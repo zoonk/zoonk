@@ -3,14 +3,13 @@ import SwiftUI
 typealias BuddyKind = Components.Schemas.Buddy.KindPayload
 typealias BuddyGlasses = Components.Schemas.Buddy.GlassesPayload
 
-/// The learner's buddy as every screen draws it (main's `@zoonk/utils/buddy`): which buddy, the
-/// glasses it wears, the belt that grows it and the Energy that wakes it. Growth and glow are
-/// always derived from the belt and Energy, so buddies never need an economy of their own.
+/// Growth and glow are always derived from the belt and Energy, so buddies never need an economy of
+/// their own.
 struct BuddyLook: Equatable, Sendable {
   var kind: BuddyKind = .zu
   var glasses: BuddyGlasses = .round
   var belt: ProgressBelt = .white
-  /// Nil before the learner has any Energy: the buddy just met them, awake, without a glow.
+  /// Nil before the learner has any Energy: awake, without a glow.
   var energy: Double?
   /// Learning wakes the buddy: on a day with study it never naps, even while Energy is low.
   var studiedToday = false
@@ -27,13 +26,10 @@ struct BuddyLook: Equatable, Sendable {
     return energy < 30 && !studiedToday ? .napping : .awake
   }
 
-  /// Energy (0–100) as the strength of the orange glow on Zu's and Beep's antenna lights; none
-  /// before any Energy. The other buddies wear no light.
   var glow: Double {
     energy.map { min(1, max(0, $0 / 100)) } ?? 0
   }
 
-  /// Its everyday face, from its Energy: sleepy while it naps, happy awake, beaming once it glows.
   var everydayExpression: BuddyExpression {
     switch energyState {
     case .napping: .sleepy
@@ -42,8 +38,7 @@ struct BuddyLook: Equatable, Sendable {
     }
   }
 
-  /// The buddy at a stage a milestone just reached, drawn grown even before the learner's belt is
-  /// read again: the first belt of that stage when its own belt is from an earlier one.
+  /// Drawn grown before the learner's belt is read again.
   func grown(to stage: BuddyStage) -> BuddyLook {
     guard self.stage < stage,
       let belt = ProgressBelt.allCases.first(where: { BuddyStage(belt: $0) == stage })
@@ -55,8 +50,7 @@ struct BuddyLook: Equatable, Sendable {
   }
 }
 
-/// Buddies grow with the belts. Brain Power only goes up, so belts never regress and neither does
-/// the buddy: each group of belts maps to one stage.
+/// Brain Power only goes up, so belts never regress and neither does the buddy.
 enum BuddyStage: Int, Comparable, Sendable {
   case baby, young, adult
 
@@ -77,7 +71,6 @@ enum BuddyStage: Int, Comparable, Sendable {
     }
   }
 
-  /// 70% as a baby, 85% young, full size as an adult.
   var scale: Double {
     switch self {
     case .baby: 0.7
@@ -89,7 +82,6 @@ enum BuddyStage: Int, Comparable, Sendable {
   static func < (lhs: BuddyStage, rhs: BuddyStage) -> Bool { lhs.rawValue < rhs.rawValue }
 }
 
-/// Below 30 Energy the buddy naps (unless the learner studied today), from 80 it glows.
 enum BuddyEnergyState: Sendable {
   case napping, awake, glowing
 }

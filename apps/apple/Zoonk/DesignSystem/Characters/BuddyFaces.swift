@@ -1,41 +1,27 @@
 import SwiftUI
 
-/// How the buddy feels. Every buddy shares one face layout (eyes at x 44 and 76, y 58; mouth near
-/// y 80), which is why every expression and every pair of glasses fits every buddy, and an
-/// expression swaps the whole face, as a 2D animator replaces a drawing.
+/// Every buddy shares one face layout (eyes at x 44 and 76, y 58; mouth near y 80), so every
+/// expression and every pair of glasses fits every buddy.
 enum BuddyExpression: CaseIterable, Hashable, Sendable {
-  /// Calm, listening.
   case neutral
-  /// Its everyday face, awake.
   case happy
-  /// Joy: today's missions, a belt.
   case cheer
-  /// Pleased with you: a level, a challenge won.
   case proud
-  /// A reveal.
   case wow
-  /// Working something out, while a reply waits.
   case think
-  /// Gentle, after a mistake.
   case kind
-  /// Low Energy and no study today.
   case sleepy
 
-  /// Closed eyes sit lower, so the glasses move down with them.
   static let sleepyEyesOffset = 3.0
 }
 
-/// The face's ink and its pupils: artwork, the same in light and dark.
 private let ink = ArtPaint.color(Color(art: 0x221b52))
 private let pupilInk = ArtPaint.color(Color(art: 0x16123a))
 private let white = ArtPaint.color(.white)
 
-/// Where each eye turns and closes: a lid comes down further than the lower one comes up.
 private let leftEyePivot = CGPoint(x: 44, y: 61)
 private let rightEyePivot = CGPoint(x: 76, y: 61)
 
-/// One expression's face, drawn as the parts an act moves (`eyeLeft`, `pupilLeft`, `lidLeft`,
-/// `browLeft`, `mouth` and their right twins).
 struct BuddyFaceArt {
   let expression: BuddyExpression
 
@@ -54,7 +40,6 @@ struct BuddyFaceArt {
         mouth.fill(svg("M55.5 81 Q60 85 64.5 81"), .color(Color(art: 0xff7ab6)))
       }
     case .proud:
-      // Content: eyes shut in an easy arc, brows up, a closed smile with one corner higher.
       arcEyes(
         painter, left: "M37.5 59.5 Q44 54 50.5 59.5", right: "M69.5 59.5 Q76 54 82.5 59.5",
         width: 3.2)
@@ -85,7 +70,6 @@ struct BuddyFaceArt {
 
   private enum Side { case left, right }
 
-  /// An open eye: its white, then the pupil with its glint, which a glance moves as one.
   private func openEye(
     _ painter: ArtPainter, _ side: Side, white eye: (Double, Double, Double, Double),
     pupil: (Double, Double, Double), glint: (Double, Double, Double)
@@ -110,7 +94,6 @@ struct BuddyFaceArt {
     blinkLids(painter)
   }
 
-  /// The lids' line while a blink holds the eyes shut: drawn only by an act.
   private func blinkLids(_ painter: ArtPainter) {
     painter.part(.lidLeft, pivot: leftEyePivot) {
       $0.stroke(svg("M36 61 Q44 64 52 61"), pupilInk, width: 3.2, cap: .round)
@@ -120,7 +103,6 @@ struct BuddyFaceArt {
     }
   }
 
-  /// Eyes shut in a smile's squint, or in content: an arc for each.
   private func arcEyes(_ painter: ArtPainter, left: String, right: String, width: CGFloat) {
     painter.part(.eyeLeft, pivot: leftEyePivot) {
       $0.stroke(svg(left), pupilInk, width: width, cap: .round)
@@ -138,7 +120,6 @@ struct BuddyFaceArt {
     mouth(painter) { $0.stroke(svg(path), ink, width: 3, cap: .round) }
   }
 
-  /// Soft brows over the glasses, in ink at half strength.
   private func brows(_ painter: ArtPainter, left: String, right: String) {
     painter.part(.browLeft, pivot: CGPoint(x: 42, y: 38)) {
       $0.stroke(svg(left), ink, width: 3, opacity: 0.5, cap: .round)

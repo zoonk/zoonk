@@ -1,22 +1,14 @@
 import Foundation
 
-/// The buddy's acts (main's `BUDDY_ACTS`): each a short performance on its parts, timed in frames
-/// at 24 a second. The eyes lead, the brows and mouth follow, then the head and the arms, and the
-/// loose parts come last.
+/// Mirrors main's `BUDDY_ACTS`. The eyes lead, the brows and mouth follow, then the head and the
+/// arms, and the loose parts come last.
 enum BuddyAct: CaseIterable, Hashable, Sendable {
-  /// The lids close in 2 frames, stay shut for 1 and open in 3. About 2 s after a reaction lands
-  /// in a face with open eyes; never on a timer.
+  /// About 2 s after a reaction lands in a face with open eyes; never on a timer.
   case blink
-  /// The pupils dart, the face slides and the head turns after them: the buddy's chat, at the
-  /// learner's message.
   case glance
-  /// Neutral to happy: a mission done; the buddy's chat, as its answer comes in.
   case smile
-  /// Anticipation, then a stretch with the arms up: today's missions, a new belt or stage.
   case cheer
-  /// A take: kept for a reveal.
   case surprise
-  /// Eyes closing content, chin up, chest out: the session's summary, new glasses.
   case proud
 
   var act: CharacterAct<BuddyExpression> {
@@ -30,8 +22,8 @@ enum BuddyAct: CaseIterable, Hashable, Sendable {
     }
   }
 
-  /// A blink starting at `from`: the lids close fast and open slower (2 frames down, 1 shut, 3
-  /// up), as people blink, and the eyes shut all the way (Trutoiu et al., 2011).
+  /// The lids close fast and open slower, and the eyes shut all the way, as people blink (Trutoiu
+  /// et al., 2011).
   private static func blinkKeys(from: Double) -> (eyes: [ActKey], lids: [ActKey]) {
     (
       eyes: [
@@ -47,7 +39,6 @@ enum BuddyAct: CaseIterable, Hashable, Sendable {
     )
   }
 
-  /// The same keys for both eyes, both pupils or both lids.
   private static func both(
     _ part: (CharacterPart, CharacterPart), _ keys: [ActKey], settle: ActEase? = nil
   )
@@ -68,8 +59,6 @@ enum BuddyAct: CaseIterable, Hashable, Sendable {
     frames: 6,
     tracks: both(eyes, blinkKeys(from: 0).eyes) + both(lids, blinkKeys(from: 0).lids))
 
-  /// A glance to the side and back: the eyes dart first (2 frames), the face slides and the head
-  /// turns after them, the antennae lag and swing past, and a blink comes with the return.
   private static let glanceAct: CharacterAct<BuddyExpression> = {
     let antennaKeys = [
       ActKey(at: 3, rotate: 0), ActKey(at: 8, ease: .swing, rotate: -4),
@@ -109,8 +98,6 @@ enum BuddyAct: CaseIterable, Hashable, Sendable {
         ])
   }()
 
-  /// A smile forming: the eyes lead with a slight squint, the mouth stretches and becomes a
-  /// smile, the head tips a little and the body lifts, the antennae following.
   private static let smileAct = CharacterAct<BuddyExpression>(
     frames: 16, swapAt: 4, to: .happy,
     tracks: both(
@@ -140,10 +127,7 @@ enum BuddyAct: CaseIterable, Hashable, Sendable {
         ActTrack(part: .antenna, keys: [ActKey(at: 7, ease: .out, rotate: -3)], settle: .follow),
       ])
 
-  /// A cheer: anticipation first (the body dips and the eyes squeeze shut), then the action (it
-  /// stretches up, the arms swing high, one a frame behind the other and not as far, so they never
-  /// mirror), the face bursts into a grin, and the follow-through: the antennae drag behind the
-  /// stretch and wobble before they settle, after the body has.
+  /// The arms swing one a frame behind the other and not as far, so they never mirror.
   private static let cheerAct = CharacterAct<BuddyExpression>(
     frames: 30, swapAt: 4, to: .cheer,
     tracks: [
@@ -210,8 +194,6 @@ enum BuddyAct: CaseIterable, Hashable, Sendable {
           settle: .follow),
       ])
 
-  /// Surprise, a take: a quick dip, then the eyes pop wide and the mouth opens, the body
-  /// stretches, the arms lift, the antennae spring back, and a blink while it sinks in.
   private static let surpriseAct = CharacterAct<BuddyExpression>(
     frames: 22, swapAt: 3, to: .wow,
     tracks: [
@@ -250,8 +232,6 @@ enum BuddyAct: CaseIterable, Hashable, Sendable {
         ActTrack(part: .antenna, keys: [ActKey(at: 5, ease: .out, rotate: -12)], settle: .follow),
       ])
 
-  /// Pride: the eyes close into a content arc (the face swaps while they're shut), the chin lifts
-  /// as the face slides up and the head tips back, the chest fills, the brows rise last.
   private static let proudAct = CharacterAct<BuddyExpression>(
     frames: 24, swapAt: 5, to: .proud,
     tracks: both(

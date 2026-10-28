@@ -1,14 +1,8 @@
 import SwiftUI
 
-/// How the Trickster feels: sly while he runs a challenge, smug when he scores, defeated when
-/// beaten.
 enum TricksterExpression: CaseIterable, Hashable, Sendable {
   case sly, smug, defeated
 
-  /// Each expression's pose beyond his face, one source for the still drawing and for the acts
-  /// that reach it. Sly is his rest. Smug cocks his crown and curls his tail. Defeated slumps:
-  /// shorter and wider, leaning back, the crown slipping over his brow, the tail wilting and the
-  /// arms hanging.
   var poses: [CharacterPart: PartPose] {
     switch self {
     case .sly:
@@ -26,7 +20,6 @@ enum TricksterExpression: CaseIterable, Hashable, Sendable {
     }
   }
 
-  /// The upper lids, as each eye's clip: their top edge is the lid.
   fileprivate var lids: (left: String, right: String) {
     switch self {
     case .sly:
@@ -43,9 +36,7 @@ private let ink = ArtPaint.color(Color(art: 0x2a1260))
 private let pupilInk = ArtPaint.color(Color(art: 0x16123a))
 private let violet = ArtPaint.color(Color(art: 0x7c3aed))
 
-/// The Trickster's drawing (main's `TricksterFigure`), the checkpoints' boss: a sly comet with a
-/// "?" tail and a crown he hasn't earned. `holdsSign` puts his "?" sign in his hand, while he's the
-/// star of a challenge he hasn't lost.
+/// `holdsSign` while he's the star of a challenge he hasn't lost.
 struct TricksterArt: CharacterArt {
   var holdsSign = false
 
@@ -57,7 +48,6 @@ struct TricksterArt: CharacterArt {
     expression.poses
   }
   static var blink: TricksterAct { .blink }
-  /// Every face of his shows his eyes open under the mask, so each can blink.
   static var openEyes: Set<TricksterExpression> { Set(TricksterExpression.allCases) }
 
   func draw(_ painter: ArtPainter, face: TricksterExpression) {
@@ -96,7 +86,6 @@ struct TricksterArt: CharacterArt {
     }
   }
 
-  /// A plasma "?" tail curling out of his head.
   private func tail(_ painter: ArtPainter) {
     let plasma = ArtPaint.linearInDrawing(
       Gradient(art: (0x8b5cf6, 0, 1), (0xc084fc, 0.45, 1), (0xff9ad5, 0.8, 1), (0xffd1ec, 1, 1)),
@@ -151,7 +140,6 @@ struct TricksterArt: CharacterArt {
   }
 }
 
-/// One expression's face under his domino mask: the eyes under their lids, the brows, the grin.
 private struct TricksterFaceArt {
   let expression: TricksterExpression
 
@@ -172,7 +160,6 @@ private struct TricksterFaceArt {
         painter, cheek: "M88 111.5 Q92 111 93 108", fang: "M59.5 122.6 L62 128 L65 123.6 Z",
         grin: "M52 119 Q68 132 90 114 Q71 124.5 52 119 Z")
     case .smug:
-      // Pleased with himself: lids lower, a sidelong look, the brow higher, the grin wider.
       eye(
         painter, .left, white: (56, 103, 7.6, 8), pupil: (57, 105, 4), glint: (58.4, 103.6, 1.3),
         lid: "M48.2 102.2 L63.8 101.2")
@@ -184,7 +171,6 @@ private struct TricksterFaceArt {
         painter, cheek: "M90.5 109.5 Q94.5 109 95.5 105.5", fang: "M58.5 122.4 L61 128 L64 123.4 Z",
         grin: "M50 118.5 Q68 133.5 92.5 111.5 Q71 125.5 50 118.5 Z")
     case .defeated:
-      // Beaten: brows up in the middle, heavy lids, eyes down, a wobbly mouth and a drop of sweat.
       eye(
         painter, .left, white: (56, 103, 7.6, 8), pupil: (55, 107.5, 4), glint: (56.4, 106.3, 1.3),
         lid: "M47.6 103.7 L63.6 101.5")
@@ -208,7 +194,6 @@ private struct TricksterFaceArt {
 
   private enum Side { case left, right }
 
-  /// The domino mask he wears in every mood.
   private func mask(_ painter: ArtPainter) {
     painter.part(.mask, pivot: CGPoint(x: 70, y: 102)) {
       $0.fill(
@@ -218,7 +203,6 @@ private struct TricksterFaceArt {
     }
   }
 
-  /// One eye under its lid, with the pupil and glint a glance moves as one.
   private func eye(
     _ painter: ArtPainter, _ side: Side, white eye: (Double, Double, Double, Double),
     pupil: (Double, Double, Double), glint: (Double, Double, Double), lid: String?
@@ -248,7 +232,6 @@ private struct TricksterFaceArt {
     }
   }
 
-  /// A lopsided grin with a fang, and the dimple at its high corner.
   private func grin(_ painter: ArtPainter, cheek: String, fang: String, grin: String) {
     painter.part(.mouth, pivot: CGPoint(x: 70, y: 120)) {
       $0.fill(svg(grin), ink)

@@ -1,9 +1,7 @@
 import SwiftUI
 
-/// Learner text (a lesson screen, a practice item) is Markdown limited to paragraphs, short lists
-/// and GFM tables of data, with inline emphasis, code and math inside them (main's
-/// `RichTextBlocks`). Anything else stays text, so a stray marker never changes a screen's layout.
-/// Each caller reads the inline markup its own way: lessons typeset math, items don't.
+/// Anything beyond paragraphs, lists and GFM tables stays text, so a stray marker never changes a
+/// screen's layout. Each caller reads the inline markup its own way: lessons typeset math, items don't.
 struct RichTextBlocks: View {
   let text: String
   let inline: (String) -> AttributedString
@@ -46,7 +44,6 @@ struct RichTextBlocks: View {
     }
   }
 
-  /// A data table, scrolling sideways when it's wider than the column.
   private func table(header: [String], rows: [[String]]) -> some View {
     ScrollView(.horizontal) {
       Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 8) {
@@ -73,14 +70,11 @@ struct RichTextBlocks: View {
 }
 
 enum RichTextBlock: Equatable {
-  /// Lines a single line break keeps together.
   case paragraph(lines: [String])
-  /// Lines starting with "-", "*", "•" (or "1." when ordered), each item without its marker.
   case list(items: [String], ordered: Bool)
   case table(header: [String], rows: [[String]])
 
-  /// Main's `parseRichBlocks`: tables where a row sits right above a delimiter row with as many
-  /// cells, and paragraphs and lists between them, split by blank lines.
+  /// Mirrors main's `parseRichBlocks`.
   static func parse(_ text: String) -> [RichTextBlock] {
     let lines = text.replacingOccurrences(of: "\r\n", with: "\n").components(separatedBy: "\n")
     var blocks: [RichTextBlock] = []
@@ -104,7 +98,6 @@ enum RichTextBlock: Equatable {
     return blocks
   }
 
-  /// Adds a line to the open block when it continues it, or starts a new block.
   private static func appending(_ line: Line, after previous: Line?, to blocks: [RichTextBlock])
     -> [RichTextBlock]
   {
@@ -144,12 +137,9 @@ enum RichTextBlock: Equatable {
     }
   }
 
-  /// A GFM pipe table: a header row, a `|---|:---:|` row with as many cells, then rows until a
-  /// line without a pipe. Missing cells are empty and extra ones are dropped.
   private struct Table {
     let header: [String]
     let rows: [[String]]
-    /// The line after the table's last row.
     let end: Int
 
     init?(lines: [String], at index: Int) {
@@ -181,7 +171,6 @@ enum RichTextBlock: Equatable {
       self.end = end
     }
 
-    /// A row's cells: pipes at either edge are optional, and `\|` is a pipe inside a cell.
     private static func cells(_ line: String) -> [String] {
       var row = line.trimmingCharacters(in: .whitespaces)
 

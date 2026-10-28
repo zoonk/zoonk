@@ -1,18 +1,10 @@
 import SwiftUI
 
-/// Two related panes side by side where each gets a phone-width column, and one column everywhere
-/// else. On the open iPhone Duo each pane is about an iPhone wide and they meet at the hinge, flat
-/// or partially folded like a book, so folding moves nothing and the fold stays clear. iPad,
-/// multitasking and iPhone landscape follow the same width rule, never a device check.
-///
-/// Switching between one column and two recreates the panes' views, so what the learner made
-/// (answers, drafts, selection, open panels) lives in a store or in state above the split.
 struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
   /// The primary pane's share of the width where there's no hinge.
   let primaryShare: CGFloat
   let primary: Primary
   let secondary: Secondary
-  /// The one-column version, what a phone shows: usually both panes' sections in one list.
   let single: Single
 
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -60,23 +52,18 @@ struct PaneSplit<Primary: View, Secondary: View, Single: View>: View {
   }
 }
 
-/// The room a view has to split in two: its width and where iPhone Duo's hinge crosses it.
 struct PaneSpace: Equatable {
-  /// A phone-width column. Every iPhone layout already works at this width at every standard text
-  /// size, and accessibility sizes get one column, so it doesn't grow with the text.
+  /// Every iPhone layout works at this width at standard text sizes, and accessibility sizes get one
+  /// column, so it doesn't grow with the text.
   static let minimumPane: CGFloat = 360
 
   struct Panes: Equatable {
-    /// The primary pane's width; the secondary takes what's left after the gap.
     var primary: CGFloat
-    /// The hinge's width, which the secondary pane keeps its content out of; zero where there's none.
     var gap: CGFloat
   }
 
   var width: CGFloat
-  /// Where the hinge runs vertically through the view, from edge to edge of its margins, in the
-  /// view's own leading-to-trailing coordinates, flat or folded. Lists beside it drop their own
-  /// margins there, so panes meet at it and keep its width as their gutter.
+  /// In the view's own leading-to-trailing coordinates, flat or folded.
   var hinge: ClosedRange<CGFloat>?
   /// The hinge while iPhone Duo is partially folded like a book: nothing may sit in it then.
   var fold: ClosedRange<CGFloat>?
@@ -106,8 +93,8 @@ struct PaneSpace: Equatable {
     }
   }
 
-  /// Whether to split is decided on the shares, so the hinge never collapses the panes (the trailing
-  /// one narrows beside iPhone Duo's vertical bar); where there's a hinge, they meet at it.
+  /// Decided on the shares, so the hinge never collapses the panes; where there's a hinge, they meet
+  /// at it.
   func panes(primaryShare: CGFloat) -> Panes? {
     // A hundredth of a point of slack, so a share like 1 - 0.55 doesn't miss the minimum by a
     // floating-point rounding error.
@@ -124,15 +111,13 @@ struct PaneSpace: Equatable {
 }
 
 extension PaneSpace {
-  /// A grid column: its width and the space after it.
   struct Column: Equatable {
     var width: CGFloat
     var spacing: CGFloat
   }
 
-  /// A grid's columns while the fold crosses it: as many on each side as fit at `minimum`, the
-  /// same number on both so the grid stays even, with the fold as the gap between the halves. Nil
-  /// without a fold.
+  /// The same number of columns on each side, so the grid stays even, with the fold as the gap
+  /// between the halves.
   func columnsAroundFold(minimum: CGFloat, spacing: CGFloat) -> [Column]? {
     guard let fold else {
       return nil
@@ -156,6 +141,5 @@ extension PaneSpace {
 }
 
 extension EnvironmentValues {
-  /// Whether the view sits in one pane of a `PaneSplit`, so a pane can drop what the other shows.
   @Entry var isPaneSplit = false
 }

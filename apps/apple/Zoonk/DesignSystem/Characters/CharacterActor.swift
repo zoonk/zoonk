@@ -1,14 +1,11 @@
 import SwiftUI
 
-/// A character's drawing: its parts in its own units, drawn in the pose an act gives them.
 protocol CharacterArt {
   associatedtype Expression: Hashable & Sendable
   associatedtype ActName: Hashable & Sendable
 
-  /// The drawing's box in its own units, which the view fits to its frame.
   var viewBox: CGRect { get }
-  /// How far past its box the drawing may reach (an antenna's glow, arms thrown up), as a share
-  /// of the box on each side; 0 crops it to the box.
+  /// A share of the box on each side; 0 crops the drawing to the box.
   var overflow: CGFloat { get }
 
   static func act(_ name: ActName) -> CharacterAct<Expression>
@@ -16,21 +13,15 @@ protocol CharacterArt {
   /// an act (a blink's lid line).
   static func poses(of expression: Expression) -> [CharacterPart: PartPose]
   static var blink: ActName { get }
-  /// The faces whose eyes are open, the only ones a blink can close.
+  /// The only faces a blink can close.
   static var openEyes: Set<Expression> { get }
 
   func draw(_ painter: ArtPainter, face: Expression)
 }
 
-/// Makes a character act (main's `useActor`): it draws `expression` still until an act plays, then
-/// moves its parts through the act and lands in the act's expression. Everyday screens pass
-/// neither `reaction` nor `cue`, so it holds still and its timeline stays paused.
-///
-/// A `reaction` plays once, when the view first appears (a moment that's already been seen passes
-/// none, and the landing `expression` instead), then one blink about 2 s later if its eyes are open.
-/// A `cue` plays its act each time its `id` changes. A new act, or the view going away, lands the
-/// one under way at once, and with Reduce Motion an act only changes the face. It's decorative:
-/// the words beside it say what happened.
+/// Everyday screens pass neither `reaction` nor `cue`, so it holds still. A `reaction` plays once,
+/// when the view first appears (a moment already seen passes the landing `expression` instead),
+/// then one blink if its eyes are open. With Reduce Motion an act only changes the face.
 struct CharacterActor<Art: CharacterArt>: View {
   let art: Art
   let expression: Art.Expression
@@ -52,7 +43,6 @@ struct CharacterActor<Art: CharacterArt>: View {
     let run: Int
   }
 
-  /// How long a character holds the pose a reaction landed in before it blinks once (48 frames).
   private let blinkAfter: TimeInterval = 2
 
   private var shown: Art.Expression { landed ?? expression }
@@ -126,8 +116,7 @@ struct CharacterActor<Art: CharacterArt>: View {
     }
   }
 
-  /// Plays an act from the expression drawn now; true once it landed on its own, false when
-  /// something stopped it (another act, the view going away), which lands it at once.
+  /// False when something stopped it (another act, the view going away), which lands it at once.
   @discardableResult
   private func play(_ name: Art.ActName, delay: TimeInterval = 0) async -> Bool {
     land()
@@ -149,7 +138,6 @@ struct CharacterActor<Art: CharacterArt>: View {
     return finished
   }
 
-  /// Draws the act under way's landing still, at once.
   private func land() {
     guard let playing else { return }
     landed = playing.act.to ?? playing.from
@@ -157,13 +145,10 @@ struct CharacterActor<Art: CharacterArt>: View {
   }
 }
 
-/// Draws a character's parts into a `GraphicsContext`, each part posed around its own pivot, the
-/// way main's SVG parts take CSS `translate`, `rotate` and `scale`.
 struct ArtPainter {
   var context: GraphicsContext
   let poses: [CharacterPart: PartPose]
 
-  /// One named part, posed around `pivot` and drawn by `content`; a hidden part draws nothing.
   func part(_ part: CharacterPart, pivot: CGPoint, _ content: (ArtPainter) -> Void) {
     let pose = poses[part] ?? .still
 
@@ -178,7 +163,6 @@ struct ArtPainter {
     content(ArtPainter(context: context, poses: poses))
   }
 
-  /// Drawing moved, turned or faded as a group, like an SVG `<g>` with a `transform`.
   func group(
     _ transform: CGAffineTransform = .identity, opacity: Double = 1,
     _ content: (ArtPainter) -> Void
@@ -189,7 +173,6 @@ struct ArtPainter {
     content(ArtPainter(context: context, poses: poses))
   }
 
-  /// Drawing clipped to `path`.
   func clipped(to path: Path, _ content: (ArtPainter) -> Void) {
     var context = context
     context.clip(to: path)
@@ -228,15 +211,13 @@ struct ArtPainter {
   }
 }
 
-/// What a shape is painted with: a color, or one of main's SVG gradients.
 enum ArtPaint {
   case color(Color)
-  /// A gradient across the shape's own box, from `start` to `end` in that box's units (SVG's
-  /// default `objectBoundingBox`).
+  /// In the shape's own box units (SVG's default `objectBoundingBox`).
   case linear(Gradient, start: UnitPoint, end: UnitPoint)
-  /// A gradient in the drawing's units (SVG's `userSpaceOnUse`).
+  /// In the drawing's units (SVG's `userSpaceOnUse`).
   case linearInDrawing(Gradient, start: CGPoint, end: CGPoint)
-  /// A radial gradient around `center`, `radius` of the shape's box (`objectBoundingBox`).
+  /// In the shape's own box units (`objectBoundingBox`).
   case radial(Gradient, center: CGPoint, radius: CGFloat)
 
   fileprivate func shading(in box: CGRect) -> GraphicsContext.Shading {
@@ -262,7 +243,6 @@ extension CGRect {
   }
 }
 
-/// The shapes main's drawings are made of, in the drawing's units.
 enum ArtShape {
   static func circle(_ x: Double, _ y: Double, _ radius: Double) -> Path {
     Path(ellipseIn: CGRect(x: x - radius, y: y - radius, width: radius * 2, height: radius * 2))
@@ -281,7 +261,6 @@ enum ArtShape {
       style: .circular)
   }
 
-  /// SVG's `rotate(angle x y)`: a turn in degrees around a point.
   static func rotation(_ degrees: Double, _ x: Double, _ y: Double) -> CGAffineTransform {
     CGAffineTransform(translationX: x, y: y)
       .rotated(by: degrees * .pi / 180)
@@ -290,15 +269,13 @@ enum ArtShape {
 }
 
 extension Path {
-  /// The path turned `degrees` around a point, as SVG's `rotate(angle x y)` on one shape.
   func rotated(_ degrees: Double, around x: Double, _ y: Double) -> Path {
     applying(ArtShape.rotation(degrees, x, y))
   }
 }
 
 extension Color {
-  /// One of the characters' own colors, drawn the same in light and dark as main draws them: it's
-  /// artwork (a skin, a lens, an ink line on a face), which no system color can stand in for.
+  /// Artwork, drawn the same in light and dark as main draws it: no system color can stand in for it.
   init(art hex: UInt32) {
     self.init(
       .sRGB, red: Double((hex >> 16) & 0xff) / 255, green: Double((hex >> 8) & 0xff) / 255,
@@ -307,7 +284,6 @@ extension Color {
 }
 
 extension Gradient {
-  /// A gradient through the characters' own colors at SVG stop offsets.
   init(art stops: (UInt32, Double, Double)...) {
     self.init(
       stops: stops.map { hex, location, opacity in

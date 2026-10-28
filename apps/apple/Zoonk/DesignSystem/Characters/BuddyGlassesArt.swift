@@ -1,12 +1,9 @@
 import SwiftUI
 
-/// Mirrors a left lens onto the right eye around the face's vertical axis.
 private let mirror = CGAffineTransform(a: -1, b: 0, c: 0, d: 1, tx: 120, ty: 0)
 
 private let gold = Gradient(art: (0xffe7a3, 0, 1), (0xf2b53c, 0.5, 1), (0xb87412, 1, 1))
 
-/// The buddy's glasses. Every frame fits every buddy because they share one face layout; round
-/// comes with the buddy, and the others are earned by fixed milestones, never at random.
 struct BuddyGlassesArt {
   let glasses: BuddyGlasses
 
@@ -143,7 +140,6 @@ struct BuddyGlassesArt {
   }
 }
 
-/// A four-pointed spark: the star glasses' glint and a burst's sparks.
 enum Spark {
   private static let box = 24.0
 

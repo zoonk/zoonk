@@ -1,7 +1,6 @@
 import SwiftUI
 
-/// The kinds of things a learner meets, each with one color and one symbol everywhere (main's `KIND_MARKS`).
-/// A lesson, the default, is neutral; kinds doing the same job share a hue and differ by their symbol.
+/// Mirrors main's `KIND_MARKS`: kinds doing the same job share a hue and differ by their symbol.
 enum LearnKind {
   case challenge
   case conversation
@@ -17,14 +16,11 @@ enum LearnKind {
     switch self {
     case .lesson:
       .secondary
-    // Going back over what was learned.
     case .mistakes, .practice, .review:
       .orange
-    // Testing what the learner knows: an orange redder than review's. No system color has it, and the
-    // system red sits beside wrong's pink.
+    // No system color is an orange redder than review's, and system red sits beside wrong's pink.
     case .challenge, .mock:
       Color(.kindMock)
-    // Making something yourself.
     case .conversation, .essay:
       .mint
     case .mindMap:
@@ -47,8 +43,6 @@ enum LearnKind {
   }
 }
 
-/// A kind's symbol in its color, where kinds sit side by side (the day's queue, the missions, a plan's
-/// events). Decorative: the words beside it name the thing.
 struct KindMark: View {
   let kind: LearnKind
 
@@ -59,7 +53,6 @@ struct KindMark: View {
   }
 }
 
-/// A kind as a small dot in its color, the quieter mark of a row in a queue. Decorative.
 struct KindDot: View {
   let kind: LearnKind
 

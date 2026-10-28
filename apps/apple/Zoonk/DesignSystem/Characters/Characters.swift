@@ -1,15 +1,5 @@
 import SwiftUI
 
-/// The learner's buddy (main's `Buddy` and `BuddyActor`): Zu, Noodle, Beep or Otto, grown by its
-/// belt, in its glasses, its face from its Energy unless `expression` says otherwise. It holds
-/// still wherever it only illustrates a screen; where the learner's work just did something, a
-/// `reaction` makes it act once with its parts (a smile, a cheer, pride), and a `cue` makes it act
-/// on each change (a glance at a message). `crop: .face` frames only the face, for icon sizes.
-/// It's decorative: the words beside it say who it is and what happened.
-///
-/// ```swift
-/// BuddyCharacter(look: look, expression: .happy, reaction: ActReaction(act: .cheer, delay: .beat))
-/// ```
 struct BuddyCharacter: View {
   let look: BuddyLook
   var expression: BuddyExpression?
@@ -24,11 +14,8 @@ struct BuddyCharacter: View {
   }
 }
 
-/// The Trickster as a challenge's art (main's `TricksterArt`), holding his "?" sign until he's
-/// beaten. Where something just happened (`reacts`: the challenge opened, or its result came in)
-/// he acts it out a beat in, once: smug while he holds his sign, his defeat once he's beaten. A
-/// revisit passes no `reacts`, and he's still, sly or defeated. A `cue` makes him act at each
-/// answer of a duel.
+/// `reacts` where something just happened (the challenge opened, or its result came in); a revisit
+/// passes none, and he's still.
 struct TricksterCharacter: View {
   var beaten = false
   var reacts = false
@@ -42,18 +29,15 @@ struct TricksterCharacter: View {
   }
 }
 
-/// The rarest moments' burst (main's `Burst`): a few sparks fly out of one point once and fade, in
-/// the moment's color (Brain Power's for a belt or the buddy's next stage). Put it in an overlay
-/// centered on that point; it draws past its frame. Decorative, and gone with Reduce Motion.
+/// Put it in an overlay centered on the burst's point; it draws past its frame.
 struct Burst: View {
-  /// A spark's size and where it flies, in points from the burst's point.
   struct Spark: Sendable {
     let size: Double
     let x: Double
     let y: Double
   }
 
-  /// Eight sparks around the point, near and far in turn, a little lopsided as a real burst is.
+  /// A little lopsided, as a real burst is.
   static let near: [Spark] = [
     Spark(size: 9, x: -38, y: -14), Spark(size: 7, x: -18, y: -32), Spark(size: 10, x: 8, y: -36),
     Spark(size: 7, x: 32, y: -24), Spark(size: 9, x: 44, y: 2), Spark(size: 6, x: 30, y: 24),
@@ -62,14 +46,12 @@ struct Burst: View {
 
   var sparks = Burst.near
   var color = Color.brain
-  /// Seconds before the sparks fly: the moment's last beat.
   var delay: TimeInterval = 0
 
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @State private var start: Date?
   @State private var done = false
 
-  /// The sparks' time out and gone (main's `duration-burst`).
   private let duration: TimeInterval = 0.75
 
   var body: some View {
@@ -93,8 +75,6 @@ struct Burst: View {
     }
   }
 
-  /// Each spark flies out to its point in the first half, at full strength, and drifts a little
-  /// further as it fades in the second, each half on the ease-out.
   private func draw(in context: GraphicsContext, size: CGSize, progress: Double) {
     guard progress >= 0, progress < 1 else { return }
 

@@ -2,10 +2,8 @@ import SwiftUI
 import Synchronization
 
 extension Path {
-  /// A path from SVG path data (`d`), so the characters keep main's drawings point for point
-  /// (`packages/ui/src/components/_buddy`, `trickster.tsx`). It reads the commands those drawings
-  /// use: moves, lines (`L`, `H`, `V`), quadratic and cubic curves, elliptical arcs and close, in
-  /// absolute and relative form, with a command's numbers repeating it.
+  /// Reads the commands main's drawings use: moves, lines (`L`, `H`, `V`), quadratic and cubic
+  /// curves, elliptical arcs and close, absolute and relative.
   init(svg data: String) {
     self.init()
 
@@ -145,10 +143,8 @@ extension Path {
   }
 }
 
-/// Parsed paths by their data, so each drawing's path is read once however often it's drawn.
 private let parsedPaths = Mutex<[String: Path]>([:])
 
-/// The path for SVG path data, read once and kept.
 func svg(_ data: String) -> Path {
   if let path = parsedPaths.withLock({ $0[data] }) {
     return path
@@ -159,8 +155,7 @@ func svg(_ data: String) -> Path {
   return path
 }
 
-/// Reads SVG path data: command letters and the numbers after them, separated by spaces, commas,
-/// a sign or a second decimal point (`3.6.8` is 3.6 and .8).
+/// Numbers may be separated by a sign or a second decimal point: `3.6.8` is 3.6 and .8.
 private struct SVGPathScanner {
   private let bytes: [UInt8]
   private var index = 0

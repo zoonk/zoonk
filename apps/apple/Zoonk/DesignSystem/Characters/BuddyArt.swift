@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// The buddy's drawing (main's `BuddyFigure`): Zu, Noodle, Beep or Otto at the stage its belt
-/// grows it to, wearing its belt and glasses, its antenna lights glowing with Energy, and the face
-/// it's showing. `face` crops to the face's square, for icon sizes, so a baby's face isn't a dot.
+/// `face` crops to the face's square, so a baby's face isn't a dot at icon sizes.
 struct BuddyArt: CharacterArt {
   enum Crop { case whole, face }
 
@@ -15,7 +13,6 @@ struct BuddyArt: CharacterArt {
   var viewBox: CGRect {
     guard crop == .face else { return CGRect(x: 0, y: 0, width: 120, height: 120) }
 
-    // Every buddy's face sits in the same square of the full-size art: eyes at y 58, mouth near 80.
     let size = 96 * look.stage.scale
     let centerY = Self.ground.y - (Self.ground.y - 60) * look.stage.scale
     return CGRect(x: Self.ground.x - size / 2, y: centerY - size / 2, width: size, height: size)
@@ -44,7 +41,6 @@ struct BuddyArt: CharacterArt {
 
     painter.group(grow) { body in
       let parts = BuddyBodyArt(look: look, isNapping: face == .sleepy) { head in
-        // The face, with its glasses, turns with the head.
         head.part(.face, pivot: CGPoint(x: 60, y: 64)) { facePainter in
           BuddyFaceArt(expression: face).draw(facePainter)
           facePainter.group(
@@ -63,7 +59,6 @@ struct BuddyArt: CharacterArt {
 /// The belt's outline, so a white or black belt never vanishes into the body.
 private let beltEdge = ArtPaint.color(.black)
 
-/// Each buddy's body, carrying its face on its head so the face turns with the head.
 private struct BuddyBodyArt {
   let look: BuddyLook
   let isNapping: Bool
@@ -80,14 +75,12 @@ private struct BuddyBodyArt {
     }
   }
 
-  /// A belt piece in the belt's color with its faint outline.
   private func beltPiece(_ painter: ArtPainter, _ path: Path, edge: Double, width: CGFloat = 1) {
     painter.fill(path, belt)
     painter.stroke(path, beltEdge, width: width, opacity: edge)
   }
 
-  /// The Energy glow of Zu's and Beep's antenna lights, brighter and wider as Energy rises. It
-  /// holds still: the buddy shows on everyday screens, where nothing loops.
+  /// The glow holds still: the buddy shows on everyday screens, where nothing loops.
   private func halo(_ painter: ArtPainter, _ x: Double, _ y: Double, radius: Double) {
     let glow = look.glow
     guard glow > 0 else { return }
@@ -103,8 +96,6 @@ private struct BuddyBodyArt {
     painter.fill(ArtShape.circle(x, y, 5.2), .color(Color(art: 0xff8a3d)))
     painter.fill(ArtShape.circle(x - 1.6, y - 1.6, 1.7), .color(.white), opacity: 0.85)
   }
-
-  // MARK: Zu, a curious alien whose antenna tips glow with Energy
 
   private func zu(_ painter: ArtPainter) {
     let skin = ArtPaint.radial(
@@ -169,8 +160,6 @@ private struct BuddyBodyArt {
     }
   }
 
-  // MARK: Noodle, a brain with legs; its Energy shows in its face
-
   private func noodle(_ painter: ArtPainter) {
     let shade = ArtPaint.radial(
       Gradient(art: (0xffb3cb, 0, 1), (0xff7aa6, 1, 1)), center: CGPoint(x: 0.4, y: 0.3),
@@ -218,8 +207,6 @@ private struct BuddyBodyArt {
       }
     }
   }
-
-  // MARK: Beep, a tidy robot whose antenna bulb glows with Energy
 
   private func beep(_ painter: ArtPainter) {
     let metal = ArtPaint.linear(
@@ -276,8 +263,6 @@ private struct BuddyBodyArt {
       }
     }
   }
-
-  // MARK: Otto, a know-it-all octopus; its spots are its skin, never a light
 
   private func otto(_ painter: ArtPainter) {
     let skin = ArtPaint.radial(

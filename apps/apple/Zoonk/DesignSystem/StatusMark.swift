@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// Where a thing in a list stands, the same in every list (main's `StatusMark`): a blue check once done, a
-/// quiet fast-forward once skipped because the learner showed they know it, the learner's blue dot with a
-/// halo for the one to do next, and a faint dot ahead. Every mark takes the same width so the rows' words
-/// start in one place, and scales with the row's text. Decorative: the row's words say its state.
 struct StatusMark: View {
   enum Status {
     case done

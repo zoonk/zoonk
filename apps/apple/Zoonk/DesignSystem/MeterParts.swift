@@ -1,17 +1,11 @@
 import SwiftUI
 
-/// A meter made of parts under the number it explains (main's `MeterParts`): each part as long as its
-/// weight and filled by what it measures, so the number's make-up reads at a glance (a day's blocks by
-/// their minutes, a lesson's answers). A single share is a `ProgressView` instead. The words beside it
-/// carry the meaning, so it's hidden from VoiceOver.
+/// A single share is a `ProgressView` instead.
 struct MeterParts: View {
   struct Part {
     enum Fill {
-      /// What's still to do: the track.
       case track
-      /// The learner's place, the edge of their progress: a blue ring.
       case current
-      /// What it measures: `.success` for done, `.destructive` for wrong, a kind's color.
       case color(Color)
     }
 

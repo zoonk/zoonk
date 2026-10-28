@@ -1,9 +1,7 @@
 import Foundation
 
-/// Characters (the buddy, the Trickster) are drawn as named parts, so they act the way a person
-/// does: their eyes, lids, brows, mouth and limbs move, never the whole drawing at once (main's
-/// `packages/ui/src/components/_character`). A part turns, stretches and moves around its own
-/// pivot, in the character's drawing units.
+/// Characters act with their parts, never the whole drawing at once (main's `_character`). A part
+/// turns, stretches and moves around its own pivot, in the character's drawing units.
 enum CharacterPart: Hashable, Sendable {
   case antenna, antennaLeft, antennaRight
   case armLeft, armRight
@@ -14,7 +12,6 @@ enum CharacterPart: Hashable, Sendable {
   case crown, sign, tail
 }
 
-/// Two numbers an act moves together: a stretch's width and height, or a move's x and y.
 struct ArtPair: Equatable, Sendable, ExpressibleByArrayLiteral {
   var x: Double
   var y: Double
@@ -33,8 +30,6 @@ struct ArtPair: Equatable, Sendable, ExpressibleByArrayLiteral {
   static let one = ArtPair(1, 1)
 }
 
-/// Where a part sits when it isn't at rest: its turn in degrees, its stretch, its move, and how
-/// much of it shows.
 struct PartPose: Equatable, Sendable {
   var opacity = 1.0
   var rotate = 0.0
@@ -42,27 +37,19 @@ struct PartPose: Equatable, Sendable {
   var translate = ArtPair.zero
 
   static let still = PartPose()
-  /// A part drawn only by an act, such as the line a shut eye shows.
   static let hidden = PartPose(opacity: 0)
 }
 
-/// How a part moves into a key, on one of main's motion tokens (`globals.css`), or held until the
-/// key and then changed at once (`hold`, as an animator swaps a drawing).
+/// Main's motion tokens (`globals.css`); `hold` keeps a part until the key, then changes it at once.
 enum ActEase: Sendable {
-  /// Speeding up into a pose: the dip before a cheer, a lid closing.
   case accelerate
-  /// A loose part (an antenna, a tail, a crown) lagging and swinging past its stop: a looser spring.
   case follow
   case hold
-  /// Fast out of the gate, gentle landing: darts and actions.
   case out
-  /// Apple's bouncy spring (bounce 0.3), for something landing.
   case spring
-  /// Slow out of one pose and into the next: a head turning, weight shifting.
   case swing
 
-  /// How far along a move is, eased, at `progress` (0–1) of its time. Springs pass 1 before
-  /// settling.
+  /// Springs pass 1 before settling.
   func value(at progress: Double) -> Double {
     let progress = min(max(progress, 0), 1)
 
@@ -131,8 +118,7 @@ enum ActEase: Sendable {
   ]
 }
 
-/// A part's pose at one frame of an act, and the curve it arrives there on. Only what it sets
-/// moves at that key.
+/// Only what it sets moves at that key.
 struct ActKey: Sendable {
   var at: Double
   var ease: ActEase?
@@ -142,18 +128,15 @@ struct ActKey: Sendable {
   var translate: ArtPair?
 }
 
-/// One part's motion through an act. It starts from the pose the part is drawn in and ends at the
-/// pose of the expression the act lands in, on `settle`'s curve, so an act never jumps at either
-/// end; a key at frame 0 or at the last frame replaces that end. `rest` is the part's pose when no
-/// expression poses it (a blink's lid line rests hidden).
+/// Starts from the pose the part is drawn in and ends at the landing expression's pose on `settle`'s
+/// curve, so an act never jumps; a key at frame 0 or at the last frame replaces that end. `rest` is
+/// the part's pose when no expression poses it.
 struct ActTrack: Sendable {
   var part: CharacterPart
   var keys: [ActKey]
   var rest: PartPose = .still
   var settle: ActEase?
 
-  /// The part's pose at `frame` of an act `frames` long, between the pose it starts in and the
-  /// one it lands in.
   func pose(at frame: Double, frames: Double, from: PartPose, to: PartPose) -> PartPose {
     PartPose(
       opacity: value(\.opacity, at: frame, frames: frames, from: from.opacity, to: to.opacity),
@@ -163,8 +146,8 @@ struct ActTrack: Sendable {
         \.translate, at: frame, frames: frames, from: from.translate, to: to.translate))
   }
 
-  /// One property between its keys, each segment on the curve of the key it reaches, as
-  /// `element.animate()` plays main's keyframes.
+  /// Each segment eases on the curve of the key it reaches, as `element.animate()` plays main's
+  /// keyframes.
   private func value<Value: ArtInterpolable>(
     _ property: KeyPath<ActKey, Value?>, at frame: Double, frames: Double, from: Value, to: Value
   ) -> Value {
@@ -195,7 +178,6 @@ struct ActTrack: Sendable {
   }
 }
 
-/// A value an act moves smoothly between keys.
 protocol ArtInterpolable {
   func interpolated(to other: Self, by amount: Double) -> Self
 }
@@ -212,10 +194,9 @@ extension ArtPair: ArtInterpolable {
   }
 }
 
-/// A short performance on a character's parts, timed in frames at 24 a second (main's
-/// `duration-frame`), and the expression it lands in. At `swapAt` the face is replaced by the
-/// landing expression's, the way a 2D animator swaps a mouth or a pair of eyes, usually while the
-/// eyes are shut or a part is squashed, so the change reads as one motion.
+/// Timed in frames at 24 a second (main's `duration-frame`). At `swapAt` the face swaps to the
+/// landing expression's, usually while the eyes are shut or a part is squashed, so it reads as one
+/// motion.
 struct CharacterAct<Expression: Hashable & Sendable>: Sendable {
   static var framesPerSecond: Double { 24 }
 
@@ -226,9 +207,7 @@ struct CharacterAct<Expression: Hashable & Sendable>: Sendable {
 
   var duration: TimeInterval { frames / Self.framesPerSecond }
 
-  /// Each part's pose at `frame`, starting from the poses of the expression it plays from and
-  /// landing in the poses of the one it lands in. Parts without a track keep the pose they're
-  /// drawn in.
+  /// Parts without a track keep the pose they're drawn in.
   func poses(
     at frame: Double, from fromPoses: [CharacterPart: PartPose],
     to toPoses: [CharacterPart: PartPose]
@@ -244,28 +223,23 @@ struct CharacterAct<Expression: Hashable & Sendable>: Sendable {
     return poses
   }
 
-  /// The face drawn at `frame`: the one it started in until the swap, then the one it lands in.
   func face(at frame: Double, from: Expression) -> Expression {
     guard let to, let swapAt, frame >= swapAt else { return from }
     return to
   }
 }
 
-/// What a character does because something happened, once, as the moment it's in plays: an act on
-/// the moment's beat (`delay`, in seconds; main's `BEAT_MS` is a quarter of one).
 struct ActReaction<ActName: Hashable & Sendable>: Hashable, Sendable {
   var act: ActName
   var delay: TimeInterval = 0
 }
 
 extension TimeInterval {
-  /// One beat of a moment (main's `BEAT_MS`): a celebration plays one thing at a time, in reading
-  /// order, a beat apart.
+  /// Main's `BEAT_MS`: a celebration plays one thing at a time, in reading order, a beat apart.
   static let beat = 0.25
 }
 
-/// An act a screen asks for on cue (a duel's verdict, the buddy's answer), played each time `id`
-/// changes.
+/// Plays its act each time `id` changes.
 struct ActCue<ActName: Hashable & Sendable>: Hashable, Sendable {
   var id: Int
   var act: ActName
