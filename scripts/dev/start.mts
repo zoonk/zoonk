@@ -12,6 +12,7 @@ import {
   getPnpmCommand,
   runForegroundCommand,
 } from "./process.mts";
+import { writeAndroidDevelopmentConfiguration } from "./write-android-configuration.mts";
 import { writeAppleDevelopmentConfiguration } from "./write-apple-configuration.mts";
 
 const currentDirectory = process.cwd();
@@ -46,6 +47,7 @@ function startProxy(environment: NodeJS.ProcessEnv): void {
 
 async function startDirectDevelopment(): Promise<CommandResult> {
   writeAppleDevelopmentConfiguration({ apiUrl: "http://localhost:4000", currentDirectory });
+  writeAndroidDevelopmentConfiguration({ apiUrl: "http://localhost:4000", currentDirectory });
 
   return runDevelopmentCommand({ args: ["exec", "turbo", "dev:direct"], environment: process.env });
 }
@@ -64,6 +66,7 @@ async function startPortlessDevelopment(): Promise<CommandResult> {
   const mailboxUrl = getServiceUrl({ ...service, serviceName: "mailbox" });
 
   writeAppleDevelopmentConfiguration({ apiUrl, currentDirectory });
+  writeAndroidDevelopmentConfiguration({ apiUrl, currentDirectory });
   process.stdout.write(`Main: ${mainUrl}\nAPI: ${apiUrl}\nMailbox: ${mailboxUrl}\n`);
 
   return runDevelopmentCommand({

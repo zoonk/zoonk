@@ -1,14 +1,117 @@
 package com.zoonk.android.app
 
+import android.content.Context
+import com.zoonk.android.BuildConfig
+import com.zoonk.android.data.ApiClients
+import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.DraftStore
+import com.zoonk.android.data.EncryptedSessionCredentials
+import com.zoonk.android.data.LearnerSummaryStore
+import com.zoonk.android.data.LiveSessionApi
+import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.PrivateImages
+import com.zoonk.android.data.SessionCredentials
+import com.zoonk.android.data.SessionState
+import com.zoonk.android.data.SessionStore
+import com.zoonk.android.data.StoredSession
+import com.zoonk.android.data.apiHttpClient
+import com.zoonk.android.data.clearCredentialState
+import com.zoonk.android.data.imageLoader
+import com.zoonk.android.data.perform
 import com.zoonk.android.navigation.LearnerAccess
+import com.zoonk.api.models.LearnerSummary
+import com.zoonk.api.models.LearnerSummaryGoal
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
+import okhttp3.HttpUrl.Companion.toHttpUrl
+import java.io.File
 
-/** The app's long-lived objects, made once per process and passed to screens by constructor. */
-class AppContainer {
-    /**
-     * Who the shell shows screens to, which its gates read. The session and the learner summary
-     * decide it once they exist; until then every screen opens as for a learner with a goal.
-     */
-    val learnerAccess: StateFlow<LearnerAccess> = MutableStateFlow(LearnerAccess.Learner)
+class AppContainer private constructor(
+    context: Context,
+    credentials: SessionCredentials,
+    previewAccess: LearnerAccess?,
+) {
+    constructor(context: Context) : this(context, EncryptedSessionCredentials(context), previewAccess = null)
+
+    val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    val api = ApiClients("${BuildConfig.API_BASE_URL}/v1/".toHttpUrl(), apiHttpClient { buildTypeSetup() })
+    val images = PrivateImages(api.baseUrl, imageLoader(context, api.http))
+    val drafts = DraftStore(File(context.filesDir, "drafts"), scope)
+    val sessions: SessionStore =
+        SessionStore(
+            api = LiveSessionApi(api),
+            credentials = credentials,
+            drafts = drafts,
+            onChange = { previous, _ ->
+                cache.followSession()
+                previous?.let(images::forget)
+            },
+            clearCredentialState = { clearCredentialState(context) },
+        )
+    val cache = AppCache(sessions, scope)
+    val learnerSummary =
+        LearnerSummaryStore(
+            api = { session -> perform { api.clients(session).account.getCurrentUserSummary() }.summary },
+            cache = cache,
+            scope = scope,
+        )
+
+    /** Who the shell shows screens to, which its gates read. */
+    val learnerAccess: StateFlow<LearnerAccess> =
+        previewAccess?.let(::MutableStateFlow)
+            ?: combine(sessions.state, learnerSummary.summary.state, ::learnerAccess)
+                .stateIn(scope, SharingStarted.Eagerly, LearnerAccess.Restoring)
+
+    init {
+        scope.launch { sessions.restore() }
+    }
+
+    companion object {
+        /** For previews and shell tests: no stored session and no requests; screens open as for [access]. */
+        fun preview(
+            context: Context,
+            access: LearnerAccess = LearnerAccess.Learner,
+        ) = AppContainer(context, NoStoredSession, access)
+    }
+}
+
+private fun learnerAccess(
+    session: SessionState,
+    summary: LoadState<LearnerSummary>,
+): LearnerAccess =
+    when (session) {
+        // Gated screens wait while the stored session can't be checked, as while it's restored.
+        SessionState.Restoring, SessionState.Unavailable -> {
+            LearnerAccess.Restoring
+        }
+
+        SessionState.SignedOut -> {
+            LearnerAccess.Visitor
+        }
+
+        is SessionState.SignedIn -> {
+            val goals = (summary as? LoadState.Loaded)?.value?.goals
+            when {
+                goals == null -> LearnerAccess.SignedIn
+                goals.none(LearnerSummaryGoal::isFollowed) -> LearnerAccess.NoGoal
+                else -> LearnerAccess.Learner
+            }
+        }
+    }
+
+/** Main's sidebar follows every goal but quick explanations, until archived. */
+private val LearnerSummaryGoal.isFollowed: Boolean
+    get() = kind != LearnerSummaryGoal.Kind.EXPLAIN && status != LearnerSummaryGoal.Status.ARCHIVED
+
+private object NoStoredSession : SessionCredentials {
+    override suspend fun read(): StoredSession? = null
+
+    override suspend fun write(session: StoredSession?) = Unit
 }

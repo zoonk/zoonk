@@ -24,7 +24,7 @@ class RoutePlaceholderTest {
         lateinit var navigator: AppNavigator
         rule.setContent {
             navigator = rememberAppNavigator()
-            ZoonkApp(app = AppContainer(), navigator = navigator)
+            ZoonkApp(app = AppContainer.preview(rule.activity), navigator = navigator)
         }
 
         routeSamples.filter { it.presentation != Presentation.Web }.forEach { route ->

@@ -59,6 +59,7 @@ import androidx.navigation3.ui.defaultPopTransitionSpec
 import androidx.navigation3.ui.defaultTransitionSpec
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
+import com.zoonk.android.data.collectShown
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppSection
@@ -85,6 +86,7 @@ fun ZoonkApp(
     navigator: AppNavigator = rememberAppNavigator(),
 ) {
     val access = app.learnerAccess.collectAsStateWithLifecycle()
+    app.learnerSummary.summary.collectShown()
     val entryProvider = remember(app, navigator) { gatedEntries(appEntries(app, navigator), access, app, navigator) }
 
     LaunchedEffect(link) {

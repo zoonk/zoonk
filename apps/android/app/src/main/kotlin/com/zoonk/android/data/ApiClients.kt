@@ -30,6 +30,9 @@ class ApiClients(
     /** [clients] with a two-minute read timeout, for writes the server answers slowly. */
     fun streamingClients(session: AuthenticatedSession?): ApiServices = streaming[session]
 
+    /** Services for a token that isn't a session yet: `SessionStore` validating or revoking it. */
+    fun bearer(token: String): ApiServices = ApiServices(baseUrl, http.withBearer(token))
+
     /** Keeps the latest session's services, so a screen's requests reuse them. */
     private inner class Memo(
         private val client: OkHttpClient,

@@ -5,3 +5,4 @@
 *.iml
 captures/
 local.properties
+local-development.properties

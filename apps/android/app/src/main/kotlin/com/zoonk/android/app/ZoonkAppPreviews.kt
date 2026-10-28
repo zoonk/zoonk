@@ -1,6 +1,8 @@
 package com.zoonk.android.app
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.zoonk.android.ui.theme.ZoonkTheme
 
@@ -29,6 +31,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 @Composable
 private fun ZoonkAppPreview() {
     ZoonkTheme {
-        ZoonkApp(app = AppContainer())
+        val context = LocalContext.current
+        ZoonkApp(app = remember { AppContainer.preview(context) })
     }
 }

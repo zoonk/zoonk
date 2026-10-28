@@ -222,6 +222,7 @@ class Resource<T : Any> internal constructor(
  * Collects a resource the way every screen should: it loads on appear and on the app's return to
  * the foreground, and stops counting as shown when the screen leaves.
  */
+@Suppress("StateFlowValueCalledInComposition") // Only the first frame's state, as for a StateFlow.
 @Composable
 fun <T : Any> Resource<T>.collectShown(): State<LoadState<T>> = shown.collectAsStateWithLifecycle(state.value)
 

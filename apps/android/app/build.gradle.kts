@@ -1,10 +1,19 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
 }
+
+// `pnpm dev` writes the API URL it serves for this checkout; without it, `pnpm dev:direct`'s port.
+val localApiBaseUrl =
+    providers
+        .fileContents(layout.projectDirectory.file("../local-development.properties"))
+        .asText
+        .map { Properties().apply { load(it.reader()) }.getProperty("apiBaseUrl") }
+        .orElse("http://localhost:4000")
 
 android {
     namespace = "com.zoonk.android"
@@ -25,9 +34,11 @@ android {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
             isPseudoLocalesEnabled = true
+            buildConfigField("String", "API_BASE_URL", "\"${localApiBaseUrl.get()}\"")
         }
 
         release {
+            buildConfigField("String", "API_BASE_URL", "\"https://api.zoonk.com\"")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -35,7 +46,7 @@ android {
     }
 
     buildFeatures {
-        buildConfig = false
+        buildConfig = true
         compose = true
     }
 
@@ -83,6 +94,10 @@ android {
     }
 }
 
+composeCompiler {
+    stabilityConfigurationFiles.add(layout.projectDirectory.file("compose-stability.conf"))
+}
+
 kotlin {
     jvmToolchain(25)
     compilerOptions {
@@ -123,6 +138,7 @@ dependencies {
     implementation(libs.coil.compose)
     implementation(libs.coil.network.okhttp)
     implementation(libs.androidx.credentials)
+    implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.tink)
     implementation(libs.okhttp.sse)
@@ -130,6 +146,7 @@ dependencies {
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.leakcanary.android)
 
     testImplementation(composeBom)
     testImplementation(libs.androidx.compose.ui.test.junit4)
