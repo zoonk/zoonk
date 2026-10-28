@@ -5,6 +5,7 @@ import SwiftUI
 /// out, that it is); the clock on top; at the bottom a typed reply and three controls: Help
 /// (phrases to use), the microphone, which mutes, and End. Nothing is graded while talking.
 struct ConversationLiveView: View {
+  @Environment(\.horizontalSizeClass) private var sizeClass
   @State private var reply = ""
   @FocusState private var isTyping: Bool
 
@@ -18,7 +19,7 @@ struct ConversationLiveView: View {
       VStack(alignment: .leading, spacing: 20) {
         CharacterRow(conversation: conversation, isTalking: call.isCharacterTalking)
 
-        if conversation.speakingTask == nil {
+        if !showsAside, conversation.speakingTask == nil {
           CallGoals(conversation: conversation, met: call.metLabels)
         }
 
@@ -29,14 +30,35 @@ struct ConversationLiveView: View {
           .foregroundStyle(.secondary)
           .accessibilityAddTraits(.updatesFrequently)
 
-        tip
+        if !showsAside {
+          tip
 
-        if usedHelp {
-          phrases
+          if usedHelp {
+            phrases
+          }
         }
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .scenePadding()
+    }
+    // On a wide screen the goals, the tip and Help's phrases sit beside the call, as main's aside.
+    .inspector(isPresented: .constant(showsAside)) {
+      ScrollView {
+        VStack(alignment: .leading, spacing: 20) {
+          if conversation.speakingTask == nil {
+            CallGoals(conversation: conversation, met: call.metLabels)
+          }
+
+          tip
+
+          if usedHelp {
+            phrases
+          }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .scenePadding()
+      }
+      .inspectorColumnWidth(min: 260, ideal: 320)
     }
     // Starts at the top, then follows what's said.
     .defaultScrollAnchor(.top, for: .alignment)
@@ -54,6 +76,10 @@ struct ConversationLiveView: View {
       }
       .scenePadding()
     }
+  }
+
+  private var showsAside: Bool {
+    sizeClass == .regular
   }
 
   private var status: String {
