@@ -17,10 +17,7 @@ type LearnerEventsInput = {
   goalId?: string | null;
   /** The interface language when the sender knows it; the goal's language otherwise. */
   locale?: string | null;
-  /**
-   * The client the events came from. Omitted, it's read from the request being handled; workflow
-   * steps pass the platform their run carries (null when no client started it).
-   */
+  /** Defaults to the request platform; workflows must pass the run's platform, or null without a client. */
   platform?: AnalyticsPlatform | null;
   userId: string;
 };

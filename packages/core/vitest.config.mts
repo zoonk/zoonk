@@ -13,10 +13,7 @@ const markdownAsText = {
   },
 };
 
-/**
- * Every worker opens up to 10 connections to the one test database (node-postgres' pool), and
- * fixtures create rows in parallel, so one worker per core overflows Postgres' default 100.
- */
+/** Each node-postgres worker pool may open 10 connections; one worker per core exceeds PostgreSQL's default 100. */
 const MAX_DATABASE_WORKERS = 6;
 
 /** File-local module mocks persist in shared workers, so those files require isolation. */
