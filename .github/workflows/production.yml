@@ -40,9 +40,14 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.release.tag_name }}
-      - uses: pnpm/setup@a0881977cd8ea73b1ed212236c99ca10dcc80cf4 # v3.1.1
+      # Node comes from the runner's tool cache. pnpm/setup would download it from nodejs.org (it
+      # reads `.tool-versions`), whose slow downloads timed jobs out, so it only sets up pnpm.
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          runtime: node@24
+          node-version-file: package.json
+      - uses: pnpm/setup@fa36a5ef7dcdefc3a7cb25655c122e00cf6e636e # v3.1.2
+        with:
+          node-version-file: false
           cache: true
           save-cache: ${{ github.ref == 'refs/heads/main' }}
       - name: Require successful CI for the tagged commit
