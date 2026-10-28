@@ -26,10 +26,6 @@ const NOW = new Date("2020-09-28T12:00:00Z");
 const DAYS = [1, 2, 3, 4, 5];
 const LESSONS_PER_CHAPTER = 12;
 
-/**
- * The band of each of the course's four chapters: every band of its path to mastery, so a
- * whole-course start (and its estimate) plans from this outline.
- */
 const CHAPTER_LEVELS = ["beginner", "beginner", "intermediate", "advanced"] as const;
 
 async function outlinedCourse({
@@ -202,8 +198,6 @@ describe(estimateCoursePlan, () => {
     ]);
   });
 
-  // A start would plan a course missing a band from the learner's own graph, so an estimate of its
-  // stored chapters would promise a plan nobody gets.
   it("returns null for a course whose outline misses a band", async () => {
     const { course } = await outlinedCourse({
       levels: ["beginner", "beginner", "beginner", "beginner"],
@@ -421,8 +415,6 @@ describe(estimateCoursePlan, () => {
     );
   });
 
-  // An exam course whose exam isn't stored yet starts as an exam goal; estimating it as a learn
-  // goal planned chapter challenges the exam plan leaves out.
   it.each(["core", "exam"] as const)(
     "matches a new %s course start's planner end and first day for a learner starting from scratch",
     async (format) => {

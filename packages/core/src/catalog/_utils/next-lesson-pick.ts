@@ -35,12 +35,7 @@ function pickReview<TChapter extends PickChapter>(
     : null;
 }
 
-/**
- * Where a learner goes next in an outline: the first unfinished lesson in reading order. When the
- * next chapter's lessons aren't written yet, the chapter itself (opening it writes them). When
- * every lesson is finished, the first lesson again, marked completed, so the button reviews.
- * Null for an outline without chapters.
- */
+/** Returns a chapter for unwritten lessons, the first lesson for a completed outline, or null for no chapters. */
 export function pickNextLesson<TChapter extends PickChapter>({
   chapters,
   finishedLessonIds,

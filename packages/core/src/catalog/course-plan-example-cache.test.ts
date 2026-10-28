@@ -36,19 +36,12 @@ vi.mock("../plans/planner/build-plan", { spy: true });
 
 const SOURCE = new URL("course-plan-example.ts", import.meta.url).pathname;
 
-/**
- * Vitest doesn't compile cache directives, so the module is compiled with the installed Next
- * compiler and run on a stand-in for the app's shared cache: entries kept across requests for the
- * default profile's revalidation time, with the tags their reads (core's too) attached, and tag
- * expiry. Core's reads and PostgreSQL stay real; a write is a database write followed by the tag
- * expiry its app sends.
- */
+/** Vitest does not compile cache directives, so use Next's compiler with a cache stand-in. */
 function cachePlatform(code: string) {
   const sharedEntries = new Map<string, CacheEntry>();
   const requestEntries = new Map<string, CacheEntry>();
   const activeEntry = new AsyncLocalStorage<CacheEntry>();
 
-  /** A private cache keeps its entries for one request only; a shared one, across requests. */
   function cache(kind: string, id: string, _bound: number, read: CachedRead, args: unknown[]) {
     const entries = kind === "private" ? requestEntries : sharedEntries;
     const key = JSON.stringify([id, args]);
@@ -117,12 +110,10 @@ function cachePlatform(code: string) {
   };
 }
 
-/** A day some days from now ("YYYY-MM-DD", UTC). */
 function dayIn(days: number): string {
   return new Date(Date.now() + days * MS_PER_DAY).toISOString().slice(0, 10);
 }
 
-/** A notice edition with one exam day, in UTC. */
 function edition(date: string) {
   return {
     check: null,
@@ -144,7 +135,6 @@ function edition(date: string) {
   };
 }
 
-/** A published exam course whose stored exam graph starts on it. */
 async function examCourse(date: string) {
   const [course, blueprint] = await Promise.all([
     courseFixture({ format: "exam", isPublished: true, visibility: "public" }),
@@ -220,8 +210,6 @@ describe("the course page's example plan cache", () => {
       ]),
     );
 
-    // The API's notice research revises the edition; until its tag reaches this app, every
-    // visitor's static course page keeps the sitting it showed.
     await prisma.examBlueprint.update({
       data: { edition: edition(dayIn(54)) },
       where: { id: blueprint.id },
@@ -325,12 +313,10 @@ describe("the course page's example plan cache", () => {
     await platform.getCoursePlanExample(course);
     expect(buildPlan).toHaveBeenCalledTimes(2 * perMiss);
 
-    // UTC is already October 1, but the sitting is still tomorrow in its own zone.
     vi.setSystemTime(new Date("2026-10-01T00:15:00Z"));
     platform.nextRequest();
     const sameExamDay = await platform.getCoursePlanExample(course);
     expect(sameExamDay.exam?.days).toStrictEqual(["2026-10-01"]);
-    // The countdown keeps the exam-zone day, while the UTC estimate has no study day left.
     expect(sameExamDay.pace).toBeNull();
 
     vi.setSystemTime(new Date("2026-10-01T10:16:00Z"));

@@ -34,7 +34,6 @@ function getWorkKind({
   return data.quickLessons.get(item.skillId)?.lessonId === item.lessonId ? "quick" : null;
 }
 
-/** Area membership alone never links replacement work to every chapter of that subject. */
 export function getCourseEstimateChapterWork({
   built,
   chapter,
@@ -82,7 +81,6 @@ export function getCourseEstimateChapterWork({
   const weeks = work.map(({ date }) => Math.floor(daysBetween(today, date) / 7) + 1);
   const endWeeks = work.map(({ end }) => Math.floor(daysBetween(today, end) / 7) + 1);
 
-  /** Joined unwritten work retains its first date, not the completion dates of its parts. */
   const unknownEnd = work.some((entry) => entry.kind === "unwritten");
 
   return {

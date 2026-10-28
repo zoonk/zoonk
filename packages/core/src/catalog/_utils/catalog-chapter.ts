@@ -6,12 +6,7 @@ function getHomeCatalogCourse(homeCourseId: string | null) {
   return homeCourseId ? getCatalogCourse(homeCourseId) : null;
 }
 
-/**
- * A chapter can be placed in several courses, so every chapter read happens in one course: the
- * given one, or the chapter's home course (the one it was written for) when none is given. The
- * course must be in the catalog and its visible outline must place the chapter; otherwise the
- * chapter isn't found there.
- */
+/** Defaults to the chapter's home course; returns null unless that course visibly places it. */
 export async function getCatalogChapterPlacement({
   chapterId,
   courseId,

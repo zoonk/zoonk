@@ -19,7 +19,6 @@ export type CourseSearchResult = {
   imageUrl: string | null;
   language: string;
   slug: string;
-  /** The language a language course teaches, which shows its flag; null for other courses. */
   targetLanguage: string | null;
   title: string;
 };
@@ -36,10 +35,6 @@ export type ChapterSearchResult = {
   title: string;
 };
 
-/**
- * Converts a published course search row into the small catalog result shared
- * by delivery apps without exposing the complete database model.
- */
 function toCourseSearchResult(course: SearchCourse): CourseSearchResult {
   return {
     brandSlug: course.organization.slug,
@@ -53,10 +48,6 @@ function toCourseSearchResult(course: SearchCourse): CourseSearchResult {
   };
 }
 
-/**
- * A chapter result links to its home course's page, so it carries that course and its brand.
- * The search only matches chapters whose home course is a published brand course.
- */
 function toChapterSearchResult({ homeCourse, ...chapter }: SearchChapter): ChapterSearchResult[] {
   if (!homeCourse?.organization) {
     return [];
@@ -77,11 +68,6 @@ function toChapterSearchResult({ homeCourse, ...chapter }: SearchChapter): Chapt
   ];
 }
 
-/**
- * Searches the published catalog as one capability so web and API consumers
- * share language scoping, result limits, and serialized course and chapter
- * shapes instead of composing separate repository reads in each delivery app.
- */
 export async function searchCatalog({
   language,
   query,

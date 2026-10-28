@@ -11,10 +11,7 @@ type DatedEstimate = Omit<
   "numbers" | "publishedContent"
 >;
 
-/**
- * Chapters count each covered placement of a reused lesson; area and global outline counts use
- * unique lesson IDs. Covered quick/unwritten work is reported separately from original lessons.
- */
+/** Reused lessons count per chapter placement, but once in area and global totals. */
 export function summarizeCourseEstimate({
   built,
   data,

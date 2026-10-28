@@ -33,7 +33,6 @@ const NOW = new Date("2020-09-28T12:00:00Z");
 const DAYS = [1, 2, 3, 4, 5];
 const TARGET_DATE = "2020-10-26";
 
-/** Undefined is a published tag missing from the revised graph; null is a retained unknown. */
 async function publicExamOutline({
   area = null,
   tagAreas = ["Math", undefined],
@@ -387,7 +386,6 @@ describe("course estimate privacy and area evidence", () => {
       throw new Error("Expected a real course-start plan");
     }
 
-    /** The first day always permits study, even on a rest weekday; the learner missed it. */
     const returnedAt = new Date("2020-09-29T12:00:00Z");
     vi.setSystemTime(returnedAt);
 
@@ -430,7 +428,6 @@ describe("course estimate privacy and area evidence", () => {
     const survivor = tags[0]!;
 
     const [alias, missing, user] = await Promise.all([
-      /** Admin merges leave the stored JSON graph unchanged and record this public survivor. */
       skillFixture({ mergedIntoId: survivor.id, name: "Read graphs in optional Physics" }),
       skillFixture({ name: "Required equations not outlined yet" }),
       userFixture(),

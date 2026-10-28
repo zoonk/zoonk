@@ -24,7 +24,6 @@ const UNWRITTEN_LESSONS = 300;
 
 export const NUMBERS_DAYS = Array.from({ length: STUDY_WEEK_DAYS }, (_, index) => index + 1);
 
-/** Original published content is deliberately smaller than its whole-exam curriculum. */
 export async function estimateNumbersFixture({
   includeUnwritten = true,
   lessonsPerChapter = ORIGINAL_LESSONS_PER_CHAPTER,

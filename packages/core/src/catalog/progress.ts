@@ -23,10 +23,6 @@ function countFinished({
   return lessons.filter((lesson) => finishedLessonIds.has(lesson.id)).length;
 }
 
-/**
- * A chapter whose lesson outline isn't written yet counts as pending, so the course percentage
- * estimates its size from the chapters that are written instead of reading 100% too early.
- */
 function toChapterProgress({
   finishedLessonIds,
   placement,
@@ -44,11 +40,7 @@ function toChapterProgress({
   };
 }
 
-/**
- * The signed-in learner's progress in a catalog course: finished lessons per chapter in reading
- * order and the course percentage. Null when the course isn't in the catalog; without a session
- * there's no progress to show.
- */
+/** Returns null for an inaccessible course, and no progress without a session. */
 export async function getCatalogCourseProgress({ courseId }: { courseId: string }) {
   "use cache: private";
   cacheTag(getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId));
@@ -81,11 +73,7 @@ export async function getCatalogCourseProgress({ courseId }: { courseId: string 
   };
 }
 
-/**
- * The signed-in learner's finished lessons in a chapter and its percentage. A chapter's progress
- * is the same in every course that places it, so it needs no course. Null when the chapter
- * doesn't exist or is private to someone else.
- */
+/** Returns null for an inaccessible chapter; progress is shared across its course placements. */
 export async function getCatalogChapterProgress({ chapterId }: { chapterId: string }) {
   "use cache: private";
   cacheTag(getLibraryChapterCacheTag(chapterId));

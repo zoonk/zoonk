@@ -36,7 +36,6 @@ describe(searchCatalog, () => {
       language: "en",
       normalizedTitle: normalizeString(searchTerm),
       organizationId: organization.id,
-      // A language course carries its target, so results can show its flag.
       targetLanguage: "es",
       title: searchTerm,
     });
@@ -119,7 +118,6 @@ describe(searchCatalog, () => {
     const [published, unpublished, undescribed, schoolCourse, privateCourse] = await Promise.all([
       courseFixture({ isPublished: true, organizationId: brand.id }),
       courseFixture({ isPublished: false, organizationId: brand.id }),
-      // A shared course whose page details aren't written yet.
       courseFixture({ description: null, isPublished: true, organizationId: brand.id }),
       courseFixture({ isPublished: true, organizationId: school.id }),
       courseFixture({ userId: owner.id, visibility: "private" }),

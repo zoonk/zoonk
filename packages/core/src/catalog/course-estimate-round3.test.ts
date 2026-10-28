@@ -24,7 +24,6 @@ import { estimateCoursePlan } from "./course-estimate";
 const NOW = new Date("2020-09-28T12:00:00Z");
 const DAYS = [1, 2, 3, 4, 5];
 
-/** A settled course with a lesson teaching three skills, as the real quantum outline does. */
 async function sharedSkillCourse(withChapterTags = false) {
   const course = await courseFixture({
     isPublished: true,

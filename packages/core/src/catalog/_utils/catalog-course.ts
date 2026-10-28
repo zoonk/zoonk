@@ -6,7 +6,6 @@ import { getLibraryCourse } from "../../library/courses/get-library-course";
 type LibraryCourse = NonNullable<Awaited<ReturnType<typeof getLibraryCourse>>>;
 type LevelBand = LibraryCourse["levels"][number];
 
-/** A chapter where a course places it: its level band and its 0-based position across every band. */
 export type CatalogPlacement = {
   chapter: LevelBand["chapters"][number];
   level: LevelBand["level"];
@@ -19,11 +18,7 @@ function toPlacements(levels: LibraryCourse["levels"]): CatalogPlacement[] {
     .map((placement, position) => ({ ...placement, position }));
 }
 
-/**
- * The catalog serves published brand courses to everyone and a private course to its owner only.
- * Returns the course with its visible outline in reading order (overview to advanced), or null
- * when the viewer can't open the course. A private course has no organization.
- */
+/** Returns null unless the course is published publicly or belongs to the viewer. */
 export async function getCatalogCourse(courseId: string) {
   if (!isUuid(courseId)) {
     return null;

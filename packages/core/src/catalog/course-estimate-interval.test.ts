@@ -140,7 +140,6 @@ describe("written course lesson interval workload", () => {
 
     expect(estimate.chapters).toHaveLength(3);
     expect(estimate.chapters[0]).toMatchObject({ chapterId: chapter.id, endWeek: 1, week: 1 });
-    // Each real 15-minute boss runs whole after its lessons, extending the phase calendar.
     expect(estimate.endDate).toBe("2020-10-04");
 
     expect(estimate.workload).toMatchObject({
@@ -167,7 +166,7 @@ describe("written course lesson interval workload", () => {
     expect
       .soft(estimate.firstDay)
       .toMatchObject([{ dayMinutes: 5, estimatedMinutes: 20, lessonId: lesson.id }]);
-    // Weekly whole checkpoints take Tuesday; this teaching interval spans six weeks.
+
     expect
       .soft(estimate.chapters[0])
       .toMatchObject({ chapterId: chapter.id, endWeek: 6, week: 1, workKinds: ["original"] });

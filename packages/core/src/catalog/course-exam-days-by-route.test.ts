@@ -26,7 +26,6 @@ const EDITION = {
   year: 2020,
 };
 
-/** A public exam course of a brand, whose exam graph starts on it. */
 async function brandExamCourse() {
   const organization = await organizationFixture();
 

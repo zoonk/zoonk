@@ -6,7 +6,6 @@ import { decodeRouteParam } from "../navigation/decode-route-param";
 import { getCourseExamDays } from "./course-exam-days";
 import { type CourseExamDays } from "./course-exam-days-contract";
 
-/** The id of the published brand course a catalog route names, kept until the route changes. */
 async function getCachedRouteCourseId(params: {
   brandSlug: string;
   courseSlug: string;
@@ -22,11 +21,7 @@ async function getCachedRouteCourseId(params: {
   return course?.id ?? null;
 }
 
-/**
- * `getCourseExamDays` for a page that names the exam course by its catalog route
- * (`/b/{brandSlug}/c/{courseSlug}`) instead of its id, such as the home page's example exam. Null
- * when no public exam course has that route or its next sitting is unknown.
- */
+/** Returns null when the route has no public exam course or its next sitting is unknown. */
 export async function getCourseExamDaysByRoute(params: {
   brandSlug: string;
   courseSlug: string;

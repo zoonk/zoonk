@@ -20,7 +20,6 @@ import {
   coursePlanEstimateInputSchema,
 } from "./course-estimate-contract";
 
-/** Same base recommendation as a new course start, reading any quick outline but creating none. */
 function planFromScratch(input: BuildPlanInput) {
   const { advise, input: withBases } = chooseBases(input);
   const settings = { ...input.settings, baseChoices: toRecommendedBaseChoices(advise()) };
@@ -165,11 +164,7 @@ async function getCachedCourseEstimate({
   };
 }
 
-/**
- * A public published course planned from scratch at the visitor's time. Private courses never
- * enter the shared cache. Fresh Library inputs key its output across app caches; the UTC start
- * day keys the calendar. No learner data, model calls or writes.
- */
+/** Public courses only. Never reads learner data, calls models, or writes. */
 export async function estimateCoursePlan(
   given: CoursePlanEstimateInput,
 ): Promise<CoursePlanEstimate | null> {

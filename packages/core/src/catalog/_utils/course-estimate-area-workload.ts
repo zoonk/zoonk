@@ -15,7 +15,6 @@ function labelArea({
   return data.kind === "exam" && label === data.title ? null : label;
 }
 
-/** Partition original lesson time across distinct chapter areas, retaining unknown evidence. */
 function getOriginalAreaParts({
   built,
   data,
@@ -57,7 +56,6 @@ function getOriginalAreaParts({
   });
 }
 
-/** A subject can be studied through quick/unwritten work even when no original outline lesson fits. */
 export function getCourseEstimateAreaWorkload({
   built,
   data,

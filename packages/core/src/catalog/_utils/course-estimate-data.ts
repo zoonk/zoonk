@@ -67,10 +67,7 @@ async function loadEstimateSourceGraph({
   return pinPlanGraphToCourse({ chapters, course, graph: exam.graph });
 }
 
-/**
- * Fresh public planner inputs, shared by the page's paces within its request. Passing these into
- * the result cache also changes its key after another app publishes or rewrites the outline.
- */
+/** Fresh outline inputs also key the result cache across apps. */
 export const loadCourseEstimateData = cache(async (courseId: string, today: string) => {
   const course = await prisma.course.findFirst({
     omit: { landingPage: true },
@@ -92,7 +89,7 @@ export const loadCourseEstimateData = cache(async (courseId: string, today: stri
     return null;
   }
 
-  /** Pinning and outline transforms may infer areas; only original evidence can classify tags. */
+  /** Only original graph evidence can classify tags; pinning may infer areas. */
   const areaSkills = new Map(
     (exam ? joinOptionSkills(exam.graph) : sourceGraph).skills.map((skill) => [
       skill.skillId,
@@ -144,8 +141,6 @@ export const loadCourseEstimateData = cache(async (courseId: string, today: stri
     skills.flatMap((skill) => (skill.level ? [[skill.id, skill.level] as const] : [])),
   );
 
-  // What its bosses ask, fresh from the public bank on every request and keyed into the cached
-  // estimate with the rest: no learner, so no answers read.
   const placeable = [...lessons, ...quickLessons.values()];
 
   const bossFacts = await loadBossPlanFacts({

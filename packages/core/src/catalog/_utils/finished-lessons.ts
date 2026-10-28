@@ -4,11 +4,6 @@ import { cacheTag } from "next/cache";
 import { getUserProgressCacheTag } from "../../cache/tags";
 import { getSession } from "../../users/get-session";
 
-/**
- * The lessons a learner finished, from their own ledger rows only: a lesson is finished once a
- * first completion or a replay that names it has ended. Callers intersect these ids with an
- * outline in code, so progress never joins content and survives content being regenerated.
- */
 async function findFinishedLessonIds({
   lessonIds,
   userId,
@@ -41,11 +36,6 @@ export function listFinishedLessonIds(userId: string): Promise<Set<string>> {
   return findFinishedLessonIds({ userId });
 }
 
-/**
- * The signed-in learner's (or guest's) finished lessons, tagging the private read so finishing a
- * lesson refreshes it. Only the requested outline's ids leave the database. Without a session
- * nobody has finished anything.
- */
 export async function loadViewerFinishedLessons(
   lessonIds: readonly string[],
 ): Promise<{ finishedLessonIds: Set<string>; signedIn: boolean }> {

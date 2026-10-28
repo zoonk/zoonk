@@ -39,7 +39,6 @@ type CatalogNextLessonResult =
   | { status: "notFound" }
   | { status: "ready"; target: CatalogNextLesson | null };
 
-/** A lesson can be prefetched once its content is written. */
 async function canPrefetchLesson({ chapterId, lessonId }: { chapterId: string; lessonId: string }) {
   const chapter = await getLibraryChapter({ chapterId });
   return chapter?.lessons.find((lesson) => lesson.id === lessonId)?.contentStatus === "completed";
@@ -96,11 +95,7 @@ async function toTarget({
   };
 }
 
-/**
- * Where the learner goes next in a catalog course, from the lessons they finished (none without a
- * session). A null target means the course has no chapters yet; `notFound` means the viewer
- * can't open the course: it isn't a published brand course or their own private course.
- */
+/** A null target means no chapters; `notFound` means the viewer cannot open the course. */
 export async function getCatalogCourseNextLesson({
   courseId,
 }: {
@@ -128,10 +123,7 @@ export async function getCatalogCourseNextLesson({
   return { status: "ready", target };
 }
 
-/**
- * Where the learner goes next in a chapter, read in a catalog course (the given one or the
- * chapter's home course). A null target means the chapter's lessons aren't written yet.
- */
+/** Defaults to the home course; a null target means its lessons are not written yet. */
 export async function getCatalogChapterNextLesson({
   chapterId,
   courseId,

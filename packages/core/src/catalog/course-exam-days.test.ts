@@ -51,7 +51,6 @@ async function examCourse({
     examBlueprintFixture({ edition: storedEdition }),
   ]);
 
-  // The course's outline teaches the one skill its exam gives it, so a start plans from it.
   const [band] = await courseBandsFixture({ courseId: course.id, levels: ["beginner"] });
 
   await prisma.examSkillGraph.create({

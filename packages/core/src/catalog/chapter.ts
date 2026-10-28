@@ -1,12 +1,7 @@
 import "server-only";
 import { getCatalogChapterPlacement } from "./_utils/catalog-chapter";
 
-/**
- * Reads a chapter in a catalog course: the given course, or the chapter's home course by
- * default. Returns the chapter with the course id, the level band the course places it in and its
- * position across that course's outline. Null when the course doesn't place the chapter, or when
- * the chapter is private to someone else.
- */
+/** Defaults to the home course; returns null when the course doesn't place the chapter or is inaccessible. */
 export async function getCatalogChapter(input: { chapterId: string; courseId?: string }) {
   const found = await getCatalogChapterPlacement(input);
 

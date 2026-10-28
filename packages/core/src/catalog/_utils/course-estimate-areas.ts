@@ -3,7 +3,6 @@ import { examStructureSchema } from "../../library/exams/blueprint-contract";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 import { matchAreasToSubjects } from "../../view-models/syllabus/_utils/match-areas";
 
-/** Exam options belong to their parent subject; the notice's short names label public areas. */
 export function getCourseEstimateAreas({
   chapters,
   graph,

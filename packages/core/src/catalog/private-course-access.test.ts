@@ -13,7 +13,6 @@ import { listCatalogCourseChapters } from "./course-chapters";
 import { getCatalogChapterNextLesson, getCatalogCourseNextLesson } from "./next-lesson";
 import { getCatalogChapterProgress, getCatalogCourseProgress } from "./progress";
 
-/** Every catalog read of a course and one of its chapters, as the current session sees them. */
 async function readCourse({ chapterId, courseId }: { chapterId: string; courseId: string }) {
   const [chapters, chapter, lessons, courseNext, chapterNext, courseProgress, chapterProgress] =
     await Promise.all([

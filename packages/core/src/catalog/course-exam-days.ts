@@ -39,11 +39,7 @@ async function getCachedCourseExamDays({
     : null;
 }
 
-/**
- * A published public exam course's next sitting, using the course start's exact date source.
- * Fresh publication checks and edition input protect cross-app caches; notice writes invalidate
- * the blueprint tag. No session, learner data, research or writes.
- */
+/** Public courses only. Never reads learner data, starts research, or writes. */
 export async function getCourseExamDays(courseId: string): Promise<CourseExamDays | null> {
   if (!isUuid(courseId)) {
     return null;

@@ -15,15 +15,12 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { loadCourseEstimateData } from "./_utils/course-estimate-data";
 import { estimateCoursePlan } from "./course-estimate";
 
-/** A Monday. */
 const NOW = new Date("2020-09-28T12:00:00Z");
 const TODAY = "2020-09-28";
 const WEEKDAYS = [1, 2, 3, 4, 5];
 
-/** A Thursday 3½ weeks away: 18 weekdays before it, the last one the light day before the exam. */
 const TARGET = "2020-10-22";
 
-/** ENEM's day in real conditions: 90 questions in five and a half hours, so its weekly mock is half. */
 const ENEM_STRUCTURE = {
   formats: [],
   mock: {
@@ -39,19 +36,11 @@ const ENEM_STRUCTURE = {
   subjects: [],
 };
 
-/**
- * A Thursday twelve weeks away: 58 weekdays before it, 57 at 60 minutes and the light day before
- * the exam.
- */
 const LONG_TARGET = "2020-12-17";
 const LONG_BUDGET = 57 * 60 + 15;
 
 const AREAS = ["Linguagens", "Ciências Humanas", "Ciências da Natureza", "Matemática"];
 
-/**
- * A public ENEM-like exam course outlined in part: a chapter of five written lessons in each area,
- * and a skill of the exam's graph no lesson teaches yet, so the plan has unwritten work too.
- */
 async function partialExamCourse({ lessonsPerArea = 5 }: { lessonsPerArea?: number } = {}) {
   const [course, blueprint, missing] = await Promise.all([
     courseFixture({ format: "exam", isPublished: true, language: "pt", title: "ENEM" }),
@@ -124,7 +113,6 @@ async function partialExamCourse({ lessonsPerArea = 5 }: { lessonsPerArea?: numb
   return course;
 }
 
-/** Every minute the estimate says the plan takes, by kind. */
 function sumWorkload(workload: {
   checkpointMinutes: number;
   lessonMinutes: number;
@@ -147,10 +135,6 @@ describe("a dated course estimate's study time", () => {
 
   afterEach(() => vi.useRealTimers());
 
-  // The learner's time from today to the exam: 17 weekdays at their minutes, and the light day
-  // before the exam (15 minutes at most). The plan's 165-minute weekly mock is longer than any of
-  // these days, so the days before it fund it: the time the plan asks for fits the calendar, mock
-  // day included, instead of the mock coming on top.
   it.each([
     { budget: 17 * 15 + 15, dailyMinutes: 15 },
     { budget: 17 * 30 + 15, dailyMinutes: 30 },
@@ -162,7 +146,6 @@ describe("a dated course estimate's study time", () => {
       const course = await partialExamCourse();
       const data = await loadCourseEstimateData(course.id, TODAY);
 
-      // The exam's mocks are longer than the learner's study day.
       expect(data?.facts).toMatchObject({ fullMockMinutes: 330, mockMinutes: 165 });
 
       const estimate = await estimateCoursePlan({
@@ -178,13 +161,10 @@ describe("a dated course estimate's study time", () => {
 
       expect(sumWorkload(estimate.workload)).toBeLessThanOrEqual(budget + 0.1);
 
-      // Three real ten-question phase checkpoints of 15 minutes, and the 165-minute mock when the
-      // days before it can fund it. At 15 minutes its week-two window can't, so it isn't planned.
       expect(estimate.workload.checkpointMinutes).toBe(dailyMinutes === 15 ? 45 : 45 + 165);
     },
   );
 
-  // Twelve weeks away the plan reaches its final stretch, whose mock sits the whole exam day.
   it("funds the final stretch's whole-day mock from the days before it, at its real length", async () => {
     const course = await partialExamCourse({ lessonsPerArea: 40 });
 
@@ -199,7 +179,6 @@ describe("a dated course estimate's study time", () => {
       throw new Error("Expected a dated estimate");
     }
 
-    // At least one whole exam day (330) and one weekly mock (165) are in the plan, at their length.
     expect(estimate.workload.checkpointMinutes).toBeGreaterThanOrEqual(330 + 165);
     expect(sumWorkload(estimate.workload)).toBeLessThanOrEqual(LONG_BUDGET + 0.1);
   });

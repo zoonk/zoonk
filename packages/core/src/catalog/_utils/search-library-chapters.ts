@@ -5,7 +5,6 @@ import { normalizeString } from "@zoonk/utils/string";
 type ChapterFindManyArgs = NonNullable<Parameters<typeof prisma.chapter.findMany>[0]>;
 type ChapterWhere = NonNullable<ChapterFindManyArgs["where"]>;
 
-/** A result links to the chapter's home course, so it carries that course and its brand. */
 const searchResultInclude = {
   homeCourse: {
     select: { id: true, organization: { select: { slug: true } }, slug: true, title: true },
@@ -23,10 +22,6 @@ function findMatches({ limit, where }: { limit: number; where: ChapterWhere }) {
 
 type ChapterMatch = Awaited<ReturnType<typeof findMatches>>[number];
 
-/**
- * Descriptions aren't stored normalized, so they're matched against both the typed text and its
- * normalized form (the same text for most ASCII queries).
- */
 function getDescriptionWhere({
   normalizedSearch,
   query,
@@ -41,18 +36,12 @@ function getDescriptionWhere({
   };
 }
 
-/** A chapter matching in several ranks keeps its best one. */
 function keepFirstPerId(chapters: ChapterMatch[]) {
   return chapters.filter(
     (chapter, index) => chapters.findIndex((item) => item.id === chapter.id) === index,
   );
 }
 
-/**
- * Searches public Library chapters in one language whose home course is a published brand course,
- * the only chapters with a public page. Exact title matches come first, then partial title
- * matches, then description matches.
- */
 export async function searchLibraryChapters({
   language,
   limit,

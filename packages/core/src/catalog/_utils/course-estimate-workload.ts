@@ -3,7 +3,6 @@ import { type BuiltPlan } from "../../plans/planner/build-plan";
 import { type CoursePlanEstimate } from "../course-estimate-contract";
 import { type CourseEstimateData } from "./course-estimate-data";
 
-/** Minutes at the sampled pace, split so outline time is never presented as all plan time. */
 export function getCourseEstimateWorkload({
   built,
   data,
