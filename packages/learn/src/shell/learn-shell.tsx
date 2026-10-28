@@ -98,7 +98,7 @@ export function LearnSidebarSection({
  * at 13.5px as Linear has them; `hit-area` keeps each one 44px to tap.
  */
 export const LEARN_SIDEBAR_ITEM_CLASS =
-  "text-muted-foreground hover:bg-sidebar-accent/70 hover:text-foreground aria-[current=page]:bg-sidebar-accent aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area relative flex h-8 min-w-0 items-center gap-2.5 rounded-md px-2 text-[0.84375rem] font-medium transition-colors outline-none focus-visible:ring-[3px] [&>svg]:size-4 [&>svg]:shrink-0";
+  "text-muted-foreground hover:bg-sidebar-accent/70 hover:text-foreground aria-[current=page]:bg-sidebar-accent aria-[current=page]:text-foreground focus-visible:ring-ring/50 hit-area press relative flex h-8 min-w-0 items-center gap-2.5 rounded-md px-2 text-[0.84375rem] font-medium outline-none focus-visible:ring-[3px] [&>svg]:size-4 [&>svg]:shrink-0";
 
 /** The sidebar's end: the learner's account and level. */
 export function LearnSidebarFooter({ className, ...props }: React.ComponentProps<"div">) {

@@ -62,13 +62,14 @@ export const LIST_ROW_CLASS = cn(
 );
 
 /**
- * A row that opens or does something: the hover and the keyboard focus inside the list. Both are
- * drawn on the highlight, which has the radius, so the row itself stays square and the hairline
- * between rows runs straight to the column's edges.
+ * A row that opens or does something: the hover, the press and the keyboard focus inside the list.
+ * All are drawn on the highlight, which has the radius, so the row itself stays square and the
+ * hairline between rows runs straight to the column's edges; a press also gives way as a wide
+ * option does, so a tap shows before the next page does.
  */
 export const LIST_ROW_INTERACTIVE_CLASS = cn(
   LIST_ROW_CLASS,
-  "hover:before:bg-muted/70 focus-visible:before:ring-ring/50 outline-none focus-visible:before:ring-[3px]",
+  "hover:before:bg-muted/70 active:before:bg-muted press focus-visible:before:ring-ring/50 outline-none [--press-scale:0.99] focus-visible:before:ring-[3px]",
 );
 
 /**

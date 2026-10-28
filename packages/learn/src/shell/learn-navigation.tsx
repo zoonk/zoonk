@@ -141,10 +141,22 @@ function NavigationRoot({ ...props }: React.ComponentProps<"nav">) {
 
 /**
  * Both placements mark the current tab the same way: the whole item (icon and label) sits on a
- * soft fill in full contrast, so it reads at a glance; black stays for the page's main action.
+ * soft fill in full contrast, so it reads at a glance; black stays for the page's main action. A
+ * tapped tab whose page is still on its way (the host marks its link `data-link-pending`, only
+ * when the page's prefetch hadn't landed) takes the mark at once, and the tab being left lets go.
  */
 const TAB_ITEM_CLASS =
-  "focus-visible:ring-ring/50 text-muted-foreground hover:bg-foreground/5 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground font-medium transition-colors outline-none focus-visible:ring-[3px]";
+  "focus-visible:ring-ring/50 text-muted-foreground hover:bg-foreground/5 hover:text-foreground aria-[current=page]:bg-muted aria-[current=page]:text-foreground has-data-link-pending:bg-muted has-data-link-pending:text-foreground press font-medium outline-none focus-visible:ring-[3px]";
+
+/** The sidebar's tabs take a pending tab's mark the same way, on the sidebar's fill. */
+const SIDE_TAB_ITEM_CLASS = cn(
+  LEARN_SIDEBAR_ITEM_CLASS,
+  "has-data-link-pending:bg-sidebar-accent has-data-link-pending:text-foreground",
+);
+
+/** While a tapped tab is pending, the current one looks like any other. */
+const PENDING_NAVIGATION_CLASS =
+  "[&:has([data-link-pending])_[aria-current=page]]:bg-transparent [&:has([data-link-pending])_[aria-current=page]]:text-muted-foreground";
 
 /**
  * The three tabs in the sidebar from `lg` up, one under the other, the buddy's face wearing
@@ -160,13 +172,13 @@ export function LearnSideNavigation({
   const routes = useLearnRoutes();
 
   return (
-    <NavigationRoot data-slot="learn-side-navigation">
+    <NavigationRoot className={PENDING_NAVIGATION_CLASS} data-slot="learn-side-navigation">
       <ul className="flex flex-col gap-0.5">
         {LEARN_TABS.map((tab) => (
           <li key={tab}>
             <LearnLink
               aria-current={tab === activeTab ? "page" : undefined}
-              className={LEARN_SIDEBAR_ITEM_CLASS}
+              className={SIDE_TAB_ITEM_CLASS}
               href={routes[tab]}
             >
               {/* As wide as the study links' icons, so every row's icon and name line up; the
@@ -205,7 +217,10 @@ export function LearnBottomNavigation({ activeTab, buddy, missions }: LearnNavig
 
   return (
     <NavigationRoot
-      className="bg-background sticky bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className={cn(
+        "bg-background sticky bottom-0 z-30 border-t pb-[env(safe-area-inset-bottom)] lg:hidden",
+        PENDING_NAVIGATION_CLASS,
+      )}
       data-bottom-bar=""
       data-slot="learn-bottom-navigation"
     >
