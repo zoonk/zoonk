@@ -103,7 +103,7 @@ private struct ChanceSimulationView: View {
         Spacer()
 
         if isRunning {
-          ChartsReadout(text: percentText(share), style: .mint)
+          ChartsReadout(text: percentText(share))
             .accessibilityHidden(true)
         }
       }
@@ -486,8 +486,9 @@ private struct SamplingSimulationView: View {
     }
   }
 
+  /// The margin turns soft blue once the sample is big enough: done, which is never green.
   private func marginReadout(_ margin: Double, isDone: Bool) -> some View {
-    ChartsReadout(text: marginText(margin), style: isDone ? .mint : .secondary)
+    ChartsReadout(text: marginText(margin), style: isDone ? .success : .secondary)
       .accessibilityHidden(true)
   }
 
