@@ -135,6 +135,8 @@ struct LanguageUnitScreen: View {
 
 private struct LanguageUnitContent: View {
   @Environment(AppRouter.self) private var router
+  /// Above the split: folding iPhone Duo recreates its panes, and the call's picker is in one.
+  @State private var callMinutes: Int?
 
   let goalId: String
   let unit: LanguageUnit
@@ -243,7 +245,8 @@ private struct LanguageUnitContent: View {
   private var practice: some View {
     if let conversation = unit.conversation {
       UnitPracticeCallSection(
-        conversation: conversation, chapterId: unit.unit.chapterId, goalId: goalId)
+        conversation: conversation, chapterId: unit.unit.chapterId, goalId: goalId,
+        minutes: $callMinutes)
     }
 
     if !unit.grammarTips.isEmpty {
@@ -335,13 +338,13 @@ private struct UnitPracticeCallSection: View {
   @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(VoiceServices.self) private var voice
-  @State private var minutes: Int?
   @State private var outcome: CallReservation?
   @State private var isStarting = false
 
   let conversation: LanguageUnit.Conversation
   let chapterId: String
   let goalId: String
+  @Binding var minutes: Int?
 
   var body: some View {
     let isPlus = learner.summary.value?.tier == .plus
