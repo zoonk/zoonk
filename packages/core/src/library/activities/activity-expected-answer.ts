@@ -12,7 +12,7 @@ export type ActivityCell = z.infer<typeof cellSchema>;
 
 export type ActivityFormulaExample = z.infer<typeof formulaExampleSchema>;
 
-export const activityExpectedAnswerSchema = z
+const activityExpectedAnswerSchema = z
   .discriminatedUnion("kind", [
     z
       .object({
