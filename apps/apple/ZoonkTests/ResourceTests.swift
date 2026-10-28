@@ -1,3 +1,4 @@
+import Observation
 import XCTest
 
 @testable import Zoonk
@@ -56,6 +57,25 @@ final class ResourceTests: XCTestCase {
 
     XCTAssertEqual(resource.state, .loaded(2))
     XCTAssertFalse(resource.isRefreshing)
+  }
+
+  /// A screen first drawn before the resource follows a new session (a restored sign-in) must
+  /// still redraw when the resource's value changes.
+  func testAScreenShowingAnotherSessionsResourceSeesItChange() async throws {
+    let session = SessionStore.preview(account: .resourceTestAccount)
+    let resource = makeResource(requests: Requests(results: [.success(1)]), session: session)
+    await resource.load()
+    await session.expire(try XCTUnwrap(session.authenticatedSession))
+
+    let redraw = ObservationFlag()
+    withObservationTracking {
+      _ = resource.state
+    } onChange: {
+      redraw.isSet = true
+    }
+    resource.followSession()
+
+    XCTAssertTrue(redraw.isSet)
   }
 
   func testCallsDuringARequestShareIt() async {
@@ -324,4 +344,8 @@ extension CurrentAccount {
       image: nil,
       name: "Learner",
       username: "learner"))
+}
+
+private final class ObservationFlag: @unchecked Sendable {
+  var isSet = false
 }

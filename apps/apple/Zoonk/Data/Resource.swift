@@ -72,6 +72,10 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
   /// What the screen shows. Reading it also follows the session, so a screen never shows another
   /// session's data, not even for the frame before `AppCache` drops it.
   var state: LoadState<Value> {
+    // Read before the session check: a screen first drawn while the value is hidden (another
+    // session's, or none yet after a restored sign-in) must still redraw once it loads.
+    let storedState = storedState
+
     guard audience == .everyone || owner == session.authenticatedSession else {
       return .idle
     }
