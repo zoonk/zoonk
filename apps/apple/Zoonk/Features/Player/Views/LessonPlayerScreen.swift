@@ -85,7 +85,7 @@ private struct LessonPlayerContent: View {
 
         return activityRenderers.renderer(for: content.template) == nil
       }
-      store.onCompleted = { event in completionHook.lessonCompleted(event) }
+      store.onCompleted = { [completionHook] event in completionHook.lessonCompleted(event) }
       await store.load()
     }
   }

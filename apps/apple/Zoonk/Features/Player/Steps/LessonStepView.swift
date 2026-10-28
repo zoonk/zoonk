@@ -72,7 +72,7 @@ private struct HookStepView: View {
       Text(
         "Guess first", tableName: "Player", comment: "Above a hook's question: a guess never counts"
       )
-      .font(.subheadline.weight(.medium))
+      .font(.caption.monospaced())
       .foregroundStyle(.secondary)
       LessonQuestionText(text: question)
       StepMedia(step: step, description: content.image, visual: content.visual)
@@ -124,7 +124,7 @@ private struct WorkedExampleStepView: View {
 
   var body: some View {
     Text("Worked example", tableName: "Player", comment: "Label above a worked example")
-      .font(.subheadline.weight(.medium))
+      .font(.caption.monospaced())
       .foregroundStyle(.secondary)
 
     if let title = content.title {
@@ -251,7 +251,7 @@ private struct SpokenAnswerStepView: View {
       LanguageStepView(exercise: listening, wordHints: nil, context: context)
     } else {
       Text("Tap and say it out loud", tableName: "Player", comment: "Above a sentence to say")
-        .font(.subheadline.weight(.medium))
+        .font(.caption.monospaced())
         .foregroundStyle(.secondary)
       LessonQuestionText(text: content.prompt)
       VStack(alignment: .leading, spacing: 4) {

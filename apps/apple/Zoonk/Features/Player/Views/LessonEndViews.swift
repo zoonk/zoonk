@@ -62,9 +62,8 @@ struct LessonCompletionView: View {
           .disabled(completion.status == .saving)
         }
       }
-      .buttonStyle(.glassProminent)
-      .tint(.primary)
-      .controlSize(.extraLarge)
+      .buttonStyle(.mainAction)
+      .controlSize(.large)
       .keyboardShortcut(.defaultAction)
       .frame(maxWidth: 680)
       .frame(maxWidth: .infinity)
@@ -83,11 +82,11 @@ struct LessonCompletionView: View {
       Grid(alignment: .leading, horizontalSpacing: 32, verticalSpacing: 4) {
         GridRow {
           Text("\(summary.correctCount)/\(summary.correctCount + summary.incorrectCount)")
-            .font(.title.monospacedDigit().weight(.semibold))
+            .font(.largeTitle.weight(.semibold).monospacedDigit())
           if summary.brainPower > 0 {
             Text("+\(summary.brainPower)")
-              .font(.title.monospacedDigit().weight(.semibold))
-              .foregroundStyle(.purple)
+              .font(.largeTitle.weight(.semibold).monospacedDigit())
+              .foregroundStyle(.brain)
           }
         }
         GridRow {
@@ -159,8 +158,7 @@ struct LessonUnavailableView: View {
       Button(action: retry) {
         Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
       }
-      .buttonStyle(.glassProminent)
-      .tint(.primary)
+      .buttonStyle(.mainAction)
     case .slowDown:
       Button(action: retry) {
         Text("Try again", tableName: "Player", comment: "Tries opening the lesson again")
@@ -286,8 +284,7 @@ struct PlusLockButton: View {
         Image(systemName: "lock.fill")
       }
     }
-    .buttonStyle(.glassProminent)
-    .tint(.primary)
+    .buttonStyle(.mainAction)
   }
 }
 
@@ -301,8 +298,7 @@ private struct SignUpButton: View {
       Text(
         "Create a free account", tableName: "Player", comment: "Opens account creation for a guest")
     }
-    .buttonStyle(.glassProminent)
-    .tint(.primary)
+    .buttonStyle(.mainAction)
   }
 }
 
@@ -359,8 +355,7 @@ struct LessonWaitingView: View {
             "Write this lesson", tableName: "Player",
             comment: "Starts writing a lesson that isn't written yet")
         }
-        .buttonStyle(.glassProminent)
-        .tint(.primary)
+        .buttonStyle(.mainAction)
       case .writing:
         ProgressView()
       case .refused(let refusal):
@@ -438,8 +433,7 @@ struct LessonGuestGateView: View {
             "Start this lesson", tableName: "Player",
             comment: "A visitor starts a public lesson as a guest")
         }
-        .buttonStyle(.glassProminent)
-        .tint(.primary)
+        .buttonStyle(.mainAction)
         .disabled(isStarting)
       } else {
         Button {
@@ -447,8 +441,7 @@ struct LessonGuestGateView: View {
         } label: {
           Text("Sign in", tableName: "Player", comment: "A visitor signs in to play a lesson")
         }
-        .buttonStyle(.glassProminent)
-        .tint(.primary)
+        .buttonStyle(.mainAction)
       }
     }
   }

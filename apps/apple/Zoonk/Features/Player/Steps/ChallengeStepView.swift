@@ -115,13 +115,14 @@ struct ChallengeStepView: View {
             Spacer()
             if meter.change != 0 {
               Text(meter.change, format: .number.sign(strategy: .always()))
-                .foregroundStyle(isGood(meter.meter, change: meter.change) ? .blue : .pink)
+                .foregroundStyle(
+                  isGood(meter.meter, change: meter.change) ? .success : .destructive)
             }
           }
           .font(.footnote)
         }
         .gaugeStyle(.accessoryLinear)
-        .tint(.blue)
+        .tint(.success)
       }
     }
   }
@@ -140,7 +141,7 @@ struct ChallengeStepView: View {
         .font(.subheadline.weight(.medium))
         .padding(12)
         .frame(maxWidth: .infinity, alignment: .trailing)
-        .background(Color.accentColor.opacity(0.12), in: .rect(cornerRadius: 16))
+        .background(Color.accentColor.opacity(0.15), in: .rect(cornerRadius: 16))
       ForEach(Array(decision.choice.replies.enumerated()), id: \.offset) { _, reply in
         bubble(reply)
       }
@@ -193,14 +194,14 @@ struct ChallengeStepView: View {
         notesSection(
           Text("Nicely done", tableName: "Player", comment: "Above what went well in a challenge"),
           notes: good,
-          tint: .blue)
+          tint: .success)
       }
 
       if !improve.isEmpty {
         notesSection(
           Text(
             "To improve", tableName: "Player", comment: "Above what to improve after a challenge"),
-          notes: improve, tint: .orange)
+          notes: improve, tint: .warning)
       }
 
       if !content.skills.isEmpty {
@@ -242,7 +243,7 @@ struct ChallengeStepView: View {
     }
     .padding()
     .frame(maxWidth: .infinity, alignment: .leading)
-    .background(tint.opacity(0.12), in: .rect(cornerRadius: 20))
+    .background(tint.opacity(0.15), in: .rect(cornerRadius: 20))
   }
 
   /// A team slot's name: the learner's team member for that slot, or the slot's role.

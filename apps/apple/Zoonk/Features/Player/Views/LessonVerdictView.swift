@@ -76,7 +76,7 @@ struct LessonVerdictView: View {
     }
     .frame(maxWidth: .infinity, alignment: .leading)
     .padding()
-    .background(verdict.tint.opacity(0.12), in: .rect(cornerRadius: 20))
+    .background(verdict.tint.opacity(0.15), in: .rect(cornerRadius: 20))
     .accessibilityElement(children: .combine)
   }
 
@@ -114,7 +114,7 @@ struct LessonVerdictView: View {
         ? Verdict(
           title: LocalizedStringResource(
             "Good guess!", table: "Player", comment: "A hook's guess was right"),
-          symbol: "sparkles", tint: .blue)
+          symbol: "sparkles", tint: .success)
         : Verdict(
           title: LocalizedStringResource(
             "Here's the answer", table: "Player", comment: "A hook's guess missed"),
@@ -126,12 +126,12 @@ struct LessonVerdictView: View {
         ? Verdict(
           title: LocalizedStringResource(
             "Correct!", table: "Player", comment: "The answer was right"), symbol: "checkmark",
-          tint: .blue)
+          tint: .success)
         : Verdict(
           title: LocalizedStringResource(
             "Right, watch the spelling", table: "Player",
             comment: "A right typed answer with a typo"),
-          symbol: "checkmark", tint: .blue)
+          symbol: "checkmark", tint: .success)
     }
 
     if step.kind == .typedAnswer, !result.checked {
@@ -146,12 +146,12 @@ struct LessonVerdictView: View {
         title: LocalizedStringResource(
           "Almost there", table: "Player", comment: "A typed or spoken answer that was partly right"
         ),
-        symbol: "circle.lefthalf.filled", tint: .orange)
+        symbol: "circle.lefthalf.filled", tint: .warning)
     }
 
     return Verdict(
       title: LocalizedStringResource("Not quite", table: "Player", comment: "The answer was wrong"),
-      symbol: "xmark", tint: .pink)
+      symbol: "xmark", tint: .destructive)
   }
 }
 
@@ -188,7 +188,7 @@ private struct LessonKeyPointsView: View {
           Text(point.text)
         } icon: {
           Image(systemName: point.met ? "checkmark.circle" : "circle.dashed")
-            .foregroundStyle(point.met ? .blue : .secondary)
+            .foregroundStyle(point.met ? .success : .secondary)
         }
         .font(.subheadline)
         .accessibilityLabel(

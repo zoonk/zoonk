@@ -32,9 +32,7 @@ private struct ScreenChip: View {
   let text: Text
 
   var body: some View {
-    text
-      .font(.subheadline.weight(.medium))
-      .foregroundStyle(.secondary)
+    text.chip()
   }
 }
 
@@ -282,7 +280,7 @@ private struct FillBlankView: View {
         .padding(.horizontal, 6)
         .overlay(alignment: .bottom) {
           Rectangle().frame(height: 2).foregroundStyle(
-            isRight.map { $0 ? Color.blue : .pink } ?? .secondary)
+            isRight.map { $0 ? Color.success : .destructive } ?? .secondary)
         }
     }
     .buttonStyle(.plain)
@@ -364,8 +362,8 @@ private struct ArrangeWordsView: View {
           } label: {
             Text(exercise.wordBankOptions[index].word)
           }
-          .buttonStyle(.borderedProminent)
-          .tint(context.result.map { $0.isCorrect ? .blue : .pink } ?? .accentColor)
+          .buttonStyle(.bordered)
+          .tint(context.result.map { $0.isCorrect ? .success : .destructive } ?? .primary)
           .disabled(context.isLocked)
         }
       }

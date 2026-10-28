@@ -120,26 +120,26 @@ struct LessonOptionStyle: ButtonStyle {
 
   private var foreground: Color {
     switch mark {
-    case .right: .blue
-    case .wrong: .pink
+    case .right: .success
+    case .wrong: .destructive
     default: .primary
     }
   }
 
   private var background: Color {
     switch mark {
-    case .selected: Color.accentColor.opacity(0.12)
-    case .right: Color.blue.opacity(0.12)
-    case .wrong: Color.pink.opacity(0.12)
+    case .selected: Color(.quaternarySystemFill)
+    case .right: Color.success.opacity(0.15)
+    case .wrong: Color.destructive.opacity(0.15)
     default: Color(.secondarySystemBackground)
     }
   }
 
   private var stroke: Color {
     switch mark {
-    case .selected: .accentColor
-    case .right: .blue
-    case .wrong: .pink
+    case .selected: .primary
+    case .right: .success
+    case .wrong: .destructive
     default: .clear
     }
   }

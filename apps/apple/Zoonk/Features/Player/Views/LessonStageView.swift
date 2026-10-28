@@ -1,37 +1,50 @@
 import SwiftUI
 
-/// One screen of the lesson with its action bar pinned at the bottom: the verdict, then the one
-/// next action (Check, Continue, ...), with Previous on every screen after the first.
+/// One screen of the lesson, its verdict under it once checked (scrolled into view), and the action
+/// bar pinned at the bottom with the one next action (Check, Continue, ...) and Previous.
 struct LessonStageView: View {
-  @Environment(\.activityRenderers) private var activityRenderers
-  @Environment(\.lessonAudio) private var audio
-  @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
   let store: LessonPlayerStore
   let state: LessonPlayerState
 
+  private static let verdictId = "verdict"
+
   var body: some View {
     if let step = state.currentStep {
-      ScrollView {
-        VStack(alignment: .leading, spacing: 24) {
-          if state.notice == .answerNotSaved {
-            Label {
-              Text(
-                "Your answer didn't reach us. Answer this screen again to finish.",
-                tableName: "Player",
-                comment: "The lesson came back to a screen whose answer was never saved")
-            } icon: {
-              Image(systemName: "exclamationmark.arrow.circlepath")
+      ScrollViewReader { proxy in
+        ScrollView {
+          VStack(alignment: .leading, spacing: 24) {
+            if state.notice == .answerNotSaved {
+              Label {
+                Text(
+                  "Your answer didn't reach us. Answer this screen again to finish.",
+                  tableName: "Player",
+                  comment: "The lesson came back to a screen whose answer was never saved")
+              } icon: {
+                Image(systemName: "exclamationmark.arrow.circlepath")
+              }
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
             }
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-          }
 
-          LessonStepView(step: step, state: state, store: store)
+            LessonStepView(step: step, state: state, store: store)
+
+            if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
+              LessonVerdictView(
+                step: step, result: result, store: store,
+                willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position } ?? false
+              )
+              .id(Self.verdictId)
+            }
+          }
+          .frame(maxWidth: 680, alignment: .leading)
+          .frame(maxWidth: .infinity)
+          .scenePadding()
         }
-        .frame(maxWidth: 680, alignment: .leading)
-        .frame(maxWidth: .infinity)
-        .scenePadding()
+        .onChange(of: state.currentResult != nil) { _, hasResult in
+          if hasResult {
+            proxy.scrollTo(Self.verdictId, anchor: .bottom)
+          }
+        }
       }
       .id(step.id)
       .scrollDismissesKeyboard(.interactively)
@@ -61,10 +74,6 @@ struct LessonActionBar: View {
 
   var body: some View {
     VStack(spacing: 12) {
-      if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
-        LessonVerdictView(step: step, result: result, store: store, willReturn: willReturn)
-      }
-
       if state.notice == .selfCorrect {
         Label {
           Text(
@@ -74,7 +83,7 @@ struct LessonActionBar: View {
           Image(systemName: "arrow.uturn.backward")
         }
         .font(.subheadline.weight(.medium))
-        .foregroundStyle(.pink)
+        .foregroundStyle(.destructive)
         .frame(maxWidth: .infinity, alignment: .leading)
       }
 
@@ -104,7 +113,6 @@ struct LessonActionBar: View {
             .frame(minHeight: 32)
           }
           .buttonStyle(.bordered)
-          .tint(.primary)
           .buttonBorderShape(.circle)
           .controlSize(.large)
           .keyboardShortcut(.leftArrow, modifiers: [])
@@ -139,9 +147,8 @@ struct LessonActionBar: View {
       }
       .frame(maxWidth: .infinity)
     }
-    .buttonStyle(.glassProminent)
-    .tint(.primary)
-    .controlSize(.extraLarge)
+    .buttonStyle(.mainAction)
+    .controlSize(.large)
     .disabled(primary.isDisabled)
     .keyboardShortcut(.defaultAction)
   }
@@ -152,11 +159,6 @@ struct LessonActionBar: View {
     }
 
     return activityRenderers.renderer(for: content.template)?.grade
-  }
-
-  /// A missed check or activity comes back at the end of the lesson.
-  private var willReturn: Bool {
-    state.queue.lastIndex(of: step.id).map { $0 > state.position } ?? false
   }
 
   private enum PrimaryKind {

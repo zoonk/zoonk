@@ -227,7 +227,7 @@ private struct LessonTimelineView: View {
         HStack(alignment: .firstTextBaseline, spacing: 12) {
           Text(event.date)
             .font(.subheadline.monospacedDigit().weight(.semibold))
-            .foregroundStyle(.blue)
+            .foregroundStyle(.success)
 
           VStack(alignment: .leading, spacing: 2) {
             Text(event.label)
