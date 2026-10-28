@@ -332,8 +332,8 @@ importers:
         specifier: 7.0.2003
         version: 7.0.2003
       portless:
-        specifier: 0.15.7
-        version: 0.15.7
+        specifier: 0.15.12
+        version: 0.15.12
       turbo:
         specifier: 2.11.7
         version: 2.11.7
@@ -7975,8 +7975,8 @@ packages:
   polyclip-ts@0.16.8:
     resolution: {integrity: sha512-JPtKbDRuPEuAjuTdhR62Gph7Is2BS1Szx69CFOO3g71lpJDFo78k4tFyi+qFOMVPePEzdSKkpGU3NBXPHHjvKQ==}
 
-  portless@0.15.7:
-    resolution: {integrity: sha512-fffMnzfwU/0chJmOMmeAOjFouRsZUmdJagxdqE4DATLw83ssAnHX4BzvNqOI5vBgsuvWLX5ZLg63bzs7zdVFNw==}
+  portless@0.15.12:
+    resolution: {integrity: sha512-Lbz85zLboOMkvq2unXYfJ/YMpsvFZYQgrwGEbinZErp045y9fLm4obm7E77V2BI2Om0Mh6tX/2w2ftFqRs5kfQ==}
     engines: {node: '>=24'}
     os: [darwin, linux, win32]
     hasBin: true
@@ -15600,7 +15600,7 @@ snapshots:
       bignumber.js: 9.3.1
       splaytree-ts: 1.0.2
 
-  portless@0.15.7: {}
+  portless@0.15.12: {}
 
   postcss-selector-parser@7.1.6:
     dependencies:

@@ -62,7 +62,7 @@
     "oxfmt": "0.72.0",
     "oxlint": "1.87.0",
     "oxlint-tsgolint": "7.0.2003",
-    "portless": "0.15.7",
+    "portless": "0.15.12",
     "turbo": "2.11.7",
     "typescript": "catalog:",
     "vitest": "catalog:",
