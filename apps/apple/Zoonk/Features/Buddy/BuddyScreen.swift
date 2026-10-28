@@ -16,29 +16,16 @@ struct BuddyScreen: View {
         ProgressView()
           .frame(maxWidth: .infinity, maxHeight: .infinity)
       case .failed:
-        ContentUnavailableView {
-          Label {
-            Text("Your buddy", tableName: "Buddy", comment: "Title of the Buddy tab")
-          } icon: {
-            Image(systemName: "face.smiling")
-          }
-        } description: {
-          Text(
-            "Something went wrong. Try again.", tableName: "Buddy",
-            comment: "The buddy's day couldn't be read")
-        } actions: {
-          Button {
-            Task { await store.status.refresh() }
-          } label: {
-            Text("Try again", tableName: "Buddy", comment: "Reads the buddy's day again")
-          }
-          .buttonStyle(.bordered)
-        }
+        failure { await store.status.refresh() }
       case .loaded where summary.summary.value == nil:
         // Which goal the buddy tutors comes with the summary: wait for it rather than show the
-        // goal start for a moment.
-        ProgressView()
-          .frame(maxWidth: .infinity, maxHeight: .infinity)
+        // goal start for a moment, and offer to read it again if it couldn't be read.
+        if case .failed = summary.summary.state {
+          failure { await summary.summary.refresh() }
+        } else {
+          ProgressView()
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
       case .loaded(let status):
         BuddyContent(status: status, goalId: tutoredGoalId)
       case .empty:
@@ -46,6 +33,27 @@ struct BuddyScreen: View {
       }
     }
     .loads(store.status, store.earlierQuestions, refreshable: false)
+  }
+
+  private func failure(retry: @escaping () async -> Void) -> some View {
+    ContentUnavailableView {
+      Label {
+        Text("Your buddy", tableName: "Buddy", comment: "Title of the Buddy tab")
+      } icon: {
+        Image(systemName: "face.smiling")
+      }
+    } description: {
+      Text(
+        "Something went wrong. Try again.", tableName: "Buddy",
+        comment: "The buddy's day couldn't be read")
+    } actions: {
+      Button {
+        Task { await retry() }
+      } label: {
+        Text("Try again", tableName: "Buddy", comment: "Reads the buddy's day again")
+      }
+      .buttonStyle(.bordered)
+    }
   }
 
   /// The selected goal the buddy tutors, unless it's archived or a quick explanation.
