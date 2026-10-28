@@ -7,6 +7,7 @@ import { getCourseDetail } from "./get-course-detail";
 describe(getCourseDetail, () => {
   it("brings a catalog course's example plan, a quarter hour a day to its end", async () => {
     const organization = await organizationFixture({ kind: "brand" });
+
     const course = await courseFixture({
       isPublished: true,
       organizationId: organization.id,
