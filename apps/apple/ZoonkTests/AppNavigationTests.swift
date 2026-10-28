@@ -62,6 +62,28 @@ final class AppNavigationTests: XCTestCase {
   }
 
   @MainActor
+  func testATaskOpenedBeneathAnotherShowsOnceUncovered() async {
+    let router = AppRouter()
+
+    router.open(.lesson(lessonId: "l1", sessionId: "s1"), over: .session)
+    XCTAssertEqual(router.tasks, [.session], "The session is in place first, without animation")
+
+    for _ in 0..<100 where router.tasks.count < 2 {
+      await Task.yield()
+    }
+
+    XCTAssertEqual(router.tasks, [.session, .lesson(lessonId: "l1", sessionId: "s1")])
+    XCTAssertTrue(router.isHidden(taskAt: 0), "The session waits out of sight under the lesson")
+    XCTAssertFalse(router.isHidden(taskAt: 1))
+
+    router.dismissTask()
+    XCTAssertFalse(router.isHidden(taskAt: 0), "Closing the lesson shows the session")
+
+    router.open(.essay(blockId: "b1"))
+    XCTAssertFalse(router.isHidden(taskAt: 0), "Once shown, it stays shown under later tasks")
+  }
+
+  @MainActor
   func testPushesLandOnTheSelectedTabAfterClosingTasks() {
     let router = AppRouter(selectedTab: .plan)
 

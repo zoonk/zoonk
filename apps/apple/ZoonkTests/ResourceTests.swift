@@ -308,6 +308,23 @@ final class ResourceTests: XCTestCase {
     XCTAssertEqual(resource.state, .loaded(2))
   }
 
+  /// A screen opened under a task (the session under the lesson a tap opened) loads what it has
+  /// nothing of, so it shows at once when uncovered; a covered screen with data, even stale, waits.
+  func testACoveredScreenLoadsOnlyWhatItHasNothingOf() async {
+    let clock = TestClock()
+    let requests = Requests(results: [.success(1), .success(2)])
+    let resource = makeResource(requests: requests, clock: clock)
+
+    await resource.prepare()
+    XCTAssertEqual(resource.state, .loaded(1))
+
+    clock.advance(by: AppCache.defaultMaxAge + .seconds(1))
+    await resource.prepare()
+
+    XCTAssertEqual(requests.count, 1)
+    XCTAssertEqual(resource.state, .loaded(1))
+  }
+
   func testAResponseThatPredatesAMutationIsDiscarded() async {
     let cache = AppCache(session: .preview(account: .resourceTestAccount))
     let requests = Requests(results: [.success(1)])

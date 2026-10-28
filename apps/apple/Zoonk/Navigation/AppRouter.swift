@@ -20,7 +20,14 @@ enum AppSheet: Hashable, Identifiable {
 final class AppRouter {
   var selectedTab: AppTab
   var sheet: AppSheet?
-  private(set) var tasks: [AppRoute] = []
+  private(set) var tasks: [AppRoute] = [] {
+    didSet {
+      // A task opened beneath another comes into sight once nothing covers it.
+      hiddenTasks = hiddenTasks.filter { tasks.count > $0 + 1 }
+    }
+  }
+  /// The depths of tasks opened beneath the task the learner asked for (see `open(_:over:)`).
+  private var hiddenTasks: Set<Int> = []
   private var paths: [AppTab: NavigationPath] = [:]
 
   init(selectedTab: AppTab = .today, sheet: AppSheet? = nil) {
@@ -82,6 +89,35 @@ final class AppRouter {
         paths[selectedTab, default: NavigationPath()].append(route)
       }
     }
+  }
+
+  /// Opens `route` with `beneath` under it as one transition: `beneath` takes its place at once and
+  /// out of sight, so the learner sees only `route` come in, and closing `route` shows `beneath`
+  /// where it was, such as a lesson over the session that goes on after it.
+  func open(_ route: AppRoute, over beneath: AppRoute) {
+    var instant = Transaction()
+    instant.disablesAnimations = true
+
+    withTransaction(instant) {
+      tasks.append(beneath)
+      hiddenTasks.insert(tasks.count - 1)
+    }
+
+    // On the next turn, so the task beneath is in place without animation (a change in the same
+    // turn would carry its own transaction to both) and `route` comes in with its own.
+    let depth = tasks.count - 1
+    Task { @MainActor [weak self] in
+      guard let self, tasks.count == depth + 1, tasks.last == beneath else {
+        return
+      }
+
+      open(route)
+    }
+  }
+
+  /// Whether the task at `depth` waits out of sight under the task it was opened beneath.
+  func isHidden(taskAt depth: Int) -> Bool {
+    hiddenTasks.contains(depth)
   }
 
   /// Opens a link to one of main's pages; false when the app has no place for it.

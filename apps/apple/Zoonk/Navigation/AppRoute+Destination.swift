@@ -131,7 +131,14 @@ struct PresentedTask: View {
   let depth: Int
 
   var body: some View {
+    // A task opened beneath another stays clear and empty until it's uncovered, so the screen
+    // under both shows while the task above comes in.
+    let isHidden = router.isHidden(taskAt: depth)
+
     route.destination
+      .opacity(isHidden ? 0 : 1)
+      .accessibilityHidden(isHidden)
+      .presentationBackground(isHidden ? AnyShapeStyle(.clear) : AnyShapeStyle(.background))
       .environment(\.isCoveredByTask, router.tasks.count > depth + 1)
       .fullScreenCover(item: router.task(at: depth + 1)) { next in
         PresentedTask(route: next, depth: depth + 1)

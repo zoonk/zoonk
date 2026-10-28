@@ -15,7 +15,8 @@ extension View {
 extension EnvironmentValues {
   /// Whether a full-screen task covers this screen. A covered screen doesn't count as showing its
   /// resources: a mutation made in the task marks them stale instead of refetching them behind it,
-  /// and they revalidate once when the task closes. The shell sets it from its stack of tasks.
+  /// and they revalidate once when the task closes. It only loads what it has nothing of yet, so a
+  /// screen opened under a task is ready when uncovered. The shell sets it from its stack of tasks.
   @Entry var isCoveredByTask = false
 }
 
@@ -45,6 +46,7 @@ private struct ResourceLoading: ViewModifier {
           resources: resources, session: session.authenticatedSession, isCovered: isCovered)
       ) {
         guard !isCovered else {
+          await forEach(resources) { await $0.prepare() }
           return
         }
 

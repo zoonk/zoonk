@@ -248,28 +248,45 @@ struct TodayDayView: View {
 extension AppRouter {
   /// Shows a step the learner's tap opened on the session screen: a question block plays there,
   /// and anything else opens its own screen over it, so closing that screen goes on with the day.
+  /// A step opened from Today comes in as one transition, with the session under it out of sight
+  /// until the step closes.
   func openStudy(_ destination: StudyDestination, sessions: StudySessionStore) {
     if case .questionBlock(_, let blockID) = destination {
       sessions.play(blockID: blockID)
     }
 
-    if !tasks.contains(.session) {
-      open(.session)
+    guard let step = destination.step else {
+      if !tasks.contains(.session) {
+        open(.session)
+      }
+
+      return
     }
 
-    switch destination {
+    if tasks.contains(.session) {
+      open(step)
+    } else {
+      open(step, over: .session)
+    }
+  }
+}
+
+extension StudyDestination {
+  /// The screen of its own a step opens over the session; nil for what the session shows itself.
+  fileprivate var step: AppRoute? {
+    switch self {
     case .challenge(let planItemID, let sessionID):
-      open(.challenge(planItemId: planItemID, sessionId: sessionID))
+      .challenge(planItemId: planItemID, sessionId: sessionID)
     case .checkpoint(let blockID, let sessionID):
-      open(.checkpoint(blockId: blockID, sessionId: sessionID))
+      .checkpoint(blockId: blockID, sessionId: sessionID)
     case .essay(let blockID):
-      open(.essay(blockId: blockID))
+      .essay(blockId: blockID)
     case .lesson(let lessonID, let sessionID):
-      open(.lesson(lessonId: lessonID, sessionId: sessionID))
+      .lesson(lessonId: lessonID, sessionId: sessionID)
     case .mock(let blockID, let sessionID):
-      open(.mock(blockId: blockID, sessionId: sessionID))
+      .mock(blockId: blockID, sessionId: sessionID)
     case .questionBlock, .session, .lessonWait:
-      break
+      nil
     }
   }
 }

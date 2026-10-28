@@ -8,6 +8,7 @@ protocol CachedResource: AnyObject, Sendable {
   var domains: Set<DataDomain> { get }
   func load() async
   func show() async
+  func prepare() async
   func refresh() async
   func invalidate()
   func followSession()
@@ -120,6 +121,19 @@ final class Resource<Value: Equatable & Sendable>: CachedResource {
     }
 
     await load()
+  }
+
+  /// What a screen a task covers asks for: the value when nothing is there yet, so a screen
+  /// opened under a task (the session under the lesson a tap opened) is ready once uncovered.
+  /// What's already there waits, stale or not, for the screen to be shown again.
+  func prepare() async {
+    followSession()
+
+    guard canRequest, !storedState.hasContent, !hasSettledOnFailure else {
+      return
+    }
+
+    await run()
   }
 
   /// Fetches again now while keeping what's shown, as pull to refresh and retry do.
