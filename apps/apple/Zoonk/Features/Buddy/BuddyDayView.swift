@@ -4,12 +4,13 @@ import SwiftUI
 /// today's missions, then the buddy (how it grows, what it remembers, its glasses, the week's
 /// summary).
 struct BuddyDayView: View {
-  @Environment(\.dismiss) private var dismiss
   @Environment(\.tutorPlaces) private var places
 
   let status: BuddyStatus
   let name: String
   let onGlasses: () -> Void
+  /// Hides the day: its sheet on a phone, its column on a wide screen.
+  let onClose: () -> Void
 
   var body: some View {
     NavigationStack {
@@ -71,9 +72,7 @@ struct BuddyDayView: View {
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            dismiss()
-          }
+          Button(role: .close, action: onClose)
         }
       }
     }

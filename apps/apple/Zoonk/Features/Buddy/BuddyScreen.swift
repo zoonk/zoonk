@@ -34,6 +34,11 @@ struct BuddyScreen: View {
           }
           .buttonStyle(.bordered)
         }
+      case .loaded where summary.summary.value == nil:
+        // Which goal the buddy tutors comes with the summary: wait for it rather than show the
+        // goal start for a moment.
+        ProgressView()
+          .frame(maxWidth: .infinity, maxHeight: .infinity)
       case .loaded(let status):
         BuddyContent(status: status, goalId: tutoredGoalId)
       case .empty:
@@ -66,6 +71,7 @@ private struct BuddyContent: View {
   let goalId: String?
 
   @State private var isDayShown = false
+  @State private var didPlaceDay = false
   @State private var isEditing = false
   @State private var isWearing = false
   @State private var goalDraft = ""
@@ -92,7 +98,9 @@ private struct BuddyContent: View {
         }
       }
       .inspector(isPresented: $isDayShown) {
-        BuddyDayView(status: status, name: name, onGlasses: { isWearing = true })
+        BuddyDayView(
+          status: status, name: name, onGlasses: { isWearing = true },
+          onClose: { isDayShown = false })
           .presentationDetents([.medium, .large])
       }
       .sheet(isPresented: $isEditing) {
@@ -102,10 +110,13 @@ private struct BuddyContent: View {
         BuddyGlassesPicker(status: status)
       }
       .onAppear {
-        // A wide screen has room to keep the day in sight beside the conversation.
-        if sizeClass == .regular {
+        // A wide screen has room to keep the day in sight beside the conversation, once: after
+        // that the learner's choice stays.
+        if !didPlaceDay, sizeClass == .regular {
           isDayShown = true
         }
+
+        didPlaceDay = true
       }
       .onChange(of: store.broughtQuestion, initial: true) { _, question in
         guard let question else {

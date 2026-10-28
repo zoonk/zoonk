@@ -74,7 +74,7 @@ struct TutorAPI: TutorAPIClient {
           case .tooManyRequests(let response):
             throw TutorFailure(refusal: try? response.body.json, fallback: .slowDown)
           case .unauthorized:
-            throw TutorFailure.signedOut
+            throw APIError.unauthorized
           case .notFound:
             throw TutorFailure.gone
           case .badRequest, .conflict, .internalServerError, .undocumented:
