@@ -1,7 +1,6 @@
 import Foundation
 import OpenAPIRuntime
 
-/// A Library lesson as the player reads it.
 struct PlayableLesson: Hashable, Sendable {
   let id: String
   let title: String
@@ -9,12 +8,10 @@ struct PlayableLesson: Hashable, Sendable {
   let targetLanguage: String?
   let chapterTitle: String?
   let steps: [LessonStep]
-  /// The summary card, each idea in one sentence, for the menu once the lesson is done.
   let summaryIdeas: [String]
   let tutorSuggestions: [Components.Schemas.LessonTutorSuggestion]
 }
 
-/// The lesson's outline when its screens can't show yet.
 struct LessonOutline: Hashable, Sendable {
   let id: String
   let title: String
@@ -24,7 +21,6 @@ struct LessonOutline: Hashable, Sendable {
 
 enum LessonLoad: Hashable, Sendable {
   case ready(PlayableLesson)
-  /// The screens are still being written.
   case notGenerated(LessonOutline)
   /// A visitor: the screens load only with a session, a guest's included.
   case sessionRequired(LessonOutline)
@@ -40,7 +36,6 @@ struct LessonRunStart: Hashable, Sendable {
   let support: LessonPlayerState.LessonSupport?
 }
 
-/// Where a public lesson fits, for the end of a guest's lesson.
 struct LessonFit: Hashable, Sendable {
   struct Course: Hashable, Sendable {
     let id: String
@@ -72,7 +67,7 @@ enum LessonCompletionOutcome: Hashable, Sendable {
   case failed
 }
 
-/// Whether an unwritten lesson can be written now, on the learner's tap.
+/// Only asked on the learner's tap.
 enum LessonWritingOutcome: Hashable, Sendable {
   case ready
   case writing
@@ -88,7 +83,6 @@ enum AnswerExplanationOutcome: Hashable, Sendable {
   case failed
 }
 
-/// The lesson player's calls to the public API.
 struct LessonPlayerAPI: Sendable {
   private let clients: APIClientFactory
 
@@ -132,7 +126,7 @@ struct LessonPlayerAPI: Sendable {
     }
   }
 
-  /// Starts a run, or resumes the open one (within half an hour) with its answers.
+  /// Resumes the open run (within half an hour) with its answers.
   func startLesson(id: String, studySessionId: String?, token: String) async throws -> Result<
     LessonRunStart, LessonRunRefusal
   > {
@@ -264,7 +258,6 @@ struct LessonPlayerAPI: Sendable {
     }
   }
 
-  /// Whether an unwritten lesson is being written, failed, or hasn't started.
   func getReadiness(id: String, token: String) async throws
     -> Components.Schemas.LessonReadiness.StatusPayload
   {
@@ -356,7 +349,7 @@ struct LessonPlayerAPI: Sendable {
     return team.members.map(\.name)
   }
 
-  /// Where a public lesson fits, for the end of a guest's lesson; nil outside a public chapter.
+  /// Nil outside a public chapter.
   func getLessonFit(id: String, token: String?) async -> LessonFit? {
     let output = try? await clients.perform(token: token) {
       try await $0.getLibraryLessonFit(path: .init(lessonId: id))
@@ -384,7 +377,7 @@ struct LessonPlayerAPI: Sendable {
     }
   }
 
-  /// A screen's saved example line; reading never writes one.
+  /// Reading never writes one.
   func getExampleLine(stepId: String, token: String) async -> String? {
     let output = try? await clients.perform(token: token) {
       try await $0.getCurrentUserStepExampleLine(path: .init(stepId: stepId))
@@ -396,8 +389,6 @@ struct LessonPlayerAPI: Sendable {
 
     return line
   }
-
-  // MARK: - Helpers
 
   /// Reads a refused allowance or AI claim: `USAGE_LIMIT_REACHED` with `details.limit`,
   /// `SLOW_DOWN` with `details.retryAfterSeconds`, `PLUS_REQUIRED`, or a guest's `SIGN_UP_REQUIRED`.

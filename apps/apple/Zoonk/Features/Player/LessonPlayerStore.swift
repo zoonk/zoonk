@@ -1,9 +1,7 @@
 import Foundation
 import Observation
 
-/// One lesson on screen: it loads the lesson, starts its run and keeps the engine's state, sending
-/// answers and the completion to the server. Every result is published only for the session that
-/// asked for it.
+/// Every result is published only for the session that asked for it.
 @MainActor
 @Observable
 final class LessonPlayerStore {
@@ -11,7 +9,6 @@ final class LessonPlayerStore {
     case loading
     case failed
     case notFound
-    /// A visitor: the screens need a session.
     case sessionRequired(LessonOutline)
     /// The screens are being written, or wait for the learner to ask for them.
     case waiting(LessonOutline, LessonWriting)
@@ -40,13 +37,9 @@ final class LessonPlayerStore {
   private(set) var lesson: PlayableLesson?
   private(set) var state: LessonPlayerState?
   private(set) var soundsEnabled = true
-  /// The colleagues' names in a challenge, in its slot order.
   private(set) var challengeTeam: [String] = []
-  /// "Explain my answer" on a wrong typed answer, by screen.
   private(set) var explanations: [String: Explanation] = [:]
-  /// The learner's personal example under an explanation, by screen, once read.
   private(set) var exampleLines: [String: String] = [:]
-  /// Where the lesson fits, for the end of a guest's lesson.
   private(set) var fit: LessonFit?
   /// A guest outside a study session: the lesson ends with "Build my plan".
   var isGuest = false
@@ -59,7 +52,6 @@ final class LessonPlayerStore {
   var isMicBlocked = false
   /// Any touch or scroll on the screen: a learner who touches it isn't stuck.
   var touches = 0
-  /// The Ask panel is open, with the question it opened with ("Explain it more simply").
   var isAsking = false
   private(set) var askingSuggestionId: String?
   /// The lesson shows as a spread, where Ask opens beside it; elsewhere Ask is a sheet. Kept by the
@@ -106,9 +98,8 @@ final class LessonPlayerStore {
     cantTalkToday = choices.isChosenToday(.cantTalk)
   }
 
-  /// A write for the session that opened the lesson, through the app's shared write rule: a 401
-  /// signs that session out (the lesson then reloads for whoever is signed in), and a result for a
-  /// session that ended meanwhile comes back `.obsolete`, never published.
+  /// A 401 signs the session that opened the lesson out, and the lesson reloads for whoever is
+  /// signed in.
   private func write<Value: Sendable>(
     invalidating domains: Set<DataDomain> = [], _ operation: (String) async throws -> Value
   ) async -> MutationResult<Value> {
@@ -123,17 +114,13 @@ final class LessonPlayerStore {
     }
   }
 
-  /// Opens the Ask panel, with a suggestion ready to send when it came from an offer.
   func ask(suggestionId: String? = nil) {
     askingSuggestionId = suggestionId
     isAskingInSheet = !isSpread
     isAsking = true
   }
 
-  // MARK: - Loading
-
-  /// Reads the lesson, then starts (or resumes) its run. An unwritten lesson waits for the learner's
-  /// tap, since writing it runs AI.
+  /// An unwritten lesson waits for the learner's tap, since writing it runs AI.
   func load(refresh: Bool = false) async {
     let identity = session.authenticatedSession
     self.identity = identity
@@ -234,10 +221,7 @@ final class LessonPlayerStore {
     screen = .playing
   }
 
-  // MARK: - Late pictures
-
-  /// While a screen still waits for its picture (the lesson was written moments ago), the lesson
-  /// is read again every few seconds, as the API asks, until the pictures come or the wait ends.
+  /// Every few seconds, as the API asks, until the pictures come or the wait ends.
   func followLatePictures() async {
     while !Task.isCancelled, let state, let identity,
       state.steps.values.contains(where: \.imagePending)
@@ -264,10 +248,7 @@ final class LessonPlayerStore {
     }
   }
 
-  // MARK: - Example lines
-
-  /// The learner's first action in the lesson writes its personal example lines in the
-  /// background (one call for every screen with a slot), never its opening.
+  /// The learner's first action writes the example lines, never the lesson's opening.
   private func writeExampleLinesOnce() {
     guard exampleLinesWriting == nil, let first = lesson?.steps.first(where: \.hasExampleLineSlot)
     else {
@@ -280,7 +261,6 @@ final class LessonPlayerStore {
     }
   }
 
-  /// Reads the screen's line once the lesson's write (if one started) settled.
   func loadExampleLine(stepId: String) async {
     guard exampleLines[stepId] == nil, let identity else {
       return
@@ -320,7 +300,7 @@ final class LessonPlayerStore {
     }
   }
 
-  /// "Write this lesson": the learner asked, so the lesson is written now.
+  /// Only on the learner's tap.
   func writeLesson() async {
     guard case .waiting(let outline, _) = screen, let identity else {
       return
@@ -348,7 +328,7 @@ final class LessonPlayerStore {
     }
   }
 
-  /// Checks every few seconds until the screens are written; reading never writes anything.
+  /// Reading never writes anything.
   private func followWriting(_ outline: LessonOutline, identity: AuthenticatedSession) async {
     while !Task.isCancelled, isCurrent(identity), case .waiting(_, .writing) = screen {
       try? await Task.sleep(for: .seconds(3))
@@ -367,7 +347,7 @@ final class LessonPlayerStore {
     }
   }
 
-  /// Whether the lesson is written yet. A 401 signs that identity out, so the screen reloads.
+  /// A 401 signs that identity out, so the screen reloads.
   private func readiness(_ lessonId: String, identity: AuthenticatedSession) async
     -> Components.Schemas.LessonReadiness.StatusPayload?
   {
@@ -380,8 +360,6 @@ final class LessonPlayerStore {
       return nil
     }
   }
-
-  // MARK: - The learner's actions
 
   func select(_ answer: LessonAnswer?) {
     guard let stepId = state?.currentStep?.id else { return }
@@ -398,39 +376,34 @@ final class LessonPlayerStore {
     state?.goBack()
   }
 
-  /// "Explain first": the explanation now, the question right after it.
   func explainFirst() {
     writeExampleLinesOnce()
     state?.explainFirst()
   }
 
-  /// "I already know this": the lesson's checks, then its end if they're all right.
   func knowThis() {
     writeExampleLinesOnce()
     state?.knowThis()
   }
 
-  /// "I don't know yet" on a written screen.
   func dontKnow() {
     guard let stepId = state?.currentStep?.id else { return }
     state?.dontKnow(stepId)
   }
 
-  /// "Can't write now": no writing for the rest of today, in this lesson and the next ones.
   func skipWriting() {
     choices.setChosenToday(.cantWrite, true)
     state?.skipWriting()
     finishIfCompleted()
   }
 
-  /// "Write again": takes back "Can't write now" and puts this lesson's writing back.
   func restoreWriting() {
     choices.setChosenToday(.cantWrite, false)
     state?.restoreWriting()
   }
 
-  /// Check: device-graded answers show their verdict at once and are recorded in the background;
-  /// typed and spoken answers (and activities graded only by the server) wait for the server.
+  /// Device-graded answers show their verdict at once and are recorded in the background; typed and
+  /// spoken answers (and activities graded only by the server) wait for the server.
   func check(gradeActivity: ((ActivityStepContent, ActivityAnswer) -> Bool)? = nil) async {
     guard let state, state.phase == .playing, let step = state.currentStep,
       let answer = state.answers[step.id]
@@ -489,7 +462,6 @@ final class LessonPlayerStore {
     }
   }
 
-  /// A spoken answer the voice feature graded.
   func resolveSpoken(_ verdict: SpokenAnswerVerdict) {
     guard let stepId = state?.currentStep?.id else { return }
     var result = LessonStepResult(
@@ -505,7 +477,6 @@ final class LessonPlayerStore {
     state?.resolve(stepId, result: result)
   }
 
-  /// Sends a device-graded answer once, keeping the task so finishing can wait for it.
   private func send(_ stepId: String, _ unsaved: LessonPlayerState.UnsavedAnswer) {
     guard saving[stepId] == nil else {
       return
@@ -517,8 +488,7 @@ final class LessonPlayerStore {
     }
   }
 
-  /// One answer to the server. Accepted (or refused for good, such as a finished run), it stops
-  /// holding the lesson back; a failed send stays unsaved and goes again with the same attempt id.
+  /// A failed send stays unsaved and goes again with the same attempt id.
   private func record(_ stepId: String, _ unsaved: LessonPlayerState.UnsavedAnswer) async {
     guard let runId = state?.runId else {
       return
@@ -544,7 +514,7 @@ final class LessonPlayerStore {
     }
   }
 
-  /// "Explain my answer" on a wrong typed answer: the learner asked, so it may run AI.
+  /// Only on the learner's tap: it may run AI.
   func explainAnswer() async {
     guard let step = state?.currentStep, case .typedAnswer(let text) = state?.answers[step.id]
     else {
@@ -565,15 +535,11 @@ final class LessonPlayerStore {
     }
   }
 
-  // MARK: - Finishing
-
-  /// Saves a lesson that just reached its end.
   private func finishIfCompleted() {
     guard state?.completion?.status == .saving else { return }
     Task { await saveCompletion() }
   }
 
-  /// "Finish" on a lesson every screen of which was answered before, or "Try again" after a failed save.
   func finish() async {
     state?.completionSaving()
     await saveCompletion()
@@ -609,8 +575,6 @@ final class LessonPlayerStore {
     let studySessionId = studySessionId
     let skippedWritingStepIds = state?.skippedWritingStepIds ?? []
 
-    // A finished lesson changes the learner's progress and learner model, as main revalidates
-    // after `completeLibraryLesson`: the summary, Today, statistics and chapters follow.
     let completed = await write(invalidating: [.userProgress, .learnerModel]) { token in
       try await api.completeLesson(
         id: lessonId, runId: runId, skippedWritingStepIds: skippedWritingStepIds, token: token)
@@ -643,15 +607,12 @@ final class LessonPlayerStore {
     }
   }
 
-  // MARK: - Identity
-
   private func isCurrent(_ identity: AuthenticatedSession?) -> Bool {
     !Task.isCancelled && session.authenticatedSession == identity
   }
 }
 
 extension LessonAnswer {
-  /// The learner's words, for a typed or spoken answer's result.
   var text: String? {
     switch self {
     case .typedAnswer(let text), .spokenAnswer(let text): text

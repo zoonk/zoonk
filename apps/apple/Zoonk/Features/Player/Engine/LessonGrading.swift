@@ -1,21 +1,16 @@
 import Foundation
 
-/// A verdict the device reaches from a screen's content alone, the same way core's
-/// `gradeStepAnswer` does, so feedback is instant and the server's grade agrees with it.
+/// Mirrors core's `gradeStepAnswer`, so feedback is instant and the server's grade agrees with it.
 struct LocalGrade: Hashable, Sendable {
   let isCorrect: Bool
-  /// The learner's answer as text, for the result.
   let answerText: String?
-  /// The right answer as text when missed.
   let correctAnswer: String?
-  /// Why: the option's reason or the screen's explanation.
   let feedback: String?
 }
 
 enum LessonGrading {
-  /// Grades what code can settle on the device. Nil for answers only the server grades (typed and
-  /// spoken answers, an activity interaction its renderer doesn't grade) and for an answer that
-  /// doesn't fit the screen.
+  /// Nil for answers only the server grades (typed and spoken answers, an activity interaction its
+  /// renderer doesn't grade) and for an answer that doesn't fit the screen.
   static func grade(
     _ answer: LessonAnswer,
     step: LessonStep,
@@ -113,8 +108,6 @@ enum LessonGrading {
     }
   }
 
-  // MARK: - Numbers (core's `checkActivityAnswer`)
-
   /// How far a number may always be from the right one when the check's own tolerance is tighter,
   /// by template (core's `minTolerance`): a guess on `guessReveal`'s log slider can't land closer
   /// than its positions, about 11% apart.
@@ -184,8 +177,6 @@ enum LessonGrading {
     return text.hasSuffix(".0") ? String(text.dropLast(2)) : text
   }
 
-  // MARK: - Language exercises
-
   static func gradeExercise(_ exercise: LanguageExercise, answer: LessonAnswer) -> LocalGrade? {
     switch (exercise.kind, answer) {
     case (.multipleChoice, .multipleChoice(let optionId)):
@@ -245,7 +236,6 @@ enum LessonGrading {
     }
   }
 
-  /// The whole sentence the learner was building, with the right words in its blanks.
   static func fillBlankSentence(_ template: String, answers: [String]) -> String {
     template.components(separatedBy: "[BLANK]").enumerated().map { index, segment in
       segment + (index < answers.count ? answers[index] : "")

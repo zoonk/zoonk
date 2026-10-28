@@ -1,7 +1,6 @@
 import Foundation
 
-/// Reads a number the learner typed, as main's `parseLocalizedNumber`: their locale's decimal comma
-/// or a point, the typographic minus and spaces. Nil for anything that isn't one plain number.
+/// Mirrors main's `parseLocalizedNumber`. Nil for anything that isn't one plain number.
 func parseLocalizedNumber(_ text: String, locale: Locale) -> Double? {
   let cleaned = text.filter { !$0.isWhitespace }.replacingOccurrences(of: "\u{2212}", with: "-")
 
@@ -57,8 +56,8 @@ private func replacingFirst(_ separator: String, in text: String) -> String {
 /// The most decimals a number shows, as `Intl.NumberFormat` allows.
 private let maxFractionDigits = 20
 
-/// A number the way people read it in their language, as main's `formatLocalizedNumber`: rounded
-/// for display only (grading uses the full value), with a typographic minus that reads as a sign.
+/// Mirrors main's `formatLocalizedNumber`: rounded for display only, since grading uses the full
+/// value.
 func formatLocalizedNumber(
   _ value: Double, fractionDigits: Int, locale: Locale, grouping: Bool = false
 ) -> String {
@@ -70,9 +69,8 @@ func formatLocalizedNumber(
   return formatted.hasPrefix("-") ? "\u{2212}" + formatted.dropFirst() : formatted
 }
 
-/// Decimals worth showing for a value's size (main's `fractionDigitsFor`): none for thousands, one
-/// for tens, two for ones and three significant digits below one, so a readout never shows float
-/// noise and a tiny value never rounds to 0.
+/// Mirrors main's `fractionDigitsFor`, so a readout never shows float noise and a tiny value never
+/// rounds to 0.
 func fractionDigitsFor(_ value: Double) -> Int {
   let size = abs(value)
 
@@ -96,9 +94,8 @@ func fractionDigitsFor(_ value: Double) -> Int {
   return min(maxFractionDigits, leadingZeros + 3)
 }
 
-/// One precision for an expected answer and the learner's value (main's `exactFractionDigitsFor`):
-/// the tolerance sets the smallest meaningful decimal, and a wrong answer keeps a digit beyond
-/// their difference, so rounding can't make both read the same. Zero tolerance keeps them all.
+/// Mirrors main's `exactFractionDigitsFor`: a wrong answer keeps a digit beyond the difference, so
+/// rounding can't make both read the same. Zero tolerance keeps them all.
 func exactFractionDigitsFor(
   expected: Double, tolerance: ActivityCheck.Tolerance, value: Double? = nil
 ) -> Int {
@@ -119,7 +116,6 @@ func exactFractionDigitsFor(
       differenceDigits))
 }
 
-/// Decimals needed to keep rounding smaller than a positive resolution.
 private func digitsForResolution(_ resolution: Double) -> Int {
   max(0, Int((-log10(resolution)).rounded(.up)))
 }

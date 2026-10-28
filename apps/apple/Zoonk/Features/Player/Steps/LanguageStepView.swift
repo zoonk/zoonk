@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Language practice: a word or a letter to learn, and exercises that build or pick an answer. The
-/// screen is what to answer; the turn is the options, blanks, word bank or columns.
 struct LanguageStepView: View {
   let exercise: LanguageExercise
   let wordHints: WordHints?
@@ -48,7 +46,6 @@ private struct ScreenChip: View {
   }
 }
 
-/// Plays a recording when there is one.
 struct LessonAudioButton: View {
   @Environment(\.lessonAudio) private var audio
 
@@ -239,8 +236,7 @@ private struct TranslationView: View {
   }
 }
 
-/// A sentence with blanks, filled from a word bank: a tile fills the first empty blank, and a
-/// filled blank empties on a tap.
+/// A tile fills the first empty blank, and a filled blank empties on a tap.
 private struct FillBlankView: View {
   let exercise: LanguageExercise
   let context: LessonStepContext
@@ -330,7 +326,6 @@ private struct FillBlankView: View {
   }
 }
 
-/// Reading (translate the sentence by arranging its words) and listening (arrange what you hear).
 private struct ArrangeWordsView: View {
   let exercise: LanguageExercise
   let context: LessonStepContext
@@ -437,8 +432,7 @@ private struct ArrangeWordsView: View {
   }
 }
 
-/// Two columns to pair: a tap on each side makes a pair; a right pair locks, a wrong one counts as
-/// a mistake. Check once every pair is matched.
+/// A right pair locks, a wrong one counts as a mistake.
 private struct MatchColumnsView: View {
   @State private var pickedLeft: Int?
   @State private var mistakes = 0
@@ -523,7 +517,6 @@ private struct MatchColumnsView: View {
   }
 }
 
-/// Lays tiles out in rows, wrapping to the width it gets.
 struct FlowLayout: Layout {
   var spacing: CGFloat = 8
 

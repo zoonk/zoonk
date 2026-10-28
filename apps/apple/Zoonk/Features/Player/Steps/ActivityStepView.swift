@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// An `activity` screen: the prompt and the picture of the case, then the learner's turn: the
-/// template's canvas from its renderer (`ActivityRenderer`) and the check tied to it: options for
-/// `choice`, a number for `numeric`, the canvas's end state for `interaction`.
 struct ActivityStepView: View {
   @Environment(\.activityRenderers) private var activityRenderers
 
@@ -103,8 +100,8 @@ struct ActivityStepView: View {
   }
 }
 
-/// A number answer read with either decimal separator, as main reads it: the field keeps what the
-/// learner typed ("0," on the way to "0,17") and answers with the number it reads.
+/// The field keeps what the learner typed ("0," on the way to "0,17") and answers with the number it
+/// reads.
 private struct NumericAnswerField: View {
   @Environment(\.locale) private var locale
   @State private var typed: String?

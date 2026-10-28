@@ -1,16 +1,11 @@
 import Foundation
 
-/// The lesson in play. Every screen kind runs through it: the views read this state and report
-/// the learner's actions; network work happens outside and reports back through its methods.
+/// Network work happens outside and reports back through its methods.
 struct LessonPlayerState: Hashable, Sendable {
   enum Phase: Hashable, Sendable {
-    /// The screen takes an answer or a tap on Continue.
     case playing
-    /// A typed or spoken answer is with the server.
     case checking
-    /// The screen shows its verdict.
     case feedback
-    /// The last screen is done: the lesson is saving or saved.
     case completed
   }
 
@@ -44,20 +39,17 @@ struct LessonPlayerState: Hashable, Sendable {
     var testedOut = false
   }
 
-  /// "I already know this": the checks being asked, and where the lesson resumes if one is missed.
   struct QuickCheck: Hashable, Sendable {
     var missed = false
     let returnPosition: Int
     let returnQueue: [String]
   }
 
-  /// An answer missed, in a row since the last right one.
   struct Miss: Hashable, Sendable {
     let stepId: String
     let skillId: String?
   }
 
-  /// The lesson as it was before "Can't write now", for "Write again".
   struct WritingRestore: Hashable, Sendable {
     let position: Int
     let queue: [String]
@@ -89,7 +81,6 @@ struct LessonPlayerState: Hashable, Sendable {
   private(set) var results: [String: LessonStepResult] = [:]
   /// The first verdict on each answerable screen, which is what the lesson counts.
   private(set) var firstVerdicts: [String: Bool] = [:]
-  /// The screens with a first verdict, in the order the learner answered them.
   private(set) var answerOrder: [String] = []
   /// Questions already sent to the end of the lesson once.
   private(set) var retried: Set<String> = []
@@ -104,21 +95,17 @@ struct LessonPlayerState: Hashable, Sendable {
   private(set) var writingRestore: WritingRestore?
   /// Questions answered after "Explain first", so memory rates them as helped.
   private(set) var helped: Set<String> = []
-  /// Answers missed in a row since the last right one, oldest first.
   private(set) var misses: [Miss] = []
   private(set) var quickCheck: QuickCheck?
-  /// Where Hyperdrive stood when the run started, and the screens answered in earlier sittings,
-  /// which it leaves out: Hyperdrive never carries over from another day.
+  /// Hyperdrive never carries over from another day.
   private(set) var hyperdriveStart = LessonHyperdriveStart.none
   private(set) var carriedStepIds: Set<String> = []
   private(set) var notice: Notice?
-  /// The server couldn't grade the last typed or spoken answer; the learner can try again.
   private(set) var checkFailed = false
   /// Back on an answered screen with Previous: it shows its result again.
   private(set) var reviewing = false
   private(set) var completion: Completion?
   private(set) var stepStartedAt: Date
-  /// Answers graded on the device that the server hasn't accepted yet, by screen.
   private(set) var unsavedAnswers: [String: UnsavedAnswer] = [:]
 
   init(
@@ -134,8 +121,6 @@ struct LessonPlayerState: Hashable, Sendable {
     completion = lessonOrder.isEmpty ? Completion(status: .ready) : nil
     stepStartedAt = now
   }
-
-  // MARK: - Reading
 
   var currentStep: LessonStep? {
     position < queue.count ? steps[queue[position]] : nil
@@ -170,7 +155,6 @@ struct LessonPlayerState: Hashable, Sendable {
     phase == .playing && position > 0 && quickCheck == nil && !isRefused
   }
 
-  /// How far the learner is, from 0 to 1, for the progress bar.
   var progress: Double {
     guard !queue.isEmpty else {
       return 1
@@ -183,7 +167,6 @@ struct LessonPlayerState: Hashable, Sendable {
   var correctCount: Int { firstVerdicts.values.filter { $0 }.count }
   var answeredCount: Int { firstVerdicts.count }
 
-  /// "Quick check · 2 of 4" while "I already know this" asks its checks.
   var quickCheckProgress: (current: Int, total: Int)? {
     quickCheck.map { _ in (position + 1, queue.count) }
   }
@@ -205,9 +188,8 @@ struct LessonPlayerState: Hashable, Sendable {
     return !explanationsAfterCurrent.isEmpty
   }
 
-  /// Hyperdrive on a screen's result: the right answers in a row its first answer made, once
-  /// there are three or more, by the rule the server scores with. Nil for a wrong answer, a
-  /// repeat, a second try or a shorter streak.
+  /// By the rule the server scores with. Nil for a wrong answer, a repeat, a second try or a streak
+  /// under three.
   func hyperdriveStreak(for stepId: String) -> Int? {
     guard queue.firstIndex(of: stepId) == position else {
       return nil
@@ -266,8 +248,6 @@ struct LessonPlayerState: Hashable, Sendable {
     return (before ?? explanations.first { $0.0 > questionIndex })?.1
   }
 
-  // MARK: - The learner's actions
-
   mutating func select(_ answer: LessonAnswer?, for stepId: String) {
     guard phase == .playing else {
       return
@@ -276,7 +256,6 @@ struct LessonPlayerState: Hashable, Sendable {
     answers[stepId] = answer
   }
 
-  /// Continue: past a verdict, through a worked example or a challenge, or past a read screen.
   mutating func continueLesson(now: Date = .now) {
     if phase == .feedback {
       advance(now: now)
@@ -355,10 +334,8 @@ struct LessonPlayerState: Hashable, Sendable {
     addSkippedWriting([stepId])
   }
 
-  /// "Can't write now": the lesson's writing from here on is left out of this run, number
-  /// questions kept. The screen that takes its place says so and offers "Write again". A lesson
-  /// left with nothing to do as it opens (`opening`) waits for Finish, since only a learner's
-  /// action saves one.
+  /// Number questions are kept. A lesson left with nothing to do as it opens (`opening`) waits for
+  /// Finish, since only a learner's action saves one.
   mutating func skipWriting(opening: Bool = false, now: Date = .now) {
     guard phase == .playing else {
       return
@@ -381,7 +358,6 @@ struct LessonPlayerState: Hashable, Sendable {
     }
   }
 
-  /// "Write again" while the screen that says the writing was left out is still in view.
   mutating func restoreWriting(now: Date = .now) {
     guard let restore = writingRestore, notice == .writingSkipped, phase == .playing else {
       return
@@ -394,9 +370,6 @@ struct LessonPlayerState: Hashable, Sendable {
     enter(restore.position, now: now)
   }
 
-  // MARK: - Checking
-
-  /// A server-graded answer is on its way: the screen waits for the verdict.
   mutating func startChecking() {
     guard phase == .playing else {
       return
@@ -406,7 +379,6 @@ struct LessonPlayerState: Hashable, Sendable {
     phase = .checking
   }
 
-  /// The server didn't grade the answer: the learner can try again.
   mutating func failChecking() {
     guard phase == .checking else {
       return
@@ -504,17 +476,12 @@ struct LessonPlayerState: Hashable, Sendable {
     }
   }
 
-  // MARK: - Pictures
-
-  /// A question that can't be answered yet: its picture, or its options', is still being drawn.
   func isWaitingForPicture(_ step: LessonStep, openedAt: Date, now: Date = .now) -> Bool {
     step.isAnswerable && step.isWaitingForPicture(openedAt: openedAt, now: now)
   }
 
-  /// Once a picture's wait is over it isn't coming in this run: its screen stops waiting (a read
-  /// at the edge of the wait can still say it's pending), and a question about a numbered picture
-  /// that never came is left out, since nobody can tell which number is which (main's
-  /// `getLostNumberedScreens`).
+  /// A question about a numbered picture that never came is left out, since nobody can tell which
+  /// number is which (main's `getLostNumberedScreens`).
   mutating func leaveOutLostPictures(openedAt: Date, now: Date = .now) {
     for step in steps.values where step.imagePending {
       if !step.isWaitingForPicture(openedAt: openedAt, now: now) {
@@ -529,8 +496,6 @@ struct LessonPlayerState: Hashable, Sendable {
 
     skipSteps(lost.map(\.id), now: now)
   }
-
-  // MARK: - The run
 
   /// The run started. When it already holds answers the screen doesn't show (the learner came
   /// back to an open run), the lesson continues from them. Once the learner answered anything
@@ -596,7 +561,6 @@ struct LessonPlayerState: Hashable, Sendable {
     }
   }
 
-  /// Leaves out screens that can't be played after all: the rest goes on from where the learner is.
   mutating func skipSteps(_ stepIds: [String], now: Date = .now) {
     let added = stepIds.filter { steps[$0] != nil && !unavailableStepIds.contains($0) }
 
@@ -620,8 +584,6 @@ struct LessonPlayerState: Hashable, Sendable {
     leaveOutAhead({ unavailable.contains($0) }, completionStatus: .ready, now: now)
   }
 
-  /// Pictures drawn after the lesson opened (a fresh read of the lesson): a screen still waiting
-  /// for its picture, or its picture options', takes them.
   mutating func applyPictures(from fresh: [LessonStep]) {
     for step in fresh {
       guard let current = steps[step.id], current.imagePending else {
@@ -631,8 +593,6 @@ struct LessonPlayerState: Hashable, Sendable {
       steps[step.id] = current.withPictures(from: step)
     }
   }
-
-  // MARK: - Completion
 
   mutating func completionSaving() {
     completion?.status = .saving
@@ -646,8 +606,6 @@ struct LessonPlayerState: Hashable, Sendable {
   mutating func completionFailed() {
     completion?.status = .failed
   }
-
-  // MARK: - Flow
 
   private mutating func enter(_ newPosition: Int, now: Date) {
     let id = newPosition < queue.count ? queue[newPosition] : ""
@@ -674,8 +632,6 @@ struct LessonPlayerState: Hashable, Sendable {
     skippedWritingStepIds += stepIds.filter { !skippedWritingStepIds.contains($0) }
   }
 
-  /// Moves past the current screen: to the next one, back to the lesson after a missed quick
-  /// check, or to the end.
   private mutating func advance(now: Date) {
     if quickCheck?.missed == true {
       leaveQuickCheck(now: now)
@@ -716,8 +672,7 @@ struct LessonPlayerState: Hashable, Sendable {
     enter(check.returnPosition, now: now)
   }
 
-  /// Leaves out the screens from the one in view on that `isLeftOut` names: the rest goes on from
-  /// where the learner is, and a lesson with nothing left ends.
+  /// A lesson with nothing left ends.
   private mutating func leaveOutAhead(
     _ isLeftOut: (String) -> Bool, completionStatus: Completion.Status, now: Date
   ) {
@@ -788,7 +743,6 @@ struct LessonPlayerState: Hashable, Sendable {
     return []
   }
 
-  /// Every check not answered right yet, in lesson order, once each.
   private var quickCheckQueue: [String] {
     queue.reduce(into: [String]()) { checks, id in
       if steps[id]?.kind == .check, firstVerdicts[id] != true, !checks.contains(id) {
@@ -825,8 +779,6 @@ struct LessonPlayerState: Hashable, Sendable {
     a == nil || b == nil || a == b
   }
 
-  // MARK: - Resuming
-
   private static func verdicts(_ answers: [LessonRunAnswer]) -> [String: Bool] {
     var verdicts: [String: Bool] = [:]
 
@@ -837,7 +789,6 @@ struct LessonPlayerState: Hashable, Sendable {
     return verdicts
   }
 
-  /// The lesson from the top, before replaying a run's answers on it.
   private mutating func resetForResume() {
     let leftOut = unavailableStepIds + skippedWritingStepIds
     queue = Self.orderOpening(lessonOrder, steps: steps, support: support).filter {
@@ -927,7 +878,6 @@ struct LessonPlayerState: Hashable, Sendable {
 }
 
 extension LessonStep {
-  /// A question keyed to the numbers of its picture ("which number is the ovary?").
   var asksNumberedPicture: Bool {
     let description: LessonPictureDescription? =
       switch content {
@@ -951,7 +901,6 @@ extension LessonStep {
     }
   }
 
-  /// Screens that take an answer the run records (everything but reading and a hook).
   var isAnswerable: Bool {
     !isRead && kind != .hook
   }
@@ -961,12 +910,10 @@ extension LessonStep {
     kind == .check || kind == .activity
   }
 
-  /// The explanation of an idea, which a question about it may come before.
   var isExplaining: Bool {
     kind == .explanation || kind == .workedExample
   }
 
-  /// Questions that may come before their explanation, where "Explain first" helps.
   var isQuestion: Bool {
     kind == .activity || kind == .check || kind == .typedAnswer
   }
@@ -981,7 +928,6 @@ extension LessonStep {
     return !content.isNumberAnswer
   }
 
-  /// A wrong language answer the learner built gets a prompt to fix it before the answer shows.
   var canSelfCorrect: Bool {
     guard case .language(let exercise, _) = content else {
       return false
@@ -990,7 +936,6 @@ extension LessonStep {
     return [.fillBlank, .listening, .reading].contains(exercise.kind)
   }
 
-  /// Typed and spoken answers wait for the server's grade.
   func isServerGraded(_ answer: LessonAnswer) -> Bool {
     switch answer {
     case .typedAnswer, .spokenAnswer: true

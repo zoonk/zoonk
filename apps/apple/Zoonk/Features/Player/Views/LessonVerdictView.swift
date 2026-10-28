@@ -1,14 +1,10 @@
 import SwiftUI
 
-/// The feedback panel above the action bar: the verdict in a few words with its symbol and soft
-/// color, the right answer when missed, the why, and notes on what happens next.
 struct LessonVerdictView: View {
   let step: LessonStep
   let result: LessonStepResult
   let store: LessonPlayerStore
-  /// The question comes back at the end of the lesson.
   let willReturn: Bool
-  /// Hyperdrive's right answers in a row, once three or more.
   var hyperdriveStreak: Int?
 
   var body: some View {
@@ -83,7 +79,6 @@ struct LessonVerdictView: View {
     .accessibilityElement(children: .contain)
   }
 
-  /// The panel's faint last line: Hyperdrive, then what happens next.
   private var notes: Text {
     let streak = hyperdriveStreak.map {
       Text(
@@ -132,7 +127,7 @@ struct LessonVerdictView: View {
     let tint: Color
   }
 
-  /// Right reads in soft blue, wrong in soft pink; a hook's guess is never wrong.
+  /// A hook's guess is never wrong.
   private var verdict: Verdict {
     if result.isSampleAnswer {
       return Verdict(
@@ -203,7 +198,6 @@ private struct LabeledText: View {
   }
 }
 
-/// Which key points a typed answer stated, by meaning.
 private struct LessonKeyPointsView: View {
   let keyPoints: [LessonStepResult.KeyPoint]
 
@@ -237,7 +231,7 @@ private struct LessonKeyPointsView: View {
   }
 }
 
-/// "Explain my answer": why a wrong typed answer misses, written on the learner's tap.
+/// Written only on the learner's tap.
 private struct LessonExplainAnswerView: View {
   let step: LessonStep
   let store: LessonPlayerStore

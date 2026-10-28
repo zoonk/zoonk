@@ -1,15 +1,12 @@
 import Foundation
 
-/// A "can't do it now" choice ("I can't talk now", "Can't write now"), kept for the rest of the
-/// learner's day on this device, across lessons, until they take it back. The next day starts
-/// without it, as on main.
+/// Kept for the rest of the learner's day on this device, across lessons, until they take it back.
 struct LessonTodayChoices: Sendable {
   enum Choice: String, Sendable {
     case cantTalk = "zoonk:cant-talk-on"
     case cantWrite = "zoonk:cant-write-on"
   }
 
-  /// The learner's current day on this device, which a choice lasts.
   let today: @Sendable () -> String
   let read: @Sendable (Choice) -> String?
   let write: @Sendable (Choice, String?) -> Void
@@ -29,7 +26,6 @@ struct LessonTodayChoices: Sendable {
 }
 
 extension LessonStep {
-  /// An explanation with room for a personal example line.
   var hasExampleLineSlot: Bool {
     if case .explanation(let content) = content {
       return content.exampleLineSlot != nil

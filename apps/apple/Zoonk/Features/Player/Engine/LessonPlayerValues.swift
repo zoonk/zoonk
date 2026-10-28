@@ -1,6 +1,5 @@
 import Foundation
 
-/// The verdict on one screen as the learner sees it.
 struct LessonStepResult: Hashable, Sendable {
   struct Correction: Hashable, Sendable {
     let wrong: String
@@ -24,7 +23,6 @@ struct LessonStepResult: Hashable, Sendable {
   var score: Double?
   /// A typed answer right apart from a typo: the right spelling.
   var spelling: String?
-  /// A recording's words to say again.
   var wordsToPractice: [String] = []
   /// When the idea comes back, once the server recorded the answer.
   var nextReviewAt: Date?
@@ -52,7 +50,7 @@ struct LessonStepResult: Hashable, Sendable {
 }
 
 extension LessonStepResult {
-  /// A written screen's good answer, for "I don't know yet": it counts neither way.
+  /// It counts neither way.
   static func sampleAnswer(_ text: String) -> LessonStepResult {
     var result = LessonStepResult(
       isCorrect: false, answerText: nil, correctAnswer: nil, feedback: nil)
@@ -62,7 +60,6 @@ extension LessonStepResult {
   }
 }
 
-/// Where Hyperdrive stood when the run started: the session's streak and screens that are repeats.
 struct LessonHyperdriveStart: Hashable, Sendable {
   /// Screens answered right before this run: a right answer on them doesn't build Hyperdrive.
   let knownStepIds: Set<String>
@@ -72,14 +69,13 @@ struct LessonHyperdriveStart: Hashable, Sendable {
   static let none = LessonHyperdriveStart(knownStepIds: [], streak: 0)
 }
 
-/// An answer the server holds for an open run, oldest first.
+/// Oldest first.
 struct LessonRunAnswer: Hashable, Sendable {
   let stepId: String
   let isCorrect: Bool
   let answeredAt: Date
 }
 
-/// Why a lesson can't start or continue right now.
 enum LessonRunRefusal: Hashable, Sendable, Error {
   enum Tier: Hashable, Sendable {
     case guest, free, plus
@@ -98,7 +94,6 @@ enum LessonRunRefusal: Hashable, Sendable, Error {
   case slowDown(retryAfterSeconds: Int)
 }
 
-/// What a finished lesson earned, as the server counted it.
 struct LessonCompletionSummary: Hashable, Sendable {
   let brainPower: Int
   let totalBrainPower: Double
@@ -108,6 +103,5 @@ struct LessonCompletionSummary: Hashable, Sendable {
   let seconds: Int
   let isFirstCompletion: Bool
   let nextReviewAt: Date?
-  /// The belt level this lesson took the learner to, to celebrate.
   let reachedLevel: Int?
 }

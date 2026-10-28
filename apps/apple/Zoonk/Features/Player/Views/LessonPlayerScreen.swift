@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// What the player needs from the app: its API and the app's cache, whose shared write rule
-/// keeps every answer and completion with the session that made it.
 @MainActor
 final class LessonPlayerDependencies {
   let api: LessonPlayerAPI
@@ -30,12 +28,9 @@ final class LessonPlayerDependencies {
 }
 
 extension EnvironmentValues {
-  /// Set once at the app root from `AppDependencies`.
   @Entry var lessonPlayer: LessonPlayerDependencies?
 }
 
-/// A Library lesson, full screen: its screens one at a time, the check and its verdict, and the
-/// lesson's end. Presented as a task (`AppRoute.lesson`), with its own close button.
 struct LessonPlayerScreen: View {
   @Environment(\.lessonPlayer) private var player
 
@@ -247,7 +242,6 @@ private struct LessonPlayerContent: View {
     }
   }
 
-  /// The end of a guest's lesson: where it fits and "Build my plan". Nil for learners.
   private var guestEnding: LessonGuestEnding? {
     guard store.isGuest, store.studySessionId == nil, let lesson = store.lesson else {
       return nil
@@ -296,7 +290,6 @@ private struct LessonPlayerContent: View {
     }
   }
 
-  /// How far the learner is, while a lesson plays.
   private var progress: Double? {
     guard let state = store.state, store.screen == .playing, state.phase != .completed else {
       return nil
@@ -328,7 +321,6 @@ private struct LessonPlayerContent: View {
   }
 }
 
-/// The buddy's panel about the screen in view, beside the lesson or in a sheet.
 struct LessonAskPanel: View {
   @Environment(\.lessonTutor) private var tutor
 
@@ -347,8 +339,7 @@ struct LessonAskPanel: View {
   }
 }
 
-/// Whether the system shows the toolbar as a vertical bar beside the content (iPhone Duo), read
-/// inside the lesson's own navigation stack, whose bar it is.
+/// Read inside the lesson's own navigation stack, whose bar it is.
 private struct VerticalToolbarReader<Content: View>: View {
   @Environment(\.isToolbarVertical) private var isToolbarVertical
   @ViewBuilder let content: (Bool) -> Content

@@ -1,21 +1,10 @@
 import SwiftUI
 
-/// The two halves of a screen. On a spread (two pages either side of the fold on the open iPhone
-/// Duo, iPad, a phone in landscape) the screen is the leading page and the learner's turn the
-/// trailing one, above the action bar; one column shows the screen, then the turn.
 enum LessonStepPart {
-  /// What the screen says: its question or title, teaching text, worked example, and the picture
-  /// or visual a question asks about.
   case screen
-  /// What the learner does: options, a field, a canvas, a recorder, the ways out. On a screen with
-  /// nothing to answer, its picture, visual or canvas to explore.
   case turn
 }
 
-/// Renders one part of a screen by its kind. Screens report the learner's answer to the store; the
-/// verdict and the next action live in the action bar. The parts are separate views, so state they
-/// share lives in the store, and what the learner does lives in the turn, which keeps its place
-/// when the stage switches between one column and a spread.
 struct LessonStepView: View {
   let step: LessonStep
   let state: LessonPlayerState
@@ -72,11 +61,8 @@ struct LessonStepView: View {
   }
 }
 
-/// What a screen reads and reports: its answer (kept in the player's state), its verdict, and
-/// whether it still takes changes.
 struct LessonStepContext {
   let lessonId: String
-  /// The study session the lesson is a block of, if any.
   let studySessionId: String?
   let answer: LessonAnswer?
   let result: LessonStepResult?
@@ -84,8 +70,6 @@ struct LessonStepContext {
   let select: @MainActor (LessonAnswer?) -> Void
   let resolveSpoken: @MainActor (SpokenAnswerVerdict) -> Void
 }
-
-// MARK: - Teaching screens
 
 private struct HookStepView: View {
   let step: LessonStep
@@ -313,7 +297,6 @@ private struct TypedAnswerStepView: View {
   }
 }
 
-/// A written answer, several lines, in a rounded field.
 struct LessonAnswerField: View {
   let text: String
   let isLocked: Bool
@@ -336,10 +319,7 @@ struct LessonAnswerField: View {
   }
 }
 
-/// How a spoken screen is answered now, as main's `getAnswerMode` decides: out loud by default;
-/// "I can't talk now" plays it as listening when the screen has a listening version, or as
-/// typing when it doesn't; typing also covers a microphone that's off. Every spoken screen keeps
-/// a way to answer.
+/// Mirrors main's `getAnswerMode`. Every spoken screen keeps a way to answer.
 enum SpokenAnswerMode: Equatable {
   case speak
   case listen
@@ -454,8 +434,7 @@ private struct SpokenAnswerStepView: View {
     modeSwitch
   }
 
-  /// "I can't talk now" while speaking; "I can talk now" or "Say it instead" otherwise. An answer
-  /// started one way doesn't carry over, and asking to speak tries the microphone again.
+  /// An answer started one way doesn't carry over, and asking to speak tries the microphone again.
   @ViewBuilder
   private var modeSwitch: some View {
     if !context.isLocked, recording.input != nil {
@@ -511,7 +490,6 @@ private struct SummaryStepView: View {
   }
 }
 
-/// A screen's drawn picture and its chart or timeline.
 struct StepMedia: View {
   let step: LessonStep
   let description: LessonPictureDescription?

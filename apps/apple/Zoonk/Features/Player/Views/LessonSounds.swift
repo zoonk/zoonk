@@ -1,8 +1,6 @@
 import AVFoundation
 
-/// A soft chime for a right answer and a short rising one for finishing a lesson, synthesized as
-/// main does (E5 and A5, then a C major arpeggio), so no audio files ship. It follows the
-/// Ring/Silent switch and mixes with other audio.
+/// Synthesized as main does, so no audio files ship.
 @MainActor
 final class LessonSounds {
   enum Sound {

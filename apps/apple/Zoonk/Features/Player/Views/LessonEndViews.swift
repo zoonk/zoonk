@@ -1,14 +1,10 @@
 import SwiftUI
 
-/// The quick moment at the end of a lesson: the title, the score and the Brain Power earned, when
-/// the idea comes back, the belt level it reached, then the way on. On a spread it's the leading
-/// page, and the way on stays on the trailing one, where Continue sat through the lesson.
 struct LessonCompletionView: View {
   let completion: LessonPlayerState.Completion
   let correct: Int
   let answered: Int
   let soundsEnabled: Bool
-  /// A guest's lesson ends with where it fits and "Build my plan".
   var guestEnding: LessonGuestEnding?
   let finish: () -> Void
   let close: () -> Void
@@ -179,8 +175,7 @@ struct LessonCompletionView: View {
   }
 }
 
-/// When a lesson can't start: a calm wait for fair use, a sign-up for a guest who used their
-/// lessons, Plus for a free learner, or a retry when the connection failed. Never a dead end.
+/// Never a dead end.
 struct LessonUnavailableView: View {
   @Environment(\.dismiss) private var dismiss
 
@@ -314,15 +309,11 @@ struct LessonUnavailableView: View {
   }
 }
 
-/// What a guest's lesson ends with: the lesson's title (onboarding starts from it outside a course)
-/// and where it fits, once read.
 struct LessonGuestEnding: Hashable {
   let lessonTitle: String
   let fit: LessonFit?
 }
 
-/// Where a guest's lesson fits, and two ways on: "Build my plan" starts a plan from the lesson's
-/// course without typing it again, and an account keeps the lesson and its review.
 private struct LessonGuestEndingView: View {
   @Environment(\.lessonPlayerRoutes) private var routes
 
@@ -415,7 +406,6 @@ private struct LessonGuestEndingView: View {
   }
 }
 
-/// The lesson's summary card, one tap away in the menu once the lesson is done.
 struct LessonSummarySheet: View {
   @Environment(\.dismiss) private var dismiss
 
@@ -456,7 +446,6 @@ private struct SignUpButton: View {
   }
 }
 
-/// The learner's small AI help is used up or needs a break.
 struct LessonHelpLimitNote: View {
   let refusal: LessonRunRefusal
 
@@ -487,7 +476,7 @@ struct LessonHelpLimitNote: View {
   }
 }
 
-/// A lesson still being written: the learner asks for it (it runs AI), or waits while it's written.
+/// Only the learner asks for the lesson to be written: it runs AI.
 struct LessonWaitingView: View {
   let outline: LessonOutline
   let writing: LessonPlayerStore.LessonWriting
@@ -556,7 +545,6 @@ struct LessonWaitingView: View {
   }
 }
 
-/// A visitor opening a public lesson: its screens need a session, a guest's included.
 struct LessonGuestGateView: View {
   @Environment(\.lessonGuestStart) private var guestStart
   @Environment(\.lessonPlayerRoutes) private var routes
@@ -603,20 +591,16 @@ struct LessonGuestGateView: View {
   }
 }
 
-/// Where the player's links go, supplied by the app's navigation.
 struct LessonPlayerRoutes: Sendable {
-  /// Sign in or create an account.
   let signIn: @MainActor @Sendable () -> Void
   /// "Build my plan" after a guest's lesson: the lesson's course as their goal, from its chapter
   /// when that's where they began (`chapterId`), else from the course's start (`.courseStart`).
   let startCourse: @MainActor @Sendable (_ courseId: String, _ chapterId: String?) -> Void
-  /// "Build my plan" for a lesson in no public course: onboarding with its subject filled in.
   let startGoal: @MainActor @Sendable (_ goal: String) -> Void
 
   static let none = LessonPlayerRoutes(signIn: {}, startCourse: { _, _ in }, startGoal: { _ in })
 }
 
 extension EnvironmentValues {
-  /// Set at the app root to the shell's subscription and sign-in sheets.
   @Entry var lessonPlayerRoutes: LessonPlayerRoutes = .none
 }

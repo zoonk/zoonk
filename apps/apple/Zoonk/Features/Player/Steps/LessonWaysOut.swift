@@ -1,8 +1,5 @@
 import SwiftUI
 
-/// A question's quiet ways out, each saying what it does: "Explain first" when the explanation is
-/// still ahead (the question comes back after it); on a written answer otherwise "I don't know
-/// yet" (a good answer shows, no verdict), and "Can't write now" (no writing for the rest of today).
 struct LessonWaysOut: View {
   let state: LessonPlayerState
   let store: LessonPlayerStore
@@ -60,8 +57,6 @@ struct LessonWaysOut: View {
   }
 }
 
-/// The personal example under an explanation: one sentence about the learner's own life, set apart
-/// by a rule on its leading edge. It simply appears once it's there.
 struct LessonExampleLine: View {
   let line: String?
 
@@ -85,9 +80,7 @@ struct LessonExampleLine: View {
   }
 }
 
-/// A calm offer to ask the buddy when the learner seems stuck: after two misses in a row on the
-/// same idea, or a long pause on an explanation. "Ask" opens the Ask panel with "Explain it more
-/// simply" ready to send; "No thanks" puts it away. Without the Ask panel there's nothing to offer.
+/// After two misses in a row on the same idea, or a long pause on an explanation.
 struct LessonAskBuddyOffer: View {
   enum Reason {
     case misses, pause
@@ -165,8 +158,6 @@ struct LessonAskBuddyOffer: View {
   }
 }
 
-/// The offer on an explanation the learner has stayed on far past its reading time (three times
-/// it, at least 45 seconds) without touching anything while the app is in front.
 struct LessonPauseOffer: View {
   @Environment(\.scenePhase) private var scenePhase
   @State private var isStuck = false

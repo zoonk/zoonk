@@ -1,10 +1,7 @@
 import SwiftUI
 import UIKit
 
-/// Typesets the LaTeX lessons write (main draws it with KaTeX) as text: variables in italics,
-/// exponents raised and indices lowered in a smaller size, fractions as a raised numerator over a
-/// fraction slash and a lowered denominator, roots, `\text{}` upright, `\underline{}` underlined,
-/// and symbols as their characters. It stays text, so it wraps, scales with Dynamic Type and reads aloud.
+/// It stays text, so it wraps, scales with Dynamic Type and reads aloud.
 enum LessonMath {
   static func attributed(_ latex: String) -> AttributedString {
     var parser = Parser(source: Array(latex))
@@ -14,7 +11,6 @@ enum LessonMath {
   fileprivate enum Style {
     case normal, superscript, `subscript`
 
-    /// How far a raised or lowered run sits from the baseline, scaled with Dynamic Type.
     var baselineOffset: CGFloat {
       let offset = UIFontMetrics(forTextStyle: .body).scaledValue(for: 6)
 
@@ -84,7 +80,6 @@ enum LessonMath {
       return space + piece + space
     }
 
-    /// The group or single token after `^` or `_`.
     private mutating func script(style: Style) -> AttributedString {
       guard index < source.count else {
         return AttributedString()
@@ -104,7 +99,6 @@ enum LessonMath {
       return run(String(character), style: style, italic: character.isLetter)
     }
 
-    /// A `{…}` argument, or the next single token.
     private mutating func argument(style: Style) -> AttributedString {
       while index < source.count, source[index] == " " {
         index += 1
@@ -113,7 +107,6 @@ enum LessonMath {
       return script(style: style)
     }
 
-    /// A `{…}` argument read as plain text (`\text{…}`).
     private mutating func textArgument() -> String {
       guard index < source.count, source[index] == "{" else {
         return ""
@@ -192,7 +185,6 @@ enum LessonMath {
       }
     }
 
-    /// Text at the surrounding size; an exponent or index a step smaller, off the baseline.
     private func run(_ text: String, style: Style, italic: Bool) -> AttributedString {
       var run = AttributedString(text)
 

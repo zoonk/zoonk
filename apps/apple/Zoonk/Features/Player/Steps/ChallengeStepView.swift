@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// A team challenge: the case's intro, then one decision at a time with the team's messages and
-/// replies and the meters it moves, then how it went. The team's names fill `{{slotId}}`. The
-/// learner's turn is the decision's choices, then the debrief.
+/// The team's names fill `{{slotId}}`.
 struct ChallengeStepView: View {
   let step: LessonStep
   let content: ChallengeContent
@@ -252,7 +250,6 @@ struct ChallengeStepView: View {
     .background(tint.opacity(0.15), in: .rect(cornerRadius: 20))
   }
 
-  /// A team slot's name: the learner's team member for that slot, or the slot's role.
   private func name(for slotId: String) -> String {
     let people = content.team.filter { !$0.ai }
 

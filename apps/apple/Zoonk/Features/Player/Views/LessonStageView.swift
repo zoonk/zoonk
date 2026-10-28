@@ -1,15 +1,5 @@
 import SwiftUI
 
-/// One screen of the lesson, its verdict or "fix it" note once checked (scrolled into view, so the
-/// bar stays small at large text sizes), and the action bar pinned at the bottom with the one next
-/// action (Check, Continue, ...) and Previous.
-///
-/// Where each half gets a phone-width column (the open iPhone Duo, iPad, a phone in landscape) the
-/// screen is a spread, by `PaneSpace`'s rule: the screen on the leading page, the learner's turn on
-/// the trailing one with the action bar at its bottom, so the bar never moves from one screen to
-/// the next; partially folded like a book, the pages meet at the fold. Elsewhere it's one column:
-/// the screen, then the turn. The trailing page is the same view in both, so what the learner is
-/// doing (a canvas, a recording, a field) carries through a fold, an unfold or a rotation.
 struct LessonStageView: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
@@ -149,8 +139,6 @@ struct LessonStageView: View {
   }
 }
 
-/// One page of the stage: a column of the screen's parts that scrolls on its own, as wide as a
-/// readable line.
 private struct LessonPage<Content: View>: View {
   let store: LessonPlayerStore
   @ViewBuilder let content: Content
@@ -172,8 +160,7 @@ private struct LessonPage<Content: View>: View {
   }
 }
 
-/// What a screen notes under itself: the learner's own example of the idea, once written, and where
-/// it comes from. Last, so a line arriving after the screen shows moves nothing.
+/// Last, so a line arriving after the screen shows moves nothing.
 private struct LessonStepNotes: View {
   let step: LessonStep
   let store: LessonPlayerStore
@@ -187,8 +174,6 @@ private struct LessonStepNotes: View {
   }
 }
 
-/// Under a checked screen with no verdict yet: a language answer to fix once, or a check the
-/// server couldn't make.
 private struct LessonCheckNote: View {
   let state: LessonPlayerState
 
@@ -216,8 +201,7 @@ private struct LessonCheckNote: View {
   }
 }
 
-/// The task's action bar: Previous and the one next action. Return does what the main button says,
-/// as on main.
+/// Return does what the main button says, as on main.
 struct LessonActionBar: View {
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -393,14 +377,11 @@ struct LessonActionBar: View {
 }
 
 extension LessonStep {
-  /// Screens that show their own verdict: activities, challenges and match columns.
   var showsOwnResult: Bool {
     kind == .challenge || kind == .matchColumns
   }
 }
 
-/// "I know this" in progress, an answer that didn't save, or writing left out for the rest of the
-/// day, above the screen.
 private struct LessonNotice: View {
   let state: LessonPlayerState
   let store: LessonPlayerStore

@@ -1,7 +1,6 @@
 import Foundation
 
-/// Where a challenge's picks lead, walked the way core's `walkChallenge` does, so the device and
-/// the server agree on where a path ends.
+/// Mirrors core's `walkChallenge`, so the device and the server agree on where a path ends.
 enum ChallengeWalk: Hashable, Sendable {
   struct Decision: Hashable, Sendable {
     let node: ChallengeContent.Node

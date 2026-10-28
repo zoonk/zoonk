@@ -1,8 +1,6 @@
 import Charts
 import SwiftUI
 
-/// Lesson text: bold, italics and code from its Markdown, and formulas between dollar signs set in
-/// a monospaced run with their common symbols ("0.75 × 80 = 60").
 struct LessonRichText: View {
   let text: String
 
@@ -14,7 +12,6 @@ struct LessonRichText: View {
     Text(Self.attributed(text))
   }
 
-  /// Markdown for the words, typeset math for what's between dollar signs.
   static func attributed(_ text: String) -> AttributedString {
     // An escaped dollar is a price, never the edge of a formula.
     let escaped = text.replacingOccurrences(of: "\\$", with: dollarPlaceholder)
@@ -50,8 +47,6 @@ struct LessonRichText: View {
   }
 }
 
-/// A screen's reading text: paragraphs, short lists and tables of data, each line read as
-/// `LessonRichText` reads it (main's `LessonBody`).
 struct LessonTextBlocks: View {
   let text: String
 
@@ -64,7 +59,6 @@ struct LessonTextBlocks: View {
   }
 }
 
-/// A screen's title, question or prompt.
 struct LessonQuestionText: View {
   let text: String
 
@@ -76,7 +70,6 @@ struct LessonQuestionText: View {
   }
 }
 
-/// A screen's picture once drawn; while it's drawn, or when it can't load, its description.
 struct LessonPictureView: View {
   @Environment(\.privateImageLoader) private var privateImages
   @Environment(SessionStore.self) private var session
@@ -151,7 +144,6 @@ private struct LessonPrivatePicture: View {
   }
 }
 
-/// A chart or a timeline drawn from a screen's data.
 struct LessonVisualView: View {
   let visual: LessonVisual
 
@@ -248,7 +240,6 @@ private struct LessonTimelineView: View {
   }
 }
 
-/// Where a screen comes from, quietly under it.
 struct LessonCitationView: View {
   let citation: LessonCitation
 

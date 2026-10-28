@@ -7,12 +7,10 @@ struct LessonOption: Identifiable, Hashable {
   var isCorrect: Bool?
   /// A picture option's description, shown with its text until its picture is drawn.
   var pictureAlt: String?
-  /// A picture option's drawn picture.
   var picture: LessonStepImage?
 }
 
-/// A question's options, one per row. Number keys pick them on a hardware keyboard, as on main.
-/// After the check, the right option reads in soft blue and a wrong pick in soft pink.
+/// Number keys pick them on a hardware keyboard, as on main.
 struct LessonOptionList: View {
   let options: [LessonOption]
   let selectedId: String?
@@ -24,7 +22,6 @@ struct LessonOptionList: View {
   var picturesPending = false
   let select: (String) -> Void
 
-  /// Options with pictures sit in a grid, a picture over each one's words, as on main.
   private var isPictureGrid: Bool {
     options.contains { $0.pictureAlt != nil }
   }
@@ -77,7 +74,6 @@ struct LessonOptionList: View {
     }
   }
 
-  /// The option's picture, a placeholder while it's drawn, or its description when it can't be.
   private func pictureLabel(_ option: LessonOption) -> some View {
     VStack(spacing: 8) {
       Group {
@@ -124,7 +120,6 @@ struct LessonOptionList: View {
     }
   }
 
-  /// After the check, VoiceOver says which option was right and which one the learner picked.
   private func verdictValue(_ option: LessonOption) -> Text {
     switch mark(option) {
     case .right:
@@ -157,7 +152,6 @@ struct LessonOptionList: View {
   }
 }
 
-/// 1–9 pick an option with a hardware keyboard.
 private struct NumberShortcut: ViewModifier {
   let index: Int
 
@@ -170,7 +164,6 @@ private struct NumberShortcut: ViewModifier {
   }
 }
 
-/// An option card: the plain secondary fill, the tint when picked, and the verdict's soft color.
 struct LessonOptionStyle: ButtonStyle {
   enum Mark {
     case plain, selected, right, wrong, dimmed
@@ -229,7 +222,6 @@ struct LessonOptionStyle: ButtonStyle {
   }
 }
 
-/// A word tile in a word bank, picked into an answer.
 struct LessonWordTile: View {
   let word: String
   var romanization: String?
