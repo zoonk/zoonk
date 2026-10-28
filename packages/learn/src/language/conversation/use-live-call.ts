@@ -311,8 +311,7 @@ export function useLiveCall({
 
       sessionRef.current = created;
       setSession(created);
-      // Failures come through the session's state (`watchConnection`); connect only rejects when
-      // called twice.
+      // Failures arrive via the session's state (`watchConnection`); only a second connect rejects.
       void created.connect({ stream: audio.stream }).catch(() => null);
     },
     [endedByServer, fail, handleEvent, hangUp, keepAudio, phaseRef, reserve, setPhase, tappedAudio],

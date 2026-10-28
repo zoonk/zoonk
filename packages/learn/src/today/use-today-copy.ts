@@ -41,8 +41,7 @@ export function useFreshStartText(): string | null {
 
   switch (freshStart) {
     case "welcomeBack":
-      // A free exam plan past its first week is shorter for what Plus holds, not lighter for the
-      // break.
+      // Past a free exam plan's first week, it's shorter for what Plus holds, not the break.
       return today.session.examAccess.trialEnded
         ? t("Welcome back! Today takes about {time}, so it's easy to pick up again.", { time })
         : t("Welcome back! Today is lighter, about {time}, so it's easy to pick up again.", {

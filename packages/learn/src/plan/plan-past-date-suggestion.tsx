@@ -68,8 +68,7 @@ export function PastDateSuggestion({ item }: { item: Extract<SlotItem, { kind: "
   const { apply, failed, isPending } = useApplyPreview(item);
   const [operations, setOperations] = useState<LearnerPlanOperation[] | null>(null);
   const [search, setSearch] = useState<DateSearch>(null);
-  // The search the learner still waits for (0 for none), so one put off or superseded shows
-  // nothing.
+  // The search the learner waits for (0 for none), so one put off or superseded shows nothing.
   const waiting = useRef(0);
   const asked = useRef(0);
   const isExam = goal.kind === "exam";

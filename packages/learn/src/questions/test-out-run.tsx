@@ -289,8 +289,7 @@ export function TestOutRun({
       const requestId = draftKey ? keepDraftRequestId({ fallback: ownId, key: draftKey }) : ownId;
       const graded = await onSubmit({ answers, requestId }).catch(() => null);
 
-      // Only graded answers clear the draft and the test's id, so a failed send is retried as the
-      // same test.
+      // Only graded answers clear the draft and its id, so a failed send retries as the same test.
       if (graded && draftKey) {
         clearAnswerDraft(draftKey);
       }

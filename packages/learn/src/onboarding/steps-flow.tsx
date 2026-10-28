@@ -76,8 +76,7 @@ export function StepsFlow({
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
 
-  // The page's plan is current only when it opened on the plan; after the steps, the reveal reads
-  // it fresh.
+  // Current only when the page opened on the plan; after the steps the reveal reads it fresh.
   const pagePlan = (onboarding.steps[0] ?? "plan") === "plan" ? initialPlan : null;
 
   const [state, setState] = useState<FlowState>(() => ({
@@ -105,8 +104,7 @@ export function StepsFlow({
     startTransition(async () => {
       setFailed(false);
 
-      // A save that fails, even by throwing, keeps the learner on this screen with what they
-      // picked.
+      // A save that fails, even by throwing, keeps the learner here with what they picked.
       const { data: outcome } = await safeAsync(() =>
         actions.answer({ goalId: state.view.goal.id, input }),
       );
@@ -166,8 +164,7 @@ export function StepsFlow({
                 total={progress.total}
               />
             ),
-            // Changing the answers now happens in "Adjust", not by going back through the
-            // questions.
+            // Answers change in "Adjust" now, not by going back through the questions.
             onBack: state.history.length > 0 && !isPlan ? back : undefined,
           }}
           notice={failed && <ChangeSaveError />}

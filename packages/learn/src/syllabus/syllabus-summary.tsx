@@ -114,8 +114,7 @@ function useSummaryLines({
     };
   }
 
-  // The learner's material is never called a notice; one that lists only headings counts those as
-  // its topics.
+  // Material is never called a notice; one that lists only headings counts them as its topics.
   if (syllabus.fromMaterial) {
     const title = t(
       "{count, plural, one {# topic from your material} other {# topics from your material}}",
