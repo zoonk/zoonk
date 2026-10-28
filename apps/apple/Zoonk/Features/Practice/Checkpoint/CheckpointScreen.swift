@@ -356,30 +356,25 @@ private struct CheckpointResultView: View {
             detail: CheckpointCopy.resultDetail(
               kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons),
             correct: correct, total: total,
-            brainPower: state.completion?.brainPower ?? 0,
+            // A win's Brain Power is its rewards' first row, as on main.
+            brainPower: passed ? 0 : state.completion?.brainPower ?? 0,
             reached: PracticeReached(
               energy: state.completion?.reached.energy,
               level: state.completion?.reached.level.map {
                 .init(color: $0.color.rawValue, level: $0.level)
               }))
 
-          if passed, let next = checkpoint.nextPhase?.value1 {
+          if passed {
+            CheckpointRewards(
+              checkpoint: checkpoint,
+              brainPower: state.completion?.brainPower ?? checkpoint.reward.brainPower)
+          } else if let next = checkpoint.nextPhase?.value1 {
             Label {
               Text(
                 "The next phase, \(next.name), is already open.", tableName: "Practice",
-                comment: "After a won phase challenge.")
+                comment: "After a phase challenge not won: the plan goes on.")
             } icon: {
-              Image(systemName: "arrow.forward.circle")
-            }
-          }
-
-          if passed, checkpoint.reward.badge {
-            Label {
-              Text(
-                "Trap hunter badge", tableName: "Practice",
-                comment: "Reward of a won phase challenge.")
-            } icon: {
-              Image(systemName: "rosette")
+              Image(systemName: "arrow.forward")
             }
           }
 
@@ -399,6 +394,74 @@ private struct CheckpointResultView: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Continue", table: "Practice", comment: "Moves on after a grade."), action: close)
+      }
+    }
+  }
+}
+
+/// What a won checkpoint earned (its Brain Power, the phase it checks off, the "Trap hunter"
+/// badge), then the phase that comes next, by its name, as main lists them.
+private struct CheckpointRewards: View {
+  let checkpoint: Components.Schemas.Checkpoint
+  let brainPower: Int
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      Text("Rewards", tableName: "Practice", comment: "Heading over what a won challenge earned.")
+        .font(.headline)
+
+      LabeledContent {
+        Text("+\(brainPower)", tableName: "Practice", comment: "Brain Power a challenge added.")
+          .monospacedDigit()
+          .foregroundStyle(.brain)
+      } label: {
+        Label {
+          Text("Brain Power", tableName: "Practice", comment: "A challenge's Brain Power reward.")
+        } icon: {
+          Image(systemName: "brain")
+        }
+      }
+
+      if checkpoint.reward.phaseComplete {
+        Label {
+          if let phase = checkpoint.phase?.value1 {
+            Text(
+              "Phase \(phase.index + 1) complete", tableName: "Practice",
+              comment: "Reward of a won phase challenge: its phase is done.")
+          } else {
+            Text(
+              "Phase complete", tableName: "Practice",
+              comment: "Reward of a won phase challenge: its phase is done.")
+          }
+        } icon: {
+          Image(systemName: "flag")
+        }
+      }
+
+      if checkpoint.reward.badge {
+        Label {
+          Text(
+            "Trap hunter badge", tableName: "Practice",
+            comment: "Reward of a won phase challenge.")
+        } icon: {
+          Image(systemName: "rosette")
+        }
+      }
+
+      if checkpoint.reward.phaseComplete, checkpoint.kind != .weekly,
+        let next = checkpoint.nextPhase?.value1
+      {
+        Text(
+          "Next phase", tableName: "Practice", comment: "Heading over the phase that comes next."
+        )
+        .font(.headline)
+        .padding(.top, 8)
+
+        Label {
+          Text(next.name)
+        } icon: {
+          Image(systemName: "arrow.forward")
+        }
       }
     }
   }
@@ -486,11 +549,7 @@ enum CheckpointCopy {
   {
     if kind == .weekly { return nil }
 
-    if passed {
-      return LocalizedStringResource(
-        "His shield is broken. You won!", table: "Practice",
-        comment: "A won phase challenge's line.")
-    }
+    if passed { return nil }
 
     return lessons == 0
       ? LocalizedStringResource(

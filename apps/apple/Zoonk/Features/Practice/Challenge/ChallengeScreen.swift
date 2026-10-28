@@ -59,34 +59,45 @@ struct ChallengeScreen: View {
   // MARK: Intro
 
   private func intro(_ challenge: Components.Schemas.Challenge) -> some View {
-    PracticeTaskLayout {
+    // Once beaten, the Trickster's checkpoint says how it went, never the rules of a duel already
+    // played, as on main.
+    let won = isTrickster(challenge) && challenge.status == .done
+
+    return PracticeTaskLayout {
       // A phase's challenge is the Trickster's, smug with his sign until he's beaten. A mock, a
       // call or the week's challenge has no art.
-      if challenge.kind != .weekly, !challenge.mock, challenge.call == nil {
-        TricksterCharacter(beaten: challenge.status == .done, reacts: challenge.status != .done)
+      if isTrickster(challenge) {
+        TricksterCharacter(beaten: won, reacts: !won)
           .frame(width: 112, height: 112)
       }
 
       VStack(alignment: .leading, spacing: 8) {
-        if let phase = challenge.phase?.value1, challenge.kind != .weekly {
-          Text(
-            "Phase \(phase.index + 1)", tableName: "Practice",
-            comment: "Eyebrow naming a phase challenge's phase."
-          )
-          .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
+        if let eyebrow = eyebrow(challenge) {
+          Text(eyebrow)
+            .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
         }
 
         Text(title(challenge)).font(.largeTitle.bold())
-        Text(description(challenge)).foregroundStyle(.secondary)
 
-        if !facts(challenge).isEmpty {
-          Text(facts(challenge).joined(separator: " · "))
-            .font(.subheadline.monospacedDigit())
-            .foregroundStyle(.secondary)
+        if won, let result = challenge.result {
+          Text(
+            "\(result.correct) of \(result.total) right", tableName: "Practice",
+            comment: "How a won challenge went, as in “8 of 10 right”."
+          )
+          .font(.subheadline.monospacedDigit())
+          .foregroundStyle(.secondary)
+        } else {
+          Text(description(challenge)).foregroundStyle(.secondary)
+
+          if !facts(challenge).isEmpty {
+            Text(facts(challenge).joined(separator: " · "))
+              .font(.subheadline.monospacedDigit())
+              .foregroundStyle(.secondary)
+          }
         }
       }
 
-      if let result = challenge.result, challenge.status == .done {
+      if let result = challenge.result, challenge.status == .done, !won {
         Label {
           Text(
             result.passed
@@ -130,7 +141,7 @@ struct ChallengeScreen: View {
         }
       }
 
-      if challenge.reward.brainPower > 0 {
+      if challenge.reward.brainPower > 0, !won {
         Label {
           Text(
             "+\(challenge.reward.brainPower) Brain Power", tableName: "Practice",
@@ -286,10 +297,58 @@ struct ChallengeScreen: View {
 
   // MARK: Copy
 
+  /// A phase's or the final checkpoint played as a duel: not a mock, a call or the week's.
+  private func isTrickster(_ challenge: Components.Schemas.Challenge) -> Bool {
+    challenge.kind != .weekly && !challenge.mock && challenge.call == nil
+  }
+
+  /// Which checkpoint it is, over the Trickster's title: "Phase 2 challenge", "Final challenge",
+  /// with "New try" on a rematch. Other challenges name themselves in their title.
+  private func eyebrow(_ challenge: Components.Schemas.Challenge) -> String? {
+    let phase = challenge.phase.map { $0.value1.index + 1 }
+
+    guard isTrickster(challenge) else {
+      return phase.map {
+        String(
+          localized: "Phase \($0)", table: "Practice",
+          comment: "Eyebrow naming a phase challenge's phase.")
+      }
+    }
+
+    let name =
+      if challenge.kind == .finalBoss {
+        String(
+          localized: "Final challenge", table: "Practice",
+          comment: "Title of the final challenge block.")
+      } else if let phase {
+        String(
+          localized: "Phase \(phase) challenge", table: "Practice",
+          comment: "Eyebrow naming a phase's checkpoint, as in “Phase 2 challenge”.")
+      } else {
+        String(
+          localized: "Phase challenge", table: "Practice",
+          comment: "Title of a phase challenge block.")
+      }
+
+    return challenge.rematch
+      ? String(
+        localized: "New try · \(name)", table: "Practice",
+        comment: "Eyebrow of a lost checkpoint's rematch; the argument names the checkpoint.")
+      : name
+  }
+
   private func title(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource {
     if challenge.mock, let number = challenge.number {
       return LocalizedStringResource(
         "Mock exam \(number)", table: "Practice", comment: "Title of a numbered mock exam.")
+    }
+
+    if isTrickster(challenge) {
+      return challenge.status == .done
+        ? LocalizedStringResource(
+          "You beat the Trickster!", table: "Practice", comment: "A won phase challenge.")
+        : LocalizedStringResource(
+          "The Trickster", table: "Practice", comment: "Title of a phase or final checkpoint duel.")
     }
 
     switch challenge.kind {
