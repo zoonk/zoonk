@@ -13,6 +13,15 @@ final class StudySessionStore {
   @ObservationIgnored private var summaries: [String: Resource<SessionSummary>] = [:]
   @ObservationIgnored private var recaps: [String: Resource<WeeklyRecap>] = [:]
 
+  /// The question block the session screen plays now, set by the tap that opened it.
+  private(set) var playingBlockID: String?
+  /// What the block just finished on the session screen earned, until the next one opens.
+  private(set) var moment: BlockMoment?
+  /// The session the learner stopped for today, whose summary shows what's done so far.
+  private(set) var stoppedSessionID: String?
+  /// Ceremonies already shown here, so a milestone a block and the summary both carry shows once.
+  @ObservationIgnored private var shownCeremonies: Set<String> = []
+
   init(api: any StudyAPIClient, cache: AppCache) {
     self.api = api
     self.cache = cache
@@ -86,6 +95,8 @@ final class StudySessionStore {
 
     do {
       try await api.stop(token: token, sessionID: sessionID, timeZone: TimeZone.current.identifier)
+      playingBlockID = nil
+      stoppedSessionID = sessionID
       cache.invalidate([.userSession, .userProgress])
       return true
     } catch {
@@ -93,10 +104,29 @@ final class StudySessionStore {
     }
   }
 
-  /// The day moved on the session screen (a block finished there or over it): Today, the
-  /// learner's summary and their progress read again.
-  func dayMoved() {
-    cache.invalidate([.userProgress, .userSession])
+  /// Plays a question block on the session screen.
+  func play(blockID: String) {
+    playingBlockID = blockID
+    moment = nil
+    stoppedSessionID = nil
+  }
+
+  /// The playing block finished: the session screen shows what it earned.
+  func finish(_ completion: BlockMoment?) {
+    playingBlockID = nil
+    moment = completion
+  }
+
+  /// The session screen closed: the next one opens on the day as it stands.
+  func leave() {
+    playingBlockID = nil
+    moment = nil
+    stoppedSessionID = nil
+  }
+
+  /// Whether a milestone's ceremony still has to show here; true once per milestone.
+  func claimCeremony(_ milestone: Milestone) -> Bool {
+    shownCeremonies.insert(milestone.id).inserted
   }
 
   /// Marks a milestone's ceremony as shown, so it never repeats; a failed mark only means it may

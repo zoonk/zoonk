@@ -61,6 +61,25 @@ struct SessionSummary: Decodable, Equatable, Sendable {
   let tomorrow: Tomorrow?
 }
 
+/// What a block finished on the session screen earned (`StudyBlockCompletion`), as its moment
+/// says it.
+struct BlockMoment: Decodable, Equatable, Sendable {
+  struct FullMeal: Decodable, Equatable, Sendable {
+    let bonus: Int
+    let paid: Bool
+  }
+
+  let blockId: String
+  let brainPower: Int
+  let ceremony: Milestone?
+  /// The day a lesson in it comes back for review, `YYYY-MM-DD`.
+  let comesBackOn: String?
+  let correct: Int
+  let fullMeal: FullMeal
+  let sessionCompleted: Bool
+  let total: Int
+}
+
 /// Something the learner earned once (`Milestone` in the API): a belt, new glasses, a buddy stage
 /// or a badge. `key` is the belt color, the glasses, the stage, or `trapHunter:<boss>` for a badge.
 struct Milestone: Decodable, Equatable, Identifiable, Sendable {

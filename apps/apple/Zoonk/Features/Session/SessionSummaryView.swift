@@ -45,7 +45,7 @@ struct SessionSummaryView: View {
     }
     .loads(summary)
     .onChange(of: summary.value?.ceremony, initial: true) { _, milestone in
-      if ceremony == nil, let milestone {
+      if let milestone, store.claimCeremony(milestone) {
         ceremony = milestone
       }
     }
@@ -225,7 +225,7 @@ struct SessionSummaryView: View {
       isAddingTime = false
 
       if let destination {
-        router.openStudy(destination)
+        router.openStudy(destination, sessions: store)
       } else {
         failed = true
       }

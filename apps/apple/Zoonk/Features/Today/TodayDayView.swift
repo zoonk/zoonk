@@ -5,6 +5,7 @@ import SwiftUI
 /// else the day offers; then the missions, the week and practice to do any time.
 struct TodayDayView: View {
   @Environment(AppRouter.self) private var router
+  @Environment(StudySessionStore.self) private var sessions
   @Environment(TodayStore.self) private var store
 
   let view: TodayView
@@ -123,7 +124,7 @@ struct TodayDayView: View {
       busy = nil
 
       if let destination {
-        router.openStudy(destination)
+        router.openStudy(destination, sessions: sessions)
       } else {
         failed = tap
       }
@@ -177,9 +178,13 @@ struct TodayDayView: View {
 }
 
 extension AppRouter {
-  /// Shows a step the learner's tap opened: the session screen, with the step's own screen over it
-  /// when it plays elsewhere, so closing that screen goes on with the day.
-  func openStudy(_ destination: StudyDestination) {
+  /// Shows a step the learner's tap opened on the session screen: a question block plays there,
+  /// and anything else opens its own screen over it, so closing that screen goes on with the day.
+  func openStudy(_ destination: StudyDestination, sessions: StudySessionStore) {
+    if case .questionBlock(_, let blockID) = destination {
+      sessions.play(blockID: blockID)
+    }
+
     if !tasks.contains(.session) {
       open(.session)
     }
@@ -195,9 +200,7 @@ extension AppRouter {
       open(.lesson(lessonId: lessonID, sessionId: sessionID))
     case .mock(let blockID, let sessionID):
       open(.mock(blockId: blockID, sessionId: sessionID))
-    case .questionBlock(let sessionID, let blockID):
-      open(.questionBlock(sessionId: sessionID, blockId: blockID))
-    case .session:
+    case .questionBlock, .session:
       break
     }
   }

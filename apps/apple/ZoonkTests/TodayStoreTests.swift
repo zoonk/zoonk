@@ -83,6 +83,25 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(destination)
   }
 
+  func testAMilestoneCeremonyShowsOnceOnTheSessionScreen() {
+    let store = StudySessionStore(api: StudyAPIStub(), cache: signedInCache())
+    let belt = Milestone(id: "m1", key: "yellow", kind: "belt")
+
+    XCTAssertTrue(store.claimCeremony(belt))
+    XCTAssertFalse(store.claimCeremony(belt), "the block's moment and the summary carry it")
+  }
+
+  func testStoppingForTodayEndsTheBlockAndShowsTheSummary() async {
+    let store = StudySessionStore(api: StudyAPIStub(), cache: signedInCache())
+    store.play(blockID: "b1")
+
+    let stopped = await store.stop(sessionID: "s1")
+
+    XCTAssertTrue(stopped)
+    XCTAssertNil(store.playingBlockID)
+    XCTAssertEqual(store.stoppedSessionID, "s1")
+  }
+
   func testShownStepEncodesItsWorkAsCoreReadsIt() throws {
     let challenge = try block(
       position: 2, kind: "checkpoint",

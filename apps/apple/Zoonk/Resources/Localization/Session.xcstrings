@@ -375,6 +375,41 @@
         }
       }
     },
+    "%lld of %lld right" : {
+      "comment" : "Questions right in the block just finished",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld von %2$lld richtig"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld of %2$lld right"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld correctas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld bonnes réponses sur %2$lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld de %2$lld certas"
+          }
+        }
+      }
+    },
     "+%lld Brain Power" : {
       "comment" : "Earned",
       "localizations" : {
@@ -632,6 +667,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Faixa preta"
+          }
+        }
+      }
+    },
+    "Block" : {
+      "comment" : "A finished block without a name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Block"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloque"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bloco"
           }
         }
       }
@@ -1303,6 +1367,35 @@
         }
       }
     },
+    "Missions done · +%lld Brain Power" : {
+      "comment" : "The block finished today's missions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missionen erledigt · +%lld Brain Power"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Misiones completadas · +%lld Poder Mental"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missions terminées · +%lld Puissance Mentale"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missões concluídas · +%lld de Poder Mental"
+          }
+        }
+      }
+    },
     "Mistakes fixed" : {
       "comment" : "Mistakes fixed this week",
       "localizations" : {
@@ -1653,6 +1746,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Óculos retrô!"
+          }
+        }
+      }
+    },
+    "Review on %@" : {
+      "comment" : "When the block's lesson comes back",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wiederholung am %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Repaso el %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À réviser le %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Revisar em %@"
           }
         }
       }
