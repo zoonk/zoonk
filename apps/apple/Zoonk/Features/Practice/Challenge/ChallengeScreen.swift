@@ -47,7 +47,9 @@ struct ChallengeScreen: View {
         }
       }
     }
-    .task { await read() }
+    // Loads once the session (and the active goal) is known, and again if it changes: a screen
+    // opened at launch can appear before the session is restored.
+    .task(id: session.authenticatedSession) { await read() }
   }
 
   // MARK: Intro
@@ -397,10 +399,7 @@ struct ChallengeScreen: View {
   // MARK: Requests
 
   private func read() async {
-    guard let identity = session.authenticatedSession else {
-      load = .failed(.unauthorized)
-      return
-    }
+    guard let identity = session.authenticatedSession else { return }
 
     do {
       let challenge = try await practice.api.challenge(

@@ -74,7 +74,9 @@ struct TestOutScreen: View {
         }
       }
     }
-    .task { await read() }
+    // Loads once the session (and the active goal) is known, and again if it changes: a screen
+    // opened at launch can appear before the session is restored.
+    .task(id: "\(session.authenticatedSession?.accountID ?? ""):\(goalId ?? "")") { await read() }
   }
 
   private func preparing(failure: (any Error)?) -> some View {
@@ -179,10 +181,7 @@ struct TestOutScreen: View {
   // MARK: Requests
 
   private func read() async {
-    guard let identity = session.authenticatedSession, let goalId else {
-      load = .failed(.notFound)
-      return
-    }
+    guard let identity = session.authenticatedSession, let goalId else { return }
 
     do {
       let loaded = try await practice.api.testOut(

@@ -51,7 +51,14 @@ struct MistakePracticeScreen: View {
       }
     }
     // Practice picks a fresh set of mistakes when it opens.
-    .task { await read() }
+    // Loads once the session (and the active goal) is known, and again if it changes: a screen
+    // opened at launch can appear before the session is restored.
+    .task(
+      id:
+        "\(session.authenticatedSession?.accountID ?? ""):\(summary.summary.value != nil):\(goalId ?? "")"
+    ) {
+      await read()
+    }
   }
 
   // MARK: Run
@@ -244,10 +251,8 @@ struct MistakePracticeScreen: View {
   // MARK: Requests
 
   private func read() async {
-    guard let identity = session.authenticatedSession else {
-      load = .failed(.unauthorized)
-      return
-    }
+    // Practice is scoped to the active goal, so it waits for the summary that names it.
+    guard let identity = session.authenticatedSession, summary.summary.value != nil else { return }
 
     do {
       let set = try await practice.api.mistakePractice(

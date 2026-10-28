@@ -47,15 +47,14 @@ struct QuestionBlockScreen: View {
       }
       .navigationBarTitleDisplayMode(.inline)
     }
-    .task { await read() }
+    // Loads once the session (and the active goal) is known, and again if it changes: a screen
+    // opened at launch can appear before the session is restored.
+    .task(id: session.authenticatedSession) { await read() }
   }
 
   /// Reads the block; a block not started yet starts first, since the learner's tap opened it.
   private func read() async {
-    guard let identity = session.authenticatedSession else {
-      load = .failed(.unauthorized)
-      return
-    }
+    guard let identity = session.authenticatedSession else { return }
 
     do {
       var detail = try await practice.api.studyBlock(
