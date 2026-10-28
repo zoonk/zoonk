@@ -59,8 +59,6 @@ final class ResourceTests: XCTestCase {
     XCTAssertFalse(resource.isRefreshing)
   }
 
-  /// A screen first drawn before the resource follows a new session (a restored sign-in) must
-  /// still redraw when the resource's value changes.
   func testAScreenShowingAnotherSessionsResourceSeesItChange() async throws {
     let session = SessionStore.preview(account: .resourceTestAccount)
     let resource = makeResource(requests: Requests(results: [.success(1)]), session: session)
@@ -123,10 +121,6 @@ final class ResourceTests: XCTestCase {
     XCTAssertEqual(requests.count, 3)
   }
 
-  /// A screen that redraws as its request fails (a spinner, then the error) shows its resource
-  /// again each time (`loads(_:)` restarts its task): a failure that persists, such as a 5xx or a
-  /// response the app can't decode, must not fetch in a loop. It stays until a retry or pull to
-  /// refresh, the app's return to the foreground, or an invalidation asks again.
   func testAFailureStaysUntilSomethingAsksAgain() async {
     let cache = AppCache(session: .preview(account: .resourceTestAccount))
     let requests = Requests(results: Array(repeating: .failure(APIError.unavailable), count: 20))
@@ -140,17 +134,14 @@ final class ResourceTests: XCTestCase {
     XCTAssertEqual(resource.state, .failed(.unavailable))
     XCTAssertEqual(requests.count, 1)
 
-    // Try again, or pull to refresh.
     await resource.refresh()
     await resource.show()
     XCTAssertEqual(requests.count, 2)
 
-    // The app returns to the foreground.
     await resource.load()
     await resource.show()
     XCTAssertEqual(requests.count, 3)
 
-    // A mutation changes what it reads.
     cache.invalidate([.userProgress])
     await requests.waitForCount(4)
     await resource.show()
@@ -159,7 +150,6 @@ final class ResourceTests: XCTestCase {
     XCTAssertEqual(resource.state, .failed(.unavailable))
   }
 
-  /// A failed revalidation keeps the content on screen, and a redraw doesn't ask again either.
   func testAFailedRevalidationIsntRetriedOnARedraw() async {
     let clock = TestClock()
     let requests = Requests(
@@ -281,9 +271,6 @@ final class ResourceTests: XCTestCase {
     XCTAssertEqual(resource.state, .loaded(2))
   }
 
-  /// A screen a full-screen task covers stops viewing its resources (`isCoveredByTask` in
-  /// `ResourceLoading`): every answer in a session invalidates Today behind it without a request,
-  /// and Today revalidates once when the session closes and it's shown again.
   func testACoveredScreenRevalidatesOnceWhenUncovered() async {
     let cache = AppCache(session: .preview(account: .resourceTestAccount))
     let requests = Requests(results: [.success(1), .success(2)])
@@ -308,8 +295,6 @@ final class ResourceTests: XCTestCase {
     XCTAssertEqual(resource.state, .loaded(2))
   }
 
-  /// A screen opened under a task (the session under the lesson a tap opened) loads what it has
-  /// nothing of, so it shows at once when uncovered; a covered screen with data, even stale, waits.
   func testACoveredScreenLoadsOnlyWhatItHasNothingOf() async {
     let clock = TestClock()
     let requests = Requests(results: [.success(1), .success(2)])
@@ -379,7 +364,6 @@ final class ResourceTests: XCTestCase {
   }
 }
 
-/// Answers a resource's requests from a script, or holds them until a test resolves them.
 @MainActor
 private final class Requests {
   var suspends: Bool

@@ -31,7 +31,6 @@ final class SettingsAPITests: XCTestCase {
   }
 }
 
-/// Records each PATCH body as sent and answers with a saved profile.
 private struct ProfileUpdateTransport: ClientTransport {
   let sentBodies = SentBodies()
 

@@ -3,14 +3,9 @@ import XCTest
 
 @testable import Zoonk
 
-/// The music templates' rules, on the cases main's tests check (`music-notes.test.ts`,
-/// `guitar-voicing.test.ts`, `keyboard-fretboard-notes.test.ts`, `rhythm-results.test.ts`,
-/// `notation-text.test.ts`, core's `music.test.ts`) and the fixtures its browser tests play
-/// (`@zoonk/testing/fixtures/activity-contents`): each grade must agree with core's
-/// `checkActivityAnswer`.
+/// Mirrors main's music tests and the fixtures its browser tests play: each grade must agree with
+/// core's `checkActivityAnswer`.
 final class MusicActivitiesTests: XCTestCase {
-  // MARK: - Notes and chords
-
   func testConvertsBetweenNamesAndMidiAroundMiddleC() {
     XCTAssertEqual(MusicNotes.noteToMidi("C4"), 60)
     XCTAssertEqual(MusicNotes.noteToMidi("Eb"), 63)
@@ -59,8 +54,6 @@ final class MusicActivitiesTests: XCTestCase {
     XCTAssertEqual(MusicNotes.displayName("Bb", languageCode: "en"), "B♭")
   }
 
-  // MARK: - Guitar
-
   private func voicing(_ pitches: [Int], bass: Int? = nil) -> GuitarVoicing? {
     Guitar.voicing(bass: bass ?? pitches.first ?? 0, pitchClasses: pitches)
   }
@@ -80,8 +73,6 @@ final class MusicActivitiesTests: XCTestCase {
     XCTAssertNil(voicing([0, 1, 2, 3, 4, 5, 6]))
     XCTAssertNil(voicing([]))
   }
-
-  // MARK: - Keyboard and fretboard
 
   private let cMinor = NoteTarget.chord(root: "C", quality: .minor)
   private let cMajor = NoteTarget.chord(root: "C", quality: .major)
@@ -139,7 +130,6 @@ final class MusicActivitiesTests: XCTestCase {
     let minor = KeyboardFretboard.toggle(KeyboardFretboard.toggle(start, 4), 3)
     XCTAssertTrue(KeyboardFretboard.grade(content, .notes(KeyboardFretboard.notes(of: minor))))
 
-    // Adding E flat without taking E away isn't minor.
     let both = KeyboardFretboard.toggle(start, 3)
     XCTAssertEqual(
       both.map { KeyboardFretboard.spelling([fields.target, fields.start])($0) },
@@ -167,7 +157,6 @@ final class MusicActivitiesTests: XCTestCase {
     XCTAssertTrue(KeyboardFretboard.grade(content, .notes(["G3", "C4"])))
     XCTAssertFalse(KeyboardFretboard.grade(content, .notes(["C4", "F4"])))
 
-    // An interval plays one note after the other, each above the one before.
     XCTAssertEqual(
       KeyboardFretboard.targetSound(.notes(["G", "C"])).map(\.midi), [67, 72])
     XCTAssertEqual(
@@ -188,8 +177,6 @@ final class MusicActivitiesTests: XCTestCase {
     XCTAssertTrue(KeyboardFretboard.grade(content, .notes(notes)))
     XCTAssertFalse(KeyboardFretboard.grade(content, .notes(["G2", "C3", "D3"])))
   }
-
-  // MARK: - Rhythm
 
   private let clave = #"""
     {"template":"rhythmTapper","prompt":"Tap the son clave over the beat.",
@@ -302,8 +289,6 @@ final class MusicActivitiesTests: XCTestCase {
     XCTAssertEqual(Rhythm.jsRound(-2.5), -2)
     XCTAssertEqual(Rhythm.median([3, 1, 2, 4]), 2.5)
   }
-
-  // MARK: - Notation
 
   private let ode =
     "X:1\nT:Ode to Joy\nC:Beethoven, 1824\nM:4/4\nL:1/4\nK:C\nE E F G | G F E D | C C D E | E3/2 D/2 D2 |]"
@@ -470,8 +455,6 @@ final class MusicActivitiesTests: XCTestCase {
     XCTAssertNil(released)
   }
 
-  // MARK: - Sound
-
   func testSynthesizesPianoAndGuitarAtTheirPitch() throws {
     XCTAssertEqual(try loudestPeriodFrequency(.piano, midi: 69), 440, accuracy: 4)
     XCTAssertEqual(try loudestPeriodFrequency(.guitar, midi: 57), 220, accuracy: 3)
@@ -487,8 +470,6 @@ final class MusicActivitiesTests: XCTestCase {
     XCTAssertEqual(try render(renderer, seconds: 0.05).map(abs).max() ?? 1, 0)
     XCTAssertTrue(renderer.isSilent)
   }
-
-  // MARK: - Helpers
 
   private func content(_ json: String) throws -> ActivityStepContent {
     try JSONDecoder().decode(ActivityStepContent.self, from: Data(json.utf8))
@@ -514,7 +495,6 @@ final class MusicActivitiesTests: XCTestCase {
     return samples
   }
 
-  /// The frequency of the strongest period in a note's sound, by autocorrelation.
   private func loudestPeriodFrequency(_ voice: MusicRenderer.VoiceKind, midi: Int) throws -> Double
   {
     let renderer = MusicRenderer(sampleRate: 48_000)

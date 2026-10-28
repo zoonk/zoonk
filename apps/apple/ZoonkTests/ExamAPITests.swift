@@ -54,7 +54,6 @@ final class ExamAPITests: XCTestCase {
   private static let baseURL = URL(string: "https://api.zoonk.test")!
 }
 
-/// Records each request's body and Content-Length, and answers with one response.
 private struct RecordingTransport: ClientTransport {
   struct Sent {
     var body: Data

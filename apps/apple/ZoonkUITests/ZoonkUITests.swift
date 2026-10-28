@@ -115,7 +115,6 @@ final class ZoonkUITests: XCTestCase {
     super.tearDown()
   }
 
-  /// Proves that the account affordance opens directly to the sign-in methods configured in this test build without an extra navigation step.
   @MainActor
   func testAccountSheetOffersEverySignInMethod() {
     continueAfterFailure = false
@@ -174,7 +173,6 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertEqual(emailButton.frame.height, appleButton.frame.height, accuracy: 1)
   }
 
-  /// Proves the accessible email field uses the email keyboard, preserves lowercase input, and submits through the keyboard action.
   @MainActor
   func testEmailSignInUsesAccessibleEmailKeyboard() {
     continueAfterFailure = false
@@ -215,7 +213,6 @@ final class ZoonkUITests: XCTestCase {
       "Expected the keyboard action to submit the email code request")
   }
 
-  /// Proves required profile setup cannot be dismissed before the user saves a valid profile.
   @MainActor
   func testRequiredProfileSetupOnlyOffersSave() {
     continueAfterFailure = false
@@ -241,7 +238,6 @@ final class ZoonkUITests: XCTestCase {
       "Expected required profile setup to reject interactive dismissal")
   }
 
-  /// Proves a free account reaches Apple's localized subscription store instead of an external checkout.
   @MainActor
   func testFreeAccountOpensNativeSubscriptionStore() throws {
     continueAfterFailure = false
@@ -279,7 +275,6 @@ final class ZoonkUITests: XCTestCase {
       "Expected navigation Back to be the only way out of the pushed subscription screen")
   }
 
-  /// Proves App Store ownership is visible before the native subscription-management sheet opens.
   @MainActor
   func testAppleSubscriptionShowsAppStoreManagement() {
     continueAfterFailure = false
@@ -293,7 +288,6 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertEqual(subscription.value as? String, "App Store")
   }
 
-  /// Proves a Google-owned subscription remains visible while iOS explains management without linking to an external purchase surface.
   @MainActor
   func testGoogleSubscriptionShowsInformationalManagement() {
     continueAfterFailure = false
@@ -317,7 +311,6 @@ final class ZoonkUITests: XCTestCase {
       "Expected guidance without an external Google Play purchase link")
   }
 
-  /// Proves that account deletion is a deliberate native flow: the account option opens a dedicated screen and the irreversible request still requires confirmation.
   @MainActor
   func testAccountDeletionRequiresConfirmation() {
     continueAfterFailure = false
@@ -330,7 +323,6 @@ final class ZoonkUITests: XCTestCase {
       accountButton.waitForExistence(timeout: 5), "Expected the account button to exist")
     accountButton.tap()
 
-    // As on main, deletion lives on the profile, which the account's own row opens.
     let profile = app.buttons.matching(NSPredicate(format: "label CONTAINS %@", "@")).firstMatch
     XCTAssertTrue(
       profile.waitForExistence(timeout: 5), "Expected the settings hub to open the profile")
@@ -360,7 +352,6 @@ final class ZoonkUITests: XCTestCase {
       "Expected the confirmation to contain the final destructive action")
   }
 
-  /// Proves that signing out starts immediately instead of adding a confirmation step for a reversible action.
   @MainActor
   func testSignOutStartsImmediately() {
     continueAfterFailure = false
@@ -386,8 +377,6 @@ final class ZoonkUITests: XCTestCase {
       "Expected tapping sign out to start the API request immediately")
   }
 
-  /// Proves every tab root renders, that Statistics opens from the level button, and that a top
-  /// tab bar's Study item opens the Study places, in both orientations.
   @MainActor
   func testShellTabsAndStudyPlacesRender() {
     continueAfterFailure = false
@@ -436,8 +425,6 @@ final class ZoonkUITests: XCTestCase {
     }
   }
 
-  /// Proves every tab root and Statistics, the Study place the fixtures fill, pass the system
-  /// accessibility audit.
   @MainActor
   func testTabsAndStatisticsPassTheAccessibilityAudit() throws {
     continueAfterFailure = false
@@ -468,8 +455,6 @@ final class ZoonkUITests: XCTestCase {
     try performAccessibilityAudit(in: app, skipping: [.dynamicType, .textClipped])
   }
 
-  /// Proves the catalog lists only the categories that have courses, filters by one, and leads to
-  /// a course's landing page and a chapter's page with their ways in.
   @MainActor
   func testCourseCatalogOpensCoursesAndChaptersWithTheirWayIn() {
     continueAfterFailure = false
@@ -566,7 +551,6 @@ final class ZoonkUITests: XCTestCase {
       "Expected the chapter to say what it teaches")
   }
 
-  /// Editing a search moves between matching and empty results without retaining the previous query's feedback.
   @MainActor
   func testCatalogSearchUpdatesWhenTheQueryChanges() {
     continueAfterFailure = false
@@ -598,7 +582,6 @@ final class ZoonkUITests: XCTestCase {
     add(screenshot)
   }
 
-  /// Proves catalog search searches beyond the selected category and opens a chapter in its course.
   @MainActor
   func testCoursesSearchFindsCoursesAndChapters() {
     continueAfterFailure = false
@@ -662,7 +645,6 @@ final class ZoonkUITests: XCTestCase {
       "Expected authentication loss to sign the learner out, with the way to log in again")
   }
 
-  /// Every stat opens from its tile: a pushed page on a phone, beside the overview on an iPad.
   @MainActor
   func testStatisticsOpensEveryStat() {
     continueAfterFailure = false
@@ -701,7 +683,6 @@ final class ZoonkUITests: XCTestCase {
     }
   }
 
-  /// The year of study is one control: its readout starts on the newest day studied and follows a tap.
   @MainActor
   func testStatisticsCalendarReadsOutTheDayPicked() {
     continueAfterFailure = false
@@ -720,8 +701,6 @@ final class ZoonkUITests: XCTestCase {
       calendar.value as? String, "Aug 20 · 9 activities", "Expected a tap to pick another day")
   }
 
-  /// A tile is one button named by its stat, its number and line as its value ("Level": "4, Green
-  /// belt"); the phone's Patterns row names its best day and time too ("Patterns, Morning").
   @MainActor
   private func statTile(_ name: String, in app: XCUIApplication) -> XCUIElement {
     app.buttons.matching(
@@ -729,12 +708,11 @@ final class ZoonkUITests: XCTestCase {
     ).firstMatch
   }
 
-  /// Audits the screen, skipping what the audit misreads:
+  /// Skips what the audit misreads:
   /// - Contrast: on the simulator it measures pixels under iOS 26's glass bars and scroll edge
-  ///   effects and fails primary text on the system background. The app uses semantic colors, and
-  ///   contrast is checked by hand with Increase Contrast.
-  /// - Dynamic Type and clipping in navigation bars, tab bars and the search field: system bars
-  ///   keep their size (a long press shows the Large Content Viewer) and truncate to their width.
+  ///   effects and fails primary text on the system background.
+  /// - Dynamic Type and clipping in system bars and the search field, which keep their size (a long
+  ///   press shows the Large Content Viewer) and truncate to their width.
   /// - Hit areas of elements that aren't controls, such as a chart's key.
   @MainActor
   private func performAccessibilityAudit(
@@ -759,8 +737,6 @@ final class ZoonkUITests: XCTestCase {
     }
   }
 
-  /// Launches the app and, when it couldn't read a fixture this target passed, stops the test once
-  /// with the reason the app shows instead of crashing.
   @MainActor
   private func launch(_ app: XCUIApplication) {
     app.launch()
@@ -772,7 +748,6 @@ final class ZoonkUITests: XCTestCase {
     }
   }
 
-  /// Creates one isolated app process from scenario data owned by the UI-test target rather than the distributable app.
   @MainActor
   private func makeApp(for scenario: UITestScenario = .signedOut) -> XCUIApplication {
     let app = XCUIApplication()
@@ -799,7 +774,6 @@ final class ZoonkUITests: XCTestCase {
     return app
   }
 
-  /// Opens the catalog the way a learner does, from the goal switcher's "Explore courses".
   @MainActor
   private func openCatalog(in app: XCUIApplication) {
     let goalSwitcher = app.buttons[uiTestGoalTitle].firstMatch
@@ -809,7 +783,6 @@ final class ZoonkUITests: XCTestCase {
     app.buttons["Explore courses"].tap()
   }
 
-  /// Opens Statistics from the level button on the tab root's toolbar.
   @MainActor
   private func openStatistics(in app: XCUIApplication) {
     let levelButton = app.buttons.matching(

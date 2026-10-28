@@ -34,8 +34,6 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(starts, [], "a question block's own screen starts it")
   }
 
-  /// A practice in the day's saved session only opens: nothing is written, so Today isn't read
-  /// again (its own screen starts it).
   func testAPracticeInASavedSessionOpensWithoutReadingTodayAgain() async throws {
     let view = try today(
       session: day(
@@ -67,8 +65,6 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(starts, ["b1"])
   }
 
-  /// A mission or a buddy link names one of today's blocks by its id: it starts as its row on
-  /// Today starts it, and a block done meanwhile opens nothing.
   func testABlockNamedByItsIdStartsAsTodaysRowDoes() async throws {
     let lesson = try block(position: 0, kind: "learn", id: "b1", lessonID: "l1")
     let done = try block(position: 1, kind: "review", status: "completed", id: "b2")
@@ -90,8 +86,6 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(starts, ["b1"])
   }
 
-  /// Sol's F14: the tap on a lesson nobody is writing asks for it (main's `unwrittenLesson`)
-  /// without starting its block, and the session waits for it.
   func testAnUnwrittenLessonIsAskedForByTheTapWithoutStartingTheBlock() async throws {
     let api = StudyAPIStub()
     let store = TodayStore(api: api, cache: signedInCache())
@@ -164,8 +158,6 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertEqual(store.stoppedSessionID, "s1")
   }
 
-  /// Sol's F15 repro: A taps Start, A's session ends while the day opens, and B's Today is on
-  /// screen when A's answer arrives. Nothing opens over B, and the session screen doesn't pick A's.
   func testAnOpeningAnsweredAfterItsLearnerLeftOpensNothing() async throws {
     let api = StudyAPIStub(
       opened: try opened(target: block(position: 0, kind: "review", id: "b1")), holdsOpening: true)
@@ -187,8 +179,6 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(store.sessionID)
   }
 
-  /// The session a tap opened is the session screen's only for that learner's same goal and day:
-  /// after midnight (or a goal switch) Today's own day decides.
   func testAnOpenedSessionDoesNotOutliveItsDay() async throws {
     let review = try block(position: 0, kind: "review")
     let shown = try today(session: day(blocks: [review], nextPosition: 0))
@@ -243,8 +233,6 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(checkpoint?["mockIdentity"], "only a mock carries its identity")
   }
 }
-
-// MARK: - Fixtures
 
 @MainActor
 private func signedInCache() -> AppCache {
@@ -373,7 +361,6 @@ private actor StudyAPIStub: StudyAPIClient {
     self.today = today
   }
 
-  /// Waits until an opening is held, so the test can change who's signed in meanwhile.
   func waitForHeldOpening() async {
     guard heldOpening == nil else {
       return
@@ -461,7 +448,6 @@ private actor StudyAPIStub: StudyAPIClient {
 }
 
 extension MutationResult {
-  /// What a tap opened, for assertions; nil when it failed or came back obsolete.
   fileprivate var destination: Value? {
     if case .done(let value) = self { value } else { nil }
   }

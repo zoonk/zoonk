@@ -298,7 +298,6 @@ extension CurrentAccount {
       username: "learner"))
 }
 
-/// Signs a session in as one learner, then another, the way a synchronized credential replaces it.
 private final class SwitchingAccountAPI: AccountAPIClient, @unchecked Sendable {
   /// Only the main actor changes it, between requests.
   nonisolated(unsafe) private var userID = "learner-a"

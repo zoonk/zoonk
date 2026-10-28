@@ -103,8 +103,7 @@ final class MutationTests: XCTestCase {
   }
 }
 
-/// Holds a write until the test opens it, the way a slow request does. Not cancellation-aware, so
-/// a write keeps running after its task is cancelled, as a URL request that's already sent does.
+/// Not cancellation-aware, like a URL request that's already sent.
 @MainActor
 private final class WriteGate {
   private var started: CheckedContinuation<Void, Never>?

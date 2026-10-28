@@ -70,7 +70,6 @@ private actor MindMapsAPIStub: MindMapsAPIClient {
   }
 
   private(set) var calls = Calls()
-  /// Each status read's answer in turn; `.ready` once they run out.
   private var statuses: [Result<ChapterMindMap.Status, APIError>]
   private let creates: Bool
 

@@ -58,7 +58,6 @@ private enum GenerationEventsResponse: Sendable {
   case notFound
 }
 
-/// Serves Server-Sent Events, one scripted response per connection.
 private actor GenerationEventsTransport: ClientTransport {
   private var responses: [GenerationEventsResponse]
   private(set) var requests: [String] = []

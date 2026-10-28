@@ -979,8 +979,6 @@ final class SessionStoreTests: XCTestCase {
     XCTAssertEqual(session.state, .signedIn(accountB))
   }
 
-  /// Launch reads start with the stored token while `GET /me` validates it, and keep their result
-  /// once it does.
   @MainActor
   func testLaunchReadsStartWithTheStoredTokenAndSurviveItsValidation() async {
     let account = makeAccount()
@@ -1011,7 +1009,6 @@ final class SessionStoreTests: XCTestCase {
     XCTAssertEqual(readTokens, ["stored-session"])
   }
 
-  /// A launch read the API refuses signs the stored session out, as any read does.
   @MainActor
   func testAnUnauthorizedLaunchReadSignsOut() async {
     let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
@@ -1034,8 +1031,6 @@ final class SessionStoreTests: XCTestCase {
     XCTAssertEqual(today.state, .idle)
   }
 
-  /// When the Keychain's token changes while launch validates it (another device signed in), the
-  /// reads made with the old token are dropped.
   @MainActor
   func testLaunchReadsOfAReplacedTokenAreDropped() async {
     let other = makeAccount(userID: "other-user")

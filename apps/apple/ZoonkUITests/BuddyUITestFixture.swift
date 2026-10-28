@@ -1,5 +1,3 @@
-/// The buddy's day as `GET /v1/me/buddy` returns it: the default Zu, awake, before today's
-/// session, so the Buddy tab shows its conversation without the network.
 let buddyStatusUITestJSON = """
   {
     "belt": {

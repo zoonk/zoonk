@@ -9,8 +9,6 @@ typeOverrides:
   schemas:
     LessonStepAnswer: LessonAnswer
     PlayableLibraryStep: LessonStep
-# Generates only the operations the app calls, and the schemas they reference. Add an operation here
-# when a feature starts using it.
 filter:
   operations:
     - acknowledgeTodayPlanChange

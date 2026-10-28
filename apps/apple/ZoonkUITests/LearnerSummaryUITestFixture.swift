@@ -1,8 +1,5 @@
-/// The goal every signed-in UI-test learner follows, which the goal switcher shows.
 let uiTestGoalTitle = "Learn how plants grow"
 
-/// A learner summary as `GET /v1/me/summary` returns it: one goal with every Study place, so the
-/// shell's toolbar and sidebar have everything to show.
 let learnerSummaryUITestJSON = """
   {
     "account": { "email": "ui-test@zoonk.test", "image": null, "name": "UI Test User" },

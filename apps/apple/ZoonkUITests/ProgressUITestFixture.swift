@@ -174,8 +174,6 @@ let progressEmptyUITestSnapshotJSON =
   }
   """#
 
-/// The past 12 months as the API sends them: Sunday first, every day up to Thursday, Aug 20, 2026,
-/// a few of them studied (the newest with 9 activities).
 private let progressUITestDates: [String] = {
   var calendar = Calendar(identifier: .gregorian)
   calendar.timeZone = .gmt

@@ -221,8 +221,6 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertFalse(state.canGoBack)
   }
 
-  // MARK: - Helpers
-
   private func answerCheck(
     _ state: inout LessonPlayerState, optionId: String, attemptId: String? = nil
   ) throws {
@@ -393,8 +391,6 @@ final class LessonGradingTests: XCTestCase {
       ])
   }
 }
-
-// MARK: - Fixtures
 
 private func step(_ json: String) throws -> LessonStep {
   try JSONDecoder().decode(LessonStep.self, from: Data(json.utf8))
@@ -638,8 +634,6 @@ final class LessonPlayerHelpTests: XCTestCase {
     XCTAssertEqual(state.steps["check"]?.imagePending, false)
   }
 
-  // MARK: - Helpers
-
   private func answer(_ state: inout LessonPlayerState, right: Bool) throws {
     let step = try XCTUnwrap(state.currentStep)
     let optionId = right ? "right" : "wrong"
@@ -648,7 +642,6 @@ final class LessonPlayerHelpTests: XCTestCase {
     state.resolve(step.id, result: LessonStepResult(grade))
   }
 
-  /// hook, explanation, check, explanation-2, second, summary
   private func helpLesson() throws -> [LessonStep] {
     [
       try step(textHook), try step(explanation), try step(check(id: "check")),
@@ -737,7 +730,6 @@ final class LocalizedNumberTests: XCTestCase {
           expected: 0.12543, tolerance: fine, value: 0.12543 + .ulpOfOne), locale: english),
       "0.12543")
 
-    // A canvas's raw reading (charts lane, Oct 2026): 72.475746 against 72.5 ± 0.5.
     let reading = exactFractionDigitsFor(
       expected: 72.5, tolerance: .init(kind: .absolute, value: 0.5), value: 72.475746)
     XCTAssertEqual(

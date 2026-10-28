@@ -543,7 +543,6 @@ private func makeCourseCatalogAPI(transport: any ClientTransport) -> CourseCatal
       transport: transport))
 }
 
-/// Exercises the generated public catalog operations without depending on an external server.
 private struct CourseCatalogResponseTransport: ClientTransport {
   let expectedOperationID: String
   let expectedPath: String

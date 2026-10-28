@@ -1,8 +1,7 @@
 import Foundation
 
-/// What the learner picked, built or wrote on a screen, in the shape `POST /v1/steps/{stepId}/checks`
-/// takes. It replaces the generated `LessonStepAnswer` (`typeOverrides`) so activities can send
-/// their own answer types. A hook's guess never counts, so only the player sees it.
+/// Replaces the generated `LessonStepAnswer` (`typeOverrides`) so activities can send their own
+/// answer types.
 public enum LessonAnswer: Codable, Hashable, Sendable {
   public struct Pair: Codable, Hashable, Sendable {
     public let left: String
@@ -33,7 +32,7 @@ public enum LessonAnswer: Codable, Hashable, Sendable {
     case userAnswers, userPairs
   }
 
-  /// Whether the server records it: a hook's guess is the player's alone.
+  /// A hook's guess is the player's alone: the server never records it.
   public var isRecorded: Bool {
     if case .hookGuess = self {
       return false

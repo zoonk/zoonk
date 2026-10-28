@@ -1,7 +1,5 @@
 import Foundation
 
-/// Any JSON value, kept as the API sent it. Activity templates each have their own fields, which
-/// only their renderer reads, so the lesson keeps them raw and a renderer decodes its own shape.
 public enum JSONValue: Codable, Hashable, Sendable {
   case null
   case bool(Bool)
@@ -41,12 +39,10 @@ public enum JSONValue: Codable, Hashable, Sendable {
     }
   }
 
-  /// Wraps any encodable value, such as an activity's own answer type.
   public init(encoding value: some Encodable) throws {
     self = try JSONDecoder().decode(JSONValue.self, from: JSONEncoder().encode(value))
   }
 
-  /// Reads the value as a typed shape, such as a template's `fields`.
   public func decode<Value: Decodable>(as type: Value.Type = Value.self) throws -> Value {
     try JSONDecoder().decode(type, from: JSONEncoder().encode(self))
   }

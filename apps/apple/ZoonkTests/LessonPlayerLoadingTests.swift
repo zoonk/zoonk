@@ -80,7 +80,6 @@ final class LessonPlayerLoadingTests: XCTestCase {
   }
 }
 
-/// Content reads come from the injected resource; these scenarios never start an authenticated run.
 private struct UnexpectedLessonTransport: ClientTransport {
   func send(
     _ request: HTTPRequest, body: HTTPBody?, baseURL: URL, operationID: String

@@ -1,23 +1,16 @@
 import Foundation
 
-/// One screen of a Library lesson as `GET /v1/library/lessons/{lessonId}` sends it, answers
-/// included so feedback is instant. It replaces the generated `PlayableLibraryStep`
-/// (`typeOverrides` in `openapi-generator-config.yaml`): the generated union of every screen and
-/// activity template is index-named and far larger than what the player reads.
+/// Replaces the generated `PlayableLibraryStep` (`typeOverrides` in `openapi-generator-config.yaml`).
 public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
   public let id: String
   public let position: Int
-  /// The skill the screen teaches or checks, when it has its own.
   public let skillId: String?
   public let citation: LessonCitation?
-  /// The drawn picture, once it's ready.
   public let image: LessonStepImage?
-  /// The picture is still being drawn.
   public let imagePending: Bool
-  /// A question whose options are pictures: each drawn picture by option id.
+  /// By option id.
   public let optionPictures: [String: LessonStepImage]
-  /// When the screen was written, in epoch milliseconds: a missing picture may still arrive for
-  /// five minutes from then.
+  /// Epoch milliseconds.
   public let pictureWaitStartedAt: Int?
   public let content: LessonStepContent
 
@@ -129,7 +122,6 @@ public struct LessonStep: Codable, Hashable, Sendable, Identifiable {
 }
 
 extension LessonStep {
-  /// This screen with the pictures a fresh read of the lesson drew since.
   public func withPictures(from fresh: LessonStep) -> LessonStep {
     LessonStep(
       id: id, position: position, skillId: skillId, citation: citation,
@@ -138,7 +130,6 @@ extension LessonStep {
       pictureWaitStartedAt: pictureWaitStartedAt, content: content)
   }
 
-  /// The same screen no longer waiting for a picture.
   public var withoutPendingPictures: LessonStep {
     LessonStep(
       id: id, position: position, skillId: skillId, citation: citation, image: image,
@@ -146,8 +137,6 @@ extension LessonStep {
       pictureWaitStartedAt: pictureWaitStartedAt, content: content)
   }
 
-  /// A missing picture may still arrive: five minutes from when the screen was written, or from
-  /// when the lesson opened for a screen that doesn't say.
   public func isWaitingForPicture(openedAt: Date, now: Date = .now) -> Bool {
     guard imagePending else {
       return false
@@ -176,8 +165,6 @@ public enum LessonStepContent: Hashable, Sendable {
   case activity(ActivityStepContent)
   case summary(SummaryContent)
   case challenge(ChallengeContent)
-  /// Language practice: vocabulary, alphabet, reading, listening, translation, fill in the blank,
-  /// multiple choice and match columns.
   case language(LanguageExercise, wordHints: WordHints?)
 
   public var kind: LessonStepKind {
@@ -196,9 +183,6 @@ public enum LessonStepContent: Hashable, Sendable {
   }
 }
 
-// MARK: - Shared parts
-
-/// The drawn picture of a screen.
 public struct LessonStepImage: Codable, Hashable, Sendable {
   public let id: String
   public let url: String
@@ -207,16 +191,12 @@ public struct LessonStepImage: Codable, Hashable, Sendable {
   public let height: Int?
 }
 
-/// What a screen's picture shows, written with the screen: its description reads while the
-/// picture is drawn or when it can't load.
 public struct LessonPictureDescription: Codable, Hashable, Sendable {
   public let alt: String
   public let prompt: String
-  /// The numbered parts of a labeled picture.
   public let parts: [String]?
 }
 
-/// Where a screen comes from: the learner's own material, a public document, or neither.
 public enum LessonCitation: Codable, Hashable, Sendable {
   case material(title: String, unit: String, page: Int?)
   case source(title: String, publisher: String?, url: String?, checkedAt: String)
@@ -267,13 +247,11 @@ public enum LessonCitation: Codable, Hashable, Sendable {
   }
 }
 
-/// The passage of the learner's material a question is about.
 public struct LessonBasis: Codable, Hashable, Sendable {
   public let position: Int
   public let quote: String
 }
 
-/// A chart or a timeline drawn from data on a screen.
 public enum LessonVisual: Codable, Hashable, Sendable {
   case chart(LessonChart)
   case timeline(LessonTimeline)
@@ -335,8 +313,6 @@ public struct LessonTimeline: Codable, Hashable, Sendable {
   public let events: [Event]
 }
 
-// MARK: - Teaching screens
-
 public struct HookContent: Codable, Hashable, Sendable {
   public struct Option: Codable, Hashable, Sendable, Identifiable {
     public let id: String
@@ -349,9 +325,7 @@ public struct HookContent: Codable, Hashable, Sendable {
   }
 
   public let variant: Variant
-  /// A text hook's words.
   public let text: String?
-  /// A guess hook's question, options and the why shown after any pick.
   public let question: String?
   public let options: [Option]?
   public let reveal: String?
@@ -368,9 +342,7 @@ public struct ExplanationContent: Codable, Hashable, Sendable {
   public let text: String
   public let image: LessonPictureDescription?
   public let visual: LessonVisual?
-  /// An activity template to play with: nothing is asked or graded.
   public let explore: ActivityExploreContent?
-  /// Where a personal example line fits, when the screen has room for one.
   public let exampleLineSlot: ExampleLineSlot?
 }
 
@@ -399,7 +371,7 @@ public struct CheckContent: Codable, Hashable, Sendable {
     public let isCorrect: Bool
     public let reason: String
     public let text: String
-    /// Picture options: the drawn picture comes with the step's pictures.
+    /// The drawn picture comes in the step's `optionPictures`.
     public let picture: Picture?
   }
 
@@ -437,15 +409,12 @@ public struct SummaryContent: Codable, Hashable, Sendable {
   public let ideas: [Idea]
 }
 
-// MARK: - Language exercises
-
 public struct WordHints: Codable, Hashable, Sendable {
   public let note: String?
   public let pronunciationTip: String?
 }
 
-/// A language exercise. `content` holds the fields of its kind (`alphabet`, `fillBlank`,
-/// `matchColumns` and `multipleChoice`); the other kinds read the sentence, the word and the
+/// `content` holds the fields of its kind; the other kinds read the sentence, the word and the
 /// option lists around it.
 public struct LanguageExercise: Codable, Hashable, Sendable {
   public struct Content: Codable, Hashable, Sendable {

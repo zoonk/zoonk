@@ -21,8 +21,6 @@ final class CourseCatalogPresentationTests: XCTestCase {
     XCTAssertNil(flagEmoji("arab"))
   }
 
-  /// Only an active goal that isn't a quick explanation follows a course, as main's course page
-  /// reads it.
   func testOnlyAnActiveGoalOnTheCourseFollowsIt() {
     let course = "course"
 
@@ -32,14 +30,12 @@ final class CourseCatalogPresentationTests: XCTestCase {
     XCTAssertFalse(summary(goals: [goal(courseID: course, kind: .explain)]).followsCourse(course))
   }
 
-  /// A page in another language points to the reader's edition; one in theirs points nowhere.
   func testOnlyACourseInAnotherLanguagePointsToTheReadersEdition() {
     XCTAssertEqual(Course.testFixture.edition(in: "pt")?.title, "Astronomia")
     XCTAssertNil(Course.testFixture.edition(in: "en"))
     XCTAssertNil(Course.testFixture.edition(in: "de"))
   }
 
-  /// Only an exam plan with every chapter in an area places chapters by area, as main does.
   func testOnlyAnExamPlanWithEveryChapterInAnAreaPlacesChaptersByArea() {
     XCTAssertEqual(
       example(

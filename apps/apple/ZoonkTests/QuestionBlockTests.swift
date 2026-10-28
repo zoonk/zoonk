@@ -250,8 +250,6 @@ final class PracticeModelTests: XCTestCase {
   }
 }
 
-// MARK: - Fixtures
-
 func makeQuestion(_ id: String, answered: PracticeAnsweredMark? = nil) -> PracticeQuestion {
   var question = PracticeQuestion(
     itemId: id, format: .multipleChoice, question: "Question \(id)", options: ["A", "B", "C"])

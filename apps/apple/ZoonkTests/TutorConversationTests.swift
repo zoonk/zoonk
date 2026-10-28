@@ -59,7 +59,6 @@ final class TutorConversationTests: XCTestCase {
 
     XCTAssertEqual(conversation.turns.first?.status, .failed)
     XCTAssertEqual(conversation.answerFailures[conversation.turns[0].id], .failed)
-    // A question not answered blocks the next one until it's retried, as on main.
     XCTAssertFalse(conversation.canAsk)
   }
 
@@ -192,7 +191,6 @@ final class TutorConversationTests: XCTestCase {
     conversation.draft = "Why?"
     XCTAssertTrue(conversation.canSendDraft)
 
-    // The answer fails, so the next question waits until it's retried.
     await conversation.send()
     conversation.draft = "And then?"
     XCTAssertFalse(conversation.canSendDraft)

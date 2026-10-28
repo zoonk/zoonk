@@ -36,7 +36,6 @@ final class BuddyLookTests: XCTestCase {
   func testAStageMilestoneDrawsTheBuddyGrownBeforeItsBeltIsReadAgain() {
     XCTAssertEqual(BuddyLook(belt: .yellow).grown(to: .young).belt, .orange)
     XCTAssertEqual(BuddyLook(belt: .green).grown(to: .adult).belt, .blue)
-    // A belt already at that stage or past it is kept: the buddy never shrinks.
     XCTAssertEqual(BuddyLook(belt: .green).grown(to: .young).belt, .green)
     XCTAssertEqual(BuddyLook(belt: .red).grown(to: .young).belt, .red)
   }

@@ -130,7 +130,6 @@ extension LearnerGoal {
 }
 
 extension GoalSyllabus {
-  /// Two subjects, the first with a chapter that exists and a far topic without a page yet.
   fileprivate static func searchFixture(kind: String) throws -> GoalSyllabus {
     try JSONDecoder().decode(
       GoalSyllabus.self,
@@ -172,7 +171,6 @@ extension GoalSyllabus {
 }
 
 extension JSONDecoder {
-  /// A finished mock as the exam page lists it.
   fileprivate static func zoonkTestMock() throws -> ExamMockSummary {
     let decoder = JSONDecoder()
     decoder.dateDecodingStrategy = .iso8601

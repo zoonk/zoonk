@@ -202,7 +202,6 @@ private struct EmailPolicyTransport: ClientTransport {
   }
 }
 
-/// The generated client's cross-cutting configuration is observable only at the transport boundary, so this avoids depending on an external server.
 private struct CurrentAccountTransport: ClientTransport {
   func send(
     _ request: HTTPRequest,
@@ -248,7 +247,6 @@ private struct RateLimitedTransport: ClientTransport {
   }
 }
 
-/// Verifies the hand-written account boundary uses the authenticated generated operation and exact signed-transaction request contract without a live server.
 private struct AppleSubscriptionTransport: ClientTransport {
   func send(
     _ request: HTTPRequest,

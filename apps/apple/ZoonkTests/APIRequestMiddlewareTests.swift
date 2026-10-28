@@ -22,8 +22,7 @@ final class APIRequestMiddlewareTests: XCTestCase {
     XCTAssertEqual(sent.body, json)
   }
 
-  /// Runs a request through `middleware` the way the generated client does: its Content-Length
-  /// already set from the body it was made with.
+  /// Sets Content-Length from `body` first, as the generated client does.
   private func send(through middleware: some ClientMiddleware, body: Data) async throws
     -> (length: String?, body: Data)
   {

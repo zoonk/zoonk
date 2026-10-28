@@ -61,7 +61,6 @@ final class PronunciationRoundTests: XCTestCase {
     await round.record(recording)
     XCTAssertEqual(round.step, .word(index: 0, state: .ready(.failed)))
 
-    // A grade for a learner who's gone changes nothing.
     await round.record(recording)
     XCTAssertEqual(round.step, .word(index: 0, state: .ready(.failed)))
     XCTAssertEqual(round.outcomes, [:])

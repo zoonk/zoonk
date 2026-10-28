@@ -14,7 +14,6 @@ final class CharacterActingTests: XCTestCase {
   func testSpringsPassTheirStopAndCurvesKeepTheirShape() {
     XCTAssertEqual(ActEase.spring.value(at: 0.53), 1.046, accuracy: 0.001)
     XCTAssertEqual(ActEase.follow.value(at: 0.292), 1.205, accuracy: 0.001)
-    // The ease-out is most of the way there by half its time, the accelerate barely started.
     XCTAssertGreaterThan(ActEase.out.value(at: 0.5), 0.85)
     XCTAssertLessThan(ActEase.accelerate.value(at: 0.5), 0.25)
     XCTAssertEqual(ActEase.swing.value(at: 0.5), 0.5, accuracy: 0.001)
@@ -34,7 +33,6 @@ final class CharacterActingTests: XCTestCase {
     XCTAssertEqual(crown.pose(at: 0, frames: 10, from: from, to: to).rotate, -7)
     XCTAssertEqual(crown.pose(at: 4, frames: 10, from: from, to: to).rotate, -14, accuracy: 0.001)
     XCTAssertEqual(crown.pose(at: 10, frames: 10, from: from, to: to).rotate, -18)
-    // On its way from the key to the landing it swings past it, on the loose spring.
     XCTAssertLessThan(crown.pose(at: 6, frames: 10, from: from, to: to).rotate, -18)
   }
 

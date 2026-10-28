@@ -105,8 +105,8 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertFalse(editor.failed)
   }
 
-  // Pedro set a deadline, then dropped it: core took that as setting back the latest change and
-  // undid it, answering with that change, whose effect is the deadline's (core's `undoSetBack`).
+  // Dropping a deadline sets back the latest change, so core undoes that change and answers with it
+  // (core's `undoSetBack`).
   func testChangeThatSetsBackTheLatestOneSaysItsUndone() throws {
     let json = """
       {
@@ -188,7 +188,6 @@ final class PlanStoreTests: XCTestCase {
     XCTAssertEqual(editor.latest, .applied(.stub, sentence: "Daily time changed."))
   }
 
-  /// An expired session signs out, and the change belongs to no one on screen: no message.
   func testExpiredSessionSignsOutInsteadOfSaving() async {
     let api = PlanAPIStub()
     let session = SessionStore.preview(account: .planTestAccount)

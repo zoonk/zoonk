@@ -1,8 +1,6 @@
 import Foundation
 
-/// An `activity` screen: one of the Library's interactive templates (`processOrder`,
-/// `chartReader`, `numberLine`, ...). The player owns the prompt, the check and the feedback;
-/// the template's canvas belongs to its renderer (`ActivityRenderer`), which reads its own
+/// The player owns the prompt, the check and the feedback; the template's renderer reads its own
 /// `fields` from `payload`.
 public struct ActivityStepContent: Codable, Hashable, Sendable {
   public let template: String
@@ -10,7 +8,6 @@ public struct ActivityStepContent: Codable, Hashable, Sendable {
   public let check: ActivityCheck
   public let image: LessonPictureDescription?
   public let data: ActivityData?
-  /// The whole content as sent, for the renderer to decode its template's `fields`.
   public let payload: JSONValue
 
   private enum CodingKeys: String, CodingKey {
@@ -31,13 +28,11 @@ public struct ActivityStepContent: Codable, Hashable, Sendable {
     try payload.encode(to: encoder)
   }
 
-  /// The template's own fields, typed by its renderer.
   public func fields<Fields: Decodable>(as type: Fields.Type = Fields.self) throws -> Fields {
     try (payload["fields"] ?? .null).decode(as: type)
   }
 }
 
-/// An activity template on an explanation screen: a canvas to play with, nothing asked.
 public struct ActivityExploreContent: Codable, Hashable, Sendable {
   public let template: String
   public let data: ActivityData?
@@ -63,7 +58,6 @@ public struct ActivityExploreContent: Codable, Hashable, Sendable {
   }
 }
 
-/// Where an activity's numbers come from: made up to show the idea, or a real source.
 public struct ActivityData: Codable, Hashable, Sendable {
   public struct Source: Codable, Hashable, Sendable {
     public let title: String
@@ -76,8 +70,7 @@ public struct ActivityData: Codable, Hashable, Sendable {
   public let source: Source?
 }
 
-/// How an activity is answered. `choice`: options under a canvas to explore. `numeric`: a number
-/// the canvas helps find. `interaction`: the canvas's end state is the answer.
+/// `interaction`: the canvas's end state is the answer.
 public enum ActivityCheck: Codable, Hashable, Sendable {
   public struct Option: Codable, Hashable, Sendable, Identifiable {
     public let id: String
@@ -174,9 +167,6 @@ public enum ActivityCheck: Codable, Hashable, Sendable {
   }
 }
 
-/// The learner's answer to an activity, as `POST /v1/steps/{stepId}/checks` takes it: an object
-/// with its `kind` (`choice`, `numeric`, `order`, `assignment`, `selection`, ...). A renderer
-/// builds its kind with `init(encoding:)` from its own `Encodable` type.
 public struct ActivityAnswer: Codable, Hashable, Sendable {
   public let value: JSONValue
 
@@ -184,7 +174,7 @@ public struct ActivityAnswer: Codable, Hashable, Sendable {
     self.value = value
   }
 
-  /// An answer of the renderer's own type, which must encode the API's `kind` field.
+  /// `answer` must encode the API's `kind` field.
   public init(encoding answer: some Encodable) throws {
     value = try JSONValue(encoding: answer)
   }
@@ -229,7 +219,6 @@ public struct ActivityAnswer: Codable, Hashable, Sendable {
     return number
   }
 
-  /// The renderer's own answer type.
   public func decode<Answer: Decodable>(as type: Answer.Type = Answer.self) throws -> Answer {
     try value.decode(as: type)
   }

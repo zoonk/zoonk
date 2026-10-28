@@ -1,7 +1,5 @@
 import Foundation
 
-/// A team challenge: a short case at work (or a "what if"), decided step by step with the team.
-/// Every path reaches an ending; it's right when at least half of the decisions were good.
 public struct ChallengeContent: Codable, Hashable, Sendable {
   public enum Variant: String, Codable, Hashable, Sendable {
     case work, whatIf

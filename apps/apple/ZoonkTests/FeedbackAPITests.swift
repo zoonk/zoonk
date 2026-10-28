@@ -133,7 +133,6 @@ private func makeFeedbackAPI(transport: any ClientTransport) -> FeedbackAPI {
     appVersion: "2.0 (7)")
 }
 
-/// Exercises the generated public feedback operation without sending a real message.
 private struct FeedbackResponseTransport: ClientTransport {
   let expectedAuthorization: String?
   let expectedBody: [String: any Sendable]

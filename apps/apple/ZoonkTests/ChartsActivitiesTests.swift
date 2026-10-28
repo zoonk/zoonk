@@ -2,12 +2,9 @@ import XCTest
 
 @testable import Zoonk
 
-/// The chart, slider and plot templates' math, against the values main's TypeScript computes for
-/// the same inputs (core's templates, `@zoonk/utils/seeded-random`, the player's helpers), so the
-/// app's readouts, simulations and verdicts agree with grading.
+/// Expected values are what main's TypeScript computes for the same inputs, so the app's readouts
+/// agree with grading.
 final class ChartsActivitiesTests: XCTestCase {
-  // MARK: - Shared helpers
-
   func testSeedsLikeMain() {
     var random = ChartsRandom(seed: 42)
     XCTAssertEqual(random.next(), 0.0009665507832230542, accuracy: 1e-15)
@@ -18,9 +15,8 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(normal.standardNormal(), -0.008046984382329135, accuracy: 1e-12)
   }
 
-  /// A real lesson's fields as Postgres stores them (shorter keys first) give main's seed: main
-  /// hashes the fields after core's schema parse, which writes keys in the schemas' alphabetical
-  /// order, the order the app encodes them in.
+  /// Postgres stores the fields shorter keys first, but main hashes them after core's schema parse,
+  /// which writes keys alphabetically, as the app encodes them.
   func testSeedsARealSimulationLikeMain() throws {
     let stored = try JSONDecoder().decode(
       JSONValue.self,
@@ -68,8 +64,6 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(
       ActivityNumberFormat.format(1_200_000, digits: 1, compact: true, locale: english), "1.2M")
   }
-
-  // MARK: - Charts
 
   func testMeasuresChartSpans() throws {
     let fields: ChartReaderFields = try decode(
@@ -269,8 +263,6 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertFalse(price.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "A1*B1"))))
   }
 
-  // MARK: - Figures
-
   func testAreaModelSplitsKeepTheirParts() {
     let side = AreaModelSide(.init(label: nil, parts: [20, 3], total: 23))
     XCTAssertEqual(side.cuts, [20])
@@ -418,8 +410,6 @@ final class ChartsActivitiesTests: XCTestCase {
     let dioxide = try XCTUnwrap(MoleculeModel.findStructure(target))
     XCTAssertEqual(Set(dioxide.bonds.map(\.order)), [2])
   }
-
-  // MARK: - Renderers
 
   func testRegistersEveryChartTemplate() {
     let registry = ActivityRendererRegistry(ChartsActivities.renderers)

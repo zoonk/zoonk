@@ -62,7 +62,6 @@ final class ProgressAPITests: XCTestCase {
     XCTAssertEqual(activity.summary.totalLessonCompletions, 3)
   }
 
-  /// A day with only reviews or practice is still a learning day, so the calendar lights it too.
   func testActivityCountsDaysWithoutNewLessons() async throws {
     let api = makeProgressAPI(
       transport: ProgressResponseTransport(
@@ -370,7 +369,6 @@ private func makeProgressAPI(transport: any ClientTransport) -> ProgressAPI {
       transport: transport))
 }
 
-/// Exercises generated operation selection and shared native authentication without an external server.
 private struct ProgressResponseTransport: ClientTransport {
   let expectedOperationID: String
   let status: HTTPResponse.Status

@@ -2,12 +2,9 @@ import XCTest
 
 @testable import Zoonk
 
-/// The order, sort and assign templates' rules, on the shared fixtures main's player browser tests
-/// play (`@zoonk/testing/fixtures/activity-contents`): each renderer's grade must agree with core's
-/// `checkActivityAnswer`, and its state rules with main's renderer models.
+/// On the fixtures main's player browser tests play (`@zoonk/testing/fixtures/activity-contents`),
+/// each renderer's grade must agree with core's `checkActivityAnswer`.
 final class ActivityRenderersTests: XCTestCase {
-  // MARK: - Shared
-
   func testShufflesLikeMainForTheSameSeed() {
     // Values from main's `seededShuffle` in `@zoonk/utils/seeded-random`.
     XCTAssertEqual(
@@ -44,8 +41,6 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertTrue(ActivityNumberFormat.format(15, unit: "%").hasSuffix("15%"))
     XCTAssertTrue(ActivityNumberFormat.format(3, unit: "days").hasSuffix("\u{00A0}days"))
   }
-
-  // MARK: - Categorize
 
   private let categorizeJSON = #"""
     {"template":"categorize","prompt":"Sort each change.","check":{"kind":"interaction","explanation":"Here is why."},
@@ -94,8 +89,6 @@ final class ActivityRenderersTests: XCTestCase {
         items, placedId: "i3", placements: ["i1": "a", "i2": "b", "i3": "c"]))
   }
 
-  // MARK: - Process order and timeline
-
   func testProcessOrderTheTrueOrderIsRightAndTheShuffleNeverIs() throws {
     let content = try content(
       #"{"template":"processOrder","prompt":"Order the steps.","check":{"kind":"interaction","explanation":"x"},"fields":{"steps":[{"id":"s1","text":"One"},{"id":"s2","text":"Two","why":"After one"},{"id":"s3","text":"Three","why":"After two"}]}}"#
@@ -133,8 +126,6 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertEqual(TimelineScale.roundedGap(2019), 2000)
     XCTAssertFalse(TimelineScale.ticks(start: -3000, end: 2000).contains(0))
   }
-
-  // MARK: - Match pairs
 
   private let matchPairsJSON = #"""
     {"template":"matchPairs","prompt":"Match each word.","check":{"kind":"interaction","explanation":"x"},
@@ -192,8 +183,6 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertEqual(MatchPairs.progress(from: answer).matched.sorted(), ["a", "b", "c"])
   }
 
-  // MARK: - Selections
-
   func testArgumentBuilderTheStrongQuoteAndReasoningAreRight() throws {
     let content = try content(
       #"{"template":"argumentBuilder","prompt":"Build it.","check":{"kind":"interaction","explanation":"x"},"fields":{"claim":"Romeo's love is impulsive.","evidence":[{"citation":"Act 2","id":"e1","isStrong":true,"quote":"Too rash.","why":"Speed."},{"citation":"Act 1","id":"e2","isStrong":false,"quote":"O brawling love!","why":"Rosaline."}],"reasoning":[{"id":"r1","isStrong":true,"text":"Juliet sees the rush.","why":"Ties."},{"id":"r2","isStrong":false,"text":"Love is common.","why":"Nothing."}]}}"#
@@ -243,8 +232,6 @@ final class ActivityRenderersTests: XCTestCase {
         ExcerptSegment(passageId: nil, text: "."),
       ], "an overlapping passage is skipped")
   }
-
-  // MARK: - Links, trees, grids and steps
 
   func testCauseEffectLinksAreASet() throws {
     let content = try content(
@@ -363,8 +350,6 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertNil(fields.mixUpFeedback(correct: "Right atrium", placed: "Pulmonary valve"))
   }
 
-  // MARK: - Numbers
-
   func testDescribesChangesAndGuessesLikeMain() {
     XCTAssertEqual(FactChange(ratio: 1.5 / 12.5), .less(8.3))
     XCTAssertEqual(FactChange(ratio: 3), .more(3))
@@ -379,8 +364,6 @@ final class ActivityRenderersTests: XCTestCase {
     XCTAssertEqual(GuessScale.compare(guess: 40, actual: 11.57, isCorrect: false), .tooBig(3.5))
     XCTAssertEqual(GuessScale.compare(guess: 11, actual: 11.57, isCorrect: true), .close)
   }
-
-  // MARK: - Helpers
 
   private func content(_ json: String) throws -> ActivityStepContent {
     try JSONDecoder().decode(ActivityStepContent.self, from: Data(json.utf8))

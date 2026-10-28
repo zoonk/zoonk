@@ -145,7 +145,6 @@ private final class Recorder {
   var items: [MockDraft] = []
 }
 
-/// Holds sends until it opens, so several answers queue up first.
 @MainActor
 private final class Gate {
   private var isOpen = false

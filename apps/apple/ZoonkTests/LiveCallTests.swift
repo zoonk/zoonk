@@ -5,8 +5,6 @@ import XCTest
 
 @MainActor
 final class LiveCallTests: XCTestCase {
-  // MARK: - Wire format
-
   func testReadsGPTLiveEventsTheCallActsOn() {
     XCTAssertEqual(event(#"{"type":"session.started","session":{"id":"s"}}"#), .started)
     XCTAssertEqual(event(#"{"type":"session.closed","usage":{"seconds":3},"reason":"x"}"#), .closed)
@@ -53,8 +51,6 @@ final class LiveCallTests: XCTestCase {
     )
   }
 
-  // MARK: - Transcript
-
   func testBuildsTurnsFromFragmentsAndTypedReplies() {
     let turns = [TranscriptTurn]()
       .adding(" Hi!", speaker: .character, startMs: 0, endMs: 500)
@@ -73,8 +69,6 @@ final class LiveCallTests: XCTestCase {
       ])
     XCTAssertEqual(turns.spokenSeconds, 3)
   }
-
-  // MARK: - Refusals
 
   func testReadsCallRefusalsInTheLearnersTerms() {
     XCTAssertEqual(reservation(409, "CALL_IN_PROGRESS"), .callInProgress)
@@ -104,8 +98,6 @@ final class LiveCallTests: XCTestCase {
     XCTAssertNil(refusal(422, "NO_SPEECH").limit)
     XCTAssertTrue(refusal(422, "NO_SPEECH").isNoSpeech)
   }
-
-  // MARK: - The call
 
   func testACallGoesLiveOpensAndEndsWhenTheServerClosesIt() async {
     let transport = FakeTransport()
@@ -212,8 +204,6 @@ final class LiveCallTests: XCTestCase {
     XCTAssertTrue(transport.isClosed)
   }
 
-  /// The review's repro (F21): ICE gathering stalls, the learner leaves, and the server can't
-  /// confirm the hangup. The device still lets go of its peer at once, and the offer's wait ends.
   func testLeavingCleansUpLocallyEvenWhenTheServerCantConfirmTheHangup() async {
     let transport = FakeTransport(holdsOffer: true)
     let server = FakeServer(confirmsHangup: false)
@@ -230,8 +220,6 @@ final class LiveCallTests: XCTestCase {
     XCTAssertEqual(call.phase, .failed)
   }
 
-  // MARK: - Helpers
-
   private func event(_ json: String) -> LiveServerEvent? {
     LiveServerEvent(json: Data(json.utf8))
   }
@@ -240,7 +228,6 @@ final class LiveCallTests: XCTestCase {
     try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
   }
 
-  /// A refusal as the API sends it: `details` decoded from its JSON.
   private func refusal(_ status: Int, _ code: String, _ details: String? = nil) -> VoiceRefusal {
     VoiceRefusal(
       status: status, code: code,
@@ -274,7 +261,7 @@ private final class FakeTransport: LiveCallTransport {
   private let holdsOffer: Bool
   private var offerWait: CheckedContinuation<Void, any Error>?
 
-  /// `holdsOffer`: ICE gathering never finishes; only closing ends the wait, as WebRTC's does.
+  /// `holdsOffer`: ICE gathering never finishes, and only closing ends the wait, as in WebRTC.
   init(holdsOffer: Bool = false) {
     self.holdsOffer = holdsOffer
   }
@@ -319,8 +306,6 @@ private final class FakeServer {
   private(set) var redeemed: [String] = []
   private(set) var ended: [String] = []
 
-  /// Each connect takes the next reservation; nil (or none left) is a ready one.
-  /// `confirmsHangup: false`: the hangup request never gets through.
   init(
     reservations: [CallReservation?] = [], endedAtDeadline: Bool = false,
     confirmsHangup: Bool = true
