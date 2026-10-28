@@ -8,6 +8,7 @@
     "./lesson/rich-text": "./src/lesson/_components/lesson-rich-text.tsx",
     "./lesson/types": "./src/lesson/lesson-player-types.ts",
     "./messages": "./src/messages.ts",
+    "./messages/*.po": "./messages/*.po",
     "./preview": "./src/preview/player-preview.tsx",
     "./preview/catalog": "./src/preview/preview-catalog.ts",
     "./questions/styles.css": "./src/questions/styles.css",

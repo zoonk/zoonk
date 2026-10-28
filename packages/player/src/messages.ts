@@ -13,9 +13,9 @@ function isPlayerMessagesModule(value: unknown): value is PlayerMessagesModule {
 }
 
 /**
- * Loads the player-owned translation catalog for an app locale.
- * Apps should call this instead of importing package message files directly so
- * the player package keeps ownership of where its extracted catalogs live.
+ * Loads the player-owned translation catalog for an app locale. A client module that needs one
+ * locale's catalog as a static script imports `@zoonk/player/messages/<locale>.po`, which the
+ * package exports, so it still owns where its extracted catalogs live.
  */
 export async function playerMessages(locale: string): Promise<PlayerMessages> {
   const translations: unknown = await import(`../messages/${locale}.po`);

@@ -74,6 +74,7 @@
     "./memory": "./src/memory/memory-screen.tsx",
     "./memory-updated": "./src/memory/memory-updated.tsx",
     "./messages": "./src/messages.ts",
+    "./messages/*.po": "./messages/*.po",
     "./meter": "./src/_components/meter.tsx",
     "./mind-maps": "./src/mind-maps/mind-maps-screen.tsx",
     "./question-tutor": "./src/questions/question-tutor.ts",

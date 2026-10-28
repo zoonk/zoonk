@@ -6,16 +6,6 @@ import { mergeMessages } from "./merge-messages";
 
 type Messages = Record<string, unknown>;
 
-/**
- * Which catalogs a part of the app sends to the browser. Every page gets main's own messages and
- * learn's site messages (votes and the feedback form are everywhere, and goals start from public
- * pages); the app's frame and the task screens get every catalog, the player's included, once for
- * the whole section, so no page inside them sends a catalog of its own. Server components read
- * every catalog through `request.ts` either way, so this only decides what client components can
- * use.
- */
-export type ClientMessagesScope = "learn" | "site";
-
 async function appMessages(locale: string): Promise<Messages> {
   const translations: unknown = await import(`../../messages/${locale}.po`);
 
@@ -26,52 +16,41 @@ async function appMessages(locale: string): Promise<Messages> {
   return translations.default;
 }
 
-async function loadMessages({
-  locale,
-  scope,
-}: {
-  locale: string;
-  scope: ClientMessagesScope;
-}): Promise<Messages> {
-  if (scope === "learn") {
-    const [player, learn, app] = await Promise.all([
-      playerMessages(locale),
-      learnMessages(locale),
-      appMessages(locale),
-    ]);
+async function loadAllMessages(locale: string): Promise<Messages> {
+  const [player, learn, app] = await Promise.all([
+    playerMessages(locale),
+    learnMessages(locale),
+    appMessages(locale),
+  ]);
 
-    return mergeMessages(player, learn, app);
-  }
+  return mergeMessages(player, learn, app);
+}
 
+async function loadSiteMessages(locale: string): Promise<Messages> {
   const [site, app] = await Promise.all([learnSiteMessages(locale), appMessages(locale)]);
   return mergeMessages(site, app);
 }
 
 /**
- * A production build's catalogs never change, so each locale's and scope's merge is made once per
- * server instead of on every render: merging walks thousands of keys, and every page renders it
- * two or three times (the server's messages, then each scope's provider), prefetches included. In
- * development extraction rewrites the catalogs as code changes, so each render merges them again.
+ * A production build's catalogs never change, so each locale's merge is made once per server
+ * instead of on every render: merging walks thousands of keys, and every page renders it, its
+ * prefetches included. In development extraction rewrites the catalogs as code changes, so each
+ * render merges them again.
  */
 const merged = new Map<string, Promise<Messages>>();
 
-/** The messages client components need in a scope, so pages don't ship every catalog. */
-export function getClientMessages(input: {
-  locale: string;
-  scope: ClientMessagesScope;
-}): Promise<Messages> {
+function mergeOnce(key: string, load: () => Promise<Messages>): Promise<Messages> {
   if (process.env.NODE_ENV !== "production") {
-    return loadMessages(input);
+    return load();
   }
 
-  const key = `${input.scope}:${input.locale}`;
   const cached = merged.get(key);
 
   if (cached) {
     return cached;
   }
 
-  const loading = loadMessages(input);
+  const loading = load();
   merged.set(key, loading);
   // A failed load isn't kept: the next render tries again.
   loading.catch(() => merged.delete(key));
@@ -80,5 +59,13 @@ export function getClientMessages(input: {
 
 /** Every catalog, for server components. App messages win a key collision unless still untranslated. */
 export function getAllMessages(locale: string): Promise<Messages> {
-  return getClientMessages({ locale, scope: "learn" });
+  return mergeOnce(`all:${locale}`, () => loadAllMessages(locale));
+}
+
+/**
+ * What every page's client components can use: main's own messages and learn's site messages
+ * (votes and the feedback form are everywhere, and goals start from public pages).
+ */
+export function getSiteMessages(locale: string): Promise<Messages> {
+  return mergeOnce(`site:${locale}`, () => loadSiteMessages(locale));
 }

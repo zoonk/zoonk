@@ -12,8 +12,9 @@ function isLearnMessagesModule(value: unknown): value is LearnMessagesModule {
 }
 
 /**
- * Loads the learn-owned translation catalog for an app locale. Apps merge it with
- * their own catalog instead of importing package message files directly.
+ * Loads the learn-owned translation catalog for an app locale. Apps merge it with their own
+ * catalog; a client module that needs one locale's catalog as a static script imports
+ * `@zoonk/learn/messages/<locale>.po`, which the package exports.
  */
 export async function learnMessages(locale: string): Promise<LearnMessages> {
   const translations: unknown = await import(`../messages/${locale}.po`);
