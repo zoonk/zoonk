@@ -38,22 +38,11 @@ type Change = NonNullable<TodayView["planChange"]>;
 type Decision = PlanChangeDecisionInput["status"];
 type Answered = { answer: Decision; answered: PlanChangeView };
 
-/**
- * The notice's title, before the sentence that says what the suggestion does. A change the exam's
- * notice brings says so in its own sentence ("The exam notice says…"), so that sentence is the
- * title.
- */
 function useChangeTitle() {
   const t = useExtracted();
   return (change: Change): string => (change.source === NOTICE_SOURCE ? "" : t("Plan suggestion"));
 }
 
-/**
- * What a change does to the plan, in words over its diff: what the diff can't say (the lessons it
- * leaves out by name, the topics, its end as the Plan says it), then the diff, which leads with the
- * lessons it leaves out or adds (fewer or more of them without a date they count against,
- * `byDate`). Today's other notices that change the plan say it the same way.
- */
 export function ProposalEffect({
   byDate = true,
   change,
@@ -79,7 +68,6 @@ export function ProposalEffect({
   );
 }
 
-/** What the answer did, said where the buttons were: an applied change says what it did to today. */
 function useAnsweredText() {
   const t = useExtracted();
   const appliedLine = useAppliedLine();
@@ -100,11 +88,6 @@ function useAnsweredText() {
   };
 }
 
-/**
- * "Apply" or "Not now" for a suggestion: "Keep mine" for one the exam's notice brings or one that
- * moves the phase dates, since the answer stays; "Use my date anyway" over the exam's official
- * date.
- */
 function ChangeActions({
   change,
   disabled,
@@ -137,13 +120,6 @@ function ChangeActions({
   );
 }
 
-/**
- * Answers the change in place; the suggestion then says what the answer did. An answer that didn't
- * save keeps the last one on screen (an applied change whose Undo failed stays applied). Undoing an
- * applied suggestion gives the suggestion back (`change`), waiting for an answer as before Apply,
- * even when Today opened on it already applied. The change stays on screen from the answer
- * (`onHold`) unless nothing was saved. One out of date stays busy until what replaces it shows.
- */
 function useAnswer(opened: Change, onHold: (held: boolean) => void) {
   const analytics = useLearnAnalytics();
   const { actions } = useTodayScreen();
@@ -162,8 +138,7 @@ function useAnswer(opened: Change, onHold: (held: boolean) => void) {
         actions.decidePlanChange({ changeId: change.id, status }),
       );
 
-      // An out-of-date change says nothing: Today read itself again, and its copy (or the page's
-      // other state) replaces it.
+      // An out-of-date change says nothing: Today read itself again, and its copy replaces it.
       if (saved === "stale") {
         setFailed(false);
         setSuperseded(change);
@@ -202,10 +177,6 @@ function useAnswer(opened: Change, onHold: (held: boolean) => void) {
   return { answer, answered, change, failed, isPending: isPending || superseded === change };
 }
 
-/**
- * After the answer: "Next suggestion" when another proposal still waits, else Undo while the
- * applied change can still be undone.
- */
 function AfterAnswer({
   answer,
   isPending,
@@ -245,11 +216,8 @@ function PlanChangeNotice({
   onNext,
 }: {
   change: Change;
-  /** It replaced the answered one in place, so the keyboard lands on it. */
   focusOnMount?: boolean;
-  /** Keeps it on screen from the learner's answer (`useShownChange`). */
   onHold: (held: boolean) => void;
-  /** Shows the next proposal still waiting, once this one is answered; null when none waits. */
   onNext: (() => void) | null;
 }) {
   const t = useExtracted();
@@ -305,12 +273,7 @@ function PlanChangeNotice({
   );
 }
 
-/**
- * Today's plan change, the one place to answer it, only when the learner has a say: a suggestion
- * ("Apply" or "Not now", and its undo once applied), or falling behind that puts the date at risk
- * (more time, focus or keep). What the plan does on its own isn't news on Today (see
- * `asksAboutAutomaticChange`).
- */
+/** Only when the learner has a say: what the plan does on its own isn't news on Today (`asksAboutAutomaticChange`). */
 export function TodayPlanChange() {
   const { today } = useTodayScreen();
   const { current: change, hold, showNext, swapped } = useShownChange(today.planChange);

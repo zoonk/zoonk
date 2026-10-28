@@ -55,7 +55,6 @@ const planChange = (status: "applied" | "proposed", id = "change"): Today["planC
   status,
 });
 
-/** Falling behind put the goal's date at risk: the learner chooses what to do. */
 const fallingBehind: Today["planChange"] = {
   behind: {
     canFocus: true,
@@ -94,8 +93,6 @@ describe(pickTodayNotice, () => {
     );
   });
 
-  // IELTS, free, day 9: falling behind asked for 3h 50m a day, which opens no lesson past the free
-  // week, and hid the notice saying so.
   it("says a free exam plan's first week is over before anything that asks more of the plan", () => {
     const trialEnded = welcomeBack({ examAccess: { trialEnded: true }, freshStart: null });
 
@@ -173,14 +170,12 @@ describe(pickTodayNotice, () => {
 
     expect(pick({ view: explained })).toBe("insight");
 
-    // Another proposal still comes first, and the insight waits for the next visit.
     expect(pick({ view: { ...explained, planChange: planChange("proposed") } })).toBe("planChange");
   });
 
   it("leaves the welcome back to the session, so no notice ever hides it", () => {
     expect(pick({ view: { session: welcomeBack() } })).toBeNull();
 
-    // The learner away for days still hears why today is lighter beside the plan's end.
     expect(pick({ view: { session: welcomeBack({ examAccess: { trialEnded: true } }) } })).toBe(
       "examAccess",
     );
@@ -206,7 +201,6 @@ describe(pickTodayNotice, () => {
 
     expect(pick({ view: { suggestedGoal } })).toBe("suggestedGoal");
 
-    // A fresh start says why today is lighter: the course waits until the learner has started.
     expect(pick({ view: { session: welcomeBack(), suggestedGoal } })).toBeNull();
 
     expect(

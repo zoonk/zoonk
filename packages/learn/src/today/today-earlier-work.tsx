@@ -5,7 +5,6 @@ import { useTodayScreen } from "./today-context";
 
 const OPEN_BACKLOG_LIMIT = 5;
 
-/** The saved backlog is separate from today's time; Start owns its new allocation. */
 export function TodayEarlierWork() {
   const t = useExtracted();
   const { today } = useTodayScreen();

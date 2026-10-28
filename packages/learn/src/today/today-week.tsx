@@ -31,14 +31,9 @@ const WEEK_TITLE_ID = "today-week-title";
 
 const DAY_CELL_CLASS = "flex min-h-11 flex-col items-center gap-1.5 py-1";
 
-/** Today's rings: 30px, the letter under each one. */
 const RING_CLASS = "size-7.5";
 
-/**
- * How much of the day's goal was done, drawn as the ring's arc. A day the plan gave no time that
- * the learner studied anyway fills whole: Will's Sunday stayed an empty ring beside "Sunday:
- * studied" after 8 minutes on his day off.
- */
+/** A day the plan gave no time that the learner studied anyway fills whole. */
 function getDayShare(day: WeekDay): number {
   if (day.hitGoal) {
     return 1;
@@ -58,24 +53,14 @@ function useWeekDate(): Date {
   return today.session.week.days.find((day) => day.isToday)?.date ?? today.session.localDate;
 }
 
-/** A study day already past without study: a dashed ring, never a red mark. */
 function isMissed(day: WeekDay, localDate: Date): boolean {
   return day.kind === "study" && !day.studied && !day.isToday && day.date < localDate;
 }
 
-/**
- * A day before the plan started or after its date: no study was asked, so nothing to fill. Past
- * the date nothing is planned until the learner moves it, though the plan goes on (see
- * `PlanStatus` `pastDate`).
- */
 function isOutsidePlan(day: WeekDay): boolean {
   return !day.studied && (day.kind === "beforeStart" || day.kind === "afterEnd");
 }
 
-/**
- * The ring's track: darker for today, dashed for a study day missed, faint for a rest day, so the
- * week reads at a glance without a single red mark.
- */
 function getTrack(day: WeekDay, localDate: Date): GoalRingTrack {
   if (day.isToday) {
     return "today";
@@ -88,12 +73,6 @@ function getTrack(day: WeekDay, localDate: Date): GoalRingTrack {
   return day.kind === "rest" ? "rest" : "default";
 }
 
-/**
- * A day as a small activity ring: its arc fills with how much of the day's goal was done and
- * closes with a check once reached. A day outside the plan is only a short dash, so days before it
- * started never read as missed. The exam's day (or the goal's date) carries a cap; a challenge's
- * day carries its kind's icon.
- */
 function DayRing({ children, day }: { children?: React.ReactNode; day: WeekDay }) {
   const localDate = useWeekDate();
 
@@ -116,7 +95,6 @@ function DayRing({ children, day }: { children?: React.ReactNode; day: WeekDay }
   );
 }
 
-/** The challenge's day: its ring with the challenge's icon in its kind's color until it's filled. */
 function ChallengeDot({ challenge, day }: { challenge: Challenge; day: WeekDay }) {
   return (
     <DayRing day={day}>
@@ -143,7 +121,6 @@ function DayLetter({ day }: { day: WeekDay }) {
   );
 }
 
-/** What a day of the week was, or will be: a day still ahead is never "not studied". */
 function useDayStatus() {
   const t = useExtracted();
   const localDate = useWeekDate();
@@ -169,8 +146,6 @@ function useDayStatus() {
       return t("before your plan");
     }
 
-    // Plans don't end: past its date a plan with lessons left goes on once the learner moves it,
-    // so the day is said by the date.
     if (day.kind === "afterEnd") {
       return t("after your date");
     }
@@ -187,11 +162,6 @@ function useDayStatus() {
   };
 }
 
-/**
- * The challenge's day, flagged in its kind's color, says what it is once ("Thursday: mock exam",
- * and how the day went once it's here). The row under the days, by name, opens its intro, so the
- * day itself isn't a second way to the same place.
- */
 function ChallengeDay({
   challenge,
   day,
@@ -222,11 +192,6 @@ function ChallengeDay({
   );
 }
 
-/**
- * "1 min / 4 hr 30 min": the week's time studied over what the plan gives it, the block's number
- * as a readout beside the plan's time in the mono face (`headline`), or one mono fact on a phone's
- * line (`inline`); screen readers hear it as a sentence.
- */
 function WeekTime({ className, size }: { className?: string; size: "headline" | "inline" }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -258,10 +223,6 @@ function WeekTime({ className, size }: { className?: string; size: "headline" | 
   );
 }
 
-/**
- * "1 of 6 days": the week's study days the learner studied so far; on a phone the week's time
- * joins it, where a tablet or a computer shows it as the block's number.
- */
 function WeekDetail() {
   const t = useExtracted();
   const { today } = useTodayScreen();
@@ -284,12 +245,6 @@ function WeekDetail() {
   );
 }
 
-/**
- * The week under its header, as one row of days, each a ring filled by how much of its goal was
- * done. The day of the week's challenge (or mock exam) carries a flag that opens it, and
- * the challenge is named under the days when it falls this week. Every week starts fresh on Monday,
- * so nothing piles up.
- */
 export function TodayWeek({ className }: { className?: string }) {
   const t = useExtracted();
   const weekdayLabel = useWeekdayLabel();
@@ -297,8 +252,7 @@ export function TodayWeek({ className }: { className?: string }) {
   const { today } = useTodayScreen();
   const challenge = today.weeklyChallenge;
 
-  // A challenge in a later week waits for its week: "This week" named next Sunday's mock (the
-  // exam page and the Plan say when the next one is).
+  // A challenge in a later week waits for its week.
   const inWeek = today.session.week.days.some((day) =>
     isSameDay(day.date, challenge?.date ?? null),
   );

@@ -7,10 +7,8 @@ import { Page, PageHeader, PageHeaderContent, PageTitle } from "../_components/p
 import { PageWithAside } from "../shell/learn-shell";
 import { TODAY_ACTION_CLASS, TODAY_ASIDE_CLASS, TODAY_MAIN_CLASS } from "./today-layout";
 
-/** How many rows the day draws while it loads. */
 const SHELL_ROWS = 5;
 
-/** The day's rows while it loads, as a row draws them: a mark, a title over its line, the time. */
 function DayRowsSkeleton() {
   return (
     <div className="mt-3 flex flex-col">
@@ -28,12 +26,6 @@ function DayRowsSkeleton() {
   );
 }
 
-/**
- * Today before the learner's day arrives, on a hard load (a client navigation paints Today from
- * its prefetch): the title where Today has it and the day in its shapes, its bar, its rows and
- * its action, so the page reads as Today from the first frame and the day fills in place. The
- * aside keeps its place beside the column from 72rem, so the column keeps its width.
- */
 export function TodayShell() {
   const t = useExtracted();
 
@@ -46,7 +38,6 @@ export function TodayShell() {
       <Page>
         <div className={TODAY_MAIN_CLASS}>
           <PageHeader className="[grid-area:head]">
-            {/* Without the date line, the title keeps its height on its own (`PageHeaderContent`). */}
             <PageHeaderContent className="w-full">
               <PageTitle>{t("Today")}</PageTitle>
             </PageHeaderContent>

@@ -5,12 +5,7 @@ import { useState } from "react";
 
 type Change = NonNullable<TodayView["planChange"]>;
 
-/**
- * The change follows Today's latest read until the learner answers it here, so a proposal
- * answered elsewhere leaves the screen. An answered change stays to show what the answer did:
- * a different proposal still waiting comes up when the learner asks (`showNext`). A notice holds
- * its change from the learner's answer (`hold`) unless nothing was saved.
- */
+/** Follows Today's latest read until the learner answers here, so a proposal answered elsewhere leaves the screen; an answered one stays to show what the answer did. */
 export function useShownChange(change: Change | null) {
   const [shown, setShown] = useState<{ change: Change; swapped: boolean } | null>(
     change ? { change, swapped: false } : null,
@@ -18,7 +13,6 @@ export function useShownChange(change: Change | null) {
 
   const [held, setHeld] = useState(false);
 
-  // Until answered here, the change is only current while Today's latest copy still says it.
   if (shown !== null && !held && shown.change !== change) {
     setShown(change ? { change, swapped: false } : null);
   }

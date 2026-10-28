@@ -19,22 +19,14 @@ import { NEXT_TITLE_ID } from "./today-ids";
 import { isFinished } from "./today-queue";
 import { useLessonBeingWritten } from "./use-today-copy";
 
-/** Where a row sits in the day: its fold on a phone or on a long day. */
 export type RowFold = { hidden: boolean; phone: boolean; wide: boolean };
 
 const NO_FOLD: RowFold = { hidden: false, phone: false, wide: false };
 
-/**
- * A row's name when it opens its block: its `::after` stretches over the whole row (44px tall at
- * least, as wide as the row's highlight), so the row is one target, with its focus ring there.
- */
+/** Its `::after` stretches over the whole row, so the row is one target with its focus ring there. */
 const ROW_OPEN_CLASS =
   "flex min-w-0 text-left outline-none after:absolute after:top-1/2 after:h-full after:min-h-11 after:-translate-y-1/2 after:rounded-[0.625rem] focus-visible:after:ring-[3px] focus-visible:after:ring-ring/50 disabled:cursor-default";
 
-/**
- * "Catching up · Portuguese Language": what a row in the day's list is part of; a phase's challenge
- * names its phase (see `getChallengePhase`). A topic the exam asks a lot says so.
- */
 function useRowLabel() {
   const t = useExtracted();
   const isCatchingUp = useIsCatchingUp();
@@ -60,10 +52,6 @@ function useRowLabel() {
   };
 }
 
-/**
- * Why a phase's challenge can't be opened yet, where its label goes: it waits for the day's
- * lessons before it, or for the challenge before it (`getBlockWait`).
- */
 function useWaitLabel() {
   const t = useExtracted();
 
@@ -80,12 +68,6 @@ function useWaitLabel() {
   };
 }
 
-/**
- * A row's frame: a hairline under it (none above the next block's highlight), one line when it's
- * done, the next block highlighted a little past the column's edges with its words from the top,
- * and hidden while its fold is closed. A row that opens its block is highlighted the same way under
- * the pointer, and fades while its block opens.
- */
 function getRowClass({
   finished,
   fold,
@@ -107,7 +89,6 @@ function getRowClass({
   );
 }
 
-/** A row's name as the button that opens its block, wherever it is in the day's order. */
 function RowOpen({
   block,
   children,
@@ -145,7 +126,6 @@ function RowOpen({
   );
 }
 
-/** A row's name, muted once finished, with its state for screen readers. */
 function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
   const t = useExtracted();
   const title = useBlockTitle();
@@ -165,10 +145,6 @@ function RowName({ block, isNext }: { block: DayStep; isNext: boolean }) {
   );
 }
 
-/**
- * What a row still to do says under its name: what it's part of (or what its challenge waits
- * for), a review's detail, and the next lesson's chapter test, a link of its own above the row's.
- */
 function RowLines({
   block,
   isNext,
@@ -209,7 +185,6 @@ function RowLines({
   );
 }
 
-/** Whether a mission opens this step: by its id on a saved day, by its place on a day not opened yet. */
 export function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
   if (opens?.kind !== "block") {
     return false;
@@ -220,16 +195,9 @@ export function opensStep(opens: MissionView["opens"], step: DayStep): boolean {
     : opens.ref.position === step.position;
 }
 
-/**
- * Whether a block is one a mission still to do opens, marked in Brain Power's violet beside its
- * minutes: doing it moves the day's missions. Only the block a tap on the mission would open, so a
- * day's queue carries at most one mark per mission, and none once the mission is done, while it
- * waits, or once today's bonus is earned.
- */
 export function useCountsTowardMission() {
   const { missions } = useTodayScreen();
 
-  // Once today's bonus is earned (here or by another goal), nothing is at stake: no marks.
   return (step: DayStep): boolean =>
     Boolean(
       !missions?.fullMeal.earned &&
@@ -240,18 +208,7 @@ export function useCountsTowardMission() {
     );
 }
 
-/**
- * One block in the day's queue: its mark (`BlockMark`), its name with what it's part of under it,
- * and its minutes. Any block still to do opens from its row, in whatever order the learner likes;
- * the next one is highlighted, its name is what Continue opens, and a lesson there can be skipped
- * with its chapter's test (its own link, above the row's). A phase's challenge with lessons still
- * before it says it waits for them instead of opening. A finished one is one quiet line that opens
- * nothing: the done mark (or a skipped one's ring) and its name, muted and never struck, since the
- * mark already says it, and no minutes: those were the plan's estimate, and "✓ Reviews 8 min"
- * above "2 min studied" read as time studied. A folded row hides on a phone, or on every screen
- * once a long day passes `WIDE_UPCOMING_ROWS`, until its fold opens. Once today's study time is
- * used up, no row opens (`opens`).
- */
+/** A finished row shows no minutes: they were the plan's estimate, and "✓ Reviews 8 min" above "2 min studied" read as time studied. */
 export function BlockRow({
   block,
   fold = NO_FOLD,
@@ -307,11 +264,6 @@ export function BlockRow({
   );
 }
 
-/**
- * A lesson of the plan after today's session (see `TodayUpNext`), drawn as a lesson still to do:
- * its mark, its name and its minutes. The first is highlighted and opens with `onOpen` ("Keep
- * learning", which adds it and the ones after it); the others only say what comes.
- */
 export function PlanLessonRow({
   busy,
   minutes,
@@ -361,13 +313,7 @@ export function PlanLessonRow({
   );
 }
 
-/**
- * One of the lessons the plan dates today that the learner's plan holds for Plus, after the day's
- * blocks: drawn as a lesson still to do, the Plus mark where its minutes would be, opening the Plus
- * page. The mark is part of the link, so its name says "Available with Plus" wherever it's read.
- * It isn't part of the session: never the next block, no mission mark, and the day's segments,
- * time and action leave it out. It folds with the day's other upcoming rows.
- */
+/** Not part of the session: never the next block, no mission mark, and the day's segments, time and action leave it out. */
 export function PlusLessonRow({ fold = NO_FOLD, title }: { fold?: RowFold; title: string }) {
   const { actions } = useTodayScreen();
 

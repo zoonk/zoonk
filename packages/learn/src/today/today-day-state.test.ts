@@ -86,7 +86,6 @@ describe(getDayState, () => {
   it("rests on a day the plan gives no time, the same before and after it's opened", () => {
     const rest = { blocks: [], minutes: { dailyGoal: 0, done: 0, planned: 0 }, nextPosition: null };
 
-    // Not opened yet, the preview may still say lessons are coming; once opened, it says nothing.
     expect(getDayState(day({ ...rest, emptyDay: "lessonsComing" }))).toBe("rest");
     expect(getDayState(day({ ...rest, emptyDay: null }))).toBe("rest");
   });
@@ -106,7 +105,6 @@ describe(getDayState, () => {
 
 describe(getSessionState, () => {
   it("counts a day still to open as started when it kept work done earlier", () => {
-    // A saved day whose replacements wait for the learner's open: its earlier work stays done.
     const state = getSessionState(
       day({
         blocks: [

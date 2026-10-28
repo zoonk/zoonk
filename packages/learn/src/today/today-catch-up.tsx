@@ -8,7 +8,6 @@ import { useFormatDuration } from "../_utils/time-format";
 import { type DayStep } from "../session/session-types";
 import { useTodayScreen } from "./today-context";
 
-/** A step that catches up on lessons earlier days left, by its place in the day. */
 export function useIsCatchingUp() {
   const { today } = useTodayScreen();
   const positions = new Set(today.session.catchUp?.positions);
@@ -16,14 +15,7 @@ export function useIsCatchingUp() {
   return (step: DayStep) => positions.has(step.position);
 }
 
-/**
- * Lessons earlier days left that today's normal time doesn't fit: they come first on the next
- * days, and while they take about one more day's time (`offered`), one tap adds them to today and
- * the learner is back on pace once they're done. More than that only says the next days take them,
- * so nobody is offered "+11 hr 52 min". The day before an exam has no next day for them: they're
- * there if the learner has time today, and it says nothing when they don't fit. Offered while the
- * day is underway and after it's done, as one quiet line under the day.
- */
+/** Offered only while the lessons left take about one more day's time (`offered`), so nobody is offered "+11 hr 52 min". */
 export function CatchUpLater() {
   const t = useExtracted();
   const formatDuration = useFormatDuration();

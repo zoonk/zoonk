@@ -17,11 +17,6 @@ import {
 import { useLearnAnalytics } from "../learn-context";
 import { useTodayScreen } from "./today-context";
 
-/**
- * A free exam plan past its first week: the day's new lessons and practice stop, while reviews
- * and fixing mistakes carry on. Today says so once, calmly, instead of lessons quietly
- * disappearing, and offers Plus for the rest of the plan and mock exams.
- */
 export function TodayExamAccess() {
   const t = useExtracted();
   const analytics = useLearnAnalytics();

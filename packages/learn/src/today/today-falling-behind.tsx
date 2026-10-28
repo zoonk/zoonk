@@ -31,14 +31,8 @@ type Behind = NonNullable<PlanChangeView["behind"]>;
 type Answer = { kept: true } | { failed: true } | null;
 type Option = "adjustTime" | "focus" | "keep" | "studyEverything";
 
-/** The topics the card names before counting the rest: its sentence already holds the numbers. */
 const NAMED_TOPICS = 2;
 
-/**
- * "At 2 hr a day, your plan now covers 39% of the exam, down from 48%.": what the missed days did,
- * in one sentence, the card's only numbers: what more time or a later date would cover is worked
- * out in the plan editor, when the learner asks.
- */
 function useBehindSentence() {
   const t = useExtracted();
   const formatShare = useFormatShare();
@@ -60,21 +54,13 @@ function useBehindSentence() {
   };
 }
 
-/**
- * The one link to the plan editor's time a day: an exam asks for more time a day; any other goal
- * can also move its date ("More time or a later date"). The editor finds what covers everything
- * when the learner asks.
- */
 function useAdjustTimeLabel(): string {
   const t = useExtracted();
   const { today } = useTodayScreen();
   return today.goal.kind === "exam" ? t("More time a day") : t("More time or a later date");
 }
 
-/**
- * The choices in order, and the one drawn as the main action. On a return after a break nothing
- * that asks for more hours leads: Rafaela, back after a month, was offered twice her time first.
- */
+/** On a return after a break, nothing that asks for more hours leads. */
 function getOptionOrder({ behind, returnDay }: { behind: Behind; returnDay: boolean }): {
   order: Option[];
   primary: Option | null;
@@ -89,12 +75,6 @@ function getOptionOrder({ behind, returnDay }: { behind: Behind; returnDay: bool
   return { order: ["adjustTime", "focus", "studyEverything", "keep"], primary: "adjustTime" };
 }
 
-/**
- * The choices falling behind leaves, in `getOptionOrder`'s order: more time a day or a later date
- * open the plan editor at the time a day, where the learner finds what covers everything and the
- * time or date they pick shows what it really covers; where to focus and everything with less
- * depth open their sheets; keeping their time is answered here.
- */
 function BehindChoices({
   behind,
   isPending,
@@ -128,18 +108,11 @@ function BehindChoices({
     studyEverything: link("studyEverything", actions.studyEverythingHref, t("Study everything")),
   };
 
-  // The main choice leads, so it's the sheet's widest answer and the panel's first.
   const sorted = primary ? [primary, ...order.filter((option) => option !== primary)] : order;
 
   return <SuggestionActions>{sorted.map((option) => options[option])}</SuggestionActions>;
 }
 
-/**
- * Saves that the learner saw the change, once: true when it's saved. One out of date says nothing
- * (Today read itself again, and its copy or the page's other state replaces it) and stays busy
- * until that shows (`superseded`); one that didn't save says so. Either lets go of the notice
- * (`onHold`), since nothing was saved.
- */
 function useSeeChange({
   change,
   onAnswer,
@@ -176,14 +149,6 @@ function useSeeChange({
   return { see, superseded: superseded === change };
 }
 
-/**
- * Falling behind put the goal's date at risk: Today says in one sentence what the missed days did
- * to what the plan covers, names a few of the topics that no longer fit, and lets the learner
- * choose (D1): more time a day, or for a goal that isn't an exam a later date, in the plan editor's
- * time a day, where Find works out exactly what covers everything and the time or date they pick
- * shows what it really covers; where to focus; studying everything; or keeping their time with
- * less depth where it counts least. Nothing changes until they choose.
- */
 export function FallingBehindNotice({
   behind,
   change,
@@ -191,7 +156,6 @@ export function FallingBehindNotice({
 }: {
   behind: Behind;
   change: Change;
-  /** Keeps it on screen from the learner's choice (see `TodayPlanChange`). */
   onHold: (held: boolean) => void;
 }) {
   const t = useExtracted();

@@ -2,11 +2,6 @@ import { Page, PageHeader, PageHeaderContent, PageTitle } from "../_components/p
 import { TodayEyebrow, TodayEyebrowPart } from "./today-heading";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
 
-/**
- * Today's title under its date line when there's no day to show yet (no goal, a paused one): the
- * same header as the day's, so the page keeps its frame. The date is the learner's day when the
- * host knows it; `state` ends the line ("Paused").
- */
 export function TodayPageHeader({
   date,
   state,
@@ -31,13 +26,7 @@ export function TodayPageHeader({
   );
 }
 
-/**
- * Today when the goal the tabs show has no day to study: it's paused or finished. Today's own
- * header ("· Paused" ending the date line), one status line ("ENEM 2027 is paused. Nothing is
- * planned until you resume it."), what the way on would do when it changes something (`detail`:
- * resuming a goal whose pause left lessons behind) and the ways on, the main one first: side by
- * side, the main one widest on a phone. Pausing a goal never swaps the page for another.
- */
+/** Pausing a goal never swaps the page for another. */
 export function TodayAtRest({
   actions,
   clause,

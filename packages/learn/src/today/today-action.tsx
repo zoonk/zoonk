@@ -20,28 +20,18 @@ import { NEXT_TITLE_ID } from "./today-ids";
 import { useContinueSession } from "./use-continue-session";
 import { useDayState, useSessionState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
-/**
- * The day's one main action, 44px: full width under the queue on a phone, in the title row from
- * `sm`, as wide as its words.
- */
 const ACTION_CLASS = "w-full text-[0.9375rem] sm:w-auto";
 
 type SessionAction = ReturnType<typeof useSessionAction> & { wait: WaitState };
 
 type TodayContinue = ReturnType<typeof useContinueSession> & {
-  /** "Keep learning", from its button, the up-next list's first row or Enter. */
   keep: SessionAction;
   wait: WaitState;
 };
 
 const TodayContinueContext = createContext<TodayContinue | null>(null);
 
-/**
- * Starts or continues the day once for the places that show it: the button (and Enter, while the
- * day has a block to go on with) and the line that says how it's going (`TodayContinueStatus`).
- * "Keep learning" is one action too, for its button and the up-next list's first row (and Enter,
- * while the day offers it), so a tap on either is one request.
- */
+/** One action for the button, Enter and the status line, and one for "Keep learning" and the up-next list's first row, so a tap on either is one request. */
 export function TodayContinueProvider({ children }: { children: React.ReactNode }) {
   const { actions } = useTodayScreen();
   const underway = useDayState() === "underway";
@@ -68,23 +58,16 @@ function useTodayContinue(): TodayContinue {
   return value;
 }
 
-/** "Keep learning" as the button and the up-next list's first row share it. */
 export function useKeepLearning(): SessionAction {
   return useTodayContinue().keep;
 }
 
-/** Whether a slow or failed Start or Continue has something to say (`TodayContinueStatus`). */
 export function useTodayContinueSpeaking(): boolean {
   const { failed, wait } = useTodayContinue();
   return failed || wait !== "none";
 }
 
-/**
- * What a slow or failed Start or Continue is doing, so the button never just greys out. It never
- * takes room of its own above anything: on a phone it's under the button, at the end of the day;
- * from `sm` it takes the place of the day's line under its segments (`DayMeta`), right under the
- * button. It's marked `data-speaking` while it says something.
- */
+/** Marked `data-speaking` while it says something. */
 export function TodayContinueStatus({ className }: { className?: string }) {
   const t = useExtracted();
   const { failed, wait } = useTodayContinue();
@@ -103,10 +86,6 @@ export function TodayContinueStatus({ className }: { className?: string }) {
   );
 }
 
-/**
- * Start or Continue for a next step whose page opens it without writing (`continueHref`): a link
- * the router loads before the tap, so the step paints at once. Enter follows it.
- */
 function ContinueLink({ href }: { href: string }) {
   const t = useExtracted();
   const { started } = useSessionState();
@@ -126,7 +105,6 @@ function ContinueLink({ href }: { href: string }) {
   );
 }
 
-/** Starts or continues the day from its button or Enter: it opens the next block. */
 function ContinueButton() {
   const t = useExtracted();
   const { actions } = useTodayScreen();
@@ -158,7 +136,6 @@ function ContinueButton() {
   );
 }
 
-/** What changed today, the day's one next step once it's done: Enter opens it. */
 function SummaryLink() {
   const t = useExtracted();
   const { actions } = useTodayScreen();
@@ -178,7 +155,6 @@ function SummaryLink() {
   );
 }
 
-/** A study day with nothing new: practice is the day's action while there's something to practice. */
 function PracticeTime() {
   const t = useExtracted();
   const { actions, today } = useTodayScreen();
@@ -200,11 +176,6 @@ function PracticeTime() {
   );
 }
 
-/**
- * "Keep learning" on a day with nothing left to start (a rest day, or once the day's session is
- * done): it adds the plan's next lessons listed under the day ("Up next in your plan") and opens
- * the first. Enter presses it, as it does Start, and a slow opening says so, as Start's does.
- */
 function KeepLearning() {
   const t = useExtracted();
   const { failed, isPending, run, wait } = useKeepLearning();
@@ -240,10 +211,6 @@ function KeepLearning() {
   );
 }
 
-/**
- * The goal's date came with lessons left: the Plan, whose slot keeps the plan going in one tap
- * (Enter too).
- */
 function SeePlanLink() {
   const t = useExtracted();
   const routes = useLearnRoutes();
@@ -262,13 +229,6 @@ function SeePlanLink() {
   );
 }
 
-/**
- * The day's main action, one place for every state: Start or Continue while there's a block to go
- * on with (Enter too), "Keep learning" with the plan's next lessons once it's done or on a rest day
- * (see `TodayUpNext`), "See today's summary" once it's done with no lesson left to add, practice on a
- * day with nothing new, the Plan once the goal's date came with lessons left. A day at its limit,
- * one still waiting for its lessons, or a rest day with nothing to add has none.
- */
 export function TodayAction({ className }: { className?: string }) {
   const state = useDayState();
   const pastDate = useTodayPastDate();

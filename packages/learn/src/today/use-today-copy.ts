@@ -6,7 +6,6 @@ import { useFormatDuration } from "../_utils/time-format";
 import { useTodayScreen } from "./today-context";
 import { type DayState, getDayState, getSessionState } from "./today-day-state";
 
-/** The session's day as the learner reads it: "Wednesday, October 7". */
 export function useTodayDate(): string {
   const format = useFormatter();
   const { today } = useTodayScreen();
@@ -21,18 +20,11 @@ export function useTodayDate(): string {
 
 const NO_BREAK_SPACE = "\u00A0";
 
-/**
- * A return after a break: Today opens with the greeting and the lighter day, and leaves the rest
- * (the notice, how far behind the plan is) after them or to the Plan.
- */
 export function isWelcomeBackDay(session: Pick<TodayView["session"], "freshStart">): boolean {
   return session.freshStart === "welcomeBack";
 }
 
-/**
- * A fresh start says why today is lighter, kindly and briefly; a return after a break says how long
- * the day takes, since "lighter" beside 12 activities said nothing. Null on an ordinary day.
- */
+/** A return after a break says how long the day takes, since "lighter" beside 12 activities said nothing. */
 export function useFreshStartText(): string | null {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -46,8 +38,7 @@ export function useFreshStartText(): string | null {
 
   switch (freshStart) {
     case "welcomeBack":
-      // A free exam plan past its first week is shorter for what Plus holds, not lighter for the
-      // break.
+      // A free exam plan past its first week is shorter for what Plus holds, not lighter for the break.
       return today.session.examAccess.trialEnded
         ? t("Welcome back! Today takes about {time}, so it's easy to pick up again.", { time })
         : t("Welcome back! Today is lighter, about {time}, so it's easy to pick up again.", {
@@ -79,11 +70,6 @@ type PastDate = Extract<
   { kind: "pastDate" }
 >;
 
-/**
- * The goal's date came with lessons left, and today has nothing planned (its time is over): the
- * day's line says so and its action opens the Plan, whose slot keeps the plan going. Null on any
- * other day, and on one whose session still has blocks to go on with or is done.
- */
 export function useTodayPastDate(): PastDate | null {
   const { today } = useTodayScreen();
   const state = useDayState();
@@ -94,11 +80,7 @@ export function useTodayPastDate(): PastDate | null {
 
 type StopLesson = { kind: string; lessonId: string | null };
 
-/**
- * Whether a stop's lesson is being written right now. A lesson nobody has started writing is
- * written when the learner opens it (its page shows the progress), so it never claims to be in
- * progress. Only lessons have content to write.
- */
+/** A lesson nobody has started writing is written when the learner opens it, so it never claims to be in progress. */
 export function isStopBeingWritten({
   block,
   lessonStatus,
@@ -113,10 +95,6 @@ export function isStopBeingWritten({
   );
 }
 
-/**
- * Whether a stop says its lesson is on its way: while it's being written, until Today stopped
- * reading itself again because the writing looks stuck.
- */
 export function useLessonBeingWritten() {
   const { today, writingStalled } = useTodayScreen();
 
@@ -126,11 +104,6 @@ export function useLessonBeingWritten() {
 
 type UpNextLesson = TodayView["session"]["extraTime"]["lessons"][number];
 
-/**
- * The plan's next lessons "Keep learning" adds, on a day with nothing left to start: a rest day,
- * or once the day's session is done. Empty on any other day, and when the time would go to
- * practice instead (every lesson is done) or isn't there to take.
- */
 export function useUpNextLessons(): UpNextLesson[] {
   const state = useDayState();
   const pastDate = useTodayPastDate();

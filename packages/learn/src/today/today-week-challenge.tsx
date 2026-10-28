@@ -21,16 +21,11 @@ export function isSameDay(a: Date, b: Date | null): boolean {
   return b !== null && a.getTime() === b.getTime();
 }
 
-/**
- * A mock the learner's plan doesn't include (it comes with Plus) leaves its day to a full review of
- * every topic, so the week names that day for what it is; the mock stays in sight, marked Plus,
- * where mocks are offered.
- */
+/** A mock the learner's plan doesn't include leaves its day to a full review of every topic. */
 function isFullReview(challenge: Challenge): boolean {
   return challenge.kind === "mock" && challenge.access === "plusRequired";
 }
 
-/** The week's event as its dot shows it, wherever it's offered: a mock exam or the challenge. */
 export function getChallengeEventKind(challenge: Pick<Challenge, "kind">): "challenge" | "mock" {
   return challenge.kind === "mock" ? "mock" : "challenge";
 }
@@ -39,7 +34,6 @@ export function getChallengeKind(challenge: Challenge): "challenge" | "mock" | "
   return isFullReview(challenge) ? "review" : getChallengeEventKind(challenge);
 }
 
-/** "mock exam", "weekly challenge" or "full review", as a day of the week is named. */
 export function useChallengeDayName() {
   const t = useExtracted();
 
@@ -52,17 +46,11 @@ export function useChallengeDayName() {
   };
 }
 
-/** "Thursday", as a label starts. */
 export function useWeekdayLabel() {
   const format = useFormatter();
   return (date: Date) => toLabelCase(format.dateTime(date, { timeZone: "UTC", weekday: "long" }));
 }
 
-/**
- * A row under the days: the kind's dot, its name and, quieter under it, when and how much
- * ("Sunday · 90 questions"). Under the name, as every row has it: after it, on one line, the
- * aside's column cut "Weekly challenge · Sunday · 10 q…" in both languages.
- */
 function ChallengeLine({ facts, name }: { facts: string; name: string }) {
   return (
     <ListRowContent>
@@ -72,10 +60,6 @@ function ChallengeLine({ facts, name }: { facts: string; name: string }) {
   );
 }
 
-/**
- * A free plan's full review under the days: what the day is, when, and what it asks. It isn't a
- * page of its own: the day's session holds it.
- */
 function FullReviewRow({ date }: { date: Date }) {
   const t = useExtracted();
   const weekdayLabel = useWeekdayLabel();
@@ -93,11 +77,6 @@ function FullReviewRow({ date }: { date: Date }) {
   );
 }
 
-/**
- * The week's challenge under the days: its name over its day, questions and time; the row opens
- * its intro. One the plan adds only once the day is opened (no saved row yet) says the same, with
- * nothing to open until then. A free plan's mock day is its full review.
- */
 export function ChallengeRow({ challenge, date }: { challenge: Challenge; date: Date }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();

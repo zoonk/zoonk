@@ -20,7 +20,6 @@ const ICONS = {
   finalStretch: FlagIcon,
 } as const;
 
-/** The moment in a few words, as the line says it: "ENEM is tomorrow". */
 function useMomentTitle() {
   const t = useExtracted();
 
@@ -40,11 +39,6 @@ function useMomentTitle() {
   };
 }
 
-/**
- * An exam goal's moment on Today (the final stretch, the day before, the exam day, "How did it
- * go?"), as Today's one notice: a line that opens the whole moment (what the day holds, what to
- * bring) in a sheet, or the moment itself in the aside.
- */
 export function TodayExamMoment() {
   const t = useExtracted();
   const momentTitle = useMomentTitle();

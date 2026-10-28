@@ -6,12 +6,7 @@ import { useTodayScreen } from "./today-context";
 import { showsFreshStart } from "./today-notice-order";
 import { useFreshStartText, useSessionState } from "./use-today-copy";
 
-/**
- * Why today starts fresh, as one quiet line under the title: a welcome back, a new phase or a new
- * week. It belongs to the session it explains, so no notice ever hides it (a free learner back
- * after 12 days saw only the end of the free week), and it goes once the learner starts. A day
- * with nothing to start says its own words instead (a rest day after a break says hello there).
- */
+/** It belongs to the session it explains, so no notice ever hides it, and it goes once the learner starts. */
 export function TodayFreshStart({ className }: { className?: string }) {
   const text = useFreshStartText();
   const { today } = useTodayScreen();

@@ -1,14 +1,9 @@
 import { type DayStep } from "../session/session-types";
 
-/** Whether a block is behind the learner: completed or skipped. */
 export function isFinished(block: Pick<DayStep, "status">): boolean {
   return block.status === "completed" || block.status === "skipped";
 }
 
-/**
- * Finished work folds together; unfinished work keeps its order around the active block, named by
- * its place in the day, which a day not opened yet has too.
- */
 export function splitTodayQueue<Block extends Pick<DayStep, "position" | "status">>({
   blocks,
   nextPosition,

@@ -10,13 +10,7 @@ import { useTodayScreen } from "./today-context";
 
 const PRACTICE_TITLE_ID = "today-practice-title";
 
-/**
- * What the learner can practice whenever they want, beyond the day's session: a mock exam or a
- * language goal's exam-style speaking (each marked Plus when the plan doesn't include it) and the
- * mistakes notebook. Under 72rem only: from there the sidebar's study links and the command
- * palette hold the same ways in, so the aside stays glanceable. The section leaves itself out when
- * none has anything to offer.
- */
+/** Under 72rem only: from there the sidebar's study links and the command palette hold the same ways in. */
 export function TodayPractice({
   className,
   mistakes,
@@ -24,7 +18,6 @@ export function TodayPractice({
   speakingEntry,
 }: {
   className?: string;
-  /** Open entries in the mistakes notebook. */
   mistakes: MistakeAvailability;
   mockEntry: React.ReactNode;
   speakingEntry: React.ReactNode;

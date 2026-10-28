@@ -13,11 +13,6 @@ import { useStudiedToday } from "./today-day-progress";
 import { TodayStatusClause, TodayStatusLine, TodayStatusSentence } from "./today-status-line";
 import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
-/**
- * "Today's session is complete. 45 min": the day's blocks are done, with the time it took; on a
- * rest day the learner chose to study, it says so, since the plan asked nothing. While "Keep
- * learning" is the day's main action, what changed today is a link at the end of the line.
- */
 function DoneStatus({ className }: { className?: string }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -48,10 +43,6 @@ function DoneStatus({ className }: { className?: string }) {
   );
 }
 
-/**
- * Why a rest day has nothing planned, and what's there anyway: the plan's next lessons when there
- * are some to add (listed under it), else the day off. A return after a break still says hello.
- */
 function RestStatus({ className }: { className?: string }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
@@ -75,11 +66,6 @@ function RestStatus({ className }: { className?: string }) {
   );
 }
 
-/**
- * A day whose lessons are still being written has no blocks yet: it says so, calmly, and fills in
- * on its own (Today reads itself again meanwhile), instead of claiming the day is done. Once that
- * looks stuck, it says to come back.
- */
 function WaitingStatus({ className }: { className?: string }) {
   const t = useExtracted();
   const { writingStalled } = useTodayScreen();
@@ -103,11 +89,7 @@ function WaitingStatus({ className }: { className?: string }) {
   );
 }
 
-/**
- * The goal's date came with lessons left (see `useTodayPastDate`): no rest day and no "nothing
- * new", but the lessons the plan keeps and the way on, adjusting it. Lucas's Today said "No study
- * planned today. Enjoy your day off!" the day after his date, with 13 lessons he never studied.
- */
+/** Never a rest day or "nothing new" past the goal's date: the lessons left are still the plan's. */
 function PastDateStatus({ className, lessons }: { className?: string; lessons: number }) {
   const t = useExtracted();
   const pastDateText = usePastDateText();
@@ -123,11 +105,7 @@ function PastDateStatus({ className, lessons }: { className?: string; lessons: n
   );
 }
 
-/**
- * When the learner's study time is back: "See you tomorrow!" only when tomorrow is a study day,
- * else the day the plan studies next, named (Friday's "tomorrow" was a Saturday off), or the next
- * session when the coming week has none. Counted from the week's today, as the week marks it.
- */
+/** "See you tomorrow!" only when tomorrow is a study day; else the plan's next day by name, or the next session. */
 function SeeYouClause() {
   const t = useExtracted();
   const format = useFormatter();
@@ -152,12 +130,6 @@ function SeeYouClause() {
   );
 }
 
-/**
- * What the day is when there's nothing to start, in one line under the queue: done, a rest day,
- * the study time used up, nothing new in the plan, the goal's date that came with lessons left, or
- * lessons still being written. A rest day that is a return after a break still says hello, as a
- * study day's lighter session does. Nothing while a block is left to go on with.
- */
 export function TodayDayStatus({ className }: { className?: string }) {
   const t = useExtracted();
   const state = useDayState();
@@ -183,8 +155,8 @@ export function TodayDayStatus({ className }: { className?: string }) {
     case "rest":
       return <RestStatus className={className} />;
     case "ahead":
-      // A free exam plan past its first week has nothing to review or fix today: its new lessons,
-      // listed locked above, come with Plus, so it never claims they're all done.
+      // A free exam plan past its first week has its new lessons locked above, so it never claims
+      // they're all done.
       if (today.session.examAccess.trialEnded) {
         return (
           <TodayStatusLine className={className} icon={<SparklesIcon />}>

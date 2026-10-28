@@ -23,11 +23,7 @@ function toHostState(notices: TodayHostNotices): TodayHostNoticeState {
   };
 }
 
-/**
- * The notice picked when Today opened stays while the learner is here, so answering it shows what
- * the answer did instead of swapping in the next notice, which waits for the next visit. A notice
- * that turns up later (Today reads itself again while lessons are written) shows when none did.
- */
+/** The notice picked when Today opened stays while the learner is here, so answering it shows what the answer did; the next waits for the next visit. */
 function useShownNotice(picked: TodayNoticeKind | null): TodayNoticeKind | null {
   const [shown, setShown] = useState(picked);
 
@@ -38,7 +34,6 @@ function useShownNotice(picked: TodayNoticeKind | null): TodayNoticeKind | null 
   return shown ?? picked;
 }
 
-/** The notice of a kind: Today's own, or the one the host drew. */
 function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
   const { notices } = useTodayScreen();
 
@@ -68,10 +63,6 @@ function NoticeOfKind({ kind }: { kind: TodayNoticeKind | null }) {
   }
 }
 
-/**
- * The one notice Today shows, the most important one, as a `Suggestion`: a line under the day on
- * a phone or a tablet, a panel in the aside from 72rem. Its slot leaves no gap when there's none.
- */
 export function TodayNotice({ className }: { className?: string }) {
   const { notices, today } = useTodayScreen();
   const kind = useShownNotice(pickTodayNotice({ host: toHostState(notices), today }));

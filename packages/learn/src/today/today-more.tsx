@@ -20,14 +20,8 @@ import { TodayExtraTime } from "./today-extra-time";
 import { getChallengeEventKind, useWeekdayLabel } from "./today-week-challenge";
 import { useDayState, useTodayPastDate, useUpNextLessons } from "./use-today-copy";
 
-/** A secondary action under the day: 44px across a phone, small beside the day from `sm`. */
 const SECONDARY_CLASS = "max-sm:h-11 max-sm:w-full max-sm:rounded-lg max-sm:text-sm sm:self-start";
 
-/**
- * "Study 10 more minutes" of practice once the day is done and every lesson of the plan is, "Study
- * for 10 minutes" on such a rest day with no study yet; never past the daily limit, and capped by
- * core.
- */
 function MoreTime() {
   const t = useExtracted();
   const { actions, today } = useTodayScreen();
@@ -51,11 +45,6 @@ function MoreTime() {
   );
 }
 
-/**
- * The week's challenge or mock exam ahead, on a day with nothing new: its intro shows what it asks,
- * before its day too. A mock the learner's plan doesn't include is marked Plus. One the plan adds
- * only once the day is opened (no saved row yet) has no intro to show: the week's row says when.
- */
 function ChallengeRow() {
   const t = useExtracted();
   const weekdayLabel = useWeekdayLabel();
@@ -83,7 +72,6 @@ function ChallengeRow() {
   );
 }
 
-/** The buddy quizzes the learner on anything in the plan. */
 function BuddyPracticeRow() {
   const t = useExtracted();
   const { actions, buddy } = useTodayScreen();
@@ -103,19 +91,11 @@ function BuddyPracticeRow() {
   );
 }
 
-/**
- * What else the day offers, under it: practice once it's done or on a rest day when every lesson
- * is done, the lessons left to catch up while the day is underway, and on a day with nothing new
- * the week's challenge and the buddy's quiz as rows under its main action. Nothing once the goal's
- * date came with lessons left, nor beside "Keep learning", which already goes on with the plan's
- * next lessons, those left to catch up first.
- */
 export function TodayMore({ className }: { className?: string }) {
   const state = useDayState();
   const pastDate = useTodayPastDate();
   const keepLearning = useUpNextLessons().length > 0;
 
-  // Past the goal's date, the one way on is the Plan's (see `TodayAction`).
   if (pastDate || keepLearning) {
     return null;
   }

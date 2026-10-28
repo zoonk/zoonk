@@ -4,14 +4,8 @@ import { MeterPart } from "../_components/meter";
 
 const PERCENT = 100;
 
-/** Where a block of the day stands: behind the learner (done or skipped), in progress, or ahead. */
 export type DaySegmentState = "ahead" | "current" | "done" | "skipped";
 
-/**
- * Blue once done, a neutral fill once skipped, a blue ring for the one in progress (where the
- * learner is, the edge of their progress; a solid segment read as done), and the track for the ones
- * ahead.
- */
 const SEGMENT_STATE_CLASS: Record<DaySegmentState, string> = {
   ahead: "",
   current: "bg-transparent ring-success ring-[1.5px] ring-inset",
@@ -19,20 +13,11 @@ const SEGMENT_STATE_CLASS: Record<DaySegmentState, string> = {
   skipped: "bg-foreground/25",
 };
 
-/**
- * A block still ahead that isn't a lesson (a review, practice, a challenge, a mock) is tinted in
- * its kind's hue, at half strength so it never reads as done, and the day's shape shows at a
- * glance; its row says what it is. A lesson, most of every day, keeps the track.
- */
 function getAheadClass(kind?: LearnKind): string {
   return kind && kind !== "lesson" ? cn(kindFillClass(kind), "opacity-50") : "";
 }
 
-/**
- * One block's segment, as long as its minutes, the one in progress filling blue as its questions
- * are answered (`share`, 0 to 1). Today draws the learner's day with it, and the public pages draw
- * an example day, so it's a module a server component can render.
- */
+/** `share` is 0 to 1. Server components draw it too (the public pages' example day). */
 export function DaySegment({
   className,
   kind,
@@ -41,7 +26,6 @@ export function DaySegment({
   state,
 }: {
   className?: string;
-  /** What the block is, so a block ahead shows its kind (`getBlockKind`). */
   kind?: LearnKind;
   minutes: number;
   share?: number;

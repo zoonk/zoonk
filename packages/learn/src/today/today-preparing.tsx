@@ -8,18 +8,12 @@ import { GenerationWait } from "../generation/generation-wait";
 import { useRefreshUntilShown } from "../generation/use-refresh-until-shown";
 import { TodayEyebrow } from "./today-heading";
 
-/**
- * Today while the goal's plan is still being built after onboarding: Today's own title over the
- * run's progress as it happens, so the frame doesn't change when the day arrives (the host reads
- * Today again once the plan is ready).
- */
 export function TodayPreparing({
   goalTitle,
   onRefresh,
   run,
 }: {
   goalTitle: string;
-  /** Reads Today again: the day shows as soon as the plan exists. */
   onRefresh: () => void;
   run: GenerationRun;
 }) {

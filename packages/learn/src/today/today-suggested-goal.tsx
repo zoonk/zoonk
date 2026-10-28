@@ -22,7 +22,6 @@ import { useTodayScreen } from "./today-context";
 
 type SuggestedGoalAnswer = "accepted" | "dismissed";
 
-/** Saves the answer through the host, which moves on to onboarding when it's accepted. */
 function useSuggestedGoalAnswer(onAnswer: (status: SuggestedGoalAnswer) => Promise<boolean>) {
   const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -37,15 +36,7 @@ function useSuggestedGoalAnswer(onAnswer: (status: SuggestedGoalAnswer) => Promi
   return { answer, failed, isPending };
 }
 
-/**
- * "Continue Physics? Build a plan in 1 minute": a course the learner was taking before goals
- * existed, offered as a goal to plan. The host records the answer and, when it's accepted, opens
- * onboarding with the course as the goal; `onAnswer` resolves to whether that worked.
- *
- * ```tsx
- * <SuggestedGoalCard onAnswer={answer} suggestion={suggestion} />
- * ```
- */
+/** `onAnswer` resolves to whether it worked. */
 function SuggestedGoalCard({
   onAnswer,
   suggestion,
@@ -87,10 +78,6 @@ function SuggestedGoalCard({
     </Suggestion>
   );
 }
-/**
- * The course from before goals as the page itself, for a learner who has no goal yet ("Welcome
- * back"): the question, what it takes, and both answers, 44px, in thumb reach.
- */
 export function SuggestedGoalOffer({
   onAnswer,
   suggestion,
@@ -138,7 +125,6 @@ export function SuggestedGoalOffer({
   );
 }
 
-/** Today's suggested goal, below everything about the current goal: it never competes with it. */
 export function TodaySuggestedGoal() {
   const { actions, today } = useTodayScreen();
   const suggestion = today.suggestedGoal;

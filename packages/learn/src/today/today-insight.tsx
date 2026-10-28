@@ -31,10 +31,6 @@ const ANALYTICS_KIND = {
   tip: "tip",
 } as const satisfies Record<MemoryInsightView["kind"], string>;
 
-/**
- * An insight's mark: the amber sparkle when it suggests something (a gap to add, a better study
- * time), a lightbulb for a tip, the list's mark for a lesson already added.
- */
 function insightMark(insight: MemoryInsightView): React.ReactNode {
   if (insight.kind === "tip") {
     return <LightbulbIcon />;
@@ -43,7 +39,6 @@ function insightMark(insight: MemoryInsightView): React.ReactNode {
   return insight.planChange?.status === "applied" ? <ListPlusIcon /> : undefined;
 }
 
-/** The two answers an insight offers, in words that say what each one does. */
 function useInsightChoices(insight: MemoryInsightView) {
   const t = useExtracted();
 
@@ -80,11 +75,6 @@ function useAnsweredText(insight: MemoryInsightView) {
   };
 }
 
-/**
- * What a bigger plan change does before the learner says yes: "Adds 6 lessons." Its new end is
- * said only as the Plan tab says it: by month, for a plan without a date, from the end the plan
- * shows now. A one-lesson change is already in the plan, with an undo, so it needs no numbers.
- */
 function InsightPlanEffect({ planChange }: { planChange: MemoryInsightView["planChange"] }) {
   const proposalEffectText = useProposalEffectText();
   const { planEnd, today } = useTodayScreen();
@@ -102,7 +92,6 @@ function InsightPlanEffect({ planChange }: { planChange: MemoryInsightView["plan
   return <SuggestionDescription>{effect}</SuggestionDescription>;
 }
 
-/** Answers the insight; the suggestion then says what the answer did. */
 function useInsightAnswer(insight: MemoryInsightView) {
   const analytics = useLearnAnalytics();
   const { actions } = useTodayScreen();
@@ -126,7 +115,6 @@ function useInsightAnswer(insight: MemoryInsightView) {
   return { answer, isPending, state };
 }
 
-/** The insight's answers, each saying what it does. */
 function InsightActions({
   insight,
   isPending,
@@ -140,8 +128,7 @@ function InsightActions({
 
   return (
     <SuggestionActions>
-      {/* A tip's only answer acknowledges it: outline, so Today's own action stays the screen's
-          one filled button. A choice (add it, move my study time) keeps its filled accept. */}
+      {/* A tip's only answer is outline, so Today's own action stays the screen's one filled button. */}
       {(insight.kind !== "planChange" ||
         insight.planChange?.status === "applied" ||
         insight.planChange?.canApply) && (
@@ -207,10 +194,7 @@ function InsightNotice({ insight }: { insight: MemoryInsightView }) {
   );
 }
 
-/**
- * Answering an insight refreshes Today, which no longer carries it; the card stays until the
- * learner leaves, so they can see what their answer did.
- */
+/** Answering refreshes Today, which no longer carries the insight; the card stays until the learner leaves, to show what the answer did. */
 function useShownInsight(insight: MemoryInsightView | null): MemoryInsightView | null {
   const [shown, setShown] = useState(insight);
 
@@ -221,11 +205,6 @@ function useShownInsight(insight: MemoryInsightView | null): MemoryInsightView |
   return insight ?? shown;
 }
 
-/**
- * At most one insight from recent sessions: a tip, a plan change with its reason (one lesson kept
- * or undone here; a bigger gap added only after an OK, with its effect on the end date), or a
- * schedule idea. It leaves Today once answered.
- */
 export function TodayInsight() {
   const analytics = useLearnAnalytics();
   const { today } = useTodayScreen();

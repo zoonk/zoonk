@@ -25,7 +25,6 @@ import { ProposalEffect } from "./today-plan-change";
 
 type ExamChoice = NonNullable<ReturnType<typeof useTodayScreen>["today"]["examChoice"]>;
 
-/** Runs one of the notice's saves with a pending state and a failure flag. */
 function useSave() {
   const [isPending, startTransition] = useTransition();
   const [failed, setFailed] = useState(false);
@@ -50,7 +49,6 @@ function useSave() {
   return { failed, isPending, save };
 }
 
-/** The question, one answer per option: until the learner picks, the plan studies none. */
 function ChoiceQuestion({
   choice,
   failed,
@@ -98,7 +96,6 @@ function ChoiceQuestion({
   );
 }
 
-/** What the pick did, where its question was, with Undo, which asks again. */
 function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: () => void }) {
   const t = useExtracted();
   const sentence = useChangeSentence();
@@ -131,11 +128,6 @@ function ChoicePicked({ change, onUndone }: { change: PlanChangeView; onUndone: 
   );
 }
 
-/**
- * An exam choice the learner left for later ("Decide later" in onboarding), asked on Today, where
- * they study: until they pick, the plan studies none of its options. The pick then says what it did
- * in place, with Undo, which asks again.
- */
 export function TodayExamChoice() {
   const t = useExtracted();
   const { actions, today } = useTodayScreen();

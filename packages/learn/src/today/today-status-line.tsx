@@ -1,19 +1,6 @@
 import { cn } from "@zoonk/ui/lib/utils";
 
-/**
- * What the day is when there's nothing to start, in one line between hairlines: a 16px muted icon
- * (the done mark for a finished day), a sentence and a quieter clause after it ("No study
- * planned today. Enjoy your day off."). Every state of Today uses it, under the same title and
- * queue, so a rest day, a paused goal or a finished day never changes the page's frame. It's a
- * status: a day that changes while the learner is here (lessons that arrive) is announced.
- *
- * ```tsx
- * <TodayStatusLine icon={<MoonIcon />}>
- *   <TodayStatusSentence>No study planned today.</TodayStatusSentence>
- *   <TodayStatusClause>Enjoy your day off.</TodayStatusClause>
- * </TodayStatusLine>
- * ```
- */
+/** A status, so a day that changes while the learner is here (lessons that arrive) is announced. */
 export function TodayStatusLine({
   children,
   className,
@@ -40,12 +27,10 @@ export function TodayStatusLine({
   );
 }
 
-/** The status's sentence, in the text color. */
 export function TodayStatusSentence({ children }: { children: React.ReactNode }) {
   return <span className="font-medium">{children} </span>;
 }
 
-/** The quieter clause after the sentence: what it means, or the day's time in the mono face. */
 export function TodayStatusClause({
   children,
   mono = false,

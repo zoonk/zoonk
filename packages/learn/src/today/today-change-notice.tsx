@@ -11,12 +11,6 @@ import {
   SuggestionSummary,
 } from "../_components/suggestion";
 
-/**
- * A source the goal is built on changed, such as a corrected exam notice or an amended law: one
- * line on Today, "The exam notice changed: the test now has 60 questions." It's news, not a
- * question, so there's nothing to answer and the line says all of it; it leaves Today after two
- * weeks.
- */
 export function TodayChangeNotice({ message }: { message: string }) {
   const t = useExtracted();
 

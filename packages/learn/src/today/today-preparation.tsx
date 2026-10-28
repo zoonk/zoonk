@@ -12,10 +12,6 @@ import { SubjectRows, type TodaySyllabus, useSubjectRows } from "./today-subject
 
 const PERCENT = 100;
 
-/**
- * "+4 this week": what an exam's preparation gained since the learner's week began, blue when it
- * rose, as the Plan says it. Nothing in a week without a whole point either way.
- */
 function useWeekGain(gain: number): React.ReactNode {
   const t = useExtracted();
   const points = Math.round(gain * PERCENT);
@@ -31,10 +27,6 @@ function useWeekGain(gain: number): React.ReactNode {
   );
 }
 
-/**
- * An exam's preparation, as the Plan's first number says it, with its gain this week and its
- * subjects on the same scale, those today's session still studies marked.
- */
 function PreparationCard({
   className,
   syllabus,
@@ -65,10 +57,6 @@ function PreparationCard({
   );
 }
 
-/**
- * A language goal's level and the one it aims for ("A2+ → B1+"), as the Plan says it, on the CEFR
- * scale: the half steps reached in blue and the ones up to the target outlined.
- */
 function LevelCard({
   className,
   level,
@@ -91,19 +79,12 @@ function LevelCard({
   );
 }
 
-/**
- * Where the goal stands, beside the session from `sm`, in its one measure as the Plan says it and
- * drawn in the goal's own units: an exam's preparation with its subjects, another goal's lessons
- * as cells, a language goal's level on the CEFR scale. The whole card leads to the Plan. A phone
- * leaves it to the Plan.
- */
 export function TodayPreparation({
   className,
   level = null,
   syllabus,
 }: {
   className?: string;
-  /** A language goal's level and the one it aims for; null for other goals and before any. */
   level?: LanguageTodayView["level"];
   syllabus: TodaySyllabus | null;
 }) {

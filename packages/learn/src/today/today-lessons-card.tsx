@@ -8,14 +8,8 @@ import { useFormatGoalProgress } from "../_utils/percent";
 import { ProgressCard, useCardIds } from "./today-progress-card";
 import { SubjectRows, type TodaySyllabus, useSubjectRows } from "./today-subject-rows";
 
-/** The plan's lessons as Today measures them: done of the total, and today's still to do. */
 type TodayLessons = Extract<NonNullable<TodayView["progress"]>, { measure: "lessons" }>["lessons"];
 
-/**
- * The plan's lessons by how they count: studied, skipped as known (the goal's own count, where a
- * lesson known in two subjects counts once), today's still to do (core's count: each once, while
- * still to do), and all of them.
- */
 function getLessonCounts({
   lessons,
   syllabus,
@@ -33,12 +27,6 @@ function getLessonCounts({
   };
 }
 
-/**
- * Any other goal's progress in its plan's lessons, as the Plan says it ("31.58%", "6 of 19
- * lessons"), drawn as the lessons themselves: one cell each, studied in blue, known muted, today's
- * still to do outlined in blue, so the day's work shows on the way to the goal. A goal with
- * several modules lists them under it, on the same scale.
- */
 export function LessonsCard({
   className,
   lessons,

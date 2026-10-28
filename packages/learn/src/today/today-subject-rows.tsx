@@ -9,13 +9,9 @@ import { type SubjectBar, getSubjectBar, getSubjectShare } from "../syllabus/use
 import { useTodayScreen } from "./today-context";
 import { isFinished } from "./today-queue";
 
-/** Subjects in sight beside the session; the Plan has every one. */
 const SHOWN_SUBJECTS = 5;
 
-/**
- * A subject as Today's aside draws it: its names and its bar's measures. Its topics and chapters
- * stay on the Plan, which lists them: a big exam's ran to about 90 KB in every Today read.
- */
+/** Without topics and chapters: a big exam's ran to about 90 KB in every Today read. */
 type TodaySubject = Pick<
   SyllabusSubject,
   | "key"
@@ -28,14 +24,12 @@ type TodaySubject = Pick<
   | "shortName"
 >;
 
-/** The goal's syllabus as Today reads it: its kind, its lessons and its subjects' rows. */
 export type TodaySyllabus = Pick<SyllabusView, "goal" | "kind" | "lessons"> & {
   subjects: TodaySubject[];
 };
 
 type SubjectRowView = { bar: SubjectBar; subject: TodaySubject; today: boolean };
 
-/** The subjects today's session still studies, by their short names, as its blocks name them. */
 function useTodaySubjects(): Set<string> {
   const { today } = useTodayScreen();
 
@@ -46,11 +40,6 @@ function useTodaySubjects(): Set<string> {
   );
 }
 
-/**
- * The subjects the Plan lists with a bar, in its order: none when the Plan has no subjects of its
- * own (a language, or a plan from one course), and never one the plan leaves out. Each says
- * whether today's session still studies it.
- */
 export function useSubjectRows(syllabus: TodaySyllabus | null): SubjectRowView[] {
   const todaySubjects = useTodaySubjects();
 
@@ -58,7 +47,6 @@ export function useSubjectRows(syllabus: TodaySyllabus | null): SubjectRowView[]
     return [];
   }
 
-  // A subject the plan leaves out has no bar, as on the Plan (see `useSubjectProgress`).
   return syllabus.subjects.flatMap((subject) =>
     subject.notPlannedReason
       ? []
@@ -66,11 +54,6 @@ export function useSubjectRows(syllabus: TodaySyllabus | null): SubjectRowView[]
   );
 }
 
-/**
- * One subject in one row, as the Plan's subjects have it: its short name (whole in its tooltip,
- * over two lines at most), the same bar and the same share: an exam subject's preparation, another
- * goal's lessons studied or known. A subject today's session still studies says so after its name.
- */
 function SubjectRow({ bar, subject, today }: SubjectRowView) {
   const t = useExtracted();
   const formatShare = useFormatProgressShare();
@@ -93,7 +76,6 @@ function SubjectRow({ bar, subject, today }: SubjectRowView) {
   );
 }
 
-/** The goal's subjects as the Plan lists them, the first few, under the card's number. */
 export function SubjectRows({ labelledBy, rows }: { labelledBy: string; rows: SubjectRowView[] }) {
   if (rows.length === 0) {
     return null;

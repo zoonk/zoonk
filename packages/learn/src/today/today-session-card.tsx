@@ -14,20 +14,13 @@ import { SESSION_LIST_ID } from "./today-ids";
 import { splitTodayQueue } from "./today-queue";
 import { TodayUpNext } from "./today-up-next";
 
-/** Done blocks a phone shows before folding them into one row ("✓ 3 done · 14 min"). */
 const PHONE_DONE_ROWS = 2;
 
-/** Blocks after the next one a phone shows before folding the rest ("+3 more · 14 min"). */
 const PHONE_UPCOMING_ROWS = 6;
 
-/** From `sm` the whole day shows, unless it's longer than this after the next block. */
 const WIDE_UPCOMING_ROWS = 12;
 
-/**
- * How many parts the day holds so far, while its lessons are still being outlined: each block the
- * learner opens prepares the next ones. "More on the way" read as a delivery already running, and
- * an IELTS learner waited 40 minutes on a 45-minute day that showed 15.
- */
+/** How many parts the day holds so far: "More on the way" read as a delivery already running. */
 function useDaySoFar(blocks: readonly DayStep[]): string {
   const t = useExtracted();
   const count = blocks.length;
@@ -43,10 +36,8 @@ function sumMinutes(blocks: readonly DayStep[]): number {
   return blocks.reduce((total, block) => total + block.estimatedMinutes, 0);
 }
 
-/** Upcoming rows in sight before the "+N more" fold, on a phone and from `sm`. */
 type UpcomingRows = { phone: number; wide: number };
 
-/** Whether an upcoming row hides behind the "+N more" fold, on a phone and from `sm`. */
 function getUpcomingFold({
   index,
   open,
@@ -59,14 +50,7 @@ function getUpcomingFold({
   return { hidden: !open, phone: index >= rows.phone, wide: index >= rows.wide };
 }
 
-/**
- * The day as a queue, flat on the page: every block, the next one highlighted, then the plan's
- * lessons for today that the learner's plan holds for Plus (`PlusLessonRow`). A phone keeps the
- * day on its first screen: more than two blocks done fold into one row, and past six after the
- * next one the rest fold into "+3 more". From `sm` the whole day shows (a day longer than 12 after
- * the next block folds the rest the same way). The fold never hides a block a mission opens: where
- * the missions card leaves its rows to the queue, that block is the mission's one place.
- */
+/** The fold never hides a block a mission opens: where the missions card leaves its rows to the queue, that block is the mission's one place. */
 function SessionQueue({ next }: { next: DayStep }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
@@ -164,11 +148,6 @@ function SessionQueue({ next }: { next: DayStep }) {
   );
 }
 
-/**
- * The day's queue once there's nothing to start (it's done, today's study time ran out, or a free
- * plan has nothing to review): every block, the done ones with their check, so the learner sees
- * what they did, then the plan's lessons for today held for Plus. No block opens from it.
- */
 function DayQueue() {
   const { today } = useTodayScreen();
   const { blocks, plusLessons } = today.session;
@@ -191,7 +170,6 @@ function DayQueue() {
   );
 }
 
-/** The step to go on with; null once the day's blocks are done. */
 function useNextBlock(): DayStep | null {
   const { today } = useTodayScreen();
   const { blocks, nextPosition } = today.session;
@@ -199,14 +177,6 @@ function useNextBlock(): DayStep | null {
   return blocks.find((block) => block.position === nextPosition) ?? null;
 }
 
-/**
- * Today's session, flat on the page under Today's title: why the day is lighter (once), the day's
- * segments with how far along it is, its blocks as a queue with the next one highlighted, and
- * one line on what the day is when there's nothing to start (done, a rest day, the study time used
- * up, nothing new, or lessons still being prepared), then the plan's next lessons once it's done
- * or resting (`TodayUpNext`). The day's main action sits beside the title from `sm` and under the
- * queue on a phone (`TodayAction`).
- */
 export function TodaySession({ className }: { className?: string }) {
   const next = useNextBlock();
   const { today } = useTodayScreen();
