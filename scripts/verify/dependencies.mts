@@ -13,7 +13,7 @@ type Advisory = {
 };
 
 /** One vulnerable package as installed: an advisory, the version it hits, and how production reaches it. */
-type Exposure = { advisory: Advisory; path: string; version: string };
+export type Exposure = { advisory: Advisory; path: string; version: string };
 
 const SERIOUS = new Set(["critical", "high"]);
 const OUTPUT_LIMIT_MB = 64;
@@ -86,14 +86,43 @@ function auditBase(repository: string, base: string): Exposure[] | null {
   }
 }
 
-const key = ({ advisory, path, version }: Exposure) => `${advisory.id} ${version} ${path}`;
+/** The same advisory at the same installed version is one exposure, however production reaches it. */
+const key = ({ advisory, version }: Exposure) => `${advisory.id} ${version}`;
 
 /**
- * High and critical advisories in production dependencies. One the base didn't have, at that
- * version and through that production path, is brought in by this change (a new package, a new
- * version, or a dev dependency moved into production) and must be fixed; the rest are named for
- * whoever updates dependencies.
+ * One line per high or critical advisory in production dependencies. One the base's production
+ * install didn't have at that version is brought in by this change (a new package, a new version,
+ * or a dev dependency moved into production) and must be fixed; the rest are named for whoever
+ * updates dependencies. Paths can't decide it: `pnpm audit` lists only a sample of a version's
+ * paths, and a different one on each run.
  */
+export function describeExposures({
+  before,
+  now,
+}: {
+  before: Exposure[];
+  now: Exposure[];
+}): string[] {
+  const known = new Set(before.map((exposure) => key(exposure)));
+
+  return [...Map.groupBy(now, key).values()].flatMap(([exposure]) => {
+    if (!exposure) {
+      return [];
+    }
+
+    const { advisory, path, version } = exposure;
+
+    const label = known.has(key(exposure))
+      ? "**Vulnerable dependency already installed**"
+      : "**must fix** **Vulnerable dependency this change adds**";
+
+    return [
+      `- [ ] ${label}: ${advisory.module_name}@${version} (${advisory.severity}) ${advisory.title}, ${advisory.url}, via ${path}`,
+    ];
+  });
+}
+
+/** `pnpm audit --prod` now and at `base`, as the lines `describeExposures` writes. */
 export function auditDependencies(repository: string, base: string): string[] {
   const now = audit(repository);
   const before = auditBase(repository, base);
@@ -111,31 +140,7 @@ export function auditDependencies(repository: string, base: string): string[] {
     return ["## Dependencies", "", "`pnpm audit --prod`: no high or critical advisories.", ""];
   }
 
-  const known = new Set(before.map((exposure) => key(exposure)));
-
-  const groups = Map.groupBy(now, (exposure) => `${exposure.advisory.id} ${exposure.version}`);
-
-  const lines = [...groups.values()].flatMap((exposures) => {
-    const added = exposures.filter((exposure) => !known.has(key(exposure)));
-    const shown = added[0] ?? exposures[0];
-
-    if (!shown) {
-      return [];
-    }
-
-    const { advisory, path, version } = shown;
-
-    const label =
-      added.length > 0
-        ? "**must fix** **Vulnerable dependency this change adds**"
-        : "**Vulnerable dependency already installed**";
-
-    return [
-      `- [ ] ${label}: ${advisory.module_name}@${version} (${advisory.severity}) ${advisory.title}, ${advisory.url}, via ${path}`,
-    ];
-  });
-
-  return ["## Dependencies", "", ...lines, ""];
+  return ["## Dependencies", "", ...describeExposures({ before, now }), ""];
 }
 
 /** Whether the audit found an advisory this change brought in, or couldn't answer. */
