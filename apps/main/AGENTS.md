@@ -1,5 +1,6 @@
 - Every reusable product capability exposed by Main must also be reachable through the public API so native apps, CLI tools, and agents can provide the same behavior. Audit new Main pages against the OpenAPI document; exclude only delivery-specific concerns such as URLs, redirects, metadata, prefetch presentation, and SEO.
 - Do not add direct Prisma access to an app for a capability that belongs in another app, the public API, mobile, CLI, or an agent. Web-only indexing and SEO queries such as sitemaps may remain in a web app.
+- The root layout keeps every page's App Shell static (`ensureStatic = "shell"`), so a default link's prefetch costs no server render. A learner's content reaches a tap only through a link that prefetches in full (`LearnLink`, `ListRowLink`, main's `Link prefetch`); a default `Link` into a private page brings its static shell alone.
 - Learning has one experience, so a flow is tested once, and only when it clears [zoonk-testing's E2E bar](../../.agents/skills/zoonk-testing/SKILL.md#the-e2e-bar).
 
 Use the shared [web UI and localization guidance](../../.agents/guides/web.md) for React composition, typed links, and translated copy. Reusable business behavior belongs in core capabilities governed by [packages/core/AGENTS.md](../../packages/core/AGENTS.md).
