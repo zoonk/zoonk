@@ -9,10 +9,8 @@ enum ItemFormat {
   numeric
 }
 
-/// One thing a learner can do ("calculate a discount"): the unit of mastery, review and study cards.
-/// Identity search keeps one skill per identity key and language, so two curricula share it and its
-/// lessons. A duplicate that slips through is merged (`mergedIntoId`), never deleted, so learners'
-/// mastery follows the surviving skill. A private course's skills are private to its owner and never reused.
+/// A duplicate that slips through identity search is merged (`mergedIntoId`), never deleted, so
+/// learners' mastery follows the surviving skill. A private course's skills are never reused.
 model Skill {
   id             String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   language       String              @db.VarChar(10)
@@ -20,20 +18,16 @@ model Skill {
   identityKey    String              @map("identity_key")
   name           String
   normalizedName String              @map("normalized_name")
-  /// The idea in one sentence: the front of the skill's study card.
   description    String
-  /// A worked example: the back of the skill's study card.
   example        String?
   level          CourseLevel?
-  /// Whether the skill's work ends in one number a learner works out (a calculation, a count), so
-  /// it can be asked with a number typed in: null until the item writer was asked for such
-  /// questions, false when it found none.
+  /// Null until the item writer was asked for typed-number questions, false when it found none.
   isQuantitative Boolean?            @map("is_quantitative")
   mergedIntoId   String?             @map("merged_into_id") @db.Uuid
   mergedInto     Skill?              @relation("SkillMerge", fields: [mergedIntoId], references: [id], onDelete: SetNull)
   mergedSkills   Skill[]             @relation("SkillMerge")
   visibility     LibraryVisibility   @default(public)
-  /// Owner of a private course's skill. Private skills are deleted with their owner.
+  /// Private skills are deleted with their owner.
   ownerId        String?             @map("owner_id") @db.Uuid
   owner          User?               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   model          String
@@ -60,7 +54,7 @@ model Skill {
   @@map("skills")
 }
 
-/// Skill graph edge: `prerequisite` is learned before `skill`.
+/// `prerequisite` is learned before `skill`.
 model SkillPrerequisite {
   skillId        String   @map("skill_id") @db.Uuid
   skill          Skill    @relation("SkillPrerequisiteSkill", fields: [skillId], references: [id], onDelete: Cascade)
@@ -73,7 +67,6 @@ model SkillPrerequisite {
   @@map("skill_prerequisites")
 }
 
-/// The 1 to 3 skills a lesson teaches.
 model LessonSkill {
   lessonId  String   @map("lesson_id") @db.Uuid
   lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
@@ -86,13 +79,8 @@ model LessonSkill {
   @@map("lesson_skills")
 }
 
-/// A question for a skill in one format, with a reason for every wrong option and key points for typed
-/// and spoken answers. Math items store the solution as data (variables, expression, units, tolerance,
-/// steps and common mistakes) so practice can use new numbers. `field` holds practice set in the
-/// learner's work ("nursing") and is null for general items. Past exam questions keep their citation
-/// under the source's reuse policy. Difficulty and discrimination are recalibrated from real answers.
-/// A question about a figure (a diagram, a map, a geometry figure) asks for it in `content.image` and
-/// is stored only once that picture is drawn and checked, linked through `mediaAssetId`.
+/// Math items store the solution as data so practice can use new numbers. `field` is null for
+/// general items. A question about a figure is stored only once its picture is drawn and checked.
 model Item {
   id                    String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
   skillId               String                 @map("skill_id") @db.Uuid
@@ -110,10 +98,9 @@ model Item {
   sourceCitation        String?                @map("source_citation")
   mediaAssetId          String?                @map("media_asset_id") @db.Uuid
   mediaAsset            MediaAsset?            @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
-  /// The set whose shared stimulus (a text, a chart, a case, a recording) the question is about.
   setId                 String?                @map("set_id") @db.Uuid
   set                   ItemSet?               @relation(fields: [setId], references: [id], onDelete: Cascade)
-  /// The question's place in its set, from 0: a recording's questions follow what is heard.
+  /// From 0; a recording's questions follow what is heard.
   setPosition           Int?                   @map("set_position")
   model                 String
   promptVersion         String                 @map("prompt_version")
@@ -137,7 +124,6 @@ model Item {
   @@map("items")
 }
 
-/// What a set's questions share: a passage, a chart, a case or a recording.
 enum ItemSetKind {
   text
   chart
@@ -145,11 +131,8 @@ enum ItemSetKind {
   audio
 }
 
-/// Questions that share one stimulus (a passage, a chart, a case, a recording) and are asked together,
-/// as exams do. Shared Library content: the stimulus never holds a learner's words. Its questions keep
-/// their own skill and format, in `Item.setPosition` order. `content` is the stimulus for its kind
-/// (`library/items/item-set-content.ts` in core). A recording's voiced file, or a stimulus picture, is
-/// linked through `mediaAssetId` once it's made.
+/// Shared Library content: the stimulus never holds a learner's words. `content` follows
+/// `library/items/item-set-content.ts` in core.
 model ItemSet {
   id              String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
   language        String         @db.VarChar(10)
@@ -172,8 +155,7 @@ model ItemSet {
   @@map("item_sets")
 }
 
-/// Shared explanation of a wrong typed or spoken answer, reused by the next learner who gives the same
-/// answer. Each row belongs to exactly one item or one step, so each unique key covers one of them.
+/// Each row belongs to exactly one item or one step, so each unique key covers one of them.
 model AnswerExplanation {
   id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   itemId           String?  @map("item_id") @db.Uuid

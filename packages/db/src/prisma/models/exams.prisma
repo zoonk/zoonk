@@ -3,13 +3,9 @@ enum MockExamStatus {
   finished
 }
 
-/// One sitting of a mock exam in real conditions: an exam goal's weekly Big Challenge, played
-/// section by section in the blueprint's order, time and scoring. `conditions` fixes each section's
-/// questions and minutes when the mock starts (an adaptive exam picks a later module when the one
-/// before it is submitted). Answers stay drafts until the mock finishes, when they're graded and
-/// recorded as attempts. `result` keeps the analysis as numbers and title snapshots, so it survives
-/// content changes. `listeningPlays` counts each recording's plays in its listening section by item
-/// set id (`{ "<setId>": 1 }`), so another tab or device can't play it again past the exam's limit.
+/// `conditions` fixes each section's questions and minutes when the mock starts. `result` keeps
+/// numbers and title snapshots, so it survives content changes. `listeningPlays` counts plays by
+/// item set id (`{ "<setId>": 1 }`), so another tab or device can't play past the exam's limit.
 model MockExam {
   id               String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId           String                 @map("user_id") @db.Uuid
@@ -40,11 +36,8 @@ model MockExam {
   @@map("mock_exams")
 }
 
-/// A mock answer while the mock runs: the pick (null when the question was left blank), whether it
-/// was flagged to come back to, which also marks the answers the learner wasn't sure of, and the
-/// time spent on it. `itemId` is a plain id: the graded answer becomes an `Attempt` at the end.
-/// `changes` counts the times a given answer was changed in a section that limits them, like the
-/// GMAT's review of 3 answers at a section's end.
+/// A null pick is a blank answer. `itemId` is a plain id: the graded answer becomes an `Attempt` at
+/// the end. `changes` counts changed answers in a section that limits them, like the GMAT's.
 model MockExamAnswer {
   id         String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   mockExamId String   @map("mock_exam_id") @db.Uuid
@@ -61,9 +54,7 @@ model MockExamAnswer {
   @@map("mock_exam_answers")
 }
 
-/// The official result a learner reports after the exam ("How did it go?"), next to the estimate
-/// they saw before it, so future estimates for the exam can be calibrated and outcomes measured.
-/// One per goal; the exam's name is a snapshot so the row stays readable without its blueprint.
+/// The exam's name is a snapshot, so the row stays readable without its blueprint.
 model ExamResult {
   id              String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId          String         @map("user_id") @db.Uuid
@@ -74,13 +65,13 @@ model ExamResult {
   examBlueprint   ExamBlueprint? @relation(fields: [examBlueprintId], references: [id], onDelete: SetNull)
   examName        String         @map("exam_name")
   examDate        DateTime?      @map("exam_date") @db.Date
-  /// The official score on the exam's own scale, or null when the learner only says pass or fail.
+  /// Null when the learner only says pass or fail.
   score           Float?
   /// "irt" for item response theory scales like ENEM's, "percent" or "points" (with `maxScore`).
   scale           String?
   maxScore        Float?         @map("max_score")
   passed          Boolean?
-  /// The estimated range shown before the exam, on the same scale, when there was one.
+  /// On the result's scale; null when no estimate was shown.
   estimateLow     Float?         @map("estimate_low")
   estimateHigh    Float?         @map("estimate_high")
   mocksTaken      Int            @default(0) @map("mocks_taken") @db.SmallInt
@@ -93,16 +84,13 @@ model ExamResult {
   @@map("exam_results")
 }
 
-/// An essay draft being graded, claimed before the grader is called, so the same draft sent twice at
-/// once is graded once: the other request waits for its grade instead of paying for another. A claim
-/// counts toward the day's essay grades until its grade is recorded (the same transaction deletes
-/// it) or grading fails (which deletes it too). `id` is the attempt id the grade is recorded under.
-/// A claim older than any grade takes was left by a request that crashed, and can be taken again.
+/// Claimed before the grader is called, so a draft sent twice at once is graded once. Recording the
+/// grade or failing deletes the claim; one older than any grade takes was left by a crash and can
+/// be taken again. `id` is the attempt id the grade is recorded under.
 model EssayGradeClaim {
   id        String   @id @db.Uuid
   userId    String   @map("user_id") @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  /// The learner's day the grade counts toward.
   localDate DateTime @map("local_date") @db.Date
   createdAt DateTime @default(now()) @map("created_at")
 

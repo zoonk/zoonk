@@ -5,25 +5,18 @@ enum UsageKind {
   tutorMessage  @map("tutor_message")
   upload
   conversation
-  /// A small AI call: understanding a goal, an answer's explanation, grading a typed or spoken
-  /// answer, an example line or a plan edit.
   assist
-  /// A chapter's mind map drawn when the learner asked for it; reading one that exists is free.
+  /// Reading one that exists is free.
   mindMap       @map("mind_map")
-  /// A far topic's lesson plan (its course band's outline) written when the learner asked to see
-  /// it before the plan got close; one that exists or is being written is free.
+  /// One that exists or is being written is free.
   outline
-  /// New questions written for a mock the learner starts when the bank has too few they never
-  /// answered; past the plan's fair use, the mock asks ones they answered before instead.
+  /// Past the plan's fair use, the mock asks questions the learner answered before instead.
   mockQuestions @map("mock_questions")
 }
 
-/// One metered action behind the allowance and fair use. A lesson counts the first time a learner
-/// starts it, whether it was reused or generated; `generated` marks a start that needed new content.
-/// `targetId` is a plain id, so usage survives content changes. `costMicros` is the estimated AI spend
-/// in millionths of a dollar, summed for the daily spend budget. `seconds` is a live call's time,
-/// summed for the plan's daily call time: the most the call may run when it connects, then how long
-/// it ran once it ends; 0 for every other use.
+/// A lesson counts the first time a learner starts it, reused or generated. `targetId` is a plain
+/// id, so usage survives content changes. `seconds` is a live call's time: the most it may run when
+/// it connects, then how long it ran once it ends; 0 for every other use.
 model UsageRecord {
   id         String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId     String    @map("user_id") @db.Uuid
@@ -40,8 +33,7 @@ model UsageRecord {
   @@map("usage_records")
 }
 
-/// Estimated AI spend (millionths of a dollar) that guests started on one UTC day, summed across all
-/// of them, so guests share one daily ceiling however many there are. Accounts never take from it.
+/// All guests share one daily ceiling, however many there are. Accounts never take from it.
 model GuestSpendDay {
   day         DateTime @id @db.Date
   spentMicros Int      @default(0) @map("spent_micros")

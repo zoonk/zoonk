@@ -31,8 +31,7 @@ model LiveCallSetting {
   @@map("live_call_settings")
 }
 
-/// The running balance of free calls' posted cost per UTC day. Reservations and settlements stay on
-/// the original day, even when a call ends after midnight.
+/// Reservations and settlements stay on the original day, even when a call ends after midnight.
 model FreeCallSpendDay {
   day         DateTime @id @db.Date
   spentMicros Int      @default(0) @map("spent_micros")
@@ -40,9 +39,8 @@ model FreeCallSpendDay {
   @@map("free_call_spend_days")
 }
 
-/// One provider session attempt of a live call. `costMicros` is the authoritative cost: the
-/// reservation while open, the settled cost once ended. It lives here because the learner's usage
-/// record cascades with their account, while the provider's bill and the shared free day don't.
+/// `costMicros` is the reservation while open and the settled cost once ended. It lives here, not on
+/// the learner's usage record, which cascades with their account; the provider's bill doesn't.
 model LiveCallConnection {
   id                String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId            String             @map("user_id") @db.Uuid
@@ -50,11 +48,11 @@ model LiveCallConnection {
   state             LiveCallState      @default(reserved)
   heldSeconds       Int                @map("held_seconds")
   costMicros        Int                @map("cost_micros")
-  /// The UTC day whose free bucket this call took from; null when it wasn't on the free plan.
+  /// Null when the call wasn't on the free plan.
   freeSpendDay      DateTime?          @map("free_spend_day") @db.Date
   deadlineAt        DateTime           @map("deadline_at")
   providerSessionId String?            @unique @map("provider_session_id")
-  /// When the creation request left: the provider's clock starts here.
+  /// When the creation request left, since the provider's clock starts there.
   startedAt         DateTime?          @map("started_at")
   endedAt           DateTime?          @map("ended_at")
   /// Set while `starting` when an end was asked for before the session existed.

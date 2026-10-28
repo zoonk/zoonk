@@ -11,7 +11,7 @@ enum LibraryVisibility {
   private
 }
 
-/// Mapped to `LibraryStepKind`, the database type's name since the legacy `StepKind` type existed.
+/// Mapped to `LibraryStepKind`: a legacy `StepKind` database type held the name.
 enum StepKind {
   hook
   explanation
@@ -44,14 +44,12 @@ enum MediaKind {
   audio
 }
 
-/// A group of lessons with objectives, shared by every course that needs it. Identity search finds it
-/// through `identityKey` (unique per language) so concurrent requests never create two copies. It can sit
-/// in several courses through `CourseChapter` and keeps one home course for its canonical URL.
+/// `identityKey` is unique per language, so concurrent requests never create two copies.
 model Chapter {
   id                    String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
   language              String                 @db.VarChar(10)
   targetLanguage        String?                @map("target_language") @db.VarChar(10)
-  /// Normalized identity (scope, level and target language) claimed by one generation workflow at a time.
+  /// Claimed by one generation workflow at a time.
   identityKey           String                 @map("identity_key")
   slug                  String
   title                 String
@@ -62,13 +60,12 @@ model Chapter {
   homeCourseId          String?                @map("home_course_id") @db.Uuid
   homeCourse            Course?                @relation(fields: [homeCourseId], references: [id], onDelete: SetNull)
   visibility            LibraryVisibility      @default(public)
-  /// Owner of private content. Private content is deleted with its owner.
+  /// Private content is deleted with its owner.
   ownerId               String?                @map("owner_id") @db.Uuid
   owner                 User?                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  /// Whether the titles and one-line descriptions of this chapter's lessons are written.
   outlineStatus         GenerationStatus       @default(pending) @map("outline_status")
   outlineRunId          String?                @map("outline_run_id")
-  /// Tools the chapter's lessons use: `[{ name, essential }]`, for the plan's "You'll use" card.
+  /// `[{ name, essential }]`
   tools                 Json                   @default("[]")
   model                 String
   promptVersion         String                 @map("prompt_version")
@@ -93,7 +90,6 @@ model Chapter {
   @@map("library_chapters")
 }
 
-/// Places a shared chapter in a course's outline, inside one level band.
 model CourseChapter {
   courseId  String      @map("course_id") @db.Uuid
   course    Course      @relation(fields: [courseId], references: [id], onDelete: Cascade)
@@ -101,7 +97,7 @@ model CourseChapter {
   chapter   Chapter     @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   level     CourseLevel
   position  Int
-  /// The outline's area when published, retained when the exam's active skill graph changes.
+  /// Kept when the exam's active skill graph changes.
   area      String?
   createdAt DateTime    @default(now()) @map("created_at")
 
@@ -111,9 +107,6 @@ model CourseChapter {
   @@map("course_chapters")
 }
 
-/// A skill from a goal's skill graph that a chapter teaches, as the course outline tagged it. Plans turn
-/// such a skill into the chapter's lessons, so a later goal that needs the same skill finds the chapters
-/// that already teach it.
 model ChapterSkill {
   chapterId String   @map("chapter_id") @db.Uuid
   chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
@@ -126,47 +119,38 @@ model ChapterSkill {
   @@map("chapter_skills")
 }
 
-/// A 2 to 5 minute lesson teaching 1 to 3 skills, shared by every chapter that needs them. Its outline
-/// (title and one-line description) exists up front; its spec and content are generated on demand. One
-/// home chapter gives it a canonical URL.
 model Lesson {
   id                String                 @id @default(dbgenerated("uuidv7()")) @db.Uuid
   language          String                 @db.VarChar(10)
   targetLanguage    String?                @map("target_language") @db.VarChar(10)
-  /// Normalized identity (skills, level and target language) claimed by one generation workflow at a time.
+  /// Claimed by one generation workflow at a time.
   identityKey       String                 @map("identity_key")
   slug              String
   title             String
   normalizedTitle   String                 @map("normalized_title")
-  /// One line on why the lesson matters.
   description       String
-  /// What the learner will be able to do afterwards, shown on session tiles. Written with the spec.
   canDo             String?                @map("can_do")
   level             CourseLevel
   estimatedMinutes  Int                    @map("estimated_minutes") @db.SmallInt
   homeChapterId     String?                @map("home_chapter_id") @db.Uuid
   homeChapter       Chapter?               @relation(fields: [homeChapterId], references: [id], onDelete: SetNull)
   visibility        LibraryVisibility      @default(public)
-  /// Owner of private content. Private content is deleted with its owner.
+  /// Private content is deleted with its owner.
   ownerId           String?                @map("owner_id") @db.Uuid
   owner             User?                  @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  /// Lesson spec: skills, screen plan, activity and visual flags, and support mode.
   spec              Json?
   specStatus        GenerationStatus       @default(pending) @map("spec_status")
   specRunId         String?                @map("spec_run_id")
   contentStatus     GenerationStatus       @default(pending) @map("content_status")
   /// Claim held by the running content generation, so one workflow writes the steps.
   contentRunId      String?                @map("content_run_id")
-  /// Drafts the quality gate held back since the lesson was last published, oldest first: the writer model, the
-  /// problems and the run of each. The next draft is told what held them back; publishing clears them.
+  /// Oldest first. The next draft is told what held them back; publishing clears them.
   heldBackDrafts    Json                   @default("[]") @map("held_back_drafts")
-  /// Set when the lesson's last allowed draft was held back: nothing writes it again and plans move on without it.
+  /// Set when the last allowed draft was held back: nothing writes it again and plans move on.
   setAsideAt        DateTime?              @map("set_aside_at")
-  /// The summary card: each idea in one sentence. Public on SEO pages.
+  /// Public on SEO pages.
   summary           Json?
-  /// A quick explanation's "Want to go further?": the questions to ask next and the subject's
-  /// Overview course. They belong to the lesson, not to the goal that first asked, so every learner
-  /// it's reused for gets them after that learner leaves.
+  /// They belong to the lesson, not the goal that first asked, so every reuse gets them.
   relatedQuestions  String[]               @default([]) @map("related_questions")
   goFurtherCourseId String?                @map("go_further_course_id") @db.Uuid
   goFurtherCourse   Course?                @relation(fields: [goFurtherCourseId], references: [id], onDelete: SetNull)
@@ -195,7 +179,6 @@ model Lesson {
   @@map("library_lessons")
 }
 
-/// Places a shared lesson in a chapter.
 model ChapterLesson {
   chapterId String   @map("chapter_id") @db.Uuid
   chapter   Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
@@ -210,20 +193,17 @@ model ChapterLesson {
   @@map("chapter_lessons")
 }
 
-/// One lesson screen, including interactive activities. `content` follows the versioned step contract in
-/// core (`contractVersion`). Learner rows point at steps with SetNull, so regenerating a lesson never
-/// deletes anyone's progress.
+/// `content` follows core's versioned step contract (`contractVersion`). Learner rows point at
+/// steps with SetNull, so regenerating a lesson never deletes anyone's progress.
 model Step {
   id                 String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   lessonId           String              @map("lesson_id") @db.Uuid
   lesson             Lesson              @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   position           Int
-  /// The lesson version the screen belongs to. A check that finds a problem after a lesson was
-  /// published publishes a new version; the screens it replaces stay, retired, so learners playing
-  /// them finish the version they opened.
+  /// A problem found after publishing publishes a new version; the replaced screens stay, retired,
+  /// so learners finish the version they opened.
   version            Int                 @default(1) @db.SmallInt
-  /// When a newer version replaced this screen; null for the lesson's current screens, the only
-  /// ones lessons are read with. Retired screens are deleted a day later.
+  /// Null for current screens, the only ones lessons read. Retired screens are deleted a day later.
   retiredAt          DateTime?           @map("retired_at")
   kind               StepKind
   contractVersion    Int                 @default(1) @map("contract_version") @db.SmallInt
@@ -238,14 +218,11 @@ model Step {
   sentence           Sentence?           @relation(fields: [sentenceId], references: [id], onDelete: SetNull)
   mediaAssetId       String?             @map("media_asset_id") @db.Uuid
   mediaAsset         MediaAsset?         @relation(fields: [mediaAssetId], references: [id], onDelete: SetNull)
-  /// When this screen's current picture became available. Null on older links whose arrival time
-  /// was not recorded; ordinary screen edits never change picture availability.
+  /// Null on older links; ordinary screen edits never change it.
   pictureAvailableAt DateTime?           @map("picture_available_at")
-  /// Where this screen comes from: the learner's material for lessons built from their own files, or
-  /// the public document its facts come from (a law, an exam notice), shown with the date it was checked.
   sourceId           String?             @map("source_id") @db.Uuid
   source             Source?             @relation(fields: [sourceId], references: [id], onDelete: SetNull)
-  /// The page or slide of `source` the screen cites, starting at 1.
+  /// Starts at 1.
   sourcePage         Int?                @map("source_page") @db.SmallInt
   model              String
   promptVersion      String              @map("prompt_version")
@@ -273,10 +250,7 @@ model Step {
   @@map("library_steps")
 }
 
-/// The picture one option of a question shows, for a question whose options are pictures ("which of
-/// these doorways is Gothic?"): one per option, drawn from the option's own request and reused
-/// across lessons like any picture. When a picture is taken out of use its row goes with it, and
-/// the option shows its description instead.
+/// When a picture is taken out of use its row goes with it, and the option shows its description.
 model StepOptionPicture {
   stepId       String     @map("step_id") @db.Uuid
   step         Step       @relation(fields: [stepId], references: [id], onDelete: Cascade)
@@ -290,8 +264,7 @@ model StepOptionPicture {
   @@map("library_step_option_pictures")
 }
 
-/// A field or tool version of a step, made the first time a learner with that field or tool needs
-/// it and then shared. `key` names the field or tool ("nursing", "excel").
+/// `key` names the field or tool ("nursing", "excel").
 model StepVariant {
   id              String          @id @default(dbgenerated("uuidv7()")) @db.Uuid
   stepId          String          @map("step_id") @db.Uuid
@@ -310,10 +283,8 @@ model StepVariant {
   @@map("step_variants")
 }
 
-/// The example line one learner sees on one explanation screen: a sentence tying its idea to their life,
-/// written from their memory facts and goal. `contextKey` hashes what it was written from, so a change in
-/// those facts writes it again. `text` is null when nothing the learner shared fits, so the model isn't
-/// asked again for the same facts.
+/// `contextKey` hashes what it was written from, so a change in those facts writes it again. `text`
+/// is null when nothing the learner shared fits, so the model isn't asked again for the same facts.
 model StepExampleLine {
   id            String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId        String   @map("user_id") @db.Uuid
@@ -334,10 +305,8 @@ model StepExampleLine {
   @@map("step_example_lines")
 }
 
-/// An image or audio file with the prompt and style version that made it, instead of URLs inside step
-/// or item JSON. `reuseKey` identifies the same picture or sound (audio keys include the language) so it is made
-/// once and reused. Images keep the structured scene they were drawn from and the subject palette; an
-/// image with labels has the labels' `language`, and one without text serves every language.
+/// `reuseKey` makes each picture or sound once (audio keys include the language). An image with
+/// labels has the labels' `language`; one without text serves every language.
 model MediaAsset {
   id            String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   kind          MediaKind
@@ -346,16 +315,14 @@ model MediaAsset {
   reuseKey      String              @unique @map("reuse_key")
   language      String?             @db.VarChar(10)
   prompt        String?
-  /// The structured scene an image was drawn from: focal object, supporting objects, relation, motion and labels.
   scene         Json?
-  /// The subject palette key the image was drawn with.
   palette       String?
   styleVersion  Int?                @map("style_version")
   width         Int?
   height        Int?
   durationMs    Int?                @map("duration_ms")
   visibility    LibraryVisibility   @default(public)
-  /// Owner of a private course's image. Private assets are deleted with their owner.
+  /// Private assets are deleted with their owner.
   ownerId       String?             @map("owner_id") @db.Uuid
   owner         User?               @relation(fields: [ownerId], references: [id], onDelete: Cascade)
   model         String
@@ -372,14 +339,8 @@ model MediaAsset {
   @@map("media_assets")
 }
 
-/// A chapter's mind map: its main concepts written as an outline (`structure`: a title, a central
-/// idea, branches with an explanation and points, an optional comparison and a one-line summary,
-/// in the chapter's language), then drawn as one picture. Made once per chapter, when a learner who
-/// finished it asks, and shared by every learner of the chapter; a private chapter's picture stays in
-/// its owner's private files. `status` follows the run writing it (`runId`): the map is completed
-/// as soon as its picture is drawn, and the picture's words are checked afterwards. A picture with
-/// serious mistakes is drawn again and replaced; when that one fails too, it's left out (`imageUrl`
-/// null) and the outline is the map.
+/// A private chapter's picture stays in its owner's private files. A picture with serious mistakes
+/// is drawn again; when that fails too, `imageUrl` is null and the outline is the map.
 model ChapterMindMap {
   id            String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
   chapterId     String           @unique @map("chapter_id") @db.Uuid
@@ -391,9 +352,7 @@ model ChapterMindMap {
   imageUrl      String?          @map("image_url")
   imageWidth    Int?             @map("image_width")
   imageHeight   Int?             @map("image_height")
-  /// A small copy of the picture for lists of maps.
   thumbnailUrl  String?          @map("thumbnail_url")
-  /// The model that wrote the outline and the one that drew the picture.
   model         String?
   imageModel    String?          @map("image_model")
   promptVersion String?          @map("prompt_version")

@@ -37,11 +37,8 @@ enum MilestoneKind {
   buddyStage @map("buddy_stage")
 }
 
-/// One short fact the learner shared (`said`) or Zoonk noticed from activity (`noticed`), read by
-/// category so tasks load only what they need. A replaced fact points at the fact that replaced it and
-/// goes with it when that fact is removed for good. Sensitive facts are stored only when the learner
-/// explicitly asks, and deleted facts are purged 30 days after `deletedAt`. Provenance is set when a
-/// model extracted the fact.
+/// Sensitive facts are stored only when the learner explicitly asks. Deleted facts are purged 30
+/// days after `deletedAt`, taking the facts they replaced.
 model MemoryFact {
   id             String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId         String           @map("user_id") @db.Uuid
@@ -55,7 +52,6 @@ model MemoryFact {
   supersedes     MemoryFact[]     @relation("MemoryFactSupersession")
   confidence     Float?
   sensitive      Boolean          @default(false)
-  /// Where the fact came from (onboarding, a chat, answers or activity) with a reference.
   sourceRef      Json?            @map("source_ref")
   expiresAt      DateTime?        @map("expires_at")
   lastUsedAt     DateTime?        @map("last_used_at")
@@ -73,10 +69,8 @@ model MemoryFact {
   @@map("memory_facts")
 }
 
-/// The daily check after a session that turns recent answers, mistakes, study times and memory into at
-/// most one insight a day: a tip, a plan change or a schedule idea. `kind` and `message` are null when
-/// the check found nothing worth saying, and `inputHash` lets the next check skip when nothing changed.
-/// `payload` holds what accepting needs, such as the suggested study time or the plan change.
+/// At most one a day. `kind` and `message` are null when the check found nothing worth saying, and
+/// `inputHash` lets the next check skip when nothing changed.
 model MemoryInsight {
   id            String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId        String              @map("user_id") @db.Uuid
@@ -101,7 +95,7 @@ model MemoryInsight {
   @@map("memory_insights")
 }
 
-/// Glasses, badges, belts and buddy stages a learner earned, each celebrated once (`shownAt`).
+/// Each is celebrated once (`shownAt`).
 model Milestone {
   id       String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId   String        @map("user_id") @db.Uuid

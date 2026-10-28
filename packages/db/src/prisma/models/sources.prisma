@@ -4,11 +4,8 @@ enum SourceKind {
   upload
 }
 
-/// A dated document from the web or an upload, fetched once and reused by every learner who needs it.
-/// `identityKey` is the canonical URL, or the content hash for uploads (prefixed with the owner id for
-/// private uploads), so a document is stored once. `validUntil` drives freshness: when it passes, the
-/// source is fetched again and a model runs only if `contentHash` changed. Private uploads stay with
-/// their owner and are deleted with them.
+/// When `validUntil` passes, the source is fetched again and a model runs only if `contentHash`
+/// changed. Private uploads are deleted with their owner.
 model Source {
   id             String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
   language       String               @db.VarChar(10)
@@ -45,12 +42,8 @@ model Source {
   @@map("sources")
 }
 
-/// One canonical structure per exam (identity keys like "enem" or "banco-do-brasil-escriturario"):
-/// subjects, weights, question formats, rules and the conditions a mock exam copies. The current edition
-/// (year, notice, dates, number of questions) is metadata, so lessons and items carry over between
-/// editions and only what changed is updated. A blueprint read from a learner's private uploads (such as
-/// a teacher's slides for a school exam) is private to that learner, keyed in their own key space, and
-/// deleted with them.
+/// The current edition is metadata, so lessons and items carry over between editions. A blueprint
+/// read from a learner's private uploads is private to that learner and deleted with them.
 model ExamBlueprint {
   id                   String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
   language             String                @db.VarChar(10)
@@ -62,12 +55,8 @@ model ExamBlueprint {
   visibility           LibraryVisibility     @default(public)
   ownerId              String?               @map("owner_id") @db.Uuid
   owner                User?                 @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  /// Subjects, weights, question formats, rules and mock conditions (questions, sections, order, time
-  /// limits and scoring).
   structure            Json
-  /// Year, notice URL, dates and number of questions of the current edition.
   edition              Json?
-  /// How often the board asks each topic, from past papers.
   topicFrequency       Json?                 @map("topic_frequency")
   sourceId             String?               @map("source_id") @db.Uuid
   source               Source?               @relation(fields: [sourceId], references: [id], onDelete: SetNull)
@@ -105,27 +94,20 @@ enum TargetCutoffStatus {
   unknown
 }
 
-/// The last published cut-off of one target of a shared exam: a course at an institution in an
-/// entrance exam's selection (SISU's last cut-off for medicine at UFMG), or a public-service
-/// exam's position, for the general list, with the page it came from. It's
-/// looked up once a year per exam and target and shared by every learner aiming there; `unknown`
-/// means the lookup found none, so nothing is shown and nothing is guessed. `targetKey` is the
-/// normalized course and institution, or position.
+/// `unknown` means the lookup found none, so nothing is shown and nothing is guessed. `targetKey`
+/// is the normalized course and institution, or position.
 model TargetCutoff {
   id              String             @id @default(dbgenerated("uuidv7()")) @db.Uuid
   examBlueprintId String             @map("exam_blueprint_id") @db.Uuid
   examBlueprint   ExamBlueprint      @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
   targetKey       String             @map("target_key")
-  /// The year it was looked up in: the next year looks it up again.
+  /// The next year looks it up again.
   year            Int                @db.SmallInt
   status          TargetCutoffStatus
   /// On the exam's own scale, as the source gives it.
   score           Float?
-  /// The top of that scale, as the source or the exam states it (ENEM's 1000).
   maxScore        Float?             @map("max_score")
-  /// The selection it's from, as the source names it ("Sisu 2025").
   edition         String?
-  /// The list it's for, as the source names it (such as Brazil's general list).
   quota           String?
   sourceUrl       String?            @map("source_url")
   sourceTitle     String?            @map("source_title")
@@ -144,24 +126,18 @@ enum CourseWeightsStatus {
   unknown
 }
 
-/// How one course at one institution weighs each part of a shared entrance exam in its selection
-/// (SISU's weights for Medicina at UFMG), with the page they came from. Looked up once a year per
-/// exam and target and shared by every learner aiming there, whose goals copy it
-/// (`details.courseWeights`) for the planner; `unknown` means the lookup found none, so nothing is
-/// weighed and nothing is guessed. `targetKey` is the normalized course and institution. It holds
-/// no learner link, so it stays when the learner whose research looked it up goes.
+/// `unknown` means the lookup found none, so nothing is weighed and nothing is guessed. It holds no
+/// learner link, so it stays when the learner whose research looked it up goes.
 model ExamCourseWeights {
   id              String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   examBlueprintId String              @map("exam_blueprint_id") @db.Uuid
   examBlueprint   ExamBlueprint       @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
   targetKey       String              @map("target_key")
-  /// The year it was looked up in: the next year looks it up again.
+  /// The next year looks it up again.
   year            Int                 @db.SmallInt
   status          CourseWeightsStatus
-  /// Each part of the exam (a notice subject) with its weight, in the notice's order; empty when
-  /// unknown.
+  /// In the notice's order; empty when unknown.
   subjects        Json                @default("[]")
-  /// The selection they're from, as the source names it ("SISU 2026").
   edition         String?
   sourceUrl       String?             @map("source_url")
   sourceTitle     String?             @map("source_title")
@@ -175,18 +151,14 @@ model ExamCourseWeights {
   @@map("exam_course_weights")
 }
 
-/// An exam's skill graph as shared Library content: the phases and skills (with their Library ids,
-/// courses, sizes and weights) the first build of the exam's shared graph wrote (see
-/// `isSharedExamGraph`). Every later learner of the notice plans from it, whatever prompt version
-/// wrote it, with no AI call. It belongs to the exam, never to a learner's plan, so deleting
-/// learners never loses it; only an admin resets it, and the next learner writes a new one.
+/// Every later learner of the notice plans from it, whatever prompt version wrote it, with no AI
+/// call. It belongs to the exam, so only an admin resets it.
 model ExamSkillGraph {
   id              String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
   examBlueprintId String        @unique @map("exam_blueprint_id") @db.Uuid
   examBlueprint   ExamBlueprint @relation(fields: [examBlueprintId], references: [id], onDelete: Cascade)
   /// The graph as plans store it (`PlanGraph`).
   graph           Json
-  /// The course a plan made from it opens with.
   primaryCourseId String?       @map("primary_course_id") @db.Uuid
   primaryCourse   Course?       @relation(fields: [primaryCourseId], references: [id], onDelete: SetNull)
   model           String
@@ -205,10 +177,8 @@ enum LearnerSourceOrigin {
   research
 }
 
-/// A source one learner brought or relies on: a file or text they uploaded, or what research found for
-/// their goal. Public uploads are stored once and shared, so this row is how a learner keeps their own
-/// material after deduplication, and how uploads are counted per day. It is a link, not progress, so it
-/// goes away with the source it points at.
+/// Public uploads are stored once and shared, so this row is how a learner keeps their own material
+/// and how uploads are counted per day.
 model LearnerSource {
   id        String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId    String              @map("user_id") @db.Uuid
@@ -227,10 +197,8 @@ model LearnerSource {
   @@map("learner_sources")
 }
 
-/// One line shown to the learners of an exam or source after a new fetch changed what they study, such
-/// as "The exam notice changed: the test now has 60 questions". It is stored once per change, not per
-/// learner: Today reads the notices of the learner's goal. `fields` lists the blueprint paths that
-/// changed, and provenance records the model that wrote the line.
+/// Stored once per change, not per learner: Today reads the notices of the learner's goal. `fields`
+/// lists the blueprint paths that changed.
 model SourceChangeNotice {
   id              String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   sourceId        String              @map("source_id") @db.Uuid
@@ -260,10 +228,7 @@ enum ContentReviewStatus {
   dismissed
 }
 
-/// A lesson or question built on a source that changed after it was written, flagged by the change's
-/// notice. Admin lists the open flags; the daily sweep rewrites the lesson or question against the
-/// changed source and marks the flag `rewritten`, or an admin dismisses it. Exactly one of
-/// `lessonId` and `itemId` is set.
+/// Exactly one of `lessonId` and `itemId` is set.
 model ContentReviewFlag {
   id         String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
   noticeId   String              @map("notice_id") @db.Uuid

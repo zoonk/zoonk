@@ -5,8 +5,6 @@ enum GenerationStatus {
   failed
 }
 
-/// What a tutor question is about: a lesson, one of its screens or an answer on it, or the chapter,
-/// plan, subject, item-bank question or mock its thread belongs to.
 enum LessonQuestionContextKind {
   lesson
   step
@@ -18,8 +16,6 @@ enum LessonQuestionContextKind {
   item
 }
 
-/// What a tutor thread is attached to: one learner has one thread per lesson, chapter, goal's plan,
-/// goal's subject, item-bank question or mock.
 enum TutorThreadKind {
   lesson
   chapter

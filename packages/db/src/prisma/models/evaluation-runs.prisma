@@ -1,11 +1,6 @@
-/// One run of an evaluation model (Jev, or its fallback when Jev failed): the task, the verdict of
-/// each question with its probabilities and the model that answered; its tokens and cost are in
-/// `ai_calls`, by `runId`. `input` holds the fields the model read only for tasks whose text is
-/// stored elsewhere anyway (a goal's prompt, a tutor question, Library titles); tasks that read text
-/// nobody keeps, like memory candidates, store only `inputHash`. Rows are kept 30 days for audits,
-/// threshold tuning and eval sampling. A run that read a learner's own text (`personal`) goes away
-/// with its learner or goal; a run deciding about shared Library content is linked to neither, so
-/// deleting the learner whose request started it keeps it.
+/// `input` holds what the model read only when that text is stored elsewhere anyway; otherwise only
+/// `inputHash`. Rows are kept 30 days. A `personal` run goes away with its learner or goal; one
+/// about shared Library content is linked to neither.
 model EvaluationRun {
   id             String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   task           String
@@ -16,14 +11,12 @@ model EvaluationRun {
   user           User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   goalId         String?  @map("goal_id") @db.Uuid
   goal           Goal?    @relation(fields: [goalId], references: [id], onDelete: Cascade)
-  /// Shared Library content or content made for one learner, as the task's analytics say.
   contentScope   String   @map("content_scope") @db.VarChar(10)
   traceId        String?  @map("trace_id")
   input          Json?
   inputHash      String   @map("input_hash")
   answers        Json
   latencyMs      Int      @map("latency_ms")
-  /// The call's run, whose tokens and cost are in `ai_calls`.
   runId          String   @map("run_id")
   createdAt      DateTime @default(now()) @map("created_at")
 

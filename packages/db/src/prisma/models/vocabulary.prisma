@@ -1,7 +1,5 @@
-/// A word in a target language, shared by every language pair learning it. `model`, `promptVersion`,
-/// `runId` and `generatedAt` name the lesson run that first wrote it with its romanization; the
-/// `audio*` columns name the text-to-speech run that voiced it. Both are null for rows made before
-/// generated rows stored their provenance.
+/// Shared by every language pair learning it. Its provenance and `audio*` columns are null for rows
+/// made before generated rows stored their provenance.
 model Word {
   id                   String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
   organizationId       String                @map("organization_id") @db.Uuid
@@ -29,23 +27,16 @@ model Word {
   @@map("words")
 }
 
-/// Stores user-language-specific pronunciation guides for words.
-/// Pronunciation is a property of the word's sound, not its meaning —
-/// "banco" is pronounced the same whether it means "bank" or "bench".
-/// But it varies by user language: an English speaker gets "BAHN-koh"
-/// while a Portuguese speaker gets a different phonetic guide.
-/// That's why pronunciation lives in its own table keyed on
-/// (wordId, userLanguage) rather than on `Word` (no user language)
-/// or `LessonWord` (would duplicate the same value across lessons).
-/// Provenance names the lesson run that last wrote the respelling or tip.
+/// A guide depends on the learner's language, not the word's meaning, so it's keyed on
+/// (wordId, userLanguage) rather than living on `Word` or `LessonWord`.
 model WordPronunciation {
   id            String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   wordId        String    @map("word_id") @db.Uuid
   word          Word      @relation(fields: [wordId], references: [id], onDelete: Cascade)
   userLanguage  String    @map("user_language") @db.VarChar(10)
   pronunciation String
-  /// One tip on the sound speakers of `userLanguage` tend to get wrong in this word, or null when
-  /// there is no real trap. Rows written before tips existed are filled the next time the word is taught.
+  /// Null when there is no real trap. Rows written before tips existed are filled the next time the
+  /// word is taught.
   tip           String?
   model         String?
   promptVersion String?   @map("prompt_version")
@@ -57,8 +48,6 @@ model WordPronunciation {
   @@map("word_pronunciations")
 }
 
-/// A sentence in a target language, shared per target language. Provenance works like `Word`'s:
-/// the lesson run that wrote it, then the text-to-speech run that voiced it.
 model Sentence {
   id                 String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
   organizationId     String           @map("organization_id") @db.Uuid
@@ -84,10 +73,8 @@ model Sentence {
   @@map("sentences")
 }
 
-/// A word a language lesson teaches, with its meaning for the lesson's language pair. The word, its
-/// audio and romanization are shared by every pair learning that target language; the translation,
-/// distractors and note belong to the lesson, because meaning depends on the situation ("banco" is
-/// a bank in one lesson and a bench in another).
+/// The translation, distractors and note belong to the lesson, because meaning depends on the
+/// situation ("banco" is a bank in one lesson and a bench in another).
 model LessonWord {
   lessonId      String   @map("lesson_id") @db.Uuid
   lesson        Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
@@ -95,9 +82,7 @@ model LessonWord {
   word          Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
   position      Int      @db.SmallInt
   translation   String
-  /// Target-language words a learner could confuse with this one, shown as wrong options.
   distractors   String[] @default([])
-  /// A false friend or usage trap, in the lesson's language.
   note          String?
   model         String
   promptVersion String   @map("prompt_version")
@@ -110,8 +95,6 @@ model LessonWord {
   @@map("lesson_words")
 }
 
-/// A sentence a language lesson uses, with its translation and explanation for the lesson's language
-/// pair. The sentence and its audio are shared per target language.
 model LessonSentence {
   lessonId               String   @map("lesson_id") @db.Uuid
   lesson                 Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
@@ -119,11 +102,8 @@ model LessonSentence {
   sentence               Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
   position               Int      @db.SmallInt
   translation            String
-  /// Why the sentence is built this way, compared with the lesson's language.
   explanation            String
-  /// Target-language words for the sentence's word bank that don't belong in it.
   distractors            String[] @default([])
-  /// Words in the lesson's language for the translation's word bank that don't belong in it.
   translationDistractors String[] @default([]) @map("translation_distractors")
   model                  String
   promptVersion          String   @map("prompt_version")

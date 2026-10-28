@@ -1,11 +1,6 @@
-// What deleted learners' study still teaches everyone, kept with nothing that points at them: no
-// user, goal or mock id, random ids (`gen_random_uuid()`, unlike uuidv7 they don't say when a row
-// was written) and days instead of times. Deleting a learner (account deletion, the inactive-guest
-// sweep) moves their rows here from the personal tables in one transaction
-// (`@zoonk/auth/anonymous-records`), and each aggregate reads them next to the live rows.
+// Nothing here points at a learner: no user, goal or mock id, days instead of times, and random ids
+// (unlike uuidv7, `gen_random_uuid()` doesn't say when a row was written).
 
-/// A deleted learner's first answer to an item, which item recalibration counts with live
-/// learners' first answers (`library/items/recalibrate-item-difficulty`).
 model AnonymousFirstAnswer {
   id        String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   itemId    String  @map("item_id") @db.Uuid
@@ -16,9 +11,8 @@ model AnonymousFirstAnswer {
   @@map("anonymous_first_answers")
 }
 
-/// One answer of a deleted learner's finished mock, which the exam's mock pace averages with live
-/// mocks' answers (`exams/mocks/_utils/mock-pace`). `mockKey` groups one mock's answers and
-/// `learnerKey` one learner's mocks, both random, so the pace still counts mocks and learners.
+/// `mockKey` groups one mock's answers and `learnerKey` one learner's mocks, both random, so the
+/// pace still counts mocks and learners.
 model AnonymousMockAnswer {
   id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   examBlueprintId String        @map("exam_blueprint_id") @db.Uuid
@@ -32,8 +26,6 @@ model AnonymousMockAnswer {
   @@map("anonymous_mock_answers")
 }
 
-/// How long a deleted learner took on a finished Library lesson, on their local day, which pace
-/// samples read with the live ledger (`plans/_utils/pace-samples`).
 model AnonymousLessonPace {
   id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   lessonId  String   @map("lesson_id") @db.Uuid
@@ -45,8 +37,6 @@ model AnonymousLessonPace {
   @@map("anonymous_lesson_paces")
 }
 
-/// A deleted learner's official exam result next to the estimate they saw before it, which
-/// calibrates later estimates for the exam with live reports (`exams/estimates/load-goal-estimate`).
 model AnonymousExamResult {
   id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   examBlueprintId String        @map("exam_blueprint_id") @db.Uuid

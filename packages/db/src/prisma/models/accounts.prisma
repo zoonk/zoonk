@@ -14,8 +14,7 @@ model User {
   banExpires            DateTime?                 @map("ban_expires")
   analyticsDisabled     Boolean                   @default(false) @map("analytics_disabled")
   stripeCustomerId      String?                   @map("stripe_customer_id")
-  /// Guests are anonymous Better Auth users. Their progress moves to the account they sign up with,
-  /// and guests with no activity for 30 days are deleted.
+  /// Inactive for 30 days, a guest is deleted; signing up moves their progress to the account.
   isAnonymous           Boolean                   @default(false) @map("is_anonymous")
   username              String?
   displayUsername       String?                   @map("display_username")
@@ -121,9 +120,7 @@ model Verification {
   @@map("verifications")
 }
 
-/// A key one install of the iOS app proved, with Apple App Attest, it holds inside a genuine copy of
-/// the app. Requests that need bot proof carry an assertion signed by it; each assertion's counter
-/// must be higher than the stored one, so none is accepted twice.
+/// Each assertion's counter must be higher than the stored one, so none is accepted twice.
 model AppAttestKey {
   id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   keyId     String   @unique @map("key_id")
@@ -204,19 +201,17 @@ model Subscription {
   seats                  Int?
   billingInterval        String?              @map("billing_interval")
   stripeScheduleId       String?              @map("stripe_schedule_id")
-  /// Stable provider chain ID, required by a database check for store providers: Apple's originalTransactionId, Google Play's purchase token. The unique index enforces one Zoonk owner per renewable subscription.
+  /// Apple's originalTransactionId or Google Play's purchase token, required by a database check:
+  /// one Zoonk owner per subscription.
   providerSubscriptionId String?              @map("provider_subscription_id")
-  /// Latest provider transaction or order ID retained to correlate store support cases without storing the signed payload.
   providerTransactionId  String?              @map("provider_transaction_id")
-  /// Exact external SKU retained because plan and billingInterval are projections that can change as Plus and Pro catalogs evolve.
   providerProductId      String?              @map("provider_product_id")
-  /// Issuing environment retained to distinguish production purchases from TestFlight sandbox, local Xcode and Play license-tester transactions.
   providerEnvironment    String?              @map("provider_environment")
-  /// When the store state was signed (Apple) or read from the store (Google), used to reject delayed notifications and concurrent stale updates.
+  /// Rejects delayed notifications and concurrent stale updates.
   providerSignedAt       DateTime?            @map("provider_signed_at")
-  /// Provider event ID retained for notification traceability and exact replay recognition without storing the signed payload.
   providerEventId        String?              @map("provider_event_id")
-  /// User FK for store subscriptions. referenceId stays polymorphic for Better Auth user and future organization billing, while database checks keep both IDs equal for Apple and Google and the cascade closes notification races during account deletion.
+  /// Database checks keep it equal to `referenceId` for Apple and Google; its cascade closes
+  /// notification races during account deletion.
   userId                 String?              @map("user_id") @db.Uuid
   user                   User?                @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -236,10 +231,8 @@ model RateLimit {
   @@map("rate_limits")
 }
 
-/// One account a learner deleted, kept so its analytics can be removed from PostHog by hand. `userId`
-/// is the deleted account's id, which is its PostHog distinct id; it's a plain id since the user row is
-/// gone, and nothing else about the person is kept. `analyticsRemovedAt` is null until an admin
-/// removes that person in PostHog and marks it done.
+/// Kept so an admin can remove a deleted account's analytics from PostHog by hand. `userId` is its
+/// PostHog distinct id, and nothing else about the person is kept.
 model AccountDeletion {
   id                 String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId             String    @map("user_id") @db.Uuid

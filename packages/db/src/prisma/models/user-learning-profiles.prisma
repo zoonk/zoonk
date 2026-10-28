@@ -14,9 +14,8 @@ enum BuddyGlasses {
   monocle
 }
 
-/// The learner's settings for how Zoonk teaches and looks. The buddy stores only its kind, name and
-/// chosen glasses: stage and glow come from the belt and Energy, and earned glasses are `Milestone` rows.
-/// `activeGoal` is the goal the tabs show.
+/// The buddy stores only its kind, name and chosen glasses: stage and glow come from the belt and
+/// Energy, and earned glasses are `Milestone` rows.
 model UserLearningProfile {
   id                String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId            String       @unique @map("user_id") @db.Uuid
@@ -29,12 +28,10 @@ model UserLearningProfile {
   buddyGlasses      BuddyGlasses @default(round) @map("buddy_glasses")
   activeGoalId      String?      @unique @map("active_goal_id") @db.Uuid
   activeGoal        Goal?        @relation(fields: [activeGoalId], references: [id], onDelete: SetNull)
-  /// The learner's memory switch in Settings; off stops Zoonk from learning new facts and from using
-  /// the ones it has, which stay listed.
+  /// Off stops Zoonk from learning new facts and from using the ones it has, which stay listed.
   memoryEnabled     Boolean      @default(true) @map("memory_enabled")
-  /// Sounds for a right answer and for finishing, set in Appearance. The device's own mute still wins.
+  /// The device's own mute still wins.
   soundsEnabled     Boolean      @default(true) @map("sounds_enabled")
-  /// The learner's own daily study limit in minutes, set in Appearance.
   dailyLimitMinutes Int?         @map("daily_limit_minutes") @db.SmallInt
   createdAt         DateTime     @default(now()) @map("created_at")
   updatedAt         DateTime     @default(now()) @updatedAt @map("updated_at")

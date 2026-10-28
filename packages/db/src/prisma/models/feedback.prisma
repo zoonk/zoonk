@@ -18,8 +18,7 @@ enum FeedbackStatus {
   replied
 }
 
-/// A message from the feedback form with its context (page, content, app version and platform) and a
-/// triage status. It is still emailed to the team. The user link is cleared when the account is deleted.
+/// Also emailed to the team. The user link is cleared when the account is deleted.
 model Feedback {
   id        String         @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId    String?        @map("user_id") @db.Uuid

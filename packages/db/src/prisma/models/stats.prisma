@@ -9,11 +9,9 @@ enum LearningEventKind {
   conversation
 }
 
-/// Content-free ledger of learning activities: one row per finished lesson, review block, question
-/// block, mock, checkpoint or session. Stats and admin read it instead of content tables, so progress
-/// pages keep their numbers when content is regenerated or deleted. Content is referenced by plain ids
-/// in `contentIds` plus a title snapshot, never by foreign keys. `localDate`, `hour` and `weekday` are
-/// learner-local and describe when the activity ended (or started, while `endedAt` is null).
+/// Stats read it instead of content tables, so content is referenced by plain ids in `contentIds`,
+/// never by foreign keys. `localDate`, `hour` and `weekday` are learner-local and describe when the
+/// activity ended (or started, while `endedAt` is null).
 model LearningEvent {
   id               String            @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId           String            @map("user_id") @db.Uuid
@@ -23,8 +21,7 @@ model LearningEvent {
   lessonKind       String?           @map("lesson_kind")
   goalId           String?           @map("goal_id") @db.Uuid
   startedAt        DateTime          @map("started_at")
-  /// Null while a started activity isn't finished (forever for legacy lessons that were started and
-  /// never finished), so completion rates count starts that never ended.
+  /// Null until a started activity finishes, so completion rates count starts that never ended.
   endedAt          DateTime?         @map("ended_at")
   localDate        DateTime          @map("local_date") @db.Date
   hour             Int               @db.SmallInt

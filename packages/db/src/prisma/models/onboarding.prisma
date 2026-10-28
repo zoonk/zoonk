@@ -4,11 +4,8 @@ enum OnboardingDraftStatus {
   failed
 }
 
-/// What onboarding understood from a goal a learner typed: its kind, the goals it names and the
-/// facts it already answers. The same words typed again by the same learner reuse it, fresh for a
-/// day since relative dates ("this year") change. It reads the learner's own words and the details
-/// they gave, so it's theirs alone: never another learner's, and deleted with them. Provenance is
-/// the run that wrote it.
+/// The same words typed again by the same learner reuse it for a day, since relative dates ("this
+/// year") change. It's theirs alone: never another learner's, and deleted with them.
 model GoalUnderstanding {
   id               String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId           String   @map("user_id") @db.Uuid
@@ -27,10 +24,7 @@ model GoalUnderstanding {
   @@map("goal_understandings")
 }
 
-/// A learner waiting for lessons that teach them to play an instrument. Those lessons need to hear
-/// the learner play, so onboarding offers musicianship as a learn goal and this waitlist instead.
-/// `instrument` is in the learner's words ("guitar"); `normalizedInstrument` keeps one entry per
-/// instrument per learner.
+/// `normalizedInstrument` keeps one entry per instrument per learner.
 model InstrumentWaitlistEntry {
   id                   String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId               String   @map("user_id") @db.Uuid
@@ -45,10 +39,8 @@ model InstrumentWaitlistEntry {
   @@map("instrument_waitlist_entries")
 }
 
-/// A goal a learner typed in onboarding, kept while they look at what was understood, so a refresh
-/// shows the same screen instead of starting over. `understanding` is what was read with the
-/// learner's fixes applied, null while the run reads the words; `runId` is that run. Goals created
-/// from it carry its id as `details.onboardingId`, which is how a draft finds its goals.
+/// Kept so a refresh shows the same screen. `understanding` is null while the run reads the words.
+/// Goals created from it carry its id as `details.onboardingId`, which is how a draft finds them.
 model OnboardingDraft {
   id            String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
   userId        String                @map("user_id") @db.Uuid
