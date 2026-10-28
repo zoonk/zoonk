@@ -9,8 +9,7 @@ public struct ActivityStepContent: Codable, Hashable, Sendable {
   public let image: LessonPictureDescription?
   public let data: ActivityData?
   public let payload: JSONValue
-  /// How far a `numeric` answer may always be from the right one on this template, when the
-  /// check's own tolerance is tighter. The screen sends it next to its content (`LessonStep`).
+  /// Sent on the step beside `content`, so `LessonStep` fills it in.
   public internal(set) var minTolerance: ActivityCheck.Tolerance?
 
   private enum CodingKeys: String, CodingKey {

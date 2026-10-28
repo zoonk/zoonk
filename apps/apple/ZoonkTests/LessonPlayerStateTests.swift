@@ -419,7 +419,6 @@ private func step(_ json: String) throws -> LessonStep {
   try JSONDecoder().decode(LessonStep.self, from: Data(json.utf8))
 }
 
-/// `minTolerance` is an activity screen's tolerance floor, as JSON.
 private func teaching(
   _ id: String, kind: String, minTolerance: String? = nil, content: String
 ) -> String {

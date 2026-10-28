@@ -133,11 +133,7 @@ export type PlayableSpokenAnswerStep = PlayableTeachingStepOf<"spokenAnswer"> & 
   listening: SerializedStep | null;
 };
 
-/**
- * An activity screen. `minTolerance` is its template's floor for a `numeric` answer (a guess on a
- * slider can't land closer than the slider's steps), so apps grade it as `checkActivityAnswer`
- * does; null when the template has none.
- */
+/** `minTolerance` is the template's floor for a `numeric` answer, so apps grade as core does. */
 export type PlayableActivityStep = PlayableTeachingStepOf<"activity"> & {
   minTolerance: ActivityTolerance | null;
 };

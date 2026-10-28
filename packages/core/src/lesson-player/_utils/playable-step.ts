@@ -97,7 +97,6 @@ function buildTeachingStep<TKind extends TeachingStepKind>(
   };
 }
 
-/** An activity screen, with its template's tolerance floor for apps that grade on the device. */
 function buildActivityStep(row: PlayableStepRow): PlayableActivityStep | null {
   const step = buildTeachingStep("activity", row);
 
