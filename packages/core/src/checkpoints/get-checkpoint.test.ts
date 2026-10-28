@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { studySessionBlockFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -32,6 +33,7 @@ async function reachedBoss() {
   ]);
 
   await checkpointItemFixture({ kind: "boss", planId: fixture.plan.id, position: 2 });
+  await layOutPlanFixture(fixture.plan.id);
   mockSession(user.id);
 
   const today = await getTodayStudySession({ goalId: fixture.goal.id });

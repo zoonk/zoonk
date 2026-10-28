@@ -3,9 +3,16 @@ import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { fixtureProvenance } from "./_utils/fixture-attrs";
 import { courseFixture } from "./courses";
-import { goalFixture, planFixture, planItemFixture } from "./goals";
+import {
+  goalFixture,
+  layOutPlanFixture,
+  planFixture,
+  planItemFixture,
+  plannedSkills,
+} from "./goals";
 import { courseChapterFixture, libraryChapterFixture } from "./library-chapters";
-import { chapterLessonFixture, libraryLessonFixture } from "./library-lessons";
+import { chapterLessonFixture, lessonSkillFixture, libraryLessonFixture } from "./library-lessons";
+import { skillsFixture } from "./skills";
 import { userFixture } from "./users";
 
 /** Linda on Queen Street: a unit's call at A2, stored so starting a call needs no model. */
@@ -55,9 +62,15 @@ export const LIVE_CALL_SDP_OFFER = [
   "",
 ].join("\r\n");
 
+/** The unit, and the plan's phase, of the language goal's lesson at `index`: two lessons a unit. */
+function unitOf(index: number) {
+  return index < 2 ? 0 : 1;
+}
+
 /**
  * A Portuguese speaker learning English: a course with two units (arriving, then renting, each with
- * two lessons), an active language goal on it with a plan, and the renting unit's call cached at A2.
+ * two lessons), an active language goal on it with a plan laid out a unit a phase, each closed by
+ * its checkpoint (`checkpoints`), and the renting unit's call cached at A2.
  */
 export async function languageGoalFixture({ userId }: { userId?: string } = {}) {
   const [user, course] = await Promise.all([
@@ -96,14 +109,20 @@ export async function languageGoalFixture({ userId }: { userId?: string } = {}) 
     ),
   );
 
+  const skills = await skillsFixture(
+    lessons.map((lesson) => `${lesson.title} ${randomUUID()}`),
+    { language: "pt" },
+  );
+
   await Promise.all(
-    lessons.map((lesson, index) =>
+    lessons.flatMap((lesson, index) => [
       chapterLessonFixture({
         chapterId: index < 2 ? arriving.id : renting.id,
         lessonId: lesson.id,
         position: index % 2,
       }),
-    ),
+      lessonSkillFixture({ lessonId: lesson.id, skillId: skills[index]?.id ?? "" }),
+    ]),
   );
 
   const goal = await goalFixture({
@@ -116,19 +135,28 @@ export async function languageGoalFixture({ userId }: { userId?: string } = {}) 
     userId: user.id,
   });
 
-  const plan = await planFixture({ goalId: goal.id });
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: {
+      skills: plannedSkills(skills.map((skill, index) => ({ ...skill, phase: unitOf(index) }))),
+    },
+    phases: [{ name: arriving.title }, { name: renting.title }],
+  });
 
   const items = await Promise.all(
     lessons.map((lesson, index) =>
       planItemFixture({
         chapterId: lesson.homeChapterId,
         lessonId: lesson.id,
-        phase: index < 2 ? 0 : 1,
+        phase: unitOf(index),
         planId: plan.id,
         position: index,
+        skillId: skills[index]?.id ?? null,
       }),
     ),
   );
+
+  const { bosses: checkpoints } = await layOutPlanFixture(plan.id);
 
   await prisma.conversationScenario.create({
     data: {
@@ -141,7 +169,7 @@ export async function languageGoalFixture({ userId }: { userId?: string } = {}) 
     },
   });
 
-  return { arriving, course, goal, items, lessons, plan, renting, user };
+  return { arriving, checkpoints, course, goal, items, lessons, plan, renting, skills, user };
 }
 
 /** The first letters of a few scripts, for alphabet lessons tests read without a model. */

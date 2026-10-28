@@ -1,6 +1,6 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import {
   setupPlayableLesson,
@@ -35,7 +35,7 @@ async function readToday(goalId: string) {
 async function startLessonBeforeMidnight() {
   vi.setSystemTime(BEFORE_MIDNIGHT);
 
-  const { lesson, steps, user } = await setupPlayableLesson({
+  const { lesson, skill, steps, user } = await setupPlayableLesson({
     steps: ["hook", "explanation", "check", "summary"],
   });
 
@@ -44,19 +44,16 @@ async function startLessonBeforeMidnight() {
     libraryLessonFixture({ title: "Second lesson" }),
   ]);
 
-  const plan = await planFixture({ goalId: goal.id });
+  await lessonSkillFixture({ lessonId: second.id, skillId: skill.id });
 
-  await Promise.all(
-    [lesson, second].map((row, position) =>
-      planItemFixture({
-        kind: "lesson",
-        lessonId: row.id,
-        planId: plan.id,
-        position,
-        titleSnapshot: row.title,
-      }),
-    ),
-  );
+  await planFixture({
+    goalId: goal.id,
+    items: [lesson, second].map((row) => ({
+      lessonId: row.id,
+      skillId: skill.id,
+      titleSnapshot: row.title,
+    })),
+  });
 
   const session = await readToday(goal.id);
   const block = session.blocks.find((candidate) => candidate.lessonId === lesson.id);

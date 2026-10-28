@@ -1,6 +1,7 @@
 import { generateMemoryInsight } from "@zoonk/ai/tasks/v2/memory/insight";
 import { findSessionPatterns } from "@zoonk/ai/tasks/v2/memory/session-patterns";
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -224,13 +225,14 @@ describe("ending a session", () => {
     // The exam is in three days, after the lesson's idea would come back.
     const targetDate = new Date(SESSION_TODAY.getTime() + 3 * DAY_MS);
 
-    const { goal, lessons, skills } = await sessionGoalFixture({
+    const { goal, lessons, plan, skills } = await sessionGoalFixture({
       goal: { dailyMinutes: 45, kind: "exam", targetDate },
       lessons: 2,
       userId: user.id,
     });
 
     await Promise.all([
+      layOutPlanFixture(plan.id),
       userProgressFixture({ currentEnergy: 40, totalBrainPower: 2480n, userId: user.id }),
       dueSkillFixture({
         due: new Date(SESSION_NOW.getTime() + 10 * DAY_MS),

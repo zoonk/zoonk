@@ -1,6 +1,6 @@
 import { assessPronunciation } from "@zoonk/ai/tasks/v2/language/assess-pronunciation";
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
@@ -265,19 +265,15 @@ describe("an activity done from Today before the learner starts the day", () => 
   });
 
   it("completes the day's block of a lesson played from its chapter", async () => {
-    const { lesson, steps, user } = await setupPlayableLesson({
+    const { lesson, skill, steps, user } = await setupPlayableLesson({
       steps: ["hook", "explanation", "check", "summary"],
     });
 
     const goal = await goalFixture({ timezone: TIME_ZONE, userId: user.id });
-    const plan = await planFixture({ goalId: goal.id });
 
-    await planItemFixture({
-      kind: "lesson",
-      lessonId: lesson.id,
-      planId: plan.id,
-      position: 0,
-      titleSnapshot: lesson.title,
+    await planFixture({
+      goalId: goal.id,
+      items: [{ lessonId: lesson.id, skillId: skill.id, titleSnapshot: lesson.title }],
     });
 
     const shown = await readShownMissions(goal.id);

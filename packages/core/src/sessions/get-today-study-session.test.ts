@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
@@ -68,6 +69,7 @@ async function examReviewTitles(examInDays: number) {
     dueSkillFixture({ due: daysAgo(-20), skillId: skills[1]?.id ?? "", userId: user.id }),
   ]);
 
+  await layOutPlanFixture(plan.id);
   mockSession(user.id);
   const result = await getTodayStudySession({ goalId: goal.id });
 
@@ -158,7 +160,7 @@ describe(getTodayStudySession, () => {
   it("makes the first session after a break lighter and says so", async () => {
     const user = await userFixture();
 
-    const { goal } = await sessionGoalFixture({
+    const { goal, plan } = await sessionGoalFixture({
       goal: { createdAt: daysAgo(7) },
       lessons: 8,
       userId: user.id,
@@ -167,6 +169,7 @@ describe(getTodayStudySession, () => {
     await Promise.all([
       dailyProgressFixtureMany([{ date: daysAgo(7), timeSpentSeconds: 900, userId: user.id }]),
       studySessionFixture({ goalId: goal.id, localDate: daysAgo(7), userId: user.id }),
+      layOutPlanFixture(plan.id),
     ]);
 
     mockSession(user.id);
@@ -208,10 +211,13 @@ describe(getTodayStudySession, () => {
     });
 
     // Sunday first: Wednesday (today) is a rest day.
-    await prisma.plan.update({
-      data: { settings: { weekdayMinutes: [45, 45, 45, 0, 45, 45, 45] } },
-      where: { id: plan.id },
-    });
+    await Promise.all([
+      prisma.plan.update({
+        data: { settings: { weekdayMinutes: [45, 45, 45, 0, 45, 45, 45] } },
+        where: { id: plan.id },
+      }),
+      layOutPlanFixture(plan.id),
+    ]);
 
     mockSession(user.id);
     const rest = await getTodayStudySession({ goalId: goal.id });

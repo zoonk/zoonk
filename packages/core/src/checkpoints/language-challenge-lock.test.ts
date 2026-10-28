@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -51,6 +52,7 @@ async function reachedLanguageChallenge({ dailyMinutes = 45, final = false, plus
     });
   }
 
+  await layOutPlanFixture(setup.plan.id);
   mockSession(user.id);
   return { ...setup, boss, user };
 }

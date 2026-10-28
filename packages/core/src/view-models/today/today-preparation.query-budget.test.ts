@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { assertReadBudget, countDatabaseStatements } from "@zoonk/testing/statement-counter";
@@ -31,11 +31,12 @@ describe("Today preparation read budgets", () => {
     async (kind) => {
       const user = await userFixture();
 
-      const { goal } = await sessionGoalFixture({
+      const { goal, plan } = await sessionGoalFixture({
         goal: { kind, targetLanguage: kind === "language" ? "en" : null },
         userId: user.id,
       });
 
+      await layOutPlanFixture(plan.id);
       mockSession(user.id);
 
       const preview = await countDatabaseStatements(() =>

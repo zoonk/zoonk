@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, layOutPlanFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { learningEventFixture } from "@zoonk/testing/fixtures/learning-events";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
@@ -70,7 +70,11 @@ async function bossSetup({ itemsPerSkill }: { itemsPerSkill?: number } = {}) {
     skillIds,
   };
 
-  await prisma.planItem.update({ data: { facts }, where: { id: boss.id } });
+  await Promise.all([
+    prisma.planItem.update({ data: { facts }, where: { id: boss.id } }),
+    layOutPlanFixture(fixture.plan.id),
+  ]);
+
   mockSession(user.id);
 
   return { ...fixture, boss, user };

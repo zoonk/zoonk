@@ -26,8 +26,7 @@ function getShownEnd(context: PlanReadContext): string | null {
 
 /**
  * The plan's size and end (see `getShownEnd`), which for an exam studying everything is when the
- * learner finishes it all after the exam once the plan holds all of it (see `getFullCourseEnd`). A
- * plan without a graph (a seeded one) keeps the estimate it was saved with.
+ * learner finishes it all after the exam once the plan holds all of it (see `getFullCourseEnd`).
  */
 export function buildEstimateView({ context }: { context: PlanReadContext }): PlanView["estimate"] {
   const pace = context.state.settings.pace;

@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { layOutPlanFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import {
   studySessionBlockFixture,
   studySessionFixture,
@@ -7,7 +7,11 @@ import {
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
-import { SESSION_NOW, SESSION_TODAY } from "../sessions/_test-utils/session-goal";
+import {
+  SESSION_NOW,
+  SESSION_TODAY,
+  sessionGoalFixture,
+} from "../sessions/_test-utils/session-goal";
 import { readBlockPayload, toBlockPayload } from "../sessions/block-payload";
 import { startChallenge } from "./start-challenge";
 
@@ -20,23 +24,27 @@ async function challengeSetup({
 }) {
   const user = await userFixture();
 
-  const goal = await goalFixture({
-    kind: language ? "language" : "learn",
-    timezone: "UTC",
+  // The phase's lesson is done, so its challenge closes it.
+  const { goal, plan, planItems } = await sessionGoalFixture({
+    goal: { kind: language ? "language" : "learn" },
+    itemsPerSkill: 0,
+    lessons: 1,
     userId: user.id,
   });
 
-  const [plan, session] = await Promise.all([
-    planFixture({ goalId: goal.id }),
+  const [session, challenge] = await Promise.all([
     studySessionFixture({
       goalId: goal.id,
       localDate: SESSION_TODAY,
       missions: [],
+      planVersion: plan.version,
       userId: user.id,
     }),
+    planItemFixture({ kind: "boss", planId: plan.id, position: 1 }),
+    prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
   ]);
 
-  const challenge = await planItemFixture({ kind: "boss", planId: plan.id, position: 1 });
+  await layOutPlanFixture(plan.id);
 
   const checkpoint = {
     kind: "boss",

@@ -1,5 +1,10 @@
 import { type Item, type Skill } from "@zoonk/db";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  goalFixture,
+  planFixture,
+  planItemFixture,
+  plannedSkills,
+} from "@zoonk/testing/fixtures/goals";
 import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
@@ -31,11 +36,6 @@ export async function learnerGoalFixture({
   // instead would end a free exam trial.
   const goal = await goalFixture({ details: { placementDeclined: true }, userId });
 
-  const plan = await planFixture({
-    goalId: goal.id,
-    phases: phases.map((_, index) => ({ name: `Phase ${index + 1}` })),
-  });
-
   const chapters = await Promise.all(
     phases.map((_, index) => libraryChapterFixture({ title: `Chapter ${index + 1}` })),
   );
@@ -47,6 +47,14 @@ export async function learnerGoalFixture({
   );
 
   const phaseOf = phases.flatMap((count, phase) => Array.from({ length: count }, () => phase));
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: {
+      skills: plannedSkills(skills.map((skill, index) => ({ ...skill, phase: phaseOf[index] }))),
+    },
+    phases: phases.map((_, index) => ({ name: `Phase ${index + 1}` })),
+  });
 
   await Promise.all(
     skills

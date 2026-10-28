@@ -30,8 +30,8 @@ export async function refreshStudyDaySelection({
       timeZone,
       useFreshSaved: true,
     });
-    // Item-only goals keep their existing open path until the phase B legacy cutover.
-    if (!selection || selection.state.graph.skills.length === 0) {
+
+    if (!selection) {
       return current;
     }
 

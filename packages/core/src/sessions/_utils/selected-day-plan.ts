@@ -170,11 +170,6 @@ export async function selectDayPlanFromContext({
     return savedSelection({ context, summary: fresh.selected });
   }
 
-  // A legacy item-only goal has no graph to rebuild; its real saved work remains playable.
-  if (context.state.graph.skills.length === 0) {
-    return savedSelection({ context, summary: fresh?.selected ?? null });
-  }
-
   const { left, snapshot } = await loadLeftWorkSelection(context);
 
   const request = {

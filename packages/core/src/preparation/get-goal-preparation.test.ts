@@ -306,10 +306,11 @@ describe(getGoalPreparation, () => {
     const result = await getGoalPreparation(goal.id);
     const preparation = result.status === "ready" ? result.preparation : null;
 
+    // The first phase's skills are the plan's easier ones, so they cover less than half of it.
     expect(preparation?.components.coverage).toMatchObject({
       studiedSkills: 2,
       totalSkills: 4,
-      value: 0.5,
+      value: 0.375,
     });
 
     expect(preparation?.components.mastery).toMatchObject({ answered: 6, correct: 5 });
@@ -606,7 +607,7 @@ describe(getGoalPreparation, () => {
     expect(preparation?.components.coverage).toMatchObject({
       studiedSkills: 1,
       totalSkills: 4,
-      value: 0.25,
+      value: 0.1875,
     });
 
     expect(preparation?.components.retention.value).toBeGreaterThan(0.9);

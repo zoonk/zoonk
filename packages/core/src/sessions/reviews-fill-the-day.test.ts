@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -152,7 +153,7 @@ describe("a day nothing but reviews can fill", () => {
   it("fills a return's light day with reviews only up to its minutes", async () => {
     const user = await userFixture();
 
-    const { goal, planItems, skills } = await sessionGoalFixture({
+    const { goal, plan, planItems, skills } = await sessionGoalFixture({
       goal: { createdAt: daysAgo(10), dailyMinutes: RETURN_DAILY_MINUTES, kind: "exam" },
       lessons: 20,
       userId: user.id,
@@ -163,6 +164,7 @@ describe("a day nothing but reviews can fill", () => {
         data: { completedAt: daysAgo(6), status: "done" },
         where: { id: { in: planItems.map((item) => item.id) } },
       }),
+      layOutPlanFixture(plan.id),
       dailyProgressFixtureMany([{ date: daysAgo(5), timeSpentSeconds: 1200, userId: user.id }]),
       ...skills.map((skill) => dueSkillFixture({ skillId: skill.id, userId: user.id })),
     ]);

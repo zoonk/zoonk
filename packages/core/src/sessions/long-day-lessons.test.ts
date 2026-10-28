@@ -1,3 +1,4 @@
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -50,14 +51,18 @@ describe("a long study day", () => {
   it("fills a whole day when the learner gives one, as the week counts it", async () => {
     const user = await userFixture();
 
-    const { goal } = await sessionGoalFixture({
+    const { goal, plan } = await sessionGoalFixture({
       goal: { dailyMinutes: MAX_DAILY_MINUTES },
       itemsPerSkill: 1,
       lessons: 400,
       userId: user.id,
     });
 
-    await learningProfileFixture({ activeGoalId: goal.id, userId: user.id });
+    await Promise.all([
+      layOutPlanFixture(plan.id),
+      learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    ]);
+
     mockSession(user.id);
 
     const result = await getTodayStudySession({});

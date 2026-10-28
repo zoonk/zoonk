@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { listeningBlueprintFixture } from "@zoonk/testing/fixtures/listening";
 import {
@@ -59,6 +60,7 @@ async function dueBossFixture(
     await prisma.planItem.update({ data: { facts }, where: { id: item.id } });
   }
 
+  await layOutPlanFixture(plan.id);
   mockSession(user.id);
   vi.mocked(buildSessionBlocks).mockClear();
 

@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { describe, expect, it, vi } from "vitest";
 import * as skillUpdates from "../../learner/_utils/update-learner-skill";
@@ -21,20 +21,12 @@ async function owedReviewsFixture() {
     skillFixture(),
   ]);
 
-  const plan = await planFixture({ goalId: goal.id });
   const skillIds = [first.id, second.id];
 
-  await Promise.all(
-    skillIds.map((skillId, position) =>
-      planItemFixture({
-        kind: "lesson",
-        lessonId: setup.lesson.id,
-        planId: plan.id,
-        position,
-        skillId,
-      }),
-    ),
-  );
+  await planFixture({
+    goalId: goal.id,
+    items: skillIds.map((skillId) => ({ lessonId: setup.lesson.id, skillId })),
+  });
 
   const started = await startLibraryLesson({
     input: { timeZone: TIME_ZONE },

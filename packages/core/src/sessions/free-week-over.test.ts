@@ -1,8 +1,14 @@
 import { prisma } from "@zoonk/db";
-import { planChangeFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import {
+  layOutPlanFixture,
+  planChangeFixture,
+  planItemFixture,
+} from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
+import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { playableLessonFixture } from "@zoonk/testing/fixtures/playable-lessons";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -51,16 +57,20 @@ async function examPastFreeWeek({ plus = false }: { plus?: boolean } = {}) {
     playableLessonFixture(),
   ]);
 
-  const planned = [next, done, begun].map((created, index) =>
-    planItemFixture({
+  const planned = [next, done, begun].map(async (created, index) => {
+    const skill = await skillFixture();
+    await lessonSkillFixture({ lessonId: created.lesson.id, skillId: skill.id });
+
+    return planItemFixture({
       kind: "lesson",
       lessonId: created.lesson.id,
       planId: fixture.plan.id,
       position: 3 + index,
+      skillId: skill.id,
       status: created === done ? "done" : "todo",
       titleSnapshot: created.lesson.title,
-    }),
-  );
+    });
+  });
 
   await Promise.all([
     ...planned,
@@ -86,6 +96,7 @@ async function examPastFreeWeek({ plus = false }: { plus?: boolean } = {}) {
 
   const boss = await checkpointItemFixture({ kind: "boss", planId: fixture.plan.id, position: 6 });
 
+  await layOutPlanFixture(fixture.plan.id);
   mockSession(user.id);
 
   return {

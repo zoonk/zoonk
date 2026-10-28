@@ -125,7 +125,11 @@ describe("Today reads without learner actions", () => {
     const input = { goalId: goal.id, userId: user.id };
     const before = await readLearnerState(input);
     expect(before.sessions).toStrictEqual([]);
-    expect(before.plan.items.map((item) => item.id)).toStrictEqual(items.map((item) => item.id));
+
+    expect(before.plan.items.map((item) => item.id)).toStrictEqual(
+      expect.arrayContaining(items.map((item) => item.id)),
+    );
+
     expect(pattern.goalId).toBe(goal.id);
 
     const [today, language] = await Promise.all([

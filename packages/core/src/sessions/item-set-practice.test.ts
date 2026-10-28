@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import { listeningGoalFixture, listeningSetFixture } from "@zoonk/testing/fixtures/listening";
@@ -41,7 +42,7 @@ const HOUR_MS = 3_600_000;
 async function passageFixture() {
   const user = await userFixture();
 
-  const { goal, planItems, skills } = await sessionGoalFixture({
+  const { goal, plan, planItems, skills } = await sessionGoalFixture({
     itemsPerSkill: 0,
     lessons: 1,
     userId: user.id,
@@ -64,6 +65,7 @@ async function passageFixture() {
       data: { completedAt: daysAgo(4), status: "done" },
       where: { id: planItems[0]?.id },
     }),
+    layOutPlanFixture(plan.id),
     dueSkillFixture({ due: daysAgo(-10), skillId, userId: user.id }),
   ]);
 

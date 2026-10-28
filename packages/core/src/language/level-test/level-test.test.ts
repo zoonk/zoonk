@@ -1,8 +1,6 @@
 import { assessPronunciation } from "@zoonk/ai/tasks/v2/language/assess-pronunciation";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
-import { lessonSkillFixture } from "@zoonk/testing/fixtures/library-lessons";
-import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
@@ -126,16 +124,15 @@ const TESTED_UP_TO_B2 = {
  */
 async function placedLearnerFixture() {
   await saveBank();
-  const { goal, items, lessons, user } = await languageGoalFixture();
+  const { goal, items, skills, user } = await languageGoalFixture();
 
-  const [basics, onLevel] = await Promise.all([
-    skillFixture({ language: "pt", level: "beginner", name: "Chegar ao aeroporto" }),
-    skillFixture({ language: "pt", level: "intermediate", name: "Negociar o aluguel" }),
-  ]);
-
+  // The arriving unit's skills are a beginner's, the renting unit's on the learner's level.
   await Promise.all([
-    ...lessons.map((lesson, index) =>
-      lessonSkillFixture({ lessonId: lesson.id, skillId: (index < 2 ? basics : onLevel).id }),
+    ...skills.map((skill, index) =>
+      prisma.skill.update({
+        data: { level: index < 2 ? "beginner" : "intermediate" },
+        where: { id: skill.id },
+      }),
     ),
     prisma.goal.update({
       data: { details: { ...(goal.details as object), levelTest: TESTED_UP_TO_B2 } },
@@ -148,7 +145,7 @@ async function placedLearnerFixture() {
 
 /**
  * The learner undid the test-out, as `undoChange` leaves it: its units are back to study and their
- * skills no longer assumed known. This fixture's plan isn't the planner's, so it has no change to undo.
+ * skills no longer assumed known.
  */
 async function bringBackTestedOutUnits({ itemIds, userId }: { itemIds: string[]; userId: string }) {
   await Promise.all([
@@ -160,14 +157,14 @@ async function bringBackTestedOutUnits({ itemIds, userId }: { itemIds: string[];
   ]);
 }
 
+/** Each unit's lesson status, in the units' order: placing a result re-plans the items' order. */
 async function readItemStatuses(itemIds: string[]) {
   const items = await prisma.planItem.findMany({
-    orderBy: { position: "asc" },
-    select: { status: true },
+    select: { id: true, status: true },
     where: { id: { in: itemIds } },
   });
 
-  return items.map((item) => item.status);
+  return itemIds.map((id) => items.find((item) => item.id === id)?.status);
 }
 
 describe("language level test", () => {

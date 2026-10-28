@@ -1,7 +1,13 @@
 import { type Goal, type StudySession, type StudySessionBlock, prisma } from "@zoonk/db";
 import { MS_PER_DAY, toUTCMidnight } from "@zoonk/utils/date";
 import { type FixtureAttrs } from "./_utils/fixture-attrs";
-import { goalFixture, planFixture, planItemFixture } from "./goals";
+import {
+  goalFixture,
+  layOutPlanFixture,
+  planFixture,
+  planItemFixture,
+  plannedSkills,
+} from "./goals";
 import { learningProfileFixture } from "./learning-profiles";
 import { libraryChapterFixture } from "./library-chapters";
 import { chapterLessonFixture, lessonSkillFixture, libraryLessonFixture } from "./library-lessons";
@@ -42,7 +48,10 @@ export async function studySessionBlockFixture(
   return prisma.studySessionBlock.create({ data: { kind: "learn", ...attrs, position } });
 }
 
-/** One written lesson per skill, with real questions and lesson-skill links. */
+/**
+ * One written lesson per skill, with real questions and lesson-skill links, in a plan the planner
+ * hasn't laid out yet (see `layOutPlanFixture`).
+ */
 export async function studySessionPlanFixture({
   goal,
   itemsPerSkill = 3,
@@ -52,14 +61,15 @@ export async function studySessionPlanFixture({
   itemsPerSkill?: number;
   lessons?: number;
 }) {
-  const plan = await planFixture({
-    goalId: goal.id,
-    phases: [{ name: "Basics" }, { name: "Practice" }],
-  });
-
   const skills = await Promise.all(
     Array.from({ length: lessons }, (_, index) => skillFixture({ name: `Skill ${index + 1}` })),
   );
+
+  const plan = await planFixture({
+    goalId: goal.id,
+    graph: { skills: plannedSkills(skills) },
+    phases: [{ name: "Basics" }, { name: "Practice" }],
+  });
 
   const lessonRows = await Promise.all(
     skills.map((_, index) =>
@@ -76,6 +86,7 @@ export async function studySessionPlanFixture({
           phase: 0,
           planId: plan.id,
           position,
+          skillId: skills[position]?.id ?? null,
           titleSnapshot: lesson.title,
         }),
       ),
@@ -145,6 +156,8 @@ export async function plusCallDayFixture({
     }),
     learningProfileFixture({ activeGoalId: goal.id, userId }),
   ]);
+
+  await layOutPlanFixture(fixture.plan.id);
 
   return { ...fixture, boss, subscription };
 }

@@ -785,14 +785,6 @@ describe(finishGoalPlacement, () => {
 
   it("names the lesson the plan opens with once placement tested some out, so it's written now", async () => {
     const { goal, items, planItems, skills } = await setup();
-    const lessons = await Promise.all(planItems.map(() => libraryLessonFixture()));
-
-    await Promise.all(
-      planItems.map((item, index) =>
-        prisma.planItem.update({ data: { lessonId: lessons[index]?.id }, where: { id: item.id } }),
-      ),
-    );
-
     const known = items.filter((item) => item.skillId === skills[0]?.id);
 
     await Promise.all(
@@ -807,7 +799,7 @@ describe(finishGoalPlacement, () => {
     const result = await finishGoalPlacement({ goalId: goal.id, input: {} });
 
     // The first skill is known: the plan now opens with the second one's lesson.
-    expect(result).toMatchObject({ firstLessonId: lessons[1]?.id, status: "ready" });
+    expect(result).toMatchObject({ firstLessonId: planItems[1]?.lessonId, status: "ready" });
   });
 
   // The bands below a stated level are the learner's word only: placement asks them first, and

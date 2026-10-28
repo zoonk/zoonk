@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import {
@@ -56,7 +57,7 @@ async function loadQuestions({ blockId, sessionId }: { blockId: string; sessionI
 async function mathReviewDay() {
   const user = await userFixture();
 
-  const { goal, planItems, skills } = await sessionGoalFixture({
+  const { goal, plan, planItems, skills } = await sessionGoalFixture({
     itemsPerSkill: 0,
     lessons: 1,
     userId: user.id,
@@ -67,6 +68,7 @@ async function mathReviewDay() {
   const [item] = await Promise.all([
     mathItemFixture(skillId),
     prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
+    layOutPlanFixture(plan.id),
     dueSkillFixture({ skillId, userId: user.id }),
   ]);
 

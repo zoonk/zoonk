@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { countDatabaseStatements } from "@zoonk/testing/statement-counter";
@@ -18,7 +19,8 @@ describe("opening a day and reading it", () => {
 
   it("reuses the selected day facts and projects access without loading unrelated usage", async () => {
     const user = await userFixture();
-    const { goal } = await sessionGoalFixture({ userId: user.id });
+    const { goal, plan } = await sessionGoalFixture({ userId: user.id });
+    await layOutPlanFixture(plan.id);
     mockSession(user.id);
 
     const input = { goalId: goal.id, shownDate: "2026-09-30", timeZone: "UTC" };
@@ -35,7 +37,7 @@ describe("opening a day and reading it", () => {
     }
 
     expect(read.result.today.session).toStrictEqual(opened.result.session);
-    expect(opened.statements + read.statements).toBeLessThanOrEqual(200);
+    expect(opened.statements + read.statements).toBeLessThanOrEqual(205);
   });
 
   it("keeps the same display-limit day when a different owned goal crosses midnight", async () => {

@@ -1,5 +1,6 @@
 import { gradeTypedAnswer } from "@zoonk/ai/tasks/v2/grading/grade-typed-answer";
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import {
@@ -142,6 +143,7 @@ async function todayPractice({
       items.map((item) => itemFixture({ content: item.content, format: item.format, skillId })),
     ),
     prisma.planItem.update({ data: { status: "done" }, where: { id: fixture.planItems[0]?.id } }),
+    layOutPlanFixture(fixture.plan.id),
     prisma.goal.update({
       data: { details: { level: "none", purpose: "deep" } },
       where: { id: fixture.goal.id },

@@ -569,13 +569,19 @@ describe(sessionPreparationWorkflow, () => {
   );
 
   it("writes a Plus learner's next checkpoint call ahead, so opening it never waits", async () => {
-    const { goal, plan, renting, user } = await languageGoalFixture();
+    const { checkpoints, goal, items, renting, user } = await languageGoalFixture();
 
     await Promise.all([
       prisma.subscription.create({
         data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
       }),
-      planItemFixture({ kind: "boss", phase: 1, planId: plan.id, position: 10 }),
+      // The arriving unit is done, its call too, so the renting unit's is the next.
+      prisma.planItem.updateMany({
+        data: { status: "done" },
+        where: {
+          id: { in: [...items.slice(0, 2).map((item) => item.id), checkpoints[0]?.id ?? ""] },
+        },
+      }),
       prisma.languageSkillLevel.create({
         data: { language: "en", score: 2, skill: "speaking", startScore: 2, userId: user.id },
       }),

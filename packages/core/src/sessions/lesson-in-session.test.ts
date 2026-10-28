@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
 import { describe, expect, it } from "vitest";
 import {
   setupPlayableLesson,
@@ -15,7 +15,7 @@ const TIME_ZONE = "UTC";
 
 /** Today's one lesson, started as its session block and answered, ready to complete. */
 async function playLessonBlock({ energy }: { energy?: number } = {}) {
-  const { lesson, steps, user } = await setupPlayableLesson({
+  const { lesson, skill, steps, user } = await setupPlayableLesson({
     steps: ["hook", "explanation", "check", "summary"],
   });
 
@@ -26,14 +26,12 @@ async function playLessonBlock({ energy }: { energy?: number } = {}) {
   }
 
   const goal = await goalFixture({ timezone: TIME_ZONE, userId: user.id });
-  const plan = await planFixture({ goalId: goal.id });
 
-  const planItem = await planItemFixture({
-    kind: "lesson",
-    lessonId: lesson.id,
-    planId: plan.id,
-    position: 0,
-    titleSnapshot: lesson.title,
+  const {
+    items: [planItem],
+  } = await planFixture({
+    goalId: goal.id,
+    items: [{ lessonId: lesson.id, skillId: skill.id, titleSnapshot: lesson.title }],
   });
 
   const today = await getTodayStudySession({ goalId: goal.id, timeZone: TIME_ZONE });
@@ -106,7 +104,7 @@ describe("a lesson played as a session block", () => {
     });
 
     await expect(
-      prisma.planItem.findUniqueOrThrow({ where: { id: planItem.id } }),
+      prisma.planItem.findUniqueOrThrow({ where: { id: planItem?.id ?? "" } }),
     ).resolves.toMatchObject({ status: "done" });
   });
 

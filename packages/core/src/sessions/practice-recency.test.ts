@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -28,7 +29,7 @@ describe("today's practice", () => {
   it("never asks again what the learner answered in the last day, such as placement", async () => {
     const user = await userFixture();
 
-    const { goal, planItems, skills } = await sessionGoalFixture({
+    const { goal, plan, planItems, skills } = await sessionGoalFixture({
       itemsPerSkill: 0,
       lessons: 1,
       userId: user.id,
@@ -45,6 +46,7 @@ describe("today's practice", () => {
         data: { completedAt: daysAgo(4), status: "done" },
         where: { id: planItems[0]?.id },
       }),
+      layOutPlanFixture(plan.id),
       dueSkillFixture({ due: daysAgo(-10), skillId, userId: user.id }),
       attemptFixture({
         answeredAt: new Date(SESSION_NOW.getTime() - 2 * HOUR_MS),

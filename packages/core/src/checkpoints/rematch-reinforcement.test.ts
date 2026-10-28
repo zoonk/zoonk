@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -57,6 +58,7 @@ describe("a lost duel's actual reinforcement lessons", () => {
       position: 2,
     });
 
+    await layOutPlanFixture(fixture.plan.id);
     mockSession(user.id);
     const today = await getTodayStudySession({ goalId: fixture.goal.id });
     const block = today.status === "ready" ? today.session.blocks[0] : null;
@@ -116,6 +118,12 @@ describe("a lost duel's actual reinforcement lessons", () => {
     }
 
     expect(tomorrow.session.blocks.filter((entry) => entry.reinforcement)).toHaveLength(count);
+
+    // Every lesson of the missed skill held back, the plan teaches that skill again before its
+    // phase's challenge, so the rematch waits for the new lesson.
+    if (count === 0) {
+      return;
+    }
 
     expect(tomorrow.session.blocks.at(-1)?.checkpoint).toMatchObject({
       kind: final ? "finalBoss" : "boss",

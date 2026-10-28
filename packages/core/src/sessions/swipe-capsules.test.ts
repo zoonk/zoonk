@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { goalFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { itemFixture, skillFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import {
@@ -38,7 +38,7 @@ describe("swipe capsules", () => {
       examBlueprintFixture({ structure: NET_SCORED_EXAM_STRUCTURE }),
     ]);
 
-    const { goal, planItems, skills } = await sessionGoalFixture({
+    const { goal, plan, planItems, skills } = await sessionGoalFixture({
       goal: { examBlueprintId: blueprint.id, kind: "exam" },
       itemsPerSkill: 0,
       lessons: 1,
@@ -49,6 +49,7 @@ describe("swipe capsules", () => {
 
     await Promise.all([
       prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
+      layOutPlanFixture(plan.id),
       dueSkillFixture({ skillId, userId: user.id }),
       ...[true, true, false].map((isTrue) =>
         itemFixture({ content: statementContent(isTrue), format: "trueFalse", skillId }),
@@ -175,7 +176,7 @@ describe("swipe capsules", () => {
       examBlueprintFixture({ structure: NET_SCORED_EXAM_STRUCTURE }),
     ]);
 
-    const { goal, planItems, skills } = await sessionGoalFixture({
+    const { goal, plan, planItems, skills } = await sessionGoalFixture({
       goal: { examBlueprintId: blueprint.id, kind: "exam" },
       itemsPerSkill: 0,
       lessons: 1,
@@ -191,6 +192,7 @@ describe("swipe capsules", () => {
         ),
       ),
       prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
+      layOutPlanFixture(plan.id),
       dueSkillFixture({ skillId, userId: user.id }),
     ]);
 

@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture, mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
@@ -32,7 +33,7 @@ async function netScoredPracticeDay() {
     examBlueprintFixture({ structure: NET_SCORED_EXAM_STRUCTURE }),
   ]);
 
-  const { goal, planItems, skills } = await sessionGoalFixture({
+  const { goal, plan, planItems, skills } = await sessionGoalFixture({
     goal: { examBlueprintId: blueprint.id, kind: "exam" },
     itemsPerSkill: 0,
     lessons: 1,
@@ -52,6 +53,7 @@ async function netScoredPracticeDay() {
     mistakeFixture({ createdAt: daysAgo(2), itemId: blank?.id, skillId, userId: user.id }),
   ]);
 
+  await layOutPlanFixture(plan.id);
   mockSession(user.id);
 
   return { goal, ids: { blank: blank?.id, wrong: wrong?.id } };
@@ -160,13 +162,14 @@ describe("net-scored practice", () => {
   it("scores an area's extra practice like the goal's exam", async () => {
     const user = await userFixture();
 
-    const { chapters, goal, skills } = await learnerGoalFixture({
+    const { chapters, goal, plan, skills } = await learnerGoalFixture({
       phases: [2, 2],
       userId: user.id,
     });
 
-    await Promise.all(
-      skills.map((skill) =>
+    await Promise.all([
+      layOutPlanFixture(plan.id),
+      ...skills.map((skill) =>
         learnerSkillFixture({
           difficulty: 5,
           lastReviewedAt: daysAgo(3),
@@ -177,7 +180,7 @@ describe("net-scored practice", () => {
           userId: user.id,
         }),
       ),
-    );
+    ]);
 
     mockSession(user.id);
 

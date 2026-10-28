@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { layOutPlanFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { lessonSkillFixture, libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
@@ -45,6 +45,7 @@ async function bossSetup({ itemsPerSkill }: { itemsPerSkill?: number } = {}) {
   });
 
   const boss = await checkpointItemFixture({ kind: "boss", planId: fixture.plan.id, position: 2 });
+  await layOutPlanFixture(fixture.plan.id);
   mockSession(user.id);
 
   return { ...fixture, boss, user };
@@ -534,6 +535,7 @@ describe("phase checkpoint (boss)", () => {
       scheduledFor: day,
     });
 
+    await layOutPlanFixture(plan.id);
     mockSession(user.id);
 
     const today = await getTodayStudySession({ goalId: goal.id });

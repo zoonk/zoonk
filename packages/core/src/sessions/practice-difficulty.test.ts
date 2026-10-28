@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -40,6 +41,7 @@ async function practiceDay(difficultyBias: DifficultyBias, targetDate: Date | nu
   await Promise.all([
     prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
     prisma.plan.update({ data: { settings: { difficultyBias } }, where: { id: plan.id } }),
+    layOutPlanFixture(plan.id),
     prisma.goal.update({ data: { targetDate }, where: { id: plan.goalId } }),
     dueSkillFixture({ due: daysAgo(-10), skillId, userId: user.id }),
   ]);

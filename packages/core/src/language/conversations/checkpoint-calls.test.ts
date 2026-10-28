@@ -1,7 +1,7 @@
 import { generateConversationScenario } from "@zoonk/ai/tasks/v2/language/conversation-scenario";
 import { createLiveCallSession } from "@zoonk/ai/tasks/v2/language/live-call-session";
 import { prisma } from "@zoonk/db";
-import { goalFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import { RENTING_SCENARIO, languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
 import { dailyProgressFixtureMany } from "@zoonk/testing/fixtures/progress";
@@ -49,15 +49,24 @@ const B1_SCENARIO = { ...RENTING_SCENARIO, title: "Negociar o aluguel" };
  */
 async function reachedCheckpointFixture({ speaking }: { speaking: number }) {
   const setup = await languageGoalFixture();
-  const { goal, plan, user } = setup;
+  const { checkpoints, goal, items, user } = setup;
+  const [arrived, boss] = checkpoints;
+
+  if (!arrived || !boss) {
+    throw new Error("Expected each unit's checkpoint");
+  }
 
   await prisma.subscription.create({
     data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
   });
 
-  const [boss, session] = await Promise.all([
-    planItemFixture({ kind: "boss", phase: 1, planId: plan.id, position: 10 }),
+  const [session] = await Promise.all([
     studySessionFixture({ goalId: goal.id, userId: user.id }),
+    // The arriving unit is done, its call too, so the renting unit's is the next.
+    prisma.planItem.updateMany({
+      data: { status: "done" },
+      where: { id: { in: [...items.slice(0, 2).map((item) => item.id), arrived.id] } },
+    }),
     prisma.languageSkillLevel.create({
       data: {
         language: "en",
@@ -442,9 +451,8 @@ describe("language checkpoint calls", () => {
   });
 
   it("writes nothing ahead when the unit's call is written or the goal has no checkpoint call", async () => {
-    const [written, noBoss, other] = await Promise.all([
+    const [written, other] = await Promise.all([
       reachedCheckpointFixture({ speaking: 1 }),
-      languageGoalFixture(),
       userFixture(),
     ]);
 
@@ -452,7 +460,6 @@ describe("language checkpoint calls", () => {
 
     await Promise.all([
       prepareCheckpointCall({ goalId: written.goal.id, userId: written.user.id }),
-      prepareCheckpointCall({ goalId: noBoss.goal.id, userId: noBoss.user.id }),
       prepareCheckpointCall({ goalId: otherGoal.id, userId: other.id }),
     ]);
 
@@ -473,14 +480,17 @@ describe("language checkpoint calls", () => {
 /** Marcos's goal with the renting unit's boss ahead: its lessons aren't done, so it's upcoming. */
 async function upcomingCallFixture({ speaking }: { speaking: number }) {
   const setup = await languageGoalFixture();
-  const { plan, user } = setup;
+  const { checkpoints, user } = setup;
+  const boss = checkpoints[1];
 
-  await prisma.subscription.create({
-    data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
-  });
+  if (!boss) {
+    throw new Error("Expected the renting unit's checkpoint");
+  }
 
-  const [boss] = await Promise.all([
-    planItemFixture({ kind: "boss", phase: 1, planId: plan.id, position: 10 }),
+  await Promise.all([
+    prisma.subscription.create({
+      data: { plan: "plus", provider: "zoonk", referenceId: user.id, status: "active" },
+    }),
     prisma.languageSkillLevel.create({
       data: {
         language: "en",

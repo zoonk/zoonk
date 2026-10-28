@@ -468,8 +468,11 @@ describe(completeLibraryLesson, () => {
   it("never says when a quick explanation comes back, since nothing reviews it", async () => {
     const setup = await setupPlayableLesson({ steps: ["explanation", "check"] });
     const goal = await goalFixture({ kind: "explain", userId: setup.user.id });
-    const plan = await planFixture({ goalId: goal.id });
-    await planItemFixture({ kind: "lesson", lessonId: setup.lesson.id, planId: plan.id });
+
+    await planFixture({
+      goalId: goal.id,
+      items: [{ lessonId: setup.lesson.id, skillId: setup.skill.id }],
+    });
 
     const runId = await startRun(setup.lesson.id);
 
@@ -506,13 +509,9 @@ describe(completeLibraryLesson, () => {
       skillFixture(),
     ]);
 
-    const plan = await planFixture({ goalId: goal.id });
-
-    await planItemFixture({
-      kind: "lesson",
-      lessonId: setup.lesson.id,
-      planId: plan.id,
-      skillId: planSkill.id,
+    await planFixture({
+      goalId: goal.id,
+      items: [{ lessonId: setup.lesson.id, skillId: planSkill.id }],
     });
 
     const runId = await startRun(setup.lesson.id);
@@ -586,15 +585,12 @@ describe(completeLibraryLesson, () => {
       goalFixture({ kind: "explain", userId: other.id }),
     ]);
 
-    const [plan, othersPlan] = await Promise.all([
-      planFixture({ goalId: explanation.id }),
-      planFixture({ goalId: othersExplanation.id }),
-      learningProfileFixture({ activeGoalId: explanation.id, userId: setup.user.id }),
-    ]);
+    const items = [{ lessonId: setup.lesson.id, skillId: setup.skill.id }];
 
     await Promise.all([
-      planItemFixture({ kind: "lesson", lessonId: setup.lesson.id, planId: plan.id }),
-      planItemFixture({ kind: "lesson", lessonId: setup.lesson.id, planId: othersPlan.id }),
+      planFixture({ goalId: explanation.id, items }),
+      planFixture({ goalId: othersExplanation.id, items }),
+      learningProfileFixture({ activeGoalId: explanation.id, userId: setup.user.id }),
     ]);
 
     const runId = await startRun(setup.lesson.id);

@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { layOutPlanFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -135,6 +135,7 @@ describe("public mock funding views", () => {
         data: { settings: { mockFunding: FUNDING, startDate: "2026-09-25" } },
         where: { id: plan.id },
       }),
+      layOutPlanFixture(plan.id),
     ]);
 
     const today = await openTodayView({ goalId: goal.id });

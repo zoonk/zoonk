@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { learnerSkillFixture } from "@zoonk/testing/fixtures/learner";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -29,6 +30,7 @@ async function setup() {
     ),
   );
 
+  await layOutPlanFixture(fixture.plan.id);
   mockSession(user.id);
   return { ...fixture, user };
 }

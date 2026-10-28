@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { attemptFixture } from "@zoonk/testing/fixtures/learner";
 import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -49,9 +50,15 @@ describe("checkpoint previews follow the day Start actually opens", () => {
 
     const [boss, day] = await Promise.all([
       checkpointItemFixture({ kind: "boss", planId: plan.id, position: 3 }),
-      studySessionFixture({ goalId: goal.id, localDate: SESSION_TODAY, userId: user.id }),
+      studySessionFixture({
+        goalId: goal.id,
+        localDate: SESSION_TODAY,
+        planVersion: plan.version,
+        userId: user.id,
+      }),
     ]);
 
+    await layOutPlanFixture(plan.id);
     const saved = await readDay(day.id);
     expect(saved.blocks).toHaveLength(0);
 

@@ -6,6 +6,8 @@ import {
   type SuggestedGoal,
   prisma,
 } from "@zoonk/db";
+import { toUTCMidnight } from "@zoonk/utils/date";
+import { isJsonObject } from "@zoonk/utils/json";
 import { type FixtureAttrs } from "./_utils/fixture-attrs";
 
 const DEFAULT_DAILY_MINUTES = 20;
@@ -24,13 +26,34 @@ export async function goalFixture(attrs: FixtureAttrs<Goal, "details"> & Pick<Go
   });
 }
 
-/** Creates the plan of a goal with one phase. */
+type PlanAttrs = FixtureAttrs<Plan, "graph" | "phases" | "settings" | "summary"> &
+  Pick<Plan, "goalId">;
+
+type PlanItemAttrs = Omit<Parameters<typeof planItemFixture>[0], "planId">;
+
+/**
+ * Creates the plan of a goal with one phase. With `items` (in their order unless they say) it's the
+ * plan the planner laid out with them (see `layOutPlanFixture`), returned with the items created.
+ */
 export async function planFixture(
-  attrs: FixtureAttrs<Plan, "graph" | "phases" | "settings" | "summary"> & Pick<Plan, "goalId">,
-) {
-  return prisma.plan.create({
+  attrs: PlanAttrs & { items: PlanItemAttrs[] },
+): Promise<Plan & { items: PlanItem[] }>;
+export async function planFixture(attrs: PlanAttrs): Promise<Plan>;
+export async function planFixture({ items, ...attrs }: PlanAttrs & { items?: PlanItemAttrs[] }) {
+  const plan = await prisma.plan.create({
     data: { phases: [{ name: "Test phase", summary: "Test phase summary" }], ...attrs },
   });
+
+  if (!items) {
+    return plan;
+  }
+
+  const created = await Promise.all(
+    items.map((item, position) => planItemFixture({ position, ...item, planId: plan.id })),
+  );
+
+  const laidOut = await layOutPlanFixture(plan.id);
+  return { ...laidOut.plan, items: created };
 }
 
 /**
@@ -46,6 +69,160 @@ export async function planItemFixture(
   return prisma.planItem.create({
     data: { kind: "lesson", phase: 0, titleSnapshot: "Test plan item", ...attrs, position },
   });
+}
+
+const LEARN_KINDS = new Set<string>(["chapter", "lesson"]);
+
+type StoredPhase = { kind?: string; startDate?: string | null };
+
+function isStoredPhase(value: unknown): value is StoredPhase {
+  return typeof value === "object" && value !== null;
+}
+
+/** The planner's graph entry for each skill a plan teaches, in its phase (0 unless given). */
+export function plannedSkills(
+  skills: readonly { id: string; lessons?: number; name: string; phase?: number }[],
+) {
+  return skills.map((skill) => ({
+    area: null,
+    lessons: skill.lessons ?? 1,
+    name: skill.name,
+    phase: skill.phase ?? 0,
+    skillId: skill.id,
+    weight: null,
+  }));
+}
+
+/**
+ * The graph with each lesson's skill in its item's phase, as the planner places what it teaches:
+ * a skill the graph has keeps the rest of its entry, and one it lacks joins it.
+ */
+function graphFromItems({
+  graph,
+  items,
+}: {
+  graph: Record<string, unknown>;
+  items: { phase: number; skill: { id: string; name: string } | null }[];
+}) {
+  const taught = Map.groupBy(
+    items.flatMap((item) => (item.skill ? [{ ...item.skill, phase: item.phase }] : [])),
+    (skill) => skill.id,
+  );
+
+  const stored = (Array.isArray(graph.skills) ? graph.skills : []).filter((skill) =>
+    isJsonObject(skill),
+  );
+
+  const storedIds = new Set(stored.map((skill) => skill.skillId));
+
+  const added = [...taught.values()].flatMap(([skill, ...rest]) =>
+    skill && !storedIds.has(skill.id) ? [{ ...skill, lessons: rest.length + 1 }] : [],
+  );
+
+  const skills = stored.map((skill) => {
+    const [item] = typeof skill.skillId === "string" ? (taught.get(skill.skillId) ?? []) : [];
+    return item ? { ...skill, phase: item.phase } : skill;
+  });
+
+  return { phases: [], ...graph, skills: [...skills, ...plannedSkills(added)] };
+}
+
+/** The plan's phases with the first dated from today, unless the planner dated them already. */
+function datePhases(value: unknown) {
+  const phases = Array.isArray(value) ? value.filter((phase) => isStoredPhase(phase)) : [];
+  const startDate = toIsoDay(toUTCMidnight(new Date()));
+
+  if (phases.some((phase) => phase.startDate)) {
+    return phases;
+  }
+
+  const [first = { name: "Test phase" }, ...rest] = phases;
+  return [{ ...first, startDate }, ...rest];
+}
+
+/**
+ * The plan's items in the planner's order with a challenge closing each phase in `open`, after
+ * that phase's last item: each item's position, and each new challenge's phase and position.
+ */
+function placeChallenges({
+  items,
+  open,
+}: {
+  items: readonly { id: string; phase: number; position: number }[];
+  open: readonly number[];
+}) {
+  const closing = new Map(
+    open.map((phase) => [items.findLast((item) => item.phase <= phase)?.id, phase]),
+  );
+
+  const order = items.flatMap((item) =>
+    closing.has(item.id) ? [item, { phase: closing.get(item.id) ?? 0 }] : [item],
+  );
+
+  return {
+    bosses: order.flatMap((entry, position) =>
+      "id" in entry ? [] : [{ phase: entry.phase, position }],
+    ),
+    moved: order.flatMap((entry, position) =>
+      "id" in entry && entry.position !== position ? [{ id: entry.id, position }] : [],
+    ),
+  };
+}
+
+/**
+ * Makes a plan the shape the planner leaves it after laying it out, from its items: each lesson's
+ * skill in the graph in its item's phase, the phases dated from today, and a challenge closing each
+ * phase with lessons. A read keeps such a plan as saved, where it would re-plan one missing any of
+ * it. Call it once a test's items are as it wants them; returns the plan and the challenges it added.
+ */
+export async function layOutPlanFixture(planId: string) {
+  const plan = await prisma.plan.findUniqueOrThrow({
+    include: { items: { include: { skill: true }, orderBy: { position: "asc" } } },
+    where: { id: planId },
+  });
+
+  const phases = datePhases(plan.phases);
+
+  const lessons = plan.items.filter(
+    (item) => LEARN_KINDS.has(item.kind) && item.status !== "skipped",
+  );
+
+  const closed = new Set(plan.items.flatMap((item) => (item.kind === "boss" ? [item.phase] : [])));
+
+  const open = [...new Set(lessons.map((item) => item.phase))].filter(
+    (phase) => !closed.has(phase) && phases[phase]?.kind !== "afterExam",
+  );
+
+  const { bosses, moved } = placeChallenges({ items: plan.items, open });
+  const graph = isJsonObject(plan.graph) ? plan.graph : {};
+
+  // Positions are unique in a plan, so moved items step aside before taking their new place.
+  const laidOut = await prisma.$transaction(async (tx) => {
+    await Promise.all(
+      moved.map((item) =>
+        tx.planItem.update({ data: { position: -1 - item.position }, where: { id: item.id } }),
+      ),
+    );
+
+    await Promise.all(
+      moved.map((item) =>
+        tx.planItem.update({ data: { position: item.position }, where: { id: item.id } }),
+      ),
+    );
+
+    return tx.plan.update({
+      data: { graph: graphFromItems({ graph, items: lessons }), phases },
+      where: { id: planId },
+    });
+  });
+
+  const added = await Promise.all(
+    bosses.map((boss) =>
+      planItemFixture({ ...boss, kind: "boss", planId, titleSnapshot: "Test challenge" }),
+    ),
+  );
+
+  return { bosses: added, plan: laidOut };
 }
 
 const UNDOABLE_KINDS = new Set(["edited", "testedOut"]);

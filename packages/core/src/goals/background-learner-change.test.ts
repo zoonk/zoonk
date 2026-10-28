@@ -1,9 +1,12 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, planChangeFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture, layOutPlanFixture, planChangeFixture } from "@zoonk/testing/fixtures/goals";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
-import { studySessionFixture } from "@zoonk/testing/fixtures/study-sessions";
+import {
+  studySessionFixture,
+  studySessionPlanFixture,
+} from "@zoonk/testing/fixtures/study-sessions";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { safeAsync } from "@zoonk/utils/error";
 import { describe, expect, it, vi } from "vitest";
@@ -18,7 +21,8 @@ import { recordGoalBuildFailure, recordGoalGeneration } from "./record-goal-gene
 async function setup() {
   const user = await userFixture();
   const goal = await goalFixture({ details: { kept: "answer" }, kind: "exam", userId: user.id });
-  const plan = await planFixture({ goalId: goal.id });
+  const { plan } = await studySessionPlanFixture({ goal, itemsPerSkill: 0, lessons: 1 });
+  await layOutPlanFixture(plan.id);
   return { goal, plan, user };
 }
 
@@ -190,6 +194,9 @@ describe("background goal plan marks", () => {
 
   it("marks today's kept-session stamp once while queue attempts mark freshness", async () => {
     const { goal, plan, user } = await setup();
+
+    // Nothing is left to study, so following the plan keeps today's finished session as it is.
+    await prisma.planItem.updateMany({ data: { status: "done" }, where: { planId: plan.id } });
     const context = await loadPlanContext({ goal, timeZone: "UTC" });
 
     if (!context) {

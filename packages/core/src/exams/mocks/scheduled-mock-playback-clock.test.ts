@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { planItemFixture } from "@zoonk/testing/fixtures/goals";
+import { layOutPlanFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
 import {
   listeningBlueprintFixture,
@@ -104,6 +104,7 @@ async function setup({
     // ledger are real saved rows; no planner, session, recording or persistence call is mocked.
     await prisma.plan.update({
       data: {
+        graph: library.graph,
         phases: [{ kind: "finalStretch", name: "Final stretch", startDate: MOCK_DAY }],
         settings: {
           mockFunding: [
@@ -147,6 +148,8 @@ async function setup({
       position: library.skills.length,
       scheduledFor: new Date(MOCK_DAY),
     });
+
+    await layOutPlanFixture(plan.id);
   } else {
     const created = await createGoalPlan({ goalId: goal.id, graph: library.graph });
 
@@ -201,8 +204,8 @@ async function assertScheduledClock({
     .find((item) => item.id === planItemId);
 
   expect(row).toMatchObject({ scheduledFor: date });
-  // A pre-existing graphless plan has no computed per-item estimate; its saved day still funds
-  // the sitting, while planner-created plans must publish the same item clock as well.
+  // A saved sitting kept as it was laid out has no computed per-item estimate; its saved day still
+  // funds the sitting, while planner-created plans must publish the same item clock as well.
   expect(row?.minutes).toBe(fromPlanner ? minutes : null);
   expect(view.plan.week.days.find((day) => day.date === date)?.minutes).toBe(minutes);
   const block = today.today.session.blocks.find((entry) => entry.checkpoint?.mock);

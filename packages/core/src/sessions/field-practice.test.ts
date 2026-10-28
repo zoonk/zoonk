@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { layOutPlanFixture } from "@zoonk/testing/fixtures/goals";
 import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -24,7 +25,7 @@ const NURSE: Details = { field: "nursing", level: "none", purpose: "work", role:
 async function fieldDay({ details, due }: { details: Details; due: Date }) {
   const user = await userFixture();
 
-  const { goal, planItems, skills } = await sessionGoalFixture({
+  const { goal, plan, planItems, skills } = await sessionGoalFixture({
     itemsPerSkill: 0,
     lessons: 1,
     userId: user.id,
@@ -40,6 +41,7 @@ async function fieldDay({ details, due }: { details: Details; due: Date }) {
 
   await Promise.all([
     prisma.planItem.update({ data: { status: "done" }, where: { id: planItems[0]?.id } }),
+    layOutPlanFixture(plan.id),
     prisma.goal.update({ data: { details }, where: { id: goal.id } }),
     dueSkillFixture({ due, skillId, userId: user.id }),
   ]);
