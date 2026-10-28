@@ -19,7 +19,6 @@ const PLAN_LABELS: Record<PlusBilling, string> = {
 
 const PLAN_ORDER: PlusBilling[] = ["monthly", "yearly", "trial", "granted"];
 
-/** The table lists the most expensive learners who made calls; the totals above count every one. */
 const LEARNER_ROWS = 50;
 
 const PRICE_HELP =
@@ -48,7 +47,6 @@ function isPaying(learner: PlusLearner): boolean {
   return learner.billing === "monthly" || learner.billing === "yearly";
 }
 
-/** A paying learner whose AI cost this month passed what their plan pays a month. */
 function isAbovePlan(learner: PlusLearner): boolean {
   return isPaying(learner) && learner.paysUsd !== null && learner.costUsd > learner.paysUsd;
 }
@@ -204,11 +202,6 @@ function LearnerRow({ learner }: { learner: PlusLearner }) {
   );
 }
 
-/**
- * What each Plus learner cost this month against what their plan pays, so a higher plan or a
- * limit can be decided from data: totals and the learners above their plan, per plan, then the
- * most expensive learners with the goals that cost the most.
- */
 export async function AiPlusLearnersSection() {
   const { learners, prices, since } = await listPlusLearnerCosts();
   const spenders = learners.filter((learner) => learner.calls > 0).slice(0, LEARNER_ROWS);

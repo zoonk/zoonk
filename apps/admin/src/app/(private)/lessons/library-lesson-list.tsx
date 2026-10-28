@@ -17,10 +17,7 @@ const LIBRARY_LESSON_COLUMNS: AdminTableColumn[] = [
   { label: "Updated" },
 ];
 
-/**
- * The Library lesson table for the URL's filters. Parsed primitives make deterministic private
- * cache entries for every filtered URL admins can prefetch.
- */
+/** Primitive props make each filtered list its own cache entry. */
 export async function LibraryLessonList({
   limit,
   model,
@@ -73,7 +70,6 @@ export async function LibraryLessonList({
   );
 }
 
-/** Keeps the table footprint stable while the filtered rows stream in. */
 export function LibraryLessonListSkeleton() {
   return <AdminTableColumnsSkeleton columns={LIBRARY_LESSON_COLUMNS} />;
 }

@@ -10,7 +10,6 @@ import { LessonHeldBack } from "./lesson-held-back";
 
 type Lesson = LibraryLessonDetail["lesson"];
 
-/** Every chapter the lesson sits in, with its courses; the home chapter gives the URL. */
 function LessonChapters({ lesson }: { lesson: Lesson }) {
   if (lesson.chapters.length === 0) {
     return <span className="text-muted-foreground">Not in any chapter</span>;
@@ -32,10 +31,6 @@ function LessonChapters({ lesson }: { lesson: Lesson }) {
   );
 }
 
-/**
- * The lesson's identity and state: writing status, where it's used, the skills it teaches, the
- * outline's provenance, and the spec and summary it was written from.
- */
 export function LessonSummary({ lesson }: { lesson: Lesson }) {
   return (
     <AdminSection description={lesson.description} title={lesson.title}>

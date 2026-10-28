@@ -12,10 +12,6 @@ function AudioLabel({ audioUrl }: { audioUrl: string | null }) {
   );
 }
 
-/**
- * Language lessons teach shared words and sentences whose audio is shared per target language.
- * Missing audio is fixed on the media page, which lists every word and sentence without it.
- */
 export function LessonLanguageResources({
   sentences,
   words,

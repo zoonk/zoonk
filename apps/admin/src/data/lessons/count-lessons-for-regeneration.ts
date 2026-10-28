@@ -7,10 +7,6 @@ const cachedCountLessonsForRegeneration = cacheAdminData((model?: string, prompt
   prisma.lesson.count({ where: getLessonRegenerationWhere({ model, promptVersion }) }),
 );
 
-/**
- * How many published lessons a regeneration with these filters would rewrite. It uses core's
- * match rule, so the number admins see is the set the API pulls.
- */
 export async function countLessonsForRegeneration({
   model,
   promptVersion,

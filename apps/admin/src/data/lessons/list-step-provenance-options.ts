@@ -4,10 +4,6 @@ import { prisma } from "@zoonk/db";
 
 export type StepProvenanceOption = { model: string; promptVersion: string; screens: number };
 
-/**
- * Every model and prompt version that wrote Library screens, with how many screens each wrote,
- * for the `/lessons` filters. Most used first, so the current writer is at the top.
- */
 export const listStepProvenanceOptions = cacheAdminData(
   async (): Promise<StepProvenanceOption[]> => {
     const rows = await prisma.step.groupBy({

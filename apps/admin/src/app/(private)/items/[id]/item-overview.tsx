@@ -14,7 +14,6 @@ function formatCalibration(value: number | null): string {
   return value === null ? "—" : value.toFixed(CALIBRATION_DIGITS);
 }
 
-/** The item's question and stored content, where it came from and how it was made. */
 export async function ItemOverview({ itemId }: { itemId: string }) {
   "use cache: private";
 
@@ -69,10 +68,7 @@ export async function ItemOverview({ itemId }: { itemId: string }) {
   );
 }
 
-/**
- * Past exam questions cite the source they were drawn from. A private upload's
- * title and citation can be personal data, so only its link is shown.
- */
+/** A private upload's title and citation can be personal data, so only its link is shown. */
 function ItemSource({ item }: { item: AdminItem }) {
   if (!item.source) {
     return item.sourceCitation ?? "—";

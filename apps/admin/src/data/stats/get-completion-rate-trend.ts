@@ -6,11 +6,7 @@ import { getStatsDateBucketSql } from "@/data/stats/_utils/stats-date-bucket";
 import { prisma, sql } from "@zoonk/db";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
-/**
- * Groups lessons by when learners started them and measures the finished
- * share in each bucket, reading the learning ledger so the trend survives
- * lessons being deleted.
- */
+/** Reads the learning ledger, so the trend survives lessons being deleted. */
 export const getCompletionRateTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
     const dateBucketSql = getStatsDateBucketSql({ date: sql`learning_events.started_at`, period });

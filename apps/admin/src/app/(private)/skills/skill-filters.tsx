@@ -6,10 +6,6 @@ import { LANGUAGE_FILTER_OPTIONS } from "@/lib/language-filter";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { buildSkillListHref, parseSkillListFilters } from "./_utils/skill-list-params";
 
-/**
- * Search, language, visibility and merged-skill filters. They read the URL, so
- * only this row waits for it while the page heading stays static.
- */
 export async function SkillFilters({ searchParams }: Pick<PageProps<"/skills">, "searchParams">) {
   const filters = parseSkillListFilters(await searchParams);
 
@@ -55,7 +51,6 @@ export async function SkillFilters({ searchParams }: Pick<PageProps<"/skills">, 
   );
 }
 
-/** Keeps the search box and filter row footprint while the URL resolves. */
 export function SkillFiltersSkeleton() {
   return (
     <div className="flex flex-col gap-3">

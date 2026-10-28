@@ -17,7 +17,6 @@ function parseStatus(value: string | null): FeedbackStatus | undefined {
   return Object.values(FeedbackStatus).find((status) => status === value);
 }
 
-/** Admins triage form messages by marking them read or replied, or back to new. */
 export async function updateMessageStatusAction(
   previousState: UpdateMessageStatusState,
   formData: FormData,

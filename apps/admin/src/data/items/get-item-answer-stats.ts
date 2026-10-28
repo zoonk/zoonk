@@ -32,16 +32,11 @@ const cachedGetItemAnswerStats = cacheAdminData(async (itemIdsKey: string) => {
   }, new Map<string, ItemAnswerStats>());
 });
 
-/**
- * Answer counts per item from learners' attempts, so admins can spot items
- * that are too hard, too easy or wrong. Accounts left out of analytics are
- * left out here too.
- */
+/** Accounts left out of analytics are left out here too. */
 export async function getItemAnswerStats(itemIds: string[]): Promise<Map<string, ItemAnswerStats>> {
   return cachedGetItemAnswerStats(itemIds.toSorted().join(","));
 }
 
-/** An item nobody answered has no attempts and no accuracy yet. */
 export function readItemAnswerStats(
   stats: Map<string, ItemAnswerStats>,
   itemId: string,
@@ -49,7 +44,6 @@ export function readItemAnswerStats(
   return stats.get(itemId) ?? EMPTY_STATS;
 }
 
-/** Share of correct answers, or null before anyone answered. */
 export function getItemAccuracy({ attempts, correct }: ItemAnswerStats): number | null {
   return attempts === 0 ? null : (correct / attempts) * 100;
 }

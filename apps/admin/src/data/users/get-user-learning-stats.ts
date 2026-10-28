@@ -15,7 +15,6 @@ export type UserLearningKindStat = {
   totalDurationSeconds: number;
 };
 
-/** Daily totals include all learning; the ledger supplies the lesson-kind breakdown. */
 export const getUserLearningStats = cacheAdminData(async (userId: string) => {
   const [completedLessons, learningDays] = await Promise.all([
     prisma.learningEvent.findMany({ where: { endedAt: { not: null }, kind: "lesson", userId } }),

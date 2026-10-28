@@ -9,7 +9,6 @@ import { OutcomeMetrics } from "./outcome-metrics";
 
 export const metadata: Metadata = { title: "Outcome Stats" };
 
-/** Outcomes: goals reached, mock exams, checkpoints and official exam results. */
 export default function OutcomesPage({ searchParams }: PageProps<"/stats/outcomes">) {
   return (
     <Suspense fallback={<StatsExplorerPageSkeleton />}>

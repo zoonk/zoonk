@@ -3,7 +3,6 @@ import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { trackedAnalyticsUserRelationWhere } from "@/data/stats/_utils/analytics-user-filter";
 import { prisma } from "@zoonk/db";
 
-/** Enough of the extracted text to check what was read, without loading a whole notice. */
 const SOURCE_EXCERPT_LENGTH = 3000;
 
 const cachedGetSource = cacheAdminData(async (sourceId: string) => {
@@ -59,11 +58,7 @@ type AdminSource = NonNullable<Awaited<ReturnType<typeof getSource>>>;
 export type AdminPublicSource = Extract<AdminSource, { visibility: "public" }>;
 export type AdminPrivateSource = Extract<AdminSource, { visibility: "private" }>;
 
-/**
- * A public source with everything admins check: where it came from, when it
- * was read and an excerpt of the text. A private upload is personal data, so
- * only its metadata leaves this function: never its title, text or file.
- */
+/** A private upload is personal data: only its metadata leaves this function. */
 export async function getSource(sourceId: string) {
   return cachedGetSource(sourceId);
 }

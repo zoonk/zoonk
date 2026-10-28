@@ -4,10 +4,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { Loader2Icon } from "lucide-react";
 import { useFormStatus } from "react-dom";
 
-/**
- * Admin table and repair actions share one compact outlined submit treatment,
- * including the pending indicator that prevents accidental repeated submits.
- */
 export function AdminActionSubmitButton({
   children,
   icon,

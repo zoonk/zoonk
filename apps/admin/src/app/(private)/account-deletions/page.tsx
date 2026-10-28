@@ -12,10 +12,7 @@ import { AccountDeletionList, AccountDeletionListSkeleton } from "./account-dele
 
 export const metadata: Metadata = { title: "Account deletions" };
 
-/**
- * Deleting an account removes its data from the database, but its analytics stay in PostHog until
- * an admin deletes that person by hand. This queue keeps only the deleted account's id.
- */
+/** An account's analytics stay in PostHog until an admin deletes that person by hand. */
 export default function AccountDeletionsPage() {
   return (
     <Container>

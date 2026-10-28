@@ -5,11 +5,7 @@ import { API_URL } from "@zoonk/utils/url";
 
 const API_ORIGIN = new URL(API_URL).origin;
 
-/**
- * Admin actions that start durable work (generation, freshness checks) go
- * through the public API, which owns the workflows. The admin's own session
- * token authorizes the call, so the API applies its usual admin checks.
- */
+/** The admin's own session token authorizes the call, so the API applies its usual admin checks. */
 export async function postAdminApi({
   body,
   path,
@@ -42,7 +38,6 @@ export async function postAdminApi({
   return { data, ok: true as const };
 }
 
-/** Read-only API capabilities keep workflow and prompt dependencies in the API app. */
 export async function getAdminApi({
   path,
   sessionToken,

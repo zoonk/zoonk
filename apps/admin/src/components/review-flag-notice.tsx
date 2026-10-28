@@ -1,10 +1,6 @@
 import { countOpenReviewFlags } from "@/data/review-flags/list-review-flags";
 import Link from "next/link";
 
-/**
- * A line on a lesson's or question's page while it waits in the review queue because a source it
- * was built on changed after it was written.
- */
 export async function ReviewFlagNotice({
   target,
 }: {

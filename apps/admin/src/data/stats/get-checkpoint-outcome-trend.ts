@@ -16,11 +16,7 @@ export type CheckpointOutcomeRow = {
   passed: number;
 };
 
-/**
- * Finished checkpoints (bosses and weekly challenges) or mocks (an exam's Big Challenge) per
- * bucket, from the ledger: how many, their answers, and how many reached the pass mark (the
- * `CEIL(questions * PASS_SHARE)` core's `getPassMark` applies).
- */
+/** The pass mark is core's `getPassMark` rule, `CEIL(questions * PASS_SHARE)`, in SQL. */
 export const getCheckpointOutcomeTrend = cacheAdminData(
   async (kind: CheckpointOutcomeKind, start: Date, end: Date, period: HistoryPeriod) => {
     const dateBucketSql = getStatsDateBucketSql({ date: sql`learning_events.ended_at`, period });

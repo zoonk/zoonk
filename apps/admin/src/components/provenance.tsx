@@ -1,6 +1,5 @@
 import { formatDateTime } from "@/lib/format";
 
-/** Enough of a run id to tell runs apart in a table; detail pages show all of it. */
 const RUN_ID_PREFIX_LENGTH = 8;
 
 type ProvenanceValue = {
@@ -10,10 +9,6 @@ type ProvenanceValue = {
   runId?: string | null;
 };
 
-/**
- * Every AI-written row carries the model, prompt version and run that made it.
- * One compact line keeps that visible in tables without adding four columns.
- */
 export function ProvenanceLine({ provenance }: { provenance: ProvenanceValue }) {
   if (!provenance.model) {
     return <span className="text-muted-foreground text-xs">—</span>;
@@ -31,10 +26,6 @@ export function ProvenanceLine({ provenance }: { provenance: ProvenanceValue }) 
   );
 }
 
-/**
- * Detail pages show the full provenance, including the run id admins paste
- * into workflow logs and the time the row was written.
- */
 export function ProvenanceFields({ provenance }: { provenance: ProvenanceValue }) {
   const fields = [
     { label: "Model", value: provenance.model },

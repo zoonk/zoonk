@@ -21,11 +21,6 @@ const DEFAULT_ANALYSIS_BY_PATH = {
   "/stats/outcomes": "goals-reached",
 } as const satisfies { [Path in StatsAnalysisPath]: StatsAnalysisViewAt<Path>["id"] };
 
-/**
- * Keeps every analytics view in one shared navigation model so adding a stat
- * cannot silently make it unreachable from one of the stats routes. An unknown
- * or missing view falls back to the route's default analysis.
- */
 export function getStatsAnalysisView<Path extends StatsAnalysisPath>({
   path,
   value,

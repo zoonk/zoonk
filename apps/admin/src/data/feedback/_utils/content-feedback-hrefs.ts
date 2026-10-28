@@ -16,7 +16,6 @@ function readIds(refs: ContentRef[], kind: FeedbackContentKind): string[] {
   return refs.filter((ref) => ref.contentKind === kind).map((ref) => ref.contentId);
 }
 
-/** Skips the query when no row of that kind is on the page. */
 async function findWhenAny<Row>(ids: string[], find: (ids: string[]) => Promise<Row[]>) {
   return ids.length > 0 ? find(ids) : [];
 }
@@ -32,10 +31,6 @@ function toAnswerExplanationHref(explanation: {
   return explanation.step ? `/lessons/${explanation.step.lessonId}` : null;
 }
 
-/**
- * Steps, step variants and answer explanations have no page of their own, so they link to the
- * lesson or item that shows them.
- */
 async function findContentParents(refs: ContentRef[]): Promise<ContentParents> {
   const [libraryLessons, steps, stepVariants, explanations] = await Promise.all([
     findWhenAny(readIds(refs, "lesson"), (ids) =>
@@ -81,7 +76,6 @@ function toParentLessonHref(lessonId: string | undefined): string | null {
   return lessonId ? `/lessons/${lessonId}` : null;
 }
 
-/** Chapters, plans and plan changes have no admin page, so their reports do not link anywhere. */
 const hrefBuilders: Record<FeedbackContentKind, HrefBuilder> = {
   answerExplanation: (contentId, parents) => parents.answerExplanationHrefs.get(contentId) ?? null,
   chapter: () => null,
@@ -97,10 +91,6 @@ const hrefBuilders: Record<FeedbackContentKind, HrefBuilder> = {
     toParentLessonHref(parents.stepVariantLessonIds.get(contentId)),
 };
 
-/**
- * The admin page for each reported piece of content, keyed by `contentKind:contentId`. Content that was
- * regenerated or deleted since the report has no entry.
- */
 export async function findContentFeedbackHrefs(refs: ContentRef[]): Promise<Map<string, string>> {
   const parents = await findContentParents(refs);
 

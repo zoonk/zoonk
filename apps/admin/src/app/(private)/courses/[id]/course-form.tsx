@@ -21,10 +21,6 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { type UpdateCourseState, updateCourseAction } from "./_actions/update-course";
 
-/**
- * Course identity editing keeps title and slug together because the title is
- * searchable while the slug is the public URL identity admins need to verify.
- */
 export function CourseForm({ course }: { course: Pick<Course, "id" | "slug" | "title"> }) {
   const [state, formAction] = useActionState(updateCourseAction, {
     error: null,

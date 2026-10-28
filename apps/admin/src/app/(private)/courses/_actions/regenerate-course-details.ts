@@ -23,10 +23,6 @@ function readRewrite(data: unknown): CourseDetailsRewrite {
   };
 }
 
-/**
- * Rewrites the landing page copy of public courses with outdated or missing copy, through the API
- * that owns the writing workflow. Each click takes a bounded batch, so its cost stays small.
- */
 export async function regenerateCourseDetailsAction(
   previousState: RegenerateCourseDetailsState,
 ): Promise<RegenerateCourseDetailsState> {

@@ -19,12 +19,10 @@ export function formatLatency(seconds: number | null): string {
   return seconds === null ? "—" : `${seconds.toFixed(LATENCY_DIGITS)}s`;
 }
 
-/** Token counts in the millions read better compact ("12.4M"). */
 export function formatTokens(tokens: number): string {
   return tokens.toLocaleString("en", { maximumFractionDigits: 1, notation: "compact" });
 }
 
-/** A part of a whole as a percentage, or a dash when there's nothing to divide by. */
 export function formatShare({ part, whole }: { part: number; whole: number }): string {
   return whole > 0 ? `${Math.round((part / whole) * PERCENT)}%` : "—";
 }

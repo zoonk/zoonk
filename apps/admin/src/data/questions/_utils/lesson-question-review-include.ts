@@ -1,4 +1,3 @@
-/** A question thread belongs to a Library lesson, placed by its home chapter and home course. */
 export const lessonQuestionReviewInclude = {
   thread: {
     select: {

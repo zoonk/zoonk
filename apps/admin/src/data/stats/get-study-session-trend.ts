@@ -5,10 +5,6 @@ import { getStatsDateBucketSql } from "@/data/stats/_utils/stats-date-bucket";
 import { prisma, sql } from "@zoonk/db";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
-/**
- * Study sessions started and finished per bucket of their learner-local date. A session is
- * started once its first block starts and finished when every block is done or skipped.
- */
 export const getStudySessionTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
     const dateBucketSql = getStatsDateBucketSql({ date: sql`study_sessions.local_date`, period });

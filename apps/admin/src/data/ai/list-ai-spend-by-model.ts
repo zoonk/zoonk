@@ -3,10 +3,6 @@ import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 import { getAiSpendSince } from "./_utils/ai-spend-since";
 
-/**
- * Spend per model and the tier that served it, most expensive first, with the tokens behind it
- * and the gateway's list-price estimate beside our own cost.
- */
 export const listAiSpendByModel = cacheAdminData(async (days: number) => {
   const since = await getAiSpendSince(days);
 

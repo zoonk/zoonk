@@ -23,7 +23,6 @@ const cachedGetExam = cacheAdminData(async (examBlueprintId: string) => {
   return exam ? { ...exam, source: exam.source ? redactSourceTitle(exam.source) : null } : null;
 });
 
-/** One exam blueprint with its structure, current edition and the source it was read from. */
 export async function getExam(examBlueprintId: string) {
   return cachedGetExam(examBlueprintId);
 }

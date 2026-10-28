@@ -32,7 +32,6 @@ function PeriodFilter({ days }: { days: number }) {
   );
 }
 
-/** The period comes from the URL; every section below reads the same one. */
 async function AiSections({ searchParams }: { searchParams: PageProps<"/ai">["searchParams"] }) {
   const params = await searchParams;
   const days = parseAiPeriodDays(params.days);
@@ -56,10 +55,7 @@ async function AiSections({ searchParams }: { searchParams: PageProps<"/ai">["se
   );
 }
 
-/**
- * Each section reads a different source (the AI call log, provenance, workflow status) and streams
- * alone. Plus learners' costs follow the calendar month, as plans are paid, not the period filter.
- */
+/** Plus learners' costs follow the calendar month, as plans are paid, not the period filter. */
 export default function AiPage({ searchParams }: PageProps<"/ai">) {
   return (
     <Container>

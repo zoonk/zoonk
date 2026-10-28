@@ -1,10 +1,8 @@
 import { type Sql, sql } from "@zoonk/db";
 
 /**
- * The v2 Library, one row per type and day: courses with an outline (`course_chapters`), chapters
- * whose lesson outline is written, lessons whose content is generated, and every step, skill
- * (merged duplicates left out), item, image, audio file, source and exam blueprint. Lesson
- * outlines exist before their content, so a lesson counts by its creation date once generated.
+ * Lesson outlines exist before their content, so a lesson counts by its creation date once
+ * generated.
  */
 export function getLibraryContentCreatedSql({ end, start }: { end: Date; start: Date }): Sql {
   return sql`

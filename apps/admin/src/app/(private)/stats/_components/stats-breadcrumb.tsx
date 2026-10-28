@@ -12,11 +12,6 @@ import { Fragment } from "react";
 export type StatsBreadcrumbItem = { href?: string; label: string };
 const EMPTY_STATS_BREADCRUMB_ITEMS: StatsBreadcrumbItem[] = [];
 
-/**
- * Every stats surface begins at Dashboard and Stats. Explorer pages stop there,
- * while drill-down pages append their own hierarchy without duplicating the
- * shared breadcrumb markup.
- */
 export function StatsBreadcrumb({
   items = EMPTY_STATS_BREADCRUMB_ITEMS,
 }: {

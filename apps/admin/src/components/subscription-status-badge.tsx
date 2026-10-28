@@ -9,10 +9,6 @@ export function SubscriptionStatusBadge({ status, ...props }: SubscriptionStatus
   return <Badge variant={getSubscriptionStatusBadgeVariant(status)} {...props} />;
 }
 
-/**
- * Active access is the only success state, while terminal billing failures
- * need stronger contrast than neutral lifecycle states.
- */
 function getSubscriptionStatusBadgeVariant(status: string | null) {
   if (status === "active" || status === "trialing") {
     return "success" as const;

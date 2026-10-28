@@ -2,7 +2,6 @@ import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { DetailField } from "@/components/detail-field";
 import { getUserLearningProfile } from "@/data/users/get-user-learning-profile";
 
-/** How the learner set Zoonk up, so support can explain what they see. */
 export async function UserLearningProfile({ userId }: { userId: string }) {
   "use cache: private";
 

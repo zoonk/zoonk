@@ -16,7 +16,6 @@ const INITIAL_STATE: FreshnessCommandState = {
   submissionId: 0,
 };
 
-/** What happened, in the admin's terms. */
 function getResultMessage({ result }: FreshnessCommandState): string | null {
   if (result === "started") {
     return "Checking now. A change updates what learners see.";
@@ -29,10 +28,6 @@ function getResultMessage({ result }: FreshnessCommandState): string | null {
   return null;
 }
 
-/**
- * "Check now" and "Stop" for an exam's or source's freshness checks. Both forms
- * share one state, so the line below shows the outcome of the last command.
- */
 export function FreshnessCommandForm({
   targetId,
   targetKind,

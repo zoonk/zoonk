@@ -14,11 +14,6 @@ type ExamResultRow = {
   withinEstimate: number;
 };
 
-/**
- * Official results learners reported after their exam ("How did it go?") in the period, by exam:
- * how many passed, how many had an estimate before the exam and how often the official score
- * landed inside it, the average error, and how many mocks they had taken.
- */
 export const getExamResults = cacheAdminData(
   async (start: Date, end: Date) =>
     prisma.$queryRaw<ExamResultRow[]>`

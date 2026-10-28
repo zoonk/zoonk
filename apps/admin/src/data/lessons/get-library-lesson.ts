@@ -42,10 +42,7 @@ const libraryLessonInclude = {
   },
 };
 
-/**
- * Answers per screen, split by right and wrong, from learner rows. Attempts point at steps with
- * SetNull, so a rewritten lesson starts over at zero.
- */
+/** Attempts point at steps with SetNull, so a rewritten lesson starts over at zero. */
 async function countStepAnswers(stepIds: string[]) {
   const rows = await prisma.attempt.groupBy({
     _count: { id: true },
@@ -70,10 +67,7 @@ function countsByStep(rows: readonly StepCountRow[]): Map<string | null, number>
   return new Map(rows.map((row) => [row.stepId, row._count.id]));
 }
 
-/**
- * Answer explanations, example lines and mistakes per screen, counted for this lesson's screens
- * only: a relation `_count` would count every screen's rows.
- */
+/** A relation `_count` would count every screen's rows, not only this lesson's. */
 async function countStepRows(stepIds: string[]) {
   const where = { stepId: { in: stepIds } };
 
@@ -96,10 +90,6 @@ async function countStepRows(stepIds: string[]) {
   });
 }
 
-/**
- * Everything the admin lesson page shows about one Library lesson: where it's used, its skills,
- * spec and summary, each screen with its field and tool versions, and answers per screen.
- */
 export const getLibraryLesson = cacheAdminData(async (lessonId: string) => {
   const lesson = await prisma.lesson.findUnique({
     include: libraryLessonInclude,

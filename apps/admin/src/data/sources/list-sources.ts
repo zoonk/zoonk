@@ -4,10 +4,7 @@ import { trackedAnalyticsUserRelationWhere } from "@/data/stats/_utils/analytics
 import { type LibraryVisibility, type SourceKind, prisma } from "@zoonk/db";
 import { redactSourceTitle } from "./_utils/source-title";
 
-/**
- * Search matches public titles only: a private upload's title can be personal
- * data, so it is never searchable.
- */
+/** A private upload's title can be personal data, so it's never searchable. */
 function buildSourceWhere({
   kind,
   search,
@@ -24,10 +21,7 @@ function buildSourceWhere({
   return { AND: [{ kind, visibility }, searchWhere] };
 }
 
-/**
- * The exams read from each source and the learners using it, counted for the page's sources only:
- * a relation `_count` would count every source's rows.
- */
+/** A relation `_count` would count every source's rows, not only the page's. */
 async function countSourceRows(sourceIds: string[]) {
   const [examBlueprints, learnerSources] = await Promise.all([
     prisma.examBlueprint.groupBy({
@@ -83,11 +77,6 @@ const cachedListSources = cacheAdminData(
 
 export type ListedSource = Awaited<ReturnType<typeof listSources>>["sources"][number];
 
-/**
- * Sources are the documents exams and items are read from. Private uploads
- * are listed by their metadata only; their title is dropped before it leaves
- * this function.
- */
 export async function listSources({
   kind,
   limit,

@@ -49,10 +49,6 @@ export async function UserAccount({ userId }: { userId: string }) {
   );
 }
 
-/**
- * A plain form keeps this admin-only toggle usable without adding client state,
- * while still sending the exact target state the server action should persist.
- */
 function AnalyticsTrackingForm({
   analyticsDisabled,
   userId,

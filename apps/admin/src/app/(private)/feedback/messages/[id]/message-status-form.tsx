@@ -17,7 +17,6 @@ const statusActions: { icon: React.ReactNode; label: string; status: FeedbackSta
   { icon: <MailIcon />, label: "Mark as new", status: "new" },
 ];
 
-/** Offers every status except the current one, so one click moves the message along. */
 export function MessageStatusForm({
   currentStatus,
   messageId,

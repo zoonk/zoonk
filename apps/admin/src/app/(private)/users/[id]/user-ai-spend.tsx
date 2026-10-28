@@ -11,10 +11,6 @@ const columns: AdminTableColumn[] = [
   { align: "right", label: "Cost" },
 ];
 
-/**
- * What this learner's AI calls cost, shared Library content their goals caused included, so a
- * runaway account stands out next to its plan and activity.
- */
 export async function UserAiSpend({ userId }: { userId: string }) {
   "use cache: private";
 

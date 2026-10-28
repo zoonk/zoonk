@@ -21,10 +21,6 @@ type EngagementSearchParams = {
   view?: string | string[];
 };
 
-/**
- * Learner milestones are all-time threshold questions, so they live as a quiet
- * engagement subsection with URL-backed inputs and linked counts.
- */
 export function LearnerMilestones({ searchParams }: { searchParams: EngagementSearchParams }) {
   const completedLessonsThreshold = parseLearnerMilestoneThreshold({
     defaultValue: DEFAULT_COMPLETED_LESSONS_THRESHOLD,
@@ -44,10 +40,7 @@ export function LearnerMilestones({ searchParams }: { searchParams: EngagementSe
   );
 }
 
-/**
- * Parsed thresholds provide deterministic private-cache keys while keeping the
- * milestone result available before navigation.
- */
+/** Primitive props make each threshold its own cache entry. */
 async function CachedLearnerMilestones({
   completedLessonsThreshold,
   learningDaysThreshold,
@@ -88,11 +81,6 @@ async function CachedLearnerMilestones({
   );
 }
 
-/**
- * Milestones are all-time questions, so the form intentionally submits only
- * their thresholds and view. Returning to a period analysis then starts from
- * its default period instead of retaining a hidden milestone filter.
- */
 function LearnerMilestoneForm({
   completedLessonsThreshold,
   learningDaysThreshold,
@@ -132,10 +120,6 @@ function LearnerMilestoneForm({
   );
 }
 
-/**
- * Threshold inputs share bounds and layout, but each writes to a different
- * query key so both milestone questions can be tuned independently.
- */
 function MilestoneThresholdField({
   defaultValue,
   id,
@@ -162,10 +146,6 @@ function MilestoneThresholdField({
   );
 }
 
-/**
- * The linked card is the bridge from "how many?" to "who are they?" while
- * keeping the visual treatment consistent with the rest of the stats page.
- */
 function LearnerMilestoneCard({
   count,
   icon,
@@ -198,10 +178,6 @@ function LearnerMilestoneCard({
   );
 }
 
-/**
- * The milestone section fetches independently from the period metrics, so its
- * skeleton mirrors only the threshold controls and two linked counts.
- */
 export function LearnerMilestonesSkeleton() {
   return (
     <section className="flex flex-col gap-8 py-4">

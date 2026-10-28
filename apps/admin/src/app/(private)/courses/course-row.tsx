@@ -2,10 +2,6 @@ import { type ListedCourse } from "@/data/courses/list-courses";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 import Link from "next/link";
 
-/**
- * The primary course identity links to its editor and keeps the current slug
- * visible so admins can verify URL changes directly from the catalog list.
- */
 export function CourseRow({ course }: { course: ListedCourse }) {
   return (
     <TableRow>

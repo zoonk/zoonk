@@ -12,10 +12,6 @@ import {
 } from "@zoonk/ui/components/table";
 import Link from "next/link";
 
-/**
- * The table focuses on the metrics that explain why each learner matched the
- * selected milestone, while the user name remains the link into account detail.
- */
 export function LearnerMilestoneUsersTable({
   emptyMessage,
   users,
@@ -43,10 +39,6 @@ export function LearnerMilestoneUsersTable({
   );
 }
 
-/**
- * The skeleton reuses the real header so column labels stay in one place while
- * placeholder rows mimic the loaded table body.
- */
 export function LearnerMilestoneUsersTableSkeleton() {
   return (
     <AdminTableSkeleton>
@@ -61,10 +53,6 @@ export function LearnerMilestoneUsersTableSkeleton() {
   );
 }
 
-/**
- * The loaded table and skeleton need identical columns. Sharing the header
- * avoids maintaining copy and alignment in two separate render paths.
- */
 function LearnerMilestoneUsersTableHeader() {
   return (
     <TableHeader>
@@ -80,10 +68,6 @@ function LearnerMilestoneUsersTableHeader() {
   );
 }
 
-/**
- * A separate row component keeps the skeleton table readable without deep JSX
- * nesting in the fallback wrapper.
- */
 function LearnerMilestoneSkeletonRow() {
   return (
     <TableRow>
@@ -112,10 +96,6 @@ function LearnerMilestoneSkeletonRow() {
   );
 }
 
-/**
- * Rows make the user identity clickable and keep the milestone numbers aligned
- * for fast scanning across the two related completion metrics.
- */
 function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
   return (
     <TableRow>
@@ -143,18 +123,11 @@ function LearnerMilestoneUserRow({ user }: { user: LearnerMilestoneUser }) {
   );
 }
 
-/**
- * Admin tables use compact date-only formatting because the surrounding column
- * label already explains which timestamp is being shown.
- */
 function formatDate(date: Date) {
   return new Date(date).toLocaleDateString();
 }
 
-/**
- * Learning dates are the learner's local calendar dates stored as UTC midnight,
- * so they're formatted in UTC to show the same day the learner saw.
- */
+/** Learner-local dates are stored as UTC midnight, so UTC shows the day the learner saw. */
 function formatLearnerDate(date: Date) {
   return new Date(date).toLocaleDateString(undefined, { timeZone: "UTC" });
 }

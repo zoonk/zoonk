@@ -6,10 +6,6 @@ import { parseFormField } from "@zoonk/utils/form";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidatePath } from "next/cache";
 
-/**
- * Records that an admin deleted this account's person in PostHog. Only a pending row changes, so
- * a second click keeps the first time it was marked.
- */
 export async function markAnalyticsRemovedAction(formData: FormData) {
   await assertAdmin();
 

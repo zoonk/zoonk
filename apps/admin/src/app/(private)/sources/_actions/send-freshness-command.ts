@@ -21,7 +21,6 @@ function parseCommand(value: string | null): FreshnessCommand | null {
   return value === "checkNow" || value === "readAgain" || value === "stop" ? value : null;
 }
 
-/** The API names an exam target by its blueprint id and a source target by its source id. */
 function buildTarget({ id, kind }: { id: string | null; kind: string | null }) {
   if (!isUuid(id)) {
     return null;
@@ -34,7 +33,6 @@ function buildTarget({ id, kind }: { id: string | null; kind: string | null }) {
   return kind === "source" ? { kind: "source" as const, sourceId: id } : null;
 }
 
-/** The API answers with one of two statuses; anything else is treated as a failure. */
 function readResult(data: unknown): FreshnessResult | null {
   if (typeof data !== "object" || data === null || !("status" in data)) {
     return null;
@@ -45,11 +43,7 @@ function readResult(data: unknown): FreshnessResult | null {
   return status === "started" || status === "stopped" ? status : null;
 }
 
-/**
- * Checks an exam or source now, or stops its checks, through the API that owns
- * the workflow. The API may be down locally, so a failed
- * call returns an error message instead of throwing.
- */
+/** The API may be down locally, so a failed call returns an error message instead of throwing. */
 export async function sendFreshnessCommandAction(
   previousState: FreshnessCommandState,
   formData: FormData,

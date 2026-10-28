@@ -12,10 +12,6 @@ type StatsExplorerContext<Path extends StatsAnalysisPath> = {
   statsPeriod: StatsPeriod;
 };
 
-/**
- * Every stats route resolves the same URL state (period and selected view) and renders the same
- * explorer chrome; routes only decide what the selected view shows.
- */
 export async function StatsExplorerRoute<Path extends StatsAnalysisPath>({
   children,
   path,

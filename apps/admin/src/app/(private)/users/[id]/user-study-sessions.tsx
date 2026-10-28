@@ -39,7 +39,6 @@ function SessionRow({ session }: { session: UserStudySession }) {
   );
 }
 
-/** The learner's latest days: what each session planned, how far they got and what it earned. */
 export async function UserStudySessions({ userId }: { userId: string }) {
   "use cache: private";
 

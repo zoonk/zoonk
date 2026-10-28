@@ -27,7 +27,6 @@ function getQueueDescription(total: number): string | undefined {
     : undefined;
 }
 
-/** Words and sentences Library lessons use without audio, each with its own upload. */
 export async function MissingAudioList() {
   "use cache: private";
 
@@ -94,7 +93,6 @@ function MissingAudioTable({
   );
 }
 
-/** A few lessons are enough to hear the word in context; the rest are counted. */
 function MissingAudioLessons({ resource }: { resource: MissingAudioResource }) {
   const hiddenCount = resource.lessonCount - resource.lessons.length;
 

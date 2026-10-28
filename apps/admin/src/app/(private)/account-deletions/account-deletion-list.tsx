@@ -16,7 +16,6 @@ const COLUMNS: AdminTableColumn[] = [
   { align: "right", label: "" },
 ];
 
-/** Each pending deletion with its id ready to copy into PostHog and the button to mark it done. */
 export async function AccountDeletionList() {
   const deletions = await listPendingAccountDeletions();
 

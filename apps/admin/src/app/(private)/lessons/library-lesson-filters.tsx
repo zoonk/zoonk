@@ -22,7 +22,6 @@ type LibraryLessonFilterValues = {
   status: LibraryLessonStatus;
 };
 
-/** Distinct values with how many screens each wrote, most used first. */
 function toModelOptions(options: StepProvenanceOption[]) {
   const screensByModel = Map.groupBy(options, (option) => option.model);
 
@@ -32,10 +31,7 @@ function toModelOptions(options: StepProvenanceOption[]) {
   }));
 }
 
-/**
- * Prompt versions are hashes, so each option names the models that used it. A version two models
- * used is one option: the filter matches the version, whichever model wrote with it.
- */
+/** Prompt versions are hashes, so each option names the models that used it. */
 function toPromptVersionOptions(options: StepProvenanceOption[], model?: string) {
   const rowsByVersion = Map.groupBy(
     options.filter((option) => !model || option.model === model),
@@ -48,11 +44,6 @@ function toPromptVersionOptions(options: StepProvenanceOption[], model?: string)
   }));
 }
 
-/**
- * Library filters: search, writing status, and the model and prompt version that wrote the
- * screens. With a model or prompt version picked, the matching published lessons can be
- * rewritten from here.
- */
 export async function LibraryLessonFilters({
   model,
   promptVersion,

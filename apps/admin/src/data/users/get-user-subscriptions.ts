@@ -22,11 +22,7 @@ export const getUserSubscriptions = cacheAdminData(async (userId: string) => {
   return { active: findUserActiveSubscription(activeSubscriptions), canceled, incomplete };
 });
 
-/**
- * "Last cancellation" follows the cancellation event, not the subscription's
- * original billing start. End dates only break ties for legacy rows that have
- * no recorded cancellation timestamp.
- */
+/** End dates only break ties for legacy rows without a recorded cancellation time. */
 function getCanceledSubscriptionOrderBy() {
   return [
     { canceledAt: { nulls: "last" as const, sort: "desc" as const } },

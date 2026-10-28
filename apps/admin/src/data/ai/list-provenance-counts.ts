@@ -25,11 +25,7 @@ type ProvenanceCountRow = {
   table: ProvenanceTable;
 };
 
-/**
- * Rows each model and prompt version wrote per Library table since the start of the period.
- * Provenance is written by Prisma in UTC, so the cutoff is UTC too. Memory facts and plan changes
- * only carry provenance when a model wrote them, so rows without a model are left out.
- */
+/** Memory facts and plan changes only carry provenance when a model wrote them. */
 export const listProvenanceCounts = cacheAdminData(async (periodDays: number) => {
   const rows = await prisma.$queryRaw<ProvenanceCountRow[]>`
     WITH period AS (

@@ -13,10 +13,6 @@ const EXPLANATION_COLUMNS: AdminTableColumn[] = [
   { label: "Created" },
 ];
 
-/**
- * Shared explanations of wrong typed or spoken answers, reused by the next learner who gives them.
- * Each row shows the explanation's provenance.
- */
 export async function ItemExplanations({ itemId }: { itemId: string }) {
   "use cache: private";
 

@@ -10,7 +10,6 @@ const STEP_COLUMNS: AdminTableColumn[] = [
   { label: "Kind" },
 ];
 
-/** Every lesson screen that shows this asset. */
 export async function MediaUsage({ mediaAssetId }: { mediaAssetId: string }) {
   "use cache: private";
 

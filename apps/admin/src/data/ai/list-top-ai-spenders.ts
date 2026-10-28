@@ -11,10 +11,6 @@ function toSpend(row: SpenderRow) {
   return { calls: Number(row.calls), costUsd: row.cost_usd ?? 0, id: row.id };
 }
 
-/**
- * The goals and learners whose AI calls cost the most in the period, shared Library content they
- * caused included, so a runaway goal or account stands out.
- */
 export const listTopAiSpenders = cacheAdminData(async (days: number) => {
   const since = await getAiSpendSince(days);
 

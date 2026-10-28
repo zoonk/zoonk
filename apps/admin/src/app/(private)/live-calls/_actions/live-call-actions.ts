@@ -14,16 +14,12 @@ export type LiveCallAdmissionState = {
   submissionId: number;
 };
 
-/** The budget is typed in dollars; the setting stores whole micros. Blank or not a number: null. */
+/** Typed in dollars, stored in whole micros. */
 function toMicros(dollars: string | null): number | null {
   const value = Number(dollars);
   return dollars?.trim() && Number.isFinite(value) ? Math.round(value * MICROS_PER_DOLLAR) : null;
 }
 
-/**
- * Saves who can start new calls and the free accounts' daily budget through the API, which owns
- * the same switch for every client. Reserve reads it fresh, so the next call follows it.
- */
 export async function updateLiveCallAdmissionAction(
   previousState: LiveCallAdmissionState,
   formData: FormData,

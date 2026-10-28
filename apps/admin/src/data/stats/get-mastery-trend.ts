@@ -9,9 +9,8 @@ import { prisma, sql } from "@zoonk/db";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
 /**
- * Learner skills that are solid or mastered now, by the date of the review that last confirmed
- * them. A learner skill keeps only its current state, so the moment a skill first reached a
- * state comes from PostHog's `Skill Level Changed`.
+ * A learner skill keeps only its current state, so when it first reached a state comes from
+ * PostHog's `Skill Level Changed`.
  */
 export const getMasteryTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
@@ -38,7 +37,6 @@ export const getMasteryTrend = cacheAdminData(
   },
 );
 
-/** Every tracked learner skill by its current state, in mastery order. */
 export const countLearnerSkillsByState = cacheAdminData(async () => {
   const rows = await prisma.learnerSkill.groupBy({
     _count: { state: true },

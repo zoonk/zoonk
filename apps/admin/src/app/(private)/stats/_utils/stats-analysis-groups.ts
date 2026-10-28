@@ -12,10 +12,7 @@ type StatsAnalysisDefinition = {
   usesPeriod: boolean;
 };
 
-/**
- * Every analysis in the explorer, grouped as the picker shows them. Adding a view here makes it
- * reachable from every stats route.
- */
+/** Adding a view here makes it reachable from every stats route. */
 export const STATS_ANALYSIS_GROUPS = [
   {
     label: "Growth",

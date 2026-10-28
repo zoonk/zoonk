@@ -8,11 +8,7 @@ import { getStatsDateBucketSql } from "@/data/stats/_utils/stats-date-bucket";
 import { prisma, sql } from "@zoonk/db";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
-/**
- * Returns distinct active learners for each visible chart bucket. The wrapped
- * function keeps positional arguments because React cache compares argument
- * identity, while the Date objects already come from the shared stats range.
- */
+/** Positional arguments, since React's cache compares argument identity. */
 export const getActiveLearnerTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
     const dateBucketSql = getStatsDateBucketSql({ date: sql`daily_progress.date`, period });

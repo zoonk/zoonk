@@ -16,10 +16,6 @@ import { Fragment } from "react";
 import { type StatsAnalysisView } from "../_utils/stats-analysis";
 import { STATS_ANALYSIS_GROUPS } from "../_utils/stats-analysis-groups";
 
-/**
- * Builds the destination locally so switching analysis always keeps the useful
- * date context, including while a view temporarily hides period controls.
- */
 function buildAnalysisHref({
   periodQuery,
   view,
@@ -33,10 +29,6 @@ function buildAnalysisHref({
   return `${view.path}?${searchParams.toString()}`;
 }
 
-/**
- * Only one metric is visible, while every analysis remains one click away in a
- * grouped, keyboard-accessible menu.
- */
 export function StatsAnalysisPicker({
   periodQuery,
   selectedView,

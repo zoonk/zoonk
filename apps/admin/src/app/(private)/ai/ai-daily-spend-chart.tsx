@@ -24,7 +24,6 @@ function DailySpendTooltip({ active, payload }: { active?: boolean; payload?: un
   );
 }
 
-/** What AI calls cost each day of the period, so a spike points at the day to look into. */
 export function AiDailySpendChart({ points }: { points: DailySpendPoint[] }) {
   return (
     <figure aria-label="AI spend per day" className="h-56 w-full">

@@ -35,7 +35,6 @@ export default function ItemDetailPage({ params }: PageProps<"/items/[id]">) {
   );
 }
 
-/** Answer numbers load beside the item's content, so neither waits on the other. */
 async function ItemDetailContent({ params }: Pick<PageProps<"/items/[id]">, "params">) {
   const { id } = await params;
 

@@ -34,7 +34,6 @@ async function ProvenanceTable({ days }: { days: number }) {
   );
 }
 
-/** What each model and prompt version wrote, read from the provenance on every Library row. */
 export async function ProvenanceSection({ days }: { days: number }) {
   return (
     <AdminSection

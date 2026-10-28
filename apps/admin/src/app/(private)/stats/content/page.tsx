@@ -9,10 +9,6 @@ import { ContentMetrics } from "./content-metrics";
 
 export const metadata: Metadata = { title: "Content Stats" };
 
-/**
- * Content keeps an instant route shell while its URL-backed analysis state
- * resolves behind Suspense.
- */
 export default function ContentPage({ searchParams }: PageProps<"/stats/content">) {
   return (
     <Suspense fallback={<StatsExplorerPageSkeleton />}>

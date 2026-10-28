@@ -21,10 +21,6 @@ export function parseSearchParams(params: Partial<Record<string, string | string
   return { limit, offset, page, search };
 }
 
-/**
- * Admin pagination query params are user-controlled strings. Coercing the page
- * here guarantees every Prisma `skip` value is a non-negative integer.
- */
 function parsePageNumber(value: SearchParamValue): number {
   const page = parseIntegerParam(value);
 
@@ -35,10 +31,7 @@ function parsePageNumber(value: SearchParamValue): number {
   return Math.max(page, MIN_PAGE);
 }
 
-/**
- * Prisma `take` must stay finite and bounded. A maximum keeps admin list pages
- * from becoming accidental unbounded queries when someone edits the URL.
- */
+/** Bounded, so an edited URL never makes an unbounded Prisma `take`. */
 function parsePageSize(value: SearchParamValue): number {
   const pageSize = parseIntegerParam(value);
 
@@ -49,11 +42,6 @@ function parsePageSize(value: SearchParamValue): number {
   return Math.min(Math.max(pageSize, MIN_PAGE_SIZE), MAX_PAGE_SIZE);
 }
 
-/**
- * Query params can arrive as arrays and can contain decimals, infinities, or
- * arbitrary text. This keeps only finite integer intent and lets callers decide
- * which default or bounds make sense for that field.
- */
 function parseIntegerParam(value: SearchParamValue): number | null {
   const firstValue = readQueryParam(value);
   const trimmedValue = firstValue?.trim();

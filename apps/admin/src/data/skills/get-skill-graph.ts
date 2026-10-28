@@ -2,7 +2,6 @@ import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type Skill, prisma } from "@zoonk/db";
 
-/** Deep enough to see where a skill starts, shallow enough to stay readable. */
 export const MAX_PREREQUISITE_DEPTH = 4;
 
 /** Upper bound on skills per side of the graph, so a hub skill can't render hundreds of nodes. */
@@ -12,11 +11,6 @@ const graphSkillSelect = { id: true, level: true, mergedIntoId: true, name: true
 
 export type GraphSkill = Pick<Skill, "id" | "level" | "mergedIntoId" | "name">;
 
-/**
- * Keeps the first occurrence of each skill that isn't already on the graph, up
- * to the remaining capacity. A skill reachable by two paths shows once, at the
- * depth where it first appears.
- */
 function selectNewSkills({
   capacity,
   candidates,
@@ -30,10 +24,6 @@ function selectNewSkills({
   return unique.filter((skill) => !seenIds.has(skill.id)).slice(0, capacity);
 }
 
-/**
- * Walks prerequisites one layer per query. Each returned layer is one step
- * further from the skill: the first holds its direct prerequisites.
- */
 async function walkPrerequisites({
   depth,
   frontierIds,
@@ -88,10 +78,6 @@ const cachedGetSkillGraph = cacheAdminData(async (skillId: string) => {
   return { dependents: dependentEdges.map((edge) => edge.skill), prerequisiteLayers };
 });
 
-/**
- * The skill's place in the graph: prerequisites walked back a few layers and
- * the skills that list it as a direct prerequisite.
- */
 export async function getSkillGraph(skillId: string) {
   return cachedGetSkillGraph(skillId);
 }

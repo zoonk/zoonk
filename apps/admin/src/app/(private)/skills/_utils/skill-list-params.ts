@@ -12,7 +12,6 @@ type SkillListFilters = {
   visibility?: LibraryVisibility;
 };
 
-/** Reads the skill list filters from the URL, dropping values the list doesn't know. */
 export function parseSkillListFilters(params: SearchParams): SkillListFilters {
   return {
     includeMerged: readQueryParam(params.merged) === "show",
@@ -25,7 +24,6 @@ export function parseSkillListFilters(params: SearchParams): SkillListFilters {
   };
 }
 
-/** The filters as query params, for pagination links. */
 export function getSkillListQueryParams(filters: SkillListFilters) {
   return {
     language: filters.language,
@@ -34,10 +32,6 @@ export function getSkillListQueryParams(filters: SkillListFilters) {
   };
 }
 
-/**
- * A filter link keeps every other filter and the search, and drops the page so
- * the new result set opens on its first page.
- */
 export function buildSkillListHref(filters: SkillListFilters) {
   return buildAdminHref({
     params: { ...getSkillListQueryParams(filters), search: filters.search },

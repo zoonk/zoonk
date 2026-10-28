@@ -3,10 +3,6 @@ import { type Sql, sql } from "@zoonk/db";
 
 export type AnswerSumsRow = { correct: bigint | null; incorrect: bigint | null };
 
-/**
- * Accuracy is the share of correct answers. With no answers it's zero rather than undefined, so
- * cards and headlines always have a number to show.
- */
 export function getAnswerAccuracy({ correct, incorrect }: AnswerSumsRow): number {
   const correctAnswers = Number(correct ?? 0);
   const total = correctAnswers + Number(incorrect ?? 0);
@@ -14,7 +10,6 @@ export function getAnswerAccuracy({ correct, incorrect }: AnswerSumsRow): number
   return total === 0 ? 0 : (correctAnswers / total) * 100;
 }
 
-/** Attempts count each answer once; ledger rows also sum answers from their activities. */
 export function getAnswersSql({ end, start }: { end?: Date; start?: Date } = {}): Sql {
   return sql`
     SELECT

@@ -47,10 +47,6 @@ export function getAdminQuestionContextLabel({
   return "Lesson";
 }
 
-/**
- * A thread is about a Library lesson, placed by its home chapter and course. Null means the lesson
- * was deleted.
- */
 export function getAdminQuestionLessonContext(
   thread: QuestionThreadLesson,
 ): AdminQuestionLessonContext | null {

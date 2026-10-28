@@ -13,7 +13,6 @@ import { SkillList, SkillListSkeleton } from "./skill-list";
 
 export const metadata: Metadata = { title: "Skills" };
 
-/** Library skills: the unit of mastery, review and study cards. */
 export default function SkillsPage({ searchParams }: PageProps<"/skills">) {
   return (
     <Container>

@@ -7,10 +7,6 @@ import {
 } from "@/data/stats/_utils/answer-accuracy";
 import { prisma } from "@zoonk/db";
 
-/**
- * Correct answers over all answers, all time for the dashboard card or within a stats period
- * when dates are given.
- */
 export const getAccuracyRate = cacheAdminData(async (start?: Date, end?: Date) => {
   const [sums] = await prisma.$queryRaw<[AnswerSumsRow]>`
     SELECT SUM(answers.correct) AS correct, SUM(answers.incorrect) AS incorrect

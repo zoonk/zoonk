@@ -5,10 +5,6 @@ import { eraseMemoryFactForSupport } from "@zoonk/core/memory/erase-fact";
 import { parseFormField } from "@zoonk/utils/form";
 import { revalidatePath } from "next/cache";
 
-/**
- * Erases one learner fact for a support request. Core checks the admin role again and removes
- * the fact with the older facts it replaced.
- */
 export async function eraseMemoryFactAction(formData: FormData) {
   await assertAdmin();
 

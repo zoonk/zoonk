@@ -10,7 +10,6 @@ const MASTERY_STATE_LABELS: Record<MasteryState, string> = {
   solid: "Solid",
 };
 
-/** Learner counts by mastery state; the learners themselves stay on their user pages. */
 export async function SkillLearners({ skillId }: { skillId: string }) {
   "use cache: private";
 

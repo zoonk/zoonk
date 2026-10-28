@@ -4,10 +4,6 @@ import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import Form from "next/form";
 
-/**
- * The drill-down page keeps the threshold editable so admins can move from one
- * cohort size to another without going back to the engagement overview.
- */
 export function LearnerMilestoneThresholdForm({
   inputLabel,
   kind,

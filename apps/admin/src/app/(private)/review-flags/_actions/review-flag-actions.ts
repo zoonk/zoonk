@@ -9,7 +9,6 @@ import { revalidatePath } from "next/cache";
 
 export type ReviewFlagActionState = { error: string | null; message: string | null };
 
-/** The flagged lesson or question is still right after the change: it leaves the queue. */
 export async function dismissReviewFlagAction(
   _previousState: ReviewFlagActionState,
   formData: FormData,
@@ -31,10 +30,7 @@ export async function dismissReviewFlagAction(
   return { error: null, message: "Dismissed." };
 }
 
-/**
- * Starts the rewrite of one flag now, through the API that owns the writing workflows. The API may
- * be down locally, so a failed call returns an error message instead of throwing.
- */
+/** The API may be down locally, so a failed call returns an error message instead of throwing. */
 export async function rewriteReviewFlagAction(
   _previousState: ReviewFlagActionState,
   formData: FormData,

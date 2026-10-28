@@ -4,10 +4,7 @@ import { trackedAnalyticsUserRelationWhere } from "@/data/stats/_utils/analytics
 import { type LibraryVisibility, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 
-/**
- * Each skill's items, learners, lessons and prerequisites, counted for the page's skills only: a
- * relation `_count` would count every skill's rows.
- */
+/** A relation `_count` would count every skill's rows, not only the page's. */
 async function countSkillRows(skillIds: string[]) {
   const [items, learnerSkills, lessons, prerequisites] = await Promise.all([
     prisma.item.groupBy({
@@ -82,11 +79,6 @@ const cachedListSkills = cacheAdminData(
 
 export type ListedSkill = Awaited<ReturnType<typeof listSkills>>["skills"][number];
 
-/**
- * Skills are the unit of mastery, so admins browse them by language and
- * visibility. Merged duplicates stay in the table (learners' mastery moved to
- * the survivor) but are hidden unless asked for.
- */
 export async function listSkills({
   includeMerged,
   language,

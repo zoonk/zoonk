@@ -20,7 +20,6 @@ export const feedbackStatusLabels: Record<FeedbackStatus, string> = {
   replied: "Replied",
 };
 
-/** A new message still needs someone to read it, so it stands out in the list. */
 export function getFeedbackStatusVariant(status: FeedbackStatus) {
   if (status === "new") {
     return "default" as const;
@@ -29,7 +28,6 @@ export function getFeedbackStatusVariant(status: FeedbackStatus) {
   return status === "replied" ? ("success" as const) : ("secondary" as const);
 }
 
-/** The learner as admins recognize them: name first, then username or email. */
 export function getLearnerLabel(user: {
   email: string;
   name: string | null;

@@ -18,10 +18,6 @@ import { UserRow } from "./user-row";
 
 type SortQueryEntry = [string, string | undefined] | undefined;
 
-/**
- * User URL state, protected account loading, and pagination resolve together
- * so sorting and search remain consistent across refreshes and shared links.
- */
 export async function UserList({
   searchParams,
 }: {
@@ -34,10 +30,7 @@ export async function UserList({
   return <CachedUserList limit={limit} offset={offset} page={page} search={search} sort={sort} />;
 }
 
-/**
- * Normalized pagination, search, and sort values keep each private-cache key
- * deterministic across the warm-up and final runtime-prefetch passes.
- */
+/** Normalized values keep each cache key the same across both runtime-prefetch passes. */
 async function CachedUserList({
   limit,
   offset,
@@ -82,10 +75,6 @@ async function CachedUserList({
   );
 }
 
-/**
- * The fallback keeps sortable column labels visible while account data and the
- * selected URL ordering resolve together.
- */
 export function UserListSkeleton() {
   return (
     <AdminTableSkeleton>
@@ -100,10 +89,6 @@ export function UserListSkeleton() {
   );
 }
 
-/**
- * Loaded and loading user tables share their sortable header so accessibility
- * labels and column alignment remain identical in both states.
- */
 function UserTableHeader({ search, sort }: { search?: string; sort?: UserSort }) {
   return (
     <TableHeader>
@@ -130,10 +115,6 @@ function UserTableHeader({ search, sort }: { search?: string; sort?: UserSort })
   );
 }
 
-/**
- * User row placeholders preserve the two-line identity cell and compact
- * account fields so the table does not shift when results arrive.
- */
 function UserSkeletonRow() {
   return (
     <TableRow>
@@ -159,11 +140,6 @@ function UserSkeletonRow() {
   );
 }
 
-/**
- * Sorting from the loaded column header matches the way admins scan the table.
- * Loading headers stay noninteractive until the request URL establishes which
- * ordering and search query their links must preserve.
- */
 function SortableUserTableHead({
   className,
   align = "left",
@@ -205,10 +181,6 @@ function SortableUserTableHead({
   );
 }
 
-/**
- * Sorting changes should preserve search but reset pagination so a valid page
- * number from one ordering does not land on an unexpectedly sparse result set.
- */
 function buildSortHref({ search, sort }: { search?: string; sort: UserSort }): `/users${string}` {
   const entries: SortQueryEntry[] = [
     getUserSortQueryValue(sort) ? ["sort", sort] : undefined,
@@ -221,10 +193,6 @@ function buildSortHref({ search, sort }: { search?: string; sort: UserSort }): `
   return queryString ? `/users?${queryString}` : "/users";
 }
 
-/**
- * URLSearchParams only accepts complete string pairs. This guard keeps optional
- * sort/search entries declarative without weakening the query-building type.
- */
 function isSortQueryEntry(entry: SortQueryEntry): entry is [string, string] {
   return Array.isArray(entry) && Boolean(entry[1]);
 }

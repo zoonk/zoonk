@@ -4,15 +4,11 @@ import { trackedAnalyticsUserRelationWhere } from "@/data/stats/_utils/analytics
 import { examEditionSchema } from "@zoonk/core/library/exams/blueprint-contract";
 import { prisma } from "@zoonk/db";
 
-/** The edition year is metadata inside the edition JSON; an unreadable edition has no year. */
 function readEditionYear(edition: unknown): number | null {
   return examEditionSchema.safeParse(edition).data?.year ?? null;
 }
 
-/**
- * The goals and items depending on each exam, counted for the page's exams only: a relation
- * `_count` would count every exam's rows.
- */
+/** A relation `_count` would count every exam's rows, not only the page's. */
 async function countExamRows(examIds: string[]) {
   const [goals, items] = await Promise.all([
     prisma.goal.groupBy({
@@ -61,10 +57,6 @@ const cachedListExams = cacheAdminData(async (limit: number, offset: number) => 
 
 export type ListedExam = Awaited<ReturnType<typeof listExams>>["exams"][number];
 
-/**
- * Exam blueprints with their current edition and the dates the freshness checks
- * watch, plus how many goals and items depend on each.
- */
 export async function listExams({ limit, offset }: { limit: number; offset: number }) {
   return cachedListExams(limit, offset);
 }

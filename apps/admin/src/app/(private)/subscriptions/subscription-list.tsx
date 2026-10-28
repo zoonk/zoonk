@@ -23,10 +23,6 @@ import Link from "next/link";
 
 const TABLE_COLUMN_COUNT = 7;
 
-/**
- * Subscription filters and pagination are URL state, so the complete log stays
- * server-rendered and can be refreshed or shared without losing its context.
- */
 export async function SubscriptionList({
   searchParams,
 }: {
@@ -88,7 +84,6 @@ async function CachedSubscriptionList({
   );
 }
 
-/** The fallback shares the real table header so loading and loaded columns cannot drift. */
 export function SubscriptionListSkeleton() {
   return (
     <div className="flex flex-col gap-4">
@@ -169,7 +164,6 @@ function SubscriptionSkeletonRow() {
   );
 }
 
-/** User identity remains the primary action because subscription review usually leads to support work. */
 function SubscriptionRow({ subscription }: { subscription: AdminSubscription }) {
   return (
     <TableRow>

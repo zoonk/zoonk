@@ -37,10 +37,6 @@ const cachedCountActiveLearners = cacheAdminData(
   },
 );
 
-/**
- * The dashboard card compares the current rolling 7-day completion window with
- * the 7 days immediately before it, not a broader 30-day baseline.
- */
 export function countActiveLearners({
   currentPeriodStart,
   previousPeriodStart,

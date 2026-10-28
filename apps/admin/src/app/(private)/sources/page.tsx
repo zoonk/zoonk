@@ -13,7 +13,6 @@ import { SourceList, SourceListSkeleton } from "./source-list";
 
 export const metadata: Metadata = { title: "Sources" };
 
-/** Documents exams and items are read from, with their freshness dates. */
 export default function SourcesPage({ searchParams }: PageProps<"/sources">) {
   return (
     <Container>

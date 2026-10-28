@@ -136,8 +136,8 @@ async function SpendByModel({ days }: { days: number }) {
 }
 
 /**
- * What every AI call cost, from the database's AI call log: priced from each call's tokens and
- * our dated price list, since with our own provider keys the gateway bills nothing.
+ * Priced from each call's tokens and our dated price list: with our own provider keys the gateway
+ * bills nothing.
  */
 export async function AiSpendSection({ days }: { days: number }) {
   return (

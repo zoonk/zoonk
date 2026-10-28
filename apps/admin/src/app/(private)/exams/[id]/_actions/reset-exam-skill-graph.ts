@@ -11,10 +11,6 @@ export type ResetExamSkillGraphState = {
   submissionId: number;
 };
 
-/**
- * Resets an exam's shared skill graph, the only way one is rewritten: the exam's next learner
- * writes a new graph, which becomes the exam's. Core checks the admin role again.
- */
 export async function resetExamSkillGraphAction(
   previousState: ResetExamSkillGraphState,
   formData: FormData,

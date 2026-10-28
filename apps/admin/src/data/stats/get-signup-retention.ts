@@ -18,10 +18,7 @@ export type SignupRetentionRow = {
   signupWeek: Date;
 };
 
-/**
- * D1, D7 and D30 retention of each signup week in the period, newest first. A learner counts for a
- * day only once that day has passed, so young cohorts aren't shown as churned.
- */
+/** A learner counts for a day only once that day has passed, so young cohorts don't read as churned. */
 export const getSignupRetention = cacheAdminData(
   async (start: Date, end: Date) =>
     prisma.$queryRaw<SignupRetentionRow[]>`

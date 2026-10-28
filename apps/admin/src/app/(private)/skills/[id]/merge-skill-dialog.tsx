@@ -16,10 +16,7 @@ import { Label } from "@zoonk/ui/components/label";
 import { useState } from "react";
 import { mergeSkillAction } from "./_actions/merge-skill";
 
-/**
- * A merge can't be undone from here (the duplicate only points at the survivor from then on), so
- * it asks for the surviving skill's id and confirms first.
- */
+/** A merge can't be undone from here, so it asks for the surviving skill's id and confirms first. */
 export function MergeSkillDialog({ skillId }: { skillId: string }) {
   const [open, setOpen] = useState(false);
 

@@ -3,7 +3,6 @@ import { StatsSection } from "@/components/stats-section";
 import { countLibraryContent } from "@/data/stats/count-library-content";
 import { BookOpenIcon, LayersIcon, SparklesIcon } from "lucide-react";
 
-/** The Library inventory. */
 export async function ContentStats() {
   "use cache: private";
 

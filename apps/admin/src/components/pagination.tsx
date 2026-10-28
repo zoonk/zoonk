@@ -10,10 +10,6 @@ import {
 } from "@zoonk/ui/components/pagination";
 import Link from "next/link";
 
-/**
- * Pagination links need to carry page state plus route-specific filters, such
- * as the generated lesson status, while dropping empty query values.
- */
 function buildPageUrl({
   basePath,
   limit,
@@ -48,10 +44,6 @@ function addEllipsesToPages(pageNumbers: number[]): (number | "ellipsis")[] {
   });
 }
 
-/**
- * Every available page is prefetched so pagination can switch URL-backed admin
- * data without waiting for a server round trip after the click.
- */
 function AdminPaginationPageLink({
   basePath,
   currentPage,

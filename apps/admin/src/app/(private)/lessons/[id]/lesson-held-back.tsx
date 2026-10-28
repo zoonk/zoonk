@@ -7,11 +7,6 @@ import {
 
 type Lesson = LibraryLessonDetail["lesson"];
 
-/**
- * The drafts the quality gate held back since the lesson was last published, with the model that
- * wrote each and what held it back, and whether the lesson was set aside after its last one (plans
- * skipped it and nothing writes it again).
- */
 export function LessonHeldBack({ lesson }: { lesson: Lesson }) {
   const drafts = parseHeldBackDrafts(lesson.heldBackDrafts);
 

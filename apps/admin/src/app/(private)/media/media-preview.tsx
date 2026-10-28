@@ -5,15 +5,11 @@ import Image from "next/image";
 const THUMBNAIL_SIZE = 48;
 const DEFAULT_PREVIEW_SIZE = 320;
 
-/** Lists omit the prompt, so it is optional; the detail page uses it as the image's alt text. */
 type PreviewAsset = Pick<MediaAsset, "height" | "kind" | "url" | "width"> & {
   prompt?: string | null;
 };
 
-/**
- * Images render as-is (unoptimized) because assets can live on any host the
- * generator wrote to. Audio gets a native player.
- */
+/** Unoptimized, since assets can live on any host the generator wrote to. */
 export function MediaPreview({ asset, size }: { asset: PreviewAsset; size: "full" | "thumbnail" }) {
   const src = asset.url;
 

@@ -188,10 +188,7 @@ function getCurrentSubscriptionPlan(subscription: UserSubscriptionRecord | null)
   return subscription?.plan ?? "free";
 }
 
-/**
- * Better Auth can schedule cancellation with an explicit timestamp or with the
- * current period end, so both fields participate in the admin lifecycle signal.
- */
+/** Better Auth schedules a cancellation by timestamp or at the period end, so both count. */
 function getScheduledCancellation(subscription: UserSubscriptionRecord | null) {
   if (!subscription?.cancelAt && !subscription?.cancelAtPeriodEnd) {
     return null;

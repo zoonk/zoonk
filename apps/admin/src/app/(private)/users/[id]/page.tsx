@@ -68,10 +68,6 @@ function SectionSkeleton() {
   );
 }
 
-/**
- * The account shell and breadcrumb do not depend on the dynamic user id, so
- * they remain available while the requested account content streams in.
- */
 export default function UserDetailPage({ params }: PageProps<"/users/[id]">) {
   return (
     <Container>
@@ -90,10 +86,6 @@ export default function UserDetailPage({ params }: PageProps<"/users/[id]">) {
   );
 }
 
-/**
- * Parameter validation must happen after the dynamic route value resolves and
- * before any independent account query receives the user id.
- */
 async function UserDetailContent({ params }: Pick<PageProps<"/users/[id]">, "params">) {
   const { id: userId } = await params;
 
@@ -146,10 +138,6 @@ async function UserDetailContent({ params }: Pick<PageProps<"/users/[id]">, "par
   );
 }
 
-/**
- * The dynamic-route fallback mirrors every independently streamed account
- * section so the page remains stable until the user id is available.
- */
 function UserDetailSkeleton() {
   return (
     <>

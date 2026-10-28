@@ -10,7 +10,6 @@ export type StepAnswers = { correct: number; total: number };
 
 const PERCENT = 100;
 
-/** Activity screens name their template (slider graph, chart reader...) in the content. */
 function getActivityTemplate(step: LibraryLessonStep): string | null {
   const template = isJsonObject(step.content) ? step.content.template : null;
   return step.kind === "activity" && typeof template === "string" ? template : null;
@@ -28,7 +27,6 @@ function AnswersLabel({ answers }: { answers?: StepAnswers }) {
   );
 }
 
-/** Links to the Library rows a screen points at, when it has them. */
 function StepLinks({ step }: { step: LibraryLessonStep }) {
   return (
     <span className="text-muted-foreground flex flex-wrap gap-x-3 text-xs">
@@ -56,7 +54,6 @@ function StepLinks({ step }: { step: LibraryLessonStep }) {
   );
 }
 
-/** One screen: its kind and contract version, who wrote it, answers and its versions. */
 export function LessonScreen({
   answers,
   step,

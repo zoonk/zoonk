@@ -3,11 +3,6 @@ import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 import { getAiSpendSince } from "./_utils/ai-spend-since";
 
-/**
- * Every AI call of the period added up: what it cost at our price list, what the gateway estimated
- * at list price (they drift apart when a price changes before our list does), how many calls the
- * list couldn't price, and how much input was read from a prompt cache.
- */
 export const getAiSpendSummary = cacheAdminData(async (days: number) => {
   const since = await getAiSpendSince(days);
 

@@ -23,9 +23,8 @@ const libraryLessonListInclude = {
 } as const;
 
 /**
- * Screens carry the content's provenance (the lesson row's own provenance is its outline), so the
- * model and prompt version filters match lessons with a screen written by them. Only the current
- * version's screens count; a version a check replaced stays a day for learners playing it.
+ * Screens carry the content's provenance (the lesson row's own is its outline), so the model and
+ * prompt filters match lessons by their current screens.
  */
 function buildLibraryLessonWhere({ model, promptVersion, search, status }: LibraryLessonFilter) {
   const containsSearch = search ? { contains: search, mode: "insensitive" as const } : undefined;
@@ -46,10 +45,7 @@ function buildLibraryLessonWhere({ model, promptVersion, search, status }: Libra
   };
 }
 
-/**
- * The chapters using each lesson and its current screens, counted for the page's lessons only: a
- * relation `_count` would count every lesson's rows.
- */
+/** A relation `_count` would count every lesson's rows, not only the page's. */
 async function countLessonRows(lessonIds: string[]) {
   const [chapters, steps] = await Promise.all([
     prisma.chapterLesson.groupBy({
@@ -104,10 +100,6 @@ const cachedListLibraryLessons = cacheAdminData(
 
 export type ListedLibraryLesson = Awaited<ReturnType<typeof listLibraryLessons>>["lessons"][number];
 
-/**
- * The Library view of `/lessons`: shared lessons with where they live (home chapter and course),
- * how far their writing got, and which model and prompt version wrote their screens.
- */
 export async function listLibraryLessons({
   limit,
   model,

@@ -33,10 +33,6 @@ function LearnerSkillRow({ learnerSkill }: { learnerSkill: RecentLearnerSkill })
   );
 }
 
-/**
- * The learner's skills by mastery state, then the most recently practiced ones with their review
- * schedule (FSRS due date, reps, lapses and days remembered).
- */
 export async function UserLearnerSkills({ userId }: { userId: string }) {
   "use cache: private";
 

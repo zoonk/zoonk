@@ -5,11 +5,7 @@ import { assertAdmin } from "@/lib/admin-guard";
 import { liveCallAdmissionResponseSchema } from "@zoonk/core/language/conversations/admission-contract";
 import { safeAsync } from "@zoonk/utils/error";
 
-/**
- * The API reads the switch, the provider key's presence and the open connections: the key lives
- * only in the API's environment, so the admin can't check it here. Reading never calls the provider.
- * Null when the API can't be reached or answers something else.
- */
+/** The provider key lives only in the API's environment, so the admin reads the controls from it. */
 const cachedGetLiveCallControls = cacheAdminData(async () => {
   const session = await assertAdmin();
 

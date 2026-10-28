@@ -43,10 +43,6 @@ function FactRow({ fact, userId }: { fact: MemoryFactRow; userId: string }) {
   );
 }
 
-/**
- * What Zoonk remembers about the learner, with an erase action for support requests, and the
- * latest daily insights it offered them.
- */
 export async function UserMemorySection({ userId }: { userId: string }) {
   "use cache: private";
 

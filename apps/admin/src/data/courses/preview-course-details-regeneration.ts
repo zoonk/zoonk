@@ -25,7 +25,6 @@ function readPreview(data: unknown) {
   };
 }
 
-/** The API owns the current prompt and core's selection; this read never starts AI. */
 const cachedPreviewCourseDetailsRegeneration = cacheAdminData(async () => {
   const session = await assertAdmin();
 

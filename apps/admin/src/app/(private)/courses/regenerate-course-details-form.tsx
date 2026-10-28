@@ -16,7 +16,6 @@ function formatCourseCount(count: number): string {
   return `${count.toLocaleString("en")} public ${count === 1 ? "course" : "courses"}`;
 }
 
-/** Every course costs the same to rewrite, so a click's share of the total follows its size. */
 function getCostMessage({
   batchSize,
   estimatedCost,
@@ -35,7 +34,6 @@ function getCostMessage({
   return `About ${formatUsd(estimatedCost)} for all of them. Each click rewrites up to ${batchSize}, oldest first, so the next costs about ${formatUsd(batchCost)}.`;
 }
 
-/** What the last click started. Courses that could not start keep their copy and stay in the set. */
 function getRewriteMessage({ failed, started }: CourseDetailsRewrite): string {
   if (started === 0) {
     return "No courses left to rewrite.";
@@ -48,10 +46,6 @@ function getRewriteMessage({ failed, started }: CourseDetailsRewrite): string {
     : `${startedMessage} ${failed.toLocaleString("en")} could not start; click again to retry.`;
 }
 
-/**
- * Rewrites outdated or missing landing page copy on public courses, a bounded batch per click.
- * The estimated cost shows before anything starts.
- */
 export function RegenerateCourseDetailsForm({
   batchSize,
   estimatedCost,

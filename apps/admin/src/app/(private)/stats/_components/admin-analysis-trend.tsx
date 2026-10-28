@@ -1,11 +1,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { MinusIcon, TrendingDownIcon, TrendingUpIcon } from "lucide-react";
 
-/**
- * Period comparisons use color only when the direction has meaning. An equal
- * result is neither success nor failure, so it stays visually neutral instead
- * of implying growth with a green upward arrow.
- */
+/** An equal result is neither success nor failure, so it stays neutral instead of a green arrow. */
 function getAnalysisChangeAppearance(percentageChange: number) {
   if (percentageChange > 0) {
     return { Icon: TrendingUpIcon, className: "text-success-text" };
@@ -18,11 +14,7 @@ function getAnalysisChangeAppearance(percentageChange: number) {
   return { Icon: MinusIcon, className: "text-muted-foreground" };
 }
 
-/**
- * Period-level change is calculated independently from the chart endpoint so
- * the large headline remains an honest aggregate instead of masquerading as
- * the final chart bucket.
- */
+/** Computed apart from the chart, so the headline is the period's aggregate, not its last bucket. */
 function AnalysisChange({
   comparisonLabel,
   current,
@@ -55,10 +47,6 @@ function AnalysisChange({
   );
 }
 
-/**
- * Gives the selected analysis one clear hierarchy: aggregate answer first,
- * short methodology second, and the trend across the remaining canvas.
- */
 export function AdminAnalysisTrend({
   children,
   comparison,

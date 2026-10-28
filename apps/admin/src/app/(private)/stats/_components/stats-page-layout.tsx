@@ -7,11 +7,6 @@ import {
 } from "@zoonk/ui/components/container";
 import { StatsBreadcrumb, type StatsBreadcrumbItem } from "./stats-breadcrumb";
 
-/**
- * Stats drill-down pages share the same container and breadcrumb structure.
- * Centralizing that shell keeps each page focused on its content instead of
- * reimplementing layout chrome.
- */
 export function StatsPageLayout({
   breadcrumbItems,
   children,

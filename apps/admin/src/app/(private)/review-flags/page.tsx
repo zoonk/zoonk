@@ -12,7 +12,6 @@ import { ReviewFlagList, ReviewFlagListSkeleton } from "./review-flag-list";
 
 export const metadata: Metadata = { title: "Needs review" };
 
-/** Content built on a source that changed after it was written, until it's rewritten or dismissed. */
 export default function ReviewFlagsPage() {
   return (
     <Container>

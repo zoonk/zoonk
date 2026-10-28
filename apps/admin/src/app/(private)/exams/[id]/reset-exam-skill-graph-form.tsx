@@ -10,7 +10,6 @@ import {
 
 const INITIAL_STATE: ResetExamSkillGraphState = { error: null, reset: false, submissionId: 0 };
 
-/** "Reset" for an exam's shared skill graph, with the outcome below it. */
 export function ResetExamSkillGraphForm({ examBlueprintId }: { examBlueprintId: string }) {
   const [state, formAction] = useActionState(resetExamSkillGraphAction, INITIAL_STATE);
 

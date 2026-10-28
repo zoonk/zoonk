@@ -28,7 +28,6 @@ const cachedListFeedbackMessages = cacheAdminData(
   },
 );
 
-/** Feedback form messages, newest first. The list leaves out the message text. */
 export async function listFeedbackMessages({
   limit,
   offset,

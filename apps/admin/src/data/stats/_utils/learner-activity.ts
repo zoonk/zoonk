@@ -1,14 +1,9 @@
 import { completedLessonActivitySql } from "@/data/stats/_utils/analytics-user-filter";
 import { type Sql, sql } from "@zoonk/db";
 
-/** Today's UTC date, the last day a period or cohort can have activity for. */
 export const utcTodaySql = sql`(NOW() AT TIME ZONE 'UTC')::date`;
 
-/**
- * Learner-local days with a finished learning activity, as distinct `user_id` and `activity_date`
- * rows: a closed ledger row, or a daily row with answers, time or a finished lesson.
- * Callers join `users` to leave out learners who turned analytics off.
- */
+/** Callers join `users` to leave out learners who turned analytics off. */
 export function getLearnerActivityDaysSql({ end, start }: { end: Date; start: Date }): Sql {
   return sql`
     SELECT learning_events.user_id, learning_events.local_date AS activity_date
@@ -34,9 +29,8 @@ export function getLearnerActivityDaysSql({ end, start }: { end: Date; start: Da
 }
 
 /**
- * Per-learner D1, D7 and D30 retention: whether the learner was active exactly that many days
- * after signing up, and whether that day has passed yet (eligible). It reads the CTEs `cohort`
- * (`user_id`, `signup_date`) and `activity` (`user_id`, `activity_date`) of the calling query.
+ * Reads the calling query's CTEs `cohort` (`user_id`, `signup_date`) and `activity` (`user_id`,
+ * `activity_date`).
  */
 export const learnerRetentionSql = sql`
   SELECT

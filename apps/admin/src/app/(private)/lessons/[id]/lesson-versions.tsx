@@ -30,7 +30,6 @@ function versionKey(source: VersionSource): string {
   return [source.kind, source.model, source.promptVersion, source.contractVersion].join("|");
 }
 
-/** Groups screens and their versions by who wrote them and which step contract they follow. */
 function groupVersions(steps: LibraryLessonStep[]): VersionRow[] {
   const groups = Map.groupBy(toVersionSources(steps), versionKey);
 
@@ -47,10 +46,6 @@ function groupVersions(steps: LibraryLessonStep[]): VersionRow[] {
   });
 }
 
-/**
- * Which models, prompt versions and step contract versions wrote this lesson's screens and their
- * field and tool versions. A lesson partly rewritten shows two rows.
- */
 export function LessonVersions({ steps }: { steps: LibraryLessonStep[] }) {
   const versions = groupVersions(steps);
 

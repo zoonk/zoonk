@@ -4,7 +4,6 @@ import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 
 type SearchParams = Awaited<PageProps<"/items">["searchParams"]>;
 
-/** Reads the item list filters from the URL, dropping values the list doesn't know. */
 export function parseItemListFilters(params: SearchParams) {
   return {
     format: readEnumQueryParam({ allowed: Object.values(ItemFormat), value: params.format }),

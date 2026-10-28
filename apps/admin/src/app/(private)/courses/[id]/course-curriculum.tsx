@@ -9,7 +9,6 @@ import Link from "next/link";
 
 type ChapterLessons = CourseCurriculumChapter["chapter"]["lessons"];
 
-/** Where a chapter lives: this course is its home, or it's shared from another course. */
 function ChapterHomeLabel({
   chapter,
   courseId,
@@ -35,7 +34,6 @@ function ChapterHomeLabel({
   );
 }
 
-/** A lesson is shared when its home is another chapter or other chapters also use it. */
 function ChapterLessonList({ chapterId, lessons }: { chapterId: string; lessons: ChapterLessons }) {
   if (lessons.length === 0) {
     return <p className="text-muted-foreground ml-6 text-xs">No lesson outlines yet.</p>;
@@ -63,7 +61,6 @@ function ChapterLessonList({ chapterId, lessons }: { chapterId: string; lessons:
   );
 }
 
-/** One placed chapter: its position in the band, where it lives, and its lessons. */
 function CurriculumChapter({
   courseId,
   placement,
@@ -85,10 +82,6 @@ function CurriculumChapter({
   );
 }
 
-/**
- * The curriculum as the Library stores it: chapters by level band and order, marking chapters
- * whose home is another course and lessons shared with other chapters.
- */
 export async function CourseCurriculum({ courseId }: { courseId: string }) {
   "use cache: private";
 

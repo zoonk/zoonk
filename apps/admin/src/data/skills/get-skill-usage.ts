@@ -3,7 +3,6 @@ import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { trackedAnalyticsUserRelationWhere } from "@/data/stats/_utils/analytics-user-filter";
 import { MasteryState, prisma } from "@zoonk/db";
 
-/** Detail tables list the first rows; the section heading carries the full count. */
 export const MAX_SKILL_USAGE_ROWS = 50;
 
 const cachedGetSkillUsage = cacheAdminData(async (skillId: string) => {
@@ -39,7 +38,6 @@ const cachedGetSkillUsage = cacheAdminData(async (skillId: string) => {
   };
 });
 
-/** Where a skill is taught and practiced: its lessons, chapters and items. */
 export async function getSkillUsage(skillId: string) {
   return cachedGetSkillUsage(skillId);
 }
@@ -57,10 +55,7 @@ const cachedCountSkillLearnersByState = cacheAdminData(async (skillId: string) =
   }));
 });
 
-/**
- * How many learners sit in each mastery state for the skill. Counts only: the
- * learners themselves are personal data and live on their user pages.
- */
+/** Counts only: the learners themselves are personal data and live on their user pages. */
 export async function countSkillLearnersByState(skillId: string) {
   return cachedCountSkillLearnersByState(skillId);
 }

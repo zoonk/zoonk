@@ -1,9 +1,5 @@
 const JSON_INDENT = 2;
 
-/**
- * AI content is stored as versioned JSON. Admins read it as formatted JSON in
- * a bounded, scrollable block so a long step never pushes the page apart.
- */
 export function AdminJson({ label, value }: { label: string; value: unknown }) {
   if (value === null || value === undefined) {
     return <p className="text-muted-foreground text-xs">{label}: none</p>;

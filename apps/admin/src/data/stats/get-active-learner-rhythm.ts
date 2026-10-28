@@ -6,17 +6,12 @@ import { getStatsDateBucketSql } from "@/data/stats/_utils/stats-date-bucket";
 import { type Sql, prisma, sql } from "@zoonk/db";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
-/** A rolling week is the day itself and the six days before it. */
 const EARLIER_DAYS_IN_WEEK = 6;
 const MILLISECONDS_PER_DAY = 86_400 * 1000;
 
 type ActiveLearnerRhythm = { daily: number | null; weekly: number | null };
 
-/**
- * One row per day from the first activity (or the period start) to today: learners active that
- * day and learners active in the rolling week ending that day. Days before anyone was active are
- * left out, so an all-time average isn't diluted by the months before launch.
- */
+/** Days before anyone was active are left out, so an all-time average isn't diluted. */
 function getRhythmSeriesSql({ end, start }: { end: Date; start: Date }): Sql {
   const activityStart = new Date(start.getTime() - EARLIER_DAYS_IN_WEEK * MILLISECONDS_PER_DAY);
 
@@ -45,7 +40,6 @@ function getRhythmSeriesSql({ end, start }: { end: Date; start: Date }): Sql {
   `;
 }
 
-/** Average daily and rolling-weekly active learners across the days of a period. */
 export const getActiveLearnerAverages = cacheAdminData(async (start: Date, end: Date) => {
   const [averages] = await prisma.$queryRaw<[ActiveLearnerRhythm]>`
     SELECT AVG(rhythm.daily)::float AS daily, AVG(rhythm.weekly)::float AS weekly
@@ -55,7 +49,6 @@ export const getActiveLearnerAverages = cacheAdminData(async (start: Date, end: 
   return { daily: averages.daily ?? 0, weekly: averages.weekly ?? 0 };
 });
 
-/** The same daily values averaged inside each visible chart bucket. */
 export const getActiveLearnerRhythmTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
     const dateBucketSql = getStatsDateBucketSql({ date: sql`rhythm.day`, period });

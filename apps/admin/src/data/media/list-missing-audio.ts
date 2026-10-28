@@ -2,17 +2,14 @@ import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type Lesson, prisma } from "@zoonk/db";
 
-/** Uploading clears a row, so the queue shows a working batch rather than paginating. */
 export const MAX_MISSING_AUDIO_ROWS = 100;
 
-/** A shared word can sit in many lessons; a few are enough to open one and hear the context. */
 const MAX_LESSONS_PER_ROW = 5;
 
 const lessonLinkSelect = { lesson: { select: { id: true, title: true } } } as const;
 
 type LessonLink = { lesson: Pick<Lesson, "id" | "title"> };
 
-/** Words and sentences become the same row shape: the text, its language and the lessons using it. */
 function toMissingAudioResource({
   id,
   lessonCount,
@@ -109,11 +106,6 @@ const cachedListMissingAudio = cacheAdminData(async () => {
 
 export type MissingAudioResource = Awaited<ReturnType<typeof listMissingAudio>>["words"][number];
 
-/**
- * Words and sentences that Library language lessons use but that have no
- * audio yet. Audio is shared per target language, so one upload fixes every
- * lesson that uses the word or sentence.
- */
 export async function listMissingAudio() {
   return cachedListMissingAudio();
 }

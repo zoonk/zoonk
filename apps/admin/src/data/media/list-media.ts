@@ -38,7 +38,6 @@ const cachedListMedia = cacheAdminData(
 
 export type ListedMediaAsset = Awaited<ReturnType<typeof listMedia>>["assets"][number];
 
-/** Images and audio made once and reused by reuse key, with how many steps point at each. */
 export async function listMedia({
   kind,
   limit,

@@ -2,10 +2,6 @@ import { previewCourseDetailsRegeneration } from "@/data/courses/preview-course-
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { RegenerateCourseDetailsForm } from "./regenerate-course-details-form";
 
-/**
- * The public courses whose page copy is outdated or missing, with what rewriting them would cost.
- * Rendering only counts them: a rewrite starts from the form's button.
- */
 export async function RegenerateCourseDetails() {
   "use cache: private";
 
@@ -24,7 +20,6 @@ export async function RegenerateCourseDetails() {
   );
 }
 
-/** Holds the panel's footprint while the count streams in, so the course table doesn't shift. */
 export function RegenerateCourseDetailsSkeleton() {
   return (
     <div className="bg-muted/40 flex flex-wrap items-center justify-between gap-3 rounded-lg border px-4 py-3">

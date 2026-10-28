@@ -79,7 +79,6 @@ function LatestFailureRow({ failure }: { failure: GenerationFailure }) {
   );
 }
 
-/** Failed and stuck generation runs by workflow, with the latest ones to open and retry. */
 export async function GenerationFailuresSection() {
   "use cache: private";
 

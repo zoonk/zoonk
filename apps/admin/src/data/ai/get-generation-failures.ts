@@ -2,12 +2,10 @@ import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma, sql } from "@zoonk/db";
 
-/** A run still marked running after this long has almost certainly died without saying so. */
 export const STUCK_RUNNING_MINUTES = 60;
 
 const LATEST_FAILURES_PER_WORKFLOW = 5;
 
-/** The workflows the queries below report, in the order the counts table lists them. */
 export type GenerationWorkflow =
   | "lessonContent"
   | "lessonSpec"
@@ -29,7 +27,6 @@ export type GenerationFailure = {
 /** Workflows write `updated_at` through Prisma in UTC, so the cutoff is UTC too. */
 const stuckBeforeSql = sql`(NOW() AT TIME ZONE 'UTC') - make_interval(mins => ${STUCK_RUNNING_MINUTES}::int)`;
 
-/** Failed and stuck rows per workflow, counted in one pass over each table. */
 function countFailures() {
   return prisma.$queryRaw<WorkflowCountRow[]>`
     SELECT 1 AS position, 'lessonContent' AS workflow,
@@ -56,10 +53,6 @@ function countFailures() {
   `;
 }
 
-/**
- * The latest failed or stuck rows of each workflow, with the parent course of chapters, which
- * have no admin page of their own.
- */
 function listLatestFailures() {
   const limit = LATEST_FAILURES_PER_WORKFLOW;
 
@@ -88,10 +81,6 @@ function listLatestFailures() {
   `;
 }
 
-/**
- * Generation failures by workflow: how many rows failed or are stuck running, and the latest of
- * them newest first, so admins can open and retry them.
- */
 export const getGenerationFailures = cacheAdminData(async () => {
   const [counts, latest] = await Promise.all([countFailures(), listLatestFailures()]);
 

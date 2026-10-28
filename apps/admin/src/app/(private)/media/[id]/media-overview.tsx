@@ -9,7 +9,6 @@ import { notFound } from "next/navigation";
 import { formatMediaSize } from "../_utils/media-format";
 import { MediaPreview } from "../media-preview";
 
-/** The asset itself, how it was made (prompt, scene, palette, style). */
 export async function MediaOverview({ mediaAssetId }: { mediaAssetId: string }) {
   "use cache: private";
 

@@ -18,10 +18,6 @@ const cachedGetSkill = cacheAdminData(async (skillId: string) =>
 
 export type AdminSkill = NonNullable<Awaited<ReturnType<typeof getSkill>>>;
 
-/**
- * One skill with the relations its detail page names directly: the owner of a
- * private skill, the skill it was merged into and the duplicates merged into it.
- */
 export async function getSkill(skillId: string) {
   return cachedGetSkill(skillId);
 }

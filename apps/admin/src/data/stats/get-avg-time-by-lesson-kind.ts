@@ -4,9 +4,7 @@ import { trackedAnalyticsUserSql } from "@/data/stats/_utils/analytics-user-filt
 import { timedLessonSql } from "@/data/stats/_utils/timed-lesson";
 import { prisma } from "@zoonk/db";
 
-/**
- * The ledger keeps lesson-kind snapshots after their lessons are deleted.
- */
+/** The ledger keeps lesson-kind snapshots after their lessons are deleted. */
 export const getAvgTimeByLessonKind = cacheAdminData(async (start: Date, end: Date) => {
   const results = await prisma.$queryRaw<
     { kind: string; avg_duration: number | null; completed: bigint; started: bigint }[]

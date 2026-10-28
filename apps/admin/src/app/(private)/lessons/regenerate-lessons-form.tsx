@@ -14,10 +14,6 @@ function formatLessonCount(count: number): string {
   return `${count.toLocaleString()} published ${count === 1 ? "lesson" : "lessons"}`;
 }
 
-/**
- * Shown when the list is filtered by a model or prompt version: rewrites the published lessons
- * that filter matches, a bounded batch per click, and says how many started.
- */
 export function RegenerateLessonsForm({
   batchSize,
   matching,

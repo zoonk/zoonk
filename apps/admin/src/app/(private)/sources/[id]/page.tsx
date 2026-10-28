@@ -36,10 +36,7 @@ export default function SourceDetailPage({ params }: PageProps<"/sources/[id]">)
   );
 }
 
-/**
- * Visibility decides the whole page: a private upload is personal data, so it
- * gets a metadata-only view and the notices and citations sections stay empty.
- */
+/** A private upload is personal data, so it gets a metadata-only view. */
 async function SourceDetailContent({ params }: Pick<PageProps<"/sources/[id]">, "params">) {
   const { id } = await params;
 

@@ -2,10 +2,6 @@ import { AdminSection } from "@/components/admin-section";
 import { listChangeNotices } from "@/data/sources/list-change-notices";
 import { ChangeNoticeTable } from "../../sources/change-notice-table";
 
-/**
- * Each new edition or notice change leaves a change notice, so the blueprint's
- * notices, newest first, are its edition history.
- */
 export async function ExamEditionHistory({ examBlueprintId }: { examBlueprintId: string }) {
   "use cache: private";
 

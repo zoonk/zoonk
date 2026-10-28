@@ -12,10 +12,7 @@ const lessonKindLabelsByText: Partial<Record<string, string>> = {
   weeklyChallenge: "Weekly challenge",
 };
 
-/**
- * Stats read lesson kinds as text from the learning ledger, so every admin page labels them the
- * same way and an unknown kind shows as stored.
- */
+/** The ledger stores kinds as text, so an unknown kind shows as stored. */
 export function getAdminLessonKindLabel(kind: string): string {
   return lessonKindLabelsByText[kind] ?? kind;
 }

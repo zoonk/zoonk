@@ -19,10 +19,7 @@ function readStringField(content: object, key: string): string | null {
   return typeof value === "string" && value.trim() ? value : null;
 }
 
-/**
- * Items have no title, so admin tables label them with their question. Content
- * is versioned JSON, so an unexpected shape falls back to the format name.
- */
+/** Content is versioned JSON, so an unexpected shape falls back to the format name. */
 export function getItemLabel({
   content,
   format,

@@ -20,10 +20,6 @@ const STATE_LABELS = {
   solid: "Solid",
 } as const;
 
-/**
- * Skills now solid or mastered by the review that last confirmed them, and every learner skill by
- * its current state.
- */
 export async function MasteryAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 

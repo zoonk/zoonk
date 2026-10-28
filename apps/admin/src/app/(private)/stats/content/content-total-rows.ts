@@ -4,7 +4,6 @@ import { type ContentTotalRow } from "./content-totals-table";
 
 type LibraryTotals = Awaited<ReturnType<typeof countLibraryContent>>;
 
-/** Library inventory rows, in the order content is built: outline, lessons, practice, media. */
 export function getContentTotalRows({
   created,
   totals,

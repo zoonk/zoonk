@@ -11,10 +11,6 @@ function formatMinutes(seconds: number): string {
   return `${Math.round(seconds / SECONDS_PER_MINUTE).toLocaleString()} min`;
 }
 
-/**
- * The share of study days that reached the learner's daily minutes, with the average day's minutes
- * against its goal for scale.
- */
 export async function MinutesVsGoalAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 

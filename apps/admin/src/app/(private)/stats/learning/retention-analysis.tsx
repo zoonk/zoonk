@@ -15,7 +15,6 @@ import { type StatsPeriod } from "../_utils/stats-period";
 /** Signup weeks are UTC dates, so they're shown in UTC to name the same Monday everywhere. */
 const weekFormat = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeZone: "UTC" });
 
-/** D1, D7 and D30 retention of each signup week that falls in the selected period. */
 export async function RetentionAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const rows = await getSignupRetention(statsPeriod.current.start, statsPeriod.current.end);
 
@@ -60,7 +59,6 @@ function RetentionRow({ row }: { row: SignupRetentionRow }) {
   );
 }
 
-/** Shows the counts behind each rate, since weekly cohorts are often small. */
 function RetentionCell({ eligible, retained }: { eligible: number; retained: number }) {
   return (
     <TableCell className="text-right tabular-nums">

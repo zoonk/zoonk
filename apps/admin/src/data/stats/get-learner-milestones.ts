@@ -36,10 +36,6 @@ export type LearnerMilestoneUser = {
   username: string | null;
 };
 
-/**
- * The engagement page needs the two milestone counts together so it can answer
- * the threshold questions without making each card own a separate data path.
- */
 export const getLearnerMilestoneSummary = cacheAdminData(
   async (completedLessonsThreshold: number, learningDaysThreshold: number) => {
     const [completedLessonsUsers, learningDaysUsers] = await Promise.all([
@@ -61,11 +57,6 @@ export const getLearnerMilestoneSummary = cacheAdminData(
   },
 );
 
-/**
- * The drill-down page uses one route for both learner milestone questions. The
- * kind decides which threshold rule filters users, while each row still shows
- * both completion totals for context.
- */
 export const listLearnerMilestoneUsers = cacheAdminData(
   async (kind: LearnerMilestoneKind, threshold: number, limit: number, offset: number) => {
     const queryParts = getLearnerMilestoneQueryParts({ kind, threshold });
@@ -82,11 +73,8 @@ export const listLearnerMilestoneUsers = cacheAdminData(
 );
 
 /**
- * Raw SQL cannot parameterize aggregate expressions or order columns, so the
- * supported milestone rules are explicitly whitelisted before being composed
- * into the shared learner-progress query. Both read the daily totals the
- * learner's Activity page shows: first lesson completions, and learner-local
- * days with a finished lesson.
+ * Raw SQL can't parameterize aggregate expressions or order columns, so the supported rules are
+ * whitelisted.
  */
 function getLearnerMilestoneQueryParts({
   kind,
@@ -108,10 +96,6 @@ function getLearnerMilestoneQueryParts({
   };
 }
 
-/**
- * Counting inside a grouped subquery lets Postgres apply the milestone rule per
- * user before the outer count turns the qualifying user set into one metric.
- */
 async function countUsersByLearnerMilestone({
   queryParts,
 }: {
@@ -132,11 +116,6 @@ async function countUsersByLearnerMilestone({
   return Number(result[0].count);
 }
 
-/**
- * The user list shares one learner-progress subquery for both milestones. The
- * whitelisted query parts decide which users qualify and which metric sorts
- * first, while every row still exposes both completion counts.
- */
 async function listUsersByLearnerMilestone({
   limit,
   offset,
@@ -180,10 +159,7 @@ async function listUsersByLearnerMilestone({
   `;
 }
 
-/**
- * Raw SQL returns bigint values for counts and Brain Power. Converting them at
- * the data boundary keeps table components free from database numeric details.
- */
+/** Raw SQL returns bigint values for counts and Brain Power. */
 function serializeLearnerMilestoneUser({
   row,
 }: {

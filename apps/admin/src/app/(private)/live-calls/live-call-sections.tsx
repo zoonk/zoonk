@@ -79,7 +79,6 @@ function ProviderKey({ available }: { available: boolean }) {
   );
 }
 
-/** The switch and the open connections, read once through the API so both agree. */
 export async function LiveCallSections() {
   const controls = await getLiveCallControls();
 
@@ -124,7 +123,6 @@ export async function LiveCallSections() {
   );
 }
 
-/** Holds the two sections' places while the API answers. */
 export function LiveCallSectionsSkeleton() {
   return (
     <>

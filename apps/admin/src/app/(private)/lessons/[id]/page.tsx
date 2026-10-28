@@ -20,10 +20,6 @@ import { LessonVersions } from "./lesson-versions";
 
 export const metadata: Metadata = { title: "Lesson" };
 
-/**
- * One Library lesson as admins review it: where it lives, its screens with every version and
- * who wrote each, and how learners answered.
- */
 export default function LibraryLessonPage({ params }: PageProps<"/lessons/[id]">) {
   return (
     <Container>

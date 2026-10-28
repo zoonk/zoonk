@@ -2,10 +2,6 @@ import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { type CourseGetPayload, prisma } from "@zoonk/db";
 
-/**
- * A course's outline is a set of shared chapters placed through `CourseChapter`, and each chapter
- * holds shared lessons through `ChapterLesson`, so counts walk the join tables.
- */
 const courseListInclude = {
   courseChapters: { select: { chapterId: true } },
   organization: true,
@@ -41,10 +37,7 @@ const cachedListCourses = cacheAdminData(async (limit: number, offset: number, s
   return { courses: courses.map((course) => addOutlineCounts(course, writtenLessons)), total };
 });
 
-/**
- * Written lessons per chapter, counted for the page's chapters only: a relation `_count` would
- * count every chapter's lessons.
- */
+/** A relation `_count` would count every chapter's lessons, not only the page's. */
 async function countWrittenLessons(chapterIds: string[]): Promise<Map<string, number>> {
   const counts = await prisma.chapterLesson.groupBy({
     _count: { lessonId: true },
@@ -59,11 +52,7 @@ export async function listCourses(params: { limit: number; offset: number; searc
   return cachedListCourses(params.limit, params.offset, params.search);
 }
 
-/**
- * The course table needs one number per course, from one written lesson count per placed chapter.
- * A lesson shared by two chapters of the same course counts twice, which matches what learners
- * see in the outline.
- */
+/** A lesson shared by two chapters of the same course counts twice, as learners see it in the outline. */
 function addOutlineCounts(
   course: CourseWithOutline,
   writtenLessons: Map<string, number>,

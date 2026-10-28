@@ -14,10 +14,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useState } from "react";
 import { eraseMemoryFactAction } from "./_actions/erase-memory-fact";
 
-/**
- * Erasing is final (unlike the learner's own delete, which keeps 30 days of undo), so it asks
- * first, like the other account actions on this page.
- */
+/** Erasing is final, unlike the learner's own delete, which keeps 30 days of undo. */
 export function EraseMemoryFactDialog({ factId, userId }: { factId: string; userId: string }) {
   const [open, setOpen] = useState(false);
 

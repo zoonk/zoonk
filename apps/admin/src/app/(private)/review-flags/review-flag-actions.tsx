@@ -11,7 +11,6 @@ import {
 
 const INITIAL_STATE: ReviewFlagActionState = { error: null, message: null };
 
-/** "Rewrite now" and "Dismiss" for one flag, with the outcome of the last one below. */
 export function ReviewFlagActions({ flagId }: { flagId: string }) {
   const [rewrite, rewriteAction] = useActionState(rewriteReviewFlagAction, INITIAL_STATE);
   const [dismiss, dismissAction] = useActionState(dismissReviewFlagAction, INITIAL_STATE);

@@ -17,7 +17,6 @@ import { MediaList, MediaListSkeleton } from "./media-list";
 
 export const metadata: Metadata = { title: "Media" };
 
-/** Images and audio made once and reused, with the prompt and style that made them. */
 export default function MediaPage({ searchParams }: PageProps<"/media">) {
   return (
     <Container>

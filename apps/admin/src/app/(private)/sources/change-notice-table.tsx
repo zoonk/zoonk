@@ -14,11 +14,6 @@ const NOTICE_COLUMNS: AdminTableColumn[] = [
 
 const SOURCE_NOTICE_COLUMNS: AdminTableColumn[] = [...NOTICE_COLUMNS, { label: "Exam" }];
 
-/**
- * Change notices, newest first: the line learners saw after a new fetch, the
- * blueprint paths that changed and the model that wrote it. A source page also
- * names the exam each notice belongs to.
- */
 export function ChangeNoticeTable({
   emptyLabel,
   notices,

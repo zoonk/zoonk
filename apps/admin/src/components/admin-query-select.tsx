@@ -5,11 +5,6 @@ import { parseAsString, useQueryStates } from "nuqs";
 
 type AdminQuerySelectOption = { label: string; value: string };
 
-/**
- * Filters with many values (models, prompt versions) use a select bound to one
- * query param. Changing it returns to the first page so the new result set
- * never opens on an empty page.
- */
 export function AdminQuerySelect({
   allLabel,
   label,

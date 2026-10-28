@@ -57,8 +57,6 @@ export function Stats({
     );
   }
 
-  // The same frame as a linked tile's, so a tile without a link lines up with its row-mates
-  // instead of spreading its label and value over the row's height.
   return <div className="p-2">{content}</div>;
 }
 

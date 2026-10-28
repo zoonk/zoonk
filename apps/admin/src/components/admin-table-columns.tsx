@@ -11,10 +11,6 @@ import {
 
 export type AdminTableColumn = { align?: "right"; label: string };
 
-/**
- * Wide Library tables declare their columns once, so the loaded header and the
- * loading placeholder can't drift apart.
- */
 function AdminTableColumnsHeader({ columns }: { columns: AdminTableColumn[] }) {
   return (
     <TableHeader>
@@ -29,10 +25,6 @@ function AdminTableColumnsHeader({ columns }: { columns: AdminTableColumn[] }) {
   );
 }
 
-/**
- * A bordered, horizontally scrollable table. With no rows it says so in one
- * full-width line instead of rendering an empty body.
- */
 export function AdminTableColumns({
   children,
   columns,
@@ -65,7 +57,6 @@ export function AdminTableColumns({
   );
 }
 
-/** One placeholder row with a short bar per column, aligned like the loaded cells. */
 function AdminTableColumnsSkeletonRow({ columns }: { columns: AdminTableColumn[] }) {
   return (
     <TableRow>
@@ -78,7 +69,6 @@ function AdminTableColumnsSkeletonRow({ columns }: { columns: AdminTableColumn[]
   );
 }
 
-/** The loading state of a column table: its real header over five placeholder rows. */
 export function AdminTableColumnsSkeleton({ columns }: { columns: AdminTableColumn[] }) {
   return (
     <AdminTableSkeleton className="overflow-x-auto">

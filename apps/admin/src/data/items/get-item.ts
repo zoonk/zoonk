@@ -20,10 +20,6 @@ const cachedGetItem = cacheAdminData(async (itemId: string) => {
 
 export type AdminItem = NonNullable<Awaited<ReturnType<typeof getItem>>>;
 
-/**
- * One item with its skill, the exam and source it was drawn from and the
- * shared explanations written for wrong typed or spoken answers.
- */
 export async function getItem(itemId: string) {
   return cachedGetItem(itemId);
 }
@@ -41,7 +37,6 @@ const cachedCountItemMistakes = cacheAdminData(async (itemId: string) => {
   return { fixed: countStatus("fixed"), open: countStatus("open") };
 });
 
-/** Mistakes notebook entries for the item that learners still have open or already fixed. */
 export async function countItemMistakes(itemId: string) {
   return cachedCountItemMistakes(itemId);
 }

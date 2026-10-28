@@ -13,15 +13,10 @@ import { Fragment } from "react";
 
 type GraphColumn = { key: string; skills: GraphSkill[]; title: string };
 
-/** Direct prerequisites sit next to the skill; earlier layers move left. */
 function getPrerequisiteColumnTitle(layerIndex: number): string {
   return layerIndex === 0 ? "Direct prerequisites" : `${layerIndex + 1} steps back`;
 }
 
-/**
- * Deepest prerequisites on the left, then each layer closer to the skill, the
- * skill itself, and the skills that build on it on the right.
- */
 function buildGraphColumns({
   currentSkill,
   dependents,
@@ -109,7 +104,6 @@ function SkillGraphColumn({
   );
 }
 
-/** Merged skills stay on the graph, struck through, so a stale edge is easy to spot. */
 function SkillGraphNode({ skill }: { skill: GraphSkill }) {
   return (
     <Link

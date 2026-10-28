@@ -9,13 +9,8 @@ import { getAiSpendMonthStart } from "./_utils/ai-spend-since";
 const CENTS_PER_DOLLAR = 100;
 const MONTHS_PER_YEAR = 12;
 
-/** A learner's goals that cost the most this month, shown beside them. */
 const GOALS_PER_LEARNER = 3;
 
-/**
- * How a Plus learner pays: `monthly` and `yearly` pay their plan's price, `trial` pays nothing
- * yet, and `granted` is Plus given by support, which nobody pays for.
- */
 export type PlusBilling = "granted" | "monthly" | "trial" | "yearly";
 
 type PlusLearnerRow = {
@@ -41,10 +36,6 @@ function toBilling(row: PlusLearnerRow): PlusBilling {
   return row.billing_interval === "year" ? "yearly" : "monthly";
 }
 
-/**
- * What each plan pays a month in US dollars, from Stripe's list prices (a yearly plan's divided by
- * twelve), before store fees and local prices. Null when Stripe can't be read.
- */
 async function loadMonthlyPrices(): Promise<Record<PlusBilling, number> | null> {
   const { data } = await safeAsync(() =>
     getStripePrices([PLUS_PLAN.lookupKey, PLUS_PLAN.annualLookupKey], "usd"),
@@ -65,12 +56,6 @@ async function loadMonthlyPrices(): Promise<Record<PlusBilling, number> | null> 
   };
 }
 
-/**
- * Every learner with Plus now and what their AI calls cost since the month began (UTC, as usage
- * limits count), shared Library content they caused included, beside what their plan pays a
- * month and the goals that cost the most, most expensive learner first. Plus is the newest active
- * or trialing paid subscription, as entitlements read it.
- */
 export const listPlusLearnerCosts = cacheAdminData(async () => {
   const since = await getAiSpendMonthStart();
 

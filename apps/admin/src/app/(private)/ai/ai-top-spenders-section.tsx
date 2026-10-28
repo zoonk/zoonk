@@ -78,10 +78,6 @@ function LearnerSpenders({ learners }: { learners: TopSpenders["learners"] }) {
   );
 }
 
-/**
- * The goals and learners that cost the most, shared Library content they caused included, so a
- * runaway goal build or account stands out.
- */
 export async function AiTopSpendersSection({ days }: { days: number }) {
   const { goals, learners } = await listTopAiSpenders(days);
 

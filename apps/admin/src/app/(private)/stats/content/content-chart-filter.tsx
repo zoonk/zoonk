@@ -19,10 +19,6 @@ const FILTERS: { label: string; value: ContentFilterValue }[] = [
   { label: "Steps", value: "steps" },
 ];
 
-/**
- * Content creation can be explored as one total or one creation pipeline
- * stage, while every choice retains the same calendar buckets.
- */
 function getCountForFilter({
   filter,
   row,
@@ -37,10 +33,6 @@ function getCountForFilter({
   return row[filter];
 }
 
-/**
- * The selected content-type headline is the sum of its visible buckets, which
- * keeps the filter, period total, and chart mathematically aligned.
- */
 function getFilteredTotal({
   content,
   filter,
@@ -51,11 +43,6 @@ function getFilteredTotal({
   return content.reduce((total, row) => total + getCountForFilter({ filter, row }), 0);
 }
 
-/**
- * Content creation is the one analysis with a useful second dimension. Its
- * type filter stays local to the chart instead of becoming permanent global
- * chrome or multiplying five near-identical entries in the analysis picker.
- */
 export function ContentChart({
   currentContent,
   previousContent,

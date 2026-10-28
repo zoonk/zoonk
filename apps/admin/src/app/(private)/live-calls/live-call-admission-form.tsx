@@ -30,10 +30,6 @@ type Admission = (typeof ADMISSIONS)[number]["value"];
 const OPTION_CLASS =
   "border-border has-data-checked:border-foreground flex min-h-11 cursor-pointer items-start gap-2.5 rounded-xl border px-3 py-2.5 text-sm";
 
-/**
- * The switch and the free accounts' shared daily budget in one form: both are read fresh when a
- * call is reserved, so saving applies to the next call without a deploy.
- */
 export function LiveCallAdmissionForm({
   admission,
   freeDailyBudgetMicros,

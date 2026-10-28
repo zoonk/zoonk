@@ -30,10 +30,6 @@ import { CourseForm } from "./course-form";
 
 export const metadata: Metadata = { title: "Edit Course" };
 
-/**
- * The course editor stays anchored to the catalog list through the same compact
- * breadcrumb pattern used by other admin detail pages.
- */
 function CourseBreadcrumb() {
   return (
     <Breadcrumb>
@@ -50,10 +46,6 @@ function CourseBreadcrumb() {
   );
 }
 
-/**
- * The static course edit shell streams the private record into a focused title
- * and slug form without delaying navigation chrome.
- */
 export default function CourseEditPage({ params }: PageProps<"/courses/[id]">) {
   return (
     <Container>
@@ -80,10 +72,6 @@ export default function CourseEditPage({ params }: PageProps<"/courses/[id]">) {
   );
 }
 
-/**
- * Only valid, existing course identifiers reach the form, keeping malformed
- * URLs away from Prisma's UUID boundary.
- */
 async function CourseFormContent({ params }: Pick<PageProps<"/courses/[id]">, "params">) {
   const { id } = await params;
 
@@ -100,7 +88,6 @@ async function CourseFormContent({ params }: Pick<PageProps<"/courses/[id]">, "p
   return <CourseForm course={{ id: course.id, slug: course.slug, title: course.title }} />;
 }
 
-/** The curriculum streams on its own, after the same id check as the form. */
 async function CourseCurriculumContent({ params }: Pick<PageProps<"/courses/[id]">, "params">) {
   const { id } = await params;
 
@@ -111,10 +98,6 @@ async function CourseCurriculumContent({ params }: Pick<PageProps<"/courses/[id]
   return <CourseCurriculum courseId={id} />;
 }
 
-/**
- * Title and slug placeholders keep the form's final dimensions stable until
- * the course record resolves.
- */
 function CourseFormSkeleton() {
   return (
     <AdminEditFormSkeleton>

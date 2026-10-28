@@ -26,10 +26,6 @@ import {
 
 const TABLE_COLUMN_COUNT = 4;
 
-/**
- * The leaderboard stays server-rendered so ranking and pagination are resolved
- * together from URL state that can be refreshed or shared.
- */
 export async function BrainPowerLeaderboard({
   searchParams,
 }: {
@@ -42,10 +38,7 @@ export async function BrainPowerLeaderboard({
   return <CachedBrainPowerLeaderboard limit={limit} offset={offset} page={page} period={period} />;
 }
 
-/**
- * Parsed pagination values keep the rolling leaderboard deterministic and
- * available to runtime prefetching.
- */
+/** Primitive props make each leaderboard state its own cache entry. */
 async function CachedBrainPowerLeaderboard({
   limit,
   offset,
@@ -115,10 +108,6 @@ function getLeaderboardUserCountLabel(total: number): "user" | "users" {
   return total === 1 ? "user" : "users";
 }
 
-/**
- * The fallback matches the loaded table structure so the page remains stable
- * while grouped Brain Power totals are loading.
- */
 export function BrainPowerLeaderboardSkeleton() {
   return (
     <div className="flex flex-col gap-4">
@@ -137,10 +126,6 @@ export function BrainPowerLeaderboardSkeleton() {
   );
 }
 
-/**
- * The loaded and loading tables share column labels and alignment so their
- * layout cannot drift as the leaderboard evolves.
- */
 function BrainPowerLeaderboardHeader() {
   return (
     <TableHeader>
@@ -154,10 +139,6 @@ function BrainPowerLeaderboardHeader() {
   );
 }
 
-/**
- * An empty row keeps the table visible when no one earned Brain Power during
- * the rolling window, making the absence of activity explicit.
- */
 function BrainPowerLeaderboardEmptyRow({ periodDescription }: { periodDescription: string }) {
   return (
     <TableRow>
@@ -168,10 +149,6 @@ function BrainPowerLeaderboardEmptyRow({ periodDescription }: { periodDescriptio
   );
 }
 
-/**
- * Each leaderboard row links the user identity to account detail while keeping
- * the rank and Brain Power total aligned for quick comparison.
- */
 function BrainPowerLeaderboardRow({ leader }: { leader: BrainPowerLeader }) {
   return (
     <TableRow>
@@ -192,10 +169,6 @@ function BrainPowerLeaderboardRow({ leader }: { leader: BrainPowerLeader }) {
   );
 }
 
-/**
- * Placeholder cells mirror the loaded row widths closely enough to avoid a
- * noticeable shift when the leaderboard streams into the page.
- */
 function BrainPowerLeaderboardSkeletonRow() {
   return (
     <TableRow>

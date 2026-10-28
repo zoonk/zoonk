@@ -21,10 +21,6 @@ const ENERGY_FORMATTER = new Intl.NumberFormat("en", {
   trailingZeroDisplay: "stripIfInteger",
 });
 
-/**
- * The admin user detail page combines account progress with durable lesson
- * completion stats so support can answer learning-history questions in one view.
- */
 export async function UserLesson({ userId }: { userId: string }) {
   "use cache: private";
 
@@ -80,18 +76,11 @@ export async function UserLesson({ userId }: { userId: string }) {
   );
 }
 
-/**
- * Energy is stored as a float, so display rounds to the single decimal place
- * admins can act on while hiding binary precision artifacts like 10.0000000002.
- */
+/** Energy is stored as a float, so it's rounded to hide artifacts like 10.0000000002. */
 function formatEnergyLevel(value: number) {
   return ENERGY_FORMATTER.format(value);
 }
 
-/**
- * The breakdown is hidden for learners with no completions so the section stays
- * compact while still showing the zero-value summary fields above.
- */
 function LessonKindBreakdown({ rows }: { rows: UserLearningKindStat[] }) {
   if (rows.length === 0) {
     return null;
@@ -136,7 +125,6 @@ function LessonKindBreakdownRow({ row }: { row: UserLearningKindStat }) {
   );
 }
 
-/** No timed sittings means there is no duration sample to average. */
 function formatOptionalDuration(durationSeconds: number | null) {
   return durationSeconds === null ? "—" : formatDuration(durationSeconds);
 }

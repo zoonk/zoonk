@@ -43,11 +43,6 @@ export async function listUsers(params: {
   return cachedListUsers(params.limit, params.offset, params.sort, params.search);
 }
 
-/**
- * Brain Power remains the default ranking because it highlights the most
- * engaged learners. Newest signups is an alternate operational view for launch
- * follow-up, so it only replaces the primary ranking when the URL asks for it.
- */
 function getUserOrderBy({ sort }: { sort: UserSort }) {
   if (sort === "newest-signups") {
     return [{ createdAt: "desc" as const }, { id: "asc" as const }];
@@ -60,11 +55,6 @@ function getUserOrderBy({ sort }: { sort: UserSort }) {
   ];
 }
 
-/**
- * The user table needs the same search shape for both the paginated id query
- * and the total count. Keeping the Prisma filter in one helper prevents the
- * visible page count from drifting away from the rows shown in the table.
- */
 function getUserSearchWhere({ search }: { search?: string }) {
   if (!search) {
     return;
@@ -79,11 +69,6 @@ function getUserSearchWhere({ search }: { search?: string }) {
   };
 }
 
-/**
- * Plan lookup is derived data for the admin table. Keeping it in one helper
- * makes the row mapping a simple projection and keeps the active-subscription
- * rule shared with the detail page.
- */
 function addUserPlan<TUser extends { id: string }>({
   subscriptionsByUserId,
   user,
@@ -97,11 +82,6 @@ function addUserPlan<TUser extends { id: string }>({
   };
 }
 
-/**
- * The user table only needs the subscriptions that belong to each listed user.
- * Grouping them once keeps the render step simple and lets us reuse the same
- * active-subscription selection rule for every row.
- */
 function groupSubscriptionsByUser({ subscriptions }: { subscriptions: Subscription[] }) {
   const subscriptionsByUserId = new Map<string, Subscription[]>();
 

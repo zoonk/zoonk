@@ -4,10 +4,6 @@ import { prisma } from "@zoonk/db";
 
 const RECENT_SESSIONS = 14;
 
-/**
- * The learner's latest study sessions (one per goal and day) with how many blocks they finished
- * and the Brain Power they earned, read from the blocks so no content is joined.
- */
 export const listUserStudySessions = cacheAdminData((userId: string) =>
   prisma.studySession.findMany({
     include: {

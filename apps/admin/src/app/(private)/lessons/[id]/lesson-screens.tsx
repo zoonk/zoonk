@@ -2,10 +2,6 @@ import { AdminSection, AdminSectionEmpty } from "@/components/admin-section";
 import { type LibraryLessonStep } from "@/data/lessons/get-library-lesson";
 import { LessonScreen, type StepAnswers } from "./lesson-screen";
 
-/**
- * Every screen in order with its versions, provenance, answers, so admins can see which
- * screen drags a lesson down before rewriting it.
- */
 export function LessonScreens({
   answers,
   steps,

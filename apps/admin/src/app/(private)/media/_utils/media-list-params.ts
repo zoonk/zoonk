@@ -6,7 +6,6 @@ type SearchParams = Awaited<PageProps<"/media">["searchParams"]>;
 
 type MediaListFilters = { kind?: MediaKind; visibility?: LibraryVisibility };
 
-/** Reads the media list filters from the URL, dropping values the list doesn't know. */
 export function parseMediaListFilters(params: SearchParams): MediaListFilters {
   return {
     kind: readEnumQueryParam({ allowed: Object.values(MediaKind), value: params.kind }),
@@ -17,7 +16,6 @@ export function parseMediaListFilters(params: SearchParams): MediaListFilters {
   };
 }
 
-/** A filter link keeps the other filter and starts on the first page. */
 export function buildMediaListHref(filters: MediaListFilters) {
   return buildAdminHref({ params: filters, path: "/media" });
 }

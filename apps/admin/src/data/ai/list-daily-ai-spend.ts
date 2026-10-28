@@ -3,7 +3,6 @@ import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 import { getAiSpendSince } from "./_utils/ai-spend-since";
 
-/** What AI calls cost per UTC day of the period, including the days with no calls. */
 export const listDailyAiSpend = cacheAdminData(async (days: number) => {
   const since = await getAiSpendSince(days);
 

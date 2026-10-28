@@ -37,7 +37,6 @@ function QuestionLessonFields({ context }: { context: AdminQuestionLessonContext
   );
 }
 
-/** Who asked, where, and what the tutor model did. */
 export async function QuestionDetails({ question }: { question: LessonQuestionDetail }) {
   const { user } = question.thread;
 

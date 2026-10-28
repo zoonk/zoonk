@@ -40,9 +40,8 @@ function readProvenance(value: unknown): MessageProvenance | null {
 }
 
 /**
- * `submitFeedback` in core stores the context the client sent (screen, url, platform, app version
- * and content) plus the provenance of that content. It is JSON, so each field is read defensively
- * and older or partial rows still render.
+ * The stored context is JSON, so each field is read defensively and older or partial rows still
+ * render.
  */
 export function parseFeedbackMessageContext(context: unknown): FeedbackMessageContext {
   const record = isJsonObject(context) ? context : {};

@@ -6,10 +6,6 @@ import { timedLessonSql } from "@/data/stats/_utils/timed-lesson";
 import { prisma, sql } from "@zoonk/db";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
-/**
- * Averages finished lesson durations inside each visible bucket so changes in
- * lesson pace can be read without mixing unfinished lessons into the series.
- */
 export const getAvgLessonTimeTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
     const dateBucketSql = getStatsDateBucketSql({ date: sql`learning_events.ended_at`, period });

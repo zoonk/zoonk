@@ -4,10 +4,6 @@ import { prisma } from "@zoonk/db";
 
 const RECENT_PLAN_CHANGES = 20;
 
-/**
- * The learner's goals with their plans (version, estimate, done and total items) and the latest
- * plan changes with their reasons, so support can see how a plan got where it is.
- */
 export const listUserGoals = cacheAdminData(async (userId: string) => {
   const goals = await prisma.goal.findMany({
     include: {

@@ -64,7 +64,6 @@ function GoalTableHeader() {
   );
 }
 
-/** The latest plan changes across goals, each with its one-sentence reason and state. */
 function PlanChanges({ goals }: { goals: UserGoal[] }) {
   const changes = goals
     .flatMap((goal) => (goal.plan?.changes ?? []).map((change) => ({ change, goal })))
@@ -93,10 +92,6 @@ function PlanChanges({ goals }: { goals: UserGoal[] }) {
   );
 }
 
-/**
- * The learner's goals and plans, then how their plans changed and why, for support questions
- * like "why did my plan move?".
- */
 export async function UserGoals({ userId }: { userId: string }) {
   "use cache: private";
 

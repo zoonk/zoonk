@@ -12,7 +12,6 @@ import { ExamList, ExamListSkeleton } from "./exam-list";
 
 export const metadata: Metadata = { title: "Exams" };
 
-/** Exam blueprints with their current edition and the dates the freshness checks watch. */
 export default function ExamsPage({ searchParams }: PageProps<"/exams">) {
   return (
     <Container>

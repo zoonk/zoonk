@@ -13,7 +13,6 @@ import { MissingAudioList, MissingAudioListSkeleton } from "./missing-audio-list
 
 export const metadata: Metadata = { title: "Missing audio" };
 
-/** The repair queue for Library language lessons: upload a clip for any word or sentence without one. */
 export default function MissingAudioPage() {
   return (
     <Container>

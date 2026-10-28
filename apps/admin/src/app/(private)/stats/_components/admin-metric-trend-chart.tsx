@@ -15,11 +15,6 @@ const SECONDS_PER_MINUTE = 60;
 
 export type MetricTrendValueFormat = "duration" | "number" | "percent";
 
-/**
- * Formats chart values in the same units as the selected metric headline so
- * tooltips and annotations never expose implementation-level seconds or raw
- * decimals.
- */
 function formatMetricTrendValue({
   format,
   value,
@@ -42,10 +37,6 @@ function formatMetricTrendValue({
   return value.toLocaleString(undefined, { maximumFractionDigits: 1 });
 }
 
-/**
- * Axis labels need shorter units than annotations while staying precise enough
- * to distinguish nearby duration values.
- */
 function formatMetricTrendAxisValue({
   format,
   value,
@@ -72,10 +63,7 @@ function formatMetricTrendAxisValue({
   return Math.round(value).toLocaleString();
 }
 
-/**
- * Peak and low callouts are derived only from real points. Missing buckets do
- * not become synthetic zeroes for rates or averages.
- */
+/** Only real points: missing buckets never become zeroes for rates or averages. */
 function getTrendExtremes(dataPoints: MetricTrendDataPoint[]) {
   const validPoints = dataPoints.filter(
     (dataPoint): dataPoint is MetricTrendDataPoint & { value: number } => dataPoint.value !== null,
@@ -92,11 +80,6 @@ function getTrendExtremes(dataPoints: MetricTrendDataPoint[]) {
   };
 }
 
-/**
- * A flat chart can describe every bucket only when the series has no missing
- * values. Sparse rate and average charts instead describe the buckets that
- * were actually observed so the caption never contradicts visible gaps.
- */
 function getFlatTrendLabel({
   hasCompleteTrend,
   observedPointCount,
@@ -111,10 +94,6 @@ function getFlatTrendLabel({
   return hasCompleteTrend ? "Every bucket" : "Observed buckets";
 }
 
-/**
- * Percentage charts retain a stable 0–100 frame, while discrete counts stop at
- * their observed maximum so small datasets do not collapse against the floor.
- */
 function getTrendDomain({
   maximumValue,
   valueFormat,
@@ -131,10 +110,6 @@ function getTrendDomain({
   }
 }
 
-/**
- * Small integer ranges need only one tick per possible count; larger ranges
- * cap their guides so the sparse canvas stays readable.
- */
 function getTrendTickCount({
   maximumValue,
   valueFormat,
@@ -149,10 +124,6 @@ function getTrendTickCount({
   return Math.min(MAX_NUMBER_AXIS_TICKS, Math.ceil(maximumValue) + 1);
 }
 
-/**
- * Hover details keep the sparse canvas precise without forcing permanent axis
- * labels or a dense legend onto the page.
- */
 function AdminMetricTrendTooltip({
   active,
   payload,
@@ -178,10 +149,6 @@ function AdminMetricTrendTooltip({
   );
 }
 
-/**
- * The compact peak and low callouts make notable moments explicit while axes
- * remain quiet enough to preserve the selected concept's open canvas.
- */
 export function AdminMetricTrendChart({
   dataPoints,
   label,
@@ -278,10 +245,6 @@ export function AdminMetricTrendChart({
   );
 }
 
-/**
- * Separates the meaning, value, and date into a readable direct label without
- * adding a legend or card around a two-line piece of information.
- */
 function TrendAnnotation({
   format,
   label,

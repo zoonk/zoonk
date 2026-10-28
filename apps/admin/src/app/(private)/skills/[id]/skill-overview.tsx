@@ -7,7 +7,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { MergeSkillDialog } from "./merge-skill-dialog";
 
-/** The skill's study card, identity and ownership, with where a merge sent it. */
 export async function SkillOverview({ skillId }: { skillId: string }) {
   "use cache: private";
 
@@ -75,7 +74,6 @@ function SkillCard({ label, text }: { label: string; text: string | null }) {
   );
 }
 
-/** Private skills belong to one learner; public skills have no owner. */
 function SkillOwner({ owner }: { owner: AdminSkill["owner"] }) {
   if (!owner) {
     return "—";

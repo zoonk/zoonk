@@ -28,7 +28,6 @@ const RHYTHM_COPY = {
   },
 } as const satisfies Record<Rhythm, { description: string; label: string }>;
 
-/** Loads one Learning question at a time. */
 export async function LearningMetrics({
   statsPeriod,
   view,
@@ -61,10 +60,6 @@ export async function LearningMetrics({
   return <ActiveLearnerRhythmAnalysis rhythm="daily" statsPeriod={statsPeriod} />;
 }
 
-/**
- * Daily and weekly actives are averages over the period's days (from the first activity to
- * today), so periods of different lengths compare fairly.
- */
 async function ActiveLearnerRhythmAnalysis({
   rhythm,
   statsPeriod,
@@ -103,10 +98,6 @@ async function ActiveLearnerRhythmAnalysis({
   );
 }
 
-/**
- * A session is finished when every block is done or skipped. The rate uses sessions that were
- * started, since a planned session nobody opened says nothing about finishing.
- */
 async function SessionsAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 

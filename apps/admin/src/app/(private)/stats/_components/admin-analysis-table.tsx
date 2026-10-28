@@ -1,8 +1,3 @@
-/**
- * Non-trend analyses use the same open hierarchy as charts: a concise
- * explanation followed by the complete table, with only one subtle boundary
- * around dense row data.
- */
 export function AdminAnalysisTable({
   children,
   description,

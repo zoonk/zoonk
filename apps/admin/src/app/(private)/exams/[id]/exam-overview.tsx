@@ -11,7 +11,6 @@ import { formatExamDate } from "../_utils/format-exam-date";
 import { ReadNoticeAgainForm } from "./read-notice-again-form";
 import { ResetExamSkillGraphForm } from "./reset-exam-skill-graph-form";
 
-/** How many skills a stored graph has. */
 function countGraphSkills(graph: unknown): number {
   const skills =
     typeof graph === "object" && graph !== null && "skills" in graph ? graph.skills : [];
@@ -19,7 +18,6 @@ function countGraphSkills(graph: unknown): number {
   return Array.isArray(skills) ? skills.length : 0;
 }
 
-/** The blueprint's key facts, what was read from its documents and its freshness controls. */
 export async function ExamOverview({ examBlueprintId }: { examBlueprintId: string }) {
   "use cache: private";
 

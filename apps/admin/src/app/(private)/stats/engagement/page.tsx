@@ -10,10 +10,6 @@ import { LearnerMilestones, LearnerMilestonesSkeleton } from "./learner-mileston
 
 export const metadata: Metadata = { title: "Engagement Stats" };
 
-/**
- * Engagement renders either one period analysis or the all-time milestone
- * tool instead of showing both simultaneously.
- */
 export default function EngagementPage({ searchParams }: PageProps<"/stats/engagement">) {
   return (
     <Suspense fallback={<StatsExplorerPageSkeleton />}>

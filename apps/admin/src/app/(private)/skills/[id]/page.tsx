@@ -35,7 +35,6 @@ export default function SkillDetailPage({ params }: PageProps<"/skills/[id]">) {
   );
 }
 
-/** Each section loads on its own, so a large graph never holds back the skill's fields. */
 async function SkillDetailContent({ params }: Pick<PageProps<"/skills/[id]">, "params">) {
   const { id } = await params;
 

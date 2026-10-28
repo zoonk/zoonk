@@ -16,7 +16,6 @@ import { LibraryLessonList, LibraryLessonListSkeleton } from "./library-lesson-l
 
 export const metadata: Metadata = { title: "Lessons" };
 
-/** Library lessons with their writing status and the model and prompt version that wrote them. */
 export default function LessonsPage({ searchParams }: PageProps<"/lessons">) {
   return (
     <Container>
@@ -39,7 +38,6 @@ export default function LessonsPage({ searchParams }: PageProps<"/lessons">) {
   );
 }
 
-/** The filters and page all live in the URL, so they resolve together. */
 async function LessonsContent({ searchParams }: Pick<PageProps<"/lessons">, "searchParams">) {
   const params = await searchParams;
   const { limit, offset, page, search } = parseSearchParams(params);

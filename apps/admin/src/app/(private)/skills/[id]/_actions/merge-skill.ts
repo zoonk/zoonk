@@ -5,10 +5,6 @@ import { mergeSkillForAdmin } from "@zoonk/core/library/skills/merge";
 import { parseFormField } from "@zoonk/utils/form";
 import { revalidatePath } from "next/cache";
 
-/**
- * Merges this duplicate skill into the one identity search should have found. Core checks the
- * admin role again and moves learners' progress to the survivor.
- */
 export async function mergeSkillAction(formData: FormData) {
   await assertAdmin();
 

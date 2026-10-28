@@ -20,7 +20,6 @@ import { buildMetricTrend, sumRows, toPercent, toRatePoints } from "../_utils/me
 import { type OutcomesAnalysisView } from "../_utils/stats-analysis";
 import { type StatsPeriod } from "../_utils/stats-period";
 
-/** Loads one Outcomes question at a time. */
 export async function OutcomeMetrics({
   statsPeriod,
   view,
@@ -88,7 +87,6 @@ function getScore(rows: readonly CheckpointOutcomeRow[]): number | null {
   });
 }
 
-/** An exam's weekly Big Challenge, scored as correct answers over all its questions. */
 async function MockExamAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 
@@ -123,7 +121,6 @@ async function MockExamAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   );
 }
 
-/** Bosses and weekly challenges that reached the pass mark of seven in ten. */
 async function CheckpointAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { chartPeriod, comparisonLabel, current, previous } = statsPeriod;
 
@@ -161,10 +158,6 @@ async function CheckpointAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod })
 
 const DECIMALS = 1;
 
-/**
- * Official results learners report after their exam ("How did it go?"), by exam: passes, how
- * often the official score landed inside the estimate shown before, and the mocks behind it.
- */
 async function ExamResultsAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const rows = await getExamResults(statsPeriod.current.start, statsPeriod.current.end);
 

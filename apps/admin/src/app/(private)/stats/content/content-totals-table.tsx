@@ -9,10 +9,6 @@ import {
 
 export type ContentTotalRow = { created?: number; title: string; total: number };
 
-/**
- * Current inventory beside what was created in the selected period. Rows without a period count
- * (such as lesson outlines) show a dash.
- */
 export function ContentTotalsTable({ rows }: { rows: readonly ContentTotalRow[] }) {
   return (
     <Table>

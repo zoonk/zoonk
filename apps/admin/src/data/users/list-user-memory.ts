@@ -4,10 +4,6 @@ import { prisma } from "@zoonk/db";
 
 const RECENT_INSIGHTS = 10;
 
-/**
- * Everything Zoonk remembers about the learner, for support requests: current facts, replaced
- * and deleted ones still kept for undo, and the latest daily insights.
- */
 export const listUserMemory = cacheAdminData(async (userId: string) => {
   const [facts, insights] = await Promise.all([
     prisma.memoryFact.findMany({

@@ -30,10 +30,6 @@ export type UploadMissingAudioState = {
   submissionId: number;
 };
 
-/**
- * Rejects unsupported media before upload so the player never receives a URL
- * whose file extension or browser decoding contract is ambiguous.
- */
 function getAudioFileExtension(file: File): string | null {
   return (
     Object.entries(AUDIO_FILE_EXTENSIONS).find(([mimeType]) => mimeType === file.type)?.[1] ?? null
@@ -44,7 +40,6 @@ function isResourceKind(value: string | null): value is MissingAudioResourceKind
   return value === "sentence" || value === "word";
 }
 
-/** Word and sentence audio live on their shared rows, so one update fixes every lesson using them. */
 async function saveAudioUrl({
   audioUrl,
   resourceId,
@@ -62,10 +57,6 @@ async function saveAudioUrl({
   await prisma.sentence.update({ data: { audioUrl }, where: { id: resourceId } });
 }
 
-/**
- * Uploads one admin-selected clip for a word or sentence that Library lessons
- * use without audio, and attaches it to the shared row.
- */
 export async function uploadMissingAudioAction(
   previousState: UploadMissingAudioState,
   formData: FormData,

@@ -3,10 +3,6 @@ import { Badge } from "@zoonk/ui/components/badge";
 import { TableCell, TableRow } from "@zoonk/ui/components/table";
 import Link from "next/link";
 
-/**
- * Admins can sort users by Brain Power or signup recency, so the row keeps both
- * values visible without making either sort mode require a separate detail page.
- */
 export function UserRow({
   user,
 }: {

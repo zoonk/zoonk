@@ -37,10 +37,6 @@ const cachedListItems = cacheAdminData(
 
 export type ListedItem = Awaited<ReturnType<typeof listItems>>["items"][number];
 
-/**
- * Items are questions without a title of their own, so admins find them by
- * the skill they practice, then narrow by format and language.
- */
 export async function listItems({
   format,
   language,

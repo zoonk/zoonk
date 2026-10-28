@@ -15,10 +15,6 @@ function getStatusVariant(status: GenerationStatus) {
   return status === "completed" ? ("default" as const) : ("outline" as const);
 }
 
-/**
- * One Library lesson: where it lives, how far its writing got, the model and prompt version that
- * wrote its screens, on it.
- */
 export function LibraryLessonRow({ lesson }: { lesson: ListedLibraryLesson }) {
   const [firstStep] = lesson.steps;
 

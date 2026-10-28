@@ -13,11 +13,7 @@ type DailyGoalTrendRow = {
   studiedSeconds: number;
 };
 
-/**
- * Days learners studied, from their first goal on, against the daily minutes of their active
- * goals (a learner's budget is split across goals, so their minutes add up). Goals keep no
- * history, so every day is measured against today's minutes.
- */
+/** Goals keep no history, so every day is measured against today's minutes. */
 export const getDailyGoalTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
     const dateBucketSql = getStatsDateBucketSql({ date: sql`daily_progress.date`, period });

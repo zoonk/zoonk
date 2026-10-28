@@ -8,7 +8,6 @@ import {
 } from "@/data/items/get-item-answer-stats";
 import { formatPercent } from "@/lib/format";
 
-/** How learners answer the item, the mistakes it caused. */
 export async function ItemAnswers({ itemId }: { itemId: string }) {
   "use cache: private";
 

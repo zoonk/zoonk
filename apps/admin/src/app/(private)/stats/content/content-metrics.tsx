@@ -43,10 +43,6 @@ function getMetricDescription({
   return METRIC_DESCRIPTIONS[metric];
 }
 
-/**
- * Loads one Content question at a time: a trend of one content type, the creation trend across
- * types, or the inventory.
- */
 export async function ContentMetrics({
   statsPeriod,
   view,
@@ -78,7 +74,6 @@ export async function ContentMetrics({
   return <ContentMetricAnalysis metric={METRIC_BY_VIEW[view.id]} statsPeriod={statsPeriod} />;
 }
 
-/** Inventory and period creations count the same Library rows, so both columns agree. */
 async function ContentTotalsAnalysis({ statsPeriod }: { statsPeriod: StatsPeriod }) {
   const { current } = statsPeriod;
 
@@ -106,10 +101,6 @@ function getMetricCount({
   return metric === "media" ? counts.images + counts.audio : counts[metric];
 }
 
-/**
- * New courses, lessons, skills, items and media share one trend shape but keep separate entries
- * in the analysis picker because they answer distinct operational questions.
- */
 async function ContentMetricAnalysis({
   metric,
   statsPeriod,

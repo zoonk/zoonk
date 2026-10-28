@@ -5,10 +5,6 @@ import { type AdminPublicSource } from "@/data/sources/get-source";
 import { formatDateTime } from "@/lib/format";
 import { FreshnessCommandForm } from "../freshness-command-form";
 
-/**
- * Everything admins check on a public source: where it came from, when it was
- * read and when it is read again, and what was extracted from it.
- */
 export function SourcePublicDetails({ source }: { source: AdminPublicSource }) {
   return (
     <div className="flex flex-col gap-8">

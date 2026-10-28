@@ -6,11 +6,7 @@ export type BrainPowerLeader = { brainPower: number; rank: number; user: User };
 
 type BrainPowerByUser = Awaited<ReturnType<typeof listBrainPowerByUser>>[number];
 
-/**
- * The cached loader coordinates the ranked progress query, matching user count,
- * and account lookup while keeping its positional arguments stable for React's
- * request memoization.
- */
+/** Positional arguments, since React's request memoization compares argument identity. */
 const cachedListBrainPowerLeaders = cacheAdminData(
   async (startDateIso: string, limit: number, offset: number) => {
     const startDate = new Date(startDateIso);
@@ -30,11 +26,6 @@ const cachedListBrainPowerLeaders = cacheAdminData(
   },
 );
 
-/**
- * The leaderboard ranks users by Brain Power earned on or after the supplied
- * date. The start date stays explicit so the route owns the selected period
- * and the cached database helper remains deterministic.
- */
 export function listBrainPowerLeaders({
   limit,
   offset,
@@ -47,11 +38,6 @@ export function listBrainPowerLeaders({
   return cachedListBrainPowerLeaders(startDate.toISOString(), limit, offset);
 }
 
-/**
- * Grouping daily rows produces one ranked total per user. The user id provides
- * a deterministic tie-breaker so pagination cannot reorder equal BP totals
- * between requests.
- */
 function listBrainPowerByUser({
   limit,
   offset,
@@ -71,19 +57,11 @@ function listBrainPowerByUser({
   });
 }
 
-/**
- * The grouped ranking and qualifying-user count must use the same daily-row
- * boundary or pagination totals can disagree with the visible leaderboard.
- */
 function getBrainPowerProgressWhere({ startDate }: { startDate: Date }) {
   return { brainPowerEarned: { gt: 0 }, date: { gte: startDate } };
 }
 
-/**
- * Prisma can rank the grouped progress totals but cannot include each user in
- * the same group query. Rebuilding rows from the ranked ids preserves the
- * database order after the account records are loaded separately.
- */
+/** Prisma can rank the grouped totals but can't include each user in the same group query. */
 function mergeBrainPowerWithUsers({
   brainPowerByUser,
   offset,
@@ -100,11 +78,7 @@ function mergeBrainPowerWithUsers({
   );
 }
 
-/**
- * A user can disappear between the grouped progress query and the account
- * lookup if an admin deletes it concurrently. Omitting that stale row keeps
- * the page usable instead of failing the whole leaderboard request.
- */
+/** An admin can delete a user between the two queries, so a missing account is left out. */
 function createBrainPowerLeader({
   index,
   offset,

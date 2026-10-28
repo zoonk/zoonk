@@ -6,7 +6,6 @@ import {
   leaderboardPeriods,
 } from "./leaderboard-period";
 
-/** URL-backed links keep leaderboard periods shareable without adding client state. */
 export function LeaderboardPeriodFilter({ period }: { period: LeaderboardPeriod }) {
   return (
     <nav aria-label="Leaderboard period filter" className="flex flex-wrap gap-1">
@@ -31,7 +30,6 @@ export function LeaderboardPeriodFilter({ period }: { period: LeaderboardPeriod 
   );
 }
 
-/** Switching periods resets pagination so a shorter period cannot open an empty page. */
 function getLeaderboardPeriodHref(
   period: LeaderboardPeriod,
 ): "/leaderboard" | `/leaderboard?${string}` {

@@ -15,10 +15,6 @@ const INITIAL_STATE: FreshnessCommandState = {
   submissionId: 0,
 };
 
-/**
- * "Read again" for an exam's stored notice, the only way a reading is redone: with today's
- * instructions, even when the notice didn't change ("Check now" reads it only when it did).
- */
 export function ReadNoticeAgainForm({ examBlueprintId }: { examBlueprintId: string }) {
   const [state, formAction] = useActionState(sendFreshnessCommandAction, INITIAL_STATE);
 

@@ -14,11 +14,6 @@ type TaskSpendRow = {
   task: string;
 };
 
-/**
- * Spend per task, most expensive first: calls, cost (shared Library content against content made
- * for one learner), the share of input read from a prompt cache, how many calls ran at the flex
- * tier, and the median latency.
- */
 export const listAiSpendByTask = cacheAdminData(async (days: number) => {
   const since = await getAiSpendSince(days);
 

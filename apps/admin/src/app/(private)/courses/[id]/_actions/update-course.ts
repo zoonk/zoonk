@@ -23,11 +23,6 @@ const ERRORS = {
   unauthorized: "You can't edit courses.",
 } as const;
 
-/**
- * Keeps a course's display title, normalized search title, and URL slug in sync
- * while preserving the admin's ability to choose a slug independently. Core checks
- * the admin role again and expires the catalog's caches of both addresses.
- */
 export async function updateCourseAction(
   previousState: UpdateCourseState,
   formData: FormData,

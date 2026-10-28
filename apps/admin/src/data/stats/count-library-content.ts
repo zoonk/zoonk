@@ -2,11 +2,6 @@ import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
-/**
- * The v2 Library inventory, counted the same way as its created-per-day rows: courses with an
- * outline, chapters whose lesson outline is written, lessons with generated content (plus every
- * outline), and skills that weren't merged into another.
- */
 export const countLibraryContent = cacheAdminData(async () => {
   const [
     courses,

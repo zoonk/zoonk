@@ -12,7 +12,6 @@ import { ReviewFlagActions } from "./review-flag-actions";
 
 const COLUMNS: AdminTableColumn[] = [{ label: "Flagged" }, { label: "" }];
 
-/** The lesson or question a flag names, linking to its admin page. */
 function FlaggedTarget({ flag }: { flag: AdminReviewFlag }) {
   if (flag.lesson) {
     return (
@@ -33,7 +32,6 @@ function FlaggedTarget({ flag }: { flag: AdminReviewFlag }) {
   return "—";
 }
 
-/** Where the change came from: the exam it updated, or the source itself. */
 function NoticeOrigin({ notice }: { notice: AdminReviewFlag["notice"] }) {
   const exam = notice.examBlueprint;
 
@@ -57,11 +55,6 @@ function describeNotice(notice: AdminReviewFlag["notice"]): string {
   return `${formatDateTime(notice.createdAt)}${fields}`;
 }
 
-/**
- * Open flags grouped by the change that raised them: the notice's line, when and what changed, where
- * it came from, and every lesson and question built on the source before it, each with "Rewrite
- * now" and "Dismiss".
- */
 export async function ReviewFlagList() {
   const flags = await listOpenReviewFlags();
   const groups = [...Map.groupBy(flags, (flag) => flag.noticeId).values()];

@@ -3,7 +3,6 @@ import { getSource } from "@/data/sources/get-source";
 import { listChangeNotices } from "@/data/sources/list-change-notices";
 import { ChangeNoticeTable } from "../change-notice-table";
 
-/** Public sources only: a private upload shows its metadata and nothing else. */
 export async function SourceChangeNotices({ sourceId }: { sourceId: string }) {
   "use cache: private";
 

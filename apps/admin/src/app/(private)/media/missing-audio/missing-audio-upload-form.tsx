@@ -12,10 +12,6 @@ import {
 
 const INITIAL_STATE: UploadMissingAudioState = { error: null, status: "idle", submissionId: 0 };
 
-/**
- * Each row has its own file input and submission state, so one upload never
- * blocks or clears another word or sentence.
- */
 export function MissingAudioUploadForm({
   resourceId,
   resourceKind,

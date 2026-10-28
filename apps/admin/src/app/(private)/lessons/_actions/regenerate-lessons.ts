@@ -19,10 +19,6 @@ function readLessonCount(data: unknown): number {
   return 0;
 }
 
-/**
- * Rewrites the lessons a model or prompt version wrote, through the API that owns the writing
- * workflow. Each click takes a bounded batch, so a large set is rewritten in steps an admin sees.
- */
 export async function regenerateLessonsAction(
   previousState: RegenerateLessonsState,
   formData: FormData,

@@ -24,10 +24,6 @@ const ITEM_COLUMNS: AdminTableColumn[] = [
   { label: "Language" },
 ];
 
-/**
- * The exam blueprints read from this source and the items that cite it. A
- * private upload shows only counts, in its metadata.
- */
 export async function SourceCitations({ sourceId }: { sourceId: string }) {
   "use cache: private";
 

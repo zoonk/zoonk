@@ -14,7 +14,6 @@ export type ContentCounts = Record<ContentCountKey, number>;
 export type DailyContentRow = ContentCounts & { date: Date };
 export type ContentCreatedSqlRow = { count: bigint; date: Date; type: string };
 
-/** Builds every content count from one rule, so no type can be left out. */
 function buildContentCounts(count: (key: ContentCountKey) => number): ContentCounts {
   return {
     audio: count("audio"),
@@ -30,7 +29,6 @@ function buildContentCounts(count: (key: ContentCountKey) => number): ContentCou
   };
 }
 
-/** Folds the per-type rows of the created-content union into one row per day. */
 export function toDailyContentRows(rows: readonly ContentCreatedSqlRow[]): DailyContentRow[] {
   const byDay = Map.groupBy(rows, (row) => row.date.toISOString());
 
@@ -44,10 +42,6 @@ export function toDailyContentRows(rows: readonly ContentCreatedSqlRow[]): Daily
     .toSorted((a, b) => a.date.getTime() - b.date.getTime());
 }
 
-/**
- * Period totals are the sum of the same daily rows the charts draw, so a headline can never
- * disagree with its bars.
- */
 export function sumContentCounts(rows: readonly ContentCounts[]): ContentCounts {
   return buildContentCounts((key) => rows.reduce((sum, row) => sum + row[key], 0));
 }

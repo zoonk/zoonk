@@ -2,7 +2,6 @@ import "server-only";
 import { cacheAdminData } from "@/data/_utils/admin-data-cache";
 import { prisma } from "@zoonk/db";
 
-/** The queue shows the newest changes first; older open flags wait on the next page load. */
 const MAX_OPEN_FLAGS = 200;
 
 const cachedListOpenReviewFlags = cacheAdminData(async () =>
@@ -25,10 +24,6 @@ const cachedListOpenReviewFlags = cacheAdminData(async () =>
 
 export type AdminReviewFlag = Awaited<ReturnType<typeof listOpenReviewFlags>>[number];
 
-/**
- * Lessons and questions built on a source that changed after they were written, waiting for the
- * daily rewrite or an admin's decision, newest change first.
- */
 export async function listOpenReviewFlags() {
   return cachedListOpenReviewFlags();
 }
@@ -38,7 +33,6 @@ const cachedCountOpenReviewFlags = cacheAdminData(
     prisma.contentReviewFlag.count({ where: { ...target, status: "open" } }),
 );
 
-/** Open flags on one lesson or question, for its admin page. */
 export async function countOpenReviewFlags(target: { itemId: string } | { lessonId: string }) {
   return cachedCountOpenReviewFlags(target);
 }

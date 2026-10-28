@@ -28,12 +28,10 @@ const ITEM_COLUMNS: AdminTableColumn[] = [
   { label: "Field" },
 ];
 
-/** Tables show the first rows; past that, the section says so next to the full count. */
 function getUsageDescription(total: number): string | undefined {
   return total > MAX_SKILL_USAGE_ROWS ? `Showing the first ${MAX_SKILL_USAGE_ROWS}.` : undefined;
 }
 
-/** Where the skill is taught (lessons, chapters) and practiced (items). */
 export async function SkillUsage({ skillId }: { skillId: string }) {
   "use cache: private";
 

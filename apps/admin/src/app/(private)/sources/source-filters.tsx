@@ -10,7 +10,6 @@ const KIND_OPTIONS = [
   { label: "Upload", value: "upload" as const },
 ];
 
-/** Search (public titles only), kind and visibility filters, all kept in the URL. */
 export async function SourceFilters({ searchParams }: Pick<PageProps<"/sources">, "searchParams">) {
   const filters = parseSourceListFilters(await searchParams);
 

@@ -6,10 +6,6 @@ const PERCENT = 100;
 
 type TrendPoint = { count: number; date: Date };
 
-/**
- * Turns database buckets into the full visible series of the selected period. Additive metrics
- * pass zero for empty buckets; rates and averages pass null, since no data isn't 0%.
- */
 export function buildMetricTrend({
   emptyValue,
   points,
@@ -28,7 +24,6 @@ export function buildMetricTrend({
   });
 }
 
-/** A share in percent, or null when there's nothing to divide by. */
 export function toPercent({
   denominator,
   numerator,
@@ -39,7 +34,6 @@ export function toPercent({
   return denominator > 0 ? (numerator / denominator) * PERCENT : null;
 }
 
-/** Rate points for the buckets that have a denominator; the others stay empty on the chart. */
 export function toRatePoints<Row extends { date: Date }>({
   denominator,
   numerator,

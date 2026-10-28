@@ -6,10 +6,6 @@ import { getStatsDateBucketSql } from "@/data/stats/_utils/stats-date-bucket";
 import { prisma, sql } from "@zoonk/db";
 import { type HistoryPeriod } from "@zoonk/utils/date-ranges";
 
-/**
- * Calculates answer accuracy inside each visible time bucket so the chart
- * reflects the same correct-answer share as the selected-period headline.
- */
 export const getAccuracyRateTrend = cacheAdminData(
   async (start: Date, end: Date, period: HistoryPeriod) => {
     const dateBucketSql = getStatsDateBucketSql({ date: sql`answers.answered_at`, period });
