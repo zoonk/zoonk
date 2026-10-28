@@ -5,12 +5,12 @@ import {
   getChapterTitleRows,
   getLessonHomeChapterRows,
   getLessonSkillRows,
-  getMergedSkillRows,
   getSkillLevelRows,
   getSkillPrerequisiteRows,
   toIdKey,
 } from "../../library/_utils/shared-rows";
 import { type ItemSkillRows } from "./goal-plan-projection";
+import { loadSkillSurvivors } from "./update-learner-skill";
 
 /**
  * Where the skill projection reads Library rows: a GET's shared caches (`"shared"`, see
@@ -124,28 +124,14 @@ export function readItemSkillRows(
 
 /**
  * Skills are merged, never deleted: each skill maps to its survivor, or to itself (see
- * `loadSkillSurvivors`).
+ * `loadSkillSurvivors`). Resolve merges fresh: Admin moves learner mastery to the survivor,
+ * and its invalidation cannot clear Main's shared entries for the old ids.
  */
 export async function readSurvivorOf(
   skillIds: readonly string[],
   from: LibrarySource,
 ): Promise<(skillId: string) => string> {
-  const merged = await readMergedSkills(skillIds, from);
-  const survivors = new Map(merged.map((skill) => [skill.id, skill.mergedIntoId ?? skill.id]));
-  return (skillId) => survivors.get(skillId) ?? skillId;
-}
-
-async function readMergedSkills(skillIds: readonly string[], from: LibrarySource) {
-  if (from === "shared") {
-    return getMergedSkillRows(toIdKey(skillIds));
-  }
-
-  return skillIds.length === 0
-    ? []
-    : from.skill.findMany({
-        select: { id: true, mergedIntoId: true },
-        where: { id: { in: [...skillIds] }, mergedIntoId: { not: null } },
-      });
+  return loadSkillSurvivors(skillIds, from === "shared" ? prisma : from);
 }
 
 /** These chapters' titles. */

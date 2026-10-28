@@ -6,7 +6,7 @@ import { prisma } from "@zoonk/db";
  * cached once for all of them ("use cache"). Each leaf is keyed by the ids of the rows themselves
  * (lessons, skills, chapters, courses), never by a parent whose children another app adds: a plan
  * that gains a lesson asks for a new key and reads it fresh. What can change under an existing id
- * (a skill merge, a renamed chapter) shows within the default revalidation, as the catalog does;
+ * (a renamed chapter) shows within the default revalidation, as the catalog does;
  * writes read these rows fresh. Callers pass ids through `toIdKey`, so equal sets share one entry.
  */
 
@@ -45,20 +45,6 @@ export async function getLessonHomeChapterRows(lessonIds: string[]) {
 }
 
 export type LessonSkillRow = Awaited<ReturnType<typeof getLessonSkillRows>>[number];
-
-/** The merged skills among these, each with its survivor. */
-export async function getMergedSkillRows(skillIds: string[]) {
-  "use cache";
-
-  if (skillIds.length === 0) {
-    return [];
-  }
-
-  return prisma.skill.findMany({
-    select: { id: true, mergedIntoId: true },
-    where: { id: { in: skillIds }, mergedIntoId: { not: null } },
-  });
-}
 
 /** The prerequisite edges between these skills. */
 export async function getSkillPrerequisiteRows(skillIds: string[]) {
