@@ -111,7 +111,7 @@ struct ChallengeStepView: View {
       ForEach(ChallengeWalk.meters(content, decisions: decisions), id: \.meter.id) { meter in
         Gauge(value: Double(meter.value), in: 0...100) {
           HStack {
-            Text(meter.meter.label)
+            Text(named(meter.meter.label))
             Spacer()
             if meter.change != 0 {
               Text(meter.change, format: .number.sign(strategy: .always()))
@@ -121,7 +121,7 @@ struct ChallengeStepView: View {
           }
           .font(.footnote)
         }
-        .gaugeStyle(.accessoryLinear)
+        .gaugeStyle(.linearCapacity)
         .tint(.success)
       }
     }
