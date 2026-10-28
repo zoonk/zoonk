@@ -2,8 +2,13 @@ import { use } from "react";
 import { type MathMarkupRenderer, mathMarkupKey } from "./math-key";
 import { MathMarkupContext } from "./math-markup-context";
 
-let renderer: MathMarkupRenderer | null = null;
-let loading: Promise<MathMarkupRenderer | null> | null = null;
+/** KaTeX's load, marked settled the way `use` reads a promise once it has its renderer. */
+type RendererLoad = Promise<MathMarkupRenderer | null> & {
+  status?: "fulfilled";
+  value?: MathMarkupRenderer | null;
+};
+
+let loading: RendererLoad | null = null;
 
 /**
  * Loads KaTeX, so a screen with math downloads it before its formulas show. A chunk that fails to
@@ -13,16 +18,23 @@ let loading: Promise<MathMarkupRenderer | null> | null = null;
  * doesn't follow.
  */
 export function preloadMathRenderer(): Promise<MathMarkupRenderer | null> {
-  loading ??= import("./math-markup").then(
-    (module) => {
-      renderer = module.renderMathMarkup;
-      return renderer;
-    },
-    () => {
-      loading = null;
-      return null;
-    },
-  );
+  if (!loading) {
+    const load: RendererLoad = import("./math-markup").then(
+      (module) => module.renderMathMarkup,
+      () => {
+        loading = null;
+        return null;
+      },
+    );
+
+    // `use` reads a promise marked settled at once, so formulas drawn after KaTeX arrived don't suspend.
+    void load.then((render) => {
+      load.status = "fulfilled";
+      load.value = render;
+    });
+
+    loading = load;
+  }
 
   return loading;
 }
@@ -42,6 +54,8 @@ export function useMathMarkup(formula: { displayMode: boolean; text: string }): 
     return drawn;
   }
 
-  const render = renderer ?? use(preloadMathRenderer());
+  // Always `use` on the load, even once KaTeX is here: React retries a formula that suspended on it
+  // expecting the same call, and warns when it's skipped.
+  const render = use(preloadMathRenderer());
   return render ? render(formula) : null;
 }
