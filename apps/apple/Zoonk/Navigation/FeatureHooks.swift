@@ -24,11 +24,11 @@ extension PracticeHooks {
         }
       },
       askButton: { target in
-        // The target says whether the answer was missed, not whether it was checked yet.
         AnyView(
           TutorAskButton(
             scope: .item(
-              itemId: target.itemId, blockId: nil, answered: target.missed, missed: target.missed),
+              itemId: target.itemId, blockId: target.blockId, answered: target.answered,
+              missed: target.missed),
             quote: target.question))
       },
       challengeCall: { planItemId in AnyView(ChallengeCallView(planItemId: planItemId)) },
