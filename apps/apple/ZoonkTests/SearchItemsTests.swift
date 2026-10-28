@@ -90,7 +90,7 @@ extension LearnerSummary {
   ) -> LearnerSummary {
     LearnerSummary(
       activeGoalID: goals.first?.id,
-      buddyKind: .zu,
+      buddy: BuddyLook(),
       buddyName: nil,
       goals: goals,
       identity: LearnerIdentity(isAnonymous: isAnonymous, signedInAt: .now, userID: "learner"),

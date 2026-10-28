@@ -4,8 +4,9 @@ import Foundation
 /// fields they draw (missions, the buddy's look) as they need them.
 struct LearnerSummary: Equatable, Sendable {
   let activeGoalID: String?
-  /// Which buddy the learner has, whose own name says it until the learner names it.
-  let buddyKind: BuddyKind
+  /// The learner's buddy as the frame draws it (which buddy, its glasses, its belt and Energy),
+  /// whose own name says it until the learner names it.
+  let buddy: BuddyLook
   /// The buddy's name, which names its tab; nil until the learner names it.
   let buddyName: String?
   let goals: [LearnerGoal]
@@ -114,7 +115,11 @@ struct LearnerSummaryAPI: LearnerSummaryAPIClient {
 func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> LearnerSummary {
   LearnerSummary(
     activeGoalID: summary.activeGoalId,
-    buddyKind: BuddyKind(rawValue: summary.buddy.kind.rawValue) ?? .zu,
+    buddy: BuddyLook(
+      kind: BuddyKind(rawValue: summary.buddy.kind.rawValue) ?? .zu,
+      glasses: BuddyGlasses(rawValue: summary.buddy.glasses.rawValue) ?? .round,
+      belt: ProgressBelt(rawValue: summary.buddy.beltColor.rawValue) ?? .white,
+      energy: summary.buddy.energy, studiedToday: summary.buddy.studiedToday),
     buddyName: summary.buddy.name,
     goals: summary.goals.map { goal in
       LearnerGoal(

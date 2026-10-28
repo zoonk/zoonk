@@ -29,7 +29,7 @@ struct PreferencesView: View {
           } label: {
             Text(preferences.buddy.displayName)
             Text(
-              "\(BuddyStage(belt: learner.summary.value?.level?.belt.rawValue).name) · \(preferences.buddy.glasses.worn)",
+              "\(BuddyStage(belt: learner.summary.value?.level?.belt ?? .white).name) · \(preferences.buddy.glasses.worn)",
               tableName: "Settings",
               comment: "The buddy's growth stage and glasses, as in “Baby · Round glasses”")
           }

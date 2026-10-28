@@ -3,7 +3,7 @@ import SwiftUI
 extension LearnerSummary {
   /// The learner's buddy by name, the one who answers in every conversation.
   var buddyDisplayName: String {
-    Zoonk.buddyName(kind: buddyKind, name: buddyName)
+    Zoonk.buddyName(kind: buddy.kind, name: buddyName)
   }
 }
 

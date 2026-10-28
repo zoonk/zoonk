@@ -64,7 +64,7 @@ struct MilestoneCeremony: View {
           // The buddy wears them at once; the save finishes after the ceremony closes.
           Task {
             await buddyStore.save(
-              BuddyChoice(kind: summary.buddyKind, name: summary.buddyName, glasses: glasses))
+              BuddyChoice(kind: summary.buddy.kind, name: summary.buddyName, glasses: glasses))
           }
           onClose()
         } label: {

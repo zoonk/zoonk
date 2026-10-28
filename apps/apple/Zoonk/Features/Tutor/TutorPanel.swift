@@ -90,7 +90,7 @@ struct TutorAskButton: View {
           "Ask \(name)", tableName: "Tutor",
           comment: "Opens the buddy's panel; the argument is the buddy's name")
       } icon: {
-        BuddyFace(kind: summary.summary.value?.buddyKind ?? .zu)
+        BuddyFace(kind: summary.summary.value?.buddy.kind ?? .zu)
       }
     }
     .buttonStyle(.bordered)

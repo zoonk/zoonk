@@ -196,20 +196,7 @@ extension BuddyGlasses {
   }
 }
 
-/// The buddy's stage, from the learner's belt: Brain Power only goes up, so the buddy only grows.
-enum BuddyStage {
-  case baby
-  case young
-  case adult
-
-  init(belt: String?) {
-    switch belt {
-    case "green", "orange": self = .young
-    case "blue", "purple", "brown", "red", "gray", "black": self = .adult
-    default: self = .baby
-    }
-  }
-
+extension BuddyStage {
   var name: Text {
     switch self {
     case .baby: Text("Baby", tableName: "Settings", comment: "The buddy's first growth stage")

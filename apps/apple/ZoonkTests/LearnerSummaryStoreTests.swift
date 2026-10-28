@@ -43,7 +43,7 @@ private actor LearnerSummaryAPIStub: LearnerSummaryAPIClient {
 
     return LearnerSummary(
       activeGoalID: nil,
-      buddyKind: .zu,
+      buddy: BuddyLook(),
       buddyName: nil,
       goals: [],
       identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: "learner"),
