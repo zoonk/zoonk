@@ -62,7 +62,7 @@ struct LessonVerdictView: View {
       }
 
       if let feedback = result.feedback, !feedback.isEmpty {
-        LessonRichText(feedback)
+        LessonTextBlocks(feedback)
           .font(.subheadline)
       }
 
@@ -268,7 +268,7 @@ private struct LessonExplainAnswerView: View {
         )
         .font(.caption.weight(.medium))
         .foregroundStyle(.secondary)
-        LessonRichText(explanation)
+        LessonTextBlocks(explanation)
           .font(.subheadline)
       }
     case .refused(let refusal):

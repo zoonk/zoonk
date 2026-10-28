@@ -50,6 +50,20 @@ struct LessonRichText: View {
   }
 }
 
+/// A screen's reading text: paragraphs, short lists and tables of data, each line read as
+/// `LessonRichText` reads it (main's `LessonBody`).
+struct LessonTextBlocks: View {
+  let text: String
+
+  init(_ text: String) {
+    self.text = text
+  }
+
+  var body: some View {
+    RichTextBlocks(text) { LessonRichText.attributed($0) }
+  }
+}
+
 /// A screen's title, question or prompt.
 struct LessonQuestionText: View {
   let text: String

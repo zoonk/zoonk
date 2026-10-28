@@ -90,7 +90,7 @@ private struct HookStepView: View {
         isGuess: true
       ) { context.select(.hookGuess(optionId: $0)) }
     } else {
-      LessonRichText(content.text ?? "")
+      LessonTextBlocks(content.text ?? "")
         .font(.title2.weight(.semibold))
       StepMedia(step: step, description: content.image, visual: content.visual)
     }
@@ -109,7 +109,7 @@ private struct ExplanationStepView: View {
       LessonQuestionText(text: title)
     }
 
-    LessonRichText(content.text)
+    LessonTextBlocks(content.text)
       .font(.body)
     StepMedia(step: step, description: content.image, visual: content.visual)
 
@@ -138,7 +138,7 @@ private struct WorkedExampleStepView: View {
       LessonQuestionText(text: title)
     }
 
-    LessonRichText(content.problem)
+    LessonTextBlocks(content.problem)
     StepMedia(step: step, description: content.image, visual: content.visual)
 
     VStack(alignment: .leading, spacing: 12) {
@@ -148,7 +148,7 @@ private struct WorkedExampleStepView: View {
             .font(.subheadline.monospacedDigit().weight(.semibold))
             .foregroundStyle(.secondary)
           VStack(alignment: .leading, spacing: 4) {
-            LessonRichText(part.text)
+            LessonTextBlocks(part.text)
             if let math = part.math {
               Text(LessonMath.attributed(math))
             }
@@ -159,7 +159,7 @@ private struct WorkedExampleStepView: View {
     }
 
     if shown >= content.steps.count {
-      LessonRichText(content.result)
+      LessonTextBlocks(content.result)
         .font(.headline)
     }
   }
@@ -172,7 +172,7 @@ private struct CheckStepView: View {
 
   var body: some View {
     if let context = content.context {
-      LessonRichText(context)
+      LessonTextBlocks(context)
         .foregroundStyle(.secondary)
     }
 
@@ -205,7 +205,7 @@ private struct TypedAnswerStepView: View {
 
   var body: some View {
     if let context = content.context {
-      LessonRichText(context)
+      LessonTextBlocks(context)
         .foregroundStyle(.secondary)
     }
 

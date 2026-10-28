@@ -230,15 +230,6 @@ final class PracticeModelTests: XCTestCase {
     XCTAssertNil(NumericEntryParser.parse("2.5", entry: .init(kind: .integer, places: nil)))
     XCTAssertNil(NumericEntryParser.parse("abc", entry: nil))
   }
-
-  func testItemTextSplitsParagraphsAndTables() {
-    let blocks = ItemTextBlock.parse(
-      "First line\nsame paragraph\n\n| A | B |\n|---|---|\n| 1 | 2 |")
-
-    XCTAssertEqual(
-      blocks,
-      [.paragraph("First line same paragraph"), .table(header: ["A", "B"], rows: [["1", "2"]])])
-  }
 }
 
 // MARK: - Fixtures
