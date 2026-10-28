@@ -3005,6 +3005,35 @@
         }
       }
     },
+    "Couldn't save. Check your connection and try again." : {
+      "comment" : "Resuming the goal failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speichern nicht möglich. Prüfe deine Internetverbindung und versuche es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se ha podido guardar. Comprueba tu conexión e inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d’enregistrer. Vérifie ta connexion et réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível salvar. Confira sua conexão e tente novamente."
+          }
+        }
+      }
+    },
     "Counts toward a mission" : {
       "comment" : "A block that moves today's missions",
       "localizations" : {
@@ -3448,35 +3477,6 @@
         }
       }
     },
-    "Go to your Plan" : {
-      "comment" : "Opens the Plan to resume a goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zu deinem Plan"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ir a tu Plan"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Accéder à ton plan"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ir para o Plano"
-          }
-        }
-      }
-    },
     "goal reached" : {
       "comment" : "A day's status",
       "localizations" : {
@@ -3821,6 +3821,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Precisa de ajustes"
+          }
+        }
+      }
+    },
+    "New goal" : {
+      "comment" : "Starts a new goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neues Ziel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nuevo objetivo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouvel objectif"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nova meta"
           }
         }
       }
@@ -4885,6 +4914,35 @@
         }
       }
     },
+    "Resume %@" : {
+      "comment" : "Resumes the paused goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ fortsetzen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reanudar %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprendre %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retomar %@"
+          }
+        }
+      }
+    },
     "Review" : {
       "comment" : "Mission: do the day's review",
       "localizations" : {
@@ -5287,6 +5345,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prática de conversação"
+          }
+        }
+      }
+    },
+    "Start a new goal, or pick another one above." : {
+      "comment" : "Today for a finished goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starte ein neues Ziel oder wähle oben ein anderes aus."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empieza un objetivo nuevo o elige otro de arriba."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commence un nouvel objectif ou choisis-en un autre ci-dessus."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comece uma nova meta ou escolha outra acima."
           }
         }
       }
@@ -5709,6 +5796,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chegou o dia"
+          }
+        }
+      }
+    },
+    "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more." : {
+      "comment" : "Why resuming the goal failed on the free plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit dem Free-Tarif kannst du immer nur ein Ziel verfolgen. Pausiere dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El plan gratuito permite seguir un objetivo a la vez. Pon en pausa el otro objetivo para reanudar este o pásate a Plus para seguir más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La formule gratuite ne permet de suivre qu’un seul objectif à la fois. Mets ton autre objectif en pause pour reprendre celui-ci, ou passe à Plus pour en suivre davantage."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No plano Grátis, você acompanha uma meta por vez. Pause sua outra meta para retomar esta ou assine o Plus para acompanhar mais."
           }
         }
       }
@@ -6322,6 +6438,35 @@
         }
       }
     },
+    "You finished %@." : {
+      "comment" : "Today for a finished goal",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast %@ abgeschlossen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has completado %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as terminé %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você concluiu %@."
+          }
+        }
+      }
+    },
     "You studied on your day off." : {
       "comment" : "Rest day studied",
       "localizations" : {
@@ -6521,6 +6666,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu plano tem uma mudança para você conferir."
+          }
+        }
+      }
+    },
+    "Your plan picks up from today, starting with the lessons planned for the days you paused." : {
+      "comment" : "What resuming the paused goal moves",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan wird ab heute fortgesetzt. Er beginnt mit den Lektionen, die für die Tage geplant waren, an denen du pausiert hast."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan se retoma desde hoy, empezando por las lecciones previstas para los días que estuvo en pausa."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan reprend à partir d’aujourd’hui, avec les leçons prévues pour les jours où tu l’avais mis en pause."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano recomeça hoje, começando pelas aulas previstas para os dias em que você pausou."
           }
         }
       }
