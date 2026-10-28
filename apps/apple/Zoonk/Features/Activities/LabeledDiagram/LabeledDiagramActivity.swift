@@ -178,10 +178,10 @@ private struct LabeledDiagramCanvas: View {
             if mark == .wrong {
               Text(slot.label)
                 .fontWeight(.semibold)
-                .foregroundStyle(.primary)
+                .foregroundStyle(Color.primary)
               if let feedback = fields.mixUpFeedback(correct: slot.label, placed: placed) {
                 LessonRichText(feedback)
-                  .foregroundStyle(.secondary)
+                  .foregroundStyle(Color.secondary)
               }
             }
           } else if let placed {

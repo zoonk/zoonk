@@ -25,13 +25,15 @@ struct MapExplorerFields: Decodable, Hashable, Sendable {
   let baseMapId: String
   let places: [Place]
 
-  /// The part of the map that shows every place with room around it.
+  /// The part of the map that shows every place with room around it, close enough that places a
+  /// street apart get pins of their own.
   var visibleRect: MKMapRect {
     let points = places.map { MKMapPoint($0.coordinate) }
     let bounds = points.reduce(MKMapRect.null) {
       $0.union(MKMapRect(origin: $1, size: MKMapSize()))
     }
-    let side = max(bounds.width, bounds.height, MKMapPointsPerMeterAtLatitude(0) * 2_000)
+    let side = max(
+      bounds.width, bounds.height, MKMapPointsPerMeterAtLatitude(places.first?.latitude ?? 0) * 200)
     return bounds.insetBy(dx: -side * 0.35, dy: -side * 0.35)
   }
 }

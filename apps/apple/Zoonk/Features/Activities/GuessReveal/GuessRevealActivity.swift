@@ -70,16 +70,17 @@ private struct GuessRevealCanvas: View {
           if let workings = fields.truth.workings, fields.truth.kind == "computed" {
             VStack(alignment: .leading, spacing: 4) {
               ForEach(Array(workings.enumerated()), id: \.offset) { _, working in
-                HStack(alignment: .firstTextBaseline) {
-                  Text(working.label)
-                  Spacer(minLength: 8)
+                HStack(alignment: .firstTextBaseline, spacing: 8) {
                   if let value = ActivityExpression.evaluate(working.expression) {
-                    Text(ActivityNumberFormat.format(value, unit: fields.unit))
+                    Text(ActivityNumberFormat.format(value))
                       .fontWeight(.semibold)
                       .monospacedDigit()
                   }
+                  Text(working.label)
+                    .foregroundStyle(.secondary)
                 }
                 .font(.subheadline)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityElement(children: .combine)
               }
             }
