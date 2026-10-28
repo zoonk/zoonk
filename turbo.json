@@ -4,6 +4,7 @@
   "global": {
     "env": [
       "AI_GATEWAY_API_KEY",
+      "ANDROID_*",
       "APPLE_*",
       "AUTH_COOKIE_CACHE_ENABLED",
       "BETTER_AUTH_SECRET",
