@@ -487,7 +487,7 @@ test.describe("Live call server states", () => {
     }
   });
 
-  test("an End OpenAI didn't confirm retains the transcript, and retry completes only the originating ended connection", async ({
+  test("an End OpenAI didn't confirm still saves the call, with its kept transcript, from its own connection", async ({
     stateCallResources: owned,
     request,
   }) => {
@@ -496,7 +496,7 @@ test.describe("Live call server states", () => {
     const page = await owned.open(learner);
 
     try {
-      const peer = await answerLiveCalls(page, "answers");
+      await answerLiveCalls(page, "answers");
       const actions = observeActions({ conversationId: call.id, page });
       await page.goto(`/conversation/${call.id}`);
       await page.getByRole("button", { name: "Start the call" }).click();
@@ -512,48 +512,21 @@ test.describe("Live call server states", () => {
       await closeBehavior({ mode: "reject", request, sessionId: connection.providerSessionId });
       await page.getByRole("button", { exact: true, name: "End" }).click();
 
-      await expect(callAlert(page)).toContainText(
-        "The call is still closing. Try again in a moment.",
-      );
-
-      expect(actions.end).toContain(connection.id);
-      expect(actions.complete).toHaveLength(0);
-
-      await peer.emit({
-        delta: " Late words must not be saved.",
-        end_ms: 10_000,
-        start_ms: 9000,
-        type: "session.output_transcript.delta",
-      });
-
-      await peer.emit({ session: { id: connection.providerSessionId }, type: "session.started" });
-
-      await expect(callAlert(page)).toContainText(
-        "The call is still closing. Try again in a moment.",
-      );
-
-      expect(actions.complete).toHaveLength(0);
-
-      expect(
-        await prisma.languageConversation.findUnique({ where: { id: call.id } }),
-      ).toMatchObject({ feedback: null, status: "ready" });
-
-      await closeBehavior({ mode: "confirm", request, sessionId: connection.providerSessionId });
-      await page.getByRole("button", { exact: true, name: "Try again" }).click();
+      // The hangup failed, yet the call is saved: its review run ends the connection later.
       await expect.poll(() => actions.complete.length).toBe(1);
+      expect(actions.end).toContain(connection.id);
       expect(actions.complete[0]?.connectionId).toBe(connection.id);
 
       expect(actions.complete[0]?.turns).toEqual(
         expect.arrayContaining([expect.objectContaining({ text: "Please keep this reply." })]),
       );
 
-      expect(JSON.stringify(actions.complete[0]?.turns)).not.toContain(
-        "Late words must not be saved",
-      );
-
-      expect(
-        await prisma.liveCallConnection.findUnique({ where: { id: connection.id } }),
-      ).toMatchObject({ state: "ended" });
+      // E2E blocks the review model: it's tried again a few times before the call saves without feedback.
+      await expect
+        .poll(() => prisma.languageConversation.findUnique({ where: { id: call.id } }), {
+          timeout: 20_000,
+        })
+        .toMatchObject({ status: "completed" });
     } finally {
       await owned.cleanup();
     }

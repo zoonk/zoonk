@@ -120,9 +120,9 @@ export function useCallMute(liveSession: LiveCallSession | null) {
 type LiveCallSummary = Omit<LanguageConversationCompletionInput, "timeZone" | "usedHelp">;
 
 /**
- * Has the server close the call, then returns what it saves; null while the server hasn't
- * confirmed the close, so nothing is reviewed or rewarded before it has and the transcript stays
- * here for another try.
+ * Asks the server to hang the call up, then returns what it saves, whether or not the hangup went
+ * through: the review that completing starts hangs the call up itself before anything is reviewed,
+ * and the deadline does if that fails too. Null only for a call that never got a connection.
  */
 export function useCallFinish({
   getConnectionId,
@@ -136,9 +136,11 @@ export function useCallFinish({
   return useCallback(async (): Promise<LiveCallSummary | null> => {
     const connectionId = getConnectionId();
 
-    if (!connectionId || !(await release())) {
+    if (!connectionId) {
       return null;
     }
+
+    await release();
 
     return {
       connectionId,
