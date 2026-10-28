@@ -359,20 +359,32 @@ private struct CourseDetailEmptyView: View {
 }
 
 extension View {
-  /// Keeps a course's or a chapter's page in a readable column on a wide screen, as main's pages
-  /// keep their measure, while its background still fills the window.
-  func catalogReadableWidth() -> some View {
-    modifier(CatalogReadableWidth())
+  /// Keeps a catalog page (a course's, a chapter's, search's results) in a readable column on a
+  /// wide screen, as main's pages keep their measure, while its background still fills the window.
+  /// Partially folded, iPhone Duo reads it on the page before the fold instead of across it.
+  func catalogReadableWidth(_ column: CGFloat = 720) -> some View {
+    modifier(CatalogReadableWidth(column: column))
   }
 }
 
 private struct CatalogReadableWidth: ViewModifier {
-  @ScaledMetric(relativeTo: .body) private var column = 720
-  @State private var width: CGFloat = 0
+  @ScaledMetric private var column: CGFloat
+  @State private var space = PaneSpace(width: 0)
+
+  init(column: CGFloat) {
+    _column = ScaledMetric(wrappedValue: column, relativeTo: .body)
+  }
 
   func body(content: Content) -> some View {
+    let side = max((space.width - column) / 2, 0)
+
     content
-      .safeAreaPadding(.horizontal, max((width - column) / 2, 0))
-      .onGeometryChange(for: CGFloat.self, of: \.size.width) { width = $0 }
+      .safeAreaPadding(.leading, space.fold == nil ? side : 0)
+      .safeAreaPadding(.trailing, space.fold.map { space.width - $0.lowerBound } ?? side)
+      .onGeometryChange(for: PaneSpace.self) {
+        PaneSpace($0)
+      } action: {
+        space = $0
+      }
   }
 }

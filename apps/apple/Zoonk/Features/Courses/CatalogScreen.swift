@@ -7,12 +7,19 @@ import SwiftUI
 struct CatalogScreen: View {
   @State private var searchText = ""
   @State private var category: CourseCategory?
+  @State private var isFolded = false
 
   var body: some View {
     AllCoursesView(category: $category, searchText: searchText)
+      .onGeometryChange(for: Bool.self) {
+        PaneSpace($0).fold != nil
+      } action: {
+        isFolded = $0
+      }
+      // The drawer's field spans the width, so partially folded the search moves to the bar.
       .searchable(
         text: $searchText,
-        placement: .navigationBarDrawer(displayMode: .always),
+        placement: isFolded ? .toolbar : .navigationBarDrawer(displayMode: .always),
         prompt: Text(
           "Search all courses", tableName: "Courses",
           comment: "Searches the public catalog, including chapters.")

@@ -2,25 +2,32 @@ import SwiftUI
 
 /// The chosen category's courses inside the catalog's list: one row each on a narrow screen, and
 /// on a wide one as many columns as fit, so a wider screen shows more courses instead of wider
-/// rows (main's grid from `lg`). The last course loads the next page.
+/// rows (main's grid from `lg`). Partially folded, iPhone Duo gets the same number of columns on
+/// each side of the fold, so no course sits in the crease. The last course loads the next page.
 struct CourseCatalogGrid: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(CourseCatalogStore.self) private var catalog
+  @State private var space = PaneSpace(width: 0)
 
   let category: CourseCategory?
   let page: CourseCatalogPage
 
+  private static let minimumColumn = 240.0
+  private static let spacing = 24.0
+
   var body: some View {
     Section {
       if usesColumns {
-        LazyVGrid(
-          columns: [GridItem(.adaptive(minimum: 240), spacing: 24, alignment: .top)],
-          alignment: .leading, spacing: 24
-        ) {
+        LazyVGrid(columns: columns, alignment: .leading, spacing: Self.spacing) {
           ForEach(page.courses) { course in
             cell(course, isColumn: true)
           }
+        }
+        .onGeometryChange(for: PaneSpace.self) {
+          PaneSpace($0)
+        } action: {
+          space = $0
         }
         .padding(.vertical, 8)
       } else {
@@ -42,6 +49,17 @@ struct CourseCatalogGrid: View {
 
   private var usesColumns: Bool {
     horizontalSizeClass == .regular && !dynamicTypeSize.isAccessibilitySize
+  }
+
+  private var columns: [GridItem] {
+    guard let fold = space.columnsAroundFold(minimum: Self.minimumColumn, spacing: Self.spacing)
+    else {
+      return [
+        GridItem(.adaptive(minimum: Self.minimumColumn), spacing: Self.spacing, alignment: .top)
+      ]
+    }
+
+    return fold.map { GridItem(.fixed($0.width), spacing: $0.spacing, alignment: .top) }
   }
 
   @ViewBuilder

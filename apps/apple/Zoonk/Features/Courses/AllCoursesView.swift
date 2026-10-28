@@ -2,6 +2,9 @@ import SwiftUI
 
 struct AllCoursesView: View {
   @Environment(CourseCatalogStore.self) private var catalog
+  /// Partially folded, iPhone Duo keeps the box and the categories under the title, on the page
+  /// before the fold, while the courses take both pages. Nil, the list's own margin, elsewhere.
+  @State private var leadingPageMargin: CGFloat?
 
   @Binding var category: CourseCategory?
   let searchText: String
@@ -26,6 +29,7 @@ struct AllCoursesView: View {
   private var browseCatalog: some View {
     List {
       GoalStartEntry(isBoxOnly: true)
+        .listSectionMargins(.trailing, leadingPageMargin)
 
       if let counts = catalog.categoryCounts.value {
         Section {
@@ -35,9 +39,18 @@ struct AllCoursesView: View {
         }
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
+        .listSectionMargins(.trailing, leadingPageMargin)
       }
 
       CatalogCourses(category: category)
+    }
+    // Section margins count from the list's whole bounds, which run under the vertical bar.
+    .onGeometryChange(for: CGFloat?.self) { proxy in
+      PaneSpace(proxy).fold.map {
+        proxy.size.width - $0.lowerBound + proxy.safeAreaInsets.trailing
+      }
+    } action: {
+      leadingPageMargin = $0
     }
     .loads(catalog.courses(category: category), catalog.categoryCounts)
   }

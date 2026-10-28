@@ -25,8 +25,7 @@ struct CourseCatalogSearchResultsView: View {
         CatalogFailureRecoveryView(context: .catalog, failure: failure, retry: retry)
       }
     }
-    .frame(maxWidth: 900)
-    .frame(maxWidth: .infinity)
+    .catalogReadableWidth(900)
   }
 
   private func resultsList(_ results: CatalogSearchResults) -> some View {
