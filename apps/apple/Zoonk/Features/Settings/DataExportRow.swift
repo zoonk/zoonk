@@ -1,8 +1,6 @@
 import SwiftUI
 import UniformTypeIdentifiers
 
-/// A download as a row ("Download my data", "Download my memory"): what it is, and a Download
-/// button that says when the file is being prepared, then saves the JSON where the learner picks.
 struct DataExportRow: View {
   @State private var file: ExportFile?
   @State private var isExporting = false

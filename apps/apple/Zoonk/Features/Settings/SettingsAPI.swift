@@ -93,7 +93,7 @@ struct SettingsAPI: SettingsAPIClient {
     }
   }
 
-  /// Deletes the fact and returns it as the change's `previous`, which an undo sends back.
+  /// Returns the fact an undo sends back.
   func deleteMemoryFact(token: String, factId: String) async throws -> MemoryFact {
     try await clients.perform(token: token) { client in
       switch try await client.deleteMemoryFact(path: .init(factId: factId)) {
@@ -107,7 +107,7 @@ struct SettingsAPI: SettingsAPIClient {
     }
   }
 
-  /// Undoes a deletion: the fact comes back with the facts it had replaced.
+  /// Returns the fact with the facts it had replaced.
   func restoreMemoryFact(token: String, factId: String) async throws -> [MemoryFact] {
     try await clients.perform(token: token) { client in
       let output = try await client.createMemoryChangeReversal(
@@ -164,7 +164,6 @@ struct SettingsAPI: SettingsAPIClient {
   }
 }
 
-/// An export as main downloads it: readable JSON with ISO dates.
 private func exportFile(_ value: some Encodable) throws -> Data {
   let encoder = JSONEncoder()
   encoder.outputFormatting = [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]

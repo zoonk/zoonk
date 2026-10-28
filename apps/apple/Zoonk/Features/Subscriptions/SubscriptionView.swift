@@ -1,9 +1,6 @@
 import StoreKit
 import SwiftUI
 
-/// The subscription sheet a Plus lock's "See Plus" opens (main's `/subscription`): an account
-/// subscribes in the App Store's own view, a guest creates an account first and a visitor logs in,
-/// each under the same offer.
 struct SubscriptionScreen: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(AppRouter.self) private var router
@@ -275,7 +272,6 @@ struct SubscriptionView: View {
   }
 }
 
-/// Main's offer: what Plus gives (`PlusBenefits`), after a free account's own plan.
 private struct SubscriptionMarketingContent: View {
   var allowance: PlanAllowance?
 

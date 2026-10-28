@@ -1,11 +1,5 @@
 import SwiftUI
 
-/// Today's session as a full-screen task: a question block plays right here (S7's
-/// `QuestionBlockScreen`, whose finish shows the moment and whose "Stop for today" the summary);
-/// between blocks it shows what the last one earned and the next stop, with Continue and "Stop for
-/// today"; a lesson still being written waits here with a ready block to do meanwhile; once the day
-/// is done (or stopped) it shows the summary. Lessons, challenges and writing play on their own
-/// task over this one, so closing them comes back here.
 struct SessionScreen: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(StudySessionStore.self) private var store
@@ -104,7 +98,6 @@ private struct SessionContent: View {
         }
       default:
         if let moment = store.moment {
-          // A block that played here says what it earned at once, while the day is read.
           List {
             Section {
               MomentSummary(moment: moment, title: nil)
@@ -132,13 +125,10 @@ private struct SessionContent: View {
         Task { await session.refresh() }
       }
     }
-    // A milestone the block earned shows once, before its moment.
     .milestoneCeremony(store.moment?.ceremony)
   }
 }
 
-/// The moment between blocks and the next stop: what the last block earned, the day's progress,
-/// the next block, and Continue beside "Stop for today". A lesson being written waits here.
 private struct NextStopView: View {
   @Environment(AppRouter.self) private var router
   @Environment(StudySessionStore.self) private var store
@@ -157,8 +147,6 @@ private struct NextStopView: View {
   private var next: StudyBlock? { day.nextBlock }
 
   var body: some View {
-    // Where there's room, what the last block earned and where the day stands lead, and what's
-    // next with the way on follows, by the right thumb.
     PaneSplit {
       List {
         daySoFar
@@ -183,7 +171,6 @@ private struct NextStopView: View {
     }
   }
 
-  /// What the last block earned (the day's missions with it) and where the day stands.
   @ViewBuilder
   private var daySoFar: some View {
     if let moment {
@@ -272,24 +259,20 @@ private struct NextStopView: View {
     .listRowInsets(EdgeInsets())
   }
 
-  /// The finished block's name, as the day lists it.
   private func title(of moment: BlockMoment) -> String {
     day.blocks.first { $0.id == moment.blockId }?.displayTitle
       ?? String(localized: "Block", table: "Session", comment: "A finished block without a name")
   }
 
-  /// Where the next lesson the learner asked for stands; nil until they ask.
   private var writing: LessonWriting? {
     next.flatMap(today.writing(for:))
   }
 
-  /// Whether work runs for the next lesson (written now, or picked by the plan first), so Continue
-  /// waits for it; a lesson nobody is writing keeps Continue, whose tap asks for it.
+  /// A lesson nobody is writing keeps Continue, whose tap asks for it.
   private var isLessonWorkRunning: Bool {
     next?.kind == .learn && (lessonStatus == "generating" || writing?.isRunning == true)
   }
 
-  /// A lesson that can't be written now: refused, or set aside by its checks.
   private var isLessonUnavailable: Bool {
     switch writing {
     case .refused, .setAside: true
@@ -313,7 +296,6 @@ private struct NextStopView: View {
         comment: "A ready block to do while the lesson is written")
   }
 
-  /// What the next lesson's writing says under it.
   private var lessonLine: AnyView? {
     guard next?.kind == .learn else {
       return nil
@@ -352,7 +334,7 @@ private struct NextStopView: View {
       .foregroundStyle(.secondary))
   }
 
-  /// A ready question block to do while the lesson is written (core's `findAlternativeStudyBlock`).
+  /// Mirrors core's `findAlternativeStudyBlock`.
   private var alternative: StudyBlock? {
     day.blocks.first {
       $0.id != next?.id && $0.status == .pending && $0.kind != .learn && $0.waitReason == nil
@@ -414,8 +396,7 @@ private struct NextStopView: View {
     }
   }
 
-  /// Follows the next lesson while it's written (or while the plan picks it, by reading the day
-  /// again), and opens it on its own once it's written when the learner asked for it.
+  /// Opens the lesson on its own once it's written only when the learner asked for it.
   private func followLesson() async {
     guard let next, next.kind == .learn else {
       lessonStatus = nil
@@ -454,17 +435,13 @@ private struct NextStopView: View {
   }
 }
 
-/// The lesson the next stop follows, and what the learner's tap asked for it.
 private struct FollowedLesson: Equatable {
   let lessonID: String?
   let writing: LessonWriting?
 }
 
-/// What a block finished here earned, in a few quiet lines: its name done, its Brain Power, how
-/// many it got right and when it comes back; the missions it moved follow in the day's moment.
 private struct MomentSummary: View {
   let moment: BlockMoment
-  /// The block's name as the day lists it; nil while the day is read.
   let title: String?
 
   var body: some View {

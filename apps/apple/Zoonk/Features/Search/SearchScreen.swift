@@ -1,10 +1,7 @@
 import SwiftUI
 
-/// The search tab, main's command palette as a native search: with no query, the learner's actions,
-/// places and other goals; with one, those that match plus settings and help, quick explanations
-/// and the catalog's courses and chapters, then asking the buddy about it or starting a goal with
-/// it. Everything but the catalog comes from the learner summary, so typing requests only the
-/// debounced catalog search.
+/// Everything but the catalog comes from cached reads, so typing requests only the debounced
+/// catalog search.
 struct SearchScreen: View {
   @Environment(AppRouter.self) private var router
   @Environment(BuddyStore.self) private var buddy
@@ -114,14 +111,10 @@ struct SearchScreen: View {
     }
   }
 
-  /// The Plan's own syllabus for the goal on screen: searching reads it from the cache and asks
-  /// for it only once, the first time a query needs it.
   private var syllabus: Resource<GoalSyllabus>? {
     learner.summary.value?.shownGoal.map { plans.syllabus(goalId: $0.id) }
   }
 
-  /// The exam page's read, for an exam goal's finished mocks: searching asks for it once, as the
-  /// syllabus.
   private var exam: Resource<ExamView>? {
     guard learner.summary.value?.places.exam == true,
       let goal = learner.summary.value?.shownGoal
@@ -144,7 +137,6 @@ struct SearchScreen: View {
     text.map { searchFallback(question: $0, summary: learner.summary.value) }
   }
 
-  /// Waits for typing to pause before asking the catalog, and drops the results of a cleared query.
   private func searchCatalog() async {
     guard text != nil else {
       catalog.clearSearch()

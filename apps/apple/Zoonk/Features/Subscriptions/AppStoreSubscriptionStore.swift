@@ -237,7 +237,8 @@ private actor AppStoreSubscriptionSynchronizationCoordinator {
   private var inFlightSynchronizations = [
     AppStoreSubscriptionSynchronizationKey: Task<AccountSubscriptionSynchronizationResult, Never>
   ]()
-  /// Distinct StoreKit events must update the shared account snapshot in order, even when completion, updates, and launch reconciliation arrive together.
+  /// Distinct StoreKit events must update the account snapshot in order, even when completion,
+  /// updates, and launch reconciliation arrive together.
   private var synchronizationTail: Task<Void, Never>?
 
   func process(

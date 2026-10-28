@@ -1,9 +1,6 @@
 import Foundation
 import Observation
 
-/// The learner summary every part of the frame reads (tabs, goal switcher, level, account), kept
-/// fresh for the app's lifetime: read on launch and sign-in, on returning to the foreground after
-/// a minute, at its `nextChangeAt`, and after any mutation, since every write can change it.
 @MainActor
 @Observable
 final class LearnerSummaryStore {
@@ -31,8 +28,7 @@ final class LearnerSummaryStore {
     }
   }
 
-  /// Reads the summary again when it says it changes. The composition root runs this in a task
-  /// keyed by `nextChangeAt`, so a newer summary reschedules it.
+  /// Run in a task keyed by `nextChangeAt`, so a newer summary reschedules it.
   func refreshAtNextChange() async {
     guard let nextChangeAt = summary.value?.nextChangeAt else {
       return
@@ -47,8 +43,6 @@ final class LearnerSummaryStore {
     await summary.refresh()
   }
 
-  /// Makes `goalID` the goal every tab shows. The learning profile changed, so the summary and
-  /// every screen reading the active goal follow.
   func switchGoal(to goalID: String) async {
     guard let session = cache.session.authenticatedSession, summary.value?.activeGoalID != goalID
     else {

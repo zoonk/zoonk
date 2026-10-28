@@ -1,22 +1,18 @@
 import Foundation
 
-/// Preferences' part of the learning profile.
 struct LearningPreferences: Equatable, Sendable {
   var buddy: BuddyChoice
-  /// False until the learner saves a buddy: the row then offers "Choose your buddy".
   var buddyPicked: Bool
   var availableGlasses: [BuddyGlasses]
   var dailyLimitMinutes: Int?
   var soundsEnabled: Bool
 }
 
-/// One change to Preferences; only the field that changed is sent.
 enum PreferencesUpdate: Equatable, Sendable {
   case buddy(BuddyChoice)
   case dailyLimitMinutes(Int?)
   case soundsEnabled(Bool)
 
-  /// Applies the change to what's shown, so the control moves before the server answers.
   func applied(to preferences: LearningPreferences) -> LearningPreferences {
     var next = preferences
 
@@ -33,8 +29,7 @@ enum PreferencesUpdate: Equatable, Sendable {
     return next
   }
 
-  /// Keys the body sends as `null`: "No limit" clears the daily limit, which the generated body
-  /// would leave out.
+  /// "No limit" clears the daily limit, which the generated body would leave out.
   var nullKeys: [String] {
     self == .dailyLimitMinutes(nil) ? ["dailyLimitMinutes"] : []
   }
@@ -56,7 +51,7 @@ enum PreferencesUpdate: Equatable, Sendable {
   }
 }
 
-/// The daily limits Preferences offers, in minutes (core's `DAILY_LIMIT_CHOICES`).
+/// Core's `DAILY_LIMIT_CHOICES`, in minutes.
 let dailyLimitChoices = [15, 30, 45, 60, 90, 120, 180]
 
 struct LearnerMemory: Equatable, Sendable {
@@ -65,7 +60,7 @@ struct LearnerMemory: Equatable, Sendable {
 }
 
 struct MemoryFact: Equatable, Identifiable, Sendable {
-  /// The order the Memory screen lists categories in: what learners aim for first, then who they are.
+  /// Listed in this order: what learners aim for first, then who they are.
   enum Category: String, CaseIterable, Sendable {
     case goals
     case background
@@ -75,7 +70,6 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
     case context
   }
 
-  /// Where a fact came from, so the learner can tell what they said from what was noticed.
   enum Source: Equatable, Sendable {
     case chat
     case noticed
@@ -91,7 +85,6 @@ struct MemoryFact: Equatable, Identifiable, Sendable {
   let createdAt: Date
 }
 
-/// What the subscription screen shows of a free plan: its buddy messages today.
 struct PlanAllowance: Equatable, Sendable {
   enum Tier: String, Sendable {
     case free

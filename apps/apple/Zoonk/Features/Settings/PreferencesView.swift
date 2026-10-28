@@ -1,8 +1,6 @@
 import SwiftUI
 
-/// Preferences: the buddy, then the lessons' sounds and daily limit, then the app's language, which
-/// iOS keeps per app in Settings. Light, dark and reduced motion follow the device, so there's no
-/// theme picker, as on main.
+/// Light, dark and reduced motion follow the device, so there's no theme picker.
 struct PreferencesView: View {
   @Environment(\.openURL) private var openURL
   @Environment(LearnerSummaryStore.self) private var learner
@@ -152,8 +150,6 @@ struct PreferencesView: View {
   }
 }
 
-/// A setting that didn't save, said under the controls: the screen shows what's saved, and the
-/// control the learner used tries again.
 struct SettingsSaveError: View {
   var body: some View {
     Section {
@@ -169,8 +165,6 @@ struct SettingsSaveError: View {
   }
 }
 
-/// What a settings page shows before its data: a spinner only while nothing is cached, and a way to
-/// try again when the first read failed.
 struct SettingsLoadingState<Value: Equatable & Sendable>: View {
   let state: LoadState<Value>
   let retry: () -> Void

@@ -1,7 +1,5 @@
 import SwiftUI
 
-/// Everything Zoonk remembers, grouped by category, with where each fact came from. The learner
-/// can correct or delete any fact (with undo), turn memory off and download it.
 struct MemoryView: View {
   @Environment(SettingsStore.self) private var settings
   @State private var editing: MemoryFact?
@@ -169,10 +167,9 @@ struct MemoryView: View {
   }
 }
 
-/// Core's limit for one fact (`MAX_MEMORY_STATEMENT_LENGTH`); the server checks it too.
+/// Core's `MAX_MEMORY_STATEMENT_LENGTH`.
 private let memoryStatementLimit = 160
 
-/// One fact, where it came from, and a menu to correct or delete it.
 private struct MemoryFactRow: View {
   let fact: MemoryFact
   let edit: () -> Void
@@ -233,7 +230,6 @@ private struct MemoryFactRow: View {
   }
 }
 
-/// "Memory updated", with the deleted fact struck through and an undo, right under the switch.
 private struct MemoryUpdatedNotice: View {
   let fact: MemoryFact
   let status: SettingsStore.UndoStatus

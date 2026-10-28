@@ -1,10 +1,6 @@
 import Foundation
 import Observation
 
-/// The settings pages' data for the signed-in learner: Preferences, Memory and the plan's
-/// allowance, each a cached resource. Saves are optimistic: the control moves at once and goes
-/// back, with "That didn't save", if the server refuses; a saved change invalidates what it touched
-/// so the summary and other screens follow. A save whose learner left meanwhile changes nothing.
 @MainActor
 @Observable
 final class SettingsStore {
@@ -18,13 +14,10 @@ final class SettingsStore {
   let memory: Resource<LearnerMemory>
   let allowance: Resource<PlanAllowance>
 
-  /// What the settings pages say about the learner's last change, kept with the learner it's
-  /// about so the next learner never sees it.
+  /// Kept with the learner it's about, so the next learner never sees it.
   private struct Notice {
     var owner: AuthenticatedSession
-    /// A save that didn't go through, said once under the controls until the next save.
     var saveFailed = false
-    /// The fact the learner last deleted, for the "Memory updated" notice and its undo.
     var deletedFact: MemoryFact?
     var undoStatus = UndoStatus.idle
   }
@@ -142,8 +135,6 @@ final class SettingsStore {
     }
   }
 
-  /// Brings the last deleted fact back, with the facts it had replaced. Any failure means it
-  /// changed since, as main says.
   func undoDeletion() async {
     guard let deleted = deletedFact else {
       return
@@ -171,7 +162,6 @@ final class SettingsStore {
     }
   }
 
-  /// A purchase or restore changed the plan: the summary's tier and the allowance follow.
   func subscriptionChanged() {
     cache.invalidate([.allowance, .userSubscription])
   }
@@ -189,7 +179,6 @@ final class SettingsStore {
     notice?.owner == cache.session.authenticatedSession ? notice : nil
   }
 
-  /// Changes the current learner's notice, starting a fresh one for a learner who had none.
   private func setNotice(_ change: (inout Notice) -> Void) {
     guard let owner = cache.session.authenticatedSession else {
       return
@@ -200,7 +189,6 @@ final class SettingsStore {
     notice = next
   }
 
-  /// A save through `AppCache.mutate`, saying "That didn't save" when it failed for this learner.
   private func save<Value: Sendable>(
     _ changed: Set<DataDomain>,
     _ write: (AuthenticatedSession) async throws -> Value

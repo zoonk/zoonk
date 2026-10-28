@@ -1,10 +1,8 @@
 import Foundation
 
-/// A row of the search tab: what it says and what it does. Rows are data, so building them is cheap
-/// and testable; `SearchScreen` runs their actions.
 struct SearchItem: Equatable, Identifiable {
   enum Action: Equatable {
-    /// Opens the buddy's tab with the question waiting in its composer.
+    /// The question waits in the buddy's composer for the learner's own send.
     case ask(String)
     case feedback
     case open(AppRoute)
@@ -17,7 +15,6 @@ struct SearchItem: Equatable, Identifiable {
   let title: String
   let systemImage: String
   var badge = 0
-  /// Other words that find the row, such as "Buddy" for the buddy's own name.
   var keywords: String?
   let action: Action
 
@@ -30,14 +27,10 @@ struct SearchGroup: Equatable, Identifiable {
   let id: String
   let title: String
   let items: [SearchItem]
-  /// Settings, help and quick explanations are found by name only, as on main.
   var isShownWithoutQuery = true
 }
 
-/// Main's palette groups in its order: the learner's actions, where they can go, their other goals,
-/// quick explanations, the plan's subjects and chapters (from the Plan's cached `syllabus`), the
-/// exam's finished mocks (from the exam page's cached `mocks`), then settings and help. A visitor
-/// gets the ways in instead.
+/// Mirrors main's palette groups and their order.
 func searchGroups(
   summary: LearnerSummary?, isSignedIn: Bool, syllabus: GoalSyllabus? = nil,
   mocks: [ExamMockSummary] = []
@@ -58,7 +51,6 @@ func searchGroups(
   ].filter { !$0.items.isEmpty }
 }
 
-/// What a query can always do, last: ask the buddy about it, then start a goal from it.
 func searchFallback(question: String, summary: LearnerSummary?) -> SearchGroup {
   let startGoal = SearchItem(
     id: "start-goal",
@@ -231,7 +223,6 @@ private func explanations(_ summary: LearnerSummary) -> SearchGroup {
     isShownWithoutQuery: false)
 }
 
-/// The exam's finished mocks, newest first as the exam page lists them, each opening its result.
 private func finishedMocks(_ mocks: [ExamMockSummary]) -> SearchGroup {
   SearchGroup(
     id: "mocks",
@@ -250,7 +241,6 @@ private func finishedMocks(_ mocks: [ExamMockSummary]) -> SearchGroup {
     isShownWithoutQuery: false)
 }
 
-/// The shown goal's subjects (where they have their own page) and chapters, found by name.
 private func plan(_ syllabus: GoalSyllabus?) -> SearchGroup {
   guard let syllabus else {
     return SearchGroup(id: "plan", title: "", items: [])
@@ -376,7 +366,6 @@ private func place(_ tab: AppTab, route: AppRoute) -> SearchItem {
     action: .open(route))
 }
 
-/// The buddy tutors a learner's goals; guests can't talk to it, as on main.
 private func canAskBuddy(_ summary: LearnerSummary) -> Bool {
   !summary.identity.isAnonymous && !summary.followedGoals.isEmpty
 }

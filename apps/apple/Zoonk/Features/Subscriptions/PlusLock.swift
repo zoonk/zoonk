@@ -1,10 +1,7 @@
 import SwiftUI
 
-/// Where a feature the learner's plan doesn't include shows (a row, a card's title, a path's mock),
-/// main's `PlusMark`: a quiet "Plus" chip, neither blue (right, done) nor a pick's ring. Plus
-/// features are never hidden: free learners and guests see them as Plus learners do, with this
-/// mark, and they open as usual to a screen whose `PlusNotice` says what Plus unlocks. VoiceOver
-/// hears "Available with Plus", or `accessibilityLabel` where the mark is the learner's own plan.
+/// Plus features are never hidden: free learners and guests see them with this mark, and they open
+/// as usual to a screen whose `PlusNotice` says what Plus unlocks.
 struct PlusMark: View {
   var accessibilityLabel: Text?
 
@@ -23,9 +20,7 @@ struct PlusMark: View {
   }
 }
 
-/// The one notice for what the learner's plan doesn't include (main's `PlusNotice`): "Available with
-/// Plus", what Plus unlocks here in one line, and "See Plus", which opens the subscription sheet. At
-/// most one on a screen, inline where the locked things are, never a pop-up.
+/// At most one on a screen, inline where the locked things are, never a pop-up.
 ///
 /// - `title` replaces "Available with Plus" where something the free plan had ends (a free exam
 ///   plan's first week).
@@ -95,9 +90,6 @@ extension PlusNotice where Action == EmptyView {
   }
 }
 
-/// "See Plus": opens the subscription sheet, where a free learner subscribes, a guest creates an
-/// account first and a visitor logs in. Styled by its place: bordered in a `PlusNotice`, and
-/// `.mainAction` where it's a locked task's main action.
 struct SeePlusButton: View {
   @Environment(AppRouter.self) private var router
 

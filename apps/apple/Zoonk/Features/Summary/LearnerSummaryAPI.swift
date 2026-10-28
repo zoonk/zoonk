@@ -1,20 +1,14 @@
 import Foundation
 
-/// What the app's frame shows about the signed-in learner, read in one request. Features add the
-/// fields they draw (missions, the buddy's look) as they need them.
 struct LearnerSummary: Equatable, Sendable {
   let activeGoalID: String?
-  /// The learner's buddy as the frame draws it (which buddy, its glasses, its belt and Energy),
-  /// whose own name says it until the learner names it.
   let buddy: BuddyLook
-  /// The buddy's name, which names its tab; nil until the learner names it.
   let buddyName: String?
   let goals: [LearnerGoal]
   let identity: LearnerIdentity
-  /// The learner's belt and level, nil before they have one.
   let level: LearnerLevel?
-  /// When the summary changes without a write (the next midnight, the subscription's next change
-  /// or the session's end), so it's read again then.
+  /// When the summary changes without a write: the next midnight, the subscription's next change or
+  /// the session's end.
   let nextChangeAt: Date
   let places: LearnerPlaces
   let readAt: Date
@@ -25,13 +19,12 @@ struct LearnerSummary: Equatable, Sendable {
 }
 
 struct LearnerGoal: Equatable, Identifiable, Sendable {
-  /// The Library course the goal follows; nil for any other goal.
   var courseID: String? = nil
   let dailyMinutes: Int
   let id: String
   let kind: Kind
   let status: Status
-  /// The goal's date (YYYY-MM-DD, a calendar day), nil without one.
+  /// `YYYY-MM-DD`, a calendar day.
   let targetDate: String?
   let title: String
 
@@ -55,7 +48,6 @@ struct LearnerLevel: Equatable, Sendable {
   let level: Int
 }
 
-/// The Study places the active goal has (main's sidebar shortcuts).
 struct LearnerPlaces: Equatable, Sendable {
   let exam: Bool
   let mindMaps: Bool
@@ -154,23 +146,19 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
 }
 
 extension LearnerSummary {
-  /// The goals the switcher lists, as main's: followed goals not archived.
   var followedGoals: [LearnerGoal] {
     goals.filter { $0.kind != .explain && $0.status != .archived }
   }
 
-  /// Quick explanations not read to the end, which open themselves from the switcher.
   var openExplanations: [LearnerGoal] {
     goals.filter { $0.kind == .explain && $0.status != .archived && $0.status != .completed }
   }
 
-  /// The goal the tabs show: the active one, else the first followed goal.
   var shownGoal: LearnerGoal? {
     followedGoals.first { $0.id == activeGoalID } ?? followedGoals.first
   }
 }
 
-/// The API sends instants as milliseconds since the epoch.
 func dateFromEpochMilliseconds(_ milliseconds: Int) -> Date {
   Date(timeIntervalSince1970: Double(milliseconds) / 1_000)
 }

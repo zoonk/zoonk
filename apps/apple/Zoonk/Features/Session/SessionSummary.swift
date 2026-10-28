@@ -1,7 +1,5 @@
 import Foundation
 
-/// What changed in a session (`GET /v1/study-sessions/{sessionId}/summary`), as the summary screen
-/// draws it.
 struct SessionSummary: Decodable, Equatable, Sendable {
   struct Belt: Decodable, Equatable, Sendable {
     struct Level: Decodable, Equatable, Sendable {
@@ -61,8 +59,6 @@ struct SessionSummary: Decodable, Equatable, Sendable {
   let tomorrow: Tomorrow?
 }
 
-/// What a block finished on the session screen earned (`StudyBlockCompletion`), as its moment
-/// says it.
 struct BlockMoment: Decodable, Equatable, Sendable {
   struct FullMeal: Decodable, Equatable, Sendable {
     let bonus: Int
@@ -72,7 +68,7 @@ struct BlockMoment: Decodable, Equatable, Sendable {
   let blockId: String
   let brainPower: Int
   let ceremony: Milestone?
-  /// The day a lesson in it comes back for review, `YYYY-MM-DD`.
+  /// `YYYY-MM-DD`.
   let comesBackOn: String?
   let completedMissions: [StudyMission.Kind]
   let correct: Int
@@ -82,7 +78,6 @@ struct BlockMoment: Decodable, Equatable, Sendable {
   let sessionCompleted: Bool
   let total: Int
 
-  /// What the block did to the day, as every result says it.
   var day: DayResult {
     DayResult(
       ceremony: ceremony,
@@ -96,8 +91,7 @@ struct BlockMoment: Decodable, Equatable, Sendable {
   }
 }
 
-/// Something the learner earned once (`Milestone` in the API): a belt, new glasses, a buddy stage
-/// or a badge. `key` is the belt color, the glasses, the stage, or `trapHunter:<boss>` for a badge.
+/// `key` is the belt color, the glasses, the stage, or `trapHunter:<boss>` for a badge.
 struct Milestone: Decodable, Equatable, Identifiable, Sendable {
   let id: String
   let key: String
@@ -105,13 +99,11 @@ struct Milestone: Decodable, Equatable, Identifiable, Sendable {
 }
 
 extension Milestone {
-  /// A milestone another feature read through the generated client, such as a practice run's.
   init(_ milestone: Components.Schemas.Milestone) {
     self.init(id: milestone.id, key: milestone.key, kind: milestone.kind.rawValue)
   }
 }
 
-/// A belt color's name, as main says it.
 func beltName(_ color: String) -> String? {
   switch color {
   case "white": String(localized: "White belt", table: "Session", comment: "A belt")

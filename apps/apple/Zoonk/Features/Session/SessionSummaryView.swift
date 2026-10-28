@@ -1,9 +1,5 @@
 import SwiftUI
 
-/// The end of today's session, or what's done so far once the learner stops: the time, what they
-/// got right and the Brain Power earned, the missions, the belt, the skills that rose and what
-/// comes tomorrow; its milestone's ceremony first, once. Finish goes back to Today, and "Keep
-/// learning" adds the plan's next lessons when there's time for them.
 struct SessionSummaryView: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(LearnerSummaryStore.self) private var learner
@@ -50,8 +46,6 @@ struct SessionSummaryView: View {
   }
 
   private func content(_ summary: SessionSummary) -> some View {
-    // Where there's room, what the day came to leads, and what moved, tomorrow and the way on
-    // follow.
     PaneSplit {
       List {
         dayResult(summary)
@@ -68,7 +62,6 @@ struct SessionSummaryView: View {
     }
   }
 
-  /// The day's result: its numbers, its missions and a new belt.
   @ViewBuilder
   private func dayResult(_ summary: SessionSummary) -> some View {
     Section {
@@ -135,7 +128,6 @@ struct SessionSummaryView: View {
 
   }
 
-  /// The skills that rose, tomorrow's lesson and the ways on.
   @ViewBuilder
   private func onward(_ summary: SessionSummary) -> some View {
     if !summary.skillsMoved.isEmpty {
@@ -259,11 +251,8 @@ struct SessionSummaryView: View {
   }
 }
 
-/// The buddy, proud of the day (main's `RewardsArt`): a beat in, its eyes close content as its chin
-/// lifts and its chest fills. Only the summary's first visit plays it, as main's
-/// `useFirstSummaryVisit` decides: the same summary opened again from Today draws it still, proud.
+/// Only the summary's first visit plays it, as main's `useFirstSummaryVisit` decides.
 private struct SummaryBuddy: View {
-  /// The summary last celebrated, by its session and the Brain Power it shows.
   private static let celebratedKey = "celebratedSessionSummary"
 
   let look: BuddyLook
