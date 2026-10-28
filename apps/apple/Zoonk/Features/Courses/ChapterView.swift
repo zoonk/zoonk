@@ -19,7 +19,7 @@ struct ChapterView: View {
       case .empty:
         ChapterDetailContent(
           chapter: chapter,
-          detail: ChapterDetail(lessons: []),
+          detail: ChapterDetail(chapter: nil, lessons: []),
           searchText: $searchText)
       case .failed(let failure):
         CatalogFailureRecoveryView(context: .chapter, failure: failure) {
@@ -78,10 +78,9 @@ private struct ChapterDetailContent: View {
 }
 
 private struct ChapterDetailList: View {
+  @Environment(AppRouter.self) private var router
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isSearching) private var isSearching
-  // Read outside the List, which doesn't pass the page's refresh action to its rows.
-  @Environment(\.refresh) private var refresh
 
   let chapter: ChapterReference
   let detail: ChapterDetail
@@ -108,25 +107,18 @@ private struct ChapterDetailList: View {
             .listRowSeparator(.hidden)
         } else {
           ForEach(filteredLessons) { lesson in
-            NavigationLink(
-              value: CourseDestination.lesson(
-                LessonReference((chapter: chapter, lesson: lesson)))
-            ) {
+            Button {
+              router.open(.lesson(lessonId: lesson.id))
+            } label: {
               CatalogNumberedRow(
                 description: lesson.displayDescription(),
                 imageURL: nil,
                 number: lesson.position + 1,
                 systemImage: "book.pages",
                 title: lesson.displayTitle()
-              ) {
-                if let progress = catalogLessonProgress(
-                  lesson: lesson,
-                  progress: detail.progress)
-                {
-                  CatalogProgressLabel(progress: progress)
-                }
-              }
+              )
             }
+            .foregroundStyle(.primary)
             .listRowInsets(
               EdgeInsets(
                 top: CatalogDetailLayout.curriculumRowVerticalInset(
@@ -170,9 +162,8 @@ private struct ChapterDetailList: View {
       }
 
       CatalogDetailActions(
-        continuation: detail.continuation,
-        destination: continuationDestination,
-        percentComplete: detail.progress?.percentComplete,
+        courseID: chapter.courseID,
+        tryLessonID: detail.tryLessonID,
         showFeedback: showFeedback)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -193,10 +184,6 @@ private struct ChapterDetailList: View {
     isSearching || catalogText(searchText) != nil
   }
 
-  private var continuationDestination: CourseDestination? {
-    chapterContinuationDestination(chapter: chapter, detail: detail)
-  }
-
   private var filteredLessons: [CourseLesson] {
     filterCourseLessons(CatalogSearchRequest(items: detail.lessons, query: searchText))
   }
@@ -205,13 +192,6 @@ private struct ChapterDetailList: View {
   private var emptyLessonsView: some View {
     if catalogText(searchText) != nil {
       ContentUnavailableView.search(text: searchText)
-    } else if detail.chapter?.generationStatus.isBeingWritten == true {
-      CatalogGenerationInProgressView(
-        checkAgain: refresh,
-        title: Text(
-          "Lessons are being written",
-          tableName: "Courses",
-          comment: "Title while a chapter's lessons are still being written."))
     } else {
       ContentUnavailableView {
         Label {
@@ -311,9 +291,7 @@ private struct ChapterLoadingView: View {
             symbolTint: .secondary,
             systemImage: "lightbulb",
             title: "Lesson title"
-          ) {
-            Text(verbatim: "Not started")
-          }
+          )
           .listRowInsets(
             EdgeInsets(
               top: CatalogDetailLayout.curriculumRowVerticalInset(

@@ -64,8 +64,6 @@ private struct CourseDetailContent: View {
 private struct CourseDetailList: View {
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.isSearching) private var isSearching
-  // Read outside the List, which doesn't pass the page's refresh action to its rows.
-  @Environment(\.refresh) private var refresh
 
   let detail: CourseDetail
   @Binding var isInformationPresented: Bool
@@ -133,14 +131,7 @@ private struct CourseDetailList: View {
         number: chapter.position + 1,
         systemImage: "rectangle.stack.fill",
         title: chapter.title
-      ) {
-        if let progress = catalogChapterProgress(
-          chapter: chapter,
-          progress: detail.progress)
-        {
-          CatalogProgressLabel(progress: progress)
-        }
-      }
+      )
     }
     .listRowInsets(
       EdgeInsets(
@@ -173,9 +164,8 @@ private struct CourseDetailList: View {
       }
 
       CatalogDetailActions(
-        continuation: detail.continuation,
-        destination: continuationDestination,
-        percentComplete: detail.progress?.percentComplete,
+        courseID: detail.course.id,
+        tryLessonID: detail.tryLessonID,
         showFeedback: showFeedback)
     }
     .frame(maxWidth: .infinity, alignment: .leading)
@@ -188,10 +178,6 @@ private struct CourseDetailList: View {
     isSearching || catalogText(searchText) != nil
   }
 
-  private var continuationDestination: CourseDestination? {
-    courseContinuationDestination(detail)
-  }
-
   private var filteredChapters: [CourseChapter] {
     filterCourseChapters(CatalogSearchRequest(items: detail.chapters, query: searchText))
   }
@@ -200,13 +186,6 @@ private struct CourseDetailList: View {
   private var emptyChaptersView: some View {
     if catalogText(searchText) != nil {
       ContentUnavailableView.search(text: searchText)
-    } else if detail.course.generationStatus.isBeingWritten {
-      CatalogGenerationInProgressView(
-        checkAgain: refresh,
-        title: Text(
-          "Chapters are being written",
-          tableName: "Courses",
-          comment: "Title while a course's chapters are still being written."))
     } else {
       ContentUnavailableView {
         Label {
@@ -323,9 +302,7 @@ private struct CourseLoadingView: View {
             number: index + 1,
             systemImage: "rectangle.stack.fill",
             title: "Chapter title"
-          ) {
-            Text(verbatim: "Not started")
-          }
+          )
           .listRowInsets(
             EdgeInsets(
               top: CatalogDetailLayout.curriculumRowVerticalInset(

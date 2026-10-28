@@ -1,70 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%lld/%lld done" : {
-      "comment" : "Chapter progress. The first value is completed lessons and the second is total lessons.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld/%2$lld abgeschlossen"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$lld/%2$lld done"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld/%2$lld completadas"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld/%2$lld terminées"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$lld/%2$lld concluídas"
-          }
-        }
-      }
-    },
-    "Account unavailable" : {
-      "comment" : "Title when My Courses cannot determine the signed-in account.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Konto nicht verfügbar"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cuenta no disponible"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compte indisponible"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Conta indisponível"
-          }
-        }
-      }
-    },
     "Advanced" : {
       "comment" : "Heading above a course's advanced chapters.",
       "localizations" : {
@@ -119,35 +55,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Todos"
-          }
-        }
-      }
-    },
-    "All Courses" : {
-      "comment" : "Segment that shows the public course catalog.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alle Kurse"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todos los cursos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tous les cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Todos os cursos"
           }
         }
       }
@@ -210,6 +117,35 @@
         }
       }
     },
+    "Build my plan" : {
+      "comment" : "Opens the start screen that builds the learner's plan from this course",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meinen Plan erstellen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparar mi plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créer mon plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montar meu plano"
+          }
+        }
+      }
+    },
     "Business" : {
       "comment" : "Course category for business.",
       "localizations" : {
@@ -235,35 +171,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Negócios"
-          }
-        }
-      }
-    },
-    "Chapter" : {
-      "comment" : "Fallback title for a chapter continuation target.\nFallback title for the chapter containing a continuation lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kapitel"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Capítulo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chapitre"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Capítulo"
           }
         }
       }
@@ -384,93 +291,6 @@
         }
       }
     },
-    "Chapters are being written" : {
-      "comment" : "Title while a course's chapters are still being written.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kapitel werden gerade erstellt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se están preparando los capítulos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les chapitres sont en cours de rédaction"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estamos escrevendo os capítulos"
-          }
-        }
-      }
-    },
-    "Check again" : {
-      "comment" : "Reloads a course or chapter whose content is still being written.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erneut prüfen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Volver a comprobar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vérifier à nouveau"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confira novamente"
-          }
-        }
-      }
-    },
-    "Check again in a minute to see them." : {
-      "comment" : "Guidance while a course or chapter is still being written.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prüfe in einer Minute noch einmal, ob sie da sind."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vuelve a comprobarlo dentro de un minuto para verlos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Vérifie à nouveau dans une minute pour les voir."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Confira novamente daqui a um minuto para ver se já estão prontos."
-          }
-        }
-      }
-    },
     "Check your connection and try again." : {
       "comment" : "Recovery guidance for an offline catalog request.",
       "localizations" : {
@@ -525,93 +345,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Comunicação"
-          }
-        }
-      }
-    },
-    "Completed" : {
-      "comment" : "Progress state for a completed chapter or lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Abgeschlossen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminé"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Completou"
-          }
-        }
-      }
-    },
-    "Continue" : {
-      "comment" : "Continues a course or chapter from the learner's next lesson.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fortsetzen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuer"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar"
-          }
-        }
-      }
-    },
-    "Continue, %lld%% complete" : {
-      "comment" : "Accessible continue action followed by the course or chapter completion percent.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fortsetzen, zu %lld %% abgeschlossen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar, %lld%% completado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuer, progression à %lld %%"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continuar, %lld%% concluído"
           }
         }
       }
@@ -699,35 +432,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Categorias de cursos"
-          }
-        }
-      }
-    },
-    "Course collection" : {
-      "comment" : "Accessibility label for switching between all courses and My Courses.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kursübersicht"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Colección de cursos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sélection de cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Coleção de cursos"
           }
         }
       }
@@ -849,7 +553,7 @@
       }
     },
     "Courses are unavailable" : {
-      "comment" : "Title when My Courses cannot be loaded from the service.\nTitle when the public course catalog cannot be loaded.",
+      "comment" : "Title when the public course catalog cannot be loaded.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -902,35 +606,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Os cursos vão aparecer aqui quando estiverem disponíveis."
-          }
-        }
-      }
-    },
-    "Create a course about %@" : {
-      "comment" : "Opens course creation from an empty category. The interpolated value is the category name.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kurs über %@ erstellen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crear un curso sobre %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Créer un cours sur %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Crie um curso sobre %@"
           }
         }
       }
@@ -1254,35 +929,6 @@
         }
       }
     },
-    "Keep your courses and progress in one place by logging in to your account." : {
-      "comment" : "Explains why signing in is useful on the My Courses screen.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Melde dich in deinem Konto an, damit deine Kurse und dein Fortschritt an einem Ort bleiben."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inicia sesión en tu cuenta para tener tus cursos y tu progreso en un solo lugar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connecte-toi à ton compte pour retrouver tes cours et ta progression au même endroit."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entre na sua conta para manter seus cursos e progresso em um só lugar."
-          }
-        }
-      }
-    },
     "Languages" : {
       "comment" : "Course category for languages.",
       "localizations" : {
@@ -1342,7 +988,7 @@
       }
     },
     "Lesson" : {
-      "comment" : "Fallback title for a lesson without a title.\nFallback title while the native lesson player is unavailable.",
+      "comment" : "Fallback title for a lesson without a title.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1366,35 +1012,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aula"
-          }
-        }
-      }
-    },
-    "Lesson player coming soon" : {
-      "comment" : "Title on the temporary destination shown before the native lesson player is available.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lektionsplayer bald verfügbar"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "El reproductor de lecciones estará disponible pronto"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Le lecteur de leçons arrive bientôt"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O reprodutor de aulas estará disponível em breve"
           }
         }
       }
@@ -1424,35 +1041,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Aulas"
-          }
-        }
-      }
-    },
-    "Lessons are being written" : {
-      "comment" : "Title while a chapter's lessons are still being written.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lektionen werden gerade erstellt"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se están preparando las lecciones"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Les leçons sont en cours de rédaction"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Estamos escrevendo as aulas"
           }
         }
       }
@@ -1573,64 +1161,6 @@
         }
       }
     },
-    "Log in" : {
-      "comment" : "Opens the native account sheet from My Courses.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Anmelden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Iniciar sesión"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Se connecter"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entrar"
-          }
-        }
-      }
-    },
-    "Log in to track your courses" : {
-      "comment" : "Title inviting signed-out learners to log in to use My Courses.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Melde dich an, um deine Kurse im Blick zu behalten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Inicia sesión para llevar el control de tus cursos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connecte-toi pour suivre tes cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entre para acompanhar seus cursos"
-          }
-        }
-      }
-    },
     "Math" : {
       "comment" : "Course category for mathematics.",
       "localizations" : {
@@ -1685,35 +1215,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mais opções"
-          }
-        }
-      }
-    },
-    "My Courses" : {
-      "comment" : "Segment that shows the signed-in learner's enrolled courses.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meine Kurse"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mis cursos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mes cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meus cursos"
           }
         }
       }
@@ -1777,7 +1278,7 @@
       }
     },
     "No courses yet" : {
-      "comment" : "Title when the public course catalog is empty.\nTitle when the signed-in learner has not enrolled in any courses.",
+      "comment" : "Title when the public course catalog is empty.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -1830,35 +1331,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ainda não há aulas"
-          }
-        }
-      }
-    },
-    "Not started" : {
-      "comment" : "Progress state for a chapter or lesson with no completed lessons.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nicht begonnen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sin empezar"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pas commencé"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Não começou"
           }
         }
       }
@@ -1979,64 +1451,6 @@
         }
       }
     },
-    "Review" : {
-      "comment" : "Reviews a completed course or chapter.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wiederholung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Repaso"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Révision"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Revisão"
-          }
-        }
-      }
-    },
-    "Review, %lld%% complete" : {
-      "comment" : "Accessible review action followed by the course or chapter completion percent.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wiederholen, zu %lld %% abgeschlossen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Repasar, %lld%% completado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réviser, progression à %lld %%"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Revisar, %lld%% concluído"
-          }
-        }
-      }
-    },
     "Science" : {
       "comment" : "Course category for science.",
       "localizations" : {
@@ -2149,35 +1563,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Buscar aulas"
-          }
-        }
-      }
-    },
-    "Search my courses" : {
-      "comment" : "Searches only the learner's enrolled courses.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meine Kurse durchsuchen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar en mis cursos"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rechercher dans mes cours"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buscar nos meus cursos"
           }
         }
       }
@@ -2298,118 +1683,60 @@
         }
       }
     },
-    "Start" : {
-      "comment" : "Starts a course or chapter that has no learner progress.",
+    "Start a goal" : {
+      "comment" : "Opens the start of a new goal from an empty catalog",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Starten"
+            "value" : "Ein Ziel starten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar"
+            "value" : "Empezar un objetivo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer"
+            "value" : "Commencer un objectif"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar"
+            "value" : "Começar uma meta"
           }
         }
       }
     },
-    "Start a course" : {
-      "comment" : "Opens course creation from an empty My Courses list.",
+    "Start free, no account needed." : {
+      "comment" : "Note under a course's start buttons for someone who isn't signed in",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einen Kurs starten"
+            "value" : "Kostenlos starten, kein Konto nötig."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar un curso"
+            "value" : "Empieza gratis, sin necesidad de crear una cuenta."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer un cours"
+            "value" : "Commence gratuitement, sans compte."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar um curso"
-          }
-        }
-      }
-    },
-    "Start learning something new today." : {
-      "comment" : "Guidance when the signed-in learner has no courses.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lerne noch heute etwas Neues."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empieza a aprender algo nuevo hoy."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commence à apprendre quelque chose de nouveau dès aujourd’hui."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comece a aprender algo novo hoje."
-          }
-        }
-      }
-    },
-    "Start, %lld%% complete" : {
-      "comment" : "Accessible start action followed by the course or chapter completion percent.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Starten, zu %lld %% abgeschlossen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empezar, %lld%% completado"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commencer, progression à %lld %%"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar, %lld%% concluído"
+            "value" : "Comece grátis, sem precisar criar uma conta."
           }
         }
       }
@@ -2530,8 +1857,37 @@
         }
       }
     },
+    "Try a lesson" : {
+      "comment" : "Opens one of the course's lessons to try before starting a plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Lektion ausprobieren"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probar una lección"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essayer une leçon"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experimentar uma aula"
+          }
+        }
+      }
+    },
     "Try again" : {
-      "comment" : "Retries account restoration from My Courses.\nRetries loading My Courses after a failure.\nRetries loading catalog content after a failure.",
+      "comment" : "Retries loading catalog content after a failure.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2559,37 +1915,8 @@
         }
       }
     },
-    "You can keep exploring this course and return when the lesson player is ready." : {
-      "comment" : "Guidance on the temporary lesson player destination.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du kannst den Kurs weiter erkunden und zurückkommen, sobald die Lektionsansicht bereit ist."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Puedes seguir explorando este curso y volver cuando el reproductor de lecciones esté listo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu peux continuer à explorer ce cours et revenir quand le lecteur de leçons sera prêt."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você pode continuar explorando este curso e voltar quando a aula estiver pronta."
-          }
-        }
-      }
-    },
     "You're offline" : {
-      "comment" : "Title when My Courses cannot load without a network connection.\nTitle when catalog content cannot load because the device is offline.",
+      "comment" : "Title when catalog content cannot load because the device is offline.",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2613,64 +1940,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você está sem conexão"
-          }
-        }
-      }
-    },
-    "Your courses are safe. Try loading them again." : {
-      "comment" : "Reassures learners after My Courses fails to load.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Kurse sind sicher. Versuch, sie noch einmal zu laden."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tus cursos siguen ahí. Intenta cargarlos de nuevo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tes cours sont toujours là. Essaie de les charger à nouveau."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Seus cursos continuam salvos. Tente carregar de novo."
-          }
-        }
-      }
-    },
-    "Zoonk couldn't load your account. Check your connection and try again." : {
-      "comment" : "Guidance when account restoration fails on My Courses.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk konnte dein Konto nicht laden. Prüfe deine Verbindung und versuche es noch einmal."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk no pudo cargar tu cuenta. Revisa tu conexión y vuelve a intentarlo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Zoonk n’a pas pu charger ton compte. Vérifie ta connexion et réessaie."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "O Zoonk não conseguiu carregar sua conta. Confira sua conexão e tente de novo."
           }
         }
       }

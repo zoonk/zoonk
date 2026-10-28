@@ -6,7 +6,6 @@ struct AppDependencies {
   let learnerSummaryStore: LearnerSummaryStore
   let lessonPlayerAPI: LessonPlayerAPI
   let mindMapsStore: MindMapsStore
-  let myCoursesStore: MyCoursesStore
   let planStore: PlanStore
   let practiceStore: PracticeStore
   let privateImageLoader: PrivateImageLoader
@@ -37,7 +36,6 @@ struct AppDependencies {
     subscriptionStore: AppStoreSubscriptionStore,
     courseCatalogAPI: (any CourseCatalogAPIClient)? = nil,
     learnerSummaryAPI: (any LearnerSummaryAPIClient)? = nil,
-    myCoursesAPI: (any MyCoursesAPIClient)? = nil,
     progressAPI: (any ProgressAPIClient)? = nil,
     settingsAPI: (any SettingsAPIClient)? = nil
   ) {
@@ -51,9 +49,6 @@ struct AppDependencies {
       api: learnerSummaryAPI ?? LearnerSummaryAPI(clients: clients),
       cache: cache)
     lessonPlayerAPI = LessonPlayerAPI(clients: clients)
-    myCoursesStore = MyCoursesStore(
-      api: myCoursesAPI ?? MyCoursesAPI(clients: clients),
-      session: session)
     goalContentStore = GoalContentStore(api: GoalContentAPI(clients: clients), cache: cache)
     mindMapsStore = MindMapsStore(api: MindMapsAPI(clients: clients), cache: cache)
     planStore = PlanStore(api: PlanAPI(clients: clients), cache: cache)

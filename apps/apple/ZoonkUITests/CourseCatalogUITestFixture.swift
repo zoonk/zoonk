@@ -1,44 +1,9 @@
 import Foundation
 import XCTest
 
-/// Keeps a pending page visible during pull-to-refresh, including a production-sized page on iPad.
-func courseCatalogPaginationUITestSnapshotJSON(pageSize: Int) throws -> String {
-  var snapshot = try XCTUnwrap(
-    try JSONSerialization.jsonObject(with: Data(courseCatalogUITestSnapshotJSON.utf8))
-      as? [String: Any])
-  let templates = try XCTUnwrap(snapshot["courses"] as? [[String: Any]])
-  let template = try XCTUnwrap(templates.first)
-  let courses = (1...pageSize).map { index in
-    var course = template
-    course["id"] = "enrolled-course-\(index)"
-    course["slug"] = "enrolled-course-\(index)"
-    course["title"] = String(format: "Enrolled Course %02d", index)
-    return course
-  }
-  snapshot["courses"] = courses
-  snapshot["enrolledCourseIDs"] = courses.compactMap { $0["id"] as? String }
-  snapshot["holdsFirstMyCoursesPagination"] = true
-  snapshot["myCoursesPageSize"] = pageSize
-  let data = try JSONSerialization.data(withJSONObject: snapshot)
-  return String(decoding: data, as: UTF8.self)
-}
-
 let courseCatalogUITestSnapshotJSON =
   #"""
   {
-    "completedLessonIDs": ["lesson-meet-roots"],
-    "enrolledCourseIDs": ["course-plants", "course-oceans"],
-    "personalCourses": [
-      {
-        "description": "Keep private observations and experiments together.",
-        "id": "course-field-notes",
-        "imageURL": null,
-        "language": "en",
-        "organization": null,
-        "slug": "my-backyard-field-notes",
-        "title": "My Backyard Field Notes"
-      }
-    ],
     "courses": [
       {
         "categories": ["science"],
@@ -168,6 +133,7 @@ let courseCatalogUITestSnapshotJSON =
         "language": "en",
         "position": 0,
         "slug": "meet-the-roots",
+        "generationStatus": "completed",
         "title": "Meet the Roots"
       },
       {
@@ -178,6 +144,7 @@ let courseCatalogUITestSnapshotJSON =
         "language": "en",
         "position": 1,
         "slug": "follow-the-water",
+        "generationStatus": "completed",
         "title": "Follow the Water"
       },
       {
@@ -188,6 +155,7 @@ let courseCatalogUITestSnapshotJSON =
         "language": "en",
         "position": 0,
         "slug": "capture-the-light",
+        "generationStatus": "completed",
         "title": "Capture the Light"
       }
     ]

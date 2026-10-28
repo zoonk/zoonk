@@ -320,108 +320,6 @@ final class ZoonkUITests: XCTestCase {
       "Expected guidance without an external Google Play purchase link")
   }
 
-  /// Proves signed-in learners can switch between the public catalog and their enrolled courses without leaving the Courses tab.
-  @MainActor
-  func testCoursesToggleSwitchesBetweenAllAndMyCourses() {
-    continueAfterFailure = false
-
-    let app = makeApp(for: .catalog)
-    app.launch()
-    openCatalog(in: app)
-
-    let allCourses = app.buttons["All Courses"]
-    let myCourses = app.buttons["My Courses"]
-    XCTAssertTrue(allCourses.waitForExistence(timeout: 5))
-    XCTAssertTrue(myCourses.exists)
-    XCTAssertTrue(allCourses.isSelected)
-    XCTAssertTrue(app.staticTexts["Everyday Numbers"].firstMatch.waitForExistence(timeout: 5))
-    XCTAssertTrue(app.searchFields["Search all courses"].exists)
-    let selectorPosition = myCourses.frame.minY
-
-    myCourses.tap()
-
-    XCTAssertTrue(myCourses.isSelected)
-    XCTAssertTrue(app.searchFields["Search my courses"].waitForExistence(timeout: 5))
-    XCTAssertEqual(myCourses.frame.minY, selectorPosition, accuracy: 1)
-    XCTAssertTrue(app.staticTexts["How Plants Grow"].firstMatch.waitForExistence(timeout: 5))
-    XCTAssertTrue(app.staticTexts["Ocean Worlds"].firstMatch.waitForExistence(timeout: 5))
-    XCTAssertFalse(app.staticTexts["Everyday Numbers"].exists)
-
-    allCourses.tap()
-
-    XCTAssertTrue(allCourses.isSelected)
-    XCTAssertTrue(app.staticTexts["Everyday Numbers"].firstMatch.waitForExistence(timeout: 5))
-  }
-
-  /// Refresh must resume pagination even when it returns the same first page and cursor.
-  @MainActor
-  func testMyCoursesRefreshResumesPendingPagination() throws {
-    continueAfterFailure = false
-    let isPad = UIDevice.current.userInterfaceIdiom == .pad
-    let pageSize = isPad ? 20 : 6
-    XCUIDevice.shared.orientation = isPad ? .landscapeLeft : .portrait
-    addTeardownBlock { @MainActor in XCUIDevice.shared.orientation = .portrait }
-
-    let app = makeApp(for: .catalog)
-    app.launchEnvironment["ZOONK_UI_TEST_CATALOG"] = try courseCatalogPaginationUITestSnapshotJSON(
-      pageSize: pageSize)
-    app.launch()
-    openCatalog(in: app)
-    app.buttons["My Courses"].tap()
-
-    let lastCourse = app.staticTexts[String(format: "Enrolled Course %02d", pageSize)].firstMatch
-    let list = app.scrollViews.containing(.staticText, identifier: "Enrolled Course 01").firstMatch
-    XCTAssertTrue(list.waitForExistence(timeout: 5))
-    list.swipeUp()
-    XCTAssertTrue(lastCourse.waitForExistence(timeout: 5))
-    XCTAssertFalse(app.staticTexts["My Backyard Field Notes"].exists)
-
-    list.swipeDown()
-    let refreshStart = list.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.15))
-    let refreshEnd = list.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.8))
-    refreshStart.press(forDuration: 0.1, thenDragTo: refreshEnd)
-
-    XCTAssertTrue(
-      app.staticTexts["My Backyard Field Notes"].firstMatch.waitForExistence(timeout: 5),
-      "Expected refresh to resume pagination and show the remaining enrollment")
-  }
-
-  /// Keeps library search scoped to enrollments while preserving the catalog filter across collection changes.
-  @MainActor
-  func testMyCoursesSearchPreservesCollectionState() {
-    continueAfterFailure = false
-
-    let app = makeApp(for: .catalog)
-    app.launch()
-    openCatalog(in: app)
-
-    let categorySelector = app.scrollViews["Course categories"]
-    XCTAssertTrue(categorySelector.waitForExistence(timeout: 5))
-    let science = categorySelector.buttons["Science"]
-    categorySelector.scrollToReveal(science)
-    science.tap()
-    XCTAssertTrue(app.staticTexts["How Plants Grow"].firstMatch.waitForExistence(timeout: 5))
-
-    app.buttons["My Courses"].tap()
-    let searchField = app.searchFields["Search my courses"]
-    XCTAssertTrue(searchField.waitForExistence(timeout: 5))
-    searchField.tap()
-    searchField.typeText("field notes")
-    XCTAssertTrue(
-      app.staticTexts["My Backyard Field Notes"].firstMatch.waitForExistence(timeout: 5))
-    XCTAssertTrue(app.staticTexts["How Plants Grow"].firstMatch.waitForNonExistence(timeout: 5))
-
-    app.buttons["All Courses"].tap()
-    XCTAssertTrue(science.waitForExistence(timeout: 5))
-    XCTAssertTrue(science.isSelected)
-    XCTAssertFalse(app.staticTexts["Everyday Numbers"].exists)
-
-    app.buttons["My Courses"].tap()
-    XCTAssertEqual(searchField.value as? String, "field notes")
-    XCTAssertTrue(
-      app.staticTexts["My Backyard Field Notes"].firstMatch.waitForExistence(timeout: 5))
-  }
-
   /// Proves that account deletion is a deliberate native flow: the account option opens a dedicated screen and the irreversible request still requires confirmation.
   @MainActor
   func testAccountDeletionRequiresConfirmation() {
@@ -537,7 +435,7 @@ final class ZoonkUITests: XCTestCase {
 
   /// Proves the public catalog filters by category and keeps course, chapter, and lesson navigation inside the native Courses stack.
   @MainActor
-  func testCourseCatalogNavigatesToLessonPlaceholderAndBack() {
+  func testCourseCatalogOpensCoursesAndChaptersWithTheirWayIn() {
     continueAfterFailure = false
 
     let app = makeApp(for: .catalog)
@@ -611,26 +509,12 @@ final class ZoonkUITests: XCTestCase {
       "Expected the course action menu to expose feedback")
     app.tap()
 
-    let courseContinue = app.buttons["Continue, 33% complete"]
     XCTAssertTrue(
-      courseContinue.waitForExistence(timeout: 2),
-      "Expected the course action to use Main's continuation label and progress")
-
-    if app.frame.width > 600 {
-      let courseTitle = app.staticTexts["How Plants Grow"].firstMatch
-      XCTAssertEqual(
-        courseContinue.frame.minX,
-        courseTitle.frame.minX,
-        accuracy: 1,
-        "Expected the primary course action to align with the hero text on iPad")
-    }
-
-    courseContinue.tap()
-
+      app.buttons["Build my plan"].waitForExistence(timeout: 2),
+      "Expected the course to offer Main's way in")
     XCTAssertTrue(
-      app.staticTexts["Lesson player coming soon"].waitForExistence(timeout: 5),
-      "Expected the course continuation action to open the next lesson directly")
-    app.navigationBars.buttons["How Plants Grow"].firstMatch.tap()
+      app.buttons["Try a lesson"].exists,
+      "Expected the course to offer its first written lesson to try")
 
     let chapter = app.buttons.matching(
       NSPredicate(format: "label CONTAINS %@", "Roots and Water")
@@ -644,9 +528,6 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(
       app.staticTexts["Beginner"].exists && app.staticTexts["Intermediate"].exists,
       "Expected the chapters to be grouped into the course's level bands")
-    XCTAssertTrue(
-      chapter.label.contains("1/2 done"),
-      "Expected the chapter row to expose learner progress instead of a lesson count")
     XCTAssertFalse(chapter.label.contains("2 lessons"))
     chapter.tap()
 
@@ -678,75 +559,13 @@ final class ZoonkUITests: XCTestCase {
       "Expected the chapter action menu to expose feedback")
     app.tap()
 
-    let chapterContinue = app.buttons["Continue, 50% complete"]
     XCTAssertTrue(
-      chapterContinue.waitForExistence(timeout: 2),
-      "Expected the chapter action to use Main's continuation label and progress")
-
-    if app.frame.width > 600 {
-      let chapterTitle = app.staticTexts["1. Roots and Water"].firstMatch
-      XCTAssertEqual(
-        chapterContinue.frame.minX,
-        chapterTitle.frame.minX,
-        accuracy: 1,
-        "Expected the primary chapter action to align with the hero text on iPad")
-    }
-
-    let completedLesson = app.buttons.matching(
-      NSPredicate(format: "label CONTAINS %@", "Meet the Roots")
-    ).firstMatch
+      app.buttons["Build my plan"].waitForExistence(timeout: 2),
+      "Expected the chapter to offer Main's way in")
     XCTAssertTrue(
       app.staticTexts["1. Meet the Roots"].exists,
       "Expected the lesson number to be part of the title instead of a separate leading column")
-    XCTAssertTrue(completedLesson.label.contains("Completed"))
-
-    let nextLesson = app.buttons.matching(
-      NSPredicate(format: "label CONTAINS %@", "Follow the Water")
-    ).firstMatch
-    XCTAssertTrue(nextLesson.label.contains("Not started"))
-    chapterContinue.tap()
-
-    XCTAssertTrue(
-      app.staticTexts["Lesson player coming soon"].waitForExistence(timeout: 5),
-      "Expected the chapter continuation action to open the next lesson directly")
-    XCTAssertTrue(app.navigationBars["Follow the Water"].exists)
-
-    let chapterBackButton = app.navigationBars.buttons["Roots and Water"].firstMatch
-    XCTAssertTrue(
-      chapterBackButton.waitForExistence(timeout: 5),
-      "Expected the lesson placeholder to retain the native chapter back action")
-    chapterBackButton.tap()
-
-    XCTAssertTrue(
-      app.staticTexts["2. Follow the Water"].waitForExistence(timeout: 5),
-      "Expected Back to return to the chapter's lesson list")
-  }
-
-  /// Proves a course whose chapters are still being written says so and offers to check again.
-  @MainActor
-  func testCourseBeingWrittenOffersToCheckAgain() {
-    continueAfterFailure = false
-
-    let app = makeApp(for: .catalog)
-    app.launch()
-    openCatalog(in: app)
-
-    let course = app.staticTexts["Night Sky Basics"].firstMatch
-    XCTAssertTrue(course.waitForExistence(timeout: 10))
-    course.tap()
-
-    XCTAssertTrue(
-      app.staticTexts["Chapters are being written"].waitForExistence(timeout: 5),
-      "Expected a course that is still being written to say so instead of looking empty")
-    XCTAssertFalse(app.staticTexts["No chapters yet"].exists)
-
-    let checkAgain = app.buttons["Check again"]
-    XCTAssertTrue(checkAgain.exists)
-    checkAgain.tap()
-
-    XCTAssertTrue(
-      app.staticTexts["Chapters are being written"].waitForExistence(timeout: 5),
-      "Expected checking again to keep the course page")
+    XCTAssertTrue(app.staticTexts["2. Follow the Water"].exists)
   }
 
   /// Editing a search moves between matching and empty results without retaining the previous query's feedback.
@@ -813,7 +632,7 @@ final class ZoonkUITests: XCTestCase {
 
   /// Proves an empty category turns unmet demand into the existing course-creation flow.
   @MainActor
-  func testEmptyCategoryOffersCourseCreation() {
+  func testEmptyCategoryOffersToStartAGoal() {
     continueAfterFailure = false
 
     let app = makeApp(for: .catalog)
@@ -838,7 +657,7 @@ final class ZoonkUITests: XCTestCase {
     XCTAssertTrue(
       app.staticTexts["No Technology courses yet"].waitForExistence(timeout: 5),
       "Expected the empty category to offer recovery")
-    app.buttons["Create a course about Technology"].tap()
+    app.buttons["Start a goal"].tap()
 
     XCTAssertTrue(
       app.navigationBars["Start a goal"].waitForExistence(timeout: 5),

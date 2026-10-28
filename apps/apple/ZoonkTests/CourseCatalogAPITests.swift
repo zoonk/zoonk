@@ -84,41 +84,9 @@ final class CourseCatalogAPITests: XCTestCase {
           """#,
         status: .ok))
 
-    let course = try await api.getCourse(id: Course.testFixture.id, token: nil)
+    let course = try await api.getCourse(id: Course.testFixture.id)
 
     XCTAssertEqual(course, .testFixture)
-  }
-
-  func testOwnerReadsTheirPrivateCourseWithoutAnOrganization() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "getCourse",
-        expectedPath: "/courses/00000000-0000-7000-8000-000000000002",
-        expectedQuery: [:],
-        expectedToken: "session-token",
-        responseBody:
-          #"""
-          {
-            "categories": [],
-            "description": null,
-            "format": "personalized",
-            "generationId": null,
-            "generationStatus": "completed",
-            "id": "00000000-0000-7000-8000-000000000002",
-            "imageUrl": null,
-            "language": "en",
-            "organization": null,
-            "slug": "field-notes",
-            "targetLanguage": null,
-            "title": "Field Notes"
-          }
-          """#,
-        status: .ok))
-
-    let course = try await api.getCourse(id: Course.testFixture.id, token: "session-token")
-
-    XCTAssertNil(course.organization)
-    XCTAssertEqual(course.title, "Field Notes")
   }
 
   func testGetChapterMapsCanonicalChapterMetadata() async throws {
@@ -144,7 +112,7 @@ final class CourseCatalogAPITests: XCTestCase {
           """#,
         status: .ok))
 
-    let chapter = try await api.getChapter(.testFixture, token: nil)
+    let chapter = try await api.getChapter(.testFixture)
 
     XCTAssertEqual(chapter, .resourceTestFixture)
   }
@@ -177,7 +145,7 @@ final class CourseCatalogAPITests: XCTestCase {
           """#,
         status: .ok))
 
-    let chapters = try await api.listCourseChapters(courseID: Course.testFixture.id, token: nil)
+    let chapters = try await api.listCourseChapters(courseID: Course.testFixture.id)
 
     XCTAssertEqual(chapters, [.testFixture])
   }
@@ -233,16 +201,11 @@ final class CourseCatalogAPITests: XCTestCase {
           """#,
         status: .ok))
 
-    let course = try await courseAPI.getCourse(id: Course.testFixture.id, token: nil)
-    let chapter = try await chapterAPI.getChapter(.testFixture, token: nil)
+    let course = try await courseAPI.getCourse(id: Course.testFixture.id)
+    let chapter = try await chapterAPI.getChapter(.testFixture)
 
     XCTAssertEqual(course.generationStatus, .running)
-    XCTAssertTrue(course.generationStatus.isBeingWritten)
     XCTAssertEqual(chapter.generationStatus, .pending)
-    XCTAssertFalse(
-      chapter.generationStatus.isBeingWritten,
-      "A pending outline waits for its first learner and isn't being written yet")
-    XCTAssertFalse(CatalogGenerationStatus.failed.isBeingWritten)
   }
 
   func testListChapterLessonsReadsTheChapterInItsCourse() async throws {
@@ -272,153 +235,9 @@ final class CourseCatalogAPITests: XCTestCase {
           """#,
         status: .ok))
 
-    let lessons = try await api.listChapterLessons(.testFixture, token: nil)
+    let lessons = try await api.listChapterLessons(.testFixture)
 
     XCTAssertEqual(lessons, [.testFixture])
-  }
-
-  func testGetCourseNextLessonMapsConcreteLessonTarget() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "getCourseNextLesson",
-        expectedPath:
-          "/courses/00000000-0000-7000-8000-000000000002/next-lesson",
-        expectedQuery: [:],
-        expectedToken: "session-token",
-        responseBody:
-          #"""
-          {
-            "canPrefetch": true,
-            "chapterId": "00000000-0000-7000-8000-000000000004",
-            "chapterSlug": "solar-system",
-            "completed": false,
-            "courseId": "00000000-0000-7000-8000-000000000002",
-            "courseSlug": "astronomy",
-            "hasStarted": true,
-            "lessonId": "00000000-0000-7000-8000-000000000005",
-            "lessonPosition": 0,
-            "lessonSlug": "the-sun",
-            "organizationSlug": "zoonk",
-            "type": "lesson"
-          }
-          """#,
-        status: .ok))
-
-    let target = try await api.getCourseNextLesson(
-      courseID: Course.testFixture.id,
-      token: "session-token")
-
-    XCTAssertEqual(target, .testLessonFixture)
-  }
-
-  func testGetChapterNextLessonMapsEmptyTarget() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "getChapterNextLesson",
-        expectedPath:
-          "/chapters/00000000-0000-7000-8000-000000000004/next-lesson",
-        expectedQuery: ["courseId": "00000000-0000-7000-8000-000000000002"],
-        expectedToken: "session-token",
-        responseBody:
-          #"""
-          { "completed": false, "hasStarted": false, "type": "empty" }
-          """#,
-        status: .ok))
-
-    let target = try await api.getChapterNextLesson(
-      .testFixture,
-      token: "session-token")
-
-    XCTAssertEqual(
-      target,
-      .empty(CatalogEmptyContinuation(completed: false, hasStarted: false)))
-  }
-
-  func testGetCourseNextLessonMapsPendingChapterTargetWithoutAuthorization() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "getCourseNextLesson",
-        expectedPath:
-          "/courses/00000000-0000-7000-8000-000000000002/next-lesson",
-        expectedQuery: [:],
-        responseBody:
-          #"""
-          {
-            "canPrefetch": false,
-            "chapterId": "00000000-0000-7000-8000-000000000004",
-            "chapterSlug": "solar-system",
-            "completed": false,
-            "courseId": "00000000-0000-7000-8000-000000000002",
-            "courseSlug": "astronomy",
-            "hasStarted": false,
-            "organizationSlug": "zoonk",
-            "type": "chapter"
-          }
-          """#,
-        status: .ok))
-
-    let target = try await api.getCourseNextLesson(
-      courseID: Course.testFixture.id,
-      token: nil)
-
-    XCTAssertEqual(target, .testChapterFixture)
-  }
-
-  func testGetCourseProgressMapsChapterAndAggregateProgress() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "getCourseProgress",
-        expectedPath: "/courses/00000000-0000-7000-8000-000000000002/progress",
-        expectedQuery: [:],
-        expectedToken: "session-token",
-        responseBody:
-          #"""
-          {
-            "chapters": [
-              {
-                "chapterId": "00000000-0000-7000-8000-000000000004",
-                "completedLessons": 1,
-                "totalLessons": 2
-              }
-            ],
-            "percentComplete": 50
-          }
-          """#,
-        status: .ok))
-
-    let progress = try await api.getCourseProgress(
-      courseID: Course.testFixture.id,
-      token: "session-token")
-
-    XCTAssertEqual(progress, .testFixture)
-  }
-
-  func testGetChapterProgressMapsLessonAndAggregateProgress() async throws {
-    let api = makeCourseCatalogAPI(
-      transport: CourseCatalogResponseTransport(
-        expectedOperationID: "getChapterProgress",
-        expectedPath: "/chapters/00000000-0000-7000-8000-000000000004/progress",
-        expectedQuery: [:],
-        expectedToken: "session-token",
-        responseBody:
-          #"""
-          {
-            "lessons": [
-              {
-                "isCompleted": true,
-                "lessonId": "00000000-0000-7000-8000-000000000005"
-              }
-            ],
-            "percentComplete": 50
-          }
-          """#,
-        status: .ok))
-
-    let progress = try await api.getChapterProgress(
-      chapterID: CourseChapter.testFixture.id,
-      token: "session-token")
-
-    XCTAssertEqual(progress, .testFixture)
   }
 
   func testSearchCatalogMapsCourseAndChapterResults() async throws {
@@ -474,7 +293,7 @@ final class CourseCatalogAPITests: XCTestCase {
         status: .notFound))
 
     do {
-      _ = try await api.getCourse(id: Course.testFixture.id, token: nil)
+      _ = try await api.getCourse(id: Course.testFixture.id)
       XCTFail("Expected not found")
     } catch let error as APIError {
       XCTAssertEqual(error, .notFound)

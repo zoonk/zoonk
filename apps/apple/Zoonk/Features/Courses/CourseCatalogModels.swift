@@ -27,10 +27,6 @@ enum CatalogGenerationStatus: String, Codable, Equatable, Sendable {
   case failed
   case pending
   case running
-
-  var isBeingWritten: Bool {
-    self == .running
-  }
 }
 
 /// The level band a course places a chapter in, from overview to advanced.
@@ -95,11 +91,17 @@ struct CourseLesson: Codable, Equatable, Identifiable, Sendable {
   let chapterID: String
   let courseID: String
   let description: String?
+  let generationStatus: CatalogGenerationStatus
   let id: String
   let language: String
   let position: Int
   let slug: String
   let title: String?
+
+  /// An unwritten lesson is written when someone opens it.
+  var isWritten: Bool {
+    generationStatus == .completed
+  }
 }
 
 /// Identifies a chapter page by the course it was opened from, since a shared chapter shows a
@@ -119,115 +121,27 @@ struct CourseCatalogPage: Codable, Equatable, Sendable {
   }
 }
 
-struct CatalogChapterContinuation: Codable, Equatable, Sendable {
-  let canPrefetch: Bool
-  let chapterID: String
-  let chapterSlug: String
-  let completed: Bool
-  let courseID: String
-  let courseSlug: String
-  let hasStarted: Bool
-  let organizationSlug: String?
-}
-
-struct CatalogEmptyContinuation: Codable, Equatable, Sendable {
-  let completed: Bool
-  let hasStarted: Bool
-}
-
-struct CatalogLessonContinuation: Codable, Equatable, Sendable {
-  let canPrefetch: Bool
-  let chapterID: String
-  let chapterSlug: String
-  let completed: Bool
-  let courseID: String
-  let courseSlug: String
-  let hasStarted: Bool
-  let lessonID: String
-  let lessonPosition: Int
-  let lessonSlug: String
-  let organizationSlug: String?
-}
-
-enum CatalogContinuationTarget: Codable, Equatable, Sendable {
-  case chapter(CatalogChapterContinuation)
-  case empty(CatalogEmptyContinuation)
-  case lesson(CatalogLessonContinuation)
-
-  var completed: Bool {
-    switch self {
-    case .chapter(let target): target.completed
-    case .empty(let target): target.completed
-    case .lesson(let target): target.completed
-    }
-  }
-
-  var hasStarted: Bool {
-    switch self {
-    case .chapter(let target): target.hasStarted
-    case .empty(let target): target.hasStarted
-    case .lesson(let target): target.hasStarted
-    }
-  }
-}
-
-struct CourseChapterProgress: Codable, Equatable, Sendable {
-  let chapterID: String
-  let completedLessons: Int
-  let totalLessons: Int
-}
-
-struct CourseProgress: Codable, Equatable, Sendable {
-  let chapters: [CourseChapterProgress]
-  let percentComplete: Int?
-}
-
-struct ChapterLessonProgress: Codable, Equatable, Sendable {
-  let isCompleted: Bool
-  let lessonID: String
-}
-
-struct ChapterProgress: Codable, Equatable, Sendable {
-  let lessons: [ChapterLessonProgress]
-  let percentComplete: Int?
-}
-
+/// A course page: the course and its chapters, with the lesson "Try a lesson" opens, the first
+/// written one of its first chapter, when there's one.
 struct CourseDetail: Codable, Equatable, Sendable {
-  let continuation: CatalogContinuationTarget?
   let course: Course
   let chapters: [CourseChapter]
-  let progress: CourseProgress?
-
-  init(
-    continuation: CatalogContinuationTarget? = nil,
-    course: Course,
-    chapters: [CourseChapter],
-    progress: CourseProgress? = nil
-  ) {
-    self.continuation = continuation
-    self.course = course
-    self.chapters = chapters
-    self.progress = progress
-  }
+  var tryLessonID: String? = nil
 }
 
 struct ChapterDetail: Codable, Equatable, Sendable {
   let chapter: CourseChapter?
-  let continuation: CatalogContinuationTarget?
   let lessons: [CourseLesson]
-  let progress: ChapterProgress?
 
-  init(
-    chapter: CourseChapter? = nil,
-    continuation: CatalogContinuationTarget? = nil,
-    lessons: [CourseLesson],
-    progress: ChapterProgress? = nil
-  ) {
-    self.chapter = chapter
-    self.continuation = continuation
-    self.lessons = lessons
-    self.progress = progress
+  /// The chapter's first written lesson, which "Try a lesson" opens.
+  var tryLessonID: String? {
+    firstWrittenLessonID(lessons)
   }
+}
+
+/// The first lesson whose content is written: trying it costs nothing and opens at once.
+func firstWrittenLessonID(_ lessons: [CourseLesson]) -> String? {
+  lessons.first(where: \.isWritten)?.id
 }
 
 struct CatalogCourseSearchResult: Codable, Equatable, Identifiable, Sendable {

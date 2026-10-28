@@ -1,6 +1,6 @@
 import SwiftUI
 
-struct CatalogNumberedRow<Metadata: View>: View {
+struct CatalogNumberedRow: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
@@ -10,7 +10,6 @@ struct CatalogNumberedRow<Metadata: View>: View {
   let symbolTint: Color?
   let systemImage: String
   let title: String
-  @ViewBuilder let metadata: Metadata
 
   init(
     description: String?,
@@ -18,8 +17,7 @@ struct CatalogNumberedRow<Metadata: View>: View {
     number: Int,
     symbolTint: Color? = nil,
     systemImage: String,
-    title: String,
-    @ViewBuilder metadata: () -> Metadata
+    title: String
   ) {
     self.description = description
     self.imageURL = imageURL
@@ -27,7 +25,6 @@ struct CatalogNumberedRow<Metadata: View>: View {
     self.symbolTint = symbolTint
     self.systemImage = systemImage
     self.title = title
-    self.metadata = metadata()
   }
 
   var body: some View {
@@ -57,10 +54,6 @@ struct CatalogNumberedRow<Metadata: View>: View {
             .foregroundStyle(.secondary)
             .lineLimit(dynamicTypeSize.isAccessibilitySize ? nil : 2)
         }
-
-        metadata
-          .font(.caption)
-          .foregroundStyle(.secondary)
       }
       .frame(maxWidth: .infinity, alignment: .leading)
     }

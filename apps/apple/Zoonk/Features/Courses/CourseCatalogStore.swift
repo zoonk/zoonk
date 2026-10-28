@@ -1,9 +1,8 @@
 import Foundation
 import Observation
 
-/// The public catalog: course lists by category, course and chapter pages, and search. Lists and
-/// search are the same for everyone; course and chapter pages show the reader's progress, so a
-/// session change drops them and finishing a lesson revalidates them.
+/// The public catalog: course lists by category, course and chapter pages, and search, the same
+/// for everyone, so they survive a session change.
 @MainActor
 @Observable
 final class CourseCatalogStore {
@@ -92,24 +91,23 @@ final class CourseCatalogStore {
     }
 
     let resource: Resource<CourseDetail> = cache.resource(
-      audience: .viewer,
-      domains: [.userProgress]
-    ) { [api] session in
-      let token = session?.bearerToken
-      async let course = api.getCourse(id: id, token: token)
-      async let chapters = api.listCourseChapters(courseID: id, token: token)
-      async let continuation = loadCatalogSupplement {
-        try await api.getCourseNextLesson(courseID: id, token: token)
-      }
-      async let progress = loadCatalogSupplement {
-        try await api.getCourseProgress(courseID: id, token: token)
+      audience: .everyone,
+      maxAge: Self.catalogMaxAge
+    ) { [api] _ in
+      async let loadingCourse = api.getCourse(id: id)
+      async let loadingChapters = api.listCourseChapters(courseID: id)
+      // The course first, so a missing course reads as not found whatever its chapters say.
+      let (course, chapters) = try await (loadingCourse, loadingChapters)
+      let tryLessonID = try await loadCatalogSupplement { () -> String? in
+        guard let first = chapters.first else {
+          return nil
+        }
+
+        return firstWrittenLessonID(
+          try await api.listChapterLessons(CatalogChapterKey(chapterID: first.id, courseID: id)))
       }
 
-      return try await CourseDetail(
-        continuation: continuation,
-        course: course,
-        chapters: chapters,
-        progress: progress)
+      return CourseDetail(course: course, chapters: chapters, tryLessonID: tryLessonID ?? nil)
     }
     courseDetails[id] = resource
     return resource
@@ -124,11 +122,11 @@ final class CourseCatalogStore {
     }
 
     let resource: Resource<ChapterDetail> = cache.resource(
-      audience: .viewer,
-      domains: [.userProgress]
-    ) { [api, weak self] session in
+      audience: .everyone,
+      maxAge: Self.catalogMaxAge
+    ) { [api, weak self] _ in
       do {
-        return try await loadChapterDetail(api: api, key: key, token: session?.bearerToken)
+        return try await loadChapterDetail(api: api, key: key)
       } catch APIError.notFound {
         await self?.courseDetails[key.courseID]?.refresh()
         throw APIError.notFound
@@ -200,25 +198,14 @@ private struct CatalogSearch {
 
 private func loadChapterDetail(
   api: any CourseCatalogAPIClient,
-  key: CatalogChapterKey,
-  token: String?
+  key: CatalogChapterKey
 ) async throws -> ChapterDetail {
   async let chapter = loadCatalogSupplement {
-    try await api.getChapter(key, token: token)
+    try await api.getChapter(key)
   }
-  async let lessons = api.listChapterLessons(key, token: token)
-  async let continuation = loadCatalogSupplement {
-    try await api.getChapterNextLesson(key, token: token)
-  }
-  async let progress = loadCatalogSupplement {
-    try await api.getChapterProgress(chapterID: key.chapterID, token: token)
-  }
+  let lessons = try await api.listChapterLessons(key)
 
-  return try await ChapterDetail(
-    chapter: chapter,
-    continuation: continuation,
-    lessons: lessons,
-    progress: progress)
+  return try await ChapterDetail(chapter: chapter, lessons: lessons)
 }
 
 /// Loads a part of a page the page can show without, so its failure doesn't fail the page.

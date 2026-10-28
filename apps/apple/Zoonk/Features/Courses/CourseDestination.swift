@@ -3,22 +3,11 @@ import Foundation
 enum CourseDestination: Hashable {
   case course(CourseReference)
   case chapter(ChapterReference)
-  case lesson(LessonReference)
 
   var title: String {
     switch self {
     case .course(let course): course.title
     case .chapter(let chapter): chapter.title
-    case .lesson(let lesson): lesson.title
-    }
-  }
-
-  var showsCompactHeader: Bool {
-    switch self {
-    case .course, .chapter:
-      true
-    case .lesson:
-      false
     }
   }
 }
@@ -30,14 +19,6 @@ struct CourseReference: Hashable {
   let title: String
 
   init(_ course: CourseSummary) {
-    description = course.description
-    id = course.id
-    imageURL = course.imageURL
-    title = course.title
-  }
-
-  /// Private courses open too: the course page reads them with the owner's session.
-  init(_ course: UserCourseSummary) {
     description = course.description
     id = course.id
     imageURL = course.imageURL
@@ -113,123 +94,4 @@ struct ChapterReference: Hashable {
       ?? (source.chapter.courseID == source.reference.courseID ? source.chapter.position : nil)
     title = source.chapter.title
   }
-
-  init(_ source: (course: Course, target: CatalogChapterContinuation)) {
-    courseID = source.target.courseID
-    courseTitle = source.course.title
-    description = ""
-    id = source.target.chapterID
-    imageURL = source.course.imageURL
-    organizationSlug = source.target.organizationSlug
-    position = nil
-    title = String(
-      localized: LocalizedStringResource(
-        "Chapter",
-        table: "Courses",
-        comment: "Fallback title for a chapter continuation target."))
-  }
-
-  init(_ source: (course: Course, target: CatalogLessonContinuation)) {
-    courseID = source.target.courseID
-    courseTitle = source.course.title
-    description = ""
-    id = source.target.chapterID
-    imageURL = source.course.imageURL
-    organizationSlug = source.target.organizationSlug
-    position = nil
-    title = String(
-      localized: LocalizedStringResource(
-        "Chapter",
-        table: "Courses",
-        comment: "Fallback title for the chapter containing a continuation lesson."))
-  }
-}
-
-struct LessonReference: Hashable {
-  let chapterTitle: String
-  let courseTitle: String
-  let id: String
-  let title: String
-
-  init(_ source: (chapter: ChapterReference, lesson: CourseLesson)) {
-    chapterTitle = source.chapter.title
-    courseTitle = source.chapter.courseTitle
-    id = source.lesson.id
-    title = source.lesson.displayTitle()
-  }
-
-  init(_ source: (chapter: ChapterReference, target: CatalogLessonContinuation)) {
-    chapterTitle = source.chapter.title
-    courseTitle = source.chapter.courseTitle
-    id = source.target.lessonID
-    title = String(
-      localized: LocalizedStringResource(
-        "Lesson",
-        table: "Courses",
-        comment: "Fallback title while the native lesson player is unavailable."))
-  }
-}
-
-func courseContinuationDestination(_ detail: CourseDetail) -> CourseDestination? {
-  guard let continuation = detail.continuation else {
-    return firstChapterDestination(detail)
-  }
-
-  switch continuation {
-  case .empty:
-    return firstChapterDestination(detail)
-  case .chapter(let target):
-    if let chapter = detail.chapters.first(where: { $0.id == target.chapterID }) {
-      return .chapter(ChapterReference((course: detail.course, chapter: chapter)))
-    }
-
-    return .chapter(ChapterReference((course: detail.course, target: target)))
-  case .lesson(let target):
-    let chapter = detail.chapters.first(where: { $0.id == target.chapterID })
-    let chapterReference =
-      chapter.map {
-        ChapterReference((course: detail.course, chapter: $0))
-      } ?? ChapterReference((course: detail.course, target: target))
-    return .lesson(LessonReference((chapter: chapterReference, target: target)))
-  }
-}
-
-private func firstChapterDestination(_ detail: CourseDetail) -> CourseDestination? {
-  guard let chapter = detail.chapters.first else {
-    return nil
-  }
-
-  return .chapter(ChapterReference((course: detail.course, chapter: chapter)))
-}
-
-func chapterContinuationDestination(
-  chapter: ChapterReference,
-  detail: ChapterDetail
-) -> CourseDestination? {
-  guard let continuation = detail.continuation else {
-    return firstLessonDestination((chapter: chapter, detail: detail))
-  }
-
-  switch continuation {
-  case .empty:
-    return firstLessonDestination((chapter: chapter, detail: detail))
-  case .chapter:
-    return .chapter(chapter)
-  case .lesson(let target):
-    if let lesson = detail.lessons.first(where: { $0.id == target.lessonID }) {
-      return .lesson(LessonReference((chapter: chapter, lesson: lesson)))
-    }
-
-    return .lesson(LessonReference((chapter: chapter, target: target)))
-  }
-}
-
-private func firstLessonDestination(
-  _ source: (chapter: ChapterReference, detail: ChapterDetail)
-) -> CourseDestination? {
-  guard let lesson = source.detail.lessons.first else {
-    return nil
-  }
-
-  return .lesson(LessonReference((chapter: source.chapter, lesson: lesson)))
 }

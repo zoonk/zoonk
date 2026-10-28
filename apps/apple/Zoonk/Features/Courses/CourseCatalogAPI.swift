@@ -3,18 +3,10 @@ import OpenAPIRuntime
 
 protocol CourseCatalogAPIClient: Sendable {
   func listCourses(query: CourseCatalogQuery) async throws -> CourseCatalogPage
-  /// Course and chapter reads send the session when there is one, so owners can read their private
-  /// courses; everyone else gets not found.
-  func getCourse(id: String, token: String?) async throws -> Course
-  func getChapter(_ key: CatalogChapterKey, token: String?) async throws -> CourseChapter
-  func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter]
-  func listChapterLessons(_ key: CatalogChapterKey, token: String?) async throws -> [CourseLesson]
-  func getCourseNextLesson(courseID: String, token: String?) async throws
-    -> CatalogContinuationTarget
-  func getChapterNextLesson(_ key: CatalogChapterKey, token: String?) async throws
-    -> CatalogContinuationTarget
-  func getCourseProgress(courseID: String, token: String?) async throws -> CourseProgress
-  func getChapterProgress(chapterID: String, token: String?) async throws -> ChapterProgress
+  func getCourse(id: String) async throws -> Course
+  func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter
+  func listCourseChapters(courseID: String) async throws -> [CourseChapter]
+  func listChapterLessons(_ key: CatalogChapterKey) async throws -> [CourseLesson]
   func searchCatalog(query: CatalogSearchQuery) async throws -> CatalogSearchResults
 }
 
@@ -44,8 +36,8 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func getCourse(id: String, token: String?) async throws -> Course {
-    try await clients.perform(token: token) { client in
+  func getCourse(id: String) async throws -> Course {
+    try await clients.perform(token: nil) { client in
       let output = try await client.getCourse(.init(path: .init(courseId: id)))
 
       switch output {
@@ -61,8 +53,8 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
 
   /// Reads the chapter as the given course places it. A course that doesn't place the chapter is
   /// not found.
-  func getChapter(_ key: CatalogChapterKey, token: String?) async throws -> CourseChapter {
-    try await clients.perform(token: token) { client in
+  func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter {
+    try await clients.perform(token: nil) { client in
       let output = try await client.getChapter(
         .init(path: .init(chapterId: key.chapterID), query: .init(courseId: key.courseID)))
 
@@ -77,8 +69,8 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
-    try await clients.perform(token: token) { client in
+  func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
+    try await clients.perform(token: nil) { client in
       let output = try await client.listCourseChapters(
         .init(path: .init(courseId: courseID)))
 
@@ -93,82 +85,14 @@ struct CourseCatalogAPI: CourseCatalogAPIClient, @unchecked Sendable {
     }
   }
 
-  func listChapterLessons(_ key: CatalogChapterKey, token: String?) async throws -> [CourseLesson] {
-    try await clients.perform(token: token) { client in
+  func listChapterLessons(_ key: CatalogChapterKey) async throws -> [CourseLesson] {
+    try await clients.perform(token: nil) { client in
       let output = try await client.listChapterLessons(
         .init(path: .init(chapterId: key.chapterID), query: .init(courseId: key.courseID)))
 
       switch output {
       case .ok(let response):
         return try response.body.json.data.map(makeCourseLesson)
-      case .notFound:
-        throw APIError.notFound
-      case .badRequest, .internalServerError, .undocumented:
-        throw APIError.unavailable
-      }
-    }
-  }
-
-  func getCourseNextLesson(courseID: String, token: String?) async throws
-    -> CatalogContinuationTarget
-  {
-    try await clients.perform(token: token) { client in
-      let output = try await client.getCourseNextLesson(
-        .init(path: .init(courseId: courseID)))
-
-      switch output {
-      case .ok(let response):
-        return makeCatalogContinuationTarget(try response.body.json)
-      case .notFound:
-        throw APIError.notFound
-      case .badRequest, .internalServerError, .undocumented:
-        throw APIError.unavailable
-      }
-    }
-  }
-
-  func getChapterNextLesson(_ key: CatalogChapterKey, token: String?) async throws
-    -> CatalogContinuationTarget
-  {
-    try await clients.perform(token: token) { client in
-      let output = try await client.getChapterNextLesson(
-        .init(path: .init(chapterId: key.chapterID), query: .init(courseId: key.courseID)))
-
-      switch output {
-      case .ok(let response):
-        return makeCatalogContinuationTarget(try response.body.json)
-      case .notFound:
-        throw APIError.notFound
-      case .badRequest, .internalServerError, .undocumented:
-        throw APIError.unavailable
-      }
-    }
-  }
-
-  func getCourseProgress(courseID: String, token: String?) async throws -> CourseProgress {
-    try await clients.perform(token: token) { client in
-      let output = try await client.getCourseProgress(
-        .init(path: .init(courseId: courseID)))
-
-      switch output {
-      case .ok(let response):
-        return makeCourseProgress(try response.body.json)
-      case .notFound:
-        throw APIError.notFound
-      case .badRequest, .internalServerError, .undocumented:
-        throw APIError.unavailable
-      }
-    }
-  }
-
-  func getChapterProgress(chapterID: String, token: String?) async throws -> ChapterProgress {
-    try await clients.perform(token: token) { client in
-      let output = try await client.getChapterProgress(
-        .init(path: .init(chapterId: chapterID)))
-
-      switch output {
-      case .ok(let response):
-        return makeChapterProgress(try response.body.json)
       case .notFound:
         throw APIError.notFound
       case .badRequest, .internalServerError, .undocumented:
@@ -335,6 +259,7 @@ private func makeCourseLesson(
     chapterID: payload.chapterId,
     courseID: payload.courseId,
     description: payload.description,
+    generationStatus: makeCatalogGenerationStatus(payload.generationStatus),
     id: payload.id,
     language: payload.language,
     position: payload.position,
@@ -348,76 +273,6 @@ private func makeCourseLevel<Payload: RawRepresentable>(
   _ payload: Payload
 ) -> CourseLevel where Payload.RawValue == String {
   CourseLevel(rawValue: payload.rawValue) ?? .overview
-}
-
-private func makeCatalogContinuationTarget(
-  _ payload: Components.Schemas.NextLessonResponse
-) -> CatalogContinuationTarget {
-  switch payload {
-  case .chapter(let target):
-    .chapter(
-      CatalogChapterContinuation(
-        canPrefetch: target.canPrefetch,
-        chapterID: target.chapterId,
-        chapterSlug: target.chapterSlug,
-        completed: target.completed,
-        courseID: target.courseId,
-        courseSlug: target.courseSlug,
-        hasStarted: target.hasStarted,
-        organizationSlug: target.organizationSlug))
-  case .empty(let target):
-    .empty(
-      CatalogEmptyContinuation(
-        completed: target.completed,
-        hasStarted: target.hasStarted))
-  case .lesson(let target):
-    .lesson(
-      CatalogLessonContinuation(
-        canPrefetch: target.canPrefetch,
-        chapterID: target.chapterId,
-        chapterSlug: target.chapterSlug,
-        completed: target.completed,
-        courseID: target.courseId,
-        courseSlug: target.courseSlug,
-        hasStarted: target.hasStarted,
-        lessonID: target.lessonId,
-        lessonPosition: target.lessonPosition,
-        lessonSlug: target.lessonSlug,
-        organizationSlug: target.organizationSlug))
-  }
-}
-
-private func makeCourseProgress(
-  _ payload: Components.Schemas.CourseCompletionResponse
-) -> CourseProgress {
-  CourseProgress(
-    chapters: payload.chapters.map(makeCourseChapterProgress),
-    percentComplete: payload.percentComplete)
-}
-
-private func makeCourseChapterProgress(
-  _ payload: Components.Schemas.CourseCompletionResponse.ChaptersPayloadPayload
-) -> CourseChapterProgress {
-  CourseChapterProgress(
-    chapterID: payload.chapterId,
-    completedLessons: payload.completedLessons,
-    totalLessons: payload.totalLessons)
-}
-
-private func makeChapterProgress(
-  _ payload: Components.Schemas.ChapterCompletionResponse
-) -> ChapterProgress {
-  ChapterProgress(
-    lessons: payload.lessons.map(makeChapterLessonProgress),
-    percentComplete: payload.percentComplete)
-}
-
-private func makeChapterLessonProgress(
-  _ payload: Components.Schemas.ChapterCompletionResponse.LessonsPayloadPayload
-) -> ChapterLessonProgress {
-  ChapterLessonProgress(
-    isCompleted: payload.isCompleted,
-    lessonID: payload.lessonId)
 }
 
 private func makeCatalogSearchResults(

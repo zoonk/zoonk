@@ -2,12 +2,11 @@ import SwiftUI
 
 struct AllCoursesView: View {
   @Environment(CourseCatalogStore.self) private var catalog
+  @Environment(AppRouter.self) private var router
   @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @State private var selectedCategory: CourseCategory?
 
-  let isSelected: Bool
   let searchText: String
-  let onCreateCourse: () -> Void
 
   var body: some View {
     Group {
@@ -19,8 +18,7 @@ struct AllCoursesView: View {
         browseCatalog
       }
     }
-    .task(id: isSelected ? searchText : nil) {
-      guard isSelected else { return }
+    .task(id: searchText) {
       await updateSearchResults()
     }
   }
@@ -71,7 +69,7 @@ struct AllCoursesView: View {
     case .loaded(let page):
       CourseCatalogGrid(category: selectedCategory, page: page)
     case .empty:
-      CourseCatalogEmptyView(category: selectedCategory, onCreateCourse: onCreateCourse)
+      CourseCatalogEmptyView(category: selectedCategory) { router.open(.startGoal) }
     case .failed(let failure):
       CatalogFailureRecoveryView(context: .catalog, failure: failure) {
         await catalog.courses(category: selectedCategory).refresh()
@@ -82,7 +80,7 @@ struct AllCoursesView: View {
 
 private struct CourseCatalogEmptyView: View {
   let category: CourseCategory?
-  let onCreateCourse: () -> Void
+  let startGoal: () -> Void
 
   var body: some View {
     ContentUnavailableView {
@@ -107,21 +105,12 @@ private struct CourseCatalogEmptyView: View {
         tableName: "Courses",
         comment: "Guidance when no public courses are available.")
     } actions: {
-      if let category {
-        Button(action: onCreateCourse) {
-          Label {
-            Text(
-              "Create a course about \(String(localized: category.localizedTitle))",
-              tableName: "Courses",
-              comment:
-                "Opens course creation from an empty category. The interpolated value is the category name."
-            )
-          } icon: {
-            Image(systemName: "plus")
-          }
-        }
-        .buttonStyle(.bordered)
+      Button(action: startGoal) {
+        Text(
+          "Start a goal", tableName: "Courses",
+          comment: "Opens the start of a new goal from an empty catalog")
       }
+      .buttonStyle(.bordered)
     }
     .frame(maxWidth: .infinity, minHeight: 280)
   }

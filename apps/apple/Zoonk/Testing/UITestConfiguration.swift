@@ -25,7 +25,6 @@
           subscriptionStore: .live(),
           courseCatalogAPI: courseCatalogAPI(snapshot: catalogSnapshot),
           learnerSummaryAPI: UITestLearnerSummaryAPI(summary: learnerSummary(from: environment)),
-          myCoursesAPI: myCoursesAPI(snapshot: catalogSnapshot),
           progressAPI: progressAPI(from: environment)),
         initiallyPresentsAccount: arguments.contains("--ui-testing-account-sheet"))
     }
@@ -88,17 +87,6 @@
       return UITestCourseCatalogAPI(snapshot: snapshot)
     }
 
-    private static func myCoursesAPI(
-      snapshot: UITestCourseCatalogSnapshot?
-    ) -> any MyCoursesAPIClient {
-      guard let snapshot else {
-        return MyCoursesAPI(
-          clients: APIClientFactory.live(baseURL: AppConfiguration.current.apiBaseURL))
-      }
-
-      return UITestMyCoursesAPI(snapshot: snapshot)
-    }
-
     private static func courseCatalogSnapshot(
       from environment: [String: String]
     ) -> UITestCourseCatalogSnapshot? {
@@ -118,81 +106,8 @@
 
   private struct UITestCourseCatalogSnapshot: Decodable, Sendable {
     let chapters: [CourseChapter]
-    let completedLessonIDs: Set<String>
     let courses: [Course]
-    let enrolledCourseIDs: Set<String>
-    let holdsFirstMyCoursesPagination: Bool?
     let lessons: [CourseLesson]
-    let myCoursesPageSize: Int?
-    let personalCourses: [UserCourseSummary]
-  }
-
-  private actor UITestMyCoursesAPI: MyCoursesAPIClient {
-    let snapshot: UITestCourseCatalogSnapshot
-    private var didHoldPagination = false
-    private var paginationContinuation: CheckedContinuation<Void, Never>?
-
-    init(snapshot: UITestCourseCatalogSnapshot) {
-      self.snapshot = snapshot
-    }
-
-    /// Uses one-item pages by default so My Courses UI scenarios exercise automatic pagination.
-    func listCourses(request: MyCoursesRequest) async throws -> MyCoursesPage {
-      guard !request.token.isEmpty else {
-        throw MyCoursesAPIError.unauthorized
-      }
-
-      // Holds a network page until refresh replaces it, making request ordering deterministic.
-      if request.query.cursor != nil, snapshot.holdsFirstMyCoursesPagination == true,
-        !didHoldPagination
-      {
-        didHoldPagination = true
-        await withCheckedContinuation { continuation in
-          paginationContinuation = continuation
-        }
-      } else if request.query.cursor == nil {
-        paginationContinuation?.resume()
-        paginationContinuation = nil
-      }
-
-      let enrolledCourses =
-        snapshot.courses
-        .filter { course in
-          snapshot.enrolledCourseIDs.contains(course.id)
-        }
-        .map(makeUserCourseSummary) + snapshot.personalCourses
-      let matchingCourses = enrolledCourses.filter {
-        matchesQuery((course: $0, query: request.query.query))
-      }
-      let requestedStartIndex = request.query.cursor.flatMap(Int.init) ?? 0
-      let startIndex = min(max(requestedStartIndex, 0), matchingCourses.count)
-      let pageSize = max(request.query.limit ?? snapshot.myCoursesPageSize ?? 1, 0)
-      let endIndex = min(startIndex + pageSize, matchingCourses.count)
-      let courses = Array(matchingCourses[startIndex..<endIndex])
-      let hasMore = endIndex < matchingCourses.count
-
-      return MyCoursesPage(
-        courses: courses,
-        hasMore: hasMore,
-        nextCursor: hasMore ? String(endIndex) : nil)
-    }
-
-    private func matchesQuery(_ source: (course: UserCourseSummary, query: String?)) -> Bool {
-      guard let query = catalogText(source.query) else { return true }
-      return source.course.title.localizedCaseInsensitiveContains(query)
-        || source.course.description?.localizedCaseInsensitiveContains(query) == true
-    }
-
-    private func makeUserCourseSummary(_ course: Course) -> UserCourseSummary {
-      UserCourseSummary(
-        description: course.description,
-        id: course.id,
-        imageURL: course.imageURL,
-        language: course.language,
-        organization: course.organization,
-        slug: course.slug,
-        title: course.title)
-    }
   }
 
   private actor UITestCourseCatalogAPI: CourseCatalogAPIClient {
@@ -220,109 +135,25 @@
         nextCursor: hasMore ? String(endIndex) : nil)
     }
 
-    func getCourse(id: String, token: String?) async throws -> Course {
-      try readableCourse(id: id, token: token)
+    func getCourse(id: String) async throws -> Course {
+      try readableCourse(id: id)
     }
 
     /// Like the API, a course that doesn't place the chapter doesn't find it.
-    func getChapter(_ key: CatalogChapterKey, token: String?) async throws -> CourseChapter {
-      _ = try readableCourse(id: key.courseID, token: token)
+    func getChapter(_ key: CatalogChapterKey) async throws -> CourseChapter {
+      _ = try readableCourse(id: key.courseID)
       return try placedChapter(key)
     }
 
-    func listCourseChapters(courseID: String, token: String?) async throws -> [CourseChapter] {
-      _ = try readableCourse(id: courseID, token: token)
+    func listCourseChapters(courseID: String) async throws -> [CourseChapter] {
+      _ = try readableCourse(id: courseID)
       return snapshot.chapters.filter { $0.courseID == courseID }
     }
 
-    func listChapterLessons(_ key: CatalogChapterKey, token: String?) async throws
-      -> [CourseLesson]
-    {
-      _ = try readableCourse(id: key.courseID, token: token)
+    func listChapterLessons(_ key: CatalogChapterKey) async throws -> [CourseLesson] {
+      _ = try readableCourse(id: key.courseID)
       _ = try placedChapter(key)
       return snapshot.lessons.filter { $0.chapterID == key.chapterID }
-    }
-
-    func getCourseNextLesson(courseID: String, token: String?) async throws
-      -> CatalogContinuationTarget
-    {
-      guard
-        let course = snapshot.courses.first(where: { $0.id == courseID }),
-        let target = continuationTarget(
-          (lessons: lessons(inCourse: courseID), token: token)),
-        let chapter = snapshot.chapters.first(where: { $0.id == target.lesson.chapterID })
-      else {
-        return .empty(CatalogEmptyContinuation(completed: false, hasStarted: false))
-      }
-
-      return makeLessonContinuation(
-        (
-          completed: target.completed,
-          course: course,
-          chapter: chapter,
-          hasStarted: target.hasStarted,
-          lesson: target.lesson
-        ))
-    }
-
-    func getChapterNextLesson(_ key: CatalogChapterKey, token: String?) async throws
-      -> CatalogContinuationTarget
-    {
-      let chapter = try placedChapter(key)
-
-      guard
-        let course = snapshot.courses.first(where: { $0.id == chapter.courseID }),
-        let target = continuationTarget(
-          (lessons: lessons(inChapter: key.chapterID), token: token))
-      else {
-        return .empty(CatalogEmptyContinuation(completed: false, hasStarted: false))
-      }
-
-      return makeLessonContinuation(
-        (
-          completed: target.completed,
-          course: course,
-          chapter: chapter,
-          hasStarted: target.hasStarted,
-          lesson: target.lesson
-        ))
-    }
-
-    func getCourseProgress(courseID: String, token: String?) async throws -> CourseProgress {
-      let completedLessonIDs = completedLessonIDs(token: token)
-      let courseLessons = lessons(inCourse: courseID)
-
-      return CourseProgress(
-        chapters: snapshot.chapters
-          .filter { $0.courseID == courseID }
-          .map {
-            makeCourseChapterProgress(
-              (chapter: $0, completedLessonIDs: completedLessonIDs))
-          },
-        percentComplete: completionPercent(
-          (
-            completed: courseLessons.count(where: { completedLessonIDs.contains($0.id) }),
-            total: courseLessons.count,
-            token: token
-          )))
-    }
-
-    func getChapterProgress(chapterID: String, token: String?) async throws -> ChapterProgress {
-      let completedLessonIDs = completedLessonIDs(token: token)
-      let chapterLessons = lessons(inChapter: chapterID)
-
-      return ChapterProgress(
-        lessons: chapterLessons.map {
-          ChapterLessonProgress(
-            isCompleted: completedLessonIDs.contains($0.id),
-            lessonID: $0.id)
-        },
-        percentComplete: completionPercent(
-          (
-            completed: chapterLessons.count(where: { completedLessonIDs.contains($0.id) }),
-            total: chapterLessons.count,
-            token: token
-          )))
     }
 
     func searchCatalog(query: CatalogSearchQuery) async throws -> CatalogSearchResults {
@@ -355,16 +186,12 @@
       }
     }
 
-    /// Private courses have no organization and are only listed or found with the owner's session.
     private var publicCourses: [Course] {
       snapshot.courses.filter { $0.organization != nil }
     }
 
-    private func readableCourse(id: String, token: String?) throws -> Course {
-      guard
-        let course = snapshot.courses.first(where: { $0.id == id }),
-        course.organization != nil || token != nil
-      else {
+    private func readableCourse(id: String) throws -> Course {
+      guard let course = publicCourses.first(where: { $0.id == id }) else {
         throw APIError.notFound
       }
 
@@ -381,103 +208,6 @@
       }
 
       return chapter
-    }
-
-    private func completedLessonIDs(token: String?) -> Set<String> {
-      token == nil ? [] : snapshot.completedLessonIDs
-    }
-
-    private func lessons(inChapter chapterID: String) -> [CourseLesson] {
-      snapshot.lessons
-        .filter { $0.chapterID == chapterID }
-        .sorted(using: KeyPathComparator(\.position))
-    }
-
-    private func lessons(inCourse courseID: String) -> [CourseLesson] {
-      let chapterPositions = Dictionary(
-        uniqueKeysWithValues: snapshot.chapters.map { ($0.id, $0.position) })
-
-      return snapshot.lessons
-        .filter { $0.courseID == courseID }
-        .sorted { left, right in
-          courseLessonOrder((lesson: left, chapterPositions: chapterPositions))
-            < courseLessonOrder((lesson: right, chapterPositions: chapterPositions))
-        }
-    }
-
-    private func courseLessonOrder(
-      _ source: (lesson: CourseLesson, chapterPositions: [String: Int])
-    ) -> (Int, Int, String) {
-      (
-        source.chapterPositions[source.lesson.chapterID] ?? 0,
-        source.lesson.position,
-        source.lesson.id
-      )
-    }
-
-    private func continuationTarget(
-      _ source: (lessons: [CourseLesson], token: String?)
-    ) -> (completed: Bool, hasStarted: Bool, lesson: CourseLesson)? {
-      guard let firstLesson = source.lessons.first else {
-        return nil
-      }
-
-      let completedLessonIDs = completedLessonIDs(token: source.token)
-      let hasStarted = source.lessons.contains(where: { completedLessonIDs.contains($0.id) })
-
-      guard
-        let nextLesson = source.lessons.first(where: { !completedLessonIDs.contains($0.id) })
-      else {
-        return (completed: true, hasStarted: hasStarted, lesson: firstLesson)
-      }
-
-      return (completed: false, hasStarted: hasStarted, lesson: nextLesson)
-    }
-
-    private func completionPercent(
-      _ source: (completed: Int, total: Int, token: String?)
-    ) -> Int? {
-      guard source.token != nil, source.total > 0 else {
-        return nil
-      }
-
-      return source.completed * 100 / source.total
-    }
-
-    private func makeCourseChapterProgress(
-      _ source: (chapter: CourseChapter, completedLessonIDs: Set<String>)
-    ) -> CourseChapterProgress {
-      let chapterLessons = lessons(inChapter: source.chapter.id)
-      return CourseChapterProgress(
-        chapterID: source.chapter.id,
-        completedLessons: chapterLessons.count(where: {
-          source.completedLessonIDs.contains($0.id)
-        }),
-        totalLessons: chapterLessons.count)
-    }
-
-    private func makeLessonContinuation(
-      _ source: (
-        completed: Bool,
-        course: Course,
-        chapter: CourseChapter,
-        hasStarted: Bool,
-        lesson: CourseLesson
-      )
-    ) -> CatalogContinuationTarget {
-      .lesson(
-        CatalogLessonContinuation(
-          canPrefetch: true,
-          chapterID: source.chapter.id,
-          chapterSlug: source.chapter.slug,
-          completed: source.completed,
-          courseID: source.course.id,
-          courseSlug: source.course.slug,
-          hasStarted: source.hasStarted,
-          lessonID: source.lesson.id,
-          lessonPosition: source.lesson.position,
-          lessonSlug: source.lesson.slug,
-          organizationSlug: source.course.organization?.slug))
     }
 
     private func matchesSearch(

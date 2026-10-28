@@ -59,9 +59,9 @@ struct AppView: View {
   AppView()
     .environment(dependencies.courseCatalogStore)
     .environment(dependencies.learnerSummaryStore)
-    .environment(dependencies.myCoursesStore)
     .environment(dependencies.progressStore)
     .environment(dependencies.sessionStore)
+    .environment(dependencies.settingsStore)
     .environment(dependencies.subscriptionStore)
     .environment(AppRouter())
 }

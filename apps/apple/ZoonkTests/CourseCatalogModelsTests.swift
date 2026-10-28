@@ -67,15 +67,10 @@ final class CourseCatalogModelsTests: XCTestCase {
 
   func testCatalogSupplementalDetailsRoundTripThroughCodable() throws {
     let courseDetail = CourseDetail(
-      continuation: .testLessonFixture,
       course: .testFixture,
       chapters: [.testFixture],
-      progress: .testFixture)
-    let chapterDetail = ChapterDetail(
-      chapter: .resourceTestFixture,
-      continuation: .testLessonFixture,
-      lessons: [.testFixture],
-      progress: .testFixture)
+      tryLessonID: CourseLesson.testFixture.id)
+    let chapterDetail = ChapterDetail(chapter: .resourceTestFixture, lessons: [.testFixture])
 
     let courseData = try JSONEncoder().encode(courseDetail)
     let chapterData = try JSONEncoder().encode(chapterDetail)
@@ -164,6 +159,7 @@ extension CourseLesson {
     chapterID: CourseChapter.testFixture.id,
     courseID: Course.testFixture.id,
     description: "A first look at our star.",
+    generationStatus: .completed,
     id: "00000000-0000-7000-8000-000000000005",
     language: "en",
     position: 0,
@@ -171,52 +167,13 @@ extension CourseLesson {
     title: "The Sun")
 }
 
-extension CatalogContinuationTarget {
-  static let testChapterFixture = CatalogContinuationTarget.chapter(
-    CatalogChapterContinuation(
-      canPrefetch: false,
-      chapterID: CourseChapter.testFixture.id,
-      chapterSlug: CourseChapter.testFixture.slug,
-      completed: false,
-      courseID: Course.testFixture.id,
-      courseSlug: Course.testFixture.slug,
-      hasStarted: false,
-      organizationSlug: CourseOrganization.testFixture.slug))
-
-  static let testLessonFixture = CatalogContinuationTarget.lesson(
-    CatalogLessonContinuation(
-      canPrefetch: true,
-      chapterID: CourseChapter.testFixture.id,
-      chapterSlug: CourseChapter.testFixture.slug,
-      completed: false,
-      courseID: Course.testFixture.id,
-      courseSlug: Course.testFixture.slug,
-      hasStarted: true,
-      lessonID: CourseLesson.testFixture.id,
-      lessonPosition: CourseLesson.testFixture.position,
-      lessonSlug: CourseLesson.testFixture.slug,
-      organizationSlug: CourseOrganization.testFixture.slug))
-}
-
-extension CourseProgress {
-  static let testFixture = CourseProgress(
-    chapters: [
-      CourseChapterProgress(
-        chapterID: CourseChapter.testFixture.id,
-        completedLessons: 1,
-        totalLessons: 2)
-    ],
-    percentComplete: 50)
-}
-
-extension ChapterProgress {
-  static let testFixture = ChapterProgress(
-    lessons: [
-      ChapterLessonProgress(
-        isCompleted: true,
-        lessonID: CourseLesson.testFixture.id)
-    ],
-    percentComplete: 50)
+extension CourseLesson {
+  func with(id: String, status: CatalogGenerationStatus) -> CourseLesson {
+    CourseLesson(
+      chapterID: chapterID, courseID: courseID, description: description,
+      generationStatus: status, id: id, language: language, position: position, slug: slug,
+      title: title)
+  }
 }
 
 extension CatalogSearchResults {
