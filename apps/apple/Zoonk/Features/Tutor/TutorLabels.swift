@@ -131,58 +131,74 @@ extension TutorScope {
   /// A few questions to start with, never a list: in a lesson its own suggestions (what
   /// "Simpler" and "Go deeper" were), elsewhere what main's buddy offers there.
   var suggestions: [TutorSuggestion] {
-    func suggestion(_ id: String, _ label: String.LocalizationValue, _ comment: StaticString)
-      -> TutorSuggestion
-    {
-      TutorSuggestion(id: id, label: String(localized: label, table: "Tutor", comment: comment))
-    }
-
     switch self {
     case .lesson(_, let suggestions), .step(_, _, _, let suggestions):
       return suggestions
     case .chapter:
       return [
-        suggestion(
-          "after", "What will I be able to do after this chapter?",
-          "A question to the buddy, sent with one tap")
+        TutorSuggestion(
+          id: "after",
+          label: String(
+            localized: "What will I be able to do after this chapter?", table: "Tutor",
+            comment: "A question to the buddy, sent with one tap"))
       ]
     case .mock:
       return [
-        suggestion(
-          "first", "What should I practice first?",
-          "A question to the buddy about a mock exam, sent with one tap"),
-        suggestion(
-          "missed", "Why did I miss these questions?",
-          "A question to the buddy about a mock exam, sent with one tap"),
+        TutorSuggestion(
+          id: "first",
+          label: String(
+            localized: "What should I practice first?", table: "Tutor",
+            comment: "A question to the buddy about a mock exam, sent with one tap")),
+        TutorSuggestion(
+          id: "missed",
+          label: String(
+            localized: "Why did I miss these questions?", table: "Tutor",
+            comment: "A question to the buddy about a mock exam, sent with one tap")),
       ]
     case .plan:
       return [
-        suggestion(
-          "today", "Why am I studying this today?", "A question to the buddy, sent with one tap"),
-        suggestion(
-          "next", "What comes next?", "A question to the buddy about the plan, sent with one tap"),
+        TutorSuggestion(
+          id: "today",
+          label: String(
+            localized: "Why am I studying this today?", table: "Tutor",
+            comment: "A question to the buddy, sent with one tap")),
+        TutorSuggestion(
+          id: "next",
+          label: String(
+            localized: "What comes next?", table: "Tutor",
+            comment: "A question to the buddy about the plan, sent with one tap")),
       ]
     case .subject:
       return [
-        suggestion(
-          "left", "What's left to study here?",
-          "A question to the buddy about a subject, sent with one tap"),
-        suggestion(
-          "covered", "Does my plan cover all of it?",
-          "A question to the buddy about a subject, sent with one tap"),
+        TutorSuggestion(
+          id: "left",
+          label: String(
+            localized: "What's left to study here?", table: "Tutor",
+            comment: "A question to the buddy about a subject, sent with one tap")),
+        TutorSuggestion(
+          id: "covered",
+          label: String(
+            localized: "Does my plan cover all of it?", table: "Tutor",
+            comment: "A question to the buddy about a subject, sent with one tap")),
       ]
     case .item(_, _, let answered, _):
       return [
         answered
-          ? suggestion(
-            "walk", "Walk me through this answer",
-            "A question to the buddy about a checked answer, sent with one tap")
-          : suggestion(
-            "asking", "What is this question asking?",
-            "A question to the buddy about a practice question, sent with one tap"),
-        suggestion(
-          "idea", "What idea is this question about?",
-          "A question to the buddy about a practice question, sent with one tap"),
+          ? TutorSuggestion(
+            id: "walk",
+            label: String(
+              localized: "Walk me through this answer", table: "Tutor",
+              comment: "A question to the buddy about a checked answer, sent with one tap"))
+          : TutorSuggestion(
+            id: "asking",
+            label: String(
+              localized: "What is this question asking?", table: "Tutor",
+              comment: "A question to the buddy about a practice question, sent with one tap")),
+        TutorSuggestion(
+          id: "idea",
+          label: String(
+            localized: "What idea is this question about?", table: "Tutor",
+            comment: "A question to the buddy about a practice question, sent with one tap")),
       ]
     }
   }

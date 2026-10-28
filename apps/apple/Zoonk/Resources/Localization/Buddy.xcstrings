@@ -1025,6 +1025,35 @@
         }
       }
     },
+    "Explain my last mistake" : {
+      "comment" : "A question to the buddy, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erklär mir meinen letzten Fehler"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explícame mi último error"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explique-moi ma dernière erreur"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me explica meu último erro"
+          }
+        }
+      }
+    },
     "Finish “%@”" : {
       "comment" : "A mission: finish a chapter; the argument is its title",
       "localizations" : {
@@ -1580,6 +1609,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Oi! Eu sou %@, seu parceiro de estudos com IA. O que você quer aprender e até quando? Vou montar um plano para cada dia até lá."
+          }
+        }
+      }
+    },
+    "I want to study less this week" : {
+      "comment" : "A question to the buddy, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ich möchte diese Woche weniger lernen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quiero estudiar menos esta semana"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Je veux moins étudier cette semaine"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quero estudar menos nesta semana"
           }
         }
       }
@@ -2918,6 +2976,35 @@
         }
       }
     },
+    "What should I focus on first?" : {
+      "comment" : "A question to the buddy, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Worauf sollte ich mich zuerst konzentrieren?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿En qué debería centrarme primero?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sur quoi devrais-je me concentrer en premier ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No que devo focar primeiro?"
+          }
+        }
+      }
+    },
     "What you asked in your courses before we rewrote them. The lessons changed, so your questions stay here to reread." : {
       "comment" : "What the earlier questions page holds",
       "localizations" : {
@@ -2972,6 +3059,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O que você quer aprender"
+          }
+        }
+      }
+    },
+    "What's in my plan for today?" : {
+      "comment" : "A question to the buddy, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was steht heute in meinem Plan?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué tengo en mi plan para hoy?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qu’est-ce qui est prévu dans mon plan aujourd’hui ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que tem no meu plano para hoje?"
+          }
+        }
+      }
+    },
+    "Why am I studying this today?" : {
+      "comment" : "A question to the buddy, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warum lerne ich das heute?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Por qué estudio esto hoy?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pourquoi est-ce que j’étudie ça aujourd’hui ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por que estou estudando isso hoje?"
           }
         }
       }

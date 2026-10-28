@@ -27,7 +27,9 @@ struct BuddyScreen: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
       case .loaded(let status):
-        BuddyContent(status: status, goalId: tutoredGoalId)
+        BuddyContent(
+          status: status, goalId: tutoredGoalId,
+          hasMistake: (summary.summary.value?.places.readyMistakes ?? 0) > 0)
       case .empty:
         EmptyView()
       }
@@ -77,6 +79,8 @@ private struct BuddyContent: View {
 
   let status: BuddyStatus
   let goalId: String?
+  /// The learner has mistakes to fix, so the buddy offers to explain the last one.
+  let hasMistake: Bool
 
   @State private var isDayShown = false
   @State private var didPlaceDay = false
@@ -189,19 +193,36 @@ private struct BuddyContent: View {
 
   /// Three ways to start, from the learner's day: why today's lessons, a lighter week, a doubt.
   private var suggestions: [TutorSuggestion] {
-    func suggestion(_ id: String, _ label: String.LocalizationValue) -> TutorSuggestion {
-      TutorSuggestion(
-        id: id,
-        label: String(
-          localized: label, table: "Buddy", comment: "A question to the buddy, sent with one tap"))
-    }
-
-    return [
+    [
       status.today != nil
-        ? suggestion("today", "Why am I studying this today?")
-        : suggestion("today", "What's in my plan for today?"),
-      suggestion("lighter", "I want to study less this week"),
-      suggestion("focus", "What should I focus on first?"),
+        ? TutorSuggestion(
+          id: "today",
+          label: String(
+            localized: "Why am I studying this today?", table: "Buddy",
+            comment: "A question to the buddy, sent with one tap"))
+        : TutorSuggestion(
+          id: "today",
+          label: String(
+            localized: "What's in my plan for today?", table: "Buddy",
+            comment: "A question to the buddy, sent with one tap")
+        ),
+      TutorSuggestion(
+        id: "lighter",
+        label: String(
+          localized: "I want to study less this week", table: "Buddy",
+          comment: "A question to the buddy, sent with one tap")
+      ),
+      hasMistake
+        ? TutorSuggestion(
+          id: "mistake",
+          label: String(
+            localized: "Explain my last mistake", table: "Buddy",
+            comment: "A question to the buddy, sent with one tap"))
+        : TutorSuggestion(
+          id: "focus",
+          label: String(
+            localized: "What should I focus on first?", table: "Buddy",
+            comment: "A question to the buddy, sent with one tap")),
     ]
   }
 

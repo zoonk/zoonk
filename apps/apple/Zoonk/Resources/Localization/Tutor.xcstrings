@@ -1581,6 +1581,35 @@
         }
       }
     },
+    "Does my plan cover all of it?" : {
+      "comment" : "A question to the buddy about a subject, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deckt mein Plan alles ab?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Mi plan lo cubre todo?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mon plan couvre-t-il tout ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meu plano cobre tudo isso?"
+          }
+        }
+      }
+    },
     "Energy, level, right answers and when you study best." : {
       "comment" : "What the statistics show",
       "localizations" : {
@@ -3169,6 +3198,35 @@
         }
       }
     },
+    "Walk me through this answer" : {
+      "comment" : "A question to the buddy about a checked answer, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erklär mir diese Antwort Schritt für Schritt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explícame paso a paso esta respuesta"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explique-moi cette réponse étape par étape"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me explica esta resposta passo a passo"
+          }
+        }
+      }
+    },
     "We couldn't finish this answer." : {
       "comment" : "A buddy answer failed",
       "localizations" : {
@@ -3285,6 +3343,93 @@
         }
       }
     },
+    "What comes next?" : {
+      "comment" : "A question to the buddy about the plan, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was kommt als Nächstes?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué viene después?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qu’est-ce qui vient ensuite ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que vem a seguir?"
+          }
+        }
+      }
+    },
+    "What idea is this question about?" : {
+      "comment" : "A question to the buddy about a practice question, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um welche Idee geht es in dieser Frage?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué idea plantea esta pregunta?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sur quelle idée porte cette question ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que ideia esta pergunta aborda?"
+          }
+        }
+      }
+    },
+    "What is this question asking?" : {
+      "comment" : "A question to the buddy about a practice question, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was wird in dieser Frage gefragt?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué me pide esta pregunta?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que demande cette question ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que esta pergunta está pedindo?"
+          }
+        }
+      }
+    },
     "What Plus includes and its price." : {
       "comment" : "What the subscription page shows",
       "localizations" : {
@@ -3314,6 +3459,64 @@
         }
       }
     },
+    "What should I practice first?" : {
+      "comment" : "A question to the buddy about a mock exam, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was sollte ich zuerst üben?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué debería practicar primero?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que devrais-je travailler en premier ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que devo praticar primeiro?"
+          }
+        }
+      }
+    },
+    "What will I be able to do after this chapter?" : {
+      "comment" : "A question to the buddy, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was werde ich nach diesem Kapitel können?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué sabré hacer después de este capítulo?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Que saurai-je faire après ce chapitre ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que vou conseguir fazer depois deste capítulo?"
+          }
+        }
+      }
+    },
     "What you did this week next to the last, and what comes next." : {
       "comment" : "What the logbook shows",
       "localizations" : {
@@ -3339,6 +3542,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O que você fez nesta semana e na anterior, e o que vem a seguir."
+          }
+        }
+      }
+    },
+    "What's left to study here?" : {
+      "comment" : "A question to the buddy about a subject, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was muss ich hier noch lernen?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Qué me queda por estudiar aquí?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qu’est-ce qu’il me reste à étudier ici ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que ainda falta estudar aqui?"
+          }
+        }
+      }
+    },
+    "Why am I studying this today?" : {
+      "comment" : "A question to the buddy, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warum lerne ich das heute?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Por qué estudio esto hoy?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pourquoi est-ce que j’étudie ça aujourd’hui ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por que estou estudando isso hoje?"
+          }
+        }
+      }
+    },
+    "Why did I miss these questions?" : {
+      "comment" : "A question to the buddy about a mock exam, sent with one tap",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warum habe ich diese Fragen falsch beantwortet?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Por qué he fallado estas preguntas?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pourquoi est-ce que je me suis trompé à ces questions ?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por que errei estas perguntas?"
           }
         }
       }
