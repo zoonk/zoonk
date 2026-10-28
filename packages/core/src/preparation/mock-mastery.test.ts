@@ -37,7 +37,6 @@ describe("mock answers in preparation's mastery evidence", () => {
     const running = await runningMock(blockId);
     const questions = running.current?.questions ?? [];
 
-    // Placement skipped these questions earlier: no answer was given to mask today's mock.
     await Promise.all(
       questions
         .slice(0, 5)
@@ -73,7 +72,6 @@ describe("mock answers in preparation's mastery evidence", () => {
       status: "ready",
     });
 
-    // A first right test-out answer also contributes: the label should read six of seven.
     const tested = await itemFixture({ skillId: skills[0]?.id ?? "" });
     await attemptFixture({ itemId: tested.id, skillId: tested.skillId, userId: user.id });
 
@@ -108,7 +106,6 @@ describe("mock answers in preparation's mastery evidence", () => {
       value: null,
     });
 
-    // Mastery appears once five questions have actual answers.
     await Promise.all(
       (running.current?.questions ?? [])
         .slice(0, 5)
@@ -122,7 +119,6 @@ describe("mock answers in preparation's mastery evidence", () => {
         ),
     );
 
-    // A repeat is practice on a familiar question, not more evidence on an unseen one.
     await attemptFixture({
       answeredAt: new Date(SESSION_NOW.getTime() + 2000),
       isCorrect: false,

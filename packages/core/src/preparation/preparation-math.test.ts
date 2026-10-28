@@ -40,7 +40,6 @@ const ANSWERS = [
   { answeredAt: new Date("2026-09-19"), isCorrect: true, skillId: "b" },
 ];
 
-/** Mastery as the math reads it from first answers to unseen questions, every one counting alike. */
 function masteryFrom({ answered, correct }: { answered: number; correct: number }) {
   const answers = Array.from({ length: answered }, (_, index) => ({
     answeredAt: WEEK_AGO,
@@ -60,7 +59,6 @@ describe(getPreparationComponents, () => {
       skills: SKILLS,
     });
 
-    // Every skill counts alike: the heavier half is the whole goal.
     expect(components.coverage).toStrictEqual({
       heaviest: { studiedSkills: 2, totalSkills: 4, value: 0.5 },
       studiedSkills: 2,
@@ -71,7 +69,6 @@ describe(getPreparationComponents, () => {
     expect(components.retention.value).toBeCloseTo(0.8);
     expect(components.mastery).toMatchObject({ answered: 5, correct: 4, evidence: 5, value: 0.8 });
 
-    // Four right of five supports less than 80%: what preparation counts and its part shows.
     expect(components.mastery.supported).toBeLessThan(0.5);
 
     expect(components.mocks).toStrictEqual({
@@ -134,8 +131,7 @@ describe(getPreparationValue, () => {
       retention: { studiedSkills: 2, value: 0.9 },
     });
 
-    // Eight right of ten supports about 54% (Wilson's lower bound), not 80%. The mock exam not
-    // taken yet counts as none: every part the learner can have shares the whole.
+    // Eight right of ten supports about 54% (Wilson's lower bound).
     expect(value).toBeCloseTo(0.5 * (0.5408 * 0.4 + 0.9 * 0.3), 3);
   });
 
@@ -152,12 +148,9 @@ describe(getPreparationValue, () => {
       retention: { studiedSkills: 1, value: 1 },
     });
 
-    // Remembering all of it is one part of three: right answers and a mock still have to show.
     expect(value).toBeCloseTo(0.05 * 0.3);
   });
 
-  // Maya passed a test-out and her progress went from 6% to 5%: its answers brought mastery in at
-  // a lower share than her memory, and the number was an average of the parts there were.
   it("never drops when a new kind of evidence comes in", () => {
     const coverage = {
       heaviest: { studiedSkills: 3, totalSkills: 35, value: 3 / 35 },
@@ -252,7 +245,6 @@ describe(getPreparationValue, () => {
 describe("preparation weighted by what the exam asks and how hard it is", () => {
   const studied = new Date("2026-09-01");
 
-  /** Two easy topics the exam rarely asks and one hard topic it asks a lot. */
   const weighted = [
     skill({ importance: 0.5, retrievability: 0.9, skillId: "easy-1", studiedAt: studied }),
     skill({ importance: 0.5, retrievability: 0.9, skillId: "easy-2", studiedAt: studied }),
@@ -273,14 +265,12 @@ describe("preparation weighted by what the exam asks and how hard it is", () => 
       skills: weighted,
     });
 
-    // Two of three skills studied, but only a quarter of what the goal asks.
     expect(components.coverage.studiedSkills).toBe(2);
     expect(components.coverage.value).toBeCloseTo(0.25);
     expect(components.coverage.heaviest.value).toBe(0);
   });
 
   it("never reads as solid without evidence on the hard part and a mock, however well the rest went", () => {
-    // Seventeen medium topics studied and known well, three hard ones never tested.
     const goal = [
       ...Array.from({ length: 17 }, (_, index) =>
         skill({ retrievability: 0.95, skillId: `medium-${index}`, studiedAt: studied }),
@@ -320,7 +310,6 @@ describe("preparation weighted by what the exam asks and how hard it is", () => 
 
     expect(withHard).toBeGreaterThanOrEqual(0.75);
 
-    // The same evidence without a mock exam stays below Solid: no test in real conditions yet.
     const withoutMock = getPreparationValue(
       getPreparationComponents({
         answers: rightOnMedium,
@@ -351,7 +340,6 @@ describe("preparation weighted by what the exam asks and how hard it is", () => 
 
     const { mastery } = getPreparationComponents({ answers, asOf: NOW, mocks: [], skills });
 
-    // Six of ten right, but the four wrong ones are on the topic worth six times as much.
     expect(mastery.correct).toBe(6);
     expect(mastery.value).toBeCloseTo(3 / 15);
     expect(mastery.evidence).toBeLessThan(10);

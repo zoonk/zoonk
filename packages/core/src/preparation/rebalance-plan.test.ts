@@ -18,25 +18,18 @@ import { rebalancePlanAfterSession } from "./rebalance-plan";
 const NOW = new Date("2020-09-30T12:00:00Z");
 const DAY_MS = 86_400_000;
 
-/** Well remembered: reviewed yesterday with a month of stability. */
 const REMEMBERED = {
   difficulty: 5,
   lastReviewedAt: new Date(NOW.getTime() - DAY_MS),
   stability: 30,
 };
 
-/** Fading: last seen ten days ago with a day of stability. */
 const FADING = {
   difficulty: 5,
   lastReviewedAt: new Date(NOW.getTime() - 10 * DAY_MS),
   stability: 1,
 };
 
-/**
- * A planned goal with two areas studied this week: Humanities is going well (Solid and
- * remembered), Science is fading. Each area is a chapter of the plan and an area of its graph, both
- * in the graph's first phase, so focusing one moves it ahead of the other.
- */
 async function setup({ phases = "shared" }: { phases?: "separate" | "shared" } = {}) {
   const user = await userFixture();
 
@@ -56,7 +49,6 @@ async function setup({ phases = "shared" }: { phases?: "separate" | "shared" } =
     userId: user.id,
   });
 
-  // One phase in the graph, so the plan's order inside it is what a focus changes.
   const graph =
     phases === "shared"
       ? {
@@ -92,7 +84,6 @@ async function setup({ phases = "shared" }: { phases?: "separate" | "shared" } =
         userId: user.id,
       }),
     ),
-    // Studied: the learner answered on every one of them.
     ...library.skills.map((skill) =>
       attemptFixture({ answeredAt: studiedAt, skillId: skill.id, userId: user.id }),
     ),
@@ -135,7 +126,6 @@ describe(rebalancePlanAfterSession, () => {
     await rebalancePlanAfterSession({ goalId: goal.id, now: NOW, userId: user.id });
     await expect(rebalances(plan.id)).resolves.toHaveLength(1);
 
-    // The plan keeps it with its undo; Today, with nothing for the learner to decide, asks nothing.
     await expect(loadPlanChangeView(change?.id ?? "")).resolves.toMatchObject({
       canUndo: true,
       operations: [{ areas: ["Science"], kind: "focusAreas" }],
@@ -148,7 +138,6 @@ describe(rebalancePlanAfterSession, () => {
   });
 
   it("announces no move when focusing the fading area wouldn't move anything", async () => {
-    // Science comes in its own later phase, after the Humanities it builds on, and everything fits.
     const { goal, plan, user } = await setup({ phases: "separate" });
 
     await rebalancePlanAfterSession({ goalId: goal.id, now: NOW, userId: user.id });

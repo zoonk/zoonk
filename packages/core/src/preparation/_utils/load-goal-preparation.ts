@@ -30,7 +30,6 @@ type SelectedPreparationPlan = Pick<PlanReadContext, "items" | "plan" | "state" 
   catchUp?: number;
 };
 
-/** Status follows the selected allocation, else the saved plan's items and estimate. */
 function getStatusSchedule({
   savedPlan,
   selectedPlan,
@@ -45,7 +44,6 @@ function getStatusSchedule({
   return { estimateHours: savedPlan?.estimateHours ?? null, items: savedPlan?.items ?? [] };
 }
 
-/** Shared evidence and status rules; Today supplies its already authorized in-memory selection. */
 export async function loadGoalPreparation({
   goalId,
   selectedPlan,
@@ -53,7 +51,6 @@ export async function loadGoalPreparation({
   goalId: string;
   selectedPlan?: SelectedPreparationPlan;
 }): Promise<GoalPreparationResult> {
-  // The request's date doesn't depend on the goal: it's read alongside it.
   const [owned, dateContext] = await Promise.all([
     getOwnedGoal(goalId),
     getRequestProgressDateContext(),
@@ -66,7 +63,6 @@ export async function loadGoalPreparation({
   return loadOwnedGoalPreparation({ dateContext, owned, selectedPlan });
 }
 
-/** Internal composition keeps the authorized goal and the request's preparation clock. */
 export async function loadOwnedGoalPreparation({
   dateContext: { currentInstant: now, timeZone: requestTimeZone },
   owned,
@@ -76,7 +72,6 @@ export async function loadOwnedGoalPreparation({
   owned: Extract<OwnedGoal, { status: "ready" }>;
   selectedPlan?: SelectedPreparationPlan;
 }): Promise<GoalPreparationResult> {
-  // A quick explanation is one answer, not a goal to prepare for.
   if (owned.goal.kind === "explain") {
     return { status: "notFound" };
   }
@@ -91,7 +86,6 @@ export async function loadOwnedGoalPreparation({
 
   const today = selectedPlan?.today ?? getDateInTimeZone({ date: now, timeZone });
   const weekStart = getStartOfLocalDay({ localDate: getStartOfWeek(today), timeZone });
-  // Areas keep a rolling seven days: rebalancing reads their trend on any day, Mondays included.
   const weekAgo = new Date(now.getTime() - WEEK_DAYS * MS_PER_DAY);
 
   const [savedPlan, subscription, blueprint] = await Promise.all([
@@ -122,7 +116,6 @@ export async function loadOwnedGoalPreparation({
   const { components, sections, stage, value } = measure(now);
   const areas = getAreaPreparations({ ...inputs, now, weekAgo });
 
-  // Only mocks estimate a score: a full review stands in for one in preparation, not for a score.
   const estimatedScore =
     inputs.testKind === "weeklyChallenges"
       ? null

@@ -11,51 +11,32 @@ import {
   sumImportance,
 } from "./preparation-math";
 
-/** What preparation reads for one goal, as of one moment. */
 type PreparationInput = {
   answers: readonly UnseenAnswer[];
   asOf: Date;
   mocks: readonly MockResult[];
-  /** Exam shares by section; absent when the goal has no usable exam shares. */
   sectionWeights?: ReadonlyMap<string, number> | null;
   skills: readonly PreparationSkill[];
   testKind?: PreparationTestKind;
   testPlusRequired?: boolean;
 };
 
-/** Right answers of those given to questions never seen before. */
 type MasteryEvidence = { answered: number; correct: number };
 
-/**
- * Preparation in one section of the goal's skill graph (an exam's "Matemática", as the planner
- * and the syllabus's subjects name it). `weight` is its share of the exam, or of the goal's
- * importance when no exam shares are available: the sections' preparations, each counting by its
- * weight, are the goal's own.
- */
 export type SectionPreparation = {
-  /**
-   * The answers that say how well the section is known, once it has the few mastery needs (see
-   * `getPreparationComponents`). Null before: its preparation counts no mastery yet.
-   */
   mastery: MasteryEvidence | null;
   preparation: number;
   section: string;
   weight: number;
 };
 
-/** A goal's preparation as of one moment: its number, its four parts and each of its sections. */
 type MeasuredPreparation = {
-  /**
-   * The four parts behind the number. Mastery reads the answers in the sections that have enough
-   * of them, the ones whose preparation counts it, so it shows only where the number does.
-   */
   components: PreparationComponents;
   sections: SectionPreparation[];
   stage: PreparationStage;
   value: number;
 };
 
-/** Exam shares do not grow with a subject's number or difficulty of skills. */
 function getSectionWeights({
   groups,
   sectionWeights,
@@ -80,18 +61,6 @@ function getSectionWeights({
   return new Map(parts.map(({ section }) => [section, fallback]));
 }
 
-/**
- * Measures a goal's preparation as of `asOf` (today's, or the week's start for its gain) the way
- * its subjects read: each section of its skill graph by the goal's rule (see
- * `getPreparationValue`) on its own skills and answers, with the goal's tests, which span every
- * section; the goal's number is theirs together, each counting by its exam share when available,
- * otherwise its share of the goal's importance. Sections outside an available exam share map
- * count as zero; included shares are normalized, so set-aside subjects do not dilute the goal.
- * So the whole sits within its contributing parts, or is zero when none contributes: a few
- * answers in each subject, too few to count mastery in any, don't count it for the whole either. Without exam shares, skills with
- * no section count as one more part, which no subject shows; a goal whose graph names no sections
- * is that one part.
- */
 export function measurePreparation(input: PreparationInput): MeasuredPreparation {
   const grouped = Map.groupBy(input.skills, (skill) => skill.section ?? null);
   const weights = getSectionWeights({ groups: grouped, sectionWeights: input.sectionWeights });
@@ -142,7 +111,6 @@ export function measurePreparation(input: PreparationInput): MeasuredPreparation
   };
 }
 
-/** The sections a subject gathers (`areas`, such as ENEM's languages and its foreign language). */
 function getOwnSections({
   areas,
   sections,
@@ -153,10 +121,6 @@ function getOwnSections({
   return sections.filter((section) => areas.includes(section.section));
 }
 
-/**
- * A subject's preparation from the sections it gathers: their preparations, each counting by its
- * weight. Null when the goal measures none of them.
- */
 export function getSubjectPreparation(input: {
   areas: readonly string[];
   sections: readonly SectionPreparation[];
@@ -176,10 +140,6 @@ export function getSubjectPreparation(input: {
   return own.reduce((sum, section) => sum + section.preparation * section.weight, 0) / weight;
 }
 
-/**
- * The answers that say how well a subject is known: those of its sections with enough to count
- * mastery. Null while none has: its preparation counts no mastery yet.
- */
 export function getSubjectMastery(input: {
   areas: readonly string[];
   sections: readonly SectionPreparation[];

@@ -4,7 +4,6 @@ import { type PlanStatusItem, getPlanStatus } from "./plan-status";
 
 const TODAY = new Date("2026-09-10T00:00:00Z");
 
-/** Two items a day from September 6 to 15. */
 function schedule(finished: number): PlanStatusItem[] {
   return Array.from({ length: 20 }, (_, index) => ({
     chapterId: "chapter",
@@ -16,7 +15,6 @@ function schedule(finished: number): PlanStatusItem[] {
   }));
 }
 
-/** The first five items tested out, the next five skipped, the rest still to do. */
 function getFinishedStatus(index: number): PlanItemStatus {
   if (index < 5) {
     return "testedOut";
@@ -208,7 +206,6 @@ describe(getPlanStatus, () => {
     ).toStrictEqual({ kind: "finished" });
   });
 
-  // Lucas's date came with lessons he hadn't studied: his plan read "Ended" and stopped there.
   it("is past its date once it came with lessons left, to do or set aside, a stand-in as its lessons", () => {
     const items: PlanStatusItem[] = schedule(16).map((item, index) =>
       index < 18 ? item : { ...item, status: "skipped" },

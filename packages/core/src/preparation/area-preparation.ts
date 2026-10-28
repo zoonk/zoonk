@@ -6,10 +6,8 @@ import {
   getPreparationValue,
 } from "./preparation-math";
 
-/** One area of a goal (a subject area or chapter) and how prepared the learner is in it. */
 export type AreaPreparation = {
   areaId: string;
-  /** Studied, but fading or not yet well known: where practice pays. */
   needsPractice: boolean;
   preparation: number;
   skills: SkillStateCounts;
@@ -17,7 +15,6 @@ export type AreaPreparation = {
   weekGain: number;
 };
 
-/** Below this share of the studied part known well, an area needs practice. */
 const NEEDS_PRACTICE_QUALITY = 0.7;
 
 type AreaMeasure = AreaPreparation & { coverage: number; quality: number | null };
@@ -59,11 +56,7 @@ function measureArea({
   };
 }
 
-/**
- * Measures each area with the same math as the whole goal (mocks aside, since they span areas) and
- * names the weakest studied area, which gets the "Practice now" shortcut. Areas not reached yet
- * are never the weakest: being early in the plan isn't a weakness.
- */
+/** An area not reached yet is never the weakest: being early in the plan isn't a weakness. */
 export function getAreaPreparations({
   answers,
   areas,

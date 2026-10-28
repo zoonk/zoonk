@@ -11,17 +11,11 @@ import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-stat
 
 export type PlanReader = typeof loadGoalPlan;
 
-/**
- * One of the goal's skills as preparation measures it: its area, its section of the skill graph
- * (see `PreparationSkill.section`), and the skills whose answers show it (itself and the finer
- * skills its lessons teach).
- */
 export type MeasuredSkill = Pick<GoalSkillNode, "areaId" | "memberSkillIds"> & {
   section: string | null;
   skillId: string;
 };
 
-/** A lesson's finer skills inherit its graph skill's subject, including a merged graph skill. */
 function getItemSkillSections({
   item,
   sections,
@@ -33,11 +27,6 @@ function getItemSkillSections({
   return section ? item.skillIds.map((id) => [id, section]) : [];
 }
 
-/**
- * The whole goal's skills: the plan's, then the ones of its skill graph the plan leaves out for now
- * (no time for them yet), so taking them in later never changes what preparation is out of. Areas
- * the learner took out of the plan aren't part of the goal anymore.
- */
 export async function loadMeasuredSkills({
   goalId,
   readPlan,
@@ -45,7 +34,6 @@ export async function loadMeasuredSkills({
 }: {
   goalId: string;
   readPlan: PlanReader;
-  /** A page's saved plan (`readSavedPlan`), so it isn't read again. */
   savedPlan?: Pick<Plan, "graph" | "settings"> | null;
 }) {
   const [plan, row] = await Promise.all([
@@ -59,7 +47,7 @@ export async function loadMeasuredSkills({
   const { examChoices: choices, fullCourse, skippedAreas } = parsePlanSettings(row?.settings);
   const skipped = new Set(skippedAreas);
   const graphSkills = graph.skills.filter((skill) => !skipped.has(getSkillArea({ graph, skill })));
-  // A page's saved plan comes with its reads taking the Library's rows from the shared caches.
+
   const survivorOf = await readSurvivorOf(
     graph.skills.map((skill) => skill.skillId),
     savedPlan === undefined ? prisma : "shared",
@@ -69,8 +57,6 @@ export async function loadMeasuredSkills({
     graph.skills.map((skill) => [survivorOf(skill.skillId), getSkillArea({ graph, skill })]),
   );
 
-  // A finer skill takes its first plan item's subject. Resolve graph anchors before inheriting:
-  // retained lessons can name a merged anchor or a subject named only by the graph's phase.
   const sectionOf = new Map([
     ...plan.items
       .toReversed()
@@ -78,8 +64,6 @@ export async function loadMeasuredSkills({
     ...graphSections,
   ]);
 
-  // Finished items survive replanning, including those of a subject the learner removed. Its
-  // finer lesson skills inherit the item's subject, so they must leave the measure too.
   const planSkills = plan.skills.filter(
     (node) => !skipped.has(sectionOf.get(node.id) ?? node.sectionTitle ?? ""),
   );

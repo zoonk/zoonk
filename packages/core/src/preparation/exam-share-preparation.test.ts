@@ -104,7 +104,6 @@ describe(getGoalPreparation, () => {
       (language.preparation.sections[0]?.preparation ?? 0) / 4,
     );
 
-    // The changed measurement is reused by the goal's read without changing who may read it.
     mockSession(null);
     await expect(getGoalPreparation(goal.id)).resolves.toStrictEqual({ status: "unauthorized" });
     const other = await userFixture();

@@ -8,14 +8,8 @@ import { weighGraphForExam } from "../../plans/planner/exam-weights";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 import { getSkillImportance } from "../preparation-math";
 
-/** A skill preparation measures, with the skills whose questions show it. */
 type ImportanceSkill = { memberSkillIds: readonly string[]; skillId: string };
 
-/**
- * Each skill's questions' average difficulty on the item bank's scale: the level they were
- * written at (the exam's own past questions included), recalibrated from every learner's first
- * answers once enough learners answered them (`recalibrateItemDifficulty`).
- */
 async function loadBankDifficulty({
   examBlueprintId,
   skillIds,
@@ -42,21 +36,11 @@ async function loadBankDifficulty({
   );
 }
 
-/**
- * Where a skill sits in the skill graph's path, as a difficulty when no question of it has one:
- * the first phase (foundations) a little easier than medium, the last a little harder.
- */
 function getGraphDifficulty({ graph, phase }: { graph: PlanGraph; phase: number | null }) {
   const last = Math.max(0, ...graph.skills.map((skill) => skill.phase));
   return phase === null || last === 0 ? 0 : phase / last - 1 / 2;
 }
 
-/**
- * How much each of the goal's skills counts toward preparation (see `getSkillImportance`): the
- * exam's weight on it, as the planner reads it, times how hard its questions are (or, without
- * any, where it sits in the path). `survivorOf` maps the graph's skills to the ones the learner
- * model keeps.
- */
 export async function loadSkillImportance({
   blueprint,
   choices,
@@ -65,9 +49,7 @@ export async function loadSkillImportance({
   skills,
   survivorOf,
 }: {
-  /** The exam's blueprint a GET already read, so it isn't read again. */
   blueprint?: ExamBlueprint | null;
-  /** The options the learner picked of their exam's choices, which alone count on it. */
   choices: readonly ExamChoice[];
   goal: Pick<Goal, "details" | "examBlueprintId" | "kind"> | null;
   graph: PlanGraph;

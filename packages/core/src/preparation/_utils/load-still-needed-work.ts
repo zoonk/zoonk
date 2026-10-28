@@ -4,11 +4,6 @@ import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { loadPlanContext } from "../../plans/_utils/plan-context";
 import { getMinutesPerItem } from "../plan-status";
 
-/**
- * What "Still needed" measures time with: each plan item still to do, with the minutes the planner
- * gives it at the learner's pace (the plan's average per item when it can't be planned now), and
- * the exam weight of each of the goal's skills.
- */
 export async function loadStillNeededWork({
   goalId,
   now,

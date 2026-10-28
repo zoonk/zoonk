@@ -37,7 +37,6 @@ const answers = ["math-1", "lang-1", "lang-2"].flatMap((skillId) =>
 
 const mocks = [{ correct: 30, endedAt: BEFORE, total: 45 }];
 
-/** Floating-point slack for comparing a weighted mean with its parts. */
 const EPSILON = 1e-9;
 
 const SECTIONS = ["Linguagens", "Língua Inglesa", "Humanas", "Natureza", "Matemática"];
@@ -50,10 +49,6 @@ function count(random: Random, max: number): number {
   return Math.floor(random() * (max + 1));
 }
 
-/**
- * A goal of two to five sections with the evidence a learner could have: skills of mixed
- * importance, studied or not, and often only a few answers in a section, with or without a mock.
- */
 function randomGoal(random: Random) {
   const sections = SECTIONS.slice(0, 2 + count(random, 3));
 
@@ -142,17 +137,12 @@ describe(measurePreparation, () => {
 
     const [math, languages] = sections;
 
-    // Half of Matemática's weight studied; all of Linguagens.
     expect(languages?.preparation).toBeGreaterThan(math?.preparation ?? 1);
 
-    // The goal is its sections together; the skill without one, not studied, adds nothing.
     const weighted = sections.reduce((sum, entry) => sum + entry.preparation * entry.weight, 0);
     expect(weighted).toBeCloseTo(goal, 12);
   });
 
-  // Two subjects studied whole, remembered at 0.9, three new questions right in each and no mock
-  // yet: the whole read 55% over two subjects at 27%. Its six answers counted for the goal, while
-  // each subject's three were too few to.
   it("reads the whole as its subjects together when each has too few answers to count", () => {
     const studied = [skill("a", "A", true), skill("b", "B", true)];
 
@@ -177,7 +167,6 @@ describe(measurePreparation, () => {
     ]);
 
     expect(value).toBeCloseTo(0.27);
-    // Mastery counts in no subject yet, so the sheet doesn't show it either.
     expect(components.mastery.value).toBeNull();
   });
 
@@ -186,7 +175,6 @@ describe(measurePreparation, () => {
       const goal = randomGoal(seededRandom(seed));
       const { sections, value } = measurePreparation(goal);
 
-      // ENEM's Linguagens gathers its foreign language: a subject can hold more than one section.
       const [first, second, ...rest] = sections;
 
       const subjects =

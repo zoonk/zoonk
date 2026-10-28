@@ -12,10 +12,9 @@ import { REBALANCE_SOURCE, pickRebalance } from "./rebalance-rule";
 
 const WEEK_DAYS = 7;
 
-/** Not shown to the learner: the apps say a rebalance from its areas, in the learner's language. */
+/** For logs and admin only; the apps word a rebalance from its areas. */
 const REBALANCE_NOTE = "Moved time to the area that needs it most.";
 
-/** The plan's names for each preparation area's skills, so a "focus on" change can point at them. */
 function toRebalanceAreas({
   areas,
   graph,
@@ -93,11 +92,7 @@ async function rebalance({
   }
 }
 
-/**
- * After a session, when one area is going well and another needs practice, the plan moves time to
- * the weak one (shown as a plan change), with an undo. It runs
- * at most once a week; a failure is logged and never gets in the way of the learner's day.
- */
+/** Never throws: a failure is logged. */
 export async function rebalancePlanAfterSession({
   goalId,
   now = new Date(),

@@ -154,7 +154,6 @@ describe("preparation after taking a subject out", () => {
         (subject) => subject.name === "Past basics",
       );
 
-      // A foundation with later work in the same subject: these basics are still tested.
       const placement = await loadPlacementPlan(goal.id);
       expect(placement.skills.find((skill) => skill.id === skills[3]!.id)?.foundation).toBe(true);
 

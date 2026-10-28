@@ -53,8 +53,6 @@ describe(buildStillNeeded, () => {
 
     expect(needed.rule).toBe("examWeighted");
 
-    // a1 is new (below Learning) and a2 weighs 4 but is only Learning; b3 (weight 3) and b2 (no
-    // weight) only need Learning.
     expect(needed.areas.flatMap((area) => area.left.map((item) => item.skillId))).toStrictEqual([
       "a1",
       "a2",
@@ -73,7 +71,6 @@ describe(buildStillNeeded, () => {
       ],
     });
 
-    // a1 gets half of the first item (a3 is already Solid), a2 all of the second, b2 half the third.
     expect(needed.areas.map((area) => area.minutes)).toStrictEqual([27, 10]);
     expect(needed.minutes).toBe(37);
   });
