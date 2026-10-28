@@ -23,14 +23,16 @@ Run commands from this directory:
 
 | Command             | Purpose                                                       |
 | ------------------- | ------------------------------------------------------------- |
-| `make build`        | Build the iPhone and iPad app in Release configuration.       |
-| `make build-ios`    | Build the iPhone and iPad app in Release configuration.       |
+| `make build`        | Build the iPhone and iPad app in Debug configuration.         |
+| `make build-ios`    | Build the iPhone and iPad app in Debug configuration.         |
 | `make test`         | Run the app's test targets on the default iPhone simulator.   |
 | `make format`       | Format Swift source files in place.                           |
 | `make format-check` | Check Swift formatting without changing files.                |
 | `make check`        | Run formatting checks, build the app, and run its test suite. |
 
 From the repository root, add `-C apps/apple`, for example `make -C apps/apple check`.
+
+To check a Release build, run `make build CONFIGURATION=Release`.
 
 Override the test destination when the default simulator is unavailable:
 
