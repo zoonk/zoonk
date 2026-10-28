@@ -14,6 +14,7 @@ How to measure requests, memory, leaks, CPU and hangs for the iPhone and iPad ap
   xcrun simctl launch --terminate-running-process $UDID com.zoonk.dev
   ```
 
+- Use a signed build for anything that signs in. `make test` and `build-for-testing` with `CODE_SIGNING_ALLOWED=NO` replace the app in the same DerivedData with an unsigned one that can't read the Keychain, so the account shows "Account unavailable" and makes no request: rebuild with the command above and reinstall before measuring.
 - Sign in with email as a persona copy (`pnpm dev:persona <name>`). The code is the newest message for that address in the mailbox's JSON: `curl -s <mailbox URL>/api/emails`.
 - Other agents may run Zoonk on other simulators, so always take the process of your own device: `PID=$(pgrep -f "CoreSimulator/Devices/$UDID/.*/Zoonk.app/Zoonk$")`.
 - Drive the app with T3 Code's device tools (`agent-device`). Its element refs expire after every action, so take a new snapshot before each tap. Snapshots make the app build its accessibility tree, which costs CPU: stop driving it before measuring idle CPU or recording a profile you want to read.

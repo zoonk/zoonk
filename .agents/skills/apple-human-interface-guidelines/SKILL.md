@@ -81,6 +81,7 @@ Screens must feel instant. The rules that matter most:
 
 - Xcode 27's simulator can't record Instruments' Network Connections, Hitches or SwiftUI templates; Time Profiler, Leaks, Allocations and the `leaks`/`footprint` command-line tools work. See the verify reference.
 - UI automation that snapshots the accessibility tree makes the app compute it, which shows up as CPU in a profile. Measure idle CPU and profiles with no automation running.
+- When `xcodebuild test` fails before any test runs with "Invalid device state" while installing on a simulator clone, rerun with `-parallel-testing-enabled NO` so it uses the simulator itself.
 - Developer documentation JSON states each API's availability; check it before using an API newer than the deployment target (iOS 26).
 
 ## Official Starting Points
