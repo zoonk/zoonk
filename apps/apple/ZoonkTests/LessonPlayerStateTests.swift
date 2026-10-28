@@ -811,10 +811,18 @@ final class LessonMathTests: XCTestCase {
 @MainActor
 final class LessonAskPlacementTests: XCTestCase {
   private func store() -> LessonPlayerStore {
-    LessonPlayerStore(
+    let cache = AppCache(session: .preview())
+    let preferences: Resource<LearningPreferences> = cache.resource(audience: .signedIn) { _ in
+      nil
+    }
+    let lesson: Resource<LessonLoad> = cache.resource(audience: .viewer) { _ in
+      throw APIError.network
+    }
+
+    return LessonPlayerStore(
       lessonId: "lesson", studySessionId: nil,
       api: LessonPlayerAPI(clients: .live(baseURL: URL(string: "https://zoonk.test")!)),
-      cache: AppCache(session: .preview()),
+      cache: cache, preferences: preferences, lessonResource: lesson,
       choices: LessonTodayChoices(today: { "today" }, read: { _ in nil }, write: { _, _ in }))
   }
 
