@@ -49,7 +49,7 @@ extension TutorPlaces {
       case .subscription:
         router.present(.subscription)
       case .startGoal:
-        router.open(.startGoal)
+        router.open(.startGoal())
       case .chapterTest(let chapterId):
         router.open(.testOut(chapterId: chapterId))
       case .chooseFocus:
