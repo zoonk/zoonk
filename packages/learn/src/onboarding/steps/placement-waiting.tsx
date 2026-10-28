@@ -15,7 +15,6 @@ import {
 } from "../onboarding-frame";
 import { WAITING_RUN, getWaitRun } from "./wait-run";
 
-/** After this long, offer to go on: placement also runs in the first sessions. */
 const PATIENCE_MS = 20_000;
 
 const FAILED_RUN: GenerationRun = { failure: "generation", status: "failed", steps: {} };
@@ -31,12 +30,6 @@ function usePatience(): boolean {
   return patient;
 }
 
-/**
- * While the goal's skill map and placement questions are written: the run's progress as it
- * happens, moving on by itself once questions exist. It never traps the learner: skipping keeps
- * what's known, a failed run offers to start again, and checking that stopped offers to check
- * again.
- */
 export function PlacementWaiting({
   buildFailed,
   onSkip,
@@ -44,7 +37,6 @@ export function PlacementWaiting({
   run,
   skipping,
 }: {
-  /** Placement says the goal's plan couldn't be built, for hosts that don't follow the run. */
   buildFailed: boolean;
   onSkip: () => void;
   poll: { restart: () => void; status: PollStatus };
@@ -54,7 +46,7 @@ export function PlacementWaiting({
   const t = useExtracted();
   const patient = usePatience();
   const shown = getWaitRun({ poll, run: run ?? (buildFailed ? FAILED_RUN : WAITING_RUN) });
-  // A test built from the learner's own material has it read first, which takes a few minutes.
+  // The learner's own material is read in the `readExamNotice` step.
   const readsMaterial = shown.steps.readExamNotice !== undefined;
 
   return (

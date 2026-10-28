@@ -10,10 +10,8 @@ import { type BuddyChoice, BuddyPicker } from "../../buddies/buddy-picker";
 import { useLearnAnalytics } from "../../learn-context";
 import { StepForm } from "./step-form";
 
-/** The picker previews each choice as a baby at 50 Energy; choosing one customizes default Zu. */
 const NEW_BUDDY_LOOK = { beltColor: "white" as const, energy: 50 };
 
-/** A buddy that grows as the learner learns, with the learner's own name for it. */
 export function BuddyStep({
   onAnswer,
   pending,

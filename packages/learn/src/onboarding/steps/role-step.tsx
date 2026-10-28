@@ -12,15 +12,10 @@ type RoleStepProps = {
   purpose: "careerChange" | "work";
 };
 
-/** An answer the learner left empty is skipped, not saved. */
 function answer(value: string): string | null {
   return value.trim() || null;
 }
 
-/**
- * Work plans use cases from the learner's job, so they ask the role and what it's for there. A
- * career change asks where they are and the role they want: the plan is what that role needs.
- */
 export function RoleStep({ onAnswer, pending, purpose }: RoleStepProps) {
   const t = useExtracted();
   const [role, setRole] = useState("");

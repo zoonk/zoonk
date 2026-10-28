@@ -7,10 +7,8 @@ import { useExtracted } from "next-intl";
 import { type ReactNode, createContext, use } from "react";
 import { type GenerationRun } from "../../generation/generation-run";
 
-/** The plan's background run while the questions show; null on screens that don't say how it goes. */
 const PlanRunContext = createContext<GenerationRun | null | undefined>(undefined);
 
-/** The run the questions' footer reports on (`PlanStartNoticeSlot`), when it stops. */
 export function PlanStartNoticeProvider({
   children,
   run,
@@ -21,13 +19,7 @@ export function PlanStartNoticeProvider({
   return <PlanRunContext value={run}>{children}</PlanRunContext>;
 }
 
-/**
- * Where a question screen says its plan stopped building: in its footer, over Continue, so a
- * notice that arrives while the learner answers never moves the choices under their finger, and
- * Try again sits beside the step they'd take next. The live region stays rendered while empty, so
- * screen readers hear it when it comes, wherever the page is scrolled. Nothing outside the
- * questions' flow.
- */
+/** In the footer, so a notice never moves the choices under the learner's finger; the live region stays while empty, so it's heard when it comes. */
 export function PlanStartNoticeSlot() {
   const run = use(PlanRunContext);
 
@@ -38,11 +30,6 @@ export function PlanStartNoticeSlot() {
   return <div aria-live="polite">{run && <PlanStartNotice run={run} />}</div>;
 }
 
-/**
- * When the plan being built in the background couldn't start or stopped: the answers are safe,
- * and starting it again now means it's ready when they finish. A lost connection waits for the
- * screens that show the plan's progress.
- */
 function PlanStartNotice({ run }: { run: GenerationRun }) {
   const t = useExtracted();
 

@@ -12,10 +12,6 @@ import {
   OnboardingTitle,
 } from "../onboarding-frame";
 
-/**
- * One onboarding question on its own screen. It's a form, so Enter continues; skippable
- * questions offer a quiet second action that saves nothing.
- */
 export function StepForm({
   canContinue = true,
   children,
@@ -36,10 +32,8 @@ export function StepForm({
   onContinue: () => void;
   onSkip?: () => void;
   pending: boolean;
-  /** What the page's aside shows beside this question from 72rem, in place of the flow's rail. */
   rail?: React.ReactNode;
   skipLabel?: string;
-  /** What the question is about, above it: the exam, the course or the subject. */
   subject?: string;
   title: string;
 }) {

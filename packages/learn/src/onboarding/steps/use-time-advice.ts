@@ -13,31 +13,13 @@ import { requestWithin } from "../../plan/use-time-to-cover";
 
 const ADVICE_POLL_MS = 3000;
 
-/**
- * The week the question shows: its study days, the weekend's own time when it has one, and, for an
- * exam, whether it studies everything (`fullCourse`), which the plan's answer then plans too.
- */
 export type StudyWeek = Omit<PlanTimeAdviceInput, "dailyMinutes"> & { studyDays: number[] };
 
-/**
- * The plan's answer, with the week it was asked for (`key`) and the time a day whose share of the
- * goal it says (`minutes`).
- */
 export type AdviceAnswer = { advice: PlanTimeAdvice; key: string; minutes: number };
 
-/**
- * What the time a day picked covers by the goal's date, and whether that's known for this time:
- * what the plan said for this very time, or, once the learner found the time that covers
- * everything for this week, that time's (all of it). Other times are unknown until asked about:
- * extra time can change the exam's mock cadence.
- */
+/** Times not asked about are unknown: extra time can change the exam's mock cadence. */
 type PickedShare = { known: boolean; share: number | null };
 
-/**
- * A weekend at another time than the weekdays keeps it when the daily time changes, so the time
- * found is the weekdays' with it; at the weekdays' time it's no time of its own. Studying
- * everything is part of the week only when on, so a week without it reads as it always did.
- */
 export function toStudyWeek({
   days,
   fullCourse = false,
@@ -57,11 +39,6 @@ export function toStudyWeek({
   return fullCourse ? { ...week, fullCourse } : week;
 }
 
-/**
- * The week Find searches (see `useWeekTimeToCover`): the days, and the weekend's own time whenever
- * the learner set one, even one equal to the weekday time they're looking at. The time found is
- * the weekdays' with that weekend fixed, as picking it saves it.
- */
 export function toFindWeek({
   days,
   weekend,
@@ -74,10 +51,6 @@ export function toFindWeek({
     : { studyDays: days, weekendMinutes: Number(weekend) };
 }
 
-/**
- * The plan's advice for this week, once it says it: an answer about another week (the one the
- * learner just changed, still on screen while this one is asked about) isn't this week's.
- */
 export function getWeekAdvice({
   answer,
   week,
@@ -88,21 +61,14 @@ export function getWeekAdvice({
   return answer?.key === JSON.stringify(week) && answer.advice.ready ? answer.advice : null;
 }
 
-/**
- * What the time a day picked covers (see `PickedShare`). The time Find found needs no question of
- * its own: the find answer for the week shown (`found`) planned it the way this question plans
- * each time, so it already says it covers everything.
- */
 export function getPickedShare({
   advice,
   answer,
   found,
   minutes,
 }: {
-  /** The plan's advice for the week shown, once it says it (`getWeekAdvice`). */
   advice: PlanTimeAdvice | null;
   answer: AdviceAnswer | null;
-  /** The time that covers everything, found for the week shown; null until the learner asks. */
   found: Pick<PlanTimeToCover, "recommendedMinutes"> | null;
   minutes: number;
 }): PickedShare {
@@ -121,11 +87,6 @@ export function getPickedShare({
   return { known: false, share: null };
 }
 
-/**
- * When studying everything ends at the time picked, once the plan asked about it for this very time
- * and week said so (`advice`, see `getWeekAdvice`); null before, and when even that plan can't
- * hold everything (see `PlanTimeAdvice.fullCourseEndDate`).
- */
 export function getFullCourseEnd({
   advice,
   answer,
@@ -147,12 +108,6 @@ export function getFullCourseEnd({
     : null;
 }
 
-/**
- * Whether an exam's choice to study everything (`checked`) goes with the week: until the plan says
- * the time picked covers everything (see `getPickedShare`), which leaves nothing to study after the
- * exam. While what it covers isn't known (another time is asked about, or asking it failed), the
- * learner's choice stands.
- */
 export function keepsFullCourse({
   checked,
   pickedShare,
@@ -164,17 +119,10 @@ export function keepsFullCourse({
   return checked && !coversEverything;
 }
 
-/** Asking stopped: it kept failing, or it ran too long. */
 function hasStopped(status: PollStatus): boolean {
   return status === "failed" || status === "timedOut";
 }
 
-/**
- * What the estimate shows: what the time picked covers, or, while another time is asked about, the
- * last share known, dimmed (`stale`), instead of a blank, with the time it was for
- * (`staleMinutes`). When asking for the time picked stopped (`failed`), the estimate says so with
- * a way to ask again (`retry`).
- */
 export function getEstimate({
   advice,
   answer,
@@ -200,10 +148,6 @@ export function getEstimate({
   };
 }
 
-/**
- * Whether there's an estimate to show: none for a plan that says no share (nothing to cover by);
- * once asking stopped, the estimate says so with its retry.
- */
 export function hasEstimate({
   estimate,
   pickedShare,
@@ -220,16 +164,6 @@ export function hasEstimate({
   return estimate.share !== null || estimate.retry || !hasStopped(status);
 }
 
-/**
- * Asks the goal's plan what the time picked covers in the week shown, again whenever either
- * changes, right away (the answer about the old week can take seconds, and is dropped when it
- * comes: the pick waits for this week's instead of moving to a week no longer shown). The plan may
- * still be being built when the question shows, so it asks until it's ready, for as long as any
- * onboarding wait does: it never gives up quietly, so asking that kept failing or ran too long says
- * so, and `restart` asks again. While the run building the plan is stopped (`stopped`), it waits
- * for that run's "Try again". Each time a day picked is asked about, unless what it covers is
- * already known.
- */
 export function useTimeAdvice({
   answer,
   dated,
@@ -241,12 +175,9 @@ export function useTimeAdvice({
   week,
 }: {
   answer: AdviceAnswer | null;
-  /** Whether the goal has a date to cover it by: without one, there's nothing to estimate. */
   dated: boolean;
   getAdvice: (week: StudyWeek & { dailyMinutes: number }) => Promise<PlanTimeAdvice | null>;
-  /** Whether what the time picked covers is known (see `getPickedShare`). */
   known: boolean;
-  /** The time a day picked, whose share of the goal the answer says. */
   minutes: number;
   onAnswer: (answer: AdviceAnswer) => void;
   stopped: boolean;
@@ -275,7 +206,6 @@ export function useTimeAdvice({
   });
 }
 
-/** Where "Find the time that covers everything" stands, for the week it was asked for (`key`). */
 type WeekFindState =
   | { status: "idle" }
   | { key: string; status: "building" | "failed" | "pending" }
@@ -283,15 +213,6 @@ type WeekFindState =
 
 const IDLE: WeekFindState = { status: "idle" };
 
-/**
- * "Find the time that covers everything" on the time step, for the week shown (its days, and the
- * weekend's own time): it plans the goal at each daily time from the least, only when the learner
- * asks. The answer belongs to what it was asked for (`key`: the days and the weekend's time as the
- * learner set them, and the plan's build): changing the days or the weekend's time, or the plan
- * being built again, leaves it behind (a late answer for a week no longer shown shows nowhere), and
- * it shows again once the week is back to what it asked for, while picking another time a day keeps
- * it. `found` is the answer for `key`.
- */
 export function useWeekTimeToCover({
   findTimeToCover,
   key,

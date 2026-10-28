@@ -9,13 +9,6 @@ import { useNoticeDayText } from "../../plan/notice-day";
 import { usePlanScreen } from "../../plan/plan-context";
 import { usePlanChange } from "../../plan/use-plan-change";
 
-/**
- * The notice's exam day when the plan counts down to another (the month the learner said, or a
- * date of their own), as one line under the plan's facts with one tap to take it ("The exam notice
- * says November 8, 2026. · Use this date"), or, for an exam held several times a year with no
- * sitting in their month, the closest ones, each one tap away. The plan keeps theirs until they
- * pick one.
- */
 export function RevealNoticeDay() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();

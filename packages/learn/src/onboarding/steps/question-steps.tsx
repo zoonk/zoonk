@@ -18,7 +18,6 @@ type StepProps = {
   subject: string;
 };
 
-/** Learn goals: an overview and a deep dive make very different plans. */
 export function PurposeStep({ onAnswer, pending, subject }: StepProps) {
   const t = useExtracted();
   const [purpose, setPurpose] = useState<OnboardingPurpose | null>(null);
@@ -83,10 +82,7 @@ export function LevelStep({
   onAnswer,
   pending,
   subject,
-}: StepProps & {
-  /** What the learner picked before, shown again when they come Back to it. */
-  initialLevel?: LevelChoice | null;
-}) {
+}: StepProps & { initialLevel?: LevelChoice | null }) {
   const t = useExtracted();
   const [level, setLevel] = useState<LevelChoice | null>(initialLevel);
 
@@ -109,10 +105,8 @@ export function LevelStep({
   );
 }
 
-/** What an exam's learner aims for beyond passing; the target question asks only that. */
 export type ExamTarget = "admission" | "position" | "score";
 
-/** A short answer: why they learn a language, or the exam's target of its kind. */
 type TextQuestion = ExamTarget | "reason";
 
 function toTextAnswer({
@@ -163,7 +157,6 @@ function useTextQuestionCopy(question: TextQuestion) {
   return copy[question];
 }
 
-/** A short answer in the learner's words, or skip it. */
 export function TextStep({
   onAnswer,
   pending,
@@ -193,7 +186,6 @@ export function TextStep({
   );
 }
 
-/** Questions asked about an unusual goal, answered together on one screen. */
 export function FollowUpsStep({
   onAnswer,
   pending,
@@ -217,8 +209,7 @@ export function FollowUpsStep({
           autoFocus={index === 0}
           key={question}
           label={question}
-          // From the answers as they are by then: two fields' words kept from before the step's
-          // code arrived come in at once.
+          // From the answers as they are by then: two fields' kept words come in at once.
           onChange={(value) =>
             setAnswers((current) =>
               current.map((answer, position) => (position === index ? value : answer)),

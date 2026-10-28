@@ -9,12 +9,6 @@ import { ChoiceList } from "../choice-list";
 import { StepForm } from "./step-form";
 import { useAdvanceOnPick } from "./use-advance-on-pick";
 
-/**
- * An exam whose candidates take one of several subjects (ENEM's foreign language: English or
- * Spanish) asks which one, so the plan, the practice and the mocks teach only that one. Each
- * choice is its own list of options, named as learners say them; "Decide later" leaves the
- * choice for the plan, where it can also be changed.
- */
 export function ExamChoiceStep({
   choices,
   onAnswer,
@@ -46,7 +40,6 @@ export function ExamChoiceStep({
       timeZone: getLocalTimeZone(),
     });
 
-  // One choice to make moves on once it's picked; several wait for Continue.
   const { cancel, pick, submit } = useAdvanceOnPick({ answer: answerWith, pending });
 
   return (
@@ -78,7 +71,6 @@ export function ExamChoiceStep({
               value: option.name,
             }))}
             label={choice.group}
-            // Number keys pick from the first choice only.
             numberKeys={index === 0}
             onChange={(value) => setPicks({ ...picks, [choice.group]: value })}
             onPick={

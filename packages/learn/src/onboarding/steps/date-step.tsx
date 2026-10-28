@@ -17,18 +17,8 @@ type StepProps = {
   subject: string;
 };
 
-type DateStepProps = StepProps & {
-  /**
-   * The goal's date so far ("YYYY-MM-DD"), such as an exam course's next sitting set when it
-   * started: the field opens on it, so Continue keeps it, and it can still be changed or removed.
-   */
-  initialDate?: string | null;
-};
+type DateStepProps = StepProps & { initialDate?: string | null };
 
-/**
- * An exam course's date question leads with the exam's own days ("Your exam is on Nov 8 (and Nov
- * 15)"): Continue plans for its first day, and another date (or none) is the second path.
- */
 function ExamDateStep({
   exam,
   onAnswer,
@@ -67,19 +57,11 @@ function ExamDateStep({
   );
 }
 
-/**
- * A deadline is optional: without one, the learner studies everything at their own pace and the
- * plan shows when each milestone arrives. An exam course's sitting leads instead, with this as
- * its other path (see `ExamDateStep`).
- */
 export function DateStep({
   exam,
   initialDate,
   ...props
-}: DateStepProps & {
-  /** The exam course's next sitting the goal started from; null for other goals. */
-  exam: { days: string[]; estimated: boolean } | null;
-}) {
+}: DateStepProps & { exam: { days: string[]; estimated: boolean } | null }) {
   const [otherDate, setOtherDate] = useState(
     () => !exam || (Boolean(initialDate) && initialDate !== exam.days[0]),
   );
@@ -100,11 +82,10 @@ function DateFieldStep({ initialDate, onAnswer, pending, subject }: DateStepProp
   const mountedAt = useMountTime();
   const today = toLocalIsoDate(mountedAt);
 
-  // After today, and no later than a plan reaches: the browser explains a day past it on Continue.
+  // The browser explains a day past the bounds on Continue.
   const bounds = getTargetDateBounds(today);
 
-  // A typed date the picker would have greyed out says why Continue waits. Typing a year passes
-  // through 0002, 0020 and 0202 on its way to 2026, so the note waits for the whole year.
+  // Typing a year passes through 0002, 0020 and 0202, so the note waits for the whole year.
   const tooEarly = date !== "" && date <= today && !date.startsWith("0");
 
   return (
@@ -133,7 +114,6 @@ function DateFieldStep({ initialDate, onAnswer, pending, subject }: DateStepProp
           type="date"
           value={date}
         />
-        {/* The note's line stays while it's empty, so it never moves Continue. */}
         <InputError aria-live="polite" className="min-h-5" id={noteId}>
           {tooEarly && t("Pick a date after today.")}
         </InputError>

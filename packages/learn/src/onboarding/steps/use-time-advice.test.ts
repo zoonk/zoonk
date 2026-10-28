@@ -24,7 +24,6 @@ const ADVICE: PlanTimeAdvice = {
   targetDateNamedMonth: false,
 };
 
-/** What Find found for the week: the time that covers everything. */
 const FOUND = { recommendedMinutes: 100 };
 
 function answerFor({
@@ -83,7 +82,6 @@ describe(getPickedShare, () => {
       share: 0.6,
     });
 
-    // Another time is asked about: the last share is that time's, not this one's.
     expect(getPickedShare({ advice: ADVICE, answer, found: FOUND, minutes: 60 })).toStrictEqual({
       known: false,
       share: null,
@@ -97,7 +95,6 @@ describe(getPickedShare, () => {
   ])(
     "uses exact Sunday exam coverage at $minutes minutes instead of extrapolating",
     ({ minutes, share }) => {
-      // The 69-minute mock begins at 70 minutes, reducing the fourteen lessons that fit.
       const advice = { ...ADVICE, coveredShare: share };
       const answer = answerFor({ advice, minutes, studyDays: [0] });
       const found = { recommendedMinutes: 65 };
@@ -141,7 +138,6 @@ describe(getPickedShare, () => {
 
 describe(toFindWeek, () => {
   it("keeps the weekend's own time for Find, even when it equals the weekday pick", () => {
-    // The search then raises the weekdays alone, as picking the time it finds saves the week.
     expect(toFindWeek({ days: EVERY_DAY, weekend: "60" })).toStrictEqual({
       studyDays: EVERY_DAY,
       weekendMinutes: 60,
@@ -314,12 +310,10 @@ describe(keepsFullCourse, () => {
     const answer = { advice, key: JSON.stringify(week), minutes: 45 };
     const shareAt = (minutes: number) => getPickedShare({ advice, answer, found: null, minutes });
 
-    // Another time, whose estimate never came (asking for it kept failing): her choice stands.
     expect(keepsFullCourse({ checked: true, pickedShare: shareAt(60) })).toBe(true);
     expect(keepsFullCourse({ checked: true, pickedShare: shareAt(45) })).toBe(true);
     expect(keepsFullCourse({ checked: false, pickedShare: shareAt(45) })).toBe(false);
 
-    // Only a time the plan says covers everything leaves nothing to study after the exam.
     expect(keepsFullCourse({ checked: true, pickedShare: { known: true, share: 1 } })).toBe(false);
   });
 });

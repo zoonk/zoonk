@@ -1,15 +1,8 @@
 import { useEffect, useRef } from "react";
 
-/** How long a picked answer stays highlighted before the next question: long enough to see it. */
 const ADVANCE_DELAY_MS = 180;
 
-/**
- * A question with one answer moves on once the learner picks it, after a moment with the pick
- * highlighted; a newer pick in that moment replaces it. Every way of answering goes through here,
- * so they never save twice: Continue or Enter (`submit`) answers at once and drops the queued
- * pick, skipping (`cancel`) drops it too, and a pick while the answer saves (`pending`) is
- * ignored. Leaving the screen cancels it. The flow admits one answer at a time on top of this.
- */
+/** Every way of answering goes through here, so they never save twice: `submit` answers at once and drops the queued pick, `cancel` drops it, and a pick while `pending` is ignored. */
 export function useAdvanceOnPick<Value>({
   answer,
   pending,

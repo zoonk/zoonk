@@ -31,7 +31,6 @@ import {
 
 type PlacementMockOffer = NonNullable<PlacementMockOutcome["offer"]> & { href: string };
 
-/** How long the mock can take, from its quick check to its longest, the same on every plan. */
 function useMockOfferText() {
   const t = useExtracted();
   const duration = useFormatDuration();
@@ -51,11 +50,6 @@ function useMockOfferText() {
   };
 }
 
-/**
- * A diagnostic mock in the exam's format, beside the quick questions: how long it can take, from
- * its quick check to its longest. It comes with Plus, so without it the row is marked Plus and
- * opens the lengths with what Plus unlocks. The quick questions stay the default.
- */
 function PlacementMockRow({ mock }: { mock: PlacementMockOffer }) {
   const t = useExtracted();
   const offerText = useMockOfferText();
@@ -80,12 +74,6 @@ function PlacementMockRow({ mock }: { mock: PlacementMockOffer }) {
   );
 }
 
-/**
- * Placement's start: what it's for (with how many areas it covers for an exam) and that it has no
- * score, so "I don't know yet" is welcome; then Start, and skipping it to start from the basics as
- * the quiet way around it, named for what it does ("Start from zero" read as starting over). An
- * exam also offers a diagnostic mock instead, with how long it takes.
- */
 export function PlacementIntro({
   areaCount,
   mock,
@@ -94,9 +82,7 @@ export function PlacementIntro({
   pending,
   subject,
 }: {
-  /** How many areas an exam's placement asks about; 0 for other goals. */
   areaCount: number;
-  /** A diagnostic mock instead, when the exam has one. */
   mock: PlacementMockOffer | null;
   onScratch: () => void;
   onStart: () => void;
@@ -136,10 +122,6 @@ export function PlacementIntro({
   );
 }
 
-/**
- * A finished moment: what was done (`done`, as the blue ✓ line every finished screen opens with;
- * none when nothing was), what it means for the plan, and one way on.
- */
 function PlacementOutcome({
   children,
   done,
@@ -177,7 +159,6 @@ export function PlacementDone({
 }: {
   answered: number;
   forToday: boolean;
-  /** The whole exam was taken as a mock instead of the quick questions. */
   fromMock: boolean;
   onContinue: () => void;
   pending: boolean;
@@ -219,7 +200,6 @@ export function PlacementDone({
   );
 }
 
-/** No question could be written for this goal: the first sessions place the learner instead. */
 export function PlacementUnavailable({
   onContinue,
   pending,
@@ -241,10 +221,6 @@ export function PlacementUnavailable({
   );
 }
 
-/**
- * The learner left the placement mock running: go on with it, or stop here, and the questions
- * answered set where the plan starts.
- */
 export function PlacementMockRunning({
   href,
   onStop,

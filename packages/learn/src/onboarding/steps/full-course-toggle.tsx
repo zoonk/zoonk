@@ -5,12 +5,6 @@ import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { type ExamFinish, useExamFullCourseText } from "../../plan/plan-full-course";
 
-/**
- * "Study everything, even after the exam", where an exam's time is chosen, while the time picked
- * leaves something out: off, the plan ends at the exam with what fits; on, until the exam it's the
- * same plan, and what doesn't fit comes after it, and once the plan says so for the time picked,
- * when everything ends (`end`), as the plan editor says it. The plan editor changes it any time.
- */
 export function FullCourseToggle({
   checked,
   end,
@@ -18,9 +12,7 @@ export function FullCourseToggle({
   onCheckedChange,
 }: {
   checked: boolean;
-  /** When studying everything ends at the time picked; null until the plan says it. */
   end: ExamFinish | null;
-  /** Where the step finds it, to move focus to its switch once Find says no time covers it all. */
   id: string;
   onCheckedChange: (checked: boolean) => void;
 }) {

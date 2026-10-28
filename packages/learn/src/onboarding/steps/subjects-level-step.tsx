@@ -14,16 +14,8 @@ import { CHOICE_ROW_CLASS } from "../choice-list";
 import { CHOICE_CONTROL_CLASS } from "../choice-styles";
 import { StepForm } from "./step-form";
 
-/** One of the notice's subjects: its name, and what learners call it when that's long. */
 type ExamSubject = { name: string; shortName: string | null };
 
-/**
- * An exam with several subjects asks which ones the learner already knows well instead of one
- * level for all of them: a law graduate knows the law subjects, not the IT ones. Their basics are
- * skipped and a quick test places the rest; "starting from scratch" skips the test. The subjects
- * are one grouped list, each named as learners say it (the notice's full name under it), with a
- * check once picked.
- */
 export function SubjectsLevelStep({
   initialKnown,
   onAnswer,
@@ -31,7 +23,6 @@ export function SubjectsLevelStep({
   subject,
   subjects,
 }: {
-  /** The subjects the learner ticked before, shown again when they come Back to it. */
   initialKnown: readonly string[];
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;

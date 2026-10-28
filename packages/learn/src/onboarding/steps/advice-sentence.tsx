@@ -5,10 +5,6 @@ import { useExtracted } from "next-intl";
 import { type FindStatus, FindTimeLine } from "../../plan/plan-coverage";
 import { readTimeToCover, useTimeToCoverTexts } from "../../plan/use-time-to-cover";
 
-/**
- * What Find found for the week shown: the time that covers everything in depth by the goal's date,
- * or that no time a day does, with the time that brings every topic in when one does.
- */
 function FoundWords({ found }: { found: PlanTimeToCover }) {
   const texts = useTimeToCoverTexts();
   const answer = readTimeToCover(found);
@@ -34,13 +30,7 @@ function FoundWords({ found }: { found: PlanTimeToCover }) {
   );
 }
 
-/**
- * The line under the time chips. Without a date there's nothing to cover by, so the time can just
- * change later. Otherwise it's one live region (see `FindTimeLine`): while the plan is still being
- * built, it says so, or that it's reading the exam's official documents first (`readingNotice`),
- * then "Find the time that covers everything" takes that place, which plans the goal at each daily
- * time only when the learner asks.
- */
+/** One live region (`FindTimeLine`); Find plans the goal at each daily time only when the learner asks. */
 export function AdviceSentence({
   dated,
   find,
@@ -53,10 +43,8 @@ export function AdviceSentence({
   dated: boolean;
   find: FindStatus;
   found: PlanTimeToCover | null;
-  /** Where the step finds the line, to move focus to it once Find answers. */
   id: string;
   onFind: () => void;
-  /** The plan said it's built, or asking for it stopped while its run goes on: Find answers. */
   planReady: boolean;
   readingNotice: boolean;
 }) {

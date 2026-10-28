@@ -4,10 +4,6 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { OnboardingColumn } from "../onboarding-frame";
 
-/**
- * The icon that opens a finished or changed moment, such as placement being done: a bare glyph
- * over the title, no tile; `success` colors it as done.
- */
 export function StepIcon({
   children,
   success = false,
@@ -28,7 +24,6 @@ export function StepIcon({
   );
 }
 
-/** While a step reads where the learner was, so a refresh doesn't flash its start screen. */
 export function StepLoading() {
   return (
     <OnboardingColumn aria-busy="true">

@@ -23,7 +23,6 @@ import {
 } from "../onboarding-frame";
 import { OnboardingTestQuestion } from "../onboarding-host";
 
-/** A typed answer is a sentence or two; the grader looks for each key point. */
 const MAX_TYPED_ANSWER = 1000;
 
 function useQuestionChoices({
@@ -48,10 +47,6 @@ function useQuestionChoices({
   }));
 }
 
-/**
- * A placement question's options drawn as every question's are (the player's answer option): its
- * number on the left, the strong line, a firm ring once picked. Its number key picks it too.
- */
 function PlacementOptions({
   choices,
   label,
@@ -106,10 +101,6 @@ function toAnswer({
     : { selectedIndex: Number(value) };
 }
 
-/**
- * A typed question, answered in the learner's own words: it confirms a skill a lucky pick could
- * otherwise skip. Enter sends it; Shift+Enter starts a new line.
- */
 function TypedAnswerField({
   onChange,
   onSubmit,
@@ -143,11 +134,6 @@ function TypedAnswerField({
   );
 }
 
-/**
- * A question's actions: "I don't know yet" beside Confirm, as a session's placement question has
- * them, and stopping under them. A long "I don't know" puts Confirm on its own line above it rather
- * than squeezing it, so the main action still comes first.
- */
 function PlacementActions({
   canConfirm,
   dontKnowLabel,
@@ -159,7 +145,6 @@ function PlacementActions({
   canConfirm: boolean;
   dontKnowLabel: string;
   onDontKnow: () => void;
-  /** Sends the last answer again after its save failed; null while nothing failed. */
   onRetry: (() => void) | null;
   onStop: () => void;
   pending: boolean;
@@ -204,14 +189,6 @@ function PlacementActions({
   );
 }
 
-/**
- * One placement question: a choice, or a few words in the learner's own words to confirm a skill.
- * What it asks comes first (what it's about and its number, its support, the statement), then the
- * answer under it. "I don't know yet" is a real answer: it moves to the basics instead of letting
- * a guess skip them, and sits beside Confirm as it does on a session's placement question. No
- * score is shown, and an answer is final, so the bar has no way back, only how far into the test
- * the learner is: "Stop here" is the way on.
- */
 export function PlacementQuestionScreen({
   dontKnowLabel,
   failed = false,
@@ -225,24 +202,17 @@ export function PlacementQuestionScreen({
   subject,
   trueFalseLabels = "trueFalse",
 }: {
-  /** What "I don't know" says for this question, such as "I didn't understand the audio". */
   dontKnowLabel?: string;
-  /** The last answer didn't save (a lost connection): it stays picked, and Try again sends it. */
   failed?: boolean;
-  /** Shown above the question, such as a voice message to listen to. */
   media?: React.ReactNode;
-  /** This question's number: how many came before, with no total and no score. */
   number?: number;
   onAnswer: (answer: PlacementAnswer, durationMs: number) => void;
-  /** "Stop anytime": the plan starts from what's known so far. */
   onStop: () => void;
   pending: boolean;
-  /** How far into the test the learner is, from 0 to 1, shown in the bar. */
+  /** 0 to 1. */
   progress: number;
   question: PlacementQuestion;
-  /** What the questions are about, such as "ENEM" or "quantum physics". */
   subject?: string;
-  /** How true-or-false questions are answered: the goal's exam's words, or true or false. */
   trueFalseLabels?: TrueFalseLabels;
 }) {
   const t = useExtracted();

@@ -25,13 +25,10 @@ import {
 /** Reading a notice and fitting it into the plan usually takes about four minutes. */
 const READING_MS = 240_000;
 
-/** The plan is built; the bar starts where the reading does. */
 const PLAN_BUILT_PROGRESS = 40;
 
-/** The two phases' shares of the bar: the plan built, then the reading. */
 const PHASE_WEIGHTS = [PLAN_BUILT_PROGRESS, 100 - PLAN_BUILT_PROGRESS];
 
-/** The reading's line changes every few seconds, so the wait shows what's going on. */
 function ReadingDetail({ document }: { document: ExamDocument }) {
   const t = useExtracted();
   const tick = useTickCount({ resetKey: "notice" });
@@ -53,14 +50,6 @@ function ReadingDetail({ document }: { document: ExamDocument }) {
   ) : null;
 }
 
-/**
- * The reveal while research reads the exam's notice: the plan is built from what the learner told
- * us, and the notice's subjects, topics and dates go into it before they see it. The host keeps
- * checking and shows the plan once the reading lands, or once the wait runs out. While the next
- * edition's notice isn't out (`lastNotice`), it reads the last one, and says so. The screen calls
- * them the official documents, and its lines name them by kind: a public exam's notice, or a
- * language certificate's official guide (see `ExamDocument`).
- */
 export function NoticeReading({
   document,
   lastNotice,
@@ -129,11 +118,6 @@ export function NoticeReading({
   );
 }
 
-/**
- * A plan revealed before its notice was read follows the exam's usual structure, and says so in one
- * muted line under its phases: the reading arrives on Today as a change the learner applies or
- * not.
- */
 export function UsualStructureNote() {
   const t = useExtracted();
 

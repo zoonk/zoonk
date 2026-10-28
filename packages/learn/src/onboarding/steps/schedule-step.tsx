@@ -47,13 +47,6 @@ import {
 } from "./use-time-advice";
 import { isRunStopped } from "./wait-run";
 
-/**
- * The time chips: the usual amounts and the learner's own pick (a time picked in "Other time…" or
- * on a course's page may be none of them). Once Find answers for the week shown, the time it found
- * joins them as it is (1 hr 25 min: it was planned, so it's exact) and says "Covers everything",
- * or, when no time does, the time that brings every topic in, "Every topic". None is picked for the
- * learner.
- */
 function useMinuteChoices({ found, picked }: { found: PlanTimeToCover | null; picked: number }) {
   const texts = useTimeToCoverTexts();
   const formatDuration = useFormatDuration();
@@ -70,7 +63,6 @@ function useMinuteChoices({ found, picked }: { found: PlanTimeToCover | null; pi
   };
 }
 
-/** The weekend's own time: the usual amounts and the times picked, never the time Find found. */
 function useWeekendChoices({
   minutes,
   weekend,
@@ -84,15 +76,9 @@ function useWeekendChoices({
   return options.map((value) => ({ label: formatDuration(value), value: String(value) }));
 }
 
-/** Where focus goes once Find answers: the time chips, and Find's line. */
 const MINUTES_ID = "onboarding-minutes";
 const FIND_LINE_ID = "onboarding-find";
 
-/**
- * Where Find's answer sends the keyboard: the chip of the time it offers (see `getOfferedMinutes`),
- * so Space picks it; when it offers none, an exam's one way to study it all, "Study everything,
- * even after the exam" (only an exam has it). Null when neither is there.
- */
 function findAnswerTarget({
   answer,
   minutes,
@@ -111,11 +97,6 @@ function findAnswerTarget({
   return findTimeChip({ choices: options, container: minutes, minutes: offered });
 }
 
-/**
- * Once Find answers, focus moves to what the learner can do with it (see `findAnswerTarget`), or
- * else to the chip picked, or to the answer itself. Only when this step asked (`ask`), and a
- * failed search keeps focus on Try again, in Find's own place.
- */
 function useFocusFound({
   found,
   options,
@@ -164,7 +145,6 @@ function MinutesReadout({ minutes }: { minutes: number }) {
   );
 }
 
-/** The time picked, large, the chips under it and "Other time…" for any time they don't have. */
 function TimeChoices({
   choices,
   minutes,
@@ -201,23 +181,6 @@ function TimeChoices({
   );
 }
 
-/**
- * How much time a day and on which days. It comes after placement, once the plan knows what the
- * learner already knows. The goal's facts lead (as chips, in the page's aside beside it from
- * 72rem), then the time picked, large, the presets under it with "Other time…" for any other, and
- * the estimate (in the aside from 72rem): what the time picked covers by the date, exactly as the
- * plan would have it, which follows every pick at once, so the learner decides with the number in
- * front of them. Each thing is said once: the estimate says what their time covers; the line
- * after it, only while that's less than everything, says what they'd need: "Find the time that
- * covers everything" plans the goal at each daily time, in the week shown (its days, and the
- * weekend's own time, which counts too), only when the learner asks, and the time it finds is
- * marked, never picked for them, so nothing changes under them while they read. Under it, the
- * other way to study everything: an exam's switch to go on after the exam, or for any other goal,
- * that the next screen moves its date. The days and the weekend's time stay one tap away. It opens
- * on the goal's starting pick (the time a course's page had picked, or one from the goal's size)
- * and on weekdays. Without a date there's nothing to cover by, so there's no estimate and nothing
- * to find.
- */
 export function ScheduleStep({
   dated,
   exam = false,
@@ -229,24 +192,14 @@ export function ScheduleStep({
   recommendedMinutes,
   run,
 }: {
-  /** The goal has a date (its own, or its exam's): the plan says the time that covers it. */
   dated: boolean;
-  /** An exam: the learner can also choose to study everything, even after it. */
   exam?: boolean;
-  /** The time that covers the goal by its date in this week, found when the learner asks. */
   findTimeToCover: (week: StudyWeek) => Promise<PlanTimeToCover | null>;
-  /** What the time picked covers by the goal's date in this week; null when it couldn't be read. */
   getTimeAdvice: (week: StudyWeek & { dailyMinutes: number }) => Promise<PlanTimeAdvice | null>;
-  /** The goal so far, which leads the screen. */
   goal: GoalView;
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;
-  /**
-   * The time the question opens on: the time a course's page had picked, or one from how big the
-   * goal is and how soon its date is.
-   */
   recommendedMinutes: number;
-  /** The run building the plan, when the host follows it: a stopped one waits for its "Try again". */
   run: GenerationRun | null;
 }) {
   const t = useExtracted();
@@ -255,14 +208,11 @@ export function ScheduleStep({
   const [weekendMinutes, setWeekendMinutes] = useState<string | null>(null);
   const [days, setDays] = useState(() => getStartingDays(goal.studyDays));
   const [answer, setAnswer] = useState<AdviceAnswer | null>(null);
-  // Each time the plan is built again (an exam's notice reading landed), what Find found before is
-  // for the plan before it.
+  // Each rebuild of the plan (an exam's notice reading landed) makes what Find found before stale.
   const [build, setBuild] = useState(0);
   const [fullCourse, setFullCourse] = useState(false);
   const studiesOnWeekends = days.some((day) => isWeekend(day));
   const weekend = studiesOnWeekends ? weekendMinutes : null;
-  // An exam's choice to study everything goes with each question, so the estimate and when
-  // everything ends describe the plan the learner would get.
   const week = toStudyWeek({ days, fullCourse: exam && fullCourse, minutes, weekend });
   const advice = getWeekAdvice({ answer, week });
 
@@ -274,7 +224,6 @@ export function ScheduleStep({
     week: findWeek,
   });
 
-  // While the plan is being built again, there's no answer to show.
   const found = answer?.advice.ready === false ? null : finder.found;
   const { choices, options } = useMinuteChoices({ found, picked: Number(minutes) });
   const weekendChoices = useWeekendChoices({ minutes: Number(minutes), weekend: weekendMinutes });
@@ -300,8 +249,7 @@ export function ScheduleStep({
   });
 
   const estimate = getEstimate({ advice, answer, pickedShare, status: asking.status });
-  // Built once the plan said so for any week; once asking stopped while its run goes on, Find says
-  // what it finds.
+
   const planReady =
     answer?.advice.ready === true || (asking.status !== "polling" && !isRunStopped(run));
 

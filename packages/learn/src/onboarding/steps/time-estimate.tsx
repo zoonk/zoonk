@@ -11,10 +11,6 @@ import { useFormatGoalDate } from "../../_utils/iso-date";
 import { useFormatDuration } from "../../_utils/time-format";
 import { OnboardingRailSection } from "../onboarding-rail";
 
-/**
- * The share, large in the mono face, where the estimate's sentence puts it (first in English; a
- * translation can put words before it, so the sentence flows around it as text).
- */
 function ShareNumber(chunks: React.ReactNode) {
   return (
     <span className="text-foreground mr-1.5 font-mono text-[1.375rem] leading-none font-medium tracking-[-0.03em] tabular-nums">
@@ -23,13 +19,6 @@ function ShareNumber(chunks: React.ReactNode) {
   );
 }
 
-/**
- * What the share is of, by the goal's date: the plan's exam topics (the curriculum the plan holds,
- * weighed by the exam, never claimed as the whole exam), what comes up most first, or the goal,
- * what matters most first. All of it reads as all of it, not "about 100%". The course's page only
- * says whether everything fits and leaves the share to this question, where the visitor's level and
- * time decide it.
- */
 function EstimateWords({ advice, share }: { advice: PlanTimeAdvice; share: number }) {
   const t = useExtracted();
   const format = useFormatter();
@@ -60,7 +49,6 @@ function EstimateWords({ advice, share }: { advice: PlanTimeAdvice; share: numbe
       );
 }
 
-/** Asking what the time picked covers stopped: it says so, with the way to ask again. */
 function EstimateFailure({ minutes, onRetry }: { minutes: number; onRetry: () => void }) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
@@ -75,7 +63,6 @@ function EstimateFailure({ minutes, onRetry }: { minutes: number; onRetry: () =>
   );
 }
 
-/** The share's sentence, or its place while the first one is on its way. */
 function EstimateShare({ advice, share }: { advice: PlanTimeAdvice | null; share: number | null }) {
   const t = useExtracted();
 
@@ -95,13 +82,6 @@ function EstimateShare({ advice, share }: { advice: PlanTimeAdvice | null; share
   );
 }
 
-/**
- * The time question's estimate: what the time a day picked covers by the goal's date, as a share,
- * what it's a share of, and the coverage bar. It follows each pick at once; while the plan works
- * out a time it hasn't said yet, the last share stays, dimmed (`stale`), and before the first one
- * the share's place waits in its shape. When asking stopped (`failed`), it isn't busy anymore: it
- * says so with a retry (`retry`), and names the time the share it kept was for.
- */
 function EstimateBody({
   advice,
   failed,
@@ -147,26 +127,16 @@ function EstimateBody({
 }
 
 type TimeEstimateProps = {
-  /** The plan's advice for the week shown; null until it says it. */
   advice: PlanTimeAdvice | null;
-  /** Asking what the time picked covers stopped. */
   failed: boolean;
-  /** The time a day picked. */
   minutes: number;
   onRetry: () => void;
-  /** The estimate says asking stopped, with its retry (the sentence above doesn't). */
   retry: boolean;
-  /** What the time picked covers; the last share known while a new one is asked (`stale`). */
   share: number | null;
   stale: boolean;
-  /** The time a day the kept share was for. */
   staleMinutes: number | null;
 };
 
-/**
- * The estimate on the screen, under the time chips and above what the learner would need, until
- * the page's aside shows it from 72rem: one panel, the only one there.
- */
 export function TimeEstimatePanel(props: TimeEstimateProps) {
   const t = useExtracted();
 
@@ -181,7 +151,6 @@ export function TimeEstimatePanel(props: TimeEstimateProps) {
   );
 }
 
-/** The estimate at the top of the page's aside from 72rem, beside the time chips it follows. */
 export function TimeEstimateSection(props: TimeEstimateProps) {
   const t = useExtracted();
 

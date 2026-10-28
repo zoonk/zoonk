@@ -7,7 +7,6 @@ import { type Choice, ChoiceList } from "../choice-list";
 
 const QUICK_TEST_MINUTES = 2;
 
-/** "Not sure" still counts as an answer: placement finds the level instead. */
 const QUICK_TEST = "test";
 
 export type LevelChoice = OnboardingOwnLevel | typeof QUICK_TEST;
@@ -18,15 +17,10 @@ function isOwnLevel(value: unknown): value is OnboardingOwnLevel {
   return OWN_LEVELS.some((level) => level === value);
 }
 
-/** The level a choice answers: a quick test leaves it to placement. */
 export function toLevelAnswer(choice: LevelChoice): OnboardingOwnLevel | null {
   return choice === QUICK_TEST ? null : choice;
 }
 
-/**
- * The pick the learner made before, as the goal saved it, so Back shows it: their level, or the
- * quick test when they answered without one. Null before they answered.
- */
 export function readLevelChoice(details: Record<string, unknown>): LevelChoice | null {
   const { answered, level } = details;
 
@@ -37,10 +31,6 @@ export function readLevelChoice(details: Record<string, unknown>): LevelChoice |
   return Array.isArray(answered) && answered.includes("level") ? QUICK_TEST : null;
 }
 
-/**
- * "How much do you already know?": the learner's level, or a quick test that finds it. Asked on
- * onboarding's level screen and on a course's start page, before anything is created.
- */
 export function LevelChoiceList({
   onChange,
   onPick,
@@ -48,9 +38,7 @@ export function LevelChoiceList({
   value,
 }: {
   onChange: (value: LevelChoice) => void;
-  /** A deliberate pick (a tap or a number key), for a screen that moves on with it. */
   onPick?: (value: LevelChoice) => void;
-  /** While the answer saves: the pick stays as it is. */
   readOnly?: boolean;
   value: LevelChoice | null;
 }) {

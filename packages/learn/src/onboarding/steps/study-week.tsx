@@ -21,20 +21,15 @@ import { OtherTimeSelect } from "./daily-minutes";
 
 const DAYS_PER_WEEK = 7;
 
-/** Every weekday, Sunday first, as the plan numbers them. */
+/** Sunday is 0, as the plan numbers weekdays. */
 export const EVERY_DAY = Array.from({ length: DAYS_PER_WEEK }, (_, day) => day);
 
 const MONDAY = 1;
 const SATURDAY = 6;
 
-/** Monday to Friday, the week a course's example plan reads too. */
 const WEEKDAYS = EVERY_DAY.filter((day) => day >= MONDAY && day < SATURDAY);
 
-/**
- * The days the time question opens on: the goal's own when someone already chose fewer than every
- * day, Monday to Friday otherwise. A new goal studies every day until this question asks, which
- * nobody chose, and a seven-day week is a lot to start with.
- */
+/** A new goal's every-day week was never chosen, so the question opens on Monday to Friday unless someone chose fewer days. */
 export function getStartingDays(goalDays: number[]): number[] {
   return goalDays.length > 0 && goalDays.length < DAYS_PER_WEEK ? goalDays : WEEKDAYS;
 }
@@ -74,7 +69,6 @@ export function WeekdayToggles({
   );
 }
 
-/** Saturday and Sunday's own time, in the same chips and "Other time…" as the rest of the week. */
 export function WeekendMinutes({
   choices,
   minutes,
@@ -84,7 +78,6 @@ export function WeekendMinutes({
   choices: Choice<string>[];
   minutes: string | null;
   onChange: (minutes: string | null) => void;
-  /** Where the weekend's own time starts when it's switched on. */
   weekdayMinutes: string;
 }) {
   const t = useExtracted();
@@ -116,10 +109,6 @@ export function WeekendMinutes({
   );
 }
 
-/**
- * Which days, and the weekend's own time, folded into one row that says the week as it stands
- * ("6 days · 3h a week"), so the screen leads with its one decision: the time a day.
- */
 export function WeekDisclosure({
   children,
   summary,

@@ -33,7 +33,6 @@ import { RevealNoticeDay } from "./reveal-notice-day";
 
 const MINUTES_PER_HOUR = 60;
 
-/** Under two hours the study time reads to five minutes; above, to the hour, as "about" says. */
 const ROUND_TO_HOURS_FROM = 120;
 const MINUTES_STEP = 5;
 
@@ -43,13 +42,7 @@ function roundStudyMinutes(minutes: number): number {
     : Math.round(minutes / MINUTES_STEP) * MINUTES_STEP;
 }
 
-/**
- * The plan's one next step, with its ⏎ hint: Enter starts day 1 from anywhere on the screen.
- * Today isn't prefetched as the screen opens: opening it builds the day once, while this screen
- * can still change the plan ("Adjust", "Use 1 hr 40 min a day"). It's prefetched once the learner
- * reaches for it (the pointer on it, a press, the keyboard's focus), when the plan is final, so
- * Today paints from that copy.
- */
+/** Today is prefetched only once the learner reaches for it, when the plan is final: opening it builds the day once. */
 function StartButton({ href }: { href: string }) {
   const t = useExtracted();
   const ref = useEnterClick<HTMLAnchorElement>();
@@ -72,11 +65,6 @@ function StartButton({ href }: { href: string }) {
   );
 }
 
-/**
- * The plan's study time, from the plan's own numbers (the same the course's page and the time
- * question read): what it studies before the date, or all of it without one. Null until the plan
- * says.
- */
 function getStudyMinutes(numbers: PlanNumbers | null): number | null {
   if (!numbers) {
     return null;
@@ -87,10 +75,6 @@ function getStudyMinutes(numbers: PlanNumbers | null): number | null {
     : numbers.beforeDeadlineMinutes;
 }
 
-/**
- * The plan's shape in one quiet line, its numbers in the mono face: how long until the goal (or
- * when it ends at this pace), the time a day and the study time it adds up to.
- */
 function RevealFacts() {
   const t = useExtracted();
   const today = useMountTime();
@@ -124,11 +108,6 @@ function RevealFacts() {
   );
 }
 
-/**
- * A block of the reveal's aside from 72rem (what fits, the choices), under its title there; under
- * 72rem it follows the weights untitled, as one more line of the plan. Each block says nothing
- * when there's nothing to say, and then its title goes too.
- */
 function RevealRailBlock({ children, title }: { children: React.ReactNode; title: string }) {
   return (
     <div className="flex flex-col gap-2 not-has-[>:nth-child(2)]:hidden">
@@ -138,13 +117,6 @@ function RevealRailBlock({ children, title }: { children: React.ReactNode; title
   );
 }
 
-/**
- * The reveal as the plan's page, a detail page's layout: "Plan created" over the goal and its
- * facts, with Start (Enter) and Adjust beside them from `md` and under them on a phone, where
- * Today's and a subject's main action sit; then the phases (a one-phase plan's chapters) and the
- * weights. What fits and the choices sit in the page's aside from 72rem and follow the weights
- * under it.
- */
 export function RevealBody({
   isGuest,
   signUpHref,

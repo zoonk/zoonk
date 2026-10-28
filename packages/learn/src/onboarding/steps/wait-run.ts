@@ -1,14 +1,8 @@
 import { type PollStatus } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
 
-/** Before the host knows the goal's run, or when it doesn't follow one. */
 export const WAITING_RUN: GenerationRun = { failure: null, status: "waiting", steps: {} };
 
-/**
- * The run an onboarding wait shows: the goal's run as the host follows it, or, once checking the
- * server for what the wait needs kept failing or ran too long, a lost connection whose way out
- * checks again.
- */
 export function getWaitRun({
   poll,
   run,

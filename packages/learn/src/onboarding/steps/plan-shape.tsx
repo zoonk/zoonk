@@ -8,21 +8,13 @@ import { getChapterKey, isWritingAhead, useChapterTitle } from "../../journey/jo
 import { PlanRoadmap } from "../../journey/plan-roadmap";
 import { usePlanScreen } from "../../plan/plan-context";
 
-/** How many rows the reveal's lists show (areas, chapters); the Plan has the rest. */
 const ROWS_SHOWN = 5;
 
-/** The phases the reveal draws: the plan's own, not what goes on after an exam. */
 function useRevealPhases() {
   const { plan } = usePlanScreen();
   return plan.phases.filter((phase) => phase.kind !== "afterExam");
 }
 
-/**
- * The plan's phases on one line, each as long as its time, the current one raised, with the day
- * each one starts under it and the goal's date at the end: the Plan's roadmap in its reveal
- * density, so the same plan is drawn the same way a minute later on the Plan. A plan of one phase
- * has nothing to draw: its chapters say its shape instead (`PlanChapterList`).
- */
 export function PlanPhasesBar() {
   const t = useExtracted();
   const phases = useRevealPhases();
@@ -39,12 +31,6 @@ export function PlanPhasesBar() {
   );
 }
 
-/**
- * The plan's shape when it has no phases to draw (a course plan of one phase): its chapters in
- * order as a quiet numbered list, named as the Plan names them, the first few with a count of the
- * rest, so every learner sees what their plan holds before starting. Lessons still being written
- * ahead aren't chapters yet, so they're left out, as the Plan says them in a line of their own.
- */
 export function PlanChapterList() {
   const t = useExtracted();
   const title = useChapterTitle();
@@ -87,14 +73,6 @@ export function PlanChapterList() {
   );
 }
 
-/**
- * What each area of the exam weighs, every one its source names (a notice's Redação too), the
- * heaviest first: a dot, the area, a thin bar of its share of the whole and its percentage in the
- * mono face. The percentages are core's (`displayWeight`), which add up to 100; one its source
- * doesn't state is an estimate, marked "~" and said under the list, naming that source as the
- * syllabus does: the learner's own material is never called a notice. The full syllabus stays one
- * tap away under it.
- */
 export function AreaWeights({ syllabus }: { syllabus: SyllabusView | null }) {
   const t = useExtracted();
   const format = useFormatter();

@@ -25,42 +25,28 @@ import { rememberStepStart, wasStepStarted } from "./step-started";
 import { useReadOnOpen } from "./use-read-on-open";
 import { isRunStopped } from "./wait-run";
 
-/** Questions come from the goal's skill map, which is still being drawn right after the goal. */
 const POLL_MS = 3000;
 
 type ReadyOutcome = Extract<PlacementOutcome, { status: "ready" }>;
 
 type Phase =
-  /**
-   * `forToday`: the day's few minutes are used and the first sessions ask the rest. `fromMock`:
-   * the learner took the whole exam as a mock instead, and it set the starting point.
-   */
   | { answered: number; forToday: boolean; fromMock?: boolean; kind: "done" }
-  /** The whole exam taken as a mock instead, left running: go on with it or stop here. */
   | { kind: "mockRunning"; mockId: string }
   | { kind: "intro" | "loading" | "unavailable" | "waiting" }
   | {
       answered: number;
       kind: "question";
       question: PlacementQuestion;
-      /** How far along today's questions are at most, from 0 to 1 (`dayBudgetSpent`). */
+      /** 0 to 1. */
       spent: number;
       trueFalseLabels: TrueFalseLabels;
     };
 
-/**
- * How far this screen already showed placement: the server counts this placement's answers on the
- * plan's current skills, which can shrink while the plan is still being written, and neither a
- * question's number nor the bar ever goes back.
- */
+/** The server's counts can shrink while the plan is still being written, and neither a question's number nor the bar goes back. */
 type Shown = { answered: number; spent: number };
 
 const NOTHING_SHOWN: Shown = { answered: 0, spent: 0 };
 
-/**
- * A new question while placement still needs one, the starting point once it's settled or once
- * today's few minutes are used.
- */
 function toPhase(outcome: ReadyOutcome, shown: Shown = NOTHING_SHOWN): Phase {
   const answered = Math.max(outcome.answered, shown.answered);
 
@@ -75,21 +61,13 @@ function toPhase(outcome: ReadyOutcome, shown: Shown = NOTHING_SHOWN): Phase {
     : { answered, forToday: outcome.dayBudgetUsed, kind: "done" };
 }
 
-/**
- * Where placement was when the learner comes back: its next question once this goal's placement
- * has answers (saved on the server, so another tab or device resumes too), or once they tapped
- * Start in this tab, else the wait for its questions. Otherwise its start, even when earlier
- * answers on the same skills (from another goal) already count, so the learner sees what it is.
- */
 function toResumedPhase({
   mock,
   outcome,
   tapped,
 }: {
-  /** The goal's placement mock, when the learner took the whole exam instead. */
   mock: PlacementMockOutcome["mock"];
   outcome: PlacementOutcome;
-  /** The learner tapped Start in this tab, before any answer was saved. */
   tapped: boolean;
 }): Phase {
   if (mock?.status === "running") {
@@ -112,17 +90,11 @@ function toResumedPhase({
   return outcome.status === "unavailable" ? { kind: "unavailable" } : { kind: "waiting" };
 }
 
-/**
- * Coming back returns to where placement was, from what's saved (the placement mock included); a
- * first visit to its start. It also reads whether the whole exam can be taken as a mock instead.
- */
 function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; goalId: string }) {
   const [phase, setPhase] = useState<Phase>({ kind: "loading" });
   const [mockOffer, setMockOffer] = useState<PlacementMockOutcome["offer"]>(null);
-  // What this screen showed, so the next question's number and the bar never go back (`Shown`).
   const shown = useRef(NOTHING_SHOWN);
 
-  /** Remember resumed questions too, before a replan can remove earlier answers. */
   const showPhase = (next: Phase) => {
     if (next.kind === "question") {
       shown.current = { answered: next.answered, spent: next.spent };
@@ -131,10 +103,8 @@ function useResumedPlacement({ actions, goalId }: { actions: OnboardingActions; 
     setPhase(next);
   };
 
-  /** The phase an outcome leads to, never behind what this screen already showed. */
   const showReady = (outcome: ReadyOutcome) => showPhase(toPhase(outcome, shown.current));
 
-  /** An answer given on this screen to the question numbered after `answered`. */
   const countAnswer = (answered: number) => {
     shown.current = {
       answered: Math.max(shown.current.answered, answered + 1),
@@ -181,14 +151,6 @@ function getAnswerKind({
   return isCorrect ? "correct" : "incorrect";
 }
 
-/**
- * Placement while the first lessons are made: adaptive questions from the goal's skill map, with
- * "I don't know yet" welcome and no score, or for an exam (accounts only), the whole exam as a
- * mock, whose answers set the starting point; stopping it midway keeps them. It ends when every
- * area of every phase has a starting point, when nothing more can be asked today, or whenever the
- * learner stops; "start from scratch" skips it. While the skill map or the next questions are being made, it follows the
- * goal's run (`run`) and checks for questions until they come, and says so when they can't.
- */
 export function PlacementStep({
   actions,
   areaCount,
@@ -199,13 +161,10 @@ export function PlacementStep({
   subject,
 }: {
   actions: OnboardingActions;
-  /** How many areas an exam's placement asks about; 0 for other goals. */
   areaCount: number;
   goalId: string;
-  /** The whole exam as a mock instead (`start`), and a running mock by its id. */
   mockHrefs: { mock: (mockId: string) => string; start: string };
   onDone: () => void;
-  /** The run building the goal's skill map and questions, when the host follows it. */
   run: GenerationRun | null;
   subject: string;
 }) {
@@ -220,7 +179,6 @@ export function PlacementStep({
   const [answerFailed, setAnswerFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
 
-  // Stopping a placement mock first keeps what was answered, which sets where the plan starts.
   const finish = (fromScratch: boolean, stopMockId: string | null = null) =>
     startTransition(async () => {
       if (stopMockId) {
@@ -279,7 +237,6 @@ export function PlacementStep({
         countAnswer(answered);
 
         if (outcome.status !== "ready") {
-          // The next questions are still being written: wait for them instead of repeating one.
           setPhase({ kind: outcome.status === "unavailable" ? "unavailable" : "waiting" });
           return;
         }
