@@ -9,13 +9,7 @@ import {
 import { PLAN_LOOKUPS, PLAN_LOOKUP_USES, type PlanLookUpFound } from "./goal-tutor-lookup-plan";
 import { type GoalTutorLinks, stringifyWithLinks } from "./goal-tutor-pages";
 
-/**
- * What the buddy can look up about the learner beyond its context, which stays small so every
- * message reads it from the cache: the notice's topics, progress by subject, the mocks they
- * finished, a lesson of their plan and their older mistakes; their plan's days, challenges and
- * lessons left (`PLAN_LOOKUPS`); and their missions, goals, account, week, courses and progress
- * (`LEARNER_LOOKUPS`).
- */
+/** Beyond the context, which stays small so every message reads it from the cache. */
 const GOAL_TUTOR_LOOKUPS = [
   "noticeTopics",
   "subjectProgress",
@@ -28,12 +22,10 @@ const GOAL_TUTOR_LOOKUPS = [
 
 export type GoalTutorLookUp = (typeof GOAL_TUTOR_LOOKUPS)[number];
 
-/** Whether a lookup reads the learner's plan (`PLAN_LOOKUPS`), for core to route it. */
 export function isPlanLookUp(what: GoalTutorLookUp): what is (typeof PLAN_LOOKUPS)[number] {
   return PLAN_LOOKUPS.some((kind) => kind === what);
 }
 
-/** Whether a lookup reads the learner beyond their plan (`LEARNER_LOOKUPS`), for core to route it. */
 export function isLearnerLookUp(what: GoalTutorLookUp): what is (typeof LEARNER_LOOKUPS)[number] {
   return LEARNER_LOOKUPS.some((kind) => kind === what);
 }
@@ -53,23 +45,19 @@ const MAX_LOOKUPS_PER_MESSAGE = 3;
 const MAX_AREA_LENGTH = 120;
 const MAX_QUERY_LENGTH = 120;
 
-/** What the model asks for: the kind, and a subject or words to narrow it to. */
 export type GoalTutorLookUpRequest = {
-  /** A subject or area of the plan, as the context names it; null for all of them. */
+  /** As the context names it; null for all of them. */
   area: string | null;
-  /** Words to find: a topic or law of the notice, a lesson's title, a mistake's subject. */
   query: string | null;
   what: GoalTutorLookUp;
 };
 
 type NoticeTopic = {
   frequency: string | null;
-  /** The heading the notice lists it under inside its subject, such as "Physics". */
   heading: string | null;
   name: string;
-  /** When the plan studies it next; null once studied, or when it isn't planned. */
+  /** Null once studied, or when it isn't planned. */
   nextDate: string | null;
-  /** Why it isn't in the plan, when it isn't. */
   notPlannedReason: string | null;
   /** From the plan's lessons on it: studied, known, inProgress, toStudy or notPlanned. */
   status: string | null;
@@ -77,32 +65,27 @@ type NoticeTopic = {
 
 type SubjectChapter = { lessonsDone: number; lessonsTotal: number; state: string; title: string };
 
-/** What a lookup found, by kind. */
 type GoalTutorLookUpFound =
   | PlanLookUpFound
   | LearnerLookUpFound
   | {
       /** Each subject's questions are in the context's `exam.subjects`, counted as the app shows them. */
       subjects: {
-        /** Topics left out of the list, past the ones shown or the ones `query` matched. */
+        /** Past the ones shown or the ones `query` matched. */
         moreTopics: number;
         name: string;
         topics: NoticeTopic[];
       }[];
-      /** The notice's address. */
       source: string | null;
       what: "noticeTopics";
     }
   | {
       subjects: {
-        /** Answers on its skills in the last weeks: right of total; null before any. */
+        /** In the last weeks; null before any. */
         answers: { right: number; total: number } | null;
         chapters: SubjectChapter[];
         lessonsDone: number;
-        /**
-         * Of `lessonsDone`, the lessons a test (placement or a chapter's) skipped because the
-         * learner showed they know them: they didn't take them.
-         */
+        /** Of `lessonsDone`, the ones a test skipped because the learner showed they know them. */
         lessonsTestedOut: number;
         lessonsTotal: number;
         moreChapters: number;
@@ -115,7 +98,6 @@ type GoalTutorLookUpFound =
       what: "subjectProgress";
     }
   | {
-      /** Subjects whose share right went up since their first mock. */
       improved: string[];
       /** Newest first. `estimate` only when the exam's scoring gives a range. */
       mocks: {
@@ -128,22 +110,19 @@ type GoalTutorLookUpFound =
         /** For an exam scored right minus wrong (Cebraspe's): that net, of `total`. */
         net: number | null;
         number: number;
-        /** The one subject a mock of one subject asked. */
         subject: string | null;
         total: number;
       }[];
-      /** The weakest subjects in their latest mock. */
       needsWork: string[];
       what: "mocks";
     }
   | {
       lessons: {
         canDo: string | null;
-        /** When the plan has it; null once done or outside the plan's days. */
+        /** Null once done or outside the plan's days. */
         date: string | null;
         description: string;
         done: boolean;
-        /** The lesson's key ideas, as its summary states them. */
         ideas: string[];
         title: string;
       }[];
@@ -159,16 +138,13 @@ type GoalTutorLookUpFound =
         skill: string | null;
         status: string;
       }[];
-      /** Mistakes that matched past the ones shown. */
       moreMistakes: number;
       what: "mistakes";
     };
 
 /**
- * What looking something up did, as the model reads it: what it found; nothing that matches
- * (with the names it knows, to try one of them); or why it can't look that up (`notExam`: notice
- * topics are for exams with a notice; `limit`: this message already looked up as much as one
- * message may; `timeout` or `error`: it couldn't read it now).
+ * `notExam`: notice topics are for exams with a notice; `limit`: this message already looked up as
+ * much as one may; `timeout` or `error`: it couldn't read it now.
  */
 export type GoalTutorLookUpResult =
   | ({ status: "found" } & GoalTutorLookUpFound)
@@ -179,10 +155,8 @@ export type GoalTutorLookUpResult =
       what: GoalTutorLookUp;
     };
 
-/** Asks core for the learner's own data, for the answer being written. */
 export type LookUpGoalData = (request: GoalTutorLookUpRequest) => Promise<GoalTutorLookUpResult>;
 
-/** What each kind holds and when it answers the learner, in the model's words. */
 const LOOKUP_USES: Record<GoalTutorLookUp, string> = {
   ...PLAN_LOOKUP_USES,
   ...LEARNER_LOOKUP_USES,
@@ -198,24 +172,20 @@ const LOOKUP_USES: Record<GoalTutorLookUp, string> = {
     "how they're doing by subject (`area` for one): lessons done of the total (some skipped by a test they passed, `lessonsTestedOut`: never say they took those), topics studied, right answers in the last weeks, open mistakes, its chapters and when it comes next. For how they're doing in a subject.",
 };
 
-/**
- * The tool's description: what it does and when, then each kind as the model reads it. The same
- * for every learner, so it stays in the cached start of every request.
- */
+/** The same for every learner, so it stays in the cached start of every request. */
 const LOOKUP_DESCRIPTION = [
   `Looks up the learner's own data that CURRENT_CONTEXT doesn't show. Use it only when the answer needs something the context doesn't have, never for what it already shows, and at most ${MAX_LOOKUPS_PER_MESSAGE} times per message. Only you see what it returns: say what matters in your answer, and link what it links.`,
   ...GOAL_TUTOR_LOOKUPS.map((what) => `- ${what}: ${LOOKUP_USES[what]}`),
 ].join("\n");
 
-/** An abort's reason as an error: the deadline's own `TimeoutError`, or what aborted it. */
+/** The deadline's own `TimeoutError`, or what aborted it. */
 function toError(reason: unknown): Error {
   return reason instanceof Error ? reason : new Error("The lookup was aborted", { cause: reason });
 }
 
 /**
- * Runs the lookup until its deadline (`LOOKUP_DEADLINE_MS`, set as the tool's `timeout`), which the
- * AI SDK only signals: a lookup still running then comes back as `timeout` (its abort read as the
- * deadline it is, `toDeadlineError`), so the buddy answers without it.
+ * The AI SDK only signals the tool's `timeout`, so a lookup still running then comes back as
+ * `timeout` and the buddy answers without it.
  */
 async function lookUpUntilDeadline({
   lookUp,
@@ -241,11 +211,7 @@ async function lookUpUntilDeadline({
   }
 }
 
-/**
- * The buddy's read-only tool: its result reaches only the model, never the learner's screen, with
- * the host's link for everything it points at (`stringifyWithLinks`). One message looks up at most
- * `MAX_LOOKUPS_PER_MESSAGE` times; past that, the buddy answers with what it has.
- */
+/** Read-only: its result reaches only the model, never the learner's screen. */
 export function createLookUpTool({
   links,
   lookUp,

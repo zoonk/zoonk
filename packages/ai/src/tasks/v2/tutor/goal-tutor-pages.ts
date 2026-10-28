@@ -1,9 +1,6 @@
 /**
- * The app's pages the buddy can send the learner to, with what each one is for, in the model's
- * words. This is the one list: each host maps every page to its own link (the web app's paths
- * live with its delivery code, `@zoonk/player/tutor/app-links`), the buddy's guide lists them in
- * this order, and core names a page when it points at one. The list and its descriptions are the
- * same for every learner, so the guide stays in the cached start of every request.
+ * The one list: each host maps every page to its own link and the guide lists them in this order.
+ * It's the same for every learner, so the guide stays in the cached start of every request.
  */
 export const GOAL_TUTOR_PAGES = [
   "today",
@@ -37,9 +34,8 @@ export const GOAL_TUTOR_PAGES = [
 export type GoalTutorPage = (typeof GOAL_TUTOR_PAGES)[number];
 
 /**
- * The pages that show the goal the app has open, not one the link names: the buddy links them
- * only in its own conversation about that goal (`PlanScopeContext.selectedGoal`), so a link never
- * opens another goal's page. Every other page is the learner's whole account.
+ * They show the goal the app has open, so the buddy links them only in its conversation about that
+ * goal (`PlanScopeContext.selectedGoal`) and a link never opens another goal's page.
  */
 const SELECTED_GOAL_PAGES = new Set<GoalTutorPage>([
   "buddy",
@@ -55,12 +51,10 @@ const SELECTED_GOAL_PAGES = new Set<GoalTutorPage>([
   "today",
 ]);
 
-/** The pages the buddy may link in a conversation, in the guide's order. */
 export function listGoalTutorPages({ selectedGoal }: { selectedGoal: boolean }): GoalTutorPage[] {
   return GOAL_TUTOR_PAGES.filter((page) => selectedGoal || !SELECTED_GOAL_PAGES.has(page));
 }
 
-/** What each page shows and when it answers what the learner wants. */
 const PAGE_USES: Record<GoalTutorPage, string> = {
   activity:
     "their study days, the lessons they finished and their time spent learning. For when or how much they studied.",
@@ -109,31 +103,20 @@ const PAGE_USES: Record<GoalTutorPage, string> = {
     "today's session in order, their missions, and catching up on lessons earlier days left when that's offered. For what to do today.",
 };
 
-/**
- * Where something opens in the app, for the buddy to link it: one of the current session's blocks
- * still to do (it opens as Today opens it), a phase challenge or a planned mock by its plan item
- * (its page starts it), a subject of the plan by its key, or one of the app's pages. Each host turns
- * it into its own link; core never knows the routes.
- */
+/** Each host turns it into its own link; core never knows the routes. */
 export type TutorLink =
   | { blockId: string; kind: "block" }
   | { kind: "challenge"; planItemId: string }
   | { kind: "page"; page: GoalTutorPage }
   | { key: string; kind: "subject" };
 
-/**
- * How a host links the app for the buddy: each page's link, and the link to anything core points
- * at. The model reads the links as they are and copies them into its answer.
- */
+/** The model reads the links as they are and copies them into its answer. */
 export type GoalTutorLinks = {
   pages: Record<GoalTutorPage, string>;
   toLink: (link: TutorLink) => string;
 };
 
-/**
- * The guide the buddy reads: each page it may link with its link and what it's for, in the list's
- * order (see `listGoalTutorPages`). The links are the host's and the same for every learner.
- */
+/** The links are the host's and the same for every learner. */
 export function formatGoalTutorPageGuide({
   pages,
   selectedGoal,
@@ -158,10 +141,7 @@ function isTutorLink(value: unknown): value is TutorLink {
   );
 }
 
-/**
- * Data as the model reads it: JSON whose `link` fields hold the host's link instead of what core
- * points at, so the model copies a ready link and never builds one.
- */
+/** `link` fields hold the host's link, so the model copies a ready link and never builds one. */
 export function stringifyWithLinks(value: unknown, toLink: GoalTutorLinks["toLink"]): string {
   return JSON.stringify(value, (key, field: unknown) =>
     key === "link" && isTutorLink(field) ? toLink(field) : field,

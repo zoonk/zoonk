@@ -8,7 +8,6 @@ import {
 
 const REQUEST: GoalTutorLookUpRequest = { area: null, query: "Lei 8.112", what: "noticeTopics" };
 
-/** A lookup stuck on a slow database. */
 const neverEnds = () => new Promise<never>(() => {});
 
 const fails = () => Promise.reject(new Error("Database unavailable"));
@@ -89,7 +88,6 @@ describe(createLookUpTool, () => {
 
     const found: GoalTutorLookUpResult = {
       ...FOUND,
-      // A result's link, as core points at what the app opens.
       lessons: FOUND.lessons.map((lesson) => ({
         ...lesson,
         link: { kind: "challenge", planItemId: "item-1" },

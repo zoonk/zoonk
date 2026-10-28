@@ -14,7 +14,6 @@ const QUESTION: ModelMessage = {
 
 const FIRST_STEP = [QUESTION];
 
-/** The next step's conversation: the first one with its calls and their results. */
 const SECOND_STEP: ModelMessage[] = [
   QUESTION,
   { content: [], role: "assistant" },
@@ -70,7 +69,6 @@ function setup(change: GoalTutorPlanChangeResult = PROPOSED) {
 }
 
 describe("one card per message", () => {
-  // Marcos asked for a speaking call and for SQL lessons in one message: the call's card won.
   it("gives the card to a plan change asked for in the same step, even when the feature runs first", async () => {
     const { askChange, offerAppTool, runChange, runOffer } = setup();
     await askChange({ messages: FIRST_STEP, toolCallId: "change" });

@@ -3,9 +3,8 @@ import { type PlanScopeContext } from "../../lessons/lesson-question-context";
 import { type GoalTutorLinks, stringifyWithLinks } from "./goal-tutor-pages";
 
 /**
- * OpenAI caches a prompt up to its latest message on its own. Memory follows the learner's
- * message, so the message itself is marked too: the next message then reads the conversation up
- * to it from the cache. Other providers ignore the mark.
+ * Memory follows the learner's message, so OpenAI's cache would stop before it: marking the message
+ * lets the next one read the conversation up to it from the cache. Other providers ignore the mark.
  */
 const CACHE_BREAKPOINT = { openai: { promptCacheBreakpoint: { mode: "explicit" } } } as const;
 
@@ -43,8 +42,7 @@ function toHistoryMessages(priorTurns: readonly LessonQuestionPriorTurn[]) {
 }
 
 /**
- * The goal's context, with the host's link wherever it points at something the app opens. Whether
- * its Library text is public is the search's to know (`privateContent`), never the model's.
+ * Whether its Library text is public is the search's to know (`privateContent`), never the model's.
  */
 function createContextMessage({
   contextSnapshot,
@@ -66,8 +64,7 @@ function createContextMessage({
 }
 
 /**
- * The memory is picked for each message, so it comes last, after the learner's message: the
- * history only ever repeats what comes before it.
+ * Picked for each message, so it comes last: the history only ever repeats what comes before it.
  */
 function createMemoryMessages(learnerMemory: readonly string[] | undefined) {
   if (!learnerMemory || learnerMemory.length === 0) {
@@ -85,12 +82,9 @@ function createMemoryMessages(learnerMemory: readonly string[] | undefined) {
 }
 
 /**
- * The buddy's messages, ordered for the providers' prompt caches, which reuse the longest prefix a
- * request shares with an earlier one. The instructions and tools every learner's request repeats
- * come before these; then the goal's context, which stays the same message after message until
- * the plan changes; then the conversation, which only grows; and last what's new in this message.
- * A follow-up reads all but its newest turn from the cache, and so does each step after a tool
- * round.
+ * Ordered for the providers' prompt caches, which reuse the longest shared prefix: the goal's
+ * context, which stays the same until the plan changes, then the conversation, which only grows,
+ * then what's new in this message.
  */
 export function createGoalTutorMessages({
   contextSnapshot,
@@ -100,7 +94,6 @@ export function createGoalTutorMessages({
   question,
 }: {
   contextSnapshot: PlanScopeContext;
-  /** Facts the learner shared before, picked for this message. */
   learnerMemory?: readonly string[];
   links: GoalTutorLinks;
   priorTurns: readonly LessonQuestionPriorTurn[];
@@ -114,7 +107,6 @@ export function createGoalTutorMessages({
   ];
 }
 
-/** The messages as plain text, for evals to show what the model read. */
 export function serializeGoalTutorMessages(
   messages: ReturnType<typeof createGoalTutorMessages>,
 ): string {

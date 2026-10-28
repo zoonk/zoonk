@@ -17,10 +17,6 @@ const OAB_EXAM = {
   subjects: [{ group: null, name: "Ética Profissional", questions: 8 }],
 } satisfies NonNullable<PlanScopeContext["exam"]>;
 
-/**
- * Sofia's plan: an official exam and a public course, with her goal, her days and lessons, how
- * far behind she is and a mistake she made.
- */
 const SOFIA_PLAN = {
   catchUp: null,
   challenges: [],
@@ -112,7 +108,6 @@ function fold(text: string): string {
   return text.normalize("NFD").replaceAll(/\p{M}/gu, "").toLowerCase();
 }
 
-/** The items of `data` the queries hold, whatever their case or accents. */
 function findSent({ data, queries }: { data: readonly string[]; queries: readonly string[] }) {
   const sent = fold(queries.join(" "));
 

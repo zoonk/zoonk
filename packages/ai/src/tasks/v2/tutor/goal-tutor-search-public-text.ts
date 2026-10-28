@@ -9,10 +9,8 @@ import {
   type TutorScreenContext,
 } from "../../lessons/lesson-question-context";
 
-/** "2027-01-10" starts with its year. */
 const YEAR_LENGTH = 4;
 
-/** Every string in a value, however deep: a screen's content, in whatever shape. */
 function collectStrings(value: unknown): string[] {
   if (typeof value === "string") {
     return [value];
@@ -121,12 +119,8 @@ function isText(text: string | null): text is string {
 }
 
 /**
- * The Library's and the notice's text the learner asked about, the same for every learner who
- * reads it: an exam's names and days, the course's outline and the screen's content. It counts only
- * when the context says all of it is public (`privateContent: false`, an exam not read from their
- * material): text written for this learner alone, their own material, and a question saved before
- * that was marked are as personal as what they wrote. The goal, the plan, their mistakes and
- * answers always are.
+ * Counts only when the context says all of it is public (`privateContent: false`, an exam not read
+ * from their material). The goal, the plan, their mistakes and answers are always personal.
  */
 export function collectPublicText(context: PlanScopeContext): string[] {
   if (context.privateContent !== false || context.exam?.fromMaterial === true) {

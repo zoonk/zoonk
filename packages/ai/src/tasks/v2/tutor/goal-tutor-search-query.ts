@@ -7,7 +7,7 @@ import {
   normalizeSearchWord,
 } from "./goal-tutor-search-terms";
 
-/** What a search's words may come from, besides the code's own vocabulary (`SEARCH_TERMS`). */
+/** Besides the code's own vocabulary (`SEARCH_TERMS`). */
 export type GoalTutorSearchSources = {
   contextSnapshot: PlanScopeContext;
   /** Facts the learner shared before: never searched, and their words never go out. */
@@ -177,7 +177,6 @@ function toDigitSpans(text: string): string[] {
   );
 }
 
-/** The words a query may hold, and the learner's own ones none of them may be. */
 type Allowed = { personal: ReadonlySet<string>; public: ReadonlySet<string>; year: string };
 
 function collectAllowed({
@@ -340,33 +339,14 @@ function dedupe(queries: readonly string[]): string[] {
 }
 
 /**
- * The queries a buddy's web search sends, built in code from the ones the model proposed, so none
- * of the learner's data (names, contacts, ID numbers, employer, goal, plan, progress, mistakes,
- * memory, earlier turns, lookups) reaches the search provider, whatever the model writes. Words go
- * out only from vocabularies that are the same for every learner:
+ * Built in code from the model's queries, so none of the learner's data reaches the search
+ * provider: words go out only from vocabularies the same for every learner (the public text asked
+ * about, `SEARCH_TERMS`, and numbers as references). Shapes of personal data come out first and
+ * break the reference before them.
  *
- * 1. the public text the learner asked about (`collectPublicText`): an official exam's names and
- *    years, a public course's outline, a public screen's content;
- * 2. the code's own search vocabulary (`SEARCH_TERMS`): the law's, courts' and exam rules' words,
- *    and the acronyms of courts, laws, exams and taxes;
- * 3. numbers as references only (`isAllowedNumber`), and a law's number where a law is named.
- *
- * Matching ignores case, accents and thousands dots. A word or number of the learner's names
- * (account, username, email, buddy), memory or goal never goes out, in any written form, unless
- * the public text has it. Shapes of personal data (an email or handle, a web address, a date or
- * time, a number of seven digits or more other than a law's) come out first, and break the
- * reference before them.
- *
- * Accepted residual (14 Oct 2026; GPT-6.1-Sol rated it P1, the lead accepted it): a name or
- * employer made only of vocabulary words that none of those sources holds ("Federal Court"), and
- * an ID shaped like a law's number written after a law's name ("Lei 54321/98"), can go out when
- * the model copies them from the learner's message. The search request carries no learner
- * identity (the app's own key, no account, address or session), so neither can be tied to a
- * person. Removing it would take queries the model picks from code-owned topic phrases and typed,
- * validated references, at a cost in what searches find.
- *
- * The first three queries left go out, each cut to Parallel's 200 characters; none means nothing
- * to search.
+ * Accepted residual (14 Oct 2026): a name made only of vocabulary words, or an ID shaped like a
+ * law's number after a law's name, can go out when the model copies it. The request carries no
+ * learner identity, so neither can be tied to a person.
  */
 export function buildSearchQueries({
   queries,

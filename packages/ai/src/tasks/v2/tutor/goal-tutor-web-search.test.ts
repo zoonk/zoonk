@@ -10,7 +10,6 @@ vi.mock("server-only", () => ({}));
 vi.mock("./goal-tutor-web-search.prompt.md", () => ({ default: "Search these queries." }));
 vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn() }));
 
-/** The search is a model call through the gateway: these tests stand in for what it returns. */
 vi.mock("ai", async (importOriginal) => {
   const actual = await importOriginal<typeof Ai>();
   return { ...actual, generateText: vi.fn() };
@@ -51,10 +50,8 @@ const STF_SOURCE = {
   url: "https://portal.stf.jus.br/adi-1194",
 };
 
-/** What the search found: the STF's page. */
 const FOUND = { results: [STF_SOURCE], search_id: "search-1" };
 
-/** A search that called the tool once and returned this. */
 function searchResult(output: unknown = FOUND) {
   const result = createGenerateTextResult(null, "openai/gpt-6-luna");
 
@@ -67,7 +64,6 @@ function searchResult(output: unknown = FOUND) {
   return { ...result, steps: [step] } as typeof result;
 }
 
-/** The buddy's search for one message. */
 function searchTool() {
   return createSearchWebTool({ contextSnapshot: PLAN, learnerMemory: ["Trabalha no BNDES"] });
 }

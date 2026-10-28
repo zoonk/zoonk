@@ -5,7 +5,6 @@ import { shouldSearchFirst } from "./goal-tutor-search";
 vi.mock("server-only", () => ({}));
 vi.mock("./goal-tutor-search.prompt.md", () => ({ default: "Decide whether to search." }));
 
-/** The classifier is a model call: these tests stand in for its verdict, slowness or failure. */
 vi.mock("../../../evaluate/evaluate-questions", () => ({ evaluateQuestions: vi.fn() }));
 
 const SUCUMBENCIA = {

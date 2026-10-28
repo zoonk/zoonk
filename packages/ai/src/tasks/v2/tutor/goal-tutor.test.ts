@@ -29,10 +29,8 @@ vi.mock("ai", async (importOriginal) => {
   return { ...actual, generateText: vi.fn() };
 });
 
-/** The app's pages with the host's links, after the goal's instructions. */
 const PAGES = `## The app's pages\n\n${formatGoalTutorPageGuide({ pages: TEST_TUTOR_LINKS.pages, selectedGoal: false })}\n`;
 
-/** The instructions a call reads, in order: the goal's, the app's pages, then a screen's. */
 function instructions(goal: string[], screen?: string) {
   return [...goal, PAGES, ...(screen ? [screen] : [])].join("\n");
 }
@@ -83,7 +81,6 @@ async function getInstructions(
   return systemPrompt;
 }
 
-/** The instructions for a question about the plan, in the open goal's conversation or not. */
 async function readPagesPrompt(selectedGoal?: true) {
   const { systemPrompt } = await generateGoalTutorAnswer({
     contextSnapshot: { ...planContext("learn"), ...(selectedGoal && { selectedGoal }) },

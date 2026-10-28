@@ -29,41 +29,23 @@ import { SEARCH_DEADLINE_MS, createSearchWebTool } from "./goal-tutor-web-search
 import systemPrompt from "./goal-tutor.prompt.md";
 
 /**
- * OpenAI's most efficient model ("focused, high-volume tasks"; models page, 7 Oct 2026), at its
- * default medium reasoning. The buddy answers doubts about any goal's subject from its own
- * knowledge and decides when the learner asks for a plan change. On the goal-tutor eval (30 cases,
- * 7 Oct 2026) Luna scored 9.07 against Gemini 3.8 Flash's 9.03, at $0.51 per 1,000 runs against
- * $11.97, p50 10.0s against 10.2s (with searches and tool rounds). On six real threads replayed
- * three messages each, a message cost $0.00065 on average against $0.0127 for Gemini 3.8 Flash,
- * with 91% of its input read from OpenAI's prompt cache. Earlier, cheaper settings lost quality:
- * Gemini 3.5 Flash-Lite 8.58 against 8.89, and low thinking on plan changes. Gemini 3.8 Flash
- * (Google, whose credits the app has) answers when OpenAI fails, then Sonnet 5.5 (Anthropic).
- * Claude Haiku 5.5 scored 8.60 against Luna's 9.61 on 6 cases (7 Oct 2026), at $1.62 per 1,000
- * runs against $0.49.
+ * Luna matched Gemini 3.8 Flash on the goal-tutor eval at a twentieth of the cost (7 Oct 2026),
+ * with 91% of its input read from OpenAI's prompt cache on real threads.
  */
 export const GOAL_TUTOR_MODEL = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash", "anthropic/claude-sonnet-5.5"] as const;
 const GOAL_TUTOR_TASK = "goal-tutor";
 
 /**
- * A search, a lookup of the learner's data the context doesn't show, a round of card tools (a plan
- * change, an app tool), the answer that says it, and room for one more round when the model offers
- * an app tool after the change, or again after a change that showed no card (`changeFirst`): at
- * most five steps. A search is a step of its own: its tool runs in the app, which builds what it
- * sends.
+ * A search, a lookup, a round of card tools, the answer, and one more round for an app tool after a
+ * change (`changeFirst`). A search is a step of its own: its tool runs in the app.
  */
 const MAX_STEPS = 5;
 
 /**
- * A search finds a current source for a fact that changes over time (case law, a recent law, an
- * exam rule the notice doesn't give): a few short excerpts keep it to one search's tokens. Left to
- * its own judgment the buddy skipped the search for a learner's own wording of a doubt whose law a
- * ruling changed (STF, ADI 1194) and answered from outdated law, so a classifier
- * (`shouldSearchFirst`) makes the first step search; with it, the buddy searched both law cases
- * and not a question about the plan, and answered all three right (eval, 7 Oct 2026). Each search
- * adds to the message the gateway's Parallel fee, about $0.005, and the small call that makes it.
- * The model only proposes the queries: what goes out holds none of the learner's data
- * (`createSearchWebTool`).
+ * Left to its own judgment the buddy answered from outdated law (STF, ADI 1194), so a classifier
+ * (`shouldSearchFirst`) makes the first step search. The model only proposes the queries: what
+ * goes out holds none of the learner's data.
  */
 const SEARCH_TOOL = "searchWeb";
 const LOOKUP_TOOL = "lookUp";
@@ -72,19 +54,13 @@ const EMPTY_ANSWER_MESSAGE = "AI provider returned an empty goal tutor answer";
 type GoalTutorInput = {
   analytics?: AiGenerationContext;
   contextSnapshot: PlanScopeContext;
-  /** Facts the learner shared before (their goals, routine, how they learn), when memory is on. */
+  /** Only when memory is on. */
   learnerMemory?: readonly string[];
-  /**
-   * The names the learner goes by (their account's name, username, email's local part, their
-   * buddy's): never sent to a web search, and never in the model's context.
-   */
+  /** Never sent to a web search, and never in the model's context. */
   learnerNames?: readonly string[];
-  /**
-   * How the host links its own pages and what the context and lookups point at: the buddy links
-   * only what it's given, copied as it reads it.
-   */
+  /** The buddy links only what it's given, copied as it reads it. */
   links: GoalTutorLinks;
-  /** Reads the learner's own data the context doesn't show; only the model sees what it finds. */
+  /** Only the model sees what it finds. */
   lookUp: LookUpGoalData;
   offerAppTool: OfferGoalAppTool;
   priorTurns: readonly LessonQuestionPriorTurn[];
@@ -122,15 +98,9 @@ function createTools({
 const TOOL_TIMEOUT = { tools: { lookUpMs: LOOKUP_DEADLINE_MS, searchWebMs: SEARCH_DEADLINE_MS } };
 
 /**
- * The first step searches when the question rests on facts that change (`shouldSearchFirst`),
- * and the next one answers from what it found. After a round of tools, the next step says what the
- * card or button shows and answers the rest of the message, and may still offer an app tool after
- * a change; the last step only answers, so a message never ends on tool calls. Every step sends
- * the same tools and thinking, which a provider's cache keys on, so a later step reads the whole
- * request before it from the cache; except that the steps after a search or a lookup can't search.
- * One search per message, with a query for the provision and one for the rulings, keeps the wait
- * and the fee to one search. After a lookup, the search's own rules keep what it found out of what
- * it sends, and this keeps the model from even proposing it.
+ * Every step sends the same tools and thinking, which a provider's cache keys on, except that steps
+ * after a search or a lookup can't search: after a lookup, this keeps the model from even proposing
+ * what it found. The last step only answers, so a message never ends on tool calls.
  */
 function createPrepareStep({
   searchFirst,
@@ -164,19 +134,10 @@ function createPrepareStep({
   };
 }
 
-/**
- * An exam goal's buddy also reads what only exams have (a cut-off, the notice's facts, mocks a plan
- * leaves to Plus, when the written tests are practiced), after the instructions every goal shares.
- * A goal's kind stays the same for a whole conversation, so its messages keep reading the same
- * prompt from the cache.
- */
+/** A goal's kind stays the same for a whole conversation, so its messages share a cached prompt. */
 const examSystemPrompt = `${systemPrompt}\n${examGoalPrompt}`;
 
-/**
- * A question asked from a screen (a chapter, a lesson, a subject, a session's or practice's question
- * or a finished mock) also reads that screen's instructions, last. A thread stays on one screen, so its messages keep reading the same prompt
- * from the cache, and the buddy's own conversation never reads them.
- */
+/** A thread stays on one screen, so its messages share a cached prompt. */
 const SCREEN_PROMPTS = {
   answer: lessonScreenPrompt,
   chapter: chapterScreenPrompt,
@@ -187,11 +148,6 @@ const SCREEN_PROMPTS = {
   subject: subjectScreenPrompt,
 } satisfies Record<TutorScreenContext["scope"]["kind"], string>;
 
-/**
- * The app's pages the buddy may link here, with the host's links, after the instructions every
- * goal shares: the same for every learner of a host, in its own conversation or on a screen, so it
- * stays in the cached start of every request.
- */
 function getPageGuide({
   contextSnapshot,
   links,
@@ -217,9 +173,8 @@ function getSystemPrompt({
 }
 
 /**
- * A language goal's doubts are about the language itself (grammar, words, how to say something),
- * which never changes, so its messages skip the classifier's half second before the first words;
- * the buddy can still search on its own.
+ * A language goal's doubts are about the language itself, which never changes, so they skip the
+ * classifier's half second; the buddy can still search on its own.
  */
 function needsSearchDecision(contextSnapshot: PlanScopeContext): boolean {
   return contextSnapshot.goal.kind !== "language";
@@ -272,10 +227,7 @@ function suppressProviderError() {
   return Promise.resolve();
 }
 
-/**
- * The buddy's answer without streaming, for evals: the same prompt, tools and steps, with the
- * eval's own stand-in for proposing plan changes.
- */
+/** For evals: the same prompt, tools and steps, without streaming. */
 export async function generateGoalTutorAnswer({
   analytics,
   model = GOAL_TUTOR_MODEL,
@@ -326,10 +278,8 @@ export async function generateGoalTutorAnswer({
 }
 
 /**
- * The learner's buddy, as their tutor for one goal: it answers doubts about what they're learning,
- * explains their plan and, when they ask for a change, proposes it through `proposePlanChange`
- * (applied only after the learner's tap), then says what it proposed. Delivery adapters stream the
- * answer and save it; `provenance` resolves once it ends and rejects when the stream fails.
+ * A plan change is applied only after the learner's tap. `provenance` resolves once the answer
+ * ends and rejects when the stream fails.
  */
 export function streamGoalTutorAnswer({ analytics, ...input }: GoalTutorInput) {
   const context = { contentScope: "personal" as const, ...analytics };

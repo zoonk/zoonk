@@ -9,16 +9,12 @@ import {
 const MAX_REQUEST_LENGTH = 500;
 const MAX_TOPIC_LENGTH = 80;
 
-/** When the plan ends before and after a change, and the lessons it adds or removes. */
 export type GoalTutorPlanChangeEffect = {
   /** For topics the learner adds: they come before lessons of the plan's first phase. */
   addedTopicsBeforeBasics?: true;
-  /** For topics the learner adds: when the first of their lessons is due with the change. */
+  /** For added topics: when their first lesson is due with the change. */
   addedTopicsStart?: string;
-  /**
-   * For more or less time on some areas: when each one whose end moves has its last lesson with
-   * the change, and now, and the lessons it gains (fewer when negative) when that's why it moves.
-   */
+  /** For more or less time on some areas; lessons gained are negative when it loses some. */
   areaEnds?: {
     area: string;
     lastLessonNow: string;
@@ -34,37 +30,30 @@ export type GoalTutorPlanChangeEffect = {
   endDateAfter: string | null;
   endDateBefore: string | null;
   lessonsAdded: number;
-  /** Some lessons added aren't written yet, so lessonsAdded is an estimate: say about how many. */
+  /**
+   * Some lessons added aren't written yet, so `lessonsAdded` is an estimate: say about how many.
+   */
   lessonsAddedEstimated?: true;
-  /** The lessons the change leaves out of the plan the learner sees, by title, as the card names them. */
   lessonsLeftOut?: string[];
   lessonsRemoved: number;
-  /** The exam's notice topics the change brings into the plan, by area. */
   topicsAdded?: { area: string; topics: string[] }[];
-  /** The exam's notice topics the change leaves out of the plan, by area. */
   topicsLeftOut?: { area: string; topics: string[] }[];
 } | null;
 
-/**
- * What asking for a plan change did, as the model reads it. The change itself only happens when
- * the learner taps Apply.
- */
+/** The change itself only happens when the learner taps Apply. */
 export type GoalTutorPlanChangeResult =
   | {
       effect: GoalTutorPlanChangeEffect;
-      /**
-       * What the change costs, to say before the learner applies it: an exam subject with
-       * questions left out, or a plan that would end weeks before its date.
-       */
+      /** What the change costs, to say before the learner applies it. */
       cautions: (
         | { area: string; kind: "leavesOutExamSubject"; questions: number }
         | { endDate: string; kind: "endsBeforeDate"; targetDate: string }
       )[];
-      /** Parts of the request no change covers, to answer in words. */
+      /** To answer in words. */
       leftOut: string[];
-      /** The exam day the notice sets, when the change moves the exam off it; null otherwise. */
+      /** Set when the change moves the exam off the notice's day. */
       officialExamDate: { date: string; source: string | null } | null;
-      /** What the change does, as the card says it: the plan changes only this way. */
+      /** As the card says it: the plan changes only this way. */
       changes: string;
       status: "proposed";
     }
@@ -73,22 +62,12 @@ export type GoalTutorPlanChangeResult =
   | { leftOut: string[]; status: "unchanged" }
   | { status: "notReady" | "notUnderstood" };
 
-/** Asks core for the change, as a proposal waiting for the learner's tap. */
 export type ProposeGoalPlanChange = (request: string) => Promise<GoalTutorPlanChangeResult>;
 
-/**
- * What offering one of the app's features did, as the model reads it: the card the learner sees
- * under the answer (with what it opens, locked when their plan doesn't include it), or why the
- * feature can't help now.
- */
 export type GoalTutorAppToolResult =
   | {
       /**
-       * What the card opens: the chapter or unit, the lessons a passed test skips, the call
-       * lengths that fit what's left of the learner's call time (or, `callTimeUsed`, that it's
-       * used until tomorrow, next month or, for a guest, an account), the subjects a mock can
-       * also be on its own, the catalog course a new goal's card shows, the written test and when
-       * the plan practices it, the notebook's open mistakes, the words to say again.
+       * `callTimeUsed`: call time is used until tomorrow, next month or, for a guest, an account.
        */
       offered: {
         cadence?: "biweekly" | "finalWeeks" | "weekly";
@@ -99,14 +78,14 @@ export type GoalTutorAppToolResult =
         minutes?: number[];
         mistakes?: number;
         subject?: string;
-        /** The subjects a mock can be on alone, besides the full exam; empty when none can. */
+        /** Besides the full exam; empty when none can be on its own. */
         subjects?: string[];
         /** For Plus: the learner already has it, so its page manages it. */
         subscribed?: boolean;
         unit?: string;
         words?: string[];
       };
-      /** Their plan doesn't include it: the card shows it locked, with what Plus unlocks. */
+      /** The card shows it locked, with what Plus unlocks. */
       plusRequired?: true;
       status: "offered";
       tool: GoalTutorAppTool;
@@ -129,7 +108,6 @@ export type GoalTutorAppToolResult =
       tool: GoalTutorAppTool;
     };
 
-/** What the model asks for: the feature, and what some features need to open. */
 export type GoalTutorAppToolRequest = {
   /** For a chapter's test: the plan area whose next chapter to test. */
   area: string | null;
@@ -140,27 +118,21 @@ export type GoalTutorAppToolRequest = {
   topic: string | null;
 };
 
-/** Asks core to offer one of the app's features under the answer. */
 export type OfferGoalAppTool = (input: GoalTutorAppToolRequest) => Promise<GoalTutorAppToolResult>;
 
 /**
- * The step a call belongs to, as the conversation the model answered when it made it: every call
- * of one step shares it, and the next step's is longer by that step's own calls and results.
+ * Every call of one step shares the conversation it answered, and the next step's is longer by
+ * that step's own calls and results.
  */
 function getStep(messages: readonly unknown[]): number {
   return messages.length;
 }
 
 /**
- * The buddy's two tools that put a card under its answer: a plan change's (Apply and Not now) or
- * one of the app's features. A message shows one card, the first one a call shows, except that a
- * plan change the learner asked for wins over a feature asked for in the same step, whatever
- * order the model calls them in: the feature gets `changeFirst` and waits for the next message.
- * Marcos asked for a speaking call and for SQL lessons in one message, and the call's card won
- * while his change waited. Calls run one after another, so a later one sees the card an earlier
- * one showed; neither rejects (core's errors come back as results), so the queue never breaks.
- * A step's calls are all known before any of them runs, which is when a plan change says it's
- * coming (`onInputAvailable`).
+ * A message shows one card, the first a call shows, except that a plan change asked for in the
+ * same step wins over a feature whatever order the model calls them in (`changeFirst`). Calls run
+ * in order and never reject, so the queue never breaks; a step's calls are all known before any
+ * runs (`onInputAvailable`).
  */
 export function createCardTools({
   offerAppTool,

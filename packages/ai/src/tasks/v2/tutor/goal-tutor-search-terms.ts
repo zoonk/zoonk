@@ -1,17 +1,13 @@
 /**
- * The words a web search for a fact that changes is written with, owned by the code: the law's and
- * the courts' vocabulary, exam rules and their notices, and the small words that join them, in the
- * languages the buddy searches in. A word here is the same for every learner, so it can never carry
- * one learner's data. Matched without case or accents, so each is written once, as it's spelled.
+ * A word here is the same for every learner, so it can never carry one learner's data. Matched
+ * without case or accents, so each is written once, as it's spelled.
  */
 const WORDS = [
-  // Small words that join the others.
   "a o as os um uma de da do das dos e em no na nos nas ao aos à às para pela pelo por com sem sobre entre após antes até ou que como qual quais quando onde ainda já mais menos se",
   "the of in on at to for and or a an is are was be with by from after before since until about not new",
   "el la los las un una del al y en por para con sin sobre entre tras hasta o que cómo cuál cuándo",
   "le la les un une des du de et en au aux pour par avec sans sur entre après avant",
   "der die das ein eine des dem den und oder in im am an auf für mit ohne nach vor seit",
-  // The law and the courts, in Portuguese.
   "direito direitos lei leis artigo artigos art arts inciso incisos parágrafo parágrafos alínea caput",
   "súmula súmulas vinculante jurisprudência entendimento tese teses tema temas repercussão geral",
   "decisão decisões julgamento julgado acórdão ministro ministros plenário turma recurso recursos",
@@ -31,19 +27,16 @@ const WORDS = [
   "morais indenização família divórcio guarda alimentos herança sucessão testamento posse",
   "propriedade usucapião locação crime crimes pena penas prisão preventiva flagrante habeas corpus",
   "mandado segurança injunção imposto impostos tributo tributos isenção imunidade taxa contribuição",
-  // Exams and their rules, in Portuguese.
   "concurso concursos edital editais banca prova provas fase fases exame questão questões gabarito",
   "inscrição inscrições cronograma data datas nota notas corte aprovação aprovados vagas cargo cargos",
   "conteúdo programático disciplina disciplinas matéria matérias peso pesos redação discursiva",
   "objetiva oficial resultado recursos regras regra",
-  // The law, courts and exams, in English.
   "law laws act acts article articles section sections clause clauses statute statutes regulation",
   "regulations rule rules ruling rulings court courts supreme decision decisions case cases precedent",
   "amendment amendments repeal repealed current latest update updated valid invalid contract",
   "contracts employee employer tax taxes federal state constitution constitutional",
   "exam exams test tests board syllabus notice date dates deadline registration score scores",
   "cutoff passing official requirements format section",
-  // The law, courts and exams, in Spanish.
   "ley leyes artículo artículos decreto reforma derogación derogado vigente actual sentencia",
   "tribunal supremo constitucional jurisprudencia contrato examen convocatoria oposiciones temario",
   "fecha plazo requisitos",
@@ -60,7 +53,6 @@ const REFERENCE_WORDS = [
 /** The words that name a law, so a law's number can follow them ("Lei 8.906/1994"). */
 const LAW_WORDS = ["lei leis lc decreto emenda ec mp ley leyes law laws act acts"] as const;
 
-/** Acronyms of courts, laws, exams and their boards and taxes that searches name. */
 const ACRONYMS = [
   "stf stj tst tse stm tcu tce trf trt tre tj cnj cnmp oab mpf pgr agu",
   "cf clt cpc cpp cp cc cdc ctn eca lindb lrf lc ec adi adc adpf ado re resp hc ms rcl",
@@ -73,7 +65,6 @@ const ACRONYMS = [
 const ROMAN_NUMERALS =
   "i ii iii iv v vi vii viii ix x xi xii xiii xiv xv xvi xvii xviii xix xx" as const;
 
-/** Case and accents don't make another word: "Cláusula" is "clausula". */
 export function normalizeSearchWord(word: string): string {
   return word.normalize("NFD").replaceAll(/\p{M}/gu, "").toLowerCase();
 }

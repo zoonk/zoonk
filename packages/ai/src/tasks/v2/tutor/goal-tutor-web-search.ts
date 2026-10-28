@@ -11,10 +11,8 @@ import { type GoalTutorSearchSources, buildSearchQueries } from "./goal-tutor-se
 import systemPrompt from "./goal-tutor-web-search.prompt.md";
 
 /**
- * The gateway runs a search only on a model's tool call, with the input the model writes (no
- * search-only endpoint; `@ai-sdk/gateway` 4.0.110), so a model that reads nothing but the queries
- * built in code makes the call: one tool call, so Luna without reasoning. Gemini 3.8 Flash makes it
- * when OpenAI fails; Sonnet 5.5 refuses a required tool.
+ * The gateway runs a search only on a model's tool call (`@ai-sdk/gateway` 4.0.110), so a model
+ * that reads nothing but the code-built queries makes it. Sonnet 5.5 refuses a required tool.
  */
 const SEARCH_MODEL = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash"] as const;
@@ -27,17 +25,12 @@ const SEARCH_TASK = "goal-tutor-web-search";
 const PARALLEL_TOOL = "searchWeb";
 
 /**
- * A few short excerpts keep a search to one search's tokens in the buddy's next step. The search's
- * input is the model's, which may ask for more or longer results than the tool's settings, so the
- * buddy reads at most these.
+ * The model may ask for more results than the tool's settings, so the buddy reads at most these.
  */
 const SEARCH_RESULTS = 5;
 const SEARCH_CHARACTERS_PER_RESULT = 1500;
 
-/**
- * A search and its one tool call take a few seconds; past this, the buddy answers without it
- * (set as the tool's `timeout`, which aborts the call).
- */
+/** Past this, the buddy answers without the search. */
 export const SEARCH_DEADLINE_MS = 15_000;
 
 const parallelTools = {
@@ -51,10 +44,8 @@ const parallelTools = {
 type SearchSource = { excerpt: string; publishDate: string | null; title: string; url: string };
 
 /**
- * What a search returns, as the gateway actually sends it (`search_id`, `excerpts`,
- * `publish_date`; 14 Oct 2026), which isn't the shape `@ai-sdk/gateway` 4.0.110 declares
- * (`searchId`, `excerpt`, `publishDate`): both are read, so a fix on either side changes nothing.
- * Anything else, such as an error, has no results.
+ * The gateway sends `search_id`, `excerpts` and `publish_date` (14 Oct 2026), not the shape
+ * `@ai-sdk/gateway` 4.0.110 declares: both are read, so a fix on either side changes nothing.
  */
 const parallelOutputSchema = z.object({
   results: z.array(
@@ -82,11 +73,7 @@ function toSearchSource(source: ParallelSource): SearchSource {
   };
 }
 
-/**
- * What a search did, as the buddy reads it: the sources it found with what was actually sent
- * (`searched`, the search tool's input); nothing left to search once the learner's data came out of
- * the queries; or no search now (a failure or the deadline).
- */
+/** `searched` is what was actually sent. */
 export type GoalTutorSearchResult =
   | {
       results: SearchSource[];
@@ -123,11 +110,7 @@ function toSearchResult(steps: readonly StepResult<typeof parallelTools>[]): Goa
   return { results: results.slice(0, SEARCH_RESULTS), searched, status: "found" };
 }
 
-/**
- * One search of the given queries, in a call whose prompt holds them and nothing else. A failure or
- * the deadline (`abortSignal`) reads as `unavailable`, so the buddy answers without it, never with
- * an error.
- */
+/** A failure or the deadline reads as `unavailable`, so the buddy answers without it. */
 async function searchWeb({
   abortSignal,
   analytics,
@@ -176,11 +159,8 @@ async function searchWeb({
 }
 
 /**
- * The buddy's web search, once per message. The model proposes queries; what goes out is built in
- * code from vocabularies that are the same for every learner (`buildSearchQueries`) and searched in
- * a call of its own that reads nothing else, so none of the learner's data reaches the search
- * provider whatever the model writes. A second call in the same message, even in the same step,
- * reads the first one's result instead of searching again.
+ * What goes out is built in code (`buildSearchQueries`) and searched in a call that reads nothing
+ * else. A second call in the same message reads the first one's result instead of searching again.
  */
 export function createSearchWebTool({
   analytics,

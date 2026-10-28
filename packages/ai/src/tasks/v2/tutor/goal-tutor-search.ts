@@ -6,7 +6,7 @@ import { evaluateQuestions } from "../../../evaluate/evaluate-questions";
 import { type AiGenerationContext } from "../../../provenance/ai-generation-event";
 import instructions from "./goal-tutor-search.prompt.md";
 
-/** The runner-up when Jev errors or times out. */
+/** The runner-up after Jev. */
 const FALLBACK_EVALUATION_MODEL = "openai/gpt-6-luna";
 const THRESHOLD = 0.5;
 
@@ -16,7 +16,6 @@ const THRESHOLD = 0.5;
  */
 const DECISION_DEADLINE_MS = 2500;
 
-/** The question the classifier answers about a buddy message. */
 const goalTutorSearchClassifier = {
   questions: {
     needsCurrentSource: {
@@ -68,11 +67,8 @@ function waitForDeadline(): Promise<false> {
 }
 
 /**
- * Whether the buddy must search before answering: a question whose answer rests on facts that
- * change, above all the law, where a court can strike or reinterpret a provision whose text looks
- * settled (the buddy once called a contract clause void from memory, missing the STF's ADI 1194).
- * The model's own judgment skipped those searches, so a separate classifier decides. False when it
- * fails or runs past its deadline: the buddy can still search on its own.
+ * The model's own judgment skipped searches on law a court had changed (the STF's ADI 1194), so a
+ * separate classifier decides. False when it fails or runs late: the buddy can still search.
  */
 export async function shouldSearchFirst(input: SearchDecisionInput): Promise<boolean> {
   const { data, error } = await safeAsync(() =>
