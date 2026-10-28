@@ -2,9 +2,10 @@ import { CONSOLE_VALUE_SOURCE } from "@zoonk/core/library/activities/console-val
 
 /**
  * Worker sources for running learner code in the browser, never on our servers. Each runs in its
- * own Web Worker, created from a Blob, so a program can't touch the page and a runaway loop is
- * stopped by terminating the worker. Before any learner code runs, each worker removes its
- * network and storage globals, so lesson code can't reach the network or the learner's session.
+ * own opaque-origin data URL worker, so a program can't access the page's origin-scoped data or session and
+ * a runaway loop is stopped by terminating the worker. Each worker also removes network and
+ * storage globals before learner code runs. This limits available APIs, not all network access:
+ * JavaScript's dynamic import, for example, can still contact cross-origin servers.
  *
  * Pyodide and sql.js load from jsDelivr only when a template that needs them appears, so the
  * player's own bundle doesn't grow. Versions are pinned: update both the URL and the note in

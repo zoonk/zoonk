@@ -38,7 +38,8 @@ const runIds = { next: 1 };
 
 function createHost(kind: ProgramKind): Host {
   const { module, source } = SOURCES[kind];
-  const url = URL.createObjectURL(new Blob([source], { type: "text/javascript" }));
+  // A data worker has an opaque origin; a Blob worker inherits the page's session access.
+  const url = `data:text/javascript;charset=utf-8,${encodeURIComponent(source)}`;
   const worker = new Worker(url, { name: `zoonk-${kind}`, type: module ? "module" : "classic" });
 
   const ready = new Promise<boolean>((resolve) => {
@@ -48,7 +49,6 @@ function createHost(kind: ProgramKind): Host {
       }
 
       worker.removeEventListener("message", handleMessage);
-      URL.revokeObjectURL(url);
       resolve(event.data.type === "ready");
     }
 
