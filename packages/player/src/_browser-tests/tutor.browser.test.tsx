@@ -446,6 +446,9 @@ describe("tutor answers", () => {
       .element(sheet.getByRole("table").getByRole("cell", { name: "km/s" }))
       .toBeVisible();
 
+    // KaTeX and Mermaid are chunks the answer started loading at its `$$` and its fence; they take as
+    // long as the server takes to send them (over a second on a busy CI runner), then draw at once.
+    await Promise.all([import("@streamdown/math"), import("@streamdown/mermaid")]);
     await expectCount(sheet.getByRole("math"), 2);
     await expect.element(sheet.getByRole("document", { name: "How an orbit forms" })).toBeVisible();
   });
