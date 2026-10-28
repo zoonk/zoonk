@@ -19,7 +19,6 @@ type MistakeEntry = Pick<
   Mistake,
   "cause" | "createdAt" | "fixedAt" | "id" | "itemId" | "status"
 > & {
-  /** The lesson "Open the lesson" opens (see `findMistakeLessons`); null when there's none. */
   lesson: MistakeLesson | null;
   /** Open and made on an earlier local day; today's mistakes return tomorrow. */
   practiceAvailable: boolean;
@@ -29,7 +28,7 @@ type MistakeEntry = Pick<
   snapshot: MistakeSnapshot;
 };
 
-/** Counts for the filters, over everything in scope before filtering by cause or status. */
+/** Counts precede cause/status filtering. */
 type MistakeCounts = {
   byCause: Record<MistakeCause | "unsorted", number>;
   fixed: number;
@@ -43,7 +42,6 @@ export type CurrentUserMistakes =
       hasMore: boolean;
       mistakes: MistakeEntry[];
       status: "ready";
-      /** The words true-or-false statements are answered with: the goal's exam's, when scoped. */
       trueFalseLabels: TrueFalseLabels;
     }
   | { status: "notFound" }
@@ -76,11 +74,6 @@ async function countMistakes(where: {
   };
 }
 
-/**
- * Lists the learner's mistakes notebook, newest first, filterable by goal (subject), skill, cause
- * and status, with counts for the filter chips. Each entry keeps its own snapshot, so it stays
- * readable after the question changes, and names the lesson to go back to.
- */
 export async function listCurrentUserMistakes(
   input: MistakeListInput,
 ): Promise<CurrentUserMistakes> {

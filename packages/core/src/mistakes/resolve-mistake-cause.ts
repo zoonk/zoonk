@@ -9,11 +9,7 @@ import { getLearnerModelCacheTag } from "../cache/tags";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { type MistakeCauseRequest } from "./record-mistake";
 
-/**
- * Asks the classifier for the cause of an ambiguous mistake and stores it. The entry keeps an
- * empty cause when the model fails, and a cause set meanwhile (by a person or a later answer) is
- * never overwritten.
- */
+/** Model failures leave cause unset; a cause saved meanwhile must never be overwritten. */
 async function resolveMistakeCause({
   input,
   mistakeId,
@@ -30,7 +26,6 @@ async function resolveMistakeCause({
 
   const { cause } = data.data;
 
-  // The notebook shows the cause; one set meanwhile stays, and changes nothing.
   const saved = await writeLearnerChange({ userId }, async (tx) => {
     const { count } = await tx.mistake.updateMany({
       data: { cause },
@@ -47,10 +42,7 @@ async function resolveMistakeCause({
   return saved;
 }
 
-/**
- * Runs the cause classifier after the response is sent, so the learner sees feedback right away.
- * Capabilities that record answers call this with the request `recordLearnerAnswer` returned.
- */
+/** Pass the request returned by answer recording; schedules classification after the response. */
 export function scheduleMistakeCause(request: MistakeCauseRequest | null): void {
   if (request) {
     after(() => resolveMistakeCause(request));

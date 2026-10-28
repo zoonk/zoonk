@@ -35,14 +35,13 @@ import {
 import { filterMistakesWithPracticeMaterial } from "./mistake-practice-eligibility";
 import { type MistakeSnapshot, readMistakeSnapshot } from "./mistake-snapshot";
 
-/** One tap of "Practice mistakes" is a short session: five mistakes, each with its drill. */
 const PRACTICE_SIZE = 5;
 
 type MistakePracticeEntry = {
   cause: Mistake["cause"];
   drill: DrillView;
   mistakeId: string;
-  /** A passage's, a case's or a recording's question shows with it (`set`), as it was asked. */
+  /** Stimulus sets must be displayed with their questions. */
   questions: (QuestionView & { set: ItemSetView | null })[];
   snapshot: MistakeSnapshot;
 };
@@ -58,7 +57,7 @@ export type MistakePracticeResult =
   | { status: "unauthorized" };
 
 async function resolveScope({ goalId, userId }: { goalId: string | undefined; userId: string }) {
-  // Without a goal, a skill that any of the learner's goals practices only with recordings counts.
+  // Unscoped practice must respect listening-only skills from any of the learner's goals.
   if (!goalId) {
     return {
       goal: null,
@@ -79,17 +78,11 @@ async function resolveScope({ goalId, userId }: { goalId: string | undefined; us
     loadListeningSkillIds(goalId),
   ]);
 
-  // The goal's skills and the finer ones their lessons teach, where lesson misses land, each
-  // drilled with its own questions or its goal skill's, as Today's practice does.
   const ownerOf = getSkillOwners(plan.skills);
 
   return { goal: owned.goal, listeningSkillIds, ownerOf, skillIds: [...ownerOf.keys()] };
 }
 
-/**
- * The skills practice draws from: the goal's (null for every skill), or for "Practice this skill"
- * that one skill, when it's in the goal's.
- */
 function getPracticeSkillIds({
   scopeSkillIds,
   skillId,
@@ -111,9 +104,9 @@ async function loadDrillMaterial({
   ownerOf,
   userId,
 }: {
-  /** The goal's exam: other exams' questions stay out, apart from the mistakes' own. */
+  /** Other exams are excluded except for the mistake's original question. */
   examBlueprintId: string | null;
-  /** The goal's field: other fields' questions stay out, apart from the mistakes' own. */
+  /** Other fields are excluded except for the mistake's original question. */
   field: string | null;
   mistakes: readonly Mistake[];
   /** The goal skill each finer skill counts for, whose questions drill it too. */
@@ -157,12 +150,7 @@ async function loadDrillMaterial({
   return { choices, lessons, seen, sets };
 }
 
-/**
- * Builds "Practice mistakes": up to five open mistakes (oldest first, one per skill first, none from
- * today), each with a drill chosen by its cause and the questions to answer, the original one
- * first; "Practice this skill" (`skillId`) takes them from one skill. Answers go to
- * `answerMistakePractice`.
- */
+/** At most five mistakes, oldest first with skill breadth; excludes today. Submit each answer to answerMistakePractice. */
 export async function getMistakePractice(
   input: MistakePracticeInput,
 ): Promise<MistakePracticeResult> {
@@ -181,8 +169,7 @@ export async function getMistakePractice(
 
   const timeZone = getAnswerTimeZone({ goal: scope.goal, timeZone: input.timeZone });
 
-  // Which mistakes are from today depends on when the learner opens practice: read at request
-  // time, never in a prerender.
+  // Next's io boundary keeps the live practice day out of prerendering.
   await io();
   const today = getDateInTimeZone({ date: new Date(), timeZone });
 

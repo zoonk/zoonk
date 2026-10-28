@@ -15,7 +15,6 @@ const YESTERDAY = new Date(Date.now() - 86_400_000);
 const RIGHT = { selectedIndex: 0 };
 const WRONG = { selectedIndex: 1 };
 
-/** A learner with one open mistake from yesterday and two questions on its skill. */
 async function setup() {
   const [user, skill] = await Promise.all([userFixture(), skillFixture()]);
 
@@ -142,8 +141,6 @@ describe(finishMistakePractice, () => {
       correctAnswers: 2,
       interactiveCompleted: 1,
     });
-
-    // Counting the run is one change; finishing it again counts nothing new.
   });
 
   it("grows one run as it's finished after every answer, counting each answer once", async () => {
@@ -157,12 +154,10 @@ describe(finishMistakePractice, () => {
       finishMistakePractice({ answerIds: [first], timeZone: "UTC" }),
     ).resolves.toMatchObject({ result: { brainPower: 2, correct: 1, total: 1 }, status: "ready" });
 
-    // A run stopped early already counts, so a partial day still counts.
     await expect(loadToday(user.id)).resolves.toMatchObject({ interactiveCompleted: 1 });
 
     const second = await answer({ answer: RIGHT, itemId: extra.id, mistakeId: mistake.id });
 
-    // Hyperdrive carries on across the run: the second right answer in a row pays double.
     await expect(
       finishMistakePractice({ answerIds: [first, second], ended: true, timeZone: "UTC" }),
     ).resolves.toMatchObject({ result: { brainPower: 6, correct: 2, total: 2 }, status: "ready" });
@@ -187,7 +182,6 @@ describe(finishMistakePractice, () => {
     const run = { answerIds: [] };
     const first = await answer({ answer: RIGHT, itemId: original.id, mistakeId: mistake.id, run });
 
-    // A run left after its first answer already counts, without a finish.
     await expect(loadRuns(user.id)).resolves.toMatchObject([{ brainPower: 2, correctAnswers: 1 }]);
     await expect(loadToday(user.id)).resolves.toMatchObject({ interactiveCompleted: 1 });
 
@@ -216,7 +210,6 @@ describe(finishMistakePractice, () => {
   it("says what each answer's count reached, for the run's end to celebrate with its own", async () => {
     const { mistake, original, user } = await setup();
 
-    // Just short of the yellow belt and of 80% Energy.
     await prisma.userProgress.create({
       data: {
         currentEnergy: 79.95,
@@ -243,7 +236,6 @@ describe(finishMistakePractice, () => {
 
     const answerId = answered.status === "ready" ? answered.feedback.answerId : "";
 
-    // The end counts nothing new, so it reaches nothing itself; the belt's moment is still to show.
     await expect(
       finishMistakePractice({ answerIds: [answerId], ended: true, timeZone: "UTC" }),
     ).resolves.toMatchObject({
@@ -258,7 +250,6 @@ describe(finishMistakePractice, () => {
     const attemptId = randomUUID();
     const sent = { answer: RIGHT, attemptId, itemId: original.id, mistakeId: mistake.id };
 
-    // The first response never arrived, so the run still lists no answers when it's sent again.
     const first = await answer({ ...sent, run: { answerIds: [] } });
     const again = await answer({ ...sent, run: { answerIds: [] } });
 

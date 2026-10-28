@@ -265,7 +265,6 @@ describe(getMistakePractice, () => {
       prisma.planItem.update({ data: { lessonId: lesson.id }, where: { id: planItems[0]?.id } }),
     ]);
 
-    // A lesson screen's miss has no bank question of its own: its goal skill's questions drill it.
     const miss = await mistakeFixture({
       cause: "gap",
       createdAt: YESTERDAY,
@@ -279,7 +278,6 @@ describe(getMistakePractice, () => {
       result.status === "ready" && result.practice.map((entry) => entry.mistakeId),
     ).toStrictEqual([miss.id]);
 
-    // The goal skill's question it offers takes the answer, and a right one fixes the miss.
     const question = result.status === "ready" ? result.practice[0]?.questions[0] : undefined;
 
     const answered = await answerMistakePractice({
@@ -463,7 +461,6 @@ describe(answerMistakePractice, () => {
         fixedMistakeIds: [mistake.id],
         isCorrect: true,
         mistakeStatus: "fixed",
-        // Answered outside a run, it counts no run, so it reaches nothing.
         reached: { energy: null, level: null },
         trap: null,
       },

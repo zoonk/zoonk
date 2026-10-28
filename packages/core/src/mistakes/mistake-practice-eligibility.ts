@@ -5,7 +5,7 @@ import { GRADABLE_ITEM_FORMATS, parseChoiceItem } from "../learner/_utils/choice
 import { getItemAudienceFilter } from "../library/items/item-field";
 import { isMistakeSkill } from "./mistake-drills";
 
-/** Open mistakes for which the same questions used by mistake practice are available. */
+/** Uses the same material eligibility as mistake practice, including owning goal-skill questions. */
 export async function filterMistakesWithPracticeMaterial<
   TMistake extends { itemId: string | null; skillId: string | null },
 >({

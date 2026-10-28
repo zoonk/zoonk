@@ -20,7 +20,7 @@ async function loadGoalScope(goalId: string) {
 
 type ScopeFailure = Exclude<Awaited<ReturnType<typeof loadGoalScope>>, { status: "ready" }>;
 
-/** All open notebook entries in the goal, whether or not their practice is available. */
+/** Counts unavailable practice too, not only mistakes currently ready to drill. */
 export async function countOpenGoalMistakes(input: {
   goalId: string;
 }): Promise<ScopeFailure | { open: number; status: "ready" }> {

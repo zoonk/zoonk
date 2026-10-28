@@ -2,15 +2,9 @@ import "server-only";
 import { type Lesson, prisma } from "@zoonk/db";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 
-/** The lesson a notebook entry opens: where the idea it missed is taught. */
 export type MistakeLesson = { id: string; title: string };
 
-type MistakeWithPlace = {
-  id: string;
-  skillId: string | null;
-  /** The lesson screen it was made on; null for a question answered outside a lesson. */
-  step: { lessonId: string } | null;
-};
+type MistakeWithPlace = { id: string; skillId: string | null; step: { lessonId: string } | null };
 
 function lessonPreference({
   finished,
@@ -26,7 +20,6 @@ function lessonPreference({
   return lesson.contentStatus === "completed" ? 1 : 2;
 }
 
-/** Notebook links prefer familiar or written material; drills keep their first teaching lesson. */
 async function findNotebookTeachingLessons({
   skillIds,
   userId,
@@ -50,7 +43,6 @@ async function findNotebookTeachingLessons({
 
   const lessonIds = [...new Set(rows.map((row) => row.lessonId))];
 
-  // The same completion rule as listFinishedLessonIds, restricted to this page's candidates.
   const completions = await prisma.$queryRaw<{ lessonId: string }[]>`
     SELECT DISTINCT content_ids->>'lessonId' AS "lessonId"
     FROM learning_events
@@ -78,12 +70,7 @@ async function findNotebookTeachingLessons({
   return bySkill;
 }
 
-/**
- * The lesson each mistake opens ("Open the lesson"): the one whose screen it was made on, else the
- * first teaching lesson the learner completed, then the first written teaching lesson, then the
- * current first teaching lesson. Only lessons the learner can open qualify. Queries are batched
- * for the notebook page; mistakes with no accessible lesson are left out.
- */
+/** Only accessible lessons qualify; absent entries have no accessible teaching lesson. */
 export async function findMistakeLessons({
   mistakes,
   userId,

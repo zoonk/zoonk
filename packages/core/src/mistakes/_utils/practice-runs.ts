@@ -1,13 +1,12 @@
 import "server-only";
 import { type Attempt, type LearningEvent, type TransactionClient, prisma } from "@zoonk/db";
 
-/** How the learning ledger names a "Practice mistakes" run. */
 const MISTAKE_PRACTICE_LEDGER_KIND = "mistakePractice";
 
-/** Answers older than this belong to a run that was left, not to the one being finished. */
+/** Answers from an abandoned day-old run must not join a new run's finish. */
 const MAX_RUN_AGE_MS = 86_400_000;
 
-/** Time counted per answer at most, so a tab left open doesn't inflate the day. */
+/** Cap idle answer time so an abandoned tab cannot inflate the study day. */
 const MAX_SECONDS_PER_ANSWER = 180;
 
 const MS_PER_SECOND = 1000;
@@ -18,11 +17,7 @@ export type PracticeAnswer = Pick<
   "answeredAt" | "durationMs" | "id" | "isCorrect" | "itemId" | "skillId"
 >;
 
-/**
- * A run's answers, only when every one is the learner's own recent practice answer: a bank
- * question on the skill (or the question) of one of their mistakes, outside sessions and lessons,
- * which count on their own.
- */
+/** Returns answers only if every id belongs to the learner's recent standalone mistake practice. */
 export async function loadPracticeAnswers({
   answerIds,
   userId,
@@ -75,7 +70,6 @@ export async function loadPracticeAnswers({
   return practiced ? answers : null;
 }
 
-/** The answer ids a finished run counted, kept on its ledger row. */
 function readRunAnswerIds(event: Pick<LearningEvent, "contentIds">): string[] {
   const { contentIds } = event;
 
@@ -87,7 +81,6 @@ function readRunAnswerIds(event: Pick<LearningEvent, "contentIds">): string[] {
   return typeof answerIds === "string" ? answerIds.split(ANSWER_ID_SEPARATOR) : [];
 }
 
-/** The notebook entries an answer fixed, as recording it saved them on the attempt. */
 export function readFixedMistakeIds(answer: Attempt["answer"]): string[] {
   if (typeof answer !== "object" || answer === null || Array.isArray(answer)) {
     return [];
@@ -100,10 +93,7 @@ export function readFixedMistakeIds(answer: Attempt["answer"]): string[] {
   return answer.fixedMistakeIds.filter((id): id is string => typeof id === "string");
 }
 
-/**
- * Only server-recorded corrections from this ledger's answers can claim a notebook mission.
- * A reopened or subsequently corrected entry no longer proves this run's current contribution.
- */
+/** Only server-recorded corrections may satisfy missions; reopened or later-fixed entries cannot prove this run's contribution. */
 export async function hasPracticeRunCorrection({
   from,
   runId,
@@ -153,10 +143,7 @@ export function toRunContentIds(answers: readonly PracticeAnswer[]): Record<stri
   return { answerIds: answers.map((answer) => answer.id).join(ANSWER_ID_SEPARATOR) };
 }
 
-/**
- * Runs counted since the first of these answers, read under the progress lock: only rows that ended
- * after it can hold any of them.
- */
+/** Caller must hold the progress lock. */
 export function loadCountedRuns(
   tx: TransactionClient,
   { since, userId }: { since: Date; userId: string },
@@ -176,10 +163,7 @@ export function loadCountedRuns(
 
 type CountedRun = Awaited<ReturnType<typeof loadCountedRuns>>[number];
 
-/**
- * Splits a finish into what's new and the run it belongs to: the counted run that already holds
- * some of these answers (a run is finished again as it goes), and the answers no run counted yet.
- */
+/** Counted answers are excluded; overlapping answers identify the existing run to extend. */
 export function matchRun({
   answers,
   runs,
@@ -199,13 +183,12 @@ export function matchRun({
   };
 }
 
-/** The run's ledger identity: one `questions` row per "Practice mistakes" run. */
 export const MISTAKE_PRACTICE_EVENT = {
   kind: "questions",
   lessonKind: MISTAKE_PRACTICE_LEDGER_KIND,
 } as const;
 
-/** From the first question shown to the finish, capped per answer. */
+/** Time starts when the first question was shown and is capped per answer. */
 export function getPracticeTime({
   answers,
   endedAt,

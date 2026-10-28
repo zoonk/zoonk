@@ -1,6 +1,5 @@
 import { type MistakeCause } from "@zoonk/db";
 
-/** The practice each cause gets. A mistake whose cause isn't known yet is simply retried. */
 export const MISTAKE_DRILL_KINDS = [
   "noGuessing",
   "readCarefully",
@@ -12,25 +11,21 @@ export const MISTAKE_DRILL_KINDS = [
 
 export type MistakeDrillKind = (typeof MISTAKE_DRILL_KINDS)[number];
 
-/** The lesson a content-gap drill goes over first: its title and its summary card's ideas. */
 export type DrillLesson = { id: string; ideas: string[]; title: string };
 
-/** A drill as apps show it: its kind, the lesson to go over before the questions, the time box. */
 export type DrillView = {
   kind: MistakeDrillKind;
   lesson: DrillLesson | null;
   timeLimitSeconds: number | null;
 };
 
-/** A question on the mistake's skill the drill could use. */
 export type DrillItemCandidate = { hasMisconceptions: boolean; id: string; seen: boolean };
 
 export type MistakeDrill = {
   itemIds: string[];
   kind: MistakeDrillKind;
-  /** The lesson that teaches the skill, for a content gap: the idea comes back before questions. */
   lessonId: string | null;
-  /** A per-question time box, only for mistakes made by running out of time. */
+  /** Per question, never a whole-drill limit. */
   timeLimitSeconds: number | null;
 };
 
@@ -42,7 +37,6 @@ const DRILL_KINDS: Readonly<Record<MistakeCause, MistakeDrillKind>> = {
   trap: "spotTheTrap",
 };
 
-/** New questions a drill adds after retrying the original one. */
 const EXTRA_QUESTIONS: Readonly<Record<MistakeDrillKind, number>> = {
   noGuessing: 1,
   readCarefully: 1,
@@ -56,20 +50,16 @@ const TIMED_DRILL_SECONDS = 45;
 
 const MS_PER_SECOND = 1000;
 
-/** The drill a mistake's cause calls for. */
 export function getDrillKind(cause: MistakeCause | null): MistakeDrillKind {
   return cause ? DRILL_KINDS[cause] : "retry";
 }
 
-/** A per-question time box, only for the drill of a mistake made by running out of time. */
+/** Per question; null for untimed drills. */
 export function getDrillTimeLimitSeconds(kind: MistakeDrillKind): number | null {
   return kind === "timed" ? TIMED_DRILL_SECONDS : null;
 }
 
-/**
- * Whether an answer took its drill's whole time box, which counts as wrong, as on the day. Apps
- * send "I don't know" as time runs out, so this only catches an answer that came too late.
- */
+/** The exact deadline is already late, not only durations exceeding it. */
 export function isPastTimeLimit({
   durationMs,
   timeLimitSeconds,
@@ -93,11 +83,7 @@ function rankCandidate({
   return seenRank + trapRank;
 }
 
-/**
- * Builds the targeted drill for one mistake: the same question again, then a few more on the skill
- * chosen by cause. Unseen questions come first, and a trap drill prefers questions whose wrong
- * options carry misconceptions, so the learner practices spotting them.
- */
+/** Unseen questions come first; trap drills prioritize misconception-bearing options. */
 export function selectMistakeDrill({
   candidates,
   cause,
@@ -129,14 +115,8 @@ export function selectMistakeDrill({
   };
 }
 
-/** An open notebook entry as practice sees it. */
 export type PracticeCandidate = { createdLocalDate: Date; id: string; skillId: string | null };
 
-/**
- * Whether a question is on the mistake's skill, or on the goal skill it counts for: a goal skill's
- * lessons usually teach finer skills, where their screens' misses land (`getSkillOwners`), and the
- * bank's questions are on the goal skill.
- */
 export function isMistakeSkill({
   itemSkillId,
   mistakeSkillId,
@@ -152,10 +132,7 @@ export function isMistakeSkill({
   );
 }
 
-/**
- * Picks the mistakes for "Practice mistakes": oldest first, one per skill before a second from the
- * same skill, and none made today, since fixing a mistake means getting it right on a later day.
- */
+/** Oldest first with one-per-skill breadth; excludes mistakes from the learner's current local day. */
 export function selectMistakesToPractice<TMistake extends PracticeCandidate>({
   limit,
   mistakes,

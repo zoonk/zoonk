@@ -29,18 +29,13 @@ import { finishMistakePractice } from "./finish-mistake-practice";
 import { getDrillKind, getDrillTimeLimitSeconds } from "./mistake-drills";
 import { scheduleMistakeCause } from "./resolve-mistake-cause";
 
-/**
- * Feedback for one practice answer: the right answer, why, where the notebook entry stands, the
- * trap a trap drill names, the answer's id, which finishing the run counts, and what counting the
- * run with it reached (a level, a tenth of Energy), for the run's end to celebrate.
- */
 type MistakePracticeFeedback = {
   answerId: string;
   correctAnswer: ReturnType<typeof getChoiceCorrectAnswer>;
   explanation: string | null;
-  /** This answer changed the practiced entry from open to fixed. */
+  /** True only when this answer changed the targeted entry from open to fixed. */
   fixed: boolean;
-  /** Every notebook entry this answer actually fixed, including overlapping drills. */
+  /** Includes fixes to overlapping entries, not only the targeted mistake. */
   fixedMistakeIds: string[];
   isCorrect: boolean;
   mistakeStatus: MistakeStatus;
@@ -54,11 +49,6 @@ export type MistakePracticeAnswerResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * The goal skills a finer skill counts for in the learner's own plans: the plan skills whose
- * lessons teach it, as `getSkillOwners` reads them. Practice drills a miss on a lesson screen,
- * which has no bank question of its own, with their questions.
- */
 async function loadOwnerSkillIds({
   skillId,
   userId,
@@ -82,10 +72,7 @@ async function loadOwnerSkillIds({
   return [...new Set(ownerIds.flatMap((id) => [id, survivorOf(id)]))];
 }
 
-/**
- * Practice answers the mistake's own question, another question on its skill, or one on a goal
- * skill it counts for (a lesson screen's miss is drilled with those, see `getMistakePractice`).
- */
+/** Eligible practice includes a mistake's original question and its owning goal skill's questions. */
 async function findPracticeItem({
   itemId,
   mistake,
@@ -112,7 +99,6 @@ async function findPracticeItem({
   return owners.includes(item.skillId) ? parseChoiceItem(item) : null;
 }
 
-/** What a practice answer saved: its id, its verdict and the notebook entries it fixed. */
 type SavedPracticeAnswer = {
   answerId: string;
   fixedMistakeIds: string[];
@@ -120,7 +106,7 @@ type SavedPracticeAnswer = {
   mistakeStatus: MistakeStatus;
 };
 
-/** An answer saved earlier, sent again: what it saved then, never recorded twice. */
+/** Replays the saved verdict without recording another answer. */
 function fromSavedAttempt({
   attempt,
   mistake,
@@ -136,10 +122,6 @@ function fromSavedAttempt({
   };
 }
 
-/**
- * Records the practice answer and schedules its cause, once when it came with an id: the same
- * answer sent twice at once gets what the first one saved.
- */
 async function recordPracticeAnswer({
   answer,
   mistake,
@@ -168,11 +150,7 @@ async function recordPracticeAnswer({
   };
 }
 
-/**
- * Counts the run with this answer toward today, as `finishMistakePractice` does, and says what the
- * count reached. The answer is saved either way: a count that fails is made by the run's next
- * answer or its finish, which count every answer no count has yet.
- */
+/** A failed count leaves the answer saved; later answers or finish count all still-uncounted answers. */
 async function countRunSoFar({
   answerId,
   input,
@@ -198,18 +176,10 @@ async function countRunSoFar({
     logError("[answerMistakePractice] Failed to count the run:", error);
   }
 
-  // A count that failed is made by the run's next answer or its finish, which says what it reached.
   return data?.status === "ready" ? data.result.reached : NOTHING_REACHED;
 }
 
-/**
- * Grades one answer from "Practice mistakes" and records it as learning, by the rules of the
- * mistake's drill (a timed drill's answer that takes the whole time box is wrong). Right on a later
- * day than the mistake, it fixes the entry (and any open entry for the same question); wrong, it
- * goes back in the notebook, with a new entry only for a question that wasn't there yet. An answer
- * that names its run counts the run toward today as it goes; finishing the run
- * (`finishMistakePractice`) counts it too.
- */
+/** Only later-local-day recall fixes a mistake; a timed answer using the full limit is wrong. Supplying run counts progress as it goes. */
 export async function answerMistakePractice({
   input,
   mistakeId,
@@ -236,7 +206,7 @@ export async function answerMistakePractice({
     return { status: "invalidItem" };
   }
 
-  // A fixed mistake leaves what the day offers: today's day is saved before the first answer.
+  // Save the offered day before a correction can remove one of its missions.
   await saveDayBeforeActivity({ goalId: input.run?.goalId, timeZone: input.timeZone, userId });
 
   const graded = gradeChoiceAnswer({ answer: input.answer, item });

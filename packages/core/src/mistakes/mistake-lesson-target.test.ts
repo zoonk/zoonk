@@ -29,7 +29,6 @@ async function targets({ written }: { written: boolean }) {
     })),
   });
 
-  // Starting a lesson and another learner finishing it do not make it familiar to this learner.
   await Promise.all([
     learningEventFixture({ contentIds: { lessonId: outline.id }, userId: other.id }),
     prisma.learningEvent.create({

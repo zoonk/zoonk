@@ -117,7 +117,6 @@ describe(listCurrentUserMistakes, () => {
       userId: user.id,
     });
 
-    // The plan's skill is taught by a lesson whose own skill is finer: its misses land there.
     const [finer, lesson] = await Promise.all([skillFixture(), libraryLessonFixture()]);
 
     await Promise.all([

@@ -51,7 +51,6 @@ export const mistakePracticeInputSchema = z
 
 export type MistakePracticeInput = z.infer<typeof mistakePracticeInputSchema>;
 
-/** More answers than one run can hold; a run asks at most a few questions per mistake. */
 const MAX_PRACTICE_ANSWERS = 50;
 
 export const mistakePracticeAnswerInputSchema = itemAnswerInputSchema

@@ -4,10 +4,7 @@ import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { toSummaryIdeas } from "../library/lessons/_utils/summary-ideas";
 import { type DrillLesson, type DrillView, type MistakeDrill } from "./mistake-drills";
 
-/**
- * The first lesson teaching each skill that the learner can open (a public lesson or their own),
- * so a content-gap drill can bring the idea back before its questions.
- */
+/** Returns only lessons visible to this learner. */
 export async function findTeachingLessonIds({
   skillIds,
   userId,
@@ -28,7 +25,6 @@ export async function findTeachingLessonIds({
   );
 }
 
-/** The lessons drills go over first, with their summary ideas, by id. */
 export async function loadDrillLessons(
   lessonIds: readonly (string | null)[],
 ): Promise<Map<string, DrillLesson>> {
@@ -51,7 +47,7 @@ export async function loadDrillLessons(
   );
 }
 
-/** A drill as apps show it, its lesson resolved; a lesson that's gone leaves just the questions. */
+/** Missing teaching lessons leave a question-only drill. */
 export function toDrillView({
   drill,
   lessons,

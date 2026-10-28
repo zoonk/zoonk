@@ -33,7 +33,7 @@ import { settleLearnerMissions } from "../sessions/missions/settle-learner-missi
 import { answerMistakePractice } from "./answer-mistake-practice";
 import { finishMistakePractice } from "./finish-mistake-practice";
 
-/** Next has no request scope in Vitest; authentication and activity persistence remain real. */
+/** Vitest lacks Next's request scope; use the test auth boundary with real activity persistence. */
 vi.unmock("../users/get-session");
 vi.mock("@zoonk/auth", () => import("../../../auth/src/testing"));
 
@@ -97,7 +97,6 @@ async function expectMissionPaid({ dayId, userId }: { dayId: string; userId: str
   expect(progress.brainPowerEarned).toBeGreaterThanOrEqual(50);
 }
 
-/** A target-scoped PostgreSQL failure exercises the committed activity and reward rollback. */
 async function interruptMissionPayout({
   dayId,
   finish,
@@ -109,7 +108,7 @@ async function interruptMissionPayout({
 }) {
   const identifier = `mission_payout_test_${crypto.randomUUID().replaceAll("-", "")}`;
 
-  // DDL identifiers cannot be query parameters; both interpolated values are test-owned UUIDs.
+  // PostgreSQL DDL identifiers cannot be parameters; these interpolated UUIDs are test-owned.
   await prisma.$executeRawUnsafe(`
     CREATE FUNCTION ${identifier}() RETURNS trigger LANGUAGE plpgsql AS $$
     BEGIN
@@ -275,8 +274,6 @@ describe("missions completed outside a study block", () => {
 
     await expectMissionPaid({ dayId: day.id, userId: user.id });
 
-    // "Try again" after a lost response sends the same drill: it counts once, with its result
-    // (the mission it completed included).
     const retries = await Promise.all([
       practiceMistakePattern({ input, patternId: pattern.id }),
       practiceMistakePattern({ input, patternId: pattern.id }),
@@ -296,7 +293,6 @@ describe("missions completed outside a study block", () => {
     expect(progress.totalBrainPower).toBe(52n);
     expect(daily.timeSpentSeconds).toBe(180);
 
-    // The id names one pattern's drill: another pattern sent with it counts as its own drill.
     const other = await prisma.mistakePattern.create({
       data: {
         content: {
@@ -441,7 +437,6 @@ describe("missions completed outside a study block", () => {
 
     await studySessionBlockFixture({ sessionId: day.id });
 
-    // A question asked on another tab is stored, its own settlement not run yet.
     await prisma.usageRecord.create({
       data: { createdAt: new Date(), kind: "tutorMessage", targetId: questionId, userId: user.id },
     });
@@ -453,7 +448,6 @@ describe("missions completed outside a study block", () => {
       roundId,
     });
 
-    // The round settles both missions and pays, but takes credit only for its own.
     expect(round).toMatchObject({
       result: {
         missionMoment: { completed: ["pronunciation"], fullMeal: { bonus: 50, paid: true } },
@@ -735,7 +729,6 @@ describe("missions completed outside a study block", () => {
       },
     });
 
-    // The objectives were marked during the live call; no learner transcript needs an AI review.
     await connectTestCall(row.id);
 
     const input = testCallCompletionInput(row.id, {
@@ -769,7 +762,6 @@ describe("missions completed outside a study block", () => {
       runs: reviewRunsInline,
     });
 
-    // The call's end says it was the day's last mission, and that it paid the +50.
     expect(completed).toMatchObject({
       conversation: { result: { brainPower: 10 } },
       missionMoment: { completed: ["call"], fullMeal: { bonus: 50, paid: true } },
@@ -867,7 +859,6 @@ describe("missions completed outside a study block", () => {
         target: { kind: "lesson", lessonId: lesson.id },
       }),
     ).resolves.toMatchObject({
-      // The question paid the bonus in one goal's day: its moment says so, whichever day it shows.
       missionMoment: { completed: ["askBuddy"], fullMeal: { bonus: 50, paid: true } },
       status: "created",
     });
@@ -882,7 +873,6 @@ describe("missions completed outside a study block", () => {
     expect(days).toHaveLength(2);
     expect(days.filter((day) => day.fullMealAt !== null)).toHaveLength(1);
 
-    // Both goals' picks are done, each recording the question that completed it.
     const completedBy = { id: expect.any(String), kind: "buddyQuestion" };
 
     expect(days.map((day) => day.missions)).toStrictEqual([

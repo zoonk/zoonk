@@ -3,12 +3,10 @@ import { type Mistake, type TransactionClient, prisma } from "@zoonk/db";
 import { type MistakeSignals, inferMistakeCause } from "./mistake-cause";
 import { type MistakeSnapshot } from "./mistake-snapshot";
 
-/** A mistake whose pattern was ambiguous, waiting for the classifier to name its cause. */
 export type MistakeCauseRequest = { input: MistakeCauseInput; mistakeId: string; userId: string };
 
 type MistakeTarget = { itemId: string | null; stepId: string | null };
 
-/** The open entry for the same question, so answering it wrong again doesn't add a duplicate. */
 function findOpenMistake({
   itemId,
   stepId,
@@ -47,12 +45,7 @@ function toCauseInput({
   };
 }
 
-/**
- * Adds a wrong answer to the notebook with its snapshot and, when the pattern is clear, its cause.
- * An ambiguous pattern leaves the cause empty and returns a request for the classifier, which runs
- * after the response so answering never waits on a model. A question already open in the notebook
- * keeps its entry.
- */
+/** Reuses an existing open entry; ambiguous causes return a classifier request for post-response work. */
 export async function recordMistake(
   {
     attemptId,
@@ -82,7 +75,6 @@ export async function recordMistake(
   const cause = isLanguageWriting ? null : inferMistakeCause(signals);
   const unknownGap = signals.dontKnow && cause === "gap";
 
-  // An explicit unknown is evidence of a gap, including when a drill targets a different question.
   const target =
     unknownGap && practicedMistakeId
       ? await transaction.mistake.findFirst({ where: { id: practicedMistakeId, userId } })

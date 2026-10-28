@@ -2,14 +2,9 @@ import { type MistakeDrillKind, isPastTimeLimit } from "./mistake-drills";
 
 const MS_PER_SECOND = 1000;
 
-/** What a drill changes in grading: its kind and, for a timed drill, the per-question time box. */
 type DrillRules = { kind: MistakeDrillKind; timeLimitSeconds: number | null };
 
-/**
- * How a drill changes one graded answer. An answer that took a timed drill's whole time box is
- * wrong, and the limit reaches the mistakes notebook, so a new entry's cause reads as time. A trap
- * drill names only the misconception matching the learner's wrong answer.
- */
+/** Reaching the full time box counts as wrong; trap names come only from the selected wrong answer's misconception. */
 export function applyDrillRules({
   drill,
   dontKnow = false,

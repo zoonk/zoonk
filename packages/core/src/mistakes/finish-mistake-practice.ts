@@ -31,10 +31,6 @@ import {
 } from "./_utils/practice-runs";
 import { type MistakePracticeFinishInput } from "./contract";
 
-/**
- * What a run earned so far, as the "Practice done" screen shows it, with what this finish reached:
- * a run counts as it goes, so the screen adds up what each answer's count reached.
- */
 type MistakePracticeSummary = ProgressCelebration & {
   brainPower: number;
   correct: number;
@@ -44,7 +40,6 @@ type MistakePracticeSummary = ProgressCelebration & {
   total: number;
 };
 
-/** The run's own totals, before the missions it completed and what it reached are known. */
 type PracticeRunTotals = Omit<MistakePracticeSummary, "ceremony" | "missionMoment" | "reached">;
 
 export type FinishMistakePracticeResult =
@@ -53,7 +48,6 @@ export type FinishMistakePracticeResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/** The goal the run practiced when it was scoped to one; "notFound" when it isn't theirs. */
 async function resolveGoal(goalId: string | undefined): Promise<Goal | "notFound" | null> {
   if (!goalId) {
     return null;
@@ -63,10 +57,6 @@ async function resolveGoal(goalId: string | undefined): Promise<Goal | "notFound
   return owned.status === "ready" ? owned.goal : "notFound";
 }
 
-/**
- * The whole run's totals: Brain Power for mistake drills (due material, with Hyperdrive across the
- * run), right answers, and time from the first question shown.
- */
 function getRunTotals({ answers, endedAt }: { answers: readonly PracticeAnswer[]; endedAt: Date }) {
   const { brainPower } = scoreAnswers({
     answers: answers.map((answer) => ({
@@ -98,11 +88,6 @@ type WriteRunInput = Omit<SettleInput, "answers"> & {
   runAnswers: readonly PracticeAnswer[];
 };
 
-/**
- * Adds the new answers to today like any question block: what they added to the run's Brain Power
- * and time, their answers and Energy, and a completion when the run is first counted, so the day is
- * a learning day. The run keeps one ledger row, which grows as the run goes on.
- */
 async function writeRun(
   tx: TransactionClient,
   { fresh, goalId, lock, run, runAnswers, timeZone, userId }: WriteRunInput,
@@ -175,11 +160,7 @@ async function writeRun(
   return { progress, result, runId: event.id };
 }
 
-/**
- * Counts a run under the learner's progress lock. Apps finish a run as it goes, with every answer
- * so far, so a run left halfway still counts: each finish adds only answers no finish counted yet
- * to the run's row, and one that adds nothing returns what the run earned.
- */
+/** Extends a single run row with uncounted answers; an unchanged finish replays its totals. */
 function settlePracticeRun({ answers, ...input }: SettleInput) {
   return writeLearnerChange({ userId: input.userId }, async (tx) => {
     const lock = await getCompletionEnergyContext({
@@ -195,7 +176,6 @@ function settlePracticeRun({ answers, ...input }: SettleInput) {
 
     const { fresh, run, runAnswers } = matchRun({ answers, runs });
 
-    // A finish that adds nothing new returns what the run earned, and changes nothing.
     if (fresh.length === 0) {
       return unchanged({
         counted: false,
@@ -215,11 +195,7 @@ function settlePracticeRun({ answers, ...input }: SettleInput) {
   });
 }
 
-/**
- * Finishes a "Practice mistakes" run with every answer given so far: after each answer, and once
- * `ended` at its end or when the learner stops early. The run counts toward today like any
- * practice, and finishing again counts only answers no finish counted yet.
- */
+/** Send every answer so far after each answer and once more with ended=true on stop; retries count only fresh answers. */
 export async function finishMistakePractice(
   input: MistakePracticeFinishInput,
 ): Promise<FinishMistakePracticeResult> {

@@ -2,12 +2,7 @@ import { type Mistake, type TransactionClient, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { getMistakePracticeBefore } from "./mistake-availability";
 
-/**
- * Marks notebook entries fixed after a right answer: the same question, or the mistake a practice
- * drill targeted. Only mistakes from an earlier learner-local day count, because fixing means
- * remembering on a later day, not repeating the answer that was just shown. Returns the mistakes
- * this answer fixed; one fixed by a concurrent answer isn't returned twice.
- */
+/** Only recall on a later local day fixes mistakes; returns only entries this answer changed, excluding concurrent fixes. */
 export async function fixMistakesAnsweredRight(
   {
     answeredAt,
