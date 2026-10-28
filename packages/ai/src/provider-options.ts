@@ -21,11 +21,6 @@ type ImageProviderOptionsResult = {
   openai: { output_format: "webp"; quality: ImageGenerationQuality };
 };
 
-/**
- * Builds the gateway routing options used by our shared text-generation helper.
- * We keep this logic centralized so every task prefers the provider that matches
- * the primary model first, then uses the same cross-provider fallback order.
- */
 function buildGatewayProviderOptions({
   fallbackModels,
   model,
@@ -40,12 +35,6 @@ function buildGatewayProviderOptions({
   return { models: useFallback ? [...fallbackModels] : [], ...(order ? { order } : {}) };
 }
 
-/**
- * Returns the provider preference list for a gateway model string.
- * For example, `openai/*` should prefer OpenAI-backed credentials first,
- * while `google/*` should prefer Google-backed credentials first.
- * Unknown prefixes are left unset so we do not invent routing rules we do not own.
- */
 function getGatewayProviderOrder(model: string): GatewayProviderOptions["order"] {
   const modelPrefix = model.split("/")[0] ?? "";
 
@@ -56,28 +45,19 @@ function getGatewayProviderOrder(model: string): GatewayProviderOptions["order"]
   return providerOrderByModelPrefix[modelPrefix];
 }
 
-/**
- * Narrows a raw gateway model prefix to one of the prefixes we explicitly own.
- * This keeps the lookup typed and makes the fallback behavior obvious when a
- * new provider appears before we decide how Zoonk should route it.
- */
 function isSupportedModelPrefix(value: string): value is SupportedModelPrefix {
   return value in providerOrderByModelPrefix;
 }
 
 /**
- * Every image task's fallbacks after its model, GPT Image 2.5 Flare: Sunburst letters as well at
- * the same price (mind-map eval, 7 Oct 2026). Seedream refuses images under 3.7 megapixels.
+ * Sunburst letters as well as Flare at the same price (mind-map eval, 7 Oct 2026). Seedream refuses
+ * images under 3.7 megapixels.
  */
 const IMAGE_FALLBACK_MODELS = ["openai/gpt-image-2.5-sunburst"] as const;
 
 /**
- * Shared Library pictures can also go to Black Forest Labs' FLUX 3 Image (about $0.024 an image),
- * and square ones to Recraft V4.1 Utility ($0.035, flat front-facing scenes), as main did for pop
- * culture and other subjects OpenAI's models won't draw. Both may train on prompts, so they only
- * draw where `allowsPromptTraining` allows it, never a picture made for one learner. Recraft V4.1
- * refuses sizes outside its own list, such as the lessons' 1024x1280 (its 4:5 is 896x1152). The
- * providers' current models on 8 Oct 2026 (docs.bfl.ai, recraft.ai/docs, AI Gateway's model list).
+ * These draw subjects OpenAI's models won't, but may train on prompts, so they only draw where
+ * `allowsPromptTraining` allows it. Recraft refuses sizes outside its own list, such as 1024x1280.
  */
 const TRAINING_IMAGE_FALLBACKS: readonly { model: string; sizes?: readonly string[] }[] = [
   { model: "bfl/flux-3-image" },
@@ -104,12 +84,7 @@ function getImageFallbackModels({
   return [...IMAGE_FALLBACK_MODELS, ...training.map(({ model }) => model)];
 }
 
-/**
- * Builds the provider options shared by image-generation tasks: the fallback chain and the OpenAI
- * image output format, in one place instead of drifting across each task entry point.
- * `promptTraining` is the task run's `allowsPromptTraining` decision; evals turn `useFallback` off
- * so each image comes from the model under test.
- */
+/** Evals turn `useFallback` off, so each image comes from the model under test. */
 export function buildImageProviderOptions({
   promptTraining,
   quality,
@@ -118,7 +93,6 @@ export function buildImageProviderOptions({
 }: {
   promptTraining: boolean;
   quality: ImageGenerationQuality;
-  /** The size every model in the chain is asked for. */
   size: string;
   useFallback: boolean;
 }): ImageProviderOptionsResult {
@@ -129,38 +103,24 @@ export function buildImageProviderOptions({
 }
 
 /**
- * The gateway's service tiers we ask for, always through `chooseServiceTier`. `flex` is best
- * effort at about half the price; `priority` is served faster at about twice the price. Both apply
- * to OpenAI and Google models only, billed at the tier that actually served the call: Anthropic
- * has no tier through the gateway, and its fast mode runs on the gateway's own credentials rather
- * than our Anthropic key, so a call that falls back to an Anthropic model answers at the standard
- * tier. Unset is the standard tier.
+ * `flex` is best effort at about half the price; `priority` is faster at about twice. Only OpenAI
+ * and Google models take a tier: a call that falls back to Anthropic answers at the standard one.
  */
 export type ServiceTier = Extract<GatewayProviderOptions["serviceTier"], "flex" | "priority">;
 
 /**
- * Who uses what a call writes: `bounded` for shared content very likely read again, of goals with
- * a limited set of courses (an exam's notice, its graph, outlines, lessons and item bank; a
- * language course's) or a lesson other learners' goals already plan (a popular shared course's),
- * `library` for shared content on any topic, which may serve one learner only (a niche goal's),
- * and `personal` for one learner's own. It sets a call's service tier and a lesson's reviewer
- * (`getLessonCheckModels`).
+ * `bounded`: shared content very likely read again (an exam's or a language's, or a lesson other
+ * goals already plan); `library`: shared content that may serve one learner; `personal`: one
+ * learner's own.
  */
 export type CallReuse = "bounded" | "library" | "personal";
 
-/**
- * When a call's result is needed: `learner` while a learner watches a wait, `soon` within the
- * next minutes (the lesson after the one being studied) and `later` in hours or days.
- */
+/** `learner` while a learner watches a wait, `soon` within minutes, `later` in hours or days. */
 export type CallWait = "learner" | "later" | "soon";
 
 /**
- * The single rule for every call's service tier. Work nobody needs for hours runs at `flex`.
- * A learner waiting gets `priority` when what's written is very likely reused (its premium is
- * paid once for many learners) or when the call is `small`: a one-off wait whose doubled price is
- * a fraction of a cent, such as understanding a goal as it's typed. Everything else runs at the
- * standard tier, including interactive calls that repeat all session long (grading, explanations,
- * the buddy), which never set `small`: their premium would add up per learner.
+ * A learner waiting gets `priority` only when what's written is very likely reused or the call is a
+ * `small` one-off. Calls that repeat all session never set `small`: their premium would add up.
  */
 export function chooseServiceTier({
   reuse = "library",
@@ -184,12 +144,9 @@ export function chooseServiceTier({
 }
 
 /**
- * Builds the shared provider options object for text-generation tasks.
- * This exists so fallback models, gateway routing and the service tier stay consistent across
- * every task in this package. Every model in a chain gets the same call settings, so tasks leave
- * sampling settings (`temperature`, `topP`, `topK`) at the models' defaults: Anthropic's models
- * from Opus 4.7 and OpenAI's reasoning models drop them, and Google advises against lowering
- * Gemini 3's temperature, which can make it loop or reason worse.
+ * Every model in a chain gets the same settings, so tasks leave sampling settings at the defaults:
+ * Anthropic's models from Opus 4.7 and OpenAI's reasoning models drop them, and Google advises
+ * against lowering Gemini 3's temperature.
  */
 export function buildProviderOptions({
   model,

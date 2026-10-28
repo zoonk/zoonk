@@ -11,16 +11,10 @@ vi.mock("ai", async (importOriginal) => {
   return { ...actual, generateImage: vi.fn() };
 });
 
-// The rewrite is its own text task; this helper only decides when to use it and retries with its input.
 vi.mock("../images/image-prompt-safety-rewrite", () => ({
   rewriteImageInputForSafetyRetry: vi.fn(),
 }));
 
-/**
- * Creates the smallest AI SDK image result shape this retry helper needs. The
- * retry logic only forwards the result, so the bytes can be fake while the
- * object still matches the SDK contract used by production callers.
- */
 function createImageResult() {
   const image = {
     base64: "aW1hZ2U=",
@@ -39,12 +33,7 @@ function createImageResult() {
   };
 }
 
-/**
- * Recreates the Gateway safety wrapper shape from real image failures without
- * importing transitive provider internals. The helper must detect the safety
- * wording whether it appears on the top-level Gateway error or nested response
- * payload.
- */
+/** From real image failures: the safety wording can sit on the error or in its nested response. */
 function createSafetyRejectionError() {
   const cause = {
     isRetryable: false,

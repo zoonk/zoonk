@@ -2,30 +2,23 @@ import { type LanguageModelUsage, type ProviderMetadata } from "ai";
 import { type CallUsage, computeCallCostUsd } from "../pricing/call-cost";
 import { readGatewayMetadata } from "./gateway-metadata";
 
-/** Token counts as the AI SDK reports them, plus the units of calls billed by length or count. */
 type TaskUsage = CallUsage & { totalTokens?: number; reasoningTokens?: number };
 
-/**
- * What one AI task run produced its output with. Generated rows store
- * `model`, `promptVersion`, `runId` and `generatedAt`; analytics uses the rest.
- */
+/** Generated rows store `model`, `promptVersion`, `runId` and `generatedAt`; analytics the rest. */
 export type TaskProvenance = {
-  /** Every model that answered, including fallbacks, joined when different steps used different models. */
+  /** Joined when steps used different models, fallbacks included. */
   model: string;
   requestedModel: string;
-  /** Every provider that served the call, joined when steps used different providers. */
+  /** Joined when steps used different providers. */
   provider: string;
   promptVersion: string;
   runId: string;
   usage: TaskUsage;
-  /**
-   * The call's cost in USD at the provider's list price, from its usage and our price list
-   * (`computeCallCostUsd`); unknown for a model the list doesn't price.
-   */
+  /** Unknown for a model our price list doesn't price. */
   costUsd?: number;
-  /** AI Gateway's list-price estimate, a cross-check for `costUsd`; unknown off the gateway. */
+  /** A cross-check for `costUsd`; unknown off the gateway. */
   gatewayCostUsd?: number;
-  /** `mixed` for steps served at different tiers; a call entirely at the standard tier leaves this unset. */
+  /** `mixed` for steps served at different tiers; unset at the standard tier. */
   serviceTier?: string;
   /** `byok` when our provider key paid for the call, `system` when the gateway's credits did. */
   credential?: string;
@@ -40,7 +33,6 @@ type GenerationStep = {
   usage: LanguageModelUsage;
 };
 
-/** The parts of a `generateText` result or a `streamText` end event that provenance reads. */
 export type FinishedGeneration = {
   finalStep: GenerationStep;
   steps: readonly GenerationStep[];
@@ -59,10 +51,7 @@ function toTaskUsage(usage: LanguageModelUsage): TaskUsage {
   };
 }
 
-/**
- * A multi-step call is billed per step, and providers may leave a token count out: the total is
- * unknown only when no part reported one.
- */
+/** Providers may leave a token count out: the total is unknown only when no part reported one. */
 export function sumKnown(values: readonly (number | undefined)[]): number | undefined {
   const known = values.filter((value) => value !== undefined);
 
@@ -73,7 +62,6 @@ export function sumKnown(values: readonly (number | undefined)[]): number | unde
   return known.reduce((total, value) => total + value, 0);
 }
 
-/** The usage of calls that together write one output, such as a question bank written level by level. */
 export function sumLanguageModelUsage(usages: readonly LanguageModelUsage[]): LanguageModelUsage {
   const sum = (read: (usage: LanguageModelUsage) => number | undefined) =>
     sumKnown(usages.map((usage) => read(usage)));
@@ -99,11 +87,8 @@ function joinDistinct(values: readonly string[]): string {
 }
 
 /**
- * One provenance for calls that run at the same time to write one output, for the row that stores
- * it: the usage and cost of every call, the slowest call's latency, and every model and provider
- * that answered (more than one when a fallback answered some calls). The calls share a system
- * prompt, so they share a prompt version; the row keeps the first call's run id. Each call still
- * sends its own `$ai_generation` event.
+ * Latency is the slowest call's and the row keeps the first call's run id; each call still sends
+ * its own `$ai_generation` event.
  */
 export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProvenance {
   const [first] = runs;
@@ -143,7 +128,7 @@ export function combineTaskProvenance(runs: readonly TaskProvenance[]): TaskProv
   };
 }
 
-/** Price each successful step independently: fallbacks, tiers and context lengths can differ. */
+/** Steps can differ in fallback model, tier and context length. */
 function priceStep(step: GenerationStep) {
   const gateway = readGatewayMetadata(step.providerMetadata);
   const model = gateway.servedModel ?? step.response.modelId;
@@ -174,14 +159,8 @@ function getServedServiceTier(tiers: readonly (string | undefined)[]): string | 
 }
 
 /**
- * Builds provenance from a finished generation. The model that ran can't come
- * from `response.modelId`: the gateway's `doGenerate` replaces the response
- * metadata with headers and body, so the AI SDK falls back to the requested
- * model id even when a fallback model answered. AI Gateway's routing metadata
- * names the model that answered; `response.modelId` is only the fallback for
- * providers that don't report routing. Each step is priced from its own usage,
- * served model and tier, since with our own provider keys the gateway bills
- * nothing; its list-price estimate is kept beside it as a cross-check.
+ * The gateway's `doGenerate` replaces the response metadata, so `response.modelId` is the requested
+ * model even when a fallback answered; the gateway's routing metadata names the model that did.
  */
 export function buildTaskProvenance({
   generatedAt,

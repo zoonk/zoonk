@@ -2,11 +2,7 @@ import { globSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { configDefaults, defineConfig } from "vitest/config";
 
-/**
- * Test files that mock modules of their own (`vi.mock`, `vi.doMock`, `vi.unmock`): a mocked module
- * stays mocked in its worker, so these run in a fresh worker each. Every other file shares workers
- * and loads the AI SDKs once per worker instead of once per file.
- */
+/** A mocked module stays mocked in its worker, so files that mock run in a fresh worker each. */
 const OWN_MOCKS = globSync("src/**/*.test.ts", { cwd: import.meta.dirname }).filter((file) =>
   /\bvi\.(?:mock|doMock|unmock)\(/u.test(readFileSync(resolve(import.meta.dirname, file), "utf8")),
 );

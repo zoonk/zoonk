@@ -9,10 +9,8 @@ import { type TaskProvenance, sumKnown } from "./task-provenance";
 type ImageGeneration = Pick<GenerateImageResult, "calls" | "images" | "usage">;
 
 /**
- * Image results carry one entry per provider call. The last call is the one
- * whose image the task keeps; AI Gateway's routing metadata names the model
- * that drew it, which differs from the requested one after a fallback. Image
- * models are priced by their tokens or per image, whichever the model bills.
+ * The last provider call's image is the one kept; the gateway's routing metadata names the model
+ * that drew it, which differs from the requested one after a fallback.
  */
 function buildImageTaskProvenance({
   generation,
@@ -44,10 +42,6 @@ function buildImageTaskProvenance({
   };
 }
 
-/**
- * The image counterpart of `runTaskGeneration`: the same run id, prompt
- * version, latency and `$ai_generation` event, built from an image result.
- */
 export async function runImageTaskGeneration<TGeneration extends ImageGeneration>({
   generate,
   libraryInput,

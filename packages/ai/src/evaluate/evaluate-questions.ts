@@ -31,12 +31,6 @@ import { formatUntrustedInput } from "./untrusted-input";
 
 type EvaluationQuestions = Record<string, Experimental_DecisionQuestion>;
 
-/**
- * Jev and Luna Decisions are the gateway's native decision models. Any other gateway id (Luna,
- * Flash Lite, Haiku) runs through the AI SDK's language-model decision adapter, the same class
- * `openai.decisionModel()` and `anthropic.decisionModel()` wrap around their own models, so every
- * candidate shares the gateway's key, routing, fallback and billing.
- */
 function getEvaluationModel(modelId: string): Experimental_DecisionModel {
   if (isNativeEvaluationModel(modelId)) {
     return zoonkGateway.decisionModel(modelId);
@@ -47,16 +41,11 @@ function getEvaluationModel(modelId: string): Experimental_DecisionModel {
 
 const TIMEOUT_MS = 10_000;
 
-/**
- * What to log and review for every verdict besides the answers. Field names
- * follow task provenance, so evaluation runs read like generation runs.
- */
 export type EvaluationRunDetails = {
-  /** The model that answered, which is the fallback when the requested one failed. */
+  /** The fallback when the requested model failed. */
   model: string;
   requestedModel: string;
   latencyMs: number;
-  /** The delimited state the model evaluated. */
   state: string;
   usage: { inputTokens: number; outputTokens: number };
 };
@@ -65,10 +54,6 @@ type EvaluationRun<QUESTIONS extends EvaluationQuestions> = EvaluationRunDetails
   answers: Experimental_DecisionResult<QUESTIONS>["answers"];
 };
 
-/**
- * Sends inputs over a model's documented limit straight to the fallback,
- * since the primary would reject them anyway and the learner would wait twice.
- */
 function selectModel({
   fallbackModel,
   model,
@@ -94,8 +79,7 @@ function selectModel({
 }
 
 /**
- * Runs one model with its own deadline so a slow primary still leaves time to fall back. A
- * deadline that runs out, even while the AI SDK waits to retry, is a timeout
+ * A deadline that runs out, even while the AI SDK waits to retry, is a timeout
  * (`EvaluationTimeoutError`), never the cancellation the SDK reports it as.
  */
 async function runModel<QUESTIONS extends EvaluationQuestions>({
@@ -133,12 +117,6 @@ async function runModel<QUESTIONS extends EvaluationQuestions>({
   };
 }
 
-/**
- * Logs one run for review and threshold tuning: the call (the model that answered, a fallback
- * showing here, its latency, tokens and cost) goes to every AI call sink with its answers, and
- * the evaluation log keeps the answers with their probabilities under the same run id, and the
- * input when `keepInput` says it may.
- */
 async function logEvaluation({
   analytics,
   input,
@@ -198,12 +176,7 @@ async function logEvaluation({
   ]);
 }
 
-/**
- * Asks typed questions (choice, score, boolean) about one shared state. The
- * inputs are delimited as untrusted data, oversized inputs skip to the
- * fallback, and an error or timeout reruns the same questions on the fallback.
- * The returned run carries everything needed to log and review the verdict.
- */
+/** Oversized inputs skip to the fallback, and an error or timeout reruns the questions on it. */
 export async function evaluateQuestions<const QUESTIONS extends EvaluationQuestions>({
   analytics,
   fallbackModel,
@@ -213,21 +186,18 @@ export async function evaluateQuestions<const QUESTIONS extends EvaluationQuesti
   questions,
   task,
 }: {
-  /** Who the run was for, like every task's `$ai_generation` event. */
   analytics?: AiGenerationContext;
-  /** The runner-up from the task's eval, used when the model errors, times out or can't fit the input. */
   fallbackModel?: string;
   /** Untrusted fields by name, such as `{ USER_INPUT: prompt }`. */
   input: Readonly<Record<string, string>>;
   /**
-   * Keep the input in the evaluation log. Only for tasks whose input is stored elsewhere anyway
-   * (a goal's prompt, a tutor question, Library titles); text nobody keeps, such as a memory
+   * Only for tasks whose input is stored elsewhere anyway; text nobody keeps, such as a memory
    * candidate that may be sensitive, is logged by its hash alone.
    */
   keepInput?: boolean;
   model?: string;
   questions: QUESTIONS;
-  /** Stable task name, matching the task's eval id, for the logged run. */
+  /** Matches the task's eval id. */
   task: string;
 }): Promise<EvaluationRun<QUESTIONS>> {
   const startedAt = performance.now();

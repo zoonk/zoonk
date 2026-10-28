@@ -1,7 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { draftAgainWhenFlawed } from "./draft-again";
 
-/** Two problems in the first draft, one in any other. */
 function countProblems(output: string): number {
   return output === "two problems" ? 2 : 1;
 }
@@ -23,7 +22,6 @@ describe(draftAgainWhenFlawed, () => {
     await expect(draftAgainWhenFlawed({ countProblems, draft })).resolves.toBe("one problem");
     expect(draft).toHaveBeenCalledTimes(2);
 
-    // The second draft sees the first, to be told what to avoid.
     expect(draft.mock.calls).toStrictEqual([[null], ["two problems"]]);
   });
 

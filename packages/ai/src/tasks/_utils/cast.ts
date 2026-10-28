@@ -2,9 +2,7 @@ import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
 import { hashSeed } from "@zoonk/utils/seeded-random";
 
 /**
- * First names and towns for the people and places of examples and questions, past the few every
- * model reaches for. Writers working in parallel (a chapter's lessons, a skill's question sets,
- * placement's batches) never see each other's choices, so left alone they all pick the same
+ * Writers working in parallel never see each other's choices, so left alone they all pick the same
  * "Lívia" in "Campinas"; each call gets its own slice of these lists instead.
  */
 type CastPool = { names: readonly string[]; places: readonly string[] };
@@ -276,11 +274,10 @@ const CAST_POOLS: Record<SupportedLocale, CastPool> = {
 };
 /* oxlint-enable eslint/sort-keys */
 
-/** Enough for a whole set (placement writes several skills' questions in one call) to never repeat. */
+/** Enough for a whole set (placement writes several skills' questions in one call). */
 const CAST_NAMES = 8;
 const CAST_PLACES = 8;
 
-/** `count` items from `start` on, wrapping around the list. */
 function sliceFrom<T>({
   count,
   items,
@@ -293,11 +290,7 @@ function sliceFrom<T>({
   return [...items.slice(start), ...items.slice(0, start)].slice(0, count);
 }
 
-/**
- * The people and places one writing call uses for its examples, picked from the language's lists
- * where `seed` (the lesson, or the skill and format of a question set) points, so parallel calls
- * get different ones and the same call always gets the same. Languages without lists get "none".
- */
+/** The same `seed` always gets the same cast; languages without lists get "none". */
 export function formatCast({ language, seed }: { language: string; seed: string }): string {
   const locale = getContentLocale(language);
 

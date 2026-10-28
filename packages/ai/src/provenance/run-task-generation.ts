@@ -14,11 +14,10 @@ export type TaskGenerationInput = {
   /** A manual version for changes the system prompt text doesn't show. */
   promptVersion?: string;
   systemPrompt: string;
-  /** Stable task name, matching the task's eval id. */
+  /** Matches the task's eval id. */
   task: string;
 };
 
-/** What every run knows before its model answers, whatever the model's output type. */
 export type TaskRunDetails = {
   generatedAt: string;
   latencyMs: number;
@@ -26,10 +25,6 @@ export type TaskRunDetails = {
   runId: string;
 };
 
-/**
- * Times one task run and sends its `$ai_generation` event when it finishes.
- * Text and image runs share it; each builds provenance from its own result.
- */
 export function startTaskRun({
   analytics,
   promptVersion,
@@ -58,10 +53,7 @@ export function startTaskRun({
   };
 }
 
-/**
- * Starts timing one task run. Streamed tasks call `finish` from their end
- * callback because the generation completes after the task returns.
- */
+/** Streamed tasks call `finish` from their end callback: the generation ends after they return. */
 export function startTaskGeneration(input: TaskGenerationInput) {
   const run = startTaskRun(input);
 
@@ -74,13 +66,7 @@ export function startTaskGeneration(input: TaskGenerationInput) {
   };
 }
 
-/**
- * Runs one task generation and returns its provenance next to the untouched
- * AI SDK result, so every task reports the model that actually ran, its
- * prompt version, usage, cost and latency the same way, and sends one
- * `$ai_generation` event. Streamed runs (`startTaskGeneration`) always keep
- * the no-training filter.
- */
+/** Streamed runs (`startTaskGeneration`) always keep the no-training filter. */
 export async function runTaskGeneration<TGeneration extends FinishedGeneration>({
   generate,
   libraryInput,

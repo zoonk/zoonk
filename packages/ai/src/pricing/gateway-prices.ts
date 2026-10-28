@@ -19,10 +19,6 @@ const listedRatesSchema = z.object({
   output: listedPriceSchema.optional(),
 });
 
-/**
- * A per-image price that varies by size, or by a style or quality we don't ask for (Recraft's
- * vector style, a low quality), which has no size of its own.
- */
 const listedImagePriceSchema = z.object({
   cost: listedPriceSchema,
   quality: z.string().optional(),
@@ -33,7 +29,6 @@ const listedImagePriceSchema = z.object({
 type ListedImagePrice = z.infer<typeof listedImagePriceSchema>;
 
 const listedPricingSchema = listedRatesSchema.extend({
-  /** The price of one image at the model's default size and style (Black Forest Labs, Recraft). */
   image: listedPriceSchema.optional(),
   image_dimension_quality_pricing: z.array(listedImagePriceSchema).optional(),
   input_cache_read_tiers: z.array(listedTierSchema).optional(),
@@ -60,7 +55,6 @@ const priceTierSchema = z.object({
   min: z.number().optional(),
 });
 
-/** A service tier's token rates; a rate it doesn't list scales from the standard one. */
 const tierRatesSchema = z.object({
   input: z.number(),
   inputCacheRead: z.number().optional(),
@@ -69,9 +63,8 @@ const tierRatesSchema = z.object({
 });
 
 /**
- * Dollars per unit for one model. Token rates are per token, with long-context `*Tiers` picked by
- * the prompt's size; calls billed by length or count use `perSecond` (transcription, live voice),
- * `perCharacter` (speech) or `perImage`.
+ * Dollars per unit: token rates per token, `perSecond` for transcription and live voice, and
+ * `perCharacter` for speech.
  */
 const modelPricingSchema = z.object({
   input: z.number(),
@@ -84,7 +77,6 @@ const modelPricingSchema = z.object({
   outputTiers: z.array(priceTierSchema).optional(),
   perCharacter: z.number().optional(),
   perImage: z.number().optional(),
-  /** Models that price each image by its size ("1K", "2K"): the price of each size. */
   perImageBySize: z.record(z.string(), z.number()).optional(),
   perSecond: z.number().optional(),
   serviceTiers: z
@@ -106,7 +98,6 @@ export type GatewayPrices = z.infer<typeof gatewayPricesSchema>;
 
 type ListedRates = z.infer<typeof listedRatesSchema>;
 
-/** A tier's rates, or nothing when the tier lists no input and output price. */
 function toTierRates(rates: ListedRates | undefined): TierRates | undefined {
   return tierRatesSchema.safeParse({
     input: rates?.input,
@@ -116,14 +107,12 @@ function toTierRates(rates: ListedRates | undefined): TierRates | undefined {
   }).data;
 }
 
-/** The prices of each size at the default style and quality. */
 function getSizePrices(prices: ListedImagePrice[] | undefined): { cost: number; size: string }[] {
   return (prices ?? []).flatMap(({ cost, quality, size, style }) =>
     size && !quality && !style ? [{ cost, size }] : [],
   );
 }
 
-/** Each size's image price, for models that price sizes apart; undefined for a single price. */
 function getImagePricesBySize(
   prices: ListedImagePrice[] | undefined,
 ): Record<string, number> | undefined {
@@ -134,7 +123,6 @@ function getImagePricesBySize(
     : undefined;
 }
 
-/** The price of an image at the model's default size, for models that bill per image. */
 function getDefaultImagePrice({
   image,
   prices,
@@ -147,10 +135,8 @@ function getDefaultImagePrice({
 }
 
 /**
- * Keeps what a call's usage can be priced with. A model with no token, duration, character or
- * image price can't be priced and is left out, so its calls show up as unpriced instead of free.
- * Decision models (the gateway's `evaluation` type, such as `openai/gpt-6-luna-decisions`) list
- * only an input price: they write no tokens, so their output costs nothing.
+ * A model with no price is left out, so its calls show up as unpriced instead of free. Decision
+ * models list only an input price: they write no tokens.
  */
 function toModelPricing({
   pricing,
@@ -206,12 +192,7 @@ function toModelPricing({
   };
 }
 
-/**
- * Downloads the gateway's public model list and saves its prices with a timestamp. The gateway
- * lists the providers' own prices, which is what our provider keys (BYOK) are billed at, so one
- * list prices both what runs in production and what evals compare. Run it when a model or a price
- * changes (`pnpm --filter @zoonk/ai prices:refresh`).
- */
+/** The gateway lists the providers' own prices, which our provider keys (BYOK) are billed at. */
 export async function refreshGatewayPrices(file: URL): Promise<GatewayPrices> {
   const response = await fetch(GATEWAY_MODELS_URL);
 

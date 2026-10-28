@@ -1,8 +1,3 @@
-/**
- * Another lesson of the chapter a lesson is planned or written for, so the lesson adds something
- * new instead of teaching the same idea with the same example, numbers or question again. What
- * exists at that moment is enough: an outlined lesson has only its title and can-do line.
- */
 export type ChapterLesson = {
   title: string;
   canDo?: string;
@@ -34,7 +29,6 @@ function formatLesson(lesson: ChapterLesson): string {
     .join("\n");
 }
 
-/** The chapter's other lessons in teaching order, as `CHAPTER_LESSONS` reads them. */
 export function formatChapterLessons(lessons: readonly ChapterLesson[] = []): string {
   return lessons.length === 0
     ? "none"

@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { computeCallCostUsd } from "./call-cost";
 
 const MILLION = 1_000_000;
-/** A speech clip costs a fraction of a cent, so its prices are compared to a millionth of a cent. */
 const CENT_FRACTION_DIGITS = 8;
 
 describe(computeCallCostUsd, () => {

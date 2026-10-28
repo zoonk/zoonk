@@ -19,7 +19,6 @@ const generation: AiGeneration = {
   task: "lesson-explanation",
 };
 
-/** Leaves the test runner's environment so the production path can be exercised. */
 function stubProductionEnvironment() {
   vi.stubEnv("E2E_TESTING", "false");
   vi.stubEnv("NODE_ENV", "production");

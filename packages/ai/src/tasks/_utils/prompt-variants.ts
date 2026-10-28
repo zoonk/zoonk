@@ -1,7 +1,6 @@
-/** A block marker on a line of its own, with its line break, so a dropped block leaves no blank line. */
+/** With its line break, so a dropped block leaves no blank line. */
 const OWN_LINE_MARKER = /^(?<marker>\{\{[#/]\w+\}\})\n/gmu;
 
-/** The outermost block of one variant: `{{#name}}…{{/name}}`. */
 const VARIANT_BLOCK = /\{\{#(?<name>\w+)\}\}(?<body>[\s\S]*?)\{\{\/\k<name>\}\}/gu;
 
 const LEFTOVER_MARKER = /\{\{[#/]\w+\}\}/u;
@@ -22,13 +21,7 @@ function resolveBlocks({
   });
 }
 
-/**
- * One call's prompt from a template whose variant rules sit in `{{#name}}…{{/name}}` blocks where
- * they belong: a block stays, in place, when its variant applies and is left out otherwise. A call
- * never reads the rules of a variant it isn't (an exam's rules on a learn goal), and a variant's
- * prompt reads exactly like the full template, with nothing moved. Every block's name must be one of
- * `variants`, so a misspelled block fails instead of always being dropped.
- */
+/** Every block's name must be in `variants`, so a misspelled block fails instead of vanishing. */
 export function selectPromptVariants({
   template,
   variants,

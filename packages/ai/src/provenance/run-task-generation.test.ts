@@ -10,9 +10,8 @@ const SYSTEM_PROMPT = "You write short lessons.";
 type ModelGenerateResult = Awaited<ReturnType<MockLanguageModelV4["doGenerate"]>>;
 
 /**
- * Mirrors what `@ai-sdk/gateway` returns from `doGenerate`: the gateway body is
- * spread in, then `response` is replaced by headers and body only, so the AI
- * SDK never sees a response model id from the gateway.
+ * Mirrors `@ai-sdk/gateway`'s `doGenerate`: `response` is replaced by headers and body, so the AI
+ * SDK never sees the gateway's response model id.
  */
 function createGatewayResult(
   providerMetadata?: ModelGenerateResult["providerMetadata"],

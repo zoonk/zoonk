@@ -24,11 +24,6 @@ const safetyRejectionSignals = [
   "trademark",
 ] as const;
 
-/**
- * Uses a text model to rewrite only the caller-owned content input that caused
- * rejection. The stable image prompt template stays in the original task so
- * format, style, language, and composition constraints do not drift on retry.
- */
 async function rewriteSafetyRejectedImageInput({
   analytics,
   error,
@@ -47,11 +42,6 @@ async function rewriteSafetyRejectedImageInput({
   return data.input.trim();
 }
 
-/**
- * Rebuilds the complete model prompt from the dynamic input at the last moment.
- * The first attempt and retry both pass through the same task-owned prompt
- * builder, so only the unsafe content changes between attempts.
- */
 function buildGenerateImageParams({
   buildPrompt,
   input,
@@ -60,11 +50,7 @@ function buildGenerateImageParams({
   return { ...params, prompt: buildPrompt({ input }) };
 }
 
-/**
- * Retries image generation once when the provider rejects the prompt for safety
- * or protected-content reasons. Normal transient failures are left to the AI
- * SDK retry layer, and normal non-safety failures still surface immediately.
- */
+/** Retries once, only after a safety rejection; the AI SDK retries transient failures. */
 export async function generateImageWithSafetyRetry({
   analytics,
   ...params
@@ -84,23 +70,14 @@ export async function generateImageWithSafetyRetry({
   }
 }
 
-/**
- * Detects the provider responses that are worth rewriting. The important
- * signal is the provider's safety/protected-content wording, not the HTTP code,
- * because Gateway can wrap the same rejection in different error classes.
- */
+/** Reads the wording, not the HTTP code: Gateway wraps the same rejection in different errors. */
 function isImageSafetyRejection({ error }: { error: unknown }): boolean {
   const text = getErrorInspectionText({ error }).toLowerCase();
 
   return safetyRejectionSignals.some((signal) => text.includes(signal));
 }
 
-/**
- * Collects searchable text from the thrown error and nested causes. Error
- * messages are added explicitly because `JSON.stringify(new Error(...))` skips
- * non-enumerable fields like `message`, while SDK wrapper objects often carry
- * the provider response in enumerable fields such as `responseBody` or `data`.
- */
+/** `JSON.stringify` skips an Error's non-enumerable `message`, so messages are added explicitly. */
 function getErrorInspectionText({ error, depth = 0 }: { error: unknown; depth?: number }): string {
   if (depth > MAX_ERROR_INSPECTION_DEPTH || error === null || error === undefined) {
     return "";

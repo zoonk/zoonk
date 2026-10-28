@@ -1,25 +1,18 @@
 import { safeAsync } from "@zoonk/utils/error";
 import { isTestEnvironment } from "../_utils/is-test-environment";
 
-/** One question's verdict, as the evaluation model returned it. */
 export type EvaluationRunAnswer =
   | { choice: string; probabilities?: Readonly<Record<string, number>>; type: "choice" }
   | { probabilities?: Readonly<Record<string, number>>; score: number; type: "score" }
   | { probability: number; type: "boolean" };
 
-/**
- * One evaluation run as the log keeps it: what the model decided with its probabilities, the model
- * that answered, and the input only when the caller keeps it. `inputHash` identifies the input
- * either way, so sampling can skip repeats without reading learner text. The call's tokens and
- * cost go to the AI call sinks under the same `runId`.
- */
+/** `inputHash` lets sampling skip repeats without reading learner text. */
 export type EvaluationRunRecord = {
   answers: Readonly<Record<string, EvaluationRunAnswer>>;
   contentScope: "personal" | "shared";
-  /** The learner the run was for, when a learner triggered it. */
   distinctId?: string;
   goalId?: string;
-  /** The untrusted fields the model read, by name; null when the task doesn't keep its input. */
+  /** Null when the task doesn't keep its input. */
   input: Readonly<Record<string, string>> | null;
   inputHash: string;
   latencyMs: number;
@@ -38,10 +31,7 @@ declare global {
   var zoonkEvaluationRunSink: EvaluationRunSink | undefined;
 }
 
-/**
- * Lets the apps store every evaluation run (the database log in `@zoonk/core`) without this
- * package depending on the database. Apps that never register one, like evals, keep nothing.
- */
+/** Lets apps store evaluation runs without this package depending on the database. */
 export function registerEvaluationRunSink(sink: EvaluationRunSink): void {
   globalThis.zoonkEvaluationRunSink = sink;
 }

@@ -33,7 +33,6 @@ async function transformImage() {
   return params?.providerOptions;
 }
 
-/** The decision a run hands its task, from the call's scope and the task's input. */
 function decide(input: PromptTrainingInput & { contentScope?: "personal" | "shared" }) {
   return runUnderPromptTrainingRule({ ...input, generate: async (rule) => rule.promptTraining });
 }

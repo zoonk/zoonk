@@ -1,10 +1,8 @@
 import { type Experimental_DecisionQuestion } from "ai";
 
 /**
- * Exact counts need each provider's tokenizer. Three characters per token
- * overestimates English and most Latin-script text, so a state that passes is
- * almost always under the real limit. Scripts that use more tokens per
- * character can still overflow; the provider error then triggers the fallback.
+ * Exact counts need each provider's tokenizer. This overestimates Latin-script text; denser scripts
+ * can still overflow, and the provider's error then triggers the fallback.
  */
 const CHARACTERS_PER_TOKEN = 3;
 
@@ -13,10 +11,7 @@ function estimateTokens(value: unknown): number {
   return Math.ceil(text.length / CHARACTERS_PER_TOKEN);
 }
 
-/**
- * Jev documents its limit as the state plus the longest question, not the
- * whole request, so only the largest question counts against it.
- */
+/** Jev documents its limit as the state plus the longest question, not the whole request. */
 export function fitsTokenLimit({
   limit,
   questions,

@@ -7,10 +7,6 @@ import {
 import gatewayPricesFile from "./gateway-prices.json";
 import { PRICE_CHANGES, PRICE_OVERRIDES } from "./price-overrides";
 
-/**
- * The single price list every AI call is priced with: the gateway's snapshot (`fetchedAt` says
- * when it was taken) plus the models the gateway doesn't list. Evals price their runs from it too.
- */
 export const GATEWAY_PRICES = gatewayPricesSchema.parse(gatewayPricesFile);
 
 const MODEL_PRICES: Readonly<Record<string, ModelPricing>> = {
@@ -18,24 +14,21 @@ const MODEL_PRICES: Readonly<Record<string, ModelPricing>> = {
   ...PRICE_OVERRIDES,
 };
 
-/** What a call used, in the units its model is billed by. */
 export type CallUsage = {
-  /** Every input token, cached reads and writes included, as the AI SDK counts them. */
+  /** Cached reads and writes included, as the AI SDK counts them. */
   inputTokens?: number;
   cacheReadTokens?: number;
   cacheWriteTokens?: number;
-  /** Every output token, reasoning included, as the AI SDK counts them. */
+  /** Reasoning included, as the AI SDK counts them. */
   outputTokens?: number;
   audioSeconds?: number;
   characters?: number;
   images?: number;
-  /** The size the images were drawn at, for models that price sizes apart ("2K"). */
   imageSize?: string;
 };
 
 type ServiceTier = keyof NonNullable<ModelPricing["serviceTiers"]>;
 
-/** The model's price on the day of the call: the latest announced change from that day on. */
 function getModelPricing({ at, model }: { at: Date; model: string }): ModelPricing | undefined {
   const change = PRICE_CHANGES.filter(
     (entry) => entry.model === model && new Date(entry.from).getTime() <= at.getTime(),
@@ -66,9 +59,8 @@ function isServiceTier(value: string | undefined): value is ServiceTier {
 }
 
 /**
- * A flex or priority call is billed at that tier's rates. A rate the tier doesn't list (a cache
- * write, a long-context tier) scales from the standard one by the tier's input ratio, the way
- * providers price their tiers.
+ * A rate the tier doesn't list (a cache write, a long-context tier) scales from the standard one by
+ * the tier's input ratio, the way providers price their tiers.
  */
 function getTierScale({ pricing, serviceTier }: { pricing: ModelPricing; serviceTier?: string }): {
   rates: Partial<TierRates>;
@@ -128,13 +120,11 @@ function priceTokens({
   );
 }
 
-/** An image's price at the size it was drawn, or the model's single price. */
 function getImagePrice({ pricing, size }: { pricing: ModelPricing; size?: string }): number {
   const sized = size === undefined ? undefined : pricing.perImageBySize?.[size];
   return sized ?? pricing.perImage ?? 0;
 }
 
-/** Calls billed by length or count: seconds of audio, characters read aloud, images drawn. */
 function priceUnits({ pricing, usage }: { pricing: ModelPricing; usage: CallUsage }): number {
   return (
     (usage.audioSeconds ?? 0) * (pricing.perSecond ?? 0) +
@@ -143,11 +133,7 @@ function priceUnits({ pricing, usage }: { pricing: ModelPricing; usage: CallUsag
   );
 }
 
-/**
- * What one call cost in dollars at these prices: input split into uncached, cached reads and
- * cache writes, output with its reasoning (the AI SDK counts reasoning inside output tokens, so
- * it isn't added twice), at the tier that served it, plus any length- or count-based charge.
- */
+/** The AI SDK counts reasoning inside output tokens, so it isn't added twice. */
 export function priceCall({
   pricing,
   serviceTier,
@@ -160,18 +146,13 @@ export function priceCall({
   return priceTokens({ pricing, serviceTier, usage }) + priceUnits({ pricing, usage });
 }
 
-/**
- * What one call cost in dollars at the provider's list price, which is what our own provider keys
- * (BYOK) are billed (`priceCall`). Undefined when the model has no price, so an unknown model
- * never looks free.
- */
+/** Undefined when the model has no price, so an unknown model never looks free. */
 export function computeCallCostUsd({
   at = new Date(),
   model,
   serviceTier,
   usage,
 }: {
-  /** When the call ran, for prices that change on a set day; now by default. */
   at?: Date;
   model: string;
   serviceTier?: string;

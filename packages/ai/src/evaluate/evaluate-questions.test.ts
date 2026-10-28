@@ -7,7 +7,6 @@ import type * as Ai from "ai";
 
 vi.mock("server-only", () => ({}));
 
-// Model calls are external: each test says how the provider answers.
 vi.mock("ai", async (importOriginal) => ({
   ...(await importOriginal<typeof Ai>()),
   experimental_decide: vi.fn(),
@@ -20,7 +19,6 @@ const evaluation = {
   task: "library-identity-decision",
 } as const;
 
-/** The deadline is a platform timer: this one has run out, as a busy provider makes it. */
 function expireDeadlines() {
   vi.spyOn(AbortSignal, "timeout").mockImplementation(() =>
     AbortSignal.abort(new DOMException("The operation timed out.", "TimeoutError")),

@@ -4,13 +4,12 @@ const SECONDS_PER_MINUTE = 60;
 const TOKENS_PER_MILLION = 1_000_000;
 
 /**
- * Google bills speech by audio tokens, 25 for every second of audio (pricing page, checked 6 Oct
- * 2026), so its per-token audio price becomes a per-second one: the AI SDK reports speech in
- * seconds of audio, not tokens.
+ * Google bills speech by audio tokens (pricing page, checked 6 Oct 2026), but the AI SDK reports
+ * speech in seconds of audio.
  */
 const GEMINI_AUDIO_TOKENS_PER_SECOND = 25;
 
-/** Dollars per million tokens of a Google speech model: the text it reads and the audio out. */
+/** Dollars per million tokens. */
 type GeminiSpeechPrice = { audio: number; text: number };
 
 function geminiSpeech({ audio, text }: GeminiSpeechPrice): ModelPricing {
@@ -21,26 +20,20 @@ function geminiSpeech({ audio, text }: GeminiSpeechPrice): ModelPricing {
   };
 }
 
-/** Dollars per minute of audio gpt-transcribe hears. */
 const OPENAI_TRANSCRIPTION_USD_PER_MINUTE = 0.0045;
 
 function perMinute(usd: number): ModelPricing {
   return { input: 0, output: 0, perSecond: usd / SECONDS_PER_MINUTE };
 }
 
-/** MAI-Voice-2.1 Flash bills the characters it reads: AI Gateway's dollars per million (11 Oct 2026). */
+/** AI Gateway's price on 11 Oct 2026. */
 const MAI_VOICE_FLASH_USD_PER_MILLION_CHARACTERS = 15;
 
 function perMillionCharacters(usd: number): ModelPricing {
   return { input: 0, output: 0, perCharacter: usd / TOKENS_PER_MILLION };
 }
 
-/**
- * Models we call that the gateway's list doesn't price, from the providers' pricing pages
- * (checked 6 Oct 2026): Google's speech models, priced by the text they read and their audio
- * tokens, and gpt-transcribe, $0.0045 a minute, which goes to OpenAI directly. Since 11 Oct 2026:
- * MAI-Voice-2.1 Flash, per character (AI Gateway's price).
- */
+/** Models the gateway's list doesn't price, from the providers' pricing pages (6 Oct 2026). */
 export const PRICE_OVERRIDES: Readonly<Record<string, ModelPricing>> = {
   "google/gemini-2.5-flash-preview-tts": geminiSpeech({ audio: 10, text: 0.5 }),
   "google/gemini-3.8-flash-lite-tts": geminiSpeech({ audio: 6, text: 0.5 }),
@@ -49,7 +42,6 @@ export const PRICE_OVERRIDES: Readonly<Record<string, ModelPricing>> = {
   "openai/gpt-transcribe": perMinute(OPENAI_TRANSCRIPTION_USD_PER_MINUTE),
 };
 
-/** Token rates from a pricing page's dollars per million tokens. */
 function perMillionTokens({
   cacheRead,
   input,
@@ -66,10 +58,10 @@ function perMillionTokens({
   };
 }
 
-/** A price a provider announced for a later day: from `from` (UTC), it replaces the current one. */
+/** From `from` (UTC), it replaces the current price. */
 type PriceChange = { from: string; model: string; pricing: ModelPricing };
 
-/** Announced on the providers' pricing pages (checked 6 Oct 2026); add new ones here. */
+/** Announced on the providers' pricing pages (checked 6 Oct 2026). */
 export const PRICE_CHANGES: readonly PriceChange[] = [
   // Gemini 4 Argon's launch price ends on 30 November 2026 and every rate doubles (Google's
   // pricing page, checked 13 Oct 2026).

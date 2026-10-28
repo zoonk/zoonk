@@ -3,14 +3,13 @@ import { type AiGeneration } from "./ai-generation-sink";
 
 type EventPropertyValue = boolean | number | string;
 
-/** Who a task ran for, so AI cost can be summed per learner, goal and content scope. */
 export type AiGenerationContext = {
-  /** The learner the call ran for. Omit it for system work that no learner triggered. */
+  /** Omit it for system work no learner triggered. */
   distinctId?: string;
   goalId?: string;
-  /** Shared Library content or content made for one learner. Defaults to shared. */
+  /** Defaults to shared. */
   contentScope?: "personal" | "shared";
-  /** Groups the calls of one larger job, such as a workflow run. Defaults to the task's run id. */
+  /** Defaults to the task's run id. */
   traceId?: string;
 };
 
@@ -23,11 +22,8 @@ export type AiGenerationEvent = {
 const MS_PER_SECOND = 1000;
 
 /**
- * Maps a finished AI call to PostHog's `$ai_generation` event. It never carries prompt
- * or response text. A known cost is sent as a passthrough total so PostHog
- * keeps our price list's cost (at the tier that actually served the call)
- * instead of estimating one from its own price table; without one, PostHog estimates
- * from the model and token counts.
+ * Never carries prompt or response text. A known cost is sent as a passthrough total so PostHog
+ * keeps our price instead of estimating one from its own price table.
  */
 export function toAiGenerationEvent({
   context = {},

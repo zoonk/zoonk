@@ -1,10 +1,6 @@
 import { type SupportedLocale, getContentLocale } from "@zoonk/utils/locale";
 
-/**
- * The everyday world of the people who read one of the app's languages: what a writer needs so
- * examples feel local instead of translated. Each language teaches one regional variant (see
- * `prompt-language.ts`), and its pack describes that same place.
- */
+/** Each language teaches one regional variant (`prompt-language.ts`); its pack is that place. */
 type LocalContextPack = {
   place: string;
   money: string;
@@ -119,11 +115,8 @@ function formatPack(pack: LocalContextPack): string {
 }
 
 /**
- * The `LOCAL_CONTEXT` block writing prompts put next to `LANGUAGE`: the currency, formats, names,
- * places, school system, exams and register of the place the language's lessons are written for,
- * so a Portuguese lesson pays in reais at a padaria in Recife instead of in dollars. It is the
- * default, not a rule: prompts let the goal set another place (the SAT is American whatever the
- * learner's language). Languages without a pack (targets of language courses) get "none".
+ * A default, not a rule: prompts let the goal set another place (the SAT is American whatever the
+ * learner's language). Languages without a pack get "none".
  */
 export function formatLocalContext(language: string): string {
   const locale = getContentLocale(language);

@@ -1,13 +1,13 @@
 import { z } from "zod";
 
 type GatewayGenerationMetadata = {
-  /** The gateway's list-price cost of the call, which it reports even when our own key paid. */
+  /** List price, reported even when our own key paid. */
   costUsd?: number;
   /** `byok` when our provider key paid for the call, `system` when the gateway's credits did. */
   credential?: string;
   servedModel?: string;
   servedProvider?: string;
-  /** `flex` or `priority` when one of those tiers served the call; the standard tier is unset. */
+  /** `flex` or `priority`; unset for the standard tier. */
   serviceTier?: string;
 };
 
@@ -30,10 +30,8 @@ const usdSchema = z
   .pipe(z.number().nonnegative());
 
 /**
- * With model fallbacks, `routing.modelAttempts` lists every model tried in
- * order and only the one that answered has `success: true`. Its
- * `canonicalSlug` is the gateway model id (`creator/model`); `modelId` is the
- * provider's internal id, so it isn't used.
+ * Only the attempt that answered has `success: true`. Its `canonicalSlug` is the gateway model id;
+ * `modelId` is the provider's internal id.
  */
 function findServedAttempt(modelAttempts: readonly unknown[] = []) {
   return modelAttempts
@@ -42,12 +40,9 @@ function findServedAttempt(modelAttempts: readonly unknown[] = []) {
 }
 
 /**
- * Reads what AI Gateway says about one model call: the model, provider, tier and credential that
- * served it and its cost at list price, for text and image calls alike. `cost` is what the gateway
- * billed, which is zero when our own provider key (BYOK) paid; `marketCost` is the list price
- * either way, so it's preferred. `@ai-sdk/gateway` types this metadata as open JSON, so each field
- * is parsed on its own: a missing or reshaped field leaves provenance on its SDK fallback instead
- * of failing a generation that already finished and was paid for.
+ * `cost` is zero when our own provider key paid, so `marketCost`, the list price either way, is
+ * preferred. `@ai-sdk/gateway` types this metadata as open JSON, so each field is parsed on its
+ * own and a reshaped one never fails a generation that was already paid for.
  */
 export function readGatewayMetadata(
   providerMetadata: Readonly<Record<string, unknown>> | undefined,

@@ -5,9 +5,8 @@ function assertProbability(name: string, value: number): void {
 }
 
 /**
- * Turns a boolean answer's P(true) into a verdict: true once it reaches the threshold. Thresholds
- * are parameters because providers don't share a calibration: the right cutoff for one question
- * and model comes from labeled eval data.
+ * Providers don't share a calibration, so the threshold for one question and model comes from
+ * labeled eval data.
  */
 export function decideBoolean({
   probability,
