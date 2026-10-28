@@ -1,3 +1,4 @@
+import { FirstPaintContent } from "@/components/first-paint-content";
 import { getTutorViewer } from "@/lib/learn/tutor-viewer";
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 import { readLessonWritingRequest } from "@/lib/lessons/lesson-writing-href";
@@ -15,6 +16,7 @@ import {
 import { getLessonProgress } from "@zoonk/core/lesson-player/progress";
 import { getLessonSupport } from "@zoonk/core/lesson-player/support";
 import { getChallengeTeam } from "@zoonk/core/library/challenges/get-team";
+import { getLessonWaitingState } from "@zoonk/core/lookahead/lesson-waiting-state";
 import { getLearningProfile } from "@zoonk/core/profile/get";
 import { getSession } from "@zoonk/core/users/session";
 import { getLessonFit } from "@zoonk/core/view-models/onboarding/get-lesson-fit";
@@ -26,7 +28,6 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { isUuid } from "@zoonk/utils/uuid";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
-import { Suspense } from "react";
 import { GuestLessonPlayer } from "./guest-lesson-player";
 import { LessonGuestGate } from "./lesson-guest-gate";
 import { LessonPlayerClient, type LessonRouting } from "./lesson-player-client";
@@ -107,6 +108,13 @@ async function getLessonChallengeTeam(played: { lesson: PlayableLibraryLesson } 
   return outcome.status === "ready" ? outcome.team : null;
 }
 
+/** Where a lesson not written yet stands; read only for one. */
+async function loadWaitingState(result: PlayableLibraryLessonResult | null) {
+  return result?.status === "notGenerated"
+    ? getLessonWaitingState({ lessonId: result.lesson.id })
+    : null;
+}
+
 /**
  * A lesson whose screens aren't here yet: a visitor becomes a guest first, since screens load only
  * with a session, and a lesson still being written is written now, on a live screen. A visitor
@@ -118,11 +126,13 @@ function LessonWithoutScreens({
   initialRequest,
   origin,
   result,
+  waiting,
 }: {
   inSession: boolean;
   initialRequest: LessonRequest;
   origin: string | null;
   result: Exclude<PlayableLibraryLessonResult, { status: "ready" }>;
+  waiting: Awaited<ReturnType<typeof loadWaitingState>>;
 }) {
   if (result.status === "sessionRequired") {
     return <LessonGuestGate exitHref={origin ?? "/"} lesson={result.lesson} />;
@@ -134,6 +144,7 @@ function LessonWithoutScreens({
       initialRequest={initialRequest}
       lesson={result.lesson}
       origin={origin}
+      waiting={waiting}
     />
   );
 }
@@ -180,7 +191,7 @@ async function getRouting({
  * drawing the task's frame on the server too makes this page's scripts carry the frame's code
  * twice, about 11 KB more on every visit.
  */
-async function LessonPlayerContent({ params, searchParams }: Props) {
+async function renderLessonPlayer({ params, searchParams }: Props) {
   const [{ lessonId }, query] = await Promise.all([params, searchParams]);
   const { firstAnswer, origin, studySessionId } = readPlayerQuery(query);
 
@@ -208,7 +219,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
 
   const played = result?.status === "ready" ? await withLanguageActivities(result.lesson) : null;
 
-  const [challengeTeam, routing, tutorSuggestions] = await Promise.all([
+  const [challengeTeam, routing, tutorSuggestions, waiting] = await Promise.all([
     getLessonChallengeTeam(played),
     getRouting({
       inSession: sessionContext !== null,
@@ -217,6 +228,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
       origin,
     }),
     played ? wordTutorSuggestions(played.lesson.language) : [],
+    loadWaitingState(result),
   ]);
 
   if (!result) {
@@ -267,6 +279,7 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
           initialRequest={readLessonWritingRequest(query)}
           origin={origin}
           result={result}
+          waiting={waiting}
         />
       )}
     </MathMarkupProvider>
@@ -276,8 +289,10 @@ async function LessonPlayerContent({ params, searchParams }: Props) {
 /** Plays a Library lesson full screen, with no navigation bar. */
 export default function LearnLessonPage(props: Props) {
   return (
-    <Suspense fallback={<LessonPlayerSkeleton />}>
-      <LessonPlayerContent {...props} />
-    </Suspense>
+    <FirstPaintContent
+      content={() => renderLessonPlayer(props)}
+      fallback={<LessonPlayerSkeleton />}
+      id="lesson-ready"
+    />
   );
 }
