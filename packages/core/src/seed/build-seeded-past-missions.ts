@@ -7,7 +7,6 @@ import { blockCandidates } from "../sessions/missions/block-candidates";
 import { type DayMissionFacts } from "../sessions/missions/day-facts";
 import { pickMissions } from "../sessions/missions/pick-missions";
 
-/** Past days use the same mission picker, with the work the persona's history says it studied. */
 export async function buildSeededPastMissions(goalId: string) {
   const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
   const tier = await getLearnerTier(goal.userId);

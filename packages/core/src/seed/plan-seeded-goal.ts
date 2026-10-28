@@ -15,11 +15,6 @@ import {
 
 type SeededPlan = { graph: PlanGraph; id: string; items: PlanItem[] };
 
-/**
- * Gives each lesson the persona wrote on its plan the skill the planner counts it for (see
- * `assignLessonSkills`), as the run that planned it saved it: a lesson a chapter shares among
- * several skills counts for one of them, which is the one a test-out of it settles.
- */
 async function writeLessonSkills({
   lessons,
   plan,
@@ -40,7 +35,6 @@ async function writeLessonSkills({
   );
 }
 
-/** The graph's skills the tested-out lessons teach: a test-out finds the learner knows them all. */
 function listTestedOutSkills({
   items,
   lessons,
@@ -57,7 +51,6 @@ function listTestedOutSkills({
   );
 }
 
-/** A test-out's change with the stand-ins it skipped among its items, and the lessons they are. */
 function listStandInsOnChange({
   items,
   payload,
@@ -77,11 +70,6 @@ function listStandInsOnChange({
   });
 }
 
-/**
- * A test-out also skips the stand-ins of the skills it covered, the part of each skill the Library
- * hasn't written yet (see `markPlanItemsTestedOut`), on the day of its lessons, and its change
- * lists them with the lessons, so its undo would bring them back too.
- */
 async function addTestedOutStandIns({
   items,
   lessons,
@@ -136,10 +124,6 @@ async function addTestedOutStandIns({
   );
 }
 
-/**
- * Prepares what the persona wrote on its plan the way the app would have saved it: each lesson
- * with the skill it counts for, and a test-out with the stand-ins it skipped.
- */
 async function prepareHistory(goal: Goal): Promise<void> {
   const plan = await prisma.plan.findUniqueOrThrow({
     include: { items: true },
@@ -154,11 +138,7 @@ async function prepareHistory(goal: Goal): Promise<void> {
   await addTestedOutStandIns({ items, lessons, plan: seeded });
 }
 
-/**
- * Plans a seeded goal the way the app does, on the day the seed wrote it (`now`): the persona's
- * history and this week's items stay as written, and the planner lays out the rest at the pace
- * the plan saved, as a plan screen refresh would. No model is called.
- */
+/** Preserves persona history and this week's work; never calls a model. */
 export async function planSeededGoal({ goalId, now }: { goalId: string; now: Date }) {
   const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
 

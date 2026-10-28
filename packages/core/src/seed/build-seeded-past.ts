@@ -25,30 +25,22 @@ const MS_PER_SECOND = 1000;
 const MS_PER_MINUTE = 60_000;
 const SECONDS_PER_MINUTE = 60;
 
-/** A mock's time the persona used: most of it, as a learner who checks their answers does. */
 const MOCK_TIME_USED = 0.85;
 
-/**
- * Whether the question at `index` was answered right, with the wrong ones spread over the
- * questions: `correct` right out of `total`.
- */
 function isRightAt({ correct, index, total }: { correct: number; index: number; total: number }) {
   const wrong = total - correct;
   return Math.floor(((index + 1) * wrong) / total) === Math.floor((index * wrong) / total);
 }
 
-/** How many of `asked` questions were right, at the share the persona's history gives. */
 function scaleCorrect({ asked, checkpoint }: { asked: number; checkpoint: PastCheckpoint }) {
   return checkpoint.total > 0 ? Math.round((checkpoint.correct / checkpoint.total) * asked) : 0;
 }
 
-/** Learner-local date, hour and weekday of an answer, as attempts store them. */
 function localFields(date: Date, timeZone: string) {
   const localDate = getDateInTimeZone({ date, timeZone });
   return { hour: getHourInTimeZone({ date, timeZone }), localDate, weekday: localDate.getUTCDay() };
 }
 
-/** When each of `count` answers was given, one after another over the block's time. */
 function answerMoments(checkpoint: PastCheckpoint, count: number): Date[] {
   const step = (checkpoint.completedAt.getTime() - checkpoint.startedAt.getTime()) / (count + 1);
 
@@ -58,7 +50,6 @@ function answerMoments(checkpoint: PastCheckpoint, count: number): Date[] {
   );
 }
 
-/** A duel question answered as a session records it: the right answer, or "I don't know". */
 function toDuelAnswer({
   blockId,
   isRight,
@@ -81,17 +72,12 @@ function toDuelAnswer({
     : unknown;
 }
 
-/** A block's time spent, in seconds. */
 function getSeconds(checkpoint: Pick<PastCheckpoint, "completedAt" | "startedAt">): number {
   return Math.round(
     (checkpoint.completedAt.getTime() - checkpoint.startedAt.getTime()) / MS_PER_SECOND,
   );
 }
 
-/**
- * A boss the persona fought: the questions the session builder picks for its phase (see
- * `selectCheckpointItems`), answered in its block with the result the history gives.
- */
 async function fillBoss({
   checkpoint,
   goal,
@@ -183,7 +169,6 @@ async function fillBoss({
   ]);
 }
 
-/** The picks a question takes: its options, true or false; none for an answer typed in. */
 function listPicks(item: MockItem): MockAnswer[] {
   if (item.format === "multipleChoice") {
     return item.content.options.map((_, selectedIndex) => ({ selectedIndex }));
@@ -192,7 +177,6 @@ function listPicks(item: MockItem): MockAnswer[] {
   return item.format === "trueFalse" ? [{ isTrue: true }, { isTrue: false }] : [];
 }
 
-/** A pick a mock grades right or wrong: the first option that grades that way; blank otherwise. */
 function pickAnswer({
   conditions,
   isRight,
@@ -213,10 +197,6 @@ function pickAnswer({
   );
 }
 
-/**
- * The mock's questions answered: `correct` of them right, spread over it, the rest wrong, each
- * graded the way the hand-in grades it (see `gradeMock`).
- */
 async function answerMock({
   areas,
   checkpoint,
@@ -264,12 +244,6 @@ async function answerMock({
   });
 }
 
-/**
- * A mock the persona took: planned from the bank as the session builder plans the week's mock
- * (see `planWeeklyMock`), its sitting finished with every question answered at the share its
- * history gives, the answers recorded as the hand-in records them, and the result graded the way
- * the hand-in grades it, which the exam page and its chart read. The block asks those questions.
- */
 async function fillMock({
   checkpoint,
   goal,
@@ -430,15 +404,11 @@ async function fillMock({
   ]);
 }
 
-/**
- * Fills the bosses and mocks of a seeded persona's past sessions once its plan is made (see
- * `SeededPast`): the questions each asked and the answers it got, and a mock's finished sitting.
- * No model is called.
- */
+/** Seed tooling only; grades recorded history without model calls. */
 export async function buildSeededPast({ goalId, past }: { goalId: string; past: SeededPast }) {
   const goal = await prisma.goal.findUniqueOrThrow({ where: { id: goalId } });
 
-  // One after another: a later boss ranks the questions an earlier one asked as seen.
+  // Later checkpoints must see earlier questions as already answered.
   await past.checkpoints.reduce(
     (previous, checkpoint) =>
       previous.then(() =>
