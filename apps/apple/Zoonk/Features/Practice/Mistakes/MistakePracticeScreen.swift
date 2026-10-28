@@ -8,9 +8,9 @@ struct MistakePracticeScreen: View {
   var skillId: String?
 
   @Environment(SessionStore.self) private var session
-  @Environment(\.practiceAPI) private var api
+  @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
-  @Environment(\.practiceGoalId) private var goalId
+  @Environment(LearnerSummaryStore.self) private var summary
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<MistakePracticeSet> = .loading
   @State private var state = MistakePracticeState(entries: [])
@@ -18,6 +18,9 @@ struct MistakePracticeScreen: View {
   @State private var labels = PracticeTrueFalseLabels.trueFalse
   @State private var shownAt = Date.now
   @State private var attempt: (id: String, index: Int)?
+
+  /// The active goal scopes the notebook, its practice and test-outs.
+  private var goalId: String? { summary.summary.value?.activeGoalID }
 
   init(skillId: String? = nil) {
     self.skillId = skillId
@@ -247,14 +250,14 @@ struct MistakePracticeScreen: View {
     }
 
     do {
-      let set = try await api.mistakePractice(
+      let set = try await practice.api.mistakePractice(
         token: identity.bearerToken, goalId: goalId, skillId: skillId)
       guard session.authenticatedSession == identity else { return }
       labels = set.trueFalseLabels
       state = MistakePracticeState(entries: set.entries)
       shownAt = .now
       load = .loaded(set)
-    } catch let error as PracticeAPIError {
+    } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
       load = .failed(error)
     } catch {
@@ -277,16 +280,15 @@ struct MistakePracticeScreen: View {
     }
 
     do {
-      let grade = try await api.answerMistake(
+      let grade = try await practice.api.answerMistake(
         token: identity.bearerToken, mistakeId: step.entry.mistakeId, itemId: step.question.itemId,
         answer: answer, durationMs: timedOut ? max(durationMs, limitMs) : durationMs,
         attemptId: attempt?.id ?? UUID().uuidString.lowercased(), runAnswerIds: state.answerIds,
         goalId: goalId)
       state.answered(grade, mistakeId: step.entry.mistakeId)
-      PracticeRevision.shared.bump()
-      hooks.didChange(.answered)
+      practice.changed(.answered)
     } catch {
-      if case PracticeAPIError.unauthorized = error { await session.expire(identity) }
+      if case APIError.unauthorized = error { await session.expire(identity) }
       state.answerFailed()
     }
   }
@@ -314,11 +316,10 @@ struct MistakePracticeScreen: View {
       return
     }
 
-    let summary = try? await api.finishMistakePractice(
+    let summary = try? await practice.api.finishMistakePractice(
       token: identity.bearerToken, answerIds: state.answerIds, ended: true, goalId: goalId)
     state.ended(summary)
-    PracticeRevision.shared.bump()
-    hooks.didChange(.finished)
+    practice.changed(.finished)
   }
 }
 

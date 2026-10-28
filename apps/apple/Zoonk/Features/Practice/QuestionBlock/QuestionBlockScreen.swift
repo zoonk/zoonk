@@ -11,7 +11,7 @@ struct QuestionBlockScreen: View {
   var onStop: (() async -> Bool)?
 
   @Environment(SessionStore.self) private var session
-  @Environment(\.practiceAPI) private var api
+  @Environment(PracticeStore.self) private var practice
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<QuestionBlockRun> = .loading
 
@@ -58,13 +58,13 @@ struct QuestionBlockScreen: View {
     }
 
     do {
-      var detail = try await api.studyBlock(
+      var detail = try await practice.api.studyBlock(
         token: identity.bearerToken, sessionId: sessionId, blockId: blockId)
 
       if detail.block.status == .pending {
-        try await api.startStudyBlock(
+        try await practice.api.startStudyBlock(
           token: identity.bearerToken, sessionId: sessionId, blockId: blockId)
-        detail = try await api.studyBlock(
+        detail = try await practice.api.studyBlock(
           token: identity.bearerToken, sessionId: sessionId, blockId: blockId)
       }
 
@@ -74,8 +74,9 @@ struct QuestionBlockScreen: View {
         QuestionBlockRun(
           detail: detail,
           client: LiveQuestionBlockClient(
-            api: api, token: identity.bearerToken, sessionId: sessionId, blockId: blockId)))
-    } catch let error as PracticeAPIError {
+            api: practice.api, token: identity.bearerToken, sessionId: sessionId, blockId: blockId))
+      )
+    } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
       load = .failed(error)
     } catch {
@@ -93,7 +94,7 @@ struct QuestionBlockView: View {
   var onRefresh: () -> Void
 
   @Environment(SessionStore.self) private var session
-  @Environment(\.practiceAPI) private var api
+  @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
   @State private var stopFailed = false
@@ -116,9 +117,9 @@ struct QuestionBlockView: View {
     .navigationTitle(Text(blockTitle))
     .onChange(of: phase) { _, phase in
       switch phase {
-      case .feedback: hooks.didChange(.answered)
+      case .feedback: practice.changed(.answered)
       case .finished(let completion):
-        hooks.didChange(.finished)
+        practice.changed(.finished)
         onFinished?(completion)
       default: break
       }
@@ -362,8 +363,8 @@ struct QuestionBlockView: View {
     guard let identity = session.authenticatedSession else { return }
 
     do {
-      try await api.stopSession(token: identity.bearerToken, sessionId: sessionId)
-      hooks.didChange(.finished)
+      try await practice.api.stopSession(token: identity.bearerToken, sessionId: sessionId)
+      practice.changed(.finished)
       dismiss()
     } catch {
       stopFailed = true

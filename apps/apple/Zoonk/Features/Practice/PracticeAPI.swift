@@ -1,17 +1,14 @@
 import Foundation
 import OpenAPIRuntime
 
-/// Why a practice request didn't give its result, in the terms the screens recover from.
+/// A practice request the server refused for a reason the screen says (transport, sign-in and
+/// missing resources stay `APIError`).
 enum PracticeAPIError: Error, Equatable {
   case conflict(code: String?)
   case dailyLimitReached
   case invalid(code: String?)
   case limitReached
-  case network
-  case notFound
   case plusRequired
-  case unauthorized
-  case unavailable
 }
 
 /// A generation POST (test-out, focus test, challenge questions): ready now, or a run writing them.
@@ -98,9 +95,6 @@ struct PracticeAPI: Sendable {
     self.clients = clients
   }
 
-  /// One client for every practice screen until the shared data layer owns it.
-  static let live = PracticeAPI(clients: .live(baseURL: AppConfiguration.current.apiBaseURL))
-
   private var timeZone: String { TimeZone.current.identifier }
 
   // MARK: Question blocks
@@ -111,9 +105,9 @@ struct PracticeAPI: Sendable {
     try await perform(token) { client in
       switch try await client.getStudyBlock(path: .init(sessionId: sessionId, blockId: blockId)) {
       case .ok(let response): return try PracticeJSON.recode(try response.body.json)
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      case .notFound: throw PracticeAPIError.notFound
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
       }
     }
   }
@@ -124,11 +118,11 @@ struct PracticeAPI: Sendable {
         path: .init(sessionId: sessionId, blockId: blockId), body: .json(.init(timeZone: timeZone)))
       {
       case .ok: return
-      case .unauthorized: throw PracticeAPIError.unauthorized
+      case .unauthorized: throw APIError.unauthorized
       case .forbidden: throw PracticeAPIError.dailyLimitReached
       case .conflict(let response):
         throw PracticeAPIError.conflict(code: try? response.body.json.error.code)
-      default: throw PracticeAPIError.unavailable
+      default: throw APIError.unavailable
       }
     }
   }
@@ -147,11 +141,11 @@ struct PracticeAPI: Sendable {
         path: .init(sessionId: sessionId, blockId: blockId), body: .json(body))
       {
       case .ok(let response): return .answered(try PracticeJSON.recode(try response.body.json))
-      case .unauthorized: throw PracticeAPIError.unauthorized
+      case .unauthorized: throw APIError.unauthorized
       case .conflict(let response):
         return (try? response.body.json.error.code) == "ALREADY_ANSWERED"
           ? .alreadyAnswered : .blockNotActive
-      default: throw PracticeAPIError.unavailable
+      default: throw APIError.unavailable
       }
     }
   }
@@ -164,12 +158,12 @@ struct PracticeAPI: Sendable {
         path: .init(sessionId: sessionId, blockId: blockId), body: .json(.init(timeZone: timeZone)))
       {
       case .ok(let response): return try response.body.json
-      case .unauthorized: throw PracticeAPIError.unauthorized
+      case .unauthorized: throw APIError.unauthorized
       case .conflict(let response):
         throw PracticeAPIError.conflict(code: try? response.body.json.error.code)
       case .unprocessableContent(let response):
         throw PracticeAPIError.invalid(code: try? response.body.json.error.code)
-      default: throw PracticeAPIError.unavailable
+      default: throw APIError.unavailable
       }
     }
   }
@@ -180,8 +174,8 @@ struct PracticeAPI: Sendable {
         path: .init(sessionId: sessionId), body: .json(.init(timeZone: timeZone)))
       {
       case .ok: return
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -198,8 +192,8 @@ struct PracticeAPI: Sendable {
           cursor: cursor))
       {
       case .ok(let response): return try response.body.json
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -225,8 +219,8 @@ struct PracticeAPI: Sendable {
               snapshotAnswer: entry.snapshot.answer)
           },
           trueFalseLabels: .init(practice.trueFalseLabels.value1))
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -257,8 +251,8 @@ struct PracticeAPI: Sendable {
           isStillOpen: grade.mistakeStatus.value1 == .open,
           reached: try PracticeJSON.recode(grade.reached),
           trap: grade.trap)
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -273,8 +267,8 @@ struct PracticeAPI: Sendable {
     return try await perform(token) { client in
       switch try await client.createMistakePracticeCompletion(body: .json(body)) {
       case .ok(let response): return try response.body.json
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -285,9 +279,9 @@ struct PracticeAPI: Sendable {
     try await perform(token) { client in
       switch try await client.getMistakePattern(path: .init(patternId: patternId)) {
       case .ok(let response): return try response.body.json
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      case .notFound, .unprocessableContent: throw PracticeAPIError.notFound
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound, .unprocessableContent: throw APIError.notFound
+      default: throw APIError.unavailable
       }
     }
   }
@@ -302,8 +296,8 @@ struct PracticeAPI: Sendable {
         body: .json(.init(answers: answers, requestId: requestId, timeZone: timeZone)))
       {
       case .ok(let response): return try response.body.json
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -312,8 +306,8 @@ struct PracticeAPI: Sendable {
     try await perform(token) { client in
       switch try await client.dismissMistakePattern(path: .init(patternId: patternId)) {
       case .noContent: return
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -332,9 +326,9 @@ struct PracticeAPI: Sendable {
             questions: try test.questions.map { try PracticeJSON.recode($0) },
             trueFalseLabels: .init(test.trueFalseLabels)))
       case .code402: return .plusRequired
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      case .notFound: throw PracticeAPIError.notFound
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
       }
     }
   }
@@ -354,8 +348,8 @@ struct PracticeAPI: Sendable {
         return .generating(generationId: try response.body.json.generationId)
       case .code402: throw PracticeAPIError.plusRequired
       case .forbidden, .tooManyRequests: throw PracticeAPIError.limitReached
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -373,8 +367,8 @@ struct PracticeAPI: Sendable {
       {
       case .ok(let response): return try response.body.json.value1
       case .code402: throw PracticeAPIError.plusRequired
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -387,9 +381,9 @@ struct PracticeAPI: Sendable {
         body: .json(.init(status: .undone, timeZone: timeZone)))
       {
       case .ok: return
-      case .unauthorized: throw PracticeAPIError.unauthorized
+      case .unauthorized: throw APIError.unauthorized
       case .conflict: throw PracticeAPIError.conflict(code: nil)
-      default: throw PracticeAPIError.unavailable
+      default: throw APIError.unavailable
       }
     }
   }
@@ -407,9 +401,9 @@ struct PracticeAPI: Sendable {
           questions: try test.questions.map { try PracticeJSON.recode($0) },
           questionsPerArea: test.questionsPerArea,
           trueFalseLabels: .init(test.trueFalseLabels))
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      case .notFound: throw PracticeAPIError.notFound
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
       }
     }
   }
@@ -425,8 +419,8 @@ struct PracticeAPI: Sendable {
         return .generating(generationId: try response.body.json.generationId)
       case .code402: throw PracticeAPIError.plusRequired
       case .forbidden, .tooManyRequests: throw PracticeAPIError.limitReached
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -440,8 +434,8 @@ struct PracticeAPI: Sendable {
     return try await perform(token) { client in
       switch try await client.submitFocusTest(path: .init(goalId: goalId), body: .json(body)) {
       case .ok(let response): return try response.body.json
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -454,9 +448,9 @@ struct PracticeAPI: Sendable {
         path: .init(planItemId: planItemId), query: .init(timeZone: timeZone))
       {
       case .ok(let response): return try response.body.json
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      case .notFound: throw PracticeAPIError.notFound
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
       }
     }
   }
@@ -472,8 +466,8 @@ struct PracticeAPI: Sendable {
         return .generating(generationId: try response.body.json.generationId)
       case .code402: throw PracticeAPIError.plusRequired
       case .forbidden, .tooManyRequests: throw PracticeAPIError.limitReached
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -491,8 +485,8 @@ struct PracticeAPI: Sendable {
       case .forbidden: throw PracticeAPIError.dailyLimitReached
       case .conflict(let response):
         throw PracticeAPIError.conflict(code: try? response.body.json.error.code)
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -508,8 +502,8 @@ struct PracticeAPI: Sendable {
       case .unprocessableContent(let response):
         // Why the plan refused the move: moveBeforeNextMonday, mockCollision, badMove, ...
         throw PracticeAPIError.invalid(code: try? response.body.json.error.details.reason)
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -522,8 +516,8 @@ struct PracticeAPI: Sendable {
         path: .init(planItemId: planItemId, changeId: changeId), query: .init(timeZone: timeZone))
       {
       case .ok(let response): return try response.body.json
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      default: throw APIError.unavailable
       }
     }
   }
@@ -538,9 +532,9 @@ struct PracticeAPI: Sendable {
           checkpoint: checkpoint,
           questions: try checkpoint.questions.map { try PracticeJSON.recode($0) },
           trueFalseLabels: .init(checkpoint.trueFalseLabels))
-      case .unauthorized: throw PracticeAPIError.unauthorized
-      case .notFound: throw PracticeAPIError.notFound
-      default: throw PracticeAPIError.unavailable
+      case .unauthorized: throw APIError.unauthorized
+      case .notFound: throw APIError.notFound
+      default: throw APIError.unavailable
       }
     }
   }
@@ -553,15 +547,17 @@ struct PracticeAPI: Sendable {
       switch try await client.getGeneration(path: .init(generationId: generationId)) {
       case .ok(let response):
         let status = try response.body.json.status
-        if status == .failed || status == .cancelled { throw PracticeAPIError.unavailable }
+        if status == .failed || status == .cancelled { throw APIError.unavailable }
         return status == .pending || status == .running
-      default: throw PracticeAPIError.unavailable
+      default: throw APIError.unavailable
       }
     }
   }
 
   // MARK: Transport
 
+  /// Runs a generated call; refusals the screens name pass through, the rest map like every
+  /// feature API's (`apiError(from:)`).
   private func perform<Output: Sendable>(
     _ token: String, operation: @Sendable (Client) async throws -> Output
   ) async throws -> Output {
@@ -570,22 +566,8 @@ struct PracticeAPI: Sendable {
     } catch let error as PracticeAPIError {
       throw error
     } catch {
-      if Self.isCancellation(error) { throw CancellationError() }
-      throw Self.isNetwork(error) ? PracticeAPIError.network : PracticeAPIError.unavailable
+      throw apiError(from: error)
     }
-  }
-
-  private static func isCancellation(_ error: Error) -> Bool {
-    if error is CancellationError { return true }
-    if let error = error as? URLError { return error.code == .cancelled }
-    if let error = error as? ClientError { return isCancellation(error.underlyingError) }
-    return false
-  }
-
-  private static func isNetwork(_ error: Error) -> Bool {
-    if error is URLError { return true }
-    if let error = error as? ClientError { return isNetwork(error.underlyingError) }
-    return false
   }
 }
 

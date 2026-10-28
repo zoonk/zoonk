@@ -8,17 +8,20 @@ struct TestOutScreen: View {
   let chapterId: String
 
   @Environment(SessionStore.self) private var session
-  @Environment(\.practiceAPI) private var api
+  @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
-  @Environment(\.practiceGoalId) private var goalId
+  @Environment(LearnerSummaryStore.self) private var summary
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<TestOutLoad> = .loading
   @State private var isWriting = false
-  @State private var writeFailure: PracticeAPIError?
+  @State private var writeFailure: (any Error)?
   @State private var isSubmitting = false
   @State private var submitFailed = false
   @State private var result: Components.Schemas.ChapterTestOutResult?
   @State private var undo: UndoState = .idle
+
+  /// The active goal scopes the notebook, its practice and test-outs.
+  private var goalId: String? { summary.summary.value?.activeGoalID }
 
   private enum UndoState: Equatable { case done, failed, idle, pending }
 
@@ -50,7 +53,7 @@ struct TestOutScreen: View {
                 comment: "Why a test-out has nothing to skip.")
             }
           case .loaded(.plusRequired):
-            preparing(failure: .plusRequired)
+            preparing(failure: PracticeAPIError.plusRequired)
           case .loaded(.test(let test)) where test.questions.isEmpty:
             preparing(failure: writeFailure)
           case .loaded(.test(let test)):
@@ -74,7 +77,7 @@ struct TestOutScreen: View {
     .task { await read() }
   }
 
-  private func preparing(failure: PracticeAPIError?) -> some View {
+  private func preparing(failure: (any Error)?) -> some View {
     PracticeQuestionsPreparingView(
       title: LocalizedStringResource(
         "Already know this?", table: "Practice", comment: "Title of a chapter test-out's start."),
@@ -182,11 +185,11 @@ struct TestOutScreen: View {
     }
 
     do {
-      let loaded = try await api.testOut(
+      let loaded = try await practice.api.testOut(
         token: identity.bearerToken, goalId: goalId, chapterId: chapterId)
       guard session.authenticatedSession == identity else { return }
       load = .loaded(loaded)
-    } catch let error as PracticeAPIError {
+    } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
       load = .failed(error)
     } catch {
@@ -203,7 +206,7 @@ struct TestOutScreen: View {
     defer { isWriting = false }
 
     do {
-      switch try await api.writeTestOut(
+      switch try await practice.api.writeTestOut(
         token: identity.bearerToken, goalId: goalId, chapterId: chapterId)
       {
       case .nothingToSkip:
@@ -213,14 +216,12 @@ struct TestOutScreen: View {
         break
       case .generating(let generationId):
         try await PracticeGenerationWait.untilDone(
-          api: api, token: identity.bearerToken, generationId: generationId)
+          api: practice.api, token: identity.bearerToken, generationId: generationId)
       }
 
       await read()
-    } catch let error as PracticeAPIError {
-      writeFailure = error
     } catch {
-      writeFailure = .unavailable
+      writeFailure = error
     }
   }
 
@@ -234,13 +235,13 @@ struct TestOutScreen: View {
     defer { isSubmitting = false }
 
     do {
-      if let graded = try await api.submitTestOut(
+      if let graded = try await practice.api.submitTestOut(
         token: identity.bearerToken, goalId: goalId, chapterId: chapterId, answers: answers,
         requestId: PracticeAnswerDraft.requestId(key: draftKey))
       {
         PracticeAnswerDraft.clear(key: draftKey)
         result = graded
-        hooks.didChange(.planChanged)
+        practice.changed(.planChanged)
       } else {
         PracticeAnswerDraft.clear(key: draftKey)
         load = .loaded(.nothingToSkip)
@@ -256,9 +257,10 @@ struct TestOutScreen: View {
     undo = .pending
 
     do {
-      try await api.undoPlanChange(token: identity.bearerToken, goalId: goalId, changeId: changeId)
+      try await practice.api.undoPlanChange(
+        token: identity.bearerToken, goalId: goalId, changeId: changeId)
       undo = .done
-      hooks.didChange(.planChanged)
+      practice.changed(.planChanged)
     } catch {
       undo = .failed
     }

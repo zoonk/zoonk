@@ -273,14 +273,14 @@ private struct Readout: View {
 
 /// A run's screens load once per opening; failures say so with a retry, never as stuck.
 enum PracticeLoad<Value> {
-  case failed(PracticeAPIError)
+  case failed(APIError)
   case loaded(Value)
   case loading
 }
 
 /// The loading and failure states every practice task shares.
 struct PracticeLoadFailureView: View {
-  let error: PracticeAPIError
+  let error: APIError
   let retry: () -> Void
 
   var body: some View {

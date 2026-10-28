@@ -6,17 +6,19 @@ import SwiftUI
 /// against the right answer, and why. Works as a sidebar tab root and as a pushed page.
 struct MistakesScreen: View {
   @Environment(SessionStore.self) private var session
-  @Environment(\.practiceAPI) private var api
+  @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
-  @Environment(\.practiceGoalId) private var goalId
+  @Environment(LearnerSummaryStore.self) private var summary
   @State private var showsFixed = false
-  @State private var pages: [Bool: Components.Schemas.MistakeList] = [:]
-  @State private var failure: PracticeAPIError?
-  @State private var loadedRevision: [Bool: Int] = [:]
   @State private var isLoadingMore = false
 
+  private var resource: Resource<Components.Schemas.MistakeList> {
+    practice.mistakes(goalId: summary.summary.value?.activeGoalID, fixed: showsFixed)
+  }
+
   var body: some View {
-    let list = pages[showsFixed]
+    let state = resource.state
+    let list = resource.value
 
     List {
       Section {
@@ -28,12 +30,12 @@ struct MistakesScreen: View {
       Section {
         Picker(selection: $showsFixed) {
           Text(
-            "To fix \(list?.counts.open ?? pages[false]?.counts.open ?? 0)", tableName: "Practice",
+            "To fix \(list?.counts.open ?? 0)", tableName: "Practice",
             comment: "Notebook list of open mistakes, with its count."
           )
           .tag(false)
           Text(
-            "Fixed \(list?.counts.fixed ?? pages[true]?.counts.fixed ?? 0)", tableName: "Practice",
+            "Fixed \(list?.counts.fixed ?? 0)", tableName: "Practice",
             comment: "Notebook list of fixed mistakes, with its count."
           )
           .tag(true)
@@ -85,8 +87,8 @@ struct MistakesScreen: View {
             .disabled(isLoadingMore)
           }
         }
-      } else if let failure {
-        PracticeLoadFailureView(error: failure) { Task { await load(force: true) } }
+      } else if case .failed(let error) = state {
+        PracticeLoadFailureView(error: error) { Task { await resource.refresh() } }
           .listRowBackground(Color.clear)
       } else {
         ProgressView().frame(maxWidth: .infinity).listRowBackground(Color.clear)
@@ -96,8 +98,7 @@ struct MistakesScreen: View {
     .navigationTitle(
       Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
     )
-    .refreshable { await load(force: true) }
-    .task(id: [showsFixed ? 1 : 0, PracticeRevision.shared.value]) { await load(force: false) }
+    .loads(resource)
   }
 
   private var emptyText: LocalizedStringResource {
@@ -140,51 +141,29 @@ struct MistakesScreen: View {
     }
   }
 
-  /// Reads the list once per opening and again after practice changed it; a refresh keeps the
-  /// list on screen while it reads.
-  private func load(force: Bool) async {
-    let revision = PracticeRevision.shared.value
-    guard force || pages[showsFixed] == nil || loadedRevision[showsFixed] != revision else {
-      return
-    }
-    guard let identity = session.authenticatedSession else { return }
-
-    let fixed = showsFixed
-
-    do {
-      let list = try await api.mistakes(
-        token: identity.bearerToken, goalId: goalId, fixed: fixed, cursor: nil)
-      guard session.authenticatedSession == identity else { return }
-      pages[fixed] = list
-      loadedRevision[fixed] = revision
-      failure = nil
-    } catch is CancellationError {
-      return
-    } catch let error as PracticeAPIError {
-      if error == .unauthorized { await session.expire(identity) }
-      if pages[fixed] == nil { failure = error }
-    } catch {
-      if pages[fixed] == nil { failure = .unavailable }
-    }
-  }
-
+  /// Appends the next page, unless the list was read again while the page loaded.
   private func loadMore() async {
-    let fixed = showsFixed
-    guard let current = pages[fixed], let cursor = current.pagination.nextCursor,
+    let resource = resource
+    guard let cursor = resource.value?.pagination.nextCursor,
       let identity = session.authenticatedSession
     else { return }
 
+    let revision = resource.revision
     isLoadingMore = true
     defer { isLoadingMore = false }
 
     guard
-      let next = try? await api.mistakes(
-        token: identity.bearerToken, goalId: goalId, fixed: fixed, cursor: cursor)
+      let next = try? await practice.api.mistakes(
+        token: identity.bearerToken, goalId: summary.summary.value?.activeGoalID, fixed: showsFixed,
+        cursor: cursor),
+      resource.revision == revision
     else { return }
 
-    var merged = next
-    merged.data = current.data + next.data
-    pages[fixed] = merged
+    resource.update { current in
+      var merged = next
+      merged.data = current.data + next.data
+      return merged
+    }
   }
 }
 

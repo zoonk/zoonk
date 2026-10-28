@@ -1,7 +1,7 @@
 import SwiftUI
 
-/// What changed after a practice answer or finish, for the app's shared data to read again: the
-/// learner summary (`places.readyMistakes`, today's blocks left, level), Today, the plan.
+/// What changed after a practice answer or finish, for the app's shared data to read again
+/// (`PracticeStore.changed`).
 enum PracticeChange: Equatable, Sendable {
   /// An answer was saved: the mistakes count and the day's progress may have moved.
   case answered
@@ -35,8 +35,6 @@ struct PracticeAskTarget: Equatable, Sendable {
 final class PracticeHooks: Sendable {
   /// Opens a destination outside the practice screen: the shell's router.
   let navigate: @MainActor @Sendable (PracticeDestination) -> Void
-  /// The shared data layer reads the domains a practice change touched again.
-  let didChange: @MainActor @Sendable (PracticeChange) -> Void
   /// The buddy lane's Ask button for the question in view; nil hides Ask.
   let askButton: (@MainActor @Sendable (PracticeAskTarget) -> AnyView)?
   /// The voice lane's live call a language phase or final challenge plays instead of questions;
@@ -53,7 +51,6 @@ final class PracticeHooks: Sendable {
 
   init(
     navigate: @escaping @MainActor @Sendable (PracticeDestination) -> Void = { _ in },
-    didChange: @escaping @MainActor @Sendable (PracticeChange) -> Void = { _ in },
     askButton: (@MainActor @Sendable (PracticeAskTarget) -> AnyView)? = nil,
     challengeCall: (@MainActor @Sendable (String) -> AnyView)? = nil,
     ceremony: (
@@ -62,7 +59,6 @@ final class PracticeHooks: Sendable {
     )? = nil
   ) {
     self.navigate = navigate
-    self.didChange = didChange
     self.askButton = askButton
     self.challengeCall = challengeCall
     self.ceremony = ceremony
@@ -72,25 +68,5 @@ final class PracticeHooks: Sendable {
 }
 
 extension EnvironmentValues {
-  /// The practice screens' API client.
-  @Entry var practiceAPI: PracticeAPI = .live
-
   @Entry var practiceHooks: PracticeHooks = .none
-
-  /// The learner's active goal, which scopes the notebook, its practice and test-outs.
-  @Entry var practiceGoalId: String?
-}
-
-/// Bumped after practice answers and finishes, so a practice screen kept alive (the notebook as a
-/// sidebar tab) reads its list again; lane C's shared invalidation replaces it.
-@MainActor
-@Observable
-final class PracticeRevision {
-  static let shared = PracticeRevision()
-
-  private(set) var value = 0
-
-  func bump() {
-    value += 1
-  }
 }

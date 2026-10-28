@@ -7,7 +7,7 @@ struct PatternScreen: View {
   let patternId: String
 
   @Environment(SessionStore.self) private var session
-  @Environment(\.practiceAPI) private var api
+  @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<Components.Schemas.MistakePattern> = .loading
@@ -244,10 +244,11 @@ struct PatternScreen: View {
     }
 
     do {
-      let pattern = try await api.pattern(token: identity.bearerToken, patternId: patternId)
+      let pattern = try await practice.api.pattern(
+        token: identity.bearerToken, patternId: patternId)
       guard session.authenticatedSession == identity else { return }
       load = .loaded(pattern)
-    } catch let error as PracticeAPIError {
+    } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
       load = .failed(error)
     } catch {
@@ -257,7 +258,7 @@ struct PatternScreen: View {
 
   private func dismissTypos() async {
     guard let identity = session.authenticatedSession else { return }
-    try? await api.dismissPattern(token: identity.bearerToken, patternId: patternId)
+    try? await practice.api.dismissPattern(token: identity.bearerToken, patternId: patternId)
   }
 
   private func save(_ pattern: Components.Schemas.MistakePattern) async {
@@ -268,10 +269,10 @@ struct PatternScreen: View {
     defer { isSaving = false }
 
     do {
-      let result = try await api.practicePattern(
+      let result = try await practice.api.practicePattern(
         token: identity.bearerToken, patternId: patternId, answers: picks, requestId: requestId)
       step = .result(result)
-      hooks.didChange(.finished)
+      practice.changed(.finished)
     } catch {
       saveFailed = true
     }

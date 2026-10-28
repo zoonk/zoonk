@@ -95,7 +95,7 @@ final class QuestionBlockRun {
       case .blockNotActive:
         needsRefresh = true
       }
-    } catch PracticeAPIError.unauthorized {
+    } catch APIError.unauthorized {
       isUnauthorized = true
       state.answerFailed()
     } catch {
@@ -127,7 +127,7 @@ final class QuestionBlockRun {
 
     do {
       state.finished(try await client.finish())
-    } catch PracticeAPIError.unauthorized {
+    } catch APIError.unauthorized {
       isUnauthorized = true
       state.finishFailed()
     } catch {

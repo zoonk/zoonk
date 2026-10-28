@@ -201,7 +201,7 @@ struct PracticeQuestionsPreparingView: View {
   let writingDetail: LocalizedStringResource
   var facts: [String] = []
   let isWriting: Bool
-  var failure: PracticeAPIError?
+  var failure: (any Error)?
   let start: () -> Void
   @Environment(\.practiceHooks) private var hooks
 
@@ -232,7 +232,7 @@ struct PracticeQuestionsPreparingView: View {
         }
       }
     } actions: {
-      if failure == .plusRequired {
+      if failure as? PracticeAPIError == .plusRequired {
         PracticeMainButton(
           title: LocalizedStringResource(
             "See Plus", table: "Practice", comment: "Opens the Plus subscription.")
@@ -249,8 +249,8 @@ struct PracticeQuestionsPreparingView: View {
     }
   }
 
-  private func failureText(_ failure: PracticeAPIError) -> LocalizedStringResource {
-    switch failure {
+  private func failureText(_ failure: any Error) -> LocalizedStringResource {
+    switch failure as? PracticeAPIError {
     case .plusRequired:
       LocalizedStringResource(
         "This test comes with Plus.", table: "Practice", comment: "A test that needs Plus.")

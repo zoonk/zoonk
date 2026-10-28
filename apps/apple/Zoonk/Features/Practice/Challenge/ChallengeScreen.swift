@@ -9,7 +9,7 @@ struct ChallengeScreen: View {
   var sessionId: String?
 
   @Environment(SessionStore.self) private var session
-  @Environment(\.practiceAPI) private var api
+  @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
   @State private var currentPlanItemId: String?
@@ -403,10 +403,11 @@ struct ChallengeScreen: View {
     }
 
     do {
-      let challenge = try await api.challenge(token: identity.bearerToken, planItemId: itemId)
+      let challenge = try await practice.api.challenge(
+        token: identity.bearerToken, planItemId: itemId)
       guard session.authenticatedSession == identity else { return }
       load = .loaded(challenge)
-    } catch let error as PracticeAPIError {
+    } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
       load = .failed(error)
     } catch {
@@ -424,9 +425,9 @@ struct ChallengeScreen: View {
     defer { isStarting = false }
 
     do {
-      let start = try await api.startChallenge(
+      let start = try await practice.api.startChallenge(
         token: identity.bearerToken, planItemId: itemId, afterWriting: afterWriting)
-      hooks.didChange(.answered)
+      practice.changed(.answered)
       dismiss()
 
       switch start.kind {
@@ -454,11 +455,11 @@ struct ChallengeScreen: View {
     defer { isWriting = false }
 
     do {
-      if case .generating(let generationId) = try await api.writeChallenge(
+      if case .generating(let generationId) = try await practice.api.writeChallenge(
         token: identity.bearerToken, planItemId: itemId)
       {
         try? await PracticeGenerationWait.untilDone(
-          api: api, token: identity.bearerToken, generationId: generationId)
+          api: practice.api, token: identity.bearerToken, generationId: generationId)
       }
     } catch PracticeAPIError.plusRequired {
       await read()
@@ -484,10 +485,11 @@ struct ChallengeScreen: View {
     defer { isMoving = false }
 
     do {
-      let moved = try await api.moveChallenge(token: identity.bearerToken, planItemId: itemId)
+      let moved = try await practice.api.moveChallenge(
+        token: identity.bearerToken, planItemId: itemId)
       currentPlanItemId = moved.planItemId ?? itemId
       movedChangeId = moved.changeId
-      hooks.didChange(.planChanged)
+      practice.changed(.planChanged)
       await read()
     } catch PracticeAPIError.invalid(let reason) {
       moveProblem =
@@ -514,11 +516,11 @@ struct ChallengeScreen: View {
     defer { isMoving = false }
 
     do {
-      let undone = try await api.undoChallengeMove(
+      let undone = try await practice.api.undoChallengeMove(
         token: identity.bearerToken, planItemId: itemId, changeId: changeId)
       currentPlanItemId = undone.planItemId ?? planItemId
       movedChangeId = nil
-      hooks.didChange(.planChanged)
+      practice.changed(.planChanged)
       await read()
     } catch {
       moveProblem = LocalizedStringResource(

@@ -8,7 +8,7 @@ struct CheckpointScreen: View {
   var sessionId: String?
 
   @Environment(SessionStore.self) private var session
-  @Environment(\.practiceAPI) private var api
+  @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<CheckpointLoad> = .loading
@@ -163,12 +163,12 @@ struct CheckpointScreen: View {
     }
 
     do {
-      let loaded = try await api.checkpoint(token: identity.bearerToken, blockId: blockId)
+      let loaded = try await practice.api.checkpoint(token: identity.bearerToken, blockId: blockId)
       guard session.authenticatedSession == identity else { return }
       state = CheckpointDuelState(load: loaded)
       shownAt = .now
       load = .loaded(loaded)
-    } catch let error as PracticeAPIError {
+    } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
       load = .failed(error)
     } catch {
@@ -185,7 +185,7 @@ struct CheckpointScreen: View {
     state?.confirm()
 
     do {
-      let outcome = try await api.answerStudy(
+      let outcome = try await practice.api.answerStudy(
         token: identity.bearerToken, sessionId: loaded.checkpoint.sessionId, blockId: blockId,
         itemId: question.itemId, answer: answer,
         durationMs: Int(Date.now.timeIntervalSince(shownAt) * 1000))
@@ -196,7 +196,7 @@ struct CheckpointScreen: View {
           answer, isCorrect: feedback.isCorrect, itemId: question.itemId,
           reinforcementLessons: feedback.reinforcementLessons, transcript: feedback.transcript,
           setId: question.set?.id)
-        hooks.didChange(.answered)
+        practice.changed(.answered)
       case .alreadyAnswered, .blockNotActive:
         await read()
       }
@@ -223,11 +223,10 @@ struct CheckpointScreen: View {
     state?.finishing()
 
     do {
-      let completion = try await api.finishStudyBlock(
+      let completion = try await practice.api.finishStudyBlock(
         token: identity.bearerToken, sessionId: loaded.checkpoint.sessionId, blockId: blockId)
       state?.finished(completion)
-      PracticeRevision.shared.bump()
-      hooks.didChange(.finished)
+      practice.changed(.finished)
     } catch {
       state?.failed(.finish)
     }

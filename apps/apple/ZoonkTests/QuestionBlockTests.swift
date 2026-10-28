@@ -98,7 +98,7 @@ final class QuestionBlockRunTests: XCTestCase {
 
   func testFailedAnswerKeepsTheDraftToRetry() async {
     let client = FakeQuestionBlockClient(answers: [
-      .failure(PracticeAPIError.network), .success(.answered(makeFeedback(isCorrect: false))),
+      .failure(APIError.network), .success(.answered(makeFeedback(isCorrect: false))),
     ])
     let run = QuestionBlockRun(detail: makeDetail(["a"]), client: client)
     run.draft = .choice(2)
@@ -136,7 +136,7 @@ final class QuestionBlockRunTests: XCTestCase {
   }
 
   func testExpiredBearerFailsTheAnswerAndSaysSo() async {
-    let client = FakeQuestionBlockClient(answers: [.failure(PracticeAPIError.unauthorized)])
+    let client = FakeQuestionBlockClient(answers: [.failure(APIError.unauthorized)])
     let run = QuestionBlockRun(detail: makeDetail(["a"]), client: client)
 
     await run.submit(.choice(0))
@@ -294,7 +294,7 @@ private actor FakeQuestionBlockClient: QuestionBlockClient {
 
   func finish() async throws -> Components.Schemas.StudyBlockCompletion {
     finishes += 1
-    if finishFails { throw PracticeAPIError.network }
+    if finishFails { throw APIError.network }
     return try JSONDecoder().decode(
       Components.Schemas.StudyBlockCompletion.self, from: Data(completionJSON.utf8))
   }

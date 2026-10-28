@@ -7,14 +7,14 @@ struct FocusTestScreen: View {
   let goalId: String
 
   @Environment(SessionStore.self) private var session
-  @Environment(\.practiceAPI) private var api
+  @Environment(PracticeStore.self) private var practice
   @Environment(\.practiceHooks) private var hooks
   @Environment(\.dismiss) private var dismiss
   @State private var load: PracticeLoad<FocusTestQuestions> = .loading
   @State private var started = false
   @State private var isWriting = false
   @State private var writingEnded = false
-  @State private var writeFailure: PracticeAPIError?
+  @State private var writeFailure: (any Error)?
   @State private var questions: [PracticeQuestion] = []
   @State private var isSubmitting = false
   @State private var submitFailed = false
@@ -183,13 +183,13 @@ struct FocusTestScreen: View {
     }
 
     do {
-      let test = try await api.focusTest(token: identity.bearerToken, goalId: goalId)
+      let test = try await practice.api.focusTest(token: identity.bearerToken, goalId: goalId)
       guard session.authenticatedSession == identity else { return }
       // A question written later fills a place that had none, never one already asked.
       let known = Set(questions.map(\.itemId))
       questions += test.questions.filter { !known.contains($0.itemId) }
       load = .loaded(test)
-    } catch let error as PracticeAPIError {
+    } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }
       load = .failed(error)
     } catch {
@@ -210,22 +210,20 @@ struct FocusTestScreen: View {
     defer { isWriting = false }
 
     do {
-      if case .generating(let generationId) = try await api.writeFocusTest(
+      if case .generating(let generationId) = try await practice.api.writeFocusTest(
         token: identity.bearerToken, goalId: goalId)
       {
         started = !questions.isEmpty
         try await PracticeGenerationWait.untilDone(
-          api: api, token: identity.bearerToken, generationId: generationId)
+          api: practice.api, token: identity.bearerToken, generationId: generationId)
       }
 
       await read()
       started = true
       if case .loaded(let updated) = load, !updated.needsItems.isEmpty { writingEnded = true }
-    } catch let error as PracticeAPIError {
-      writingEnded = true
-      if questions.isEmpty { writeFailure = error }
     } catch {
       writingEnded = true
+      if questions.isEmpty { writeFailure = error }
     }
   }
 
@@ -237,10 +235,10 @@ struct FocusTestScreen: View {
     defer { isSubmitting = false }
 
     do {
-      result = try await api.submitFocusTest(
+      result = try await practice.api.submitFocusTest(
         token: identity.bearerToken, goalId: goalId, answers: answers)
       PracticeAnswerDraft.clear(key: draftKey)
-      hooks.didChange(.planChanged)
+      practice.changed(.planChanged)
     } catch {
       submitFailed = true
     }
@@ -250,10 +248,11 @@ struct FocusTestScreen: View {
     guard let identity = session.authenticatedSession else { return }
 
     do {
-      try await api.undoPlanChange(token: identity.bearerToken, goalId: goalId, changeId: changeId)
+      try await practice.api.undoPlanChange(
+        token: identity.bearerToken, goalId: goalId, changeId: changeId)
       undone = true
       undoFailed = false
-      hooks.didChange(.planChanged)
+      practice.changed(.planChanged)
     } catch {
       undoFailed = true
     }
