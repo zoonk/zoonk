@@ -10,6 +10,8 @@ struct CatalogDetailActions: View {
   @Environment(SessionStore.self) private var session
 
   let courseID: String
+  /// The chapter a chapter page starts the plan from; nil for the whole course.
+  var chapterID: String?
   let tryLessonID: String?
   let showFeedback: () -> Void
 
@@ -50,7 +52,7 @@ struct CatalogDetailActions: View {
   @ViewBuilder
   private var startButtons: some View {
     Button {
-      router.open(.courseStart(courseId: courseID))
+      router.open(.courseStart(courseId: courseID, chapterId: chapterID))
     } label: {
       Text(
         "Build my plan", tableName: "Courses",

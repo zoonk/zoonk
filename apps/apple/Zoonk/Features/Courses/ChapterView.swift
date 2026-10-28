@@ -163,6 +163,7 @@ private struct ChapterDetailList: View {
 
       CatalogDetailActions(
         courseID: chapter.courseID,
+        chapterID: chapter.id,
         tryLessonID: detail.tryLessonID,
         showFeedback: showFeedback)
     }
