@@ -198,6 +198,71 @@ final class ChartsActivitiesTests: XCTestCase {
     XCTAssertEqual(view.baseline?.kind, .whatIf)
   }
 
+  func testPatternTableEndingsAndGrading() throws {
+    let fields: PatternTableFields = try decode(
+      """
+      {"choices":["áis","éis","ís","en"],"modelWord":"hablar","newWord":"comer",
+       "rows":[{"answer":"como","blank":false,"label":"yo","model":"hablo"},
+               {"answer":"coméis","blank":true,"label":"vosotros","model":"habláis"},
+               {"answer":"comen","blank":true,"label":"ellos","model":"hablan"}]}
+      """)
+
+    XCTAssertEqual(fields.expected, ["1": "éis", "2": "en"])
+    XCTAssertEqual(fields.stem(fields.rows[1]), "com")
+    XCTAssertEqual(PatternTableFields.commonStem(["hablo", "hablas", "habla"]), "habl")
+    XCTAssertEqual(fields.nextOpenBlank(after: nil, filled: [:]), 1)
+    XCTAssertEqual(fields.nextOpenBlank(after: 1, filled: ["1": "éis"]), 2)
+    XCTAssertNil(fields.nextOpenBlank(after: 2, filled: ["1": "éis", "2": "en"]))
+
+    XCTAssertTrue(
+      fields.grade(
+        try ActivityAnswer(encoding: PatternTableAnswer(pairs: ["1": "éis", "2": "en"]))))
+    XCTAssertFalse(
+      fields.grade(
+        try ActivityAnswer(encoding: PatternTableAnswer(pairs: ["1": "áis", "2": "en"]))))
+    XCTAssertFalse(
+      fields.grade(try ActivityAnswer(encoding: PatternTableAnswer(pairs: ["1": "éis"]))))
+  }
+
+  func testPatternTesterGradesRegexesAndFormulasLikeCore() throws {
+    XCTAssertFalse(PatternRegex.isSafe("(a+)+"))
+    XCTAssertFalse(PatternRegex.isSafe("(a|aa)*"))
+    XCTAssertFalse(PatternRegex.isSafe("(\\w)\\1"))
+    XCTAssertTrue(PatternRegex.isSafe("^\\d{5}(-\\d{4})?$"))
+    XCTAssertTrue(PatternRegex.isSafe("[(]+"))
+    XCTAssertTrue(PatternRegex.isSafe("(ab)?c+"))
+
+    let zip: PatternTesterFields = try decode(
+      """
+      {"hints":[],"mode":"regex","shouldMatch":["94103","94103-1234"],
+       "shouldNotMatch":["9410","941031","94103-12"],"solution":"^\\\\d{5}(-\\\\d{4})?$","task":"ZIP"}
+      """)
+
+    XCTAssertTrue(
+      zip.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "^\\d{5}(-\\d{4})?$"))))
+    XCTAssertFalse(zip.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "^\\d{5}"))))
+    XCTAssertFalse(zip.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "(\\d+)+"))))
+
+    if case .regex(let regex) = zip, let results = PatternRegex.test("\\d{5}", regex: regex) {
+      XCTAssertEqual(results.shouldMatch.map(\.match), [0..<5, 0..<5])
+      XCTAssertEqual(results.shouldNotMatch.map(\.passes), [true, false, false])
+    } else {
+      XCTFail("The pattern should compile")
+    }
+
+    let price: PatternTesterFields = try decode(
+      """
+      {"examples":[{"inputs":[{"name":"A1","value":100},{"name":"B1","value":0.2}],"output":120},
+                   {"inputs":[{"name":"A1","value":50},{"name":"B1","value":0.1}],"output":55}],
+       "hints":[],"mode":"formula","solution":"A1*(1+B1)","task":"Price",
+       "tolerance":{"kind":"absolute","value":0.01}}
+      """)
+
+    XCTAssertTrue(
+      price.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "=A1*(1+B1)"))))
+    XCTAssertFalse(price.grade(try ActivityAnswer(encoding: PatternTesterAnswer(pattern: "A1*B1"))))
+  }
+
   // MARK: - Renderers
 
   func testRegistersEveryChartTemplate() {
@@ -205,7 +270,7 @@ final class ChartsActivitiesTests: XCTestCase {
 
     for template in [
       "chartReader", "distributionExplorer", "randomSimulation", "numberLine", "lineCrossing",
-      "formulaModel",
+      "formulaModel", "patternTable", "patternTester",
     ] {
       XCTAssertNotNil(registry.renderer(for: template), template)
     }
