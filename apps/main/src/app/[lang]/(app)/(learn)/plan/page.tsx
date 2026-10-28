@@ -70,26 +70,40 @@ function findActiveGoal(list: Awaited<ReturnType<typeof listCurrentUserGoals>>) 
 }
 
 /**
- * A goal without a plan yet: still in onboarding, its questions are the one way forward; past
- * them, its plan is being built (or its run needs another try), which the Plan follows.
+ * Where a goal without a plan stands: questions still ahead in onboarding, or its plan being built
+ * (or its run needing another try); null without a session. Kept with the page's prefetch, so the
+ * tab opens on the right screen; onboarding answers and the building client's polling still read
+ * fresh state, and goal or profile writes expire it.
  */
-async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {
+async function loadPlanlessStage(goalId: string): Promise<"building" | "setup" | null> {
   "use cache: private";
 
   const session = await getSession();
 
   if (!session) {
-    return <PlanNoGoal />;
+    return null;
   }
 
-  // Only this initial display is cached; onboarding answers and the building client's polling
-  // still read fresh state. Goal/profile writes invalidate the cached choice of next screen.
   cacheTag(getGoalsCacheTag(session.user.id), getLearningProfileCacheTag(session.user.id));
 
   const onboarding = await getOnboarding({ goalId });
   const steps = onboarding.status === "ready" ? onboarding.onboarding.steps : [];
 
-  if (steps.some((step) => step !== "plan")) {
+  return steps.some((step) => step !== "plan") ? "setup" : "building";
+}
+
+/**
+ * A goal without a plan yet: still in onboarding, its questions are the one way forward; past
+ * them, its plan is being built (or its run needs another try), which the Plan follows.
+ */
+async function JourneyWithoutPlan({ goalId, goalTitle }: { goalId: string; goalTitle: string }) {
+  const stage = await loadPlanlessStage(goalId);
+
+  if (!stage) {
+    return <PlanNoGoal />;
+  }
+
+  if (stage === "setup") {
     return <JourneySetup goalId={goalId} goalTitle={goalTitle} />;
   }
 
