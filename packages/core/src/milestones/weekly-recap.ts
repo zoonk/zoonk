@@ -1,19 +1,14 @@
 import { MS_PER_DAY } from "@zoonk/utils/date";
 
-/**
- * The Sunday logbook: the week as a short recap from templates, never an AI call. Numbers are
- * compared only with the learner's own past, and the biggest turnaround says why it happened.
- */
 const DAYS_PER_WEEK = 7;
 const SECONDS_PER_MINUTE = 60;
 
-/** A turnaround worth telling: at least 20 points more right answers from first to last day. */
 const MIN_TURNAROUND_GAIN = 0.2;
 
 export type RecapDay = { correct: number; date: Date; incorrect: number; seconds: number };
 
 export type WeekNumbers = {
-  /** Minutes per studied day, the "44 min a day on average" line. */
+  /** Minutes per studied day, excluding days without study. */
   averageMinutes: number;
   daysStudied: Date[];
   minutes: number;
@@ -47,7 +42,6 @@ export function summarizeWeek({
   };
 }
 
-/** "40 min more than last week": the difference with the learner's own previous week. */
 export function compareWeeks({
   current,
   previous,
@@ -71,9 +65,9 @@ export type SkillAnswer = {
 
 export type Turnaround = {
   from: number;
-  /** Share of right answers on each day of the week, null on days off. */
+  /** Accuracy fractions; null for days without answers. */
   points: { accuracy: number | null; date: Date }[];
-  /** Later days whose first answer was right: "you remembered it on 3 different days". */
+  /** Distinct later days whose first answer was correct. */
   rememberedOn: Date[];
   skillId: string;
   to: number;
@@ -124,10 +118,6 @@ function getSkillTurnaround({
   };
 }
 
-/**
- * The skill that grew the most this week, from its first studied day to its last, when it grew by
- * enough to be worth a page of the logbook.
- */
 export function findBiggestTurnaround({
   answers,
   weekStart,

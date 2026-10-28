@@ -23,7 +23,6 @@ const EMPTY_COUNTS: MilestoneCounts = {
   fullMeals: 0,
 };
 
-/** The uncapped source predicates are the comparison oracle, independent of SQL pagination. */
 async function rawCounts(userId: string): Promise<MilestoneCounts> {
   const [attempts, bigChallenges, capsulesOpened, fullMeals] = await Promise.all([
     prisma.learningEvent.findMany({
@@ -84,7 +83,6 @@ async function expectCounts(userId: string, expectedRaw: MilestoneCounts): Promi
 
 async function unfinishedEvent(attrs: Parameters<typeof learningEventFixture>[0]) {
   const row = await learningEventFixture(attrs);
-  // The fixture defaults null endedAt to a finished event; persist this boundary explicitly.
   return prisma.learningEvent.update({ data: { endedAt: null }, where: { id: row.id } });
 }
 
@@ -138,7 +136,7 @@ describe("saturated milestone counts preserve all consumer outputs", () => {
       ),
       studySessionFixture({ fullMealAt: null, status: "completed", userId: user.id }),
     ]);
-    // Multiple source rows on one date count independently, regardless of session status.
+
     await expectCounts(user.id, { ...EMPTY_COUNTS, fullMeals: count });
   });
 

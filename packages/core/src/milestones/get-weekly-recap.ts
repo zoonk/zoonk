@@ -21,14 +21,8 @@ import {
 const DAYS_PER_WEEK = 7;
 const SUNDAY_OFFSET = 6;
 
-/** Why the turnaround happened, in the learner's terms: a gold card, a Solid skill, or practice. */
 type TurnaroundReason = "gold" | "practice" | "solid";
 
-/**
- * The week as a logbook: the learner's numbers against their own last week, the biggest
- * turnaround and why, badges earned, what the buddy ate, phases finished and next week's focus.
- * Written from templates in the apps; nothing here calls a model.
- */
 type WeeklyRecap = {
   badges: Milestone[];
   comparison: ReturnType<typeof compareWeeks>;
@@ -113,12 +107,7 @@ async function loadWeeks({ userId, weekStart }: { userId: string; weekStart: Dat
   return { comparison: compareWeeks({ current: week, previous: lastWeek }), lastWeek, week };
 }
 
-/**
- * The week a logbook tells by default: the last finished one until the current week ends on
- * Sunday, so a Monday never opens a recap of a week that has only just started. A learner who
- * hasn't studied before this week has no finished week yet: their first logbook is this week's,
- * not ready until Sunday.
- */
+/** Before Sunday, default to last week; new learners use their first week, marked not ready until Sunday. */
 async function getDefaultWeekStart({
   today,
   userId,
@@ -143,11 +132,7 @@ async function getDefaultWeekStart({
     : currentWeekStart;
 }
 
-/**
- * The logbook for one week: the last finished week by default (see `getDefaultWeekStart`). One
- * private cached read, so the buddy's link to it prefetches the logbook whole; the day it counts
- * from is read with the rest, so a prefetched copy keeps the day it was read.
- */
+/** Defaults to the last finished week; a prefetched recap retains the day it was read. */
 export async function getWeeklyRecap(input: WeeklyRecapInput): Promise<WeeklyRecapResult> {
   "use cache: private";
 

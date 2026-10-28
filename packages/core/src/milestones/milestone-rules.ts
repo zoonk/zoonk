@@ -2,14 +2,7 @@ import { type BuddyGlasses, type MilestoneKind } from "@zoonk/db";
 import { BELT_COLORS_ORDER, type BeltColor, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { getBuddyStage } from "@zoonk/utils/buddy";
 
-/**
- * Milestones come from the ledger, never from chance, and each says upfront how it's earned.
- * Glasses: Round comes with the buddy, Star for the first boss beaten, Aviator for the first Big
- * Challenge, Cat-eye for seven days with all three missions done, Retro for fifty capsules opened
- * and Monocle for the final boss. Badges ("Trap hunter" for a boss won) go to the logbook. A new
- * belt color and the buddy's next stage are celebrated once each. The reader saturates these
- * internal counts at GLASSES_TARGETS; they are not exact lifetime totals.
- */
+/** Saturated at GLASSES_TARGETS; never treat these as exact lifetime totals. */
 export type MilestoneCounts = {
   bigChallenges: number;
   bossesWon: number;
@@ -43,7 +36,6 @@ export type GlassesProgress = {
   target: number;
 };
 
-/** Every pair of glasses with how far the learner is: "4/7 mission days", "38/50 capsules". */
 export function getGlassesProgress(counts: MilestoneCounts): GlassesProgress[] {
   return [
     { current: 0, earned: true, glasses: "round", target: 0 },
@@ -62,18 +54,13 @@ export function getGlassesProgress(counts: MilestoneCounts): GlassesProgress[] {
 
 export type MilestoneAward = { kind: MilestoneKind; key: string };
 
-/** Glasses the counts have earned. */
 export function getEarnedGlasses(counts: MilestoneCounts): MilestoneAward[] {
   return getGlassesProgress(counts)
     .filter((progress) => progress.earned && progress.glasses !== "round")
     .map((progress) => ({ key: progress.glasses, kind: "glasses" }));
 }
 
-/**
- * Belt colors, and the buddy stages they bring, crossed between two Brain Power totals. Only what
- * was crossed counts, so a learner who arrives with Brain Power from before never gets a ceremony
- * for a belt they already had.
- */
+/** Counts only crossings in this interval, never retroactive ceremonies for an existing balance. */
 export function getCrossedMilestones({
   after,
   before,
@@ -95,12 +82,10 @@ export function getCrossedMilestones({
   });
 }
 
-/** A boss won puts a "Trap hunter" badge in the logbook, one per boss. */
 export function getTrapHunterBadge(planItemId: string): MilestoneAward {
   return { key: `trapHunter:${planItemId}`, kind: "badge" };
 }
 
-/** The buddy growing matters most, then a new belt, then glasses, then badges. */
 const CEREMONY_PRIORITY: Readonly<Record<MilestoneKind, number>> = {
   badge: 3,
   belt: 1,
@@ -108,10 +93,7 @@ const CEREMONY_PRIORITY: Readonly<Record<MilestoneKind, number>> = {
   glasses: 2,
 };
 
-/**
- * At most one ceremony per session: the most important milestone not shown yet, the newest first
- * among equals. The rest show quietly in the logbook and the buddy's page.
- */
+/** Returns at most one unshown milestone, newest first among equal priorities. */
 export function pickCeremony<
   TMilestone extends { earnedAt: Date; kind: MilestoneKind; shownAt: Date | null },
 >(milestones: readonly TMilestone[]): TMilestone | null {

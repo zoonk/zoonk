@@ -253,7 +253,7 @@ describe("Buddy request facts", () => {
         ]);
       }
 
-      /** Vitest lacks Next's request cache. Only that boundary is modeled; every first read uses the real DB fact. */
+      /** Vitest lacks Next's request cache; retain each first real database fact for this request. */
       const realFact = progressFacts.readUserProgress;
       const requestFacts = new Map<string, ReturnType<typeof realFact>>();
 
@@ -276,12 +276,11 @@ describe("Buddy request facts", () => {
       assertReadBudget(preload, 1);
       expect(preload.statements).toBe(1);
 
-      /** Attribute the real measuring helper's SQL without replacing its logic or persistence. */
       const realMeasure = snapshot.measureProgress;
       const measured = { statements: 0, writes: 0 };
 
       const measure = vi.spyOn(snapshot, "measureProgress").mockImplementation(async (input) => {
-        /** Flush the sibling findUnique batch before attributing only the progress helper's SQL. */
+        /** Flush Prisma's sibling findUnique batch before attributing this helper's SQL. */
         await setImmediate();
         const observed = await countDatabaseStatements(() => realMeasure(input));
         measured.statements += observed.statements;

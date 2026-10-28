@@ -2,10 +2,6 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { CAPSULE_LEDGER_KIND } from "../award-milestones";
 
-/**
- * What the buddy ate in a period, all from learner rows: new ideas (skills first studied), reviews
- * (answers in opened capsules) and fixes (mistakes fixed). It's learning, shown as food.
- */
 export type BuddyDiet = { fixes: number; newIdeas: number; reviews: number };
 
 export async function loadBuddyDiet({

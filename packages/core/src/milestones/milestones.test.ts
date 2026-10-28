@@ -23,7 +23,6 @@ import { getBuddyStatus } from "./get-buddy-status";
 import { getWeeklyRecap } from "./get-weekly-recap";
 import { listCurrentUserMilestones, markMilestoneShown } from "./list-milestones";
 
-/** Sunday, Oct 4: the logbook for Sep 28 to Oct 4 is ready. */
 const SUNDAY = new Date("2026-10-04T18:00:00Z");
 const MONDAY = new Date("2026-09-28T00:00:00Z");
 
@@ -232,7 +231,6 @@ describe(getWeeklyRecap, () => {
       { correctAnswers: 2, date: weekDay(8, 0), timeSpentSeconds: 300, userId: user.id },
     ]);
 
-    // Wednesday of the next week: that week has only just started, so the logbook is last week's.
     vi.setSystemTime(weekDay(9, 18));
     mockSession(user.id);
     const result = await getWeeklyRecap({ timeZone: "UTC" });
@@ -332,14 +330,12 @@ describe(getBuddyStatus, () => {
 
     mockSession(user.id);
 
-    // Just met: awake, with no empty meter to show.
     await expect(energyOf()).resolves.toStrictEqual({
       current: null,
       state: "awake",
       studiedToday: false,
     });
 
-    // The first lesson, today: Energy shows what it earned right away.
     await Promise.all([
       userProgressFixture({ currentEnergy: 2, totalBrainPower: 30n, userId: user.id }),
       dailyProgressFixtureMany([{ date: today, timeSpentSeconds: 300, userId: user.id }]),
@@ -385,7 +381,6 @@ describe(getBuddyStatus, () => {
       buddy: {
         today: {
           fullMeal: { bonus: 50, earned: false },
-          // Which goal's day they are, as the learner summary names its own.
           goalId: goal.id,
           localDate: session.localDate.toISOString().slice(0, 10),
           missions: [{ kind: "somethingNew", status: "done" }],

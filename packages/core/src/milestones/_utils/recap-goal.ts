@@ -3,11 +3,7 @@ import { prisma } from "@zoonk/db";
 import { isPhaseFinished } from "../../plans/_utils/phase-states";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
 
-/**
- * The goal's phases finished within the week ("Phase 1 · Basics done"): nothing of the phase is
- * left, its work was finished (`isPhaseFinished`: none of it set aside), and the last item was
- * finished in the week.
- */
+/** A phase finishes only when all work is completed, not set aside. */
 export async function loadPhasesFinished({
   from,
   goalId,

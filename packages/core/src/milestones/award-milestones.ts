@@ -14,10 +14,9 @@ import {
   getEarnedGlasses,
 } from "./milestone-rules";
 
-/** The ledger's count of opened capsules: one `review` row per capsule, marked as such. */
 export const CAPSULE_LEDGER_KIND = "capsule";
 
-/** Counts toward glasses targets, saturated at each target, from rows that outlive content. */
+/** Counts saturate at glasses targets and are not exact lifetime totals. */
 export async function loadMilestoneCounts(userId: string): Promise<MilestoneCounts> {
   const [bosses, bigChallenges, capsulesOpened, fullMeals] = await Promise.all([
     prisma.learningEvent.findMany({
@@ -59,11 +58,7 @@ export async function loadMilestoneCounts(userId: string): Promise<MilestoneCoun
   };
 }
 
-/**
- * Records every milestone the learner has now earned and returns the new ones: glasses from the
- * ledger's counts, belts and buddy stages crossed by Brain Power just earned, and badges from the
- * activity that just ended. Each is stored once, so running it again changes nothing.
- */
+/** Returns only newly inserted milestones; repeating an award has no effect. */
 export async function awardMilestones({
   badges = [],
   brainPower,
@@ -71,7 +66,6 @@ export async function awardMilestones({
   userId,
 }: {
   badges?: readonly MilestoneAward[];
-  /** Brain Power before and after the activity, to find belts crossed. */
   brainPower: { after: number; before: number } | null;
   /** Separately paid rewards retain their own intervals, including across account linking. */
   brainPowerRewards?: readonly BrainPowerReward[];
@@ -113,7 +107,6 @@ export async function awardMilestones({
     return count;
   });
 
-  // None when a competing award inserted them first.
   if (inserted > 0) {
     revalidateCacheTags([getUserProgressCacheTag(userId)]);
   }

@@ -37,11 +37,7 @@ import { type GlassesProgress, getGlassesProgress } from "./milestone-rules";
 
 const DAYS_PER_WEEK = 7;
 
-/** Today's achievable missions and their completion bonus, from the active goal's session. */
-/**
- * Today's missions, and which goal's session and learner-local day (`YYYY-MM-DD`) they are, so a
- * client showing them beside other reads can tell they're the same day's.
- */
+/** goalId and localDate identify the mission day, which must match adjacent views. */
 type BuddyToday = {
   fullMeal: { bonus: number; earned: boolean };
   goalId: string;
@@ -49,12 +45,6 @@ type BuddyToday = {
   missions: Mission[];
 };
 
-/**
- * The buddy's page: its Energy (and whether it naps, is awake or glows), its stage and how far the
- * next one is, today's missions, what it ate this week and the glasses earned. Stage and glow come
- * from the belt and Energy, and glasses from milestones, so the buddy has no economy of its own.
- * Learners without a saved choice get the default buddy with the same progress.
- */
 type BuddyStatus = {
   belt: BeltLevelResult & { totalBrainPower: number };
   /** `current` is null until the learner has learned something: a new buddy has no Energy yet. */
@@ -73,7 +63,6 @@ export type BuddyStatusResult =
   | { buddy: BuddyStatus; status: "ready" }
   | { status: "unauthorized" };
 
-/** The missions of the active goal's session today, read without building the session. */
 async function loadToday({
   goalId,
   localDate,
@@ -140,8 +129,7 @@ export async function getBuddyStatus(input: BuddyStatusInput): Promise<BuddyStat
     readLearningProfile(userId),
   ]);
 
-  // Energy and the day's study read the learner's clock like the top bar and the stats pages do;
-  // today's session belongs to the goal's day, as Today builds it.
+  // Account study uses the learner's clock; the saved session still belongs to its goal's day.
   const timeZone = getAnswerTimeZone({
     goal: input.timeZone ? null : goal,
     timeZone: input.timeZone,

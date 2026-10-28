@@ -7,11 +7,11 @@ import { loadMilestoneCounts } from "./award-milestones";
 import { type GlassesProgress, getGlassesProgress, pickCeremony } from "./milestone-rules";
 
 type MilestoneList = {
-  /** The one milestone to celebrate next, if any hasn't been shown yet. */
+  /** The next unshown milestone, if any. */
   ceremony: Milestone | null;
-  /** Every milestone earned, newest first: badges fill the logbook. */
+  /** Newest first. */
   earned: Milestone[];
-  /** Every pair of glasses with its progress, earned ones included. */
+  /** Includes already-earned glasses. */
   glasses: GlassesProgress[];
 };
 
@@ -19,7 +19,6 @@ export type MilestoneListResult =
   | { milestones: MilestoneList; status: "ready" }
   | { status: "unauthorized" };
 
-/** The learner's milestones: glasses with their progress, badges, belts and buddy stages. */
 export async function listCurrentUserMilestones(): Promise<MilestoneListResult> {
   const session = await getSession();
 
@@ -45,13 +44,7 @@ export type MilestoneShownResult =
   | { status: "notFound" }
   | { status: "unauthorized" };
 
-/**
- * Records that a milestone was celebrated, so it's shown only once. Showing it again keeps the
- * first time.
- *
- * Tag invalidation from the acknowledgement's Server Action would re-render the page and remove
- * the ceremony while the learner is still viewing it.
- */
+/** Replays preserve the first shown time. Do not invalidate from this Server Action: rerendering would dismiss the active ceremony. */
 export async function markMilestoneShown(milestoneId: string): Promise<MilestoneShownResult> {
   const session = await getSession();
 
@@ -65,7 +58,6 @@ export async function markMilestoneShown(milestoneId: string): Promise<Milestone
 
   const userId = session.user.id;
 
-  // A replay or another learner's id updates nothing.
   await prisma.$transaction(async (tx) => {
     await markLearnerChanged(tx, { userId });
 

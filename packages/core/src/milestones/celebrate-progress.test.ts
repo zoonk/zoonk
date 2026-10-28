@@ -3,7 +3,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it } from "vitest";
 import { celebrateProgress } from "./celebrate-progress";
 
-/** A learner whose total is `brainPower` now, as their progress row keeps it. */
 async function learnerAt(brainPower: number) {
   const user = await userFixture();
 
@@ -37,7 +36,6 @@ describe(celebrateProgress, () => {
   });
 
   it("counts the day's bonus the work paid, as a block's level does", async () => {
-    // The work took 240 to 245; the day's bonus its last mission paid took it to 295, past 250.
     const user = await learnerAt(295);
 
     const celebration = await celebrateProgress({
@@ -54,7 +52,6 @@ describe(celebrateProgress, () => {
   });
 
   it("never counts what other work added meanwhile, such as another tab's", async () => {
-    // The work took 246 to 248; another tab's practice took the total to 300 meanwhile.
     const user = await learnerAt(300);
 
     const celebration = await celebrateProgress({

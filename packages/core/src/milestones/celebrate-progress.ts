@@ -7,17 +7,9 @@ import { awardMilestones } from "./award-milestones";
 import { loadCeremony } from "./load-ceremony";
 import { type BrainPowerReward } from "./milestone-reward";
 
-/** What settling the day's missions after the work paid: the day's bonus, when it was the last. */
 type DaySettlement = { fullMealPaid: boolean; fullMealReward: BrainPowerReward | null };
 
-/**
- * Records the belts and buddy stages the work's Brain Power crossed, like a session block's, then
- * settles the day it counts toward (`settleDay`: the missions it completed), and says what its
- * result celebrates: the level and the tenth of Energy it reached, the day's bonus it paid
- * included, as a block's level is, and the milestone not shown yet. The belts come first, right
- * after the work was saved, so a day that fails to settle never loses them. `progress` is null when
- * nothing was added (a repeat), which reaches nothing.
- */
+/** Award earned belts before settling the day so a settlement failure cannot lose them; null progress reaches nothing. */
 export async function celebrateProgress({
   progress,
   settleDay,
