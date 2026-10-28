@@ -1,9 +1,21 @@
 import Foundation
 import Observation
 
+/// A learner's session. A bearer token belongs to one account, so the token is the identity: the
+/// session restored from the Keychain is the same session before and after `GET /me` names its
+/// account.
 struct AuthenticatedSession: Hashable, Sendable {
-  let accountID: String
+  /// Nil while the stored token is being validated at launch.
+  let accountID: String?
   let bearerToken: String
+
+  static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.bearerToken == rhs.bearerToken
+  }
+
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(bearerToken)
+  }
 }
 
 @MainActor
@@ -23,6 +35,8 @@ final class SessionStore {
   private var isReconciling = false
   private var didRestore = false
   private var token: String?
+  /// The Keychain's token while launch validates it, so the launch reads start alongside `GET /me`.
+  private var restoringToken: String?
 
   private enum StoredCredentialValidation {
     case active(CurrentAccount)
@@ -59,11 +73,15 @@ final class SessionStore {
   }
 
   var authenticatedSession: AuthenticatedSession? {
-    guard let account, let token else {
+    if let account, let token {
+      return AuthenticatedSession(accountID: account.user.id, bearerToken: token)
+    }
+
+    guard state == .restoring, let restoringToken else {
       return nil
     }
 
-    return AuthenticatedSession(accountID: account.user.id, bearerToken: token)
+    return AuthenticatedSession(accountID: nil, bearerToken: restoringToken)
   }
 
   /// Clears an expired bearer token only when both memory and the synchronized Keychain still contain that session, preventing a late response from deleting a newer credential from another device.
@@ -130,7 +148,10 @@ final class SessionStore {
     isReconciling = true
     state = .restoring
     failure = nil
-    defer { isReconciling = false }
+    defer {
+      isReconciling = false
+      restoringToken = nil
+    }
 
     if !(await loadLatestCredential()) {
       didRestore = false
@@ -667,6 +688,10 @@ final class SessionStore {
         failure = nil
         state = .signedOut
         return true
+      }
+
+      if state == .restoring {
+        restoringToken = storedToken
       }
 
       let validationRevision = accountRefreshRevision

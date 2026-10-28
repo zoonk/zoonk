@@ -979,6 +979,92 @@ final class SessionStoreTests: XCTestCase {
     XCTAssertEqual(session.state, .signedIn(accountB))
   }
 
+  /// Launch reads start with the stored token while `GET /me` validates it, and keep their result
+  /// once it does.
+  @MainActor
+  func testLaunchReadsStartWithTheStoredTokenAndSurviveItsValidation() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(currentAccountResult: .success(account))
+    let validation = CurrentAccountRequestGate()
+    api.currentAccountHandler = { _ in await validation.load() }
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "stored-session"))
+    var readTokens = [String?]()
+    let today = AppCache(session: session).resource(audience: .signedIn) { owner in
+      readTokens.append(owner?.bearerToken)
+      return 1
+    }
+
+    let restore = Task { await session.restore() }
+    await validation.waitUntilStarted()
+    await today.load()
+
+    XCTAssertEqual(today.state, .loaded(1))
+    XCTAssertEqual(session.state, .restoring)
+
+    validation.resume(returning: account)
+    await restore.value
+    await today.load()
+
+    XCTAssertEqual(session.state, .signedIn(account))
+    XCTAssertEqual(today.state, .loaded(1))
+    XCTAssertEqual(readTokens, ["stored-session"])
+  }
+
+  /// A launch read the API refuses signs the stored session out, as any read does.
+  @MainActor
+  func testAnUnauthorizedLaunchReadSignsOut() async {
+    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
+    let validation = CurrentAccountRequestGate()
+    api.currentAccountHandler = { _ in await validation.load() }
+    let credentials = SessionCredentialStoreSpy(token: "stored-session")
+    let session = makeSession(api: api, credentialStore: credentials)
+    let today: Resource<Int> = AppCache(session: session).resource(audience: .signedIn) { _ in
+      throw APIError.unauthorized
+    }
+
+    let restore = Task { await session.restore() }
+    await validation.waitUntilStarted()
+    await today.load()
+    validation.resume(returning: makeAccount())
+    await restore.value
+
+    XCTAssertEqual(session.state, .signedOut)
+    XCTAssertNil(credentials.token)
+    XCTAssertEqual(today.state, .idle)
+  }
+
+  /// When the Keychain's token changes while launch validates it (another device signed in), the
+  /// reads made with the old token are dropped.
+  @MainActor
+  func testLaunchReadsOfAReplacedTokenAreDropped() async {
+    let other = makeAccount(userID: "other-user")
+    let api = SessionStoreAPIStub(currentAccountResult: .success(makeAccount()))
+    let validation = CurrentAccountRequestGate()
+    api.currentAccountHandler = { token in
+      token == "stored-session" ? await validation.load() : other
+    }
+    let credentials = SessionCredentialStoreSpy(token: "stored-session")
+    let session = makeSession(api: api, credentialStore: credentials)
+    var readTokens = [String?]()
+    let today = AppCache(session: session).resource(audience: .signedIn) { owner in
+      readTokens.append(owner?.bearerToken)
+      return readTokens.count
+    }
+
+    let restore = Task { await session.restore() }
+    await validation.waitUntilStarted()
+    await today.load()
+    credentials.token = "other-session"
+    validation.resume(returning: makeAccount())
+    await restore.value
+    await today.load()
+
+    XCTAssertEqual(session.state, .signedIn(other))
+    XCTAssertEqual(today.state, .loaded(2))
+    XCTAssertEqual(readTokens, ["stored-session", "other-session"])
+  }
+
   @MainActor
   private func makeSession(
     api: any AccountAPIClient = SessionStoreAPIStub(),

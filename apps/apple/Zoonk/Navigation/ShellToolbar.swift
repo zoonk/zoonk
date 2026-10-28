@@ -31,7 +31,7 @@ struct ShellToolbar: ViewModifier {
   @ToolbarContentBuilder
   private var items: some ToolbarContent {
     switch session.state {
-    case .restoring:
+    case .restoring where session.authenticatedSession == nil:
       ToolbarItem(placement: .topBarTrailing) {
         EmptyView()
       }
@@ -43,7 +43,7 @@ struct ShellToolbar: ViewModifier {
           Text("Log in", tableName: "Navigation", comment: "Opens sign-in")
         }
       }
-    case .signedIn, .unavailable:
+    case .restoring, .signedIn, .unavailable:
       if let summary = learner.summary.value {
         ToolbarItem(placement: .topBarLeading) {
           GoalSwitcher(summary: summary, isCompact: isSwitcherCompact)

@@ -13,11 +13,12 @@ enum LearnerAccess {
   @MainActor
   init(session: SessionStore, summary: LearnerSummary?) {
     switch session.state {
-    case .restoring:
+    case .restoring where session.authenticatedSession == nil:
       self = .restoring
     case .signedOut:
       self = .visitor
-    case .signedIn, .unavailable:
+    // A restored token reads as signed in while launch validates it.
+    case .restoring, .signedIn, .unavailable:
       guard let summary else {
         self = .signedIn
         return
