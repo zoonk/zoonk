@@ -175,7 +175,8 @@ struct LessonPauseOffer: View {
   let store: LessonPlayerStore
 
   var body: some View {
-    Group {
+    // A stack rather than a group, so the timer runs while nothing shows yet.
+    VStack(alignment: .leading, spacing: 0) {
       if isStuck, store.state?.quickCheck == nil {
         LessonAskBuddyOffer(reason: .pause, store: store)
       }

@@ -55,7 +55,7 @@ struct LessonStageView: View {
 
               VStack(alignment: .leading, spacing: 20) {
                 LessonStepView(step: step, state: state, store: store, part: .screen)
-                LessonStepNotes(step: step)
+                LessonStepNotes(step: step, store: store)
               }
             }
             .frame(width: pages.primary)
@@ -75,7 +75,7 @@ struct LessonStageView: View {
                 LessonStepView(step: step, state: state, store: store, part: .turn)
 
                 if pages == nil {
-                  LessonStepNotes(step: step)
+                  LessonStepNotes(step: step, store: store)
                 }
               }
 
@@ -94,6 +94,10 @@ struct LessonStageView: View {
                 if state.struggleOffer != nil {
                   LessonAskBuddyOffer(reason: .misses, store: store)
                 }
+              }
+
+              if step.strugglePause != nil {
+                LessonPauseOffer(step: step, store: store)
               }
             }
             .onChange(of: state.currentResult != nil) { _, hasResult in
@@ -120,6 +124,11 @@ struct LessonStageView: View {
         .environment(\.isPaneSplit, pages != nil)
       }
       .id(step.id)
+      .task(id: step.id) {
+        if step.hasExampleLineSlot {
+          await store.loadExampleLine(stepId: step.id)
+        }
+      }
       .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
       .sensoryFeedback(trigger: countedVerdict(step)) { _, isCorrect in
@@ -157,11 +166,15 @@ private struct LessonPage<Content: View>: View {
   }
 }
 
-/// What a screen notes under itself: where it comes from.
+/// What a screen notes under itself: the learner's own example of the idea, once written, and where
+/// it comes from. Last, so a line arriving after the screen shows moves nothing.
 private struct LessonStepNotes: View {
   let step: LessonStep
+  let store: LessonPlayerStore
 
   var body: some View {
+    LessonExampleLine(line: store.exampleLines[step.id])
+
     if let citation = step.citation {
       LessonCitationView(citation: citation)
     }
