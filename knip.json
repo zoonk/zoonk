@@ -26,7 +26,7 @@
       "project": ["!scripts/run-simulator.mts"]
     },
     "apps/api": {
-      "entry": [".eloqnt/config.ts", "scripts/*.ts"],
+      "entry": [".eloqnt/config.ts", "e2e/gateway-fetch.ts", "scripts/*.ts"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
     "apps/blog": { "project": ["src/**/*.{ts,tsx,mdx}!"] },

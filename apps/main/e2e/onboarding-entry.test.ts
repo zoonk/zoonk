@@ -8,20 +8,18 @@ import { type Page, expect, test } from "./fixtures";
  * The way into onboarding: a goal sent from `/start` or Today is saved as a draft and read, the
  * address keeps the draft so a refresh shows the same screen, and nothing is read or written
  * until the learner sends. Understandings are stored the way a real one is (the cache), so these
- * run without the AI task. Words nobody read yet fail to be read: the run doesn't start when no
- * API is reachable, and fails on the E2E API, which has no AI. Both offer to try again.
+ * run without the AI task. Words nobody read yet start a run that reads them, which waits on the
+ * E2E API: it has no model. A read that stopped offers to try again.
  */
 
 type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 
 const DRAFT_URL = /\/start\?draft=[0-9a-f-]{36}$/u;
 
-/**
- * A read that failed: its run didn't start (no API is reachable), or stopped (the E2E API has no
- * AI, and its run gives up only after the workflow's step retries).
- */
 const FAILED_READ = /^This didn't (?:start|finish)$/u;
-const FAILED_READ_TIMEOUT = 15_000;
+
+const RUN_EVENTS = "**/v1/generations/*/events**";
+const RUN_STATUS = /\/v1\/generations\/[^/]+$/u;
 
 function uniqueWords(words: string) {
   return `${words} ${randomUUID().slice(0, 8)}`;
@@ -31,6 +29,24 @@ async function sendGoal(page: Page, goal: string) {
   await page.goto("/start");
   await page.getByRole("textbox", { name: "I want to" }).fill(goal);
   await page.getByRole("button", { name: "Build my plan" }).click();
+}
+
+/**
+ * Stands in for a read that stopped where the browser follows its run: E2E runs wait on a model
+ * that never answers, and server-side calls are out of `page.route`'s reach.
+ */
+async function stopReads(page: Page) {
+  await page.route(RUN_EVENTS, (route) =>
+    route.fulfill({
+      body: `data: ${JSON.stringify({ reason: "aiGenerationFailed", status: "error", step: "workflowError" })}\n\n`,
+      contentType: "text/event-stream",
+      status: 200,
+    }),
+  );
+
+  await page.route(RUN_STATUS, (route) =>
+    route.fulfill({ json: { status: "failed" }, status: 200 }),
+  );
 }
 
 async function findDraft(prompt: string) {
@@ -121,12 +137,14 @@ test.describe("Coming back", () => {
     page,
   }) => {
     const goal = uniqueWords("learn to juggle five balls");
+    await stopReads(page);
     await sendGoal(page, goal);
 
     // Nobody read these words before and reading them failed: the draft is saved, unread.
     await expect(page).toHaveURL(DRAFT_URL);
-    await expect(page.getByText(FAILED_READ)).toBeVisible({ timeout: FAILED_READ_TIMEOUT });
+    await expect(page.getByText(FAILED_READ)).toBeVisible();
     await expect(page.getByRole("button", { name: "Try again" })).toBeVisible();
+    await Promise.all([page.unroute(RUN_EVENTS), page.unroute(RUN_STATUS)]);
 
     const draft = await findDraft(goal);
 
