@@ -10,7 +10,7 @@ import {
   mayCostToKeepPhaseDates,
   showsPhaseDatesMove,
 } from "../planner/phase-dates-move";
-import { type PlanEffect, getPlanEffect } from "../planner/plan-effect";
+import { type PlanEffect } from "../planner/plan-effect";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
 import { planPhaseDatesMove } from "./moved-phase-dates";
 import { parsePlanChangePayload, toPlanChangePayload } from "./plan-change-payload";
@@ -18,6 +18,7 @@ import { type PlanContext } from "./plan-context";
 import { writePlanMetadata } from "./plan-metadata-write";
 import { getPlanPreviewBasis } from "./plan-preview-basis";
 import { type ComputedPlan, type PlanTagRevalidation, revalidatePlanTags } from "./replan";
+import { getBuiltChange } from "./seen-effect";
 
 /**
  * How a learner's change planned the plan it saved (see `getChangePlanning`), from its own state:
@@ -85,12 +86,7 @@ function getMovedDatesEffect({
   moved: ComputedPlan;
 }): PlanEffect {
   return {
-    ...getPlanEffect({
-      after: moved.built.items,
-      before: computed.built.items,
-      standInLessons: moved.standInLessons,
-      standInLessonsBefore: computed.standInLessons,
-    }),
+    ...getBuiltChange({ after: moved, before: computed }),
     ...getPhaseDatesEffect({
       graph: computed.state.graph,
       kept: computed.built,

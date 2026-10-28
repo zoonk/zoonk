@@ -251,6 +251,41 @@ describe("a plan that changes as the learner studies says so", () => {
   });
 });
 
+describe("a missed day's card says what changes in the saved plan", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  // The card counts stand-ins as saved, skill by skill (R3): counted by item, a stand-in that only
+  // partly fits said it added all its lessons, and one that shrank said nothing.
+  it("counts the stand-ins it shrinks or grows as the saved plan does", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(NOW);
+
+    const { goal, plan } = await setupStandIns();
+    const before = await readAreas(plan.id);
+    const away = new Date("2020-10-02T12:00:00Z");
+
+    vi.setSystemTime(away);
+
+    vi.mocked(getRequestProgressDateContext).mockResolvedValue({
+      currentDate: new Date("2020-10-02T00:00:00Z"),
+      currentInstant: away,
+      timeZone: "UTC",
+    });
+
+    await refreshGoalPlan({ goalId: goal.id });
+
+    const settled = await prisma.planChange.findFirstOrThrow({
+      where: { kind: "missedDays", planId: plan.id },
+    });
+
+    expect(parseEffect(settled.payload)).toMatchObject(
+      countSavedChange({ after: await readAreas(plan.id), before }),
+    );
+  });
+});
+
 describe("more of one subject and less of another", () => {
   beforeEach(() => {
     vi.useFakeTimers({ toFake: ["Date"] });

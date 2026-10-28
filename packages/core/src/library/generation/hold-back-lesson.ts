@@ -4,7 +4,8 @@ import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
 import { toPlanChangePayload } from "../../plans/_utils/plan-change-payload";
-import { getPlanEffect } from "../../plans/planner/plan-effect";
+import { getSeenChange } from "../../plans/planner/plan-effect";
+import { parsePlanGraph } from "../../plans/planner/plan-state";
 import { refreshGoalPlan } from "../../plans/refresh-goal-plan";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { type HeldBackDraft, MAX_LESSON_DRAFTS, parseHeldBackDrafts } from "./held-back-drafts";
@@ -21,6 +22,11 @@ const PRIVATE_LESSON_DRAFTS = 1;
 /** A superseded claim must roll back plan/learner admission as well as the attempted draft. */
 class LessonClaimLostError extends Error {
   override name = "LessonClaimLostError";
+}
+
+/** A lesson item is one lesson; a stand-in, the lessons it was saved with. */
+function countSavedLessons(item: { lessonId: string | null; lessons?: number | null }): number {
+  return item.lessonId ? 1 : (item.lessons ?? 1);
 }
 
 /**
@@ -65,26 +71,24 @@ export async function moveOnWithoutLesson(
 
   await Promise.all(
     [...Map.groupBy(items, (item) => item.planId)].map(async ([planId, removed]) => {
-      const before = removed.at(0)?.plan.items ?? [];
+      const plan = removed.at(0)?.plan;
+      const before = plan?.items ?? [];
       const ids = new Set(removed.map((item) => item.id));
 
-      const effect = getPlanEffect({
+      const effect = getSeenChange({
         after: before.map((item) =>
           ids.has(item.id) ? { ...item, status: "skipped" as const } : item,
         ),
         before,
-        standInLessons: new Map(
-          before.flatMap((item) => (item.skillId ? [[item.skillId, item.lessons ?? 1]] : [])),
-        ),
+        graph: parsePlanGraph(plan?.graph),
+        lessonsAfter: countSavedLessons,
+        lessonsBefore: countSavedLessons,
       });
 
       await tx.planChange.create({
         data: {
           kind: "estimateUpdated",
-          payload: toPlanChangePayload({
-            effect: { ...effect, lessonsLeftOut: removed.map((item) => item.titleSnapshot) },
-            source: "system",
-          }),
+          payload: toPlanChangePayload({ effect, source: "system" }),
           planId,
           reason: "An unplayable lesson was set aside.",
           status: "applied",

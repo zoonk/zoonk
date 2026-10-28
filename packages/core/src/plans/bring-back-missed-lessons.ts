@@ -6,7 +6,6 @@ import { toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext } from "./_utils/plan-context";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { type ComputedPlan, computePlan } from "./_utils/replan";
-import { withSeenTopics } from "./_utils/seen-effect";
 import { withPlanRetry } from "./plan-conflict";
 import { getSkillArea } from "./planner/graph-areas";
 import { type AreaTopics } from "./planner/plan-effect";
@@ -37,7 +36,7 @@ function listMissedTopics({
 
 /**
  * The topics a relearn brings in, by area: the missed ones first, then the others the plan built
- * again from today brings into the plan the learner sees (see `withSeenTopics`). Naming only the
+ * again from today brings into the plan the learner sees (see `getRunEffect`). Naming only the
  * missed one, an OAB plan's legislative process and juvenile offense topics came in unnamed.
  */
 function joinTopics(missed: readonly AreaTopics[], seen: readonly AreaTopics[] = []): AreaTopics[] {
@@ -183,7 +182,7 @@ export async function bringBackMissedLessons({
         : await planWithRestored({ context, ids: plannedIds, now });
 
     const restoredIds = getPlannedIds({ computed, ids: plannedIds });
-    const seen = withSeenTopics({ computed, shown: context.items });
+    const seen = computed.effect;
 
     await commitPlan({
       change: {

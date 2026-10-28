@@ -2,7 +2,7 @@ import { getSkillArea } from "./graph-areas";
 import { type NextMockMove } from "./next-mock-move";
 import { daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { SMALL_CHANGE_DAYS, SMALL_CHANGE_LESSONS } from "./plan-change-thresholds";
-import { type PlannedItem, getItemKey } from "./plan-items";
+import { type PlannedItem } from "./plan-items";
 import { type PlanGraph } from "./plan-state";
 import { type SkillMinutes } from "./skill-minutes";
 
@@ -117,38 +117,7 @@ export type PlanEffect = {
   weeklyEvents?: WeeklyEventMove;
 };
 
-/**
- * A lesson item is one lesson; a stand-in counts the lessons it plans: the whole skill when no
- * lesson teaches it yet, the rest when the Library outlined part of it.
- */
-function countItemLessons({
-  item,
-  standInLessons,
-}: {
-  item: Pick<EffectItem, "lessonId" | "skillId">;
-  standInLessons: ReadonlyMap<string, number>;
-}): number {
-  return item.lessonId ? 1 : (standInLessons.get(item.skillId ?? "") ?? 1);
-}
-
-function getLessonCounts({
-  items,
-  standInLessons,
-}: {
-  items: readonly EffectItem[];
-  standInLessons: ReadonlyMap<string, number>;
-}) {
-  return new Map(
-    items
-      .filter((item) => item.status === "todo" && item.kind === "lesson")
-      .map((item) => [
-        getItemKey({ ...item, id: item.id ?? "" }),
-        countItemLessons({ item, standInLessons }),
-      ]),
-  );
-}
-
-function getEndDate(items: readonly EffectItem[]): string | null {
+function getEndDate(items: readonly Pick<EffectItem, "scheduledFor" | "status">[]): string | null {
   const last = items
     .filter((item) => item.status === "todo" && item.scheduledFor)
     .map((item) => item.scheduledFor?.getTime() ?? 0)
@@ -257,40 +226,12 @@ export function startsBeforeBasics({
   return added !== -1 && basics !== -1 && added < basics;
 }
 
-/** Compares what was left to do before a change with what is left after it. */
-export function getPlanEffect({
-  after,
-  before,
-  standInLessons,
-  standInLessonsBefore = standInLessons,
-}: {
-  after: readonly EffectItem[];
-  before: readonly EffectItem[];
-  /** The lessons each skill's stand-in plans after, from `getStandInLessons` or what fits. */
-  standInLessons: ReadonlyMap<string, number>;
-  /** The same before, when the plans differ in what fits (see `getFittedStandInLessons`). */
-  standInLessonsBefore?: ReadonlyMap<string, number>;
-}): PlanEffect {
-  const beforeLessons = getLessonCounts({ items: before, standInLessons: standInLessonsBefore });
-  const afterLessons = getLessonCounts({ items: after, standInLessons });
-
-  const standIns = new Set(
-    after
-      .filter((item) => isStandIn(item))
-      .map((item) => getItemKey({ ...item, id: item.id ?? "" })),
-  );
-
-  return {
-    endDateAfter: getEndDate(after),
-    endDateBefore: getEndDate(before),
-    lessonsAdded: countGained({ from: afterLessons, to: beforeLessons }),
-    ...gainsStandIns({ from: afterLessons, standIns, to: beforeLessons }),
-    lessonsRemoved: countGained({ from: beforeLessons, to: afterLessons }),
-  };
-}
-
-/** A plan item as the learner sees it in their plan: what it is, its skill and its title. */
+/**
+ * A plan item as the learner sees it in their plan: what it is, its skill, its title, and for a
+ * stand-in, the lessons it was saved with.
+ */
 type SeenItem = Pick<EffectItem, "chapterId" | "kind" | "lessonId" | "skillId" | "status"> & {
+  lessons?: number | null;
   titleSnapshot: string;
 };
 
@@ -378,6 +319,50 @@ export function listLessonsLeftOut({
       item.lessonId ? !lessonIds.has(item.lessonId) : !skillIds.has(item.skillId ?? ""),
     )
     .map((item) => item.titleSnapshot);
+}
+
+/**
+ * The one diff every card reads (R3): what a plan (`after`) changes in the plan the learner sees
+ * (`before`), the lessons it adds and removes skill by skill (see `countLessonChanges`, each side's
+ * stand-ins sized by `lessonsBefore` and `lessonsAfter`), the ones it leaves out whole by name, the
+ * notice topics it brings in or leaves out, and when each ends. Counted by item instead, a missed
+ * day's card said a stand-in of 32 lessons that fits 4 added 32, and lessons written since the save
+ * added themselves again.
+ */
+export function getSeenChange({
+  after,
+  before,
+  graph,
+  lessonsAfter,
+  lessonsBefore,
+}: {
+  after: readonly (SeenItem & Pick<EffectItem, "scheduledFor">)[];
+  before: readonly (SeenItem & Pick<EffectItem, "scheduledFor">)[];
+  graph: PlanGraph;
+  lessonsAfter: (item: SeenItem) => number;
+  lessonsBefore: (item: SeenItem) => number;
+}): Pick<
+  PlanEffect,
+  | "endDateAfter"
+  | "endDateBefore"
+  | "lessonsAdded"
+  | "lessonsAddedEstimated"
+  | "lessonsLeftOut"
+  | "lessonsRemoved"
+  | "topicsAdded"
+  | "topicsLeftOut"
+> {
+  const lessonsLeftOut = listLessonsLeftOut({ after, before });
+  const { topicsAdded, topicsLeftOut } = getTopicChanges({ after, before, graph });
+
+  return {
+    endDateAfter: getEndDate(after),
+    endDateBefore: getEndDate(before),
+    ...countLessonChanges({ after, before, lessonsAfter, lessonsBefore }),
+    ...(lessonsLeftOut.length > 0 && { lessonsLeftOut }),
+    ...(topicsAdded.length > 0 && { topicsAdded }),
+    ...(topicsLeftOut.length > 0 && { topicsLeftOut }),
+  };
 }
 
 /** Changes bigger than a lesson wait for the learner's OK before they apply. */

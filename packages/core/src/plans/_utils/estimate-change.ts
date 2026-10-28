@@ -2,7 +2,6 @@ import { SMALL_CHANGE_LESSONS } from "../planner/plan-change-thresholds";
 import { toPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import { type ComputedPlan, type PlanChangeRecord } from "./replan";
-import { getSeenEffect } from "./seen-effect";
 
 /**
  * One notice per refresh when the net lesson count the learner saw changes past the threshold, when
@@ -24,25 +23,21 @@ export function getEstimateChange({
     return null;
   }
 
-  const seen = getSeenEffect({ computed, shown: context.items });
-
-  const movesEnds = (computed.effect.phaseEnds?.length ?? 0) > 0;
-  const leavesOut = (seen.lessonsLeftOut?.length ?? 0) > 0;
+  const { effect } = computed;
+  const movesEnds = (effect.phaseEnds?.length ?? 0) > 0;
+  const leavesOut = (effect.lessonsLeftOut?.length ?? 0) > 0;
 
   if (
     !movesEnds &&
     !leavesOut &&
-    Math.abs(seen.lessonsAdded - seen.lessonsRemoved) <= SMALL_CHANGE_LESSONS
+    Math.abs(effect.lessonsAdded - effect.lessonsRemoved) <= SMALL_CHANGE_LESSONS
   ) {
     return null;
   }
 
-  // Whether additions are estimated comes from the same seen count, not the stored item count.
-  const { lessonsAddedEstimated: _planned, ...effect } = computed.effect;
-
   return {
     kind: "estimateUpdated",
-    payload: toPlanChangePayload({ effect: { ...effect, ...seen }, source: "system" }),
+    payload: toPlanChangePayload({ effect, source: "system" }),
     reason: "The plan's lesson estimates changed.",
     status: "applied",
   };

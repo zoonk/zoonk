@@ -5,7 +5,6 @@ import { getFallingBehind } from "./falling-behind";
 import { toPlanChangePayload } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import { type ComputedPlan, type PlanChangeRecord } from "./replan";
-import { withSeenTopics } from "./seen-effect";
 
 /** Plain notes for logs and admin; the apps say these changes from their kind and numbers. */
 const LEFT_WORK_NOTE = "Lessons earlier days left come first; the rest of the plan moved forward.";
@@ -46,7 +45,7 @@ export function getSettledPlanChange({
       }),
       days: countLeftDays({ context, left }),
       effect: {
-        ...withSeenTopics({ computed, shown: context.items }),
+        ...computed.effect,
         ...(phaseEnds.length > 0 && { phaseEnds }),
         ...(nextMock && { nextMock }),
       },

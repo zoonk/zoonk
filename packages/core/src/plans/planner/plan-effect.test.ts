@@ -4,15 +4,15 @@ import {
   countLessonChanges,
   getAddedSkillsStart,
   getFittedStandInLessons,
-  getPlanEffect,
+  getSeenChange,
   getTopicChanges,
   needsApproval,
   startsBeforeBasics,
 } from "./plan-effect";
 import { type PlanGraph } from "./plan-state";
 
-/** Fractions has a stand-in of 8 lessons the Library hasn't outlined yet. */
-const standInLessons = new Map([["fractions", 8]]);
+/** A graph without topics: changes name its skills. */
+const noTopics: PlanGraph = { skills: [] } as unknown as PlanGraph;
 
 function item(attrs: { date: string; lessonId?: string; skillId?: string }) {
   return {
@@ -24,13 +24,19 @@ function item(attrs: { date: string; lessonId?: string; skillId?: string }) {
     scheduledFor: fromIsoDate(attrs.date),
     skillId: attrs.skillId ?? null,
     status: "todo" as const,
+    titleSnapshot: attrs.lessonId ?? attrs.skillId ?? "",
   };
 }
 
-describe(getPlanEffect, () => {
-  // The stand-in is for the rest of a skill the plan has a lesson of: it counts the lessons still
-  // missing, as the map sizes it.
-  it("counts lessons added and removed, placeholders by their size, and the end date move", () => {
+/** One for a lesson; a stand-in as `sizes` says. */
+function sizedBy(sizes: Record<string, number>) {
+  return ({ lessonId, skillId }: { lessonId: string | null; skillId: string | null }) =>
+    lessonId ? 1 : (sizes[skillId ?? ""] ?? 1);
+}
+
+describe(getSeenChange, () => {
+  // Fractions has a stand-in of 8 lessons the Library hasn't outlined yet: it counts under its skill.
+  it("counts lessons added and removed skill by skill, stand-ins by their size, and the end date move", () => {
     const before = [
       item({ date: "2026-10-01", lessonId: "a", skillId: "fractions" }),
       item({ date: "2026-10-02", lessonId: "b" }),
@@ -41,25 +47,70 @@ describe(getPlanEffect, () => {
       item({ date: "2026-10-05", skillId: "fractions" }),
     ];
 
-    expect(getPlanEffect({ after, before, standInLessons })).toStrictEqual({
+    const sizes = sizedBy({ fractions: 8 });
+
+    expect(
+      getSeenChange({ after, before, graph: noTopics, lessonsAfter: sizes, lessonsBefore: sizes }),
+    ).toStrictEqual({
       endDateAfter: "2026-10-05",
       endDateBefore: "2026-10-02",
       lessonsAdded: 8,
       lessonsAddedEstimated: true,
+      lessonsLeftOut: ["b"],
       lessonsRemoved: 1,
     });
   });
 
   // A stand-in's lessons are the plan's estimate until the Library writes them: Pedro's card said
-  // 8 lessons for a topic the Library wrote 5 for. Written lessons are no estimate (the test above
-  // adds a stand-in, which is).
+  // 8 lessons for a topic the Library wrote 5 for. Written lessons are no estimate.
   it("says the lessons it adds are an estimate only when some aren't written yet", () => {
     const before = [item({ date: "2026-10-01", lessonId: "a" })];
     const written = [...before, item({ date: "2026-10-02", lessonId: "b" })];
+    const sizes = sizedBy({});
 
-    expect(getPlanEffect({ after: written, before, standInLessons })).not.toHaveProperty(
-      "lessonsAddedEstimated",
-    );
+    expect(
+      getSeenChange({
+        after: written,
+        before,
+        graph: noTopics,
+        lessonsAfter: sizes,
+        lessonsBefore: sizes,
+      }),
+    ).not.toHaveProperty("lessonsAddedEstimated");
+  });
+
+  it("counts a stand-in that shrinks as the lessons it leaves out", () => {
+    const stays = [item({ date: "2026-10-05", skillId: "fractions" })];
+
+    expect(
+      getSeenChange({
+        after: stays,
+        before: stays,
+        graph: noTopics,
+        lessonsAfter: sizedBy({ fractions: 2 }),
+        lessonsBefore: sizedBy({ fractions: 8 }),
+      }),
+    ).toMatchObject({ lessonsAdded: 0, lessonsRemoved: 6 });
+  });
+
+  // Counted by item, the lessons written for a saved stand-in of 8 added themselves again.
+  it("counts lessons written since the save as the stand-in's own", () => {
+    const before = [item({ date: "2026-10-05", skillId: "x" })];
+
+    const after = [
+      ...["a", "b", "c"].map((lessonId) => item({ date: "2026-10-05", lessonId, skillId: "x" })),
+      item({ date: "2026-10-06", skillId: "x" }),
+    ];
+
+    expect(
+      getSeenChange({
+        after,
+        before,
+        graph: noTopics,
+        lessonsAfter: sizedBy({ x: 5 }),
+        lessonsBefore: sizedBy({ x: 8 }),
+      }),
+    ).toMatchObject({ lessonsAdded: 0, lessonsRemoved: 0 });
   });
 });
 
@@ -71,9 +122,7 @@ describe(getFittedStandInLessons, () => {
       standInLessons: new Map([["fractions", 32]]),
     });
 
-    const after = [item({ date: "2026-10-05", skillId: "fractions" })];
-
-    expect(getPlanEffect({ after, before: [], standInLessons: fitted }).lessonsAdded).toBe(4);
+    expect(fitted.get("fractions")).toBe(4);
   });
 
   it("counts a stand-in by its own part that fits, not its skill's: written lessons take the core first", () => {
@@ -86,19 +135,6 @@ describe(getFittedStandInLessons, () => {
     });
 
     expect(fitted.get("media")).toBe(2);
-  });
-
-  it("counts the lessons a stand-in in both plans gains or loses", () => {
-    const stays = [item({ date: "2026-10-05", skillId: "fractions" })];
-
-    expect(
-      getPlanEffect({
-        after: stays,
-        before: stays,
-        standInLessons: new Map([["fractions", 6]]),
-        standInLessonsBefore: new Map([["fractions", 2]]),
-      }),
-    ).toMatchObject({ lessonsAdded: 4, lessonsRemoved: 0 });
   });
 });
 

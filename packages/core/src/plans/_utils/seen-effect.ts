@@ -1,12 +1,6 @@
-import {
-  type PlanEffect,
-  countLessonChanges,
-  getFittedStandInLessons,
-  getTopicChanges,
-  listLessonsLeftOut,
-} from "../planner/plan-effect";
+import { type PlanEffect, getFittedStandInLessons, getSeenChange } from "../planner/plan-effect";
 import { type PlanGraph } from "../planner/plan-state";
-import { type PlanContext } from "./plan-context";
+import { type ContextPlanItem } from "./plan-context";
 import { type ComputedPlan } from "./replan";
 
 type CountedItem = { lessonId: string | null; lessons?: number | null; skillId: string | null };
@@ -35,9 +29,9 @@ export function getLessonCounters({
   const [after, before] = [fitStandIns(computed), fitStandIns(fallback)];
 
   return {
-    lessonsAfter: (item: CountedItem) => (item.lessonId ? 1 : (after.get(item.skillId ?? "") ?? 1)),
+    lessonsAfter: sizeBy(after),
     lessonsBefore: (item: CountedItem) =>
-      item.lessonId ? 1 : (item.lessons ?? before.get(item.skillId ?? "") ?? 1),
+      item.lessonId ? 1 : (item.lessons ?? sizeBy(before)(item)),
   };
 }
 
@@ -56,9 +50,8 @@ function joinGraphs({ computed, fallback }: { computed: ComputedPlan; fallback: 
 }
 
 /**
- * What a planning run (`computed`) changes in the plan the learner sees (`shown`, as saved): the
- * lessons it adds and leaves out, skill by skill, the ones it leaves out whole by name, and the
- * notice topics it brings in or leaves out. Read against a plan planned again instead, a topic an
+ * What a planning run (`computed`) changes in the plan the learner sees (`shown`, as saved), as
+ * every card reads it (see `getSeenChange`). Read against a plan planned again instead, a topic an
  * earlier run had already left out was said to "leave" (Lucas's "Origin and evolution", out of his
  * plan before his change). `fallback` sizes the stand-ins saved without a size.
  */
@@ -69,58 +62,37 @@ export function getSeenEffect({
 }: {
   computed: ComputedPlan;
   fallback?: ComputedPlan;
-  shown: PlanContext["items"];
-}): Pick<
-  PlanEffect,
-  | "lessonsAdded"
-  | "lessonsAddedEstimated"
-  | "lessonsLeftOut"
-  | "lessonsRemoved"
-  | "topicsAdded"
-  | "topicsLeftOut"
-> {
-  const after = computed.built.items;
-
-  const lessons = countLessonChanges({
-    after,
-    before: shown,
-    ...getLessonCounters({ computed, fallback }),
-  });
-
-  const lessonsLeftOut = listLessonsLeftOut({ after, before: shown });
-
-  const topics = getTopicChanges({
-    after,
+  shown: readonly ContextPlanItem[];
+}): PlanEffect {
+  return getSeenChange({
+    after: computed.built.items,
     before: shown,
     graph: joinGraphs({ computed, fallback }),
+    ...getLessonCounters({ computed, fallback }),
   });
+}
 
-  return {
-    ...lessons,
-    ...(lessonsLeftOut.length > 0 && { lessonsLeftOut }),
-    ...(topics.topicsAdded.length > 0 && { topicsAdded: topics.topicsAdded }),
-    ...(topics.topicsLeftOut.length > 0 && { topicsLeftOut: topics.topicsLeftOut }),
-  };
+/** Sizes a stand-in as `sizes` say, a lesson as one. */
+function sizeBy(sizes: ReadonlyMap<string, number>) {
+  return (item: CountedItem) => (item.lessonId ? 1 : (sizes.get(item.skillId ?? "") ?? 1));
 }
 
 /**
- * A system change's effect (`computed.effect`) with the notice topics it brings into the plan the
- * learner sees (`shown`) or leaves out of it (see `getSeenEffect`): every change to which topics
- * the plan teaches names them. A test-out that brought topics in and missed days that left some
- * out said only how many lessons moved, or that the plan covers less.
+ * What a plan (`after`) would change in the one a run saves (`before`), each side's stand-ins sized
+ * as its save stores them, so a proposal's card says what applying it records against that save.
  */
-export function withSeenTopics({
-  computed,
-  shown,
+export function getBuiltChange({
+  after,
+  before,
 }: {
-  computed: ComputedPlan;
-  shown: PlanContext["items"];
+  after: ComputedPlan;
+  before: ComputedPlan;
 }): PlanEffect {
-  const { topicsAdded, topicsLeftOut } = getSeenEffect({ computed, shown });
-
-  return {
-    ...computed.effect,
-    ...(topicsAdded && { topicsAdded }),
-    ...(topicsLeftOut && { topicsLeftOut }),
-  };
+  return getSeenChange({
+    after: after.built.items,
+    before: before.built.items,
+    graph: joinGraphs({ computed: after, fallback: before }),
+    lessonsAfter: sizeBy(fitStandIns(after)),
+    lessonsBefore: sizeBy(fitStandIns(before)),
+  });
 }

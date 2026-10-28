@@ -4,7 +4,6 @@ import { type PlanEffect } from "../planner/plan-effect";
 import { loadLeftWork } from "./left-work";
 import { type PlanContext } from "./plan-context";
 import { type ComputedPlan, computePlan } from "./replan";
-import { withSeenTopics } from "./seen-effect";
 
 /**
  * What resuming a paused goal does to its plan. Paused days aren't missed days: when the pause left
@@ -31,9 +30,6 @@ export async function computeResumedPlan(
   return {
     carriedItemIds: left.map((item) => item.id),
     computed,
-    effect: {
-      ...withSeenTopics({ computed, shown: context.items }),
-      ...(phaseEnds.length > 0 && { phaseEnds }),
-    },
+    effect: { ...computed.effect, ...(phaseEnds.length > 0 && { phaseEnds }) },
   };
 }

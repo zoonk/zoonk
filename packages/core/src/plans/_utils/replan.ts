@@ -304,7 +304,7 @@ export async function computePlan({
       return bases();
     },
     built,
-    effect: getRunEffect({ built, context, kept: input.phaseEnds, standInLessons }),
+    effect: getRunEffect({ built, context, graph: saved, kept: input.phaseEnds, standInLessons }),
     get feasibility() {
       return feasibility();
     },

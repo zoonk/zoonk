@@ -8,9 +8,10 @@ import { followPlanToday } from "./_utils/follow-plan-today";
 import { getListeningPastBasicsEffect, withPastBasicsAreas } from "./_utils/level-listening-starts";
 import { parsePlanChangePayload, toPlanChangePayload } from "./_utils/plan-change-payload";
 import { type PlanContext } from "./_utils/plan-context";
+import { type PlanSnapshot, parsePlanSnapshot } from "./_utils/plan-snapshot";
 import { loadPlanAtToken } from "./_utils/plan-token";
 import { computePlan } from "./_utils/replan";
-import { withSeenTopics } from "./_utils/seen-effect";
+import { getSeenEffect } from "./_utils/seen-effect";
 import { countLessons } from "./_utils/stand-in-lessons";
 import { RECENT_CHANGE_MS } from "./_utils/today-plan-change";
 import { PlanConflictError, withPlanRetry } from "./plan-conflict";
@@ -52,74 +53,58 @@ function joinNames(older: readonly string[] = [], newer: readonly string[] = [])
   return [...new Set([...older, ...newer])];
 }
 
-type AreaTopics = { area: string; topics: string[] };
-
-function joinTopics(older: readonly AreaTopics[] = [], newer: readonly AreaTopics[] = []) {
-  const entries = [...older, ...newer];
-
-  return [...new Set(entries.map((entry) => entry.area))].map((area) => ({
-    area,
-    topics: joinNames(
-      entries.filter((entry) => entry.area === area).flatMap((entry) => entry.topics),
-    ),
-  }));
-}
-
 /**
  * Two skips as one, from the plan before the first to the plan after the last: what moved keeps its
- * first `before` and its last `after`, and what each named adds up.
+ * first `before` and its last `after`, and the lessons and topics are the diff of the plan the
+ * first one started from, every skip in it, with the plan the last one saves (`seen`, see
+ * `getSeenEffect`), as one skip's own effect reads it. Summed instead, a skill the two skips moved
+ * both ways counted twice.
  */
-function joinSkipEffects(older: PlanEffect | null, newer: PlanEffect): PlanEffect {
-  if (!older) {
-    return newer;
-  }
-
+function joinSkipEffects({
+  newer,
+  older,
+  seen,
+}: {
+  newer: PlanEffect;
+  older: PlanEffect | null;
+  seen: PlanEffect;
+}): PlanEffect {
   const areaEnds = joinMoves({
     key: (end) => end.area,
     newer: newer.areaEnds,
-    older: older.areaEnds,
+    older: older?.areaEnds,
   });
 
   const areaStarts = joinMoves({
     key: (start) => start.area,
     newer: newer.areaStarts,
-    older: older.areaStarts,
+    older: older?.areaStarts,
   });
 
   const phaseEnds = joinMoves({
     key: (end) => end.name,
     newer: newer.phaseEnds,
-    older: older.phaseEnds,
+    older: older?.phaseEnds,
   });
-
-  const lessonsLeftOut = joinNames(older.lessonsLeftOut, newer.lessonsLeftOut);
-  const listeningPastBasics = joinNames(older.listeningPastBasics, newer.listeningPastBasics);
-  const topicsAdded = joinTopics(older.topicsAdded, newer.topicsAdded);
-  const topicsLeftOut = joinTopics(older.topicsLeftOut, newer.topicsLeftOut);
-  const nextMock = joinMove(older.nextMock, newer.nextMock);
-  const weeklyEvents = joinMove(older.weeklyEvents, newer.weeklyEvents);
 
   const areaLessons = joinMoves({
     key: (area) => area.area,
     newer: newer.areaLessons,
-    older: older.areaLessons,
+    older: older?.areaLessons,
   });
 
+  const listeningPastBasics = joinNames(older?.listeningPastBasics, newer.listeningPastBasics);
+  const nextMock = joinMove(older?.nextMock, newer.nextMock);
+  const weeklyEvents = joinMove(older?.weeklyEvents, newer.weeklyEvents);
+
   return {
-    ...older,
-    ...newer,
-    endDateBefore: older.endDateBefore,
-    lessonsAdded: older.lessonsAdded + newer.lessonsAdded,
-    lessonsRemoved: older.lessonsRemoved + newer.lessonsRemoved,
+    ...seen,
     ...(areaEnds.length > 0 && { areaEnds }),
     ...(areaLessons.length > 0 && { areaLessons }),
     ...(areaStarts.length > 0 && { areaStarts }),
-    ...(lessonsLeftOut.length > 0 && { lessonsLeftOut }),
     ...(listeningPastBasics.length > 0 && { listeningPastBasics }),
     ...(nextMock && { nextMock }),
     ...(phaseEnds.length > 0 && { phaseEnds }),
-    ...(topicsAdded.length > 0 && { topicsAdded }),
-    ...(topicsLeftOut.length > 0 && { topicsLeftOut }),
     ...(weeklyEvents && { weeklyEvents }),
   };
 }
@@ -137,7 +122,12 @@ async function findUnseenSkip({
 }: {
   context: PlanContext;
   now: Date;
-}): Promise<{ change: PlanChange; payload: JsonObject; snapshot: JsonObject } | null> {
+}): Promise<{
+  change: PlanChange;
+  items: PlanSnapshot["items"];
+  payload: JsonObject;
+  snapshot: JsonObject;
+} | null> {
   const latest = await prisma.planChange.findFirst({
     orderBy: [{ createdAt: "desc" }, { id: "desc" }],
     where: { planId: context.plan.id },
@@ -164,7 +154,11 @@ async function findUnseenSkip({
   });
 
   const snapshot = kept?.plan;
-  return isJsonObject(snapshot) ? { change: latest, payload: latest.payload, snapshot } : null;
+  const items = parsePlanSnapshot(snapshot)?.items;
+
+  return isJsonObject(snapshot) && items
+    ? { change: latest, items, payload: latest.payload, snapshot }
+    : null;
 }
 
 /**
@@ -245,7 +239,7 @@ export async function announceTestedOutItems({
     });
 
     const effect = {
-      ...withSeenTopics({ computed, shown: context.items }),
+      ...computed.effect,
       ...getListeningPastBasicsEffect({ areas: pastBasicsAreas, state: context.state }),
     };
 
@@ -272,7 +266,18 @@ export async function announceTestedOutItems({
             data: {
               payload: toPlanChangePayload({
                 ...added,
-                effect: joinSkipEffects(added.effect, effect),
+                effect: joinSkipEffects({
+                  newer: effect,
+                  older: added.effect,
+                  seen: getSeenEffect({
+                    computed,
+                    shown: unseen.items.map((item) =>
+                      skipped.has(item.id) || counted.has(item.id)
+                        ? { ...item, status: "testedOut" as const }
+                        : item,
+                    ),
+                  }),
+                }),
                 lessonsSkipped: (added.lessonsSkipped ?? 0) + newlySkipped,
                 planItemIds: [...new Set([...added.planItemIds, ...skipped])],
                 versionAfter: context.plan.version + 1,

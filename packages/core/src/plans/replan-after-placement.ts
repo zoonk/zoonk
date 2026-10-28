@@ -50,7 +50,6 @@ export async function replanAfterPlacement({
     const changeId = await commitPlan({
       change: getCoverageChange({
         computed,
-        context,
         ...getListeningPastBasicsEffect({ areas: pastBasicsAreas, state: context.state }),
       }),
       computed,
