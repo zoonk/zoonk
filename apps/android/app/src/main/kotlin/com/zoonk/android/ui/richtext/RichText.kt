@@ -17,7 +17,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.semantics.CollectionInfo
@@ -39,6 +38,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.core.os.ConfigurationCompat
+import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import java.util.Locale
 
 /**
@@ -180,16 +181,14 @@ private fun typesetBlock(
         }
     }
 
-/** The design system's highlighter for a sentence the screen points at, under the text's own color. */
-private val markColor: Color
-    @Composable @ReadOnlyComposable
-    get() = MaterialTheme.colorScheme.tertiaryContainer
+/** Main's `bg-warning/15`. */
+private const val MARK_ALPHA = 0.15f
 
 @Composable
 internal fun richText(segments: List<RichSegment>): SpokenText {
     val words = rememberMathWords()
     val codeBackground = MaterialTheme.colorScheme.surfaceContainerHigh
-    val mark = markColor
+    val mark = MaterialTheme.zoonk.warning.copy(alpha = MARK_ALPHA)
 
     return remember(segments, words, codeBackground, mark) {
         var hasMath = false
@@ -363,7 +362,7 @@ private fun RichList(
                             .widthIn(min = MARKER_WIDTH)
                             .alignByBaseline()
                             .then(if (block.ordered) Modifier else Modifier.clearAndSetSemantics {}),
-                    style = style.copy(fontFeatureSettings = "tnum"),
+                    style = style.withTabularFigures(),
                     textAlign = TextAlign.End,
                 )
 

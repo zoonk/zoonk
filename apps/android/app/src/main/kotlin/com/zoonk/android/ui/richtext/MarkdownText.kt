@@ -44,6 +44,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
+import com.zoonk.android.ui.theme.withTabularFigures
 import org.commonmark.ext.gfm.strikethrough.Strikethrough
 import org.commonmark.ext.gfm.strikethrough.StrikethroughExtension
 import org.commonmark.ext.gfm.tables.TableBlock
@@ -336,7 +337,7 @@ private fun MarkdownList(
                             .widthIn(min = MARKER_WIDTH)
                             .alignByBaseline()
                             .then(if (ordered) Modifier else Modifier.clearAndSetSemantics {}),
-                    style = style.copy(fontFeatureSettings = "tnum"),
+                    style = style.withTabularFigures(),
                     textAlign = TextAlign.End,
                 )
 

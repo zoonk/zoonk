@@ -43,6 +43,14 @@ class RichTextScreenshots {
     fun phoneDark() = capture("richtext-phone-dark", dark = true)
 
     @Test
+    @Config(qualifiers = "w411dp-h2000dp-xxhdpi")
+    fun phoneLightMoreContrast() = capture("richtext-phone-light-more-contrast", dark = false, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h2000dp-night-xxhdpi")
+    fun phoneDarkMoreContrast() = capture("richtext-phone-dark-more-contrast", dark = true, moreContrast = true)
+
+    @Test
     @Config(qualifiers = "w411dp-h3600dp-xxhdpi")
     fun phoneAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
@@ -56,9 +64,10 @@ class RichTextScreenshots {
     private fun capture(
         name: String,
         dark: Boolean,
+        moreContrast: Boolean = false,
     ) {
         compose.setContent {
-            ZoonkTheme(darkTheme = dark) {
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 RichTextGallery()
             }
         }
