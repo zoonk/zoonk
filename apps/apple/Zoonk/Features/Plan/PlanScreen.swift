@@ -44,7 +44,6 @@ private struct GoalPlanView: View {
     }
     .navigationTitle(Text("Plan", tableName: "Plan", comment: "Title of the Plan tab"))
     .navigationSubtitle(subtitle(plan.value?.plan) ?? Text(verbatim: ""))
-    .toolbarTitleDisplayMode(.inlineLarge)
   }
 
   @ViewBuilder
