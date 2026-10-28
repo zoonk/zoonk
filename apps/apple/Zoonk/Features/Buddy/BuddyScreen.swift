@@ -100,8 +100,9 @@ private struct BuddyContent: View {
       .inspector(isPresented: $isDayShown) {
         BuddyDayView(
           status: status, name: name, onGlasses: { isWearing = true },
-          onClose: { isDayShown = false })
-          .presentationDetents([.medium, .large])
+          onClose: { isDayShown = false }
+        )
+        .presentationDetents([.medium, .large])
       }
       .sheet(isPresented: $isEditing) {
         BuddyEditor(status: status)

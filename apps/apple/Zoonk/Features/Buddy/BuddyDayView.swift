@@ -27,13 +27,11 @@ struct BuddyDayView: View {
               }
             }
           } header: {
-            Text("Today's missions", tableName: "Buddy", comment: "Section of the day's missions")
+            missionsHeader(today)
           }
         }
 
         Section {
-          status.growthLine
-
           Button {
             places.open(.memory)
           } label: {
@@ -69,6 +67,9 @@ struct BuddyDayView: View {
           "\(name) today", tableName: "Buddy",
           comment: "Title of the buddy's day; the argument is its name")
       )
+      .navigationSubtitle(
+        Text("\(status.stage.name) · \(status.growthLine)")
+      )
       .navigationBarTitleDisplayMode(.inline)
       .toolbar {
         ToolbarItem(placement: .cancellationAction) {
@@ -76,6 +77,45 @@ struct BuddyDayView: View {
         }
       }
     }
+  }
+
+  /// "Today's missions", how many and about how long, and the Brain Power every mission done
+  /// adds.
+  private func missionsHeader(_ today: BuddyStatus.TodayPayload) -> some View {
+    let minutes = Int(today.missions.compactMap(\.minutes).reduce(0, +).rounded())
+
+    return HStack(alignment: .firstTextBaseline) {
+      VStack(alignment: .leading, spacing: 2) {
+        Text("Today's missions", tableName: "Buddy", comment: "Section of the day's missions")
+
+        Text(
+          "\(missionCount(today.missions.count)) · ~\(minutes) min", tableName: "Buddy",
+          comment:
+            "How many missions today and about how long they take; the first argument is the count"
+        )
+        .font(.footnote)
+        .foregroundStyle(.secondary)
+      }
+
+      Spacer()
+
+      if today.fullMeal.bonus > 0 {
+        Label {
+          Text(
+            "+\(today.fullMeal.bonus) Brain Power", tableName: "Buddy",
+            comment: "The Brain Power every mission done adds")
+        } icon: {
+          Image(systemName: "brain")
+        }
+        .font(.footnote.monospacedDigit())
+        .foregroundStyle(.brain)
+      }
+    }
+    .textCase(nil)
+  }
+
+  private func missionCount(_ count: Int) -> String {
+    String(localized: "\(count) missions", table: "Buddy", comment: "How many missions today")
   }
 
   @ViewBuilder
@@ -136,6 +176,17 @@ struct BuddyMissionRow: View {
   let buddyName: String
   let open: () -> Void
 
+  /// The block it still asks ("Why doesn't the electron fall?") and about how long it takes.
+  private var stepLine: String? {
+    let minutes = mission.minutes.map {
+      String(
+        localized: "\(Int($0.rounded())) min", table: "Buddy",
+        comment: "About how long a mission takes")
+    }
+    let parts = [mission.detail?.value1.title, minutes].compactMap(\.self)
+    return parts.isEmpty ? nil : parts.joined(separator: " · ")
+  }
+
   var body: some View {
     let done = mission.status == .done
 
@@ -149,6 +200,10 @@ struct BuddyMissionRow: View {
         } label: {
           mission.name(buddy: buddyName)
             .foregroundStyle(done ? .secondary : .primary)
+
+          if !done, let line = stepLine {
+            Text(line)
+          }
         }
       } icon: {
         Image(systemName: done ? "checkmark.circle.fill" : "circle")
