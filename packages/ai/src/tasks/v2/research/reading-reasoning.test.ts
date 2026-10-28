@@ -68,7 +68,6 @@ describe(mergeQuestionFormats, () => {
     ).toStrictEqual([format("essay"), table, otherShort]);
   });
 
-  // Pedro's notes, read again: the reading's table was "other" and the narrow read's "shortAnswer".
   it("keeps one entry for a format both read, the one that names its kind", () => {
     const table = {
       ...format("other"),

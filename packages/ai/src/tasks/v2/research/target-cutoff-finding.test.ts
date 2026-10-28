@@ -23,7 +23,6 @@ const UNKNOWN = {
   status: "unknown",
 };
 
-/** A cut-off of 7 on a scale whose top the lookup gave as `maxScore`. */
 function readSeven(maxScore: number | null) {
   return toTargetCutoffFinding({ isSearched: searched, raw: { ...raw, maxScore, score: 7 } });
 }

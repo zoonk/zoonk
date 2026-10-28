@@ -33,7 +33,6 @@ function toWords(text: string): Set<string> {
   );
 }
 
-/** Whether two formats' descriptions ask about the same thing: they share a word that says what. */
 function sharesWords(first: string, second: string): boolean {
   const words = toWords(first);
   return [...toWords(second)].some((word) => words.has(word));
@@ -41,10 +40,7 @@ function sharesWords(first: string, second: string): boolean {
 
 type DescribedFormat = { description: string; kind: string };
 
-/**
- * The same question format, read twice: one kind (or one read as `other`, which the other names)
- * asking about the same thing ("organelles table" in both).
- */
+/** One kind (or one read as `other`, which the other names) asking about the same thing. */
 export function isSameFormat(first: DescribedFormat, second: DescribedFormat): boolean {
   const sameKind = first.kind === second.kind || first.kind === "other" || second.kind === "other";
 

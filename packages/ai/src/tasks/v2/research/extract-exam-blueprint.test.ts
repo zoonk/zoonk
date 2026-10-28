@@ -12,7 +12,6 @@ vi.mock("./extract-exam-blueprint-reading-again.prompt.md", () => ({
   default: "Include what LEFT_OUT lists.",
 }));
 
-// Model calls are external: the test says how the provider answers.
 vi.mock("ai", async (importOriginal) => ({
   ...(await importOriginal<typeof Ai>()),
   generateText: vi.fn(),
@@ -27,7 +26,6 @@ const notice = {
   url: "https://example.gov.br/edital.pdf",
 };
 
-/** A stream whose call ended with `error` before any output, as the AI SDK reports it. */
 function failedStream(error: Error): ReturnType<typeof streamText> {
   const failed = Promise.reject(error);
   failed.catch(() => null);
@@ -41,7 +39,6 @@ function failedStream(error: Error): ReturnType<typeof streamText> {
   } as unknown as ReturnType<typeof streamText>;
 }
 
-/** A reading that ends in a provider's error, told what an earlier reading left out or not. */
 function readFailing(corrections?: Parameters<typeof extractExamBlueprint>[0]["corrections"]) {
   return extractExamBlueprint({
     corrections,
@@ -99,7 +96,6 @@ describe(extractExamBlueprint, () => {
     );
   });
 
-  // TJ-SP's reading lost its scale and Língua Portuguesa's topics to the checks.
   it("tells a reading again what an earlier one stated that no check could confirm", async () => {
     const refused = new Error("The provider refused the request");
     vi.mocked(streamText).mockClear();

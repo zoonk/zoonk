@@ -3,7 +3,6 @@ import { replaceEmDashes } from "@zoonk/utils/string";
 
 const NUMBER_PATTERN = /\d+/gu;
 
-/** The translations as the model gave them: the texts' language, and the texts in each other one. */
 export type PassMarkTranslationOutput = {
   language: string;
   translations: { language: string; texts: string[] }[];
@@ -13,7 +12,6 @@ function listNumbers(text: string): string[] {
   return text.match(NUMBER_PATTERN) ?? [];
 }
 
-/** Whether a translation keeps every number of its line, as many times as the line has it. */
 function keepsNumbers({ line, translation }: { line: string; translation: string }): boolean {
   const left = listNumbers(translation);
 
@@ -30,10 +28,8 @@ function keepsNumbers({ line, translation }: { line: string; translation: string
 }
 
 /**
- * The translations a learner can rely on, by language code: one per asked language other than the
- * texts' own, each a line for every line, in order, keeping every number its line has (a pass mark
- * with a wrong score is worse than one in another language). Em dashes are repaired; a language
- * that fails a check is left out, so its learners read the notice's own words.
+ * A pass mark with a wrong score is worse than one in another language, so a language that loses a
+ * line or a number is left out and its learners read the notice's own words.
  */
 export function toPassMarkTranslations({
   languages,

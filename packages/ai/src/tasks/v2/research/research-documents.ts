@@ -5,11 +5,7 @@ import { formatUntrustedInput } from "../../../evaluate/untrusted-input";
 const MAX_TEXT_LENGTH = 120_000;
 const MAX_IMAGES_PER_DOCUMENT = 8;
 
-/**
- * One source as models read it. PDFs and images go as files, since models
- * read them natively; web pages and parsed Word or PowerPoint files go as
- * text, with slide images as files.
- */
+/** PDFs and images go as files, since models read them natively. */
 export type ResearchDocument = {
   file: { data: Uint8Array | URL; mediaType: string } | null;
   images: { data: string; mediaType: string }[];
@@ -22,11 +18,7 @@ function toHeader({ document, number }: { document: ResearchDocument; number: nu
   return `DOCUMENT ${number}: ${document.title}${document.url ? ` (${document.url})` : ""}`;
 }
 
-/**
- * A document's text, unless its file is attached: a PDF goes once, as the
- * file, instead of twice. Text is delimited as data because documents come
- * from the web and from learners.
- */
+/** Text is delimited as data because documents come from the web and from learners. */
 function toTextPart({
   document,
   number,
@@ -61,7 +53,7 @@ function toFileParts(document: ResearchDocument): FilePart[] {
   ];
 }
 
-/** Numbered documents (from 1) as message parts, so facts can cite a document by its number. */
+/** Numbered from 1, so facts can cite a document by its number. */
 export function toDocumentParts(documents: ResearchDocument[]): (FilePart | TextPart)[] {
   return documents.flatMap((document, index) => [
     toTextPart({ document, number: index + 1 }),

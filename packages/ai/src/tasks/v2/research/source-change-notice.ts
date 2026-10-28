@@ -17,9 +17,7 @@ const MAX_NOTICE_LENGTH = 160;
 const schema = z.object({ message: z.string() });
 
 export type SourceChangeNoticeParams = {
-  /** The exam or document that changed, such as "ENEM" or "Lei 14.790/2023". */
   source: string;
-  /** Changed fields with old and new values, or an excerpt of removed and added lines. */
   changes: string;
   language: string;
   model?: string;
@@ -28,10 +26,6 @@ export type SourceChangeNoticeParams = {
   analytics?: AiGenerationContext;
 };
 
-/**
- * Writes the one line affected learners see on Today when a source changed.
- * Only runs after a freshness check found a real change, so it's rare and cheap.
- */
 export async function generateSourceChangeNotice({
   analytics,
   changes,

@@ -31,10 +31,6 @@ function toInput({ goal }: { goal: string }) {
   return { GOAL: goal };
 }
 
-/**
- * The same rules as an evaluation question, so the eval can compare Jev and
- * other evaluation models with this task's generation models on one scorer.
- */
 export const changingFactsClassifier = {
   instructions: systemPrompt,
   labels: {
@@ -47,8 +43,7 @@ export const changingFactsClassifier = {
 };
 
 /**
- * Asks whether a goal depends on facts that change over time. Only goals that
- * do are researched from dated sources; the rest are taught from the Library.
+ * Only goals that depend on changing facts are researched; the rest are taught from the Library.
  */
 export async function classifyChangingFacts({
   analytics,
@@ -79,9 +74,8 @@ export async function classifyChangingFacts({
 }
 
 /**
- * The production path: Jev answers the same question with the same labels, in
- * the `changing-facts` eval as accurately as Luna (20 of 20) in a third of the
- * time and half the cost, with Luna as the fallback when Jev errors.
+ * Jev matched Luna on the `changing-facts` eval (20 of 20) in a third of the time and half the
+ * cost; Luna is the fallback.
  */
 export async function detectChangingFacts({
   analytics,

@@ -14,15 +14,11 @@ import {
 
 export type { TopicFrequencyFinding } from "./topic-frequency-finding";
 
-/**
- * The pair the other past-edition lookups use (`find-subject-questions`, `find-course-weights`:
- * Gemini 3.8 Flash with Parallel), at low reasoning: research runs it once per exam, beside them.
- */
+/** The other past-edition lookups' pair, at low reasoning. */
 const defaultModel = "google/gemini-3.8-flash";
 const defaultSearchTool: ResearchSearchTool = "parallel";
 const defaultReasoning: Reasoning = "low";
 
-/** A few searches for each of a handful of subjects, and the answer. */
 const MAX_STEPS = 8;
 
 const topicSchema = z.object({
@@ -45,11 +41,9 @@ const schema = z.object({
 
 type FindTopicFrequencyInput = {
   board: string | null;
-  /** The exam and, when it has phases or roles, the learner's ("OAB…, first phase"). */
   exam: string;
-  /** The subjects to rank, each with its topics in the notice's words. */
+  /** Topics in the notice's words. */
   subjects: TopicFrequencySubject[];
-  /** The learner-local date, YYYY-MM-DD. */
   today: string;
 };
 
@@ -60,7 +54,6 @@ export type FindTopicFrequencyParams = FindTopicFrequencyInput & {
   searchTool?: ResearchSearchTool;
 };
 
-/** Each subject numbered, with its topics under ids ("S2.5"), as the prompt reads them. */
 function formatSubjects(subjects: readonly TopicFrequencySubject[]): string {
   return subjects
     .map((subject, index) =>
@@ -85,12 +78,8 @@ ${formatUntrustedInput({
 }
 
 /**
- * Looks up how often an exam asked each topic of some of its subjects in recent editions, from
- * analyses of its past papers (ENEM's genetics every year, its gravitation rarely), for a notice
- * whose documents don't say: a plan short on time leaves out the topics asked least first. Only
- * one source per subject, on a page a search returned, rating the subject's own topics, is kept;
- * anything else is left out, never guessed. Fallback models aren't used: the search tool is tied
- * to the model it's measured with.
+ * A plan short on time leaves out the topics asked least first. No fallback models: the search tool
+ * is tied to the model it's measured with.
  */
 export async function findTopicFrequency({
   analytics,

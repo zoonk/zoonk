@@ -8,17 +8,14 @@ import { type Reasoning, type ServiceTier, buildProviderOptions } from "../../..
 import systemPrompt from "./check-cited-facts.prompt.md";
 
 /**
- * The `check-cited-facts` eval: Flash judged every planted fact right; Haiku accepted an
- * unsupported one. Told that a passage stated for every part of a kind supports each part of it,
- * Flash kept ENEM's 45 questions per objective test and still rejected them for the essay (4 of 4
- * cases, 8 Oct 2026).
+ * Flash judged every planted fact right on the check-cited-facts eval; Haiku accepted an
+ * unsupported one (8 Oct 2026).
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-luna"] as const;
 
 const schema = z.object({ results: z.array(z.object({ id: z.string(), supported: z.boolean() })) });
 
-/** One extracted fact in words, with the passage it quotes. */
 export type CitedFact = { id: string; passage: string; statement: string };
 
 export type CheckCitedFactsParams = {
@@ -26,7 +23,6 @@ export type CheckCitedFactsParams = {
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
-  /** The gateway tier it answers at (see `chooseServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   analytics?: AiGenerationContext;
 };
@@ -40,10 +36,8 @@ function formatFacts(facts: CitedFact[]): string {
 }
 
 /**
- * Checks that each fact says no more than its passage, the second half of the
- * rule that every blueprint field is traced to its source (code first checks
- * that the passage is really in the document). A fact the model skipped
- * counts as unsupported.
+ * Code first checks that the passage is really in the document. A fact the model skipped counts as
+ * unsupported.
  */
 export async function checkCitedFacts({
   analytics,

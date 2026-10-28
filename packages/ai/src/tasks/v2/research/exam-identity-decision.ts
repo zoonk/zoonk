@@ -4,14 +4,13 @@ import { evaluateQuestions } from "../../../evaluate/evaluate-questions";
 import { JEV_MODEL_ID } from "../../../evaluate/evaluation-models";
 import decisionPrompt from "./exam-identity-decision.prompt.md";
 
-/** The cutoff the Library identity decisions start from; the exam eval can move it. */
+/** The Library identity decisions' cutoff; the exam eval can move it. */
 const MIN_PROBABILITY = 0.6;
 const FALLBACK_EVALUATION_MODEL = "openai/gpt-6-luna";
 
-/** The decision's instructions, so evals show what the models were asked. */
 export const EXAM_IDENTITY_INSTRUCTIONS: string = decisionPrompt;
 
-/** How an exam is described to the decision: never a learner's personal details. */
+/** Never a learner's personal details. */
 export type ExamDescription = {
   board: string | null;
   country: string;
@@ -35,10 +34,7 @@ function describeExam(exam: ExamDescription): ExamDescription {
   return { board: exam.board, country: exam.country, name: exam.name, role: exam.role };
 }
 
-/**
- * Asks whether one stored exam is the requested one. Both sides are data
- * inside delimiters, so a name claiming "same exam" can't move the verdict.
- */
+/** Both sides are delimited data, so a name claiming "same exam" can't move the verdict. */
 export async function evaluateExamIdentityPair({
   candidate,
   model = JEV_MODEL_ID,
@@ -64,16 +60,11 @@ export async function evaluateExamIdentityPair({
   return { ...run, probability: answers.same.probability };
 }
 
-/** Whether a pair's probability reaches the reuse threshold. */
 export function isSameExam(probability: number): boolean {
   return decideBoolean({ probability, threshold: MIN_PROBABILITY });
 }
 
-/**
- * Picks the stored exam most likely to be the requested one, when one reaches
- * the threshold, so "Exame Nacional do Ensino Médio" and "ENEM" share one
- * blueprint. Each candidate is judged on its own, in parallel.
- */
+/** So "Exame Nacional do Ensino Médio" and "ENEM" share one blueprint. */
 export async function decideExamIdentity({
   candidates,
   request,

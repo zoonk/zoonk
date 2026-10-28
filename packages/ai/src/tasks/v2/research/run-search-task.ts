@@ -12,10 +12,8 @@ import {
 } from "./research-search-tools";
 
 /**
- * Runs a task that searches the web with `searchTool` and answers in `schema`. `isSearched` says
- * whether an address is on a site its searches returned: a page on any other site was invented by
- * the model, so a task keeps only what a search showed. Fallback models aren't used: each search
- * tool is tied to the model it's measured with.
+ * A page on a site no search returned was invented, so a task keeps only what `isSearched` passes.
+ * No fallback models: each search tool is tied to the model it's measured with.
  */
 export async function runSearchTask<T>({
   analytics,

@@ -18,27 +18,21 @@ const schema = z.object({
 });
 
 export type TranslatePassMarksParams = {
-  /** The pass marks as the exam's documents say them, in their language. */
   texts: string[];
-  /** The codes of the languages to translate into (the app's); the texts' own is skipped. */
+  /** The texts' own language is skipped. */
   languages: readonly string[];
   model?: string;
   reasoning?: Reasoning;
-  /** The gateway tier it answers at (see `chooseServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   useFallback?: boolean;
   analytics?: AiGenerationContext;
 };
 
-/** The translations kept, by language code, and the language the texts are in. */
 export type PassMarkTranslations = { language: string; translations: Record<string, string[]> };
 
 /**
- * Translates an exam's pass marks (DELE's "at least 30 points in Group 1 and 30 in Group 2", in
- * Spanish) into the app's languages when its documents are read, so a learner reads them in their
- * own (a DELE candidate learning in Portuguese saw the notice's Spanish). A shared reading serves every
- * learner of the exam, so it runs once per reading, beside its checks and at their tier. Code keeps
- * only translations with a line per pass mark and every number of it (`toPassMarkTranslations`).
+ * A shared reading serves every learner of the exam, so it runs once per reading. Code keeps only
+ * translations with a line per pass mark and every number of it.
  */
 export async function translatePassMarks({
   analytics,

@@ -8,7 +8,7 @@ import { type Reasoning, buildProviderOptions } from "../../../provider-options"
 import { type ChangingFactsTopic } from "./changing-facts";
 import systemPrompt from "./research-plan.prompt.md";
 
-/** The `research-plan` eval: all three candidates named every exam right; Flash was cheapest and fastest. */
+/** All three candidates named every exam right on the research-plan eval; Flash was cheapest. */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] as const;
 
@@ -31,14 +31,8 @@ const schema = z.object({
 
 export type ExamResearchPlan = z.infer<typeof schema>;
 
-/**
- * What research reads for a goal: an exam's official documents, a law's or a product's current
- * text (the facts that change, from `detectChangingFacts`), or reference syllabi (university
- * courses and official curricula) that a big learn goal's curriculum is checked against.
- */
 export type ResearchTopic = Exclude<ChangingFactsTopic, "none"> | "syllabus";
 
-/** What every research plan names, an exam's or a source's: what to search for and where. */
 export type ResearchSearchPlan = Pick<
   ExamResearchPlan,
   "country" | "language" | "name" | "officialDomains" | "queries" | "searchTerms"
@@ -46,7 +40,6 @@ export type ResearchSearchPlan = Pick<
 
 export type ExamResearchPlanParams = {
   goal: string;
-  /** The understood fields of the goal (exam, date, role), as JSON. */
   details?: string | null;
   model?: string;
   useFallback?: boolean;
@@ -64,7 +57,6 @@ function toDomain(value: string): string {
     .replace(/\/+$/u, "");
 }
 
-/** Codes in their canonical case, bare domains, and no more domains, queries or terms than search uses. */
 export function normalizeResearchPlan<TPlan extends ResearchSearchPlan>(plan: TPlan): TPlan {
   return {
     ...plan,
@@ -79,7 +71,6 @@ export function normalizeResearchPlan<TPlan extends ResearchSearchPlan>(plan: TP
   };
 }
 
-/** The learner's goal and what onboarding understood of it, marked as data, after today's date. */
 export function formatResearchGoal({
   details,
   goal,
@@ -92,13 +83,7 @@ export function formatResearchGoal({
 ${formatUntrustedInput({ DETAILS: details ?? "none", GOAL: goal })}`;
 }
 
-/**
- * Names what research looks for when a goal prepares for an exam: the canonical
- * exam (name and role, which are its identity), whether it's a teacher's own test,
- * where its organizer publishes, and the queries that find the current notice. It
- * never states facts about the exam itself. Laws, products and syllabi have their
- * own plan (`generateSourceResearchPlan`).
- */
+/** It never states facts about the exam itself. */
 export async function generateExamResearchPlan({
   analytics,
   details,

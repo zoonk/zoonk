@@ -12,15 +12,10 @@ import {
 import { type ResearchSearchTool } from "./research-search-tools";
 import { runSearchTask } from "./run-search-task";
 
-/**
- * The `find-official-sources` eval (5 real exams): Flash with Parallel found the
- * current official notice every time in about 10 seconds for about $0.02, the
- * cheapest of the combinations that found all five.
- */
+/** With Parallel, Flash found every current notice in about 10 seconds, the cheapest that did. */
 const defaultModel = "google/gemini-3.8-flash";
 const defaultSearchTool: ResearchSearchTool = "parallel";
 
-/** Up to six searches and the structured answer. */
 const MAX_STEPS = 8;
 const MAX_DOCUMENTS = 6;
 
@@ -49,18 +44,14 @@ const schema = z.object({ documents: z.array(documentSchema), officialFound: z.b
 
 export type FoundSourceDocument = z.infer<typeof documentSchema>;
 
-/** What search reads of a research plan: an exam's also names its board, edition and role. */
 type SearchedPlan = Pick<ResearchSearchPlan, "country" | "name" | "officialDomains" | "queries"> &
   Partial<Pick<ExamResearchPlan, "board" | "edition" | "role">>;
 
 export type FindOfficialSourcesParams = {
   plan: SearchedPlan;
-  /** What research reads; left out when confirming an upload, whose topic isn't known. */
+  /** Left out when confirming an upload, whose topic isn't known. */
   topic?: ResearchTopic;
-  /**
-   * Documents an earlier search found that couldn't be downloaded (a board's site that refuses
-   * automated downloads): the search looks for the same documents on other sites instead.
-   */
+  /** Documents that couldn't be downloaded, which the search looks for on other sites. */
   unreadable?: readonly string[];
   searchTool?: ResearchSearchTool;
   model?: string;
@@ -68,10 +59,7 @@ export type FindOfficialSourcesParams = {
   analytics?: AiGenerationContext;
 };
 
-/**
- * Only the fields search uses, picked at runtime: a whole plan also carries its search terms,
- * language and whether it's a class test, which search never reads.
- */
+/** Picked at runtime: a whole plan also carries fields search never reads. */
 function toSearchedFields(plan: SearchedPlan): Required<SearchedPlan> {
   return {
     board: plan.board ?? null,
@@ -100,12 +88,8 @@ function toPlanPrompt({
 }
 
 /**
- * Searches official domains first for an exam's current notice, a law's text,
- * a product's documentation or a subject's reference syllabi, or, given the
- * documents that couldn't be downloaded (`unreadable`), copies of them on other
- * sites. Addresses on sites no search returned are dropped, since the model
- * invented them. Fallback models aren't used: each search tool is tied to the
- * model it's measured with.
+ * Addresses on sites no search returned are dropped, since the model invented them. No fallback
+ * models: each search tool is tied to the model it's measured with.
  */
 export async function findOfficialSources({
   analytics,
@@ -118,7 +102,6 @@ export async function findOfficialSources({
 }: FindOfficialSourcesParams) {
   const userPrompt = toPlanPrompt({ plan, topic, unreadable });
 
-  // A search for copies of documents that couldn't be downloaded reads its own rules.
   const systemPrompt = selectPromptVariants({
     template: promptTemplate,
     variants: { unreadable: unreadable.length > 0 },

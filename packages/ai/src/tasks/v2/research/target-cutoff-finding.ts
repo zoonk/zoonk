@@ -1,10 +1,9 @@
 const MAX_TITLE_LENGTH = 200;
 const MAX_LABEL_LENGTH = 80;
 
-/** The lookup's answer as the model gave it. */
 export type RawTargetCutoffFinding = {
   edition: string | null;
-  /** The highest score the exam's scale allows, when the source or the exam says (ENEM's 1000). */
+  /** When the source or the exam says (ENEM's 1000). */
   maxScore: number | null;
   quota: string | null;
   score: number | null;
@@ -13,11 +12,9 @@ export type RawTargetCutoffFinding = {
   status: "found" | "unknown";
 };
 
-/** The last published cut-off of the learner's target, with where it came from. */
 export type TargetCutoffFinding =
   | {
       edition: string | null;
-      /** The top of the scale the score is on, when the source or the exam states it. */
       maxScore: number | null;
       quota: string | null;
       score: number;
@@ -55,14 +52,13 @@ function isScore({ maxScore, score }: { maxScore: number | null; score: number |
 }
 
 /**
- * Keeps only a cut-off a learner can compare their target with: a real score from a page a search
- * actually returned. Anything else reads as not known, never as a guess, so the app says nothing.
+ * Anything but a real score from a page a search returned reads as not known: the app says nothing.
  */
 export function toTargetCutoffFinding({
   isSearched,
   raw,
 }: {
-  /** Whether an address is on a site the search returned; anything else was invented. */
+  /** An address on a site the search didn't return was invented. */
   isSearched: (url: string) => boolean;
   raw: RawTargetCutoffFinding;
 }): TargetCutoffFinding {

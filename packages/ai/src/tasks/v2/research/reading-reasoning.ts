@@ -2,10 +2,8 @@ import { type Reasoning } from "../../../provider-options";
 import { type ResearchDocument } from "./research-documents";
 
 /**
- * Documents this short (a page or two of class notes, a short syllabus) are read at low
- * reasoning: a teacher's one-page notes (1,945 characters) took 283 s and 39,104 reasoning tokens
- * at the model's default on 7 Oct 2026, where whole notices take one to three minutes. A photo
- * counts as a page; a file whose text wasn't extracted can't be sized, so it reads at the default.
+ * Shorter documents read at low reasoning: a teacher's one-page notes took 283 s at the default (7
+ * Oct 2026). A file whose text wasn't extracted can't be sized, so it reads at the default.
  */
 const SHORT_READING_CHARS = 20_000;
 const PHOTO_CHARS = 3000;
@@ -24,7 +22,6 @@ function estimateReadingChars(documents: readonly ResearchDocument[]): number | 
   }, 0);
 }
 
-/** The caller's reasoning, or low for short documents (`SHORT_READING_CHARS`). */
 export function getReadingReasoning({
   documents,
   reasoning,

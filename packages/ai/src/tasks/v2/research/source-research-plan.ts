@@ -7,7 +7,7 @@ import { type Reasoning, buildProviderOptions } from "../../../provider-options"
 import { type ResearchTopic, formatResearchGoal, normalizeResearchPlan } from "./research-plan";
 import systemPrompt from "./source-research-plan.prompt.md";
 
-/** The `research-plan` eval, before laws, products and syllabi got a plan of their own: Flash was cheapest and fastest. */
+/** Flash was cheapest and fastest on the research-plan eval. */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] as const;
 
@@ -22,12 +22,10 @@ const schema = z.object({
 
 export type SourceResearchPlan = z.infer<typeof schema>;
 
-/** The sources research reads for a goal that isn't an exam: a law, a product or reference syllabi. */
 export type SourceResearchTopic = Exclude<ResearchTopic, "exam">;
 
 export type SourceResearchPlanParams = {
   goal: string;
-  /** The understood fields of the goal (purpose, role), as JSON. */
   details?: string | null;
   topic: SourceResearchTopic;
   model?: string;
@@ -36,11 +34,7 @@ export type SourceResearchPlanParams = {
   analytics?: AiGenerationContext;
 };
 
-/**
- * Names what research looks for when a goal depends on a law's or a product's current text, or is
- * checked against reference syllabi: the canonical law, product or subject, where it's published,
- * and the queries that find it (none for a subject no university course teaches).
- */
+/** No queries for a subject no university course teaches. */
 export async function generateSourceResearchPlan({
   analytics,
   details,

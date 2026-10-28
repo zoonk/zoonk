@@ -6,11 +6,7 @@ import { type ToolSet } from "ai";
 import { getModelFamily } from "../../../_utils/model-family";
 import { zoonkGateway } from "../../../gateway";
 
-/**
- * The gateway's search tools work with any model; `native` is the model's own
- * provider search (OpenAI, Anthropic or Google). The research eval compares
- * them on finding the official source, extraction accuracy, latency and price.
- */
+/** `native` is the model's own provider search; the others work with any model. */
 export const RESEARCH_SEARCH_TOOLS = ["exa", "parallel", "perplexity", "native"] as const;
 
 export type ResearchSearchTool = (typeof RESEARCH_SEARCH_TOOLS)[number];
@@ -38,9 +34,8 @@ function buildNativeSearch(model: string): ToolSet {
 }
 
 /**
- * One search tool under a stable name, so the prompt reads the same with every
- * choice. Domain filters are left to the model's tool calls: the prompt asks it
- * to search the official domains first.
+ * Domain filters are left to the model's tool calls: the prompt asks it to search the official
+ * domains first.
  */
 export function buildResearchSearchTools({
   model,
@@ -77,7 +72,6 @@ export function buildResearchSearchTools({
 
 const URL_PATTERN = /https?:\/\/[^\s"'<>\\)\]]+/gu;
 
-/** Every address that appears anywhere in a search result, however the tool shapes it. */
 function collectUrls(value: unknown): string[] {
   return JSON.stringify(value ?? null).match(URL_PATTERN) ?? [];
 }
@@ -86,10 +80,7 @@ function getHostname(url: string): string | null {
   return URL.canParse(url) ? new URL(url).hostname.replace(/^www\./u, "") : null;
 }
 
-/**
- * The sites the search actually returned. A document on a site no search
- * returned was invented by the model, so callers drop it before fetching.
- */
+/** A document on a site no search returned was invented, so callers drop it before fetching. */
 export function collectSearchedHosts({
   sources,
   toolResults,

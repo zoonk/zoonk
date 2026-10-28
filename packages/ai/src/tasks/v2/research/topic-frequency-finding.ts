@@ -5,10 +5,9 @@ export const TOPIC_FREQUENCY_LEVELS = ["high", "medium", "low"] as const;
 
 type Level = (typeof TOPIC_FREQUENCY_LEVELS)[number];
 
-/** A subject as the lookup is asked about it: its name and its topics, in the notice's words. */
 export type TopicFrequencySubject = { name: string; topics: string[] };
 
-/** The lookup's answer as the model gave it: subjects by number, topics by id ("S2.5"). */
+/** Subjects by number, topics by id ("S2.5"). */
 export type RawTopicFrequencyFinding = {
   subjects: {
     basis: string;
@@ -19,7 +18,6 @@ export type RawTopicFrequencyFinding = {
   }[];
 };
 
-/** What one source says about how often a subject's topics are asked, in the notice's words. */
 export type TopicFrequencyFinding = {
   subjects: {
     basis: string;
@@ -39,7 +37,7 @@ function toAppearances(value: number | null): number | null {
   return value !== null && Number.isInteger(value) && value >= 0 ? value : null;
 }
 
-/** The subject's own topic an id names ("S2.5" in subject 2), or null for another subject's. */
+/** Null for another subject's topic. */
 function findTopic({
   id,
   number,
@@ -58,7 +56,6 @@ function findTopic({
   return subject.topics[Number(match.topic) - 1] ?? null;
 }
 
-/** The topics a source rates, each once, in the notice's words. */
 function toTopics({
   entry,
   subject,
@@ -80,16 +77,14 @@ function toTopics({
 }
 
 /**
- * Keeps only what a plan can rank topics by: for each subject asked about, once, the topics of
- * its own that one source rates, from a page a search actually returned. Anything else is left
- * out, never guessed.
+ * Only one source's rating of a subject's own topics, from a page a search returned; never guessed.
  */
 export function toTopicFrequencyFinding({
   isSearched,
   raw,
   subjects,
 }: {
-  /** Whether an address is on a site the search returned; anything else was invented. */
+  /** An address on a site the search didn't return was invented. */
   isSearched: (url: string) => boolean;
   raw: RawTopicFrequencyFinding;
   subjects: readonly TopicFrequencySubject[];

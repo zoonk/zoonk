@@ -1,7 +1,7 @@
 const MAX_TITLE_LENGTH = 200;
 const MAX_EDITION_LENGTH = 80;
 
-/** The lookup's answer as the model gave it: counts by the subject's number in `SUBJECTS`. */
+/** Counts by the subject's number in `SUBJECTS`. */
 export type RawSubjectQuestionsFinding = {
   counts: { questions: number; subject: number }[];
   edition: string | null;
@@ -10,10 +10,7 @@ export type RawSubjectQuestionsFinding = {
   status: "found" | "unknown";
 };
 
-/**
- * Each subject's questions in the order the subjects were asked (null for one the source gives no
- * single count for), with where they came from.
- */
+/** Null for a subject the source gives no single count for. */
 export type SubjectQuestionsFinding =
   | {
       edition: string | null;
@@ -34,7 +31,7 @@ function isCount(value: number): boolean {
   return Number.isInteger(value) && value >= 0;
 }
 
-/** One count per subject, in their order: null for a subject with none, two, or not a count. */
+/** Null for a subject with none, two, or not a count. */
 function toQuestions({
   counts,
   subjectCount,
@@ -49,9 +46,8 @@ function toQuestions({
 }
 
 /**
- * Whether the counts fit the exam's total: every subject's adds up to it, and some subjects' never
- * pass it (the source counts a subject the notice's reading doesn't name, as one reading of the
- * OAB's notice dropped ethics and its 8 of 80).
+ * Some subjects' counts may fall short of the total: the source can count a subject the reading
+ * missed (one reading of the OAB's notice dropped ethics and its 8 of 80).
  */
 function fitsTotal({ questions, total }: { questions: (number | null)[]; total: number | null }) {
   if (total === null) {
@@ -63,10 +59,7 @@ function fitsTotal({ questions, total }: { questions: (number | null)[]; total: 
 }
 
 /**
- * Keeps only counts a learner can plan by: from a page a search actually returned, one per
- * subject, adding up to the exam's total when the notice gives one and every subject has its
- * count. A subject the source gives no single count for has none, and the others keep theirs;
- * anything else reads as not known, never as a guess.
+ * A subject without a single count has none and the others keep theirs; anything else is unknown.
  */
 export function toSubjectQuestionsFinding({
   isSearched,
@@ -74,7 +67,7 @@ export function toSubjectQuestionsFinding({
   subjectCount,
   total,
 }: {
-  /** Whether an address is on a site the search returned; anything else was invented. */
+  /** An address on a site the search didn't return was invented. */
   isSearched: (url: string) => boolean;
   raw: RawSubjectQuestionsFinding;
   subjectCount: number;

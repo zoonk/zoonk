@@ -10,15 +10,11 @@ import { runSearchTask } from "./run-search-task";
 
 export type { CourseWeightsFinding } from "./course-weights-finding";
 
-/**
- * The pair `find-subject-questions` uses (Gemini 3.8 Flash with Parallel), at low reasoning: the
- * same kind of lookup, a table on a page a search returns, about two cents a goal.
- */
+/** `find-subject-questions`'s pair for the same kind of lookup, at low reasoning. */
 const defaultModel = "google/gemini-3.8-flash";
 const defaultSearchTool: ResearchSearchTool = "parallel";
 const defaultReasoning: Reasoning = "low";
 
-/** A few searches and the answer. */
 const MAX_STEPS = 5;
 
 const schema = z.object({
@@ -30,15 +26,10 @@ const schema = z.object({
 });
 
 type FindCourseWeightsInput = {
-  /** The course the learner wants ("Medicina"). */
   course: string;
-  /** The entrance exam ("ENEM"). */
   exam: string;
-  /** The institution the learner wants ("UFMG"). */
   institution: string;
-  /** The exam's parts as its notice names them. */
   subjects: string[];
-  /** The learner-local date, YYYY-MM-DD. */
   today: string;
 };
 
@@ -62,13 +53,7 @@ ${formatUntrustedInput({
   `;
 }
 
-/**
- * Looks up the weights the learner's course uses for each part of an entrance exam at the
- * learner's institution (medicine at UFMG counts natural sciences and the essay more), so the plan gives
- * those parts their share of the time and the learner sees why. Only one source's weights for one
- * selection, on a page a search returned, are kept; anything else reads as not known. Fallback
- * models aren't used: the search tool is tied to the model it's measured with.
- */
+/** No fallback models: the search tool is tied to the model it's measured with. */
 export async function findCourseWeights({
   analytics,
   model = defaultModel,

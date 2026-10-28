@@ -8,10 +8,8 @@ import { type ResearchDocument, toDocumentParts } from "./research-documents";
 import systemPrompt from "./upload-visibility.prompt.md";
 
 /**
- * The `upload-visibility` eval: every candidate was right; Luna was the cheapest. It compares
- * generation models only: besides public or private, the task returns the title, publisher,
- * language and kind that research's confirming title search needs, and it reads PDF and image
- * pages, while an evaluation model (Jev) answers questions over text alone.
+ * Every candidate was right on the upload-visibility eval and Luna was cheapest. Jev can't do this:
+ * the task also returns the title, publisher, language and kind, and reads PDF and image pages.
  */
 const defaultModel = "openai/gpt-6-luna";
 const fallbackModels = ["google/gemini-3.8-flash", "google/gemini-3.5-flash-lite"] as const;
@@ -50,11 +48,7 @@ export type UploadVisibilityParams = {
   analytics?: AiGenerationContext;
 };
 
-/**
- * Only the start of a text document goes to the model. A PDF or an image is
- * sent as it is, since cutting a PDF's pages would mean parsing and rebuilding
- * it, and models read a notice's cover as quickly as its text.
- */
+/** A PDF or an image goes as it is, since cutting a PDF's pages would mean rebuilding it. */
 function toExcerpt(document: ResearchDocument): ResearchDocument {
   return {
     ...document,
@@ -63,11 +57,7 @@ function toExcerpt(document: ResearchDocument): ResearchDocument {
   };
 }
 
-/**
- * Decides whether an upload is a document its publisher made public, such as
- * an exam notice or a law, which may be shared with other learners after a
- * search confirms it; anything else, and anything unsure, stays private.
- */
+/** A public document may be shared after a search confirms it; anything unsure stays private. */
 export async function classifyUploadVisibility({
   analytics,
   document,

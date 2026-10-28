@@ -5,7 +5,6 @@ const MAX_EDITION_LENGTH = 80;
 const MIN_OPTIONS = 2;
 const MAX_OPTIONS = 10;
 
-/** The lookup's answer as the model gave it. */
 export type RawChoiceOptionsFinding = {
   edition: string | null;
   options: number | null;
@@ -14,7 +13,6 @@ export type RawChoiceOptionsFinding = {
   status: "found" | "unknown";
 };
 
-/** How many options each of the exam's multiple-choice questions had, with where it came from. */
 export type ChoiceOptionsFinding =
   | {
       edition: string | null;
@@ -35,15 +33,12 @@ function isOptionCount(value: number | null): value is number {
   return value !== null && Number.isInteger(value) && value >= MIN_OPTIONS && value <= MAX_OPTIONS;
 }
 
-/**
- * Keeps only a count questions can be written by: a whole number of options from a page a search
- * actually returned. Anything else reads as not known, never as a guess.
- */
+/** Anything but a whole number from a page a search returned reads as not known, never a guess. */
 export function toChoiceOptionsFinding({
   isSearched,
   raw,
 }: {
-  /** Whether an address is on a site the search returned; anything else was invented. */
+  /** An address on a site the search didn't return was invented. */
   isSearched: (url: string) => boolean;
   raw: RawChoiceOptionsFinding;
 }): ChoiceOptionsFinding {

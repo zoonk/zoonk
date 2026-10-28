@@ -18,48 +18,37 @@ import { getReadingReasoning } from "./reading-reasoning";
 import { type ResearchDocument, toDocumentParts } from "./research-documents";
 
 /**
- * The `extract-exam-blueprint` eval on 5 real notices: Flash 32/32 facts, Sol 30/32, Opus 28/32.
- * On 23 cases (13 Oct 2026), on the 21 both read to the end: Flash 9.65, Gemini 4 Argon 9.82 (never
- * lower on a case), p50 141 s and 116 s, at $74 and $136 per 1,000 readings, Argon's doubling on
- * 1 Dec 2026. Both stopped on recitation (Flash once, Argon twice), which falls back to Sol.
+ * Flash read 32 of 32 facts on the extract-exam-blueprint eval; Gemini 4 Argon scored a little
+ * higher at nearly twice the price (13 Oct 2026). Both stop on recitation now and then, which falls
+ * back to Sol.
  */
 const defaultModel = "google/gemini-3.8-flash";
 const fallbackModels = ["openai/gpt-6-sol", "anthropic/claude-opus-5.5"] as const;
 
-/** Where a fact came from: the document's number and the passage quoted from it. */
 const cited = { document: z.number().int(), passage: z.string() };
 
 /** Facts a notice states in several places cite each passage. */
 const citedMany = { passages: z.array(z.object(cited)) };
 
 /**
- * The reading streams, so a long one never waits on response headers: three SAT readings hit the
- * five-minute header timeout before one answered in 94 s. The same PRF notice (21,000 output
- * tokens, mostly reasoning) took 68 s once and 264 s another time, so a reading's length follows
- * the provider's speed; one that sends nothing for this long has stalled, and the step retries it
- * instead of waiting.
+ * The reading streams, so a long one never waits on response headers (three SAT readings hit the
+ * five-minute header timeout). Its length follows the provider's speed, so one that sends nothing
+ * this long has stalled and the step retries it.
  */
 const READING_TIMEOUT = { chunkMs: 60_000, firstChunkMs: 150_000 };
 
 /**
- * How a stream ends when the provider stops it for its content: Gemini ends a reading that copies
- * a long syllabus or passage word for word as a recitation (the Câmara notice's 180 topics, twice
- * in three readings on 5 Oct 2026). The gateway only falls back on errors, so the task reads the
- * documents again with the next model.
+ * Gemini ends a reading that copies a long syllabus word for word as a recitation (5 Oct 2026). The
+ * gateway only falls back on errors, so the task reads the documents again with the next model.
  */
 const CONTENT_FILTER = "content-filter";
 
-/** A heading of the syllabus over some of a subject's topics, and the first topic under it. */
 const topicHeadingSchema = z.object({ firstTopic: z.string(), name: z.string() });
 
 /**
- * One thing a written section asks ("two discursive questions of up to 20 lines"), or one recording
- * part of a listening section ("Part 1: a conversation in an everyday context, form completion"),
- * with how many times that recording is played; `plays` is null for written tasks and when the
- * notice doesn't say. It quotes every passage it comes from, the line that states the task or
- * part itself first (its claims name it by that line): a format page states a part, its setting,
- * its questions and its plays in separate sentences, some about several parts at once ("Parts 1
- * and 2 deal with everyday, social situations"), away from the section's summary.
+ * `plays` is null for written tasks and when the notice doesn't say. It quotes every passage it
+ * comes from, the line that states the task first, since a format page states a part's details in
+ * separate sentences.
  */
 const writtenTaskSchema = z.object({
   ...citedMany,
@@ -69,9 +58,8 @@ const writtenTaskSchema = z.object({
 });
 
 /**
- * The scale the result is reported on, as the notice states it (a range, its step and the score
- * that passes), with `fromPercent` only where the notice publishes a linear conversion from the
- * share of right answers; null when it states no scale.
+ * `fromPercent` only where the notice publishes a linear conversion from the share of right
+ * answers; null when it states no scale.
  */
 const scaleSchema = z.object({
   fromPercent: z.object({ base: z.number(), perPercent: z.number() }).nullable(),
@@ -82,11 +70,6 @@ const scaleSchema = z.object({
   step: z.number().nullable(),
 });
 
-/**
- * How candidates move through a section, when the notice says: never back to a question once
- * left, a clock per question, an answer before the next one shows, and how many answers the
- * review at its end may change.
- */
 const navigationSchema = z.object({
   answerChanges: z.number().int().nullable(),
   forwardOnly: z.boolean(),
@@ -122,37 +105,21 @@ const extractionSchema = z.object({
         /** The result depends on the other candidates (a percentile, a standardized score). */
         relative: z.boolean(),
         scale: scaleSchema.nullable(),
-        /**
-         * For `wrongCancelsRight`, the share of a right answer's points a wrong one takes away (1,
-         * or 0.25 for +4 and -1); null when the notice gives no numbers or wrong answers cost none.
-         */
+        /** For `wrongCancelsRight` (0.25 for +4 and -1); null when the notice gives no numbers. */
         wrongPenalty: z.number().nullable(),
       }),
       sections: z.array(
         z.object({
-          /**
-           * The lines the section's questions, minutes and details come from: a format page
-           * states them under the section's own heading, away from the exam's summary.
-           */
           ...citedMany,
-          /** The break the notice gives after this section, before the next, in minutes. */
           breakAfterMinutes: z.number().int().nullable(),
           day: z.number().int().nullable(),
-          /**
-           * `written`: answered in writing (a discursive test, an essay, a legal brief);
-           * `listening`, `speaking` and `practical` for tests of those kinds.
-           */
           kind: z.enum(["objective", "written", "listening", "speaking", "practical"]),
           minutes: z.number().int().nullable(),
           name: z.string(),
           navigation: navigationSchema.nullable(),
           questions: z.number().int().nullable(),
-          /**
-           * What a written section asks, or a listening section's recording parts, as the notice
-           * says them; empty for an objective one.
-           */
+          /** Empty for an objective section. */
           tasks: z.array(writtenTaskSchema),
-          /** What may be used or is given in the section, in one sentence of the notice's. */
           tools: z.string().nullable(),
         }),
       ),
@@ -168,7 +135,7 @@ const extractionSchema = z.object({
   rules: z.array(
     z.object({
       ...cited,
-      /** `passMark`: what it takes to pass, so it can be said once where learners look for it. */
+      /** `passMark` is said once where learners look for it. */
       kind: z.enum(["passMark", "other"]),
       text: z.string(),
     }),
@@ -176,38 +143,24 @@ const extractionSchema = z.object({
   subjects: z.array(
     z.object({
       ...citedMany,
-      /**
-       * The choice the subject is an option of, when candidates take only one of several subjects
-       * (ENEM's foreign language: English or Spanish); null otherwise.
-       */
+      /** For one of several subjects candidates pick from (ENEM's foreign language); else null. */
       choiceGroup: z.string().nullable(),
-      /** The part of the exam the notice puts the subject in, such as its basic knowledge (P1). */
       group: z.string().nullable(),
-      /**
-       * A skills matrix's competency and ability statements, when the topics are the contents
-       * it's paired with (ENEM's "objects of knowledge"); empty otherwise.
-       */
+      /** When the topics are a skills matrix's paired contents (ENEM's); empty otherwise. */
       matrix: z.array(z.string()),
       name: z.string(),
-      /** The subject whose question count includes this one's (an option inside ENEM's languages). */
+      /** The subject whose question count includes this one's. */
       partOf: z.string().nullable(),
       questions: z.number().int().nullable(),
-      /** What learners call the subject when its name is long, such as "Constitutional Law". */
+      /** What learners call a long-named subject. */
       shortName: z.string(),
-      /**
-       * The headings the syllabus puts the subject's topics under (ENEM's physics, chemistry and
-       * biology in natural sciences), each with the first of `topics` under it; empty when it
-       * lists them without headings.
-       */
+      /** Each with the first of `topics` under it; empty when the syllabus has no headings. */
       topicHeadings: z.array(topicHeadingSchema),
       topics: z.array(z.string()),
       weight: z.number().nullable(),
     }),
   ),
-  /**
-   * The language the exam certifies or measures candidates' command of (IELTS and PTE Academic:
-   * English), as an ISO 639-1 code; null when it tests subjects, a language among them included.
-   */
+  /** Null when the exam tests subjects, a language among them included. */
   testedLanguage: z.object({ ...cited, language: z.string() }).nullable(),
   topicFrequency: z.array(
     z.object({
@@ -223,13 +176,7 @@ const extractionSchema = z.object({
 
 export type BlueprintExtraction = z.infer<typeof extractionSchema>;
 
-/**
- * What the check of an earlier reading of the same documents found it left out (see
- * `checkExamReading`): a subject they name as part of the exam, a subject's count they state,
- * counts that don't add up to the exam's questions, or what it stated that no check could confirm
- * from what it quoted (`unconfirmed`: the result's scale, the exam's day or a subject's topics).
- * `document` is the document's number.
- */
+/** `unconfirmed`: what a reading stated that no check could confirm from what it quoted. */
 export type ReadingCorrection =
   | { document: number; kind: "missingSubject"; name: string; passage: string }
   | { document: number; kind: "missingCount"; passage: string; questions: number; subject: string }
@@ -237,30 +184,19 @@ export type ReadingCorrection =
   | { kind: "unconfirmed"; part: "examDate" | "scale" | "topics"; subject: string | null };
 
 export type ExtractExamBlueprintParams = {
-  /** The exam's canonical name and role, such as "Banco do Brasil, Clerk". */
   exam: string;
   documents: ResearchDocument[];
-  /** What an earlier reading left out, for a reading again that includes it. */
   corrections?: ReadingCorrection[];
   model?: string;
   useFallback?: boolean;
   reasoning?: Reasoning;
-  /** The gateway tier it answers at (see `ServiceTier`); the standard one when unset. */
   serviceTier?: ServiceTier;
   analytics?: AiGenerationContext;
 };
 
 /**
- * Reads an exam's documents (the notice and its corrections, the syllabus,
- * past papers) into a blueprint where every fact quotes its passage. It never
- * fills a gap from the model's own knowledge; the caller checks each fact
- * against its passage and asks the learner for the notice when too little is
- * left. A reading the provider stops for its content is read again with the
- * next model (see `CONTENT_FILTER`). The exam's question formats are also read
- * on their own, at the same time (`extractQuestionFormats`), and fill what the
- * reading missed; that narrow read failing leaves the reading as it is. Its own
- * provenance (`formatsProvenance`, null when it failed) sends its own event; an
- * eval adds it to what the reading spent.
+ * Never fills a gap from the model's own knowledge. The question formats are read on their own at
+ * the same time and fill what the reading missed; that read failing leaves the reading as it is.
  */
 export async function extractExamBlueprint(
   params: ExtractExamBlueprintParams,
@@ -311,7 +247,6 @@ async function readWithFallback(
   throw read.error;
 }
 
-/** A reading the provider stopped for its content, which another model may finish. */
 class ContentFilteredError extends Error {
   constructor(model: string) {
     super(`${model} stopped the blueprint reading for its content.`);
@@ -319,7 +254,6 @@ class ContentFilteredError extends Error {
   }
 }
 
-/** What a reading stated that no check could confirm, and how to state it so a check can. */
 function describeUnconfirmed(
   correction: Extract<ReadingCorrection, { kind: "unconfirmed" }>,
 ): string {
@@ -348,15 +282,11 @@ function describeCorrection(correction: ReadingCorrection): string {
   return `- The subjects' questions add up to ${correction.sum}, but the exam has ${correction.total}.`;
 }
 
-/**
- * A reading again reads what the check found left out (`LEFT_OUT`) with its own rules after the
- * usual ones; a first reading gets the usual rules alone.
- */
 function getInstructions(corrections: readonly ReadingCorrection[]): string {
   return corrections.length > 0 ? `${systemPrompt}\n${readingAgainPrompt}` : systemPrompt;
 }
 
-/** What an earlier reading left out, after the documents: it changes with every reading. */
+/** After the documents, since it changes with every reading. */
 function toCorrectionParts(corrections: readonly ReadingCorrection[]): TextPart[] {
   if (corrections.length === 0) {
     return [];
