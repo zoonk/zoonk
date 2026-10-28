@@ -1,9 +1,18 @@
 import SwiftUI
 
-/// One screen of the lesson, its verdict or "fix it" note under it once checked (scrolled into
-/// view, so the bar stays small at large text sizes), and the action bar pinned at the bottom with
-/// the one next action (Check, Continue, ...) and Previous.
+/// One screen of the lesson, its verdict or "fix it" note once checked (scrolled into view, so the
+/// bar stays small at large text sizes), and the action bar pinned at the bottom with the one next
+/// action (Check, Continue, ...) and Previous.
+///
+/// Where each half gets a phone-width column (the open iPhone Duo, iPad, a phone in landscape) the
+/// screen is a spread, by `PaneSpace`'s rule: the screen on the leading page, the learner's turn on
+/// the trailing one with the action bar at its bottom, so the bar never moves from one screen to
+/// the next; partially folded like a book, the pages meet at the fold. Elsewhere it's one column:
+/// the screen, then the turn. The trailing page is the same view in both, so what the learner is
+/// doing (a canvas, a recording, a field) carries through a fold, an unfold or a rotation.
 struct LessonStageView: View {
+  @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
   let store: LessonPlayerStore
   let state: LessonPlayerState
 
@@ -19,57 +28,91 @@ struct LessonStageView: View {
     return result.isCorrect
   }
 
+  /// The spread's pages, or nil for one column, which accessibility text sizes always get.
+  private func pages(_ proxy: GeometryProxy) -> PaneSpace.Panes? {
+    dynamicTypeSize.isAccessibilitySize ? nil : PaneSpace(proxy).panes(primaryShare: 0.5)
+  }
+
   var body: some View {
     if let step = state.currentStep {
-      ScrollViewReader { proxy in
-        ScrollView {
-          VStack(alignment: .leading, spacing: 24) {
-            LessonNotice(state: state, store: store)
+      // A reader, so a wide screen never shows the one-column version first.
+      GeometryReader { proxy in
+        let pages = pages(proxy)
 
-            LessonStepView(step: step, state: state, store: store)
+        HStack(spacing: 0) {
+          if let pages {
+            LessonPage(store: store) {
+              LessonNotice(state: state, store: store)
 
-            LessonCheckNote(state: state)
-              .id(Self.checkNoteId)
+              VStack(alignment: .leading, spacing: 20) {
+                LessonStepView(step: step, state: state, store: store, part: .screen)
+                LessonStepNotes(step: step)
+              }
+            }
+            .frame(width: pages.primary)
+          }
 
-            if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
-              LessonVerdictView(
-                step: step, result: result, store: store,
-                willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position } ?? false,
-                hyperdriveStreak: state.hyperdriveStreak(for: step.id)
-              )
-              .id(Self.verdictId)
+          ScrollViewReader { scroll in
+            LessonPage(store: store) {
+              if pages == nil {
+                LessonNotice(state: state, store: store)
+              }
 
-              if state.struggleOffer != nil {
-                LessonAskBuddyOffer(reason: .misses, store: store)
+              VStack(alignment: .leading, spacing: 20) {
+                if pages == nil {
+                  LessonStepView(step: step, state: state, store: store, part: .screen)
+                }
+
+                LessonStepView(step: step, state: state, store: store, part: .turn)
+
+                if pages == nil {
+                  LessonStepNotes(step: step)
+                }
+              }
+
+              LessonCheckNote(state: state)
+                .id(Self.checkNoteId)
+
+              if let result = state.currentResult, state.phase == .feedback, !step.showsOwnResult {
+                LessonVerdictView(
+                  step: step, result: result, store: store,
+                  willReturn: state.queue.lastIndex(of: step.id).map { $0 > state.position }
+                    ?? false,
+                  hyperdriveStreak: state.hyperdriveStreak(for: step.id)
+                )
+                .id(Self.verdictId)
+
+                if state.struggleOffer != nil {
+                  LessonAskBuddyOffer(reason: .misses, store: store)
+                }
+              }
+            }
+            .onChange(of: state.currentResult != nil) { _, hasResult in
+              if hasResult {
+                scroll.scrollTo(Self.verdictId, anchor: .bottom)
+              }
+            }
+            .onChange(of: state.notice == .selfCorrect || state.checkFailed) { _, hasNote in
+              if hasNote {
+                scroll.scrollTo(Self.checkNoteId, anchor: .bottom)
               }
             }
           }
-          .frame(maxWidth: 680, alignment: .leading)
-          .frame(maxWidth: .infinity)
-          .scenePadding()
-        }
-        .onScrollPhaseChange { _, phase in
-          if phase != .idle {
-            store.touches += 1
+          .safeAreaBar(edge: .bottom) {
+            // On the trailing page the bar is already past the fold; one column moves it there.
+            LessonActionBar(store: store, state: state, step: step)
+              .keepsOffFold()
           }
+          // The fold is the trailing page's safe area, so its content and the action bar stay
+          // clear of the crease.
+          .safeAreaPadding(.leading, pages?.gap ?? 0)
+          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
-        .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
-        .onChange(of: state.currentResult != nil) { _, hasResult in
-          if hasResult {
-            proxy.scrollTo(Self.verdictId, anchor: .bottom)
-          }
-        }
-        .onChange(of: state.notice == .selfCorrect || state.checkFailed) { _, hasNote in
-          if hasNote {
-            proxy.scrollTo(Self.checkNoteId, anchor: .bottom)
-          }
-        }
+        .environment(\.isPaneSplit, pages != nil)
       }
       .id(step.id)
+      .simultaneousGesture(TapGesture().onEnded { store.touches += 1 })
       .scrollDismissesKeyboard(.interactively)
-      .safeAreaBar(edge: .bottom) {
-        LessonActionBar(store: store, state: state, step: step)
-      }
       .sensoryFeedback(trigger: countedVerdict(step)) { _, isCorrect in
         isCorrect.map { $0 ? .success : .error }
       }
@@ -78,6 +121,40 @@ struct LessonStageView: View {
           LessonSounds.shared.play(.correct)
         }
       }
+    }
+  }
+}
+
+/// One page of the stage: a column of the screen's parts that scrolls on its own, as wide as a
+/// readable line.
+private struct LessonPage<Content: View>: View {
+  let store: LessonPlayerStore
+  @ViewBuilder let content: Content
+
+  var body: some View {
+    ScrollView {
+      VStack(alignment: .leading, spacing: 24) {
+        content
+      }
+      .frame(maxWidth: 680, alignment: .leading)
+      .frame(maxWidth: .infinity)
+      .scenePadding()
+    }
+    .onScrollPhaseChange { _, phase in
+      if phase != .idle {
+        store.touches += 1
+      }
+    }
+  }
+}
+
+/// What a screen notes under itself: where it comes from.
+private struct LessonStepNotes: View {
+  let step: LessonStep
+
+  var body: some View {
+    if let citation = step.citation {
+      LessonCitationView(citation: citation)
     }
   }
 }

@@ -1,26 +1,38 @@
 import SwiftUI
 
-/// Language practice: a word or a letter to learn, and exercises that build or pick an answer.
+/// Language practice: a word or a letter to learn, and exercises that build or pick an answer. The
+/// screen is what to answer; the turn is the options, blanks, word bank or columns.
 struct LanguageStepView: View {
   let exercise: LanguageExercise
   let wordHints: WordHints?
   let context: LessonStepContext
+  let part: LessonStepPart
 
   var body: some View {
-    switch exercise.kind {
-    case .vocabulary:
+    switch (exercise.kind, part) {
+    case (.vocabulary, .screen):
       VocabularyView(exercise: exercise, wordHints: wordHints)
-    case .alphabet:
+    case (.alphabet, .screen):
       AlphabetView(content: exercise.content)
-    case .multipleChoice:
-      MultipleChoiceView(exercise: exercise, context: context)
-    case .translation:
-      TranslationView(exercise: exercise, context: context)
-    case .fillBlank:
+    case (.multipleChoice, _):
+      MultipleChoiceView(exercise: exercise, context: context, part: part)
+    case (.translation, _):
+      TranslationView(exercise: exercise, context: context, part: part)
+    case (.fillBlank, .screen):
+      if let question = exercise.content.question {
+        LessonQuestionText(text: question)
+      }
+    case (.fillBlank, .turn):
       FillBlankView(exercise: exercise, context: context)
-    case .reading, .listening:
-      ArrangeWordsView(exercise: exercise, context: context)
-    case .matchColumns:
+    case (.reading, _), (.listening, _):
+      ArrangeWordsView(exercise: exercise, context: context, part: part)
+    case (.matchColumns, .screen):
+      LessonQuestionText(
+        text: exercise.content.question
+          ?? String(
+            localized: "Match the pairs.", table: "Player",
+            comment: "Instruction of a match-the-pairs exercise"))
+    case (.matchColumns, .turn):
       MatchColumnsView(exercise: exercise, context: context)
     default:
       EmptyView()
@@ -151,16 +163,24 @@ private struct AlphabetView: View {
 private struct MultipleChoiceView: View {
   let exercise: LanguageExercise
   let context: LessonStepContext
+  let part: LessonStepPart
 
   var body: some View {
-    if let text = exercise.content.context {
-      LessonRichText(text).foregroundStyle(.secondary)
-    }
+    switch part {
+    case .screen:
+      if let text = exercise.content.context {
+        LessonRichText(text).foregroundStyle(.secondary)
+      }
 
-    if let question = exercise.content.question {
-      LessonQuestionText(text: question)
+      if let question = exercise.content.question {
+        LessonQuestionText(text: question)
+      }
+    case .turn:
+      options
     }
+  }
 
+  private var options: some View {
     LessonOptionList(
       options: (exercise.content.options ?? []).map {
         LessonOption(id: $0.id, text: $0.text, isCorrect: $0.isCorrect)
@@ -179,32 +199,41 @@ private struct TranslationView: View {
 
   let exercise: LanguageExercise
   let context: LessonStepContext
+  let part: LessonStepPart
 
   var body: some View {
     if let word = exercise.word {
-      ScreenChip(
-        text: Text(
-          "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"))
-      LessonQuestionText(text: word.translation)
+      switch part {
+      case .screen:
+        ScreenChip(
+          text: Text(
+            "Translate", tableName: "Player",
+            comment: "Label above a word or sentence to translate"))
+        LessonQuestionText(text: word.translation)
+      case .turn:
+        options(word)
+      }
+    }
+  }
 
-      LessonOptionList(
-        options: exercise.translationOptions.map {
-          LessonOption(
-            id: $0.id, text: $0.word, detail: $0.romanization, isCorrect: $0.id == word.id)
-        },
-        selectedId: context.answer.flatMap {
-          if case .translation(let id) = $0 { id } else { nil }
-        },
-        isChecked: context.result != nil,
-        isLocked: context.isLocked
-      ) { id in
-        context.select(.translation(selectedOptionId: id))
+  private func options(_ word: LanguageExercise.Word) -> some View {
+    LessonOptionList(
+      options: exercise.translationOptions.map {
+        LessonOption(
+          id: $0.id, text: $0.word, detail: $0.romanization, isCorrect: $0.id == word.id)
+      },
+      selectedId: context.answer.flatMap {
+        if case .translation(let id) = $0 { id } else { nil }
+      },
+      isChecked: context.result != nil,
+      isLocked: context.isLocked
+    ) { id in
+      context.select(.translation(selectedOptionId: id))
 
-        if let url = exercise.translationOptions.first(where: { $0.id == id })?.audioUrl.flatMap(
-          URL.init(string:))
-        {
-          Task { await audio.play(url) }
-        }
+      if let url = exercise.translationOptions.first(where: { $0.id == id })?.audioUrl.flatMap(
+        URL.init(string:))
+      {
+        Task { await audio.play(url) }
       }
     }
   }
@@ -229,10 +258,6 @@ private struct FillBlankView: View {
   }
 
   var body: some View {
-    if let question = exercise.content.question {
-      LessonQuestionText(text: question)
-    }
-
     FlowLayout(spacing: 8) {
       ForEach(Array(segments.enumerated()), id: \.offset) { index, segment in
         if !segment.isEmpty {
@@ -309,6 +334,7 @@ private struct FillBlankView: View {
 private struct ArrangeWordsView: View {
   let exercise: LanguageExercise
   let context: LessonStepContext
+  let part: LessonStepPart
 
   private var isListening: Bool { exercise.kind == .listening }
 
@@ -336,56 +362,67 @@ private struct ArrangeWordsView: View {
 
   var body: some View {
     if let sentence = exercise.sentence {
-      if isListening {
-        ScreenChip(
-          text: Text(
-            "What do you hear?", tableName: "Player",
-            comment: "Above a sentence to listen to and arrange"))
-        HStack(spacing: 12) {
-          LessonAudioButton(url: sentence.audioUrl)
-          if sentence.audioUrl == nil {
-            LessonQuestionText(text: sentence.sentence)
-          }
-        }
-      } else {
-        ScreenChip(
-          text: Text(
-            "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"
-          ))
-        LessonQuestionText(text: sentence.translation)
+      switch part {
+      case .screen: screen(sentence)
+      case .turn: turn
       }
-
-      FlowLayout(spacing: 8) {
-        ForEach(arranged, id: \.self) { index in
-          Button {
-            set(arranged.filter { $0 != index })
-          } label: {
-            Text(exercise.wordBankOptions[index].word)
-          }
-          .buttonStyle(.bordered)
-          .tint(context.result.map { $0.isCorrect ? .success : .destructive } ?? .primary)
-          .disabled(context.isLocked)
-        }
-      }
-      .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-      .padding(8)
-      .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
-
-      FlowLayout(spacing: 8) {
-        ForEach(exercise.wordBankOptions.indices, id: \.self) { index in
-          LessonWordTile(
-            word: exercise.wordBankOptions[index].word,
-            romanization: exercise.wordBankOptions[index].romanization,
-            isUsed: arranged.contains(index) || context.isLocked
-          ) {
-            set(arranged + [index])
-          }
-        }
-      }
-      .accessibilityElement(children: .contain)
-      .accessibilityLabel(
-        Text("Word bank", tableName: "Player", comment: "The words to build an answer from"))
     }
+  }
+
+  @ViewBuilder
+  private func screen(_ sentence: LanguageExercise.Sentence) -> some View {
+    if isListening {
+      ScreenChip(
+        text: Text(
+          "What do you hear?", tableName: "Player",
+          comment: "Above a sentence to listen to and arrange"))
+      HStack(spacing: 12) {
+        LessonAudioButton(url: sentence.audioUrl)
+        if sentence.audioUrl == nil {
+          LessonQuestionText(text: sentence.sentence)
+        }
+      }
+    } else {
+      ScreenChip(
+        text: Text(
+          "Translate", tableName: "Player", comment: "Label above a word or sentence to translate"
+        ))
+      LessonQuestionText(text: sentence.translation)
+    }
+  }
+
+  @ViewBuilder
+  private var turn: some View {
+    FlowLayout(spacing: 8) {
+      ForEach(arranged, id: \.self) { index in
+        Button {
+          set(arranged.filter { $0 != index })
+        } label: {
+          Text(exercise.wordBankOptions[index].word)
+        }
+        .buttonStyle(.bordered)
+        .tint(context.result.map { $0.isCorrect ? .success : .destructive } ?? .primary)
+        .disabled(context.isLocked)
+      }
+    }
+    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+    .padding(8)
+    .background(Color(.secondarySystemBackground), in: .rect(cornerRadius: 16))
+
+    FlowLayout(spacing: 8) {
+      ForEach(exercise.wordBankOptions.indices, id: \.self) { index in
+        LessonWordTile(
+          word: exercise.wordBankOptions[index].word,
+          romanization: exercise.wordBankOptions[index].romanization,
+          isUsed: arranged.contains(index) || context.isLocked
+        ) {
+          set(arranged + [index])
+        }
+      }
+    }
+    .accessibilityElement(children: .contain)
+    .accessibilityLabel(
+      Text("Word bank", tableName: "Player", comment: "The words to build an answer from"))
   }
 
   private func set(_ indices: [Int]) {
@@ -421,12 +458,6 @@ private struct MatchColumnsView: View {
   }
 
   var body: some View {
-    LessonQuestionText(
-      text: exercise.content.question
-        ?? String(
-          localized: "Match the pairs.", table: "Player",
-          comment: "Instruction of a match-the-pairs exercise"))
-
     HStack(alignment: .top, spacing: 12) {
       VStack(spacing: 10) {
         ForEach(pairs.indices, id: \.self) { index in

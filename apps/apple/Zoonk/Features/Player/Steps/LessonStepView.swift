@@ -1,43 +1,62 @@
 import SwiftUI
 
-/// Renders one screen by its kind. Screens report the learner's answer to the store; the verdict
-/// and the next action live in the action bar.
+/// The two halves of a screen. On a spread (two pages either side of the fold on the open iPhone
+/// Duo, iPad, a phone in landscape) the screen is the leading page and the learner's turn the
+/// trailing one, above the action bar; one column shows the screen, then the turn.
+enum LessonStepPart {
+  /// What the screen says: its question or title, teaching text, worked example, and the picture
+  /// or visual a question asks about.
+  case screen
+  /// What the learner does: options, a field, a canvas, a recorder, the ways out. On a screen with
+  /// nothing to answer, its picture, visual or canvas to explore.
+  case turn
+}
+
+/// Renders one part of a screen by its kind. Screens report the learner's answer to the store; the
+/// verdict and the next action live in the action bar. The parts are separate views, so state they
+/// share lives in the store, and what the learner does lives in the turn, which keeps its place
+/// when the stage switches between one column and a spread.
 struct LessonStepView: View {
   let step: LessonStep
   let state: LessonPlayerState
   let store: LessonPlayerStore
+  let part: LessonStepPart
 
   var body: some View {
-    VStack(alignment: .leading, spacing: 20) {
-      switch step.content {
-      case .hook(let content):
-        HookStepView(step: step, content: content, context: context)
-      case .explanation(let content):
-        ExplanationStepView(step: step, content: content, store: store)
-      case .workedExample(let content):
-        WorkedExampleStepView(step: step, content: content, shown: state.revealed[step.id] ?? 1)
-      case .check(let content):
-        CheckStepView(step: step, content: content, context: context)
-        LessonWaysOut(state: state, store: store, step: step)
-      case .typedAnswer(let content):
-        TypedAnswerStepView(content: content, context: context)
-        LessonWaysOut(state: state, store: store, step: step)
-      case .spokenAnswer(let content, let listening):
-        SpokenAnswerStepView(
-          step: step, content: content, listening: listening, context: context, store: store)
-      case .activity(let content):
-        ActivityStepView(step: step, content: content, context: context)
-      case .summary(let content):
-        SummaryStepView(content: content)
-      case .challenge(let content):
-        ChallengeStepView(step: step, content: content, state: state, store: store)
-      case .language(let exercise, let wordHints):
-        LanguageStepView(exercise: exercise, wordHints: wordHints, context: context)
-      }
+    switch step.content {
+    case .hook(let content):
+      HookStepView(step: step, content: content, context: context, part: part)
+    case .explanation(let content):
+      ExplanationStepView(step: step, content: content, part: part)
+    case .workedExample(let content):
+      WorkedExampleStepView(
+        step: step, content: content, shown: state.revealed[step.id] ?? 1, part: part)
+    case .check(let content):
+      CheckStepView(step: step, content: content, context: context, part: part)
 
-      if let citation = step.citation {
-        LessonCitationView(citation: citation)
+      if part == .turn {
+        LessonWaysOut(state: state, store: store, step: step)
       }
+    case .typedAnswer(let content):
+      TypedAnswerStepView(content: content, context: context, part: part)
+
+      if part == .turn {
+        LessonWaysOut(state: state, store: store, step: step)
+      }
+    case .spokenAnswer(let content, let listening):
+      SpokenAnswerStepView(
+        step: step, content: content, listening: listening, context: context, store: store,
+        part: part)
+    case .activity(let content):
+      ActivityStepView(step: step, content: content, context: context, part: part)
+    case .summary(let content):
+      if part == .screen {
+        SummaryStepView(content: content)
+      }
+    case .challenge(let content):
+      ChallengeStepView(step: step, content: content, state: state, store: store, part: part)
+    case .language(let exercise, let wordHints):
+      LanguageStepView(exercise: exercise, wordHints: wordHints, context: context, part: part)
     }
   }
 
@@ -72,9 +91,23 @@ private struct HookStepView: View {
   let step: LessonStep
   let content: HookContent
   let context: LessonStepContext
+  let part: LessonStepPart
+
+  /// A hook that asks for a guess first, with its question and options.
+  private var isGuess: Bool {
+    content.variant == .guess && content.question != nil && content.options != nil
+  }
 
   var body: some View {
-    if let question = content.question, let options = content.options, content.variant == .guess {
+    switch part {
+    case .screen: screen
+    case .turn: turn
+    }
+  }
+
+  @ViewBuilder
+  private var screen: some View {
+    if isGuess, let question = content.question {
       Text(
         "Guess first", tableName: "Player", comment: "Above a hook's question: a guess never counts"
       )
@@ -82,6 +115,15 @@ private struct HookStepView: View {
       .foregroundStyle(.secondary)
       LessonQuestionText(text: question)
       StepMedia(step: step, description: content.image, visual: content.visual)
+    } else {
+      LessonTextBlocks(content.text ?? "")
+        .font(.title2.weight(.semibold))
+    }
+  }
+
+  @ViewBuilder
+  private var turn: some View {
+    if isGuess, let options = content.options {
       LessonOptionList(
         options: options.map { LessonOption(id: $0.id, text: $0.text, isCorrect: $0.isCorrect) },
         selectedId: context.answer.flatMap { if case .hookGuess(let id) = $0 { id } else { nil } },
@@ -90,8 +132,6 @@ private struct HookStepView: View {
         isGuess: true
       ) { context.select(.hookGuess(optionId: $0)) }
     } else {
-      LessonTextBlocks(content.text ?? "")
-        .font(.title2.weight(.semibold))
       StepMedia(step: step, description: content.image, visual: content.visual)
     }
   }
@@ -102,34 +142,58 @@ private struct ExplanationStepView: View {
 
   let step: LessonStep
   let content: ExplanationContent
-  let store: LessonPlayerStore
+  let part: LessonStepPart
 
   var body: some View {
-    if let title = content.title {
-      LessonQuestionText(text: title)
-    }
+    switch part {
+    case .screen:
+      if let title = content.title {
+        LessonQuestionText(text: title)
+      }
 
-    LessonTextBlocks(content.text)
-      .font(.body)
-    StepMedia(step: step, description: content.image, visual: content.visual)
+      LessonTextBlocks(content.text)
+        .font(.body)
+    case .turn:
+      StepMedia(step: step, description: content.image, visual: content.visual)
 
-    if let explore = content.explore,
-      let renderer = activityRenderers.renderer(for: explore.template)
-    {
-      renderer.canvas(
-        ActivityCanvasContext(
-          template: explore.template, payload: explore.payload, check: nil, phase: .explore,
-          answer: nil, setAnswer: { _ in }))
+      if let explore = content.explore,
+        let renderer = activityRenderers.renderer(for: explore.template)
+      {
+        renderer.canvas(
+          ActivityCanvasContext(
+            template: explore.template, payload: explore.payload, check: nil, phase: .explore,
+            answer: nil, setAnswer: { _ in }))
+      }
     }
   }
 }
 
+/// A worked example's steps on the screen. Its picture or chart sits under the problem it belongs
+/// to; on a spread it's the trailing page, beside the steps.
 private struct WorkedExampleStepView: View {
+  @Environment(\.isPaneSplit) private var isPaneSplit
+
   let step: LessonStep
   let content: WorkedExampleContent
   let shown: Int
+  let part: LessonStepPart
 
   var body: some View {
+    switch part {
+    case .screen: screen
+    case .turn:
+      if isPaneSplit {
+        media
+      }
+    }
+  }
+
+  private var media: some View {
+    StepMedia(step: step, description: content.image, visual: content.visual)
+  }
+
+  @ViewBuilder
+  private var screen: some View {
     Text("Worked example", tableName: "Player", comment: "Label above a worked example")
       .font(.caption.monospaced())
       .foregroundStyle(.secondary)
@@ -139,17 +203,20 @@ private struct WorkedExampleStepView: View {
     }
 
     LessonTextBlocks(content.problem)
-    StepMedia(step: step, description: content.image, visual: content.visual)
+
+    if !isPaneSplit {
+      media
+    }
 
     VStack(alignment: .leading, spacing: 12) {
-      ForEach(Array(content.steps.prefix(shown).enumerated()), id: \.offset) { index, part in
+      ForEach(Array(content.steps.prefix(shown).enumerated()), id: \.offset) { index, solved in
         HStack(alignment: .firstTextBaseline, spacing: 12) {
           Text(index + 1, format: .number)
             .font(.subheadline.monospacedDigit().weight(.semibold))
             .foregroundStyle(.secondary)
           VStack(alignment: .leading, spacing: 4) {
-            LessonTextBlocks(part.text)
-            if let math = part.math {
+            LessonTextBlocks(solved.text)
+            if let math = solved.math {
               Text(LessonMath.attributed(math))
             }
           }
@@ -169,71 +236,80 @@ private struct CheckStepView: View {
   let step: LessonStep
   let content: CheckContent
   let context: LessonStepContext
+  let part: LessonStepPart
 
   var body: some View {
-    if let context = content.context {
-      LessonTextBlocks(context)
-        .foregroundStyle(.secondary)
-    }
+    switch part {
+    case .screen:
+      if let context = content.context {
+        LessonTextBlocks(context)
+          .foregroundStyle(.secondary)
+      }
 
-    if let basis = content.basis {
-      Text("“\(basis.quote)”")
-        .font(.callout.italic())
-        .foregroundStyle(.secondary)
-    }
+      if let basis = content.basis {
+        Text("“\(basis.quote)”")
+          .font(.callout.italic())
+          .foregroundStyle(.secondary)
+      }
 
-    LessonQuestionText(text: content.question)
-    StepMedia(step: step, description: content.image, visual: content.visual)
-    LessonOptionList(
-      options: content.options.map {
-        LessonOption(
-          id: $0.id, text: $0.text, isCorrect: $0.isCorrect, pictureAlt: $0.picture?.alt,
-          picture: step.optionPictures[$0.id])
-      },
-      selectedId: context.answer.flatMap { if case .check(let id) = $0 { id } else { nil } },
-      isChecked: context.result != nil,
-      isLocked: context.isLocked,
-      picturesPending: step.imagePending
-    ) { context.select(.check(optionId: $0)) }
+      LessonQuestionText(text: content.question)
+      StepMedia(step: step, description: content.image, visual: content.visual)
+    case .turn:
+      LessonOptionList(
+        options: content.options.map {
+          LessonOption(
+            id: $0.id, text: $0.text, isCorrect: $0.isCorrect, pictureAlt: $0.picture?.alt,
+            picture: step.optionPictures[$0.id])
+        },
+        selectedId: context.answer.flatMap { if case .check(let id) = $0 { id } else { nil } },
+        isChecked: context.result != nil,
+        isLocked: context.isLocked,
+        picturesPending: step.imagePending
+      ) { context.select(.check(optionId: $0)) }
+    }
   }
 }
 
 private struct TypedAnswerStepView: View {
   let content: TypedAnswerContent
   let context: LessonStepContext
+  let part: LessonStepPart
   @FocusState private var isFocused: Bool
 
   var body: some View {
-    if let context = content.context {
-      LessonTextBlocks(context)
-        .foregroundStyle(.secondary)
-    }
-
-    if content.isOwnWords {
-      Label {
-        Text(
-          "In your own words", tableName: "Player",
-          comment: "Above a question answered in a few sentences")
-      } icon: {
-        Image(systemName: "pencil.line")
+    switch part {
+    case .screen:
+      if let context = content.context {
+        LessonTextBlocks(context)
+          .foregroundStyle(.secondary)
       }
-      .font(.caption.monospaced())
-      .foregroundStyle(.secondary)
+
+      if content.isOwnWords {
+        Label {
+          Text(
+            "In your own words", tableName: "Player",
+            comment: "Above a question answered in a few sentences")
+        } icon: {
+          Image(systemName: "pencil.line")
+        }
+        .font(.caption.monospaced())
+        .foregroundStyle(.secondary)
+      }
+
+      LessonQuestionText(text: content.question)
+
+      if let visual = content.visual {
+        LessonVisualView(visual: visual)
+      }
+    case .turn:
+      LessonAnswerField(
+        text: context.answer?.text ?? "",
+        isLocked: context.isLocked,
+        isNumber: content.isNumberAnswer,
+        isFocused: $isFocused
+      ) { context.select($0.isEmpty ? nil : .typedAnswer(text: $0)) }
+      .onAppear { isFocused = !context.isLocked }
     }
-
-    LessonQuestionText(text: content.question)
-
-    if let visual = content.visual {
-      LessonVisualView(visual: visual)
-    }
-
-    LessonAnswerField(
-      text: context.answer?.text ?? "",
-      isLocked: context.isLocked,
-      isNumber: content.isNumberAnswer,
-      isFocused: $isFocused
-    ) { context.select($0.isEmpty ? nil : .typedAnswer(text: $0)) }
-    .onAppear { isFocused = !context.isLocked }
   }
 }
 
@@ -282,7 +358,6 @@ enum SpokenAnswerMode: Equatable {
 
 private struct SpokenAnswerStepView: View {
   @Environment(\.spokenAnswerRecording) private var recording
-  @State private var micBlocked = false
   @FocusState private var isFocused: Bool
 
   let step: LessonStep
@@ -290,6 +365,7 @@ private struct SpokenAnswerStepView: View {
   let listening: LanguageExercise?
   let context: LessonStepContext
   let store: LessonPlayerStore
+  let part: LessonStepPart
 
   /// "I can't talk now" holds for every spoken screen for the rest of the day, as on main.
   private var cantTalk: Bool {
@@ -299,69 +375,83 @@ private struct SpokenAnswerStepView: View {
   private var mode: SpokenAnswerMode {
     SpokenAnswerMode(
       canListen: listening != nil, canSpeak: recording.input != nil, cantTalk: cantTalk,
-      micBlocked: micBlocked)
+      micBlocked: store.isMicBlocked)
   }
 
   var body: some View {
     if mode == .listen, let listening {
-      LanguageStepView(exercise: listening, wordHints: nil, context: context)
-      modeSwitch
+      LanguageStepView(exercise: listening, wordHints: nil, context: context, part: part)
+
+      if part == .turn {
+        modeSwitch
+      }
     } else {
-      if mode == .speak {
-        Text("Tap and say it out loud", tableName: "Player", comment: "Above a sentence to say")
-          .font(.caption.monospaced())
+      switch part {
+      case .screen: screen
+      case .turn: turn
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var screen: some View {
+    if mode == .speak {
+      Text("Tap and say it out loud", tableName: "Player", comment: "Above a sentence to say")
+        .font(.caption.monospaced())
+        .foregroundStyle(.secondary)
+    }
+
+    LessonQuestionText(text: content.prompt)
+    VStack(alignment: .leading, spacing: 4) {
+      Text(content.targetText)
+        .font(.title3.weight(.medium))
+      if let romanization = content.romanization {
+        Text(romanization).foregroundStyle(.secondary)
+      }
+      if let translation = content.translation {
+        Text(translation).foregroundStyle(.secondary)
+      }
+    }
+  }
+
+  @ViewBuilder
+  private var turn: some View {
+    if mode == .speak, let input = recording.input {
+      input(
+        SpokenAnswerContext(
+          lessonId: context.lessonId, studySessionId: context.studySessionId, stepId: step.id,
+          content: content,
+          isLocked: context.isLocked,
+          onGraded: context.resolveSpoken,
+          onBlocked: { store.isMicBlocked = true }))
+    } else {
+      if store.isMicBlocked, !context.isLocked {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(
+            "The microphone is blocked. Type your answer instead.", tableName: "Player",
+            comment: "A spoken screen falls back to typing when the microphone is off"
+          )
           .foregroundStyle(.secondary)
-      }
 
-      LessonQuestionText(text: content.prompt)
-      VStack(alignment: .leading, spacing: 4) {
-        Text(content.targetText)
-          .font(.title3.weight(.medium))
-        if let romanization = content.romanization {
-          Text(romanization).foregroundStyle(.secondary)
-        }
-        if let translation = content.translation {
-          Text(translation).foregroundStyle(.secondary)
-        }
-      }
-
-      if mode == .speak, let input = recording.input {
-        input(
-          SpokenAnswerContext(
-            lessonId: context.lessonId, studySessionId: context.studySessionId, stepId: step.id,
-            content: content,
-            isLocked: context.isLocked,
-            onGraded: context.resolveSpoken,
-            onBlocked: { micBlocked = true }))
-      } else {
-        if micBlocked, !context.isLocked {
-          VStack(alignment: .leading, spacing: 4) {
-            Text(
-              "The microphone is blocked. Type your answer instead.", tableName: "Player",
-              comment: "A spoken screen falls back to typing when the microphone is off"
-            )
-            .foregroundStyle(.secondary)
-
-            if let settings = URL(string: UIApplication.openSettingsURLString) {
-              Link(destination: settings) {
-                Text(
-                  "Open Settings", tableName: "Player",
-                  comment: "Opens the app's settings to turn the microphone back on")
-              }
+          if let settings = URL(string: UIApplication.openSettingsURLString) {
+            Link(destination: settings) {
+              Text(
+                "Open Settings", tableName: "Player",
+                comment: "Opens the app's settings to turn the microphone back on")
             }
           }
-          .font(.subheadline)
         }
-
-        LessonAnswerField(
-          text: context.answer?.text ?? "", isLocked: context.isLocked, isFocused: $isFocused
-        ) {
-          context.select($0.isEmpty ? nil : .spokenAnswer(text: $0))
-        }
+        .font(.subheadline)
       }
 
-      modeSwitch
+      LessonAnswerField(
+        text: context.answer?.text ?? "", isLocked: context.isLocked, isFocused: $isFocused
+      ) {
+        context.select($0.isEmpty ? nil : .spokenAnswer(text: $0))
+      }
     }
+
+    modeSwitch
   }
 
   /// "I can't talk now" while speaking; "I can talk now" or "Say it instead" otherwise. An answer
@@ -372,7 +462,7 @@ private struct SpokenAnswerStepView: View {
       Button {
         context.select(nil)
         store.cantTalkToday = mode == .speak
-        micBlocked = false
+        store.isMicBlocked = false
       } label: {
         if mode == .speak {
           Label {

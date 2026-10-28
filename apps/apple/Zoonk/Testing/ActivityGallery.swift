@@ -80,46 +80,35 @@
     @State private var run = 0
 
     var body: some View {
-      ScrollView {
-        VStack(alignment: .leading, spacing: 16) {
-          Picker(selection: $isExploring) {
-            Text(verbatim: "Activity").tag(false)
-            Text(verbatim: "Explore").tag(true)
-          } label: {
-            Text(verbatim: "Mode")
+      // The player's spread on wide screens, so a canvas shows at the trailing page's width.
+      PaneSplit {
+        ScrollView {
+          VStack(alignment: .leading, spacing: 16) {
+            modePicker
+            part(.screen)
           }
-          .pickerStyle(.segmented)
-
-          if isExploring, let renderer = activityRenderers.renderer(for: content.template) {
-            renderer.canvas(
-              ActivityCanvasContext(
-                template: content.template, payload: content.payload, check: nil, phase: .explore,
-                answer: nil, setAnswer: { _ in }))
-          } else {
-            ActivityStepView(
-              step: step, content: content,
-              context: LessonStepContext(
-                lessonId: "gallery", studySessionId: nil, answer: answer, result: result,
-                isLocked: result != nil,
-                select: { answer = $0 }, resolveSpoken: { _ in }))
-          }
-
-          if let result {
-            Label {
-              Text(verbatim: result.isCorrect ? "Right" : "Not quite")
-            } icon: {
-              Image(systemName: result.isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
-            }
-            .foregroundStyle(result.isCorrect ? Color.success : .destructive)
-            Text(
-              verbatim: [result.correctAnswer, result.feedback].compactMap { $0 }.joined(
-                separator: "\n")
-            )
-            .font(.footnote)
-          }
+          .padding()
         }
-        .padding()
-        .id(run)
+      } secondary: {
+        ScrollView {
+          VStack(alignment: .leading, spacing: 16) {
+            part(.turn)
+            resultView
+          }
+          .padding()
+          .id(run)
+        }
+      } single: {
+        ScrollView {
+          VStack(alignment: .leading, spacing: 16) {
+            modePicker
+            part(.screen)
+            part(.turn)
+            resultView
+          }
+          .padding()
+          .id(run)
+        }
       }
       .navigationTitle(Text(verbatim: content.template))
       .onAppear {
@@ -151,6 +140,53 @@
           }
           .disabled(answer == nil || result != nil)
         }
+      }
+    }
+
+    private var modePicker: some View {
+      Picker(selection: $isExploring) {
+        Text(verbatim: "Activity").tag(false)
+        Text(verbatim: "Explore").tag(true)
+      } label: {
+        Text(verbatim: "Mode")
+      }
+      .pickerStyle(.segmented)
+    }
+
+    @ViewBuilder
+    private func part(_ part: LessonStepPart) -> some View {
+      if isExploring {
+        if part == .turn, let renderer = activityRenderers.renderer(for: content.template) {
+          renderer.canvas(
+            ActivityCanvasContext(
+              template: content.template, payload: content.payload, check: nil, phase: .explore,
+              answer: nil, setAnswer: { _ in }))
+        }
+      } else {
+        ActivityStepView(
+          step: step, content: content,
+          context: LessonStepContext(
+            lessonId: "gallery", studySessionId: nil, answer: answer, result: result,
+            isLocked: result != nil,
+            select: { answer = $0 }, resolveSpoken: { _ in }),
+          part: part)
+      }
+    }
+
+    @ViewBuilder
+    private var resultView: some View {
+      if let result {
+        Label {
+          Text(verbatim: result.isCorrect ? "Right" : "Not quite")
+        } icon: {
+          Image(systemName: result.isCorrect ? "checkmark.circle.fill" : "xmark.circle.fill")
+        }
+        .foregroundStyle(result.isCorrect ? Color.success : .destructive)
+        Text(
+          verbatim: [result.correctAnswer, result.feedback].compactMap { $0 }.joined(
+            separator: "\n")
+        )
+        .font(.footnote)
       }
     }
 

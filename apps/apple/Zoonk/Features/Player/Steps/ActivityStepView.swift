@@ -1,14 +1,15 @@
 import SwiftUI
 
-/// An `activity` screen: the prompt, the picture of the case, the template's canvas from its
-/// renderer (`ActivityRenderer`) and the check tied to it: options for `choice`, a number for
-/// `numeric`, the canvas's end state for `interaction`.
+/// An `activity` screen: the prompt and the picture of the case, then the learner's turn: the
+/// template's canvas from its renderer (`ActivityRenderer`) and the check tied to it: options for
+/// `choice`, a number for `numeric`, the canvas's end state for `interaction`.
 struct ActivityStepView: View {
   @Environment(\.activityRenderers) private var activityRenderers
 
   let step: LessonStep
   let content: ActivityStepContent
   let context: LessonStepContext
+  let part: LessonStepPart
 
   private var answer: ActivityAnswer? {
     if case .activity(let answer) = context.answer {
@@ -19,11 +20,20 @@ struct ActivityStepView: View {
   }
 
   var body: some View {
+    switch part {
+    case .screen:
+      LessonQuestionText(text: content.prompt)
+      LessonPictureView(
+        image: step.image, description: content.image, isPending: step.imagePending)
+    case .turn:
+      turn
+    }
+  }
+
+  @ViewBuilder
+  private var turn: some View {
     let renderer = activityRenderers.renderer(for: content.template)
     let checkFirst = renderer?.showsCheckFirst(content) ?? false
-
-    LessonQuestionText(text: content.prompt)
-    LessonPictureView(image: step.image, description: content.image, isPending: step.imagePending)
 
     if checkFirst {
       checkArea

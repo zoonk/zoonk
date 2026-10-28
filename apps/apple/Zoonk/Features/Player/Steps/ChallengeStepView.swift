@@ -1,27 +1,32 @@
 import SwiftUI
 
 /// A team challenge: the case's intro, then one decision at a time with the team's messages and
-/// replies and the meters it moves, then how it went. The team's names fill `{{slotId}}`.
+/// replies and the meters it moves, then how it went. The team's names fill `{{slotId}}`. The
+/// learner's turn is the decision's choices, then the debrief.
 struct ChallengeStepView: View {
   let step: LessonStep
   let content: ChallengeContent
   let state: LessonPlayerState
   let store: LessonPlayerStore
+  let part: LessonStepPart
 
   var body: some View {
     let progress = ChallengeProgress(
       content: content, picks: state.challengePicks(step.id), shown: state.revealed[step.id] ?? 0)
 
-    switch progress {
-    case .intro:
+    switch (progress, part) {
+    case (.intro, .screen):
       intro
-    case .deciding(let node, let confirmed, let decisions, let pending):
+    case (.intro, .turn):
+      EmptyView()
+    case (.deciding(let node, _, let decisions, _), .screen):
       meters(decisions)
       conversation(decisions)
       ForEach(Array(node.messages.enumerated()), id: \.offset) { _, message in
         bubble(message)
       }
       LessonQuestionText(text: named(node.prompt))
+    case (.deciding(let node, let confirmed, _, let pending), .turn):
       LessonOptionList(
         options: node.choices.map { LessonOption(id: $0.id, text: named($0.text)) },
         selectedId: pending,
@@ -30,9 +35,10 @@ struct ChallengeStepView: View {
       ) { choiceId in
         store.select(.challenge(choiceIds: confirmed + [choiceId]))
       }
-    case .ended(let ending, _, let decisions):
+    case (.ended(_, _, let decisions), .screen):
       meters(decisions)
       conversation(decisions)
+    case (.ended(let ending, _, let decisions), .turn):
       if let result = state.currentResult {
         debrief(ending: ending, decisions: decisions, isCorrect: result.isCorrect)
       }

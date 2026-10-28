@@ -54,6 +54,9 @@ final class LessonPlayerStore {
   var cantTalkToday: Bool {
     didSet { choices.setChosenToday(.cantTalk, cantTalkToday) }
   }
+  /// The microphone was off when a spoken screen tried it, so spoken screens are typed until the
+  /// learner asks to speak again. Kept here, since both halves of a spread show it.
+  var isMicBlocked = false
   /// Any touch or scroll on the screen: a learner who touches it isn't stuck.
   var touches = 0
   /// The Ask panel is open, with the question it opened with ("Explain it more simply").
