@@ -25,7 +25,6 @@ function reportFor(
   };
 }
 
-/** The frame holding `learnerId`'s summary of a study day (goal A's today by default). */
 function scopeOf(
   learnerId: string,
   day: { goalId?: string; localDate?: string } = {},
@@ -69,7 +68,6 @@ describe("the buddy tab's missions from page reads", () => {
   });
 
   it("never shows a read of another goal, even one that arrives later", () => {
-    // Goal A's page read lands after the learner switched to goal B, with a later time.
     const goalB = reportFor("first", 20, 1, { goalId: "goal-b" });
     const reports = addAll([goalB, reportFor("first", 30, 3)]);
 
@@ -83,12 +81,10 @@ describe("the buddy tab's missions from page reads", () => {
   });
 
   it("never shows yesterday's missions in today's frame, even stamped after midnight", () => {
-    // A page read yesterday's session, then got its time after the frame read today.
     const reports = addAll([reportFor("first", 50, 2, { localDate: YESTERDAY })]);
 
     expect(findTabMissionsReport({ reports, scope: scopeOf("first") })).toBeNull();
 
-    // While yesterday's day carries over, the frame describes it, and its reads count.
     expect(
       findTabMissionsReport({ reports, scope: scopeOf("first", { localDate: YESTERDAY }) }),
     ).toMatchObject({ missions: { done: 2 } });

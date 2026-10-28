@@ -1,12 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-// One function in every fresh module: each test drives the one the helper calls.
 const analytics = vi.hoisted(() => ({ resetPostHogUser: vi.fn(async () => {}) }));
 
 // PostHog's SDK failing to load or start can't be produced with the real one in a test.
 vi.mock("./posthog", () => analytics);
 
-/** A browser tab, with what it tells the other tabs and the errors it reports. */
 function stubTab() {
   const announced: unknown[] = [];
   const reported: unknown[] = [];
@@ -24,7 +22,6 @@ function stubTab() {
   return { announced, reported };
 }
 
-/** A fresh helper, with the tab's stubs in place as it loads. */
 async function loadHelper() {
   vi.resetModules();
 

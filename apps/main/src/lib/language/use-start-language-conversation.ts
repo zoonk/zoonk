@@ -10,12 +10,6 @@ import {
 
 type CallLimit = Extract<ConversationConnection, { status: "limit" }>["limit"];
 
-/**
- * Starts a call and opens it on the call screen. Resolves to true once it opens, false when it
- * didn't start, so the screen can say so and offer another try, or, for an exam task the call time
- * left can't fit, that call time (`limit`). A call started from the exam screen (`from: "exam"`)
- * leads back there when it's done.
- */
 export function useOpenLanguageConversation({ from }: { from?: "exam" } = {}) {
   const router = useRouter();
 
@@ -38,7 +32,6 @@ export function useOpenLanguageConversation({ from }: { from?: "exam" } = {}) {
   );
 }
 
-/** Starts a call and opens it, as `useOpenLanguageConversation`; false whenever it didn't start. */
 export function useStartLanguageConversation(options: { from?: "exam" } = {}) {
   const open = useOpenLanguageConversation(options);
 

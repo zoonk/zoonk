@@ -10,7 +10,6 @@ import {
   workflowRunReducer,
 } from "./workflow-run-state";
 
-/** How many lost connections in a row the follower rides out before telling the learner. */
 const MAX_LOST_CONNECTIONS = 5;
 
 function run(actions: WorkflowRunAction[], from: WorkflowRunState = INITIAL_WORKFLOW_RUN_STATE) {
@@ -43,7 +42,6 @@ describe(workflowRunReducer, () => {
       { offsetMs: 1500, type: "serverClock" },
       event({ at: 1000, status: "started", step: "understandGoal" }),
       event({ at: 8000, status: "completed", step: "understandGoal" }),
-      // Replayed after a reconnect: the step keeps its first time.
       event({ at: 9000, status: "started", step: "understandGoal" }),
       event({ status: "started", step: "saveSkills" }),
     ]);

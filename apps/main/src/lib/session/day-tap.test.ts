@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { type DayOpenOutcome, openStudyDayAction } from "./day-open-action";
 import { sendDayOpen, toDestinationResult, toTapResult } from "./day-tap";
 
-/** The open is a request to the server: each test answers it as the server would. */
 vi.mock("./day-open-action", () => ({ openStudyDayAction: vi.fn() }));
 
 const INPUT = {
@@ -23,7 +22,6 @@ const RETRYABLE: DayOpenOutcome = { status: "retryable" };
 describe(sendDayOpen, () => {
   beforeEach(() => {
     vi.mocked(openStudyDayAction).mockReset();
-    // The page the tap was made on, which the noted write belongs to.
     vi.stubGlobal("location", new URL("https://zoonk.test/en/today"));
   });
 

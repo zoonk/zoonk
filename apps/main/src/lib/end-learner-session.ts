@@ -3,12 +3,8 @@ import { announceAuthChange } from "./auth/auth-change";
 import { resetPostHogUser } from "./posthog";
 
 /**
- * What the browser forgets when a learner's session ends, whatever ends it (logging out, deleting
- * the account): analytics unlinked first, so the next visitor on this browser isn't taken for
- * them, then, once `endSession` returns (or fails), the other tabs told to reload.
- * The session hint goes with the session cookie, in the response that ends it. Each step is best
- * effort: analytics that fail (PostHog not loading) are reported and never keep the session from
- * ending or the other tabs from hearing it.
+ * Analytics are unlinked first, so the next visitor on this browser isn't taken for the learner. Each
+ * step is best effort: failing analytics never keep the session from ending or the tabs from hearing.
  */
 export async function endLearnerSession(endSession: () => Promise<unknown>): Promise<void> {
   try {

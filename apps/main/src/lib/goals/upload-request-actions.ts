@@ -7,10 +7,6 @@ import { z } from "zod";
 
 const goalIdSchema = z.uuid();
 
-/**
- * "Not now" on the ask for the notice research couldn't find: the same core capability as
- * `DELETE /v1/goals/{goalId}/upload-request`. Core checks the goal is the learner's.
- */
 export async function dismissUploadRequestAction(goalId: string): Promise<boolean> {
   const parsed = goalIdSchema.safeParse(goalId);
 

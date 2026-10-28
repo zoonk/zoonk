@@ -20,7 +20,6 @@ function outlinePath({ goalId, skillId }: { goalId: string; skillId: string }) {
   return `/v1/goals/${encodeURIComponent(goalId)}/skills/${encodeURIComponent(skillId)}/outline` as const;
 }
 
-/** Asks the API for a far topic's lessons: `POST .../outline/generations`, on the learner's tap. */
 async function requestOutline({
   goalId,
   skillId,
@@ -54,7 +53,6 @@ async function requestOutline({
   return getString(body, "status") === "ready" ? { status: "ready" } : { status: "writing" };
 }
 
-/** A far topic's lesson plan from the API, for the sheet that waits while it's written. */
 async function readOutline({
   goalId,
   skillId,
@@ -72,11 +70,7 @@ async function readOutline({
   return parsed.success ? parsed.data : null;
 }
 
-/**
- * A goal's far topics as main's screens open them: through the public API from the browser (a
- * topic's first chapter takes about half a minute, so it never holds up the page's Server
- * Actions), then the page is read again to show its chapters in the plan.
- */
+/** From the browser: a topic's first chapter takes about half a minute, which would hold up the page's Server Actions. */
 export function useTopicOutlineActions(goalId: string): TopicOutlineActions {
   const router = useRouter();
 

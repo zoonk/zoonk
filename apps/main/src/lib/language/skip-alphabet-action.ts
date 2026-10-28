@@ -6,10 +6,6 @@ import { z } from "zod";
 
 const goalIdSchema = z.uuid();
 
-/**
- * The learner already reads the script: their sessions stop opening with the alphabet lesson, as
- * `POST /v1/goals/{goalId}/alphabet-skips` does. The goal id is untrusted.
- */
 export async function skipAlphabetAction(goalId: unknown): Promise<boolean> {
   const parsed = goalIdSchema.safeParse(goalId);
 

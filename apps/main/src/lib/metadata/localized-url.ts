@@ -6,21 +6,13 @@ import {
 } from "@zoonk/utils/locale";
 import { SITE_URL } from "@zoonk/utils/url";
 
-/**
- * Search-facing URLs must use the same `as-needed` locale strategy as browser
- * navigation. Content languages may be regional, so they are normalized to a
- * supported app locale before next-intl builds the pathname.
- */
+/** Content languages may be regional, so they're normalized to a supported app locale before next-intl builds the path. */
 export function getLocalizedUrl({ href, language }: { href: string; language: string }): string {
   const locale = getSupportedLocaleFromLanguage(language);
   const pathname = getPathname({ href, locale });
   return new URL(pathname, SITE_URL).toString();
 }
 
-/**
- * A page translated into every supported language: its canonical URL in this language and the
- * other languages' versions, so search engines show each visitor the page in their language.
- */
 export function getLocalizedAlternates({ href, language }: { href: string; language: string }) {
   const languages = Object.fromEntries(
     SUPPORTED_LOCALES.map((locale) => [locale, getLocalizedUrl({ href, language: locale })]),

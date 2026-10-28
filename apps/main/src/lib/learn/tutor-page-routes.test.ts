@@ -6,10 +6,8 @@ import { describe, expect, it } from "vitest";
 const APP_DIR = path.join(import.meta.dirname, "../../app/[lang]");
 const ID = "0199e2a1-3b4c-7d5e-8f60-718293a4b5c6";
 
-/** The web app's links for the buddy: every page, and the link to what core points at. */
 const { pages, toLink } = createAnswerLinks([]).links;
 
-/** Every page of the app, as a pattern of its path: route groups dropped, segments as wildcards. */
 function listPageRoutes(): RegExp[] {
   const files = readdirSync(APP_DIR, { recursive: true }).map(String);
 
@@ -26,7 +24,6 @@ function listPageRoutes(): RegExp[] {
     });
 }
 
-/** What the router opens for a link: its path, without the query. */
 function toRoute(href: string): string {
   return href.split("?")[0] ?? href;
 }

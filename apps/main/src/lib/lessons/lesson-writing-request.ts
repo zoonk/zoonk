@@ -7,13 +7,6 @@ import { LESSON_PLAYER_ERROR_CODES } from "@zoonk/core/lesson-player/error-codes
 import { type LessonLimit } from "@zoonk/learn/help-limit";
 import { getString, isJsonObject } from "@zoonk/utils/json";
 
-/**
- * What asking for a lesson's content answered: `writing` once a run writes it (followed by its
- * id), `ready` when it's written, `refused` when the learner's allowance says not now (and why),
- * `plusRequired` when a free exam plan past its first week holds it for Plus, `setAside` when
- * every draft failed its checks, so nothing writes it again, and `failed` when the request didn't
- * go through.
- */
 export type LessonWritingAnswer =
   | { generationId: string; status: "writing" }
   | { limit: LessonLimit; status: "refused" }
@@ -59,11 +52,6 @@ function readAnswer({
   return generationId ? { generationId, status: "writing" } : { status: "failed" };
 }
 
-/**
- * Asks the API to write the lesson now, or to follow the run already writing it, from the
- * learner's tap. A visitor who pressed "Start this lesson" without a session becomes a guest
- * first (behind BotID), so the guest's allowance decides whether a new lesson may be written.
- */
 export async function askToWriteLesson(lessonId: string): Promise<LessonWritingAnswer> {
   if (!(await ensureGuestSession())) {
     return { status: "failed" };

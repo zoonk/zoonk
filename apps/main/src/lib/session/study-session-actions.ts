@@ -42,10 +42,7 @@ const missionDayInputSchema = z.object({
 type SessionInput = z.infer<typeof sessionInputSchema>;
 type BlockInput = z.infer<typeof blockInputSchema>;
 
-/**
- * Whether the next block isn't the step the screen showed and one of them is a mock: Start never
- * begins a mock the learner didn't see, so the screen shows the new step first.
- */
+/** Start never begins a mock the learner didn't see. */
 function isChangedMock({
   blocks,
   expectedBlockId,
@@ -63,14 +60,6 @@ function isChangedMock({
   return Boolean(next?.checkpoint?.mock || shown?.checkpoint?.mock);
 }
 
-/**
- * Opens the next block of today's session ("Continue", "Take off", the moment after a block):
- * starts it and says where it's played, or the session screen for the summary once nothing is
- * left. An earlier day's session the learner has left (a lesson finished the next morning) goes on
- * with today's, on Today. The step the screen showed (`expectedBlockId`) guards mocks: when it or
- * the next block is a mock and they differ, nothing opens (`changed`). Null when it couldn't be
- * opened.
- */
 export async function openNextStudyBlockAction(
   input: z.infer<typeof nextInputSchema>,
 ): Promise<StudyDestination | null> {
@@ -115,7 +104,6 @@ export async function openNextStudyBlockAction(
   return result;
 }
 
-/** Opens one block the learner picked, such as a ready block while a lesson is written. */
 export async function openStudyBlockAction(input: BlockInput): Promise<StudyDestination | null> {
   const parsed = blockInputSchema.safeParse(input);
 
@@ -145,12 +133,8 @@ export async function openStudyBlockAction(input: BlockInput): Promise<StudyDest
 }
 
 /**
- * Saves the day of a mission whose page the learner's tap opens (a drill, a round, a call), while
- * the page opens: the same core capability the activity runs before it records anything, so its
- * first answer doesn't wait for the day. The tap never waits for it either: a navigation takes
- * over from a Server Action still on its way, whose request still runs, and the activity saves the
- * day itself when this didn't get through. The public API's day open
- * (`POST /v1/goals/{goalId}/study-sessions`) saves the same day.
+ * The tap never waits for it: a navigation takes over from a Server Action still on its way, whose
+ * request still runs, and the activity saves the day itself when this didn't get through.
  */
 export async function saveMissionDayAction(
   input: z.infer<typeof missionDayInputSchema>,
@@ -168,14 +152,7 @@ export async function saveMissionDayAction(
   }
 }
 
-/**
- * Opens the block of a saved day a mission or a first step opens (its `opens`), from its chip on
- * Today or its row in the buddy's day, started like a block the learner picks. It reads the day
- * that block belongs to (only the learner's own), not whichever goal is active now. Only a block
- * still to do and free to start opens: null for one that isn't (a chip read before the day
- * changed: the block finished, skipped, gone or waiting for the lessons before it), so the host
- * reads the day again instead.
- */
+/** Null for a block no longer free to start, so the host reads the day again. */
 export async function openMissionAction(
   input: z.infer<typeof missionInputSchema>,
 ): Promise<StudyDestination | null> {
@@ -209,8 +186,6 @@ export async function openMissionAction(
 
     const destination = await openStudyBlock({ block, sessionId: session.id, timeZone });
 
-    // A block finished on another device between this read and its start goes to the session
-    // screen without a block of its own (`blockFinished`): nothing opened, so the host reads again.
     return destination?.kind === "session" && !destination.blockId ? null : destination;
   });
 
@@ -264,7 +239,6 @@ export async function openWrittenLessonAction(input: BlockInput): Promise<StudyD
   return result;
 }
 
-/** Finishes a question block and returns its moment: the same capability as `POST .../completions`. */
 export async function finishStudyBlockAction(input: BlockInput): Promise<StudyFinishOutcome> {
   const parsed = blockInputSchema.safeParse(input);
 
@@ -287,7 +261,6 @@ export async function finishStudyBlockAction(input: BlockInput): Promise<StudyFi
     return { status: "failed" };
   }
 
-  // The session's end gets the next one ready, as `POST .../completions` does.
   if (result.completion.sessionCompleted) {
     prepareStudySession(sessionId);
   }
@@ -295,7 +268,6 @@ export async function finishStudyBlockAction(input: BlockInput): Promise<StudyFi
   return { moment: serializeStudyBlockCompletion(result.completion), status: "finished" };
 }
 
-/** "Stop for today": what was done counts and the rest waits, with no penalty. */
 export async function stopStudySessionAction(input: SessionInput): Promise<boolean> {
   const parsed = sessionInputSchema.safeParse(input);
 
@@ -319,13 +291,11 @@ export async function stopStudySessionAction(input: SessionInput): Promise<boole
     return false;
   }
 
-  // What's left waits for next time: the next session gets ready, as `POST .../stops` does.
   prepareStudySession(parsed.data.sessionId);
 
   return true;
 }
 
-/** "10 more minutes": adds the bonus block and opens it. Null when there's nothing to add. */
 export async function addExtraStudyBlockAction(
   input: SessionInput,
 ): Promise<StudyDestination | null> {
@@ -348,10 +318,6 @@ export async function addExtraStudyBlockAction(
   return result;
 }
 
-/**
- * "Catch up today": the lessons earlier days left that today's time didn't fit join today's
- * session. Resolves to whether they were added; Today reads itself again to show them.
- */
 export async function catchUpTodayAction(input: SessionInput): Promise<boolean> {
   const parsed = sessionInputSchema.safeParse(input);
 
@@ -376,7 +342,6 @@ const insightAnswerSchema = z.object({
   status: z.enum(["accepted", "dismissed"]),
 });
 
-/** Answers Today's insight: the same core capability as `PATCH /v1/me/memory/insights/{id}`. */
 export async function answerMemoryInsightAction(input: {
   insightId: string;
   status: "accepted" | "dismissed";

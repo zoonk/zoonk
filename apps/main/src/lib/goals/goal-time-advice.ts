@@ -10,14 +10,7 @@ import {
 } from "@zoonk/core/plans/time-advice-contract";
 import { postFromBrowser } from "../api/browser-api";
 
-/**
- * What the time a day picked covers by the goal's date, in the week onboarding's time question
- * shows (its study days, and the weekend's own time when it has one), studying everything when an
- * exam's learner asks about that (`fullCourse`): that time's plan only (the time that covers
- * everything is Find's, see `findGoalTimeToCover`). Requested from the API in the
- * browser: the question asks again until the plan is built, and a Server Action would keep its
- * Continue busy while each preview waits. Null when it couldn't be read.
- */
+/** From the browser: the question asks again until the plan is built, and a Server Action would keep Continue busy. */
 export async function getGoalTimeAdvice({
   dailyMinutes,
   fullCourse,
@@ -37,13 +30,7 @@ export async function getGoalTimeAdvice({
   return planTimeAdviceSchema.safeParse(await response.json().catch(() => null)).data ?? null;
 }
 
-/**
- * The daily time that covers the goal's whole plan by its date, found when the learner taps "Find
- * the time that covers everything" (see `PlanTimeToCover`), in the week asked about (the plan's own
- * when absent). Posted to the API from the browser: it plans the goal at each daily time, so it
- * takes a moment, and as no Server Action it never refreshes the page or its prefetched links,
- * since it changes nothing. Null when it couldn't be found.
- */
+/** Not a Server Action, so it never refreshes the page or its prefetched links: it changes nothing. */
 export async function findGoalTimeToCover({
   goalId,
   studyDays,

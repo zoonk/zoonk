@@ -9,7 +9,6 @@ async function readBody(response: Response): Promise<unknown> {
   return response.json().catch(() => null);
 }
 
-/** The API's example line: the saved line, null when there's none. */
 async function readExampleLine(response: Response | null): Promise<ExampleLine | null> {
   if (!response?.ok) {
     return null;
@@ -27,10 +26,7 @@ export async function getExampleLine({ stepId }: { stepId: string }): Promise<Ex
   );
 }
 
-/**
- * Writes the lesson's personal examples. The player asks in the background after the learner's
- * first action in the lesson, never as it opens.
- */
+/** The player asks after the learner's first action in the lesson, never as it opens. */
 export async function requestExampleLine({
   stepId,
 }: {
@@ -41,11 +37,7 @@ export async function requestExampleLine({
   );
 }
 
-/**
- * "Explain answer" on a wrong typed answer, asked from the browser so it never holds up the
- * lesson's answers while the explanation is written. A refusal says which allowance ran out;
- * anything else that isn't an explanation is a failure the learner can try again.
- */
+/** From the browser, so it never holds up the lesson's answers while the explanation is written. */
 export async function requestAnswerExplanation({
   answer,
   stepId,

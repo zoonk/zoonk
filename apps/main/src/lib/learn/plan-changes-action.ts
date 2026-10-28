@@ -10,11 +10,7 @@ const inputSchema = z.object({
   watch: planWatchSchema,
 });
 
-/**
- * Whether what the page watches (`watch`: the goal's plan, or today's session too) or their
- * lessons changed since the page read them (`since`, its read time), for a tab waiting on lessons
- * (`useRefreshOnPlanChange`). A tab that can't tell, or whose goal is gone, reads itself again.
- */
+/** A tab that can't tell, or whose goal is gone, reads itself again. */
 export async function hasPlanChangedAction(input: {
   goalId: string;
   since: number;

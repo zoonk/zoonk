@@ -4,10 +4,8 @@ import { type LearnerSummaryResponse } from "../learner-summary-response";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-/** When every learner here signed in: one session each, however often it's read. */
 const SIGNED_IN_AT = Date.now() - DAY_MS;
 
-/** One learner's summary as the server read it now. */
 export function summaryOf(userId: string, activeGoalId: string | null = null): LearnerSummary {
   const now = Date.now();
 
@@ -42,19 +40,16 @@ export function summaryOf(userId: string, activeGoalId: string | null = null): L
   };
 }
 
-/** The summary route's answer for a learner. */
 export function answerFor(
   summary: LearnerSummary,
 ): Extract<LearnerSummaryResponse, { status: "ready" }> {
   return { status: "ready", summary };
 }
 
-/** A page's seed for a learner. */
 export function seedFor(summary: LearnerSummary) {
   return { status: "ready", summary } as const;
 }
 
-/** Summary reads the test answers by hand, in the order it picks. */
 export function stubSummaryReads() {
   const reads: PromiseWithResolvers<LearnerSummaryResponse>[] = [];
 
@@ -70,18 +65,12 @@ export function stubSummaryReads() {
   return reads;
 }
 
-/** Lets every answer given so far run through the store. */
 export async function settle() {
   await new Promise((resolve) => {
     setImmediate(resolve);
   });
 }
 
-/**
- * A browser on a page whose render streams a seed, or not, holding the signed-in session hint; the
- * learner can move to a seeded page later (`page.seeded = true`), and the hint can change as an
- * auth response leaves it (`setHint`: `1`, `0`, or none).
- */
 export function stubPage({ seeded }: { seeded: boolean }) {
   const page = { seeded };
 
@@ -110,7 +99,6 @@ export function stubPage({ seeded }: { seeded: boolean }) {
   };
 }
 
-/** A fresh store: it lives in its module, once per page. */
 export async function loadStore() {
   vi.resetModules();
   return import("../learner-store");

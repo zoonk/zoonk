@@ -6,12 +6,7 @@ import { createCatalogOpenGraphImage } from "./catalog-opengraph-image";
 
 type CourseRoute = { brandSlug: string; courseSlug: string };
 
-/**
- * The card as its PNG and the image response's headers, per course address: the course's read, its
- * thumbnail's download and conversion and the render happen once per cache lifetime. The course
- * read's tags expire it when the course changes, and its chapter and lesson pages, which share the
- * card, share the entry.
- */
+/** The course read's tags expire it when the course changes; its chapter and lesson pages share the entry. */
 async function getCourseCard(route: CourseRoute) {
   "use cache";
 
@@ -30,10 +25,6 @@ async function getCourseCard(route: CourseRoute) {
   return { headers, png: new Uint8Array(await image.arrayBuffer()) };
 }
 
-/**
- * The course's share card: its thumbnail when it has one, or art for its
- * category. Chapter and lesson pages without a card of their own share it too.
- */
 export async function createCourseOpenGraphImage(route: CourseRoute): Promise<Response> {
   const { headers, png } = await getCourseCard({
     brandSlug: decodeRouteParam(route.brandSlug),

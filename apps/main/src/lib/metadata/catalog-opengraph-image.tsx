@@ -32,10 +32,6 @@ type CatalogImageSource =
   | { kind: "remote"; url: string }
   | { kind: "root" };
 
-/**
- * Builds the shared catalog Open Graph image with only the course image, title,
- * and description so share cards stay clean and cache-safe.
- */
 export async function createCatalogOpenGraphImage(params: CatalogOpenGraphImageParams) {
   const imageSrc = await getRenderableImageSrc({
     fallbackImagePath: params.fallbackImagePath,
@@ -47,10 +43,6 @@ export async function createCatalogOpenGraphImage(params: CatalogOpenGraphImageP
   });
 }
 
-/**
- * Keeps long generated titles inside the fixed social-card canvas instead of
- * letting one unusually long course or lesson title overflow the image.
- */
 function truncateText({ maxLength, text }: { maxLength: number; text: string }): string {
   if (text.length <= maxLength) {
     return text;
@@ -59,10 +51,6 @@ function truncateText({ maxLength, text }: { maxLength: number; text: string }):
   return `${text.slice(0, maxLength - 1).trimEnd()}...`;
 }
 
-/**
- * Longer titles need a smaller fixed type size because Open Graph images have a
- * single target canvas and cannot rely on responsive browser layout.
- */
 function getTitleFontSize(title: string): number {
   if (title.length > LONG_TITLE_LENGTH) {
     return LONG_TITLE_FONT_SIZE;
@@ -75,18 +63,11 @@ function getTitleFontSize(title: string): number {
   return SHORT_TITLE_FONT_SIZE;
 }
 
-/**
- * Optional image URLs flow through conditional arrays, so this narrows them
- * before the fallback loader receives an ordered list of concrete sources.
- */
 function isImageSource(source: CatalogImageSource | null): source is CatalogImageSource {
   return Boolean(source);
 }
 
-/**
- * Stored image URLs may be remote uploads or app-public fallback paths. Keeping
- * them typed avoids dynamic filesystem joins that make the build trace too much.
- */
+/** Typed sources avoid dynamic filesystem joins, which make the build trace too much. */
 function getImageSource(source: string | null | undefined): CatalogImageSource | null {
   if (!source) {
     return null;
@@ -103,11 +84,6 @@ function getImageSource(source: string | null | undefined): CatalogImageSource |
   return null;
 }
 
-/**
- * Thumbnail URLs can be remote blob URLs or local public fallback paths. The
- * renderer tries the content image first, then the route fallback, then the
- * root static share image so metadata generation never fails over artwork.
- */
 async function getRenderableImageSrc({
   fallbackImagePath,
   imageUrl,
@@ -124,10 +100,6 @@ async function getRenderableImageSrc({
   return getFirstRenderableImageSrc(sources);
 }
 
-/**
- * The first usable image should win because generated thumbnails are more
- * specific than fallback art, but a broken upload should still leave a card.
- */
 async function getFirstRenderableImageSrc(sources: CatalogImageSource[]): Promise<string> {
   const [source, ...remainingSources] = sources;
 
@@ -145,11 +117,7 @@ async function getFirstRenderableImageSrc(sources: CatalogImageSource[]): Promis
   return getFirstRenderableImageSrc(remainingSources);
 }
 
-/**
- * `next/og` renders PNG data URLs reliably, while the generated catalog art is
- * stored as WebP. Converting at the metadata boundary keeps the stored assets
- * unchanged and avoids blank share previews.
- */
+/** `next/og` renders PNG data URLs reliably, but the catalog art is stored as WebP. */
 async function getPngDataUrl({ image }: { image: Buffer }): Promise<string | null> {
   const { data } = await optimizeImage({ format: "png", image, quality: 92 });
 
@@ -160,10 +128,6 @@ async function getPngDataUrl({ image }: { image: Buffer }): Promise<string | nul
   return `data:image/png;base64,${data.toString("base64")}`;
 }
 
-/**
- * Keeps remote and local image loading behind one boundary so the renderer does
- * not need to know where a thumbnail came from.
- */
 async function readImageBytes(source: CatalogImageSource): Promise<Buffer | null> {
   if (source.kind === "remote") {
     return fetchRemoteImage(source.url);
@@ -176,10 +140,6 @@ async function readImageBytes(source: CatalogImageSource): Promise<Buffer | null
   return readLocalImage(join(process.cwd(), ROOT_OPEN_GRAPH_IMAGE_PATH));
 }
 
-/**
- * Remote thumbnails are user-facing content, so failures should degrade to the
- * next fallback image instead of breaking the metadata route.
- */
 async function fetchRemoteImage(url: string): Promise<Buffer | null> {
   const { data } = await safeAsync(async () => {
     const response = await fetch(url);
@@ -194,19 +154,11 @@ async function fetchRemoteImage(url: string): Promise<Buffer | null> {
   return data;
 }
 
-/**
- * Local fallback art lives in the app project so tests and previews do not need
- * production network access when a course has no generated thumbnail.
- */
 async function readLocalImage(path: string): Promise<Buffer | null> {
   const { data } = await safeAsync(() => readFile(path));
   return data;
 }
 
-/**
- * The card follows a quiet course-preview layout: one image block and one text
- * block, with no labels or metadata that would compete with the course copy.
- */
 function CatalogOpenGraphImage({
   description,
   imageSrc,

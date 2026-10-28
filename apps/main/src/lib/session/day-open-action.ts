@@ -11,13 +11,7 @@ import { logError } from "@zoonk/utils/logger";
 import { openStudyBlock } from "./open-study-block";
 import { type StudyDestination } from "./study-destination";
 
-/**
- * What opening a day comes back with, for the tap that sent it: the day opened, its session, and
- * where the tapped step plays once it started (`destination`;
- * null when no step was asked for or it changed since the screen showed it, which `targetStatus`
- * says). `retryable` asks for one more try in a request of its own; `empty` is a day with nothing
- * to open. A step that should have started and didn't is `failed`, like an error.
- */
+/** `retryable` asks for one more try in a request of its own. */
 export type DayOpenOutcome =
   | {
       destination: StudyDestination | null;
@@ -28,19 +22,13 @@ export type DayOpenOutcome =
   | { status: "empty" | "retryable" }
   | { status: "failed" | "goalNotActive" | "notFound" | "preparing" | "unauthorized" };
 
-/** The browser's zone is part of every tap here, as for the session's other actions. */
 const dayOpenInputSchema = openStudyDayInputSchema.required({ timeZone: true });
 
 function isStartable(status: DayTargetStatus | null): boolean {
   return status === "next" || status === "resolved";
 }
 
-/**
- * Opens the learner's day of one goal (`goalId`, the day the screen showed), the same core
- * capability as `POST /v1/goals/{goalId}/study-sessions`, then starts the tapped step when it's
- * still the work the screen showed, as a tap on a saved day does. Opening writes no AI work: only
- * starting the step does what starting it always did. A bare open (no `target`) only opens.
- */
+/** Opening writes no AI work; only starting the tapped step does. */
 export async function openStudyDayAction(input: OpenStudyDayInput): Promise<DayOpenOutcome> {
   const parsed = dayOpenInputSchema.safeParse(input);
 

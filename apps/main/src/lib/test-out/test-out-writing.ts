@@ -1,6 +1,5 @@
 import { type QuestionWriting, requestQuestionWriting } from "@/lib/questions/question-writing";
 
-/** Asks the API for the questions a chapter's test-out still needs (see `requestQuestionWriting`). */
 export function requestTestOutWriting({
   chapterId,
   goalId,

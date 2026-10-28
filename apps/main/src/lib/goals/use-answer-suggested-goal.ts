@@ -8,13 +8,7 @@ import { answerSuggestedGoalAction } from "./suggested-goal-actions";
 
 type SuggestedGoalAnswer = { status: "accepted" | "dismissed"; suggestion: SuggestedGoalView };
 
-/**
- * Records the answer to a suggested goal. Accepting opens the course's start, where the learner
- * picks up the course they were taking, or onboarding with its title once nobody can start that
- * course (as the saved answer says, not the card, which may be older). Dismissing stays on Today,
- * or opens onboarding when the learner has no goal yet (`hasGoal: false`), since Today has nothing
- * else to show them.
- */
+/** Goes by the saved answer, not the card, which may be older. */
 export function useAnswerSuggestedGoal({ hasGoal }: { hasGoal: boolean }) {
   const router = useRouter();
 

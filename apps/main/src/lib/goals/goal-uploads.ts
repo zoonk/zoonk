@@ -12,10 +12,8 @@ import { getWorkflowAuthHeaders } from "../workflow/auth-headers";
 const HTTP_UNAUTHORIZED = 401;
 const HTTP_UNPROCESSABLE = 422;
 
-/** Uploads go to the private store, which only the server reads. */
 const UPLOAD_ACCESS = "private";
 
-/** What the uploads route answered, as the paperclip says it. */
 async function toOutcome(response: Response): Promise<AttachOutcome> {
   const body: unknown = await response.json().catch(() => null);
   const source = isJsonObject(body) ? body.source : null;
@@ -25,8 +23,6 @@ async function toOutcome(response: Response): Promise<AttachOutcome> {
     return { source: { id, title: getString(source, "title") ?? "" }, status: "attached" };
   }
 
-  // A plan's cap for the day or the month, fair use asking for a short break, or a guest's
-  // account to create.
   const refusal = getUsageRefusal(body);
 
   if (refusal?.kind === "usageLimit") {
@@ -47,19 +43,14 @@ async function toOutcome(response: Response): Promise<AttachOutcome> {
   }
 }
 
-/**
- * The goal the material is for, when the goal already exists (the notice research asked for), so
- * the upload is linked to it. Onboarding's paperclip attaches before the goal exists.
- */
+/** Onboarding's paperclip attaches before the goal exists. */
 type AttachGoal = { goalId?: string };
 
-/** Registers the material with `POST /v1/uploads`, which checks the plan's upload allowance. */
 async function registerUpload(body: Record<string, string | undefined>): Promise<AttachOutcome> {
   const response = await postFromBrowser({ body, path: "/v1/uploads" });
   return response ? toOutcome(response) : { status: "failed" };
 }
 
-/** Pasted text: the syllabus, notes or a chapter, stored as the learner's own source. */
 export function attachGoalText({
   goalId,
   language,
@@ -68,7 +59,6 @@ export function attachGoalText({
   return registerUpload({ goalId, kind: "text", language, text });
 }
 
-/** A pasted link: an article, a class page or a public PDF, read once as the learner's source. */
 export function attachGoalLink({
   goalId,
   language,
@@ -77,10 +67,6 @@ export function attachGoalLink({
   return registerUpload({ goalId, kind: "link", language, url });
 }
 
-/**
- * A file goes straight to Blob storage in the learner's own folder (the API signs the upload,
- * refused once the plan's uploads are used up), then is registered like pasted text.
- */
 export async function attachGoalFile({
   file,
   goalId,

@@ -11,11 +11,6 @@ import { z } from "zod";
 
 const answerInputSchema = suggestedGoalAnswerSchema.extend({ suggestionId: z.uuid() });
 
-/**
- * Answers a suggested goal on Today: the same core capability as `PATCH /v1/me/suggested-goals/{id}`.
- * Returns the answered suggestion as it stands now (its course may be gone since Today showed it),
- * or null when the answer wasn't saved.
- */
 export async function answerSuggestedGoalAction(input: {
   status: "accepted" | "dismissed";
   suggestionId: string;

@@ -1,10 +1,5 @@
 import { STUDY_SESSION_PARAM } from "@/lib/lessons/lesson-player-params";
 
-/**
- * Where a checkpoint or a mock continues once it's done. The session navigation opens them with
- * `?session=`, as it opens lessons: from their session, they continue back to it, which opens the
- * next block or the day's summary; opened any other way (the exam page, a shared link), to Today.
- */
 export function getSessionBlockReturn({
   query,
   sessionId,

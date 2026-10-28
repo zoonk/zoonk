@@ -7,7 +7,6 @@ import { followTimeZoneAction } from "./follow-time-zone";
 
 const askedFollows = new Set<string>();
 
-/** Follow the device once per goal and zone, after the authenticated summary arrives. */
 export function useFollowTimeZone(goalId: string) {
   const learner = useLearnerSummary();
 

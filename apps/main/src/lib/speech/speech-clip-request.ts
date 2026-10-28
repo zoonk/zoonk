@@ -12,7 +12,6 @@ async function readBody(response: Response): Promise<unknown> {
   return response.json().catch(() => null);
 }
 
-/** What `POST /v1/speech-clips` answered, as a play button shows it. */
 async function toSpeechClipOutcome(response: Response): Promise<SpeechClipOutcome> {
   const body = await readBody(response);
 
@@ -25,12 +24,7 @@ async function toSpeechClipOutcome(response: Response): Promise<SpeechClipOutcom
   return { limit: readRefusedLimit({ body, status: response.status }), status: "failed" };
 }
 
-/**
- * Text read aloud for the web's learn screens and lesson player: the shared clip from the API, or
- * a new one voiced the first time anyone asks; the learner's own words (`personal`) play from
- * their private file through the web's file route (`toWebOwnFileUrl`). It goes from the browser on
- * the learner's tap, so a clip that takes seconds never holds up the page's Server Actions.
- */
+/** From the browser, so a clip that takes seconds never holds up the page's Server Actions. */
 export async function requestSpeechClip({
   language,
   personal = false,

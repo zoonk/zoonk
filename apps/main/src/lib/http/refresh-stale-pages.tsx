@@ -5,33 +5,21 @@ import { usePathname, useRouter, useSelectedLayoutSegment } from "next/navigatio
 import { useEffect, useEffectEvent, useLayoutEffect, useRef } from "react";
 import { onOtherTabWrite, takeSettledAppWrites } from "./app-write-ledger";
 
-/** As long as Next.js keeps a page in the browser before reading it again (its default stale time). */
+/** Next.js's default stale time for a page the browser keeps. */
 const STALE_MS = 300_000;
 
-/** The app's frame (`(app)/layout.tsx`): the pages a learner comes back to, unlike task screens. */
 const FRAME_SEGMENT = "(app)";
 
-/**
- * Whether the router's latest navigation went Back or Forward. Next.js draws that page inside its
- * own `popstate` listener, before any other one hears it, so the router says it as it starts.
- */
+/** Next.js draws a Back or Forward page inside its own `popstate` listener, before any other one hears it. */
 let traversing = false;
 
-/** Called as each router navigation starts (`onRouterTransitionStart`, `instrumentation-client.ts`). */
 export function noteRouterTransition(navigationType: RouterTransitionType): void {
   traversing = navigationType === "traverse";
 }
 
 /**
- * Reads the pages again when what the browser keeps of them may be out of date, so the next one
- * shown is current. Leaving a task screen (a lesson, a session…) does once the writes sent from it
- * settle (`noteAppWrite`), unless the navigation already read their result. Showing a frame page
- * after any write does too; leaving the frame for a task screen doesn't, since that screen reads
- * its own answer. A frame page shown again, by Back or Forward (which Next.js restores at any
- * age) or by coming back to the tab,
- * reads again once the pages were last read five minutes ago or more (the day may have changed, or
- * they studied on another device), or after another tab wrote. A task screen on screen is never
- * read again under the learner. Draws nothing.
+ * Next.js restores a Back or Forward page at any age, so a frame page shown again reads again after
+ * five minutes or another tab's write. A task screen on screen is never read again under the learner.
  */
 export function RefreshStalePages() {
   const router = useRouter();

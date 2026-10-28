@@ -25,10 +25,6 @@ export async function getCategories(): Promise<CategoryInfo[]> {
   ];
 }
 
-/**
- * Resolves route category slugs to their translated display labels so UI copy
- * never exposes internal values such as "tech" instead of "Technology".
- */
 async function getCategoryLabel(category: CourseCategory): Promise<string> {
   const categories = await getCategories();
 
@@ -48,10 +44,6 @@ export async function getCategoryMeta(params: { category: CourseCategory }) {
   };
 }
 
-/**
- * Every category page's headline, like "Courses in Science", which reads right for every category,
- * by its key: the catalog's header follows the chosen category without waiting.
- */
 export async function getCategoryTitles(): Promise<Record<string, string>> {
   const t = await getExtracted();
   const categories = await getCategories();
@@ -61,7 +53,6 @@ export async function getCategoryTitles(): Promise<Record<string, string>> {
   );
 }
 
-/** Every category's name by its key, for a course's subject label wherever a list shows many. */
 export async function getCategoryNames(): Promise<Record<string, string>> {
   const categories = await getCategories();
   return Object.fromEntries(categories.map(({ key, label }) => [key, label]));

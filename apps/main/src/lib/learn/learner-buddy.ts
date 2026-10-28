@@ -5,11 +5,6 @@ import { getBeltLevel } from "@zoonk/core/progress/get-belt-level";
 import { getEnergyLevel } from "@zoonk/core/progress/get-energy-level";
 import { getStudiedToday } from "@zoonk/core/progress/get-studied-today";
 
-/**
- * The learner's buddy: kind, name and glasses from the profile, growth from the belt and glow from
- * Energy, which is null until the learner has learned something (a new buddy is awake, without a
- * glow). Zu until the learner saves a choice, including for visitors without a profile.
- */
 export async function getLearnerBuddy() {
   const [profile, belt, energy, studiedToday] = await Promise.all([
     getLearningProfile(),

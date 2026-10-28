@@ -16,14 +16,9 @@ import {
 import { getWorkflowAuthHeaders } from "./auth-headers";
 import { useGenerationEvents } from "./use-generation-events";
 
-/** A run saves its id within a few seconds of starting; the page asks for it this often. */
 const ID_POLL_MS = 2000;
-/** With no run after this long, the start failed: the learner can start it again. */
 const NOT_STARTED_MS = 45_000;
-/**
- * A run can stop without ending its stream (a crash or a restart leaves it running, which the API
- * reports as failed once it stalls): while following one, its status is checked this often.
- */
+/** A crash or a restart can leave a run's stream open; the API reports it failed once it stalls. */
 const STATUS_CHECK_MS = 120_000;
 
 const RUN_STATUSES = new Set<string>(["cancelled", "completed", "failed", "pending", "running"]);
@@ -32,7 +27,6 @@ function isRunStatus(value: string | null): value is RunStatus {
   return value !== null && RUN_STATUSES.has(value);
 }
 
-/** The workflow's own status for a run, or null when the API couldn't be reached. */
 async function readRunStatus(runId: string): Promise<RunStatus | null> {
   const headers = await getWorkflowAuthHeaders();
   const url = `${getBrowserApiUrl()}/v1/generations/${encodeURIComponent(runId)}`;
@@ -48,16 +42,6 @@ async function readRunStatus(runId: string): Promise<RunStatus | null> {
   return isRunStatus(status) ? status : null;
 }
 
-/**
- * Follows the run behind a generation wait until its content is ready, for `GenerationWait`. It
- * only reads: the host starts runs (a learner's tap, never a page load) and passes the run's id,
- * or `readGenerationId` to ask for it until the run saved it. Events stream live and resume after
- * a dropped connection; a run that hands over to another is followed there. It never gives up
- * silently: no run within 45 seconds, a connection that keeps dropping, or a failed run each
- * become a failure with the way out (`retry`): reconnecting to the same run, or starting it again
- * through `restart`, which may return the new run's id (null when the start failed). `onReady`
- * runs once the content is ready.
- */
 export function useWorkflowRun({
   generationId,
   kind,
@@ -110,7 +94,6 @@ export function useWorkflowRun({
     return () => clearTimeout(timer);
   }, [state.reconnectIn]);
 
-  /** A closed stream: the run's own status says whether to reopen it, or how it ended. */
   async function checkRun(id: string) {
     const runStatus = await readRunStatus(id);
     dispatch(runStatus ? { status: runStatus, type: "runStatus" } : { type: "connectionLost" });
@@ -168,7 +151,6 @@ export function useWorkflowRun({
 
     const { data, error } = await safeAsync(restart);
 
-    // A host that knows its start failed says so with null: no need to wait for a run.
     if (error || data === null) {
       dispatch({ type: "notStarted" });
       return;

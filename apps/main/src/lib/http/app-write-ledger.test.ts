@@ -12,7 +12,6 @@ function heldWrite() {
 
 describe("app write ledger", () => {
   beforeEach(async () => {
-    // The page the writes are sent from, which a browser always has.
     vi.stubGlobal("location", new URL(PAGE));
     await takeSettledAppWrites();
   });
@@ -76,7 +75,6 @@ describe("app write ledger", () => {
 
   describe("requests the page sends", () => {
     beforeEach(() => {
-      // The network is outside the test: every request answers at once.
       vi.stubGlobal(
         "fetch",
         vi.fn(() => Promise.resolve(new Response(null))),
@@ -111,7 +109,6 @@ describe("app write ledger", () => {
       await fetch("/en/today?_rsc=next", { headers: { RSC: "1" } });
 
       await expect(takeSettledAppWrites({ to: "/en/today" })).resolves.toBe(false);
-      // A different page kept before the write still needs a refresh.
       await expect(takeSettledAppWrites({ to: "/en/plan" })).resolves.toBe(true);
       await expect(takeSettledAppWrites()).resolves.toBe(false);
     });

@@ -13,7 +13,6 @@ function isAnswer(body: unknown): body is MaterialQuestionAnswer {
   return isJsonObject(body) && typeof body.answer === "string" && Array.isArray(body.citations);
 }
 
-/** What the API answered, as the questions screen says it. */
 async function toOutcome(response: Response): Promise<MaterialQuestionOutcome> {
   const body: unknown = await response.json().catch(() => null);
 
@@ -37,10 +36,6 @@ async function toOutcome(response: Response): Promise<MaterialQuestionOutcome> {
     : { status: "failed" };
 }
 
-/**
- * "Ask questions" about the material attached with the paperclip, through
- * `POST /v1/material-questions`, like the uploads that stored it.
- */
 export async function askMaterialQuestion(input: {
   language: string;
   question: string;

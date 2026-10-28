@@ -5,12 +5,6 @@ import { type TapResult } from "./day-entry";
 import { type DayOpenOutcome, openStudyDayAction } from "./day-open-action";
 import { type StudyDestination } from "./study-destination";
 
-/**
- * What a day's open came to, for the screen that tapped: where the step plays once it started, a
- * read of the screen again when nothing started (the step changed or left the day, the day had
- * nothing to open, the goal can't be studied now: the screen says which once it reads itself), or
- * a failure, which two lost races in a row are too.
- */
 export function toTapResult(outcome: DayOpenOutcome): TapResult {
   if (outcome.status === "opened") {
     return outcome.destination
@@ -23,7 +17,7 @@ export function toTapResult(outcome: DayOpenOutcome): TapResult {
     : { kind: "refresh" };
 }
 
-/** What a saved day's action came to: null didn't work; `changed` opened nothing on purpose. */
+/** `changed` opened nothing on purpose. */
 export function toDestinationResult(destination: StudyDestination | null): TapResult {
   if (!destination) {
     return { kind: "failed" };
@@ -33,12 +27,8 @@ export function toDestinationResult(destination: StudyDestination | null): TapRe
 }
 
 /**
- * Opens the day the screen showed, from the learner's tap: the request leaves at once (call this in
- * the click, before navigating, so the navigation never holds it back). When it lost a race to
- * another write of the learner's (`retryable`), it's sent once more, in a request of its own, while
- * the tab is still where the tap was made for the same identity (`stillHere`); a second loss is a
- * failure. Opening leaves the screen alone, so it's noted for the pages to read again once the
- * learner is back in the frame (`noteAppWrite`).
+ * Call this in the click, before navigating, so the navigation never holds the request back. A lost
+ * race is sent once more while the tab is still where the tap was made; a second loss is a failure.
  */
 export async function sendDayOpen({
   input,

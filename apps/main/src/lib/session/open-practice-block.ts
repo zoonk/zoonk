@@ -13,18 +13,12 @@ type AddedPractice =
   | { block: Parameters<typeof openStudyBlock>[0]["block"]; sessionId: string; status: "ready" }
   | { status: "goalNotActive" | "notFound" | "nothingToPractice" | "unauthorized" | "unavailable" };
 
-/**
- * A bonus practice block (a chapter's "Practice now", Content's "Review") that core added to
- * today's session, started where it's played, with why it didn't start in the learner's terms
- * otherwise.
- */
 export async function openPracticeBlock({
   add,
   label,
   timeZone,
 }: {
   add: () => Promise<AddedPractice>;
-  /** Names the caller in the error log. */
   label: string;
   timeZone: string;
 }): Promise<PracticeBlockResult> {

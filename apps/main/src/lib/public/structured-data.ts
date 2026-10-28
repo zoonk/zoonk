@@ -34,10 +34,6 @@ export function breadcrumbJsonLd(items: Named[]): JsonLdObject {
   };
 }
 
-/**
- * A course with its outline. The workload is the sum of the lessons' estimated
- * minutes, so it's only set once the outline exists.
- */
 export function courseJsonLd({
   description,
   language,
@@ -72,7 +68,6 @@ export function courseJsonLd({
   };
 }
 
-/** A chapter's lessons, in order. */
 export function lessonListJsonLd({
   lessons,
   name,
@@ -93,7 +88,6 @@ export function lessonListJsonLd({
   };
 }
 
-/** A short lesson: what it teaches (its summary ideas), how long it takes and where it fits. */
 export function lessonJsonLd({
   course,
   description,
@@ -128,10 +122,6 @@ export function lessonJsonLd({
   };
 }
 
-/**
- * The home page's site and the organization behind it, so search results can show Zoonk's name and
- * logo for the whole site. Every language's home page describes the same site.
- */
 export const HOME_JSON_LD: JsonLdObject[] = [
   { "@context": SCHEMA_CONTEXT, "@type": "WebSite", name: "Zoonk", url: `${SITE_URL}/` },
   {

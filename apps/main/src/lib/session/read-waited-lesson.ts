@@ -4,7 +4,6 @@ import { getFromBrowser } from "@/lib/api/browser-api";
 import { type NextStopLesson } from "@zoonk/learn/session/next-stop";
 import { getString } from "@zoonk/utils/json";
 
-/** A lesson's state as its readiness says it, as the next stop's wait draws it. */
 const WAITED_LESSON = new Map<string, NextStopLesson>([
   ["failed", "failed"],
   ["generating", "writing"],
@@ -12,10 +11,7 @@ const WAITED_LESSON = new Map<string, NextStopLesson>([
   ["ready", "ready"],
 ]);
 
-/**
- * Where a waited-for lesson stands, from the API's readiness (the narrow read native clients poll):
- * the wait reads the whole session again only when it changed. Null when it couldn't be read.
- */
+/** The wait reads the whole session again only when this changed. Null when it couldn't be read. */
 export async function readWaitedLesson(
   lessonId: string,
 ): Promise<{ generationId: string | null; lesson: NextStopLesson } | null> {

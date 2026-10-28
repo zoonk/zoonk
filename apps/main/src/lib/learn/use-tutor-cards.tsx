@@ -12,10 +12,6 @@ import { type TutorCardActions, type TutorCards, getTutorCards } from "@zoonk/le
 import { useMemo } from "react";
 import { useTutorAppLinks } from "./use-tutor-app-links";
 
-/**
- * Where each feature the buddy offers opens. Choosing where to focus is the Plan with its
- * "Choose where to focus" sheet open; a written test is its subject's page.
- */
 const TOOL_HREFS: TutorCardActions["tools"]["hrefs"] = {
   chooseFocus: "/plan?focus=choose",
   chooseMock: MOCK_ENTRY_HREFS.choose,
@@ -29,11 +25,6 @@ const TOOL_HREFS: TutorCardActions["tools"]["hrefs"] = {
   subject: (key) => `/plan/${key}`,
 };
 
-/**
- * How the buddy's cards work for the goal it tutors, on its tab and on every screen it's asked
- * from: a plan change is answered as the Plan answers one, then the page reads itself again;
- * a feature opens where main shows it.
- */
 export function useTutorCardActions(goalId: string): TutorCardActions {
   const router = useRouter();
   const startTestOut = useStartTestOut();
@@ -61,15 +52,9 @@ export function useTutorCardActions(goalId: string): TutorCardActions {
   );
 }
 
-/** The buddy's cards on a screen inside a goal, with how its answers link the app there. */
 export type MainTutorCards = TutorCards & { appLinks: ReturnType<typeof useTutorAppLinks> };
 
-/**
- * The buddy's cards under its answers on a screen inside the goal it tutors (a chapter, a lesson,
- * a mock), and how those answers link the app (`useTutorAppLinks`); none without a goal, whose
- * answers never carry one. The lesson player isn't a learn screen, so each card brings main's
- * learn links and analytics with it.
- */
+/** The lesson player isn't a learn screen, so each card brings main's learn links and analytics with it. */
 export function useTutorCards(goalId: string | null): MainTutorCards | null {
   const actions = useTutorCardActions(goalId ?? "");
   const appLinks = useTutorAppLinks(goalId ?? "");

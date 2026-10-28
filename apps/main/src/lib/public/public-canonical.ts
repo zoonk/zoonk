@@ -11,11 +11,7 @@ export function getCourseUrl({ brandSlug, courseSlug, language }: CourseParams):
   return getLocalizedUrl({ href: getCourseHref({ brandSlug, courseSlug }), language });
 }
 
-/**
- * A shared chapter can sit in several courses. Its canonical URL is its home
- * placement, so search engines see one page per chapter; other placements
- * point there.
- */
+/** A shared chapter's canonical URL is its home placement, so search engines see one page per chapter. */
 export async function getChapterUrls({
   chapterId,
   ...params
@@ -32,7 +28,6 @@ export async function getChapterUrls({
   };
 }
 
-/** Like chapters, a reused lesson's canonical URL is its home chapter's placement. */
 export async function getLessonUrls({
   lessonId,
   ...params

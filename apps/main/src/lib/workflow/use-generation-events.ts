@@ -6,10 +6,6 @@ import { createParser } from "eventsource-parser";
 import { useEffect, useEffectEvent, useRef } from "react";
 import { getWorkflowAuthHeaders } from "./auth-headers";
 
-/**
- * Follows a run's durable stream, resuming after the last event on each new connection.
- * A different run starts at its first event.
- */
 export function useGenerationEvents({
   connection,
   onComplete,
@@ -86,7 +82,6 @@ export function useGenerationEvents({
         }
         /* eslint-enable no-await-in-loop */
 
-        // Flush any bytes the decoder held back while waiting for more chunks
         parser.feed(decoder.decode());
 
         onCompleteEvent();

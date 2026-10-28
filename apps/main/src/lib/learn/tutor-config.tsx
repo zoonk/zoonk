@@ -14,13 +14,7 @@ const renderMemoryUpdate: NonNullable<TutorNavigation["renderMemoryUpdate"]> = (
   <MemoryUpdated changes={changes} className="mt-2" onUndo={undoMemoryChangesAction} />
 );
 
-/**
- * The tutor in a lesson or on a screen (a chapter, course, plan or mock), over the public API:
- * the learner's buddy answers, by face and name (`getLearnerBuddy`, including the default).
- * Signed-in learners ask; visitors and guests see the sign-up prompt, since the tutor isn't part
- * of a guest's allowance. Inside a goal, its answers carry the buddy's cards and link the app
- * (`useTutorCards`); the buddy's tab draws its own cards and passes only `appLinks`.
- */
+/** Visitors and guests see the sign-up prompt: the tutor isn't part of a guest's allowance. */
 export function getTutorConfig({
   appLinks,
   buddy,

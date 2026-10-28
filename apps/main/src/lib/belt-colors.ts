@@ -4,10 +4,6 @@ import { getExtracted } from "next-intl/server";
 
 export type BeltColorOption = { bgClass: string; key: BeltColor; label: string };
 
-/**
- * The progression dots and visible level copy share these options so every belt
- * color uses the same translated full label.
- */
 export async function getBeltColors(): Promise<BeltColorOption[]> {
   const t = await getExtracted();
 
@@ -21,10 +17,6 @@ export async function getBeltColors(): Promise<BeltColorOption[]> {
   }));
 }
 
-/**
- * Call sites that only render the current belt still read from the shared belt
- * options so belt copy cannot drift from the progression labels.
- */
 export async function getBeltLabel({ color }: { color: BeltColor }): Promise<string> {
   const beltColors = await getBeltColors();
 

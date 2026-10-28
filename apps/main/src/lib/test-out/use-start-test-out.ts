@@ -6,11 +6,6 @@ import { useCallback } from "react";
 import { TEST_OUT_FROM_SESSION_PARAM, TEST_OUT_RUN_PARAM } from "./test-out-params";
 import { requestTestOutWriting } from "./test-out-writing";
 
-/**
- * "Take the test" on a chapter's or unit's page, or offered in today's session (`fromSession`):
- * asks for the test-out's questions (a POST on the learner's tap) and opens the test, which
- * follows the run writing them when they don't exist yet.
- */
 export function useStartTestOut() {
   const router = useRouter();
 

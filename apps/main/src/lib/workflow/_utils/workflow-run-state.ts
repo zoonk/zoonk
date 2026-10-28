@@ -12,39 +12,28 @@ import {
   type GenerationStepTimes,
 } from "@zoonk/learn/generation/run";
 
-/** Lost connections in a row, without a single event between them, before the learner is told. */
 const MAX_LOST_CONNECTIONS = 5;
 
-/** A stream that closed while its run still works (a function timeout) reopens after this. */
+/** A stream can close while its run still works (a function timeout). */
 const REOPEN_DELAY_MS = 1500;
 
 const MAX_RECONNECT_DELAY_MS = 16_000;
 
-/** The workflow's own status for a run, as `GET /v1/generations/{id}` reports it. */
 export type RunStatus = "cancelled" | "completed" | "failed" | "pending" | "running";
 
 export type WorkflowRunState = {
-  /**
-   * This device's clock minus the server's, from the stream's `Date` header as it opened, so the
-   * phase running now is timed on the server's clock, as its events are. A replayed event can't
-   * tell it: it arrives long after its time.
-   */
+  /** From the stream's `Date` header as it opened: a replayed event arrives long after its time. */
   clockOffsetMs: number | null;
-  /** Each new connection gets its own number, so the events URL changes and a fresh one opens. */
+  /** A new number changes the events URL, so a fresh connection opens. */
   connection: number;
   failure: GenerationFailure | null;
-  /** The run the followed one handed over to: the one actually doing the work. */
   joined: string | null;
   lostConnections: number;
-  /** The run's id, read from the server while the host didn't have it. */
   polled: string | null;
   ready: boolean;
-  /** When the next connection opens, in milliseconds from now; null while one is open. */
   reconnectIn: number | null;
-  /** Runs that failed and were started again: their ids are no longer followed. */
   replaced: string[];
   steps: Partial<Record<string, GenerationStepState>>;
-  /** When the run reported each step, on the server's clock. */
   stepTimes: Partial<Record<string, GenerationStepTimes>>;
 };
 
@@ -77,7 +66,6 @@ function isSettled(state: WorkflowRunState): boolean {
   return state.ready || state.failure !== null;
 }
 
-/** Waits longer after each lost connection in a row: 2, 4, 8 and 16 seconds. */
 function getReconnectDelay(lostConnections: number): number {
   return Math.min(1000 * 2 ** lostConnections, MAX_RECONNECT_DELAY_MS);
 }
@@ -119,7 +107,6 @@ function applyEvent({
   message: StepStreamMessage;
   state: WorkflowRunState;
 }): WorkflowRunState {
-  // Any event proves the connection works.
   const connected = { ...state, lostConnections: 0 };
 
   const meaning = getStepMeaning({ kind, status: message.status, step: message.step });
@@ -142,11 +129,7 @@ function applyEvent({
   return { ...recorded, ready };
 }
 
-/**
- * The stream closed before the wait's content was ready. The run's own status decides: still
- * running means the connection was cut (a function timeout) and a new one resumes it; finished
- * means the work is done; failed or cancelled means it stopped.
- */
+/** A run still running behind a closed stream had its connection cut (a function timeout). */
 function applyRunStatus(state: WorkflowRunState, status: RunStatus): WorkflowRunState {
   if (isSettled(state)) {
     return state;
@@ -163,7 +146,6 @@ function applyRunStatus(state: WorkflowRunState, status: RunStatus): WorkflowRun
   return { ...state, lostConnections: 0, reconnectIn: REOPEN_DELAY_MS };
 }
 
-/** After a few lost connections in a row, the learner is told instead of waiting on nothing. */
 function applyConnectionLost(state: WorkflowRunState): WorkflowRunState {
   if (isSettled(state)) {
     return state;
@@ -178,12 +160,6 @@ function applyConnectionLost(state: WorkflowRunState): WorkflowRunState {
   return { ...state, lostConnections, reconnectIn: getReconnectDelay(lostConnections) };
 }
 
-/**
- * Following a generation run for a wait: its steps, when its content is ready, and why it stopped
- * (it never started, the connection kept dropping, or the run failed). Each reconnect opens a new
- * connection that resumes where the last one ended; the learner's own reconnect starts the count
- * of lost connections over.
- */
 export function workflowRunReducer(
   state: WorkflowRunState,
   action: WorkflowRunAction,
@@ -225,7 +201,6 @@ export function workflowRunReducer(
   }
 }
 
-/** The run to follow: one the followed run handed over to, else the known one, unless replaced. */
 export function getFollowedRunId({
   generationId,
   state,

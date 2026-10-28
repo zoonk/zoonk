@@ -3,7 +3,6 @@
 import { type BeltColor } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
 
-/** A belt's full name ("Yellow belt"), the words `getBeltLabel` gives server components. */
 export function useBeltLabel(color: BeltColor): string {
   const t = useExtracted();
 

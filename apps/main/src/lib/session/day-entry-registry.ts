@@ -10,7 +10,6 @@ function notify() {
   registry.listeners.forEach((listener) => listener());
 }
 
-/** Moves the tab's entry on, if it's still the one `id` names. */
 function patch(id: number, fields: Partial<DayEntry>) {
   if (registry.entry?.id !== id) {
     return;
@@ -20,7 +19,6 @@ function patch(id: number, fields: Partial<DayEntry>) {
   notify();
 }
 
-/** Ends the entry `id` names, or the tab's entry whichever it is (the identity changed). */
 export function endDayEntry(id?: number): void {
   if (!registry.entry || (id !== undefined && registry.entry.id !== id)) {
     return;
@@ -30,10 +28,6 @@ export function endDayEntry(id?: number): void {
   notify();
 }
 
-/**
- * Lets the entry `id` names go at `expiry`, or now when that passed; only while nothing applies
- * its result (`unlessApplied`), for a result's own minute.
- */
 function expireAt(id: number, expiry: number, { unlessApplied }: { unlessApplied: boolean }) {
   const expire = () => {
     if (!unlessApplied || registry.entry?.applied === false) {
@@ -51,10 +45,6 @@ function expireAt(id: number, expiry: number, { unlessApplied }: { unlessApplied
   setTimeout(expire, expiresIn);
 }
 
-/**
- * Starts the tab's one entry for a tap, replacing any earlier one. It lets go on its own once the
- * day it showed ends, or a minute after its result if nothing applied it.
- */
 export function beginDayEntry(
   input: Omit<DayEntry, "applied" | "expired" | "id" | "result">,
 ): DayEntry {
@@ -79,7 +69,6 @@ export function beginDayEntry(
   return entry;
 }
 
-/** Records the tap's result (from then on, nothing applying it lets it go), or a new address. */
 export function updateDayEntry(id: number, fields: Partial<Pick<DayEntry, "href" | "result">>) {
   const dayEndsAt = registry.entry?.id === id ? registry.entry.day.shown.day.dayEndsAt : null;
   patch(id, fields);
@@ -89,16 +78,10 @@ export function updateDayEntry(id: number, fields: Partial<Pick<DayEntry, "href"
   }
 }
 
-/** The session screen is applying the tap's result: it stays busy until that's done. */
 export function markDayEntryApplied(id: number): void {
   patch(id, { applied: true });
 }
 
-/**
- * The tap's result opened at another address of the session screen (`href`), on the block it names
- * (the day's next step changed since the screen showed it): the entry follows, drawing that block
- * when the day it holds has it.
- */
 export function moveDayEntry(id: number, { blockId, href }: { blockId?: string; href: string }) {
   const entry = registry.entry?.id === id ? registry.entry : null;
 
@@ -119,7 +102,6 @@ export function moveDayEntry(id: number, { blockId, href }: { blockId?: string; 
   });
 }
 
-/** Applying the tap's result failed (its lesson couldn't be asked for): the step says so, with its retry. */
 export function failDayEntry(id: number): void {
   patch(id, { applied: false, result: { kind: "failed" } });
 }

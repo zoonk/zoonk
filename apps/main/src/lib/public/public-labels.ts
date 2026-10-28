@@ -6,16 +6,12 @@ import { getTotalDuration } from "./total-duration";
 const MINUTES_PER_HOUR = 60;
 const SECONDS_PER_MINUTE = 60;
 
-/** Estimated lengths in minutes as the app's compact duration, like "5 min" or "1 hr 30 min". */
 export async function getMinutesFormatter(): Promise<(minutes: number) => string> {
   const locale = await getLocale();
   return (minutes) => formatDuration({ locale, totalSeconds: minutes * SECONDS_PER_MINUTE });
 }
 
-/**
- * Calendar days as core sends them ("YYYY-MM-DD") written as their day and month, "Nov 8", read at
- * UTC midnight so no timezone moves them to another day.
- */
+/** Read at UTC midnight so no time zone moves the day. */
 export async function getIsoDayFormatter(): Promise<(isoDate: string) => string> {
   const format = await getFormatter();
 
@@ -27,12 +23,6 @@ export async function getIsoDayFormatter(): Promise<(isoDate: string) => string>
     });
 }
 
-/**
- * How long a chapter, a course or a part of a plan takes, from its lessons' estimates
- * (`getTotalDuration`): its minutes under an hour, beyond that the whole hours it rounds to, marked
- * "~" as the estimate they are ("~3 hr"), as the app marks every estimate in a line of data. Read
- * once, for a page that writes several.
- */
 export async function getTotalDurationFormatter(): Promise<(totalMinutes: number) => string> {
   const formatMinutes = await getMinutesFormatter();
 
@@ -45,16 +35,12 @@ export async function getTotalDurationFormatter(): Promise<(totalMinutes: number
   };
 }
 
-/** How long a chapter or course takes, from its lessons' estimates (`getTotalDuration`). */
 export async function getTotalDurationLabel(totalMinutes: number): Promise<string> {
   const durationText = await getTotalDurationFormatter();
   return durationText(totalMinutes);
 }
 
-/**
- * The names of a course outline's level bands, read once for a page that names several: looking
- * each up on its own would run the translations inside `Promise.all`.
- */
+/** Read once: looking each up on its own would run the translations inside `Promise.all`. */
 export async function getLevelLabels(): Promise<Record<CourseLevel, string>> {
   const t = await getExtracted();
 

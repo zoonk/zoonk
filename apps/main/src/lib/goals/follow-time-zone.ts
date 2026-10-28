@@ -11,7 +11,6 @@ const followInputSchema = z.object({
   timeZone: z.string().refine(isValidTimeZone),
 });
 
-/** Save a permitted device-zone move, refreshing the goal and its Today response. */
 export async function followTimeZoneAction(input: { goalId: string; timeZone: string }) {
   const parsed = followInputSchema.safeParse(input);
 

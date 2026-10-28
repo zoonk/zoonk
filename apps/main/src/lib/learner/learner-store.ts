@@ -16,10 +16,8 @@ import {
 } from "./learner-summary-core";
 import { getSessionHint, hasSessionHint } from "./session-hint";
 
-/** A page whose render streams the summary in (`LearnerSummarySeed`) marks it in the head. */
 export const LEARNER_SEED_META = "zoonk-learner-seed";
 
-/** How long a page's seed may take before the browser reads the summary itself. */
 const SEED_WAIT_MS = 10_000;
 
 /**
@@ -38,11 +36,6 @@ function waitForSeed() {
   }, SEED_WAIT_MS);
 }
 
-/**
- * Makes sure the summary is (being) read, for something that shows it: the page's seed when one is
- * on its way, a read when the browser holds a session, or the visitor's look otherwise. A summary
- * is read again once it changes on its own (`nextChangeAt`), and a failed read on the next try.
- */
 export function ensureLearnerSummary(): void {
   if (typeof document === "undefined") {
     return;
@@ -67,7 +60,6 @@ export function ensureLearnerSummary(): void {
     return;
   }
 
-  // A visitor who became a guest has a session to read now; a failed read tries again.
   if (
     (state.status === "visitor" && hasSessionHint()) ||
     (state.status === "failed" && getSessionHint() !== "none")
@@ -76,7 +68,6 @@ export function ensureLearnerSummary(): void {
   }
 }
 
-/** Takes what a page's server render read (`LearnerSummarySeed`). */
 export function mergeLearnerSummarySeed(seed: LearnerSummarySeedValue): void {
   install();
 
@@ -105,15 +96,13 @@ export function mergeLearnerSummarySeed(seed: LearnerSummarySeedValue): void {
   );
 }
 
-/** The identity's generation now, to tell later whether it changed while a request was out. */
 export function getLearnerGeneration(): number {
   return store.generation;
 }
 
 /**
- * Takes a summary a Server Action returned with its outcome (a goal switch) for the identity the
- * browser held when it sent the action (`generation`), so an old session's cookies never restore
- * it; when the session was checked meanwhile, the summary is read again with the cookies of now.
+ * Takes it only for the identity held when the action was sent (`generation`), so an old session's
+ * cookies never restore it.
  */
 export function mergeLearnerSummary({
   generation,

@@ -6,19 +6,11 @@ import { headers } from "next/headers";
 
 const API_ORIGIN = new URL(API_URL).origin;
 
-/**
- * What the API answered: its JSON body when it accepted, or its status (null when it couldn't be
- * reached) with the error body, so callers can tell a learner who should slow down from a failure.
- */
 export type LearnerApiResponse =
   | { json: unknown; ok: true }
   | { json: unknown; ok: false; status: number | null };
 
-/**
- * Posts to the API as the learner of this request: their cookie, so the API acts as them, and
- * their browser, so the work counts as web. Workflows run on the API, so the app starts them this
- * way and waits for the answer, never in the background.
- */
+/** Forwards the learner's cookie and browser, so the API acts as them and counts the work as web. */
 export async function postAsLearner({
   body,
   path,

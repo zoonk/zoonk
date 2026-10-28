@@ -9,13 +9,6 @@ export type QuestionWriting =
   | { limit: HelpLimit; status: "refused" }
   | { status: "failed" | "plusRequired" | "preparing" | "ready" };
 
-/**
- * Asks the API to write the questions a test still needs (a chapter's test-out, a plan's focus
- * test, a mock), when the learner taps for it (a POST, never on page load): `ready` when it has
- * them, `preparing` while the goal's skill map is still drawn (ask again soon), or the run writing
- * them, or `plusRequired` when a free exam plan past its first week takes the test with Plus only.
- * `path` is the test's generations endpoint under `/v1`; `body`, what the endpoint asks for.
- */
 export async function requestQuestionWriting(
   path: `/${string}`,
   body?: Record<string, unknown>,
@@ -28,7 +21,6 @@ export async function requestQuestionWriting(
 
   const answer: unknown = await response.json().catch(() => null);
 
-  // The route always answers JSON: no body is no answer.
   if (answer === null) {
     return { status: "failed" };
   }

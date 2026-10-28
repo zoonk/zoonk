@@ -10,8 +10,7 @@ import { describe, expect, it, vi } from "vitest";
 import { prepareStudySession } from "./session-preparation";
 import { openWrittenLessonAction } from "./study-session-actions";
 
-// Request identity and Next's after-response scheduling are platform boundaries. Persistence and
-// block-start permissions below use the real disposable test database.
+// Request identity and Next's after-response scheduling are platform boundaries.
 vi.mock("@zoonk/core/users/session", () => ({ getSession: vi.fn() }));
 vi.mock("next/server", () => ({ after: vi.fn() }));
 // Preparation sends a request to the external API; a read-driven opening must never reach it.

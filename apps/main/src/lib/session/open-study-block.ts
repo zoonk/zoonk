@@ -7,12 +7,7 @@ import { type StudyBlock } from "@zoonk/learn/session/types";
 import { prepareStudySession } from "./session-preparation";
 import { type StudyDestination } from "./study-destination";
 
-/**
- * Where a checkpoint or mock block opens. A planned challenge that hasn't started (or stepped aside)
- * opens on its intro, which starts it. Through the block's page, which redirects there, the
- * intro's Start landed back on the intro: the router kept that redirect for the block's address.
- * A language goal's call opens on the block's page, which takes it to the call.
- */
+/** Straight to the intro: the router keeps the block page's redirect, so Start would land back on the intro. */
 async function toChallengeDestination({
   block,
   sessionId,
@@ -29,17 +24,14 @@ async function toChallengeDestination({
       return { kind: "today" };
     }
 
-    // A language goal's call the learner's plan leaves to Plus opens on its intro too, locked.
     if (call.status === "notLanguage" || call.status === "plusRequired") {
       return { kind: "challenge", planItemId: block.planItemId, sessionId };
     }
   }
 
-  // An exam's weekly Big Challenge is a mock in real conditions, on its own screen.
   return { blockId: block.id, kind: block.checkpoint?.mock ? "mock" : "checkpoint", sessionId };
 }
 
-/** A lesson still being written can't open yet: the session screen shows the wait instead. */
 async function isLessonReady(lessonId: string | null): Promise<boolean> {
   if (!lessonId) {
     return false;
@@ -49,14 +41,6 @@ async function isLessonReady(lessonId: string | null): Promise<boolean> {
   return state?.status === "ready";
 }
 
-/**
- * Starts a block and says where it's played, by the rule every screen uses (`getDayBlockScreen`).
- * Checkpoints and mocks start on their own screen, and a lesson that isn't ready isn't started:
- * the learner's browser asks for it right away (so the answer, including a refusal, reaches the
- * screen), then the session screen shows the wait or why it can't be written now, with a ready
- * block to do meanwhile. Other blocks opened get the rest of the session and the next study day
- * written in the background.
- */
 export async function openStudyBlock({
   block,
   sessionId,
@@ -76,7 +60,7 @@ export async function openStudyBlock({
       return { blockId: block.id, kind: "preparingLesson" };
     }
 
-    /** Preparation would compete with the browser's request and hide its refusal or use its allowance. */
+    // Preparation would compete with the browser's request and hide its refusal or use its allowance.
     return { blockId: block.id, kind: "unwrittenLesson", lessonId: block.lessonId, sessionId };
   }
 
@@ -86,7 +70,6 @@ export async function openStudyBlock({
     if (block.status === "active") {
       const resumed = await startStudyBlock({ blockId: block.id, input: { timeZone }, sessionId });
 
-      // Started while the plan had Plus: its intro says what Plus unlocks now.
       if (resumed.status === "plusRequired" && block.planItemId) {
         return { kind: "challenge", planItemId: block.planItemId, sessionId };
       }

@@ -75,11 +75,9 @@ const PROFILES = {
   },
 } as const;
 
-// Object.keys returns string[], but we know it matches ProfileName
-// oxlint-disable-next-line typescript/no-unsafe-type-assertion
+// oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Object.keys widens the keys to string[].
 const PROFILE_KEYS = Object.keys(PROFILES) as (keyof typeof PROFILES)[];
 
-/** Zoonk's profiles, the Brazilian ones for Portuguese and the global ones for every other language. */
 export function getSocialProfiles(locale: string) {
   return PROFILE_KEYS.map((name) => {
     const profile = PROFILES[name];

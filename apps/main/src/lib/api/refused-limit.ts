@@ -15,7 +15,6 @@ function pick<Value extends string>(value: string | null, values: readonly Value
   return values.find((candidate) => candidate === value) ?? null;
 }
 
-/** A hard cap's tier: the envelope's `details.limit.tier`, else what the status says it is. */
 function readTier({ limit, status }: { limit: unknown; status: number }) {
   const tier = pick(getString(limit, "tier"), TIERS);
 
@@ -30,13 +29,6 @@ function readTier({ limit, status }: { limit: unknown; status: number }) {
   return status === HTTP_PAYMENT_REQUIRED ? "free" : "plus";
 }
 
-/**
- * The API's refusal of a metered request in the learner's terms (see the API's
- * `usageDecisionError`): 403 asks a guest to sign up (`SIGN_UP_REQUIRED` once the day's AI budget
- * all guests share is spent), 402 a free learner to wait or get Plus, and a 429 is a short break
- * (`SLOW_DOWN`) or Plus's cap for today. `details.limit` says which cap it was and when it starts
- * over. Null for any other answer.
- */
 export function readRefusedLimit({
   body,
   status,

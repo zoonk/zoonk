@@ -19,7 +19,6 @@ function chapterPath({ chapterId, goalId }: { chapterId: string; goalId: string 
   return `/v1/goals/${encodeURIComponent(goalId)}/chapters/${encodeURIComponent(chapterId)}/mind-map` as const;
 }
 
-/** Asks the API for the map: `POST .../mind-map/generations`, on the learner's tap. */
 async function requestMindMap({
   chapterId,
   goalId,
@@ -53,7 +52,6 @@ async function requestMindMap({
   return getString(body, "status") === "ready" ? { status: "ready" } : { status: "generating" };
 }
 
-/** The map's status from the API, for the screens that wait while it's made. */
 async function readMindMapStatus({
   chapterId,
   goalId,
@@ -71,11 +69,7 @@ async function readMindMapStatus({
   return isMindMapStatus(status) ? status : null;
 }
 
-/**
- * A goal's mind maps as main's screens make them: through the public API from the browser (making
- * one takes a minute, so it never holds up the page's Server Actions), then the page is read again
- * to show the map.
- */
+/** From the browser: making a map takes a minute, which would hold up the page's Server Actions. */
 export function useMindMapActions(goalId: string): MindMapActions {
   const router = useRouter();
 

@@ -21,10 +21,6 @@ const DEFAULT_CHAPTER_IMAGES: Record<CourseCategory, string> = {
   tech: "/catalog/chapters/tech.webp",
 };
 
-/**
- * Category rows come from the database as strings, so this keeps the validation
- * boundary next to the map that requires known course categories.
- */
 function getValidCategory(category: string): CourseCategory | null {
   if (isValidCategory(category)) {
     return category;
@@ -33,10 +29,6 @@ function getValidCategory(category: string): CourseCategory | null {
   return null;
 }
 
-/**
- * Fallback art follows the course's first valid category, so a course without
- * its own image still gets a share card that fits its subject.
- */
 export function getDefaultChapterImage({
   categories,
 }: {

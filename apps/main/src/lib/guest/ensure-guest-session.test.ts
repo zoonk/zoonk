@@ -12,7 +12,6 @@ vi.mock("@zoonk/auth/client", () => ({
 
 vi.mock("@zoonk/utils/logger", () => ({ logError: vi.fn() }));
 
-/** A fresh helper: the guest it may be making lives in its module. */
 async function loadHelper() {
   vi.resetModules();
   const { ensureGuestSession } = await import("./ensure-guest-session");
