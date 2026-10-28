@@ -15,7 +15,7 @@ import {
 } from "./reconcile-store-subscription";
 import { StoreSubscriptionChangedError } from "./store-subscription-changed-error";
 
-/** Reads of Google after which a save that keeps racing other writes gives up (and is retried). */
+/** A save that keeps racing other writes gives up after this many reads, for its caller to retry. */
 const MAX_READS = 3;
 const DAY_MS = 86_400_000;
 
@@ -28,7 +28,6 @@ type ReconcileGooglePlaySubscriptionInput = {
   seen: Subscription | null;
 };
 
-/** Picks who a purchase read from Google belongs to, or null to save nothing. */
 type FindOwner = (
   purchase: VerifiedGooglePlaySubscription,
   seen: Subscription | null,
@@ -139,9 +138,8 @@ export async function findGooglePlayLineOwner(purchase: VerifiedGooglePlaySubscr
 }
 
 /**
- * Reads a purchase from Google, the source of truth, and saves it for the owner `findOwner` picks.
- * When another write saved the purchase between the read of its row and Google's answer, Google is
- * read again. Null for a pending purchase, one without an owner, or a notification already saved.
+ * Google signs no version, so a save replaces only the row read before asking Google, and reads
+ * Google again when another save landed in between. `findOwner` returning null saves nothing.
  */
 export async function saveGooglePlayPurchase(
   {
@@ -218,7 +216,6 @@ export function getGooglePlayRenewalCheckAt(subscription: Subscription | null, n
   return new Date(periodEnd.getTime() + days * DAY_MS);
 }
 
-/** The renewal check to schedule for a saved purchase, or null once Google has ended it. */
 export function getGooglePlayRenewalCheck(subscription: Subscription | null) {
   const checkAt = getGooglePlayRenewalCheckAt(subscription);
   return checkAt && subscription ? { checkAt, subscriptionId: subscription.id } : null;

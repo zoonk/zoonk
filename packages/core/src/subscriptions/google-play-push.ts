@@ -2,15 +2,11 @@ import { createRemoteJWKSet, errors, jwtVerify } from "jose";
 import { getGooglePlayServiceAccount } from "./google-play-api";
 import { GooglePlayError } from "./google-play-error";
 
-/** The keys Google signs its OpenID Connect ID tokens with, Pub/Sub's push tokens among them. */
 const googleSigningKeys = createRemoteJWKSet(new URL("https://www.googleapis.com/oauth2/v3/certs"));
 
 const GOOGLE_ISSUERS = ["https://accounts.google.com", "accounts.google.com"];
 
-/**
- * Pub/Sub signs each push with an ID token for the push subscription's service account and
- * audience. Only Zoonk's own service account (the one reading Play purchases) may push.
- */
+/** Only pushes Pub/Sub signs as Zoonk's own service account, for this endpoint, are accepted. */
 export async function verifyGooglePlayPush({
   audience,
   authorization,

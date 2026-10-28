@@ -2,10 +2,7 @@ import { GooglePlayError } from "@zoonk/core/subscriptions/google-play-error";
 import { checkGooglePlayRenewal } from "@zoonk/core/subscriptions/google-play-renewal";
 import { RetryableError } from "workflow";
 
-/**
- * Reads the purchase from Google and saves its state; when Google can't be reached (or refuses the
- * service account), the step tries again an hour later, for a day, instead of ending access.
- */
+/** Google being unreachable must not end access, so the check retries hourly for a day. */
 export async function checkGooglePlayRenewalStep(subscriptionId: string): Promise<Date | null> {
   "use step";
 

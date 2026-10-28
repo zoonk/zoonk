@@ -5,7 +5,6 @@ export type GooglePlaySubscriptionProduct = Pick<
   "billingInterval" | "plan"
 >;
 
-/** Play Console subscription products, each with one base plan per billing period. */
 const GOOGLE_PLAY_SUBSCRIPTION_PRODUCTS: Record<
   string,
   Record<string, GooglePlaySubscriptionProduct>

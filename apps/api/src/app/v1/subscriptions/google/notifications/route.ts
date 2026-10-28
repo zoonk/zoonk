@@ -8,7 +8,7 @@ import { API_URL } from "@zoonk/utils/url";
 import { type NextRequest } from "next/server";
 import { getGooglePlayNotificationErrorResponse } from "./_utils/google-play-notification-error";
 
-/** The audience the Pub/Sub push subscription signs its tokens for: this endpoint's public URL. */
+/** The push subscription's configured audience. */
 const PUSH_AUDIENCE = new URL("/v1/subscriptions/google/notifications", API_URL).href;
 
 async function createGooglePlayNotification(request: NextRequest) {

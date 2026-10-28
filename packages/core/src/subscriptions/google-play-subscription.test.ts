@@ -51,7 +51,6 @@ type PurchaseOptions = {
   state?: string;
 };
 
-/** A `purchases.subscriptionsv2` resource as Google returns it. */
 function makePurchase({
   accountId,
   acknowledged = false,
@@ -84,7 +83,6 @@ function makePurchase({
   };
 }
 
-/** What Google answers: every purchase it knows by token, and what Zoonk sent it. */
 const google = {
   /** Another request acknowledged the purchase a moment earlier, so Google refuses this one. */
   acknowledgedConcurrently: false,
@@ -171,7 +169,6 @@ function makePushToken({
     .sign(pushKeys.privateKey);
 }
 
-/** One Pub/Sub push of a Real-time Developer Notification, signed like Google signs it. */
 async function push(
   notification: Record<string, unknown>,
   {
@@ -238,7 +235,6 @@ async function findSubscriptionId(purchaseToken: string) {
   return subscription.id;
 }
 
-/** The workflow's check at a saved purchase's renewal checkpoint. */
 async function checkRenewal(purchaseToken: string) {
   return checkGooglePlayRenewal(await findSubscriptionId(purchaseToken));
 }

@@ -3,7 +3,6 @@ import { z } from "zod";
 import { GooglePlayError } from "./google-play-error";
 import { createVerifiedGooglePlaySubscription } from "./google-play-purchase";
 
-/** The Android app's application id, the only package whose purchases grant Zoonk access. */
 export const GOOGLE_PLAY_PACKAGE_NAME = "com.zoonk";
 
 const ANDROID_PUBLISHER_URL = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${GOOGLE_PLAY_PACKAGE_NAME}`;
@@ -34,7 +33,6 @@ const accessTokenResponseSchema = z.object({
 
 let cachedAccessToken: { expiresAt: number; token: string } | null = null;
 
-/** The service account key file (JSON) Play Console grants access to this app's orders. */
 export function getGooglePlayServiceAccount() {
   const value = process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_KEY?.trim();
 
@@ -58,7 +56,6 @@ async function fetchFromGoogle(url: string, init?: RequestInit) {
   }
 }
 
-/** OAuth 2.0 for service accounts: a signed JWT assertion exchanged for an access token. */
 async function requestAccessToken({ email, privateKey }: { email: string; privateKey: string }) {
   const key = await importPKCS8(privateKey, "RS256").catch((error: unknown) => {
     throw new GooglePlayError("configuration", { cause: error });
@@ -91,7 +88,6 @@ async function requestAccessToken({ email, privateKey }: { email: string; privat
   return accessTokenResponseSchema.parse(await response.json());
 }
 
-/** Reuses the access token across requests on one instance until shortly before it expires. */
 async function getAccessToken() {
   const serviceAccount = getGooglePlayServiceAccount();
 
@@ -104,7 +100,6 @@ async function getAccessToken() {
   return token;
 }
 
-/** Calls the Developer API for this app: a GET, or a POST when there's a JSON body. */
 async function callAndroidPublisher(path: string, body?: unknown) {
   const token = await getAccessToken();
   const headers = { authorization: `Bearer ${token}`, "content-type": "application/json" };
@@ -114,7 +109,7 @@ async function callAndroidPublisher(path: string, body?: unknown) {
     body === undefined ? { headers } : { body: JSON.stringify(body), headers, method: "POST" },
   );
 
-  /** A revoked or rotated key invalidates the cached token: the next call signs in again. */
+  /** A revoked or rotated key invalidates the cached token. */
   if (response.status === HTTP_UNAUTHORIZED) {
     cachedAccessToken = null;
   }
@@ -122,17 +117,14 @@ async function callAndroidPublisher(path: string, body?: unknown) {
   return response;
 }
 
-/** The service account was refused: it lacks access in Play Console, or its key was revoked. */
+/** 401 and 403 mean the service account lacks Play Console access or its key was revoked. */
 function getFailureReason(status: number) {
   return status === HTTP_UNAUTHORIZED || status === HTTP_FORBIDDEN
     ? "configuration"
     : "unavailable";
 }
 
-/**
- * Reads the subscription's current state from Google (`purchases.subscriptionsv2.get`), the
- * source of truth for every purchase and notification. Null while the purchase is pending.
- */
+/** Google's current state of the purchase, its source of truth; null while it's pending. */
 export async function getGooglePlaySubscription(purchaseToken: string) {
   const readAt = new Date();
 

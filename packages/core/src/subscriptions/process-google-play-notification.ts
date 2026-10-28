@@ -18,10 +18,7 @@ const developerNotificationSchema = z.object({
     .optional(),
 });
 
-/**
- * The purchase token a notification is about, when it's one of this app's subscriptions: a state
- * change or a refund. Test and one-time product notifications change no entitlement.
- */
+/** Test and one-time product notifications change no entitlement. */
 function getNotifiedPurchaseToken(data: string) {
   try {
     const decoded: unknown = JSON.parse(Buffer.from(data, "base64").toString("utf8"));
@@ -44,11 +41,8 @@ function getNotifiedPurchaseToken(data: string) {
 }
 
 /**
- * Reconciles Real-time Developer Notifications from the Pub/Sub push subscription so renewals,
- * holds, refunds and revocations reach every client even when the Android app is closed. A
- * notification only says which purchase changed: its state comes from Google's API. A first
- * delivery saves the purchase only for its line's owner (`findGooglePlayLineOwner`) while that
- * user exists; a known purchase keeps its owner.
+ * A notification only says which purchase changed, so its state is read from Google. A known
+ * purchase keeps its owner; a new one is saved only for its line's owner while that user exists.
  */
 export async function processGooglePlayNotification({
   audience,

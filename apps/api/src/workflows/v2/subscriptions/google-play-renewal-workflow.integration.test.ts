@@ -10,7 +10,6 @@ const DAY_MS = 86_400_000;
 const MINUTE_MS = 60_000;
 const realFetch = globalThis.fetch;
 
-/** What Google was asked, and the period it reports the subscription renewed to. */
 const google = { reads: [] as string[], renewedUntil: new Date(0) };
 
 /** Google's HTTP boundary; the workflow runtime's own requests go through. */

@@ -5,18 +5,15 @@ import {
 } from "./reconcile-google-play-subscription";
 
 /**
- * Runs at a saved purchase's renewal checkpoint (from the API's renewal workflow): Plus doesn't end
- * when the stored period does, since Google may have renewed it, extended its grace or still be
- * retrying the payment (silent grace), so Google is read again and its answer saved. Returns when
- * to check next, or null once Google has ended the purchase. Not a learner capability: the
- * workflow passes the id of a subscription a save scheduled.
+ * The stored period end isn't the end of access (Google may have renewed the purchase, extended its
+ * grace or still be retrying a payment), so Google is asked at each checkpoint. Returns the next
+ * checkpoint, or null once Google has ended the purchase. Called by the API's renewal workflow.
  */
 export async function checkGooglePlayRenewal(subscriptionId: string) {
   const now = new Date();
   const saved = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
   const checkAt = getGooglePlayRenewalCheckAt(saved, now);
 
-  /** Ended, or renewed since this check was scheduled: nothing to ask Google yet. */
   if (!saved?.providerSubscriptionId || !checkAt || (saved.periodEnd && saved.periodEnd > now)) {
     return checkAt;
   }

@@ -6,10 +6,8 @@ import { checkGooglePlayRenewalStep } from "./steps/check-google-play-renewal-st
 export type GooglePlayRenewalInput = { checkAt: Date; subscriptionId: string };
 
 /**
- * Asks Google about a saved purchase at its renewal checkpoint, so Plus never ends on the stored
- * period alone (`checkGooglePlayRenewal`), then starts the next checkpoint's run, so no run lives
- * for a subscription's whole life. One run per purchase and checkpoint: every save schedules one,
- * and a second start for the same checkpoint ends at once.
+ * One short run per checkpoint, rather than one for a subscription's whole life; every save
+ * schedules one, so a second start for the same checkpoint ends at once.
  */
 export async function googlePlayRenewalWorkflow(input: GooglePlayRenewalInput) {
   "use workflow";

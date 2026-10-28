@@ -33,7 +33,6 @@ export type StoreSubscriptionSnapshot = {
   status: "active" | "canceled";
 };
 
-/** The store chain is already linked to another Zoonk account. */
 export class StoreSubscriptionConflictError extends Error {
   constructor() {
     super("Store subscription belongs to another account");
@@ -86,7 +85,6 @@ async function updateSignedSnapshot(tx: TransactionClient, input: WriteInput) {
   return count === 0 ? unchanged(current) : current;
 }
 
-/** Replaces only the version read before the store was asked; anything newer means asking again. */
 async function updateReadSnapshot(
   tx: TransactionClient,
   { data, existing, expectedSignedAt }: WriteInput & { expectedSignedAt: Date | null },

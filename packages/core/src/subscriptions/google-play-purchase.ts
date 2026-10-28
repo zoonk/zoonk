@@ -19,7 +19,6 @@ export type VerifiedGooglePlaySubscription = {
   orderId: string | null;
   productId: string;
   purchaseToken: string;
-  /** When Zoonk read this state from Google, which orders concurrent reads of one token. */
   readAt: Date;
   startTime: Date;
 };
@@ -107,10 +106,7 @@ function getCanceledAt({
   return purchase.canceledStateContext?.userInitiatedCancellation?.cancelTime ?? readAt;
 }
 
-/**
- * Converts a `purchases.subscriptionsv2` resource into the entitlement Zoonk stores. Returns null
- * for a pending purchase. Zoonk sells single-item subscriptions, so the first line item is the plan.
- */
+/** Zoonk sells single-item subscriptions, so the first line item is the plan. Null while pending. */
 export function createVerifiedGooglePlaySubscription({
   purchaseToken,
   readAt,
