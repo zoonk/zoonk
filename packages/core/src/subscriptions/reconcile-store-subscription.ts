@@ -34,9 +34,13 @@ export type StoreSubscriptionSnapshot = {
 };
 
 export class StoreSubscriptionConflictError extends Error {
-  constructor() {
+  /** Whether this chain, or the one it replaced, belongs to another account. */
+  readonly chain: "current" | "previous";
+
+  constructor(chain: "current" | "previous" = "current") {
     super("Store subscription belongs to another account");
     this.name = "StoreSubscriptionConflictError";
+    this.chain = chain;
   }
 }
 
@@ -47,8 +51,11 @@ type ReconcileOptions = {
    * (Apple) replace only an older signed time.
    */
   expectedSignedAt?: Date | null;
-  /** The chain this one replaced (an upgrade, downgrade or resubscription); it ends as this starts. */
-  replacedSubscriptionId?: string | null;
+  /**
+   * The chain this one replaced or resubscribed. It must belong to the same account, checked in the
+   * grant's own transaction, and it stops granting access on every save of this one.
+   */
+  previousSubscriptionId?: string | null;
 };
 
 type WriteInput = { data: StoreSubscriptionSnapshot & { userId: string }; existing: Subscription };
@@ -103,20 +110,34 @@ async function updateReadSnapshot(
   return tx.subscription.findUniqueOrThrow({ where: { id: existing.id } });
 }
 
-/**
- * The replaced chain stops granting access, and its version moves on so a read of it that started
- * earlier can't save it as active again.
- */
-function endReplacedSubscription({
-  replacedSubscriptionId,
+/** Its version moves on too, so a read of it that started earlier can't save it as active again. */
+async function endPreviousSubscription({
+  previousSubscriptionId,
   snapshot,
   tx,
 }: {
-  replacedSubscriptionId: string;
+  previousSubscriptionId: string;
   snapshot: StoreSubscriptionSnapshot;
   tx: TransactionClient;
 }) {
-  return tx.subscription.updateMany({
+  const previous = await tx.subscription.findUnique({
+    where: {
+      provider_providerSubscriptionId: {
+        provider: snapshot.provider,
+        providerSubscriptionId: previousSubscriptionId,
+      },
+    },
+  });
+
+  if (!previous) {
+    return;
+  }
+
+  if (previous.referenceId !== snapshot.referenceId) {
+    throw new StoreSubscriptionConflictError("previous");
+  }
+
+  await tx.subscription.updateMany({
     data: {
       cancelAt: null,
       cancelAtPeriodEnd: false,
@@ -124,12 +145,7 @@ function endReplacedSubscription({
       providerSignedAt: snapshot.providerSignedAt,
       status: "canceled",
     },
-    where: {
-      endedAt: null,
-      provider: snapshot.provider,
-      providerSubscriptionId: replacedSubscriptionId,
-      referenceId: snapshot.referenceId,
-    },
+    where: { endedAt: null, id: previous.id },
   });
 }
 
@@ -164,7 +180,7 @@ function writeSnapshotRow(
 /** A snapshot and its entitlement/input markers commit together, including first delivery. */
 function writeSnapshot(
   snapshot: StoreSubscriptionSnapshot,
-  { expectedSignedAt, replacedSubscriptionId }: ReconcileOptions,
+  { expectedSignedAt, previousSubscriptionId }: ReconcileOptions,
 ) {
   const data = { ...snapshot, userId: snapshot.referenceId };
 
@@ -180,15 +196,15 @@ function writeSnapshot(
 
     const written = await writeSnapshotRow(tx, { data, existing, expectedSignedAt });
 
-    if (replacedSubscriptionId) {
-      await endReplacedSubscription({ replacedSubscriptionId, snapshot, tx });
+    if (previousSubscriptionId) {
+      await endPreviousSubscription({ previousSubscriptionId, snapshot, tx });
     }
 
     return written;
   });
 }
 
-export function findStoreSubscription({
+export async function findStoreSubscription({
   provider,
   providerSubscriptionId,
 }: {

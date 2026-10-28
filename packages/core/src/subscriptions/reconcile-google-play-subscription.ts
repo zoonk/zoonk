@@ -93,29 +93,30 @@ async function acknowledge({ purchase, referenceId }: ReconcileGooglePlaySubscri
 }
 
 /**
- * Acknowledges a granted purchase before saving it, so a saved notification never hides an
- * acknowledgement that failed: a retry reads the purchase again and acknowledges what's left.
- * Google signs no version, so the save replaces only the row read before asking it.
+ * Google blocks replacing a purchase until it's acknowledged, so acknowledging only once it's saved
+ * means a replacement always finds its predecessor stored with its owner. An acknowledgement that
+ * fails is retried by the next POST, notification or checkpoint, within Google's three days.
  */
 async function save(input: ReconcileGooglePlaySubscriptionInput) {
   const { purchase, seen } = input;
+
+  const subscription = await reconcileStoreSubscription(getGooglePlaySubscriptionSnapshot(input), {
+    expectedSignedAt: seen?.providerSignedAt ?? null,
+    previousSubscriptionId: purchase.linkedPurchaseToken ?? purchase.expiredPurchaseToken,
+  }).catch((error: unknown) => {
+    if (error instanceof StoreSubscriptionConflictError) {
+      const reason = error.chain === "previous" ? "accountMismatch" : "conflict";
+      throw new GooglePlayError(reason, { cause: error });
+    }
+
+    throw error;
+  });
 
   if (purchase.isActive && !purchase.isAcknowledged) {
     await acknowledge(input);
   }
 
-  try {
-    return await reconcileStoreSubscription(getGooglePlaySubscriptionSnapshot(input), {
-      expectedSignedAt: seen?.providerSignedAt ?? null,
-      replacedSubscriptionId: purchase.isActive ? purchase.linkedPurchaseToken : null,
-    });
-  } catch (error) {
-    if (error instanceof StoreSubscriptionConflictError) {
-      throw new GooglePlayError("conflict", { cause: error });
-    }
-
-    throw error;
-  }
+  return subscription;
 }
 
 /**
@@ -153,11 +154,6 @@ export async function saveGooglePlayPurchase(
     provider: "google",
     providerSubscriptionId: purchaseToken,
   });
-
-  /** Pub/Sub delivers at least once: a message already saved needs no second read from Google. */
-  if (eventId && seen?.providerEventId === eventId) {
-    return seen;
-  }
 
   const purchase = await getGooglePlaySubscription(purchaseToken);
 

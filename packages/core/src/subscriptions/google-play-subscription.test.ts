@@ -7,6 +7,7 @@ import { mockSession } from "../_test-utils/mock-session";
 import { hasActiveSubscription } from "../auth/subscription";
 import { checkGooglePlayRenewal } from "./check-google-play-renewal";
 import { processGooglePlayNotification } from "./process-google-play-notification";
+import * as storeSubscriptions from "./reconcile-store-subscription";
 import { syncCurrentUserGooglePlaySubscription } from "./sync-google-play-subscription";
 
 const PACKAGE_NAME = "com.zoonk";
@@ -87,6 +88,8 @@ const google = {
   /** Another request acknowledged the purchase a moment earlier, so Google refuses this one. */
   acknowledgedConcurrently: false,
   acknowledgements: [] as { body: unknown; productId: string; purchaseToken: string }[],
+  /** Acknowledgements Google refuses before it accepts one. */
+  failingAcknowledgements: 0,
   /**
    * Reads of a token Google answers late: with the state as it was when the read started
    * (`readFirst`), or as it is when the answer finally goes out.
@@ -94,6 +97,8 @@ const google = {
   holds: new Map<string, { readFirst: boolean; until: Promise<unknown> }>(),
   purchases: new Map<string, Record<string, unknown>>(),
   reads: [] as string[],
+  /** Purchases acknowledged before Zoonk saved them, which Google would then let be replaced. */
+  unsavedAcknowledgements: [] as string[],
 };
 
 function setPurchase(purchaseToken: string, options: PurchaseOptions) {
@@ -142,6 +147,16 @@ async function googleFetch(input: RequestInfo | URL, init?: RequestInit) {
   if (acknowledgement?.product && acknowledgement.token && typeof init?.body === "string") {
     const purchaseToken = decodeURIComponent(acknowledgement.token);
     const productId = decodeURIComponent(acknowledgement.product);
+
+    if (google.failingAcknowledgements > 0) {
+      google.failingAcknowledgements -= 1;
+      return new Response(null, { status: 503 });
+    }
+
+    if (!(await findGoogleSubscription(purchaseToken))) {
+      google.unsavedAcknowledgements.push(purchaseToken);
+    }
+
     google.acknowledgements.push({ body: JSON.parse(init.body), productId, purchaseToken });
 
     google.purchases.set(purchaseToken, {
@@ -239,6 +254,26 @@ async function checkRenewal(purchaseToken: string) {
   return checkGooglePlayRenewal(await findSubscriptionId(purchaseToken));
 }
 
+/** A purchase another request saved: the row its own save writes. */
+function claimDirectly({ purchaseToken, userId }: { purchaseToken: string; userId: string }) {
+  const now = new Date();
+
+  return prisma.subscription.create({
+    data: {
+      billingInterval: "month",
+      periodEnd: new Date(now.getTime() + 30 * DAY_MS),
+      periodStart: now,
+      plan: "plus",
+      provider: "google",
+      providerSignedAt: now,
+      providerSubscriptionId: purchaseToken,
+      referenceId: userId,
+      status: "active",
+      userId,
+    },
+  });
+}
+
 function makePurchaseToken() {
   return `purchase-token.${randomUUID()}`;
 }
@@ -252,6 +287,8 @@ describe("Google Play subscriptions", () => {
   beforeEach(() => {
     google.acknowledgements = [];
     google.acknowledgedConcurrently = false;
+    google.failingAcknowledgements = 0;
+    google.unsavedAcknowledgements = [];
     google.holds.clear();
     google.purchases.clear();
     google.reads = [];
@@ -260,6 +297,7 @@ describe("Google Play subscriptions", () => {
   });
 
   afterEach(() => {
+    vi.restoreAllMocks();
     vi.unstubAllEnvs();
     vi.unstubAllGlobals();
   });
@@ -309,6 +347,8 @@ describe("Google Play subscriptions", () => {
         { body: {}, productId: "plus", purchaseToken },
       ]);
 
+      expect(google.unsavedAcknowledgements).toStrictEqual([]);
+
       await expect(hasPlus(user.id)).resolves.toBe(true);
     });
 
@@ -326,6 +366,23 @@ describe("Google Play subscriptions", () => {
         billingInterval: "year",
         providerProductId: "plus:yearly",
       });
+    });
+
+    it("keeps a purchase saved when Google refuses its acknowledgement, and acknowledges it on the next sync", async () => {
+      const user = await userFixture();
+      const purchaseToken = makePurchaseToken();
+      setPurchase(purchaseToken, { accountId: user.id });
+      google.failingAcknowledgements = 1;
+      mockSession(user.id);
+
+      await expect(sync(purchaseToken)).rejects.toMatchObject({ reason: "unavailable" });
+      await expect(hasPlus(user.id)).resolves.toBe(true);
+
+      await sync(purchaseToken);
+
+      expect(google.acknowledgements.map((item) => item.purchaseToken)).toStrictEqual([
+        purchaseToken,
+      ]);
     });
 
     it("refuses a purchase made for another account", async () => {
@@ -701,7 +758,7 @@ describe("Google Play subscriptions", () => {
       await expect(hasPlus(user.id)).resolves.toBe(false);
     });
 
-    it("reads Google once per message however often Pub/Sub delivers it", async () => {
+    it("saves a redelivered message's purchase again without acknowledging it twice", async () => {
       const user = await userFixture();
       const purchaseToken = makePurchaseToken();
       setPurchase(purchaseToken, { accountId: user.id });
@@ -711,11 +768,14 @@ describe("Google Play subscriptions", () => {
         subscriptionNotification: { notificationType: NOTIFICATION.purchased, purchaseToken },
       };
 
-      const first = await push(notification, { messageId });
-      const again = await push(notification, { messageId });
+      await push(notification, { messageId });
+      await push(notification, { messageId });
 
-      expect(again).toStrictEqual(first);
-      expect(google.reads).toStrictEqual([purchaseToken]);
+      await expect(findGoogleSubscription(purchaseToken)).resolves.toMatchObject({
+        providerEventId: messageId,
+        status: "active",
+      });
+
       expect(google.acknowledgements).toHaveLength(1);
     });
 
@@ -894,10 +954,96 @@ describe("Google Play subscriptions", () => {
       release();
       await lateSave;
 
-      setPurchase(newToken, { ...replacement, acknowledged: true });
-      await pushSubscriptionChange(newToken, NOTIFICATION.renewed);
+      setPurchase(newToken, {
+        ...replacement,
+        acknowledged: true,
+        autoRenewEnabled: false,
+        state: "SUBSCRIPTION_STATE_EXPIRED",
+      });
+
+      await push({
+        voidedPurchaseNotification: { orderId: ORDER_ID, productType: 1, purchaseToken: newToken },
+      });
 
       await expect(findGoogleSubscription(oldToken)).resolves.toMatchObject({ status: "canceled" });
+      await expect(hasPlus(user.id)).resolves.toBe(false);
+    });
+
+    it("keeps a replaced purchase ended when the replacement is refunded before a late read of it saves", async () => {
+      const user = await userFixture();
+      const [oldToken, newToken] = [makePurchaseToken(), makePurchaseToken()];
+      setPurchase(oldToken, { accountId: user.id });
+      mockSession(user.id);
+      await sync(oldToken);
+
+      const release = holdRead(oldToken, { readFirst: true });
+      const lateSave = sync(oldToken);
+      await waitForReads(oldToken, 2);
+
+      const replacement = {
+        accountId: user.id,
+        expiryTime: new Date(Date.now() + 30 * DAY_MS),
+        extra: { linkedPurchaseToken: oldToken },
+      };
+
+      setPurchase(newToken, replacement);
+      await pushSubscriptionChange(newToken, NOTIFICATION.purchased);
+
+      setPurchase(newToken, {
+        ...replacement,
+        acknowledged: true,
+        autoRenewEnabled: false,
+        state: "SUBSCRIPTION_STATE_EXPIRED",
+      });
+
+      await push({
+        voidedPurchaseNotification: { orderId: ORDER_ID, productType: 1, purchaseToken: newToken },
+      });
+
+      setPurchase(oldToken, {
+        accountId: user.id,
+        acknowledged: true,
+        autoRenewEnabled: false,
+        expiryTime: new Date(Date.now() - MINUTE_MS),
+        state: "SUBSCRIPTION_STATE_EXPIRED",
+      });
+
+      release();
+      await lateSave;
+
+      await expect(findGoogleSubscription(oldToken)).resolves.toMatchObject({ status: "canceled" });
+      await expect(hasPlus(user.id)).resolves.toBe(false);
+    });
+
+    it("refuses a replacement whose predecessor's first claim lands between its owner lookup and its save", async () => {
+      const [owner, other] = await Promise.all([userFixture(), userFixture()]);
+      const [oldToken, newToken] = [makePurchaseToken(), makePurchaseToken()];
+      const findStoreSubscription = storeSubscriptions.findStoreSubscription;
+      let claimed = false;
+
+      vi.spyOn(storeSubscriptions, "findStoreSubscription").mockImplementation(async (input) => {
+        const found = await findStoreSubscription(input);
+
+        if (input.providerSubscriptionId === oldToken && !claimed) {
+          claimed = true;
+          await claimDirectly({ purchaseToken: oldToken, userId: owner.id });
+        }
+
+        return found;
+      });
+
+      setPurchase(newToken, { accountId: other.id, extra: { linkedPurchaseToken: oldToken } });
+      mockSession(other.id);
+
+      await expect(sync(newToken)).rejects.toMatchObject({ reason: "accountMismatch" });
+      expect(claimed).toBe(true);
+      await expect(findGoogleSubscription(newToken)).resolves.toBeNull();
+      await expect(hasPlus(other.id)).resolves.toBe(false);
+
+      await expect(findGoogleSubscription(oldToken)).resolves.toMatchObject({
+        referenceId: owner.id,
+        status: "active",
+      });
     });
 
     it("reads Google again when another save lands between its read and its own save", async () => {
