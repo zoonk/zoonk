@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// The tertiary fill reads on a page, a sheet or an inspector; `.bordered` blends its fill into a
+/// The tertiary fill reads on a page, a sheet or a pane; `.bordered` blends its fill into a
 /// sheet's background.
 struct SuggestionChipStyle: ButtonStyle {
   func makeBody(configuration: Configuration) -> some View {
