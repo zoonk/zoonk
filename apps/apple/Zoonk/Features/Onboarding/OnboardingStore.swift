@@ -312,8 +312,8 @@ final class OnboardingStore {
 
 extension AppCache {
   /// `mutate` for onboarding's writes, which the API can refuse for a product reason (a goal
-  /// limit, the guests' daily budget, haste): a refusal is thrown as that `OnboardingError`, a
-  /// transport failure as `OnboardingError.failed`, and a result for a session that ended or
+  /// limit, the guests' daily budget, haste): a refusal is thrown as that `OnboardingError`, an
+  /// `APIError` failure as `OnboardingError.failed`, and a result for a session that ended or
   /// changed meanwhile (or signed out on `unauthorized`) as `CancellationError`, which screens
   /// ignore: nothing they'd show belongs to the learner on screen now.
   func onboardingWrite<Value: Sendable>(
@@ -324,8 +324,6 @@ extension AppCache {
       identity -> Result<Value, OnboardingError> in
       do {
         return .success(try await write(identity))
-      } catch OnboardingError.failed(let error) {
-        throw error
       } catch let refusal as OnboardingError {
         return .failure(refusal)
       }

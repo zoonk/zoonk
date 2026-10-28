@@ -31,7 +31,7 @@ final class OnboardingWriteTests: XCTestCase {
     let cache = AppCache(session: .preview(account: .onboardingTestAccount))
 
     do {
-      _ = try await cache.onboardingWrite { _ -> Int in throw OnboardingError.failed(.network) }
+      _ = try await cache.onboardingWrite { _ -> Int in throw APIError.network }
       XCTFail("A failure is thrown")
     } catch {
       XCTAssertEqual(error as? OnboardingError, .failed(.network))
@@ -43,9 +43,7 @@ final class OnboardingWriteTests: XCTestCase {
     let cache = AppCache(session: session)
 
     do {
-      _ = try await cache.onboardingWrite { _ -> Int in
-        throw OnboardingError.failed(.unauthorized)
-      }
+      _ = try await cache.onboardingWrite { _ -> Int in throw APIError.unauthorized }
       XCTFail("An unauthorized write is thrown")
     } catch {
       XCTAssertTrue(error is CancellationError, "Screens show nothing for it")

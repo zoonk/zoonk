@@ -63,6 +63,11 @@ struct ReadDraftView: View {
     create {
       try await onboarding.createExplanation(draft: draft, question: question)
     } then: { goalID in
+      // Only while the start flow that asked is still on screen.
+      guard case .startGoal = router.tasks.last else {
+        return
+      }
+
       router.dismissTask()
       router.open(.explain(goalId: goalID))
     }

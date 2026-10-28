@@ -74,6 +74,8 @@ private struct GoalSteps: View {
   @State private var isSaving = false
   @State private var failed = false
   @State private var confirmingStartOver = false
+  /// Start over's request, cancelled if the screen goes away first, so it never acts after.
+  @State private var startingOver: Task<Void, Never>?
 
   init(
     view: GoalOnboarding,
@@ -169,7 +171,7 @@ private struct GoalSteps: View {
       isPresented: $confirmingStartOver, titleVisibility: .visible
     ) {
       Button(role: .destructive) {
-        Task { await startOver() }
+        startingOver = Task { await startOver() }
       } label: {
         Text(
           "Start over", tableName: "Onboarding",
@@ -181,6 +183,7 @@ private struct GoalSteps: View {
         tableName: "Onboarding",
         comment: "What starting over does")
     }
+    .onDisappear { startingOver?.cancel() }
   }
 
   /// The step counter beside the bar: answered steps, this one and the ones still ahead.
@@ -242,9 +245,15 @@ private struct GoalSteps: View {
     do {
       try await onboarding.startOver(goalIDs: view.goalIds.isEmpty ? [view.goal.id] : view.goalIds)
 
+      // Closed meanwhile: whatever is on screen now isn't this setup's to replace.
+      guard !Task.isCancelled else {
+        return
+      }
+
       if let onStartOver {
         onStartOver()
-      } else {
+      } else if case .goalSetup = router.tasks.last {
+        // Only the setup that asked is replaced, if it's still the one on screen.
         router.dismissTask()
         router.open(.startGoal())
       }

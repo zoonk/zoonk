@@ -6,7 +6,9 @@ typealias GoalOnboarding = Components.Schemas.Onboarding
 typealias OnboardingAnswer = Components.Schemas.OnboardingAnswerInput
 typealias GoalPlacement = Components.Schemas.Placement
 
-/// Why a goal couldn't start or a step couldn't save, in the terms main's onboarding explains.
+/// Why a goal couldn't start or a step couldn't save, in the terms main's onboarding explains. The
+/// API throws these only for product refusals; transport and session failures are `APIError`s,
+/// which `AppCache.onboardingWrite` turns into `.failed` (or signs out on `unauthorized`).
 enum OnboardingError: Error, Equatable, Sendable {
   /// Reading words hit a cap: small AI calls, or a guest's one goal (`USAGE_LIMIT_REACHED`).
   case limit(OnboardingLimit)
@@ -39,7 +41,7 @@ struct OnboardingAPI: Sendable {
   let clients: APIClientFactory
 
   func understand(goal: String, token: String) async throws -> OnboardingDraft {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.createGoalUnderstanding(
         body: .json(
           .init(
@@ -60,14 +62,14 @@ struct OnboardingAPI: Sendable {
     case .tooManyRequests(let response):
       throw Self.error(try response.body.json)
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     case .badRequest, .internalServerError, .undocumented:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
   func understanding(id: String, token: String) async throws -> OnboardingDraft {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.getGoalUnderstanding(path: .init(understandingId: id))
     }
 
@@ -75,17 +77,17 @@ struct OnboardingAPI: Sendable {
     case .ok(let response):
       return try response.body.json
     case .notFound:
-      throw OnboardingError.failed(.notFound)
+      throw APIError.notFound
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     case .badRequest, .internalServerError, .undocumented:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
   /// Starts reading a draft again after its run failed.
   func readAgain(id: String, token: String) async throws -> OnboardingDraft {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.createGoalUnderstandingGeneration(path: .init(understandingId: id))
     }
 
@@ -101,9 +103,9 @@ struct OnboardingAPI: Sendable {
     case .tooManyRequests(let response):
       throw Self.error(try response.body.json)
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
@@ -113,7 +115,7 @@ struct OnboardingAPI: Sendable {
     edit: Components.Schemas.OnboardingDraftEdit,
     token: String
   ) async throws -> OnboardingDraft {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.reviseGoalUnderstanding(
         path: .init(understandingId: id), body: .json(edit))
     }
@@ -122,11 +124,11 @@ struct OnboardingAPI: Sendable {
     case .ok(let response):
       return try response.body.json
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     case .notFound:
-      throw OnboardingError.failed(.notFound)
+      throw APIError.notFound
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
@@ -134,7 +136,7 @@ struct OnboardingAPI: Sendable {
     _ input: Components.Schemas.GoalCreateInput,
     token: String
   ) async throws -> Components.Schemas.GoalCreateResponse {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.createGoals(body: .json(input))
     }
 
@@ -146,9 +148,9 @@ struct OnboardingAPI: Sendable {
     case .tooManyRequests(let response):
       throw Self.error(try response.body.json)
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
@@ -174,7 +176,7 @@ struct OnboardingAPI: Sendable {
     goalID: String,
     token: String
   ) async throws -> GoalOnboarding {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.answerOnboardingQuestion(path: .init(goalId: goalID), body: .json(answer))
     }
 
@@ -182,17 +184,17 @@ struct OnboardingAPI: Sendable {
     case .ok(let response):
       return try response.body.json
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     case .notFound:
-      throw OnboardingError.failed(.notFound)
+      throw APIError.notFound
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
   /// Starts a goal's curriculum again after its run stopped; a run already going is joined.
   func writeGoal(goalID: String, token: String) async throws -> String {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.createGoalGeneration(path: .init(goalId: goalID))
     }
 
@@ -204,15 +206,15 @@ struct OnboardingAPI: Sendable {
     case .tooManyRequests(let response):
       throw Self.error(try response.body.json)
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
   /// "Start over" archives what this onboarding created, so the next goal starts clean.
   func archive(goalID: String, token: String) async throws {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.updateGoal(
         path: .init(goalId: goalID), body: .json(.init(status: .archived)))
     }
@@ -221,14 +223,14 @@ struct OnboardingAPI: Sendable {
     case .ok:
       return
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
   func joinInstrumentWaitlist(instrument: String, token: String?) async throws -> WaitlistOutcome {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.joinInstrumentWaitlist(
         body: .json(.init(instrument: instrument, language: Self.language)))
     }
@@ -239,12 +241,12 @@ struct OnboardingAPI: Sendable {
     case .unauthorized, .forbidden:
       return .signInRequired
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
   func placement(goalID: String, token: String) async throws -> GoalPlacement {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.getGoalPlacement(
         path: .init(goalId: goalID), query: .init(timeZone: TimeZone.current.identifier))
     }
@@ -253,9 +255,9 @@ struct OnboardingAPI: Sendable {
     case .ok(let response):
       return try response.body.json
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
@@ -264,7 +266,7 @@ struct OnboardingAPI: Sendable {
     goalID: String,
     token: String
   ) async throws -> Components.Schemas.PlacementAnswerResult {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.createPlacementAnswer(path: .init(goalId: goalID), body: .json(input))
     }
 
@@ -272,15 +274,15 @@ struct OnboardingAPI: Sendable {
     case .ok(let response):
       return try response.body.json
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
   /// Ends placement: what was answered sets where each phase starts, or every phase starts at its beginning.
   func completePlacement(goalID: String, fromScratch: Bool, token: String) async throws {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.completeGoalPlacement(
         path: .init(goalId: goalID),
         body: .json(.init(fromScratch: fromScratch, timeZone: TimeZone.current.identifier)))
@@ -290,15 +292,15 @@ struct OnboardingAPI: Sendable {
     case .ok:
       return
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
   /// Ends a language goal's level test; skipped, the plan starts from the level the learner gave.
   func finishLevelTest(goalID: String, token: String) async throws {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.finishLanguageLevelTest(path: .init(goalId: goalID))
     }
 
@@ -306,15 +308,15 @@ struct OnboardingAPI: Sendable {
     case .ok:
       return
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
   /// Writes the plan's first lessons ahead, so none waits when the learner gets there.
   func prepareLessons(goalID: String, token: String) async throws {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.createGoalLessonPreparation(path: .init(goalId: goalID))
     }
 
@@ -322,9 +324,9 @@ struct OnboardingAPI: Sendable {
     case .accepted:
       return
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
@@ -346,7 +348,7 @@ struct OnboardingAPI: Sendable {
     let input = try JSONDecoder().decode(
       Components.Schemas.CourseGoalStartInput.self,
       from: JSONSerialization.data(withJSONObject: body))
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.startCourseGoal(path: .init(courseId: courseID), body: .json(input))
     }
 
@@ -360,11 +362,11 @@ struct OnboardingAPI: Sendable {
     case .tooManyRequests(let response):
       throw Self.error(try response.body.json)
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     case .notFound:
-      throw OnboardingError.failed(.notFound)
+      throw APIError.notFound
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
@@ -390,7 +392,7 @@ struct OnboardingAPI: Sendable {
     dailyMinutes: Int,
     token: String
   ) async throws -> (goalID: String, isNew: Bool) {
-    let output = try await perform(token: token) { client in
+    let output = try await clients.perform(token: token) { client in
       try await client.createGoalFromPlanLink(
         path: .init(planId: id),
         body: .json(.init(dailyMinutes: dailyMinutes, timeZone: TimeZone.current.identifier)))
@@ -406,26 +408,15 @@ struct OnboardingAPI: Sendable {
     case .tooManyRequests(let response):
       throw Self.error(try response.body.json)
     case .unauthorized:
-      throw OnboardingError.failed(.unauthorized)
+      throw APIError.unauthorized
     default:
-      throw OnboardingError.failed(.unavailable)
+      throw APIError.unavailable
     }
   }
 
   /// The language main's onboarding writes titles and notes in: the app's interface language.
   static var language: String {
     Bundle.main.preferredLocalizations.first.map { String($0.prefix(2)) } ?? "en"
-  }
-
-  private func perform<Output: Sendable>(
-    token: String?,
-    operation: (Client) async throws -> Output
-  ) async throws -> Output {
-    do {
-      return try await clients.perform(token: token, operation: operation)
-    } catch let error as APIError {
-      throw OnboardingError.failed(error)
-    }
   }
 
   /// Reads the product codes a refusal carries; anything else is a plain failure.

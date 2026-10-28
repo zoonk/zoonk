@@ -110,8 +110,9 @@ final class AppRouter {
     self.sheet = sheet
   }
 
+  /// Closes the top task; nothing when a learner already closed it (or a session change did).
   func dismissTask() {
-    tasks.removeLast()
+    _ = tasks.popLast()
   }
 
   /// Drops every pushed page and task, for a goal switch or a different learner: what they
