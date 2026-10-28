@@ -48,8 +48,8 @@ private struct RevealCount: ViewModifier {
   }
 }
 
-private func percentText(_ share: Double, format: ChartsNumberFormat) -> String {
-  format(share * 100, unit: "%", digits: share * 100 < 10 ? 1 : 0)
+private func percentText(_ share: Double) -> String {
+  ActivityNumberFormat.format(share * 100, unit: "%", digits: share * 100 < 10 ? 1 : 0)
 }
 
 private struct ChanceSimulationView: View {
@@ -59,7 +59,6 @@ private struct ChanceSimulationView: View {
 
   @State private var runIndex = 0
   @State private var revealed = 0
-  private let format = ChartsNumberFormat()
 
   /// The runs play once there's nothing left to guess: after the check, or explored.
   private var isRunning: Bool { context.phase != .answering }
@@ -82,7 +81,7 @@ private struct ChanceSimulationView: View {
     let share = hits.isEmpty ? 0 : Double(hits.filter { $0 }.count) / Double(hits.count)
     let isDone = isRunning && shown.count == outcomes.count
     let runsLabel = String(
-      localized: "\(format(Double(fields.runs))) runs of \(fields.trialLabel)",
+      localized: "\(ActivityNumberFormat.format(Double(fields.runs))) runs of \(fields.trialLabel)",
       table: "ActivitiesCharts",
       comment: "How many times a random trial runs, like 1,000 runs of 10 flips")
 
@@ -94,7 +93,7 @@ private struct ChanceSimulationView: View {
 
           if isRunning, let guess {
             Text(
-              "Your guess: \(percentText(guess, format: format))", tableName: "ActivitiesCharts",
+              "Your guess: \(percentText(guess))", tableName: "ActivitiesCharts",
               comment: "The learner's guess next to a simulation"
             )
             .font(.footnote.weight(.medium))
@@ -104,7 +103,7 @@ private struct ChanceSimulationView: View {
         Spacer()
 
         if isRunning {
-          ChartsReadout(text: percentText(share, format: format), style: .mint)
+          ChartsReadout(text: percentText(share), style: .mint)
             .accessibilityHidden(true)
         }
       }
@@ -143,16 +142,16 @@ private struct ChanceSimulationView: View {
     .accessibilityLabel(
       isRunning
         ? Text(
-          "\(runsLabel): \(fields.hitLabel) came up in \(percentText(share, format: format)) of them.",
+          "\(runsLabel): \(fields.hitLabel) came up in \(percentText(share)) of them.",
           tableName: "ActivitiesCharts", comment: "A finished simulation, for VoiceOver")
         : Text(verbatim: runsLabel))
   }
 
   private func doneSummary(share: Double) -> some View {
-    let exact = percentText(ChanceModel.exactChance(fields.model), format: format)
+    let exact = percentText(ChanceModel.exactChance(fields.model))
 
     return Text(
-      "\(fields.hitLabel) in \(percentText(share, format: format)) of the runs. The exact chance is \(exact).",
+      "\(fields.hitLabel) in \(percentText(share)) of the runs. The exact chance is \(exact).",
       tableName: "ActivitiesCharts", comment: "What a simulation found, next to the exact chance"
     )
     .font(.subheadline.monospacedDigit())
@@ -201,7 +200,7 @@ private struct ChanceSimulationView: View {
                 ? Text("Yes", tableName: "ActivitiesCharts", comment: "A run that hit")
                 : Text("No", tableName: "ActivitiesCharts", comment: "A run that missed")
             } else {
-              Text(verbatim: format(Double(outcome)))
+              Text(verbatim: ActivityNumberFormat.format(Double(outcome)))
             }
           }
         }
@@ -219,7 +218,7 @@ private struct ChanceSimulationView: View {
           .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 3]))
           .annotation(position: .top, alignment: .trailing) {
             Text(
-              "Your guess: \(percentText(guess, format: format))", tableName: "ActivitiesCharts",
+              "Your guess: \(percentText(guess))", tableName: "ActivitiesCharts",
               comment: "The learner's guess next to a simulation"
             )
             .font(.caption2)
@@ -239,7 +238,7 @@ private struct ChanceSimulationView: View {
         AxisGridLine()
         AxisValueLabel {
           if let share = value.as(Double.self) {
-            Text(verbatim: format(share * 100, unit: "%", digits: 0))
+            Text(verbatim: ActivityNumberFormat.format(share * 100, unit: "%", digits: 0))
           }
         }
       }
@@ -248,7 +247,7 @@ private struct ChanceSimulationView: View {
       AxisMarks(values: [0, fields.runs]) { value in
         AxisValueLabel {
           if let run = value.as(Int.self) {
-            Text(verbatim: format(Double(run)))
+            Text(verbatim: ActivityNumberFormat.format(Double(run)))
           }
         }
       }
@@ -266,7 +265,6 @@ private struct SamplingSimulationView: View {
   @State private var sizeIndex: Int
   @State private var runIndex = 0
   @State private var revealed = 0
-  private let format = ChartsNumberFormat()
 
   init(context: ActivityCanvasContext, fields: RandomSimulationFields.Sampling, fieldsJSON: String)
   {
@@ -301,19 +299,20 @@ private struct SamplingSimulationView: View {
 
   private func valueText(_ value: Double, digits: Int? = nil) -> String {
     isShare
-      ? format(value * 100, unit: "%", digits: digits ?? 1)
-      : format(value, unit: fields.unit, digits: digits)
+      ? ActivityNumberFormat.format(value * 100, unit: "%", digits: digits ?? 1)
+      : ActivityNumberFormat.format(value, unit: fields.unit, digits: digits)
   }
 
   private func marginText(_ margin: Double) -> String {
     guard isShare else {
       return String(
-        localized: "±\(format(margin, unit: fields.unit))", table: "ActivitiesCharts",
+        localized: "±\(ActivityNumberFormat.format(margin, unit: fields.unit))",
+        table: "ActivitiesCharts",
         comment: "A margin of error in a measured unit, like ±2.1 cm")
     }
 
     let points = margin * 100
-    let text = format(points, digits: 1)
+    let text = ActivityNumberFormat.format(points, digits: 1)
 
     if let whole = Int(exactly: (points * 10).rounded() / 10) {
       return String(
@@ -415,8 +414,10 @@ private struct SamplingSimulationView: View {
 
       if comparison != nil {
         HStack(spacing: 16) {
-          legend(Color.secondary.opacity(0.25), text: format(Double(smallest)), isCurrent: false)
-          legend(.mint, text: format(Double(size)), isCurrent: true)
+          legend(
+            Color.secondary.opacity(0.25), text: ActivityNumberFormat.format(Double(smallest)),
+            isCurrent: false)
+          legend(.mint, text: ActivityNumberFormat.format(Double(size)), isCurrent: true)
         }
         .accessibilityHidden(true)
       }
@@ -425,7 +426,8 @@ private struct SamplingSimulationView: View {
         HStack {
           Text(verbatim: sizeLabel).font(.subheadline)
           Spacer()
-          Text(verbatim: format(Double(size))).font(.subheadline.weight(.medium).monospacedDigit())
+          Text(verbatim: ActivityNumberFormat.format(Double(size))).font(
+            .subheadline.weight(.medium).monospacedDigit())
         }
 
         Slider(
@@ -436,14 +438,15 @@ private struct SamplingSimulationView: View {
         ) {
           Text(verbatim: sizeLabel)
         } minimumValueLabel: {
-          Text(verbatim: format(Double(smallest))).font(.caption)
+          Text(verbatim: ActivityNumberFormat.format(Double(smallest))).font(.caption)
         } maximumValueLabel: {
-          Text(verbatim: format(Double(fields.sampleSizes.last ?? smallest))).font(.caption)
+          Text(verbatim: ActivityNumberFormat.format(Double(fields.sampleSizes.last ?? smallest)))
+            .font(.caption)
         }
         .disabled(isChecked)
         .accessibilityValue(
           Text(
-            "\(format(Double(size))). 95% of samples within \(marginText(margin)).",
+            "\(ActivityNumberFormat.format(Double(size))). 95% of samples within \(marginText(margin)).",
             tableName: "ActivitiesCharts", comment: "A sample size slider's spoken value"))
       }
 
@@ -467,7 +470,7 @@ private struct SamplingSimulationView: View {
     .accessibilityElement(children: .contain)
     .accessibilityLabel(
       Text(
-        "\(format(Double(fields.runs))) samples of \(format(Double(size))) from \(fields.populationLabel). The true value is \(valueText(truth, digits: digits)); 95% of samples landed between \(valueText(range.lowerBound, digits: digits)) and \(valueText(range.upperBound, digits: digits)).",
+        "\(ActivityNumberFormat.format(Double(fields.runs))) samples of \(ActivityNumberFormat.format(Double(size))) from \(fields.populationLabel). The true value is \(valueText(truth, digits: digits)); 95% of samples landed between \(valueText(range.lowerBound, digits: digits)) and \(valueText(range.upperBound, digits: digits)).",
         tableName: "ActivitiesCharts", comment: "A sampling simulation, for VoiceOver"))
   }
 
@@ -501,11 +504,11 @@ private struct SamplingSimulationView: View {
     Group {
       if isDone {
         Text(
-          "\(format(Double(fields.runs))) samples of \(format(Double(size)))",
+          "\(ActivityNumberFormat.format(Double(fields.runs))) samples of \(ActivityNumberFormat.format(Double(size)))",
           tableName: "ActivitiesCharts", comment: "A finished sampling run")
       } else {
         Text(
-          "Running \(format(Double(shown))) of \(format(Double(fields.runs)))…",
+          "Running \(ActivityNumberFormat.format(Double(shown))) of \(ActivityNumberFormat.format(Double(fields.runs)))…",
           tableName: "ActivitiesCharts", comment: "A sampling run filling in"
         )
         .accessibilityHidden(true)
@@ -552,13 +555,13 @@ private struct SamplingSimulationView: View {
           )
           .fontWeight(.medium)
         } label: {
-          Text(verbatim: format(Double(size)))
+          Text(verbatim: ActivityNumberFormat.format(Double(size)))
         }
         .font(.subheadline.monospacedDigit())
       }
 
       Text(
-        "From \(format(Double(smallest))) to \(format(Double(largest))), the margin shrinks to \(format(ratio * 100, unit: "%", digits: 1)) of its size.",
+        "From \(ActivityNumberFormat.format(Double(smallest))) to \(ActivityNumberFormat.format(Double(largest))), the margin shrinks to \(ActivityNumberFormat.format(ratio * 100, unit: "%", digits: 1)) of its size.",
         tableName: "ActivitiesCharts", comment: "How much a margin of error shrinks as samples grow"
       )
       .font(.footnote)

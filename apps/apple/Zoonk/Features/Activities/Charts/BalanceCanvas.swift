@@ -23,14 +23,12 @@ struct BalanceCanvas: View {
   }
 }
 
-private var format: ChartsNumberFormat { ChartsNumberFormat() }
-
 private func equationText(_ state: BalanceModel.State, symbol: String) -> (
   left: String, right: String
 ) {
   (
-    BalanceModel.text(state.left, symbol: symbol) { format($0) },
-    BalanceModel.text(state.right, symbol: symbol) { format($0) }
+    BalanceModel.text(state.left, symbol: symbol) { ActivityNumberFormat.format($0) },
+    BalanceModel.text(state.right, symbol: symbol) { ActivityNumberFormat.format($0) }
   )
 }
 
@@ -299,7 +297,7 @@ private struct BalanceScale: View {
               .frame(width: 18, height: 18)
           }
         } else if pan.units > 0 {
-          Text(verbatim: format(pan.units))
+          Text(verbatim: ActivityNumberFormat.format(pan.units))
             .font(.caption.weight(.semibold).monospacedDigit())
             .padding(.horizontal, 8)
             .frame(minHeight: 28)

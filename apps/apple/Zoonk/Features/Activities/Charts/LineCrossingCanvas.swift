@@ -11,7 +11,6 @@ struct LineCrossingCanvas: View {
   /// How far the one moved line is, by its id; right or up is positive.
   @State private var offsets: [String: Double] = [:]
   @State private var dragOrigin: Double?
-  private let format = ChartsNumberFormat()
 
   private var axis: LineCrossingModel.Axis { LineCrossingModel.axis(of: fields.shift.direction) }
 

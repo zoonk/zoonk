@@ -81,7 +81,6 @@ struct UnitCircleCanvas: View {
   let fields: UnitCircleFields
 
   @State private var degrees: Double
-  private let format = ChartsNumberFormat()
 
   init(context: ActivityCanvasContext, fields: UnitCircleFields) {
     self.context = context
@@ -122,12 +121,13 @@ struct UnitCircleCanvas: View {
 
   private func angleText(_ degrees: Double) -> String {
     if fields.angleUnit == .degrees {
-      return format(degrees, unit: "°")
+      return ActivityNumberFormat.format(degrees, unit: "°")
     }
 
     return UnitCircleAngle.piFraction(degrees)
       ?? String(
-        localized: "\(format(degrees * .pi / 180)) rad", table: "ActivitiesCharts",
+        localized: "\(ActivityNumberFormat.format(degrees * .pi / 180)) rad",
+        table: "ActivitiesCharts",
         comment: "An angle in radians, like 2.5 rad")
   }
 
@@ -143,7 +143,7 @@ struct UnitCircleCanvas: View {
   }
 
   private func valueText(_ value: Double?) -> String {
-    value.map { format($0, digits: 2) }
+    value.map { ActivityNumberFormat.format($0, digits: 2) }
       ?? String(
         localized: "undefined", table: "ActivitiesCharts",
         comment: "A tangent that doesn't exist, at 90°")
@@ -372,7 +372,7 @@ struct UnitCircleCanvas: View {
         AxisGridLine()
         AxisValueLabel {
           if let y = value.as(Double.self) {
-            Text(verbatim: format(y))
+            Text(verbatim: ActivityNumberFormat.format(y))
           }
         }
       }

@@ -67,7 +67,6 @@ struct AreaModelCanvas: View {
 
   @State private var sides: [AreaModelSide]
   @State private var width: CGFloat = 320
-  private let format = ChartsNumberFormat()
 
   init(context: ActivityCanvasContext, fields: AreaModelFields) {
     self.context = context
@@ -105,11 +104,11 @@ struct AreaModelCanvas: View {
   var body: some View {
     let total = pieces.reduce(0, +)
     let sum =
-      "\(pieces.map { format($0) }.joined(separator: " + ")) = \(hidesTotal ? "?" : format(total, unit: unit))"
+      "\(pieces.map { ActivityNumberFormat.format($0) }.joined(separator: " + ")) = \(hidesTotal ? "?" : ActivityNumberFormat.format(total, unit: unit))"
 
     ChartsCanvas {
       if fields.isArea {
-        AreaGrid(sides: $sides, isEnabled: !isChecked, format: format)
+        AreaGrid(sides: $sides, isEnabled: !isChecked)
           .frame(height: gridHeight)
           .frame(maxWidth: .infinity)
           .onGeometryChange(for: CGFloat.self) {
@@ -118,7 +117,7 @@ struct AreaModelCanvas: View {
             width = $0
           }
       } else {
-        AreaBar(sides: $sides, isEnabled: !isChecked, format: format)
+        AreaBar(sides: $sides, isEnabled: !isChecked)
       }
 
       ChartsReadout(text: sum)
@@ -141,7 +140,7 @@ struct AreaModelCanvas: View {
   private func summary(total: Double) -> String {
     let parts = String(
       localized:
-        "Split into \(pieces.count) parts: \(pieces.map { format($0) }.joined(separator: ", ")).",
+        "Split into \(pieces.count) parts: \(pieces.map { ActivityNumberFormat.format($0) }.joined(separator: ", ")).",
       table: "ActivitiesCharts", comment: "An area or bar model's parts, for VoiceOver")
 
     guard !hidesTotal else {
@@ -149,7 +148,8 @@ struct AreaModelCanvas: View {
     }
 
     let together = String(
-      localized: "Together they make \(format(total, unit: unit)).", table: "ActivitiesCharts",
+      localized: "Together they make \(ActivityNumberFormat.format(total, unit: unit)).",
+      table: "ActivitiesCharts",
       comment: "An area or bar model's total, for VoiceOver")
 
     return "\(parts) \(together)"
@@ -160,7 +160,6 @@ struct AreaModelCanvas: View {
 private struct AreaGrid: View {
   @Binding var sides: [AreaModelSide]
   let isEnabled: Bool
-  let format: ChartsNumberFormat
 
   var body: some View {
     GeometryReader { geometry in
@@ -184,7 +183,7 @@ private struct AreaGrid: View {
               .fill(Color.mint.opacity((row + column).isMultiple(of: 2) ? 0.18 : 0.3))
               .overlay { Rectangle().strokeBorder(Color.mint, lineWidth: 1) }
               .overlay {
-                Text(verbatim: format(columnPart * rowPart))
+                Text(verbatim: ActivityNumberFormat.format(columnPart * rowPart))
                   .font(.caption.weight(.semibold).monospacedDigit())
                   .minimumScaleFactor(0.5)
                   .lineLimit(1)
@@ -196,14 +195,14 @@ private struct AreaGrid: View {
         }
 
         ForEach(Array(width.parts.enumerated()), id: \.offset) { index, part in
-          Text(verbatim: format(part))
+          Text(verbatim: ActivityNumberFormat.format(part))
             .font(.caption.monospacedDigit())
             .foregroundStyle(.secondary)
             .position(x: (xs[index] + xs[index + 1]) / 2, y: frame.minY - 14)
         }
 
         ForEach(Array(height.parts.enumerated()), id: \.offset) { index, part in
-          Text(verbatim: format(part))
+          Text(verbatim: ActivityNumberFormat.format(part))
             .font(.caption.monospacedDigit())
             .foregroundStyle(.secondary)
             .position(x: frame.minX - 20, y: (ys[index] + ys[index + 1]) / 2)
@@ -214,7 +213,7 @@ private struct AreaGrid: View {
             label: Text(
               "Split across the width", tableName: "ActivitiesCharts",
               comment: "A split line across an area model's width"),
-            value: format(width.cuts[index]), isEnabled: isEnabled
+            value: ActivityNumberFormat.format(width.cuts[index]), isEnabled: isEnabled
           ) { steps in
             sides[0] = width.moving(index, to: width.cuts[index] + Double(steps) * width.step)
           } drag: { location in
@@ -229,7 +228,7 @@ private struct AreaGrid: View {
             label: Text(
               "Split across the height", tableName: "ActivitiesCharts",
               comment: "A split line across an area model's height"),
-            value: format(height.cuts[index]), isEnabled: isEnabled
+            value: ActivityNumberFormat.format(height.cuts[index]), isEnabled: isEnabled
           ) { steps in
             sides[1] = height.moving(index, to: height.cuts[index] + Double(steps) * height.step)
           } drag: { location in
@@ -248,7 +247,6 @@ private struct AreaGrid: View {
 private struct AreaBar: View {
   @Binding var sides: [AreaModelSide]
   let isEnabled: Bool
-  let format: ChartsNumberFormat
 
   var body: some View {
     GeometryReader { geometry in
@@ -258,7 +256,7 @@ private struct AreaBar: View {
       let xs = edges(bar).map { frame.minX + frame.width * $0 / bar.total }
 
       ZStack(alignment: .topLeading) {
-        Text(verbatim: format(bar.total))
+        Text(verbatim: ActivityNumberFormat.format(bar.total))
           .font(.caption.weight(.medium).monospacedDigit())
           .foregroundStyle(.secondary)
           .position(x: frame.midX, y: frame.minY - 16)
@@ -268,7 +266,7 @@ private struct AreaBar: View {
             .fill(Color.mint.opacity(index.isMultiple(of: 2) ? 0.18 : 0.3))
             .overlay { Rectangle().strokeBorder(Color.mint, lineWidth: 1) }
             .overlay {
-              Text(verbatim: format(part))
+              Text(verbatim: ActivityNumberFormat.format(part))
                 .font(.caption.weight(.semibold).monospacedDigit())
                 .minimumScaleFactor(0.5)
                 .lineLimit(1)
@@ -282,7 +280,7 @@ private struct AreaBar: View {
             label: Text(
               "Split across the width", tableName: "ActivitiesCharts",
               comment: "A split line across an area model's width"),
-            value: format(bar.cuts[index]), isEnabled: isEnabled
+            value: ActivityNumberFormat.format(bar.cuts[index]), isEnabled: isEnabled
           ) { steps in
             sides[0] = bar.moving(index, to: bar.cuts[index] + Double(steps) * bar.step)
           } drag: { location in

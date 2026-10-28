@@ -203,7 +203,7 @@ struct FormulaModelView {
     (fields.events ?? []).filter { events[$0.name] == 1 }.map(\.label)
   }
 
-  func readouts(format: ChartsNumberFormat) -> [Readout] {
+  func readouts() -> [Readout] {
     fields.outputs.map { output in
       let value = outputAt(output, now)
       let before = readoutBaseline.flatMap { outputAt(output, $0.values) }
@@ -213,17 +213,19 @@ struct FormulaModelView {
         note =
           readoutBaseline?.kind == .whatIf
           ? String(
-            localized: "\(format(before, unit: output.unit)) before", table: "ActivitiesCharts",
+            localized: "\(ActivityNumberFormat.format(before, unit: output.unit)) before",
+            table: "ActivitiesCharts",
             comment: "An output's value before the what-ifs, like $1,200 before")
           : String(
-            localized: "\(format(value - before, unit: output.unit, signed: true)) from the start",
+            localized:
+              "\(ActivityNumberFormat.format(value - before, unit: output.unit, signed: true)) from the start",
             table: "ActivitiesCharts",
             comment: "How much an output changed, like +$300 from the start")
       }
 
       return Readout(
         id: output.id, label: output.label,
-        value: value.map { format($0, unit: output.unit) } ?? "", note: note,
+        value: value.map { ActivityNumberFormat.format($0, unit: output.unit) } ?? "", note: note,
         isPrimary: output.id == charted.id)
     }
   }

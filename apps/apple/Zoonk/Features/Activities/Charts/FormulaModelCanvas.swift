@@ -11,7 +11,6 @@ struct FormulaModelCanvas: View {
 
   @State private var sliders: [String: Double]
   @State private var events: [String: Double]
-  private let format = ChartsNumberFormat()
 
   init(context: ActivityCanvasContext, fields: FormulaModelFields) {
     self.context = context
@@ -46,7 +45,7 @@ struct FormulaModelCanvas: View {
   }
 
   private func board(_ view: FormulaModelView) -> some View {
-    let readouts = view.readouts(format: format)
+    let readouts = view.readouts()
 
     return ChartsCanvas {
       if let title = fields.title {
@@ -79,7 +78,7 @@ struct FormulaModelCanvas: View {
 
       if let compared = view.compared {
         Text(
-          "\(view.charted.label) at \(format(compared.x, unit: view.axis.unit)): \(format(compared.y, unit: view.charted.unit))",
+          "\(view.charted.label) at \(ActivityNumberFormat.format(compared.x, unit: view.axis.unit)): \(ActivityNumberFormat.format(compared.y, unit: view.charted.unit))",
           tableName: "ActivitiesCharts",
           comment: "An output at a marked value, like Savings at 10 years: $1,600"
         )
@@ -154,9 +153,12 @@ struct FormulaModelCanvas: View {
           .symbolSize(90)
           .annotation(position: .top, spacing: 4) {
             if view.delta != 0 {
-              Text(verbatim: format(view.delta, unit: view.charted.unit, signed: true))
-                .font(.caption.weight(.semibold).monospacedDigit())
-                .foregroundStyle(.mint)
+              Text(
+                verbatim: ActivityNumberFormat.format(
+                  view.delta, unit: view.charted.unit, signed: true)
+              )
+              .font(.caption.weight(.semibold).monospacedDigit())
+              .foregroundStyle(.mint)
             }
           }
       }
@@ -175,7 +177,7 @@ struct FormulaModelCanvas: View {
         AxisGridLine()
         AxisValueLabel {
           if let x = value.as(Double.self) {
-            Text(verbatim: format(x, unit: view.axis.unit))
+            Text(verbatim: ActivityNumberFormat.format(x, unit: view.axis.unit))
           }
         }
       }
@@ -185,7 +187,7 @@ struct FormulaModelCanvas: View {
         AxisGridLine()
         AxisValueLabel {
           if let y = value.as(Double.self) {
-            Text(verbatim: format(y, unit: view.charted.unit, compact: true))
+            Text(verbatim: ActivityNumberFormat.format(y, unit: view.charted.unit, compact: true))
           }
         }
       }
@@ -233,13 +235,14 @@ struct FormulaModelCanvas: View {
   private func slider(_ variable: FormulaModelFields.Variable, view: FormulaModelView) -> some View
   {
     let value = sliders[variable.name] ?? variable.initial
-    let output = view.chartedNow.map { format($0, unit: view.charted.unit) } ?? ""
+    let output =
+      view.chartedNow.map { ActivityNumberFormat.format($0, unit: view.charted.unit) } ?? ""
 
     return VStack(alignment: .leading, spacing: 4) {
       HStack(alignment: .firstTextBaseline) {
         Text(verbatim: variable.label).font(.subheadline)
         Spacer()
-        Text(verbatim: format(value, unit: variable.unit))
+        Text(verbatim: ActivityNumberFormat.format(value, unit: variable.unit))
           .font(.subheadline.weight(.medium).monospacedDigit())
       }
 
@@ -257,16 +260,20 @@ struct FormulaModelCanvas: View {
       ) {
         Text(verbatim: variable.label)
       } minimumValueLabel: {
-        Text(verbatim: format(variable.min, unit: variable.unit)).font(.caption).foregroundStyle(
+        Text(verbatim: ActivityNumberFormat.format(variable.min, unit: variable.unit)).font(
+          .caption
+        ).foregroundStyle(
           .secondary)
       } maximumValueLabel: {
-        Text(verbatim: format(variable.max, unit: variable.unit)).font(.caption).foregroundStyle(
+        Text(verbatim: ActivityNumberFormat.format(variable.max, unit: variable.unit)).font(
+          .caption
+        ).foregroundStyle(
           .secondary)
       }
       .disabled(isChecked)
       .accessibilityValue(
         Text(
-          "\(format(value, unit: variable.unit)). \(view.charted.label): \(output)",
+          "\(ActivityNumberFormat.format(value, unit: variable.unit)). \(view.charted.label): \(output)",
           tableName: "ActivitiesCharts",
           comment: "A model slider's spoken value with the output it drives"))
     }
@@ -318,7 +325,7 @@ struct FormulaModelCanvas: View {
       parts.append(
         String(
           localized:
-            "For comparison, at \(format(compared.x, unit: view.axis.unit)) it's \(format(compared.y, unit: view.charted.unit)).",
+            "For comparison, at \(ActivityNumberFormat.format(compared.x, unit: view.axis.unit)) it's \(ActivityNumberFormat.format(compared.y, unit: view.charted.unit)).",
           table: "ActivitiesCharts",
           comment: "A marked comparison on a model's chart, for VoiceOver"))
     }

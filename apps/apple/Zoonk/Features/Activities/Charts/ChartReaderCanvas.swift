@@ -59,7 +59,6 @@ struct ChartReaderCanvas: View {
   let fields: ChartReaderFields
 
   @State private var selected: [String] = []
-  private let format = ChartsNumberFormat()
 
   private var isChecked: Bool {
     if case .checked = context.phase { return true }
@@ -155,7 +154,7 @@ struct ChartReaderCanvas: View {
         AxisGridLine()
         AxisValueLabel {
           if let x = value.as(Double.self) {
-            Text(verbatim: format(x, grouping: !fields.hasPlainX))
+            Text(verbatim: ActivityNumberFormat.format(x, grouping: !fields.hasPlainX))
           }
         }
       }
@@ -165,7 +164,7 @@ struct ChartReaderCanvas: View {
         AxisGridLine()
         AxisValueLabel {
           if let y = value.as(Double.self) {
-            Text(verbatim: format(y, compact: true))
+            Text(verbatim: ActivityNumberFormat.format(y, compact: true))
           }
         }
       }
@@ -202,11 +201,11 @@ struct ChartReaderCanvas: View {
 
     switch fields.statistic {
     case .percentChange:
-      return format(value, unit: "%", signed: true)
+      return ActivityNumberFormat.format(value, unit: "%", signed: true)
     case .change:
-      return format(value, unit: fields.yUnit, signed: true)
+      return ActivityNumberFormat.format(value, unit: fields.yUnit, signed: true)
     case .ratePerUnit:
-      let change = format(value, unit: fields.yUnit, signed: true)
+      let change = ActivityNumberFormat.format(value, unit: fields.yUnit, signed: true)
       return String(
         localized: "\(change) per \(fields.xLabel)", table: "ActivitiesCharts",
         comment: "A rate on a chart, like +2.4 ppm per year")
@@ -218,7 +217,7 @@ struct ChartReaderCanvas: View {
     let last = fields.points.last
     let line = String(
       localized:
-        "A line chart of \(fields.yLabel) by \(fields.xLabel), from \(format(first?.y ?? 0, unit: fields.yUnit)) at \(format(first?.x ?? 0, grouping: !fields.hasPlainX)) to \(format(last?.y ?? 0, unit: fields.yUnit)) at \(format(last?.x ?? 0, grouping: !fields.hasPlainX)).",
+        "A line chart of \(fields.yLabel) by \(fields.xLabel), from \(ActivityNumberFormat.format(first?.y ?? 0, unit: fields.yUnit)) at \(ActivityNumberFormat.format(first?.x ?? 0, grouping: !fields.hasPlainX)) to \(ActivityNumberFormat.format(last?.y ?? 0, unit: fields.yUnit)) at \(ActivityNumberFormat.format(last?.x ?? 0, grouping: !fields.hasPlainX)).",
       table: "ActivitiesCharts", comment: "What a chart reader's line shows, for VoiceOver")
 
     let spans = shownSpans.compactMap { span in

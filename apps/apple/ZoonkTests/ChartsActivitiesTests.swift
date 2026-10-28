@@ -27,15 +27,25 @@ final class ChartsActivitiesTests: XCTestCase {
   }
 
   func testFormatsUnitsLikeMain() {
-    let format = ChartsNumberFormat(locale: Locale(identifier: "en_US"))
+    let english = Locale(identifier: "en_US")
+    let format = { (value: Double, unit: String?, signed: Bool, digits: Int?, grouping: Bool) in
+      ActivityNumberFormat.format(
+        value, unit: unit, signed: signed, digits: digits, grouping: grouping, locale: english)
+    }
 
-    XCTAssertEqual(format(24, unit: "%", signed: true), "+24%")
-    XCTAssertEqual(format(130.5, unit: "m"), "130.5\u{00A0}m")
-    XCTAssertEqual(format(-3), "\u{2212}3")
-    XCTAssertEqual(format(1960, grouping: false), "1960")
-    XCTAssertEqual(format(3869.68, unit: "$"), "$3,870")
-    XCTAssertEqual(format(3.5, unit: "$"), "$3.50")
-    XCTAssertEqual(format(0.000075), "0.000075")
+    XCTAssertEqual(format(24, "%", true, nil, true), "+24%")
+    XCTAssertEqual(format(130.5, "m", false, nil, true), "130.5\u{00A0}m")
+    XCTAssertEqual(format(-3, nil, false, nil, true), "\u{2212}3")
+    XCTAssertEqual(format(1960, nil, false, nil, false), "1960")
+    XCTAssertEqual(format(3869.68, "$", false, nil, true), "$3,870")
+    XCTAssertEqual(format(3.5, "$", false, nil, true), "$3.50")
+    XCTAssertEqual(format(3.001, "$", false, nil, true), "$3")
+    XCTAssertEqual(format(7, "R$ por metro", false, nil, true), "R$7 por metro")
+    XCTAssertEqual(format(0.000075, nil, false, nil, true), "0.000075")
+    XCTAssertEqual(format(49.4567, "%", false, 1, true), "49.5%")
+    XCTAssertEqual(ActivityNumberFormat.format(1_200_000, compact: true, locale: english), "1M")
+    XCTAssertEqual(
+      ActivityNumberFormat.format(1_200_000, digits: 1, compact: true, locale: english), "1.2M")
   }
 
   // MARK: - Charts

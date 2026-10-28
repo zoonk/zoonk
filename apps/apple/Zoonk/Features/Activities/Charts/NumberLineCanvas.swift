@@ -43,7 +43,6 @@ struct NumberLineCanvas: View {
 
   /// Where the dot is while exploring, when nothing is answered.
   @State private var explored: Double?
-  private let format = ChartsNumberFormat()
 
   private var isChecked: Bool {
     if case .checked = context.phase { return true }
@@ -58,13 +57,22 @@ struct NumberLineCanvas: View {
   private var jumps: [(from: Double, to: Double, label: String)] {
     guard isChecked else {
       return position == fields.start
-        ? [] : [(fields.start, position, format(position - fields.start, signed: true))]
+        ? []
+        : [
+          (
+            fields.start, position,
+            ActivityNumberFormat.format(position - fields.start, signed: true)
+          )
+        ]
     }
 
     let stops = fields.stops
 
     return fields.moves.enumerated().map { index, move in
-      (stops[index], stops[index + 1], move.label ?? format(move.by, signed: true))
+      (
+        stops[index], stops[index + 1],
+        move.label ?? ActivityNumberFormat.format(move.by, signed: true)
+      )
     }
   }
 
@@ -137,7 +145,7 @@ struct NumberLineCanvas: View {
           fields.ticks.contains(where: { $0.value == tick && $0.isLabelled })
         {
           AxisValueLabel(verticalSpacing: 16) {
-            Text(verbatim: format(tick))
+            Text(verbatim: ActivityNumberFormat.format(tick))
               .fontWeight(tick == 0 ? .semibold : .regular)
           }
         }
@@ -164,7 +172,7 @@ struct NumberLineCanvas: View {
               label: Text(
                 "Your answer on the number line", tableName: "ActivitiesCharts",
                 comment: "The number line's dot, for VoiceOver"),
-              value: format(position, unit: fields.unit), isEnabled: !isChecked
+              value: ActivityNumberFormat.format(position, unit: fields.unit), isEnabled: !isChecked
             ) { steps in
               place(position + Double(steps) * fields.step)
             }
@@ -221,28 +229,33 @@ struct NumberLineCanvas: View {
       ? fields.moves.map(\.by) : (position == fields.start ? [] : [position - fields.start])
 
     guard !values.isEmpty else {
-      return format(fields.start)
+      return ActivityNumberFormat.format(fields.start)
     }
 
-    let terms = values.map { "\($0 < 0 ? "\u{2212}" : "+") \(format(abs($0)))" }
+    let terms = values.map {
+      "\($0 < 0 ? "\u{2212}" : "+") \(ActivityNumberFormat.format(abs($0)))"
+    }
     let end = values.reduce(fields.start, +)
 
-    return "\(([format(fields.start)] + terms).joined(separator: " ")) = \(format(end))"
+    return
+      "\(([ActivityNumberFormat.format(fields.start)] + terms).joined(separator: " ")) = \(ActivityNumberFormat.format(end))"
   }
 
   private var summary: String {
     let line = String(
       localized:
-        "A number line for \(fields.label) from \(format(fields.min)) to \(format(fields.max)). It starts at \(format(fields.start, unit: fields.unit)), and your dot is at \(format(position, unit: fields.unit)).",
+        "A number line for \(fields.label) from \(ActivityNumberFormat.format(fields.min)) to \(ActivityNumberFormat.format(fields.max)). It starts at \(ActivityNumberFormat.format(fields.start, unit: fields.unit)), and your dot is at \(ActivityNumberFormat.format(position, unit: fields.unit)).",
       table: "ActivitiesCharts", comment: "A number line, for VoiceOver")
 
     guard isChecked else {
       return line
     }
 
-    let jumps = fields.moves.map { format($0.by, signed: true) }.joined(separator: ", ")
+    let jumps = fields.moves.map { ActivityNumberFormat.format($0.by, signed: true) }.joined(
+      separator: ", ")
     let landing = String(
-      localized: "The jumps go \(jumps) and land at \(format(fields.landing, unit: fields.unit)).",
+      localized:
+        "The jumps go \(jumps) and land at \(ActivityNumberFormat.format(fields.landing, unit: fields.unit)).",
       table: "ActivitiesCharts", comment: "A number line's jumps after the check, for VoiceOver")
 
     return "\(line) \(landing)"

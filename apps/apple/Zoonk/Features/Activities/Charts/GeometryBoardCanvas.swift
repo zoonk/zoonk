@@ -9,7 +9,6 @@ struct GeometryBoardCanvas: View {
   let fields: GeometryBoardFields
 
   @State private var points: [GeometryBoardFields.Point]
-  private let format = ChartsNumberFormat()
 
   init(context: ActivityCanvasContext, fields: GeometryBoardFields) {
     self.context = context
@@ -141,7 +140,8 @@ struct GeometryBoardCanvas: View {
       )
       .accessibilityValue(
         Text(
-          "At \(format(point.x)), \(format(point.y)). \(summary)", tableName: "ActivitiesCharts",
+          "At \(ActivityNumberFormat.format(point.x)), \(ActivityNumberFormat.format(point.y)). \(summary)",
+          tableName: "ActivitiesCharts",
           comment: "Where a corner is and what the board measures")
       )
       .accessibilityActions {
@@ -227,7 +227,8 @@ struct GeometryBoardCanvas: View {
           index == reading.totalIndex
           ? reading.total : reading.partIndexes.firstIndex(of: index).map { reading.parts[$0] }
         if let value {
-          let text = index == reading.totalIndex && hidesTotal ? "?" : format(value)
+          let text =
+            index == reading.totalIndex && hidesTotal ? "?" : ActivityNumberFormat.format(value)
           canvas.draw(
             canvas.resolve(
               Text(verbatim: text).font(.caption.weight(.semibold)).foregroundStyle(color)),
@@ -271,7 +272,7 @@ struct GeometryBoardCanvas: View {
         let inside = CGPoint(x: at.x - unitOut.0 * 26, y: at.y + unitOut.1 * 26)
         canvas.draw(
           canvas.resolve(
-            Text(verbatim: format(reading.parts[index], unit: "°")).font(
+            Text(verbatim: ActivityNumberFormat.format(reading.parts[index], unit: "°")).font(
               .caption2.weight(.semibold).monospacedDigit())), at: inside)
       }
 
@@ -280,7 +281,7 @@ struct GeometryBoardCanvas: View {
         let middle = transform.point((point.x + next.x) / 2, (point.y + next.y) / 2)
         canvas.draw(
           canvas.resolve(
-            Text(verbatim: format(reading.parts[index])).font(
+            Text(verbatim: ActivityNumberFormat.format(reading.parts[index])).font(
               .caption2.weight(.semibold).monospacedDigit()
             ).foregroundStyle(.purple)), at: middle)
       }
@@ -289,7 +290,7 @@ struct GeometryBoardCanvas: View {
 
   @ViewBuilder
   private func sumLine(_ reading: GeometryBoardModel.Reading) -> some View {
-    let total = hidesTotal ? "?" : format(reading.total, unit: unit)
+    let total = hidesTotal ? "?" : ActivityNumberFormat.format(reading.total, unit: unit)
     let isAnswer =
       isChecked
       && {
@@ -304,7 +305,8 @@ struct GeometryBoardCanvas: View {
         ChartsReadout(text: total, style: isAnswer ? .success : .primary)
       }
     } else {
-      let parts = reading.parts.map { format($0, unit: unit) }.joined(separator: " + ")
+      let parts = reading.parts.map { ActivityNumberFormat.format($0, unit: unit) }.joined(
+        separator: " + ")
       ChartsReadout(text: "\(parts) = \(total)", style: isAnswer ? .success : .primary)
         .minimumScaleFactor(0.6)
         .lineLimit(2)
@@ -313,8 +315,9 @@ struct GeometryBoardCanvas: View {
 
   /// What the board measures now, in words, for VoiceOver.
   private func describe(_ reading: GeometryBoardModel.Reading) -> String {
-    let parts = reading.parts.map { format($0, unit: unit) }.joined(separator: ", ")
-    let total = format(reading.total, unit: unit)
+    let parts = reading.parts.map { ActivityNumberFormat.format($0, unit: unit) }.joined(
+      separator: ", ")
+    let total = ActivityNumberFormat.format(reading.total, unit: unit)
 
     switch fields.measure {
     case .angleSum:

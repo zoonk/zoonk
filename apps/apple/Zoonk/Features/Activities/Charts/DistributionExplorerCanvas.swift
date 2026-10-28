@@ -157,7 +157,6 @@ struct DistributionExplorerCanvas: View {
   let fields: DistributionExplorerFields
 
   @State private var handles: DistributionExplorerFields.Interval
-  private let format = ChartsNumberFormat()
 
   init(context: ActivityCanvasContext, fields: DistributionExplorerFields) {
     self.context = context
@@ -179,7 +178,7 @@ struct DistributionExplorerCanvas: View {
   }
 
   private func percentText(_ value: Double) -> String {
-    format(value, unit: "%", digits: 1)
+    ActivityNumberFormat.format(value, unit: "%", digits: 1)
   }
 
   var body: some View {
@@ -193,7 +192,7 @@ struct DistributionExplorerCanvas: View {
     ChartsCanvas {
       HStack(alignment: .firstTextBaseline) {
         Text(
-          "\(fields.valueLabel) from \(format(handles.from)) to \(format(handles.to))",
+          "\(fields.valueLabel) from \(ActivityNumberFormat.format(handles.from)) to \(ActivityNumberFormat.format(handles.to))",
           tableName: "ActivitiesCharts", comment: "The range between a distribution's two handles"
         )
         .font(.subheadline)
@@ -235,7 +234,7 @@ struct DistributionExplorerCanvas: View {
               .annotation(position: .top, alignment: .center) {
                 Text(
                   verbatim:
-                    "\(format(fields.target.from)) – \(format(fields.target.to)): \(percentText(DistributionModel.percent(fields.distribution, fields.target)))"
+                    "\(ActivityNumberFormat.format(fields.target.from)) – \(ActivityNumberFormat.format(fields.target.to)): \(percentText(DistributionModel.percent(fields.distribution, fields.target)))"
                 )
                 .font(.caption.weight(.semibold).monospacedDigit())
                 .foregroundStyle(.orange)
@@ -254,7 +253,7 @@ struct DistributionExplorerCanvas: View {
           // Below the handles that sit on the baseline.
           AxisValueLabel(verticalSpacing: 16) {
             if let x = value.as(Double.self) {
-              Text(verbatim: format(x))
+              Text(verbatim: ActivityNumberFormat.format(x))
             }
           }
         }
@@ -326,7 +325,7 @@ struct DistributionExplorerCanvas: View {
         label: label,
         value: String(
           localized:
-            "\(format(value, unit: fields.unit)). \(percentText(between)) between the handles.",
+            "\(ActivityNumberFormat.format(value, unit: fields.unit)). \(percentText(between)) between the handles.",
           table: "ActivitiesCharts", comment: "A distribution handle's spoken value"),
         isEnabled: !isChecked
       ) { steps in
@@ -369,18 +368,18 @@ struct DistributionExplorerCanvas: View {
       case .normal(let mean, let sd):
         String(
           localized:
-            "A bell curve of \(fields.valueLabel), with an average of \(format(mean, unit: fields.unit)) and a standard deviation of \(format(sd, unit: fields.unit)).",
+            "A bell curve of \(fields.valueLabel), with an average of \(ActivityNumberFormat.format(mean, unit: fields.unit)) and a standard deviation of \(ActivityNumberFormat.format(sd, unit: fields.unit)).",
           table: "ActivitiesCharts", comment: "A normal distribution, for VoiceOver")
       case .uniform(let min, let max):
         String(
           localized:
-            "A flat distribution of \(fields.valueLabel), from \(format(min, unit: fields.unit)) to \(format(max, unit: fields.unit)).",
+            "A flat distribution of \(fields.valueLabel), from \(ActivityNumberFormat.format(min, unit: fields.unit)) to \(ActivityNumberFormat.format(max, unit: fields.unit)).",
           table: "ActivitiesCharts", comment: "A uniform distribution, for VoiceOver")
       }
 
     let shares = String(
       localized:
-        "\(percentText(between)) of values fall between \(format(handles.from, unit: fields.unit)) and \(format(handles.to, unit: fields.unit)), \(percentText(below)) below and \(percentText(above)) above.",
+        "\(percentText(between)) of values fall between \(ActivityNumberFormat.format(handles.from, unit: fields.unit)) and \(ActivityNumberFormat.format(handles.to, unit: fields.unit)), \(percentText(below)) below and \(percentText(above)) above.",
       table: "ActivitiesCharts",
       comment: "The shares around a distribution's handles, for VoiceOver")
 

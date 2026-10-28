@@ -11,7 +11,6 @@ struct PatternTesterCanvas: View {
   @State private var pattern: String
   @State private var selection: TextSelection?
   @State private var hintsShown = 0
-  private let format = ChartsNumberFormat()
 
   init(context: ActivityCanvasContext, fields: PatternTesterFields) {
     self.context = context
@@ -358,11 +357,11 @@ struct PatternTesterCanvas: View {
 
         GridRow {
           ForEach(example.inputs, id: \.name) { input in
-            Text(verbatim: format(input.value))
+            Text(verbatim: ActivityNumberFormat.format(input.value))
           }
-          Text(verbatim: format(example.output)).fontWeight(.medium)
+          Text(verbatim: ActivityNumberFormat.format(example.output)).fontWeight(.medium)
           HStack(spacing: 4) {
-            Text(verbatim: result?.value.map { format($0) } ?? "–")
+            Text(verbatim: result?.value.map { ActivityNumberFormat.format($0) } ?? "–")
             if let result {
               Image(systemName: result.passes ? "checkmark" : "xmark")
                 .foregroundStyle(result.passes ? Color.success : .destructive)
