@@ -92,11 +92,16 @@ struct LessonCompletionView: View {
   }
 
   private func readouts(_ summary: LessonCompletionSummary) -> some View {
-    VStack(alignment: .leading, spacing: 16) {
+    // With nothing answered (an explanation read again, a lesson without checks), no score shows.
+    let answered = summary.correctCount + summary.incorrectCount
+
+    return VStack(alignment: .leading, spacing: 16) {
       Grid(alignment: .leading, horizontalSpacing: 32, verticalSpacing: 4) {
         GridRow {
-          Text("\(summary.correctCount)/\(summary.correctCount + summary.incorrectCount)")
-            .font(.largeTitle.weight(.semibold).monospacedDigit())
+          if answered > 0 {
+            Text("\(summary.correctCount)/\(answered)")
+              .font(.largeTitle.weight(.semibold).monospacedDigit())
+          }
           if summary.brainPower > 0 {
             Text("+\(summary.brainPower)")
               .font(.largeTitle.weight(.semibold).monospacedDigit())
@@ -104,9 +109,11 @@ struct LessonCompletionView: View {
           }
         }
         GridRow {
-          Text("Right", tableName: "Player", comment: "Label under the lesson's score")
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+          if answered > 0 {
+            Text("Right", tableName: "Player", comment: "Label under the lesson's score")
+              .font(.subheadline)
+              .foregroundStyle(.secondary)
+          }
           if summary.brainPower > 0 {
             Text(
               "Brain Power", tableName: "Player",
