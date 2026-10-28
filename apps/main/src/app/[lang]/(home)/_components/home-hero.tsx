@@ -8,11 +8,6 @@ import { getExtracted } from "next-intl/server";
 import { HERO_GOAL_ID } from "./home-ids";
 import { LandingGoalBox } from "./landing-goal-box";
 
-/**
- * The first screen's words, on the page: the promise, how Zoonk keeps it in one line and the one
- * box for the visitor's own goal. The product keeping it follows on its own band
- * (`HomeExample`).
- */
 export async function HomeHero({ startPath }: { startPath: string }) {
   const t = await getExtracted();
 

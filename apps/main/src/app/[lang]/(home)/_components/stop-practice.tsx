@@ -27,23 +27,16 @@ const STOP_TITLE_ID = "stop-practice";
 
 const DAYS_PER_WEEK = 7;
 
-/** The kind of practice each example goal leads to, whose dot marks the stop. */
 const PRACTICE_KIND: Record<ExampleGoal, LearnKind> = {
   exam: "mock",
   job: "practice",
   move: "conversation",
 };
 
-/** The week of the example plan the examples' `today` falls in, counted from its first day. */
 function getPlanWeek({ start, today }: { start: Date | undefined; today: Date }): number {
   return start ? Math.floor(daysBetween({ from: start, to: today }) / DAYS_PER_WEEK) + 1 : 1;
 }
 
-/**
- * Practice, as the example goal the visitor picked needs it: an exam's format and its mocks, a
- * move's conversations out loud, a new job's real work. The heading says which, and the pair
- * under it shows it; the stop's mark is that practice's own dot.
- */
 export async function StopPractice() {
   const t = await getExtracted();
   const plans = await getExamplePlans();

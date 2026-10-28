@@ -51,7 +51,6 @@ import {
 const STOP_TITLE_ID = "stop-every-day";
 const YESTERDAY_LABEL_ID = "stop-every-day-yesterday";
 
-/** A day's rows with their numbers on them, pointing to the captions under the window. */
 function withNotes(steps: readonly TomorrowStep[]): DayListStep[] {
   return steps.map(({ note, ...step }) => ({
     ...step,
@@ -59,10 +58,6 @@ function withNotes(steps: readonly TomorrowStep[]): DayListStep[] {
   }));
 }
 
-/**
- * What changed in the plan when yesterday was missed: its phase ends a day later, or, with the
- * date too near for that, one of its lessons is left out; the date stays.
- */
 async function PlanChanged({ goal }: { goal: ExampleGoal }) {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -101,8 +96,7 @@ async function PlanChanged({ goal }: { goal: ExampleGoal }) {
         lines={
           change.kind === "moved"
             ? [
-                // A phase's end that moves is a plain move; only the lesson a missed day takes out
-                // is bad news, so it alone is red (as every plan diff colors by meaning).
+                // Only the lesson a missed day takes out is bad news, so it alone is red.
                 {
                   kind: "removed",
                   text: t("{phase} until {date}", { date: formatDay(end), phase: phaseName }),
@@ -132,11 +126,6 @@ async function PlanChanged({ goal }: { goal: ExampleGoal }) {
   );
 }
 
-/**
- * Tomorrow's Today for one example goal: its date and days left, the title, its queue after a
- * studied yesterday (and "On pace. Nothing moves.") or a missed one (yesterday's lesson first, and
- * the plan's change), and the goal's measure beside it from 1100px.
- */
 async function TomorrowWindow({ goal }: { goal: ExampleGoal }) {
   const t = await getExtracted();
   const tSwitcher = await getExtracted("goalSwitcher");
@@ -167,7 +156,6 @@ async function TomorrowWindow({ goal }: { goal: ExampleGoal }) {
               ),
             ].join(" · ")}
           </p>
-          {/* Tomorrow morning's Today, the day after the hero's. */}
           <p className="text-title">{t("Tomorrow")}</p>
         </div>
 
@@ -197,7 +185,6 @@ async function TomorrowWindow({ goal }: { goal: ExampleGoal }) {
   );
 }
 
-/** What each number on tomorrow's rows points at, in the order of the day being shown. */
 async function DayCaptions() {
   const t = await getExtracted();
 
@@ -243,12 +230,6 @@ async function DayCaptions() {
   ));
 }
 
-/**
- * Every day: tomorrow's Today for the example goal the visitor picked, with yesterday's switch,
- * so they can see what a missed day does: yesterday's lesson comes first and the plan moves to
- * fit, while a studied day changes nothing. Its rows are numbered, and the captions under the
- * window say what each is.
- */
 export async function StopEveryDay() {
   const t = await getExtracted();
   // The switch's answers have their own namespace: the app's "Studied" is a day's state, not an answer.

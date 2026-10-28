@@ -25,11 +25,6 @@ import {
 
 const GOALS_LABEL_ID = "example-goals-label";
 
-/**
- * The example goals as the app's goal switcher lists them (the mark, the name, the time a day and
- * the days left), a radio each: picking one shows its plan here and the rest of the page follows
- * it. Three across over the plan on a phone, a column beside it from 900px.
- */
 async function ExampleGoalList() {
   const t = await getExtracted();
   const tSwitcher = await getExtracted("goalSwitcher");
@@ -93,10 +88,6 @@ async function ExampleGoalList() {
   );
 }
 
-/**
- * One example goal's plan on the examples' today: where it stands (its goal, the days left and
- * its pace or level), its road, and Today's queue under it.
- */
 async function ExamplePlan({ goal }: { goal: ExampleGoal }) {
   const t = await getExtracted();
   const tSwitcher = await getExtracted("goalSwitcher");
@@ -161,13 +152,6 @@ async function ExamplePlan({ goal }: { goal: ExampleGoal }) {
   );
 }
 
-/**
- * The product under the first screen's words, on a band of `ground` across the page so its window
- * reads as the one white sheet on it: the example goals beside the plan of the one picked, in the
- * app's own window. Every plan is in the page; the picked one shows (`Variant`), and they share
- * one place, so the window keeps the height of the tallest and nothing under it moves. A caption
- * says they're examples and that the page follows the pick.
- */
 export async function HomeExample() {
   const t = await getExtracted();
 

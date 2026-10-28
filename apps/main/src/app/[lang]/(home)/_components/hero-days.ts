@@ -2,10 +2,6 @@ import { type DayListStep } from "@/components/public/day-list";
 import { getExtracted } from "next-intl/server";
 import { type ExampleGoal, getExampleSet } from "./landing-examples";
 
-/**
- * Each example goal's day on the examples' today, as Today lists it: the first block done, the
- * next one under way. Its minutes add up to the goal's time a day.
- */
 export async function getHeroDays(): Promise<Record<ExampleGoal, DayListStep[]>> {
   const t = await getExtracted();
   const set = await getExampleSet();

@@ -2,7 +2,6 @@ import { getExtracted } from "next-intl/server";
 import { getExampleSet } from "./landing-examples";
 import { type Tomorrow, getStepDetails } from "./tomorrow-steps";
 
-/** The ENEM's tomorrow, both ways, for Portuguese's example exam. */
 async function getEnemTomorrow(): Promise<Tomorrow> {
   const t = await getExtracted();
   const { mistakes, yesterday } = await getStepDetails();
@@ -101,7 +100,6 @@ async function getEnemTomorrow(): Promise<Tomorrow> {
   };
 }
 
-/** The SAT's tomorrow, both ways, for every other language's example exam. */
 async function getSatTomorrow(): Promise<Tomorrow> {
   const t = await getExtracted();
   const { mistakes, yesterday } = await getStepDetails();
@@ -192,7 +190,6 @@ async function getSatTomorrow(): Promise<Tomorrow> {
   };
 }
 
-/** The example exam's tomorrow, both ways, for the exam the page's language shows. */
 export async function getExamTomorrow(): Promise<Tomorrow> {
   const set = await getExampleSet();
 

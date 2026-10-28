@@ -14,7 +14,6 @@ import { CARD_CLASS } from "./practice-card-styles";
 
 type ExamOption = { result?: AnswerOptionResult; tag?: string; text: string };
 
-/** An exam question as a mock or a session shows it once checked: the learner's answer, the right one. */
 function ExamQuestionCard({
   context,
   explanation,
@@ -58,10 +57,6 @@ function ExamQuestionCard({
   );
 }
 
-/**
- * The exam: a question in its real format, answered wrong and explained, beside the week's mock
- * exam's result (an estimated range, never a promise), marked Plus as the app marks mocks.
- */
 export async function ExamPractice() {
   const t = await getExtracted();
   const set = await getExampleSet();
@@ -115,7 +110,6 @@ export async function ExamPractice() {
     />
   );
 
-  // Each topic's right answers, so the misses add up to the mistakes to review.
   const topics = isEnem
     ? [
         { id: "ecology", name: t("Ecology"), right: 2, total: 4 },
@@ -148,7 +142,6 @@ export async function ExamPractice() {
         </p>
 
         <div className="flex flex-col gap-2">
-          {/* A range, its dash at the numbers' size: no unit to set small. */}
           <p className="text-readout text-[2.75rem]">{isEnem ? "610–690" : "1180–1260"}</p>
           <p className="text-muted-foreground text-[0.8125rem]">
             {isEnem ? t("Estimated score · Natural Sciences") : t("Estimated score · SAT")}

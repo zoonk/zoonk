@@ -30,10 +30,6 @@ import { PlacementQuestions } from "./placement-questions";
 
 const STOP_TITLE_ID = "stop-day-one";
 
-/**
- * "How much do you already know?" as onboarding asks it, its answers with what each means, "The
- * basics" picked: a choice's row highlighted, its ring filled with a check.
- */
 async function LevelChoices() {
   const t = await getExtracted();
   const minutesText = await getMinutesFormatter();
@@ -89,7 +85,6 @@ async function LevelChoices() {
   );
 }
 
-/** The level question for the example goal the visitor picked, under that goal's name. */
 async function LevelQuestion() {
   const t = await getExtracted();
   const plans = await getExamplePlans();
@@ -111,11 +106,6 @@ async function LevelQuestion() {
   );
 }
 
-/**
- * Day 1, in three frames: the level question, a placement question answered, and the plan that
- * skips what the answers showed, for the example goal the visitor picked. The first frame is the
- * same for every goal; the other two follow the pick.
- */
 export async function StopDayOne() {
   const t = await getExtracted();
 

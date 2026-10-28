@@ -12,7 +12,6 @@ import { FRAME_EYEBROW_CLASS } from "./day-one-styles";
 import { getExampleSet } from "./landing-examples";
 import { CARD_CLASS } from "./practice-card-styles";
 
-/** Bar heights of a recording: the spoken part first, then the rest still to say. */
 const RECORDING_BARS = [
   { height: 8, spoken: true },
   { height: 14, spoken: true },
@@ -37,7 +36,6 @@ const RECORDING_BARS = [
   { height: 8, spoken: false },
 ];
 
-/** The practice call's length in minutes. */
 const CALL_MINUTES = 4;
 
 /** The sentence to say is in the language of the move, never in the page's own. */
@@ -58,7 +56,6 @@ function renderBold(chunks: ReactNode) {
   return <b className="font-semibold">{chunks}</b>;
 }
 
-/** A call goal's mark: done, or an empty ring still to reach. */
 function CallGoalMark({ done }: { done: boolean }) {
   if (done) {
     return <DoneMark />;
@@ -71,10 +68,6 @@ function CallGoalMark({ done }: { done: boolean }) {
   );
 }
 
-/**
- * The move: a sentence to say out loud with a tip on how it sounds, beside a practice call for the
- * moment it's for, its goals ticked as the call went.
- */
 export async function MovePractice() {
   const t = await getExtracted();
   const minutesText = await getMinutesFormatter();

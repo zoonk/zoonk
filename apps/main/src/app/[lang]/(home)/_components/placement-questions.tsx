@@ -4,18 +4,8 @@ import { getExtracted } from "next-intl/server";
 import { FRAME_EYEBROW_CLASS } from "./day-one-styles";
 import { EXAMPLE_GOALS, type ExampleGoal, GOAL_SWITCH, getExampleSet } from "./landing-examples";
 
-type PlacementQuestion = {
-  label: string;
-  /** The answers' language when they're in the language being learned. */
-  lang?: string;
-  options: string[];
-  question: string;
-};
+type PlacementQuestion = { label: string; lang?: string; options: string[]; question: string };
 
-/**
- * Each example goal's third placement question, as the visitor would see it, answered: its number
- * with no total, as in the product, since placement asks only as many as it needs.
- */
 async function getPlacementQuestions(): Promise<Record<ExampleGoal, PlacementQuestion>> {
   const t = await getExtracted();
   const set = await getExampleSet();
@@ -69,7 +59,6 @@ async function getPlacementQuestions(): Promise<Record<ExampleGoal, PlacementQue
   };
 }
 
-/** A placement question answered: its place in the test, the question and its answers, one picked. */
 function PlacementPicture({ question }: { question: PlacementQuestion }) {
   return (
     <>
@@ -87,7 +76,6 @@ function PlacementPicture({ question }: { question: PlacementQuestion }) {
   );
 }
 
-/** The placement question for each example goal, the one the visitor picked showing. */
 export async function PlacementQuestions() {
   const questions = await getPlacementQuestions();
 

@@ -3,7 +3,6 @@ import { getExamTomorrow } from "./exam-tomorrow";
 import { type ExampleGoal } from "./landing-examples";
 import { type Tomorrow, getStepDetails } from "./tomorrow-steps";
 
-/** The job goal's tomorrow, both ways. */
 async function getJobTomorrow(): Promise<Tomorrow> {
   const t = await getExtracted();
   const { mistakes, yesterday } = await getStepDetails();
@@ -85,7 +84,6 @@ async function getJobTomorrow(): Promise<Tomorrow> {
   };
 }
 
-/** The move goal's tomorrow, both ways. */
 async function getMoveTomorrow(): Promise<Tomorrow> {
   const t = await getExtracted();
   const { yesterday } = await getStepDetails();
@@ -167,11 +165,7 @@ async function getMoveTomorrow(): Promise<Tomorrow> {
   };
 }
 
-/**
- * Each example goal's tomorrow, both ways. Its rows follow the captions' order: studied, the
- * lesson written for the goal (1), a review (2) and the mistakes (3); missed, yesterday's lesson
- * first (1), then a review (2), a lesson (3) and the mistakes (4). Each day fits the goal's time.
- */
+/** Rows follow the captions' order (`DayCaptions`). */
 export async function getTomorrows(): Promise<Record<ExampleGoal, Tomorrow>> {
   const exam = await getExamTomorrow();
   const job = await getJobTomorrow();

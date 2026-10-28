@@ -8,32 +8,15 @@ import { getExtracted, getFormatter } from "next-intl/server";
 import { type ExampleGoal, getExampleSet } from "./landing-examples";
 import { type DayState } from "./tomorrow-steps";
 
-/**
- * The job goal's example lessons, the morning after a missed day: known from Day 1, studied in
- * its seven weeks of about one a day, and the plan's total to its date, at the same pace.
- */
 const JOB_PROGRESS = { known: 10, studied: 33, total: 220 };
 
-/** The job's lessons on tomorrow's Today: yesterday's comes first after a missed day. */
 const JOB_TODAY: Record<DayState, number> = { missed: 2, studied: 1 };
 
-/**
- * The subjects yesterday's lessons were in (the hero's Today: the ENEM's humanities, math and
- * essay, the SAT's two), each a point higher after a day studied.
- */
 const STUDIED_YESTERDAY = new Set(["essay", "human", "math", "reading"]);
 const STUDIED_POINT = 0.01;
 
-/** The move goal's example level, where the learner is and where the plan takes them. */
 const MOVE_LEVELS = "A2 → B1";
 
-/**
- * The goal's measure beside its day, as Today's aside draws it in the goal's own units, under the
- * same sentence-case title: an exam's preparation over its subjects, a language's level on the
- * CEFR ladder, another goal's lessons as cells. From 1100px, where the window has room for it. A
- * studied yesterday counts in it: one lesson more, and a point more in each subject yesterday's
- * lessons were in.
- */
 export async function GoalMeasure({ day, goal }: { day: DayState; goal: ExampleGoal }) {
   const t = await getExtracted();
   const format = await getFormatter();

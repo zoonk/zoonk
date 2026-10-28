@@ -6,11 +6,6 @@ import { LandingGoalBox } from "./landing-goal-box";
 
 const CLOSE_TITLE_ID = "landing-close-title";
 
-/**
- * The page ends where every plan ends, the big day, the last stop of its story, where the rail
- * arrives: the goal box again, its example still the goal the visitor picked, with nothing else to
- * decide.
- */
 export async function FinalCall({ startPath }: { startPath: string }) {
   const t = await getExtracted();
 

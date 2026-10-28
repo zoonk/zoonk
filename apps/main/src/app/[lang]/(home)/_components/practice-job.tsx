@@ -9,13 +9,8 @@ import { FRAME_EYEBROW_CLASS } from "./day-one-styles";
 import { SQL_NAMES, getExampleSet } from "./landing-examples";
 import { CARD_CLASS } from "./practice-card-styles";
 
-/** The skill the notebook's entry is filed under, as SQL writes it. */
 const MISTAKE_SKILL = "GROUP BY";
 
-/**
- * The new job: a real problem, a query that runs and the rows it gives, beside the Mistakes
- * notebook's entry for one that didn't.
- */
 export async function JobPractice() {
   const t = await getExtracted();
   const format = await getFormatter();

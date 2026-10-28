@@ -1,15 +1,8 @@
 import { type RoadBand } from "@/components/public/plan-road";
 import { daysBetween } from "./landing-examples";
 
-/** A phase of an example plan, by its days: the road draws each as long as they are. */
 export type ExamplePhase = { end: Date; id: string; name: string; start: Date };
 
-/**
- * An example plan's phases as the road draws them on the examples' `today`: the ones over done, the
- * one today falls in current (its lessons done as far as its days went), the rest ahead with their
- * first day under them (`formatStart`). Every number comes from the phases' dates, so the road,
- * the countdown and a plan change's dates always agree.
- */
 export function getRoadBands({
   formatStart,
   phases,
@@ -36,7 +29,6 @@ export function getRoadBands({
   });
 }
 
-/** "Phase 2 of 4": where today is on the road, by its place. */
 export function getCurrentPhase({
   phases,
   today,

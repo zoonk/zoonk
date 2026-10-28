@@ -22,7 +22,6 @@ import {
 
 const STOP_TITLE_ID = "stop-buddy";
 
-/** The default buddy, as a new learner meets it: Zu, with round glasses, before any Energy. */
 function ZuFace({ className }: { className?: string }) {
   return (
     <Buddy
@@ -36,17 +35,8 @@ function ZuFace({ className }: { className?: string }) {
   );
 }
 
-type Exchange = {
-  /** The learner's question, and where they asked it: the question or lesson the page just showed. */
-  answer: string;
-  ask: string;
-  context: string;
-  /** The quote's language when it's the one being learned. */
-  lang?: string;
-  quote: string;
-};
+type Exchange = { answer: string; ask: string; context: string; lang?: string; quote: string };
 
-/** Each example goal's late question to the buddy, about the practice the page just showed. */
 async function getExchanges(): Promise<Record<ExampleGoal, Exchange>> {
   const t = await getExtracted();
   const set = await getExampleSet();
@@ -109,11 +99,6 @@ async function getExchanges(): Promise<Record<ExampleGoal, Exchange>> {
   };
 }
 
-/**
- * One exchange as the buddy's conversation shows it: where the learner asked (the question
- * quoted), their question in a bubble, the buddy's answer as plain text on the page under its face
- * and name, and the one-tap follow-ups it offers after a miss.
- */
 async function Conversation({ exchange }: { exchange: Exchange }) {
   const t = await getExtracted();
   const tBuddy = await getExtracted("buddyNames");
@@ -150,11 +135,6 @@ async function Conversation({ exchange }: { exchange: Exchange }) {
   );
 }
 
-/**
- * Stuck late at night: the buddy explains the question the page just showed, as simply as the
- * learner needs, where they got stuck. Its lead says it's AI. From `lg` its words sit beside the
- * conversation, which keeps a chat's measure.
- */
 export async function StopBuddy() {
   const t = await getExtracted();
   const exchanges = await getExchanges();

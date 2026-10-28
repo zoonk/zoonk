@@ -11,22 +11,17 @@ import {
   getGoalDate,
 } from "./landing-examples";
 
-/** An example goal as the app's goal switcher shows it, with its plan's phases. */
 type ExamplePlan = {
   dailyMinutes: number;
   date: Date;
-  /** What the goal's mark is drawn from (`GoalMark`). */
   mark: { id: string; kind: string; targetLanguage: string | null; title: string };
-  /** The goal's name in the switcher. */
   name: string;
   phases: readonly ExamplePhase[];
-  /** The goal's short name over its plan ("SAT"). */
   shortName: string;
 };
 
 type PhaseDays = { end: string; id: string; name: string; start: string };
 
-/** A phase from its first and last days as written, moved to the real calendar. */
 function shiftPhase(calendar: ExampleCalendar, { end, id, name, start }: PhaseDays) {
   return { end: calendar.shift(end), id, name, start: calendar.shift(start) };
 }
@@ -35,11 +30,6 @@ function addDays(date: Date, days: number): Date {
   return new Date(date.getTime() + days * MS_PER_DAY);
 }
 
-/**
- * The ENEM example as written for 26 days to the exam: foundations from 15 days ago to 4 days ago,
- * filling the gaps from 3 days ago to day 10, practice to day 19, the final stretch to the exam.
- * The days after today keep those shares at any distance.
- */
 const ENEM_WRITTEN = {
   daysLeft: 26,
   foundationsEnd: -4,
@@ -52,12 +42,6 @@ const ENEM_WRITTEN = {
 const ENEM_GAPS_END = ENEM_WRITTEN.gapsEnd / ENEM_WRITTEN.daysLeft;
 const ENEM_PRACTICE_END = ENEM_WRITTEN.practiceEnd / ENEM_WRITTEN.daysLeft;
 
-/**
- * The ENEM example's phases against its real date: two weeks of foundations done, today early in
- * filling the gaps, then practice and the final stretch sharing what's left to the exam, so the
- * road always ends on the real day. A phase too near the exam to have a day of its own is left
- * out, as the app's plan leaves it out.
- */
 function fitEnemPhases({
   date,
   names,
@@ -96,10 +80,6 @@ function fitEnemPhases({
   return phases.filter((phase) => phase.start <= phase.end && phase.start <= date);
 }
 
-/**
- * An exam plan's phases, named by what they're for, as the app names an exam's phases (the plan's
- * phase names, which learn translates): a few weeks of each for the ENEM, months for the SAT.
- */
 async function getExamPhases({
   calendar,
   date,
@@ -130,7 +110,6 @@ async function getExamPhases({
   ].map((phase) => shiftPhase(calendar, phase));
 }
 
-/** A move abroad's phases: the moments of the move, in order. */
 async function getMovePhases(calendar: ExampleCalendar): Promise<ExamplePhase[]> {
   const t = await getExtracted("examplePhases");
 
@@ -144,11 +123,7 @@ async function getMovePhases(calendar: ExampleCalendar): Promise<ExamplePhase[]>
   ].map((phase) => shiftPhase(calendar, phase));
 }
 
-/**
- * A new job's phases: the skills it asks for, then something to show for them. Example phases
- * have their own namespace, so a word the app also uses (its stats page's "Statistics") can
- * translate as a subject.
- */
+/** Example phases have their own namespace, so a word the app also uses can translate as a subject. */
 async function getJobPhases(calendar: ExampleCalendar): Promise<ExamplePhase[]> {
   const t = await getExtracted("examplePhases");
 
@@ -161,10 +136,6 @@ async function getJobPhases(calendar: ExampleCalendar): Promise<ExamplePhase[]> 
   ].map((phase) => shiftPhase(calendar, phase));
 }
 
-/**
- * The landing's three example goals in the page's language, each as the goal switcher lists it,
- * with its plan's phases: the hero's road and the "Every day" stop's plan change read them.
- */
 export async function getExamplePlans(): Promise<Record<ExampleGoal, ExamplePlan>> {
   const t = await getExtracted();
   const format = await getFormatter();

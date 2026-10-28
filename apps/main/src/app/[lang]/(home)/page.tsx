@@ -38,13 +38,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 /**
- * The home page for visitors, prerendered per language. It has one job: get someone started on a
- * goal, by showing the plan they'd get. The hero's example goals scope the whole page, which
- * follows one plan's story in time order: Day 1, every day (and the day you miss), practice, the
- * buddy at night, and the big day, its parts on bands that alternate the page and `ground`. Every variant is in the HTML and CSS shows the picked one, so
- * the page has no script of its own. Anyone with a session opens Today instead (`proxy.ts`),
- * before this renders. The language comes from the root parameter, which stays available while a
- * prefetch warms the page's caches.
+ * Every example variant is in the HTML and CSS shows the picked one, so the page has no script of its
+ * own. Anyone with a session opens Today instead (`proxy.ts`).
  */
 export default async function HomePage() {
   const t = await getExtracted();

@@ -14,7 +14,6 @@ import { EXAMPLE_GOALS, type ExampleGoal, GOAL_SWITCH, getExampleSet } from "./l
 
 type PlanRow = { id: string; lessons?: number; state: "next" | "skipped" | "todo"; title: string };
 
-/** Each example goal's plan after placement: its first chapters skipped, the next one ahead. */
 async function getPlacedPlans(): Promise<
   Record<ExampleGoal, { rows: PlanRow[]; skipped: number }>
 > {
@@ -68,10 +67,6 @@ async function getPlacedPlans(): Promise<
   };
 }
 
-/**
- * The plan placement leaves, as the Plan lists it: the chapters a learner showed they know
- * skipped, with the lessons that saves, and the plan going on from the next one, highlighted.
- */
 async function PlacedPlanPicture({ plan }: { plan: { rows: PlanRow[]; skipped: number } }) {
   const t = await getExtracted();
   // Its own namespace: a placed topic's "Skipped" agrees with topics of any gender and number,
@@ -121,7 +116,6 @@ async function PlacedPlanPicture({ plan }: { plan: { rows: PlanRow[]; skipped: n
   );
 }
 
-/** The plan placement leaves for each example goal, the one the visitor picked showing. */
 export async function PlacedPlans() {
   const placed = await getPlacedPlans();
 

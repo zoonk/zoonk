@@ -4,10 +4,6 @@ import { getExtracted, getFormatter } from "next-intl/server";
 import { getExamplePlans } from "./example-plans";
 import { EXAMPLE_GOALS, type ExampleGoal, GOAL_SWITCH, getExampleSet } from "./landing-examples";
 
-/**
- * Each example goal in the visitor's words, with its date's month, as someone would write it in
- * the box.
- */
 async function getGoalExamples(): Promise<Record<ExampleGoal, string>> {
   const t = await getExtracted();
   const format = await getFormatter();
@@ -30,10 +26,6 @@ async function getGoalExamples(): Promise<Record<ExampleGoal, string>> {
   };
 }
 
-/**
- * The landing's goal box, whose example is the example goal the visitor picked above it: every
- * example is in the page, and the picked one shows.
- */
 export async function LandingGoalBox({ action, id }: { action: string; id: string }) {
   const t = await getExtracted();
   const examples = await getGoalExamples();
