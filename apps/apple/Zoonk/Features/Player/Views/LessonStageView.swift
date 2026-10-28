@@ -12,7 +12,6 @@ import SwiftUI
 /// doing (a canvas, a recording, a field) carries through a fold, an unfold or a rotation.
 struct LessonStageView: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
   let store: LessonPlayerStore
   let state: LessonPlayerState
@@ -29,17 +28,10 @@ struct LessonStageView: View {
     return result.isCorrect
   }
 
-  /// The spread's pages, or nil for one column, which accessibility text sizes always get. While
-  /// Ask's inspector sits beside the lesson (regular widths; a sheet covers it on compact ones), the
-  /// screen shows whole in one column, so the learner sees what they're asking about.
+  /// The two pages where the stage splits, or nil for one column, which accessibility text sizes
+  /// always get.
   private func pages(_ proxy: GeometryProxy) -> PaneSpace.Panes? {
-    guard !dynamicTypeSize.isAccessibilitySize,
-      !(store.isAsking && horizontalSizeClass == .regular)
-    else {
-      return nil
-    }
-
-    return PaneSpace(proxy).panes(primaryShare: 0.5)
+    dynamicTypeSize.isAccessibilitySize ? nil : PaneSpace(proxy).panes(primaryShare: 0.5)
   }
 
   var body: some View {
@@ -47,9 +39,13 @@ struct LessonStageView: View {
       // A reader, so a wide screen never shows the one-column version first.
       GeometryReader { proxy in
         let pages = pages(proxy)
+        // While asking on a spread, the screen shows whole in one column on the leading page, so the
+        // learner sees what they're asking about, and the buddy has the trailing page.
+        let isAskingBeside = pages != nil && store.isAsking
+        let spread = isAskingBeside ? nil : pages
 
         HStack(spacing: 0) {
-          if let pages {
+          if let pages = spread {
             LessonPage(store: store) {
               LessonNotice(state: state, store: store)
 
@@ -63,18 +59,18 @@ struct LessonStageView: View {
 
           ScrollViewReader { scroll in
             LessonPage(store: store) {
-              if pages == nil {
+              if spread == nil {
                 LessonNotice(state: state, store: store)
               }
 
               VStack(alignment: .leading, spacing: 20) {
-                if pages == nil {
+                if spread == nil {
                   LessonStepView(step: step, state: state, store: store, part: .screen)
                 }
 
                 LessonStepView(step: step, state: state, store: store, part: .turn)
 
-                if pages == nil {
+                if spread == nil {
                   LessonStepNotes(step: step, store: store)
                 }
               }
@@ -116,12 +112,22 @@ struct LessonStageView: View {
             LessonActionBar(store: store, state: state, step: step)
               .keepsOffFold()
           }
-          // The fold is the trailing page's safe area, so its content and the action bar stay
+          // The hinge is the trailing page's safe area, so its content and the action bar stay
           // clear of the crease.
-          .safeAreaPadding(.leading, pages?.gap ?? 0)
-          .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+          .safeAreaPadding(.leading, spread?.gap ?? 0)
+          .frame(width: isAskingBeside ? pages?.primary : nil)
+          .frame(maxWidth: isAskingBeside ? nil : .infinity, maxHeight: .infinity, alignment: .top)
+
+          if isAskingBeside, let pages {
+            LessonAskPanel(store: store, isBeside: true)
+              .safeAreaPadding(.leading, pages.gap)
+              .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+          }
         }
-        .environment(\.isPaneSplit, pages != nil)
+        .environment(\.isPaneSplit, spread != nil)
+        .onChange(of: pages != nil, initial: true) { _, isSpread in
+          store.isSpread = isSpread
+        }
       }
       .id(step.id)
       .task(id: step.id) {

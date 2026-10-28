@@ -808,6 +808,44 @@ final class LessonMathTests: XCTestCase {
   }
 }
 
+@MainActor
+final class LessonAskPlacementTests: XCTestCase {
+  private func store() -> LessonPlayerStore {
+    LessonPlayerStore(
+      lessonId: "lesson", studySessionId: nil,
+      api: LessonPlayerAPI(clients: .live(baseURL: URL(string: "https://zoonk.test")!)),
+      cache: AppCache(session: .preview()),
+      choices: LessonTodayChoices(today: { "today" }, read: { _ in nil }, write: { _, _ in }))
+  }
+
+  func testAskOpensBesideASpreadAndAsASheetOnOneColumn() {
+    let store = store()
+
+    store.isSpread = true
+    store.ask()
+    XCTAssertFalse(store.isAskingInSheet, "a spread puts Ask beside the lesson")
+
+    store.isAsking = false
+    store.isSpread = false
+    store.ask(suggestionId: "simpler")
+    XCTAssertTrue(store.isAskingInSheet, "one column shows it as a sheet")
+    XCTAssertEqual(store.askingSuggestionId, "simpler")
+  }
+
+  func testClosingTheDuoNeverBringsBackASheetAskWasBesideTheLessonFor() {
+    let store = store()
+
+    store.isSpread = false
+    store.ask()
+    store.isSpread = true
+    XCTAssertFalse(store.isAskingInSheet, "once beside the lesson, it isn't a sheet anymore")
+
+    store.isSpread = false
+    XCTAssertTrue(store.isAsking, "closing iPhone Duo keeps Ask open for when it opens again")
+    XCTAssertFalse(store.isAskingInSheet, "without covering the lesson with a sheet")
+  }
+}
+
 final class LessonPlayerSavingTests: XCTestCase {
   func testAMatchColumnsAnswerThatEndsTheLessonStaysUnsavedUntilTheServerTakesIt() throws {
     let match = #"""

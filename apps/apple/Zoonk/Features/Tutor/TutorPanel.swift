@@ -1,9 +1,10 @@
 import SwiftUI
 
-/// The buddy's conversation about what the learner is on, in a sheet or an inspector: the buddy
-/// by name, what it's about, the question quoted when it's a practice question, and a close
-/// button. Hosts that present it themselves (the player's inspector) return it from their hook;
-/// others use `TutorAskButton`.
+/// The buddy's conversation about what the learner is on, in a sheet or a pane: the buddy by name,
+/// what it's about, and the question quoted when it's a practice question. A sheet has its own bar
+/// with a close button; a pane beside the screen has neither, since the screen's bar is the only
+/// bar and its Ask closes the pane. Hosts that place it themselves (the player) return it from their
+/// hook; others use `TutorAskButton`.
 struct TutorPanel: View {
   @Environment(\.dismiss) private var dismiss
   @Environment(LearnerSummaryStore.self) private var summary
@@ -11,45 +12,63 @@ struct TutorPanel: View {
   let scope: TutorScope
   /// The practice question asked about, quoted so it stays in view.
   var quote: String?
+  /// Beside the screen rather than in a sheet.
+  var isPane = false
 
   var body: some View {
-    NavigationStack {
-      TutorThreadView(scope: scope) {
-        VStack(alignment: .leading, spacing: 8) {
-          scope.panelDescription
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
-
-          if let quote {
-            Text(quoteLine(quote))
-              .font(.footnote)
-              .foregroundStyle(.secondary)
-              .lineLimit(3)
-              .padding(.leading, 10)
-              .overlay(alignment: .leading) {
-                Rectangle()
-                  .fill(.separator)
-                  .frame(width: 2)
+    if isPane {
+      thread
+    } else {
+      NavigationStack {
+        thread
+          .navigationTitle(title)
+          .navigationBarTitleDisplayMode(.inline)
+          .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+              Button(role: .close) {
+                dismiss()
               }
+            }
           }
-        }
       }
-      .navigationTitle(
-        Text(
-          "Ask \(name)", tableName: "Tutor",
-          comment: "Title of the buddy's panel; the argument is the buddy's name")
-      )
-      .navigationBarTitleDisplayMode(.inline)
-      .toolbar {
-        ToolbarItem(placement: .cancellationAction) {
-          Button(role: .close) {
-            dismiss()
-          }
+      .presentationDetents([.medium, .large])
+      .presentationBackgroundInteraction(.enabled(upThrough: .medium))
+    }
+  }
+
+  private var title: Text {
+    Text(
+      "Ask \(name)", tableName: "Tutor",
+      comment: "Title of the buddy's panel; the argument is the buddy's name")
+  }
+
+  private var thread: some View {
+    TutorThreadView(scope: scope) {
+      VStack(alignment: .leading, spacing: 8) {
+        if isPane {
+          title
+            .font(.headline)
+            .accessibilityAddTraits(.isHeader)
+        }
+
+        scope.panelDescription
+          .font(.subheadline)
+          .foregroundStyle(.secondary)
+
+        if let quote {
+          Text(quoteLine(quote))
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+            .lineLimit(3)
+            .padding(.leading, 10)
+            .overlay(alignment: .leading) {
+              Rectangle()
+                .fill(.separator)
+                .frame(width: 2)
+            }
         }
       }
     }
-    .presentationDetents([.medium, .large])
-    .presentationBackgroundInteraction(.enabled(upThrough: .medium))
   }
 
   private var name: String {

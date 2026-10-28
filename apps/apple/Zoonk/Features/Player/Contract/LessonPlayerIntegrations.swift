@@ -85,9 +85,9 @@ struct LessonTutorScope: Hashable, Sendable {
 }
 
 struct LessonTutor: Sendable {
-  /// The panel's content, shown in an inspector (a sheet on compact widths). Without it, the
-  /// player has no Ask button.
-  let panel: (@MainActor @Sendable (LessonTutorScope) -> AnyView)?
+  /// The panel's content: beside the lesson on a spread, where the lesson's Ask closes it, and in a
+  /// sheet with its own close elsewhere. Without it, the player has no Ask button.
+  let panel: (@MainActor @Sendable (LessonTutorScope, _ isBeside: Bool) -> AnyView)?
 
   static let unavailable = LessonTutor(panel: nil)
 }

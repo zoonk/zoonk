@@ -56,7 +56,6 @@ struct LessonPlayerScreen: View {
 
 private struct LessonPlayerContent: View {
   @Environment(\.dismiss) private var dismiss
-  @Environment(\.horizontalSizeClass) private var horizontalSizeClass
   @Environment(\.activityRenderers) private var activityRenderers
   @Environment(\.lessonTutor) private var tutor
   @Environment(SessionStore.self) private var session
@@ -131,14 +130,9 @@ private struct LessonPlayerContent: View {
         "Your answer hasn't been checked, so it won't be kept.", tableName: "Player",
         comment: "Closing a lesson with a written answer not checked yet")
     }
-    .inspector(isPresented: isShowingAsk) {
-      if let panel = tutor.panel, let lesson = store.lesson {
-        panel(
-          LessonTutorScope(
-            lessonId: lesson.id, stepId: store.state?.currentStep?.id,
-            stepNumber: store.state.flatMap { $0.currentStep == nil ? nil : $0.position + 1 },
-            suggestions: lesson.tutorSuggestions, startingSuggestionId: store.askingSuggestionId))
-      }
+    // Beside the lesson on a spread (the stage shows it); a sheet where the lesson is one column.
+    .sheet(isPresented: isShowingAskSheet) {
+      LessonAskPanel(store: store, isBeside: false)
     }
     .sheet(isPresented: $isShowingSummary) {
       LessonSummarySheet(ideas: store.lesson?.summaryIdeas ?? [])
@@ -223,7 +217,13 @@ private struct LessonPlayerContent: View {
 
   private var askButton: some View {
     Button {
-      store.ask(isCompact: horizontalSizeClass == .compact)
+      // Beside the lesson, Ask also closes the panel, as an inspector's button does; elsewhere it
+      // opens it, including one left open beside the lesson before iPhone Duo closed.
+      if store.isAsking, store.isSpread {
+        store.isAsking = false
+      } else {
+        store.ask()
+      }
     } label: {
       Label {
         Text("Ask", tableName: "Player", comment: "Opens the panel to ask about the lesson")
@@ -233,11 +233,13 @@ private struct LessonPlayerContent: View {
     }
   }
 
-  /// Ask beside the lesson on regular widths. On compact ones the inspector is a sheet, shown only
-  /// when Ask was opened there, so a size change alone (closing iPhone Duo) never covers the lesson.
-  private var isShowingAsk: Binding<Bool> {
+  /// Ask's sheet, shown only when Ask was opened where the lesson is one column, so a size change
+  /// alone (closing iPhone Duo with Ask beside the lesson) never covers the lesson. SwiftUI turns a
+  /// presented inspector into a sheet on such a change, and presented while iPhone Duo is folded
+  /// it leaves the lesson running under it, so Ask is a pane beside the lesson instead.
+  private var isShowingAskSheet: Binding<Bool> {
     Binding {
-      store.isAsking && (horizontalSizeClass == .regular || store.isAskingOnCompact)
+      store.isAsking && store.isAskingInSheet
     } set: { isShown in
       if !isShown {
         store.isAsking = false
@@ -323,6 +325,25 @@ private struct LessonPlayerContent: View {
     }
 
     return !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+  }
+}
+
+/// The buddy's panel about the screen in view, beside the lesson or in a sheet.
+struct LessonAskPanel: View {
+  @Environment(\.lessonTutor) private var tutor
+
+  let store: LessonPlayerStore
+  let isBeside: Bool
+
+  var body: some View {
+    if let panel = tutor.panel, let lesson = store.lesson {
+      panel(
+        LessonTutorScope(
+          lessonId: lesson.id, stepId: store.state?.currentStep?.id,
+          stepNumber: store.state.flatMap { $0.currentStep == nil ? nil : $0.position + 1 },
+          suggestions: lesson.tutorSuggestions, startingSuggestionId: store.askingSuggestionId),
+        isBeside)
+    }
   }
 }
 
