@@ -27,10 +27,12 @@ protocol AccountAPIClient {
   ) async throws -> AccountDeletionResponse
   func getCurrentAccount(token: String) async throws -> CurrentAccount
   func sendEmailCode(email: String, token: String?) async throws
-  func signInWithApple(_ credentials: AppleSignInCredentials) async throws -> String
-  func signInWithEmailCode(email: String, code: String) async throws -> String
+  /// `guestToken` is the guest session being replaced, so the server moves the guest's plan and progress to the account.
+  func signInWithApple(_ credentials: AppleSignInCredentials, guestToken: String?) async throws
+    -> String
+  func signInWithEmailCode(email: String, code: String, guestToken: String?) async throws -> String
   func signInAsGuest() async throws -> String
-  func signInWithGoogle(idToken: String) async throws -> String
+  func signInWithGoogle(idToken: String, guestToken: String?) async throws -> String
   func signOut(token: String) async throws
   func synchronizeAppleSubscription(
     token: String,
@@ -121,9 +123,10 @@ struct AccountAPI {
     }
   }
 
-  func signInWithEmailCode(email: String, code: String) async throws -> String {
+  func signInWithEmailCode(email: String, code: String, guestToken: String?) async throws -> String
+  {
     let proof = await appAttest.proof(for: .emailSession(email: email, code: code))
-    let output = try await perform { client in
+    let output = try await perform(token: guestToken) { client in
       try await client.createEmailCodeSession(
         .init(
           headers: .init(
@@ -171,8 +174,10 @@ struct AccountAPI {
   }
 
   /// Sends Apple's single-use code and signed identity assertion so the server owns token exchange, verification, and account linking.
-  func signInWithApple(_ credentials: AppleSignInCredentials) async throws -> String {
-    let output = try await perform { client in
+  func signInWithApple(_ credentials: AppleSignInCredentials, guestToken: String?) async throws
+    -> String
+  {
+    let output = try await perform(token: guestToken) { client in
       try await client.createAppleSession(
         .init(body: .json(makeAppleRequestBody(credentials))))
     }
@@ -193,8 +198,8 @@ struct AccountAPI {
     }
   }
 
-  func signInWithGoogle(idToken: String) async throws -> String {
-    let output = try await perform { client in
+  func signInWithGoogle(idToken: String, guestToken: String?) async throws -> String {
+    let output = try await perform(token: guestToken) { client in
       try await client.createGoogleSession(
         .init(body: .json(.init(idToken: idToken))))
     }

@@ -59,7 +59,8 @@ final class AccountAPITests: XCTestCase {
         transport: EmailPolicyTransport(code: "DISPOSABLE_EMAIL_NOT_ALLOWED")))
 
     do {
-      _ = try await api.signInWithEmailCode(email: "learner@mailinator.com", code: "123456")
+      _ = try await api.signInWithEmailCode(
+        email: "learner@mailinator.com", code: "123456", guestToken: nil)
       XCTFail("Expected a temporary inbox to be rejected")
     } catch let error as AccountAPIError {
       XCTAssertEqual(error, .disposableEmail)
@@ -102,7 +103,8 @@ final class AccountAPITests: XCTestCase {
         transport: RateLimitedTransport()))
 
     do {
-      _ = try await api.signInWithEmailCode(email: "learner@zoonk.test", code: "123456")
+      _ = try await api.signInWithEmailCode(
+        email: "learner@zoonk.test", code: "123456", guestToken: nil)
       XCTFail("Expected the rate limit response to throw")
     } catch let error as AccountAPIError {
       XCTAssertEqual(error, .rateLimited)

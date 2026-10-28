@@ -512,6 +512,22 @@ final class SessionStoreTests: XCTestCase {
   }
 
   @MainActor
+  func testSigningInFromAGuestSessionSendsItSoTheGuestsPlanMovesToTheAccount() async {
+    let account = makeAccount()
+    let api = SessionStoreAPIStub(
+      currentAccountResult: .success(account),
+      emailSignInResult: .success("account-session"))
+    let session = makeSession(
+      api: api, credentialStore: SessionCredentialStoreSpy(token: "guest-session"))
+
+    await session.restore()
+    await session.signInWithEmailCode(email: "learner@zoonk.test", code: "123456")
+
+    XCTAssertEqual(api.emailSignInGuestTokens, ["guest-session"])
+    XCTAssertEqual(session.authenticatedSession?.bearerToken, "account-session")
+  }
+
+  @MainActor
   func testEmailSignInSurfacesRateLimitRecovery() async {
     let session = makeSession(
       api: SessionStoreAPIStub(emailSignInResult: .failure(.rateLimited)),
@@ -1006,6 +1022,7 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
   var currentAccountHandler: (@MainActor (String) async throws -> CurrentAccount)?
   var emailSignInResult: Result<String, AccountAPIError> = .failure(.invalidResponse)
   var emailCodeRequests = [(email: String, token: String?)]()
+  var emailSignInGuestTokens = [String?]()
   var emailCodeHandler: (@MainActor (String, String?) async throws -> Void)?
   var deletionHandler:
     (
@@ -1057,8 +1074,11 @@ private final class SessionStoreAPIStub: AccountAPIClient, @unchecked Sendable {
     return try currentAccountResult.get()
   }
 
-  func signInWithEmailCode(email: String, code: String) async throws -> String {
-    try emailSignInResult.get()
+  func signInWithEmailCode(email: String, code: String, guestToken: String?) async throws
+    -> String
+  {
+    emailSignInGuestTokens.append(guestToken)
+    return try emailSignInResult.get()
   }
 
   func sendEmailCode(email: String, token: String?) async throws {
@@ -1162,11 +1182,13 @@ extension AccountAPIClient {
     throw AccountAPIError.invalidResponse
   }
 
-  func signInWithApple(_ credentials: AppleSignInCredentials) async throws -> String {
+  func signInWithApple(_ credentials: AppleSignInCredentials, guestToken: String?) async throws
+    -> String
+  {
     throw AccountAPIError.invalidResponse
   }
 
-  func signInWithGoogle(idToken: String) async throws -> String {
+  func signInWithGoogle(idToken: String, guestToken: String?) async throws -> String {
     throw AccountAPIError.invalidResponse
   }
 

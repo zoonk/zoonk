@@ -17,6 +17,7 @@ private struct AccountDeletionDestination: Hashable {
 
 struct AccountSheet: View {
   @Environment(\.dismiss) private var dismiss
+  @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @State private var isAppStoreSubscriptionManagementPresented = false
   @State private var isGooglePlayManagementPresented = false
@@ -95,8 +96,12 @@ struct AccountSheet: View {
       Text("Close", tableName: "Account", comment: "Closes the account sheet"))
   }
 
+  private var isGuest: Bool {
+    learner.summary.value?.identity.isAnonymous == true
+  }
+
   private var requiresProfileSetup: Bool {
-    guard case .signedIn(let account) = session.state else {
+    guard case .signedIn(let account) = session.state, !isGuest else {
       return false
     }
 
@@ -110,6 +115,9 @@ struct AccountSheet: View {
       ProgressView()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     case .signedOut:
+      LoginView()
+    case .signedIn where isGuest:
+      // A guest creates an account here; signing in moves their plan and progress to it.
       LoginView()
     case .signedIn(let account):
       if account.needsProfileSetup {

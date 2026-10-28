@@ -322,15 +322,19 @@ private final class ProgressAccountAPIStub: AccountAPIClient, @unchecked Sendabl
     throw AccountAPIError.invalidResponse
   }
 
-  func signInWithApple(_ credentials: AppleSignInCredentials) async throws -> String {
+  func signInWithApple(_ credentials: AppleSignInCredentials, guestToken: String?) async throws
+    -> String
+  {
     throw AccountAPIError.invalidResponse
   }
 
-  func signInWithEmailCode(email: String, code: String) async throws -> String {
+  func signInWithEmailCode(email: String, code: String, guestToken: String?) async throws
+    -> String
+  {
     throw AccountAPIError.invalidResponse
   }
 
-  func signInWithGoogle(idToken: String) async throws -> String {
+  func signInWithGoogle(idToken: String, guestToken: String?) async throws -> String {
     throw AccountAPIError.invalidResponse
   }
 

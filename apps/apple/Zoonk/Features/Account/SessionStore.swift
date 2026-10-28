@@ -220,7 +220,8 @@ final class SessionStore {
     defer { finishWorkingOperation(workingRevision) }
 
     do {
-      let token = try await api.signInWithEmailCode(email: email, code: code)
+      let token = try await api.signInWithEmailCode(
+        email: email, code: code, guestToken: self.token)
       try await completeSignIn(token: token)
     } catch {
       failure = getFailure(error)
@@ -252,7 +253,7 @@ final class SessionStore {
     defer { finishWorkingOperation(workingRevision) }
 
     do {
-      let token = try await api.signInWithApple(credentials)
+      let token = try await api.signInWithApple(credentials, guestToken: self.token)
       try await completeSignIn(token: token)
     } catch {
       failure = getFailure(error)
@@ -268,7 +269,7 @@ final class SessionStore {
 
     do {
       let identityToken = try await googleAuthentication.signIn(from: anchor)
-      let token = try await api.signInWithGoogle(idToken: identityToken)
+      let token = try await api.signInWithGoogle(idToken: identityToken, guestToken: self.token)
       try await completeSignIn(token: token)
     } catch GoogleAuthenticationError.canceled {
       failure = nil
