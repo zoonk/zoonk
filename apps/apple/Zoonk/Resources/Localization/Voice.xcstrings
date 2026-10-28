@@ -381,6 +381,35 @@
         }
       }
     },
+    "A live call where you get your point across. Speak or type." : {
+      "comment" : "What a language checkpoint's call is",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Live-Gespräch, in dem du dich verständlich machst. Sprich oder tippe."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una llamada en directo para expresar lo que quieres decir. Habla o escribe."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un appel en direct pour te faire comprendre. Parle ou écris."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma conversa ao vivo para você se expressar. Fale ou digite."
+          }
+        }
+      }
+    },
     "A star for finishing, one for getting everything across and one without Help." : {
       "comment" : "How a call's stars are earned",
       "localizations" : {
@@ -3997,6 +4026,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A tarefa não começou. Tente de novo daqui a pouco."
+          }
+        }
+      }
+    },
+    "The unit's call" : {
+      "comment" : "A language checkpoint's call",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Das Gespräch des Kapitels"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La llamada de la unidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’appel de l’unité"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A conversa do módulo"
           }
         }
       }
