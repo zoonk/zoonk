@@ -421,6 +421,11 @@ private struct PronunciationResultView: View {
   let isEmpty: Bool
   let result: PronunciationRound.Result?
 
+  /// What the round did to the learner's day.
+  private var day: DayResult? {
+    result.flatMap { DayResult($0) }
+  }
+
   var body: some View {
     if isEmpty {
       ContentUnavailableView {
@@ -482,8 +487,13 @@ private struct PronunciationResultView: View {
               }
             }
           }
+
+          if let day {
+            DayMomentSections(result: day)
+          }
         }
       }
+      .milestoneCeremony(day?.ceremony)
     }
   }
 }

@@ -75,8 +75,6 @@ private struct SessionContent: View {
 
   let sessionID: String
 
-  @State private var ceremony: Milestone?
-
   var body: some View {
     let session = store.session(id: sessionID)
     let stopped = store.stoppedSessionID == sessionID
@@ -117,16 +115,7 @@ private struct SessionContent: View {
       }
     }
     // A milestone the block earned shows once, before its moment.
-    .onChange(of: store.moment?.ceremony, initial: true) { _, milestone in
-      if let milestone, store.claimCeremony(milestone) {
-        ceremony = milestone
-      }
-    }
-    .fullScreenCover(item: $ceremony) { milestone in
-      MilestoneCeremony(milestone: milestone) {
-        ceremony = nil
-      }
-    }
+    .milestoneCeremony(store.moment?.ceremony)
   }
 }
 
@@ -155,6 +144,8 @@ private struct NextStopView: View {
         Section {
           MomentSummary(moment: moment, title: title(of: moment))
         }
+
+        DayMomentSections(result: moment.day)
       }
 
       Section {
@@ -458,14 +449,6 @@ private struct MomentSummary: View {
           comment: "When the block's lesson comes back"
         )
         .foregroundStyle(.secondary)
-      }
-
-      if moment.fullMeal.paid {
-        Text(
-          "Missions done · +\(moment.fullMeal.bonus) Brain Power", tableName: "Session",
-          comment: "The block finished today's missions"
-        )
-        .foregroundStyle(.brain)
       }
     }
   }

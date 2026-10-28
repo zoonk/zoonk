@@ -123,6 +123,64 @@
         }
       }
     },
+    "%@ is glowing as bright as it gets." : {
+      "comment" : "Energy at its top",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ leuchtet so hell wie möglich."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡%@ brilla con toda su energía!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ brille au maximum."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ está brilhando no máximo."
+          }
+        }
+      }
+    },
+    "%@ is glowing now." : {
+      "comment" : "Energy at 80% or more",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ leuchtet jetzt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡%@ brilla ahora!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ brille maintenant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ está brilhando agora."
+          }
+        }
+      }
+    },
     "%@ is Young now, and keeps growing with your Brain Power." : {
       "comment" : "The buddy's next stage",
       "localizations" : {
@@ -241,6 +299,101 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@!"
+          }
+        }
+      }
+    },
+    "%lld missions done!" : {
+      "comment" : "Missions this result completed",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mission erledigt!"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld Missionen erledigt!"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Mission done!"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld missions done!"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "¡Misión completada!"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "¡%lld misiones completadas!"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Mission terminée !"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld missions terminées !"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Missão concluída!"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld missões concluídas!"
+                }
+              }
+            }
           }
         }
       }
@@ -845,35 +998,6 @@
         }
       }
     },
-    "Do %@ first" : {
-      "comment" : "A ready block to do while a lesson is written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Erledige zuerst %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Haz %@ primero"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fais d’abord %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Faça %@ primeiro"
-          }
-        }
-      }
-    },
     "Done for now" : {
       "comment" : "Summary after stopping",
       "localizations" : {
@@ -957,6 +1081,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Concluído em menos de um minuto"
+          }
+        }
+      }
+    },
+    "Energy at %lld%%" : {
+      "comment" : "A new tenth of Energy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energie bei %lld%%"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energía al %lld%%"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Énergie à %lld%%"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Energia em %lld%%"
           }
         }
       }
@@ -1164,35 +1317,6 @@
         }
       }
     },
-    "Getting it ready…" : {
-      "comment" : "A lesson being written",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Wird vorbereitet…"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparándolo…"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Préparation en cours…"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Preparando…"
-          }
-        }
-      }
-    },
     "Gray belt" : {
       "comment" : "A belt",
       "localizations" : {
@@ -1247,6 +1371,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Faixa verde"
+          }
+        }
+      }
+    },
+    "Instead: %@" : {
+      "comment" : "A ready block to do when the lesson can't be written now",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stattdessen: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En su lugar: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À la place : %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No lugar: %@"
           }
         }
       }
@@ -1338,6 +1491,35 @@
         }
       }
     },
+    "Level up!" : {
+      "comment" : "A new belt level",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Neues Level!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Has subido de nivel!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nouveau niveau !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Subiu de nível!"
+          }
+        }
+      }
+    },
     "Logbook" : {
       "comment" : "The weekly recap's title",
       "localizations" : {
@@ -1367,31 +1549,31 @@
         }
       }
     },
-    "Missions done · +%lld Brain Power" : {
-      "comment" : "The block finished today's missions",
+    "Max Energy: %lld%%" : {
+      "comment" : "Energy at its top",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Missionen erledigt · +%lld Brain Power"
+            "value" : "Maximale Energie: %lld%%"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Misiones completadas · +%lld Poder Mental"
+            "value" : "Energía máxima: %lld%%"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Missions terminées · +%lld Puissance Mentale"
+            "value" : "Énergie maximale : %lld%%"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Missões concluídas · +%lld de Poder Mental"
+            "value" : "Energia máxima: %lld%%"
           }
         }
       }
@@ -1837,6 +2019,35 @@
         }
       }
     },
+    "Right answers raise it. A day away lowers it a little." : {
+      "comment" : "What moves Energy",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Richtige Antworten erhöhen sie. Ein Tag Pause senkt sie ein wenig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las respuestas correctas la aumentan. Un día sin estudiar la reduce un poco."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les bonnes réponses font monter l’Énergie. Une journée sans jouer la fait légèrement baisser."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Respostas certas aumentam a Energia. Um dia sem estudar diminui um pouco."
+          }
+        }
+      }
+    },
     "Session complete" : {
       "comment" : "Summary of a finished day",
       "localizations" : {
@@ -2222,31 +2433,60 @@
         }
       }
     },
-    "This lesson isn't written yet." : {
-      "comment" : "A lesson nobody started writing",
+    "This lesson can't be written now, so your plan goes on without it." : {
+      "comment" : "A lesson set aside by its checks",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Lektion wurde noch nicht erstellt."
+            "value" : "Diese Lektion kann gerade nicht erstellt werden. Dein Plan geht ohne sie weiter."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta lección aún no está preparada."
+            "value" : "No se puede preparar esta lección ahora, así que tu plan sigue sin ella."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette leçon n’a pas encore été préparée."
+            "value" : "Cette leçon ne peut pas être préparée maintenant. Ton plan continue sans elle."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta aula ainda não foi criada."
+            "value" : "Não dá para criar esta aula agora, então seu plano continua sem ela."
+          }
+        }
+      }
+    },
+    "This lesson is being written for you. It's usually ready in about two minutes." : {
+      "comment" : "A lesson being written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Lektion wird gerade für dich erstellt. Meist ist sie in etwa zwei Minuten fertig."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estamos preparando esta lección para ti. Suele estar lista en unos dos minutos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette leçon est en cours de préparation. Elle est généralement prête en deux minutes environ."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estamos criando esta aula para você. Ela costuma ficar pronta em cerca de dois minutos."
           }
         }
       }
@@ -2305,6 +2545,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Missões de hoje"
+          }
+        }
+      }
+    },
+    "Today's missions done!" : {
+      "comment" : "Every mission is done",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Missionen für heute erledigt!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¡Has completado las misiones de hoy!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missions du jour terminées !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Missões de hoje concluídas!"
           }
         }
       }
@@ -2397,7 +2666,7 @@
       }
     },
     "Try again" : {
-      "comment" : "Retries loading\nRetries loading the session\nRetries loading the summary",
+      "comment" : "Asks again for a lesson that failed\nRetries loading\nRetries loading the session\nRetries loading the summary",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2479,6 +2748,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível abrir o próximo passo. Tente de novo."
+          }
+        }
+      }
+    },
+    "We couldn't write this lesson." : {
+      "comment" : "Writing a lesson failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten diese Lektion nicht erstellen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido preparar esta lección."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu préparer cette leçon."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível criar esta aula."
           }
         }
       }
@@ -2599,6 +2897,35 @@
         }
       }
     },
+    "While you wait: %@" : {
+      "comment" : "A ready block to do while the lesson is written",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Während du wartest: %@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mientras esperas: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En attendant : %@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enquanto espera: %@"
+          }
+        }
+      }
+    },
     "White belt" : {
       "comment" : "A belt",
       "localizations" : {
@@ -2653,6 +2980,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Faixa amarela"
+          }
+        }
+      }
+    },
+    "You earned +%lld Brain Power." : {
+      "comment" : "The bonus for every mission done",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du hast +%lld Brain Power verdient."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has ganado +%lld de Poder Mental."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu as gagné +%lld PM."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você ganhou +%lld de Poder Mental."
           }
         }
       }

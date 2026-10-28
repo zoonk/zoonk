@@ -180,68 +180,6 @@ struct TodayChallengeRow: View {
   }
 }
 
-/// One insight from the learner's recent answers, with its two answers.
-struct TodayInsightSection: View {
-  let insight: TodayView.Insight
-  let isBusy: Bool
-  let answer: (Bool) -> Void
-
-  var body: some View {
-    Section {
-      Text(insight.message)
-
-      HStack {
-        Button {
-          answer(true)
-        } label: {
-          accept
-        }
-        .buttonStyle(.bordered)
-
-        if let dismiss {
-          Button {
-            answer(false)
-          } label: {
-            dismiss
-          }
-          .buttonStyle(.borderless)
-        }
-      }
-      .disabled(isBusy)
-    } header: {
-      Text("From your recent answers", tableName: "Today", comment: "An insight's header")
-    }
-  }
-
-  private var accept: Text {
-    switch insight.kind {
-    case "planChange" where insight.planChange?.status == "applied":
-      Text("Keep it", tableName: "Today", comment: "Keeps an applied plan change")
-    case "planChange":
-      Text("Add it", tableName: "Today", comment: "Applies a proposed plan change")
-    case "scheduleIdea":
-      Text(
-        "Move my study time to \(insight.studyTime ?? "")", tableName: "Today",
-        comment: "Accepts a new study time")
-    default:
-      Text("Got it", tableName: "Today", comment: "Closes a tip")
-    }
-  }
-
-  private var dismiss: Text? {
-    switch insight.kind {
-    case "planChange" where insight.planChange?.status == "applied":
-      Text("Undo", tableName: "Today", comment: "Undoes an applied plan change")
-    case "planChange":
-      Text("No thanks", tableName: "Today", comment: "Declines a proposed plan change")
-    case "scheduleIdea":
-      Text("Not now", tableName: "Today", comment: "Declines a new study time")
-    default:
-      nil
-    }
-  }
-}
-
 /// A plan change waiting for the learner's say; the Plan shows it and decides it.
 struct TodayPlanChangeSection: View {
   @Environment(AppRouter.self) private var router

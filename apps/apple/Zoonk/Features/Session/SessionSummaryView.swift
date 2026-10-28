@@ -14,7 +14,6 @@ struct SessionSummaryView: View {
   let sessionID: String
   let stopped: Bool
 
-  @State private var ceremony: Milestone?
   @State private var action: Task<Void, Never>?
   @State private var isAddingTime = false
   @State private var failed = false
@@ -46,19 +45,7 @@ struct SessionSummaryView: View {
       }
     }
     .loads(summary)
-    .onChange(of: summary.value?.ceremony, initial: true) { _, milestone in
-      if let milestone, store.claimCeremony(milestone) {
-        ceremony = milestone
-      }
-    }
-    .onDisappear {
-      action?.cancel()
-    }
-    .fullScreenCover(item: $ceremony) { milestone in
-      MilestoneCeremony(milestone: milestone) {
-        ceremony = nil
-      }
-    }
+    .milestoneCeremony(summary.value?.ceremony)
   }
 
   private func content(_ summary: SessionSummary) -> some View {

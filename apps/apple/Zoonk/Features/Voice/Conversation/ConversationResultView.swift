@@ -6,6 +6,9 @@ import SwiftUI
 struct ConversationResultView: View {
   @Environment(\.dismiss) private var dismiss
   let conversation: LanguageConversation
+  /// What the call did to the day, when it was just saved here; a call opened later shows only its
+  /// own result.
+  var day: DayResult?
 
   var body: some View {
     List {
@@ -29,7 +32,12 @@ struct ConversationResultView: View {
           EmptyView()
         }
       }
+
+      if let day {
+        DayMomentSections(result: day)
+      }
     }
+    .milestoneCeremony(day?.ceremony)
     .safeAreaBar(edge: .bottom) {
       Button {
         dismiss()

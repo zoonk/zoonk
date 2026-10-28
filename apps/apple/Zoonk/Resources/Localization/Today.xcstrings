@@ -2019,35 +2019,6 @@
         }
       }
     },
-    "Add it" : {
-      "comment" : "Applies a proposed plan change",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Übernehmen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aplicar cambio"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ajouter"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Adicionar"
-          }
-        }
-      }
-    },
     "Adjust your plan to keep going." : {
       "comment" : "The goal's date passed",
       "localizations" : {
@@ -2686,6 +2657,35 @@
         }
       }
     },
+    "Continue explanation" : {
+      "comment" : "Opens the learner's unfinished quick explanation",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erklärung fortsetzen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar con la explicación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer l’explication"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar explicação"
+          }
+        }
+      }
+    },
     "Continue session" : {
       "comment" : "Continues today's session",
       "localizations" : {
@@ -2711,6 +2711,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Continuar sessão"
+          }
+        }
+      }
+    },
+    "Continue setting up" : {
+      "comment" : "Opens the goal's questions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einrichtung fortsetzen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar con la configuración"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer la configuration"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar configuração"
           }
         }
       }
@@ -2774,7 +2803,7 @@
       }
     },
     "Done" : {
-      "comment" : "A finished block",
+      "comment" : "A finished block\nA mission that's done",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -2827,35 +2856,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Para hoje"
-          }
-        }
-      }
-    },
-    "Each day's lessons, reviews and practice for your goal." : {
-      "comment" : "What Today holds once there's a goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die Lektionen, Wiederholungen und Übungen für dein Ziel an jedem Tag."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Las lecciones, repasos y prácticas de cada día para tu objetivo."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Chaque jour, des leçons, des révisions et de l’entraînement pour ton objectif."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "As aulas, revisões e práticas de cada dia para sua meta."
           }
         }
       }
@@ -3129,35 +3129,6 @@
         }
       }
     },
-    "From your recent answers" : {
-      "comment" : "An insight's header",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aus deinen letzten Antworten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "A partir de tus respuestas recientes"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "D’après tes réponses récentes"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Com base nas suas respostas recentes"
-          }
-        }
-      }
-    },
     "Full review" : {
       "comment" : "A full review block",
       "localizations" : {
@@ -3274,35 +3245,6 @@
         }
       }
     },
-    "Got it" : {
-      "comment" : "Closes a tip",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verstanden"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entendido"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Compris"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entendi"
-          }
-        }
-      }
-    },
     "Have a call" : {
       "comment" : "Mission: a practice call",
       "localizations" : {
@@ -3332,31 +3274,31 @@
         }
       }
     },
-    "Keep it" : {
-      "comment" : "Keeps an applied plan change",
+    "It's built from what you tell us." : {
+      "comment" : "Why the goal's questions matter",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beibehalten"
+            "value" : "Sie wird aus deinen Antworten erstellt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantener el cambio"
+            "value" : "Se crea a partir de lo que nos cuentes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Garder"
+            "value" : "Il est créé à partir de ce que tu nous dis."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Manter"
+            "value" : "Ela é criada com base no que você conta pra gente."
           }
         }
       }
@@ -3560,35 +3502,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Simulado"
-          }
-        }
-      }
-    },
-    "Move my study time to %@" : {
-      "comment" : "Accepts a new study time",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Meine Lernzeit auf %@ verschieben"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cambiar mi horario de estudio a %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Déplacer ma séance à %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mudar meu horário de estudo para %@"
           }
         }
       }
@@ -3804,37 +3717,8 @@
         }
       }
     },
-    "No thanks" : {
-      "comment" : "Declines a proposed plan change",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Nein, danke"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No, gracias"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Non merci"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Agora não"
-          }
-        }
-      }
-    },
     "Not now" : {
-      "comment" : "Declines a new study time",
+      "comment" : "Dismisses the suggested goal",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -4508,6 +4392,35 @@
         }
       }
     },
+    "Quick explanation" : {
+      "comment" : "An unfinished explanation",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kurze Erklärung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explicación rápida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explication rapide"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explicação rápida"
+          }
+        }
+      }
+    },
     "Quick review" : {
       "comment" : "A short review block",
       "localizations" : {
@@ -5001,35 +4914,6 @@
         }
       }
     },
-    "Start a goal" : {
-      "comment" : "Opens the start of a new goal\nTitle of Today without a goal",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ein Ziel starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empieza un objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commencer un objectif"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Começar uma meta"
-          }
-        }
-      }
-    },
     "Start session" : {
       "comment" : "Starts today's session",
       "localizations" : {
@@ -5274,6 +5158,35 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Suggested goal" : {
+      "comment" : "A goal from the learner's last course",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorgeschlagenes Ziel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objetivo sugerido"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Objectif suggéré"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meta sugerida"
           }
         }
       }
@@ -5684,35 +5597,6 @@
         }
       }
     },
-    "Undo" : {
-      "comment" : "Undoes an applied plan change",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rückgängig"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deshacer"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Annuler"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Desfazer"
-          }
-        }
-      }
-    },
     "Up next in your plan" : {
       "comment" : "The plan's next lessons",
       "localizations" : {
@@ -5767,6 +5651,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível abrir o próximo passo. Tente novamente."
+          }
+        }
+      }
+    },
+    "We couldn't save your answer. Try again." : {
+      "comment" : "Answering the suggested goal failed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wir konnten deine Antwort nicht speichern. Versuch es noch einmal."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No hemos podido guardar tu respuesta. Inténtalo de nuevo."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nous n’avons pas pu enregistrer ta réponse. Réessaie."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não foi possível salvar sua resposta. Tente de novo."
           }
         }
       }
@@ -6177,6 +6090,35 @@
         }
       }
     },
+    "Your plan for %@ needs a few more answers." : {
+      "comment" : "A goal left halfway through its questions",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan für %@ braucht noch ein paar Antworten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan para %@ necesita algunas respuestas más."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il manque quelques réponses pour ton plan sur %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano para %@ precisa de mais algumas respostas."
+          }
+        }
+      }
+    },
     "Your plan has a change for you to look at." : {
       "comment" : "A proposed plan change",
       "localizations" : {
@@ -6202,6 +6144,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu plano tem uma mudança para você conferir."
+          }
+        }
+      }
+    },
+    "Your quick explanation" : {
+      "comment" : "The learner's unfinished quick explanation",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine kurze Erklärung"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu explicación rápida"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton explication rapide"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua explicação rápida"
           }
         }
       }

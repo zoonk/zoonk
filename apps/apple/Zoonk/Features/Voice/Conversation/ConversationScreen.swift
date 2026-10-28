@@ -9,6 +9,8 @@ struct ConversationScreen: View {
   @State private var conversation: Resource<LanguageConversation>?
   /// A call in progress can't be swiped away: End hangs it up and saves it.
   @State private var isInCall = false
+  /// What the call just saved did to the learner's day, for its result.
+  @State private var day: DayResult?
 
   let conversationId: String
 
@@ -78,11 +80,12 @@ struct ConversationScreen: View {
       }
     case .loaded(let value):
       if value.result != nil {
-        ConversationResultView(conversation: value)
+        ConversationResultView(conversation: value, day: day)
           .navigationTitle(ConversationTitle(conversation: value).text)
       } else {
-        LiveCallRun(conversation: value, isInCall: $isInCall) {
+        LiveCallRun(conversation: value, isInCall: $isInCall) { saved in
           // The saved call's result, with its feedback, replaces the run.
+          day = saved
           await resource.refresh()
         }
         .navigationTitle(ConversationTitle(conversation: value).text)
@@ -138,7 +141,7 @@ private struct LiveCallRun: View {
 
   let conversation: LanguageConversation
   @Binding var isInCall: Bool
-  let onSaved: () async -> Void
+  let onSaved: (DayResult?) async -> Void
 
   var body: some View {
     Group {
@@ -266,10 +269,10 @@ private struct LiveCallRun: View {
     }
 
     switch completion {
-    case .done(.completed):
+    case .done(.completed(let completed)):
       // Brain Power, missions, today's time, the unit's or exam's standing, and call time.
       voice.cache.invalidate([.userProgress, .goals, .learnerModel, .allowance])
-      await onSaved()
+      await onSaved(DayResult(completed))
     case .done(.ended):
       saving = .ended
     case .done(.takenOver):

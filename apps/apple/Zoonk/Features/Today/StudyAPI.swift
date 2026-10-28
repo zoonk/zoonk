@@ -38,7 +38,7 @@ protocol StudyAPIClient: Sendable {
   /// Gets the session's lessons picked and written in the background, for a step whose lesson the
   /// plan hasn't picked yet.
   func prepareSession(token: String, sessionID: String) async throws
-  func answerInsight(token: String, insightID: String, accepted: Bool) async throws
+  func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws
   func markMilestoneShown(token: String, milestoneID: String) async throws
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap
 }
@@ -268,14 +268,15 @@ struct StudyAPI: StudyAPIClient {
     }
   }
 
-  func answerInsight(token: String, insightID: String, accepted: Bool) async throws {
+  func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {
     let body = StatusBody(status: accepted ? "accepted" : "dismissed")
 
     try await clients.perform(token: token) { client in
-      switch try await client.answerMemoryInsight(
-        path: .init(insightId: insightID), body: .json(try StudyJSON.recode(body)))
+      switch try await client.answerSuggestedGoal(
+        path: .init(suggestionId: suggestionID), body: .json(try StudyJSON.recode(body)))
       {
-      case .ok:
+      case .ok, .conflict:
+        // Already answered elsewhere: the suggestion is closed either way.
         return
       case .unauthorized:
         throw APIError.unauthorized

@@ -58,19 +58,6 @@ struct TodayView: Decodable, Equatable, Sendable {
     let mockDate: String
   }
 
-  /// One insight from recent sessions, until the learner answers it.
-  struct Insight: Decodable, Equatable, Sendable {
-    struct PlanChange: Decodable, Equatable, Sendable {
-      let status: String
-    }
-
-    let id: String
-    let kind: String
-    let message: String
-    let planChange: PlanChange?
-    let studyTime: String?
-  }
-
   /// A plan change the learner has a say in.
   struct PlanChange: Decodable, Equatable, Sendable {
     let id: String
@@ -101,7 +88,8 @@ struct TodayView: Decodable, Equatable, Sendable {
   let earlierWork: [EarlierWork]
   let exam: ExamMoment?
   let goal: Goal
-  let insight: Insight?
+  /// At most one insight from recent sessions, until it's answered (the Buddy's card answers it).
+  let insight: MemoryInsight?
   /// Where each lesson of the day's learn blocks stands: `ready`, `generating`, `notStarted`,
   /// `failed`.
   let lessonStatus: [String: String]

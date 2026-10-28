@@ -166,3 +166,33 @@ struct MilestoneCeremony: View {
     }
   }
 }
+
+extension View {
+  /// Opens a result's milestone ceremony full screen, once per milestone wherever it shows (a
+  /// block's moment, the summary, a call's or a round's result), and marks it shown.
+  func milestoneCeremony(_ milestone: Milestone?) -> some View {
+    modifier(MilestoneCeremonyPresenter(milestone: milestone))
+  }
+}
+
+private struct MilestoneCeremonyPresenter: ViewModifier {
+  @Environment(StudySessionStore.self) private var sessions
+
+  let milestone: Milestone?
+
+  @State private var shown: Milestone?
+
+  func body(content: Content) -> some View {
+    content
+      .onChange(of: milestone, initial: true) { _, milestone in
+        if let milestone, sessions.claimCeremony(milestone) {
+          shown = milestone
+        }
+      }
+      .fullScreenCover(item: $shown) { milestone in
+        MilestoneCeremony(milestone: milestone) {
+          shown = nil
+        }
+      }
+  }
+}

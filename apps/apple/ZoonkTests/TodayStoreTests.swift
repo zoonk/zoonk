@@ -406,7 +406,7 @@ private actor StudyAPIStub: StudyAPIClient {
   func prepareSession(token: String, sessionID: String) async throws {
     preparedSessions.append(sessionID)
   }
-  func answerInsight(token: String, insightID: String, accepted: Bool) async throws {}
+  func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws {}
   func markMilestoneShown(token: String, milestoneID: String) async throws {}
 
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap {

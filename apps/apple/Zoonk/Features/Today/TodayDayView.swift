@@ -19,7 +19,6 @@ struct TodayDayView: View {
   enum Tap: Equatable {
     case block(Int)
     case catchUp
-    case insight
     case keepLearning
     case main
   }
@@ -42,9 +41,11 @@ struct TodayDayView: View {
         })
 
       if let insight = view.insight {
-        TodayInsightSection(insight: insight, isBusy: busy == .insight) { accepted in
-          perform(.insight) { await store.answerInsight(insight, accepted: accepted) }
+        Section {
+          MemoryInsightCard(insight: insight)
         }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets())
       }
 
       if view.planChange?.status == "proposed" {

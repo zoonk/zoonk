@@ -65,92 +65,193 @@ struct TodayScreen: View {
   }
 }
 
-/// A visitor or a learner without a goal: Today is where a goal starts.
+/// A visitor or a learner without a goal starts one right here, under Today's own title (S5b's
+/// inline `GoalStartEntry`, as main's start form): an unfinished quick explanation first, then the
+/// box with its examples.
 private struct TodayStartGoal: View {
   @Environment(AppRouter.self) private var router
+  @Environment(LearnerSummaryStore.self) private var learner
 
   var body: some View {
-    // TODO(S5): embed the start form view from ONBOARDING-CONTRACT.md once it lands; until then
-    // Today leads to the start flow's screen.
-    ContentUnavailableView {
-      Label {
-        Text("Start a goal", tableName: "Today", comment: "Title of Today without a goal")
-      } icon: {
-        Image(systemName: "target")
+    List {
+      if let explanation = learner.summary.value?.openExplanations.last {
+        Section {
+          Label {
+            VStack(alignment: .leading, spacing: 2) {
+              Text(explanation.title)
+              Text("Quick explanation", tableName: "Today", comment: "An unfinished explanation")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            }
+          } icon: {
+            Image(systemName: "play")
+              .foregroundStyle(.secondary)
+          }
+
+          Button {
+            router.open(.explain(goalId: explanation.id))
+          } label: {
+            Text(
+              "Continue explanation", tableName: "Today",
+              comment: "Opens the learner's unfinished quick explanation")
+          }
+        } header: {
+          Text(
+            "Your quick explanation", tableName: "Today",
+            comment: "The learner's unfinished quick explanation")
+        }
       }
-    } description: {
-      Text(
-        "Each day's lessons, reviews and practice for your goal.", tableName: "Today",
-        comment: "What Today holds once there's a goal")
-    } actions: {
-      Button {
-        router.open(.startGoal())
-      } label: {
-        Text("Start a goal", tableName: "Today", comment: "Opens the start of a new goal")
-      }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
+
+      GoalStartEntry()
     }
+    .navigationSubtitle(Text(Date.now, format: .dateTime.weekday(.abbreviated).month().day()))
   }
 }
 
-/// A learner back from before goals existed: their last course is offered first.
+/// A learner back from before goals existed: their last course is offered first, and either answer
+/// moves them on.
 private struct TodaySuggestedGoal: View {
   @Environment(AppRouter.self) private var router
   @Environment(TodayStore.self) private var store
 
   let suggestion: SuggestedGoal
 
+  @State private var answering: Bool?
+  @State private var failed = false
+
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        Text(
-          "Continue \(suggestion.title)?", tableName: "Today",
-          comment: "Offers a goal from the learner's last course")
-      } icon: {
-        Image(systemName: "safari")
+    List {
+      Section {
+        VStack(alignment: .leading, spacing: 4) {
+          Text(
+            "Continue \(suggestion.title)?", tableName: "Today",
+            comment: "Offers a goal from the learner's last course"
+          )
+          .font(.headline)
+
+          Text("Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise")
+            .foregroundStyle(.secondary)
+        }
+
+        Button {
+          answer(accepted: true)
+        } label: {
+          Text("Build my plan", tableName: "Today", comment: "Accepts the suggested goal")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.mainAction)
+        .controlSize(.large)
+
+        Button {
+          answer(accepted: false)
+        } label: {
+          Text("Not now", tableName: "Today", comment: "Dismisses the suggested goal")
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.bordered)
+        .controlSize(.large)
+      } header: {
+        Label {
+          Text(
+            "Suggested goal", tableName: "Today", comment: "A goal from the learner's last course")
+        } icon: {
+          Image(systemName: "safari")
+        }
+      } footer: {
+        if failed {
+          Text(
+            "We couldn't save your answer. Try again.", tableName: "Today",
+            comment: "Answering the suggested goal failed"
+          )
+          .foregroundStyle(.destructive)
+        }
       }
-    } description: {
-      Text("Build a plan in 1 minute.", tableName: "Today", comment: "Suggested goal's promise")
-    } actions: {
-      Button {
-        router.open(.startGoal())
-      } label: {
-        Text("Build my plan", tableName: "Today", comment: "Accepts the suggested goal")
-      }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
+      .disabled(answering != nil)
     }
     .navigationSubtitle(
       Text("Welcome back", tableName: "Today", comment: "Greets a learner back with no goal"))
   }
+
+  /// Either answer closes the suggestion; accepting opens the start flow with its title in the box.
+  private func answer(accepted: Bool) {
+    answering = accepted
+    failed = false
+
+    Task {
+      let result = await store.answer(suggestion, accepted: accepted)
+      answering = nil
+
+      switch result {
+      case .done where accepted:
+        router.open(.startGoal(goal: suggestion.title))
+      case .failed:
+        failed = true
+      case .done, .obsolete:
+        break
+      }
+    }
+  }
 }
 
-/// A goal whose plan is being built after onboarding: Today waits and reads itself again.
+/// A goal whose plan is being built after onboarding: Today waits and reads itself again. A goal
+/// left halfway through its questions has no plan coming until they're answered, so Today says
+/// what's missing and leads back to them instead.
 private struct TodayPreparing: View {
+  @Environment(AppRouter.self) private var router
+  @Environment(OnboardingStore.self) private var onboarding
   @Environment(TodayStore.self) private var store
 
   let goalID: String
   let title: String
 
   var body: some View {
-    ContentUnavailableView {
-      Label {
-        Text("Building your plan", tableName: "Today", comment: "A plan is being built")
-      } icon: {
-        ProgressView()
+    let setup = onboarding.onboarding(goalID: goalID)
+    let answersLeft = setup.value?.steps.contains { $0.rawValue != "plan" } == true
+
+    Group {
+      if answersLeft {
+        ContentUnavailableView {
+          Label {
+            Text(
+              "Your plan for \(title) needs a few more answers.", tableName: "Today",
+              comment: "A goal left halfway through its questions")
+          } icon: {
+            Image(systemName: "list.bullet.clipboard")
+          }
+        } description: {
+          Text(
+            "It's built from what you tell us.", tableName: "Today",
+            comment: "Why the goal's questions matter")
+        } actions: {
+          Button {
+            router.open(.goalSetup(goalId: goalID))
+          } label: {
+            Text("Continue setting up", tableName: "Today", comment: "Opens the goal's questions")
+          }
+          .buttonStyle(.mainAction)
+          .controlSize(.large)
+        }
+      } else {
+        ContentUnavailableView {
+          Label {
+            Text("Building your plan", tableName: "Today", comment: "A plan is being built")
+          } icon: {
+            ProgressView()
+          }
+        } description: {
+          Text(
+            "Building your plan for \(title)", tableName: "Today",
+            comment: "A plan is being built for the goal")
+        }
+        .task(id: goalID) {
+          while !Task.isCancelled {
+            try? await Task.sleep(for: .seconds(5))
+            await store.today.refresh()
+          }
+        }
       }
-    } description: {
-      Text(
-        "Building your plan for \(title)", tableName: "Today",
-        comment: "A plan is being built for the goal")
     }
-    .task(id: goalID) {
-      while !Task.isCancelled {
-        try? await Task.sleep(for: .seconds(5))
-        await store.today.refresh()
-      }
-    }
+    .loads(setup, refreshable: false)
   }
 }
 

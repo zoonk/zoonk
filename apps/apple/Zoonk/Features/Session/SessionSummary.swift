@@ -74,10 +74,26 @@ struct BlockMoment: Decodable, Equatable, Sendable {
   let ceremony: Milestone?
   /// The day a lesson in it comes back for review, `YYYY-MM-DD`.
   let comesBackOn: String?
+  let completedMissions: [StudyMission.Kind]
   let correct: Int
   let fullMeal: FullMeal
+  let missions: [StudyMission]
+  let reached: DayResult.Reached?
   let sessionCompleted: Bool
   let total: Int
+
+  /// What the block did to the day, as every result says it.
+  var day: DayResult {
+    DayResult(
+      ceremony: ceremony,
+      missionMoment: completedMissions.isEmpty
+        ? nil
+        : DayResult.MissionMoment(
+          completed: completedMissions,
+          fullMeal: DayResult.MissionMoment.FullMeal(bonus: fullMeal.bonus, paid: fullMeal.paid),
+          missions: missions),
+      reached: reached)
+  }
 }
 
 /// Something the learner earned once (`Milestone` in the API): a belt, new glasses, a buddy stage

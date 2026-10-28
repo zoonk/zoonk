@@ -152,25 +152,42 @@ final class TodayStore {
     }
   }
 
-  /// Accepts or dismisses the insight Today shows; accepting may change the plan.
-  func answerInsight(_ insight: TodayView.Insight, accepted: Bool) async -> MutationResult<Void> {
-    await cache.mutate(invalidating: [.goals, .learnerModel]) { identity in
-      try await api.answerInsight(
-        token: identity.bearerToken, insightID: insight.id, accepted: accepted)
+  /// Accepts or dismisses the goal Today suggests from the learner's last course; either answer
+  /// closes it.
+  func answer(_ suggestion: SuggestedGoal, accepted: Bool) async -> MutationResult<Void> {
+    await cache.mutate(invalidating: [.goals]) { identity in
+      try await api.answerSuggestedGoal(
+        token: identity.bearerToken, suggestionID: suggestion.id, accepted: accepted)
     }
   }
 
   /// Runs a tap that opens a step for the session that made it: a learner who left meanwhile gets
   /// nothing (`obsolete`), and one whose step couldn't open sees Today read again.
   private func openStep(
+    for day: OpenedSession.Day?,
     _ open: (_ token: String) async throws -> (sessionID: String, destination: StudyDestination)
   ) async -> MutationResult<StudyDestination> {
     switch await cache.mutate(
       invalidating: [.userProgress, .userSession], { try await open($0.bearerToken) })
     {
-    case .done(let opened):
-      openedSessionID = opened.sessionID
-      return .done(opened.destination)
+    case .done(let result):
+      // `mutate` returns `done` only while the learner who tapped is still the one signed in.
+      if let owner = cache.session.authenticatedSession {
+        if let day {
+          opened = OpenedSession(owner: owner, day: day, sessionID: result.sessionID)
+        }
+
+        switch result.destination {
+        case .lessonWait(let blockID, let writing):
+          writings[blockID] = (owner, writing)
+        case .lesson:
+          writings = [:]
+        default:
+          break
+        }
+      }
+
+      return .done(result.destination)
     case .failed(let error):
       cache.invalidate([.userSession])
       return .failed(error)
