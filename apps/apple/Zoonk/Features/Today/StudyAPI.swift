@@ -129,7 +129,10 @@ struct StudyAPI: StudyAPIClient {
     let body = OpenDayBody(
       keepEmpty: target == nil, shownDate: shownDate, target: target, timeZone: timeZone)
 
-    return try await clients.perform(token: token) { client in
+    // Sent as its own JSON: the generated body drops the shown block's `null`s, which core needs.
+    let json = try JSONEncoder().encode(body)
+
+    return try await clients.perform(token: token, body: json) { client in
       switch try await client.openStudyDay(
         path: .init(goalId: goalID), body: .json(try StudyJSON.recode(body)))
       {
