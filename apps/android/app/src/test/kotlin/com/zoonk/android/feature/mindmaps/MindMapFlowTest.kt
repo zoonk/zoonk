@@ -83,7 +83,16 @@ class MindMapFlowTest {
         ZoonkTheme {
             navigator = rememberAppNavigator()
             val context = LocalContext.current
-            val host = remember { MindMapsHost(store, ana, PrivatePictures(AppContainer.preview(context).images, ana)) { cap } }
+            val host =
+                remember {
+                    MindMapsHost(
+                        store,
+                        ana,
+                        PrivatePictures(AppContainer.preview(context).images, ana),
+                        cap = { cap },
+                        currentSession = { ana },
+                    )
+                }
             MindMapsContent(goalId, host, navigator, subject = subject)
         }
     }
