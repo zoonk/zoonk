@@ -229,6 +229,7 @@
     <string name="today_exam_speaking">Exam-style speaking</string>
     <!-- %1$s is the exam's name, such as IELTS. -->
     <string name="today_exam_speaking_detail">%1$s tasks on a call</string>
+    <string name="today_notice_exam">Your exam</string>
     <string name="today_notice_exam_access">Exam prep on the free plan</string>
     <string name="today_notice_suggested_goal">Suggested goal</string>
     <string name="today_insight_label">From your recent answers</string>

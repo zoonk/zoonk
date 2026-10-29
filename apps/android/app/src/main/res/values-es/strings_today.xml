@@ -64,6 +64,7 @@
   "today_nothing_new": "bda36dbbed2ef5e49b8b13410935e615c370f6e6f155ca68caeba0b5d4accb2f",
   "today_nothing_new_detail": "57a868f94f15c96c821f0f3e8361fd3a09a099735705efac66ac6ce305108bb5",
   "today_nothing_to_review": "2269422cdf5f3be38ff4484d5349cda626f2fb4781ec60bbe5dd7522c0480000",
+  "today_notice_exam": "103b67cdf149265749a023d617fe7caa8ff659cbb5353f8518d13c704984034e",
   "today_notice_exam_access": "a9339b2641b12aa3e5fb21a7277f225cb6b015716da7e66701eb85616790fbbc",
   "today_notice_suggested_goal": "ac360e7e9546fc1a04eea8eaa20f18594cad0dbc212a2018b23c9db47d63facd",
   "today_open_failed": "92470853a41c78697187b6d86cd8606ae1bdec93a428e545b9fa36cbe9dcbc11",
@@ -406,6 +407,7 @@
     <string name="today_exam_speaking">Expresión oral con formato de examen</string>
     <!-- %1$s is the exam's name, such as IELTS. -->
     <string name="today_exam_speaking_detail">%1$s tareas en una llamada</string>
+    <string name="today_notice_exam">Tu examen</string>
     <string name="today_notice_exam_access">Preparación para el examen en el plan gratuito</string>
     <string name="today_notice_suggested_goal">Objetivo sugerido</string>
     <string name="today_insight_label">Según tus respuestas recientes</string>

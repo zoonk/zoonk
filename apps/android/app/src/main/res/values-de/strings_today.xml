@@ -64,6 +64,7 @@
   "today_nothing_new": "472f4585f969ca3749543f99a24769c035934ce74f32723aea0df88680d517f9",
   "today_nothing_new_detail": "ea7df4102d379fc17daf896654e7950a473b6c2e3ffb8b568111c4bc2f31886e",
   "today_nothing_to_review": "1d7e3f64d1651514a6894f94f05b76a0b0e698c24ed2ef9ca150e603c7299df1",
+  "today_notice_exam": "e8bdbd634e6c09a9c0b9a02aefd78ddf2e9d82213dca08e3aa9b4d1078816488",
   "today_notice_exam_access": "323c052714a1c7382a203ccd5eeabab08017eb8ec0275bcf10b7bf1f1a4006bb",
   "today_notice_suggested_goal": "658949dcb87dc2875beb378f62f2ff35e51c6cdd34ac5ffa122757d0ef77bf56",
   "today_open_failed": "75fcc30a662dcaf012a289dd30cdf9065584a174d22812f32b61c1898f38a01e",
@@ -388,6 +389,7 @@
     <string name="today_exam_speaking">Sprechen wie in der Prüfung</string>
     <!-- %1$s is the exam's name, such as IELTS. -->
     <string name="today_exam_speaking_detail">%1$s Aufgaben in einem Gespräch</string>
+    <string name="today_notice_exam">Deine Prüfung</string>
     <string name="today_notice_exam_access">Prüfungsvorbereitung im Free-Tarif</string>
     <string name="today_notice_suggested_goal">Vorgeschlagenes Ziel</string>
     <string name="today_insight_label">Aus deinen letzten Antworten</string>

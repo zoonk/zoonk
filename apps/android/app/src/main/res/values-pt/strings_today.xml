@@ -64,6 +64,7 @@
   "today_nothing_new": "dbc530e8d04270ff826c0cb36f220536ac23d10e2e65a09b5ef6b21d50736a27",
   "today_nothing_new_detail": "2ded9a3589f35a0427ba8164147939e303cae2917f2826163cf969b5aeea24e5",
   "today_nothing_to_review": "5e6195204da2d9a83ee64d07e450f44fd95e8983226984a1a8654b13e8ade8ef",
+  "today_notice_exam": "23d7de0f6aef005d48ccedc6659cdbdd0035c65322d545ff0c7fcf41fb24b40a",
   "today_notice_exam_access": "49548ad7911208fb8ffe44987e286c0d932c7d7457f10fee5fd5d6711ffb8ad3",
   "today_notice_suggested_goal": "8f7f92d056cff466c1e3e31b15842585daa9da6709c61a604ab40e11c32ebb33",
   "today_open_failed": "3b6788fdf075fbc89947b0f8106c57b9d19bfdd9b08efa521cc4cbdb2c9db659",
@@ -406,6 +407,7 @@
     <string name="today_exam_speaking">Conversação no estilo da prova</string>
     <!-- %1$s is the exam's name, such as IELTS. -->
     <string name="today_exam_speaking_detail">%1$s tarefas em uma conversa</string>
+    <string name="today_notice_exam">Sua prova</string>
     <string name="today_notice_exam_access">Preparo para a prova no plano grátis</string>
     <string name="today_notice_suggested_goal">Meta sugerida</string>
     <string name="today_insight_label">Com base nas suas respostas recentes</string>

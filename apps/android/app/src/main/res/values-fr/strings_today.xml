@@ -64,6 +64,7 @@
   "today_nothing_new": "b477c0459549f815e0b5833aeb4e76633103bb34b7f6f07c1ee6101213972ece",
   "today_nothing_new_detail": "7dce5938c4e945e05db3d3107b34a4f71417610851e0e4f4e3f688ca7a751259",
   "today_nothing_to_review": "81f1e8d5221576951767b451b3e531cef05759c8c2620a79077f616a34cdc0da",
+  "today_notice_exam": "d6822564c10e1d83f257a8abed6cb2dbfe144e68fd6357e06570539558bd3504",
   "today_notice_exam_access": "b1eff30ac66d2c76a509e19f7733185e1e1f4bdbb823f735978d498c491df697",
   "today_notice_suggested_goal": "9cd95bf70f5a78a635b655de2d67a4f785440dfd7f1d3eae17ba9fa491d12a39",
   "today_open_failed": "d7b4958323b3eb77f521410556299220497a02133868a1c09a7ff4247a27bee7",
@@ -406,6 +407,7 @@
     <string name="today_exam_speaking">Expression orale façon examen</string>
     <!-- %1$s is the exam's name, such as IELTS. -->
     <string name="today_exam_speaking_detail">%1$s exercices lors d’un appel</string>
+    <string name="today_notice_exam">Ton examen</string>
     <string name="today_notice_exam_access">Préparation aux examens avec la formule gratuite</string>
     <string name="today_notice_suggested_goal">Objectif suggéré</string>
     <string name="today_insight_label">D’après tes réponses récentes</string>

@@ -11,6 +11,9 @@ import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.exam.ExamMomentCard
+import com.zoonk.android.feature.exam.examMomentTitle
+import com.zoonk.android.feature.exam.icon
 import com.zoonk.android.feature.plan.PlanEnd
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.planChangeAppliedLine
@@ -26,6 +29,7 @@ import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
+import com.zoonk.api.models.ExamMoment
 import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MemoryInsightPlanChange
 import com.zoonk.api.models.SuggestedGoal
@@ -56,10 +60,35 @@ internal fun TodayNotice(
     LaunchedEffect(picked) { if (shown == null) shown = picked }
 
     when (shown ?: picked) {
+        TodayNoticeKind.Exam -> read.today.exam?.let { ExamMomentNotice(it, state, layout, modifier) }
         TodayNoticeKind.ExamAccess -> ExamAccessNotice(state, layout, modifier)
         TodayNoticeKind.Insight -> InsightNotice(state, layout, modifier)
         TodayNoticeKind.SuggestedGoal -> read.today.suggestedGoal?.let { SuggestedGoalNotice(it, state, layout, modifier) }
         else -> Unit
+    }
+}
+
+@Composable
+private fun ExamMomentNotice(
+    moment: ExamMoment,
+    state: TodayNoticeState,
+    layout: SuggestionLayout,
+    modifier: Modifier,
+) {
+    Suggestion(
+        label = stringResource(R.string.today_notice_exam),
+        summary = examMomentTitle(moment),
+        layout = layout,
+        modifier = modifier,
+        mark = SuggestionMark.Symbol(moment.stage.icon),
+    ) {
+        ExamMomentCard(
+            moment,
+            onOpen = {
+                close()
+                state.navigate(AppRoute.Exam)
+            },
+        )
     }
 }
 

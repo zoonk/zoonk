@@ -170,6 +170,38 @@ class TodayScreenshots {
                 },
                 "unopened" to unopened(),
                 "started" to started(),
+                "notice-exam" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "exam" to
+                                    fixture(
+                                        "exam-moment",
+                                        "stage" to "dayBefore",
+                                        "dayBefore" to "review",
+                                        "examName" to "ENEM",
+                                        "sessionsDone" to 41,
+                                        "mocksTaken" to 3,
+                                        "prepared" to true,
+                                        "day" to
+                                            buildJsonObject {
+                                                put("date", "2026-11-08")
+                                                put("label", null as String?)
+                                                put("startTime", "13:30")
+                                            },
+                                        "checklist" to
+                                            JsonArray(
+                                                listOf("documents", "blackPen", "route", "sleep").map {
+                                                    kotlinx.serialization.json.JsonPrimitive(it)
+                                                },
+                                            ),
+                                        "tools" to
+                                            JsonArray(listOf(kotlinx.serialization.json.JsonPrimitive("A black pen with a clear barrel"))),
+                                    ),
+                            ),
+                    ),
                 "notice-insight" to
                     day(
                         blocks = lessons(3),
