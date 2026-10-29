@@ -30,6 +30,7 @@ import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
@@ -111,6 +112,17 @@ internal fun setupView(
         """.trimIndent(),
     )
 
+internal fun planLinkOf(owner: String? = null): PlanLink =
+    ApiJson.decodeFromString(
+        """
+        {"owner":${owner?.let { "{\"goalId\":\"$it\"}" } ?: "null"},
+         "outline":{"goalKind":"exam","hours":40.5,"language":"en","skillCount":24,"targetLanguage":null,
+          "subject":{"title":"Bar exam","description":"Pass the state bar on the first try."},
+          "phases":[{"hours":20.0,"kind":"foundations","milestone":"Every subject once","name":""},
+                    {"hours":0.0,"kind":"finalStretch","milestone":null,"name":""}]}}
+        """.trimIndent(),
+    )
+
 internal class FakeOnboardingApi : OnboardingApi {
     var understood: (String) -> OnboardingDraft = { understoodDraft(prompt = it) }
     var draft: OnboardingDraft = understoodDraft()
@@ -172,6 +184,13 @@ internal class FakeOnboardingApi : OnboardingApi {
         refusal?.let { throw it }
         return goalCreated()
     }
+
+    var planLink: PlanLink = planLinkOf()
+
+    override suspend fun planLink(
+        session: AuthenticatedSession?,
+        planId: String,
+    ): PlanLink = planLink
 
     override suspend fun createFromPlanLink(
         session: AuthenticatedSession,

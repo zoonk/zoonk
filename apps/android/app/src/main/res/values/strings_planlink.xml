@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Above a shared plan's subject. -->
+    <string name="planlink_eyebrow">A study plan someone shared with you</string>
+    <!-- A shared plan without a subject, and the title over its phases. -->
+    <string name="planlink_study_plan">A study plan</string>
+    <string name="planlink_minutes_label">How much time a day?</string>
+    <!-- Starts the learner's own plan from a shared one. -->
+    <string name="planlink_start">Start from this plan</string>
+    <string name="planlink_make_it_yours">You get your own plan for the same subject, at your own pace. A few questions then skip what you already know.</string>
+    <string name="planlink_refused">You can\'t start another goal right now. Finish or pause one first.</string>
+    <string name="planlink_failed">That didn\'t work. Try again in a moment.</string>
+    <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->
+    <string name="planlink_facts">~%1$s of study · %2$s · %3$s</string>
+    <plurals name="planlink_phases">
+        <item quantity="one">%d phase</item>
+        <item quantity="other">%d phases</item>
+    </plurals>
+    <plurals name="planlink_skills">
+        <item quantity="one">%d skill</item>
+        <item quantity="other">%d skills</item>
+    </plurals>
+    <!-- A phase's approximate study time. %1$s is a duration, such as "2 hr". -->
+    <string name="planlink_about">~%1$s</string>
+    <string name="planlink_not_found">This plan isn\'t available</string>
+    <string name="planlink_not_found_description">The link may be old, or its owner stopped sharing it.</string>
+</resources>

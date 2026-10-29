@@ -593,7 +593,7 @@ private fun findStatus(state: LoadState<PlanTimeToCover>?): FindStatus? =
 
 private const val STALE_ALPHA = 0.6f
 
-private fun selectedCheck(selected: Boolean): (@Composable () -> Unit)? =
+internal fun selectedCheck(selected: Boolean): (@Composable () -> Unit)? =
     if (selected) {
         { Icon(painterResource(R.drawable.ic_check), contentDescription = null, modifier = Modifier.size(FilterChipDefaults.IconSize)) }
     } else {

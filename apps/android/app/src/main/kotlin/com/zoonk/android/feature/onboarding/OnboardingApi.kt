@@ -36,6 +36,7 @@ import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.PlacementCompletionInput
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
@@ -101,6 +102,11 @@ interface OnboardingApi {
         session: AuthenticatedSession,
         input: GoalCreateInput,
     ): GoalCreateResponse
+
+    suspend fun planLink(
+        session: AuthenticatedSession?,
+        planId: String,
+    ): PlanLink
 
     suspend fun createFromPlanLink(
         session: AuthenticatedSession,
@@ -275,6 +281,11 @@ class LiveOnboardingApi(
         session: AuthenticatedSession,
         input: GoalCreateInput,
     ) = perform { api.clients(session).goals.createGoals(input) }
+
+    override suspend fun planLink(
+        session: AuthenticatedSession?,
+        planId: String,
+    ) = perform { api.clients(session).plans.getPlanLink(UUID.fromString(planId)) }
 
     override suspend fun createFromPlanLink(
         session: AuthenticatedSession,

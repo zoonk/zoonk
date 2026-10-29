@@ -35,6 +35,7 @@ import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanLink
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeAdviceInput
@@ -178,6 +179,22 @@ class OnboardingStore(
                     )
                 api.createFromPlanLink(session, planId, start).id.toString()
             }
+        }
+
+    /** A shared plan as its link shows it: its subject and phases, never its owner or their progress. */
+    val planLinks =
+        cache.keyed<String, PlanLink>(Audience.Viewer, setOf(DataDomain.Goals)) { session, planId -> api.planLink(session, planId) }
+
+    /** A signed-in learner's own goal from a shared plan, at [dailyMinutes] a day; the owner gets their own goal back. */
+    suspend fun startFromPlanLink(
+        planId: String,
+        dailyMinutes: Int,
+    ): WriteOutcome<String> =
+        write(setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.Allowance)) { session ->
+            api
+                .createFromPlanLink(session, planId, PlanLinkStartInput(dailyMinutes.toLong(), timeZone = TimeZone.getDefault().id))
+                .id
+                .toString()
         }
 
     /** A language goal whose reason names a certificate moves to that exam: the reply is the new goal's setup. */
