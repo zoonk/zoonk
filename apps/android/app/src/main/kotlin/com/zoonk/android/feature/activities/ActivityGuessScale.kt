@@ -135,7 +135,7 @@ fun ActivityGuessScale(
                     contentDescription = guessName
                     stateDescription = guessValue
                 },
-            onPositionChange = { onGuessChange(roundGuess(scale.valueAt(it))) },
+            onPositionChange = { onGuessChange(twoSignificant(scale.valueAt(it))) },
             marks = {
                 if (actualShare == null) return@GuessSlider
                 val trackHeight = size.height

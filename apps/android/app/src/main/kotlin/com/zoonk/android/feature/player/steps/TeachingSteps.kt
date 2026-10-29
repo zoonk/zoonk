@@ -526,8 +526,8 @@ data class ChoiceOption(
 
 /**
  * Options picked by a tap or a number key; tapping a pick again clears it. Once checked, only the
- * right option and a wrong pick stay, marked (a guess keeps every option). [columns] lays them out
- * as a grid, as picture options are.
+ * right option and a wrong pick stay, marked, unless [keepsEveryOption] (a guess keeps every option
+ * too). [columns] lays them out as a grid, as picture options are.
  */
 @Composable
 fun ChoiceOptions(
@@ -538,6 +538,7 @@ fun ChoiceOptions(
     locked: Boolean,
     onSelect: (String?) -> Unit,
     columns: Int = 1,
+    keepsEveryOption: Boolean = false,
     optionContent: @Composable (ChoiceOption) -> Unit = { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) },
 ) {
     val label = stringResource(R.string.player_answer_options)
@@ -552,7 +553,7 @@ fun ChoiceOptions(
                     isGuess -> AnswerResult.Guess
                     else -> AnswerResult.Wrong
                 }
-            if (isChecked && result == null && !isGuess) null else ShownOption(index + 1, option, picked, result)
+            if (isChecked && result == null && !isGuess && !keepsEveryOption) null else ShownOption(index + 1, option, picked, result)
         }
 
     AnswerOptionGroup(Modifier.semantics { contentDescription = label }) {

@@ -3,6 +3,7 @@ package com.zoonk.android.ui.format
 import android.icu.math.BigDecimal
 import android.icu.text.CompactDecimalFormat
 import android.icu.text.DecimalFormat
+import android.icu.text.DecimalFormatSymbols
 import android.icu.text.NumberFormat
 import android.icu.util.Currency
 import android.icu.util.ULocale
@@ -24,15 +25,16 @@ fun formatAmount(
     unit: String? = null,
     compact: Boolean = false,
     maximumFractionDigits: Int? = null,
+    signed: Boolean = false,
 ): String {
     val money = moneyUnit(unit)
     if (money != null) {
-        val amount = formatMoney(value, money.currency, locale, compact, maximumFractionDigits)
+        val amount = formatMoney(value, money.currency, locale, compact, maximumFractionDigits, signed)
         return if (money.rest.isEmpty()) amount else "$amount ${money.rest}"
     }
 
     val digits = maximumFractionDigits ?: fractionDigitsFor(value)
-    val number = if (compact) formatCompact(value, locale, digits) else formatNumber(value, locale, digits)
+    val number = if (compact) formatCompact(value, locale, digits) else formatNumber(value, locale, digits, signed = signed)
     return withUnit(number, unit)
 }
 
@@ -43,6 +45,7 @@ fun formatMoney(
     locale: Locale,
     compact: Boolean = false,
     maximumFractionDigits: Int? = null,
+    signed: Boolean = false,
 ): String {
     val whole = abs(value) >= WHOLE_MONEY_FROM || isWhole(value, MONEY_FRACTION_DIGITS)
     val digits = maximumFractionDigits ?: if (whole) 0 else MONEY_FRACTION_DIGITS
@@ -60,7 +63,11 @@ fun formatMoney(
             format.format(abs(value))
         }
 
-    return if (value < 0) MINUS_SIGN + text else text
+    return when {
+        value < 0 -> MINUS_SIGN + text
+        signed && value > 0 -> DecimalFormatSymbols.getInstance(ULocale.forLocale(locale)).plusSign + text
+        else -> text
+    }
 }
 
 /** A number answer with its unit, as main's `formatMathAnswer` writes it: money in its currency, tiny values to two significant digits. */

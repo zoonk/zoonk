@@ -31,11 +31,13 @@ data class ActivityBadge(
 
 /**
  * Main's `ActivityRenderer`: a template's canvas, its badge, whether its check comes before the
- * canvas, and whether it shows its data's source. The frame draws everything else.
+ * canvas, whether it shows its data's source, and what a number key picks on its canvas (picking
+ * the current answer again clears it). The frame draws everything else.
  */
 class ActivityRenderer(
     val badge: (ActivityStepContent) -> ActivityBadge?,
     val canvas: @Composable (ActivityProps) -> Unit,
     val checkFirst: (ActivityStepContent) -> Boolean = { false },
     val showsData: (ActivityStepContent) -> Boolean = { false },
+    val keyPick: ((ActivityStepContent, Int) -> ActivityAnswer?)? = null,
 )

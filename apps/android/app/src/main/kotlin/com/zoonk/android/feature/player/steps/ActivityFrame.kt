@@ -29,11 +29,18 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityPhase
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
+import com.zoonk.android.feature.activities.beforeAfterRenderer
+import com.zoonk.android.feature.activities.chartReaderRenderer
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.activities.choiceId
+import com.zoonk.android.feature.activities.decisionTreeRenderer
+import com.zoonk.android.feature.activities.dialogueSimulatorRenderer
+import com.zoonk.android.feature.activities.findErrorRenderer
 import com.zoonk.android.feature.activities.guessRevealRenderer
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
+import com.zoonk.android.feature.activities.patternTableRenderer
+import com.zoonk.android.feature.activities.stepSolverRenderer
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.model.ActivityAnswer
@@ -70,7 +77,14 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData.PlayableLib
 /** The one place a template gets its renderer. */
 val activityRenderers: Map<String, ActivityRenderer> =
     mapOf(
+        "beforeAfter" to beforeAfterRenderer,
+        "chartReader" to chartReaderRenderer,
+        "decisionTree" to decisionTreeRenderer,
+        "dialogueSimulator" to dialogueSimulatorRenderer,
+        "findError" to findErrorRenderer,
         "guessReveal" to guessRevealRenderer,
+        "patternTable" to patternTableRenderer,
+        "stepSolver" to stepSolverRenderer,
     )
 
 /** Apple's rule: a choice or number check can be answered from the frame alone; an interaction needs its canvas. */

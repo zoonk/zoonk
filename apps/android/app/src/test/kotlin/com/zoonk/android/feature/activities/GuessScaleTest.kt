@@ -33,7 +33,7 @@ class GuessScaleTest {
     fun guessesKeepTwoSignificantDigits() {
         assertEquals(
             listOf(12.0, 1.3, -1.3, 0.046, 96.0, 120_000.0),
-            listOf(11.574, 1.25, -1.25, 0.0456, 95.5, 123_456.0).map(::roundGuess),
+            listOf(11.574, 1.25, -1.25, 0.0456, 95.5, 123_456.0).map(::twoSignificant),
         )
     }
 

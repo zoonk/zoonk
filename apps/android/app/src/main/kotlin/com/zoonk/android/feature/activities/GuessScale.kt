@@ -75,14 +75,14 @@ fun compareGuess(
     if (guess <= 0 || actual <= 0) return GuessComparison.Off(guess - actual)
     val ratio = guess / actual
     return when {
-        ratio >= RATIO_COMPARISON_MIN -> GuessComparison.TooBig(roundGuess(ratio))
-        ratio <= 1 / RATIO_COMPARISON_MIN -> GuessComparison.TooSmall(roundGuess(1 / ratio))
+        ratio >= RATIO_COMPARISON_MIN -> GuessComparison.TooBig(twoSignificant(ratio))
+        ratio <= 1 / RATIO_COMPARISON_MIN -> GuessComparison.TooSmall(twoSignificant(1 / ratio))
         else -> GuessComparison.Off(guess - actual)
     }
 }
 
-/** JavaScript's `Number(value.toPrecision(2))`. */
-fun roundGuess(value: Double): Double = BigDecimal(value).round(MathContext(GUESS_DIGITS, RoundingMode.HALF_UP)).toDouble()
+/** JavaScript's `Number(value.toPrecision(2))`, how main rounds a guess and a change. */
+fun twoSignificant(value: Double): Double = BigDecimal(value).round(MathContext(GUESS_DIGITS, RoundingMode.HALF_UP)).toDouble()
 
 private const val GUESS_DIGITS = 2
 private const val RATIO_COMPARISON_MIN = 1.5

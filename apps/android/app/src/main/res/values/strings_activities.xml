@@ -3,6 +3,7 @@
     <string name="activities_badge_estimate_first">Estimate first</string>
     <string name="activities_badge_read_chart">Read the chart</string>
     <string name="activities_badge_before_after">Before and after</string>
+    <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
     <string name="activities_badge_follow_key">Follow the key</string>
     <string name="activities_badge_find_error">Find the error</string>
     <string name="activities_badge_step_by_step">Step by step</string>
@@ -26,4 +27,95 @@
     <string name="activities_guess_too_big">Your guess is about %1$s times too big.</string>
     <!-- How many times smaller the guess was than the real value, like "3.5". -->
     <string name="activities_guess_too_small">Your guess is about %1$s times too small.</string>
+
+    <!-- Shows the state after the change, named like "With the assembly line". -->
+    <string name="activities_before_after_show">Show after: %1$s</string>
+    <string name="activities_before_after_hidden">The after state is hidden until you show it.</string>
+    <string name="activities_before_after_no_change">No change</string>
+    <!-- How a fact shrank, like "3 times less". -->
+    <string name="activities_before_after_less">%1$s times less</string>
+    <!-- How a fact grew, like "8 times more". -->
+    <string name="activities_before_after_more">%1$s times more</string>
+
+    <!-- What a line chart shows, for TalkBack: its value name, its axis name, then its first and last values with where they sit, like "A line chart of CO₂ by Year, from 316 ppm at 1960 to 421 ppm at 2023." -->
+    <string name="activities_chart_description">A line chart of %1$s by %2$s, from %3$s at %4$s to %5$s at %6$s.</string>
+    <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
+    <string name="activities_chart_span">%1$s: %2$s.</string>
+    <string name="activities_chart_tap_span">Tap a span to measure it</string>
+    <!-- The name of the group of spans the learner can measure, for TalkBack. -->
+    <string name="activities_chart_spans">Spans to measure</string>
+    <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
+    <string name="activities_chart_rate">%1$s per %2$s</string>
+
+    <!-- The panel with the case the learner follows through the key. -->
+    <string name="activities_tree_case">The case</string>
+    <!-- The outcomes the key can still reach from here. -->
+    <string name="activities_tree_still_possible">Still possible</string>
+    <string name="activities_tree_your_answers">Your answers</string>
+    <string name="activities_tree_leads_to">The key leads to</string>
+    <string name="activities_tree_undo">Undo</string>
+    <string name="activities_tree_walk">The walk for this case</string>
+    <!-- The branch the learner took where the key went another way, like "You chose Single". -->
+    <string name="activities_tree_you_chose">You chose %1$s</string>
+    <!-- The outcome the right walk reaches, like "It leads to Pine." -->
+    <string name="activities_tree_it_leads_to">It leads to %1$s.</string>
+    <!-- For TalkBack: which question the learner is on and the outcomes still possible, like "Question 2. Still possible: Pine, Spruce." -->
+    <string name="activities_tree_question">Question %1$d. Still possible: %2$s.</string>
+    <!-- For TalkBack: the outcome reached and how many questions it took. -->
+    <plurals name="activities_tree_reached">
+        <item quantity="one">You reached %1$s after %2$d question.</item>
+        <item quantity="other">You reached %1$s after %2$d questions.</item>
+    </plurals>
+
+    <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->
+    <string name="activities_find_error_ai_asked">Someone asked an AI assistant</string>
+    <string name="activities_find_error_problem">Problem</string>
+    <string name="activities_find_error_ai_note">The AI\'s answer. One step is wrong: spot the AI\'s mistake.</string>
+    <!-- The name of the list of the AI's steps, for TalkBack. -->
+    <string name="activities_find_error_ai_answer">The AI assistant\'s answer</string>
+    <!-- The name of the list of a worked answer's steps, for TalkBack. -->
+    <string name="activities_find_error_worked">Worked answer</string>
+    <!-- A step of the answer, for TalkBack, like "Step 2: Down 20% means times 0.8". -->
+    <string name="activities_find_error_step">Step %1$d: %2$s</string>
+    <string name="activities_find_error_wrong_step">The wrong step is step %1$d.</string>
+    <!-- For TalkBack, with the number of steps. -->
+    <string name="activities_find_error_description">A worked answer in %1$d steps. One step is wrong; pick it.</string>
+    <!-- For TalkBack, with the number of steps. -->
+    <string name="activities_find_error_ai_description">An AI assistant\'s answer in %1$d steps. One step is wrong; pick it.</string>
+
+    <!-- The name of the list of a problem's steps, for TalkBack. -->
+    <string name="activities_solver_steps">Steps</string>
+    <!-- Before why a pick is wrong, like "Not quite: that adds the tax first." -->
+    <string name="activities_solver_not_quite">Not quite:</string>
+    <!-- Before why the right pick is right. -->
+    <string name="activities_solver_right">Right:</string>
+    <!-- The learner's first, wrong pick at a step, like "Your first pick: Add 8% first". -->
+    <string name="activities_solver_first_pick">Your first pick: %1$s</string>
+    <!-- For TalkBack: which step the learner is on, like "Step 2 of 3." -->
+    <string name="activities_solver_description">Step %1$d of %2$d.</string>
+
+    <!-- Asks which ending a row's person takes, like "Which ending does nosotros take?" -->
+    <string name="activities_pattern_which_ending">Which ending does %1$s take?</string>
+    <!-- The name of the group of endings to pick, for TalkBack, like "Endings for nosotros". -->
+    <string name="activities_pattern_endings">Endings for %1$s</string>
+    <!-- An open cell, for TalkBack: the row's person and the word so far, like "nosotros: habl…, choose the ending". -->
+    <string name="activities_pattern_blank">%1$s: %2$s, choose the ending</string>
+    <!-- Read after a wrong form, for TalkBack, like "Correct answer: hablamos". -->
+    <string name="activities_pattern_correct">Correct answer: %1$s</string>
+    <!-- For TalkBack: the two words the table compares and how many cells are left. -->
+    <plurals name="activities_pattern_description">
+        <item quantity="one">A table of %1$s and %2$s. %3$d cell is left for you to complete.</item>
+        <item quantity="other">A table of %1$s and %2$s. %3$d cells are left for you to complete.</item>
+    </plurals>
+
+    <!-- The name of the list of lines spoken so far, for TalkBack. -->
+    <string name="activities_dialogue_conversation">The conversation so far</string>
+    <!-- Read before the other person's line, for TalkBack. -->
+    <string name="activities_dialogue_they_say">They say:</string>
+    <!-- Read before the learner's own earlier line, for TalkBack. -->
+    <string name="activities_dialogue_you_said">You said:</string>
+    <string name="activities_dialogue_hear_line">Hear this line</string>
+    <string name="activities_dialogue_hear_best">Hear the best reply</string>
+    <!-- For TalkBack, with the scene, like "A conversation: At a café. Choose the reply that fits." -->
+    <string name="activities_dialogue_description">A conversation: %1$s. Choose the reply that fits.</string>
 </resources>

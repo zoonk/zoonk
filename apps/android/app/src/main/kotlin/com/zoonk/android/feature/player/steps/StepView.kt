@@ -128,9 +128,14 @@ fun keyPick(
             }
 
             is StepContent.Activity -> {
-                (content.frame.check as? ChoiceCheckValue)?.value?.options?.getOrNull(index)?.let {
-                    LessonAnswer.Activity(choiceAnswer(it.id))
-                }
+                val picked =
+                    activityRenderers[content.frame.template]?.keyPick?.invoke(content.content, index)
+                        ?: (content.frame.check as? ChoiceCheckValue)
+                            ?.value
+                            ?.options
+                            ?.getOrNull(index)
+                            ?.let { choiceAnswer(it.id) }
+                picked?.let(LessonAnswer::Activity)
             }
 
             is StepContent.Language -> {

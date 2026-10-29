@@ -62,10 +62,19 @@ private class Shot(
     val isCorrect: Boolean,
 )
 
+private fun right(fixture: String) = Shot(fixture, ActivityFixtures.rightAnswer(fixture), isCorrect = true)
+
 private val shots =
     listOf(
         Shot("guessReveal", numericAnswer(40.0), isCorrect = false),
-        Shot("guessReveal.cited", numericAnswer(14.0), isCorrect = true),
+        right("guessReveal.cited"),
+        right("beforeAfter"),
+        right("chartReader"),
+        right("decisionTree"),
+        right("findError"),
+        right("stepSolver"),
+        right("patternTable"),
+        right("dialogueSimulator"),
     )
 
 /**
@@ -135,7 +144,12 @@ class ActivityScreenshots {
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
         val cache = AppCache(session, scope)
         val drafts = DraftStore(temporary.newFolder(), scope)
-        val screens = shots.flatMap { shot -> states(shot).map { (state, player) -> Triple(state, playable(listOf(ActivityFixtures.step(shot.fixture, id = "act"))), player) } }
+        val screens =
+            shots.flatMap { shot ->
+                states(shot).map { (state, player) ->
+                    Triple(state, playable(listOf(ActivityFixtures.step(shot.fixture, id = "act"))), player)
+                }
+            }
         val viewModel =
             LessonPlayerViewModel(
                 LESSON_ID,

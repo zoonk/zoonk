@@ -1,11 +1,13 @@
 package com.zoonk.android.feature.activities
 
+import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityFrame
 import com.zoonk.android.feature.player.model.ActivityStepContent
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
+import com.zoonk.api.models.ActivityExpectedAnswer
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.doubleOrNull
@@ -29,6 +31,31 @@ object ActivityFixtures {
         entry(name)["expected"]?.takeUnless { it is JsonNull }?.let { ApiJson.decodeFromJsonElement(ActivityExpected.serializer(), it) }
 
     fun value(name: String): Double? = entry(name)["value"]?.jsonPrimitive?.doubleOrNull
+
+    /** The learner's answer that reaches the expected end state, where both are written alike. */
+    fun rightAnswer(name: String): ActivityAnswer? =
+        when (val expected = expected(name)) {
+            is ActivityExpected.ChoiceWrapper -> {
+                choiceAnswer(expected.value.optionId)
+            }
+
+            is ActivityExpected.NumericWrapper -> {
+                numericAnswer(expected.value.`value`)
+            }
+
+            is ActivityExpected.InteractionWrapper -> {
+                runCatching {
+                    ApiJson.decodeFromJsonElement(
+                        ActivityAnswer.serializer(),
+                        ApiJson.encodeToJsonElement(ActivityExpectedAnswer.serializer(), expected.value.answer),
+                    )
+                }.getOrNull()
+            }
+
+            null -> {
+                null
+            }
+        }
 
     fun step(
         name: String,
