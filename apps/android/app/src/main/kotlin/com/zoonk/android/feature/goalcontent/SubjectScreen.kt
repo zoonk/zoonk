@@ -34,7 +34,6 @@ import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.plan.PlanOp
 import com.zoonk.android.feature.plan.PlanStore
-import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
@@ -64,30 +63,24 @@ fun SubjectScreen(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    val summary by app.learnerSummary.summary.collectShown()
-    val goal = summary.value?.planGoal
-
-    if (goal == null) {
-        PageScaffold(onBack = { navigator.back() }) { PageNotFound(navigator, it) }
-        return
+    WithPlanGoal(app.learnerSummary.summary, navigator) { goal ->
+        SubjectContent(
+            goalId = goal.id,
+            subjectKey = route.subjectKey,
+            syllabus = app.plans.syllabus[goal.id],
+            plans = app.plans,
+            navigator = navigator,
+            menu = { ReportProblemMenu(app, FeedbackTarget(screen = "subject")) },
+            ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
+            mindMapChapters = {
+                val maps by app.mindMaps.list[goal.id].collectShown()
+                maps.value
+                    ?.chapters
+                    ?.mapTo(mutableSetOf()) { it.chapterId }
+                    .orEmpty()
+            },
+        )
     }
-
-    SubjectContent(
-        goalId = goal.id,
-        subjectKey = route.subjectKey,
-        syllabus = app.plans.syllabus[goal.id],
-        plans = app.plans,
-        navigator = navigator,
-        menu = { ReportProblemMenu(app, FeedbackTarget(screen = "subject")) },
-        ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
-        mindMapChapters = {
-            val maps by app.mindMaps.list[goal.id].collectShown()
-            maps.value
-                ?.chapters
-                ?.mapTo(mutableSetOf()) { it.chapterId }
-                .orEmpty()
-        },
-    )
 }
 
 @Composable

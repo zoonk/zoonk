@@ -45,7 +45,6 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.mindmaps.ChapterMindMapCard
-import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
@@ -86,42 +85,42 @@ fun ChapterScreen(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    val summary by app.learnerSummary.summary.collectShown()
-    val goal = summary.value?.planGoal
     val chapterId = runCatching { UUID.fromString(route.chapterId) }.getOrNull()
 
-    when {
-        goal == null || chapterId == null -> {
-            PageScaffold(onBack = { navigator.back() }) { PageNotFound(navigator, it) }
-        }
+    WithPlanGoal(app.learnerSummary.summary, navigator) { goal ->
+        when {
+            chapterId == null -> {
+                PageScaffold(onBack = { navigator.back() }) { PageNotFound(navigator, it) }
+            }
 
-        // A language's chapters are its units: drawn here too, as main does, so a link never redirects.
-        goal.kind == LearnerSummaryGoal.Kind.LANGUAGE -> {
-            RoutePlaceholder(AppRoute.LanguageUnit(route.chapterId), app, navigator)
-        }
+            // A language's chapters are its units: drawn here too, as main does, so a link never redirects.
+            goal.kind == LearnerSummaryGoal.Kind.LANGUAGE -> {
+                RoutePlaceholder(AppRoute.LanguageUnit(route.chapterId), app, navigator)
+            }
 
-        else -> {
-            val key = ChapterKey(goal.id, chapterId)
-            ChapterContent(
-                key = key,
-                store = app.goalContent,
-                navigator = navigator,
-                menu = {
-                    ReportProblemMenu(
-                        app,
-                        FeedbackTarget(
-                            screen = "chapter",
-                            contentKind = FeedbackSubmissionContext.ContentKind.CHAPTER,
-                            contentId = chapterId,
-                        ),
-                    )
-                },
-                ask = { AskTutor(TutorScope.Chapter(route.chapterId), app, navigator, appearance = it) },
-                mindMap = {
-                    val map by app.mindMaps.chapter[key].collectShown()
-                    map.value?.let { MindMapSlot(it) { ChapterMindMapCard(it, key, app, navigator) } }
-                },
-            )
+            else -> {
+                val key = ChapterKey(goal.id, chapterId)
+                ChapterContent(
+                    key = key,
+                    store = app.goalContent,
+                    navigator = navigator,
+                    menu = {
+                        ReportProblemMenu(
+                            app,
+                            FeedbackTarget(
+                                screen = "chapter",
+                                contentKind = FeedbackSubmissionContext.ContentKind.CHAPTER,
+                                contentId = chapterId,
+                            ),
+                        )
+                    },
+                    ask = { AskTutor(TutorScope.Chapter(route.chapterId), app, navigator, appearance = it) },
+                    mindMap = {
+                        val map by app.mindMaps.chapter[key].collectShown()
+                        map.value?.let { MindMapSlot(it) { ChapterMindMapCard(it, key, app, navigator) } }
+                    },
+                )
+            }
         }
     }
 }

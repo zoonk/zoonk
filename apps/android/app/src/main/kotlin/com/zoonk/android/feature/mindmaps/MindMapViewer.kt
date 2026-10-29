@@ -67,7 +67,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.feature.goalcontent.PageLoading
 import com.zoonk.android.feature.goalcontent.PageNotFound
-import com.zoonk.android.feature.plan.planGoal
+import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LocalPrivatePictures
@@ -96,40 +96,40 @@ fun MindMapScreen(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    val summary by app.learnerSummary.summary.collectShown()
-    val goal = summary.value?.planGoal
-    val host = mindMapsHost(app)
-    val chapterId = runCatching { UUID.fromString(route.chapterId) }.getOrNull()
     val close: () -> Unit = { navigator.closeTask() }
 
-    if (goal == null || host == null || chapterId == null) {
-        TaskScaffold(onClose = close) { PageNotFound(navigator, it) }
-        return
-    }
-
-    val listed by app.mindMaps.list[goal.id]
-        .state
-        .collectAsStateWithLifecycle()
-    val fromList =
-        listed.value
-            ?.chapters
-            ?.firstOrNull { it.chapterId == chapterId }
-            ?.let { map -> map.image?.let { ViewedMap(map.title, it, map.outline) } }
-    val viewed = fromList?.let(Viewed::Shown) ?: chapterMap(app, ChapterKey(goal.id, chapterId))
-
-    when (viewed) {
-        Viewed.Loading -> {
-            TaskScaffold(onClose = close) { PageLoading(it) }
-        }
-
-        Viewed.Missing -> {
+    WithPlanGoal(app.learnerSummary.summary, navigator, frame = { TaskScaffold(onClose = close, content = it) }) { goal ->
+        val host = mindMapsHost(app)
+        val chapterId = runCatching { UUID.fromString(route.chapterId) }.getOrNull()
+        if (host == null || chapterId == null) {
             TaskScaffold(onClose = close) { PageNotFound(navigator, it) }
+            return@WithPlanGoal
         }
 
-        is Viewed.Shown -> {
-            val maps = host.maps(goal.id)
-            CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
-                MindMapViewer(viewed.map, onClose = close, onSave = rememberSavePicture(maps, viewed.map.image, viewed.map.title))
+        val listed by app.mindMaps.list[goal.id]
+            .state
+            .collectAsStateWithLifecycle()
+        val fromList =
+            listed.value
+                ?.chapters
+                ?.firstOrNull { it.chapterId == chapterId }
+                ?.let { map -> map.image?.let { ViewedMap(map.title, it, map.outline) } }
+        val viewed = fromList?.let(Viewed::Shown) ?: chapterMap(app, ChapterKey(goal.id, chapterId))
+
+        when (viewed) {
+            Viewed.Loading -> {
+                TaskScaffold(onClose = close) { PageLoading(it) }
+            }
+
+            Viewed.Missing -> {
+                TaskScaffold(onClose = close) { PageNotFound(navigator, it) }
+            }
+
+            is Viewed.Shown -> {
+                val maps = host.maps(goal.id)
+                CompositionLocalProvider(LocalPrivatePictures provides host.pictures) {
+                    MindMapViewer(viewed.map, onClose = close, onSave = rememberSavePicture(maps, viewed.map.image, viewed.map.title))
+                }
             }
         }
     }

@@ -60,7 +60,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.PageLoading
 import com.zoonk.android.feature.goalcontent.PageNotFound
-import com.zoonk.android.feature.plan.planGoal
+import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -81,16 +81,14 @@ fun MindMapsScreen(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    val summary by app.learnerSummary.summary.collectShown()
-    val goal = summary.value?.planGoal
-    val host = mindMapsHost(app)
-
-    if (goal == null || host == null) {
-        PageScaffold(onBack = { navigator.back() }) { PageNotFound(navigator, it) }
-        return
+    WithPlanGoal(app.learnerSummary.summary, navigator) { goal ->
+        val host = mindMapsHost(app)
+        if (host == null) {
+            PageScaffold(onBack = { navigator.back() }) { PageNotFound(navigator, it) }
+        } else {
+            MindMapsContent(goal.id, host, navigator)
+        }
     }
-
-    MindMapsContent(goal.id, host, navigator)
 }
 
 @Composable

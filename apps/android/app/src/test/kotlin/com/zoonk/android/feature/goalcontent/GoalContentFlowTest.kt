@@ -1,8 +1,11 @@
 package com.zoonk.android.feature.goalcontent
 
 import androidx.activity.ComponentActivity
+import androidx.compose.material3.Text
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -12,13 +15,18 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.LearnerSummaryApi
+import com.zoonk.android.data.LearnerSummaryStore
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanOp
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.plan.learnerSummary
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.LearnerSummary
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -68,6 +76,48 @@ class GoalContentFlowTest {
                 ChapterContent(ChapterKey(goalId, UUID.fromString(chapterId(3))), store, navigator)
             }
         }
+    }
+
+    private fun showGoalPage(api: LearnerSummaryApi) {
+        val summary = LearnerSummaryStore(api, cache, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)).summary
+        rule.setContent {
+            ZoonkTheme {
+                navigator = rememberAppNavigator()
+                WithPlanGoal(summary, navigator) { Text(it.title) }
+            }
+        }
+    }
+
+    @Test
+    fun aGoalPageWaitsForTheSummaryInsteadOfSayingItsNotFound() {
+        val reply = CompletableDeferred<LearnerSummary>()
+        showGoalPage { reply.await() }
+
+        rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)).assertIsDisplayed()
+        rule.onNodeWithText("We couldn't find this page").assertDoesNotExist()
+
+        reply.complete(learnerSummary(title = "Pass ENEM"))
+
+        rule.onNodeWithText("Pass ENEM").assertIsDisplayed()
+    }
+
+    @Test
+    fun aSummaryThatDidntLoadOffersToTryAgain() {
+        var reachable = false
+        showGoalPage { if (reachable) learnerSummary(title = "Pass ENEM") else throw ApiException(ApiError.Network) }
+
+        rule.onNodeWithText("This page didn't load").assertIsDisplayed()
+        reachable = true
+        rule.onNodeWithText("Try again").performClick()
+
+        rule.onNodeWithText("Pass ENEM").assertIsDisplayed()
+    }
+
+    @Test
+    fun aLearnerWithoutAPlanGoalIsToldThePageIsNotFound() {
+        showGoalPage { learnerSummary(kind = "explain") }
+
+        rule.onNodeWithText("We couldn't find this page").assertIsDisplayed()
     }
 
     @Test

@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -66,16 +67,26 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Resource
+import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
+import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.LearnerSummary
+import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.SyllabusChapter
+import kotlinx.coroutines.launch
 import java.net.URI
 import java.time.LocalDate
 import java.util.Date
@@ -511,6 +522,31 @@ internal fun ContinueButton(
 ) {
     Button(onClick = onClick, modifier = modifier) {
         Text(stringResource(if (started) R.string.goalcontent_continue else R.string.goalcontent_start))
+    }
+}
+
+/**
+ * A page about the learner's plan goal: loading while the summary loads, its failure with Retry,
+ * and not found only once the summary says there's no plan goal.
+ */
+@Composable
+internal fun WithPlanGoal(
+    summary: Resource<LearnerSummary>,
+    navigator: AppNavigator,
+    frame: @Composable (
+        content: @Composable (PaddingValues) -> Unit,
+    ) -> Unit = { PageScaffold(onBack = { navigator.back() }, content = it) },
+    content: @Composable (LearnerSummaryGoal) -> Unit,
+) {
+    val state by summary.collectShown()
+    val scope = rememberCoroutineScope()
+    val goal = state.value?.planGoal
+
+    when {
+        goal != null -> content(goal)
+        state.value != null || state == LoadState.Empty -> frame { PageNotFound(navigator, it) }
+        state is LoadState.Failed -> frame { LoadFailedMessage(onRetry = { scope.launch { summary.refresh() } }, Modifier.padding(it)) }
+        else -> frame { PageLoading(it) }
     }
 }
 
