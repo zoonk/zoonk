@@ -1,18 +1,14 @@
-import { randomBytes } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { getEnvironment } from "@zoonk/utils/environment";
 import { verifyAssertion, verifyAttestation } from "node-app-attest";
 import { z } from "zod";
+import { consumeAppChallenge } from "../request-guards/app-challenge";
 import {
   APP_ATTEST_HEADERS,
   type AppAttestBinding,
   appAttestHeadersSchema,
   getAppAttestClientData,
 } from "./app-attest-contract";
-
-const CHALLENGE_LIFETIME_MS = 300_000;
-const CHALLENGE_BYTES = 32;
-const CHALLENGE_IDENTIFIER_PREFIX = "app-attest-challenge:";
 
 /** The library is untyped: these are the parts of its answers we keep. */
 const verifiedAttestationSchema = z.object({ publicKey: z.string().min(1) });
@@ -24,32 +20,6 @@ function getAppIdentity() {
   return APPLE_APP_BUNDLE_IDENTIFIER && APPLE_TEAM_ID
     ? { bundleIdentifier: APPLE_APP_BUNDLE_IDENTIFIER, teamIdentifier: APPLE_TEAM_ID }
     : null;
-}
-
-export async function issueAppAttestChallenge(): Promise<string> {
-  const challenge = randomBytes(CHALLENGE_BYTES).toString("base64url");
-
-  await prisma.verification.create({
-    data: {
-      expiresAt: new Date(Date.now() + CHALLENGE_LIFETIME_MS),
-      identifier: `${CHALLENGE_IDENTIFIER_PREFIX}${challenge}`,
-      value: "app-attest",
-    },
-  });
-
-  return challenge;
-}
-
-/** Uses a challenge up in one statement, so two requests can't both spend it. */
-async function consumeChallenge(challenge: string): Promise<boolean> {
-  const { count } = await prisma.verification.deleteMany({
-    where: {
-      expiresAt: { gt: new Date() },
-      identifier: `${CHALLENGE_IDENTIFIER_PREFIX}${challenge}`,
-    },
-  });
-
-  return count === 1;
 }
 
 /** The library throws on every failed check; any throw means the proof doesn't hold. */
@@ -80,7 +50,7 @@ export async function registerAppAttestKey({
     throw new Error("App Attest needs APPLE_TEAM_ID and APPLE_APP_BUNDLE_IDENTIFIER");
   }
 
-  if (!(await consumeChallenge(challenge))) {
+  if (!(await consumeAppChallenge(challenge))) {
     return false;
   }
 
@@ -140,7 +110,7 @@ export async function hasAppAttestAssertion({
 
   const key = await prisma.appAttestKey.findUnique({ where: { keyId } });
 
-  if (!key || !(await consumeChallenge(challenge))) {
+  if (!key || !(await consumeAppChallenge(challenge))) {
     return false;
   }
 

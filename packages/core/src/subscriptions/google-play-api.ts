@@ -18,7 +18,6 @@ const HTTP_GONE = 410;
 /** Statuses for a token Google doesn't know, or no longer reports (expired more than 60 days ago). */
 const INVALID_PURCHASE_STATUSES = new Set([HTTP_BAD_REQUEST, HTTP_NOT_FOUND]);
 
-/** The shared service account's failures, in Google Play's terms. */
 function toGooglePlayError(error: unknown): never {
   throw error instanceof GoogleApiError
     ? new GooglePlayError(error.reason, { cause: error })

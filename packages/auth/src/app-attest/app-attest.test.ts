@@ -1,12 +1,13 @@
 import { prisma } from "@zoonk/db";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { issueAppChallenge } from "../request-guards/app-challenge";
 import { makeAssertion, makeDeviceKey } from "./_test-utils/assertion";
 import {
   RECORDED_APP,
   RECORDED_DEVELOPMENT_ATTESTATION,
   RECORDED_PRODUCTION_ATTESTATION,
 } from "./_test-utils/recorded-attestations";
-import { hasAppAttestAssertion, issueAppAttestChallenge, registerAppAttestKey } from "./app-attest";
+import { hasAppAttestAssertion, registerAppAttestKey } from "./app-attest";
 import {
   APP_ATTEST_HEADERS,
   APP_ATTEST_OPERATIONS,
@@ -66,7 +67,7 @@ async function signedRequest({
   counter: number;
   key: ReturnType<typeof makeDeviceKey>;
 }) {
-  const challenge = await issueAppAttestChallenge();
+  const challenge = await issueAppChallenge();
   const assertion = makeAssertion({ ...options, challenge, counter, privateKey: key.privateKey });
 
   return assertionHeaders({ assertion, challenge, keyId: key.keyId });
@@ -227,7 +228,7 @@ describe("App Attest", () => {
     it("refuses a key that never registered, a signature by another key, or another app", async () => {
       const registered = await registeredDeviceKey();
       const unregistered = makeDeviceKey();
-      const challenge = await issueAppAttestChallenge();
+      const challenge = await issueAppChallenge();
 
       const forged = makeAssertion({ challenge, counter: 1, privateKey: unregistered.privateKey });
 
@@ -244,7 +245,7 @@ describe("App Attest", () => {
 
     it("refuses a request without all three headers or with a malformed assertion", async () => {
       const key = await registeredDeviceKey();
-      const challenge = await issueAppAttestChallenge();
+      const challenge = await issueAppChallenge();
 
       const results = await Promise.all([
         isAttested(new Headers()),

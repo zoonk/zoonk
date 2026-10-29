@@ -11,7 +11,7 @@ export const appAttestPaths = {
   "/app-attest/challenges": {
     post: {
       description:
-        "A one-time challenge for Apple App Attest. The iOS app asks for one before attesting its key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof.",
+        "A one-time challenge for the apps' bot proof. The iOS app asks for one before attesting its App Attest key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof; the Android app asks for one before each of those requests and sends a Play Integrity token in the `X-Play-Integrity-*` headers.",
       operationId: "createAppAttestChallenge",
       responses: {
         "201": {
@@ -21,7 +21,7 @@ export const appAttestPaths = {
         "429": authRateLimitResponse,
       },
       security: PUBLIC_SECURITY,
-      summary: "Get an App Attest challenge",
+      summary: "Get an app proof challenge",
       tags: ["Sessions"],
     },
   },

@@ -8,6 +8,8 @@ import {
   APP_ATTEST_OPERATIONS,
   type AppAttestBinding,
 } from "../app-attest/app-attest-contract";
+import { hasPlayIntegrityProof } from "../play-integrity/play-integrity";
+import { PLAY_INTEGRITY_HEADERS } from "../play-integrity/play-integrity-contract";
 import { getBotIdVerification } from "../request-guards/bot-id";
 
 /** Each app's `initBotId` must cover these: main's `/api/auth/*` and the API's `/v1/auth/*`. */
@@ -78,7 +80,7 @@ async function isAuthenticatedEmailCodeRequest({
   );
 }
 
-async function readAppAttestBinding(
+async function readAppProofBinding(
   path: string,
   request: Request,
 ): Promise<AppAttestBinding | null> {
@@ -106,8 +108,8 @@ async function readAppAttestBinding(
   return null;
 }
 
-/** A missing or failed assertion falls through to BotID, which answers the usual 403. */
-async function isAppAttestedRequest({
+/** A missing or failed proof falls through to BotID, which answers the usual 403. */
+async function isAppProvenRequest({
   context,
   request,
 }: {
@@ -118,13 +120,26 @@ async function isAppAttestedRequest({
   const { pathname } = new URL(request.url);
   const path = BOT_CHECKED_AUTH_PATHS.find((checked) => pathname === `${basePath}${checked}`);
 
-  if (request.method !== "POST" || !path || !request.headers.has(APP_ATTEST_HEADERS.keyId)) {
+  const { headers } = request;
+  const isAppAttest = headers.has(APP_ATTEST_HEADERS.keyId);
+
+  if (
+    request.method !== "POST" ||
+    !path ||
+    (!isAppAttest && !headers.has(PLAY_INTEGRITY_HEADERS.token))
+  ) {
     return false;
   }
 
-  const binding = await readAppAttestBinding(path, request);
+  const binding = await readAppProofBinding(path, request);
 
-  return binding !== null && (await hasAppAttestAssertion({ binding, headers: request.headers }));
+  if (!binding) {
+    return false;
+  }
+
+  return isAppAttest
+    ? hasAppAttestAssertion({ binding, headers })
+    : hasPlayIntegrityProof({ binding, headers });
 }
 
 export function botCheckPlugin() {
@@ -141,7 +156,7 @@ export function botCheckPlugin() {
     onRequest: async (request, context) => {
       if (
         (await isAuthenticatedEmailCodeRequest({ context, request })) ||
-        (await isAppAttestedRequest({ context, request }))
+        (await isAppProvenRequest({ context, request }))
       ) {
         return;
       }

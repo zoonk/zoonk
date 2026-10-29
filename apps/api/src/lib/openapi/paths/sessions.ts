@@ -2,7 +2,7 @@ import { nativeAppleCredentialsSchema } from "@zoonk/auth/native-apple-contract"
 import { z } from "zod";
 import { accessErrorCodes } from "../../access-error-codes";
 import { sessionErrorCodes } from "../../session-error-codes";
-import { appAttestHeaderParamsSchema } from "../schemas/app-attest";
+import { appProofHeaderParamsSchema } from "../schemas/app-attest";
 import {
   badRequestResponse,
   forbiddenResponse,
@@ -45,15 +45,15 @@ const signupValidationResponse = {
 
 const emailCodeForbiddenResponse = {
   ...forbiddenResponse,
-  description: `Account disabled, email code locked, or the request had neither BotID's nor App Attest's proof. Error codes: ${sessionErrorCodes.accountDisabled}, ${sessionErrorCodes.emailCodeLocked}, ${accessErrorCodes.botDetected}.`,
+  description: `Account disabled, email code locked, or the request had no bot proof (BotID's, App Attest's or Play Integrity's). Error codes: ${sessionErrorCodes.accountDisabled}, ${sessionErrorCodes.emailCodeLocked}, ${accessErrorCodes.botDetected}.`,
 } as const;
 
 const botCheckForbiddenResponse = {
   ...forbiddenResponse,
-  description: `The request had neither BotID's nor App Attest's proof, or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: ${accessErrorCodes.botDetected}, ${accessErrorCodes.untrustedOrigin}.`,
+  description: `The request had no bot proof (BotID's, App Attest's or Play Integrity's), or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: ${accessErrorCodes.botDetected}, ${accessErrorCodes.untrustedOrigin}.`,
 } as const;
 
-const EMAIL_CODE_BOT_CHECK = `Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the \`X-App-Attest-*\` headers (see \`POST /v1/app-attest/challenges\`); without either they get 403 ${accessErrorCodes.botDetected}.`;
+const EMAIL_CODE_BOT_CHECK = `Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the \`X-App-Attest-*\` headers or the Android app's Play Integrity token in the \`X-Play-Integrity-*\` headers (see \`POST /v1/app-attest/challenges\`); without any of them they get 403 ${accessErrorCodes.botDetected}.`;
 
 const googleAuthorizationResponse = {
   ...unauthorizedResponse,
@@ -81,7 +81,7 @@ export const sessionPaths = {
         content: { "application/json": { schema: emailSignInCodeRequestSchema } },
         required: true,
       },
-      requestParams: { header: appAttestHeaderParamsSchema },
+      requestParams: { header: appProofHeaderParamsSchema },
       responses: {
         "204": { description: "Sign-in code sent" },
         "400": signupValidationResponse,
@@ -134,7 +134,7 @@ export const sessionPaths = {
         content: { "application/json": { schema: emailCodeSessionRequestSchema } },
         required: true,
       },
-      requestParams: { header: appAttestHeaderParamsSchema },
+      requestParams: { header: appProofHeaderParamsSchema },
       responses: {
         "200": sessionTokenResponse,
         "400": emailCodeErrorResponse,

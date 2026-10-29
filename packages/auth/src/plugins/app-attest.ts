@@ -1,11 +1,12 @@
 import { type BetterAuthPlugin } from "better-auth";
 import { APIError, createAuthEndpoint } from "better-auth/api";
 import { z } from "zod";
-import { issueAppAttestChallenge, registerAppAttestKey } from "../app-attest/app-attest";
+import { registerAppAttestKey } from "../app-attest/app-attest";
 import {
   APP_ATTESTATION_INVALID_ERROR_CODE,
   appAttestKeyRequestSchema,
 } from "../app-attest/app-attest-contract";
+import { issueAppChallenge } from "../request-guards/app-challenge";
 
 /** Auth endpoints, so Better Auth's IP rate limit covers them like every sign-in. */
 export function appAttestPlugin() {
@@ -14,7 +15,7 @@ export function appAttestPlugin() {
       createAppAttestChallenge: createAuthEndpoint(
         "/app-attest/challenge",
         { body: z.object({}).strict(), method: "POST" },
-        async (context) => context.json({ challenge: await issueAppAttestChallenge() }),
+        async (context) => context.json({ challenge: await issueAppChallenge() }),
       ),
       createAppAttestKey: createAuthEndpoint(
         "/app-attest/key",

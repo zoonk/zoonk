@@ -3,6 +3,10 @@ import {
   appAttestHeadersSchema,
   appAttestKeyRequestSchema,
 } from "@zoonk/auth/app-attest-contract";
+import {
+  PLAY_INTEGRITY_HEADERS,
+  playIntegrityHeadersSchema,
+} from "@zoonk/auth/play-integrity-contract";
 import { z } from "zod";
 
 export const appAttestChallengeResponseSchema = z
@@ -12,7 +16,7 @@ export const appAttestChallengeResponseSchema = z
       .min(1)
       .meta({
         description:
-          "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header).",
+          "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header), and a Play Integrity token's request hash covers it the same way (see the `x-play-integrity-token` header).",
       }),
   })
   .meta({ id: "AppAttestChallenge" });
@@ -32,8 +36,8 @@ export const appAttestKeyRequestBodySchema = appAttestKeyRequestSchema
   })
   .meta({ id: "AppAttestKeyRequest" });
 
-/** All three headers, or none. */
-export const appAttestHeaderParamsSchema = z.object({
+/** iOS sends App Attest's three headers, Android Play Integrity's two, and a browser none. */
+export const appProofHeaderParamsSchema = z.object({
   [APP_ATTEST_HEADERS.assertion]: appAttestHeadersSchema.shape[APP_ATTEST_HEADERS.assertion]
     .optional()
     .meta({
@@ -46,4 +50,15 @@ export const appAttestHeaderParamsSchema = z.object({
   [APP_ATTEST_HEADERS.keyId]: appAttestHeadersSchema.shape[APP_ATTEST_HEADERS.keyId]
     .optional()
     .meta({ description: "The key registered with `POST /v1/app-attest/keys`" }),
+  [PLAY_INTEGRITY_HEADERS.challenge]: playIntegrityHeadersSchema.shape[
+    PLAY_INTEGRITY_HEADERS.challenge
+  ]
+    .optional()
+    .meta({ description: "A fresh challenge from `POST /v1/app-attest/challenges`" }),
+  [PLAY_INTEGRITY_HEADERS.token]: playIntegrityHeadersSchema.shape[PLAY_INTEGRITY_HEADERS.token]
+    .optional()
+    .meta({
+      description:
+        "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)",
+    }),
 });

@@ -361,10 +361,10 @@
     },
     "/app-attest/challenges": {
       "post": {
-        "description": "A one-time challenge for Apple App Attest. The iOS app asks for one before attesting its key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof.",
+        "description": "A one-time challenge for the apps' bot proof. The iOS app asks for one before attesting its App Attest key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof; the Android app asks for one before each of those requests and sends a Play Integrity token in the `X-Play-Integrity-*` headers.",
         "operationId": "createAppAttestChallenge",
         "security": [],
-        "summary": "Get an App Attest challenge",
+        "summary": "Get an app proof challenge",
         "tags": [
           "Sessions"
         ],
@@ -4063,7 +4063,7 @@
     },
     "/guests": {
       "post": {
-        "description": "A guest can take up to three lessons, at most one newly generated, start one goal and use a day's worth of small AI help, and all guests share one daily AI budget: once it's spent, a guest's new AI work answers 403 `SIGN_UP_REQUIRED` (ask them to create a free account to continue), while lessons already written and pictures already drawn stay free. Signing up or in later moves the guest's progress to that account, whose own caps apply from then on. Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the `X-App-Attest-*` headers (see `POST /v1/app-attest/challenges`).",
+        "description": "A guest can take up to three lessons, at most one newly generated, start one goal and use a day's worth of small AI help, and all guests share one daily AI budget: once it's spent, a guest's new AI work answers 403 `SIGN_UP_REQUIRED` (ask them to create a free account to continue), while lessons already written and pictures already drawn stay free. Signing up or in later moves the guest's progress to that account, whose own caps apply from then on. Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the `X-App-Attest-*` headers or the Android app's Play Integrity token in the `X-Play-Integrity-*` headers (see `POST /v1/app-attest/challenges`).",
         "operationId": "createGuestSession",
         "security": [],
         "summary": "Create a guest session",
@@ -4107,6 +4107,28 @@
               "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
             },
             "description": "The key registered with `POST /v1/app-attest/keys`"
+          },
+          {
+            "in": "header",
+            "name": "x-play-integrity-challenge",
+            "schema": {
+              "description": "A fresh challenge from `POST /v1/app-attest/challenges`",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "description": "A fresh challenge from `POST /v1/app-attest/challenges`"
+          },
+          {
+            "in": "header",
+            "name": "x-play-integrity-token",
+            "schema": {
+              "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 16384
+            },
+            "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)"
           }
         ],
         "responses": {
@@ -4121,7 +4143,7 @@
             }
           },
           "403": {
-            "description": "The request had neither BotID's nor App Attest's proof. Error code: BOT_DETECTED.",
+            "description": "The request had no bot proof (BotID's, App Attest's or Play Integrity's). Error code: BOT_DETECTED.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11373,7 +11395,7 @@
     },
     "/email-sign-in-codes": {
       "post": {
-        "description": "Emails a sign-in code; signing in with it creates the account the first time. An optional existing bearer session, even one too old to delete the account directly, authorizes delivery only to that account's email without BotID. The session must still be active; guests and disabled accounts are excluded. This does not refresh the session or authorize deletion: submit the emailed code to DELETE /v1/me. All sends retain Better Auth's IP rate limit. Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the `X-App-Attest-*` headers (see `POST /v1/app-attest/challenges`); without either they get 403 BOT_DETECTED.",
+        "description": "Emails a sign-in code; signing in with it creates the account the first time. An optional existing bearer session, even one too old to delete the account directly, authorizes delivery only to that account's email without BotID. The session must still be active; guests and disabled accounts are excluded. This does not refresh the session or authorize deletion: submit the emailed code to DELETE /v1/me. All sends retain Better Auth's IP rate limit. Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the `X-App-Attest-*` headers or the Android app's Play Integrity token in the `X-Play-Integrity-*` headers (see `POST /v1/app-attest/challenges`); without any of them they get 403 BOT_DETECTED.",
         "operationId": "createEmailSignInCode",
         "security": [
           {},
@@ -11422,6 +11444,28 @@
               "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
             },
             "description": "The key registered with `POST /v1/app-attest/keys`"
+          },
+          {
+            "in": "header",
+            "name": "x-play-integrity-challenge",
+            "schema": {
+              "description": "A fresh challenge from `POST /v1/app-attest/challenges`",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "description": "A fresh challenge from `POST /v1/app-attest/challenges`"
+          },
+          {
+            "in": "header",
+            "name": "x-play-integrity-token",
+            "schema": {
+              "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 16384
+            },
+            "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)"
           }
         ],
         "requestBody": {
@@ -11449,7 +11493,7 @@
             }
           },
           "403": {
-            "description": "The request had neither BotID's nor App Attest's proof, or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: BOT_DETECTED, UNTRUSTED_ORIGIN.",
+            "description": "The request had no bot proof (BotID's, App Attest's or Play Integrity's), or it has browser fetch metadata (Sec-Fetch-*) without an Origin Zoonk trusts. Error codes: BOT_DETECTED, UNTRUSTED_ORIGIN.",
             "content": {
               "application/json": {
                 "schema": {
@@ -11632,7 +11676,7 @@
     },
     "/sessions/email-code": {
       "post": {
-        "description": "Signs in with the code from `POST /v1/email-sign-in-codes`, creating the account the first time. Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the `X-App-Attest-*` headers (see `POST /v1/app-attest/challenges`); without either they get 403 BOT_DETECTED.",
+        "description": "Signs in with the code from `POST /v1/email-sign-in-codes`, creating the account the first time. Requests must pass Vercel BotID, which runs in a browser, or carry the iOS app's App Attest assertion in the `X-App-Attest-*` headers or the Android app's Play Integrity token in the `X-Play-Integrity-*` headers (see `POST /v1/app-attest/challenges`); without any of them they get 403 BOT_DETECTED.",
         "operationId": "createEmailCodeSession",
         "security": [],
         "summary": "Sign in with an email code",
@@ -11676,6 +11720,28 @@
               "pattern": "^$|^(?:[0-9a-zA-Z+/]{4})*(?:(?:[0-9a-zA-Z+/]{2}==)|(?:[0-9a-zA-Z+/]{3}=))?$"
             },
             "description": "The key registered with `POST /v1/app-attest/keys`"
+          },
+          {
+            "in": "header",
+            "name": "x-play-integrity-challenge",
+            "schema": {
+              "description": "A fresh challenge from `POST /v1/app-attest/challenges`",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 128
+            },
+            "description": "A fresh challenge from `POST /v1/app-attest/challenges`"
+          },
+          {
+            "in": "header",
+            "name": "x-play-integrity-token",
+            "schema": {
+              "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 16384
+            },
+            "description": "The token a Play Integrity standard request returned, made with the request hash set to the unpadded base64url SHA-256 of the request's client data (built as for `x-app-attest-assertion`)"
           }
         ],
         "requestBody": {
@@ -11710,7 +11776,7 @@
             }
           },
           "403": {
-            "description": "Account disabled, email code locked, or the request had neither BotID's nor App Attest's proof. Error codes: ACCOUNT_DISABLED, EMAIL_SIGN_IN_CODE_LOCKED, BOT_DETECTED.",
+            "description": "Account disabled, email code locked, or the request had no bot proof (BotID's, App Attest's or Play Integrity's). Error codes: ACCOUNT_DISABLED, EMAIL_SIGN_IN_CODE_LOCKED, BOT_DETECTED.",
             "content": {
               "application/json": {
                 "schema": {
@@ -28872,7 +28938,7 @@
           "challenge": {
             "type": "string",
             "minLength": 1,
-            "description": "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header)."
+            "description": "Single-use and valid for five minutes. An attestation's client data hash is the SHA-256 of its UTF-8 bytes; an assertion signs it inside the request's client data (see the `x-app-attest-assertion` header), and a Play Integrity token's request hash covers it the same way (see the `x-play-integrity-token` header)."
           }
         },
         "required": [

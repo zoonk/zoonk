@@ -1,10 +1,12 @@
 import { SignJWT, importPKCS8 } from "jose";
 import { z } from "zod";
 
-/** The Android app's application id on Google Play. */
 export const GOOGLE_PLAY_PACKAGE_NAME = "com.zoonk";
 
-const GOOGLE_SCOPES = "https://www.googleapis.com/auth/androidpublisher";
+const GOOGLE_SCOPES = [
+  "https://www.googleapis.com/auth/androidpublisher",
+  "https://www.googleapis.com/auth/playintegrity",
+].join(" ");
 
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 const TOKEN_LIFETIME_SECONDS = 3600;
@@ -103,7 +105,6 @@ async function getAccessToken() {
   return token;
 }
 
-/** Calls a Google API as Zoonk's service account: a GET, or a POST when there's a JSON body. */
 export async function callGoogleApi(url: string, body?: unknown) {
   const token = await getAccessToken();
   const headers = { authorization: `Bearer ${token}`, "content-type": "application/json" };

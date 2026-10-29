@@ -44,7 +44,7 @@ const MAX_ASSERTION_LENGTH = 4096;
 const MAX_CHALLENGE_LENGTH = 128;
 
 const appAttestKeyIdSchema = z.base64().max(MAX_KEY_ID_LENGTH);
-const appAttestChallengeSchema = z.string().min(1).max(MAX_CHALLENGE_LENGTH);
+export const appAttestChallengeSchema = z.string().min(1).max(MAX_CHALLENGE_LENGTH);
 
 export const appAttestKeyRequestSchema = z
   .object({

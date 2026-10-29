@@ -1,4 +1,4 @@
-import { randomUUID } from "node:crypto";
+import { createHash, randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { betterAuth } from "better-auth/minimal";
 import { checkBotId } from "botid/server";
@@ -13,6 +13,8 @@ import {
 import { BETTER_AUTH_BASE_PATH } from "../config";
 import { createEmailOTPPlugin } from "../email-otp-plugin";
 import { NativeAuthResponseError, getAuthError } from "../errors";
+import { decodePlayIntegrityToken } from "../play-integrity/decode-play-integrity-token";
+import { PLAY_INTEGRITY_HEADERS } from "../play-integrity/play-integrity-contract";
 import { baseAuthConfig } from "../server";
 import { appAttestPlugin } from "./app-attest";
 import { botCheckPlugin } from "./bot-check";
@@ -21,6 +23,10 @@ import { guestPlugin } from "./guest";
 /** BotID only answers on Vercel, and email delivery needs Next's request context. */
 vi.mock("botid/server", () => ({ checkBotId: vi.fn() }));
 vi.mock("./otp", () => ({ sendVerificationOTP: vi.fn() }));
+
+vi.mock("../play-integrity/decode-play-integrity-token", () => ({
+  decodePlayIntegrityToken: vi.fn(),
+}));
 
 const BASE_URL = "http://localhost:3000";
 
@@ -172,6 +178,53 @@ describe("bot check on auth requests", () => {
     ]);
 
     expect(refused.map((response) => response.status)).toStrictEqual([403, 403, 403]);
+  });
+
+  it("lets the Android app make a guest and ask for a code with Play Integrity tokens", async () => {
+    async function playIntegrity(binding: AppAttestBinding) {
+      const response = await post("/app-attest/challenge", {});
+      const { challenge } = (await response.json()) as { challenge: string };
+      const clientData = ["zoonk-app-attest:1", challenge, binding.operation, ...binding.fields];
+
+      vi.mocked(decodePlayIntegrityToken).mockResolvedValueOnce({
+        appIntegrity: { appRecognitionVerdict: "PLAY_RECOGNIZED" },
+        deviceIntegrity: { deviceRecognitionVerdict: ["MEETS_DEVICE_INTEGRITY"] },
+        requestDetails: {
+          requestHash: createHash("sha256").update(clientData.join("\n")).digest("base64url"),
+          requestPackageName: "com.zoonk",
+        },
+      });
+
+      return {
+        [PLAY_INTEGRITY_HEADERS.challenge]: challenge,
+        [PLAY_INTEGRITY_HEADERS.token]: "play-integrity-token",
+      };
+    }
+
+    const address = email();
+    const signedFor = { fields: [address], operation: APP_ATTEST_OPERATIONS.emailCode };
+
+    const guest = await post(
+      "/sign-in/anonymous",
+      {},
+      await playIntegrity({ fields: [], operation: APP_ATTEST_OPERATIONS.guest }),
+    );
+
+    const code = await post(
+      "/email-otp/send-verification-otp",
+      { email: address, type: "sign-in" },
+      await playIntegrity(signedFor),
+    );
+
+    // A token made for one email proves nothing for another: BotID decides.
+    const otherEmail = await post(
+      "/email-otp/send-verification-otp",
+      { email: email(), type: "sign-in" },
+      await playIntegrity(signedFor),
+    );
+
+    expect([guest.status, code.status, otherEmail.status]).toStrictEqual([200, 200, 403]);
+    expect(checkBotId).toHaveBeenCalledOnce();
   });
 
   it("refuses to register a key without a genuine attestation", async () => {
