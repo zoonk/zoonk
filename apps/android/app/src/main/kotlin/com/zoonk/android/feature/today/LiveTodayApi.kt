@@ -74,6 +74,13 @@ class LiveTodayApi(
         perform { api.clients(session).memory.answerMemoryInsight(insightId, MemoryInsightAnswer(status)) }
     }
 
+    override suspend fun prepareLessons(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) {
+        perform { api.clients(session).contentGeneration.createGoalLessonPreparation(goalId) }
+    }
+
     override suspend fun answerSuggestedGoal(
         session: AuthenticatedSession,
         suggestionId: UUID,

@@ -108,6 +108,12 @@ interface TodayApi {
         accepted: Boolean,
     )
 
+    /** Starts writing the day's lessons nobody is outlining yet; the next read says they're coming. */
+    suspend fun prepareLessons(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    )
+
     /** The answer as saved: answered elsewhere first, it may differ. */
     suspend fun answerSuggestedGoal(
         session: AuthenticatedSession,
@@ -170,6 +176,8 @@ class TodayStore(
                 if (e.code == "GOAL_LIMIT_REACHED") false else throw e
             }
         }
+
+    suspend fun prepareLessons(goalId: UUID): MutationResult<Unit> = cache.mutate(invalidating = DOMAINS) { api.prepareLessons(it, goalId) }
 
     suspend fun answer(
         suggestion: SuggestedGoal,

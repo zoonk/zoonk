@@ -28,6 +28,9 @@ sealed interface TodayTap {
 
     /** "Keep learning", "Practice for N minutes" and the up-next list's first row: one request. */
     data object KeepLearning : TodayTap
+
+    /** "Get today's lessons" on a day nobody is writing yet. */
+    data object Prepare : TodayTap
 }
 
 /** Every write starts from a tap; reading Today never writes. */
@@ -57,6 +60,15 @@ class TodayViewModel(
     fun keepLearning(read: TodayRead.Day) =
         run(read, TodayTap.KeepLearning) {
             opener.addExtraTime(read.day, read.today.goal.id)
+        }
+
+    fun prepareLessons(read: TodayRead.Day) =
+        run(read, TodayTap.Prepare) {
+            when (val result = store.prepareLessons(read.today.goal.id)) {
+                is MutationResult.Done -> MutationResult.Done(null)
+                is MutationResult.Failed -> result
+                MutationResult.Obsolete -> MutationResult.Obsolete
+            }
         }
 
     var isCatchingUp by mutableStateOf(false)

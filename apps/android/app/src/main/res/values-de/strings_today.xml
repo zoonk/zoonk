@@ -37,6 +37,7 @@
   "today_fresh_start_new_week": "9a4296952b2f8a627328b8b3c593a9e02042e2fe70e20c69738a9de823bf204f",
   "today_fresh_start_welcome_back": "c734e5d74607635b3906ce8d8185a787def2d72cafb5d9d2389a51733c5adbfe",
   "today_fresh_start_welcome_back_trial_ended": "f1b3f19fc5ebb3b48c56aac0218a50c447f68882eb4a898aa3309908bfc4def5",
+  "today_get_lessons": "9461da7009ba62ed7c8b8bfeb1230e385b3041fea769f50d546bcb2137258e9e",
   "today_insight_add_it": "4c8f4383ad38216eb3845a705546e8dceb7131dfce0b74d54cc00cc7c539533e",
   "today_insight_got_it": "3bccb6f1196c270c1c0232cd10530f77930cbb6ea08b4ab17fb7e1fea8040bca",
   "today_insight_keep_it": "63f00786a39ade1ec50aecbd4ce54a71453b7b3de1047315af2b56c9bba9a926",
@@ -48,6 +49,7 @@
   "today_insight_undo": "0f5c5a152b24432977f8e4f68b90aa75bc6c664b166cdf8f44f8cead446325a1",
   "today_keep_learning": "2eee3490e9ebf9f5ca3943e1980626592ea24e7c5118ae726fcb2bd00232c86b",
   "today_keep_learning_failed": "cd07606ad4d05ebb6c87c96ccb218248cf35421d4f1154895c74d684cf2b8ab7",
+  "today_lessons_not_written": "73ff53e1b22d2ede4123b669fef3ecd08739fef86381232c1ffc363c077fcea5",
   "today_lessons_so_far": "bdc55a1d5f9790b915f2afcd46d86d1dd1243a65fbb15b061995c335e03e54bf",
   "today_limit": "0fc8735b09d478eb4fa5640baafa798207aa5627e5fac84a9b2be2f9536a30bb",
   "today_mistakes_notebook": "536f561cc0979f2b969c6ff8b749d4d8d047f6c6bec7976d43d5c946be14994f",
@@ -280,6 +282,8 @@
     <string name="today_keep_learning">Weiterlernen</string>
     <string name="today_practice_minutes">Übe %1$s Minuten</string>
     <string name="today_see_plan">Plan ansehen</string>
+    <string name="today_lessons_not_written">Die heutigen Lektionen wurden noch nicht erstellt.</string>
+    <string name="today_get_lessons">Heutige Lektionen abrufen</string>
     <string name="today_open_failed">Der nächste Schritt ließ sich nicht öffnen. Versuch es noch einmal.</string>
     <string name="today_keep_learning_failed">Deine nächsten Lektionen ließen sich nicht öffnen. Versuch es noch einmal.</string>
     <string name="today_welcome_back">Willkommen zurück</string>

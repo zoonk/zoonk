@@ -67,6 +67,11 @@ class TodayStoreTest {
                 accepted: Boolean,
             ) = Unit
 
+            override suspend fun prepareLessons(
+                session: AuthenticatedSession,
+                goalId: UUID,
+            ) = error("Not used")
+
             override suspend fun answerSuggestedGoal(
                 session: AuthenticatedSession,
                 suggestionId: UUID,
@@ -97,6 +102,29 @@ class TodayStoreTest {
             )
             assertEquals(LessonGenerationStatus.GENERATING, read.today.lessonStatus[lesson])
             assertEquals(true, read.day.isWaitingForLessons(read.today.lessonStatus))
+        }
+
+    @Test
+    fun anEmptyDayNobodyIsWritingAsksForItsLessons() =
+        runTest {
+            val session =
+                fixture(
+                    "unstarted-study-day",
+                    "blocks" to kotlinx.serialization.json.JsonArray(emptyList()),
+                    "emptyDay" to "lessonsToPrepare",
+                    "minutes" to
+                        buildJsonObject {
+                            put("dailyGoal", 30)
+                            put("done", 0)
+                            put("planned", 0)
+                        },
+                    "nextPosition" to null,
+                )
+            val today = decodeFixture<Today>("today", "session" to session)
+
+            val read = read(api { today }, ana, "UTC") as TodayRead.Day
+
+            assertEquals(DayState.Prepare, read.day.dayState())
         }
 
     @Test

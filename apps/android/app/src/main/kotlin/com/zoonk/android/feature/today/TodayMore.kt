@@ -70,7 +70,7 @@ internal fun TodayMore(
             }
         }
 
-        DayState.Limit, DayState.Waiting -> {}
+        DayState.Limit, DayState.Prepare, DayState.Waiting -> {}
     }
 }
 

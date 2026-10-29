@@ -774,6 +774,10 @@ private fun TodayDayStatus(
             }
         }
 
+        DayState.Prepare -> {
+            TodayStatusLine(R.drawable.ic_schedule, stringResource(R.string.today_lessons_not_written), null, modifier)
+        }
+
         DayState.Limit -> {
             TodayStatusLine(R.drawable.ic_hourglass_empty, stringResource(R.string.today_limit), seeYou(model), modifier)
         }

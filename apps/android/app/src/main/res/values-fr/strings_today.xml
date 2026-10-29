@@ -37,6 +37,7 @@
   "today_fresh_start_new_week": "2b6e27dcdafbbbd2a24ab83e2d0929daa2d44db5d4287b0468e7a18efaa11590",
   "today_fresh_start_welcome_back": "8638cdb9aace2d787cb233747f6d91e548d20cfbcd5f5ee852aee83069955584",
   "today_fresh_start_welcome_back_trial_ended": "c6846655cb33401b1965e188040cfb9adda21dd535e61d213808321f58cc22ab",
+  "today_get_lessons": "ac43bedb0768c278e99b6c5f36a7259e6ee4042a37b2ec75cc4795a39a49129b",
   "today_insight_add_it": "f5681e4c1d531bac01a5f4f8b28c3e95af9815a7a45aa5652927eb4f4164ac44",
   "today_insight_got_it": "98c9816c5fa06040d65dda9c7bf8c765e033e38fd8014d70779c2092e3137146",
   "today_insight_keep_it": "3487e4d74d89b9e1c5c8f2cd6de92ea6a6e6cde2947bd7a7b5c79fc47bf7a44a",
@@ -48,6 +49,7 @@
   "today_insight_undo": "e3b8ac32b1017848ece1a8ff33e8641340246879e6ac17f8bfcf236f2746d405",
   "today_keep_learning": "3d49c9787f34bb599dc953ca71ca33acee3776b12c3ca14461db25bd7a12c5ae",
   "today_keep_learning_failed": "4a8aaa1afdc1211e0e7d16c41e91dce42bbf1b4422b903e35fd724e930fe4c05",
+  "today_lessons_not_written": "1766c76042626573d7ce714658a343e78bd3caf23def4c23a25695f130bf1a8f",
   "today_lessons_so_far": "bbcb1cacd45f3e431cac9610d621b6665d32919fa291cc6a0340db3318bacff7",
   "today_limit": "50e81a21c9dcee186016845f037e89d28471f0ba93375aa21996a2c45842e15f",
   "today_mistakes_notebook": "607690686e6d99b3d3657370c402bca72522bc438a8aeba76e1039ec6855c8be",
@@ -292,6 +294,8 @@
     <string name="today_keep_learning">Continuer à apprendre</string>
     <string name="today_practice_minutes">S’entraîner pendant %1$s minutes</string>
     <string name="today_see_plan">Voir ton plan</string>
+    <string name="today_lessons_not_written">Les leçons du jour ne sont pas encore préparées.</string>
+    <string name="today_get_lessons">Préparer les leçons du jour</string>
     <string name="today_open_failed">Impossible d’ouvrir la prochaine étape. Réessaie.</string>
     <string name="today_keep_learning_failed">Impossible d’ouvrir tes prochaines leçons. Réessaie.</string>
     <string name="today_welcome_back">Content de te revoir</string>

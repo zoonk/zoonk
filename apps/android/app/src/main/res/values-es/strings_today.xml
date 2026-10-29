@@ -37,6 +37,7 @@
   "today_fresh_start_new_week": "74e9a9cfb35449de08fef8305581289fead8104ba43e669e021e32df70364c64",
   "today_fresh_start_welcome_back": "f8cba8472c2fbab4308327c52c771f8e624f7d7a742a098dca02755fbf781c9d",
   "today_fresh_start_welcome_back_trial_ended": "0b47fd8a68706188f02ae16af9cfe82e9abc0ad5a6b8b7be4da59609a5b47c3b",
+  "today_get_lessons": "29be1d9174d909a6c75cee602b2358530e977065832525b81905d18d2fae436d",
   "today_insight_add_it": "60ce5fd19a291ce235ababe87590e18d861f64ef22cd5bb0be2b56477bd91c0a",
   "today_insight_got_it": "c38955229e0be0bd63a3d4935b0693d613a8773d28825ad38355773f0a3cd955",
   "today_insight_keep_it": "2f40e0d92e4a3434f090b2cf81820e1c6c7be4511aa5bb9a38b7157c4a72f3ff",
@@ -48,6 +49,7 @@
   "today_insight_undo": "a8b5763c5c8417fd801fe253fe02b99d9ce6e777e7f52096e788df95789aff4d",
   "today_keep_learning": "6627840be32294097588cc8ce17de9bf5fe12d1039240eabfcaf086e84918e3b",
   "today_keep_learning_failed": "a2970d0d82733902ed313c0ec72ef298b89b532d320d72eaf6e99d223d2f7a75",
+  "today_lessons_not_written": "2e862a0879caa013d4865be6658ff504ffd7d4562a5fb5bcf13d0b1d62ddb645",
   "today_lessons_so_far": "5d8f58e85826cf0c3892661a089dbd5e30491e3bd32a93aa40197a034d01073a",
   "today_limit": "36966cdf5fe95f0474af374fda0d30947106dd5895e45eb21adb945277af499d",
   "today_mistakes_notebook": "1020376f5e6e336a0a03fa62e739827339e9fca90c3a9d70e0b2dd718ea827da",
@@ -292,6 +294,8 @@
     <string name="today_keep_learning">Seguir estudiando</string>
     <string name="today_practice_minutes">Practica durante %1$s minutos</string>
     <string name="today_see_plan">Ver tu plan</string>
+    <string name="today_lessons_not_written">Las lecciones de hoy aún no están preparadas.</string>
+    <string name="today_get_lessons">Preparar las lecciones de hoy</string>
     <string name="today_open_failed">No se ha podido abrir el siguiente paso. Inténtalo de nuevo.</string>
     <string name="today_keep_learning_failed">No se han podido abrir tus próximas lecciones. Inténtalo de nuevo.</string>
     <string name="today_welcome_back">Te damos la bienvenida de nuevo</string>

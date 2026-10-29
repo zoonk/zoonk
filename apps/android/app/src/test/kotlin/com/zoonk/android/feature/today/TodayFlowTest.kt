@@ -246,6 +246,11 @@ class TodayFlowTest {
             accepted: Boolean,
         ) = Unit
 
+        override suspend fun prepareLessons(
+            session: AuthenticatedSession,
+            goalId: UUID,
+        ) = error("Not used")
+
         override suspend fun answerSuggestedGoal(
             session: AuthenticatedSession,
             suggestionId: UUID,

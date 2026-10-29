@@ -106,6 +106,7 @@ internal fun TodayDay(
                 open = { step -> if (idle()) viewModel.open(read, step, next = false) },
                 next = { model.day.nextStep?.let { if (idle()) viewModel.open(read, it, next = true) } },
                 keepLearning = { if (idle()) viewModel.keepLearning(read) },
+                prepare = { if (idle()) viewModel.prepareLessons(read) },
                 navigate = navigator::open,
             )
         }
@@ -191,6 +192,7 @@ internal class TodayActionHandlers(
     val open: (com.zoonk.android.feature.session.DayStep) -> Unit,
     val next: () -> Unit,
     val keepLearning: () -> Unit,
+    val prepare: () -> Unit,
     val navigate: (AppRoute) -> Unit,
 )
 
@@ -214,6 +216,7 @@ private val TodayDayModel.hasAction: Boolean
             keepLearning ||
             state == DayState.Underway ||
             state == DayState.Done ||
+            state == DayState.Prepare ||
             (state == DayState.Ahead && day.extraTime.available)
 
 @Composable
@@ -231,6 +234,7 @@ internal fun TodayAction(
     val tap =
         when {
             model.pastDate != null -> null
+            model.state == DayState.Prepare -> TodayTap.Prepare
             model.keepLearning || model.state == DayState.Ahead -> TodayTap.KeepLearning
             model.state == DayState.Underway -> TodayTap.Continue
             else -> null
@@ -243,6 +247,10 @@ internal fun TodayAction(
         when {
             model.pastDate != null -> {
                 ActionButton(stringResource(R.string.today_see_plan), busy = false, buttonModifier) { actions.navigate(AppRoute.Plan()) }
+            }
+
+            model.state == DayState.Prepare -> {
+                ActionButton(stringResource(R.string.today_get_lessons), busy, buttonModifier, actions.prepare)
             }
 
             model.keepLearning -> {
@@ -292,6 +300,7 @@ internal fun rememberActionStatus(
     val tap =
         when {
             model.pastDate != null -> null
+            model.state == DayState.Prepare -> TodayTap.Prepare
             model.keepLearning || model.state == DayState.Ahead -> TodayTap.KeepLearning
             model.state == DayState.Underway -> TodayTap.Continue
             else -> null
@@ -311,12 +320,10 @@ internal fun TodayActionStatus(
         Text(
             text =
                 stringResource(
-                    if (status.failed ==
-                        TodayTap.Continue
-                    ) {
-                        R.string.today_open_failed
-                    } else {
-                        R.string.today_keep_learning_failed
+                    when (status.failed) {
+                        TodayTap.Continue -> R.string.today_open_failed
+                        TodayTap.Prepare -> R.string.today_save_failed
+                        else -> R.string.today_keep_learning_failed
                     },
                 ),
             modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },

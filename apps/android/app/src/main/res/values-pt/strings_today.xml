@@ -37,6 +37,7 @@
   "today_fresh_start_new_week": "c6bbd5e700c35dc455b409658c3cd9e5444057a7bf14245dd5f353fa39d58910",
   "today_fresh_start_welcome_back": "ef2f1d95d5dc7dfe6f859556a7c7ddbdfefe59cc758072635ec3fb28ed0ebe70",
   "today_fresh_start_welcome_back_trial_ended": "f26af61354d3b1bac429195115e536e6343a0018f5a8d13c01a70eebb767e16f",
+  "today_get_lessons": "5e05d2f0b4618316d1ef49ac097eaab3b2d6a3e2b835b1b61cd6bc09a80b8678",
   "today_insight_add_it": "2cfce9928a0be221a462eea611d6906c531e8383f76b3b1ea5ba43d9e45d76ae",
   "today_insight_got_it": "64cf662ce7eae98cddfd248dab7a2dab433c284452cbe9015d313184852c56dd",
   "today_insight_keep_it": "88373581bbbcfb6a548d8f73d2584b77dd2102e3d01f5e46a004f4b14a3c1590",
@@ -48,6 +49,7 @@
   "today_insight_undo": "838f9dd192858d537089794d8cffe88dccabf4ead2ff3faa585750639e62a0ad",
   "today_keep_learning": "b6b2a087dd3331e2950552eddcea7473c269e724bfab345f4e654cb7b3fafbcf",
   "today_keep_learning_failed": "5967c16632c167733d3eb09c191deee703156f339014aa5af6c013b131becaa0",
+  "today_lessons_not_written": "ec6c2e401c14c9cbb2fc473c6cf4ba432e3164ef63bc59b7e3485d364fdbd4c2",
   "today_lessons_so_far": "f9c16fe0446304f93073d8956128500cbccc39980aef7c1d337f695aa8ac1b10",
   "today_limit": "4277bc8b05ad360a1e8b132a9213a2784e9c4f529a89d03069635c22ab8017e9",
   "today_mistakes_notebook": "4053ac2d12afda4ccd7cca0af203e5c51e39c3a2c7aebc9c5fa95626c3265fcb",
@@ -292,6 +294,8 @@
     <string name="today_keep_learning">Continuar estudando</string>
     <string name="today_practice_minutes">Praticar por %1$s minutos</string>
     <string name="today_see_plan">Ver seu plano</string>
+    <string name="today_lessons_not_written">As aulas de hoje ainda não foram criadas.</string>
+    <string name="today_get_lessons">Criar as aulas de hoje</string>
     <string name="today_open_failed">Não foi possível abrir o próximo passo. Tente novamente.</string>
     <string name="today_keep_learning_failed">Não foi possível abrir suas próximas aulas. Tente novamente.</string>
     <string name="today_welcome_back">Boas-vindas de volta</string>

@@ -34,6 +34,7 @@ class TodayDayStateTest {
     fun aStudyDayWithoutBlocksWaitsForItsLessonsOrHasNothingNew() {
         assertEquals(DayState.Waiting, day(steps = emptyList(), emptyDay = EmptyDay.LessonsComing).dayState())
         assertEquals(DayState.Ahead, day(steps = emptyList(), emptyDay = EmptyDay.NothingNew).dayState())
+        assertEquals(DayState.Prepare, day(steps = emptyList(), emptyDay = EmptyDay.LessonsToPrepare).dayState())
     }
 
     @Test

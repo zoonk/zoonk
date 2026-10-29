@@ -7,13 +7,15 @@ import com.zoonk.api.models.LessonGenerationStatus
 import com.zoonk.api.models.StudyBlock
 
 /**
- * A day with no blocks is a rest day, one still being outlined (`waiting`), or one with nothing new
- * (`ahead`): never a finished session.
+ * A day with no blocks is a rest day, one still being outlined (`waiting`), one whose lessons wait
+ * for the learner to ask for them (`prepare`), or one with nothing new (`ahead`): never a finished
+ * session.
  */
 data class SessionState(
     val ahead: Boolean,
     val done: Boolean,
     val limitReached: Boolean,
+    val prepare: Boolean,
     val rest: Boolean,
     val started: Boolean,
     val waiting: Boolean,
@@ -25,16 +27,17 @@ fun DayView.sessionState(): SessionState {
     val studyDay = empty && !limitReached && minutes.dailyGoal > 0
 
     return SessionState(
-        ahead = studyDay && emptyDay != EmptyDay.LessonsComing,
+        ahead = studyDay && (emptyDay == EmptyDay.NothingNew || emptyDay == null),
         done = !empty && nextPosition == null,
         limitReached = limitReached,
+        prepare = studyDay && emptyDay == EmptyDay.LessonsToPrepare,
         rest = empty && !limitReached && minutes.dailyGoal == 0.0,
         started = steps.any { it.status != StudyBlock.Status.PENDING },
         waiting = studyDay && emptyDay == EmptyDay.LessonsComing,
     )
 }
 
-enum class DayState { Ahead, Done, Limit, Rest, Underway, Waiting }
+enum class DayState { Ahead, Done, Limit, Prepare, Rest, Underway, Waiting }
 
 fun DayView.dayState(): DayState {
     val state = sessionState()
@@ -42,6 +45,7 @@ fun DayView.dayState(): DayState {
 
     return when {
         state.waiting -> DayState.Waiting
+        state.prepare -> DayState.Prepare
         hasNext && !state.limitReached -> DayState.Underway
         state.limitReached && !state.done -> DayState.Limit
         state.ahead -> DayState.Ahead

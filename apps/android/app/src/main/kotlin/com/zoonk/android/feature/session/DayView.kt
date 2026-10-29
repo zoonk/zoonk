@@ -52,7 +52,7 @@ data class DayView(
     val dayEndsAt: Long,
 )
 
-enum class EmptyDay { LessonsComing, NothingNew }
+enum class EmptyDay { LessonsComing, LessonsToPrepare, NothingNew }
 
 enum class FreshStart { WelcomeBack, NewWeek, NewPhase }
 
@@ -239,7 +239,12 @@ private fun UnstartedStudyDay.toDayView(): DayView =
         dayEndsAt = dayEndsAt,
     )
 
-private fun emptyDay(value: String) = if (value == "nothingNew") EmptyDay.NothingNew else EmptyDay.LessonsComing
+private fun emptyDay(value: String) =
+    when (value) {
+        "nothingNew" -> EmptyDay.NothingNew
+        "lessonsToPrepare" -> EmptyDay.LessonsToPrepare
+        else -> EmptyDay.LessonsComing
+    }
 
 private fun freshStart(value: String) =
     when (value) {
