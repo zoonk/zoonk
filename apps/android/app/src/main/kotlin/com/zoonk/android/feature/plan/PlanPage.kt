@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -68,12 +69,13 @@ data class PlanPageState(
 class PlanLinks(
     private val navigator: AppNavigator,
     private val page: PlanPageState,
+    private val leaving: () -> Unit = {},
 ) {
     val hasExam: Boolean get() = page.isExam
     val hasMindMaps: Boolean get() = page.summary.places.mindMaps
 
     fun chapter(chapterId: String) =
-        navigator.open(
+        open(
             if (page.goal.kind ==
                 LearnerSummaryGoal.Kind.LANGUAGE
             ) {
@@ -83,19 +85,27 @@ class PlanLinks(
             },
         )
 
-    fun challenge(planItemId: String) = navigator.open(AppRoute.Challenge(planItemId))
+    fun challenge(planItemId: String) = open(AppRoute.Challenge(planItemId))
 
-    fun exam() = navigator.open(AppRoute.Exam)
+    fun exam() = open(AppRoute.Exam)
 
-    fun mindMaps() = navigator.open(AppRoute.MindMaps)
+    fun mindMaps() = open(AppRoute.MindMaps)
 
-    fun logbook() = navigator.open(AppRoute.Logbook)
+    fun logbook() = open(AppRoute.Logbook)
 
-    fun course(courseId: String) = navigator.open(AppRoute.CatalogCourse(courseId))
+    fun course(courseId: String) = open(AppRoute.CatalogCourse(courseId))
 
-    fun buddy() = navigator.open(AppRoute.Buddy())
+    fun buddy() = open(AppRoute.Buddy())
 
-    fun subject(key: String) = navigator.open(AppRoute.Subject(key))
+    fun subject(key: String) = open(AppRoute.Subject(key))
+
+    /** These links run [close] before leaving, so a sheet they're in doesn't stay over the page they open. */
+    fun closing(close: () -> Unit) = PlanLinks(navigator, page) { close() }
+
+    private fun open(route: AppRoute) {
+        leaving()
+        navigator.open(route)
+    }
 }
 
 @Composable
@@ -195,10 +205,12 @@ internal fun PlanContent(
     val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links, onAdjust = adjust) }
 
     var pathOpen by rememberSaveable { mutableStateOf(false) }
+    val list = rememberLazyListState()
     val main =
         @Composable { asideBeside: Boolean ->
             LazyColumn(
                 modifier = Modifier.fillMaxSize(),
+                state = list,
                 contentPadding = PaddingValues(start = PAGE_MARGIN, end = PAGE_MARGIN, top = 8.dp, bottom = 32.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
@@ -230,7 +242,7 @@ internal fun PlanContent(
             }
         }
 
-    // Beside a subject the Plan is the list pane, too narrow for its own aside.
+    // The aside goes beside the page only when the page itself has the room, as on a subject's page.
     BoxWithConstraints {
         if (maxWidth < ASIDE_PAGE_WIDTH) {
             main(false)
@@ -254,7 +266,7 @@ internal fun PlanContent(
         }
     }
 
-    if (pathOpen) PathSheet(page, links, onDismiss = { pathOpen = false })
+    if (pathOpen) PathSheet(page, links.closing { pathOpen = false }, onDismiss = { pathOpen = false })
 }
 
 /** Main's phases sheet: with subjects on the page, the compact roadmap opens the path here. */
