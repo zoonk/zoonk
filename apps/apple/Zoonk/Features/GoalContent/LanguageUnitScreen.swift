@@ -25,8 +25,8 @@ struct LanguageUnit: Decodable, Equatable, Sendable {
   }
 
   struct Mistake: Decodable, Equatable, Identifiable, Sendable {
-    let answer: String
-    let correctAnswer: String
+    let answer: String?
+    let correctAnswer: String?
     let id: String
     let question: String
   }
@@ -303,17 +303,21 @@ private struct LanguageUnitContent: View {
           VStack(alignment: .leading, spacing: 4) {
             Text(mistake.question)
 
-            Text(
-              "You answered: \(mistake.answer)", tableName: "Plan",
-              comment: "The learner's wrong answer to a unit question"
-            )
-            .foregroundStyle(.destructive)
+            if let answer = mistake.answer {
+              Text(
+                "You answered: \(answer)", tableName: "Plan",
+                comment: "The learner's wrong answer to a unit question"
+              )
+              .foregroundStyle(.destructive)
+            }
 
-            Text(
-              "Answer: \(mistake.correctAnswer)", tableName: "Plan",
-              comment: "The right answer to a unit question"
-            )
-            .foregroundStyle(.secondary)
+            if let correctAnswer = mistake.correctAnswer {
+              Text(
+                "Answer: \(correctAnswer)", tableName: "Plan",
+                comment: "The right answer to a unit question"
+              )
+              .foregroundStyle(.secondary)
+            }
           }
           .font(.subheadline)
         }
