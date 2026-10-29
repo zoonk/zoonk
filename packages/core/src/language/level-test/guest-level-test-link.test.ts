@@ -7,6 +7,7 @@ import {
   signInWithPassword,
 } from "../../../../auth/src/guests/_test-utils/guest-auth";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { getSpeechClipKey } from "../../audio/speech-clip-key";
 import * as levelState from "./_utils/level-test-state";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { finishLanguageLevelTest } from "./finish-language-level-test";
@@ -51,6 +52,21 @@ async function createAnsweredTest(targetLanguage = "fr") {
       runId: "test",
       targetLanguage,
     },
+  });
+
+  await prisma.mediaAsset.createMany({
+    data: bank.questions
+      .filter((question) => question.skill === "listening")
+      .map((question) => ({
+        kind: "audio",
+        language: targetLanguage,
+        model: "test",
+        promptVersion: "test",
+        reuseKey: getSpeechClipKey({ language: targetLanguage, text: question.passage }),
+        runId: "test",
+        url: "https://blob.test/placement.mp3",
+      })),
+    skipDuplicates: true,
   });
 
   const goal = await prisma.goal.create({

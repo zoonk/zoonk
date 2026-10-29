@@ -2,8 +2,7 @@ import { getBaseLanguage, isTTSSupportedLanguage } from "@zoonk/utils/languages"
 import { z } from "zod";
 import { languageCodeSchema } from "../library/steps/contract/content-schemas";
 
-/** Listening passages reach about 470 characters; longer text should be split for replay. */
-const SPEECH_CLIP_MAX_CHARACTERS = 600;
+export const NEW_SPEECH_CLIP_MAX_CHARACTERS = 600;
 
 export function normalizeSpeechText(text: string): string {
   return text.normalize("NFC").replaceAll(/\s+/gu, " ").trim();
@@ -26,8 +25,10 @@ export const speechClipInputSchema = z.object({
     .string()
     .trim()
     .min(1)
-    .max(SPEECH_CLIP_MAX_CHARACTERS)
-    .meta({ description: "What the clip says: a word, a sentence or a short passage" }),
+    .meta({
+      description:
+        "What the clip says: a word, a sentence or a passage. New clips accept up to 600 characters; prepared recordings may be longer",
+    }),
 });
 
 export type SpeechClipInput = z.input<typeof speechClipInputSchema>;

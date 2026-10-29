@@ -1,15 +1,38 @@
+import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { generateLevelTestBank } from "@zoonk/ai/tasks/v2/language/level-test-bank";
 import { prisma } from "@zoonk/db";
 import { languageGoalFixture } from "@zoonk/testing/fixtures/language";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { storeBlobUploads } from "../../_test-utils/blob-uploads";
+import { useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockSession } from "../../_test-utils/mock-session";
+import { requestSpeechClip } from "../../audio/request-speech-clip";
+import { getSpeechClipKey } from "../../audio/speech-clip-key";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
+import { prepareLanguageLevelTest } from "./prepare-language-level-test";
 import { writeLevelTestBank } from "./write-level-test-bank";
 
 const TEST_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
 
 type Written = Awaited<ReturnType<typeof generateLevelTestBank>>;
+
+function voicedAudio(): Awaited<ReturnType<typeof generateLanguageAudio>> {
+  return {
+    data: {
+      audio: new Uint8Array([1, 2, 3]),
+      durationMs: 2400,
+      format: "mp3",
+      provenance: { ...bankFrom("voice").provenance, model: "test-voice" },
+    },
+    error: null,
+  };
+}
+
+function mockAudio() {
+  storeBlobUploads();
+  vi.mocked(generateLanguageAudio).mockResolvedValue(voicedAudio());
+}
 
 function bankFrom(passage: string): Written {
   return {
@@ -65,7 +88,7 @@ async function learnerOfFreshPair() {
   await prisma.goal.update({ data: pair, where: { id: setup.goal.id } });
   mockSession(setup.user.id);
 
-  return { goalId: setup.goal.id, pair };
+  return { goalId: setup.goal.id, pair, userId: setup.user.id };
 }
 
 function findRow(pair: { language: string; targetLanguage: string }) {
@@ -74,6 +97,7 @@ function findRow(pair: { language: string; targetLanguage: string }) {
 
 describe("the level test's question bank", () => {
   beforeEach(() => {
+    mockAudio();
     vi.mocked(generateLevelTestBank).mockClear();
   });
 
@@ -150,6 +174,7 @@ describe("the level test's question bank", () => {
 
 describe("writing a pair's question bank ahead", () => {
   beforeEach(() => {
+    mockAudio();
     vi.mocked(generateLevelTestBank).mockClear();
   });
 
@@ -223,5 +248,142 @@ describe("writing a pair's question bank ahead", () => {
     const row = await findRow(pair);
     expect(JSON.stringify(row.content)).toContain("Current A1");
     expect(JSON.stringify(row.content)).not.toContain("Late");
+  });
+});
+
+describe("placement listening audio", () => {
+  beforeEach(mockAudio);
+
+  it("prepares all listening passages before publishing the bank, reusing them for playback without AI help", async () => {
+    const { goalId, pair, userId } = await learnerOfFreshPair();
+    const passage = crypto.randomUUID();
+    vi.mocked(generateLevelTestBank).mockResolvedValueOnce(bankFrom(passage));
+
+    await writeLevelTestBank({ pair });
+
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(TEST_LEVELS.length);
+
+    await Promise.all(
+      TEST_LEVELS.map((level) =>
+        expect(
+          prisma.mediaAsset.findUnique({
+            where: {
+              reuseKey: getSpeechClipKey({
+                language: pair.targetLanguage,
+                text: `${passage} ${level}`,
+              }),
+            },
+          }),
+        ).resolves.toMatchObject({ kind: "audio", ownerId: null, visibility: "public" }),
+      ),
+    );
+
+    await useGuestOutOfHelp();
+
+    await expect(
+      requestSpeechClip({ language: pair.targetLanguage, text: `${passage} A2` }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(TEST_LEVELS.length);
+
+    await writeLevelTestBank({ pair });
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(TEST_LEVELS.length);
+    mockSession(userId);
+
+    await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
+      test: { status: "ready" },
+    });
+  });
+
+  it("does not publish questions while their audio is still being generated", async () => {
+    const { goalId, pair } = await learnerOfFreshPair();
+    const audio = Promise.withResolvers<Awaited<ReturnType<typeof generateLanguageAudio>>>();
+    const voiced = voicedAudio();
+    vi.mocked(generateLanguageAudio).mockClear().mockReturnValueOnce(audio.promise);
+    vi.mocked(generateLevelTestBank).mockResolvedValueOnce(bankFrom(crypto.randomUUID()));
+    const writing = writeLevelTestBank({ pair });
+
+    await expect.poll(() => vi.mocked(generateLanguageAudio).mock.calls.length).toBeGreaterThan(0);
+
+    await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
+      test: { startedAt: expect.any(String), status: "preparing" },
+    });
+
+    audio.resolve(voiced);
+    await expect(writing).resolves.toStrictEqual({ status: "written" });
+  });
+
+  it("fails preparation if a clip fails, so incomplete questions are not offered as ready", async () => {
+    const { goalId, pair } = await learnerOfFreshPair();
+    vi.mocked(generateLevelTestBank).mockResolvedValueOnce(bankFrom(crypto.randomUUID()));
+
+    vi.mocked(generateLanguageAudio).mockResolvedValueOnce({
+      data: null,
+      error: new Error("Voice unavailable"),
+    });
+
+    await expect(writeLevelTestBank({ pair })).rejects.toThrow("placement audio");
+
+    await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
+      test: { startedAt: null, status: "preparing" },
+    });
+
+    const failedRow = await findRow(pair);
+    const questions = failedRow.content;
+    await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "ready" });
+    const retriedRow = await findRow(pair);
+    expect(retriedRow.content).toStrictEqual(questions);
+    expect(generateLevelTestBank).toHaveBeenCalledOnce();
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(TEST_LEVELS.length + 1);
+  });
+
+  it("prepares an existing text bank without rewriting it, including long advanced passages", async () => {
+    const { goalId, pair } = await learnerOfFreshPair();
+    const written = bankFrom(`Un messaggio lungo ${crypto.randomUUID()} `.repeat(20));
+
+    const content = {
+      ...written.data,
+      questions: written.data.questions.map((question, index) => ({
+        ...question,
+        id: `q${index}`,
+      })),
+    };
+
+    await prisma.languageLevelTest.create({
+      data: { ...pair, content, model: "test", promptVersion: "test", runId: "old-bank" },
+    });
+
+    await expect(prepareLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "preparing" });
+
+    await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
+      test: { startedAt: null, status: "preparing" },
+    });
+
+    expect(generateLanguageAudio).not.toHaveBeenCalled();
+    await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "ready" });
+    expect(generateLevelTestBank).not.toHaveBeenCalled();
+    const preparedRow = await findRow(pair);
+    expect(preparedRow.content).toStrictEqual(content);
+    await expect(prepareLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "ready" });
+
+    await expect(
+      requestSpeechClip({
+        language: pair.targetLanguage,
+        text: content.questions[0]?.passage ?? "",
+      }),
+    ).resolves.toMatchObject({ status: "ready" });
+
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(TEST_LEVELS.length);
+  });
+
+  it("keeps languages without a voice available as text", async () => {
+    const pair = { ...freshPair(), targetLanguage: "xx" };
+    vi.mocked(generateLevelTestBank).mockResolvedValueOnce(bankFrom(crypto.randomUUID()));
+
+    await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "written" });
+    await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "ready" });
+    const row = await findRow(pair);
+    expect(row.content).not.toHaveProperty("audioStartedAt");
+    expect(generateLanguageAudio).not.toHaveBeenCalled();
   });
 });

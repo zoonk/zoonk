@@ -6,6 +6,7 @@ import {
 import { type LanguageLevelTest, isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { toProvenanceData } from "../../../library/_utils/library-rows";
 import { type LevelTestBank, levelTestBankSchema } from "../level-test-contract";
+import { hasLevelTestAudio, prepareLevelTestAudio } from "./level-test-audio";
 
 const STALE_CLAIM_MS = 660_000;
 
@@ -53,10 +54,16 @@ async function writeBank({
     return { ...question, id: `${key}-${index}` };
   });
 
+  const bank = { audioStartedAt: new Date().toISOString(), questions, speaking: data.speaking };
+
   const { count } = await prisma.languageLevelTest.updateMany({
-    data: { content: { questions, speaking: data.speaking }, ...toProvenanceData(provenance) },
+    data: { content: bank, ...toProvenanceData(provenance) },
     where: { ...pair, runId: claimId },
   });
+
+  if (count > 0) {
+    await prepareLevelTestAudio({ analytics, bank, pair });
+  }
 
   return count > 0;
 }
@@ -131,10 +138,12 @@ export async function loadLevelTestBank(pair: LanguagePair): Promise<LevelTestBa
   const row = await findBankRow(pair);
   const bank = readBank(row);
 
-  if (bank) {
+  if (bank && (await hasLevelTestAudio({ bank, pair }))) {
     return { bank, status: "ready" };
   }
 
-  const running = row && row.generatedAt.getTime() > Date.now() - STALE_CLAIM_MS;
-  return { startedAt: running ? row.generatedAt : null, status: "preparing" };
+  const audioStartedAt = bank?.audioStartedAt ? new Date(bank.audioStartedAt) : null;
+  const startedAt = bank ? audioStartedAt : row?.generatedAt;
+  const running = startedAt && startedAt.getTime() > Date.now() - STALE_CLAIM_MS;
+  return { startedAt: running ? startedAt : null, status: "preparing" };
 }

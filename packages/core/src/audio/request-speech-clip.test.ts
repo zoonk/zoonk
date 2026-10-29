@@ -69,6 +69,10 @@ describe(requestSpeechClip, () => {
       status: "invalid",
     });
 
+    await expect(
+      requestSpeechClip({ language: "it", text: "a".repeat(601) }),
+    ).resolves.toStrictEqual({ status: "invalid" });
+
     expect(generateLanguageAudio).not.toHaveBeenCalled();
   });
 

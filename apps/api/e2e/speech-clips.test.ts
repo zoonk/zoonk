@@ -82,6 +82,20 @@ test.describe("Speech clips API", () => {
     await apiContext.dispose();
   });
 
+  test("plays a prepared long placement passage without generating a new clip", async () => {
+    const { apiContext } = await createAuthenticatedApiContext({
+      baseURL,
+      prefix: "speech-prepared",
+    });
+
+    const text = `${uniqueSentence()} `.repeat(20);
+    const clip = await storedClip({ language: "it", text });
+    const response = await apiContext.post("/v1/speech-clips", { data: { language: "it", text } });
+    expect(response.status()).toBe(200);
+    await expect(response.json()).resolves.toMatchObject({ id: clip.id, url: clip.url });
+    await apiContext.dispose();
+  });
+
   test("refuses a language without a voice, empty text and text too long for one clip", async () => {
     const { apiContext } = await createAuthenticatedApiContext({
       baseURL,

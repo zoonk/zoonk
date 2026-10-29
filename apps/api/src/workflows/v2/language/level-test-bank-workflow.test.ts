@@ -1,3 +1,5 @@
+import { put } from "@vercel/blob";
+import { generateLanguageAudio } from "@zoonk/ai/tasks/audio";
 import { generateLevelTestBank } from "@zoonk/ai/tasks/v2/language/level-test-bank";
 import { prisma } from "@zoonk/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -56,6 +58,25 @@ function streamedSteps() {
 describe(levelTestBankWorkflow, () => {
   beforeEach(() => {
     vi.mocked(generateLevelTestBank).mockReset();
+
+    vi.mocked(generateLanguageAudio).mockResolvedValue({
+      data: {
+        audio: new Uint8Array([1, 2, 3]),
+        durationMs: 2400,
+        format: "mp3",
+        provenance: bankFrom("voice").provenance,
+      },
+      error: null,
+    });
+
+    vi.mocked(put).mockImplementation(async (pathname) => ({
+      contentDisposition: "inline",
+      contentType: "audio/mpeg",
+      downloadUrl: `https://blob.test/${pathname}`,
+      etag: "",
+      pathname,
+      url: `https://blob.test/${pathname}`,
+    }));
   });
 
   it("writes the pair's questions once, saying so on its stream", async () => {

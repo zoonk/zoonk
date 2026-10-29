@@ -24415,8 +24415,7 @@
           "text": {
             "type": "string",
             "minLength": 1,
-            "maxLength": 600,
-            "description": "What the clip says: a word, a sentence or a short passage"
+            "description": "What the clip says: a word, a sentence or a passage. New clips accept up to 600 characters; prepared recordings may be longer"
           }
         },
         "required": [

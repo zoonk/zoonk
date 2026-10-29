@@ -13,6 +13,7 @@ import {
   waitForBlockedStatement,
 } from "../../_test-utils/learner-lock";
 import { mockGuestSession, mockSession } from "../../_test-utils/mock-session";
+import { getSpeechClipKey } from "../../audio/speech-clip-key";
 import { getUsageRule } from "../../entitlements/limits";
 import * as learnerWrite from "../../learner/_utils/write-learner-change";
 import { NEW_SKILL_MEMORY } from "../../learner/fsrs-scheduler";
@@ -60,6 +61,21 @@ async function saveBank(targetLanguage = "en") {
     },
     update: { content: BANK },
     where: { languagePair: { language: "pt", targetLanguage } },
+  });
+
+  await prisma.mediaAsset.createMany({
+    data: BANK.questions
+      .filter((question) => question.skill === "listening")
+      .map((question) => ({
+        kind: "audio",
+        language: targetLanguage,
+        model: "test",
+        promptVersion: "test",
+        reuseKey: getSpeechClipKey({ language: targetLanguage, text: question.passage }),
+        runId: "test",
+        url: "https://blob.test/placement.mp3",
+      })),
+    skipDuplicates: true,
   });
 }
 

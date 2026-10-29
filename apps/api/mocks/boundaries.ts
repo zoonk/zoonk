@@ -6,6 +6,7 @@ import { vi } from "vitest";
  */
 export const boundaries = {
   "@vercel/blob": { del: vi.fn(), list: vi.fn(), put: vi.fn() },
+  "@zoonk/ai/tasks/audio": { generateLanguageAudio: vi.fn() },
   "@zoonk/ai/tasks/audio/listening": { voiceListeningScript: vi.fn() },
   "@zoonk/ai/tasks/courses/intent": { classifyCourseIntent: vi.fn() },
   "@zoonk/ai/tasks/lessons/question": { streamLessonQuestionAnswer: vi.fn() },
