@@ -42,6 +42,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -54,6 +55,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -92,6 +94,7 @@ import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.PlacementAnswerAnyOf
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
+import kotlin.math.max
 import kotlin.time.Duration.Companion.seconds
 import com.zoonk.api.models.LessonVisual as ApiLessonVisual
 
@@ -166,9 +169,10 @@ internal fun ColumnScope.PlacementStep(
         is PlacementPhase.Question -> {
             key(phase.item.itemId) {
                 PlacementQuestion(
-                    question = phase,
+                    item = phase.item,
+                    eyebrow = "${subject.labelCase()} · ${stringResource(R.string.onboarding_placement_question_number, phase.number)}",
+                    labels = phase.labels,
                     typedWords = rememberUnsentWords(goalId, typedDraftStep(phase.item.itemId), count = 1),
-                    subject = subject,
                     pending = vm.isSaving,
                     answerFailed = vm.answerFailed,
                     finishFailed = vm.finishFailed,
@@ -319,22 +323,25 @@ private class Choice(
     val rich: Boolean,
 )
 
+/** Main's `PlacementQuestionScreen`, shared with the language level test; only a typed question needs [typedWords]. */
 @Composable
-private fun ColumnScope.PlacementQuestion(
-    question: PlacementPhase.Question,
-    typedWords: UnsentWords,
-    subject: String,
+internal fun ColumnScope.PlacementQuestion(
+    item: PlacementItem,
+    eyebrow: String?,
+    labels: TrueFalseLabels,
+    typedWords: UnsentWords?,
     pending: Boolean,
     answerFailed: Boolean,
     finishFailed: Boolean,
     onAnswer: (PlacementAnswer, Long) -> Unit,
     onRetry: () -> Unit,
     onStop: () -> Unit,
+    dontKnowLabel: String = stringResource(R.string.onboarding_placement_dont_know),
+    media: @Composable () -> Unit = {},
 ) {
-    val item = question.item
-    val choices = choices(item.format, question.labels)
+    val choices = choices(item.format, labels)
     var picked by rememberSaveable { mutableStateOf<Int?>(null) }
-    var typed by typedWords.field(0)
+    val typed = typedWords?.values?.first().orEmpty()
     var sent by rememberSaveable { mutableStateOf(false) }
     val shownAt = remember { SystemClock.elapsedRealtime() }
     val answer: PlacementAnswer? =
@@ -351,10 +358,9 @@ private fun ColumnScope.PlacementQuestion(
     }
     val confirm = { answer?.let(send) }
 
-    Eyebrow("${subject.labelCase()} · ${stringResource(R.string.onboarding_placement_question_number, question.number)}")
-    item.context?.let {
-        RichText(it, style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
-    }
+    eyebrow?.let { Eyebrow(it) }
+    media()
+    item.context?.let { RichText(it, style = MaterialTheme.typography.bodyLarge) }
     item.image?.let { PrivatePicture(it.url, it.alt, it.width, it.height, PictureFrame.Question) }
     val visual = remember(item.visual) { item.visual?.recode<ApiLessonVisual, LessonVisual>() }
     visual?.let { LessonVisual(it) }
@@ -365,7 +371,7 @@ private fun ColumnScope.PlacementQuestion(
         LaunchedEffect(Unit) { typedFocus.requestFocus() }
         OutlinedTextField(
             value = typed,
-            onValueChange = { typed = it.take(MAX_TYPED_ANSWER) },
+            onValueChange = { typedWords?.set(0, it.take(MAX_TYPED_ANSWER)) },
             modifier = Modifier.fillMaxWidth().focusRequester(typedFocus),
             label = { Text(stringResource(R.string.onboarding_placement_your_answer)) },
             minLines = 3,
@@ -388,25 +394,54 @@ private fun ColumnScope.PlacementQuestion(
             }
         }
         FinishFailed(finishFailed)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(
-                onClick = { send(DONT_KNOW) },
-                enabled = !pending,
-                modifier = Modifier.weight(1f),
-                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-            ) {
-                Icon(painterResource(R.drawable.ic_help), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-                Text(
-                    stringResource(R.string.onboarding_placement_dont_know),
-                    modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
-                )
-            }
-            Button(onClick = { confirm() }, enabled = answer != null && !pending, modifier = Modifier.weight(CONFIRM_WEIGHT)) {
-                Text(stringResource(R.string.onboarding_placement_confirm))
-            }
-        }
+        BesideOrAbove(
+            start = {
+                OutlinedButton(
+                    onClick = { send(DONT_KNOW) },
+                    enabled = !pending,
+                    contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                ) {
+                    Icon(painterResource(R.drawable.ic_help), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+                    Text(dontKnowLabel, modifier = Modifier.padding(start = ButtonDefaults.IconSpacing))
+                }
+            },
+            end = {
+                Button(onClick = { confirm() }, enabled = answer != null && !pending) {
+                    Text(stringResource(R.string.onboarding_placement_confirm))
+                }
+            },
+        )
         TextButton(onClick = onStop, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_placement_stop))
+        }
+    }
+}
+
+/** Main's wrapping answer row: [end] moves above [start] when [start] can't fit on one line beside it, so no label breaks mid-word. */
+@Composable
+private fun BesideOrAbove(
+    start: @Composable () -> Unit,
+    end: @Composable () -> Unit,
+) {
+    Layout(contents = listOf(start, end)) { (starts, ends), constraints ->
+        val gap = ACTION_GAP.roundToPx()
+        val width = constraints.maxWidth
+        val startWidth = starts.first().maxIntrinsicWidth(constraints.maxHeight)
+        val beside = startWidth + gap + END_MIN_WIDTH.roundToPx() <= width
+        val startPlaceable = starts.first().measure(Constraints.fixedWidth(if (beside) startWidth else width))
+        val endPlaceable = ends.first().measure(Constraints.fixedWidth(if (beside) width - gap - startWidth else width))
+
+        if (beside) {
+            val height = max(startPlaceable.height, endPlaceable.height)
+            layout(width, height) {
+                startPlaceable.placeRelative(0, (height - startPlaceable.height) / 2)
+                endPlaceable.placeRelative(startWidth + gap, (height - endPlaceable.height) / 2)
+            }
+        } else {
+            layout(width, endPlaceable.height + gap + startPlaceable.height) {
+                endPlaceable.placeRelative(0, 0)
+                startPlaceable.placeRelative(0, endPlaceable.height + gap)
+            }
         }
     }
 }
@@ -554,7 +589,7 @@ private fun ColumnScope.PlacementMockRunning(
 }
 
 @Composable
-private fun FinishFailed(failed: Boolean) {
+internal fun FinishFailed(failed: Boolean) {
     if (!failed) return
     Text(
         text = stringResource(R.string.onboarding_save_failed),
@@ -585,4 +620,5 @@ private val PATIENCE = 20.seconds
 private const val MAX_TYPED_ANSWER = 1000
 private const val READS_MATERIAL_STEP = "readExamNotice"
 
-private const val CONFIRM_WEIGHT = 1.6f
+private val ACTION_GAP = 8.dp
+private val END_MIN_WIDTH = 160.dp
