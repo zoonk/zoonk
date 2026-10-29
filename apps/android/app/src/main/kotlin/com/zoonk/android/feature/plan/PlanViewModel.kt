@@ -44,6 +44,9 @@ class PlanViewModel(
     private val failedParts = MutableStateFlow(emptySet<PlanPart>())
     private val latestChange = MutableStateFlow<EditorChange?>(null)
 
+    /** Counts the editor's openings, so a change saved in one doesn't show its answer in the next. */
+    private var openings = 0
+
     val isSaving: StateFlow<Boolean> = saving.asStateFlow()
 
     val events: Flow<PlanEvent> = notices.receiveAsFlow()
@@ -51,10 +54,7 @@ class PlanViewModel(
     /** Parts whose change is saving, which take no other tap meanwhile. */
     val pending: StateFlow<Set<PlanPart>> = savingParts.asStateFlow()
 
-    /**
-     * What each part asked for, shown over the plan until the plan shown has it: a tap shows at once
-     * and survives turning the device.
-     */
+    /** What each saving part asked for, shown over the plan meanwhile: a tap shows at once and survives turning the device. */
     val asked: StateFlow<Map<PlanPart, List<PlanOp>>> = askedOperations.asStateFlow()
 
     val failed: StateFlow<Set<PlanPart>> = failedParts.asStateFlow()
@@ -80,27 +80,34 @@ class PlanViewModel(
         }
     }
 
-    /** [answered] gets what the change did once the plan shown has it, or null when it didn't save. */
+    /**
+     * The part takes no other tap until the plan shown has the change. [answered] gets what it did,
+     * or null when it didn't save or the plan couldn't be read again, as main's page couldn't be.
+     */
     fun change(
         part: PlanPart,
         operations: List<PlanOp>,
         answered: (PlanChangeResult?) -> Unit = {},
     ) {
         if (part in savingParts.value) return
+        val opening = openings
         savingParts.update { it + part }
         failedParts.update { it - part }
         askedOperations.update { it + (part to operations) }
         viewModelScope.launch {
             val result = store.change(goalId, operations)
-            savingParts.update { it - part }
-            if (result is MutationResult.Done && store.awaitWritesShown(goalId)) {
-                if (result.value.status == PlanChangeResult.Status.APPLIED) result.value.change?.let(::report)
-                answered(result.value)
-            } else if (result is MutationResult.Failed) {
-                failedParts.update { it + part }
+            val saved = (result as? MutationResult.Done)?.value
+            val shown = if (saved != null) store.awaitWritesShown(goalId) else null
+            val sameOpening = opening == openings
+            if (saved != null && shown == PlanShown.Current) {
+                if (sameOpening && saved.status == PlanChangeResult.Status.APPLIED) saved.change?.let(::report)
+                answered(saved)
+            } else if (result is MutationResult.Failed || shown == PlanShown.Stale) {
+                if (sameOpening) failedParts.update { it + part }
                 answered(null)
             }
-            askedOperations.update { if (it[part] === operations) it - part else it }
+            askedOperations.update { it - part }
+            savingParts.update { it - part }
         }
     }
 
@@ -109,11 +116,15 @@ class PlanViewModel(
         latestChange.update { it?.forChange(change) { copy(undoing = true, undoFailed = false) } }
         viewModelScope.launch {
             val result = store.undo(goalId, change.id)
-            val undone = result is MutationResult.Done && store.awaitWritesShown(goalId)
+            val shown = if (result is MutationResult.Done) store.awaitWritesShown(goalId) else null
             latestChange.update {
-                it?.forChange(
-                    change,
-                ) { copy(undone = undone || this.undone, undoing = false, undoFailed = result is MutationResult.Failed) }
+                it?.forChange(change) {
+                    copy(
+                        undone = undone || shown == PlanShown.Current,
+                        undoing = false,
+                        undoFailed = result is MutationResult.Failed || shown == PlanShown.Stale,
+                    )
+                }
             }
         }
     }
@@ -124,6 +135,7 @@ class PlanViewModel(
 
     /** The editor opens without the change it showed last time, as main's does. */
     fun forgetLatest() {
+        openings++
         latestChange.value = null
         failedParts.value = emptySet()
     }

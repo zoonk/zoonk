@@ -10,6 +10,7 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Resource
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.value
 import com.zoonk.api.models.GoalProgress
@@ -41,6 +42,9 @@ data class PlanRead(
     val readAt: Instant,
     val writes: Int = 0,
 )
+
+/** [Stale]: reading the plan again failed. [Dropped]: the plan isn't shown anymore, as when the session ended. */
+enum class PlanShown { Current, Stale, Dropped }
 
 /**
  * [steps] are the setup's questions the learner hasn't answered (`plan` alone: it's being built).
@@ -273,21 +277,23 @@ class PlanStore(
         operations: List<PlanOp>,
     ): MutationResult<PlanChangePreview> = cache.mutate { api.preview(it, goalId, operations) }
 
-    /**
-     * Waits until the plan shown was read after every write saved so far (a read that fails waits
-     * for the next, as a pull or a return to the app starts). False when the plan was dropped
-     * meanwhile, as when the session ended.
-     */
-    suspend fun awaitWritesShown(goalId: UUID): Boolean {
+    /** Reads the plan again unless the plan shown has every write saved so far, and says whether it has them now. */
+    suspend fun awaitWritesShown(goalId: UUID): PlanShown {
         val written = writes[goalId] ?: 0
         val shown = plan[goalId]
-        val shownWrites =
-            shown.state.value.value
-                ?.writes ?: 0
-        if (shownWrites < written) shown.refresh()
-        val state = shown.state.first { it !is LoadState.Loaded || it.value.writes >= written }
-        return state is LoadState.Loaded
+        if (shown.writesShown() < written) {
+            shown.refresh()
+            // A newer write's invalidation replaces this read with one that has this write too.
+            shown.isRefreshing.first { !it }
+        }
+        return when {
+            shown.state.value !is LoadState.Loaded -> PlanShown.Dropped
+            shown.writesShown() >= written -> PlanShown.Current
+            else -> PlanShown.Stale
+        }
     }
+
+    private fun Resource<PlanRead>.writesShown() = state.value.value?.writes ?: 0
 
     /** Counted before the write's invalidation reads the plan again, so that read counts it. */
     private suspend fun <T> write(

@@ -139,6 +139,7 @@ internal fun PlanEditor(
             PlanEditorBody(page, edits, section, onTellBuddy, drafts = drafts)
         }
     }
+    if (drafts.datePicking) PlanDateDialog(page, edits, layer = wide, onClose = { drafts.datePicking = false })
 }
 
 /** [onClose] is the side panel's close button; the panel shows the latest change at its top, as main's does. */

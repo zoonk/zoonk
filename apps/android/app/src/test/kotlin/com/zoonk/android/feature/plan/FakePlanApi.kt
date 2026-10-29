@@ -25,6 +25,10 @@ internal class FakePlanApi : PlanApi {
     /** Holds a change asking for one of these operations until its gate opens. */
     val gates = mutableMapOf<PlanOp, CompletableDeferred<Unit>>()
     var createdAt: (List<PlanOp>) -> String = { "2026-10-28T12:00:00Z" }
+    var changeId: (List<PlanOp>) -> String = { CHANGE_ID }
+
+    /** Holds every plan read until it opens. */
+    var planGate: CompletableDeferred<Unit>? = null
     val changes = mutableListOf<List<PlanOp>>()
     val decisions = mutableListOf<PlanChangeDecisionInput.Status>()
 
@@ -32,6 +36,7 @@ internal class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
     ): Plan {
+        planGate?.await()
         planFailure?.let { throw it }
         plans++
         return plan()
@@ -93,7 +98,10 @@ internal class FakePlanApi : PlanApi {
         operations.firstNotNullOfOrNull { gates[it] }?.await()
         changeFailure?.let { throw it }
         changes += operations
-        return PlanChangeResult(change = planChange(createdAt = createdAt(operations)), status = PlanChangeResult.Status.APPLIED)
+        return PlanChangeResult(
+            change = planChange(createdAt = createdAt(operations), id = changeId(operations)),
+            status = PlanChangeResult.Status.APPLIED,
+        )
     }
 
     override suspend fun preview(

@@ -181,10 +181,11 @@ internal fun planChange(
     effect: String? = null,
     extra: String = "",
     createdAt: String = "2026-10-28T12:00:00Z",
+    id: String = CHANGE_ID,
 ): com.zoonk.api.models.PlanChange =
     ApiJson.decodeFromString(
         """
-        {"canApply":true,"canUndo":true,"createdAt":"$createdAt","examDocument":"notice","id":"$CHANGE_ID",
+        {"canApply":true,"canUndo":true,"createdAt":"$createdAt","examDocument":"notice","id":"$id",
          "kind":"$kind","lessonsSkipped":0,"operations":$operations,"seen":false,"source":"$source","status":"$status"
          ${effect?.let { ""","effect":$it""" }.orEmpty()}${if (extra.isEmpty()) "" else ",$extra"}}
         """.trimIndent(),

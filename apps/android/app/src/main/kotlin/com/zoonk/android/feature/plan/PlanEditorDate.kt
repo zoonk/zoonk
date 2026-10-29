@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -96,19 +97,35 @@ internal fun PlanDateSection(
 
         if (edits.hasFailed(PlanPart.Date)) SaveFailedText()
     }
+}
 
-    if (drafts.datePicking) {
-        TargetDateDialog(
-            today = page.today,
-            shown = shown ?: target,
-            canPick = { namedMonth || it != target },
-            onPick = {
-                drafts.datePicking = false
-                setDate(it)
-            },
-            onDismiss = { drafts.datePicking = false },
-        )
-    }
+/**
+ * Its own window, kept above the editor's sheet or panel so turning a phone keeps the date being
+ * picked. A new [layer] (the sheet or panel it's over) opens its window again, on top of the new one.
+ */
+@Composable
+internal fun PlanDateDialog(
+    page: PlanPageState,
+    edits: PlanEdits,
+    layer: Any,
+    onClose: () -> Unit,
+) {
+    val schedule = page.plan.schedule
+    val target = schedule.targetDate?.toJavaLocalDate()
+    val namedMonth = schedule.targetDateNamedMonth && target != null
+    val asked = edits.asked(PlanPart.Date).filterIsInstance<PlanOp.TargetDate>().firstOrNull()
+
+    TargetDateDialog(
+        today = page.today,
+        shown = asked?.date ?: target,
+        canPick = { namedMonth || it != target },
+        onPick = {
+            onClose()
+            edits.change(PlanPart.Date, listOf(PlanOp.TargetDate(it))) {}
+        },
+        onDismiss = onClose,
+        layer = layer,
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -119,6 +136,7 @@ private fun TargetDateDialog(
     canPick: (LocalDate) -> Boolean,
     onPick: (LocalDate) -> Unit,
     onDismiss: () -> Unit,
+    layer: Any,
 ) {
     val bounds = today.plusDays(1)..today.plusDays(MAX_PLAN_DAYS)
     val state =
@@ -135,14 +153,16 @@ private fun TargetDateDialog(
         )
     val chosen = state.selectedDateMillis?.let(::utcDate)?.takeIf { it in bounds && canPick(it) }
 
-    DatePickerDialog(
-        onDismissRequest = onDismiss,
-        confirmButton = {
-            TextButton(onClick = { chosen?.let(onPick) }, enabled = chosen != null) { Text(stringResource(R.string.plan_save)) }
-        },
-        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.plan_cancel)) } },
-    ) {
-        DatePicker(state)
+    key(layer) {
+        DatePickerDialog(
+            onDismissRequest = onDismiss,
+            confirmButton = {
+                TextButton(onClick = { chosen?.let(onPick) }, enabled = chosen != null) { Text(stringResource(R.string.plan_save)) }
+            },
+            dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.plan_cancel)) } },
+        ) {
+            DatePicker(state)
+        }
     }
 }
 

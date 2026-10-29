@@ -140,21 +140,51 @@ class PlanViewModelTest {
         }
 
     @Test
-    fun aReadThatFailsAfterASaveKeepsWhatWasAskedUntilTheNextRead() =
+    fun aPartTakesNoOtherTapUntilThePlanShownHasItsChange() =
+        runTest {
+            val gate = CompletableDeferred<Unit>().also { api.planGate = it }
+
+            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(45)))
+            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(60)))
+            assertEquals(setOf(PlanPart.Schedule), viewModel.pending.value)
+
+            gate.complete(Unit)
+            assertEquals(listOf(listOf<PlanOp>(PlanOp.DailyMinutes(45))), api.changes)
+            assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
+        }
+
+    @Test
+    fun aSaveWhosePlanCantBeReadAgainSaysItDidntSave() =
         runTest {
             withContext(Dispatchers.Main) { store.plan[goalId].load() }
             api.planFailure = ApiException(ApiError.Network)
+            val answers = mutableListOf<PlanChangeResult?>()
 
-            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(45)))
-            assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
-            assertEquals(setOf(PlanPart.Schedule), viewModel.asked.value.keys)
-            assertNull(viewModel.latest.value)
+            viewModel.change(PlanPart.Writing, listOf(PlanOp.WrittenCadence("biweekly"))) { answers += it }
 
-            api.planFailure = null
-            withContext(Dispatchers.Main) { store.plan[goalId].refresh() }
+            assertEquals(setOf(PlanPart.Writing), viewModel.failed.value)
+            assertEquals(listOf<PlanChangeResult?>(null), answers)
             assertEquals(emptyMap<PlanPart, List<PlanOp>>(), viewModel.asked.value)
+            assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
+            assertNull(viewModel.latest.value)
+        }
+
+    @Test
+    fun anOlderChangeAnsweringLastLeavesTheNewerOneShown() =
+        runTest {
+            val time = PlanOp.DailyMinutes(45)
+            val harder = PlanOp.DifficultyBias("harder")
+            val newer = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d02"
+            api.createdAt = { if (it == listOf(time)) "2026-10-28T12:00:00Z" else "2026-10-28T12:01:00Z" }
+            api.changeId = { if (it == listOf(time)) CHANGE_ID else newer }
+            val gate = CompletableDeferred<Unit>().also { api.gates[time] = it }
+
+            viewModel.change(PlanPart.Schedule, listOf(time))
+            viewModel.change(PlanPart.Steering, listOf(harder))
+            gate.complete(Unit)
+
             assertEquals(
-                CHANGE_ID,
+                newer,
                 viewModel.latest.value
                     ?.change
                     ?.id
@@ -163,23 +193,17 @@ class PlanViewModelTest {
         }
 
     @Test
-    fun anOlderChangeAnsweringLastLeavesTheNewerOneShown() =
+    fun aChangeSavedBeforeTheEditorReopensDoesntShowInIt() =
         runTest {
             val time = PlanOp.DailyMinutes(45)
-            val harder = PlanOp.DifficultyBias("harder")
-            api.createdAt = { if (it == listOf(time)) "2026-10-28T12:00:00Z" else "2026-10-28T12:01:00Z" }
             val gate = CompletableDeferred<Unit>().also { api.gates[time] = it }
 
             viewModel.change(PlanPart.Schedule, listOf(time))
-            viewModel.change(PlanPart.Steering, listOf(harder))
+            viewModel.forgetLatest()
             gate.complete(Unit)
 
-            assertEquals(
-                Instant.parse("2026-10-28T12:01:00Z"),
-                viewModel.latest.value
-                    ?.change
-                    ?.createdAt,
-            )
+            assertNull(viewModel.latest.value)
+            assertEquals(emptyMap<PlanPart, List<PlanOp>>(), viewModel.asked.value)
         }
 
     @Test
