@@ -22,6 +22,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.GraphicsMode
 import java.io.ByteArrayOutputStream
 import java.util.UUID
+import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -34,14 +35,20 @@ class PrivateImagesTest {
     private val ana = AuthenticatedSession(ANA, "token-a", "local-a")
     private val bia = AuthenticatedSession(BIA, "token-b", "local-b")
     private val anaResponds = CountDownLatch(1)
+
+    // A server may reuse a port another test's late request still reaches, so only this path counts.
+    private val coverPath = "/v1/files/course/${UUID.randomUUID()}/cover.png"
+    private val coverTokens = ConcurrentLinkedQueue<String?>()
     private lateinit var images: PrivateImages
 
     @Before
     fun start() {
         api.dispatcher =
             object : Dispatcher() {
-                override fun dispatch(request: RecordedRequest): MockResponse =
-                    when {
+                override fun dispatch(request: RecordedRequest): MockResponse {
+                    if (request.url.encodedPath == coverPath) coverTokens += request.headers["Authorization"]
+
+                    return when {
                         request.url.encodedPath == "/v1/files/moved.png" -> {
                             redirect()
                         }
@@ -60,6 +67,7 @@ class PrivateImagesTest {
                             png(width = 3)
                         }
                     }
+                }
             }
         elsewhere.dispatcher =
             object : Dispatcher() {
@@ -79,7 +87,7 @@ class PrivateImagesTest {
     @Test
     fun anEarlierLearnersSlowPictureNeverReachesTheNextLearner() =
         runBlocking {
-            val url = api.url("/v1/files/course/1/cover.png").toString()
+            val url = api.url(coverPath).toString()
             val forAna = async(kotlinx.coroutines.Dispatchers.IO) { images.loader.execute(images.request(context, url, ana)) }
             Thread.sleep(200)
             val forBia = images.loader.execute(images.request(context, url, bia)) as SuccessResult
@@ -89,8 +97,7 @@ class PrivateImagesTest {
             assertEquals(2, forBia.image.width)
             assertEquals(1, lateForAna.image.width)
             assertEquals(2, cached(forBia.memoryCacheKey)?.width)
-            val tokens = api.takeRequests(2).map { it.headers["Authorization"] }.toSet()
-            assertEquals(setOf("Bearer token-a", "Bearer token-b"), tokens)
+            assertEquals(setOf("Bearer token-a", "Bearer token-b"), coverTokens.toSet())
 
             images.forget(ana)
             assertNull(cached(lateForAna.memoryCacheKey))
@@ -130,8 +137,6 @@ class PrivateImagesTest {
 
     private fun MockWebServer.arrived(): RecordedRequest =
         checkNotNull(takeRequest(5, TimeUnit.SECONDS)) { "No request arrived within 5 s" }
-
-    private fun MockWebServer.takeRequests(count: Int) = List(count) { arrived() }
 
     private fun redirect() =
         MockResponse
