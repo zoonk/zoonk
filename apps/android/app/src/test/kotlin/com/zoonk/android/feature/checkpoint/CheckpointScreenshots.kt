@@ -27,6 +27,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -151,4 +153,37 @@ class CheckpointScreenshots {
                     ),
             ),
         )
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneResultWon() =
+        show(
+            "phone-result-won",
+            checkpoint(
+                fields =
+                    arrayOf(
+                        "status" to "completed",
+                        "result" to
+                            JsonObject(mapOf("correct" to JsonPrimitive(2), "passed" to JsonPrimitive(true), "total" to JsonPrimitive(3))),
+                        "nextPhase" to JsonObject(mapOf("index" to JsonPrimitive(1), "name" to JsonPrimitive("Energy"))),
+                        "reward" to
+                            JsonObject(
+                                mapOf(
+                                    "badge" to JsonPrimitive(true),
+                                    "brainPower" to JsonPrimitive(30),
+                                    "glasses" to kotlinx.serialization.json.JsonNull,
+                                    "phaseComplete" to JsonPrimitive(true),
+                                ),
+                            ),
+                    ),
+            ),
+        )
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneAnswerNotSaved() =
+        show("phone-not-saved", feedback = {
+            throw com.zoonk.android.data
+                .ApiException(com.zoonk.android.data.ApiError.Network)
+        }, play = ::confirm)
 }
