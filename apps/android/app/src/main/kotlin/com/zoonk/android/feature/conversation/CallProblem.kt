@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.conversation
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -7,8 +8,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -85,7 +86,7 @@ internal fun CallProblem(
             Problem(title, actions.onClose, actions = {
                 Button(
                     onClick = actions.onTakeover,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.barAction(),
                 ) { Text(stringResource(R.string.conversation_take_over)) }
             }) {
                 ProblemMessage(
@@ -96,9 +97,11 @@ internal fun CallProblem(
         }
 
         failure == LiveCallFailure.Dropped -> {
+            // Leaving a dropped call ends it, so what was said still gets its feedback.
+            BackHandler(onBack = actions.onEnd)
             Problem(title, actions.onEnd, actions = {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = actions.onEnd) { Text(stringResource(R.string.conversation_end_call)) }
+                    FilledTonalButton(onClick = actions.onEnd) { Text(stringResource(R.string.conversation_end_call)) }
                     Button(
                         onClick = actions.onRetry,
                         modifier = Modifier.weight(1f),
@@ -111,7 +114,7 @@ internal fun CallProblem(
             Problem(title, actions.onClose, actions = {
                 Button(
                     onClick = actions.onRetry,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.barAction(),
                 ) { Text(stringResource(R.string.conversation_try_again)) }
             }) {
                 ProblemMessage(
@@ -167,7 +170,7 @@ private fun ProblemWithBack(
     content: @Composable () -> Unit,
 ) {
     Problem(title, onClose, actions = {
-        Button(onClick = onClose, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.navigation_back)) }
+        Button(onClick = onClose, modifier = Modifier.barAction()) { Text(stringResource(R.string.navigation_back)) }
     }, content = content)
 }
 
@@ -225,7 +228,7 @@ internal fun SavingCall(
 
     val message = if (save == CallSave.Closing) R.string.conversation_still_closing else R.string.conversation_save_failed
     CallFrame(title = title, onClose = onClose, bottomBar = {
-        Button(onClick = onRetry, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.conversation_try_again)) }
+        Button(onClick = onRetry, modifier = Modifier.barAction()) { Text(stringResource(R.string.conversation_try_again)) }
     }) {
         item(key = "failed") {
             Text(

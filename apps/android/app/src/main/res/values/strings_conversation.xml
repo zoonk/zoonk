@@ -44,6 +44,10 @@
     <string name="conversation_talking">%1$s is talking…</string>
     <string name="conversation_listening">Listening…</string>
     <string name="conversation_help">Help</string>
+    <!-- Asked when the learner goes back or closes the screen during a call. -->
+    <string name="conversation_end_title">End the call?</string>
+    <string name="conversation_end_description">You\'ll get feedback on what you said so far.</string>
+    <string name="conversation_keep_talking">Keep talking</string>
     <string name="conversation_mute">Mute</string>
     <string name="conversation_end">End</string>
 
@@ -56,7 +60,7 @@
     <string name="conversation_paused_title">Calls are paused</string>
     <string name="conversation_paused">It\'s the same for everyone right now. Try again later.</string>
     <string name="conversation_in_progress_title">You\'re already in a call</string>
-    <string name="conversation_in_progress">It\'s open in another tab or on another device. Ending it from here skips its feedback.</string>
+    <string name="conversation_in_progress">It\'s open on another device or in your browser. Ending it from here skips its feedback.</string>
     <string name="conversation_take_over">End that call and start this one</string>
     <string name="conversation_dropped_title">The call dropped</string>
     <string name="conversation_dropped">Call again, or end the call to get feedback on what you said.</string>
@@ -90,7 +94,10 @@
     <!-- Labels of a correction: what the learner said, then a better way to say it. -->
     <string name="conversation_you_said_label">You said</string>
     <string name="conversation_better">Better</string>
-    <string name="conversation_listen">Listen</string>
+    <!-- A button that plays a word or sentence aloud, such as "Listen to por favor". -->
+    <string name="conversation_listen_to">Listen to %1$s</string>
+    <!-- One line of a correction, read aloud: its label, then the words, such as "Better: Un café, por favor". -->
+    <string name="conversation_diff_line">%1$s: %2$s</string>
 
     <string name="conversation_practice">Practice a conversation</string>
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->

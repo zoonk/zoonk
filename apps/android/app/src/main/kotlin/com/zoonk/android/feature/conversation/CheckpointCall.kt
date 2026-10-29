@@ -220,7 +220,7 @@ private fun CheckpointIntro(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
-                OutlinedButton(onClick = onToday, modifier = Modifier.fillMaxWidth()) {
+                OutlinedButton(onClick = onToday, modifier = Modifier.barAction()) {
                     Text(stringResource(R.string.conversation_back_to_today))
                 }
             },
@@ -258,7 +258,7 @@ private fun CheckpointPreparing(
                         asked = true
                         model.start(microphone = null)
                     },
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.barAction(),
                     label = stringResource(R.string.conversation_get_ready),
                 )
             },

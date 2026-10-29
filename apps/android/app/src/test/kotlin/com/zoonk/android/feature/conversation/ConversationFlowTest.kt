@@ -91,12 +91,12 @@ class ConversationFlowTest {
 
         transport.onEvent(characterSays("¡Hola! ¿Qué le pongo?"))
         transport.onEvent(learnerSays("Un café, por favor.", 1000.0, 3000.0))
-        seen("¡Hola! ¿Qué le pongo?")
-        seen("Un café, por favor.")
+        seen("Lucía: ¡Hola! ¿Qué le pongo?")
+        seen("You: Un café, por favor.")
 
         compose.onNode(hasSetTextAction()).performTextInput("Con leche")
         compose.onNodeWithContentDescription("Send").performClick()
-        seen("Con leche")
+        seen("You: Con leche")
         assertTrue(transport.instructions.last().endsWith("\"Con leche\""))
 
         compose.onNodeWithContentDescription("Help").performClick()

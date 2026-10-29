@@ -38,6 +38,7 @@ import com.zoonk.android.feature.livecall.LiveCallPhase
 import com.zoonk.android.feature.livecall.LiveConversationCalls
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.api.models.CompletedLanguageConversation
 import com.zoonk.api.models.LanguageConversation
@@ -201,14 +202,17 @@ private fun Conversation(
         }
 
         result != null -> {
-            ConversationResult(
-                conversation = conversation,
-                result = result,
-                speech = speech,
-                onContinue = exits::close,
-                onClose = exits::close,
-                onSeePlus = onSeePlus,
-            )
+            // A call opened after it ended was celebrated then.
+            CelebrationScope(play = completed != null) {
+                ConversationResult(
+                    conversation = conversation,
+                    result = result,
+                    speech = speech,
+                    onContinue = exits::close,
+                    onClose = exits::close,
+                    onSeePlus = onSeePlus,
+                )
+            }
             return
         }
     }
@@ -234,7 +238,7 @@ private fun Conversation(
         callState == null && examTask != null -> {
             val prepStartedAt by model.prepStartedAt.collectAsStateWithLifecycle(null)
             ExamTaskIntro(conversation, examTask, prepStartedAt, model::startPrep, exits::close) {
-                StartCallButton(starting = false, onClick = { startCall(false) }, modifier = Modifier.fillMaxWidth())
+                StartCallButton(starting = false, onClick = { startCall(false) }, modifier = Modifier.barAction())
             }
         }
 

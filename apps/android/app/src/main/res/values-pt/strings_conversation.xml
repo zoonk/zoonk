@@ -38,10 +38,13 @@
   "conversation_criterion_range": "a13d868e29e7932c6d3aacdc5200d2e303de12993643860f27acdcf3516c8c94",
   "conversation_criterion_task": "51c51700a2bf5d6c4c6331b564cf9072ce07df95bed7e1210f4cc6418119980c",
   "conversation_criterion_vocabulary": "70be76a90eb49fbda7a8eecffb5a229cf325cce22042bde4a4312b4b585f7aaa",
+  "conversation_diff_line": "04a352ab06a69109da587e102410db70fe9837ab1e04d73bdc72c63a0514f848",
   "conversation_dropped": "bebce03272e49ba37feec2295afc5cfbe726500e9a2b77e7e42e76036238913a",
   "conversation_dropped_title": "92c5eb9275acdb1a48b42fc7f7b1837f1875326e57a50c5b8ec1f01a540a41c9",
   "conversation_end": "c65b8e9bfa1afd49ba73813cca591c085e425b381091b3da3215b415f12f8cd3",
   "conversation_end_call": "18e5576d56b5fb5c18d49a659bf69e77a1792e91382cc49cf7ed59c792fc9cf7",
+  "conversation_end_description": "5040eb9684cb9ab45a5b61f220469104cdb2ef8bba6c45f9ee56176e3373cf32",
+  "conversation_end_title": "a18a7fe2ecfb885810c1de22fa21ceb9d5fc682392c0a1cc9cccd9781ed86819",
   "conversation_ended": "84f6223dfeac9c57a4683452acc11cdcdf87ed4f9e669d6d336f65bdafd6cd19",
   "conversation_ended_title": "9b544b4954fcf5929eae8655c4f4b5b1957ed14c603bff1bf39a78d46c07e8ee",
   "conversation_estimate": "7787a08cc5b35d48a8bb086bd4af5f9282159dd2eb6a40491077e60fe142f7ce",
@@ -61,11 +64,12 @@
   "conversation_goals_tile": "d0bf598485424e0533c3cacc3c61e90f338d4c6b3fc07036ce92cd1150906127",
   "conversation_help": "af4e3e79017894e01e1aa387a80246cad4e90b11e0ae16b3f91566711ca304c0",
   "conversation_ielts_mock": "15a9e1b6b8d3b1c22cf6a57dd5ebee5dd312f8505305cc93f17cc7f49fda37b7",
-  "conversation_in_progress": "f27f542bef0aa2aac2d57efbce22a999d9116eddb48b0bfec97a8901432e278c",
+  "conversation_in_progress": "41a1f1472b61cbdf5eb84305b7e3512044c36aa663a3e153c059ce3be44dc517",
   "conversation_in_progress_title": "98b0550722c8e913b3ffab3c8efc1a29ccacdec07d684831948529e890adfab0",
   "conversation_intro_meta": "6e0559709b2cf84d8e7491ab5cf4786f2f1019ede4ed2cd4e650a3049b6b1fd6",
+  "conversation_keep_talking": "1933b2357e4b6577f8dee86e30207c4f1f2c46c5e631849fd19374926aa9a17a",
   "conversation_level_line": "7b6c21b850fd95c8c2b2032edc8356896b84dc48d208b7a14bd90ea748bf7801",
-  "conversation_listen": "b0910642755f7591b5ecc1b87505fe569855a57e0a0e83a96705faf8a607144a",
+  "conversation_listen_to": "2731ca09d91f96dd0a6c26e0ca66ea8e94d04e97923420b259504666c453c7d6",
   "conversation_listening": "8e05ec50a7a8dc144ea1faf2e9298b8df46d66ea3366a79f7d21cf02bc25732b",
   "conversation_longer_calls_plus": "fd8283dc16704632510c5bf18120ccc596e96a561a9a7de6119f90485449beff",
   "conversation_mic_note": "1ae12e2f62733f723bc876bcfdb99c6f510c0ed55033a6e8925cf44db457e5a5",
@@ -211,6 +215,10 @@
     <string name="conversation_talking">%1$s está falando…</string>
     <string name="conversation_listening">Escutando…</string>
     <string name="conversation_help">Ajuda</string>
+    <!-- Asked when the learner goes back or closes the screen during a call. -->
+    <string name="conversation_end_title">Encerrar a conversa?</string>
+    <string name="conversation_end_description">Você vai receber comentários sobre o que disse até agora.</string>
+    <string name="conversation_keep_talking">Continuar conversando</string>
     <string name="conversation_mute">Silenciar</string>
     <string name="conversation_end">Encerrar</string>
     <string name="conversation_no_calls_today">Você não pode fazer mais conversas hoje</string>
@@ -222,7 +230,7 @@
     <string name="conversation_paused_title">As conversas estão pausadas</string>
     <string name="conversation_paused">Isso está acontecendo com todo mundo agora. Tente de novo mais tarde.</string>
     <string name="conversation_in_progress_title">Você já está em uma conversa</string>
-    <string name="conversation_in_progress">Ela está aberta em outra aba ou em outro dispositivo. Encerrá-la por aqui faz você perder o feedback.</string>
+    <string name="conversation_in_progress">A conversa está aberta em outro dispositivo ou no navegador. Encerrá-la por aqui faz você perder os comentários.</string>
     <string name="conversation_take_over">Encerrar essa conversa e começar esta</string>
     <string name="conversation_dropped_title">A conversa caiu</string>
     <string name="conversation_dropped">Ligue de novo ou encerre a conversa para receber feedback sobre o que você disse.</string>
@@ -256,7 +264,10 @@
     <!-- Labels of a correction: what the learner said, then a better way to say it. -->
     <string name="conversation_you_said_label">Você disse</string>
     <string name="conversation_better">Melhor</string>
-    <string name="conversation_listen">Ouvir</string>
+    <!-- A button that plays a word or sentence aloud, such as "Listen to por favor". -->
+    <string name="conversation_listen_to">Ouvir %1$s</string>
+    <!-- One line of a correction, read aloud: its label, then the words, such as "Better: Un café, por favor". -->
+    <string name="conversation_diff_line">%1$s: %2$s</string>
     <string name="conversation_practice">Praticar uma conversa</string>
     <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
     <string name="conversation_practice_with">com %1$s · %2$s</string>

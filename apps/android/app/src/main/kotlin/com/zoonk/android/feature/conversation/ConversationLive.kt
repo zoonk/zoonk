@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
@@ -21,6 +22,7 @@ import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.FilledTonalIconToggleButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -33,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -42,6 +45,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -49,11 +53,13 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.livecall.LiveCallPhase
 import com.zoonk.android.feature.livecall.LiveCallState
 import com.zoonk.android.ui.components.formatClock
+import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationSetup.EndsAtLimit
 import com.zoonk.api.models.LanguageConversationTurn.Speaker
 import com.zoonk.api.models.SpeakingTask
+import kotlinx.coroutines.flow.drop
 
 /** What the learner can do during the call. */
 internal class LiveCallActions(
@@ -65,8 +71,9 @@ internal class LiveCallActions(
 
 /**
  * Main's live call: who's talking, the transcript, the call's status, then the goals (turning
- * blue as they're met), a tip for the next one and, after Help, phrases to lean on. Back ends the
- * call as End does, so a stray gesture never drops it unsaved.
+ * blue as they're met), a tip for the next one and, after Help, phrases to lean on. Back and the
+ * close action ask before ending a live call, which End does at once; while it connects, they go
+ * back to the intro as End does.
  */
 @Composable
 internal fun ConversationLive(
@@ -81,8 +88,24 @@ internal fun ConversationLive(
     val metCount = conversation.objectives.count { it.label in call.metLabels }
     val goalsMeta = stringResource(R.string.conversation_goals_met, metCount, conversation.objectives.size)
     val character = conversation.character
+    // Help's phrases come last on a phone (after the character, goals, turns, status and tip), or they'd
+    // land below a long transcript; beside an aside the list is shorter and this scrolls to its end.
+    val phrasesIndex = 2 + call.turns.size + 2
+    LaunchedEffect(usedHelp) { if (usedHelp) listState.scrollToItem(phrasesIndex) }
 
-    BackHandler(onBack = actions.onEnd)
+    val live = call.phase == LiveCallPhase.Live
+    BackHandler(enabled = !live, onBack = actions.onEnd)
+    val endFirst =
+        if (live) {
+            TaskExitConfirmation(
+                title = stringResource(R.string.conversation_end_title),
+                description = stringResource(R.string.conversation_end_description),
+                confirm = stringResource(R.string.conversation_end_call),
+                cancel = stringResource(R.string.conversation_keep_talking),
+            )
+        } else {
+            null
+        }
 
     // The newest words stay in view, unless the learner scrolled up to read earlier ones.
     val said =
@@ -91,16 +114,17 @@ internal fun ConversationLive(
                 .lastOrNull()
                 ?.text
                 ?.length
-    LaunchedEffect(said) {
-        val info = listState.layoutInfo
-        val nearEnd = (info.visibleItemsInfo.lastOrNull()?.index ?: 0) >= info.totalItemsCount - TRANSCRIPT_TAIL
-        if (nearEnd && info.totalItemsCount > 0) listState.scrollToItem(info.totalItemsCount - 1)
+    LaunchedEffect(said) { listState.followEnd() }
+    // The keyboard opening shrinks the list: the line being answered stays in view.
+    LaunchedEffect(listState) {
+        snapshotFlow { listState.layoutInfo.viewportSize }.drop(1).collect { listState.followEnd() }
     }
 
     CallFrame(
         title = conversation.title,
         onClose = actions.onEnd,
         listState = listState,
+        exitConfirmation = endFirst,
         bottomBar = { LiveBar(call, actions) },
         aside = {
             if (examTask == null) {
@@ -129,12 +153,10 @@ internal fun ConversationLive(
         }
         if (!beside && examTask == null) {
             item(key = "goals") {
-                Checklist(
-                    conversation.objectives,
-                    conversation.targetLanguage,
-                    met = { it in call.metLabels },
-                    modifier = Modifier.callItem(),
-                )
+                Column(Modifier.callItem()) {
+                    SectionTitle(stringResource(R.string.conversation_goals), trailing = goalsMeta)
+                    Checklist(conversation.objectives, conversation.targetLanguage, met = { it in call.metLabels })
+                }
             }
         }
         call.turns.forEachIndexed { index, turn ->
@@ -174,10 +196,10 @@ private fun Turn(
 ) {
     val words = inLanguage(text, conversation.targetLanguage)
     if (speaker == Speaker.LEARNER) {
-        val said = stringResource(R.string.conversation_you_said, text)
+        val said = spokenAs(stringResource(R.string.conversation_you_said, MARK), text, conversation.targetLanguage)
         Box(modifier, contentAlignment = Alignment.CenterEnd) {
             Surface(
-                modifier = Modifier.fillMaxWidth(BUBBLE_SHARE).wrapContentWidth(Alignment.End).semantics { contentDescription = said },
+                modifier = Modifier.fillMaxWidth(BUBBLE_SHARE).wrapContentWidth(Alignment.End).clearAndSetSemantics { this.text = said },
                 shape = MaterialTheme.shapes.large,
                 color = MaterialTheme.colorScheme.surfaceContainerHigh,
             ) {
@@ -185,11 +207,16 @@ private fun Turn(
             }
         }
     } else {
-        val said = stringResource(R.string.conversation_character_said, conversation.character.name, text)
+        val said =
+            spokenAs(
+                stringResource(R.string.conversation_character_said, conversation.character.name, MARK),
+                text,
+                conversation.targetLanguage,
+            )
         Box(modifier, contentAlignment = Alignment.CenterStart) {
             Text(
                 words,
-                Modifier.fillMaxWidth(BUBBLE_SHARE).semantics { contentDescription = said },
+                Modifier.fillMaxWidth(BUBBLE_SHARE).clearAndSetSemantics { this.text = said },
                 style = MaterialTheme.typography.bodyLarge,
             )
         }
@@ -302,21 +329,21 @@ private fun TypedReply(
         }
     }
     val label = stringResource(R.string.conversation_type_reply)
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-        OutlinedTextField(
-            value = text,
-            onValueChange = { text = it },
-            modifier = Modifier.weight(1f).semantics { contentDescription = label },
-            enabled = canSend,
-            placeholder = { Text(stringResource(R.string.conversation_type_reply_hint)) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
-            keyboardActions = KeyboardActions(onSend = { send() }),
-        )
-        FilledIconButton(onClick = send, enabled = canSend && text.isNotBlank()) {
-            Icon(painterResource(R.drawable.ic_send), contentDescription = stringResource(R.string.conversation_send))
-        }
-    }
+    OutlinedTextField(
+        value = text,
+        onValueChange = { text = it },
+        modifier = Modifier.fillMaxWidth().semantics { contentDescription = label },
+        enabled = canSend,
+        placeholder = { Text(stringResource(R.string.conversation_type_reply_hint)) },
+        trailingIcon = {
+            IconButton(onClick = send, enabled = canSend && text.isNotBlank()) {
+                Icon(painterResource(R.drawable.ic_send), contentDescription = stringResource(R.string.conversation_send))
+            }
+        },
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+        keyboardActions = KeyboardActions(onSend = { send() }),
+    )
 }
 
 @Composable
@@ -338,6 +365,12 @@ private fun CallControls(
                 onCheckedChange = { actions.onMute() },
                 enabled = canMute,
                 modifier = Modifier.size(CONTROL_SIZE),
+                // Muted reads as a pick: the ink fill, not a lighter tonal one.
+                colors =
+                    IconButtonDefaults.filledTonalIconToggleButtonColors(
+                        checkedContainerColor = MaterialTheme.colorScheme.primary,
+                        checkedContentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
             ) {
                 Icon(painterResource(if (off) R.drawable.ic_mic_off else R.drawable.ic_mic), contentDescription = label)
             }
@@ -370,6 +403,12 @@ private fun Control(
         button(name)
         Text(name, Modifier.clearAndSetSemantics {}, style = MaterialTheme.typography.labelMedium, textAlign = TextAlign.Center)
     }
+}
+
+private suspend fun LazyListState.followEnd() {
+    val info = layoutInfo
+    val nearEnd = (info.visibleItemsInfo.lastOrNull()?.index ?: 0) >= info.totalItemsCount - TRANSCRIPT_TAIL
+    if (nearEnd && info.totalItemsCount > 0) scrollToItem(info.totalItemsCount - 1)
 }
 
 private const val BUBBLE_SHARE = 0.8f

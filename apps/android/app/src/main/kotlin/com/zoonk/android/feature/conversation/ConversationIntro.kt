@@ -102,7 +102,7 @@ private fun IntroActions(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         if (start == CallIntroStart.PlusRequired) {
             PlusNotice(onSeePlus = null, description = stringResource(R.string.conversation_challenge_plus), inset = true)
-            Button(onClick = onSeePlus, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.subscription_see_plus)) }
+            Button(onClick = onSeePlus, modifier = Modifier.barAction()) { Text(stringResource(R.string.subscription_see_plus)) }
             return@Column
         }
         if (start == CallIntroStart.Failed) {
@@ -113,7 +113,7 @@ private fun IntroActions(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        StartCallButton(starting = start == CallIntroStart.Starting, onClick = onStart, modifier = Modifier.fillMaxWidth())
+        StartCallButton(starting = start == CallIntroStart.Starting, onClick = onStart, modifier = Modifier.barAction())
     }
 }
 

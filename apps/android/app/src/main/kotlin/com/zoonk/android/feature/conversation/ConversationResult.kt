@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.conversation
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -9,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -16,12 +19,16 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -29,24 +36,36 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.ListenButton
 import com.zoonk.android.feature.audio.SpeechPlayer
+import com.zoonk.android.feature.audio.SpeechStatusIcon
 import com.zoonk.android.feature.audio.SpokenText
+import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
+import com.zoonk.android.feature.audio.speechActionLabel
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StepPagerActions
+import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.richtext.RichInlineText
+import com.zoonk.android.ui.theme.ZoonkMotion
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.LanguageCallFeedback
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationResult
 import com.zoonk.api.models.LanguageConversationResultFeedback
+import kotlin.math.ceil
 
 /**
  * Main's call result, a step at a time: the stars with what the call earned, what went well, and
@@ -105,14 +124,7 @@ private fun StarsStep(
     val stars = result.stars.toInt()
     val starsLabel = pluralStringResource(R.plurals.conversation_stars, stars, stars)
 
-    Row(
-        Modifier.clearAndSetSemantics { contentDescription = starsLabel },
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(painterResource(R.drawable.ic_star_filled), contentDescription = null, tint = MaterialTheme.colorScheme.tertiary)
-        Readout("$stars/$MAX_STARS")
-    }
+    StarsReadout(stars, settles = !lost && stars > 0, Modifier.clearAndSetSemantics { contentDescription = starsLabel })
 
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
@@ -126,7 +138,7 @@ private fun StarsStep(
                 result.passed -> stringResource(R.string.conversation_challenge_passed)
                 else -> stringResource(R.string.conversation_not_this_time)
             }
-        Text(headline, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
+        Text(headline, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
         feedback?.encouragement?.let {
             Text(
                 it,
@@ -163,27 +175,98 @@ private fun CallFacts(
     val met = conversation.objectives.count { it.met }
     if (total == 0 && result.brainPower <= 0) return
 
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    val goals: (@Composable (Modifier) -> Unit)? =
         if (total > 0) {
-            val spoken =
-                stringResource(
-                    R.string.conversation_goals_met,
-                    formatNumber(met.toDouble(), locale),
-                    formatNumber(total.toDouble(), locale),
+            { modifier ->
+                val spoken =
+                    stringResource(
+                        R.string.conversation_goals_met,
+                        formatNumber(met.toDouble(), locale),
+                        formatNumber(total.toDouble(), locale),
+                    )
+                Fact(
+                    R.drawable.ic_target,
+                    MaterialTheme.colorScheme.tertiary,
+                    stringResource(R.string.conversation_goals_tile),
+                    "$met/$total",
+                    spoken,
+                    modifier,
                 )
-            Fact(
-                R.drawable.ic_target,
-                MaterialTheme.colorScheme.tertiary,
-                stringResource(R.string.conversation_goals_tile),
-                "$met/$total",
-                spoken,
-            )
+            }
+        } else {
+            null
         }
+    val brainPower: (@Composable (Modifier) -> Unit)? =
         if (result.brainPower > 0) {
-            val points = "+" + formatNumber(result.brainPower.toDouble(), locale)
-            Fact(R.drawable.ic_psychology, MaterialTheme.zoonk.brain, stringResource(R.string.conversation_brain_power), points, points)
+            { modifier ->
+                val points = "+" + formatNumber(countedUp(result.brainPower).toDouble(), locale)
+                val spoken = "+" + formatNumber(result.brainPower.toDouble(), locale)
+                Fact(
+                    R.drawable.ic_psychology,
+                    MaterialTheme.zoonk.brain,
+                    stringResource(R.string.conversation_brain_power),
+                    points,
+                    spoken,
+                    modifier,
+                )
+            }
+        } else {
+            null
         }
+    val tiles = listOfNotNull(goals, brainPower)
+    // Two tiles side by side, as main's grid; stacked when large text would squeeze them.
+    if (LocalDensity.current.fontScale > STACK_FONT_SCALE) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) { tiles.forEach { it(Modifier.fillMaxWidth()) } }
+    } else {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) { tiles.forEach { it(Modifier.weight(1f)) } }
     }
+}
+
+/** The stars earned, the out-of-three muted; the star settles once where the result celebrates. */
+@Composable
+private fun StarsReadout(
+    stars: Int,
+    settles: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val plays = celebrates() && settles
+    val scale = remember { Animatable(if (plays) SETTLE_FROM else 1f) }
+    LaunchedEffect(plays) { if (plays) scale.animateTo(1f, tween(SETTLE_MILLIS, easing = ZoonkMotion.EaseOut)) }
+    val large = MaterialTheme.typography.displaySmall.withTabularFigures()
+    Row(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            painterResource(R.drawable.ic_star_filled),
+            contentDescription = null,
+            modifier =
+                Modifier.graphicsLayer {
+                    scaleX = scale.value
+                    scaleY = scale.value
+                },
+            tint = MaterialTheme.colorScheme.tertiary,
+        )
+        Text(
+            buildAnnotatedString {
+                append(stars.toString())
+                withStyle(
+                    SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant, fontSize = MaterialTheme.typography.titleLarge.fontSize),
+                ) {
+                    append("/$MAX_STARS")
+                }
+            },
+            style = large.copy(fontWeight = FontWeight.SemiBold),
+        )
+    }
+}
+
+/** Counts up once where the result celebrates. */
+@Composable
+private fun countedUp(value: Long): Long {
+    val plays = celebrates()
+    val shown = remember { Animatable(if (plays) 0f else value.toFloat()) }
+    LaunchedEffect(value, plays) {
+        if (plays) shown.animateTo(value.toFloat(), tween(COUNT_UP_MILLIS, easing = ZoonkMotion.EaseOut)) else shown.snapTo(value.toFloat())
+    }
+    return ceil(shown.value).toLong().coerceIn(1, value.coerceAtLeast(1))
 }
 
 @Composable
@@ -193,8 +276,9 @@ private fun Fact(
     label: String,
     value: String,
     spokenValue: String,
+    modifier: Modifier = Modifier,
 ) {
-    OutlinedCard(Modifier.semantics(mergeDescendants = true) {}) {
+    OutlinedCard(modifier.semantics(mergeDescendants = true) {}) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(18.dp), tint = tint)
@@ -301,9 +385,9 @@ private fun DiffLine(
     language: String,
     better: Boolean,
 ) {
-    val spoken = "$label: $text"
+    val spoken = spokenAs(stringResource(R.string.conversation_diff_line, label, MARK), text, language)
     Surface(
-        Modifier.fillMaxWidth().clearAndSetSemantics { contentDescription = spoken },
+        Modifier.fillMaxWidth().clearAndSetSemantics { this.text = spoken },
         shape = MaterialTheme.shapes.small,
         color = if (better) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.errorContainer,
         contentColor = if (better) MaterialTheme.colorScheme.onTertiaryContainer else MaterialTheme.colorScheme.onErrorContainer,
@@ -323,7 +407,15 @@ private fun SpeakButton(
     personal: Boolean = false,
 ) {
     val audio = rememberSpokenAudio(speech, language)
-    ListenButton(audio, listOf(SpokenText(text, personal = personal)), stringResource(R.string.conversation_listen))
+    val label = speechActionLabel(audio.state, stringResource(R.string.conversation_listen_to, text))
+    FilledTonalIconButton(
+        onClick = { if (audio.isBusy) audio.cancel() else audio.speak(listOf(SpokenText(text, personal = personal))) },
+        modifier = Modifier.semantics { contentDescription = label },
+    ) {
+        SpeechStatusIcon(audio.state) {
+            Icon(painterResource(R.drawable.ic_volume_up), contentDescription = null, modifier = Modifier.size(buttonIconSize()))
+        }
+    }
 }
 
 @Composable
@@ -337,3 +429,9 @@ private fun Note(text: String) {
 }
 
 private const val MAX_STARS = 3
+private const val STACK_FONT_SCALE = 1.5f
+private const val SETTLE_FROM = 0.6f
+private const val SETTLE_MILLIS = 400
+
+/** Main's `--transition-duration-fill`. */
+private const val COUNT_UP_MILLIS = 700
