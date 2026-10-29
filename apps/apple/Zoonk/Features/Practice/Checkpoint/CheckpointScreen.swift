@@ -361,7 +361,7 @@ private struct CheckpointResultView: View {
               kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons),
             correct: correct, total: total,
             // A win's Brain Power is its rewards' first row, as on main.
-            brainPower: passed ? 0 : state.completion?.brainPower ?? 0,
+            brainPower: passed ? 0 : state.completion?.ownBrainPower ?? 0,
             reached: PracticeReached(
               energy: state.completion?.reached.energy,
               level: state.completion?.reached.level.map {
@@ -371,7 +371,7 @@ private struct CheckpointResultView: View {
           if passed {
             CheckpointRewards(
               checkpoint: checkpoint,
-              brainPower: state.completion?.brainPower ?? checkpoint.reward.brainPower)
+              brainPower: state.completion?.ownBrainPower ?? checkpoint.reward.brainPower)
           } else if let next = checkpoint.nextPhase?.value1 {
             Label {
               Text(

@@ -493,7 +493,7 @@ private struct BlockFinishedView: View {
     PracticeTaskLayout {
       PracticeResultHeader(
         title: title, correct: completion.correct, total: completion.total,
-        brainPower: completion.brainPower,
+        brainPower: completion.ownBrainPower,
         reached: PracticeReached(
           energy: completion.reached.energy,
           level: completion.reached.level.map { .init(color: $0.color.rawValue, level: $0.level) }))

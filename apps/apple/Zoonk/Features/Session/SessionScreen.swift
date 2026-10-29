@@ -464,8 +464,8 @@ private struct MomentSummary: View {
       .font(.title2.bold())
       .accessibilityAddTraits(.isHeader)
 
-      if moment.brainPower > 0 {
-        Text("+\(moment.brainPower) Brain Power", tableName: "Session", comment: "Earned")
+      if moment.ownBrainPower > 0 {
+        Text("+\(moment.ownBrainPower) Brain Power", tableName: "Session", comment: "Earned")
           .font(.headline.monospacedDigit())
           .foregroundStyle(.brain)
       }

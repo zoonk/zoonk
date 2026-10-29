@@ -87,9 +87,13 @@ struct BlockMoment: Decodable, Equatable, Sendable {
   let sessionCompleted: Bool
   let total: Int
 
-  /// Without the day's bonus it paid, which its missions show.
   var ownBrainPower: Int {
-    brainPower - (fullMeal.paid ? fullMeal.bonus : 0)
+    Self.ownBrainPower(brainPower, bonus: fullMeal.bonus, paid: fullMeal.paid)
+  }
+
+  /// A block's Brain Power without the day's bonus it paid, which its missions show.
+  static func ownBrainPower(_ brainPower: Int, bonus: Int, paid: Bool) -> Int {
+    brainPower - (paid ? bonus : 0)
   }
 
   var day: DayResult {
@@ -106,6 +110,12 @@ struct BlockMoment: Decodable, Equatable, Sendable {
 }
 
 /// `key` is the belt color, the glasses, the stage, or `trapHunter:<boss>` for a badge.
+extension Components.Schemas.StudyBlockCompletion {
+  var ownBrainPower: Int {
+    BlockMoment.ownBrainPower(brainPower, bonus: fullMeal.bonus, paid: fullMeal.paid)
+  }
+}
+
 struct Milestone: Decodable, Equatable, Identifiable, Sendable {
   let id: String
   let key: String
