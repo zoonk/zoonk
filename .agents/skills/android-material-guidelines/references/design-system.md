@@ -31,7 +31,8 @@ When `globals.css` changes, regenerate the palette: `pnpm --filter android palet
 | `energy`                                                   | `MaterialTheme.zoonk.energy`                                                                                                |
 | `kind-*`                                                   | `LearnKind.color`, drawn by `KindMark` and `KindDot`                                                                        |
 | `belt-*`                                                   | `Belt.color`: full strength in every scheme, drawn by `BeltDot`                                                             |
-| subject hues, `viz-*`                                      | added to the palette and `ZoonkColors` when a feature needs them                                                            |
+| `viz-accent`, `viz-secondary`, `viz-highlight`             | `MaterialTheme.zoonk.vizAccent`, `vizSecondary`, `vizHighlight`: a chart's series, in that order                            |
+| subject hues                                               | added to the palette and `ZoonkColors` when a feature needs them                                                            |
 
 `ZoonkColors` holds only meanings Material has no role for. Add one only when no role carries it without colliding with another meaning: its token in the generator's list, then `ZoonkColors`.
 
@@ -67,8 +68,9 @@ Material's `shapes` and component defaults. Shape carries no meaning in the desi
 - **`KindMark`, `KindDot`:** a kind's symbol or dot in its color, only where kinds sit side by side. A list of one kind shows state instead.
 - **`BeltDot`, `BeltLevel`:** the belt in its color with an edge, and the level button's content (dot and number, read as "Yellow belt, level 3"); the button says where it goes with `onClickLabel`.
 - **`answerTone`, `AnswerTag`:** an answer piece's line, fill and words for idle, picked, right, wrong and guess, and the word a checked piece shows ("Correct", "Your answer", "Your guess"). The words stay `onSurface`; only the line and fill change.
+- **`LessonVisual`:** main's chart (bars or lines, up to three series) and timeline, from a value type each caller reads its API model into with `recode()`. TalkBack reads a chart's values in place of the drawing.
 - **`StatusMessage`, `LoadFailedMessage`, `EmptyState`:** a screen that couldn't show (centered, the main action first) and a place with nothing yet (start-aligned, no card).
-- **Formatting (`ui/format`):** `formatNumber`, `formatPercent`, `formatProgressShare`, `formatDuration`, `formatMinutes`, `formatDate` with main's `DateStyle`s and `formatTimeOfDay` on the device's clock, all with `currentLocale()`. They write what main's `@zoonk/utils` writes.
+- **Formatting (`ui/format`):** `formatNumber`, `formatAmount` (money and units, compact for axes), `formatPercent`, `formatProgressShare`, `formatDuration`, `formatMinutes`, `formatDate` with main's `DateStyle`s and `formatTimeOfDay` on the device's clock, all with `currentLocale()`. They write what main's `@zoonk/utils` writes.
 - **Plus locks:** the same screen locked with the subscribe action, never a different screen.
 - **Celebrations:** a full-screen `Dialog`, once, never on load, still when the animator duration scale is 0.
 

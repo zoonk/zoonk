@@ -46,6 +46,9 @@ internal data class ZoonkPalette(
     val beltRed: Color,
     val beltGray: Color,
     val beltBlack: Color,
+    val vizAccent: Color,
+    val vizSecondary: Color,
+    val vizHighlight: Color,
     val destructiveTint: Color,
     val successTint: Color,
 )
@@ -87,6 +90,9 @@ internal val LightPalette =
         beltRed = Color(0xFFFB2C36),
         beltGray = Color(0xFF6A7282),
         beltBlack = Color(0xFF000000),
+        vizAccent = Color(0xFF038A7F),
+        vizSecondary = Color(0xFFA941B0),
+        vizHighlight = Color(0xFFB66C18),
         destructiveTint = Color(0xFFFDEFF3),
         successTint = Color(0xFFEFF6FD),
     )
@@ -128,6 +134,9 @@ internal val DarkPalette =
         beltRed = Color(0xFFFB2C36),
         beltGray = Color(0xFF6A7282),
         beltBlack = Color(0xFF404040),
+        vizAccent = Color(0xFF70E5D3),
+        vizSecondary = Color(0xFFE8A0EC),
+        vizHighlight = Color(0xFFF7C15F),
         destructiveTint = Color(0xFF1F1418),
         successTint = Color(0xFF141A20),
     )
@@ -169,6 +178,9 @@ internal val LightMoreContrastPalette =
         beltRed = Color(0xFFFB2C36),
         beltGray = Color(0xFF6A7282),
         beltBlack = Color(0xFF000000),
+        vizAccent = Color(0xFF005F5A),
+        vizSecondary = Color(0xFF8A0194),
+        vizHighlight = Color(0xFF973C00),
         destructiveTint = Color(0xFFF7E8EF),
         successTint = Color(0xFFEAEDF9),
     )
@@ -210,6 +222,9 @@ internal val DarkMoreContrastPalette =
         beltRed = Color(0xFFFB2C36),
         beltGray = Color(0xFF6A7282),
         beltBlack = Color(0xFF737373),
+        vizAccent = Color(0xFF96F7E4),
+        vizSecondary = Color(0xFFF6CFFF),
+        vizHighlight = Color(0xFFFEE685),
         destructiveTint = Color(0xFF170F13),
         successTint = Color(0xFF111417),
     )

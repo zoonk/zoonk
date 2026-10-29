@@ -63,6 +63,7 @@ import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitPeriod
@@ -78,6 +79,7 @@ import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatMinutes
@@ -111,6 +113,7 @@ internal val gallerySections =
         GallerySection("Trickster") { Tricksters() },
         GallerySection("Acts") { Acts() },
         GallerySection("Answer tones") { Answers() },
+        GallerySection("Lesson visuals") { LessonVisuals() },
         GallerySection("Headers and empty states") { HeadersAndEmptyStates() },
         GallerySection("Limit notices") { LimitNotices() },
         GallerySection("Load failed") { LoadFailedMessage(onRetry = {}) { TextButton(onClick = {}) { Text("Go to Today") } } },
@@ -480,6 +483,50 @@ private fun AnswerSample(
 }
 
 @Composable
+private fun LessonVisuals() {
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        LessonVisual(
+            LessonVisual.Chart(
+                chart = LessonVisual.Chart.Kind.Bar,
+                title = "Household spending by region",
+                categoryLabel = "Region",
+                valueLabel = "Monthly spending",
+                categories = listOf("North", "Northeast", "Southeast", "South", "Center-West"),
+                series =
+                    listOf(
+                        LessonVisual.Chart.Series("2019", listOf(2_100.0, 1_850.0, 3_400.0, 3_050.0, 2_900.0)),
+                        LessonVisual.Chart.Series("2024", listOf(2_600.0, 2_200.0, 4_100.0, 3_600.0, 3_500.0)),
+                    ),
+                unit = "R$",
+                source = "IBGE",
+            ),
+        )
+        LessonVisual(
+            LessonVisual.Chart(
+                chart = LessonVisual.Chart.Kind.Line,
+                title = "Average rainfall in Recife",
+                categoryLabel = "Month",
+                valueLabel = "Rain",
+                categories = listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun"),
+                series = listOf(LessonVisual.Chart.Series("Rain", listOf(110.0, 152.0, 265.0, 326.0, 329.0, 390.0))),
+                unit = "mm",
+            ),
+        )
+        LessonVisual(
+            LessonVisual.Timeline(
+                title = "Brazil becomes a republic",
+                events =
+                    listOf(
+                        LessonVisual.Timeline.Event("1822", "Independence", "Dom Pedro I declares it on September 7."),
+                        LessonVisual.Timeline.Event("1888", "Abolition of slavery"),
+                        LessonVisual.Timeline.Event("1889", "Proclamation of the Republic", "The monarchy ends."),
+                    ),
+            ),
+        )
+    }
+}
+
+@Composable
 private fun HeadersAndEmptyStates() {
     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         SectionHeader("This week")
@@ -519,6 +566,8 @@ private fun Formatting() {
             "1234.5" to formatNumber(1_234.5, locale),
             "Brain Power earned" to formatNumber(50.0, locale, signed = true),
             "−3" to formatNumber(-3.0, locale),
+            "R$ 3.50" to formatAmount(3.5, locale, "R$"),
+            "2000 compact" to formatAmount(2_000.0, locale, compact = true),
             "Share 0.456" to formatPercent(0.456, locale),
             "Begun share" to formatProgressShare(0.004, locale),
             "Day" to formatDate(day, locale, today = day),

@@ -40,6 +40,9 @@ export const PALETTE_TOKENS = [
   "belt-red",
   "belt-gray",
   "belt-black",
+  "viz-accent",
+  "viz-secondary",
+  "viz-highlight",
 ] as const;
 
 /** Main draws these with opacity (`bg-success/9`); Material's container roles need a color. */

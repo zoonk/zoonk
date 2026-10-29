@@ -32,6 +32,10 @@ data class ZoonkColors(
     val beltRed: Color,
     val beltGray: Color,
     val beltBlack: Color,
+    /** A chart's series, in order; nothing else. */
+    val vizAccent: Color,
+    val vizSecondary: Color,
+    val vizHighlight: Color,
 )
 
 internal fun ZoonkPalette.zoonkColors() =
@@ -56,6 +60,9 @@ internal fun ZoonkPalette.zoonkColors() =
         beltRed = beltRed,
         beltGray = beltGray,
         beltBlack = beltBlack,
+        vizAccent = vizAccent,
+        vizSecondary = vizSecondary,
+        vizHighlight = vizHighlight,
     )
 
 internal val LocalZoonkColors = staticCompositionLocalOf { LightPalette.zoonkColors() }

@@ -160,9 +160,9 @@ private fun formatUtc(
         .apply { timeZone = TimeZone.GMT_ZONE }
         .format(date)
 
-private const val MAX_FRACTION_DIGITS = 20
-private const val MINUS_SIGN = "−"
-private const val NO_BREAK_SPACE = ' '
+internal const val MAX_FRACTION_DIGITS = 20
+internal const val MINUS_SIGN = "−"
+internal const val NO_BREAK_SPACE = ' '
 private const val SECONDS_PER_MINUTE = 60L
 private const val MINUTES_PER_HOUR = 60L
 private const val MILLIS_PER_SECOND = 1_000L
