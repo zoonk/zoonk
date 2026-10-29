@@ -80,7 +80,9 @@ Follow the root completion and verification policy. The [README command referenc
 
 ## Emulators and builds
 
-Agents share one Mac with the owner and other agents.
+Agents share one Mac with the owner and other agents. When the Mac is overloaded, the emulator's hang detector kills it, and an emulator with a window then opens a "quit unexpectedly" alert on the owner's screen.
 
-- Use the AVDs that exist (`emulator -list-avds`); don't create AVDs per task. Boot one with `-no-snapshot-save`, keep it running while you work, and shut it down when your task ends.
+- Use the AVDs that exist (`emulator -list-avds`); don't create AVDs per task. Boot one headless with `-no-window -no-snapshot-save`, keep it running while you work, and shut it down when your task ends. A headless emulator's crash opens no alert, and no window covers the owner's screen. Look at it with `adb -s <serial> exec-out screencap -p > screen.png`.
+- Boot with a window only for TalkBack checks, which need its gestures, and run `pnpm dev:close-device-crash-alerts` before ending that task.
+- When your emulator exits on its own, the Mac was overloaded: run `pnpm dev:wait-for-cpu` before booting it again.
 - Run at most two emulators and two Gradle builds at once. Never run `./gradlew --stop`: it stops every Gradle daemon of that version on the machine, including other agents' builds. Idle daemons exit on their own.

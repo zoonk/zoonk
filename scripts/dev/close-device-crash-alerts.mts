@@ -1,16 +1,19 @@
 import { spawnSync } from "node:child_process";
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { homedir } from "node:os";
 import path from "node:path";
 import { setTimeout as sleep } from "node:timers/promises";
 
-// Stops at the first alert that isn't a simulator crash: a Mac app's crash is for a person to read.
+// Stops at the first alert that isn't a simulator or emulator crash: a Mac app's crash is for a
+// person to read.
 
 const ALERT_TITLE = /^(?<name>.+) quit unexpectedly\.$/u;
 const MAX_ALERTS = 500;
 const NEXT_ALERT_WAIT_MS = 1500;
 const REPORTS_DIRECTORY = path.join(homedir(), "Library", "Logs", "DiagnosticReports");
 const SIMULATOR_COALITION = '"coalitionName" : "com.apple.CoreSimulator.SimDevice.';
+// Reports redact the home folder to USER; the SDK's default location is ~/Library/Android/sdk.
+const ANDROID_SDK_PROCESS = String.raw`"procPath" : "\/Users\/USER\/Library\/Android\/`;
 
 function runAppleScript(script: string) {
   const result = spawnSync("osascript", ["-e", script], { encoding: "utf8" });
@@ -39,16 +42,19 @@ function getAlertProcessName() {
     .find((name) => name !== undefined);
 }
 
-function isSimulatorCrash(processName: string) {
+function isDeviceCrash(processName: string) {
+  // Report names end in their crash time; macOS rewrites old reports, so their mtimes can't order them.
   const newestReport = readdirSync(REPORTS_DIRECTORY)
     .filter((file) => file.startsWith(`${processName}-`) && file.endsWith(".ips"))
-    .map((file) => path.join(REPORTS_DIRECTORY, file))
-    .toSorted((left, right) => statSync(right).mtimeMs - statSync(left).mtimeMs)
-    .at(0);
+    .toSorted()
+    .at(-1);
 
-  return (
-    newestReport !== undefined && readFileSync(newestReport, "utf8").includes(SIMULATOR_COALITION)
-  );
+  if (newestReport === undefined) {
+    return false;
+  }
+
+  const report = readFileSync(path.join(REPORTS_DIRECTORY, newestReport), "utf8");
+  return report.includes(SIMULATOR_COALITION) || report.includes(ANDROID_SDK_PROCESS);
 }
 
 function ignoreAlert() {
@@ -69,13 +75,16 @@ async function waitForAlertProcessName() {
   return getAlertProcessName();
 }
 
-async function closeSimulatorCrashAlerts() {
+async function closeDeviceCrashAlerts() {
   let closed = 0;
   let processName = getAlertProcessName();
 
   while (processName !== undefined && closed < MAX_ALERTS) {
-    if (!isSimulatorCrash(processName)) {
-      process.stdout.write(`Left the alert for ${processName} open: it isn't a simulator crash.\n`);
+    if (!isDeviceCrash(processName)) {
+      process.stdout.write(
+        `Left the alert for ${processName} open: it isn't a simulator or emulator crash.\n`,
+      );
+
       break;
     }
 
@@ -85,11 +94,11 @@ async function closeSimulatorCrashAlerts() {
     processName = await waitForAlertProcessName();
   }
 
-  process.stdout.write(`Closed ${closed} simulator crash ${closed === 1 ? "alert" : "alerts"}.\n`);
+  process.stdout.write(`Closed ${closed} device crash ${closed === 1 ? "alert" : "alerts"}.\n`);
 }
 
 try {
-  await closeSimulatorCrashAlerts();
+  await closeDeviceCrashAlerts();
 } catch (error) {
   process.stderr.write(`${error instanceof Error ? error.message : String(error)}\n`);
   process.exitCode = 1;

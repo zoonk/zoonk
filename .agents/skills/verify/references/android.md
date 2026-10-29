@@ -15,7 +15,7 @@ Read the PNGs. Images aren't committed and CI doesn't compare pixels. A render s
 ## Set up the emulator
 
 - Start the checkout's backend (`pnpm dev` to iterate, `pnpm start` for timings). Debug builds call the URL it writes to `apps/android/local-development.properties`; on the emulator, `localhost` names resolve to the Mac at `10.0.2.2`. A request that fails after 30 seconds with `SocketTimeoutException` means the app lacks `ACCESS_LOCAL_NETWORK` (see the README's "Local API").
-- Boot your AVD once and keep it: `emulator -avd Medium_Phone -no-snapshot-save &`, then `adb wait-for-device`. Install and launch: `pnpm android:phone -- Medium_Phone`.
+- Boot your AVD once and keep it: `emulator -avd Medium_Phone -no-window -no-snapshot-save &`, then `adb wait-for-device`. Install and launch: `pnpm android:phone -- Medium_Phone`.
 - Sign in as a persona copy (`pnpm dev:persona <name>`) with the token recipe in `apps/android/README.md`'s "Local API".
 - Other agents may run Zoonk on another emulator: pass `-s <serial>` to every `adb` command (`adb devices`), and take your app's process: `PID=$(adb -s $SERIAL shell pidof com.zoonk.debug)`.
 
@@ -78,7 +78,7 @@ Each reported leak has a trace in the LeakCanary app on the device. For a heap t
 
 ## State across recreation and process death
 
-- Rotation, fold and resize: rotate in the emulator, `adb shell wm size 1280x800` then `adb shell wm size reset`, or fold a foldable AVD from its extended controls. The screen keeps its scroll, its tab and the learner's input, and sends no request.
+- Rotation, fold and resize: `adb emu rotate`, `adb emu fold` and `adb emu unfold` on a foldable AVD, or `adb shell wm size 1280x800` then `adb shell wm size reset`. The screen keeps its scroll, its tab and the learner's input, and sends no request.
 - Process death: open a screen with work in progress, press Home (`adb shell input keyevent KEYCODE_HOME`), wait a few seconds, kill the process (`adb shell am kill com.zoonk.debug`; check `adb shell pidof com.zoonk.debug` is empty), reopen it from Recents. The tab, back stack, scroll and drafts come back; each screen reads its data once. "Don't keep activities" (`adb shell settings put global always_finish_activities 1`, then `0`) recreates on every leave.
 
 ## Settings to test against
@@ -91,7 +91,7 @@ adb shell settings put global animator_duration_scale 0          # remove animat
 adb shell cmd locale set-app-locales com.zoonk.debug --locales en-XA   # pseudolocale (API 33+); ar-XB for RTL
 ```
 
-TalkBack: turn it on in the emulator's Settings (Play images) and use the emulator window for gestures; `adb input` can bypass it. Restore every setting you changed.
+TalkBack: boot the emulator with a window (without `-no-window`), turn TalkBack on in its Settings (Play images) and use the window for gestures; `adb input` can bypass it. Restore every setting you changed.
 
 ## Report
 

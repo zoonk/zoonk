@@ -41,6 +41,8 @@ Code says what it does; a comment earns its place only by saying what the code c
 
 If this is a big task or it requires checking multiple areas (eg code, design, ux, accessibility, etc), delegate tasks to sub-agents especialized in those fields. For instructions, read _[Agent orchestration](.agents/guides/orchestration.md)_.
 
+Agents share the owner's Mac, often many at once. Before a build, a test suite or booting a simulator or emulator, run `pnpm dev:wait-for-cpu`: it waits while the Mac runs more than twice the work it has cores for, where simulators and emulators miss their deadlines and crash.
+
 ## Architecture shared by all workspaces
 
 - Put reusable business rules, authorization, persistence, and orchestration in `@zoonk/core`. Apps own delivery: HTTP parsing/serialization, UI composition, translations, URLs, metadata, and presentation fallbacks. Do not add framework abstraction until another framework is adopted.

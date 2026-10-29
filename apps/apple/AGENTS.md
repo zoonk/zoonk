@@ -88,4 +88,4 @@ Agents share one Mac with the owner. Each simulator boot starts a full iOS syste
 - Keep at most three simulators booted on the Mac (check `xcrun simctl list devices booted` before booting one, and wait for a slot) and at most two Xcode builds or test runs at a time. A lead running several Apple lanes gives each lane its simulator and runs no more lanes at once than those limits allow.
 - Run `xcodebuild test` with `-parallel-testing-enabled NO` so it doesn't boot extra clones of your simulator.
 - When Zoonk crashes on a simulator (a new `~/Library/Logs/DiagnosticReports/Zoonk-*.ips`), stop and fix the cause before running more tests. When a system service crashes on the same simulator again after a reboot, shut it down and run `xcrun simctl erase <udid>` before using it again.
-- Before ending a task that used a simulator, run `pnpm simulator:close-crash-alerts`. It closes the crash alerts simulators opened and leaves alerts for Mac apps open.
+- After Zoonk crashes on a simulator, and before ending a task that used one, run `pnpm dev:close-device-crash-alerts`. It closes the crash alerts simulators and emulators opened and leaves alerts for Mac apps open.
