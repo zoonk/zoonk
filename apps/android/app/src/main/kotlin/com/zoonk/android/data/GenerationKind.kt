@@ -1,9 +1,25 @@
 package com.zoonk.android.data
 
-/** [seconds] is its usual duration on real runs, which weighs it in the bar. */
+import androidx.annotation.StringRes
+import com.zoonk.android.R
+
+/** [count] numbered lines (`Writing question 3…`) with [review] after every second one. */
+data class NumberedLines(
+    val count: Int,
+    @StringRes val line: Int,
+    @StringRes val review: Int,
+)
+
+/**
+ * [seconds] is its usual duration on real runs, which weighs it in the bar; an [optional] phase
+ * shows once the run reports a step of it. [lines] say what it's doing while it runs, then cycle.
+ */
 data class GenerationPhase(
     val id: String,
     val seconds: Int,
+    @StringRes val label: Int,
+    val lines: List<Int> = emptyList(),
+    val numbered: NumberedLines? = null,
     val optional: Boolean = false,
 )
 
@@ -20,17 +36,39 @@ sealed interface StepPlace {
 
 /**
  * What a run writes, with its steps mapped to the wait's phases as main's
- * `packages/learn/src/generation/generation-kinds.ts` maps them. A new kind goes here with its words
- * in `GenerationWait`.
+ * `packages/learn/src/generation/generation-kinds.ts` maps them. A lane adds its kind as one entry
+ * here, with its words in its own strings file; the goal phases' words are shared.
  */
 enum class GenerationKind(
+    /** What the wait is doing, for screen readers on its bar. */
+    @StringRes val label: Int,
     val phases: List<GenerationPhase>,
     val steps: Map<String, StepPlace>,
     /** Done once this step completes, before the run's own end: the screen needs only what it wrote. */
     val doneOnCompleted: String? = null,
 ) {
     Understanding(
-        phases = listOf(GenerationPhase("read", 8), GenerationPhase("dates", 12, optional = true)),
+        label = R.string.generation_understanding,
+        phases =
+            listOf(
+                GenerationPhase(
+                    "read",
+                    8,
+                    R.string.generation_understanding_read,
+                    listOf(
+                        R.string.generation_understanding_read_line_1,
+                        R.string.generation_understanding_read_line_2,
+                        R.string.generation_understanding_read_line_3,
+                    ),
+                ),
+                GenerationPhase(
+                    "dates",
+                    12,
+                    R.string.generation_understanding_dates,
+                    listOf(R.string.generation_understanding_dates_line_1, R.string.generation_understanding_dates_line_2),
+                    optional = true,
+                ),
+            ),
         steps =
             mapOf(
                 "findExamDates" to StepPlace.Phase("dates"),
@@ -40,7 +78,19 @@ enum class GenerationKind(
             ),
     ),
     Curriculum(
-        phases = GOAL_PHASES + GenerationPhase("plan", 15),
+        label = R.string.generation_curriculum,
+        phases =
+            GOAL_PHASES +
+                GenerationPhase(
+                    "plan",
+                    15,
+                    R.string.generation_curriculum_plan,
+                    listOf(
+                        R.string.generation_curriculum_plan_line_1,
+                        R.string.generation_curriculum_plan_line_2,
+                        R.string.generation_curriculum_plan_line_3,
+                    ),
+                ),
         steps =
             GOAL_STEPS +
                 mapOf(
@@ -54,7 +104,16 @@ enum class GenerationKind(
         doneOnCompleted = "createPlan",
     ),
     Placement(
-        phases = GOAL_PHASES + GenerationPhase("questions", 40),
+        label = R.string.generation_placement,
+        phases =
+            GOAL_PHASES +
+                GenerationPhase(
+                    "questions",
+                    40,
+                    R.string.generation_placement_questions,
+                    listOf(R.string.generation_placement_questions_line),
+                    questionLines(count = 6),
+                ),
         steps =
             GOAL_STEPS +
                 mapOf(
@@ -67,7 +126,15 @@ enum class GenerationKind(
                 ),
     ),
     FirstLesson(
-        phases = GOAL_PHASES + GenerationPhase("day", 15),
+        label = R.string.generation_first_lesson,
+        phases =
+            GOAL_PHASES +
+                GenerationPhase(
+                    "day",
+                    15,
+                    R.string.generation_first_lesson_day,
+                    listOf(R.string.generation_first_lesson_day_line_1, R.string.generation_first_lesson_day_line_2),
+                ),
         steps =
             GOAL_STEPS +
                 mapOf(
@@ -81,7 +148,21 @@ enum class GenerationKind(
         doneOnCompleted = "createPlan",
     ),
     LevelTestBank(
-        phases = listOf(GenerationPhase("bank", 60)),
+        label = R.string.generation_level_test,
+        phases =
+            listOf(
+                GenerationPhase(
+                    "bank",
+                    60,
+                    R.string.generation_level_test_bank,
+                    listOf(
+                        R.string.generation_level_test_bank_line_1,
+                        R.string.generation_level_test_bank_line_2,
+                        R.string.generation_level_test_bank_line_3,
+                        R.string.generation_level_test_bank_line_4,
+                    ),
+                ),
+            ),
         steps =
             mapOf(
                 "joinLevelTestBank" to StepPlace.Phase("bank"),
@@ -98,20 +179,37 @@ enum class GenerationKind(
     internal fun stepsOf(phase: String): List<String> = steps.filterValues { it == StepPlace.Phase(phase) }.keys.toList()
 }
 
-private val GOAL_PHASES =
-    listOf(
-        GenerationPhase("goal", 8),
-        GenerationPhase("notice", 15, optional = true),
-        GenerationPhase("skills", 60),
-    )
+/** The phases every goal's run starts with; `notice` only runs for a plan built from the learner's own material. */
+val GOAL_PHASES: List<GenerationPhase>
+    get() =
+        listOf(
+            GenerationPhase("goal", 8, R.string.generation_goal, listOf(R.string.generation_goal_line_1, R.string.generation_goal_line_2)),
+            GenerationPhase(
+                "notice",
+                15,
+                R.string.generation_notice,
+                listOf(R.string.generation_notice_line_1, R.string.generation_notice_line_2),
+                optional = true,
+            ),
+            GenerationPhase(
+                "skills",
+                60,
+                R.string.generation_skills,
+                listOf(R.string.generation_skills_line_1, R.string.generation_skills_line_2, R.string.generation_skills_line_3),
+            ),
+        )
 
-private val GOAL_STEPS =
-    mapOf(
-        "buildSkillGraph" to StepPlace.Phase("skills"),
-        "joinRunningGoal" to StepPlace.Join,
-        "readExamNotice" to StepPlace.Phase("notice"),
-        "understandGoal" to StepPlace.Phase("goal"),
-    )
+val GOAL_STEPS: Map<String, StepPlace>
+    get() =
+        mapOf(
+            "buildSkillGraph" to StepPlace.Phase("skills"),
+            "joinRunningGoal" to StepPlace.Join,
+            "readExamNotice" to StepPlace.Phase("notice"),
+            "understandGoal" to StepPlace.Phase("goal"),
+        )
+
+/** Questions being written, numbered, with a check of the answers between them. */
+fun questionLines(count: Int) = NumberedLines(count, R.string.generation_question_line, R.string.generation_question_review)
 
 enum class StepState { Started, Completed }
 

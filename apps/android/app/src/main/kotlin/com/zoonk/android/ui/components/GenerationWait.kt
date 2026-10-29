@@ -1,6 +1,5 @@
 package com.zoonk.android.ui.components
 
-import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -12,10 +11,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -42,6 +41,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationKind
+import com.zoonk.android.data.GenerationPhase
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.PhaseProgress
 import com.zoonk.android.data.PhaseStatus
@@ -79,18 +79,16 @@ fun GenerationWait(
                 GenerationFailureNotice(failure, onRetry)
             } else {
                 WaitProgress(
-                    name = stringResource(kind.copy().name),
+                    name = stringResource(kind.label),
                     share = driftedShare(progress.share, progress.target, progress.activeMillis, following, now),
                 )
             }
         }
 
         Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-            val phases = kind.copy().phases
             progress.phases.forEach { phase ->
                 PhaseRow(
                     phase = phase,
-                    copy = phases.getValue(phase.phase.id),
                     following = following,
                     elapsedMillis = elapsed(phase, following, now, run.clockOffsetMillis),
                 )
@@ -120,10 +118,7 @@ fun GenerationFailureNotice(
             }
         }
 
-    Card(
-        modifier = modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-    ) {
+    OutlinedCard(modifier = modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite }) {
         Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -182,11 +177,10 @@ private fun WaitProgress(
 @Composable
 private fun PhaseRow(
     phase: PhaseProgress,
-    copy: PhaseCopy,
     following: Boolean,
     elapsedMillis: Long?,
 ) {
-    val label = stringResource(copy.label)
+    val label = stringResource(phase.phase.label)
     val state =
         stringResource(
             when (phase.status) {
@@ -213,7 +207,7 @@ private fun PhaseRow(
                 fontWeight = if (emphasized) FontWeight.Medium else null,
                 style = MaterialTheme.typography.bodyMedium,
             )
-            if (phase.status == PhaseStatus.Active && following) DetailLine(copy, phase.phase.id)
+            if (phase.status == PhaseStatus.Active && following) DetailLine(phase.phase)
         }
         if (elapsedMillis != null) {
             Text(
@@ -228,7 +222,11 @@ private fun PhaseRow(
 
 @Composable
 private fun PhaseIndicator(status: PhaseStatus) {
-    val box = markSize()
+    val box =
+        with(LocalDensity.current) {
+            MaterialTheme.typography.bodyMedium.lineHeight
+                .toDp()
+        }
     val ink = MaterialTheme.colorScheme.onSurface
     val faint = MaterialTheme.colorScheme.onSurface.copy(alpha = FAINT_ALPHA)
 
@@ -267,18 +265,15 @@ private fun PhaseIndicator(status: PhaseStatus) {
 
 /** A line of what the phase is doing, changing every few seconds and then cycling. */
 @Composable
-private fun DetailLine(
-    copy: PhaseCopy,
-    phase: String,
-) {
-    var tick by remember(phase) { mutableIntStateOf(0) }
-    LaunchedEffect(phase) {
+private fun DetailLine(phase: GenerationPhase) {
+    var tick by remember(phase.id) { mutableIntStateOf(0) }
+    LaunchedEffect(phase.id) {
         while (true) {
             delay(Random.nextLong(DETAIL_MIN_MILLIS, DETAIL_MAX_MILLIS))
             tick++
         }
     }
-    val line = detailLine(copy, tick) ?: return
+    val line = detailLine(phase, tick) ?: return
     Text(
         text = line,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -288,11 +283,11 @@ private fun DetailLine(
 
 @Composable
 private fun detailLine(
-    copy: PhaseCopy,
+    phase: GenerationPhase,
     tick: Int,
 ): String? {
-    val lines = copy.lines.map { stringResource(it) }
-    val numbered = copy.numbered
+    val lines = phase.lines.map { stringResource(it) }
+    val numbered = phase.numbered
     val sequence =
         if (numbered == null) {
             lines
@@ -380,128 +375,6 @@ internal fun formatClock(millis: Long): String {
     return if (hours > 0) "%d:%02d:%02d".format(hours, minutes, seconds) else "%d:%02d".format(minutes, seconds)
 }
 
-private class PhaseCopy(
-    @StringRes val label: Int,
-    val lines: List<Int> = emptyList(),
-    val numbered: NumberedLines? = null,
-)
-
-/** [line] takes the number. */
-private class NumberedLines(
-    val count: Int,
-    @StringRes val line: Int,
-    @StringRes val review: Int,
-)
-
-private class KindCopy(
-    @StringRes val name: Int,
-    val phases: Map<String, PhaseCopy>,
-)
-
-private val GOAL_PHASES =
-    mapOf(
-        "goal" to PhaseCopy(R.string.generation_goal, listOf(R.string.generation_goal_line_1, R.string.generation_goal_line_2)),
-        "notice" to PhaseCopy(R.string.generation_notice, listOf(R.string.generation_notice_line_1, R.string.generation_notice_line_2)),
-        "skills" to
-            PhaseCopy(
-                R.string.generation_skills,
-                listOf(R.string.generation_skills_line_1, R.string.generation_skills_line_2, R.string.generation_skills_line_3),
-            ),
-    )
-
-private fun questionLines(count: Int) = NumberedLines(count, R.string.generation_question_line, R.string.generation_question_review)
-
-private fun GenerationKind.copy(): KindCopy =
-    when (this) {
-        GenerationKind.Understanding -> {
-            KindCopy(
-                R.string.generation_understanding,
-                mapOf(
-                    "read" to
-                        PhaseCopy(
-                            R.string.generation_understanding_read,
-                            listOf(
-                                R.string.generation_understanding_read_line_1,
-                                R.string.generation_understanding_read_line_2,
-                                R.string.generation_understanding_read_line_3,
-                            ),
-                        ),
-                    "dates" to
-                        PhaseCopy(
-                            R.string.generation_understanding_dates,
-                            listOf(R.string.generation_understanding_dates_line_1, R.string.generation_understanding_dates_line_2),
-                        ),
-                ),
-            )
-        }
-
-        GenerationKind.Curriculum -> {
-            KindCopy(
-                R.string.generation_curriculum,
-                GOAL_PHASES +
-                    (
-                        "plan" to
-                            PhaseCopy(
-                                R.string.generation_curriculum_plan,
-                                listOf(
-                                    R.string.generation_curriculum_plan_line_1,
-                                    R.string.generation_curriculum_plan_line_2,
-                                    R.string.generation_curriculum_plan_line_3,
-                                ),
-                            )
-                    ),
-            )
-        }
-
-        GenerationKind.Placement -> {
-            KindCopy(
-                R.string.generation_placement,
-                GOAL_PHASES +
-                    (
-                        "questions" to
-                            PhaseCopy(
-                                R.string.generation_placement_questions,
-                                listOf(R.string.generation_placement_questions_line),
-                                questionLines(PLACEMENT_QUESTIONS),
-                            )
-                    ),
-            )
-        }
-
-        GenerationKind.FirstLesson -> {
-            KindCopy(
-                R.string.generation_first_lesson,
-                GOAL_PHASES +
-                    (
-                        "day" to
-                            PhaseCopy(
-                                R.string.generation_first_lesson_day,
-                                listOf(R.string.generation_first_lesson_day_line_1, R.string.generation_first_lesson_day_line_2),
-                            )
-                    ),
-            )
-        }
-
-        GenerationKind.LevelTestBank -> {
-            KindCopy(
-                R.string.generation_level_test,
-                mapOf(
-                    "bank" to
-                        PhaseCopy(
-                            R.string.generation_level_test_bank,
-                            listOf(
-                                R.string.generation_level_test_bank_line_1,
-                                R.string.generation_level_test_bank_line_2,
-                                R.string.generation_level_test_bank_line_3,
-                                R.string.generation_level_test_bank_line_4,
-                            ),
-                        ),
-                ),
-            )
-        }
-    }
-
-private const val PLACEMENT_QUESTIONS = 6
 private const val TICK_MILLIS = 1000L
 private const val DETAIL_MIN_MILLIS = 2200L
 private const val DETAIL_MAX_MILLIS = 3600L
