@@ -68,10 +68,7 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
     page.getByRole("heading", { name: "How much time can you study each day?" }),
   ).toBeVisible();
 
-  await page
-    .getByRole("radiogroup", { name: "Minutes a day" })
-    .getByText("45 min", { exact: true })
-    .click();
+  await page.getByLabel("Time a day", { exact: true }).selectOption("45");
 
   let failSave = true;
 
@@ -91,7 +88,7 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
   await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeVisible();
-  await expect(page.getByRole("radio", { name: "45 min" })).toBeChecked();
+  await expect(page.getByLabel("Time a day", { exact: true })).toHaveValue("45");
 
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();

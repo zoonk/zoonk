@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
 import {
   goalFixture,
   planFixture,
@@ -32,8 +33,10 @@ export async function createMappedGoal(userId: string) {
   return goal;
 }
 
+/** Replaces the empty plan a goal the app started has, as its build would. */
 export async function mapGoalSkills({ goalId }: { goalId: string }) {
   const id = randomUUID().slice(0, SHORT_ID_LENGTH);
+  await prisma.plan.deleteMany({ where: { goalId } });
 
   const total = SKILLS_PER_PHASE.reduce((sum, count) => sum + count, 0);
 

@@ -3,10 +3,14 @@ import { prisma } from "@zoonk/db";
 import { ensureGuest } from "@zoonk/e2e/fixtures/guests";
 import { goalUnderstandingFixture } from "@zoonk/testing/fixtures/goal-understandings";
 import { type Page, expect, test } from "./fixtures";
+import { mapGoalSkills } from "./onboarding-fixtures";
 
 type Understanding = Parameters<typeof goalUnderstandingFixture>[0]["result"];
 
 const GOAL_URL = /\/start\/[0-9a-f-]{36}$/u;
+
+/** The time question asks the plan every 3 s while it's being built. */
+const NEXT_CHECK_TIMEOUT_MS = 10_000;
 
 async function storeUnderstanding(
   page: Page,
@@ -64,29 +68,21 @@ test.describe("Onboarding from a typed goal", () => {
 
     await page.getByRole("button", { name: "Skip and start from the basics" }).click();
 
+    await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
+    await mapGoalSkills({ goalId: created.id });
+
     const time = page.getByRole("heading", { name: "How much time can you study each day?" });
-    await expect(time).toBeVisible();
+    await expect(time).toBeVisible({ timeout: NEXT_CHECK_TIMEOUT_MS });
     await page.reload();
     await expect(time).toBeVisible();
 
-    await page
-      .getByRole("radiogroup", { name: "Minutes a day" })
-      .getByText("30 min", { exact: true })
-      .click();
-
-    await page.getByRole("button", { name: /^Which days\?/u }).click();
+    await page.getByLabel("Time a day", { exact: true }).selectOption("30");
     await page.getByRole("button", { name: "Saturday" }).click();
     await page.getByRole("switch", { name: "Different time on weekends" }).click();
-
-    await page
-      .getByRole("radiogroup", { name: "Minutes on weekends" })
-      .getByText("1 hr", { exact: true })
-      .click();
-
-    await expect(page.getByText("6 days · 3 hr 30 min a week")).toBeVisible();
+    await page.getByLabel("Time on weekends", { exact: true }).selectOption("60");
     await page.getByRole("button", { exact: true, name: "Continue" }).click();
 
-    await expect(page.getByRole("heading", { name: "Building your plan" })).toBeVisible();
+    await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
 
     const saved = await prisma.goal.findUniqueOrThrow({
       include: { user: true },
