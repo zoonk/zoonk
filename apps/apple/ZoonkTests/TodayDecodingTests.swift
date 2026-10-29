@@ -38,6 +38,18 @@ final class TodayDecodingTests: XCTestCase {
     XCTAssertNil(mission.step(block: nil))
   }
 
+  func testAProposalSaysWhatItLeavesOutAndTheTopicsNotWrittenYet() throws {
+    let text = try XCTUnwrap(planLessonsEffectText(anaTodayView().planChange?.effect))
+
+    XCTAssertTrue(
+      text.hasPrefix(
+        "Leaves out 256 lessons, such as Compatibilidade da proposta de intervenção, Limites da analogia histórica"
+      ), text)
+    XCTAssertTrue(
+      text.contains("Lessons not written yet: Conhecer as cinco competências da redação (about 5)"),
+      text)
+  }
+
   private func anaTodayView() throws -> TodayView {
     let generated = try decoder().decode(
       Components.Schemas.Today.self, from: Data(anaToday.utf8))

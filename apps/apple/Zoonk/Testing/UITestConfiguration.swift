@@ -370,7 +370,7 @@
     }
 
     func decidePlanChange(
-      goalId: String, changeId: String, decision: TutorPlanChangeDecision, token: String
+      goalId: String, changeId: String, decision: PlanChangeDecision, token: String
     ) async throws -> Components.Schemas.PlanChange {
       throw APIError.unavailable
     }
@@ -449,6 +449,12 @@
     }
 
     func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap {
+      throw APIError.network
+    }
+
+    func decidePlanChange(
+      token: String, goalID: String, changeID: String, decision: PlanChangeDecision
+    ) async throws -> TodayView.PlanChange? {
       throw APIError.network
     }
   }

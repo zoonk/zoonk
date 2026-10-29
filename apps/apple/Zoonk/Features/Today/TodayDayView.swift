@@ -19,6 +19,7 @@ struct TodayDayView: View {
     case catchUp
     case keepLearning
     case main
+    case planChange
   }
 
   var body: some View {
@@ -82,8 +83,13 @@ struct TodayDayView: View {
       .listRowInsets(EdgeInsets())
     }
 
-    if view.planChange?.status == "proposed" {
-      TodayPlanChangeSection(change: view.planChange)
+    if let shown = store.shownPlanChange(in: view) {
+      TodayPlanChangeSection(
+        view: view, shown: shown, isOpen: $disclosures.planChange, isSaving: busy == .planChange,
+        failed: failed == .planChange
+      ) { decision in
+        perform(.planChange) { await store.answer(shown.change, with: decision, in: view) }
+      }
     }
   }
 

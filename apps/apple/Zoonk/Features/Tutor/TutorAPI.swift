@@ -10,12 +10,12 @@ protocol TutorAPIClient: Sendable {
   func answer(questionId: String, token: String) -> AsyncThrowingStream<TutorAnswerEvent, Error>
   func question(id: String, token: String) async throws -> TutorTurn
   func decidePlanChange(
-    goalId: String, changeId: String, decision: TutorPlanChangeDecision, token: String
+    goalId: String, changeId: String, decision: PlanChangeDecision, token: String
   ) async throws -> Components.Schemas.PlanChange
   func undoMemoryChanges(_ changes: [TutorMemoryChange], token: String) async throws
 }
 
-enum TutorPlanChangeDecision: String, Sendable {
+enum PlanChangeDecision: String, Sendable {
   case applied
   case declined
   case undone
@@ -113,7 +113,7 @@ struct TutorAPI: TutorAPIClient {
   }
 
   func decidePlanChange(
-    goalId: String, changeId: String, decision: TutorPlanChangeDecision, token: String
+    goalId: String, changeId: String, decision: PlanChangeDecision, token: String
   ) async throws -> Components.Schemas.PlanChange {
     try await clients.perform(token: token) { client in
       let output = try await client.decidePlanChange(

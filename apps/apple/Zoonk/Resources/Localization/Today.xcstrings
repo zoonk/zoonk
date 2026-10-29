@@ -2773,6 +2773,41 @@
         }
       }
     },
+    "Apply" : {
+      "comment" : "Applies a proposed plan change",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Übernehmen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Apply"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplicar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appliquer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aplicar"
+          }
+        }
+      }
+    },
     "Ask %@ something" : {
       "comment" : "Mission: ask the buddy",
       "localizations" : {
@@ -3982,6 +4017,76 @@
         }
       }
     },
+    "It's in your plan from your next study day. Today's session stays as it is." : {
+      "comment" : "A plan change was applied",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ab deinem nächsten Lerntag ist es in deinem Plan. Die heutige Lerneinheit bleibt unverändert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "It's in your plan from your next study day. Today's session stays as it is."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está en tu plan a partir de tu próximo día de estudio. La sesión de hoy se mantiene igual."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est dans ton plan à partir de ton prochain jour d’étude. La séance d’aujourd’hui reste inchangée."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está no seu plano a partir do próximo dia de estudo. A sessão de hoje continua como está."
+          }
+        }
+      }
+    },
+    "It's in your plan, and today's session follows it." : {
+      "comment" : "A plan change was applied",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Es ist in deinem Plan, und die heutige Lerneinheit richtet sich danach."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "It's in your plan, and today's session follows it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está en tu plan y la sesión de hoy se ajusta a él."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "C’est dans ton plan, et la séance d’aujourd’hui en tient compte."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está no seu plano, e a sessão de hoje segue essa data."
+          }
+        }
+      }
+    },
     "It's where you left it" : {
       "comment" : "Under a running mock",
       "localizations" : {
@@ -4042,6 +4147,111 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Continuar estudando"
+          }
+        }
+      }
+    },
+    "Keep mine" : {
+      "comment" : "Declines a change and keeps the plan's own",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Meinen Plan beibehalten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Keep mine"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantener la mía"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garder la mienne"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manter a minha"
+          }
+        }
+      }
+    },
+    "Keep the notice's date" : {
+      "comment" : "Declines a change and keeps the date the exam notice sets",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datum aus der Prüfungsmitteilung beibehalten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Keep the notice's date"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantener la fecha del aviso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garder la date indiquée sur l’avis"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manter a data do edital"
+          }
+        }
+      }
+    },
+    "Keep the official date" : {
+      "comment" : "Declines a change and keeps the date the exam's official calendar sets",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offizielles Datum beibehalten"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Keep the official date"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mantener la fecha oficial"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garder la date officielle"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manter a data oficial"
           }
         }
       }
@@ -6317,6 +6527,76 @@
         }
       }
     },
+    "The exam notice sets the exam for %@." : {
+      "comment" : "The exam's official day, from its notice",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laut Prüfungsmitteilung findet die Prüfung am %@ statt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The exam notice sets the exam for %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El aviso del examen indica que será el %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L’avis indique que l’examen aura lieu le %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O edital marca a prova para %@."
+          }
+        }
+      }
+    },
+    "The exam's official calendar sets the exam for %@." : {
+      "comment" : "The exam's official day, from its official calendar",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Laut offiziellem Prüfungskalender findet die Prüfung am %@ statt."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "The exam's official calendar sets the exam for %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El calendario oficial del examen indica que será el %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le calendrier officiel indique que l’examen aura lieu le %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O calendário oficial marca a prova para %@."
+          }
+        }
+      }
+    },
     "The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more." : {
       "comment" : "Why resuming the goal failed on the free plan",
       "localizations" : {
@@ -6731,6 +7011,76 @@
         }
       }
     },
+    "Undo" : {
+      "comment" : "Undoes a plan change the learner applied",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rückgängig"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Undo"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deshacer"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfazer"
+          }
+        }
+      }
+    },
+    "Undone. Your plan is back as it was." : {
+      "comment" : "A plan change was undone",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rückgängig gemacht. Dein Plan ist wieder wie zuvor."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Undone. Your plan is back as it was."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deshecho. Tu plan vuelve a estar como antes."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modification annulée. Ton plan est rétabli comme avant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Desfeito. Seu plano voltou a ser como era."
+          }
+        }
+      }
+    },
     "Up next in your plan" : {
       "comment" : "The plan's next lessons",
       "localizations" : {
@@ -6756,6 +7106,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A seguir no seu plano"
+          }
+        }
+      }
+    },
+    "Use my date anyway" : {
+      "comment" : "Applies a change that moves the exam off the notice's date",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mein Datum trotzdem verwenden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Use my date anyway"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar mi fecha de todos modos"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utiliser quand même ma date"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Usar minha data mesmo assim"
           }
         }
       }
@@ -7294,6 +7679,41 @@
         }
       }
     },
+    "Your plan follows it from now on." : {
+      "comment" : "A plan change was applied",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan richtet sich ab jetzt danach."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your plan follows it from now on."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan se ajusta a partir de ahora."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan en tient compte à partir de maintenant."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano segue essa data daqui em diante."
+          }
+        }
+      }
+    },
     "Your plan for %@ needs a few more answers." : {
       "comment" : "A goal left halfway through its questions",
       "localizations" : {
@@ -7377,6 +7797,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seu plano recomeça hoje, começando pelas aulas previstas para os dias em que você pausou."
+          }
+        }
+      }
+    },
+    "Your plan stays as it was." : {
+      "comment" : "A plan change was declined",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan bleibt unverändert."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your plan stays as it was."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan se mantiene como estaba."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan reste inchangé."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano continua como estava."
           }
         }
       }

@@ -26,6 +26,7 @@ struct TodayView: Decodable, Equatable, Sendable {
     let daysLeft: Int?
     let id: String
     let kind: Kind
+    let targetDate: String?
     let title: String
   }
 
@@ -60,9 +61,25 @@ struct TodayView: Decodable, Equatable, Sendable {
   }
 
   struct PlanChange: Decodable, Equatable, Sendable {
+    /// Set when missed days put the goal's date at risk: the Plan's catch-up choices answer it.
+    struct Behind: Decodable, Equatable, Sendable {}
+
+    struct OfficialDate: Decodable, Equatable, Sendable {
+      let date: String
+    }
+
+    let behind: Behind?
+    let canApply: Bool
+    let canUndo: Bool
+    let effect: PlanEffect?
+    let examDocument: ExamDocument
     let id: String
+    let kind: String
+    let officialDate: OfficialDate?
     let reason: String?
+    let source: String
     let status: String
+    let todaySession: String?
   }
 
   struct Pattern: Decodable, Equatable, Sendable {

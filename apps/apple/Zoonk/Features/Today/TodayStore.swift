@@ -33,6 +33,9 @@ final class TodayStore {
 
   /// Shown while Today reads the day again, never for another learner or day.
   private var opened: OpenedSession?
+  /// Main holds an answered change on Today with what it did and its Undo while the day reads
+  /// again; never for another learner or day.
+  private var answered: (owner: AuthenticatedSession, localDate: String, value: AnsweredPlanChange)?
   private var writings: [String: (owner: AuthenticatedSession, writing: LessonWriting)] = [:]
 
   @ObservationIgnored private let api: any StudyAPIClient
@@ -147,6 +150,56 @@ final class TodayStore {
       try await api.catchUp(
         token: identity.bearerToken, sessionID: sessionID, timeZone: TimeZone.current.identifier)
     }
+  }
+
+  /// A new proposal, or the one the learner just answered.
+  func shownPlanChange(in view: TodayView) -> AnsweredPlanChange? {
+    let answered = answeredPlanChange(in: view)
+
+    if let proposed = view.planChange, proposed.status == "proposed",
+      proposed.id != answered?.change.id
+    {
+      return AnsweredPlanChange(change: proposed)
+    }
+
+    return answered
+  }
+
+  /// Undoing an applied proposal asks about it again.
+  func answer(_ change: TodayView.PlanChange, with decision: PlanChangeDecision, in view: TodayView)
+    async -> MutationResult<Void>
+  {
+    let goalID = view.goal.id
+    let result = await cache.mutate(invalidating: [.goals, .userSession]) { identity in
+      let saved = try await api.decidePlanChange(
+        token: identity.bearerToken, goalID: goalID, changeID: change.id, decision: decision)
+      return (identity, saved)
+    }
+
+    switch result {
+    case .done(let (owner, saved)):
+      // Out of date, it says nothing: Today reads the day again, as main does.
+      answered = saved.flatMap {
+        $0.status == "proposed"
+          ? nil
+          : (owner, view.session.localDate, AnsweredPlanChange(change: $0, decision: decision))
+      }
+      return .done(())
+    case .failed(let error):
+      return .failed(error)
+    case .obsolete:
+      return .obsolete
+    }
+  }
+
+  private func answeredPlanChange(in view: TodayView) -> AnsweredPlanChange? {
+    guard let answered, answered.owner == cache.session.authenticatedSession,
+      answered.localDate == view.session.localDate
+    else {
+      return nil
+    }
+
+    return answered.value
   }
 
   func answer(_ suggestion: SuggestedGoal, accepted: Bool) async -> MutationResult<Void> {
@@ -370,4 +423,9 @@ private struct OpenedSession {
   let owner: AuthenticatedSession
   let day: Day
   let sessionID: String
+}
+
+struct AnsweredPlanChange: Equatable {
+  let change: TodayView.PlanChange
+  var decision: PlanChangeDecision?
 }

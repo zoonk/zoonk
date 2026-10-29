@@ -251,18 +251,135 @@ struct PlanEditorLatestSection: View {
 }
 
 func planEffectText(_ effect: PlanEffect?, plan: GoalPlan) -> String? {
+  planEffectText(
+    effect, today: plan.today,
+    isEstimated: plan.schedule.targetDate == nil || plan.schedule.targetDateEstimated)
+}
+
+func planEffectText(_ effect: PlanEffect?, today: String, isEstimated: Bool) -> String? {
   guard let after = effect?.endDateAfter, let before = effect?.endDateBefore, after != before else {
     return nil
   }
 
-  let afterText = PlanDate.text(after, today: plan.today)
-  let beforeText = PlanDate.text(before, today: plan.today)
+  let afterText = PlanDate.text(after, today: today)
+  let beforeText = PlanDate.text(before, today: today)
 
-  return plan.schedule.targetDate == nil || plan.schedule.targetDateEstimated
+  return isEstimated
     ? String(
       localized: "Ends around \(afterText) instead of \(beforeText).", table: "Plan",
       comment: "How a change moves the plan's estimated end")
     : String(
       localized: "Ends \(afterText) instead of \(beforeText).", table: "Plan",
       comment: "How a change moves the plan's end")
+}
+
+/// Mirrors main's `useLessonsEffectText` for a plan with a date: what a change adds and leaves out,
+/// naming a few of the lessons it leaves out and the topics not written yet.
+func planLessonsEffectText(_ effect: PlanEffect?) -> String? {
+  guard let effect else {
+    return nil
+  }
+
+  let leftOut = effect.lessonsLeftOut ?? []
+  let removed = effect.lessonsRemoved
+  let someOf = leftOut.count != removed
+  let names = leftOut.isEmpty ? nil : someOf ? lessonExamples(leftOut) : lessonList(leftOut)
+
+  let counts = lessonCountsText(
+    added: effect.lessonsAdded, about: effect.lessonsAddedEstimated ?? false, removed: removed,
+    names: names, someOf: someOf)
+  // A lesson swapped within its own topic still needs its name.
+  let netted =
+    removed == 0 && !leftOut.isEmpty
+    ? leftOutText(removed: leftOut.count, names: lessonList(leftOut), someOf: false) : nil
+  let unwritten = (effect.unwrittenLeftOut ?? []).map {
+    String(
+      localized: "\($0.skill) (about \($0.lessons))", table: "Plan",
+      comment: "A topic whose lessons aren't written yet, with about how many it has")
+  }
+  let unwrittenText =
+    unwritten.isEmpty
+    ? nil
+    : String(
+      localized: "Lessons not written yet: \(unwritten.formatted(.list(type: .and))).",
+      table: "Plan", comment: "Topics a change leaves out before their lessons are written")
+  let sentences = [counts, netted, unwrittenText].compactMap(\.self)
+
+  return sentences.isEmpty ? nil : sentences.joined(separator: " ")
+}
+
+private func lessonCountsText(added: Int, about: Bool, removed: Int, names: String?, someOf: Bool)
+  -> String?
+{
+  if added > 0 && removed > 0 {
+    switch (names, someOf, about) {
+    case (let names?, true, true):
+      return String(
+        localized: "Adds about \(added) lessons and leaves out \(removed), such as \(names).",
+        table: "Plan", comment: "A change's lessons added and left out, naming a few")
+    case (let names?, true, false):
+      return String(
+        localized: "Adds \(added) lessons and leaves out \(removed), such as \(names).",
+        table: "Plan", comment: "A change's lessons added and left out, naming a few")
+    case (let names?, false, true):
+      return String(
+        localized: "Adds about \(added) lessons and leaves out \(removed): \(names).",
+        table: "Plan", comment: "A change's lessons added and left out, naming them all")
+    case (let names?, false, false):
+      return String(
+        localized: "Adds \(added) lessons and leaves out \(removed): \(names).", table: "Plan",
+        comment: "A change's lessons added and left out, naming them all")
+    case (nil, _, true):
+      return String(
+        localized: "Adds about \(added) lessons and leaves out \(removed).", table: "Plan",
+        comment: "A change's lessons added and left out")
+    case (nil, _, false):
+      return String(
+        localized: "Adds \(added) lessons and leaves out \(removed).", table: "Plan",
+        comment: "A change's lessons added and left out")
+    }
+  }
+
+  if added > 0 {
+    return about
+      ? String(
+        localized: "Adds about \(added) lessons.", table: "Plan",
+        comment: "A change's lessons added, estimated")
+      : String(
+        localized: "Adds \(added) lessons.", table: "Plan", comment: "A change's lessons added")
+  }
+
+  return removed > 0 ? leftOutText(removed: removed, names: names, someOf: someOf) : nil
+}
+
+private func leftOutText(removed: Int, names: String?, someOf: Bool) -> String {
+  guard let names else {
+    return String(
+      localized: "Leaves out \(removed) lessons.", table: "Plan",
+      comment: "A change's lessons left out")
+  }
+
+  return someOf
+    ? String(
+      localized: "Leaves out \(removed) lessons, such as \(names).", table: "Plan",
+      comment: "A change's lessons left out, naming a few")
+    : String(
+      localized: "Leaves out \(removed) lessons: \(names).", table: "Plan",
+      comment: "A change's lessons left out, naming them all")
+}
+
+/// Main's `useExamples`: the first three, as a list.
+private func lessonExamples(_ names: [String]) -> String {
+  names.prefix(3).formatted(.list(type: .and))
+}
+
+/// Main's `useShortList` for lessons: three names, then how many more.
+private func lessonList(_ names: [String]) -> String {
+  guard names.count > 3 else {
+    return names.formatted(.list(type: .and))
+  }
+
+  return String(
+    localized: "\(names.prefix(3).joined(separator: ", ")) and \(names.count - 3) more",
+    table: "Plan", comment: "A few lesson names and how many more")
 }

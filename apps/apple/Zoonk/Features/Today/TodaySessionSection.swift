@@ -4,6 +4,7 @@ import SwiftUI
 /// folding or unfolding keeps it.
 struct TodayDisclosures {
   var earlierWork: Bool?
+  var planChange = false
   var showsDone = false
   var showsMore = false
 }

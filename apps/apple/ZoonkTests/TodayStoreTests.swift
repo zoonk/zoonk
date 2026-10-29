@@ -258,6 +258,58 @@ final class TodayStoreTests: XCTestCase {
     XCTAssertNil(cache.session.authenticatedSession)
   }
 
+  func testAnAnsweredPlanChangeStaysWithItsAnswerWhileTodayReadsAgain() async throws {
+    let proposed = try planChange(status: "proposed")
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
+    let api = StudyAPIStub(
+      today: .day(view), decided: try planChange(status: "applied", canUndo: true))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    let result = await store.answer(proposed, with: .applied, in: view)
+    await api.serve(.day(try today(session: day(blocks: [], nextPosition: nil))))
+    await store.today.refresh()
+    let shown = try store.shownPlanChange(in: XCTUnwrap(store.day))
+
+    guard case .done = result else {
+      return XCTFail("the answer saves")
+    }
+
+    XCTAssertEqual(shown?.decision, .applied)
+    XCTAssertEqual(shown?.change.status, "applied")
+    XCTAssertEqual(shown?.change.canUndo, true)
+  }
+
+  func testAChangeThePlanMovedPastLeavesWithoutAnError() async throws {
+    let applied = try planChange(status: "applied", canUndo: true)
+    let view = try today(session: day(blocks: [], nextPosition: nil))
+    let api = StudyAPIStub(today: .day(view))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    let result = await store.answer(applied, with: .undone, in: view)
+
+    guard case .done = result else {
+      return XCTFail("a change already out of date isn't a failure to show")
+    }
+
+    XCTAssertNil(store.shownPlanChange(in: view))
+  }
+
+  func testUndoingAnAnswerAsksAboutTheProposalAgain() async throws {
+    let proposed = try planChange(status: "proposed")
+    let view = try today(session: day(blocks: [], nextPosition: nil), planChange: proposed)
+    let api = StudyAPIStub(today: .day(view), decided: try planChange(status: "applied"))
+    let store = TodayStore(api: api, cache: signedInCache())
+    await store.today.load()
+
+    _ = await store.answer(proposed, with: .applied, in: view)
+    await api.decide(proposed)
+    _ = await store.answer(proposed, with: .undone, in: view)
+
+    XCTAssertEqual(store.shownPlanChange(in: view), AnsweredPlanChange(change: proposed))
+  }
+
   func testShownStepEncodesItsWorkAsCoreReadsIt() throws {
     let challenge = try block(
       position: 2, kind: "checkpoint",
@@ -360,13 +412,23 @@ private func day(
       limitReached: limitReached, localDate: localDate))
 }
 
-private func today(session: StudyDay) throws -> TodayView {
+private func planChange(status: String, canUndo: Bool = false) throws -> TodayView.PlanChange {
+  try decode(
+    """
+    {"behind":null,"canApply":true,"canUndo":\(canUndo),"effect":null,"examDocument":"notice",
+    "id":"c1","kind":"edited","officialDate":null,"reason":"Rest on Saturdays?",
+    "source":"memory","status":"\(status)","todaySession":null}
+    """)
+}
+
+private func today(session: StudyDay, planChange: TodayView.PlanChange? = nil) throws -> TodayView {
   TodayView(
     earlierWork: [], exam: nil,
     goal: try decode(
       #"{"dateEstimated":false,"daysLeft":null,"id":"g1","kind":"learn","title":"Goal"}"#),
     insight: nil, lessonStatus: [:], mockFunding: nil, pattern: nil,
-    planChange: nil, progress: nil, session: session, studiedToday: false, weeklyChallenge: nil)
+    planChange: planChange, progress: nil, session: session, studiedToday: false,
+    weeklyChallenge: nil)
 }
 
 private func opened(target: StudyBlock) throws -> OpenedStudyDay {
@@ -381,6 +443,7 @@ private actor StudyAPIStub: StudyAPIClient {
   private let startError: APIError?
   private let call: LanguageCheckpointCall
   private var today: TodayContent
+  private var decided: TodayView.PlanChange?
   private let holdsOpening: Bool
   private var heldOpening: CheckedContinuation<Void, Never>?
   private var openingWaiter: CheckedContinuation<Void, Never>?
@@ -394,8 +457,10 @@ private actor StudyAPIStub: StudyAPIClient {
   init(
     opened: OpenedStudyDay? = nil, start: BlockStart = .started, startError: APIError? = nil,
     call: LanguageCheckpointCall = .notLanguage(.init(status: .notLanguage)),
-    today: TodayContent = .goalNotActive, holdsOpening: Bool = false
+    today: TodayContent = .goalNotActive, decided: TodayView.PlanChange? = nil,
+    holdsOpening: Bool = false
   ) {
+    self.decided = decided
     self.opened = opened
     self.startResult = start
     self.startError = startError
@@ -406,6 +471,10 @@ private actor StudyAPIStub: StudyAPIClient {
 
   func serve(_ today: TodayContent) {
     self.today = today
+  }
+
+  func decide(_ change: TodayView.PlanChange) {
+    decided = change
   }
 
   func waitForHeldOpening() async {
@@ -500,6 +569,12 @@ private actor StudyAPIStub: StudyAPIClient {
 
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap {
     throw APIError.unavailable
+  }
+
+  func decidePlanChange(
+    token: String, goalID: String, changeID: String, decision: PlanChangeDecision
+  ) async throws -> TodayView.PlanChange? {
+    decided
   }
 }
 

@@ -36,6 +36,9 @@ protocol StudyAPIClient: Sendable {
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws
   func markMilestoneShown(token: String, milestoneID: String) async throws
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap
+  func decidePlanChange(
+    token: String, goalID: String, changeID: String, decision: PlanChangeDecision
+  ) async throws -> TodayView.PlanChange?
 }
 
 /// A tap that only opens the day (to add time or catch up) names none.
@@ -291,6 +294,32 @@ struct StudyAPI: StudyAPIClient {
 
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
     try await LessonPlayerAPI(clients: clients).writeLesson(id: lessonID, token: token)
+  }
+
+  /// Nil when the change is out of date: answered elsewhere, or the plan moved on.
+  func decidePlanChange(
+    token: String, goalID: String, changeID: String, decision: PlanChangeDecision
+  ) async throws -> TodayView.PlanChange? {
+    try await clients.perform(token: token) { client in
+      switch try await client.decidePlanChange(
+        path: .init(goalId: goalID, changeId: changeID),
+        body: .json(
+          .init(
+            status: .init(rawValue: decision.rawValue) ?? .declined,
+            timeZone: TimeZone.current.identifier)))
+      {
+      case .ok(let response):
+        return try StudyJSON.recode(try response.body.json)
+      case .conflict:
+        return nil
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .notFound:
+        throw APIError.notFound
+      default:
+        throw APIError.unavailable
+      }
+    }
   }
 
   func prepareSession(token: String, sessionID: String) async throws {

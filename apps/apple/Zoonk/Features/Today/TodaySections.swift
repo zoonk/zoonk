@@ -176,31 +176,186 @@ struct TodayChallengeRow: View {
   }
 }
 
-/// The Plan shows and decides it.
+/// Main answers a proposal right on Today, where the Plan never shows it. Missed days that put the
+/// goal's date at risk leave their choices to the Plan.
 struct TodayPlanChangeSection: View {
   @Environment(AppRouter.self) private var router
+  @AccessibilityFocusState private var isResultFocused: Bool
 
-  let change: TodayView.PlanChange?
+  let view: TodayView
+  let shown: AnsweredPlanChange
+  @Binding var isOpen: Bool
+  let isSaving: Bool
+  let failed: Bool
+  let answer: (PlanChangeDecision) -> Void
+
+  private var change: TodayView.PlanChange { shown.change }
 
   var body: some View {
     Section {
-      VStack(alignment: .leading, spacing: 4) {
-        Text(
-          "Your plan has a change for you to look at.", tableName: "Today",
-          comment: "A proposed plan change")
+      if let decision = shown.decision {
+        Text(result(decision))
+          .accessibilityFocused($isResultFocused)
 
-        if let reason = change?.reason {
-          Text(reason)
-            .font(.subheadline)
-            .foregroundStyle(.secondary)
+        if decision == .applied, change.canUndo {
+          Button {
+            answer(.undone)
+          } label: {
+            Label {
+              Text("Undo", tableName: "Today", comment: "Undoes a plan change the learner applied")
+            } icon: {
+              Image(systemName: "arrow.uturn.backward")
+            }
+          }
+          .disabled(isSaving)
+        }
+      } else if change.kind == "missedDays", change.behind != nil {
+        Text(summary)
+
+        Button {
+          router.select(.plan)
+        } label: {
+          Text("See your plan", tableName: "Today", comment: "Opens the Plan")
+        }
+      } else {
+        DisclosureGroup(isExpanded: $isOpen) {
+          details
+        } label: {
+          Label {
+            Text(summary)
+          } icon: {
+            Image(systemName: "sparkles")
+          }
         }
       }
 
-      Button {
-        router.select(.plan)
-      } label: {
-        Text("See your plan", tableName: "Today", comment: "Opens the Plan")
+      if failed {
+        Text(
+          "We couldn't save your answer. Try again.", tableName: "Today",
+          comment: "Answering a plan change failed"
+        )
+        .font(.footnote)
+        .foregroundStyle(.destructive)
       }
+    }
+    .onChange(of: shown.decision) {
+      // The buttons leave with the answer, so VoiceOver lands on what it did.
+      isResultFocused = shown.decision != nil
+    }
+  }
+
+  private var summary: String {
+    change.reason
+      ?? String(
+        localized: "Your plan has a change for you to look at.", table: "Today",
+        comment: "A proposed plan change")
+  }
+
+  @ViewBuilder
+  private var details: some View {
+    let effect = [
+      // Only a plan without a date says its new end, as main does.
+      view.goal.targetDate == nil
+        ? planEffectText(change.effect, today: view.session.localDate, isEstimated: true) : nil,
+      planLessonsEffectText(change.effect),
+    ].compactMap(\.self)
+
+    if !effect.isEmpty {
+      Text(effect.joined(separator: " "))
+        .foregroundStyle(.secondary)
+    }
+
+    if let date = change.officialDate?.date {
+      Text(officialDateLine(PlanDate.text(date, today: view.session.localDate)))
+        .foregroundStyle(.secondary)
+    }
+
+    HStack {
+      if change.canApply {
+        Button {
+          answer(.applied)
+        } label: {
+          applyLabel
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.mainAction)
+      }
+
+      Button {
+        answer(.declined)
+      } label: {
+        declineLabel
+          .frame(maxWidth: .infinity)
+      }
+      .buttonStyle(.bordered)
+    }
+    .disabled(isSaving)
+  }
+
+  /// Answering the notice or the phase dates keeps what the learner has.
+  private var keepsMine: Bool {
+    change.source == "notice" || change.source == "phaseDates"
+  }
+
+  private var applyLabel: Text {
+    change.officialDate != nil
+      ? Text(
+        "Use my date anyway", tableName: "Today",
+        comment: "Applies a change that moves the exam off the notice's date")
+      : Text("Apply", tableName: "Today", comment: "Applies a proposed plan change")
+  }
+
+  private var declineLabel: Text {
+    if change.officialDate != nil {
+      return change.examDocument == .notice
+        ? Text(
+          "Keep the notice's date", tableName: "Today",
+          comment: "Declines a change and keeps the date the exam notice sets")
+        : Text(
+          "Keep the official date", tableName: "Today",
+          comment: "Declines a change and keeps the date the exam's official calendar sets")
+    }
+
+    return keepsMine
+      ? Text("Keep mine", tableName: "Today", comment: "Declines a change and keeps the plan's own")
+      : Text("Not now", tableName: "Today", comment: "Declines a proposed plan change")
+  }
+
+  private func officialDateLine(_ date: String) -> String {
+    change.examDocument == .notice
+      ? String(
+        localized: "The exam notice sets the exam for \(date).", table: "Today",
+        comment: "The exam's official day, from its notice")
+      : String(
+        localized: "The exam's official calendar sets the exam for \(date).", table: "Today",
+        comment: "The exam's official day, from its official calendar")
+  }
+
+  private func result(_ decision: PlanChangeDecision) -> String {
+    switch decision {
+    case .applied:
+      switch change.todaySession {
+      case "changed":
+        String(
+          localized: "It's in your plan, and today's session follows it.", table: "Today",
+          comment: "A plan change was applied")
+      case "unchanged":
+        String(
+          localized: "It's in your plan from your next study day. Today's session stays as it is.",
+          table: "Today", comment: "A plan change was applied")
+      default:
+        String(
+          localized: "Your plan follows it from now on.", table: "Today",
+          comment: "A plan change was applied")
+      }
+    case .declined:
+      String(
+        localized: "Your plan stays as it was.", table: "Today",
+        comment: "A plan change was declined")
+    case .undone:
+      String(
+        localized: "Undone. Your plan is back as it was.", table: "Today",
+        comment: "A plan change was undone")
     }
   }
 }

@@ -103,10 +103,18 @@ enum PlanEdit: Encodable, Equatable, Sendable {
 }
 
 struct PlanEffect: Decodable, Equatable, Sendable {
+  struct UnwrittenLeftOut: Decodable, Equatable, Sendable {
+    let lessons: Int
+    let skill: String
+  }
+
   let endDateAfter: String?
   let endDateBefore: String?
   let lessonsAdded: Int
+  let lessonsAddedEstimated: Bool?
+  let lessonsLeftOut: [String]?
   let lessonsRemoved: Int
+  let unwrittenLeftOut: [UnwrittenLeftOut]?
 }
 
 struct AppliedPlanChange: Decodable, Equatable, Identifiable, Sendable {

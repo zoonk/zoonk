@@ -138,7 +138,7 @@ struct TutorPlanChangeCard: View {
     }
   }
 
-  private func decide(_ decision: TutorPlanChangeDecision) {
+  private func decide(_ decision: PlanChangeDecision) {
     isSaving = true
     failed = false
 

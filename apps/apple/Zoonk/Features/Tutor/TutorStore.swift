@@ -171,7 +171,7 @@ final class TutorConversation {
   }
 
   func decide(
-    _ change: Components.Schemas.PlanChange, in turnID: String, decision: TutorPlanChangeDecision
+    _ change: Components.Schemas.PlanChange, in turnID: String, decision: PlanChangeDecision
   ) async -> MutationResult<Void> {
     guard let goalId = scope.goalId else {
       return .failed(.unavailable)
