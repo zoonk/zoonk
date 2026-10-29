@@ -47,21 +47,33 @@ struct ShellGate<Content: View>: View {
       Color.clear
         .navigationTitle(Text(title))
     case (_, .visitor):
-      signInGate
+      described(signInGate)
         .navigationTitle(Text(title))
-        .navigationSubtitle(subtitle)
     case (.goal, .noGoal) where startsGoalHere:
       goalBox
         .navigationTitle(Text(title))
     case (.goal, .noGoal):
-      startGoalGate
+      described(startGoalGate)
         .navigationTitle(Text(title))
-        .navigationSubtitle(subtitle)
     }
   }
 
-  private var subtitle: Text {
-    description.map { Text($0) } ?? Text(verbatim: "")
+  /// A navigation subtitle is cut to one line on a phone; the page's first line wraps.
+  @ViewBuilder
+  private func described(_ gate: some View) -> some View {
+    if let description {
+      ScrollView {
+        VStack(alignment: .leading, spacing: 24) {
+          Text(description)
+            .foregroundStyle(.secondary)
+
+          gate
+        }
+        .scenePadding(.horizontal)
+      }
+    } else {
+      gate
+    }
   }
 
   private var signInGate: some View {
