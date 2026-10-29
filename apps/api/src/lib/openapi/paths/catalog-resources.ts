@@ -1,4 +1,5 @@
 import {
+  catalogLessonSchema,
   catalogSearchQuerySchema,
   catalogSearchResponseSchema,
   chapterCourseContextQuerySchema,
@@ -7,7 +8,11 @@ import {
   courseChapterListResponseSchema,
   courseResourceSchema,
 } from "../schemas/catalog-resources";
-import { chapterPathParamsSchema, coursePathParamsSchema } from "../schemas/paths";
+import {
+  chapterPathParamsSchema,
+  coursePathParamsSchema,
+  lessonPathParamsSchema,
+} from "../schemas/paths";
 import { notFoundResponse, validationErrorResponse } from "../schemas/responses";
 import { OPTIONAL_AUTHENTICATION_SECURITY, PUBLIC_SECURITY } from "../security";
 
@@ -17,6 +22,24 @@ const PRIVATE_CHAPTER_ACCESS =
   "A chapter read in a learner's private course is only found with that learner's session.";
 
 export const catalogResourcePaths = {
+  "/catalog/lessons/{lessonId}": {
+    get: {
+      description:
+        "A Library lesson's public page: what it teaches and its first screen, the same for everyone. A first question lists its options without the answer; the lesson's screens load in the player.",
+      operationId: "getCatalogLesson",
+      requestParams: { path: lessonPathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: catalogLessonSchema } },
+          description: "The lesson's public page",
+        },
+        ...resourceNotFoundResponses,
+      },
+      security: PUBLIC_SECURITY,
+      summary: "Get a lesson's public page",
+      tags: ["Library lessons"],
+    },
+  },
   "/catalog/search": {
     get: {
       operationId: "searchCatalog",

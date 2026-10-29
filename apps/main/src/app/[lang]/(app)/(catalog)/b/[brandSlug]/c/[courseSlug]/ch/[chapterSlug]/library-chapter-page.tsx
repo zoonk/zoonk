@@ -8,7 +8,7 @@ import {
 import { CatalogPageBar } from "@/components/catalog/catalog-page-bar";
 import { ChapterStrip } from "@/components/catalog/chapter-strip";
 import { CourseProgressScope } from "@/components/catalog/course-progress";
-import { TryLesson, getTryLessonId, pickTryLesson } from "@/components/catalog/try-lesson";
+import { TryLesson, getTryLessonId } from "@/components/catalog/try-lesson";
 import { CheckMark } from "@/components/public/check-mark";
 import { JsonLd } from "@/components/public/json-ld";
 import { NoAccountStartNote } from "@/components/public/no-account-note";
@@ -23,6 +23,7 @@ import { getChapterUrls } from "@/lib/public/public-canonical";
 import { getChapterHref, getLessonHref } from "@/lib/public/public-hrefs";
 import { breadcrumbJsonLd, lessonListJsonLd } from "@/lib/public/structured-data";
 import { getExamChapterAreas } from "@zoonk/core/catalog/course-plan-example";
+import { pickTryLesson } from "@zoonk/core/catalog/try-lesson";
 import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
 import { Page, PageSection } from "@zoonk/learn/page";
 import { SubjectGlyph, getSubject } from "@zoonk/learn/subject-label";
@@ -149,13 +150,7 @@ export async function LibraryChapterPage({
   const t = await getExtracted();
 
   const [tryLesson, areas, urls] = await Promise.all([
-    pickTryLesson(
-      chapter.lessons.map((lesson, index) => ({
-        chapterTitle: chapter.title,
-        lessonId: lesson.id,
-        number: index + 1,
-      })),
-    ),
+    pickTryLesson([chapter]),
     getExamChapterAreas(course),
     getChapterUrls({
       ...params,

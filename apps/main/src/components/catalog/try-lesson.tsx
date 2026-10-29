@@ -1,41 +1,16 @@
 import { getLessonPlayerPath } from "@/lib/public/public-hrefs";
 import { getMinutesFormatter } from "@/lib/public/public-labels";
-import { getPublicLibraryLesson } from "@zoonk/core/library/lessons/public";
+import { type TryLessonPick } from "@zoonk/core/catalog/try-lesson";
 import { SURFACE_CLASS } from "@zoonk/learn/surface";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type SupportedLocale } from "@zoonk/utils/locale";
 import { getExtracted } from "next-intl/server";
-import { type FirstChoiceScreen, FirstQuestion } from "./first-question";
+import { FirstQuestion } from "./first-question";
 import { ScrollToAnchor } from "./scroll-to-anchor";
-
-export type TryLessonCandidate = { chapterTitle: string; lessonId: string; number: number };
-
-export type TryLessonPick = TryLessonCandidate & { minutes: number; screen: FirstChoiceScreen };
-
-const CANDIDATES = 8;
 
 /** Unique in the document, since the router may keep a visited page beside the open one. */
 export function getTryLessonId(scopeId: string): string {
   return `try-lesson-${scopeId}`;
-}
-
-/** Its reads are cached per lesson, so the page can look before it decides to show the card. */
-export async function pickTryLesson(
-  candidates: TryLessonCandidate[],
-): Promise<TryLessonPick | null> {
-  const lessons = await Promise.all(
-    candidates.slice(0, CANDIDATES).map(async (candidate) => {
-      const lesson = await getPublicLibraryLesson({ lessonId: candidate.lessonId });
-      const screen = lesson?.firstScreen;
-
-      return lesson && screen?.kind === "choice"
-        ? { ...candidate, minutes: lesson.estimatedMinutes, screen }
-        : null;
-    }),
-  );
-
-  const questions = lessons.filter((item) => item !== null);
-  return questions.find((item) => item.screen.guess) ?? questions[0] ?? null;
 }
 
 export async function TryLesson({

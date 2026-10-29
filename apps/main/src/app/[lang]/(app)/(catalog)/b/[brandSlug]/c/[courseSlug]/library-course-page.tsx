@@ -11,12 +11,7 @@ import { CourseMark } from "@/components/catalog/course-mark";
 import { CoursePlanWindow } from "@/components/catalog/course-plan-window";
 import { CourseGoalSwitch, CourseProgressScope } from "@/components/catalog/course-progress";
 import { CourseSubjectLabel } from "@/components/catalog/course-subject-label";
-import {
-  TryLesson,
-  type TryLessonCandidate,
-  getTryLessonId,
-  pickTryLesson,
-} from "@/components/catalog/try-lesson";
+import { TryLesson, getTryLessonId } from "@/components/catalog/try-lesson";
 import { JsonLd } from "@/components/public/json-ld";
 import { PublicViewTracker } from "@/components/public/public-view-tracker";
 import { type LibraryCourseRoute, type LibraryOutline } from "@/data/catalog/resolve-catalog-route";
@@ -29,6 +24,7 @@ import { getIsoDayFormatter, getLevelLabels } from "@/lib/public/public-labels";
 import { breadcrumbJsonLd, courseJsonLd } from "@/lib/public/structured-data";
 import { getCoursePlanExample } from "@zoonk/core/catalog/course-plan-example";
 import { type CoursePlanExample } from "@zoonk/core/catalog/course-plan-example-contract";
+import { pickTryLesson } from "@zoonk/core/catalog/try-lesson";
 import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { listPublishedCourseEditions } from "@zoonk/core/courses/published-editions";
 import { ContentFeedbackMenu } from "@zoonk/learn/feedback/content-menu";
@@ -151,18 +147,6 @@ function getChapterTitles(outline: LibraryOutline): Map<string, string> {
   );
 }
 
-function getTryCandidates(outline: LibraryOutline): TryLessonCandidate[] {
-  return outline.levels.flatMap((band) =>
-    band.chapters.flatMap((chapter) =>
-      chapter.lessons.map((lesson, index) => ({
-        chapterTitle: chapter.title,
-        lessonId: lesson.id,
-        number: index + 1,
-      })),
-    ),
-  );
-}
-
 async function CourseClosing({ courseId, pace }: { courseId: string; pace: number | null }) {
   const t = await getExtracted();
   const titleId = `course-closing-${courseId}`;
@@ -212,7 +196,7 @@ export async function LibraryCoursePage({
   const formatDay = await getIsoDayFormatter();
 
   const [tryLesson, plan] = await Promise.all([
-    pickTryLesson(getTryCandidates(outline)),
+    pickTryLesson(outline.levels.flatMap((band) => band.chapters)),
     getCoursePlanExample(course),
   ]);
 

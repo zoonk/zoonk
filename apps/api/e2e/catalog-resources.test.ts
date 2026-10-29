@@ -11,11 +11,17 @@ import {
   catalogCourseFixture,
   privateCourseFixture,
 } from "@zoonk/testing/fixtures/library-courses";
+import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
+import { libraryStepFixture } from "@zoonk/testing/fixtures/library-steps";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { examBlueprintFixture } from "@zoonk/testing/fixtures/sources";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { normalizeString } from "@zoonk/utils/string";
-import { courseResourceSchema } from "../src/lib/openapi/schemas/catalog-resources";
+import {
+  catalogLessonSchema,
+  chapterResourceSchema,
+  courseResourceSchema,
+} from "../src/lib/openapi/schemas/catalog-resources";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { readBody } from "./helpers/response";
 
@@ -350,6 +356,114 @@ test.describe("Catalog resource API", () => {
     ]);
 
     await Promise.all([owner.apiContext.dispose(), other.apiContext.dispose(), visitor.dispose()]);
+  });
+
+  test("shows visitors a lesson's public page and each page's lesson to try, never the answers", async () => {
+    const [{ chapters, course, lessons }, owner] = await Promise.all([
+      catalogCourseFixture({ lessonCounts: [1, 1] }),
+      userFixture(),
+    ]);
+
+    const [[told] = [], [guessed] = []] = lessons;
+
+    const guessHook = {
+      options: [
+        { id: "planet", isCorrect: false, text: "Yes, like a tiny planet" },
+        { id: "cloud", isCorrect: true, text: "No, it's more like a cloud" },
+      ],
+      question: "Does the electron circle the nucleus?",
+      reveal: "It's a cloud of chances.",
+      variant: "guess",
+    };
+
+    const [privateLesson] = await Promise.all([
+      libraryLessonFixture({
+        contentStatus: "completed",
+        ownerId: owner.id,
+        visibility: "private",
+      }),
+      libraryStepFixture({
+        content: { text: "Atoms are mostly empty.", variant: "text" },
+        kind: "hook",
+        lessonId: told!.id,
+        position: 0,
+      }),
+      libraryStepFixture({ content: guessHook, kind: "hook", lessonId: guessed!.id, position: 0 }),
+      prisma.lesson.update({
+        data: { summary: { ideas: [{ text: "The electron is a cloud." }] } },
+        where: { id: guessed!.id },
+      }),
+    ]);
+
+    const apiContext = await newApiContext();
+
+    const [courseResponse, lessonResponse, firstChapter, secondChapter, textLesson, responses] =
+      await Promise.all([
+        apiContext.get(`/v1/courses/${course.id}`),
+        apiContext.get(`/v1/catalog/lessons/${guessed!.id}`),
+        apiContext
+          .get(`/v1/chapters/${chapters[0]!.id}`)
+          .then((response) => readBody({ response, schema: chapterResourceSchema })),
+        apiContext
+          .get(`/v1/chapters/${chapters[1]!.id}`)
+          .then((response) => readBody({ response, schema: chapterResourceSchema })),
+        apiContext
+          .get(`/v1/catalog/lessons/${told!.id}`)
+          .then((response) => readBody({ response, schema: catalogLessonSchema })),
+        getAll({
+          apiContext,
+          paths: [`/v1/catalog/lessons/${privateLesson.id}`, `/v1/catalog/lessons/${randomUUID()}`],
+        }),
+      ]);
+
+    const [rawCourse, rawLesson] = await Promise.all([
+      courseResponse.text(),
+      lessonResponse.text(),
+    ]);
+
+    const courseBody = courseResourceSchema.parse(JSON.parse(rawCourse));
+    const lesson = catalogLessonSchema.parse(JSON.parse(rawLesson));
+
+    const screen = {
+      context: null,
+      guess: true,
+      kind: "choice",
+      options: [
+        { id: "planet", text: "Yes, like a tiny planet" },
+        { id: "cloud", text: "No, it's more like a cloud" },
+      ],
+      question: guessHook.question,
+    };
+
+    const tryLesson = {
+      chapterTitle: chapters[1]!.title,
+      lessonId: guessed!.id,
+      minutes: guessed!.estimatedMinutes,
+      number: 1,
+      screen,
+    };
+
+    expect(courseBody.tryLesson).toStrictEqual(tryLesson);
+    expect(secondChapter.tryLesson).toStrictEqual(tryLesson);
+    expect(firstChapter.tryLesson).toBeNull();
+
+    expect(lesson).toStrictEqual({
+      description: guessed!.description,
+      estimatedMinutes: guessed!.estimatedMinutes,
+      firstScreen: screen,
+      id: guessed!.id,
+      language: guessed!.language,
+      summaryIdeas: ["The electron is a cloud."],
+      title: guessed!.title,
+    });
+
+    expect(textLesson.firstScreen).toStrictEqual({ kind: "text", text: "Atoms are mostly empty." });
+    expect(courseResponse.status()).toBe(200);
+    expect(lessonResponse.status()).toBe(200);
+    expect(rawCourse + rawLesson).not.toMatch(/isCorrect|cloud of chances/u);
+    expect(responses.map((response) => response.status())).toStrictEqual([404, 404]);
+
+    await apiContext.dispose();
   });
 
   test("does not expose courses outside the published brand catalog", async () => {

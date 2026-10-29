@@ -5,6 +5,7 @@ import { type searchCatalog } from "@zoonk/core/catalog/search";
 import { type getCourseDetail } from "@zoonk/core/courses/get-detail";
 import { parseCourseLandingPageContent } from "@zoonk/core/courses/landing-page";
 import { type listCourses } from "@zoonk/core/courses/list";
+import { type getPublicLibraryLesson } from "@zoonk/core/library/lessons/public";
 import { getLanguageFlagCode } from "@zoonk/utils/language-flags";
 import { toApiImageUrl } from "./file-urls";
 
@@ -14,6 +15,7 @@ type CourseChapter = NonNullable<Awaited<ReturnType<typeof listCatalogCourseChap
 type ChapterLessons = NonNullable<Awaited<ReturnType<typeof listCatalogChapterLessons>>>;
 type CourseResource = NonNullable<Awaited<ReturnType<typeof getCourseDetail>>>;
 type CourseSummary = Awaited<ReturnType<typeof listCourses>>[number];
+type PublicLesson = NonNullable<Awaited<ReturnType<typeof getPublicLibraryLesson>>>;
 
 type ChapterFields = CatalogChapter["chapter"] | CourseChapter["chapter"];
 
@@ -162,5 +164,17 @@ export function toCatalogSearchResponse(results: CatalogSearch) {
       targetLanguage: course.targetLanguage,
       title: course.title,
     })),
+  };
+}
+
+export function toCatalogLesson(lesson: PublicLesson) {
+  return {
+    description: lesson.description,
+    estimatedMinutes: lesson.estimatedMinutes,
+    firstScreen: lesson.firstScreen,
+    id: lesson.id,
+    language: lesson.language,
+    summaryIdeas: lesson.summaryIdeas,
+    title: lesson.title,
   };
 }

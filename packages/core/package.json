@@ -43,6 +43,7 @@
     "./catalog/next-lesson": "./src/catalog/next-lesson.ts",
     "./catalog/progress": "./src/catalog/progress.ts",
     "./catalog/search": "./src/catalog/search-catalog.ts",
+    "./catalog/try-lesson": "./src/catalog/try-lesson.ts",
     "./checkpoints/challenge": "./src/checkpoints/get-challenge.ts",
     "./checkpoints/challenge-contract": "./src/checkpoints/challenge-contract.ts",
     "./checkpoints/challenge-move": "./src/checkpoints/move-challenge.ts",

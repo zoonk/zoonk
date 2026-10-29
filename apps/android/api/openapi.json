@@ -658,6 +658,73 @@
         }
       }
     },
+    "/catalog/lessons/{lessonId}": {
+      "get": {
+        "description": "A Library lesson's public page: what it teaches and its first screen, the same for everyone. A first question lists its options without the answer; the lesson's screens load in the player.",
+        "operationId": "getCatalogLesson",
+        "security": [],
+        "summary": "Get a lesson's public page",
+        "tags": [
+          "Library lessons"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lessonId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Lesson ID"
+            },
+            "required": true,
+            "description": "Lesson ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The lesson's public page",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogLesson"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/catalog/search": {
       "get": {
         "operationId": "searchCatalog",
@@ -29148,6 +29215,159 @@
         ],
         "additionalProperties": false
       },
+      "CatalogLesson": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "estimatedMinutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "firstScreen": {
+            "nullable": true,
+            "description": "What the lesson opens with; null until its content is written",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CatalogFirstQuestion"
+              },
+              {
+                "$ref": "#/components/schemas/CatalogFirstText"
+              },
+              {
+                "$ref": "#/components/schemas/CatalogFirstStart"
+              }
+            ],
+            "type": "object",
+            "discriminator": {
+              "propertyName": "kind",
+              "mapping": {
+                "choice": "#/components/schemas/CatalogFirstQuestion",
+                "text": "#/components/schemas/CatalogFirstText",
+                "start": "#/components/schemas/CatalogFirstStart"
+              }
+            }
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "language": {
+            "type": "string"
+          },
+          "summaryIdeas": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "What the lesson teaches, each idea in one sentence; empty until it's written"
+          },
+          "title": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "description",
+          "estimatedMinutes",
+          "firstScreen",
+          "id",
+          "language",
+          "summaryIdeas",
+          "title"
+        ],
+        "additionalProperties": false
+      },
+      "CatalogFirstQuestion": {
+        "type": "object",
+        "properties": {
+          "context": {
+            "nullable": true,
+            "description": "Plain text the question follows; null when it stands alone",
+            "type": "string"
+          },
+          "guess": {
+            "type": "boolean",
+            "description": "A guess before the lesson teaches it, which doesn't count; otherwise a question the lesson checks"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "choice"
+            ]
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "text": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "description": "Without which is right: the lesson checks the answer the learner opens it with"
+          },
+          "question": {
+            "type": "string",
+            "description": "Rich text: the lesson Markdown subset and `$…$` math"
+          }
+        },
+        "required": [
+          "context",
+          "guess",
+          "kind",
+          "options",
+          "question"
+        ],
+        "additionalProperties": false
+      },
+      "CatalogFirstText": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "text"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "description": "Plain text"
+          }
+        },
+        "required": [
+          "kind",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "CatalogFirstStart": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "start"
+            ]
+          }
+        },
+        "required": [
+          "kind"
+        ],
+        "additionalProperties": false,
+        "description": "A first screen with nothing to show before the lesson"
+      },
       "CatalogSearchResponse": {
         "type": "object",
         "properties": {
@@ -29321,6 +29541,15 @@
           },
           "title": {
             "type": "string"
+          },
+          "tryLesson": {
+            "nullable": true,
+            "description": "Null when none of the chapter's first lessons opens with a question",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CatalogTryLesson"
+              }
+            ]
           }
         },
         "required": [
@@ -29334,9 +29563,46 @@
           "objectives",
           "position",
           "slug",
-          "title"
+          "title",
+          "tryLesson"
         ],
         "additionalProperties": false
+      },
+      "CatalogTryLesson": {
+        "type": "object",
+        "properties": {
+          "chapterTitle": {
+            "type": "string"
+          },
+          "lessonId": {
+            "type": "string",
+            "format": "uuid",
+            "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
+          },
+          "minutes": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "number": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991,
+            "description": "The lesson's number in its chapter"
+          },
+          "screen": {
+            "$ref": "#/components/schemas/CatalogFirstQuestion"
+          }
+        },
+        "required": [
+          "chapterTitle",
+          "lessonId",
+          "minutes",
+          "number",
+          "screen"
+        ],
+        "additionalProperties": false,
+        "description": "A lesson to try from the page: among the first lessons, one that opens with a guess, else with a question. Opening it with an option answers its first screen."
       },
       "ChapterLessonListResponse": {
         "type": "object",
@@ -29576,6 +29842,15 @@
           },
           "title": {
             "type": "string"
+          },
+          "tryLesson": {
+            "nullable": true,
+            "description": "Null when none of the course's first lessons opens with a question",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CatalogTryLesson"
+              }
+            ]
           }
         },
         "required": [
@@ -29595,7 +29870,8 @@
           "organization",
           "slug",
           "targetLanguage",
-          "title"
+          "title",
+          "tryLesson"
         ],
         "additionalProperties": false
       },
