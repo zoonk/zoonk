@@ -21,7 +21,12 @@ import { isWeeklyChallengeItem } from "./load-weekly-challenge";
 const MONDAY = 1;
 const DAYS_PER_WEEK = 7;
 
-export type ChallengeMove = { changeId: string | null; date: string; planItemId: string | null };
+export type ChallengeMove = {
+  changeId: string | null;
+  date: string;
+  effect: PlanEffect | null;
+  planItemId: string | null;
+};
 
 export type ApplyChallengeMoveResult =
   | { move: ChallengeMove; status: "moved" }
@@ -168,6 +173,7 @@ export async function applyChallengeMove({
     move: {
       changeId: result.change?.id ?? null,
       date: toIsoDate(to),
+      effect: result.change?.effect ?? null,
       planItemId: moved?.id ?? null,
     },
     status: "moved",

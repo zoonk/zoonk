@@ -101,6 +101,25 @@ describe(moveChallenge, () => {
     ).resolves.toMatchObject({ scheduledFor: weekly.scheduledFor });
   });
 
+  it("returns what the move did to the plan, as the moved challenge's read says it", async () => {
+    const { weekly } = await setup();
+
+    const moved = await moveChallenge({ input: { timeZone: "UTC" }, planItemId: weekly.id });
+
+    if (moved.status !== "moved" || !moved.move.planItemId || !moved.move.changeId) {
+      throw new Error("Expected the moved challenge and its Undo");
+    }
+
+    const read = await getChallenge({
+      input: { timeZone: "UTC" },
+      movedBy: moved.move.changeId,
+      planItemId: moved.move.planItemId,
+    });
+
+    expect(moved.move.effect).toStrictEqual(expect.any(Object));
+    expect(read.status === "ready" && read.moved).toStrictEqual(moved.move.effect);
+  });
+
   it("does not offer a move onto a resting Monday and refuses a stale move without writing", async () => {
     const { plan, weekly } = await setup({ mondayRests: true });
 

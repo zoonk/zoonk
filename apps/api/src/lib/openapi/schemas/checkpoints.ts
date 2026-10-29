@@ -1,6 +1,7 @@
 import { CHALLENGE_STATUSES, type ChallengeView } from "@zoonk/core/checkpoints/challenge-contract";
 import { EXAM_DAY_CHECKLIST } from "@zoonk/core/checkpoints/weekly-challenge-rules";
 import { trueFalseLabelsSchema } from "@zoonk/core/library/exams/true-false-labels";
+import { planEffectSchema } from "@zoonk/core/plans/effect-contract";
 import { BuddyGlasses } from "@zoonk/db";
 import { CEFR_LEVELS } from "@zoonk/utils/cefr";
 import { z } from "zod";
@@ -292,6 +293,12 @@ export const challengeGenerationSchema = z
 
 export const challengeMoveResponseSchema = checkpointMoveResponseSchema
   .extend({
+    effect: planEffectSchema
+      .nullable()
+      .meta({
+        description:
+          "What making room on the new day did to the plan, such as the lessons it left out; null before the plan is built",
+      }),
     planItemId: z
       .uuid()
       .nullable()
