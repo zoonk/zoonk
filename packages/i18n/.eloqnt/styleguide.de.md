@@ -30,6 +30,7 @@
 - “Speaking”: “Sprechen”
 - “mind map”: “Mindmap”
 - “card”: “Karte”, not “Lernkarte”; a speaking exam's task card may be “Aufgabenkarte”
+- “in a row” (right answers in a streak): “hintereinander”, not “in Folge”
 
 ## Feature names and states
 
