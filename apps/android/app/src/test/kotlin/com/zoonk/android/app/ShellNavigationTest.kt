@@ -68,6 +68,16 @@ class ShellNavigationTest {
     }
 
     @Test
+    fun snackbarsShowAboveADockedAction() {
+        open(AppRoute.Exam)
+        rule.onNodeWithText("Show").performClick()
+
+        val snackbar = rule.onNodeWithText("Saved").fetchSemanticsNode().boundsInRoot
+        val docked = rule.onNodeWithTag("docked").fetchSemanticsNode().boundsInRoot
+        assertTrue("The snackbar ends at ${snackbar.bottom}, below the docked action's top ${docked.top}", snackbar.bottom <= docked.top)
+    }
+
+    @Test
     fun reselectingTheTabGoesBackToItsRoot() {
         tab("Plan").performClick()
         open(AppRoute.Subject("biology"))

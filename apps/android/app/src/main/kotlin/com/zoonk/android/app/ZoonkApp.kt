@@ -42,10 +42,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -84,6 +90,26 @@ import com.zoonk.api.models.LearnerSummaryPlaces
  * Outside the shell (previews, tests) nothing shows them.
  */
 val LocalSnackbarHostState = staticCompositionLocalOf { SnackbarHostState() }
+
+/** The tops of the docked action bars on screen, so the shell's snackbars rise above them as a Scaffold's do above its bottom bar. */
+class SnackbarAnchors {
+    private val tops = mutableStateMapOf<Any, Float>()
+
+    val highest: Float? get() = tops.values.minOrNull()
+
+    fun set(
+        key: Any,
+        top: Float,
+    ) {
+        tops[key] = top
+    }
+
+    fun remove(key: Any) {
+        tops.remove(key)
+    }
+}
+
+val LocalSnackbarAnchors = staticCompositionLocalOf { SnackbarAnchors() }
 
 @Composable
 fun ZoonkApp(
@@ -124,16 +150,23 @@ fun AppShell(
     summary: LearnerSummary? = null,
     snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
+    val snackbarAnchors = remember { SnackbarAnchors() }
     val entries = navigator.rememberEntries(entryProvider)
     val navigationSuiteType = navigationSuiteType(currentWindowAdaptiveInfoV2(), navigator)
 
-    CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState) {
+    CompositionLocalProvider(LocalSnackbarHostState provides snackbarHostState, LocalSnackbarAnchors provides snackbarAnchors) {
         Surface(modifier = modifier) {
             NavigationSuiteScaffoldLayout(
                 navigationSuite = { AppNavigationSuite(navigator, navigationSuiteType, summary) },
                 navigationSuiteType = navigationSuiteType,
             ) {
-                Box(Modifier.consumeWindowInsets(navigationSuiteInsets(navigationSuiteType))) {
+                var contentBottom by remember { mutableFloatStateOf(0f) }
+
+                Box(
+                    Modifier
+                        .consumeWindowInsets(navigationSuiteInsets(navigationSuiteType))
+                        .onGloballyPositioned { contentBottom = it.boundsInRoot().bottom },
+                ) {
                     NavDisplay(
                         entries = entries,
                         sceneStrategies = listOf(rememberListDetailSceneStrategy()),
@@ -148,20 +181,33 @@ fun AppShell(
 
                     // A task's scaffold shows them over its action bar instead.
                     if (!navigator.isTaskOpen) {
-                        SnackbarHost(
-                            hostState = snackbarHostState,
-                            modifier =
-                                Modifier
-                                    .align(Alignment.BottomCenter)
-                                    .windowInsetsPadding(
-                                        WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom + WindowInsetsSides.Horizontal),
-                                    ),
-                        )
+                        ShellSnackbarHost(snackbarHostState, snackbarAnchors, { contentBottom }, Modifier.align(Alignment.BottomCenter))
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun ShellSnackbarHost(
+    hostState: SnackbarHostState,
+    anchors: SnackbarAnchors,
+    contentBottom: () -> Float,
+    modifier: Modifier = Modifier,
+) {
+    val anchorTop = anchors.highest
+    val lift =
+        if (anchorTop == null) {
+            Modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Bottom))
+        } else {
+            Modifier.padding(bottom = with(LocalDensity.current) { (contentBottom() - anchorTop).coerceAtLeast(0f).toDp() })
+        }
+
+    SnackbarHost(
+        hostState = hostState,
+        modifier = modifier.windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal)).then(lift),
+    )
 }
 
 /** A tab switch shows the other tab at once, as everyday screens stay still. */
