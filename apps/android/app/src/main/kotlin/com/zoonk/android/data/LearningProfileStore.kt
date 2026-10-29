@@ -8,6 +8,7 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
+import java.util.UUID
 import kotlin.coroutines.cancellation.CancellationException
 
 interface LearningProfileApi {
@@ -48,6 +49,9 @@ class LearningProfileStore(
     /** Null is no limit. */
     suspend fun setDailyLimit(minutes: Long?): Boolean =
         update({ it.copy(dailyLimitMinutes = minutes) }, buildJsonObject { put("dailyLimitMinutes", minutes) })
+
+    suspend fun setActiveGoal(goalId: UUID): Boolean =
+        update({ it.copy(activeGoalId = goalId) }, buildJsonObject { put("activeGoalId", goalId.toString()) })
 
     /** [name] null keeps the buddy's own name. */
     suspend fun setBuddy(

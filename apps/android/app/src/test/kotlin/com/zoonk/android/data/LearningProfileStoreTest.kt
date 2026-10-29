@@ -84,6 +84,23 @@ class LearningProfileStoreTest {
         }
 
     @Test
+    fun theActiveGoalIsSentByItsId() =
+        runTest {
+            val store = loaded()
+            val goalId = java.util.UUID.fromString("00000000-0000-0000-0000-000000000002")
+            api.current = api.current.copy(activeGoalId = goalId)
+
+            assertTrue(store.setActiveGoal(goalId))
+
+            assertEquals("""{"activeGoalId":"$goalId"}""", api.changes.single().toString())
+            assertEquals(
+                goalId,
+                store.profile.state.value.value!!
+                    .activeGoalId,
+            )
+        }
+
+    @Test
     fun aRefusedChangeShowsTheSavedProfileAgain() =
         runTest {
             val store = loaded()

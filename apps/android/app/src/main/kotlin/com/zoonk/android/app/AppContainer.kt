@@ -38,15 +38,13 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.player.LessonPlayerStore
 import com.zoonk.android.feature.player.LiveLessonPlayerApi
 import com.zoonk.android.feature.player.TodayChoices
+import com.zoonk.android.feature.recap.RecapStore
+import com.zoonk.android.feature.session.LiveStudyApi
+import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.subscription.GooglePlayBilling
 import com.zoonk.android.feature.subscription.LiveSubscriptionApi
 import com.zoonk.android.feature.subscription.NoPlayBilling
 import com.zoonk.android.feature.subscription.SubscriptionStore
-import com.zoonk.android.feature.tutor.LiveTutorApi
-import com.zoonk.android.feature.tutor.TutorStore
-import com.zoonk.android.feature.recap.RecapStore
-import com.zoonk.android.feature.session.LiveStudyApi
-import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.today.LiveTodayApi
 import com.zoonk.android.feature.today.TodayStore
 import com.zoonk.android.feature.tutor.LiveTutorApi
@@ -55,8 +53,6 @@ import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.SpeechClipRequest
-import com.zoonk.api.models.LearningProfileResponse
-import com.zoonk.api.models.LearningProfileUpdate
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -166,15 +162,7 @@ class AppContainer private constructor(
             cache = cache,
             timeZone = timeZone,
         )
-    val goalSwitch =
-        GoalSwitch(
-            api = { session, goalId ->
-                perform<LearningProfileResponse> {
-                    api.clients(session).account.updateCurrentUserLearningProfile(LearningProfileUpdate(activeGoalId = goalId))
-                }
-            },
-            cache = cache,
-        )
+    val goalSwitch = GoalSwitch(learningProfile::setActiveGoal)
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =
