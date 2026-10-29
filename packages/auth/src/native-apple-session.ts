@@ -13,10 +13,9 @@ import { getNativeAppleProvider } from "./providers/apple";
 import { baseAuthConfig, baseAuthPlugins } from "./server";
 import { stripePlugin } from "./stripe/plugin";
 
-export type NativeAppleAuthChanges = { accountId?: string; sessionToken?: string; userId?: string };
+export type NativeAppleAuthChanges = { sessionToken?: string };
 
 const nativeAppleAuthChanges = new AsyncLocalStorage<NativeAppleAuthChanges>();
-const baseUserCreateAfter = baseAuthConfig.databaseHooks?.user?.create?.after;
 
 function nativeAppleRateLimitPlugin() {
   return {
@@ -33,21 +32,6 @@ function nativeAppleRateLimitPlugin() {
 
 const nativeAppleDatabaseHooks = {
   ...baseAuthConfig.databaseHooks,
-  account: {
-    ...baseAuthConfig.databaseHooks?.account,
-    create: {
-      ...baseAuthConfig.databaseHooks?.account?.create,
-      after: async (account, context) => {
-        const changes = nativeAppleAuthChanges.getStore();
-
-        if (changes) {
-          changes.accountId = account.id;
-        }
-
-        await baseAuthConfig.databaseHooks?.account?.create?.after?.(account, context);
-      },
-    },
-  },
   session: {
     ...baseAuthConfig.databaseHooks?.session,
     create: {
@@ -60,21 +44,6 @@ const nativeAppleDatabaseHooks = {
         }
 
         await baseAuthConfig.databaseHooks?.session?.create?.after?.(session, context);
-      },
-    },
-  },
-  user: {
-    ...baseAuthConfig.databaseHooks?.user,
-    create: {
-      ...baseAuthConfig.databaseHooks?.user?.create,
-      after: async (user, context) => {
-        const changes = nativeAppleAuthChanges.getStore();
-
-        if (changes) {
-          changes.userId = user.id;
-        }
-
-        await baseUserCreateAfter?.(user, context);
       },
     },
   },

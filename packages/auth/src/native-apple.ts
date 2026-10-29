@@ -66,7 +66,11 @@ async function throwAfterAppleRevocation({
   throw error;
 }
 
-async function rollbackNativeAppleAuthChanges({
+/**
+ * Better Auth publishes the user and its Apple account as it creates them, and another sign-in may
+ * use them at once, so a failed attempt takes back only its own sessions; the account stays.
+ */
+async function deleteAttemptSessions({
   changes,
   responseSessionToken,
 }: {
@@ -84,17 +88,6 @@ async function rollbackNativeAppleAuthChanges({
   if (sessionTokens.length > 0) {
     await prisma.session.deleteMany({ where: { token: { in: sessionTokens } } });
   }
-
-  // The new user is visible as soon as Better Auth creates it, so another device may already be
-  // signed into it; it goes only while no session uses it, checked in the same statement.
-  if (changes.userId) {
-    await prisma.user.deleteMany({ where: { id: changes.userId, sessions: { none: {} } } });
-    return;
-  }
-
-  if (changes.accountId) {
-    await prisma.account.deleteMany({ where: { id: changes.accountId } });
-  }
 }
 
 async function throwAfterSessionCleanup({
@@ -109,7 +102,7 @@ async function throwAfterSessionCleanup({
   responseSessionToken?: string;
 }): Promise<never> {
   const cleanupResults = await Promise.allSettled([
-    rollbackNativeAppleAuthChanges({ changes, responseSessionToken }),
+    deleteAttemptSessions({ changes, responseSessionToken }),
     revokeAppleToken({
       clientIdentifier,
       token: authorization.refreshToken,
@@ -300,10 +293,9 @@ export async function signInWithNativeApple(request: NativeAppleSessionRequest) 
     verifiedAuthorization,
   });
 
-  // The sign-in is complete and the account may already be in use elsewhere, so a guest that can't
-  // move takes back only this request's session; the guest keeps its progress.
+  // The grant is already saved on the account, so nothing is revoked; the guest keeps its progress.
   await linkNativeAppleGuest({ headers, userId: session.user.id }).catch(async (error: unknown) => {
-    await prisma.session.deleteMany({ where: { token: session.token } });
+    await deleteAttemptSessions({ changes, responseSessionToken: session.token });
     throw error;
   });
 
