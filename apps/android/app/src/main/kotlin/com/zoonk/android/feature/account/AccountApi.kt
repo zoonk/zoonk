@@ -1,10 +1,9 @@
 package com.zoonk.android.feature.account
 
 import com.zoonk.android.data.ApiClients
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.perform
-import com.zoonk.android.data.withBearer
-import com.zoonk.api.ApiServices
 import com.zoonk.api.models.AccountDataExport
 import com.zoonk.api.models.EmailCodeSessionRequest
 import com.zoonk.api.models.EmailSignInCodeRequest
@@ -14,7 +13,6 @@ import com.zoonk.api.models.MeUpdate
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
-import okhttp3.OkHttpClient
 
 /** The calls that sign in, set up and edit the account. Sign-in calls send [current]'s bearer so a guest's progress moves. */
 interface AccountApi {
@@ -73,38 +71,48 @@ sealed interface BotProofRequest {
     ) : BotProofRequest
 }
 
-/**
- * Headers proving a bot-checked request comes from the app (Play Integrity, ARCHITECTURE.md
- * section 4). Empty when there's no proof: the request goes without it and the server decides.
- */
-fun interface BotProof {
-    suspend fun headers(request: BotProofRequest): Map<String, String>
-}
-
-/** Until the server accepts Play Integrity; local development skips the bot check. */
-object NoBotProof : BotProof {
-    override suspend fun headers(request: BotProofRequest): Map<String, String> = emptyMap()
-}
+/** A Play Integrity token and the single-use challenge its request hash covers. */
+private data class PlayIntegrityProof(
+    val token: String,
+    val challenge: String,
+)
 
 class LiveAccountApi(
     private val api: ApiClients,
-    private val botProof: BotProof,
+    private val integrity: IntegrityTokens?,
 ) : AccountApi {
-    override suspend fun sendEmailCode(email: String) =
+    override suspend fun sendEmailCode(email: String) {
+        val proof = proof(BotProofRequest.EmailCode(email))
         perform {
-            proven(BotProofRequest.EmailCode(email), null).sessions.createEmailSignInCode(EmailSignInCodeRequest(email))
+            api.clients(null).sessions.createEmailSignInCode(
+                EmailSignInCodeRequest(email),
+                xPlayIntegrityChallenge = proof?.challenge,
+                xPlayIntegrityToken = proof?.token,
+            )
         }
+    }
 
     override suspend fun emailSession(
         email: String,
         code: String,
         current: AuthenticatedSession?,
-    ): String =
-        perform {
-            proven(BotProofRequest.EmailSession(email, code), current).sessions.createEmailCodeSession(EmailCodeSessionRequest(code, email))
+    ): String {
+        val proof = proof(BotProofRequest.EmailSession(email, code))
+        return perform {
+            api.clients(current).sessions.createEmailCodeSession(
+                EmailCodeSessionRequest(code, email),
+                xPlayIntegrityChallenge = proof?.challenge,
+                xPlayIntegrityToken = proof?.token,
+            )
         }.token
+    }
 
-    override suspend fun guest(): String = perform { proven(BotProofRequest.Guest, null).sessions.createGuestSession() }.token
+    override suspend fun guest(): String {
+        val proof = proof(BotProofRequest.Guest)
+        return perform {
+            api.clients(null).sessions.createGuestSession(xPlayIntegrityChallenge = proof?.challenge, xPlayIntegrityToken = proof?.token)
+        }.token
+    }
 
     override suspend fun google(
         idToken: String,
@@ -148,21 +156,15 @@ class LiveAccountApi(
         return perform { api.clients(session).account.deleteCurrentUser(body) }.appleAuthorizationRevoked
     }
 
-    private suspend fun proven(
-        request: BotProofRequest,
-        current: AuthenticatedSession?,
-    ): ApiServices {
-        val headers = botProof.headers(request)
-        if (headers.isEmpty()) return api.clients(current)
-        val http = current?.let { api.http.withBearer(it.bearerToken) } ?: api.http
-        return ApiServices(api.baseUrl, http.withHeaders(headers))
+    /** Without a proof the request goes anyway, and the server decides as it does for iOS. */
+    private suspend fun proof(request: BotProofRequest): PlayIntegrityProof? {
+        val integrity = integrity ?: return null
+        val challenge =
+            try {
+                perform { api.clients(null).sessions.createAppAttestChallenge() }.challenge
+            } catch (e: ApiException) {
+                return null
+            }
+        return integrity.token(request.requestHash(challenge))?.let { PlayIntegrityProof(it, challenge) }
     }
 }
-
-private fun OkHttpClient.withHeaders(headers: Map<String, String>): OkHttpClient =
-    newBuilder()
-        .addInterceptor { chain ->
-            val request = chain.request().newBuilder()
-            headers.forEach { (name, value) -> request.header(name, value) }
-            chain.proceed(request.build())
-        }.build()

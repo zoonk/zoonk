@@ -16,12 +16,16 @@ class LiveAccountApiTest {
     private val server = MockWebServer()
     private lateinit var api: LiveAccountApi
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
+    private val hashes = mutableListOf<String>()
+    private var token: String? = "play-token"
 
     @Before
     fun start() {
         server.start()
-        api = LiveAccountApi(ApiClients(server.url("/v1/"), apiHttpClient()), NoBotProof)
+        api = api(IntegrityTokens { hash -> token.also { hashes += hash } })
     }
+
+    private fun api(integrity: IntegrityTokens?) = LiveAccountApi(ApiClients(server.url("/v1/"), apiHttpClient()), integrity)
 
     @After
     fun stop() = server.close()
@@ -41,6 +45,71 @@ class LiveAccountApiTest {
             assertEquals("Bearer token-a", plain.headers["Authorization"])
             assertEquals("{}", plain.body!!.utf8())
             assertEquals("""{"emailCredentials":{"email":"ana@zoonk.test","otp":"123456"}}""", server.takeRequest().body!!.utf8())
+        }
+
+    @Test
+    fun aGuestProvesItsRequestWithATokenForAFreshChallenge() =
+        runTest {
+            server.enqueue(json("""{"challenge":"ch-1"}"""))
+            server.enqueue(json("""{"token":"guest-token"}"""))
+
+            api.guest()
+
+            val challenge = server.takeRequest()
+            assertEquals("POST", challenge.method)
+            assertEquals("/v1/app-attest/challenges", challenge.url.encodedPath)
+            // Node's createHash("sha256").update("zoonk-app-attest:1\nch-1\nguest").digest("base64url"), as the API builds it.
+            assertEquals(listOf("xAqB2QzkTXZyIv76C-GYdUELQ5M9x7ZBMxq5eqj_4UM"), hashes)
+            val guest = server.takeRequest()
+            assertEquals("/v1/guests", guest.url.encodedPath)
+            assertEquals("play-token", guest.headers["x-play-integrity-token"])
+            assertEquals("ch-1", guest.headers["x-play-integrity-challenge"])
+        }
+
+    @Test
+    fun anEmailSessionBindsTheEmailAndCodeItSendsAndKeepsTheGuestsBearer() =
+        runTest {
+            server.enqueue(json("""{"challenge":"ch-1"}"""))
+            server.enqueue(json("""{"token":"ana-token"}"""))
+
+            api.emailSession("Ana@zoonk.test", "123456", ana)
+
+            server.takeRequest()
+            assertEquals(listOf("xBn6QTf1gdiuvY-NUbCVunnMDlu_ecMuxn1rm2n7RAA"), hashes)
+            val session = server.takeRequest()
+            assertEquals("Bearer token-a", session.headers["Authorization"])
+            assertEquals("ch-1", session.headers["x-play-integrity-challenge"])
+            assertEquals("play-token", session.headers["x-play-integrity-token"])
+        }
+
+    @Test
+    fun withoutATokenTheRequestGoesWithoutProof() =
+        runTest {
+            token = null
+            server.enqueue(json("""{"challenge":"ch-1"}"""))
+            server.enqueue(MockResponse.Builder().code(204).build())
+            server.enqueue(MockResponse.Builder().code(500).build())
+            server.enqueue(MockResponse.Builder().code(204).build())
+
+            api.sendEmailCode("ana@zoonk.test")
+            api.sendEmailCode("ana@zoonk.test")
+
+            server.takeRequest()
+            assertNull(server.takeRequest().headers["x-play-integrity-token"])
+            assertEquals("/v1/app-attest/challenges", server.takeRequest().url.encodedPath)
+            val unproven = server.takeRequest()
+            assertEquals("/v1/email-sign-in-codes", unproven.url.encodedPath)
+            assertNull(unproven.headers["x-play-integrity-challenge"])
+        }
+
+    @Test
+    fun withoutPlayIntegrityNoChallengeIsSpent() =
+        runTest {
+            server.enqueue(json("""{"token":"guest-token"}"""))
+
+            api(integrity = null).guest()
+
+            assertEquals("/v1/guests", server.takeRequest().url.encodedPath)
         }
 
     private fun json(body: String) =

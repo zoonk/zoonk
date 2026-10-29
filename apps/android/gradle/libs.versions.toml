@@ -43,6 +43,7 @@ tink = "1.24.0"
 # Account and Plus.
 billing = "9.1.0"
 googleid = "1.2.1"
+playIntegrity = "1.6.0"
 
 # Speech clips and recorded answers.
 media3 = "1.11.1"
@@ -107,6 +108,8 @@ tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "
 androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "androidxLifecycle" }
 billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+kotlinx-coroutines-play-services = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-play-services", version.ref = "kotlinxCoroutines" }
+play-integrity = { module = "com.google.android.play:integrity", version.ref = "playIntegrity" }
 
 # Speech clips and recorded answers.
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }

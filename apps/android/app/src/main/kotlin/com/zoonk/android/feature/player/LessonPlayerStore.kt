@@ -89,9 +89,6 @@ interface LessonPlayerApi {
         session: AuthenticatedSession,
         lessonId: String,
     ): LessonFit?
-
-    /** Returns the new guest's token. */
-    suspend fun createGuest(): String
 }
 
 class LiveLessonPlayerApi(
@@ -181,8 +178,6 @@ class LiveLessonPlayerApi(
         } catch (e: ApiException) {
             if (e.error == ApiError.NotFound) null else throw e
         }
-
-    override suspend fun createGuest() = perform { api.clients(null).sessions.createGuestSession() }.token
 }
 
 /** Lessons by id, kept across opening and closing the player; each read follows the session. */

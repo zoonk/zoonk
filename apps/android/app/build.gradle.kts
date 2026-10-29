@@ -42,10 +42,17 @@ android {
             versionNameSuffix = "-debug"
             isPseudoLocalesEnabled = true
             buildConfigField("String", "API_BASE_URL", "\"${localApiBaseUrl.get()}\"")
+            // The API refuses tokens for `com.zoonk.debug`, so a debug build sends none rather than spend Google decodes.
+            buildConfigField("String", "PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER", "\"\"")
         }
 
         release {
             buildConfigField("String", "API_BASE_URL", "\"https://api.zoonk.com\"")
+            buildConfigField(
+                "String",
+                "PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER",
+                "\"${providers.environmentVariable("PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER").getOrElse("")}\"",
+            )
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -155,6 +162,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.process)
     implementation(libs.billing.ktx)
     implementation(libs.googleid)
+    implementation(libs.kotlinx.coroutines.play.services)
+    implementation(libs.play.integrity)
 
     // Speech clips and recorded answers.
     implementation(libs.androidx.media3.exoplayer)

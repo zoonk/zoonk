@@ -180,6 +180,4 @@ class FakeLessonPlayerApi(
         session: AuthenticatedSession,
         lessonId: String,
     ) = fit
-
-    override suspend fun createGuest() = "guest-token"
 }

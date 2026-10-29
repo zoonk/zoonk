@@ -43,6 +43,8 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.account.AccountFailure
+import com.zoonk.android.feature.account.accountFailure
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonOutline
@@ -228,12 +230,12 @@ private fun GuestGate(
     exits: LessonPlayerExits,
 ) {
     var attempt by rememberSaveable { mutableStateOf(0) }
-    var failed by rememberSaveable { mutableStateOf(false) }
+    var failure by rememberSaveable { mutableStateOf<AccountFailure?>(null) }
+    val failed = failure != null
 
     LaunchedEffect(attempt) {
-        failed = false
-        val result = app.sessions.signIn(asGuest = true) { app.lessonPlayer.api.createGuest() }
-        failed = result is SignInResult.Failed
+        failure = null
+        failure = (app.account.startAsGuest() as? SignInResult.Failed)?.let { accountFailure(it.error, it.code) }
     }
 
     LessonFrame(
@@ -257,7 +259,10 @@ private fun GuestGate(
             Text(outline.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
             if (failed) {
                 Text(
-                    stringResource(R.string.player_open_failed),
+                    stringResource(
+                        // Without the app's proof, trying again can't help; Google sign-in needs none.
+                        if (failure == AccountFailure.BotDetected) R.string.account_failure_bot_detected else R.string.player_open_failed,
+                    ),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodyMedium,
                 )

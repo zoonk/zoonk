@@ -25,7 +25,7 @@ import com.zoonk.android.data.imageLoader
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.LiveAccountApi
-import com.zoonk.android.feature.account.NoBotProof
+import com.zoonk.android.feature.account.PlayIntegrity
 import com.zoonk.android.feature.audio.ExoAudioOutput
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
@@ -111,7 +111,12 @@ class AppContainer private constructor(
     val tutor = TutorStore(LiveTutorApi(api), cache, sessions)
 
     // Account and Plus (L1).
-    val account = AccountStore(LiveAccountApi(api, NoBotProof), sessions, cache)
+    private val integrity =
+        BuildConfig.PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER
+            .toLongOrNull()
+            ?.takeIf { previewAccess == null }
+            ?.let { PlayIntegrity(context, it, scope) }
+    val account = AccountStore(LiveAccountApi(api, integrity), sessions, cache)
     val memory = MemoryStore(LiveMemoryApi(api), cache)
     val feedback = FeedbackSender(LiveFeedbackApi(api), sessions)
     val subscriptions =
