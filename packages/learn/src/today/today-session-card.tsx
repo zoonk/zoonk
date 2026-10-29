@@ -5,6 +5,7 @@ import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { type DayStep } from "../session/session-types";
 import { BlockRow, PlusLessonRow, type RowFold, useCountsTowardMission } from "./today-block-row";
+import { ComingLessonsRow } from "./today-coming-lessons";
 import { useTodayScreen } from "./today-context";
 import { DayMeta, DayProgress } from "./today-day-progress";
 import { TodayDayStatus } from "./today-day-status";
@@ -19,18 +20,6 @@ const PHONE_DONE_ROWS = 2;
 const PHONE_UPCOMING_ROWS = 6;
 
 const WIDE_UPCOMING_ROWS = 12;
-
-/** How many parts the day holds so far: "More on the way" read as a delivery already running. */
-function useDaySoFar(blocks: readonly DayStep[]): string {
-  const t = useExtracted();
-  const count = blocks.length;
-
-  return blocks.every((block) => block.kind === "learn")
-    ? t("{count, plural, one {# lesson} other {# lessons}} so far · more as you go", { count })
-    : t("{count, plural, one {# activity} other {# activities}} so far · more as you go", {
-        count,
-      });
-}
 
 function sumMinutes(blocks: readonly DayStep[]): number {
   return blocks.reduce((total, block) => total + block.estimatedMinutes, 0);
@@ -58,7 +47,6 @@ function SessionQueue({ next }: { next: DayStep }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
   const { blocks, lessonsComing, plusLessons } = today.session;
-  const daySoFar = useDaySoFar(blocks);
   const [doneOpen, setDoneOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const countsTowardMission = useCountsTowardMission();
@@ -71,7 +59,8 @@ function SessionQueue({ next }: { next: DayStep }) {
     wide: Math.max(WIDE_UPCOMING_ROWS, marked),
   };
 
-  const upcoming = after.length + plusLessons.length;
+  const coming = lessonsComing ? 1 : 0;
+  const upcoming = after.length + coming + plusLessons.length;
   const phoneMore = Math.max(0, upcoming - rows.phone);
   const wideMore = Math.max(0, upcoming - rows.wide);
 
@@ -112,9 +101,13 @@ function SessionQueue({ next }: { next: DayStep }) {
           />
         ))}
 
+        {lessonsComing && (
+          <ComingLessonsRow fold={getUpcomingFold({ index: after.length, open: moreOpen, rows })} />
+        )}
+
         {plusLessons.map((lesson, index) => (
           <PlusLessonRow
-            fold={getUpcomingFold({ index: after.length + index, open: moreOpen, rows })}
+            fold={getUpcomingFold({ index: after.length + coming + index, open: moreOpen, rows })}
             // oxlint-disable-next-line react/no-array-index-key -- two plan items can share a title, and a read replaces the list whole.
             key={index}
             title={lesson.title}
@@ -142,10 +135,6 @@ function SessionQueue({ next }: { next: DayStep }) {
           onToggle={() => setMoreOpen((open) => !open)}
           open={moreOpen}
         />
-      )}
-
-      {lessonsComing && (
-        <p className="text-muted-foreground pt-2 font-mono text-xs tabular-nums">{daySoFar}</p>
       )}
     </div>
   );

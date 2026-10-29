@@ -21,7 +21,7 @@ import { useLessonBeingWritten } from "./use-today-copy";
 
 export type RowFold = { hidden: boolean; phone: boolean; wide: boolean };
 
-const NO_FOLD: RowFold = { hidden: false, phone: false, wide: false };
+export const NO_FOLD: RowFold = { hidden: false, phone: false, wide: false };
 
 /**
  * Its `::after` stretches over the whole row, so the row is one target with its focus ring there.
@@ -74,7 +74,7 @@ function useWaitLabel() {
   };
 }
 
-function getRowClass({
+export function getRowClass({
   finished,
   fold,
   isNext,

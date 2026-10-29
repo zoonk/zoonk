@@ -12570,6 +12570,7 @@ msgid ", skipped"
 msgstr ", übersprungen"
 
 #: src/today/today-block-row.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "FAa3OD"
 msgid "Being written for you…"
 msgstr "Wir erstellen das für dich…"
@@ -12598,6 +12599,16 @@ msgstr "Heute nachholen · +{time}"
 msgctxt "ZoDO4s"
 msgid "What changed"
 msgstr "Was sich geändert hat"
+
+#: src/today/today-coming-lessons.tsx
+msgctxt "FAEHQ7"
+msgid "Your next lessons"
+msgstr "Deine nächsten Lektionen"
+
+#: src/today/today-coming-lessons.tsx
+msgctxt "Bhd3E-"
+msgid "Taking longer than usual"
+msgstr "Dauert länger als sonst"
 
 #: src/today/today-day-progress.tsx
 msgctxt "m9CrfE"
@@ -12902,16 +12913,6 @@ msgstr "Das dauert normalerweise ein bis zwei Minuten. Dein erster Tag öffnet s
 msgctxt "32z8oG"
 msgid "Your week"
 msgstr "Deine Woche"
-
-#: src/today/today-session-card.tsx
-msgctxt "7JIV15"
-msgid "{count, plural, one {# lesson} other {# lessons}} so far · more as you go"
-msgstr "Bisher {count, plural, one {# Lektion} other {# Lektionen}} · weitere kommen dazu"
-
-#: src/today/today-session-card.tsx
-msgctxt "8SYxar"
-msgid "{count, plural, one {# activity} other {# activities}} so far · more as you go"
-msgstr "Bisher {count, plural, one {# Aktivität} other {# Aktivitäten}} · weitere kommen dazu"
 
 #: src/today/today-session-card.tsx
 msgctxt "RrxniK"
