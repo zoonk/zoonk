@@ -53,6 +53,7 @@ import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
+import com.zoonk.android.feature.planlink.PlanLinkScreen
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.GenerationWait
@@ -363,6 +364,7 @@ class OnboardingScreenshots {
                     )
                 },
                 "setup-buddy" to { Setup(FakeOnboardingApi().apply { setup = { setupView(listOf("buddy", "plan")) } }) },
+                "plan-link" to { PlanLink(FakeOnboardingApi()) },
                 "level-test-intro" to { LevelTest(FakeOnboardingApi(), targetLanguage = "ja", native = "pt") },
                 "level-test-reading" to { LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(answered = 3) }) },
                 "level-test-listening" to {
@@ -432,6 +434,16 @@ class OnboardingScreenshots {
                     )
                 }
             CompositionLocalProvider(LocalSetupSpeech provides speech) { Setup(api) }
+        }
+
+        @Composable
+        private fun PlanLink(api: FakeOnboardingApi) {
+            PlanLinkScreen(
+                AppRoute.PlanLink("3c4d5e6f-7a8b-4c9d-8e1f-2a3b4c5d6e7f"),
+                rememberStore(api),
+                signedIn = true,
+                rememberAppNavigator(),
+            )
         }
 
         @Composable

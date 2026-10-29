@@ -113,10 +113,19 @@ fun GoalSetupScreen(
         }
     }
 
-    BackHandler(enabled = back != null) { back?.invoke() }
+    // A test's answers are final and saved: its Back leaves the setup as Finish later does, never a
+    // step back, and Start over waits until it ends.
+    val leave = { navigator.showRoot(AppTab.Today) }
+    BackHandler(enabled = back != null || testing != null) { if (testing != null) leave() else back?.invoke() }
 
     PageScaffold(
-        onBack = { back?.invoke() ?: navigator.back() },
+        onBack = {
+            when {
+                testing != null -> leave()
+                back != null -> back()
+                else -> navigator.back()
+            }
+        },
         title = {
             when {
                 testing != null -> {
@@ -134,7 +143,7 @@ fun GoalSetupScreen(
             }
         },
         actions = {
-            if (view != null && inQuestions) {
+            if (view != null && inQuestions && testing == null) {
                 MoreMenu(
                     disabled = vm.isSaving || vm.isStartingOver,
                     onFinishLater = { navigator.showRoot(AppTab.Today) },

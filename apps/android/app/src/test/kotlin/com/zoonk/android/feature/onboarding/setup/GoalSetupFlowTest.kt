@@ -28,7 +28,9 @@ import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.levelTestOf
+import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.setupView
+import com.zoonk.android.feature.onboarding.trueFalseQuestion
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -134,6 +136,23 @@ class GoalSetupFlowTest {
 
         assertEquals(listOf(GOAL_ID), api.archived)
         assertEquals(AppRoute.StartGoal(), navigator.currentRoute)
+    }
+
+    @Test
+    fun aPlacementQuestionsBackLeavesTheSetupWithoutStepsBackOrStartOver() {
+        api.setup = { setupView(listOf("placement", "plan"), details = """{"answered":["purpose"]}""") }
+        api.placement = placementOf(next = trueFalseQuestion())
+        show()
+        rule.onNodeWithContentDescription("Back").assertIsDisplayed()
+
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+
+        rule.onNodeWithText("A contract needs consideration to be binding.").assertIsDisplayed()
+        rule.onNodeWithContentDescription("More").assertDoesNotExist()
+        rule.onNodeWithContentDescription("Back").performClick()
+
+        assertEquals(AppRoute.Today, navigator.currentRoute)
+        assertTrue(api.answers.isEmpty())
     }
 
     @Test

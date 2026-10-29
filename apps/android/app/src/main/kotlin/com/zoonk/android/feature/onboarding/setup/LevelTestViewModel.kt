@@ -98,8 +98,22 @@ internal class LevelTestViewModel(
         send()
     }
 
+    /** A failed answer may have saved with only its reply lost: once the test moved past it, it isn't sent again. */
     fun retryAnswer() {
-        if (!isSaving) send()
+        val answer = sent ?: return
+        if (isSaving) return
+        isSaving = true
+        viewModelScope.launch {
+            test.refresh()
+            val current = (phase(test.state.value) as? LevelTestPhase.Question)?.question?.id
+            isSaving = false
+            if (current == answer.questionId) {
+                send()
+            } else {
+                sent = null
+                answerFailed = false
+            }
+        }
     }
 
     /** The learner leaves the questions for the levels they have so far. */

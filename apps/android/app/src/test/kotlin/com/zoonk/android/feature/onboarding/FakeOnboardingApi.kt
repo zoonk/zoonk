@@ -359,6 +359,7 @@ internal class FakeOnboardingApi : OnboardingApi {
     var prepared = 0
     var levelTestAnswered: (LanguageLevelTestAnswerInput) -> LanguageLevelTest = { levelTestOf(answered = 1, next = DONE_NEXT) }
     val levelTestAnswers = mutableListOf<LanguageLevelTestAnswerInput>()
+    var replyLost = false
     var spoken: () -> LanguageLevelTest = { levelTestOf(answered = 1, next = DONE_NEXT) }
     val spokenTakes = mutableListOf<VoiceRecording>()
     var finishedLevelTests = 0
@@ -388,6 +389,7 @@ internal class FakeOnboardingApi : OnboardingApi {
         levelTestAnswers += input
         writeFailure?.let { throw it }
         levelTest = levelTestAnswered(input)
+        if (replyLost) throw ApiException(ApiError.Network)
         return levelTest
     }
 

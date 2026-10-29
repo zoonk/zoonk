@@ -202,6 +202,22 @@ class LevelTestStepFlowTest {
     }
 
     @Test
+    fun aRetryAfterALostReplyReadsTheTestInsteadOfSendingTheAnswerAgain() {
+        api.levelTestAnswered = { levelTestOf(next = listeningQuestion(), answered = 1) }
+        api.replyLost = true
+        show()
+        tap("Start")
+        tap("Every Saturday")
+        tap("Confirm")
+
+        api.replyLost = false
+        tap("Try again")
+
+        assertEquals(1, api.levelTestAnswers.size)
+        rule.onNodeWithText("Marco va al mercato ogni sabato.").assertDoesNotExist()
+    }
+
+    @Test
     fun aReadingQuestionSendsThePickedOptionThenAListeningOneFollows() {
         api.levelTestAnswered = { levelTestOf(next = listeningQuestion(), answered = 1) }
         show()

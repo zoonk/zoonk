@@ -2,7 +2,6 @@ package com.zoonk.android.feature.onboarding.setup
 
 import android.app.LocaleConfig
 import android.app.LocaleManager
-import android.icu.util.ULocale
 import android.os.Build
 import android.os.LocaleList
 import androidx.compose.foundation.layout.Arrangement
@@ -57,6 +56,7 @@ import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.SpeechState
 import com.zoonk.android.feature.audio.SpeechStatusIcon
 import com.zoonk.android.feature.audio.SpokenText
+import com.zoonk.android.feature.audio.VoiceAnswerModel
 import com.zoonk.android.feature.audio.VoiceAnswerRecorder
 import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberSpokenAudio
@@ -355,14 +355,18 @@ private fun ColumnScope.LevelTestSpeaking(
         )
         Text(sentence.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
     }
+    val recorderKey = "level-test-sentence:$goalId"
+    val context = LocalContext.current
+    // The recorder's own model, shared by its key: skipping while a sentence is graded would race the grade.
+    val voice = viewModel(key = recorderKey) { VoiceAnswerModel(context) }
     VoiceAnswerRecorder(
         grade = { store.speakLevelTest(goalId, it) },
         onGraded = {},
         navigator = navigator,
-        key = "level-test-sentence:$goalId",
+        key = recorderKey,
     )
     OnboardingActions {
-        TextButton(onClick = onSkip, modifier = Modifier.fillMaxWidth()) {
+        TextButton(onClick = onSkip, enabled = !voice.checking, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_language_test_skip_part))
         }
     }
@@ -440,12 +444,51 @@ private fun languageName(
     locale: Locale,
 ): String = Locale.forLanguageTag(tag).getDisplayLanguage(locale).ifEmpty { tag }
 
-/** A language whose likely script isn't Latin, such as Japanese, Russian or Arabic. */
-private fun usesNonLatinScript(tag: String): Boolean =
-    ULocale.addLikelySubtags(ULocale.forLanguageTag(tag)).script.let {
-        it.isNotEmpty() &&
-            it != "Latn"
-    }
+/** The languages core writes an alphabet lesson for (`NON_LATIN_SCRIPT_LANGUAGES` in packages/utils/src/languages.ts). */
+private fun usesNonLatinScript(tag: String): Boolean = Locale.forLanguageTag(tag).language in NON_LATIN_SCRIPT_LANGUAGES
+
+private val NON_LATIN_SCRIPT_LANGUAGES =
+    setOf(
+        "am",
+        "ar",
+        "be",
+        "bg",
+        "bn",
+        "bo",
+        "dv",
+        "el",
+        "fa",
+        "gu",
+        "he",
+        "hi",
+        "hy",
+        "ja",
+        "ka",
+        "km",
+        "kn",
+        "ko",
+        "lo",
+        "mk",
+        "ml",
+        "mn",
+        "mr",
+        "my",
+        "ne",
+        "pa",
+        "ps",
+        "ru",
+        "sd",
+        "si",
+        "sr",
+        "ta",
+        "te",
+        "th",
+        "ti",
+        "uk",
+        "ur",
+        "yi",
+        "zh",
+    )
 
 private const val LISTENING_RATE = 0.9f
 private const val NAME_SHARE_LIMIT = 0.4f
