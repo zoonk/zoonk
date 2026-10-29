@@ -86,10 +86,19 @@ class ApiJsonTest {
                  "rows":[["Atlantis",null],["Brazil","Brasília"]]}]}
                 """.trimIndent(),
             )
-        assertEquals(listOf(Cell.StringValue("Atlantis"), null), fields.tables.single().rows.first())
+        assertEquals(
+            listOf(Cell.StringValue("Atlantis"), null),
+            fields.tables
+                .single()
+                .rows
+                .first(),
+        )
         assertEquals(listOf(listOf(Cell.StringValue("Atlantis"), null)), fields.expected.rows)
 
-        val expected = ApiJson.decodeFromString<ActivityExpectedRows>("""{"columns":["capital"],"kind":"rows","orderMatters":true,"rows":[[null]]}""")
+        val expected =
+            ApiJson.decodeFromString<ActivityExpectedRows>(
+                """{"columns":["capital"],"kind":"rows","orderMatters":true,"rows":[[null]]}""",
+            )
         assertEquals(listOf(listOf(null)), expected.rows)
 
         val answer = """{"columns":["name","capital"],"kind":"rows","rows":[["Atlantis",null]]}"""
