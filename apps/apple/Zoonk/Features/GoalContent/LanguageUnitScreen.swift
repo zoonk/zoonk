@@ -25,10 +25,16 @@ struct LanguageUnit: Decodable, Equatable, Sendable {
   }
 
   struct Mistake: Decodable, Equatable, Identifiable, Sendable {
+    enum Skill: String, Decodable, Sendable {
+      case listening, speaking, words, writing
+    }
+
     let answer: String?
     let correctAnswer: String?
+    let explanation: String?
     let id: String
     let question: String
+    let skill: Skill
   }
 
   struct Tip: Decodable, Equatable, Hashable, Sendable {
@@ -300,30 +306,42 @@ private struct LanguageUnitContent: View {
     if !unit.mistakes.isEmpty {
       Section {
         ForEach(unit.mistakes) { mistake in
-          VStack(alignment: .leading, spacing: 4) {
-            Text(mistake.question)
+          VStack(alignment: .leading, spacing: 8) {
+            skillName(mistake.skill)
+              .font(.caption.weight(.medium))
+              .foregroundStyle(.secondary)
+
+            ItemText(mistake.question)
+              .font(.subheadline.weight(.medium))
 
             if let answer = mistake.answer {
-              Text(
-                "You answered: \(answer)", tableName: "Plan",
-                comment: "The learner's wrong answer to a unit question"
-              )
-              .foregroundStyle(.destructive)
+              MistakeAnswerRow(text: answer, isRight: false)
             }
 
             if let correctAnswer = mistake.correctAnswer {
-              Text(
-                "Answer: \(correctAnswer)", tableName: "Plan",
-                comment: "The right answer to a unit question"
-              )
-              .foregroundStyle(.secondary)
+              MistakeAnswerRow(text: correctAnswer, isRight: true)
+            }
+
+            if let explanation = mistake.explanation {
+              ItemText(explanation)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
             }
           }
-          .font(.subheadline)
+          .padding(.vertical, 4)
         }
       } header: {
         Text("Your mistakes", tableName: "Plan", comment: "Section of a unit's mistakes")
       }
+    }
+  }
+
+  private func skillName(_ skill: LanguageUnit.Mistake.Skill) -> Text {
+    switch skill {
+    case .listening: Text("Listening", tableName: "Plan", comment: "A language skill")
+    case .speaking: Text("Speaking", tableName: "Plan", comment: "A language skill")
+    case .words: Text("Words", tableName: "Plan", comment: "A language skill")
+    case .writing: Text("Writing", tableName: "Plan", comment: "A language skill")
     }
   }
 

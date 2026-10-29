@@ -401,7 +401,7 @@ private struct MistakeEntryView: View {
   }
 }
 
-private struct MistakeAnswerRow: View {
+struct MistakeAnswerRow: View {
   let text: String
   let isRight: Bool
 

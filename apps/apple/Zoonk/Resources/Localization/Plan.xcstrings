@@ -4808,35 +4808,6 @@
         }
       }
     },
-    "Answer: %@" : {
-      "comment" : "The right answer to a unit question",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Antwort: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Respuesta: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réponse : %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Resposta: %@"
-          }
-        }
-      }
-    },
     "Appears a lot" : {
       "comment" : "A topic past exams ask often",
       "localizations" : {
@@ -12891,6 +12862,35 @@
         }
       }
     },
+    "Words" : {
+      "comment" : "A language skill",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wörter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vocabulario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vocabulaire"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vocabulário"
+          }
+        }
+      }
+    },
     "Writing" : {
       "comment" : "A language skill\nPractice activity",
       "localizations" : {
@@ -13003,35 +13003,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "A partir de agora, você vai praticar escrita só nas semanas finais."
-          }
-        }
-      }
-    },
-    "You answered: %@" : {
-      "comment" : "The learner's wrong answer to a unit question",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Deine Antwort: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu respuesta: %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as répondu : %@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você respondeu: %@"
           }
         }
       }

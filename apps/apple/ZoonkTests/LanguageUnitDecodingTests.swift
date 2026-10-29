@@ -21,6 +21,7 @@ final class LanguageUnitDecodingTests: XCTestCase {
 
     XCTAssertEqual(unit.mistakes.first?.question, "Ligue cada palavra ao significado")
     XCTAssertNil(unit.mistakes.first?.correctAnswer)
+    XCTAssertEqual(unit.mistakes.first?.skill, .words)
   }
 }
 
