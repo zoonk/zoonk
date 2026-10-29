@@ -4,6 +4,7 @@
   "goal_switcher_current_goal": "1c1d6eaa5481f3aa02ef3016c78e9c7b8af617fd88687ce2ddb6563b4277072e",
   "goal_switcher_daily": "3bc6af4870de014625ef81399da7ca5b79656bbbb0e0162690f589f7a8621d3c",
   "goal_switcher_explore_courses": "7ffe9eedd3d78ef9e3361996aa9eb3fe21b0807040c056783d434eb8f5bdd7fd",
+  "goal_switcher_failed": "79915813750d6afd5c719904d0f7521281bb03d20a460fe89190ffc501f4e0eb",
   "goal_switcher_finished": "2e4274c6ec4774b783f741a9a54e86f9904447451af12ba9e94135fde0fb82c1",
   "goal_switcher_new_goal": "fc5e012026edb504a291456201364eed8ddb7ff86b564563121c7926dbdcaa66",
   "goal_switcher_paused": "9869d4d7ad618514d6a20e54f9bbc84f6ee682ff9746fb20d57865d799be2053",
@@ -24,4 +25,5 @@
     <string name="goal_switcher_daily">%1$s pro Tag</string>
     <string name="goal_switcher_finished">Abgeschlossen</string>
     <string name="goal_switcher_paused">Pausiert</string>
+    <string name="goal_switcher_failed">Wir konnten das Ziel nicht wechseln. Versuch es noch einmal.</string>
 </resources>

@@ -21,8 +21,7 @@ class GoalSwitchTest {
         runTest {
             val switch = GoalSwitch { true }
 
-            switch.select(goal, shown = emptyList(), shows = { false })
-
+            assertTrue(switch.select(goal, shown = emptyList(), shows = { false }))
             assertEquals(goal, switch.pending.value)
             switch.settle(goal)
             assertNull(switch.pending.value)
@@ -33,8 +32,7 @@ class GoalSwitchTest {
         runTest {
             val switch = GoalSwitch { false }
 
-            switch.select(goal, shown = emptyList(), shows = { false })
-
+            assertFalse(switch.select(goal, shown = emptyList(), shows = { false }))
             assertNull(switch.pending.value)
         }
 

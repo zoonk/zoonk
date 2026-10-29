@@ -23,23 +23,28 @@ class GoalSwitch(
     /** The switch is being saved; until it is, the tabs can't have read the new goal. */
     val saving: StateFlow<Boolean> = writing.asStateFlow()
 
-    /** [shown] are the reads that show the active goal, read again once it's saved; [shows] says when they do. */
+    /**
+     * [shown] are the reads that show the active goal, read again once it's saved; [shows] says when
+     * they do. False when the switch couldn't be saved; a pick while one is saving is ignored.
+     */
     suspend fun select(
         goalId: UUID,
         shown: List<Resource<*>>,
         shows: (UUID) -> Boolean,
-    ) {
-        if (writing.value) return
+    ): Boolean {
+        if (writing.value) return true
         writing.value = true
         target.value = goalId
 
         try {
-            if (makeActive(goalId)) {
+            val saved = makeActive(goalId)
+            if (saved) {
                 coroutineScope { shown.forEach { launch { it.refresh() } } }
                 if (shows(goalId)) settle(goalId)
             } else {
                 settle(goalId)
             }
+            return saved
         } finally {
             writing.value = false
         }

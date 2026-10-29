@@ -16,6 +16,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -38,6 +39,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
@@ -46,6 +48,8 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LearnerSummaryGoal
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
@@ -71,6 +75,9 @@ fun GoalSwitcher(
     val selectedId = pending ?: learner.activeGoalId ?: followed.firstOrNull()?.id
     val selected = followed.firstOrNull { it.id == selectedId } ?: followed.firstOrNull()
     val viewModel = viewModel { GoalSwitcherViewModel(app) }
+    val snackbars = LocalSnackbarHostState.current
+    val failedText = stringResource(R.string.goal_switcher_failed)
+    LaunchedEffect(viewModel) { viewModel.failures.collect { snackbars.showSnackbar(failedText) } }
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     if (selected == null && explanations.isEmpty()) {
@@ -189,9 +196,13 @@ private fun MenuItems(
 class GoalSwitcherViewModel(
     private val app: AppContainer,
 ) : ViewModel() {
+    private val failed = Channel<Unit>(Channel.CONFLATED)
+    val failures = failed.receiveAsFlow()
+
     fun select(goalId: UUID) {
         viewModelScope.launch {
-            app.goalSwitch.select(goalId, listOf(app.learnerSummary.summary, app.today.today), shows = app.today::shows)
+            val saved = app.goalSwitch.select(goalId, listOf(app.learnerSummary.summary, app.today.today), shows = app.today::shows)
+            if (!saved) failed.send(Unit)
         }
     }
 }
