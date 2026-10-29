@@ -75,7 +75,7 @@ Each role looks for what the others miss: the engineer for failure paths, data a
 - [Principal engineer and designer](references/review.md)
 - [Security researcher](references/security.md)
 
-You can't unsee how you built the change. For anything beyond a small fix, each review runs in a separate agent that didn't write it, given the diff range, the running app's URL and its checklist, all at once ([orchestration guide](../../guides/orchestration.md) for the models). In Claude Code, `/code-review` and `/security-review` run in fresh subagents. The builder fixes what they find.
+You can't unsee how you built the change. For anything beyond a small fix, each review runs in a separate agent that didn't write it, given the diff range, the running app's URL and its checklist, all at once ([orchestration guide](../../guides/orchestration.md) for the models). For code, the principal engineer's review comes from the other model family ([cross-model review](../../../AGENTS.md#cross-model-review)); Claude Code's `/code-review` and `/security-review` run on Claude, so they don't count as that review of Opus's work. The builder fixes what they find.
 
 ## 6. Walk it as learners
 

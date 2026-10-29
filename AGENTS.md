@@ -59,6 +59,15 @@ If this is a big task or it requires checking multiple areas (eg code, design, u
 - During implementation, once the affected scope has been verified, broaden or repeat checks only for new changes, failures, unresolved risks, or an explicit request. For timing, concurrency, or fixture-isolation changes, repeat the focused affected coverage to establish stability.
 - Before each commit, run the change's relevant checks: typecheck, lint and format of the touched files, and affected tests, where applicable. Report the checks and results. Commits do not require the full PR verification gate.
 
+### Cross-model review
+
+Before committing or pushing any code change beyond a typo or a small, obvious fix:
+
+1. Ask yourself: "Am I over-engineering this? Is there a simpler way to do it?"
+2. Have a subagent from the other model family review it adversarially at xhigh reasoning: GPT Sol reviews Opus's work, and Opus reviews GPT Sol's. Give it the request and the diff, not your reasoning, and fix what holds up.
+
+Some models over-engineer, and a reviewer from another family catches the bugs, clutter and simpler approaches the author misses. This applies to every agent that commits, subagents included: one that can't delegate hands back before committing so its lead gets the review.
+
 ### PR verification gate
 
 - Before opening a PR (including a draft), marking a PR ready for review, or merging a PR, run locally the full set of quality checks from both the PR and `main` CI pipelines, including checks that only run after merge. It applies to every change type; focused checks during implementation do not replace it.
