@@ -1,0 +1,18 @@
+{
+  "uniqueId": "abcjs",
+  "artifactVersion": "6.7.1",
+  "name": "abcjs",
+  "description": "",
+  "website": "https://github.com/paulrosen/abcjs",
+  "developers": [
+    {
+      "name": "Paul Rosen"
+    },
+    {
+      "name": "Gregory Dyke"
+    }
+  ],
+  "licenses": [
+    "abcjs-mit"
+  ]
+}

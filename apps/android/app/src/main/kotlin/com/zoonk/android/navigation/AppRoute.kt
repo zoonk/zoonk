@@ -81,6 +81,9 @@ sealed interface AppRoute : NavKey {
     data object Help : AppRoute
 
     @Serializable
+    data object Licenses : AppRoute
+
+    @Serializable
     data object Statistics : AppRoute
 
     @Serializable
@@ -338,7 +341,7 @@ val AppRoute.presentation: Presentation
             -> Presentation.Push
 
             AppRoute.Settings, AppRoute.Preferences, AppRoute.Memory, AppRoute.Profile,
-            AppRoute.Subscription, AppRoute.Help,
+            AppRoute.Subscription, AppRoute.Help, AppRoute.Licenses,
             -> Presentation.Section(AppSection.Settings)
 
             AppRoute.Statistics, AppRoute.StatsLevel, AppRoute.StatsEnergy, AppRoute.StatsActivity,

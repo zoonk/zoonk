@@ -91,6 +91,8 @@ class AppLinkTest {
             AppRoute.WebSubscription::class.java,
             // A section of the terms, which links open as the terms.
             AppRoute.FairUse::class.java,
+            // Main credits its dependencies on the web; the app lists its own.
+            AppRoute.Licenses::class.java,
         )
 
     @Test

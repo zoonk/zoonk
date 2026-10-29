@@ -49,4 +49,7 @@
     <string name="settings_preferences_app_language">App language</string>
     <string name="settings_preferences_on_this_device">On this device</string>
     <string name="settings_preferences_save_failed">That didn\'t save. Try again.</string>
+    <string name="settings_licenses">Open source licenses</string>
+    <string name="settings_licenses_website">Website</string>
+    <string name="settings_licenses_read">Read the license</string>
 </resources>

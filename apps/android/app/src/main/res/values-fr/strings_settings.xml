@@ -22,6 +22,9 @@
   "settings_download_data_description": "335c6d0ab9fb87e48f8b8384332cef999978dbdcd02a0a5295c7e4084922660c",
   "settings_download_failed": "e09a41ee2e1e476e443923da57f166c6cd4862ec2f75e3b9ad655029adb0a7e1",
   "settings_download_preparing": "5ccb0d5b0f28e384d9b38fa67f23340d6eff80bf992ba86c106dee44b26849e5",
+  "settings_licenses": "5a5fd6ac5bd62d468951e6f4c446e1613d36de7a055b687bd3bf2356510e7e6b",
+  "settings_licenses_read": "7ff9fc0afe03f67fbca89cbad4cc7afacb3b3ac55bc2d02c5916713c58d6800a",
+  "settings_licenses_website": "13fcac6a2f6489185a5e80cc427aa2f6e8ffaa49ef6a556cc90b2f00a3a4ac8f",
   "settings_manage_apple": "d45af4d85f6c72435ce99a2ecbfa2c2d8bd8ac2585f5c7eed99d298213159b20",
   "settings_memory": "baa2b2b5100dafe111f0c8bdb132283c1cc03c6bbeb8890f1c908e419810058c",
   "settings_preferences": "de2e6b6fdbec6feab5dab472b968eeffb90c6bbdc5a3866a3a670712fb22ca42",
@@ -98,4 +101,7 @@
     <string name="settings_preferences_app_language">Langue de l’application</string>
     <string name="settings_preferences_on_this_device">Sur cet appareil</string>
     <string name="settings_preferences_save_failed">La sauvegarde a échoué. Réessaie.</string>
+    <string name="settings_licenses">Licences open source</string>
+    <string name="settings_licenses_website">Site web</string>
+    <string name="settings_licenses_read">Lire la licence</string>
 </resources>

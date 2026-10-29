@@ -3,6 +3,7 @@ import java.util.Properties
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.aboutlibraries.android)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.serialization)
 }
@@ -120,6 +121,11 @@ kotlin {
     }
 }
 
+aboutLibraries {
+    // abcjs's music glyphs are copied into the app rather than depended on, so their notice is added here.
+    collect.configPath = layout.projectDirectory.dir("aboutlibraries")
+}
+
 dependencies {
     lintChecks(project(":lint-checks"))
     implementation(libs.androidx.activity.compose)
@@ -164,6 +170,7 @@ dependencies {
     implementation(libs.googleid)
     implementation(libs.kotlinx.coroutines.play.services)
     implementation(libs.play.integrity)
+    implementation(libs.aboutlibraries.core)
 
     // Speech clips and recorded answers.
     implementation(libs.androidx.media3.exoplayer)

@@ -21,6 +21,7 @@ val routeSamples: List<AppRoute> =
         AppRoute.Profile,
         AppRoute.Subscription,
         AppRoute.Help,
+        AppRoute.Licenses,
         AppRoute.Statistics,
         AppRoute.StatsLevel,
         AppRoute.StatsEnergy,
