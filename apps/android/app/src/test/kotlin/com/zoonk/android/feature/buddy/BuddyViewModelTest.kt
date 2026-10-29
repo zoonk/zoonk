@@ -91,6 +91,11 @@ class BuddyViewModelTest {
 
         override suspend fun brainPower(session: AuthenticatedSession): Long? = null
 
+        override suspend fun prepareLessons(
+            session: AuthenticatedSession,
+            goalId: UUID,
+        ) = Unit
+
         override suspend fun mistakes(
             session: AuthenticatedSession,
             goalId: UUID,
