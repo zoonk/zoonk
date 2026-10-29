@@ -1,10 +1,14 @@
 "use client";
 
-import { type LanguageLevelTestView } from "@zoonk/core/language/level-test/contract";
+import {
+  LEVEL_TEST_MINUTES,
+  type LanguageLevelTestView,
+} from "@zoonk/core/language/level-test/contract";
 import { usesNonLatinScript } from "@zoonk/utils/languages";
 import { isValidLocale } from "@zoonk/utils/locale";
 import { CircleCheckIcon } from "lucide-react";
 import { useExtracted, useLocale } from "next-intl";
+import { useFormatDuration } from "../../_utils/time-format";
 import {
   OnboardingColumn,
   OnboardingDescription,
@@ -56,6 +60,7 @@ export function TestIntro({
 }) {
   const t = useExtracted();
   const locale = useLocale();
+  const formatDuration = useFormatDuration();
   const target = new Intl.DisplayNames([locale], { type: "language" }).of(goal.targetLanguage);
 
   return (
@@ -66,7 +71,8 @@ export function TestIntro({
         </OnboardingTitle>
         <OnboardingDescription>
           {t(
-            "About three minutes of reading, listening and one sentence out loud, so your plan starts at your level.",
+            "About {time} of reading, listening and one sentence out loud, so your plan starts at your level.",
+            { time: formatDuration(LEVEL_TEST_MINUTES) },
           )}
         </OnboardingDescription>
       </OnboardingHeading>

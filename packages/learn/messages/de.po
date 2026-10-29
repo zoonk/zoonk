@@ -5312,9 +5312,9 @@ msgid "Let's see your level in {language}"
 msgstr "Finden wir dein Level in {language} heraus"
 
 #: src/language/level-test/level-test-screens.tsx
-msgctxt "mQ8o_E"
-msgid "About three minutes of reading, listening and one sentence out loud, so your plan starts at your level."
-msgstr "Etwa drei Minuten lesen, hören und einen Satz laut sprechen, damit dein Plan auf deinem Level beginnt."
+msgctxt "OAt3qi"
+msgid "About {time} of reading, listening and one sentence out loud, so your plan starts at your level."
+msgstr "Etwa {time} lesen, hören und einen Satz laut sprechen, damit dein Plan auf deinem Level beginnt."
 
 #: src/language/level-test/level-test-screens.tsx
 msgctxt "Lqi6Xz"

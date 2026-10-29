@@ -88,7 +88,8 @@ export function LevelStep({
   onAnswer,
   pending,
   subject,
-}: StepProps & { initialLevel?: LevelChoice | null }) {
+  testMinutes,
+}: StepProps & { initialLevel?: LevelChoice | null; testMinutes?: number }) {
   const t = useExtracted();
   const [level, setLevel] = useState<LevelChoice | null>(initialLevel);
 
@@ -106,7 +107,13 @@ export function LevelStep({
       pending={pending}
       title={t("How much do you already know?")}
     >
-      <LevelChoiceList onChange={setLevel} onPick={pick} readOnly={pending} value={level} />
+      <LevelChoiceList
+        onChange={setLevel}
+        onPick={pick}
+        readOnly={pending}
+        testMinutes={testMinutes}
+        value={level}
+      />
     </StepForm>
   );
 }

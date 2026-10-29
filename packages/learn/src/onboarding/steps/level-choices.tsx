@@ -35,11 +35,14 @@ export function LevelChoiceList({
   onChange,
   onPick,
   readOnly,
+  testMinutes = QUICK_TEST_MINUTES,
   value,
 }: {
   onChange: (value: LevelChoice) => void;
   onPick?: (value: LevelChoice) => void;
   readOnly?: boolean;
+  /** A language goal's quick test is its level test, which takes longer. */
+  testMinutes?: number;
   value: LevelChoice | null;
 }) {
   const t = useExtracted();
@@ -59,9 +62,7 @@ export function LevelChoiceList({
     },
     { description: t("Only what's new or hard"), label: t("I know it well"), value: "advanced" },
     {
-      description: t("Adapts to your answers, about {time}", {
-        time: formatDuration(QUICK_TEST_MINUTES),
-      }),
+      description: t("Adapts to your answers, about {time}", { time: formatDuration(testMinutes) }),
       label: t("Not sure, give me a quick test"),
       value: QUICK_TEST,
     },
