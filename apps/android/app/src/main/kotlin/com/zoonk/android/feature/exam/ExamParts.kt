@@ -202,7 +202,15 @@ internal fun NoticeDatesCard(
                     val month = formatDate(noSitting.month.toJavaLocalDate(), locale, DateStyle.Month)
                     Text(stringResource(R.string.exam_no_sitting_title, month), style = MaterialTheme.typography.titleSmall)
                     Text(
-                        pluralStringResource(R.plurals.exam_no_sitting_detail, noSitting.closest.size),
+                        stringResource(
+                            if (noSitting.closest.size ==
+                                1
+                            ) {
+                                R.string.exam_no_sitting_detail_one
+                            } else {
+                                R.string.exam_no_sitting_detail_several
+                            },
+                        ),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium,
                     )

@@ -89,7 +89,7 @@ private fun ExamFormatSection(format: List<ExamFormatDay>) {
         when (format.size) {
             1 -> stringResource(R.string.exam_format_one_day)
             2 -> stringResource(R.string.exam_format_two_days)
-            else -> stringResource(R.string.exam_format_days, format.size)
+            else -> pluralStringResource(R.plurals.exam_format_days, format.size, format.size)
         }
     val parts = format.flatMap { it.parts }
     val questions = parts.filterNot { it.written }.sumOf { it.questions ?: 0L }.toInt()

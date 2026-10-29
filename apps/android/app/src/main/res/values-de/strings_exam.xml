@@ -39,7 +39,7 @@
   "exam_final_stretch": "186a0495d97cb124a3aee7db652ccdb602bf9d85fc7b0e47c7850d73a4b23811",
   "exam_final_stretch_detail": "862b0ab9c36f1632d1181b77461b6b4e74833cfa7e2605f2f016734798d299e3",
   "exam_format_day": "57fc70ad17709d2f9c01a2b15f743895b6e13293dc10689270a5d54cc2ab70c2",
-  "exam_format_days": "e8087cccd9793e7dd0c6a66bce855188c4b2fb1ab88b04aaf06d86f63ed58580",
+  "exam_format_days": "67d3121eeee1c6220f012d0ae67ea01fa37821e6e65285ad7228980abaae99eb",
   "exam_format_one_day": "4b63448509889fa360b07e51d177a3fcca1d81f7f62d7bd20abc1660800cac0b",
   "exam_format_parts_questions": "63102319d1b76f29584890a027ffc23dbdeefaa99253707334ebb51b3adb1fa7",
   "exam_format_two_days": "da6ab32afe2470dfb4070d81b7208a4e766866ebc42795f0061a7789f4d8316d",
@@ -57,7 +57,8 @@
   "exam_named_month_note_guide": "646d68d32ebf9bd7cec681fd5a0da0578a8c098cd42fcdda0d06aa128ed61bed",
   "exam_named_month_note_notice": "2eb9ce6e87539ca7fad1592b7828962b0d83e562c8fe716894dc5ea855ff7276",
   "exam_net_score_in": "d417348cf57b04c686d4a7295dcd8de6941c73658f9966b8c9f72afcb4c5e4c7",
-  "exam_no_sitting_detail": "a838359485217a662165254df5a27fd4bd63b6d986e0780c6750af8b5a39a783",
+  "exam_no_sitting_detail_one": "a22a8c8f7c65e14d6d468c25c82556ec09c61e4ad8e9f495105fa130c13aa0bc",
+  "exam_no_sitting_detail_several": "174ddb317a9b4c89322df5b2005d146874b50be82f30155109f98fd5ce4c0008",
   "exam_no_sitting_title": "d775710c738917b6cdbb5002797b8083384729a0d37036b4923929091baa7722",
   "exam_not_found_description": "6f8a79ec36e77642a52d1f330204ba54a7d8828255a07ae18dfc196fa8881e58",
   "exam_not_found_title": "cc922324b2ad6f3fb9433919c6c9b80caded05029b661a098b1cfa6e9ea8487f",
@@ -184,10 +185,8 @@
     <string name="exam_use_this_date">Dieses Datum verwenden</string>
     <!-- %1$s is a month and year, such as "November 2027". -->
     <string name="exam_no_sitting_title">Kein Prüfungstermin im Jahr %1$s</string>
-    <plurals name="exam_no_sitting_detail">
-        <item quantity="one">Dein Plan behält deinen Termin bei, es sei denn, du wechselst zum nächstgelegenen.</item>
-        <item quantity="other">Dein Plan behält deinen Termin bei, es sei denn, du wechselst zu einem der nächstgelegenen Termine.</item>
-    </plurals>
+    <string name="exam_no_sitting_detail_one">Dein Plan behält deinen Termin bei, sofern du nicht zum nächstgelegenen wechselst.</string>
+    <string name="exam_no_sitting_detail_several">Dein Plan behält deinen Termin bei, sofern du nicht zu einem der nächstgelegenen wechselst.</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="exam_use_date">%1$s verwenden</string>
     <string name="exam_result_detail">Trag dein offizielles Ergebnis ein, sobald es vorliegt. Du kannst es später ändern.</string>
@@ -249,7 +248,11 @@
     <string name="exam_progress_locked">Der Score jeder Probeprüfung im Zeitverlauf und wie sich die einzelnen Fächer entwickeln.</string>
     <string name="exam_format_one_day">Der Prüfungstag</string>
     <string name="exam_format_two_days">Die beiden Prüfungstage</string>
-    <string name="exam_format_days">Die %1$d Prüfungstage</string>
+    <!-- The title over an exam's days, for three or more: "The 3 days". -->
+    <plurals name="exam_format_days">
+        <item quantity="one">Der %d. Tag</item>
+        <item quantity="other">Die %d Tage</item>
+    </plurals>
     <string name="exam_format_day">Tag %1$d</string>
     <!-- %1$s lists the day's parts, %2$s counts its questions: "Languages and Humanities · 90 questions". -->
     <string name="exam_format_parts_questions">%1$s · %2$s</string>

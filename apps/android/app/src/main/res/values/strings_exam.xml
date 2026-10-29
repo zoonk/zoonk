@@ -68,10 +68,8 @@
     <string name="exam_use_this_date">Use this date</string>
     <!-- %1$s is a month and year, such as "November 2027". -->
     <string name="exam_no_sitting_title">No exam date in %1$s</string>
-    <plurals name="exam_no_sitting_detail">
-        <item quantity="one">Your plan keeps your date unless you switch to the closest one.</item>
-        <item quantity="other">Your plan keeps your date unless you switch to one of the closest.</item>
-    </plurals>
+    <string name="exam_no_sitting_detail_one">Your plan keeps your date unless you switch to the closest one.</string>
+    <string name="exam_no_sitting_detail_several">Your plan keeps your date unless you switch to one of the closest.</string>
     <!-- %1$s is a date, such as "November 8". -->
     <string name="exam_use_date">Use %1$s</string>
     <string name="exam_result_detail">Add your official result when it comes out. You can change it later.</string>
@@ -133,7 +131,11 @@
     <string name="exam_progress_locked">Each mock\'s score over time, and how each subject is going.</string>
     <string name="exam_format_one_day">The exam day</string>
     <string name="exam_format_two_days">The two days</string>
-    <string name="exam_format_days">The %1$d days</string>
+    <!-- The title over an exam's days, for three or more: "The 3 days". -->
+    <plurals name="exam_format_days">
+        <item quantity="one">The %d day</item>
+        <item quantity="other">The %d days</item>
+    </plurals>
     <string name="exam_format_day">Day %1$d</string>
     <!-- %1$s lists the day's parts, %2$s counts its questions: "Languages and Humanities · 90 questions". -->
     <string name="exam_format_parts_questions">%1$s · %2$s</string>
