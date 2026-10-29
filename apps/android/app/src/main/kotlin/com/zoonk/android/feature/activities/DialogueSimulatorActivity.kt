@@ -19,9 +19,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.LocaleList
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.SpeechPlayer
@@ -59,15 +65,18 @@ private fun DialogueSimulatorActivity(props: ActivityProps) {
     val best = fields.replies.firstOrNull { it.isBest }
     val conversationLabel = stringResource(R.string.activities_dialogue_conversation)
 
-    ActivityCanvas(stringResource(R.string.activities_dialogue_description, fields.scene)) {
+    ActivityCanvas(gap = 16.dp) {
+        val sceneStyle = MaterialTheme.typography.labelMedium
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Icon(
-                painterResource(R.drawable.ic_location_on),
-                contentDescription = null,
-                modifier = Modifier.padding(top = 1.dp).size(14.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(fields.scene, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+            LineMarker(sceneStyle) {
+                Icon(
+                    painterResource(R.drawable.ic_location_on),
+                    contentDescription = null,
+                    modifier = Modifier.size(14.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Text(fields.scene, color = MaterialTheme.colorScheme.onSurfaceVariant, style = sceneStyle)
         }
         Column(Modifier.semantics { contentDescription = conversationLabel }, verticalArrangement = Arrangement.spacedBy(12.dp)) {
             fields.lines.forEach { ChatLine(it, speech, fields.language) }
@@ -77,11 +86,11 @@ private fun DialogueSimulatorActivity(props: ActivityProps) {
             selectedId = selectedId,
             isChecked = props.isChecked,
             isGuess = false,
-            locked = props.isChecked,
+            locked = props.isLocked,
             keepsEveryOption = true,
             onSelect = { id -> props.onAnswerChange(id?.let { selectionAnswer(listOf(it)) }) },
         ) { option ->
-            ReplyContent(fields.replies.first { it.id == option.id }, props.isChecked)
+            ReplyContent(fields.replies.first { it.id == option.id }, fields.language, props.isChecked)
         }
         if (props.isChecked && speech != null && best != null) {
             val label = stringResource(R.string.activities_dialogue_hear_best)
@@ -124,10 +133,16 @@ private fun ChatLine(
                 .widthIn(min = 48.dp)
                 .clip(bubble)
                 .background(if (isThem) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.vizAccent.copy(alpha = SOFT))
-                .semantics(mergeDescendants = true) { contentDescription = "$said ${line.text}. ${line.translation}" }
-                .padding(horizontal = 14.dp, vertical = 10.dp),
+                .clearAndSetSemantics {
+                    text =
+                        buildAnnotatedString {
+                            append("$said ")
+                            append(spoken(line.text, language))
+                            append(". ${line.translation}")
+                        }
+                }.padding(horizontal = 14.dp, vertical = 10.dp),
         ) {
-            Text(line.text, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
+            Text(spoken(line.text, language), style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
             Text(line.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
         if (isThem && speech != null) {
@@ -139,10 +154,11 @@ private fun ChatLine(
 @Composable
 private fun ReplyContent(
     reply: PlayableLibraryStepAnyOfContentOneOf21FieldsRepliesInner,
+    language: String,
     isChecked: Boolean,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(reply.text, style = MaterialTheme.typography.bodyLarge)
+        Text(spoken(reply.text, language), style = MaterialTheme.typography.bodyLarge)
         if (isChecked) {
             Text(reply.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
             RichText(reply.why, style = MaterialTheme.typography.bodyMedium)
@@ -151,3 +167,9 @@ private fun ReplyContent(
 }
 
 private const val SOFT = 0.16f
+
+/** Words in the language being learned, marked so TalkBack voices them in it. */
+private fun spoken(
+    text: String,
+    language: String,
+) = buildAnnotatedString { withStyle(SpanStyle(localeList = LocaleList(language))) { append(text) } }

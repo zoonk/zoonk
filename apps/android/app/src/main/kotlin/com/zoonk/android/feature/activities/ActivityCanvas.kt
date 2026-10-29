@@ -2,7 +2,9 @@ package com.zoonk.android.feature.activities
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -28,11 +30,14 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.AnswerResult
@@ -40,11 +45,15 @@ import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.zoonk
 
-/** Main's `ActivityCanvas`: the panel a template draws in. [description] says what it shows, in words, for TalkBack. */
+/**
+ * Main's `ActivityCanvas`: the panel a template draws in. [description] says what a drawing shows,
+ * in words, for TalkBack; a canvas of text and controls says it all already, so it has none.
+ */
 @Composable
 fun ActivityCanvas(
-    description: String,
     modifier: Modifier = Modifier,
+    description: String? = null,
+    gap: Dp = 12.dp,
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(
@@ -53,11 +62,21 @@ fun ActivityCanvas(
                 .fillMaxWidth()
                 .clip(RoundedCornerShape(16.dp))
                 .background(MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = CANVAS_ALPHA))
-                .semantics { contentDescription = description }
+                .then(if (description == null) Modifier else Modifier.semantics { contentDescription = description })
                 .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(gap),
         content = content,
     )
+}
+
+/** Main's `LineMarker`: a small icon centered on the first line of [style]'s text beside it, at any font size. */
+@Composable
+fun LineMarker(
+    style: TextStyle,
+    content: @Composable () -> Unit,
+) {
+    val height = with(LocalDensity.current) { style.lineHeight.toDp() }
+    Box(Modifier.height(height), contentAlignment = Alignment.Center) { content() }
 }
 
 @Composable
@@ -89,7 +108,8 @@ fun <T> ActivitySelectGrid(
 
 /**
  * Main's `ActivitySelectGridItem`: a pick is ink, and checking marks it right or wrong with a
- * symbol as well as a color. A [Role.Checkbox] tile toggles; a [Role.RadioButton] one is picked.
+ * symbol as well as a color. A [Role.Checkbox] tile toggles, a [Role.RadioButton] one is picked,
+ * and a [Role.Button] one acts at once.
  */
 @Composable
 fun RowScope.ActivityTile(
@@ -104,10 +124,10 @@ fun RowScope.ActivityTile(
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(12.dp)
     val choice =
-        if (role == Role.Checkbox) {
-            Modifier.toggleable(value = picked, enabled = enabled, role = role, onValueChange = { onClick() })
-        } else {
-            Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
+        when (role) {
+            Role.Checkbox -> Modifier.toggleable(value = picked, enabled = enabled, role = role, onValueChange = { onClick() })
+            Role.RadioButton -> Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
+            else -> Modifier.clickable(enabled = enabled, role = role, onClick = onClick)
         }
 
     Row(
@@ -153,14 +173,17 @@ fun ActivityTakeaway(
     text: String,
     modifier: Modifier = Modifier,
 ) {
+    val style = MaterialTheme.typography.bodyMedium
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Icon(
-            painterResource(R.drawable.ic_lightbulb),
-            contentDescription = null,
-            modifier = Modifier.padding(top = 2.dp).size(16.dp),
-            tint = MaterialTheme.zoonk.vizHighlight,
-        )
-        RichText(text, style = MaterialTheme.typography.bodyMedium)
+        LineMarker(style) {
+            Icon(
+                painterResource(R.drawable.ic_lightbulb),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.zoonk.vizHighlight,
+            )
+        }
+        RichText(text, style = style)
     }
 }
 

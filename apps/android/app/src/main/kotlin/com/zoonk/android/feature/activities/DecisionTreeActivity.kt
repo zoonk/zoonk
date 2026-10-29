@@ -27,9 +27,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
@@ -62,14 +62,7 @@ private fun DecisionTreeActivity(props: ActivityProps) {
         path = next
         props.onAnswerChange(if (nodes.find(next.lastOrNull()) is TreeNode.Outcome) orderAnswer(next) else null)
     }
-    val description =
-        if (current is TreeNode.Outcome) {
-            pluralStringResource(R.plurals.activities_tree_reached, steps.size, current.label, steps.size)
-        } else {
-            stringResource(R.string.activities_tree_question, steps.size + 1, stillPossible.joinToString(", ") { it.label })
-        }
-
-    ActivityCanvas(description) {
+    ActivityCanvas(gap = 16.dp) {
         Panel {
             ActivityCanvasLabel(stringResource(R.string.activities_tree_case))
             RichText(fields.case.description, style = MaterialTheme.typography.bodyLarge)
@@ -87,12 +80,14 @@ private fun DecisionTreeActivity(props: ActivityProps) {
             Column(Modifier.semantics { contentDescription = answersLabel }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 steps.forEach { step ->
                     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                        Icon(
-                            painterResource(R.drawable.ic_check_circle),
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
+                        LineMarker(MaterialTheme.typography.bodyMedium) {
+                            Icon(
+                                painterResource(R.drawable.ic_check_circle),
+                                contentDescription = null,
+                                modifier = Modifier.size(18.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
                         RichText(
                             step.node.question,
                             modifier = Modifier.weight(1f),
@@ -123,7 +118,13 @@ private fun DecisionTreeActivity(props: ActivityProps) {
                 label = current.question,
                 columns = if (current.branches.any { it.label.length > LONG_BRANCH_LENGTH }) 1 else 2,
             ) { branch ->
-                ActivityTile(picked = false, result = null, onClick = { walk(path + branch.next) }) { Text(branch.label) }
+                ActivityTile(
+                    picked = false,
+                    result = null,
+                    onClick = { walk(path + branch.next) },
+                    enabled = !props.isLocked,
+                    role = Role.Button,
+                ) { Text(branch.label) }
             }
         }
         if (current is TreeNode.Outcome) {
@@ -141,7 +142,7 @@ private fun DecisionTreeActivity(props: ActivityProps) {
             }
         }
         if (!props.isChecked && path.size > 1) {
-            OutlinedButton(onClick = { walk(path.dropLast(1)) }) {
+            OutlinedButton(onClick = { walk(path.dropLast(1)) }, enabled = !props.isLocked) {
                 Icon(painterResource(R.drawable.ic_undo), contentDescription = null, modifier = Modifier.size(18.dp))
                 Text(stringResource(R.string.activities_tree_undo), modifier = Modifier.padding(start = 8.dp))
             }
@@ -166,13 +167,15 @@ private fun TreeReview(
         Text(stringResource(R.string.activities_tree_walk), style = MaterialTheme.typography.titleSmall)
         steps.forEachIndexed { index, step ->
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                StepMark(
-                    when {
-                        index < missedAt -> AnswerMark.Right
-                        index == missedAt -> AnswerMark.Wrong
-                        else -> null
-                    },
-                )
+                LineMarker(MaterialTheme.typography.bodyMedium) {
+                    StepMark(
+                        when {
+                            index < missedAt -> AnswerMark.Right
+                            index == missedAt -> AnswerMark.Wrong
+                            else -> null
+                        },
+                    )
+                }
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     RichText(
                         step.node.question,
@@ -200,7 +203,7 @@ private enum class AnswerMark { Right, Wrong }
 
 @Composable
 private fun StepMark(mark: AnswerMark?) {
-    val modifier = Modifier.padding(top = 2.dp).size(16.dp)
+    val modifier = Modifier.size(16.dp)
     when (mark) {
         AnswerMark.Right -> {
             Icon(painterResource(R.drawable.ic_check), null, modifier, tint = MaterialTheme.colorScheme.tertiary)

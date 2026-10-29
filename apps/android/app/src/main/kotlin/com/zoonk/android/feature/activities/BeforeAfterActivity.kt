@@ -2,7 +2,6 @@ package com.zoonk.android.feature.activities
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,8 +31,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -82,25 +87,21 @@ private fun BeforeAfterActivity(props: ActivityProps) {
             .associate { it.id to changeRatio(fields, it.id) }
             .takeIf { props.isChecked }
     val afterFocus = remember { FocusRequester() }
-    val description =
-        listOf(
-            describe(fields.before, locale),
-            fields.change,
-            if (showsAfter) describe(fields.after, locale) else stringResource(R.string.activities_before_after_hidden),
-        ).joinToString(" ")
-
     LaunchedEffect(revealed) { if (revealed) afterFocus.requestFocus() }
 
-    ActivityCanvas(description) {
+    ActivityCanvas {
         StateCard(fields.before, other = fields.after, isAfter = false, highlightId = highlightId, ratios = null)
+        val changeStyle = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
         Row(Modifier.padding(horizontal = 4.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            Icon(
-                painterResource(R.drawable.ic_arrow_downward),
-                contentDescription = null,
-                modifier = Modifier.padding(top = 2.dp).size(16.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            RichText(fields.change, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
+            LineMarker(changeStyle) {
+                Icon(
+                    painterResource(R.drawable.ic_arrow_downward),
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            RichText(fields.change, style = changeStyle)
         }
         if (showsAfter) {
             StateCard(
@@ -112,13 +113,29 @@ private fun BeforeAfterActivity(props: ActivityProps) {
                 modifier = Modifier.focusRequester(afterFocus).focusable(),
             )
         } else {
+            val dashed = MaterialTheme.zoonk.vizAccent.copy(alpha = DASHED)
             OutlinedButton(
                 onClick = { revealed = true },
-                modifier = Modifier.fillMaxWidth().heightIn(min = 96.dp),
+                modifier =
+                    Modifier.fillMaxWidth().heightIn(min = 96.dp).drawBehind {
+                        val width = 2.dp.toPx()
+                        drawRoundRect(
+                            dashed,
+                            topLeft = Offset(width / 2, width / 2),
+                            size = Size(size.width - width, size.height - width),
+                            cornerRadius = CornerRadius(12.dp.toPx()),
+                            style = Stroke(width, pathEffect = PathEffect.dashPathEffect(floatArrayOf(6.dp.toPx(), 4.dp.toPx()))),
+                        )
+                    },
                 shape = RoundedCornerShape(12.dp),
-                border = BorderStroke(2.dp, MaterialTheme.zoonk.vizAccent.copy(alpha = SOFT)),
+                border = null,
             ) {
-                Icon(painterResource(R.drawable.ic_visibility), contentDescription = null, modifier = Modifier.size(16.dp))
+                Icon(
+                    painterResource(R.drawable.ic_visibility),
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = MaterialTheme.zoonk.vizAccent,
+                )
                 Text(
                     stringResource(R.string.activities_before_after_show, fields.after.label),
                     modifier = Modifier.padding(start = 8.dp),
@@ -245,16 +262,6 @@ private fun changeLabel(
         is FactChange.More -> stringResource(R.string.activities_before_after_more, formatAmount(change.times, locale))
     }
 
-private fun describe(
-    state: BeforeAfterState,
-    locale: Locale,
-): String =
-    listOf(
-        "${state.label}:",
-        state.facts.joinToString(", ") { "${it.label} ${formatAmount(it.value, locale, it.unit)}" },
-        state.description,
-    ).joinToString(" ")
-
 /** Core's `changeRatio`: a fact's after value over its before value. */
 internal fun changeRatio(
     fields: PlayableLibraryStepAnyOfContentOneOf34Fields,
@@ -272,4 +279,5 @@ internal fun changeRatio(
 }
 
 private const val SOFT = 0.16f
+private const val DASHED = 0.4f
 private const val GROW_MILLIS = 700

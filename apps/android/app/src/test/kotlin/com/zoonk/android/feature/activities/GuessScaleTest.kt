@@ -45,4 +45,9 @@ class GuessScaleTest {
         assertEquals(GuessComparison.Off(1.4299999999999997), compareGuess(actual = 11.57, guess = 13.0, isCorrect = false))
         assertEquals(GuessComparison.Off(5.0), compareGuess(actual = -3.0, guess = 2.0, isCorrect = false))
     }
+
+    @Test
+    fun aGuessTooSmallToCompareAsTimesReadsAsHowFarOff() {
+        assertEquals(GuessComparison.Off(1e-320 - 14.0), compareGuess(actual = 14.0, guess = 1e-320, isCorrect = false))
+    }
 }

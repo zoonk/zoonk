@@ -1,8 +1,6 @@
 package com.zoonk.android.feature.activities
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,9 +25,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.AnswerResult
@@ -85,13 +87,13 @@ private fun StepSolverActivity(props: ActivityProps) {
     val line = MaterialTheme.colorScheme.outlineVariant
     val stepsLabel = stringResource(R.string.activities_solver_steps)
 
-    ActivityCanvas(stringResource(R.string.activities_solver_description, minOf(current + 1, steps.size), steps.size)) {
+    ActivityCanvas(gap = 16.dp) {
         RichText(content.fields.problem, style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium))
         Column(
             Modifier
                 .semantics { contentDescription = stepsLabel }
                 .drawBehind {
-                    val x = MARKER.toPx() / 2
+                    val x = if (layoutDirection == LayoutDirection.Rtl) size.width - MARKER.toPx() / 2 else MARKER.toPx() / 2
                     drawLine(line, Offset(x, MARKER.toPx() / 2), Offset(x, size.height - MARKER.toPx() / 2), strokeWidth = 2.dp.toPx())
                 },
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -107,7 +109,12 @@ private fun StepSolverActivity(props: ActivityProps) {
                             else -> StepStatus.Later
                         },
                     picks = picks[step.id].orEmpty(),
+                    firstPick =
+                        props.answer.assignmentPairs
+                            ?.get(step.id)
+                            .takeIf { props.isChecked } ?: picks[step.id]?.firstOrNull(),
                     isChecked = props.isChecked,
+                    isLocked = props.isLocked,
                     maxValue = maxValue,
                     onPick = { pick(step.id, it) },
                 )
@@ -122,13 +129,15 @@ private fun SolverStepRow(
     step: Step,
     status: StepStatus,
     picks: List<String>,
+    firstPick: String?,
     isChecked: Boolean,
+    isLocked: Boolean,
     maxValue: Double,
     onPick: (String) -> Unit,
 ) {
     val correct = step.choices.firstOrNull { it.isCorrect }
     val wrongPicks = step.choices.filter { it.id in picks && !it.isCorrect }
-    val firstPickWrong = picks.firstOrNull()?.let { it != correct?.id } == true
+    val firstPickWrong = firstPick != null && firstPick != correct?.id
 
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         StepMarker(index, status, wrong = isChecked && firstPickWrong)
@@ -161,7 +170,8 @@ private fun SolverStepRow(
                     ActivityTile(
                         picked = false,
                         result = AnswerResult.Wrong.takeIf { choice.id in picks },
-                        enabled = choice.id !in picks,
+                        enabled = choice.id !in picks && !isLocked,
+                        role = Role.Button,
                         onClick = { onPick(choice.id) },
                     ) { RichText(choice.text) }
                 }
@@ -174,7 +184,7 @@ private fun SolverStepRow(
                 Verdict(stringResource(R.string.activities_solver_right), correct.reason, right = true)
             }
             if (isChecked && firstPickWrong) {
-                wrongPicks.firstOrNull()?.let {
+                step.choices.firstOrNull { it.id == firstPick }?.let {
                     Text(
                         stringResource(R.string.activities_solver_first_pick, it.text),
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -215,7 +225,11 @@ private fun StepMarker(
 
         StepStatus.Later -> {
             Box(
-                modifier.background(colors.surface).border(BorderStroke(2.dp, colors.outlineVariant), CircleShape),
+                modifier.background(colors.surface).drawBehind {
+                    val ring = 2.dp.toPx()
+                    val dashes = PathEffect.dashPathEffect(floatArrayOf(4.dp.toPx(), 3.dp.toPx()))
+                    drawCircle(colors.outlineVariant, radius = (size.minDimension - ring) / 2, style = Stroke(ring, pathEffect = dashes))
+                },
                 contentAlignment = Alignment.Center,
             ) {
                 number(colors.onSurfaceVariant)

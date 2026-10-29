@@ -65,7 +65,7 @@ private fun ChartReaderActivity(props: ActivityProps) {
             ),
         ) + measures.map { (span, measure) -> stringResource(R.string.activities_chart_span, span.label, measure) }
 
-    ActivityCanvas(description.joinToString(" ")) {
+    ActivityCanvas(description = description.joinToString(" ")) {
         Text(fields.yLabel, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
         val ink = MaterialTheme.colorScheme.onSurface
         val ring = MaterialTheme.colorScheme.surface
@@ -95,7 +95,7 @@ private fun ChartReaderActivity(props: ActivityProps) {
             ActivityTile(
                 picked = span.id in selected,
                 result = AnswerResult.Right.takeIf { props.isChecked && span.id == targetId },
-                enabled = !props.isChecked,
+                enabled = !props.isLocked,
                 onClick = {
                     selected = if (span.id in selected) selected - span.id else selected + span.id
                     if (numeric != null) props.onAnswerChange(selected.lastOrNull()?.let { measureSpan(fields, it) }?.let(::numericAnswer))

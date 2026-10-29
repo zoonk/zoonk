@@ -12,6 +12,7 @@ enum class ActivityPhase { Answering, Checked }
 /**
  * What a template's canvas gets. The screen's answer is the player's, never the canvas's own;
  * [expected] and [isCorrect] come from the server's check, so a canvas draws them and never grades.
+ * While [isLocked] (being checked or checked) the player takes no new answer, so a canvas changes nothing.
  */
 data class ActivityProps(
     val content: ActivityStepContent,
@@ -19,6 +20,7 @@ data class ActivityProps(
     val expected: ActivityExpected?,
     val isCorrect: Boolean?,
     val phase: ActivityPhase,
+    val isLocked: Boolean,
     val onAnswerChange: (ActivityAnswer?) -> Unit,
 ) {
     val isChecked: Boolean get() = phase == ActivityPhase.Checked

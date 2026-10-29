@@ -2,7 +2,6 @@ package com.zoonk.android.feature.activities
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -10,10 +9,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +29,8 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -74,9 +75,7 @@ private fun PatternTableActivity(props: ActivityProps) {
         props.onAnswerChange(if (blanks.all { "$it" in next }) assignmentAnswer(next) else null)
     }
 
-    ActivityCanvas(
-        pluralStringResource(R.plurals.activities_pattern_description, blanks.size, fields.modelWord, fields.newWord, blanks.size),
-    ) {
+    ActivityCanvas(gap = 16.dp) {
         PatternGrid(
             listOf(
                 listOf<@Composable () -> Unit>(
@@ -105,9 +104,14 @@ private fun PatternTableActivity(props: ActivityProps) {
                                 }
 
                                 else -> {
-                                    OpenBlank(row, blankStem(fields.choices, row.answer), filled["$index"], active == index) {
-                                        active =
-                                            index
+                                    OpenBlank(
+                                        row,
+                                        blankStem(fields.choices, row.answer),
+                                        filled["$index"],
+                                        active == index,
+                                        !props.isLocked,
+                                    ) {
+                                        active = index
                                     }
                                 }
                             }
@@ -126,7 +130,13 @@ private fun PatternTableActivity(props: ActivityProps) {
                     label = stringResource(R.string.activities_pattern_endings, activeRow.label),
                     columns = if (fields.choices.size > SHORT_CHOICES) 4 else 3,
                 ) { choice ->
-                    ActivityTile(picked = filled["$active"] == choice, result = null, onClick = { choose(choice) }) {
+                    ActivityTile(
+                        picked = filled["$active"] == choice,
+                        result = null,
+                        onClick = { choose(choice) },
+                        enabled = !props.isLocked,
+                        role = Role.RadioButton,
+                    ) {
                         Text("-$choice", style = MaterialTheme.typography.bodyLarge)
                     }
                 }
@@ -137,7 +147,8 @@ private fun PatternTableActivity(props: ActivityProps) {
 
 /**
  * Main's pattern table, laid out as a browser lays out a table: columns wrap between words to fit
- * the width, and the table scrolls sideways only when even its longest words don't fit.
+ * the width. When even the longest words don't fit (a large font on a phone), each row stacks its
+ * label over its two forms instead, so the form the learner completes stays in view.
  */
 @Composable
 private fun PatternGrid(rows: List<List<@Composable () -> Unit>>) {
@@ -148,38 +159,77 @@ private fun PatternGrid(rows: List<List<@Composable () -> Unit>>) {
         Layout(
             content = {
                 rows.forEachIndexed { rowIndex, row ->
-                    val divider =
-                        if (rowIndex == 0) {
-                            Modifier
-                        } else {
-                            Modifier.drawBehind { drawLine(line, Offset.Zero, Offset(size.width, 0f), strokeWidth = 1.dp.toPx()) }
-                        }
-                    row.forEach { cell ->
-                        Column(divider.padding(8.dp), verticalArrangement = Arrangement.Center) { cell() }
-                    }
+                    if (rowIndex > 0) Box(Modifier.background(line))
+                    row.forEach { cell -> Column(Modifier.padding(8.dp), verticalArrangement = Arrangement.Center) { cell() } }
                 }
             },
-            modifier = Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = 8.dp, vertical = 4.dp),
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
         ) { measurables, _ ->
             val columns = rows.first().size
             val room = available - 16.dp.roundToPx()
-            val column = { index: Int -> measurables.filterIndexed { cell, _ -> cell % columns == index } }
-            val narrowest = (0 until columns).map { index -> column(index).maxOf { it.minIntrinsicWidth(Int.MAX_VALUE) } }
-            val widest = (0 until columns).map { index -> column(index).maxOf { it.maxIntrinsicWidth(Int.MAX_VALUE) } }
-            val widths = tableWidths(narrowest, widest, room)
-            val heights =
-                measurables.chunked(columns).map { row -> row.mapIndexed { index, cell -> cell.minIntrinsicHeight(widths[index]) }.max() }
-            val placeables =
-                measurables.mapIndexed { index, cell -> cell.measure(Constraints.fixed(widths[index % columns], heights[index / columns])) }
-            layout(widths.sum(), heights.sum()) {
-                var y = 0
-                placeables.chunked(columns).forEachIndexed { rowIndex, row ->
-                    var x = 0
-                    row.forEachIndexed { column, cell ->
-                        cell.placeRelative(x, y)
-                        x += widths[column]
+            val divider = 1.dp.roundToPx()
+            val header = measurables.take(columns)
+            val body = measurables.drop(columns).chunked(columns + 1).map { it.first() to it.drop(1) }
+            val cells = listOf(header) + body.map { it.second }
+            val narrowest = (0 until columns).map { column -> cells.maxOf { it[column].minIntrinsicWidth(Int.MAX_VALUE) } }
+            val stacked = narrowest.sum() > room
+            val widths =
+                if (stacked) {
+                    List(columns) { room / (columns - 1) }
+                } else {
+                    tableWidths(
+                        narrowest,
+                        (0 until columns).map { column ->
+                            cells.maxOf { it[column].maxIntrinsicWidth(Int.MAX_VALUE) }
+                        },
+                        room,
+                    )
+                }
+            val width = if (stacked) room else widths.sum()
+
+            /** Measures [row]'s cells at [cellWidths] as tall as the tallest, laying them side by side. */
+            fun sideBySide(
+                row: List<Measurable>,
+                cellWidths: List<Int>,
+            ): List<Pair<Placeable, Int>> {
+                val height = row.indices.maxOf { row[it].minIntrinsicHeight(cellWidths[it]) }
+                var x = 0
+                return row.mapIndexed { index, cell ->
+                    (cell.measure(Constraints.fixed(cellWidths[index], height)) to x).also {
+                        x +=
+                            cellWidths[index]
                     }
-                    y += heights[rowIndex]
+                }
+            }
+
+            val lines =
+                cells
+                    .mapIndexed { rowIndex, row ->
+                        val rule =
+                            if (rowIndex >
+                                0
+                            ) {
+                                listOf(listOf(body[rowIndex - 1].first.measure(Constraints.fixed(width, divider)) to 0))
+                            } else {
+                                emptyList()
+                            }
+                        if (!stacked) {
+                            rule + listOf(sideBySide(row, widths))
+                        } else {
+                            val label = row.first()
+                            val labelHeight = if (rowIndex == 0) 0 else label.minIntrinsicHeight(room)
+                            rule +
+                                listOf(
+                                    listOf(label.measure(Constraints.fixed(room, labelHeight)) to 0),
+                                    sideBySide(row.drop(1), widths.drop(1)),
+                                )
+                        }
+                    }.flatten()
+            layout(width, lines.sumOf { line -> line.maxOf { it.first.height } }) {
+                var y = 0
+                lines.forEach { line ->
+                    line.forEach { (cell, x) -> cell.placeRelative(x, y) }
+                    y += line.maxOf { it.first.height }
                 }
             }
         }
@@ -218,6 +268,7 @@ private fun OpenBlank(
     stem: String,
     chosen: String?,
     isActive: Boolean,
+    enabled: Boolean,
     onSelect: () -> Unit,
 ) {
     val accent = MaterialTheme.zoonk.vizAccent
@@ -226,11 +277,12 @@ private fun OpenBlank(
 
     Row(
         Modifier
+            .offset(x = (-8).dp)
             .heightIn(min = 48.dp)
             .widthIn(min = 96.dp)
             .clip(shape)
             .border(2.dp, if (isActive) accent else Color.Transparent, shape)
-            .selectable(selected = isActive, role = Role.Button, onClick = onSelect)
+            .selectable(selected = isActive, enabled = enabled, role = Role.Button, onClick = onSelect)
             .clearAndSetSemantics { contentDescription = label }
             .padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,

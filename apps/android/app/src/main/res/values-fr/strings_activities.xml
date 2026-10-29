@@ -9,7 +9,6 @@
   "activities_badge_reply": "5b74c9b826ccc16d155c83ba5c9b20d573261ad449fe6503790b287a572a32a3",
   "activities_badge_spot_pattern": "d5a373087f88ebcbe1082cb73cf5004e2995d31686c0ebe98ed0e6077dfdc3df",
   "activities_badge_step_by_step": "0dcf798e55164f0797844c51a99cceb98c0d9208018f812367acd635c126a22e",
-  "activities_before_after_hidden": "e16848c594e56bd2f819211e5c8c480a20035dde8b7985dc233f2cbf277ec306",
   "activities_before_after_less": "fc51f7c0a58695f65f9863d1f2937da607a8a2d5065f0ea248dca610b1ed4a10",
   "activities_before_after_more": "d27c122578ceaeb105236003ff7070721651d9ffe9550f3ecf779f4150356d19",
   "activities_before_after_no_change": "966aac4b88580ce642e65e7f2cf16c1b9a1f4d23a6e801efe0ae59502ee0ca08",
@@ -20,20 +19,19 @@
   "activities_chart_spans": "1077772faf8d7407b4e423adf64a2cadf5c54a5e535ef3286c329fb1f417d0e1",
   "activities_chart_tap_span": "e258071e9fce8eab9012e292c6a673cb7130ec0d3883fc63c3980e27e7ad87fc",
   "activities_dialogue_conversation": "a0a05e3b08ca988f7cd8e6776547496b6c90112dd88fc2558ad175e46081de13",
-  "activities_dialogue_description": "61ad4a29ac39ac4cd04d5e28adc3ef74f881944252f3ff8ec6eb834a44f50e8e",
   "activities_dialogue_hear_best": "8f3fb5c594d945bb614f200b9845f650e1845321a41927b324cf942545f61af1",
   "activities_dialogue_hear_line": "f9ec2f131455bb3d5118d50e977175e773ca116db6538ebd04bbe27822a28ebe",
   "activities_dialogue_they_say": "16e3a5a4c16142cf60cbac2a0aa623c8d8554c67ae62191a08b5e4e6899adf43",
   "activities_dialogue_you_said": "cd62b3dee6b0cec802e4f6a58ade526e0f434ae1fac3d48732c6be60feb7ca0a",
   "activities_find_error_ai_answer": "2d956a7f5715acc59dc164b7c1f7e36f2e66954182389a36af35ee5b78d4de07",
   "activities_find_error_ai_asked": "360791565b0e13ecdc2a0fb92d9b0b0176831151b44d8d8c7e947adbd72bfded",
-  "activities_find_error_ai_description": "1b69f12f07520d547874d206810cd89de6a51b99245f29ac92f18f30f5a9b5dc",
   "activities_find_error_ai_note": "a79e214330078f720e8ec14ffebe48f36046095f249ab5c9efa76ae055c9efd1",
-  "activities_find_error_description": "869c9b0a4b01092c8fae79a7a8eb9950830f40efb946596b84e6841b17b5f8c5",
   "activities_find_error_problem": "d891354c83da08189c0518706166e9351624c813117583268f3b402593f7fea2",
-  "activities_find_error_step": "8d6d99abb3dcee25c2d5e82c4a1dc63d745ad2da831fb8b1203f612a12abfd72",
+  "activities_find_error_step": "2d77f5824f90f5d96813f59057d25e5469678ba0ba43343a6f7c9b57569001a8",
+  "activities_find_error_the_wrong_step": "e25c9dc11fc85c5e06bb5ccd3394a65f3510be66875f2147a93be7fb025d2615",
   "activities_find_error_worked": "7c06cf8b998ae49e2a4201f6663fe8933238332cc80ccf8ab9009f60f8e6eda5",
   "activities_find_error_wrong_step": "57ff59c2ed210dcc1f5fa57fa57f911f882ebc96035b6a9841bf9bffc3f1b012",
+  "activities_find_error_your_pick": "95b907adf72df10d2d9a227fe720645691f8049c8a1acd5d7d589e621d7313bf",
   "activities_guess_close": "3a5a3b22a63d46012d4106141ef87e6a020944df214b71bdf47c523c97f2022f",
   "activities_guess_drag": "175b32cc977d098fbf0ac3fab01ffa90cd6c906d24a6c6bd3cb4ac67a706d3eb",
   "activities_guess_none": "bed937bda518210ce4135819ace59b70a5b725af617903a17e1faf0fb9f51296",
@@ -47,10 +45,8 @@
   "activities_guess_yours": "e325fc1c473ef5dda71a977403ae0b2461b8e183fb1542e66b0829f84c47a429",
   "activities_pattern_blank": "9b7cb4b9c730fb87aad8d912c83c0d63b6125a527e86ad83be121fe76faa5326",
   "activities_pattern_correct": "47fb1626c9057797c21ffc8d55addcc0f60e825399f57f800c9f6321259aede0",
-  "activities_pattern_description": "027f4d11a9e43a31ab02496595bc4489f7ec75a2db94655e77647990415ad2b5",
   "activities_pattern_endings": "1dcd075e768d6e451df0d54f3397d27f0cc4c02ba5f864bfb961784a2235154c",
   "activities_pattern_which_ending": "c467b47466477d9147a5bd4a939e7c73e481dc500bb6c1f89421e1440dc6b0a8",
-  "activities_solver_description": "d679915152a02c12049d32a350d7bfa3e38e2f5fc5c4ec2a522bb13bdd2f63be",
   "activities_solver_first_pick": "3e7a816016da4daf17776c7b4c5b369e28340a7828c917e5e9da90952d1d5789",
   "activities_solver_not_quite": "ad4b370cca53bc4a06f0e70ac4afb70ba74be6a13210a9c747b46755bf85d26f",
   "activities_solver_right": "26b39f1360980abe6ed05af5a57bdd7d0053d5f9ef99c83fd9778a689a764072",
@@ -58,8 +54,6 @@
   "activities_tree_case": "edc2bd1c5a4b09d47510960f6a571a526f7b208108b5a739ee1664860312d2b3",
   "activities_tree_it_leads_to": "46647851efa9215cb0c51732ca73726e5df5cc577822e77cd352d404af15020e",
   "activities_tree_leads_to": "0195cd7e2644360b3c6f89c8b14abd01577ad5da5e0a2962bb1ee522db4e5aad",
-  "activities_tree_question": "dbc29e42968cef171c97becaabfa0a4a945e8a5b99cba49f6f466c639b789cf7",
-  "activities_tree_reached": "70421ab8b3d2db8d43eede8cccfd61ea2709b02595149b23dc74adb4be667f5e",
   "activities_tree_still_possible": "d801aa0fe90d3d6d6de01d7ddd9330b98f08d3ec5e7eafe505b977e71652680c",
   "activities_tree_undo": "bc52fd36b32193e8e06c5564eca98b017087e4d30da3971af30e32d22f1a1283",
   "activities_tree_walk": "50470adb04152c249c7dfdae9c2e86d286e102bfde8972023daaa5a6999352b4",
@@ -96,7 +90,6 @@
     <string name="activities_guess_too_small">Ton estimation est environ %1$s fois trop faible.</string>
     <!-- Shows the state after the change, named like "With the assembly line". -->
     <string name="activities_before_after_show">Afficher l’après : %1$s</string>
-    <string name="activities_before_after_hidden">L’état après est masqué jusqu’à ce que tu l’affiches.</string>
     <string name="activities_before_after_no_change">Aucun changement</string>
     <!-- How a fact shrank, like "3 times less". -->
     <string name="activities_before_after_less">%1$s fois moins</string>
@@ -123,14 +116,6 @@
     <string name="activities_tree_you_chose">Tu as choisi %1$s</string>
     <!-- The outcome the right walk reaches, like "It leads to Pine." -->
     <string name="activities_tree_it_leads_to">Ça mène à %1$s.</string>
-    <!-- For TalkBack: which question the learner is on and the outcomes still possible, like "Question 2. Still possible: Pine, Spruce." -->
-    <string name="activities_tree_question">Question %1$d. Encore possible : %2$s.</string>
-    <!-- For TalkBack: the outcome reached and how many questions it took. -->
-    <plurals name="activities_tree_reached">
-        <item quantity="one">Tu as atteint %1$s après %2$d question.</item>
-        <item quantity="many">Tu as atteint %1$s après %2$d questions.</item>
-        <item quantity="other">Tu as atteint %1$s après %2$d questions.</item>
-    </plurals>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->
     <string name="activities_find_error_ai_asked">Quelqu’un a posé une question à un assistant IA</string>
     <string name="activities_find_error_problem">Problème</string>
@@ -139,21 +124,13 @@
     <string name="activities_find_error_ai_answer">La réponse de l’assistant IA</string>
     <!-- The name of the list of a worked answer's steps, for TalkBack. -->
     <string name="activities_find_error_worked">Résolution détaillée</string>
-    <!-- A step of the answer, for TalkBack, like "Step 2: Down 20% means times 0.8". -->
-    <string name="activities_find_error_step">Étape %1$d : %2$s</string>
+    <!-- Read before a step of the answer, for TalkBack, like "Step 2". -->
+    <string name="activities_find_error_step">Étape %1$d</string>
+    <!-- For TalkBack, on the step that has the error once checked. -->
+    <string name="activities_find_error_the_wrong_step">La mauvaise étape</string>
+    <!-- For TalkBack, on the learner's pick once checked, when it wasn't the wrong step. -->
+    <string name="activities_find_error_your_pick">Ton choix</string>
     <string name="activities_find_error_wrong_step">L’étape %1$d est fausse.</string>
-    <!-- For TalkBack, with the number of steps. -->
-    <plurals name="activities_find_error_description">
-        <item quantity="one">Une réponse détaillée en %1$d étape. Une étape est erronée ; choisis-la.</item>
-        <item quantity="many">Une réponse détaillée en %1$d étapes. Une étape est erronée ; choisis-la.</item>
-        <item quantity="other">Une réponse détaillée en %1$d étapes. Une étape est erronée ; choisis-la.</item>
-    </plurals>
-    <!-- For TalkBack, with the number of steps. -->
-    <plurals name="activities_find_error_ai_description">
-        <item quantity="one">Une réponse d’un assistant IA en %1$d étape. Une étape est erronée ; choisis-la.</item>
-        <item quantity="many">Une réponse d’un assistant IA en %1$d étapes. Une étape est erronée ; choisis-la.</item>
-        <item quantity="other">Une réponse d’un assistant IA en %1$d étapes. Une étape est erronée ; choisis-la.</item>
-    </plurals>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Étapes</string>
     <!-- Before why a pick is wrong, like "Not quite: that adds the tax first." -->
@@ -162,8 +139,6 @@
     <string name="activities_solver_right">Bonne réponse :</string>
     <!-- The learner's first, wrong pick at a step, like "Your first pick: Add 8% first". -->
     <string name="activities_solver_first_pick">Ton premier choix : %1$s</string>
-    <!-- For TalkBack: which step the learner is on, like "Step 2 of 3." -->
-    <string name="activities_solver_description">Étape %1$d sur %2$d.</string>
     <!-- Asks which ending a row's person takes, like "Which ending does nosotros take?" -->
     <string name="activities_pattern_which_ending">Quelle terminaison prend %1$s ?</string>
     <!-- The name of the group of endings to pick, for TalkBack, like "Endings for nosotros". -->
@@ -172,12 +147,6 @@
     <string name="activities_pattern_blank">%1$s : %2$s, choisis la terminaison</string>
     <!-- Read after a wrong form, for TalkBack, like "Correct answer: hablamos". -->
     <string name="activities_pattern_correct">Bonne réponse : %1$s</string>
-    <!-- For TalkBack: the two words the table compares and how many cells are left. -->
-    <plurals name="activities_pattern_description">
-        <item quantity="one">Un tableau de %1$s et %2$s. Il reste %3$d case à compléter.</item>
-        <item quantity="many">Un tableau de %1$s et %2$s. Il reste %3$d cases à compléter.</item>
-        <item quantity="other">Un tableau de %1$s et %2$s. Il reste %3$d cases à compléter.</item>
-    </plurals>
     <!-- The name of the list of lines spoken so far, for TalkBack. -->
     <string name="activities_dialogue_conversation">La conversation jusqu’ici</string>
     <!-- Read before the other person's line, for TalkBack. -->
@@ -186,6 +155,4 @@
     <string name="activities_dialogue_you_said">Tu as dit :</string>
     <string name="activities_dialogue_hear_line">Écouter cette réplique</string>
     <string name="activities_dialogue_hear_best">Écouter la meilleure réponse</string>
-    <!-- For TalkBack, with the scene, like "A conversation: At a café. Choose the reply that fits." -->
-    <string name="activities_dialogue_description">Une conversation : %1$s. Choisis la réponse qui convient.</string>
 </resources>

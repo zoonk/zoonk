@@ -4,10 +4,14 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -15,8 +19,12 @@ import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.pressKey
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.feature.player.FakeLessonPlayerApi
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
+import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.summaryStep
+import kotlinx.coroutines.CompletableDeferred
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -36,8 +44,11 @@ class ActivityKitFlowTest {
     private fun play(
         fixture: String,
         isCorrect: Boolean,
-    ) = harness.play(listOf(ActivityFixtures.step(fixture))) {
+        then: List<LessonStep> = emptyList(),
+        configure: FakeLessonPlayerApi.() -> Unit = {},
+    ) = harness.play(listOf(ActivityFixtures.step(fixture)) + then) {
         grade = { _, _ -> checkResult(isCorrect, expected = ActivityFixtures.expected(fixture)) }
+        configure()
     }
 
     private fun tap(text: String) = rule.onNodeWithText(text).performScrollTo().performClick()
@@ -88,7 +99,7 @@ class ActivityKitFlowTest {
     fun findErrorShowsTheFixOfTheWrongStep() {
         play("findError", isCorrect = true)
 
-        rule.onNode(hasContentDescription("Step 2: Down 20%", substring = true)).performClick()
+        rule.onNode(hasText("Step 2") and hasText("Down 20%", substring = true)).performClick()
         harness.tap("Check")
 
         shows("120 × 0.8 = 96, not 100.")
@@ -100,7 +111,7 @@ class ActivityKitFlowTest {
         play("findError", isCorrect = false)
 
         rule.onRoot().performKeyInput { pressKey(Key.Three) }
-        rule.onNode(hasContentDescription("Step 3: So the price", substring = true)).assertIsSelected()
+        rule.onNode(hasText("Step 3") and hasText("So the price", substring = true)).assertIsSelected()
         harness.tap("Check")
 
         shows("The wrong step is step 2.")
@@ -153,5 +164,45 @@ class ActivityKitFlowTest {
 
         shows("No greeting and a bare command sound rude to a stranger.")
         shows("Good morning. Do you have anything for a sore throat?")
+    }
+
+    @Test
+    fun aMissedStepSolverComesBackToSolveAgain() {
+        play("stepSolver", isCorrect = false)
+
+        tap("Add the tax")
+        tap("Take 25% off")
+        tap("$45")
+        harness.tap("Check")
+        harness.tap("Continue")
+
+        rule.onNodeWithText("Add the tax").performScrollTo().assertIsEnabled()
+    }
+
+    @Test
+    fun aStepSolverShowsItsFirstPickAgainOnReturn() {
+        play("stepSolver", isCorrect = false, then = listOf(summaryStep("end")))
+
+        tap("Add the tax")
+        tap("Take 25% off")
+        tap("$45")
+        harness.tap("Check")
+        harness.tap("Continue")
+        rule.onNodeWithContentDescription("Previous screen").performClick()
+
+        shows("Your first pick: Add the tax")
+    }
+
+    @Test
+    fun aCanvasTakesNoChangeWhileItsAnswerIsChecked() {
+        val gate = CompletableDeferred<Unit>()
+        play("patternTable", isCorrect = false) { this.gate = gate }
+
+        tap("-áis")
+        tap("-en")
+        harness.tap("Check")
+
+        rule.onNodeWithText("-éis").assertIsNotEnabled()
+        gate.complete(Unit)
     }
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.TextMeasurer
 import androidx.compose.ui.text.TextStyle
@@ -96,7 +97,8 @@ class Plot internal constructor(
 
 /**
  * Main's `ActivityPlot`: a dashed grid with its values on the left, the x values under it, and
- * what [draw] adds. Its labels grow with the font size, so the margins measure them.
+ * what [draw] adds in an [area] as tall as main's. Its labels grow with the font size, so the
+ * margins measure them and the plot grows with them.
  */
 @Composable
 fun ActivityPlot(
@@ -107,13 +109,21 @@ fun ActivityPlot(
     formatY: (Double) -> String,
     formatX: (Double) -> String,
     modifier: Modifier = Modifier,
-    height: Dp = 184.dp,
+    area: Dp = 148.dp,
     draw: Plot.() -> Unit,
 ) {
     val measurer = rememberTextMeasurer()
     val style = MaterialTheme.typography.labelSmall.withTabularFigures()
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
     val gridColor = MaterialTheme.colorScheme.outlineVariant
+    val labelHeight =
+        with(LocalDensity.current) {
+            measurer
+                .measure("0", style)
+                .size.height
+                .toDp()
+        }
+    val height = TOP + area + maxOf(MIN_BOTTOM, labelHeight + LABEL_GAP)
 
     Canvas(modifier.fillMaxWidth().height(height).clearAndSetSemantics {}) {
         val yLabels = yTicks.map { measurer.measure(formatY(it), style.copy(color = muted)) }
@@ -130,24 +140,13 @@ fun ActivityPlot(
 
         yTicks.zip(yLabels).forEach { (tick, label) ->
             val py = y.toPixel(tick)
-            drawLine(
-                gridColor,
-                Offset(left, py),
-                Offset(right, py),
-                strokeWidth = 1.dp.toPx(),
-                pathEffect =
-                    if (tick ==
-                        baseline
-                    ) {
-                        null
-                    } else {
-                        dashes
-                    },
-            )
+            val effect = if (tick == baseline) null else dashes
+            drawLine(gridColor, Offset(left, py), Offset(right, py), strokeWidth = 1.dp.toPx(), pathEffect = effect)
             drawText(label, topLeft = Offset(left - gap - label.size.width, py - label.size.height / 2))
         }
         xTicks.zip(xLabels).forEach { (tick, label) ->
-            drawText(label, topLeft = Offset(x.toPixel(tick) - label.size.width / 2, bottom + gap))
+            val start = (x.toPixel(tick) - label.size.width / 2).coerceIn(0f, size.width - label.size.width)
+            drawText(label, topLeft = Offset(start, bottom + gap))
         }
         Plot(this, x, y, top, bottom, measurer, style).draw()
     }

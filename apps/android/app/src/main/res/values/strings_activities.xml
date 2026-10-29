@@ -30,7 +30,6 @@
 
     <!-- Shows the state after the change, named like "With the assembly line". -->
     <string name="activities_before_after_show">Show after: %1$s</string>
-    <string name="activities_before_after_hidden">The after state is hidden until you show it.</string>
     <string name="activities_before_after_no_change">No change</string>
     <!-- How a fact shrank, like "3 times less". -->
     <string name="activities_before_after_less">%1$s times less</string>
@@ -59,13 +58,6 @@
     <string name="activities_tree_you_chose">You chose %1$s</string>
     <!-- The outcome the right walk reaches, like "It leads to Pine." -->
     <string name="activities_tree_it_leads_to">It leads to %1$s.</string>
-    <!-- For TalkBack: which question the learner is on and the outcomes still possible, like "Question 2. Still possible: Pine, Spruce." -->
-    <string name="activities_tree_question">Question %1$d. Still possible: %2$s.</string>
-    <!-- For TalkBack: the outcome reached and how many questions it took. -->
-    <plurals name="activities_tree_reached">
-        <item quantity="one">You reached %1$s after %2$d question.</item>
-        <item quantity="other">You reached %1$s after %2$d questions.</item>
-    </plurals>
 
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->
     <string name="activities_find_error_ai_asked">Someone asked an AI assistant</string>
@@ -75,19 +67,13 @@
     <string name="activities_find_error_ai_answer">The AI assistant\'s answer</string>
     <!-- The name of the list of a worked answer's steps, for TalkBack. -->
     <string name="activities_find_error_worked">Worked answer</string>
-    <!-- A step of the answer, for TalkBack, like "Step 2: Down 20% means times 0.8". -->
-    <string name="activities_find_error_step">Step %1$d: %2$s</string>
+    <!-- Read before a step of the answer, for TalkBack, like "Step 2". -->
+    <string name="activities_find_error_step">Step %1$d</string>
+    <!-- For TalkBack, on the step that has the error once checked. -->
+    <string name="activities_find_error_the_wrong_step">The wrong step</string>
+    <!-- For TalkBack, on the learner's pick once checked, when it wasn't the wrong step. -->
+    <string name="activities_find_error_your_pick">Your pick</string>
     <string name="activities_find_error_wrong_step">The wrong step is step %1$d.</string>
-    <!-- For TalkBack, with the number of steps. -->
-    <plurals name="activities_find_error_description">
-        <item quantity="one">A worked answer in %1$d step. One step is wrong; pick it.</item>
-        <item quantity="other">A worked answer in %1$d steps. One step is wrong; pick it.</item>
-    </plurals>
-    <!-- For TalkBack, with the number of steps. -->
-    <plurals name="activities_find_error_ai_description">
-        <item quantity="one">An AI assistant\'s answer in %1$d step. One step is wrong; pick it.</item>
-        <item quantity="other">An AI assistant\'s answer in %1$d steps. One step is wrong; pick it.</item>
-    </plurals>
 
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Steps</string>
@@ -97,8 +83,6 @@
     <string name="activities_solver_right">Right:</string>
     <!-- The learner's first, wrong pick at a step, like "Your first pick: Add 8% first". -->
     <string name="activities_solver_first_pick">Your first pick: %1$s</string>
-    <!-- For TalkBack: which step the learner is on, like "Step 2 of 3." -->
-    <string name="activities_solver_description">Step %1$d of %2$d.</string>
 
     <!-- Asks which ending a row's person takes, like "Which ending does nosotros take?" -->
     <string name="activities_pattern_which_ending">Which ending does %1$s take?</string>
@@ -108,11 +92,6 @@
     <string name="activities_pattern_blank">%1$s: %2$s, choose the ending</string>
     <!-- Read after a wrong form, for TalkBack, like "Correct answer: hablamos". -->
     <string name="activities_pattern_correct">Correct answer: %1$s</string>
-    <!-- For TalkBack: the two words the table compares and how many cells are left. -->
-    <plurals name="activities_pattern_description">
-        <item quantity="one">A table of %1$s and %2$s. %3$d cell is left for you to complete.</item>
-        <item quantity="other">A table of %1$s and %2$s. %3$d cells are left for you to complete.</item>
-    </plurals>
 
     <!-- The name of the list of lines spoken so far, for TalkBack. -->
     <string name="activities_dialogue_conversation">The conversation so far</string>
@@ -122,6 +101,4 @@
     <string name="activities_dialogue_you_said">You said:</string>
     <string name="activities_dialogue_hear_line">Hear this line</string>
     <string name="activities_dialogue_hear_best">Hear the best reply</string>
-    <!-- For TalkBack, with the scene, like "A conversation: At a café. Choose the reply that fits." -->
-    <string name="activities_dialogue_description">A conversation: %1$s. Choose the reply that fits.</string>
 </resources>

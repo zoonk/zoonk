@@ -419,8 +419,8 @@ private fun Content(
             ) {
                 LessonColumn {
                     Notice(state, screen, viewModel)
-                    // A screen's own picks (placed words, filled blanks) start over on the next screen.
-                    key(step.id) { StepView(step, state, screen, actions, navigator, language) }
+                    // A screen's own picks (placed words, filled blanks) start over on the next screen and on a retry.
+                    key(step.id, state.position) { StepView(step, state, screen, actions, navigator, language) }
                     Result(state, screen)
                 }
             }

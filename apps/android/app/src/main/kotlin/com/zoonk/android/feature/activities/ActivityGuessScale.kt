@@ -19,6 +19,7 @@ import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
@@ -33,6 +34,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
@@ -68,8 +70,8 @@ fun ActivityGuessReveal(
             stringResource(R.string.activities_guess_scale_revealed, format(scale.min), format(scale.max), format(revealed))
         }
 
-    ActivityCanvas(description) {
-        ActivityGuessScale(scale, unit, guess, revealed, disabled = props.isChecked, onGuessChange = onGuessChange)
+    ActivityCanvas(description = description) {
+        ActivityGuessScale(scale, unit, guess, revealed, disabled = props.isLocked, onGuessChange = onGuessChange)
         if (revealed != null) {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 if (guess != null) ActivityGuessComparison(revealed, guess, props.isCorrect == true, unit)
@@ -139,9 +141,11 @@ fun ActivityGuessScale(
             marks = {
                 if (actualShare == null) return@GuessSlider
                 val trackHeight = size.height
+                // The slider runs right to left in RTL; drawn marks follow it.
+                val x = { at: Double -> (if (layoutDirection == LayoutDirection.Rtl) 1 - at else at).toFloat() * size.width }
                 if (guess != null) {
-                    val from = min(share, actualShare).toFloat() * size.width
-                    val to = max(share, actualShare).toFloat() * size.width
+                    val from = min(x(share), x(actualShare))
+                    val to = max(x(share), x(actualShare))
                     drawRoundRect(
                         highlight.copy(alpha = SOFT),
                         Offset(from, 0f),
@@ -149,7 +153,7 @@ fun ActivityGuessScale(
                         CornerRadius(trackHeight / 2),
                     )
                 }
-                val center = Offset(actualShare.toFloat() * size.width, trackHeight / 2)
+                val center = Offset(x(actualShare), trackHeight / 2)
                 drawCircle(highlight.copy(alpha = SOFT), radius = DOT.toPx() + RING.toPx(), center = center)
                 drawCircle(highlight, radius = DOT.toPx(), center = center)
             },
@@ -240,7 +244,11 @@ private fun ScaleChip(
         border = if (outlined) BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant) else null,
         modifier = Modifier.clearAndSetSemantics {},
     ) {
-        Row(Modifier.padding(horizontal = 10.dp, vertical = 4.dp), horizontalArrangement = Arrangement.spacedBy(4.dp)) { words() }
+        Row(
+            Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) { words() }
     }
 }
 

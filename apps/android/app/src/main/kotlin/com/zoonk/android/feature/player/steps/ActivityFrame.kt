@@ -105,15 +105,10 @@ internal fun ActivityView(
     val renderer = activityRenderers[frame.template]
     val phase = if (result == null) ActivityPhase.Answering else ActivityPhase.Checked
     val activityAnswer = (answer as? LessonAnswer.Activity)?.answer
-    val onAnswerChange = { next: ActivityAnswer? ->
-        if (state.phase ==
-            LessonPhase.Playing
-        ) {
-            actions.select(next?.let(LessonAnswer::Activity))
-        }
-    }
+    val locked = state.phase != LessonPhase.Playing
+    val onAnswerChange = { next: ActivityAnswer? -> if (!locked) actions.select(next?.let(LessonAnswer::Activity)) }
     val checkFirst = renderer?.checkFirst?.invoke(content.content) == true
-    val check = @Composable { ActivityCheckArea(frame.check, activityAnswer, phase, onAnswerChange) }
+    val check = @Composable { ActivityCheckArea(frame.check, activityAnswer, phase, locked, onAnswerChange) }
 
     QuestionScene {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -125,7 +120,9 @@ internal fun ActivityView(
         if (checkFirst) check()
         renderer?.let {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                it.canvas(ActivityProps(content.content, activityAnswer, result?.expected, result?.isCorrect, phase, onAnswerChange))
+                it.canvas(
+                    ActivityProps(content.content, activityAnswer, result?.expected, result?.isCorrect, phase, locked, onAnswerChange),
+                )
                 if (it.showsData(content.content)) ActivityDataNote(frame)
             }
         }
@@ -140,6 +137,7 @@ private fun ActivityCheckArea(
     check: ActivityCheck,
     answer: ActivityAnswer?,
     phase: ActivityPhase,
+    locked: Boolean,
     onAnswerChange: (ActivityAnswer?) -> Unit,
 ) {
     if (check is ChoiceCheckValue) {
@@ -150,12 +148,12 @@ private fun ActivityCheckArea(
                 selectedId = answer.choiceId,
                 isChecked = phase == ActivityPhase.Checked,
                 isGuess = false,
-                locked = phase == ActivityPhase.Checked,
+                locked = locked,
                 onSelect = { id -> onAnswerChange(id?.let { choiceAnswer(it) }) },
             )
         }
     } else if (check is NumericCheckValue) {
-        NumericCheckField(check.value, answer, phase, onAnswerChange)
+        NumericCheckField(check.value, answer, locked, onAnswerChange)
     }
 }
 
@@ -169,7 +167,7 @@ private fun CheckQuestion(text: String) {
 private fun NumericCheckField(
     check: NumericCheck,
     answer: ActivityAnswer?,
-    phase: ActivityPhase,
+    locked: Boolean,
     onAnswerChange: (ActivityAnswer?) -> Unit,
 ) {
     val locale = currentLocale()
@@ -198,7 +196,7 @@ private fun NumericCheckField(
                     )
                 },
                 modifier = Modifier.widthIn(min = 160.dp, max = 240.dp),
-                readOnly = phase == ActivityPhase.Checked,
+                readOnly = locked,
                 placeholder = { Text(stringResource(R.string.player_your_answer)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
@@ -300,6 +298,7 @@ private fun ActivityFeedback(
                         stringResource(R.string.player_activity_your_answer),
                         formatAmount(it, locale, numeric.unit, maximumFractionDigits = digits),
                         tabular = true,
+                        isRight = false,
                     )
                 }
                 if (!isCorrect) {
@@ -329,13 +328,14 @@ private fun LabeledLine(
     label: String,
     answer: String,
     tabular: Boolean = false,
+    isRight: Boolean = true,
 ) {
     val style = MaterialTheme.typography.bodyMedium
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = style)
         Text(
             answer,
-            color = MaterialTheme.colorScheme.tertiary,
+            color = if (isRight) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurface,
             style = (if (tabular) style.withTabularFigures() else style).copy(fontWeight = FontWeight.Medium),
         )
     }

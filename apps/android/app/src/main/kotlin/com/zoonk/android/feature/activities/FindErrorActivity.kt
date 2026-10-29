@@ -28,6 +28,9 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -57,14 +60,7 @@ private fun FindErrorActivity(props: ActivityProps) {
     val pickedId = props.answer.selectionIds?.firstOrNull()
     val errorId = props.expected.selectionIds?.firstOrNull()
     val isAi = fields.author == PlayableLibraryStepAnyOfContentOneOf29Fields.Author.AI
-    val description =
-        if (isAi) {
-            pluralStringResource(R.plurals.activities_find_error_ai_description, fields.steps.size, fields.steps.size)
-        } else {
-            pluralStringResource(R.plurals.activities_find_error_description, fields.steps.size, fields.steps.size)
-        }
-
-    ActivityCanvas(description) {
+    ActivityCanvas(gap = 16.dp) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             ActivityCanvasLabel(
                 stringResource(if (isAi) R.string.activities_find_error_ai_asked else R.string.activities_find_error_problem),
@@ -101,7 +97,7 @@ private fun FindErrorActivity(props: ActivityProps) {
                     correction = fields.correction.takeIf { result == AnswerResult.Right },
                     picked = step.id == pickedId,
                     result = result,
-                    enabled = !props.isChecked,
+                    enabled = !props.isLocked,
                     onClick = { props.onAnswerChange(if (step.id == pickedId) null else selectionAnswer(listOf(step.id))) },
                 )
             }
@@ -132,7 +128,12 @@ private fun StepRow(
 ) {
     val tone = answerTone(picked, result)
     val shape = RoundedCornerShape(12.dp)
-    val label = stringResource(R.string.activities_find_error_step, number, text)
+    val verdict =
+        when (result) {
+            AnswerResult.Right -> stringResource(R.string.activities_find_error_the_wrong_step)
+            AnswerResult.Wrong -> stringResource(R.string.activities_find_error_your_pick)
+            else -> null
+        }
 
     Row(
         modifier =
@@ -143,7 +144,7 @@ private fun StepRow(
                 .background(if (result == null) MaterialTheme.colorScheme.surface else tone.container)
                 .border(tone.border, shape)
                 .selectable(selected = picked, enabled = enabled, role = Role.RadioButton, onClick = onClick)
-                .semantics { contentDescription = label }
+                .semantics { verdict?.let { stateDescription = it } }
                 .padding(horizontal = 14.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -177,6 +178,7 @@ private fun StepNumber(
     result: AnswerResult?,
 ) {
     val colors = MaterialTheme.colorScheme
+    val name = stringResource(R.string.activities_find_error_step, number)
     val (container, content) =
         when (result) {
             AnswerResult.Right -> colors.tertiary to colors.onTertiary
@@ -188,7 +190,7 @@ private fun StepNumber(
             .size(28.dp)
             .clip(CircleShape)
             .background(container)
-            .clearAndSetSemantics {},
+            .clearAndSetSemantics { text = AnnotatedString(name) },
         contentAlignment = Alignment.Center,
     ) {
         when (result) {

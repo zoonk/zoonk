@@ -72,8 +72,8 @@ fun compareGuess(
     isCorrect: Boolean,
 ): GuessComparison {
     if (isCorrect) return GuessComparison.Close
-    if (guess <= 0 || actual <= 0) return GuessComparison.Off(guess - actual)
     val ratio = guess / actual
+    if (guess <= 0 || actual <= 0 || !ratio.isFinite() || !(1 / ratio).isFinite()) return GuessComparison.Off(guess - actual)
     return when {
         ratio >= RATIO_COMPARISON_MIN -> GuessComparison.TooBig(twoSignificant(ratio))
         ratio <= 1 / RATIO_COMPARISON_MIN -> GuessComparison.TooSmall(twoSignificant(1 / ratio))
