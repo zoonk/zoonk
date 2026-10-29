@@ -1,8 +1,10 @@
 package com.zoonk.android.feature.account
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -170,9 +172,17 @@ private fun MenuItem(
     onClick: () -> Unit,
 ) {
     DropdownMenuItem(
-        text = { Text(text) },
+        text = {
+            // The mark goes under the words when a large font leaves no room beside them.
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                itemVerticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(text)
+                trailing?.invoke()
+            }
+        },
         onClick = onClick,
         leadingIcon = { Icon(painterResource(icon), contentDescription = null) },
-        trailingIcon = trailing,
     )
 }

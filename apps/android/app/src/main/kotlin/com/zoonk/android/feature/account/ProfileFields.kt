@@ -10,13 +10,17 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.autofill.ContentType
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
@@ -30,19 +34,22 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 
 /**
- * Main's name and username fields. With [showsUsernameLine], a suggested username shows as a line
- * with Change until the learner asks to edit it, as main's setup does.
+ * Main's name and username fields. In [isSetup], as main's setup, the name takes focus and the
+ * suggested username shows as a line with Change until the learner asks to edit it.
  */
 @Composable
 fun ProfileFields(
     form: ProfileFormViewModel,
     modifier: Modifier = Modifier,
-    showsUsernameLine: Boolean = false,
+    isSetup: Boolean = false,
 ) {
-    var isEditingUsername by rememberSaveable { mutableStateOf(!showsUsernameLine) }
+    val nameFocus = remember { FocusRequester() }
+    var isEditingUsername by rememberSaveable { mutableStateOf(!isSetup) }
     val showsUsernameField =
         isEditingUsername || form.username.isEmpty() || form.failure == AccountFailure.UsernameTaken ||
             form.usernameStatus == UsernameStatus.Taken
+
+    LaunchedEffect(Unit) { if (isSetup) nameFocus.requestFocus() }
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         OutlinedTextField(
@@ -51,6 +58,7 @@ fun ProfileFields(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .focusRequester(nameFocus)
                     .semantics { contentType = ContentType.PersonFullName },
             label = { Text(stringResource(R.string.account_name)) },
             singleLine = true,

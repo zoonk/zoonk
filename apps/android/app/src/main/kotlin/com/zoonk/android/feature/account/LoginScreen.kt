@@ -274,7 +274,7 @@ private fun ProfileSetup(
 internal fun ProfileSetupForm(form: ProfileFormViewModel) {
     Title(stringResource(R.string.account_setup_title))
     Description(stringResource(R.string.account_setup_description))
-    ProfileFields(form, showsUsernameLine = true)
+    ProfileFields(form, isSetup = true)
     ProfileSaveFailure(form)
     WorkingButton(stringResource(R.string.account_continue), isWorking = form.isSaving, enabled = form.canSave, onClick = { form.save() })
 }
