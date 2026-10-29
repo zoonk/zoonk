@@ -34,6 +34,7 @@
     "build",
     "**/generated/**",
     "apps/apple/ZoonkAPI/Sources/ZoonkAPI/openapi.json",
+    "apps/android/api/openapi.json",
     "**/messages/**",
     ".turbo",
     "pnpm-lock.yaml"
