@@ -143,15 +143,14 @@ internal fun LazyListScope.todaySession(
 
 private fun LazyListScope.freshStartItem(model: TodayDayModel) {
     val day = model.day
-    val started = day.steps.any { it.status != StudyBlock.Status.PENDING }
-    val shows = day.freshStart != null && !model.today.studiedToday && !started
+    val freshStart = day.freshStart ?: return
 
-    if (!shows || model.session.ahead || model.session.limitReached || model.session.rest) return
+    if (!day.showsFreshStart(model.today.studiedToday) || model.session.ahead || model.session.limitReached || model.session.rest) return
 
     item(key = "fresh-start", contentType = "note") {
         val time = formatMinutes(day.steps.sumOf { it.estimatedMinutes }.toInt(), currentLocale())
         val text =
-            when (day.freshStart) {
+            when (freshStart) {
                 FreshStart.WelcomeBack -> {
                     // Past a free exam plan's first week, it's shorter for what Plus holds, not the break.
                     val trialEnded = day.examAccess.trialEnded

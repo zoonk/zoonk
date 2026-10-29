@@ -72,6 +72,8 @@ fun DayView.queue(nextPosition: Long): TodayQueue {
 fun DayView.minutesLeft(): Long = steps.filterNot(DayStep::isFinished).sumOf { it.estimatedMinutes }
 
 /** The minutes actually studied, never the plan's minutes for the blocks done. */
+fun DayView.showsFreshStart(studiedToday: Boolean): Boolean = freshStart != null && !studiedToday && !sessionState().started
+
 fun DayView.studiedToday(): Long = week.days.firstOrNull { it.isToday }?.minutes ?: 0
 
 /**
