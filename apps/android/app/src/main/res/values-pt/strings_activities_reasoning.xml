@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_reasoning_badge_compare_sources": "cfdf62cd13c2a6bd8a0425bae3a5eff1430a71db37db1eb7dd8a9002f4652297",
   "activities_reasoning_badge_fill_square": "84bb6ca62fb325ee6766ec6ae783f0f3f85f9ef5d3f8cd4064b18d89b8871565",
   "activities_reasoning_grid_all_filled": "23f34d24a794b94cfeaafbed6d1e68d195051a4ad4c042c51089343f6b50804f",
   "activities_reasoning_grid_counted": "8e218b64cef7b490cb3a906def63e49211576ac2ad379c6b58dc14dbc5b89443",
@@ -15,7 +16,14 @@
   "activities_reasoning_grid_value_trait": "797b3b6bb0dd1055e708283bab3d32ee31e8fbd344f2f96683431a829e11ba12",
   "activities_reasoning_grid_what_goes": "2d24472d25651b9e601e3172599f22736e7a1c2011fcfc1f4782548fb3702f7d",
   "activities_reasoning_grid_which_genotype": "98b7e0bf4f18bce74dcabbefa1ceb001d0a98a908ee1cea19f8f7bbbbf1743f9",
-  "activities_reasoning_grid_your_answer": "e0cb7cca2e56b42e835efcaa3011007f53b672a42afb07ebf0ac29d5daad48f1"
+  "activities_reasoning_grid_your_answer": "e0cb7cca2e56b42e835efcaa3011007f53b672a42afb07ebf0ac29d5daad48f1",
+  "activities_reasoning_source_mark": "254e4611757bdc3c27d37b5ea60eaf1f582e9920b9abcdf210f929058d8b7ad3",
+  "activities_reasoning_source_missed": "c629e7020ba6f7fd3ea0e7d0a78d833646629533669528caf7ca6f06ed4cc180",
+  "activities_reasoning_source_missed_passages": "fcc75bf3e72654114c9f1368bf197616950b783599f8243fda6e0b699aba3e04",
+  "activities_reasoning_source_nothing_marked": "3fd4e267dd4a7eeea09db41e25c65f162025d4029c0ab98d4bf66b5339ee6649",
+  "activities_reasoning_source_unmark": "32618839f82728de996748fa07f72dfc27958c9bac1081df8159114b02f2c2ec",
+  "activities_reasoning_source_what_to_mark": "3a8bcfbfc0c9f82bd9fcfb4e7d9976b28b2dcbcb6a4c80f20813f0f4904f8cf9",
+  "activities_reasoning_source_you_marked": "606e0994a1da8615a3861aad7e77ceb9deafc743bde899ff4f12c4734c2967ac"
 }
 -->
 <resources>
@@ -60,4 +68,20 @@
     <string name="activities_reasoning_grid_which_genotype">Qual genótipo vai no quadrado %1$d?</string>
     <!-- Asks for the value of a square of a grid of numbers, like "What goes in square 2?" -->
     <string name="activities_reasoning_grid_what_goes">O que vai no quadrado %1$d?</string>
+    <!-- Two sources the learner reads side by side to mark passages in each. -->
+    <string name="activities_reasoning_badge_compare_sources">Compare as fontes</string>
+    <!-- A TalkBack action on a source's text that marks one of its passages, like "Mark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_mark">Marcar: %1$s</string>
+    <!-- A TalkBack action on a source's text that unmarks one of its passages, like "Unmark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_unmark">Desmarcar: %1$s</string>
+    <!-- For TalkBack, after a source's text: the passages the learner marked in it, separated by semicolons. -->
+    <string name="activities_reasoning_source_you_marked">Você marcou: %1$s.</string>
+    <!-- For TalkBack, after a source's text with no passage marked. -->
+    <string name="activities_reasoning_source_nothing_marked">Nada marcado ainda.</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner should have marked, separated by semicolons. -->
+    <string name="activities_reasoning_source_missed_passages">Você deixou passar: %1$s.</string>
+    <!-- Legend once checked: the tint of the passages the question was about. -->
+    <string name="activities_reasoning_source_what_to_mark">O que marcar</string>
+    <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
+    <string name="activities_reasoning_source_missed">Deixou passar</string>
 </resources>

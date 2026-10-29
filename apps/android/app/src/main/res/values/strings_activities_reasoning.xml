@@ -39,4 +39,21 @@
     <string name="activities_reasoning_grid_which_genotype">Which genotype goes in square %1$d?</string>
     <!-- Asks for the value of a square of a grid of numbers, like "What goes in square 2?" -->
     <string name="activities_reasoning_grid_what_goes">What goes in square %1$d?</string>
+
+    <!-- Two sources the learner reads side by side to mark passages in each. -->
+    <string name="activities_reasoning_badge_compare_sources">Compare sources</string>
+    <!-- A TalkBack action on a source's text that marks one of its passages, like "Mark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_mark">Mark: %1$s</string>
+    <!-- A TalkBack action on a source's text that unmarks one of its passages, like "Unmark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_unmark">Unmark: %1$s</string>
+    <!-- For TalkBack, after a source's text: the passages the learner marked in it, separated by semicolons. -->
+    <string name="activities_reasoning_source_you_marked">You marked: %1$s.</string>
+    <!-- For TalkBack, after a source's text with no passage marked. -->
+    <string name="activities_reasoning_source_nothing_marked">Nothing marked yet.</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner should have marked, separated by semicolons. -->
+    <string name="activities_reasoning_source_missed_passages">Missed: %1$s.</string>
+    <!-- Legend once checked: the tint of the passages the question was about. -->
+    <string name="activities_reasoning_source_what_to_mark">What to mark</string>
+    <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
+    <string name="activities_reasoning_source_missed">Missed</string>
 </resources>

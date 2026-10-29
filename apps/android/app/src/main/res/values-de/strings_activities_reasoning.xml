@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_reasoning_badge_compare_sources": "772c57bdf580f3ed4278326982c0de4a04ab956efb88e639e7ecbf6713631bb8",
   "activities_reasoning_badge_fill_square": "a8f13e639cdb3a6483cb026a22bd38cc16ce106c905d751d57ccaf1eafd555c4",
   "activities_reasoning_grid_all_filled": "949b0f638acbf5a0d1993d83150cf0f90bda93abb565bbe4f465eb0be54a6a2f",
   "activities_reasoning_grid_counted": "bad96997cc575e13d88794b6530080d93a3fb1d07f4676d2f82aaa83919b3621",
@@ -15,7 +16,14 @@
   "activities_reasoning_grid_value_trait": "939628a35ac29f1f21787401db8d9db12234902a608d606ef8d42251b6ef7f40",
   "activities_reasoning_grid_what_goes": "578474d494318d34433bfd6c48260e583b5f70e6cd0ce08a4ce6bbb863949fb6",
   "activities_reasoning_grid_which_genotype": "197f4365870b9a3c1395d22782bfd063cd655df9bcf2c09f16576d407e6a69bd",
-  "activities_reasoning_grid_your_answer": "0b643d445bd6e9ff50910c3fd843f3af09d27ab3f7e5c86eecddd11a1443552b"
+  "activities_reasoning_grid_your_answer": "0b643d445bd6e9ff50910c3fd843f3af09d27ab3f7e5c86eecddd11a1443552b",
+  "activities_reasoning_source_mark": "899a2cea2f3e8518314b9ce1e64438ce058e04f582c40a5f9d1c1ba3af6361ac",
+  "activities_reasoning_source_missed": "5fcff3313326622247fd84573cc75b658f5e95064104d67423272eef7c4fb033",
+  "activities_reasoning_source_missed_passages": "933f9ed8281c7600e3e8954525a51f3e28709b11f32267ac180d976b7eb54ef5",
+  "activities_reasoning_source_nothing_marked": "19a55849c6702c5f946c2fd5e02065dfec569620d188fb8f8cc079903ef41007",
+  "activities_reasoning_source_unmark": "8a68508f04c37fcda114ab93424d88c32b0a78b3e5c7df976aa53e7eb26c8f6d",
+  "activities_reasoning_source_what_to_mark": "3ad7c0c54e1d23a34e499a0a42cd1c4555e0e5453c8f5a2e817f9ab91d9acfd4",
+  "activities_reasoning_source_you_marked": "0c7a1f45d7e559b03a2ba7069201dd9f0a770ac63782c889dd99fcb8c394047f"
 }
 -->
 <resources>
@@ -57,4 +65,20 @@
     <string name="activities_reasoning_grid_which_genotype">Welcher Genotyp gehört in Quadrat %1$d?</string>
     <!-- Asks for the value of a square of a grid of numbers, like "What goes in square 2?" -->
     <string name="activities_reasoning_grid_what_goes">Was gehört in Quadrat %1$d?</string>
+    <!-- Two sources the learner reads side by side to mark passages in each. -->
+    <string name="activities_reasoning_badge_compare_sources">Quellen vergleichen</string>
+    <!-- A TalkBack action on a source's text that marks one of its passages, like "Mark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_mark">Markieren: %1$s</string>
+    <!-- A TalkBack action on a source's text that unmarks one of its passages, like "Unmark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_unmark">Markierung entfernen: %1$s</string>
+    <!-- For TalkBack, after a source's text: the passages the learner marked in it, separated by semicolons. -->
+    <string name="activities_reasoning_source_you_marked">Du hast markiert: %1$s.</string>
+    <!-- For TalkBack, after a source's text with no passage marked. -->
+    <string name="activities_reasoning_source_nothing_marked">Noch nichts markiert.</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner should have marked, separated by semicolons. -->
+    <string name="activities_reasoning_source_missed_passages">Nicht markiert: %1$s.</string>
+    <!-- Legend once checked: the tint of the passages the question was about. -->
+    <string name="activities_reasoning_source_what_to_mark">Was markiert werden soll</string>
+    <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
+    <string name="activities_reasoning_source_missed">Nicht markiert</string>
 </resources>

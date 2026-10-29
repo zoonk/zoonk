@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_reasoning_badge_compare_sources": "bcb6bc0338ea98be2bdbc1e9e5e26bc7b9b2746644c4b0b7ab8bf62f91bed2a1",
   "activities_reasoning_badge_fill_square": "6bff0f2b4d73928aad77a4b1965456e0aabbb9d6bbbdf5f24a6c0ad352960d25",
   "activities_reasoning_grid_all_filled": "82bbc3688f480eac1255cc05b89d9965fe6355b96115ae36fd943486e90582f1",
   "activities_reasoning_grid_counted": "ff3d78c79ee46544a2a500a7c949af10ea098dc1fa8029abb39dd59b6e14fc59",
@@ -15,7 +16,14 @@
   "activities_reasoning_grid_value_trait": "399b7b8ba5a70437048d3438e9f85ac25fd413afeacd5a643f31a4595a96e2aa",
   "activities_reasoning_grid_what_goes": "8dc1676418e41f36ad06031bd51530b0f7fbf2c1257d426bb41549fc5d204ebe",
   "activities_reasoning_grid_which_genotype": "121a9ab1d4e74620e873cb864bca9bf95c5eb9b9bcd43b1a18a4c12f63cdabc6",
-  "activities_reasoning_grid_your_answer": "a4cdb43d31c11c6f9d73b3a05de60906284da29ecff2ca427f8cd57f39ec69f3"
+  "activities_reasoning_grid_your_answer": "a4cdb43d31c11c6f9d73b3a05de60906284da29ecff2ca427f8cd57f39ec69f3",
+  "activities_reasoning_source_mark": "8f2069c9a7f6e37bc408288576204f92cbcecf3696f9d514638df3ca05da9ca0",
+  "activities_reasoning_source_missed": "85657da9bd85106379f363f255e70370a898badb2f45e5904bba20c872126a7d",
+  "activities_reasoning_source_missed_passages": "56ae374cc661aca2fcacfbf44ef2351f4df6b5da0504552e1952be8570d00dd6",
+  "activities_reasoning_source_nothing_marked": "fe127f86a65d1c06327d1fa8247ba9a46b57bf72de13f0dbe1bc97f0a3d52406",
+  "activities_reasoning_source_unmark": "32a31e6b9167f2c665bc529dfe914af3a809d9c3677806b341ba63181c103e58",
+  "activities_reasoning_source_what_to_mark": "2d02d43b6808c13a152c4391a618ad83ec54b8ddd366c58ee9c62f0dbefa4219",
+  "activities_reasoning_source_you_marked": "ece6eb5dbf7f058ce9287ff79b16e785b0cc814e70f19ab34bc8b0bee5de2964"
 }
 -->
 <resources>
@@ -60,4 +68,20 @@
     <string name="activities_reasoning_grid_which_genotype">Quel génotype va dans la case %1$d ?</string>
     <!-- Asks for the value of a square of a grid of numbers, like "What goes in square 2?" -->
     <string name="activities_reasoning_grid_what_goes">Que faut-il mettre dans la case %1$d ?</string>
+    <!-- Two sources the learner reads side by side to mark passages in each. -->
+    <string name="activities_reasoning_badge_compare_sources">Comparer les sources</string>
+    <!-- A TalkBack action on a source's text that marks one of its passages, like "Mark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_mark">Marquer : %1$s</string>
+    <!-- A TalkBack action on a source's text that unmarks one of its passages, like "Unmark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_unmark">Décocher : %1$s</string>
+    <!-- For TalkBack, after a source's text: the passages the learner marked in it, separated by semicolons. -->
+    <string name="activities_reasoning_source_you_marked">Tu as marqué : %1$s.</string>
+    <!-- For TalkBack, after a source's text with no passage marked. -->
+    <string name="activities_reasoning_source_nothing_marked">Rien n’est encore marqué.</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner should have marked, separated by semicolons. -->
+    <string name="activities_reasoning_source_missed_passages">Oubliés : %1$s.</string>
+    <!-- Legend once checked: the tint of the passages the question was about. -->
+    <string name="activities_reasoning_source_what_to_mark">À marquer</string>
+    <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
+    <string name="activities_reasoning_source_missed">Oubliés</string>
 </resources>

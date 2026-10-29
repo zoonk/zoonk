@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_reasoning_badge_compare_sources": "21852f7dc9b8cde6b1f67ec2644657cdb0168b7ad328ebb2360d39933e5c0fbd",
   "activities_reasoning_badge_fill_square": "68b32cb6594e7d4463348c5a7e317a0bbc292140c91fbe25f1047348195a1703",
   "activities_reasoning_grid_all_filled": "770d89db5e5754327b7072e12b3cca3ba3b4fd7da9e92acfc952f41830666c9d",
   "activities_reasoning_grid_counted": "72ebaa6ac6282bab54dc5261bdb19f26789e0a2bff9eba9ae8dca8c28a33e441",
@@ -15,7 +16,14 @@
   "activities_reasoning_grid_value_trait": "5f8bb45471f67ce0515a7ed14f29422650ca53ef78c957a279ae7405cec269a0",
   "activities_reasoning_grid_what_goes": "0345798470d971f707f48d2e60755cdc28ab8217f59c1a79a21e3b73a4efa844",
   "activities_reasoning_grid_which_genotype": "4b540b26fc91e975ffc2cb21c5c9bbe05a9f7399031adfcf2fcc9d8cf660b453",
-  "activities_reasoning_grid_your_answer": "7bbc4d0034de17c7c30bc9b7a9ab99539f55dd5bcf83fa65c476fa303843d057"
+  "activities_reasoning_grid_your_answer": "7bbc4d0034de17c7c30bc9b7a9ab99539f55dd5bcf83fa65c476fa303843d057",
+  "activities_reasoning_source_mark": "2a19cb67355d15984eee737416bc7b28072eb201f4b930b3cc6d4bdab205e5f9",
+  "activities_reasoning_source_missed": "86e7d739713d8cacb41824c63b5ec1d3a16f642d39d223fed03bde3df67f2346",
+  "activities_reasoning_source_missed_passages": "7f76c8cf23ea230ea996fe34d0d40d612d594d1446b5e05135737095b4523ba9",
+  "activities_reasoning_source_nothing_marked": "d9bb56265ca7e63da364984ad38e809aaee67b68fd2d1f305fb6fee18361e43d",
+  "activities_reasoning_source_unmark": "0902b5bf75af8ca58872a71ffe7ab6597e9c85f09ababafec313125203ca55f1",
+  "activities_reasoning_source_what_to_mark": "993aacf266eebb39f91b38da88664b0cbf27172fdf9d2d67c59307cec70d91f5",
+  "activities_reasoning_source_you_marked": "210277aced4e41f774b0e6fd0944c707c4b26d84363f3b6adc47891f603d7595"
 }
 -->
 <resources>
@@ -60,4 +68,20 @@
     <string name="activities_reasoning_grid_which_genotype">¿Qué genotipo va en la casilla %1$d?</string>
     <!-- Asks for the value of a square of a grid of numbers, like "What goes in square 2?" -->
     <string name="activities_reasoning_grid_what_goes">¿Qué va en la casilla %1$d?</string>
+    <!-- Two sources the learner reads side by side to mark passages in each. -->
+    <string name="activities_reasoning_badge_compare_sources">Comparar fuentes</string>
+    <!-- A TalkBack action on a source's text that marks one of its passages, like "Mark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_mark">Marcar: %1$s</string>
+    <!-- A TalkBack action on a source's text that unmarks one of its passages, like "Unmark: The regulars fired on us". -->
+    <string name="activities_reasoning_source_unmark">Desmarcar: %1$s</string>
+    <!-- For TalkBack, after a source's text: the passages the learner marked in it, separated by semicolons. -->
+    <string name="activities_reasoning_source_you_marked">Has marcado: %1$s.</string>
+    <!-- For TalkBack, after a source's text with no passage marked. -->
+    <string name="activities_reasoning_source_nothing_marked">Aún no has marcado nada.</string>
+    <!-- For TalkBack once checked, after a source's text: the passages the learner should have marked, separated by semicolons. -->
+    <string name="activities_reasoning_source_missed_passages">No has marcado: %1$s.</string>
+    <!-- Legend once checked: the tint of the passages the question was about. -->
+    <string name="activities_reasoning_source_what_to_mark">Qué marcar</string>
+    <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
+    <string name="activities_reasoning_source_missed">No marcado</string>
 </resources>

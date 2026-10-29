@@ -52,6 +52,7 @@ import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.activities.patternTableRenderer
 import com.zoonk.android.feature.activities.reasoning.combinationGridRenderer
+import com.zoonk.android.feature.activities.reasoning.sourceComparisonRenderer
 import com.zoonk.android.feature.activities.sorting.categorizeRenderer
 import com.zoonk.android.feature.activities.sorting.causeEffectChainRenderer
 import com.zoonk.android.feature.activities.sorting.labeledDiagramRenderer
@@ -119,6 +120,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "patternTester" to patternTesterRenderer,
         "processOrder" to processOrderRenderer,
         "rhythmTapper" to rhythmTapperRenderer,
+        "sourceComparison" to sourceComparisonRenderer,
         "sqlPlayground" to sqlPlaygroundRenderer,
         "stepSolver" to stepSolverRenderer,
         "timeline" to timelineRenderer,

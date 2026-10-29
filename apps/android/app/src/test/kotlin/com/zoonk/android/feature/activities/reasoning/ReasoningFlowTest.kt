@@ -1,7 +1,12 @@
 package com.zoonk.android.feature.activities.reasoning
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
@@ -9,12 +14,16 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.percentOffset
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performCustomAccessibilityActionWithLabel
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.activities.gridCells
+import com.zoonk.android.feature.activities.selectionIds
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
 import com.zoonk.api.models.LessonStepAnswer
@@ -25,6 +34,7 @@ import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 
 /** Main's player tests for the reasoning templates, played in the real player with core's expected end states. */
+@OptIn(ExperimentalTestApi::class)
 @RunWith(AndroidJUnit4::class)
 class ReasoningFlowTest {
     @get:Rule
@@ -36,13 +46,16 @@ class ReasoningFlowTest {
     private val harness = LessonPlayerHarness(rule) { folder.newFolder() }
 
     private var sent: List<String>? = null
+    private var picked: List<String>? = null
 
     private fun play(
         fixture: String,
         isCorrect: Boolean,
     ) = harness.play(listOf(ActivityFixtures.step(fixture))) {
         grade = { _, input ->
-            sent = (input.answer as? LessonStepAnswer.LessonStepAnswerOneOf3Value)?.value?.answer.gridCells
+            val answer = (input.answer as? LessonStepAnswer.LessonStepAnswerOneOf3Value)?.value?.answer
+            sent = answer.gridCells
+            picked = answer.selectionIds
             checkResult(isCorrect, expected = ActivityFixtures.expected(fixture))
         }
     }
@@ -109,5 +122,33 @@ class ReasoningFlowTest {
         harness.tap("Check")
 
         shows("6 of 36 squares: 7")
+    }
+
+    private val regulars = hasContentDescription("The regulars fired on us without any provocation.")
+    private val rebels = hasContentDescription("Some of the rebels fired first from behind a wall.")
+
+    private fun states(state: String) = SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, state)
+
+    @Test
+    fun sourceComparisonMarkingBothClaimsSendsThem() {
+        play("sourceComparison", isCorrect = true)
+
+        rule.onNode(regulars).performScrollTo().performCustomAccessibilityActionWithLabel("Mark: The regulars fired on us")
+        rule.onNode(rebels).performScrollTo().performCustomAccessibilityActionWithLabel("Mark: the rebels fired first")
+        rule.onNode(rebels).assert(states("You marked: the rebels fired first."))
+        harness.tap("Check")
+
+        assertEquals(listOf("p1", "p2"), picked)
+    }
+
+    @Test
+    fun sourceComparisonATapMarksAPassageAndCheckingNamesTheOneMissed() {
+        play("sourceComparison", isCorrect = false)
+
+        rule.onNode(regulars).performScrollTo().performTouchInput { click(percentOffset(0.05f, 0.25f)) }
+        rule.onNode(regulars).assert(states("You marked: The regulars fired on us."))
+        harness.tap("Check")
+
+        rule.onNode(rebels).performScrollTo().assert(states("Nothing marked yet. Missed: the rebels fired first."))
     }
 }
