@@ -6,6 +6,7 @@
     <string name="buddy_page_change">Change %1$s</string>
     <string name="buddy_page_choose">Choose your buddy</string>
     <string name="buddy_page_weekly_summary">Weekly summary</string>
+    <string name="buddy_page_earlier_questions">Earlier questions</string>
     <!-- Read aloud for a count shown as "2/6", like glasses earned of all. -->
     <string name="buddy_page_count">%1$s of %2$s</string>
     <string name="buddy_page_save_failed">That didn\'t save. Try again.</string>

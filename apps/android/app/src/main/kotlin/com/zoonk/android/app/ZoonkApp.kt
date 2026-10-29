@@ -86,6 +86,8 @@ import com.zoonk.android.navigation.gatedEntries
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.navigation.rememberEntries
 import com.zoonk.android.navigation.section
+import com.zoonk.android.ui.characters.BuddyKind
+import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.LearnerSummary
@@ -392,7 +394,11 @@ private fun DrawerItem(
 
 /** The buddy's tab carries the name the learner gave it. */
 @Composable
-private fun AppTab.title(summary: LearnerSummary?): String = summary?.buddy?.name?.takeIf { this == AppTab.Buddy } ?: stringResource(label)
+private fun AppTab.title(summary: LearnerSummary?): String {
+    if (this != AppTab.Buddy) return stringResource(label)
+    val buddy = summary?.buddy
+    return buddyName(buddy?.kind?.let { BuddyKind.of(it.value) } ?: BuddyKind.Zu, buddy?.name)
+}
 
 /** Exam, Speaking and Mind maps are listed only for a goal that has them. */
 private fun StudyPlace.isListed(places: LearnerSummaryPlaces?): Boolean =

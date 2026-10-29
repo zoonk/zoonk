@@ -105,7 +105,11 @@ internal fun BuddyTodayLine(
             }
             if (today == null || today.missions.isNotEmpty()) {
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
-                    Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(14.dp))
+                    if (today != null) {
+                        MissionsRing(done, today.missions.size, Modifier.size(14.dp), strokeWidth = RING_STROKE)
+                    } else {
+                        Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(14.dp))
+                    }
                     Text(
                         today?.let { "$done/${it.missions.size}" } ?: DASH,
                         style = number,
@@ -323,3 +327,4 @@ private val ROW_COLORS @Composable get() = ListItemDefaults.colors(containerColo
 
 private const val PERCENT = 100.0
 private const val DASH = "–"
+private const val RING_STROKE = 6f

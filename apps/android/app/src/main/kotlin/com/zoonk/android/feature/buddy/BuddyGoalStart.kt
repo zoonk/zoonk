@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,9 +24,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.tutor.TutorAvatar
 import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppNavigator
@@ -41,8 +48,10 @@ import com.zoonk.api.models.BuddyStatus
 internal fun BuddyGoalStart(
     status: BuddyStatus,
     ask: String?,
+    app: AppContainer,
     navigator: AppNavigator,
 ) {
+    val earlier by app.earlierQuestions.questions.collectShown()
     val look = status.look()
     val name = buddyName(look.kind, status.buddy.name)
     var goal by rememberSaveable(ask) { mutableStateOf(ask.orEmpty()) }
@@ -59,6 +68,12 @@ internal fun BuddyGoalStart(
                         Modifier.weight(1f).padding(top = 4.dp),
                         style = MaterialTheme.typography.bodyLarge,
                     )
+                }
+                if (earlier.value != null) {
+                    TextButton(onClick = { navigator.open(AppRoute.EarlierQuestions) }) {
+                        Icon(painterResource(R.drawable.ic_history), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
+                        Text(stringResource(R.string.buddy_page_earlier_questions), Modifier.padding(start = ButtonDefaults.IconSpacing))
+                    }
                 }
             }
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

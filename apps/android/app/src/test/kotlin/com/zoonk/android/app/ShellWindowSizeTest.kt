@@ -39,7 +39,7 @@ class ShellWindowSizeTest {
 
     private fun tab(label: String) = rule.onNode(hasText(label) and hasClickAction())
 
-    private fun tabBounds() = listOf("Today", "Plan", "Buddy").map { tab(it).getUnclippedBoundsInRoot() }
+    private fun tabBounds() = listOf("Today", "Plan", "Zu").map { tab(it).getUnclippedBoundsInRoot() }
 
     private fun assertBar() {
         val bounds = tabBounds()

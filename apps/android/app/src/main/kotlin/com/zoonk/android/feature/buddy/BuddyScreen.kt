@@ -102,7 +102,7 @@ fun BuddyScreen(
                 read is LoadState.Loaded && learner != null -> {
                     val goalId = learner.tutoredGoalId
                     if (goalId == null) {
-                        BuddyGoalStart(read.value, route.ask, navigator)
+                        BuddyGoalStart(read.value, route.ask, app, navigator)
                     } else {
                         BuddyPage(read.value, goalId, route.ask, app, navigator)
                     }
@@ -151,6 +151,7 @@ internal fun BuddyPage(
     val react: (BuddyAct) -> Unit = { act -> if (look.energyState == BuddyEnergyState.Awake) coroutines.launch { face.play(act) } }
     val onMission: (MissionOpens) -> Unit = { vm.openMission(it, goalId) }
     val hasMistake = mistakes.value?.let { it.ready + it.tomorrow > 0 } == true
+    val earlier by app.earlierQuestions.questions.collectShown()
 
     LaunchedEffect(vm) { vm.routes.collect(navigator::open) }
     LaunchedEffect(ask) { if (ask != null && tutor.draft.text.isEmpty()) tutor.draft.setTextAndPlaceCursorAtEnd(ask) }
@@ -179,7 +180,14 @@ internal fun BuddyPage(
             Column(Modifier.widthIn(max = BUDDY_COLUMN_WIDTH).weight(1f)) {
                 BuddyHeader(look, face, name, status, Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp)) {
                     if (!beside) BuddyTodayLine(status, look, name, onMission, navigator)
-                    BuddyMenu(status, name, onEdit = { editing = true }, onGlasses = { wearing = true }, navigator)
+                    BuddyMenu(
+                        status,
+                        name,
+                        hasEarlier = earlier.value != null,
+                        onEdit = { editing = true },
+                        onGlasses = { wearing = true },
+                        navigator,
+                    )
                 }
                 if (vm.saveFailed && !editing) SaveFailed(Modifier.padding(horizontal = 16.dp))
                 if (vm.openFailed) OpenFailed(Modifier.padding(horizontal = 16.dp))
@@ -269,6 +277,7 @@ private fun PickBuddyButton(onPick: () -> Unit) {
 private fun BuddyMenu(
     status: BuddyStatus,
     name: String,
+    hasEarlier: Boolean,
     onEdit: () -> Unit,
     onGlasses: () -> Unit,
     navigator: AppNavigator,
@@ -323,6 +332,16 @@ private fun BuddyMenu(
                 },
                 leadingIcon = { Icon(painterResource(R.drawable.ic_event_note), contentDescription = null) },
             )
+            if (hasEarlier) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.buddy_page_earlier_questions)) },
+                    onClick = {
+                        open = false
+                        navigator.open(AppRoute.EarlierQuestions)
+                    },
+                    leadingIcon = { Icon(painterResource(R.drawable.ic_history), contentDescription = null) },
+                )
+            }
         }
     }
 }
