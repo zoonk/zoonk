@@ -48,6 +48,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -73,6 +74,7 @@ import com.zoonk.android.feature.player.engine.isLanguageStep
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.PlayableLesson
+import com.zoonk.android.feature.player.steps.LocalLessonPictures
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.SummaryIdeas
@@ -330,6 +332,7 @@ private fun Content(
             val scroll = rememberScrollState()
 
             LaunchedEffect(step.id, state.position) { scroll.scrollTo(0) }
+            PrefetchPictures(state)
 
             val layoutDirection = LocalLayoutDirection.current
 
@@ -359,6 +362,24 @@ private fun Content(
                 }
             }
         }
+    }
+}
+
+private const val PICTURES_AHEAD = 2
+
+/** The next screens' pictures load ahead, so they show at once when the learner gets there. */
+@Composable
+private fun PrefetchPictures(state: LessonPlayerState) {
+    val pictures = LocalLessonPictures.current ?: return
+    val context = LocalContext.current
+    val ahead =
+        state.queue
+            .drop(state.position + 1)
+            .take(PICTURES_AHEAD)
+            .mapNotNull { state.steps[it]?.image?.url }
+
+    LaunchedEffect(ahead, pictures.session) {
+        ahead.forEach { url -> pictures.images.loader.enqueue(pictures.images.request(context, url, pictures.session)) }
     }
 }
 

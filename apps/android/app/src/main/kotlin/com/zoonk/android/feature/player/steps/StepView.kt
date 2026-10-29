@@ -43,7 +43,7 @@ fun StepView(
         is StepContent.Guess -> GuessHookView(step, content, answer, result, locked, actions)
         is StepContent.Fact -> FactHookView(step, content)
         is StepContent.Explanation -> ExplanationView(step, content)
-        is StepContent.WorkedExample -> WorkedExampleView(content, revealed = state.revealed[step.id] ?: 1)
+        is StepContent.WorkedExample -> WorkedExampleView(step, content, revealed = state.revealed[step.id] ?: 1)
         is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions)
         is StepContent.Summary -> SummaryView(content)
         is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions)

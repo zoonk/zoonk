@@ -1,7 +1,8 @@
 package com.zoonk.android.feature.player.steps
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -14,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -32,16 +35,35 @@ class LessonPictures(
 
 val LocalLessonPictures = staticCompositionLocalOf<LessonPictures?> { null }
 
-/** Sized from its stored width and height so nothing jumps; a picture that fails to load leaves no gap. */
+/** How tall a picture may grow, as a share of the window's height (main's `PICTURE_FRAME_CLASS`). */
+enum class PictureFrame(
+    val heightShare: Float,
+) {
+    Hero(0.55f),
+    Inline(0.45f),
+    Question(0.40f),
+}
+
+/**
+ * Sized from its stored width and height so nothing jumps, a muted surface until it loads; a
+ * picture that fails to load leaves no gap.
+ */
 @Composable
 fun StepPicture(
     image: StepImage,
+    frame: PictureFrame,
     modifier: Modifier = Modifier,
 ) {
     val pictures = LocalLessonPictures.current ?: return
     val context = LocalContext.current
     var failed by remember(image.url) { mutableStateOf(false) }
-    val ratio = if (image.width != null && image.height != null && image.height > 0) image.width.toFloat() / image.height else DEFAULT_RATIO
+    val ratio = (image.width ?: DEFAULT_WIDTH).toFloat() / (image.height ?: DEFAULT_HEIGHT).coerceAtLeast(1)
+    val windowHeight =
+        with(LocalDensity.current) {
+            LocalWindowInfo.current.containerSize.height
+                .toDp()
+        }
+    val shape = RoundedCornerShape(16.dp)
 
     if (failed) return
 
@@ -51,15 +73,17 @@ fun StepPicture(
         contentDescription = image.alt,
         modifier =
             modifier
-                .fillMaxWidth()
+                .heightIn(max = windowHeight * frame.heightShare)
                 .aspectRatio(ratio)
-                .clip(RoundedCornerShape(16.dp)),
+                .clip(shape)
+                .background(MaterialTheme.colorScheme.surfaceContainerHigh),
         contentScale = ContentScale.Fit,
         onError = { failed = true },
     )
 }
 
-private const val DEFAULT_RATIO = 4f / 3f
+private const val DEFAULT_WIDTH = 1024L
+private const val DEFAULT_HEIGHT = 1280L
 
 /**
  * A question with a table of data above it: main splits the table off so the question reads as one
