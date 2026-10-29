@@ -39,7 +39,6 @@
   "goalcontent_lesson_count": "062f0846140364b77afe30a5be591772486f8ba3123c42a29b80eb80eb8f6602",
   "goalcontent_lessons": "4411c8367decf34749d35f98627dc228ba182d43f5a9a533962439562473531a",
   "goalcontent_lessons_done": "c535fcd48dc18b6240595338cfbf1b5314196e7180fd54ca1c0df549031fba4e",
-  "goalcontent_lessons_done_spoken": "fbfed39492050a74a458925d179ce331b11edfb967d1c9883b06a1bef6ff4f75",
   "goalcontent_lessons_from_start": "662c482fac06dee8434bba9317de544296226c453ae4e9514c105a84b0eb4f04",
   "goalcontent_lessons_known_skipped": "d56320a839576ed61dc2cffd390032dbd13bee1449f0d3296776d348e53929ca",
   "goalcontent_lessons_on_the_way": "22f054d7a9bb4dcfc25f34c084e1d7adee0679555c5d902ce3b420dd545f063e",
@@ -79,7 +78,6 @@
   "goalcontent_skill_mastered": "680f7b9b8bfb4f3a023c77860ba6d01aea83ceaa7ea4d19cf957c685696ab208",
   "goalcontent_skill_solid": "5a2f8ee65d06c5dde768fc2c133013deb556fe362727a5fc33382b0324e7e840",
   "goalcontent_skills": "4eb6075cd177b037c0f07d655609e69757374d230e2b21c9afe8087512df3949",
-  "goalcontent_skipped": "a804e82ab5d6011aca0cc5b83a78dde44fa183fbe3732f004c4f50a6549c5e19",
   "goalcontent_skipped_known": "5af39b969feec16e8756a7b7f682a31875331169ffb7fac941f42cb34e669da4",
   "goalcontent_start": "9d69fde4729f535dcf04d0c991444d08e1820d0723f058ab55dbbb3718ecfee7",
   "goalcontent_studied": "4b44f63ba393809b3d52cfa8aaf358bf5a79d793f3b9963fe7bd1797e7cb6ca6",
@@ -264,12 +262,7 @@
     <string name="goalcontent_lessons_from_start">%1$s · ab %2$s</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s abgeschlossen</string>
-    <plurals name="goalcontent_lessons_done_spoken">
-        <item quantity="one">%1$s von %2$d Lektion abgeschlossen</item>
-        <item quantity="other">%1$s von %2$d Lektionen abgeschlossen</item>
-    </plurals>
     <string name="goalcontent_done">Erledigt</string>
-    <string name="goalcontent_skipped">Ausgelassen</string>
     <string name="goalcontent_up_next">Als Nächstes</string>
     <string name="goalcontent_coming_up">Demnächst</string>
     <!-- A topic's state for screen readers. -->

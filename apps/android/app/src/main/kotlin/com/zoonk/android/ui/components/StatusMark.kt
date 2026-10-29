@@ -2,7 +2,9 @@ package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -15,6 +17,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 
 enum class MarkStatus { Done, Next, Skipped, Todo }
@@ -68,6 +71,28 @@ fun StatusMark(
     }
 }
 
+/** Part done, as a blue ring filling on the track: a chapter or topic the learner has started. */
+@Composable
+fun ProgressMark(
+    progress: Float,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+) {
+    Box(
+        modifier = modifier.size(markSize()).markSemantics(contentDescription),
+        contentAlignment = Alignment.Center,
+    ) {
+        CircularProgressIndicator(
+            progress = { progress },
+            modifier = Modifier.fillMaxSize(RING_SHARE),
+            color = MaterialTheme.colorScheme.tertiary,
+            trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+            strokeWidth = 2.dp,
+            gapSize = 0.dp,
+        )
+    }
+}
+
 @Composable
 fun DoneMark(modifier: Modifier = Modifier) {
     Icon(
@@ -96,6 +121,7 @@ internal fun Modifier.markSemantics(contentDescription: String?): Modifier =
 
 internal const val ICON_SHARE = 0.75f
 private const val SKIPPED_SHARE = 0.55f
+private const val RING_SHARE = 0.8f
 
 internal const val DOT_SHARE = 1 / 3f
 private const val HALO_SCALE = 1.75f

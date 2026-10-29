@@ -60,4 +60,8 @@
     <string name="test_out_skip_unit">Take the test and skip the unit</string>
     <string name="not_found_title">We couldn\'t find this page</string>
     <string name="not_found_description">The link may be old or mistyped.</string>
+    <string name="list_row_expanded">Expanded</string>
+    <string name="list_row_collapsed">Collapsed</string>
+    <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
+    <string name="list_row_states">%1$s, %2$s</string>
 </resources>

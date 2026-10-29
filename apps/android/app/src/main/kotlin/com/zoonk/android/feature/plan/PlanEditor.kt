@@ -72,6 +72,8 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBase
@@ -343,7 +345,7 @@ private fun PlanEditRequest(
 ) {
     val buddy = page.summary.buddy
 
-    PathRow(onClick = onTellBuddy, end = { Chevron() }) {
+    ListRow(onClick = onTellBuddy, end = { ListRowChevron() }) {
         Icon(painterResource(R.drawable.ic_chat_bubble), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(

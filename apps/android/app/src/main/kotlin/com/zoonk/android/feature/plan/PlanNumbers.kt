@@ -56,8 +56,13 @@ import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.ROW_BLEED
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -346,7 +351,7 @@ internal fun PaceDetails(
 
     PlanWeek(page)
 
-    PathRow(onClick = links::logbook, end = { Chevron() }) {
+    ListRow(onClick = links::logbook, end = { ListRowChevron() }) {
         Text(stringResource(R.string.plan_last_week_recap), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
     }
 }
@@ -770,7 +775,7 @@ private fun StillToDo(
         SectionHeader(stringResource(R.string.plan_still_to_do))
         items.forEach { item ->
             val content: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit = {
-                Leading { KindMark(item.kind) }
+                ListRowLeading { KindMark(item.kind) }
                 Column(Modifier.weight(1f)) {
                     Text(item.label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
                     item.detail?.let { MetaLine(it) }
@@ -778,9 +783,9 @@ private fun StillToDo(
                 if (item.plusRequired) PlusMark()
             }
             if (item.opensExam && links.hasExam) {
-                PathRow(onClick = links::exam, end = { Chevron() }, content = content)
+                ListRow(onClick = links::exam, end = { ListRowChevron() }, content = content)
             } else {
-                PathRow(content = content)
+                ListRow(content = content)
             }
         }
     }

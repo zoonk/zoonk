@@ -39,7 +39,6 @@
   "goalcontent_lesson_count": "e968d1fd07bd68d8e0392e6d2f54295c9e26b2f585669ca8ac5830ec785c578f",
   "goalcontent_lessons": "81731095aa2feede0cf841b0f3c4abd8443095f7bd90f00f33ee8019610da7d4",
   "goalcontent_lessons_done": "277f695392f2eafdf438809624a91d979486bf2b3c69e95b0902bb1de0a4e0a2",
-  "goalcontent_lessons_done_spoken": "dc1c6ccb6ff4f789deed6586d801bcc17f9e8c92a02bb2ef844a8ea0ae45ad95",
   "goalcontent_lessons_from_start": "a122581d5e813c4c5ca8b4e7ad775bb9ace5cc817310a53e394b6fc419fa8ad9",
   "goalcontent_lessons_known_skipped": "e05f13bd6a9ee72cfd4234be2edc4149f1b24e3adae7bdc268d6d0f9f4460746",
   "goalcontent_lessons_on_the_way": "6dd20c109232c2c04e7326d475f671effaacc9b6d2f9ea40b7f180997a378fe7",
@@ -79,7 +78,6 @@
   "goalcontent_skill_mastered": "e8ec56fd344cb92ad8f1ca33c47d07da76cce435edff31cd8c6c223665d29d2d",
   "goalcontent_skill_solid": "d86b8b37e2fe14a4f46228d5b1672769c9c8a2323fe20a828bd5b702e7f0d41c",
   "goalcontent_skills": "024b2a9b898fd4e6cc17c3f3f1d667c59fd80891033beeba00fe4e0dfaaaba44",
-  "goalcontent_skipped": "01b736120d77fe94f493efdd8e578101da426d26d107c02f5d6f302f90dd6f1e",
   "goalcontent_skipped_known": "fb736f00258f6e0744e9a19a746ecc8552ed8f429b9ccba0a08ac1b92b5e7649",
   "goalcontent_start": "cc0854bb8b324a41aac7839102d140a50a3298942faad4506e8b76f1bebde64b",
   "goalcontent_studied": "260a27a1ffd6d7a3467ad774d19d11ffe648c2336e6e5b90598ad63ce84398ec",
@@ -282,13 +280,7 @@
     <string name="goalcontent_lessons_from_start">%1$s · desde %2$s</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s completadas</string>
-    <plurals name="goalcontent_lessons_done_spoken">
-        <item quantity="one">%1$s de %2$d lección completada</item>
-        <item quantity="many">%1$s de %2$d lecciones completadas</item>
-        <item quantity="other">%1$s de %2$d lecciones completadas</item>
-    </plurals>
     <string name="goalcontent_done">Completado</string>
-    <string name="goalcontent_skipped">Omitido</string>
     <string name="goalcontent_up_next">A continuación</string>
     <string name="goalcontent_coming_up">Lo siguiente</string>
     <!-- A topic's state for screen readers. -->

@@ -21,11 +21,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.api.models.GoalContentGoal
@@ -132,6 +135,7 @@ private fun SubjectRow(
             modifier = nameModifier,
             color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
             style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium,
             maxLines = if (layout == RowLayout.Stacked) Int.MAX_VALUE else 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -149,16 +153,7 @@ private fun SubjectRow(
         }
     }
 
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .heightIn(min = 56.dp)
-                .clickable(onClick = onClick)
-                .padding(horizontal = PAGE_PADDING, vertical = 12.dp),
-        horizontalArrangement = Arrangement.spacedBy(14.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
+    ListRow(modifier = Modifier.padding(horizontal = PAGE_PADDING), onClick = onClick, end = { ListRowChevron() }) {
         if (layout == RowLayout.Stacked) {
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 name(Modifier)

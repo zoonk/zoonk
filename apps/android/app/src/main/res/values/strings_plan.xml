@@ -80,8 +80,6 @@
     <string name="plan_short_days">Days %1$d to %2$d of %3$d</string>
 
     <string name="plan_your_path">Your path</string>
-    <string name="plan_expanded">Expanded</string>
-    <string name="plan_collapsed">Collapsed</string>
     <string name="plan_lessons_count">%1$d / %2$d</string>
     <plurals name="plan_lessons_done_of">
         <item quantity="one">%1$d of %2$d lesson done</item>

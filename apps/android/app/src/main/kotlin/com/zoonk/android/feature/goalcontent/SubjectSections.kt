@@ -48,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.ChapterMark
 import com.zoonk.android.feature.plan.WrittenCadenceChoice
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.tutor.AskTutorAppearance
@@ -252,7 +253,7 @@ internal fun ColumnScope.SubjectAside(
         AsideSection(stringResource(R.string.goalcontent_also)) {
             Column {
                 if (openMindMaps != null) MindMapsRow(openMindMaps)
-                ask?.invoke(AskTutorAppearance.Row)
+                if (ask != null) Box(Modifier.padding(horizontal = PAGE_PADDING)) { ask(AskTutorAppearance.Row) }
             }
         }
     }
@@ -264,7 +265,7 @@ internal fun MindMapsRow(onClick: () -> Unit) {
     ContentRow(
         headline = { Text(stringResource(R.string.navigation_mind_maps)) },
         onClick = onClick,
-        leading = { Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { KindDot(LearnKind.MindMap) } },
+        leading = { KindDot(LearnKind.MindMap) },
     )
 }
 
@@ -377,14 +378,13 @@ internal fun LazyListScope.subjectChapters(
                         )
                     },
                     onClick = { showAll = true },
+                    chevron = false,
                     leading = {
-                        Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) {
-                            Icon(
-                                painterResource(R.drawable.ic_add),
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
+                        Icon(
+                            painterResource(R.drawable.ic_add),
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
                     },
                 )
             }
@@ -454,7 +454,16 @@ internal fun SyllabusChapterRow(
         },
         onClick = onClick,
         current = isNext,
-        leading = { ChapterMark(chapter, isNext) },
+        leading = {
+            ChapterMark(
+                isNext = isNext,
+                done = chapter.state == SyllabusChapter.State.DONE,
+                skipped = chapter.known,
+                writing = chapter.writing,
+                lessonsDone = chapter.lessonsDone,
+                lessonsTotal = chapter.lessonsTotal,
+            )
+        },
         supporting = line?.let { { Text(it) } },
         trailing = nextDate?.let { { Text(formatPlanDate(it.toJavaLocalDate(), today, locale), style = factsStyle()) } },
     )
@@ -607,7 +616,7 @@ private fun TopicGroupRow(
         trailing = trailing,
         stateDescription = status,
     ) {
-        Column(Modifier.padding(start = TOPIC_CONTENT_START, end = PAGE_PADDING, bottom = 8.dp)) {
+        Column(Modifier.padding(start = rowWordsStart(), end = PAGE_PADDING, bottom = 8.dp)) {
             group.children.forEach { child -> ChildTopic(child, knownReturn) }
             if (chapters.isNotEmpty()) {
                 if (group.children.isNotEmpty()) HorizontalDivider(Modifier.padding(vertical = 4.dp))
@@ -903,6 +912,4 @@ private fun MatrixGroupRow(group: TopicGroup<String>) {
 private const val SHOWN_UPCOMING = 4
 private const val SHOWN_MATRIX_GROUPS = 2
 
-/** Under a row's words, past its mark (ListItem's 16dp, a 24dp mark, its 16dp gap). */
-private val TOPIC_CONTENT_START = 56.dp
 private val CHILD_INDENT = 20.dp

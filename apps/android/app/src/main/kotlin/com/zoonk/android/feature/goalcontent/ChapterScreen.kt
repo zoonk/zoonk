@@ -429,7 +429,7 @@ private fun ChapterPractice(
                     }
                 },
                 onClick = actions.testOut,
-                leading = { KindDotMark(LearnKind.Practice) },
+                leading = { KindDot(LearnKind.Practice) },
                 supporting = { Text(stringResource(R.string.goalcontent_test_out_description)) },
             )
         }
@@ -444,7 +444,8 @@ private fun ChapterPractice(
                     )
                 },
                 onClick = if (practice.running) null else actions.practice,
-                leading = { KindDotMark(LearnKind.Practice) },
+                chevron = true,
+                leading = { KindDot(LearnKind.Practice) },
             )
             practiceMessage(practice.outcome)?.let {
                 Text(
@@ -460,11 +461,6 @@ private fun ChapterPractice(
             }
         }
     }
-}
-
-@Composable
-private fun KindDotMark(kind: LearnKind) {
-    Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { KindDot(kind) }
 }
 
 @Composable

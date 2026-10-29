@@ -149,12 +149,7 @@
     <string name="goalcontent_lessons_from_start">%1$s · from %2$s</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s done</string>
-    <plurals name="goalcontent_lessons_done_spoken">
-        <item quantity="one">%1$s of %2$d lesson done</item>
-        <item quantity="other">%1$s of %2$d lessons done</item>
-    </plurals>
     <string name="goalcontent_done">Done</string>
-    <string name="goalcontent_skipped">Skipped</string>
     <string name="goalcontent_up_next">Up next</string>
     <string name="goalcontent_coming_up">Coming up</string>
     <!-- A topic's state for screen readers. -->

@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanAreasInner
@@ -190,7 +191,7 @@ private fun FocusTestLink(onOpen: () -> Unit) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            Chevron()
+            ListRowChevron()
         }
     }
 }

@@ -39,7 +39,6 @@
   "goalcontent_lesson_count": "16d1b6edf799d0afa1015884a7c873c960cd10f6fd39fa72a5f9793ad4f1e961",
   "goalcontent_lessons": "d40327977fabf2c9ccb63b66a969010af4f6d7f4a4acbb78bd7559cdd601f119",
   "goalcontent_lessons_done": "708aa52b0496cd5896090dc7819df6f63d96b81f38a63f7ac93562d9bf21e02a",
-  "goalcontent_lessons_done_spoken": "7ada45751ebc0676f892fdc3fd3df0cbef1ffbac16b2533c5d79959695a552e7",
   "goalcontent_lessons_from_start": "7472b1ff0d9f5b2f86e2c735cc3f10df0786639e6ae25d9b4090df66de0e5de4",
   "goalcontent_lessons_known_skipped": "9d6d069a9fab9f532277afe82392968a9dc9dcb2e9b6e32ac2e44c4cf21d050c",
   "goalcontent_lessons_on_the_way": "4e6987413ca3c772ce487a3ae913d863e6177d331547737708527f9e72301ce7",
@@ -79,7 +78,6 @@
   "goalcontent_skill_mastered": "79a73b9146e45380a68c0b627dfc01e3e8ade0d9a8286b06c56b501c3aec4f89",
   "goalcontent_skill_solid": "fc42563b1a2bc0220f5f761348cf582d2db6f99614b59ecfa638dd5dc0e36544",
   "goalcontent_skills": "bcdebe0301104100c00924290afbc151b70737d90d7e8ced3c541487fefb41af",
-  "goalcontent_skipped": "c0cbf926eaf51e182eb5877b4906e15f24b55a23ed5f8af44bc9862b01043507",
   "goalcontent_skipped_known": "a0981bca7bce5f6c6c01a7ac086600e6daded327cf71628f10c0e175f8bd5e89",
   "goalcontent_start": "da74b1d50d8751f9a5a5fed95a80ca4922f32194fb191b465094c04588475fbb",
   "goalcontent_studied": "c393780a2165d31e2db22d51214e3b2cf68e46d425fb015295d3c1aad2e3690d",
@@ -282,13 +280,7 @@
     <string name="goalcontent_lessons_from_start">%1$s · à partir de %2$s</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s terminées</string>
-    <plurals name="goalcontent_lessons_done_spoken">
-        <item quantity="one">%1$s leçon terminée sur %2$d</item>
-        <item quantity="many">%1$s leçons terminées sur %2$d</item>
-        <item quantity="other">%1$s leçons terminées sur %2$d</item>
-    </plurals>
     <string name="goalcontent_done">Terminé</string>
-    <string name="goalcontent_skipped">Ignoré</string>
     <string name="goalcontent_up_next">À suivre</string>
     <string name="goalcontent_coming_up">Bientôt</string>
     <!-- A topic's state for screen readers. -->

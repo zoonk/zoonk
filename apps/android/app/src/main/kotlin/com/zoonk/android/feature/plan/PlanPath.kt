@@ -52,9 +52,15 @@ import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.ProgressMark
+import com.zoonk.android.ui.components.ROW_ICON_SIZE
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.TitleAndMeta
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -123,7 +129,7 @@ private fun PhaseItem(
         val chapterId = own.chapterId.toString()
         val isNext = own.state == PlanPhaseChaptersInner.State.CURRENT
         Column {
-            PathRow(onClick = { links.chapter(chapterId) }, highlighted = isNext, end = { Chevron() }) {
+            ListRow(onClick = { links.chapter(chapterId) }, highlighted = isNext, end = { ListRowChevron() }) {
                 PhaseColumns(page, phase, isLast, open, nextChapter = own.takeIf { isNext })
             }
             if (open) {
@@ -138,28 +144,16 @@ private fun PhaseItem(
 
     val hasContent = phase.chapters.isNotEmpty() || phase.checkpoint != null
     if (!hasContent) {
-        PathRow { PhaseColumns(page, phase, isLast, open) }
+        ListRow { PhaseColumns(page, phase, isLast, open) }
         return
     }
 
     // Keyed by whether it's the open phase, so one opened or shut by hand keeps it until the plan moves on.
     var expanded by rememberSaveable(phase.index, open) { mutableStateOf(open) }
     val byPlace = phase.isNamedLikeAChapter(name)
-    val stateWords = stringResource(if (expanded) R.string.plan_expanded else R.string.plan_collapsed)
 
     Column {
-        PathRow(
-            onClick = { expanded = !expanded },
-            modifier = Modifier.semantics { stateDescription = stateWords },
-            end = {
-                Icon(
-                    painter = painterResource(if (expanded) R.drawable.ic_expand_less else R.drawable.ic_expand_more),
-                    contentDescription = null,
-                    modifier = Modifier.size(ICON_SIZE),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            },
-        ) {
+        ListRow(onClick = { expanded = !expanded }, expanded = expanded) {
             PhaseColumns(page, phase, isLast, open, byPlace = byPlace && expanded)
         }
         if (expanded) {
@@ -181,7 +175,7 @@ private fun RowScope.PhaseColumns(
     byPlace: Boolean = false,
     nextChapter: PlanPhaseChaptersInner? = null,
 ) {
-    Leading {
+    ListRowLeading {
         if (nextChapter != null) ChapterMark(nextChapter, isNext = true) else PhaseMark(phase)
     }
     val until = phaseUntil(page, phase, isLast)
@@ -333,32 +327,40 @@ internal fun ChapterMark(
     chapter: PlanPhaseChaptersInner,
     isNext: Boolean,
 ) {
-    val total = chapter.lessonsTotal
-    val done = chapter.lessonsDone
+    ChapterMark(
+        isNext = isNext,
+        done = chapter.state == PlanPhaseChaptersInner.State.DONE,
+        skipped = chapter.isSkipped,
+        writing = chapter.writing,
+        lessonsDone = chapter.lessonsDone,
+        lessonsTotal = chapter.lessonsTotal,
+    )
+}
+
+/** A chapter's mark wherever it's listed: next, part done as a ring, skipped, done or ahead. */
+@Composable
+internal fun ChapterMark(
+    isNext: Boolean,
+    done: Boolean,
+    skipped: Boolean,
+    writing: Boolean,
+    lessonsDone: Long,
+    lessonsTotal: Long,
+) {
     when {
         isNext -> {
             StatusMark(MarkStatus.Next, contentDescription = stringResource(R.string.plan_up_next))
         }
 
-        chapter.state != PlanPhaseChaptersInner.State.DONE && !chapter.writing && done > 0 && total > 0 -> {
-            val spoken = lessonsDoneSpoken(done, total)
-            Box(Modifier.size(markSize()).semantics { contentDescription = spoken }, contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(
-                    progress = { done.toFloat() / total },
-                    modifier = Modifier.size(markSize() * RING_SHARE),
-                    color = MaterialTheme.colorScheme.tertiary,
-                    trackColor = MaterialTheme.colorScheme.surfaceContainerHighest,
-                    strokeWidth = 2.dp,
-                    gapSize = 0.dp,
-                )
-            }
+        !done && !writing && lessonsDone > 0 && lessonsTotal > 0 -> {
+            ProgressMark(lessonsDone.toFloat() / lessonsTotal, contentDescription = lessonsDoneSpoken(lessonsDone, lessonsTotal))
         }
 
-        chapter.state == PlanPhaseChaptersInner.State.DONE && chapter.isSkipped -> {
+        done && skipped -> {
             StatusMark(MarkStatus.Skipped, contentDescription = stringResource(R.string.plan_skipped))
         }
 
-        chapter.state == PlanPhaseChaptersInner.State.DONE -> {
+        done -> {
             StatusMark(MarkStatus.Done, contentDescription = stringResource(R.string.plan_done))
         }
 
@@ -367,8 +369,6 @@ internal fun ChapterMark(
         }
     }
 }
-
-private const val RING_SHARE = 0.8f
 
 @Composable
 internal fun PhaseChapters(
@@ -386,8 +386,8 @@ internal fun PhaseChapters(
     Column {
         shown.forEach { ChapterRow(it, links) }
         if (hidden > 0) {
-            PathRow(onClick = { showAll = !showAll }) {
-                Leading {
+            ListRow(onClick = { showAll = !showAll }) {
+                ListRowLeading {
                     Icon(
                         painter = painterResource(if (showAll) R.drawable.ic_remove else R.drawable.ic_add),
                         contentDescription = null,
@@ -423,7 +423,7 @@ private fun ChapterRow(
     val isNext = chapter.state == PlanPhaseChaptersInner.State.CURRENT
     val chapterId = chapter.chapterId?.toString()
     val content: @Composable RowScope.() -> Unit = {
-        Leading { ChapterMark(chapter, isNext) }
+        ListRowLeading { ChapterMark(chapter, isNext) }
         TitleAndMeta(
             modifier = Modifier.weight(1f),
             meta = {
@@ -454,9 +454,9 @@ private fun ChapterRow(
     }
 
     when {
-        chapter.writing && chapter.skillId != null -> PathRow(content = content)
-        chapterId == null -> PathRow(content = content)
-        else -> PathRow(onClick = { links.chapter(chapterId) }, highlighted = isNext, end = { Chevron() }, content = content)
+        chapter.writing && chapter.skillId != null -> ListRow(content = content)
+        chapterId == null -> ListRow(content = content)
+        else -> ListRow(onClick = { links.chapter(chapterId) }, highlighted = isNext, end = { ListRowChevron() }, content = content)
     }
 }
 
@@ -503,7 +503,7 @@ internal fun CheckpointRow(
         }
     val planItemId = checkpoint.planItemId?.toString()
     val content: @Composable RowScope.() -> Unit = {
-        Leading { Trickster(Modifier.size(markSize() + 4.dp)) }
+        ListRowLeading { Trickster(Modifier.size(markSize() + 4.dp)) }
         TitleAndMeta(modifier = Modifier.weight(1f), meta = { trailing?.let { TrailingText(PlanDateWords(it, it)) } }) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
@@ -518,9 +518,9 @@ internal fun CheckpointRow(
     }
 
     if (planItemId != null) {
-        PathRow(onClick = { links.challenge(planItemId) }, end = { Chevron() }, content = content)
+        ListRow(onClick = { links.challenge(planItemId) }, end = { ListRowChevron() }, content = content)
     } else {
-        PathRow(content = content)
+        ListRow(content = content)
     }
 }
 
@@ -547,7 +547,7 @@ internal fun MockRow(
             }
         }
     val content: @Composable RowScope.() -> Unit = {
-        Leading { KindMark(LearnKind.Mock) }
+        ListRowLeading { KindMark(LearnKind.Mock) }
         val words = formatPlanDate(date, page.today, currentLocale())
         TitleAndMeta(modifier = Modifier.weight(1f), meta = { TrailingText(PlanDateWords(words, words)) }) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -562,13 +562,13 @@ internal fun MockRow(
         }
     }
 
-    if (onClick != null) PathRow(onClick = onClick, end = { Chevron() }, content = content) else PathRow(content = content)
+    if (onClick != null) ListRow(onClick = onClick, end = { ListRowChevron() }, content = content) else ListRow(content = content)
 }
 
 @Composable
 private fun FinishItem(page: PlanPageState) {
-    PathRow {
-        Leading { FlagMark() }
+    ListRow {
+        ListRowLeading { FlagMark() }
         val finish = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
         TitleAndMeta(modifier = Modifier.weight(1f), meta = { finish?.let { TrailingText(it) } }) {
             Text(text = page.goal.title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
@@ -581,104 +581,7 @@ internal fun FlagMark() {
     Icon(painterResource(R.drawable.ic_flag), contentDescription = null)
 }
 
-@Composable
-internal fun PathRow(
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
-    highlighted: Boolean = false,
-    end: @Composable () -> Unit = { Box(Modifier.size(ICON_SIZE)) },
-    content: @Composable RowScope.() -> Unit,
-) {
-    Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .bleed(ROW_BLEED)
-                .clip(MaterialTheme.shapes.medium)
-                .then(if (highlighted) Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh) else Modifier)
-                .then(
-                    if (onClick != null) {
-                        Modifier.clickable(role = Role.Button, onClick = onClick)
-                    } else {
-                        Modifier.semantics(mergeDescendants = true) {}
-                    },
-                ).heightIn(min = 48.dp)
-                .padding(horizontal = ROW_BLEED, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        content()
-        end()
-    }
-}
-
-/** Rows reach past the page's margin by [amount] on each side, so their words line up with the headings above them. */
-internal fun Modifier.bleed(amount: Dp): Modifier =
-    layout { measurable, constraints ->
-        val extra = (amount * 2).roundToPx()
-        val wide =
-            if (constraints.hasBoundedWidth) {
-                constraints.copy(minWidth = constraints.minWidth + extra, maxWidth = constraints.maxWidth + extra)
-            } else {
-                constraints
-            }
-        val placeable = measurable.measure(wide)
-        layout(placeable.width - extra, placeable.height) { placeable.placeRelative(-amount.roundToPx(), 0) }
-    }
-
-internal val ROW_BLEED = 8.dp
-
-/** Icons in rows take Material's 24dp, so they keep pace with the words beside them. */
-internal val ICON_SIZE = 24.dp
-
-/**
- * A row's words with its numbers or date at the end, as main's rows show them; when the words would
- * get too little room (large text, a narrow pane), the numbers go under them instead.
- */
-@Composable
-internal fun TitleAndMeta(
-    modifier: Modifier = Modifier,
-    meta: @Composable () -> Unit,
-    title: @Composable () -> Unit,
-) {
-    Layout(
-        contents =
-            listOf({
-                Column {
-                    title()
-                }
-            }, { Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) { meta() } }),
-        modifier = modifier,
-    ) { (titles, metas), constraints ->
-        val width = constraints.maxWidth
-        val gap = 12.dp.roundToPx()
-        val metaPlaceable = metas.first().measure(Constraints(maxWidth = width))
-        val titleMeasurable = titles.first()
-        val room = width - metaPlaceable.width - if (metaPlaceable.width > 0) gap else 0
-        val beside = metaPlaceable.width == 0 || room >= minOf(titleMeasurable.maxIntrinsicWidth(Constraints.Infinity), width / 2)
-        if (beside) {
-            val titlePlaceable = titleMeasurable.measure(Constraints(maxWidth = room.coerceAtLeast(0)))
-            val height = maxOf(titlePlaceable.height, metaPlaceable.height)
-            layout(width, height) {
-                titlePlaceable.placeRelative(0, (height - titlePlaceable.height) / 2)
-                metaPlaceable.placeRelative(width - metaPlaceable.width, (height - metaPlaceable.height) / 2)
-            }
-        } else {
-            val titlePlaceable = titleMeasurable.measure(Constraints(maxWidth = width))
-            layout(width, titlePlaceable.height + metaPlaceable.height) {
-                titlePlaceable.placeRelative(0, 0)
-                metaPlaceable.placeRelative(0, titlePlaceable.height)
-            }
-        }
-    }
-}
-
 internal val SHEET_MARGIN = 24.dp
-
-@Composable
-internal fun Leading(content: @Composable () -> Unit) {
-    Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { content() }
-}
 
 @Composable
 internal fun MetaLine(text: String) {

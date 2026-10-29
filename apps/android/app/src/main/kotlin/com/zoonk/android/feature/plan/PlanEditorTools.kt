@@ -180,7 +180,7 @@ private fun LaterTools(
 ) {
     if (tools.isEmpty()) return
     var open by remember { mutableStateOf(false) }
-    val stateWords = stringResource(if (open) R.string.plan_expanded else R.string.plan_collapsed)
+    val stateWords = stringResource(if (open) R.string.list_row_expanded else R.string.list_row_collapsed)
     val names = tools.joinToString(", ") { CHOICES_PATTERN.matchEntire(it.name)?.groupValues?.get(1) ?: it.name }
 
     Column {

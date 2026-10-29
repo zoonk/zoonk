@@ -3,6 +3,9 @@ package com.zoonk.android.feature.goalcontent
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Text
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasProgressBarRangeInfo
@@ -167,6 +170,17 @@ class GoalContentFlowTest {
         rule.onNodeWithText("Motion and forces").performClick()
 
         assertEquals(AppRoute.Chapter(chapterId(1)), navigator.currentRoute)
+    }
+
+    @Test
+    fun aTopicSaysItsStatusAndWhetherItsOpen() {
+        showSubject("natural-sciences")
+        val mechanics = rule.onNodeWithText("1 Mechanics")
+
+        mechanics.assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Studied, Collapsed"))
+        mechanics.performClick()
+
+        mechanics.assert(SemanticsMatcher.expectValue(SemanticsProperties.StateDescription, "Studied, Expanded"))
     }
 
     @Test

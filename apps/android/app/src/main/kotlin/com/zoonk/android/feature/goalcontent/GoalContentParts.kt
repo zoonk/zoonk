@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -30,9 +31,12 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -64,6 +68,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -74,10 +79,15 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.StatusMessage
+import com.zoonk.android.ui.components.TitleAndMeta
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -153,34 +163,31 @@ internal fun RowDivider() {
     HorizontalDivider(Modifier.padding(horizontal = PAGE_PADDING))
 }
 
-/** A row of a list: the learner's place is highlighted, and a row without [onClick] is plain text. */
+/** A row of a list, drawn as the Plan's rows are; one that opens a page ends in a chevron. */
 @Composable
 internal fun ContentRow(
     headline: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     current: Boolean = false,
+    chevron: Boolean = onClick != null,
     leading: (@Composable () -> Unit)? = null,
     supporting: (@Composable () -> Unit)? = null,
     trailing: (@Composable () -> Unit)? = null,
     stateDescription: String? = null,
 ) {
-    ListItem(
-        headlineContent = headline,
-        modifier =
-            (if (onClick == null) modifier else modifier.clickable(onClick = onClick))
-                .semantics(mergeDescendants = true) { if (stateDescription != null) this.stateDescription = stateDescription },
-        leadingContent = leading,
-        supportingContent = supporting,
-        trailingContent = trailing,
-        colors =
-            ListItemDefaults.colors(
-                containerColor = if (current) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surface,
-            ),
-    )
+    ListRow(
+        modifier = modifier.padding(horizontal = PAGE_PADDING),
+        onClick = onClick,
+        highlighted = current,
+        stateDescription = stateDescription,
+        end = if (chevron) ({ ListRowChevron() }) else null,
+    ) {
+        RowWords(headline, leading, supporting, trailing)
+    }
 }
 
-/** A row that opens what's under it in place; TalkBack hears whether it's open. */
+/** A row that opens what's under it in place. */
 @Composable
 internal fun ExpandableRow(
     expanded: Boolean,
@@ -193,51 +200,44 @@ internal fun ExpandableRow(
     stateDescription: String? = null,
     content: @Composable () -> Unit,
 ) {
-    val turn by animateFloatAsState(if (expanded) HALF_TURN else 0f, tween(EXPAND_MILLIS), label = "chevron")
-
     Column(modifier) {
-        ListItem(
-            headlineContent = headline,
-            modifier =
-                Modifier
-                    .clickable(onClick = onToggle)
-                    .semantics {
-                        if (stateDescription != null) this.stateDescription = stateDescription
-                        if (expanded) {
-                            collapse {
-                                onToggle()
-                                true
-                            }
-                        } else {
-                            expand {
-                                onToggle()
-                                true
-                            }
-                        }
-                    },
-            leadingContent = leading,
-            supportingContent = supporting,
-            trailingContent = {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    trailing?.invoke()
-                    Icon(
-                        painter = painterResource(R.drawable.ic_expand_more),
-                        contentDescription = null,
-                        modifier = Modifier.rotate(turn),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
-            },
-        )
-        AnimatedVisibility(
-            visible = expanded,
-            enter = expandVertically(tween(EXPAND_MILLIS)),
-            exit = shrinkVertically(tween(EXPAND_MILLIS)),
+        ListRow(
+            modifier = Modifier.padding(horizontal = PAGE_PADDING),
+            onClick = onToggle,
+            expanded = expanded,
+            stateDescription = stateDescription,
         ) {
-            content()
+            RowWords(headline, leading, supporting, trailing)
+        }
+        if (expanded) content()
+    }
+}
+
+@Composable
+private fun RowScope.RowWords(
+    headline: @Composable () -> Unit,
+    leading: (@Composable () -> Unit)?,
+    supporting: (@Composable () -> Unit)?,
+    trailing: (@Composable () -> Unit)?,
+) {
+    val quiet = MaterialTheme.colorScheme.onSurfaceVariant
+    if (leading != null) ListRowLeading(leading)
+    TitleAndMeta(
+        modifier = Modifier.weight(1f),
+        meta = { if (trailing != null) CompositionLocalProvider(LocalContentColor provides quiet, content = trailing) },
+    ) {
+        ProvideTextStyle(MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium), headline)
+        if (supporting != null) {
+            CompositionLocalProvider(LocalContentColor provides quiet) {
+                ProvideTextStyle(MaterialTheme.typography.bodyMedium, supporting)
+            }
         }
     }
 }
+
+/** Where words under a row's start, past its mark. */
+@Composable
+internal fun rowWordsStart(): Dp = PAGE_PADDING + markSize() + 12.dp
 
 /** A row's words with a chip after them, which moves under them when the line has no room. */
 @Composable
@@ -310,70 +310,6 @@ internal fun CoverageBar(
     }
 }
 
-/** A share done as a ring, in blue on a faint track. Decorative. */
-@Composable
-internal fun ProgressRing(
-    share: Double,
-    modifier: Modifier = Modifier,
-) {
-    val track = MaterialTheme.colorScheme.onSurface.copy(alpha = RING_TRACK_ALPHA)
-    val fill = MaterialTheme.colorScheme.tertiary
-
-    Canvas(modifier.clearAndSetSemantics {}) {
-        val stroke = size.minDimension * RING_STROKE
-        val inset = stroke / 2
-        val arcSize = Size(size.width - stroke, size.height - stroke)
-        drawCircle(track, radius = (size.minDimension - stroke) / 2, style = Stroke(stroke))
-        drawArc(
-            color = fill,
-            startAngle = -90f,
-            sweepAngle = FULL_TURN * share.coerceIn(0.0, 1.0).toFloat(),
-            useCenter = false,
-            topLeft = Offset(inset, inset),
-            size = arcSize,
-            style = Stroke(stroke, cap = StrokeCap.Round),
-        )
-    }
-}
-
-@Composable
-internal fun ChapterMark(
-    chapter: SyllabusChapter,
-    isNext: Boolean,
-) {
-    when {
-        isNext -> {
-            StatusMark(MarkStatus.Next, contentDescription = stringResource(R.string.goalcontent_up_next))
-        }
-
-        chapter.state != SyllabusChapter.State.DONE && !chapter.writing && chapter.lessonsDone > 0 && chapter.lessonsTotal > 0 -> {
-            val locale = currentLocale()
-            val spoken =
-                pluralStringResource(
-                    R.plurals.goalcontent_lessons_done_spoken,
-                    chapter.lessonsTotal.toInt(),
-                    formatNumber(chapter.lessonsDone.toDouble(), locale),
-                    chapter.lessonsTotal.toInt(),
-                )
-            Box(Modifier.size(markSize()).semantics { contentDescription = spoken }, contentAlignment = Alignment.Center) {
-                ProgressRing(chapter.lessonsDone.toDouble() / chapter.lessonsTotal, Modifier.size(markSize() * RING_SHARE))
-            }
-        }
-
-        chapter.state == SyllabusChapter.State.DONE && chapter.known -> {
-            StatusMark(MarkStatus.Skipped, contentDescription = stringResource(R.string.goalcontent_skipped))
-        }
-
-        chapter.state == SyllabusChapter.State.DONE -> {
-            StatusMark(MarkStatus.Done, contentDescription = stringResource(R.string.goalcontent_done))
-        }
-
-        else -> {
-            StatusMark(MarkStatus.Todo)
-        }
-    }
-}
-
 @Composable
 internal fun FilledDot(
     color: Color,
@@ -403,9 +339,7 @@ internal fun TopicMarkIcon(
         }
 
         is TopicMark.InProgress -> {
-            Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) {
-                ProgressRing(mark.share.coerceAtLeast(MIN_RING_SHARE), Modifier.size(markSize() * RING_SHARE * scale))
-            }
+            ProgressMark(mark.share.coerceAtLeast(MIN_RING_SHARE).toFloat(), Modifier.size(markSize() * scale))
         }
 
         TopicMark.NotPlanned -> {
@@ -590,13 +524,7 @@ internal inline fun <T> LazyListScope.dividedItems(
     }
 }
 
-private const val HALF_TURN = 180f
-private const val FULL_TURN = 360f
-private const val EXPAND_MILLIS = 200
 private const val KNOWN_ALPHA = 0.7f
-private const val RING_TRACK_ALPHA = 0.1f
-private const val RING_STROKE = 0.09f
-private const val RING_SHARE = 0.6f
 private const val SMALL_MARK = 0.85f
 private const val MINUS_SHARE = 0.7f
 private const val MIN_RING_SHARE = 0.15

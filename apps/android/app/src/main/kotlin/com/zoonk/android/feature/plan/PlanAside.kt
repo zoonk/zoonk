@@ -26,9 +26,15 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.PlusMark
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.ROW_BLEED
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.TitleAndMeta
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.zoonk
@@ -60,8 +66,8 @@ internal fun NextOnPath(
         Column {
             mockDate?.let { MockRow(page, it, links) }
             chapter?.chapterId?.let { id ->
-                PathRow(onClick = { links.chapter(id.toString()) }, end = { Chevron() }) {
-                    Leading { ChapterMark(chapter, isNext = true) }
+                ListRow(onClick = { links.chapter(id.toString()) }, end = { ListRowChevron() }) {
+                    ListRowLeading { ChapterMark(chapter, isNext = true) }
                     val count =
                         PlanDateWords(
                             stringResource(R.string.plan_lessons_count, chapter.lessonsDone.toInt(), chapter.lessonsTotal.toInt()),
@@ -91,7 +97,7 @@ private fun FinishRow(
     links: PlanLinks,
 ) {
     val content: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit = {
-        Leading { FlagMark() }
+        ListRowLeading { FlagMark() }
         Column(Modifier.weight(1f)) {
             Text(
                 text = page.goal.title,
@@ -113,7 +119,7 @@ private fun FinishRow(
             }
         }
     }
-    if (links.hasExam) PathRow(onClick = links::exam, end = { Chevron() }, content = content) else PathRow(content = content)
+    if (links.hasExam) ListRow(onClick = links::exam, end = { ListRowChevron() }, content = content) else ListRow(content = content)
 }
 
 @Composable
@@ -121,8 +127,8 @@ private fun AfterExamRow(
     page: PlanPageState,
     phase: PlanPhase,
 ) {
-    PathRow {
-        Leading { StatusMark(MarkStatus.Todo) }
+    ListRow {
+        ListRowLeading { StatusMark(MarkStatus.Todo) }
         val end = phase.end?.let { planDate(it, page.today, estimate = true, month = true) }
         TitleAndMeta(modifier = Modifier.weight(1f), meta = { end?.let { TrailingText(it) } }) {
             Text(phaseName(phase, page.mocksRequirePlus), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
@@ -175,8 +181,8 @@ private fun LinkRow(
     text: String,
     onClick: () -> Unit,
 ) {
-    PathRow(onClick = onClick, end = { Chevron() }) {
-        Leading {
+    ListRow(onClick = onClick, end = { ListRowChevron() }) {
+        ListRowLeading {
             Icon(
                 painterResource(icon),
                 contentDescription = null,

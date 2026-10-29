@@ -39,7 +39,6 @@
   "goalcontent_lesson_count": "8ccf70eaa72a2888a67ac2a41a5b6c70409dda5528e42da4f4239c845df6af56",
   "goalcontent_lessons": "8ecd81bb8efaf0fe939eb3818926c3855321e43e562aff5db315358810a8343e",
   "goalcontent_lessons_done": "ceb823fb3eec3a666df3db9a022f6860da04b238ddbae8c57f6bfa13507ebd39",
-  "goalcontent_lessons_done_spoken": "b53ff65b1c18ced35f10d4b83887002980be988ff7d852701f02b8717ace3a27",
   "goalcontent_lessons_from_start": "5f6a2e2731d653e9093a80c05d232695c4bf92b4ac86abd5330ba3f1b81b4794",
   "goalcontent_lessons_known_skipped": "5aa157d2567d680c9b981cf78d931363ba610d717a87ee613a9ecc644579b047",
   "goalcontent_lessons_on_the_way": "5bc2db02f26b58840d2e6d15f904b55f4b1eba6b59773d27c5cf0e3ddd306ae4",
@@ -79,7 +78,6 @@
   "goalcontent_skill_mastered": "8e1eec9d6ea93ae4f6f629cb3eb49e1efdf20d2f35a7a76e3b86c7110ff7a088",
   "goalcontent_skill_solid": "38608a1e13c4285db197b192ce062b0e24e6af76a22577871c088c9a43065845",
   "goalcontent_skills": "1e4351807a78db5ed4f1ced87a95a2f3401fcff4d21aa82f18e63fdb2a6faee3",
-  "goalcontent_skipped": "1c19c543cb87fbcc77429976baa765f2d28fa8c4686ed373832df765e54357b6",
   "goalcontent_skipped_known": "81aad300b4d11ce4f50d83dfd9bc18951ba5b33ec64e0124d14d917d549f5fa7",
   "goalcontent_start": "a83f67753ed1c32971bc608c090cb57a52df47ab51f38ea0c3a3cb5a3c995a9c",
   "goalcontent_studied": "74527812f61c4e113cb1addf5cab6e556c60bb7e019beb14b91b6caffb52ad9c",
@@ -282,13 +280,7 @@
     <string name="goalcontent_lessons_from_start">%1$s · a partir de %2$s</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s concluídas</string>
-    <plurals name="goalcontent_lessons_done_spoken">
-        <item quantity="one">%1$s de %2$d aula concluída</item>
-        <item quantity="many">%1$s de %2$d aulas concluídas</item>
-        <item quantity="other">%1$s de %2$d aulas concluídas</item>
-    </plurals>
     <string name="goalcontent_done">Concluído</string>
-    <string name="goalcontent_skipped">Pulado</string>
     <string name="goalcontent_up_next">A seguir</string>
     <string name="goalcontent_coming_up">Em breve</string>
     <!-- A topic's state for screen readers. -->

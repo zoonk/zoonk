@@ -33,6 +33,9 @@
   "lessons_position": "544c9bf2ae35579b4b58fd73d82242ae3ee266cb020aea424b1083af7e6d6d45",
   "lessons_title": "0f2a283125c77bf67522eedf5032044d1468ab0b5eda8c6637625c61e93692c2",
   "lessons_up_next": "b57f9b5d70d0fd3b6513dbf5612f11aa6383d0a9239c226842a2503dd542e4cb",
+  "list_row_collapsed": "e827dfacf6a393116ee76a42e705d684cef8342aeacf45b90d105c0f292e16d8",
+  "list_row_expanded": "c60b4be953fd52445faa2cc3bf3bec62805ecd49a13336d63cbdb47fcdb2ee9c",
+  "list_row_states": "fc9f319c90153a44d507f801420669bee7b7d60b7c2bdc9268536b732f9c3276",
   "load_failed_description": "067b3a78163c415e1a7d7545f117486e00e95cb793574ddb2c2b63b57e1ff2ca",
   "load_failed_title": "62ff8a0e058fc2bd67435cdbf8b616ec6dd56da2d6ab8b9a62b334a15b9483c0",
   "load_failed_try_again": "001fb66e6dbecd7aa9457e150fe4e1194434571b596794b64efab6eb7e473456",
@@ -118,4 +121,8 @@
     <string name="test_out_skip_unit">Haz la prueba y omite la unidad</string>
     <string name="not_found_title">No hemos encontrado esta página</string>
     <string name="not_found_description">Puede que el enlace sea antiguo o esté mal escrito.</string>
+    <string name="list_row_expanded">Expandido</string>
+    <string name="list_row_collapsed">Contraído</string>
+    <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
+    <string name="list_row_states">%1$s, %2$s</string>
 </resources>

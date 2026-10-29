@@ -92,6 +92,7 @@ import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.Suggestion
@@ -436,6 +437,11 @@ private fun StatusMarks() {
                     ),
             )
         }
+        ListItem(
+            headlineContent = { Text("Acids and bases") },
+            leadingContent = { ProgressMark(0.4f) },
+            colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+        )
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             DoneMark()
             Text("Done mark alone", style = MaterialTheme.typography.bodyMedium)

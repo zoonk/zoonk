@@ -52,6 +52,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlanPhase
@@ -149,7 +150,7 @@ private fun RoadmapCompact(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
-            if (onOpen != null) Chevron()
+            if (onOpen != null) ListRowChevron()
         }
     }
 }
@@ -561,16 +562,6 @@ private fun positionWords(
         append(name)
         withStyle(SpanStyle(color = quiet)) { details.forEach { append(" · $it") } }
     }
-}
-
-@Composable
-internal fun Chevron(modifier: Modifier = Modifier) {
-    Icon(
-        painter = painterResource(R.drawable.ic_chevron_right),
-        contentDescription = null,
-        modifier = modifier.size(ICON_SIZE),
-        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-    )
 }
 
 @Composable

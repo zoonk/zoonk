@@ -269,7 +269,7 @@ private fun BasesBySubject(
     onChoose: (List<PlanBase>, PlanBase.Choice) -> Unit,
 ) {
     var open by remember { mutableStateOf(startOpen) }
-    val stateWords = stringResource(if (open) R.string.plan_expanded else R.string.plan_collapsed)
+    val stateWords = stringResource(if (open) R.string.list_row_expanded else R.string.list_row_collapsed)
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(

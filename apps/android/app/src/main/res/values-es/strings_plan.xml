@@ -195,7 +195,6 @@
   "plan_choose_focus": "9fea168370a9b438b974b4a8d96fd8eac32e8c57f2dd3f7da627a4d7aa619ff8",
   "plan_choose_focus_yourself": "863cb67e3a7d315c1ffb3c571dbc64755bce8cb6df2f8e3c24faf52dbc45bd08",
   "plan_choose_prerequisites": "570d93577693c74eca573e1732c090e45095a80f537e5afb34acc321891aca95",
-  "plan_collapsed": "c770a12c0f980e9a1e63076eebe57d92e06deb082a86762f4b052081ff54ca0d",
   "plan_continue": "e24e4816dfd093d1320edccbd889b1d7ce46d631836c025e13ef67c073738314",
   "plan_continues_on": "e0c8890bcc42cc51e2c443a8efccdf777177074605239926c426747624c37b68",
   "plan_continues_today": "e48237c532de0054d34e6a79287c4465d6e7e7e5ec1a81c2bbb97954baf2ab7e",
@@ -242,7 +241,6 @@
   "plan_exam_date": "a059a0212363e0ca4e2aafd54ec1f5d95893b0b8de07b3902d5b5ac58ce33317",
   "plan_exam_date_label": "6d66c48aa216d597e9f1de130c31ac53aed1d10b60d7bd4984c65ca5d985b826",
   "plan_exam_day": "5f93cb66f01a1e3f3de68af3daf89a66137764ca5d7c4bd8d71c9471a4136d55",
-  "plan_expanded": "63698c175e19aaf655bc8a9d16f27d1d44eb6643b2804d4a9509b7814fa86603",
   "plan_eyebrow": "08c65de9f81b17c6eea2825ae91fbb8bcd55819998907b8636da2bde03ca44c3",
   "plan_far_count_from": "2dc4e4e737af4531066dcce73e9398f05bd3c0a47500fce63cfe97cf2d1992b2",
   "plan_far_from": "df05bbba65570ceec3da1aaa215896d9933153295ebaabe0176d9abd8d496eda",
@@ -596,8 +594,6 @@
     <string name="plan_short_day">Día %1$d de %2$d</string>
     <string name="plan_short_days">Días %1$d a %2$d de %3$d</string>
     <string name="plan_your_path">Tu camino</string>
-    <string name="plan_expanded">Ampliado</string>
-    <string name="plan_collapsed">Contraído</string>
     <string name="plan_lessons_count">%1$d / %2$d</string>
     <plurals name="plan_lessons_done_of">
         <item quantity="one">%1$d de %2$d lección completada</item>
