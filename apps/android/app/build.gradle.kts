@@ -122,7 +122,9 @@ kotlin {
 }
 
 aboutLibraries {
-    // abcjs's music glyphs are copied into the app rather than depended on, so their notice is added here.
+    // Online, the plugin downloads license texts with no timeout and caches whatever came back, so the
+    // texts it needs are committed under aboutlibraries/licenses, with abcjs's glyphs, which the app copies.
+    offlineMode = true
     collect.configPath = layout.projectDirectory.dir("aboutlibraries")
 }
 

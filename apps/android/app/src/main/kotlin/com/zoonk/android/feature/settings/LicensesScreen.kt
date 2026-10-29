@@ -102,7 +102,7 @@ private fun LicenseSheet(
             library.licenses.forEach { license ->
                 HorizontalDivider()
                 Text(license.name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
-                val text = license.licenseContent?.let(::readableLicense)
+                val text = license.licenseContent?.takeIf { it.isNotBlank() }
                 if (text != null) {
                     Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 } else {
@@ -133,19 +133,3 @@ private fun openWeb(
     context: Context,
     url: String,
 ) = CustomTabsIntent.Builder().build().launchUrl(context, url.toUri())
-
-/**
- * SPDX's license texts, which the plugin downloads, mark fillable parts as
- * `<<var;name=…;original=…;match=…>>` and optional ones with `<<beginOptional>>`; the plugin keeps
- * them (https://github.com/mikepenz/AboutLibraries/issues/995), so each shows its original wording.
- */
-internal fun readableLicense(content: String): String =
-    content
-        .replace(SPDX_VARIABLE) { it.groupValues[1].trim() }
-        .replace(SPDX_MARKER, "")
-        .replace("<br />", "\n")
-        .replace("<br/>", "\n")
-        .trim()
-
-private val SPDX_VARIABLE = Regex("""<<var;.*?original=(.*?)(?:;match=.*?)?>>""")
-private val SPDX_MARKER = Regex("""<<(?:begin|end)Optional[^>]*>>""")
