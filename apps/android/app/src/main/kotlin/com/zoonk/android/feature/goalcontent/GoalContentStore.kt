@@ -13,9 +13,6 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.GoalChapter
-import com.zoonk.api.models.PlanChangeInput
-import com.zoonk.api.models.PlanChangeResult
-import com.zoonk.api.models.PlanOperation
 import com.zoonk.api.models.StudyBlock
 import kotlinx.datetime.TimeZone
 import java.util.UUID
@@ -36,12 +33,6 @@ interface GoalContentApi {
         goalId: UUID,
         input: AreaPracticeInput,
     ): AreaPractice
-
-    suspend fun changePlan(
-        session: AuthenticatedSession,
-        goalId: UUID,
-        input: PlanChangeInput,
-    ): PlanChangeResult
 }
 
 class LiveGoalContentApi(
@@ -57,12 +48,6 @@ class LiveGoalContentApi(
         goalId: UUID,
         input: AreaPracticeInput,
     ) = perform { api.clients(session).studySessions.createAreaPractice(goalId, input) }
-
-    override suspend fun changePlan(
-        session: AuthenticatedSession,
-        goalId: UUID,
-        input: PlanChangeInput,
-    ) = perform { api.clients(session).plans.createPlanChange(goalId, input) }
 }
 
 sealed interface PracticeOutcome {
@@ -77,7 +62,7 @@ sealed interface PracticeOutcome {
     data object Failed : PracticeOutcome
 }
 
-/** A goal's chapter pages, and the writes its subject and chapter pages make. */
+/** A goal's chapter pages, and practice on a chapter; the subject page changes the plan through the Plan's store. */
 class GoalContentStore(
     private val api: GoalContentApi,
     private val cache: AppCache,
@@ -110,14 +95,6 @@ class GoalContentStore(
             MutationResult.Obsolete -> {
                 null
             }
-        }
-
-    suspend fun changePlan(
-        goalId: UUID,
-        operations: List<PlanOperation>,
-    ): MutationResult<PlanChangeResult> =
-        cache.mutate(invalidating = PlanStore.WRITE_DOMAINS) { session ->
-            api.changePlan(session, goalId, PlanChangeInput(operations = operations, timeZone = timeZone().id))
         }
 
     private companion object {

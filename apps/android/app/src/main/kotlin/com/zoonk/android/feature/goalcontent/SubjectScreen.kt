@@ -32,6 +32,8 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.plan.PlanOp
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
@@ -43,9 +45,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.ExamDocument
-import com.zoonk.api.models.PlanOperation
-import com.zoonk.api.models.PlanOperationOneOf13
-import com.zoonk.api.models.PlanOperationOneOf7
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
 import com.zoonk.api.models.SyllabusSubject
@@ -77,7 +76,7 @@ fun SubjectScreen(
         goalId = goal.id,
         subjectKey = route.subjectKey,
         syllabus = app.plans.syllabus[goal.id],
-        store = app.goalContent,
+        plans = app.plans,
         navigator = navigator,
         menu = { ReportProblemMenu(app, FeedbackTarget(screen = "subject")) },
         ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
@@ -89,7 +88,7 @@ internal fun SubjectContent(
     goalId: UUID,
     subjectKey: String,
     syllabus: Resource<Syllabus>,
-    store: GoalContentStore,
+    plans: PlanStore,
     navigator: AppNavigator,
     menu: @Composable () -> Unit = {},
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
@@ -104,7 +103,7 @@ internal fun SubjectContent(
             if (subject == null) {
                 PageScaffold(onBack = back) { PageNotFound(navigator, it) }
             } else {
-                val writes = viewModel(key = "subject-$goalId") { SubjectViewModel(store, syllabus, goalId) }
+                val writes = viewModel(key = "subject-$goalId") { SubjectViewModel(plans, syllabus, goalId) }
                 SubjectPage(
                     syllabus = shown.value,
                     subject = subject,
@@ -162,7 +161,7 @@ internal data class SubjectWrites(
 
 /** The plan changes a subject's page makes, shown until the syllabus read after them lands. */
 internal class SubjectViewModel(
-    private val store: GoalContentStore,
+    private val plans: PlanStore,
     private val syllabus: Resource<Syllabus>,
     private val goalId: UUID,
 ) : ViewModel() {
@@ -173,7 +172,7 @@ internal class SubjectViewModel(
         if (writes.value.restoring) return
         writes.update { it.copy(restoring = true, restoreFailed = false) }
         viewModelScope.launch {
-            val result = change(PlanOperation.PlanOperationOneOf7Value(PlanOperationOneOf7(areas, PlanOperationOneOf7.Kind.RESTORE_AREAS)))
+            val result = change(PlanOp.RestoreAreas(areas))
             writes.update { it.copy(restoring = false, restoreFailed = result is MutationResult.Failed) }
         }
     }
@@ -182,15 +181,13 @@ internal class SubjectViewModel(
         if (writes.value.tappedCadence != null) return
         writes.update { it.copy(tappedCadence = cadence, cadenceFailed = false) }
         viewModelScope.launch {
-            val operation =
-                PlanOperationOneOf13(PlanOperationOneOf13.Cadence.valueOf(cadence.name), PlanOperationOneOf13.Kind.SET_WRITTEN_CADENCE)
-            val result = change(PlanOperation.PlanOperationOneOf13Value(operation))
+            val result = change(PlanOp.WrittenCadence(cadence.value))
             writes.update { it.copy(tappedCadence = null, cadenceFailed = result is MutationResult.Failed) }
         }
     }
 
-    private suspend fun change(operation: PlanOperation): MutationResult<*> {
-        val result = store.changePlan(goalId, listOf(operation))
+    private suspend fun change(operation: PlanOp): MutationResult<*> {
+        val result = plans.change(goalId, listOf(operation))
         if (result is MutationResult.Done) syllabus.refresh()
         return result
     }

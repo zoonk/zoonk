@@ -12,14 +12,13 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.plan.FakePlanApi
+import com.zoonk.android.feature.plan.PlanOp
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.models.PlanOperation
-import com.zoonk.api.models.PlanOperationOneOf13
-import com.zoonk.api.models.PlanOperationOneOf7
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -46,14 +45,15 @@ class GoalContentFlowTest {
             CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
         )
     private val store = GoalContentStore(api, cache, timeZone = { TimeZone.UTC })
-    private val plans = PlanStore(SyllabusPlanApi(), cache)
+    private val planApi = FakePlanApi()
+    private val plans = PlanStore(SyllabusPlanApi(planApi), cache)
     private lateinit var navigator: AppNavigator
 
     private fun showSubject(key: String) {
         rule.setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                SubjectContent(goalId, key, plans.syllabus[goalId], store, navigator)
+                SubjectContent(goalId, key, plans.syllabus[goalId], plans, navigator)
             }
         }
     }
@@ -124,8 +124,7 @@ class GoalContentFlowTest {
         rule.onNodeWithText("Bring it back").performClick()
         rule.waitForIdle()
 
-        val restore = PlanOperation.PlanOperationOneOf7Value(PlanOperationOneOf7(listOf("Spanish"), PlanOperationOneOf7.Kind.RESTORE_AREAS))
-        assertEquals(listOf(restore), api.changes.single().operations)
+        assertEquals(listOf<PlanOp>(PlanOp.RestoreAreas(listOf("Spanish"))), planApi.changes.single())
     }
 
     @Test
@@ -136,11 +135,7 @@ class GoalContentFlowTest {
         rule.onNodeWithText("Every other week").performClick()
         rule.waitForIdle()
 
-        val cadence =
-            PlanOperation.PlanOperationOneOf13Value(
-                PlanOperationOneOf13(PlanOperationOneOf13.Cadence.BIWEEKLY, PlanOperationOneOf13.Kind.SET_WRITTEN_CADENCE),
-            )
-        assertEquals(listOf(cadence), api.changes.single().operations)
+        assertEquals(listOf<PlanOp>(PlanOp.WrittenCadence("biweekly")), planApi.changes.single())
     }
 
     @Test

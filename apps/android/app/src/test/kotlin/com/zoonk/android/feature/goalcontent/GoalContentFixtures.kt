@@ -7,8 +7,6 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.GoalChapter
-import com.zoonk.api.models.PlanChangeInput
-import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.Syllabus
 import java.util.UUID
 
@@ -203,7 +201,6 @@ internal class FakeGoalContentApi : GoalContentApi {
     var chapters = 0
     var practice: () -> AreaPractice = { practiceBlock("practice") }
     val practiced = mutableListOf<AreaPracticeInput>()
-    val changes = mutableListOf<PlanChangeInput>()
 
     override suspend fun chapter(
         session: AuthenticatedSession,
@@ -220,15 +217,6 @@ internal class FakeGoalContentApi : GoalContentApi {
     ): AreaPractice {
         practiced += input
         return practice()
-    }
-
-    override suspend fun changePlan(
-        session: AuthenticatedSession,
-        goalId: UUID,
-        input: PlanChangeInput,
-    ): PlanChangeResult {
-        changes += input
-        return ApiJson.decodeFromString("""{"change":null,"status":"applied"}""")
     }
 }
 

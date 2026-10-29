@@ -14,10 +14,7 @@ import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.Plan
-import com.zoonk.api.models.PlanChangeInput
 import com.zoonk.api.models.PlanChangeResult
-import com.zoonk.api.models.PlanOperation
-import com.zoonk.api.models.PlanOperationOneOf7
 import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -104,29 +101,6 @@ class GoalContentStoreTest {
             advanceUntilIdle()
 
             assertEquals(2, api.chapters)
-            shown.cancel()
-        }
-
-    @Test
-    fun aPlanChangeSendsTheDevicesTimeZoneAndReadsTheSyllabusAgain() =
-        runTest {
-            val api = FakeGoalContentApi()
-            val planApi = SyllabusPlanApi()
-            val (store, plans) = stores(api, planApi)
-            val syllabus = plans.syllabus[key.goalId]
-            val shown = launch { syllabus.shown.collect {} }
-            advanceUntilIdle()
-
-            val restore =
-                PlanOperation.PlanOperationOneOf7Value(
-                    PlanOperationOneOf7(listOf("Spanish"), PlanOperationOneOf7.Kind.RESTORE_AREAS),
-                )
-            val result = store.changePlan(key.goalId, listOf(restore))
-            advanceUntilIdle()
-
-            assertEquals(true, result is MutationResult.Done)
-            assertEquals(PlanChangeInput(operations = listOf(restore), timeZone = "America/Sao_Paulo"), api.changes.single())
-            assertEquals(2, planApi.syllabi)
             shown.cancel()
         }
 
