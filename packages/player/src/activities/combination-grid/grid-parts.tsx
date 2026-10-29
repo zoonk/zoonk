@@ -53,7 +53,7 @@ export function Trait({
         aria-hidden="true"
         className={cn(
           "size-2 shrink-0 rounded-full",
-          isDominant ? "bg-viz-accent" : "ring-muted-foreground ring-1 ring-inset",
+          isDominant ? "bg-foreground" : "ring-muted-foreground ring-1 ring-inset",
         )}
       />
       {isDominant ? traits.dominant : traits.recessive}
