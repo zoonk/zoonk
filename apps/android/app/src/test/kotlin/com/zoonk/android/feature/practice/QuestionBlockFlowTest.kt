@@ -47,77 +47,21 @@ class QuestionBlockFlowTest {
     @get:Rule
     val rule = createAndroidComposeRule<ComponentActivity>()
 
-    private val detail: StudyBlockDetail =
-        ApiJson.decodeFromJsonElement(
-            JsonObject(
-                mapOf(
-                    "block" to fixture("study-block", "id" to BLOCK, "status" to "active", "kind" to "practice"),
-                    "hints" to JsonPrimitive(true),
-                    "questions" to
-                        JsonArray(
-                            listOf(
-                                fixture(
-                                    "checkpoint-question",
-                                    "itemId" to FIRST,
-                                    "question" to "Which is a planet?",
-                                    "options" to JsonArray(listOf(JsonPrimitive("Mars"), JsonPrimitive("Moon"))),
-                                ),
-                                fixture(
-                                    "checkpoint-question",
-                                    "itemId" to SECOND,
-                                    "question" to "Which is a star?",
-                                    "options" to JsonArray(listOf(JsonPrimitive("Sun"), JsonPrimitive("Venus"))),
-                                ),
-                            ),
-                        ),
-                    "trueFalseLabels" to JsonPrimitive("trueFalse"),
-                ),
-            ),
-        )
-
     private fun show() {
         val cache =
             AppCache(
                 FakeSession(AuthenticatedSession(ANA, "token", "local")),
                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
             )
-        val api =
-            object : QuestionBlockApi {
-                override suspend fun block(
-                    session: AuthenticatedSession,
-                    key: BlockKey,
-                ) = detail
-
-                override suspend fun answer(
-                    session: AuthenticatedSession,
-                    key: BlockKey,
-                    input: StudyAnswerInput,
-                ): StudyAnswerFeedback =
-                    ApiJson.decodeFromString(
-                        StudyAnswerFeedback.serializer(),
-                        """{"blank":false,"correctAnswer":{"selectedIndex":0},"explanation":"Mars orbits the Sun.","hyperdrive":{"level":1,"streak":1},
-                        |"isCorrect":true,"mistakeFixed":false,"pauseSuggested":false,"reinforcementLessons":null,"savedToNotebook":false,
-                        |"transcript":null,"trap":null,"workedSteps":[]}
-                        """.trimMargin(),
-                    )
-
-                override suspend fun finish(
-                    session: AuthenticatedSession,
-                    key: BlockKey,
-                    timeZone: String,
-                ): StudyBlockCompletion = error("Not used")
-
-                override suspend fun stop(
-                    session: AuthenticatedSession,
-                    sessionId: UUID,
-                    timeZone: String,
-                ): StudySessionSummary = error("Not used")
-            }
-        val viewModel =
-            QuestionBlockViewModel(BlockKey(UUID.fromString(SESSION), UUID.fromString(BLOCK)), QuestionBlockStore(api, cache) { "UTC" })
-        runBlocking { viewModel.block.load() }
-        val read = viewModel.questions((viewModel.block.state.value as LoadState.Loaded).value)
-        viewModel.begin(read.questions)
+        val detail =
+            blockDetail(
+                listOf(
+                    blockQuestion(FIRST, "question" to "Which is a planet?", "options" to strings("Mars", "Moon")),
+                    blockQuestion(SECOND, "question" to "Which is a star?", "options" to strings("Sun", "Venus")),
+                ),
+            )
+        val viewModel = practiceViewModel(cache, detail) { studyFeedback(isCorrect = true, explanation = "Mars orbits the Sun.") }
+        val read = viewModel.started()
 
         rule.setContent {
             ZoonkTheme {
@@ -147,8 +91,6 @@ class QuestionBlockFlowTest {
     }
 
     private companion object {
-        const val SESSION = "1b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
-        const val BLOCK = "2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
         const val FIRST = "3b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
         const val SECOND = "4b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"
     }

@@ -158,12 +158,9 @@ internal fun Runner(
         title = { Text(title, maxLines = 1) },
         actions = { reportTarget(question, run)?.let { ReportProblemMenu(app, it) } },
         bottomBar =
-            if (run.phase ==
-                BlockPhase.Finishing
-            ) {
-                null
-            } else {
-                ({ BlockActions(read, run, question, draft, viewModel, app, navigator) })
+            when (run.phase) {
+                BlockPhase.Finishing -> null
+                else -> ({ ActionBarWidth { BlockActions(read, run, question, draft, viewModel, app, navigator) } })
             },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {

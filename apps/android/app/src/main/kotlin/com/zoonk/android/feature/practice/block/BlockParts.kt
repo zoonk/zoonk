@@ -2,13 +2,16 @@ package com.zoonk.android.feature.practice.block
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
@@ -220,13 +223,21 @@ internal fun ActionColumn(content: @Composable ColumnScope.() -> Unit) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp), content = content)
 }
 
-/** The main action fills the row; another (not sure, ask the buddy) sits at its start. */
+/**
+ * The main action fills the row; another (not sure, ask the buddy) sits at its start, and the main
+ * action takes a line of its own when both don't fit, as at a large font.
+ */
 @Composable
 internal fun ActionRow(
     ask: @Composable () -> Unit,
     content: @Composable RowScope.() -> Unit,
 ) {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+    FlowRow(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        itemVerticalAlignment = Alignment.CenterVertically,
+    ) {
         ask()
         Row(
             Modifier.weight(1f),
@@ -236,6 +247,16 @@ internal fun ActionRow(
         )
     }
 }
+
+/** The task's actions stay as wide as its questions on a wide window. */
+@Composable
+internal fun ActionBarWidth(content: @Composable () -> Unit) {
+    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Box(Modifier.widthIn(max = ACTIONS_WIDTH).fillMaxWidth()) { content() }
+    }
+}
+
+private val ACTIONS_WIDTH = 640.dp
 
 @Composable
 private fun Note(
