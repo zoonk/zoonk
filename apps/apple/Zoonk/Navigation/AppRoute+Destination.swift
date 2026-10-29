@@ -105,7 +105,7 @@ extension AppTab {
     case .today:
       TodayScreen()
     case .plan:
-      ShellGate(requirement: .goal, title: title) {
+      ShellGate(requirement: .goal, title: title, startsGoalHere: true) {
         PlanScreen()
       }
     case .buddy:
