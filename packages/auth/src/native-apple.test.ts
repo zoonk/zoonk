@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { createGoal } from "./guests/_test-utils/learner-data";
 import { reauthorizeAppleForAccountDeletion, signInWithNativeApple } from "./native-apple";
 
 const APPLE_ISSUER = "https://appleid.apple.com";
@@ -326,14 +327,17 @@ describe(signInWithNativeApple, () => {
     },
   );
 
-  it("undoes the sign-in when the guest's progress can't move to the new account", async () => {
+  it("keeps the new account when the guest can't move, since another sign-in may already use it", async () => {
     const subject = `apple-${randomUUID()}`;
     const user = await createTestUser();
 
-    const [account, sessionResponse] = await Promise.all([
+    const [account, sessionResponse, otherSignIn] = await Promise.all([
       createAppleAccount({ subject, userId: user.id }),
       createSessionResponse({ userId: user.id }),
+      createSessionResponse({ userId: user.id }),
     ]);
+
+    const otherGuestGoal = await createGoal(user.id);
 
     verifySubject(subject);
     mocks.linkGuest.mockRejectedValue(new Error("Guest link failed"));
@@ -351,13 +355,18 @@ describe(signInWithNativeApple, () => {
       userId: user.id,
     });
 
-    await expect(prisma.user.findUnique({ where: { id: user.id } })).resolves.toBeNull();
+    const [ownSession, otherSession, keptAccount, keptGoal] = await Promise.all([
+      prisma.session.findUnique({ where: { token: sessionResponse.token } }),
+      prisma.session.findUnique({ where: { token: otherSignIn.token } }),
+      prisma.account.findUnique({ where: { id: account.id } }),
+      prisma.goal.findUnique({ where: { id: otherGuestGoal.id } }),
+    ]);
 
-    expect(mocks.revokeToken).toHaveBeenCalledExactlyOnceWith({
-      clientIdentifier: "com.zoonk.dev",
-      token: authorization.refreshToken,
-      tokenType: "refresh_token",
-    });
+    expect(ownSession).toBeNull();
+    expect(otherSession?.userId).toBe(user.id);
+    expect(keptAccount?.refreshToken).toBe(authorization.refreshToken);
+    expect(keptGoal?.userId).toBe(user.id);
+    expect(mocks.revokeToken).not.toHaveBeenCalled();
   });
 });
 

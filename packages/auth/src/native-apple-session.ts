@@ -166,12 +166,7 @@ export function signInWithExistingAppleAccount(credentials: NativeAppleCredentia
   });
 }
 
-/**
- * Moves the progress of the guest whose bearer the sign-in carries to the
- * Apple account, as the main auth does for Google and email. It runs once the
- * sign-in can no longer roll back, since undoing a new account would delete
- * what moved; a failed move changes nothing (one transaction).
- */
+/** Call only once the sign-in can't roll back: deleting a new account would delete what moved. A failed move changes nothing. */
 export async function linkNativeAppleGuest({
   headers,
   userId,

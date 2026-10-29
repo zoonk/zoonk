@@ -243,17 +243,14 @@ async function requireExpectedAppleAccount({
   }
 }
 
-/** Saves the grant, then moves the carried guest's progress; cleans up both credentials if either fails. */
 async function persistAppleAuthorization({
   accountId,
   changes,
-  headers,
   session,
   verifiedAuthorization,
 }: {
   accountId: string;
   changes: NativeAppleAuthChanges;
-  headers: Headers;
   session: NativeAppleSession;
   verifiedAuthorization: VerifiedAppleAuthorization;
 }) {
@@ -269,8 +266,6 @@ async function persistAppleAuthorization({
       },
       where: { id: accountId },
     });
-
-    await linkNativeAppleGuest({ headers, userId: session.user.id });
   } catch (error) {
     return throwAfterSessionCleanup({
       ...verifiedAuthorization,
@@ -299,9 +294,15 @@ export async function signInWithNativeApple(request: NativeAppleSessionRequest) 
   await persistAppleAuthorization({
     accountId: account.id,
     changes,
-    headers,
     session,
     verifiedAuthorization,
+  });
+
+  // Once its grant is saved the account is published and another sign-in may already use it, so a
+  // guest that can't move takes back only this request's session; the guest keeps its progress.
+  await linkNativeAppleGuest({ headers, userId: session.user.id }).catch(async (error: unknown) => {
+    await prisma.session.deleteMany({ where: { token: session.token } });
+    throw error;
   });
 
   return session;
