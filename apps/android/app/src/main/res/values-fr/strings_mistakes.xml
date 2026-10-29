@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mistakes_nothing_description": "e0344aed0e2afcd45c5f4b043a27c7978a4728e428fb5b553aeefbe11037cc25",
+  "mistakes_nothing_title": "45677c5241a8ca5e81c0ba0b5d65a062945450a1a24b1ebe53687b1f80f45402",
+  "mistakes_practice_comes_back": "97bce53e32a718b32ad6297bec2fec984d0349cf4ab7fdadf2d1ade16800ee43",
+  "mistakes_practice_end": "ef0e63e0a3c1f6f31d1ea78d2462ecc00384de699e0c8bb70a42c99577fb7f69",
+  "mistakes_practice_fixed": "e0f314d230b3f882629fdb7a2ea0e87b35222b5527dd8e0fdb7eec6186477358",
+  "mistakes_practice_title": "a27e7a5bdf209c6051f70354fff42b48125b921c13212616eed5d33cc0e3cd95"
+}
+-->
+<resources>
+    <string name="mistakes_practice_title">Réviser tes erreurs</string>
+    <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
+    <string name="mistakes_practice_end">Termine la révision. Tes réponses sont prises en compte.</string>
+    <string name="mistakes_practice_comes_back">Le reste reviendra un autre jour, quand tu le retiendras mieux.</string>
+    <plurals name="mistakes_practice_fixed">
+        <item quantity="one">%d erreur corrigée</item>
+        <item quantity="many">%d erreurs corrigées</item>
+        <item quantity="other">%d erreurs corrigées</item>
+    </plurals>
+    <string name="mistakes_nothing_title">Rien à réviser pour l’instant</string>
+    <string name="mistakes_nothing_description">Les erreurs reviennent pour être révisées à partir du lendemain.</string>
+</resources>

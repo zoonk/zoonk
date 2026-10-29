@@ -1,0 +1,11 @@
+{
+  "answerId": "8b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+  "correctAnswer": { "selectedIndex": 0 },
+  "explanation": null,
+  "fixed": false,
+  "fixedMistakeIds": [],
+  "isCorrect": true,
+  "mistakeStatus": "open",
+  "reached": { "energy": null, "level": null },
+  "trap": null
+}

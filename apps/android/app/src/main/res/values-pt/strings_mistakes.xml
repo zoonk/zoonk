@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mistakes_nothing_description": "9a49600552e8354c7712fa629ac73199d5c5b1657d9024ace1fda749906f4721",
+  "mistakes_nothing_title": "7848741fa5472d906066f541068c18833d273f0b932ce5ef8a78d5cd6f9062fb",
+  "mistakes_practice_comes_back": "ad87f80974e54993a67c6f4e147a77e4f38419b04a0809004cc785c61480fc95",
+  "mistakes_practice_end": "1f9b1a2594a43ac48afe6465395f913019da2888b19888f372d17796e33cf4e7",
+  "mistakes_practice_fixed": "3d59de796bc533f20670d215f8e1b32b447077afda622482e249b5cdc23fb339",
+  "mistakes_practice_title": "5744d6900917a3f7691f536856253acf2d7b181e7bc97271c40b62bc0074463c"
+}
+-->
+<resources>
+    <string name="mistakes_practice_title">Praticar o que você errou</string>
+    <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
+    <string name="mistakes_practice_end">Encerrar prática. O que você respondeu já conta.</string>
+    <string name="mistakes_practice_comes_back">O restante volta outro dia, quando você tiver mais chance de fixar.</string>
+    <plurals name="mistakes_practice_fixed">
+        <item quantity="one">%d erro corrigido</item>
+        <item quantity="many">%d erros corrigidos</item>
+        <item quantity="other">%d erros corrigidos</item>
+    </plurals>
+    <string name="mistakes_nothing_title">Nada para praticar ainda</string>
+    <string name="mistakes_nothing_description">Os erros voltam para você praticar a partir do dia seguinte ao que cometeu cada um.</string>
+</resources>

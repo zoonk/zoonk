@@ -12,5 +12,5 @@ fun EntryProviderScope<NavKey>.mistakesEntries(
     navigator: AppNavigator,
 ) {
     entry<AppRoute.Mistakes> { RoutePlaceholder(it, app, navigator) }
-    entry<AppRoute.MistakePractice> { RoutePlaceholder(it, app, navigator) }
+    entry<AppRoute.MistakePractice> { MistakePracticeScreen(it, app, navigator) }
 }

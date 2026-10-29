@@ -46,6 +46,8 @@ import com.zoonk.android.feature.livecall.OngoingCalls
 import com.zoonk.android.feature.livecall.WebRtcLiveCallTransport
 import com.zoonk.android.feature.memory.LiveMemoryApi
 import com.zoonk.android.feature.memory.MemoryStore
+import com.zoonk.android.feature.mistakes.LiveMistakesApi
+import com.zoonk.android.feature.mistakes.MistakesStore
 import com.zoonk.android.feature.mock.LiveMockApi
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.LiveOnboardingApi
@@ -216,6 +218,7 @@ class AppContainer private constructor(
 
     // Practice and checks (lane L6).
     val questionBlocks = QuestionBlockStore(LiveQuestionBlockApi(api), cache, timeZone)
+    val mistakes = MistakesStore(LiveMistakesApi(api), cache, timeZone)
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mistakes_practice_title">Practice mistakes</string>
+    <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
+    <string name="mistakes_practice_end">End practice. What you answered counts.</string>
+    <string name="mistakes_practice_comes_back">The rest come back another day, when they stick better.</string>
+    <plurals name="mistakes_practice_fixed">
+        <item quantity="one">%d mistake fixed</item>
+        <item quantity="other">%d mistakes fixed</item>
+    </plurals>
+    <string name="mistakes_nothing_title">Nothing to practice yet</string>
+    <string name="mistakes_nothing_description">Mistakes come back for practice from the day after you make them.</string>
+</resources>

@@ -1,0 +1,9 @@
+{
+  "brainPower": 12,
+  "ceremony": null,
+  "correct": 1,
+  "missionMoment": null,
+  "reached": { "energy": null, "level": null },
+  "seconds": 40,
+  "total": 2
+}
