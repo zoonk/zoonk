@@ -4,6 +4,7 @@ import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
 import { SUPPORTED_LOCALES } from "@zoonk/utils/locale";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
+import { availableParallelism } from "node:os";
 import createNextIntlPlugin from "next-intl/plugin";
 
 const CACHE_IMAGE_DAYS = 30;
@@ -48,6 +49,7 @@ const nextConfig: NextConfig = {
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
     authInterrupts: true,
+    cpus: availableParallelism(),
     exposeTestingApiInProductionBuild: isE2E,
     // The root layout sits under `[lang]`, so URLs no route matches need `app/global-not-found.tsx`.
     globalNotFound: true,
