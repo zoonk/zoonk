@@ -192,6 +192,17 @@ class AppNavigatorTest {
     }
 
     @Test
+    fun popToRootsKeepsTheTaskItIsAskedTo() {
+        navigator.open(AppRoute.Mistakes)
+        navigator.open(AppRoute.Mock("block-1"))
+        navigator.open(AppRoute.Login)
+        navigator.popToRoots(keeping = AppRoute.Login)
+
+        assertEquals(AppRoute.Login, navigator.currentRoute)
+        AppTab.entries.forEach { tab -> assertEquals(listOf(tab.root), stack(tab)) }
+    }
+
+    @Test
     fun onlyATabSwitchSkipsTheTransition() {
         navigator.select(AppTab.Plan)
         assertTrue(navigator.isSwitchingTabs)

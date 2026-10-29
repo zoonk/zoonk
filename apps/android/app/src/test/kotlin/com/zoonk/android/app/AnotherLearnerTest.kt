@@ -15,17 +15,31 @@ class AnotherLearnerTest {
         isGuest: Boolean = false,
     ) = SessionState.SignedIn(AuthenticatedSession(accountId, "token", "local"), account(accountId), isGuest)
 
+    private fun startsAnother(
+        vararg before: SessionState,
+        next: SessionState.SignedIn,
+    ): Boolean = before.fold(ShownLearner()) { shown, state -> shown.after(state) }.startsAnother(next)
+
     @Test
     fun onlyADifferentLearnerStartsFromTheRoots() {
         assertEquals(
-            listOf(false, false, true, false, true),
+            listOf(false, false, true, true, false, true),
             listOf(
-                startsAnotherLearner(null, false, signedIn(ANA)),
-                startsAnotherLearner(ANA, false, signedIn(ANA)),
-                startsAnotherLearner(ANA, false, signedIn(BIA)),
-                startsAnotherLearner(GUEST, true, signedIn(ANA)),
-                startsAnotherLearner(GUEST, true, signedIn(BIA, isGuest = true)),
+                startsAnother(next = signedIn(ANA)),
+                startsAnother(signedIn(ANA), next = signedIn(ANA)),
+                startsAnother(signedIn(ANA), next = signedIn(BIA)),
+                startsAnother(signedIn(ANA), SessionState.SignedOut(), next = signedIn(BIA)),
+                startsAnother(signedIn(GUEST, isGuest = true), next = signedIn(ANA)),
+                startsAnother(signedIn(GUEST, isGuest = true), next = signedIn(BIA, isGuest = true)),
             ),
+        )
+    }
+
+    @Test
+    fun aGuestWhoseSessionEndedBringsNothingIntoTheNextAccount() {
+        assertEquals(
+            true,
+            startsAnother(signedIn(GUEST, isGuest = true), SessionState.SignedOut(sessionEnded = true), next = signedIn(ANA)),
         )
     }
 }

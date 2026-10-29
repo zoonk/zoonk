@@ -179,9 +179,12 @@ class AppNavigator internal constructor(
         isSwitchingTabs = false
     }
 
-    /** Drops every page and task, for another learner or goal: what they showed belonged to the previous one. */
-    fun popToRoots() {
-        tasks.clear()
+    /**
+     * Drops every page and task, for another learner or goal: what they showed belonged to the
+     * previous one. [keeping] stays open, such as the sign-in still asking for the new learner's name.
+     */
+    fun popToRoots(keeping: AppRoute? = null) {
+        tasks.retainAll { it == keeping }
         AppTab.entries.forEach { tab -> popTo(stack(tab), size = 1) }
         isSwitchingTabs = false
     }

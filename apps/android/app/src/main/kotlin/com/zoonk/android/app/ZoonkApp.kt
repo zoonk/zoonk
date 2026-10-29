@@ -46,6 +46,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
@@ -129,19 +130,14 @@ fun ZoonkApp(
     val access = app.learnerAccess.collectAsStateWithLifecycle()
     val summary by app.learnerSummary.summary.collectShown()
     val entryProvider = remember(app, navigator) { gatedEntries(appEntries(app, navigator), access, app, navigator) }
-    val session =
-        app.sessions.state
-            .collectAsStateWithLifecycle()
-            .value as? SessionState.SignedIn
-    var shownAccountId by rememberSaveable { mutableStateOf<String?>(null) }
-    var shownGuest by rememberSaveable { mutableStateOf(false) }
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    var shown by rememberSaveable(stateSaver = ShownLearner.Saver) { mutableStateOf(ShownLearner()) }
 
     // As main reloads its tabs when someone signs in: another learner's screens aren't theirs.
-    LaunchedEffect(session?.session?.accountId) {
-        val learner = session ?: return@LaunchedEffect
-        if (startsAnotherLearner(shownAccountId, shownGuest, learner)) navigator.popToRoots()
-        shownAccountId = learner.session.accountId
-        shownGuest = learner.isGuest
+    LaunchedEffect(session) {
+        val current = session
+        if (current is SessionState.SignedIn && shown.startsAnother(current)) navigator.popToRoots(keeping = AppRoute.Login)
+        shown = shown.after(current)
     }
 
     LaunchedEffect(link) {
@@ -163,12 +159,27 @@ fun ZoonkApp(
     }
 }
 
-/** A guest who signs in brings their work into the account, so only that change keeps the screens open. */
-internal fun startsAnotherLearner(
-    shownAccountId: String?,
-    shownGuest: Boolean,
-    next: SessionState.SignedIn,
-): Boolean = shownAccountId != null && shownAccountId != next.session.accountId && !(shownGuest && !next.isGuest)
+/** The learner the window last showed, saved with it. */
+internal data class ShownLearner(
+    val accountId: String? = null,
+    val guest: Boolean = false,
+) {
+    /** A guest who signs in brings their work into the account, so only that change keeps the screens open. */
+    fun startsAnother(next: SessionState.SignedIn): Boolean =
+        accountId != null && accountId != next.session.accountId && !(guest && !next.isGuest)
+
+    /** A guest whose session ended brings nothing into the next account. */
+    fun after(state: SessionState): ShownLearner =
+        when (state) {
+            is SessionState.SignedIn -> ShownLearner(state.session.accountId, state.isGuest)
+            is SessionState.SignedOut -> copy(guest = false)
+            else -> this
+        }
+
+    companion object {
+        val Saver = listSaver<ShownLearner, Any?>({ listOf(it.accountId, it.guest) }, { ShownLearner(it[0] as String?, it[1] as Boolean) })
+    }
+}
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
