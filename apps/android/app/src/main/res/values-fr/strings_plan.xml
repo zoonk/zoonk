@@ -73,6 +73,8 @@
   "plan_change_keep_notice_date": "e5e3fbce7122350c498007de61c927daf17aa2a4ce9dbfe0ded12fba080e348e",
   "plan_change_keep_official_date": "0f14306dc0ad07f67733204fc9bc2018ad6541a6fee3624b81411d001f54cdb2",
   "plan_change_leaves_out": "07779c36bc4ea49547061dfd4715d38e174d1c79585837d3692e4036bafa7271",
+  "plan_change_left_out": "fb1b5907842cfd286b330267478c249d159476ec854bc0c03a95cab6c3715a01",
+  "plan_change_left_out_include": "11db844cc431dc1dc5d15fc0fdf73b2971011e22e6084c792dae9983a178ad5c",
   "plan_change_less_time_for": "2ed72483458b1b5448ccb2780549038cc3066b92c43482dca4be407d3ddb4ea8",
   "plan_change_light_week": "04cdb7adcdace6a4115a6ecda29562c433ec61beb6657eb3efc3471177bd89d5",
   "plan_change_likely_date": "9460ad21d84f395b75e5b4532fd0c7291e8869b9492c91582f40e5b571390c78",
@@ -949,6 +951,8 @@
         <item quantity="other">%1$s (à propos de %2$d)</item>
     </plurals>
     <string name="plan_change_unwritten">Leçons pas encore préparées : %1$s.</string>
+    <string name="plan_change_left_out">Leçons laissées de côté : %1$s.</string>
+    <string name="plan_change_left_out_include">Parmi les leçons laissées de côté : %1$s.</string>
     <plurals name="plan_change_adds">
         <item quantity="one">Ajoute %d leçon</item>
         <item quantity="many">Ajoute %d leçons</item>

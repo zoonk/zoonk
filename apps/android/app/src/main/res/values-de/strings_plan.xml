@@ -73,6 +73,8 @@
   "plan_change_keep_notice_date": "6b2a8956c8b06d0a3c6fdd0a1daeebe673d42bfa9c132745fb99282bc01e89ed",
   "plan_change_keep_official_date": "d933f173470a0c8e50a5ce7cbc5854c2e4c32b5b10bbefca23454555ca25e583",
   "plan_change_leaves_out": "3c0a3a5dddcf7cef4dd750551f3f13797d0890eed4efa01123351966ae6d1ff5",
+  "plan_change_left_out": "281f4b3d71e572b40eadee137056a233220c42c81b4700771277e2e9ec9fee86",
+  "plan_change_left_out_include": "38acc3b409271fc63f6db7968cdc896d60a889bf12b3f949bdc0438e7b076d41",
   "plan_change_less_time_for": "ddf2121b58bd0e7ad0f713d9a556ec40418e66efed93d8043956783482610f13",
   "plan_change_light_week": "a4105df6a24a744ea3977bd4d0393a249ebad10526c1d5f116497e9274375fd1",
   "plan_change_likely_date": "de6027517c81012076148c835be929a7670be1a4545cff8f8d8020cc741d6078",
@@ -888,6 +890,8 @@
         <item quantity="other">%1$s (zu %2$d)</item>
     </plurals>
     <string name="plan_change_unwritten">Noch nicht erstellte Lektionen: %1$s.</string>
+    <string name="plan_change_left_out">Ausgelassene Lektionen: %1$s.</string>
+    <string name="plan_change_left_out_include">Zu den ausgelassenen Lektionen gehören %1$s.</string>
     <plurals name="plan_change_adds">
         <item quantity="one">Fügt %d Lektion hinzu</item>
         <item quantity="other">Fügt %d Lektionen hinzu</item>

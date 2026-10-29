@@ -73,6 +73,8 @@
   "plan_change_keep_notice_date": "26402ffc422c50e6a5e05a32a3718a38ffecb5579dc1f9a566341580736577c8",
   "plan_change_keep_official_date": "26d7b80741906878c81c94f6438c765111714f4e6a05c60fab038b06d7c9f050",
   "plan_change_leaves_out": "fb03b78c0446e65dde12513e63a8d413f3401698a2c823cc1d4f915033cbf56a",
+  "plan_change_left_out": "ddc67a82cc76d5896162ce74f7ccd7c86b38518efd62d76ac863241961f0c004",
+  "plan_change_left_out_include": "fc378ee4ac303b9535c593687c09bd4b0e12d5eecd814a7ea1cb402fcbb8a2f1",
   "plan_change_less_time_for": "b44e343f82b3a39c26e47ea207b243f0e98570ece876533200886d4f45e38a69",
   "plan_change_light_week": "a95ac86a1d476fec6b44f8385852e86997b37a2740c09c3f8905981bba3d6261",
   "plan_change_likely_date": "9594ead618eb4e612e06b1abe80d6c19f7bf3fc23eb2abc7ad9a319f98b33794",
@@ -949,6 +951,8 @@
         <item quantity="other">%1$s (sobre %2$d)</item>
     </plurals>
     <string name="plan_change_unwritten">Lecciones aún sin preparar: %1$s.</string>
+    <string name="plan_change_left_out">Lecciones omitidas: %1$s.</string>
+    <string name="plan_change_left_out_include">Entre las lecciones omitidas están %1$s.</string>
     <plurals name="plan_change_adds">
         <item quantity="one">Añade %d lección</item>
         <item quantity="many">Añade %d lecciones</item>

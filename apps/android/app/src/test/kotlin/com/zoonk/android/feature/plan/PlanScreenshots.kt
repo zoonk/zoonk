@@ -90,6 +90,15 @@ class PlanScreenshots {
                         PreparationDetails(progress(), forExam = false, lessons = Standing.Progress(progress(), 13, 46), links = links)
                     },
                 "plan-sheet-phase-details" to { links -> PhaseDetails(page, page.plan.phases[1], links) },
+                "plan-change-diff" to
+                    { _ ->
+                        PlanEffectDiff(planChange(effect = effect(""""lessonsRemoved":3""")).effect)
+                        PlanEffectDiff(
+                            planChange(
+                                effect = effect(""""lessonsAdded":2,"endDateBefore":"2027-01-10","endDateAfter":"2027-01-20""""),
+                            ).effect,
+                        )
+                    },
             )
         var shown by mutableStateOf(sheets.keys.first())
         compose.setContent {

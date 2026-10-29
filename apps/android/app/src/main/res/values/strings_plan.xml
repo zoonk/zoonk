@@ -523,6 +523,8 @@
         <item quantity="other">%1$s (about %2$d)</item>
     </plurals>
     <string name="plan_change_unwritten">Lessons not written yet: %1$s.</string>
+    <string name="plan_change_left_out">Lessons left out: %1$s.</string>
+    <string name="plan_change_left_out_include">Lessons left out include %1$s.</string>
     <plurals name="plan_change_adds">
         <item quantity="one">Adds %d lesson</item>
         <item quantity="other">Adds %d lessons</item>

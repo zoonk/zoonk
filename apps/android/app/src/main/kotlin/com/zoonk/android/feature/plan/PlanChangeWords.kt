@@ -878,7 +878,23 @@ internal fun lessonsText(
             }.let {
                 if (it.isEmpty()) null else stringResource(R.string.plan_change_unwritten, joinList(it))
             }
-    if (named && names == null) return unwritten
+    if (named) {
+        // Beside a diff, which already counts them, only the names say more.
+        val left =
+            names?.let {
+                stringResource(
+                    if (someOf &&
+                        removed > 0
+                    ) {
+                        R.string.plan_change_left_out_include
+                    } else {
+                        R.string.plan_change_left_out
+                    },
+                    it,
+                )
+            }
+        return listOfNotNull(left, unwritten).joinToString(" ").ifEmpty { null }
+    }
 
     val counts = lessonCounts(added, about, removed, names, someOf, byDate)
     // Counts net skill by skill, so a lesson swapped within its skill still needs its name.

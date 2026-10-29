@@ -102,6 +102,20 @@ class PlanChangeWordsTest {
     }
 
     @Test
+    fun besideADiffTheLessonsLeftOutAreNamedWithoutTheirCount() {
+        val named = effect(""""lessonsAdded":2,"lessonsRemoved":3,"lessonsLeftOut":["Sets","Tuples","Loops"]""")
+        val examples = effect(""""lessonsRemoved":5,"lessonsLeftOut":["Sets","Tuples","Loops","Maps"]""")
+
+        assertEquals(
+            listOf("Lessons left out: Sets, Tuples, and Loops.", "Lessons left out include Sets, Tuples, and Loops."),
+            words(
+                { planChangeFootnote(planChange(effect = named).effect) },
+                { lessonsText(planChange(effect = examples).effect, named = true) },
+            ),
+        )
+    }
+
+    @Test
     fun appliedLinesSayWhenTodaysSessionTakesIt() {
         val change = planChange(extra = """"todaySession":"unchanged"""")
 
@@ -126,11 +140,11 @@ class PlanChangeWordsTest {
     }
 
     @Test
-    fun theDiffShowsNowAndAfterTheChange() {
+    fun theDiffShowsNowAndAfterTheChangeExceptOnItsLessonLines() {
         val change = planChange(effect = effect(""""lessonsAdded":2,"endDateBefore":"2027-01-10","endDateAfter":"2027-01-20""""))
         compose.setContent { ZoonkTheme { PlanEffectDiff(change.effect, goalDate = GoalDateMove(LocalDate.of(2027, 2, 1), null)) } }
 
-        compose.onNodeWithContentDescription("After the change: Adds 2 lessons").assertExists()
+        compose.onNodeWithContentDescription("Adds 2 lessons").assertExists()
         compose.onNodeWithContentDescription("Now: Plan ends January${NBSP}10,${NBSP}2027").assertExists()
         compose.onNodeWithContentDescription("After the change: Plan ends January${NBSP}20,${NBSP}2027").assertExists()
     }

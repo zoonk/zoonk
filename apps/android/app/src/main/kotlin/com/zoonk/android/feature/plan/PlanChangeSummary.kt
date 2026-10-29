@@ -32,6 +32,7 @@ import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanEffect
 import com.zoonk.api.models.PlanEffectWeeklyEvents
@@ -122,18 +123,17 @@ fun PlanEffectDiff(
             modifier
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.medium)
-                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium)
-                .padding(vertical = 4.dp),
+                .border(1.dp, MaterialTheme.colorScheme.outlineVariant, MaterialTheme.shapes.medium),
     ) {
         lines.forEach { line ->
             val (container, content) = line.colors()
-            val spoken = "${if (line.added) after else now}: ${line.text}"
+            val spoken = if (line.prefixed) "${if (line.added) after else now}: ${line.text}" else line.text
             Row(
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .background(container)
-                        .padding(horizontal = 12.dp, vertical = 1.dp)
+                        .padding(horizontal = 12.dp, vertical = 3.dp)
                         .clearAndSetSemantics { contentDescription = spoken },
             ) {
                 val style = MaterialTheme.typography.bodySmall.withTabularFigures()
@@ -151,10 +151,12 @@ fun PlanEffectDiff(
 
 private enum class Tone { Good, Bad, Neutral }
 
+/** A lesson line says its own when ("Leaves out", "Adds"), so TalkBack reads it without "Now" or "After". */
 private class DiffLine(
     val added: Boolean,
     val text: String,
     val tone: Tone,
+    val prefixed: Boolean = true,
 )
 
 @Composable
@@ -162,7 +164,10 @@ private fun DiffLine.colors(): Pair<Color, Color> {
     val colors = MaterialTheme.colorScheme
     return when (tone) {
         Tone.Good -> colors.tertiaryContainer to colors.onTertiaryContainer
-        Tone.Bad -> colors.errorContainer to colors.onErrorContainer
+
+        // Pink means wrong; lessons left out are news to notice, so they take the warning's soft amber.
+        Tone.Bad -> MaterialTheme.zoonk.warning.copy(alpha = WARNING_TINT) to MaterialTheme.zoonk.warningText
+
         Tone.Neutral -> Color.Transparent to if (added) colors.onSurface else colors.onSurfaceVariant
     }
 }
@@ -263,6 +268,7 @@ private fun lessonLines(
                         pluralStringResource(R.plurals.plan_change_fewer_lessons, removed, removed)
                     },
                 tone = if (byDate) Tone.Bad else Tone.Good,
+                prefixed = false,
             )
         } else {
             null
@@ -278,6 +284,7 @@ private fun lessonLines(
                         else -> pluralStringResource(R.plurals.plan_change_more_lessons, added, added)
                     },
                 tone = if (byDate) Tone.Good else Tone.Neutral,
+                prefixed = false,
             )
         } else {
             null
@@ -293,3 +300,5 @@ private fun diffDate(
 ): String = formatDate(date, currentLocale(), style).replace(' ', NO_BREAK_SPACE)
 
 private const val NO_BREAK_SPACE = '\u00A0'
+
+private const val WARNING_TINT = 0.12f

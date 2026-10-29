@@ -73,6 +73,8 @@
   "plan_change_keep_notice_date": "9c1bf7d56e464ad897477d89197eae1abef0c549aa85b3c8afe5775fe4aab2e4",
   "plan_change_keep_official_date": "9dedb171c302f00888f4ce822d15707ca0353074db94d1a1f51adc8a9ea33f9c",
   "plan_change_leaves_out": "df476e4a1390d5fbed16434cd342f9dce4a57a1612f9f316d8847ce59363f416",
+  "plan_change_left_out": "3c0427d39f9617ce9508397d001e903520185d7b1ded990b54bf78c8b8c91816",
+  "plan_change_left_out_include": "3d76d2baa605722d71e85a65b6c7d6393b473d042afa90e0a33f9284d9c64df5",
   "plan_change_less_time_for": "beb53f5878b2ed9d7042af0530d24b2c78681e901d6a22e7e1ed94fe48eb8dd2",
   "plan_change_light_week": "b830e853e73b648e598f13d4bbfe93dff67c75c52655931e505827cc3e52251d",
   "plan_change_likely_date": "e18ae3fb887ba24ab2efbeb8ec05331b899e875134acda7f516e1729395cf991",
@@ -949,6 +951,8 @@
         <item quantity="other">%1$s (sobre %2$d)</item>
     </plurals>
     <string name="plan_change_unwritten">Aulas ainda não criadas: %1$s.</string>
+    <string name="plan_change_left_out">Aulas que ficaram de fora: %1$s.</string>
+    <string name="plan_change_left_out_include">Entre as aulas que ficaram de fora estão %1$s.</string>
     <plurals name="plan_change_adds">
         <item quantity="one">Adiciona %d aula</item>
         <item quantity="many">Adiciona %d aulas</item>
