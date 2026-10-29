@@ -25,6 +25,7 @@ private class SentAnswer(
 internal class PlacementViewModel(
     private val goalId: String,
     private val store: OnboardingStore,
+    private val drafts: SetupDrafts?,
     handle: SavedStateHandle,
 ) : ViewModel() {
     private var savedStarted by handle.saved { false }
@@ -108,6 +109,7 @@ internal class PlacementViewModel(
                 is WriteOutcome.Done -> {
                     shown = shown.copy(answered = maxOf(shown.answered, answer.question.number))
                     sent = null
+                    drafts?.words(goalId, typedDraftStep(answer.question.item.itemId))?.remove()
                 }
 
                 WriteOutcome.Obsolete -> {}
@@ -120,3 +122,5 @@ internal class PlacementViewModel(
         }
     }
 }
+
+internal fun typedDraftStep(itemId: String) = "placement.$itemId"

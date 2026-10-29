@@ -80,7 +80,10 @@ fun GoalSetupScreen(
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = session as? SessionState.SignedIn
-    CompositionLocalProvider(LocalPrivatePictures provides PrivatePictures(app.images, signedIn?.session)) {
+    CompositionLocalProvider(
+        LocalPrivatePictures provides PrivatePictures(app.images, signedIn?.session),
+        LocalSetupDrafts provides signedIn?.session?.let { SetupDrafts(app.drafts, it) },
+    ) {
         GoalSetupScreen(route, app.onboarding, isGuest = signedIn?.isGuest == true, navigator)
     }
 }
@@ -92,7 +95,8 @@ fun GoalSetupScreen(
     isGuest: Boolean,
     navigator: AppNavigator,
 ) {
-    val vm = viewModel { GoalSetupViewModel(store, createSavedStateHandle(), route.goalId) }
+    val drafts = LocalSetupDrafts.current
+    val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId) }
     val state by store.onboardings[vm.goalId].collectShown()
     val view = (state as? LoadState.Loaded)?.value
     val step = vm.flow.current
@@ -214,11 +218,16 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.ROLE -> {
-            RoleStep(careerChange = view.goal.details.text("purpose") == "careerChange", pending, vm::answer)
+            RoleStep(
+                careerChange = view.goal.details.text("purpose") == "careerChange",
+                pending,
+                rememberUnsentWords(vm.goalId, step.value, count = 2),
+                vm::answer,
+            )
         }
 
         OnboardingStep.REASON -> {
-            TextStep(TextQuestion.Reason, subject, pending, vm::answer)
+            TextStep(TextQuestion.Reason, subject, pending, rememberUnsentWords(vm.goalId, step.value, count = 1), vm::answer)
         }
 
         OnboardingStep.TARGET -> {
@@ -230,6 +239,7 @@ private fun ColumnScope.QuestionStep(
                 },
                 subject,
                 pending,
+                rememberUnsentWords(vm.goalId, step.value, count = 1),
                 vm::answer,
             )
         }
@@ -239,7 +249,7 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.FOLLOW_UPS -> {
-            FollowUpsStep(view.followUps, pending, vm::answer)
+            FollowUpsStep(view.followUps, pending, rememberUnsentWords(vm.goalId, step.value, count = view.followUps.size), vm::answer)
         }
 
         OnboardingStep.EXAM_CHOICE -> {

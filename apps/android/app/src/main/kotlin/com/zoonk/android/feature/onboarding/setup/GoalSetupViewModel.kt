@@ -47,6 +47,7 @@ data class SetupFlow(
 /** Each answer is a POST from the learner's tap; its reply is the goal's whole new setup. */
 internal class GoalSetupViewModel(
     private val store: OnboardingStore,
+    private val drafts: SetupDrafts?,
     handle: SavedStateHandle,
     goalId: String,
 ) : ViewModel() {
@@ -106,9 +107,11 @@ internal class GoalSetupViewModel(
         if (isSaving) return
         isSaving = true
         saveFailed = false
+        val answeredGoal = goalId
         viewModelScope.launch {
             when (val outcome = store.answer(goalId, input)) {
                 is WriteOutcome.Done -> {
+                    drafts?.words(answeredGoal, step.value)?.remove()
                     applyAnswer(step, outcome.value)
                 }
 

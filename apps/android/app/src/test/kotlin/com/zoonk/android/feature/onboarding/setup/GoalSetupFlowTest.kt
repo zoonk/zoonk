@@ -1,5 +1,10 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
@@ -14,6 +19,8 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.DraftStore
+import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.feature.onboarding.EXAM_GOAL_ID
@@ -30,14 +37,18 @@ import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.runBlocking
 import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import kotlin.time.Duration
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
@@ -48,13 +59,24 @@ class GoalSetupFlowTest {
     private val api = FakeOnboardingApi()
     private lateinit var navigator: AppNavigator
 
-    private fun show(goalId: String = GOAL_ID) {
-        val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+    @get:Rule
+    val folder = TemporaryFolder()
+
+    private val ana = AuthenticatedSession("ana", "token-a", "local-a")
+    private var screen by mutableIntStateOf(0)
+
+    private fun show(
+        goalId: String = GOAL_ID,
+        drafts: SetupDrafts? = null,
+    ) {
+        val session = FakeSession(ana)
         val store = OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
         rule.setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                GoalSetupScreen(AppRoute.GoalSetup(goalId), store, isGuest = false, navigator)
+                CompositionLocalProvider(LocalSetupDrafts provides drafts) {
+                    key(screen) { GoalSetupScreen(AppRoute.GoalSetup(goalId), store, isGuest = false, navigator) }
+                }
             }
         }
     }
@@ -184,5 +206,27 @@ class GoalSetupFlowTest {
         rule.onNodeWithText("data analyst").assertIsDisplayed()
         rule.onNodeWithText("What you do now").assertIsDisplayed()
         rule.onNodeWithText("teacher").assertIsDisplayed()
+    }
+
+    @Test
+    fun unsentWordsComeBackWhenTheScreenIsRebuiltAndGoOnceTheAnswerSaves() {
+        val draftStore =
+            DraftStore(folder.newFolder(), CoroutineScope(SupervisorJob() + Dispatchers.IO), debounce = Duration.ZERO)
+        runBlocking { draftStore.follow { DraftsChange(next = ana.accountId) } }
+        val drafts = SetupDrafts(draftStore, ana)
+        api.setup = { setupView(listOf("reason", "plan"), kind = "language") }
+        show(drafts = drafts)
+
+        rule.onNode(hasSetTextAction()).performTextInput("To pass the DELE")
+        rule.onNodeWithText("To pass the DELE").assertExists()
+        rule.waitUntil(5_000) { runBlocking { drafts.words(GOAL_ID, "reason").value.first() } == listOf("To pass the DELE") }
+        screen++
+
+        rule.onNodeWithText("To pass the DELE").assertIsDisplayed()
+        api.reply = { goalId, _ -> setupView(listOf("plan"), goalId = goalId) }
+        rule.onNodeWithText("Continue").performScrollTo().performClick()
+        rule.waitForIdle()
+        assertEquals(listOf(GOAL_ID), api.answers.map { it.first })
+        rule.waitUntil(5_000) { runBlocking { drafts.words(GOAL_ID, "reason").value.first() } == null }
     }
 }

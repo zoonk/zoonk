@@ -361,9 +361,10 @@ internal fun ColumnScope.TextStep(
     question: TextQuestion,
     subject: String,
     pending: Boolean,
+    words: UnsentWords,
     onAnswer: (OnboardingAnswerInput) -> Unit,
 ) {
-    var value by rememberSaveable(question) { mutableStateOf("") }
+    var value by words.field(0)
     val answer = { text: String? ->
         onAnswer(
             if (question == TextQuestion.Reason) {
@@ -439,9 +440,10 @@ internal fun ColumnScope.TextStep(
 internal fun ColumnScope.FollowUpsStep(
     questions: List<String>,
     pending: Boolean,
+    words: UnsentWords,
     onAnswer: (OnboardingAnswerInput) -> Unit,
 ) {
-    var answers by rememberSaveable(questions) { mutableStateOf(questions.map { "" }) }
+    val answers = words.values
     val send = { values: List<String?> ->
         onAnswer(
             OnboardingAnswerInput.OnboardingAnswerInputOneOf5Value(
@@ -462,7 +464,7 @@ internal fun ColumnScope.FollowUpsStep(
                 label = question,
                 placeholder = stringResource(R.string.onboarding_your_answer),
                 value = answers.getOrElse(index) { "" },
-                onValueChange = { typed -> answers = answers.mapIndexed { position, answer -> if (position == index) typed else answer } },
+                onValueChange = { typed -> words.set(index, typed) },
                 focusFirst = index == 0,
             )
         }
@@ -473,10 +475,11 @@ internal fun ColumnScope.FollowUpsStep(
 internal fun ColumnScope.RoleStep(
     careerChange: Boolean,
     pending: Boolean,
+    words: UnsentWords,
     onAnswer: (OnboardingAnswerInput) -> Unit,
 ) {
-    var role by rememberSaveable { mutableStateOf("") }
-    var second by rememberSaveable { mutableStateOf("") }
+    var role by words.field(0)
+    var second by words.field(1)
     val answer = { text: String -> text.trim().ifEmpty { null } }
 
     StepForm(

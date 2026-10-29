@@ -112,7 +112,8 @@ internal fun ColumnScope.PlacementStep(
     onProgress: (Float?) -> Unit,
     onDone: () -> Unit,
 ) {
-    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, createSavedStateHandle()) }
+    val drafts = LocalSetupDrafts.current
+    val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, drafts, createSavedStateHandle()) }
     val resource = store.placements[goalId]
     val placement by resource.collectShown()
     val mocks by store.placementMocks[goalId].collectShown()
@@ -166,6 +167,7 @@ internal fun ColumnScope.PlacementStep(
             key(phase.item.itemId) {
                 PlacementQuestion(
                     question = phase,
+                    typedWords = rememberUnsentWords(goalId, typedDraftStep(phase.item.itemId), count = 1),
                     subject = subject,
                     pending = vm.isSaving,
                     answerFailed = vm.answerFailed,
@@ -320,6 +322,7 @@ private class Choice(
 @Composable
 private fun ColumnScope.PlacementQuestion(
     question: PlacementPhase.Question,
+    typedWords: UnsentWords,
     subject: String,
     pending: Boolean,
     answerFailed: Boolean,
@@ -331,7 +334,7 @@ private fun ColumnScope.PlacementQuestion(
     val item = question.item
     val choices = choices(item.format, question.labels)
     var picked by rememberSaveable { mutableStateOf<Int?>(null) }
-    var typed by rememberSaveable { mutableStateOf("") }
+    var typed by typedWords.field(0)
     var sent by rememberSaveable { mutableStateOf(false) }
     val shownAt = remember { SystemClock.elapsedRealtime() }
     val answer: PlacementAnswer? =
