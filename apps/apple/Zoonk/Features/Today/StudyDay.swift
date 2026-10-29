@@ -95,6 +95,18 @@ struct StudyDay: Decodable, Equatable, Sendable {
     blocks.first { $0.position == nextPosition }
   }
 
+  /// Mirrors main's `splitTodayQueue`: the blocks still to do keep their order around the next one.
+  func queue(next: StudyBlock?) -> (before: [StudyBlock], after: [StudyBlock]) {
+    guard let index = blocks.firstIndex(where: { $0.position == next?.position }) else {
+      return (before: [], after: blocks.filter { !$0.isFinished })
+    }
+
+    return (
+      before: blocks[..<index].filter { !$0.isFinished },
+      after: blocks[(index + 1)...].filter { !$0.isFinished }
+    )
+  }
+
   var minutesLeft: Int {
     blocks.filter { !$0.isFinished }.reduce(0) { $0 + $1.estimatedMinutes }
   }

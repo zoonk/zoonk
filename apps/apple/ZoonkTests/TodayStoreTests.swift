@@ -16,6 +16,20 @@ final class TodayStoreTests: XCTestCase {
       try day(blocks: [block(position: 0)], nextPosition: 0, limitReached: true).state, .limit)
   }
 
+  func testTheQueueKeepsBlocksInTheirOrderAroundTheNextOne() throws {
+    let session = try day(
+      blocks: [
+        block(position: 0, status: "completed"), block(position: 1), block(position: 2),
+        block(position: 3),
+      ],
+      nextPosition: 2)
+    let queue = session.queue(next: session.nextBlock)
+
+    XCTAssertEqual(queue.before.map(\.position), [1])
+    XCTAssertEqual(queue.after.map(\.position), [3])
+    XCTAssertEqual(session.queue(next: nil).after.map(\.position), [1, 2, 3])
+  }
+
   func testStartOnADayNotOpenedYetOpensItWithTheShownStep() async throws {
     let view = try today(
       session: day(blocks: [block(position: 0, kind: "review")], nextPosition: 0))

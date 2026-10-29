@@ -136,7 +136,7 @@ struct TodaySessionSection: View {
   private var queue: some View {
     let next = session.dailyLimit?.reached == true ? nil : session.nextBlock
     let done = session.blocks.filter(\.isFinished)
-    let upcoming = session.blocks.filter { !$0.isFinished && $0.position != next?.position }
+    let (before, upcoming) = session.queue(next: next)
     let foldsDone = next != nil && done.count > doneRows
     let markedUpTo = upcoming.lastIndex { countsTowardMission($0) }.map { $0 + 1 } ?? 0
     let shownUpcoming = disclosures.showsMore ? upcoming.count : max(upcomingRows, markedUpTo)
@@ -149,6 +149,10 @@ struct TodaySessionSection: View {
       ForEach(done, id: \.position) { block in
         BlockRow(block: block, view: view, isNext: false, countsTowardMission: false)
       }
+    }
+
+    ForEach(before, id: \.position) { block in
+      blockButton(block, isNext: false)
     }
 
     if let next {
