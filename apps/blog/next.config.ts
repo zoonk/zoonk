@@ -1,9 +1,10 @@
+import { availableParallelism } from "node:os";
 import createMDX from "@next/mdx";
 import { type NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
-  experimental: { turbopackRustReactCompiler: true },
+  experimental: { cpus: availableParallelism(), turbopackRustReactCompiler: true },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
 };

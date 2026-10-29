@@ -1,3 +1,4 @@
+import { availableParallelism } from "node:os";
 import { withSentryConfig } from "@sentry/nextjs/config";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
 import { withBotId } from "botid/next/config";
@@ -22,6 +23,7 @@ const nextConfig: NextConfig = {
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
     authInterrupts: true,
+    cpus: availableParallelism(),
     // The API enables Cache Components for request deduplication, not to require every auth page to navigate instantly.
     instantInsights: { validationLevel: "manual-warning" },
     turbopackRustReactCompiler: true,
