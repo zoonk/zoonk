@@ -238,7 +238,7 @@ private fun learnerGroups(
             SearchItem(
                 "mind-maps",
                 stringResource(R.string.navigation_mind_maps),
-                SearchAction.Open(AppRoute.MindMaps),
+                SearchAction.Open(AppRoute.MindMaps()),
                 PlaceIcon.MindMaps.icon,
             ).takeIf { places?.mindMaps == true },
             SearchItem(

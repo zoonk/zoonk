@@ -20,8 +20,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -71,6 +69,8 @@ import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
