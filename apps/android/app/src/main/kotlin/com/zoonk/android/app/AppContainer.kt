@@ -60,6 +60,8 @@ import com.zoonk.android.feature.session.LiveStudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.speaking.LiveSpeakingApi
 import com.zoonk.android.feature.speaking.SpeakingStore
+import com.zoonk.android.feature.stats.LiveStatsApi
+import com.zoonk.android.feature.stats.StatsStore
 import com.zoonk.android.feature.subscription.GooglePlayBilling
 import com.zoonk.android.feature.subscription.LiveSubscriptionApi
 import com.zoonk.android.feature.subscription.NoPlayBilling
@@ -219,6 +221,7 @@ class AppContainer private constructor(
 
     val catalog = CatalogStore(LiveCatalogApi(api), cache)
     val search = SearchStore(LiveSearchApi(api), cache)
+    val stats = StatsStore(LiveStatsApi(api), cache)
 
     init {
         scope.launch { sessions.restore() }

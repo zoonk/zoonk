@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="stats_all_goals">All goals</string>
+    <string name="stats_nav">Your stats</string>
+    <string name="stats_overview">Overview</string>
+    <string name="stats_level">Level</string>
+    <string name="stats_energy">Energy</string>
+    <string name="stats_activity">Activity</string>
+    <string name="stats_score">Score</string>
+    <string name="stats_patterns">Patterns</string>
+    <string name="stats_empty_title">Start learning to track your progress</string>
+    <string name="stats_go_to_today">Go to Today</string>
+    <string name="stats_not_yet">Not yet</string>
+
+    <string name="stats_energy_average">Average %1$s</string>
+    <string name="stats_study_days">Study days</string>
+    <plurals name="stats_lessons_time">
+        <item quantity="one">%1$d lesson · %2$s</item>
+        <item quantity="other">%1$d lessons · %2$s</item>
+    </plurals>
+    <string name="stats_right_count">%1$s/%2$s right</string>
+    <string name="stats_right_last_90">Right answers in the last 90 days</string>
+    <string name="stats_score_90">Score · 90 days</string>
+    <string name="stats_score_after_answers">Your score shows after your first answers.</string>
+    <string name="stats_patterns_90">Patterns · 90 days</string>
+    <string name="stats_see_all">See all</string>
+    <string name="stats_best_day">Best day</string>
+    <string name="stats_best_time">Best time</string>
+    <string name="stats_week_spread">Spread across the week</string>
+    <string name="stats_range">%1$s–%2$s</string>
+
+    <string name="stats_brain_power">Brain Power</string>
+    <string name="stats_never_goes_down">Never goes down</string>
+    <string name="stats_next_level">Next level</string>
+    <string name="stats_max_level">Max level reached</string>
+    <string name="stats_to_level">To level %1$s</string>
+    <string name="stats_to_belt">To %1$s</string>
+    <string name="stats_belt_progression">Belt progression</string>
+    <string name="stats_level_of">Level %1$s of %2$s</string>
+    <string name="stats_to_go">%1$s to go</string>
+    <string name="stats_next_belt">Next belt</string>
+    <string name="stats_belt_at">%1$s at %2$s Brain Power</string>
+    <string name="stats_every_belt">Every belt earned</string>
+    <string name="stats_level_line">Every lesson adds %1$s Brain Power, and it never goes down.</string>
+
+    <string name="stats_today">Today</string>
+    <string name="stats_average">Average</string>
+    <string name="stats_since_start">Since you started</string>
+    <string name="stats_full_energy">At 100%</string>
+    <string name="stats_full_energy_days">Days with full Energy</string>
+    <string name="stats_energy_line">Every lesson you finish raises your Energy. On days off it drops a little, and your belt and progress stay.</string>
+    <string name="stats_low">Low</string>
+    <string name="stats_high">High</string>
+
+    <string name="stats_any_day_studied">Any day you studied</string>
+    <string name="stats_lessons">Lessons</string>
+    <string name="stats_finished">Finished</string>
+    <string name="stats_time">Time</string>
+    <string name="stats_studying_total">Studying in total</string>
+    <string name="stats_past_year">Past 12 months</string>
+    <string name="stats_less">Less</string>
+    <string name="stats_more">More</string>
+    <plurals name="stats_calendar_activity_summary">
+        <item quantity="one">%1$d day with activity in the past 12 months, the busiest with %2$s</item>
+        <item quantity="other">%1$d days with activity in the past 12 months, the busiest with %2$s</item>
+    </plurals>
+    <plurals name="stats_activities">
+        <item quantity="one">%1$d activity</item>
+        <item quantity="other">%1$d activities</item>
+    </plurals>
+    <string name="stats_calendar_energy_summary">Energy over the past 12 months: %1$s on average, %2$s today</string>
+
+    <string name="stats_right_answers">Right answers</string>
+    <string name="stats_right">Right</string>
+    <string name="stats_of_all_answers">Of all your answers</string>
+    <string name="stats_correct_of_total">%1$s of %2$s</string>
+    <string name="stats_period">Period</string>
+    <string name="stats_back_from_today">Back from today</string>
+    <plurals name="stats_days">
+        <item quantity="one">%1$d day</item>
+        <item quantity="other">%1$d days</item>
+    </plurals>
+    <string name="stats_score_line">Every answer counts the same, so harder lessons can lower your score for a while.</string>
+    <string name="stats_week">Week</string>
+    <string name="stats_score_percent">Score (%)</string>
+
+    <string name="stats_answers">Answers</string>
+    <string name="stats_last_90">In the last 90 days</string>
+    <string name="stats_not_enough">Not enough answers yet</string>
+    <plurals name="stats_within_points">
+        <item quantity="one">Within %1$d point</item>
+        <item quantity="other">Within %1$d points</item>
+    </plurals>
+    <plurals name="stats_score_answers">
+        <item quantity="one">%1$s · %2$d answer</item>
+        <item quantity="other">%1$s · %2$d answers</item>
+    </plurals>
+    <plurals name="stats_answer_count">
+        <item quantity="one">%1$d answer</item>
+        <item quantity="other">%1$d answers</item>
+    </plurals>
+    <string name="stats_no_answers">No answers</string>
+    <string name="stats_throughout_week">Throughout the week</string>
+    <string name="stats_throughout_day">Throughout the day</string>
+    <string name="stats_any_day">Any day</string>
+    <string name="stats_any_time">Any time</string>
+    <string name="stats_night">Night</string>
+    <string name="stats_morning">Morning</string>
+    <string name="stats_afternoon">Afternoon</string>
+    <string name="stats_evening">Evening</string>
+    <plurals name="stats_days_even">
+        <item quantity="one">Your days are within %1$d point of each other, so any day works.</item>
+        <item quantity="other">Your days are within %1$d points of each other, so any day works.</item>
+    </plurals>
+    <plurals name="stats_times_even">
+        <item quantity="one">Your times of day are within %1$d point of each other, so any time works.</item>
+        <item quantity="other">Your times of day are within %1$d points of each other, so any time works.</item>
+    </plurals>
+    <plurals name="stats_min_answers">
+        <item quantity="one">A day or a time of day needs %1$d answer to count, so one lucky answer never makes a pattern.</item>
+        <item quantity="other">A day or a time of day needs %1$d answers to count, so one lucky answer never makes a pattern.</item>
+    </plurals>
+</resources>
