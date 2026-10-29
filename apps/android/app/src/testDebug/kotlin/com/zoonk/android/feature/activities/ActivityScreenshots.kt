@@ -37,6 +37,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.playable
+import com.zoonk.android.feature.player.steps.activityRenderers
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
@@ -62,20 +63,13 @@ private class Shot(
     val isCorrect: Boolean,
 )
 
-private fun right(fixture: String) = Shot(fixture, ActivityFixtures.rightAnswer(fixture), isCorrect = true)
-
+/** Every fixture of a template with a renderer, checked right, and one wrong guess to show a miss. */
 private val shots =
-    listOf(
-        Shot("guessReveal", numericAnswer(40.0), isCorrect = false),
-        right("guessReveal.cited"),
-        right("beforeAfter"),
-        right("chartReader"),
-        right("decisionTree"),
-        right("findError"),
-        right("stepSolver"),
-        right("patternTable"),
-        right("dialogueSimulator"),
-    )
+    listOf(Shot("guessReveal", numericAnswer(40.0), isCorrect = false)) +
+        ActivityFixtures.names
+            .filter { it.substringBefore('.') in activityRenderers }
+            .sorted()
+            .map { Shot(it, ActivityFixtures.rightAnswer(it), isCorrect = true) }
 
 /**
  * Review screenshots of each activity template, answering and checked, written only on demand:
