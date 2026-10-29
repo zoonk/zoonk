@@ -63,6 +63,7 @@ const CANONICAL_OPERATIONS = [
     operationId: "getCurrentUserScorePatterns",
     path: "/me/progress/score/patterns",
   },
+  { method: "get", operationId: "getFreePlan", path: "/free-plan" },
   { method: "post", operationId: "createAppleSubscription", path: "/me/subscriptions/apple" },
   { method: "post", operationId: "createGooglePlaySubscription", path: "/me/subscriptions/google" },
   {

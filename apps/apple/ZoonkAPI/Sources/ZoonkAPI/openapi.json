@@ -12197,6 +12197,38 @@
         }
       }
     },
+    "/free-plan": {
+      "get": {
+        "operationId": "getFreePlan",
+        "security": [],
+        "summary": "Get the free plan",
+        "tags": [
+          "Subscriptions"
+        ],
+        "responses": {
+          "200": {
+            "description": "The free plan's limits",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FreePlan"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/me/subscriptions/apple": {
       "post": {
         "operationId": "createAppleSubscription",
@@ -72212,6 +72244,71 @@
           "stepId"
         ],
         "additionalProperties": false
+      },
+      "FreePlan": {
+        "type": "object",
+        "properties": {
+          "activeGoals": {
+            "nullable": true,
+            "description": "Goals a free account can have at a time",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "examPrepDays": {
+            "nullable": true,
+            "description": "Days of an exam plan the free plan includes, or null for all of it",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "guestLessons": {
+            "nullable": true,
+            "description": "Lessons a guest can start before creating an account",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "lessonsPerDay": {
+            "nullable": true,
+            "description": "Lessons a free account can start each day",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "lessonsPerMonth": {
+            "nullable": true,
+            "description": "Lessons a free account can start each month",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "tutorMessagesPerDay": {
+            "nullable": true,
+            "description": "Messages a free account can send its study buddy each day",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "uploadsPerDay": {
+            "nullable": true,
+            "description": "Files a free account can upload each day",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "activeGoals",
+          "examPrepDays",
+          "guestLessons",
+          "lessonsPerDay",
+          "lessonsPerMonth",
+          "tutorMessagesPerDay",
+          "uploadsPerDay"
+        ],
+        "additionalProperties": false,
+        "description": "What the free plan includes, for pricing pages. Null means no cap."
       },
       "StoreSubscriptionResponse": {
         "type": "object",

@@ -6,11 +6,31 @@ import {
   googlePlayNotificationSchema,
   googlePlaySubscriptionRequestSchema,
 } from "@zoonk/core/subscriptions/google-play-contract";
-import { badRequestResponse, conflictResponse, unauthorizedResponse } from "../schemas/responses";
-import { storeSubscriptionResponseSchema } from "../schemas/subscriptions";
+import {
+  badRequestResponse,
+  conflictResponse,
+  internalErrorResponse,
+  unauthorizedResponse,
+} from "../schemas/responses";
+import { freePlanResponseSchema, storeSubscriptionResponseSchema } from "../schemas/subscriptions";
 import { AUTHENTICATED_SECURITY, PUBLIC_SECURITY } from "../security";
 
 export const subscriptionPaths = {
+  "/free-plan": {
+    get: {
+      operationId: "getFreePlan",
+      responses: {
+        "200": {
+          content: { "application/json": { schema: freePlanResponseSchema } },
+          description: "The free plan's limits",
+        },
+        "500": internalErrorResponse,
+      },
+      security: PUBLIC_SECURITY,
+      summary: "Get the free plan",
+      tags: ["Subscriptions"],
+    },
+  },
   "/me/subscriptions/apple": {
     post: {
       operationId: "createAppleSubscription",
