@@ -3,6 +3,7 @@ import { milestonePathParamsSchema } from "@/lib/openapi/schemas/paths";
 import { readPathParams } from "@/lib/request-input";
 import { studySessionError } from "@/lib/study-session-errors";
 import { markMilestoneShown } from "@zoonk/core/milestones/list";
+import { serializeMilestone } from "@zoonk/core/sessions/completion-contract";
 import { NextResponse } from "next/server";
 
 async function createView(
@@ -17,7 +18,7 @@ async function createView(
     return studySessionError(result);
   }
 
-  return NextResponse.json(result.milestone);
+  return NextResponse.json(serializeMilestone(result.milestone));
 }
 
 export const POST = withApiErrorBoundary(createView);

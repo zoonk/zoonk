@@ -1,4 +1,5 @@
 import { type Milestone } from "@zoonk/db";
+import { BELT_COLORS_ORDER, getBeltStartBrainPower } from "@zoonk/utils/belt-level";
 import { z } from "zod";
 import { type CheckpointOutcome } from "../checkpoints/_utils/checkpoint-outcome";
 import { type QuestionAnswer } from "./contract";
@@ -169,6 +170,14 @@ export type MissionMomentView = z.infer<typeof missionMomentSchema>;
 
 export const milestoneSchema = z
   .object({
+    beltStartBrainPower: z
+      .number()
+      .int()
+      .nullable()
+      .meta({
+        description:
+          "For a belt, the Brain Power it starts at, which the learner reached to earn it; null for other milestones",
+      }),
     earnedAt: z.iso.datetime(),
     id: idSchema,
     key: z.string(),
@@ -266,8 +275,14 @@ export type StudyBlockCompletionView = z.infer<typeof studyBlockCompletionSchema
 
 export type MilestoneView = z.infer<typeof milestoneSchema>;
 
+function getMilestoneBeltStart({ key, kind }: Pick<Milestone, "key" | "kind">): number | null {
+  const belt = BELT_COLORS_ORDER.find((color) => color === key);
+  return kind === "belt" && belt ? getBeltStartBrainPower(belt) : null;
+}
+
 export function serializeMilestone(milestone: Milestone): MilestoneView {
   return {
+    beltStartBrainPower: getMilestoneBeltStart(milestone),
     earnedAt: milestone.earnedAt.toISOString(),
     id: milestone.id,
     key: milestone.key,

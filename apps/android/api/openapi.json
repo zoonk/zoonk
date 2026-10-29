@@ -37665,6 +37665,13 @@
       "Milestone": {
         "type": "object",
         "properties": {
+          "beltStartBrainPower": {
+            "nullable": true,
+            "description": "For a belt, the Brain Power it starts at, which the learner reached to earn it; null for other milestones",
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
           "earnedAt": {
             "type": "string",
             "format": "date-time",
@@ -37695,6 +37702,7 @@
           }
         },
         "required": [
+          "beltStartBrainPower",
           "earnedAt",
           "id",
           "key",

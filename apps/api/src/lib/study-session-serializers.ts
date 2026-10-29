@@ -1,5 +1,6 @@
 import { type WeeklyChallengeResult } from "@zoonk/core/checkpoints/weekly-challenge";
 import { type WeeklyRecapResult } from "@zoonk/core/milestones/weekly-recap";
+import { serializeMilestone } from "@zoonk/core/sessions/completion-contract";
 import { type StudySessionResult } from "@zoonk/core/sessions/get";
 import { type StudySessionSummaryResult } from "@zoonk/core/sessions/summary";
 import { type TodayViewResult } from "@zoonk/core/view-models/today/get";
@@ -75,6 +76,7 @@ function serializeWeekNumbers(week: WeeklyRecap["week"]) {
 export function serializeWeeklyRecap(recap: WeeklyRecap) {
   return {
     ...recap,
+    badges: recap.badges.map((badge) => serializeMilestone(badge)),
     lastWeek: serializeWeekNumbers(recap.lastWeek),
     turnaround: recap.turnaround
       ? {
