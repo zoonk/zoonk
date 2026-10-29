@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 env:
-  GRADLE_ARGUMENTS: --no-daemon --console=plain --profile -Dorg.gradle.jvmargs="-Xmx4g -Dfile.encoding=UTF-8" -Pkotlin.daemon.jvmargs=-Xmx2g
+  GRADLE_ARGUMENTS: --no-daemon --console=plain --profile -Dorg.gradle.jvmargs="-Xmx6g -Dfile.encoding=UTF-8" -Pkotlin.daemon.jvmargs=-Xmx2g
 
 jobs:
   changes:
@@ -93,6 +93,10 @@ jobs:
         include:
           - job: checks
             target: lint
+            tasks: :app:lintRelease
+          - job: style
+            target: lint
+            tasks: spotlessCheck :lint-checks:test
           - job: tests
             target: test
           - job: release
@@ -116,6 +120,6 @@ jobs:
           digest-mismatch: error
 
       - name: Run Gradle
-        run: make -C apps/android ${{ matrix.target }} GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS ${{ matrix.arguments }}"
+        run: make -C apps/android ${{ matrix.target }} GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS ${{ matrix.arguments }}" ${{ matrix.tasks && format('LINT_TASKS="{0}"', matrix.tasks) || '' }}
 
       - *profiles
