@@ -4,6 +4,7 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performFirstLinkClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -114,6 +115,15 @@ class SpeakingScreenTest {
 
         compose.onNodeWithText("Not enough call time today for this task").assertExists()
         assertTrue(opened.isEmpty())
+    }
+
+    @Test
+    fun theFooterLinksToTheOfficialFormat() {
+        show()
+
+        compose.onNodeWithText("Official format", substring = true).performFirstLinkClick()
+
+        assertEquals(listOf("https://examenes.cervantes.es/dele-b2"), webs)
     }
 
     @Test

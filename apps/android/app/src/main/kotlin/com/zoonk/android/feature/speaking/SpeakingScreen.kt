@@ -25,7 +25,6 @@ import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -47,6 +46,13 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -293,16 +299,23 @@ fun SpeakingPaperSection(
         }
         StartState(model, retry = { started?.let(startTask) }, actions = actions)
         val partner = paper.tasks.any { it.role == SpeakingPaperTask.Role.PARTNER }
-        Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                stringResource(if (partner) R.string.speaking_footer_partner else R.string.speaking_footer),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
-            )
-            TextButton(onClick = { openWeb(paper.source) }, contentPadding = PaddingValues(0.dp)) {
-                Text(stringResource(R.string.speaking_official_format))
-            }
-        }
+        val footer = stringResource(if (partner) R.string.speaking_footer_partner else R.string.speaking_footer)
+        val official = stringResource(R.string.speaking_official_format)
+        Text(
+            buildAnnotatedString {
+                append(footer)
+                append(" ")
+                withLink(
+                    LinkAnnotation.Clickable(
+                        tag = "official-format",
+                        styles = TextLinkStyles(SpanStyle(fontWeight = FontWeight.Medium, textDecoration = TextDecoration.Underline)),
+                    ) { openWeb(paper.source) },
+                ) { append(official) }
+            },
+            Modifier.padding(top = 16.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
     }
 }
 
