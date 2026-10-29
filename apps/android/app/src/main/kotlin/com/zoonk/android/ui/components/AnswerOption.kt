@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.withTabularFigures
 import kotlin.math.max
@@ -38,7 +39,8 @@ fun AnswerOptionGroup(
 }
 
 /**
- * One option of a question (main's `AnswerOption`): its number key, its words and, once checked,
+ * One option of a question (main's `AnswerOption`): its number key (for keyboards, so TalkBack
+ * skips it), its words and, once checked,
  * the word its result shows. The word sits beside the option's words while their longest word fits
  * next to it, and under them otherwise, so a long word never breaks at a large font.
  */
@@ -84,6 +86,7 @@ private fun NumberKey(
     Box(
         modifier =
             modifier
+                .clearAndSetSemantics {}
                 .defaultMinSize(minWidth = 22.dp, minHeight = 22.dp)
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(6.dp)),
         contentAlignment = Alignment.Center,
