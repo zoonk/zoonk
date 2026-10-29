@@ -21,7 +21,6 @@ import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
-import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.api.models.ExamChoice
 
@@ -76,35 +75,31 @@ private fun ExamChoiceOptions(
 
 /**
  * Main's `ExamChoiceSuggestion`, for the plan's suggestion slot: each option saves at once. Once
- * [answer] (what the change did) is known it shows instead, with [undo].
+ * the [answer] shows, it says what the change did instead, with Undo.
  */
 @Composable
 internal fun ExamChoiceSuggestion(
     choice: ExamChoice,
     layout: SuggestionLayout,
     failed: Boolean,
-    answer: String?,
+    answer: SlotAnswer?,
     onChoose: (subject: String) -> Unit,
     modifier: Modifier = Modifier,
-    undoFailed: Boolean = false,
-    undo: @Composable () -> Unit = {},
 ) {
     val title = stringResource(R.string.plan_exam_choice_question, choice.group)
 
     Suggestion(
         label = title,
-        summary = if (undoFailed) stringResource(R.string.suggestion_save_failed) else answer ?: title,
+        summary = answer?.summary() ?: title,
         layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(R.drawable.ic_signpost),
         answered = answer != null,
-        lineAction = if (answer != null) undo else ({ SuggestionOpen(stringResource(R.string.plan_choose)) }),
+        lineAction = if (answer != null) ({ answer.Undo() }) else ({ SuggestionOpen(stringResource(R.string.plan_choose)) }),
     ) {
         SuggestionHeader(title)
         if (answer != null) {
-            SuggestionResult(answer)
-            SuggestionActions(undo)
-            if (undoFailed) SuggestionSaveError()
+            answer.Result()
             return@Suggestion
         }
         SuggestionDescription(stringResource(R.string.plan_exam_choice_until_you_pick, choice.group))

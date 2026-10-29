@@ -158,11 +158,16 @@ internal fun CoverageSuggestion(slot: Slot) {
         }
     val preview = slot.host.preview.of(offer?.operations.orEmpty(), plan)
 
-    fun ask(next: CoverageIntent) {
+    /** [focus] moves to the suggestion once the search answers, as the control that asked gives way. */
+    fun ask(
+        next: CoverageIntent,
+        focus: () -> Unit,
+    ) {
         state.asking = next
         state.intent = next
         slot.host.clearPreview()
         edits.findTimeToCover(plan) { outcome ->
+            if (state.asking == next) focus()
             val time = (outcome as? TimeToCoverOutcome.Answered)?.time ?: return@findTimeToCover
             val change = coverageChange(page.isExam, next, time) ?: return@findTimeToCover
             if (coverage != null && state.asking == next) slot.host.requestPreview(change.operations)
@@ -203,7 +208,7 @@ internal fun CoverageSuggestion(slot: Slot) {
                         )
                     }
                     if (offer == null && found == null) {
-                        FindAction(pending, retry) { ask(if (retry) state.intent else CoverageIntent.Time) }
+                        FindAction(pending, retry) { ask(if (retry) state.intent else CoverageIntent.Time, focus) }
                     }
                     if (studiesEverything) {
                         SuggestionAction(stringResource(R.string.plan_study_everything_after_exam), onClick = {
@@ -213,7 +218,7 @@ internal fun CoverageSuggestion(slot: Slot) {
                     }
                     if (coverage != null) {
                         OtherOptions { done ->
-                            if (moveDate) Option(stringResource(R.string.plan_move_date), done) { ask(CoverageIntent.Date) }
+                            if (moveDate) Option(stringResource(R.string.plan_move_date), done) { ask(CoverageIntent.Date, focus) }
                             if (canChooseFocus(plan)) {
                                 Option(stringResource(R.string.plan_choose_focus), done) {
                                     close()

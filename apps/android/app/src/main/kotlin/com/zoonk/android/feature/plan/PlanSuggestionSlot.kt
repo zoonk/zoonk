@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,10 +18,14 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -43,6 +48,7 @@ import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
 import com.zoonk.android.ui.components.SuggestionResult
 import com.zoonk.android.ui.components.SuggestionSaveError
+import com.zoonk.android.ui.components.rememberMoveFocus
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
@@ -190,6 +196,18 @@ internal class SlotHost(
     val onContinue: () -> Unit = {},
 )
 
+/** Where the slot moves a keyboard's or screen reader's focus once the control they used gives way, as main's does. */
+@Stable
+internal class SlotFocus {
+    val suggestion = FocusRequester()
+
+    /** Focus is on the slot, which keeps its result up. */
+    var focused by mutableStateOf(false)
+
+    /** The control used takes the item shown with it, so focus moves to the one shown next. */
+    var next = false
+}
+
 /** What every item reads and does, as main's `usePlanSuggestionSlot`. */
 internal class Slot(
     val page: PlanPageState,
@@ -198,22 +216,26 @@ internal class Slot(
     val host: SlotHost,
     val state: SlotState,
     val layout: SuggestionLayout,
+    val focus: SlotFocus,
 ) {
     val answered: SlotResult? get() = state.answered(edits)
 
     fun answer(item: SlotItem): SlotResult? = answered?.takeIf { it.item.key == item.key }
 
+    /** Paging keeps focus on the pager. */
     fun move(
         step: Int,
         index: Int,
         count: Int,
     ) {
         leave()
+        focus.next = false
         state.position = (index + step + count) % count
     }
 
     fun dismiss(item: SlotItem) {
         leave()
+        focus.next = true
         state.dismissed += item.key
     }
 
@@ -284,19 +306,32 @@ internal fun PlanSuggestionSlot(
     state: SlotState = remember { SlotState() },
 ) {
     val items = slotItemsLeft(page, host, state)
-    val slot = Slot(page, edits, links, host, state, layout)
+    val focus = remember { SlotFocus() }
+    val slot = Slot(page, edits, links, host, state, layout, focus)
     val answered = slot.answered
     val index = state.position.coerceIn(0, (items.size - 1).coerceAtLeast(0))
-    val item = answered?.item ?: items.getOrNull(index) ?: return
+    val item = answered?.item ?: items.getOrNull(index)
+    val moveFocus = rememberMoveFocus()
     val timeout =
         LocalAccessibilityManager.current?.calculateRecommendedTimeoutMillis(RESULT_MILLIS, containsControls = true) ?: RESULT_MILLIS
+    val undo = answered?.change?.let { edits.changes[it.id] }
+    val holding by rememberUpdatedState(focus.focused || undo?.undoing == true || undo?.undoFailed == true)
 
-    LaunchedEffect(answered) {
-        if (answered != null) {
-            delay(timeout)
-            state.result = null
+    LaunchedEffect(item?.key, answered == null) {
+        if (focus.next) {
+            focus.next = false
+            if (item != null) moveFocus(focus.suggestion)
         }
     }
+
+    // The result stays a moment with its Undo, longer while focus is on the slot or Undo is saving or didn't save.
+    LaunchedEffect(answered) {
+        if (answered == null) return@LaunchedEffect
+        do delay(timeout) while (holding)
+        state.result = null
+    }
+
+    if (item == null) return
 
     val pager: (@Composable (Modifier) -> Unit)? =
         if (items.size > 1) {
@@ -305,65 +340,79 @@ internal fun PlanSuggestionSlot(
             null
         }
     val suggestion: @Composable () -> Unit = {
-        key(item.key) {
-            when (item) {
-                SlotItem.Paused -> {
-                    PausedSuggestion(page, layout, resume, onSetStatus)
-                }
-
-                is SlotItem.Choice -> {
-                    val change = slot.answer(item)?.change
-                    ExamChoiceSuggestion(
-                        choice = item.choice,
-                        layout = layout,
-                        failed = edits.hasFailed(PlanPart.ExamChoices),
-                        answer = change?.let { planChangeSentence(it) },
-                        undoFailed = change?.let { edits.changes[it.id]?.undoFailed } == true,
-                        onChoose = { subject ->
-                            edits.chooseExamOption(item.choice.group, subject) { answer ->
-                                answer?.change?.takeIf { answer.status == PlanChangeResult.Status.APPLIED }?.let {
-                                    state.result = SlotResult(item, it)
-                                }
-                            }
-                        },
-                        undo = { change?.takeIf { it.canUndo }?.let { SlotUndo(it, edits) } },
-                    )
-                }
-
-                is SlotItem.PastDate -> {
-                    PastDateSuggestion(item, slot, onAdjust)
-                }
-
-                SlotItem.FitLessons -> {
-                    FitLessonsSuggestion(slot)
-                }
-
-                SlotItem.Coverage -> {
-                    CoverageSuggestion(slot)
-                }
-
-                SlotItem.Finished -> {
-                    host.next?.let { StudyNextSuggestion(it, slot) }
-                }
-
-                is SlotItem.Pace -> {
-                    PaceSuggestion(item, layout, links, onAdjust)
-                }
-
-                SlotItem.FreeWeekOver -> {
-                    FreeWeekSuggestion(layout, links)
-                }
-            }
+        Box(Modifier.focusRequester(focus.suggestion)) {
+            key(item.key) { SlotSuggestion(item, slot, resume, onSetStatus, onAdjust) }
         }
     }
 
-    Column(modifier.semantics { isTraversalGroup = true }) {
+    Column(modifier.onFocusChanged { focus.focused = it.hasFocus }.semantics { isTraversalGroup = true }) {
         if (layout == SuggestionLayout.Panel) {
             // The panel's pager heads it, so paging never moves it under the finger.
             SuggestionFrame(head = pager?.let { { it(Modifier.padding(top = 4.dp, end = 4.dp)) } }, content = suggestion)
         } else {
             suggestion()
             pager?.invoke(Modifier)
+        }
+    }
+}
+
+@Composable
+private fun SlotSuggestion(
+    item: SlotItem,
+    slot: Slot,
+    resume: Resume,
+    onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    onAdjust: (PlanSection?) -> Unit,
+) {
+    val layout = slot.layout
+    val links = slot.links
+    when (item) {
+        SlotItem.Paused -> {
+            PausedSuggestion(slot.page, layout, resume) {
+                slot.focus.next = true
+                onSetStatus(it)
+            }
+        }
+
+        is SlotItem.Choice -> {
+            val edits = slot.edits
+            ExamChoiceSuggestion(
+                choice = item.choice,
+                layout = layout,
+                failed = edits.hasFailed(PlanPart.ExamChoices),
+                answer = slot.shownAnswer(item),
+                onChoose = { subject ->
+                    edits.chooseExamOption(item.choice.group, subject) { answer ->
+                        answer?.change?.takeIf { answer.status == PlanChangeResult.Status.APPLIED }?.let {
+                            slot.state.result = SlotResult(item, it)
+                        }
+                    }
+                },
+            )
+        }
+
+        is SlotItem.PastDate -> {
+            PastDateSuggestion(item, slot, onAdjust)
+        }
+
+        SlotItem.FitLessons -> {
+            FitLessonsSuggestion(slot)
+        }
+
+        SlotItem.Coverage -> {
+            CoverageSuggestion(slot)
+        }
+
+        SlotItem.Finished -> {
+            slot.host.next?.let { StudyNextSuggestion(it, slot) }
+        }
+
+        is SlotItem.Pace -> {
+            PaceSuggestion(item, layout, links, onAdjust)
+        }
+
+        SlotItem.FreeWeekOver -> {
+            FreeWeekSuggestion(layout, links)
         }
     }
 }
@@ -403,17 +452,51 @@ private fun SlotPager(
     }
 }
 
-@Composable
-private fun SlotUndo(
-    change: PlanChange,
-    edits: PlanEdits,
+/**
+ * What an answer did, with its Undo, as main's `SuggestionResult` and `SlotUndo`: beside Undo it
+ * says when Undo didn't save. A line has no room beside it, so there that takes the place of [text].
+ */
+internal class SlotAnswer(
+    val text: String,
+    private val change: PlanChange?,
+    private val edits: PlanEdits,
+    private val onUndo: () -> Unit,
 ) {
-    SuggestionAction(
-        text = stringResource(R.string.plan_undo),
-        onClick = { edits.undo(change) },
-        enabled = edits.changes[change.id]?.undoing != true,
-        secondary = true,
-    )
+    private val tracked: EditorChange? get() = change?.let { edits.changes[it.id] }
+
+    /** The line's summary. */
+    @Composable
+    fun summary(): String = if (tracked?.undoFailed == true) stringResource(R.string.suggestion_save_failed) else text
+
+    @Composable
+    fun Undo() {
+        val change = change?.takeIf { it.canUndo } ?: return
+        SuggestionAction(
+            text = stringResource(R.string.plan_undo),
+            onClick = {
+                onUndo()
+                edits.undo(change)
+            },
+            enabled = tracked?.undoing != true,
+            secondary = true,
+        )
+    }
+
+    /** The answer in a panel or sheet. */
+    @Composable
+    fun Result() {
+        SuggestionResult(text)
+        SuggestionActions { Undo() }
+        if (tracked?.undoFailed == true) SuggestionSaveError()
+    }
+}
+
+/** [item]'s answer while it shows; an Undo that saves moves focus to what the slot shows next. */
+@Composable
+internal fun Slot.shownAnswer(item: SlotItem): SlotAnswer? {
+    val answer = answer(item) ?: return null
+    val text = answer.change?.let { planChangeSentence(it) } ?: stringResource(R.string.plan_updated_sentence)
+    return SlotAnswer(text, answer.change, edits) { focus.next = true }
 }
 
 /** Main's `PlanChangeSuggestion`: a change to offer, which says what it did, with Undo, once applied. */
@@ -425,25 +508,19 @@ internal fun PlanChangeSuggestion(
     mark: SuggestionMark = SuggestionMark.New,
     content: @Composable SuggestionContentScope.() -> Unit,
 ) {
-    val answer = slot.answer(item)
-    val change = answer?.change
-    val result = answer?.let { change?.let { planChangeSentence(it) } ?: stringResource(R.string.plan_updated_sentence) }
-    val undoFailed = change?.let { slot.edits.changes[it.id]?.undoFailed } == true
-    val undo = @Composable { if (change?.canUndo == true) SlotUndo(change, slot.edits) }
+    val answer = slot.shownAnswer(item)
 
     Suggestion(
         label = stringResource(R.string.plan_suggestion),
-        summary = if (undoFailed) stringResource(R.string.suggestion_save_failed) else result ?: title,
+        summary = answer?.summary() ?: title,
         layout = slot.layout,
         mark = if (answer != null) SuggestionMark.Done else mark,
         answered = answer != null,
-        lineAction = if (answer != null) undo else ({ SuggestionOpen() }),
+        lineAction = if (answer != null) ({ answer.Undo() }) else ({ SuggestionOpen() }),
     ) {
-        if (result != null) {
+        if (answer != null) {
             SuggestionHeader(stringResource(R.string.plan_updated))
-            SuggestionResult(result)
-            SuggestionActions(undo)
-            if (undoFailed) SuggestionSaveError()
+            answer.Result()
             return@Suggestion
         }
         SuggestionHeader(title)

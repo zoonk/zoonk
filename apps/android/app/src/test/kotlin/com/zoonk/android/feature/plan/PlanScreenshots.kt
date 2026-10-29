@@ -344,6 +344,10 @@ class PlanScreenshots {
                     Shot(goalPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
                         SlotState().apply { result = SlotResult(SlotItem.Coverage, change) }
                     }),
+                "plan-slot-coverage-undo-failed" to
+                    Shot(goalPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change, undoFailed = true))), state = {
+                        SlotState().apply { result = SlotResult(SlotItem.Coverage, change) }
+                    }),
                 "plan-slot-fit" to Shot(fitPlan),
                 "plan-slot-paged" to Shot(pagedPlan, state = { SlotState(position = 1) }),
                 "plan-slot-paged-applied" to

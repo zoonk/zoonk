@@ -1,17 +1,29 @@
 package com.zoonk.android.feature.plan
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isFocused
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -49,16 +61,19 @@ class PlanSuggestionSlotTest {
     private var preview by mutableStateOf<PlanPreviewState>(PlanPreviewState.Idle)
     private val applied = mutableListOf<List<PlanOp>>()
     private val adjusted = mutableListOf<PlanSection?>()
+    private var goalStatus by mutableStateOf("active")
+    private val elsewhere = FocusRequester()
 
     private fun show(
         extra: String = "",
         status: String = "active",
         layout: SuggestionLayout = SuggestionLayout.Panel,
     ) {
-        val summary = learnerSummary(status = status)
-        val page = PlanPageState(summary.goals.first(), plan(extra), summary)
+        goalStatus = status
         compose.setContent {
             navigator = rememberAppNavigator()
+            val summary = learnerSummary(status = goalStatus)
+            val page = PlanPageState(summary.goals.first(), plan(extra), summary)
             val edits =
                 PlanEdits(
                     changes = changes,
@@ -174,16 +189,19 @@ class PlanSuggestionSlotTest {
                     onContinue = onContinue,
                 )
             ZoonkTheme {
-                PlanSuggestionSlot(
-                    page,
-                    edits,
-                    PlanLinks(navigator, page),
-                    Resume.Plain,
-                    {},
-                    onAdjust = { adjusted += it },
-                    layout = SuggestionLayout.Panel,
-                    host = host,
-                )
+                Column {
+                    Box(Modifier.size(1.dp).focusRequester(elsewhere).focusable())
+                    PlanSuggestionSlot(
+                        page,
+                        edits,
+                        PlanLinks(navigator, page),
+                        Resume.Plain,
+                        {},
+                        onAdjust = { adjusted += it },
+                        layout = SuggestionLayout.Panel,
+                        host = host,
+                    )
+                }
             }
         }
     }
@@ -264,6 +282,84 @@ class PlanSuggestionSlotTest {
     }
 
     @Test
+    fun anAppliedChangeTakesFocusToWhatItDid() {
+        showSlot(plan(FIT_OFFER))
+
+        compose.onNodeWithText("Apply").performClick()
+
+        compose.onNodeWithText("Plan updated").assertIsFocused()
+    }
+
+    @Test
+    fun notNowTakesFocusToTheNextSuggestion() {
+        showSlot(coveragePlan(extra = BEHIND))
+        compose.onNodeWithContentDescription("Next").performClick()
+
+        compose.onNodeWithText("Other options").performClick()
+        compose.onNodeWithText("Not now").performClick()
+
+        compose.onNodeWithText("A little to catch up").assertIsFocused()
+    }
+
+    @Test
+    fun anUndoneChangeTakesFocusBackToTheSuggestion() {
+        showSlot(plan(FIT_OFFER))
+        compose.onNodeWithText("Apply").performClick()
+
+        compose.onNodeWithText("Undo").performClick()
+        changes = changes.mapValues { it.value.copy(undone = true) }
+
+        compose.onNodeWithText("6 more lessons fit in your time").assertIsFocused()
+    }
+
+    @Test
+    fun aFoundTimeTakesFocusToTheSuggestion() {
+        showSlot(coveragePlan(), found = timeToCover(recommended = 45))
+
+        compose.onNodeWithText("Find the time that covers everything").performClick()
+
+        compose.onNode(isFocused()).assert(hasText("covers everything in depth", substring = true))
+    }
+
+    @Test
+    fun aResumedGoalTakesFocusToTheNextSuggestion() {
+        show(BEHIND, status = "paused")
+
+        compose.onNodeWithText("Resume").performClick()
+        goalStatus = "active"
+
+        compose.onNodeWithText("A little to catch up").assertIsFocused()
+    }
+
+    @Test
+    fun aResultStaysWhileFocusIsOnTheSlot() {
+        showSlot(plan(FIT_OFFER))
+        compose.onNodeWithText("Apply").performClick()
+
+        compose.mainClock.advanceTimeBy(RESULT_WAIT)
+        compose.onNodeWithText("Plan updated").assertIsDisplayed()
+
+        compose.runOnIdle { elsewhere.requestFocus() }
+        compose.mainClock.advanceTimeBy(RESULT_WAIT)
+        compose.onNodeWithText("Plan updated").assertDoesNotExist()
+    }
+
+    @Test
+    fun aResultStaysWhileItsUndoSavesOrDidntSave() {
+        showSlot(plan(FIT_OFFER))
+        compose.onNodeWithText("Apply").performClick()
+        compose.runOnIdle { elsewhere.requestFocus() }
+
+        changes = changes.mapValues { it.value.copy(undoing = true) }
+        compose.mainClock.advanceTimeBy(RESULT_WAIT)
+        compose.onNodeWithText("Plan updated").assertIsDisplayed()
+
+        changes = changes.mapValues { it.value.copy(undoing = false, undoFailed = true) }
+        compose.mainClock.advanceTimeBy(RESULT_WAIT)
+        compose.onNodeWithText("That didn't save. Try again.").assertIsDisplayed()
+    }
+
+    @Test
     fun aPassedDateFindsTheDateThatCoversWhatsLeftOnlyFromPreview() {
         showSlot(
             plan(""""status":{"kind":"pastDate","lessons":4}"""),
@@ -311,6 +407,7 @@ class PlanSuggestionSlotTest {
     }
 
     private companion object {
+        const val RESULT_WAIT = 20_000L
         const val BEHIND = """"status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null}"""
         const val FIT_OFFER =
             """"fitOffer":{"canApply":true,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":false,""" +
