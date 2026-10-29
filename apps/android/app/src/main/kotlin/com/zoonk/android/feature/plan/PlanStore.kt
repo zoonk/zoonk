@@ -15,8 +15,16 @@ import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanChange
+import com.zoonk.api.models.PlanChangeDecisionInput
+import com.zoonk.api.models.PlanChangePreview
+import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.Syllabus
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import java.time.ZoneId
 import java.util.UUID
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
@@ -92,6 +100,26 @@ interface PlanApi {
         goalId: UUID,
         status: GoalUpdateInput.Status,
     )
+
+    suspend fun change(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        operations: List<PlanOp>,
+    ): PlanChangeResult
+
+    /** Saves nothing. */
+    suspend fun preview(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        operations: List<PlanOp>,
+    ): PlanChangePreview
+
+    suspend fun decide(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        changeId: UUID,
+        status: PlanChangeDecisionInput.Status,
+    ): PlanChange
 }
 
 class LivePlanApi(
@@ -149,6 +177,33 @@ class LivePlanApi(
     ) {
         perform { api.clients(session).goals.updateGoal(goalId, GoalUpdateInput(status = status)) }
     }
+
+    override suspend fun change(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        operations: List<PlanOp>,
+    ) = perform { api.clients(session).plans.createPlanChange(goalId, changeInput(operations)) }
+
+    override suspend fun preview(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        operations: List<PlanOp>,
+    ) = perform { api.clients(session).plans.previewPlanChange(goalId, changeInput(operations)) }
+
+    override suspend fun decide(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        changeId: UUID,
+        status: PlanChangeDecisionInput.Status,
+    ) = perform { api.clients(session).plans.decidePlanChange(goalId, changeId, PlanChangeDecisionInput(status, deviceTimeZone())) }
+
+    private fun changeInput(operations: List<PlanOp>) =
+        buildJsonObject {
+            put("operations", JsonArray(operations.mapNotNull { it.toJson() }))
+            put("timeZone", deviceTimeZone())
+        }
+
+    private fun deviceTimeZone() = ZoneId.systemDefault().id
 }
 
 /** The Plan tab's reads, by goal; the subject pages read [syllabus] too. */
@@ -194,6 +249,39 @@ class PlanStore(
         goalId: UUID,
         status: GoalUpdateInput.Status,
     ): MutationResult<Unit> = cache.mutate(invalidating = WRITE_DOMAINS + DataDomain.LearningProfile) { api.setStatus(it, goalId, status) }
+
+    /**
+     * A learner's edit, from their tap. It answers once the plan shown is read again, so a tapped
+     * choice never shows the old one in between.
+     */
+    suspend fun change(
+        goalId: UUID,
+        operations: List<PlanOp>,
+    ): MutationResult<PlanChangeResult> =
+        rereading(goalId, cache.mutate(invalidating = WRITE_DOMAINS) { api.change(it, goalId, operations) })
+
+    suspend fun undo(
+        goalId: UUID,
+        changeId: UUID,
+    ): MutationResult<PlanChange> =
+        rereading(
+            goalId,
+            cache.mutate(invalidating = WRITE_DOMAINS) { api.decide(it, goalId, changeId, PlanChangeDecisionInput.Status.UNDONE) },
+        )
+
+    /** What an edit would do: it saves nothing, so nothing is read again. */
+    suspend fun preview(
+        goalId: UUID,
+        operations: List<PlanOp>,
+    ): MutationResult<PlanChangePreview> = cache.mutate { api.preview(it, goalId, operations) }
+
+    private suspend fun <T> rereading(
+        goalId: UUID,
+        result: MutationResult<T>,
+    ): MutationResult<T> {
+        if (result is MutationResult.Done) plan[goalId].refresh()
+        return result
+    }
 
     /**
      * While lessons are being written: asks whether anything changed since the plan shown was read,

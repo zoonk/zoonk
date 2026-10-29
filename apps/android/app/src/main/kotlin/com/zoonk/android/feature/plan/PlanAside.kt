@@ -34,6 +34,7 @@ import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanMockSchedule
 import com.zoonk.api.models.PlanPhase
+import com.zoonk.api.models.PlanSchedule
 import com.zoonk.api.models.PlanSteering
 import kotlinx.datetime.toJavaLocalDate
 import java.time.DayOfWeek
@@ -324,13 +325,7 @@ private fun goalDateValue(page: PlanPageState): String {
 @Composable
 private fun dailyTimeValue(page: PlanPageState): String {
     val locale = currentLocale()
-    val shape =
-        weekShape(
-            page.plan.schedule.weekdayMinutes
-                .map { it.toInt() },
-            page.plan.schedule.dailyMinutes
-                .toInt(),
-        )
+    val shape = page.plan.schedule.weekShape
     val weekdays = formatMinutes(shape.weekdays, locale)
     return shape.weekend?.let { stringResource(R.string.plan_time_weekends, weekdays, formatMinutes(it, locale)) } ?: weekdays
 }
@@ -339,7 +334,15 @@ private fun dailyTimeValue(page: PlanPageState): String {
 internal data class WeekShape(
     val weekdays: Int,
     val weekend: Int?,
-)
+    val weekdayDays: List<Int>,
+    val weekendDays: List<Int>,
+) {
+    /** Only a week with both kinds of study day can give the weekend its own time. */
+    val canDiffer: Boolean get() = weekdayDays.isNotEmpty() && weekendDays.isNotEmpty()
+}
+
+internal val PlanSchedule.weekShape: WeekShape
+    get() = weekShape(weekdayMinutes.map { it.toInt() }, dailyMinutes.toInt())
 
 internal fun weekShape(
     weekdayMinutes: List<Int>,
@@ -347,12 +350,17 @@ internal fun weekShape(
 ): WeekShape {
     fun minutes(day: Int) = weekdayMinutes.getOrElse(day) { 0 }
     val weekdayDays = (1..5).filter { minutes(it) > 0 }
-    val weekendDays = listOf(0, 6).filter { minutes(it) > 0 }
+    val weekendDays = WEEKEND.filter { minutes(it) > 0 }
     val weekdays = common(weekdayDays.map(::minutes)) ?: dailyMinutes
     val weekend = common(weekendDays.map(::minutes))
-    val canDiffer = weekdayDays.isNotEmpty() && weekendDays.isNotEmpty()
-    return WeekShape(weekdays, weekend.takeIf { canDiffer && it != weekdays })
+    val shape = WeekShape(weekdays, null, weekdayDays, weekendDays)
+    return if (shape.canDiffer && weekend != weekdays) shape.copy(weekend = weekend) else shape
 }
+
+/** Sunday is 0, as the plan counts weekdays. */
+internal fun isWeekend(weekday: Int) = weekday in WEEKEND
+
+private val WEEKEND = listOf(0, 6)
 
 /** The most common; the longer one on a tie. */
 private fun common(minutes: List<Int>): Int? =

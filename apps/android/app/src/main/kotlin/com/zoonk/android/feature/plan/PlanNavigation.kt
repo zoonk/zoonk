@@ -10,5 +10,5 @@ fun EntryProviderScope<NavKey>.planEntries(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    entry<AppRoute.Plan> { PlanScreen(app, navigator) }
+    entry<AppRoute.Plan> { route -> PlanScreen(app, navigator, route.focus) }
 }

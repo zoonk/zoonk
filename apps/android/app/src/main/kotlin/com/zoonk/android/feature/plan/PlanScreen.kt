@@ -62,6 +62,7 @@ import kotlin.time.Duration.Companion.seconds
 fun PlanScreen(
     app: AppContainer,
     navigator: AppNavigator,
+    focus: String? = null,
 ) {
     val summary by app.learnerSummary.summary.collectShown()
     val scope = rememberCoroutineScope()
@@ -84,7 +85,7 @@ fun PlanScreen(
             }
 
             else -> {
-                key(goal.id) { GoalPlan(goal, loaded, app, navigator, padding) }
+                key(goal.id) { GoalPlan(goal, loaded, app, navigator, padding, focus) }
             }
         }
     }
@@ -97,6 +98,7 @@ private fun GoalPlan(
     app: AppContainer,
     navigator: AppNavigator,
     padding: PaddingValues,
+    focus: String?,
 ) {
     val resource = app.plans.plan[goal.id]
     val state by resource.collectShown()
@@ -114,7 +116,7 @@ private fun GoalPlan(
         }
 
         read != null && read.plan.ready -> {
-            ReadyPlan(goal, summary, read.plan, app, navigator, padding)
+            ReadyPlan(goal, summary, read.plan, app, navigator, padding, focus)
         }
 
         state is LoadState.Loaded || state is LoadState.Empty || (state as? LoadState.Failed)?.error == ApiError.NotFound -> {
@@ -140,6 +142,7 @@ private fun ReadyPlan(
     app: AppContainer,
     navigator: AppNavigator,
     padding: PaddingValues,
+    focus: String?,
 ) {
     val resource = app.plans.plan[goal.id]
     var pulled by remember { mutableStateOf(false) }
@@ -164,7 +167,7 @@ private fun ReadyPlan(
         },
         modifier = Modifier.fillMaxSize().padding(padding),
     ) {
-        PlanPage(page = PlanPageState(goal, plan, summary), app = app, navigator = navigator, viewModel = viewModel)
+        PlanPage(page = PlanPageState(goal, plan, summary), app = app, navigator = navigator, viewModel = viewModel, focus = focus)
     }
 }
 

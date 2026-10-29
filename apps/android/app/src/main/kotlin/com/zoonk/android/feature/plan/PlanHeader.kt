@@ -14,6 +14,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -51,13 +52,13 @@ internal fun PlanHeader(
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
     modifier: Modifier = Modifier,
     report: ReportProblem? = null,
-    adjust: (@Composable () -> Unit)? = null,
+    onAdjust: (() -> Unit)? = null,
 ) {
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         PlanEyebrow(page)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             PlanTitle(Modifier.weight(1f))
-            adjust?.invoke()
+            onAdjust?.let { OutlinedButton(onClick = it) { Text(stringResource(R.string.plan_adjust_plan)) } }
             PlanMenu(page, links, resume, isSaving, onSetStatus, report)
         }
     }

@@ -51,6 +51,8 @@ openApiGenerate {
             // Its explicit nulls mean "clear it" (no daily limit, no active goal), which the model can't tell from absent.
             "LearningProfileUpdate",
             "MeDeletion",
+            // Its `setTargetDate` takes an explicit null (no date), which the generated models would drop.
+            "PlanChangeInput",
             "PronunciationAnswerRequest",
             "SpokenAnswerRequest",
             "__schema0",

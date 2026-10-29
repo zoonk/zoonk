@@ -574,4 +574,31 @@
     <string name="plan_change_next_mock">Next mock %1$s</string>
     <string name="plan_change_mocks_on">Mock exams on %1$s</string>
     <string name="plan_change_weekly_challenges_on">Weekly challenges on %1$s</string>
+
+    <string name="plan_editor_title">Adjust your plan</string>
+    <string name="plan_undo">Undo</string>
+    <string name="plan_deadline">Deadline</string>
+    <string name="plan_named_month_note">%1$s for now. Pick the day when you know it.</string>
+    <string name="plan_no_deadline_note">No deadline: you study everything at your own pace.</string>
+    <string name="plan_pick_date">Pick a date</string>
+    <string name="plan_save">Save</string>
+    <string name="plan_use_this_date">Use this date</string>
+    <string name="plan_other_time_a_day">Other time a day</string>
+    <string name="plan_weekend_time_differs">Different time on weekends</string>
+    <string name="plan_time_on_weekends">Time on weekends</string>
+    <string name="plan_what_you_practice">What you practice</string>
+    <string name="plan_when_to_practice">When to practice %1$s</string>
+    <string name="plan_cadence_weekly">Every week</string>
+    <string name="plan_cadence_biweekly">Every other week</string>
+    <string name="plan_cadence_final_weeks">Only the final weeks</string>
+    <string name="plan_cadence_weekly_effect">Recommended: a little every week, which improves writing the most.</string>
+    <string name="plan_cadence_biweekly_effect">The same practice in alternate weeks: less spread out, more at a time.</string>
+    <string name="plan_cadence_final_weeks_effect">Less spaced practice, concentrated in the final weeks before the exam.</string>
+    <string name="plan_how_is_it_going">How is it going?</string>
+    <string name="plan_too_easy">Too easy</string>
+    <string name="plan_too_hard">Too hard</string>
+    <string name="plan_more_practice">More practice</string>
+    <string name="plan_more_explanation">More explanation</string>
+    <string name="plan_tell_buddy">Something else? Tell %1$s</string>
+    <string name="plan_tell_buddy_description">In your own words, like “less on weekends”. You\'ll see the change before it applies.</string>
 </resources>

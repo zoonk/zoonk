@@ -6,6 +6,8 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.PlanChangeDecisionInput
+import com.zoonk.api.models.PlanChangeResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,8 +20,11 @@ import kotlinx.coroutines.test.setMain
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.time.LocalDate
 import java.util.UUID
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -67,5 +72,50 @@ class PlanViewModelTest {
             viewModel.setStatus(GoalUpdateInput.Status.PAUSED)
 
             assertEquals(PlanEvent.SaveFailed, viewModel.events.first())
+        }
+
+    @Test
+    fun aChangeAnswersOnceThePlanShownIsReadAgain() =
+        runTest {
+            var readsWhenAnswered = -1
+
+            viewModel.change(PlanPart.Schedule, listOf(PlanOp.DailyMinutes(45))) { readsWhenAnswered = api.plans }
+
+            assertEquals(listOf(listOf<PlanOp>(PlanOp.DailyMinutes(45))), api.changes)
+            assertEquals(1, readsWhenAnswered)
+            assertEquals(
+                CHANGE_ID,
+                viewModel.latest.value
+                    ?.change
+                    ?.id
+                    .toString(),
+            )
+            assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
+        }
+
+    @Test
+    fun aChangeThatDidntSaveFailsOnlyItsOwnPart() =
+        runTest {
+            api.changeFailure = ApiException(ApiError.Network)
+            val answers = mutableListOf<PlanChangeResult?>()
+
+            viewModel.change(PlanPart.Steering, listOf(PlanOp.DifficultyBias("harder"))) { answers += it }
+
+            assertEquals(listOf<PlanChangeResult?>(null), answers)
+            assertEquals(setOf(PlanPart.Steering), viewModel.failed.value)
+            assertNull(viewModel.latest.value)
+            assertEquals(0, api.plans)
+        }
+
+    @Test
+    fun undoingTheLatestChangeShowsItUndone() =
+        runTest {
+            viewModel.change(PlanPart.Date, listOf(PlanOp.TargetDate(LocalDate.parse("2027-06-12"))))
+
+            viewModel.undo(viewModel.latest.value!!.change)
+
+            assertEquals(listOf(PlanChangeDecisionInput.Status.UNDONE), api.decisions)
+            assertTrue(viewModel.latest.value!!.undone)
+            assertEquals(2, api.plans)
         }
 }

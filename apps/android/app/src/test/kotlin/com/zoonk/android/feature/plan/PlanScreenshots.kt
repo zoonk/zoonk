@@ -102,6 +102,50 @@ class PlanScreenshots {
         }
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h2600dp-xxhdpi")
+    fun editor() = captureEditor("plan-editor")
+
+    @Test
+    @Config(qualifiers = "w411dp-h2600dp-night-xxhdpi")
+    fun editorDarkMoreContrast() = captureEditor("plan-editor-dark-more-contrast", dark = true, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h4400dp-xhdpi")
+    fun editorAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureEditor("plan-editor-font200")
+    }
+
+    private fun captureEditor(
+        name: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        val summary = learnerSummary(kind = "exam", title = "ENEM")
+        val plan =
+            plan(
+                """
+                "schedule":{"dailyMinutes":45,"fullCourse":false,"lightWeeks":[],"studyDays":6,"targetDate":"2027-11-07",
+                 "targetDateEstimated":false,"targetDateNamedMonth":false,"noticeDay":{"date":"2027-11-14","estimated":false},
+                 "weekdayMinutes":[0,45,45,45,45,45,90]},
+                "steering":{"difficultyBias":"harder","lessonsStudied":12,"practiceBias":"balanced","skippedActivities":[]},
+                "writtenPractice":{"cadence":"weekly","finalWeeksFrom":"2027-09-01","parts":["the essay"]}
+                """.trimIndent(),
+            )
+        val page = PlanPageState(summary.goals.first(), plan, summary)
+        val latest = EditorChange(planChange(operations = """[{"kind":"setDailyMinutes","minutes":45}]""", effect = effect()))
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
+                Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
+                    Column(Modifier.padding(top = 24.dp)) { PlanEditorBody(page, PlanEdits(latest = latest)) }
+                }
+            }
+        }
+        compose.waitForIdle()
+        write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,

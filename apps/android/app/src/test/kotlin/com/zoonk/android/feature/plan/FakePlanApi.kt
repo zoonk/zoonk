@@ -5,6 +5,10 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanChange
+import com.zoonk.api.models.PlanChangeDecisionInput
+import com.zoonk.api.models.PlanChangePreview
+import com.zoonk.api.models.PlanChangeResult
 import java.util.UUID
 import kotlin.time.Instant
 
@@ -14,6 +18,9 @@ internal class FakePlanApi : PlanApi {
     var statusFailure: ApiException? = null
     val statuses = mutableListOf<GoalUpdateInput.Status>()
     val askedSince = mutableListOf<Instant>()
+    var changeFailure: ApiException? = null
+    val changes = mutableListOf<List<PlanOp>>()
+    val decisions = mutableListOf<PlanChangeDecisionInput.Status>()
 
     override suspend fun plan(
         session: AuthenticatedSession,
@@ -69,5 +76,31 @@ internal class FakePlanApi : PlanApi {
     ) {
         statusFailure?.let { throw it }
         statuses += status
+    }
+
+    override suspend fun change(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        operations: List<PlanOp>,
+    ): PlanChangeResult {
+        changeFailure?.let { throw it }
+        changes += operations
+        return PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED)
+    }
+
+    override suspend fun preview(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        operations: List<PlanOp>,
+    ) = PlanChangePreview(effect = null, feasibility = null, ready = true, unchanged = true)
+
+    override suspend fun decide(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        changeId: UUID,
+        status: PlanChangeDecisionInput.Status,
+    ): PlanChange {
+        decisions += status
+        return planChange(status = status.value)
     }
 }

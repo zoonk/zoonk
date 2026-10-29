@@ -17,6 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -93,10 +96,18 @@ internal fun PlanPage(
     app: AppContainer,
     navigator: AppNavigator,
     viewModel: PlanViewModel,
+    focus: String?,
 ) {
     val syllabus by app.plans.syllabus[page.goal.id].collectShown()
     val progress by app.plans.progress[page.goal.id].collectShown()
     val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
+    val pending by viewModel.pending.collectAsStateWithLifecycle()
+    val failed by viewModel.failed.collectAsStateWithLifecycle()
+    val latest by viewModel.latest.collectAsStateWithLifecycle()
+    var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME) }
+    var editingAt by rememberSaveable { mutableStateOf(if (focus == ADJUST_TIME) PlanSection.Time else null) }
+    val links = PlanLinks(navigator, page)
+    val edits = PlanEdits(pending, failed, latest, viewModel::change, viewModel::undo)
     val report =
         rememberReportProblem(
             app,
@@ -108,7 +119,7 @@ internal fun PlanPage(
     PlanContent(
         page = page,
         standing = standingOf(page, progress.value, syllabus.value),
-        links = PlanLinks(navigator, page),
+        links = links,
         resume =
             if (page.isPaused) {
                 resumeOf(
@@ -122,8 +133,30 @@ internal fun PlanPage(
         isSaving = isSaving,
         onSetStatus = viewModel::setStatus,
         report = report,
+        onAdjust = { section ->
+            viewModel.forgetLatest()
+            editingAt = section
+            editing = true
+        },
     )
+
+    if (editing) {
+        PlanEditor(
+            page = page,
+            edits = edits,
+            section = editingAt,
+            onTellBuddy = {
+                editing = false
+                links.buddy()
+            },
+            onDismiss = { editing = false },
+        )
+    }
 }
+
+/** Main's `?focus=` arrivals that open Adjust plan, as Today's and the tutor's links do. */
+private const val ADJUST = "adjust"
+private const val ADJUST_TIME = "time"
 
 /** Whether resuming asks first, which waits for the preview of what resuming changes; a failed preview asks. */
 internal enum class Resume { Plain, Confirm, Pending }
@@ -145,8 +178,10 @@ internal fun PlanContent(
     isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
     report: ReportProblem? = null,
+    onAdjust: ((PlanSection?) -> Unit)? = null,
 ) {
-    val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links) }
+    val adjust = onAdjust?.let { { it(null) } }
+    val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links, onAdjust = adjust) }
 
     PageWithSupportingPane(
         supportingPane = {
@@ -158,7 +193,7 @@ internal fun PlanContent(
                 ) {
                     numbers(NumberVariant.Stats)
                     NextOnPath(page, links)
-                    PlanProperties(page, links)
+                    PlanProperties(page, links, onOpen = onAdjust)
                 }
             }
         },
@@ -169,7 +204,15 @@ internal fun PlanContent(
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             item(key = "header", contentType = "header") {
-                PlanHeader(page = page, links = links, resume = resume, isSaving = isSaving, onSetStatus = onSetStatus, report = report)
+                PlanHeader(
+                    page = page,
+                    links = links,
+                    resume = resume,
+                    isSaving = isSaving,
+                    onSetStatus = onSetStatus,
+                    report = report,
+                    onAdjust = adjust,
+                )
             }
             item(key = "roadmap", contentType = "roadmap") { PlanRoadmap(page, links) }
             if (!asideBeside) {

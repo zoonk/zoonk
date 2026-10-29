@@ -14,6 +14,12 @@
   "plan_available_with_plus": "5a32f686f3063c49a68cdd5df4ce90f700a7ad4720625879f1169a86680a5074",
   "plan_building_description": "747a950046f8c2d2e1f77b52c3ae513a150515e2ef7046aed9fbddb403c83d52",
   "plan_building_eyebrow": "b03cfd7b7dea878c2773b0bf15b098b27022b3f0d6c3c607338888eba84889bf",
+  "plan_cadence_biweekly": "140660ee1432e11f0205bbc617125b85eaed7f985989945d6f4f49456256ab2b",
+  "plan_cadence_biweekly_effect": "7854968e7dfe197ece378f7610e4baa78d18f378eaa9a9bb2075c2fa43212d72",
+  "plan_cadence_final_weeks": "f1547fa45563e51fd4b862f4b01a9801ebba577b5302a0c7a4cf58a4a027fbc1",
+  "plan_cadence_final_weeks_effect": "82f8d4a6d7468c2da08590ea2835a2b0dd49506e3f7d28e6057d9ac670109512",
+  "plan_cadence_weekly": "565f5a188e709a5ff8c3214cba9a81cdb80d2269799c754598966be0f0c13ec8",
+  "plan_cadence_weekly_effect": "a0f0d90cc79405441e13f36294fffeb9cf15d8d64b00e3c409f956c270aad0a6",
   "plan_cancel": "113f9c511d044be0f4d68f210c2138b3669f6b3fdcacea73765c809e1f413b09",
   "plan_challenge_after_previous": "c03dcef57b7b796243445154a9944e5420e1d07017f6e0940ce963e2a2b9857e",
   "plan_challenge_left_out": "eaeae6beb8b972a1999cfe1ecb46a589aa8abdfc9aa80d708a86d63259dbc686",
@@ -171,8 +177,10 @@
   "plan_days_left": "2da468cc146fe539accb546e8d90174a598d2d7ada927673f45b4f3074485c57",
   "plan_days_left_estimate": "4bc33719e70fd7961e70d1f765d2d491df42f23758e90590c121cade60bd6207",
   "plan_days_left_estimate_spoken": "77a9065d465b3762d19733c9383f75a07c046792ce85607d399bd96f86a41c1f",
+  "plan_deadline": "0dcbd05e71837a5f29041cad86ced8570c8816eab1ac02f0e5776d9680bfdfa7",
   "plan_done": "973b2ed23fb1bf05ee344ea7e01f21500a51419b468ba8bcce71a397bad0863a",
   "plan_done_suffix": "0963ad6903e79fcf28aa8f2aa0e54a97a1c21f426a51e5ca1a72881b434981d2",
+  "plan_editor_title": "5446a15416bf7aef58676a811d0122d2a7c1091e6356019179a077f02f4a0d47",
   "plan_estimate_based_on": "11eb2bad1760c4c4de7b71d5b11c0d32c38401bbdf757b99756973e2ae28825f",
   "plan_estimate_based_on_last": "2f68c5f5a5e8102c3e4856fd798075aa1e0095ef41ab7d0eeb12e696a25e7546",
   "plan_estimate_waits": "bcb0de6ee2ef66b0f135288f36355229dc65e7db53d877e6ba0cc0975bdc5db1",
@@ -196,6 +204,7 @@
   "plan_goal_date": "a4a28bc97ac836828178ca06220aeacdf43b2c189e5b14a2a0d7c73f83f62369",
   "plan_goal_limit_reached": "1ff1dd4d44719f5eb81438ccd83706c049b09f042228d6192c3a5fb903f4f1a0",
   "plan_going_deeper": "87d6ba4d151a2cf7c09f680e63366a037e853ec906001a141590f6fff0bf92b6",
+  "plan_how_is_it_going": "b2636671e1d0374ebe0761d41e98b8a77f41caba0ec3fcc7e987928f429113d2",
   "plan_last_week_recap": "adcd140c655b0b21a82db427344b253aa3a2d34f265b1e75fe312991d20389a7",
   "plan_lessons": "7e706b806ec55d99ddb289dc4baa8968b01af0eb9d6a7ee78b512d6f690993a7",
   "plan_lessons_being_written_from": "4bb183709d2db140d857ef5eae905dde5a852cad5ee3cb884954877f038e3bc3",
@@ -227,18 +236,23 @@
   "plan_mondays": "352e0a38255cddb15ae1e2acd747eb5eead0b05c11ce3131f1782de7a4523bac",
   "plan_more": "018d58b2a8a367fbe386b482c579f8e1911a5acd60ceb053be9f4cace8ef740c",
   "plan_more_chapters": "0dcdfc73a7100cb96c66d5552f0bf8aa838541bc1a86a048689c16754d58d9b1",
+  "plan_more_explanation": "7841da1a5ce7ba5e7cafb265cec679521a3e91a8045c16ee319f05ac77d2998e",
   "plan_more_lessons": "221275034e30a71a0feef172cbf455e7c967768342044437a86beb840ff8347b",
   "plan_more_lessons_challenge_on": "a0127feae60779fab7e2bf8a3f254e83759f30705d0e3d280477959c7654d8bd",
   "plan_more_lessons_on_the_way": "2238fcaec9f3b308eccf9203b8073bb0012dc83a42525ed8e2740d625e190c55",
+  "plan_more_practice": "5800cd13b934a0dd4cee716538283554fed9437a3214ef5fdfda15080bd44d05",
+  "plan_named_month_note": "52e0e46d24f99350e5fe7740578cc60399a9462e8bf4ccec2f6d9d584c5b8a0a",
   "plan_next_on_path": "d964e34ccfb999b315d4dc9950c78d0dbd97557726c8c4aa71d74bda14483dd9",
   "plan_no_change_this_week": "fd630d5e21c3665d18acb94733be31d02ac64218720b1ed3481999e2e7b71cea",
   "plan_no_date": "a302f567d7a6e779d5f775a79c89049658268456423ab94685b64f1ced4a6e03",
+  "plan_no_deadline_note": "d93ce36be1ae4c87ccd1fa83ba8871824e7ed31f221501f35f53e5ca400cc607",
   "plan_no_goal_description": "369f3e24418cd2befbcf7d9eb5800c4bcc804e93de41da9b8b84e6dd9665ae49",
   "plan_not_in_your_plan": "fa37615ca3b5e78725719088f7948d597469c275b111cb4c101cab2d80feb28c",
   "plan_not_yet": "21a27c4972b247a299dd7d4ef4911bb3848848269a4ed2ab5a378aa2f820d344",
   "plan_nothing_planned": "a8ff058ea3dbfef1eea393ee2f740cf23c610caad56c8b9f8fd501ebb91d4b2c",
   "plan_nothing_planned_until_resume": "fe5079550471efdc953e4f35fc6b7baa2a5be554db8235e031e28abde6422af2",
   "plan_options": "c703bd1bf60cf761bff829d21d66567a1dccc97726c4a2dfd9dc0a13e29160f7",
+  "plan_other_time_a_day": "fcbc6c6381c8d80d5b189f832eb02e642cded632450ed2d0bcb081ae8a659195",
   "plan_pace": "d9f7de2f7c0ac1765b024d6eab139237cad03d7352338f6ef1dbc6a2632a55d2",
   "plan_pace_challenges_left": "5a0ccd701fc6874753b8d3efb27abc6ba2f048d6230782f1d5ec5325d31c9a2a",
   "plan_pace_days": "6ae0fc0739e41a03804dec11e06b1e385caa8dab551478c1a88a6c02e15e7848",
@@ -276,6 +290,7 @@
   "plan_phase_number": "a87adcd54ad109df095fd86ec1c56f02a368d853ae8891ef58f6ef3ed9b52267",
   "plan_phase_practice": "768f1230ca5c4f925a40f1f6bf37a65a2f5e60b46f7f03f3e83883b0e370bcfc",
   "plan_phases_done": "d0802b8400e6b54f10181f18f7dff8ab01ba8283b78a1e8b0c96e1ad8872a779",
+  "plan_pick_date": "938d953587e2fe6f9629689a5189660dee9b522b58ddb012c58f9b5c78368558",
   "plan_practice": "6d777480882dd4dc1b747fea543d942620c1eb6522bc05e404956bb0c56b4815",
   "plan_preparation": "b01c145379ed1c32a7c827f2b607daa82e4b32ecc0ad8c117c7c57789f44b2de",
   "plan_progress": "44ef891c7a763cbed1f95966035dea0820cf3cff8fe94ddc7fd81a787595ffd6",
@@ -290,6 +305,7 @@
   "plan_roadmap_phase_of": "4ca0f8a2e0ba0e246ec5a97fd3c69d3efff824c9d092b8640f29b81a2a79de30",
   "plan_roadmap_until": "de38838a4e379eff40d381d23335ebd85438951a8f41e12d114fb09cb1665533",
   "plan_saturdays": "45930d51bbf62c9a1971e9aef93af0a162b8503ec5ac778cfe920169e380801e",
+  "plan_save": "4e837c388fe4537c3e02f16c358de2b2665c3452982901283f7d958d5e5bd934",
   "plan_save_failed": "94e6e4fcb25a8b428873bab9569911cbbf343f6f86fe2055170c9afb11de5980",
   "plan_score_band": "650071ca2d2355b94f261bda8a7cedfd6ca17c60079859c8f74090c61480e003",
   "plan_score_band_range": "97ccc8c55fac5d38c802aad360e2e7aa4a0af31ee99791d6a628e5b5d595cfe6",
@@ -324,26 +340,36 @@
   "plan_sundays": "d2d9095a0c7fe5ad2736bf64d4500f7a71cc48834518620b15852c9fd955bde3",
   "plan_system_phone": "c43508a044ba693f3935e9db02d16a865936669e2fbb18d2deac5c72d358cf12",
   "plan_talk_to": "7ce4d23c0038856a4dd5d78e68e8cc8fed74a57d3920a84c720003d00078d96c",
+  "plan_tell_buddy": "ab0116cd105effc5ef15e767f0d7b213fcc5d6e4ecab233751176afca70fc89d",
+  "plan_tell_buddy_description": "39eeb21eac5903ce9a99bab3e0f948634fa03075b732ecaa55e3e18d65ccc07a",
   "plan_this_week": "61162fd7f150738af12d823313df049e6f587c579cc8808427911d8c191dd80d",
   "plan_thursdays": "c11ed5612988dd59962680cd2e9470b4ad39f410f968c01ab745cd19dc808587",
   "plan_time_a_day": "233a9c0ed0d8f22a7fb6ae3ce9377187ad305267147d01999b243476a4acd987",
   "plan_time_a_day_label": "2cb155a40fcb43499847f04f5f643949947ace3e6ee376dbe08930a29af56bca",
+  "plan_time_on_weekends": "a923f05deb94dcfe98423a2346f1aeeccb70618ede65042061f0f7aee2405f1d",
   "plan_time_weekends": "ead23834421978bec917d6a5b4715695bcc739ceb9ca2d1c9141e7e1c74cd714",
   "plan_title": "90d347473b45435ec4e1dede3999d3db4a434e7371b93042daef73954513cf70",
   "plan_to_be_confirmed": "1bca3ac3114996ee94b178091ab3e7ac11b776e908dbe0c0377fcdc3934d318f",
   "plan_today": "21bbb1395f58869438b198cf0be5521b6d4bca37072f283e1c5074a79eff4771",
+  "plan_too_easy": "b770b316e81e261c2a1cd34a9134692f6392d55b91878530dadd26973e8ddb1b",
+  "plan_too_hard": "051dc5f69273d7f56f4f434433c847adf20fb05e2356c88927b22a125149bc7b",
   "plan_tuesdays": "3b55b70b636629cebf146b676a8880e4719f135c78c7471454e8d4982b1359ef",
+  "plan_undo": "c00af33b86f249aaa670a93bad21716ceb85700ebe2d0ade5cac154a91e7833d",
   "plan_unit_lessons_being_written": "8bb48ca3ab24a17d0de7d8b5e2e3a52af58e7e9253f9c40f8cff0b7375ea37a1",
   "plan_until": "2cba5796bdc220f40bb5c38cc4c4f7345ec97f75021c1dd64cfb00e9e38ca8d1",
   "plan_until_estimate": "897780c300ed3ffec28af2ac88deea50e11bfc82e57dc0b9bfa04a78277869e4",
   "plan_until_estimate_spoken": "e4381921105ce05cefc97c232d22a5831756495cfc02636b014379900a458561",
   "plan_up_next": "6f52d11e44c0dc2912a95702659458f11c6472bb945ef962d756295042241e81",
   "plan_up_next_suffix": "c9ff1b7dac18408c2d193e2e29a3909678bec54dd3bae854d6367c6313b28736",
+  "plan_use_this_date": "f93eb533b4e60161ec1065d7921d0473012591130b89189f8115a6df9c7cf0ce",
   "plan_wednesdays": "1ed89107720510cad1f16711c7271eb8b083824c6ce3d6a01cc53a730ae7213b",
   "plan_week_day": "23a45fa721a9dadae32cb60baecf274ae6e6ff0e24a9e55c1829f65746964023",
   "plan_week_time": "1f3a177f6e01c098a719c4b660d077a3a2451e8f941bbfe5bd324dc437be0079",
+  "plan_weekend_time_differs": "f00f3c089221117c006287d6206e93f147543ebfd839fe254048992b13b0c708",
   "plan_weekly_challenges": "c21c402c53c2f4c936460717a2c47d0311c4b6e7b6da3b531a6fea828cf1123e",
   "plan_weekly_challenges_count": "cce369c181f9bb5b092c9e477c108e2c93e5981def8606d4f963e36e7744dbf2",
+  "plan_what_you_practice": "52582d55037f73b5b40171ac07419de37945376cdf2e3659295be45f66a11996",
+  "plan_when_to_practice": "9d773bb918a86ead74bad2ac042603f54f996823f51e43f7c2a7f8c5d1c535a9",
   "plan_you_are_here_suffix": "a1d5f649b8a32699abe62b3940107c03d22a0a2860fe6de4515ea928ec7f2d60",
   "plan_your_pace": "5cd1f902d42d9e05e120277456ec3dbc8e1ab9e5e294b4758d85aefdf9f5028f",
   "plan_your_path": "28bbdd914cc0173469ddf092bc4cc1df1c453c7c9f4ad05e14e65ae31129fdf0",
@@ -982,4 +1008,30 @@
     <string name="plan_change_next_mock">Próximo simulacro: %1$s</string>
     <string name="plan_change_mocks_on">Simulacros de examen el %1$s</string>
     <string name="plan_change_weekly_challenges_on">Desafíos semanales el %1$s</string>
+    <string name="plan_editor_title">Ajusta tu plan</string>
+    <string name="plan_undo">Deshacer</string>
+    <string name="plan_deadline">Fecha límite</string>
+    <string name="plan_named_month_note">%1$s por ahora. Elige el día cuando lo sepas.</string>
+    <string name="plan_no_deadline_note">Sin fecha límite: estudia a tu ritmo.</string>
+    <string name="plan_pick_date">Elige una fecha</string>
+    <string name="plan_save">Guardar</string>
+    <string name="plan_use_this_date">Usar esta fecha</string>
+    <string name="plan_other_time_a_day">Otro horario al día</string>
+    <string name="plan_weekend_time_differs">Horario distinto los fines de semana</string>
+    <string name="plan_time_on_weekends">Horario de los fines de semana</string>
+    <string name="plan_what_you_practice">Qué practicas</string>
+    <string name="plan_when_to_practice">Cuándo practicar %1$s</string>
+    <string name="plan_cadence_weekly">Todas las semanas</string>
+    <string name="plan_cadence_biweekly">Una semana sí y otra no</string>
+    <string name="plan_cadence_final_weeks">Solo las últimas semanas</string>
+    <string name="plan_cadence_weekly_effect">Recomendado: un poco cada semana, que es lo que más mejora la expresión escrita.</string>
+    <string name="plan_cadence_biweekly_effect">La misma práctica en semanas alternas: menos repartida y más intensa.</string>
+    <string name="plan_cadence_final_weeks_effect">Práctica menos espaciada, concentrada en las últimas semanas antes del examen.</string>
+    <string name="plan_how_is_it_going">¿Cómo va?</string>
+    <string name="plan_too_easy">Demasiado fácil</string>
+    <string name="plan_too_hard">Demasiado difícil</string>
+    <string name="plan_more_practice">Más práctica</string>
+    <string name="plan_more_explanation">Más explicaciones</string>
+    <string name="plan_tell_buddy">¿Algo más? Díselo a %1$s</string>
+    <string name="plan_tell_buddy_description">Cuéntalo con tus palabras, como «menos los fines de semana». Verás el cambio antes de que se aplique.</string>
 </resources>
