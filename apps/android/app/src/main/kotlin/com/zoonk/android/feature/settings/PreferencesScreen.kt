@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
@@ -36,6 +37,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -58,6 +60,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.LearningProfileStore
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
@@ -89,6 +92,24 @@ class PreferencesViewModel(
     var saveFailed by mutableStateOf(false)
         private set
 
+    var isEditingBuddy by mutableStateOf(false)
+        private set
+
+    var isSavingBuddy by mutableStateOf(false)
+        private set
+
+    var buddySaveFailed by mutableStateOf(false)
+        private set
+
+    fun editBuddy(editing: Boolean) {
+        isEditingBuddy = editing
+        buddySaveFailed = false
+    }
+
+    fun saveFailedShown() {
+        saveFailed = false
+    }
+
     fun setSoundsEnabled(enabled: Boolean) = save { profile.setSoundsEnabled(enabled) }
 
     fun setDailyLimit(minutes: Long?) = save { profile.setDailyLimit(minutes) }
@@ -97,12 +118,20 @@ class PreferencesViewModel(
         kind: BuddyKind,
         glasses: BuddyGlasses,
         name: String,
-    ) = save {
-        profile.setBuddy(
-            ProfileBuddy.Kind.entries.first { it.value == kind.key },
-            ProfileBuddy.Glasses.entries.first { it.value == glasses.key },
-            name.trim().ifEmpty { null },
-        )
+    ) {
+        if (isSavingBuddy) return
+        isSavingBuddy = true
+        buddySaveFailed = false
+        viewModelScope.launch {
+            val saved =
+                profile.setBuddy(
+                    ProfileBuddy.Kind.entries.first { it.value == kind.key },
+                    ProfileBuddy.Glasses.entries.first { it.value == glasses.key },
+                    name.trim().ifEmpty { null },
+                )
+            isSavingBuddy = false
+            if (saved) isEditingBuddy = false else buddySaveFailed = true
+        }
     }
 
     private fun save(write: suspend () -> Boolean) {
@@ -124,6 +153,15 @@ fun PreferencesScreen(
     val summary by app.learnerSummary.summary.collectShown()
     val preferences = viewModel { PreferencesViewModel(app.learningProfile) }
     val scope = rememberCoroutineScope()
+    val snackbars = LocalSnackbarHostState.current
+    val saveFailed = stringResource(R.string.settings_preferences_save_failed)
+
+    LaunchedEffect(preferences.saveFailed) {
+        if (preferences.saveFailed) {
+            preferences.saveFailedShown()
+            snackbars.showSnackbar(saveFailed)
+        }
+    }
 
     PageScaffold(onBack = { navigator.back() }, title = { Text(stringResource(R.string.settings_preferences)) }) { padding ->
         Box(
@@ -161,15 +199,6 @@ fun PreferencesScreen(
                 }
 
                 LanguageSection()
-
-                if (preferences.saveFailed) {
-                    Text(
-                        text = stringResource(R.string.settings_preferences_save_failed),
-                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                }
             }
         }
     }
@@ -181,7 +210,6 @@ private fun BuddySection(
     summaryLook: BuddyLook,
     preferences: PreferencesViewModel,
 ) {
-    var isEditing by rememberSaveable { mutableStateOf(false) }
     val kind = BuddyKind.of(profile.buddy.kind.value)
     val glasses = BuddyGlasses.of(profile.buddy.glasses.value)
     val look = summaryLook.copy(kind = kind, glasses = glasses)
@@ -197,7 +225,7 @@ private fun BuddySection(
                 },
             )
             OutlinedButton(
-                onClick = { isEditing = true },
+                onClick = { preferences.editBuddy(true) },
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
                 colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
             ) {
@@ -206,15 +234,14 @@ private fun BuddySection(
         }
     }
 
-    if (isEditing) {
+    if (preferences.isEditingBuddy) {
         BuddyEditor(
             profile = profile,
             look = look,
-            onClose = { isEditing = false },
-            onSave = { newKind, newGlasses, name ->
-                isEditing = false
-                preferences.setBuddy(newKind, newGlasses, name)
-            },
+            isSaving = preferences.isSavingBuddy,
+            saveFailed = preferences.buddySaveFailed,
+            onClose = { preferences.editBuddy(false) },
+            onSave = preferences::setBuddy,
         )
     }
 }
@@ -224,6 +251,8 @@ private fun BuddySection(
 private fun BuddyEditor(
     profile: LearningProfile,
     look: BuddyLook,
+    isSaving: Boolean,
+    saveFailed: Boolean,
     onClose: () -> Unit,
     onSave: (BuddyKind, BuddyGlasses, String) -> Unit,
 ) {
@@ -233,30 +262,45 @@ private fun BuddyEditor(
     val earned = profile.availableGlasses.map { BuddyGlasses.of(it.value) }.toSet() + BuddyGlasses.Round
 
     ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        Column(
-            modifier =
-                Modifier
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 24.dp)
-                    .padding(bottom = 24.dp)
-                    .navigationBarsPadding()
-                    .imePadding(),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Text(stringResource(R.string.settings_preferences_buddy), style = MaterialTheme.typography.titleLarge)
-            BuddyPicker(
-                kind = kind,
-                name = name,
-                onSelect = { kind = it },
-                onNameChange = { name = it },
-                glasses = glasses,
-                look = look,
-            )
-            Text(stringResource(R.string.buddy_glasses), style = MaterialTheme.typography.titleMedium)
-            BuddyGlassesPicker(look = look.copy(kind = kind), earned = earned, selected = glasses, onSelect = { glasses = it })
-            Row(Modifier.align(Alignment.End), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(Modifier.navigationBarsPadding().imePadding()) {
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f, fill = false)
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Text(stringResource(R.string.settings_preferences_buddy), style = MaterialTheme.typography.titleLarge)
+                BuddyPicker(
+                    kind = kind,
+                    name = name,
+                    onSelect = { kind = it },
+                    onNameChange = { name = it },
+                    glasses = glasses,
+                    look = look,
+                )
+                Text(stringResource(R.string.buddy_glasses), style = MaterialTheme.typography.titleMedium)
+                BuddyGlassesPicker(look = look.copy(kind = kind), earned = earned, selected = glasses, onSelect = { glasses = it })
+            }
+            HorizontalDivider()
+            Row(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (saveFailed) {
+                    Text(
+                        text = stringResource(R.string.settings_preferences_save_failed),
+                        modifier = Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                } else {
+                    Spacer(Modifier.weight(1f))
+                }
                 TextButton(onClick = onClose) { Text(stringResource(R.string.settings_cancel)) }
-                Button(onClick = { onSave(kind, glasses, name) }) { Text(stringResource(R.string.settings_save)) }
+                Button(onClick = { onSave(kind, glasses, name) }, enabled = !isSaving) { Text(stringResource(R.string.settings_save)) }
             }
         }
     }
@@ -341,7 +385,8 @@ private fun LanguageSection() {
     Section(stringResource(R.string.settings_preferences_language)) {
         OutlinedCard(Modifier.fillMaxWidth()) {
             ListItem(
-                headlineContent = { Text(stringResource(R.string.settings_preferences_language)) },
+                headlineContent = { Text(stringResource(R.string.settings_preferences_app_language)) },
+                supportingContent = { Text(stringResource(R.string.settings_preferences_on_this_device)) },
                 trailingContent = { Text(locale.getDisplayLanguage(locale).replaceFirstChar { it.titlecase(locale) }) },
                 modifier =
                     Modifier.clickable(role = Role.Button) {

@@ -46,5 +46,7 @@
     <!-- %1$s is a duration, like "45 min". -->
     <string name="settings_preferences_limit_a_day">%1$s a day</string>
     <string name="settings_preferences_language">Language</string>
+    <string name="settings_preferences_app_language">App language</string>
+    <string name="settings_preferences_on_this_device">On this device</string>
     <string name="settings_preferences_save_failed">That didn\'t save. Try again.</string>
 </resources>

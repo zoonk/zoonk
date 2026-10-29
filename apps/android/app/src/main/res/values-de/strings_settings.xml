@@ -25,6 +25,7 @@
   "settings_manage_apple": "42c3517c90ca4b0be69d9c0d8dac99e83f07bcf08b05e13969a2c02b93b83fe9",
   "settings_memory": "b4bd4298a4abe3dac40c56bd0c773a89a4acfe83d1d120138d02bf93c8ab23f4",
   "settings_preferences": "319ebe1061d4c3e9ec9294a7404ea8afedcfa58848fd62b1f1214bca3e837850",
+  "settings_preferences_app_language": "34651fdb09eb3cdee6dc7925727d960cff8e283d08ce08de61a007cf257eeb03",
   "settings_preferences_buddy": "a5c70da54a8d7a15d322a32c53daf45c2481f61852021856e168a9fed23a189f",
   "settings_preferences_buddy_line": "e791877baf1c1205653a97eab75b0cd70ef60b9cdd426082ca6c7eac2765c6ad",
   "settings_preferences_change": "43bcbc53a761ef69add36d11196e002787ef7c2d7909be82befda3e6838f1cb4",
@@ -35,6 +36,7 @@
   "settings_preferences_lessons": "14d36aa72a2644f3bfb51ede00e8456935309c8966ae296e780c3d0988305b6d",
   "settings_preferences_limit_a_day": "8f1a8c1c929c73c3759fb767b55f62d5c2cdfd854ee336682ad6f316493df98c",
   "settings_preferences_no_limit": "f196e8cb4aba138a559b21ccc0a936866fe0aa99414057122b1fdee492145507",
+  "settings_preferences_on_this_device": "14e3095f177933ef610626ea65e0ac046a37c166cc4a35627e69712184fcc191",
   "settings_preferences_save_failed": "aa787d4049acddb890477ed7ac84fddf791e873ceff393380ad372974c606297",
   "settings_preferences_sounds": "835e4109f126ee0f7bb938ceb6abd3ebf10aa00c74d05b8980e0ae1e093db439",
   "settings_preferences_sounds_description": "9db87a54deead2526d952318d7f72f451df7baeb0e3e5dd2c7c3e2f2a2a6d593",
@@ -93,5 +95,7 @@
     <!-- %1$s is a duration, like "45 min". -->
     <string name="settings_preferences_limit_a_day">%1$s pro Tag</string>
     <string name="settings_preferences_language">Sprache</string>
+    <string name="settings_preferences_app_language">App-Sprache</string>
+    <string name="settings_preferences_on_this_device">Auf diesem Gerät</string>
     <string name="settings_preferences_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
 </resources>
