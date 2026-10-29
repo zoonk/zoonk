@@ -15,9 +15,12 @@ import com.zoonk.api.models.CreateUploadRequestOneOf
 import com.zoonk.api.models.CreateUploadRequestOneOf1
 import com.zoonk.api.models.CreateUploadRequestOneOf2
 import com.zoonk.api.models.GoalCreateInput
+import com.zoonk.api.models.GoalGenerationRun
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
 import com.zoonk.api.models.MockOptions
+import com.zoonk.api.models.Onboarding
+import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
 import com.zoonk.api.models.Placement
@@ -26,7 +29,14 @@ import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanLinkStartInput
+import com.zoonk.api.models.PlanTimeAdvice
+import com.zoonk.api.models.PlanTimeAdviceInput
+import com.zoonk.api.models.PlanTimeToCover
+import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.Syllabus
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonElement
@@ -93,6 +103,15 @@ class OnboardingStore(
             session?.let { api.allowance(it) }
         }
 
+    /** A goal's setup; each answer replies with the whole new setup. */
+    val onboardings =
+        cache.keyed<String, Onboarding>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.LearnerModel)) {
+            session,
+            goalId,
+            ->
+            session?.let { api.onboarding(it, goalId) }
+        }
+
     /** Drafts this process sent from a tap: a draft opened later waits for the learner's own tap. */
     private val sent = mutableSetOf<String>()
 
@@ -155,6 +174,42 @@ class OnboardingStore(
                     )
                 api.createFromPlanLink(session, planId, start).id.toString()
             }
+        }
+
+    /** A language goal whose reason names a certificate moves to that exam: the reply is the new goal's setup. */
+    suspend fun answer(
+        goalId: String,
+        input: OnboardingAnswerInput,
+    ): WriteOutcome<Onboarding> =
+        write(
+            invalidating = setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.LearnerModel),
+            replacing = { listOf(onboardings[it.goal.id.toString()].replacing(it)) },
+        ) { api.answer(it, goalId, input) }
+
+    val generationRuns =
+        cache.keyed<String, GoalGenerationRun>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
+            session?.let { api.goalGenerationRun(it, goalId) }
+        }
+
+    /** What a daily time and week would cover: the server plans the goal for it without saving anything. */
+    val timeAdvice =
+        cache.keyed<AdviceQuery, PlanTimeAdvice>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearnerModel)) { session, query ->
+            session?.let { api.timeAdvice(it, query.goalId, query.input) }
+        }
+
+    /** Read only from the learner's tap: the server plans the goal at each daily time. */
+    val timesToCover =
+        cache.keyed<CoverQuery, PlanTimeToCover>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearnerModel)) { session, query ->
+            session?.let { api.timeToCover(it, query.goalId, query.input) }
+        }
+
+    suspend fun writeGoal(goalId: String) = write { api.writeGoal(it, goalId) }
+
+    /** Archives what this onboarding made, so the learner starts over from their words. */
+    suspend fun startOver(goalIds: List<String>) =
+        write(setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.LearnerModel)) { session ->
+            coroutineScope { goalIds.map { async { api.archive(session, it) } }.awaitAll() }
+            Unit
         }
 
     suspend fun joinWaitlist(
@@ -251,10 +306,7 @@ class OnboardingStore(
         }
 
     val placementMocks =
-        cache.keyed<String, MockOptions>(
-            Audience.SignedIn,
-            setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserSubscription),
-        ) { session, goalId ->
+        cache.keyed<String, MockOptions>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.UserSubscription)) { session, goalId ->
             session?.let {
                 try {
                     api.mockOptions(it, goalId)
@@ -338,3 +390,15 @@ private inline fun <reified T> JsonElement.decode(): T? =
     } catch (e: IllegalArgumentException) {
         null
     }
+
+data class AdviceQuery(
+    val goalId: String,
+    val input: PlanTimeAdviceInput,
+)
+
+/** [build] counts the plan's rebuilds, so a time found for an earlier build is never shown again. */
+data class CoverQuery(
+    val goalId: String,
+    val input: PlanTimeToCoverInput,
+    val build: Int,
+)

@@ -8,6 +8,7 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatTimeOfDay
+import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalDraftOutput
 import com.zoonk.api.models.GoalUnderstandingOneOfSchedule
 import com.zoonk.api.models.OnboardingExamDate
@@ -46,6 +47,18 @@ data class RowSource(
     val url: String,
 )
 
+data class GoalFacts(
+    val isLanguage: Boolean,
+    val targetLanguage: String?,
+    val details: Map<String, JsonElement>?,
+    val title: String,
+    val language: String,
+)
+
+fun GoalDraftOutput.facts() = GoalFacts(kind == GoalDraftOutput.Kind.LANGUAGE, targetLanguage, details, title, language)
+
+fun Goal.facts() = GoalFacts(kind == Goal.Kind.LANGUAGE, targetLanguage, details, title, language)
+
 data class UnderstoodRow(
     val id: String,
     val label: String,
@@ -80,7 +93,7 @@ class UnderstoodRows(
         return listOfNotNull(
             UnderstoodRow("title", text(R.string.onboarding_row_goal), draft.title, editable = EditableField.Title),
             dateRow(draft, goal.examDates),
-        ) + languageRows(draft) + detailRows(draft, goal.cutoff) +
+        ) + languageRows(draft.facts()) + detailRows(draft.facts(), goal.cutoff) +
             listOfNotNull(
                 levelNote?.let {
                     UnderstoodRow(
@@ -133,9 +146,9 @@ class UnderstoodRows(
             )
         }
 
-    private fun languageRows(draft: GoalDraftOutput): List<UnderstoodRow> {
+    fun languageRows(draft: GoalFacts): List<UnderstoodRow> {
         val target = draft.targetLanguage
-        if (draft.kind != GoalDraftOutput.Kind.LANGUAGE || target == null) return emptyList()
+        if (!draft.isLanguage || target == null) return emptyList()
         val language = languageName(target)
         val native = draft.details.text("nativeLanguage") ?: draft.language
 
@@ -149,8 +162,8 @@ class UnderstoodRows(
         )
     }
 
-    private fun detailRows(
-        draft: GoalDraftOutput,
+    fun detailRows(
+        draft: GoalFacts,
         cutoff: TargetCutoff?,
     ): List<UnderstoodRow> {
         fun unsaid(key: String) = draft.details.text(key)?.takeUnless { isSaidIn(draft.title, it) }
@@ -190,9 +203,7 @@ class UnderstoodRows(
                     id = "targetScore",
                     label =
                         text(
-                            if (draft.kind ==
-                                GoalDraftOutput.Kind.LANGUAGE
-                            ) {
+                            if (draft.isLanguage) {
                                 R.string.onboarding_row_level_aiming
                             } else {
                                 R.string.onboarding_row_target_score

@@ -76,7 +76,7 @@ class PlacementStepFlowTest {
         show()
 
         rule.onNodeWithText("Let's see what you already know").assertIsDisplayed()
-        rule.onNodeWithText("A few quick questions about the 3 areas", substring = true).assertIsDisplayed()
+        rule.onNodeWithText("A few quick questions about 3 areas", substring = true).assertIsDisplayed()
         assertEquals(emptyList<Any>(), api.placementAnswers)
         assertEquals(emptyList<Boolean>(), api.finishedPlacements)
     }

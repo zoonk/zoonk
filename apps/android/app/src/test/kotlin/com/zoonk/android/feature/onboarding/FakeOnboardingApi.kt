@@ -12,9 +12,12 @@ import com.zoonk.api.models.Generation
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
+import com.zoonk.api.models.GoalGenerationRun
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
 import com.zoonk.api.models.MockOptions
+import com.zoonk.api.models.Onboarding
+import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
 import com.zoonk.api.models.Placement
@@ -22,6 +25,10 @@ import com.zoonk.api.models.PlacementAnswerInput
 import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanLinkStartInput
+import com.zoonk.api.models.PlanTimeAdvice
+import com.zoonk.api.models.PlanTimeAdviceInput
+import com.zoonk.api.models.PlanTimeToCover
+import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.Source
 import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.CompletableDeferred
@@ -73,6 +80,27 @@ internal fun goalCreated(): GoalCreateResponse =
          "examBlueprintId":null,"id":"$GOAL_ID","isActive":true,"kind":"exam","language":"en","plan":null,"primaryCourseId":null,
          "prompt":"pass the bar exam","status":"active","studyDays":[],"studyTime":null,"targetDate":null,"targetLanguage":null,
          "timezone":null,"title":"Pass the bar exam"}]}
+        """.trimIndent(),
+    )
+
+internal const val EXAM_GOAL_ID = "2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e"
+
+internal fun setupView(
+    steps: List<String>,
+    goalId: String = GOAL_ID,
+    kind: String = "learn",
+    details: String = """{"answered":[]}""",
+    targetDate: String? = null,
+): Onboarding =
+    ApiJson.decodeFromString(
+        """
+        {"examChoices":[],"examDays":null,"examSubjects":[],"followUps":[],"generationId":null,"goalIds":["$goalId"],
+         "libraryCourse":null,"recommendedMinutes":30,"steps":[${steps.joinToString(",") { "\"$it\"" }}],
+         "goal":{"createdAt":"2026-10-28T12:00:00Z","dailyMinutes":30,"details":$details,"examBlueprintId":null,"id":"$goalId",
+          "isActive":true,"kind":"$kind","language":"en","plan":null,"primaryCourseId":null,"prompt":"learn statistics","status":"active",
+          "studyDays":[],"studyTime":null,"targetDate":${targetDate?.let {
+            "\"$it\""
+        } ?: "null"},"targetLanguage":null,"timezone":null,"title":"Learn statistics"}}
         """.trimIndent(),
     )
 
@@ -155,6 +183,63 @@ internal class FakeOnboardingApi : OnboardingApi {
     ) = Unit
 
     override suspend fun allowance(session: AuthenticatedSession): AllowanceResponse = throw ApiException(ApiError.Unavailable)
+
+    var setup: (String) -> Onboarding = { throw ApiException(ApiError.NotFound) }
+    val answers = mutableListOf<Pair<String, OnboardingAnswerInput>>()
+    var reply: (String, OnboardingAnswerInput) -> Onboarding = { goalId, _ -> setup(goalId) }
+    val archived = mutableListOf<String>()
+
+    override suspend fun onboarding(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = setup(goalId)
+
+    override suspend fun answer(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: OnboardingAnswerInput,
+    ): Onboarding {
+        answers += goalId to input
+        refusal?.let { throw it }
+        return reply(goalId, input)
+    }
+
+    var generationId: (String) -> String? = { null }
+    val generationReads = mutableListOf<String>()
+
+    override suspend fun goalGenerationRun(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): GoalGenerationRun {
+        generationReads += goalId
+        return GoalGenerationRun(generationId(goalId))
+    }
+
+    override suspend fun writeGoal(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = "run-2"
+
+    override suspend fun archive(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) {
+        archived += goalId
+    }
+
+    var advice: (PlanTimeAdviceInput) -> PlanTimeAdvice = { throw ApiException(ApiError.Unavailable) }
+
+    override suspend fun timeAdvice(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: PlanTimeAdviceInput,
+    ) = advice(input)
+
+    override suspend fun timeToCover(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: PlanTimeToCoverInput,
+    ): PlanTimeToCover = throw ApiException(ApiError.Unavailable)
 
     override suspend fun uploadFile(
         session: AuthenticatedSession,

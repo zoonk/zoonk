@@ -40,6 +40,7 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.StepState
 import com.zoonk.android.data.StepTimes
+import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
@@ -47,6 +48,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -62,7 +64,7 @@ import java.io.File
 import java.time.LocalDate
 
 /**
- * Review screenshots of the start flow, written only on demand:
+ * Review screenshots of the start flow and goal setup, written only on demand:
  * `./gradlew :app:testDebugUnitTest --tests '*OnboardingScreenshots*' --rerun -Pzoonk.shots=<folder>`.
  */
 @RunWith(AndroidJUnit4::class)
@@ -282,7 +284,48 @@ class OnboardingScreenshots {
                 "reveal-reading" to {
                     Reveal(FakeOnboardingApi().apply { plan = planOf(notice = "reading") })
                 },
+                "setup-purpose" to
+                    { Setup(FakeOnboardingApi().apply { setup = { setupView(listOf("purpose", "level", "schedule", "plan")) } }) },
+                "setup-level" to { Setup(FakeOnboardingApi().apply { setup = { setupView(listOf("level", "schedule", "plan")) } }) },
+                "setup-exam-date" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup = { setupView(listOf("targetDate", "schedule", "plan"), kind = "exam", details = ENEM_DETAILS) }
+                        },
+                    )
+                },
+                "setup-schedule" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup = {
+                                setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2026-11-08")
+                            }
+                            advice = {
+                                PlanTimeAdvice(
+                                    coveredShare = 0.6,
+                                    fullCourseEndDate = null,
+                                    measure = PlanTimeAdvice.Measure.EXAM,
+                                    numbers = null,
+                                    ready = true,
+                                    targetDate = kotlinx.datetime.LocalDate(2026, 11, 8),
+                                    targetDateNamedMonth = false,
+                                )
+                            }
+                        },
+                    )
+                },
+                "setup-buddy" to { Setup(FakeOnboardingApi().apply { setup = { setupView(listOf("buddy", "plan")) } }) },
             )
+
+        @Composable
+        private fun Setup(api: FakeOnboardingApi) {
+            val store =
+                remember {
+                    val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+                    OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
+                }
+            GoalSetupScreen(AppRoute.GoalSetup(GOAL_ID), store, isGuest = false, rememberAppNavigator())
+        }
 
         @Composable
         private fun Start(

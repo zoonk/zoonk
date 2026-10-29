@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
@@ -22,12 +20,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -42,7 +37,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -52,6 +46,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.AttachedSource
+import com.zoonk.android.feature.onboarding.Choice
+import com.zoonk.android.feature.onboarding.ChoiceList
 import com.zoonk.android.feature.onboarding.PickedFile
 import com.zoonk.android.feature.onboarding.Refusal
 import com.zoonk.android.feature.onboarding.WriteOutcome
@@ -296,12 +292,6 @@ internal fun MaterialIntentChoice(
     value: MaterialIntent?,
     onChange: (MaterialIntent) -> Unit,
 ) {
-    val choices =
-        listOf(
-            Triple(MaterialIntent.Exam, R.string.onboarding_intent_exam, R.string.onboarding_intent_exam_description),
-            Triple(MaterialIntent.Understand, R.string.onboarding_intent_understand, R.string.onboarding_intent_understand_description),
-            Triple(MaterialIntent.Questions, R.string.onboarding_intent_questions, R.string.onboarding_intent_questions_description),
-        )
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             stringResource(R.string.onboarding_intent_title),
@@ -311,17 +301,29 @@ internal fun MaterialIntentChoice(
                 },
             style = MaterialTheme.typography.titleMedium,
         )
-        OutlinedCard(Modifier.selectableGroup()) {
-            choices.forEach { (intent, label, description) ->
-                ListItem(
-                    headlineContent = { Text(stringResource(label)) },
-                    supportingContent = { Text(stringResource(description)) },
-                    leadingContent = { RadioButton(selected = value == intent, onClick = null) },
-                    colors = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0f)),
-                    modifier = Modifier.selectable(selected = value == intent, role = Role.RadioButton, onClick = { onChange(intent) }),
-                )
-            }
-        }
+        ChoiceList(
+            choices =
+                listOf(
+                    Choice(
+                        MaterialIntent.Exam,
+                        stringResource(R.string.onboarding_intent_exam),
+                        stringResource(R.string.onboarding_intent_exam_description),
+                    ),
+                    Choice(
+                        MaterialIntent.Understand,
+                        stringResource(R.string.onboarding_intent_understand),
+                        stringResource(R.string.onboarding_intent_understand_description),
+                    ),
+                    Choice(
+                        MaterialIntent.Questions,
+                        stringResource(R.string.onboarding_intent_questions),
+                        stringResource(R.string.onboarding_intent_questions_description),
+                    ),
+                ),
+            value = value,
+            label = stringResource(R.string.onboarding_intent_label),
+            onChange = onChange,
+        )
     }
 }
 

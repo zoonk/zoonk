@@ -28,35 +28,40 @@ internal class Poll {
     internal var round by mutableIntStateOf(0)
         private set
 
+    internal var readsAtOnce = false
+
     fun restart() {
         stopped = false
+        readsAtOnce = true
         round++
     }
 }
 
+internal enum class PollStatus { Idle, Polling, Failed }
+
 /**
- * Main's `usePoll`: [read] every few seconds while [active] and the screen is on, until three reads
- * in a row fail or ten minutes pass, which stops it until [Poll.restart].
+ * [read] every few seconds after the screen's own load while [active] and the screen is on, until
+ * three reads in a row fail or ten minutes pass, which stops it until a new [key] or [Poll.restart],
+ * whose Try again reads at once.
  */
 @Composable
 internal fun rememberPoll(
     active: Boolean,
+    key: Any? = null,
     read: suspend () -> Boolean,
 ): Poll {
     val poll = remember { Poll() }
     val currentRead by rememberUpdatedState(read)
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    LaunchedEffect(active, poll.round, lifecycle) {
-        if (!active) {
-            poll.stopped = false
-            return@LaunchedEffect
-        }
+    LaunchedEffect(active, key, poll.round, lifecycle) {
+        poll.stopped = false
+        if (!active) return@LaunchedEffect
         val startedAt = TimeSource.Monotonic.markNow()
         var failures = 0
         lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
             while (!poll.stopped) {
-                delay(POLL_INTERVAL)
+                if (poll.readsAtOnce) poll.readsAtOnce = false else delay(POLL_INTERVAL)
                 failures = if (currentRead()) 0 else failures + 1
                 if (failures >= MAX_FAILURES || startedAt.elapsedNow() >= POLL_TIMEOUT) poll.stopped = true
             }
@@ -65,6 +70,13 @@ internal fun rememberPoll(
 
     return poll
 }
+
+internal fun Poll.status(active: Boolean) =
+    when {
+        !active -> PollStatus.Idle
+        stopped -> PollStatus.Failed
+        else -> PollStatus.Polling
+    }
 
 /** True when the read came back, as a new value counts. */
 internal suspend fun Resource<*>.refreshed(): Boolean {

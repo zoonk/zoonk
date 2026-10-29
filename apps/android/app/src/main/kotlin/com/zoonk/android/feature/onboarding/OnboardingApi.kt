@@ -14,12 +14,16 @@ import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
+import com.zoonk.api.models.GoalGenerationRun
 import com.zoonk.api.models.GoalUnderstandingInput
+import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.JoinInstrumentWaitlistRequest
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.MockTimeZoneInput
+import com.zoonk.api.models.Onboarding
+import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
 import com.zoonk.api.models.Placement
@@ -28,6 +32,10 @@ import com.zoonk.api.models.PlacementAnswerResult
 import com.zoonk.api.models.PlacementCompletionInput
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanLinkStartInput
+import com.zoonk.api.models.PlanTimeAdvice
+import com.zoonk.api.models.PlanTimeAdviceInput
+import com.zoonk.api.models.PlanTimeToCover
+import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.Source
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.UploadToken
@@ -102,6 +110,45 @@ interface OnboardingApi {
     )
 
     suspend fun allowance(session: AuthenticatedSession): AllowanceResponse
+
+    suspend fun onboarding(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): Onboarding
+
+    suspend fun answer(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: OnboardingAnswerInput,
+    ): Onboarding
+
+    suspend fun goalGenerationRun(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): GoalGenerationRun
+
+    /** Starts writing the goal's curriculum again, or joins the run already writing it. */
+    suspend fun writeGoal(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): String
+
+    suspend fun archive(
+        session: AuthenticatedSession,
+        goalId: String,
+    )
+
+    suspend fun timeAdvice(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: PlanTimeAdviceInput,
+    ): PlanTimeAdvice
+
+    suspend fun timeToCover(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: PlanTimeToCoverInput,
+    ): PlanTimeToCover
 
     /** Straight to Blob storage, which the API signs, since requests to the API are capped at 4.5 MB. */
     suspend fun uploadFile(
@@ -210,6 +257,52 @@ class LiveOnboardingApi(
     }
 
     override suspend fun allowance(session: AuthenticatedSession) = perform { api.clients(session).account.getCurrentUserAllowance() }
+
+    override suspend fun onboarding(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = perform { api.clients(session).onboarding.getOnboarding(UUID.fromString(goalId)) }
+
+    override suspend fun answer(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: OnboardingAnswerInput,
+    ) = perform { api.clients(session).onboarding.answerOnboardingQuestion(UUID.fromString(goalId), input) }
+
+    override suspend fun goalGenerationRun(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = perform { api.clients(session).contentGeneration.getGoalGeneration(UUID.fromString(goalId)) }
+
+    override suspend fun writeGoal(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = perform { api.clients(session).contentGeneration.createGoalGeneration(UUID.fromString(goalId)) }.generationId
+
+    override suspend fun timeAdvice(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: PlanTimeAdviceInput,
+    ) = perform { api.clients(session).plans.getPlanTimeAdvice(UUID.fromString(goalId), input) }
+
+    override suspend fun timeToCover(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: PlanTimeToCoverInput,
+    ) = perform { api.clients(session).plans.findPlanTimeToCover(UUID.fromString(goalId), input) }
+
+    override suspend fun archive(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) {
+        perform {
+            api
+                .clients(
+                    session,
+                ).goals
+                .updateGoal(UUID.fromString(goalId), GoalUpdateInput(status = GoalUpdateInput.Status.ARCHIVED))
+        }
+    }
 
     override suspend fun uploadFile(
         session: AuthenticatedSession,
