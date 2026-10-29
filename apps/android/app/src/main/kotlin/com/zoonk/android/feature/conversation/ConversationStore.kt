@@ -16,63 +16,63 @@ import com.zoonk.api.models.CompletedLanguageConversation
 import com.zoonk.api.models.LanguageCheckpointCall
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationCompletionInput
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.buildJsonObject
+import com.zoonk.api.models.LanguageConversationStartInput
+import com.zoonk.api.models.LanguageConversationStartInputOneOf
+import com.zoonk.api.models.LanguageConversationStartInputOneOf1
+import com.zoonk.api.models.LanguageConversationStartInputOneOf2
+import com.zoonk.api.models.LanguageConversationStartInputOneOf3
 import java.util.UUID
 
 /** The calls a learner starts, each from a tap: a unit's practice call, a checkpoint's, a speaking mock and an exam task. */
 sealed interface CallRequest {
-    val body: JsonObject
+    val input: LanguageConversationStartInput
 
     data class Practice(
         val chapterId: UUID,
         val goalId: UUID?,
         val minutes: Long,
     ) : CallRequest {
-        override val body
+        override val input
             get() =
-                buildJsonObject {
-                    put("kind", JsonPrimitive("practice"))
-                    put("chapterId", JsonPrimitive(chapterId.toString()))
-                    goalId?.let { put("goalId", JsonPrimitive(it.toString())) }
-                    put("minutes", JsonPrimitive(minutes))
-                }
+                LanguageConversationStartInput.LanguageConversationStartInputOneOfValue(
+                    LanguageConversationStartInputOneOf(
+                        chapterId = chapterId,
+                        kind = LanguageConversationStartInputOneOf.Kind.PRACTICE,
+                        minutes = LanguageConversationStartInputOneOf.Minutes.entries.first { it.value == minutes.toDouble() },
+                        goalId = goalId,
+                    ),
+                )
     }
 
     data class Checkpoint(
         val blockId: UUID,
     ) : CallRequest {
-        override val body
+        override val input
             get() =
-                buildJsonObject {
-                    put("kind", JsonPrimitive("checkpoint"))
-                    put("blockId", JsonPrimitive(blockId.toString()))
-                }
+                LanguageConversationStartInput.LanguageConversationStartInputOneOf1Value(
+                    LanguageConversationStartInputOneOf1(blockId, LanguageConversationStartInputOneOf1.Kind.CHECKPOINT),
+                )
     }
 
     data class SpeakingMock(
         val goalId: UUID,
     ) : CallRequest {
-        override val body
+        override val input
             get() =
-                buildJsonObject {
-                    put("kind", JsonPrimitive("speakingMock"))
-                    put("goalId", JsonPrimitive(goalId.toString()))
-                }
+                LanguageConversationStartInput.LanguageConversationStartInputOneOf2Value(
+                    LanguageConversationStartInputOneOf2(goalId, LanguageConversationStartInputOneOf2.Kind.SPEAKING_MOCK),
+                )
     }
 
     data class ExamSpeaking(
         val goalId: UUID,
         val task: String,
     ) : CallRequest {
-        override val body
+        override val input
             get() =
-                buildJsonObject {
-                    put("kind", JsonPrimitive("examSpeaking"))
-                    put("goalId", JsonPrimitive(goalId.toString()))
-                    put("task", JsonPrimitive(task))
-                }
+                LanguageConversationStartInput.LanguageConversationStartInputOneOf3Value(
+                    LanguageConversationStartInputOneOf3(goalId, LanguageConversationStartInputOneOf3.Kind.EXAM_SPEAKING, task),
+                )
     }
 }
 
@@ -163,7 +163,7 @@ class LiveConversationApi(
     override suspend fun start(
         session: AuthenticatedSession,
         request: CallRequest,
-    ) = perform { api.streamingClients(session).language.startLanguageConversation(request.body) }.conversationId
+    ) = perform { api.streamingClients(session).language.startLanguageConversation(request.input) }.conversationId
 
     override suspend fun complete(
         session: AuthenticatedSession,
