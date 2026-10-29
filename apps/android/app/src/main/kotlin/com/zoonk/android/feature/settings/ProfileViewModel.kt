@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.OutputStream
 
-enum class DeletionStep { None, Confirm, Code, AppleNote, Done }
+enum class DeletionStep { None, Confirm, Code, AppleNote, Deleted }
 
 /** The profile's download and its account deletion, for the account [session] shows. */
 class ProfileViewModel(
@@ -81,7 +81,7 @@ class ProfileViewModel(
             try {
                 when (val result = account.deleteAccount(session, email, code.takeIf { usesCode })) {
                     is AccountDeletion.Deleted -> {
-                        if (result.appleAuthorizationRevoked == false) deletionStep = DeletionStep.AppleNote else finish()
+                        deletionStep = if (result.appleAuthorizationRevoked == false) DeletionStep.AppleNote else DeletionStep.Deleted
                     }
 
                     AccountDeletion.NeedsCode -> {
@@ -116,12 +116,9 @@ class ProfileViewModel(
         }
     }
 
-    /** After the Apple note, or at once without one: the session belonged to the deleted account. */
+    /** After the Apple note. */
     fun finish() {
-        viewModelScope.launch {
-            account.forgetDeletedAccount(session)
-            deletionStep = DeletionStep.Done
-        }
+        deletionStep = DeletionStep.Deleted
     }
 
     private fun write(

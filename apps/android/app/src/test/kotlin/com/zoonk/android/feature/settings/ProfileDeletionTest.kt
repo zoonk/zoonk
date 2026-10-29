@@ -60,17 +60,16 @@ class ProfileDeletionTest {
     }
 
     @Test
-    fun deletingSignsTheDeletedAccountOut() =
+    fun deletingTheAccountEndsTheFlow() =
         runTest {
-            val (sessions, profile) = signedIn()
+            val (_, profile) = signedIn()
 
             profile.askToDelete()
             profile.delete()
             advanceUntilIdle()
 
             assertEquals(listOf<String?>(null), api.deletions)
-            assertEquals(DeletionStep.Done, profile.deletionStep)
-            assertEquals(SessionState.SignedOut(sessionEnded = false), sessions.state.value)
+            assertEquals(DeletionStep.Deleted, profile.deletionStep)
         }
 
     @Test
@@ -96,7 +95,7 @@ class ProfileDeletionTest {
             profile.delete()
             advanceUntilIdle()
             assertEquals(listOf<String?>("123456"), api.deletions)
-            assertEquals(DeletionStep.Done, profile.deletionStep)
+            assertEquals(DeletionStep.Deleted, profile.deletionStep)
         }
 
     @Test
@@ -112,9 +111,7 @@ class ProfileDeletionTest {
             assertTrue(sessions.state.value is SessionState.SignedIn)
 
             profile.finish()
-            advanceUntilIdle()
-            assertEquals(DeletionStep.Done, profile.deletionStep)
-            assertEquals(SessionState.SignedOut(sessionEnded = false), sessions.state.value)
+            assertEquals(DeletionStep.Deleted, profile.deletionStep)
         }
 
     @Test

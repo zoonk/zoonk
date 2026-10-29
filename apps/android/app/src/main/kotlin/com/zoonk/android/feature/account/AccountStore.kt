@@ -68,24 +68,20 @@ class AccountStore(
         name: String,
         username: String,
     ): AccountFailure? {
-        val result =
-            cache.mutate(invalidating = setOf(DataDomain.UserSession)) { session ->
-                try {
-                    session to api.updateProfile(session, name, username)
-                } catch (e: ApiException) {
-                    if (e.code != "CONFLICT") throw e
-                    null
-                }
-            }
+        val result = cache.mutate(invalidating = setOf(DataDomain.UserSession)) { session -> session to api.updateProfile(session, name, username) }
         return when (result) {
             is MutationResult.Done -> {
-                val (session, account) = result.value ?: return AccountFailure.UsernameTaken
+                val (session, account) = result.value
                 sessions.showAccount(session, account)
                 null
             }
 
             is MutationResult.Failed -> {
-                if (result.error == ApiError.Network) AccountFailure.Network else AccountFailure.Save
+                when {
+                    result.code == "CONFLICT" -> AccountFailure.UsernameTaken
+                    result.error == ApiError.Network -> AccountFailure.Network
+                    else -> AccountFailure.Save
+                }
             }
 
             MutationResult.Obsolete -> {
@@ -234,6 +230,5 @@ fun accountFailure(
         code == "EMAIL_SIGN_IN_CODE_INVALID" -> AccountFailure.WrongCode
         code == "EMAIL_SIGN_IN_CODE_EXPIRED" -> AccountFailure.CodeExpired
         code == "EMAIL_SIGN_IN_CODE_LOCKED" -> AccountFailure.CodeLocked
-        code == "CONFLICT" -> AccountFailure.UsernameTaken
         else -> AccountFailure.SignIn
     }

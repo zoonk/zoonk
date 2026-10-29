@@ -186,7 +186,7 @@ private fun Profile(
         }
     }
 
-    DeletionDialogs(app, navigator, profile, user.email)
+    DeletionDialogs(app, navigator, profile, signedIn)
 }
 
 @Composable
@@ -194,8 +194,9 @@ private fun DeletionDialogs(
     app: AppContainer,
     navigator: AppNavigator,
     profile: ProfileViewModel,
-    email: String,
+    signedIn: SessionState.SignedIn,
 ) {
+    val email = signedIn.account.user.email
     val context = LocalContext.current
     val snackbars = LocalSnackbarHostState.current
     val deleted = stringResource(R.string.settings_account_deleted)
@@ -278,11 +279,15 @@ private fun DeletionDialogs(
             )
         }
 
-        DeletionStep.Done -> {
+        // Leaves first: forgetting the session would take this page away before it could.
+        DeletionStep.Deleted -> {
             LaunchedEffect(Unit) {
-                app.scope.launch { snackbars.showSnackbar(deleted) }
                 navigator.popToRoots()
                 navigator.showRoot(AppTab.Today)
+                app.scope.launch {
+                    app.account.forgetDeletedAccount(signedIn.session)
+                    snackbars.showSnackbar(deleted)
+                }
             }
         }
     }
