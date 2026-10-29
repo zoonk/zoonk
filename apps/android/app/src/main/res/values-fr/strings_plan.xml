@@ -7,11 +7,39 @@
   "plan_activity_vocabulary": "04352c0f279dbd48eee0b5bcbb42c2fff5752fa9aa557a817e571054d5c2ca1e",
   "plan_activity_writing": "a0ebb9f68e73f66928b57325db010e6b723ba0cf2ade6656faadf9535779ca2c",
   "plan_adjust_plan": "7e775996e4acd9e7a92b124de49e69349459303e3514bf514cbe7cc2ad25dd1d",
+  "plan_all_prerequisites": "f937c2573798efbf32e3584afeedcc0d4e3d7bf27a11771f5b6cfb63e4715250",
   "plan_apply": "9a5dc900b7c8cbaa73433142574832e1ff4a1fb6a18ca9993251178dd88fc688",
   "plan_archive": "6b417484e2c225ea8d69ff3c2f0dbf4feaa8509727617204554dd865326425f2",
   "plan_archive_description": "b90972fd418c6b11b5a4c52553a655b4ad7911a5e874c4fbfa1d9eb34c25359e",
   "plan_archive_goal": "8083b6a5770ab05db56927d743e0ac8329944468d112222c2c786ed1006d3b39",
   "plan_archive_title": "10aaee5c589928a3602d0c432ff2103f55c42dffa811cdb113ec6a2b06561f2d",
+  "plan_base_deep": "7099228d4b128b1120286842e5945da9ba1ddf19a7aa1a90b272206f1efbc1b4",
+  "plan_base_deep_description": "f64194a87e1c45fe40766842e3900a53a63152cb7fd36e57d51c8d9d5242578f",
+  "plan_base_essential": "379ff4ddaa11c30336e7ba0f520c9b589d73912887161ba28e370dd9a866e0d4",
+  "plan_base_essential_description": "6c00f058932f8bea29d4f5b6a9a3779948adad2a31b593252f6b31da5df807e3",
+  "plan_base_names_time": "1bb2650fd2176513d8d8097af3b030e61eb7f1ae7be5a7618a30d49305aeb852",
+  "plan_base_quick": "8e2f07f756bdc824e7f74380e6f362ea219a9b086c0d96b245e51cf7f53766df",
+  "plan_base_quick_description": "f68d101b98d96e1c513ebede2831ad4fc06fc584deabdeeab5f31d88d8f699b3",
+  "plan_base_skip": "1e0a83cd3e88b8a5ef8f71000c58e144d198fa50a9c97fd2967224924be2f3e4",
+  "plan_base_skip_description": "87540cb4a7b4874fcc303b3aced6399a8fbd774e8af208c4420419fe8816be12",
+  "plan_base_studied": "6541150ee45bd67b57cc9680e30f31979fb0393e0eda5d2a07bfb50d8a7a4c36",
+  "plan_base_studied_name": "720c7f842a2b2269ae9fbab90714e3f4b6e3e370658020e61dfb56e184527db0",
+  "plan_bases_deep": "eac289aaa13f8a2861ada759196ebfe508ad80553a3b42d2491fa0c909e591f6",
+  "plan_bases_differ": "f0ce639a21431761ba05197efd185bd408502088ebe65c35f31d6f0ca3ac5824",
+  "plan_bases_essential": "71601fff66df68101762f3fd4ff17e69d27c2cec1bdb63caebb3e27d150dc6e2",
+  "plan_bases_everything_fits": "901715fa9fa5972068d22a5c991cb1cada14121618f64a94a6db8eb783f3a71b",
+  "plan_bases_exam_share": "bce67b60874aa29109837e0828703ad3d9681bd51e39c0c9ff46e6c00897c594",
+  "plan_bases_exam_share_same": "bd8f27fa97f99425e42c911543abf09deb0d180db671ab35819adc75e791cd07",
+  "plan_bases_goal_share": "ff3d2004b6ad569f7a7018b0289de0f56a2748106ef07691ff8a1975a8907164",
+  "plan_bases_goal_share_same": "8a9fed5794bbc31465f132b85d9f545c39de53d6bce0ec268c27e1f3235b579c",
+  "plan_bases_known": "5b89044a0b0e5174bb8421ecaca8dfa04cc8971305fb95223dddf556a2801b1f",
+  "plan_bases_mixed": "54969a7347cb7bb19d0c9e00ef359490f135abda38c4dda40440591dec93c2d2",
+  "plan_bases_quick": "5ea69e98b1ab1b9843fc86cd678b465e76f2b1371fb8683ac69ce9b77fc2f679",
+  "plan_bases_show_known": "e0371199dd6687a47f180b37aca1198c3e189ff3bc35dd588cc88930b74de221",
+  "plan_bases_skip": "cab9d0f226d60465a9b7393b93ea9e6777d5b8a550be782cb835e8c09d068a31",
+  "plan_bases_studied_stay": "9c3353ca26eece1f8125b50bf6c81f4af63c3d9b0fbd057c87ad55b67509e736",
+  "plan_bases_topics_come_in": "106ffb4a29557333ed4e94a4dcfb92d06850ad9af6118fdfae857039673ce50e",
+  "plan_bases_topics_leave": "db5a16bff6b165cd577f6cb42f37be518f08f666fa867a32e002383182626396",
   "plan_building_description": "de5a7da2debfaeef394f2d35e32fce2ca0e28fb84a2e8d4ce3f3bfd27720067c",
   "plan_building_eyebrow": "3a99227c8318ccaa33595c121ec0a2e40b3f2e6f02a801d76bb5d5dd51366c6d",
   "plan_cadence_biweekly": "1cd29a3c73bc1d42ade29288f7d061d3704cbfed962b56c66abd34ef39601471",
@@ -158,10 +186,13 @@
   "plan_change_writing_biweekly": "6bbb8271715a735dd7642ad46aa9a568dcf7f068af289881123b11d65a0b2fe3",
   "plan_change_writing_final_weeks": "00d09b30b5d6e092eaa380a8507eaf2be52fd3f76e402f45c8009e42056b1d07",
   "plan_change_writing_weekly": "cee3f379a436366b8036146ad8b76fc4cd9e12899f1f0bf95f86059860b4c60f",
+  "plan_check_failed": "60fc1aad46d843950bd7bbf8a0699574335d49cb79f763e5d60b87d93e5d2954",
   "plan_checking_changes": "eba9ffa512e768a88b0076dbb09a0c7b4782cad14acbb9623e37754d74e3f7b7",
   "plan_choose": "046463549f44bff5b492b95c07894d76a68b090b5a9cccb1a633f0fe5a200415",
+  "plan_choose_by_subject": "e1f2211b3c0a9d66491032a2c09c87f4de3b544759e280e9721c3d5e1b0e29be",
   "plan_choose_focus": "3702ef2b4c799f32429393549d2c6a288fc4e08d44b74cee4f07f2fc6f358dc9",
   "plan_choose_focus_yourself": "6ba00a8b547cabc1d0be76f906ffb12666cd7c1a922c5acbfb10319162c3c1fe",
+  "plan_choose_prerequisites": "66a136d78c252a9a1fd90d0f8a4cdb8a3034e65924274f71090d9fa6d6a9dfef",
   "plan_collapsed": "22455c9d7882f6897e0ef401d7355fafb1845a909806b1f7d5297a2321f13e47",
   "plan_continue": "2d515d9943ff4cf2277fabf8ffe4c10160be602d8d1025deef870bace6b1163b",
   "plan_continues_on": "3f2e04caf7d8d25a71df848a312883079044c1528a9dbc52714bb9048214dad7",
@@ -192,6 +223,7 @@
   "plan_days_left_estimate": "5afd2d8da5cf960b7bed8b49b16c71555f5d92ba9a26ce7e0f339bc711904473",
   "plan_days_left_estimate_spoken": "88913c8a072a26c8db660f3e74934034fb7f33ddd59d9ed4a7f6b43dc1866275",
   "plan_deadline": "0cf09b4326f12bf94fb358e113ac89b46854193ae4c7c3efdadd1cc0cfc0c7b0",
+  "plan_different_choices": "b59f8a0bc22d83d178a294049fcad06620ccb32b9e3c8ca5ea30b8a2a9d698d5",
   "plan_done": "55905fe3ffa56ada9aadbe8ca2d25e0650849ecc27e1aca8ff39d8aa7f9eb2d6",
   "plan_done_suffix": "8a3cbf19205496f5956efef543f92ef2ba427196a1955cee3956fcdfe555928b",
   "plan_editor_close": "76d170354f6469487ad38b600f827cc2a54537587fd42594bf4e7a1d958b3580",
@@ -241,6 +273,8 @@
   "plan_full_reviews": "3f1f9f97c2d332f640b50743a2a88f74223ef05823d0c5f2e7445ad7f458f26d",
   "plan_full_reviews_done": "19e30a4c22c114db6931b0b101553a4be49041a8821f091f5ae90c0afb56c479",
   "plan_gain_this_week": "c8668ec3a6941c6f3803ee20e5a0319b36330789d8fabd2fe84c0d78b45b009d",
+  "plan_get_recommendation": "f24515c2590b7df8d16af9d261aee8df22977333b92d0494424acde1447ca651",
+  "plan_getting_recommendation": "b9ad11d86bd714e583df04cb793bde11de9eb2fa2a437e950ad122b2e56c7078",
   "plan_goal_date": "ecfe72e4f1a3c8d91472e88c7032e3472b235f28660a0fead76f48a6a787dd1e",
   "plan_goal_limit_reached": "e9c1d59dbe59d6714042c5f71f79be6a219b280c69b21bfbf16063a7c85f2281",
   "plan_going_deeper": "ad54ab3a0baf1d3d9abbcb22730de5c1502dcd11c57c423bc3979f74162bcd5f",
@@ -338,7 +372,18 @@
   "plan_pick_date": "375d2d140d760a8c0456da58cf45fd1064e1cace556237ec9fa5a3eb569c6ae1",
   "plan_practice": "16340d3baf3d188bf74ee845fee05947c3b85c4775395a236e4f926cfd12462f",
   "plan_preparation": "585dbb46c406747f9c77c1a5a09518bb643102b68ac8b9f22e2f70d751a39592",
+  "plan_prerequisites": "dc3f3a7d2410fcb852cd8fc371bc8a5da1994334f376a6895c125b4b43b11285",
+  "plan_prerequisites_exam": "75e9cb0ffdb9f5f4610325cfd14be6d045a5ee00b42ac14c751a2452ac7efbf7",
+  "plan_prerequisites_goal": "ef335ae91ba0f4b8caacd35e84ff04e89d1af19455295bb281f174d37025b9d8",
   "plan_progress": "7ed434f1cd00bd95f708b20704de8a819543b32d452dc9eb52d835bbacc69902",
+  "plan_recommend_deep": "6b97bf3b8967e86cd043703f79ce40a72572132a57337e3ba2736d7b327c020b",
+  "plan_recommend_essential_exam": "493ed4b67a43d8a76e4aedcbb11580cf58cc60acdc4c1307ef5b274ef09b3e1d",
+  "plan_recommend_essential_goal": "f50f0d88cfd579f2f2dae8e60729bbea06687723e8f28363dabc51b8925eb02d",
+  "plan_recommend_quick_exam": "97e54ae493e799ad5b8a4fdbc0fbde4ba2ca73e19818570d591906d50e1d688a",
+  "plan_recommend_quick_goal": "d7a3a93efce30ebf1b4d66680daeba10d111a1cd4c4addd951a5ab622497bb9e",
+  "plan_recommendation_failed": "18e6fc9618efaf082af73bd9d579ba1edc161f6bbbf4c2e1959ee815a1177192",
+  "plan_recommendation_followed": "8472ea39772eeeddb95c2314f544e238ef76142f53929051a0c77f169e8cf0b0",
+  "plan_recommended": "c7e26fab81306e24caaf383b993967012e4c022549605b26071fe60fcea6d7c9",
   "plan_resume": "8e58ef2af8ad3db5fa8e9d02c4a2ee02a2c124adb6ba193d23e887645631fbd8",
   "plan_resume_effect": "be4946feb1f7359c7727186db31e0fdaf1967023cb65d71a1d86f4b989fcd031",
   "plan_resume_goal": "a8d0162a5e3972ef5ffdd0e51d30a142c41370e53c321f93f355916d997a2fac",
@@ -351,6 +396,7 @@
   "plan_roadmap_until": "3fa1cc1633a11ad10555b158556113db1a65d46a409cedfb6e61f4553629186e",
   "plan_saturdays": "da33ff9fd0448e0a3cab80a2a1469cc2aca87a9d56d0992cdb0c71088ff24d3d",
   "plan_save": "81c0d1d1d4445de88d065a12e0ee82ca4b6b1cca12f2394c6ea3642ce9bd7c67",
+  "plan_save_choices": "c56de898c018741f2fa9050f793c30aeabd5ad1c7a95fccf0a3c2888ea9841aa",
   "plan_save_failed": "ca361adcb523a0a75080453e0abc4631bcf84367e89357b1365b88dca9b7e9dc",
   "plan_saving": "e7d166cc2562b17afd62fe01a246058e201fb24161dd160a204ae156993d479b",
   "plan_score_band": "b0906692a4a2569bfe6e5599bce8bcc5af19eba5c0419163fadf089c66d3f180",
@@ -375,6 +421,7 @@
   "plan_skipped": "f48b12cda9274763a75897cf58f4af93673e0aae86a86806bd2b805a0c6428e3",
   "plan_skipped_known": "6933ba5699158bedfc0b9857af8bba58a639b6be301710bf37ad98c0b5274db4",
   "plan_stays_as_it_is": "d9abbc265307ad49560d9232d5a294fa3edb878caa784f65e9219ceab9d44f92",
+  "plan_still_building": "0287d7fb946ceace4ef53842ec0bc67cd5cb4be01e081659c528e0914c069fc3",
   "plan_still_fading": "51d798be26c45b600178032b6557724f79265ce54a0b3b3e9a902bca377d0486",
   "plan_still_first_challenge": "6100c5137175623554f16a5869bb13f7ef2205dd6c79ae6162d510adabec43a5",
   "plan_still_first_mock": "bac6450ca215aa97ac4106ae47449f01128025ecdde43ab073e2765de5c63856",
@@ -1083,6 +1130,95 @@
     <string name="plan_exam_choice_left_out">Choisis celui que tu passeras. En attendant, ton plan laisse %1$s de côté.</string>
     <string name="plan_exam_choice_question">%1$s : lequel passeras-tu ?</string>
     <string name="plan_exam_choice_until_you_pick">En attendant ton choix, ton plan laisse %1$s de côté.</string>
+    <string name="plan_prerequisites">Prérequis</string>
+    <string name="plan_choose_prerequisites">Choisir les prérequis</string>
+    <string name="plan_prerequisites_exam">Les sujets qui reviennent souvent s’appuient sur ces prérequis.</string>
+    <string name="plan_prerequisites_goal">Le travail final lié à ton objectif s’appuie sur ces prérequis.</string>
+    <plurals name="plan_bases_mixed">
+        <item quantity="one">%1$d prérequis, %2$s selon ton choix.</item>
+        <item quantity="many">%1$d prérequis, %2$s selon tes choix.</item>
+        <item quantity="other">%1$d prérequis, %2$s selon tes choix.</item>
+    </plurals>
+    <plurals name="plan_bases_deep">
+        <item quantity="one">%1$d prérequis, %2$s en profondeur.</item>
+        <item quantity="many">%1$d prérequis, %2$s en profondeur.</item>
+        <item quantity="other">%1$d prérequis, %2$s en profondeur.</item>
+    </plurals>
+    <plurals name="plan_bases_quick">
+        <item quantity="one">%1$d prérequis, %2$s avec sa leçon rapide.</item>
+        <item quantity="many">%1$d prérequis, %2$s avec une leçon rapide chacun.</item>
+        <item quantity="other">%1$d prérequis, %2$s avec une leçon rapide chacun.</item>
+    </plurals>
+    <plurals name="plan_bases_skip">
+        <item quantity="one">%1$d prérequis, ignoré.</item>
+        <item quantity="many">%1$d prérequis, tous ignorés.</item>
+        <item quantity="other">%1$d prérequis, tous ignorés.</item>
+    </plurals>
+    <plurals name="plan_bases_essential">
+        <item quantity="one">%1$d prérequis, %2$s pour en voir l’essentiel.</item>
+        <item quantity="many">%1$d prérequis, %2$s pour en voir l’essentiel.</item>
+        <item quantity="other">%1$d prérequis, %2$s pour en voir l’essentiel.</item>
+    </plurals>
+    <plurals name="plan_bases_known">
+        <item quantity="one">%d prérequis que tu as montré connaître et qui ne fait déjà plus partie de ton plan.</item>
+        <item quantity="many">%d prérequis que tu as montré connaître et qui ne font déjà plus partie de ton plan.</item>
+        <item quantity="other">%d prérequis que tu as montré connaître et qui ne font déjà plus partie de ton plan.</item>
+    </plurals>
+    <string name="plan_bases_show_known">Tu en connais déjà certains ? Montre-le avec un test et ils seront retirés de ton plan automatiquement.</string>
+    <string name="plan_base_deep">En profondeur</string>
+    <string name="plan_base_essential">L’essentiel</string>
+    <string name="plan_base_quick">Leçon rapide</string>
+    <string name="plan_base_skip">Ignorer</string>
+    <string name="plan_base_deep_description">Toutes les leçons</string>
+    <string name="plan_base_essential_description">Le premier tiers des leçons</string>
+    <string name="plan_base_quick_description">Une courte leçon par prérequis</string>
+    <string name="plan_base_skip_description">Les laisser de côté dans ton plan</string>
+    <string name="plan_all_prerequisites">Tous les prérequis</string>
+    <string name="plan_recommended">Recommandé</string>
+    <string name="plan_bases_differ">Tes prérequis ont des choix différents. En choisir un ci-dessus l’applique à tous.</string>
+    <string name="plan_bases_studied_stay">Les prérequis que tu as étudiés le restent.</string>
+    <string name="plan_choose_by_subject">Choisir par matière</string>
+    <string name="plan_base_studied_name">%1$s (étudié)</string>
+    <string name="plan_base_names_time">%1$s · %2$s</string>
+    <string name="plan_different_choices">Choix différents</string>
+    <string name="plan_base_studied">Étudié</string>
+    <string name="plan_get_recommendation">Obtenir une recommandation</string>
+    <string name="plan_getting_recommendation">Recommandation en cours…</string>
+    <string name="plan_recommendation_failed">Impossible d’obtenir une recommandation.</string>
+    <string name="plan_still_building">Ton plan est encore en préparation. Réessaie dans un instant.</string>
+    <string name="plan_recommend_deep">Tu as assez de temps pour tout voir : nous te recommandons d’étudier chaque prérequis en profondeur.</string>
+    <plurals name="plan_recommend_quick_exam">
+        <item quantity="one">%d jour restant : nous te recommandons une leçon rapide par prérequis, pour garder du temps pour les sujets les plus fréquents.</item>
+        <item quantity="many">%d jours restants : nous te recommandons une leçon rapide par prérequis, pour garder du temps pour les sujets les plus fréquents.</item>
+        <item quantity="other">%d jours restants : nous te recommandons une leçon rapide par prérequis, pour garder du temps pour les sujets les plus fréquents.</item>
+    </plurals>
+    <plurals name="plan_recommend_quick_goal">
+        <item quantity="one">%d jour restant : nous te recommandons une leçon rapide par prérequis, pour garder du temps pour ce qui compte le plus pour ton objectif.</item>
+        <item quantity="many">%d jours restants : nous te recommandons une leçon rapide par prérequis, pour garder du temps pour ce qui compte le plus pour ton objectif.</item>
+        <item quantity="other">%d jours restants : nous te recommandons une leçon rapide par prérequis, pour garder du temps pour ce qui compte le plus pour ton objectif.</item>
+    </plurals>
+    <string name="plan_recommend_essential_exam">Nous te recommandons de voir l’essentiel pour mieux comprendre les sujets qui s’appuient dessus.</string>
+    <string name="plan_recommend_essential_goal">Nous te recommandons de voir l’essentiel pour mieux comprendre ce qui s’appuie dessus.</string>
+    <string name="plan_recommendation_followed">Ton plan suit déjà cette recommandation.</string>
+    <string name="plan_checking_changes">Vérification des changements…</string>
+    <string name="plan_check_failed">Impossible de vérifier les changements.</string>
+    <string name="plan_stays_as_it_is">Ton plan reste tel quel.</string>
+    <string name="plan_save_choices">Enregistrer les choix</string>
+    <plurals name="plan_bases_topics_come_in">
+        <item quantity="one">%1$d sujet s’ajoute : %2$s.</item>
+        <item quantity="many">%1$d sujets s’ajoutent : %2$s.</item>
+        <item quantity="other">%1$d sujets s’ajoutent : %2$s.</item>
+    </plurals>
+    <plurals name="plan_bases_topics_leave">
+        <item quantity="one">%1$d sujet est retiré : %2$s.</item>
+        <item quantity="many">%1$d sujets sont retirés : %2$s.</item>
+        <item quantity="other">%1$d sujets sont retirés : %2$s.</item>
+    </plurals>
+    <string name="plan_bases_everything_fits">Tout tient dans le délai prévu.</string>
+    <string name="plan_bases_exam_share_same">D’ici la date prévue : %1$s de l’examen, comme actuellement.</string>
+    <string name="plan_bases_goal_share_same">D’ici la date prévue : %1$s de ton objectif, comme actuellement.</string>
+    <string name="plan_bases_exam_share">À ta date : %1$s de l’examen, contre %2$s aujourd’hui.</string>
+    <string name="plan_bases_goal_share">À ta date : %1$s de ton objectif, contre %2$s aujourd’hui.</string>
     <string name="plan_what_you_practice">Ce que tu révises</string>
     <string name="plan_when_to_practice">Quand réviser %1$s</string>
     <string name="plan_cadence_weekly">Chaque semaine</string>
@@ -1133,7 +1269,6 @@
     <string name="plan_study_everything">Tout étudier</string>
     <string name="plan_study_everything_exam_description">Tous les sujets, même après l’examen, à ton rythme.</string>
     <string name="plan_study_everything_goal_description">Toutes les parties de ton objectif, à ton rythme et sans date de fin.</string>
-    <string name="plan_checking_changes">Vérification des changements…</string>
     <string name="plan_sheet_done">Terminé</string>
     <string name="plan_choose_focus">Choisir les sujets à travailler</string>
     <string name="plan_where_to_focus">Où mettre l’accent</string>
@@ -1148,7 +1283,6 @@
     <string name="plan_focus_on_these">Mettre l’accent sur ces sujets</string>
     <string name="plan_saving">Enregistrement…</string>
     <string name="plan_couldnt_check_changes">Impossible de vérifier les changements.</string>
-    <string name="plan_stays_as_it_is">Ton plan reste tel quel.</string>
     <string name="plan_then_covers_everything">Ton plan couvre alors tout en détail.</string>
     <string name="plan_apply">Appliquer</string>
     <string name="plan_not_now">Pas maintenant</string>

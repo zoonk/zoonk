@@ -145,6 +145,8 @@ internal fun PlanPage(
             chooseFocus = { choosingFocus = true },
             studyEverything = { studyingEverything = true },
             chooseExamOption = viewModel::chooseExamOption,
+            preview = viewModel::preview,
+            adviseOnBases = viewModel::basesAdvice,
         )
     val report =
         rememberReportProblem(

@@ -6,7 +6,9 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
+import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.coroutines.Deferred
@@ -31,7 +33,7 @@ import java.util.UUID
 enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
 
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
-enum class PlanPart { Date, Schedule, ExamChoices, Activities, Writing, Steering, FullCourse, Focus }
+enum class PlanPart { Date, Schedule, ExamChoices, Bases, Activities, Writing, Steering, FullCourse, Focus }
 
 /** The editor's latest applied change, which it shows with Undo. */
 data class EditorChange(
@@ -117,6 +119,12 @@ class PlanViewModel(
         subject: String,
         answered: (PlanChangeResult?) -> Unit = {},
     ) = save(PlanPart.ExamChoices, listOf(PlanOp.ExamChoice(group, subject)), answered) { store.chooseExamOption(goalId, group, subject) }
+
+    /** Null when it couldn't be asked. */
+    suspend fun basesAdvice(): PlanBasesAdvice? = (store.basesAdvice(goalId) as? MutationResult.Done)?.value
+
+    /** Null when it couldn't be asked. */
+    suspend fun preview(operations: List<PlanOp>): PlanChangePreview? = (store.preview(goalId, operations) as? MutationResult.Done)?.value
 
     /** [write] saves [operations], which show as asked for until the plan shown has them. */
     private fun save(

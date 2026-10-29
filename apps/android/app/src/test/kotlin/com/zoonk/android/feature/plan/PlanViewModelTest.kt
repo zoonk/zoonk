@@ -7,6 +7,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangeResult
 import kotlinx.coroutines.CompletableDeferred
@@ -362,5 +363,13 @@ class PlanViewModelTest {
                     ?.id
                     .toString(),
             )
+        }
+
+    @Test
+    fun aRecommendationForThePrerequisitesSavesNothing() =
+        runTest {
+            assertEquals(PlanBasesAdvice.Recommended.ESSENTIAL, viewModel.basesAdvice()?.recommended)
+            assertEquals(1, api.advised)
+            assertEquals(0, api.plans)
         }
 }

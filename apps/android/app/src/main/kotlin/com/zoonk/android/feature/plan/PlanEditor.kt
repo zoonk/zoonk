@@ -6,12 +6,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
@@ -21,6 +23,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
 import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -31,6 +34,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -70,9 +74,13 @@ import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanBase
+import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
+import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import kotlinx.datetime.toJavaLocalDate
+import java.io.Serializable
 import java.util.UUID
 
 /**
@@ -93,6 +101,8 @@ internal data class PlanEdits(
     val chooseFocus: () -> Unit = {},
     val studyEverything: () -> Unit = {},
     val chooseExamOption: (group: String, subject: String, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
+    val preview: suspend (List<PlanOp>) -> PlanChangePreview? = { null },
+    val adviseOnBases: suspend () -> PlanBasesAdvice? = { null },
 ) {
     fun isPending(part: PlanPart) = part in pending
 
@@ -106,20 +116,30 @@ internal data class PlanEdits(
 internal class EditorDrafts(
     datePicking: Boolean = false,
     weekendOn: Boolean? = null,
+    bases: BasesDraft? = null,
 ) {
     var datePicking by mutableStateOf(datePicking)
 
     /** Null follows the plan: on while its weekend has its own time. */
     var weekendOn by mutableStateOf(weekendOn)
 
+    /** The prerequisites' sheet while it's open. */
+    var bases by mutableStateOf(bases)
+
     companion object {
         val Saver =
             listSaver<EditorDrafts, Any?>(
-                save = { listOf(it.datePicking, it.weekendOn) },
-                restore = { EditorDrafts(it[0] as Boolean, it[1] as Boolean?) },
+                save = { listOf(it.datePicking, it.weekendOn, it.bases) },
+                restore = { EditorDrafts(it[0] as Boolean, it[1] as Boolean?, it[2] as BasesDraft?) },
             )
     }
 }
+
+/** The choices not saved yet, by skill; [saved] is the change saving them made, shown with Done and Undo. */
+internal data class BasesDraft(
+    val choices: Map<UUID, PlanBase.Choice> = emptyMap(),
+    val saved: UUID? = null,
+) : Serializable
 
 /**
  * The learner's adjustments, as main's `PlanEditor`: a bottom sheet on a phone, and from a medium
@@ -207,6 +227,7 @@ internal fun ColumnScope.PlanEditorBody(
             daysModifier = Modifier.section(PlanSection.Days),
         )
         PlanExamChoices(page, edits, Modifier.section(PlanSection.Choices))
+        PlanBases(page, edits, drafts)
         PlanActivities(page, edits, Modifier.section(PlanSection.Practice))
         PlanWrittenPractice(page, edits)
         PlanSteering(page, edits)
@@ -403,4 +424,35 @@ internal fun SectionLabel(
     modifier: Modifier = Modifier,
 ) {
     Text(text = text, modifier = modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
+}
+
+@Composable
+internal fun ChoiceRow(
+    label: String,
+    description: String,
+    selected: Boolean,
+    onSelect: () -> Unit,
+    mark: (@Composable () -> Unit)? = null,
+    trailing: String? = null,
+) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = 56.dp)
+                .selectable(selected = selected, role = Role.RadioButton, onClick = onSelect)
+                .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        RadioButton(selected = selected, onClick = null)
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(label, style = MaterialTheme.typography.bodyLarge)
+                mark?.invoke()
+            }
+            Text(description, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        }
+        trailing?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+    }
 }

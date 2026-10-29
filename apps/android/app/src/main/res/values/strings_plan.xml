@@ -590,6 +590,85 @@
     <string name="plan_exam_choice_left_out">Pick the one you\'ll take. Until you do, your plan leaves %1$s out.</string>
     <string name="plan_exam_choice_question">%1$s: which one will you take?</string>
     <string name="plan_exam_choice_until_you_pick">Until you pick, your plan leaves %1$s out.</string>
+    <string name="plan_prerequisites">Prerequisites</string>
+    <string name="plan_choose_prerequisites">Choose prerequisites</string>
+    <string name="plan_prerequisites_exam">Topics that come up a lot build on these.</string>
+    <string name="plan_prerequisites_goal">Your goal\'s final work builds on these.</string>
+    <plurals name="plan_bases_mixed">
+        <item quantity="one">%1$d prerequisite, %2$s with your choice.</item>
+        <item quantity="other">%1$d prerequisites, %2$s with your choices.</item>
+    </plurals>
+    <plurals name="plan_bases_deep">
+        <item quantity="one">%1$d prerequisite, %2$s in depth.</item>
+        <item quantity="other">%1$d prerequisites, %2$s in depth.</item>
+    </plurals>
+    <plurals name="plan_bases_quick">
+        <item quantity="one">%1$d prerequisite, %2$s for its quick lesson.</item>
+        <item quantity="other">%1$d prerequisites, %2$s for a quick lesson each.</item>
+    </plurals>
+    <plurals name="plan_bases_skip">
+        <item quantity="one">%1$d prerequisite, skipped.</item>
+        <item quantity="other">%1$d prerequisites, all skipped.</item>
+    </plurals>
+    <plurals name="plan_bases_essential">
+        <item quantity="one">%1$d prerequisite, %2$s for its essentials.</item>
+        <item quantity="other">%1$d prerequisites, %2$s for their essentials.</item>
+    </plurals>
+    <plurals name="plan_bases_known">
+        <item quantity="one">%d prerequisite you showed you know is already out of your plan.</item>
+        <item quantity="other">%d prerequisites you showed you know are already out of your plan.</item>
+    </plurals>
+    <string name="plan_bases_show_known">Already know some? Show it in a test and they leave your plan on their own.</string>
+    <string name="plan_base_deep">In depth</string>
+    <string name="plan_base_essential">Essentials</string>
+    <string name="plan_base_quick">Quick lesson</string>
+    <string name="plan_base_skip">Skip</string>
+    <string name="plan_base_deep_description">Every lesson</string>
+    <string name="plan_base_essential_description">The first third of the lessons</string>
+    <string name="plan_base_quick_description">One short lesson each</string>
+    <string name="plan_base_skip_description">Leave them out of your plan</string>
+    <string name="plan_all_prerequisites">All prerequisites</string>
+    <string name="plan_recommended">Recommended</string>
+    <string name="plan_bases_differ">Your prerequisites have different choices. Picking one above applies it to all.</string>
+    <string name="plan_bases_studied_stay">Prerequisites you\'ve studied stay studied.</string>
+    <string name="plan_choose_by_subject">Choose by subject</string>
+    <string name="plan_base_studied_name">%1$s (studied)</string>
+    <string name="plan_base_names_time">%1$s · %2$s</string>
+    <string name="plan_different_choices">Different choices</string>
+    <string name="plan_base_studied">Studied</string>
+    <string name="plan_get_recommendation">Get a recommendation</string>
+    <string name="plan_getting_recommendation">Getting a recommendation…</string>
+    <string name="plan_recommendation_failed">We couldn\'t get a recommendation.</string>
+    <string name="plan_still_building">Your plan is still being built. Try again in a moment.</string>
+    <string name="plan_recommend_deep">Your time covers everything, so we recommend each prerequisite in depth.</string>
+    <plurals name="plan_recommend_quick_exam">
+        <item quantity="one">%d day left: we recommend a quick lesson for each prerequisite, so there\'s time for what comes up most.</item>
+        <item quantity="other">%d days left: we recommend a quick lesson for each prerequisite, so there\'s time for what comes up most.</item>
+    </plurals>
+    <plurals name="plan_recommend_quick_goal">
+        <item quantity="one">%d day left: we recommend a quick lesson for each prerequisite, so there\'s time for what matters most to your goal.</item>
+        <item quantity="other">%d days left: we recommend a quick lesson for each prerequisite, so there\'s time for what matters most to your goal.</item>
+    </plurals>
+    <string name="plan_recommend_essential_exam">We recommend the essentials, so the topics that build on them make sense.</string>
+    <string name="plan_recommend_essential_goal">We recommend the essentials, so what builds on them makes sense.</string>
+    <string name="plan_recommendation_followed">Your plan already follows it.</string>
+    <string name="plan_checking_changes">Checking what changes…</string>
+    <string name="plan_check_failed">We couldn\'t check what changes.</string>
+    <string name="plan_stays_as_it_is">Your plan stays as it is.</string>
+    <string name="plan_save_choices">Save choices</string>
+    <plurals name="plan_bases_topics_come_in">
+        <item quantity="one">%1$d topic comes in: %2$s.</item>
+        <item quantity="other">%1$d topics come in: %2$s.</item>
+    </plurals>
+    <plurals name="plan_bases_topics_leave">
+        <item quantity="one">%1$d topic leaves: %2$s.</item>
+        <item quantity="other">%1$d topics leave: %2$s.</item>
+    </plurals>
+    <string name="plan_bases_everything_fits">Everything then fits by your date.</string>
+    <string name="plan_bases_exam_share_same">By your date: %1$s of the exam, as now.</string>
+    <string name="plan_bases_goal_share_same">By your date: %1$s of your goal, as now.</string>
+    <string name="plan_bases_exam_share">By your date: %1$s of the exam, against %2$s now.</string>
+    <string name="plan_bases_goal_share">By your date: %1$s of your goal, against %2$s now.</string>
     <string name="plan_what_you_practice">What you practice</string>
     <string name="plan_when_to_practice">When to practice %1$s</string>
     <string name="plan_cadence_weekly">Every week</string>
@@ -641,7 +720,6 @@
     <string name="plan_study_everything">Study everything</string>
     <string name="plan_study_everything_exam_description">Every topic, even after the exam, at your own pace.</string>
     <string name="plan_study_everything_goal_description">Every part of your goal, at your own pace, with no end date.</string>
-    <string name="plan_checking_changes">Checking what changes…</string>
     <string name="plan_sheet_done">Done</string>
     <string name="plan_choose_focus">Choose where to focus</string>
     <string name="plan_where_to_focus">Where to focus</string>
@@ -656,7 +734,6 @@
     <string name="plan_focus_on_these">Focus on these</string>
     <string name="plan_saving">Saving…</string>
     <string name="plan_couldnt_check_changes">We couldn\'t check what changes.</string>
-    <string name="plan_stays_as_it_is">Your plan stays as it is.</string>
     <string name="plan_then_covers_everything">Your plan then covers everything in depth.</string>
     <string name="plan_apply">Apply</string>
     <string name="plan_not_now">Not now</string>

@@ -16,11 +16,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.PlanBasesAdvice
+import com.zoonk.api.models.PlanChangePreview
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -283,6 +288,72 @@ class PlanScreenshots {
         write(name, compose.onRoot().captureToImage().asAndroidBitmap())
     }
 
+    /** The prerequisites' sheet, drawn here as it shows in its sheet. */
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun editorSheets() = captureEditorSheets("plan-editor-sheet")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
+    fun editorSheetsDarkMoreContrast() = captureEditorSheets("plan-editor-sheet-dark-more-contrast", dark = true, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h3000dp-xhdpi")
+    fun editorSheetsAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureEditorSheets("plan-editor-sheet-font200")
+    }
+
+    private fun captureEditorSheets(
+        prefix: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        val summary = learnerSummary(kind = "exam", title = "ENEM")
+        val page =
+            PlanPageState(
+                summary.goals.first(),
+                plan(
+                    """
+                    "feasibility":{"coreFits":true,"coveredShare":0.78,"deadline":"2027-11-07","deepensMostAsked":false,"fits":false,
+                     "measure":"exam","timeCovers":false},
+                    $EDITOR_CHOICES
+                    """.trimIndent(),
+                ),
+                summary,
+            )
+        val preview =
+            ApiJson.decodeFromString<PlanChangePreview>(
+                """
+                {"effect":{"lessonsAdded":6,"lessonsRemoved":0,"topicsAdded":[{"area":"Matemática","topics":["Probabilidade","Estatística"]}]},
+                 "feasibility":{"coreFits":true,"coveredShare":0.82,"fits":false,"measure":"exam"},"ready":true,"unchanged":false}
+                """.trimIndent(),
+            )
+        val edits =
+            PlanEdits(
+                preview = { preview },
+                adviseOnBases = { PlanBasesAdvice(daysLeft = 12, ready = true, recommended = PlanBasesAdvice.Recommended.QUICK) },
+            )
+        var bases by mutableStateOf(BasesDraft())
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
+                Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
+                    Column(Modifier.padding(top = 24.dp)) {
+                        BasesChoices(page, page.plan.bases!!, edits, bases, onDraft = { bases = it }, onDone = {})
+                    }
+                }
+            }
+        }
+        compose.waitForIdle()
+        write("$prefix-bases", compose.onRoot().captureToImage().asAndroidBitmap())
+
+        compose.onNodeWithText("Get a recommendation").performClick()
+        compose.onNodeWithText("Quick lesson").performClick()
+        compose.mainClock.advanceTimeBy(1_000)
+        compose.waitForIdle()
+        write("$prefix-bases-changed", compose.onRoot().captureToImage().asAndroidBitmap())
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,
@@ -331,7 +402,17 @@ class PlanScreenshots {
         val EDITOR_CHOICES =
             """
             "examChoices":[{"group":"Língua estrangeira","options":[{"name":"Inglês","shortName":null},
-             {"name":"Espanhol","shortName":null}],"subject":null}]
+             {"name":"Espanhol","shortName":null}],"subject":null}],
+            "bases":{"daysLeft":12,"knownCount":1,"items":[
+             {"area":"Matemática","choice":"essential","choices":["deep","essential","quick","skip"],
+              "minutes":{"deep":120,"essential":40,"quick":10},"name":"Frações","neededFor":["Probabilidade"],
+              "skillId":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b01","studied":false},
+             {"area":"Matemática","choice":"essential","choices":["deep","essential","quick","skip"],
+              "minutes":{"deep":90,"essential":30,"quick":10},"name":"Razão e proporção","neededFor":[],
+              "skillId":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b02","studied":false},
+             {"area":"Linguagens","choice":"essential","choices":["deep"],
+              "minutes":{"deep":60,"essential":20,"quick":10},"name":"Classes de palavras","neededFor":[],
+              "skillId":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b03","studied":true}]}
             """.trimIndent()
     }
 }

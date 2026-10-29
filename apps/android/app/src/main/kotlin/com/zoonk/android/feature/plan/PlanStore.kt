@@ -18,6 +18,7 @@ import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangePreview
@@ -146,6 +147,12 @@ interface PlanApi {
         group: String,
         subject: String,
     ): PlanChangeResult
+
+    /** Plans the goal with every prerequisite in depth, so only when the learner asks. Saves nothing. */
+    suspend fun basesAdvice(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): PlanBasesAdvice
 }
 
 class LivePlanApi(
@@ -235,6 +242,11 @@ class LivePlanApi(
         subject: String,
     ) = perform { api.clients(session).plans.createPlanExamChoice(goalId, ExamChoiceInput(group, subject, deviceTimeZone())) }
 
+    override suspend fun basesAdvice(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = perform { api.clients(session).plans.createPlanBasesAdvice(goalId) }
+
     private fun changeInput(operations: List<PlanOp>) =
         buildJsonObject {
             put("operations", JsonArray(operations.mapNotNull { it.toJson() }))
@@ -311,6 +323,8 @@ class PlanStore(
         group: String,
         subject: String,
     ): MutationResult<PlanChangeResult> = write(goalId) { api.chooseExamOption(it, goalId, group, subject) }
+
+    suspend fun basesAdvice(goalId: UUID): MutationResult<PlanBasesAdvice> = cache.mutate { api.basesAdvice(it, goalId) }
 
     /** What an edit would do: it saves nothing, so nothing is read again. */
     suspend fun preview(

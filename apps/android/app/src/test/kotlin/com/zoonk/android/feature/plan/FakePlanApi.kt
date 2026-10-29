@@ -5,6 +5,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangePreview
@@ -42,6 +43,8 @@ internal class FakePlanApi : PlanApi {
     var preview = PlanChangePreview(effect = null, feasibility = null, ready = true, unchanged = true)
 
     val examChoices = mutableListOf<Pair<String, String>>()
+    var advice = PlanBasesAdvice(daysLeft = 40, ready = true, recommended = PlanBasesAdvice.Recommended.ESSENTIAL)
+    var advised = 0
 
     override suspend fun plan(
         session: AuthenticatedSession,
@@ -153,5 +156,13 @@ internal class FakePlanApi : PlanApi {
     ): PlanChangeResult {
         examChoices += group to subject
         return PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED)
+    }
+
+    override suspend fun basesAdvice(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): PlanBasesAdvice {
+        advised++
+        return advice
     }
 }
