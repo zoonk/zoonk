@@ -10,6 +10,7 @@ struct StudyDay: Decodable, Equatable, Sendable {
 
   enum EmptyDay: String, Decodable, Sendable {
     case lessonsComing
+    case lessonsToPrepare
     case nothingNew
   }
 

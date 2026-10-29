@@ -69,7 +69,7 @@ export function toStudyBlockView(
   return { ...toDayBlockView(input), id: input.block.id };
 }
 
-export type EmptyDay = "lessonsComing" | "nothingNew";
+export type EmptyDay = "lessonsComing" | "lessonsToPrepare" | "nothingNew";
 
 /** offered permits adding leftover lessons when they take about one extra study day. */
 export type CatchUpView = {
@@ -89,7 +89,7 @@ export type StudySessionView = {
   current: boolean;
   dailyLimit: DailyTimeLimitStatus | null;
   dayEndsAt: number;
-  /** Null with blocks or no study time; lessonsComing fills automatically, while nothingNew offers alternatives. */
+  /** Null with blocks or no study time; lessonsComing fills automatically, lessonsToPrepare waits for the learner to ask for them, and nothingNew offers alternatives. */
   emptyDay: EmptyDay | null;
   examAccess: ExamPrepAccess;
   /** Do not promise work tomorrow when the goal's exam is tomorrow. */

@@ -6,11 +6,12 @@ import {
   prisma,
 } from "@zoonk/db";
 import "server-only";
+import { getOutlineStaleBefore } from "../../lookahead/outline-ahead";
 import { readSkillCourses } from "../../lookahead/plan-outline-needs";
 import { isStandIn } from "../../plans/planner/plan-item-rules";
 import { isExamSchedule } from "../../plans/planner/plan-queue";
 
-const OUTLINING: GenerationStatus[] = ["pending", "running"];
+export const OUTLINING: GenerationStatus[] = ["pending", "running"];
 
 const STAND_IN = {
   chapterId: null,
@@ -76,19 +77,21 @@ async function loadDayStandInSkills({
   return [...due, ...next].flatMap((item) => (item.skillId ? [item.skillId] : []));
 }
 
-/** A stand-in reserves time only while its course is actively awaiting an outline; never wait on content nobody is writing. */
-export async function isDayAwaitingOutlines({
-  client = prisma,
-  goal,
-  graph,
-  localDate,
-}: {
+type DayOutlinesInput = {
   client?: TransactionClient;
   graph?: unknown;
   goal: Pick<Goal, "id" | "kind" | "primaryCourseId" | "targetDate">;
   /** The learner-local date of the day, as a UTC-midnight label. */
   localDate: Date;
-}): Promise<boolean> {
+  now?: Date;
+};
+
+export async function loadDayStandInCourseIds({
+  client = prisma,
+  goal,
+  graph,
+  localDate,
+}: DayOutlinesInput): Promise<string[]> {
   const [skillIds, plan] = await Promise.all([
     loadDayStandInSkills({ client, goal, localDate }),
     graph === undefined
@@ -97,18 +100,40 @@ export async function isDayAwaitingOutlines({
   ]);
 
   if (!plan || skillIds.length === 0) {
-    return false;
+    return [];
   }
 
   const courseOf = readSkillCourses({ graph: plan.graph, primaryCourseId: goal.primaryCourseId });
 
-  const courseIds = [
+  return [
     ...new Set(skillIds.flatMap((skillId) => courseOf.get(skillId) ?? goal.primaryCourseId ?? [])),
   ];
+}
+
+/**
+ * Whether the day's stand-ins are being outlined (`awaiting`) or wait for someone to ask (`idle`);
+ * null without stand-ins. A stand-in reserves time only while its course is actively awaiting an
+ * outline; never wait on content nobody is writing.
+ */
+export async function getDayOutlines(input: DayOutlinesInput): Promise<"awaiting" | "idle" | null> {
+  const { client = prisma, now = new Date() } = input;
+  const courseIds = await loadDayStandInCourseIds(input);
+
+  if (courseIds.length === 0) {
+    return null;
+  }
 
   const outlining = await client.course.count({
-    where: { id: { in: courseIds }, outlineStatus: { in: OUTLINING } },
+    where: {
+      id: { in: courseIds },
+      outlineStatus: { in: OUTLINING },
+      updatedAt: { gt: getOutlineStaleBefore(now) },
+    },
   });
 
-  return outlining > 0;
+  return outlining > 0 ? "awaiting" : "idle";
+}
+
+export async function isDayAwaitingOutlines(input: DayOutlinesInput): Promise<boolean> {
+  return (await getDayOutlines(input)) === "awaiting";
 }

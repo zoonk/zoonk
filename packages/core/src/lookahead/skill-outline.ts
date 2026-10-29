@@ -9,10 +9,9 @@ import { findOwnedGoal } from "../learner/_utils/owned-goal";
 import { getBandRank } from "../learner/placement/placement-graph";
 import { libraryRowsVisibleTo } from "../library/_utils/library-visibility";
 import { refreshGoalPlan } from "../plans/refresh-goal-plan";
+import { getOutlineStaleBefore } from "./outline-ahead";
 import { type PlanOutlineNeed, findSkillOutlineNeed, readSkillCourses } from "./plan-outline-needs";
 import { type SkillOutline } from "./skill-outline-contract";
-
-const WRITING_STALE_AFTER_MS = 900_000;
 
 type OwnedSkillOutline<TResult> = TResult | { status: "notFound" } | { status: "unauthorized" };
 
@@ -40,14 +39,10 @@ async function findSkillCourse({ goalId, skillId }: { goalId: string; skillId: s
 
 type SkillCourse = NonNullable<Awaited<ReturnType<typeof findSkillCourse>>>;
 
-function getStaleBefore(now: Date): Date {
-  return new Date(now.getTime() - WRITING_STALE_AFTER_MS);
-}
-
 function isBeingOutlined({ course, now }: { course: SkillCourse; now: Date }): boolean {
   return (
     (course.outlineStatus === "pending" || course.outlineStatus === "running") &&
-    course.updatedAt > getStaleBefore(now)
+    course.updatedAt > getOutlineStaleBefore(now)
   );
 }
 
@@ -58,7 +53,7 @@ async function markOutlineAsked({ course, now }: { course: SkillCourse; now: Dat
       OR: [
         { outlineStatus: null },
         { outlineStatus: { not: "running" } },
-        { updatedAt: { lt: getStaleBefore(now) } },
+        { updatedAt: { lt: getOutlineStaleBefore(now) } },
       ],
       id: course.id,
     },

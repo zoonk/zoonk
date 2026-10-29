@@ -393,6 +393,7 @@
     "./lookahead/lesson-waiting-state": "./src/lookahead/get-lesson-waiting-state.ts",
     "./lookahead/outline-ahead": "./src/lookahead/outline-ahead.ts",
     "./lookahead/placement-item-skills": "./src/lookahead/placement-item-skills.ts",
+    "./lookahead/today-outlines": "./src/lookahead/today-outlines.ts",
     "./lookahead/placement-week": "./src/lookahead/placement-week.ts",
     "./lookahead/plan-outline-needs": "./src/lookahead/plan-outline-needs.ts",
     "./lookahead/record-generation-wait": "./src/lookahead/record-generation-wait.ts",

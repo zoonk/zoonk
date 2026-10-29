@@ -79,7 +79,7 @@ export const contentGenerationPaths = {
   "/goals/{goalId}/lesson-preparations": {
     post: {
       description:
-        "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion calls it itself; call it when placement ends another way, never on a screen view. For a guest only the plan's first lesson is written, counted as its start like opening it.",
+        "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion calls it itself; call it when placement ends another way, or from the learner's tap on a Today whose `emptyDay` is `lessonsToPrepare` (the next read says `lessonsComing`), never on a screen view. For a guest only the plan's first lesson is written, counted as its start like opening it.",
       operationId: "createGoalLessonPreparation",
       requestParams: { path: goalPathParamsSchema },
       responses: {

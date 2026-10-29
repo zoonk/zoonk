@@ -1,4 +1,4 @@
-import { type ExamBlueprint, prisma } from "@zoonk/db";
+import { type ExamBlueprint } from "@zoonk/db";
 import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { withoutLockedPhaseChallenges } from "../../checkpoints/_utils/phase-challenge-access";
@@ -17,57 +17,33 @@ import { loadCatchUpView } from "./catch-up";
 import { getCarryOverEnd, isCurrentSession } from "./current-session";
 import { readDailyTimeLimitStatus } from "./daily-time-limit";
 import { getGoalDayMinutes } from "./day-minutes";
+import { toEmptyDay } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
 import { withLessonDisplayMinutes } from "./lesson-display-minutes";
-import { isDayAwaitingOutlines } from "./outlining-stand-ins";
+import { getDayOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
 import { loadSessionAnswers } from "./session-answers";
-import { type EmptyDay, type StudySessionView, toStudySessionView } from "./session-view";
+import { type StudySessionView, toStudySessionView } from "./session-view";
 import { type StudySessionRow } from "./study-session-access";
 
-/** Distinguish an outline still arriving from exhausted work that no amount of waiting will add. */
-async function loadEmptyDay({
+async function loadDayOutlines({
   dayMinutes,
   session,
 }: {
   dayMinutes: number;
   session: StudySessionRow;
-}): Promise<EmptyDay | null> {
-  if (session.blocks.length > 0 || dayMinutes === 0 || !session.goalId) {
+}): Promise<"awaiting" | "idle" | null> {
+  if (dayMinutes === 0 || session.status === "completed" || !session.goal) {
     return null;
   }
 
-  const coming = await prisma.planItem.count({
-    where: {
-      chapterId: null,
-      kind: "lesson",
-      lessonId: null,
-      plan: { goalId: session.goalId },
-      status: "todo",
-    },
-  });
-
-  return coming > 0 ? "lessonsComing" : "nothingNew";
+  return getDayOutlines({ goal: session.goal, localDate: session.localDate });
 }
 
-async function loadLessonsComing({
-  current,
-  dayMinutes,
-  session,
-}: {
-  current: boolean;
-  dayMinutes: number;
-  session: StudySessionRow;
-}): Promise<boolean> {
-  const hasTime = dayMinutes - session.plannedMinutes >= DEFAULT_LESSON_MINUTES;
-
-  if (!current || !hasTime || session.status === "completed" || !session.goal) {
-    return false;
-  }
-
-  return isDayAwaitingOutlines({ goal: session.goal, localDate: session.localDate });
+function hasLessonRoom({ dayMinutes, session }: { dayMinutes: number; session: StudySessionRow }) {
+  return dayMinutes - session.plannedMinutes >= DEFAULT_LESSON_MINUTES;
 }
 
 function loadViewPlan({ fresh, session }: { fresh?: PlannedStudyDay; session: StudySessionRow }) {
@@ -192,9 +168,8 @@ export async function loadStudySessionView({
       })
     : { includesMockExams: true, trialEnded: false };
 
-  const [emptyDay, lessonsComing, missions, fullMealEarned, plusLessons] = await Promise.all([
-    loadEmptyDay({ dayMinutes, session }),
-    loadLessonsComing({ current, dayMinutes, session }),
+  const [outlines, missions, fullMealEarned, plusLessons] = await Promise.all([
+    loadDayOutlines({ dayMinutes, session }),
     getDayMissions({ displayBlocks, session, timeZone, ...(current && { through: new Date() }) }),
     hasDayMissionBonus({ session, timeZone, ...(current && { now: new Date() }) }),
     loadDayPlusLessons({
@@ -213,10 +188,10 @@ export async function loadStudySessionView({
     dailyLimit,
     dayEndsAt,
     dayMinutes,
-    emptyDay,
+    emptyDay: session.blocks.length > 0 ? null : toEmptyDay({ dayMinutes, outlines }),
     examAccess,
     fullMealEarned,
-    lessonsComing,
+    lessonsComing: current && hasLessonRoom({ dayMinutes, session }) && outlines === "awaiting",
     missions,
     oftenTestedSkillIds,
     plusLessons,

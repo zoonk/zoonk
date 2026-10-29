@@ -2322,7 +2322,7 @@
     },
     "/goals/{goalId}/lesson-preparations": {
       "post": {
-        "description": "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion calls it itself; call it when placement ends another way, never on a screen view. For a guest only the plan's first lesson is written, counted as its start like opening it.",
+        "description": "Gets a goal's first lessons written before its first study session exists: today's first lessons and the next study day's, as many as the learner's plan writes ahead. Placement's completion calls it itself; call it when placement ends another way, or from the learner's tap on a Today whose `emptyDay` is `lessonsToPrepare` (the next read says `lessonsComing`), never on a screen view. For a guest only the plan's first lesson is written, counted as its start like opening it.",
         "operationId": "createGoalLessonPreparation",
         "security": [
           {
@@ -85307,10 +85307,11 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (show one action that posts the goal's lesson preparation; the next read says `lessonsComing`; never post it on your own), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
+              "lessonsToPrepare",
               "nothingNew"
             ]
           },
@@ -87407,10 +87408,11 @@
           },
           "emptyDay": {
             "nullable": true,
-            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
+            "description": "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (show one action that posts the goal's lesson preparation; the next read says `lessonsComing`; never post it on your own), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
             "type": "string",
             "enum": [
               "lessonsComing",
+              "lessonsToPrepare",
               "nothingNew"
             ]
           },

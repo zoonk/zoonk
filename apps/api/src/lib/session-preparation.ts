@@ -20,6 +20,7 @@ import {
   getGoalPreparationAccess,
   getSessionPreparationAccess,
 } from "@zoonk/core/lookahead/session-preparation";
+import { askTodayOutlines } from "@zoonk/core/lookahead/today-outlines";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { after } from "next/server";
@@ -225,6 +226,8 @@ export async function startGoalPreparation({
   if (access.status !== "ready") {
     return access;
   }
+
+  await askTodayOutlines({ goalId: access.goalId, timeZone: access.timeZone });
 
   return startFromAccess({ access, claimQuestions: null, platform });
 }

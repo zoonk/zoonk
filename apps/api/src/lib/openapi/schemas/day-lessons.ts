@@ -1,11 +1,11 @@
 import { z } from "zod";
 
 export const emptyDaySchema = z
-  .enum(["lessonsComing", "nothingNew"])
+  .enum(["lessonsComing", "lessonsToPrepare", "nothingNew"])
   .nullable()
   .meta({
     description:
-      "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
+      "Why a day with study time has no blocks: `lessonsComing` while its lessons are still being outlined (the day fills in on its own; read it again), `lessonsToPrepare` when its lessons aren't written and nobody is outlining them (show one action that posts the goal's lesson preparation; the next read says `lessonsComing`; never post it on your own), `nothingNew` when every lesson of the plan is done or one the learner showed they know, so offer practice (`extraTime`), the week's challenge or the buddy instead (on a free exam plan past its first week, whose new lessons come with Plus: nothing to review or fix today). Null when the day has blocks or no study time",
   });
 
 export const lessonsComingSchema = z

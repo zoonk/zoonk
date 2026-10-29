@@ -10,12 +10,14 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { replanGoalsWaitingOnSkills } from "../library/curriculum/replan-waiting-goals";
+import { askTodayOutlines } from "../lookahead/today-outlines";
 import { keepPaceOwn } from "../plans/_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { readSelectedItemFacts } from "../plans/_utils/selected-item-contract";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
+import { openTodayView } from "./_test-utils/open-today-view";
 
 const NOW = new Date("2026-09-30T12:00:00Z");
 const A_MINUTE_LATER = new Date("2026-09-30T12:01:00Z");
@@ -36,11 +38,13 @@ async function readToday(goalId: string) {
 
 async function setupDayWithStandIn({
   dailyMinutes = 45,
+  firstLessons = 2,
   laterLessons = 8,
   outlineStatus = "running",
   standInSize = LANDING,
 }: {
   dailyMinutes?: number;
+  firstLessons?: number;
   laterLessons?: number;
   outlineStatus?: GenerationStatus;
   standInSize?: number;
@@ -48,7 +52,11 @@ async function setupDayWithStandIn({
   const [user, course] = await Promise.all([userFixture(), courseFixture({ outlineStatus })]);
 
   const library = await planLibraryFixture({
-    skills: [{ lessons: 2 }, { lessons: 0, size: standInSize }, { lessons: laterLessons }],
+    skills: [
+      ...(firstLessons > 0 ? [{ lessons: firstLessons }] : []),
+      { lessons: 0, size: standInSize },
+      { lessons: laterLessons },
+    ],
   });
 
   const { goal } = await unplannedGoalFixture({
@@ -217,6 +225,51 @@ describe("today's session the learner was shown", () => {
       lessonsComing: false,
       status: "unstarted",
     });
+  });
+
+  it("asks for an empty day's lessons nobody is outlining, and says they're coming once asked", async () => {
+    const { goal } = await setupDayWithStandIn({
+      firstLessons: 0,
+      laterLessons: 0,
+      outlineStatus: "completed",
+    });
+
+    const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(before.status === "ready" && before.today.session).toMatchObject({
+      blocks: [],
+      emptyDay: "lessonsToPrepare",
+      status: "unstarted",
+    });
+
+    const opened = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(opened.today.session).toMatchObject({ blocks: [], emptyDay: "lessonsToPrepare" });
+
+    await askTodayOutlines({ goalId: goal.id, timeZone: "UTC" });
+    const after = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(after.today.session).toMatchObject({ blocks: [], emptyDay: "lessonsComing" });
+  });
+
+  it("stops waiting on an outline nobody has touched for a while", async () => {
+    const { course, goal } = await setupDayWithStandIn({
+      firstLessons: 0,
+      laterLessons: 0,
+      outlineStatus: "pending",
+    });
+
+    const fresh = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    await prisma.course.update({
+      data: { updatedAt: new Date(NOW.getTime() - 20 * 60_000) },
+      where: { id: course.id },
+    });
+
+    const stale = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(fresh.status === "ready" && fresh.today.session.emptyDay).toBe("lessonsComing");
+    expect(stale.status === "ready" && stale.today.session.emptyDay).toBe("lessonsToPrepare");
   });
 
   it("fills the rest of the day once the outline it waited for ends without its lessons", async () => {

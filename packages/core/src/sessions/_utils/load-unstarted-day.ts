@@ -2,7 +2,6 @@ import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
 import "server-only";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
-import { isWritingItem } from "../../plans/planner/plan-item-rules";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { type UnstartedDayView } from "../day-view";
@@ -12,31 +11,15 @@ import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { toDayBlockView } from "./day-block-view";
 import { toDayViewFields } from "./day-view-fields";
+import { toEmptyDay } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
-import { isDayAwaitingOutlines } from "./outlining-stand-ins";
+import { getDayOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
 import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-plan";
 import { type SessionDayContext } from "./session-placement";
 import { getSessionBar } from "./session-view";
-
-/** Pending lessons must not turn a rest day into an awaiting-content day. */
-function getEmptyDay({
-  dayMinutes,
-  selection,
-}: {
-  dayMinutes: number;
-  selection: SelectedDayPlan;
-}) {
-  if (dayMinutes === 0) {
-    return null;
-  }
-
-  return selection.items.some((item) => item.status === "todo" && isWritingItem(item))
-    ? "lessonsComing"
-    : "nothingNew";
-}
 
 /** Read-only display data; never invents session or block ids. */
 export async function loadUnstartedDayView({
@@ -69,7 +52,7 @@ export async function loadUnstartedDayView({
     missionViews,
     earned,
     plusLessons,
-    awaitingOutlines,
+    outlines,
   ] = await Promise.all([
     loadStudyWeek({
       localDate,
@@ -95,12 +78,12 @@ export async function loadUnstartedDayView({
       localDate,
       userId,
     }),
-    isDayAwaitingOutlines({ goal, graph: day.plan.graph, localDate }),
+    getDayOutlines({ goal, graph: day.plan.graph, localDate, now }),
   ]);
 
   const missions = missionViews.map((mission) => asDayMission(mission));
 
-  const emptyDay = getEmptyDay({ dayMinutes, selection });
+  const emptyDay = toEmptyDay({ dayMinutes, outlines });
 
   const hasRoom = dayMinutes - day.plannedMinutes >= DEFAULT_LESSON_MINUTES;
 
@@ -112,7 +95,7 @@ export async function loadUnstartedDayView({
     emptyDay,
     examAccess,
     fullMealEarned: earned,
-    lessonsComing: hasRoom && awaitingOutlines,
+    lessonsComing: hasRoom && outlines === "awaiting",
     missions,
     plusLessons,
     session: {
