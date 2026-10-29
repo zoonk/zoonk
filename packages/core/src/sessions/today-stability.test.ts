@@ -14,6 +14,7 @@ import { keepPaceOwn } from "../plans/_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { readSelectedItemFacts } from "../plans/_utils/selected-item-contract";
 import { createGoalPlan } from "../plans/create-goal-plan";
+import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 
 const NOW = new Date("2026-09-30T12:00:00Z");
@@ -35,13 +36,19 @@ async function readToday(goalId: string) {
 
 async function setupDayWithStandIn({
   dailyMinutes = 45,
+  laterLessons = 8,
   outlineStatus = "running",
   standInSize = LANDING,
-}: { dailyMinutes?: number; outlineStatus?: GenerationStatus; standInSize?: number } = {}) {
+}: {
+  dailyMinutes?: number;
+  laterLessons?: number;
+  outlineStatus?: GenerationStatus;
+  standInSize?: number;
+} = {}) {
   const [user, course] = await Promise.all([userFixture(), courseFixture({ outlineStatus })]);
 
   const library = await planLibraryFixture({
-    skills: [{ lessons: 2 }, { lessons: 0, size: standInSize }, { lessons: 8 }],
+    skills: [{ lessons: 2 }, { lessons: 0, size: standInSize }, { lessons: laterLessons }],
   });
 
   const { goal } = await unplannedGoalFixture({
@@ -192,6 +199,24 @@ describe("today's session the learner was shown", () => {
     const due = new Set(dueToday.map((item) => item.lessonId));
 
     expect(learnLessonIds(today).some((id) => later.has(id) && !due.has(id))).toBe(true);
+  });
+
+  it("says lessons are coming before the day opens only while someone is outlining them", async () => {
+    const outlining = await setupDayWithStandIn({ laterLessons: 0 });
+    const whileOutlining = await getTodayView({ goalId: outlining.goal.id, timeZone: "UTC" });
+
+    expect(whileOutlining.status === "ready" && whileOutlining.today.session).toMatchObject({
+      lessonsComing: true,
+      status: "unstarted",
+    });
+
+    const idle = await setupDayWithStandIn({ laterLessons: 0, outlineStatus: "completed" });
+    const whileIdle = await getTodayView({ goalId: idle.goal.id, timeZone: "UTC" });
+
+    expect(whileIdle.status === "ready" && whileIdle.today.session).toMatchObject({
+      lessonsComing: false,
+      status: "unstarted",
+    });
   });
 
   it("fills the rest of the day once the outline it waited for ends without its lessons", async () => {

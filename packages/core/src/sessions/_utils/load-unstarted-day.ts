@@ -14,6 +14,7 @@ import { toDayBlockView } from "./day-block-view";
 import { toDayViewFields } from "./day-view-fields";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
+import { isDayAwaitingOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
 import { type SelectedDayPlan, getSelectedCatchUpItems } from "./selected-day-plan";
@@ -68,6 +69,7 @@ export async function loadUnstartedDayView({
     missionViews,
     earned,
     plusLessons,
+    awaitingOutlines,
   ] = await Promise.all([
     loadStudyWeek({
       localDate,
@@ -93,6 +95,7 @@ export async function loadUnstartedDayView({
       localDate,
       userId,
     }),
+    isDayAwaitingOutlines({ goal, graph: day.plan.graph, localDate }),
   ]);
 
   const missions = missionViews.map((mission) => asDayMission(mission));
@@ -109,7 +112,7 @@ export async function loadUnstartedDayView({
     emptyDay,
     examAccess,
     fullMealEarned: earned,
-    lessonsComing: hasRoom && emptyDay === "lessonsComing",
+    lessonsComing: hasRoom && awaitingOutlines,
     missions,
     plusLessons,
     session: {
