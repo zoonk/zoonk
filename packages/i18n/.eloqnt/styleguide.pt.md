@@ -56,7 +56,7 @@
 - “Time capsules”: “Cápsulas do tempo”
 - “Missions”: “Missões”
 - Mission names (missions list, first steps): infinitive, like a to-do list: “Concluir sua primeira aula”, “Praticar {area}”
-- “call” (speaking practice): “conversa”, not “chamada” or “ligação”
+- “call” (speaking practice): “conversa”, not “chamada” or “ligação”; “speaking practice calls” is “conversas de prática”, without repeating “conversação”
 - “Hyperdrive”: “Hiperpropulsão”
 - “Mistakes notebook”: “Caderno de erros”
 - “To fix” / “Fixed” (notebook tabs): “Para corrigir” / “Corrigidos”

@@ -36,3 +36,4 @@ Zoonk helps anyone learn anything, especially people in small towns, under-resou
 
 - Learners can choose buddy names and goal titles. Their gender and number are unknown; use neutral wording around names and the word for “goal” when a title needs agreement.
 - Duration placeholders such as “{time}” already include localized units; do not add units around them.
+- Keep a count’s placeholder (“#” or “%d”) in every plural form, “one” included, where English puts it: “%d goal at a time” becomes “%d meta por vez”, never a literal “1”, a spelled-out number, or “uma meta por vez (%d)”.
