@@ -143,9 +143,12 @@
   "onboarding_reveal_created": "a271358a3e64b64fcdcf561760f31fe139c4985c15340818c5ec0d7234ac125e",
   "onboarding_reveal_daily": "a6845eedeb2322c8d1dea7c786385c1bb77cb437a7ca58a8e10d2a3b4d684fb2",
   "onboarding_reveal_days": "1eba845d1466fee82d98ebd3db6c8d8a49d5a0852bbf126ae03cc9c0a72cf464",
-  "onboarding_reveal_estimated_guide": "ad205e494a8e693af1ea319943423df6ae46eb21eee4dd4c363615fd9423f3b0",
-  "onboarding_reveal_estimated_material": "4afcd75ef07f66db07454f29528bf0dcb1c8c66958cf0519ec4774636fc6c8a9",
-  "onboarding_reveal_estimated_notice": "0a0f4519a51181846bbe6ce5ba351fd8d9d6d3f524258e294adcab3aefd6690b",
+  "onboarding_reveal_estimated_guide_area": "6034657326a64bb967db40b31b55917bf8f918c06ad6979326ad393259d09c1e",
+  "onboarding_reveal_estimated_guide_areas": "d9c0e290f23a89444bd8ab49cdbe54e1cb1442756b1d7ddc72e3daa66c620bad",
+  "onboarding_reveal_estimated_material_area": "99a4492abd9c4ef4788f717b0e7b2aea227122745f070c3c3c2d990ea73c236e",
+  "onboarding_reveal_estimated_material_areas": "7f4659fbfbc204437cc16f6d09fb65870de22c13cf0b143517896aaae6f661ed",
+  "onboarding_reveal_estimated_notice_area": "6c22756902daf6ef7f42332410dcaca98a6674d56d0da22f3f0a1cf7cb529cbf",
+  "onboarding_reveal_estimated_notice_areas": "5cc8d6facab215211eb00456b167890008178d5f77c42d6810d97d069c276018",
   "onboarding_reveal_estimated_percent": "79cfcaa3a742a734401093b7648fd3262ea322374125d5cd4bdcacb5c190184f",
   "onboarding_reveal_free_week_over_body": "f2be1c27dff07f1fcfdacbdca4e9ca8acbcd9f44916f94d64d63b1d3cfaae73e",
   "onboarding_reveal_free_week_over_title": "e2477c4faade8def5d6cf22039a940370d6be6bf7a990cc488b6adf17b90c968",
@@ -643,19 +646,10 @@
     <string name="onboarding_reveal_weights">Peso por área</string>
     <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
     <string name="onboarding_reveal_estimated_percent">~%1$s</string>
-    <plurals name="onboarding_reveal_estimated_material">
-        <item quantity="one">~ Estimación: tu material no indica cuánto pesa esta área.</item>
-        <item quantity="many">~ Estimación: tu material no indica cuánto pesan estas áreas.</item>
-        <item quantity="other">~ Estimación: tu material no indica cuánto pesan estas áreas.</item>
-    </plurals>
-    <plurals name="onboarding_reveal_estimated_guide">
-        <item quantity="one">~ Estimación: la guía oficial no indica cuánto pesa esta área.</item>
-        <item quantity="many">~ Estimación: la guía oficial no indica cuánto pesan estas áreas.</item>
-        <item quantity="other">~ Estimación: la guía oficial no indica cuánto pesan estas áreas.</item>
-    </plurals>
-    <plurals name="onboarding_reveal_estimated_notice">
-        <item quantity="one">~ Estimación: la convocatoria no indica cuánto pesa esta área.</item>
-        <item quantity="many">~ Estimación: la convocatoria no indica cuánto pesan estas áreas.</item>
-        <item quantity="other">~ Estimación: la convocatoria no indica cuánto pesan estas áreas.</item>
-    </plurals>
+    <string name="onboarding_reveal_estimated_material_area">~ Estimación: tu material no indica cuánto pesa esta área.</string>
+    <string name="onboarding_reveal_estimated_material_areas">~ Estimación: tu material no indica cuánto pesan estas áreas.</string>
+    <string name="onboarding_reveal_estimated_guide_area">~ Estimación: la guía oficial no indica cuánto pesa esta área.</string>
+    <string name="onboarding_reveal_estimated_guide_areas">~ Estimación: la guía oficial no indica cuánto pesan estas áreas.</string>
+    <string name="onboarding_reveal_estimated_notice_area">~ Estimación: el aviso no indica cuánto pesa esta área.</string>
+    <string name="onboarding_reveal_estimated_notice_areas">~ Estimación: el aviso no indica cuánto pesan estas áreas.</string>
 </resources>

@@ -508,14 +508,22 @@ private fun AreaWeightList(weights: AreaWeights) {
             }
         }
         if (weights.assumed > 0) {
+            val oneArea = weights.assumed == 1
             Text(
-                pluralStringResource(
+                stringResource(
                     when (weights.source) {
-                        WeightSource.Material -> R.plurals.onboarding_reveal_estimated_material
-                        WeightSource.Guide -> R.plurals.onboarding_reveal_estimated_guide
-                        WeightSource.Notice -> R.plurals.onboarding_reveal_estimated_notice
+                        WeightSource.Material -> {
+                            if (oneArea) R.string.onboarding_reveal_estimated_material_area else R.string.onboarding_reveal_estimated_material_areas
+                        }
+
+                        WeightSource.Guide -> {
+                            if (oneArea) R.string.onboarding_reveal_estimated_guide_area else R.string.onboarding_reveal_estimated_guide_areas
+                        }
+
+                        WeightSource.Notice -> {
+                            if (oneArea) R.string.onboarding_reveal_estimated_notice_area else R.string.onboarding_reveal_estimated_notice_areas
+                        }
                     },
-                    weights.assumed,
                 ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,

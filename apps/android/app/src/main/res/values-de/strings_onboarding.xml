@@ -143,9 +143,12 @@
   "onboarding_reveal_created": "efa5828748a35da2ac608c5435adc85531be4f11ba358abc8e2009fb31f8438c",
   "onboarding_reveal_daily": "b38ff141c2e9363ccb1ac3fd50dfca8cc37016024b4907206555de3683ae41be",
   "onboarding_reveal_days": "adca650e80e82099280dd39e82a493b945d51d8ee146f67f8a713f9f63a703d3",
-  "onboarding_reveal_estimated_guide": "b0bdf1bf6d68d4f4c02cfa24ff3e6330b18c12ce13e643c322b1b5eac368022d",
-  "onboarding_reveal_estimated_material": "2e32708772fad7f83e5880564cdaa24b84710b0492442b952c132c3ff232d2f8",
-  "onboarding_reveal_estimated_notice": "d9c954934f26c00a8e882a0cfe15ed8485299540c11c71f1c62c6f78836d3c95",
+  "onboarding_reveal_estimated_guide_area": "f49f6c80923d1a8cfbeac5ad5c63289a9c73ae849f77490b4db19704f1bdcd89",
+  "onboarding_reveal_estimated_guide_areas": "7743996df0faf2a8a1c6f6c76bc762cd7366ef8b9b82dba6d7890e02ba3315a0",
+  "onboarding_reveal_estimated_material_area": "0115caf35b6fb33416155f9e73e259933efcdb6238d8563af7326f3cd0ef56f2",
+  "onboarding_reveal_estimated_material_areas": "b7fcbe299ccc7ca52637bb3d20b1eae87d868946ff017292b16a4c52edbca9dc",
+  "onboarding_reveal_estimated_notice_area": "e80c85306c4b16fd7bd84e5789182dcf250f4e2b1e7d8a7e7da4a64946871f9d",
+  "onboarding_reveal_estimated_notice_areas": "4f8104d303fa7f00a6cebf3cadcde0b27d3e65047e3d0e9510fb1205eb68cd47",
   "onboarding_reveal_estimated_percent": "ad1bc23164c00915330d1e4696af0fb6499e1c4bba67089cc29ce74347002bc3",
   "onboarding_reveal_free_week_over_body": "0a42eb34e3084cef8045ad4565d92f6fd125e39074e05508b81e4cf0ef68e3d0",
   "onboarding_reveal_free_week_over_title": "ed0aaab8c7fb4dc73035b63397e8e4402efa3c8d41a626618af1bdbbf734acdd",
@@ -627,16 +630,10 @@
     <string name="onboarding_reveal_weights">Gewichtung nach Bereich</string>
     <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
     <string name="onboarding_reveal_estimated_percent">~%1$s</string>
-    <plurals name="onboarding_reveal_estimated_material">
-        <item quantity="one">~ Geschätzt: In deinen Unterlagen steht nicht, wie stark dieser Bereich gewichtet wird.</item>
-        <item quantity="other">~ Geschätzt: In deinen Unterlagen steht nicht, wie stark diese Bereiche gewichtet werden.</item>
-    </plurals>
-    <plurals name="onboarding_reveal_estimated_guide">
-        <item quantity="one">~ Geschätzt: Im offiziellen Leitfaden steht nicht, wie stark dieser Bereich gewichtet wird.</item>
-        <item quantity="other">~ Geschätzt: Im offiziellen Leitfaden steht nicht, wie stark diese Bereiche gewichtet werden.</item>
-    </plurals>
-    <plurals name="onboarding_reveal_estimated_notice">
-        <item quantity="one">~ Geschätzt: In der Mitteilung steht nicht, wie stark dieser Bereich gewichtet wird.</item>
-        <item quantity="other">~ Geschätzt: In der Mitteilung steht nicht, wie stark diese Bereiche gewichtet werden.</item>
-    </plurals>
+    <string name="onboarding_reveal_estimated_material_area">~ Geschätzt: In deinen Unterlagen steht nicht, wie viel dieses Thema zählt.</string>
+    <string name="onboarding_reveal_estimated_material_areas">~ Geschätzt: In deinen Unterlagen steht nicht, wie viel diese Themen zählen.</string>
+    <string name="onboarding_reveal_estimated_guide_area">~ Geschätzt: Im offiziellen Leitfaden steht nicht, wie viel dieses Thema zählt.</string>
+    <string name="onboarding_reveal_estimated_guide_areas">~ Geschätzt: Im offiziellen Leitfaden steht nicht, wie viel diese Themen zählen.</string>
+    <string name="onboarding_reveal_estimated_notice_area">~ Geschätzt: Im Hinweis steht nicht, wie viel dieses Thema zählt.</string>
+    <string name="onboarding_reveal_estimated_notice_areas">~ Geschätzt: Im Hinweis steht nicht, wie viel diese Themen zählen.</string>
 </resources>

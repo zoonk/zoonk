@@ -373,16 +373,10 @@
     <string name="onboarding_reveal_weights">Weight by area</string>
     <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
     <string name="onboarding_reveal_estimated_percent">~%1$s</string>
-    <plurals name="onboarding_reveal_estimated_material">
-        <item quantity="one">~ Estimated: your material doesn\'t say how much this area weighs.</item>
-        <item quantity="other">~ Estimated: your material doesn\'t say how much these areas weigh.</item>
-    </plurals>
-    <plurals name="onboarding_reveal_estimated_guide">
-        <item quantity="one">~ Estimated: the official guide doesn\'t say how much this area weighs.</item>
-        <item quantity="other">~ Estimated: the official guide doesn\'t say how much these areas weigh.</item>
-    </plurals>
-    <plurals name="onboarding_reveal_estimated_notice">
-        <item quantity="one">~ Estimated: the notice doesn\'t say how much this area weighs.</item>
-        <item quantity="other">~ Estimated: the notice doesn\'t say how much these areas weigh.</item>
-    </plurals>
+    <string name="onboarding_reveal_estimated_material_area">~ Estimated: your material doesn\'t say how much this area weighs.</string>
+    <string name="onboarding_reveal_estimated_material_areas">~ Estimated: your material doesn\'t say how much these areas weigh.</string>
+    <string name="onboarding_reveal_estimated_guide_area">~ Estimated: the official guide doesn\'t say how much this area weighs.</string>
+    <string name="onboarding_reveal_estimated_guide_areas">~ Estimated: the official guide doesn\'t say how much these areas weigh.</string>
+    <string name="onboarding_reveal_estimated_notice_area">~ Estimated: the notice doesn\'t say how much this area weighs.</string>
+    <string name="onboarding_reveal_estimated_notice_areas">~ Estimated: the notice doesn\'t say how much these areas weigh.</string>
 </resources>

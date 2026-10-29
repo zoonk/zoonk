@@ -143,9 +143,12 @@
   "onboarding_reveal_created": "55fcbcb8577c074e8868bf789d49e4dafb01942f16a7649a3857058112ec506e",
   "onboarding_reveal_daily": "6f483d010258366fe9407782ad1839e5591bd30befdc85a06f2e2f3bbc9594c9",
   "onboarding_reveal_days": "5f2408dc95b3d3211d645a007e06099cac8dd9ced1e246324bbce961fb8c7152",
-  "onboarding_reveal_estimated_guide": "6525961578dea5c09d59550d984a948d6bb1ac83c7798c15ab4e22389d0a09ba",
-  "onboarding_reveal_estimated_material": "0292963b6dca06d609467786f0aa384a19405ab18b4c5884d143323a8e763aea",
-  "onboarding_reveal_estimated_notice": "2012ad60fe6552c74fe3e81291d474678e2bdd78f1e42389796c5540c02dcb49",
+  "onboarding_reveal_estimated_guide_area": "ca27a7ef97f1659374db7c388600e5d84b0190ef4394ffd7660ca387747e8a9b",
+  "onboarding_reveal_estimated_guide_areas": "eb5486b435b513536dd5f9285f966e26b3f253dd7772125134c6d9d7124d8e11",
+  "onboarding_reveal_estimated_material_area": "771398d4fd0e03b36d6f04f0ab6f8316dc81cf356fe74142e5915b89ba4b19e1",
+  "onboarding_reveal_estimated_material_areas": "7ad5d14f3a386d1337a6bb4fc7322646d7e1c921ac4749a49538208cc9bbbdca",
+  "onboarding_reveal_estimated_notice_area": "5249a2bcba49ecbf911638944ec144e0d3038f71ebf339590e21f8abd4d09165",
+  "onboarding_reveal_estimated_notice_areas": "1cd551ff4b24f36e960496711667657ec6684e417f9726ccb6bce1f3f190b003",
   "onboarding_reveal_estimated_percent": "44a202905bfed7d8896e94150eec4ab87988ec5324dd7c1e3c74309bca46cc0e",
   "onboarding_reveal_free_week_over_body": "80a096756c7d88deee2e538d7a13ee8f2a13d9d166ab773c9f9eb8d0ed85076b",
   "onboarding_reveal_free_week_over_title": "222e67d155f4ad501953c0a6b21524282909d8f149752d630c46080734b8de3a",
@@ -643,19 +646,10 @@
     <string name="onboarding_reveal_weights">Répartition par domaine</string>
     <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
     <string name="onboarding_reveal_estimated_percent">~%1$s</string>
-    <plurals name="onboarding_reveal_estimated_material">
-        <item quantity="one">~ Estimation : ton support n’indique pas le poids de ce domaine.</item>
-        <item quantity="many">~ Estimation : ton support n’indique pas le poids de ces domaines.</item>
-        <item quantity="other">~ Estimation : ton support n’indique pas le poids de ces domaines.</item>
-    </plurals>
-    <plurals name="onboarding_reveal_estimated_guide">
-        <item quantity="one">~ Estimation : le guide officiel n’indique pas le poids de ce domaine.</item>
-        <item quantity="many">~ Estimation : le guide officiel n’indique pas le poids de ces domaines.</item>
-        <item quantity="other">~ Estimation : le guide officiel n’indique pas le poids de ces domaines.</item>
-    </plurals>
-    <plurals name="onboarding_reveal_estimated_notice">
-        <item quantity="one">~ Estimation : l’avis n’indique pas le poids de ce domaine.</item>
-        <item quantity="many">~ Estimation : l’avis n’indique pas le poids de ces domaines.</item>
-        <item quantity="other">~ Estimation : l’avis n’indique pas le poids de ces domaines.</item>
-    </plurals>
+    <string name="onboarding_reveal_estimated_material_area">~ Estimation : ton support n’indique pas le poids de cette matière.</string>
+    <string name="onboarding_reveal_estimated_material_areas">~ Estimation : ton support n’indique pas le poids de ces matières.</string>
+    <string name="onboarding_reveal_estimated_guide_area">~ Estimation : le guide officiel n’indique pas le poids de cette matière.</string>
+    <string name="onboarding_reveal_estimated_guide_areas">~ Estimation : le guide officiel n’indique pas le poids de ces matières.</string>
+    <string name="onboarding_reveal_estimated_notice_area">~ Estimation : la notice n’indique pas le poids de cette matière.</string>
+    <string name="onboarding_reveal_estimated_notice_areas">~ Estimation : la notice n’indique pas le poids de ces matières.</string>
 </resources>

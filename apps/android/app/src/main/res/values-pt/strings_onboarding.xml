@@ -143,9 +143,12 @@
   "onboarding_reveal_created": "13a30997bdb8cdf84b28603070067e588fb3dee6b89f2175a88e29c6c0b6a742",
   "onboarding_reveal_daily": "a141880ecadcf5b04ec70bf4fd5b119bea6f232a9eab5e45de9c1147f12c7f57",
   "onboarding_reveal_days": "fe441623cb47eb0ce94aa7acd54d2d21c0e1449be3f9e0349262184b5f1c0775",
-  "onboarding_reveal_estimated_guide": "49ab7b18d99a7b7f70c3cee59fa4be17919c01f7fdbb39e803df224a9382c2f4",
-  "onboarding_reveal_estimated_material": "a8c38d50a4a9e9c514320db0631d7196522903022b3c372e20d30542f3f2d65a",
-  "onboarding_reveal_estimated_notice": "05355600181849448d518a537f3113d7817cb352e611b9ea515defe62e56b470",
+  "onboarding_reveal_estimated_guide_area": "50dfccbb92a29ee32a9c2ac62fa7f5f0c6bf4986708c4e9b96820e8ae75651fb",
+  "onboarding_reveal_estimated_guide_areas": "efd1af0ab263307d2d21d58d4a57ee745f6de97217cabb5107a78d12fb3a1579",
+  "onboarding_reveal_estimated_material_area": "75f86bc128d7b1dd30198df6eff12ecfd89d3e6ee167b9d88712ad073678b1de",
+  "onboarding_reveal_estimated_material_areas": "d47f4938cb0cd465b258b22216fb2c72feeee774c52a66b63c4f807f0b1c1336",
+  "onboarding_reveal_estimated_notice_area": "18f16e13a44656b8480ecab26a712ce3669e9b5c479344b2fdcfa02926a586fb",
+  "onboarding_reveal_estimated_notice_areas": "8a983a2e485105d01b4783c8ae463289837917cb174242729a96c1f1af146ce0",
   "onboarding_reveal_estimated_percent": "1367bf72e539876d063f27d3253e62f7727fb5420697f09f511ee9ffcce8f529",
   "onboarding_reveal_free_week_over_body": "75252b9f7fcfeb8a9d3ee063478ee6aca6345b010b72869e31489545239399bc",
   "onboarding_reveal_free_week_over_title": "55479b4b1ecd5bdb190b5451e3176af3a4eeb93a6255890fd0c4f36262c41607",
@@ -643,19 +646,10 @@
     <string name="onboarding_reveal_weights">Peso por matéria</string>
     <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
     <string name="onboarding_reveal_estimated_percent">~%1$s</string>
-    <plurals name="onboarding_reveal_estimated_material">
-        <item quantity="one">~ Estimativa: seu material não informa quanto essa matéria pesa.</item>
-        <item quantity="many">~ Estimativa: seu material não informa quanto essas matérias pesam.</item>
-        <item quantity="other">~ Estimativa: seu material não informa quanto essas matérias pesam.</item>
-    </plurals>
-    <plurals name="onboarding_reveal_estimated_guide">
-        <item quantity="one">~ Estimativa: o guia oficial não informa quanto essa matéria pesa.</item>
-        <item quantity="many">~ Estimativa: o guia oficial não informa quanto essas matérias pesam.</item>
-        <item quantity="other">~ Estimativa: o guia oficial não informa quanto essas matérias pesam.</item>
-    </plurals>
-    <plurals name="onboarding_reveal_estimated_notice">
-        <item quantity="one">~ Estimativa: o edital não informa quanto essa matéria pesa.</item>
-        <item quantity="many">~ Estimativa: o edital não informa quanto essas matérias pesam.</item>
-        <item quantity="other">~ Estimativa: o edital não informa quanto essas matérias pesam.</item>
-    </plurals>
+    <string name="onboarding_reveal_estimated_material_area">~ Estimativa: seu material não informa o peso desta matéria.</string>
+    <string name="onboarding_reveal_estimated_material_areas">~ Estimativa: seu material não informa o peso destas matérias.</string>
+    <string name="onboarding_reveal_estimated_guide_area">~ Estimativa: o guia oficial não informa o peso desta matéria.</string>
+    <string name="onboarding_reveal_estimated_guide_areas">~ Estimativa: o guia oficial não informa o peso destas matérias.</string>
+    <string name="onboarding_reveal_estimated_notice_area">~ Estimativa: o edital não informa o peso desta matéria.</string>
+    <string name="onboarding_reveal_estimated_notice_areas">~ Estimativa: o edital não informa o peso destas matérias.</string>
 </resources>
