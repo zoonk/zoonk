@@ -19,8 +19,10 @@
   "stats_best_day": "a0061fdc6534d252da6398423294f5b4d3218e17269837da2b0e4fee4ccb58e4",
   "stats_best_time": "ee3ecb78c93f362b6499e1637720c13be0517a548aecf6babc6f01b4c16285ba",
   "stats_brain_power": "b2ea4745d76d6f10724f8dd58133fb8bba47ce13f2429fe0cae27741e91951fd",
+  "stats_brain_power_amount": "14c02390d76027093fe2ff98b1c0b0571a86a0c4a8fea83103e146a99ff6e2ff",
   "stats_calendar_activity_summary": "0feaaa2ec9439c44701f22262a8e9bf7a87b5efc55131031ec401fdcae41d4e1",
   "stats_calendar_energy_summary": "83088184dd27b5b3ad29dc4a1066ee33b94492aa754f00ea2a30bcaa2ff90352",
+  "stats_correct_of_total": "0519c24be94c2d677ffee8006f15b170ce2c199faa0e59826db500c591fc7e0c",
   "stats_day_activities": "29c99058e5a319d01f71f7d36da2c093dd3e9a599090ad423821aa36432c2cc3",
   "stats_day_energy": "1f72b54d0fdc29bfd2486dc69669b25bad1af8558138aae80e0f2bc6255856c3",
   "stats_day_no_energy": "bec1a0ebef88702274d1b254dfffe62e64e64319b0f64456afae1e1df184b03a",
@@ -125,6 +127,7 @@
     <string name="stats_week_spread">Distribuídas ao longo da semana</string>
     <string name="stats_range">%1$s–%2$s</string>
     <string name="stats_brain_power">Poder Mental</string>
+    <string name="stats_brain_power_amount">%1$s Poder Mental</string>
     <string name="stats_never_goes_down">Nunca diminui</string>
     <string name="stats_next_level">Próximo nível</string>
     <string name="stats_max_level">Nível máximo alcançado</string>
@@ -177,6 +180,7 @@
     <string name="stats_right_answers">Respostas certas</string>
     <string name="stats_right">Certo</string>
     <string name="stats_of_all_answers">De todas as suas respostas</string>
+    <string name="stats_correct_of_total">%1$s de %2$s</string>
     <string name="stats_period">Período</string>
     <string name="stats_back_from_today">A partir de hoje, voltando</string>
     <plurals name="stats_days">

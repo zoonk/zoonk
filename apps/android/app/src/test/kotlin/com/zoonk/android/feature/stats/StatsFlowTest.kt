@@ -110,6 +110,14 @@ class StatsFlowTest {
     }
 
     @Test
+    fun theRightTileReadsAsAnswersOutOfAll() {
+        show(StatsPage.Score)
+
+        rule.onNodeWithText("45/60").assertIsDisplayed()
+        rule.onNodeWithContentDescription("45 of 60", substring = true).assertExists()
+    }
+
+    @Test
     fun theLevelPageSaysHowFarTheNextBeltIs() {
         show(StatsPage.Level)
 

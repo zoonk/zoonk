@@ -31,6 +31,7 @@
     <string name="stats_range">%1$s–%2$s</string>
 
     <string name="stats_brain_power">Brain Power</string>
+    <string name="stats_brain_power_amount">%1$s Brain Power</string>
     <string name="stats_never_goes_down">Never goes down</string>
     <string name="stats_next_level">Next level</string>
     <string name="stats_max_level">Max level reached</string>
@@ -83,6 +84,7 @@
     <string name="stats_right_answers">Right answers</string>
     <string name="stats_right">Right</string>
     <string name="stats_of_all_answers">Of all your answers</string>
+    <string name="stats_correct_of_total">%1$s of %2$s</string>
     <string name="stats_period">Period</string>
     <string name="stats_back_from_today">Back from today</string>
     <plurals name="stats_days">

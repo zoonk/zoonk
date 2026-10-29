@@ -249,12 +249,12 @@ private fun OverviewContent(
                     OutlinedCard(onClick = { context.open(StatsPage.Patterns) }) {
                         ListItem(
                             headlineContent = { Text(stringResource(R.string.stats_patterns)) },
-                            trailingContent = {
-                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                                    PatternValue(names.joinToString(" · ").ifEmpty { stringResource(R.string.stats_not_yet) })
-                                    Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null)
-                                }
+                            supportingContent = {
+                                PatternValue(
+                                    names.joinToString(" · ").ifEmpty { stringResource(R.string.stats_not_yet) },
+                                )
                             },
+                            trailingContent = { Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null) },
                         )
                     }
                 }
@@ -438,7 +438,7 @@ private fun NextLevelTile(
 
     StatTile(
         label = label,
-        value = whole(level.bpToNextLevel, locale) + " " + stringResource(R.string.stats_brain_power),
+        value = stringResource(R.string.stats_brain_power_amount, whole(level.bpToNextLevel, locale)),
         icon = icon(R.drawable.ic_keyboard_double_arrow_up),
         modifier = modifier,
         footer = { Meter(level.progressInLevel.toFloat() / level.bpPerLevel.coerceAtLeast(1), color = MaterialTheme.zoonk.brain) },
@@ -803,9 +803,12 @@ internal fun ScorePage(context: StatsContext) {
                         )
                     },
                     { modifier ->
+                        val correct = whole(score.correctAnswers, locale)
+                        val total = whole(score.totalAnswers, locale)
                         StatTile(
                             label = stringResource(R.string.stats_right),
-                            value = whole(score.correctAnswers, locale) + "/" + whole(score.totalAnswers, locale),
+                            value = "$correct/$total",
+                            spokenValue = stringResource(R.string.stats_correct_of_total, correct, total),
                             detail = stringResource(R.string.stats_of_all_answers),
                             tone = StatTone.Success,
                             icon = tonedIcon(R.drawable.ic_check_circle, StatTone.Success),
