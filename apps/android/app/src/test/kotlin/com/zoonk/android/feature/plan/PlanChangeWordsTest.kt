@@ -48,6 +48,19 @@ class PlanChangeWordsTest {
     }
 
     @Test
+    fun aChangeTheLearnerNeverTookSaysWhatItWouldHaveSet() {
+        val minutes = """[{"kind":"setDailyMinutes","minutes":20}]"""
+
+        assertEquals(
+            listOf("Daily time: 20$NBSP" + "min.", "Daily time: 20$NBSP" + "min."),
+            words(
+                { planChangeSentence(planChange(minutes, status = "declined")) },
+                { planChangeSentence(planChange(minutes, status = "replaced")) },
+            ),
+        )
+    }
+
+    @Test
     fun aWrittenReasonIsShownAsWritten() {
         assertEquals(
             listOf("Your buddy moved it."),

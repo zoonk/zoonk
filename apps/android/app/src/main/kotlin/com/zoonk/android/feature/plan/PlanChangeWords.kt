@@ -26,6 +26,8 @@ import kotlin.math.abs
  * tutor's plan-change card.
  */
 
+private val NEVER_APPLIED = setOf(PlanChange.Status.PROPOSED, PlanChange.Status.DECLINED, PlanChange.Status.REPLACED)
+
 /** Main's `useChangeSentence`. [targetDate] is the goal's date while it's ahead, so system changes count by it. */
 @Composable
 fun planChangeSentence(
@@ -35,9 +37,10 @@ fun planChangeSentence(
     change.reason?.let { return it }
     val ops = change.operations.map { it.op }
     val effect = change.effect
+    val neverApplied = change.status in NEVER_APPLIED
 
     if (change.source == NOTICE_SOURCE) return noticeSentence(ops, change.examDocument)
-    if (change.source == PHASE_DATES_SOURCE && change.status == PlanChange.Status.PROPOSED) return phaseDatesSentence(effect)
+    if (change.source == PHASE_DATES_SOURCE && neverApplied) return phaseDatesSentence(effect)
 
     val first = ops.firstOrNull()
     if (change.source == OWN_LEVEL_SOURCE && first is PlanOp.AddSkills) {
@@ -50,10 +53,9 @@ fun planChangeSentence(
     systemChangeSentence(change, effect, targetDate)?.let { return it }
     if (ops.isEmpty()) return coverageSentence(effect)
 
-    val proposed = change.status == PlanChange.Status.PROPOSED
     return ops
         .map { op ->
-            (if (proposed) proposedOperationSentence(op) else null) ?: operationSentence(op, change.examDocument)
+            (if (neverApplied) proposedOperationSentence(op) else null) ?: operationSentence(op, change.examDocument)
         }.joinToString(" ")
 }
 
@@ -268,7 +270,7 @@ fun noticeDayText(
 private fun followsNotice(document: ExamDocument): String =
     stringResource(if (document == ExamDocument.NOTICE) R.string.plan_change_follows_notice else R.string.plan_change_follows_guide)
 
-/** For a waiting change: "Daily time: 40 min.", never "changed to" before the learner said yes. */
+/** For a change never applied: "Daily time: 40 min.", never "changed to" unless the learner said yes. */
 @Composable
 private fun proposedOperationSentence(op: PlanOp): String? =
     when (op) {
