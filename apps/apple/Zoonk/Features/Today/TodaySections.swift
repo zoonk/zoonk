@@ -514,10 +514,9 @@ struct TodayWeekSection: View {
     let studied = studyDuration(minutes: week.time.studiedMinutes)
     let planned = studyDuration(minutes: Int(week.time.targetMinutes))
     let hasTime = week.time.targetMinutes > 0
-    let parts = [days, hasTime ? "\(studied) / \(planned)" : nil].compactMap(\.self)
 
-    if !parts.isEmpty {
-      Text(verbatim: parts.joined(separator: " · "))
+    if let line = Self.numbers(days: days, time: hasTime ? (studied, planned) : nil) {
+      Text(verbatim: line)
         .monospacedDigit()
         .accessibilityLabel(
           [
@@ -529,6 +528,20 @@ struct TodayWeekSection: View {
               : nil,
           ].compactMap(\.self).joined(separator: ", "))
     }
+  }
+
+  /// Wraps only between its values, so "5 hrs 13 min" never splits across two lines.
+  nonisolated static func numbers(days: String?, time: (studied: String, planned: String)?)
+    -> String?
+  {
+    func whole(_ value: String) -> String {
+      value.replacingOccurrences(of: " ", with: "\u{A0}")
+    }
+
+    let parts = [
+      days.map(whole), time.map { "\(whole($0.studied)) / \(whole($0.planned))" },
+    ].compactMap(\.self)
+    return parts.isEmpty ? nil : parts.joined(separator: " · ")
   }
 
   var body: some View {

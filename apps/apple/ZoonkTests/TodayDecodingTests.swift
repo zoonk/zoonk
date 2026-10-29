@@ -19,6 +19,15 @@ final class TodayDecodingTests: XCTestCase {
     XCTAssertEqual(week.studyDayCount, 7)
   }
 
+  func testTheWeeksNumbersWrapOnlyBetweenWholeValues() {
+    let line = TodayWeekSection.numbers(
+      days: "4 of 7 days", time: (studied: "2 hrs 14 min", planned: "5 hrs 13 min"))
+
+    XCTAssertEqual(
+      line,
+      "4\u{A0}of\u{A0}7\u{A0}days · 2\u{A0}hrs\u{A0}14\u{A0}min / 5\u{A0}hrs\u{A0}13\u{A0}min")
+  }
+
   func testAMissionToFinishAChapterSaysTheLessonsAfterItsNext() throws {
     let today = try anaTodayView()
     let mission = try XCTUnwrap(today.session.missions.first { $0.kind == .finishChapter })
