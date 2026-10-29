@@ -110,7 +110,7 @@
   "conversation_prep": "3557cc9dc49842957b5165a56b101da3b9256017bde3feace2a8ff97acfeee65",
   "conversation_prep_again": "d345c74e690625c866f0c86e4d3cef198436c23176bc6f39f1b103894bf50ec4",
   "conversation_prep_over": "239a552741df620da3b83f23b2ef252b1af42ca7996a6c867ff9b3e1e561ec76",
-  "conversation_prep_shared": "6d80d7fafec32f615e859224daa70014c78634226caab5a137d35e15c0066932",
+  "conversation_prep_shared": "f0bd780da08da9a81dce8a5b79066d4d2965c875bc59b5e5a981e4ad8aae64b0",
   "conversation_preparation": "b80c5463c2a73b857c5e87dff178e7f8df09a9fd9d373ff563f61671fc577119",
   "conversation_rated_on": "a7fd722f3c459f9fb4744fdd28538fbb657c7f749d1829c37130cbcbf0b54c8d",
   "conversation_rating": "adea1945af2f9c16eb8d1bca34ea29373a64559dba901c62dc1f02386c890afc",
@@ -298,7 +298,7 @@
     <string name="conversation_your_card">Deine Karte</string>
     <string name="conversation_preparation">Vorbereitung</string>
     <!-- The exam's shared preparation time, the tasks it covers, then this task's share. -->
-    <string name="conversation_prep_shared">Die Prüfung gibt dir %1$s Zeit, um die Aufgaben %2$s gemeinsam vorzubereiten, für diese Aufgabe etwa %3$s.</string>
+    <string name="conversation_prep_shared">Bei der Prüfung hast du %1$s, um die Aufgaben %2$s gemeinsam vorzubereiten, etwa %3$s für diese Aufgabe.</string>
     <string name="conversation_prep">Die Prüfung gibt dir %1$s Zeit, dich mit der Karte vorzubereiten.</string>
     <string name="conversation_start_preparing">Mit der Vorbereitung beginnen</string>
     <string name="conversation_prep_over">Die Vorbereitungszeit ist vorbei. Starte das Gespräch, wenn du bereit bist.</string>
