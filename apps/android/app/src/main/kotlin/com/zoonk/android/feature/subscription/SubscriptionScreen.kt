@@ -44,6 +44,9 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -173,13 +176,22 @@ private fun CurrentPlan(
             style = MaterialTheme.typography.bodyMedium,
         )
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            if (provider == GOOGLE) {
-                Button(
-                    onClick = {
-                        val url = "https://play.google.com/store/account/subscriptions?sku=plus&package=${context.packageName}"
-                        CustomTabsIntent.Builder().build().launchUrl(context, url.toUri())
-                    },
-                ) { Text(stringResource(R.string.subscription_manage_google)) }
+            when (provider) {
+                GOOGLE -> {
+                    Button(
+                        onClick = {
+                            val url =
+                                "https://play.google.com/store/account/subscriptions?sku=$PLUS_PRODUCT_ID&package=${context.packageName}"
+                            CustomTabsIntent.Builder().build().launchUrl(context, url.toUri())
+                        },
+                    ) { Text(stringResource(R.string.subscription_manage_google)) }
+                }
+
+                STRIPE -> {
+                    Button(onClick = { navigator.open(AppRoute.WebSubscription) }) {
+                        Text(stringResource(R.string.subscription_manage_web))
+                    }
+                }
             }
             OutlinedButton(
                 onClick = { navigator.open(AppRoute.Help) },
@@ -219,13 +231,14 @@ private fun Offer(
 ) {
     val offers by app.subscriptions.offers.collectShown()
     val purchase by app.subscriptions.purchase.collectAsStateWithLifecycle()
-    var period by rememberSaveable { mutableStateOf(BillingPeriod.Yearly) }
+    var period by rememberSaveable { mutableStateOf(BillingPeriod.Monthly) }
     val activity = LocalActivity.current
     val scope = rememberCoroutineScope()
     val plans = offers.value
     // Play can sell one base plan and not the other in a region: show the one it sells.
     val offer = plans?.let { it.offerFor(period) ?: it.monthly ?: it.yearly }
     val isWorking = purchase == PurchaseState.Buying || purchase == PurchaseState.Confirming
+    val canBuy = offer != null || offers is LoadState.Loading
 
     Text(
         stringResource(R.string.subscription_offer_title),
@@ -237,7 +250,7 @@ private fun Offer(
 
     OutlinedCard(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-            Text(stringResource(R.string.subscription_plus), style = MaterialTheme.typography.titleMedium)
+            Text(stringResource(R.string.subscription_plus), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
 
             if (plans?.monthly != null && plans.yearly != null) {
                 SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
@@ -247,29 +260,25 @@ private fun Offer(
                             onClick = { period = choice },
                             shape = SegmentedButtonDefaults.itemShape(index, BillingPeriod.entries.size),
                         ) {
-                            Text(
-                                stringResource(
-                                    if (choice ==
-                                        BillingPeriod.Monthly
-                                    ) {
-                                        R.string.subscription_monthly
-                                    } else {
-                                        R.string.subscription_yearly
-                                    },
-                                ),
-                            )
+                            if (choice == BillingPeriod.Monthly) {
+                                Text(stringResource(R.string.subscription_monthly))
+                            } else {
+                                YearlyLabel(plans.yearlySavings())
+                            }
                         }
                     }
                 }
             }
 
             when {
-                offer != null -> Price(offer, plans.monthly)
-                offers is LoadState.Loading -> CircularProgressIndicator(Modifier.size(24.dp))
+                offer != null -> Price(offer)
+                offers is LoadState.Loading -> CircularProgressIndicator(Modifier.size(24.dp).align(Alignment.CenterHorizontally))
                 else -> Note(stringResource(R.string.subscription_unavailable))
             }
 
             when {
+                !canBuy -> {}
+
                 !hasAccount -> {
                     Button(onClick = { navigator.open(AppRoute.Login) }, modifier = Modifier.fillMaxWidth()) {
                         Text(stringResource(R.string.subscription_get_plus))
@@ -294,18 +303,21 @@ private fun Offer(
                     }
                 }
             }
-            Note(stringResource(R.string.subscription_cancel_anytime), Modifier.align(Alignment.CenterHorizontally))
+            if (canBuy) Note(stringResource(R.string.subscription_cancel_anytime), Modifier.align(Alignment.CenterHorizontally))
             PurchaseMessage(purchase)
+            if (purchase == PurchaseState.ConfirmFailed) {
+                OutlinedButton(
+                    onClick = { navigator.open(AppRoute.Help) },
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+                ) { Text(stringResource(R.string.subscription_contact_support)) }
+            }
             PlusBenefits()
         }
     }
 }
 
 @Composable
-private fun Price(
-    offer: PlusOffer,
-    monthly: PlusOffer?,
-) {
+private fun Price(offer: PlusOffer) {
     val locale = currentLocale()
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -329,14 +341,32 @@ private fun Price(
             Note(stringResource(R.string.subscription_billed_monthly))
         } else {
             Note(stringResource(R.string.subscription_yearly_per_month, money(offer.priceMicros / 12, offer.currency, locale)))
-            val savings = monthly?.takeIf { it.currency == offer.currency }?.let { it.priceMicros * 12 - offer.priceMicros }
-            if (savings != null &&
-                savings > 0
-            ) {
-                Note(stringResource(R.string.subscription_yearly_saves, money(savings, offer.currency, locale)))
-            }
         }
     }
+}
+
+/** Main's Yearly segment, which names the savings before the learner switches to it. */
+@Composable
+private fun YearlyLabel(savings: PlusOffer?) {
+    val yearly = stringResource(R.string.subscription_yearly)
+    if (savings == null) return Text(yearly)
+    val save = stringResource(R.string.subscription_save, money(savings.priceMicros, savings.currency, currentLocale()))
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    Text(
+        buildAnnotatedString {
+            append(yearly)
+            append(" ")
+            withStyle(SpanStyle(color = muted)) { append(save) }
+        },
+    )
+}
+
+/** What a year costs less than twelve months, as an offer in the yearly plan's currency; null when it doesn't. */
+private fun PlusOffers.yearlySavings(): PlusOffer? {
+    val monthly = monthly ?: return null
+    val yearly = yearly ?: return null
+    val savings = monthly.priceMicros * 12 - yearly.priceMicros
+    return yearly.takeIf { monthly.currency == it.currency && savings > 0 }?.copy(priceMicros = savings)
 }
 
 @Composable
@@ -396,7 +426,7 @@ private fun FreePlanSummary(app: AppContainer) {
 @Composable
 fun PlusBenefits(modifier: Modifier = Modifier) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.subscription_benefits_summary), style = MaterialTheme.typography.titleSmall)
+        Text(stringResource(R.string.subscription_benefits_summary), style = MaterialTheme.typography.titleMedium)
         listOf(
             R.string.subscription_benefit_exam,
             R.string.subscription_benefit_mocks,

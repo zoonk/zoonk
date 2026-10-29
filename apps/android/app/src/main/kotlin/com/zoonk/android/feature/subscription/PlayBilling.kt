@@ -114,7 +114,7 @@ class GooglePlayBilling(
                     listOf(
                         QueryProductDetailsParams.Product
                             .newBuilder()
-                            .setProductId(PRODUCT_ID)
+                            .setProductId(PLUS_PRODUCT_ID)
                             .setProductType(BillingClient.ProductType.SUBS)
                             .build(),
                     ),
@@ -196,11 +196,9 @@ class GooglePlayBilling(
             else -> PlayPurchaseUpdate.Purchased(purchase.purchaseToken)
         }
     }
-
-    private companion object {
-        const val PRODUCT_ID = "plus"
-    }
 }
+
+const val PLUS_PRODUCT_ID = "plus"
 
 /** The base plans set up in Play Console under the `plus` product. */
 val BillingPeriod.basePlanId: String

@@ -57,6 +57,7 @@ val routeSamples: List<AppRoute> =
         AppRoute.Privacy,
         AppRoute.Terms,
         AppRoute.Blog,
+        AppRoute.WebSubscription,
     )
 
 /** Read from the sealed interface, so a route added without a sample fails the tests. */

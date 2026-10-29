@@ -18,9 +18,10 @@
   "subscription_free_week_over_title": "b289b46986b0672dcdf6b8d369b89c25f5ff5f7a85741d6c0684af9c63b40e71",
   "subscription_get_plus": "31fb2e1fbff7aca1ed13869a548ab00cf80260a42f104312ffc6878a11ef04ef",
   "subscription_manage_google": "ef40137d6b2dba5b32e47efffd7cff90e754d2498f63ee7fe7c91fc460776f98",
+  "subscription_manage_web": "b0d2fcad3d89220726761f92cab725349483ecb87a8bca3a4b860e45068221a2",
   "subscription_managed_apple": "9a68c4b687d1b1579b563b4a8f7f967b330c804ee601eecbf7709a679ef22593",
   "subscription_managed_google": "5338f7486563313d06b77817e054f71908e2472d0712f7975019c9ef81bad558",
-  "subscription_managed_web": "08a75bf48a87d59061edcdd72b37395246a8982b8d4fdbc9c7caf163ba7c43f5",
+  "subscription_managed_web": "22b1149a932b97a949c4ab140b708fc87d10ba5d62b411c4d5dea75af829585e",
   "subscription_managed_zoonk": "e4f466ddb57c8ebc59c64443955e5699dcf8f9bf49281a284e4457d112b40036",
   "subscription_messages_used": "d7edcdf1d2bd65d61a3d6272cced68b918b6443e31c3d370a2bcc535e05ed4e7",
   "subscription_monthly": "f1e53edbf4cb4cab6bdf361ea17a2e36dc8f9d4979bd46cafe3fa3d76465dc58",
@@ -29,18 +30,18 @@
   "subscription_per_year": "232a325e4d9c0fa9dff0f4ee0c4150152c8d1a040c618c2ba10e668272269903",
   "subscription_period_ends_on": "b43bc53bbed7f7df5310487ff1076d68be1ca4f7fabfb4bd281ee14ee4ae23bc",
   "subscription_plus": "61dd82cd0834f9fba78dce9843236be8f4d01b8076a3eb5ed56498c25b6e5025",
-  "subscription_purchase_confirm_failed": "4c65a53e30b6444036d60683a72c704d709abdee3389f9ebcddcb66debe300b6",
+  "subscription_purchase_confirm_failed": "9343d0f6ba2740aa86079cc372835b00a7ccf5f611f2ce7eb18e4d5bc462af3d",
   "subscription_purchase_confirming": "a5c4faf2f98acfeff94420cd4d5a0f13c20a366a52efbce47ebadb7ddbe09c71",
   "subscription_purchase_other_account": "44e3e2983b1a42b59d7e5568ce4caacbf9d4b6602980b33658a0c08321a672e7",
   "subscription_purchase_pending": "8c65723361b519e1befc85638e41faee2dea78dc3955d8a32ec0ead4e5b6d9fe",
   "subscription_purchase_play_failed": "ad4c92a85bde40387657901c6c9576396fa0c30d1081acab352d13ef5c33c33d",
   "subscription_renews_on": "a27ca67eed27ca7271e5b253b1d2673161be5c8fbb9284ca7d7c8fc78155ecee",
+  "subscription_save": "9bdf89aa0c6e000bade7736c4d671804af96580aa87e0c6d0978dffe036dcbd6",
   "subscription_see_plus": "f12215b93038e6c39c7bc9d27ec4b69a48ee06aaaf4a17b288fef94929de3831",
   "subscription_subscribe": "7cc8965d6c6ae991879d725ecee58ef25a3aae1e658f6d92b23c7dc6c668cac7",
   "subscription_unavailable": "86f0ff1c6cf14b5ba3d66e214d2f05f6b999bbb5667a2dc1c236b887a98fa30d",
   "subscription_yearly": "523bbf7f6ad76293fdf793e597819f81d75df6fb3496537b8100a74a2f7fa37d",
   "subscription_yearly_per_month": "2e484194db11b31ad587bf0cee813f6e01d0c1d2693c5d82b90a81828c726be6",
-  "subscription_yearly_saves": "c3190e7adf28f335d4810010eb79a0de725bb2f400e6d55d4f750e6ea09fdd96",
   "subscription_your_plan": "82a038f5741e98ab2c4980646a4d47271fb7ff7b6fbf0e4f12b2f48b97c8a8d0"
 }
 -->
@@ -60,9 +61,10 @@
     <string name="subscription_period_ends_on">Dein aktueller Abrechnungszeitraum endet am %1$s.</string>
     <string name="subscription_managed_google">Dieses Abo wird über Google Play verwaltet. Zum Ändern oder Kündigen nutze Google Play.</string>
     <string name="subscription_managed_apple">Dieses Abo wird über den App Store verwaltet. Zum Ändern oder Kündigen gehe auf einem iPhone, iPad oder Mac zu den Abo-Einstellungen deiner Apple-ID.</string>
-    <string name="subscription_managed_web">Dieses Abo wird auf der Zoonk-Website verwaltet. Zum Ändern oder Kündigen gehe dort zu „Abo“.</string>
+    <string name="subscription_managed_web">Dieses Abo verwaltest du auf der Zoonk-Website. Dort kannst du es ändern oder kündigen.</string>
     <string name="subscription_managed_zoonk">Dieses Abo wird von Zoonk verwaltet. Wenn du Hilfe beim Ändern oder Kündigen brauchst, wende dich an den Support.</string>
     <string name="subscription_manage_google">In Google Play verwalten</string>
+    <string name="subscription_manage_web">Tarif verwalten</string>
     <string name="subscription_contact_support">Support kontaktieren</string>
     <string name="subscription_offer_title">Zoonk Plus abonnieren</string>
     <string name="subscription_your_plan">Dein Tarif</string>
@@ -74,13 +76,13 @@
     </plurals>
     <string name="subscription_monthly">Monatlich</string>
     <string name="subscription_yearly">Jährlich</string>
+    <!-- Beside "Yearly" in the billing period switch, lowercase as a continuation. %1$s is the price, like $20. -->
+    <string name="subscription_save">%1$s sparen</string>
     <string name="subscription_per_month">pro Monat</string>
     <string name="subscription_per_year">pro Jahr</string>
     <string name="subscription_billed_monthly">Monatliche Abrechnung.</string>
     <!-- %1$s is a price, like "$5.00". -->
     <string name="subscription_yearly_per_month">Das sind %1$s pro Monat.</string>
-    <!-- %1$s is a price, like "$20.00". -->
-    <string name="subscription_yearly_saves">Du sparst %1$s pro Jahr.</string>
     <string name="subscription_unavailable">Plus kann gerade nicht auf diesem Gerät gekauft werden. Prüfe, ob Google Play installiert ist und du angemeldet bist.</string>
     <string name="subscription_get_plus">Plus holen</string>
     <string name="subscription_subscribe">Abonnieren</string>
@@ -89,7 +91,7 @@
     <string name="subscription_purchase_confirming">Kauf wird bestätigt…</string>
     <string name="subscription_purchase_other_account">Dieses Google-Play-Abo gehört zu einem anderen Zoonk-Konto. Melde dich bei diesem Konto an, um es zu nutzen.</string>
     <string name="subscription_purchase_play_failed">Google Play konnte den Kauf nicht abschließen. Versuch es noch einmal.</string>
-    <string name="subscription_purchase_confirm_failed">Dein Kauf wurde abgeschlossen, aber wir konnten ihn noch nicht bestätigen. Wir versuchen es erneut, wenn du zurückkommst. Du kannst auch hello@zoonk.com kontaktieren.</string>
+    <string name="subscription_purchase_confirm_failed">Dein Kauf wurde abgeschlossen, aber wir konnten ihn noch nicht bestätigen. Wir versuchen es erneut, wenn du zurückkommst.</string>
     <string name="subscription_benefits_summary">Jedes Ziel · jede Lektion</string>
     <string name="subscription_benefit_exam">Dein kompletter Prüfungsplan für jeden Tag bis zur Prüfung</string>
     <string name="subscription_benefit_mocks">Probeprüfungen mit Zeitlimit wie bei der echten Prüfung</string>
