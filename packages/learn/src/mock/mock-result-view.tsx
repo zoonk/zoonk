@@ -75,11 +75,15 @@ function DeltaLine({ result }: { result: MockResult }) {
   const t = useExtracted();
   const current = result.irt?.score ?? result.net?.net ?? null;
 
-  if (current === null || result.previous === null || current === result.previous) {
+  if (current === null || result.previous === null) {
     return null;
   }
 
   const change = Math.round(current - result.previous);
+
+  if (change === 0) {
+    return null;
+  }
 
   return (
     <p className="text-muted-foreground flex items-center gap-1.5 font-mono text-xs tabular-nums [&>svg]:size-3.5 [&>svg]:shrink-0">
