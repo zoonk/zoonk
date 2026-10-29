@@ -43,10 +43,11 @@ private data class MathSpan(
 
 private val UPPERCASE_LETTER = Regex("\\p{Lu}")
 
-// `(?U)`: whitespace is Unicode whitespace, as JavaScript reads `\s`.
-private val UNORDERED_ITEM = Regex("(?U)^\\s*[-*•]\\s+(.+)$")
-private val ORDERED_ITEM = Regex("(?U)^\\s*[0-9]{1,3}[.)]\\s+(.+)$")
-private val LINE_BREAK = Regex("(?U)\\s*\\n\\s*")
+// JavaScript's `\s`, spelled out: the JVM's `\s` is ASCII only, and Android's ICU regex rejects `(?U)`.
+private const val SPACE = "[\\t\\n\\u000B\\f\\r \\u00A0\\u1680\\u2000-\\u200A\\u2028\\u2029\\u202F\\u205F\\u3000\\uFEFF]"
+private val UNORDERED_ITEM = Regex("^$SPACE*[-*•]$SPACE+(.+)$")
+private val ORDERED_ITEM = Regex("^$SPACE*[0-9]{1,3}[.)]$SPACE+(.+)$")
+private val LINE_BREAK = Regex("$SPACE*\\n$SPACE*")
 private val LINE_END = Regex("\\r?\\n")
 
 private fun isDigitAt(
