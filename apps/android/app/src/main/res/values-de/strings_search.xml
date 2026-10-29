@@ -31,6 +31,7 @@
   "search_memory": "8180e532b0f05f73279526b39afa51a90942c8d7b5a4c4bfca16775dac1e0840",
   "search_mistakes_notebook": "4e3e946372cf6019819a1d6a0d8530864a281f48605e14d40def3a13c40a4d0b",
   "search_mock_exam": "22b7d5f321102ffa7a5596a8ee45ca79b775af0ce29618d43fda4679e934eb46",
+  "search_open": "77284e5a0eef0dc347488af1ebfda5e2f476d434a2aad40be9cdce61b4e05a31",
   "search_placeholder": "9305695887aea9f4d7b289c4f4a44edca73d161f2189b07365268678cb3fe9d1",
   "search_practice_mistakes": "b1c409d0952301240e9a87aecc1498086ba020bad01b5f922a88c71750364b78",
   "search_preferences": "ef0e8d6b398ba8808f82807ed8a9266afb9f030ec15daa609645b39b5069507e",
@@ -50,6 +51,7 @@
 -->
 <resources>
     <string name="search_placeholder">Suchen oder fragen…</string>
+    <string name="search_open">Suchen oder fragen</string>
     <string name="search_close">Suche schließen</string>
     <string name="search_clear">Suche löschen</string>
     <string name="search_continue_failed">Dein nächster Schritt ließ sich nicht öffnen. Versuch es noch einmal.</string>

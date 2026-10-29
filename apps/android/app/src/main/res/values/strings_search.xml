@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="search_placeholder">Search or ask…</string>
+    <string name="search_open">Search or ask</string>
     <string name="search_close">Close search</string>
     <string name="search_clear">Clear search</string>
     <string name="search_continue_failed">Couldn\'t open your next step. Try again.</string>

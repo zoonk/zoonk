@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.search
 
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -7,7 +8,10 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -17,6 +21,7 @@ import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onLast
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -154,6 +159,22 @@ class SearchFlowTest {
         }
 
         rule.runOnIdle { search.open() }
+        rule.onAllNodes(hasSetTextAction()).onLast().performTextInput("explore")
+        rule.mainClock.advanceTimeBy(500)
+        rule.onNodeWithText("Explore courses").performClick()
+
+        assertEquals(AppRoute.Catalog(), navigator.currentRoute)
+    }
+
+    @Test
+    fun aPagesSearchActionOpensSearchForALearnerOnly() {
+        var signedIn by mutableStateOf(false)
+        show { app, navigator -> SearchHost(app, navigator, signedIn) { Row { SearchAction() } } }
+
+        rule.onNodeWithContentDescription("Search or ask").assertDoesNotExist()
+
+        signedIn = true
+        rule.onNodeWithContentDescription("Search or ask").performClick()
         rule.onAllNodes(hasSetTextAction()).onLast().performTextInput("explore")
         rule.mainClock.advanceTimeBy(500)
         rule.onNodeWithText("Explore courses").performClick()

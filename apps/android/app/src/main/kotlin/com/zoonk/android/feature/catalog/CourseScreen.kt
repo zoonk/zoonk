@@ -56,6 +56,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.search.SearchAction
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -130,7 +131,10 @@ internal fun <T : Any> CatalogPage(
     PageScaffold(
         onBack = { navigator.back() },
         title = { if (headlineScrolledAway) title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
-        actions = { if (report != null && state is LoadState.Loaded) ReportProblemMenu(app, report) },
+        actions = {
+            SearchAction()
+            if (report != null && state is LoadState.Loaded) ReportProblemMenu(app, report)
+        },
     ) { padding ->
         PullToRefreshBox(
             isRefreshing = isRefreshing,

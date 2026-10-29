@@ -63,6 +63,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.search.SearchAction
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.EmptyState
@@ -113,6 +114,7 @@ fun CatalogScreen(
     PageScaffold(
         onBack = { navigator.back() },
         title = { Text(title ?: stringResource(R.string.catalog_title), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        actions = { SearchAction() },
     ) { padding ->
         PullToRefreshBox(
             isRefreshing = isRefreshing,
