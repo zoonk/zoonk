@@ -26,6 +26,8 @@ import com.zoonk.api.apis.StudySessionsApi
 import com.zoonk.api.apis.SubscriptionsApi
 import com.zoonk.api.apis.UsersApi
 import com.zoonk.api.apis.WorkflowsApi
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.serializer
 import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -47,6 +49,7 @@ class ApiServices(
             .baseUrl(baseUrl)
             .client(client)
             .addConverterFactory(NullBody)
+            .addConverterFactory(SerialNames)
             .addConverterFactory(ApiJson.asConverterFactory("application/json".toMediaType()))
             .build()
 
@@ -101,4 +104,17 @@ private object NullBody : Converter.Factory() {
     }
 
     private const val NULL = "null"
+}
+
+/** The generated enums don't override `toString`, which Retrofit sends for a query or path; their `@SerialName` is the contract's name. */
+private object SerialNames : Converter.Factory() {
+    override fun stringConverter(
+        type: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit,
+    ): Converter<*, String>? {
+        if ((type as? Class<*>)?.isEnum != true) return null
+        val serializer = ApiJson.serializersModule.serializer(type)
+        return Converter<Any, String> { value -> ApiJson.encodeToJsonElement(serializer, value).jsonPrimitive.content }
+    }
 }

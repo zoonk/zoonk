@@ -182,6 +182,19 @@ class ApiRuntimeTest {
             assertEquals(false, performOrNull { api.clients(ana).plans.getPlanQuestionThread(goal) }?.hasMore)
         }
 
+    @Test
+    fun anEnumQueryGoesByTheContractsName() =
+        runTest {
+            server.enqueue(json("null"))
+            performOrNull {
+                api.clients(ana).plans.getPlanQuestionThread(
+                    java.util.UUID.randomUUID(),
+                    contextKind = com.zoonk.api.apis.PlansApi.ContextKindGetPlanQuestionThread.PLAN,
+                )
+            }
+            assertEquals("plan", server.takeRequest().url.queryParameter("contextKind"))
+        }
+
     private fun json(body: String) =
         MockResponse
             .Builder()
