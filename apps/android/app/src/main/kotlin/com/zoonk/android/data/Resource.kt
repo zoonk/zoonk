@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.currentCoroutineContext
@@ -139,8 +140,9 @@ class Resource<T : Any> internal constructor(
         val owner = owner
         if (stored.value.hasContent) refreshing.value = true else stored.value = LoadState.Loading
         lateinit var deferred: Deferred<Unit>
+        // Lazy, so a fetch that answers without suspending finds itself as the request.
         deferred =
-            scope.async {
+            scope.async(start = CoroutineStart.LAZY) {
                 val result =
                     try {
                         Result.success(fetch(owner))
@@ -152,6 +154,7 @@ class Resource<T : Any> internal constructor(
                 finish(deferred, owner, result)
             }
         request = deferred
+        deferred.start()
         return deferred
     }
 

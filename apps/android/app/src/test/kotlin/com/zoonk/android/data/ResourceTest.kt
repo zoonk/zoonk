@@ -7,6 +7,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
@@ -81,6 +82,15 @@ class ResourceTest {
             gate.complete(Unit)
             revalidating.join()
             assertEquals(LoadState.Loaded(2), resource.state.value)
+        }
+
+    @Test
+    fun aReadThatAnswersWithoutWaitingFinishes() =
+        runTest {
+            val scope = CoroutineScope(SupervisorJob() + UnconfinedTestDispatcher(testScheduler))
+            val resource = AppCache(FakeSession(ana), scope, clock).resource<String>(Audience.SignedIn) { "today" }
+            resource.refresh()
+            assertEquals(LoadState.Loaded("today"), resource.state.value)
         }
 
     @Test
