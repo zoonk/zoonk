@@ -151,6 +151,42 @@ class TodayViewModel(
     /** Today left the screen (a task over it, another tab), so the next notice can show on return. */
     fun endVisit() {
         noticeHold = null
+        planChangeAnswer = null
+        examChoiceMade = null
+    }
+
+    /** A plan change answered here, so its card says what the answer did after Today moves on. */
+    var planChangeAnswer by mutableStateOf<PlanChangeAnswer?>(null)
+        private set
+
+    var planChangeFailed by mutableStateOf(false)
+        private set
+
+    var isSavingPlanChange by mutableStateOf(false)
+        private set
+
+    fun decidePlanChange(
+        goalId: UUID,
+        change: PlanChange,
+        status: PlanChangeDecisionInput.Status,
+    ) {
+        if (isSavingPlanChange) return
+        isSavingPlanChange = true
+        planChangeFailed = false
+
+        viewModelScope.launch {
+            when (val result = plans.decideChange(goalId, change.id, status)) {
+                is MutationResult.Done -> planChangeAnswer = PlanChangeAnswer(status, result.value)
+                is MutationResult.Failed -> planChangeFailed = true
+                MutationResult.Obsolete -> Unit
+            }
+            isSavingPlanChange = false
+        }
+    }
+
+    /** Shows the change Today offers next, after this one's answer. */
+    fun nextPlanChange() {
+        planChangeAnswer = null
     }
 
     /** The exam choice just made, so its card says what it did after Today stops asking. */
@@ -290,3 +326,8 @@ data class TodayRoute(
 )
 
 enum class InsightAnswer { Accepted, Dismissed, Failed }
+
+data class PlanChangeAnswer(
+    val status: PlanChangeDecisionInput.Status,
+    val change: PlanChange,
+)

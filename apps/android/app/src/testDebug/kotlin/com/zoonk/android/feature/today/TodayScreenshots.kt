@@ -228,6 +228,44 @@ class TodayScreenshots {
                                     },
                             ),
                     ),
+                "notice-plan-change" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "planChange" to
+                                    fixture(
+                                        "plan-change",
+                                        "status" to "proposed",
+                                        "canApply" to true,
+                                        "source" to "tutor",
+                                        "reason" to "Two more lessons of Biologia a week, where your answers slip most.",
+                                    ),
+                            ),
+                    ),
+                "notice-behind" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "planChange" to
+                                    fixture(
+                                        "plan-change",
+                                        "status" to "applied",
+                                        "kind" to "missedDays",
+                                        "behind" to
+                                            buildJsonObject {
+                                                put("canFocus", true)
+                                                put("coveredAfter", 0.72)
+                                                put("coveredBefore", 0.8)
+                                                put("currentMinutes", 30)
+                                                put("measure", "exam")
+                                            },
+                                    ),
+                            ),
+                    ),
                 "notice-insight" to
                     day(
                         blocks = lessons(3),

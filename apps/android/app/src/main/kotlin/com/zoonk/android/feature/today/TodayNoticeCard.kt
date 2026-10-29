@@ -66,6 +66,7 @@ internal fun TodayNotice(
         TodayNoticeKind.Exam -> read.today.exam?.let { ExamMomentNotice(it, state, layout, modifier) }
         TodayNoticeKind.ExamAccess -> ExamAccessNotice(state, layout, modifier)
         TodayNoticeKind.ExamChoice -> ExamChoiceNotice(state, layout, modifier)
+        TodayNoticeKind.PlanChange -> PlanChangeNotice(state, layout, modifier)
         TodayNoticeKind.Insight -> (read.today.insight ?: hold?.insight)?.let { InsightNotice(it, state, layout, modifier) }
         TodayNoticeKind.SuggestedGoal -> read.today.suggestedGoal?.let { SuggestedGoalNotice(it, state, layout, modifier) }
         else -> Unit
@@ -339,7 +340,7 @@ private fun insightResult(
 
 /** A plan with a date says what a change does to it; one without reads its estimated end from the plan. */
 @Composable
-private fun planEnd(state: TodayNoticeState): PlanEnd {
+internal fun planEnd(state: TodayNoticeState): PlanEnd {
     val goal = state.read.today.goal
     val plans = state.plans
     if (goal.targetDate != null || plans == null) return PlanEnd(goal.targetDate?.toJavaLocalDate(), null)

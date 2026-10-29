@@ -4,6 +4,9 @@
   "today_activities_so_far": "3e1aac686caa030fa34db95167c2d8e5dbb04148dd58fb85516815f8f70c2a3f",
   "today_already_know_this": "201032609797529d0580414127270bcd3a76f4b53837e356edb4d63c57920584",
   "today_behind": "5e544ccc76f247860a4225de80ba9ea7fc8fa7355b56c2febf4c48f6bb753d22",
+  "today_behind_exam": "1cb12a6f20a1d37405d367a063d747ddb6646852bf896ed06cf84d9fda6fc7f7",
+  "today_behind_goal": "dca38bec492423bc8be06350ed280d5c4b3a90552cbeaadfd044b3bb9b7d8c12",
+  "today_behind_kept": "cc30ff277aad2e29751b8694741d08bbd7923adc05bbc46ae58c9e78671ff8f0",
   "today_building_plan": "18c6d34f36eb9c4f3818c49cedd01472b8bac024971cc51a5215fac97eb8d9e4",
   "today_building_plan_detail": "4d621bbdb3714bd5c472b9febac1316c6556d176c787ba51a122d8948de001ec",
   "today_building_plan_goal": "05419c0cd3601c342f2a35a965020f126f365f5f212ea73b842fb8d62b56cb6e",
@@ -11,6 +14,7 @@
   "today_catch_up_next_days": "ccd93c573bbaa9ec83b5cd09c6ab44c7a0df582d7e716a1d61cf736ea8d1e212",
   "today_catch_up_today": "809f3fc4f19e19874ad2e912650824693ab6dda5e39b613b4ec774057044a8a9",
   "today_catch_up_tomorrow": "b4145c6deccbb96b8fb6df06eea180306466fc13c550063b9dc6305e57abba9f",
+  "today_choose_focus": "4ed68b961faf157e464059a5f4c80366976a417a8da75ff4820e7554150e8c00",
   "today_connection_lost": "53a8b1f7b26e893eadad156f756c7120bc36a526d491ec2c13cc2cad586c7b07",
   "today_connection_lost_detail": "eed5380699f48f28ecd42a56808cbf81437fc45ae33c548f0fcc6559e725ca08",
   "today_continue_explanation": "0c42c2baabb31d2b85ef196bf4d656c987d7312cb21bbe1a7e5597ecc77b9e50",
@@ -52,6 +56,7 @@
   "today_keep_learning": "6627840be32294097588cc8ce17de9bf5fe12d1039240eabfcaf086e84918e3b",
   "today_keep_learning_failed": "a2970d0d82733902ed313c0ec72ef298b89b532d320d72eaf6e99d223d2f7a75",
   "today_lessons_not_written": "2e862a0879caa013d4865be6658ff504ffd7d4562a5fb5bcf13d0b1d62ddb645",
+  "today_keep_my_time": "203dde1082a6447f01999b0d02376a83ddcaf4d6658cfe25f31056e3eeebb24c",
   "today_lessons_so_far": "5d8f58e85826cf0c3892661a089dbd5e30491e3bd32a93aa40197a034d01073a",
   "today_limit": "36966cdf5fe95f0474af374fda0d30947106dd5895e45eb21adb945277af499d",
   "today_mistakes_notebook": "1020376f5e6e336a0a03fa62e739827339e9fca90c3a9d70e0b2dd718ea827da",
@@ -62,7 +67,10 @@
   "today_mock_funding": "0ebfbf023d77545e339532df8c57dcf3863477b39ead7b7e41ae72434cf5fc70",
   "today_mock_funding_welcome_back": "2bf59f205408e1fa9fa1e43fbeb7079185be0e8dd8406b3fca9777a40e1ef586",
   "today_more_count": "d215d2706b8c9e61d311419d08a7997432394364b8b259bfa002bc3899140d49",
+  "today_more_time_a_day": "ca55d7b0ea91806b4db361f181ca54b305f48b3b03051f723cd2f11b7a9f0d65",
+  "today_more_time_or_later_date": "d46375bd2894894360e5f40cc19f0b0a4195f1edd438c4ca71d744a25a9f9f0d",
   "today_new_goal": "abfc628696277d4e26e63d9c1ead9f83790dabc2ad4e2535c54a1b32c43f676d",
+  "today_next_suggestion": "09c32e48bf30d361dd0c337ed1e38fe044cb08b1e7beaa4476df3878f4ebf2d8",
   "today_not_now": "7d15274e66116674b7318ba10a1ff04723a59308f80d69b10c568a6e06c22031",
   "today_noted": "78476c1191852cb25fc59f2b93803dfb672bf329a73e07712eff238b0f314ec4",
   "today_nothing_new": "bda36dbbed2ef5e49b8b13410935e615c370f6e6f155ca68caeba0b5d4accb2f",
@@ -71,6 +79,8 @@
   "today_notice_exam": "103b67cdf149265749a023d617fe7caa8ff659cbb5353f8518d13c704984034e",
   "today_notice_exam_access": "a9339b2641b12aa3e5fb21a7277f225cb6b015716da7e66701eb85616790fbbc",
   "today_notice_exam_choice": "f74343068f462af0c31f2b55f23f58a32a12ee244908bce4c4ba0f84e86fe84f",
+  "today_notice_falling_behind": "872b4854cbc11d55c0e622431a50ec39528712319ce87bbb4db19a942a284e06",
+  "today_notice_plan_change": "05c146c93639d3a2a2a7b3ff18bdf564748445b1fb6fe2b945ffac2d69e6795e",
   "today_notice_suggested_goal": "ac360e7e9546fc1a04eea8eaa20f18594cad0dbc212a2018b23c9db47d63facd",
   "today_open_failed": "92470853a41c78697187b6d86cd8606ae1bdec93a428e545b9fa36cbe9dcbc11",
   "today_pace_ahead": "5d905064fc94ac7ea77b000d823f92a22af33fcc27709672a4b0977f52e0ea71",
@@ -90,7 +100,11 @@
   "today_paused_detail": "c333b9db1ffd74b66217142d929bce210421ec9c6a2e355c526ab941defa0e00",
   "today_paused_goal": "d225824852c4c831f09dfbba14cfb707919359337e41ba4fa581bf8ea7788193",
   "today_paused_this_goal": "8ef02272aeabd96ea235ce682864c90493e916528e7a3004795ce6f607e457e9",
+  "today_plan_apply": "ac78a60db62160f4ef157c3cbaa3f9a4310a188f3033ce39391205971b27dc51",
+  "today_plan_keep_mine": "7cdcc097e1db8c81ef70a3253c4637156780ab50cfb2b7bbaa1498a8014c17be",
   "today_plan_stays": "c946a704b8c3870752b979867c17d256de08d983561fdb10f3e299048cdd44c7",
+  "today_plan_suggestion": "49ef82efb1016e24c026afcddd96ff6d78386cd746f9dc45ffbecdebb8f15af2",
+  "today_plan_use_my_date": "b9d633d23ff303de16a3f3df24b318c7e2f809c1632a4566bed688d6a72e4d9d",
   "today_practice_anytime": "e49fa62dc493955b7aec31d62a9608d1100c9e8a45688759434509ccaf40a72e",
   "today_practice_minutes": "e9640558ecb074d97dde46f5c4f35022f49de964896ce59c7c8bf634befb3147",
   "today_practice_with_buddy": "0f3d36057dcc0fe30556953b83bff49fa7bd5761b9fdb3075d54e60f432abbdf",
@@ -132,6 +146,7 @@
   "today_step_often_tested_label": "b0de1d44f2ab93879849bf701c9b45dfa61b2483f223a8cd362b53a647fb4b4a",
   "today_step_skipped": "117af3c118d053a7334dc6a1cb21d140621ca4f39faba01746c65b2b8fe847c5",
   "today_steps_done": "6321238aac6979b0a29a11b5a64bece1f59aca296cb928ba4d21df87d0684ace",
+  "today_study_everything": "df12aa2cc5fe288b30175bece925c2ff453b137f98c1ca2621a0038cd22089b0",
   "today_study_minutes": "2609d634f331325b7483669935481d15f957db47a3916967f896044ee6f49194",
   "today_study_more_minutes": "7dbbaee6010c964f015d789e891cd3eddac9405e955c4ac81256f92ff14fc2db",
   "today_suggested_goal_accept": "68a16cb9900047c84f18a8f5a86328b0c71b0f0b401bfe6fea0e10b97eac50f6",
@@ -436,6 +451,23 @@
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_detail">Hasta que elijas, tu plan omite %1$s.</string>
     <string name="today_exam_choice_choose">Elegir</string>
+    <string name="today_notice_plan_change">Cambio sugerido</string>
+    <string name="today_plan_suggestion">Sugerencia para el plan</string>
+    <string name="today_plan_apply">Aplicar</string>
+    <string name="today_plan_use_my_date">Usar mi fecha de todos modos</string>
+    <string name="today_plan_keep_mine">Mantener mi plan</string>
+    <string name="today_next_suggestion">Siguiente sugerencia</string>
+    <string name="today_notice_falling_behind">Cambio en el plan</string>
+    <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->
+    <string name="today_behind_exam">Con %1$s al día, tu plan ahora cubre %2$s del examen, frente a %3$s antes.</string>
+    <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->
+    <string name="today_behind_goal">Con %1$s al día, tu plan ahora cubre %2$s de tu objetivo, frente a %3$s antes.</string>
+    <string name="today_more_time_a_day">Más tiempo al día</string>
+    <string name="today_more_time_or_later_date">Más tiempo o una fecha posterior</string>
+    <string name="today_choose_focus">Elige en qué centrarte</string>
+    <string name="today_study_everything">Estudiarlo todo</string>
+    <string name="today_keep_my_time">Mantener mi tiempo</string>
+    <string name="today_behind_kept">Entendido. Mantienes el tiempo que tienes, con menos profundidad en lo menos importante.</string>
     <string name="today_connection_lost">Se ha perdido la conexión</string>
     <string name="today_connection_lost_detail">Hemos dejado de recibir actualizaciones. Puede que siga funcionando.</string>
     <string name="today_reconnect">Volver a conectar</string>

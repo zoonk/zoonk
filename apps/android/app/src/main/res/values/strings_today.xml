@@ -252,6 +252,23 @@
     <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
     <string name="today_exam_choice_detail">Until you pick, your plan leaves %1$s out.</string>
     <string name="today_exam_choice_choose">Choose</string>
+    <string name="today_notice_plan_change">Suggested change</string>
+    <string name="today_plan_suggestion">Plan suggestion</string>
+    <string name="today_plan_apply">Apply</string>
+    <string name="today_plan_use_my_date">Use my date anyway</string>
+    <string name="today_plan_keep_mine">Keep mine</string>
+    <string name="today_next_suggestion">Next suggestion</string>
+    <string name="today_notice_falling_behind">Plan change</string>
+    <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->
+    <string name="today_behind_exam">At %1$s a day, your plan now covers %2$s of the exam, down from %3$s.</string>
+    <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->
+    <string name="today_behind_goal">At %1$s a day, your plan now covers %2$s of your goal, down from %3$s.</string>
+    <string name="today_more_time_a_day">More time a day</string>
+    <string name="today_more_time_or_later_date">More time or a later date</string>
+    <string name="today_choose_focus">Choose where to focus</string>
+    <string name="today_study_everything">Study everything</string>
+    <string name="today_keep_my_time">Keep my time</string>
+    <string name="today_behind_kept">Noted. You keep your time, with less depth where it counts least.</string>
     <string name="today_connection_lost">Connection lost</string>
     <string name="today_connection_lost_detail">We stopped getting updates. It may still be working.</string>
     <string name="today_reconnect">Reconnect</string>
