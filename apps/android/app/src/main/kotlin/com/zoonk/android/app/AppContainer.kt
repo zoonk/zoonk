@@ -213,7 +213,7 @@ class AppContainer private constructor(
             .id
     }
     val today = TodayStore(LiveTodayApi(api), cache, scope, timeZone)
-    val studyOpener = StudyOpener(LiveStudyApi(api), cache, timeZone)
+    val studyOpener = StudyOpener(LiveStudyApi(api), cache, timeZone, scope)
     val recap =
         RecapStore(
             api = { session, goalId, timeZone ->

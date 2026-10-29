@@ -40,4 +40,11 @@ class LiveStudyApi(
     ) {
         perform { api.clients(session).studySessions.createStudyBlockStart(sessionId, blockId, StudyBlockStart(timeZone = timeZone)) }
     }
+
+    override suspend fun prepare(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+    ) {
+        perform { api.clients(session).contentGeneration.createStudySessionPreparation(sessionId) }
+    }
 }

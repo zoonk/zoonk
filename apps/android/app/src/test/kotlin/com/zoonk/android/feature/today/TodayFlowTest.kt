@@ -96,7 +96,17 @@ class TodayFlowTest {
         val today = decodeFixture<Today>("today", "session" to day)
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val store = TodayStore(NoTodayApi, cache, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate), timeZone = { "UTC" })
-        val viewModel = TodayViewModel(StudyOpener(StartingApi(), cache, timeZone = { "UTC" }), store)
+        val viewModel =
+            TodayViewModel(
+                StudyOpener(
+                    StartingApi(),
+                    cache,
+                    timeZone = { "UTC" },
+                    scope =
+                        CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+                ),
+                store,
+            )
         val read = TodayRead.Day(today, today.session.toDayView())
 
         rule.setContent {
@@ -131,14 +141,14 @@ class TodayFlowTest {
     }
 
     @Test
-    fun aReviewRowOpensTheSessionScreenWhichPlaysIt() {
+    fun aReviewRowStartsItsBlockAndOpensTheQuestionRunner() {
         show()
 
         rule.onNodeWithText("What you already know").performClick()
         rule.waitForIdle()
 
-        assertEquals(AppRoute.Session(blockId = reviewBlock), navigator.currentRoute)
-        assertEquals(emptyList<UUID>(), started)
+        assertEquals(AppRoute.QuestionBlock(session, reviewBlock), navigator.currentRoute)
+        assertEquals(listOf(UUID.fromString(reviewBlock)), started)
     }
 
     @Test
@@ -199,6 +209,11 @@ class TodayFlowTest {
         ) {
             started += blockId
         }
+
+        override suspend fun prepare(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+        ) = Unit
     }
 
     private object NoTodayApi : TodayApi {

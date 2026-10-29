@@ -8,6 +8,8 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
@@ -44,6 +46,12 @@ interface StudyApi {
         blockId: UUID,
         timeZone: String,
     )
+
+    /** Starts writing the session's coming lessons, so they're ready when the learner gets there. */
+    suspend fun prepare(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+    )
 }
 
 /**
@@ -55,6 +63,7 @@ class StudyOpener(
     private val api: StudyApi,
     private val cache: AppCache,
     private val timeZone: () -> String,
+    private val scope: CoroutineScope,
 ) {
     suspend fun open(
         day: DayView,
@@ -103,14 +112,30 @@ class StudyOpener(
         step: DayStep,
     ): AppRoute? {
         val blockId = step.id ?: return null
+        val lessonId = step.lessonId
+
+        // The lesson's page writes it with its own wait and retry; preparing too would compete with that request.
+        if (step.kind == StudyBlock.Kind.LEARN && step.screen == StudyBlock.Screen.SESSION && lessonId != null) {
+            return AppRoute.Lesson(lessonId.toString(), sessionId.toString())
+        }
+
+        prepare(session, sessionId)
 
         return when (step.screen) {
-            StudyBlock.Screen.SESSION, StudyBlock.Screen.UNKNOWN -> {
+            StudyBlock.Screen.SESSION -> {
+                if (step.kind == StudyBlock.Kind.LEARN) {
+                    AppRoute.Session(blockId = blockId.toString())
+                } else {
+                    started(session, sessionId, blockId) { AppRoute.QuestionBlock(sessionId.toString(), blockId.toString()) }
+                }
+            }
+
+            StudyBlock.Screen.UNKNOWN -> {
                 AppRoute.Session(blockId = blockId.toString())
             }
 
             StudyBlock.Screen.LESSON -> {
-                val lessonId = step.lessonId ?: return AppRoute.Session(blockId = blockId.toString())
+                lessonId ?: return AppRoute.Session(blockId = blockId.toString())
                 started(session, sessionId, blockId) { AppRoute.Lesson(lessonId.toString(), sessionId.toString()) }
             }
 
@@ -133,6 +158,19 @@ class StudyOpener(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    /** Not awaited, so the block opens at once; a failed request only means the next opened block asks again. */
+    private fun prepare(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+    ) {
+        scope.launch {
+            try {
+                api.prepare(session, sessionId)
+            } catch (_: ApiException) {
             }
         }
     }
