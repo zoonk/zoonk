@@ -254,4 +254,19 @@ class ConversationFlowTest {
         )
         compose.onNodeWithText("You did well.").assertExists()
     }
+
+    @Test
+    fun aMocksTaskGoesBackToTheMockOnceSaved() {
+        compose.setContent {
+            com.zoonk.android.ui.theme
+                .ZoonkTheme { harness.Conversation(fromMock = true) }
+        }
+        goLive()
+
+        compose.onNodeWithContentDescription("End").performClick()
+        compose.waitForIdle()
+
+        assertEquals(1, api.completions.size)
+        assertEquals(1, closed)
+    }
 }

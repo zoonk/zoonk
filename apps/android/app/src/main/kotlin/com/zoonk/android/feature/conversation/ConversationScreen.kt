@@ -74,7 +74,7 @@ fun ConversationScreen(
         NotFound(onClose = exits::close)
         return
     }
-    ConversationEntry(id, app, exits, from = route.from)
+    ConversationEntry(id, app, exits, from = route.from, mock = route.mock)
 }
 
 /** With [startWith], the call starts as soon as it's read, from the tap that opened it (a checkpoint's Start). */
@@ -85,6 +85,7 @@ internal fun ConversationEntry(
     exits: ConversationExits,
     startWith: Boolean? = null,
     from: String? = null,
+    mock: String? = null,
 ) {
     val model =
         viewModel(key = "conversation:$id") {
@@ -98,7 +99,7 @@ internal fun ConversationEntry(
                 scope = app.scope,
             )
         }
-    ConversationContent(model, app.speech, exits, startWith, fromExam = from == FROM_EXAM)
+    ConversationContent(model, app.speech, exits, startWith, fromExam = from == FROM_EXAM, fromMock = mock != null)
 }
 
 @Composable
@@ -108,6 +109,7 @@ internal fun ConversationContent(
     exits: ConversationExits,
     startWith: Boolean? = null,
     fromExam: Boolean = false,
+    fromMock: Boolean = false,
 ) {
     val load by model.conversation.collectShown()
     val scope = rememberCoroutineScope()
@@ -136,7 +138,7 @@ internal fun ConversationContent(
         }
 
         is LoadState.Loaded -> {
-            Conversation(state.value, model, speech, exits, startWith, fromExam)
+            Conversation(state.value, model, speech, exits, startWith, fromExam, fromMock)
         }
     }
 }
@@ -149,8 +151,11 @@ private fun Conversation(
     exits: ConversationExits,
     startWith: Boolean?,
     fromExam: Boolean,
+    fromMock: Boolean,
 ) {
     val completed = model.completed
+    // A mock's task goes straight back to the mock once saved: the mock shows no feedback until it's over.
+    LaunchedEffect(completed) { if (completed != null && fromMock) exits.close() }
     val conversation = remember(completed, stored) { completed?.recode<CompletedLanguageConversation, LanguageConversation>() ?: stored }
     val intro = remember(conversation) { conversation.recode<LanguageConversation, LanguageConversationIntro>() }
     val result = conversation.result

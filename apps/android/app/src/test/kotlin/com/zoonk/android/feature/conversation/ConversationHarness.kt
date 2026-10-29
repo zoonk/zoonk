@@ -95,7 +95,8 @@ internal class ConversationHarness(
     fun Conversation(
         conversationId: UUID = id,
         startWith: Boolean? = null,
-    ) = ConversationContent(model(conversationId), speech, exits, startWith)
+        fromMock: Boolean = false,
+    ) = ConversationContent(model(conversationId), speech, exits, startWith, fromMock = fromMock)
 
     fun show(
         compose: ComposeContentTestRule,
