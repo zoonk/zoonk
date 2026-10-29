@@ -10,11 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -58,7 +58,7 @@ internal fun PlanHeader(
         PlanEyebrow(page)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             PlanTitle(Modifier.weight(1f))
-            onAdjust?.let { OutlinedButton(onClick = it) { Text(stringResource(R.string.plan_adjust_plan)) } }
+            onAdjust?.let { FilledTonalButton(onClick = it) { Text(stringResource(R.string.plan_adjust_plan)) } }
             PlanMenu(page, links, resume, isSaving, onSetStatus, report)
         }
     }

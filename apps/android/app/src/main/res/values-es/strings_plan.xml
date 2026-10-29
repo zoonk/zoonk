@@ -253,7 +253,7 @@
   "plan_nothing_planned": "a8ff058ea3dbfef1eea393ee2f740cf23c610caad56c8b9f8fd501ebb91d4b2c",
   "plan_nothing_planned_until_resume": "fe5079550471efdc953e4f35fc6b7baa2a5be554db8235e031e28abde6422af2",
   "plan_options": "c703bd1bf60cf761bff829d21d66567a1dccc97726c4a2dfd9dc0a13e29160f7",
-  "plan_other_time_a_day": "fcbc6c6381c8d80d5b189f832eb02e642cded632450ed2d0bcb081ae8a659195",
+  "plan_other_time": "5aeb973f2b3b93099fadbb404db26ec7092805adfb84719ee3891840e142645e",
   "plan_pace": "d9f7de2f7c0ac1765b024d6eab139237cad03d7352338f6ef1dbc6a2632a55d2",
   "plan_pace_challenges_left": "5a0ccd701fc6874753b8d3efb27abc6ba2f048d6230782f1d5ec5325d31c9a2a",
   "plan_pace_days": "6ae0fc0739e41a03804dec11e06b1e385caa8dab551478c1a88a6c02e15e7848",
@@ -1018,7 +1018,7 @@
     <string name="plan_pick_date">Elige una fecha</string>
     <string name="plan_save">Guardar</string>
     <string name="plan_use_this_date">Usar esta fecha</string>
-    <string name="plan_other_time_a_day">Otro horario al día</string>
+    <string name="plan_other_time">Otro momento…</string>
     <string name="plan_weekend_time_differs">Horario distinto los fines de semana</string>
     <string name="plan_time_on_weekends">Horario de los fines de semana</string>
     <string name="plan_what_you_practice">Qué practicas</string>

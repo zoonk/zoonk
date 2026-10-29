@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -33,7 +32,6 @@ internal fun PlanActivities(
     modifier: Modifier = Modifier,
 ) {
     if (page.goal.kind != LearnerSummaryGoal.Kind.LANGUAGE) return
-    val pending = edits.isPending(PlanPart.Activities)
     val asked = edits.asked(PlanPart.Activities)
     val skipped =
         page.plan.steering.skippedActivities
@@ -44,15 +42,14 @@ internal fun PlanActivities(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             PlanSteering.SkippedActivities.entries.forEach { activity ->
                 val isOn = activity !in skipped
-                FilterChip(
+                PlanChip(
+                    text = activityName(activity),
                     selected = askedOn(asked, activity.value) ?: isOn,
                     onClick = {
                         val activities = listOf(activity.value)
                         val operation = if (isOn) PlanOp.SkipActivities(activities) else PlanOp.RestoreActivities(activities)
                         edits.change(PlanPart.Activities, listOf(operation)) {}
                     },
-                    label = { Text(activityName(activity)) },
-                    enabled = !pending,
                 )
             }
         }
@@ -66,7 +63,6 @@ internal fun PlanWrittenPractice(
     edits: PlanEdits,
 ) {
     val practice = page.plan.writtenPractice ?: return
-    val pending = edits.isPending(PlanPart.Writing)
     val asked = edits.asked(PlanPart.Writing).filterIsInstance<PlanOp.WrittenCadence>().firstOrNull()
     val shown = WrittenPractice.Cadence.entries.firstOrNull { it.value == asked?.cadence } ?: practice.cadence
     val cadences = WrittenPractice.Cadence.entries.filter { it != WrittenPractice.Cadence.FINAL_WEEKS || practice.finalWeeksFrom != null }
@@ -82,7 +78,6 @@ internal fun PlanWrittenPractice(
                             .heightIn(min = 48.dp)
                             .selectable(
                                 selected = cadence == shown,
-                                enabled = !pending,
                                 role = Role.RadioButton,
                                 onClick = {
                                     if (cadence != practice.cadence) {
@@ -93,7 +88,7 @@ internal fun PlanWrittenPractice(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    RadioButton(selected = cadence == shown, onClick = null, enabled = !pending)
+                    RadioButton(selected = cadence == shown, onClick = null)
                     Text(cadenceLabel(cadence), style = MaterialTheme.typography.bodyLarge)
                 }
             }
@@ -136,7 +131,6 @@ internal fun PlanSteering(
 ) {
     val steering = page.plan.steering
     if (steering.lessonsStudied == 0L) return
-    val pending = edits.isPending(PlanPart.Steering)
     val tap = edits.asked(PlanPart.Steering).firstOrNull()
     val difficulty = (tap as? PlanOp.DifficultyBias)?.bias ?: steering.difficultyBias.value
     val practice = (tap as? PlanOp.PracticeBias)?.bias ?: steering.practiceBias.value
@@ -154,14 +148,13 @@ internal fun PlanSteering(
         SectionLabel(stringResource(R.string.plan_how_is_it_going))
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             steers.forEach { steer ->
-                FilterChip(
+                PlanChip(
+                    text = stringResource(steer.label),
                     selected = steer.active,
                     onClick = {
                         val operation = steer.operation(steer.active)
                         edits.change(PlanPart.Steering, listOf(operation)) {}
                     },
-                    label = { Text(stringResource(steer.label)) },
-                    enabled = !pending,
                 )
             }
         }

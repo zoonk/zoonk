@@ -584,7 +584,7 @@
     <string name="plan_pick_date">Pick a date</string>
     <string name="plan_save">Save</string>
     <string name="plan_use_this_date">Use this date</string>
-    <string name="plan_other_time_a_day">Other time a day</string>
+    <string name="plan_other_time">Other time…</string>
     <string name="plan_weekend_time_differs">Different time on weekends</string>
     <string name="plan_time_on_weekends">Time on weekends</string>
     <string name="plan_what_you_practice">What you practice</string>

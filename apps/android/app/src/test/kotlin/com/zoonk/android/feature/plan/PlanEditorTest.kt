@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
@@ -62,10 +66,25 @@ class PlanEditorTest {
     fun aTimeChipSavesTheDailyTimeAndShowsTheTapAtOnce() {
         show()
 
-        compose.onNodeWithText("45\u00A0min").performClick()
+        compose
+            .onNodeWithText(
+                "45\u00A0min",
+            ).assert(SemanticsMatcher.expectValue(SemanticsProperties.Role, Role.RadioButton))
+            .performClick()
 
         assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.DailyMinutes(45))), changes)
         compose.onNodeWithText("45\u00A0min").assertIsSelected()
+    }
+
+    @Test
+    fun anotherTimeFromTheMenuJoinsThePresets() {
+        show()
+
+        compose.onNodeWithText("Other time…").performClick()
+        compose.onNodeWithText("5\u00A0hr").performClick()
+
+        assertEquals(listOf(PlanPart.Schedule to listOf<PlanOp>(PlanOp.DailyMinutes(300))), changes)
+        compose.onNodeWithText("5\u00A0hr").assertIsSelected()
     }
 
     @Test

@@ -10,14 +10,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -43,6 +44,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.theme.zoonk
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.time.temporal.WeekFields
@@ -60,10 +62,14 @@ internal fun PlanScheduleSection(
     val shape = page.plan.schedule.weekShape
     val weekendOn = drafts.weekendOn ?: (shape.weekend != null)
 
-    DailyMinutes(edits, shape, weekendOn, modifier)
-    StudyDays(page, edits, shape, daysModifier)
-    WeekendMinutes(edits, shape, weekendOn, onWeekendOn = { drafts.weekendOn = it })
-    if (edits.hasFailed(PlanPart.Schedule)) SaveFailedText()
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
+            DailyMinutes(edits, shape, weekendOn, modifier)
+            StudyDays(page, edits, shape, daysModifier)
+            WeekendMinutes(edits, shape, weekendOn, onWeekendOn = { drafts.weekendOn = it })
+        }
+        if (edits.hasFailed(PlanPart.Schedule)) SaveFailedText()
+    }
 }
 
 @Composable
@@ -88,10 +94,15 @@ private fun DailyMinutes(
         SectionLabel(stringResource(R.string.plan_time_a_day_label))
         FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             timeChoices(shape.weekdays, shown).forEach { minutes ->
-                FilterChip(selected = minutes == shown, onClick = { setMinutes(minutes) }, label = { Text(formatMinutes(minutes, locale)) })
+                PlanChip(
+                    formatMinutes(minutes, locale),
+                    selected = minutes == shown,
+                    onClick = { setMinutes(minutes) },
+                    role = Role.RadioButton,
+                )
             }
+            OtherTime(shown, onPick = ::setMinutes)
         }
-        OtherTimeSelect(stringResource(R.string.plan_other_time_a_day), shown, enabled = !pending, onPick = ::setMinutes)
     }
 }
 
@@ -125,7 +136,7 @@ private fun StudyDays(
                         name = names,
                         on = asked.firstOrNull { weekday in it.weekdays }?.let { it.minutes > 0 } ?: studies[weekday],
                         // A plan needs at least one study day.
-                        enabled = !pending && !(studies[weekday] && studies.count { it } == 1),
+                        enabled = !(studies[weekday] && studies.count { it } == 1),
                         onToggle = { pressed ->
                             val minutes = if (pressed) minutesFor(weekday) else 0
                             edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(listOf(weekday), minutes))) {}
@@ -147,11 +158,11 @@ private fun dayNames(
     val measurer = rememberTextMeasurer()
     val style = MaterialTheme.typography.labelLarge
     val cell = with(LocalDensity.current) { ((width - DAY_GAP * (DAYS_PER_WEEK - 1)) / DAYS_PER_WEEK - DAY_PADDING * 2).toPx() }
-    val fits = DayOfWeek.entries.all { measurer.measure(it.getDisplayName(TextStyle.SHORT, locale), style).size.width <= cell }
+    val fits = DayOfWeek.entries.all { measurer.measure(dayName(it, TextStyle.SHORT, locale), style).size.width <= cell }
     return if (fits) TextStyle.SHORT else TextStyle.NARROW_STANDALONE
 }
 
-/** Sunday is 0, as the plan counts weekdays. */
+/** Sunday is 0, as the plan counts weekdays. On, it's picked as an answer is: an ink line on the picked tint. */
 @Composable
 private fun DayToggle(
     weekday: Int,
@@ -164,7 +175,7 @@ private fun DayToggle(
     val locale = currentLocale()
     val day = DayOfWeek.of(if (weekday == 0) DAYS_PER_WEEK else weekday)
     val colors = MaterialTheme.colorScheme
-    val content = if (on) colors.onSecondaryContainer else colors.onSurfaceVariant
+    val content = if (on) colors.onSurface else colors.onSurfaceVariant
 
     Surface(
         checked = on,
@@ -172,13 +183,13 @@ private fun DayToggle(
         modifier = modifier.heightIn(min = 48.dp).semantics { contentDescription = day.getDisplayName(TextStyle.FULL, locale) },
         enabled = enabled,
         shape = MaterialTheme.shapes.small,
-        color = if (on) colors.secondaryContainer else Color.Transparent,
+        color = if (on) MaterialTheme.zoonk.selectedTint else Color.Transparent,
         contentColor = if (enabled) content else content.copy(alpha = DISABLED_ALPHA),
-        border = if (on) null else BorderStroke(1.dp, colors.outlineVariant),
+        border = if (on) BorderStroke(2.dp, colors.primary) else BorderStroke(1.dp, colors.outline),
     ) {
         Box(Modifier.padding(horizontal = DAY_PADDING), contentAlignment = Alignment.Center) {
             Text(
-                text = day.getDisplayName(name, locale),
+                text = dayName(day, name, locale),
                 style = MaterialTheme.typography.labelLarge,
                 maxLines = 1,
                 overflow = TextOverflow.Clip,
@@ -186,6 +197,13 @@ private fun DayToggle(
         }
     }
 }
+
+/** Java's short names are lowercase in Portuguese, Spanish and French; main capitalizes them. */
+private fun dayName(
+    day: DayOfWeek,
+    style: TextStyle,
+    locale: Locale,
+) = day.getDisplayName(style, locale).replaceFirstChar { it.titlecase(locale) }
 
 @Composable
 private fun WeekendMinutes(
@@ -208,50 +226,62 @@ private fun WeekendMinutes(
                     .heightIn(min = 48.dp)
                     .toggleable(
                         value = weekendOn,
-                        // Switched off, the weekend takes the weekdays' time, so it waits for a change still setting it.
-                        enabled = !pending,
                         role = Role.Switch,
                         onValueChange = { next ->
-                            onWeekendOn(next)
-                            if (!next && shape.weekend != null) setWeekend(shape.weekdays)
+                            // Switched off, the weekend takes the weekdays' time, so it waits for a change still setting it.
+                            if (!pending) {
+                                onWeekendOn(next)
+                                if (!next && shape.weekend != null) setWeekend(shape.weekdays)
+                            }
                         },
                     ),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(stringResource(R.string.plan_weekend_time_differs), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-            Switch(checked = weekendOn, onCheckedChange = null, enabled = !pending)
+            Switch(checked = weekendOn, onCheckedChange = null)
         }
         if (weekendOn) {
-            TimeSelect(
-                label = stringResource(R.string.plan_time_on_weekends),
-                value = shown,
-                enabled = !pending,
-                onPick = ::setWeekend,
-            )
+            TimeSelect(label = stringResource(R.string.plan_time_on_weekends), value = shown, onPick = ::setWeekend)
         }
     }
 }
 
-/** Shows the time last picked in it only while it's the plan's; picking a chip clears it. */
+/** Main's other-time menu, as the presets' last chip: a time picked there joins the presets. */
 @Composable
-private fun OtherTimeSelect(
-    label: String,
-    minutes: Int,
-    enabled: Boolean,
+private fun OtherTime(
+    shown: Int,
     onPick: (Int) -> Unit,
 ) {
-    var chosen by remember { mutableStateOf<Int?>(null) }
+    var expanded by remember { mutableStateOf(false) }
+    val locale = currentLocale()
+    val times = menuTimes(shown)
+    val itemHeight = with(LocalDensity.current) { MENU_ITEM_HEIGHT.roundToPx() }
 
-    TimeSelect(
-        label = label,
-        value = chosen?.takeIf { it == minutes },
-        enabled = enabled,
-        onPick = {
-            chosen = it
-            onPick(it)
-        },
-    )
+    Box {
+        PlanChip(
+            text = stringResource(R.string.plan_other_time),
+            selected = false,
+            onClick = { expanded = true },
+            role = Role.DropdownList,
+            trailing = R.drawable.ic_arrow_drop_down,
+        )
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+            scrollState = rememberScrollState(times.indexOf(shown).coerceAtLeast(0) * itemHeight),
+        ) {
+            times.forEach { minutes ->
+                DropdownMenuItem(
+                    text = { Text(formatMinutes(minutes, locale)) },
+                    onClick = {
+                        expanded = false
+                        onPick(minutes)
+                    },
+                )
+            }
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -259,18 +289,16 @@ private fun OtherTimeSelect(
 private fun TimeSelect(
     label: String,
     value: Int?,
-    enabled: Boolean,
     onPick: (Int) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val locale = currentLocale()
 
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it && enabled }) {
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
         OutlinedTextField(
             value = value?.let { formatMinutes(it, locale) }.orEmpty(),
             onValueChange = {},
-            modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled),
-            enabled = enabled,
+            modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
             readOnly = true,
             label = { Text(label) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
@@ -320,3 +348,4 @@ private const val DAYS_PER_WEEK = 7
 private val DAY_GAP = 4.dp
 private val DAY_PADDING = 4.dp
 private const val DISABLED_ALPHA = 0.38f
+private val MENU_ITEM_HEIGHT = 48.dp

@@ -253,7 +253,7 @@
   "plan_nothing_planned": "6d6580174fd99c769e79695fe6095c5e169181f412eb69c1897fd9b9162aba71",
   "plan_nothing_planned_until_resume": "addd1fe523be39bda28bd83949fc81fa1cf0a4f1a129380d4cb86515efad8aa8",
   "plan_options": "20ba5d8e946906cb0697a069be299a60fe73bb4768c5c7d59cf2738c1a2ec168",
-  "plan_other_time_a_day": "ca5cbadbcde7ca057c29d5d95bf43171933cbbbb5ce12296578b17872352bae3",
+  "plan_other_time": "e253c68f5685ef829374c3c5f245fb027abcf25a008746794e169f68d0b4e687",
   "plan_pace": "c3efd7e3bdd4539222f91923c9b7d396f7aaf936a4680cb9c5bf5089736c6628",
   "plan_pace_challenges_left": "90b01f4c5e434813984fb7e1ecf201671d44bd01eaab416f78339393e3cb6212",
   "plan_pace_days": "5e9d90548bb043b5f5452163aa83b95fcf806ec41f2d5e6bccaa1c78609a1f41",
@@ -948,7 +948,7 @@
     <string name="plan_pick_date">Datum auswählen</string>
     <string name="plan_save">Speichern</string>
     <string name="plan_use_this_date">Dieses Datum verwenden</string>
-    <string name="plan_other_time_a_day">Andere tägliche Lernzeit</string>
+    <string name="plan_other_time">Andere Zeit…</string>
     <string name="plan_weekend_time_differs">Am Wochenende andere Lernzeit</string>
     <string name="plan_time_on_weekends">Lernzeit am Wochenende</string>
     <string name="plan_what_you_practice">Was du übst</string>

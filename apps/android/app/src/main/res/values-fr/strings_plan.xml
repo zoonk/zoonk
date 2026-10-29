@@ -253,7 +253,7 @@
   "plan_nothing_planned": "2973e6f8c2a573c130456b95e8a59fd6deaae11b400c99f8f3fbd3ecddfee4dc",
   "plan_nothing_planned_until_resume": "a92d4100c28ae96b14077b16d2ece513390dfd8a88b04dd56be0b6998e2e0cec",
   "plan_options": "25cc1fa435a90e191ea0de80f1d69a644c653dce9628ff89ee44bca2e2c2068e",
-  "plan_other_time_a_day": "f6017113810f32c16e3ccae5f99e51e943e5f9acaf784c5b75fd1d86fd271607",
+  "plan_other_time": "9ae1cd0f611c3366b42f261b3308abde728ebc5eb2ef3189b118207b6f768658",
   "plan_pace": "15e346cdd1b54f62422fa2758df391d3a49b8abf57fc87f1fdeb369cdf40fdd6",
   "plan_pace_challenges_left": "4675bd27a1620ebc464f9f4e563110b46992fbf30180ad2b9332c9311445b7af",
   "plan_pace_days": "d6299b338614496b57cbea65a0f9be8bcf0223c9e089c622effd52fa583dc5a4",
@@ -1018,7 +1018,7 @@
     <string name="plan_pick_date">Choisir une date</string>
     <string name="plan_save">Enregistrer</string>
     <string name="plan_use_this_date">Utiliser cette date</string>
-    <string name="plan_other_time_a_day">Autre durée par jour</string>
+    <string name="plan_other_time">Autre durée…</string>
     <string name="plan_weekend_time_differs">Durée différente le week-end</string>
     <string name="plan_time_on_weekends">Durée le week-end</string>
     <string name="plan_what_you_practice">Ce que tu révises</string>

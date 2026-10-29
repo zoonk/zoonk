@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.plan
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.relocation.BringIntoViewRequester
@@ -22,14 +24,16 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -48,11 +52,14 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -61,6 +68,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
 import kotlinx.datetime.toJavaLocalDate
@@ -122,7 +130,12 @@ internal fun PlanEditor(
     if (wide) {
         SidePanel(onDismiss) { PlanEditorBody(page, edits, section, onTellBuddy, onClose = onDismiss, drafts = drafts) }
     } else {
-        ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        val title = stringResource(R.string.plan_editor_title)
+        ModalBottomSheet(
+            onDismissRequest = onDismiss,
+            modifier = Modifier.semantics { paneTitle = title },
+            sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        ) {
             PlanEditorBody(page, edits, section, onTellBuddy, drafts = drafts)
         }
     }
@@ -256,6 +269,7 @@ private fun LatestChange(
                 text = stringResource(R.string.plan_change_undone),
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Medium,
             )
             return@Column
         }
@@ -268,7 +282,7 @@ private fun LatestChange(
             icon = R.drawable.ic_tune,
         )
         if (latest.change.canUndo) {
-            OutlinedButton(onClick = { onUndo(latest.change) }, enabled = !latest.undoing) { Text(stringResource(R.string.plan_undo)) }
+            TextButton(onClick = { onUndo(latest.change) }, enabled = !latest.undoing) { Text(stringResource(R.string.plan_undo)) }
         }
         if (latest.undoFailed) SaveFailedText()
     }
@@ -295,6 +309,59 @@ private fun PlanEditRequest(
             )
         }
     }
+}
+
+/**
+ * A choice in the editor, picked as an answer is: a check and an ink line on the picked tint. [role]
+ * says what a tap does for TalkBack when it isn't a checkbox's.
+ */
+@Composable
+internal fun PlanChip(
+    text: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    role: Role? = null,
+    @DrawableRes trailing: Int? = null,
+) {
+    val colors = MaterialTheme.colorScheme
+
+    FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { Text(text) },
+        modifier = if (role != null) modifier.semantics { this.role = role } else modifier,
+        leadingIcon =
+            if (selected) {
+                { Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(FilterChipDefaults.IconSize)) }
+            } else {
+                null
+            },
+        trailingIcon =
+            trailing?.let {
+                {
+                    Icon(
+                        painterResource(it),
+                        contentDescription = null,
+                        Modifier.size(FilterChipDefaults.IconSize),
+                    )
+                }
+            },
+        colors =
+            FilterChipDefaults.filterChipColors(
+                selectedContainerColor = MaterialTheme.zoonk.selectedTint,
+                selectedLabelColor = colors.onSurface,
+                selectedLeadingIconColor = colors.onSurface,
+            ),
+        border =
+            FilterChipDefaults.filterChipBorder(
+                enabled = true,
+                selected = selected,
+                borderColor = colors.outline,
+                selectedBorderColor = colors.primary,
+                selectedBorderWidth = 2.dp,
+            ),
+    )
 }
 
 @Composable

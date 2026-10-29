@@ -200,6 +200,7 @@ internal fun PlanProperties(
 ) {
     val schedule = page.plan.schedule
     val locale = currentLocale()
+    val adjust = stringResource(R.string.plan_adjust_plan)
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
         SectionHeader(stringResource(R.string.plan_your_plan))
@@ -208,8 +209,14 @@ internal fun PlanProperties(
                 label = stringResource(if (page.isExam) R.string.plan_exam_date else R.string.plan_goal_date),
                 value = goalDateValue(page),
                 onClick = onOpen?.let { { it(PlanSection.Date) } },
+                onClickLabel = adjust,
             )
-            PropertyRow(stringResource(R.string.plan_time_a_day_label), dailyTimeValue(page), onOpen?.let { { it(PlanSection.Time) } })
+            PropertyRow(
+                stringResource(R.string.plan_time_a_day_label),
+                dailyTimeValue(page),
+                onOpen?.let { { it(PlanSection.Time) } },
+                onClickLabel = adjust,
+            )
             PropertyRow(
                 stringResource(R.string.plan_study_days),
                 studyDaysText(
@@ -219,12 +226,14 @@ internal fun PlanProperties(
                     locale,
                 ),
                 onOpen?.let { { it(PlanSection.Days) } },
+                onClickLabel = adjust,
             )
             schedule.mocks?.let { mocks ->
                 PropertyRow(
                     label = stringResource(R.string.plan_mock_exams),
                     value = mockScheduleValue(page, mocks),
                     onClick = if (links.hasExam) links::exam else null,
+                    onClickLabel = stringResource(R.string.plan_about_exam),
                     plus = page.mocksRequirePlus,
                 )
             }
@@ -233,7 +242,7 @@ internal fun PlanProperties(
                 PropertyRow(
                     label = choice.group,
                     value = picked?.let { it.shortName ?: it.name } ?: stringResource(R.string.plan_choose),
-                    onClick = onOpen?.let { { it(PlanSection.Choices) } },
+                    onClick = null,
                     warning = picked == null,
                 )
             }
@@ -252,6 +261,7 @@ internal fun PlanProperties(
                                 practiced.map { activityName(it) }.joinToString(" · ")
                             },
                         onClick = onOpen?.let { { it(PlanSection.Practice) } },
+                        onClickLabel = adjust,
                     )
                 }
             }
@@ -266,6 +276,7 @@ private fun PropertyRow(
     label: String,
     value: String,
     onClick: (() -> Unit)?,
+    onClickLabel: String? = null,
     plus: Boolean = false,
     warning: Boolean = false,
 ) {
@@ -277,7 +288,7 @@ private fun PropertyRow(
                 .clip(MaterialTheme.shapes.small)
                 .then(
                     if (onClick != null) {
-                        Modifier.clickable(role = Role.Button, onClick = onClick)
+                        Modifier.clickable(onClickLabel = onClickLabel, role = Role.Button, onClick = onClick)
                     } else {
                         Modifier.semantics(mergeDescendants = true) {}
                     },

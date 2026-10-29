@@ -59,6 +59,13 @@ class PlanScreenshots {
     }
 
     @Test
+    @Config(qualifiers = "de-w411dp-h3200dp-xhdpi")
+    fun phoneInGermanAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("plan-phone-de-font200")
+    }
+
+    @Test
     @Config(qualifiers = "w700dp-h1600dp-xhdpi")
     fun medium() = capture("plan-medium")
 
@@ -180,6 +187,7 @@ class PlanScreenshots {
                         resume = Resume.Plain,
                         isSaving = false,
                         onSetStatus = {},
+                        onAdjust = {},
                     )
                 }
             }

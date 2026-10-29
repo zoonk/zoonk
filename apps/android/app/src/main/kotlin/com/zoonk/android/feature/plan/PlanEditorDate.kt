@@ -9,10 +9,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
@@ -48,7 +48,6 @@ internal fun PlanDateSection(
     val schedule = page.plan.schedule
     val target = schedule.targetDate?.toJavaLocalDate()
     val namedMonth = schedule.targetDateNamedMonth && target != null
-    val pending = edits.isPending(PlanPart.Date)
     val asked = edits.asked(PlanPart.Date).filterIsInstance<PlanOp.TargetDate>().firstOrNull()
     val shown = if (asked != null) asked.date else target.takeUnless { namedMonth }
     val locale = currentLocale()
@@ -67,16 +66,16 @@ internal fun PlanDateSection(
             value = shown?.let { formatDate(it, locale, DateStyle.Long) }.orEmpty(),
             onValueChange = {},
             modifier =
-                Modifier.fillMaxWidth().pointerInput(pending) {
+                Modifier.fillMaxWidth().pointerInput(Unit) {
                     awaitEachGesture {
                         awaitFirstDown(pass = PointerEventPass.Initial)
-                        if (waitForUpOrCancellation(pass = PointerEventPass.Initial) != null && !pending) drafts.datePicking = true
+                        if (waitForUpOrCancellation(pass = PointerEventPass.Initial) != null) drafts.datePicking = true
                     }
                 },
             readOnly = true,
             label = { Text(stringResource(if (page.isExam) R.string.plan_exam_date else R.string.plan_deadline)) },
             trailingIcon = {
-                IconButton(onClick = { drafts.datePicking = true }, enabled = !pending) {
+                IconButton(onClick = { drafts.datePicking = true }) {
                     Icon(painterResource(R.drawable.ic_calendar_month), contentDescription = stringResource(R.string.plan_pick_date))
                 }
             },
@@ -90,7 +89,7 @@ internal fun PlanDateSection(
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            OutlinedButton(onClick = { setDate(day.date.toJavaLocalDate()) }, enabled = !pending) {
+            FilledTonalButton(onClick = { setDate(day.date.toJavaLocalDate()) }) {
                 Text(stringResource(R.string.plan_use_this_date))
             }
         }
