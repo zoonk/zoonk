@@ -294,24 +294,7 @@ private struct SubscriptionMarketingContent: View {
         .foregroundStyle(.secondary)
       }
 
-      VStack(alignment: .leading, spacing: 12) {
-        benefit(
-          Text(
-            "Your whole exam plan, every day to the exam", tableName: "Account",
-            comment: "Zoonk Plus benefit: the full exam plan"))
-        benefit(
-          Text(
-            "Mock exams, timed like the real one", tableName: "Account",
-            comment: "Zoonk Plus benefit: timed mock exams"))
-        benefit(
-          Text(
-            "An AI study buddy whenever you're stuck", tableName: "Account",
-            comment: "Zoonk Plus benefit: the study buddy"))
-        benefit(
-          Text(
-            "Higher limits for speaking calls", tableName: "Account",
-            comment: "Zoonk Plus benefit: more speaking call time, never a number"))
-      }
+      PlusBenefits()
 
       if let allowance, allowance.tier == .free {
         GroupBox {
@@ -340,6 +323,31 @@ private struct SubscriptionMarketingContent: View {
     .padding(.horizontal)
   }
 
+}
+
+/// What Zoonk Plus includes, as main's `PlusBenefits` lists it.
+struct PlusBenefits: View {
+  var body: some View {
+    VStack(alignment: .leading, spacing: 12) {
+      benefit(
+        Text(
+          "Your whole exam plan, every day to the exam", tableName: "Account",
+          comment: "Zoonk Plus benefit: the full exam plan"))
+      benefit(
+        Text(
+          "Mock exams, timed like the real one", tableName: "Account",
+          comment: "Zoonk Plus benefit: timed mock exams"))
+      benefit(
+        Text(
+          "An AI study buddy whenever you're stuck", tableName: "Account",
+          comment: "Zoonk Plus benefit: the study buddy"))
+      benefit(
+        Text(
+          "Higher limits for speaking calls", tableName: "Account",
+          comment: "Zoonk Plus benefit: more speaking call time, never a number"))
+    }
+  }
+
   private func benefit(_ title: Text) -> some View {
     Label {
       title
@@ -347,5 +355,83 @@ private struct SubscriptionMarketingContent: View {
       Image(systemName: "checkmark")
         .foregroundStyle(.secondary)
     }
+  }
+}
+
+/// Main's current plan for a subscription Zoonk manages: the stores' own are managed in the
+/// stores.
+struct PlusStatusView: View {
+  let subscription: AccountSubscription
+
+  var body: some View {
+    List {
+      Section {
+        VStack(alignment: .leading, spacing: 6) {
+          HStack(spacing: 8) {
+            Text("Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name")
+              .font(.title.bold())
+
+            Group {
+              subscription.cancelAt == nil
+                ? Text("Active", tableName: "Account", comment: "Status for an active subscription")
+                : Text(
+                  "Subscription ending", tableName: "Account",
+                  comment: "A subscription set to end")
+            }
+            .chip()
+          }
+
+          if let dateLine {
+            dateLine
+              .foregroundStyle(.secondary)
+          }
+        }
+        .listRowBackground(Color.clear)
+      }
+
+      Section {
+        PlusBenefits()
+      } header: {
+        Text(
+          "Every goal · every lesson", tableName: "Account",
+          comment: "What Zoonk Plus includes, in one line")
+      }
+
+      Section {
+        Link(destination: AccountLinks.support) {
+          Text("Contact support", tableName: "Account", comment: "Opens Zoonk's support")
+        }
+      } footer: {
+        Text(
+          "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.",
+          tableName: "Account", comment: "Where a subscription Zoonk manages is changed")
+      }
+    }
+    .navigationTitle(
+      Text("Subscription", tableName: "Account", comment: "Account option for subscription")
+    )
+    .toolbarTitleDisplayMode(.inline)
+  }
+
+  private var dateLine: Text? {
+    let date: (Date) -> String = { $0.formatted(date: .abbreviated, time: .omitted) }
+
+    if let cancelAt = subscription.cancelAt {
+      return Text(
+        "Your subscription will end on \(date(cancelAt)).", tableName: "Account",
+        comment: "When a subscription set to end ends")
+    }
+
+    guard let periodEnd = subscription.periodEnd else {
+      return nil
+    }
+
+    return subscription.provider == "stripe"
+      ? Text(
+        "Renews on \(date(periodEnd)).", tableName: "Account",
+        comment: "When a web subscription renews")
+      : Text(
+        "Current billing period ends on \(date(periodEnd)).", tableName: "Account",
+        comment: "When the subscription's paid period ends")
   }
 }

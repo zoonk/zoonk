@@ -82,7 +82,7 @@ struct PreferencesView: View {
           }
         } label: {
           LabeledContent {
-            Text(appLanguage)
+            Text(appLanguageName)
           } label: {
             Text("Language", tableName: "Settings", comment: "Row opening the app's language")
           }
@@ -122,11 +122,6 @@ struct PreferencesView: View {
         }
       }
     }
-  }
-
-  private var appLanguage: String {
-    let identifier = Bundle.main.preferredLocalizations.first ?? "en"
-    return Locale.current.localizedString(forIdentifier: identifier) ?? identifier
   }
 
   private func soundsBinding(_ preferences: LearningPreferences) -> Binding<Bool> {
@@ -196,4 +191,10 @@ struct SettingsLoadingState<Value: Equatable & Sendable>: View {
       EmptyView()
     }
   }
+}
+
+/// The language the app shows, which the device chooses.
+var appLanguageName: String {
+  let identifier = Bundle.main.preferredLocalizations.first ?? "en"
+  return Locale.current.localizedString(forIdentifier: identifier) ?? identifier
 }

@@ -474,7 +474,9 @@ struct AccountAPI {
           AccountSubscription(
             plan: $0.plan,
             provider: $0.provider,
-            status: $0.status)
+            status: $0.status,
+            cancelAt: $0.cancelAt,
+            periodEnd: $0.periodEnd)
         }),
       user: AccountUser(
         displayUsername: response.user.displayUsername,

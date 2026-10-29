@@ -558,6 +558,41 @@
         }
       }
     },
+    "Contact support" : {
+      "comment" : "Opens Zoonk's support",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Support kontaktieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Contact support"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contactar con soporte"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contacter l’assistance"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fale com o suporte"
+          }
+        }
+      }
+    },
     "Continue with Apple to confirm that this account is yours before deleting it." : {
       "comment" : "Explains why Apple reauthorization is required for deletion",
       "localizations" : {
@@ -728,6 +763,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Criar uma conta"
+          }
+        }
+      }
+    },
+    "Current billing period ends on %@." : {
+      "comment" : "When the subscription's paid period ends",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Der aktuelle Abrechnungszeitraum endet am %@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Current billing period ends on %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "El periodo de facturación actual termina el %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La période de facturation en cours se termine le %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O período de cobrança atual termina em %@."
           }
         }
       }
@@ -1747,6 +1817,41 @@
         }
       }
     },
+    "Plus" : {
+      "comment" : "Zoonk Plus, the plan's name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Plus"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus"
+          }
+        }
+      }
+    },
     "Preferences" : {
       "comment" : "Settings row for Preferences",
       "localizations" : {
@@ -2004,6 +2109,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compras restauradas"
+          }
+        }
+      }
+    },
+    "Renews on %@." : {
+      "comment" : "When a web subscription renews",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Verlängert sich am %@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Renews on %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se renueva el %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renouvellement le %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Renova em %@."
           }
         }
       }
@@ -2356,6 +2496,41 @@
         }
       }
     },
+    "Subscription ending" : {
+      "comment" : "A subscription set to end",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abo endet"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Subscription ending"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suscripción a punto de finalizar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fin de l’abonnement"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assinatura encerrando"
+          }
+        }
+      }
+    },
     "Temporary email addresses aren't supported. Use another email or a privacy alias." : {
       "comment" : "Temporary inbox rejection; persistent privacy aliases remain supported",
       "localizations" : {
@@ -2555,6 +2730,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Isso apaga permanentemente seu perfil, metas, planos, progresso, memória, comentários e arquivos enviados. Não dá para desfazer."
+          }
+        }
+      }
+    },
+    "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it." : {
+      "comment" : "Where a subscription Zoonk manages is changed",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Abo wird von Zoonk verwaltet. Wenn du Hilfe beim Ändern oder Kündigen brauchst, wende dich an den Support."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoonk gestiona esta suscripción. Contacta con soporte si necesitas ayuda para cambiarla o cancelarla."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet abonnement est géré par Zoonk. Contacte l’assistance si tu as besoin d’aide pour le modifier ou le résilier."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta assinatura é gerenciada pelo Zoonk. Fale com o suporte se precisar de ajuda para alterá-la ou cancelá-la."
           }
         }
       }
@@ -3077,6 +3287,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua compra está segura. Entre na sua conta e depois restaure as compras para ativar o Plus na sua conta do Zoonk."
+          }
+        }
+      }
+    },
+    "Your subscription will end on %@." : {
+      "comment" : "When a subscription set to end ends",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Abo endet am %@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your subscription will end on %@."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu suscripción finalizará el %@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton abonnement prendra fin le %@."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sua assinatura terminará em %@."
           }
         }
       }

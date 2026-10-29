@@ -5,6 +5,7 @@ private enum AccountDestination: Hashable {
   case deleteAccount(AccountDeletionDestination)
   case memory
   case preferences
+  case plus(AccountSubscription)
   case profile
   case subscription(UUID)
 }
@@ -55,6 +56,8 @@ struct AccountSheet: View {
               }
               .id(account.user.id)
             }
+          case .plus(let subscription):
+            PlusStatusView(subscription: subscription)
           case .subscription(let appAccountToken):
             SubscriptionView(appAccountToken: appAccountToken)
           }
@@ -191,7 +194,7 @@ struct AccountSheet: View {
       path.removeAll()
     case .signedOut, .unavailable:
       switch path.last {
-      case .memory, .preferences, .profile, .subscription:
+      case .memory, .plus, .preferences, .profile, .subscription:
         path.removeAll()
       case .deleteAccount, nil:
         break
@@ -246,7 +249,9 @@ private struct SettingsHubView: View {
         NavigationLink(value: AccountDestination.preferences) {
           LabeledContent {
             if let buddy = settings.preferences.value?.buddy {
-              Text(buddy.displayName)
+              Text(verbatim: "\(buddy.displayName) · \(appLanguageName)")
+            } else {
+              Text(appLanguageName)
             }
           } label: {
             Text("Preferences", tableName: "Account", comment: "Settings row for Preferences")
@@ -356,7 +361,7 @@ private struct AccountSubscriptionRow: View {
       .accessibilityLabel(subscriptionLabel)
       .accessibilityValue(googlePlayStatus)
     case .contactSupport:
-      Link(destination: AccountLinks.support) {
+      NavigationLink(value: access.subscription.map(AccountDestination.plus)) {
         rowLabel(status: activeStatus)
       }
       .accessibilityLabel(subscriptionLabel)
@@ -402,7 +407,9 @@ private struct AccountSubscriptionRow: View {
   private func rowLabel(status: Text) -> some View {
     LabeledContent {
       if access.subscriptionAction != .subscribe {
-        PlusMark()
+        PlusMark(
+          accessibilityLabel: Text(
+            "Plus", tableName: "Account", comment: "Zoonk Plus, the plan's name"))
       }
     } label: {
       subscriptionLabel

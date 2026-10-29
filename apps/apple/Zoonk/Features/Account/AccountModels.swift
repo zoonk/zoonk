@@ -40,10 +40,12 @@ struct AccountDeletionRequirements: Decodable, Equatable {
   let hasAppleAccount: Bool
 }
 
-struct AccountSubscription: Decodable, Equatable {
+struct AccountSubscription: Decodable, Equatable, Hashable {
   let plan: String
   let provider: String
   let status: String?
+  var cancelAt: Date? = nil
+  var periodEnd: Date? = nil
 }
 
 struct AppleSubscriptionSynchronization: Equatable {
