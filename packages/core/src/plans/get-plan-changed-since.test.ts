@@ -1,4 +1,5 @@
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
 import {
@@ -124,6 +125,32 @@ describe(getPlanChangedSince, () => {
 
     await expect(
       getPlanChangedSince({ goalId: second.goal.id, since: second.readAt, watch: "today" }),
+    ).resolves.toStrictEqual({ changed: true, status: "ready" });
+  });
+
+  it("sees the plan's course finish an outline that wrote nothing for the plan", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ outlineStatus: "running" }),
+    ]);
+
+    const goal = await goalFixture({ primaryCourseId: course.id, userId: user.id });
+    await planFixture({ goalId: goal.id });
+    mockSession(user.id);
+    const readAt = Date.now() + AFTER_READ_MS;
+
+    vi.useFakeTimers({ toFake: ["Date"] });
+    afterRead(readAt);
+
+    await prisma.course.updateMany({
+      data: { outlineStatus: "completed" },
+      where: { id: course.id },
+    });
+
+    vi.useRealTimers();
+
+    await expect(
+      getPlanChangedSince({ goalId: goal.id, since: readAt, watch: "today" }),
     ).resolves.toStrictEqual({ changed: true, status: "ready" });
   });
 

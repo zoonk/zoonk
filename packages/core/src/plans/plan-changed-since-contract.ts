@@ -4,7 +4,7 @@ export const planWatchSchema = z
   .enum(["plan", "today"])
   .meta({
     description:
-      "plan: the goal's plan, its items and their lessons, which the plan's screen shows; today: those and the learner's sessions from the last two days, their stops and the stops' lessons, which Today shows",
+      "plan: the goal's plan, its items, their lessons and the courses they come from (an outline that ends), which the plan's screen shows; today: those and the learner's sessions from the last two days, their stops and the stops' lessons, which Today shows",
     id: "PlanWatch",
   });
 
