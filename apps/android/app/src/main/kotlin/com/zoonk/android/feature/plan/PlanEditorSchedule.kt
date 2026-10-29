@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -42,6 +40,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.OtherTime
+import com.zoonk.android.ui.components.otherTimes
+import com.zoonk.android.ui.components.timeChoices
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.zoonk
@@ -106,8 +107,8 @@ private fun DailyMinutes(
                     description = answer?.let { timeNote(it, minutes) },
                 )
             }
-            OtherTime(shown, onPick = ::setMinutes)
         }
+        OtherTime(shown, stringResource(R.string.onboarding_schedule_other_time_label), ::setMinutes)
         DailyCoverage(page, edits, focus)
         FullCourseSwitch(page, edits, focus.studyEverything)
     }
@@ -254,43 +255,6 @@ private fun WeekendMinutes(
     }
 }
 
-/** Main's other-time menu, as the presets' last chip: a time picked there joins the presets. */
-@Composable
-private fun OtherTime(
-    shown: Int,
-    onPick: (Int) -> Unit,
-) {
-    var expanded by remember { mutableStateOf(false) }
-    val locale = currentLocale()
-    val times = menuTimes(shown)
-    val itemHeight = with(LocalDensity.current) { MENU_ITEM_HEIGHT.roundToPx() }
-
-    Box {
-        PlanChip(
-            text = stringResource(R.string.plan_other_time),
-            selected = false,
-            onClick = { expanded = true },
-            role = Role.DropdownList,
-            trailing = R.drawable.ic_arrow_drop_down,
-        )
-        DropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-            scrollState = rememberScrollState(times.indexOf(shown).coerceAtLeast(0) * itemHeight),
-        ) {
-            times.forEach { minutes ->
-                DropdownMenuItem(
-                    text = { Text(formatMinutes(minutes, locale)) },
-                    onClick = {
-                        expanded = false
-                        onPick(minutes)
-                    },
-                )
-            }
-        }
-    }
-}
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun TimeSelect(
@@ -312,7 +276,7 @@ private fun TimeSelect(
             singleLine = true,
         )
         ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            menuTimes(value).forEach { minutes ->
+            otherTimes(value).forEach { minutes ->
                 DropdownMenuItem(
                     text = { Text(formatMinutes(minutes, locale)) },
                     onClick = {
@@ -339,20 +303,7 @@ private fun askedMinutes(
         }
     }
 
-/** Onboarding's time chips, with the learner's own times among them. */
-internal fun timeChoices(vararg times: Int?): List<Int> = (MINUTE_OPTIONS + times.filterNotNull()).distinct().sorted()
-
-/** Every time the menu offers, with the one shown among them. */
-internal fun menuTimes(shown: Int?): List<Int> = if (shown == null || shown in DAILY_TIMES) DAILY_TIMES else (DAILY_TIMES + shown).sorted()
-
-private val MINUTE_OPTIONS = listOf(15, 30, 45, 60, 90, 120, 180, 240)
-
-/** Quarter hours to four hours, then half hours to a whole day. */
-private val DAILY_TIMES = (15..240 step 15) + (270..MAX_DAILY_MINUTES step 30)
-
-private const val MAX_DAILY_MINUTES = 1440
 private const val DAYS_PER_WEEK = 7
 private val DAY_GAP = 4.dp
 private val DAY_PADDING = 4.dp
 private const val DISABLED_ALPHA = 0.38f
-private val MENU_ITEM_HEIGHT = 48.dp

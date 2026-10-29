@@ -347,7 +347,6 @@
   "plan_nothing_planned_until_resume": "08610766e527cd4b25bcbdf0a5d7131d4d3e4af1b0348075b54e72814f5aea08",
   "plan_options": "f3cee82c74a292395099a5d18d2a09eade63ced448764e4e972d49c2e215faec",
   "plan_other_options": "3202ecd49bcf0ff9637fdd370f176f20fecea3d1e85223560eb5ce93ffb8008a",
-  "plan_other_time": "043df4cf1de2dcf7ea4aa68e43129c6e077e7d88d94600d5e07dd027a15efcf9",
   "plan_pace": "f78f648abe914c866f8ec47d184e70df921dcbad17eea9cd49cd9a35328575e1",
   "plan_pace_challenges_left": "230222e20941c13b2622397dcacc6a09c8a2967228e142676ef3f7de07df06e1",
   "plan_pace_days": "adf33b1f44f9f273fc445f1ad55c21d793118360e2e62cf9b4cba4943fbc4fd1",
@@ -1180,7 +1179,6 @@
     <string name="plan_pick_date">Escolha uma data</string>
     <string name="plan_save">Salvar</string>
     <string name="plan_use_this_date">Usar esta data</string>
-    <string name="plan_other_time">Outro tempo…</string>
     <string name="plan_weekend_time_differs">Tempo diferente nos fins de semana</string>
     <string name="plan_time_on_weekends">Tempo nos fins de semana</string>
     <string name="plan_exam_choice_left_out">Escolha qual prova você vai fazer. Até escolher, seu plano deixa %1$s de fora.</string>
