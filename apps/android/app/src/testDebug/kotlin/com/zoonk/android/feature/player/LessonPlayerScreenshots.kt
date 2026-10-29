@@ -37,6 +37,7 @@ import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LibraryLessonCompletion
+import com.zoonk.api.models.SpokenAnswerGrade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -96,6 +97,7 @@ class LessonPlayerScreenshots {
             workedExampleStep("worked"),
             checkStep("quiz"),
             typedAnswerStep("why"),
+            spokenStep("say"),
             summaryStep("end"),
         )
 
@@ -151,6 +153,24 @@ class LessonPlayerScreenshots {
                     LessonAction.CheckResolved("why", graded, counts = true),
                 )
             },
+            "spoken-heard" to {
+                val heard =
+                    ApiJson
+                        .decodeFromString(
+                            SpokenAnswerGrade.serializer(),
+                            """
+                            {"attemptId":"00000000-0000-4000-8000-000000000021","explanation":"Say the h softly, almost silent.","isCorrect":false,"score":0.5,
+                             "transcript":"Tengo ambre","words":[{"heard":"Tengo","status":"correct","text":"Tengo"},{"heard":"ambre","status":"different","text":"hambre"}],
+                             "wordsToPractice":[{"audioUrl":null,"heard":"ambre","respelling":"AHM-breh","status":"different","text":"hambre","tip":"The h is silent in Spanish."}]}
+                            """.trimIndent(),
+                        ).toStepResult("Tengo hambre")
+                at(
+                    *toQuiz(),
+                    LessonAction.SkipSteps(listOf("quiz", "why")),
+                    LessonAction.CheckStarted("say"),
+                    LessonAction.CheckResolved("say", heard, counts = true),
+                )
+            },
             "free-limit" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)))) },
             "slow-down" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.SlowDown(30)))) },
             "finish-ready" to { LessonPlayerState.initial(LESSON_ID, emptyList(), now = 0) },
@@ -160,7 +180,7 @@ class LessonPlayerScreenshots {
                     LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right")),
                     LessonAction.CheckResolved("quiz", checkResult(true).toStepResult("Right"), counts = true),
                     LessonAction.Continue,
-                    LessonAction.SkipSteps(listOf("why")),
+                    LessonAction.SkipSteps(listOf("why", "say")),
                     LessonAction.Continue,
                     LessonAction.CompletionSaved(ApiJson.decodeFromString(LibraryLessonCompletion.serializer(), COMPLETION)),
                 )

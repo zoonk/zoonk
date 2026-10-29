@@ -49,6 +49,7 @@
   "player_guest_limit_description": "7dbf29c25b64ff6987f37e33be4e8d62a7e341163b65b9ae47a67c9dc2b1f879",
   "player_guest_limit_title": "1b090d0a188ef7e2cda1cf9ba3a9aec86705f283dbaa70692843db8689075ea1",
   "player_guest_save_note": "3119683036c53a2fce0b5938af453b10f2cd0dffab4b8b21505093457884c63c",
+  "player_how_to_say": "1cca53e684baa51831de118afda363706e5e903a05cc41b34f7897402113be2a",
   "player_hyperdrive_streak": "afe509d604d2ae416e511ca29fc5c9ae6006ccf882f1f54d2f7f3278c80f7b5b",
   "player_in_your_own_words": "4b60b6eb30a812614024f8d680d883919cd4ee00db65d3faaefc582250597be8",
   "player_keep_writing": "4f3bb6df4bacda09f22c79f8582b7e21111ea8966e7e2426bfc81de38bea10cc",
@@ -61,6 +62,7 @@
   "player_lesson_complete": "4b10cdcd36bcdac8adc3c1768f57b2988580986c75d56e4f8b71b011b6cf5c35",
   "player_lesson_of": "e290cb1258fc6d1b298484b991892c3e6b0d3539ba2505ceab28ab07c5d81f34",
   "player_lesson_summary": "35131b3255d956ba4a7069ee4f2083e7b0bd2fca128ec5a77b8fccc689f2e1b8",
+  "player_listen": "344ce00cfaa6d2bfcd3c5585266a33583e4fa5b133f9b7ba8223cdb06e9e0de5",
   "player_microphone_blocked": "1ecd110fae0b3ec5c773354777c5d58a5238d765d6990ce5e449038bb8185106",
   "player_next_lesson": "8e219129fcc6c3abcaf36cc94eab9f574ec949d29ce3912ccd22c1da52b8f07a",
   "player_not_found_description": "9c8f4529af3e9b61ec672e024ad68bb840b17422c485e0318a9905001362bbca",
@@ -107,6 +109,8 @@
   "player_set_aside_title": "af9f3bd4b7b17133f58b00d05794db6151f279d3932b89549f8ef6caccf123d5",
   "player_slow_down_description": "5e29ee2ab3d2adb605ef54a0fb67c51dd868db64836b1d4eb36fa0fb4cb97df3",
   "player_slow_down_title": "8e543cff28110f6aa9b2c43c381faf457857ef34a41a949414abec1c0ff35b86",
+  "player_slowly": "47b323074e9abee3fe38d9cad0ab57b184a4ed33544c82b3d3d7d05210e30cc1",
+  "player_sounds_like": "94dd31b2d8d4ae86894df0acf4b001c3ed16ff9859e3da268894618699d8abae",
   "player_spelled": "929b18b62c9ff7051757fb50607596c0e3385e43e7cd5ff4376bed69347c3856",
   "player_start_failed_description": "4409dd8536161795d0d60382d7160f5c93327e25631111fee83becda7ee4441d",
   "player_start_failed_title": "c5597942b912e85c4d5ff842200c4098dd5dab80293d94630aebf136b8fe66b5",
@@ -125,6 +129,9 @@
   "player_verdict_sample_answer": "4d8519fa60588ecd0f62e1118b6a203b050e783936526319f5854b1f2e31f626",
   "player_verdict_typo": "0976fbd50c8201b4abfd8761c2bae4dbb360cb1ab99d552e5a99650b27c5f3ca",
   "player_verdict_unchecked": "e6cf15f48b25e35fb7ebd9a3d49be29bb3bd641e6108cb20439f8edcd7c8d8cd",
+  "player_what_we_heard": "d2890a04da77110a3fa27aa3fdd4aa463fc09ac5614c7ce5ff42259d10501eb6",
+  "player_word_heard_as": "817b3da68a93d46b9507e595f5ffb07f38a3b192c8d772d4c8a813ea3917f7c1",
+  "player_word_not_heard": "ec2a2369f7b1b098dc2acbf04069ec8db0acd92abb8a9dc9bb2d2244d72723ad",
   "player_worked_example": "4e72beb5a55a7d1fe179ec8c475f4bfc7a76470ba80e9ae4cc253d508cdbd2be",
   "player_worked_example_result": "d859348d095685d5f80815ef2e9c90168f692740b4557936644d3903c6098076",
   "player_worked_example_steps": "628b714bd8c43e9fdd798492e69c504b0374219d3217957536052bbc4bfb4fad",
@@ -245,6 +252,16 @@
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Dilo en su lugar</string>
     <string name="player_microphone_blocked">El micrófono está bloqueado. Escribe tu respuesta.</string>
+    <string name="player_what_we_heard">Lo que hemos oído</string>
+    <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
+    <string name="player_word_not_heard">%1$s (no se ha oído)</string>
+    <!-- Read by screen readers: %1$s is the word asked for, %2$s what the learner said instead. -->
+    <string name="player_word_heard_as">%1$s (se ha oído como %2$s)</string>
+    <string name="player_how_to_say">Cómo se dice %1$s</string>
+    <!-- %1$s spells how the word sounds, such as “AHM-breh”. -->
+    <string name="player_sounds_like">suena como %1$s</string>
+    <string name="player_listen">Escuchar</string>
+    <string name="player_slowly">Despacio</string>
     <string name="player_drawing_picture">Dibujando la imagen…</string>
     <string name="player_not_in_app_title">Esta lección aún no está disponible en la app</string>
     <string name="player_not_in_app_description">Tiene pantallas que la app aún no puede mostrar. Puedes hacerla en zoonk.com.</string>

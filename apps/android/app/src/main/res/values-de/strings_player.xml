@@ -49,6 +49,7 @@
   "player_guest_limit_description": "54601882b82d3042e109b2e2fd708391eb21b0dcdff000ad5686cad4cf71c654",
   "player_guest_limit_title": "2eb0e8626889bd7adcbb5bfcaf089df08f6ee6a5dae84dd0aeb04df6c78ae42f",
   "player_guest_save_note": "01f196a6dea723c7081b57e2342b7a8c2aeed186883da1099d54cc7ffb58c993",
+  "player_how_to_say": "23193f849f17431b1e6e0169bd3b7fe41b80fe599e3853af09d385ddc9bca7c4",
   "player_hyperdrive_streak": "8615779456d7ee9049a3252bee45608010cd4b75a9340abdcad615b337895096",
   "player_in_your_own_words": "68a1d04acb40fe6eda5eb24a8477108851ae6e23dccf3eac6388a08195962f70",
   "player_keep_writing": "d5cda7f30c74206f18a0367808f9d1faa29682593b1f732e53e9f475cdbaebdb",
@@ -61,6 +62,7 @@
   "player_lesson_complete": "b3841051b33296d31928204cce9254bdb8e022d81f591591b759378f7e07cd27",
   "player_lesson_of": "fe70475c2e119fa632dc56cad8fb9c65b09af2e3a5b969e9ac08dc41916015af",
   "player_lesson_summary": "2bc0408f3ecc87033ee6390a98b12f8eed7e56b75e7d2414218539b526952b37",
+  "player_listen": "7a797408f10f7db925cf55836a89b1844f9663758f6a04d19378c20112163cb1",
   "player_microphone_blocked": "3a0bc431cd0f16f8a2382f32152272dd80154bc300b4e6730cf15dbdd15cc17e",
   "player_next_lesson": "a686aba05df320bb7261ba0442876fb13bfc67e3135c6866dbc7ad540ec5318f",
   "player_not_found_description": "7cba90f261337bb5fd3fbea37f7fcc357d2d7e48c0c68932d94e0a3fbb2cba0d",
@@ -107,6 +109,8 @@
   "player_set_aside_title": "f5fa64bb717c5062e79f0fcce8c0d0ae797165ce6f3182f4f772e9e5727a647e",
   "player_slow_down_description": "c87ca347f3291d3591426748c8e43d0597b590cadd23c5bfbb1629d6f75af781",
   "player_slow_down_title": "9f5c4db0742272d16afee29fb5b72496f75b1c0af443cf0494ea7f43fde55c32",
+  "player_slowly": "dc7431bb6951935ed25639b5f62aba4ff68ebcda32c8d3479a93c6f9f521ebf4",
+  "player_sounds_like": "20aea82615eb65c5b885334caac72d8897118d794d0d70ca1c58914ec9fbfbf0",
   "player_spelled": "9e336f77c1eeb07a0599b3498352d073e936723fafca5bef7791bade0153b332",
   "player_start_failed_description": "5475c98c69a4441f92ed476a95107c194267a23ebbfc7838b99473b158de65a1",
   "player_start_failed_title": "04e1204b6a48934b36c88d0da7c4d214b806da03d751cbb9601ec6e7dc081516",
@@ -125,6 +129,9 @@
   "player_verdict_sample_answer": "9e22c28bbf0d30d7222331852baecf109b18cf12eb2e8625e074bd755181baf6",
   "player_verdict_typo": "aa344a50eaa3cdd7271dc7f8f83bc4b1ff0ff3b5ece8f287ced0a684b3313da2",
   "player_verdict_unchecked": "258d7411fcafce0e337ca5cc837c527f97497eaee64ecb7610868eab54032f1b",
+  "player_what_we_heard": "1bde2e210378388a790f0fb92327d2bd07b8801841de8ee370b17c2f00d9fe21",
+  "player_word_heard_as": "23302332a47276142a07850f535496b9d1988758ff858b1a9d95f4e407bdb631",
+  "player_word_not_heard": "fcd2450819caf6541dfb04275dfcad33a3d351173fd9947ab2e683fee6396691",
   "player_worked_example": "9231138926d5acadff1d5106c42f59d84575f12839a40f9a483e2ee48ee5cb17",
   "player_worked_example_result": "94b6ce2306ea7891f50de5b2a758839897c7bf76819c2a1352cd04a617f5b359",
   "player_worked_example_steps": "ccfbc5a0f9245c1e4a0cc98432ebf1f72073fe7273b8658ce6d60cb7f090d441",
@@ -242,6 +249,16 @@
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Sag es stattdessen</string>
     <string name="player_microphone_blocked">Das Mikrofon ist gesperrt. Gib stattdessen deine Antwort ein.</string>
+    <string name="player_what_we_heard">Was wir gehört haben</string>
+    <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
+    <string name="player_word_not_heard">%1$s (nicht gehört)</string>
+    <!-- Read by screen readers: %1$s is the word asked for, %2$s what the learner said instead. -->
+    <string name="player_word_heard_as">%1$s (gehört als %2$s)</string>
+    <string name="player_how_to_say">So sprichst du %1$s aus</string>
+    <!-- %1$s spells how the word sounds, such as “AHM-breh”. -->
+    <string name="player_sounds_like">klingt wie %1$s</string>
+    <string name="player_listen">Anhören</string>
+    <string name="player_slowly">Langsam</string>
     <string name="player_drawing_picture">Wir zeichnen das Bild…</string>
     <string name="player_not_in_app_title">Diese Lektion gibt es noch nicht in der App</string>
     <string name="player_not_in_app_description">Sie enthält Seiten, die die App noch nicht anzeigen kann. Du kannst sie auf zoonk.com bearbeiten.</string>

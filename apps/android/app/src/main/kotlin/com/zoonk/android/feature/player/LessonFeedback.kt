@@ -24,6 +24,7 @@ import com.zoonk.android.feature.player.engine.isLanguageStep
 import com.zoonk.android.feature.player.model.AnswerCorrection
 import com.zoonk.android.feature.player.model.AnswerKeyPoint
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.feature.player.steps.count
@@ -112,6 +113,9 @@ fun LessonStepResultView(
         if (showsCorrectAnswer) LabeledAnswer(stringResource(R.string.player_correct_answer_label), result.correctAnswer.orEmpty())
 
         SampleAnswer(result)
+
+        val spoken = step.content as? StepContent.SpokenAnswer
+        if (result.heard != null && spoken != null) SpokenWords(result.heard, spoken.content.language)
 
         if (keyPoints != null) {
             KeyPoints(keyPoints)

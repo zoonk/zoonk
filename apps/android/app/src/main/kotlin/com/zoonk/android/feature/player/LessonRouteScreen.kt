@@ -166,7 +166,7 @@ private fun PlayingLesson(
 
     LaunchedEffect(load.lesson.id, signedIn) { viewModel.open(load.lesson) }
 
-    CompositionLocalProvider(LocalPrivatePictures provides PrivatePictures(app.images, signedIn)) {
+    CompositionLocalProvider(LocalPrivatePictures provides PrivatePictures(app.images, signedIn), LocalLessonSpeech provides app.speech) {
         LessonPlayer(load.lesson, state, ending, viewModel, exits, navigator)
         LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
     }

@@ -112,6 +112,16 @@
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
     <string name="player_say_it_instead">Say it instead</string>
     <string name="player_microphone_blocked">The microphone is blocked. Type your answer instead.</string>
+    <string name="player_what_we_heard">What we heard</string>
+    <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
+    <string name="player_word_not_heard">%1$s (not heard)</string>
+    <!-- Read by screen readers: %1$s is the word asked for, %2$s what the learner said instead. -->
+    <string name="player_word_heard_as">%1$s (heard as %2$s)</string>
+    <string name="player_how_to_say">How to say %1$s</string>
+    <!-- %1$s spells how the word sounds, such as “AHM-breh”. -->
+    <string name="player_sounds_like">sounds like %1$s</string>
+    <string name="player_listen">Listen</string>
+    <string name="player_slowly">Slowly</string>
     <string name="player_drawing_picture">Drawing the picture…</string>
     <string name="player_not_in_app_title">This lesson isn\'t in the app yet</string>
     <string name="player_not_in_app_description">It has screens the app can\'t show yet. You can do it on zoonk.com.</string>
