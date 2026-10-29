@@ -61,11 +61,4 @@ class VisitorWelcomeTest {
 
         assertEquals(AppRoute.StartGoal(goal = "Understand quantum physics"), navigator.currentRoute)
     }
-
-    @Test
-    fun logInOpensSignIn() {
-        rule.onNodeWithText("Log in").performScrollTo().performClick()
-
-        assertEquals(AppRoute.Login, navigator.currentRoute)
-    }
 }

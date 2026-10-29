@@ -9,9 +9,11 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.SavedStateHandleSaveableApi
 import androidx.lifecycle.viewmodel.compose.saveable
 import com.zoonk.android.data.AppleCallback
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.SignInResult
 import kotlinx.coroutines.launch
+import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 
 enum class SignInWork { Google, Apple, SendCode, CheckCode, Resend }
@@ -110,7 +112,11 @@ class SignInViewModel(
         }
     }
 
+    /** The session Google's sheet opened over: its answer signs in only while that's still current. */
+    private var googleStartedFrom: AuthenticatedSession? = null
+
     fun startGoogle() {
+        googleStartedFrom = sessions.current
         work = SignInWork.Google
         failure = null
         appleExpired = false
@@ -128,6 +134,10 @@ class SignInViewModel(
             }
 
             is GoogleIdToken.Received -> {
+                if (sessions.current != googleStartedFrom) {
+                    work = null
+                    return
+                }
                 viewModelScope.launch {
                     try {
                         show(account.signInWithGoogle(token.idToken))
@@ -147,9 +157,15 @@ class SignInViewModel(
         return try {
             sessions.startAppleSignIn()
         } catch (e: CancellationException) {
+            work = null
             throw e
         } catch (e: IllegalStateException) {
+            // Restoring or unavailable: no session to start from yet.
             work = null
+            null
+        } catch (e: IOException) {
+            work = null
+            failure = AccountFailure.SignIn
             null
         }
     }
@@ -166,7 +182,13 @@ class SignInViewModel(
         }
         viewModelScope.launch {
             try {
-                val result = sessions.completeAppleSignIn(callback)
+                val result =
+                    try {
+                        sessions.completeAppleSignIn(callback)
+                    } catch (e: IOException) {
+                        failure = AccountFailure.SignIn
+                        return@launch
+                    }
                 when {
                     callback.error == APPLE_USER_CANCELED -> {}
 

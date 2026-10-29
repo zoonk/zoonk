@@ -54,7 +54,6 @@
   "account_username_rules": "c9fc817bd7610d33b0ffa85276f25f8295951b13a467df301f20c63e91a5bb92",
   "account_username_taken": "70c59a8dde53bbf197070d4a4117aa5b5697f6f758dbf2b82ed96decb5e822b0",
   "account_welcome_description": "80cae33ef80610150268e552356de6e8c76a8fbb663049f5a0b6253079a3581d",
-  "account_welcome_have_account": "3561363e76f9e909ba4facffe3e7aa646ae6387f55524b8f1ae1e54ecf9e4317",
   "account_welcome_note": "9f395a9532d05a2babaf597eae6544179f5c2baef57054344e7ed2945a74e5e1",
   "account_welcome_title": "4a6e49520d319ee75457ad6251de852173f0c82f625e9ff1c5035d96e5558e45"
 }
@@ -63,7 +62,6 @@
     <string name="account_welcome_title">Jeden Tag wissen, was du bis zum großen Tag lernen solltest.</string>
     <string name="account_welcome_description">Nenn Zoonk dein Ziel und deinen Termin. Dein Plan passt zu deinem Zeitplan und wird angepasst, wenn du einen Tag verpasst.</string>
     <string name="account_welcome_note">Starte kostenlos, ganz ohne Konto.</string>
-    <string name="account_welcome_have_account">Hast du schon ein Konto?</string>
     <string name="account_terms">Nutzungsbedingungen</string>
     <string name="account_privacy">Datenschutzerklärung</string>
     <string name="account_sign_in_title">Anmelden oder Konto erstellen</string>

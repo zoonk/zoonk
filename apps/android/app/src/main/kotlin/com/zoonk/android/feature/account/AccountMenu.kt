@@ -15,10 +15,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -59,13 +59,17 @@ fun AccountMenu(
     val user = signedIn?.takeUnless { it.isGuest }?.account?.user
     val isPlus = summary.value?.tier == LearnerSummary.Tier.PLUS
     var isOpen by rememberSaveable { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
     val snackbars = LocalSnackbarHostState.current
     val signOutFailed = stringResource(R.string.account_sign_out_failed)
 
     fun go(route: AppRoute) {
         isOpen = false
         navigator.open(route)
+    }
+
+    // Main's frame offers a visitor Log in beside the menu.
+    if (signedIn == null) {
+        TextButton(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
     }
 
     Box {
@@ -103,7 +107,8 @@ fun AccountMenu(
                 user != null -> {
                     MenuItem(stringResource(R.string.account_menu_log_out), R.drawable.ic_logout) {
                         isOpen = false
-                        scope.launch {
+                        // The app's scope: closing the menu or turning the screen mustn't cancel it halfway.
+                        app.scope.launch {
                             if (app.sessions.signOut() is SignOutResult.Failed) snackbars.showSnackbar(signOutFailed)
                         }
                     }
@@ -126,8 +131,10 @@ fun AccountMenu(
 private fun Identity(user: MeUser) {
     Row(
         modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        AccountAvatar(user, size = 32.dp)
         Column(Modifier.widthIn(max = 280.dp)) {
             Text(
                 text = user.name.ifBlank { user.email },

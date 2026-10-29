@@ -54,7 +54,6 @@
   "account_username_rules": "336666ad7a898844d9052eb3397c3a080a13e269398d278896c19350ac7314d8",
   "account_username_taken": "c9396008475a27be2e961af8ac200061c5fc33e769e37e4e44707d508ca7a42f",
   "account_welcome_description": "05aa88f4e92afb3faad4548c5b82c3b187c8764c8b402db610362e361dac9351",
-  "account_welcome_have_account": "6d2516e509a3ab9b297dd244593542bf9fe2d02c666ad3bfd192b18ff07dfdd1",
   "account_welcome_note": "7b6ddd3f243fd5d573156f2c1c92b2b4b27be8e33bb68ede67fdd4a45842bcbc",
   "account_welcome_title": "094a18dde8385322bbf2a61965b61e35ee0dbc9de411b937b25b4dc74c3b176b"
 }
@@ -63,7 +62,6 @@
     <string name="account_welcome_title">Prepárate cada día hasta la fecha importante.</string>
     <string name="account_welcome_description">Cuéntale a Zoonk cuál es tu objetivo y para cuándo. Tu plan se adapta a tu horario y se ajusta si algún día no puedes estudiar.</string>
     <string name="account_welcome_note">Empieza gratis, sin cuenta.</string>
-    <string name="account_welcome_have_account">¿Ya tienes una cuenta?</string>
     <string name="account_terms">Términos del servicio</string>
     <string name="account_privacy">Política de privacidad</string>
     <string name="account_sign_in_title">Inicia sesión o crea una cuenta</string>

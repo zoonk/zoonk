@@ -29,10 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
@@ -83,9 +85,9 @@ fun GoalBox(
     val line = if (isAskingForWords) stringResource(R.string.goal_box_write_first) else note
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        // At large font sizes "I want to" beside the words would leave them a narrow strip.
-        val labelAbove = LocalDensity.current.fontScale > LARGE_FONT_SCALE
-        if (labelAbove) Text(stringResource(R.string.goal_box_label), style = MaterialTheme.typography.bodyLarge)
+        // Above the box rather than beside it, where a long goal or a large font wrapped in a narrow strip.
+        val label = stringResource(R.string.goal_box_label)
+        Text(label, Modifier.clearAndSetSemantics {}, style = MaterialTheme.typography.bodyLarge)
 
         OutlinedTextField(
             value = value,
@@ -101,9 +103,9 @@ fun GoalBox(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .focusRequester(focusRequester),
+                    .focusRequester(focusRequester)
+                    .semantics { contentDescription = label },
             readOnly = isSubmitting,
-            prefix = if (labelAbove) null else ({ Text(stringResource(R.string.goal_box_label), Modifier.padding(end = 4.dp)) }),
             placeholder = { Text(stringResource(R.string.goal_box_placeholder, spokenLanguage(currentLocale()))) },
             supportingText = line?.let { { Text(it) } },
             isError = isAskingForWords,
@@ -200,4 +202,3 @@ private fun spokenLanguage(locale: Locale): String {
 }
 
 private const val QUICK_EXPLANATION_MINUTES = 5
-private const val LARGE_FONT_SCALE = 1.5f

@@ -72,6 +72,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 /**
  * Main's central login as a task: Google, Apple and an email code, then profile setup for a new
@@ -138,7 +139,17 @@ internal fun Methods(
             enabled = work == null,
         ) {
             signIn.startGoogle()
-            scope.launch { signIn.finishGoogle(requestGoogleIdToken(context, BuildConfig.GOOGLE_SERVER_CLIENT_ID)) }
+            scope.launch {
+                // Recreation cancels the sheet with this screen; the view model outlives it, so it's told.
+                val token =
+                    try {
+                        requestGoogleIdToken(context, BuildConfig.GOOGLE_SERVER_CLIENT_ID)
+                    } catch (e: CancellationException) {
+                        signIn.finishGoogle(GoogleIdToken.Canceled)
+                        throw e
+                    }
+                signIn.finishGoogle(token)
+            }
         }
     }
 
@@ -329,6 +340,7 @@ private fun ProviderButton(
         onClick = onClick,
         enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
     ) {
         if (isWorking) {

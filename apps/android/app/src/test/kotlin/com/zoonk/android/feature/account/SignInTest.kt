@@ -163,6 +163,7 @@ class SignInTest {
             assertTrue((sessions.state.value as SessionState.SignedIn).isGuest)
 
             val signIn = SignInViewModel(account, sessions, SavedStateHandle())
+            signIn.startGoogle()
             signIn.finishGoogle(GoogleIdToken.Received("google-id-token"))
             advanceUntilIdle()
 
@@ -245,6 +246,43 @@ class SignInTest {
 
             assertNull(signIn.work)
             assertNull(signIn.failure)
+        }
+
+    @Test
+    fun aGoogleAnswerArrivingAfterAnotherSignInChangesNothing() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            val signIn = SignInViewModel(account, sessions, SavedStateHandle())
+
+            signIn.startGoogle()
+            account.startAsGuest()
+            signIn.finishGoogle(GoogleIdToken.Received("google-id-token"))
+            advanceUntilIdle()
+
+            assertTrue(api.signInBearers.isEmpty())
+            assertTrue((sessions.state.value as SessionState.SignedIn).isGuest)
+            assertNull(signIn.work)
+        }
+
+    @Test
+    fun aProfileBeingSavedCantBeEdited() =
+        runTest {
+            val (sessions, account) = stores()
+            sessions.restore()
+            account.signInWithEmailCode("bia@zoonk.test", "123456")
+            val form = ProfileFormViewModel(account, (sessions.state.value as SessionState.SignedIn).account.user, SavedStateHandle())
+            advanceUntilIdle()
+
+            form.onNameChange("Bia")
+            form.save()
+            form.onUsernameChange("someone_else")
+            form.onNameChange("Other")
+            advanceUntilIdle()
+
+            assertEquals(listOf("Bia" to "ana_learner"), api.saved)
+            assertEquals("ana_learner", form.username)
+            assertEquals("Bia", form.name)
         }
 
     @Test

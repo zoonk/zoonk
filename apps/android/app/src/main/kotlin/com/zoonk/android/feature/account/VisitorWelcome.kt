@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -87,17 +86,6 @@ fun VisitorWelcome(
             )
 
             GoalExamples(examples = rememberGoalExamples(), onPick = start)
-
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = stringResource(R.string.account_welcome_have_account),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                OutlinedButton(onClick = { navigator.open(AppRoute.Login) }) {
-                    Text(stringResource(R.string.gate_log_in))
-                }
-            }
 
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(onClick = { navigator.open(AppRoute.Terms) }) { Text(stringResource(R.string.account_terms)) }

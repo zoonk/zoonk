@@ -63,6 +63,7 @@ fun ProfileFields(
             label = { Text(stringResource(R.string.account_name)) },
             supportingText = if (isSetup) null else ({ Text(stringResource(R.string.account_name_description)) }),
             singleLine = true,
+            readOnly = form.isSaving,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
         )
 
@@ -115,6 +116,7 @@ private fun UsernameField(form: ProfileFormViewModel) {
         },
         isError = isWrong,
         singleLine = true,
+        readOnly = form.isSaving,
         keyboardOptions =
             KeyboardOptions(
                 capitalization = KeyboardCapitalization.None,

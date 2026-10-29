@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -59,7 +58,6 @@ fun SettingsScreen(
     val memory by app.memory.memory.collectShown()
     val signedIn = session as? SessionState.SignedIn
     val account = signedIn?.takeUnless { it.isGuest }?.account?.user
-    val scope = rememberCoroutineScope()
     val snackbars = LocalSnackbarHostState.current
     val signOutFailed = stringResource(R.string.account_sign_out_failed)
     val open = { route: AppRoute -> navigator.openSettingsPage(route) }
@@ -151,7 +149,7 @@ fun SettingsScreen(
                             colors = ListItemDefaults.colors(headlineColor = MaterialTheme.colorScheme.error),
                             modifier =
                                 Modifier.clickable {
-                                    scope.launch {
+                                    app.scope.launch {
                                         when (app.sessions.signOut()) {
                                             SignOutResult.SignedOut -> navigator.closeSection()
                                             is SignOutResult.Failed -> snackbars.showSnackbar(signOutFailed)

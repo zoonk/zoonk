@@ -63,6 +63,7 @@ class ProfileFormViewModel(
     }
 
     fun onNameChange(value: String) {
+        if (isSaving) return
         name = value
         failure = null
         isSaved = false
@@ -70,7 +71,7 @@ class ProfileFormViewModel(
 
     fun onUsernameChange(value: String) {
         val normalized = value.trim().lowercase()
-        if (normalized == username) return
+        if (isSaving || normalized == username) return
         username = normalized
         failure = null
         isSaved = false
