@@ -1,1 +1,19 @@
-{"behind":null,"canApply":false,"canUndo":false,"createdAt":"2026-10-28T12:00:00.000Z","days":null,"effect":null,"examDocument":"guide","id":"5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00","kind":"x","lessonsSkipped":0,"officialDate":null,"operations":[],"reason":null,"seen":false,"source":"x","status":"proposed","todaySession":null}
+{
+  "behind": null,
+  "canApply": false,
+  "canUndo": false,
+  "createdAt": "2026-10-28T12:00:00.000Z",
+  "days": null,
+  "effect": null,
+  "examDocument": "guide",
+  "id": "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00",
+  "kind": "x",
+  "lessonsSkipped": 0,
+  "officialDate": null,
+  "operations": [],
+  "reason": null,
+  "seen": false,
+  "source": "x",
+  "status": "proposed",
+  "todaySession": null
+}

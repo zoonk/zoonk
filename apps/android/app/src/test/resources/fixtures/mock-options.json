@@ -1,1 +1,18 @@
-{"access":"open","examDocument":"guide","examName":"x","goalId":"5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00","lastMock":null,"options":[],"placement":null,"running":null,"sizeSource":{"formats":null,"material":false,"pastEdition":null,"questions":"notice","subjects":null,"time":"notice"}}
+{
+  "access": "open",
+  "examDocument": "guide",
+  "examName": "x",
+  "goalId": "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00",
+  "lastMock": null,
+  "options": [],
+  "placement": null,
+  "running": null,
+  "sizeSource": {
+    "formats": null,
+    "material": false,
+    "pastEdition": null,
+    "questions": "notice",
+    "subjects": null,
+    "time": "notice"
+  }
+}
