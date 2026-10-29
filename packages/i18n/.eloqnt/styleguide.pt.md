@@ -23,6 +23,7 @@
 - “start a goal”: “começar uma meta”
 - “session” (study): “sessão”; expired sign-in session: “Sua sessão expirou”, not “Sua sessão terminou”
 - “check” (an answer): “conferir”; “grade” (an essay) and “fix” (a mistake): “corrigir”
+- “say again” (words in pronunciation practice): “repetir”, as in “Repita 2 palavras”
 - “write” (Zoonk generating content): “criar”; learner writing: “escrever”
 - “share” (personal facts): “contar”
 - “questions” (counts): “perguntas”; an exam item being discussed: “questão”
