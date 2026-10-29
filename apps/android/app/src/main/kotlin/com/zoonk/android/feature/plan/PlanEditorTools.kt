@@ -2,6 +2,7 @@ package com.zoonk.android.feature.plan
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -29,19 +30,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.api.models.PlanTool
+import java.util.UUID
 
 /** What the learner answers for one or more of the plan's tools; [system] is the device a setup is for. */
 data class ToolAnswer(
@@ -229,12 +231,27 @@ private fun NoToolsPath(
     tools: List<PlanTool>,
     edits: PlanEdits,
 ) {
-    var chose by remember { mutableStateOf(false) }
+    var asked by remember { mutableStateOf(false) }
+    val opening = remember { UUID.randomUUID() }
+    val note = remember { FocusRequester() }
+    val link = remember { FocusRequester() }
+    val withoutTools = tools.all { it.choice == PlanTool.Choice.NONE }
+    val failed = edits.sheetFailed(PlanPart.Tools, opening)
 
-    if (tools.all { it.choice == PlanTool.Choice.NONE }) {
+    LaunchedEffect(withoutTools, failed) {
+        if (!asked) return@LaunchedEffect
+        if (withoutTools) {
+            note.requestFocus()
+        } else if (failed) {
+            asked = false
+            link.requestFocus()
+        }
+    }
+
+    if (withoutTools) {
         Text(
             text = stringResource(R.string.plan_tools_without),
-            modifier = Modifier.padding(top = 4.dp).semantics { liveRegion = LiveRegionMode.Polite },
+            modifier = Modifier.padding(top = 4.dp).focusRequester(note).focusable(),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -242,15 +259,16 @@ private fun NoToolsPath(
     }
     TextButton(
         onClick = {
-            chose = true
-            edits.chooseTools(ToolAnswer(tools.map { it.name }, PlanTool.Choice.NONE)) {}
+            asked = true
+            edits.chooseTools(ToolAnswer(tools.map { it.name }, PlanTool.Choice.NONE)) { edits.answerSheet(opening, it) }
         },
+        modifier = Modifier.focusRequester(link),
         shape = MaterialTheme.shapes.small,
         contentPadding = FLUSH_START,
     ) {
         Text(stringResource(R.string.plan_tools_none))
     }
-    if (chose && edits.hasFailed(PlanPart.Tools)) SaveFailedText()
+    if (failed) SaveFailedText()
 }
 
 /** Main's `ToolChoiceForm`: it closes once its answer saves. */

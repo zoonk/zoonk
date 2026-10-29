@@ -111,6 +111,7 @@ private fun fullCourseRule(
 internal fun FullCourseSwitch(
     page: PlanPageState,
     edits: PlanEdits,
+    switchModifier: Modifier = Modifier,
 ) {
     val course = fullCourse(page)?.takeIf { it.isExam } ?: return
     val on =
@@ -124,7 +125,7 @@ internal fun FullCourseSwitch(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
             modifier =
-                Modifier
+                switchModifier
                     .fillMaxWidth()
                     .heightIn(min = 48.dp)
                     .toggleable(

@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -30,6 +31,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -307,12 +310,18 @@ private fun BasesAdvice(
     onAsk: () -> Unit,
 ) {
     val asking = advice == Advice.Pending
+    val answer = remember { FocusRequester() }
+
+    LaunchedEffect(advice) { if (advice is Advice.Answered) answer.requestFocus() }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         when (advice) {
             is Advice.Answered -> {
                 val text = adviceText(advice, isExam)
-                Note(if (followed) "$text ${stringResource(R.string.plan_recommendation_followed)}" else text, live = true)
+                Note(
+                    text = if (followed) "$text ${stringResource(R.string.plan_recommendation_followed)}" else text,
+                    modifier = Modifier.focusRequester(answer).focusable(),
+                )
             }
 
             Advice.Building -> {
@@ -380,11 +389,12 @@ private fun PreviewOutcome(
 @Composable
 private fun Note(
     text: String,
+    modifier: Modifier = Modifier,
     live: Boolean = false,
 ) {
     Text(
         text = text,
-        modifier = if (live) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier,
+        modifier = if (live) modifier.semantics { liveRegion = LiveRegionMode.Polite } else modifier,
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )

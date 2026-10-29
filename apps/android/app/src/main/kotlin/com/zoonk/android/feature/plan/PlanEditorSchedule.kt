@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -84,6 +85,7 @@ private fun DailyMinutes(
     val shown = askedMinutes(edits.asked(PlanPart.Schedule), shape.weekdayDays) ?: shape.weekdays
     val locale = currentLocale()
     val answer = (edits.timeToCover.forPlan(page.plan) as? TimeToCoverState.Answered)?.time?.answer()
+    val focus = remember { CoverageFocus() }
 
     fun setMinutes(minutes: Int) {
         if (pending || minutes == shown) return
@@ -100,14 +102,15 @@ private fun DailyMinutes(
                     formatMinutes(minutes, locale),
                     selected = minutes == shown,
                     onClick = { setMinutes(minutes) },
+                    modifier = focus.timeChip(minutes, offered = answer?.offeredMinutes, picked = shown),
                     role = Role.RadioButton,
                     description = answer?.let { timeNote(it, minutes) },
                 )
             }
             OtherTime(shown, onPick = ::setMinutes)
         }
-        DailyCoverage(page, edits)
-        FullCourseSwitch(page, edits)
+        DailyCoverage(page, edits, focus)
+        FullCourseSwitch(page, edits, Modifier.focusRequester(focus.studyEverything))
     }
 }
 

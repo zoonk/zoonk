@@ -2,7 +2,13 @@ package com.zoonk.android.feature.plan
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -28,24 +34,38 @@ class PlanCoverageTest {
     private var finds = 0
     private val opened = mutableListOf<String>()
 
+    private var shownFound by mutableStateOf<TimeToCoverState>(TimeToCoverState.Idle)
+
+    /** [finding] is what a find answers; [saved] what a change does. */
     private fun show(
         plan: Plan = coveragePlan(),
         kind: String = "learn",
         pending: Set<PlanPart> = emptySet(),
         found: TimeToCoverState = TimeToCoverState.Idle,
+        finding: TimeToCoverState? = null,
+        saved: PlanChangeResult? = null,
     ) {
         val summary = learnerSummary(kind = kind)
         val page = PlanPageState(summary.goals.first(), plan, summary)
-        val edits =
-            PlanEdits(
-                pending = pending,
-                change = { part, operations, _: (PlanChangeResult?) -> Unit -> changes += part to operations },
-                timeToCover = found,
-                findTimeToCover = { _, _ -> finds++ },
-                chooseFocus = { opened += "focus" },
-                studyEverything = { opened += "everything" },
-            )
-        compose.setContent { ZoonkTheme { Column { PlanEditorBody(page, edits) } } }
+        shownFound = found
+        compose.setContent {
+            val edits =
+                PlanEdits(
+                    pending = pending,
+                    change = { part, operations, answered ->
+                        changes += part to operations
+                        saved?.let(answered)
+                    },
+                    timeToCover = shownFound,
+                    findTimeToCover = { _, _ ->
+                        finds++
+                        finding?.let { shownFound = it }
+                    },
+                    chooseFocus = { opened += "focus" },
+                    studyEverything = { opened += "everything" },
+                )
+            ZoonkTheme { Column { PlanEditorBody(page, edits) } }
+        }
     }
 
     private fun answered(
@@ -143,5 +163,35 @@ class PlanCoverageTest {
                 ),
         )
         compose.onNodeWithText("Covers your whole goal.").assertIsDisplayed()
+    }
+
+    @Test
+    fun aTimeFoundOnTheLearnersTapTakesFocusToItsChip() {
+        show(finding = answered(time = timeToCover(recommended = 75)))
+
+        compose.onNodeWithText("Find the time that covers everything").performClick()
+
+        compose.onNode(hasText("Covers everything", substring = true)).assertIsFocused()
+    }
+
+    @Test
+    fun aDateFoundOnTheLearnersTapTakesFocusToMoveDate() {
+        show(finding = answered(time = timeToCover(recommended = null, fittingDate = "2027-03-15")))
+
+        compose.onNodeWithText("Find the time that covers everything").performClick()
+
+        compose.onNodeWithText("Move your date to March 15, 2027").assertIsFocused()
+    }
+
+    @Test
+    fun aMovedDateTakesFocusToTheTimePicked() {
+        show(
+            found = answered(time = timeToCover(recommended = null, fittingDate = "2027-03-15")),
+            saved = PlanChangeResult(change = null, status = PlanChangeResult.Status.APPLIED),
+        )
+
+        compose.onNodeWithText("Move your date to March 15, 2027").performClick()
+
+        compose.onNode(isSelected() and hasText("20\u00A0min", substring = true)).assertIsFocused()
     }
 }

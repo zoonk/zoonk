@@ -12,6 +12,7 @@ import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
 import androidx.compose.ui.test.assertIsSelected
@@ -87,6 +88,7 @@ class PlanEditorTest {
                     chooseTools = { answer, answered ->
                         toolAnswers += answer
                         toolAnswered += answered
+                        asked = asked + (PlanPart.Tools to listOf(answer.operation))
                     },
                     preview = { preview },
                     adviseOnBases = advise,
@@ -242,6 +244,7 @@ class PlanEditorTest {
             .onNodeWithText(
                 "We recommend the essentials, so what builds on them makes sense. Your plan already follows it.",
             ).assertIsDisplayed()
+            .assertIsFocused()
         compose.onNodeWithText("Recommended").assertIsDisplayed()
     }
 
@@ -265,6 +268,7 @@ class PlanEditorTest {
         compose.onNodeWithText("No tools? You can do it all with examples.").performScrollTo().performClick()
 
         assertEquals(listOf(ToolAnswer(listOf("Python", "Spreadsheet (Google Sheets or Excel)"), PlanTool.Choice.NONE)), toolAnswers)
+        compose.onNodeWithText("You won't practice on your own computer. Lessons use examples and simulations instead.").assertIsFocused()
     }
 
     @Test

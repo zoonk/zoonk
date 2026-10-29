@@ -17,11 +17,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -38,6 +42,7 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanFeasibility
+import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 
@@ -129,6 +134,7 @@ internal fun timeNote(
 internal fun DailyCoverage(
     page: PlanPageState,
     edits: PlanEdits,
+    focus: CoverageFocus,
 ) {
     val plan = page.plan
     if (plan.feasibility?.deadline == null) return
@@ -156,12 +162,12 @@ internal fun DailyCoverage(
                 style = MaterialTheme.typography.bodyMedium,
                 color = muted,
             )
-            FindLine(page, edits, canFind = !timeEnough(plan))
+            FindLine(page, edits, canFind = !timeEnough(plan), focus)
             val canMove = canMoveDate(page)
             val canFocus = canChooseFocus(plan)
             if (canMove || canFocus) {
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    if (canMove) MoveDateSwitch(page, edits)
+                    if (canMove) MoveDateSwitch(page, edits, focus)
                     if (canFocus) ChooseFocusAction(edits.chooseFocus)
                 }
             }
@@ -195,6 +201,7 @@ private fun FindLine(
     page: PlanPageState,
     edits: PlanEdits,
     canFind: Boolean,
+    focus: CoverageFocus,
 ) {
     val search = edits.timeToCover.forPlan(page.plan)
     val time = (search as? TimeToCoverState.Answered)?.time
@@ -208,6 +215,7 @@ private fun FindLine(
     LaunchedEffect(search) {
         if (asked && !pending) {
             asked = false
+            time?.let { focus.afterFound(it, page.isExam) }
             requester.bringIntoView()
         }
     }
@@ -271,6 +279,7 @@ private enum class MoveOutcome { Building, Failed, NoDate }
 internal fun MoveDateSwitch(
     page: PlanPageState,
     edits: PlanEdits,
+    focus: CoverageFocus,
 ) {
     var finding by remember { mutableStateOf(false) }
     var outcome by remember { mutableStateOf<MoveOutcome?>(null) }
@@ -295,11 +304,11 @@ internal fun MoveDateSwitch(
             }
             return
         }
-        edits.change(PlanPart.Schedule, listOf(PlanOp.TargetDate(date))) {}
+        edits.change(PlanPart.Schedule, listOf(PlanOp.TargetDate(date))) { if (it != null) focus.pickedTime.requestFocus() }
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        FilledTonalButton(onClick = ::move) {
+        FilledTonalButton(onClick = ::move, modifier = Modifier.focusRequester(focus.moveDate)) {
             PendingLabel(
                 pending = pending,
                 text =
@@ -333,6 +342,42 @@ private fun ErrorLine(text: String) {
 @Composable
 internal fun ChooseFocusAction(onChoose: () -> Unit) {
     FilledTonalButton(onClick = onChoose) { Text(stringResource(R.string.plan_choose_focus)) }
+}
+
+/**
+ * Main's `findFocusTarget`: where focus goes once the time that covers everything is found or the
+ * date moves, since the control the learner tapped gives way.
+ */
+@Stable
+internal class CoverageFocus {
+    val offeredTime = FocusRequester()
+    val pickedTime = FocusRequester()
+    val moveDate = FocusRequester()
+    val studyEverything = FocusRequester()
+
+    fun timeChip(
+        minutes: Int,
+        offered: Int?,
+        picked: Int,
+    ): Modifier =
+        Modifier
+            .then(if (minutes == offered) Modifier.focusRequester(offeredTime) else Modifier)
+            .then(if (minutes == picked) Modifier.focusRequester(pickedTime) else Modifier)
+
+    /** The time offered, else Move date for a goal, else an exam's Study everything switch, else the time picked. */
+    fun afterFound(
+        time: PlanTimeToCover,
+        isExam: Boolean,
+    ) {
+        val target =
+            when {
+                time.answer().offeredMinutes != null -> offeredTime
+                !isExam && time.fittingDate != null -> moveDate
+                isExam -> studyEverything
+                else -> null
+            }
+        if (target?.requestFocus(FocusDirection.Enter) != true) pickedTime.requestFocus(FocusDirection.Enter)
+    }
 }
 
 /** A button's label with a spinner before it while its work runs, as main's `PendingLabel`. */
