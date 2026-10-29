@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -57,13 +58,14 @@ fun ChapterScreen(
 ) {
     val detail = catalog.course[route.courseId]
     val state by detail.collectShown()
-    val chapterState by catalog.chapter[ChapterInCourse(route.chapterId, route.courseId)].collectShown()
+    val chapter = catalog.chapter[ChapterInCourse(route.chapterId, route.courseId)]
+    val chapterState by chapter.collectShown()
     val place = state.value?.let { placeOf(it, route.chapterId) }
     val shown = if (state is LoadState.Loaded && place == null) LoadState.Failed(ApiError.NotFound) else state
 
     val report = FeedbackTarget("chapter", FeedbackSubmissionContext.ContentKind.CHAPTER, route.chapterId.toUuidOrNull())
 
-    CatalogPage(app, navigator, detail, shown, place?.chapter?.title, report) { value, layout ->
+    CatalogPage(app, navigator, detail, shown, place?.chapter?.title, report, alsoShown = listOf(chapter)) { value, layout ->
         placeOf(value, route.chapterId)?.let { chapterContent(app, navigator, value, it, chapterState.value?.tryLesson, layout) }
     }
 }
@@ -100,9 +102,9 @@ private fun LazyListScope.chapterContent(
             Column(modifier.widthIn(max = COLUMN_WIDTH)) {
                 CourseEyebrow(navigator, detail)
                 Spacer(Modifier.size(8.dp))
-                Text(chapter.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineLarge)
+                Text(chapter.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.size(16.dp))
-                Text(chapter.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleMedium)
+                Text(chapter.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
                 Spacer(Modifier.size(16.dp))
                 PlanLine(startsHere = startChapterId != null)
                 Spacer(Modifier.size(24.dp))
@@ -148,16 +150,22 @@ private fun LazyListScope.chapterContent(
     }
 
     if (hasLesson) {
-        item(key = "lessons", contentType = "lessons") { ChapterLessons(navigator, courseId, place, currentLessonId = null) }
-    }
+        item(key = "lessons", contentType = "lessons") {
+            val lessons = @Composable { modifier: Modifier -> ChapterLessons(navigator, courseId, place, modifier) }
 
-    if (chapter.objectives.isNotEmpty()) {
-        item(key = "objectives", contentType = "objectives") {
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                SectionTitle(stringResource(R.string.catalog_what_you_learn))
-                CheckLines(chapter.objectives)
+            if (layout.beside && chapter.objectives.isNotEmpty()) {
+                Row(horizontalArrangement = Arrangement.spacedBy(64.dp)) {
+                    lessons(Modifier.weight(1f))
+                    ChapterObjectives(chapter.objectives, Modifier.weight(1f))
+                }
+            } else {
+                lessons(Modifier)
             }
         }
+    }
+
+    if (chapter.objectives.isNotEmpty() && !(layout.beside && hasLesson)) {
+        item(key = "objectives", contentType = "objectives") { ChapterObjectives(chapter.objectives) }
     }
 
     item(key = "closing", contentType = "closing") {
@@ -167,7 +175,7 @@ private fun LazyListScope.chapterContent(
             Text(
                 stringResource(if (startChapterId != null) R.string.catalog_chapter_closing else R.string.catalog_closing_start),
                 modifier = Modifier.semantics { heading() },
-                style = MaterialTheme.typography.headlineSmall,
+                style = MaterialTheme.typography.titleMedium,
             )
             Spacer(Modifier.size(8.dp))
             Text(
@@ -178,6 +186,17 @@ private fun LazyListScope.chapterContent(
             Spacer(Modifier.size(24.dp))
             ChapterStart(app, navigator, courseId, startChapterId, hasLesson)
         }
+    }
+}
+
+@Composable
+private fun ChapterObjectives(
+    objectives: List<String>,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        SectionTitle(stringResource(R.string.catalog_what_you_learn))
+        CheckLines(objectives)
     }
 }
 
@@ -213,7 +232,12 @@ internal fun CourseEyebrow(
         )
 
     Row(
-        modifier = Modifier.clickable { navigator.open(AppRoute.CatalogCourse(detail.course.id.toString())) }.padding(vertical = 12.dp),
+        modifier =
+            Modifier
+                .minimumInteractiveComponentSize()
+                .clickable(onClickLabel = stringResource(R.string.catalog_open_course)) {
+                    navigator.open(AppRoute.CatalogCourse(detail.course.id.toString()))
+                },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -240,13 +264,7 @@ private fun ChapterStrip(
         )
     val label = position + SEPARATOR + place.chapter.level.label()
     val stretch = detail.chapters.drop(place.number - 1).take(NEXT_CHAPTERS + 1)
-    val subjectColor =
-        Subject
-            .of(
-                detail.course.categories
-                    .firstOrNull()
-                    ?.value,
-            ).colors.color
+    val ink = MaterialTheme.colorScheme.onSurface
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
         SectionTitle(stringResource(R.string.catalog_chapter_strip))
@@ -258,14 +276,13 @@ private fun ChapterStrip(
                         if (level ==
                             place.chapter.level
                         ) {
-                            MeterPart.Fill.Place
+                            MeterPart.Fill.Solid(ink)
                         } else {
-                            MeterPart.Fill.Solid(subjectColor)
+                            MeterPart.Fill.Track
                         },
                         chapters.size.toFloat(),
                     )
                 },
-            contentDescription = label,
         )
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium.withTabularFigures())
 
@@ -287,7 +304,7 @@ private fun ChapterStrip(
                                         )
                                     }
                                 },
-                            ).padding(vertical = 10.dp),
+                            ).padding(vertical = 14.dp),
                 ) {
                     if (offset < 2) {
                         Text(
@@ -307,72 +324,85 @@ private fun ChapterStrip(
     }
 }
 
-/** Main's `ChapterLessons`: the chapter's lessons in order, each opening its page; [currentLessonId]'s on its tint. */
+/** Main's `ChapterLessons`: the chapter's lessons under their facts ("Chapter 2 of 9 · 4 short lessons · 30 min"). */
 @Composable
 internal fun ChapterLessons(
     navigator: AppNavigator,
     courseId: String,
     place: ChapterPlace,
-    currentLessonId: String?,
     modifier: Modifier = Modifier,
-    title: String = stringResource(R.string.catalog_lessons),
+) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        SectionTitle(stringResource(R.string.catalog_lessons), facts = chapterFacts(place))
+        ChapterLessonRows(navigator, courseId, place, currentLessonId = null)
+    }
+}
+
+@Composable
+internal fun chapterFacts(place: ChapterPlace): String {
+    val locale = currentLocale()
+    val lessons = place.chapter.lessons
+
+    return listOf(
+        stringResource(
+            R.string.catalog_chapter_position,
+            formatNumber(place.number.toDouble(), locale),
+            formatNumber(place.total.toDouble(), locale),
+        ),
+        pluralStringResource(R.plurals.catalog_short_lessons, lessons.size, lessons.size),
+        formatTotalDuration(lessons.sumOf { it.estimatedMinutes }.toDouble(), locale),
+    ).joinToString(SEPARATOR)
+}
+
+/** Main's `ChapterLessonRows`: each lesson opens its page; [currentLessonId]'s is on its tint. */
+@Composable
+internal fun ChapterLessonRows(
+    navigator: AppNavigator,
+    courseId: String,
+    place: ChapterPlace,
+    currentLessonId: String?,
 ) {
     val locale = currentLocale()
     val chapter = place.chapter
-    val minutes = chapter.lessons.sumOf { it.estimatedMinutes }
-    val facts =
-        listOf(
-            stringResource(
-                R.string.catalog_chapter_position,
-                formatNumber(place.number.toDouble(), locale),
-                formatNumber(place.total.toDouble(), locale),
-            ),
-            pluralStringResource(R.plurals.catalog_short_lessons, chapter.lessons.size, chapter.lessons.size),
-            formatTotalDuration(minutes.toDouble(), locale),
-        ).joinToString(SEPARATOR)
 
-    Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionTitle(title, facts = facts)
+    Column(Modifier.widthIn(max = COLUMN_WIDTH)) {
+        chapter.lessons.forEachIndexed { index, lesson ->
+            val lessonId = lesson.id.toString()
+            val isCurrent = lessonId == currentLessonId
 
-        Column(Modifier.widthIn(max = COLUMN_WIDTH)) {
-            chapter.lessons.forEachIndexed { index, lesson ->
-                val lessonId = lesson.id.toString()
-                val isCurrent = lessonId == currentLessonId
-
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .background(
-                                if (isCurrent) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surface,
-                                MaterialTheme.shapes.small,
-                            ).then(
-                                if (isCurrent) {
-                                    Modifier.semantics { selected = true }
-                                } else {
-                                    Modifier.clickable { navigator.open(AppRoute.CatalogLesson(lessonId, chapter.id.toString(), courseId)) }
-                                },
-                            ).padding(horizontal = 8.dp, vertical = 12.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Text(
-                        formatNumber((index + 1).toDouble(), locale),
-                        modifier = Modifier.widthIn(min = 16.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                    )
-                    Text(
-                        lesson.title,
-                        modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Medium,
-                    )
-                    Text(
-                        formatMinutes(lesson.estimatedMinutes.toInt(), locale),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                    )
-                }
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(
+                            if (isCurrent) MaterialTheme.colorScheme.surfaceContainerHigh else MaterialTheme.colorScheme.surface,
+                            MaterialTheme.shapes.small,
+                        ).then(
+                            if (isCurrent) {
+                                Modifier.semantics { selected = true }
+                            } else {
+                                Modifier.clickable { navigator.open(AppRoute.CatalogLesson(lessonId, chapter.id.toString(), courseId)) }
+                            },
+                        ).padding(horizontal = 8.dp, vertical = 14.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Text(
+                    formatNumber((index + 1).toDouble(), locale),
+                    modifier = Modifier.widthIn(min = 16.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                )
+                Text(
+                    lesson.title,
+                    modifier = Modifier.weight(1f),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                )
+                Text(
+                    formatMinutes(lesson.estimatedMinutes.toInt(), locale),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                )
             }
         }
     }

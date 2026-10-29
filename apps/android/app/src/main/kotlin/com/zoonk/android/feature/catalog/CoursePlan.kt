@@ -63,6 +63,7 @@ internal fun CoursePlanSection(
     plan: CoursePlanExample,
     chapters: List<CourseChapter>,
     isExam: Boolean,
+    beside: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val pace = plan.pace ?: return
@@ -75,31 +76,56 @@ internal fun CoursePlanSection(
             ?.let { formatDate(it.toJavaLocalDate(), currentLocale()) }
     val titles = chapters.associate { it.id.toString() to it.title }
 
-    Column(modifier.widthIn(max = COLUMN_WIDTH), verticalArrangement = Arrangement.spacedBy(28.dp)) {
+    val headline = @Composable {
+        if (undated != null) {
+            UndatedHeadline(undated, pace.minutes)
+        } else {
+            DatedHeadline(estimate.dated!!, examDate.orEmpty(), pace.minutes)
+        }
+    }
+    val today = undated?.takeIf { it.firstDay.isNotEmpty() }?.let { @Composable { UndatedToday(it, titles) } }
+    val workload = @Composable { PlanWorkload(estimate.numbers, isExam) }
+    val caption = @Composable {
+        Text(
+            stringResource(R.string.catalog_plan_caption),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
+    val title = @Composable {
         Text(
             stringResource(R.string.catalog_example_plan),
             modifier =
                 Modifier.semantics {
                     heading()
                 },
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
         )
+    }
 
-        if (undated != null) {
-            UndatedHeadline(undated, pace.minutes)
-        } else {
-            DatedHeadline(estimate.dated!!, examDate.orEmpty(), pace.minutes)
+    // Main pairs the headline (and the workload, when there's a first day) with the rest from `@3xl`.
+    if (beside) {
+        Column(modifier, verticalArrangement = Arrangement.spacedBy(28.dp)) {
+            title()
+            Row(horizontalArrangement = Arrangement.spacedBy(64.dp)) {
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(36.dp)) {
+                    headline()
+                    if (today != null) workload()
+                }
+                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                    (today ?: workload)()
+                    caption()
+                }
+            }
         }
-
-        PlanWorkload(estimate.numbers, isExam)
-
-        if (undated != null && undated.firstDay.isNotEmpty()) UndatedToday(undated, titles)
-
-        Text(
-            stringResource(R.string.catalog_plan_caption),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodySmall,
-        )
+    } else {
+        Column(modifier.widthIn(max = COLUMN_WIDTH), verticalArrangement = Arrangement.spacedBy(28.dp)) {
+            title()
+            headline()
+            workload()
+            today?.invoke()
+            caption()
+        }
     }
 }
 
@@ -123,6 +149,20 @@ internal fun bigQuantity(
             append(quantity)
         }
         append(text.substring(start + quantity.length))
+    }
+}
+
+/** Main's `<strong>` around one part of a translated sentence. */
+private fun emphasized(
+    text: String,
+    part: String,
+): AnnotatedString {
+    val start = text.indexOf(part)
+    if (start < 0) return AnnotatedString(text)
+
+    return buildAnnotatedString {
+        append(text)
+        addStyle(SpanStyle(fontWeight = FontWeight.SemiBold), start, start + part.length)
     }
 }
 
@@ -161,7 +201,7 @@ private fun UndatedHeadline(
         if (endMonth != null) {
             LineWithIcon(
                 icon = R.drawable.ic_flag,
-                text = stringResource(R.string.catalog_plan_finish_around, endMonth),
+                text = emphasized(stringResource(R.string.catalog_plan_finish_around, endMonth), endMonth),
                 color = MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.bodyLarge,
             )

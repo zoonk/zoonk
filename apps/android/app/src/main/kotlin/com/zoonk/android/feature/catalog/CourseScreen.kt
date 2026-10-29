@@ -28,7 +28,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -93,23 +95,26 @@ internal fun <T : Any> CatalogPage(
     state: LoadState<T>,
     title: String?,
     report: FeedbackTarget? = null,
+    alsoShown: List<Resource<*>> = emptyList(),
     content: LazyListScope.(T, CatalogPageLayout) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
     val isRefreshing by resource.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
+    val headlineScrolledAway by remember(listState) { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+    val refresh: () -> Unit = { (listOf(resource) + alsoShown).forEach { scope.launch { it.refresh() } } }
     val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     val wide = sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val layout = CatalogPageLayout(listState, beside = sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND))
 
     PageScaffold(
         onBack = { navigator.back() },
-        title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
+        title = { if (headlineScrolledAway) title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
         actions = { if (report != null && state is LoadState.Loaded) ReportProblemMenu(app, report) },
     ) { padding ->
         PullToRefreshBox(
             isRefreshing = isRefreshing,
-            onRefresh = { scope.launch { resource.refresh() } },
+            onRefresh = refresh,
             modifier = Modifier.fillMaxSize().padding(padding),
         ) {
             when (state) {
@@ -121,7 +126,7 @@ internal fun <T : Any> CatalogPage(
                     if (state.error == ApiError.NotFound) {
                         CatalogNotFound(navigator)
                     } else {
-                        LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } })
+                        LoadFailedMessage(onRetry = refresh)
                     }
                 }
 
@@ -227,7 +232,10 @@ private fun LazyListScope.courseContent(
     }
 
     if (plan?.pace != null) {
-        item(key = "plan", contentType = "plan") { CoursePlanSection(plan, detail.chapters, course.format == CourseResource.Format.EXAM) }
+        item(
+            key = "plan",
+            contentType = "plan",
+        ) { CoursePlanSection(plan, detail.chapters, course.format == CourseResource.Format.EXAM, beside) }
     }
 
     val audience = course.landingPage?.audience.orEmpty()
@@ -316,11 +324,11 @@ private fun CourseHero(
             Spacer(Modifier.size(12.dp))
         }
 
-        Text(course.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineLarge)
+        Text(course.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
 
         if (!promise.isNullOrBlank()) {
             Spacer(Modifier.size(16.dp))
-            Text(promise, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleMedium)
+            Text(promise, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
         }
 
         Spacer(Modifier.size(16.dp))
@@ -393,7 +401,7 @@ private fun CourseClosing(
         Text(
             stringResource(if (follows) R.string.catalog_closing_follows else R.string.catalog_closing_start),
             modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleMedium,
         )
 
         if (!follows) {

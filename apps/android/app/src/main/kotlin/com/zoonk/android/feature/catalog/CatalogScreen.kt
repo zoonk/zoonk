@@ -25,12 +25,14 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationDrawerItem
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -48,8 +50,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -132,13 +134,8 @@ fun CatalogScreen(
                     list = list,
                     state = state,
                     gridState = gridState,
-                    header = {
-                        CatalogHeader(
-                            categories = categories.takeUnless { wide },
-                            onSelect = { category = it },
-                            onGoal = { goal -> navigator.open(AppRoute.StartGoal(goal = goal)) },
-                        )
-                    },
+                    header = { CatalogHeader(onGoal = { goal -> navigator.open(AppRoute.StartGoal(goal = goal)) }) },
+                    chips = if (wide) null else ({ CategoryChips(categories, onSelect = { category = it }) }),
                     onRetry = { scope.launch { courses.refresh() } },
                     modifier = Modifier.weight(1f),
                 )
@@ -182,33 +179,26 @@ private fun CategoryList(
 ) {
     val description = stringResource(R.string.catalog_categories)
     val locale = currentLocale()
+    val selected = MaterialTheme.colorScheme.surfaceContainerHigh
 
-    Column(modifier.padding(12.dp).selectableGroup().semantics { paneTitle = description }) {
+    Column(modifier.padding(vertical = 12.dp).selectableGroup().semantics { contentDescription = description }) {
         categories.forEach { link ->
-            NavigationDrawerItem(
-                label = { Text(link.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                selected = link.selected,
-                onClick = { onSelect(link.key) },
-                icon = link.key?.let { { SubjectGlyph(Subject.of(it)) } },
-                badge = {
-                    Text(
-                        formatNumber(link.count.toDouble(), locale),
-                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                    )
+            ListItem(
+                headlineContent = { Text(link.label, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+                leadingContent = link.key?.let { { SubjectGlyph(Subject.of(it)) } },
+                trailingContent = {
+                    Text(formatNumber(link.count.toDouble(), locale), style = MaterialTheme.typography.labelMedium.withTabularFigures())
                 },
+                colors = ListItemDefaults.colors(containerColor = if (link.selected) selected else MaterialTheme.colorScheme.surface),
+                modifier = Modifier.selectable(selected = link.selected, role = Role.Tab) { onSelect(link.key) },
             )
         }
     }
 }
 
 @Composable
-private fun CatalogHeader(
-    categories: List<CategoryLink>?,
-    onSelect: (String?) -> Unit,
-    onGoal: (String) -> Unit,
-) {
+private fun CatalogHeader(onGoal: (String) -> Unit) {
     var goal by rememberSaveable { mutableStateOf("") }
-    val description = stringResource(R.string.catalog_categories)
 
     Column(Modifier.padding(vertical = 8.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Text(
@@ -221,36 +211,51 @@ private fun CatalogHeader(
         GoalBox(value = goal, onValueChange = {
             goal = it
         }, onSubmit = onGoal, modifier = Modifier.padding(horizontal = 16.dp).widthIn(max = COLUMN_WIDTH))
+    }
+}
 
-        if (categories != null) {
-            LazyRow(
-                modifier = Modifier.selectableGroup().semantics { contentDescription = description },
-                contentPadding = PaddingValues(horizontal = 16.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                items(categories.size, key = { categories[it].key ?: "all" }) { index ->
-                    val link = categories[index]
+/** Main pins the chips under the bar on phones, so another category is in reach however far the list scrolls. */
+@Composable
+private fun CategoryChips(
+    categories: List<CategoryLink>,
+    onSelect: (String?) -> Unit,
+) {
+    val description = stringResource(R.string.catalog_categories)
 
-                    FilterChip(
-                        selected = link.selected,
-                        onClick = { onSelect(link.key) },
-                        label = { Text(link.label) },
-                        leadingIcon =
-                            when {
-                                link.selected -> {
-                                    { Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(18.dp)) }
-                                }
+    Surface {
+        LazyRow(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(
+                        vertical = 8.dp,
+                    ).selectableGroup()
+                    .semantics { contentDescription = description },
+            contentPadding = PaddingValues(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            items(categories.size, key = { categories[it].key ?: "all" }) { index ->
+                val link = categories[index]
 
-                                link.key != null -> {
-                                    { SubjectGlyph(Subject.of(link.key)) }
-                                }
+                FilterChip(
+                    selected = link.selected,
+                    onClick = { onSelect(link.key) },
+                    label = { Text(link.label) },
+                    leadingIcon =
+                        when {
+                            link.selected -> {
+                                { Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(18.dp)) }
+                            }
 
-                                else -> {
-                                    null
-                                }
-                            },
-                    )
-                }
+                            link.key != null -> {
+                                { SubjectGlyph(Subject.of(link.key)) }
+                            }
+
+                            else -> {
+                                null
+                            }
+                        },
+                )
             }
         }
     }
@@ -265,6 +270,7 @@ private fun CourseGrid(
     state: LoadState<CoursePage>,
     gridState: LazyGridState,
     header: @Composable () -> Unit,
+    chips: (@Composable () -> Unit)?,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -302,6 +308,7 @@ private fun CourseGrid(
         contentPadding = PaddingValues(bottom = 24.dp),
     ) {
         item(key = "header", span = { GridItemSpan(maxLineSpan) }, contentType = "header") { header() }
+        if (chips != null) stickyHeader(key = "chips", contentType = "chips") { chips() }
 
         when (state) {
             LoadState.Idle, LoadState.Loading -> {
@@ -324,7 +331,7 @@ private fun CourseGrid(
                         action =
                             list.category?.let {
                                 {
-                                    OutlinedButton(onClick = { navigator.open(AppRoute.StartGoal()) }) {
+                                    FilledTonalButton(onClick = { navigator.open(AppRoute.StartGoal()) }) {
                                         Icon(painterResource(R.drawable.ic_add), contentDescription = null, Modifier.size(18.dp))
                                         Spacer(Modifier.size(8.dp))
                                         Text(stringResource(R.string.catalog_start_goal))
@@ -371,7 +378,7 @@ private fun LoadMoreFooter(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         style = MaterialTheme.typography.bodyMedium,
                     )
-                    OutlinedButton(onClick = onRetry) {
+                    FilledTonalButton(onClick = onRetry) {
                         Icon(painterResource(R.drawable.ic_refresh), contentDescription = null, Modifier.size(18.dp))
                         Spacer(Modifier.size(8.dp))
                         Text(stringResource(R.string.load_failed_try_again))

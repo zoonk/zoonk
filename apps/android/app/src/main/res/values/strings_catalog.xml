@@ -136,6 +136,8 @@
         <item quantity="other">Show %1$d more chapters</item>
     </plurals>
     <string name="catalog_show_fewer_chapters">Show fewer chapters</string>
+    <string name="catalog_expand">Expand</string>
+    <string name="catalog_collapse">Collapse</string>
     <string name="catalog_expanded">Expanded</string>
     <string name="catalog_collapsed">Collapsed</string>
     <string name="catalog_left_out">Left out</string>
@@ -143,6 +145,7 @@
         <item quantity="one">%1$d chapter left out</item>
         <item quantity="other">%1$d chapters left out</item>
     </plurals>
+    <!-- Chosen by %1$d, the lessons that fit; %2$s is the area's lessons in all. -->
     <plurals name="catalog_lessons_fit">
         <item quantity="one">%1$d of %2$s lessons fit</item>
         <item quantity="other">%1$d of %2$s lessons fit</item>
@@ -158,6 +161,7 @@
     <string name="catalog_quick_and_written_later">quick lessons and lessons written as you reach them</string>
     <string name="catalog_quick_lessons">quick lessons</string>
     <string name="catalog_written_later">lessons written as you reach them</string>
+    <!-- Chosen by %1$d, the chapter's lessons the plan holds; %2$s is its lessons in all. -->
     <plurals name="catalog_lessons_in_plan">
         <item quantity="one">%1$d of %2$s lessons</item>
         <item quantity="other">%1$d of %2$s lessons</item>
@@ -178,6 +182,8 @@
     <string name="catalog_after_this_chapter">After this chapter</string>
 
     <string name="catalog_start_lesson">Start the lesson</string>
+    <string name="catalog_start_this_lesson">Start this lesson</string>
+    <string name="catalog_open_course">Open the course</string>
     <plurals name="catalog_lesson_minutes">
         <item quantity="one">%1$d minute.</item>
         <item quantity="other">%1$d minutes.</item>

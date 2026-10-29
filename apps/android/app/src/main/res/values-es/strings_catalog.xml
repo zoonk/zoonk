@@ -20,6 +20,7 @@
   "catalog_closing_follows": "d74ab2fa917f7da26587db2b6579c4bc3c2bcd2bd168d10727299a2619284261",
   "catalog_closing_start": "2f88f93b834f95a71adabde51c0cf6efaf06715e0e5e0216a8bc01dfaf4c164a",
   "catalog_closing_steps": "82c0c23321c8b99799a835d3a8d4dd9752a588cf88e832e031c018657a655b5b",
+  "catalog_collapse": "37b85fe3729b7ed11e3ea48e774d1bdcd684c07113756bbf5d6b1edfaddafde8",
   "catalog_collapsed": "1d52d9df490b9b067d3bbc72574250181db54bf56508ffd1a785a10e7c990ec6",
   "catalog_continue_plan": "30b6fad1fbae50737ded2faa051bb74484ffb3bd017670c2f31feb19b97d8a34",
   "catalog_course_meta": "92041bb7a37b82589ba4c478b6874221e0787d6d333bc3aa31554c3bf49e2bd0",
@@ -31,6 +32,7 @@
   "catalog_exam_on": "543ef10b63744d9c0b6b40ca51600decc7d3e43968af162b955d1b747b7c47bd",
   "catalog_exam_on_today": "36bead4d6a3e5f6671d2f2aad54fee508a5ddc8d07e5736daa62ad68cd24b51e",
   "catalog_example_plan": "e045773c32b442323246eb7e37660c7a0f1b6ff804d1ec4e745b5ee6d5fb1b79",
+  "catalog_expand": "87fd9802697548f8b7c054861cc132c2fa8a7d80ffd8988ccd40d3f6d35f9e14",
   "catalog_expanded": "f02e78bb6d62b2452909373f835b41621b2e84d7b853a6b4cc032817de99e461",
   "catalog_go_to_chapter": "3b9f0b4ae6a4d254d6bb7107dd93c0b1303c4cd345636854cb346a57181a57c3",
   "catalog_guess_first": "eee9efc49720b74b98bbcaa1427e53eef566f63ba4623013ee1a2a2da9e680ae",
@@ -40,7 +42,7 @@
   "catalog_lesson_minutes": "84a59cc1384842625d0034f76b3c8a9748f5ed6c3c1a7832658cb1d30e9a391e",
   "catalog_lesson_part_of": "370eaaab59b34ade702667cdb1429c63e03a52c6df3c8636a5c770679c7d8b67",
   "catalog_lessons": "625a197bb4c8a923126c7699c169c2c43d6fbd31268a23192b5d864e7114156c",
-  "catalog_lessons_fit": "69e806ff8dcde11d548680023d2fc5f0c88c214d8a2fb50d90f35a44d9e9d371",
+  "catalog_lessons_fit": "eda3f15144919e73a55518e73c7c8afe2c60e8f647df1bbc69560d14467d8f3a",
   "catalog_lessons_in_plan": "5eb516ffee12a81ba6f35b9170c430bb2a232e4c1bbfd30e72488df376c33e22",
   "catalog_level_advanced": "3686138a10e7879e2f24e282be135c7a53437d93c25d42c4b5b8cf9c36cb2c3f",
   "catalog_level_beginner": "db75b0f71df77004aeabb1d63a192a585cd1f3577e87fa55ce4105203edbf06f",
@@ -53,6 +55,7 @@
   "catalog_no_sign_up": "6f763047ce42224af6a27d1bea0543429b52771b3db7880adeb34ff250b81c52",
   "catalog_not_found_description": "0864a30f6f67338e40c8d6b3c1571394e698453d154b9bbfb710ff1e1e14815c",
   "catalog_not_found_title": "5be4765d71988aed3f97a3fcb862b085a2c08cf0ec12e26d04ac9b1de5dd39aa",
+  "catalog_open_course": "8f698c4e231c46e4dce0c0e9f32bc56cea6f163d485741e7201a08ed47a285d7",
   "catalog_outcomes": "b58437d2d14e999b6a511e00d2838eb8905125c0f54d5af14c91d059a55fbf27",
   "catalog_outline": "20392136a115e2c5fb8a3baeae0a2469c1dd906847b787448413719d6a93bab8",
   "catalog_outline_plan_dated": "0906016540644619d0178910cf6daa350cb4884ef62bf1ca65cea18c63461375",
@@ -86,6 +89,7 @@
   "catalog_start_free": "08d520aee0041b3d7ffeb0b6e0e2286985d19ecb54d2ff3411df9c6993b1836b",
   "catalog_start_goal": "cb91209441fd75243773420d9fc9a24593a7243c16449f16dd88ae68afb8c670",
   "catalog_start_lesson": "248278a253f8437fc4f0791de7e3004471f5c688b0d36a4e432345e6d03a7ddf",
+  "catalog_start_this_lesson": "dcf5c69521603da9c075d27351dbb2c60cb4437d3b45951c82b551424e04a4b2",
   "catalog_subject_arts": "48d06f90ff925d55ccbce96a3da0dd75692bf270173ef1c5030a233dc2a06f90",
   "catalog_subject_business": "30f09f89107f12b521eb3d1880651c69f46f4f38ba2fee1a7769299de2b3c028",
   "catalog_subject_communication": "398e5272a867a4223a30cbd5c90ec83e847c23e17fc07b8556af20408de05aae",
@@ -265,6 +269,8 @@
         <item quantity="other">Mostrar %1$d capítulos más</item>
     </plurals>
     <string name="catalog_show_fewer_chapters">Mostrar menos capítulos</string>
+    <string name="catalog_expand">Ampliar</string>
+    <string name="catalog_collapse">Contraer</string>
     <string name="catalog_expanded">Ampliado</string>
     <string name="catalog_collapsed">Contraído</string>
     <string name="catalog_left_out">Omitido</string>
@@ -273,8 +279,9 @@
         <item quantity="many">%1$d capítulos omitidos</item>
         <item quantity="other">%1$d capítulos omitidos</item>
     </plurals>
+    <!-- Chosen by %1$d, the lessons that fit; %2$s is the area's lessons in all. -->
     <plurals name="catalog_lessons_fit">
-        <item quantity="one">%1$d de %2$s lecciones cabe</item>
+        <item quantity="one">%1$d de %2$s lección cabe</item>
         <item quantity="many">%1$d de %2$s lecciones caben</item>
         <item quantity="other">%1$d de %2$s lecciones caben</item>
     </plurals>
@@ -291,6 +298,7 @@
     <string name="catalog_quick_and_written_later">lecciones rápidas y lecciones que se preparan a medida que avanzas</string>
     <string name="catalog_quick_lessons">lecciones rápidas</string>
     <string name="catalog_written_later">lecciones que se preparan a medida que avanzas</string>
+    <!-- Chosen by %1$d, the chapter's lessons the plan holds; %2$s is its lessons in all. -->
     <plurals name="catalog_lessons_in_plan">
         <item quantity="one">%1$d de %2$s lección</item>
         <item quantity="many">%1$d de %2$s lecciones</item>
@@ -309,6 +317,8 @@
     <string name="catalog_this_chapter">Este capítulo</string>
     <string name="catalog_after_this_chapter">Después de este capítulo</string>
     <string name="catalog_start_lesson">Empieza la lección</string>
+    <string name="catalog_start_this_lesson">Empezar esta lección</string>
+    <string name="catalog_open_course">Abrir el curso</string>
     <plurals name="catalog_lesson_minutes">
         <item quantity="one">%1$d minuto.</item>
         <item quantity="many">%1$d minutos.</item>

@@ -40,7 +40,10 @@ interface CatalogApi {
         courseId: String,
     ): ChapterResource
 
-    suspend fun lesson(lessonId: String): CatalogLesson
+    suspend fun lesson(
+        lessonId: String,
+        courseId: String,
+    ): CatalogLesson
 }
 
 data class CoursePage(
@@ -61,6 +64,11 @@ data class CourseList(
 
 data class ChapterInCourse(
     val chapterId: String,
+    val courseId: String,
+)
+
+data class LessonInCourse(
+    val lessonId: String,
     val courseId: String,
 )
 
@@ -92,8 +100,8 @@ class CatalogStore(
     val chapter: KeyedResources<ChapterInCourse, ChapterResource> =
         cache.keyed(Audience.Everyone, maxAge = CATALOG_MAX_AGE) { _, key -> api.chapter(key.chapterId, key.courseId) }
 
-    val lesson: KeyedResources<String, CatalogLesson> =
-        cache.keyed(Audience.Everyone, maxAge = CATALOG_MAX_AGE) { _, lessonId -> api.lesson(lessonId) }
+    val lesson: KeyedResources<LessonInCourse, CatalogLesson> =
+        cache.keyed(Audience.Everyone, maxAge = CATALOG_MAX_AGE) { _, key -> api.lesson(key.lessonId, key.courseId) }
 
     /**
      * Appends the list's next page, unless a refresh replaced the list meanwhile. False when the
@@ -170,7 +178,10 @@ class LiveCatalogApi(
         courseId: String,
     ) = perform { api.clients(null).chapters.getChapter(chapterId.toUuid(), courseId.toUuid()) }
 
-    override suspend fun lesson(lessonId: String) = perform { api.clients(null).libraryLessons.getCatalogLesson(lessonId.toUuid()) }
+    override suspend fun lesson(
+        lessonId: String,
+        courseId: String,
+    ) = perform { api.clients(null).libraryLessons.getCatalogLesson(lessonId.toUuid(), courseId.toUuid()) }
 
     private companion object {
         const val PAGE_SIZE = 20L

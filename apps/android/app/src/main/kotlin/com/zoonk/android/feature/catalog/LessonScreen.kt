@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -55,7 +56,7 @@ fun LessonScreen(
     catalog: CatalogStore = app.catalog,
 ) {
     val detail = catalog.course[route.courseId]
-    val lesson = catalog.lesson[route.lessonId]
+    val lesson = catalog.lesson[LessonInCourse(route.lessonId, route.courseId)]
     val state by detail.collectShown()
     val lessonState by lesson.collectShown()
     val place = state.value?.let { placeOf(it, route.chapterId) }
@@ -63,9 +64,9 @@ fun LessonScreen(
     val missing = (state is LoadState.Loaded && outlineLesson == null) || (lessonState as? LoadState.Failed)?.error == ApiError.NotFound
     val shown = if (missing) LoadState.Failed(ApiError.NotFound) else state
 
-    CatalogPage(app, navigator, detail, shown, outlineLesson?.title) { value, _ ->
+    CatalogPage(app, navigator, detail, shown, outlineLesson?.title, alsoShown = listOf(lesson)) { value, layout ->
         val found = placeOf(value, route.chapterId) ?: return@CatalogPage
-        lessonContent(app, navigator, value, found, route.lessonId, lesson, lessonState)
+        lessonContent(app, navigator, value, found, route.lessonId, lesson, lessonState, layout.beside)
     }
 }
 
@@ -77,41 +78,47 @@ private fun LazyListScope.lessonContent(
     lessonId: String,
     lesson: Resource<CatalogLesson>,
     state: LoadState<CatalogLesson>,
+    beside: Boolean,
 ) {
     val outlineLesson = place.chapter.lessons.first { it.id.toString() == lessonId }
     val courseId = detail.course.id.toString()
     val page = state.value
 
     item(key = "lesson", contentType = "lesson") {
-        Column(Modifier.widthIn(max = COLUMN_WIDTH)) {
-            CourseEyebrow(navigator, detail)
-            Spacer(Modifier.size(8.dp))
-            Text(outlineLesson.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineLarge)
+        // Main moves the chapter's lessons beside the lesson where there's room, and its disclosure goes.
+        Row(horizontalArrangement = Arrangement.spacedBy(48.dp)) {
+            Column(Modifier.weight(1f).widthIn(max = COLUMN_WIDTH)) {
+                CourseEyebrow(navigator, detail)
+                Spacer(Modifier.size(8.dp))
+                Text(outlineLesson.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
 
-            page?.description?.let {
-                Spacer(Modifier.size(12.dp))
-                Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleMedium)
+                page?.description?.let {
+                    Spacer(Modifier.size(12.dp))
+                    Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+                }
+
+                Spacer(Modifier.size(32.dp))
+
+                when (state) {
+                    is LoadState.Loaded -> {
+                        LessonFirstScreen(app, navigator, state.value)
+                    }
+
+                    is LoadState.Failed -> {
+                        val scope = rememberCoroutineScope()
+                        LoadFailedMessage(onRetry = { scope.launch { lesson.refresh() } })
+                    }
+
+                    else -> {
+                        Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+                    }
+                }
+
+                Spacer(Modifier.size(48.dp))
+                LessonMore(navigator, courseId, place, lessonId, page?.summaryIdeas.orEmpty(), chapterBeside = beside)
             }
 
-            Spacer(Modifier.size(32.dp))
-
-            when (state) {
-                is LoadState.Loaded -> {
-                    LessonFirstScreen(app, navigator, state.value)
-                }
-
-                is LoadState.Failed -> {
-                    val scope = rememberCoroutineScope()
-                    LoadFailedMessage(onRetry = { scope.launch { lesson.refresh() } })
-                }
-
-                else -> {
-                    Box(Modifier.fillMaxWidth().padding(24.dp), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-                }
-            }
-
-            Spacer(Modifier.size(48.dp))
-            LessonMore(navigator, courseId, place, lessonId, page?.summaryIdeas.orEmpty())
+            if (beside) LessonChapterAside(navigator, courseId, place, lessonId, Modifier.weight(1f))
         }
     }
 
@@ -130,7 +137,9 @@ private fun LessonFirstScreen(
         pluralStringResource(R.plurals.catalog_lesson_minutes, minutes, minutes) +
             if (isVisitor(app)) " " + stringResource(R.string.catalog_no_sign_up) else ""
     val start = @Composable {
-        Button(onClick = { navigator.open(AppRoute.Lesson(lessonId)) }) { Text(stringResource(R.string.catalog_start_lesson)) }
+        // A lesson not written yet says it starts writing; one with a first screen, that it opens.
+        val label = if (lesson.firstScreen == null) R.string.catalog_start_this_lesson else R.string.catalog_start_lesson
+        Button(onClick = { navigator.open(AppRoute.Lesson(lessonId)) }) { Text(stringResource(label)) }
         Spacer(Modifier.size(16.dp))
         LineWithIcon(R.drawable.ic_play_circle, note, style = MaterialTheme.typography.bodySmall)
     }
@@ -162,6 +171,7 @@ private fun LessonMore(
     place: ChapterPlace,
     lessonId: String,
     ideas: List<String>,
+    chapterBeside: Boolean,
 ) {
     val locale = currentLocale()
     val chapter = place.chapter
@@ -191,25 +201,48 @@ private fun LessonMore(
             }
         }
 
-        OutlineZone(
-            title = stringResource(R.string.catalog_chapter_heading, formatNumber(place.number.toDouble(), locale), chapter.title),
-            aside =
-                pluralStringResource(R.plurals.catalog_plan_lessons, chapter.lessons.size, chapter.lessons.size) + SEPARATOR +
-                    formatTotalDuration(minutes.toDouble(), locale),
-            closedSummary = null,
-            initiallyOpen = false,
-        ) {
-            Column(Modifier.padding(bottom = 16.dp)) {
-                ChapterLessons(navigator, courseId, place, currentLessonId = lessonId, title = chapter.title)
-                TextButton(onClick = { navigator.open(AppRoute.CatalogChapter(chapter.id.toString(), courseId)) }) {
-                    Text(stringResource(R.string.catalog_go_to_chapter))
-                    Spacer(Modifier.size(8.dp))
-                    Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null, Modifier.size(18.dp))
+        if (!chapterBeside) {
+            OutlineZone(
+                title = stringResource(R.string.catalog_chapter_heading, formatNumber(place.number.toDouble(), locale), chapter.title),
+                aside =
+                    pluralStringResource(R.plurals.catalog_plan_lessons, chapter.lessons.size, chapter.lessons.size) + SEPARATOR +
+                        formatTotalDuration(minutes.toDouble(), locale),
+                closedSummary = null,
+                initiallyOpen = false,
+            ) {
+                Column(Modifier.padding(bottom = 16.dp)) {
+                    ChapterLessonRows(navigator, courseId, place, currentLessonId = lessonId)
+                    TextButton(onClick = { navigator.open(AppRoute.CatalogChapter(chapter.id.toString(), courseId)) }) {
+                        Text(stringResource(R.string.catalog_go_to_chapter))
+                        Spacer(Modifier.size(8.dp))
+                        Icon(painterResource(R.drawable.ic_arrow_forward), contentDescription = null, Modifier.size(18.dp))
+                    }
                 }
             }
         }
 
         HorizontalDivider()
+    }
+}
+
+/** Main's `LessonChapterAside`: the chapter's facts, its title (which opens it) and its lessons. */
+@Composable
+private fun LessonChapterAside(
+    navigator: AppNavigator,
+    courseId: String,
+    place: ChapterPlace,
+    lessonId: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(modifier.widthIn(max = ASIDE_WIDTH), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(chapterFacts(place), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+        TextButton(
+            onClick = { navigator.open(AppRoute.CatalogChapter(place.chapter.id.toString(), courseId)) },
+            contentPadding = PaddingValues(0.dp),
+        ) {
+            Text(place.chapter.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
+        }
+        ChapterLessonRows(navigator, courseId, place, currentLessonId = lessonId)
     }
 }
 
@@ -247,7 +280,7 @@ private fun LessonPlanDay(
         Text(
             stringResource(R.string.catalog_lesson_part_of, detail.course.title),
             modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleLarge,
+            style = MaterialTheme.typography.titleMedium,
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -279,3 +312,4 @@ private fun LessonPlanDay(
 }
 
 private const val DAY_LESSONS = 3
+private val ASIDE_WIDTH = 360.dp

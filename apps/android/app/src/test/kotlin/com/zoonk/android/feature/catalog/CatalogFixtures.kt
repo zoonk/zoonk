@@ -137,7 +137,10 @@ internal class FakeCatalogApi(
         return chapterResource(chapterId)
     }
 
-    override suspend fun lesson(lessonId: String): CatalogLesson {
+    override suspend fun lesson(
+        lessonId: String,
+        courseId: String,
+    ): CatalogLesson {
         reads += "lesson:$lessonId"
         return catalogLesson(lessonId)
     }

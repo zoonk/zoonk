@@ -14,9 +14,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +33,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Dp
@@ -176,6 +177,17 @@ internal fun LineWithIcon(
     color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     style: TextStyle = MaterialTheme.typography.bodyMedium,
 ) {
+    LineWithIcon(icon, AnnotatedString(text), modifier, color, style)
+}
+
+@Composable
+internal fun LineWithIcon(
+    @DrawableRes icon: Int,
+    text: AnnotatedString,
+    modifier: Modifier = Modifier,
+    color: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    style: TextStyle = MaterialTheme.typography.bodyMedium,
+) {
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Icon(
             painterResource(icon),
@@ -240,13 +252,13 @@ internal fun StartActions(
             }
 
             if (secondary) {
-                OutlinedButton(onClick = start, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) { label() }
+                FilledTonalButton(onClick = start, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) { label() }
             } else {
                 Button(onClick = start, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) { label() }
             }
 
             if (onTryLesson != null) {
-                OutlinedButton(onClick = onTryLesson) { Text(stringResource(R.string.catalog_try_lesson)) }
+                FilledTonalButton(onClick = onTryLesson) { Text(stringResource(R.string.catalog_try_lesson)) }
             }
         }
 
@@ -409,7 +421,7 @@ internal fun SectionTitle(
     facts: String? = null,
 ) {
     FlowRow(modifier, horizontalArrangement = Arrangement.spacedBy(12.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-        Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+        Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
         if (facts != null) {
             Text(
                 facts,

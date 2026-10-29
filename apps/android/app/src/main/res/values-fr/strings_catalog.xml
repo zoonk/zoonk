@@ -20,6 +20,7 @@
   "catalog_closing_follows": "1043c5d0fd6a1099b7345977bbfc40e803951b08084bfef6eb90b9e660e3567c",
   "catalog_closing_start": "bfac1b789aaa42ea3fe7dabb1d0832beff94554966d25839812dbabb09f14000",
   "catalog_closing_steps": "77394bf2c258fa3c008f734ea25249507da072b64287dbf71acfe32023c3b88d",
+  "catalog_collapse": "f408e130b3d4ba9105a0baf631c96e57f110c1104b60da19c211a90a576c94c5",
   "catalog_collapsed": "ed3f987673c50017ecfc067d6a74fe96abaf498237c9177c6a62fba0f7d14b7b",
   "catalog_continue_plan": "400261e62be2284b8d6e70b2894f000b542bbef77abc83a9279415a84d362cb1",
   "catalog_course_meta": "11b4a50ddeb14b2d602d082a48bdc6d0ea96080fee3f29d301b02ed920e947a7",
@@ -31,6 +32,7 @@
   "catalog_exam_on": "5757da24ec7fdf6222e68d525f352d0d2d4478d5ef224c0041c737b4e2b8f5ca",
   "catalog_exam_on_today": "0a1d59bfbbd9ee9dbb0f21dffbd12943fa601a2174f434c76fa80a88bf270339",
   "catalog_example_plan": "d0bca5a90450318690e1794ea46049b0397d1166be7e1be1e0e3cab5fd18ccee",
+  "catalog_expand": "64721faeb3011ab9296571eba5329b3ddec6736e8f05427e3b47aa7b20ecad44",
   "catalog_expanded": "52543aaf013dcde0d92b2dee7b43da3ce5958896451f8f75068e93da40c46a4c",
   "catalog_go_to_chapter": "52fcec3ad65effd7d992610ca319420b71fb01d5a6f7047a288d8bad344283f5",
   "catalog_guess_first": "d0d9461f49fee45ba1a7ca8264f344700d70da1769325de356615fc8dfe86ac7",
@@ -53,6 +55,7 @@
   "catalog_no_sign_up": "f7510075fafa542c2c193995ed002a648921d407f883f1d05ec730360626d6c4",
   "catalog_not_found_description": "3ea31f141d411f2f5b3456fd866b2015d075e154edd772d10864bc1a0b37b2f5",
   "catalog_not_found_title": "5f5ed135bfe25afe1d5b36a41114da12ce4d9c8b0734db88cca798c09601077d",
+  "catalog_open_course": "82fa99ff137ea5e88543d360dcd9e0c241baddf367df28339b19ee914ebe9af5",
   "catalog_outcomes": "bcc308f747e08ac3d7970bf6cc7640395fccd1bfa07b21c29fdb69f4265c59f2",
   "catalog_outline": "14e5e415394a368b703997b4fbf981c9deacf7bd631534bcc3df96cf5a921281",
   "catalog_outline_plan_dated": "e62012f2a62ea4e0d3c3f345b0597219d7f671935dc6d0f83dd6c3db1d04362d",
@@ -86,6 +89,7 @@
   "catalog_start_free": "a5aef9a48cb06d5ffd1df166de96d0c2c856959b2b168032b7c43d4bcd4c3502",
   "catalog_start_goal": "82d71c907e5ebd4dfcaa052deab380f9d52e6c85fe99956344d5826f0e84b55a",
   "catalog_start_lesson": "e7ea37bd0bff5d60c43dfbd27dd6604d47ff6bc3189acbbfa6adb823d1313e61",
+  "catalog_start_this_lesson": "4c8da8899fca53564282c058d527d8442ea61fdeaab9d85718e6ce2f783e13ff",
   "catalog_subject_arts": "ca87780fc494698142bc89c00570e49fd1f1258d38ca5dc7e9dbd3e3a18879f9",
   "catalog_subject_business": "cf7c1d544ba5eda6e3a6f7c4f29305721153bc99d1dfee1546eac4d0c62b5013",
   "catalog_subject_communication": "4e7a7a497332a57951d41cee1de156bb449aca7e1268e2d2ce865b688a4e14e2",
@@ -265,6 +269,8 @@
         <item quantity="other">Afficher %1$d chapitres de plus</item>
     </plurals>
     <string name="catalog_show_fewer_chapters">Afficher moins de chapitres</string>
+    <string name="catalog_expand">Développer</string>
+    <string name="catalog_collapse">Réduire</string>
     <string name="catalog_expanded">Développé</string>
     <string name="catalog_collapsed">Réduit</string>
     <string name="catalog_left_out">Laissé de côté</string>
@@ -273,6 +279,7 @@
         <item quantity="many">%1$d chapitres laissés de côté</item>
         <item quantity="other">%1$d chapitres laissés de côté</item>
     </plurals>
+    <!-- Chosen by %1$d, the lessons that fit; %2$s is the area's lessons in all. -->
     <plurals name="catalog_lessons_fit">
         <item quantity="one">%1$d leçon sur %2$s tient</item>
         <item quantity="many">%1$d leçons sur %2$s tiennent</item>
@@ -291,6 +298,7 @@
     <string name="catalog_quick_and_written_later">leçons courtes et leçons préparées au fur et à mesure</string>
     <string name="catalog_quick_lessons">leçons courtes</string>
     <string name="catalog_written_later">leçons préparées au fur et à mesure</string>
+    <!-- Chosen by %1$d, the chapter's lessons the plan holds; %2$s is its lessons in all. -->
     <plurals name="catalog_lessons_in_plan">
         <item quantity="one">%1$d leçon sur %2$s</item>
         <item quantity="many">%1$d leçons sur %2$s</item>
@@ -309,6 +317,8 @@
     <string name="catalog_this_chapter">Ce chapitre</string>
     <string name="catalog_after_this_chapter">Après ce chapitre</string>
     <string name="catalog_start_lesson">Commencer la leçon</string>
+    <string name="catalog_start_this_lesson">Commencer cette leçon</string>
+    <string name="catalog_open_course">Ouvrir le cours</string>
     <plurals name="catalog_lesson_minutes">
         <item quantity="one">%1$d minute.</item>
         <item quantity="many">%1$d minutes.</item>

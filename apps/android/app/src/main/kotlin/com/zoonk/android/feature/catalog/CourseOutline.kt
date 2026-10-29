@@ -24,15 +24,11 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.LinkAnnotation
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextLinkStyles
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppNavigator
@@ -279,7 +275,7 @@ private fun areaFitText(
                 listOfNotNull(
                     pluralStringResource(
                         R.plurals.catalog_lessons_fit,
-                        area.total.toInt(),
+                        area.fitting.toInt(),
                         area.fitting.toInt(),
                         formatNumber(area.total.toDouble(), locale),
                     ),
@@ -333,7 +329,7 @@ private fun areaChapterMark(
             row.lessonsInPlan < chapter.lessons.size -> {
                 pluralStringResource(
                     R.plurals.catalog_lessons_in_plan,
-                    chapter.lessons.size,
+                    row.lessonsInPlan.toInt(),
                     row.lessonsInPlan.toInt(),
                     formatNumber(chapter.lessons.size.toDouble(), locale),
                 )
@@ -366,7 +362,10 @@ internal fun OutlineZone(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .clickable { open = !open }
+                    .clickable(
+                        onClickLabel = stringResource(if (open) R.string.catalog_collapse else R.string.catalog_expand),
+                        role = Role.Button,
+                    ) { open = !open }
                     .semantics { stateDescription = state }
                     .padding(vertical = 14.dp),
             verticalAlignment = Alignment.Top,
@@ -380,7 +379,7 @@ internal fun OutlineZone(
                 ) {
                     Text(
                         title,
-                        modifier = Modifier.padding(end = 12.dp).semantics { heading() },
+                        modifier = Modifier.padding(end = 12.dp),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
@@ -451,7 +450,6 @@ private fun OutlineChapterRow(
 ) {
     val locale = currentLocale()
     val chapterId = chapter.id.toString()
-    val linkStyle = TextLinkStyles(SpanStyle(color = MaterialTheme.colorScheme.onSurfaceVariant))
 
     Row(
         modifier =
@@ -486,20 +484,7 @@ private fun OutlineChapterRow(
 
             if (chapter.lessons.isNotEmpty()) {
                 Text(
-                    buildAnnotatedString {
-                        chapter.lessons.forEachIndexed { index, lesson ->
-                            if (index > 0) append(SEPARATOR)
-                            val lessonId = lesson.id.toString()
-                            withLink(
-                                LinkAnnotation.Clickable(
-                                    lessonId,
-                                    linkStyle,
-                                ) { navigator.open(AppRoute.CatalogLesson(lessonId, chapterId, courseId)) },
-                            ) {
-                                append(lesson.title)
-                            }
-                        }
-                    },
+                    chapter.lessons.joinToString(SEPARATOR) { it.title },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )

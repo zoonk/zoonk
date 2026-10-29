@@ -1,7 +1,7 @@
 import { type Lookup, type Mode, parseCss, resolveColor, toArgbHex, tokensAt } from "./palette.mts";
 
 /** Main's `[data-subject]` roles, which each subject's hue and chroma fill in. */
-export const SUBJECT_TOKENS = ["subject", "subject-text", "subject-tint"] as const;
+const SUBJECT_TOKENS = ["subject", "subject-text", "subject-tint"] as const;
 
 const SUBJECT_PRELUDE = /^\[data-subject="(?<subject>[\w-]+)"\]$/u;
 const CALC_PRODUCT = /calc\(\s*(?<left>[\d.]+)\s*\*\s*(?<right>[\d.]+)\s*\)/gu;
