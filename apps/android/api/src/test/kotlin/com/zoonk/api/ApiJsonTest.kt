@@ -1,6 +1,8 @@
 package com.zoonk.api
 
 import com.zoonk.api.models.ExamBlueprintSource
+import com.zoonk.api.models.ItemSetListening
+import com.zoonk.api.models.LanguageConversationStartInputOneOf
 import com.zoonk.api.models.MeUpdate
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
 import kotlinx.serialization.json.Json
@@ -50,5 +52,22 @@ class ApiJsonTest {
     fun aBodyLeavesOutTheFieldsItDoesNotSet() {
         val body = MeUpdate(name = "Ana")
         assertEquals("{\"name\":\"Ana\"}", ApiJson.encodeToString(MeUpdate.serializer(), body))
+    }
+
+    @Test
+    fun aNumberLiteralUnionReadsAndWritesTheNumber() {
+        val listening =
+            ApiJson.decodeFromString<ItemSetListening>(
+                """{"audio":null,"plays":2,"task":null,"title":null,"transcript":null}""",
+            )
+        assertEquals(ItemSetListening.Plays._2, listening.plays)
+
+        val start =
+            LanguageConversationStartInputOneOf(
+                chapterId = UUID.fromString("7d3c1c1e-5b0a-4d43-9f55-0c9a3c1c2f10"),
+                kind = LanguageConversationStartInputOneOf.Kind.PRACTICE,
+                minutes = LanguageConversationStartInputOneOf.Minutes._1,
+            )
+        assertTrue(ApiJson.encodeToString(LanguageConversationStartInputOneOf.serializer(), start).contains("\"minutes\":1.0"))
     }
 }

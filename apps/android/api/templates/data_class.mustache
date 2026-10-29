@@ -1,0 +1,444 @@
+{{!
+OpenAPI Generator 7.26.0's kotlin-client/data_class.mustache, giving a model's inner number enum
+(an inline `anyOf` of number literals, like `plays: 1 | 2`) the value serializer the top-level
+enum_class.mustache gives every non-string enum. Without it, kotlinx.serialization reads and
+writes the enum's @SerialName ("1.0"), so the server's `1` doesn't decode and requests send a
+string. Nothing else differs.
+https://github.com/OpenAPITools/openapi-generator/issues/25459
+}}
+{{^multiplatform}}
+{{#gson}}
+{{#generateOneOfAnyOfWrappers}}
+import com.google.gson.Gson
+import com.google.gson.JsonElement
+import com.google.gson.TypeAdapter
+import com.google.gson.TypeAdapterFactory
+import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
+import com.google.gson.annotations.JsonAdapter
+import java.io.IOException
+{{/generateOneOfAnyOfWrappers}}
+import com.google.gson.annotations.SerializedName
+{{/gson}}
+{{#moshi}}
+import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
+{{/moshi}}
+{{#jackson}}
+{{#enumUnknownDefaultCase}}
+import com.fasterxml.jackson.annotation.JsonEnumDefaultValue
+{{/enumUnknownDefaultCase}}
+import com.fasterxml.jackson.annotation.JsonProperty
+{{#hasEnums}}
+import com.fasterxml.jackson.annotation.JsonValue
+{{/hasEnums}}
+{{#discriminator}}
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonSubTypes
+import com.fasterxml.jackson.annotation.JsonTypeInfo
+{{/discriminator}}
+{{/jackson}}
+{{#kotlinx_serialization}}
+import {{#serializableModel}}kotlinx.serialization.Serializable as KSerializable{{/serializableModel}}{{^serializableModel}}kotlinx.serialization.Serializable{{/serializableModel}}
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Contextual
+{{#enumUnknownDefaultCase}}
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+{{/enumUnknownDefaultCase}}
+{{^enumUnknownDefaultCase}}
+{{#hasEnums}}
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+{{/hasEnums}}
+{{/enumUnknownDefaultCase}}
+{{#discriminator}}
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.json.JsonClassDiscriminator
+{{/discriminator}}
+{{/kotlinx_serialization}}
+{{#parcelizeModels}}
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+{{/parcelizeModels}}
+{{/multiplatform}}
+{{#multiplatform}}
+import kotlinx.serialization.*
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
+{{#discriminator}}
+import kotlinx.serialization.json.JsonClassDiscriminator
+{{/discriminator}}
+{{/multiplatform}}
+{{#serializableModel}}
+import java.io.Serializable
+{{/serializableModel}}
+{{#generateRoomModels}}
+import {{roomModelPackage}}.{{classname}}RoomModel
+import {{packageName}}.infrastructure.ITransformForStorage
+{{/generateRoomModels}}
+
+/**
+ * {{{description}}}
+ *
+{{#allVars}}
+ * @param {{{name}}} {{{description}}}
+{{/allVars}}
+ */
+{{#parcelizeModels}}
+@Parcelize
+{{/parcelizeModels}}
+{{#multiplatform}}@Serializable{{/multiplatform}}{{#kotlinx_serialization}}{{#serializableModel}}@KSerializable{{/serializableModel}}{{^serializableModel}}@Serializable{{/serializableModel}}{{/kotlinx_serialization}}{{#moshi}}{{#moshiCodeGen}}@JsonClass(generateAdapter = true){{/moshiCodeGen}}{{/moshi}}{{#jackson}}{{#discriminator}}{{>typeInfoAnnotation}}{{/discriminator}}{{/jackson}}
+{{#isDeprecated}}
+@Deprecated(message = "This schema is deprecated.")
+{{/isDeprecated}}
+{{>additionalModelTypeAnnotations}}
+
+{{#vendorExtensions.x-class-extra-annotation}}
+{{{vendorExtensions.x-class-extra-annotation}}}
+{{/vendorExtensions.x-class-extra-annotation}}
+{{#kotlinx_serialization}}{{#discriminator}}
+@OptIn(ExperimentalSerializationApi::class)
+@JsonClassDiscriminator(discriminator = "{{#lambda.escapeDollar}}{{{discriminator.propertyBaseName}}}{{/lambda.escapeDollar}}")
+{{/discriminator}}
+{{#additionalProperties.discriminatorValue}}
+@SerialName(value = {{#lambda.doublequote}}{{{additionalProperties.discriminatorValue}}}{{/lambda.doublequote}})
+{{/additionalProperties.discriminatorValue}}
+{{/kotlinx_serialization}}
+{{#multiplatform}}{{#discriminator}}
+@OptIn(ExperimentalSerializationApi::class)
+@JsonClassDiscriminator(discriminator = "{{#lambda.escapeDollar}}{{{discriminator.propertyBaseName}}}{{/lambda.escapeDollar}}")
+{{/discriminator}}
+{{#additionalProperties.discriminatorValue}}
+@SerialName(value = {{#lambda.doublequote}}{{{additionalProperties.discriminatorValue}}}{{/lambda.doublequote}})
+{{/additionalProperties.discriminatorValue}}
+{{/multiplatform}}
+{{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}{{#discriminator}}{{#kotlinx_serialization}}sealed class{{/kotlinx_serialization}}{{#multiplatform}}sealed class{{/multiplatform}}{{^multiplatform}}{{^kotlinx_serialization}}interface{{/kotlinx_serialization}}{{/multiplatform}}{{/discriminator}}{{^discriminator}}{{#hasVars}}data {{/hasVars}}class{{/discriminator}} {{classname}}{{^discriminator}} (
+
+{{#allVars}}
+{{#required}}{{>data_class_req_var}}{{/required}}{{^required}}{{>data_class_opt_var}}{{/required}}{{^-last}},{{/-last}}
+
+{{/allVars}}
+){{/discriminator}}{{#parent}}{{^serializableModel}}{{^parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#kotlinx_serialization}}(){{/kotlinx_serialization}}{{#multiplatform}}(){{/multiplatform}}{{#isArray}}(){{/isArray}}{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{#serializableModel}}{{^parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Serializable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{^serializableModel}}{{#parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#parent}}{{#serializableModel}}{{#parcelizeModels}} : {{{parent}}}{{#isMap}}(){{/isMap}}{{#isArray}}(){{/isArray}}, Serializable, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{#serializableModel}}{{^parcelizeModels}} : Serializable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{^serializableModel}}{{#parcelizeModels}} : Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{^parent}}{{#serializableModel}}{{#parcelizeModels}} : Serializable, Parcelable{{/parcelizeModels}}{{/serializableModel}}{{/parent}}{{#generateRoomModels}}{{#parent}}, {{/parent}}{{^discriminator}}{{^parent}}:{{/parent}} ITransformForStorage<{{classname}}RoomModel>{{/discriminator}}{{/generateRoomModels}}{{#vendorExtensions.x-has-data-class-body}} {
+{{/vendorExtensions.x-has-data-class-body}}
+{{#generateRoomModels}}
+    companion object { }
+    {{^discriminator}}override fun toRoomModel(): {{classname}}RoomModel =
+        {{classname}}RoomModel(roomTableId = 0,
+        {{#allVars}}{{#items.isPrimitiveType}}{{#isArray}}{{#isList}}{{name}} = this.{{name}},{{/isList}}{{/isArray}}{{/items.isPrimitiveType}}{{^isEnum}}{{^isArray}}{{name}} = this.{{name}},{{/isArray}}{{/isEnum}}{{#isEnum}}{{^isArray}}{{name}} = this.{{name}},{{/isArray}}{{/isEnum}}
+        {{/allVars}}
+        ){{/discriminator}}
+{{/generateRoomModels}}
+{{#serializableModel}}
+    {{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}companion object {
+        private const val serialVersionUID: Long = 123
+    }
+{{/serializableModel}}
+{{^serializableModel}}{{^generateRoomModels}}{{^generateOneOfAnyOfWrappers}}{{#companionObject}}    {{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}companion object { }
+{{/companionObject}}{{/generateOneOfAnyOfWrappers}}{{/generateRoomModels}}{{/serializableModel}}{{#discriminator}}{{#vars}}{{#required}}
+{{>interface_req_var}}{{/required}}{{^required}}
+{{>interface_opt_var}}{{/required}}{{/vars}}{{/discriminator}}
+{{#hasEnums}}
+{{#vars}}
+{{#isEnum}}
+    /**
+     * {{{description}}}
+     *
+     * Values: {{#allowableValues}}{{#enumVars}}{{&name}}{{^-last}},{{/-last}}{{/enumVars}}{{/allowableValues}}
+     */
+    {{^multiplatform}}
+    {{#kotlinx_serialization}}
+    {{#serializableModel}}@KSerializable{{/serializableModel}}{{^serializableModel}}@Serializable{{#enumUnknownDefaultCase}}(with = {{{nameInPascalCase}}}Serializer::class){{/enumUnknownDefaultCase}}{{^enumUnknownDefaultCase}}{{^isContainer}}{{^isString}}(with = {{{nameInPascalCase}}}Serializer::class){{/isString}}{{/isContainer}}{{/enumUnknownDefaultCase}}{{/serializableModel}}
+    {{/kotlinx_serialization}}
+    {{#moshi}}
+    @JsonClass(generateAdapter = false)
+    {{/moshi}}
+    {{/multiplatform}}
+    {{#multiplatform}}
+    @Serializable
+    {{/multiplatform}}
+    {{#nonPublicApi}}internal {{/nonPublicApi}}{{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}enum class {{{nameInPascalCase}}}({{^nonPublicApi}}{{#explicitApi}}public {{/explicitApi}}{{/nonPublicApi}}{{#jackson}}@get:JsonValue {{/jackson}}val value: {{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}{{#mostInnerItems}}{{dataType}}{{/mostInnerItems}}{{/isContainer}}) {
+    {{#allowableValues}}
+    {{#enumVars}}
+        {{#enumDescription}}
+        /**
+        * {{.}}
+        */
+        {{/enumDescription}}
+        {{^multiplatform}}
+        {{#moshi}}
+        @Json(name = {{#lambda.doublequote}}{{{value}}}{{/lambda.doublequote}}) {{&name}}({{{value}}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
+        {{/moshi}}
+        {{#gson}}
+        @SerializedName(value = {{#lambda.doublequote}}{{{value}}}{{/lambda.doublequote}}) {{&name}}({{{value}}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
+        {{/gson}}
+        {{#jackson}}
+        @JsonProperty(value = {{#lambda.doublequote}}{{{value}}}{{/lambda.doublequote}}) {{#enumUnknownDefaultCase}}{{#-last}}@JsonEnumDefaultValue {{/-last}}{{/enumUnknownDefaultCase}}{{&name}}({{{value}}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
+        {{/jackson}}
+        {{#kotlinx_serialization}}
+        @SerialName(value = {{#lambda.doublequote}}{{{value}}}{{/lambda.doublequote}}) {{&name}}({{{value}}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
+        {{/kotlinx_serialization}}
+        {{/multiplatform}}
+        {{#multiplatform}}
+        @SerialName(value = {{#lambda.doublequote}}{{{value}}}{{/lambda.doublequote}}) {{&name}}({{{value}}}){{^-last}},{{/-last}}{{#-last}};{{/-last}}
+        {{/multiplatform}}
+    {{/enumVars}}
+    {{/allowableValues}}
+    {{#multiplatform}}
+        override fun toString(): kotlin.String = value{{^isString}}.toString(){{/isString}}
+    {{/multiplatform}}
+    }
+    {{#kotlinx_serialization}}
+    {{#enumUnknownDefaultCase}}
+
+    internal object {{nameInPascalCase}}Serializer : KSerializer<{{nameInPascalCase}}> {
+        override val descriptor = {{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}kotlin.String{{/isContainer}}.serializer().descriptor
+
+        override fun deserialize(decoder: Decoder): {{nameInPascalCase}} {
+            val value = decoder.decodeSerializableValue({{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}kotlin.String{{/isContainer}}.serializer())
+            return {{nameInPascalCase}}.entries.firstOrNull { it.value == value }
+                ?: {{nameInPascalCase}}.{{#allowableValues}}{{#enumVars}}{{#-last}}{{&name}}{{/-last}}{{/enumVars}}{{/allowableValues}}
+        }
+
+        override fun serialize(encoder: Encoder, value: {{nameInPascalCase}}) {
+            encoder.encodeSerializableValue({{^isContainer}}{{dataType}}{{/isContainer}}{{#isContainer}}kotlin.String{{/isContainer}}.serializer(), value.value)
+        }
+    }
+    {{/enumUnknownDefaultCase}}
+    {{^enumUnknownDefaultCase}}{{^isContainer}}{{^isString}}
+
+    internal object {{nameInPascalCase}}Serializer : KSerializer<{{nameInPascalCase}}> {
+        override val descriptor = {{dataType}}.serializer().descriptor
+
+        override fun deserialize(decoder: Decoder): {{nameInPascalCase}} {
+            val value = decoder.decodeSerializableValue({{dataType}}.serializer())
+            return {{nameInPascalCase}}.entries.firstOrNull { it.value == value }
+                ?: throw IllegalArgumentException("Unknown enum value: $value")
+        }
+
+        override fun serialize(encoder: Encoder, value: {{nameInPascalCase}}) {
+            encoder.encodeSerializableValue({{dataType}}.serializer(), value.value)
+        }
+    }
+    {{/isString}}{{/isContainer}}{{/enumUnknownDefaultCase}}
+    {{/kotlinx_serialization}}
+{{/isEnum}}
+{{/vars}}
+{{/hasEnums}}
+{{#generateOneOfAnyOfWrappers}}
+    {{#gson}}
+
+    class CustomTypeAdapterFactory : TypeAdapterFactory {
+        override fun <T> create(gson: Gson, type: TypeToken<T>): TypeAdapter<T>? {
+            if (!{{classname}}::class.java.isAssignableFrom(type.rawType)) {
+              return null // this class only serializes '{{classname}}' and its subtypes
+            }
+            val elementAdapter = gson.getAdapter(JsonElement::class.java)
+            val thisAdapter = gson.getDelegateAdapter(this, TypeToken.get({{classname}}::class.java))
+
+            @Suppress("UNCHECKED_CAST")
+            return object : TypeAdapter<{{classname}}>() {
+                @Throws(IOException::class)
+                override fun write(out: JsonWriter, value: {{classname}}) {
+                    val obj = thisAdapter.toJsonTree(value).getAsJsonObject()
+                    elementAdapter.write(out, obj)
+                }
+
+                @Throws(IOException::class)
+                override fun read(jsonReader: JsonReader): {{classname}}  {
+                    val jsonElement = elementAdapter.read(jsonReader)
+                    validateJsonElement(jsonElement)
+                    return thisAdapter.fromJsonTree(jsonElement)
+                }
+            }.nullSafe() as TypeAdapter<T>
+        }
+    }
+
+    companion object {
+        var openapiFields = HashSet<String>()
+        var openapiRequiredFields = HashSet<String>()
+
+        init {
+            {{#allVars}}
+            {{#-first}}
+            // a set of all properties/fields (JSON key names)
+            {{/-first}}
+            openapiFields.add("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}")
+            {{/allVars}}
+
+            {{#requiredVars}}
+            {{#-first}}
+            // a set of required properties/fields (JSON key names)
+            {{/-first}}
+            openapiRequiredFields.add("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}")
+            {{/requiredVars}}
+        }
+
+       /**
+        * Validates the JSON Element and throws an exception if issues found
+        *
+        * @param jsonElement JSON Element
+        * @throws IOException if the JSON Element is invalid with respect to {{classname}}
+        */
+        @Throws(IOException::class)
+        fun validateJsonElement(jsonElement: JsonElement?) {
+            if (jsonElement == null) {
+              require(openapiRequiredFields.isEmpty()) { // has required fields but JSON element is null
+                String.format("The required field(s) %s in {{{classname}}} is not found in the empty JSON string", {{classname}}.openapiRequiredFields.toString())
+              }
+            }
+            {{^hasChildren}}
+            {{#requiredVars}}
+            {{#-first}}
+
+            // check to make sure all required properties/fields are present in the JSON string
+            for (requiredField in openapiRequiredFields) {
+              requireNotNull(jsonElement!!.getAsJsonObject()[requiredField]) {
+                String.format("The required field `%s` is not found in the JSON string: %s", requiredField, jsonElement.toString())
+              }
+            }
+            {{/-first}}
+            {{/requiredVars}}
+            {{/hasChildren}}
+            {{^discriminator}}
+            {{#hasVars}}
+            val jsonObj = jsonElement!!.getAsJsonObject()
+            {{/hasVars}}
+            {{#vars}}
+            {{#isArray}}
+            {{#items.isModel}}
+            {{#required}}
+            // ensure the json data is an array
+            if (!jsonObj.get("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}").isJsonArray) {
+              throw IllegalArgumentException(String.format("Expected the field `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be an array in the JSON string but got `%s`", jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].toString()))
+            }
+
+            // validate the required field `{{{baseName}}}` (array)
+            for (i in 0 until jsonObj.getAsJsonArray("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}").size()) {
+              {{{items.dataType}}}.validateJsonElement(jsonObj.getAsJsonArray("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}").get(i))
+            }
+            {{/required}}
+            {{^required}}
+            if (jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] != null && !jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].isJsonNull) {
+              if (jsonObj.getAsJsonArray("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}") != null) {
+                // ensure the json data is an array
+                require(jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].isJsonArray) {
+                  String.format("Expected the field `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be an array in the JSON string but got `%s`", jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].toString())
+                }
+
+                // validate the optional field `{{{baseName}}}` (array)
+                for (i in 0 until jsonObj.getAsJsonArray("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}").size()) {
+                  {{{items.dataType}}}.validateJsonElement(jsonObj.getAsJsonArray("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}").get(i))
+                }
+              }
+            }
+            {{/required}}
+            {{/items.isModel}}
+            {{^items.isModel}}
+            {{^required}}
+            // ensure the optional json data is an array if present
+            if (jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] != null && !jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].isJsonNull) {
+              require(jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].isJsonArray()) {
+                String.format("Expected the field `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be an array in the JSON string but got `%s`", jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].toString())
+              }
+            }
+            {{/required}}
+            {{#required}}
+            // ensure the required json array is present
+            requireNotNull(jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"]) {
+              "Expected the field `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be an array in the JSON string but got `null`"
+            }
+            require(jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].isJsonArray()) {
+              String.format("Expected the field `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be an array in the JSON string but got `%s`", jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].toString())
+            }
+            {{/required}}
+            {{#items.isPrimitiveType}}
+            {{^items.isArray}}
+            // ensure the items in json array are primitive
+            if (jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] != null) {
+              for (i in 0 until jsonObj.getAsJsonArray("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}").size()) {
+                require(jsonObj.getAsJsonArray("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}").get(i).isJsonPrimitive) {
+                  String.format("Expected the property in array `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be primitive")
+                }
+              }
+            }
+            {{/items.isArray}}
+            {{/items.isPrimitiveType}}
+            {{/items.isModel}}
+            {{/isArray}}
+            {{^isContainer}}
+            {{#isString}}
+            {{#notRequiredOrIsNullable}}
+            if (jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] != null && !jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].isJsonNull) {
+              require(jsonObj.get("{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}").isJsonPrimitive) {
+                String.format("Expected the field `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be a primitive type in the JSON string but got `%s`", jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].toString())
+              }
+            }
+            {{/notRequiredOrIsNullable}}
+            {{^notRequiredOrIsNullable}}
+            require(jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].isJsonPrimitive) {
+              String.format("Expected the field `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be a primitive type in the JSON string but got `%s`", jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].toString())
+            }
+            {{/notRequiredOrIsNullable}}
+            {{/isString}}
+            {{#isModel}}
+            {{#required}}
+            // validate the required field `{{{baseName}}}`
+            {{{dataType}}}.validateJsonElement(jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"])
+            {{/required}}
+            {{^required}}
+            // validate the optional field `{{{baseName}}}`
+            if (jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] != null && !jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].isJsonNull) {
+              {{{dataType}}}.validateJsonElement(jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"])
+            }
+            {{/required}}
+            {{/isModel}}
+            {{#isEnum}}
+            {{#required}}
+            // validate the required field `{{{baseName}}}`
+            require({{{datatypeWithEnum}}}.entries.any { it.value == jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].asString }) {
+                String.format("Expected the field `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be valid `{{{datatypeWithEnum}}}` enum value in the JSON string but got `%s`", jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].toString())
+            }
+            {{/required}}
+            {{^required}}
+            // validate the optional field `{{{baseName}}}`
+            if (jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] != null && !jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].isJsonNull) {
+                require({{{datatypeWithEnum}}}.entries.any { it.value == jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].asString }) {
+                    String.format("Expected the field `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be valid `{{{datatypeWithEnum}}}` enum value in the JSON string but got `%s`", jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].toString())
+                }
+            }
+            {{/required}}
+            {{/isEnum}}
+            {{#isEnumRef}}
+            {{#required}}
+            // validate the required field `{{{baseName}}}`
+            require({{{dataType}}}.entries.any { it.value == jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].asString }) {
+                String.format("Expected the field `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be valid `{{{dataType}}}` enum value in the JSON string but got `%s`", jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].toString())
+            }
+            {{/required}}
+            {{^required}}
+            // validate the optional field `{{{baseName}}}`
+            if (jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"] != null && !jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].isJsonNull) {
+                require({{{dataType}}}.entries.any { it.value == jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].asString }) {
+                    String.format("Expected the field `{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}` to be valid `{{{dataType}}}` enum value in the JSON string but got `%s`", jsonObj["{{#lambda.escapeDollar}}{{baseName}}{{/lambda.escapeDollar}}"].toString())
+                }
+            }
+            {{/required}}
+            {{/isEnumRef}}
+            {{/isContainer}}
+            {{/vars}}
+            {{/discriminator}}
+        }
+    }
+    {{/gson}}
+{{/generateOneOfAnyOfWrappers}}
+
+{{#vendorExtensions.x-has-data-class-body}}
+}
+{{/vendorExtensions.x-has-data-class-body}}
