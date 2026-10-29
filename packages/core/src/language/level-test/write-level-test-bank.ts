@@ -1,5 +1,4 @@
 import "server-only";
-import { prepareLevelTestAudio } from "./_utils/level-test-audio";
 import {
   type LanguagePair,
   type LevelTestBankAnalytics,
@@ -21,10 +20,7 @@ export async function writeLevelTestBank({
 }): Promise<WriteLevelTestBankResult> {
   const row = await findBankRow(pair);
 
-  const bank = readBank(row);
-
-  if (bank) {
-    await prepareLevelTestAudio({ analytics, bank, pair });
+  if (readBank(row)) {
     return { status: "ready" };
   }
 

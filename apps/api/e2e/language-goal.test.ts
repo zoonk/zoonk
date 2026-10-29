@@ -1,6 +1,5 @@
 import { randomInt, randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
-import { getSpeechClipKey } from "@zoonk/core/audio/speech-clip-key";
 import { languageConversationSetupSchema } from "@zoonk/core/language/conversations/contract";
 import { getAlphabetIdentityKey } from "@zoonk/core/library/language/alphabet-identity";
 import { prisma } from "@zoonk/db";
@@ -56,21 +55,6 @@ async function ensureLevelTestBank() {
     },
     update: { content },
     where: { languagePair: { language: "pt", targetLanguage: "en" } },
-  });
-
-  await prisma.mediaAsset.createMany({
-    data: content.questions
-      .filter((question) => question.skill === "listening")
-      .map((question) => ({
-        kind: "audio",
-        language: "en",
-        model: "test",
-        promptVersion: "test",
-        reuseKey: getSpeechClipKey({ language: "en", text: question.passage }),
-        runId: "test",
-        url: "https://blob.test/placement.mp3",
-      })),
-    skipDuplicates: true,
   });
 }
 

@@ -103,6 +103,6 @@ export function voiceSpeechClip(
   return started;
 }
 
-export function isVoicingSpeechClip(reuseKey: string): boolean {
-  return voicing.has(reuseKey);
+export function getPendingSpeechClip(reuseKey: string): Promise<MediaAsset | null> | undefined {
+  return voicing.get(reuseKey);
 }

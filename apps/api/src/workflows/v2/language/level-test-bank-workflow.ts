@@ -6,6 +6,7 @@ import { repeatUntil } from "../_shared/repeat-until";
 import {
   type LanguagePair,
   levelTestBankProgressStep,
+  prepareLevelTestBankAudioStep,
   writeLevelTestBankStep,
 } from "./steps/level-test-bank-steps";
 
@@ -42,6 +43,19 @@ export async function levelTestBankWorkflow(
 
   const write = () => writeLevelTestBankStep({ ...input, workflowRunId });
 
+  const status = await writeQuestionBank(write);
+
+  if (status.status === "unfinished") {
+    return status;
+  }
+
+  await prepareLevelTestBankAudioStep({ ...input, workflowRunId });
+  return status;
+}
+
+async function writeQuestionBank(
+  write: () => ReturnType<typeof writeLevelTestBankStep>,
+): Promise<LevelTestBankResult> {
   try {
     const status = await repeatUntil({
       done: (current) => DONE.has(current),

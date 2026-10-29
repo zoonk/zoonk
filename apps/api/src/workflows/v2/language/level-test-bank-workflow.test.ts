@@ -108,6 +108,56 @@ describe(levelTestBankWorkflow, () => {
     expect(generateLevelTestBank).toHaveBeenCalledOnce();
   });
 
+  it("announces the test is ready while its listening clips are still being prepared", async () => {
+    const pair = freshPair();
+    const audio = Promise.withResolvers<Awaited<ReturnType<typeof generateLanguageAudio>>>();
+
+    const voiced = {
+      data: {
+        audio: new Uint8Array([1, 2, 3]),
+        durationMs: 2400,
+        format: "mp3" as const,
+        provenance: bankFrom("voice").provenance,
+      },
+      error: null,
+    };
+
+    vi.mocked(generateLevelTestBank).mockResolvedValue(bankFrom(crypto.randomUUID()));
+    vi.mocked(generateLanguageAudio).mockReturnValue(audio.promise);
+    const writing = levelTestBankWorkflow({ pair });
+
+    await expect
+      .poll(() => vi.mocked(generateLanguageAudio).mock.calls.length)
+      .toBe(TEST_LEVELS.length);
+
+    expect(streamedSteps()).toStrictEqual([
+      "writeLevelTestBank:started",
+      "levelTestBankReady:completed",
+    ]);
+
+    audio.resolve(voiced);
+    await expect(writing).resolves.toStrictEqual({ status: "written" });
+  });
+
+  it("does not report a failed test after its questions are ready if background audio fails", async () => {
+    const pair = freshPair();
+    vi.mocked(generateLevelTestBank).mockResolvedValue(bankFrom(crypto.randomUUID()));
+
+    vi.mocked(generateLanguageAudio).mockResolvedValue({
+      data: null,
+      error: new Error("Voice unavailable"),
+    });
+
+    await expect(levelTestBankWorkflow({ pair })).rejects.toThrow("placement audio");
+
+    expect(streamedSteps()).toStrictEqual([
+      "writeLevelTestBank:started",
+      "levelTestBankReady:completed",
+    ]);
+
+    expect(generateLevelTestBank).toHaveBeenCalledOnce();
+  });
+
   it("joins the run already writing the pair", async () => {
     mockHookConflict({ returnValue: Promise.resolve(null), runId: "writing-run" });
 

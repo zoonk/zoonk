@@ -6,11 +6,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { storeBlobUploads } from "../../_test-utils/blob-uploads";
 import { useGuestOutOfHelp } from "../../_test-utils/guest-out-of-help";
 import { mockSession } from "../../_test-utils/mock-session";
+import * as speechClips from "../../audio/_utils/speech-clips";
 import { requestSpeechClip } from "../../audio/request-speech-clip";
 import { getSpeechClipKey } from "../../audio/speech-clip-key";
 import { answerLanguageLevelTest } from "./answer-language-level-test";
 import { getLanguageLevelTest } from "./get-language-level-test";
 import { prepareLanguageLevelTest } from "./prepare-language-level-test";
+import { prepareLevelTestBankAudio } from "./prepare-level-test-audio";
 import { writeLevelTestBank } from "./write-level-test-bank";
 
 const TEST_LEVELS = ["A1", "A2", "B1", "B2", "C1"] as const;
@@ -97,7 +99,6 @@ function findRow(pair: { language: string; targetLanguage: string }) {
 
 describe("the level test's question bank", () => {
   beforeEach(() => {
-    mockAudio();
     vi.mocked(generateLevelTestBank).mockClear();
   });
 
@@ -174,7 +175,6 @@ describe("the level test's question bank", () => {
 
 describe("writing a pair's question bank ahead", () => {
   beforeEach(() => {
-    mockAudio();
     vi.mocked(generateLevelTestBank).mockClear();
   });
 
@@ -254,12 +254,13 @@ describe("writing a pair's question bank ahead", () => {
 describe("placement listening audio", () => {
   beforeEach(mockAudio);
 
-  it("prepares all listening passages before publishing the bank, reusing them for playback without AI help", async () => {
+  it("prepares listening passages in parallel and reuses them for playback without AI help", async () => {
     const { goalId, pair, userId } = await learnerOfFreshPair();
     const passage = crypto.randomUUID();
     vi.mocked(generateLevelTestBank).mockResolvedValueOnce(bankFrom(passage));
 
     await writeLevelTestBank({ pair });
+    await prepareLevelTestBankAudio({ pair });
 
     expect(generateLanguageAudio).toHaveBeenCalledTimes(TEST_LEVELS.length);
 
@@ -286,7 +287,7 @@ describe("placement listening audio", () => {
 
     expect(generateLanguageAudio).toHaveBeenCalledTimes(TEST_LEVELS.length);
 
-    await writeLevelTestBank({ pair });
+    await prepareLevelTestBankAudio({ pair });
     expect(generateLanguageAudio).toHaveBeenCalledTimes(TEST_LEVELS.length);
     mockSession(userId);
 
@@ -295,25 +296,55 @@ describe("placement listening audio", () => {
     });
   });
 
-  it("does not publish questions while their audio is still being generated", async () => {
+  it("lets the learner start and answer while audio is still being generated", async () => {
     const { goalId, pair } = await learnerOfFreshPair();
     const audio = Promise.withResolvers<Awaited<ReturnType<typeof generateLanguageAudio>>>();
     const voiced = voicedAudio();
     vi.mocked(generateLanguageAudio).mockClear().mockReturnValueOnce(audio.promise);
     vi.mocked(generateLevelTestBank).mockResolvedValueOnce(bankFrom(crypto.randomUUID()));
-    const writing = writeLevelTestBank({ pair });
+    await writeLevelTestBank({ pair });
+    const writing = prepareLevelTestBankAudio({ pair });
 
     await expect.poll(() => vi.mocked(generateLanguageAudio).mock.calls.length).toBeGreaterThan(0);
 
     await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
-      test: { startedAt: expect.any(String), status: "preparing" },
+      test: { status: "ready" },
     });
 
+    await expect(
+      answerLanguageLevelTest({ goalId, input: { answerIndex: 0, questionId: "reading-A2-0" } }),
+    ).resolves.toMatchObject({ status: "ready" });
+
     audio.resolve(voiced);
-    await expect(writing).resolves.toStrictEqual({ status: "written" });
+    await expect(writing).resolves.toBeUndefined();
   });
 
-  it("fails preparation if a clip fails, so incomplete questions are not offered as ready", async () => {
+  it("lets an early listening tap join a long passage being prepared without another model call or AI help", async () => {
+    const { pair, userId } = await learnerOfFreshPair();
+    const passage = `Un messaggio lungo ${crypto.randomUUID()} `.repeat(20);
+    const audio = Promise.withResolvers<Awaited<ReturnType<typeof generateLanguageAudio>>>();
+    vi.mocked(generateLevelTestBank).mockResolvedValueOnce(bankFrom(passage));
+    vi.mocked(generateLanguageAudio).mockReturnValueOnce(audio.promise);
+    await writeLevelTestBank({ pair });
+    const preparing = prepareLevelTestBankAudio({ pair });
+
+    await expect
+      .poll(() => vi.mocked(generateLanguageAudio).mock.calls.length)
+      .toBe(TEST_LEVELS.length);
+
+    const pendingRead = vi.spyOn(speechClips, "getPendingSpeechClip");
+    const playing = requestSpeechClip({ language: pair.targetLanguage, text: `${passage} A1` });
+    await expect.poll(() => pendingRead.mock.calls.length).toBe(1);
+
+    audio.resolve(voicedAudio());
+    await preparing;
+    await expect(playing).resolves.toMatchObject({ status: "ready" });
+    expect(generateLanguageAudio).toHaveBeenCalledTimes(TEST_LEVELS.length);
+    await expect(prisma.usageRecord.count({ where: { kind: "assist", userId } })).resolves.toBe(0);
+    pendingRead.mockRestore();
+  });
+
+  it("keeps the test usable if a clip fails and retries only the missing audio", async () => {
     const { goalId, pair } = await learnerOfFreshPair();
     vi.mocked(generateLevelTestBank).mockResolvedValueOnce(bankFrom(crypto.randomUUID()));
 
@@ -322,15 +353,16 @@ describe("placement listening audio", () => {
       error: new Error("Voice unavailable"),
     });
 
-    await expect(writeLevelTestBank({ pair })).rejects.toThrow("placement audio");
+    await writeLevelTestBank({ pair });
+    await expect(prepareLevelTestBankAudio({ pair })).rejects.toThrow("placement audio");
 
     await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
-      test: { startedAt: null, status: "preparing" },
+      test: { status: "ready" },
     });
 
     const failedRow = await findRow(pair);
     const questions = failedRow.content;
-    await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "ready" });
+    await expect(prepareLevelTestBankAudio({ pair })).resolves.toBeUndefined();
     const retriedRow = await findRow(pair);
     expect(retriedRow.content).toStrictEqual(questions);
     expect(generateLevelTestBank).toHaveBeenCalledOnce();
@@ -353,14 +385,14 @@ describe("placement listening audio", () => {
       data: { ...pair, content, model: "test", promptVersion: "test", runId: "old-bank" },
     });
 
-    await expect(prepareLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "preparing" });
+    await expect(prepareLanguageLevelTest(goalId)).resolves.toMatchObject({ status: "ready" });
 
     await expect(getLanguageLevelTest(goalId)).resolves.toMatchObject({
-      test: { startedAt: null, status: "preparing" },
+      test: { status: "ready" },
     });
 
     expect(generateLanguageAudio).not.toHaveBeenCalled();
-    await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "ready" });
+    await expect(prepareLevelTestBankAudio({ pair })).resolves.toBeUndefined();
     expect(generateLevelTestBank).not.toHaveBeenCalled();
     const preparedRow = await findRow(pair);
     expect(preparedRow.content).toStrictEqual(content);
@@ -382,8 +414,7 @@ describe("placement listening audio", () => {
 
     await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "written" });
     await expect(writeLevelTestBank({ pair })).resolves.toStrictEqual({ status: "ready" });
-    const row = await findRow(pair);
-    expect(row.content).not.toHaveProperty("audioStartedAt");
+    await expect(prepareLevelTestBankAudio({ pair })).resolves.toBeUndefined();
     expect(generateLanguageAudio).not.toHaveBeenCalled();
   });
 });

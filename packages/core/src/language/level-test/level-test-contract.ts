@@ -21,7 +21,6 @@ const levelTestQuestionSchema = z.object({
 });
 
 export const levelTestBankSchema = z.object({
-  audioStartedAt: z.iso.datetime().optional(),
   questions: z.array(levelTestQuestionSchema),
   speaking: z.array(
     z.object({ level: z.enum(CEFR_LEVELS), sentence: z.string(), translation: z.string() }),

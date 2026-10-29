@@ -164,6 +164,7 @@
     "./language/level-test/contract": "./src/language/level-test/level-test-contract.ts",
     "./language/level-test/finish": "./src/language/level-test/finish-language-level-test.ts",
     "./language/level-test/get": "./src/language/level-test/get-language-level-test.ts",
+    "./language/level-test/prepare-audio": "./src/language/level-test/prepare-level-test-audio.ts",
     "./language/level-test/prepare": "./src/language/level-test/prepare-language-level-test.ts",
     "./language/level-test/speech": "./src/language/level-test/grade-level-test-speech.ts",
     "./language/level-test/write-bank": "./src/language/level-test/write-level-test-bank.ts",

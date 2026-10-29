@@ -3,7 +3,7 @@ import { type MediaAsset } from "@zoonk/db";
 import { claimAssist } from "../entitlements/claim-usage";
 import { type RefusedUsage } from "../entitlements/contract";
 import { getSession } from "../users/get-session";
-import { findSpeechClip, isVoicingSpeechClip, voiceSpeechClip } from "./_utils/speech-clips";
+import { findSpeechClip, getPendingSpeechClip, voiceSpeechClip } from "./_utils/speech-clips";
 import {
   NEW_SPEECH_CLIP_MAX_CHARACTERS,
   type SpeechClip,
@@ -53,13 +53,20 @@ export async function requestSpeechClip(input: SpeechClipInput): Promise<Request
     return { clip: toSpeechClip(stored), status: "ready" };
   }
 
+  const pending = getPendingSpeechClip(reuseKey);
+
+  if (pending) {
+    const prepared = await pending;
+    return prepared ? { clip: toSpeechClip(prepared), status: "ready" } : { status: "failed" };
+  }
+
   if (parsed.data.text.length > NEW_SPEECH_CLIP_MAX_CHARACTERS) {
     return { status: "invalid" };
   }
 
-  const usage = isVoicingSpeechClip(reuseKey) ? null : await claimAssist();
+  const usage = await claimAssist();
 
-  if (usage && usage.status !== "allowed") {
+  if (usage.status !== "allowed") {
     return usage;
   }
 
