@@ -170,6 +170,9 @@ internal fun QuestionOrderAndPairs() {
 internal fun QuestionFields() {
     Samples {
         Sample(numeric) { QuestionAnswer(numeric, TrueFalseWords.TrueFalse, false, null, true, {}, {}) }
+        Sample(numeric.copy(itemId = "numeric-checked"), graded = true) {
+            QuestionAnswer(numeric, TrueFalseWords.TrueFalse, false, AnswerCheck(Answer.Numeric(68.0), null, true), false, {}, {})
+        }
         Sample(typed) { QuestionAnswer(typed, TrueFalseWords.TrueFalse, false, null, true, {}, {}) }
         Sample(typed.copy(itemId = "typed-checked"), graded = true) {
             QuestionAnswer(typed, TrueFalseWords.TrueFalse, false, AnswerCheck(Answer.Text("So"), Answer.Text("Na"), false), false, {}, {})
@@ -239,7 +242,9 @@ internal fun QuestionMaterials() {
 internal fun QuestionDrills() {
     Samples {
         DrillNote(Drill(Drill.Kind.Timed, timeLimitSeconds = 45), onOpenLesson = null)
-        DrillCountdown(seconds = 45, onTimeUp = {})
+        key("full") { DrillCountdown(seconds = 45, onTimeUp = {}) }
+        key("ending") { DrillCountdown(seconds = 8, onTimeUp = {}) }
+        DrillAnswerNotes(drill = Drill(Drill.Kind.NoGuessing), notSure = true, timedOut = true, trap = null)
         DrillNote(Drill(Drill.Kind.Retry), onOpenLesson = null, lastAnswer = "Ribosome")
         DrillNote(drill.copy(lesson = drill.lesson?.copy(ideas = emptyList())), onOpenLesson = {})
         DrillIdeas(drill, onOpenLesson = {})

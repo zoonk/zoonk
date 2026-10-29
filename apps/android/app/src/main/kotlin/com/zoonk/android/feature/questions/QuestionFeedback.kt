@@ -11,12 +11,17 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextDirection
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.FeedbackNote
@@ -146,9 +151,24 @@ fun WorkedSteps(
     modifier: Modifier = Modifier,
 ) {
     if (steps.isEmpty()) return
-    val shape = RoundedCornerShape(10.dp)
-    val style = MaterialTheme.typography.bodyMedium.withTabularFigures()
+    // A formula reads left to right in every language.
+    val style =
+        MaterialTheme.typography.bodyMedium
+            .withTabularFigures()
+            .copy(textDirection = TextDirection.Ltr)
     val result = stringResource(R.string.questions_result, plainItemLine(steps.last()))
+
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Ltr) { WorkedStepLines(steps, style, result, modifier) }
+}
+
+@Composable
+private fun WorkedStepLines(
+    steps: List<String>,
+    style: TextStyle,
+    result: String,
+    modifier: Modifier,
+) {
+    val shape = RoundedCornerShape(10.dp)
 
     Column(
         modifier

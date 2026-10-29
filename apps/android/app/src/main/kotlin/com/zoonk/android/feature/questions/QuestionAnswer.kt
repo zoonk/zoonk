@@ -2,6 +2,8 @@ package com.zoonk.android.feature.questions
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatNumber
 
 /** A checked answer: what was sent, the right one when the server says it, and the verdict. */
 data class AnswerCheck(
@@ -28,11 +30,36 @@ fun QuestionAnswer(
 ) {
     when (question.format) {
         QuestionFormat.Numeric -> {
-            NumericAnswerField(question.entry, question.unit, check?.mark, enabled, onAnswer, onSubmit, modifier)
+            val sent =
+                (check?.answer as? Answer.Numeric)?.value?.let {
+                    formatNumber(
+                        it,
+                        currentLocale(),
+                        MAX_SHOWN_DIGITS,
+                        grouping = false,
+                    )
+                }
+            NumericAnswerField(
+                question.entry,
+                question.unit,
+                check?.mark,
+                enabled,
+                onAnswer,
+                onSubmit,
+                modifier,
+                initialText = sent.orEmpty(),
+            )
         }
 
         QuestionFormat.Typed -> {
-            TypedAnswerField(check?.mark, enabled, onAnswer, onSubmit, modifier)
+            TypedAnswerField(
+                check?.mark,
+                enabled,
+                onAnswer,
+                onSubmit,
+                modifier,
+                initialText = (check?.answer as? Answer.Text)?.text.orEmpty(),
+            )
         }
 
         QuestionFormat.Order -> {
@@ -83,3 +110,6 @@ private val AnswerCheck.mark: AnswerMark?
             isCorrect -> AnswerMark.Correct
             else -> AnswerMark.Wrong
         }
+
+/** A sent number shows as typed, never rounded. */
+private const val MAX_SHOWN_DIGITS = 20

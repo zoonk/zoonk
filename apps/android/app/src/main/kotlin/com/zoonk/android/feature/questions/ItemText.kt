@@ -7,9 +7,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.richtext.MarkupKind
 import com.zoonk.android.ui.richtext.RichSegment
@@ -148,3 +150,7 @@ private val SIGN_THEN_AMOUNT = Regex("(\\p{Sc})[ \\t](?=\\d)")
 private val AMOUNT_THEN_SIGN = Regex("(\\d)[ \\t](?=[\\p{Sc}%])")
 private val BREAK = RichSegment(SegmentKind.Text, "\n")
 private const val NO_BREAK_SPACE = '\u00A0'
+
+/** One line of [this] style, so a symbol beside it grows with the font. */
+@Composable
+internal fun TextStyle.lineHeightDp(): Dp = with(LocalDensity.current) { lineHeight.toDp() }

@@ -2,6 +2,7 @@ package com.zoonk.android.feature.questions
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -52,9 +53,10 @@ fun NumericAnswerField(
     onAnswer: (Answer?) -> Unit,
     onSubmit: (Answer) -> Unit,
     modifier: Modifier = Modifier,
+    initialText: String = "",
 ) {
     val locale = currentLocale()
-    var text by rememberSaveable { mutableStateOf("") }
+    var text by rememberSaveable { mutableStateOf(initialText) }
     var invalid by rememberSaveable { mutableStateOf(false) }
     val locked = !enabled || mark != null
 
@@ -71,7 +73,7 @@ fun NumericAnswerField(
             invalid = false
             onAnswer(parseEntryAnswer(entry, it, locale)?.let(Answer::Numeric))
         },
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         readOnly = locked,
         textStyle = MaterialTheme.typography.titleLarge.withTabularFigures(),
         label = { Text(stringResource(R.string.questions_your_answer)) },
@@ -123,8 +125,9 @@ fun TypedAnswerField(
     onAnswer: (Answer?) -> Unit,
     onSubmit: (Answer) -> Unit,
     modifier: Modifier = Modifier,
+    initialText: String = "",
 ) {
-    var text by rememberSaveable { mutableStateOf("") }
+    var text by rememberSaveable { mutableStateOf(initialText) }
     val locked = !enabled || mark != null
 
     OutlinedTextField(
@@ -133,7 +136,7 @@ fun TypedAnswerField(
             text = it.take(MAX_TYPED_ANSWER)
             onAnswer(text.trim().takeIf(String::isNotEmpty)?.let(Answer::Text))
         },
-        modifier = modifier,
+        modifier = modifier.fillMaxWidth(),
         readOnly = locked,
         textStyle = MaterialTheme.typography.titleLarge,
         label = { Text(stringResource(R.string.questions_your_answer)) },

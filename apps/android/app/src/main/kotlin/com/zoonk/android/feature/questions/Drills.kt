@@ -143,7 +143,14 @@ fun DrillNote(
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         NoteIcon(drill.kind.icon)
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            if (!answered) Text(text = drillLine(drill), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+            if (!answered) {
+                Text(
+                    text = drillLine(drill),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium,
+                )
+            }
             lastAnswer?.let {
                 Text(
                     text = stringResource(R.string.questions_drill_last_answer, it),
@@ -182,7 +189,7 @@ fun DrillAnswerNotes(
             Text(
                 text =
                     buildAnnotatedString {
-                        withStyle(SpanStyle(fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)) { append(label) }
+                        withStyle(SpanStyle(fontWeight = FontWeight.Medium)) { append(label) }
                         append(" ")
                         append(trap)
                     },
@@ -222,18 +229,20 @@ fun DrillCountdown(
     val warning = secondsLeft <= WARNING_SECONDS
     val warningColor = MaterialTheme.zoonk.warning
     val announcement = countdownAnnouncement(secondsLeft)
+    val clockStyle = MaterialTheme.typography.labelLarge.withTabularFigures()
 
     Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         Icon(
             painter = painterResource(R.drawable.ic_timer),
             contentDescription = null,
-            modifier = Modifier.size(18.dp),
+            modifier = Modifier.size(clockStyle.lineHeightDp()),
             tint = if (warning) warningColor else MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Meter(
             share = remaining.toFloat() / total,
             modifier = Modifier.weight(1f),
-            color = if (warning) warningColor else MaterialTheme.colorScheme.tertiary,
+            // Ink, as main's: a draining clock isn't progress, which is blue.
+            color = if (warning) warningColor else MaterialTheme.colorScheme.onSurface,
         )
         Text(
             text = formatClock(remaining),
@@ -243,7 +252,7 @@ fun DrillCountdown(
                     liveRegion = LiveRegionMode.Polite
                 },
             color = if (warning) MaterialTheme.zoonk.warningText else MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.labelLarge.withTabularFigures(),
+            style = clockStyle,
         )
     }
 }
@@ -333,11 +342,7 @@ private fun DrillAnswerNote(
 private fun NoteIcon(
     @DrawableRes icon: Int,
 ) {
-    val size =
-        with(LocalDensity.current) {
-            MaterialTheme.typography.bodyMedium.lineHeight
-                .toDp()
-        }
+    val size = MaterialTheme.typography.bodyMedium.lineHeightDp()
     Icon(
         painterResource(icon),
         contentDescription = null,

@@ -96,6 +96,7 @@ fun ItemSetText(
 ) {
     val folds = continued && !inAside && (set.text?.length ?: 0) >= LONG_TEXT_CHARACTERS
     var expanded by rememberSaveable(set.id) { mutableStateOf(!folds) }
+    val foldedHeight = MaterialTheme.typography.bodyMedium.lineHeightDp() * FOLDED_LINES
 
     Row(modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
         if (!inAside) VerticalDivider(Modifier.fillMaxHeight(), thickness = 2.dp)
@@ -106,7 +107,12 @@ fun ItemSetText(
             set.text?.let { text ->
                 ItemText(
                     text = text,
-                    modifier = if (folds && !expanded) Modifier.heightIn(max = FOLDED_HEIGHT).clipToBounds().fadeOut() else Modifier,
+                    modifier =
+                        if (folds && !expanded) {
+                            Modifier.heightIn(max = foldedHeight).clipToBounds().fadeOut()
+                        } else {
+                            Modifier
+                        },
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -181,13 +187,12 @@ private fun QuestionNote(
     modifier: Modifier,
 ) {
     val style = MaterialTheme.typography.labelMedium
-    val glyph = with(LocalDensity.current) { style.fontSize.toDp() }
 
     Row(modifier, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
         Icon(
             painter = painterResource(icon),
             contentDescription = null,
-            modifier = Modifier.padding(top = 1.dp).size(glyph),
+            modifier = Modifier.size(style.lineHeightDp()),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(text = text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = style)
@@ -202,11 +207,16 @@ fun ItemCitationNote(
 ) {
     FlowRow(
         modifier,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalArrangement = Arrangement.spacedBy(8.dp),
         itemVerticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(text = citation.text, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+        Text(
+            text = citation.text,
+            modifier = Modifier.padding(end = 12.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
+        )
         citation.checkedAt?.let(::checkedDay)?.let { SourcesChip(citation, it) }
     }
 }
@@ -254,6 +264,11 @@ private fun SourcesChip(
         AssistChip(
             onClick = { scope.launch { tooltip.show() } },
             label = { Text(stringResource(R.string.questions_sources_chip, formatDate(checked, locale, DateStyle.MonthShort))) },
+            colors =
+                AssistChipDefaults.assistChipColors(
+                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    leadingIconContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                ),
             leadingIcon = {
                 Icon(
                     painterResource(R.drawable.ic_menu_book),
@@ -272,5 +287,5 @@ private fun checkedDay(checkedAt: String): LocalDate? =
 
 /** About where a phone starts folding a set's text. */
 private const val LONG_TEXT_CHARACTERS = 400
-private val FOLDED_HEIGHT = 96.dp
+private const val FOLDED_LINES = 4
 private const val FADE_FROM = 0.4f
