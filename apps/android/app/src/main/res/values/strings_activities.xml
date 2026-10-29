@@ -101,4 +101,16 @@
     <string name="activities_dialogue_you_said">You said:</string>
     <string name="activities_dialogue_hear_line">Hear this line</string>
     <string name="activities_dialogue_hear_best">Hear the best reply</string>
+
+    <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->
+    <string name="activities_sortable_picked_up">Picked up %1$s at position %2$d.</string>
+    <!-- Read by TalkBack as a lifted row moves, like "Water is split is over position 3." -->
+    <string name="activities_sortable_over">%1$s is over position %2$d.</string>
+    <!-- Read by TalkBack when a row is put down, like "Water is split dropped at position 3." -->
+    <string name="activities_sortable_dropped">%1$s dropped at position %2$d.</string>
+    <!-- Read by TalkBack when moving a row is cancelled. -->
+    <string name="activities_sortable_stopped">Stopped moving %1$s. It stays where it was.</string>
+    <!-- TalkBack actions that move a row of a list one place. -->
+    <string name="activities_sortable_move_up">Move up</string>
+    <string name="activities_sortable_move_down">Move down</string>
 </resources>
