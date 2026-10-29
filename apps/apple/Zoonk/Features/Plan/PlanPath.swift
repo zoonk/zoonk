@@ -71,6 +71,7 @@ struct PlanPathRows: View {
 
 private struct PlanPhaseRow: View {
   @Environment(PlanStore.self) private var store
+  @Environment(\.dynamicTypeSize) private var typeSize
 
   let context: PlanContext
   let phase: PlanPhase
@@ -191,23 +192,15 @@ private struct PlanPhaseRow: View {
       == .orderedSame
   }
 
+  /// The counts stay at the trailing edge beside a long title; only accessibility sizes stack
+  /// them under it.
   private func header(byPlace: Bool, next: Bool) -> some View {
-    LabeledContent {
-      VStack(alignment: .trailing, spacing: 2) {
-        if phase.lessonsTotal > 0 {
-          Text(
-            "\(phase.lessonsDone) / \(phase.lessonsTotal)", tableName: "Plan",
-            comment: "Lessons done of a phase's lessons"
-          )
-          .monospacedDigit()
-        }
+    let layout =
+      typeSize.isAccessibilitySize
+      ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+      : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: 12))
 
-        if let until {
-          until
-            .font(.caption)
-        }
-      }
-    } label: {
+    return layout {
       Label {
         VStack(alignment: .leading, spacing: 2) {
           Text(
@@ -229,6 +222,24 @@ private struct PlanPhaseRow: View {
       } icon: {
         StatusMark(status: next ? .next : mark)
       }
+      .frame(maxWidth: .infinity, alignment: .leading)
+
+      VStack(alignment: typeSize.isAccessibilitySize ? .leading : .trailing, spacing: 2) {
+        if phase.lessonsTotal > 0 {
+          Text(
+            "\(phase.lessonsDone) / \(phase.lessonsTotal)", tableName: "Plan",
+            comment: "Lessons done of a phase's lessons"
+          )
+          .monospacedDigit()
+        }
+
+        if let until {
+          until
+            .font(.caption)
+        }
+      }
+      .foregroundStyle(.secondary)
+      .fixedSize()
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(phase.state == .current ? youAreHere : Text(verbatim: ""))
