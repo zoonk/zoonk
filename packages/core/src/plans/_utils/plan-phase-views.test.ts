@@ -611,7 +611,7 @@ describe("a phase's topics not written yet", () => {
     ).toStrictEqual([[true, false, null]]);
   });
 
-  it("offer no topic a chapter already teaches, and still say what the plan knows about it", () => {
+  it("opens a far topic chapters already teach, so its outline lists them, and still say what the plan knows about it", () => {
     const [view] = buildPhaseViews({
       chapterTitles: new Map(),
       currentPhase: 0,
@@ -626,7 +626,7 @@ describe("a phase's topics not written yet", () => {
 
     expect(
       view?.chapters.map(({ far, plannedLessons, skillId }) => ({ far, plannedLessons, skillId })),
-    ).toStrictEqual([{ far: true, plannedLessons: 3, skillId: null }]);
+    ).toStrictEqual([{ far: true, plannedLessons: 3, skillId: "skill-0" }]);
   });
 
   it("offer the row's first topic no chapter teaches yet", () => {

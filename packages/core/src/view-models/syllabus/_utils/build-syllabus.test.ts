@@ -514,7 +514,7 @@ describe(buildSyllabus, () => {
         nextDate: "2026-10-09",
         plannedLessons: 4,
         position: 2,
-        skillId: null,
+        skillId: "s-ortho",
         state: "upcoming",
         title: "Aplicar a ortografia",
         writing: true,

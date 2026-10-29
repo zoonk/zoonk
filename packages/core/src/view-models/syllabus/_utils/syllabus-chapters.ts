@@ -1,5 +1,5 @@
 import {
-  getOpenEarlySkill,
+  getFarTopicSkill,
   isFarTopic,
   sumPlannedLessons,
 } from "../../../plans/_utils/stand-in-lessons";
@@ -105,7 +105,7 @@ export function buildChapters({
         lessonsTotal: sum(inChapter),
         nextDate,
         plannedLessons: writing ? sumPlannedLessons(inChapter) : null,
-        skillId: getOpenEarlySkill({ far, skillIds: [first.skillId], taughtSkillIds }),
+        skillId: getFarTopicSkill({ far, skillIds: [first.skillId], taughtSkillIds }),
         state: getChapterState({ done, key, nextKey }),
         title: written?.chapterId
           ? chapterTitles.get(written.chapterId) || written.titleSnapshot

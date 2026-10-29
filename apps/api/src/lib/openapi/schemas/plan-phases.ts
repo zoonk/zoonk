@@ -48,7 +48,7 @@ export const planPhaseSchema = z
             .nullable()
             .meta({
               description:
-                "A `far` row's first topic no chapter teaches yet: its lesson plan is `GET /goals/{goalId}/skills/{skillId}/outline`, and POST `.../outline/generations` writes it now. Null for every other row, including one whose lessons are on the way and one whose topics chapters already teach (the plan writes their next chapter as the learner gets close)",
+                "A `far` row's topic to open: its first topic no chapter teaches yet, else its first taught one. Its lesson plan is `GET /goals/{goalId}/skills/{skillId}/outline`: `ready` lists the chapters that teach it, and POST `.../outline/generations` writes an untaught one now. Null for every other row, including one whose lessons are on the way",
             }),
           skills: z
             .array(z.string())

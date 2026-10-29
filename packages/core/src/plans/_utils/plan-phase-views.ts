@@ -11,7 +11,7 @@ import { type PlanReadItem, getPlanReadItemKey } from "./plan-read-projection";
 import { type ShortPlanShape, toShortPhaseView } from "./short-plan-view";
 import {
   countItemLessons,
-  getOpenEarlySkill,
+  getFarTopicSkill,
   isFarTopic,
   sumPlannedLessons,
 } from "./stand-in-lessons";
@@ -145,7 +145,7 @@ function buildChapters({
       lessonsTotal: sum(inGroup),
       nextDate,
       plannedLessons: writing ? sumPlannedLessons(inGroup) : null,
-      skillId: getOpenEarlySkill({
+      skillId: getFarTopicSkill({
         far,
         skillIds: todo.map((item) => item.skillId),
         taughtSkillIds,

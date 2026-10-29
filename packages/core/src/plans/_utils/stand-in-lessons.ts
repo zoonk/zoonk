@@ -42,7 +42,11 @@ export function isFarTopic({
   return Boolean(writing && nextDate && outlinedUntil && nextDate > outlinedUntil);
 }
 
-export function getOpenEarlySkill({
+/**
+ * The far row's topic to open: its first one no chapter teaches yet, whose outline it can write
+ * early, else its first taught one, whose outline lists the chapters that now teach it.
+ */
+export function getFarTopicSkill({
   far,
   skillIds,
   taughtSkillIds,
@@ -51,5 +55,10 @@ export function getOpenEarlySkill({
   skillIds: readonly (string | null)[];
   taughtSkillIds: ReadonlySet<string>;
 }): string | null {
-  return far ? (skillIds.find((id) => id !== null && !taughtSkillIds.has(id)) ?? null) : null;
+  if (!far) {
+    return null;
+  }
+
+  const topics = skillIds.filter((id) => id !== null);
+  return topics.find((id) => !taughtSkillIds.has(id)) ?? topics[0] ?? null;
 }
