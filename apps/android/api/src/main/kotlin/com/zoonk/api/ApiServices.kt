@@ -33,8 +33,6 @@ import kotlinx.serialization.json.JsonObject
 import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
-import java.lang.reflect.Type
-import java.util.UUID
 import okhttp3.ResponseBody
 import retrofit2.Converter
 import retrofit2.Response
@@ -44,6 +42,8 @@ import retrofit2.create
 import retrofit2.http.Body
 import retrofit2.http.POST
 import retrofit2.http.Path
+import java.lang.reflect.Type
+import java.util.UUID
 
 /** [baseUrl] is the API's versioned root, ending in `/v1/`. */
 class ApiServices(
