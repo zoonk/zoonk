@@ -3,6 +3,7 @@ import SwiftUI
 struct SubjectScreen: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var plans
+  @State private var isReporting = false
 
   let subjectKey: String
 
@@ -56,6 +57,33 @@ struct SubjectScreen: View {
         ToolbarItem(placement: .primaryAction) {
           TutorAskButton(scope: .subject(goalId: goal.id, subjectKey: subjectKey))
         }
+
+        ToolbarItem(placement: .primaryAction) {
+          Menu {
+            Button {
+              isReporting = true
+            } label: {
+              Label {
+                Text(
+                  "Report a problem", tableName: "Plan",
+                  comment: "Opens the feedback form about the subject page")
+              } icon: {
+                Image(systemName: "flag")
+              }
+            }
+          } label: {
+            Label {
+              Text(
+                "Subject options", tableName: "Plan",
+                comment: "Spoken label of the subject's … menu")
+            } icon: {
+              Image(systemName: "ellipsis")
+            }
+          }
+        }
+      }
+      .sheet(isPresented: $isReporting) {
+        FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "subject"))
       }
       .loads(syllabus)
     }
@@ -91,6 +119,29 @@ private struct SubjectContent: View {
 
   private var isExam: Bool { goal.kind == .exam }
 
+  /// Main's subject facts: its topics and chapters, and how much is done while it's taught in
+  /// lessons.
+  private var facts: [String] {
+    [
+      subject.topics.isEmpty
+        ? nil
+        : String(
+          localized: "\(subject.topics.count) topics", table: "Plan",
+          comment: "How many topics a subject has"),
+      subject.chapters.isEmpty
+        ? nil
+        : String(
+          localized: "\(subject.chapters.count) chapters", table: "Plan",
+          comment: "How many chapters a subject has"),
+      subject.notPlannedReason == nil && subject.preparation == nil
+        ? String(
+          localized:
+            "\(subject.lessonShare.formatted(.percent.precision(.fractionLength(0)))) done",
+          table: "Plan", comment: "How much of a subject is done, as in 40% done")
+        : nil,
+    ].compactMap(\.self)
+  }
+
   private var header: some View {
     Section {
       VStack(alignment: .leading, spacing: 8) {
@@ -107,21 +158,35 @@ private struct SubjectContent: View {
         Text(subject.name)
           .font(.title2.weight(.semibold))
 
+        if !facts.isEmpty {
+          Text(verbatim: facts.joined(separator: " · "))
+            .font(.subheadline)
+            .monospacedDigit()
+            .foregroundStyle(.secondary)
+        }
+
         if let reason = subject.notPlannedReason, !reason.isEmpty {
           Text("Not in your plan", tableName: "Plan", comment: "A subject the plan leaves out")
             .font(.subheadline)
             .foregroundStyle(.secondary)
         }
 
-        if let next = subject.chapters.first(where: { $0.state == .current && $0.chapterId != nil }
-        ),
-          let chapterId = next.chapterId
+        if subject.notPlannedReason == nil,
+          let chapterId = subject.chapters.first(where: {
+            $0.state != .done && $0.chapterId != nil
+          })?.chapterId
         {
           Button {
             router.open(chapterRoute(chapterId))
           } label: {
-            Text("Continue", tableName: "Plan", comment: "Opens the subject's next chapter")
-              .frame(maxWidth: .infinity)
+            Group {
+              if subject.lessonsDone > 0 {
+                Text("Continue", tableName: "Plan", comment: "Opens the subject's next chapter")
+              } else {
+                Text("Start", tableName: "Plan", comment: "Opens the subject's first chapter")
+              }
+            }
+            .frame(maxWidth: .infinity)
           }
           .buttonStyle(.mainAction)
           .controlSize(.large)
@@ -242,33 +307,52 @@ private struct SubjectChapterRow: View {
     }
   }
 
+  /// Main's syllabus chapter row: numbered, what's left of the one in progress, and when the plan
+  /// studies it next.
   private var content: some View {
-    LabeledContent {
-      if chapter.lessonsTotal > 0 {
-        Text(
-          "\(chapter.lessonsDone) / \(chapter.lessonsTotal)", tableName: "Plan",
-          comment: "Lessons done of a chapter's lessons"
-        )
-        .monospacedDigit()
-      }
-    } label: {
+    PlanPathRow {
       Label {
         VStack(alignment: .leading, spacing: 2) {
-          Text(chapter.title)
+          Text(verbatim: "\(chapter.position). \(chapter.title)")
+            .foregroundStyle(chapter.state == .done ? .secondary : .primary)
 
-          if chapter.writing && chapter.chapterId == nil {
-            Text(
-              "Being written", tableName: "Plan",
-              comment: "A chapter whose lessons are still being written"
-            )
-            .font(.caption)
-            .foregroundStyle(.secondary)
+          if let line {
+            line
+              .font(.caption)
+              .foregroundStyle(.secondary)
           }
         }
       } icon: {
         StatusMark(status: status)
       }
+    } value: {
+      if chapter.state != .done, let nextDate = chapter.nextDate {
+        Text(PlanDate.text(nextDate, today: isoDay(.now)))
+          .monospacedDigit()
+      }
     }
+  }
+
+  private var line: Text? {
+    if chapter.known {
+      return Text(
+        "Skipped because you already know it", tableName: "Plan",
+        comment: "A chapter the learner tested out of")
+    }
+
+    if chapter.writing && chapter.chapterId == nil {
+      return Text(
+        "Being written", tableName: "Plan",
+        comment: "A chapter whose lessons are still being written")
+    }
+
+    guard chapter.state == .current else {
+      return nil
+    }
+
+    return Text(
+      "\(chapter.lessonsTotal) lessons · \(chapter.lessonsDone) done", tableName: "Plan",
+      comment: "The chapter in progress: its lessons and how many are done")
   }
 
   private var status: StatusMark.Status {
