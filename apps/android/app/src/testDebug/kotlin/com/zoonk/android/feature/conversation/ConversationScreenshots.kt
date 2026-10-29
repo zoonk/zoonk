@@ -58,6 +58,10 @@ class ConversationScreenshots {
     fun tablet() = walk("tablet")
 
     @Test
+    @Config(qualifiers = "w851dp-h882dp-xhdpi")
+    fun foldOpen() = walk("fold-open")
+
+    @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun limit() {
         val harness = ConversationHarness()
