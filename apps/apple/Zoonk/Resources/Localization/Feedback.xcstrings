@@ -233,35 +233,6 @@
         }
       }
     },
-    "Please provide as much detail as possible." : {
-      "comment" : "Guidance below the feedback message field.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bitte beschreibe dein Anliegen so genau wie möglich."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Incluye todos los detalles que puedas."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Donne-nous autant de détails que possible."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dê o máximo de detalhes possível."
-          }
-        }
-      }
-    },
     "Report a problem" : {
       "comment" : "Navigation title for the form reporting a problem with a page",
       "localizations" : {
@@ -409,6 +380,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Agradecemos seu feedback"
+          }
+        }
+      }
+    },
+    "This screen is attached" : {
+      "comment" : "Says the message is sent with the page it was written on",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieser Bildschirm wird angehängt"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Se adjunta esta pantalla"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une capture de cet écran est jointe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta tela está anexada"
           }
         }
       }

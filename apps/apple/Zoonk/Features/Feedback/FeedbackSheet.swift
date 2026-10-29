@@ -23,6 +23,7 @@ private struct FeedbackForm: View {
   @FocusState private var focusedField: FeedbackField?
   @State private var store: FeedbackFormStore
   private let asksForEmail: Bool
+  private let attachesScreen: Bool
   private let isReport: Bool
 
   init(
@@ -33,6 +34,7 @@ private struct FeedbackForm: View {
     token: String?
   ) {
     asksForEmail = accountEmail?.isEmpty ?? true
+    attachesScreen = context?.contentID != nil
     self.isReport = isReport
     _store = State(
       initialValue: FeedbackFormStore(
@@ -180,10 +182,16 @@ private struct FeedbackForm: View {
             tableName: "Feedback",
             comment: "Message field label in the feedback form."))
       } footer: {
-        Text(
-          "Please provide as much detail as possible.",
-          tableName: "Feedback",
-          comment: "Guidance below the feedback message field.")
+        if attachesScreen {
+          Label {
+            Text(
+              "This screen is attached",
+              tableName: "Feedback",
+              comment: "Says the message is sent with the page it was written on")
+          } icon: {
+            Image(systemName: "paperclip")
+          }
+        }
       }
 
       if case .failed(let failure) = store.state {
