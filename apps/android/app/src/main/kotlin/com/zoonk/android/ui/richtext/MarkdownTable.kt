@@ -92,3 +92,11 @@ internal fun readMarkdownTable(
         end = end,
     )
 }
+
+/** The lines that belong to a table, so a question can split its data from its words (`findMarkdownTableLines`). */
+fun findMarkdownTableLines(lines: List<String>): Set<Int> =
+    lines.indices
+        .flatMap { index ->
+            val read = if (isRow(lines.getOrNull(index - 1))) null else readMarkdownTable(lines, index)
+            read?.let { (index until it.end).toList() }.orEmpty()
+        }.toSet()
