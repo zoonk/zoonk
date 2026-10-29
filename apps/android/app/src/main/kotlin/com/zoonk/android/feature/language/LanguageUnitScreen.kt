@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
@@ -19,6 +20,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -33,12 +36,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -61,6 +66,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.KindDotLeading
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LessonList
 import com.zoonk.android.ui.components.LessonProgress
@@ -205,7 +211,7 @@ internal fun UnitPage(
 ) {
     val lessons = remember(unit) { unit.lessons.map { it.listed() } }
     val compact = !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-    val padding = PaddingValues(horizontal = if (compact) 16.dp else 24.dp, vertical = 24.dp)
+    val padding = PaddingValues(horizontal = (if (compact) 16.dp else 24.dp) - LIST_ITEM_INSET, vertical = 24.dp)
     val aboutLabel = stringResource(R.string.language_unit_about)
     val openLesson = { id: UUID -> actions.open(AppRoute.Lesson(id.toString())) }
 
@@ -231,7 +237,7 @@ internal fun UnitPage(
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
             LazyColumn(
                 state = listState,
-                modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
+                modifier = Modifier.then(if (asideBeside) Modifier else Modifier.widthIn(max = PAGE_WIDTH)).fillMaxSize(),
                 contentPadding = padding,
                 verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
             ) {
@@ -280,7 +286,7 @@ private fun UnitHero(
             ).joinToString(SEPARATOR)
         }
 
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+    Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(eyebrow, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
             Text(info.title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
@@ -299,13 +305,17 @@ private fun UnitObjectives(
     objectives: List<String>,
     finished: Boolean,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionHeader(stringResource(if (finished) R.string.language_unit_can_already else R.string.language_unit_objectives))
+    Column {
+        SectionHeader(
+            stringResource(if (finished) R.string.language_unit_can_already else R.string.language_unit_objectives),
+            Modifier.padding(horizontal = LIST_ITEM_INSET),
+        )
         objectives.take(SHOWN_OBJECTIVES).forEach { objective ->
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
-                CanDoMark(done = finished, modifier = Modifier.padding(top = 2.dp))
-                Text(objective, style = MaterialTheme.typography.bodyLarge)
-            }
+            ListItem(
+                headlineContent = { Text(objective) },
+                leadingContent = { Box(Modifier.size(MARK_SLOT), contentAlignment = Alignment.Center) { CanDoMark(done = finished) } },
+                colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+            )
         }
     }
 }
@@ -313,7 +323,7 @@ private fun UnitObjectives(
 @Composable
 private fun UnitProgress(lessons: List<ListedLesson>) {
     val locale = currentLocale()
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(Modifier.padding(horizontal = LIST_ITEM_INSET), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(
             stringResource(R.string.language_unit_progress),
             detail =
@@ -367,7 +377,7 @@ private fun UnitPractice(
         }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(stringResource(R.string.language_unit_practice))
+        SectionHeader(stringResource(R.string.language_unit_practice), Modifier.padding(horizontal = LIST_ITEM_INSET))
         Column {
             rows.forEachIndexed { index, row ->
                 if (index > 0) HorizontalDivider()
@@ -388,7 +398,7 @@ private fun UnitMistakes(mistakes: List<LanguageUnitMistakesInner>) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelMedium,
                 )
-                ItemText(mistake.question, style = MaterialTheme.typography.bodyMedium)
+                ItemText(mistake.question, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
                 mistake.answer?.let { MistakeAnswer(it, right = false) }
                 mistake.correctAnswer?.let { MistakeAnswer(it, right = true) }
                 mistake.explanation?.let {
@@ -474,7 +484,7 @@ private fun UnitReference(unit: LanguageUnit) {
         }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionHeader(stringResource(R.string.language_unit_reference))
+        SectionHeader(stringResource(R.string.language_unit_reference), Modifier.padding(horizontal = LIST_ITEM_INSET))
         Column {
             rows.forEachIndexed { index, row ->
                 if (index > 0) HorizontalDivider()
@@ -494,6 +504,7 @@ private fun LanguageUnitLessonsInner.listed() =
     )
 
 private const val SEPARATOR = " · "
+private val MARK_SLOT = 24.dp
 private const val SHOWN_OBJECTIVES = 3
 private val PAGE_WIDTH = 720.dp
 private val SECTION_GAP = 40.dp

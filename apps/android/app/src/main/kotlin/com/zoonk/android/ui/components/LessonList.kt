@@ -5,6 +5,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
@@ -38,7 +39,8 @@ data class ListedLesson(
 
 /**
  * Main's `LessonList`: the lessons in order, numbered, with how many are done. The next one is
- * marked and tinted only when [upNext] (its chapter is the plan's current one).
+ * marked and tinted only when [upNext] (its chapter is the plan's current one). Its rows reach its
+ * edges and inset their content, so place it without the page's side padding.
  */
 @Composable
 fun LessonList(
@@ -53,6 +55,7 @@ fun LessonList(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(
             stringResource(R.string.lessons_title),
+            modifier = Modifier.padding(horizontal = LIST_ITEM_INSET),
             detail =
                 stringResource(
                     R.string.lessons_done_count,

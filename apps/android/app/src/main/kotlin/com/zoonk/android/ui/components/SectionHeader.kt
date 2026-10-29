@@ -10,7 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.withTabularFigures
+
+/** The inset Material's `ListItem` gives its content; a header or line above rows takes it to share their edge. */
+val LIST_ITEM_INSET = 16.dp
 
 /** [detail] sits at the end, as main's `PageSectionDetail` ("2 of 6"). */
 @Composable
