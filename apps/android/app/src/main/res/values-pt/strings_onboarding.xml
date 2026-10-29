@@ -128,6 +128,75 @@
   "onboarding_read_limit_guest": "b8396a318eed2f84eaf12a28d4106fc5042f93cab99e86c0610eebea353514ae",
   "onboarding_read_limit_plus": "9306ec2111d95df512615dd792a945b474dcf0e559e5fbc96cf7ec77a97da6d7",
   "onboarding_remove_material": "81b9841b1fbb22b72709c9a15f1c7f79905f51febd74b45b5c8cbb9709598d47",
+  "onboarding_reveal_about_days": "815cf64559d4ad0206a58f6d816927354b3885064f9a5b550be6c847b065a5e9",
+  "onboarding_reveal_adjust": "70d8aef1aad88aa4e44458e94f6ec870ea5cd07fa5ee2d13ca18635da79e912d",
+  "onboarding_reveal_building_description": "db6efdd159c512bbbc8ee33e288de345cfd38bd259457b13403c5687c8535f70",
+  "onboarding_reveal_building_title": "95f31573e287ba8d45ae98cb2dac63c8e8e16cbc5acd97b7481c953b63762a89",
+  "onboarding_reveal_chapters": "1e7725fd8ccf2418954c4bdc28302f7bc2eee323a28b07fa16eac2d0e5d7ee6a",
+  "onboarding_reveal_covers_exam_after": "4e3e9c168517cfe07a35ac4fb2c6179b95b7009c002214d84456a16455503ee9",
+  "onboarding_reveal_covers_exam_deeper": "f47be81e8e226e880dffda78a2d2251c2ab4cf601f836e3d55c99083a0cf4426",
+  "onboarding_reveal_covers_exam_left_out": "d563456f970dff56e9bf0cb8c07f85b923cc7c2d0fa3928312c8281e1208873a",
+  "onboarding_reveal_covers_exam_lighter": "c6baeb2b900860269c1f6bdbae84786a37f873892d0595f597719d049e1812f1",
+  "onboarding_reveal_covers_goal": "d8184c658768ea560aacd8f9c5bd2da104369b5f0d532610ba8600e76e9fc55a",
+  "onboarding_reveal_covers_goal_left_out": "b383108bec3cb733bdef216e31b1e57148c9e57fbebda2f04b77950a2b586e19",
+  "onboarding_reveal_covers_nothing": "4d311601340a8de29542df8f3a2d31d0ffc8f2fb3b1b2b1569ea86622ef7aa20",
+  "onboarding_reveal_created": "13a30997bdb8cdf84b28603070067e588fb3dee6b89f2175a88e29c6c0b6a742",
+  "onboarding_reveal_daily": "a141880ecadcf5b04ec70bf4fd5b119bea6f232a9eab5e45de9c1147f12c7f57",
+  "onboarding_reveal_days": "fe441623cb47eb0ce94aa7acd54d2d21c0e1449be3f9e0349262184b5f1c0775",
+  "onboarding_reveal_estimated_guide": "49ab7b18d99a7b7f70c3cee59fa4be17919c01f7fdbb39e803df224a9382c2f4",
+  "onboarding_reveal_estimated_material": "a8c38d50a4a9e9c514320db0631d7196522903022b3c372e20d30542f3f2d65a",
+  "onboarding_reveal_estimated_notice": "05355600181849448d518a537f3113d7817cb352e611b9ea515defe62e56b470",
+  "onboarding_reveal_estimated_percent": "1367bf72e539876d063f27d3253e62f7727fb5420697f09f511ee9ffcce8f529",
+  "onboarding_reveal_free_week_over_body": "75252b9f7fcfeb8a9d3ee063478ee6aca6345b010b72869e31489545239399bc",
+  "onboarding_reveal_free_week_over_title": "55479b4b1ecd5bdb190b5451e3176af3a4eeb93a6255890fd0c4f36262c41607",
+  "onboarding_reveal_full_course": "fe4054cf1926b4312dcd418359b9bfd87bc59197386e0fa123f1e66d514ecefd",
+  "onboarding_reveal_full_course_finish": "88577ad89ca0410cd41aa6e32b603284203a82812ef433e71b93c49ec32b03b3",
+  "onboarding_reveal_guide_parts": "8dbd7521df2edf4bb2bd43ca887d825db1a5948d30839ec5522db15123025039",
+  "onboarding_reveal_known_skills": "223505aa52dab4df416791d78b5069f91811b3631389fe2b5decd359a068fccf",
+  "onboarding_reveal_material_topics": "181da8125f3614f83934fdfe0b53ff6d5958e36898e774f85e3a2470855c8aef",
+  "onboarding_reveal_modules": "2ebe3296ac5881f045e1637b86bd8e3e4077ac4a6950d367dd604b27f1795889",
+  "onboarding_reveal_more_chapters": "7f603f4d7e482feb21a66460fb502488d8d867bb67045e4fdc9ed663a99bff1a",
+  "onboarding_reveal_more_lessons": "b5afd84fd2e4d90322e91a86805d7ad0a0417a96865e3c2cbd6b538abc1d8b5d",
+  "onboarding_reveal_most_questions": "17599b2d02c776fa6d75349aeca75ff6664d771c1f3fd79df89a4a4540c08046",
+  "onboarding_reveal_no_sitting": "64bd52557ab82c6f1da2a71d4154cf6a08001b5040a6ec97d4b78af44a60c3c7",
+  "onboarding_reveal_notice_day_estimated": "c396253a217040150e1899bbe83076930f8ec4614c5b39694e275e40692c270a",
+  "onboarding_reveal_notice_day_guide": "441e956f6eff5fb7bc22345b9e8f458e199cc6854e75edfa563857d6639ad2f1",
+  "onboarding_reveal_notice_day_notice": "c8e0353b8f30caca289ad86d5f027a4653ce85ea037728cbc4c88341c3c8d6ef",
+  "onboarding_reveal_notice_subjects": "4758bd47a8174839b8bd8706e5c600feabc4160268ab0fe41b3e0c374675c96d",
+  "onboarding_reveal_phase_day": "6eeee8608d11d51f14224c7eaf2535be0cc5688537945c51ff0fc3a9782b600b",
+  "onboarding_reveal_phase_final_stretch": "8274bb772da94493007ede1ba355f60decdd776ec50f738a8dca9177d918e625",
+  "onboarding_reveal_phase_foundations": "f7c8827a61c0c2221b3607846df6c99d8cc96f48c846ee7bd31f14c27dff652d",
+  "onboarding_reveal_phase_full_review": "cf873e5c6c7fe27328a6281a915168ce0a7c535721e2e197e9c4f3a46b132f54",
+  "onboarding_reveal_phase_full_review_and_practice": "479f75376dd0ce6ade0ac86a002ddcd70eb5f1a6b1837638595a3aebdaa55e7a",
+  "onboarding_reveal_phase_gaps": "18dcf9102bcbd627ec3f6b219d45914d1fb2b80a12390de037a0deada1032ca5",
+  "onboarding_reveal_phase_light_review": "4b7225da72167f627d627e554b55c16b2bd2bc1aa7ada1751de754929e40320e",
+  "onboarding_reveal_phase_map_and_gaps": "600dfc50ba95cb296315d5ba3b5412fc05eb98b4a89e87b64cca03c82cc7fc48",
+  "onboarding_reveal_phase_mock_and_practice": "42f42bc6380c6b07976b35d9da4c0a5310945975ca4766abb5a9756196340984",
+  "onboarding_reveal_phase_number": "0e2424506d2fdf138666ec2618d676b525e4a6aff9fb06c4388047c5770ce4d3",
+  "onboarding_reveal_phase_place": "cbcf4060faf0cbb6cef6a2283979079799292f9ed48149c0b11c4598a83fb16b",
+  "onboarding_reveal_phase_position": "7fa805e69cedd41adff10df8a92def9a1307798d8341f52b031287fcdf7b0096",
+  "onboarding_reveal_phase_practice": "186022d7ec0eabf8c1deabbaa33c6c2946ff32c2dd2fcc96ee24a5f4c283451e",
+  "onboarding_reveal_phase_short_mock": "edbe567bdb085b8096796e75ef8358855804721cc9eb9da5b03d2fcd793c9691",
+  "onboarding_reveal_phases": "73d8843c1f1a2dbe0455bbc83100ff72f71070d0f3a49ea3777112b510709661",
+  "onboarding_reveal_reading_done_step": "8d1769d0a265e7b21cbab0f8530b8785596f1deb5ecd80b953c13b585bae5c3c",
+  "onboarding_reveal_reading_guide": "b3b2d19dbeee26df1a7c439771bc3bf64e39e6d70b0fbb8b9211cc35414b3510",
+  "onboarding_reveal_reading_last": "b9293afbdb8f0cb12d194f1f31f5a0cb3fea476591622085569506ecf2bdc7d2",
+  "onboarding_reveal_reading_last_title": "0ab818341d23b4d6c8b10c4db7545e68f5c1f2bbe8c3cada15238ab5ed71de64",
+  "onboarding_reveal_reading_notice": "c46beff9b8bda19bbf5092b0e8d78ed88af24160508f36dfc113cf5ca5079429",
+  "onboarding_reveal_reading_step": "15b2f9596ca81afcde6e05a3e0169468deee743ee2a337ac2aea0af93c265f6e",
+  "onboarding_reveal_reading_title": "3cb3ec943f10e8de51068d0cbd2758996ce7b0d0bc504fc825178cafab74ba58",
+  "onboarding_reveal_save_note": "6704d109c60cc005b5ceac6677a6f638fd8500171faeba15a3c8f586895ffaa6",
+  "onboarding_reveal_start": "52ab050bd17908a219d5c5edb1744bd6ce272dbfe651b7931d48eaab10b1cff4",
+  "onboarding_reveal_study": "155673a61683b1aedfdc5c3c107e340b672b0694d9d497b494ab11a95d977d6c",
+  "onboarding_reveal_today": "1eaad2c10699dde8c956c0dfa37e9a43a35c2dbabc7ea6c4c7704fd10cb6ba4f",
+  "onboarding_reveal_topics": "121fbc941a442bc58bc6032afab9cf774893a8b61e72369f14dad1cbbea32f01",
+  "onboarding_reveal_topics_all_planned": "2fcab0abf6f3965b12d2dd9006886bc51048cec58e519d2ad2b573967dda50d3",
+  "onboarding_reveal_topics_dont_fit": "7be4cbdf48a8326815db3a19a10ae8fceea7514e595f70a3ecbfc7cf1cf49ec8",
+  "onboarding_reveal_topics_planned": "ddb6e6b8d8f6cfbda7c0f0f9b903b88c8d414e082eb514409b9026b268c2f81e",
+  "onboarding_reveal_until_about": "7477f87e0bf6829f2d687e0e0f553483c6ebbfb574d4e610c3d36c3244700597",
+  "onboarding_reveal_usual_structure": "afedcab8880e2ffa66e8c013a7e32ee6cb61429ecc4a724a08faa95a532ed975",
+  "onboarding_reveal_weights": "377fe45e61e7ed9a2dee3c826ca16e4cceef9a2382893bf7aa994349532efb9d",
+  "onboarding_reveal_you_are_here": "a28a60f98f2c47209547a575f44ab7eebbc032c2aa8d9babc947fa4f61a3c4d0",
   "onboarding_rewrite_hint": "98542e1d67534f9f62d6edf6ecada058d750bee7801984136072e937a95a902d",
   "onboarding_row_course": "8c5bba924835ec5575b5a810233db74578bfeadd2153d9d2d3a1dfadb8ce2f73",
   "onboarding_row_cutoff_score": "e466c71621973468333d24343ff871622822f655c55ec895253a27fc60805152",
@@ -440,4 +509,153 @@
     <string name="onboarding_placement_mock_waiting_description">Continue de onde parou ou pare agora: seu plano vai partir das perguntas que você respondeu.</string>
     <string name="onboarding_placement_continue_mock">Continuar o simulado</string>
     <string name="onboarding_placement_stop_mock">Parar e ver meu plano</string>
+    <!-- The plan reveal: the plan the setup built, ready to start. -->
+    <string name="onboarding_reveal_building_title">Montando seu plano</string>
+    <string name="onboarding_reveal_building_description">Estamos escolhendo o que você vai aprender primeiro e distribuindo nos seus dias. Adicionar uma nova matéria pode levar um ou dois minutos.</string>
+    <string name="onboarding_reveal_reading_title">Lendo os documentos oficiais da prova</string>
+    <string name="onboarding_reveal_reading_last_title">Lendo os documentos oficiais da edição anterior</string>
+    <string name="onboarding_reveal_reading_notice">Seu plano vai seguir as matérias, os tópicos e as datas do edital. Isso costuma levar alguns minutos.</string>
+    <string name="onboarding_reveal_reading_guide">Seu plano vai seguir as partes, os tópicos e as datas do guia oficial. Isso costuma levar alguns minutos.</string>
+    <string name="onboarding_reveal_reading_last">Os documentos da próxima edição ainda não foram publicados, então seu plano vai seguir as matérias e os tópicos da edição anterior. Vamos avisar você quando os novos documentos saírem. Isso costuma levar alguns minutos.</string>
+    <string name="onboarding_reveal_reading_done_step">Seu plano, com base no que você contou</string>
+    <string name="onboarding_reveal_reading_step">Lendo os documentos oficiais</string>
+    <string name="onboarding_reveal_created">Plano criado</string>
+    <plurals name="onboarding_reveal_days">
+        <item quantity="one">%d dia</item>
+        <item quantity="many">%d dias</item>
+        <item quantity="other">%d dias</item>
+    </plurals>
+    <plurals name="onboarding_reveal_about_days">
+        <item quantity="one">Cerca de %d dia</item>
+        <item quantity="many">Cerca de %d dias</item>
+        <item quantity="other">Cerca de %d dias</item>
+    </plurals>
+    <!-- When a plan without a date ends at the learner\'s pace. %1$s is a date or a month. -->
+    <string name="onboarding_reveal_until_about">Até aproximadamente %1$s</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_reveal_daily">%1$s por dia</string>
+    <!-- The study time a plan adds up to. %1$s is a duration, such as "12 hr". -->
+    <string name="onboarding_reveal_study">cerca de %1$s de estudo</string>
+    <string name="onboarding_reveal_start">Começar</string>
+    <string name="onboarding_reveal_adjust">Ajustar</string>
+    <string name="onboarding_reveal_save_note">Salve seu plano para ele estar aqui na próxima vez.</string>
+    <string name="onboarding_reveal_phases">Fases</string>
+    <string name="onboarding_reveal_chapters">Capítulos</string>
+    <plurals name="onboarding_reveal_more_chapters">
+        <item quantity="one">mais %d capítulo</item>
+        <item quantity="many">mais %d capítulos</item>
+        <item quantity="other">mais %d capítulos</item>
+    </plurals>
+    <plurals name="onboarding_reveal_known_skills">
+        <item quantity="one">%d habilidade que você já conhece</item>
+        <item quantity="many">%d habilidades que você já conhece</item>
+        <item quantity="other">%d habilidades que você já conhece</item>
+    </plurals>
+    <!-- A new plan\'s chapter whose lessons are still being written. -->
+    <string name="onboarding_reveal_more_lessons">Mais aulas</string>
+    <string name="onboarding_reveal_usual_structure">Este plano segue a estrutura mais comum da prova enquanto a gente termina de ler os documentos oficiais. Se eles mudarem seu plano, você decide no Hoje.</string>
+    <!-- Phases of an exam plan, named by what the learner does in them. -->
+    <string name="onboarding_reveal_phase_foundations">Fundamentos</string>
+    <string name="onboarding_reveal_phase_gaps">Preencher lacunas</string>
+    <string name="onboarding_reveal_phase_practice">Prática</string>
+    <string name="onboarding_reveal_phase_final_stretch">Reta final</string>
+    <!-- %1$d is the phase\'s place in the plan. -->
+    <string name="onboarding_reveal_phase_number">Fase %1$d</string>
+    <!-- Phases of a plan whose exam is days away. -->
+    <string name="onboarding_reveal_phase_map_and_gaps">Mapa da prova e lacunas</string>
+    <string name="onboarding_reveal_phase_mock_and_practice">Simulado e prática</string>
+    <string name="onboarding_reveal_phase_full_review_and_practice">Revisão completa e prática</string>
+    <string name="onboarding_reveal_phase_short_mock">Simulado curto e revisão</string>
+    <string name="onboarding_reveal_phase_full_review">Revisão completa</string>
+    <string name="onboarding_reveal_phase_light_review">Revisão leve</string>
+    <!-- Read by TalkBack on the mark of the phase the learner is in. -->
+    <string name="onboarding_reveal_you_are_here">Você está aqui</string>
+    <!-- Beside the phase the learner is in, in place of its start date. -->
+    <string name="onboarding_reveal_today">Hoje</string>
+    <!-- %1$d is the day the learner is on in the current phase, %2$d how many days it has. -->
+    <string name="onboarding_reveal_phase_day">dia %1$d de %2$d</string>
+    <!-- %1$d is the current phase\'s place, %2$d how many phases the plan has. -->
+    <string name="onboarding_reveal_phase_position">%1$d de %2$d</string>
+    <string name="onboarding_reveal_phase_place">fase %1$d de %2$d</string>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="onboarding_reveal_notice_day_estimated">A data provável da prova agora é %1$s.</string>
+    <string name="onboarding_reveal_notice_day_notice">O edital informa %1$s.</string>
+    <string name="onboarding_reveal_notice_day_guide">O calendário oficial da prova informa %1$s.</string>
+    <!-- %1$s is a month, such as "March 2027". -->
+    <string name="onboarding_reveal_no_sitting">Sem data de prova em %1$s</string>
+    <string name="onboarding_reveal_free_week_over_title">Sua semana grátis de preparo para a prova acabou</string>
+    <string name="onboarding_reveal_free_week_over_body">Revisar e corrigir seus erros continua grátis. O Plus libera novas aulas, o restante do seu plano e simulados.</string>
+    <!-- What the learner\'s time a day covers. %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_reveal_covers_nothing">%1$s por dia não é tempo suficiente para cobrir sua meta.</string>
+    <string name="onboarding_reveal_covers_exam_deeper">Com %1$s por dia, você estuda todos os tópicos da prova e vê com mais profundidade os que mais caem.</string>
+    <string name="onboarding_reveal_covers_exam_lighter">Com %1$s por dia, você estuda todos os tópicos da prova, alguns com menos profundidade.</string>
+    <string name="onboarding_reveal_covers_goal">Com %1$s por dia, você estuda todas as partes da sua meta e vê com mais profundidade as mais importantes.</string>
+    <string name="onboarding_reveal_covers_exam_after">Com %1$s por dia, você não consegue estudar todos os tópicos até a prova: os que menos caem ficam para depois.</string>
+    <string name="onboarding_reveal_covers_exam_left_out">Com %1$s por dia, você não consegue estudar todos os tópicos: os que menos caem ficam de fora.</string>
+    <string name="onboarding_reveal_covers_goal_left_out">Com %1$s por dia, você não consegue estudar todas as partes da sua meta: o que vem por último na sua trilha fica de fora.</string>
+    <!-- %1$s is a duration, %2$s a month, %3$s the exam\'s date. -->
+    <string name="onboarding_reveal_full_course_finish">Com %1$s por dia, você termina em %2$s, depois da prova em %3$s. Até a prova, os tópicos que mais caem vêm primeiro.</string>
+    <string name="onboarding_reveal_full_course">Até a prova, os tópicos que mais caem vêm primeiro. O que não couber fica para depois.</string>
+    <plurals name="onboarding_reveal_modules">
+        <item quantity="one">%d módulo</item>
+        <item quantity="many">%d módulos</item>
+        <item quantity="other">%d módulos</item>
+    </plurals>
+    <plurals name="onboarding_reveal_material_topics">
+        <item quantity="one">%d tópico do seu material</item>
+        <item quantity="many">%d tópicos do seu material</item>
+        <item quantity="other">%d tópicos do seu material</item>
+    </plurals>
+    <plurals name="onboarding_reveal_notice_subjects">
+        <item quantity="one">%d matéria do edital</item>
+        <item quantity="many">%d matérias do edital</item>
+        <item quantity="other">%d matérias do edital</item>
+    </plurals>
+    <plurals name="onboarding_reveal_guide_parts">
+        <item quantity="one">%d parte do guia oficial</item>
+        <item quantity="many">%d partes do guia oficial</item>
+        <item quantity="other">%d partes do guia oficial</item>
+    </plurals>
+    <!-- %1$s lists subjects with their number of questions, such as "Math 45 · Languages 45". -->
+    <string name="onboarding_reveal_most_questions">Maioria das perguntas: %1$s</string>
+    <plurals name="onboarding_reveal_topics">
+        <item quantity="one">%d tópico</item>
+        <item quantity="many">%d tópicos</item>
+        <item quantity="other">%d tópicos</item>
+    </plurals>
+    <plurals name="onboarding_reveal_topics_all_planned">
+        <item quantity="one">%d tópico, todos no seu plano</item>
+        <item quantity="many">%d tópicos, todos no seu plano</item>
+        <item quantity="other">%d tópicos, todos no seu plano</item>
+    </plurals>
+    <!-- %1$d topics left out of %2$d (the count the plural follows) don\'t fit in %3$s a day. -->
+    <plurals name="onboarding_reveal_topics_dont_fit">
+        <item quantity="one">%1$d de %2$d tópico não cabe em %3$s por dia</item>
+        <item quantity="many">%1$d de %2$d tópicos não cabem em %3$s por dia</item>
+        <item quantity="other">%1$d de %2$d tópicos não cabem em %3$s por dia</item>
+    </plurals>
+    <!-- %1$d topics in the plan, out of %2$d (the count the plural follows). -->
+    <plurals name="onboarding_reveal_topics_planned">
+        <item quantity="one">%1$d de %2$d tópico no seu plano</item>
+        <item quantity="many">%1$d de %2$d tópicos no seu plano</item>
+        <item quantity="other">%1$d de %2$d tópicos no seu plano</item>
+    </plurals>
+    <string name="onboarding_reveal_weights">Peso por matéria</string>
+    <!-- An area\'s estimated weight. %1$s is a percentage, such as "20%". -->
+    <string name="onboarding_reveal_estimated_percent">~%1$s</string>
+    <plurals name="onboarding_reveal_estimated_material">
+        <item quantity="one">~ Estimativa: seu material não informa quanto essa matéria pesa.</item>
+        <item quantity="many">~ Estimativa: seu material não informa quanto essas matérias pesam.</item>
+        <item quantity="other">~ Estimativa: seu material não informa quanto essas matérias pesam.</item>
+    </plurals>
+    <plurals name="onboarding_reveal_estimated_guide">
+        <item quantity="one">~ Estimativa: o guia oficial não informa quanto essa matéria pesa.</item>
+        <item quantity="many">~ Estimativa: o guia oficial não informa quanto essas matérias pesam.</item>
+        <item quantity="other">~ Estimativa: o guia oficial não informa quanto essas matérias pesam.</item>
+    </plurals>
+    <plurals name="onboarding_reveal_estimated_notice">
+        <item quantity="one">~ Estimativa: o edital não informa quanto essa matéria pesa.</item>
+        <item quantity="many">~ Estimativa: o edital não informa quanto essas matérias pesam.</item>
+        <item quantity="other">~ Estimativa: o edital não informa quanto essas matérias pesam.</item>
+    </plurals>
 </resources>
