@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepResult
+import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.LibraryLessonCompletion
 import kotlin.time.Instant
 
@@ -13,29 +14,19 @@ enum class LessonNotice { AnswerNotSaved, PictureReady, SelfCorrect, WritingSkip
 
 enum class LessonSupport { ExplanationFirst, QuestionFirst }
 
-enum class RefusalTier { Free, Guest, Plus }
-
-enum class RefusalPeriod { Day, Month, Total }
-
 /** Why the run, or a piece of AI help, was refused. None is a dead end: each screen offers a way on. */
 @Immutable
 sealed interface LessonRefusal {
     data object Failed : LessonRefusal
 
-    data class LimitReached(
-        val tier: RefusalTier,
-        val period: RefusalPeriod,
-    ) : LessonRefusal
-
     data object NotFound : LessonRefusal
 
     data object PlusRequired : LessonRefusal
 
-    data class SlowDown(
-        val retryAfterSeconds: Long,
+    /** A slow-down, a used-up allowance, or a guest who needs an account. */
+    data class Limited(
+        val limit: Limit,
     ) : LessonRefusal
-
-    data object SignUpRequired : LessonRefusal
 }
 
 /** A typed or spoken answer the server couldn't grade for a reason the learner should see. */

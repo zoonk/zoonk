@@ -23,14 +23,15 @@ import com.zoonk.android.feature.player.engine.HyperdriveStart
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
-import com.zoonk.android.feature.player.engine.RefusalPeriod
-import com.zoonk.android.feature.player.engine.RefusalTier
 import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -146,8 +147,8 @@ class LessonPlayerScreenshots {
                     LessonAction.CheckResolved("why", graded, counts = true),
                 )
             },
-            "free-limit" to { at(LessonAction.RunRefused(LessonRefusal.LimitReached(RefusalTier.Free, RefusalPeriod.Day))) },
-            "slow-down" to { at(LessonAction.RunRefused(LessonRefusal.SlowDown(30))) },
+            "free-limit" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)))) },
+            "slow-down" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.SlowDown(30)))) },
             "finish-ready" to { LessonPlayerState.initial(LESSON_ID, emptyList(), now = 0) },
         )
 

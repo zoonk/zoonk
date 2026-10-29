@@ -8,10 +8,9 @@ import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.player.engine.LessonRefusal
-import com.zoonk.android.feature.player.engine.RefusalPeriod
-import com.zoonk.android.feature.player.engine.RefusalTier
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toLessonLoad
+import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.LessonReadiness
@@ -22,10 +21,6 @@ import com.zoonk.api.models.LibraryLessonCompletionInput
 import com.zoonk.api.models.LibraryLessonRun
 import com.zoonk.api.models.LibraryLessonStartInput
 import com.zoonk.api.models.NextLessonResponse
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.longOrNull
 import java.time.ZoneId
 import java.util.UUID
 
@@ -183,58 +178,10 @@ class LessonPlayerStore(
 
 fun timeZone(): String = ZoneId.systemDefault().id
 
-/**
- * Reads a refusal from the API: `USAGE_LIMIT_REACHED` with its limit's tier and period,
- * `SLOW_DOWN` with `retryAfterSeconds`, `PLUS_REQUIRED`, a guest's `SIGN_UP_REQUIRED`, or a
- * missing lesson. Null for anything worth retrying.
- */
+/** The API's refusals main's access screens tell apart; null for anything worth retrying. */
 fun ApiException.toLessonRefusal(): LessonRefusal? =
-    when (code) {
-        "PLUS_REQUIRED" -> LessonRefusal.PlusRequired
-        "SIGN_UP_REQUIRED" -> LessonRefusal.SignUpRequired
-        "SLOW_DOWN" -> LessonRefusal.SlowDown(detail("retryAfterSeconds")?.jsonPrimitive?.longOrNull ?: DEFAULT_RETRY_SECONDS)
-        "USAGE_LIMIT_REACHED" -> usageLimit()
-        else -> LessonRefusal.NotFound.takeIf { error == ApiError.NotFound }
+    when {
+        code == "PLUS_REQUIRED" -> LessonRefusal.PlusRequired
+        error == ApiError.NotFound -> LessonRefusal.NotFound
+        else -> Limit.of(this)?.let(LessonRefusal::Limited)
     }
-
-private fun ApiException.detail(name: String) = (details as? JsonObject)?.get(name)
-
-private fun ApiException.usageLimit(): LessonRefusal.LimitReached {
-    val limit = detail("limit")?.jsonObject
-    val tier =
-        when (limit?.get("tier")?.jsonPrimitive?.content) {
-            "guest" -> {
-                RefusalTier.Guest
-            }
-
-            "free" -> {
-                RefusalTier.Free
-            }
-
-            "plus" -> {
-                RefusalTier.Plus
-            }
-
-            else -> {
-                if (status == FORBIDDEN) {
-                    RefusalTier.Guest
-                } else if (status == PAYMENT_REQUIRED) {
-                    RefusalTier.Free
-                } else {
-                    RefusalTier.Plus
-                }
-            }
-        }
-    val period =
-        when (limit?.get("period")?.jsonPrimitive?.content) {
-            "month" -> RefusalPeriod.Month
-            "total" -> RefusalPeriod.Total
-            else -> RefusalPeriod.Day
-        }
-
-    return LessonRefusal.LimitReached(tier, period)
-}
-
-private const val DEFAULT_RETRY_SECONDS = 30L
-private const val PAYMENT_REQUIRED = 402
-private const val FORBIDDEN = 403

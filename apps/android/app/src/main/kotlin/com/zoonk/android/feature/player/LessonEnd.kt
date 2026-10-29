@@ -35,16 +35,18 @@ import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonRefusal
-import com.zoonk.android.feature.player.engine.RefusalPeriod
-import com.zoonk.android.feature.player.engine.RefusalTier
 import com.zoonk.android.feature.player.engine.Segment
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.FeedbackNote
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -95,8 +97,8 @@ fun LessonAccessScreen(
     exits: LessonPlayerExits,
 ) {
     when (refusal) {
-        is LessonRefusal.SlowDown -> {
-            SlowDown(refusal.retryAfterSeconds, onRetry)
+        is LessonRefusal.Limited -> {
+            Limited(refusal.limit, onRetry, exits)
         }
 
         LessonRefusal.PlusRequired -> {
@@ -105,14 +107,6 @@ fun LessonAccessScreen(
                 stringResource(R.string.player_free_week_over_title),
                 stringResource(R.string.player_free_week_over_description),
             ) { PlusActions(exits) }
-        }
-
-        is LessonRefusal.LimitReached -> {
-            LimitReached(refusal, exits)
-        }
-
-        LessonRefusal.SignUpRequired -> {
-            LimitReached(LessonRefusal.LimitReached(RefusalTier.Guest, RefusalPeriod.Day), exits)
         }
 
         LessonRefusal.NotFound -> {
@@ -146,12 +140,19 @@ private fun ColumnScope.PlusActions(exits: LessonPlayerExits) {
 }
 
 @Composable
-private fun LimitReached(
-    refusal: LessonRefusal.LimitReached,
+private fun Limited(
+    limit: Limit,
+    onRetry: () -> Unit,
     exits: LessonPlayerExits,
 ) {
-    when (refusal.tier) {
-        RefusalTier.Guest -> {
+    val tier = if (limit.needsAccount) LimitTier.Guest else (limit as? Limit.Reached)?.tier
+
+    when (tier) {
+        null -> {
+            SlowDown(((limit as? Limit.SlowDown)?.retryAfterSeconds ?: 0).toLong(), onRetry)
+        }
+
+        LimitTier.Guest -> {
             AccessLayout(
                 R.drawable.ic_person_add,
                 stringResource(R.string.player_guest_limit_title),
@@ -163,8 +164,8 @@ private fun LimitReached(
             }
         }
 
-        RefusalTier.Free -> {
-            val month = refusal.period == RefusalPeriod.Month
+        LimitTier.Free -> {
+            val month = (limit as? Limit.Reached)?.period == LimitPeriod.Month
             AccessLayout(
                 R.drawable.ic_auto_awesome,
                 stringResource(if (month) R.string.player_free_limit_month_title else R.string.player_free_limit_day_title),
@@ -172,7 +173,7 @@ private fun LimitReached(
             ) { PlusActions(exits) }
         }
 
-        RefusalTier.Plus -> {
+        LimitTier.Plus -> {
             AccessLayout(
                 R.drawable.ic_hourglass_empty,
                 stringResource(R.string.player_plus_limit_title),

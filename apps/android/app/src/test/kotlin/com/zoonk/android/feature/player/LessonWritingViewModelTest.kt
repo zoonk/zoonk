@@ -7,10 +7,11 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.player.engine.LessonRefusal
-import com.zoonk.android.feature.player.engine.RefusalPeriod
-import com.zoonk.android.feature.player.engine.RefusalTier
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonOutline
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitTier
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -121,7 +122,10 @@ class LessonWritingViewModelTest {
             advanceUntilIdle()
             writing.start()
             advanceUntilIdle()
-            assertEquals(LessonWriting.Refused(LessonRefusal.LimitReached(RefusalTier.Free, RefusalPeriod.Month)), writing.writing.value)
+            assertEquals(
+                LessonWriting.Refused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Month))),
+                writing.writing.value,
+            )
 
             api.writeResponse = { throw ApiException(ApiError.Unavailable, "LESSON_SET_ASIDE", 409) }
             val setAside = writing()

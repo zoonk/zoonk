@@ -35,9 +35,13 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonOutline
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitNotice
+import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.api.models.ReadyAlternative
@@ -126,10 +130,39 @@ fun LessonWaitingScreen(
                 }
 
                 is LessonWriting.Refused -> {
-                    LessonAccessScreen(current.refusal, onRetry = viewModel::start, exits = exits)
+                    WritingRefused(current.refusal, viewModel::start, exits)
                     alternative?.let { Alternative(it, instead = true, exits) }
                 }
             }
+        }
+    }
+}
+
+/** Main's `LessonNotWrittenNotice`: the shared limit notice, or Plus's free week being over. */
+@Composable
+private fun WritingRefused(
+    refusal: LessonRefusal,
+    onRetry: () -> Unit,
+    exits: LessonPlayerExits,
+) {
+    when (refusal) {
+        is LessonRefusal.Limited -> {
+            LimitNotice(
+                limit = refusal.limit,
+                subject = LimitSubject.Lessons,
+                onCreateAccount = { exits.open(AppRoute.Login) },
+                onSeePlus = { exits.open(AppRoute.Subscription) },
+            )
+            if (refusal.limit is Limit.SlowDown) FilledTonalButton(onClick = onRetry) { Text(stringResource(R.string.player_try_again)) }
+        }
+
+        LessonRefusal.PlusRequired -> {
+            Notice(stringResource(R.string.player_free_week_over_title), stringResource(R.string.player_free_week_over_description))
+            FilledTonalButton(onClick = { exits.open(AppRoute.Subscription) }) { Text(stringResource(R.string.player_see_plus)) }
+        }
+
+        LessonRefusal.NotFound, LessonRefusal.Failed -> {
+            LessonAccessScreen(refusal, onRetry, exits)
         }
     }
 }

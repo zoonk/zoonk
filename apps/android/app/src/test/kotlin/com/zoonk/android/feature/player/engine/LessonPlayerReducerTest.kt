@@ -11,6 +11,9 @@ import com.zoonk.android.feature.player.stepResult
 import com.zoonk.android.feature.player.summaryStep
 import com.zoonk.android.feature.player.typedAnswerStep
 import com.zoonk.android.feature.player.workedExampleStep
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitTier
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -297,7 +300,8 @@ class LessonPlayerReducerTest {
 
     @Test
     fun saysWhyAnAnswerWasNotGradedUntilTheNextTry() {
-        listOf(CheckIssue.Refused(LessonRefusal.LimitReached(RefusalTier.Guest, RefusalPeriod.Day)), CheckIssue.NoSpeech).forEach { issue ->
+        val guestLimit = CheckIssue.Refused(LessonRefusal.Limited(Limit.Reached(LimitTier.Guest, LimitPeriod.Day)))
+        listOf(guestLimit, CheckIssue.NoSpeech).forEach { issue ->
             val refused =
                 play(listOf(typedAnswerStep("spoken")), LessonAction.CheckStarted("spoken"), LessonAction.CheckFailed("spoken", issue))
             assertEquals(LessonPhase.Playing, refused.phase)
