@@ -23,6 +23,19 @@ final class LanguageUnitDecodingTests: XCTestCase {
     XCTAssertNil(unit.mistakes.first?.correctAnswer)
     XCTAssertEqual(unit.mistakes.first?.skill, .words)
   }
+
+  func testAUnitOutsideAnyPlanDecodes() throws {
+    let generated = try JSONDecoder().decode(
+      Components.Schemas.LanguageUnit.self,
+      from: Data(
+        unitWithoutCharacter
+          .replacing(#""goalId": "cf99ff41-0451-8a82-818a-bdb838af6ced""#, with: #""goalId": null"#)
+          .replacing(#""position": 5"#, with: #""position": null"#).utf8))
+    let unit: LanguageUnit = try PracticeJSON.recode(generated)
+
+    XCTAssertNil(unit.goalId)
+    XCTAssertNil(unit.unit.position)
+  }
 }
 
 /// A matching question's mistake has no single right answer.

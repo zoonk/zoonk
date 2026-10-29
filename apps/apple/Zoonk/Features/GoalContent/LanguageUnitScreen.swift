@@ -47,7 +47,7 @@ struct LanguageUnit: Decodable, Equatable, Sendable {
     let description: String?
     let levelRange: String?
     let objectives: [String]
-    let position: Int
+    let position: Int?
     let title: String
   }
 
@@ -201,9 +201,11 @@ private struct LanguageUnitContent: View {
 
     Section {
       VStack(alignment: .leading, spacing: 6) {
-        eyebrow
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
+        if let eyebrow {
+          eyebrow
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
 
         Text(unit.unit.title)
           .font(.title2.weight(.semibold))
@@ -375,14 +377,21 @@ private struct LanguageUnitContent: View {
     }
   }
 
-  private var eyebrow: Text {
-    if let range = unit.unit.levelRange, !range.isEmpty {
+  /// A unit outside the learner's plan has no number.
+  private var eyebrow: Text? {
+    let range = unit.unit.levelRange.flatMap { $0.isEmpty ? nil : $0 }
+
+    guard let position = unit.unit.position else {
+      return range.map { Text($0) }
+    }
+
+    if let range {
       return Text(
-        "Unit \(unit.unit.position) · \(range)", tableName: "Plan",
+        "Unit \(position) · \(range)", tableName: "Plan",
         comment: "A unit's number and its level range")
     }
 
-    return Text("Unit \(unit.unit.position)", tableName: "Plan", comment: "A unit's number")
+    return Text("Unit \(position)", tableName: "Plan", comment: "A unit's number")
   }
 }
 
