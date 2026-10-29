@@ -353,7 +353,8 @@ private fun StepRow(
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
             Text(
                 text = blockTitle(step),
-                maxLines = 1,
+                // Two lines, so a large font still shows what the step is.
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 color = if (finished) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleSmall,

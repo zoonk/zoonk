@@ -62,7 +62,7 @@ class StudyOpener(
         next: Boolean,
         goalId: UUID,
     ): MutationResult<AppRoute?> =
-        cache.mutate(invalidating = setOf(DataDomain.UserProgress, DataDomain.UserSession)) { session ->
+        cache.mutate(invalidating = OPENING) { session ->
             val sessionId = day.sessionId
             if (sessionId != null && step.id != null) {
                 route(session, sessionId, step)
@@ -78,7 +78,7 @@ class StudyOpener(
         day: DayView,
         goalId: UUID,
     ): MutationResult<AppRoute?> =
-        cache.mutate(invalidating = setOf(DataDomain.UserProgress, DataDomain.UserSession)) { session ->
+        cache.mutate(invalidating = OPENING) { session ->
             val sessionId =
                 day.sessionId
                     ?: api.openDay(session, day.goalId ?: goalId, openDayBody(day.localDate, null, next = false, timeZone())).sessionId
@@ -158,6 +158,9 @@ class StudyOpener(
         }
 
     private companion object {
+        /** Opening saves the day's plan and session and starting marks a block begun; progress changes only as work finishes. */
+        val OPENING = setOf(DataDomain.Goals, DataDomain.UserSession)
+
         val STARTABLE = setOf(OpenedStudyDay.TargetStatus.NEXT, OpenedStudyDay.TargetStatus.RESOLVED)
     }
 }
