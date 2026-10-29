@@ -126,7 +126,7 @@ private fun SpeakingRow(
         title = stringResource(R.string.today_exam_speaking),
         description = stringResource(R.string.today_exam_speaking_detail, speaking.title),
         trailing = { if (speaking.access == LanguageTodaySpeaking.Access.PLUS_REQUIRED) PlusMark() },
-    ) { navigate(AppRoute.Speaking) }
+    ) { navigate(AppRoute.Speaking()) }
 }
 
 @Composable
