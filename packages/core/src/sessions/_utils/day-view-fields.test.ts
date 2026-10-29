@@ -1,5 +1,7 @@
+import { type StudyBlockKind } from "@zoonk/db";
 import { describe, expect, it } from "vitest";
 import { type DayViewFieldsInput, toDayViewFields } from "./day-view-fields";
+import { type DayOutlines } from "./outlining-stand-ins";
 
 const TODAY = new Date("2026-10-17T00:00:00Z");
 
@@ -10,8 +12,9 @@ function examDay({ trialEnded }: { trialEnded: boolean }): DayViewFieldsInput {
     dailyLimit: null,
     dayMinutes: 40,
     examAccess: { includesMockExams: !trialEnded, trialEnded },
-    lessonsComing: true,
+    lessonRoom: true,
     missions: [],
+    outlines: "awaiting",
     session: {
       blocks: [
         {
@@ -39,7 +42,30 @@ function examDay({ trialEnded }: { trialEnded: boolean }): DayViewFieldsInput {
 
 function emptyExamDay({ trialEnded }: { trialEnded: boolean }): DayViewFieldsInput {
   const day = examDay({ trialEnded });
-  return { ...day, emptyDay: "lessonsComing", session: { ...day.session, blocks: [] } };
+  return { ...day, session: { ...day.session, blocks: [] } };
+}
+
+function dayOf({
+  kinds,
+  lessonRoom = true,
+  outlines,
+}: {
+  kinds: StudyBlockKind[];
+  lessonRoom?: boolean;
+  outlines: DayOutlines;
+}) {
+  const day = examDay({ trialEnded: false });
+  const [block] = day.session.blocks;
+  const blocks = kinds.flatMap((kind, position) => (block ? [{ ...block, kind, position }] : []));
+
+  const { emptyDay, lessonsComing, lessonsToPrepare } = toDayViewFields({
+    ...day,
+    lessonRoom,
+    outlines,
+    session: { ...day.session, blocks },
+  });
+
+  return { emptyDay, lessonsComing, lessonsToPrepare };
 }
 
 describe(toDayViewFields, () => {
@@ -51,5 +77,33 @@ describe(toDayViewFields, () => {
   it("says an empty day on a free exam plan past its first week has nothing new, never lessons on the way", () => {
     expect(toDayViewFields(emptyExamDay({ trialEnded: true })).emptyDay).toBe("nothingNew");
     expect(toDayViewFields(emptyExamDay({ trialEnded: false })).emptyDay).toBe("lessonsComing");
+  });
+
+  it("treats a day with only practice like an empty day: coming while outlined, asked for while idle", () => {
+    expect(dayOf({ kinds: [], outlines: "awaiting" }).emptyDay).toBe("lessonsComing");
+    expect(dayOf({ kinds: [], outlines: "idle" }).emptyDay).toBe("lessonsToPrepare");
+
+    expect(dayOf({ kinds: ["practice"], outlines: "awaiting" })).toStrictEqual({
+      emptyDay: null,
+      lessonsComing: true,
+      lessonsToPrepare: false,
+    });
+
+    expect(dayOf({ kinds: ["practice"], outlines: "idle" })).toStrictEqual({
+      emptyDay: null,
+      lessonsComing: false,
+      lessonsToPrepare: true,
+    });
+  });
+
+  it("never asks a day with a lesson of its own, or one without room, for lessons nobody is writing", () => {
+    expect(dayOf({ kinds: ["learn", "practice"], outlines: "idle" }).lessonsToPrepare).toBe(false);
+    expect(dayOf({ kinds: ["learn"], outlines: "awaiting" }).lessonsComing).toBe(true);
+
+    expect(dayOf({ kinds: ["practice"], lessonRoom: false, outlines: "idle" })).toStrictEqual({
+      emptyDay: null,
+      lessonsComing: false,
+      lessonsToPrepare: false,
+    });
   });
 });

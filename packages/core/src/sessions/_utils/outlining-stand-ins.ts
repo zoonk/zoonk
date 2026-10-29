@@ -13,6 +13,8 @@ import { isExamSchedule } from "../../plans/planner/plan-queue";
 
 export const OUTLINING: GenerationStatus[] = ["pending", "running"];
 
+export type DayOutlines = "awaiting" | "idle" | null;
+
 const STAND_IN = {
   chapterId: null,
   kind: "lesson",
@@ -115,7 +117,7 @@ export async function loadDayStandInCourseIds({
  * null without stand-ins. A stand-in reserves time only while its course is actively awaiting an
  * outline; never wait on content nobody is writing.
  */
-export async function getDayOutlines(input: DayOutlinesInput): Promise<"awaiting" | "idle" | null> {
+export async function getDayOutlines(input: DayOutlinesInput): Promise<DayOutlines> {
   const { client = prisma, now = new Date() } = input;
   const courseIds = await loadDayStandInCourseIds(input);
 

@@ -15,6 +15,7 @@
   "hyperdrive": { "level": 0, "streak": 0 },
   "id": "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00",
   "lessonsComing": false,
+  "lessonsToPrepare": false,
   "localDate": "2026-10-28",
   "minutes": { "dailyGoal": 0, "done": 0, "planned": 0 },
   "missions": [],

@@ -6,6 +6,7 @@ import {
   lessonSkillFixture,
   libraryLessonFixture,
 } from "@zoonk/testing/fixtures/library-lessons";
+import { choiceItemContent, itemFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
@@ -18,6 +19,7 @@ import { createGoalPlan } from "../plans/create-goal-plan";
 import { getTodayView } from "../view-models/today/get-today-view";
 import { getTodayStudySession } from "./_test-utils/open-today";
 import { openTodayView } from "./_test-utils/open-today-view";
+import { daysAgo, dueSkillFixture } from "./_test-utils/session-goal";
 
 const NOW = new Date("2026-09-30T12:00:00Z");
 const A_MINUTE_LATER = new Date("2026-09-30T12:01:00Z");
@@ -75,6 +77,44 @@ async function setupDayWithStandIn({
   mockSession(user.id);
 
   return { course, goal, library };
+}
+
+/** A placement tested out every written lesson, so the day holds only practice and nobody outlines its next lessons. */
+async function setupPlacedDay() {
+  const [user, course] = await Promise.all([
+    userFixture(),
+    courseFixture({ outlineStatus: "completed" }),
+  ]);
+
+  const library = await planLibraryFixture({
+    skills: [{ lessons: 3 }, { builds: 0, lessons: 0, size: 8 }],
+  });
+
+  const known = library.skills[0]?.id ?? "";
+
+  const { goal } = await unplannedGoalFixture({
+    dailyMinutes: 30,
+    primaryCourseId: course.id,
+    settings: { startDate: "2026-09-30" },
+    timezone: "UTC",
+    userId: user.id,
+  });
+
+  await Promise.all([
+    createGoalPlan({ goalId: goal.id, graph: library.graph }),
+    learningProfileFixture({ activeGoalId: goal.id, userId: user.id }),
+    itemFixture({ content: choiceItemContent(), skillId: known }),
+    dueSkillFixture({ due: daysAgo(-10), skillId: known, userId: user.id }),
+  ]);
+
+  await prisma.planItem.updateMany({
+    data: { completedAt: NOW, status: "testedOut" },
+    where: { lessonId: { not: null }, plan: { goalId: goal.id } },
+  });
+
+  mockSession(user.id);
+
+  return { goal };
 }
 
 async function landWaitingLessons({
@@ -250,6 +290,30 @@ describe("today's session the learner was shown", () => {
     const after = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
     expect(after.today.session).toMatchObject({ blocks: [], emptyDay: "lessonsComing" });
+  });
+
+  it("asks for a practice-only day's lessons nobody is outlining, and says they're coming once asked", async () => {
+    const { goal } = await setupPlacedDay();
+    const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
+    const day = before.status === "ready" ? before.today.session : null;
+
+    expect(day?.blocks.length).toBeGreaterThan(0);
+    expect(day?.blocks.some((block) => block.kind === "learn")).toBe(false);
+
+    expect(day).toMatchObject({
+      lessonsComing: false,
+      lessonsToPrepare: true,
+      status: "unstarted",
+    });
+
+    const opened = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(opened.today.session).toMatchObject({ lessonsComing: false, lessonsToPrepare: true });
+
+    await askTodayOutlines({ goalId: goal.id, timeZone: "UTC" });
+    const after = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(after.today.session).toMatchObject({ lessonsComing: true, lessonsToPrepare: false });
   });
 
   it("stops waiting on an outline nobody has touched for a while", async () => {

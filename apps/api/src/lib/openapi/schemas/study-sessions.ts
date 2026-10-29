@@ -5,7 +5,12 @@ import { formatDuration } from "@zoonk/utils/duration";
 import { z } from "zod";
 import { catchUpSchema } from "./catch-up";
 import { checkpointAnsweredQuestionsSchema } from "./checkpoint-evidence";
-import { emptyDaySchema, examTomorrowSchema, lessonsComingSchema } from "./day-lessons";
+import {
+  emptyDaySchema,
+  examTomorrowSchema,
+  lessonsComingSchema,
+  lessonsToPrepareSchema,
+} from "./day-lessons";
 import { listeningTranscriptSchema } from "./item-set";
 import { studyBlockSchema } from "./study-block";
 import { studyBlockQuestionSchema } from "./study-block-question";
@@ -90,6 +95,7 @@ export const studySessionResponseSchema = z
     hyperdrive: hyperdriveSchema,
     id: idSchema,
     lessonsComing: lessonsComingSchema,
+    lessonsToPrepare: lessonsToPrepareSchema,
     localDate: logicalDateSchema,
     minutes: z.object({
       dailyGoal: z

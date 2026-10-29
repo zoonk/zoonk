@@ -11,7 +11,6 @@ import { loadBlockSubjects } from "./block-subjects";
 import { loadCatchUpView } from "./catch-up";
 import { toDayBlockView } from "./day-block-view";
 import { toDayViewFields } from "./day-view-fields";
-import { toEmptyDay } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
 import { getDayOutlines } from "./outlining-stand-ins";
@@ -83,8 +82,6 @@ export async function loadUnstartedDayView({
 
   const missions = missionViews.map((mission) => asDayMission(mission));
 
-  const emptyDay = toEmptyDay({ dayMinutes, outlines });
-
   const hasRoom = dayMinutes - day.plannedMinutes >= DEFAULT_LESSON_MINUTES;
 
   const fields = toDayViewFields({
@@ -92,11 +89,11 @@ export async function loadUnstartedDayView({
     current: true,
     dailyLimit: day.plan.limit,
     dayMinutes,
-    emptyDay,
     examAccess,
     fullMealEarned: earned,
-    lessonsComing: hasRoom && outlines === "awaiting",
+    lessonRoom: hasRoom,
     missions,
+    outlines,
     plusLessons,
     session: {
       blocks,

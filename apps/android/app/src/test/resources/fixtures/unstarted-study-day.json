@@ -12,6 +12,7 @@
   "goalId": null,
   "hyperdrive": { "level": 0, "streak": 0 },
   "lessonsComing": false,
+  "lessonsToPrepare": false,
   "localDate": "2026-10-28",
   "minutes": { "dailyGoal": 0, "done": 0, "planned": 0 },
   "nextPosition": null,

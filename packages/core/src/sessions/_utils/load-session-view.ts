@@ -17,11 +17,10 @@ import { loadCatchUpView } from "./catch-up";
 import { getCarryOverEnd, isCurrentSession } from "./current-session";
 import { readDailyTimeLimitStatus } from "./daily-time-limit";
 import { getGoalDayMinutes } from "./day-minutes";
-import { toEmptyDay } from "./empty-day";
 import { getExamPrepAccess } from "./exam-access";
 import { withExtraStudyCheck } from "./extra-blocks";
 import { withLessonDisplayMinutes } from "./lesson-display-minutes";
-import { getDayOutlines } from "./outlining-stand-ins";
+import { type DayOutlines, getDayOutlines } from "./outlining-stand-ins";
 import { type PlannedStudyDay } from "./plan-study-day";
 import { loadDayPlusLessons } from "./plus-only-lessons";
 import { loadSessionAnswers } from "./session-answers";
@@ -34,7 +33,7 @@ async function loadDayOutlines({
 }: {
   dayMinutes: number;
   session: StudySessionRow;
-}): Promise<"awaiting" | "idle" | null> {
+}): Promise<DayOutlines> {
   if (dayMinutes === 0 || session.status === "completed" || !session.goal) {
     return null;
   }
@@ -188,12 +187,12 @@ export async function loadStudySessionView({
     dailyLimit,
     dayEndsAt,
     dayMinutes,
-    emptyDay: session.blocks.length > 0 ? null : toEmptyDay({ dayMinutes, outlines }),
     examAccess,
     fullMealEarned,
-    lessonsComing: current && hasLessonRoom({ dayMinutes, session }) && outlines === "awaiting",
+    lessonRoom: current && hasLessonRoom({ dayMinutes, session }),
     missions,
     oftenTestedSkillIds,
+    outlines,
     plusLessons,
     session,
     timeZone,

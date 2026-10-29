@@ -10,11 +10,13 @@ import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
 import { type Mission, getMissionBonus, isFullMeal } from "../missions";
 import { shouldSuggestPause } from "../pause-suggestion";
 import { type DayBlockInput } from "./day-block-view";
+import { getDayLessons } from "./empty-day";
 import { type ExamPrepAccess } from "./exam-access";
 import { isExamTomorrow } from "./exam-tomorrow";
+import { type DayOutlines } from "./outlining-stand-ins";
 import { type PlusLesson } from "./plus-only-lessons";
 import { type SessionAnswer } from "./session-answers";
-import { type EmptyDay, type StudySessionView } from "./session-view";
+import { type StudySessionView } from "./session-view";
 
 export type DayViewFieldsInput = {
   answers: readonly SessionAnswer[];
@@ -22,11 +24,11 @@ export type DayViewFieldsInput = {
   dailyLimit: DailyTimeLimitStatus | null;
   dayEndsAt?: number;
   dayMinutes: number;
-  emptyDay?: EmptyDay | null;
   examAccess: ExamPrepAccess;
   fullMealEarned?: boolean;
-  lessonsComing?: boolean;
+  lessonRoom?: boolean;
   missions: readonly Pick<Mission, "status">[];
+  outlines?: DayOutlines;
   plusLessons?: PlusLesson[];
   sessionBar: StudySessionView["sessionBar"];
   session: {
@@ -60,11 +62,11 @@ export function toDayViewFields({
   dailyLimit,
   dayEndsAt,
   dayMinutes,
-  emptyDay = null,
   examAccess,
   fullMealEarned,
-  lessonsComing = false,
+  lessonRoom = false,
   missions,
+  outlines = null,
   plusLessons = [],
   session,
   sessionBar,
@@ -76,7 +78,14 @@ export function toDayViewFields({
 > {
   const streak = scoreAnswers({ answers }).streak;
 
-  const empty = examAccess.trialEnded && emptyDay ? "nothingNew" : emptyDay;
+  const lessons = getDayLessons({
+    blocks: session.blocks,
+    dayMinutes,
+    lessonRoom,
+    outlines,
+    trialEnded: examAccess.trialEnded,
+  });
+
   const minutesDone = Math.round(getSessionMinutesDone(session.blocks));
   const blocksPower = session.blocks.reduce((sum, block) => sum + block.brainPower, 0);
 
@@ -88,7 +97,7 @@ export function toDayViewFields({
     dayEndsAt:
       dayEndsAt ??
       getStartOfLocalDay({ localDate: addDays(session.localDate, 1), timeZone }).getTime(),
-    emptyDay: session.blocks.length === 0 && dayMinutes > 0 ? empty : null,
+    emptyDay: lessons.emptyDay,
     examAccess,
     examTomorrow: isExamTomorrow({ day: session.localDate, goal: session.goal }),
     extraTime: getExtraTime({
@@ -107,7 +116,8 @@ export function toDayViewFields({
     },
     goalId: session.goalId,
     hyperdrive: { level: getHyperdriveLevel(streak), streak },
-    lessonsComing: lessonsComing && session.blocks.length > 0 && !examAccess.trialEnded,
+    lessonsComing: lessons.lessonsComing,
+    lessonsToPrepare: lessons.lessonsToPrepare,
     localDate: session.localDate,
     minutes: { dailyGoal: dayMinutes, done: minutesDone, planned: session.plannedMinutes },
     nextPosition: getNextPosition(session.blocks),
