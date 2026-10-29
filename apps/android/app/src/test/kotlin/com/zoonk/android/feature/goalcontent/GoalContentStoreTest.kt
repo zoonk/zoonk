@@ -111,7 +111,7 @@ class GoalContentStoreTest {
     fun aPlanChangeSendsTheDevicesTimeZoneAndReadsTheSyllabusAgain() =
         runTest {
             val api = FakeGoalContentApi()
-            val planApi = FakePlanApi()
+            val planApi = SyllabusPlanApi()
             val (store, plans) = stores(api, planApi)
             val syllabus = plans.syllabus[key.goalId]
             val shown = launch { syllabus.shown.collect {} }
@@ -132,7 +132,7 @@ class GoalContentStoreTest {
 
     private fun TestScope.stores(
         api: GoalContentApi,
-        planApi: PlanApi = FakePlanApi(),
+        planApi: PlanApi = SyllabusPlanApi(),
     ): Pair<GoalContentStore, PlanStore> {
         val scope = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
         val cache = AppCache(FakeSession(ana), scope)

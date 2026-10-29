@@ -1,17 +1,16 @@
 package com.zoonk.android.feature.goalcontent
 
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanApi
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AreaPractice
 import com.zoonk.api.models.AreaPracticeInput
 import com.zoonk.api.models.GoalChapter
-import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanChangeInput
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.Syllabus
 import java.util.UUID
-import kotlin.time.Instant
 
 internal const val GOAL = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a01"
 internal const val SESSION = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1a03"
@@ -233,19 +232,11 @@ internal class FakeGoalContentApi : GoalContentApi {
     }
 }
 
-internal class FakePlanApi : PlanApi {
+/** The Plan's fake, reading the exam's syllabus and counting its reads. */
+internal class SyllabusPlanApi(
+    private val base: PlanApi = FakePlanApi(),
+) : PlanApi by base {
     var syllabi = 0
-
-    override suspend fun plan(
-        session: AuthenticatedSession,
-        goalId: UUID,
-    ): Plan = error("not read here")
-
-    override suspend fun planChanged(
-        session: AuthenticatedSession,
-        goalId: UUID,
-        since: Instant,
-    ) = false
 
     override suspend fun syllabus(
         session: AuthenticatedSession,

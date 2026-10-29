@@ -46,7 +46,7 @@ class GoalContentFlowTest {
             CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
         )
     private val store = GoalContentStore(api, cache, timeZone = { TimeZone.UTC })
-    private val plans = PlanStore(FakePlanApi(), cache)
+    private val plans = PlanStore(SyllabusPlanApi(), cache)
     private lateinit var navigator: AppNavigator
 
     private fun showSubject(key: String) {
