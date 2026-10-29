@@ -133,7 +133,7 @@ private val COLUMN_PADDING = 20.dp
 
 /** The action bar's actions line up with the column above them. */
 @Composable
-private fun BarColumn(content: @Composable () -> Unit) {
+internal fun BarColumn(content: @Composable () -> Unit) {
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         Box(Modifier.widthIn(max = COLUMN_WIDTH - COLUMN_PADDING * 2).fillMaxWidth()) { content() }
     }

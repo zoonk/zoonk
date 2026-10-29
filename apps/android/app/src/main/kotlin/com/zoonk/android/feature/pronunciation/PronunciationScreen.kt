@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.pronunciation
 
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,10 +18,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -33,7 +34,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -53,6 +61,7 @@ import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -74,7 +83,9 @@ import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.audio.rememberRecordTap
 import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.feature.audio.withoutFailure
+import com.zoonk.android.feature.player.BarColumn
 import com.zoonk.android.feature.player.LessonColumn
+import com.zoonk.android.feature.player.TaskActions
 import com.zoonk.android.feature.player.segmentParts
 import com.zoonk.android.feature.questions.ItemLine
 import com.zoonk.android.navigation.AppNavigator
@@ -120,7 +131,10 @@ fun PronunciationScreen(
     key(owner, goalId) { PronunciationTask(goalId, owner, app.pronunciation, app.speech, navigator) }
 }
 
-/** Reads the words once: once the round starts, what grading changes is the next round's. */
+/**
+ * Reads the words due now, once: a cached list can be from before the last round's answers, so the
+ * round starts from a fresh read, and what grading changes after that is the next round's.
+ */
 @Composable
 internal fun PronunciationTask(
     goalId: String,
@@ -130,7 +144,7 @@ internal fun PronunciationTask(
     navigator: AppNavigator,
 ) {
     val context = LocalContext.current
-    val model = viewModel(key = "pronunciation:$owner:$goalId") { PronunciationViewModel(context) }
+    val model = viewModel(key = "pronunciation:$owner:$goalId") { PronunciationViewModel(context, createSavedStateHandle()) }
     val round = model.round
 
     if (round != null) {
@@ -141,12 +155,19 @@ internal fun PronunciationTask(
     val resource = remember(goalId) { store.reviews(goalId) }
     val load by resource.collectShown()
     val scope = rememberCoroutineScope()
+    var fresh by remember(resource) { mutableStateOf(false) }
+    LaunchedEffect(resource) {
+        resource.refresh()
+        fresh = true
+    }
 
-    when (val state = load) {
-        is LoadState.Loaded -> LaunchedEffect(state.value) { model.start(goalId, state.value, store) }
-        LoadState.Empty -> LaunchedEffect(Unit) { model.start(goalId, null, store) }
-        is LoadState.Failed -> if (state.error == ApiError.NotFound) LaunchedEffect(Unit) { model.start(goalId, null, store) }
-        LoadState.Idle, LoadState.Loading -> Unit
+    if (fresh) {
+        when (val state = load) {
+            is LoadState.Loaded -> LaunchedEffect(state.value) { model.start(goalId, state.value, store) }
+            LoadState.Empty -> LaunchedEffect(Unit) { model.start(goalId, null, store) }
+            is LoadState.Failed -> if (state.error == ApiError.NotFound) LaunchedEffect(Unit) { model.start(goalId, null, store) }
+            LoadState.Idle, LoadState.Loading -> Unit
+        }
     }
 
     TaskScaffold(onClose = navigator::closeTask, title = { Text(stringResource(R.string.pronunciation_title)) }) { padding ->
@@ -165,7 +186,7 @@ internal fun PronunciationRoundScreen(
     navigator: AppNavigator,
 ) {
     when (val step = round.step) {
-        is RoundStep.Result -> RoundEnd(round.words.isEmpty(), step.result, navigator::closeTask)
+        is RoundStep.Result -> RoundEnd(round, step.result, navigator::closeTask)
         is RoundStep.Word -> WordStep(round, step, model, speech, navigator)
     }
 }
@@ -179,8 +200,9 @@ private fun WordStep(
     navigator: AppNavigator,
 ) {
     val word = round.words[step.index]
-    val normal = rememberSpokenAudio(speech, round.language)
-    val slow = rememberSpokenAudio(speech, round.language)
+    // Each word has its own sounds, so leaving it stops them.
+    val normal = key(word.id) { rememberSpokenAudio(speech, round.language) }
+    val slow = key(word.id) { rememberSpokenAudio(speech, round.language) }
     val status by model.recorder.state.collectAsStateWithLifecycle()
     val recording = status is VoiceRecorder.Status.Recording
     val tapRecord =
@@ -203,6 +225,7 @@ private fun WordStep(
 
     TaskScaffold(
         onClose = navigator::closeTask,
+        modifier = Modifier.taskKeys(onEnter = { if (step.grade != null && !round.pending) model.next() }, onEscape = navigator::closeTask),
         title = { Text(stringResource(R.string.pronunciation_title)) },
         actions = {
             if (step.grade == null && !model.microphoneOff) {
@@ -210,43 +233,41 @@ private fun WordStep(
             }
         },
         bottomBar = {
-            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                if (round.finishFailed) SaveFailed(onRetry = model::finish)
-                WordActions(round, step, model, status, tapRecord)
+            BarColumn {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                    if (round.finishFailed) SaveFailed(onRetry = model::finish)
+                    WordActions(round, step, model, status, tapRecord)
+                }
             }
         },
     ) { padding ->
-        Column(
-            Modifier
-                .fillMaxSize()
-                .padding(padding)
-                .verticalScroll(rememberScrollState())
-                .padding(vertical = 16.dp),
-        ) {
-            LessonColumn {
-                RoundMeter(round)
-                key(word.id) { WordCard(word, round.language, normal, slow, navigator) }
-                val grade = step.grade
-                when {
-                    grade != null -> {
-                        GradeNote(grade)
-                    }
+        Column(Modifier.fillMaxSize().padding(padding)) {
+            LessonColumn(Modifier.padding(top = 8.dp, bottom = 16.dp)) { RoundMeter(round) }
+            Column(Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(bottom = 16.dp)) {
+                LessonColumn {
+                    key(word.id) { WordCard(word, round.language, normal, slow, navigator) }
+                    val grade = step.grade
+                    when {
+                        grade != null -> {
+                            GradeNote(grade)
+                        }
 
-                    model.microphoneOff -> {
-                        MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
-                    }
+                        model.microphoneOff -> {
+                            MicrophoneOff(stringResource(R.string.pronunciation_microphone_off))
+                        }
 
-                    step.issue is VoiceIssue.Limited && !recording && !round.pending -> {
-                        LimitNotice(
-                            step.issue.limit,
-                            LimitSubject.Help,
-                            onCreateAccount = { navigator.open(AppRoute.Login) },
-                            onSeePlus = { navigator.open(AppRoute.Subscription) },
-                        )
-                    }
+                        step.issue is VoiceIssue.Limited && !recording && !round.pending -> {
+                            LimitNotice(
+                                step.issue.limit,
+                                LimitSubject.Help,
+                                onCreateAccount = { navigator.open(AppRoute.Login) },
+                                onSeePlus = { navigator.open(AppRoute.Subscription) },
+                            )
+                        }
 
-                    else -> {
-                        RecorderStatus(step.issue, pending = round.pending, recording = recording)
+                        else -> {
+                            RecorderStatus(step.issue, pending = round.pending, recording = recording)
+                        }
                     }
                 }
             }
@@ -451,15 +472,20 @@ private fun WordActions(
     val grade = step.grade
     when {
         grade != null -> {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            TaskActions { width ->
                 if (!grade.isCorrect) {
-                    OutlinedButton(onClick = round::tryAgain, contentPadding = ButtonDefaults.ButtonWithIconContentPadding) {
+                    FilledTonalButton(
+                        onClick = round::tryAgain,
+                        enabled = !round.pending,
+                        contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                    ) {
                         Icon(painterResource(R.drawable.ic_replay), contentDescription = null, modifier = Modifier.size(buttonIconSize()))
                         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
                         Text(stringResource(R.string.pronunciation_try_again))
                     }
                 }
-                Button(onClick = model::next, modifier = Modifier.weight(1f), enabled = !round.pending) {
+                Button(onClick = model::next, modifier = width, enabled = !round.pending) {
+                    if (round.pending) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
                     Text(
                         stringResource(
                             if (round.index + 1 ==
@@ -477,6 +503,7 @@ private fun WordActions(
 
         model.microphoneOff -> {
             Button(onClick = model::next, modifier = Modifier.fillMaxWidth(), enabled = !round.pending) {
+                if (round.pending) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
                 Text(stringResource(R.string.pronunciation_skip))
             }
         }
@@ -510,15 +537,27 @@ private fun SaveFailed(onRetry: () -> Unit) {
 /** The day's moment and its ceremony come with the session's (L3), as on the lesson's end. */
 @Composable
 private fun RoundEnd(
-    noWords: Boolean,
+    round: PronunciationRound,
     result: PronunciationRoundResult?,
     onDone: () -> Unit,
 ) {
+    // A round restored with its words already said is counted as it opens.
+    if (round.pending) {
+        TaskScaffold(onClose = onDone, title = { Text(stringResource(R.string.pronunciation_title)) }) { padding ->
+            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
+        }
+        return
+    }
+    val noWords = round.words.isEmpty() && result == null
+
     TaskScaffold(
         onClose = onDone,
+        modifier = Modifier.taskKeys(onEnter = onDone, onEscape = onDone),
         title = { Text(stringResource(R.string.pronunciation_title)) },
         bottomBar = {
-            Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.pronunciation_done)) }
+            BarColumn {
+                TaskActions { width -> Button(onClick = onDone, modifier = width) { Text(stringResource(R.string.pronunciation_done)) } }
+            }
         },
     ) { padding ->
         Column(
@@ -552,6 +591,34 @@ private fun RoundEnd(
                 result?.let {
                     MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt(), spoken = true))
                 }
+            }
+        }
+    }
+}
+
+/** Enter presses the screen's main action and Escape leaves, as in the lesson player. */
+@Composable
+private fun Modifier.taskKeys(
+    onEnter: () -> Unit,
+    onEscape: () -> Unit,
+): Modifier {
+    val focus = remember { FocusRequester() }
+    LaunchedEffect(Unit) { focus.requestFocus() }
+    return focusRequester(focus).focusable().onKeyEvent { event ->
+        if (event.type != KeyEventType.KeyDown) return@onKeyEvent false
+        when (event.key) {
+            Key.Enter, Key.NumPadEnter -> {
+                onEnter()
+                true
+            }
+
+            Key.Escape -> {
+                onEscape()
+                true
+            }
+
+            else -> {
+                false
             }
         }
     }

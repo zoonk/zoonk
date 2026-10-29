@@ -6,6 +6,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
@@ -39,15 +40,17 @@ class PronunciationFlowTest {
             ),
         ) { "America/Sao_Paulo" }
 
-    private fun open(api: FakePronunciationApi) {
-        val store = store(api)
+    private fun open(
+        api: FakePronunciationApi,
+        store: PronunciationStore = store(api),
+    ) {
         rule.setContent {
             ZoonkTheme { PronunciationTask(GOAL_ID, "local", store, previewSpeech(), rememberAppNavigator()) }
         }
     }
 
     private fun play(api: FakePronunciationApi): PronunciationRound {
-        val model = PronunciationViewModel(rule.activity).apply { start(GOAL_ID, api.words, store(api)) }
+        val model = PronunciationViewModel(rule.activity, SavedStateHandle()).apply { start(GOAL_ID, api.words, store(api)) }
         rule.setContent {
             ZoonkTheme { PronunciationRoundScreen(model.round!!, model, previewSpeech(), rememberAppNavigator()) }
         }
@@ -55,7 +58,7 @@ class PronunciationFlowTest {
     }
 
     private fun PronunciationRound.say() {
-        rule.runOnIdle { runBlocking { record(RECORDING) } }
+        rule.runOnIdle { runBlocking { record(index, RECORDING) } }
     }
 
     @Test
@@ -121,5 +124,31 @@ class PronunciationFlowTest {
 
         rule.onNodeWithText("We couldn't hear the word. Try again a little closer.").assertIsDisplayed()
         rule.onNodeWithText("Record").assertIsDisplayed()
+    }
+
+    @Test
+    fun reopeningAfterARoundShowsTheWordsDueNowNotTheCachedOnes() {
+        val api = FakePronunciationApi(reviews(word(1, "hola")))
+        val store = store(api)
+        runBlocking { store.reviews(GOAL_ID).refresh() }
+        api.words = reviews(word(2, "gracias"))
+
+        open(api, store)
+
+        rule.onNodeWithText("gracias").assertIsDisplayed()
+        rule.onNodeWithText("hola").assertDoesNotExist()
+    }
+
+    @Test
+    fun aRoundRestoredAfterTheAppClosedCountsTheWordsAlreadySaid() {
+        val api = FakePronunciationApi(reviews())
+        val saved = SavedStateHandle(mapOf("roundId" to "round-before", "answered" to true))
+        val model = PronunciationViewModel(rule.activity, saved)
+
+        rule.runOnIdle { model.start(GOAL_ID, api.words, store(api)) }
+        rule.setContent { ZoonkTheme { PronunciationRoundScreen(model.round!!, model, previewSpeech(), rememberAppNavigator()) } }
+
+        rule.onNodeWithText("Practice done").assertIsDisplayed()
+        assertEquals(listOf("round-before"), api.finished)
     }
 }

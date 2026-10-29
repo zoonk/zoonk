@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.AppCache
@@ -115,9 +116,9 @@ class PronunciationScreenshots {
             states.map { state ->
                 val api = FakePronunciationApi(if (state.empty) reviews() else reviews(*words), *state.grades.toTypedArray())
                 val store = PronunciationStore(api, cache) { "UTC" }
-                PronunciationViewModel(compose.activity).apply { start(GOAL_ID, api.words, store) }.also { model ->
+                PronunciationViewModel(compose.activity, SavedStateHandle()).apply { start(GOAL_ID, api.words, store) }.also { model ->
                     runBlocking {
-                        state.grades.forEach { _ -> model.round!!.record(RECORDING) }
+                        state.grades.forEach { _ -> model.round!!.record(model.round!!.index, RECORDING) }
                         repeat(state.skips) { model.round!!.next() }
                     }
                 }

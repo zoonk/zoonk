@@ -44,7 +44,7 @@ class PronunciationRoundTest {
         runTest {
             val round = round(word(1, "a"), grades = listOf(GradeOutcome.Graded(grade(isCorrect = true))))
 
-            round.record(RECORDING)
+            round.record(round.index, RECORDING)
             assertEquals(mapOf(0 to Segment.Right), round.outcomes)
 
             round.next()
@@ -62,14 +62,14 @@ class PronunciationRoundTest {
                     grades = listOf(GradeOutcome.Graded(grade(isCorrect = false)), GradeOutcome.Graded(grade(isCorrect = true))),
                 )
 
-            round.record(RECORDING)
+            round.record(round.index, RECORDING)
             assertEquals(mapOf(0 to Segment.Wrong), round.outcomes)
 
             round.tryAgain()
             assertEquals(RoundStep.Word(0), round.step)
             assertEquals(emptyMap<Int, Segment>(), round.outcomes)
 
-            round.record(RECORDING)
+            round.record(round.index, RECORDING)
             assertEquals(mapOf(0 to Segment.Right), round.outcomes)
         }
 
@@ -101,16 +101,16 @@ class PronunciationRoundTest {
                         ),
                 )
 
-            round.record(RECORDING)
+            round.record(round.index, RECORDING)
             assertEquals(RoundStep.Word(0, issue = VoiceIssue.NoSpeech), round.step)
 
-            round.record(RECORDING)
+            round.record(round.index, RECORDING)
             assertEquals(RoundStep.Word(0, issue = VoiceIssue.Limited(Limit.SignUpRequired)), round.step)
 
-            round.record(RECORDING)
+            round.record(round.index, RECORDING)
             assertEquals(RoundStep.Word(0, issue = VoiceIssue.Failed), round.step)
 
-            round.record(RECORDING)
+            round.record(round.index, RECORDING)
             assertEquals(RoundStep.Word(0, issue = VoiceIssue.Failed), round.step)
             assertEquals(emptyMap<Int, Segment>(), round.outcomes)
             assertFalse(round.pending)
@@ -121,13 +121,25 @@ class PronunciationRoundTest {
         runTest {
             val round = round(word(1, "a"), grades = listOf(GradeOutcome.Graded(grade(isCorrect = true))), finishFails = 1)
 
-            round.record(RECORDING)
+            round.record(round.index, RECORDING)
             round.next()
             assertTrue(round.finishFailed)
 
             round.finish()
             assertFalse(round.finishFailed)
             assertEquals(RoundStep.Result(RESULT), round.step)
+        }
+
+    @Test
+    fun aTakeThatArrivesAfterItsWordWasLeftIsDropped() =
+        runTest {
+            val round = round(word(1, "a"), word(2, "b"), grades = listOf(GradeOutcome.Graded(grade(isCorrect = true))))
+
+            round.next()
+            round.record(0, RECORDING)
+
+            assertEquals(RoundStep.Word(1), round.step)
+            assertTrue(answered.isEmpty())
         }
 
     @Test
