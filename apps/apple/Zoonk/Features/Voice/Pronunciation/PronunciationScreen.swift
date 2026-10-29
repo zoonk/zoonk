@@ -472,7 +472,7 @@ private struct PronunciationResultView: View {
         }
 
         LabeledContent {
-          Text(result.brainPower, format: .number)
+          Text(result.brainPower, format: .number.sign(strategy: .always(includingZero: false)))
             .monospacedDigit()
             .foregroundStyle(.brain)
         } label: {
