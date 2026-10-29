@@ -29,7 +29,13 @@ function getApiUrl(): string {
 const apiUrl = getApiUrl();
 
 const result = await runForegroundCommand({
-  args: ["listen", "--forward-to", `${apiUrl}/v1/auth/stripe/webhook`],
+  args: [
+    "listen",
+    "--events",
+    "checkout.session.completed,customer.subscription.created,customer.subscription.updated,customer.subscription.deleted",
+    "--forward-to",
+    `${apiUrl}/v1/auth/stripe/webhook`,
+  ],
   command: "stripe",
   currentDirectory,
   environment: process.env,
