@@ -326,7 +326,7 @@ private fun ColumnScope.QuestionStep(
 
 /** At least the window's height, so a step's actions can sit at its bottom on phones. */
 @Composable
-private fun SetupColumn(content: @Composable ColumnScope.() -> Unit) {
+internal fun SetupColumn(content: @Composable ColumnScope.() -> Unit) {
     BoxWithConstraints(Modifier.fillMaxSize().imePadding()) {
         val windowHeight = maxHeight
         Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {

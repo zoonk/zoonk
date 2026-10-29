@@ -6,12 +6,14 @@ import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Replacement
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.audio.toGradeOutcome
+import com.zoonk.android.feature.onboarding.setup.LevelChoice
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.CreateUploadRequestOneOf
@@ -30,6 +32,7 @@ import com.zoonk.api.models.Onboarding
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementAnswer
 import com.zoonk.api.models.PlacementAnswerInput
@@ -48,8 +51,11 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.put
 import java.net.URI
 import java.net.URISyntaxException
 import java.util.TimeZone
@@ -180,6 +186,41 @@ class OnboardingStore(
                 api.createFromPlanLink(session, planId, start).id.toString()
             }
         }
+
+    /**
+     * A Library course as the learner's goal, which opens its setup while that still asks something
+     * and Today otherwise; a visitor starts as a guest, and a goal already on the course comes back.
+     */
+    internal suspend fun startCourse(
+        courseId: String,
+        chapterId: String?,
+        dailyMinutes: Int?,
+        level: LevelChoice?,
+    ): WriteOutcome<CourseStarted> {
+        if (sessions.current == null && !startGuest()) return WriteOutcome.Failed
+        val body = courseStartBody(chapterId, dailyMinutes, level, TimeZone.getDefault().id)
+        val started =
+            write(setOf(DataDomain.Goals, DataDomain.LearningProfile, DataDomain.Allowance)) {
+                api.startCourse(it, courseId, body).id.toString()
+            }
+        return when (started) {
+            is WriteOutcome.Done -> WriteOutcome.Done(CourseStarted(started.value, inSetup(started.value)))
+            is WriteOutcome.Refused -> started
+            WriteOutcome.Failed -> WriteOutcome.Failed
+            WriteOutcome.Obsolete -> WriteOutcome.Obsolete
+        }
+    }
+
+    /** Whether a goal's setup still asks something; an unread setup counts as asking. */
+    internal suspend fun inSetup(goalId: String) = setupOf(goalId).inSetup()
+
+    private suspend fun setupOf(goalId: String): Onboarding? {
+        val setup = onboardings[goalId]
+        setup.load()
+        return (setup.state.value as? LoadState.Loaded)?.value
+    }
+
+    private fun Onboarding?.inSetup() = this?.steps?.any { it != OnboardingStep.PLAN } != false
 
     /** A shared plan as its link shows it: its subject and phases, never its owner or their progress. */
     val planLinks =
@@ -464,3 +505,31 @@ data class CoverQuery(
     val goal: Goal,
     val input: PlanTimeToCoverInput,
 )
+
+internal data class CourseStarted(
+    val goalId: String,
+    val inSetup: Boolean,
+)
+
+/** A quick test sends `level: null`, which differs from leaving the level for the setup to ask. */
+internal fun courseStartBody(
+    chapterId: String?,
+    dailyMinutes: Int?,
+    level: LevelChoice?,
+    timeZone: String,
+) = buildJsonObject {
+    chapterId?.let { put("chapterId", it) }
+    dailyMinutes?.let { put("dailyMinutes", it) }
+    when (level) {
+        is LevelChoice.Own -> {
+            put("level", level.level.value)
+        }
+
+        LevelChoice.QuickTest -> {
+            put("level", JsonNull)
+        }
+
+        null -> {}
+    }
+    put("timeZone", timeZone)
+}

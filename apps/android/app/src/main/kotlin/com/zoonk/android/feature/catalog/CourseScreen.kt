@@ -189,7 +189,7 @@ internal data class CatalogPageLayout(
 
 /** A course, chapter or lesson that no longer exists is a not-found page inside the frame, as on main. */
 @Composable
-private fun CatalogNotFound(navigator: AppNavigator) {
+internal fun CatalogNotFound(navigator: AppNavigator) {
     StatusMessage(
         icon = R.drawable.ic_search_off,
         title = stringResource(R.string.catalog_not_found_title),

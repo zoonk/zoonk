@@ -42,6 +42,7 @@ import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.datetime.LocalDate
+import kotlinx.serialization.json.JsonObject
 
 internal const val DRAFT_ID = "6f9d2c1e-3b4a-4c5d-8e6f-7a8b9c0d1e2f"
 internal const val GOAL_ID = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
@@ -192,6 +193,22 @@ internal class FakeOnboardingApi : OnboardingApi {
         session: AuthenticatedSession?,
         planId: String,
     ): PlanLink = planLink
+
+    val courseStarts = mutableListOf<Pair<String, JsonObject>>()
+
+    /** Holds a course's start until it completes. */
+    var courseStartGate: CompletableDeferred<Unit>? = null
+
+    override suspend fun startCourse(
+        session: AuthenticatedSession,
+        courseId: String,
+        body: JsonObject,
+    ): Goal {
+        courseStarts += courseId to body
+        courseStartGate?.await()
+        refusal?.let { throw it }
+        return goalCreated().goals.single()
+    }
 
     override suspend fun createFromPlanLink(
         session: AuthenticatedSession,

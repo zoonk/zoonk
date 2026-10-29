@@ -429,6 +429,28 @@
     <string name="onboarding_level_title">How much do you already know?</string>
     <string name="onboarding_level_description">It only changes where your plan starts.</string>
     <string name="onboarding_level_label">Your level</string>
+    <string name="onboarding_course_chapter_description">Your plan starts at this chapter and follows the course from there, in the time you have each day.</string>
+    <string name="onboarding_course_follows">Your plan follows this course, in the time you have each day.</string>
+    <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
+    <plurals name="onboarding_course_chapters">
+        <item quantity="one">%d chapter</item>
+        <item quantity="other">%d chapters</item>
+    </plurals>
+    <!-- After the chapters' count, like "3 chapters · 12 lessons". -->
+    <plurals name="onboarding_course_lessons">
+        <item quantity="one">%d lesson</item>
+        <item quantity="other">%d lessons</item>
+    </plurals>
+    <!-- Under the first chapters of a plan that starts at a chapter. -->
+    <plurals name="onboarding_course_more_chapters">
+        <item quantity="one">and %d more chapter</item>
+        <item quantity="other">and %d more chapters</item>
+    </plurals>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_course_minutes">%1$s a day for now. You can change it in the next steps.</string>
+    <string name="onboarding_course_build">Build my plan</string>
+    <string name="onboarding_course_failed">We couldn\'t start this course.</string>
+    <string name="onboarding_course_start_free">Start free, no account needed.</string>
     <string name="onboarding_level_none">Nothing, I\'m just starting</string>
     <string name="onboarding_level_none_description">From scratch, with everyday examples</string>
     <string name="onboarding_level_basic">The basics</string>

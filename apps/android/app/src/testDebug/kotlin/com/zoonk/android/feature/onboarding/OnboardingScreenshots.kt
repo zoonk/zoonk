@@ -49,6 +49,11 @@ import com.zoonk.android.feature.audio.AudioOutput
 import com.zoonk.android.feature.audio.PlaybackEnd
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
+import com.zoonk.android.feature.catalog.CHAPTER_ONE
+import com.zoonk.android.feature.catalog.COURSE
+import com.zoonk.android.feature.catalog.CatalogStore
+import com.zoonk.android.feature.catalog.FakeCatalogApi
+import com.zoonk.android.feature.onboarding.course.CourseStartScreen
 import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
 import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
@@ -365,6 +370,8 @@ class OnboardingScreenshots {
                 },
                 "setup-buddy" to { Setup(FakeOnboardingApi().apply { setup = { setupView(listOf("buddy", "plan")) } }) },
                 "plan-link" to { PlanLink(FakeOnboardingApi()) },
+                "course-start" to { CourseStart(AppRoute.CourseStart(COURSE)) },
+                "course-start-chapter" to { CourseStart(AppRoute.CourseStart(COURSE, chapterId = CHAPTER_ONE, dailyMinutes = 15)) },
                 "level-test-intro" to { LevelTest(FakeOnboardingApi(), targetLanguage = "ja", native = "pt") },
                 "level-test-reading" to { LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(answered = 3) }) },
                 "level-test-listening" to {
@@ -444,6 +451,20 @@ class OnboardingScreenshots {
                 rememberStore(api),
                 signedIn = true,
                 rememberAppNavigator(),
+            )
+        }
+
+        @Composable
+        private fun CourseStart(route: AppRoute.CourseStart) {
+            val session = remember { FakeSession(AuthenticatedSession("ana", "token-a", "local-a")) }
+            val cache = remember { AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)) }
+            CourseStartScreen(
+                route = route,
+                catalog = remember { CatalogStore(FakeCatalogApi(), cache) },
+                store = remember { OnboardingStore(FakeOnboardingApi(), cache, session) { true } },
+                signedIn = false,
+                existingGoalId = null,
+                navigator = rememberAppNavigator(),
             )
         }
 

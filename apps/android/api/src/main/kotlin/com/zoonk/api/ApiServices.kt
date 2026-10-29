@@ -26,6 +26,7 @@ import com.zoonk.api.apis.StudySessionsApi
 import com.zoonk.api.apis.SubscriptionsApi
 import com.zoonk.api.apis.UsersApi
 import com.zoonk.api.apis.WorkflowsApi
+import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OpenedStudyDay
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -101,6 +102,13 @@ interface JsonBodyApi {
         @Path("goalId") goalId: UUID,
         @Body body: JsonObject,
     ): Response<OpenedStudyDay>
+
+    /** The generated `startCourseGoal`, whose `level` is `null` for a quick test and absent to ask it in the setup. */
+    @POST("courses/{courseId}/goals")
+    suspend fun startCourseGoal(
+        @Path("courseId") courseId: UUID,
+        @Body body: JsonObject,
+    ): Response<Goal>
 }
 
 /**

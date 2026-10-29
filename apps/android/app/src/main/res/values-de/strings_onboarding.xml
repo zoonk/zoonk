@@ -23,6 +23,15 @@
   "onboarding_citation_page": "4b72278480b0dda9958c86d8fb644edd02a8e9e84b96dfcb83f5b5ad2aa4fc18",
   "onboarding_citation_slide": "61739bd4cf222eb7610fb0fe4534567ea77054ee3f62820ba51e63a94eeb6924",
   "onboarding_continue": "deeaf079beb4d803bd47aa48cb8d28ff425ef667b0bab1f1c254058036aad89c",
+  "onboarding_course_build": "7d3f86de7eb76b08dbc6272474e19b2bb9a71bf89ad0e956eadef1cd13b1b5ad",
+  "onboarding_course_chapter_description": "ad6b5b65a12515e08053ce8e1aedc46938bae934a8b1905cfa6d8788084812b4",
+  "onboarding_course_chapters": "f0fd50c34f454d6891307022baa6832fc3f46701dcade4da527899355be2959f",
+  "onboarding_course_failed": "21398867fef7e3a1a097899fe7123065e55132b900b3fdc09485b1e93736c0f7",
+  "onboarding_course_follows": "5c1a559c4d6fd1704ace161a618f35cec23b824c14099719e0e2d0563e7bd5ee",
+  "onboarding_course_lessons": "8dfeb3414a70441587c752d03bc25b59242a99be418c9c5e6caab3d2417fb941",
+  "onboarding_course_minutes": "24a0d839f24b3b466d26f4a000346f4ba4dfd1ded8f4cae533a1a5efc2574320",
+  "onboarding_course_more_chapters": "8e417b8af6c486fb6825a0ab2960045d71bbc8e43ae2351412654fb4c75e2741",
+  "onboarding_course_start_free": "7ff5a09b73af1c6b72c1d0a1af12b7ba710bc3d4ad37575bbbc13935c1b1292f",
   "onboarding_create_account": "ac27f94ba2e9fb3763e2eb55408c08646c6dd14d676ae3845512812e31ec3848",
   "onboarding_create_account_short": "dcd1dc6344997a95fb2e4346e7eb2016ee36ad5096ec47b737000c075e2e2e29",
   "onboarding_date_description": "ed8a9ea691509cdfafcf2fe2cdc190fcbc335af04362f2a287be8db63b549689",
@@ -838,6 +847,28 @@
     <string name="onboarding_level_title">Wie viel weißt du schon?</string>
     <string name="onboarding_level_description">Das bestimmt nur, wo dein Plan beginnt.</string>
     <string name="onboarding_level_label">Dein Level</string>
+    <string name="onboarding_course_chapter_description">Dein Plan startet mit diesem Kapitel und geht dann im Kurs weiter, passend zu deiner täglichen Lernzeit.</string>
+    <string name="onboarding_course_follows">Dein Plan orientiert sich an diesem Kurs und an der Zeit, die du täglich hast.</string>
+    <!-- Before the lessons' count, like "3 chapters · 12 lessons". -->
+    <plurals name="onboarding_course_chapters">
+        <item quantity="one">%d Kapitel</item>
+        <item quantity="other">%d Kapitel</item>
+    </plurals>
+    <!-- After the chapters' count, like "3 chapters · 12 lessons". -->
+    <plurals name="onboarding_course_lessons">
+        <item quantity="one">%d Lektion</item>
+        <item quantity="other">%d Lektionen</item>
+    </plurals>
+    <!-- Under the first chapters of a plan that starts at a chapter. -->
+    <plurals name="onboarding_course_more_chapters">
+        <item quantity="one">und %d weiteres Kapitel</item>
+        <item quantity="other">und %d weitere Kapitel</item>
+    </plurals>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_course_minutes">%1$s pro Tag erst mal. In den nächsten Schritten kannst du das ändern.</string>
+    <string name="onboarding_course_build">Meinen Plan erstellen</string>
+    <string name="onboarding_course_failed">Wir konnten diesen Kurs nicht starten.</string>
+    <string name="onboarding_course_start_free">Kostenlos starten, ganz ohne Konto.</string>
     <string name="onboarding_level_none">Noch nichts, ich fange gerade erst an</string>
     <string name="onboarding_level_none_description">Von Grund auf, mit Beispielen aus dem Alltag</string>
     <string name="onboarding_level_basic">Die Grundlagen</string>

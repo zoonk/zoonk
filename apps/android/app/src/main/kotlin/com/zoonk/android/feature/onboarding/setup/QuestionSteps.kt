@@ -260,6 +260,26 @@ internal fun ColumnScope.LevelStep(
             ),
         )
     }
+    StepForm(
+        title = stringResource(R.string.onboarding_level_title),
+        description = stringResource(R.string.onboarding_level_description),
+        subject = subject,
+        canContinue = level != null,
+        pending = pending,
+        onContinue = { level?.let(answer) },
+    ) {
+        LevelChoiceList(level, onChange = { level = it }, onPick = answer, readOnly = pending)
+    }
+}
+
+/** Main's level choices, shared by the setup's level question and a course's start. */
+@Composable
+internal fun LevelChoiceList(
+    value: LevelChoice?,
+    onChange: (LevelChoice) -> Unit,
+    onPick: ((LevelChoice) -> Unit)? = null,
+    readOnly: Boolean = false,
+) {
     val choices: List<Choice<LevelChoice>> =
         listOf(
             Choice<LevelChoice>(
@@ -288,24 +308,7 @@ internal fun ColumnScope.LevelStep(
                 stringResource(R.string.onboarding_level_test_description, formatMinutes(QUICK_TEST_MINUTES, currentLocale())),
             ),
         )
-
-    StepForm(
-        title = stringResource(R.string.onboarding_level_title),
-        description = stringResource(R.string.onboarding_level_description),
-        subject = subject,
-        canContinue = level != null,
-        pending = pending,
-        onContinue = { level?.let(answer) },
-    ) {
-        ChoiceList(
-            choices,
-            level,
-            stringResource(R.string.onboarding_level_label),
-            onChange = { level = it },
-            onPick = answer,
-            readOnly = pending,
-        )
-    }
+    ChoiceList(choices, value, stringResource(R.string.onboarding_level_label), onChange = onChange, onPick = onPick, readOnly = readOnly)
 }
 
 @Composable

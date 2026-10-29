@@ -62,6 +62,7 @@ import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.CatalogFirstQuestion
 import com.zoonk.api.models.CatalogTryLesson
+import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import java.util.Locale
 import kotlin.math.roundToLong
@@ -86,13 +87,15 @@ internal fun followsCourse(
     courseId: String,
 ): Boolean {
     val summary by app.learnerSummary.summary.collectShown()
+    return summary.value?.goalOnCourse(courseId) != null
+}
 
-    return summary.value?.goals.orEmpty().any { goal ->
+internal fun LearnerSummary.goalOnCourse(courseId: String): LearnerSummaryGoal? =
+    goals.firstOrNull { goal ->
         goal.courseId?.toString() == courseId &&
             goal.status == LearnerSummaryGoal.Status.ACTIVE &&
             goal.kind != LearnerSummaryGoal.Kind.EXPLAIN
     }
-}
 
 /** Main's `getTotalDuration`: minutes under an hour, rounded hours ("~3 hr") after. */
 internal fun formatTotalDuration(

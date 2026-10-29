@@ -49,6 +49,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
@@ -102,6 +103,12 @@ interface OnboardingApi {
         session: AuthenticatedSession,
         input: GoalCreateInput,
     ): GoalCreateResponse
+
+    suspend fun startCourse(
+        session: AuthenticatedSession,
+        courseId: String,
+        body: JsonObject,
+    ): Goal
 
     suspend fun planLink(
         session: AuthenticatedSession?,
@@ -281,6 +288,12 @@ class LiveOnboardingApi(
         session: AuthenticatedSession,
         input: GoalCreateInput,
     ) = perform { api.clients(session).goals.createGoals(input) }
+
+    override suspend fun startCourse(
+        session: AuthenticatedSession,
+        courseId: String,
+        body: JsonObject,
+    ) = perform { api.clients(session).jsonBodies.startCourseGoal(UUID.fromString(courseId), body) }
 
     override suspend fun planLink(
         session: AuthenticatedSession?,
