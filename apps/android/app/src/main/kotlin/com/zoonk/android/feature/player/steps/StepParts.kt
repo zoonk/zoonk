@@ -6,7 +6,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import com.zoonk.android.data.recode
 import com.zoonk.android.feature.player.model.StepImage
+import com.zoonk.android.feature.player.model.StepVisual
+import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.richtext.RichText
@@ -17,6 +20,12 @@ fun StepPicture(
     image: StepImage,
     frame: PictureFrame,
 ) = PrivatePicture(image.url, image.alt, image.width, image.height, frame)
+
+@Composable
+fun LessonStepVisual(visual: StepVisual?) {
+    val shown = remember(visual) { visual?.recode<StepVisual, LessonVisual>() } ?: return
+    LessonVisual(shown)
+}
 
 /**
  * A question with a table of data above it: main splits the table off so the question reads as one

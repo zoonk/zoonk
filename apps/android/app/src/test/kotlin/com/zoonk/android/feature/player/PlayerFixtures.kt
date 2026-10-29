@@ -10,6 +10,7 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
+import com.zoonk.android.feature.player.model.StepVisual
 import com.zoonk.android.feature.player.model.SummaryStepContent
 import com.zoonk.android.feature.player.model.TypedAnswerStepContent
 import com.zoonk.android.feature.player.model.WorkedExampleStepContent
@@ -21,7 +22,8 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOf8ContentStepsInner
 fun explanationStep(
     id: String,
     skillId: String? = null,
-) = LessonStep(id, skillId, StepContent.Explanation(ExplanationStepContent(text = "Idea $id", title = "Title $id")))
+    visual: StepVisual? = null,
+) = LessonStep(id, skillId, StepContent.Explanation(ExplanationStepContent(text = "Idea $id", title = "Title $id", visual = visual)))
 
 fun workedExampleStep(id: String) =
     LessonStep(

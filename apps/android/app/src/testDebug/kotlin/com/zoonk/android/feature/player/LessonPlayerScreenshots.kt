@@ -27,12 +27,14 @@ import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.StepVisual
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -88,7 +90,7 @@ class LessonPlayerScreenshots {
     private val steps =
         listOf(
             hookGuessStep("hook"),
-            explanationStep("idea"),
+            explanationStep("idea", visual = RIDERSHIP),
             workedExampleStep("worked"),
             checkStep("quiz"),
             typedAnswerStep("why"),
@@ -215,3 +217,11 @@ class LessonPlayerScreenshots {
         println("Screenshot ${file.path}")
     }
 }
+
+private val RIDERSHIP: StepVisual =
+    ApiJson.decodeFromString(
+        """
+        {"kind":"chart","chart":"bar","title":"Riders per day","categoryLabel":"Line","valueLabel":"Riders",
+        "categories":["Blue","Red","Green"],"series":[{"name":"2025","values":[1200,800,450]}]}
+        """,
+    )
