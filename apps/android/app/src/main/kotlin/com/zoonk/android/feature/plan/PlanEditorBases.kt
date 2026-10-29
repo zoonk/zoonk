@@ -53,7 +53,6 @@ import com.zoonk.api.models.PlanBases
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangePreviewFeasibility
-import com.zoonk.api.models.PlanChangeResult
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -112,12 +111,11 @@ internal fun ColumnScope.BasesChoices(
     val title = stringResource(R.string.plan_prerequisites)
     val description = stringResource(if (page.isExam) R.string.plan_prerequisites_exam else R.string.plan_prerequisites_goal)
 
-    val saved = edits.sheetAnswer(draft.opening)?.takeIf { it.status == PlanChangeResult.Status.APPLIED }
-    if (saved != null && saved.change == null) {
+    if (edits.sheetKept(draft.opening)) {
         LaunchedEffect(draft.opening) { onDone() }
         return
     }
-    val applied = saved?.change?.let { edits.changes[it.id] }
+    val applied = edits.sheetApplied(draft.opening)
     if (applied != null) {
         PlanChangeApplied(page, title, description, applied, R.drawable.ic_layers, onUndo = { edits.undo(applied.change) }, onDone = onDone)
         return

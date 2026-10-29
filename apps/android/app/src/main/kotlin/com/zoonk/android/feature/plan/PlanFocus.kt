@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -75,9 +76,14 @@ internal fun ColumnScope.ChooseFocusBody(
 ) {
     val title = stringResource(R.string.plan_where_to_focus)
     val description = stringResource(R.string.plan_where_to_focus_description)
-    var appliedId by rememberSaveable { mutableStateOf<String?>(null) }
-    val applied = appliedId?.let { edits.changes[UUID.fromString(it)] }
+    var saved by rememberSaveable { mutableStateOf<UUID?>(null) }
+    val save = saved
+    val applied = save?.let(edits::sheetApplied)
 
+    if (save != null && edits.sheetKept(save)) {
+        LaunchedEffect(save) { onDone() }
+        return
+    }
     if (applied != null) {
         PlanChangeApplied(
             page,
@@ -94,28 +100,21 @@ internal fun ColumnScope.ChooseFocusBody(
     val areas = focusChoices(page.plan.areas)
     val current = areas.filter { it.area.focused }.map { it.area.name }
     var chosen by rememberSaveable { mutableStateOf(current) }
-    var unchanged by rememberSaveable { mutableStateOf<PlanChangeResult.Reason?>(null) }
+    val answer = save?.let(edits::sheetAnswer)
+    val unchanged = answer?.status == PlanChangeResult.Status.UNCHANGED
     val pending = edits.isPending(PlanPart.Focus)
 
     fun save() {
-        edits.change(PlanPart.Focus, listOf(PlanOp.FocusAreas(chosen))) { result ->
-            val change = result?.change
-            when {
-                // A plan not built yet keeps the focus for when it is: there's no change to show.
-                result?.status == PlanChangeResult.Status.APPLIED && change == null -> onDone()
-
-                result?.status == PlanChangeResult.Status.APPLIED && change != null -> appliedId = change.id.toString()
-
-                result?.status == PlanChangeResult.Status.UNCHANGED -> unchanged = result.reason
-            }
-        }
+        val id = UUID.randomUUID()
+        saved = id
+        edits.change(PlanPart.Focus, listOf(PlanOp.FocusAreas(chosen))) { edits.answerSheet(id, it) }
     }
 
     PlanSheetContent(
         title = title,
         description = description,
         body = {
-            unchanged?.let { FocusUnchanged(it, joinList(chosen)) }
+            if (unchanged) FocusUnchanged(answer.reason, joinList(chosen))
             FocusTestLink(onFocusTest)
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(
@@ -131,7 +130,7 @@ internal fun ColumnScope.ChooseFocusBody(
                         checked = name in chosen,
                         onCheckedChange = { checked ->
                             if (pending) return@AreaChoice
-                            unchanged = null
+                            saved = null
                             chosen = if (checked) chosen + name else chosen - name
                         },
                     )
@@ -142,11 +141,11 @@ internal fun ColumnScope.ChooseFocusBody(
             Button(
                 onClick = ::save,
                 modifier = Modifier.fillMaxWidth(),
-                enabled = chosen.isNotEmpty() && chosen.toSet() != current.toSet() && unchanged == null,
+                enabled = chosen.isNotEmpty() && chosen.toSet() != current.toSet() && !unchanged,
             ) {
                 Text(stringResource(if (pending) R.string.plan_saving else R.string.plan_focus_on_these))
             }
-            if (edits.hasFailed(PlanPart.Focus)) SaveFailedText()
+            if (save != null && edits.sheetFailed(PlanPart.Focus, save)) SaveFailedText()
         },
     )
 }

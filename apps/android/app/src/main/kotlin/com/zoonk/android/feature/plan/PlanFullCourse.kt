@@ -37,7 +37,6 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.api.models.LearnerSummaryGoal
-import com.zoonk.api.models.PlanChangeResult
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import java.util.UUID
@@ -185,8 +184,9 @@ internal fun ColumnScope.StudyEverythingBody(
     onPreview: (List<PlanOp>) -> Unit,
     onDone: () -> Unit,
 ) {
-    var appliedId by rememberSaveable { mutableStateOf<String?>(null) }
-    val applied = appliedId?.let { edits.changes[UUID.fromString(it)] }
+    var saved by rememberSaveable { mutableStateOf<UUID?>(null) }
+    val save = saved
+    val applied = save?.let(edits::sheetApplied)
     val course = fullCourse(page)
     val title = stringResource(R.string.plan_study_everything)
     val exam = course?.isExam ?: page.isExam
@@ -205,7 +205,7 @@ internal fun ColumnScope.StudyEverythingBody(
         )
         return
     }
-    if (course == null) {
+    if (course == null || (save != null && edits.sheetKept(save))) {
         LaunchedEffect(Unit) { onDone() }
         return
     }
@@ -227,15 +227,9 @@ internal fun ColumnScope.StudyEverythingBody(
     }
 
     fun choose() {
-        edits.change(PlanPart.FullCourse, operations) { result ->
-            val change = result?.change
-            when {
-                // A plan not built yet keeps the choice for when it is: there's no change to show.
-                result?.status == PlanChangeResult.Status.APPLIED && change == null -> onDone()
-
-                result?.status == PlanChangeResult.Status.APPLIED && change != null -> appliedId = change.id.toString()
-            }
-        }
+        val id = UUID.randomUUID()
+        saved = id
+        edits.change(PlanPart.FullCourse, operations) { edits.answerSheet(id, it) }
     }
 
     PlanSheetContent(
@@ -262,7 +256,7 @@ internal fun ColumnScope.StudyEverythingBody(
                 PendingLabel(pending, stringResource(R.string.plan_study_everything))
             }
             TextButton(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.plan_cancel)) }
-            if (edits.hasFailed(PlanPart.FullCourse)) SaveFailedText()
+            if (save != null && edits.sheetFailed(PlanPart.FullCourse, save)) SaveFailedText()
         },
     )
 }

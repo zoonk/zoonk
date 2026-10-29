@@ -118,6 +118,13 @@ internal data class PlanEdits(
     /** What a sheet [opening]'s save answered; null until it did, or when it didn't save. */
     fun sheetAnswer(opening: UUID): PlanChangeResult? = sheetAnswers[opening]
 
+    /** The change [opening]'s save applied, with its Undo, while it's this editor opening's. */
+    fun sheetApplied(opening: UUID): EditorChange? =
+        sheetAnswer(opening)?.takeIf { it.status == PlanChangeResult.Status.APPLIED }?.change?.let { changes[it.id] }
+
+    /** Whether [opening]'s save went to a plan not built yet, which keeps it for when it is: there's no change to show. */
+    fun sheetKept(opening: UUID) = sheetAnswer(opening)?.let { it.status == PlanChangeResult.Status.APPLIED && it.change == null } == true
+
     /** Whether [opening]'s save didn't, and [part] hasn't saved again since. */
     fun sheetFailed(
         part: PlanPart,

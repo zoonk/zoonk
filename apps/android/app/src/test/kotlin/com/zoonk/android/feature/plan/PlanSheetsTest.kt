@@ -3,6 +3,7 @@ package com.zoonk.android.feature.plan
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
@@ -25,6 +26,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h1600dp")
@@ -38,6 +40,8 @@ class PlanSheetsTest {
     private var done = 0
     private var focusTests = 0
     private val previews = mutableListOf<List<PlanOp>>()
+    private val sheetAnswers = mutableStateMapOf<UUID, PlanChangeResult?>()
+    private var open by mutableStateOf(true)
 
     private fun edits(latest: EditorChange? = null) =
         PlanEdits(
@@ -47,6 +51,8 @@ class PlanSheetsTest {
                 changes += part to operations
                 answer = answered
             },
+            sheetAnswers = sheetAnswers,
+            answerSheet = { opening, result -> sheetAnswers[opening] = result },
         )
 
     private fun page(plan: Plan) = learnerSummary().let { PlanPageState(it.goals.first(), plan, it) }
@@ -54,7 +60,7 @@ class PlanSheetsTest {
     private fun focus(plan: Plan = coveragePlan(areas = "[${area("Algebra", focused = true)},${area("Geometry")}]")) {
         edits = edits()
         compose.setContent {
-            ZoonkTheme { Column { ChooseFocusBody(page(plan), edits, onFocusTest = { focusTests++ }, onDone = { done++ }) } }
+            ZoonkTheme { Column { if (open) ChooseFocusBody(page(plan), edits, onFocusTest = { focusTests++ }, onDone = { done++ }) } }
         }
     }
 
@@ -110,6 +116,22 @@ class PlanSheetsTest {
         compose.onNodeWithText("Undo").assertIsDisplayed()
         compose.onNodeWithText("Done").performClick()
         assertEquals(1, done)
+    }
+
+    @Test
+    fun aFocusSavedFromAnEarlierOpeningLeavesTheNextOneOpen() {
+        focus()
+        compose.onNodeWithText("Geometry").performClick()
+        compose.onNodeWithText("Focus on these").performClick()
+        open = false
+        compose.waitForIdle()
+        open = true
+        compose.waitForIdle()
+
+        answer(PlanChangeResult(change = null, status = PlanChangeResult.Status.APPLIED))
+
+        compose.onNodeWithText("Focus on these").assertIsDisplayed()
+        assertEquals(0, done)
     }
 
     @Test
