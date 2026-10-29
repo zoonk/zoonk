@@ -25,6 +25,8 @@ struct TodayDayView: View {
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
       List {
+        // It asks for a decision, so it leads the day where the day has room beside it.
+        planChange
         day
       }
     } secondary: {
@@ -36,6 +38,7 @@ struct TodayDayView: View {
     } single: {
       List {
         day
+        planChange
         notices
         aside
         TodayPracticeSection(view: view, language: language)
@@ -74,6 +77,18 @@ struct TodayDayView: View {
       })
   }
 
+  @ViewBuilder
+  private var planChange: some View {
+    if let shown = store.shownPlanChange(in: view) {
+      TodayPlanChangeSection(
+        view: view, shown: shown, isOpen: $disclosures.planChange, isSaving: busy == .planChange,
+        failed: failed == .planChange
+      ) { decision in
+        perform(.planChange) { await store.answer(shown.change, with: decision, in: view) }
+      }
+    }
+  }
+
   private var language: LanguageTodayView? {
     view.goal.kind == .language ? store.languageToday(goalID: view.goal.id).value : nil
   }
@@ -90,14 +105,6 @@ struct TodayDayView: View {
       .listRowInsets(EdgeInsets())
     }
 
-    if let shown = store.shownPlanChange(in: view) {
-      TodayPlanChangeSection(
-        view: view, shown: shown, isOpen: $disclosures.planChange, isSaving: busy == .planChange,
-        failed: failed == .planChange
-      ) { decision in
-        perform(.planChange) { await store.answer(shown.change, with: decision, in: view) }
-      }
-    }
   }
 
   @ViewBuilder
