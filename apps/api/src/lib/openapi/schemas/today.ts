@@ -4,6 +4,7 @@ import { mockFundingSchema } from "@zoonk/core/plans/mock-funding-contract";
 import { noticedPatternSchema } from "@zoonk/core/view-models/language/contract";
 import { GoalKind } from "@zoonk/db";
 import { z } from "zod";
+import { lessonGenerationStatusSchema } from "./content-generation";
 import { examMomentSchema } from "./exams";
 import { memoryInsightSchema } from "./memory";
 import { planStatusSchema } from "./preparation";
@@ -53,7 +54,7 @@ export const todayResponseSchema = z
       .nullable()
       .meta({ description: "At most one insight from recent sessions, until it's answered" }),
     lessonStatus: z
-      .record(z.uuid(), z.enum(["ready", "generating", "notStarted", "failed"]))
+      .record(z.uuid(), lessonGenerationStatusSchema)
       .meta({
         description:
           "Where each lesson of the day's learn blocks stands; a stop still being written says so. Follow one with `/v1/library/lessons/{lessonId}/readiness`",

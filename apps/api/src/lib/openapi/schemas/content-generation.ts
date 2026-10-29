@@ -28,6 +28,11 @@ const readyAlternativeSchema = z
   ])
   .meta({ id: "ReadyAlternative" });
 
+/** Its own component, so generated clients read a map of it (Today's `lessonStatus`) as a map. */
+export const lessonGenerationStatusSchema = z
+  .enum(["ready", "generating", "notStarted", "failed"])
+  .meta({ id: "LessonGenerationStatus" });
+
 export const lessonReadinessSchema = z
   .object({
     alternative: readyAlternativeSchema
