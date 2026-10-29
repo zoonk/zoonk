@@ -298,6 +298,7 @@ internal fun PlanSuggestionSlot(
     edits: PlanEdits,
     links: PlanLinks,
     resume: Resume,
+    isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
     onAdjust: (PlanSection?) -> Unit,
     layout: SuggestionLayout,
@@ -341,7 +342,7 @@ internal fun PlanSuggestionSlot(
         }
     val suggestion: @Composable () -> Unit = {
         Box(Modifier.focusRequester(focus.suggestion)) {
-            key(item.key) { SlotSuggestion(item, slot, resume, onSetStatus, onAdjust) }
+            key(item.key) { SlotSuggestion(item, slot, resume, isSaving, onSetStatus, onAdjust) }
         }
     }
 
@@ -361,6 +362,7 @@ private fun SlotSuggestion(
     item: SlotItem,
     slot: Slot,
     resume: Resume,
+    isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
     onAdjust: (PlanSection?) -> Unit,
 ) {
@@ -368,7 +370,7 @@ private fun SlotSuggestion(
     val links = slot.links
     when (item) {
         SlotItem.Paused -> {
-            PausedSuggestion(slot.page, layout, resume) {
+            PausedSuggestion(slot.page, layout, resume, isSaving) {
                 slot.focus.next = true
                 onSetStatus(it)
             }
@@ -380,6 +382,7 @@ private fun SlotSuggestion(
                 choice = item.choice,
                 layout = layout,
                 failed = edits.hasFailed(PlanPart.ExamChoices),
+                pending = edits.isPending(PlanPart.ExamChoices),
                 answer = slot.shownAnswer(item),
                 onChoose = { subject ->
                     edits.chooseExamOption(item.choice.group, subject) { answer ->
@@ -534,6 +537,7 @@ private fun PausedSuggestion(
     page: PlanPageState,
     layout: SuggestionLayout,
     resume: Resume,
+    isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
 ) {
     val title = stringResource(R.string.plan_goal_paused, page.goal.title)
@@ -542,7 +546,7 @@ private fun PausedSuggestion(
             SuggestionAction(
                 text = stringResource(R.string.plan_resume),
                 onClick = { onSetStatus(GoalUpdateInput.Status.ACTIVE) },
-                enabled = resume != Resume.Pending,
+                enabled = !isSaving && resume != Resume.Pending,
             )
         }
 

@@ -14,6 +14,7 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isFocused
@@ -68,6 +69,8 @@ class PlanSuggestionSlotTest {
         extra: String = "",
         status: String = "active",
         layout: SuggestionLayout = SuggestionLayout.Panel,
+        saving: Boolean = false,
+        pending: Set<PlanPart> = emptySet(),
     ) {
         goalStatus = status
         compose.setContent {
@@ -76,6 +79,7 @@ class PlanSuggestionSlotTest {
             val page = PlanPageState(summary.goals.first(), plan(extra), summary)
             val edits =
                 PlanEdits(
+                    pending = pending,
                     changes = changes,
                     undo = { undone += it },
                     chooseExamOption = { group, subject, answered ->
@@ -91,7 +95,8 @@ class PlanSuggestionSlotTest {
                     edits,
                     PlanLinks(navigator, page),
                     Resume.Plain,
-                    { statuses += it },
+                    isSaving = saving,
+                    onSetStatus = { statuses += it },
                     onAdjust = {},
                     layout = layout,
                 )
@@ -107,6 +112,20 @@ class PlanSuggestionSlotTest {
         compose.onNodeWithText("Resume").performClick()
 
         assertEquals(listOf(GoalUpdateInput.Status.ACTIVE), statuses)
+    }
+
+    @Test
+    fun resumeWaitsWhileTheGoalsStatusSaves() {
+        show(status = "paused", layout = SuggestionLayout.Line, saving = true)
+
+        compose.onNodeWithText("Resume").assertIsNotEnabled()
+    }
+
+    @Test
+    fun examOptionsWaitWhileAChoiceSaves() {
+        show(EXAM_CHOICES, pending = setOf(PlanPart.ExamChoices))
+
+        compose.onNodeWithText("Spanish").assertIsNotEnabled()
     }
 
     @Test
@@ -126,10 +145,7 @@ class PlanSuggestionSlotTest {
 
     @Test
     fun anExamOptionChosenFromTheSlotShowsWhatItDidWithUndo() {
-        show(
-            """"examChoices":[{"group":"Foreign language","options":[{"name":"English","shortName":null},""" +
-                """{"name":"Spanish","shortName":null}],"subject":null}]""",
-        )
+        show(EXAM_CHOICES)
 
         compose.onNodeWithText("Spanish").performClick()
         compose.onNodeWithText("Undo").performClick()
@@ -140,11 +156,7 @@ class PlanSuggestionSlotTest {
 
     @Test
     fun anUndoThatDidntSaveSaysSoOnTheLine() {
-        show(
-            """"examChoices":[{"group":"Foreign language","options":[{"name":"English","shortName":null},""" +
-                """{"name":"Spanish","shortName":null}],"subject":null}]""",
-            layout = SuggestionLayout.Line,
-        )
+        show(EXAM_CHOICES, layout = SuggestionLayout.Line)
         compose.onNodeWithText("Choose").performClick()
         compose.onNodeWithText("Spanish").performClick()
 
@@ -196,7 +208,8 @@ class PlanSuggestionSlotTest {
                         edits,
                         PlanLinks(navigator, page),
                         Resume.Plain,
-                        {},
+                        isSaving = false,
+                        onSetStatus = {},
                         onAdjust = { adjusted += it },
                         layout = SuggestionLayout.Panel,
                         host = host,
@@ -408,6 +421,9 @@ class PlanSuggestionSlotTest {
 
     private companion object {
         const val RESULT_WAIT = 20_000L
+        const val EXAM_CHOICES =
+            """"examChoices":[{"group":"Foreign language","options":[{"name":"English","shortName":null},""" +
+                """{"name":"Spanish","shortName":null}],"subject":null}]"""
         const val BEHIND = """"status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null}"""
         const val FIT_OFFER =
             """"fitOffer":{"canApply":true,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":false,""" +

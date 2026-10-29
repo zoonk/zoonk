@@ -188,6 +188,13 @@ class PlanEditorTest {
     }
 
     @Test
+    fun examOptionsWaitWhileAChoiceSaves() {
+        show(EXAM_CHOICES, pending = setOf(PlanPart.ExamChoices))
+
+        compose.onNodeWithText("Spanish").performScrollTo().assertIsNotEnabled()
+    }
+
+    @Test
     fun anExamOptionSavesAtOnceAndShowsAsPicked() {
         show(EXAM_CHOICES)
 

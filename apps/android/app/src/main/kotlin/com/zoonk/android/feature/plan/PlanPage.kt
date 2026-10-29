@@ -335,6 +335,7 @@ internal fun PlanContent(
                 edits = edits,
                 links = links,
                 resume = resume,
+                isSaving = isSaving,
                 onSetStatus = onSetStatus,
                 onAdjust = { onAdjust?.invoke(it) },
                 layout = layout,

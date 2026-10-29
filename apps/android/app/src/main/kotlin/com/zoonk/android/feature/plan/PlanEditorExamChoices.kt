@@ -60,6 +60,7 @@ private fun ExamChoiceOptions(
                     selected = option.name == shown,
                     onClick = { if (option.name != shown) edits.chooseExamOption(choice.group, option.name) {} },
                     role = Role.RadioButton,
+                    enabled = !edits.isPending(PlanPart.ExamChoices),
                 )
             }
         }
@@ -82,6 +83,7 @@ internal fun ExamChoiceSuggestion(
     choice: ExamChoice,
     layout: SuggestionLayout,
     failed: Boolean,
+    pending: Boolean,
     answer: SlotAnswer?,
     onChoose: (subject: String) -> Unit,
     modifier: Modifier = Modifier,
@@ -105,7 +107,7 @@ internal fun ExamChoiceSuggestion(
         SuggestionDescription(stringResource(R.string.plan_exam_choice_until_you_pick, choice.group))
         SuggestionActions {
             choice.options.forEach { option ->
-                SuggestionAction(option.shortName ?: option.name, onClick = { onChoose(option.name) }, secondary = true)
+                SuggestionAction(option.shortName ?: option.name, onClick = { onChoose(option.name) }, enabled = !pending, secondary = true)
             }
         }
         if (failed) SuggestionSaveError()
