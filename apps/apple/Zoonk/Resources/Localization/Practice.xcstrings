@@ -30,6 +30,35 @@
         }
       }
     },
+    "%@ of %@" : {
+      "comment" : "How far a recording has played, as in “0:42 of 3:19”.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ von %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ sur %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ de %2$@"
+          }
+        }
+      }
+    },
     "His shield held this time." : {
       "comment" : "Under the verdict that loses a phase challenge, before when it comes back.",
       "localizations" : {

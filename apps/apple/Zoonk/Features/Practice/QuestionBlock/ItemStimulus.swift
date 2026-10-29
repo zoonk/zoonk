@@ -233,6 +233,7 @@ private final class SetRecordings {
   var panels: [String: Panels] = [:]
   var failed: Set<String> = []
   private(set) var playing: String?
+  private var reached: [String: TimeInterval] = [:]
   @ObservationIgnored private var player: AVPlayer?
   @ObservationIgnored private var shown: [String: Int] = [:]
 
@@ -240,11 +241,17 @@ private final class SetRecordings {
     try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio)
     let item = AVPlayerItem(url: url)
     let next = AVPlayer(playerItem: item)
-    player?.pause()
+    stop()
     player = next
     playing = key
     next.play()
     return item
+  }
+
+  /// Once a play is over, how far it got: its end after a full play.
+  func elapsed(_ key: String) -> TimeInterval {
+    guard playing == key else { return reached[key] ?? 0 }
+    return player.map { $0.currentTime().seconds }.flatMap { $0.isFinite ? $0 : nil } ?? 0
   }
 
   func ended(_ item: AVPlayerItem?) {
@@ -252,6 +259,7 @@ private final class SetRecordings {
   }
 
   func stop() {
+    if let playing { reached[playing] = elapsed(playing) }
     player?.pause()
     player = nil
     playing = nil
@@ -268,6 +276,33 @@ private final class SetRecordings {
     Task {
       if shown[key, default: 0] <= 0, playing == key { stop() }
     }
+  }
+}
+
+private struct RecordingProgress: View {
+  let key: String
+  let isPlaying: Bool
+  let length: TimeInterval
+
+  var body: some View {
+    TimelineView(.animation(minimumInterval: 0.5, paused: !isPlaying)) { _ in
+      let elapsed = min(SetRecordings.shared.elapsed(key), length)
+
+      VStack(alignment: .leading, spacing: 4) {
+        ProgressView(value: elapsed, total: length)
+        Text(
+          "\(clock(elapsed)) of \(clock(length))", tableName: "Practice",
+          comment: "How far a recording has played, as in “0:42 of 3:19”."
+        )
+        .font(.caption.monospacedDigit())
+        .foregroundStyle(.secondary)
+      }
+      .accessibilityElement(children: .combine)
+    }
+  }
+
+  private func clock(_ seconds: TimeInterval) -> String {
+    Duration.seconds(Int(seconds.rounded())).formatted(.time(pattern: .minuteSecond))
   }
 }
 
@@ -319,6 +354,10 @@ private struct ListeningPlayerView: View {
       }
       .buttonStyle(.bordered)
       .disabled(isPlaying || (!answered && playsLeft == 0) || listening.audio == nil)
+
+      if let durationMs = listening.audio?.durationMs, durationMs > 0 {
+        RecordingProgress(key: playsKey, isPlaying: isPlaying, length: Double(durationMs) / 1000)
+      }
 
       if recordings.failed.contains(playsKey) {
         Text(
