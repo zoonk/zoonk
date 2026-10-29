@@ -203,7 +203,7 @@ describe("reasoning activities", () => {
       .not.toMatchTextContent("Oak");
 
     await page.getByRole("button", { name: "In bundles" }).click();
-    await expect.element(page.getByText("The key leads to")).toBeVisible();
+    await expect.element(page.getByText("Your answers lead to")).toBeVisible();
     await checkActivity();
     await expectVerdict("Correct!");
     await expect.element(page.getByText("It leads to Pine.")).toBeVisible();

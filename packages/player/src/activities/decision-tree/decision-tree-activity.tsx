@@ -134,7 +134,7 @@ export function DecisionTreeActivity({
           aria-live="polite"
           className="bg-viz-accent-soft flex flex-col gap-0.5 rounded-xl px-3.5 py-3"
         >
-          <p className="text-viz-accent text-xs font-semibold">{t("The key leads to")}</p>
+          <p className="text-viz-accent text-xs font-semibold">{t("Your answers lead to")}</p>
           <p className="text-lg font-semibold">{current.label}</p>
         </div>
       )}

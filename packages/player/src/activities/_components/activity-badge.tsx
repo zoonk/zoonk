@@ -58,7 +58,7 @@ export type ActivityBadgeKind =
   | "exploreMap"
   | "fillSquare"
   | "findError"
-  | "followKey"
+  | "followQuestions"
   | "handsOn"
   | "labelIt"
   | "linkCauses"
@@ -101,7 +101,7 @@ const BADGE_ICONS: Record<ActivityBadgeKind, LucideIcon> = {
   exploreMap: MapPinned,
   fillSquare: Grid2x2Check,
   findError: ScanSearch,
-  followKey: Split,
+  followQuestions: Split,
   handsOn: Hand,
   labelIt: Tag,
   linkCauses: Workflow,
@@ -148,11 +148,7 @@ function useBadgeLabel(kind: ActivityBadgeKind): string {
     exploreMap: t("Explore the map"),
     fillSquare: t("Fill the square"),
     findError: t("Find the error"),
-    followKey: t({
-      description:
-        "A short imperative badge, about as long as the English. The key is an identification key, as in biology: questions that lead to a name. Not a musical key.",
-      message: "Follow the key",
-    }),
+    followQuestions: t("Follow the questions"),
     handsOn: t("Hands on"),
     labelIt: t("Label it"),
     linkCauses: t("Link causes"),

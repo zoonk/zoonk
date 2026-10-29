@@ -66,11 +66,10 @@ msgctxt "Xl9ymg"
 msgid "Find the error"
 msgstr "Encuentra el error"
 
-#. A short imperative badge, about as long as the English. The key is an identification key, as in biology: questions that lead to a name. Not a musical key.
 #: src/activities/_components/activity-badge.tsx
-msgctxt "Md3D5Q"
-msgid "Follow the key"
-msgstr "Sigue la clave"
+msgctxt "nC6XLx"
+msgid "Follow the questions"
+msgstr "Sigue las preguntas"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "XsJOM5"
@@ -1075,9 +1074,9 @@ msgid "Your answers"
 msgstr "Tus respuestas"
 
 #: src/activities/decision-tree/decision-tree-activity.tsx
-msgctxt "6lXge0"
-msgid "The key leads to"
-msgstr "La clave lleva a"
+msgctxt "aI6870"
+msgid "Your answers lead to"
+msgstr "Tus respuestas conducen a"
 
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "PTXFe3"

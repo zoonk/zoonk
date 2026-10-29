@@ -61,7 +61,7 @@ export const activityRenderers: {
     template: "codeTracer",
   }),
   decisionTree: defineActivityRenderer({
-    badge: "followKey",
+    badge: "followQuestions",
     load: () =>
       import("./decision-tree/decision-tree-activity").then(
         (module) => module.DecisionTreeActivity,
