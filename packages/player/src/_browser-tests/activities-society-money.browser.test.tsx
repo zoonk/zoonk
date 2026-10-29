@@ -221,6 +221,46 @@ describe("money and society activities", () => {
     await expectVerdict("Correct!");
   });
 
+  it("source comparison: a right answer's legend says nothing was missed", async () => {
+    openActivity({ template: "sourceComparison" });
+    await page.getByRole("checkbox", { name: "The regulars fired on us" }).click();
+    await page.getByRole("checkbox", { name: "the rebels fired first" }).click();
+    await checkActivity();
+    await expectVerdict("Correct!");
+    await expect.element(page.getByText("What to mark", { exact: true })).toBeInTheDocument();
+    await expect.element(page.getByText("Missed", { exact: true })).not.toBeInTheDocument();
+  });
+
+  it("source comparison: a passage marked by mistake has its own legend entry", async () => {
+    const fixture = activityContentFixtures.sourceComparison;
+    const [first, second] = fixture.fields.sources;
+
+    openActivity({
+      content: {
+        ...fixture,
+        fields: {
+          ...fixture.fields,
+          sources: [
+            {
+              ...first,
+              passages: [
+                ...(first?.passages ?? []),
+                { id: "p3", isTarget: false, text: "without any provocation" },
+              ],
+            },
+            second,
+          ],
+        },
+      },
+      template: "sourceComparison",
+    });
+
+    await page.getByRole("checkbox", { name: "The regulars fired on us" }).click();
+    await page.getByRole("checkbox", { name: "without any provocation" }).click();
+    await checkActivity();
+    await expect.element(page.getByText("Wrong mark", { exact: true })).toBeInTheDocument();
+  });
+
   it("source comparison: marking one of two shows the one missed", async () => {
     openActivity({ template: "sourceComparison" });
     await page.getByRole("checkbox", { name: "The regulars fired on us" }).click();

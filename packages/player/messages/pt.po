@@ -2613,6 +2613,11 @@ msgid "Missed"
 msgstr "Faltou marcar"
 
 #: src/activities/source-comparison/source-comparison-activity.tsx
+msgctxt "zR6-ei"
+msgid "Wrong mark"
+msgstr "Marca de erro"
+
+#: src/activities/source-comparison/source-comparison-activity.tsx
 msgctxt "4O8gKs"
 msgid "Two sources to compare: {first} and {second}."
 msgstr "Duas fontes para comparar: {first} e {second}."

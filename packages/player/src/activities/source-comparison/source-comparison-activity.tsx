@@ -177,10 +177,14 @@ export function SourceComparisonActivity({
     }
   }
 
-  const markedTexts = fields.sources
-    .flatMap((source) => source.passages)
+  const passages = fields.sources.flatMap((source) => source.passages);
+
+  const markedTexts = passages
     .filter((passage) => marked.includes(passage.id))
     .map((passage) => passage.text);
+
+  const missed = passages.some((passage) => passage.isTarget && !marked.includes(passage.id));
+  const wrong = passages.some((passage) => !passage.isTarget && marked.includes(passage.id));
 
   return (
     <ActivityCanvas labelId={labelId}>
@@ -210,10 +214,18 @@ export function SourceComparisonActivity({
             <span className="bg-success/25 h-3 w-4 rounded-sm" />
             {t("What to mark")}
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="border-success w-4 border-b-2 border-dashed" />
-            {t("Missed")}
-          </span>
+          {missed && (
+            <span className="flex items-center gap-1.5">
+              <span className="border-success w-4 border-b-2 border-dashed" />
+              {t("Missed")}
+            </span>
+          )}
+          {wrong && (
+            <span className="flex items-center gap-1.5">
+              <span className="bg-destructive/25 h-3 w-4 rounded-sm" />
+              {t("Wrong mark")}
+            </span>
+          )}
         </div>
       )}
 
