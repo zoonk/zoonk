@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The Plan's section listing an exam's subjects. -->
+    <string name="goalcontent_subjects">Subjects</string>
+    <!-- The Plan's section listing the plan's modules. -->
+    <string name="goalcontent_modules">Modules</string>
+    <plurals name="goalcontent_subject_count">
+        <item quantity="one">%d subject</item>
+        <item quantity="other">%d subjects</item>
+    </plurals>
+    <plurals name="goalcontent_module_count">
+        <item quantity="one">%d module</item>
+        <item quantity="other">%d modules</item>
+    </plurals>
+    <plurals name="goalcontent_topic_count">
+        <item quantity="one">%d topic</item>
+        <item quantity="other">%d topics</item>
+    </plurals>
+    <plurals name="goalcontent_material_topic_count">
+        <item quantity="one">%d topic from your material</item>
+        <item quantity="other">%d topics from your material</item>
+    </plurals>
+    <plurals name="goalcontent_chapter_count">
+        <item quantity="one">%d chapter</item>
+        <item quantity="other">%d chapters</item>
+    </plurals>
+    <plurals name="goalcontent_lesson_count">
+        <item quantity="one">%d lesson</item>
+        <item quantity="other">%d lessons</item>
+    </plurals>
+    <plurals name="goalcontent_question_count">
+        <item quantity="one">%d question</item>
+        <item quantity="other">%d questions</item>
+    </plurals>
+    <plurals name="goalcontent_skill_count">
+        <item quantity="one">%d skill</item>
+        <item quantity="other">%d skills</item>
+    </plurals>
+    <!-- Progress in words: "3 of 12". -->
+    <string name="goalcontent_count_of">%1$s of %2$s</string>
+    <!-- A subject's topics studied of all its topics: "3 of 12 topics". -->
+    <plurals name="goalcontent_topics_studied_of">
+        <item quantity="one">%1$s of %2$d topic</item>
+        <item quantity="other">%1$s of %2$d topics</item>
+    </plurals>
+    <!-- Screen reader text of a topic group's count: "2 of 5 topics studied". -->
+    <plurals name="goalcontent_topics_studied_spoken">
+        <item quantity="one">%1$s of %2$d topic studied</item>
+        <item quantity="other">%1$s of %2$d topics studied</item>
+    </plurals>
+    <!-- The share of something done: "35% done". -->
+    <string name="goalcontent_percent_done">%1$d%% done</string>
+    <!-- Legend of a progress bar's parts. -->
+    <string name="goalcontent_studied">Studied</string>
+    <string name="goalcontent_known">Known</string>
+    <string name="goalcontent_new">New</string>
+    <!-- An exam subject's estimated readiness. -->
+    <string name="goalcontent_preparation">Preparation</string>
+    <string name="goalcontent_coverage">Coverage</string>
+    <string name="goalcontent_mastery">Mastery</string>
+    <!-- A subject's first answers to unseen questions that were right: "6 of 8 right". -->
+    <string name="goalcontent_mastery_right">%1$s of %2$s right</string>
+    <string name="goalcontent_mastery_pending">Shows after a few practice questions</string>
+    <string name="goalcontent_not_in_plan">Not in your plan</string>
+    <!-- A group of subjects the plan adds outside what the learner's own material lists. -->
+    <string name="goalcontent_also_in_plan">Also in your plan</string>
+    <!-- A group of subjects the plan adds outside an exam's public notice. -->
+    <string name="goalcontent_beyond_notice">Beyond the notice</string>
+    <!-- A group of subjects the plan adds outside a language certificate's official guide. -->
+    <string name="goalcontent_beyond_guide">Beyond the official guide</string>
+    <!-- %1$s is a link to the site that counted the questions. -->
+    <string name="goalcontent_questions_source_edition">Questions per subject in the %1$s, as counted by %2$s.</string>
+    <string name="goalcontent_questions_source_latest">Questions per subject in the latest exam, as counted by %1$s.</string>
+    <!-- %1$s is a course, %2$s a university, %3$s the parts of the exam it weighs more, %4$s a link to the source's site. -->
+    <string name="goalcontent_course_weights_heavier">%1$s at %2$s counts %3$s more, so your plan gives them more of your time. Weights from %4$s.</string>
+    <string name="goalcontent_course_weights_even">%1$s at %2$s counts every part of the exam the same. Weights from %3$s.</string>
+
+    <!-- Eyebrow of a subject's page for a subject of an exam's notice. -->
+    <string name="goalcontent_subject">Subject</string>
+    <!-- Eyebrow of a subject's page for a module of the learner's plan. -->
+    <string name="goalcontent_module">Module</string>
+    <string name="goalcontent_from_material">From your material</string>
+    <!-- How much of the exam a subject is: "20% of the exam". -->
+    <string name="goalcontent_share_of_exam">%1$s of the exam</string>
+    <plurals name="goalcontent_topics_known_skipped">
+        <item quantity="one">%d topic skipped because you already know it</item>
+        <item quantity="other">%d topics skipped because you already know them</item>
+    </plurals>
+    <plurals name="goalcontent_lessons_known_skipped">
+        <item quantity="one">%d lesson skipped because you already know it</item>
+        <item quantity="other">%d lessons skipped because you already know them</item>
+    </plurals>
+    <!-- Opens the next chapter or lesson once some are done. -->
+    <string name="goalcontent_continue">Continue</string>
+    <!-- Opens the first chapter or lesson. -->
+    <string name="goalcontent_start">Start</string>
+    <string name="goalcontent_topics_in_material">Topics in your material</string>
+    <string name="goalcontent_topics_in_notice">Topics in the notice</string>
+    <string name="goalcontent_topics_in_guide">Topics in the official guide</string>
+    <string name="goalcontent_details">Details</string>
+    <string name="goalcontent_questions">Questions</string>
+    <string name="goalcontent_topics">Topics</string>
+    <string name="goalcontent_chapters">Chapters</string>
+    <!-- The next day the plan studies a subject. -->
+    <string name="goalcontent_next_date">Next date</string>
+    <!-- Lessons the learner skipped because they already knew them. -->
+    <string name="goalcontent_known_before">Known before</string>
+    <plurals name="goalcontent_lessons_skipped">
+        <item quantity="one">%d lesson skipped</item>
+        <item quantity="other">%d lessons skipped</item>
+    </plurals>
+    <string name="goalcontent_subject_skipped">You took this subject out of your plan.</string>
+    <string name="goalcontent_subject_time">It doesn\'t fit in the time you have.</string>
+    <string name="goalcontent_subject_missing">Your plan doesn\'t teach this subject yet.</string>
+    <string name="goalcontent_adjust_plan">Adjust plan</string>
+    <!-- Puts a subject the learner took out back in their plan. -->
+    <string name="goalcontent_bring_back">Bring it back</string>
+    <string name="goalcontent_save_failed">That didn\'t save. Try again.</string>
+    <!-- %1$s lists an exam's written tests: "When to practice the essay and the discursive test". -->
+    <string name="goalcontent_cadence_title">When to practice %1$s</string>
+    <string name="goalcontent_cadence_weekly">Every week</string>
+    <string name="goalcontent_cadence_biweekly">Every other week</string>
+    <string name="goalcontent_cadence_final_weeks">Only the final weeks</string>
+    <string name="goalcontent_cadence_weekly_effect">Recommended: a little every week, which improves writing the most.</string>
+    <string name="goalcontent_cadence_biweekly_effect">The same practice in alternate weeks: less spread out, more at a time.</string>
+    <string name="goalcontent_cadence_final_weeks_effect">Less spaced practice, concentrated in the final weeks before the exam.</string>
+    <plurals name="goalcontent_chapters_done">
+        <item quantity="one">%d chapter done</item>
+        <item quantity="other">%d chapters done</item>
+    </plurals>
+    <plurals name="goalcontent_chapters_known">
+        <item quantity="one">%d chapter skipped because you already know it</item>
+        <item quantity="other">%d chapters skipped because you already know them</item>
+    </plurals>
+    <!-- Follows "3 chapters done, " in one sentence. -->
+    <plurals name="goalcontent_chapters_known_after_done">
+        <item quantity="one">%d skipped because you already know it</item>
+        <item quantity="other">%d skipped because you already know them</item>
+    </plurals>
+    <!-- Joins "3 chapters done" and "2 skipped because you already know them". -->
+    <string name="goalcontent_done_and_known">%1$s, %2$s</string>
+    <plurals name="goalcontent_more_chapters">
+        <item quantity="one">%d more chapter</item>
+        <item quantity="other">%d more chapters</item>
+    </plurals>
+    <string name="goalcontent_skipped_known">Skipped because you already know it</string>
+    <string name="goalcontent_lessons_on_the_way">Lessons on the way</string>
+    <!-- When a topic's lessons start: "From November". -->
+    <string name="goalcontent_from_start">From %1$s</string>
+    <plurals name="goalcontent_about_lessons">
+        <item quantity="one">About %d lesson</item>
+        <item quantity="other">About %d lessons</item>
+    </plurals>
+    <!-- "About 6 lessons · from November". -->
+    <string name="goalcontent_lessons_from_start">%1$s · from %2$s</string>
+    <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
+    <string name="goalcontent_lessons_done">%1$s · %2$s done</string>
+    <plurals name="goalcontent_lessons_done_spoken">
+        <item quantity="one">%1$s of %2$d lesson done</item>
+        <item quantity="other">%1$s of %2$d lessons done</item>
+    </plurals>
+    <string name="goalcontent_done">Done</string>
+    <string name="goalcontent_skipped">Skipped</string>
+    <string name="goalcontent_up_next">Up next</string>
+    <string name="goalcontent_coming_up">Coming up</string>
+    <!-- A topic's state for screen readers. -->
+    <string name="goalcontent_topic_known">You know this</string>
+    <string name="goalcontent_topic_in_progress">In progress</string>
+    <string name="goalcontent_topic_to_study">To study</string>
+    <string name="goalcontent_topic_known_reviews">You know this · it comes back in your reviews</string>
+    <string name="goalcontent_topic_known_practice">You know this · it comes back in practice</string>
+    <string name="goalcontent_topic_skipped">You took this subject out of your plan</string>
+    <string name="goalcontent_topic_past_basics">You start past the basics</string>
+    <string name="goalcontent_topic_skipped_base">You chose to skip this prerequisite</string>
+    <string name="goalcontent_topic_time">Doesn\'t fit in the time you have</string>
+    <string name="goalcontent_topic_missing">No lessons on it yet</string>
+    <!-- Marks a topic past exams asked a lot. -->
+    <string name="goalcontent_appears_a_lot">Appears a lot</string>
+    <!-- %1$s is the "Appears a lot" mark. -->
+    <string name="goalcontent_frequency_material">Topics marked %1$s are the ones your material says come up a lot. They get more of your time.</string>
+    <string name="goalcontent_frequency_past_exams">Topics marked %1$s are the ones past exams asked most.</string>
+    <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
+    <string name="goalcontent_frequency_tagged_waits">Topics marked %1$s are the ones past exams asked most (%2$s, according to %3$s). The ones asked least are the ones that wait.</string>
+    <string name="goalcontent_frequency_tagged">Topics marked %1$s are the ones past exams asked most (%2$s, according to %3$s). They get more of your time.</string>
+    <!-- %1$s is what the source counted, %2$s a link to the source's site. -->
+    <string name="goalcontent_frequency_waits">The topics past exams asked least are the ones that wait (%1$s, according to %2$s).</string>
+    <string name="goalcontent_frequency_most">The topics past exams asked most get more of your time (%1$s, according to %2$s).</string>
+    <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
+    <string name="goalcontent_matrix_title">What the questions ask</string>
+    <string name="goalcontent_see_all">See all %1$s</string>
+    <string name="goalcontent_not_found_title">We couldn\'t find this page</string>
+    <string name="goalcontent_not_found_description">The link may be old or mistyped.</string>
+    <string name="goalcontent_not_found_action">Go to the home page</string>
+
+    <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
+    <string name="goalcontent_subject_chapter">%1$s · Chapter %2$s</string>
+    <string name="goalcontent_chapter_number">Chapter %1$s</string>
+    <string name="goalcontent_lessons">Lessons</string>
+    <string name="goalcontent_progress">Progress</string>
+    <string name="goalcontent_practice">Practice</string>
+    <!-- Offers a test that skips a chapter the learner already knows. -->
+    <string name="goalcontent_test_out_title">Already know this?</string>
+    <string name="goalcontent_test_out_description">Take the test and skip the chapter</string>
+    <string name="goalcontent_practice_chapter">Practice this chapter</string>
+    <string name="goalcontent_practice_daily_cap">That\'s all the bonus practice for today. Tomorrow\'s session picks this chapter up.</string>
+    <string name="goalcontent_practice_nothing">Nothing to practice in this chapter yet.</string>
+    <string name="goalcontent_practice_failed">That didn\'t work. Try again in a moment.</string>
+    <string name="goalcontent_for_reference">For reference</string>
+    <string name="goalcontent_chapter_summary">Chapter summary</string>
+    <string name="goalcontent_skills">Skills</string>
+    <string name="goalcontent_summaries">Summaries</string>
+    <!-- A skill whose recall is fading. -->
+    <string name="goalcontent_to_review">To review</string>
+    <string name="goalcontent_skill_learning">Learning</string>
+    <string name="goalcontent_skill_solid">Solid</string>
+    <string name="goalcontent_skill_mastered">Mastered</string>
+    <string name="goalcontent_plus" translatable="false">Plus</string>
+    <string name="goalcontent_plus_spoken">Available with Plus</string>
+</resources>

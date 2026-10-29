@@ -43,6 +43,8 @@ import com.zoonk.android.feature.explain.ExplainStore
 import com.zoonk.android.feature.explain.LiveExplainApi
 import com.zoonk.android.feature.feedback.FeedbackSender
 import com.zoonk.android.feature.feedback.LiveFeedbackApi
+import com.zoonk.android.feature.goalcontent.GoalContentStore
+import com.zoonk.android.feature.goalcontent.LiveGoalContentApi
 import com.zoonk.android.feature.language.LanguageUnitStore
 import com.zoonk.android.feature.language.LiveLanguageUnitApi
 import com.zoonk.android.feature.livecall.LiveCallTransports
@@ -135,6 +137,7 @@ class AppContainer private constructor(
     val learningProfile = LearningProfileStore(LiveLearningProfileApi(api), cache)
 
     val plans = PlanStore(LivePlanApi(api), cache)
+    val goalContent = GoalContentStore(LiveGoalContentApi(api), cache)
 
     // Account and Plus (L1).
     private val integrity =
