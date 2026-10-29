@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -46,7 +47,13 @@ fun PlusNotice(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.Top,
         ) {
-            Icon(painterResource(R.drawable.ic_auto_awesome), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            // Inset, it lines up with the 20 dp tiles of the card around it.
+            Icon(
+                painterResource(R.drawable.ic_auto_awesome),
+                contentDescription = null,
+                modifier = if (inset) Modifier.size(INSET_ICON_SIZE) else Modifier,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
                 description?.let {
@@ -77,3 +84,5 @@ fun PlusNotice(
         OutlinedCard(modifier.fillMaxWidth()) { content() }
     }
 }
+
+private val INSET_ICON_SIZE = 20.dp

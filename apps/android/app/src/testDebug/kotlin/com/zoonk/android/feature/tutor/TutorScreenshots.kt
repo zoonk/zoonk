@@ -53,11 +53,11 @@ class TutorScreenshots {
     fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
 
     @Test
-    @Config(qualifiers = "w411dp-h4200dp-xhdpi")
+    @Config(qualifiers = "w411dp-h5400dp-xhdpi")
     fun offers() = capture("tutor-offers", dark = false)
 
     @Test
-    @Config(qualifiers = "w411dp-h4200dp-night-xhdpi")
+    @Config(qualifiers = "w411dp-h5400dp-night-xhdpi")
     fun offersDark() = capture("tutor-offers-dark", dark = true)
 
     @Test
@@ -105,7 +105,7 @@ class TutorScreenshots {
                 index,
                 json,
                 ->
-                turn("q$index", TutorTurn.Status.Completed, "Here.", toolOffer = offer(json))
+                turn("offer$index", TutorTurn.Status.Completed, "Here.", toolOffer = offer(json))
             },
     ) {
         val api = FakeTutorApi()

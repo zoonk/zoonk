@@ -8,9 +8,12 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.plan.planChange
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
+import com.zoonk.api.models.PlanChange
+import com.zoonk.api.models.PlanChangeDecisionInput
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -31,6 +34,7 @@ import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
+import java.util.UUID
 import kotlin.time.Instant
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -40,7 +44,10 @@ class TutorViewModelTest {
     private val bia = AuthenticatedSession("bia", "token-b", "local-b")
     private val session = FakeSession(ana)
     private val api = FakeTutorApi()
-    private val scope = TutorScope.Plan("goal")
+    private val scope = TutorScope.Plan(GOAL)
+    private var decision: (PlanChangeDecisionInput.Status) -> MutationResult<PlanChange> = {
+        MutationResult.Done(planChange(status = it.value).copy(id = UUID.fromString(OTHER_CHANGE)))
+    }
 
     @Before
     fun main() = Dispatchers.setMain(dispatcher)
@@ -52,7 +59,7 @@ class TutorViewModelTest {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
         return TutorViewModel(
             scope,
-            TutorStore(api, cache, session, { true }) { _, _, _ -> MutationResult.Obsolete },
+            TutorStore(api, cache, session, { true }) { _, _, status -> decision(status) },
         ).also { it.thread.load() }
     }
 
@@ -358,5 +365,61 @@ class TutorViewModelTest {
         assertEquals(5000, pollDelay(6, random = 0.5))
     }
 
+    @Test
+    fun applyingAChangeLeavesNoEarlierOneToUndo() =
+        runTest(dispatcher) {
+            api.thread = TutorThread(listOf(changeTurn("q1", planChange()), changeTurn("q2", proposed)), hasMore = false, nextCursor = null)
+            decision = { MutationResult.Done(proposed.copy(status = PlanChange.Status.APPLIED)) }
+            val vm = conversation()
+
+            vm.decidePlanChange(proposed.id, PlanChangeDecisionInput.Status.APPLIED)
+            advanceUntilIdle()
+
+            assertEquals(listOf(false, true), vm.turns.map { it.planChange?.canUndo })
+            assertEquals(
+                PlanChange.Status.APPLIED,
+                vm.turns
+                    .last()
+                    .planChange
+                    ?.status,
+            )
+        }
+
+    @Test
+    fun aDecisionOutlastsAReadThatStartedBeforeIt() =
+        runTest(dispatcher) {
+            api.thread = TutorThread(listOf(changeTurn("q1", proposed)), hasMore = false, nextCursor = null)
+            decision = { MutationResult.Done(proposed.copy(status = PlanChange.Status.DECLINED)) }
+            val vm = conversation()
+            api.gate = kotlinx.coroutines.CompletableDeferred()
+            launch { vm.thread.refresh() }
+            advanceUntilIdle()
+
+            vm.decidePlanChange(proposed.id, PlanChangeDecisionInput.Status.DECLINED)
+            advanceUntilIdle()
+            api.gate?.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(
+                PlanChange.Status.DECLINED,
+                vm.turns
+                    .single()
+                    .planChange
+                    ?.status,
+            )
+        }
+
+    private val proposed = planChange(status = "proposed").copy(id = UUID.fromString(OTHER_CHANGE))
+
+    private fun changeTurn(
+        id: String,
+        change: PlanChange,
+    ) = turn(id, TutorTurn.Status.Completed, "Try this.").copy(planChange = change)
+
     private fun <T> flowOf(vararg values: T): Flow<T> = flow { values.forEach { emit(it) } }
+
+    private companion object {
+        const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+        const val OTHER_CHANGE = "9a1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+    }
 }

@@ -15,8 +15,8 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.memory.MemoryUndo
 import com.zoonk.android.ui.components.Limit
-import com.zoonk.api.models.MemoryChangeReference
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.StudyMissionMoment
@@ -40,6 +40,7 @@ data class TutorConversationState(
     val askFailure: TutorFailure? = null,
     val answerFailures: Map<String, TutorFailure> = emptyMap(),
     val memoryChanges: Map<String, List<TutorMemoryChange>> = emptyMap(),
+    val memoryUndos: Map<String, MemoryUndo> = emptyMap(),
     val decidingChanges: Set<UUID> = emptySet(),
     val failedDecisions: Set<UUID> = emptySet(),
     val missionMoment: StudyMissionMoment? = null,
@@ -129,7 +130,15 @@ class TutorViewModel internal constructor(
         }
     }
 
-    suspend fun undoMemory(changes: List<MemoryChangeReference>): Boolean = store.undoMemory(changes)
+    fun undoMemory(turnId: String) {
+        val changes = state.value.memoryChanges[turnId] ?: return
+        if ((state.value.memoryUndos[turnId] ?: MemoryUndo.Offered) != MemoryUndo.Offered) return
+        mutableState.update { it.copy(memoryUndos = it.memoryUndos + (turnId to MemoryUndo.Undoing)) }
+        viewModelScope.launch {
+            val undone = store.undoMemory(changes.map { it.shown.reference })
+            mutableState.update { it.copy(memoryUndos = it.memoryUndos + (turnId to if (undone) MemoryUndo.Undone else MemoryUndo.Failed)) }
+        }
+    }
 
     fun decidePlanChange(
         changeId: UUID,
@@ -140,11 +149,7 @@ class TutorViewModel internal constructor(
         mutableState.update { it.copy(decidingChanges = it.decidingChanges + changeId, failedDecisions = it.failedDecisions - changeId) }
         viewModelScope.launch {
             val result = store.decidePlanChange(UUID.fromString(goal), changeId, status)
-            if (result is MutationResult.Done) {
-                thread.update { page ->
-                    page.copy(turns = page.turns.map { if (it.planChange?.id == changeId) it.copy(planChange = result.value) else it })
-                }
-            }
+            if (result is MutationResult.Done) answered(result.value)
             mutableState.update {
                 it.copy(
                     decidingChanges = it.decidingChanges - changeId,
@@ -298,7 +303,7 @@ class TutorViewModel internal constructor(
                                 turns =
                                     page.turns.map { turn ->
                                         val change = turn.planChange
-                                        if (change != null && change.id.toString() in event.ids) {
+                                        if (change?.status == PlanChange.Status.PROPOSED && change.id.toString() in event.ids) {
                                             turn.copy(planChange = change.copy(status = PlanChange.Status.REPLACED))
                                         } else {
                                             turn
@@ -332,6 +337,25 @@ class TutorViewModel internal constructor(
         } finally {
             mutableState.update { if (it.answeringId == id) it.copy(answeringId = null) else it }
         }
+    }
+
+    /**
+     * Main's reconciliation: an applied or undone change moves the plan, so no earlier change can be
+     * undone anymore. Replacing cancels an older read still in flight, which would bring the change back.
+     */
+    private fun answered(change: PlanChange) {
+        val page = thread.state.value.value ?: return
+        val moved = change.status == PlanChange.Status.APPLIED || change.status == PlanChange.Status.UNDONE
+        val turns =
+            page.turns.map { turn ->
+                val shown = turn.planChange
+                when {
+                    shown?.id == change.id -> turn.copy(planChange = change)
+                    moved && shown?.canUndo == true -> turn.copy(planChange = shown.copy(canUndo = false))
+                    else -> turn
+                }
+            }
+        thread.replace(page.copy(turns = turns))
     }
 
     /** A dropped stream may still have saved its answer: read it before calling it failed. */

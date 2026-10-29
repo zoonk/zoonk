@@ -144,7 +144,7 @@ private fun Loaded(
         )
     }
 
-    screen.lastChange?.let { change -> MemoryUpdated(listOf(change), onUndo = screen::undo) }
+    screen.lastChange?.let { change -> MemoryUpdated(listOf(change), screen.lastUndo, onUndo = screen::undo) }
 
     if (screen.saveFailed) {
         Text(

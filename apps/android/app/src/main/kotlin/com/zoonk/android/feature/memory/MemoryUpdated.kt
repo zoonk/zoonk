@@ -2,20 +2,14 @@ package com.zoonk.android.feature.memory
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -23,15 +17,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
 import com.zoonk.android.R
 import com.zoonk.api.models.MemoryChangeReference
-import kotlinx.coroutines.launch
 import java.util.UUID
 
 /** One change to memory: the fact it added ([statement]) and the one it replaced or removed. */
@@ -40,55 +36,52 @@ data class MemoryChangeShown(
     val statement: String?,
     val previousFactId: UUID?,
     val previousStatement: String?,
-)
+) {
+    val reference: MemoryChangeReference get() = MemoryChangeReference(factId, previousFactId)
+}
+
+/** Where an Undo of a memory change stands; [Failed] means memory changed since. */
+enum class MemoryUndo { Offered, Undoing, Undone, Failed }
 
 /**
  * Main's "Memory updated" line with Undo, wherever Zoonk learns or forgets something (the memory
- * page, the tutor). [onUndo] answers whether every change was undone.
+ * page, the tutor). The screen's view model runs the Undo, so leaving the line doesn't cancel it.
  */
 @Composable
 fun MemoryUpdated(
     changes: List<MemoryChangeShown>,
-    onUndo: suspend (List<MemoryChangeReference>) -> Boolean,
+    undo: MemoryUndo,
+    onUndo: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val first = changes.firstOrNull() ?: return
-    var undone by rememberSaveable(changes) { mutableStateOf<Boolean?>(null) }
-    var isUndoing by remember(changes) { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
     val label = stringResource(R.string.memory_updated)
     val more = if (changes.size > 1) pluralStringResource(R.plurals.memory_updated_more, changes.size - 1, changes.size - 1) else null
     val strong = MaterialTheme.colorScheme.onSurface
+    val icon = MaterialTheme.colorScheme.onSurfaceVariant
 
     Row(
         modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            painter = painterResource(R.drawable.ic_psychology),
-            contentDescription = null,
-            modifier = Modifier.size(18.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-
         Text(
             text =
-                when (undone) {
-                    true -> {
-                        buildAnnotatedString { append(stringResource(R.string.memory_change_undone)) }
-                    }
+                buildAnnotatedString {
+                    // The icon is decorative: TalkBack reads its stand-in as a pause, not a symbol.
+                    appendInlineContent(ICON_ID, alternateText = " ")
+                    append(" ")
+                    when (undo) {
+                        MemoryUndo.Undone -> {
+                            append(stringResource(R.string.memory_change_undone))
+                        }
 
-                    false -> {
-                        buildAnnotatedString {
+                        MemoryUndo.Failed -> {
                             withStyle(
                                 SpanStyle(color = MaterialTheme.colorScheme.error),
                             ) { append(stringResource(R.string.memory_undo_failed)) }
                         }
-                    }
 
-                    null -> {
-                        buildAnnotatedString {
+                        MemoryUndo.Offered, MemoryUndo.Undoing -> {
                             withStyle(SpanStyle(color = strong, fontWeight = FontWeight.Medium)) { append(label) }
                             first.statement?.let { append(" $it") }
                             first.previousStatement?.let {
@@ -99,23 +92,25 @@ fun MemoryUpdated(
                         }
                     }
                 },
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f).alignByBaseline(),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.bodyMedium,
+            inlineContent =
+                mapOf(
+                    ICON_ID to
+                        InlineTextContent(Placeholder(ICON_EM.em, ICON_EM.em, PlaceholderVerticalAlign.TextCenter)) {
+                            Icon(painterResource(R.drawable.ic_psychology), contentDescription = null, Modifier.fillMaxSize(), tint = icon)
+                        },
+                ),
         )
 
-        if (undone == null) {
-            TextButton(
-                onClick = {
-                    isUndoing = true
-                    scope.launch {
-                        undone = onUndo(changes.map { MemoryChangeReference(it.factId, it.previousFactId) })
-                        isUndoing = false
-                    }
-                },
-                enabled = !isUndoing,
-                modifier = Modifier.padding(start = 4.dp),
-            ) { Text(stringResource(R.string.memory_undo)) }
+        if (undo == MemoryUndo.Offered || undo == MemoryUndo.Undoing) {
+            TextButton(onClick = onUndo, enabled = undo == MemoryUndo.Offered, modifier = Modifier.alignByBaseline()) {
+                Text(stringResource(R.string.memory_undo))
+            }
         }
     }
 }
+
+private const val ICON_ID = "icon"
+private const val ICON_EM = 1.3f

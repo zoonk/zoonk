@@ -21,6 +21,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.PlanEffectDiff
@@ -45,20 +46,28 @@ internal fun TutorPlanChange(
     modifier: Modifier = Modifier,
 ) {
     val proposed = change.status == PlanChange.Status.PROPOSED
+    val applied = change.status == PlanChange.Status.APPLIED
     val oneWeek = change.operations.map { it.op }.any { it is PlanOp.LightWeek || it is PlanOp.MoveWeeklyEvent }
 
     OutlinedCard(modifier.widthIn(max = TUTOR_CARD_MAX_WIDTH).fillMaxWidth()) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        stringResource(R.string.tutor_plan_change_title),
+                        Modifier.weight(1f).semantics { heading() },
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    if (oneWeek) LabelChip(stringResource(R.string.tutor_plan_change_one_week))
+                }
+                // A change that left the plan as it was steps back in the conversation.
                 Text(
-                    stringResource(R.string.tutor_plan_change_title),
-                    Modifier.weight(1f).semantics { heading() },
-                    style = MaterialTheme.typography.titleSmall,
+                    planChangeSentence(change),
+                    color = if (proposed || applied) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
-                if (oneWeek) LabelChip(stringResource(R.string.tutor_plan_change_one_week))
             }
 
-            Text(planChangeSentence(change), style = MaterialTheme.typography.bodyMedium)
             if (proposed) {
                 PlanEffectDiff(change.effect)
                 planChangeFootnote(change.effect)?.let {
@@ -73,7 +82,7 @@ internal fun TutorPlanChange(
                 Text(
                     it,
                     Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    color = if (applied) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
@@ -102,7 +111,7 @@ private fun statusLine(change: PlanChange): String? =
         PlanChange.Status.PROPOSED -> null
     }
 
-/** A change that would replace the exam's official date asks whether to keep it instead. */
+/** A change that would replace the exam's official date asks whether to keep it instead, in longer words stacked. */
 @Composable
 private fun Decisions(
     change: PlanChange,
@@ -110,26 +119,24 @@ private fun Decisions(
     onDecide: (Decision) -> Unit,
 ) {
     val overridesOfficialDate = change.officialDate != null
+    val outlined = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
 
     when {
         change.status == PlanChange.Status.PROPOSED -> {
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            val apply: @Composable (Modifier) -> Unit = { width ->
                 if (change.canApply) {
-                    Button(onClick = { onDecide(Decision.APPLIED) }, enabled = !deciding, modifier = Modifier.weight(1f)) {
-                        Text(
+                    Button(onClick = { onDecide(Decision.APPLIED) }, enabled = !deciding, modifier = width) {
+                        ButtonLabel(
                             stringResource(
                                 if (overridesOfficialDate) R.string.tutor_plan_change_use_my_date else R.string.tutor_plan_change_apply,
                             ),
                         )
                     }
                 }
-                OutlinedButton(
-                    onClick = { onDecide(Decision.DECLINED) },
-                    enabled = !deciding,
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-                ) {
-                    Text(
+            }
+            val decline: @Composable (Modifier) -> Unit = { width ->
+                OutlinedButton(onClick = { onDecide(Decision.DECLINED) }, enabled = !deciding, modifier = width, colors = outlined) {
+                    ButtonLabel(
                         if (overridesOfficialDate) {
                             planChangeKeepOfficialDateLabel(change.examDocument)
                         } else {
@@ -138,14 +145,29 @@ private fun Decisions(
                     )
                 }
             }
+
+            if (overridesOfficialDate) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    apply(Modifier.fillMaxWidth())
+                    decline(Modifier.fillMaxWidth())
+                }
+            } else {
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    apply(Modifier.weight(1f))
+                    decline(Modifier.weight(1f))
+                }
+            }
         }
 
         change.status == PlanChange.Status.APPLIED && change.canUndo -> {
-            OutlinedButton(
-                onClick = { onDecide(Decision.UNDONE) },
-                enabled = !deciding,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-            ) { Text(stringResource(R.string.tutor_plan_change_undo)) }
+            OutlinedButton(onClick = { onDecide(Decision.UNDONE) }, enabled = !deciding, colors = outlined) {
+                Text(stringResource(R.string.tutor_plan_change_undo))
+            }
         }
     }
+}
+
+@Composable
+private fun ButtonLabel(text: String) {
+    Text(text, textAlign = TextAlign.Center)
 }

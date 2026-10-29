@@ -5,7 +5,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zoonk.api.models.MemoryChangeReference
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,6 +17,9 @@ class MemoryViewModel(
 ) : ViewModel() {
     /** The last deletion, offered for Undo. */
     var lastChange by mutableStateOf<MemoryChangeShown?>(null)
+        private set
+
+    var lastUndo by mutableStateOf(MemoryUndo.Offered)
         private set
 
     /** A change didn't save: it was put back. */
@@ -46,10 +48,19 @@ class MemoryViewModel(
                     previousFactId = change.previous.id,
                     previousStatement = change.previous.statement,
                 )
+            lastUndo = MemoryUndo.Offered
             true
         }
 
-    suspend fun undo(changes: List<MemoryChangeReference>): Boolean = store.undo(changes)
+    fun undo() {
+        val change = lastChange ?: return
+        if (lastUndo != MemoryUndo.Offered) return
+        lastUndo = MemoryUndo.Undoing
+        viewModelScope.launch {
+            val undone = store.undo(listOf(change.reference))
+            if (lastChange == change) lastUndo = if (undone) MemoryUndo.Undone else MemoryUndo.Failed
+        }
+    }
 
     fun export(open: () -> OutputStream?) {
         if (isExporting) return

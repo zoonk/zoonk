@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.memory.MemoryUndo
 import com.zoonk.android.feature.memory.MemoryUpdated
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
@@ -218,7 +219,13 @@ private fun TurnView(
                     }
                     turn.toolOffer?.let { TutorOffer(it, routes) }
                 }
-                state.memoryChanges[turn.id]?.let { changes -> MemoryUpdated(changes.map { it.shown }, onUndo = vm::undoMemory) }
+                state.memoryChanges[turn.id]?.let { changes ->
+                    MemoryUpdated(
+                        changes = changes.map { it.shown },
+                        undo = state.memoryUndos[turn.id] ?: MemoryUndo.Offered,
+                        onUndo = { vm.undoMemory(turn.id) },
+                    )
+                }
             }
         }
     }

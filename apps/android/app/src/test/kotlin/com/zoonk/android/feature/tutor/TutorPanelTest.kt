@@ -210,10 +210,10 @@ class TutorPanelTest {
 
         compose.onNode(hasSetTextAction()).performTextInput("I like space")
         compose.onNodeWithContentDescription("Send").performClick()
-        compose.onNodeWithText("Memory updated: Likes space").assertExists()
+        compose.onNodeWithText("Memory updated: Likes space", substring = true).assertExists()
         compose.onNodeWithText("Undo").performClick()
 
-        compose.onNodeWithText("Change undone").assertExists()
+        compose.onNodeWithText("Change undone", substring = true).assertExists()
         assertEquals(listOf(listOf(MemoryChangeReference(factId = UUID.fromString(FACT)))), undone)
     }
 
