@@ -103,41 +103,43 @@ internal fun CommonQuestions(
     val email = stringResource(R.string.subscription_questions_email)
     val linkStyle = TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline))
 
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(
-            stringResource(R.string.subscription_questions_title),
-            Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleLarge,
-        )
-        Text(
-            buildAnnotatedString {
-                append(stringResource(R.string.subscription_questions_unsure))
-                append(" ")
-                withLink(LinkAnnotation.Url("mailto:$email", linkStyle)) { append(email) }
-            },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(
+                stringResource(R.string.subscription_questions_title),
+                Modifier.semantics { heading() },
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Text(
+                buildAnnotatedString {
+                    append(stringResource(R.string.subscription_questions_unsure))
+                    append(" ")
+                    withLink(LinkAnnotation.Url("mailto:$email", linkStyle)) { append(email) }
+                },
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
 
-    Column {
-        if (limits != null) {
-            Question(stringResource(R.string.subscription_question_free), initiallyOpen = true) {
-                FreePlanAnswer(limits, hasAccount)
+        Column {
+            if (limits != null) {
+                Question(stringResource(R.string.subscription_question_free), initiallyOpen = true) {
+                    FreePlanAnswer(limits, hasAccount)
+                }
             }
+            Question(stringResource(R.string.subscription_question_unlimited)) {
+                Answer(stringResource(R.string.subscription_answer_unlimited))
+                AnswerAction(stringResource(R.string.subscription_answer_fair_use)) { navigator.open(AppRoute.FairUse) }
+            }
+            Question(stringResource(R.string.subscription_question_cancel)) {
+                Answer(stringResource(R.string.subscription_answer_cancel))
+            }
+            Question(stringResource(R.string.subscription_question_refund)) {
+                Answer(stringResource(R.string.subscription_answer_refund))
+                AnswerAction(stringResource(R.string.subscription_contact_support)) { navigator.open(AppRoute.Help) }
+            }
+            HorizontalDivider()
         }
-        Question(stringResource(R.string.subscription_question_unlimited)) {
-            Answer(stringResource(R.string.subscription_answer_unlimited))
-            AnswerAction(stringResource(R.string.subscription_answer_fair_use)) { navigator.open(AppRoute.FairUse) }
-        }
-        Question(stringResource(R.string.subscription_question_cancel)) {
-            Answer(stringResource(R.string.subscription_answer_cancel))
-        }
-        Question(stringResource(R.string.subscription_question_refund)) {
-            Answer(stringResource(R.string.subscription_answer_refund))
-            AnswerAction(stringResource(R.string.subscription_contact_support)) { navigator.open(AppRoute.Help) }
-        }
-        HorizontalDivider()
     }
 }
 
@@ -186,7 +188,7 @@ private fun FreePlanAnswer(
         Answer(lead)
         items.forEach { item ->
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text("•", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text("•", color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
                 Answer(item)
             }
         }
@@ -214,7 +216,7 @@ private fun Question(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Text(question, Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
+        Text(question, Modifier.weight(1f), style = MaterialTheme.typography.titleMedium)
         Icon(
             painterResource(R.drawable.ic_expand_more),
             contentDescription = null,

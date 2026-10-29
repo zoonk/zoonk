@@ -9,13 +9,13 @@
   "subscription_answer_free_calls": "a5ff552977bd4583987ead3ca9b04e5e64169229543b4415e93897ef89752e6b",
   "subscription_answer_free_exam": "ea901c20807d560bffeca8a157887669b77d23c6697cf9163f8264a90db4ec63",
   "subscription_answer_free_exam_day": "3de1468dc6420d38efcb88d4699c4a7d0ee032c5d84b8734c7abb2038f6b35ab",
-  "subscription_answer_free_exam_week": "18895feb75ba0c23677da02fb31393f7dcc1fc00769f2c59ce523733d6e7525d",
+  "subscription_answer_free_exam_week": "a2f48d27a311a620accd4076581dec2693d9f145eb99690446368d5c86093f91",
   "subscription_answer_free_goals": "146985b1c1526059bc0146992d939b26c3c4ef3cc1873101a761c506f5ab4b52",
   "subscription_answer_free_guest_lead": "e33afb3f550ee773ffecc0ebea18c2748c4c9efc1454a8c5565f8098eda44eb6",
   "subscription_answer_free_lead": "b37ed8b19cc2b1a96ebfdac127b1012711af15aa1475c64419359520e57040e6",
   "subscription_answer_free_lessons": "1acb9eecff8a89bd88b17e74909dc49f1a13da36eda463e7431c2cffa1e9e27a",
   "subscription_answer_free_uploads": "e42ea5461791ba39808ea4cd8bed387b9a08d286959c24ca0288a75d15985585",
-  "subscription_answer_refund": "8f2d122f8456a3b76b5d0ae6ef59f50cb5fc128c3f5e657d8707649c6c9e27e2",
+  "subscription_answer_refund": "4892fbf059da12e3b5ddf887ea5b001b33a5b48c395df8695191853e9a26fc72",
   "subscription_answer_unlimited": "61f409219a0ab66b0e80af742357d14127e60a8e9a8dee02daada638ece4b324",
   "subscription_available_with_plus": "7cd7b0aaee2632e2489afa3f3f925647a7c42923529005cf98f9bd78c9820013",
   "subscription_benefit_buddy": "9472eeea1cf1687e9388a73ed8f569445fedd65cd6126a266c1f2da8d831d294",
@@ -30,7 +30,7 @@
   "subscription_ends_on": "c1976f512b793fa39f1e912853ca3e4f31f04fb1647faa9be7ead93ec37e45f5",
   "subscription_free": "f2e5f3c52c974703ca35778dedfad4bd1f1598f485fb50b2fc812214d3de77a2",
   "subscription_free_buddy": "16ccf879de115732b96506dc10453568c5bad1d3edda13ac1be209b7f28058f7",
-  "subscription_free_calls": "4a654d22b3e7bd157688e43c74c362d606c85554509c7eecac9efbae32088ed5",
+  "subscription_free_calls": "b024fe0aecb0122c4f0db51d15dfb04fce35bf293858d6d22ab67d14f33a4771",
   "subscription_free_exam": "ab5b8289d06fef76a309bea54392ecd786d88c5d97fe823afb0213605f331076",
   "subscription_free_exam_day": "a8aa2a22742b6b76640392cf2200bb3caf04f0118f4a3b2ace161635756eaeef",
   "subscription_free_exam_week": "1b81e3b510ed6513b30c7ef2b25af96e94c57b2bc7644fb10fa9e3aba8fa92ee",
@@ -137,6 +137,7 @@
     <string name="subscription_no_card_needed">Aucune carte bancaire nécessaire.</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
+    <!-- %d is the number as a digit, at the start: "1 goal". -->
     <plurals name="subscription_free_goals">
         <item quantity="one">%d objectif</item>
         <item quantity="many">%d objectifs</item>
@@ -161,7 +162,8 @@
         <item quantity="many">Un compagnon d’étude IA : %d messages par jour</item>
         <item quantity="other">Un compagnon d’étude IA : %d messages par jour</item>
     </plurals>
-    <string name="subscription_free_calls">Des appels pour t’entraîner à l’oral, avec des limites plus basses qu’avec Plus</string>
+    <!-- Calls are spoken practice conversations with an AI partner. -->
+    <string name="subscription_free_calls">Appels d’entraînement à l’oral, avec des limites plus basses que Plus</string>
     <string name="subscription_questions_title">Questions fréquentes</string>
     <string name="subscription_questions_unsure">Tu hésites encore ?</string>
     <!-- Each language writes to its own support inbox: keep the address for this language's support (Portuguese: contato@zoonk.com). -->
@@ -175,6 +177,7 @@
         <item quantity="other">Commence gratuitement avec %d leçons, sans compte. Avec un compte gratuit, tu as :</item>
     </plurals>
     <string name="subscription_answer_free_lead">Avec la formule gratuite, tu as :</string>
+    <!-- %d is the number as a digit, at the start of every form, "one" included ("1 goal at a time"); never spell it out or move it to the end. -->
     <plurals name="subscription_answer_free_goals">
         <item quantity="one">%d objectif à la fois</item>
         <item quantity="many">%d objectifs à la fois</item>
@@ -186,7 +189,7 @@
         <item quantity="many">%1$d leçons par mois, jusqu’à %2$d par jour</item>
         <item quantity="other">%1$d leçons par mois, jusqu’à %2$d par jour</item>
     </plurals>
-    <string name="subscription_answer_free_exam_week">La première semaine de préparation à un examen</string>
+    <string name="subscription_answer_free_exam_week">La première semaine de préparation aux examens</string>
     <string name="subscription_answer_free_exam_day">Le premier jour de préparation à l’examen</string>
     <!-- Never shown for 1 or 7 days, which have their own strings; "one" is there only because every language needs it. -->
     <plurals name="subscription_answer_free_exam">
@@ -213,5 +216,5 @@
     <string name="subscription_question_cancel">Que se passe-t-il si j’annule ?</string>
     <string name="subscription_answer_cancel">Tu gardes Plus jusqu’à la fin de la période déjà payée. Ensuite, tu repasses à la formule gratuite, et tu conserves tes objectifs et ta progression.</string>
     <string name="subscription_question_refund">Puis-je obtenir un remboursement ?</string>
-    <string name="subscription_answer_refund">Contacte-nous et explique-nous ce qui s’est passé. Nous ferons de notre mieux pour te rembourser.</string>
+    <string name="subscription_answer_refund">Contacte-nous simplement et explique-nous ce qui s’est passé. Nous ferons de notre mieux pour te rembourser.</string>
 </resources>

@@ -41,6 +41,7 @@ class FreePlanTest {
     fun theCardSumsUpTheFreePlanWithAWeekOfExamPrep() {
         rule.setContent { ZoonkTheme { FreePlanCard(limits, currency = "USD", onStart = {}) } }
 
+        rule.onNode(hasText("$0")).assertIsDisplayed()
         rule.onNode(hasText("1 goal · 40 lessons a month")).assertIsDisplayed()
         rule.onNode(hasText("For an exam: the diagnostic, your plan and its first week")).assertIsDisplayed()
         rule.onNode(hasText("An AI study buddy: 10 messages a day")).assertIsDisplayed()

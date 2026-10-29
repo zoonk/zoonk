@@ -9,13 +9,13 @@
   "subscription_answer_free_calls": "57dde35a24d10a3f44c840e10361d16e4d9d1bd20cd2c7c0c1b2b2046336309d",
   "subscription_answer_free_exam": "5709b32efb4f80ee1b5ec04b3a4a439f00f683a9a35e4f1a431e1b8835dd9897",
   "subscription_answer_free_exam_day": "b056122b4be4d0cdb71d09d01e8abb9041eed342deeb0260ce2174404e8a1555",
-  "subscription_answer_free_exam_week": "55b9a134669496978fa6ccdb275e058292c8a26c8d57d8931457ca8a274c4e0f",
-  "subscription_answer_free_goals": "e0f92a3734362aab7acc55aaa6f66c2014f474907fa13a01f392d42ea2dca6df",
+  "subscription_answer_free_exam_week": "4ab54c422dae10dd624916f955724834954471f3a7983a409d667abee29c8496",
+  "subscription_answer_free_goals": "05f2a26ae803b4e466a20b580f8fd2a203c17faf79bcde05be9850442e0e40ee",
   "subscription_answer_free_guest_lead": "1e4ae82c35dbe3157f2c94a383eadded631af1fdf2817bbee3fe3e0e50b712ea",
   "subscription_answer_free_lead": "647e7cf358d85f224b9e781d750ce2824c50ff60c6131263c6eab066a92e21f7",
   "subscription_answer_free_lessons": "a9ca7bc299eb99551fba36a249e63b08d0c07a16080ed99a2f046b2a7e5b3304",
   "subscription_answer_free_uploads": "af02c7e45410183e9f67b8908dbceff4702474f4723a670b827c34571b1b73ca",
-  "subscription_answer_refund": "951a7e6fdae344d77fd06949f61a96a79eb5d44c2f3e553dd07a2eab59a303d0",
+  "subscription_answer_refund": "f14c188b0ee3e30c31b5a19f1d8adb5d908238293a695598618981a2a7a15c57",
   "subscription_answer_unlimited": "95ee379723c6f57c3252a97d235a45cb67fedc7281156d3e942574c0d8fe327c",
   "subscription_available_with_plus": "8812b4079aa6602eb03d804bbc74e68b4f855e9b199aeff4f0c59126294c9b4e",
   "subscription_benefit_buddy": "4faa278b37a7ef9fabd15a2731da2b4f79e29cd5f9b38bba0c3af413e7ce0368",
@@ -33,7 +33,7 @@
   "subscription_free_calls": "41a5591385a47f2ee79dd96625bc47fd51a50414212e6305cc34885e85c56f45",
   "subscription_free_exam": "4ec5a1cf95f4ab7cabd83fb7c7938fedb230bd78ecc03883c5002caf661685d9",
   "subscription_free_exam_day": "f96f008a60b0534c2a09a60213dc293893357c5f1f7a93c2fbc5988ad5f90a4c",
-  "subscription_free_exam_week": "65fd2b476cee3ddf70c5d0ddc962cdde5746ac37c8896037bd9df9922ae8de3a",
+  "subscription_free_exam_week": "b2085d58515895476cebe66857a5edfbf3b884facfffc8fd16724764daa8d7a2",
   "subscription_free_goals": "eac8c5987d9fdabab172196270be0b46d7b3467d8744d9b3891dacf3d5209d70",
   "subscription_free_lessons_a_month": "37357e79327c71aae5324667632830d6273a579415effdb07c68797149e35cff",
   "subscription_free_plan": "847aaffd32972fa7abaf252b270c629fea501ddfe3d416588adaa96a0b94164f",
@@ -137,6 +137,7 @@
     <string name="subscription_no_card_needed">No necesitas tarjeta.</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
+    <!-- %d is the number as a digit, at the start: "1 goal". -->
     <plurals name="subscription_free_goals">
         <item quantity="one">%d objetivo</item>
         <item quantity="many">%d objetivos</item>
@@ -148,7 +149,7 @@
         <item quantity="other">%d lecciones al mes</item>
     </plurals>
     <string name="subscription_free_plan">Un plan para tu objetivo y la fecha que elijas</string>
-    <string name="subscription_free_exam_week">Para un examen: el diagnóstico, tu plan y la primera semana</string>
+    <string name="subscription_free_exam_week">Para un examen: el diagnóstico, tu plan y su primera semana</string>
     <string name="subscription_free_exam_day">Para un examen: el diagnóstico, tu plan y su primer día</string>
     <!-- Never shown for 1 or 7 days, which have their own strings; "one" is there only because every language needs it. -->
     <plurals name="subscription_free_exam">
@@ -161,6 +162,7 @@
         <item quantity="many">Un compañero de estudio con IA: %d mensajes al día</item>
         <item quantity="other">Un compañero de estudio con IA: %d mensajes al día</item>
     </plurals>
+    <!-- Calls are spoken practice conversations with an AI partner. -->
     <string name="subscription_free_calls">Llamadas para practicar expresión oral, con límites más bajos que Plus</string>
     <string name="subscription_questions_title">Preguntas frecuentes</string>
     <string name="subscription_questions_unsure">¿Todavía tienes dudas?</string>
@@ -175,10 +177,11 @@
         <item quantity="other">Empieza gratis con %d lecciones, sin necesidad de crear una cuenta. Con una cuenta gratuita, tienes:</item>
     </plurals>
     <string name="subscription_answer_free_lead">Con el plan gratuito, tienes:</string>
+    <!-- %d is the number as a digit, at the start of every form, "one" included ("1 goal at a time"); never spell it out or move it to the end. -->
     <plurals name="subscription_answer_free_goals">
-        <item quantity="one">%d objetivo a la vez</item>
-        <item quantity="many">%d objetivos a la vez</item>
-        <item quantity="other">%d objetivos a la vez</item>
+        <item quantity="one">%d objetivo por vez</item>
+        <item quantity="many">%d objetivos por vez</item>
+        <item quantity="other">%d objetivos por vez</item>
     </plurals>
     <!-- %1$d is the lessons a month, %2$d the most a day. -->
     <plurals name="subscription_answer_free_lessons">
@@ -186,7 +189,7 @@
         <item quantity="many">%1$d lecciones al mes, hasta %2$d al día</item>
         <item quantity="other">%1$d lecciones al mes, hasta %2$d al día</item>
     </plurals>
-    <string name="subscription_answer_free_exam_week">La primera semana de preparación del examen</string>
+    <string name="subscription_answer_free_exam_week">La primera semana de preparación para el examen</string>
     <string name="subscription_answer_free_exam_day">El primer día de preparación para el examen</string>
     <!-- Never shown for 1 or 7 days, which have their own strings; "one" is there only because every language needs it. -->
     <plurals name="subscription_answer_free_exam">
@@ -213,5 +216,5 @@
     <string name="subscription_question_cancel">¿Qué pasa si cancelo?</string>
     <string name="subscription_answer_cancel">Conservas Plus hasta que termine el periodo que ya has pagado. Después vuelves al plan gratuito y mantienes tus objetivos y tu progreso.</string>
     <string name="subscription_question_refund">¿Puedo pedir un reembolso?</string>
-    <string name="subscription_answer_refund">Solo tienes que ponerte en contacto con nosotros y contarnos qué ha pasado. Haremos todo lo posible para conseguir que te devuelvan el dinero.</string>
+    <string name="subscription_answer_refund">Solo tienes que ponerte en contacto con nosotros y contarnos qué ha pasado. Haremos todo lo posible para que te devuelvan el dinero.</string>
 </resources>

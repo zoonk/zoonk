@@ -55,6 +55,7 @@
     <string name="subscription_no_card_needed">No card needed.</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
+    <!-- %d is the number as a digit, at the start: "1 goal". -->
     <plurals name="subscription_free_goals">
         <item quantity="one">%d goal</item>
         <item quantity="other">%d goals</item>
@@ -75,6 +76,7 @@
         <item quantity="one">An AI study buddy: %d message a day</item>
         <item quantity="other">An AI study buddy: %d messages a day</item>
     </plurals>
+    <!-- Calls are spoken practice conversations with an AI partner. -->
     <string name="subscription_free_calls">Speaking practice calls, with lower limits than Plus</string>
     <string name="subscription_questions_title">Common questions</string>
     <string name="subscription_questions_unsure">Still unsure?</string>
@@ -88,6 +90,7 @@
         <item quantity="other">Start free with %d lessons, no account needed. With a free account, you get:</item>
     </plurals>
     <string name="subscription_answer_free_lead">With the free plan, you get:</string>
+    <!-- %d is the number as a digit, at the start of every form, "one" included ("1 goal at a time"); never spell it out or move it to the end. -->
     <plurals name="subscription_answer_free_goals">
         <item quantity="one">%d goal at a time</item>
         <item quantity="other">%d goals at a time</item>

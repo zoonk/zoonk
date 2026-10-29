@@ -18,6 +18,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.LocalContentColor
@@ -314,6 +315,7 @@ private fun Offer(
                     colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                 ) { Text(stringResource(R.string.subscription_contact_support)) }
             }
+            HorizontalDivider()
             PlusBenefits()
         }
     }
@@ -490,8 +492,11 @@ internal fun money(
 ): String =
     NumberFormat
         .getCurrencyInstance(locale)
-        .apply { this.currency = Currency.getInstance(currency) }
-        .format(micros / 1_000_000.0)
+        .apply {
+            this.currency = Currency.getInstance(currency)
+            // Main's formatPrice: a whole amount reads "$60", not "$60.00".
+            if (micros % 1_000_000 == 0L) maximumFractionDigits = 0
+        }.format(micros / 1_000_000.0)
 
 private const val GOOGLE = "google"
 private const val APPLE = "apple"

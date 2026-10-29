@@ -10,7 +10,7 @@
   "subscription_answer_free_exam": "8d4850f834c0c66332560e896226fb8d7a2c79c804ce7e7e0e5d79b15adb496c",
   "subscription_answer_free_exam_day": "689fd0ac2a41b38d706e3194312f96beaf9c2b1fabf72a136993e23f261c1b18",
   "subscription_answer_free_exam_week": "3cab3038ad9d059c343f2294d67e627bd7ac61315bd05d382485a7cde1f96204",
-  "subscription_answer_free_goals": "1aebb5cdd6de477f741cd8e74c926b455cd788aa57add727ae94ffb82d3e385c",
+  "subscription_answer_free_goals": "568030eb6b6b7ec7c6c0a2a1a40f65dafb4639724845f3e2930102da146ff2e5",
   "subscription_answer_free_guest_lead": "c583056b9a158348b4b053f17b13f7119f7e4cea8d19f2bf9b0cff1bf775f38e",
   "subscription_answer_free_lead": "baca0583eb01fc616bee85d707427b005324f5f12f8163fa20d8590deb5c6930",
   "subscription_answer_free_lessons": "1449a02fc5935d4dd1c89c7408ce384a52394ba270b3e9fee8b8288fddf3d04a",
@@ -30,10 +30,10 @@
   "subscription_ends_on": "187383b691d5631900ce5343ace72461d2e22d614bd6354653d314ffebd22a53",
   "subscription_free": "fd0e890bb5d4ac7f48866d89c5b26b870f7c2146bf1da62fe005a2ad0418b542",
   "subscription_free_buddy": "642c31f0a0c640c3f0b3ad2f750663abdc9656772320474d15f560bf7b8c0e5c",
-  "subscription_free_calls": "8ebad264c3c611b93c89f3a8b8c9d5ee04039036f43dd789227f265a1e8428c5",
+  "subscription_free_calls": "2a2f0e462b7be63722405006103015f187b7fb3e9ae45c060c3a87053bc57870",
   "subscription_free_exam": "d1ac4d037cb37123e10555c2ba8af7b40febff13c62f56d7b14db9e4fbe33d6f",
   "subscription_free_exam_day": "3262c36a55bc14bad70e10a8f06d7f595de789a087d6b2baa8cf79ee7005cd2a",
-  "subscription_free_exam_week": "624c7f010ad208391a01dd71f52599ae6abca348350a764ae75bbcd38f464f6c",
+  "subscription_free_exam_week": "45d262a9a7b80d4551f9223e06c1fac55620ca8b2d7c675423ce1f30bd543bd9",
   "subscription_free_goals": "288716d6cae46307c97980f7d7af9a33403165009a7421e45f3c4d949e5d93b9",
   "subscription_free_lessons_a_month": "a360a92d56d275ff56931c99cb61db8fa6b5c5f5eace8ae99a4264c31fe46a73",
   "subscription_free_plan": "1b23f15e231fee75385c34799d8a83e7e8639347ea729356c3f8d4fe6ad2d569",
@@ -137,6 +137,7 @@
     <string name="subscription_no_card_needed">Não precisa de cartão.</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
+    <!-- %d is the number as a digit, at the start: "1 goal". -->
     <plurals name="subscription_free_goals">
         <item quantity="one">%d meta</item>
         <item quantity="many">%d metas</item>
@@ -148,7 +149,7 @@
         <item quantity="other">%d aulas por mês</item>
     </plurals>
     <string name="subscription_free_plan">Um plano para sua meta e sua data</string>
-    <string name="subscription_free_exam_week">Para uma prova: diagnóstico, plano e primeira semana</string>
+    <string name="subscription_free_exam_week">Para uma prova: o diagnóstico, seu plano e a primeira semana dele</string>
     <string name="subscription_free_exam_day">Para uma prova: o diagnóstico, seu plano e o primeiro dia</string>
     <!-- Never shown for 1 or 7 days, which have their own strings; "one" is there only because every language needs it. -->
     <plurals name="subscription_free_exam">
@@ -161,7 +162,8 @@
         <item quantity="many">Um parceiro de estudos com IA: %d mensagens por dia</item>
         <item quantity="other">Um parceiro de estudos com IA: %d mensagens por dia</item>
     </plurals>
-    <string name="subscription_free_calls">Conversas para praticar conversação, com limites menores que no Plus</string>
+    <!-- Calls are spoken practice conversations with an AI partner. -->
+    <string name="subscription_free_calls">Conversas de prática, com limites menores que os do Plus</string>
     <string name="subscription_questions_title">Dúvidas frequentes</string>
     <string name="subscription_questions_unsure">Ainda está em dúvida?</string>
     <!-- Each language writes to its own support inbox: keep the address for this language's support (Portuguese: contato@zoonk.com). -->
@@ -175,8 +177,9 @@
         <item quantity="other">Comece grátis com %d aulas, sem precisar criar uma conta. Com uma conta grátis, você tem:</item>
     </plurals>
     <string name="subscription_answer_free_lead">Com o plano grátis, você tem:</string>
+    <!-- %d is the number as a digit, at the start of every form, "one" included ("1 goal at a time"); never spell it out or move it to the end. -->
     <plurals name="subscription_answer_free_goals">
-        <item quantity="one">Uma meta por vez (%d)</item>
+        <item quantity="one">%d meta por vez</item>
         <item quantity="many">%d metas por vez</item>
         <item quantity="other">%d metas por vez</item>
     </plurals>

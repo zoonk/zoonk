@@ -15,7 +15,7 @@
   "subscription_answer_free_lead": "e42eb0ffe8058864faafcfbafd7e2fd6940a872312b5cc4e5e8f8551507de13c",
   "subscription_answer_free_lessons": "f62b7fbdd5de66b97e524cb5e77521332f876e47c5ba2117708a9b588b31a2e1",
   "subscription_answer_free_uploads": "fbe084ffd70a5c0440f221b0a5a4fd071d627fefb15f779e37d7c7d2cddb613b",
-  "subscription_answer_refund": "2ceac3554280be80767beef4f2bf83becd743fc3507833357565b9d5ac368333",
+  "subscription_answer_refund": "7977c6b150e010925fa879cce7a5b1da30fcc06d9ddf11b75a61a23eedbb15d0",
   "subscription_answer_unlimited": "07f6cc1752d2f0933d8a10c2e06d4ed5e4a7ad0131d351f1dbf4a3d5ba8e6589",
   "subscription_available_with_plus": "c1f0a8dbf6c53c615c5e8b607884619c669c4cbe61ffffe3a944d354cfbb225d",
   "subscription_benefit_buddy": "df245c6cc9f9d2e939efe145ce97142003768b1176f18fc72f7fd37e89d88e94",
@@ -29,8 +29,8 @@
   "subscription_ending": "7e50fbe98c0c8995102211f8580a36a60ac6be478dc235d8f400940a44e22647",
   "subscription_ends_on": "a2a9f420f44fb12a9ccd52b9b734b0b0891507184fe305585584c3e6ea8b4cb8",
   "subscription_free": "792ab0bf7e14fa482802f6a02b50a4b43c6429fa419bea51dee249b5bfaf549b",
-  "subscription_free_buddy": "cd2dafa7567d4aeefc0ad9c1f8492da753e340aff653b7bc01cd9eae972727bc",
-  "subscription_free_calls": "054c1b025ef4a0f1536cabf9750ac8332f43b36b61dc6336aed63d3672880868",
+  "subscription_free_buddy": "d964dfcfb6d15f8b746b562773081ea080007c2c2f8539dd904308892dcba544",
+  "subscription_free_calls": "2050de6f6e20113b8c0efb448cb46e397d841f9a54bbf78a034feb85393171e6",
   "subscription_free_exam": "234a70a4c3bac8933de7672f2b37dfe75e0af1b79d7d310c4c360f4bb69cd94c",
   "subscription_free_exam_day": "34e1ec4056b115c3901ba72549f4edc20be20b9de190040666c929504fcb7c6e",
   "subscription_free_exam_week": "c15c6fde0ef16dbaa98ad022935a8fc3dffe56e687702174bbe65f7d9dc1fe26",
@@ -136,6 +136,7 @@
     <string name="subscription_no_card_needed">Keine Karte erforderlich.</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
+    <!-- %d is the number as a digit, at the start: "1 goal". -->
     <plurals name="subscription_free_goals">
         <item quantity="one">%d Ziel</item>
         <item quantity="other">%d Ziele</item>
@@ -153,10 +154,11 @@
         <item quantity="other">Für eine Prüfung: die Diagnose, dein Plan und die ersten %d Tage davon</item>
     </plurals>
     <plurals name="subscription_free_buddy">
-        <item quantity="one">Ein KI-Lernpartner: %d Nachricht pro Tag</item>
-        <item quantity="other">Ein KI-Lernpartner: %d Nachrichten pro Tag</item>
+        <item quantity="one">Ein KI-Lernkumpel: %d Nachricht pro Tag</item>
+        <item quantity="other">Ein KI-Lernkumpel: %d Nachrichten pro Tag</item>
     </plurals>
-    <string name="subscription_free_calls">Sprechübungen mit geringeren Limits als bei Plus</string>
+    <!-- Calls are spoken practice conversations with an AI partner. -->
+    <string name="subscription_free_calls">Gespräche zum Sprechen üben, mit niedrigeren Limits als bei Plus</string>
     <string name="subscription_questions_title">Häufige Fragen</string>
     <string name="subscription_questions_unsure">Noch unsicher?</string>
     <!-- Each language writes to its own support inbox: keep the address for this language's support (Portuguese: contato@zoonk.com). -->
@@ -169,6 +171,7 @@
         <item quantity="other">Starte kostenlos mit %d Lektionen, ganz ohne Konto. Mit einem kostenlosen Konto bekommst du:</item>
     </plurals>
     <string name="subscription_answer_free_lead">Mit dem kostenlosen Tarif bekommst du:</string>
+    <!-- %d is the number as a digit, at the start of every form, "one" included ("1 goal at a time"); never spell it out or move it to the end. -->
     <plurals name="subscription_answer_free_goals">
         <item quantity="one">%d Ziel gleichzeitig</item>
         <item quantity="other">%d Ziele gleichzeitig</item>
@@ -202,5 +205,5 @@
     <string name="subscription_question_cancel">Was passiert, wenn ich kündige?</string>
     <string name="subscription_answer_cancel">Du behältst Plus bis zum Ende des Zeitraums, den du bereits bezahlt hast. Danach nutzt du wieder den kostenlosen Tarif. Deine Ziele und dein Fortschritt bleiben erhalten.</string>
     <string name="subscription_question_refund">Kann ich eine Rückerstattung bekommen?</string>
-    <string name="subscription_answer_refund">Melde dich einfach bei uns und erzähl uns, was passiert ist. Wir tun unser Bestes, damit du eine Rückerstattung bekommst.</string>
+    <string name="subscription_answer_refund">Melde dich einfach bei uns und erzähl uns, was passiert ist. Wir tun unser Bestes, damit du dein Geld zurückbekommst.</string>
 </resources>
