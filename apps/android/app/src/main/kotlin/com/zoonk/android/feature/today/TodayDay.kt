@@ -113,7 +113,7 @@ internal fun TodayDay(
             ) {
                 item(key = "heading", contentType = "heading") {
                     TodayHeading(model, wide, Modifier.pageItem()) {
-                        if (wide) TodayAction(model, viewModel, actions, Modifier)
+                        if (wide) TodayAction(model, viewModel, actions, Modifier.widthIn(max = WIDE_ACTION_WIDTH), docked = false)
                     }
                 }
 
@@ -144,7 +144,7 @@ private fun TodayActionBar(
     Surface {
         Column {
             HorizontalDivider()
-            TodayAction(model, viewModel, actions, Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp))
+            TodayAction(model, viewModel, actions, Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 12.dp), docked = true)
         }
     }
 }
@@ -163,6 +163,7 @@ internal fun TodayAction(
     viewModel: TodayViewModel,
     actions: TodayActionHandlers,
     modifier: Modifier,
+    docked: Boolean,
 ) {
     if (!model.hasAction) return
 
@@ -178,7 +179,7 @@ internal fun TodayAction(
     val failed = tap != null && viewModel.failed == tap
 
     Column(modifier, horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        val buttonModifier = Modifier.fillMaxWidth()
+        val buttonModifier = if (docked) Modifier.fillMaxWidth() else Modifier
         val busy = tap != null && pending == tap
 
         when {
@@ -212,12 +213,12 @@ internal fun TodayAction(
             }
         }
 
-        OpeningWaitLine(wait, Modifier.fillMaxWidth())
+        OpeningWaitLine(wait)
 
         if (failed) {
             Text(
                 text = stringResource(if (tap == TodayTap.Continue) R.string.today_open_failed else R.string.today_keep_learning_failed),
-                modifier = Modifier.fillMaxWidth().semantics { liveRegion = LiveRegionMode.Polite },
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                 color = MaterialTheme.colorScheme.error,
                 style = MaterialTheme.typography.bodyMedium,
             )
@@ -261,3 +262,6 @@ internal fun TodayPlaceholder(padding: PaddingValues) {
 internal fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWidth().padding(horizontal = 16.dp)
 
 private const val SWITCHING_ALPHA = 0.6f
+
+/** Beside the title, the action and its wait line never squeeze the title. */
+private val WIDE_ACTION_WIDTH = 280.dp

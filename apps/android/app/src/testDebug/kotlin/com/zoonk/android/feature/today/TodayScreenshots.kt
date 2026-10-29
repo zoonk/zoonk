@@ -1,0 +1,339 @@
+package com.zoonk.android.feature.today
+
+import android.graphics.Bitmap
+import androidx.activity.ComponentActivity
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.test.captureToImage
+import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onRoot
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.app.AppContainer
+import com.zoonk.android.feature.session.decodeFixture
+import com.zoonk.android.feature.session.fixture
+import com.zoonk.android.feature.session.toDayView
+import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.TabRootScaffold
+import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.Today
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
+import kotlinx.serialization.json.putJsonObject
+import org.junit.Assume.assumeTrue
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
+import org.robolectric.annotation.Config
+import org.robolectric.annotation.GraphicsMode
+import java.io.File
+
+/**
+ * Review screenshots of Today's day states, written only on demand:
+ * `./gradlew :app:testDebugUnitTest --tests '*TodayScreenshots*' --rerun -Pzoonk.shots=<folder>`.
+ */
+@RunWith(AndroidJUnit4::class)
+@GraphicsMode(GraphicsMode.Mode.NATIVE)
+class TodayScreenshots {
+    @get:Rule
+    val compose = createAndroidComposeRule<ComponentActivity>()
+
+    private val folder = System.getProperty("zoonk.shots").orEmpty()
+
+    @Before
+    fun onlyOnDemand() = assumeTrue("Pass -Pzoonk.shots=<folder> to write them", folder.isNotEmpty())
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phone() = capture("phone")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun phoneDarkMoreContrast() = capture("phone-dark-more-contrast", dark = true, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1600dp-xxhdpi")
+    fun phoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("phone-font200")
+    }
+
+    @Test
+    @Config(qualifiers = "w700dp-h1000dp-xhdpi")
+    fun foldUnfolded() = capture("medium")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tablet() = capture("tablet")
+
+    private fun capture(
+        name: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        var index by mutableIntStateOf(0)
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
+                key(index) { Screen(DAYS[index].second) }
+            }
+        }
+        DAYS.indices.forEach { day ->
+            index = day
+            compose.waitForIdle()
+            write("today-${DAYS[day].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+        }
+    }
+
+    @Composable
+    private fun Screen(read: TodayRead.Day) {
+        val context = LocalContext.current
+        val app = remember { AppContainer.preview(context) }
+        val navigator = rememberAppNavigator()
+        val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today) }
+
+        TabRootScaffold(app, navigator) { padding ->
+            TodayDay(read, app.today.today, MutableStateFlow(null), viewModel, navigator, padding)
+        }
+    }
+
+    private fun write(
+        name: String,
+        bitmap: Bitmap,
+    ) {
+        val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
+        file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+        println("Screenshot ${file.path}")
+    }
+
+    private companion object {
+        val DAYS: List<Pair<String, TodayRead.Day>> by lazy {
+            listOf(
+                "unopened" to unopened(),
+                "started" to started(),
+                "done-up-next" to doneWithUpNext(),
+                "rest" to day(blocks = emptyList(), next = null, dailyGoal = 0),
+                "waiting" to day(blocks = emptyList(), next = null, extra = mapOf("emptyDay" to "lessonsComing")),
+                "limit" to day(blocks = lessons(4, done = 2), next = 2, extra = mapOf("dailyLimit" to limitReached())),
+            )
+        }
+
+        fun block(
+            position: Int,
+            kind: String = "learn",
+            title: String? = "Lesson ${position + 1}",
+            status: String = "pending",
+            minutes: Int = 6,
+            extra: Map<String, Any?> = emptyMap(),
+        ): JsonObject =
+            fixture(
+                "study-block",
+                "id" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c%04d".format(position),
+                "kind" to kind,
+                "screen" to (if (kind == "learn") "lesson" else "session"),
+                "lessonId" to (if (kind == "learn") "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3d%04d".format(position) else null),
+                "position" to position,
+                "status" to status,
+                "title" to title,
+                "estimatedMinutes" to minutes,
+                "canDo" to (if (kind == "learn") "Explain how cells divide" else null),
+                *extra.toList().toTypedArray(),
+            )
+
+        fun lessons(
+            count: Int,
+            done: Int = 0,
+        ) = (0 until count).map { block(it, status = if (it < done) "completed" else "pending") }
+
+        fun limitReached() =
+            buildJsonObject {
+                put("limitMinutes", 30)
+                put("reached", true)
+                put("remainingMinutes", 0)
+                put("usedMinutes", 30)
+            }
+
+        fun day(
+            blocks: List<JsonObject>,
+            next: Int?,
+            dailyGoal: Int = 45,
+            unopened: Boolean = false,
+            extra: Map<String, Any?> = emptyMap(),
+            today: Map<String, Any?> = emptyMap(),
+        ): TodayRead.Day {
+            val minutes =
+                buildJsonObject {
+                    put("dailyGoal", dailyGoal)
+                    put("done", 0)
+                    put("planned", dailyGoal)
+                }
+            val week =
+                buildJsonObject {
+                    put(
+                        "days",
+                        buildJsonArray {
+                            add(
+                                buildJsonObject {
+                                    put("date", "2026-10-28")
+                                    put("goalMinutes", dailyGoal)
+                                    put("hitGoal", false)
+                                    put("isToday", true)
+                                    put("kind", "study")
+                                    put("minutes", 22)
+                                    put("studied", true)
+                                },
+                            )
+                        },
+                    )
+                    put("daysHitGoal", 2)
+                    put("nextStudyDate", "2026-10-29")
+                    put("studyDays", 5)
+                    putJsonObject("time") {
+                        put("studiedMinutes", 80)
+                        put("targetMinutes", 225)
+                    }
+                }
+            val sessionBlocks = if (unopened) blocks.map { JsonObject(it - "id") } else blocks
+            val session =
+                fixture(
+                    if (unopened) "unstarted-study-day" else "study-session",
+                    "status" to if (unopened) "unstarted" else "active",
+                    "blocks" to JsonArray(sessionBlocks),
+                    "nextPosition" to next,
+                    "minutes" to minutes,
+                    "week" to week,
+                    "goalId" to "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01",
+                    *extra.toList().toTypedArray(),
+                )
+            val goal =
+                buildJsonObject {
+                    put("dateEstimated", false)
+                    put("daysLeft", 41)
+                    put("id", "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d01")
+                    put("kind", "exam")
+                    put("targetDate", "2026-12-08")
+                    put("title", "ENEM 2026")
+                }
+            val progress =
+                buildJsonObject {
+                    put("measure", "preparation")
+                    put("status", buildJsonObject { put("kind", "onTrack") })
+                    put("value", 0.42)
+                    put("weekGain", 0.03)
+                }
+            val read =
+                decodeFixture<Today>("today", "session" to session, "goal" to goal, "progress" to progress, *today.toList().toTypedArray())
+            return TodayRead.Day(read, read.session.toDayView())
+        }
+
+        fun capsules(): JsonElement =
+            buildJsonArray {
+                listOf("1.2 Cell membrane", "2 Mitosis", "Photosynthesis", "Genetics").forEach { title ->
+                    add(
+                        buildJsonObject {
+                            put("format", "rapidFire")
+                            put("key", title)
+                            put("lessonId", null as String?)
+                            put("opened", false)
+                            put("questions", 3)
+                            put("title", title)
+                        },
+                    )
+                }
+            }
+
+        fun unopened() =
+            day(
+                blocks =
+                    listOf(
+                        block(0, kind = "review", title = null, minutes = 8, extra = mapOf("capsules" to capsules(), "questions" to 14)),
+                    ) +
+                        (1..7).map { block(it, extra = if (it == 2) mapOf("subject" to "Biologia") else emptyMap()) } +
+                        block(
+                            8,
+                            kind = "checkpoint",
+                            title = "Phase 1: Cells",
+                            minutes = 10,
+                            extra =
+                                mapOf(
+                                    "waitReason" to "lessons",
+                                    "questions" to 12,
+                                ),
+                        ),
+                next = 0,
+                unopened = true,
+                extra = mapOf("freshStart" to "newWeek", "lessonsComing" to true),
+                today = mapOf("studiedToday" to false),
+            )
+
+        fun started() =
+            day(
+                blocks =
+                    listOf(
+                        block(
+                            0,
+                            kind = "review",
+                            title = null,
+                            status = "completed",
+                            extra =
+                                mapOf(
+                                    "capsules" to capsules(),
+                                    "questions" to 14,
+                                ),
+                        ),
+                        block(1, status = "completed"),
+                        block(2, status = "skipped"),
+                        block(
+                            3,
+                            kind = "practice",
+                            title = null,
+                            status = "active",
+                            minutes = 10,
+                            extra =
+                                mapOf(
+                                    "questions" to 10,
+                                    "answered" to 4,
+                                ),
+                        ),
+                        block(4),
+                        block(5),
+                    ),
+                next = 3,
+            )
+
+        fun doneWithUpNext(): TodayRead.Day {
+            val extraTime =
+                buildJsonObject {
+                    put("available", true)
+                    put(
+                        "lessons",
+                        buildJsonArray {
+                            listOf("Meiosis" to 7, "Genetic code" to 6, "Proteins" to 8).forEach { (title, minutes) ->
+                                add(
+                                    buildJsonObject {
+                                        put("minutes", minutes)
+                                        put("title", title)
+                                    },
+                                )
+                            }
+                        },
+                    )
+                    put("minutes", 10)
+                    put("reason", null as String?)
+                }
+            return day(blocks = lessons(3, done = 3), next = null, extra = mapOf("extraTime" to extraTime))
+        }
+    }
+}
