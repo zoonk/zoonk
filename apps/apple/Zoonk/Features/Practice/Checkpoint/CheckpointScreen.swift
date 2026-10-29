@@ -164,10 +164,16 @@ struct CheckpointScreen: View {
 
         if let feedback {
           PracticeFeedbackPanel(verdict: PracticeVerdict(isCorrect: feedback.isCorrect)) {
-            Text(
-              "You'll see why at the end.", tableName: "Practice",
-              comment: "A checkpoint keeps its answers until it ends."
-            )
+            Group {
+              if let decision = state.decision {
+                Text(
+                  CheckpointCopy.decisionLine(decision, lessons: state.reinforcementLessons))
+              } else if !feedback.isCorrect {
+                Text(
+                  "You'll see why at the end.", tableName: "Practice",
+                  comment: "A checkpoint keeps its answers until it ends.")
+              }
+            }
             .foregroundStyle(.secondary)
           }
         }
@@ -556,7 +562,28 @@ enum CheckpointCopy {
 
     if passed { return nil }
 
-    return lessons == 0
+    return newTry(lessons: lessons)
+  }
+
+  /// Under the verdict that decides a duel.
+  static func decisionLine(_ decision: DuelDecision, lessons: Int) -> String {
+    switch decision {
+    case .won:
+      String(
+        localized: "His shield is broken. You won!", table: "Practice",
+        comment: "Under the verdict that wins a phase challenge.")
+    case .lost:
+      [
+        String(
+          localized: "His shield held this time.", table: "Practice",
+          comment: "Under the verdict that loses a phase challenge, before when it comes back."),
+        String(localized: newTry(lessons: lessons)),
+      ].joined(separator: " ")
+    }
+  }
+
+  private static func newTry(lessons: Int) -> LocalizedStringResource {
+    lessons == 0
       ? LocalizedStringResource(
         "New try tomorrow. Nothing is lost.", table: "Practice",
         comment: "A lost phase challenge comes back.")

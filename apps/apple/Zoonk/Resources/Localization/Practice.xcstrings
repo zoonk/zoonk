@@ -30,6 +30,64 @@
         }
       }
     },
+    "His shield held this time." : {
+      "comment" : "Under the verdict that loses a phase challenge, before when it comes back.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sein Schild hat diesmal gehalten."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Su escudo ha resistido esta vez."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son bouclier a tenu cette fois."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O escudo dele resistiu desta vez."
+          }
+        }
+      }
+    },
+    "His shield is broken. You won!" : {
+      "comment" : "Under the verdict that wins a phase challenge.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sein Schild ist zerbrochen. Du hast gewonnen!"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Has roto su escudo. ¡Has ganado!"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Son bouclier est brisé. Tu as gagné !"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O escudo dele quebrou. Você venceu!"
+          }
+        }
+      }
+    },
     "%lld available tomorrow" : {
       "comment" : "Notebook count of today's mistakes.",
       "localizations" : {
