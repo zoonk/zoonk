@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "search_appearance": "a555ab33df7bacae45da9dc418edf21e619d1c9d9c3e9e50176b11b5efd52673",
+  "search_ask_buddy": "98af4685a01e840f5cfa544647e00b4f559319ab30543443d66b63dcea2c0aa7",
+  "search_ask_detail": "1ecbd4aaae3de8170fe325721e205c649a3cd8591de05a3bacaab7d89aeacb71",
+  "search_ask_question": "11a6970f0559b0a447b27d4387af70467a3a744c80888c625cc293460d958f10",
+  "search_blog": "188ae076fb9bfc2179a71be194b9d95cb00f77c99a44ee3151e6820314f1d71f",
+  "search_buddy_keyword": "668de5a7e295ba71c89b4863a006045313d8a41f3dc63e1b29403aeb350cbefc",
+  "search_close": "1201c61c9d449ccbe946c511ebb3b10b7cb2a086c3699c59f2773979d6888ec6",
+  "search_continue": "16830cd2d2f6fa652f23275591c114cc43f321e1d865fa701e580da9cd1fed38",
+  "search_group_account": "69ea4af971e1f98c06e968fe52b4aa9011857c80712e31bf032380bd24efdd46",
+  "search_group_actions": "59c71362a97fbfa51f610dcc1988a86f81c5ca0c95cdb37c8e54a67ee1560db2",
+  "search_group_ask": "b7bdcd809d686cdba02ddd90a840f39323a7130bca900730a925bbdc124856e5",
+  "search_group_catalog": "a795b755f943f4b4399baa93eb7ba0727f4aa58971ec2439ef8a80d00afb8526",
+  "search_group_explanations": "6c57db3cb10baa5ea19cbce303209cc818af34acd936d66250df9ed19b285ce6",
+  "search_group_go_to": "7ec2ea35207706583a2c3dc8b061dc4afd0c17d8c1dd4c29e26226b42f0797e3",
+  "search_group_goals": "df76b65255d76c116fb8521c79ac4cba946df8a10e95fff1f6c15f3d94d9956f",
+  "search_group_help": "53da4bbfe6c2a03e7a7fcdfa350cc130752c66e9eceeb620e6d148ed7c714800",
+  "search_group_mocks": "2be7d1e823f49e6c20944941b3eb97bd42a8fd0f06b6940c67785db0900c00c1",
+  "search_group_new_goal": "e017395a70949060aa5b73083a3e22ead636923d072befeb9f3079bb9329af7b",
+  "search_group_plan": "94249099bf3892263593959db75e9e48294ab7d54caa15a9e1ecf7fc57c2c003",
+  "search_help": "2a9ba984686868bdc3a59e90f17fd71f7849c4de01dcaaf390be49ce5b86bb2c",
+  "search_home": "d51e8b0c89c29d7b87b7ddc888a84a3ed5aa8023f689805bc0f8aa7ce8121e40",
+  "search_language": "02c75d1662d788ce63d778748d70600c055778858e163147cd5a9b3bd7f74e86",
+  "search_log_in": "f9624cb4b77bf2cb838f9f62272144d8daa70d0dfdcc05a8710d4cd3faade895",
+  "search_log_out": "e1a88ca32c099ac26f0d833a89d527bee59c7e2e34339c6585c361cb6dd99675",
+  "search_logbook": "6a31c928360d37f30212183d46cb3158ff1a51e613b9bd4a9add9b620b1412cf",
+  "search_memory": "a881172e98d67687913880673f68b552735c421c936decf149b00ae8cd231fc7",
+  "search_mistakes_notebook": "a8c55e720d67fba9a306e27ff06b157ea435fb9073d15c40d378fa2b0af51972",
+  "search_mock_exam": "b73611f96d7590bba424e7152d17a30b6f14e15ed92690d9bc16696dfe7a4eeb",
+  "search_placeholder": "7e5a7ad0536dd8ec96ced0abb3acc6db66b224f84e491c305d77193954f80fc4",
+  "search_practice_mistakes": "304b98bea056e4c054c18ed6a1cebe259ee8f920f79ecc1f9b138cb6740c1ce6",
+  "search_preferences": "c0943b65788ec0aff16ee368b794d925ff0a9136c2017384a0273ce805285375",
+  "search_pricing": "78a07454af96ddac6fba13970fb3aa4ef6b8c37115cc60eef0e39a895b458061",
+  "search_profile": "438514bc4cc5d81ebb068ce62b2457847ed01a5c01a9c62ab4ceccd41c271f01",
+  "search_send_feedback": "697fad69a281c2bc5da8342a842bd7d095f57cc0f3b7a58b9ffa995f11a9d49b",
+  "search_settings": "61a41d8630a5b299c8b8892816bb6f692839d3d91aa171d1504ddaadf643a8ea",
+  "search_start_goal": "d5cc8fe144414c30006de0f204b8bc46e920d714f505bc3bcee80c13e3a3c83b",
+  "search_start_goal_named": "e39ef7350727b8ecfb8b69ee7395610cd6c68497b2d85f499a6468ead928a04a",
+  "search_start_new_goal": "e169026cfb65cffd25cb401e4ce62227302bb4032bc0c1c1f77ce455e8394990",
+  "search_start_new_goal_named": "c4d1bd64f3e0911c6c61522bdbde01e57a32329038d1a8f79475d6bcc43d7d38",
+  "search_subscription": "752e3b15187c3882ae8fc4d4d74fa9bb51ba5b0aa22611e7dca6f82733d74658",
+  "search_switch_goal": "aa790988879aaa4c85e16a056bcc0b17ca0a13d0d723c9de148148df950188ad",
+  "search_take_mock": "72167a438b806f43dda8882fe742684225dc0fe1c4de1602a6c5aa5f9d5ee0fc",
+  "search_take_mock_detail": "07b1a34f9823795e2fdfb3e22b159c8623e8bcd0f4544081228b222cf61a54b4"
+}
+-->
+<resources>
+    <string name="search_placeholder">Pesquise ou pergunte…</string>
+    <string name="search_close">Fechar pesquisa</string>
+    <string name="search_group_actions">Ações</string>
+    <string name="search_group_go_to">Ir para</string>
+    <string name="search_group_goals">Suas metas</string>
+    <string name="search_group_explanations">Explicações rápidas</string>
+    <string name="search_group_plan">Seu plano</string>
+    <string name="search_group_mocks">Simulados</string>
+    <string name="search_group_catalog">No catálogo</string>
+    <string name="search_group_account">Minha conta</string>
+    <string name="search_group_help">Ajuda</string>
+    <string name="search_group_ask">Perguntar</string>
+    <string name="search_group_new_goal">Nova meta</string>
+    <string name="search_continue">Continuar a sessão de hoje</string>
+    <string name="search_take_mock">Fazer um simulado</string>
+    <string name="search_take_mock_detail">completo, metade ou uma matéria</string>
+    <string name="search_practice_mistakes">Praticar o que você errou</string>
+    <string name="search_ask_buddy">Pergunte para %1$s…</string>
+    <string name="search_start_new_goal">Começar uma nova meta</string>
+    <string name="search_buddy_keyword">Parceiro</string>
+    <string name="search_mistakes_notebook">Caderno de erros</string>
+    <string name="search_logbook">Diário de bordo</string>
+    <string name="search_switch_goal">Mudar para %1$s</string>
+    <string name="search_mock_exam">Simulado %1$s</string>
+    <string name="search_home">Página inicial</string>
+    <string name="search_start_goal">Começar uma meta</string>
+    <string name="search_pricing">Preços</string>
+    <string name="search_log_in">Entrar</string>
+    <string name="search_log_out">Sair</string>
+    <string name="search_blog">Blog</string>
+    <string name="search_send_feedback">Enviar feedback</string>
+    <string name="search_help">Ajuda</string>
+    <string name="search_settings">Configurações</string>
+    <string name="search_profile">Perfil</string>
+    <string name="search_memory">Memória</string>
+    <string name="search_subscription">Assinatura</string>
+    <string name="search_preferences">Preferências</string>
+    <string name="search_appearance">Aparência</string>
+    <string name="search_language">Idioma</string>
+    <string name="search_ask_question">Pergunte para %1$s: “%2$s”</string>
+    <string name="search_ask_detail">abre a conversa</string>
+    <string name="search_start_new_goal_named">Começar uma nova meta: “%1$s”</string>
+    <string name="search_start_goal_named">Começar uma meta: “%1$s”</string>
+</resources>

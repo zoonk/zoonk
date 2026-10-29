@@ -2,6 +2,7 @@ package com.zoonk.android.feature.catalog
 
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CatalogLesson
+import com.zoonk.api.models.CatalogSearchResponse
 import com.zoonk.api.models.ChapterResource
 import com.zoonk.api.models.CourseCategoryCounts
 import com.zoonk.api.models.CourseChapter
@@ -135,6 +136,16 @@ internal class FakeCatalogApi(
     ): ChapterResource {
         reads += "chapter:$chapterId"
         return chapterResource(chapterId)
+    }
+
+    var searchResults: CatalogSearchResponse = CatalogSearchResponse(chapters = emptyList(), courses = emptyList())
+
+    override suspend fun search(
+        language: String,
+        query: String,
+    ): CatalogSearchResponse {
+        reads += "search:$language:$query"
+        return searchResults
     }
 
     override suspend fun lesson(

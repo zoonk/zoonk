@@ -10,6 +10,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.perform
 import com.zoonk.api.apis.CoursesApi
 import com.zoonk.api.models.CatalogLesson
+import com.zoonk.api.models.CatalogSearchResponse
 import com.zoonk.api.models.ChapterResource
 import com.zoonk.api.models.CourseCategoryCounts
 import com.zoonk.api.models.CourseChapter
@@ -44,6 +45,11 @@ interface CatalogApi {
         lessonId: String,
         courseId: String,
     ): CatalogLesson
+
+    suspend fun search(
+        language: String,
+        query: String,
+    ): CatalogSearchResponse
 }
 
 data class CoursePage(
@@ -65,6 +71,11 @@ data class CourseList(
 data class ChapterInCourse(
     val chapterId: String,
     val courseId: String,
+)
+
+data class CatalogQuery(
+    val language: String,
+    val query: String,
 )
 
 data class LessonInCourse(
@@ -102,6 +113,11 @@ class CatalogStore(
 
     val lesson: KeyedResources<LessonInCourse, CatalogLesson> =
         cache.keyed(Audience.Everyone, maxAge = CATALOG_MAX_AGE) { _, key -> api.lesson(key.lessonId, key.courseId) }
+
+    val search: KeyedResources<CatalogQuery, CatalogSearchResponse> =
+        cache.keyed(Audience.Everyone, maxAge = CATALOG_MAX_AGE, isEmpty = { it.courses.isEmpty() && it.chapters.isEmpty() }) { _, query ->
+            api.search(query.language, query.query)
+        }
 
     /**
      * Appends the list's next page, unless a refresh replaced the list meanwhile. False when the
@@ -182,6 +198,11 @@ class LiveCatalogApi(
         lessonId: String,
         courseId: String,
     ) = perform { api.clients(null).libraryLessons.getCatalogLesson(lessonId.toUuid(), courseId.toUuid()) }
+
+    override suspend fun search(
+        language: String,
+        query: String,
+    ) = perform { courses.searchCatalog(language, query) }
 
     private companion object {
         const val PAGE_SIZE = 20L

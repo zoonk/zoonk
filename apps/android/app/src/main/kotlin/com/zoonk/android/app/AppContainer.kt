@@ -54,6 +54,8 @@ import com.zoonk.android.feature.player.TodayChoices
 import com.zoonk.android.feature.practice.block.LiveQuestionBlockApi
 import com.zoonk.android.feature.practice.block.QuestionBlockStore
 import com.zoonk.android.feature.recap.RecapStore
+import com.zoonk.android.feature.search.LiveSearchApi
+import com.zoonk.android.feature.search.SearchStore
 import com.zoonk.android.feature.session.LiveStudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.speaking.LiveSpeakingApi
@@ -216,6 +218,7 @@ class AppContainer private constructor(
                 .stateIn(scope, SharingStarted.Eagerly, LearnerAccess.Restoring)
 
     val catalog = CatalogStore(LiveCatalogApi(api), cache)
+    val search = SearchStore(LiveSearchApi(api), cache)
 
     init {
         scope.launch { sessions.restore() }

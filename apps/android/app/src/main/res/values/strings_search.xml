@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_placeholder">Search or ask…</string>
+    <string name="search_close">Close search</string>
+
+    <string name="search_group_actions">Actions</string>
+    <string name="search_group_go_to">Go to</string>
+    <string name="search_group_goals">Your goals</string>
+    <string name="search_group_explanations">Quick explanations</string>
+    <string name="search_group_plan">Your plan</string>
+    <string name="search_group_mocks">Mock exams</string>
+    <string name="search_group_catalog">In the catalog</string>
+    <string name="search_group_account">My account</string>
+    <string name="search_group_help">Help</string>
+    <string name="search_group_ask">Ask</string>
+    <string name="search_group_new_goal">New goal</string>
+
+    <string name="search_continue">Continue today\'s session</string>
+    <string name="search_take_mock">Take a mock exam</string>
+    <string name="search_take_mock_detail">full, half or one subject</string>
+    <string name="search_practice_mistakes">Practice your mistakes</string>
+    <string name="search_ask_buddy">Ask %1$s…</string>
+    <string name="search_start_new_goal">Start a new goal</string>
+    <string name="search_buddy_keyword">Buddy</string>
+    <string name="search_mistakes_notebook">Mistakes notebook</string>
+    <string name="search_logbook">Logbook</string>
+    <string name="search_switch_goal">Switch to %1$s</string>
+    <string name="search_mock_exam">Mock exam %1$s</string>
+    <string name="search_home">Home page</string>
+    <string name="search_start_goal">Start a goal</string>
+    <string name="search_pricing">Pricing</string>
+    <string name="search_log_in">Log in</string>
+    <string name="search_log_out">Logout</string>
+    <string name="search_blog">Blog</string>
+    <string name="search_send_feedback">Send feedback</string>
+    <string name="search_help">Help</string>
+    <string name="search_settings">Settings</string>
+    <string name="search_profile">Profile</string>
+    <string name="search_memory">Memory</string>
+    <string name="search_subscription">Subscription</string>
+    <string name="search_preferences">Preferences</string>
+    <string name="search_appearance">Appearance</string>
+    <string name="search_language">Language</string>
+    <string name="search_ask_question">Ask %1$s: “%2$s”</string>
+    <string name="search_ask_detail">opens the chat</string>
+    <string name="search_start_new_goal_named">Start a new goal: “%1$s”</string>
+    <string name="search_start_goal_named">Start a goal: “%1$s”</string>
+</resources>
