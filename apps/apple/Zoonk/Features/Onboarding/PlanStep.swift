@@ -224,7 +224,7 @@ private struct PlanReveal: View {
 
       // A plan of one phase has nothing to draw in time: its chapters say its shape instead.
       if plan.roadPhases.count > 1 {
-        PlanRoadmapSection(context: context, structure: structure)
+        PlanRoadmapSection(context: context, structure: structure, listsPhases: true)
       } else {
         RevealChapters(plan: plan)
       }

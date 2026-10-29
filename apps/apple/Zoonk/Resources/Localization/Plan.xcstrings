@@ -10343,6 +10343,35 @@
         }
       }
     },
+    "Phases" : {
+      "comment" : "Header over a new plan's phases",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phasen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fases"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Phases"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fases"
+          }
+        }
+      }
+    },
     "Phone only" : {
       "comment" : "A device's system",
       "localizations" : {
@@ -12526,6 +12555,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "hoje"
+          }
+        }
+      }
+    },
+    "Today" : {
+      "comment" : "When the learner's current phase starts",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aujourd’hui"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hoje"
           }
         }
       }

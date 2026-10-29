@@ -54,13 +54,20 @@ struct PlanRoadmapSection: View {
 
   let context: PlanContext
   let structure: GoalSyllabus?
+  var listsPhases = false
 
   var body: some View {
     let phases = context.plan.roadPhases
 
     if !phases.isEmpty {
       Section {
-        if structure != nil {
+        if listsPhases {
+          RoadmapCompact(context: context, opens: false)
+
+          ForEach(phases) { phase in
+            RoadmapPhaseRow(phase: phase, today: context.plan.today)
+          }
+        } else if structure != nil {
           Button {
             showsPhases = true
           } label: {
@@ -69,6 +76,10 @@ struct PlanRoadmapSection: View {
           .foregroundStyle(.primary)
         } else {
           RoadmapCompact(context: context, opens: false)
+        }
+      } header: {
+        if listsPhases {
+          Text("Phases", tableName: "Plan", comment: "Header over a new plan's phases")
         }
       }
       .sheet(isPresented: $showsPhases, onDismiss: openPendingRoute) {
@@ -103,6 +114,41 @@ struct PlanRoadmapSection: View {
       router.open(route)
     }
   }
+}
+
+private struct RoadmapPhaseRow: View {
+  let phase: PlanPhase
+  let today: String
+
+  var body: some View {
+    PlanPathRow {
+      Label {
+        Text(phase.title)
+          .fontWeight(.medium)
+      } icon: {
+        StatusMark(status: phase.mark)
+      }
+    } value: {
+      if let start = phase.startDate {
+        Group {
+          if phase.state == .current {
+            Text("Today", tableName: "Plan", comment: "When the learner's current phase starts")
+          } else {
+            Text(PlanDate.text(start, today: today))
+          }
+        }
+        .font(.subheadline)
+        .monospacedDigit()
+        .foregroundStyle(.secondary)
+      }
+    }
+    .accessibilityElement(children: .combine)
+    .accessibilityValue(
+      phase.state == .current
+        ? Text("You are here", tableName: "Plan", comment: "Spoken on the learner's current phase")
+        : Text(verbatim: ""))
+  }
+
 }
 
 private struct RoadmapCompact: View {

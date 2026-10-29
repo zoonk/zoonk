@@ -69,6 +69,16 @@ struct PlanPathRows: View {
   }
 }
 
+extension PlanPhase {
+  var mark: StatusMark.Status {
+    switch state {
+    case .done: .done
+    case .current: .next
+    case .leftOut, .unfinished, .upcoming: .todo
+    }
+  }
+}
+
 private struct PlanPhaseRow: View {
   @Environment(PlanStore.self) private var store
   @Environment(\.dynamicTypeSize) private var typeSize
@@ -213,7 +223,7 @@ private struct PlanPhaseRow: View {
           }
         }
       } icon: {
-        StatusMark(status: next ? .next : mark)
+        StatusMark(status: next ? .next : phase.mark)
       }
     } value: {
       VStack(alignment: typeSize.isAccessibilitySize ? .leading : .trailing, spacing: 2) {
@@ -237,14 +247,6 @@ private struct PlanPhaseRow: View {
 
   private var youAreHere: Text {
     Text("You are here", tableName: "Plan", comment: "Spoken on the learner's current phase")
-  }
-
-  private var mark: StatusMark.Status {
-    switch phase.state {
-    case .done: .done
-    case .current: .next
-    case .leftOut, .unfinished, .upcoming: .todo
-    }
   }
 
   private var meta: Text? {
