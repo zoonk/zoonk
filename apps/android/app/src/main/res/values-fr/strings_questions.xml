@@ -34,7 +34,7 @@
   "questions_mark_correct": "65cfd73753298401b993883db432b03046084c9b596a1f6b42b75cba8ea5d900",
   "questions_mark_wrong": "1595e6496e1a4b516cc5b03590abe0b2ff2e6d3baf0529c22190801e21128483",
   "questions_matched_with": "7232392de3bec39a29aa07d616dea1e0c2336ffd82cc68d8bcbed6a6bb666992",
-  "questions_mistake_fixed": "8894082da98b3a5e53df1af47275fd621046f62bcd95b1f15f6cab43e53b94a6",
+  "questions_mistakes_fixed": "a9938f406203f882922ffc95f3a6b3cace2ad31e20f28347b6e74127e8601e03",
   "questions_not_quite": "6cf6134e2905560be96851418ac0d2b50cf09747959a1dd548a6d16765a70add",
   "questions_open_source": "b3b83fbe5fc505dd8adc663b258241a088a19544dad0f6f40072e4a165790a79",
   "questions_order_hint": "6cb3c78bf075225c4adc5c61781eac079cea9402431551e611b777ef45a4f7c8",
@@ -114,7 +114,11 @@
     <string name="questions_right_answer">Bonne réponse : %1$s</string>
     <!-- The last line of a worked solution, read aloud. -->
     <string name="questions_result">Résultat : %1$s</string>
-    <string name="questions_mistake_fixed">Erreur corrigée. Elle quitte ton carnet.</string>
+    <plurals name="questions_mistakes_fixed">
+        <item quantity="one">Erreur corrigée. Elle disparaît de ton carnet.</item>
+        <item quantity="many">%d erreurs corrigées. Elles disparaissent de ton carnet.</item>
+        <item quantity="other">%d erreurs corrigées. Elles disparaissent de ton carnet.</item>
+    </plurals>
     <string name="questions_saved">Ajoutée à tes erreurs</string>
     <string name="questions_saved_tomorrow">Ajoutée à tes erreurs · elle revient demain</string>
     <string name="questions_show_less">Afficher moins</string>

@@ -55,6 +55,7 @@ class AmountsTest {
         assertEquals(listOf("R$ 3,50", "R$ 2.000"), listOf(3.5, 2_000.0).map { money(it, pt, "R$") })
         assertEquals("3,50 €", money(3.5, fr, "€"))
         assertEquals("$2K", money(2_000.0, en, "$", compact = true))
+        assertEquals("$3.50", money(3.5, en, "$", compact = true))
         assertEquals("R$ 2 mil", money(2_000.0, pt, "R$", compact = true))
         assertEquals("R$ 1.200 per month", money(1_200.0, pt, "R$ per month"))
     }

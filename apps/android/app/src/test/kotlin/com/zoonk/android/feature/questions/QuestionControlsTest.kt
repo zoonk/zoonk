@@ -3,6 +3,7 @@ package com.zoonk.android.feature.questions
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.test.TouchInjectionScope
 import androidx.compose.ui.test.assertCountEquals
@@ -108,6 +109,19 @@ class QuestionControlsTest {
         assertEquals(Answer.TrueFalse(false), answer)
         rule.onNodeWithText("Leave blank", substring = true).performClick()
         assertEquals(Answer.DontKnow, answer)
+    }
+
+    @Test
+    fun aCanceledSwipeSpringsBackWithoutAnswering() {
+        show(Question("statement", QuestionFormat.TrueFalse, "Water boils at 100 °C at sea level."))
+
+        rule.onNodeWithText("Water boils", substring = true).performTouchInput {
+            down(center)
+            moveBy(Offset(150.dp.toPx(), 0f))
+            cancel()
+        }
+        rule.waitForIdle()
+        assertNull(answer)
     }
 
     @Test

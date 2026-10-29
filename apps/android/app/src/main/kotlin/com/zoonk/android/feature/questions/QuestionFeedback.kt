@@ -191,7 +191,7 @@ private fun MistakeNote(
 ) {
     val text =
         when {
-            feedback.mistakeFixed -> stringResource(R.string.questions_mistake_fixed)
+            feedback.fixedCount > 0 -> pluralStringResource(R.plurals.questions_mistakes_fixed, feedback.fixedCount, feedback.fixedCount)
             !feedback.savedToNotebook -> return
             examTomorrow -> stringResource(R.string.questions_saved)
             else -> stringResource(R.string.questions_saved_tomorrow)

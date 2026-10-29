@@ -52,7 +52,10 @@ fun formatMoney(
         if (compact) {
             // The currency's own place and spacing, around the short number.
             val one = currencyFormat(currency, locale, 0, 0).format(1)
-            one.replaceFirst(NumberFormat.getInstance(ULocale.forLocale(locale)).format(1), formatCompact(abs(value), locale, digits))
+            one.replaceFirst(
+                NumberFormat.getInstance(ULocale.forLocale(locale)).format(1),
+                formatCompact(abs(value), locale, max(digits, minimum), minimum),
+            )
         } else {
             format.format(abs(value))
         }
@@ -167,11 +170,13 @@ private fun formatCompact(
     value: Double,
     locale: Locale,
     maximumFractionDigits: Int,
+    minimumFractionDigits: Int = 0,
 ): String {
     val format =
         CompactDecimalFormat.getInstance(ULocale.forLocale(locale), CompactDecimalFormat.CompactStyle.SHORT).apply {
             setSignificantDigitsUsed(false)
             this.maximumFractionDigits = maximumFractionDigits.coerceIn(0, MAX_FRACTION_DIGITS)
+            this.minimumFractionDigits = minimumFractionDigits
             roundingMode = BigDecimal.ROUND_HALF_UP
         }
     val text = format.format(abs(value))

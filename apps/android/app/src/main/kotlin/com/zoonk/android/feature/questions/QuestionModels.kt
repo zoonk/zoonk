@@ -281,6 +281,8 @@ data class AnswerFeedback(
     val trap: String? = null,
     val hyperdrive: Hyperdrive? = null,
     val mistakeFixed: Boolean = false,
+    /** Every mistake a mistakes-practice answer fixed, this one's and others' on the same skill. */
+    val fixedMistakeIds: List<String> = emptyList(),
     val savedToNotebook: Boolean = false,
     val transcript: List<TranscriptLine>? = null,
 ) {
@@ -288,6 +290,8 @@ data class AnswerFeedback(
     data class Hyperdrive(
         val streak: Int,
     )
+
+    val fixedCount: Int get() = maxOf(fixedMistakeIds.size, if (mistakeFixed) 1 else 0)
 }
 
 /** The answer a runner sends, in the API's shape (`{ "selectedIndex": 2 }`, `{ "dontKnow": true }`). */

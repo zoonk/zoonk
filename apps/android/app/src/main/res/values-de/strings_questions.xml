@@ -34,7 +34,7 @@
   "questions_mark_correct": "acb7e5f06e9759c3dd7c8d98913dcd5b5e76eb0d221d653797f61e5ee953772e",
   "questions_mark_wrong": "7f46cd2b5e978c5f53985b5658fe95f55e02c1a2ca63b3529dd671fadb24f86c",
   "questions_matched_with": "97628d68b1cd118e24dc5a5560b6af67e432bb22d2a3ceaa86fef1931550cfb6",
-  "questions_mistake_fixed": "41d3e614911d5e9d21c23e6e18b271a2e00c7fd108aadb92cd2246d91f0361be",
+  "questions_mistakes_fixed": "db87975a215ab6e39a205bffe4541e30f0a68096095e713b8d6cf5e90cdb0068",
   "questions_not_quite": "c95d6464a2ae21750f275d318ff32022b58f6a475b759f72867b532a8985fffb",
   "questions_open_source": "571366e965ff9338a6e06d37b354b5b0c84c9c3fae8827eda89fa5f24efe1306",
   "questions_order_hint": "1025487c28a4b341279ab7907ecdbc6856fa074202372fd54392b36eaa0fa50f",
@@ -111,7 +111,10 @@
     <string name="questions_right_answer">Richtige Antwort: %1$s</string>
     <!-- The last line of a worked solution, read aloud. -->
     <string name="questions_result">Ergebnis: %1$s</string>
-    <string name="questions_mistake_fixed">Fehler korrigiert. Er wird aus deinem Fehlerheft entfernt.</string>
+    <plurals name="questions_mistakes_fixed">
+        <item quantity="one">Fehler korrigiert. Er verschwindet aus deinem Fehlerheft.</item>
+        <item quantity="other">%d Fehler korrigiert. Sie verschwinden aus deinem Fehlerheft.</item>
+    </plurals>
     <string name="questions_saved">In deinem Fehlerheft gespeichert</string>
     <string name="questions_saved_tomorrow">In deinem Fehlerheft gespeichert · kommt morgen wieder</string>
     <string name="questions_show_less">Weniger anzeigen</string>

@@ -106,7 +106,7 @@ fun ItemSetText(
             set.text?.let { text ->
                 ItemText(
                     text = text,
-                    modifier = if (expanded) Modifier else Modifier.heightIn(max = FOLDED_HEIGHT).clipToBounds().fadeOut(),
+                    modifier = if (folds && !expanded) Modifier.heightIn(max = FOLDED_HEIGHT).clipToBounds().fadeOut() else Modifier,
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

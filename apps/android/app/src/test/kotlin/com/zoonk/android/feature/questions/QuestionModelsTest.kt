@@ -90,7 +90,7 @@ class QuestionModelsTest {
             ApiJson
                 .decodeFromString<MistakePracticeFeedback>(
                     """{"answerId":"0b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","correctAnswer":{"selectedIndex":1},"explanation":null,"fixed":true,
-                    |"fixedMistakeIds":[],"isCorrect":true,"mistakeStatus":"fixed","reached":{"energy":null,"level":null},"trap":"Two look alike."}
+                    |"fixedMistakeIds":["0b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b","1b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b"],"isCorrect":true,"mistakeStatus":"fixed","reached":{"energy":null,"level":null},"trap":"Two look alike."}
                     """.trimMargin(),
                 ).recode<MistakePracticeFeedback, AnswerFeedback>()
 
@@ -99,6 +99,8 @@ class QuestionModelsTest {
         assertTrue(block.savedToNotebook)
         assertEquals(Answer.Choice(1), mistake.correctAnswer)
         assertEquals("Two look alike.", mistake.trap)
+        assertEquals(2, mistake.fixedCount)
+        assertEquals(1, AnswerFeedback(isCorrect = true, mistakeFixed = true).fixedCount)
     }
 
     @Test

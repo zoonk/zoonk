@@ -45,7 +45,10 @@
     <string name="questions_right_answer">Right answer: %1$s</string>
     <!-- The last line of a worked solution, read aloud. -->
     <string name="questions_result">Result: %1$s</string>
-    <string name="questions_mistake_fixed">Mistake fixed. It leaves your notebook.</string>
+    <plurals name="questions_mistakes_fixed">
+        <item quantity="one">Mistake fixed. It leaves your notebook.</item>
+        <item quantity="other">%d mistakes fixed. They leave your notebook.</item>
+    </plurals>
     <string name="questions_saved">Saved to your mistakes</string>
     <string name="questions_saved_tomorrow">Saved to your mistakes · it comes back tomorrow</string>
     <string name="questions_show_less">Show less</string>

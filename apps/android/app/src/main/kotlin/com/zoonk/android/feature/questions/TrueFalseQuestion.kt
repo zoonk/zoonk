@@ -1,9 +1,7 @@
 package com.zoonk.android.feature.questions
 
 import androidx.compose.animation.core.animate
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,11 +15,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -34,6 +35,7 @@ import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.richtext.RichBlock
 import com.zoonk.android.ui.richtext.parseRichBlocks
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 /** A checked statement: what the learner said and, when the server says it, whether it was true. */
@@ -115,32 +117,37 @@ private fun StatementCard(
     onSwipe: (isTrue: Boolean) -> Unit,
 ) {
     var offset by remember { mutableFloatStateOf(0f) }
+    val scope = rememberCoroutineScope()
     val haptics = LocalHapticFeedback.current
     val density = LocalDensity.current
     val threshold = with(density) { SWIPE_THRESHOLD.toPx() }
     val towardEnd = if (LocalLayoutDirection.current == LayoutDirection.Rtl) -1f else 1f
+    val swipe by rememberUpdatedState(onSwipe)
 
-    val drag =
-        rememberDraggableState { delta ->
-            val crossed = abs(offset) >= threshold
-            offset += delta
-            if (!crossed && abs(offset) >= threshold) haptics.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
-        }
+    fun settle() {
+        scope.launch { animate(offset, 0f) { value, _ -> offset = value } }
+    }
 
     OutlinedCard(
         Modifier
             .fillMaxWidth()
             .heightIn(min = 128.dp)
             // Outside the layer, so the drag is measured where the finger is, not on the moving card.
-            .draggable(
-                state = drag,
-                orientation = Orientation.Horizontal,
-                enabled = canSwipe,
-                onDragStopped = {
-                    if (abs(offset) >= threshold) onSwipe(offset * towardEnd > 0)
-                    animate(offset, 0f) { value, _ -> offset = value }
-                },
-            ).graphicsLayer {
+            .pointerInput(canSwipe, threshold, towardEnd) {
+                if (!canSwipe) return@pointerInput
+                detectHorizontalDragGestures(
+                    onDragEnd = {
+                        if (abs(offset) >= threshold) swipe(offset * towardEnd > 0)
+                        settle()
+                    },
+                    onDragCancel = ::settle,
+                ) { change, delta ->
+                    change.consume()
+                    val crossed = abs(offset) >= threshold
+                    offset += delta
+                    if (!crossed && abs(offset) >= threshold) haptics.performHapticFeedback(HapticFeedbackType.GestureThresholdActivate)
+                }
+            }.graphicsLayer {
                 translationX = offset
                 rotationZ = offset / density.density * TILT_DEGREES_PER_DP
             },

@@ -34,7 +34,7 @@
   "questions_mark_correct": "6366275c3cd93c2989f51cf429c81df2240bf782cc146cb0c5f687308639b1fd",
   "questions_mark_wrong": "9a4859dbd6c0b895fb2d465d1c97ed820fb0577ef833b54952b0f2634b3e144a",
   "questions_matched_with": "f4b3e5acaa767112be164fa7405e78e95b8ddbe5ec77735ef14d8291f830b4e6",
-  "questions_mistake_fixed": "94255fb9db59bff45ed755945879d16a72d1cbdbc58c6b53b6af4cba5d6636d1",
+  "questions_mistakes_fixed": "7024f57ef9de0a9ab727c7e43228b89b67b87b23d31147017d0819f8c3ff3fbc",
   "questions_not_quite": "29fd0a839c5de519d92f84f7dc11b14b3c996c6bcfc4dff85841acb03e217455",
   "questions_open_source": "bbb5bb47eadb9e7d42e4223a6d3a47d21cd32075dc9b2cde17841fed9acaff28",
   "questions_order_hint": "c3fd29beccd81ccf3ed9e9f44df3c7a77a3435bf5ae167ce6f3847a750ee13e1",
@@ -114,7 +114,11 @@
     <string name="questions_right_answer">Resposta certa: %1$s</string>
     <!-- The last line of a worked solution, read aloud. -->
     <string name="questions_result">Resultado: %1$s</string>
-    <string name="questions_mistake_fixed">Erro corrigido. Ele sai do seu caderno.</string>
+    <plurals name="questions_mistakes_fixed">
+        <item quantity="one">Erro corrigido. Ele sai do seu caderno.</item>
+        <item quantity="many">%d erros corrigidos. Eles saem do seu caderno.</item>
+        <item quantity="other">%d erros corrigidos. Eles saem do seu caderno.</item>
+    </plurals>
     <string name="questions_saved">Salvo no seu caderno de erros</string>
     <string name="questions_saved_tomorrow">Salvo no seu caderno de erros · volta amanhã</string>
     <string name="questions_show_less">Mostrar menos</string>

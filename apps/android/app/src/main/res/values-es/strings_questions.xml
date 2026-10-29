@@ -34,7 +34,7 @@
   "questions_mark_correct": "96a4d70d574188c51a9612daf53d2ba52fc235a54c9b14204b950371be36ac7c",
   "questions_mark_wrong": "187994f55ec305e600af688ec13e8ca01e2bcfda7538811d31b9f892bc71be57",
   "questions_matched_with": "aebd49d5a1e862110182e44b25ced2f30615cc04f4b28d9ce09201d7c9910e92",
-  "questions_mistake_fixed": "68cd695d22957e23f8840334d8ccecd1d72cfc5b9ce210d9e315e6d4e3dff8e8",
+  "questions_mistakes_fixed": "bb0f4a516f46bcd82c0a691818cc2021a06227b54470a313523dab68dbd92e3a",
   "questions_not_quite": "4cdbca56aef863afa176a257d0e75792288e09bfb29870870e25e4ad5bfa697d",
   "questions_open_source": "07084d9317de23094ace1e67cb6164e053c5a5e37b38e88b15625f550dc56eae",
   "questions_order_hint": "39e7f6198d63a153d4888d3dc6134f42d54afc38e98f6fd0ca02d002276736b0",
@@ -114,7 +114,11 @@
     <string name="questions_right_answer">Respuesta correcta: %1$s</string>
     <!-- The last line of a worked solution, read aloud. -->
     <string name="questions_result">Resultado: %1$s</string>
-    <string name="questions_mistake_fixed">Error corregido. Ya no aparece en tu cuaderno.</string>
+    <plurals name="questions_mistakes_fixed">
+        <item quantity="one">Error corregido. Desaparece de tu cuaderno.</item>
+        <item quantity="many">%d errores corregidos. Desaparecen de tu cuaderno.</item>
+        <item quantity="other">%d errores corregidos. Desaparecen de tu cuaderno.</item>
+    </plurals>
     <string name="questions_saved">Guardado en tu cuaderno de errores</string>
     <string name="questions_saved_tomorrow">Guardado en tu cuaderno de errores · volverá mañana</string>
     <string name="questions_show_less">Mostrar menos</string>
