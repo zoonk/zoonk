@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "steps_continue": "dcb6501d8853cbd12dce819f013857693dad740a0f3a6d6014bc1db6b93feaa6"
+}
+-->
+<resources>
+    <string name="steps_continue">Continuar</string>
+</resources>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "recap_days_studied": "76fe766acd2a793d39cf26ae4d24c7a64315393eb775e8dfeb327fa0aa021969",
+  "recap_first_summary": "a1a33ffd8f9a20359aff533a526549417ccd6dbcfb638af8093fa60c2fb01bf8",
+  "recap_first_summary_detail": "283a1cc681d4cfc6b6aae292a2c4d5494c4d93e7c9e98af89ac7a6e0f3967cc8",
+  "recap_fresh_week": "12c1a97ef28d94dd178b11a035f79da62a0d0503a01a75311bfd0fb42837c84d",
+  "recap_learned": "460a39df1693f29ac576a22116d99c83625678877ca5d18f36fb1bb9dd109b44",
+  "recap_lets_go": "9653db36f700fb75c9eb928c99b48aba6da28d0b14b58104b379057d259d5a88",
+  "recap_mastered": "e778afd749daa168709e9bb7b19dea142c32cff15b3e2be25c0b3a5bcd921fe3",
+  "recap_mistake_fixed": "82f843c1098a51da7e0beac0f8ae7fd24d364e6985084d2b60a6d2752b32916a",
+  "recap_mistakes_fixed": "502b2ced7907d8dd7713ba2bfe453091ffd9a2d0fcf6f2bc5924ee92f8d1e9a1",
+  "recap_more_questions": "4374c62880db7889921b9c63537f1a7a0354deb78aca40b8277e1b468b295c03",
+  "recap_more_time": "5c199f1a90b71ef16f8c0e15aaad42bb2e44436cba3a46477187dbf867a3d717",
+  "recap_new_idea": "c77d58b2167e1452be2346bd4f66eed200922c350ce91180b70af1c374fd04f4",
+  "recap_new_ideas": "eb8d764bcff887b44d511eff10886d785151baa1e755d54a51cfaeb6f6e75d3b",
+  "recap_next_week": "539c876b69ced3f58f45054da2bf8a02a63e497dbcd2305bd0119c1e22a7cfc1",
+  "recap_phase_done": "031ed75e51ac8daaa5fca92c221d6cada84ba45723db6645820ec6defe0a3439",
+  "recap_questions": "6e6d00a492a0c9fcfb3e886f5e763c9f92dff2f378acc8adc4ebe4006df9360d",
+  "recap_quiet_week": "e572f6a278de369f8d667240bc371488f8f00d2928818300b8681a53dfa5fbdf",
+  "recap_review": "0b95bb0f7ff3980cacfd252f5e3c275000b944a15d80efe9ddfb9a083bab988b",
+  "recap_reviews": "446ee8591fc7757127a2151e25e694fdc1f22d9ae19e0e572d601fcb425b7ab7",
+  "recap_solid": "c1190aa530846296a881a250d0759238701fc81830c0b944c614da41ce239b72",
+  "recap_time": "51d5c652a64f2d9b8c6c2f2db7d8e4c1cc5e8c19edea490777f0fefae25aacb3",
+  "recap_title": "113940242f1dc33c79b8aa678ff2de4f5ab8a4856f4fe164e787510e69c0b2f8",
+  "recap_trap_hunter_badge": "6c3fdecbb33fcef846a5f8497f94ce130e7cf5b6c04e2e380d138875621de0e2",
+  "recap_trap_hunter_badges": "fd8ab18eb05ef04d4491c70267e84f280647b21d913ff3633bd3138be1bbe732",
+  "recap_turnaround": "67b49c1c807c9ceceabe6756fa46cc47c57a595c14d1dd3767e3361325519c2a",
+  "recap_turnaround_chart": "02571b9eb4a83af05d9c51f3849568ee80f35c79350af976995bba2dede4111b",
+  "recap_turnaround_detail": "9b9744fabcff13121991f18349dae8ea2be9628ddceb4f2a3b4255f7994dd2f3",
+  "recap_weekly_summary": "19151e22381971e6a56d15a9fc9af65e734d58c0a16337a4103ae3a018d12c0b",
+  "recap_what_a_week": "74b94fb819888651ab35ea93c464d53140d4e166e5bcd31912dc531415929d2e",
+  "recap_what_a_week_name": "77f5dd97dc9c6705209c5a787fd3a089b444d61909f0b50c6d37cb2658be211e"
+}
+-->
+<resources>
+    <string name="recap_title">Diário de bordo</string>
+    <plurals name="recap_days_studied">
+        <item quantity="one">%d dia de estudo</item>
+        <item quantity="many">%d dias de estudo</item>
+        <item quantity="other">%d dias de estudo</item>
+    </plurals>
+    <!-- %1$s is a duration, such as "20 min". -->
+    <string name="recap_more_time">%1$s a mais que na semana anterior!</string>
+    <plurals name="recap_more_questions">
+        <item quantity="one">%d pergunta a mais que na semana anterior!</item>
+        <item quantity="many">%d perguntas a mais que na semana anterior!</item>
+        <item quantity="other">%d perguntas a mais que na semana anterior!</item>
+    </plurals>
+    <!-- %1$s is the phase's number, %2$s its name. -->
+    <string name="recap_phase_done">Fase %1$s · %2$s concluído</string>
+    <!-- %1$s is the week's dates, such as "Oct 20 – 26". -->
+    <string name="recap_weekly_summary">Resumo semanal · %1$s</string>
+    <!-- %1$s is the learner's first name. -->
+    <string name="recap_what_a_week_name">Que semana, %1$s!</string>
+    <string name="recap_what_a_week">Que semana!</string>
+    <string name="recap_time">Tempo</string>
+    <string name="recap_questions">Perguntas</string>
+    <string name="recap_quiet_week">Uma semana tranquila</string>
+    <string name="recap_first_summary">Seu primeiro resumo chega no domingo</string>
+    <string name="recap_fresh_week">Toda semana começa do zero.</string>
+    <string name="recap_first_summary_detail">Ele mostra sua semana em números e a habilidade que mais evoluiu.</string>
+    <string name="recap_turnaround">A maior virada</string>
+    <!-- %1$s and %2$s are percentages: "40% → 85% right answers". -->
+    <string name="recap_turnaround_detail">%1$s → %2$s respostas certas</string>
+    <!-- %1$s is a skill's name. -->
+    <plurals name="recap_mastered">
+        <item quantity="one">%1$s agora está Dominado: você lembrou em %2$d dia diferente.</item>
+        <item quantity="many">%1$s agora está Dominado: você lembrou em %2$d dias diferentes.</item>
+        <item quantity="other">%1$s agora está Dominado: você lembrou em %2$d dias diferentes.</item>
+    </plurals>
+    <string name="recap_solid">%1$s agora está Firme: você continuou acertando nos dias seguintes.</string>
+    <string name="recap_turnaround_chart">Respostas certas nessa habilidade em cada dia da semana</string>
+    <string name="recap_learned">O que você aprendeu</string>
+    <!-- A count stands beside these; the singular reads beside 1. -->
+    <string name="recap_new_idea">ideia nova</string>
+    <string name="recap_new_ideas">ideias novas</string>
+    <string name="recap_review">revisão</string>
+    <string name="recap_reviews">revisões</string>
+    <string name="recap_mistake_fixed">erro corrigido</string>
+    <string name="recap_mistakes_fixed">erros corrigidos</string>
+    <string name="recap_trap_hunter_badge">emblema de caçador de pegadinhas</string>
+    <string name="recap_trap_hunter_badges">emblemas de caçador de pegadinhas</string>
+    <string name="recap_next_week">Próxima semana</string>
+    <string name="recap_lets_go">Vamos lá</string>
+</resources>

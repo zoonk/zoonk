@@ -44,6 +44,7 @@ import com.zoonk.android.feature.subscription.NoPlayBilling
 import com.zoonk.android.feature.subscription.SubscriptionStore
 import com.zoonk.android.feature.tutor.LiveTutorApi
 import com.zoonk.android.feature.tutor.TutorStore
+import com.zoonk.android.feature.recap.RecapStore
 import com.zoonk.android.feature.session.LiveStudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.today.LiveTodayApi
@@ -155,6 +156,14 @@ class AppContainer private constructor(
     }
     val today = TodayStore(LiveTodayApi(api), cache, scope, timeZone)
     val studyOpener = StudyOpener(LiveStudyApi(api), cache, timeZone)
+    val recap =
+        RecapStore(
+            api = { session, goalId, timeZone ->
+                perform { api.clients(session).milestones.getCurrentUserWeeklyRecap(goalId = goalId, timeZone = timeZone) }
+            },
+            cache = cache,
+            timeZone = timeZone,
+        )
     val goalSwitch =
         GoalSwitch(
             api = { session, goalId ->

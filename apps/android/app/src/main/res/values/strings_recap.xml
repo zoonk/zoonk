@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="recap_title">Logbook</string>
+    <plurals name="recap_days_studied">
+        <item quantity="one">%d day studied</item>
+        <item quantity="other">%d days studied</item>
+    </plurals>
+    <!-- %1$s is a duration, such as "20 min". -->
+    <string name="recap_more_time">%1$s more than the week before!</string>
+    <plurals name="recap_more_questions">
+        <item quantity="one">%d more question than the week before!</item>
+        <item quantity="other">%d more questions than the week before!</item>
+    </plurals>
+    <!-- %1$s is the phase's number, %2$s its name. -->
+    <string name="recap_phase_done">Phase %1$s · %2$s done</string>
+    <!-- %1$s is the week's dates, such as "Oct 20 – 26". -->
+    <string name="recap_weekly_summary">Weekly summary · %1$s</string>
+    <!-- %1$s is the learner's first name. -->
+    <string name="recap_what_a_week_name">What a week, %1$s!</string>
+    <string name="recap_what_a_week">What a week!</string>
+    <string name="recap_time">Time</string>
+    <string name="recap_questions">Questions</string>
+    <string name="recap_quiet_week">A quiet week</string>
+    <string name="recap_first_summary">Your first summary comes on Sunday</string>
+    <string name="recap_fresh_week">Every week starts fresh.</string>
+    <string name="recap_first_summary_detail">It shows your week in numbers and the skill that grew the most.</string>
+    <string name="recap_turnaround">The biggest turnaround</string>
+    <!-- %1$s and %2$s are percentages: "40% → 85% right answers". -->
+    <string name="recap_turnaround_detail">%1$s → %2$s right answers</string>
+    <!-- %1$s is a skill's name. -->
+    <plurals name="recap_mastered">
+        <item quantity="one">%1$s is Mastered now: you remembered it on %2$d different day.</item>
+        <item quantity="other">%1$s is Mastered now: you remembered it on %2$d different days.</item>
+    </plurals>
+    <string name="recap_solid">%1$s is Solid now: you kept getting it right on later days.</string>
+    <string name="recap_turnaround_chart">Right answers on this skill each day of the week</string>
+    <string name="recap_learned">What you learned</string>
+    <!-- A count stands beside these; the singular reads beside 1. -->
+    <string name="recap_new_idea">new idea</string>
+    <string name="recap_new_ideas">new ideas</string>
+    <string name="recap_review">review</string>
+    <string name="recap_reviews">reviews</string>
+    <string name="recap_mistake_fixed">mistake fixed</string>
+    <string name="recap_mistakes_fixed">mistakes fixed</string>
+    <string name="recap_trap_hunter_badge">Trap hunter badge</string>
+    <string name="recap_trap_hunter_badges">Trap hunter badges</string>
+    <string name="recap_next_week">Next week</string>
+    <string name="recap_lets_go">Let\'s go</string>
+</resources>
