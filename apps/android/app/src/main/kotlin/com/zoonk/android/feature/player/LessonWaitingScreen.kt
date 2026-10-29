@@ -178,7 +178,10 @@ private fun WritingRefused(
         }
 
         LessonRefusal.PlusRequired -> {
-            Notice(stringResource(R.string.player_free_week_over_title), stringResource(R.string.player_free_week_over_description))
+            Notice(
+                stringResource(R.string.subscription_free_week_over_title),
+                stringResource(R.string.subscription_free_week_over_description),
+            )
             FilledTonalButton(onClick = { exits.open(AppRoute.Subscription) }) { Text(stringResource(R.string.player_see_plus)) }
         }
 

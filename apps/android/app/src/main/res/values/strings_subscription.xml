@@ -3,6 +3,8 @@
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Available with Plus</string>
     <string name="subscription_see_plus">See Plus</string>
+    <string name="subscription_free_week_over_title">Your free week of exam prep is over</string>
+    <string name="subscription_free_week_over_description">Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.</string>
     <string name="subscription_active">Active</string>
     <string name="subscription_ending">Subscription ending</string>
     <!-- %1$s is a date. -->

@@ -67,8 +67,6 @@
   "player_free_limit_day_title": "e4c29715fd73790b462e35f83e66053af797ad590c4c68bd2fdc733446b55a3e",
   "player_free_limit_month_description": "682dd344c1dc440df366c672a83d5f87d4192782b28bc76970e3a9788263866d",
   "player_free_limit_month_title": "1f8c40a4c5457356d873c9d37b7bd11c86b0aad22930ab5abe355f58f431f7ee",
-  "player_free_week_over_description": "44d6d5aa2e3764e89f027f11d39b568a3824248a70fb4397aa12cac6a10b0630",
-  "player_free_week_over_title": "49270a1400b4b3aa4af94c29563fd9a9907fe6e43669ca09f671ae656351746f",
   "player_guess_first": "976f5ae5a3f1e52f6ac71b4f3d4fb3b1cb328f90593c3374f0c0c833952824ce",
   "player_guess_hint": "cd5188e4491106dfd4a8570c3d631ae45a226367906179a357cf7a0dd5e59d73",
   "player_guest_limit_description": "cd364187cacd11f10e9b4c374f3fd4beadb2d2a5558d91f94bfbb6a17b8a6393",
@@ -334,8 +332,6 @@
     <string name="player_free_limit_month_title">Essas são todas as aulas novas deste mês</string>
     <string name="player_free_limit_month_description">Você ainda pode revisar o que aprendeu e praticar o que errou. As aulas novas ficam disponíveis no mês que vem, ou assine o Plus para continuar agora.</string>
     <string name="player_see_plus">Ver o Plus</string>
-    <string name="player_free_week_over_title">Sua semana grátis de preparo para a prova acabou</string>
-    <string name="player_free_week_over_description">Revisar e corrigir o que você errou continua grátis. O Plus libera aulas novas, o restante do seu plano e simulados.</string>
     <string name="player_guest_limit_title">Salve seu progresso para continuar</string>
     <string name="player_guest_limit_description">Você já fez todas as aulas que pode experimentar sem uma conta. Crie uma conta grátis para continuar e leve com você tudo o que aprendeu.</string>
     <string name="player_create_free_account">Criar uma conta grátis</string>

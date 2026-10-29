@@ -14,6 +14,8 @@
   "subscription_ending": "8e6179abbd7e7167be203dfbf587d1ca1fd978bb4bcb397c794453709439da95",
   "subscription_ends_on": "187383b691d5631900ce5343ace72461d2e22d614bd6354653d314ffebd22a53",
   "subscription_free": "fd0e890bb5d4ac7f48866d89c5b26b870f7c2146bf1da62fe005a2ad0418b542",
+  "subscription_free_week_over_description": "2d81992c45e2e762603224cf1eb0a771164be15a05c86f4233f5404bcbf1fe61",
+  "subscription_free_week_over_title": "cf3e31e1d3646d49708ddcf84af41e2bef649710ad3eccdb626eac4baf83bb03",
   "subscription_get_plus": "f0c01f7d5215e42b15888f6eb1ca75f500e8275dce5be7ccede71c643bff9c66",
   "subscription_manage_google": "3350b3c34c2619bf6c0bb6c453f81cfd595325bb120ce397fda93f8edfc15474",
   "subscription_managed_apple": "ad2c63eacf42ba170ec2c88dd24649f94cb1db2e88c36850d005069a6f97c463",
@@ -46,6 +48,8 @@
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Disponível no Plus</string>
     <string name="subscription_see_plus">Conheça o Plus</string>
+    <string name="subscription_free_week_over_title">Sua semana grátis de preparo para a prova acabou</string>
+    <string name="subscription_free_week_over_description">Revisar e corrigir seus erros continua grátis. Com o Plus, você tem acesso a novas aulas, ao restante do seu plano e a simulados.</string>
     <string name="subscription_active">Ativa</string>
     <string name="subscription_ending">Assinatura terminando</string>
     <!-- %1$s is a date. -->

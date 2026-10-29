@@ -67,8 +67,6 @@
   "player_free_limit_day_title": "8f71cd2a89946d1e3a48bef12349636925ceb2bc86156247fa21dd72145554f5",
   "player_free_limit_month_description": "fa574892899947985acdab70c8456dcf0c193ee655641f636c52f6be3c790cdd",
   "player_free_limit_month_title": "43205a2a3abc164ac0c1784da0bcaf27b3b7e18a7172ed5b4e52cac87d750d55",
-  "player_free_week_over_description": "4f273b2d1dc9af8d527ccce46d4585d7d97045bc15fd86d47481059448a1e6b9",
-  "player_free_week_over_title": "b96a396f43b879e995311a23fb16e599fbf6447b31c38369516da3d5a77b8d84",
   "player_guess_first": "0d5957cfc9e9f225e603fe0d665351ecdcea1ac5c1bad81428c7baa2fb924ce7",
   "player_guess_hint": "495532d7a88d83f37e3edd30d6e06570e158c0416809e3d83f1a697831585733",
   "player_guest_limit_description": "54601882b82d3042e109b2e2fd708391eb21b0dcdff000ad5686cad4cf71c654",
@@ -330,8 +328,6 @@
     <string name="player_free_limit_month_title">Das waren alle neuen Lektionen für diesen Monat</string>
     <string name="player_free_limit_month_description">Du kannst weiterhin wiederholen, was du gelernt hast, und deine Fehler üben. Nächsten Monat gibt es wieder neue Lektionen. Mit Plus kannst du jetzt weitermachen.</string>
     <string name="player_see_plus">Plus ansehen</string>
-    <string name="player_free_week_over_title">Deine kostenlose Woche Prüfungsvorbereitung ist vorbei</string>
-    <string name="player_free_week_over_description">Wiederholen und Fehler korrigieren bleibt kostenlos. Mit Plus bekommst du neue Lektionen, den Rest deines Plans und Probeprüfungen.</string>
     <string name="player_guest_limit_title">Speichere deinen Fortschritt, um weiterzumachen</string>
     <string name="player_guest_limit_description">Du hast die Lektionen gelernt, die du ohne Konto ausprobieren kannst. Erstelle ein kostenloses Konto, um weiterzumachen. Alles, was du gelernt hast, bleibt erhalten.</string>
     <string name="player_create_free_account">Kostenloses Konto erstellen</string>

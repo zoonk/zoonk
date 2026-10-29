@@ -168,8 +168,6 @@
     <string name="player_free_limit_month_title">That\'s all the new lessons for this month</string>
     <string name="player_free_limit_month_description">You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now.</string>
     <string name="player_see_plus">See Plus</string>
-    <string name="player_free_week_over_title">Your free week of exam prep is over</string>
-    <string name="player_free_week_over_description">Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.</string>
     <string name="player_guest_limit_title">Save your progress to keep going</string>
     <string name="player_guest_limit_description">You\'ve taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you.</string>
     <string name="player_create_free_account">Create a free account</string>

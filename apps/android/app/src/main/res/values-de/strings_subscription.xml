@@ -14,6 +14,8 @@
   "subscription_ending": "7e50fbe98c0c8995102211f8580a36a60ac6be478dc235d8f400940a44e22647",
   "subscription_ends_on": "a2a9f420f44fb12a9ccd52b9b734b0b0891507184fe305585584c3e6ea8b4cb8",
   "subscription_free": "792ab0bf7e14fa482802f6a02b50a4b43c6429fa419bea51dee249b5bfaf549b",
+  "subscription_free_week_over_description": "b9220f81a35eb301c25ebc913ccfe4d42ef2e4c326faba545acb8e4aec093405",
+  "subscription_free_week_over_title": "b289b46986b0672dcdf6b8d369b89c25f5ff5f7a85741d6c0684af9c63b40e71",
   "subscription_get_plus": "31fb2e1fbff7aca1ed13869a548ab00cf80260a42f104312ffc6878a11ef04ef",
   "subscription_manage_google": "ef40137d6b2dba5b32e47efffd7cff90e754d2498f63ee7fe7c91fc460776f98",
   "subscription_managed_apple": "9a68c4b687d1b1579b563b4a8f7f967b330c804ee601eecbf7709a679ef22593",
@@ -46,6 +48,8 @@
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Mit Plus verfügbar</string>
     <string name="subscription_see_plus">Plus ansehen</string>
+    <string name="subscription_free_week_over_title">Deine kostenlose Woche zur Prüfungsvorbereitung ist vorbei</string>
+    <string name="subscription_free_week_over_description">Wiederholen und Fehler korrigieren bleibt kostenlos. Mit Plus erhältst du Zugriff auf neue Lektionen, den restlichen Plan und Probeprüfungen.</string>
     <string name="subscription_active">Aktiv</string>
     <string name="subscription_ending">Abo endet</string>
     <!-- %1$s is a date. -->

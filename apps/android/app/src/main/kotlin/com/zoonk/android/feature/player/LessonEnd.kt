@@ -106,8 +106,8 @@ fun LessonAccessScreen(
         LessonRefusal.PlusRequired -> {
             AccessLayout(
                 R.drawable.ic_auto_awesome,
-                stringResource(R.string.player_free_week_over_title),
-                stringResource(R.string.player_free_week_over_description),
+                stringResource(R.string.subscription_free_week_over_title),
+                stringResource(R.string.subscription_free_week_over_description),
             ) { PlusActions(exits) }
         }
 

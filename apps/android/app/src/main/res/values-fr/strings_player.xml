@@ -67,8 +67,6 @@
   "player_free_limit_day_title": "5dca473273434dd3e57def452c14e9a835a7719714fac100d9eb0032974b44d1",
   "player_free_limit_month_description": "80927db28b241d0d445232c10d3bcbefba7dcab9d790a4128686225f33eccfa2",
   "player_free_limit_month_title": "baa13d93883978dbe69aba9d4ce1cef04a61e246f2b2cb9fb62c6f9be2e3ee65",
-  "player_free_week_over_description": "a021ccb8371451a69ce74cbd6e8730c71a0f937621e17a342933927127c26bdc",
-  "player_free_week_over_title": "fad322a1b682250eb2895644a25602f22fc5cdbd7de5c59fef049c5839d0e3b7",
   "player_guess_first": "15fa61e2bb794c67dadfadc31d96f46db5af25197deafdff33eebf7c720c0f75",
   "player_guess_hint": "bf5107fcece71f49b287b389398d1cc909ac133e01b4ed1362981ddd59828b78",
   "player_guest_limit_description": "8cd60608c08d272e487823c2aad11c5168a7bc2b464f248ded454fd830e90f87",
@@ -334,8 +332,6 @@
     <string name="player_free_limit_month_title">Tu as terminé les nouvelles leçons de ce mois-ci</string>
     <string name="player_free_limit_month_description">Tu peux encore réviser ce que tu as appris et corriger tes erreurs. De nouvelles leçons seront disponibles le mois prochain, ou passe à Plus pour continuer maintenant.</string>
     <string name="player_see_plus">Découvrir Plus</string>
-    <string name="player_free_week_over_title">Ta semaine gratuite de préparation à l’examen est terminée</string>
-    <string name="player_free_week_over_description">La révision et la correction de tes erreurs restent gratuites. Plus donne accès aux nouvelles leçons, au reste de ton plan et aux examens blancs.</string>
     <string name="player_guest_limit_title">Enregistre ta progression pour continuer</string>
     <string name="player_guest_limit_description">Tu as suivi toutes les leçons accessibles sans compte. Crée un compte gratuit pour continuer et retrouver tout ce que tu as appris.</string>
     <string name="player_create_free_account">Créer un compte gratuit</string>

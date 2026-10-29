@@ -14,6 +14,8 @@
   "subscription_ending": "25821316ee7d4b7787285b6577574874f3a0711dc72e0a82b3d381f43e7032d4",
   "subscription_ends_on": "c1976f512b793fa39f1e912853ca3e4f31f04fb1647faa9be7ead93ec37e45f5",
   "subscription_free": "f2e5f3c52c974703ca35778dedfad4bd1f1598f485fb50b2fc812214d3de77a2",
+  "subscription_free_week_over_description": "6a77f25a4d8f0e503207f74da1ddcf7a8a5ffe584781b297c1e04434cae93bc0",
+  "subscription_free_week_over_title": "1db5853d630828f60fa7c75947ba5b9a21df2df941284a3e0498130530e4f0b1",
   "subscription_get_plus": "11bbacf52d235c2a60c19a3b99012716c402f1164a4a7462b332fd3228f50b64",
   "subscription_manage_google": "00aa4ae71d40b7eafe5dc1a657fe442d0ed86d25173d0c0376464efe8fde0662",
   "subscription_managed_apple": "6369144d019c44dd0ea7ba2e021344b213f3756d193dbf382d7987e27ca02ade",
@@ -46,6 +48,8 @@
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Disponible avec Plus</string>
     <string name="subscription_see_plus">Voir Plus</string>
+    <string name="subscription_free_week_over_title">Ta semaine gratuite de préparation aux examens est terminée</string>
+    <string name="subscription_free_week_over_description">Les révisions et la correction de tes erreurs restent gratuites. Plus donne accès à de nouvelles leçons, au reste de ton plan et aux examens blancs.</string>
     <string name="subscription_active">Active</string>
     <string name="subscription_ending">Abonnement qui prend fin</string>
     <!-- %1$s is a date. -->
