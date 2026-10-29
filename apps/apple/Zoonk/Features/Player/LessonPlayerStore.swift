@@ -232,10 +232,10 @@ final class LessonPlayerStore {
         try? await Task.sleep(for: .seconds(4))
       }
 
-      let fresh = try? await api.getLesson(id: lessonId, token: identity.bearerToken)
+      await lessonResource.refresh()
       guard isCurrent(identity) else { return }
 
-      if case .ready(let lesson) = fresh {
+      if case .ready(let lesson) = lessonResource.value {
         self.state?.applyPictures(from: lesson.steps)
       }
 
