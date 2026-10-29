@@ -142,7 +142,8 @@ struct LogbookScreen: View {
   }
 }
 
-/// One step at a time, as main tells it; a swipe or Continue turns the page.
+/// One step at a time, as main tells it; a swipe or Continue turns the page. Two panes have room
+/// for the whole story at once.
 private struct LogbookSteps: View {
   @Environment(\.accessibilityReduceMotion) private var reduceMotion
   @Environment(AppRouter.self) private var router
@@ -155,23 +156,42 @@ private struct LogbookSteps: View {
   var body: some View {
     let steps = recap.steps
 
-    TabView(selection: $current) {
-      ForEach(steps, id: \.self) { step in
-        List {
+    PaneSplit {
+      List {
+        page(.week)
+      }
+    } secondary: {
+      List {
+        ForEach(steps.filter { $0 != .week }, id: \.self) { step in
           page(step)
         }
-        .tag(step)
+
+        Section {
+          letsGo
+            .controlSize(.large)
+        }
+        .listRowBackground(Color.clear)
+        .listRowInsets(EdgeInsets())
       }
-    }
-    .tabViewStyle(.page(indexDisplayMode: steps.count > 1 ? .always : .never))
-    .indexViewStyle(.page(backgroundDisplayMode: .always))
-    .background(Color(.systemGroupedBackground))
-    .safeAreaBar(edge: .bottom) {
-      action(steps)
-        .controlSize(.large)
-        .scenePadding(.horizontal)
-        .padding(.vertical, 10)
-        .keepsOffFold()
+    } single: {
+      TabView(selection: $current) {
+        ForEach(steps, id: \.self) { step in
+          List {
+            page(step)
+          }
+          .tag(step)
+        }
+      }
+      .tabViewStyle(.page(indexDisplayMode: steps.count > 1 ? .always : .never))
+      .indexViewStyle(.page(backgroundDisplayMode: .always))
+      .background(Color(.systemGroupedBackground))
+      .safeAreaBar(edge: .bottom) {
+        action(steps)
+          .controlSize(.large)
+          .scenePadding(.horizontal)
+          .padding(.vertical, 10)
+          .keepsOffFold()
+      }
     }
     .onChange(of: current) {
       focusedStep = current
@@ -193,14 +213,18 @@ private struct LogbookSteps: View {
       }
       .buttonStyle(.mainAction)
     } else {
-      Button {
-        router.showRoot(of: .today)
-      } label: {
-        Text("Let's go", tableName: "Session", comment: "Closes the recap and opens Today")
-          .frame(maxWidth: .infinity)
-      }
-      .buttonStyle(.mainAction)
+      letsGo
     }
+  }
+
+  private var letsGo: some View {
+    Button {
+      router.showRoot(of: .today)
+    } label: {
+      Text("Let's go", tableName: "Session", comment: "Closes the recap and opens Today")
+        .frame(maxWidth: .infinity)
+    }
+    .buttonStyle(.mainAction)
   }
 
   @ViewBuilder
