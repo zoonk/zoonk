@@ -1,6 +1,6 @@
 import { once } from "@zoonk/utils/once";
 import { type SelectedCoverage } from "../_utils/selected-summary-contract";
-import { MAX_DAILY_MINUTES } from "../daily-minutes";
+import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../daily-minutes";
 import { type BuildPlanInput, type BuiltPlan, buildPlan } from "./build-plan";
 import {
   type StudyScheduleAt,
@@ -10,6 +10,7 @@ import {
 } from "./daily-time-plans";
 import { deepensMostAsked, hasEveryTopic } from "./feasibility-topics";
 import { findFittingDate } from "./fitting-date";
+import { getFittingFloor } from "./fitting-floor";
 import { fromIsoDate } from "./plan-calendar";
 import { type ExamSubjectShare, getSkillValue } from "./selected-coverage";
 import { getSelectedCoverage } from "./selected-plan-summary";
@@ -106,8 +107,19 @@ export function getPlanFeasibility({
     () => deadline !== null && (fits || (coverageAt(input.goal.dailyMinutes)?.fits ?? false)),
   );
 
+  const fittingFloor = once(() =>
+    getFittingFloor({
+      built: plannedAt()(MIN_DAILY_MINUTES),
+      examSubjects,
+      input,
+      studyScheduleAt,
+    }),
+  );
+
   const recommendedMinutes = once(() =>
-    deadline ? findFittingMinutes((minutes) => coverageAt(minutes)?.fits ?? false) : null,
+    deadline
+      ? findFittingMinutes((minutes) => coverageAt(minutes)?.fits ?? false, fittingFloor())
+      : null,
   );
 
   const alternative = once(() => (deadline ? null : getAlternative({ built: planned, input })));

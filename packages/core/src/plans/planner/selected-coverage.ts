@@ -175,6 +175,49 @@ function listShortLessons({
     .toSorted((a, b) => a.lessonId.localeCompare(b.lessonId));
 }
 
+/** Each lesson counts once, however many skills share it. */
+export function getWholeShortfall({
+  built,
+  deadline,
+  examSubjects,
+  input,
+  requirement,
+  settled,
+}: {
+  built: BuiltPlan;
+  deadline: string;
+  examSubjects: readonly ExamSubjectShare[] | null;
+  input: BuildPlanInput;
+  requirement: ReadonlyMap<string, SkillRequirement>;
+  settled: ReadonlySet<string>;
+}): number {
+  const raw = new Map([...requirement.values()].flatMap((skill) => [...skill.lessons]));
+  const lessons = listCoveredLessons({ built, deadline, raw });
+  const standIns = listCoveredStandIns({ built, deadline });
+
+  const measured = listScope({ examSubjects, input }).skills.flatMap(({ skillId }) => {
+    const required = requirement.get(skillId);
+    return required && !settled.has(skillId) ? [{ required, skillId }] : [];
+  });
+
+  const lessonsLeft = new Map(
+    measured.flatMap(({ required }) =>
+      [...required.lessons].map(
+        ([lessonId, minutes]) =>
+          [lessonId, Math.max(0, minutes - (lessons.get(lessonId) ?? 0))] as const,
+      ),
+    ),
+  );
+
+  const standInsLeft = measured.reduce(
+    (sum, { required, skillId }) =>
+      sum + Math.max(0, required.standIn - (standIns.get(skillId) ?? 0)),
+    0,
+  );
+
+  return [...lessonsLeft.values()].reduce((sum, minutes) => sum + minutes, standInsLeft);
+}
+
 export function getSkillValue(skill: SelectedSkill): number {
   if (skill.state === "settled") {
     return 1;

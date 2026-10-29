@@ -204,4 +204,28 @@ describe(findFittingMinutes, () => {
   it("finds nothing when not even a whole day fits", () => {
     expect(findFittingMinutes(() => false)).toBeNull();
   });
+
+  it("tries no time under the floor, and finds what trying them all finds", () => {
+    const tried: number[] = [];
+
+    const fits = (minutes: number) => {
+      tried.push(minutes);
+      return minutes === 95 || minutes >= 135;
+    };
+
+    expect(findFittingMinutes(fits, 80)).toBe(95);
+    expect(tried).toStrictEqual([80, 85, 90, 95]);
+  });
+
+  it("halves past 4 hours as it would without the floor, trying nothing under it", () => {
+    const tried: number[] = [];
+
+    const fits = (minutes: number) => {
+      tried.push(minutes);
+      return fitsAroundAMock(minutes);
+    };
+
+    expect(findFittingMinutes(fits, 290)).toBe(findFittingMinutes(fitsAroundAMock));
+    expect(tried.every((minutes) => minutes >= 290)).toBe(true);
+  });
 });

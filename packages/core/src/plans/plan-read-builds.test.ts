@@ -10,8 +10,21 @@ import { getPlanBasesAdvice } from "./get-bases-advice";
 import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
 import { type buildPlan } from "./planner/build-plan";
+import { type getFittingFloor } from "./planner/fitting-floor";
 
 const builds = vi.hoisted(() => ({ depth: 0, laidOut: 0 }));
+
+/** With the floor off, the search tries every time from the least, as it did before it had one. */
+const floor = vi.hoisted(() => ({ off: false }));
+
+vi.mock("./planner/fitting-floor", async (importOriginal) => {
+  const actual = await importOriginal<{ getFittingFloor: typeof getFittingFloor }>();
+
+  return {
+    getFittingFloor: (...args: Parameters<typeof getFittingFloor>) =>
+      floor.off ? 0 : actual.getFittingFloor(...args),
+  };
+});
 
 vi.mock("./planner/build-plan", async (importOriginal) => {
   const actual = await importOriginal<{ buildPlan: typeof buildPlan }>();
@@ -85,6 +98,31 @@ describe("plans laid out per read", () => {
 
     const advice = await countBuilds(() => getPlanBasesAdvice(user.goalId));
     expect(advice.result.status).toBe("ready");
+  }, 120_000);
+
+  // It plans Ana's exam at each daily time twice over, past the default timeout on CI's slower runners.
+  it("finds the time that covers Ana's exam without planning every time under it, and finds the same one", async () => {
+    const copyKey = randomUUID();
+
+    const user = await seedV2PersonaCopy({
+      copyKey,
+      email: `floor-${copyKey}@zoonk.test`,
+      persona: "exam",
+    });
+
+    mockSession(user.userId);
+
+    const find = () =>
+      findPlanTimeToCover({ goalId: user.goalId, input: { studyDays: [1, 2, 3, 4, 5] } });
+
+    floor.off = true;
+    const everyTime = await countBuilds(find);
+    floor.off = false;
+    const fromFloor = await countBuilds(find);
+
+    expect(everyTime.result).toMatchObject({ time: { recommendedMinutes: expect.any(Number) } });
+    expect(fromFloor.result).toStrictEqual(everyTime.result);
+    expect(fromFloor.builds).toBeLessThan(everyTime.builds / 2);
   }, 120_000);
 
   it("finds no time for a date that has passed without searching every daily time", async () => {

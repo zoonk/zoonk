@@ -81,21 +81,27 @@ function narrowFit({
 /**
  * Tries every time up to `EVERY_TIME_UP_TO` in order, since more time can hold less (a weekly mock
  * that comes with it takes a study day); past that it halves toward a time that fits. Null when not
- * even a whole day fits.
+ * even a whole day fits. No time under `floor` can fit, so none is tried: the answer stays the one
+ * trying them all would find.
  */
-export function findFittingMinutes(fits: (dailyMinutes: number) => boolean): number | null {
+export function findFittingMinutes(
+  fits: (dailyMinutes: number) => boolean,
+  floor = 0,
+): number | null {
+  const fitsFromFloor = (minutes: number) => minutes >= floor && fits(minutes);
+
   const times = Array.from(
     { length: EVERY_TIME_UP_TO / MINUTES_STEP },
     (_, index) => (index + 1) * MINUTES_STEP,
   );
 
-  const found = times.find((minutes) => fits(minutes));
+  const found = times.find((minutes) => fitsFromFloor(minutes));
 
   if (found !== undefined) {
     return found;
   }
 
-  return fits(MAX_DAILY_MINUTES)
-    ? narrowFit({ fits, fitting: MAX_DAILY_MINUTES, short: EVERY_TIME_UP_TO })
+  return fitsFromFloor(MAX_DAILY_MINUTES)
+    ? narrowFit({ fits: fitsFromFloor, fitting: MAX_DAILY_MINUTES, short: EVERY_TIME_UP_TO })
     : null;
 }

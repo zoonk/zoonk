@@ -10,7 +10,7 @@ import { PHASE_WORK_KINDS } from "./plan-item-rules";
 import { type ExamSubjectShare, getCoverage } from "./selected-coverage";
 import { listSettled, readRequirement, sumRequirement } from "./selected-requirement";
 
-function getDeadline({ built, input }: { built: BuiltPlan; input: BuildPlanInput }) {
+export function getCoverageDeadline({ built, input }: { built: BuiltPlan; input: BuildPlanInput }) {
   const { targetDate } = input.goal;
 
   if (!targetDate) {
@@ -30,7 +30,7 @@ export function getSelectedCoverage({
   examSubjects: readonly ExamSubjectShare[] | null;
   input: BuildPlanInput;
 }): SelectedCoverage | null {
-  const deadline = getDeadline({ built, input });
+  const deadline = getCoverageDeadline({ built, input });
   const { targetDate } = input.goal;
 
   return deadline && targetDate
@@ -159,7 +159,7 @@ export function summarizeSelectedPlan({
   examSubjects: readonly ExamSubjectShare[] | null;
   input: BuildPlanInput;
 }): SelectedSummary {
-  const deadline = getDeadline({ built, input });
+  const deadline = getCoverageDeadline({ built, input });
   const requirementBySkill = readRequirement({ built, input });
   const settled = listSettled(input);
   const requirement = sumRequirement({ built, requirement: requirementBySkill, settled });
