@@ -2,20 +2,34 @@ package com.zoonk.android.feature.onboarding
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
@@ -26,6 +40,8 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.StepState
 import com.zoonk.android.data.StepTimes
+import com.zoonk.android.feature.onboarding.setup.PlacementStep
+import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
@@ -43,6 +59,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
+import java.time.LocalDate
 
 /**
  * Review screenshots of the start flow, written only on demand:
@@ -85,6 +102,27 @@ class OnboardingScreenshots {
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tablet() = capture("tablet")
+
+    /** Questions still being written wait for the learner's Start, so it's tapped first. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun placementWaiting() {
+        var run by mutableStateOf(
+            GenerationRun(
+                status = GenerationRun.Status.Following,
+                steps = mapOf("understandGoal" to StepState.Completed, "buildSkillGraph" to StepState.Started),
+            ),
+        )
+        val api = FakeOnboardingApi().apply { placement = placementOf(status = "preparing", next = null) }
+        compose.setContent { ZoonkTheme { Surface { Placement(api, run) } } }
+        compose.onNodeWithText("Start").performClick()
+        compose.waitForIdle()
+        write("placement-waiting-phone-screen", compose.onRoot().captureToImage().asAndroidBitmap())
+
+        run = GenerationRun(status = GenerationRun.Status.Failed, failure = GenerationFailure.Generation)
+        compose.waitForIdle()
+        write("placement-waiting-failed-phone-screen", compose.onRoot().captureToImage().asAndroidBitmap())
+    }
 
     private fun capture(
         name: String,
@@ -181,6 +219,69 @@ class OnboardingScreenshots {
                         AppRoute.StartGoal(draftId = DRAFT_ID),
                     )
                 },
+                "placement-intro" to {
+                    Placement(FakeOnboardingApi().apply { mockOptions = mockOptionsOf(access = "plusRequired") })
+                },
+                "placement-question" to {
+                    Placement(FakeOnboardingApi().apply { placement = placementOf(answered = 2, started = true, spent = 0.35) })
+                },
+                "placement-typed" to {
+                    Placement(FakeOnboardingApi().apply { placement = placementOf(next = typedQuestion(), started = true, spent = 0.6) })
+                },
+                "placement-done" to {
+                    Placement(
+                        FakeOnboardingApi().apply {
+                            placement = placementOf(status = "done", next = null, answered = 9, started = true, dayBudgetUsed = true)
+                        },
+                    )
+                },
+                "reveal" to {
+                    Reveal(
+                        FakeOnboardingApi().apply {
+                            plan =
+                                planOf(feasibility = feasibilityOf(coreFits = true, deepensMostAsked = true), numbers = numbersOf(1_380.0))
+                            syllabus =
+                                syllabusOf(
+                                    listOf(
+                                        subjectOf("Civil procedure", percent = 35),
+                                        subjectOf("Contracts", percent = 25),
+                                        subjectOf("Criminal law", percent = 25),
+                                        subjectOf("Ethics", percent = 15, assumed = true),
+                                    ),
+                                )
+                        },
+                    )
+                },
+                "reveal-chapters" to {
+                    Reveal(
+                        FakeOnboardingApi().apply {
+                            val chapters = (1..7).joinToString(",", "[", "]") { chapterOf("Chapter $it") }
+                            plan =
+                                planOf(
+                                    targetDate = null,
+                                    endDate = LocalDate.now().plusDays(90),
+                                    phases =
+                                        listOf(
+                                            phaseOf(0, "learn", "current", LocalDate.now(), LocalDate.now().plusDays(90), chapters),
+                                        ),
+                                )
+                        },
+                        isGuest = true,
+                    )
+                },
+                "reveal-building" to {
+                    Reveal(
+                        FakeOnboardingApi().apply { plan = planOf(ready = false) },
+                        run =
+                            GenerationRun(
+                                status = GenerationRun.Status.Following,
+                                steps = mapOf("understandGoal" to StepState.Completed, "buildSkillGraph" to StepState.Completed),
+                            ),
+                    )
+                },
+                "reveal-reading" to {
+                    Reveal(FakeOnboardingApi().apply { plan = planOf(notice = "reading") })
+                },
             )
 
         @Composable
@@ -194,6 +295,57 @@ class OnboardingScreenshots {
                     OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
                 }
             StartGoalScreen(route, store, sessionKey = "local-a", canAttach = true, rememberAppNavigator())
+        }
+
+        @Composable
+        private fun Placement(
+            api: FakeOnboardingApi,
+            run: GenerationRun = GenerationRun(),
+        ) {
+            val store = rememberStore(api)
+            SetupColumn {
+                PlacementStep(GOAL_ID, "bar exam", areaCount = 4, run, onRetryRun = {}, store, rememberAppNavigator(), onDone = {})
+            }
+        }
+
+        @Composable
+        private fun Reveal(
+            api: FakeOnboardingApi,
+            isGuest: Boolean = false,
+            run: GenerationRun = GenerationRun(status = GenerationRun.Status.Following),
+        ) {
+            val store = rememberStore(api)
+            SetupColumn {
+                PlanRevealStep(examGoal(), isGuest, libraryCourse = null, run, onRetryRun = {}, store, rememberAppNavigator())
+            }
+        }
+
+        @Composable
+        private fun rememberStore(api: FakeOnboardingApi) =
+            remember {
+                val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+                OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
+            }
+
+        /** The setup's column: at least the window's height, so actions sit at its bottom on phones. */
+        @Composable
+        private fun SetupColumn(content: @Composable ColumnScope.() -> Unit) {
+            BoxWithConstraints(Modifier.fillMaxSize()) {
+                val height = maxHeight
+                Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+                    Column(
+                        modifier =
+                            Modifier
+                                .widthIn(
+                                    max = 640.dp,
+                                ).fillMaxWidth()
+                                .heightIn(min = height)
+                                .padding(horizontal = 24.dp, vertical = 16.dp),
+                        verticalArrangement = Arrangement.spacedBy(24.dp),
+                        content = content,
+                    )
+                }
+            }
         }
     }
 }
