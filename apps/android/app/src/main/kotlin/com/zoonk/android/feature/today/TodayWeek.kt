@@ -12,6 +12,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,6 +26,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.navigation.AppRoute
@@ -76,6 +78,7 @@ internal fun TodayWeek(
     }
 }
 
+/** The week's time is a big number where there's room; on a phone it joins the days line. */
 @Composable
 private fun WeekHeader(day: DayView) {
     val days = day.week.days
@@ -83,6 +86,19 @@ private fun WeekHeader(day: DayView) {
     val studied = days.count { it.studied }
     val locale = currentLocale()
     val time = day.week.time
+    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val studiedText = formatMinutes(time.studiedMinutes.toInt(), locale)
+    val planned = formatMinutes(time.targetMinutes.roundToInt(), locale)
+    val timeDescription = stringResource(R.string.today_week_time, studiedText, planned)
+    val hasTime = time.targetMinutes > 0
+    val daysText =
+        if (studyDays >
+            0
+        ) {
+            pluralStringResource(R.plurals.today_week_days, studyDays, formatNumber(studied.toDouble(), locale), studyDays)
+        } else {
+            null
+        }
 
     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(Modifier.weight(1f)) {
@@ -91,20 +107,26 @@ private fun WeekHeader(day: DayView) {
                 modifier = Modifier.semantics { heading() },
                 style = MaterialTheme.typography.titleMedium,
             )
-            if (studyDays > 0) {
+            val line = listOfNotNull(daysText, if (hasTime && !wide) "$studiedText / $planned" else null).joinToString(" · ")
+            if (line.isNotEmpty()) {
                 Text(
-                    text = pluralStringResource(R.plurals.today_week_days, studyDays, formatNumber(studied.toDouble(), locale), studyDays),
+                    text = line,
+                    modifier =
+                        if (hasTime &&
+                            !wide
+                        ) {
+                            Modifier.semantics { contentDescription = listOfNotNull(daysText, timeDescription).joinToString(", ") }
+                        } else {
+                            Modifier
+                        },
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodySmall.withTabularFigures(),
                 )
             }
         }
 
-        if (time.targetMinutes > 0) {
-            val studiedText = formatMinutes(time.studiedMinutes.toInt(), locale)
-            val planned = formatMinutes(time.targetMinutes.roundToInt(), locale)
-            val description = stringResource(R.string.today_week_time, studiedText, planned)
-            Row(Modifier.clearAndSetSemantics { contentDescription = description }, verticalAlignment = Alignment.Bottom) {
+        if (hasTime && wide) {
+            Row(Modifier.clearAndSetSemantics { contentDescription = timeDescription }, verticalAlignment = Alignment.Bottom) {
                 Text(studiedText, style = MaterialTheme.typography.titleLarge.withTabularFigures())
                 Text(
                     text = " / $planned",
