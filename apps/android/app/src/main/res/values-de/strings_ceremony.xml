@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "ceremony_belt": "3e029b05485d3e9479b736d3b77e9c402ffbe552b2ec59ce8f9e367e92357d44",
+  "ceremony_belt_detail": "20b94d9536ebb2e61992750b6057e619b44e12d95875ea8d83d262861d38bb7c",
+  "ceremony_belt_reached": "c28eb81977affb83989fac24e90a5c4065c62a411b25ed100a96ce4c1e2ec6c9",
+  "ceremony_continue": "5fe825fff6e018e07f0febd0aa019217e3fd8b0115b5eb1c2bbd79c3892d5686",
+  "ceremony_glasses_aviator": "bd74dcbe866d4741e57637fa9e4fb84b08d8273654710612e5185bec86284901",
+  "ceremony_glasses_aviator_detail": "be4cd628efbc1dc6458cac16d158b07027081cd610a70e0fd71506073597f5f1",
+  "ceremony_glasses_cat_eye": "48a6a484d648a995a9ec4c3f4adf3af83062d94fece4117cfdb9f53d1c5ca50c",
+  "ceremony_glasses_cat_eye_detail": "f690b0ff2a7e789614cb0096ceb70878072073f87e8f264f83aa1d165c566b69",
+  "ceremony_glasses_monocle": "8ffd37d072592f81981040e2475b57d3139e2f8535ced05ef4396218d0da3d78",
+  "ceremony_glasses_monocle_detail": "92ae61da5d77bb51a12d94aa716ab0c6b894a536cd82a3c33bf1fb1cf55a552f",
+  "ceremony_glasses_new": "2f883ca521abd2e7170114486c7de96450b6ad620c9f46db0a880951ca2bc6ab",
+  "ceremony_glasses_new_detail": "497e57d5818f5d40f3ea27c354ea9997f1f8330dd5c7c4a34f6ce75e77896795",
+  "ceremony_glasses_retro": "c4dad7efbb8a4fbc2162a28206008d364a0a6d3554aa2650e1f5e4de6c8de3c6",
+  "ceremony_glasses_retro_detail": "98a947a20dcf944487b7711b3ec416405543e407c4a5263ab60a44e73ea2a0fd",
+  "ceremony_glasses_star": "5ad7b36daefff2aec1ced1da52a6188826d58298bf7d6f87af4af64bc0a16580",
+  "ceremony_glasses_star_detail": "11b3d4826ce3a40f812655e0ee16348e75be4a078e84d5f3eb7b240569284a6b",
+  "ceremony_grew_up": "3ba3011cbe0d8f54d09478501277a96dd6fff74afb8050374a1b4e75e428ef3f",
+  "ceremony_new_belt": "2051891408e78c7135ff44126b738052f3a232ca1222d5a3bb7d220a8f4a014b",
+  "ceremony_not_now": "36e3e338586955439c201ed5e467b0f85d28250bb778c7d36d9795d297f8437c",
+  "ceremony_stage_adult": "a17697b36387fede52fd041e837db32ea85666e6d80583d78dd3b3da9e6192a5",
+  "ceremony_stage_young": "1b49899e48df2197b0c5acec5e57d832d523c20542c4e69a2c9705569fbc485e",
+  "ceremony_wear": "b4b80d3b20c7f04ccce440f0995430064fc845ee3bf0a420dd463de2563957b3"
+}
+-->
+<resources>
+    <!-- %1$s is the belt's name, such as Yellow belt. -->
+    <string name="ceremony_belt">%1$s!</string>
+    <string name="ceremony_new_belt">Ein neuer Gürtel!</string>
+    <!-- %1$s is a formatted amount of Brain Power, such as 1,000. -->
+    <string name="ceremony_belt_reached">Du hast durch Lernen %1$s Brain Power erreicht.</string>
+    <string name="ceremony_belt_detail">Du hast ihn dir mit deiner Brain Power verdient.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_grew_up">%1$s ist groß geworden!</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_stage_young">%1$s ist jetzt jung und wächst mit deiner Brain Power weiter.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_stage_adult">%1$s ist jetzt erwachsen und dank deiner Brain Power ausgewachsen.</string>
+    <string name="ceremony_glasses_star">Sternbrille!</string>
+    <string name="ceremony_glasses_star_detail">Für den Sieg bei deiner ersten Phasen-Herausforderung.</string>
+    <string name="ceremony_glasses_aviator">Pilotenbrille!</string>
+    <string name="ceremony_glasses_aviator_detail">Für den Abschluss deiner ersten wöchentlichen Herausforderung.</string>
+    <string name="ceremony_glasses_cat_eye">Katzenaugenbrille!</string>
+    <string name="ceremony_glasses_cat_eye_detail">Für den Abschluss aller Missionen an 7 verschiedenen Tagen.</string>
+    <string name="ceremony_glasses_retro">Ret Brille!</string>
+    <string name="ceremony_glasses_retro_detail">Für den Abschluss von 50 Wiederholungen.</string>
+    <string name="ceremony_glasses_monocle">Ein Monokel!</string>
+    <string name="ceremony_glasses_monocle_detail">Für den Sieg bei der letzten Herausforderung.</string>
+    <string name="ceremony_glasses_new">Neue Brille!</string>
+    <string name="ceremony_glasses_new_detail">Sie gehört zu deinem Kumpel.</string>
+    <string name="ceremony_continue">Weiter</string>
+    <string name="ceremony_wear">Aufsetzen</string>
+    <string name="ceremony_not_now">Nicht jetzt</string>
+</resources>

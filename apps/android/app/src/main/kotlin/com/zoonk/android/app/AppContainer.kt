@@ -36,6 +36,7 @@ import com.zoonk.android.feature.buddy.EarlierQuestionsStore
 import com.zoonk.android.feature.buddy.LiveBuddyApi
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.LiveCatalogApi
+import com.zoonk.android.feature.ceremonies.MilestoneViews
 import com.zoonk.android.feature.checkpoint.CheckpointStore
 import com.zoonk.android.feature.checkpoint.LiveCheckpointApi
 import com.zoonk.android.feature.conversation.ConversationStore
@@ -223,6 +224,7 @@ class AppContainer private constructor(
             timeZone = timeZone,
         )
     val goalSwitch = GoalSwitch(learningProfile::setActiveGoal)
+    val milestoneViews = MilestoneViews(api, cache)
 
     // Live calls and speaking (L9).
     val conversations = ConversationStore(LiveConversationApi(api), cache)

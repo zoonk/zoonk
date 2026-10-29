@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- %1$s is the belt's name, such as Yellow belt. -->
+    <string name="ceremony_belt">%1$s!</string>
+    <string name="ceremony_new_belt">A new belt!</string>
+    <!-- %1$s is a formatted amount of Brain Power, such as 1,000. -->
+    <string name="ceremony_belt_reached">You reached %1$s Brain Power by learning.</string>
+    <string name="ceremony_belt_detail">Your Brain Power earned it.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_grew_up">%1$s grew up!</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_stage_young">%1$s is Young now, and keeps growing with your Brain Power.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="ceremony_stage_adult">%1$s is an Adult now, fully grown with your Brain Power.</string>
+    <string name="ceremony_glasses_star">Star glasses!</string>
+    <string name="ceremony_glasses_star_detail">For winning your first phase challenge.</string>
+    <string name="ceremony_glasses_aviator">Aviator glasses!</string>
+    <string name="ceremony_glasses_aviator_detail">For finishing your first weekly challenge.</string>
+    <string name="ceremony_glasses_cat_eye">Cat-eye glasses!</string>
+    <string name="ceremony_glasses_cat_eye_detail">For finishing every mission on 7 different days.</string>
+    <string name="ceremony_glasses_retro">Retro glasses!</string>
+    <string name="ceremony_glasses_retro_detail">For finishing 50 reviews.</string>
+    <string name="ceremony_glasses_monocle">A monocle!</string>
+    <string name="ceremony_glasses_monocle_detail">For winning the final challenge.</string>
+    <string name="ceremony_glasses_new">New glasses!</string>
+    <string name="ceremony_glasses_new_detail">They come with your buddy.</string>
+    <string name="ceremony_continue">Continue</string>
+    <string name="ceremony_wear">Wear them</string>
+    <string name="ceremony_not_now">Not now</string>
+</resources>
