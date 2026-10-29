@@ -37,20 +37,25 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.navigation.LearnerAccess
 import kotlinx.coroutines.launch
 
-/** The conversation about [scope], kept by the screen showing it so a draft or an answer survives closing it. */
+/**
+ * The conversation about [scope], kept by the screen showing it so a draft or an answer survives
+ * closing it; each account gets its own.
+ */
 @Composable
 internal fun rememberTutor(
     scope: TutorScope,
     app: AppContainer,
 ): TutorViewModel {
-    val vm = viewModel(key = "tutor:${scope.thread}") { TutorViewModel(scope, app.tutor) }
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    val account = (session as? SessionState.SignedIn)?.session?.localId
+    val vm = viewModel(key = "tutor:${scope.thread}:$account") { TutorViewModel(scope, app.tutor) }
     SideEffect { vm.scope = scope }
     return vm
 }
@@ -58,9 +63,8 @@ internal fun rememberTutor(
 /** Visitors and guests see the sign-up prompt: the tutor isn't part of a guest's allowance. */
 @Composable
 internal fun rememberCanAsk(app: AppContainer): Boolean {
-    val access by app.learnerAccess.collectAsStateWithLifecycle()
-    val summary by app.learnerSummary.summary.collectShown()
-    return access != LearnerAccess.Visitor && access != LearnerAccess.SessionEnded && summary.value?.identity?.isAnonymous != true
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    return (session as? SessionState.SignedIn)?.isGuest == false
 }
 
 @Composable

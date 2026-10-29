@@ -16,6 +16,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
@@ -46,7 +47,7 @@ class TutorViewModelTest {
     @After
     fun reset() = Dispatchers.resetMain()
 
-    private suspend fun conversation(): TutorViewModel {
+    private suspend fun conversation(scope: TutorScope = this.scope): TutorViewModel {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
         return TutorViewModel(scope, TutorStore(api, cache, session)).also { it.thread.load() }
     }
@@ -239,6 +240,111 @@ class TutorViewModelTest {
                 vm.thread.state.value.value!!
                     .hasMore,
             )
+        }
+
+    @Test
+    fun anotherAccountDoesntResendTheFirstOnesQuestion() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.refusal = ApiException(ApiError.Network)
+            vm.draft.setTextAndPlaceCursorAtEnd("Ana's question")
+            vm.send()
+            advanceUntilIdle()
+
+            session.session = bia
+            api.refusal = null
+            vm.thread.load()
+            vm.draft.setTextAndPlaceCursorAtEnd("Bia's question")
+            vm.send()
+            advanceUntilIdle()
+
+            assertEquals("Bia's question", api.asked.last().question)
+            assertEquals(
+                2,
+                api.asked
+                    .map { it.requestId }
+                    .distinct()
+                    .size,
+            )
+        }
+
+    @Test
+    fun aReadInFlightDoesntDropTheNewQuestion() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.gate = kotlinx.coroutines.CompletableDeferred()
+            launch { vm.thread.refresh() }
+            advanceUntilIdle()
+
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            vm.send()
+            advanceUntilIdle()
+            api.gate?.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(listOf("q1"), vm.turns.map { it.id })
+        }
+
+    @Test
+    fun linksCountAsCheckedOnlyOnceTheServersAnswerArrives() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.answers = {
+                flow {
+                    emit(TutorAnswerEvent.Text("See [this](https://example.com)"))
+                    throw ApiException(ApiError.Network)
+                }
+            }
+            api.question = { id -> turn(id, TutorTurn.Status.Pending, null) }
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            vm.send()
+            advanceUntilIdle()
+
+            assertTrue("A partial answer that failed keeps its links shut", "q1" in vm.state.value.streamed)
+
+            api.answers = {
+                flow {
+                    emit(TutorAnswerEvent.Text("See"))
+                    throw ApiException(ApiError.Network)
+                }
+            }
+            api.question = { id -> turn(id, TutorTurn.Status.Completed, "See [this](https://example.com)") }
+            vm.retryAnswer("q1")
+            advanceUntilIdle()
+
+            assertFalse("The server's saved answer has checked links", "q1" in vm.state.value.streamed)
+        }
+
+    @Test
+    fun anExpiredReadBackSignsTheSessionOut() =
+        runTest(dispatcher) {
+            val vm = conversation()
+            api.answers = { flow { throw ApiException(ApiError.Network) } }
+            api.question = { throw ApiException(ApiError.Unauthorized) }
+
+            vm.draft.setTextAndPlaceCursorAtEnd("Why?")
+            vm.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf(ana), session.expired)
+        }
+
+    @Test
+    fun aResentQuestionKeepsTheScopeItWasAskedIn() =
+        runTest(dispatcher) {
+            val unchecked = TutorScope.Item("item", blockId = null, answered = false)
+            val vm = conversation(unchecked)
+            api.refusal = ApiException(ApiError.Network)
+            vm.draft.setTextAndPlaceCursorAtEnd("What is this asking?")
+            vm.send()
+            advanceUntilIdle()
+
+            vm.scope = unchecked.copy(answered = true)
+            api.refusal = null
+            vm.send()
+            advanceUntilIdle()
+
+            assertEquals(listOf(unchecked, unchecked), api.asked.map { it.scope })
         }
 
     @Test

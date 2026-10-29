@@ -3,6 +3,9 @@ package com.zoonk.android.feature.tutor
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.ApiError
@@ -64,7 +67,7 @@ class TutorViewModel internal constructor(
     private val store: TutorStore,
 ) : ViewModel() {
     /** The conversation's latest scope (the question now checked) is what its next question is about. */
-    var scope: TutorScope = scope
+    var scope: TutorScope by mutableStateOf(scope)
         internal set
 
     val thread: Resource<TutorThread> = store.threads[scope.thread]
@@ -109,7 +112,7 @@ class TutorViewModel internal constructor(
         viewModelScope.launch {
             try {
                 val turn = read(id, session) ?: return@launch
-                if (turn.status == TutorTurn.Status.Running) streamAnswer(id, session) else update(id) { turn }
+                if (turn.status == TutorTurn.Status.Running) streamAnswer(id, session) else adopt(turn)
             } finally {
                 checking -= id
             }
@@ -167,7 +170,7 @@ class TutorViewModel internal constructor(
                     return
                 }
             if (sessions.current != session) return
-            update(id) { turn }
+            adopt(turn)
             if (!turn.isInProgress) return
         }
     }
@@ -177,7 +180,9 @@ class TutorViewModel internal constructor(
         suggestion: String?,
     ) {
         val turns = turns ?: return
-        val pending = unresolved ?: PendingAsk(question, suggestion, UUID.randomUUID().toString())
+        val session = sessions.current ?: return
+        val pending =
+            unresolved?.takeIf { it.session == session } ?: PendingAsk(question, suggestion, UUID.randomUUID().toString(), scope, session)
         if (pending.question.isEmpty() || !state.value.canAsk(turns)) return
         unresolved = pending
         mutableState.update { it.copy(asking = true, askFailure = null, unresolvedQuestion = null) }
@@ -185,7 +190,7 @@ class TutorViewModel internal constructor(
         viewModelScope.launch {
             val result =
                 cache.mutate { session ->
-                    api.ask(scope, pending.question, pending.suggestion, pending.requestId, session) to session
+                    api.ask(pending.scope, pending.question, pending.suggestion, pending.requestId, session) to session
                 }
             mutableState.update { it.copy(asking = false) }
 
@@ -194,7 +199,10 @@ class TutorViewModel internal constructor(
                     val (asked, session) = result.value
                     unresolved = null
                     draft.clearText()
-                    thread.update { it.copy(turns = it.turns + asked.turn) }
+                    // Replacing cancels an older read still in flight, which would drop the new question.
+                    thread.state.value.value?.let { page ->
+                        thread.replace(page.copy(turns = page.turns.filterNot { it.id == asked.turn.id } + asked.turn))
+                    }
                     mutableState.update { it.copy(missionMoment = asked.missionMoment) }
                     if (asked.missionMoment != null) cache.invalidate(setOf(DataDomain.UserSession))
                     if (asked.turn.status == TutorTurn.Status.Pending || asked.turn.status == TutorTurn.Status.Failed) {
@@ -301,10 +309,14 @@ class TutorViewModel internal constructor(
             try {
                 api.question(id, session)
             } catch (e: ApiException) {
+                if (e.error == ApiError.Unauthorized) {
+                    sessions.expire(session)
+                    return
+                }
                 null
             }
         if (sessions.current != session) return
-        if (turn != null && turn.status != TutorTurn.Status.Pending) update(id) { turn }
+        if (turn != null && turn.status != TutorTurn.Status.Pending) adopt(turn)
         if (turn == null || turn.status == TutorTurn.Status.Pending || turn.status == TutorTurn.Status.Failed) fail(id, reason)
     }
 
@@ -325,7 +337,13 @@ class TutorViewModel internal constructor(
         reason: TutorFailure,
     ) {
         update(id) { it.copy(status = TutorTurn.Status.Failed) }
-        mutableState.update { it.copy(answerFailures = it.answerFailures + (id to reason), streamed = it.streamed - id) }
+        mutableState.update { it.copy(answerFailures = it.answerFailures + (id to reason)) }
+    }
+
+    /** The server's own copy of a turn: its answer is the saved one, whose links were checked. */
+    private fun adopt(turn: TutorTurn) {
+        update(turn.id) { turn }
+        mutableState.update { it.copy(streamed = it.streamed - turn.id) }
     }
 
     private fun update(
@@ -333,10 +351,13 @@ class TutorViewModel internal constructor(
         change: (TutorTurn) -> TutorTurn,
     ) = thread.update { it.updating(id, change) }
 
+    /** Sent again exactly as it was, by the session that asked it. */
     private class PendingAsk(
         val question: String,
         val suggestion: String?,
         val requestId: String,
+        val scope: TutorScope,
+        val session: AuthenticatedSession,
     )
 }
 

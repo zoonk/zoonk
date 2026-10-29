@@ -68,7 +68,6 @@ internal fun aboutLabel(about: TutorTurn.About): String =
         },
     )
 
-/** What a failed question or answer says. */
 @Composable
 internal fun failureMessage(failure: TutorFailure?): String {
     failure?.helpLimit?.let { return limitMessage(it, LimitSubject.Help) }

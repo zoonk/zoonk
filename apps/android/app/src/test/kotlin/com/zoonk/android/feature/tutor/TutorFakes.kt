@@ -10,6 +10,7 @@ internal class FakeTutorApi : TutorApi {
     class Ask(
         val question: String,
         val requestId: String,
+        val scope: TutorScope,
     )
 
     var thread: TutorThread? = null
@@ -20,6 +21,9 @@ internal class FakeTutorApi : TutorApi {
     var question: (String) -> TutorTurn = { id -> turn(id, TutorTurn.Status.Completed, "") }
     val asked = mutableListOf<Ask>()
 
+    /** Holds the next thread read until it completes. */
+    var gate: kotlinx.coroutines.CompletableDeferred<Unit>? = null
+
     override suspend fun thread(
         key: TutorThreadKey,
         cursor: String?,
@@ -27,7 +31,9 @@ internal class FakeTutorApi : TutorApi {
     ): TutorThread? {
         if (cursor != null) return earlier
         threadReads++
-        return thread
+        val read = thread
+        gate?.await()
+        return read
     }
 
     override suspend fun ask(
@@ -37,7 +43,7 @@ internal class FakeTutorApi : TutorApi {
         requestId: String,
         session: AuthenticatedSession,
     ): AskedQuestion {
-        asked += Ask(question, requestId)
+        asked += Ask(question, requestId, scope)
         refusal?.let { throw it }
         return AskedQuestion(turn("q${asked.size}", TutorTurn.Status.Pending, null, question, scope.about), missionMoment = null)
     }
