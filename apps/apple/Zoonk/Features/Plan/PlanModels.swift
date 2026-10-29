@@ -358,12 +358,21 @@ struct PlanChapter: Decodable, Equatable, Identifiable, Sendable {
   let lessonsTotal: Int
   let nextDate: String?
   let skillId: String?
+  /// Skills placement tested out before their lessons were written, named by the row instead of
+  /// its course.
+  let skills: [String]
   let state: State
   let testedOut: Bool
   let title: String
   let writing: Bool
 
   var id: String { chapterId ?? skillId ?? title }
+
+  var isSkipped: Bool { !skills.isEmpty || testedOut }
+
+  /// Lessons on the way within the weeks the plan writes ahead: the phase says so in a line instead
+  /// of a row.
+  var isWritingAhead: Bool { writing && !far && skills.isEmpty }
 }
 
 struct PlanWeekDay: Decodable, Equatable, Identifiable, Sendable {

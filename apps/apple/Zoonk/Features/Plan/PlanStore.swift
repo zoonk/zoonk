@@ -21,6 +21,14 @@ final class PlanStore {
   @ObservationIgnored private var standings: [String: Resource<GoalStanding>] = [:]
   @ObservationIgnored private var studyNexts: [String: Resource<StudyNext>] = [:]
   @ObservationIgnored private var syllabi: [String: Resource<GoalSyllabus>] = [:]
+  /// What the learner opened on a plan's path, kept above the panes a fold rebuilds.
+  private var phaseDisclosures: [String: [Int: PhaseDisclosure]] = [:]
+
+  struct PhaseDisclosure {
+    /// Nil until the learner opens or closes it: the phase they're in starts open.
+    var isExpanded: Bool?
+    var showsAllChapters = false
+  }
 
   init(
     api: any PlanAPIClient, cache: AppCache, calendar: Calendar = .current,
@@ -51,6 +59,14 @@ final class PlanStore {
 
     plans[goalId] = plan
     return plan
+  }
+
+  func phaseDisclosure(goalId: String, phase: Int) -> PhaseDisclosure {
+    phaseDisclosures[goalId]?[phase] ?? PhaseDisclosure()
+  }
+
+  func setPhaseDisclosure(goalId: String, phase: Int, _ change: (inout PhaseDisclosure) -> Void) {
+    change(&phaseDisclosures[goalId, default: [:]][phase, default: PhaseDisclosure()])
   }
 
   func syllabus(goalId: String) -> Resource<GoalSyllabus> {

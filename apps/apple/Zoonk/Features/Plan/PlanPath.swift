@@ -51,7 +51,6 @@ struct PlanPathRows: View {
       PlanPhaseRow(
         context: context, phase: phase, isOpen: phase.index == open, isLast: phase.index == last
       )
-      .id("\(phase.index)-\(phase.index == open)")
     }
 
     LabeledContent {
@@ -71,19 +70,27 @@ struct PlanPathRows: View {
 }
 
 private struct PlanPhaseRow: View {
-  @State private var isExpanded: Bool
+  @Environment(PlanStore.self) private var store
 
   let context: PlanContext
   let phase: PlanPhase
   let isOpen: Bool
   let isLast: Bool
 
-  init(context: PlanContext, phase: PlanPhase, isOpen: Bool, isLast: Bool) {
-    self.context = context
-    self.phase = phase
-    self.isOpen = isOpen
-    self.isLast = isLast
-    _isExpanded = State(initialValue: isOpen)
+  private var disclosure: PlanStore.PhaseDisclosure {
+    store.phaseDisclosure(goalId: context.goal.id, phase: phase.index)
+  }
+
+  private var isExpanded: Bool { disclosure.isExpanded ?? isOpen }
+
+  private var expansion: Binding<Bool> {
+    Binding {
+      isExpanded
+    } set: { isExpanded in
+      store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
+        $0.isExpanded = isExpanded
+      }
+    }
   }
 
   var body: some View {
@@ -101,11 +108,8 @@ private struct PlanPhaseRow: View {
     } else if phase.chapters.isEmpty && phase.checkpoint == nil {
       header(byPlace: false, next: false)
     } else {
-      DisclosureGroup(isExpanded: $isExpanded) {
-        ForEach(phase.chapters) { chapter in
-          PlanChapterRow(context: context, chapter: chapter)
-        }
-
+      DisclosureGroup(isExpanded: expansion) {
+        chapterRows
         events
       } label: {
         // Open over a chapter of its name, it goes by its place, so the name never shows twice.
@@ -115,12 +119,46 @@ private struct PlanPhaseRow: View {
   }
 
   @ViewBuilder
+  private var chapterRows: some View {
+    let rows = phase.chapters.filter { !$0.isWritingAhead }
+    let window = planChapterWindow(states: rows.map(\.state))
+    let hidden = rows.count - window.count
+
+    let showsAll = disclosure.showsAllChapters
+
+    ForEach(showsAll ? rows : Array(rows[window])) { chapter in
+      PlanChapterRow(context: context, chapter: chapter)
+    }
+
+    if hidden > 0 {
+      Button {
+        store.setPhaseDisclosure(goalId: context.goal.id, phase: phase.index) {
+          $0.showsAllChapters.toggle()
+        }
+      } label: {
+        Label {
+          showsAll
+            ? Text(
+              "Show fewer chapters", tableName: "Plan",
+              comment: "Folds a phase's chapters back to the ones around the next")
+            : Text(
+              "\(hidden) more chapters", tableName: "Plan",
+              comment: "Shows the phase's chapters left out around the next one")
+        } icon: {
+          Image(systemName: showsAll ? "minus" : "plus")
+        }
+      }
+      .foregroundStyle(.secondary)
+    }
+  }
+
+  @ViewBuilder
   private var events: some View {
     if let checkpoint = phase.checkpoint {
       PlanCheckpointRow(checkpoint: checkpoint, today: context.plan.today)
     }
 
-    if phase.chapters.contains(where: { $0.writing && !$0.far }) {
+    if phase.chapters.contains(where: \.isWritingAhead) {
       Text(
         "More lessons for this phase are being written.", tableName: "Plan",
         comment: "Note under a phase whose lessons are still being written"
@@ -342,7 +380,7 @@ private struct PlanChapterRow: View {
 
   private var content: some View {
     LabeledContent {
-      if chapter.lessonsTotal > 0 {
+      if chapter.lessonsTotal > 0, !chapter.writing, !chapter.isSkipped {
         Text(
           "\(chapter.lessonsDone) / \(chapter.lessonsTotal)", tableName: "Plan",
           comment: "Lessons done of a chapter's lessons"
@@ -367,7 +405,13 @@ private struct PlanChapterRow: View {
   }
 
   private var title: Text {
-    chapter.title.isEmpty
+    if !chapter.skills.isEmpty {
+      return Text(
+        "\(chapter.skills.count) skills you already know", tableName: "Plan",
+        comment: "A row of skills placement showed the learner knows")
+    }
+
+    return chapter.title.isEmpty
       ? Text(
         "More lessons", tableName: "Plan",
         comment: "A chapter whose lessons are still being written")
@@ -375,7 +419,7 @@ private struct PlanChapterRow: View {
   }
 
   private var note: Text? {
-    if chapter.testedOut {
+    if chapter.testedOut && chapter.skills.isEmpty {
       return Text(
         "Skipped because you already know it", tableName: "Plan",
         comment: "A chapter the learner tested out of")
@@ -402,7 +446,7 @@ private struct PlanChapterRow: View {
   }
 
   private var mark: StatusMark.Status {
-    if chapter.testedOut {
+    if chapter.isSkipped {
       return .skipped
     }
 
@@ -535,4 +579,13 @@ struct SyllabusSubjectRow: View {
     }
     .accessibilityElement(children: .combine)
   }
+}
+
+/// Mirrors main's `getChapterWindow`: four chapters from the one before the next.
+func planChapterWindow(states: [PlanChapter.State]) -> Range<Int> {
+  let shown = 4
+  let focus = states.firstIndex(of: .current) ?? states.firstIndex { $0 != .done } ?? -1
+  let start = max(0, min(max(0, focus - 1), states.count - shown))
+
+  return start..<min(states.count, start + shown)
 }
