@@ -519,7 +519,6 @@ struct TodayWeekSection: View {
     if !parts.isEmpty {
       Text(verbatim: parts.joined(separator: " · "))
         .monospacedDigit()
-        .lineLimit(1)
         .accessibilityLabel(
           [
             days,
