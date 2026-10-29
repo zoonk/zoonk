@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- %1$s is the number of right answers, drawn large; %2$s is how many were answered. -->
+    <plurals name="moment_score">
+        <item quantity="one">%1$s of %2$s right</item>
+        <item quantity="other">%1$s of %2$s right</item>
+    </plurals>
+    <!-- %1$s is the points earned, drawn large with their plus sign. -->
+    <string name="moment_brain_power">+%1$s Brain Power</string>
+</resources>

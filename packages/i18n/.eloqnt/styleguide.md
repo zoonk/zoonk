@@ -23,6 +23,7 @@ Zoonk helps anyone learn anything, especially people in small towns, under-resou
 - Buddies are learning partners, not pets. Their localized names are proper names.
 - “Known” and “Known before” mean the learner knew something before studying it in Zoonk.
 - In Trickster duels, “broken” counts shield plates broken by right answers; “held” means the shield withstood this attempt.
+- Write a glossary term's abbreviation (such as “BP”) only where the source abbreviates it; “+10 Brain Power” keeps the full name.
 - Keep the brand name “Zoonk” unchanged. Use each locale's glossary consistently across web, lesson player, Apple, and Android catalogs, including inflected forms.
 
 ## Plan language

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "moment_brain_power": "dfa8235c8e1f07cc439c7eaa1d89977b63c1b9b7d133299caca66087183435a0",
+  "moment_score": "868e1ff425790d56c21dee97d6a4d112ec626612db75dbe6a959632bb467b419"
+}
+-->
+<resources>
+    <!-- %1$s is the number of right answers, drawn large; %2$s is how many were answered. -->
+    <plurals name="moment_score">
+        <item quantity="one">%1$s de %2$s correctas</item>
+        <item quantity="many">%1$s de %2$s correctas</item>
+        <item quantity="other">%1$s de %2$s correctas</item>
+    </plurals>
+    <!-- %1$s is the points earned, drawn large with their plus sign. -->
+    <string name="moment_brain_power">+%1$s Poder Mental</string>
+</resources>
