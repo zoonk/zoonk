@@ -114,4 +114,38 @@
     <string name="activities_code_hint_mistake">%1$s:</string>
     <string name="activities_code_pattern_that_works">A pattern that works</string>
     <string name="activities_code_formula_that_works">A formula that works</string>
+
+    <string name="activities_code_badge_query_data">Query the data</string>
+    <!-- The field for a SQL query, and its label. -->
+    <string name="activities_code_your_query">Your query</string>
+    <!-- The row of buttons that type SQL words and the tables' names, for TalkBack. -->
+    <string name="activities_code_sql_words">SQL words, tables and columns</string>
+    <plurals name="activities_code_query_timeout">
+        <item quantity="one">The query took more than %d second and was stopped.</item>
+        <item quantity="other">The query took more than %d seconds and was stopped.</item>
+    </plurals>
+    <!-- A table's state, for TalkBack. -->
+    <string name="activities_code_table_expanded">Expanded</string>
+    <!-- A table's state, for TalkBack. -->
+    <string name="activities_code_table_collapsed">Collapsed</string>
+    <plurals name="activities_code_table_rows">
+        <item quantity="one">%d row</item>
+        <item quantity="other">%d rows</item>
+    </plurals>
+    <!-- A database table's name, for TalkBack, like "Table countries". -->
+    <string name="activities_code_table_named">Table %1$s</string>
+    <!-- A row of the learner's result that the expected result doesn't have, for TalkBack. -->
+    <string name="activities_code_row_extra">not expected</string>
+    <!-- A row of the expected result that the learner's result doesn't have, for TalkBack. -->
+    <string name="activities_code_row_missing">missing from your result</string>
+    <string name="activities_code_no_table">The query ran but didn\'t return a table. Use SELECT to get rows.</string>
+    <string name="activities_code_result_no_rows">Your result has no rows</string>
+    <plurals name="activities_code_your_result_rows">
+        <item quantity="one">Your result: %d row</item>
+        <item quantity="other">Your result: %d rows</item>
+    </plurals>
+    <string name="activities_code_changed_query">You changed the query. Run it again to see the new result.</string>
+    <string name="activities_code_expected_result">Expected result</string>
+    <string name="activities_code_expected_result_in_order">Expected result, in this order</string>
+    <string name="activities_code_query_that_works">A query that works</string>
 </resources>

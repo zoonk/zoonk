@@ -404,5 +404,3 @@ private val LineEditsSaver =
         save = { edits -> edits.flatMapTo(ArrayList()) { (line, text) -> listOf(line.toString(), text) } },
         restore = { saved -> saved.chunked(2).associate { (line, text) -> line.toInt() to text } },
     )
-
-private const val STALE_ALPHA = 0.6f

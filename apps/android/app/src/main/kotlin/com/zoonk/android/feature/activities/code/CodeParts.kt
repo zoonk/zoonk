@@ -191,6 +191,24 @@ internal fun CodeLine(
     }
 }
 
+/** Main's `ActivityCodeListing`: highlighted, numbered and read-only. */
+@Composable
+internal fun CodeListing(
+    code: String,
+    language: CodeLanguage,
+    label: String,
+) {
+    val lines = highlightCode(code, language)
+    val digits = lines.size.toString().length
+    CodeBlock(label) {
+        lines.forEachIndexed { index, tokens ->
+            CodeLine(index + 1, digits, CodeLineTone.Plain) {
+                Text(highlighted(tokens), softWrap = false, style = codeTextStyle())
+            }
+        }
+    }
+}
+
 private data class Highlighting(
     private val language: CodeLanguage,
     private val palette: CodePalette,
@@ -242,6 +260,64 @@ internal fun CodeLineField(
         cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
         decorationBox = { field -> Box(contentAlignment = Alignment.CenterStart) { field() } },
     )
+}
+
+/**
+ * Main's `ActivityCodeEditor`: highlighted code that scrolls sideways instead of wrapping. Enter
+ * starts a new line and Ctrl or Cmd with Enter runs it.
+ */
+@Composable
+internal fun CodeEditor(
+    value: TextFieldValue,
+    onValueChange: (TextFieldValue) -> Unit,
+    language: CodeLanguage,
+    label: String,
+    placeholder: String,
+    focusRequester: FocusRequester,
+    onSubmit: () -> Unit,
+    readOnly: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val colors = MaterialTheme.colorScheme
+    val shape = RoundedCornerShape(12.dp)
+    val style = codeTextStyle().copy(color = colors.onSurface)
+    BoxWithConstraints(
+        modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .background(colors.surface)
+            .border(1.dp, colors.outlineVariant, shape),
+    ) {
+        val inner = maxWidth - EDITOR_PADDING * 2
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            modifier =
+                Modifier
+                    .horizontalScroll(rememberScrollState())
+                    .padding(horizontal = EDITOR_PADDING, vertical = 12.dp)
+                    .widthIn(min = inner)
+                    .heightIn(min = 48.dp)
+                    .focusRequester(focusRequester)
+                    .semantics { contentDescription = label }
+                    .onPreviewKeyEvent { event ->
+                        val submit = event.isEnter() && (event.isCtrlPressed || event.isMetaPressed)
+                        if (submit && event.type == KeyEventType.KeyDown) onSubmit()
+                        submit
+                    },
+            readOnly = readOnly,
+            textStyle = style,
+            keyboardOptions = codeKeyboard,
+            visualTransformation = Highlighting(language, codePalette()),
+            cursorBrush = SolidColor(colors.primary),
+            decorationBox = { field ->
+                Box {
+                    if (value.text.isEmpty()) Text(placeholder, color = colors.onSurfaceVariant, style = style, softWrap = false)
+                    field()
+                }
+            },
+        )
+    }
 }
 
 /** Main's `CodeSnippet`: [before] goes in front of the selection and [after] behind it. */
@@ -377,4 +453,6 @@ internal fun SandboxRunBar(
 
 private val CURRENT_MARK = 3.dp
 internal const val SOFT_ALPHA = 0.12f
+internal const val STALE_ALPHA = 0.6f
+private val EDITOR_PADDING = 16.dp
 private const val EDGE_ALPHA = 0.4f

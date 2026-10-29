@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_code_badge_query_data": "63d3ff1fd61f393ca7ee0d63dcc5d6d74a1aa4c03d82fd9c52387c8d3e352891",
   "activities_code_badge_run": "4765fd41ff3983cab48ddc19818d355f587598f23cfdb705c51de2a1346970a5",
   "activities_code_badge_test_pattern": "70800bc4028f252fa432865153d40e8951dff3e29650c5db23de3c0a61aa6333",
   "activities_code_changed_code": "61974c0977d8cec6f5d939ee74f8fac99c0362d3dd5068ee1a1c153529658be8",
+  "activities_code_changed_query": "cf525f01dbf52199f18b7f1305f053e15893fbc99936399af3cfa03f6ad2913a",
   "activities_code_code": "59f9739696514843d6cc97e2ecbe5bbaaee6e50fc2fafa8e150cb71cd0adfce5",
   "activities_code_error_line": "e9420ebd212be30c6eaad572c5e5ae2d3c770d7bce360aa75d1898a5f9cae5ba",
   "activities_code_examples_pass": "956f37bd22af8463427c17518ec2b22590f7de3266e209e1fab1f31b7f99d830",
   "activities_code_expected": "d8a934d273316c38881808dd848ddd098350ac60a8a56808ee8386d005123d52",
+  "activities_code_expected_result": "812724709de6431cd3831bfe59896ad876a30984aef94d58e761fb03dee4c838",
+  "activities_code_expected_result_in_order": "e2d5abda41c771f9264931b87bd5a94a6774437e36ad870dbbe33cb11027565f",
   "activities_code_formula_that_works": "df8bf341d395ccbc8ec8577fadf1dfd5a383c1e030650412feb8518cccb1a08a",
   "activities_code_hint_mistake": "40560607a4b2dca42c6f218d9fa73a5904eb4481d310d6bca169d29b282e24e4",
   "activities_code_line_yours": "49015406183f6ce66f2eb86c1ba5f905eebc4da8d5b3829953cd0443571dc50d",
   "activities_code_lines_yours": "c04fa0f930871609dc885dab732a822dd0accbed19860547de553da3c22233af",
+  "activities_code_no_table": "7176967d34f0097418c666020f54b40dd79e5f7b6dfcf2973ad8498f9c1942d9",
   "activities_code_not_quite": "47c84dcbe7d3a98187ceab9aae70659edbc6bae64abafadd48dafded665eea4d",
   "activities_code_nothing_printed": "0167a831dc7663e499cff6cff67245c7b40a60b259c679ff7e5ba9e7476051f1",
   "activities_code_pass_count": "035c93235b5718a796b6078d463c86ab990a68d8efee5235df47c26f2d7cc5d3",
   "activities_code_pattern_cant_run": "b41e4c0715a5be504f1b7b377280f3ac2b427fbba343c7420d2a28cf237e2e7a",
   "activities_code_pattern_that_works": "fb9f56a1781edf4d60fba5afed1d45ebf8f1441a0743e1f1c1c8a7d669a48f84",
+  "activities_code_query_that_works": "a7a46ac351bb6607cf0c5175bf009bbb1c60180b94af5c021e110bdb8e1c6e66",
+  "activities_code_query_timeout": "d09908d3783359b6fd9d6fd2fccc802784a0fb07eaa2400ff4a62c1eb54050a4",
+  "activities_code_result_no_rows": "3776be106c9219aae9cd44c28a830c72afa7ff5ff9d18a5c440542366ed86fb5",
+  "activities_code_row_extra": "f99829e45ab14d56659706921766b6df517f4c7e879adf907634666d58616ec8",
+  "activities_code_row_missing": "155fb6809e55f91ebc463aee155641412e0ae24a0d7ce15e376a828e39fc5f4f",
   "activities_code_run": "89d1764a30cfdb1a0fd418c350d071dcda2665765f8560de7e27ac5175514486",
   "activities_code_run_again": "6e1b580294f19af115f16a5adfe8083172f19bc855ee2cd005aca153147838fb",
   "activities_code_run_to_see": "a82978082c389b38155a45e91ee88eccf4a7be8b0df73ef0c371bb2aa241e2dc",
@@ -51,14 +61,21 @@
   "activities_code_snippet_times": "5f38b63f3467070ea288430aff9f2c1c91728f3a20ff1bd233008a4051da4661",
   "activities_code_snippet_word": "a89164731cc6738be95d552748e874d7b88e1500c2475f2666953eedc3d8ad14",
   "activities_code_snippet_zero_or_more": "55c56dca63189281744c4e4b1187092d6cce4f46202c154c61edc47b33a78903",
+  "activities_code_sql_words": "1ec1cf696f03e632b7368b278385da8c56cf3db5016826f7ecc47226c26ce94c",
   "activities_code_start_over": "496fe69a3bfc8b0343c67fae6fd909e6f1d41694779312346ad19f045f7f6b6c",
   "activities_code_stopped_after": "c3af8741acb22f60c6199edafd278d06a3f26db762e648241ccb8fa29b617273",
   "activities_code_symbols": "81f8cc72215ddf4a476eb99ea21d7b268eb1be2a0f3afb60348e3ecacfc3152f",
+  "activities_code_table_collapsed": "655a6b6d24359efedde7bf1ffb89b784f30ae30c2b1fc6d840153867e136b41c",
+  "activities_code_table_expanded": "fd3f1bff0b8b1134ea848f1ac3f844c4c02c3f050dca28beb1ac58264205eec8",
+  "activities_code_table_named": "1a2201cb78183fc0fc21a04e7f75bb7fe707ff25ec390d9f6cc53f35a549ebd3",
+  "activities_code_table_rows": "c57a4a47fb17791b1f465eed0040145e4485070c4c47f998203c959ab390742e",
   "activities_code_too_much_output": "2f7f78d34ca0aa348de07f7ecf4716e173d36368ee04c676476d223618c97dd0",
   "activities_code_your_formula": "2720d8e21acafdd42cf1cf966801514d4e8446afe5cb3fb6867a30da667b0964",
   "activities_code_your_output": "fb3e652322cf44adb360dcae47d2d06b8d8247501ab7b91db6360b7c478baeca",
   "activities_code_your_pattern": "1c8585e24a98b0ec7098aafcd8ea0aba141522c5c3700aafe67f145574f15dcb",
-  "activities_code_your_result": "5d5c52b28a28721e0ca3ed87d06210285f779cbd067933a18876458e69fd39f2"
+  "activities_code_your_query": "4e119bd5412d5d48fa3bfee772d346deb5bf4920ded68beaf0c21c51d365e6c1",
+  "activities_code_your_result": "5d5c52b28a28721e0ca3ed87d06210285f779cbd067933a18876458e69fd39f2",
+  "activities_code_your_result_rows": "6a0775414440fe18c3f7204064b6873c890775affbef0a9589439a73e899e6f2"
 }
 -->
 <resources>
@@ -173,4 +190,37 @@
     <string name="activities_code_hint_mistake">%1$s:</string>
     <string name="activities_code_pattern_that_works">Ein funktionierendes Muster</string>
     <string name="activities_code_formula_that_works">Eine funktionierende Formel</string>
+    <string name="activities_code_badge_query_data">Daten abfragen</string>
+    <!-- The field for a SQL query, and its label. -->
+    <string name="activities_code_your_query">Deine Abfrage</string>
+    <!-- The row of buttons that type SQL words and the tables' names, for TalkBack. -->
+    <string name="activities_code_sql_words">SQL-Begriffe, Tabellen und Spalten</string>
+    <plurals name="activities_code_query_timeout">
+        <item quantity="one">Die Abfrage dauerte länger als %d Sek. und wurde gestoppt.</item>
+        <item quantity="other">Die Abfrage dauerte länger als %d Sek. und wurde gestoppt.</item>
+    </plurals>
+    <!-- A table's state, for TalkBack. -->
+    <string name="activities_code_table_expanded">Ausgeklappt</string>
+    <!-- A table's state, for TalkBack. -->
+    <string name="activities_code_table_collapsed">Eingeklappt</string>
+    <plurals name="activities_code_table_rows">
+        <item quantity="one">%d Zeile</item>
+        <item quantity="other">%d Zeilen</item>
+    </plurals>
+    <!-- A database table's name, for TalkBack, like "Table countries". -->
+    <string name="activities_code_table_named">Tabelle %1$s</string>
+    <!-- A row of the learner's result that the expected result doesn't have, for TalkBack. -->
+    <string name="activities_code_row_extra">nicht erwartet</string>
+    <!-- A row of the expected result that the learner's result doesn't have, for TalkBack. -->
+    <string name="activities_code_row_missing">fehlt in deinem Ergebnis</string>
+    <string name="activities_code_no_table">Die Abfrage wurde ausgeführt, hat aber keine Tabelle zurückgegeben. Verwende SELECT, um Zeilen abzurufen.</string>
+    <string name="activities_code_result_no_rows">Dein Ergebnis enthält keine Zeilen</string>
+    <plurals name="activities_code_your_result_rows">
+        <item quantity="one">Dein Ergebnis: %d Zeile</item>
+        <item quantity="other">Dein Ergebnis: %d Zeilen</item>
+    </plurals>
+    <string name="activities_code_changed_query">Du hast die Abfrage geändert. Führe sie noch einmal aus, um das neue Ergebnis zu sehen.</string>
+    <string name="activities_code_expected_result">Erwartetes Ergebnis</string>
+    <string name="activities_code_expected_result_in_order">Erwartetes Ergebnis in dieser Reihenfolge</string>
+    <string name="activities_code_query_that_works">Eine funktionierende Abfrage</string>
 </resources>
