@@ -1,3 +1,4 @@
+import Charts
 import SwiftUI
 
 struct WeeklyRecap: Decodable, Equatable, Sendable {
@@ -34,8 +35,14 @@ struct WeeklyRecap: Decodable, Equatable, Sendable {
       case solid
     }
 
+    struct Point: Decodable, Equatable, Sendable {
+      let accuracy: Double?
+      let date: String
+    }
+
     let from: Double
     let name: String
+    let points: [Point]
     let reason: Reason
     let rememberedOn: [String]
     let to: Double
@@ -51,11 +58,35 @@ struct WeeklyRecap: Decodable, Equatable, Sendable {
   let week: Week
   let weekEnd: String
   let weekStart: String
+
+  var isQuiet: Bool { !ready || week.daysStudied.isEmpty }
+
+  /// Main's story: the week, its biggest turnaround, what was learned, then next week.
+  var steps: [LogbookStep] {
+    guard !isQuiet else {
+      return [.week]
+    }
+
+    return LogbookStep.allCases.filter { step in
+      switch step {
+      case .week: true
+      case .turnaround: turnaround != nil
+      case .learned: buddyAte.newIdeas + buddyAte.reviews + buddyAte.fixes + badges.count > 0
+      case .next: nextFocus != nil
+      }
+    }
+  }
+}
+
+enum LogbookStep: CaseIterable, Hashable {
+  case week
+  case turnaround
+  case learned
+  case next
 }
 
 struct LogbookScreen: View {
   @Environment(\.dismiss) private var dismiss
-  @Environment(AppRouter.self) private var router
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(SessionStore.self) private var session
   @Environment(StudySessionStore.self) private var store
@@ -66,26 +97,8 @@ struct LogbookScreen: View {
     NavigationStack {
       Group {
         switch recap.state {
-        case .loaded(let value) where value.ready && value.week.minutes > 0:
-          content(value)
         case .loaded(let value):
-          ContentUnavailableView {
-            Label {
-              value.ready
-                ? Text("A quiet week", tableName: "Session", comment: "A week without study")
-                : Text(
-                  "Your first summary comes on Sunday", tableName: "Session",
-                  comment: "No weekly summary yet")
-            } icon: {
-              Image(systemName: "calendar")
-            }
-          } description: {
-            value.ready
-              ? Text("Every week starts fresh.", tableName: "Session", comment: "A quiet week")
-              : Text(
-                "It shows your week in numbers and the skill that grew the most.",
-                tableName: "Session", comment: "What the weekly summary shows")
-          }
+          LogbookSteps(recap: value, learnerName: learnerName)
         case .failed(let error) where error != .unauthorized:
           ContentUnavailableView {
             Label {
@@ -119,72 +132,238 @@ struct LogbookScreen: View {
     }
   }
 
-  private func content(_ recap: WeeklyRecap) -> some View {
-    PaneSplit {
-      List {
-        week(recap)
+  /// A guest has no name of their own: their placeholder would read "What a week, Guest!".
+  private var learnerName: String? {
+    guard learner.summary.value?.identity.isAnonymous != true else {
+      return nil
+    }
+
+    return session.account?.user.name.split(separator: " ").first.map(String.init)
+  }
+}
+
+/// One step at a time, as main tells it; a swipe or Continue turns the page.
+private struct LogbookSteps: View {
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(AppRouter.self) private var router
+  @State private var current = LogbookStep.week
+  @AccessibilityFocusState private var focusedStep: LogbookStep?
+
+  let recap: WeeklyRecap
+  let learnerName: String?
+
+  var body: some View {
+    let steps = recap.steps
+
+    TabView(selection: $current) {
+      ForEach(steps, id: \.self) { step in
+        List {
+          page(step)
+        }
+        .tag(step)
       }
-    } secondary: {
-      List {
-        changes(recap)
+    }
+    .tabViewStyle(.page(indexDisplayMode: steps.count > 1 ? .always : .never))
+    .indexViewStyle(.page(backgroundDisplayMode: .always))
+    .background(Color(.systemGroupedBackground))
+    .safeAreaBar(edge: .bottom) {
+      action(steps)
+        .controlSize(.large)
+        .scenePadding(.horizontal)
+        .padding(.vertical, 10)
+        .keepsOffFold()
+    }
+    .onChange(of: current) {
+      focusedStep = current
+    }
+  }
+
+  @ViewBuilder
+  private func action(_ steps: [LogbookStep]) -> some View {
+    let position = steps.firstIndex(of: current) ?? 0
+
+    if position + 1 < steps.count {
+      Button {
+        withAnimation(reduceMotion ? nil : .default) {
+          current = steps[position + 1]
+        }
+      } label: {
+        Text("Continue", tableName: "Session", comment: "Turns to the recap's next step")
+          .frame(maxWidth: .infinity)
       }
-    } single: {
-      List {
-        week(recap)
-        changes(recap)
+      .buttonStyle(.mainAction)
+    } else {
+      Button {
+        router.showRoot(of: .today)
+      } label: {
+        Text("Let's go", tableName: "Session", comment: "Closes the recap and opens Today")
+          .frame(maxWidth: .infinity)
+      }
+      .buttonStyle(.mainAction)
+    }
+  }
+
+  @ViewBuilder
+  private func page(_ step: LogbookStep) -> some View {
+    switch step {
+    case .week:
+      weekPage
+    case .turnaround:
+      if let turnaround = recap.turnaround {
+        Section {
+          header(
+            .turnaround,
+            eyebrow: Text(
+              "The biggest turnaround", tableName: "Session", comment: "The skill that grew most"),
+            title: Text(turnaround.name),
+            detail: Text(
+              "\(turnaround.from.formatted(.percent.precision(.fractionLength(0)))) → \(turnaround.to.formatted(.percent.precision(.fractionLength(0)))) right answers",
+              tableName: "Session", comment: "A skill's right answers at the week's start and end"
+            )
+            .monospacedDigit())
+        }
+
+        Section {
+          TurnaroundChart(turnaround: turnaround)
+
+          if let reason = reason(turnaround) {
+            reason
+          }
+        }
+      }
+    case .learned:
+      Section {
+        header(
+          .learned,
+          title: Text("What you learned", tableName: "Session", comment: "The week's learning"))
+      }
+
+      Section {
+        learnedRow(
+          .lesson, Text("New ideas", tableName: "Session", comment: "New ideas learned this week"),
+          count: recap.buddyAte.newIdeas)
+        learnedRow(
+          .review, Text("Reviews", tableName: "Session", comment: "Reviews done this week"),
+          count: recap.buddyAte.reviews)
+        learnedRow(
+          .mistakes,
+          Text("Mistakes fixed", tableName: "Session", comment: "Mistakes fixed this week"),
+          count: recap.buddyAte.fixes)
+
+        if !recap.badges.isEmpty {
+          LabeledContent {
+            Text(recap.badges.count, format: .number)
+          } label: {
+            Label {
+              Text("Trap hunter badges", tableName: "Session", comment: "Badges earned this week")
+            } icon: {
+              Image(systemName: "rosette")
+                .foregroundStyle(.secondary)
+            }
+          }
+        }
+      }
+    case .next:
+      if let next = recap.nextFocus {
+        Section {
+          header(
+            .next,
+            eyebrow: Text("Next week", tableName: "Session", comment: "The plan's next week"),
+            title: Text(next.title))
+        }
       }
     }
   }
 
   @ViewBuilder
-  private func week(_ recap: WeeklyRecap) -> some View {
+  private var weekPage: some View {
     Section {
-      VStack(alignment: .leading, spacing: 6) {
-        Text(eyebrow(recap))
+      WeekRings(recap: recap)
+        .listRowBackground(Color.clear)
+
+      if recap.isQuiet {
+        header(
+          .week, eyebrow: Text(weekRange),
+          title: recap.ready
+            ? Text("A quiet week", tableName: "Session", comment: "A week without study")
+            : Text(
+              "Your first summary comes on Sunday", tableName: "Session",
+              comment: "No weekly summary yet"),
+          detail: recap.ready
+            ? Text("Every week starts fresh.", tableName: "Session", comment: "A quiet week")
+            : Text(
+              "It shows your week in numbers and the skill that grew the most.",
+              tableName: "Session", comment: "What the weekly summary shows"))
+      } else {
+        header(.week, eyebrow: Text(weekEyebrow), title: weekTitle, detail: gain)
+      }
+    }
+
+    if !recap.isQuiet {
+      Section {
+        LabeledContent {
+          Text(studyDuration(minutes: recap.week.minutes))
+            .monospacedDigit()
+        } label: {
+          Label {
+            Text("Time", tableName: "Session", comment: "The week's study time")
+          } icon: {
+            Image(systemName: "clock")
+          }
+        }
+
+        LabeledContent {
+          Text(recap.week.questions, format: .number)
+        } label: {
+          Label {
+            Text("Questions", tableName: "Session", comment: "The week's questions")
+          } icon: {
+            Image(systemName: "checklist")
+          }
+        }
+      }
+    }
+  }
+
+  private func header(
+    _ step: LogbookStep, eyebrow: Text? = nil, title: Text, detail: Text? = nil
+  ) -> some View {
+    VStack(alignment: .leading, spacing: 6) {
+      if let eyebrow {
+        eyebrow
           .font(.subheadline)
           .foregroundStyle(.secondary)
-
-        title
-          .font(.largeTitle.bold())
-          .accessibilityAddTraits(.isHeader)
-
-        if let gain = gain(recap) {
-          Text(gain)
-            .foregroundStyle(.success)
-        }
-      }
-      .listRowBackground(Color.clear)
-
-      WeekRings(recap: recap)
-    }
-
-    Section {
-      LabeledContent {
-        Text(studyDuration(minutes: recap.week.minutes))
-          .monospacedDigit()
-      } label: {
-        Label {
-          Text("Time", tableName: "Session", comment: "The week's study time")
-        } icon: {
-          Image(systemName: "clock")
-        }
       }
 
-      LabeledContent {
-        Text(recap.week.questions, format: .number)
-      } label: {
-        Label {
-          Text("Questions", tableName: "Session", comment: "The week's questions")
-        } icon: {
-          Image(systemName: "checklist")
-        }
+      title
+        .font(.largeTitle.bold())
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityFocused($focusedStep, equals: step)
+
+      if let detail {
+        detail
+          .foregroundStyle(.secondary)
       }
     }
-
+    .listRowBackground(Color.clear)
   }
 
   @ViewBuilder
-  private func reason(_ turnaround: WeeklyRecap.Turnaround) -> some View {
+  private func learnedRow(_ kind: LearnKind, _ label: Text, count: Int) -> some View {
+    if count > 0 {
+      LabeledContent {
+        Text(count, format: .number)
+      } label: {
+        Label {
+          label
+        } icon: {
+          KindMark(kind: kind)
+        }
+      }
+    }
+  }
+
+  private func reason(_ turnaround: WeeklyRecap.Turnaround) -> Text? {
     switch turnaround.reason {
     case .gold:
       Text(
@@ -200,102 +379,20 @@ struct LogbookScreen: View {
         comment: "Why the week's biggest turnaround grew; the argument is its skill"
       )
     case .practice:
-      EmptyView()
+      nil
     }
   }
 
-  @ViewBuilder
-  private func changes(_ recap: WeeklyRecap) -> some View {
-    if let turnaround = recap.turnaround {
-      Section {
-        VStack(alignment: .leading, spacing: 4) {
-          Text(turnaround.name)
-            .font(.headline)
-
-          Text(
-            "\(turnaround.from.formatted(.percent.precision(.fractionLength(0)))) → \(turnaround.to.formatted(.percent.precision(.fractionLength(0)))) right answers",
-            tableName: "Session", comment: "A skill's right answers at the week's start and end"
-          )
-          .monospacedDigit()
-          .foregroundStyle(.secondary)
-
-          reason(turnaround)
-            .padding(.top, 4)
-        }
-      } header: {
-        Text("The biggest turnaround", tableName: "Session", comment: "The skill that grew most")
-      }
-    }
-
-    Section {
-      LabeledContent {
-        Text(recap.buddyAte.newIdeas, format: .number)
-      } label: {
-        Text("New ideas", tableName: "Session", comment: "New ideas learned this week")
-      }
-
-      LabeledContent {
-        Text(recap.buddyAte.reviews, format: .number)
-      } label: {
-        Text("Reviews", tableName: "Session", comment: "Reviews done this week")
-      }
-
-      LabeledContent {
-        Text(recap.buddyAte.fixes, format: .number)
-      } label: {
-        Text("Mistakes fixed", tableName: "Session", comment: "Mistakes fixed this week")
-      }
-
-      if !recap.badges.isEmpty {
-        LabeledContent {
-          Text(recap.badges.count, format: .number)
-        } label: {
-          Text("Trap hunter badges", tableName: "Session", comment: "Badges earned this week")
-        }
-      }
-    } header: {
-      Text("What you learned", tableName: "Session", comment: "The week's learning")
-    }
-
-    if let next = recap.nextFocus {
-      Section {
-        Text(next.title)
-      } header: {
-        Text("Next week", tableName: "Session", comment: "The plan's next week")
-      }
-    }
-
-    Section {
-      Button {
-        router.showRoot(of: .today)
-      } label: {
-        Text("Let's go", tableName: "Session", comment: "Closes the recap and opens Today")
-          .frame(maxWidth: .infinity)
-      }
-      .buttonStyle(.mainAction)
-      .controlSize(.large)
-    }
-    .listRowBackground(Color.clear)
-    .listRowInsets(EdgeInsets())
-  }
-
-  private var title: Text {
-    let name = session.account?.user.name.split(separator: " ").first.map(String.init)
-
-    if let name, learner.summary.value?.identity.isAnonymous != true {
-      return Text("What a week, \(name)!", tableName: "Session", comment: "The recap's title")
+  private var weekTitle: Text {
+    if let learnerName {
+      return Text(
+        "What a week, \(learnerName)!", tableName: "Session", comment: "The recap's title")
     }
 
     return Text("What a week!", tableName: "Session", comment: "The recap's title")
   }
 
-  private func eyebrow(_ recap: WeeklyRecap) -> String {
-    if let finished = recap.phasesFinished.first {
-      return String(
-        localized: "Phase \(finished.phase + 1) · \(finished.name) done", table: "Session",
-        comment: "A phase finished this week")
-    }
-
+  private var weekRange: String {
     let range = [recap.weekStart, recap.weekEnd].compactMap(studyDate)
     let text =
       range.count == 2
@@ -307,21 +404,97 @@ struct LogbookScreen: View {
       localized: "Weekly summary · \(text)", table: "Session", comment: "The recap's week")
   }
 
+  private var weekEyebrow: String {
+    guard let finished = recap.phasesFinished.first else {
+      return weekRange
+    }
+
+    return String(
+      localized: "Phase \(finished.phase + 1) · \(finished.name) done", table: "Session",
+      comment: "A phase finished this week")
+  }
+
   /// Only good news is compared; a quieter week starts over.
-  private func gain(_ recap: WeeklyRecap) -> String? {
+  private var gain: Text? {
     if recap.comparison.minutes > 0 {
-      return String(
-        localized: "\(studyDuration(minutes: recap.comparison.minutes)) more than the week before!",
-        table: "Session", comment: "More time than last week")
+      return Text(
+        "\(studyDuration(minutes: recap.comparison.minutes)) more than the week before!",
+        tableName: "Session", comment: "More time than last week"
+      )
+      .foregroundStyle(.success)
     }
 
     if recap.comparison.questions > 0 {
-      return String(
-        localized: "\(recap.comparison.questions) more questions than the week before!",
-        table: "Session", comment: "More questions than last week")
+      return Text(
+        "\(recap.comparison.questions) more questions than the week before!",
+        tableName: "Session", comment: "More questions than last week"
+      )
+      .foregroundStyle(.success)
     }
 
     return nil
+  }
+}
+
+/// Right answers on the skill each day it was studied, across the week's seven days.
+private struct TurnaroundChart: View {
+  let turnaround: WeeklyRecap.Turnaround
+
+  var body: some View {
+    let days = Array(turnaround.points.enumerated())
+
+    Chart {
+      RuleMark(y: .value(rightAnswers, 0.0))
+        .foregroundStyle(Color(.separator))
+
+      ForEach(days, id: \.offset) { index, point in
+        if let accuracy = point.accuracy {
+          LineMark(x: .value(day, index), y: .value(rightAnswers, accuracy))
+            .lineStyle(StrokeStyle(lineWidth: 3, lineCap: .round))
+            .foregroundStyle(.success)
+
+          PointMark(x: .value(day, index), y: .value(rightAnswers, accuracy))
+            .symbolSize(64)
+            .foregroundStyle(.success)
+            .accessibilityLabel(Text(weekday(point, .wide)))
+            .accessibilityValue(Text(accuracy.formatted(.percent.precision(.fractionLength(0)))))
+        }
+      }
+    }
+    .chartXScale(domain: 0...max(days.count - 1, 1))
+    .chartYScale(domain: 0...1)
+    .chartYAxis(.hidden)
+    .chartXAxis {
+      AxisMarks(values: days.map(\.offset)) { value in
+        AxisValueLabel {
+          if let index = value.as(Int.self), days.indices.contains(index) {
+            Text(weekday(days[index].element, .narrow))
+          }
+        }
+      }
+    }
+    .frame(height: 140)
+    .padding(.vertical, 8)
+    .accessibilityLabel(
+      Text(
+        "Right answers on this skill each day of the week", tableName: "Session",
+        comment: "Spoken name of the turnaround chart"))
+  }
+
+  private var day: Text {
+    Text("Day", tableName: "Session", comment: "Turnaround chart axis: a day")
+  }
+
+  private var rightAnswers: Text {
+    Text("Right answers", tableName: "Session", comment: "Turnaround chart axis: right answers")
+  }
+
+  private func weekday(
+    _ point: WeeklyRecap.Turnaround.Point, _ width: Date.FormatStyle.Symbol.Weekday
+  )
+    -> String
+  {
+    studyDate(point.date)?.formatted(.studyDay.weekday(width)) ?? ""
   }
 }
 
