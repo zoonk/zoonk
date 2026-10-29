@@ -180,6 +180,10 @@
     <string name="player_save_failed">That didn\'t go through. Your answers are kept.</string>
     <string name="player_review_on">Review on %1$s</string>
     <string name="player_next_lesson">Next lesson</string>
+    <string name="player_stop_for_today">Stop for today</string>
+    <string name="player_see_todays_summary">See today\'s summary</string>
+    <string name="player_next_step_failed">We couldn\'t open the next step. Try again.</string>
+    <string name="player_stop_failed">We couldn\'t stop the session. Try again.</string>
     <string name="player_back_to_chapter">Back to chapter</string>
     <string name="player_back_to_unit">Back to unit</string>
     <string name="player_part_of">This is part of</string>

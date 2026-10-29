@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
@@ -54,6 +55,7 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -354,6 +356,10 @@ internal fun completionMainAction(
 
         CompletionStatus.Saved -> {
             when {
+                ending.inSession -> {
+                    viewModel::continueSession
+                }
+
                 ending.guest -> {
                     { exits.replace(guestPlan(lesson, ending)) }
                 }
@@ -402,6 +408,11 @@ fun CompletionActions(
         }
     val back = if (lesson.targetLanguage != null) R.string.player_back_to_unit else R.string.player_back_to_chapter
 
+    if (status == CompletionStatus.Saved && ending.inSession) {
+        SessionEndActions(state, viewModel, exits)
+        return
+    }
+
     if (status == CompletionStatus.Saved && ending.guest) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Button(onClick = { main?.invoke() }, enabled = main != null, modifier = Modifier.fillMaxWidth()) { Text(stringResource(label)) }
@@ -417,6 +428,42 @@ fun CompletionActions(
             FilledTonalButton(onClick = exits::close, modifier = width) { Text(stringResource(back)) }
         }
         Button(onClick = { main?.invoke() }, enabled = main != null, modifier = width) { Text(stringResource(label)) }
+    }
+}
+
+/**
+ * Main's `MomentActions`: Stop for today sits above Continue, so a quick second tap after the last
+ * answer's Continue never stops the session. A finished session's Continue opens its summary.
+ */
+@Composable
+private fun SessionEndActions(
+    state: LessonPlayerState,
+    viewModel: LessonPlayerViewModel,
+    exits: LessonPlayerExits,
+) {
+    val move by viewModel.sessionMove.collectAsStateWithLifecycle()
+    val block = state.completion?.result?.studyBlock
+    val completed = block?.sessionCompleted == true
+
+    LaunchedEffect(move.leaving) { move.leaving?.let(exits::replace) }
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        move.failed?.let { failed ->
+            Text(
+                stringResource(if (failed == SessionStep.Stop) R.string.player_stop_failed else R.string.player_next_step_failed),
+                Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                color = MaterialTheme.colorScheme.error,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        if (block != null && !completed) {
+            OutlinedButton(onClick = viewModel::stopSession, enabled = move.pending == null, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.player_stop_for_today))
+            }
+        }
+        Button(onClick = viewModel::continueSession, enabled = move.pending == null, modifier = Modifier.fillMaxWidth()) {
+            Text(stringResource(if (completed) R.string.player_see_todays_summary else R.string.player_action_continue))
+        }
     }
 }
 

@@ -60,6 +60,8 @@ internal class LessonPlayerHarness(
         steps: List<LessonStep>,
         guest: Boolean = false,
         ceremony: LessonCeremony? = null,
+        sessionId: String? = null,
+        sessionSteps: SessionSteps? = null,
         configure: FakeLessonPlayerApi.() -> Unit = {},
     ) {
         val lesson = playable(steps)
@@ -71,13 +73,14 @@ internal class LessonPlayerHarness(
         val newViewModel = {
             LessonPlayerViewModel(
                 lessonId = LESSON_ID,
-                studySessionId = null,
+                studySessionId = sessionId,
                 firstAnswer = null,
                 store = LessonPlayerStore(api, cache),
                 cache = cache,
                 sessions = session,
                 choices = TodayChoices(drafts),
                 drafts = drafts,
+                sessionSteps = sessionSteps,
                 isGuest = { guest },
                 activeGoalId = { GOAL_ID },
             )

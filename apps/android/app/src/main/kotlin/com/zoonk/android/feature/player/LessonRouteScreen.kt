@@ -61,6 +61,7 @@ import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 /** `/learn/{lessonId}`: the lesson's screens, its outline while it waits to be written, or a visitor's way in. */
 @Composable
@@ -159,6 +160,12 @@ internal fun PlayingLesson(
                 sessions = app.sessions,
                 choices = app.todayChoices,
                 drafts = app.drafts,
+                sessionSteps =
+                    object : SessionSteps {
+                        override suspend fun next(sessionId: UUID) = app.studyOpener.continueSession(sessionId)
+
+                        override suspend fun stop(sessionId: UUID) = app.questionBlocks.stop(sessionId)
+                    },
                 isGuest = { (app.sessions.state.value as? SessionState.SignedIn)?.isGuest == true },
                 activeGoalId = {
                     app.learnerSummary.summary.state.value.value
