@@ -16,16 +16,6 @@ internal fun isWeekend(day: Int) = day == 0 || day == 6
 /** A new goal's every-day week was never chosen, so the question opens on Monday to Friday unless someone chose fewer days. */
 internal fun startingDays(goalDays: List<Int>): List<Int> = goalDays.takeIf { it.isNotEmpty() && it.size < EVERY_DAY.size } ?: WEEKDAYS
 
-private val MINUTE_OPTIONS = listOf(15, 30, 45, 60, 90, 120, 180, 240)
-
-private const val MAX_DAILY_MINUTES = 1440
-
-internal val DAILY_TIMES: List<Int> = (15..240 step 15).toList() + (270..MAX_DAILY_MINUTES step 30).toList()
-
-internal fun timeChoices(vararg times: Int?): List<Int> = (MINUTE_OPTIONS + times.filterNotNull()).distinct().sorted()
-
-internal fun otherTimes(shown: Int?): List<Int> = if (shown == null || shown in DAILY_TIMES) DAILY_TIMES else (DAILY_TIMES + shown).sorted()
-
 internal data class StudyWeek(
     val studyDays: List<Int>,
     val weekendMinutes: Int? = null,

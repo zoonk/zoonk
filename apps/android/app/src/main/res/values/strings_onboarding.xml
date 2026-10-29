@@ -509,7 +509,6 @@
     <!-- Beside the big daily time, like "45 min · per day". -->
     <string name="onboarding_schedule_per_day">per day</string>
     <string name="onboarding_schedule_minutes_label">Minutes a day</string>
-    <string name="onboarding_schedule_other_time">Other time…</string>
     <string name="onboarding_schedule_other_time_label">Other time a day</string>
     <string name="onboarding_weekend_other_time_label">Other time on weekends</string>
     <!-- Under the daily time the plan found that studies everything. -->

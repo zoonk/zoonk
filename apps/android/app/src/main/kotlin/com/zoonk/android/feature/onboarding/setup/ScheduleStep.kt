@@ -60,6 +60,8 @@ import com.zoonk.android.feature.onboarding.CoverQuery
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.OtherTime
+import com.zoonk.android.ui.components.timeChoices
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -231,32 +233,6 @@ private fun TimeChoices(
             }
         }
         OtherTime(minutes, stringResource(R.string.onboarding_schedule_other_time_label), onChange)
-    }
-}
-
-@Composable
-internal fun OtherTime(
-    minutes: Int,
-    label: String,
-    onPick: (Int) -> Unit,
-) {
-    var open by rememberSaveable { mutableStateOf(false) }
-    val locale = currentLocale()
-    Box {
-        TextButton(onClick = { open = true }, modifier = Modifier.semantics { contentDescription = label }) {
-            Text(stringResource(R.string.onboarding_schedule_other_time))
-        }
-        DropdownMenu(expanded = open, onDismissRequest = { open = false }) {
-            otherTimes(minutes).forEach { time ->
-                DropdownMenuItem(
-                    text = { Text(formatMinutes(time, locale)) },
-                    onClick = {
-                        open = false
-                        onPick(time)
-                    },
-                )
-            }
-        }
     }
 }
 

@@ -368,7 +368,6 @@
   "onboarding_schedule_every_topic": "ea2653894fa5c9ff65d789a19917de09b3078cb2744d6f573d3a2adbcc0db1fd",
   "onboarding_schedule_minutes_label": "dee466d78ed0370fad26228024cdc67afbebf14864ef22feb2caca16a0210a98",
   "onboarding_schedule_move_date": "80e3d36d6aef16ee0a8547b83e4240217e29c9f2c2e796cfb87955d2fe16c952",
-  "onboarding_schedule_other_time": "284c1f7392405d21c93ffebaf15984d5b016fe6c0efc11cf0abf26c21269a6fb",
   "onboarding_schedule_other_time_label": "24e97f04be44d44e0598edac0d596bb9df4914c8f195605647cd6dc376937b31",
   "onboarding_schedule_per_day": "b1e12e299b0ee6586bac09f00cadd08541be8b680bd2c6120dcea0e117a01f6c",
   "onboarding_schedule_reading_notice": "6489da80211e1297fae4ed3c0a6e228054819e3977a5822bf26214fcdf39f4b4",
@@ -937,7 +936,6 @@
     <!-- Beside the big daily time, like "45 min · per day". -->
     <string name="onboarding_schedule_per_day">al día</string>
     <string name="onboarding_schedule_minutes_label">Minutos al día</string>
-    <string name="onboarding_schedule_other_time">Otro tiempo…</string>
     <string name="onboarding_schedule_other_time_label">Otro tiempo al día</string>
     <string name="onboarding_weekend_other_time_label">Otro tiempo los fines de semana</string>
     <!-- Under the daily time the plan found that studies everything. -->

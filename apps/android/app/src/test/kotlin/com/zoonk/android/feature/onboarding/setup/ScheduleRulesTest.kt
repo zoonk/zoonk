@@ -49,14 +49,6 @@ class ScheduleRulesTest {
     }
 
     @Test
-    fun theTimesListedKeepAPickedOrOfferedTimeOutsideTheUsualOnes() {
-        assertEquals(listOf(15, 30, 45, 60, 70, 90, 120, 180, 240), timeChoices(70, null, 30))
-        assertEquals(DAILY_TIMES, otherTimes(45))
-        assertTrue(100 in otherTimes(100))
-        assertEquals(1440, DAILY_TIMES.last())
-    }
-
-    @Test
     fun findKeepsTheWeekendsOwnTimeEvenWhenItEqualsTheWeekdayPick() {
         assertEquals(StudyWeek(EVERY_DAY, 60), findWeek(EVERY_DAY, 60))
         assertEquals(StudyWeek(EVERY_DAY), studyWeek(EVERY_DAY, 60, 60))

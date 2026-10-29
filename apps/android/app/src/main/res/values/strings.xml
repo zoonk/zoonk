@@ -42,4 +42,6 @@
     <string name="load_failed_try_again">Try again</string>
     <string name="suggestion_view">View</string>
     <string name="suggestion_save_failed">That didn\'t save. Try again.</string>
+    <!-- Under the daily time chips; opens a menu of every other daily study time. -->
+    <string name="other_time">Other time…</string>
 </resources>

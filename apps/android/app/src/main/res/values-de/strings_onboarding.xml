@@ -368,7 +368,6 @@
   "onboarding_schedule_every_topic": "3af8fa8cdc7911d5c7aa5665a3a135a54e57cc4fa694e991cca80e53b14ee402",
   "onboarding_schedule_minutes_label": "a6794a2a576ca11d6e13e8e7fa7cec0e3797f8be2a345ed9b5359b01c18a3221",
   "onboarding_schedule_move_date": "0b8c1affd9db2fb92c15bcb1d6c4290d9fff9b48c15c81f071d9f0f2046e359a",
-  "onboarding_schedule_other_time": "99447c3508b3e3196a6d3c005704a57d4fdf919e98f9366ccb2cb4acf58e0e6d",
   "onboarding_schedule_other_time_label": "72f51e0143b8c751da3114aeb089084bf33c768ad9b9ef3403ea75af0655ffd6",
   "onboarding_schedule_per_day": "8cdc07c113ea7caaa1f32d26753c4ecfb2825a3fe4bd4c742a9af6d499377393",
   "onboarding_schedule_reading_notice": "0aa325e9fbf18fc6f8afb21e2bc8684aa44b4a525c1261f350accdd02b386bce",
@@ -920,7 +919,6 @@
     <!-- Beside the big daily time, like "45 min · per day". -->
     <string name="onboarding_schedule_per_day">pro Tag</string>
     <string name="onboarding_schedule_minutes_label">Minuten pro Tag</string>
-    <string name="onboarding_schedule_other_time">Andere Lernzeit…</string>
     <string name="onboarding_schedule_other_time_label">Andere Lernzeit pro Tag</string>
     <string name="onboarding_weekend_other_time_label">Andere Lernzeit am Wochenende</string>
     <!-- Under the daily time the plan found that studies everything. -->

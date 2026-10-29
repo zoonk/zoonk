@@ -44,15 +44,15 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.setup.OtherTime
 import com.zoonk.android.feature.onboarding.setup.selectedCheck
-import com.zoonk.android.feature.onboarding.setup.timeChoices
 import com.zoonk.android.feature.plan.phaseKindName
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.EmptyState
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.OtherTime
+import com.zoonk.android.ui.components.timeChoices
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
