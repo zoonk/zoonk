@@ -35,6 +35,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.zoonk.android.R
+import com.zoonk.android.feature.conversation.PracticeConversation
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppRoute
@@ -240,7 +241,6 @@ private fun ChapterTestOffer(
     ) { OfferButton(stringResource(R.string.tutor_offer_take_test)) { routes.open(AppRoute.TestOut(offer.chapterId.toString())) } }
 }
 
-/** The unit's page holds the call, with its length to choose. */
 @Composable
 private fun ConversationCallOffer(
     offer: TutorToolOfferOneOf3,
@@ -259,7 +259,7 @@ private fun ConversationCallOffer(
             },
         tile = { KindDot(LearnKind.Conversation) },
         modifier = modifier,
-    ) { OfferButton(stringResource(R.string.tutor_offer_open)) { routes.open(AppRoute.LanguageUnit(offer.chapterId.toString())) } }
+    ) { PracticeConversation(offer.call, offer.chapterId, offer.goalId, routes.startCall, routes.open) }
 }
 
 @Composable

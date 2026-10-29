@@ -18,6 +18,8 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.conversation.CallRequest
+import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.plan.planChange
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
@@ -53,8 +55,18 @@ class TutorPanelTest {
     private var decision: (
         PlanChangeDecisionInput.Status,
     ) -> MutationResult<PlanChange> = { MutationResult.Done(planChange(status = it.value)) }
+    private val calls = mutableListOf<CallRequest>()
     private val routes =
-        TutorRoutes(createAccount = { openedLogin++ }, signIn = { openedLogin++ }, seePlus = { openedPlus++ }, open = { opened += it })
+        TutorRoutes(
+            createAccount = { openedLogin++ },
+            signIn = { openedLogin++ },
+            seePlus = { openedPlus++ },
+            open = { opened += it },
+            startCall = {
+                calls += it
+                CallStart.Started(CALL)
+            },
+        )
 
     private fun show(
         scope: TutorScope = TutorScope.Chapter("chapter"),
@@ -185,6 +197,24 @@ class TutorPanelTest {
     }
 
     @Test
+    fun aCallOfferPicksItsLengthAndStartsTheCallFromTheChat() {
+        showOffer(
+            """
+            {"kind":"conversationCall","chapterId":"$CHAPTER","goalId":"$GOAL","unitTitle":"At the café",
+             "call":{"character":{"name":"Lucía","role":"Waiter"},"defaultMinutes":3,"limit":null,"minutes":[1,2,3],"paused":false,"plusMinutes":[5]}}
+            """.trimIndent(),
+        )
+
+        compose.onNodeWithText("Practice a conversation").performScrollTo().performClick()
+        compose.onNodeWithText("2\u00A0min").performClick()
+        compose.onNodeWithText("Start the call").performClick()
+        compose.waitForIdle()
+
+        assertEquals(listOf<CallRequest>(CallRequest.Practice(UUID.fromString(CHAPTER), UUID.fromString(GOAL), 2)), calls)
+        assertEquals(listOf<AppRoute>(AppRoute.Conversation(CALL.toString())), opened)
+    }
+
+    @Test
     fun aLockedOfferSaysWhatPlusAddsAndLeadsThere() {
         showOffer("""{"kind":"mockExam","access":"plusRequired","goalId":"$GOAL","subjects":[]}""")
 
@@ -261,6 +291,8 @@ class TutorPanelTest {
     private companion object {
         const val COURSE = "6a1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+        const val CHAPTER = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e60"
+        val CALL: UUID = UUID.fromString("7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e61")
         const val FACT = "8f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
     }
 }
