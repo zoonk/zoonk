@@ -151,6 +151,7 @@ export function GridBoard({
       {columns.map((cell) => (
         <GridHeader
           isAllele={isAllele}
+          isCompact={isCompact}
           isLit={active?.columnIndex === cell.columnIndex}
           key={`column-${cell.columnIndex}`}
           value={cell.column}
@@ -162,6 +163,7 @@ export function GridBoard({
           {cell.columnIndex === 0 && (
             <GridHeader
               isAllele={isAllele}
+              isCompact={isCompact}
               isLit={active?.rowIndex === cell.rowIndex}
               value={cell.row}
             />

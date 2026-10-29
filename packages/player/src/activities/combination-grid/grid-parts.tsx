@@ -63,25 +63,29 @@ export function Trait({
 
 export function GridHeader({
   isAllele,
+  isCompact,
   isLit,
   value,
 }: {
   isAllele: boolean;
+  isCompact: boolean;
   isLit: boolean;
   value: string;
 }) {
+  const numberSize = isCompact ? "text-sm" : "text-lg";
+
   return (
     <div
       aria-hidden="true"
       className={cn(
         "bg-background ring-border flex min-h-11 items-center justify-center rounded-xl ring-1 motion-safe:transition-colors",
-        isAllele ? "text-xl" : "text-lg",
+        isAllele ? "text-xl" : numberSize,
         isLit && "bg-viz-accent-soft ring-viz-accent ring-2",
       )}
     >
       {/* A sum or product grid's cells are the answer, so its headers stay quieter than them. */}
       <CellValue
-        className={isAllele ? undefined : "text-muted-foreground font-normal"}
+        className={cn(!isAllele && "font-normal", !isAllele && !isLit && "text-muted-foreground")}
         isAllele={isAllele}
         value={value}
       />
