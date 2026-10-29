@@ -76,7 +76,7 @@ class ActivityKitFlowTest {
         tap("Needles")
         rule.onNodeWithText("Oak").assertDoesNotExist()
         tap("In bundles")
-        shows("The key leads to")
+        shows("Your answers lead to")
         harness.tap("Check")
 
         shows("It leads to Pine.")

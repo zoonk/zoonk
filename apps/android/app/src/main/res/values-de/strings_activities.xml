@@ -4,7 +4,7 @@
   "activities_badge_before_after": "308814d465c82468ddda4e5ff8327495983065b152f841d31a66b21ee3945372",
   "activities_badge_estimate_first": "75254b54fa15ffaae13500528f7b9d2052c8302fb416d8fce86aa28a7004d13b",
   "activities_badge_find_error": "bbb1cda2c14e4286211582f948a82bbe440142e508bcdf8a4bf46406498d8788",
-  "activities_badge_follow_key": "26779a29e8997e7552237efab95fe9f17c3148af6e69800be978934244e4e6ad",
+  "activities_badge_follow_questions": "f58b37c0a69d350dabdb46287dc0007a948ddafbe40d595ce13b22b66e7decd2",
   "activities_badge_read_chart": "c5d57e0bacd234bbc55de680556c62a632a6627e11431001595e88a35cab217b",
   "activities_badge_reply": "7ed79040956633b7437351e953ff86af02be52249f0979e3b5fc093c24b2b4d3",
   "activities_badge_spot_pattern": "5ddc7e6a5e8a9693bec4fb397358995f6ef8b0256ab07d832ed29d2b90d6d11f",
@@ -53,7 +53,7 @@
   "activities_solver_steps": "0b34bda829e1d5c7b800fd1e35640008b3b5208c605aba38fe3498ed257dec1a",
   "activities_tree_case": "8e82f701cdf1af3145a2ab44564a7518542674829849d39a3d16103799d8ae78",
   "activities_tree_it_leads_to": "5e28eda2d07552ce659ff99500fdfa7735d434d5453defbc35a7d99149853c82",
-  "activities_tree_leads_to": "f87f98cacb66d7e44aff4c309d9ba093cb2489e3ef72f1d1af897ed15386678b",
+  "activities_tree_leads_to": "290218c1977b2765f665700e1a4b9f53c7f9a3700af9fc68f5fa991fb0a47bec",
   "activities_tree_still_possible": "8b3298ef1711f7c073d17349ccbbf08ec564cd04fe871a542c45caa73c66d0ff",
   "activities_tree_undo": "3fec71acf5c7765c668d81b0658450c3c555da2069b8b453ed5f11a7568c812a",
   "activities_tree_walk": "010a80e3bc67916395a547d1b97c5c03db7fa0cb3699b7da04084f3bde26ca26",
@@ -66,7 +66,7 @@
     <string name="activities_badge_read_chart">Lies das Diagramm</string>
     <string name="activities_badge_before_after">Vorher und nachher</string>
     <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
-    <string name="activities_badge_follow_key">Folge dem Schlüssel</string>
+    <string name="activities_badge_follow_questions">Beantworte die Fragen</string>
     <string name="activities_badge_find_error">Finde den Fehler</string>
     <string name="activities_badge_step_by_step">Schritt für Schritt</string>
     <string name="activities_badge_spot_pattern">Erkenne das Muster</string>
@@ -104,12 +104,12 @@
     <string name="activities_chart_spans">Zu messende Abschnitte</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s pro %2$s</string>
-    <!-- The panel with the case the learner follows through the key. -->
+    <!-- The panel with the case the learner follows through the questions. -->
     <string name="activities_tree_case">Der Fall</string>
-    <!-- The outcomes the key can still reach from here. -->
+    <!-- The outcomes the learner's answers can still reach from here. -->
     <string name="activities_tree_still_possible">Noch möglich</string>
     <string name="activities_tree_your_answers">Deine Antworten</string>
-    <string name="activities_tree_leads_to">Der Schlüssel führt zu</string>
+    <string name="activities_tree_leads_to">Deine Antworten führen zu</string>
     <string name="activities_tree_undo">Rückgängig</string>
     <string name="activities_tree_walk">Der Weg für diesen Fall</string>
     <!-- The branch the learner took where the key went another way, like "You chose Single". -->

@@ -4,7 +4,7 @@
   "activities_badge_before_after": "28857ae805e3b8f6a3380199edc3d554b6db7666fc50972a939e577c4790de45",
   "activities_badge_estimate_first": "35648e932f6cfba58a247acae3b28863bd79fb2624bfba376e0cb21e415fbab7",
   "activities_badge_find_error": "d01dede584ea84496f01997658a3d7db719e65950868fdb0e94dc321b56ef872",
-  "activities_badge_follow_key": "81f22414565a72437aab0e1d3291cfd50c5934196aa4c4530dd2cd36c45a1164",
+  "activities_badge_follow_questions": "962321629c08af3fa0cf9b487bc5960a06b818bdceff2394cbffd41d8f38094b",
   "activities_badge_read_chart": "2f948a408d2075da25f0ca9b9e3c937f877d64d57c306dcb5f4844dfe0a60819",
   "activities_badge_reply": "5b74c9b826ccc16d155c83ba5c9b20d573261ad449fe6503790b287a572a32a3",
   "activities_badge_spot_pattern": "d5a373087f88ebcbe1082cb73cf5004e2995d31686c0ebe98ed0e6077dfdc3df",
@@ -53,7 +53,7 @@
   "activities_solver_steps": "71c7ce303f2cf3eee4b469ebecd4437d9310b7b84d47847493116ba210b11f14",
   "activities_tree_case": "edc2bd1c5a4b09d47510960f6a571a526f7b208108b5a739ee1664860312d2b3",
   "activities_tree_it_leads_to": "46647851efa9215cb0c51732ca73726e5df5cc577822e77cd352d404af15020e",
-  "activities_tree_leads_to": "0195cd7e2644360b3c6f89c8b14abd01577ad5da5e0a2962bb1ee522db4e5aad",
+  "activities_tree_leads_to": "9620f246396bd90d0998d71c086590ba872be648b37c2dd0a5aa204d52d14547",
   "activities_tree_still_possible": "d801aa0fe90d3d6d6de01d7ddd9330b98f08d3ec5e7eafe505b977e71652680c",
   "activities_tree_undo": "bc52fd36b32193e8e06c5564eca98b017087e4d30da3971af30e32d22f1a1283",
   "activities_tree_walk": "50470adb04152c249c7dfdae9c2e86d286e102bfde8972023daaa5a6999352b4",
@@ -66,7 +66,7 @@
     <string name="activities_badge_read_chart">Lis le graphique</string>
     <string name="activities_badge_before_after">Avant et après</string>
     <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
-    <string name="activities_badge_follow_key">Suis la clé</string>
+    <string name="activities_badge_follow_questions">Suis les questions</string>
     <string name="activities_badge_find_error">Trouve l’erreur</string>
     <string name="activities_badge_step_by_step">Étape par étape</string>
     <string name="activities_badge_spot_pattern">Repère le motif</string>
@@ -104,12 +104,12 @@
     <string name="activities_chart_spans">Intervalles à mesurer</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s par %2$s</string>
-    <!-- The panel with the case the learner follows through the key. -->
+    <!-- The panel with the case the learner follows through the questions. -->
     <string name="activities_tree_case">Le cas</string>
-    <!-- The outcomes the key can still reach from here. -->
+    <!-- The outcomes the learner's answers can still reach from here. -->
     <string name="activities_tree_still_possible">Encore possible</string>
     <string name="activities_tree_your_answers">Tes réponses</string>
-    <string name="activities_tree_leads_to">La clé mène à</string>
+    <string name="activities_tree_leads_to">Tes réponses mènent à</string>
     <string name="activities_tree_undo">Annuler</string>
     <string name="activities_tree_walk">Le parcours de ce cas</string>
     <!-- The branch the learner took where the key went another way, like "You chose Single". -->

@@ -43,7 +43,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContent.PlayableLibraryStepA
 
 val decisionTreeRenderer =
     ActivityRenderer(
-        badge = { ActivityBadge(R.string.activities_badge_follow_key, R.drawable.ic_call_split) },
+        badge = { ActivityBadge(R.string.activities_badge_follow_questions, R.drawable.ic_call_split) },
         canvas = { DecisionTreeActivity(it) },
     )
 

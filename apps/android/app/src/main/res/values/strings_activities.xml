@@ -4,7 +4,7 @@
     <string name="activities_badge_read_chart">Read the chart</string>
     <string name="activities_badge_before_after">Before and after</string>
     <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
-    <string name="activities_badge_follow_key">Follow the key</string>
+    <string name="activities_badge_follow_questions">Follow the questions</string>
     <string name="activities_badge_find_error">Find the error</string>
     <string name="activities_badge_step_by_step">Step by step</string>
     <string name="activities_badge_spot_pattern">Spot the pattern</string>
@@ -46,12 +46,12 @@
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s per %2$s</string>
 
-    <!-- The panel with the case the learner follows through the key. -->
+    <!-- The panel with the case the learner follows through the questions. -->
     <string name="activities_tree_case">The case</string>
-    <!-- The outcomes the key can still reach from here. -->
+    <!-- The outcomes the learner's answers can still reach from here. -->
     <string name="activities_tree_still_possible">Still possible</string>
     <string name="activities_tree_your_answers">Your answers</string>
-    <string name="activities_tree_leads_to">The key leads to</string>
+    <string name="activities_tree_leads_to">Your answers lead to</string>
     <string name="activities_tree_undo">Undo</string>
     <string name="activities_tree_walk">The walk for this case</string>
     <!-- The branch the learner took where the key went another way, like "You chose Single". -->
