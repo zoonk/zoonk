@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "listening_collapsed": "2e32ea11bf2c5b7c56cd42d3833bf17bf62a29f76a413b8fbbd581528d8d0f0a",
   "listening_elapsed": "6f47bf5671695979e4510a4684a812547395ff4feb0b9f12777545dd4ab90f2c",
+  "listening_expanded": "50cef96a282b25e845f32719af0f797d707346afc2f898808583bdcc20026e9c",
   "listening_failed": "e0a25b7930a5849450b27a4ee71ec2d92a7cc190d7f3a49edb917512d745de4b",
   "listening_note_free": "5bf446a80513417fe005a21c2d641d940be5f32f430431932f7c3d4dd8b6f912",
   "listening_note_once": "d91102ef962779b15add6042d9133f5408135c88b0f3641a6bdfe0ce74a62709",
@@ -41,4 +43,6 @@
         <item quantity="other">Questions sur cet enregistrement (%d)</item>
     </plurals>
     <string name="listening_transcript">Transcription</string>
+    <string name="listening_expanded">Développé</string>
+    <string name="listening_collapsed">Réduit</string>
 </resources>

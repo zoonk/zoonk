@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -55,6 +56,7 @@ internal fun MockSpeaking(
         viewModel,
         run,
         onClose,
+        title = { SectionClock(current.deadline) },
         actions = {
             if (speaking == null) {
                 val starting = run.busy == MockStep.StartSpeaking
@@ -74,20 +76,17 @@ internal fun MockSpeaking(
             }
         },
     ) {
-        SectionClock(current.deadline, large = true)
-        StepTitle(section?.name ?: speaking?.paper ?: stringResource(R.string.mock_speaking))
-        if (speaking == null) {
-            StepDetail(stringResource(R.string.mock_speaking_intro))
-        } else {
+        StepHeader {
+            StepTitle(section?.name ?: speaking?.paper ?: stringResource(R.string.mock_speaking))
             StepDetail(
-                if (left >
-                    0
-                ) {
-                    pluralStringResource(R.plurals.mock_speaking_left, left, left)
-                } else {
-                    stringResource(R.string.mock_speaking_all_done)
+                when {
+                    speaking == null -> stringResource(R.string.mock_speaking_intro)
+                    left > 0 -> pluralStringResource(R.plurals.mock_speaking_left, left, left)
+                    else -> stringResource(R.string.mock_speaking_all_done)
                 },
             )
+        }
+        if (speaking != null) {
             Column {
                 speaking.tasks.forEachIndexed { index, task ->
                     if (index > 0) HorizontalDivider()
@@ -161,7 +160,10 @@ private fun TaskRow(
                 )
             }
         } else {
-            FilledTonalButton(onClick = onStart) { Text(stringResource(R.string.mock_speaking_start_task)) }
+            val label = stringResource(R.string.mock_speaking_start_task_number, number)
+            FilledTonalButton(onClick = onStart, modifier = Modifier.semantics { contentDescription = label }) {
+                Text(stringResource(R.string.mock_speaking_start_task))
+            }
         }
     }
 }

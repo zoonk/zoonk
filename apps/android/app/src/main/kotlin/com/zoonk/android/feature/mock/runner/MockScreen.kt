@@ -6,25 +6,33 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,9 +41,10 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -43,6 +52,7 @@ import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.mockShapeLabel
@@ -55,6 +65,7 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockExam
@@ -70,59 +81,63 @@ fun MockScreen(
     navigator: AppNavigator,
     store: MockRunStore = app.mockRuns,
 ) {
-    val resource = store.mock[route.blockId]
-    val state by resource.collectShown()
-    val scope = rememberCoroutineScope()
-    val loaded = state.value
+    val account = app.sessions.current?.localId
+    key(account) {
+        val opening = viewModel(key = "mock-open-${route.blockId}-$account") { MockOpening(store.open(route.blockId)) }
+        val state by opening.mock.collectShown()
+        val scope = rememberCoroutineScope()
+        val loaded = state.value
 
-    when {
-        loaded == null -> {
-            TaskScaffold(onClose = { navigator.closeTask() }) { padding ->
-                Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                    val current = state
-                    when {
-                        current is LoadState.Failed && current.error != ApiError.NotFound -> {
-                            LoadFailedMessage(
-                                onRetry = { scope.launch { resource.refresh() } },
-                            )
-                        }
+        when {
+            loaded == null -> {
+                TaskScaffold(onClose = { navigator.closeTask() }) { padding ->
+                    Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+                        val current = state
+                        when {
+                            current is LoadState.Failed && current.error != ApiError.NotFound -> {
+                                LoadFailedMessage(onRetry = { scope.launch { opening.mock.refresh() } })
+                            }
 
-                        current is LoadState.Failed || current is LoadState.Empty -> {
-                            MockNotFound(navigator)
-                        }
+                            current is LoadState.Failed || current is LoadState.Empty -> {
+                                MockNotFound(navigator)
+                            }
 
-                        else -> {
-                            CircularProgressIndicator()
+                            else -> {
+                                CircularProgressIndicator()
+                            }
                         }
                     }
                 }
             }
-        }
 
-        // Before it starts, a mock is its challenge's intro: when it is, its size, Start.
-        loaded.status == MockExam.Status.READY -> {
-            LaunchedEffect(loaded.planItemId) {
-                navigator.closeTask()
-                loaded.planItemId?.let { navigator.open(AppRoute.Challenge(it.toString(), route.sessionId)) }
+            // Before it starts, a mock is its challenge's intro: when it is, its size, Start.
+            loaded.view.status == MockExam.Status.READY -> {
+                LaunchedEffect(loaded.view.planItemId) {
+                    navigator.closeTask()
+                    loaded.view.planItemId?.let { navigator.open(AppRoute.Challenge(it.toString(), route.sessionId)) }
+                }
             }
-        }
 
-        else -> {
-            key(app.sessions.current?.localId) {
+            else -> {
                 val viewModel =
-                    viewModel(key = "mock-${route.blockId}-${app.sessions.current?.localId}") {
-                        MockRunnerViewModel(store, app.sessions, route.blockId, loaded)
+                    viewModel(key = "mock-${route.blockId}-$account") {
+                        MockRunnerViewModel(store, app.sessions, route.blockId, loaded, reread = opening.mock::refresh)
                     }
-                LaunchedEffect(loaded) { viewModel.show(loaded) }
+                LaunchedEffect(loaded) { viewModel.show(loaded.view) }
                 LifecycleStartEffect(viewModel) {
                     viewModel.onStart()
-                    onStopOrDispose {}
+                    onStopOrDispose { viewModel.onStop() }
                 }
                 MockRunScreen(viewModel, route, navigator, MockAudio(app.speech, app.listeningPlays, app.sessions.current))
             }
         }
     }
 }
+
+/** One opening of a mock: its read lives as long as the screen, so leaving and opening it again reads it again. */
+internal class MockOpening(
+    val mock: Resource<OpenedMock>,
+) : ViewModel()
 
 @Composable
 private fun MockNotFound(navigator: AppNavigator) {
@@ -149,10 +164,15 @@ private fun MockRunScreen(
 ) {
     val run by viewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    var leaving by remember { mutableStateOf(false) }
+    // Pressed again while answers go out, it still closes only the mock.
     val leave: () -> Unit = {
-        scope.launch {
-            viewModel.leave()
-            navigator.closeTask()
+        if (!leaving) {
+            leaving = true
+            scope.launch {
+                viewModel.leave()
+                navigator.closeTask()
+            }
         }
     }
     val view = run.view
@@ -161,7 +181,7 @@ private fun MockRunScreen(
     BackHandler(onBack = leave)
 
     when {
-        view.status == MockExam.Status.EXPIRED -> MockExpired(view, route, navigator)
+        view.status == MockExam.Status.EXPIRED -> MockExpired(viewModel, run, route, navigator, leave)
         view.status == MockExam.Status.FINISHED -> MockFinished(run, navigator)
         view.breakUntil != null && current == null -> MockBreak(viewModel, run, view.breakUntil!!, leave)
         current != null && run.timeUp -> MockTimeUp(viewModel, run, leave)
@@ -171,17 +191,25 @@ private fun MockRunScreen(
     }
 }
 
-/** A step's frame: the task's close, one centered column, its actions pinned below with what's saving. */
+/**
+ * A step's frame: the task's close, one centered column, its actions pinned below with what's
+ * saving. [title] is the top bar's (a clock); an [aside] shows beside the column where there's
+ * room, and not at all where there isn't, as main's step asides.
+ */
 @Composable
 internal fun MockStepFrame(
     viewModel: MockRunnerViewModel,
     run: MockRun,
     onClose: () -> Unit,
     actions: @Composable () -> Unit,
+    title: @Composable () -> Unit = {},
+    aside: (@Composable ColumnScope.() -> Unit)? = null,
+    asideTitle: String = "",
     content: @Composable () -> Unit,
 ) {
     TaskScaffold(
         onClose = onClose,
+        title = title,
         bottomBar = {
             MockActionBar {
                 MockStepStatus(viewModel, run)
@@ -189,16 +217,64 @@ internal fun MockStepFrame(
             }
         },
     ) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
-            Column(
-                Modifier
-                    .widthIn(max = COLUMN_WIDTH)
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState())
-                    .padding(STEP_PADDING),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) { content() }
+        if (aside == null) {
+            StepColumn(Modifier.padding(padding), content)
+        } else {
+            PageWithSupportingPane(
+                modifier = Modifier.padding(padding),
+                supportingPane = { StepAside(asideTitle, aside) },
+            ) { StepColumn(Modifier, content) }
         }
+    }
+}
+
+@Composable
+private fun StepColumn(
+    modifier: Modifier,
+    content: @Composable () -> Unit,
+) {
+    Box(modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+        Column(
+            Modifier
+                .widthIn(max = COLUMN_WIDTH)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(STEP_PADDING),
+            verticalArrangement = Arrangement.spacedBy(24.dp),
+        ) { content() }
+    }
+}
+
+@Composable
+private fun StepAside(
+    title: String,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Row {
+        VerticalDivider()
+        Column(
+            Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(STEP_PADDING)
+                .semantics { paneTitle = title },
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+            content()
+        }
+    }
+}
+
+/** Main's step header: an icon set apart, then what says where the learner is, close together. */
+@Composable
+internal fun StepHeader(
+    icon: Int? = null,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+        icon?.let { Icon(painterResource(it), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant) }
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp), content = content)
     }
 }
 
@@ -213,7 +289,7 @@ internal fun MockStepStatus(
 
     when (saveStatus) {
         DraftSaveStatus.Retrying -> {
-            androidx.compose.foundation.layout.Row(live, verticalAlignment = Alignment.CenterVertically) {
+            Row(live, verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     stringResource(R.string.mock_not_saved_retrying),
                     Modifier.weight(1f),
@@ -267,20 +343,31 @@ internal fun MockActionBar(content: @Composable ColumnScope.() -> Unit) {
     }
 }
 
-/** The pinned main action of a step, with a wheel while it's busy. */
+/** A step's main action. Busy, it keeps its ink and shows a wheel, as main's does. */
 @Composable
 internal fun MockMainButton(
     text: String,
     busy: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
+    modifier: Modifier = Modifier.fillMaxWidth(),
 ) {
-    Button(onClick = onClick, enabled = enabled && !busy, modifier = Modifier.fillMaxWidth()) {
+    val colors =
+        if (busy) {
+            ButtonDefaults.buttonColors(
+                disabledContainerColor = MaterialTheme.colorScheme.primary,
+                disabledContentColor = MaterialTheme.colorScheme.onPrimary,
+            )
+        } else {
+            ButtonDefaults.buttonColors()
+        }
+
+    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier.heightIn(min = 48.dp), colors = colors) {
         if (busy) {
             CircularProgressIndicator(
                 Modifier.padding(end = 8.dp).size(18.dp),
                 strokeWidth = 2.dp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                color = LocalContentColor.current,
             )
         }
         Text(text)
@@ -340,10 +427,11 @@ private fun MockTimeUp(
             )
         },
     ) {
-        Icon(painterResource(R.drawable.ic_timer_off), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        MockEyebrow(run.view)
-        StepTitle(stringResource(R.string.mock_time_up))
-        if (saveStatus == DraftSaveStatus.Saved) StepDetail(stringResource(R.string.mock_answers_saved))
+        StepHeader(R.drawable.ic_timer_off) {
+            MockEyebrow(run.view)
+            StepTitle(stringResource(R.string.mock_time_up))
+            if (saveStatus == DraftSaveStatus.Saved) StepDetail(stringResource(R.string.mock_answers_saved))
+        }
     }
 }
 
@@ -367,7 +455,7 @@ private fun MockHandedIn(
                 onClick = viewModel::finish,
             )
         },
-    ) { StepTitle(stringResource(R.string.mock_handed_in_title)) }
+    ) { StepHeader { StepTitle(stringResource(R.string.mock_handed_in_title)) } }
 }
 
 /** When the break ends, its clock already started the next section on the server; this shows it. */
@@ -397,73 +485,75 @@ private fun MockBreak(
                 onClick = viewModel::endBreak,
             )
         },
+        aside = if (run.view.sections.size > 1) ({ SheetSections(run, titled = false) }) else null,
+        asideTitle = stringResource(R.string.mock_sections),
     ) {
-        StepTitle(stringResource(R.string.mock_break))
-        Text(
-            formatClock(remaining),
-            Modifier.semantics { contentDescription = "$label ${formatClock(remaining)}" },
-            style = MaterialTheme.typography.displayMedium.withTabularFigures(),
-        )
-        StepDetail(stringResource(R.string.mock_break_detail))
+        StepHeader {
+            StepTitle(stringResource(R.string.mock_break))
+            Text(
+                formatClock(remaining),
+                Modifier.padding(top = 6.dp).semantics { contentDescription = "$label ${formatClock(remaining)}" },
+                style = MaterialTheme.typography.displayMedium.withTabularFigures(),
+            )
+            StepDetail(stringResource(R.string.mock_break_detail))
+        }
         if (next != null) {
-            HorizontalDivider()
-            androidx.compose.foundation.layout.Row(
-                Modifier.fillMaxWidth().padding(vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(
-                        next.name?.let {
-                            stringResource(R.string.mock_next_named, it)
-                        } ?: stringResource(R.string.mock_next_section),
-                        fontWeight = FontWeight.Medium,
-                    )
-                    next.tools?.let {
+            Column {
+                HorizontalDivider()
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 56.dp)
+                        .padding(vertical = 8.dp)
+                        .semantics(mergeDescendants = true) {},
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            it,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
+                            next.name?.let { stringResource(R.string.mock_next_named, it) } ?: stringResource(R.string.mock_next_section),
+                            style = MaterialTheme.typography.titleSmall,
                         )
+                        next.tools?.let {
+                            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
+                    Text(
+                        formatDuration(next.minutes * SECONDS_PER_MINUTE, currentLocale()),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                    )
                 }
-                Text(
-                    formatDuration(next.minutes * SECONDS_PER_MINUTE, currentLocale()),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
+                HorizontalDivider()
             }
-            HorizontalDivider()
-            if (run.view.sections.size > 1) SheetSections(run)
         }
     }
 }
 
 @Composable
 private fun MockExpired(
-    view: MockExam,
+    viewModel: MockRunnerViewModel,
+    run: MockRun,
     route: AppRoute.Mock,
     navigator: AppNavigator,
+    onClose: () -> Unit,
 ) {
-    TaskScaffold(
-        onClose = { navigator.closeTask() },
-        bottomBar = {
-            MockActionBar {
-                Button(
-                    onClick = {
-                        navigator.closeTask()
-                        navigator.open(view.planItemId?.let { AppRoute.Challenge(it.toString(), route.sessionId) } ?: AppRoute.MockChooser)
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                ) { Text(stringResource(R.string.mock_take_new)) }
-            }
+    MockStepFrame(
+        viewModel,
+        run,
+        onClose,
+        actions = {
+            Button(
+                onClick = {
+                    navigator.closeTask()
+                    navigator.open(run.view.planItemId?.let { AppRoute.Challenge(it.toString(), route.sessionId) } ?: AppRoute.MockChooser)
+                },
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+            ) { Text(stringResource(R.string.mock_take_new)) }
         },
-    ) { padding ->
-        Column(
-            Modifier.fillMaxSize().padding(padding).padding(STEP_PADDING),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(painterResource(R.drawable.ic_timer_off), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            MockEyebrow(view)
+    ) {
+        StepHeader(R.drawable.ic_timer_off) {
+            MockEyebrow(run.view)
             StepTitle(stringResource(R.string.mock_expired_title))
             StepDetail(stringResource(R.string.mock_expired_detail))
         }

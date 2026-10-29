@@ -83,6 +83,7 @@
   "mock_speaking_left": "c105f8353f7dcc5616e88a58e73b84b7a85b1f0f452f81b692256f2a298d9149",
   "mock_speaking_start": "f7ca6a7bbeb0068296aa2a3374d3928a3c2fe409c02ea954f2f4188077da2d64",
   "mock_speaking_start_task": "8b4be6ed1d4e268dcb0b1d6949570e9aeadc950e39058d63a916fba81b98359c",
+  "mock_speaking_start_task_number": "8cb7b21d3fd16a889531816c920168635e08a2b4119901de16c1872966e4dc44",
   "mock_speaking_task": "391f3c876a401bf622eb492efcc6cc86e0cd740b96ad242626a64f773dbbfb78",
   "mock_speaking_writing": "5546d088248b9c5fc70e2ec9ee44c4e6ebd4ee510e5a6b01fb1ba7cc929d691c",
   "mock_start_next": "823163d45c35dc2bc5f97ab75be29fc0b808f0f4818b1f229867a9dc77a7e95a",
@@ -262,6 +263,7 @@
     <string name="mock_speaking_task">Aufgabe %1$d · %2$s</string>
     <string name="mock_speaking_done">Erledigt</string>
     <string name="mock_speaking_start_task">Starten</string>
+    <string name="mock_speaking_start_task_number">Aufgabe %1$d starten</string>
     <plurals name="mock_speaking_hand_in_left">
         <item quantity="one">%d Aufgabe ist noch offen. Für diese Prüfung erhältst du keine Schätzung. Danach kannst du sie in dieser Probeprüfung nicht mehr bearbeiten.</item>
         <item quantity="other">%d Aufgaben sind noch offen. Für diese Prüfung erhältst du keine Schätzung. Danach kannst du sie in dieser Probeprüfung nicht mehr bearbeiten.</item>

@@ -10,16 +10,20 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.AlignmentLine
 import androidx.compose.ui.layout.FirstBaseline
 import androidx.compose.ui.layout.Layout
@@ -44,6 +48,7 @@ fun AnswerOptionGroup(
  * the word its result shows. The word sits beside the option's words while their longest word fits
  * next to it, and under them otherwise, so a long word never breaks at a large font. An option
  * among several picks is a [Role.Checkbox]; [tag] replaces the result's word (an order step's place).
+ * A [glyph] marks the key in place of its number, as main's net-scored statements (✓, ✗, –).
  */
 @Composable
 fun AnswerOption(
@@ -55,6 +60,7 @@ fun AnswerOption(
     enabled: Boolean = true,
     role: Role = Role.RadioButton,
     tag: (@Composable () -> Unit)? = null,
+    glyph: Painter? = null,
     content: @Composable () -> Unit,
 ) {
     val tone = answerTone(picked, result)
@@ -76,7 +82,7 @@ fun AnswerOption(
                 ).padding(horizontal = 14.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        NumberKey(marker, Modifier.alignByBaseline())
+        NumberKey(marker, glyph, Modifier.alignByBaseline())
         TagBesideOrUnder(
             modifier = Modifier.weight(1f).alignByBaseline(),
             content = content,
@@ -88,6 +94,7 @@ fun AnswerOption(
 @Composable
 private fun NumberKey(
     number: Int,
+    glyph: Painter?,
     modifier: Modifier,
 ) {
     Box(
@@ -98,12 +105,21 @@ private fun NumberKey(
                 .border(1.dp, MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(6.dp)),
         contentAlignment = Alignment.Center,
     ) {
+        // A glyph keeps the digit's size and baseline, so its key lines up with the option's words.
         Text(
             text = number.toString(),
             modifier = Modifier.padding(horizontal = 6.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = if (glyph == null) MaterialTheme.colorScheme.onSurfaceVariant else Color.Transparent,
             style = MaterialTheme.typography.labelMedium.withTabularFigures(),
         )
+        glyph?.let {
+            Icon(
+                it,
+                contentDescription = null,
+                modifier = Modifier.size(14.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
     }
 }
 

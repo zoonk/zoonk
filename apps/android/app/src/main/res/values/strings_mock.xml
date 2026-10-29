@@ -158,6 +158,7 @@
     <string name="mock_speaking_task">Task %1$d · %2$s</string>
     <string name="mock_speaking_done">Done</string>
     <string name="mock_speaking_start_task">Start</string>
+    <string name="mock_speaking_start_task_number">Start task %1$d</string>
     <plurals name="mock_speaking_hand_in_left">
         <item quantity="one">%d task isn\'t done, so this paper gets no estimate. After this, you can\'t do it in this mock.</item>
         <item quantity="other">%d tasks aren\'t done, so this paper gets no estimate. After this, you can\'t do them in this mock.</item>

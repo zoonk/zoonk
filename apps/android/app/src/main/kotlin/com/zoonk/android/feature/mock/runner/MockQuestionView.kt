@@ -3,33 +3,34 @@ package com.zoonk.android.feature.mock.runner
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key
-import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.key
-import androidx.compose.ui.input.key.onPreviewKeyEvent
-import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -115,16 +116,6 @@ private fun AnswerInput(
     }
 }
 
-/** An option and the answer it gives; a statement's "Leave blank" gives none. */
-private data class MockOption(
-    val answer: Answer?,
-    val label: String,
-)
-
-/**
- * A statement can be left blank only where a wrong answer cancels a right one (Cebraspe), and never
- * in a section that asks for an answer before moving on.
- */
 @Composable
 private fun Options(
     viewModel: MockRunnerViewModel,
@@ -134,41 +125,48 @@ private fun Options(
     locked: Boolean,
 ) {
     val words = if (run.view.trueFalseLabels.value == "rightWrong") TrueFalseWords.RightWrong else TrueFalseWords.TrueFalse
-    val options =
-        if (question.question.format == QuestionFormat.TrueFalse) {
-            listOfNotNull(
-                MockOption(Answer.TrueFalse(true), trueFalseLabel(true, words)),
-                MockOption(Answer.TrueFalse(false), trueFalseLabel(false, words)),
-                MockOption(null, stringResource(R.string.questions_leave_blank)).takeIf {
-                    run.view.scoring == MockExam.Scoring.NET &&
-                        !run.moves.mustAnswer
-                },
-            )
-        } else {
-            question.question.options
-                .orEmpty()
-                .mapIndexed { index, label -> MockOption(Answer.Choice(index), label) }
-        }
+    val labels = question.question.options.orEmpty()
+    // Main's `getOptionMarks`: where a wrong statement cancels a right one, the keys say ✓, ✗ and –.
+    val glyphs = question.question.format == QuestionFormat.TrueFalse && run.view.scoring == MockExam.Scoring.NET
 
-    fun pick(option: MockOption) {
-        if (locked) return
-        val picked = draft != null && option.answer != null && draft.answer == option.answer
-        if (picked && run.moves.mustAnswer) return
-        viewModel.answer(if (picked) null else option.answer)
-    }
-
-    AnswerOptionGroup(Modifier.numberKeys(options.size) { pick(options[it]) }) {
-        options.forEachIndexed { index, option ->
+    AnswerOptionGroup {
+        run.optionAnswers(question).orEmpty().forEachIndexed { index, option ->
             AnswerOption(
                 marker = index + 1,
-                picked = option.answer != null && draft?.answer == option.answer,
+                picked = option != null && draft?.answer == option,
                 result = null,
-                onClick = { pick(option) },
+                onClick = { viewModel.pickOption(index) },
                 enabled = !locked,
-            ) { ItemLine(option.label, style = MaterialTheme.typography.bodyLarge) }
+                glyph = if (glyphs) painterResource(statementGlyph(option)) else null,
+            ) {
+                when (option) {
+                    is Answer.TrueFalse -> {
+                        ItemLine(trueFalseLabel(option.isTrue, words), style = MaterialTheme.typography.bodyLarge)
+                    }
+
+                    null -> {
+                        Text(
+                            stringResource(R.string.questions_leave_blank),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+
+                    else -> {
+                        ItemLine(labels[index], style = MaterialTheme.typography.bodyLarge)
+                    }
+                }
+            }
         }
     }
 }
+
+private fun statementGlyph(option: Answer?): Int =
+    when ((option as? Answer.TrueFalse)?.isTrue) {
+        true -> R.drawable.ic_check
+        false -> R.drawable.ic_close
+        null -> R.drawable.ic_remove
+    }
 
 @Composable
 private fun Picks(
@@ -177,24 +175,17 @@ private fun Picks(
     draft: MockDraft?,
     locked: Boolean,
 ) {
-    val options = question.question.options.orEmpty()
     val picks = (draft?.answer as? Answer.Choices)?.indexes.orEmpty()
-
-    fun toggle(index: Int) {
-        if (locked) return
-        val next = if (index in picks) picks - index else picks + index
-        viewModel.answer(if (next.isEmpty()) null else Answer.Choices(next))
-    }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         question.question.select?.let { PickRule(it) }
-        AnswerOptionGroup(Modifier.numberKeys(options.size, ::toggle)) {
-            options.forEachIndexed { index, label ->
+        AnswerOptionGroup {
+            question.question.options.orEmpty().forEachIndexed { index, label ->
                 AnswerOption(
                     marker = index + 1,
                     picked = index in picks,
                     result = null,
-                    onClick = { toggle(index) },
+                    onClick = { viewModel.pickOption(index) },
                     enabled = !locked,
                     role = Role.Checkbox,
                 ) { ItemLine(label, style = MaterialTheme.typography.bodyLarge) }
@@ -350,13 +341,13 @@ internal fun QuestionCell(
             else -> MaterialTheme.colorScheme.outlineVariant
         }
 
+    val interactions = remember { MutableInteractionSource() }
+
+    // The strip's cell is drawn small, as main's, inside a full-size target.
     Box(
         modifier
-            .heightIn(min = if (compact) 28.dp else 48.dp)
-            .clip(shape)
-            .background(if (answered) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent)
-            .border(if (current) 2.dp else 1.dp, border, shape)
-            .clickable(enabled = enabled) { onPick(index) }
+            .heightIn(min = 48.dp)
+            .clickable(interactionSource = interactions, indication = null, enabled = enabled) { onPick(index) }
             .clearAndSetSemantics {
                 contentDescription = name
                 stateDescription = states
@@ -365,24 +356,51 @@ internal fun QuestionCell(
             },
         contentAlignment = Alignment.Center,
     ) {
-        if (question.essay) {
-            Icon(
-                painterResource(R.drawable.ic_border_color),
-                contentDescription = null,
-                modifier = Modifier.size(if (compact) 14.dp else 16.dp),
-            )
-        } else {
-            Text(
-                question.number.toString(),
-                color = if (answered || current) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                style = (if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelLarge).withTabularFigures(),
-            )
+        Box(
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = if (compact) 28.dp else 48.dp)
+                .alpha(if (enabled) 1f else DISABLED_ALPHA)
+                .clip(shape)
+                .background(if (answered) MaterialTheme.colorScheme.surfaceContainerHighest else Color.Transparent)
+                .border(if (current) 2.dp else 1.dp, border, shape)
+                .indication(interactions, ripple()),
+            contentAlignment = Alignment.Center,
+        ) {
+            CellLabel(question, answered || current, compact)
+            if (flagged) FlagGlyph(Modifier.align(Alignment.TopEnd).padding(3.dp).size(if (compact) 8.dp else 10.dp))
         }
     }
 }
 
+/** Flagged is the Flag button's own mark, never its color alone. */
 @Composable
-internal fun Modifier.flaggedEdge(): Modifier = border(1.5.dp, MaterialTheme.zoonk.warning, RoundedCornerShape(2.dp))
+internal fun FlagGlyph(modifier: Modifier = Modifier) {
+    Icon(painterResource(R.drawable.ic_flag_filled), contentDescription = null, modifier = modifier, tint = MaterialTheme.zoonk.warning)
+}
+
+@Composable
+private fun CellLabel(
+    question: MockQuestion,
+    strong: Boolean,
+    compact: Boolean,
+) {
+    if (question.essay) {
+        Icon(
+            painterResource(R.drawable.ic_border_color),
+            contentDescription = null,
+            modifier = Modifier.size(if (compact) 14.dp else 16.dp),
+        )
+    } else {
+        Text(
+            question.number.toString(),
+            color = if (strong) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            softWrap = false,
+            style = (if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelLarge).withTabularFigures(),
+        )
+    }
+}
 
 /** A new clock for every question, started when it appears; it leaves the question when it runs out. */
 @Composable
@@ -415,23 +433,12 @@ internal fun ItemCountdown(
     }
 }
 
-/** Number keys pick options, as on main; on phones without a keyboard nothing changes. */
-private fun Modifier.numberKeys(
-    count: Int,
-    onPick: (Int) -> Unit,
-): Modifier =
-    onPreviewKeyEvent { event ->
-        if (event.type != KeyEventType.KeyDown) return@onPreviewKeyEvent false
-        val index = NUMBER_KEYS.indexOf(event.key)
-        if (index !in 0 until count) return@onPreviewKeyEvent false
-        onPick(index)
-        true
-    }
-
-private val NUMBER_KEYS = listOf(Key.One, Key.Two, Key.Three, Key.Four, Key.Five, Key.Six, Key.Seven, Key.Eight, Key.Nine)
 private val WORDS = Regex("\\S+")
 private const val NUMBER_DIGITS = 4
 private const val MAX_ESSAY_CHARACTERS = 12_000
 private const val ESSAY_LINES = 10
 private val ESSAY_HEIGHT = 288.dp
 private const val MS_PER_SECOND = 1000L
+
+/** Material's disabled emphasis. */
+private const val DISABLED_ALPHA = 0.38f

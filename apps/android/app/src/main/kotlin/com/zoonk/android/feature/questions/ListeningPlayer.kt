@@ -31,7 +31,9 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
@@ -341,6 +343,7 @@ private fun ListeningPlayer(
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Medium,
                             maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
                         )
                     }
                     val total = durationMs ?: 0
@@ -390,8 +393,10 @@ private fun Fold(
     onToggle: () -> Unit,
     content: @Composable () -> Unit,
 ) {
+    val state = stringResource(if (open) R.string.listening_expanded else R.string.listening_collapsed)
+
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        FilledTonalButton(onClick = onToggle) {
+        FilledTonalButton(onClick = onToggle, modifier = Modifier.semantics { stateDescription = state }) {
             Text(label)
             Icon(
                 painterResource(R.drawable.ic_expand_more),

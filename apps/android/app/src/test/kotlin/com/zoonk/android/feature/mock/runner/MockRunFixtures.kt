@@ -5,6 +5,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.MockExam
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
@@ -22,7 +23,8 @@ internal fun question(
     number: Int,
     text: String,
     options: List<String> = listOf("2", "3", "4"),
-) = """{"area":"Mathematics","context":null,"entry":null,"format":"multipleChoice","image":null,"itemId":"$item","number":$number,
+    format: String = "multipleChoice",
+) = """{"area":"Mathematics","context":null,"entry":null,"format":"$format","image":null,"itemId":"$item","number":$number,
     "options":[${options.joinToString(
     ",",
 ) { "\"$it\"" }}],"question":"$text","select":null,"set":null,"skillId":"$SKILL","unit":null,"visual":null}"""
@@ -59,8 +61,20 @@ internal fun currentSection(
     questions: String = "${question(ITEM_ONE, 1, "What is 1 + 1?")},${question(ITEM_TWO, 2, "What is 1 + 2?")}",
     drafts: String = "",
     deadline: String = "${Clock.System.now() + 1.hours}",
+    kind: String = "null",
 ) =
-    """{"changesLeft":null,"deadline":"$deadline","drafts":[$drafts],"kind":null,"plays":[],"questions":[$questions],"resume":0,"section":$section}"""
+    """{"changesLeft":null,"deadline":"$deadline","drafts":[$drafts],"kind":$kind,"plays":[],"questions":[$questions],"resume":0,"section":$section}"""
+
+/** A running mock whose first section moves by [navigation], main's section rules. */
+internal fun navigatedMock(navigation: String) =
+    runningMock(
+        extra =
+            """"sections":[{"breakAfterMinutes":null,"essays":0,"index":0,"minutes":30,"name":"Mathematics","navigation":$navigation,"questions":2,"status":"current","tools":null},
+            {"breakAfterMinutes":null,"essays":0,"index":1,"minutes":30,"name":"Languages","navigation":null,"questions":1,"status":"upcoming","tools":null}]""",
+    )
+
+internal const val FORWARD_ONLY = """{"answerChanges":null,"forwardOnly":true,"itemSeconds":null,"mustAnswer":false}"""
+internal const val A_MINUTE_EACH = """{"answerChanges":null,"forwardOnly":true,"itemSeconds":60,"mustAnswer":false}"""
 
 /** The second section, as the mock reads once the first is handed in. */
 internal fun secondSection() =
@@ -78,6 +92,10 @@ internal class FakeMockRunApi(
     val submitted = mutableListOf<Int>()
     var afterSubmit: MockExam? = null
     var saveFailure: ApiException? = null
+
+    /** Holds a hand-in until completed, then fails it with [stepFailure] if set. */
+    var stepGate: CompletableDeferred<Unit>? = null
+    var stepFailure: ApiException? = null
     var plays = 0
 
     override suspend fun mock(
@@ -101,6 +119,8 @@ internal class FakeMockRunApi(
         section: Int,
         timeZone: String,
     ) {
+        stepGate?.await()
+        stepFailure?.let { throw it }
         submitted += section
         afterSubmit?.let { mock = it }
     }

@@ -83,6 +83,7 @@
   "mock_speaking_left": "6292d7122d8b751c11df92cac9ae7b4cadc4dd277f755e662590bd2f293b2696",
   "mock_speaking_start": "edb2e63a585a8992e14d83738d28ae07c89d7077d9f0ce7e13e9913642f2739f",
   "mock_speaking_start_task": "16a06da803aae3092e310d26f60d21768e3d0e6159647955aec6e3393a920d6a",
+  "mock_speaking_start_task_number": "842dae4d60734d5868b15ad32cae0c80fce5c5b8729f9cab503fcaee9ab1a7de",
   "mock_speaking_task": "d7b2f387d572bc8284f9787cd5896780c9143dddc4cfb4bf8ef587092aa6c812",
   "mock_speaking_writing": "1a4d71c8dd04987c73c1ead80bee56263d387343e3d9b6e83cb8ed42ba58bc0c",
   "mock_start_next": "083c5691123d8a0c8a5418f4ade96556d9525e12e59f05ab4e56f57e6a1b0221",
@@ -276,6 +277,7 @@
     <string name="mock_speaking_task">Tarea %1$d · %2$s</string>
     <string name="mock_speaking_done">Hecho</string>
     <string name="mock_speaking_start_task">Empezar</string>
+    <string name="mock_speaking_start_task_number">Empieza la tarea %1$d</string>
     <plurals name="mock_speaking_hand_in_left">
         <item quantity="one">Queda %d tarea sin completar, así que este examen no tendrá una estimación. Después de esto, no podrás hacerla en este simulacro.</item>
         <item quantity="many">Quedan %d tareas sin completar, así que este examen no tendrá una estimación. Después de esto, no podrás hacerlas en este simulacro.</item>

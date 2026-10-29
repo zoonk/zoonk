@@ -9,8 +9,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.Serializable
 import kotlin.math.min
 import kotlin.time.Duration
@@ -35,13 +33,13 @@ enum class SendResult { Stored, Refused, Unreachable, Stop }
  * Main's `createDraftSaveQueue`: sends answers in order, so an older answer to a question never
  * lands after a newer one, and retries one that couldn't reach the server, with a growing wait,
  * before what follows. A newer answer to a question still waiting replaces the older one, since
- * each holds everything about its question. What isn't stored yet is [persist]ed after every
- * change, so a closed app sends it the next time the mock opens. Call it on the main thread.
+ * each holds everything about its question. [onPendingChange] runs whenever [pending] changes, so
+ * the device can keep it. Call it on the main thread.
  */
 class MockSaveQueue(
     private val scope: CoroutineScope,
     private val send: suspend (MockDraft) -> SendResult,
-    private val persist: suspend (List<MockDraft>) -> Unit,
+    private val onPendingChange: () -> Unit,
     private val retryDelay: (attempt: Int) -> Duration = ::backoff,
 ) {
     private val waiting = mutableListOf<MockDraft>()
@@ -50,18 +48,21 @@ class MockSaveQueue(
     private var refused = false
     private var retry: Job? = null
     private var stopped = false
-    private val persisting = Mutex()
     private val state = MutableStateFlow(DraftSaveStatus.Saved)
 
     val status: StateFlow<DraftSaveStatus> = state.asStateFlow()
 
     val isBusy: Boolean get() = sending != null || waiting.isNotEmpty()
 
+    /** The newest answer to each question not stored yet, the one going out included. */
+    val pending: List<MockDraft>
+        get() = (listOfNotNull(sending) + waiting).associateBy(MockDraft::itemId).values.toList()
+
     fun add(draft: MockDraft) {
         if (stopped) return
         val index = waiting.indexOfFirst { it.itemId == draft.itemId }
         if (index == -1) waiting += draft else waiting[index] = draft
-        save()
+        onPendingChange()
         sendNext()
     }
 
@@ -103,7 +104,7 @@ class MockSaveQueue(
                 SendResult.Stored, SendResult.Refused -> {
                     attempt = 0
                     refused = result == SendResult.Refused
-                    save()
+                    onPendingChange()
                     sendNext()
                 }
             }
@@ -129,11 +130,6 @@ class MockSaveQueue(
                 refused -> DraftSaveStatus.Refused
                 else -> DraftSaveStatus.Saved
             }
-    }
-
-    /** The newest list wins: each write reads the queue as it is when its turn comes. */
-    private fun save() {
-        scope.launch { persisting.withLock { persist(listOfNotNull(sending) + waiting.filter { it.itemId != sending?.itemId }) } }
     }
 }
 

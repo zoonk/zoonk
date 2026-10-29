@@ -58,7 +58,7 @@
   "mock_not_found_title": "d84e2d6d176cabdd11a7da6e54f1f0455c2a75c18b72a628e8a8902981b530fa",
   "mock_not_saved_retrying": "6f09f9cd46b370a3ec13ec9a58da1a2d0313d988f7ca77d27329cd5fe2666f28",
   "mock_place": "bfd44e514b37acddfd1cba0b38791b1360749df5d1dc3eeb8818889f3944d4bf",
-  "mock_progress_label": "6ca5a724ed32bf4fa102c99229603b2992d79b6f04c72d991d4fa25271a837c9",
+  "mock_progress_label": "91a0ed5df9527536b672699521a979c0130167d29f72a5fea7298d18bf0876f4",
   "mock_question_number": "102733cd553620570579c3b33ba4331f091896f3f44abb6074e3336b5ebfb41b",
   "mock_question_place": "186267aa771ed84615cd940f5f7cf79a568fe10116200911f823845dbd54d1cd",
   "mock_question_place_area": "fd0e0b435b1357a79ab09156a6ff10c6b160c42f9de3ef5c0c265b34daa41f60",
@@ -83,6 +83,7 @@
   "mock_speaking_left": "b6262e9da982089d7d6ce0e618b38bcf2556eafc900ae4e7c69ab3acadbd347c",
   "mock_speaking_start": "a850ccd055727ab18cec5a7318ce016e1f56b9f3f14607502c8250f437e1bbce",
   "mock_speaking_start_task": "ac528f9b96bd1808ac43e742180b5a7af96c1d058b2cdff0337b3294c31aaf66",
+  "mock_speaking_start_task_number": "face7ffeccb4dafc3e6544b4c4813b72de69c63e761763d7fa4dd3584ca710d7",
   "mock_speaking_task": "76890d8a35963e10f0f177c577fb78cae8cf31cdc0b0aadbc016066175f228c1",
   "mock_speaking_writing": "d6f9a335a8f3d267c5a2f8d1bbbdc44850c310ca992fded0ec4f33ad005d8e1c",
   "mock_start_next": "207e328521faed54805513fddee86736eb577a853339c81b8a3dc93d749f686e",
@@ -140,7 +141,7 @@
     <!-- Under the section's countdown, such as "1:24:09". -->
     <string name="mock_time_left_caption">temps restant</string>
     <string name="mock_time_left_question">Temps restant pour cette question</string>
-    <string name="mock_progress_label">Questions répondues dans cette partie</string>
+    <string name="mock_progress_label">Questions auxquelles tu as répondu dans cette section</string>
     <!-- Where the learner is among a section's questions: "12 of 45". -->
     <string name="mock_place">%1$d sur %2$d</string>
     <string name="mock_written_part">Partie écrite</string>
@@ -276,6 +277,7 @@
     <string name="mock_speaking_task">Tâche %1$d · %2$s</string>
     <string name="mock_speaking_done">Terminé</string>
     <string name="mock_speaking_start_task">Commencer</string>
+    <string name="mock_speaking_start_task_number">Commencer la tâche %1$d</string>
     <plurals name="mock_speaking_hand_in_left">
         <item quantity="one">%d tâche n’est pas terminée, donc cette copie n’aura pas d’estimation. Après ça, tu ne pourras plus la faire dans cet examen blanc.</item>
         <item quantity="many">%d tâches ne sont pas terminées, donc cette copie n’aura pas d’estimation. Après ça, tu ne pourras plus les faire dans cet examen blanc.</item>

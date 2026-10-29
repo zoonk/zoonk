@@ -19,7 +19,8 @@ class MockSaveQueueTest {
     private val sent = mutableListOf<MockDraft>()
     private val results = ArrayDeque<SendResult>()
     private var gate: CompletableDeferred<Unit>? = null
-    private val persisted = mutableListOf<List<MockDraft>>()
+    private val kept = mutableListOf<List<MockDraft>>()
+    private lateinit var queue: MockSaveQueue
 
     private fun TestScope.queue() =
         MockSaveQueue(
@@ -29,8 +30,8 @@ class MockSaveQueueTest {
                 sent += draft
                 results.removeFirstOrNull() ?: SendResult.Stored
             },
-            persist = { persisted += it },
-        )
+            onPendingChange = { kept += queue.pending },
+        ).also { queue = it }
 
     private fun draft(
         item: String,
@@ -47,7 +48,7 @@ class MockSaveQueueTest {
 
             assertEquals(listOf("a", "b"), sent.map { it.itemId })
             assertEquals(DraftSaveStatus.Saved, queue.status.value)
-            assertEquals(emptyList<MockDraft>(), persisted.last())
+            assertEquals(emptyList<MockDraft>(), kept.last())
         }
 
     @Test
@@ -138,10 +139,26 @@ class MockSaveQueueTest {
             queue.add(draft("a", 0))
             runCurrent()
 
-            assertEquals(listOf(draft("a", 0)), persisted.last())
+            assertEquals(listOf(draft("a", 0)), kept.last())
             gate!!.complete(Unit)
             advanceUntilIdle()
-            assertEquals(emptyList<MockDraft>(), persisted.last())
+            assertEquals(emptyList<MockDraft>(), kept.last())
+        }
+
+    @Test
+    fun aNewerAnswerToTheQuestionGoingOutIsTheOneKept() =
+        runTest {
+            gate = CompletableDeferred()
+            val queue = queue()
+            queue.add(draft("a", 0))
+            runCurrent()
+            queue.add(draft("a", 1))
+
+            assertEquals(listOf(draft("a", 1)), kept.last())
+            gate!!.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(listOf(draft("a", 0), draft("a", 1)), sent)
+            assertEquals(emptyList<MockDraft>(), kept.last())
         }
 
     @Test

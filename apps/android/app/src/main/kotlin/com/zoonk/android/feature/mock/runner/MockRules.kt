@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.mock.runner
 
 import com.zoonk.android.feature.questions.Answer
+import com.zoonk.android.feature.questions.QuestionFormat
+import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamSectionsInnerNavigation
 
 /** Main's `getSectionMoves`: where the learner may go in a section and what may still change. */
@@ -64,6 +66,32 @@ val MockDraft?.isAnswered: Boolean
             is Answer.Text -> answer.text.isNotBlank()
             else -> true
         }
+
+/**
+ * The answers a question's options give, in order, or null when it isn't answered by picking. A
+ * statement's "Leave blank" gives none; it's offered only where a wrong answer cancels a right one
+ * (Cebraspe), and never in a section that asks for an answer before moving on.
+ */
+fun MockRun.optionAnswers(question: MockQuestion): List<Answer?>? {
+    val kit = question.question
+    return when {
+        question.essay || kit.format == QuestionFormat.Numeric || kit.format == QuestionFormat.Typed -> {
+            null
+        }
+
+        kit.format == QuestionFormat.TrueFalse -> {
+            val statements = listOf(Answer.TrueFalse(true), Answer.TrueFalse(false))
+            if (view.scoring == MockExam.Scoring.NET && !moves.mustAnswer) statements + null else statements
+        }
+
+        else -> {
+            kit.options
+                .orEmpty()
+                .indices
+                .map(Answer::Choice)
+        }
+    }
+}
 
 /** "12 of 45" among a section's counted questions; null for an essay, which isn't counted. */
 data class SectionPlace(

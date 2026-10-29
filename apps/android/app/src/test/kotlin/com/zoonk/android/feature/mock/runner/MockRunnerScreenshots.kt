@@ -91,6 +91,20 @@ class MockRunnerScreenshots {
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun expired() = capture("mock-expired", runningMock(extra = """"status":"expired""""))
 
+    /** Where a wrong statement cancels a right one, the keys say ✓, ✗ and –. */
+    @Test
+    fun netScoredStatements() =
+        capture(
+            "mock-net-statements",
+            runningMock(
+                current =
+                    currentSection(
+                        questions = question(ITEM_ONE, 1, "Water boils at 100 °C at sea level.", emptyList(), "trueFalse"),
+                    ),
+                extra = """"scoring":"net"""",
+            ),
+        )
+
     /** The first question answered and the second flagged, from the drafts the server kept. */
     private fun answered() =
         runningMock(

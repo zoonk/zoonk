@@ -9,14 +9,15 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.DraftHandle
 import com.zoonk.android.data.DraftStore
-import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Resource
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockPlayInput
 import com.zoonk.api.models.MockTimeZoneInput
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.buildJsonObject
@@ -176,20 +177,27 @@ class LiveMockRunApi(
     }
 }
 
-/**
- * A running mock, by the id it opens with. It changes only by the learner's steps in it, each of
- * which reads it again, so no other write revalidates it; its unsent answers wait on the device.
- */
+/** The mock as the server has it and the answers this device hasn't sent yet: a runner starts from both. */
+data class OpenedMock(
+    val view: MockExam,
+    val unsent: List<MockDraft>,
+)
+
+/** A running mock's reads and writes; its unsent answers wait on the device until the server has them. */
 class MockRunStore(
     private val api: MockRunApi,
     private val cache: AppCache,
     private val drafts: DraftStore,
     private val timeZone: () -> String,
 ) {
-    val mock: KeyedResources<String, MockExam> =
-        cache.keyed(Audience.SignedIn) { session, blockId -> session?.let { api.mock(it, blockId) } }
+    /** Each opening reads the mock again, as main's page does, so a runner never starts from a read older than its saves. */
+    fun open(blockId: String): Resource<OpenedMock> =
+        cache.resource(Audience.SignedIn) { session ->
+            session ?: return@resource null
+            val view = api.mock(session, blockId) ?: return@resource null
+            OpenedMock(view, unsent(session, blockId).value.first().orEmpty())
+        }
 
-    /** Answers given but not stored yet, kept on the device until the server has them. */
     fun unsent(
         session: AuthenticatedSession,
         blockId: String,
@@ -209,29 +217,26 @@ class MockRunStore(
     suspend fun submitSection(
         blockId: String,
         section: Int,
-    ): MutationResult<MockExam?> = step(blockId, setOf(DataDomain.LearnerModel)) { api.submitSection(it, blockId, section, timeZone()) }
+    ): MutationResult<MockExam?> = step(blockId, FINISHING) { api.submitSection(it, blockId, section, timeZone()) }
 
     suspend fun endBreak(blockId: String): MutationResult<MockExam?> = step(blockId) { api.endBreak(it, blockId) }
 
     suspend fun startSpeaking(blockId: String): MutationResult<MockExam?> = step(blockId) { api.startSpeaking(it, blockId) }
 
-    suspend fun finish(blockId: String): MutationResult<MockExam?> =
-        step(blockId, setOf(DataDomain.LearnerModel)) {
-            api.finish(it, blockId, timeZone())
-        }
-
-    /** A GET when its deadline may have passed long ago; it never scores the mock. */
-    suspend fun reread(blockId: String) = mock[blockId].refresh()
+    suspend fun finish(blockId: String): MutationResult<MockExam?> = step(blockId, FINISHING) { api.finish(it, blockId, timeZone()) }
 
     private suspend fun step(
         blockId: String,
         invalidating: Set<DataDomain> = emptySet(),
         write: suspend (AuthenticatedSession) -> Unit,
     ): MutationResult<MockExam?> =
-        cache.mutate(invalidating = invalidating, replacing = { read ->
-            listOfNotNull(read?.let { mock[blockId].replacing(it) })
-        }) { session ->
+        cache.mutate(invalidating) { session ->
             write(session)
             api.mock(session, blockId)
         }
+
+    private companion object {
+        /** A graded mock completes its block in the day's session, moves progress and the learner model, and can bring lessons back into the plan. */
+        val FINISHING = setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress, DataDomain.UserSession)
+    }
 }

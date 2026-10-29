@@ -58,7 +58,7 @@
   "mock_not_found_title": "ab87844eb915d55885c36ce59a4475fb51057407063c098682813ef399370478",
   "mock_not_saved_retrying": "ff6842fd332db0a026a78ba79d6801195e270a37c795a4bb8b014fa4a464da09",
   "mock_place": "4b5b7e09a78303ddca94df9a847bf54afa007747d930b3e25c42a920982778fa",
-  "mock_progress_label": "82ac7f9dc97579ab32e8a0250f8e5cc79688b1940f7edc73dd52bf120f40ab4d",
+  "mock_progress_label": "f82abb3130af1c21a87114a645b19ac71208f9c6dacfdaa5cd25a3455b917ca2",
   "mock_question_number": "86371ffc185e4b9e2d20ba6ba10c036bcb9d1774095bb43071432df2e5348ec8",
   "mock_question_place": "d323b81c9b59356522db78746209c68afa573c08b48b5b150882985c2bea4a50",
   "mock_question_place_area": "45d1c6d03b6ca6462e9e13aa679126e2e4effa244a0ad3e11c542df7828f81b2",
@@ -83,6 +83,7 @@
   "mock_speaking_left": "2a0d845b2ef668b607c78b1d5eafcdd46ae6a8cc1e50e2abfee3ddbd2d8ca8ae",
   "mock_speaking_start": "c5448e5eb806505b2e032237de71d1ec7d8f33c6986bbc0059feb625681ab50c",
   "mock_speaking_start_task": "fbdf2802c2a8b07d406e3d9f2b6a48f10e84fe711aeb596b854d5d05f5e71a7b",
+  "mock_speaking_start_task_number": "f11e5cd2b974fb789f56f88460ea9b853e4a339c4b93e48d937e179b02fd0587",
   "mock_speaking_task": "561b77125caab7ade55c1f5cd8152f65d20fb3e14016063e4261411ee72a94e2",
   "mock_speaking_writing": "2813e5a701b40eb6c2bb5d71262639e04ebb695cf29776e91afc332b61f01a5a",
   "mock_start_next": "52cf3a939d6cb7f3a7a6910a3f4651196dbf96dd8a641caa45a84bdc0f032344",
@@ -140,7 +141,7 @@
     <!-- Under the section's countdown, such as "1:24:09". -->
     <string name="mock_time_left_caption">tempo restante</string>
     <string name="mock_time_left_question">Tempo restante para esta pergunta</string>
-    <string name="mock_progress_label">Perguntas respondidas nesta parte</string>
+    <string name="mock_progress_label">Perguntas respondidas nesta seção</string>
     <!-- Where the learner is among a section's questions: "12 of 45". -->
     <string name="mock_place">%1$d de %2$d</string>
     <string name="mock_written_part">Parte escrita</string>
@@ -276,6 +277,7 @@
     <string name="mock_speaking_task">Tarefa %1$d · %2$s</string>
     <string name="mock_speaking_done">Concluído</string>
     <string name="mock_speaking_start_task">Começar</string>
+    <string name="mock_speaking_start_task_number">Iniciar tarefa %1$d</string>
     <plurals name="mock_speaking_hand_in_left">
         <item quantity="one">%d tarefa não foi concluída, então este simulado não terá estimativa. Depois disso, você não poderá fazê-la neste simulado.</item>
         <item quantity="many">%d tarefas não foram concluídas, então este simulado não terá estimativa. Depois disso, você não poderá fazê-las neste simulado.</item>

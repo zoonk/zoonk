@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "listening_collapsed": "4b277ca46e8fcdab47d1901ae00c251bc406892af81ad47a2268304373970434",
   "listening_elapsed": "99fca59a3d62b989791f126fd3ab298c077d264b430068a0f7f1caa35833ed72",
+  "listening_expanded": "f45fc48bd41621e09b41754b8dd5f0772db9bc2f3595fe7469e3d7feaafb9431",
   "listening_failed": "9ef43c798ac83b9abc3bfa3499aa8c35253903a7d36833b094559049dd4f5b7c",
   "listening_note_free": "82944aa23bf09ca35223cb57916649d700ed604a53543c229dfd9d0d399f9246",
   "listening_note_once": "b8dbaddd3ceb29a24802305dcaccc91c5f95a045fada9aa62dba6e3af24cddd8",
@@ -40,4 +42,6 @@
         <item quantity="other">Fragen zu dieser Aufnahme (%d)</item>
     </plurals>
     <string name="listening_transcript">Transkript</string>
+    <string name="listening_expanded">Ausgeklappt</string>
+    <string name="listening_collapsed">Eingeklappt</string>
 </resources>
