@@ -16,6 +16,7 @@ import { hasAreas, useAreaSentence } from "./use-area-sentence";
 import { isChoiceOperation, useChoiceSentence } from "./use-choice-sentence";
 import { useCoverageSentence } from "./use-coverage-sentence";
 import { usePhaseDatesSentence } from "./use-phase-dates-sentence";
+import { useProposedOperationSentence } from "./use-proposed-sentence";
 import { useShortList } from "./use-short-list";
 import { type PlanChangeContent, useSystemChangeSentence } from "./use-system-change-sentence";
 import { useToolSentence } from "./use-tool-sentence";
@@ -48,29 +49,6 @@ function useFollowsNoticeSentence() {
       "{document, select, notice {Your plan follows the exam notice.} other {Your plan follows the exam's official guide.}}",
       { document },
     );
-}
-
-/** For a change never applied: "Daily time: 40 min.", never "changed to" unless the learner said yes. */
-function useProposedOperationSentence() {
-  const t = useExtracted();
-  const formatDate = useFormatIsoDate();
-  const formatDuration = useFormatDuration();
-
-  return function proposedOperationSentence(operation: PlanOperation): string | null {
-    if (operation.kind === "setDailyMinutes") {
-      return t("Daily time: {time}.", { time: formatDuration(operation.minutes) });
-    }
-
-    if (operation.kind === "moveWeeklyEvent") {
-      return t("Weekly challenge: {date}.", { date: formatDate(operation.to, "long") });
-    }
-
-    const date =
-      (operation.kind === "setTargetDate" || operation.kind === "setNoticeDate") &&
-      operation.targetDate;
-
-    return date ? t("Goal date: {date}.", { date: formatDate(date, "long") }) : null;
-  };
 }
 
 function useOperationSentence() {

@@ -183,9 +183,25 @@ export function useLessonsEffectText() {
     }
 
     return someOf && removed > 0
-      ? t("Lessons left out include {names}.", { names })
-      : t("Lessons left out: {names}.", { names });
+      ? t({
+          description: "A suggested change, not one already made.",
+          message: "Lessons left out include {names}.",
+          values: { names },
+        })
+      : t({
+          description: "A suggested change, not one already made.",
+          message: "Lessons left out: {names}.",
+          values: { names },
+        });
   };
+
+  // Lessons swapped within a skill remove none in total, so the diff has no count for them.
+  const leftOutNamesText = (counted: Counted, leftOut: string[]) =>
+    namesText(
+      counted.removed === 0 && leftOut.length > 0
+        ? { names: shortList(leftOut, "lessons"), removed: leftOut.length, someOf: false }
+        : counted,
+    );
 
   return function lessonsText(
     effect: ChangeEffect,
@@ -212,7 +228,7 @@ export function useLessonsEffectText() {
     const unwritten = unwrittenText(effect);
 
     if (named) {
-      return [namesText(counted), unwritten].filter(Boolean).join(" ") || null;
+      return [leftOutNamesText(counted, leftOut), unwritten].filter(Boolean).join(" ") || null;
     }
 
     const counts = sayLessons(byDate ? { addedText, bothText, removedText } : fewer, {

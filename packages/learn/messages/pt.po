@@ -10464,21 +10464,6 @@ msgid "{document, select, notice {Your plan follows the exam notice.} other {You
 msgstr "{document, select, notice {Seu plano segue o edital da prova.} other {Seu plano segue o guia oficial da prova.}}"
 
 #: src/plan/use-change-sentence.ts
-msgctxt "Ug6b0w"
-msgid "Daily time: {time}."
-msgstr "Tempo diário: {time}."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "8lqPZz"
-msgid "Weekly challenge: {date}."
-msgstr "Desafio semanal: {date}."
-
-#: src/plan/use-change-sentence.ts
-msgctxt "C8erdS"
-msgid "Goal date: {date}."
-msgstr "Data da meta: {date}."
-
-#: src/plan/use-change-sentence.ts
 msgctxt "n-S3-o"
 msgid "Daily time changed to {time}."
 msgstr "Tempo diário alterado para {time}."
@@ -10740,15 +10725,17 @@ msgctxt "j3OVHp"
 msgid "Leaves out {lessons, plural, one {# lesson} other {# lessons}}: {names}."
 msgstr "Deixa de fora {lessons, plural, one {# aula} other {# aulas}}: {names}."
 
+#. A suggested change, not one already made.
 #: src/plan/use-effect-counts.ts
 msgctxt "NeqKcc"
 msgid "Lessons left out include {names}."
-msgstr "Algumas aulas que ficaram de fora: {names}."
+msgstr "Algumas aulas que podem ficar de fora: {names}."
 
+#. A suggested change, not one already made.
 #: src/plan/use-effect-counts.ts
 msgctxt "GOzVd7"
 msgid "Lessons left out: {names}."
-msgstr "Aulas que ficaram de fora: {names}."
+msgstr "Aulas que podem ficar de fora: {names}."
 
 #: src/plan/use-effect-text.ts
 msgctxt "IUkTus"
@@ -10874,6 +10861,71 @@ msgstr "Reta final"
 msgctxt "planPhases.vgG-Fn"
 msgid "After the exam"
 msgstr "Depois da prova"
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "_9tzOi"
+msgid "Leave out: {activities}."
+msgstr "Deixar de fora: {activities}."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "zGH4a8"
+msgid "Back in your lessons: {activities}."
+msgstr "De volta às suas aulas: {activities}."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "mlgPyu"
+msgid "Leave out of the plan: {areas}."
+msgstr "Deixar fora do plano: {areas}."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "x5EnlY"
+msgid "Back in the plan: {areas}."
+msgstr "De volta ao plano: {areas}."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "MHmq3i"
+msgid "Add to your plan: {skills}."
+msgstr "Adicionar ao plano: {skills}."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "Ug6b0w"
+msgid "Daily time: {time}."
+msgstr "Tempo diário: {time}."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "8lqPZz"
+msgid "Weekly challenge: {date}."
+msgstr "Desafio semanal: {date}."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "Mk9Lt2"
+msgid "More practice."
+msgstr "Mais prática."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "i8iXqU"
+msgid "More explanation."
+msgstr "Mais explicações."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "IXaFjE"
+msgid "Harder material."
+msgstr "Conteúdo mais difícil."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "Uk1YPh"
+msgid "Easier material."
+msgstr "Conteúdo mais fácil."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "ZDlgRn"
+msgid "Lessons at the usual difficulty."
+msgstr "Aulas na dificuldade de sempre."
+
+#: src/plan/use-proposed-sentence.ts
+msgctxt "C8erdS"
+msgid "Goal date: {date}."
+msgstr "Data da meta: {date}."
 
 #: src/plan/use-relearn-sentence.ts
 msgctxt "U1dGge"
