@@ -119,7 +119,7 @@ class TodayScreenshots {
         val context = LocalContext.current
         val app = remember { AppContainer.preview(context) }
         val navigator = rememberAppNavigator()
-        val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today) }
+        val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today, app.plans) }
 
         TabRootScaffold(app, navigator) { padding ->
             TodayDay(
@@ -200,6 +200,32 @@ class TodayScreenshots {
                                         "tools" to
                                             JsonArray(listOf(kotlinx.serialization.json.JsonPrimitive("A black pen with a clear barrel"))),
                                     ),
+                            ),
+                    ),
+                "notice-exam-choice" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "examChoice" to
+                                    buildJsonObject {
+                                        put("group", "Língua estrangeira")
+                                        put(
+                                            "options",
+                                            buildJsonArray {
+                                                listOf("Inglês", "Espanhol").forEach { name ->
+                                                    add(
+                                                        buildJsonObject {
+                                                            put("name", name)
+                                                            put("shortName", null as String?)
+                                                        },
+                                                    )
+                                                }
+                                            },
+                                        )
+                                        put("subject", null as String?)
+                                    },
                             ),
                     ),
                 "notice-insight" to

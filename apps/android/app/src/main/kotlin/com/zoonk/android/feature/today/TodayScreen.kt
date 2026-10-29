@@ -70,7 +70,7 @@ fun TodayScreen(
     navigator: AppNavigator,
 ) {
     val access by app.learnerAccess.collectAsStateWithLifecycle()
-    val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today) }
+    val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today, app.plans) }
 
     LaunchedEffect(viewModel, navigator) {
         viewModel.routes.collect { tapped ->

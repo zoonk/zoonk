@@ -1,20 +1,25 @@
 package com.zoonk.android.feature.today
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.exam.ExamMomentCard
 import com.zoonk.android.feature.exam.examMomentTitle
 import com.zoonk.android.feature.exam.icon
+import com.zoonk.android.feature.plan.PlanEffectDiff
 import com.zoonk.android.feature.plan.PlanEnd
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.planChangeAppliedLine
 import com.zoonk.android.feature.plan.planChangeProposalEffect
+import com.zoonk.android.feature.plan.planChangeSentence
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
@@ -60,6 +65,7 @@ internal fun TodayNotice(
     when (hold?.kind ?: picked) {
         TodayNoticeKind.Exam -> read.today.exam?.let { ExamMomentNotice(it, state, layout, modifier) }
         TodayNoticeKind.ExamAccess -> ExamAccessNotice(state, layout, modifier)
+        TodayNoticeKind.ExamChoice -> ExamChoiceNotice(state, layout, modifier)
         TodayNoticeKind.Insight -> (read.today.insight ?: hold?.insight)?.let { InsightNotice(it, state, layout, modifier) }
         TodayNoticeKind.SuggestedGoal -> read.today.suggestedGoal?.let { SuggestedGoalNotice(it, state, layout, modifier) }
         else -> Unit
@@ -87,6 +93,86 @@ private fun ExamMomentNotice(
                 state.navigate(AppRoute.Exam)
             },
         )
+    }
+}
+
+/** Equal options, so one under the other in their order, never one as the main answer. */
+@Composable
+private fun ExamChoiceNotice(
+    state: TodayNoticeState,
+    layout: SuggestionLayout,
+    modifier: Modifier,
+) {
+    val viewModel = state.viewModel
+    val goalId = state.read.today.goal.id
+    val label = stringResource(R.string.today_notice_exam_choice)
+    val mark = SuggestionMark.Symbol(R.drawable.ic_signpost)
+    val saving = viewModel.isSavingExamChoice
+    val made = viewModel.examChoiceMade
+
+    if (made != null) {
+        val sentence =
+            planChangeSentence(
+                made,
+                state.read.today.goal.targetDate
+                    ?.toJavaLocalDate(),
+            )
+        val undo: (@Composable () -> Unit)? =
+            if (made.canUndo) {
+                {
+                    SuggestionAction(
+                        stringResource(R.string.today_undo),
+                        { viewModel.undoExamChoice(goalId, made) },
+                        enabled = !saving,
+                        secondary = true,
+                    )
+                }
+            } else {
+                null
+            }
+
+        Suggestion(
+            label = label,
+            summary = sentence,
+            layout = layout,
+            modifier = modifier,
+            mark = mark,
+            answered = true,
+            lineAction = undo,
+        ) {
+            SuggestionResult(sentence)
+            planChangeProposalEffect(made.effect, planEnd(state), besideDiff = true)?.let { SuggestionDescription(it) }
+            PlanEffectDiff(made.effect)
+            undo?.let { SuggestionActions { it() } }
+            if (viewModel.examChoiceFailed) SuggestionSaveError()
+        }
+        return
+    }
+
+    val choice = state.read.today.examChoice ?: return
+    val question = stringResource(R.string.today_exam_choice_question, choice.group)
+
+    Suggestion(
+        label = label,
+        summary = question,
+        layout = layout,
+        modifier = modifier,
+        mark = mark,
+        lineAction = { SuggestionOpen(stringResource(R.string.today_exam_choice_choose)) },
+    ) {
+        SuggestionHeader(question)
+        SuggestionDescription(stringResource(R.string.today_exam_choice_detail, choice.group))
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            choice.options.forEach { option ->
+                SuggestionAction(
+                    text = option.shortName ?: option.name,
+                    onClick = { viewModel.chooseExamOption(goalId, choice.group, option.name) },
+                    enabled = !saving,
+                    secondary = true,
+                )
+            }
+        }
+        if (viewModel.examChoiceFailed) SuggestionSaveError()
     }
 }
 
@@ -205,7 +291,7 @@ private fun InsightActions(
         when (insight.kind) {
             MemoryInsight.Kind.PLAN_CHANGE -> {
                 if (applied) {
-                    stringResource(R.string.today_insight_keep_it) to stringResource(R.string.today_insight_undo)
+                    stringResource(R.string.today_insight_keep_it) to stringResource(R.string.today_undo)
                 } else {
                     stringResource(R.string.today_insight_add_it) to stringResource(R.string.today_insight_no_thanks)
                 }

@@ -26,6 +26,9 @@
   "today_done_day_off": "064bdec3d11516c9df77126994f693b79be69a24b140d2fb51e0dd3371a58dc3",
   "today_earlier_work": "347ed0b4e99b464ed4185ecac92a431009bcb7544764130411e982c39bfa1d3c",
   "today_earlier_work_detail": "8143e9cf07d09b2d2f8f9de843ecefc43c3a1c377020b9bd8360aacb2377e883",
+  "today_exam_choice_choose": "98da2ef8581db6b02454aff3c21c6bbb1429944d70b52d55c155f4dff8c51b0b",
+  "today_exam_choice_detail": "822eb5194a184cf63c2033f8bd7419104b7cf86c9fb99b159f14e51d10263040",
+  "today_exam_choice_question": "b882276d965cf7a79f6131a2309b17100e1b73a17ee9f0e7e9b8bac01458c23b",
   "today_exam_speaking": "4098dc34e4997c2bbee4c77af7e7a611257f898b526a024790dffc74b639bbdf",
   "today_exam_speaking_detail": "60a933e03b4f74a9b76f2bbe5c8dcf2c71ccb954a65b4ae074a0091112fb1d29",
   "today_exam_today": "d9a18a38090e928c92968c26e037f04f11b541dfb161589e717623ebdbc8809d",
@@ -46,7 +49,6 @@
   "today_insight_no_thanks": "8a044e42e33a607a5a142829e792ec2644374ab7d39099bb62bda1fe9a7e81e0",
   "today_insight_time_moved": "03f8cfb1889856152b1c5dee7f2f0786be8f4ce0bef6d25f69ee02fe66ba2e17",
   "today_insight_time_stays": "025d6a25a0a10760f6f9d3a7cfcb67625f5d041e0db42f9cf7917a979fb1abfe",
-  "today_insight_undo": "a8b5763c5c8417fd801fe253fe02b99d9ce6e777e7f52096e788df95789aff4d",
   "today_keep_learning": "6627840be32294097588cc8ce17de9bf5fe12d1039240eabfcaf086e84918e3b",
   "today_keep_learning_failed": "a2970d0d82733902ed313c0ec72ef298b89b532d320d72eaf6e99d223d2f7a75",
   "today_lessons_not_written": "2e862a0879caa013d4865be6658ff504ffd7d4562a5fb5bcf13d0b1d62ddb645",
@@ -68,6 +70,7 @@
   "today_nothing_to_review": "2269422cdf5f3be38ff4484d5349cda626f2fb4781ec60bbe5dd7522c0480000",
   "today_notice_exam": "103b67cdf149265749a023d617fe7caa8ff659cbb5353f8518d13c704984034e",
   "today_notice_exam_access": "a9339b2641b12aa3e5fb21a7277f225cb6b015716da7e66701eb85616790fbbc",
+  "today_notice_exam_choice": "f74343068f462af0c31f2b55f23f58a32a12ee244908bce4c4ba0f84e86fe84f",
   "today_notice_suggested_goal": "ac360e7e9546fc1a04eea8eaa20f18594cad0dbc212a2018b23c9db47d63facd",
   "today_open_failed": "92470853a41c78697187b6d86cd8606ae1bdec93a428e545b9fa36cbe9dcbc11",
   "today_pace_ahead": "5d905064fc94ac7ea77b000d823f92a22af33fcc27709672a4b0977f52e0ea71",
@@ -141,6 +144,7 @@
   "today_time_left": "c4d9efaafaf48c006c3adbf27a27620aef3758869c49334e04a2ee2b7741fb92",
   "today_time_studied": "3390a17278dc48f098f080cbfb456f85714e013bb18284c5d61ccf1492b810cd",
   "today_title": "aad21e290bd4e5efcfc1d41cb8041f7b69b70346b6b474c3cd08bab1449da86f",
+  "today_undo": "3c776fd3df00ce3975ac6b1dbac36a4adaa99d0b9759a7803e17abb1d1d834e1",
   "today_up_next": "ce1148e56ad18c15a113c5d48ec7f468dcc82028d351e797376b000c66587ab1",
   "today_waiting": "5b8065f8cd458691016515b1e60b8b35cb42d35c3a1913b363a1e1223fad4d49",
   "today_waiting_detail": "8c0ab27ebbdb4d5f1c082fe63145af860760b65abf68017a80a34776a9f8407c",
@@ -418,7 +422,6 @@
     <string name="today_insight_add_it">Añadirlo</string>
     <string name="today_insight_no_thanks">No, gracias</string>
     <string name="today_insight_keep_it">Mantenerlo</string>
-    <string name="today_insight_undo">Deshacer</string>
     <!-- %1$s is a time of day, such as 7:00 PM. -->
     <string name="today_insight_move_time">Cambiar mi tiempo de estudio a %1$s</string>
     <string name="today_insight_got_it">Entendido</string>
@@ -426,6 +429,13 @@
     <string name="today_insight_time_stays">Tu tiempo de estudio se mantiene igual.</string>
     <string name="today_plan_stays">Tu plan se queda como estaba.</string>
     <string name="today_noted">Anotado.</string>
+    <string name="today_undo">Deshacer</string>
+    <string name="today_notice_exam_choice">Elección de examen</string>
+    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
+    <string name="today_exam_choice_question">%1$s: ¿cuál vas a hacer?</string>
+    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
+    <string name="today_exam_choice_detail">Hasta que elijas, tu plan omite %1$s.</string>
+    <string name="today_exam_choice_choose">Elegir</string>
     <string name="today_connection_lost">Se ha perdido la conexión</string>
     <string name="today_connection_lost_detail">Hemos dejado de recibir actualizaciones. Puede que siga funcionando.</string>
     <string name="today_reconnect">Volver a conectar</string>

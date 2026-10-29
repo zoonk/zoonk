@@ -238,7 +238,6 @@
     <string name="today_insight_add_it">Add it</string>
     <string name="today_insight_no_thanks">No thanks</string>
     <string name="today_insight_keep_it">Keep it</string>
-    <string name="today_insight_undo">Undo</string>
     <!-- %1$s is a time of day, such as 7:00 PM. -->
     <string name="today_insight_move_time">Move my study time to %1$s</string>
     <string name="today_insight_got_it">Got it</string>
@@ -246,6 +245,13 @@
     <string name="today_insight_time_stays">Your study time stays the same.</string>
     <string name="today_plan_stays">Your plan stays as it was.</string>
     <string name="today_noted">Noted.</string>
+    <string name="today_undo">Undo</string>
+    <string name="today_notice_exam_choice">Exam choice</string>
+    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
+    <string name="today_exam_choice_question">%1$s: which one will you take?</string>
+    <!-- %1$s is a group of the exam's either/or subjects, such as Foreign language. -->
+    <string name="today_exam_choice_detail">Until you pick, your plan leaves %1$s out.</string>
+    <string name="today_exam_choice_choose">Choose</string>
     <string name="today_connection_lost">Connection lost</string>
     <string name="today_connection_lost_detail">We stopped getting updates. It may still be working.</string>
     <string name="today_reconnect">Reconnect</string>

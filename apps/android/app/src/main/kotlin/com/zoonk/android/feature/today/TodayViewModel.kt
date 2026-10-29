@@ -6,10 +6,14 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.MemoryInsight
+import com.zoonk.api.models.PlanChange
+import com.zoonk.api.models.PlanChangeDecisionInput
+import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.SuggestedGoal
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -37,6 +41,7 @@ sealed interface TodayTap {
 class TodayViewModel(
     private val opener: StudyOpener,
     private val store: TodayStore,
+    private val plans: PlanStore,
 ) : ViewModel() {
     private val opened = Channel<TodayRoute>(Channel.BUFFERED)
 
@@ -146,6 +151,47 @@ class TodayViewModel(
     /** Today left the screen (a task over it, another tab), so the next notice can show on return. */
     fun endVisit() {
         noticeHold = null
+    }
+
+    /** The exam choice just made, so its card says what it did after Today stops asking. */
+    var examChoiceMade by mutableStateOf<PlanChange?>(null)
+        private set
+
+    var examChoiceFailed by mutableStateOf(false)
+        private set
+
+    var isSavingExamChoice by mutableStateOf(false)
+        private set
+
+    fun chooseExamOption(
+        goalId: UUID,
+        group: String,
+        subject: String,
+    ) = saveExamChoice {
+        val result = (plans.chooseExamOption(goalId, group, subject) as? MutationResult.Done)?.value
+        val change = result?.change?.takeIf { result.status == PlanChangeResult.Status.APPLIED }
+        if (change != null) examChoiceMade = change
+        change != null
+    }
+
+    fun undoExamChoice(
+        goalId: UUID,
+        change: PlanChange,
+    ) = saveExamChoice {
+        val undone = plans.decideChange(goalId, change.id, PlanChangeDecisionInput.Status.UNDONE) is MutationResult.Done
+        if (undone) examChoiceMade = null
+        undone
+    }
+
+    private fun saveExamChoice(save: suspend () -> Boolean) {
+        if (isSavingExamChoice) return
+        isSavingExamChoice = true
+        examChoiceFailed = false
+
+        viewModelScope.launch {
+            examChoiceFailed = !save()
+            isSavingExamChoice = false
+        }
     }
 
     /** Kept per insight, so its card shows what the answer did once Today no longer carries it. */

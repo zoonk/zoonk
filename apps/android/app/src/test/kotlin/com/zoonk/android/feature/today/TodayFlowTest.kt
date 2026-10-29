@@ -12,6 +12,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.plan.FakePlanApi
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.StudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.decodeFixture
@@ -106,6 +108,7 @@ class TodayFlowTest {
                         CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
                 ),
                 store,
+                PlanStore(FakePlanApi(), cache),
             )
         val read = TodayRead.Day(today, today.session.toDayView())
 
