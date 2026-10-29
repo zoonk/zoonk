@@ -11,6 +11,9 @@ object ZoonkMotion {
     /** A celebration plays one thing at a time, in reading order, a beat apart. */
     const val BEAT_MILLIS = 250
 
+    /** Between items of one list that celebrate together. */
+    const val STAGGER_MILLIS = 100
+
     val EaseOut: Easing = CubicBezierEasing(0.22f, 1f, 0.36f, 1f)
     val EaseAccelerate: Easing = CubicBezierEasing(0.55f, 0f, 1f, 0.45f)
     val EaseSwing: Easing = CubicBezierEasing(0.45f, 0f, 0.55f, 1f)

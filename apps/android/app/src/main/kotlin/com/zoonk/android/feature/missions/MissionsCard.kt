@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.missions
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +26,8 @@ import androidx.compose.material3.TooltipBox
 import androidx.compose.material3.TooltipDefaults
 import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,9 +55,11 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.celebrates
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.theme.ZoonkMotion
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.StudyMission
@@ -201,17 +207,40 @@ private fun MissionsStatus(
     )
 }
 
-/** One part per mission, furthest first, filling in Brain Power's violet. */
+/**
+ * One part per mission, furthest first, filling in Brain Power's violet. [from] names missions whose
+ * part fills from the step before it, after [delayMillis], when the screen celebrates.
+ */
 @Composable
-private fun MissionTrack(
+internal fun MissionTrack(
     missions: List<DayMission>,
     modifier: Modifier,
+    from: Set<StudyMission.Kind> = emptySet(),
+    delayMillis: Int = 0,
 ) {
-    val fills = missions.map { if (it.total > 0) (it.progress.toFloat() / it.total).coerceAtMost(1f) else 0f }.sortedDescending()
+    val parts =
+        missions
+            .map { mission ->
+                val fill = if (mission.total > 0) (mission.progress.toFloat() / mission.total).coerceAtMost(1f) else 0f
+                val start =
+                    if (mission.kind in from &&
+                        mission.total > 0
+                    ) {
+                        ((mission.total - 1f) / mission.total).coerceAtLeast(0f)
+                    } else {
+                        fill
+                    }
+                start to fill
+            }.sortedByDescending { it.second }
     val brain = MaterialTheme.zoonk.brain
+    val animates = celebrates() && from.isNotEmpty()
+    val progress = remember { Animatable(if (animates) 0f else 1f) }
+    LaunchedEffect(animates) {
+        if (animates) progress.animateTo(1f, tween(ZoonkMotion.BEAT_MILLIS * 2, delayMillis, ZoonkMotion.EaseOut))
+    }
 
     Row(modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(2.dp)) {
-        fills.forEach { fill ->
+        parts.forEach { (start, fill) ->
             Box(
                 Modifier
                     .weight(1f)
@@ -219,7 +248,7 @@ private fun MissionTrack(
                     .clip(MaterialTheme.shapes.extraSmall)
                     .background(brain.copy(alpha = TRACK_ALPHA)),
             ) {
-                Box(Modifier.fillMaxWidth(fill).height(6.dp).background(brain))
+                Box(Modifier.fillMaxWidth(start + (fill - start) * progress.value).height(6.dp).background(brain))
             }
         }
     }

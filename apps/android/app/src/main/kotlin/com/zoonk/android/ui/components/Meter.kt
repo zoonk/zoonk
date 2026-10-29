@@ -57,8 +57,10 @@ data class MeterPart(
             val share: Float = 0f,
         ) : Fill
 
+        /** [share] (0 to 1) of it filled, from the start. */
         data class Solid(
             val color: Color,
+            val share: Float = 1f,
         ) : Fill
     }
 }
@@ -115,7 +117,12 @@ fun MeterParts(
                 }
 
                 is MeterPart.Fill.Solid -> {
-                    drawRoundRect(fill.color, Offset(left, 0f), partSize, radius)
+                    val filled = width * fill.share.coerceIn(0f, 1f)
+                    if (filled < width) drawRoundRect(track, Offset(left, 0f), partSize, radius)
+                    if (filled > 0f) {
+                        val filledLeft = if (rtl) left + width - filled else left
+                        drawRoundRect(fill.color, Offset(filledLeft, 0f), Size(filled, size.height), radius)
+                    }
                 }
             }
 
