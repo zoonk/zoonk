@@ -51,6 +51,7 @@ import com.zoonk.android.feature.activities.music.rhythmTapperRenderer
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.activities.patternTableRenderer
+import com.zoonk.android.feature.activities.reasoning.argumentBuilderRenderer
 import com.zoonk.android.feature.activities.reasoning.combinationGridRenderer
 import com.zoonk.android.feature.activities.reasoning.mapExplorerRenderer
 import com.zoonk.android.feature.activities.reasoning.sourceComparisonRenderer
@@ -100,6 +101,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData.PlayableLib
 /** The one place a template gets its renderer. */
 val activityRenderers: Map<String, ActivityRenderer> =
     mapOf(
+        "argumentBuilder" to argumentBuilderRenderer,
         "beforeAfter" to beforeAfterRenderer,
         "categorize" to categorizeRenderer,
         "causeEffectChain" to causeEffectChainRenderer,

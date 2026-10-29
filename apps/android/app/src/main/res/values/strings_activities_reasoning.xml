@@ -114,4 +114,36 @@
     <!-- The alliance of France, the United Kingdom and Russia before the First World War. -->
     <string name="activities_reasoning_map_label_triple_entente">Triple Entente</string>
     <string name="activities_reasoning_map_label_united_kingdom">United Kingdom</string>
+
+    <!-- An argument the learner builds from a claim, a quote as evidence and a line of reasoning. -->
+    <string name="activities_reasoning_badge_build_argument">Build an argument</string>
+    <!-- The statement the argument sets out to support. -->
+    <string name="activities_reasoning_claim">Claim</string>
+    <!-- The part of an argument that quotes a source. -->
+    <string name="activities_reasoning_evidence">Evidence</string>
+    <!-- The part of an argument that explains how the quote proves the claim; also above the lines to pick for it. -->
+    <string name="activities_reasoning_reasoning">Reasoning</string>
+    <string name="activities_reasoning_evidence_hint">Pick the quote that best supports the claim</string>
+    <string name="activities_reasoning_reasoning_hint">Pick how the quote proves the claim</string>
+    <!-- The empty reasoning part while the evidence is still to pick. -->
+    <string name="activities_reasoning_reasoning_next">Next: explain how the quote proves the claim</string>
+    <string name="activities_reasoning_take_quote_out">Take the quote out</string>
+    <string name="activities_reasoning_take_reasoning_out">Take the reasoning out</string>
+    <!-- Above the quotes the learner picks the evidence from. -->
+    <string name="activities_reasoning_quotes">Quotes</string>
+    <!-- What tapping a quote does, read by TalkBack as "Double-tap to use as evidence". -->
+    <string name="activities_reasoning_use_as_evidence">Use as evidence</string>
+    <!-- What tapping a line of reasoning does, read by TalkBack as "Double-tap to use as reasoning". -->
+    <string name="activities_reasoning_use_as_reasoning">Use as reasoning</string>
+    <string name="activities_reasoning_argument_ready">Your argument is ready. Check it, or take a part out to change it.</string>
+    <!-- After the check, on a part of the argument that supports the claim well. -->
+    <string name="activities_reasoning_strong">Strong</string>
+    <!-- After the check, on a part of the argument that supports the claim poorly. -->
+    <string name="activities_reasoning_weak">Weak</string>
+    <!-- After the check, above the strong quote the learner didn't pick. -->
+    <string name="activities_reasoning_stronger_evidence">Stronger evidence</string>
+    <!-- After the check, above the strong reasoning the learner didn't pick. -->
+    <string name="activities_reasoning_stronger_reasoning">Stronger reasoning</string>
+    <!-- A quote from a source, in the language's quotation marks. -->
+    <string name="activities_reasoning_quote">“%1$s”</string>
 </resources>

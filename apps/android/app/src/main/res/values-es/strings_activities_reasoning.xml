@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_reasoning_argument_ready": "faab57eb1901f85b81e43712b6f9a78461f67dd4b8f333ceb3dd2b35368a5af2",
+  "activities_reasoning_badge_build_argument": "415fa10097665d96c04bc48ee8dddfccf877f6e5c3643187a19ec35b576fe7f9",
   "activities_reasoning_badge_compare_sources": "21852f7dc9b8cde6b1f67ec2644657cdb0168b7ad328ebb2360d39933e5c0fbd",
   "activities_reasoning_badge_explore_map": "adde62dfe8d5b584d2d3967405624256f26f82bb704fef9d18e1b94465e45079",
   "activities_reasoning_badge_fill_square": "68b32cb6594e7d4463348c5a7e317a0bbc292140c91fbe25f1047348195a1703",
+  "activities_reasoning_claim": "392d6c9212b31a20112e243332490e1eec0fe95828f14a14c4ac3c708c00f0c4",
+  "activities_reasoning_evidence": "715e61d0f1ef0ed00ab8dd9d13a83642781401e3d20f2bd9857452be953ce7e5",
+  "activities_reasoning_evidence_hint": "cba9615fe31bbab6184a44846f8a9d263651c0558128a975b3c1e1754262aab7",
   "activities_reasoning_grid_all_filled": "770d89db5e5754327b7072e12b3cca3ba3b4fd7da9e92acfc952f41830666c9d",
   "activities_reasoning_grid_counted": "72ebaa6ac6282bab54dc5261bdb19f26789e0a2bff9eba9ae8dca8c28a33e441",
   "activities_reasoning_grid_filled": "93d9a0a75616cb151a30952249e450d1ead3a03426673c64a1eea1600e1fabc6",
@@ -57,13 +62,26 @@
   "activities_reasoning_map_usa_states": "2313c113adb86781b9078d48f6ece208a53ac1c73815dbfab30149611a45e46a",
   "activities_reasoning_map_world": "136ad9bbf911d0f99af884ebd157991641200859e4f31f318142b7976c6fbfe5",
   "activities_reasoning_map_world_continents": "315c867af1311ed3aa0a1ff931c281c82b900d59dc012a339b8a9626b0ef232f",
+  "activities_reasoning_quote": "48e0a0e4bb9f3711b0362e18d7e077d0ad7f1bf1ea4214b86c0d85e191baf4d8",
+  "activities_reasoning_quotes": "5df505e2f49c6f0629bc3f4631237289859be92373c8cf210eda1d57dbbf9c1c",
+  "activities_reasoning_reasoning": "e0450f1a618140691c0d8e4bf6f34cd4f5b625f8a7f2d632cab6738b554ef0ab",
+  "activities_reasoning_reasoning_hint": "2a7a56cf5cc85c1990e5309e2d25ecea58c3eec1d89bcea75d6cf3ed30babddc",
+  "activities_reasoning_reasoning_next": "75d0aac918752b82eea682c66db340f3a4b05b84d6ae27f2bba8685a86efb439",
   "activities_reasoning_source_mark": "2a19cb67355d15984eee737416bc7b28072eb201f4b930b3cc6d4bdab205e5f9",
   "activities_reasoning_source_missed": "86e7d739713d8cacb41824c63b5ec1d3a16f642d39d223fed03bde3df67f2346",
   "activities_reasoning_source_missed_passages": "7f76c8cf23ea230ea996fe34d0d40d612d594d1446b5e05135737095b4523ba9",
   "activities_reasoning_source_nothing_marked": "d9bb56265ca7e63da364984ad38e809aaee67b68fd2d1f305fb6fee18361e43d",
   "activities_reasoning_source_unmark": "0902b5bf75af8ca58872a71ffe7ab6597e9c85f09ababafec313125203ca55f1",
   "activities_reasoning_source_what_to_mark": "993aacf266eebb39f91b38da88664b0cbf27172fdf9d2d67c59307cec70d91f5",
-  "activities_reasoning_source_you_marked": "210277aced4e41f774b0e6fd0944c707c4b26d84363f3b6adc47891f603d7595"
+  "activities_reasoning_source_you_marked": "210277aced4e41f774b0e6fd0944c707c4b26d84363f3b6adc47891f603d7595",
+  "activities_reasoning_strong": "82e05d832cd6da34da23f9dbff41eda40395755879525741e07f5cd9e2391204",
+  "activities_reasoning_stronger_evidence": "a3cd76c223ede87dcdf61831e9242e8ee86444ae7afb8740da1c293956b89e68",
+  "activities_reasoning_stronger_reasoning": "9be2b4866ad9680fcc09251d145ea5fe374faa6bf435c48f8ddf364aebc8baa4",
+  "activities_reasoning_take_quote_out": "067a2a2fb69bf2a1f6dad6c1b59bf6e297eb237b67f7d68649489cab52af9635",
+  "activities_reasoning_take_reasoning_out": "12f3275b0f0d9d95e92a200f47e9b803dcb2f4e979e324e2c84288dccd208d1b",
+  "activities_reasoning_use_as_evidence": "6eaf0677fdafb9dde0c18bdf51d34439531bc40d5f3086288731efbfe181129f",
+  "activities_reasoning_use_as_reasoning": "e6f62d72a75940d606b37709d8f52dc475d1c692d2f6f9a0c2580ed5a96d27f1",
+  "activities_reasoning_weak": "05532792f60ee57414f1a44284ba9941bcea1d6d5ddbe8f2196178027ddc0962"
 }
 -->
 <resources>
@@ -183,4 +201,35 @@
     <!-- The alliance of France, the United Kingdom and Russia before the First World War. -->
     <string name="activities_reasoning_map_label_triple_entente">Triple Entente</string>
     <string name="activities_reasoning_map_label_united_kingdom">Reino Unido</string>
+    <!-- An argument the learner builds from a claim, a quote as evidence and a line of reasoning. -->
+    <string name="activities_reasoning_badge_build_argument">Construye un argumento</string>
+    <!-- The statement the argument sets out to support. -->
+    <string name="activities_reasoning_claim">Afirmación</string>
+    <!-- The part of an argument that quotes a source. -->
+    <string name="activities_reasoning_evidence">Pruebas</string>
+    <!-- The part of an argument that explains how the quote proves the claim; also above the lines to pick for it. -->
+    <string name="activities_reasoning_reasoning">Razonamiento</string>
+    <string name="activities_reasoning_evidence_hint">Elige la cita que mejor respalde la afirmación</string>
+    <string name="activities_reasoning_reasoning_hint">Elige cómo demuestra la cita la afirmación</string>
+    <!-- The empty reasoning part while the evidence is still to pick. -->
+    <string name="activities_reasoning_reasoning_next">A continuación: explica cómo demuestra la cita la afirmación</string>
+    <string name="activities_reasoning_take_quote_out">Quitar la cita</string>
+    <string name="activities_reasoning_take_reasoning_out">Quitar el razonamiento</string>
+    <!-- Above the quotes the learner picks the evidence from. -->
+    <string name="activities_reasoning_quotes">Citas</string>
+    <!-- What tapping a quote does, read by TalkBack as "Double-tap to use as evidence". -->
+    <string name="activities_reasoning_use_as_evidence">Usar como prueba</string>
+    <!-- What tapping a line of reasoning does, read by TalkBack as "Double-tap to use as reasoning". -->
+    <string name="activities_reasoning_use_as_reasoning">Usar como razonamiento</string>
+    <string name="activities_reasoning_argument_ready">Tu argumento está listo. Compruébalo o quita una parte para cambiarlo.</string>
+    <!-- After the check, on a part of the argument that supports the claim well. -->
+    <string name="activities_reasoning_strong">Sólido</string>
+    <!-- After the check, on a part of the argument that supports the claim poorly. -->
+    <string name="activities_reasoning_weak">Débil</string>
+    <!-- After the check, above the strong quote the learner didn't pick. -->
+    <string name="activities_reasoning_stronger_evidence">Pruebas más sólidas</string>
+    <!-- After the check, above the strong reasoning the learner didn't pick. -->
+    <string name="activities_reasoning_stronger_reasoning">Razonamiento más sólido</string>
+    <!-- A quote from a source, in the language's quotation marks. -->
+    <string name="activities_reasoning_quote">«%1$s»</string>
 </resources>

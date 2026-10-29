@@ -33,6 +33,7 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
+import org.robolectric.annotation.Config
 
 /** Main's player tests for the reasoning templates, played in the real player with core's expected end states. */
 @OptIn(ExperimentalTestApi::class)
@@ -174,5 +175,54 @@ class ReasoningFlowTest {
         shows("Most of the deaths were in houses a few streets from this pump.")
         rule.onNode(hasContentDescription("1. Broad Street pump")).assertIsSelected()
         shows("1 of 3 explored")
+    }
+
+    private fun candidate(text: String) = rule.onNode(hasText(text, substring = true) and hasClickAction())
+
+    @Test
+    fun argumentBuilderTheStrongQuoteAndReasoningAreRight() {
+        play("argumentBuilder", isCorrect = true)
+
+        candidate("It is too rash").performScrollTo().performClick()
+        candidate("Juliet herself").performScrollTo().performClick()
+        shows("Your argument is ready.")
+        harness.tap("Check")
+
+        assertEquals(listOf("e1", "r1"), picked)
+        shows("It names the speed.")
+    }
+
+    @Test
+    fun argumentBuilderAWeakQuoteNamesTheStrongerOne() {
+        play("argumentBuilder", isCorrect = false)
+
+        candidate("O brawling love").performScrollTo().performClick()
+        rule.onNode(hasContentDescription("Take the quote out")).performClick()
+        candidate("O brawling love").performScrollTo().performClick()
+        candidate("Juliet herself").performScrollTo().performClick()
+        harness.tap("Check")
+
+        shows("Stronger evidence")
+        shows("It is about Rosaline.")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp")
+    fun argumentBuilderTakesAQuoteDraggedOntoTheEvidence() {
+        play("argumentBuilder", isCorrect = true)
+
+        val quote = candidate("It is too rash")
+        val from = quote.fetchSemanticsNode().boundsInRoot
+        val slot = rule.onNode(hasText("Pick the quote that best supports the claim")).fetchSemanticsNode().boundsInRoot
+        quote.performTouchInput {
+            down(center)
+            advanceEventTime(viewConfiguration.longPressTimeoutMillis + 100)
+            moveBy((slot.center - from.center) / 2f)
+            moveBy((slot.center - from.center) / 2f)
+            up()
+        }
+
+        rule.onNode(hasContentDescription("Take the quote out")).assertExists()
+        shows("Pick how the quote proves the claim")
     }
 }
