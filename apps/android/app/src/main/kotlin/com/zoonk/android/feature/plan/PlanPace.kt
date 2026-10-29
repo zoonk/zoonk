@@ -53,12 +53,20 @@ val PlanStatus.pace: Pace
 fun paceText(pace: Pace): String =
     when (pace) {
         is Pace.Ahead -> {
-            pluralStringResource(R.plurals.plan_pace_days_ahead, pace.days, pace.days)
+            if (pace.days ==
+                1
+            ) {
+                stringResource(R.string.plan_pace_one_day_ahead)
+            } else {
+                pluralStringResource(R.plurals.plan_pace_days_ahead, pace.days, pace.days)
+            }
         }
 
         is Pace.Behind -> {
             if (pace.lessons != null && pace.lessons > 0) {
                 pluralStringResource(R.plurals.plan_pace_lessons_to_catch_up, pace.lessons, pace.lessons)
+            } else if (pace.days == 1) {
+                stringResource(R.string.plan_pace_one_day_behind)
             } else {
                 pluralStringResource(R.plurals.plan_pace_days_behind, pace.days, pace.days)
             }
@@ -102,7 +110,18 @@ fun paceFix(
         }
 
         is Pace.ChallengesLeft -> {
-            PaceFix(pluralStringResource(R.plurals.plan_pace_win_challenges, pace.challenges), adjust = false)
+            PaceFix(
+                stringResource(
+                    if (pace.challenges ==
+                        1
+                    ) {
+                        R.string.plan_pace_win_challenge
+                    } else {
+                        R.string.plan_pace_win_challenges
+                    },
+                ),
+                adjust = false,
+            )
         }
 
         is Pace.NeedsAdjusting -> {
@@ -114,7 +133,10 @@ fun paceFix(
                 PaceFix(pluralStringResource(R.plurals.plan_pace_earlier_lessons_first, pace.lessons, pace.lessons), adjust = false)
             } else {
                 val days = pluralStringResource(R.plurals.plan_pace_days, pace.days, pace.days)
-                PaceFix(stringResource(R.string.plan_pace_more_minutes, pace.extraMinutesPerDay, days), adjust = false)
+                PaceFix(
+                    pluralStringResource(R.plurals.plan_pace_more_minutes, pace.extraMinutesPerDay, pace.extraMinutesPerDay, days),
+                    adjust = false,
+                )
             }
         }
 

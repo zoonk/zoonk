@@ -42,7 +42,8 @@
   "plan_days_left_estimate_spoken": "1e715e84b5d6bf0ba05e95282c400ea4d8875702a9c87a5f3de53b1da16669ee",
   "plan_done": "5d463edbdf3432ae2db1509c8015439459a37ba963f219ef4b5a09228d737027",
   "plan_done_suffix": "3e2030886b1bbbc7ffc13e559974b6a3f64fc038bc25555f1d7b5605d5042a0f",
-  "plan_estimate_based_on": "3dcd58ac00327fa8382c007c31a54226d22bdf27caf7978e0794ab4438f61a0a",
+  "plan_estimate_based_on": "1f3168fa02f322c306d4e24bcaa6777e42d5ee66c6b166ba6b08967f32aba687",
+  "plan_estimate_based_on_last": "86b6d05ddd46d6851c6f9d874b70a745e29d7df281b273f229963fe2454faa1e",
   "plan_estimate_waits": "067d7a2145f04a238efe9666842537d673b7e437547cc00adb565b5da43e93a9",
   "plan_estimated_score": "7945c81279e5e3cceee7d6444fac1882bf0b5d514ce94fee80924050bd9c73c2",
   "plan_every_day": "dff76e68074267fac608ca3548d475c2b38a68853e7de1fbc8c1bf6ffaf92e45",
@@ -54,13 +55,13 @@
   "plan_eyebrow": "491cdf1bfa03fcfbc90817969fcb3d33b2d551178a54845494d48b5d19376ab1",
   "plan_far_count_from": "ca0a1fd89b2e943774c968530a98893f6d201d462bb830c2839be492e1f12ada",
   "plan_far_from": "fa7e47e64d7b7d9c69caac8798674243c8cceaf94ec3aeca5364f144aec09fe2",
+  "plan_far_lessons": "d0a81aef8bc53432792c763ae7a5459937db7f16bb87a6b38080279f6db0e6ec",
   "plan_far_lessons_about": "71b1fe45f9ccde0331e8379d206a7f01b0e1910bcb1e09ab8460ba8b6a5b44f7",
-  "plan_far_one_lesson": "f181ed0c09fa95f23212b6ccd8c15cc631a3c069d05d935fa6c36a566ed3c63b",
   "plan_fridays": "a73f8ddb2136c00c4f9eb9205aafd0d0e624f362a844d26dc551645e6b9b8ced",
   "plan_full_course": "83f6f7eb23a04ae784c3a70aaf718b7f1538dd7a9884428b83a5cc423ef10a16",
   "plan_full_reviews": "eef87df23f40cd718af4ff8c03649af98444c7504e0c62aac2c080e10bca604b",
   "plan_full_reviews_done": "0290271fb6c6661c70dfeef9721b99d5d20a09398cf5b0ffa047dd46a325d27f",
-  "plan_gain_this_week": "7fd4c6abf79eb7b4f6aef1d3dce1cba11881d0129780fdf9c334fd783b3db48d",
+  "plan_gain_this_week": "e4aa8a5299d029c6c4b0b065509853ad614528a2ab67e4e618c174913c60972f",
   "plan_goal_date": "b446fe7ede82a727c514a3c58637afe97d9793532cbb0a8f58fac837ebe95cbc",
   "plan_goal_limit_reached": "ef2409630c2a953857c49d9ad42e1bcfd661cce9349f5cb49d19b0b3b67b5df7",
   "plan_going_deeper": "ccbc15320f0aa6f91b10820d28a901211029624fb95e0791b0b1ddb3bed61465",
@@ -75,9 +76,9 @@
   "plan_lessons_of": "4e8e75e99f0c4d8ff893de393b5c7e00c8a7e992ba9af24df129332cf58c436a",
   "plan_lessons_on_the_way": "27af34b959550723746134d86360b2f9492807a3680881755c93dcbc79a5060d",
   "plan_long_term_memory": "f534bd1bca7e18384be8b94e394cc40d5dcda1e8578772f88af963f2d83e9325",
-  "plan_loss_this_week": "cfa7ad75d32e0efe078945de3a0f97eccdf248391f4ad4ad67721003dc087445",
+  "plan_loss_this_week": "6c4f9af3960dae0aee639de55fbb509ce98906e00cdb8a158a7676aac12d2dc5",
   "plan_mastery": "b1a9105e7cc7e29b751a5f13eb9627414b0193a4893840ff3482625c192259ae",
-  "plan_mastery_caption": "cebdae998f4608b7cf3a14b42040687b53274db1fb093b4b10b2c70fd56a02a9",
+  "plan_mastery_caption": "ae0733b46c6d19d1ba79a66170f8b8713e2c933a65b3e0185c3a86181379312c",
   "plan_mastery_waits": "ef686f54711561e569b76e01b6bec7881949269076081e979d9c4aa5a7b215fe",
   "plan_measure_full_reviews": "459ec4e7013ddd34c166cca18e9f3ebabb89902cf7c9d29864d55229d1fea92b",
   "plan_measure_mocks": "dc5b85defd40a83c99509e40bbb516cd3359bcf0f1fbcd274d1253677a5d174f",
@@ -110,15 +111,17 @@
   "plan_pace": "c3efd7e3bdd4539222f91923c9b7d396f7aaf936a4680cb9c5bf5089736c6628",
   "plan_pace_challenges_left": "90b01f4c5e434813984fb7e1ecf201671d44bd01eaab416f78339393e3cb6212",
   "plan_pace_days": "5e9d90548bb043b5f5452163aa83b95fcf806ec41f2d5e6bccaa1c78609a1f41",
-  "plan_pace_days_ahead": "9d3b9050fa4289715be6e42d731201740602338e193e72d5a102895e33ee0280",
-  "plan_pace_days_behind": "14884f40184ad39fc3db7f5a0aa8a9af8ccb0ddf55cc17b5157dcb1477621599",
+  "plan_pace_days_ahead": "4896a0a57d3306e9ae45d94cdf99cfd277fedb818cb6dd26c93f9ba9237c617b",
+  "plan_pace_days_behind": "7dc7f604258146c1220170ce89904371c6ca43dc19914b449fd88621f517fe0d",
   "plan_pace_earlier_lessons_first": "b00faecd8897415920cbc5bc7ad58f4755769f5fe3669a2570a48e8ef6b4c88b",
   "plan_pace_finished": "bdc07f0d50f318345e9c9bb88326e33e4d722b9f9e2690128a2f188bc24daa46",
   "plan_pace_keeping_pace": "ebffb4a98e17e115b97ce9298f9f2ca52120f515df592f68f08addfb9a3a1a4f",
   "plan_pace_lessons_to_catch_up": "e5bfd50aebbb9a654992b2c714f2d5aea2037b5bf45078f0850428c30ec45ad6",
-  "plan_pace_more_minutes": "e884188172afab5b68cafd3c80960dd3484ce277c17ac4a30421a46a2f9ca246",
+  "plan_pace_more_minutes": "af2530f1462fd64281c424a2a402d2e1fcc1ec436523c6ab0cc8fa80445dcacd",
   "plan_pace_needs_adjusting": "fe59de8c4d0348e1583e2e979e7e052b2d10640bcad639952e82f7be418a8e08",
   "plan_pace_no_longer_fits": "2a6e069cda4fa94fd1a161b36cc1c7400f45bcef1536ff3df0cf7779ef529e49",
+  "plan_pace_one_day_ahead": "45ddf3dbe18f388f85b40d8a236c926e513e084bdbc1fd73158f08daf9994bd3",
+  "plan_pace_one_day_behind": "67304f04ecea128006bb9e6d31e656487365beed80775bedc22dae76374d4cf0",
   "plan_pace_past_your_date": "4cf6f4cb974b89a4a26309035b599cf6c217484e9cbaf00fc03f39661dfbdf63",
   "plan_pace_value_ahead": "f340d8e6f3fcb2aed6098aaa42d1050bf0d1ff035f46f9a7196aa38aaf2df198",
   "plan_pace_value_behind": "80d3f8746a6683f2b4ba549b037727fc0e49a4ddac2e6b170e5141c7e8eb6089",
@@ -128,7 +131,8 @@
   "plan_pace_value_past_date": "75aab2c5272a294d0363fd1967c03fefc5a927184e246b83de5bb6e742d07ece",
   "plan_pace_value_paused": "daee3760e37b95476a41424a69dbea28fea7beda139485cf5426a6f90b916599",
   "plan_pace_value_too_tight": "2166ff56f1253abd2c16c0fbb513b817ff53909d83184684b92b2b5227eae1cc",
-  "plan_pace_win_challenges": "4f02841a56106e1ba07e7216d1ec71d7c8fbdaa19715ef853b66119e59b6174a",
+  "plan_pace_win_challenge": "026ff9f52c21ebd6cf7e4251cd58109b1e28de4fda99459260e3a3615a89a7f9",
+  "plan_pace_win_challenges": "fe21a2c0ca124d833eb69cd840b29acf6d566375155b1c66e9fd09eeb2af28cd",
   "plan_past_date_exam_sentence": "8403ea3e03fe5ee830d44092ca29d1ecb8199bb7fb3a5ef8955d05d09c925d9c",
   "plan_past_date_goal_sentence": "655143ade550c7399c1f76302525f1f760bd2afdede802becab6b2b7348172f6",
   "plan_pause_goal": "ca6760c7890b9fb7f502138e0dc182709a5a3ee37d291202d2f3ce8c11bd14fa",
@@ -321,7 +325,10 @@
     <string name="plan_skipped_known">Übersprungen, weil du das schon kennst</string>
     <string name="plan_going_deeper">Ein früheres Thema vertiefen</string>
     <string name="plan_far_from">Ab %1$s</string>
-    <string name="plan_far_one_lesson">%1$d Lektion</string>
+    <plurals name="plan_far_lessons">
+        <item quantity="one">%d Lektion</item>
+        <item quantity="other">%d Lektionen</item>
+    </plurals>
     <plurals name="plan_far_lessons_about">
         <item quantity="one">Etwa %d Lektion</item>
         <item quantity="other">Etwa %d Lektionen</item>
@@ -406,12 +413,14 @@
         <item quantity="one">Noch %d Lektion</item>
         <item quantity="other">Noch %d Lektionen</item>
     </plurals>
+    <string name="plan_pace_one_day_ahead">Einen Tag voraus</string>
     <plurals name="plan_pace_days_ahead">
-        <item quantity="one">Einen Tag voraus</item>
+        <item quantity="one">%d Tag voraus</item>
         <item quantity="other">%d Tage voraus</item>
     </plurals>
+    <string name="plan_pace_one_day_behind">Einen Tag im Rückstand</string>
     <plurals name="plan_pace_days_behind">
-        <item quantity="one">Einen Tag im Rückstand</item>
+        <item quantity="one">%d Tag im Rückstand</item>
         <item quantity="other">%d Tage im Rückstand</item>
     </plurals>
     <plurals name="plan_pace_lessons_to_catch_up">
@@ -426,10 +435,8 @@
     <string name="plan_pace_needs_adjusting">Anpassung nötig</string>
     <string name="plan_pace_keeping_pace">Im Plan</string>
     <string name="plan_pace_past_your_date">Nach dem Zieldatum</string>
-    <plurals name="plan_pace_win_challenges">
-        <item quantity="one">Alle Lektionen sind erledigt: Gewinne die Herausforderung, um deinen Plan abzuschließen.</item>
-        <item quantity="other">Alle Lektionen sind erledigt: Gewinne die Herausforderungen, um deinen Plan abzuschließen.</item>
-    </plurals>
+    <string name="plan_pace_win_challenge">Alle Lektionen sind erledigt: Gewinne die Herausforderung, um deinen Plan abzuschließen.</string>
+    <string name="plan_pace_win_challenges">Alle Lektionen sind erledigt: Gewinne die Herausforderungen, um deinen Plan abzuschließen.</string>
     <string name="plan_pace_no_longer_fits">Dein Plan passt nicht mehr in die verbleibende Zeit.</string>
     <plurals name="plan_pace_earlier_lessons_first">
         <item quantity="one">%d Lektion von früheren Tagen ist zuerst dran: Sobald du sie erledigt hast, bist du wieder im Plan.</item>
@@ -439,7 +446,10 @@
         <item quantity="one">%d Tag</item>
         <item quantity="other">%d Tage</item>
     </plurals>
-    <string name="plan_pace_more_minutes">Mit %1$d Minuten mehr am Tag für %2$s bist du wieder im Plan.</string>
+    <plurals name="plan_pace_more_minutes">
+        <item quantity="one">%1$d Minute mehr pro Tag für %2$s und du bist wieder im Tempo.</item>
+        <item quantity="other">%1$d Minuten mehr pro Tag für %2$s und du bist wieder im Tempo.</item>
+    </plurals>
     <plurals name="plan_past_date_exam_sentence">
         <item quantity="one">Vor deiner Prüfung war noch %d Lektion offen.</item>
         <item quantity="other">Vor deiner Prüfung waren noch %d Lektionen offen.</item>
@@ -462,12 +472,19 @@
     <string name="plan_your_preparation">Deine Vorbereitung</string>
     <string name="plan_your_progress">Dein Fortschritt</string>
     <string name="plan_no_change_this_week">Diese Woche keine Veränderung</string>
-    <string name="plan_gain_this_week">+%1$d diese Woche</string>
-    <string name="plan_loss_this_week">%1$d diese Woche</string>
+    <plurals name="plan_gain_this_week">
+        <item quantity="one">+%d diese Woche</item>
+        <item quantity="other">+%d diese Woche</item>
+    </plurals>
+    <plurals name="plan_loss_this_week">
+        <item quantity="one">%d diese Woche</item>
+        <item quantity="other">%d diese Woche</item>
+    </plurals>
     <string name="plan_estimate_waits">Mach weitere Probeprüfungen der ganzen Prüfung oder eines Teils davon, um deinen geschätzten Score zu sehen.</string>
     <string name="plan_estimated_score">Geschätzter Score</string>
+    <string name="plan_estimate_based_on_last">Basierend auf deiner letzten Probeprüfung</string>
     <plurals name="plan_estimate_based_on">
-        <item quantity="one">Basierend auf deiner letzten Probeprüfung</item>
+        <item quantity="one">Basierend auf deiner letzten %d Probeprüfung</item>
         <item quantity="other">Basierend auf deinen letzten %d Probeprüfungen</item>
     </plurals>
     <string name="plan_score_percent">%1$d%%</string>
@@ -483,7 +500,10 @@
     </plurals>
     <string name="plan_mastery">Beherrschung</string>
     <string name="plan_mastery_waits">Wird nach einigen Übungsfragen angezeigt</string>
-    <string name="plan_mastery_caption">%1$d von %2$d richtig</string>
+    <plurals name="plan_mastery_caption">
+        <item quantity="one">%1$d von %2$d richtig</item>
+        <item quantity="other">%1$d von %2$d richtig</item>
+    </plurals>
     <string name="plan_long_term_memory">Langzeitgedächtnis</string>
     <string name="plan_retention_caption">Von dem, was du gelernt hast</string>
     <string name="plan_not_yet">Noch nicht</string>

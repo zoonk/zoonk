@@ -147,7 +147,7 @@ fun farTopicLine(
     if (lessons == null) return start?.let { stringResource(R.string.plan_far_from, it) }
     val count =
         if (lessons == 1) {
-            stringResource(R.string.plan_far_one_lesson, lessons)
+            pluralStringResource(R.plurals.plan_far_lessons, lessons, lessons)
         } else {
             pluralStringResource(R.plurals.plan_far_lessons_about, lessons, lessons)
         }

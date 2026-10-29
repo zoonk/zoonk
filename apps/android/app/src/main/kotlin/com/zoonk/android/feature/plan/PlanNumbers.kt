@@ -179,8 +179,8 @@ private fun weekGain(gain: Double): String {
     val points = (gain * PERCENT).roundToInt()
     return when {
         points == 0 -> stringResource(R.string.plan_no_change_this_week)
-        points > 0 -> stringResource(R.string.plan_gain_this_week, points)
-        else -> stringResource(R.string.plan_loss_this_week, points)
+        points > 0 -> pluralStringResource(R.plurals.plan_gain_this_week, points, points)
+        else -> pluralStringResource(R.plurals.plan_loss_this_week, -points, points)
     }
 }
 
@@ -484,7 +484,16 @@ private fun EstimatedScoreBlock(preparation: GoalPreparation) {
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(scoreRange(score), style = MaterialTheme.typography.headlineMedium.withTabularFigures())
-        MetaLine(pluralStringResource(R.plurals.plan_estimate_based_on, score.mocks.toInt(), score.mocks.toInt()))
+        val mocks = score.mocks.toInt()
+        MetaLine(
+            if (mocks ==
+                1
+            ) {
+                stringResource(R.string.plan_estimate_based_on_last)
+            } else {
+                pluralStringResource(R.plurals.plan_estimate_based_on, mocks, mocks)
+            },
+        )
     }
 }
 
@@ -572,7 +581,12 @@ private fun PreparationParts(
                 ) {
                     stringResource(R.string.plan_mastery_waits)
                 } else {
-                    stringResource(R.string.plan_mastery_caption, mastery.correct.toInt(), mastery.answered.toInt())
+                    pluralStringResource(
+                        R.plurals.plan_mastery_caption,
+                        mastery.answered.toInt(),
+                        mastery.correct.toInt(),
+                        mastery.answered.toInt(),
+                    )
                 },
                 // The headline's measure: a few right answers say less than many.
                 mastery.supported,

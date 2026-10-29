@@ -111,7 +111,10 @@
     <string name="plan_skipped_known">Skipped because you already know it</string>
     <string name="plan_going_deeper">Going deeper into an earlier topic</string>
     <string name="plan_far_from">From %1$s</string>
-    <string name="plan_far_one_lesson">%1$d lesson</string>
+    <plurals name="plan_far_lessons">
+        <item quantity="one">%d lesson</item>
+        <item quantity="other">%d lessons</item>
+    </plurals>
     <plurals name="plan_far_lessons_about">
         <item quantity="one">About %d lesson</item>
         <item quantity="other">About %d lessons</item>
@@ -200,12 +203,14 @@
         <item quantity="one">%d lesson left</item>
         <item quantity="other">%d lessons left</item>
     </plurals>
+    <string name="plan_pace_one_day_ahead">One day ahead</string>
     <plurals name="plan_pace_days_ahead">
-        <item quantity="one">One day ahead</item>
+        <item quantity="one">%d day ahead</item>
         <item quantity="other">%d days ahead</item>
     </plurals>
+    <string name="plan_pace_one_day_behind">One day behind</string>
     <plurals name="plan_pace_days_behind">
-        <item quantity="one">One day behind</item>
+        <item quantity="one">%d day behind</item>
         <item quantity="other">%d days behind</item>
     </plurals>
     <plurals name="plan_pace_lessons_to_catch_up">
@@ -220,10 +225,8 @@
     <string name="plan_pace_needs_adjusting">Needs adjusting</string>
     <string name="plan_pace_keeping_pace">Keeping pace</string>
     <string name="plan_pace_past_your_date">Past your date</string>
-    <plurals name="plan_pace_win_challenges">
-        <item quantity="one">Every lesson is done: win the challenge to finish your plan.</item>
-        <item quantity="other">Every lesson is done: win the challenges to finish your plan.</item>
-    </plurals>
+    <string name="plan_pace_win_challenge">Every lesson is done: win the challenge to finish your plan.</string>
+    <string name="plan_pace_win_challenges">Every lesson is done: win the challenges to finish your plan.</string>
     <string name="plan_pace_no_longer_fits">Your plan no longer fits in the time left.</string>
     <plurals name="plan_pace_earlier_lessons_first">
         <item quantity="one">%d lesson from earlier days comes first: once you\'ve done it, you\'re keeping pace again.</item>
@@ -233,7 +236,10 @@
         <item quantity="one">%d day</item>
         <item quantity="other">%d days</item>
     </plurals>
-    <string name="plan_pace_more_minutes">%1$d more minutes a day for %2$s and you\'re keeping pace again.</string>
+    <plurals name="plan_pace_more_minutes">
+        <item quantity="one">%1$d more minute a day for %2$s and you\'re keeping pace again.</item>
+        <item quantity="other">%1$d more minutes a day for %2$s and you\'re keeping pace again.</item>
+    </plurals>
     <plurals name="plan_past_date_exam_sentence">
         <item quantity="one">%d lesson was left before your exam.</item>
         <item quantity="other">%d lessons were left before your exam.</item>
@@ -257,12 +263,19 @@
     <string name="plan_your_preparation">Your preparation</string>
     <string name="plan_your_progress">Your progress</string>
     <string name="plan_no_change_this_week">No change this week</string>
-    <string name="plan_gain_this_week">+%1$d this week</string>
-    <string name="plan_loss_this_week">%1$d this week</string>
+    <plurals name="plan_gain_this_week">
+        <item quantity="one">+%d this week</item>
+        <item quantity="other">+%d this week</item>
+    </plurals>
+    <plurals name="plan_loss_this_week">
+        <item quantity="one">%d this week</item>
+        <item quantity="other">%d this week</item>
+    </plurals>
     <string name="plan_estimate_waits">Take more mock exams of the whole exam or half of it to see your estimated score.</string>
     <string name="plan_estimated_score">Estimated score</string>
+    <string name="plan_estimate_based_on_last">Based on your last mock exam</string>
     <plurals name="plan_estimate_based_on">
-        <item quantity="one">Based on your last mock exam</item>
+        <item quantity="one">Based on your last %d mock exam</item>
         <item quantity="other">Based on your last %d mock exams</item>
     </plurals>
     <string name="plan_score_percent">%1$d%%</string>
@@ -278,7 +291,10 @@
     </plurals>
     <string name="plan_mastery">Mastery</string>
     <string name="plan_mastery_waits">Shows after a few practice questions</string>
-    <string name="plan_mastery_caption">%1$d of %2$d right</string>
+    <plurals name="plan_mastery_caption">
+        <item quantity="one">%1$d of %2$d right</item>
+        <item quantity="other">%1$d of %2$d right</item>
+    </plurals>
     <string name="plan_long_term_memory">Long-term memory</string>
     <string name="plan_retention_caption">Of what you studied</string>
     <string name="plan_not_yet">Not yet</string>

@@ -15,7 +15,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
@@ -170,14 +170,15 @@ private fun PlanEvents(
     navigator: AppNavigator,
 ) {
     val snackbars: SnackbarHostState = LocalSnackbarHostState.current
-    val context = LocalContext.current
+    val limitReached = stringResource(R.string.plan_goal_limit_reached)
+    val saveFailed = stringResource(R.string.plan_save_failed)
 
     LaunchedEffect(viewModel) {
         viewModel.events.collect { event ->
             when (event) {
                 PlanEvent.Archived -> navigator.select(AppTab.Today)
-                PlanEvent.GoalLimitReached -> snackbars.showSnackbar(context.getString(R.string.plan_goal_limit_reached))
-                PlanEvent.SaveFailed -> snackbars.showSnackbar(context.getString(R.string.plan_save_failed))
+                PlanEvent.GoalLimitReached -> snackbars.showSnackbar(limitReached)
+                PlanEvent.SaveFailed -> snackbars.showSnackbar(saveFailed)
             }
         }
     }
