@@ -22,6 +22,7 @@ export function activityFixtures() {
   return Object.fromEntries(
     [...Object.entries(activityContentFixtures), ...modes].map(([name, fixture]) => {
       const content = activityContentSchema.parse(fixture);
+
       const value =
         getActivityTemplate(content.template)?.computeValue(content.fields, {
           inputs: {},
