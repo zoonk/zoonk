@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.catalog
 
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CatalogLesson
 import com.zoonk.api.models.CatalogSearchResponse
@@ -154,5 +155,15 @@ internal class FakeCatalogApi(
     ): CatalogLesson {
         reads += "lesson:$lessonId"
         return catalogLesson(lessonId)
+    }
+
+    var startedLessons: Set<String> = emptySet()
+
+    override suspend fun lessonStarted(
+        session: AuthenticatedSession,
+        lessonId: String,
+    ): Boolean {
+        reads += "started:$lessonId"
+        return lessonId in startedLessons
     }
 }

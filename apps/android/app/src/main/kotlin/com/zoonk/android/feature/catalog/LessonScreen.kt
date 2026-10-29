@@ -59,6 +59,7 @@ fun LessonScreen(
     val lesson = catalog.lesson[LessonInCourse(route.lessonId, route.courseId)]
     val state by detail.collectShown()
     val lessonState by lesson.collectShown()
+    val started = catalog.isStarted(route.lessonId)
     val place = state.value?.let { placeOf(it, route.chapterId) }
     val outlineLesson = place?.chapter?.lessons?.firstOrNull { it.id.toString() == route.lessonId }
     val missing = (state is LoadState.Loaded && outlineLesson == null) || (lessonState as? LoadState.Failed)?.error == ApiError.NotFound
@@ -66,7 +67,7 @@ fun LessonScreen(
 
     CatalogPage(app, navigator, detail, shown, outlineLesson?.title, alsoShown = listOf(lesson)) { value, layout ->
         val found = placeOf(value, route.chapterId) ?: return@CatalogPage
-        lessonContent(app, navigator, value, found, route.lessonId, lesson, lessonState, layout)
+        lessonContent(app, navigator, value, found, route.lessonId, lesson, lessonState, started, layout)
     }
 }
 
@@ -78,6 +79,7 @@ private fun LazyListScope.lessonContent(
     lessonId: String,
     lesson: Resource<CatalogLesson>,
     state: LoadState<CatalogLesson>,
+    started: Boolean,
     layout: CatalogPageLayout,
 ) {
     val beside = layout.beside
@@ -103,7 +105,7 @@ private fun LazyListScope.lessonContent(
 
                 when (state) {
                     is LoadState.Loaded -> {
-                        LessonFirstScreen(app, navigator, state.value)
+                        LessonFirstScreen(app, navigator, state.value, started)
                     }
 
                     is LoadState.Failed -> {
@@ -132,6 +134,7 @@ private fun LessonFirstScreen(
     app: AppContainer,
     navigator: AppNavigator,
     lesson: CatalogLesson,
+    started: Boolean,
 ) {
     val lessonId = lesson.id.toString()
     val minutes = lesson.estimatedMinutes.toInt()
@@ -148,7 +151,7 @@ private fun LessonFirstScreen(
 
     when (val screen = lesson.firstScreen) {
         is CatalogLessonFirstScreen.ChoiceWrapper -> {
-            FirstQuestion(app, navigator, lessonId, lesson.estimatedMinutes, screen.value)
+            FirstQuestion(app, navigator, lessonId, lesson.estimatedMinutes, screen.value, started)
         }
 
         is CatalogLessonFirstScreen.TextWrapper -> {

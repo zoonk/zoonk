@@ -5,6 +5,8 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
+import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.perform
@@ -21,6 +23,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 import java.util.Locale
 import java.util.UUID
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 
 interface CatalogApi {
@@ -50,6 +53,11 @@ interface CatalogApi {
         language: String,
         query: String,
     ): CatalogSearchResponse
+
+    suspend fun lessonStarted(
+        session: AuthenticatedSession,
+        lessonId: String,
+    ): Boolean
 }
 
 data class CoursePage(
@@ -113,6 +121,12 @@ class CatalogStore(
 
     val lesson: KeyedResources<LessonInCourse, CatalogLesson> =
         cache.keyed(Audience.Everyone, maxAge = CATALOG_MAX_AGE) { _, key -> api.lesson(key.lessonId, key.courseId) }
+
+    /** Answers saved in a lesson don't invalidate it, so it's read each time a page shows it, as main's is. */
+    val lessonStarted: KeyedResources<String, Boolean> =
+        cache.keyed(Audience.SignedIn, setOf(DataDomain.UserProgress), maxAge = Duration.ZERO) { session, lessonId ->
+            session?.let { api.lessonStarted(it, lessonId) }
+        }
 
     val search: KeyedResources<CatalogQuery, CatalogSearchResponse> =
         cache.keyed(Audience.Everyone, maxAge = CATALOG_MAX_AGE, isEmpty = { it.courses.isEmpty() && it.chapters.isEmpty() }) { _, query ->
@@ -207,4 +221,9 @@ class LiveCatalogApi(
     private companion object {
         const val PAGE_SIZE = 20L
     }
+
+    override suspend fun lessonStarted(
+        session: AuthenticatedSession,
+        lessonId: String,
+    ) = perform { api.clients(session).libraryLessons.getLibraryLessonProgress(lessonId.toUuid()) }.started
 }

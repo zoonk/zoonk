@@ -53,6 +53,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.navigation.AppNavigator
@@ -79,11 +80,19 @@ fun CourseScreen(
     val detail = catalog.course[route.courseId]
     val state by detail.collectShown()
     val title = (state as? LoadState.Loaded)?.value?.course?.title
+    val started =
+        catalog.isStarted(
+            state.value
+                ?.course
+                ?.tryLesson
+                ?.lessonId
+                ?.toString(),
+        )
 
     val report = FeedbackTarget("course", FeedbackSubmissionContext.ContentKind.COURSE, route.courseId.toUuidOrNull())
 
     CatalogPage(app, navigator, detail, state, title, report) { value, layout ->
-        courseContent(app, navigator, value, layout)
+        courseContent(app, navigator, value, started, layout)
     }
 }
 
@@ -190,6 +199,7 @@ private fun LazyListScope.courseContent(
     app: AppContainer,
     navigator: AppNavigator,
     detail: CourseDetail,
+    started: Boolean,
     layout: CatalogPageLayout,
 ) {
     val course = detail.course
@@ -222,11 +232,8 @@ private fun LazyListScope.courseContent(
                 TryLessonCard(
                     app,
                     navigator,
-                    tryLesson.lessonId.toString(),
-                    tryLesson.chapterTitle,
-                    tryLesson.number,
-                    tryLesson.minutes,
-                    tryLesson.screen,
+                    tryLesson,
+                    started,
                     Modifier.weight(1f),
                 )
             }
@@ -240,11 +247,8 @@ private fun LazyListScope.courseContent(
             TryLessonCard(
                 app,
                 navigator,
-                tryLesson.lessonId.toString(),
-                tryLesson.chapterTitle,
-                tryLesson.number,
-                tryLesson.minutes,
-                tryLesson.screen,
+                tryLesson,
+                started,
             )
         }
     }

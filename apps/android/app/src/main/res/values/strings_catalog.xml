@@ -189,4 +189,6 @@
     <string name="catalog_chapter_heading">Chapter %1$s: %2$s</string>
     <string name="catalog_go_to_chapter">Go to the chapter</string>
     <string name="catalog_lesson_part_of">This lesson is part of the %1$s course.</string>
+    <string name="catalog_continue_lesson">Continue the lesson</string>
+    <string name="catalog_lesson_started">You\'ve started this lesson. It picks up where you left off.</string>
 </resources>

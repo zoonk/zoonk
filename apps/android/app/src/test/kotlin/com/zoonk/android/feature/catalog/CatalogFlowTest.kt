@@ -14,6 +14,7 @@ import androidx.compose.ui.test.performScrollToNode
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -38,7 +39,10 @@ class CatalogFlowTest {
     private val api = FakeCatalogApi()
     private lateinit var navigator: AppNavigator
 
-    private fun show(content: @Composable (AppContainer, AppNavigator, CatalogStore) -> Unit) {
+    private fun show(
+        session: AuthenticatedSession? = null,
+        content: @Composable (AppContainer, AppNavigator, CatalogStore) -> Unit,
+    ) {
         rule.setContent {
             ZoonkTheme {
                 val context = LocalContext.current
@@ -47,7 +51,7 @@ class CatalogFlowTest {
                     remember {
                         CatalogStore(
                             api,
-                            AppCache(FakeSession(null), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
+                            AppCache(FakeSession(session), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)),
                         )
                     }
                 navigator = rememberAppNavigator()
@@ -111,6 +115,20 @@ class CatalogFlowTest {
         rule.onNodeWithText("Yes, like a tiny planet").performClick()
 
         assertEquals(AppRoute.Lesson(LESSON_TWO, firstAnswer = "planet"), navigator.currentRoute)
+    }
+
+    @Test
+    fun aLessonTheLearnerStartedOffersToContinueIt() {
+        api.startedLessons = setOf(LESSON_TWO)
+        show(AuthenticatedSession("account", "token", "local")) { app, navigator, store ->
+            LessonScreen(AppRoute.CatalogLesson(LESSON_TWO, CHAPTER_ONE, COURSE), app, navigator, store)
+        }
+
+        rule.onNodeWithText("You've started this lesson. It picks up where you left off.").assertIsDisplayed()
+        rule.onNodeWithText("Yes, like a tiny planet").assertDoesNotExist()
+        rule.onNodeWithText("Continue the lesson").performClick()
+
+        assertEquals(AppRoute.Lesson(LESSON_TWO), navigator.currentRoute)
     }
 
     @Test

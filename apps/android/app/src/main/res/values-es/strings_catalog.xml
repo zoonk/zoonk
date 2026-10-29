@@ -22,6 +22,7 @@
   "catalog_closing_steps": "82c0c23321c8b99799a835d3a8d4dd9752a588cf88e832e031c018657a655b5b",
   "catalog_collapse": "37b85fe3729b7ed11e3ea48e774d1bdcd684c07113756bbf5d6b1edfaddafde8",
   "catalog_collapsed": "1d52d9df490b9b067d3bbc72574250181db54bf56508ffd1a785a10e7c990ec6",
+  "catalog_continue_lesson": "bec40257a5b9bd51518c99b9a652ccc957ded20d5bd6a80502d5ff2e4c8c474a",
   "catalog_continue_plan": "30b6fad1fbae50737ded2faa051bb74484ffb3bd017670c2f31feb19b97d8a34",
   "catalog_course_meta": "92041bb7a37b82589ba4c478b6874221e0787d6d333bc3aa31554c3bf49e2bd0",
   "catalog_edition_notice": "4d03d0a1bec7e9144f83b265fedb36901c4f4920e5c93c30e4ac642965f28a78",
@@ -41,6 +42,7 @@
   "catalog_left_out": "72fa10fdf92d680f90c512297b2a6d0c56058f14fd5f370211d172ec2d0a899a",
   "catalog_lesson_minutes": "84a59cc1384842625d0034f76b3c8a9748f5ed6c3c1a7832658cb1d30e9a391e",
   "catalog_lesson_part_of": "370eaaab59b34ade702667cdb1429c63e03a52c6df3c8636a5c770679c7d8b67",
+  "catalog_lesson_started": "a5576f62686d3095152a8d24d764b3faa98c138d3f268f295af845e5db36e7be",
   "catalog_lessons": "625a197bb4c8a923126c7699c169c2c43d6fbd31268a23192b5d864e7114156c",
   "catalog_lessons_fit": "c09fcc1ecb2716fbe334206d15e291e06c3f70d682a6c3c18bb6dc9855a0bde2",
   "catalog_lessons_in_plan": "d9ec6dc45f1ddbabb84a918821dacd25ce7bbe20ebfe0fa30c23cfaadb95dfe3",
@@ -324,4 +326,6 @@
     <string name="catalog_chapter_heading">Capítulo %1$s: %2$s</string>
     <string name="catalog_go_to_chapter">Ir al capítulo</string>
     <string name="catalog_lesson_part_of">Esta lección forma parte del curso %1$s.</string>
+    <string name="catalog_continue_lesson">Continúa la lección</string>
+    <string name="catalog_lesson_started">Has empezado esta lección. Continúa donde lo dejaste.</string>
 </resources>

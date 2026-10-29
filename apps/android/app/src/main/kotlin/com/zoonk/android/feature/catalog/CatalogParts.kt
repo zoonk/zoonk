@@ -61,6 +61,7 @@ import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.CatalogFirstQuestion
+import com.zoonk.api.models.CatalogTryLesson
 import com.zoonk.api.models.LearnerSummaryGoal
 import java.util.Locale
 import kotlin.math.roundToLong
@@ -266,19 +267,25 @@ internal fun StartActions(
     }
 }
 
+/** Main's `LessonProgressSwitch`: whether the learner started [lessonId], read each time its page shows. */
+@Composable
+internal fun CatalogStore.isStarted(lessonId: String?): Boolean =
+    lessonId != null &&
+        lessonStarted[lessonId]
+            .collectShown()
+            .value.value == true
+
 /** Main's `TryLesson` card: the lesson's first question, answered right here, which opens the lesson with that answer. */
 @Composable
 internal fun TryLessonCard(
     app: AppContainer,
     navigator: AppNavigator,
-    lessonId: String,
-    chapterTitle: String,
-    number: Long,
-    minutes: Long,
-    screen: CatalogFirstQuestion,
+    tryLesson: CatalogTryLesson,
+    started: Boolean,
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
+    val minutes = tryLesson.minutes
 
     OutlinedCard(modifier.widthIn(max = COLUMN_WIDTH)) {
         Column(Modifier.padding(20.dp)) {
@@ -289,16 +296,22 @@ internal fun TryLessonCard(
             )
             Spacer(Modifier.size(4.dp))
             Text(
-                text = stringResource(R.string.catalog_try_place, chapterTitle, formatNumber(number.toDouble(), locale)),
+                text =
+                    stringResource(
+                        R.string.catalog_try_place,
+                        tryLesson.chapterTitle,
+                        formatNumber(tryLesson.number.toDouble(), locale),
+                    ),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
             )
             Spacer(Modifier.size(20.dp))
-            FirstQuestion(app, navigator, lessonId, minutes, screen)
+            FirstQuestion(app, navigator, tryLesson.lessonId.toString(), minutes, tryLesson.screen, started, secondary = true)
         }
     }
 }
 
+/** A started lesson offers to go on instead (main's `ContinueLesson`), a secondary action on a page with its own start. */
 @Composable
 internal fun FirstQuestion(
     app: AppContainer,
@@ -306,8 +319,15 @@ internal fun FirstQuestion(
     lessonId: String,
     minutes: Long,
     screen: CatalogFirstQuestion,
+    started: Boolean,
     modifier: Modifier = Modifier,
+    secondary: Boolean = false,
 ) {
+    if (started) {
+        ContinueLesson(onContinue = { navigator.open(AppRoute.Lesson(lessonId)) }, secondary = secondary, modifier = modifier)
+        return
+    }
+
     val locale = currentLocale()
     val minutesText = formatNumber(minutes.toDouble(), locale)
 
@@ -345,6 +365,25 @@ internal fun FirstQuestion(
         val note = stringResource(if (screen.guess) R.string.catalog_guess_note else R.string.catalog_check_note, minutesText)
         val visitor = if (isVisitor(app)) " " + stringResource(R.string.catalog_no_sign_up) else ""
         LineWithIcon(R.drawable.ic_play_circle, note + visitor, style = MaterialTheme.typography.bodySmall)
+    }
+}
+
+@Composable
+private fun ContinueLesson(
+    onContinue: () -> Unit,
+    secondary: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val label = stringResource(R.string.catalog_continue_lesson)
+
+    Column(modifier) {
+        Text(
+            stringResource(R.string.catalog_lesson_started),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Spacer(Modifier.size(20.dp))
+        if (secondary) FilledTonalButton(onClick = onContinue) { Text(label) } else Button(onClick = onContinue) { Text(label) }
     }
 }
 
