@@ -65,6 +65,7 @@ internal fun MockSpeaking(
                     busy = starting,
                     enabled = !run.pending,
                     onClick = viewModel::startSpeaking,
+                    modifier = Modifier.fillMaxWidth(),
                 )
             } else {
                 MockMainButton(
@@ -72,6 +73,7 @@ internal fun MockSpeaking(
                     busy = run.busy == MockStep.Submit,
                     enabled = !run.pending,
                     onClick = { confirming = true },
+                    modifier = Modifier.fillMaxWidth(),
                 )
             }
         },

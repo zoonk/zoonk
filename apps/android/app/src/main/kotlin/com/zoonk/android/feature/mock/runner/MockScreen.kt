@@ -350,7 +350,7 @@ internal fun MockMainButton(
     busy: Boolean,
     enabled: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth(),
+    modifier: Modifier = Modifier,
 ) {
     val colors =
         if (busy) {
@@ -424,6 +424,7 @@ private fun MockTimeUp(
                 busy = handingIn,
                 enabled = !run.pending,
                 onClick = viewModel::submitSection,
+                modifier = Modifier.fillMaxWidth(),
             )
         },
     ) {
@@ -453,6 +454,7 @@ private fun MockHandedIn(
                 busy = finishing,
                 enabled = !run.pending,
                 onClick = viewModel::finish,
+                modifier = Modifier.fillMaxWidth(),
             )
         },
     ) { StepHeader { StepTitle(stringResource(R.string.mock_handed_in_title)) } }
@@ -483,6 +485,7 @@ private fun MockBreak(
                 busy = run.busy == MockStep.EndBreak,
                 enabled = !run.pending,
                 onClick = viewModel::endBreak,
+                modifier = Modifier.fillMaxWidth(),
             )
         },
         aside = if (run.view.sections.size > 1) ({ SheetSections(run, titled = false) }) else null,
