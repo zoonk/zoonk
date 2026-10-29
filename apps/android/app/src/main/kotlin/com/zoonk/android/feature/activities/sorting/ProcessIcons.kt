@@ -44,7 +44,7 @@ internal fun processIcon(icon: Icon): Int =
         Icon.BOOK_OPEN -> R.drawable.ic_menu_book
 
         // book
-        Icon.BRAIN -> R.drawable.ic_neurology
+        Icon.BRAIN -> R.drawable.ic_cognition
 
         // brain
         Icon.BUG -> R.drawable.ic_bug_report
@@ -125,7 +125,7 @@ internal fun processIcon(icon: Icon): Int =
         Icon.FLASK_CONICAL -> R.drawable.ic_experiment
 
         // testtube.2
-        Icon.FLOWER -> R.drawable.ic_local_florist
+        Icon.FLOWER -> R.drawable.ic_spa
 
         // camera.macro
         Icon.FOOTPRINTS -> R.drawable.ic_footprint
