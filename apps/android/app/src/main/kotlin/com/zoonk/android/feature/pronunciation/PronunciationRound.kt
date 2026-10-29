@@ -5,7 +5,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
@@ -34,8 +33,7 @@ sealed interface RoundStep {
 
 /**
  * Main's `usePronunciationRound`. The round is counted once, at the end, and only when a word was
- * said. It keeps the words it started with, even if grading changes what's due. A round restored
- * after process death keeps its [roundId], so the words already graded still count when it ends.
+ * said. It keeps the words it started with, even if grading changes what's due.
  */
 @Stable
 class PronunciationRound(
@@ -43,9 +41,9 @@ class PronunciationRound(
     val words: List<ReviewWord>,
     private val answer: suspend (reviewId: String, roundId: String, VoiceRecording) -> GradeOutcome<PronunciationAnswerGrade>,
     private val complete: suspend (roundId: String) -> MutationResult<PronunciationRoundResult>,
-    val roundId: String = UUID.randomUUID().toString(),
-    answeredBefore: Boolean = false,
 ) {
+    val roundId = UUID.randomUUID().toString()
+
     var step: RoundStep by mutableStateOf(if (words.isEmpty()) RoundStep.Result(null) else RoundStep.Word(0))
         private set
 
@@ -59,20 +57,28 @@ class PronunciationRound(
     var finishFailed by mutableStateOf(false)
         private set
 
-    var hasAnswers = answeredBefore
-        private set
+    private var hasAnswers = false
 
     val index: Int get() = (step as? RoundStep.Word)?.index ?: words.size
 
     val segments: List<Segment>
         get() = words.indices.map { outcomes[it] ?: if (it == index) Segment.Current else Segment.Ahead }
 
-    /** A take answers the word it was recorded for; one that arrives after that word was left, or while another is graded, is dropped. */
+    /** Bumped by Try again and the next word, so only a take recorded for the attempt in view answers it. */
+    var attempt = 0
+        private set
+
+    /**
+     * A take answers the attempt it was recorded for. One from an earlier attempt, one that arrives
+     * while another is graded or once the word has its grade is dropped.
+     */
     suspend fun record(
-        index: Int,
+        attempt: Int,
         recording: VoiceRecording,
     ) {
-        if ((step as? RoundStep.Word)?.index != index || pending) return
+        val word = step as? RoundStep.Word ?: return
+        if (attempt != this.attempt || word.grade != null || pending) return
+        val index = word.index
         pending = true
         try {
             step =
@@ -106,6 +112,7 @@ class PronunciationRound(
 
     fun tryAgain() {
         val index = (step as? RoundStep.Word)?.index ?: return
+        attempt++
         outcomes = outcomes - index
         step = RoundStep.Word(index)
     }
@@ -113,6 +120,7 @@ class PronunciationRound(
     suspend fun next() {
         val index = (step as? RoundStep.Word)?.index ?: return
         if (index !in outcomes) outcomes = outcomes + (index to Segment.Read)
+        attempt++
         if (index + 1 < words.size) {
             step = RoundStep.Word(index + 1)
             return
@@ -142,7 +150,6 @@ class PronunciationRound(
 /** Holds the round and its take through rotation; leaving the screen throws an unfinished take away. */
 class PronunciationViewModel(
     context: Context,
-    private val saved: SavedStateHandle,
 ) : ViewModel() {
     val recorder = VoiceRecorder(context.applicationContext, viewModelScope)
 
@@ -157,28 +164,23 @@ class PronunciationViewModel(
         store: PronunciationStore,
     ) {
         if (round != null) return
-        val answeredBefore = saved.get<Boolean>(ANSWERED) == true
-        val started =
+        round =
             PronunciationRound(
                 language = reviews?.language.orEmpty(),
                 words = reviews?.words.orEmpty(),
                 answer = { reviewId, roundId, recording -> store.answer(reviewId, goalId, roundId, recording) },
                 complete = { roundId -> store.finish(roundId, goalId) },
-                roundId = saved.get<String>(ROUND_ID) ?: UUID.randomUUID().toString().also { saved[ROUND_ID] = it },
-                answeredBefore = answeredBefore,
             )
-        round = started
-        // Every word was said before the app closed: the round only needs counting.
-        if (answeredBefore && started.words.isEmpty()) finish()
     }
 
     fun record() {
         val round = round ?: return
-        val index = round.index
+        val attempt = round.attempt
         recorder.start { recording ->
             viewModelScope.launch {
-                round.record(index, recording)
-                saved[ANSWERED] = round.hasAnswers
+                round.record(attempt, recording)
+                // A take started before this one was graded would answer a word that has its grade.
+                if ((round.step as? RoundStep.Word)?.grade != null) recorder.cancel()
             }
         }
     }
@@ -193,10 +195,5 @@ class PronunciationViewModel(
 
     override fun onCleared() {
         recorder.cancel()
-    }
-
-    private companion object {
-        const val ROUND_ID = "roundId"
-        const val ANSWERED = "answered"
     }
 }

@@ -28,9 +28,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,7 +61,6 @@ import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -105,7 +104,6 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.models.PronunciationAnswerGrade
 import com.zoonk.api.models.PronunciationRoundResult
-import kotlinx.coroutines.launch
 import java.time.ZoneId
 import kotlin.time.toJavaInstant
 
@@ -133,7 +131,7 @@ fun PronunciationScreen(
 
 /**
  * Reads the words due now, once: a cached list can be from before the last round's answers, so the
- * round starts from a fresh read, and what grading changes after that is the next round's.
+ * round starts only from a read that succeeded, and what grading changes after that is the next round's.
  */
 @Composable
 internal fun PronunciationTask(
@@ -144,7 +142,7 @@ internal fun PronunciationTask(
     navigator: AppNavigator,
 ) {
     val context = LocalContext.current
-    val model = viewModel(key = "pronunciation:$owner:$goalId") { PronunciationViewModel(context, createSavedStateHandle()) }
+    val model = viewModel(key = "pronunciation:$owner:$goalId") { PronunciationViewModel(context) }
     val round = model.round
 
     if (round != null) {
@@ -154,14 +152,17 @@ internal fun PronunciationTask(
 
     val resource = remember(goalId) { store.reviews(goalId) }
     val load by resource.collectShown()
-    val scope = rememberCoroutineScope()
-    var fresh by remember(resource) { mutableStateOf(false) }
-    LaunchedEffect(resource) {
+    var attempt by remember(resource) { mutableIntStateOf(0) }
+    var fresh by remember(resource) { mutableStateOf<Boolean?>(null) }
+    LaunchedEffect(resource, attempt) {
+        fresh = null
+        // A failed read keeps the cached list without a new revision.
+        val before = resource.revision
         resource.refresh()
-        fresh = true
+        fresh = resource.revision != before
     }
 
-    if (fresh) {
+    if (fresh == true) {
         when (val state = load) {
             is LoadState.Loaded -> LaunchedEffect(state.value) { model.start(goalId, state.value, store) }
             LoadState.Empty -> LaunchedEffect(Unit) { model.start(goalId, null, store) }
@@ -171,9 +172,8 @@ internal fun PronunciationTask(
     }
 
     TaskScaffold(onClose = navigator::closeTask, title = { Text(stringResource(R.string.pronunciation_title)) }) { padding ->
-        val failed = (load as? LoadState.Failed)?.takeIf { it.error != ApiError.NotFound }
         Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-            if (failed != null) LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }) else CircularProgressIndicator()
+            if (fresh == false) LoadFailedMessage(onRetry = { attempt++ }) else CircularProgressIndicator()
         }
     }
 }
@@ -541,14 +541,7 @@ private fun RoundEnd(
     result: PronunciationRoundResult?,
     onDone: () -> Unit,
 ) {
-    // A round restored with its words already said is counted as it opens.
-    if (round.pending) {
-        TaskScaffold(onClose = onDone, title = { Text(stringResource(R.string.pronunciation_title)) }) { padding ->
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-        }
-        return
-    }
-    val noWords = round.words.isEmpty() && result == null
+    val noWords = round.words.isEmpty()
 
     TaskScaffold(
         onClose = onDone,

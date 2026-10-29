@@ -56,11 +56,15 @@ internal class FakePronunciationApi(
     val answered = mutableListOf<String>()
     val finished = mutableListOf<String>()
     var finishFails = 0
+    var reviewsFail = false
 
     override suspend fun reviews(
         session: AuthenticatedSession,
         goalId: String,
-    ) = words
+    ): PronunciationReviews {
+        if (reviewsFail) throw ApiException(ApiError.Network)
+        return words
+    }
 
     override suspend fun answer(
         session: AuthenticatedSession,
