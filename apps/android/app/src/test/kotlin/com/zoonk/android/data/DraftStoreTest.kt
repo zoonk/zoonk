@@ -24,6 +24,7 @@ import org.junit.rules.TemporaryFolder
 import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
+import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 
 @Serializable
@@ -156,6 +157,32 @@ class DraftStoreTest {
             second.flush()
             first.save(EssayDraft("three"))
             assertEquals(EssayDraft("three"), second.value.first())
+        }
+
+    @Test
+    fun aDraftsWriteLandsWhileItsCallersThreadIsBusy() =
+        runTest {
+            val io = Executors.newSingleThreadExecutor { Thread(it, "drafts-io") }.asCoroutineDispatcher()
+            val caller = Executors.newSingleThreadExecutor { Thread(it, "caller") }
+            val busy = CountDownLatch(1)
+            val drafts = DraftStore(folder.root, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler)), io = io)
+            val sessions = sessions(drafts).apply { restore() }
+            sessions.signIn { "token-a" }
+            val essay = drafts.open(sessions.current!!, "essay:1", EssayDraft.serializer())
+
+            val saving = CoroutineScope(caller.asCoroutineDispatcher()).launch { essay.save(EssayDraft("saved")) }
+            caller.execute { busy.await() }
+            val landed =
+                (1..50).any {
+                    Thread.sleep(100)
+                    entries(ANA)?.contains("saved") == true
+                }
+            busy.countDown()
+            saving.join()
+            caller.shutdown()
+            io.close()
+
+            assertTrue(landed)
         }
 
     @Test

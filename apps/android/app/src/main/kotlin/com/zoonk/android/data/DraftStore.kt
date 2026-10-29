@@ -145,11 +145,15 @@ class DraftStore(
         ) {
             if (owner != accountId) return
             try {
-                store.updateData { drafts ->
-                    when {
-                        owner != accountId -> drafts
-                        entry == null -> LearnerDrafts(drafts.entries - key)
-                        else -> LearnerDrafts(drafts.entries + (key to entry))
+                // DataStore runs updateData's transform in its caller's context, which would make a
+                // write wait for a busy main thread.
+                withContext(io) {
+                    store.updateData { drafts ->
+                        when {
+                            owner != accountId -> drafts
+                            entry == null -> LearnerDrafts(drafts.entries - key)
+                            else -> LearnerDrafts(drafts.entries + (key to entry))
+                        }
                     }
                 }
             } catch (e: CancellationException) {
