@@ -387,4 +387,17 @@ class PlanViewModelTest {
             assertEquals(1, api.advised)
             assertEquals(0, api.plans)
         }
+
+    @Test
+    fun aSheetsAnswerStaysWithItsOwnOpeningUntilTheEditorOpensAgain() =
+        runTest {
+            val first = UUID.randomUUID()
+            val saved = PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED)
+
+            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.HAVE)) { viewModel.answerSheet(first, it) }
+
+            assertEquals(mapOf(first to saved), viewModel.sheetAnswers.value)
+            viewModel.forgetLatest()
+            assertEquals(emptyMap<UUID, PlanChangeResult?>(), viewModel.sheetAnswers.value)
+        }
 }

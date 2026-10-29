@@ -108,10 +108,21 @@ internal data class PlanEdits(
     val chooseTools: (ToolAnswer, (PlanChangeResult?) -> Unit) -> Unit = { _, _ -> },
     val preview: suspend (List<PlanOp>) -> PlanChangePreview? = { null },
     val adviseOnBases: suspend () -> PlanBasesAdvice? = { null },
+    val sheetAnswers: Map<UUID, PlanChangeResult?> = emptyMap(),
+    val answerSheet: (opening: UUID, PlanChangeResult?) -> Unit = { _, _ -> },
 ) {
     fun isPending(part: PlanPart) = part in pending
 
     fun hasFailed(part: PlanPart) = part in failed
+
+    /** What a sheet [opening]'s save answered; null until it did, or when it didn't save. */
+    fun sheetAnswer(opening: UUID): PlanChangeResult? = sheetAnswers[opening]
+
+    /** Whether [opening]'s save didn't, and [part] hasn't saved again since. */
+    fun sheetFailed(
+        part: PlanPart,
+        opening: UUID,
+    ) = hasFailed(part) && opening in sheetAnswers && sheetAnswers[opening] == null
 
     fun asked(part: PlanPart): List<PlanOp> = asked[part].orEmpty()
 }
@@ -144,17 +155,18 @@ internal class EditorDrafts(
     }
 }
 
-/** The choices not saved yet, by skill; [saved] is the change saving them made, shown with Done and Undo. */
+/** The choices not saved yet, by skill; [opening] tells this opening's save from an earlier one's. */
 internal data class BasesDraft(
     val choices: Map<UUID, PlanBase.Choice> = emptyMap(),
-    val saved: UUID? = null,
+    val opening: UUID = UUID.randomUUID(),
 ) : Serializable
 
-/** [choice] and [system] start as the tool's current answer. */
+/** [choice] and [system] start as the tool's current answer; [opening] tells this opening's save from an earlier one's. */
 internal data class ToolDraft(
     val name: String,
     val choice: PlanTool.Choice?,
     val system: PlanTool.System?,
+    val opening: UUID = UUID.randomUUID(),
 ) : Serializable
 
 /**
@@ -377,12 +389,14 @@ internal fun PlanChip(
     role: Role? = null,
     @DrawableRes trailing: Int? = null,
     description: String? = null,
+    enabled: Boolean = true,
 ) {
     val colors = MaterialTheme.colorScheme
 
     FilterChip(
         selected = selected,
         onClick = onClick,
+        enabled = enabled,
         label = {
             if (description == null) {
                 Text(text)
@@ -418,7 +432,7 @@ internal fun PlanChip(
             ),
         border =
             FilterChipDefaults.filterChipBorder(
-                enabled = true,
+                enabled = enabled,
                 selected = selected,
                 borderColor = colors.outline,
                 selectedBorderColor = colors.primary,
@@ -451,6 +465,7 @@ internal fun ChoiceRow(
     description: String,
     selected: Boolean,
     onSelect: () -> Unit,
+    enabled: Boolean = true,
     mark: (@Composable () -> Unit)? = null,
     trailing: String? = null,
 ) {
@@ -459,12 +474,12 @@ internal fun ChoiceRow(
             Modifier
                 .fillMaxWidth()
                 .heightIn(min = 56.dp)
-                .selectable(selected = selected, role = Role.RadioButton, onClick = onSelect)
+                .selectable(selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onSelect)
                 .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        RadioButton(selected = selected, onClick = null)
+        RadioButton(selected = selected, onClick = null, enabled = enabled)
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(label, style = MaterialTheme.typography.bodyLarge)

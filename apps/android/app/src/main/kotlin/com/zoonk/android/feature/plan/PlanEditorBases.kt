@@ -86,7 +86,7 @@ internal fun PlanBases(
             bases = bases,
             edits = edits,
             draft = draft,
-            onDraft = { next -> if (drafts.bases != null) drafts.bases = next },
+            onDraft = { drafts.bases = it },
             onDismiss = { drafts.bases = null },
         )
     }
@@ -120,7 +120,6 @@ internal fun ColumnScope.BasesChoices(
     onDraft: (BasesDraft) -> Unit,
     onDone: () -> Unit,
 ) {
-    var tried by remember { mutableStateOf(false) }
     var advice by remember { mutableStateOf<Advice>(Advice.Idle) }
     var attempt by remember { mutableIntStateOf(0) }
     val scope = rememberCoroutineScope()
@@ -151,7 +150,12 @@ internal fun ColumnScope.BasesChoices(
         )
     }
 
-    val applied = edits.latest?.takeIf { it.change.id == draft.saved }
+    val saved = edits.sheetAnswer(draft.opening)?.takeIf { it.status == PlanChangeResult.Status.APPLIED }
+    if (saved != null && saved.change == null) {
+        LaunchedEffect(draft.opening) { onDone() }
+        return
+    }
+    val applied = saved?.change?.let { edits.changes[it.id] }
     if (applied != null) {
         AppliedBases(page, applied, edits, onDone)
         return
@@ -176,7 +180,7 @@ internal fun ColumnScope.BasesChoices(
         verticalArrangement = Arrangement.spacedBy(20.dp),
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            AllBasesChoice(bases.items, shared, recommended, onChoose = { choose(bases.items, it) })
+            AllBasesChoice(bases.items, shared, recommended, enabled = !pending, onChoose = { choose(bases.items, it) })
             if (shared == null) Note(stringResource(R.string.plan_bases_differ))
             if (bases.items.any { it.studied }) Note(stringResource(R.string.plan_bases_studied_stay))
             BasesAdvice(
@@ -196,6 +200,7 @@ internal fun ColumnScope.BasesChoices(
                 areas = areas,
                 choiceOf = ::choiceOf,
                 startOpen = sharedChoice(open) { it.choice } == null,
+                enabled = !pending,
                 onChoose = ::choose,
             )
         }
@@ -209,24 +214,16 @@ internal fun ColumnScope.BasesChoices(
     ) {
         if (operations.isNotEmpty()) PreviewOutcome(page, check, onRetry = { attempt++ })
         Button(
-            onClick = {
-                tried = true
-                edits.change(PlanPart.Bases, operations) { saved ->
-                    if (saved?.status == PlanChangeResult.Status.APPLIED) {
-                        val change = saved.change
-                        if (change == null) onDone() else onDraft(draft.copy(saved = change.id))
-                    }
-                }
-            },
+            onClick = { edits.change(PlanPart.Bases, operations) { edits.answerSheet(draft.opening, it) } },
             modifier = Modifier.fillMaxWidth(),
-            enabled = operations.isNotEmpty() && check is Check.Ready,
+            enabled = !pending && operations.isNotEmpty() && check is Check.Ready,
         ) {
             if (pending) {
                 CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
             }
             Text(stringResource(R.string.plan_save_choices))
         }
-        if (tried && edits.hasFailed(PlanPart.Bases)) SaveFailedText()
+        if (edits.sheetFailed(PlanPart.Bases, draft.opening)) SaveFailedText()
     }
 }
 
@@ -235,6 +232,7 @@ private fun AllBasesChoice(
     items: List<PlanBase>,
     value: PlanBase.Choice?,
     recommended: PlanBase.Choice?,
+    enabled: Boolean,
     onChoose: (PlanBase.Choice) -> Unit,
 ) {
     val locale = currentLocale()
@@ -248,6 +246,7 @@ private fun AllBasesChoice(
                     description = baseChoiceDescription(choice),
                     selected = choice == value,
                     onSelect = { onChoose(choice) },
+                    enabled = enabled,
                     mark = if (choice == recommended) ({ LabelChip(stringResource(R.string.plan_recommended)) }) else null,
                     trailing =
                         if (choice == PlanBase.Choice.SKIP) {
@@ -266,6 +265,7 @@ private fun BasesBySubject(
     areas: Map<String, List<PlanBase>>,
     choiceOf: (PlanBase) -> PlanBase.Choice,
     startOpen: Boolean,
+    enabled: Boolean,
     onChoose: (List<PlanBase>, PlanBase.Choice) -> Unit,
 ) {
     var open by remember { mutableStateOf(startOpen) }
@@ -290,7 +290,7 @@ private fun BasesBySubject(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        if (open) areas.forEach { (area, items) -> SubjectChoice(area, items, choiceOf, onChoose = { onChoose(items, it) }) }
+        if (open) areas.forEach { (area, items) -> SubjectChoice(area, items, choiceOf, enabled, onChoose = { onChoose(items, it) }) }
     }
 }
 
@@ -300,6 +300,7 @@ private fun SubjectChoice(
     area: String,
     items: List<PlanBase>,
     choiceOf: (PlanBase) -> PlanBase.Choice,
+    enabled: Boolean,
     onChoose: (PlanBase.Choice) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -314,11 +315,12 @@ private fun SubjectChoice(
     fun label(choice: PlanBase.Choice) =
         if (studied && choice == PlanBase.Choice.ESSENTIAL) stringResource(R.string.plan_base_studied) else baseChoiceName(choice)
 
-    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it }) {
+    ExposedDropdownMenuBox(expanded = expanded, onExpandedChange = { expanded = it && enabled }) {
         OutlinedTextField(
             value = value?.let { label(it) } ?: stringResource(R.string.plan_different_choices),
             onValueChange = {},
-            modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable),
+            modifier = Modifier.fillMaxWidth().menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable, enabled),
+            enabled = enabled,
             readOnly = true,
             label = { Text(area) },
             trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },

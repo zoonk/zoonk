@@ -27,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -85,7 +86,7 @@ internal fun PlanTools(
                 tool = tool,
                 draft = draft,
                 edits = edits,
-                onDraft = { next -> if (drafts.tool != null) drafts.tool = next },
+                onDraft = { drafts.tool = it },
                 onDismiss = { drafts.tool = null },
             )
         }
@@ -261,11 +262,13 @@ internal fun ColumnScope.ToolChoiceForm(
     onDraft: (ToolDraft) -> Unit,
     onDone: () -> Unit,
 ) {
-    var tried by remember { mutableStateOf(false) }
     val pending = edits.isPending(PlanPart.Tools)
+    val saved = edits.sheetAnswer(draft.opening)
     val chosen = draft.choice
     val system = draft.system
     val needsSystem = chosen == PlanTool.Choice.SETUP && system == null
+
+    LaunchedEffect(saved) { if (saved != null) onDone() }
 
     Column(
         modifier =
@@ -290,6 +293,7 @@ internal fun ColumnScope.ToolChoiceForm(
                     description = stringResource(option.description),
                     selected = option.choice == chosen,
                     onSelect = { onDraft(draft.copy(choice = option.choice)) },
+                    enabled = !pending,
                 )
             }
         }
@@ -303,12 +307,13 @@ internal fun ColumnScope.ToolChoiceForm(
                             selected = option == system,
                             onClick = { onDraft(draft.copy(system = option)) },
                             role = Role.RadioButton,
+                            enabled = !pending,
                         )
                     }
                 }
             }
         }
-        if (tried && edits.hasFailed(PlanPart.Tools)) SaveFailedText()
+        if (edits.sheetFailed(PlanPart.Tools, draft.opening)) SaveFailedText()
     }
     HorizontalDivider()
     Row(
@@ -319,12 +324,11 @@ internal fun ColumnScope.ToolChoiceForm(
         Button(
             onClick = {
                 if (chosen == null) return@Button
-                tried = true
                 val answer = ToolAnswer(listOf(tool.name), chosen, system.takeIf { chosen == PlanTool.Choice.SETUP })
-                edits.chooseTools(answer) { if (it != null) onDone() }
+                edits.chooseTools(answer) { edits.answerSheet(draft.opening, it) }
             },
             modifier = Modifier.weight(1f),
-            enabled = chosen != null && !needsSystem,
+            enabled = chosen != null && !needsSystem && !pending,
         ) {
             if (pending) {
                 CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), color = LocalContentColor.current, strokeWidth = 2.dp)

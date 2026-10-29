@@ -47,6 +47,9 @@ class PlanEditorTest {
     private val toolAnswers = mutableListOf<ToolAnswer>()
     private var asked by mutableStateOf(emptyMap<PlanPart, List<PlanOp>>())
     private var shownLatest by mutableStateOf<EditorChange?>(null)
+    private var shownChanges by mutableStateOf(emptyMap<UUID, EditorChange>())
+    private var sheetAnswers by mutableStateOf(emptyMap<UUID, PlanChangeResult?>())
+    private val toolAnswered = mutableListOf<(PlanChangeResult?) -> Unit>()
 
     /** [saved] is what a change answers, and becomes the latest change as the view model's does. */
     private fun show(
@@ -67,11 +70,12 @@ class PlanEditorTest {
                     pending = pending,
                     asked = asked,
                     latest = shownLatest,
+                    changes = shownChanges,
                     change = { part, operations, answered ->
                         changes += part to operations
                         asked = asked + (part to operations)
                         saved?.let {
-                            shownLatest = it.change?.let(::EditorChange)
+                            it.change?.let { change -> report(change) }
                             answered(it)
                         }
                     },
@@ -80,12 +84,22 @@ class PlanEditorTest {
                         examChoices += group to subject
                         asked = asked + (PlanPart.ExamChoices to listOf(PlanOp.ExamChoice(group, subject)))
                     },
-                    chooseTools = { answer, _ -> toolAnswers += answer },
+                    chooseTools = { answer, answered ->
+                        toolAnswers += answer
+                        toolAnswered += answered
+                    },
                     preview = { preview },
                     adviseOnBases = advise,
+                    sheetAnswers = sheetAnswers,
+                    answerSheet = { opening, result -> sheetAnswers = sheetAnswers + (opening to result) },
                 )
             ZoonkTheme { Column { PlanEditorBody(page, edits) } }
         }
+    }
+
+    private fun report(change: PlanChange) {
+        shownChanges = shownChanges + (change.id to EditorChange(change))
+        shownLatest = shownChanges.values.maxBy { it.change.createdAt }
     }
 
     @Test
@@ -203,6 +217,10 @@ class PlanEditorTest {
         val choices = listOf(BaseChoice(FRACTIONS, "deep"), BaseChoice(RATIOS, "deep"))
         assertEquals(listOf(PlanPart.Bases to listOf<PlanOp>(PlanOp.BaseChoices(choices))), changes)
         compose.onAllNodesWithText("1 prerequisite is studied in depth.").assertCountEquals(2)
+        compose.runOnIdle {
+            report(planChange("""[{"kind":"setDailyMinutes","minutes":45}]""", createdAt = "2026-10-28T12:05:00Z", id = NEWER))
+        }
+        compose.onNodeWithText("1 prerequisite is studied in depth.").assertIsDisplayed()
         compose.onNodeWithText("Done").performClick()
         compose.onNodeWithText("Save choices").assertDoesNotExist()
     }
@@ -249,8 +267,34 @@ class PlanEditorTest {
         assertEquals(listOf(ToolAnswer(listOf("Python", "Spreadsheet (Google Sheets or Excel)"), PlanTool.Choice.NONE)), toolAnswers)
     }
 
+    @Test
+    fun aToolSheetHoldsItsAnswerWhileItSaves() {
+        show(TOOLS, pending = setOf(PlanPart.Tools))
+
+        compose.onNodeWithContentDescription("Choose how you'll use Python").performScrollTo().performClick()
+
+        compose.onNodeWithText("I have it").assertIsNotEnabled()
+        compose.onNodeWithText("Save").assertIsNotEnabled()
+    }
+
+    @Test
+    fun anEarlierToolSaveLeavesTheNextToolsSheetOpen() {
+        show(TOOLS)
+        compose.onNodeWithContentDescription("Choose how you'll use Python").performScrollTo().performClick()
+        compose.onNodeWithText("I have it").performClick()
+        compose.onNodeWithText("Save").performClick()
+        compose.onNodeWithText("Cancel").performClick()
+        compose.onNodeWithText("More later: Spreadsheet").performScrollTo().performClick()
+        compose.onNodeWithContentDescription("Choose how you'll use Spreadsheet (Google Sheets or Excel)").performScrollTo().performClick()
+
+        compose.runOnIdle { toolAnswered.single()(PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED)) }
+
+        compose.onNodeWithText("How will you use it?").assertIsDisplayed()
+    }
+
     private companion object {
         const val PREVIEW_WAIT = 1_000L
+        const val NEWER = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d02"
         val FRACTIONS = UUID.fromString("6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b01").toString()
         val RATIOS = UUID.fromString("6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b02").toString()
 

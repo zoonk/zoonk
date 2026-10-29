@@ -140,6 +140,7 @@ internal fun PlanPage(
     val failed by viewModel.failed.collectAsStateWithLifecycle()
     val latest by viewModel.latest.collectAsStateWithLifecycle()
     val changes by viewModel.changes.collectAsStateWithLifecycle()
+    val sheetAnswers by viewModel.sheetAnswers.collectAsStateWithLifecycle()
     val timeToCover by viewModel.timeToCover.collectAsStateWithLifecycle()
     val preview by viewModel.preview.collectAsStateWithLifecycle()
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME) }
@@ -164,6 +165,8 @@ internal fun PlanPage(
             chooseTools = viewModel::chooseTools,
             preview = viewModel::preview,
             adviseOnBases = viewModel::basesAdvice,
+            sheetAnswers = sheetAnswers,
+            answerSheet = viewModel::answerSheet,
         )
     val report =
         rememberReportProblem(

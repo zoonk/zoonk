@@ -53,6 +53,7 @@ class PlanViewModel(
     private val askedOperations = MutableStateFlow(emptyMap<PlanPart, List<PlanOp>>())
     private val failedParts = MutableStateFlow(emptySet<PlanPart>())
     private val openingChanges = MutableStateFlow(emptyMap<UUID, EditorChange>())
+    private val sheetAnswersState = MutableStateFlow(emptyMap<UUID, PlanChangeResult?>())
     private val timeToCoverState = MutableStateFlow<TimeToCoverState>(TimeToCoverState.Idle)
     private var search: TimeToCoverSearch? = null
     private val previewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
@@ -74,6 +75,12 @@ class PlanViewModel(
 
     /** Every change this opening of the editor made, so a sheet keeps its own, with its Undo, after a newer one. */
     val changes: StateFlow<Map<UUID, EditorChange>> = openingChanges.asStateFlow()
+
+    /**
+     * What each sheet opening's save answered (null: it didn't save), kept here so the sheet showing
+     * that opening finds it, after turning the device too, and an earlier opening's never reaches it.
+     */
+    val sheetAnswers: StateFlow<Map<UUID, PlanChangeResult?>> = sheetAnswersState.asStateFlow()
 
     /** The change made last, which the editor shows with Undo; answers can arrive out of order. */
     val latest: StateFlow<EditorChange?> =
@@ -176,6 +183,12 @@ class PlanViewModel(
         }
     }
 
+    /** Pass as a sheet's save's answer: its [opening] reads it. */
+    fun answerSheet(
+        opening: UUID,
+        result: PlanChangeResult?,
+    ) = sheetAnswersState.update { it + (opening to result) }
+
     private fun report(change: PlanChange) = openingChanges.update { it + (change.id to EditorChange(change)) }
 
     private fun update(
@@ -263,6 +276,7 @@ class PlanViewModel(
     fun forgetLatest() {
         openings++
         openingChanges.value = emptyMap()
+        sheetAnswersState.value = emptyMap()
         failedParts.value = emptySet()
     }
 
