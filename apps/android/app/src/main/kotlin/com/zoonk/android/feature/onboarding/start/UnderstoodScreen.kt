@@ -4,6 +4,7 @@ import android.text.format.DateFormat
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +16,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -75,7 +75,7 @@ import java.time.LocalTime
 import java.time.ZoneOffset
 
 @Composable
-internal fun UnderstoodScreen(
+internal fun ColumnScope.UnderstoodScreen(
     goal: String,
     understanding: GoalUnderstandingOneOf,
     material: List<String>,
@@ -144,7 +144,7 @@ internal fun UnderstoodScreen(
             Button(onClick = onConfirm, enabled = !isCreating && !rewriting, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(if (isCreating) R.string.onboarding_saving_goal else R.string.onboarding_looks_right))
             }
-            FilledTonalButton(onClick = { rewriting = true }, enabled = !isCreating && !rewriting, modifier = Modifier.fillMaxWidth()) {
+            TextButton(onClick = { rewriting = true }, enabled = !isCreating && !rewriting, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.onboarding_fix_something))
             }
         }

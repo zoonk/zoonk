@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,13 +15,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +32,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
@@ -75,7 +77,11 @@ internal fun OutcomeIcon(
 }
 
 @Composable
-internal fun OnboardingActions(content: @Composable ColumnScope.() -> Unit) {
+internal fun ColumnScope.OnboardingActions(content: @Composable ColumnScope.() -> Unit) {
+    // Main pins them to the bottom on phones, within thumb reach; wider windows keep them under the content.
+    if (!currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
+        Spacer(Modifier.weight(1f))
+    }
     Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), content = content)
 }
 
@@ -120,7 +126,7 @@ internal fun GoalErrorAlert(
 
 /** Main's `GoalFooter`: a goal that needs an account offers only that. */
 @Composable
-internal fun GoalFooter(
+internal fun ColumnScope.GoalFooter(
     error: GoalError?,
     onCreateAccount: () -> Unit,
     onOpenPlan: () -> Unit,
@@ -176,7 +182,7 @@ internal fun GoalLimitNotice(
 
 /** In place of confirming, when Plus is what lifts the limit. */
 @Composable
-internal fun GoalLimitWall(
+internal fun ColumnScope.GoalLimitWall(
     reason: GoalLimitReason,
     onSeePlus: () -> Unit,
     onOpenPlan: () -> Unit,
@@ -200,7 +206,7 @@ internal fun GoalLimitWall(
 
 /** Right after sending, it opens by itself; coming back later it waits for a tap, since writing it is new work. */
 @Composable
-internal fun ExplainGoal(
+internal fun ColumnScope.ExplainGoal(
     goal: String,
     question: String,
     isStarting: Boolean,
@@ -220,7 +226,7 @@ internal fun ExplainGoal(
 }
 
 @Composable
-internal fun DeclinedGoal(
+internal fun ColumnScope.DeclinedGoal(
     goal: String,
     onRetry: () -> Unit,
 ) {
@@ -233,7 +239,7 @@ internal fun DeclinedGoal(
 }
 
 @Composable
-internal fun UnclearGoal(
+internal fun ColumnScope.UnclearGoal(
     goal: String,
     onRetry: () -> Unit,
 ) {
@@ -246,7 +252,7 @@ internal fun UnclearGoal(
 }
 
 @Composable
-internal fun InstrumentGoal(
+internal fun ColumnScope.InstrumentGoal(
     goal: String,
     instrument: String,
     isStarting: Boolean,
@@ -309,7 +315,7 @@ internal fun InstrumentGoal(
         Button(onClick = onStartMusicianship, enabled = !isStarting, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(if (isStarting) R.string.onboarding_saving_goal else R.string.onboarding_start_musicianship))
         }
-        FilledTonalButton(
+        TextButton(
             onClick = onJoinWaitlist,
             enabled = !isJoining && waitlist != WaitlistOutcome.Joined,
             modifier = Modifier.fillMaxWidth(),
@@ -318,7 +324,7 @@ internal fun InstrumentGoal(
 }
 
 @Composable
-internal fun GuestGoalGate(
+internal fun ColumnScope.GuestGoalGate(
     onCreateAccount: () -> Unit,
     onBackToToday: () -> Unit,
 ) {

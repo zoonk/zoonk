@@ -43,13 +43,16 @@ class StartGoalFlowTest {
     private val api = FakeOnboardingApi()
     private lateinit var navigator: AppNavigator
 
-    private fun show(route: AppRoute.StartGoal = AppRoute.StartGoal()) {
+    private fun show(
+        route: AppRoute.StartGoal = AppRoute.StartGoal(),
+        hasSession: Boolean = true,
+    ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val store = OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
         rule.setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                StartGoalScreen(route, store, canAttach = true, navigator)
+                StartGoalScreen(route, store, hasSession = hasSession, canAttach = hasSession, navigator)
             }
         }
     }
@@ -117,5 +120,14 @@ class StartGoalFlowTest {
         rule.onNodeWithText("Understanding your goal").assertIsDisplayed()
         rule.onNodeWithText("pass the bar exam").assertIsDisplayed()
         assertEquals(emptyList<Pair<String, String>>(), api.understandCalls)
+    }
+
+    @Test
+    fun aVisitorCanLogInFromTheStart() {
+        show(hasSession = false)
+
+        rule.onNodeWithText("Log in").performClick()
+
+        assertEquals(AppRoute.Login, navigator.currentRoute)
     }
 }

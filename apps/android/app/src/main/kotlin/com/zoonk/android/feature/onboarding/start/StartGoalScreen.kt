@@ -1,14 +1,17 @@
 package com.zoonk.android.feature.onboarding.start
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -32,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -79,7 +84,8 @@ fun StartGoalScreen(
     navigator: AppNavigator,
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
-    StartGoalScreen(route, app.onboarding, canAttach = (session as? SessionState.SignedIn)?.isGuest == false, navigator)
+    val signedIn = session as? SessionState.SignedIn
+    StartGoalScreen(route, app.onboarding, hasSession = signedIn != null, canAttach = signedIn?.isGuest == false, navigator)
 }
 
 /** Material needs an account ([canAttach]): a guest is asked to create one first. */
@@ -87,6 +93,7 @@ fun StartGoalScreen(
 fun StartGoalScreen(
     route: AppRoute.StartGoal,
     store: OnboardingStore,
+    hasSession: Boolean,
     canAttach: Boolean,
     navigator: AppNavigator,
 ) {
@@ -133,7 +140,12 @@ fun StartGoalScreen(
 
     BackHandler(enabled = backInFlow != null) { backInFlow?.invoke() }
 
-    PageScaffold(onBack = { backInFlow?.invoke() ?: navigator.back() }) { padding ->
+    PageScaffold(
+        onBack = { backInFlow?.invoke() ?: navigator.back() },
+        actions = {
+            if (!hasSession) TextButton(onClick = { navigator.open(AppRoute.Login) }) { Text(stringResource(R.string.gate_log_in)) }
+        },
+    ) { padding ->
         PageWithSupportingPane(
             supportingPane = { HowItWorks(hasAccount = canAttach) },
             modifier = Modifier.padding(padding).consumeWindowInsets(padding),
@@ -173,30 +185,28 @@ private class StartActions(
     val toExplanation: (String) -> Unit,
 )
 
+/** At least the window's height, so a screen's actions can sit at its bottom. */
 @Composable
 private fun StartColumn(content: @Composable ColumnScope.() -> Unit) {
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .imePadding()
-                .verticalScroll(rememberScrollState()),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        Column(
-            modifier =
-                Modifier
-                    .widthIn(max = 640.dp)
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            content = content,
-        )
+    BoxWithConstraints(Modifier.fillMaxSize().imePadding()) {
+        val windowHeight = maxHeight
+        Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+            Column(
+                modifier =
+                    Modifier
+                        .widthIn(max = 640.dp)
+                        .fillMaxWidth()
+                        .heightIn(min = windowHeight)
+                        .padding(horizontal = 24.dp, vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+                content = content,
+            )
+        }
     }
 }
 
 @Composable
-private fun Entry(
+private fun ColumnScope.Entry(
     vm: StartGoalViewModel,
     route: AppRoute.StartGoal,
     canAttach: Boolean,
@@ -256,7 +266,7 @@ private fun materialGoal(flow: StartFlowState): String {
 }
 
 @Composable
-private fun UnderstandingWait(
+private fun ColumnScope.UnderstandingWait(
     goal: String?,
     run: GenerationRun,
     onRetry: (() -> Unit)?,
@@ -271,7 +281,7 @@ private fun UnderstandingWait(
 }
 
 @Composable
-private fun Draft(
+private fun ColumnScope.Draft(
     vm: StartGoalViewModel,
     store: OnboardingStore,
     id: String,
@@ -306,7 +316,7 @@ private fun Draft(
 }
 
 @Composable
-private fun DraftContent(
+private fun ColumnScope.DraftContent(
     vm: StartGoalViewModel,
     draft: OnboardingDraft,
     upFront: GoalLimitReason?,
@@ -430,7 +440,7 @@ private fun DraftContent(
 private fun failedRun(failure: GenerationFailure) = GenerationRun(status = GenerationRun.Status.Failed, failure = failure)
 
 @Composable
-private fun MaterialQuestions(
+private fun ColumnScope.MaterialQuestions(
     vm: StartGoalViewModel,
     language: String,
 ) {
@@ -490,7 +500,23 @@ private fun HowItWorks(hasAccount: Boolean) {
     Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(stringResource(R.string.onboarding_how_it_works))
         steps.forEachIndexed { index, step ->
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            // The first step is where the learner is.
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(
+                            if (index ==
+                                0
+                            ) {
+                                MaterialTheme.colorScheme.surfaceContainerHigh
+                            } else {
+                                Color.Transparent
+                            },
+                            MaterialTheme.shapes.small,
+                        ).padding(horizontal = 8.dp, vertical = 6.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
                 Text(
                     text = (index + 1).toString(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
