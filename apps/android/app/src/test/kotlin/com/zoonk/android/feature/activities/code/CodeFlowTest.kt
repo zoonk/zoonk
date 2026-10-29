@@ -9,6 +9,7 @@ import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
@@ -23,6 +24,7 @@ import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
+import com.zoonk.android.feature.activities.assignmentAnswer
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
 import com.zoonk.android.feature.player.model.ActivityAnswer
@@ -279,6 +281,42 @@ class CodeFlowTest {
         scripted.gate = null
         tap("Run again")
         waitForCheckEnabled()
+    }
+
+    private fun stepForward(times: Int) =
+        repeat(times) {
+            rule.onNode(hasContentDescription("Step forward")).performScrollTo().performClick()
+        }
+
+    private fun option(text: String) = rule.onNode(hasText(text) and hasClickAction()).performScrollTo().performClick()
+
+    @Test
+    fun predictingTheTracedValueIsRight() {
+        playFixture("codeTracer", isCorrect = true) { JsonPrimitive(true) }
+
+        shows("Step 1 of 4")
+        stepForward(2)
+        shows("What will mid be on pass 3?")
+        rule.onNode(hasContentDescription("Step forward")).assertIsNotEnabled()
+        option("6")
+        stepForward(1)
+        shows("You said 6, and it was.")
+        harness.tap("Check")
+
+        shows("Correct!")
+        assertEquals(listOf(assignmentAnswer(mapOf("0" to "b"))), graded)
+    }
+
+    @Test
+    fun aWrongPredictionShowsTheTracedValue() {
+        playFixture("codeTracer", isCorrect = false) { JsonPrimitive(true) }
+
+        stepForward(2)
+        option("5")
+        harness.tap("Check")
+
+        shows("Not quite")
+        shows("You said 5; it was 6.")
     }
 
     private companion object {

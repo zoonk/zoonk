@@ -148,4 +148,30 @@
     <string name="activities_code_expected_result">Expected result</string>
     <string name="activities_code_expected_result_in_order">Expected result, in this order</string>
     <string name="activities_code_query_that_works">A query that works</string>
+
+    <string name="activities_code_badge_step_through">Step through</string>
+    <string name="activities_code_step_back">Step back</string>
+    <string name="activities_code_step_forward">Step forward</string>
+    <!-- Where a code trace stands before any line ran. -->
+    <string name="activities_code_before_first_line">Before the first line</string>
+    <!-- Where a code trace stands, like "Step 2 of 4". -->
+    <string name="activities_code_step_of">Step %1$d of %2$d</string>
+    <!-- The line of code that just ran, for TalkBack. -->
+    <string name="activities_code_current_line">Current line</string>
+    <!-- The variables a code trace watches, for TalkBack. -->
+    <string name="activities_code_variables">Variables</string>
+    <!-- A variable's value before the step that changed it, shown before its new value, like "3 →". -->
+    <string name="activities_code_value_was">%1$s →</string>
+    <!-- A variable with no value yet. -->
+    <string name="activities_code_not_set">not set</string>
+    <string name="activities_code_predict_first">Predict first. Then step forward to see what happens.</string>
+    <string name="activities_code_step_to_see">Step forward to see if you\'re right.</string>
+    <string name="activities_code_step_next_line">Step forward to run the next line.</string>
+    <string name="activities_code_whole_run">That\'s the whole run. Check your predictions when you\'re ready.</string>
+    <!-- The learner's predictions of a code trace's values, for TalkBack. -->
+    <string name="activities_code_your_predictions">Your predictions</string>
+    <!-- A right prediction, like "You said 6, and it was." -->
+    <string name="activities_code_you_said_right">You said %1$s, and it was.</string>
+    <!-- A wrong prediction and the real value, like "You said 5; it was 6." -->
+    <string name="activities_code_you_said_wrong">You said %1$s; it was %2$s.</string>
 </resources>

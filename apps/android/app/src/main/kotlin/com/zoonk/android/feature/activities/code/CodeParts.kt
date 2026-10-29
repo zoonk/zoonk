@@ -30,6 +30,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -146,6 +147,7 @@ internal fun CodeLine(
     digits: Int,
     tone: CodeLineTone,
     modifier: Modifier = Modifier,
+    state: String? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
@@ -176,6 +178,7 @@ internal fun CodeLine(
             .fillMaxWidth()
             .clip(shape)
             .then(toned)
+            .then(if (state == null) Modifier else Modifier.semantics { stateDescription = state })
             .padding(end = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -197,12 +200,15 @@ internal fun CodeListing(
     code: String,
     language: CodeLanguage,
     label: String,
+    currentLine: Int? = null,
 ) {
     val lines = highlightCode(code, language)
     val digits = lines.size.toString().length
+    val current = stringResource(R.string.activities_code_current_line)
     CodeBlock(label) {
         lines.forEachIndexed { index, tokens ->
-            CodeLine(index + 1, digits, CodeLineTone.Plain) {
+            val isCurrent = index + 1 == currentLine
+            CodeLine(index + 1, digits, if (isCurrent) CodeLineTone.Current else CodeLineTone.Plain, state = current.takeIf { isCurrent }) {
                 Text(highlighted(tokens), softWrap = false, style = codeTextStyle())
             }
         }
@@ -319,6 +325,13 @@ internal fun CodeEditor(
         )
     }
 }
+
+/** Saves drafts keyed by [key]'s text, like edited lines by number, for `rememberSaveable`. */
+internal fun <K> draftsSaver(key: (String) -> K) =
+    Saver<Map<K, String>, ArrayList<String>>(
+        save = { drafts -> drafts.flatMapTo(ArrayList()) { (k, text) -> listOf(k.toString(), text) } },
+        restore = { saved -> saved.chunked(2).associate { (k, text) -> key(k) to text } },
+    )
 
 /** Main's `CodeSnippet`: [before] goes in front of the selection and [after] behind it. */
 data class CodeSnippet(

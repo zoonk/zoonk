@@ -3,10 +3,13 @@
 {
   "activities_code_badge_query_data": "63d3ff1fd61f393ca7ee0d63dcc5d6d74a1aa4c03d82fd9c52387c8d3e352891",
   "activities_code_badge_run": "4765fd41ff3983cab48ddc19818d355f587598f23cfdb705c51de2a1346970a5",
+  "activities_code_badge_step_through": "79b8019a53222c796ab4687d6448a580a34e911ef568f1c1587d95a0f07b99ee",
   "activities_code_badge_test_pattern": "70800bc4028f252fa432865153d40e8951dff3e29650c5db23de3c0a61aa6333",
+  "activities_code_before_first_line": "dc16a8b0fcfe17f4289918558a0b59da72477b69ad9410a5da65ebb3a23298f6",
   "activities_code_changed_code": "61974c0977d8cec6f5d939ee74f8fac99c0362d3dd5068ee1a1c153529658be8",
   "activities_code_changed_query": "cf525f01dbf52199f18b7f1305f053e15893fbc99936399af3cfa03f6ad2913a",
   "activities_code_code": "59f9739696514843d6cc97e2ecbe5bbaaee6e50fc2fafa8e150cb71cd0adfce5",
+  "activities_code_current_line": "f13dc8630d6a42965a6df4dcbefbfa5de5a83f6810d74ae897d2c9a3c9beb9f8",
   "activities_code_error_line": "e9420ebd212be30c6eaad572c5e5ae2d3c770d7bce360aa75d1898a5f9cae5ba",
   "activities_code_examples_pass": "956f37bd22af8463427c17518ec2b22590f7de3266e209e1fab1f31b7f99d830",
   "activities_code_expected": "d8a934d273316c38881808dd848ddd098350ac60a8a56808ee8386d005123d52",
@@ -18,10 +21,12 @@
   "activities_code_lines_yours": "c04fa0f930871609dc885dab732a822dd0accbed19860547de553da3c22233af",
   "activities_code_no_table": "7176967d34f0097418c666020f54b40dd79e5f7b6dfcf2973ad8498f9c1942d9",
   "activities_code_not_quite": "47c84dcbe7d3a98187ceab9aae70659edbc6bae64abafadd48dafded665eea4d",
+  "activities_code_not_set": "8bfbc988575f23e64fc8f13d75b681c1249cdad504f67b83b523935c8d5268bd",
   "activities_code_nothing_printed": "0167a831dc7663e499cff6cff67245c7b40a60b259c679ff7e5ba9e7476051f1",
   "activities_code_pass_count": "035c93235b5718a796b6078d463c86ab990a68d8efee5235df47c26f2d7cc5d3",
   "activities_code_pattern_cant_run": "b41e4c0715a5be504f1b7b377280f3ac2b427fbba343c7420d2a28cf237e2e7a",
   "activities_code_pattern_that_works": "fb9f56a1781edf4d60fba5afed1d45ebf8f1441a0743e1f1c1c8a7d669a48f84",
+  "activities_code_predict_first": "88a1b49fdb99313761c2d538d51253aa53b5db107ea203bf9d49fb1ed08fefaf",
   "activities_code_query_that_works": "a7a46ac351bb6607cf0c5175bf009bbb1c60180b94af5c021e110bdb8e1c6e66",
   "activities_code_query_timeout": "d09908d3783359b6fd9d6fd2fccc802784a0fb07eaa2400ff4a62c1eb54050a4",
   "activities_code_result_no_rows": "3776be106c9219aae9cd44c28a830c72afa7ff5ff9d18a5c440542366ed86fb5",
@@ -63,6 +68,11 @@
   "activities_code_snippet_zero_or_more": "55c56dca63189281744c4e4b1187092d6cce4f46202c154c61edc47b33a78903",
   "activities_code_sql_words": "1ec1cf696f03e632b7368b278385da8c56cf3db5016826f7ecc47226c26ce94c",
   "activities_code_start_over": "496fe69a3bfc8b0343c67fae6fd909e6f1d41694779312346ad19f045f7f6b6c",
+  "activities_code_step_back": "44d06f40a2f6cb7707b4e2a349685ac50b7ef0b1e99542783135fea847faaafa",
+  "activities_code_step_forward": "41daa0597d8a65d97c658a26165afd7c2baf0924d92f2f1b7ac25249ad7499de",
+  "activities_code_step_next_line": "7fce9819e67d45905c13babc653bf95a0b50f7008af319b9b24290d8498a9407",
+  "activities_code_step_of": "2dbcd61b72fccc98a730895a669b06d166fb33753edc59db790d1b7e4720ae24",
+  "activities_code_step_to_see": "7a42b243b64d3d080688370021c6da4da43bf2d5f52f4e419553a249abd43540",
   "activities_code_stopped_after": "c3af8741acb22f60c6199edafd278d06a3f26db762e648241ccb8fa29b617273",
   "activities_code_symbols": "81f8cc72215ddf4a476eb99ea21d7b268eb1be2a0f3afb60348e3ecacfc3152f",
   "activities_code_table_collapsed": "655a6b6d24359efedde7bf1ffb89b784f30ae30c2b1fc6d840153867e136b41c",
@@ -70,9 +80,15 @@
   "activities_code_table_named": "1a2201cb78183fc0fc21a04e7f75bb7fe707ff25ec390d9f6cc53f35a549ebd3",
   "activities_code_table_rows": "c57a4a47fb17791b1f465eed0040145e4485070c4c47f998203c959ab390742e",
   "activities_code_too_much_output": "2f7f78d34ca0aa348de07f7ecf4716e173d36368ee04c676476d223618c97dd0",
+  "activities_code_value_was": "4e2686688c2fd96eadd1e3686e5ea18f1ebd512ea61401a067efb98b8c37a791",
+  "activities_code_variables": "67d21837f03ca6dcd1f3ae26a5d5b4d8ebacee69f701303cafa2fed596353b74",
+  "activities_code_whole_run": "63e84c137126bd517aaf0e2b13d5d9faf58dd1a034f715ef0152e40ebd450833",
+  "activities_code_you_said_right": "aea57e748748f73c53ad4b0f95d028989822707060963c8271a2ffc26d0d1961",
+  "activities_code_you_said_wrong": "6b08f2befc57ab41a04b652109619c552f13bd2969d1436312ab9d0deafea8d1",
   "activities_code_your_formula": "2720d8e21acafdd42cf1cf966801514d4e8446afe5cb3fb6867a30da667b0964",
   "activities_code_your_output": "fb3e652322cf44adb360dcae47d2d06b8d8247501ab7b91db6360b7c478baeca",
   "activities_code_your_pattern": "1c8585e24a98b0ec7098aafcd8ea0aba141522c5c3700aafe67f145574f15dcb",
+  "activities_code_your_predictions": "0816131488a8b77ba48803bff3fe0e2bad754214009f46efdc264024e1816481",
   "activities_code_your_query": "4e119bd5412d5d48fa3bfee772d346deb5bf4920ded68beaf0c21c51d365e6c1",
   "activities_code_your_result": "5d5c52b28a28721e0ca3ed87d06210285f779cbd067933a18876458e69fd39f2",
   "activities_code_your_result_rows": "6a0775414440fe18c3f7204064b6873c890775affbef0a9589439a73e899e6f2"
@@ -223,4 +239,29 @@
     <string name="activities_code_expected_result">Erwartetes Ergebnis</string>
     <string name="activities_code_expected_result_in_order">Erwartetes Ergebnis in dieser Reihenfolge</string>
     <string name="activities_code_query_that_works">Eine funktionierende Abfrage</string>
+    <string name="activities_code_badge_step_through">Schritt für Schritt</string>
+    <string name="activities_code_step_back">Einen Schritt zurück</string>
+    <string name="activities_code_step_forward">Einen Schritt vor</string>
+    <!-- Where a code trace stands before any line ran. -->
+    <string name="activities_code_before_first_line">Vor der ersten Zeile</string>
+    <!-- Where a code trace stands, like "Step 2 of 4". -->
+    <string name="activities_code_step_of">Schritt %1$d von %2$d</string>
+    <!-- The line of code that just ran, for TalkBack. -->
+    <string name="activities_code_current_line">Aktuelle Zeile</string>
+    <!-- The variables a code trace watches, for TalkBack. -->
+    <string name="activities_code_variables">Variablen</string>
+    <!-- A variable's value before the step that changed it, shown before its new value, like "3 →". -->
+    <string name="activities_code_value_was">%1$s →</string>
+    <!-- A variable with no value yet. -->
+    <string name="activities_code_not_set">nicht festgelegt</string>
+    <string name="activities_code_predict_first">Sag zuerst voraus, was passiert. Geh dann einen Schritt vor, um es zu sehen.</string>
+    <string name="activities_code_step_to_see">Geh einen Schritt vor, um zu sehen, ob du richtigliegst.</string>
+    <string name="activities_code_step_next_line">Geh einen Schritt vor, um die nächste Zeile auszuführen.</string>
+    <string name="activities_code_whole_run">Das war der ganze Ablauf. Überprüfe deine Vorhersagen, wenn du bereit bist.</string>
+    <!-- The learner's predictions of a code trace's values, for TalkBack. -->
+    <string name="activities_code_your_predictions">Deine Vorhersagen</string>
+    <!-- A right prediction, like "You said 6, and it was." -->
+    <string name="activities_code_you_said_right">Du hast %1$s gesagt, und das stimmt.</string>
+    <!-- A wrong prediction and the real value, like "You said 5; it was 6." -->
+    <string name="activities_code_you_said_wrong">Du hast %1$s gesagt; tatsächlich war es %2$s.</string>
 </resources>

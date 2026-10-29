@@ -25,7 +25,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -93,7 +92,7 @@ private fun CodeRunnerActivity(props: ActivityProps) {
     val editorRun = rememberEditorRun()
     val scope = rememberCoroutineScope()
     val onAnswerChange by rememberUpdatedState(props.onAnswerChange)
-    var edits by rememberSaveable(stateSaver = LineEditsSaver) { mutableStateOf(emptyMap<Int, String>()) }
+    var edits by rememberSaveable(stateSaver = draftsSaver(String::toInt)) { mutableStateOf(emptyMap<Int, String>()) }
     var run by remember { mutableStateOf(props.answer.output?.let(ProgramRun::printed)) }
     val program = programWithEdits(fields.starterCode, edits)
     val matches = run?.let { sameOutput(it.output, fields.expectedOutput) } == true
@@ -398,9 +397,3 @@ private fun NotQuite(mistake: String) {
         }
     }
 }
-
-private val LineEditsSaver =
-    Saver<Map<Int, String>, ArrayList<String>>(
-        save = { edits -> edits.flatMapTo(ArrayList()) { (line, text) -> listOf(line.toString(), text) } },
-        restore = { saved -> saved.chunked(2).associate { (line, text) -> line.toInt() to text } },
-    )
