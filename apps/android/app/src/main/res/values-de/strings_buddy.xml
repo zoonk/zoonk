@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "buddy_picker_label": "c8f2121d1863421cd8e6cdfe25a67f639694a0ad7d825f7fbe23429e7c920175",
+  "buddy_picker_name": "ecb380844c080b982413c05c5494864a79f92c99759a3a7177fd4b8f538a4ec5",
+  "buddy_tagline_beep": "496944e9b02aeae6c9affd3129ddf2e084676f3938e98eb8907ade518f400afc",
+  "buddy_tagline_noodle": "849c2a94ff17afb57f1fb82bf330853afee7bb902f9b2a5893f0a528f308f6e7",
+  "buddy_tagline_otto": "ded16ff0e1346ed158b7e006a19eae6394143839b04d6f6801f96bc68d2c0271",
+  "buddy_tagline_zu": "1c1ecc782c6df6fbd7cda4f562f5617cb3e7a2eae18d3dbb701df2239de93d5e"
+}
+-->
+<resources>
+    <!-- Screen reader name of the group of buddies to pick from. -->
+    <string name="buddy_picker_label">Kumpel</string>
+    <!-- Label of the field for a custom buddy name. -->
+    <string name="buddy_picker_name">Name</string>
+    <!-- Under the buddy Zu, an alien, in the buddy picker. -->
+    <string name="buddy_tagline_zu">Neugieriger Außerirdischer</string>
+    <!-- Under the buddy Noodle, a brain, in the buddy picker. -->
+    <string name="buddy_tagline_noodle">Gehirn auf Beinen</string>
+    <!-- Under the buddy Beep, a robot, in the buddy picker. -->
+    <string name="buddy_tagline_beep">Ordentlicher Roboter</string>
+    <!-- Under the buddy Otto, an octopus, in the buddy picker. -->
+    <string name="buddy_tagline_otto">Besserwisser-Oktopus</string>
+</resources>
