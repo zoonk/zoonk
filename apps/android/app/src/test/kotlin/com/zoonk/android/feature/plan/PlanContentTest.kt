@@ -7,12 +7,15 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.feature.goalcontent.modulesSyllabus
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.Syllabus
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -33,6 +36,7 @@ class PlanContentTest {
         resumeChangesPlan: Boolean = false,
         kind: String = "learn",
         resume: Resume = if (resumeChangesPlan) Resume.Confirm else Resume.Plain,
+        structure: Syllabus? = null,
     ) {
         val summary = learnerSummary(status = status, kind = kind)
         val page = PlanPageState(summary.goals.first(), learnPlan(), summary)
@@ -42,6 +46,7 @@ class PlanContentTest {
                 PlanContent(
                     page = page,
                     standing = if (kind == "language") null else Standing.Progress(progress(), done = 13, total = 46),
+                    structure = structure,
                     links = PlanLinks(navigator, page),
                     resume = resume,
                     isSaving = false,
@@ -121,5 +126,15 @@ class PlanContentTest {
 
         compose.onNodeWithText("Behind").assertIsDisplayed()
         compose.onNodeWithText("Progress").assertDoesNotExist()
+    }
+
+    @Test
+    fun aPlanWithSubjectsListsThemInPlaceOfThePathAndOpensThem() {
+        show(structure = modulesSyllabus())
+
+        compose.onNodeWithText("Sets and tuples").assertDoesNotExist()
+        compose.onNodeWithText("Working with data").performScrollTo().performClick()
+
+        compose.runOnIdle { assertEquals(AppRoute.Subject("data"), navigator.currentRoute) }
     }
 }

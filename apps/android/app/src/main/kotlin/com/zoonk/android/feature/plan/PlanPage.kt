@@ -11,6 +11,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -22,6 +24,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
@@ -33,6 +37,8 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblem
 import com.zoonk.android.feature.feedback.rememberReportProblem
+import com.zoonk.android.feature.goalcontent.PlanSyllabusSection
+import com.zoonk.android.feature.goalcontent.hasSubjectPages
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -88,6 +94,8 @@ class PlanLinks(
     fun course(courseId: String) = navigator.open(AppRoute.CatalogCourse(courseId))
 
     fun buddy() = navigator.open(AppRoute.Buddy())
+
+    fun subject(key: String) = navigator.open(AppRoute.Subject(key))
 }
 
 @Composable
@@ -120,6 +128,7 @@ internal fun PlanPage(
     PlanContent(
         page = page,
         standing = standingOf(page, progress.value, syllabus.value),
+        structure = syllabus.value?.takeIf { it.hasSubjectPages },
         links = links,
         resume =
             if (page.isPaused) {
@@ -174,6 +183,7 @@ private fun resumeOf(state: LoadState<Boolean>): Resume =
 internal fun PlanContent(
     page: PlanPageState,
     standing: Standing?,
+    structure: Syllabus?,
     links: PlanLinks,
     resume: Resume,
     isSaving: Boolean,
@@ -184,48 +194,88 @@ internal fun PlanContent(
     val adjust = onAdjust?.let { { it(null) } }
     val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links, onAdjust = adjust) }
 
-    PageWithSupportingPane(
-        supportingPane = {
-            Row {
-                VerticalDivider()
-                Column(
-                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(PAGE_MARGIN),
-                    verticalArrangement = Arrangement.spacedBy(32.dp),
-                ) {
-                    numbers(NumberVariant.Stats)
-                    NextOnPath(page, links)
-                    PlanProperties(page, links, onOpen = onAdjust)
+    var pathOpen by rememberSaveable { mutableStateOf(false) }
+    val main =
+        @Composable { asideBeside: Boolean ->
+            LazyColumn(
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(start = PAGE_MARGIN, end = PAGE_MARGIN, top = 8.dp, bottom = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp),
+            ) {
+                item(key = "header", contentType = "header") {
+                    PlanHeader(
+                        page = page,
+                        links = links,
+                        resume = resume,
+                        isSaving = isSaving,
+                        onSetStatus = onSetStatus,
+                        report = report,
+                        onAdjust = adjust,
+                    )
+                }
+                item(key = "roadmap", contentType = "roadmap") {
+                    PlanRoadmap(page, links, onOpenPath = if (structure != null) ({ pathOpen = true }) else null)
+                }
+                if (!asideBeside) {
+                    item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
+                }
+                if (structure != null) {
+                    item(key = "structure", contentType = "structure") { PlanSyllabusSection(structure, onOpenSubject = links::subject) }
+                } else {
+                    item(key = "path", contentType = "path") { PathSection(page, links) }
+                }
+                if (!asideBeside) {
+                    item(key = "next", contentType = "next") { NextAndMore(page, links) }
                 }
             }
-        },
-    ) { asideBeside ->
-        LazyColumn(
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = PAGE_MARGIN, end = PAGE_MARGIN, top = 8.dp, bottom = 32.dp),
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-        ) {
-            item(key = "header", contentType = "header") {
-                PlanHeader(
-                    page = page,
-                    links = links,
-                    resume = resume,
-                    isSaving = isSaving,
-                    onSetStatus = onSetStatus,
-                    report = report,
-                    onAdjust = adjust,
-                )
-            }
-            item(key = "roadmap", contentType = "roadmap") { PlanRoadmap(page, links) }
-            if (!asideBeside) {
-                item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
-            }
-            item(key = "path", contentType = "path") { PathSection(page, links) }
-            if (!asideBeside) {
-                item(key = "next", contentType = "next") { NextAndMore(page, links) }
-            }
+        }
+
+    // Beside a subject the Plan is the list pane, too narrow for its own aside.
+    BoxWithConstraints {
+        if (maxWidth < ASIDE_PAGE_WIDTH) {
+            main(false)
+        } else {
+            PageWithSupportingPane(
+                supportingPane = {
+                    Row {
+                        VerticalDivider()
+                        Column(
+                            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(PAGE_MARGIN),
+                            verticalArrangement = Arrangement.spacedBy(32.dp),
+                        ) {
+                            numbers(NumberVariant.Stats)
+                            NextOnPath(page, links)
+                            PlanProperties(page, links, onOpen = onAdjust)
+                        }
+                    }
+                },
+                mainPane = main,
+            )
         }
     }
+
+    if (pathOpen) PathSheet(page, links, onDismiss = { pathOpen = false })
 }
+
+/** Main's phases sheet: with subjects on the page, the compact roadmap opens the path here. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun PathSheet(
+    page: PlanPageState,
+    links: PlanLinks,
+    onDismiss: () -> Unit,
+) {
+    val title = stringResource(R.string.plan_your_path)
+    ModalBottomSheet(onDismissRequest = onDismiss, modifier = Modifier.semantics { paneTitle = title }) {
+        PathSection(
+            page,
+            links,
+            Modifier.verticalScroll(rememberScrollState()).padding(start = SHEET_MARGIN, end = SHEET_MARGIN, bottom = 32.dp),
+        )
+    }
+}
+
+private val ASIDE_PAGE_WIDTH = 840.dp
 
 internal val PAGE_MARGIN = 16.dp
 

@@ -192,6 +192,7 @@ class PlanScreenshots {
                     PlanContent(
                         page = page,
                         standing = Standing.Progress(progress(), done = 13, total = 46),
+                        structure = null,
                         links = PlanLinks(navigator, page),
                         resume = Resume.Plain,
                         isSaving = false,
