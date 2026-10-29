@@ -106,7 +106,7 @@ class QuestionBlockScreenshots {
             ZoonkTheme(darkTheme = dark) {
                 val navigator = rememberAppNavigator()
                 val run by viewModel.state.collectAsStateWithLifecycle()
-                run?.let { Runner(read, it, viewModel, AppContainer.preview(rule.activity), navigator) }
+                run?.let { Runner(read, it, viewModel, AppContainer.preview(rule.activity), navigator, onClose = {}) }
             }
         }
 

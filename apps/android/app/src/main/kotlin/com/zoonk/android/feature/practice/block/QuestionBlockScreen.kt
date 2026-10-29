@@ -73,70 +73,108 @@ import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FeedbackSubmissionContext
+import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudyBlockDetail
 import java.util.UUID
 
-/** A practice or review block played one question at a time (main's `QuestionBlock`). */
 @Composable
 fun QuestionBlockScreen(
     route: AppRoute.QuestionBlock,
     app: AppContainer,
     navigator: AppNavigator,
+) = QuestionBlock(route.sessionId, route.blockId, app, navigator, onClose = navigator::closeTask)
+
+/**
+ * A session's practice or review block played one question at a time (main's `QuestionBlock`), for
+ * its own route or a session screen hosting it. [finished] takes the whole screen once the block is
+ * done, as main's day moment does.
+ */
+@Composable
+fun QuestionBlock(
+    sessionId: String,
+    blockId: String,
+    app: AppContainer,
+    navigator: AppNavigator,
+    onClose: () -> Unit,
+    finished: @Composable (StudyBlockCompletion) -> Unit = { BlockFinished(it, onClose) },
 ) {
-    val key = remember(route) { blockKey(route) }
+    val key = remember(sessionId, blockId) { blockKey(sessionId, blockId) }
     if (key == null) {
-        NotFound(navigator)
+        NotFound(onClose)
         return
     }
-    val viewModel = viewModel(key = "block:${route.blockId}") { QuestionBlockViewModel(key, app.questionBlocks) }
+    val viewModel = viewModel(key = "block:$blockId") { QuestionBlockViewModel(key, app.questionBlocks) }
     val loaded by viewModel.block.collectShown()
     val closed by viewModel.closed.collectAsStateWithLifecycle()
 
-    LaunchedEffect(closed) { if (closed) navigator.closeTask() }
+    LaunchedEffect(closed) { if (closed) onClose() }
 
     when (val state = loaded) {
         is LoadState.Loaded -> {
             val read = remember(state.value) { viewModel.questions(state.value) }
             LaunchedEffect(read) { viewModel.begin(read.questions) }
             val run by viewModel.state.collectAsStateWithLifecycle()
-            run?.let { Runner(read, it, viewModel, app, navigator) }
+            run?.let { shown ->
+                val phase = shown.phase
+                if (phase is BlockPhase.Finished) finished(phase.completion) else Runner(read, shown, viewModel, app, navigator, onClose)
+            }
         }
 
         is LoadState.Failed -> {
             if (state.error == ApiError.NotFound) {
-                NotFound(navigator)
+                NotFound(onClose)
             } else {
-                TaskScaffold(onClose = navigator::closeTask) { padding ->
+                TaskScaffold(onClose = onClose) { padding ->
                     Box(Modifier.padding(padding)) { LoadFailedMessage(onRetry = { viewModel.reread() }) }
                 }
             }
         }
 
         LoadState.Empty -> {
-            NotFound(navigator)
+            NotFound(onClose)
         }
 
         else -> {
-            TaskScaffold(onClose = navigator::closeTask) { padding ->
+            TaskScaffold(onClose = onClose) { padding ->
                 Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
             }
         }
     }
 }
 
-private fun blockKey(route: AppRoute.QuestionBlock): BlockKey? =
-    runCatching { BlockKey(UUID.fromString(route.sessionId), UUID.fromString(route.blockId)) }.getOrNull()
+private fun blockKey(
+    sessionId: String,
+    blockId: String,
+): BlockKey? = runCatching { BlockKey(UUID.fromString(sessionId), UUID.fromString(blockId)) }.getOrNull()
 
 @Composable
-private fun NotFound(navigator: AppNavigator) {
-    TaskScaffold(onClose = navigator::closeTask) { padding ->
+private fun NotFound(onClose: () -> Unit) {
+    TaskScaffold(onClose = onClose) { padding ->
         StatusMessage(
             icon = R.drawable.ic_school,
             title = stringResource(R.string.practice_not_found_title),
             description = stringResource(R.string.practice_not_found_description),
             modifier = Modifier.padding(padding),
-        ) { Button(onClick = navigator::closeTask) { Text(stringResource(R.string.practice_back_to_today)) } }
+        ) { Button(onClick = onClose) { Text(stringResource(R.string.practice_back_to_today)) } }
     }
+}
+
+@Composable
+private fun BlockFinished(
+    completion: StudyBlockCompletion,
+    onClose: () -> Unit,
+) {
+    TaskScaffold(
+        onClose = onClose,
+        bottomBar = {
+            ActionBarWidth {
+                Button(
+                    onClick = onClose,
+                    modifier = Modifier.fillMaxWidth(),
+                ) { Text(stringResource(R.string.practice_continue)) }
+            }
+        },
+    ) { padding -> BlockDone(completion, Modifier.fillMaxSize().padding(padding)) }
 }
 
 @Composable
@@ -146,6 +184,7 @@ internal fun Runner(
     viewModel: QuestionBlockViewModel,
     app: AppContainer,
     navigator: AppNavigator,
+    onClose: () -> Unit,
 ) {
     val detail = read.detail
     val questions = read.questions
@@ -154,7 +193,7 @@ internal fun Runner(
     val title = blockTitle(detail.block.toDayStep())
 
     TaskScaffold(
-        onClose = navigator::closeTask,
+        onClose = onClose,
         title = { Text(title, maxLines = 1) },
         actions = { reportTarget(question, run)?.let { ReportProblemMenu(app, it) } },
         bottomBar =
@@ -214,11 +253,6 @@ private fun BlockBody(
 
     if (phase == BlockPhase.Finishing) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-        return
-    }
-
-    if (phase is BlockPhase.Finished) {
-        BlockDone(phase.completion, Modifier.fillMaxSize())
         return
     }
 
@@ -377,10 +411,6 @@ private fun BlockActions(
     }
 
     when {
-        phase is BlockPhase.Finished -> {
-            Button(onClick = navigator::closeTask, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.practice_continue)) }
-        }
-
         phase == BlockPhase.FinishReady -> {
             Button(onClick = viewModel::finish, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.practice_finish)) }
         }
