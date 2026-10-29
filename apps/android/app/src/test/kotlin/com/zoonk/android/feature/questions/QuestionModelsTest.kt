@@ -40,6 +40,25 @@ class QuestionModelsTest {
     }
 
     @Test
+    fun readsARecordingSetsPlays() {
+        val recording =
+            blockQuestion.replace(
+                """"kind":"chart","listening":null""",
+                """"kind":"audio","listening":{"audio":{"durationMs":61000,"url":"https://cdn.zoonk.test/a.mp3"},"plays":2,"task":null,"title":"At the station","transcript":null}""",
+            )
+        val question = ApiJson.decodeFromString<CheckpointQuestionsInner>(recording).recode<CheckpointQuestionsInner, Question>()
+
+        assertEquals(2, question.set?.listening?.plays)
+        assertEquals(
+            "https://cdn.zoonk.test/a.mp3",
+            question.set
+                ?.listening
+                ?.audio
+                ?.url,
+        )
+    }
+
+    @Test
     fun readsATestOutsStatementAndAnAllPick() {
         val statement =
             ApiJson.decodeFromString<BankQuestion>(

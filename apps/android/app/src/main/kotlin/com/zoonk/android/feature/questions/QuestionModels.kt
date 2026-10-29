@@ -181,13 +181,17 @@ data class ItemSet(
 
     @Serializable
     data class Listening(
-        val plays: Int,
+        // The contract's `1 | 2` arrives as a JSON number the generated client writes as 1.0.
+        @SerialName("plays") private val playsValue: Double,
         val audio: Audio? = null,
         val task: String? = null,
         val title: String? = null,
         /** Only once the set's questions are answered. */
         val transcript: List<TranscriptLine>? = null,
     ) {
+        /** How many times the recording plays, as in the exam. */
+        val plays: Int get() = playsValue.toInt()
+
         @Serializable
         data class Audio(
             val url: String,
