@@ -1309,7 +1309,7 @@ msgstr "Auf Montag verschieben"
 #: src/mock/mock-chooser-parts.tsx
 msgctxt "zgw8mc"
 msgid "Mock exams come with Plus: whenever you want, and every week in your plan."
-msgstr "Mit Plus kannst du Probeprüfungen machen, wann immer du willst, und jede Woche eine in deinem Tarif."
+msgstr "Mit Plus kannst du Probeprüfungen jederzeit und jede Woche in deinem Plan machen."
 
 #: src/challenge/challenge-footer.tsx
 msgctxt "4jTLf0"
@@ -2668,7 +2668,7 @@ msgstr "{count, plural, one {# absolviert} other {# absolviert}}"
 #: src/exam/exam-mocks-section.tsx
 msgctxt "R5ym3g"
 msgid "Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time."
-msgstr "Probeprüfungen gibt’s mit Plus: wann immer du möchtest, jede Woche in deinem Tarif und mit deinem Fortschritt im Zeitverlauf."
+msgstr "Mit Plus kannst du Probeprüfungen jederzeit und jede Woche in deinem Plan machen und deinen Fortschritt verfolgen."
 
 #: src/exam/exam-moment-card.tsx
 msgctxt "DBeLXR"
@@ -8043,7 +8043,7 @@ msgstr "Erstelle ein kostenloses Konto, um ein weiteres Ziel zu starten"
 #: src/onboarding/entry/guest-goal-gate.tsx
 msgctxt "LCl_qZ"
 msgid "Without an account, you can follow one goal. Your plan and progress come with you."
-msgstr "Ohne Konto kannst du einem Ziel folgen. Dein Tarif und dein Fortschritt bleiben erhalten."
+msgstr "Ohne Konto kannst du ein Ziel verfolgen. Dein Plan und dein Fortschritt bleiben erhalten."
 
 #: src/onboarding/entry/material-goal.ts
 msgctxt "6dvkek"

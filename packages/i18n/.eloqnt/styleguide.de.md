@@ -14,7 +14,7 @@
 - “chapter”: “Kapitel”
 - “lesson”: “Lektion”
 - “goal” (the learner's goal): “Ziel”, not “Lernziel”
-- “plan” (study plan): “Plan”; subscription plan: “Tarif”
+- “plan” (study plan): “Plan”, also in a sentence about Plus (“every week in your plan”, “your plan and progress”); subscription plan (“the free plan”, “as your plan allows”): “Tarif”
 - “Free” (subscription name): “Free”
 - “session” (study): “Lerneinheit”; sign-in session: “Sitzung”
 - “check” (an answer): “prüfen”
