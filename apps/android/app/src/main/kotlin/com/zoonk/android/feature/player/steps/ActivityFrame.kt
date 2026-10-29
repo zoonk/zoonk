@@ -42,6 +42,7 @@ import com.zoonk.android.feature.activities.code.sqlPlaygroundRenderer
 import com.zoonk.android.feature.activities.decisionTreeRenderer
 import com.zoonk.android.feature.activities.dialogueSimulatorRenderer
 import com.zoonk.android.feature.activities.findErrorRenderer
+import com.zoonk.android.feature.activities.geometry.unitCircleRenderer
 import com.zoonk.android.feature.activities.guessRevealRenderer
 import com.zoonk.android.feature.activities.math.areaModelRenderer
 import com.zoonk.android.feature.activities.math.balanceRenderer
@@ -136,6 +137,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "sqlPlayground" to sqlPlaygroundRenderer,
         "stepSolver" to stepSolverRenderer,
         "timeline" to timelineRenderer,
+        "unitCircle" to unitCircleRenderer,
     )
 
 private val KeptAnswer: Saver<ActivityAnswer?, String> =

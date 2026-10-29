@@ -46,15 +46,16 @@ class Plot internal constructor(
         y: Double,
     ) = Offset(this.x.toPixel(x), this.y.toPixel(y))
 
-    /** A line through [points], dashed in [dash]-long pieces when given. */
+    /** A line through [points], dashed in [dash]-long pieces [gap] apart when given. */
     fun line(
         points: List<Pair<Double, Double>>,
         color: Color,
         width: Dp = 3.dp,
         dash: Dp? = null,
+        gap: Dp? = null,
     ) = with(scope) {
         if (points.isEmpty()) return@with
-        val effect = dash?.let { PathEffect.dashPathEffect(floatArrayOf(it.toPx(), it.toPx())) }
+        val effect = dash?.let { PathEffect.dashPathEffect(floatArrayOf(it.toPx(), (gap ?: it).toPx())) }
         drawPath(path(points), color, style = Stroke(width.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = effect))
     }
 

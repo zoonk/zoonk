@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_geometry_badge_turn_it": "7970607b9c95fddf8f05696bf4991663fdc22645fba837a9e287fb9af6dd8211",
+  "activities_geometry_cos": "ae517cb1191a6027cd18771c3290f9c103ec7c33fa2663251d204b38ada36ce6",
+  "activities_geometry_radians": "11fd6819734c3cab4a0d26715c511700061efef11507b5aad59d41706accab0c",
+  "activities_geometry_sin": "20a49ec0239f77e0bac33921cae781729003cb7cc18c6b9843ca92aa875d4db3",
+  "activities_geometry_tan": "9197e8019ed8143568ddcb61665e241b04e7c1fae9407b7e9cecf431470db06d",
+  "activities_geometry_undefined": "89dc073bc65b1927ecdea1a8d7f5b568762d853407e282b89515d0f58f64ce4f",
+  "activities_geometry_unit_circle_as_turns": "1889d47c35a7d5cc370f9583a9cd2a150d6ddad62856565ee0188d0e1afcd11e",
+  "activities_geometry_unit_circle_asks": "e621c43ecfb01ef448590e22787e40a1eeac34e228ae2e2be7cc2619eedad7f1",
+  "activities_geometry_unit_circle_description": "c4d102e78b645e76159bb1dda57cdd8516411ba87afbc0eb211fdbf23967bfa0",
+  "activities_geometry_unit_circle_point": "32d88fbdfcad4050251965a2aa0940f60232c6424c09fe62dde63655255330eb",
+  "activities_geometry_unit_circle_value": "1bdce6523816f1b5f5864aa46c9183d0fec8591e5ecb10ff31c1b933cda29c87"
+}
+-->
+<resources>
+    <string name="activities_geometry_badge_turn_it">Dreh es</string>
+    <!-- The unit circle's draggable point, for TalkBack. -->
+    <string name="activities_geometry_unit_circle_point">Punkt auf dem Einheitskreis</string>
+    <!-- The point's angle, then the values at it, like "30°. sin = 0.5, cos = 0.87". -->
+    <string name="activities_geometry_unit_circle_value">%1$s. %2$s</string>
+    <!-- The unit circle, for TalkBack: the angle, then the values at it, like "sin = 0.5, cos = 0.87". -->
+    <string name="activities_geometry_unit_circle_description">Ein Kreis mit Radius 1 und einem Punkt bei %1$s. Seine Höhe entspricht dem Sinus und sein seitlicher Abstand vom Mittelpunkt dem Kosinus: %2$s.</string>
+    <!-- The checked angle on a unit circle, for TalkBack, like "The question asks about 30°, where sin = 0.5." -->
+    <string name="activities_geometry_unit_circle_asks">Die Frage bezieht sich auf %1$s, wobei %2$s = %3$s.</string>
+    <!-- Above the sine and cosine waves. -->
+    <string name="activities_geometry_unit_circle_as_turns">Während sich der Punkt dreht</string>
+    <!-- Short name of sine ("sen" in Portuguese and Spanish). -->
+    <string name="activities_geometry_sin">sin</string>
+    <!-- Short name of cosine. -->
+    <string name="activities_geometry_cos">cos</string>
+    <!-- Short name of tangent. -->
+    <string name="activities_geometry_tan">tan</string>
+    <!-- A tangent that doesn't exist, at 90°. -->
+    <string name="activities_geometry_undefined">undefiniert</string>
+    <!-- An angle in radians, like "2.5 rad". -->
+    <string name="activities_geometry_radians">%1$s rad</string>
+</resources>
