@@ -21,12 +21,12 @@ msgstr "Temporäre E-Mail-Adressen werden nicht unterstützt. Verwende eine ande
 #: src/app/auth/login/social-login.tsx
 msgctxt "pN2p0t"
 msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
-msgstr "Beim Anmelden ist ein Fehler aufgetreten. Bitte versuche es erneut oder kontaktiere hello@zoonk.com"
+msgstr "Bei der Anmeldung ist ein Fehler aufgetreten. Bitte versuche es erneut oder kontaktiere hello@zoonk.com"
 
 #: src/app/auth/login/email-login-form.tsx
 msgctxt "YRe93Y"
 msgid "Enter a valid email address"
-msgstr "Gib eine gültige E-Mail‑Adresse ein"
+msgstr "Gib eine gültige E-Mail-Adresse ein"
 
 #: src/app/auth/login/email-login-form.tsx
 msgctxt "sy-pv5"
@@ -48,12 +48,12 @@ msgstr "Weiter"
 #: src/app/auth/login/page.tsx
 msgctxt "eN8MTJ"
 msgid "Sign in or create an account"
-msgstr "Anmelden oder ein Konto erstellen"
+msgstr "Anmelden oder Konto erstellen"
 
 #: src/app/auth/login/page.tsx
 msgctxt "o_pwJP"
 msgid "That sign-in expired. Try again."
-msgstr "Diese Anmeldung ist abgelaufen. Versuch es noch einmal."
+msgstr "Die Anmeldung ist abgelaufen. Versuche es erneut."
 
 #: src/app/auth/login/page.tsx
 msgctxt "4wpUNc"
@@ -63,42 +63,42 @@ msgstr "Oder"
 #: src/app/auth/login/page.tsx
 msgctxt "Ju9oB-"
 msgid "By clicking on Continue, you agree to our <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>."
-msgstr "Indem du auf Weiter klickst, stimmst du unseren <terms>Nutzungsbedingungen</terms> und der <privacy>Datenschutzrichtlinie</privacy> zu."
+msgstr "Mit einem Klick auf „Weiter“ stimmst du unseren <terms>Nutzungsbedingungen</terms> und unserer <privacy>Datenschutzerklärung</privacy> zu."
 
 #: src/app/auth/login/social-login.tsx
 msgctxt "FJ6r9E"
 msgid "Continue with Google"
-msgstr "Weiter mit Google"
+msgstr "Mit Google fortfahren"
 
 #: src/app/auth/login/social-login.tsx
 msgctxt "BmecBA"
 msgid "Continue with Apple"
-msgstr "Weiter mit Apple"
+msgstr "Mit Apple fortfahren"
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "_8e0dn"
 msgid "Something went wrong. Try again in a moment."
-msgstr "Etwas ist schiefgelaufen. Versuch es gleich noch einmal."
+msgstr "Etwas ist schiefgelaufen. Versuche es gleich noch einmal."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "__wP3o"
 msgid "This code expired. Get a new one."
-msgstr "Dieser Code ist abgelaufen. Hol dir einen neuen."
+msgstr "Dieser Code ist abgelaufen. Fordere einen neuen an."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "hUjCDW"
 msgid "Too many tries. Wait a minute, then try again."
-msgstr "Zu viele Versuche. Warte eine Minute und versuch es dann noch einmal."
+msgstr "Zu viele Versuche. Warte eine Minute und versuche es dann erneut."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "P-D93T"
 msgid "Too many wrong tries with this code. Get a new one."
-msgstr "Du hast diesen Code zu oft falsch eingegeben. Hol dir einen neuen."
+msgstr "Zu viele Fehlversuche mit diesem Code. Fordere einen neuen an."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "AFMAKd"
 msgid "That code isn't right. Check the email and try again."
-msgstr "Dieser Code stimmt nicht. Prüfe die E-Mail und versuch es noch einmal."
+msgstr "Der Code stimmt nicht. Prüfe die E-Mail und versuche es erneut."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "U2LhAf"
@@ -108,12 +108,12 @@ msgstr "Wir haben einen neuen Code an {email} gesendet."
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "E05GNf"
 msgid "Wait a minute before asking for another code."
-msgstr "Warte eine Minute, bevor du einen weiteren Code anforderst."
+msgstr "Warte eine Minute, bevor du einen neuen Code anforderst."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "bWxjFV"
 msgid "We couldn't send a new code. Try again."
-msgstr "Wir konnten keinen neuen Code senden. Versuch es noch einmal."
+msgstr "Wir konnten keinen neuen Code senden. Versuche es erneut."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "5UeJRL"
@@ -128,22 +128,22 @@ msgstr "Neuen Code senden"
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "X1bhjS"
 msgid "Didn't get it?"
-msgstr "Nicht angekommen?"
+msgstr "Nicht erhalten?"
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "qs4xBq"
 msgid "Send again"
-msgstr "Noch einmal senden"
+msgstr "Erneut senden"
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "ChATeO"
 msgid "Change email"
-msgstr "E‑Mail ändern"
+msgstr "E-Mail-Adresse ändern"
 
 #: src/app/auth/otp/page.tsx
 msgctxt "zx7CKB"
 msgid "Check your email"
-msgstr "Schau in dein Postfach"
+msgstr "Prüfe deine E-Mails"
 
 #: src/app/auth/otp/page.tsx
 msgctxt "AmelVC"
@@ -163,12 +163,12 @@ msgstr "Wie sollen wir dich nennen?"
 #: src/app/auth/setup/page.tsx
 msgctxt "y9wzAs"
 msgid "You can change it later in your profile."
-msgstr "Du kannst das später in deinem Profil ändern."
+msgstr "Du kannst deinen Namen später in deinem Profil ändern."
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "1SvspN"
 msgid "Checking..."
-msgstr "Wird überprüft…"
+msgstr "Wir prüfen…"
 
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "9N4_rz"
@@ -213,7 +213,7 @@ msgstr "Benutzername"
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "bz5AYp"
 msgid "We couldn't save your profile. Try again."
-msgstr "Wir konnten dein Profil nicht speichern. Versuch es noch einmal."
+msgstr "Wir konnten dein Profil nicht speichern. Versuche es erneut."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgctxt "1vqX2W"
@@ -238,22 +238,22 @@ msgstr "Zurück zu Zoonk"
 #: src/lib/tutor-confirmation.ts
 msgctxt "Sd1Qq1"
 msgid "Below is a short test on {chapter}: passing it skips the lessons you already know."
-msgstr "Unten findest du einen kurzen Test zu {chapter}: Wenn du ihn bestehst, überspringst du die Lektionen, die du schon kennst."
+msgstr "Unten findest du einen kurzen Test zu {chapter}. Wenn du ihn bestehst, werden die Lektionen übersprungen, deren Inhalte du schon kennst."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "OPj8y4"
 msgid "Below you can choose where to focus, or take a short test that chooses for you."
-msgstr "Unten kannst du auswählen, worauf du dich konzentrieren möchtest, oder einen kurzen Test machen, der das für dich entscheidet."
+msgstr "Unten kannst du deinen Schwerpunkt wählen oder einen kurzen Test machen, der ihn für dich auswählt."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "ejo0Qg"
 msgid "Below you can start a short practice call whenever you're ready."
-msgstr "Unten kannst du jederzeit mit einem kurzen Übungsgespräch anfangen, sobald du bereit bist."
+msgstr "Unten kannst du ein kurzes Übungsgespräch starten, sobald du bereit bist."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "c7OWI5"
 msgid "Below you can see when your plan practices {subject}."
-msgstr "Unten siehst du, wann du laut deinem Plan {subject} übst."
+msgstr "Unten siehst du, wann du {subject} in deinem Plan übst."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "zPC6bz"
@@ -263,7 +263,7 @@ msgstr "Unten findest du deinen Wochenrückblick."
 #: src/lib/tutor-confirmation.ts
 msgctxt "CinPvg"
 msgid "Below you can see and change what I remember about you."
-msgstr "Unten kannst du sehen und ändern, was ich mir über dich gemerkt habe."
+msgstr "Unten kannst du sehen und ändern, was ich mir über dich merke."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "u6lEYv"
@@ -273,7 +273,7 @@ msgstr "Unten findest du dein Fehlerheft mit Übungen zu jedem Fehler."
 #: src/lib/tutor-confirmation.ts
 msgctxt "qmjNYT"
 msgid "Below you can choose a mock exam to take now."
-msgstr "Unten kannst du eine Probeprüfung auswählen, die du jetzt ablegen möchtest."
+msgstr "Unten kannst du eine Probeprüfung auswählen, die du jetzt machen möchtest."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "aK1CcD"
@@ -283,12 +283,12 @@ msgstr "Unten findest du die Plus-Seite."
 #: src/lib/tutor-confirmation.ts
 msgctxt "KAqcUe"
 msgid "Below you can say again the words that were hard to pronounce."
-msgstr "Unten kannst du die Wörter, deren Aussprache dir schwerfiel, noch einmal sprechen."
+msgstr "Unten kannst du die Wörter noch einmal aussprechen, die dir schwergefallen sind."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "BXdAAo"
 msgid "I've put the change to your plan below. Nothing changes until you apply it."
-msgstr "Unten habe ich die Änderung an deinem Plan zusammengestellt. Nichts ändert sich, bis du sie übernimmst."
+msgstr "Ich habe den Änderungsvorschlag für deinen Plan unten eingefügt. Erst wenn du ihn übernimmst, ändert sich etwas."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "cVQNWB"
