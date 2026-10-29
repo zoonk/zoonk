@@ -5,6 +5,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
+import androidx.compose.ui.test.assertTextContains
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
@@ -113,8 +114,11 @@ class StatsFlowTest {
     fun theRightTileReadsAsAnswersOutOfAll() {
         show(StatsPage.Score)
 
-        rule.onNodeWithText("45/60").assertIsDisplayed()
-        rule.onNodeWithContentDescription("45 of 60", substring = true).assertExists()
+        rule
+            .onNodeWithText("45 of 60")
+            .assertIsDisplayed()
+            .assertTextContains("Right")
+            .assertTextContains("Of all your answers")
     }
 
     @Test

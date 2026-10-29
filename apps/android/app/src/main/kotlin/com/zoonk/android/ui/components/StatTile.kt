@@ -19,8 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.text
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -73,7 +75,8 @@ fun StatTile(
                 MaterialTheme.typography.headlineSmall.copy(
                     color = if (tone == StatTone.Brain) MaterialTheme.zoonk.brainText else MaterialTheme.colorScheme.onSurface,
                 )
-            val spoken = spokenValue?.let { Modifier.semantics { contentDescription = it } } ?: Modifier
+            // A description would replace the whole merged card for TalkBack; replaced text joins the label and detail.
+            val spoken = spokenValue?.let { Modifier.clearAndSetSemantics { text = AnnotatedString(it) } } ?: Modifier
             // Main's `BigQuantity` for a quantity ("40 Brain Power", "2 days"), its words smaller; other values whole.
             if (value.any(Char::isDigit)) {
                 Readout(value, spoken, style)
