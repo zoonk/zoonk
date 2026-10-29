@@ -240,16 +240,6 @@ struct ChallengeScreen: View {
         dismiss()
         hooks.navigate(.checkpoint(blockId: blockId, sessionId: sessionId))
       }
-    } else if challenge.call != nil, challenge.status != .done {
-      if let call = hooks.challengeCall {
-        call(itemId)
-      } else {
-        Text(
-          "This challenge isn't ready yet.", tableName: "Practice",
-          comment: "A challenge that can't start on this device yet."
-        )
-        .font(.subheadline).foregroundStyle(.secondary)
-      }
     } else if challenge.status == .ready || challenge.status == .started {
       PracticeActionRow {
         if challenge.canMove, movedChangeId == nil {
@@ -289,7 +279,6 @@ struct ChallengeScreen: View {
   /// Before its day a challenge has nothing to do yet: no pinned bar.
   private func hasActions(_ challenge: Components.Schemas.Challenge) -> Bool {
     challenge.locked || challenge.status == .plusRequired
-      || (challenge.call != nil && challenge.status != .done)
       || challenge.canMove
       || challenge.waitReason != nil
       || [.ready, .started].contains(challenge.status)
@@ -494,6 +483,16 @@ struct ChallengeScreen: View {
       let challenge = try await practice.api.challenge(
         token: identity.bearerToken, planItemId: itemId)
       guard session.authenticatedSession == identity else { return }
+
+      // A call that has its block opens on the call's own intro, as main's challenge page does.
+      if challenge.call != nil, let blockId = challenge.blockId, challenge.status != .done,
+        !challenge.locked
+      {
+        dismiss()
+        hooks.navigate(.checkpoint(blockId: blockId, sessionId: sessionId))
+        return
+      }
+
       load = .loaded(challenge)
     } catch let error as APIError {
       if error == .unauthorized { await session.expire(identity) }

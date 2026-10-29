@@ -29,8 +29,9 @@ extension PracticeHooks {
               missed: target.missed),
             quote: target.question))
       },
-      challengeCall: { planItemId in AnyView(ChallengeCallView(planItemId: planItemId)) },
-      checkpointCall: { blockId, _ in AnyView(CheckpointCallView(blockId: blockId)) },
+      checkpointCall: { blockId, _ in
+        AnyView(ConversationScreen(checkpointBlockId: blockId))
+      },
       ceremony: { milestone, onClose in
         AnyView(MilestoneCeremony(milestone: Milestone(milestone), onClose: onClose))
       })

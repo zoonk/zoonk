@@ -33,8 +33,6 @@ final class PracticeHooks: Sendable {
   let navigate: @MainActor @Sendable (PracticeDestination) -> Void
   /// Nil hides Ask.
   let askButton: (@MainActor @Sendable (PracticeAskTarget) -> AnyView)?
-  /// Nil shows the call's intro with its start unavailable.
-  let challengeCall: (@MainActor @Sendable (_ planItemId: String) -> AnyView)?
   /// Nil says the challenge isn't ready here.
   let checkpointCall: (@MainActor @Sendable (_ blockId: String, _ sessionId: String?) -> AnyView)?
   /// Nil shows the result alone.
@@ -48,7 +46,6 @@ final class PracticeHooks: Sendable {
   init(
     navigate: @escaping @MainActor @Sendable (PracticeDestination) -> Void = { _ in },
     askButton: (@MainActor @Sendable (PracticeAskTarget) -> AnyView)? = nil,
-    challengeCall: (@MainActor @Sendable (String) -> AnyView)? = nil,
     checkpointCall: (@MainActor @Sendable (String, String?) -> AnyView)? = nil,
     ceremony: (
       @MainActor @Sendable (Components.Schemas.Milestone, @escaping @MainActor () -> Void) ->
@@ -57,7 +54,6 @@ final class PracticeHooks: Sendable {
   ) {
     self.navigate = navigate
     self.askButton = askButton
-    self.challengeCall = challengeCall
     self.checkpointCall = checkpointCall
     self.ceremony = ceremony
   }

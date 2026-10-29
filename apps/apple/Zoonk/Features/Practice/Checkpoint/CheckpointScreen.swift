@@ -21,6 +21,27 @@ struct CheckpointScreen: View {
   }
 
   var body: some View {
+    Group {
+      if isCall, let checkpointCall = hooks.checkpointCall {
+        // The call's screen brings its own title, close and intro.
+        checkpointCall(blockId, sessionId)
+      } else {
+        checkpoint
+      }
+    }
+    .task(id: session.authenticatedSession) { await read() }
+  }
+
+  /// A language phase or final checkpoint is a live call, which asks no questions.
+  private var isCall: Bool {
+    guard case .loaded(let loaded) = load, let state else {
+      return false
+    }
+
+    return loaded.questions.isEmpty && !state.isResult
+  }
+
+  private var checkpoint: some View {
     NavigationStack {
       Group {
         switch load {
@@ -30,8 +51,7 @@ struct CheckpointScreen: View {
           PracticeLoadFailureView(error: error) { Task { await read() } }
         case .loaded(let loaded):
           if let state {
-            if loaded.questions.isEmpty, !state.isResult {
-              // A language phase or final checkpoint is a live call, which asks no questions.
+            if isCall {
               call
             } else if loaded.checkpoint.status == .pending,
               let planItemId = loaded.checkpoint.planItemId
@@ -53,7 +73,6 @@ struct CheckpointScreen: View {
         PracticeCloseButton { dismiss() }
       }
     }
-    .task(id: session.authenticatedSession) { await read() }
   }
 
   private var title: LocalizedStringResource {
@@ -65,22 +84,17 @@ struct CheckpointScreen: View {
     return CheckpointCopy.title(loaded.checkpoint)
   }
 
-  @ViewBuilder
   private var call: some View {
-    if let checkpointCall = hooks.checkpointCall {
-      checkpointCall(blockId, sessionId)
-    } else {
-      ContentUnavailableView {
-        Label {
-          Text(title)
-        } icon: {
-          Image(systemName: "phone")
-        }
-      } description: {
-        Text(
-          "This challenge isn't ready yet.", tableName: "Practice",
-          comment: "A challenge that can't start on this device yet.")
+    ContentUnavailableView {
+      Label {
+        Text(title)
+      } icon: {
+        Image(systemName: "phone")
       }
+    } description: {
+      Text(
+        "This challenge isn't ready yet.", tableName: "Practice",
+        comment: "A challenge that can't start on this device yet.")
     }
   }
 

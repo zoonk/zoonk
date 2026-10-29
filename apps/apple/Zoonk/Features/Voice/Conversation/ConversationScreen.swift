@@ -1,25 +1,42 @@
 import SwiftUI
 
-/// A call that already ended opens on its result.
+/// A call that already ended opens on its result. A checkpoint's call opens on its intro before
+/// it's made, and its Start makes the call and calls at once, as main's checkpoint page does.
 struct ConversationScreen: View {
+  enum Source: Equatable {
+    case conversation(String)
+    case checkpoint(blockId: String)
+  }
+
   @Environment(VoiceServices.self) private var voice
   @Environment(\.dismiss) private var dismiss
-  @State private var conversation: Resource<LanguageConversation>?
   /// A call in progress can't be swiped away: End hangs it up and saves it.
   @State private var isInCall = false
   @State private var day: DayResult?
+  @State private var started: String?
 
-  let conversationId: String
+  let source: Source
   /// A running mock's speaking task goes back to the mock without the call's own result: the mock's
   /// result reads it.
   var onSaved: (() -> Void)? = nil
 
+  init(conversationId: String, onSaved: (() -> Void)? = nil) {
+    source = .conversation(conversationId)
+    self.onSaved = onSaved
+  }
+
+  init(checkpointBlockId: String) {
+    source = .checkpoint(blockId: checkpointBlockId)
+  }
+
   var body: some View {
     NavigationStack {
       Group {
-        if let conversation {
-          content(conversation)
-            .loads(conversation, refreshable: false)
+        switch source {
+        case .conversation(let conversationId):
+          conversation(conversationId, callsRightAway: false)
+        case .checkpoint(let blockId):
+          checkpoint(blockId)
         }
       }
       .navigationBarTitleDisplayMode(.inline)
@@ -34,6 +51,47 @@ struct ConversationScreen: View {
       }
     }
     .interactiveDismissDisabled(isInCall)
+  }
+
+  @ViewBuilder
+  private func checkpoint(_ blockId: String) -> some View {
+    let call = voice.checkpointCall(blockId: blockId)
+
+    if let started {
+      conversation(started, callsRightAway: true)
+    } else if case .ready(let made)? = call.value {
+      conversation(made.conversationId, callsRightAway: false)
+    } else {
+      CheckpointCallIntro(call: call, blockId: blockId) { started = $0 }
+    }
+  }
+
+  private func conversation(_ conversationId: String, callsRightAway: Bool) -> some View {
+    ConversationLoad(
+      conversationId: conversationId, callsRightAway: callsRightAway, isInCall: $isInCall,
+      day: $day, onSaved: onSaved
+    )
+    .id(conversationId)
+  }
+}
+
+private struct ConversationLoad: View {
+  @Environment(VoiceServices.self) private var voice
+  @State private var conversation: Resource<LanguageConversation>?
+
+  let conversationId: String
+  let callsRightAway: Bool
+  @Binding var isInCall: Bool
+  @Binding var day: DayResult?
+  let onSaved: (() -> Void)?
+
+  var body: some View {
+    Group {
+      if let conversation {
+        content(conversation)
+          .loads(conversation, refreshable: false)
+      }
+    }
     .onAppear {
       conversation =
         conversation
@@ -54,36 +112,19 @@ struct ConversationScreen: View {
     case .idle, .loading:
       ProgressView()
     case .empty, .failed(.notFound):
-      ContentUnavailableView {
-        Label {
-          Text(
-            "This call isn't here", tableName: "Voice", comment: "A conversation that doesn't exist"
-          )
-        } icon: {
-          Image(systemName: "phone.badge.waveform")
-        }
-      }
+      CallNotHere()
     case .failed:
-      ContentUnavailableView {
-        Label {
-          Text("The call didn't load", tableName: "Voice", comment: "Loading a conversation failed")
-        } icon: {
-          Image(systemName: "wifi.exclamationmark")
-        }
-      } actions: {
-        Button {
-          Task { await resource.refresh() }
-        } label: {
-          Text("Try again", tableName: "Voice", comment: "Button to retry loading")
-        }
-        .buttonStyle(.bordered)
+      CallLoadFailed {
+        Task { await resource.refresh() }
       }
     case .loaded(let value):
       if value.result != nil {
         ConversationResultView(conversation: value, day: day)
           .navigationTitle(ConversationTitle(conversation: value).text)
       } else {
-        LiveCallRun(conversation: value, isInCall: $isInCall) { saved in
+        LiveCallRun(
+          conversation: value, isInCall: $isInCall, callsRightAway: callsRightAway
+        ) { saved in
           if let onSaved {
             onSaved()
             return
@@ -94,6 +135,38 @@ struct ConversationScreen: View {
         }
         .navigationTitle(ConversationTitle(conversation: value).text)
       }
+    }
+  }
+}
+
+struct CallNotHere: View {
+  var body: some View {
+    ContentUnavailableView {
+      Label {
+        Text(
+          "This call isn't here", tableName: "Voice", comment: "A conversation that doesn't exist")
+      } icon: {
+        Image(systemName: "phone.badge.waveform")
+      }
+    }
+  }
+}
+
+struct CallLoadFailed: View {
+  let retry: () -> Void
+
+  var body: some View {
+    ContentUnavailableView {
+      Label {
+        Text("The call didn't load", tableName: "Voice", comment: "Loading a conversation failed")
+      } icon: {
+        Image(systemName: "wifi.exclamationmark")
+      }
+    } actions: {
+      Button(action: retry) {
+        Text("Try again", tableName: "Voice", comment: "Button to retry loading")
+      }
+      .buttonStyle(.bordered)
     }
   }
 }
@@ -137,10 +210,9 @@ private struct LiveCallRun: View {
   @State private var call: LiveCall?
   @State private var saving: LiveCallSaveState?
   @State private var usedHelp = false
-  @State private var callsRightAway = false
-
   let conversation: LanguageConversation
   @Binding var isInCall: Bool
+  @State var callsRightAway: Bool
   let onSaved: (DayResult?) async -> Void
 
   var body: some View {
