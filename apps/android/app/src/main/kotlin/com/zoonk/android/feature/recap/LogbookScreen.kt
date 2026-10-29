@@ -55,7 +55,11 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.Readout
+import com.zoonk.android.ui.components.StatTile
+import com.zoonk.android.ui.components.StatTiles
+import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.StepPagerActions
+import com.zoonk.android.ui.components.color
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
@@ -286,43 +290,34 @@ private fun WeekStep(
         title = learnerName?.let { stringResource(R.string.recap_what_a_week_name, it) } ?: stringResource(R.string.recap_what_a_week),
         detail = gainLine(recap),
     )
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        StatTile(
-            R.drawable.ic_schedule,
-            stringResource(R.string.recap_time),
-            formatMinutes(recap.week.minutes.toInt(), locale),
-            Modifier.weight(1f),
-        )
-        StatTile(
-            R.drawable.ic_checklist,
-            stringResource(R.string.recap_questions),
-            formatNumber(recap.week.questions.toDouble(), locale),
-            Modifier.weight(1f),
-        )
-    }
+    StatTiles(
+        columns = 2,
+        tiles =
+            listOf(
+                { modifier ->
+                    StatTile(
+                        label = stringResource(R.string.recap_time),
+                        value = formatMinutes(recap.week.minutes.toInt(), locale),
+                        modifier = modifier,
+                        icon = neutralIcon(R.drawable.ic_schedule),
+                    )
+                },
+                { modifier ->
+                    StatTile(
+                        label = stringResource(R.string.recap_questions),
+                        value = formatNumber(recap.week.questions.toDouble(), locale),
+                        modifier = modifier,
+                        icon = neutralIcon(R.drawable.ic_checklist),
+                    )
+                },
+            ),
+    )
 }
 
 @Composable
-private fun StatTile(
-    icon: Int,
-    label: String,
-    value: String,
-    modifier: Modifier,
-) {
-    OutlinedCard(modifier.semantics(mergeDescendants = true) {}) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    painterResource(icon),
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-                Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
-            }
-            Readout(value)
-        }
-    }
+private fun neutralIcon(id: Int): @Composable (Modifier) -> Unit {
+    val tint = StatTone.Neutral.color
+    return { modifier -> Icon(painterResource(id), contentDescription = null, modifier = modifier, tint = tint) }
 }
 
 @Composable
