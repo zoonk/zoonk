@@ -3,9 +3,6 @@ package com.zoonk.android.feature.today
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
@@ -55,14 +52,15 @@ internal fun TodayNotice(
     modifier: Modifier = Modifier,
 ) {
     val read = state.read
+    val viewModel = state.viewModel
     val picked = pickTodayNotice(read.today, read.day, state.host)
-    var shown by remember(read.today.goal.id) { mutableStateOf<TodayNoticeKind?>(null) }
-    LaunchedEffect(picked) { if (shown == null) shown = picked }
+    LaunchedEffect(read.today.goal.id, read.day.localDate, picked, read.today.insight?.id) { viewModel.holdNotice(read, picked) }
+    val hold = viewModel.noticeHold?.takeIf { it.goalId == read.today.goal.id && it.date == read.day.localDate }
 
-    when (shown ?: picked) {
+    when (hold?.kind ?: picked) {
         TodayNoticeKind.Exam -> read.today.exam?.let { ExamMomentNotice(it, state, layout, modifier) }
         TodayNoticeKind.ExamAccess -> ExamAccessNotice(state, layout, modifier)
-        TodayNoticeKind.Insight -> InsightNotice(state, layout, modifier)
+        TodayNoticeKind.Insight -> (read.today.insight ?: hold?.insight)?.let { InsightNotice(it, state, layout, modifier) }
         TodayNoticeKind.SuggestedGoal -> read.today.suggestedGoal?.let { SuggestedGoalNotice(it, state, layout, modifier) }
         else -> Unit
     }
@@ -154,18 +152,13 @@ private fun SuggestedGoalNotice(
     }
 }
 
-/** Answering refreshes Today, which then no longer carries the insight; the card stays to show what the answer did. */
 @Composable
 private fun InsightNotice(
+    insight: MemoryInsight,
     state: TodayNoticeState,
     layout: SuggestionLayout,
     modifier: Modifier,
 ) {
-    val current = state.read.today.insight
-    var held by remember { mutableStateOf(current) }
-    LaunchedEffect(current?.id) { if (current != null) held = current }
-    val insight = current ?: held ?: return
-
     val viewModel = state.viewModel
     val answer = viewModel.insightAnswers[insight.id]
     val result = answer?.takeIf { it != InsightAnswer.Failed }?.let { insightResult(insight, it) }

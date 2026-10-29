@@ -6,6 +6,8 @@ import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MemoryInsightPlanChange
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.Today
+import kotlinx.datetime.LocalDate
+import java.util.UUID
 
 enum class TodayNoticeKind { Exam, ExamAccess, ExamChoice, Insight, PlanChange, Practice, SourceChange, SuggestedGoal, UploadRequest }
 
@@ -61,4 +63,25 @@ private fun Today.planChangeStatus(): PlanChange.Status? {
     val change = planChange ?: return null
     if (insight?.planChange?.id == change.id) return null
     return if (change.behind != null) PlanChange.Status.PROPOSED else change.status
+}
+
+/**
+ * One visit to a goal's day: the notice picked when it opened and the insight it showed, so
+ * answering shows what the answer did; the next notice waits for the next visit.
+ */
+data class NoticeHold(
+    val goalId: UUID,
+    val date: LocalDate,
+    val kind: TodayNoticeKind?,
+    val insight: MemoryInsight?,
+)
+
+fun NoticeHold?.next(
+    goalId: UUID,
+    date: LocalDate,
+    picked: TodayNoticeKind?,
+    insight: MemoryInsight?,
+): NoticeHold {
+    val visit = this?.takeIf { it.goalId == goalId && it.date == date }
+    return NoticeHold(goalId, date, kind = visit?.kind ?: picked, insight = insight ?: visit?.insight)
 }

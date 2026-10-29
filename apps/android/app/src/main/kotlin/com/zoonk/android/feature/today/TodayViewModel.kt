@@ -121,6 +121,21 @@ class TodayViewModel(
     var answerFailed by mutableStateOf(false)
         private set
 
+    var noticeHold by mutableStateOf<NoticeHold?>(null)
+        private set
+
+    fun holdNotice(
+        read: TodayRead.Day,
+        picked: TodayNoticeKind?,
+    ) {
+        noticeHold = noticeHold.next(read.today.goal.id, read.day.localDate, picked, read.today.insight)
+    }
+
+    /** Today left the screen (a task over it, another tab), so the next notice can show on return. */
+    fun endVisit() {
+        noticeHold = null
+    }
+
     /** Kept per insight, so its card shows what the answer did once Today no longer carries it. */
     var insightAnswers by mutableStateOf(mapOf<UUID, InsightAnswer>())
         private set

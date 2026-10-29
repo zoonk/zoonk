@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.today
 
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -90,6 +92,8 @@ internal fun TodayDay(
             context = Triple(read.today.goal.id, read.day.localDate, read.day.sessionId),
         ).stalled
     val model = remember(read, stalled) { TodayDayModel(read, stalled) }
+    val activity = LocalActivity.current
+    DisposableEffect(viewModel) { onDispose { if (activity?.isChangingConfigurations != true) viewModel.endVisit() } }
     val scope = rememberCoroutineScope()
     var pulled by remember { mutableStateOf(false) }
     var doneOpen by rememberSaveable { mutableStateOf(false) }
