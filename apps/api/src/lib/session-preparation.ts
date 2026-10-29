@@ -111,7 +111,7 @@ async function startFromAccess({
 }
 
 /** A placement or a plan edit can move a guest's plan past the bands its build outlined. */
-function prepareGuestLessons({
+async function prepareGuestLessons({
   access,
   platform,
 }: {
@@ -127,6 +127,8 @@ function prepareGuestLessons({
   if (!goalId) {
     return;
   }
+
+  await askTodayOutlines({ goalId, timeZone: access.timeZone });
 
   after(async () => {
     const { error } = await safeAsync(() =>
@@ -152,7 +154,7 @@ export async function startSessionPreparation({
   ]);
 
   if (access.status === "guest") {
-    prepareGuestLessons({ access, platform });
+    await prepareGuestLessons({ access, platform });
     return { preparationId: null, status: "started" };
   }
 
@@ -167,6 +169,7 @@ export async function startSessionPreparation({
   const [claimQuestions, challengeQuestions] = await Promise.all([
     readClaimQuestions(access.goalId),
     readChallengeQuestions(access.goalId),
+    askTodayOutlines(access),
   ]);
 
   return startFromAccess({ access, challengeQuestions, claimQuestions, platform });
@@ -180,7 +183,7 @@ export async function scheduleSessionPreparation(sessionId: string): Promise<voi
   ]);
 
   if (access.status === "guest") {
-    prepareGuestLessons({ access, platform });
+    await prepareGuestLessons({ access, platform });
     return;
   }
 
@@ -191,6 +194,7 @@ export async function scheduleSessionPreparation(sessionId: string): Promise<voi
   const [claimQuestions, challengeQuestions] = await Promise.all([
     readClaimQuestions(access.goalId),
     readChallengeQuestions(access.goalId),
+    askTodayOutlines(access),
   ]);
 
   after(async () => {
@@ -215,7 +219,7 @@ export async function startGoalPreparation({
   ]);
 
   if (access.status === "guest") {
-    prepareGuestLessons({ access, platform });
+    await prepareGuestLessons({ access, platform });
     return { preparationId: null, status: "started" };
   }
 
@@ -227,7 +231,7 @@ export async function startGoalPreparation({
     return access;
   }
 
-  await askTodayOutlines({ goalId: access.goalId, timeZone: access.timeZone });
+  await askTodayOutlines(access);
 
   return startFromAccess({ access, claimQuestions: null, platform });
 }
@@ -240,13 +244,15 @@ export async function scheduleGoalPreparation(goalId: string): Promise<void> {
   ]);
 
   if (access.status === "guest") {
-    prepareGuestLessons({ access, platform });
+    await prepareGuestLessons({ access, platform });
     return;
   }
 
   if (access.status !== "ready") {
     return;
   }
+
+  await askTodayOutlines(access);
 
   after(async () => {
     const { error } = await safeAsync(() =>

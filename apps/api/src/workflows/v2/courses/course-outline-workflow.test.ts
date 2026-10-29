@@ -964,8 +964,12 @@ describe(courseOutlineWorkflow, () => {
     },
   );
 
-  it("writes nothing when the course already teaches every skill in another band", async () => {
-    const [skill, course] = await Promise.all([skillFixture(), courseFixture()]);
+  it("writes nothing when the course already teaches every skill in another band, and gives an asked course back", async () => {
+    const [skill, course] = await Promise.all([
+      skillFixture(),
+      courseFixture({ outlineStatus: "pending" }),
+    ]);
+
     const chapter = await libraryChapterFixture();
 
     await Promise.all([
@@ -993,6 +997,10 @@ describe(courseOutlineWorkflow, () => {
     ).resolves.toStrictEqual({ bandsWritten: 0, chapterIds: [], status: "written" });
 
     expect(generateCourseOutline).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ).resolves.toMatchObject({ outlineStatus: "completed" });
 
     expect(start).toHaveBeenCalledWith(
       courseDetailsWorkflow,
@@ -1317,8 +1325,12 @@ describe(courseOutlineWorkflow, () => {
     expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, [{ ...input, attempt: 2 }]);
   });
 
-  it("stops waiting once the runs before it wrote everything it needed", async () => {
-    const [skill, course] = await Promise.all([skillFixture(), courseFixture()]);
+  it("stops waiting once the runs before it wrote everything it needed, and gives an asked course back", async () => {
+    const [skill, course] = await Promise.all([
+      skillFixture(),
+      courseFixture({ outlineStatus: "pending" }),
+    ]);
+
     const [chapter, lesson] = await Promise.all([libraryChapterFixture(), libraryLessonFixture()]);
 
     await Promise.all([
@@ -1345,6 +1357,10 @@ describe(courseOutlineWorkflow, () => {
     ).resolves.toStrictEqual({ status: "joined" });
 
     expect(start).not.toHaveBeenCalled();
+
+    await expect(
+      prisma.course.findUniqueOrThrow({ where: { id: course.id } }),
+    ).resolves.toMatchObject({ outlineStatus: "completed" });
   });
 
   it("fails visibly instead of dropping its bands when the course stays taken", async () => {

@@ -1,12 +1,15 @@
 import { prisma } from "@zoonk/db";
 import "server-only";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { addDays } from "../plans/planner/plan-calendar";
 import { OUTLINING, loadDayStandInCourseIds } from "../sessions/_utils/outlining-stand-ins";
+import { getLearnerTier, getLookahead } from "./learner-lookahead";
 import { getOutlineStaleBefore } from "./outline-ahead";
 
 /**
- * The learner asked for the day's lessons: its stand-ins' courses await their outlines at once, so
- * the next read says they're coming before preparation claims them. Authorize the goal first.
+ * Preparation is about to start: the courses of the day's stand-ins it will outline await their
+ * outlines at once, so a read before an outline claims its course says the lessons are coming.
+ * An outline that finds nothing to write puts its course back. Authorize the goal first.
  */
 export async function askTodayOutlines({
   goalId,
@@ -18,7 +21,7 @@ export async function askTodayOutlines({
   timeZone: string;
 }): Promise<void> {
   const goal = await prisma.goal.findUnique({
-    select: { id: true, kind: true, primaryCourseId: true, targetDate: true },
+    select: { id: true, kind: true, primaryCourseId: true, targetDate: true, userId: true },
     where: { id: goalId },
   });
 
@@ -26,9 +29,13 @@ export async function askTodayOutlines({
     return;
   }
 
+  const localDate = getDateInTimeZone({ date: now, timeZone });
+  const { outlineDays } = getLookahead(await getLearnerTier(goal.userId));
+
   const courseIds = await loadDayStandInCourseIds({
     goal,
-    localDate: getDateInTimeZone({ date: now, timeZone }),
+    localDate,
+    until: addDays(localDate, outlineDays),
   });
 
   await prisma.course.updateMany({

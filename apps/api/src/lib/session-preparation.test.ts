@@ -148,6 +148,26 @@ describe("preparing a guest's lessons", () => {
     ["asked for a session", startSessionFor],
     ["after a session write", scheduleSessionFor],
   ])(
+    "marks the band's course as awaiting its outline before the work starts, %s",
+    async (_when, prepare: (guest: PlacedGuest) => Promise<unknown>) => {
+      const guest = await placedGuestFixture();
+
+      await prepare(guest);
+
+      const course = await prisma.course.findUniqueOrThrow({ where: { id: guest.course.id } });
+
+      expect(course.outlineStatus).toBe("pending");
+
+      await settle();
+    },
+  );
+
+  it.each([
+    ["asked for the goal", (guest: PlacedGuest) => startGoalPreparation({ goalId: guest.goal.id })],
+    ["after a plan write", (guest: PlacedGuest) => scheduleGoalPreparation(guest.goal.id)],
+    ["asked for a session", startSessionFor],
+    ["after a session write", scheduleSessionFor],
+  ])(
     "outlines the band a placement moved the plan to, %s",
     async (_when, prepare: (guest: PlacedGuest) => Promise<unknown>) => {
       const guest = await placedGuestFixture();

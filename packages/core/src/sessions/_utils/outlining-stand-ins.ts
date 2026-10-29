@@ -27,10 +27,12 @@ async function loadNextStandIn({
   client,
   goal,
   localDate,
+  until,
 }: {
   client: TransactionClient;
   goal: Pick<Goal, "id" | "kind" | "targetDate">;
   localDate: Date;
+  until?: Date;
 }): Promise<Pick<PlanItem, "skillId">[]> {
   if (isExamSchedule(goal)) {
     return [];
@@ -47,7 +49,7 @@ async function loadNextStandIn({
     client.planItem.findFirst({
       orderBy: [{ scheduledFor: "asc" }, { position: "asc" }],
       select: { chapterId: true, kind: true, lessonId: true, skillId: true },
-      where: { plan, scheduledFor: { gt: localDate }, status: "todo" },
+      where: { plan, scheduledFor: { gt: localDate, lte: until }, status: "todo" },
     }),
   ]);
 
@@ -58,10 +60,12 @@ async function loadDayStandInSkills({
   client,
   goal,
   localDate,
+  until,
 }: {
   client: TransactionClient;
   goal: Pick<Goal, "id" | "kind" | "targetDate">;
   localDate: Date;
+  until?: Date;
 }): Promise<string[]> {
   const [due, next] = await Promise.all([
     client.planItem.findMany({
@@ -73,7 +77,7 @@ async function loadDayStandInSkills({
         status: "todo",
       },
     }),
-    loadNextStandIn({ client, goal, localDate }),
+    loadNextStandIn({ client, goal, localDate, until }),
   ]);
 
   return [...due, ...next].flatMap((item) => (item.skillId ? [item.skillId] : []));
@@ -86,6 +90,8 @@ type DayOutlinesInput = {
   /** The learner-local date of the day, as a UTC-midnight label. */
   localDate: Date;
   now?: Date;
+  /** The last day the caller's preparation outlines: a later next stand-in is left out. */
+  until?: Date;
 };
 
 export async function loadDayStandInCourseIds({
@@ -93,9 +99,10 @@ export async function loadDayStandInCourseIds({
   goal,
   graph,
   localDate,
+  until,
 }: DayOutlinesInput): Promise<string[]> {
   const [skillIds, plan] = await Promise.all([
-    loadDayStandInSkills({ client, goal, localDate }),
+    loadDayStandInSkills({ client, goal, localDate, until }),
     graph === undefined
       ? client.plan.findUnique({ select: { graph: true }, where: { goalId: goal.id } })
       : { graph },
