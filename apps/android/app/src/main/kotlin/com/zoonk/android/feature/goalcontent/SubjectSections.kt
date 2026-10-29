@@ -696,7 +696,7 @@ private fun TopicChapterLink(
             Modifier
                 .fillMaxWidth()
                 .heightIn(min = 48.dp)
-                .then(if (onClick == null) Modifier else Modifier.clickable(onClick = onClick)),
+                .then(if (onClick == null) Modifier else Modifier.clickable(role = Role.Button, onClick = onClick)),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

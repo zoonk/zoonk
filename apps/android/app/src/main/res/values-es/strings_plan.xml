@@ -250,7 +250,7 @@
   "plan_far_nothing_left": "7b5c25e9a16c1c10403addc9b285721fbdf0f93353fe33e813ba8f3d264e68fd",
   "plan_far_see_lessons": "d400e75be98ebf169902a9c2c367dc22bc95049070af4fe101b7ec6fea51ae13",
   "plan_far_unreachable": "1d2eaab0d9e5ff33c7f79b8df111f527bfe3a7c5faed878d8d3997f491cb78ef",
-  "plan_far_writing": "63cae946078cf674e289473438359d4dc9265fee83af1a197724d12c8d6395df",
+  "plan_far_writing": "beb2cc3d16821e2e7c71b1430cee52c37e9ad0cb8e84cb0e7bb92a21dc6d42d6",
   "plan_find": "abec83e4bf02187d629d86ebb73bdab0d8efa52da1a90770a3c06bf37ce071ad",
   "plan_find_building": "e29b1e7b0f10681732e17a49ab0d7150ac3ea7c100a18db6fa7581d04f35eef4",
   "plan_find_covers": "8be1ca61a9053685c4089ba1920cca810f640c876512f9cca19f1531a650ad92",
@@ -648,7 +648,8 @@
     <string name="plan_far_explain">Las lecciones de cada tema se planifican dos semanas antes de que llegues a él. Ya puedes ver las de este tema.</string>
     <!-- Writes a far topic's lessons now. -->
     <string name="plan_far_see_lessons">Ver las lecciones</string>
-    <string name="plan_far_writing">Estamos preparando las lecciones… Tardaremos unos 30 s.</string>
+    <!-- Write the duration out in words, not as "30 s". -->
+    <string name="plan_far_writing">Preparando las lecciones… Tarda alrededor de medio minuto.</string>
     <string name="plan_far_unreachable">No hemos podido conectar con el servidor. Comprueba tu conexión.</string>
     <string name="plan_far_nothing_left">Ya no queda nada por preparar para este tema.</string>
     <plurals name="plan_more_chapters">

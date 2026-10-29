@@ -250,7 +250,7 @@
   "plan_far_nothing_left": "c9e914e69d04657da3057f79e0097a5b084d606e6f483f6b6ae1d11059fc9d18",
   "plan_far_see_lessons": "096ab62767d7a76f1e2e6d3d9bacb0a8ac35f375622238752d2b9e85a3c24cdc",
   "plan_far_unreachable": "c0c17f9d19e9904208f435753a3d076530feb46cc6aef4fba2d761af21d8a763",
-  "plan_far_writing": "3460af8a8c2c55a24eb4f0289aedc4c2f40dcf76b3ce066b6c757cdde81d1f32",
+  "plan_far_writing": "a84a30566807bfe617896ad3787cdcb731afe729a2fcb47cedac79033fa92961",
   "plan_find": "b99abb0d91aeadda225c77387e6eba5ed294b787c632fdffd1d7b9c2928fed83",
   "plan_find_building": "6f68863c4eb8c835976c1007e40b529ab8daf04b101a40276a4555e5e9ff824f",
   "plan_find_covers": "ba7d5766aff3f6f58efd3217b1b2a64dff8c8e1665212b8df7a859d172da53bb",
@@ -648,7 +648,8 @@
     <string name="plan_far_explain">Les leçons d’un sujet sont planifiées deux semaines avant que tu l’abordes. Tu peux voir celles de ce sujet maintenant.</string>
     <!-- Writes a far topic's lessons now. -->
     <string name="plan_far_see_lessons">Voir les leçons</string>
-    <string name="plan_far_writing">Préparation des leçons… Ça prend environ trente secondes.</string>
+    <!-- Write the duration out in words, not as "30 s". -->
+    <string name="plan_far_writing">Préparation des leçons… Cela prend environ une demi-minute.</string>
     <string name="plan_far_unreachable">Impossible de joindre le serveur. Vérifie ta connexion.</string>
     <string name="plan_far_nothing_left">Il n’y a plus rien à préparer pour ce sujet.</string>
     <plurals name="plan_more_chapters">

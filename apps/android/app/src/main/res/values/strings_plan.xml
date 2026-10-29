@@ -124,6 +124,7 @@
     <string name="plan_far_explain">A topic\'s lessons are planned two weeks before you get to it. You can see this one\'s now.</string>
     <!-- Writes a far topic's lessons now. -->
     <string name="plan_far_see_lessons">See the lessons</string>
+    <!-- Write the duration out in words, not as "30 s". -->
     <string name="plan_far_writing">Preparing the lessons… It takes about half a minute.</string>
     <string name="plan_far_unreachable">We couldn\'t reach the server. Check your connection.</string>
     <string name="plan_far_nothing_left">There\'s nothing left to prepare for this topic.</string>

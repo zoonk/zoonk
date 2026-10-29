@@ -1,6 +1,10 @@
 package com.zoonk.android.feature.plan
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.SemanticsProperties
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -60,7 +64,10 @@ class FarTopicSheetTest {
         assertEquals(emptyList<UUID>(), api.outlineWrites)
         compose.onNodeWithText("See the lessons").performClick()
 
-        compose.onNodeWithText("Preparing the lessons… It takes about half a minute.").assertIsDisplayed()
+        compose
+            .onNodeWithText("Preparing the lessons… It takes about half a minute.")
+            .assertIsDisplayed()
+            .assert(SemanticsMatcher.expectValue(SemanticsProperties.LiveRegion, LiveRegionMode.Polite))
         assertEquals(listOf(flask.skillId), api.outlineWrites)
     }
 

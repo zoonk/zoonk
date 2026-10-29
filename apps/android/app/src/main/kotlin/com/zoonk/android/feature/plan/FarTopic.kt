@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -13,7 +14,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -23,8 +23,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
@@ -322,56 +324,87 @@ private fun FarTopicBody(
             }
         }
 
-        FarTopicShown.Writing -> {
-            FollowWhileWritten(topics, open.topic.skillId)
-            Row(
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                CircularProgressIndicator(Modifier.size(16.dp), color = MaterialTheme.colorScheme.onSurfaceVariant, strokeWidth = 2.dp)
-                FarTopicText(stringResource(R.string.plan_far_writing), Modifier.weight(1f))
-            }
+        else -> {
+            FarTopicRequest(open, topics, navigator)
+        }
+    }
+}
+
+/**
+ * The topic's state as one message and one action, as main's sheet has, so TalkBack reads each new
+ * message where the learner is and the action keeps its focus as its words change.
+ */
+@Composable
+private fun FarTopicRequest(
+    open: FarTopicSheetState,
+    topics: FarTopicViewModel,
+    navigator: AppNavigator,
+) {
+    val shown = open.shown
+    val writing = shown == FarTopicShown.Writing
+    val failed = shown is FarTopicShown.Unreachable
+    val limit = (shown as? FarTopicShown.Refused)?.limit
+    val message =
+        when (shown) {
+            FarTopicShown.Writing -> R.string.plan_far_writing
+            is FarTopicShown.Unreachable -> R.string.plan_far_unreachable
+            FarTopicShown.Unavailable -> R.string.plan_far_nothing_left
+            else -> R.string.plan_far_explain
+        }
+    val action =
+        when (shown) {
+            is FarTopicShown.Unreachable -> R.string.load_failed_try_again
+            FarTopicShown.Available, is FarTopicShown.Refused -> R.string.plan_far_see_lessons
+            else -> null
         }
 
-        FarTopicShown.Unavailable -> {
-            FarTopicText(stringResource(R.string.plan_far_nothing_left))
-        }
-
-        is FarTopicShown.Unreachable -> {
-            FarTopicText(stringResource(R.string.plan_far_unreachable))
-            FilledTonalButton(onClick = topics::retry, enabled = !open.asking, modifier = Modifier.fillMaxWidth()) {
-                AskingMark(open.asking)
-                Text(stringResource(R.string.load_failed_try_again))
-            }
-        }
-
-        FarTopicShown.Available, is FarTopicShown.Refused -> {
-            val limit = (shown as? FarTopicShown.Refused)?.limit
-            FarTopicText(stringResource(R.string.plan_far_explain))
-            Button(
-                onClick = topics::request,
-                enabled = !open.asking && (limit == null || limit is Limit.SlowDown),
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                AskingMark(open.asking)
-                Text(stringResource(R.string.plan_far_see_lessons))
-            }
-            if (limit != null) {
-                LimitNotice(
-                    limit = limit,
-                    subject = LimitSubject.Outlines,
-                    onCreateAccount = {
-                        topics.close()
-                        navigator.open(AppRoute.Login)
-                    },
-                    onSeePlus = {
-                        topics.close()
-                        navigator.open(AppRoute.Subscription)
-                    },
+    if (writing) FollowWhileWritten(topics, open.topic.skillId)
+    Row(
+        modifier = Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        if (writing) {
+            val lineHeight =
+                with(LocalDensity.current) {
+                    MaterialTheme.typography.bodyMedium.lineHeight
+                        .toDp()
+                }
+            Box(Modifier.height(lineHeight), contentAlignment = Alignment.Center) {
+                CircularProgressIndicator(
+                    Modifier.size(16.dp).clearAndSetSemantics {},
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    strokeWidth = 2.dp,
                 )
             }
         }
+        FarTopicText(stringResource(message), Modifier.weight(1f))
+    }
+
+    if (action != null) {
+        Button(
+            onClick = if (failed) topics::retry else topics::request,
+            enabled = !open.asking && (limit == null || limit is Limit.SlowDown),
+            modifier = Modifier.fillMaxWidth(),
+            colors = if (failed) ButtonDefaults.filledTonalButtonColors() else ButtonDefaults.buttonColors(),
+        ) {
+            AskingMark(open.asking)
+            Text(stringResource(action))
+        }
+    }
+
+    if (limit != null) {
+        LimitNotice(
+            limit = limit,
+            subject = LimitSubject.Outlines,
+            onCreateAccount = {
+                topics.close()
+                navigator.open(AppRoute.Login)
+            },
+            onSeePlus = {
+                topics.close()
+                navigator.open(AppRoute.Subscription)
+            },
+        )
     }
 }
 
