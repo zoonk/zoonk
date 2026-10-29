@@ -77,25 +77,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ist eine offizielle Prüfung. Übe die Sprechaufgaben, egal ob du die Prüfung ablegen möchtest."
+            "value" : "%@ ist eine offizielle Prüfung. Übe die Sprechaufgaben, auch wenn du die Prüfung nicht ablegen möchtest."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ es un examen oficial. Practica sus pruebas orales tanto si tienes pensado presentarte como si no."
+            "value" : "%@ es un examen oficial. Practica sus tareas de expresión oral tanto si piensas presentarte como si no."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ est un examen officiel. Entraîne-toi aux épreuves orales, que tu prévoies de le passer ou non."
+            "value" : "%@ est un examen officiel. Entraîne-toi aux épreuves orales, que tu comptes le passer ou non."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ é uma prova oficial. Pratique as tarefas de conversação, mesmo que você não pretenda fazê-la."
+            "value" : "%@ é uma prova oficial. Pratique as tarefas de conversação mesmo que você não pretenda fazer a prova."
           }
         }
       }
@@ -106,7 +106,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ spricht…"
+            "value" : "%@ spricht …"
           }
         },
         "es" : {
@@ -135,7 +135,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ Vorbereitungszeit"
+            "value" : "%@ zur Vorbereitung"
           }
         },
         "es" : {
@@ -147,7 +147,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ pour préparer"
+            "value" : "%@ pour te préparer"
           }
         },
         "pt" : {
@@ -314,13 +314,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld épreuve · %@ à l’examen"
+                  "value" : "%lld tâche · %@ à l’examen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld épreuves · %@ à l’examen"
+                  "value" : "%lld tâches · %@ à l’examen"
                 }
               }
             }
@@ -387,25 +387,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einen Stern gibt’s fürs Abschließen, einen dafür, alles verständlich auszudrücken, und einen dafür, ohne Hilfe auszukommen."
+            "value" : "Einen Stern fürs Abschließen, einen dafür, alles verständlich zu vermitteln, und einen fürs Abschließen ohne Hilfe."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una estrella por terminar, otra por expresarte con claridad y otra por hacerlo sin ayuda."
+            "value" : "Una estrella por terminar, otra por expresar todo lo que querías decir y otra por hacerlo sin ayuda."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une étoile pour terminer, une pour réussir à tout exprimer et une sans aide."
+            "value" : "Une étoile pour avoir terminé, une pour avoir tout réussi à exprimer et une pour ne pas avoir utilisé l’aide."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma estrela por concluir, outra por conseguir se expressar bem e mais uma por fazer sem ajuda."
+            "value" : "Uma estrela por terminar, uma por transmitir tudo o que queria e uma por não usar a Ajuda."
           }
         }
       }
@@ -416,19 +416,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Genauigkeit"
+            "value" : "Sprachliche Richtigkeit"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Precisión"
+            "value" : "Corrección"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Précision"
+            "value" : "Correction"
           }
         },
         "pt" : {
@@ -445,25 +445,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Akzent hält dich nicht auf. Wörter, die noch anders klingen, kommen morgen wieder."
+            "value" : "Ein Akzent steht dir nie im Weg. Wörter, die noch anders klingen, kommen morgen wieder dran."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El acento nunca te frena. Las palabras que aún suenen distintas volverán mañana."
+            "value" : "Tener acento nunca te impide avanzar. Las palabras que aún suenen diferentes volverán mañana."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton accent ne te pénalise jamais. Les mots qui sonnent encore différemment reviendront demain."
+            "value" : "Ton accent ne te bloque jamais. Les mots qui sonnent encore différemment reviendront demain."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu sotaque nunca impede seu progresso. As palavras que ainda soarem diferentes voltam amanhã."
+            "value" : "Seu sotaque nunca te impede de avançar. As palavras que ainda soarem diferentes voltam amanhã."
           }
         }
       }
@@ -474,25 +474,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine KI übernimmt die Rolle der prüfenden Person oder der anderen Kandidatin bzw. des anderen Kandidaten. Bei jedem Versuch gibt es eine neue Karte. Danach erhältst du eine Einschätzung anhand der offiziellen Prüfungskriterien, aber keinen offiziellen Score."
+            "value" : "Eine KI übernimmt die Rolle der prüfenden Person oder der anderen teilnehmenden Person. Bei jedem Versuch bekommst du eine neue Aufgabenkarte. Danach erhältst du eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una IA hace de examinador o de otro candidato. Cada intento incluye una tarjeta nueva y, al terminar, recibes una estimación según los criterios oficiales del examen, no una puntuación oficial."
+            "value" : "Una IA hace el papel del examinador o del otro candidato. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no una puntuación oficial."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une IA remplace l’examinateur ou l’autre candidat. Chaque essai propose une nouvelle fiche. Ensuite, tu reçois une estimation selon les critères officiels de l’examen, pas un score officiel."
+            "value" : "Une IA prend la place de l’examinateur ou de l’autre candidat. À chaque essai, tu reçois une nouvelle fiche, puis une estimation selon les critères officiels de l’examen, mais pas de Score officiel."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma IA faz o papel do examinador ou de outro candidato. A cada tentativa, você recebe um novo cartão e, no fim, uma estimativa baseada nos critérios oficiais da prova, não uma pontuação oficial."
+            "value" : "Uma IA faz o papel da pessoa examinadora ou de outro candidato. Cada tentativa tem um novo cartão e, ao final, você recebe uma estimativa com base nos critérios oficiais da prova, sem valer como nota oficial."
           }
         }
       }
@@ -503,25 +503,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine KI übernimmt die Rolle der prüfenden Person. Bei jedem Versuch gibt es eine neue Karte. Danach erhältst du eine Einschätzung anhand der offiziellen Prüfungskriterien, aber keinen offiziellen Score."
+            "value" : "Eine KI übernimmt die Rolle der prüfenden Person. Bei jedem Versuch bekommst du eine neue Aufgabenkarte. Danach erhältst du eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una IA hace de examinador. Cada intento incluye una tarjeta nueva y, al terminar, recibes una estimación según los criterios oficiales del examen, no una puntuación oficial."
+            "value" : "Una IA hace el papel del examinador. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no una puntuación oficial."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une IA remplace l’examinateur. Chaque essai propose une nouvelle fiche. Ensuite, tu reçois une estimation selon les critères officiels de l’examen, pas un score officiel."
+            "value" : "Une IA prend la place de l’examinateur. À chaque essai, tu reçois une nouvelle fiche, puis une estimation selon les critères officiels de l’examen, mais pas de Score officiel."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma IA faz o papel do examinador. A cada tentativa, você recebe um novo cartão e, no fim, uma estimativa baseada nos critérios oficiais da prova, não uma pontuação oficial."
+            "value" : "Uma IA faz o papel da pessoa examinadora. Cada tentativa tem um novo cartão e, ao final, você recebe uma estimativa com base nos critérios oficiais da prova, sem valer como nota oficial."
           }
         }
       }
@@ -544,7 +544,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quitter"
+            "value" : "Retour"
           }
         },
         "pt" : {
@@ -602,13 +602,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mieux"
+            "value" : "Mieux dire"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Melhor"
+            "value" : "Uma forma melhor"
           }
         }
       }
@@ -648,7 +648,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut anrufen"
+            "value" : "Erneut verbinden"
           }
         },
         "es" : {
@@ -666,7 +666,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversar de novo"
+            "value" : "Conversar novamente"
           }
         }
       }
@@ -677,7 +677,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ruf erneut an oder beende das Gespräch, um Feedback zu deinen Aussagen zu erhalten."
+            "value" : "Verbinde dich erneut oder beende das Gespräch, um Feedback zu deinen Antworten zu erhalten."
           }
         },
         "es" : {
@@ -689,13 +689,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rappelle, ou termine l’appel pour obtenir un retour sur ce que tu as dit."
+            "value" : "Rappelle ou termine l’appel pour recevoir un retour sur ce que tu as dit."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Converse de novo ou encerre a conversa para receber comentários sobre o que você disse."
+            "value" : "Converse novamente ou encerre a conversa para receber feedback sobre o que você disse."
           }
         }
       }
@@ -712,7 +712,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Duración de la llamada"
+            "value" : "Tiempo de llamada"
           }
         },
         "fr" : {
@@ -724,7 +724,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Duração da conversa"
+            "value" : "Tempo da conversa"
           }
         }
       }
@@ -735,7 +735,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird angerufen…"
+            "value" : "Verbindung wird aufgebaut …"
           }
         },
         "es" : {
@@ -782,7 +782,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As conversas estão pausadas"
+            "value" : "As conversas estão em pausa"
           }
         }
       }
@@ -793,13 +793,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gespräche in der Sprache, die du lernst, auf deinem Level."
+            "value" : "Gespräche in der Sprache, die du lernst, auf deinem Niveau."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llamadas en el idioma que estás aprendiendo y a tu nivel."
+            "value" : "Llamadas en el idioma que aprendes, adaptadas a tu nivel."
           }
         },
         "fr" : {
@@ -840,7 +840,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você precisa de uma conta grátis para conversar"
+            "value" : "Para conversar, você precisa de uma conta grátis"
           }
         }
       }
@@ -851,25 +851,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Herausforderungsgespräche gibt es mit Plus. Dein Plan läuft auch ohne sie weiter."
+            "value" : "Herausforderungs-Gespräche sind in Plus enthalten. Dein Plan geht auch ohne sie weiter."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las llamadas de desafío están incluidas en Plus. Puedes seguir con tu plan sin ellas."
+            "value" : "Las llamadas de desafío están incluidas en Plus. Tu plan continúa sin ellas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les défis oraux sont inclus avec Plus. Ton plan continue sans eux."
+            "value" : "Les appels de défi sont inclus dans Plus. Ton plan continue sans eux."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As conversas do desafio fazem parte do Plus. Seu plano continua sem elas."
+            "value" : "As conversas de desafio estão disponíveis no Plus. Seu plano continua sem elas."
           }
         }
       }
@@ -909,7 +909,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird geprüft…"
+            "value" : "Wir prüfen …"
           }
         },
         "es" : {
@@ -950,7 +950,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Des réponses claires et développées"
+            "value" : "Réponses claires et développées"
           }
         },
         "pt" : {
@@ -1054,19 +1054,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erstelle ein kostenloses Konto, um weiterzumachen."
+            "value" : "Erstelle dein kostenloses Konto, um weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crea una cuenta gratuita para continuar."
+            "value" : "Crea tu cuenta gratuita para continuar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Crée un compte gratuit pour continuer."
+            "value" : "Crée ton compte gratuit pour continuer."
           }
         },
         "pt" : {
@@ -1083,7 +1083,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aufgabenbewältigung"
+            "value" : "Aufgabenerfüllung"
           }
         },
         "es" : {
@@ -1101,7 +1101,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Execução da tarefa"
+            "value" : "Cumprimento da tarefa"
           }
         }
       }
@@ -1112,13 +1112,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fertig"
+            "value" : "Erledigt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hecho"
+            "value" : "Completado"
           }
         },
         "fr" : {
@@ -1147,13 +1147,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Colgar"
+            "value" : "Terminar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Raccrocher"
+            "value" : "Terminer"
           }
         },
         "pt" : {
@@ -1170,7 +1170,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieses Gespräch beenden und das neue starten"
+            "value" : "Das andere Gespräch beenden und dieses starten"
           }
         },
         "es" : {
@@ -1182,13 +1182,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminer cet appel et démarrer celui-ci"
+            "value" : "Terminer cet appel et commencer celui-ci"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encerre aquela conversa e comece esta"
+            "value" : "Encerrar aquela conversa e começar esta"
           }
         }
       }
@@ -1286,7 +1286,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sprachfluss"
+            "value" : "Flüssigkeit"
           }
         },
         "es" : {
@@ -1315,7 +1315,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Flüssigkeit und Zusammenhang"
+            "value" : "Redefluss und Zusammenhang"
           }
         },
         "es" : {
@@ -1489,25 +1489,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Leistung"
+            "value" : "So hast du abgeschnitten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo lo has hecho"
+            "value" : "Qué tal lo has hecho"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton résultat"
+            "value" : "Tes résultats"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu desempenho"
+            "value" : "Como você foi"
           }
         }
       }
@@ -1518,7 +1518,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "IELTS-Sprechprobeprüfung"
+            "value" : "IELTS-Probeprüfung: Sprechen"
           }
         },
         "es" : {
@@ -1547,7 +1547,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Interaktion"
+            "value" : "Gesprächsführung"
           }
         },
         "es" : {
@@ -1582,19 +1582,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volverá %@."
+            "value" : "Volverá a aparecer %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il reviendra %@."
+            "value" : "Tu pourras le redire %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volta %@."
+            "value" : "Ela volta %@."
           }
         }
       }
@@ -1605,7 +1605,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Gespräch wurde beendet, als du ein anderes gestartet hast."
+            "value" : "Es wurde beendet, als du ein anderes Gespräch begonnen hast."
           }
         },
         "es" : {
@@ -1617,13 +1617,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cet appel a pris fin quand tu en as démarré un autre."
+            "value" : "Cet appel s’est terminé quand tu en as commencé un autre."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A conversa foi encerrada quando você começou outra."
+            "value" : "Ela terminou quando você começou outra conversa."
           }
         }
       }
@@ -1634,25 +1634,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Gespräch ist in einem anderen Tab oder auf einem anderen Gerät geöffnet. Wenn du es hier beendest, erhältst du kein Feedback dazu."
+            "value" : "Es ist in einem anderen Tab oder auf einem anderen Gerät geöffnet. Wenn du es hier beendest, erhältst du kein Feedback dazu."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Está abierta en otra pestaña o dispositivo. Si la terminas desde aquí, no recibirás comentarios."
+            "value" : "La llamada está abierta en otra pestaña o en otro dispositivo. Si la terminas desde aquí, no recibirás comentarios sobre ella."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cet appel est ouvert dans un autre onglet ou sur un autre appareil. Si tu le termines ici, tu n’auras pas son retour."
+            "value" : "Il est ouvert dans un autre onglet ou sur un autre appareil. Si tu y mets fin ici, tu ne recevras pas de retour."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ela está aberta em outra aba ou dispositivo. Se você encerrar daqui, vai pular os comentários."
+            "value" : "Ela está aberta em outra aba ou em outro dispositivo. Se você encerrar por aqui, não vai receber o retorno sobre ela."
           }
         }
       }
@@ -1663,25 +1663,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das gilt gerade für alle. Versuch es später noch einmal."
+            "value" : "Das ist gerade bei allen so. Versuch es später noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ahora mismo está en pausa para todo el mundo. Inténtalo más tarde."
+            "value" : "Ahora mismo las llamadas están pausadas para todo el mundo. Vuelve a intentarlo más tarde."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les appels sont en pause pour tout le monde. Réessaie plus tard."
+            "value" : "Les appels sont en pause pour tout le monde en ce moment. Réessaie plus tard."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso está acontecendo com todo mundo agora. Tente de novo mais tarde."
+            "value" : "As conversas estão em pausa para todo mundo agora. Tente de novo mais tarde."
           }
         }
       }
@@ -1698,7 +1698,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lengua"
+            "value" : "Lenguaje"
           }
         },
         "fr" : {
@@ -1721,7 +1721,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Letzter Versuch: %1$lld von %2$lld auf dem Level %3$@"
+            "value" : "Letzter Versuch: %1$lld von %2$lld auf %3$@"
           }
         },
         "en" : {
@@ -1733,19 +1733,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Último intento: %1$lld de %2$lld al nivel de %3$@"
+            "value" : "Último intento: %1$lld de %2$lld al nivel %3$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dernier essai : %1$lld sur %2$lld au niveau %3$@"
+            "value" : "Dernier essai : %1$lld critères sur %2$lld au niveau %3$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Última tentativa: %1$lld de %2$lld no nível %3$@"
+            "value" : "Última tentativa: %1$lld de %2$lld no nível de %3$@"
           }
         }
       }
@@ -1756,7 +1756,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Letzter Versuch: %1$lld von %2$lld nahe am Level %3$@"
+            "value" : "Letzter Versuch: %1$lld von %2$lld nahe an %3$@"
           }
         },
         "en" : {
@@ -1768,19 +1768,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Último intento: %1$lld de %2$lld cerca del nivel de %3$@"
+            "value" : "Último intento: %1$lld de %2$lld cerca del nivel %3$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dernier essai : %1$lld sur %2$lld, proche du niveau %3$@"
+            "value" : "Dernier essai : %1$lld critères sur %2$lld proches du niveau %3$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Última tentativa: %1$lld de %2$lld perto do nível %3$@"
+            "value" : "Última tentativa: %1$lld de %2$lld perto do nível de %3$@"
           }
         }
       }
@@ -1803,13 +1803,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dernier essai : en dessous du niveau %@"
+            "value" : "Dernier essai : en dessous du niveau %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Última tentativa: abaixo de %@"
+            "value" : "Última tentativa: abaixo do nível de %@"
           }
         }
       }
@@ -1832,7 +1832,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dernier essai : aucune estimation"
+            "value" : "Dernier essai : aucune estimation"
           }
         },
         "pt" : {
@@ -1907,25 +1907,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird angehört…"
+            "value" : "Wir hören uns an, wie es klang…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Evaluando cómo ha sonado…"
+            "value" : "Escuchando cómo ha sonado…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Évaluation de ta prononciation…"
+            "value" : "Écoute de ta prononciation…"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Analisando como soou…"
+            "value" : "Ouvindo como você falou…"
           }
         }
       }
@@ -1936,7 +1936,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hört zu…"
+            "value" : "Wir hören zu…"
           }
         },
         "es" : {
@@ -1948,7 +1948,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En écoute…"
+            "value" : "À l’écoute…"
           }
         },
         "pt" : {
@@ -1965,19 +1965,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hört zu… Tippe auf „Stopp“, um zu prüfen."
+            "value" : "Wir hören zu… Tippe auf „Stopp“, um deine Antwort zu prüfen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escuchando… Pulsa «Detener» para comprobar."
+            "value" : "Escuchando… Pulsa Detener para comprobar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enregistrement… Appuie sur Arrêter pour vérifier."
+            "value" : "À l’écoute… Appuie sur Arrêter pour vérifier."
           }
         },
         "pt" : {
@@ -1994,7 +1994,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mikrofon aus"
+            "value" : "Mikrofon ausgeschaltet"
           }
         },
         "es" : {
@@ -2012,7 +2012,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Microfone desligado"
+            "value" : "Microfone desativado"
           }
         }
       }
@@ -2041,7 +2041,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Silenciar"
+            "value" : "Desativar microfone"
           }
         }
       }
@@ -2070,7 +2070,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Microfone silenciado"
+            "value" : "Microfone desativado"
           }
         }
       }
@@ -2081,25 +2081,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diesen Monat keine Gespräche mehr"
+            "value" : "Diesen Monat sind keine Gespräche mehr möglich"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No te quedan llamadas este mes"
+            "value" : "No quedan llamadas este mes"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as épuisé ton temps d’appel pour ce mois-ci"
+            "value" : "Plus d’appels ce mois-ci"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você não tem mais conversas neste mês"
+            "value" : "Sem mais conversas neste mês"
           }
         }
       }
@@ -2110,25 +2110,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heute keine Gespräche mehr"
+            "value" : "Heute sind keine Gespräche mehr möglich"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No te quedan llamadas hoy"
+            "value" : "No quedan llamadas hoy"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as épuisé ton temps d’appel pour aujourd’hui"
+            "value" : "Plus d’appels aujourd’hui"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você não tem mais conversas hoje"
+            "value" : "Sem mais conversas hoje"
           }
         }
       }
@@ -2139,7 +2139,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für dieses Ziel gibt es keine Sprechübungen"
+            "value" : "Keine Sprechübung für dieses Ziel"
           }
         },
         "es" : {
@@ -2151,13 +2151,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun entraînement à l’oral pour cet objectif"
+            "value" : "Aucun exercice d’expression orale pour cet objectif"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não há prática de conversação para esta meta"
+            "value" : "Sem prática de conversação para esta meta"
           }
         }
       }
@@ -2168,25 +2168,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heute gibt es keine Wörter zum erneuten Sprechen."
+            "value" : "Heute gibt es keine Wörter zum Wiederholen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoy no tienes palabras que repetir."
+            "value" : "Hoy no hay palabras que repetir."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun mot à répéter aujourd’hui."
+            "value" : "Aucun mot à redire aujourd’hui."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não há palavras para repetir hoje."
+            "value" : "Nenhuma palavra para repetir hoje."
           }
         }
       }
@@ -2197,25 +2197,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diesen Monat reicht die Gesprächszeit für diese Aufgabe nicht aus"
+            "value" : "Diesen Monat bleibt nicht genug Gesprächszeit für diese Aufgabe"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No tienes tiempo de llamada suficiente este mes para esta tarea"
+            "value" : "No queda suficiente tiempo de llamada este mes para esta tarea"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il ne te reste pas assez de temps d’appel ce mois-ci pour cette tâche"
+            "value" : "Pas assez de temps d’appel ce mois-ci pour cette activité"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O tempo de conversa restante neste mês não é suficiente para esta tarefa"
+            "value" : "Não há tempo de conversa suficiente neste mês para esta atividade"
           }
         }
       }
@@ -2226,25 +2226,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heute reicht die Gesprächszeit für diese Aufgabe nicht aus"
+            "value" : "Heute bleibt nicht genug Gesprächszeit für diese Aufgabe"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No tienes tiempo de llamada suficiente hoy para esta tarea"
+            "value" : "No queda suficiente tiempo de llamada hoy para esta tarea"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il ne te reste pas assez de temps d’appel aujourd’hui pour cette tâche"
+            "value" : "Pas assez de temps d’appel aujourd’hui pour cette activité"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O tempo de conversa restante hoje não é suficiente para esta tarefa"
+            "value" : "Não há tempo de conversa suficiente hoje para esta atividade"
           }
         }
       }
@@ -2255,13 +2255,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diesmal nicht"
+            "value" : "Diesmal hat es nicht geklappt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta vez no"
+            "value" : "Esta vez no ha sido posible"
           }
         },
         "fr" : {
@@ -2273,7 +2273,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dessa vez, não"
+            "value" : "Não foi desta vez"
           }
         }
       }
@@ -2284,25 +2284,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es ist nichts verloren: Das Gespräch kommt wieder, damit du es erneut versuchen kannst."
+            "value" : "Nichts ist verloren: Das Gespräch kommt wieder, damit du es noch einmal versuchen kannst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No has perdido nada: puedes volver a iniciar la llamada e intentarlo de nuevo."
+            "value" : "No pasa nada: la llamada volverá a aparecer para que puedas intentarlo de nuevo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rien n’est perdu : l’appel revient pour que tu puisses réessayer."
+            "value" : "Rien n’est perdu : l’appel reviendra pour que tu puisses réessayer."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você não perdeu nada: a conversa volta para você tentar de novo."
+            "value" : "Nada foi perdido: a conversa volta para você tentar de novo."
           }
         }
       }
@@ -2319,19 +2319,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta vez no has dicho nada"
+            "value" : "No has dicho nada esta vez"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu n’as rien dit cette fois"
+            "value" : "Rien de dit cette fois"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você não disse nada desta vez"
+            "value" : "Você não falou nada desta vez"
           }
         }
       }
@@ -2342,7 +2342,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nichts zum erneuten Sprechen"
+            "value" : "Nichts zum Wiederholen"
           }
         },
         "es" : {
@@ -2354,13 +2354,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun mot à répéter"
+            "value" : "Rien à redire"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não há nada para repetir"
+            "value" : "Nada para repetir"
           }
         }
       }
@@ -2429,7 +2429,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oder gib deine Antwort ein"
+            "value" : "Oder tippe deine Antwort ein"
           }
         },
         "es" : {
@@ -2458,19 +2458,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aufbau deiner Aussagen"
+            "value" : "Deine Aussagen strukturieren"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Organización del discurso"
+            "value" : "Organización de lo que dices"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Organisation de tes propos"
+            "value" : "Organisation de tes idées"
           }
         },
         "pt" : {
@@ -2487,13 +2487,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gesamtbewertung"
+            "value" : "Gesamtband"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nota global"
+            "value" : "Banda global"
           }
         },
         "fr" : {
@@ -2505,7 +2505,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faixa geral"
+            "value" : "Nota geral"
           }
         }
       }
@@ -2545,7 +2545,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tempo und Aussprache"
+            "value" : "Sprechtempo und Aussprache"
           }
         },
         "es" : {
@@ -2574,7 +2574,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nützliche Formulierungen"
+            "value" : "Sätze, die du verwenden kannst"
           }
         },
         "es" : {
@@ -2667,19 +2667,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pulsa «Grabar» y di la palabra en voz alta"
+            "value" : "Pulsa Grabar y di la palabra en voz alta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appuie sur Enregistrer et prononce le mot à voix haute"
+            "value" : "Appuie sur Enregistrer et dis le mot à voix haute"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque em Gravar e diga a palavra em voz alta"
+            "value" : "Toque em Gravar e fale a palavra em voz alta"
           }
         }
       }
@@ -2754,13 +2754,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Variedad lingüística"
+            "value" : "Variedad de recursos lingüísticos"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Étendue du vocabulaire et des structures"
+            "value" : "Richesse de la langue"
           }
         },
         "pt" : {
@@ -2783,7 +2783,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se evalúa según %@"
+            "value" : "Evaluado según %@"
           }
         },
         "fr" : {
@@ -2795,7 +2795,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avaliado com base em %@"
+            "value" : "Avaliado por %@"
           }
         }
       }
@@ -2806,13 +2806,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Sprechleistung wird anhand der Prüfungskriterien bewertet. Das dauert normalerweise etwa eine halbe Minute."
+            "value" : "Wir bewerten deine Sprechleistung nach den Prüfungskriterien. Das dauert meist etwa eine halbe Minute."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Evaluando tu expresión oral según los criterios del examen. Suele tardar unos 30 s."
+            "value" : "Estamos evaluando tu expresión oral según los criterios del examen. Suele tardar medio minuto."
           }
         },
         "fr" : {
@@ -2824,7 +2824,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avaliando sua conversação com base nos critérios da prova. Isso costuma levar cerca de 30 s."
+            "value" : "Avaliando sua fala pelos critérios da prova. Isso costuma levar cerca de meio minuto."
           }
         }
       }
@@ -2835,7 +2835,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verbindung wird wiederhergestellt…"
+            "value" : "Wir stellen die Verbindung wieder her…"
           }
         },
         "es" : {
@@ -2899,7 +2899,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Grabando… Pulsa «Detener» cuando termines."
+            "value" : "Grabando… Pulsa Detener cuando termines."
           }
         },
         "fr" : {
@@ -2951,25 +2951,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch einmal sagen"
+            "value" : "Sag es noch einmal"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repítelo"
+            "value" : "Dilo otra vez"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Répète"
+            "value" : "Dis-le encore"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diga de novo"
+            "value" : "Fale de novo"
           }
         }
       }
@@ -2980,13 +2980,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sprich es wie %@ aus"
+            "value" : "Sprich es so aus: %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pronúncialo como %@"
+            "value" : "Se pronuncia así: %@"
           }
         },
         "fr" : {
@@ -2998,7 +2998,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pronuncie como %@"
+            "value" : "Fale como %@"
           }
         }
       }
@@ -3021,7 +3021,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Options de la séance"
+            "value" : "Options de l’écran"
           }
         },
         "pt" : {
@@ -3044,7 +3044,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver cómo te ha ido"
+            "value" : "Ver qué tal ha ido"
           }
         },
         "fr" : {
@@ -3067,7 +3067,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Letztes Ergebnis ansehen"
+            "value" : "Dein letztes Ergebnis ansehen"
           }
         },
         "es" : {
@@ -3131,7 +3131,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Omitir esta palabra"
+            "value" : "Saltar esta palabra"
           }
         },
         "fr" : {
@@ -3160,13 +3160,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ha sonado bien"
+            "value" : "Han sonado bien"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prononciation correcte"
+            "value" : "Bien prononcés"
           }
         },
         "pt" : {
@@ -3183,7 +3183,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sprich oder tippe. Das Mikrofon wird nur während des Gesprächs verwendet."
+            "value" : "Sprich oder schreibe. Das Mikrofon wird nur während des Gesprächs verwendet."
           }
         },
         "es" : {
@@ -3201,7 +3201,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fale ou digite. O microfone só é usado durante a conversa."
+            "value" : "Fale ou digite. O microfone é usado apenas durante a conversa."
           }
         }
       }
@@ -3212,25 +3212,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit einem kostenlosen Konto kannst du Gespräche führen. Erstelle ein Konto, um laut zu üben."
+            "value" : "Mit einem kostenlosen Konto kannst du Gespräche zum Sprechen führen. Erstelle ein Konto, um laut zu üben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las llamadas de expresión oral están incluidas en una cuenta gratuita. Crea una para practicar en voz alta."
+            "value" : "Las llamadas para practicar la expresión oral están incluidas con una cuenta gratuita. Crea una para practicar en voz alta."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les appels d’expression orale sont inclus avec un compte gratuit. Crée un compte pour t’entraîner à voix haute."
+            "value" : "Les appels pour pratiquer l’oral sont inclus avec un compte gratuit. Crée un compte pour t’entraîner à voix haute."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversas de prática estão incluídas na conta grátis. Crie uma conta para praticar em voz alta."
+            "value" : "As conversas de prática estão disponíveis com uma conta grátis. Crie uma para praticar em voz alta."
           }
         }
       }
@@ -3270,25 +3270,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit Plus kannst du jede Aufgabe der Prüfung im Gespräch üben und erhältst danach jeweils eine Einschätzung anhand der offiziellen Kriterien."
+            "value" : "Mit Plus kannst du jede Aufgabe der mündlichen Prüfung in einem Gespräch üben. Nach jeder Aufgabe erhältst du eine Einschätzung anhand der offiziellen Kriterien."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La práctica de expresión oral está incluida en Plus: haz por llamada todas las tareas del examen y recibe una estimación según los criterios oficiales después de cada una."
+            "value" : "La práctica de expresión oral está incluida con Plus: haz cada tarea del examen en una llamada y recibe una estimación basada en los criterios oficiales después de cada una."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’entraînement à l’expression orale est inclus avec Plus : passe chaque épreuve de l’examen à l’oral et obtiens une estimation selon les critères officiels après chacune."
+            "value" : "L’entraînement à l’expression orale est inclus avec Plus : chaque exercice de l’épreuve se fait en appel, avec une estimation selon les critères officiels après chacun."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A prática de conversação está incluída no Plus: faça cada tarefa da prova em uma conversa e receba uma estimativa com base nos critérios oficiais depois de cada uma."
+            "value" : "A prática de conversação está incluída no Plus: faça todas as tarefas da prova em uma conversa e receba uma estimativa baseada nos critérios oficiais após cada uma."
           }
         }
       }
@@ -3299,7 +3299,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sprechübung konnte nicht geladen werden"
+            "value" : "Die Sprechübung konnte nicht geladen werden"
           }
         },
         "es" : {
@@ -3311,13 +3311,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’entraînement à l’expression orale n’a pas chargé"
+            "value" : "L’entraînement à l’expression orale n’a pas pu se charger"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar a prática de conversação"
+            "value" : "A prática de conversação não carregou"
           }
         }
       }
@@ -3328,13 +3328,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Starte ein neues Gespräch, um weiterzuüben."
+            "value" : "Starte ein neues Gespräch, um weiter zu üben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicia una llamada nueva para seguir practicando."
+            "value" : "Inicia una nueva llamada para seguir practicando."
           }
         },
         "fr" : {
@@ -3398,7 +3398,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer cette tâche"
+            "value" : "Commencer cet exercice"
           }
         },
         "pt" : {
@@ -3415,7 +3415,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird gestartet…"
+            "value" : "Wir starten…"
           }
         },
         "es" : {
@@ -3433,7 +3433,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iniciando…"
+            "value" : "Começando…"
           }
         }
       }
@@ -3444,7 +3444,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Sprechleistung wird noch bewertet. Das dauert länger als sonst."
+            "value" : "Wir bewerten deine Sprechleistung noch. Das dauert länger als üblich."
           }
         },
         "es" : {
@@ -3456,13 +3456,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’évaluation de ton expression orale est toujours en cours. Ça prend plus de temps que d’habitude."
+            "value" : "L’évaluation de ton expression orale est toujours en cours. Cela prend plus de temps que d’habitude."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda estamos avaliando sua conversação. Isso está demorando mais que o normal."
+            "value" : "Ainda estamos avaliando sua fala. Isso está demorando mais que o normal."
           }
         }
       }
@@ -3473,7 +3473,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Feedback wird noch erstellt. Das dauert länger als sonst."
+            "value" : "Wir erstellen dein Feedback noch. Das dauert länger als üblich."
           }
         },
         "es" : {
@@ -3485,13 +3485,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La rédaction de ton retour est toujours en cours. Ça prend plus de temps que d’habitude."
+            "value" : "La préparation de ton retour est toujours en cours. Cela prend plus de temps que d’habitude."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda estamos escrevendo seu feedback. Isso está demorando mais que o normal."
+            "value" : "Ainda estamos preparando seu retorno. Isso está demorando mais que o normal."
           }
         }
       }
@@ -3531,13 +3531,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mach kurz Pause und versuch es dann noch einmal."
+            "value" : "Mach eine kurze Pause und versuche es dann erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tómate un descanso breve y vuelve a intentarlo."
+            "value" : "Descansa un momento y vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -3560,19 +3560,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippe und sprich deine Antwort laut aus"
+            "value" : "Tippe und sag es laut"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca para decirlo en voz alta"
+            "value" : "Pulsa y dilo en voz alta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Appuie et réponds à voix haute"
+            "value" : "Appuie et dis-le à voix haute"
           }
         },
         "pt" : {
@@ -3607,7 +3607,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tâche %1$lld sur %2$lld"
+            "value" : "Exercice %1$lld sur %2$lld"
           }
         },
         "pt" : {
@@ -3636,7 +3636,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tâches"
+            "value" : "Exercices"
           }
         },
         "pt" : {
@@ -3653,13 +3653,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das hat nicht geklappt. Versuch es noch einmal."
+            "value" : "Das hat nicht geklappt. Versuche es erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido completar. Vuelve a intentarlo."
+            "value" : "No se ha podido evaluar. Vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -3694,13 +3694,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ça semblait correct"
+            "value" : "C’était bien prononcé"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa palavra soou certa"
+            "value" : "Soou certo"
           }
         }
       }
@@ -3711,7 +3711,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Verbindung zum Gespräch wurde nicht hergestellt"
+            "value" : "Das Gespräch konnte nicht verbunden werden"
           }
         },
         "es" : {
@@ -3723,7 +3723,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’appel n’a pas abouti"
+            "value" : "L’appel n’a pas pu se connecter"
           }
         },
         "pt" : {
@@ -3752,13 +3752,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’appel ne s’est pas chargé"
+            "value" : "L’appel n’a pas pu se charger"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar a conversa"
+            "value" : "A conversa não carregou"
           }
         }
       }
@@ -3769,13 +3769,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Gespräch konnte nicht gestartet werden. Versuch es gleich noch einmal."
+            "value" : "Das Gespräch konnte nicht gestartet werden. Versuche es gleich noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido iniciar la llamada. Vuelve a intentarlo dentro de un momento."
+            "value" : "No se ha podido iniciar la llamada. Vuelve a intentarlo en un momento."
           }
         },
         "fr" : {
@@ -3787,7 +3787,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A conversa não começou. Tente de novo daqui a pouco."
+            "value" : "A conversa não começou. Tente de novo em instantes."
           }
         }
       }
@@ -3804,13 +3804,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha cortado la llamada"
+            "value" : "Se ha interrumpido la llamada"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La connexion à l’appel a été perdue"
+            "value" : "L’appel a été coupé"
           }
         },
         "pt" : {
@@ -3827,25 +3827,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Gespräch wird noch beendet. Versuch es gleich noch einmal."
+            "value" : "Das Gespräch wird noch beendet. Versuche es gleich noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La llamada aún se está cerrando. Vuelve a intentarlo dentro de un momento."
+            "value" : "La llamada aún se está cerrando. Vuelve a intentarlo en un momento."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’appel est encore en train de se terminer. Réessaie dans un instant."
+            "value" : "L’appel est encore en cours de fermeture. Réessaie dans un instant."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A conversa ainda está sendo encerrada. Tente de novo daqui a pouco."
+            "value" : "A conversa ainda está sendo encerrada. Tente de novo em instantes."
           }
         }
       }
@@ -3856,7 +3856,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für die Vorbereitung hast du %@."
+            "value" : "In der Prüfung hast du %@, um dich vorzubereiten."
           }
         },
         "es" : {
@@ -3897,7 +3897,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Évaluation générale de l’examinateur"
+            "value" : "Évaluation globale de l’examinateur"
           }
         },
         "pt" : {
@@ -3932,7 +3932,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O microfone está desligado"
+            "value" : "O microfone está desativado"
           }
         }
       }
@@ -3943,7 +3943,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Ton wurde nicht abgespielt. Versuch es noch einmal."
+            "value" : "Der Ton konnte nicht abgespielt werden. Versuche es erneut."
           }
         },
         "es" : {
@@ -3955,7 +3955,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le son n’a pas été lu. Réessaie."
+            "value" : "Le son n’a pas pu être lu. Réessaie."
           }
         },
         "pt" : {
@@ -3972,25 +3972,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Aufgabe konnte nicht gestartet werden. Versuch es gleich noch einmal."
+            "value" : "Die Aufgabe konnte nicht gestartet werden. Versuche es gleich noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido iniciar la tarea. Vuelve a intentarlo dentro de un momento."
+            "value" : "No se ha podido iniciar la tarea. Vuelve a intentarlo en un momento."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La tâche n’a pas démarré. Réessaie dans un instant."
+            "value" : "L’exercice n’a pas démarré. Réessaie dans un instant."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A tarefa não começou. Tente de novo daqui a pouco."
+            "value" : "A tarefa não começou. Tente de novo em instantes."
           }
         }
       }
@@ -4013,13 +4013,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les mots ne se sont pas chargés"
+            "value" : "Les mots n’ont pas pu se charger"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar as palavras"
+            "value" : "As palavras não carregaram"
           }
         }
       }
@@ -4071,7 +4071,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cet appel n’existe pas"
+            "value" : "Cet appel est introuvable"
           }
         },
         "pt" : {
@@ -4088,25 +4088,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Herausforderung ist ein kurzes Gespräch über die Einheit. Es wird zuerst auf dein Sprachniveau zugeschnitten. Das dauert höchstens eine halbe Minute."
+            "value" : "Diese Herausforderung ist ein kurzes Gespräch über die Einheit. Wir erstellen es zuerst passend zu deinem Sprechniveau. Das dauert bis zu einer halben Minute."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este desafío es una llamada breve sobre la unidad. Primero se prepara según tu nivel de expresión oral, lo que puede tardar hasta medio minuto."
+            "value" : "Este desafío es una llamada breve sobre la unidad. Primero la preparamos para tu nivel de expresión oral, lo que puede tardar hasta medio minuto."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce défi est un court échange oral sur l’unité. Il est d’abord préparé selon ton niveau d’expression orale, ce qui prend jusqu’à 30 s."
+            "value" : "Ce défi est un court appel sur l’unité. Il est d’abord préparé selon ton niveau à l’oral, ce qui prend jusqu’à une trentaine de secondes."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este desafio é uma conversa curta sobre o módulo. Primeiro, ela é criada para o seu nível de conversação, o que leva até meio minuto."
+            "value" : "Este desafio é uma conversa rápida sobre a unidade. Primeiro, a gente cria a conversa para o seu nível de conversação, o que leva até meio minuto."
           }
         }
       }
@@ -4117,13 +4117,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das kommt manchmal vor. Versuch es gleich noch einmal."
+            "value" : "Das kommt manchmal vor. Versuche es gleich noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A veces pasa. Vuelve a intentarlo dentro de un momento."
+            "value" : "Esto ocurre a veces. Vuelve a intentarlo en un momento."
           }
         },
         "fr" : {
@@ -4135,7 +4135,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso acontece às vezes. Tente de novo daqui a pouco."
+            "value" : "Isso acontece às vezes. Tente de novo em instantes."
           }
         }
       }
@@ -4181,7 +4181,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para mejorar"
+            "value" : "Por mejorar"
           }
         },
         "fr" : {
@@ -4193,7 +4193,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para melhorar"
+            "value" : "O que melhorar"
           }
         }
       }
@@ -4216,7 +4216,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Examen blanc d’expression orale du TOEFL"
+            "value" : "Examen blanc d’expression orale TOEFL"
           }
         },
         "pt" : {
@@ -4233,13 +4233,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch einmal versuchen"
+            "value" : "Erneut versuchen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentarlo"
+            "value" : "Inténtalo de nuevo"
           }
         },
         "fr" : {
@@ -4251,7 +4251,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar de novo"
+            "value" : "Tentar novamente"
           }
         }
       }
@@ -4262,25 +4262,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktiviere in den Einstellungen das Mikrofon für Zoonk, um deine Antwort laut auszusprechen."
+            "value" : "Aktiviere in den Einstellungen das Mikrofon für Zoonk, um laut zu antworten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activa el micrófono de Zoonk en Ajustes para responder en voz alta."
+            "value" : "Activa el micrófono para Zoonk en Ajustes para responder en voz alta."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Active le micro pour Zoonk dans Réglages afin de répondre à voix haute."
+            "value" : "Active le micro pour Zoonk dans Réglages pour répondre à voix haute."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ative o microfone do Zoonk nos Ajustes para responder em voz alta."
+            "value" : "Ative o microfone para o Zoonk em Ajustes para responder em voz alta."
           }
         }
       }
@@ -4297,19 +4297,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activa el micrófono de Zoonk en Ajustes para decir la palabra. Puedes omitirla por ahora."
+            "value" : "Activa el micrófono para Zoonk en Ajustes para decir la palabra. Puedes omitirla por ahora."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Active le micro pour Zoonk dans Réglages pour dire le mot. Tu peux aussi passer pour le moment."
+            "value" : "Active le micro pour Zoonk dans Réglages pour dire le mot. Tu peux le passer pour l’instant."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ative o microfone do Zoonk nos Ajustes para falar a palavra. Você pode pular por enquanto."
+            "value" : "Ative o microfone para o Zoonk em Ajustes para falar a palavra. Você pode pular por enquanto."
           }
         }
       }
@@ -4320,7 +4320,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schreib deine Antwort"
+            "value" : "Schreibe deine Antwort"
           }
         },
         "es" : {
@@ -4349,7 +4349,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einheits-Herausforderung"
+            "value" : "Einheiten-Herausforderung"
           }
         },
         "es" : {
@@ -4378,7 +4378,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sprachverwendung"
+            "value" : "Sprachgebrauch"
           }
         },
         "es" : {
@@ -4390,7 +4390,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maîtrise de la langue"
+            "value" : "Utilisation de la langue"
           }
         },
         "pt" : {
@@ -4436,13 +4436,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Antwort konnte diesmal nicht geprüft werden. Versuch es noch einmal."
+            "value" : "Wir konnten deine Antwort diesmal nicht prüfen. Versuch es noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido comprobar tu respuesta. Vuelve a intentarlo."
+            "value" : "No hemos podido comprobar tu respuesta esta vez. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -4454,7 +4454,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível conferir sua resposta desta vez. Tente de novo."
+            "value" : "A gente não conseguiu conferir sua resposta desta vez. Tente novamente."
           }
         }
       }
@@ -4471,7 +4471,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos oído ninguna palabra. Vuelve a intentarlo."
+            "value" : "No hemos oído ninguna palabra. Inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -4483,7 +4483,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos ouvir nenhuma palavra. Tente de novo."
+            "value" : "A gente não ouviu nenhuma palavra. Tente novamente."
           }
         }
       }
@@ -4500,19 +4500,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos oído la palabra. Vuelve a intentarlo un poco más cerca."
+            "value" : "No hemos oído la palabra. Inténtalo de nuevo un poco más cerca del micrófono."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous n’avons pas entendu le mot. Réessaie en te rapprochant un peu."
+            "value" : "Nous n’avons pas entendu le mot. Réessaie en te rapprochant un peu du micro."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos ouvir a palavra. Tente de novo um pouco mais perto."
+            "value" : "A gente não ouviu a palavra. Tente novamente um pouco mais perto do microfone."
           }
         }
       }
@@ -4523,13 +4523,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Gespräch konnte nicht gespeichert werden."
+            "value" : "Wir konnten das Gespräch nicht speichern."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido guardar la llamada."
+            "value" : "No hemos podido guardar la llamada."
           }
         },
         "fr" : {
@@ -4541,7 +4541,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível salvar a conversa."
+            "value" : "A gente não conseguiu salvar a conversa."
           }
         }
       }
@@ -4552,13 +4552,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Antworten konnten nicht gespeichert werden."
+            "value" : "Wir konnten deine Antworten nicht speichern."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se han podido guardar tus respuestas."
+            "value" : "No hemos podido guardar tus respuestas."
           }
         },
         "fr" : {
@@ -4570,7 +4570,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível salvar suas respostas."
+            "value" : "A gente não conseguiu salvar suas respostas."
           }
         }
       }
@@ -4599,7 +4599,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvimos “%@”"
+            "value" : "A gente ouviu “%@”"
           }
         }
       }
@@ -4610,25 +4610,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was du vermitteln möchtest"
+            "value" : "Was du vermitteln sollst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué quieres transmitir"
+            "value" : "Qué quieres comunicar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce que tu veux faire passer"
+            "value" : "Ce qu’il faut exprimer"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que você quer transmitir"
+            "value" : "O que comunicar"
           }
         }
       }
@@ -4697,7 +4697,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit einer anderen prüfungsteilnehmenden Person (KI)"
+            "value" : "Mit einer anderen Person in der Prüfung (KI)"
           }
         },
         "es" : {
@@ -4761,13 +4761,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Daran kannst du als Nächstes arbeiten: %@"
+            "value" : "Als Nächstes üben: %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Próximo aspecto que mejorar: %@"
+            "value" : "Trabaja ahora: %@"
           }
         },
         "fr" : {
@@ -4779,7 +4779,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pratique a seguir: %@"
+            "value" : "Próximo ponto para praticar: %@"
           }
         }
       }
@@ -4790,7 +4790,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Feedback wird erstellt…"
+            "value" : "Wir erstellen dein Feedback…"
           }
         },
         "es" : {
@@ -4802,13 +4802,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rédaction de ton retour…"
+            "value" : "Préparation de ton retour…"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escrevendo seu feedback…"
+            "value" : "Criando seu feedback…"
           }
         }
       }
@@ -4819,7 +4819,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast gesagt"
+            "value" : "Das hast du gesagt"
           }
         },
         "es" : {
@@ -4860,7 +4860,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toi : %@"
+            "value" : "Toi : %@"
           }
         },
         "pt" : {
@@ -4883,7 +4883,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya estás en una llamada"
+            "value" : "Ya tienes una llamada en curso"
           }
         },
         "fr" : {
@@ -4912,19 +4912,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta ya la dominas. No volverá a aparecer."
+            "value" : "Ya sabes esta palabra. No volverá a aparecer."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu maîtrises ce mot. Il ne reviendra plus."
+            "value" : "Tu connais ce mot. Il ne reviendra plus."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já aprendeu essa palavra. Ela não vai aparecer de novo."
+            "value" : "Você aprendeu esta palavra. Ela não vai aparecer de novo."
           }
         }
       }
@@ -4935,25 +4935,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast deine heutige Lernzeit erreicht. Das Gespräch kommt in deiner nächsten Lerneinheit."
+            "value" : "Deine heutige Lernzeit ist aufgebraucht. Das Gespräch kommt in deiner nächsten Lerneinheit."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has llegado al límite de tiempo de estudio de hoy. Lo harás en tu próxima sesión."
+            "value" : "Has alcanzado el tiempo de estudio de hoy. La llamada estará en tu próxima sesión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as atteint la durée d’étude prévue pour aujourd’hui. Ce défi sera dans ta prochaine séance."
+            "value" : "Tu as atteint ta durée d’étude pour aujourd’hui. Cet appel sera dans ta prochaine séance."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você chegou ao limite do tempo de estudo de hoje. Isso fica para a próxima sessão."
+            "value" : "Você chegou ao fim do seu tempo de estudo de hoje. A conversa estará na sua próxima sessão."
           }
         }
       }
@@ -4970,7 +4970,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda gratuita disponible sin una cuenta. Crea una cuenta gratis para seguir."
+            "value" : "Has usado toda la ayuda gratuita disponible sin cuenta. Crea una cuenta gratuita para continuar."
           }
         },
         "fr" : {
@@ -4982,7 +4982,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você usou toda a ajuda grátis disponível sem uma conta. Crie uma conta grátis para continuar."
+            "value" : "Você usou toda a ajuda gratuita disponível sem uma conta. Crie uma conta grátis para continuar."
           }
         }
       }
@@ -4993,25 +4993,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast die Hilfe für diesen Monat aufgebraucht. Nächsten Monat ist sie wieder verfügbar. Mit Plus kannst du jetzt weitermachen."
+            "value" : "Du hast deine Hilfe für diesen Monat aufgebraucht. Nächsten Monat ist sie wieder verfügbar. Mit Plus kannst du sofort weitermachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda de este mes. Volverá el mes que viene o pásate a Plus para seguir ahora."
+            "value" : "Has usado la ayuda de este mes. Volverá el mes que viene, o puedes conseguir Plus para continuar ahora."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as utilisé toute l’aide du mois. Elle revient le mois prochain, ou passe à Plus pour continuer dès maintenant."
+            "value" : "Tu as utilisé toute ton aide pour ce mois. Elle sera de nouveau disponible le mois prochain. Passe à Plus pour continuer dès maintenant."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você usou toda a ajuda deste mês. Ela volta no mês que vem, ou assine o Plus para continuar agora."
+            "value" : "Você usou toda a ajuda deste mês. Ela volta no mês que vem, ou você pode assinar o Plus para continuar agora."
           }
         }
       }
@@ -5022,25 +5022,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast die kostenlose Hilfe für heute aufgebraucht. Erstelle ein kostenloses Konto, um weiterzumachen."
+            "value" : "Du hast deine kostenlose Hilfe für heute aufgebraucht. Erstelle ein kostenloses Konto, um weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda gratuita de hoy. Crea una cuenta gratis para seguir."
+            "value" : "Has usado la ayuda gratuita de hoy. Crea una cuenta gratuita para continuar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as utilisé toute l’aide gratuite du jour. Crée un compte gratuit pour continuer."
+            "value" : "Tu as utilisé toute ton aide gratuite pour aujourd’hui. Crée un compte gratuit pour continuer."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você usou toda a ajuda grátis de hoje. Crie uma conta grátis para continuar."
+            "value" : "Você usou toda a ajuda gratuita de hoje. Crie uma conta grátis para continuar."
           }
         }
       }
@@ -5051,25 +5051,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast die Hilfe für heute aufgebraucht. Morgen ist sie wieder verfügbar. Mit Plus kannst du jetzt weitermachen."
+            "value" : "Du hast deine Hilfe für heute aufgebraucht. Morgen ist sie wieder verfügbar. Mit Plus kannst du sofort weitermachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda de hoy. Volverá mañana o pásate a Plus para seguir ahora."
+            "value" : "Has usado la ayuda de hoy. Volverá mañana, o puedes conseguir Plus para continuar ahora."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as utilisé toute l’aide du jour. Elle revient demain, ou passe à Plus pour continuer dès maintenant."
+            "value" : "Tu as utilisé toute ton aide pour aujourd’hui. Elle sera de nouveau disponible demain. Passe à Plus pour continuer dès maintenant."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você usou toda a ajuda de hoje. Ela volta amanhã, ou assine o Plus para continuar agora."
+            "value" : "Você usou toda a ajuda de hoje. Ela volta amanhã, ou você pode assinar o Plus para continuar agora."
           }
         }
       }
@@ -5080,19 +5080,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast die Hilfe für heute aufgebraucht. Morgen ist sie wieder verfügbar."
+            "value" : "Du hast deine Hilfe für heute aufgebraucht. Morgen ist sie wieder verfügbar."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda de hoy. Volverá mañana."
+            "value" : "Has usado la ayuda de hoy. Volverá mañana."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as utilisé toute l’aide du jour. Elle revient demain."
+            "value" : "Tu as utilisé toute ton aide pour aujourd’hui. Elle sera de nouveau disponible demain."
           }
         },
         "pt" : {
@@ -5115,19 +5115,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Casi has agotado el tiempo de llamada de este mes."
+            "value" : "Tu tiempo de llamadas de este mes está a punto de agotarse."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as presque épuisé ton temps d’appel pour ce mois-ci."
+            "value" : "Ton temps d’appel pour ce mois est presque épuisé."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu tempo de conversa deste mês está quase acabando."
+            "value" : "Seu tempo de conversa deste mês está acabando."
           }
         }
       }
@@ -5144,19 +5144,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Casi has agotado el tiempo de llamada de hoy."
+            "value" : "Tu tiempo de llamadas de hoy está a punto de agotarse."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as presque épuisé ton temps d’appel pour aujourd’hui."
+            "value" : "Ton temps d’appel pour aujourd’hui est presque épuisé."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu tempo de conversa de hoje está quase acabando."
+            "value" : "Seu tempo de conversa de hoje está acabando."
           }
         }
       }
@@ -5167,25 +5167,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nächsten Monat kannst du wieder Gespräche führen. Mit Plus kannst du jetzt mehr Gespräche führen."
+            "value" : "Nächsten Monat kannst du wieder Gespräche führen. Mit Plus hast du mehr Gesprächszeit."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podrás volver a llamar el mes que viene o pásate a Plus para tener más tiempo de llamada."
+            "value" : "Podrás volver a llamar el mes que viene, o conseguir Plus para tener límites de llamadas más altos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu pourras de nouveau appeler le mois prochain, ou passe à Plus pour profiter de limites d’appel plus élevées."
+            "value" : "Tu pourras de nouveau passer des appels le mois prochain. Passe à Plus pour avoir plus de temps d’appel."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você poderá conversar de novo no mês que vem, ou assine o Plus para ter mais tempo de conversa."
+            "value" : "Suas conversas voltam no mês que vem, ou você pode assinar o Plus para ter limites maiores."
           }
         }
       }
@@ -5208,13 +5208,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu pourras de nouveau appeler le mois prochain."
+            "value" : "Tu pourras de nouveau passer des appels le mois prochain."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você poderá conversar de novo no mês que vem."
+            "value" : "Suas conversas voltam no mês que vem."
           }
         }
       }
@@ -5225,25 +5225,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Morgen kannst du wieder Gespräche führen. Mit Plus kannst du jetzt mehr Gespräche führen."
+            "value" : "Morgen kannst du wieder Gespräche führen. Mit Plus hast du mehr Gesprächszeit."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Podrás volver a llamar mañana o pásate a Plus para tener más tiempo de llamada."
+            "value" : "Podrás volver a llamar mañana, o conseguir Plus para tener límites de llamadas más altos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu pourras de nouveau appeler demain, ou passe à Plus pour profiter de limites d’appel plus élevées."
+            "value" : "Tu pourras de nouveau passer des appels demain. Passe à Plus pour avoir plus de temps d’appel."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você poderá conversar de novo amanhã, ou assine o Plus para ter mais tempo de conversa."
+            "value" : "Suas conversas voltam amanhã, ou você pode assinar o Plus para ter limites maiores."
           }
         }
       }
@@ -5266,13 +5266,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu pourras de nouveau appeler demain."
+            "value" : "Tu pourras de nouveau passer des appels demain."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você poderá conversar de novo amanhã."
+            "value" : "Suas conversas voltam amanhã."
           }
         }
       }

@@ -36,7 +36,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@, Level %2$lld. Statistiken"
+            "value" : "%1$@, Level %2$lld. Statistik"
           }
         },
         "en" : {
@@ -74,13 +74,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Tag übrig"
+                  "value" : "Noch %lld Tag"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Tage übrig"
+                  "value" : "Noch %lld Tage"
                 }
               }
             }
@@ -110,13 +110,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld día restante"
+                  "value" : "Queda %lld día"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld días restantes"
+                  "value" : "Quedan %lld días"
                 }
               }
             }
@@ -128,13 +128,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld jour restant"
+                  "value" : "Il reste %lld jour"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld jours restants"
+                  "value" : "Il reste %lld jours"
                 }
               }
             }
@@ -146,13 +146,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld dia restante"
+                  "value" : "Falta %lld dia"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld dias restantes"
+                  "value" : "Faltam %lld dias"
                 }
               }
             }
@@ -213,7 +213,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma unidade do seu plano de idioma, com as aulas e seu progresso."
+            "value" : "Uma unidade do seu plano de idiomas, com as aulas e seu progresso."
           }
         }
       }
@@ -317,7 +317,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Objetivo actual. Cambiar objetivo"
+            "value" : "Objetivo actual. Cambiar de objetivo"
           }
         },
         "fr" : {
@@ -340,25 +340,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Ideen aus jedem Kapitel auf einer Karte, damit du sehen kannst, wie sie zusammenhängen."
+            "value" : "Die Ideen jedes Kapitels auf einer Mindmap, damit du ihre Zusammenhänge wiederholen kannst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las ideas de cada capítulo en un mismo mapa, para repasar cómo se relacionan."
+            "value" : "Las ideas de cada capítulo en un mapa, para repasar cómo se relacionan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les idées de chaque chapitre réunies sur une carte pour voir leurs liens."
+            "value" : "Les idées de chaque chapitre sur une carte pour revoir leurs liens."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As ideias de cada capítulo em um só mapa, para revisar como elas se conectam."
+            "value" : "As ideias de cada capítulo em um mapa, para revisar como elas se conectam."
           }
         }
       }
@@ -532,7 +532,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entre para continuar de onde parou ou comece de graça."
+            "value" : "Entre para continuar de onde parou ou comece grátis."
           }
         }
       }
@@ -671,7 +671,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Progrès"
+            "value" : "Progression"
           }
         },
         "pt" : {
@@ -735,7 +735,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pesquisar"
+            "value" : "Buscar"
           }
         }
       }
@@ -781,7 +781,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza un objetivo"
+            "value" : "Empezar un objetivo"
           }
         },
         "fr" : {
@@ -810,7 +810,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza un objetivo nuevo"
+            "value" : "Empezar un nuevo objetivo"
           }
         },
         "fr" : {
@@ -839,7 +839,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza gratis"
+            "value" : "Empezar gratis"
           }
         },
         "fr" : {
@@ -851,7 +851,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar de graça"
+            "value" : "Começar grátis"
           }
         }
       }
@@ -862,7 +862,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit einem Ziel starten"
+            "value" : "Starte mit einem Ziel"
           }
         },
         "es" : {
@@ -955,19 +955,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuéntanos qué quieres aprender y planificaremos cada día hasta que lo consigas."
+            "value" : "Cuéntanos qué quieres aprender y planificaremos cada día para ayudarte a conseguirlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dis-nous ce que tu veux apprendre et nous préparerons ton plan jour après jour jusqu’à ce que tu y arrives."
+            "value" : "Dis-nous ce que tu veux apprendre et nous préparerons ton plan jour après jour jusqu’à ton objectif."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conte o que você quer aprender e a gente vai planejar cada dia até você chegar lá."
+            "value" : "Conte o que você quer aprender e a gente planeja cada dia até você chegar lá."
           }
         }
       }
@@ -990,7 +990,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le jour est arrivé"
+            "value" : "Le grand jour est arrivé"
           }
         },
         "pt" : {
@@ -1007,25 +1007,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Fragen, die du falsch beantwortet hast, warum, und Übungen, bis du sie richtig beantwortest."
+            "value" : "Die Fragen, die du falsch beantwortet hast, warum deine Antworten falsch waren und Übungen, bis du sie richtig beantwortest."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las preguntas que has fallado, por qué y cómo practicarlas hasta acertarlas."
+            "value" : "Las preguntas que fallaste, por qué las fallaste y ejercicios para practicarlas hasta acertar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les questions auxquelles tu as mal répondu, les raisons et des exercices pour trouver la bonne réponse."
+            "value" : "Les questions auxquelles tu as mal répondu, pourquoi, et de quoi t’entraîner jusqu’à trouver les bonnes réponses."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As perguntas que você errou, o motivo de cada erro e prática até acertar."
+            "value" : "As questões que você errou, por que errou e prática até acertar."
           }
         }
       }
@@ -1094,25 +1094,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was du jeden Tag bis zu deinem Ziel lernst und welche Themen es umfasst."
+            "value" : "Was du jeden Tag bis zu deinem Ziel lernst und welche Inhalte dein Plan abdeckt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que estudiarás cada día hasta alcanzar tu objetivo y qué incluye."
+            "value" : "Qué estudiarás cada día para alcanzar tu objetivo y qué incluye el plan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce que tu étudieras chaque jour jusqu’à ton objectif et ce que cela couvre."
+            "value" : "Ce que tu étudieras chaque jour jusqu’à ton objectif et les sujets abordés."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que você vai estudar a cada dia até alcançar sua meta, e o que ela abrange."
+            "value" : "O que você vai estudar a cada dia até sua meta e o que o plano abrange."
           }
         }
       }
@@ -1129,19 +1129,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero responde a tus preguntas y adapta tu plan."
+            "value" : "Tu Compañero responde a tus preguntas y ajusta tu plan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon répond à tes questions et ajuste ton plan."
+            "value" : "Ton Compagnon répond à tes questions et ajuste ton plan."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu parceiro responde suas perguntas e ajusta seu plano."
+            "value" : "Seu Parceiro responde suas perguntas e ajusta seu plano."
           }
         }
       }

@@ -48,7 +48,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Poser une question"
+            "value" : "Demander"
           }
         },
         "pt" : {
@@ -83,13 +83,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Demander à %1$@ : « %2$@ »"
+            "value" : "Demander à %1$@ : « %2$@ »"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perguntar a %1$@: “%2$@”"
+            "value" : "Pergunte para %1$@: “%2$@”"
           }
         }
       }
@@ -100,7 +100,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ fragen …"
+            "value" : "%@ fragen…"
           }
         },
         "es" : {
@@ -118,7 +118,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perguntar a %@…"
+            "value" : "Pergunte para %@…"
           }
         }
       }
@@ -170,7 +170,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuer la séance d’aujourd’hui"
+            "value" : "Continuer la séance du jour"
           }
         },
         "pt" : {
@@ -396,7 +396,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulacro de examen %@"
+            "value" : "Simulacro %@"
           }
         },
         "fr" : {
@@ -425,7 +425,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulacros de examen"
+            "value" : "Simulacros"
           }
         },
         "fr" : {
@@ -506,7 +506,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fehler üben"
+            "value" : "Deine Fehler üben"
           }
         },
         "es" : {
@@ -622,13 +622,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suchen oder fragen …"
+            "value" : "Suchen oder fragen…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Buscar o preguntar…"
+            "value" : "Busca o pregunta…"
           }
         },
         "fr" : {
@@ -640,7 +640,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pesquise ou pergunte…"
+            "value" : "Busque ou pergunte…"
           }
         }
       }
@@ -663,13 +663,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer un commentaire"
+            "value" : "Envoyer un avis"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar opinião"
+            "value" : "Enviar feedback"
           }
         }
       }
@@ -692,7 +692,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réglages"
+            "value" : "Paramètres"
           }
         },
         "pt" : {
@@ -709,7 +709,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Ziel starten"
+            "value" : "Ziel starten"
           }
         },
         "es" : {
@@ -738,7 +738,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Ziel starten: „%@“"
+            "value" : "Ziel starten: „%@“"
           }
         },
         "es" : {
@@ -750,7 +750,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer un objectif : « %@ »"
+            "value" : "Commencer un objectif : « %@ »"
           }
         },
         "pt" : {
@@ -767,19 +767,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein neues Ziel starten: „%@“"
+            "value" : "Neues Ziel starten: „%@“"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar un objetivo nuevo: «%@»"
+            "value" : "Empezar un nuevo objetivo: «%@»"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer un nouvel objectif : « %@ »"
+            "value" : "Commencer un nouvel objectif : « %@ »"
           }
         },
         "pt" : {
@@ -831,7 +831,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cambiar a %@"
+            "value" : "Cambiar al objetivo %@"
           }
         },
         "fr" : {
@@ -860,7 +860,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hacer un simulacro de examen"
+            "value" : "Hacer un simulacro"
           }
         },
         "fr" : {

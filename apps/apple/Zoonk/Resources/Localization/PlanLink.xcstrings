@@ -281,13 +281,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Lernplan, den jemand mit dir geteilt hat"
+            "value" : "Ein Lernplan, der mit dir geteilt wurde"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un plan de estudio que han compartido contigo"
+            "value" : "Un plan de estudio que alguien ha compartido contigo"
           }
         },
         "fr" : {
@@ -299,7 +299,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um plano de estudos que compartilharam com você"
+            "value" : "Um plano de estudos compartilhado com você"
           }
         }
       }
@@ -310,7 +310,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wie viel Zeit am Tag?"
+            "value" : "Wie viel Zeit pro Tag?"
           }
         },
         "es" : {
@@ -351,13 +351,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Partir de ce plan"
+            "value" : "Commencer avec ce plan"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar a partir deste plano"
+            "value" : "Começar com este plano"
           }
         }
       }
@@ -374,7 +374,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No ha funcionado. Vuelve a intentarlo dentro de un momento."
+            "value" : "Algo ha fallado. Vuelve a intentarlo dentro de un momento."
           }
         },
         "fr" : {
@@ -386,7 +386,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu certo. Tente de novo daqui a pouco."
+            "value" : "Não deu certo. Tente novamente em instantes."
           }
         }
       }
@@ -426,13 +426,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch einmal versuchen"
+            "value" : "Erneut versuchen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentarlo"
+            "value" : "Volver a intentar"
           }
         },
         "fr" : {
@@ -444,7 +444,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar de novo"
+            "value" : "Tentar novamente"
           }
         }
       }
@@ -455,7 +455,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieser Plan konnte nicht geladen werden"
+            "value" : "Wir konnten diesen Plan nicht laden"
           }
         },
         "es" : {
@@ -484,25 +484,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du kannst gerade kein weiteres Ziel starten. Schließe zuerst ein Ziel ab oder pausiere es."
+            "value" : "Du kannst gerade kein weiteres Ziel starten. Schließe zuerst eines ab oder pausiere es."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No puedes empezar otro objetivo ahora mismo. Completa o pausa uno primero."
+            "value" : "Ahora mismo no puedes empezar otro objetivo. Primero termina o pausa uno."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu ne peux pas démarrer un autre objectif pour le moment. Termine-en un ou mets-en un en pause d’abord."
+            "value" : "Tu ne peux pas commencer un autre objectif pour le moment. Termine ou mets en pause un objectif d’abord."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você não pode começar outra meta agora. Conclua ou pause uma primeiro."
+            "value" : "Você não pode começar outra meta agora. Primeiro, conclua ou pause uma delas."
           }
         }
       }
@@ -513,25 +513,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du bekommst deinen eigenen Plan für dasselbe Thema und lernst in deinem Tempo. Nach ein paar Fragen kannst du überspringen, was du schon weißt."
+            "value" : "Du bekommst einen eigenen Plan zum selben Thema, in deinem Tempo. Ein paar Fragen sorgen dafür, dass du überspringst, was du schon weißt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendrás tu propio plan para la misma materia y a tu ritmo. Responde a unas preguntas y omite lo que ya sabes."
+            "value" : "Tendrás tu propio plan sobre el mismo tema, a tu ritmo. Unas preguntas permitirán omitir lo que ya sabes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu auras ton propre plan sur le même sujet, à ton rythme. Réponds à quelques questions, puis ignore ce que tu connais déjà."
+            "value" : "Tu auras ton propre plan sur le même sujet, à ton rythme. Quelques questions permettront ensuite de passer ce que tu sais déjà."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você recebe seu próprio plano para a mesma matéria, no seu ritmo. Responda a algumas perguntas para pular o que você já sabe."
+            "value" : "Você recebe seu próprio plano para a mesma matéria, no seu ritmo. Depois, algumas perguntas ajudam a pular o que você já sabe."
           }
         }
       }

@@ -36,7 +36,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ konnte nicht geladen werden. Prüfe deine Verbindung und versuche es noch einmal."
+            "value" : "%@ wurde nicht geladen. Prüfe deine Verbindung und versuche es erneut."
           }
         },
         "es" : {
@@ -48,13 +48,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de charger %@. Vérifie ta connexion et réessaie."
+            "value" : "%@ n’a pas pu être chargé. Vérifie ta connexion et réessaie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar %@. Confira sua conexão e tente de novo."
+            "value" : "Não foi possível carregar %@. Confira sua conexão e tente novamente."
           }
         }
       }
@@ -71,7 +71,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, no aparece en tu resultado"
+            "value" : "%@, falta en tu resultado"
           }
         },
         "fr" : {
@@ -83,7 +83,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, ausente no seu resultado"
+            "value" : "%@, faltando no seu resultado"
           }
         }
       }
@@ -106,7 +106,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, inattendu"
+            "value" : "%@, ligne inattendue"
           }
         },
         "pt" : {
@@ -218,7 +218,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine funktionierende Abfrage"
+            "value" : "Eine Abfrage, die funktioniert"
           }
         },
         "es" : {
@@ -282,13 +282,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No coincide con el resultado esperado"
+            "value" : "No coincide con la salida esperada"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne correspond pas au résultat attendu"
+            "value" : "Ne correspond pas à la sortie attendue"
           }
         },
         "pt" : {
@@ -311,7 +311,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esperado"
+            "value" : "Salida esperada"
           }
         },
         "fr" : {
@@ -363,7 +363,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erwartetes Ergebnis in dieser Reihenfolge"
+            "value" : "Erwartetes Ergebnis, in dieser Reihenfolge"
           }
         },
         "es" : {
@@ -392,19 +392,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ wird vorbereitet. Beim ersten Mal dauert das ein paar Sekunden."
+            "value" : "Wir bereiten %@ vor. Beim ersten Mal dauert das ein paar Sekunden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando %@. La primera vez puede tardar unos segundos."
+            "value" : "Preparando %@. La primera vez tarda unos segundos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Préparation de %@. La première fois, cela prend quelques secondes."
+            "value" : "Préparation de %@. Cela prend quelques secondes la première fois."
           }
         },
         "pt" : {
@@ -421,25 +421,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zeile %@ gehört dir"
+            "value" : "Zeile %@ kannst du bearbeiten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La línea %@ es tuya"
+            "value" : "Puedes editar la línea %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La ligne %@ est à toi"
+            "value" : "Tu peux modifier la ligne %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A linha %@ é sua"
+            "value" : "A linha %@ é sua para editar"
           }
         }
       }
@@ -462,13 +462,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ligne %lld, à modifier"
+            "value" : "Ligne %lld, à toi de la modifier"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Linha %lld, para você editar"
+            "value" : "Linha %lld, sua para editar"
           }
         }
       }
@@ -514,25 +514,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Zeilen %@ gehören dir"
+            "value" : "Zeilen %@ kannst du bearbeiten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las líneas %@ son tuyas"
+            "value" : "Puedes editar las líneas %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les lignes %@ sont à toi"
+            "value" : "Tu peux modifier les lignes %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As linhas %@ são suas"
+            "value" : "As linhas %@ são suas para editar"
           }
         }
       }
@@ -549,13 +549,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Coincide con el resultado esperado"
+            "value" : "Coincide con la salida esperada"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Correspond au résultat attendu"
+            "value" : "Correspond à la sortie attendue"
           }
         },
         "pt" : {
@@ -572,7 +572,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht ganz"
+            "value" : "Noch nicht ganz"
           }
         },
         "es" : {
@@ -590,7 +590,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quase"
+            "value" : "Ainda não"
           }
         }
       }
@@ -607,7 +607,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "sin definir"
+            "value" : "sin asignar"
           }
         },
         "fr" : {
@@ -630,7 +630,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es wurde nichts ausgegeben"
+            "value" : "Keine Ausgabe"
           }
         },
         "es" : {
@@ -642,7 +642,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rien n’a été affiché"
+            "value" : "Rien ne s’est affiché"
           }
         },
         "pt" : {
@@ -688,25 +688,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gib zuerst deine Vorhersage ab. Gehe dann einen Schritt weiter, um zu sehen, was passiert."
+            "value" : "Stelle zuerst eine Vermutung auf. Gehe dann einen Schritt weiter, um zu sehen, was passiert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primero, haz una predicción. Después, avanza para ver qué ocurre."
+            "value" : "Primero predice qué pasará. Después avanza para comprobarlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fais d’abord une prédiction, puis avance étape par étape pour voir ce qui se passe."
+            "value" : "Fais d’abord une prédiction. Puis avance d’une étape pour voir ce qui se passe."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faça uma previsão primeiro. Depois, avance para ver o que acontece."
+            "value" : "Primeiro, faça uma previsão. Depois, avance para ver o que acontece."
           }
         }
       }
@@ -781,19 +781,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a ejecutar"
+            "value" : "Ejecutar de nuevo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Relancer"
+            "value" : "Exécuter à nouveau"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Executar de novo"
+            "value" : "Executar novamente"
           }
         }
       }
@@ -804,7 +804,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Führe den Code aus, um das Ergebnis zu sehen"
+            "value" : "Führe den Code aus, um die Ausgabe zu sehen"
           }
         },
         "es" : {
@@ -822,7 +822,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Execute o código para ver o resultado"
+            "value" : "Execute o código para ver a saída"
           }
         }
       }
@@ -839,7 +839,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En ejecución"
+            "value" : "Ejecutando"
           }
         },
         "fr" : {
@@ -862,25 +862,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "SQL-Begriffe, Tabellen und Spalten"
+            "value" : "SQL-Schlüsselwörter, Tabellen und Spalten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Palabras, tablas y columnas de SQL"
+            "value" : "Palabras de SQL, tablas y columnas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mots SQL, tables et colonnes"
+            "value" : "Mots-clés, tables et colonnes SQL"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Palavras, tabelas e colunas SQL"
+            "value" : "Palavras de SQL, tabelas e colunas"
           }
         }
       }
@@ -897,13 +897,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar de nuevo con el código original"
+            "value" : "Volver a empezar con el código original"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recommencer avec le code d’origine"
+            "value" : "Repartir du code d’origine"
           }
         },
         "pt" : {
@@ -973,7 +973,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Étape %1$lld sur %2$lld. La ligne %3$lld a été exécutée."
+            "value" : "Étape %1$lld sur %2$lld. Ligne %3$lld exécutée."
           }
         },
         "pt" : {
@@ -990,13 +990,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einen Schritt zurück"
+            "value" : "Schritt zurück"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retroceder un paso"
+            "value" : "Retroceder"
           }
         },
         "fr" : {
@@ -1019,13 +1019,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einen Schritt weiter"
+            "value" : "Schritt weiter"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avanzar un paso"
+            "value" : "Avanzar"
           }
         },
         "fr" : {
@@ -1037,7 +1037,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avançar uma etapa"
+            "value" : "Avançar um passo"
           }
         }
       }
@@ -1066,7 +1066,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avance para executar a próxima linha."
+            "value" : "Avance um passo para executar a próxima linha."
           }
         }
       }
@@ -1095,7 +1095,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avance para ver se você acertou."
+            "value" : "Avance um passo para ver se você acertou."
           }
         }
       }
@@ -1109,13 +1109,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Nach %lld Sekunde gestoppt. Gibt es eine Endlosschleife?"
+                  "value" : "Nach %lld Sekunde gestoppt. Gibt es eine Schleife, die nie endet?"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Nach %lld Sekunden gestoppt. Gibt es eine Endlosschleife?"
+                  "value" : "Nach %lld Sekunden gestoppt. Gibt es eine Schleife, die nie endet?"
                 }
               }
             }
@@ -1145,13 +1145,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Se ha detenido después de %lld segundo. ¿Hay un bucle que no termina?"
+                  "value" : "Se ha detenido después de %lld segundo. ¿Hay algún bucle que no termina nunca?"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Se ha detenido después de %lld segundos. ¿Hay un bucle que no termina?"
+                  "value" : "Se ha detenido después de %lld segundos. ¿Hay algún bucle que no termina nunca?"
                 }
               }
             }
@@ -1163,13 +1163,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Arrêt après %lld seconde. Y a-t-il une boucle sans fin ?"
+                  "value" : "Arrêté après %lld seconde. Y a-t-il une boucle qui ne se termine jamais ?"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Arrêt après %lld secondes. Y a-t-il une boucle sans fin ?"
+                  "value" : "Arrêté après %lld secondes. Y a-t-il une boucle qui ne se termine jamais ?"
                 }
               }
             }
@@ -1181,13 +1181,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A execução parou depois de %lld segundo. Será que há um loop que nunca termina?"
+                  "value" : "A execução parou após %lld segundo. Há um loop que nunca termina?"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A execução parou depois de %lld segundos. Será que há um loop que nunca termina?"
+                  "value" : "A execução parou após %lld segundos. Há um loop que nunca termina?"
                 }
               }
             }
@@ -1201,25 +1201,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gestoppt, weil zu viel ausgegeben wurde. Gibt es eine Endlosschleife?"
+            "value" : "Gestoppt, weil zu viel ausgegeben wurde. Gibt es eine Schleife, die nie endet?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha detenido porque ha mostrado demasiados datos. ¿Hay un bucle que no termina?"
+            "value" : "Se ha detenido porque ha mostrado demasiado contenido. ¿Hay algún bucle que no termina nunca?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrêt : le programme a affiché trop de texte. Y a-t-il une boucle sans fin ?"
+            "value" : "Arrêté car trop de texte a été affiché. Y a-t-il une boucle qui ne se termine jamais ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A execução parou porque exibiu informação demais. Será que há um loop que nunca termina?"
+            "value" : "A execução parou porque exibiu conteúdo demais. Há um loop que nunca termina?"
           }
         }
       }
@@ -1259,25 +1259,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das war der ganze Ablauf."
+            "value" : "Das war der gesamte Ablauf."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eso es todo."
+            "value" : "La ejecución ha terminado."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "C’est la fin de l’exécution."
+            "value" : "L’exécution est terminée."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa foi toda a execução."
+            "value" : "A execução terminou."
           }
         }
       }
@@ -1288,25 +1288,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das war der ganze Ablauf. Prüfe deine Vorhersagen, wenn du bereit bist."
+            "value" : "Das war der gesamte Ablauf. Prüfe deine Vermutungen, wenn du bereit bist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eso es todo. Comprueba tus predicciones cuando quieras."
+            "value" : "La ejecución ha terminado. Comprueba tus predicciones cuando quieras."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "C’est la fin de l’exécution. Vérifie tes prédictions quand tu es prêt."
+            "value" : "L’exécution est terminée. Vérifie tes prédictions quand tu es prêt."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa foi toda a execução. Confira suas previsões quando quiser."
+            "value" : "A execução terminou. Confira suas previsões quando estiver pronto."
           }
         }
       }
@@ -1323,13 +1323,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La consulta se ha ejecutado, pero no ha devuelto ninguna tabla. Usa SELECT para obtener filas."
+            "value" : "La consulta se ha ejecutado, pero no ha devuelto una tabla. Usa SELECT para obtener filas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La requête a été exécutée, mais n’a renvoyé aucune table. Utilise SELECT pour obtenir des lignes."
+            "value" : "La requête a été exécutée, mais n’a pas renvoyé de table. Utilise SELECT pour obtenir des lignes."
           }
         },
         "pt" : {
@@ -1346,7 +1346,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Abfrage hat zu viele Zeilen zurückgegeben. Füge einen Filter oder LIMIT hinzu und versuche es noch einmal."
+            "value" : "Die Abfrage hat zu viele Zeilen zurückgegeben. Füge einen Filter oder LIMIT hinzu und versuche es erneut."
           }
         },
         "es" : {
@@ -1358,13 +1358,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La requête a renvoyé trop de lignes. Ajoute un filtre ou LIMIT, puis réessaie."
+            "value" : "La requête a renvoyé trop de lignes. Ajoute un filtre ou LIMIT et réessaie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A consulta retornou linhas demais. Adicione um filtro ou LIMIT e tente de novo."
+            "value" : "A consulta retornou linhas demais. Adicione um filtro ou LIMIT e tente novamente."
           }
         }
       }
@@ -1378,13 +1378,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Die Abfrage dauerte länger als %lld Sekunde und wurde gestoppt."
+                  "value" : "Die Abfrage hat länger als %lld Sekunde gedauert und wurde gestoppt."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Die Abfrage dauerte länger als %lld Sekunden und wurde gestoppt."
+                  "value" : "Die Abfrage hat länger als %lld Sekunden gedauert und wurde gestoppt."
                 }
               }
             }
@@ -1432,13 +1432,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La requête a dépassé %lld seconde et a été arrêtée."
+                  "value" : "La requête a pris plus de %lld seconde et a été arrêtée."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La requête a dépassé %lld secondes et a été arrêtée."
+                  "value" : "La requête a pris plus de %lld secondes et a été arrêtée."
                 }
               }
             }
@@ -1488,7 +1488,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar de novo"
+            "value" : "Tentar novamente"
           }
         }
       }
@@ -1534,19 +1534,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has cambiado el código. Vuelve a ejecutarlo para ver el nuevo resultado."
+            "value" : "Has cambiado el código. Ejecútalo de nuevo para ver la nueva salida."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as modifié le code. Exécute-le à nouveau pour voir le nouveau résultat."
+            "value" : "Tu as modifié le code. Exécute-le à nouveau pour voir ce qu’il affiche."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você mudou o código. Execute de novo para ver a nova saída."
+            "value" : "Você alterou o código. Execute de novo para ver a nova saída."
           }
         }
       }
@@ -1563,7 +1563,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has cambiado la consulta. Vuelve a ejecutarla para ver el nuevo resultado."
+            "value" : "Has cambiado la consulta. Ejecútala de nuevo para ver el nuevo resultado."
           }
         },
         "fr" : {
@@ -1575,7 +1575,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você mudou a consulta. Execute de novo para ver o novo resultado."
+            "value" : "Você alterou a consulta. Execute de novo para ver o novo resultado."
           }
         }
       }
@@ -1586,25 +1586,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast %@ gesagt, und das war richtig."
+            "value" : "Du hast %@ gesagt und lagst richtig."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has dicho %@, y era correcto."
+            "value" : "Dijiste %@ y acertaste."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as dit %@, et c’était bien ça."
+            "value" : "Tu as répondu %@, et c’était bien ça."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você disse %@, e era isso mesmo."
+            "value" : "Você disse %@, e acertou."
           }
         }
       }
@@ -1615,7 +1615,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast %1$@ gesagt; richtig war %2$@."
+            "value" : "Du hast %1$@ gesagt; es war %2$@."
           }
         },
         "en" : {
@@ -1627,19 +1627,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has dicho %1$@; el valor era %2$@."
+            "value" : "Dijiste %1$@; era %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as dit %1$@ ; la valeur était %2$@."
+            "value" : "Tu as répondu %1$@ ; c’était %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você disse %1$@; o valor era %2$@."
+            "value" : "Você disse %1$@, mas era %2$@."
           }
         }
       }
@@ -1656,13 +1656,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu resultado"
+            "value" : "Tu salida"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton résultat"
+            "value" : "Ce que ton programme affiche"
           }
         },
         "pt" : {
@@ -1838,16 +1838,10 @@
         "pt" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Seu resultado: %lld linha"
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Seu resultado: %lld linhas"
+                  "value" : "Seu resultado, total de linhas: %lld"
                 }
               }
             }

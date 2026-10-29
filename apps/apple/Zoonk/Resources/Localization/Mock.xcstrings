@@ -7,7 +7,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ kann nicht Teil einer Probeprüfung sein, denn es ist eine praktische Prüfung."
+            "value" : "%@ kann nicht Teil einer Probeprüfung sein: Es handelt sich um eine praktische Prüfung."
           }
         },
         "es" : {
@@ -19,13 +19,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ne peut pas faire partie d’un examen blanc : c’est une épreuve pratique."
+            "value" : "%@ ne peut pas faire partie d’un examen blanc : c’est une épreuve pratique."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ não pode fazer parte do simulado: é uma prova prática."
+            "value" : "%@ não pode fazer parte de um simulado: é uma prova prática."
           }
         }
       }
@@ -36,7 +36,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ geschafft"
+            "value" : "%@ abgeschlossen"
           }
         },
         "es" : {
@@ -65,25 +65,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ gibt es nur in vollständigen Probeprüfungen."
+            "value" : "%@ ist nur in vollständigen Probeprüfungen enthalten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ solo aparece en los simulacros completos."
+            "value" : "%@ solo está disponible en los simulacros completos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ figure uniquement dans les examens blancs complets."
+            "value" : "%@ est uniquement inclus dans les examens blancs complets."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ só aparece em simulados completos."
+            "value" : "%@ só aparece nos simulados completos."
           }
         }
       }
@@ -94,19 +94,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ gibt es noch nicht in Probeprüfungen."
+            "value" : "%@ ist noch nicht in Probeprüfungen enthalten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ aún no aparece en los simulacros."
+            "value" : "%@ aún no está disponible en los simulacros."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ n’apparaît pas encore dans les examens blancs."
+            "value" : "%@ n’est pas encore inclus dans les examens blancs."
           }
         },
         "pt" : {
@@ -176,13 +176,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ sur %2$lld bonnes réponses"
+            "value" : "%1$@ bonnes réponses sur %2$lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ de %2$lld certas"
+            "value" : "%1$@ de %2$lld corretas"
           }
         }
       }
@@ -263,7 +263,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@easy@, %#@hard@. Das wirkt sich auf deinen Score aus. Wiederhole zuerst die leichten Fragen."
+            "value" : "%#@easy@, %#@hard@. Das wirkt sich negativ auf deinen Score aus: Wiederhole zuerst die leichten Fragen."
           },
           "substitutions" : {
             "easy" : {
@@ -294,13 +294,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg schwierige Frage richtig"
+                      "value" : "%arg schwere Frage richtig"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg schwierige Fragen richtig"
+                      "value" : "%arg schwere Fragen richtig"
                     }
                   }
                 }
@@ -359,7 +359,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@easy@ incorrectas y %#@hard@ correctas. La puntuación lo tiene en cuenta: repasa primero las fáciles."
+            "value" : "%#@easy@, %#@hard@. Esto reduce tu puntuación: repasa primero las preguntas fáciles."
           },
           "substitutions" : {
             "easy" : {
@@ -370,13 +370,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg fácil"
+                      "value" : "%arg pregunta fácil incorrecta"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg fáciles"
+                      "value" : "%arg preguntas fáciles incorrectas"
                     }
                   }
                 }
@@ -390,13 +390,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg difícil"
+                      "value" : "%arg pregunta difícil correcta"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg difíciles"
+                      "value" : "%arg preguntas difíciles correctas"
                     }
                   }
                 }
@@ -407,7 +407,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@easy@ et %#@hard@. Le score en tient compte : révise d’abord les questions faciles."
+            "value" : "%#@easy@, %#@hard@. Cela diminue ton Score : révise d’abord les questions faciles."
           },
           "substitutions" : {
             "easy" : {
@@ -455,7 +455,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@easy@ e %#@hard@. Isso reduz sua pontuação: revise primeiro as questões fáceis."
+            "value" : "%#@easy@, %#@hard@. Isso reduz sua nota: revise primeiro as questões fáceis."
           },
           "substitutions" : {
             "easy" : {
@@ -565,13 +565,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La rédaction est vierge."
+                  "value" : "La rédaction est vide."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld rédactions sont vierges."
+                  "value" : "%lld rédactions sont vides."
                 }
               }
             }
@@ -701,13 +701,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Thema mehr"
+                  "value" : "%lld weiteres Thema"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Themen mehr"
+                  "value" : "%lld weitere Themen"
                 }
               }
             }
@@ -755,13 +755,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld sujet supplémentaire"
+                  "value" : "%lld sujet de plus"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld sujets supplémentaires"
+                  "value" : "%lld sujets de plus"
                 }
               }
             }
@@ -773,13 +773,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tópico a mais"
+                  "value" : "Mais %lld tópico"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tópicos a mais"
+                  "value" : "Mais %lld tópicos"
                 }
               }
             }
@@ -828,7 +828,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@ready@, daher dauert diese Probeprüfung etwa %3$@"
+            "value" : "%#@ready@, daher dauert diese Probeprüfung etwa %3$@."
           },
           "substitutions" : {
             "ready" : {
@@ -839,13 +839,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg von %2$lld Fragen ist jetzt verfügbar"
+                      "value" : "%arg der %2$lld Fragen ist bereits verfügbar"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg von %2$lld Fragen sind jetzt verfügbar"
+                      "value" : "%arg der %2$lld Fragen sind bereits verfügbar"
                     }
                   }
                 }
@@ -884,7 +884,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@ready@, así que este simulacro dura unos %3$@."
+            "value" : "%#@ready@, así que este simulacro dura aproximadamente %3$@."
           },
           "substitutions" : {
             "ready" : {
@@ -895,13 +895,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg de las %2$lld preguntas está lista"
+                      "value" : "%arg de las %2$lld preguntas está lista ahora"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg de las %2$lld preguntas están listas"
+                      "value" : "%arg de las %2$lld preguntas están listas ahora"
                     }
                   }
                 }
@@ -912,7 +912,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@ready@, cet examen blanc dure environ %3$@."
+            "value" : "%#@ready@, cet examen blanc dure donc environ %3$@."
           },
           "substitutions" : {
             "ready" : {
@@ -940,7 +940,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@ready@, então este simulado dura cerca de %3$@."
+            "value" : "%#@ready@, então este simulado leva cerca de %3$@."
           },
           "substitutions" : {
             "ready" : {
@@ -951,13 +951,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg de %2$lld perguntas está disponível agora"
+                      "value" : "%arg das %2$lld perguntas está pronta agora"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg de %2$lld perguntas estão disponíveis agora"
+                      "value" : "%arg das %2$lld perguntas estão prontas agora"
                     }
                   }
                 }
@@ -973,7 +973,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld Fragen"
+            "value" : "%lld Fr."
           }
         },
         "es" : {
@@ -1002,7 +1002,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld Fragen · ~%2$@"
+            "value" : "%1$lld Fr. · ~%2$@"
           }
         },
         "en" : {
@@ -1040,13 +1040,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Frage ist leer."
+                  "value" : "%lld Frage ist unbeantwortet."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Fragen sind leer."
+                  "value" : "%lld Fragen sind unbeantwortet."
                 }
               }
             }
@@ -1189,13 +1189,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld question est signalée."
+                  "value" : "%lld question est marquée."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld questions sont signalées."
+                  "value" : "%lld questions sont marquées."
                 }
               }
             }
@@ -1207,13 +1207,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pergunta está sinalizada."
+                  "value" : "%lld pergunta está marcada."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld perguntas estão sinalizadas."
+                  "value" : "%lld perguntas estão marcadas."
                 }
               }
             }
@@ -1230,13 +1230,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Frage war am Ende der Zeit noch offen."
+                  "value" : "Als die Zeit ablief, war noch %lld Frage offen."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Fragen waren am Ende der Zeit noch offen."
+                  "value" : "Als die Zeit ablief, waren noch %lld Fragen offen."
                 }
               }
             }
@@ -1266,13 +1266,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Quedó %lld pregunta sin responder al agotarse el tiempo."
+                  "value" : "Quedó %lld pregunta cuando se acabó el tiempo."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Quedaron %lld preguntas sin responder al agotarse el tiempo."
+                  "value" : "Quedaron %lld preguntas cuando se acabó el tiempo."
                 }
               }
             }
@@ -1284,13 +1284,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld question restait quand le temps a expiré."
+                  "value" : "Il restait %lld question à la fin du temps imparti."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld questions restaient quand le temps a expiré."
+                  "value" : "Il restait %lld questions à la fin du temps imparti."
                 }
               }
             }
@@ -1322,7 +1322,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@seconds@ pro Frage in %2$@. Ziel: höchstens %3$lld."
+            "value" : "%#@seconds@ pro Frage im Bereich %2$@. Versuche, höchstens %3$lld zu brauchen."
           },
           "substitutions" : {
             "seconds" : {
@@ -1378,7 +1378,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@seconds@ por pregunta de %2$@. Intenta tardar %3$lld o menos."
+            "value" : "%#@seconds@ por pregunta de %2$@. Intenta llegar a %3$lld o menos."
           },
           "substitutions" : {
             "seconds" : {
@@ -1406,7 +1406,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@seconds@ par question %2$@. Vise %3$lld ou moins."
+            "value" : "%#@seconds@ par question de %2$@. Vise %3$lld ou moins."
           },
           "substitutions" : {
             "seconds" : {
@@ -1434,7 +1434,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@seconds@ por questão de %2$@. Tente ficar em %3$lld ou menos."
+            "value" : "%#@seconds@ por pergunta de %2$@. Tente levar %3$lld ou menos."
           },
           "substitutions" : {
             "seconds" : {
@@ -1473,19 +1473,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld desde el anterior"
+            "value" : "%lld desde el último simulacro"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld depuis le dernier examen blanc"
+            "value" : "%lld depuis le dernier examen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld a menos que no anterior"
+            "value" : "%lld desde o último simulado"
           }
         }
       }
@@ -1594,13 +1594,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Aufgabe ist noch offen. Deshalb gibt es für diesen Prüfungsteil keine Schätzung. Danach kannst du sie in dieser Probeprüfung nicht mehr bearbeiten."
+                  "value" : "%lld Aufgabe ist nicht abgeschlossen, daher gibt es für diesen Prüfungsteil keine Schätzung. Danach kannst du sie in dieser Probeprüfung nicht mehr bearbeiten."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Aufgaben sind noch offen. Deshalb gibt es für diesen Prüfungsteil keine Schätzung. Danach kannst du sie in dieser Probeprüfung nicht mehr bearbeiten."
+                  "value" : "%lld Aufgaben sind nicht abgeschlossen, daher gibt es für diesen Prüfungsteil keine Schätzung. Danach kannst du sie in dieser Probeprüfung nicht mehr bearbeiten."
                 }
               }
             }
@@ -1630,13 +1630,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tarea está sin terminar, así que no se puede estimar la puntuación de esta prueba. Después, no podrás hacerla en este simulacro."
+                  "value" : "Queda %lld tarea sin completar, así que esta prueba no recibirá una puntuación estimada. Después de entregar, no podrás completarla en este simulacro."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tareas están sin terminar, así que no se puede estimar la puntuación de esta prueba. Después, no podrás hacerlas en este simulacro."
+                  "value" : "Quedan %lld tareas sin completar, así que esta prueba no recibirá una puntuación estimada. Después de entregar, no podrás completarlas en este simulacro."
                 }
               }
             }
@@ -1648,13 +1648,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tâche n’est pas terminée, donc tu n’auras pas d’estimation pour cette épreuve. Après l’avoir remise, tu ne pourras plus la faire dans cet examen blanc."
+                  "value" : "%lld tâche n’est pas terminée, donc cette épreuve n’aura pas de Score estimé. Après avoir rendu, tu ne pourras plus la terminer dans cet examen blanc."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tâches ne sont pas terminées, donc tu n’auras pas d’estimation pour cette épreuve. Après l’avoir remise, tu ne pourras plus les faire dans cet examen blanc."
+                  "value" : "%lld tâches ne sont pas terminées, donc cette épreuve n’aura pas de Score estimé. Après avoir rendu, tu ne pourras plus les terminer dans cet examen blanc."
                 }
               }
             }
@@ -1666,13 +1666,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tarefa não foi concluída, então esta prova não terá uma estimativa. Depois de entregar, você não poderá fazer essa tarefa neste simulado."
+                  "value" : "%lld tarefa não foi concluída, então esta parte não terá uma estimativa. Depois de entregar, você não poderá fazer essa tarefa neste simulado."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tarefas não foram concluídas, então esta prova não terá uma estimativa. Depois de entregar, você não poderá fazer essas tarefas neste simulado."
+                  "value" : "%lld tarefas não foram concluídas, então esta parte não terá uma estimativa. Depois de entregar, você não poderá fazer essas tarefas neste simulado."
                 }
               }
             }
@@ -1787,19 +1787,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+%lld desde el anterior"
+            "value" : "+%lld desde el último simulacro"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+%lld depuis le dernier examen blanc"
+            "value" : "+%lld depuis le dernier examen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+%lld em relação ao anterior"
+            "value" : "+%lld desde o último simulado"
           }
         }
       }
@@ -1810,13 +1810,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein ganzer Prüfungstag"
+            "value" : "Ein vollständiger Prüfungstag"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un día completo de examen"
+            "value" : "Una jornada de examen completa"
           }
         },
         "fr" : {
@@ -1828,7 +1828,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um dia inteiro de prova"
+            "value" : "Um dia completo de prova"
           }
         }
       }
@@ -1839,13 +1839,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein ganzer Prüfungstag, Tag %lld"
+            "value" : "Ein vollständiger Prüfungstag, Tag %lld"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un día completo de examen, día %lld"
+            "value" : "Una jornada de examen completa, día %lld"
           }
         },
         "fr" : {
@@ -1857,7 +1857,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um dia inteiro de prova, dia %lld"
+            "value" : "Um dia completo de prova, dia %lld"
           }
         }
       }
@@ -1868,7 +1868,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Probeprüfung, um dein Level zu ermitteln"
+            "value" : "Eine Probeprüfung, um dein Level zu bestimmen"
           }
         },
         "es" : {
@@ -1880,7 +1880,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un examen blanc pour évaluer ton niveau"
+            "value" : "Un examen blanc pour situer ton niveau"
           }
         },
         "pt" : {
@@ -1897,25 +1897,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein kurzer Check. In deinen ersten Tagen wird das Ergebnis genauer."
+            "value" : "Eine kurze Einschätzung. In deinen ersten Tagen wird sie verfeinert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una prueba rápida. Tus primeros días la ajustarán."
+            "value" : "Una prueba rápida. Tus primeros días ayudarán a ajustar el resultado."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un test rapide. Tes premiers jours permettront de l’affiner."
+            "value" : "Une évaluation rapide. Tes premiers jours permettront de l’affiner."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma avaliação rápida. Seus primeiros dias vão ajustar seu nível."
+            "value" : "Uma avaliação rápida. Seus primeiros dias ajudam a ajustar o resultado."
           }
         }
       }
@@ -1996,7 +1996,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unos %1$@ en la escala %2$@, de %3$@ a %4$@."
+            "value" : "Alrededor de %1$@ en la escala %2$@, de %3$@ a %4$@."
           }
         },
         "fr" : {
@@ -2008,7 +2008,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cerca de %1$@ na escala %2$@, de %3$@ a %4$@."
+            "value" : "Cerca de %1$@ na escala %2$@, que vai de %3$@ a %4$@."
           }
         }
       }
@@ -2019,7 +2019,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Etwa %1$@ auf der Prüfungsskala, von %2$@ bis %3$@."
+            "value" : "Etwa %1$@ auf der Prüfungsskala von %2$@ bis %3$@."
           }
         },
         "en" : {
@@ -2031,7 +2031,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unos %1$@ en la escala del examen, de %2$@ a %3$@."
+            "value" : "Aproximadamente %1$@ en la escala del examen, de %2$@ a %3$@."
           }
         },
         "fr" : {
@@ -2060,13 +2060,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Después, no podrás cambiar tus respuestas."
+            "value" : "Después de esto, no podrás cambiar tus respuestas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Après ça, tu ne pourras plus modifier tes réponses."
+            "value" : "Après cela, tu ne pourras plus modifier tes réponses."
           }
         },
         "pt" : {
@@ -2101,7 +2101,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Responda a cada pergunta para continuar."
+            "value" : "Responda a cada pergunta para avançar."
           }
         }
       }
@@ -2112,25 +2112,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beantworte jede Frage, um weiterzumachen. Du kannst nicht zurückgehen."
+            "value" : "Beantworte jede Frage, um weiterzumachen. Du kannst danach nicht mehr zu ihr zurückkehren."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Responde a cada pregunta para continuar. No podrás volver atrás."
+            "value" : "Responde a cada pregunta para continuar. No podrás volver a ella."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réponds à chaque question pour continuer. Tu ne pourras pas revenir en arrière."
+            "value" : "Réponds à chaque question pour continuer. Tu ne pourras pas y revenir."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Responda a cada pergunta para continuar. Não dá para voltar a uma pergunta depois."
+            "value" : "Responda a cada pergunta para avançar. Você não poderá voltar a ela."
           }
         }
       }
@@ -2228,7 +2228,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leer"
+            "value" : "Unbeantwortet"
           }
         },
         "es" : {
@@ -2257,7 +2257,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leere Antworten zählen in diesem Score als falsch."
+            "value" : "Unbeantwortete Fragen zählen bei diesem Score als falsch."
           }
         },
         "es" : {
@@ -2269,13 +2269,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les réponses laissées vides comptent comme fausses dans ce score."
+            "value" : "Les réponses laissées vides comptent comme des erreurs dans ce score."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Respostas em branco contam como erradas nesta pontuação."
+            "value" : "Nesta pontuação, respostas em branco contam como erradas."
           }
         }
       }
@@ -2286,25 +2286,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leere Antworten zählen wie am Prüfungstag als falsch."
+            "value" : "Unbeantwortete Fragen zählen wie in der Prüfung als falsch."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las respuestas en blanco cuentan como incorrectas, igual que el día del examen."
+            "value" : "Las respuestas en blanco cuentan como incorrectas, igual que en el examen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les réponses laissées vides comptent comme fausses, comme le jour de l’examen."
+            "value" : "Les réponses laissées vides comptent comme des erreurs, comme le jour de l’examen."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Respostas em branco contam como erradas, como no dia da prova."
+            "value" : "Respostas em branco contam como erradas, assim como no dia da prova."
           }
         }
       }
@@ -2391,7 +2391,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por matéria"
+            "value" : "Por área"
           }
         }
       }
@@ -2402,7 +2402,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Konsistenz"
+            "value" : "Stimmigkeit"
           }
         },
         "es" : {
@@ -2420,7 +2420,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Coerência"
+            "value" : "Consistência"
           }
         }
       }
@@ -2501,7 +2501,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuer la séance d’aujourd’hui"
+            "value" : "Continuer la séance du jour"
           }
         },
         "pt" : {
@@ -2550,13 +2550,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Bearbeite die Aufgaben der Reihe nach. Jede Aufgabe ist ein Gespräch. Danach kommst du hierher zurück. Noch %lld Aufgabe."
+                  "value" : "Bearbeite die Aufgaben der Reihe nach. Jede Aufgabe ist ein Gespräch, nach dem du hierher zurückkehrst. Noch %lld Aufgabe."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Bearbeite die Aufgaben der Reihe nach. Jede Aufgabe ist ein Gespräch. Danach kommst du hierher zurück. Noch %lld Aufgaben."
+                  "value" : "Bearbeite die Aufgaben der Reihe nach. Jede Aufgabe ist ein Gespräch, nach dem du hierher zurückkehrst. Noch %lld Aufgaben."
                 }
               }
             }
@@ -2586,13 +2586,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Haz las tareas en orden. Cada una es una llamada y, al terminar, volverás aquí. Te queda %lld tarea."
+                  "value" : "Haz las tareas en orden. Cada una es una llamada y volverás aquí al terminarla. Queda %lld tarea."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Haz las tareas en orden. Cada una es una llamada y, al terminar, volverás aquí. Te quedan %lld tareas."
+                  "value" : "Haz las tareas en orden. Cada una es una llamada y volverás aquí al terminarla. Quedan %lld tareas."
                 }
               }
             }
@@ -2604,13 +2604,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Fais les tâches dans l’ordre. Chacune est un appel, puis tu reviens ici. Il reste %lld tâche."
+                  "value" : "Fais les tâches dans l’ordre. Chacune se fait lors d’un appel, puis tu reviens ici. Il reste %lld tâche."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Fais les tâches dans l’ordre. Chacune est un appel, puis tu reviens ici. Il reste %lld tâches."
+                  "value" : "Fais les tâches dans l’ordre. Chacune se fait lors d’un appel, puis tu reviens ici. Il reste %lld tâches."
                 }
               }
             }
@@ -2622,13 +2622,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Faça as tarefas na ordem. Cada uma é uma conversa; depois dela, você volta para cá. Falta %lld tarefa."
+                  "value" : "Faça as tarefas em ordem. Cada uma é uma conversa, e você volta aqui depois dela. Falta %lld tarefa."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Faça as tarefas na ordem. Cada uma é uma conversa; depois dela, você volta para cá. Faltam %lld tarefas."
+                  "value" : "Faça as tarefas em ordem. Cada uma é uma conversa, e você volta aqui depois dela. Faltam %lld tarefas."
                 }
               }
             }
@@ -2642,13 +2642,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erledigt"
+            "value" : "Abgeschlossen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hecho"
+            "value" : "Completada"
           }
         },
         "fr" : {
@@ -2660,7 +2660,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Concluído"
+            "value" : "Concluída"
           }
         }
       }
@@ -2674,13 +2674,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Erledigt: %lld Lektion aus deinem Plan entfernt."
+                  "value" : "Erledigt: %lld Lektion aus deinem Plan übersprungen."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Erledigt: %lld Lektionen aus deinem Plan entfernt."
+                  "value" : "Erledigt: %lld Lektionen aus deinem Plan übersprungen."
                 }
               }
             }
@@ -2710,13 +2710,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Hecho: %lld lección menos en tu plan."
+                  "value" : "Listo: %lld lección menos en tu plan."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Hecho: %lld lecciones menos en tu plan."
+                  "value" : "Listo: %lld lecciones menos en tu plan."
                 }
               }
             }
@@ -2728,13 +2728,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Terminé : %lld leçon retirée de ton plan."
+                  "value" : "C’est fait : %lld leçon retirée de ton plan."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Terminé : %lld leçons retirées de ton plan."
+                  "value" : "C’est fait : %lld leçons retirées de ton plan."
                 }
               }
             }
@@ -2746,13 +2746,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Concluído: %lld aula a menos no seu plano."
+                  "value" : "Pronto: %lld aula a menos no seu plano."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Concluído: %lld aulas a menos no seu plano."
+                  "value" : "Pronto: %lld aulas a menos no seu plano."
                 }
               }
             }
@@ -2772,19 +2772,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hecho: a partir de ahora, tu plan le dedica más tiempo."
+            "value" : "Listo: tu plan le dedicará más tiempo a partir de ahora."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminé : ton plan lui accorde plus de temps à partir de maintenant."
+            "value" : "C’est fait : ton plan y consacre désormais plus de temps."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pronto: seu plano reserva mais tempo para isso daqui em diante."
+            "value" : "Pronto: seu plano vai dedicar mais tempo a essa área a partir de agora."
           }
         }
       }
@@ -2836,7 +2836,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toutes les questions ont une réponse."
+            "value" : "Tu as répondu à toutes les questions."
           }
         },
         "pt" : {
@@ -2882,25 +2882,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Aufgaben sind erledigt. Danach kannst du sie in dieser Probeprüfung nicht noch einmal bearbeiten."
+            "value" : "Alle Aufgaben sind abgeschlossen. Danach kannst du sie in dieser Probeprüfung nicht noch einmal bearbeiten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has completado todas las tareas. Después de entregar, no podrás volver a hacerlas en este simulacro."
+            "value" : "Has completado todas las tareas. Después de esto, no podrás volver a hacerlas en este simulacro."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toutes les tâches sont terminées. Après ça, tu ne pourras plus les refaire dans cet examen blanc."
+            "value" : "Toutes les tâches sont terminées. Après cela, tu ne pourras plus les refaire dans cet examen blanc."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todas as tarefas foram concluídas. Depois de entregar, você não poderá refazê-las neste simulado."
+            "value" : "Todas as tarefas foram concluídas. Depois disso, você não poderá refazer elas neste simulado."
           }
         }
       }
@@ -2911,7 +2911,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Aufgaben sind erledigt. Gib diesen Abschnitt ab, um weiterzumachen."
+            "value" : "Alle Aufgaben sind abgeschlossen. Gib diesen Abschnitt ab, um weiterzumachen."
           }
         },
         "es" : {
@@ -2923,7 +2923,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toutes les tâches sont terminées. Remets cette partie pour continuer."
+            "value" : "Toutes les tâches sont terminées. Rends cette section pour continuer."
           }
         },
         "pt" : {
@@ -2952,7 +2952,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Signaler"
+            "value" : "Marquer"
           }
         },
         "pt" : {
@@ -2981,7 +2981,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Signalée"
+            "value" : "Marquée"
           }
         },
         "pt" : {
@@ -2998,25 +2998,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mehr Fokus auf %@?"
+            "value" : "Mehr auf %@ konzentrieren?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Quieres centrarte más en %@?"
+            "value" : "¿Dedicar más tiempo a %@?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Te concentrer davantage sur %@ ?"
+            "value" : "Consacrer plus de temps à %@ ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dar mais atenção a %@?"
+            "value" : "Dedicar mais tempo a %@?"
           }
         }
       }
@@ -3027,19 +3027,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird vorbereitet…"
+            "value" : "Wir bereiten alles vor…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparándolo…"
+            "value" : "Preparando el simulacro…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Préparation…"
+            "value" : "Préparation en cours…"
           }
         },
         "pt" : {
@@ -3056,7 +3056,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bewerten"
+            "value" : "Bewerten lassen"
           }
         },
         "es" : {
@@ -3068,7 +3068,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Corriger"
+            "value" : "Faire corriger"
           }
         },
         "pt" : {
@@ -3085,25 +3085,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Bewertung erfolgt nach dem Bewertungsschema der Prüfung. Das kann bis zu 30 Sekunden dauern."
+            "value" : "Wir bewerten deinen Text nach den Kriterien der Prüfung. Das kann bis zu 30 Sekunden dauern."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se está corrigiendo con los criterios del examen. Puede tardar hasta 30 s."
+            "value" : "Corrigiendo según los criterios del examen. Puede tardar hasta 30 segundos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Correction selon le barème de l’examen. Cela peut prendre jusqu’à 30 s."
+            "value" : "Correction selon le barème de l’examen. Cela peut prendre jusqu’à 30 s."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Corrigindo com os critérios da prova. Isso pode levar até 30 segundos."
+            "value" : "Corrigindo com os critérios da prova. Pode levar até 30 segundos."
           }
         }
       }
@@ -3114,7 +3114,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird bewertet…"
+            "value" : "Wir bewerten deine Antworten…"
           }
         },
         "es" : {
@@ -3126,7 +3126,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Correction…"
+            "value" : "Correction en cours…"
           }
         },
         "pt" : {
@@ -3213,7 +3213,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remettre"
+            "value" : "Rendre"
           }
         },
         "pt" : {
@@ -3236,13 +3236,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entregar el simulacro de examen"
+            "value" : "Entregar el simulacro"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remettre l’examen blanc"
+            "value" : "Rendre l’examen blanc"
           }
         },
         "pt" : {
@@ -3265,13 +3265,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Entregar el simulacro de examen?"
+            "value" : "¿Entregar el simulacro?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remettre l’examen blanc ?"
+            "value" : "Rendre l’examen blanc ?"
           }
         },
         "pt" : {
@@ -3300,7 +3300,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remettre cette partie"
+            "value" : "Rendre cette section"
           }
         },
         "pt" : {
@@ -3329,7 +3329,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remettre cette partie ?"
+            "value" : "Rendre cette section ?"
           }
         },
         "pt" : {
@@ -3358,7 +3358,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remise"
+            "value" : "Rendue"
           }
         },
         "pt" : {
@@ -3375,7 +3375,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird abgegeben…"
+            "value" : "Wir geben den Abschnitt ab…"
           }
         },
         "es" : {
@@ -3387,7 +3387,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remise…"
+            "value" : "Envoi en cours…"
           }
         },
         "pt" : {
@@ -3404,7 +3404,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wie lange"
+            "value" : "Dauer"
           }
         },
         "es" : {
@@ -3433,25 +3433,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "So bewertet es die echte Prüfung: %@"
+            "value" : "So wird es in der echten Prüfung bewertet: %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo lo puntúa el examen real: %@"
+            "value" : "Cómo se puntúa en el examen real: %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comment l’examen réel le note : %@"
+            "value" : "Comment l’examen officiel le note : %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como a prova oficial calcula a pontuação: %@"
+            "value" : "Como a prova calcula a pontuação: %@"
           }
         }
       }
@@ -3468,7 +3468,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con el formato del examen, unos %@."
+            "value" : "Con el formato del examen, aproximadamente %@."
           }
         },
         "fr" : {
@@ -3491,7 +3491,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Format der Prüfung, %1$@ bis %2$@. Du entscheidest, wie lange."
+            "value" : "Im Format der Prüfung, von %1$@ bis %2$@. Du bestimmst die Dauer."
           }
         },
         "en" : {
@@ -3509,7 +3509,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Au format de l’examen, de %1$@ à %2$@. C’est toi qui choisis la durée."
+            "value" : "Au format de l’examen, de %1$@ à %2$@. Tu choisis la durée."
           }
         },
         "pt" : {
@@ -3526,7 +3526,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im Format der Prüfung. Dein Plan richtet sich nach deinen Antworten."
+            "value" : "Im Format der Prüfung. Dein Plan baut auf deinen Antworten auf."
           }
         },
         "es" : {
@@ -3538,7 +3538,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Au format de l’examen. Tes réponses servent de point de départ à ton plan."
+            "value" : "Au format de l’examen. Ton plan se base sur tes réponses."
           }
         },
         "pt" : {
@@ -3555,25 +3555,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es beginnt schon so früh, wie es die nötigen Grundlagen erlauben."
+            "value" : "Dieser Bereich beginnt bereits so früh, wie es die nötigen Grundlagen erlauben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya empieza lo antes posible según lo que necesita como base."
+            "value" : "Ya empieza tan pronto como permiten los contenidos previos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il commence déjà aussi tôt que le permettent les notions sur lesquelles il s’appuie."
+            "value" : "Cela commence déjà aussi tôt que les acquis nécessaires le permettent."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Já começa na data mais cedo permitida pelas bases necessárias."
+            "value" : "Já começa o mais cedo que as bases permitem."
           }
         }
       }
@@ -3584,7 +3584,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es wurde noch nicht bewertet."
+            "value" : "Der Text wurde noch nicht bewertet."
           }
         },
         "es" : {
@@ -3596,7 +3596,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette rédaction n’a pas encore été corrigée."
+            "value" : "Elle n’a pas encore été corrigée."
           }
         },
         "pt" : {
@@ -3613,7 +3613,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hier machst du weiter, wo du aufgehört hast"
+            "value" : "Du kannst dort weitermachen, wo du aufgehört hast"
           }
         },
         "es" : {
@@ -3625,13 +3625,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reprendre là où tu en étais"
+            "value" : "Tu le retrouves là où tu l’as laissé"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No ponto em que você parou"
+            "value" : "Está onde você parou"
           }
         }
       }
@@ -3642,7 +3642,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weiter beantworten"
+            "value" : "Weiter antworten"
           }
         },
         "es" : {
@@ -3700,7 +3700,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meinen Plan beibehalten"
+            "value" : "Meinen Plan behalten"
           }
         },
         "es" : {
@@ -3732,13 +3732,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Wenn du die unsicheren Antworten leer gelassen hättest, hättest du %lld Punkt mehr bekommen."
+                  "value" : "Hättest du die unsicheren Antworten ausgelassen, hättest du %lld Punkt mehr bekommen."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Wenn du die unsicheren Antworten leer gelassen hättest, hättest du %lld Punkte mehr bekommen."
+                  "value" : "Hättest du die unsicheren Antworten ausgelassen, hättest du %lld Punkte mehr bekommen."
                 }
               }
             }
@@ -3768,13 +3768,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Dejar en blanco las respuestas que no tenías claras te habría dado %lld punto."
+                  "value" : "Dejar en blanco las preguntas en las que dudabas te habría dado %lld punto más."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Dejar en blanco las respuestas que no tenías claras te habría dado %lld puntos."
+                  "value" : "Dejar en blanco las preguntas en las que dudabas te habría dado %lld puntos más."
                 }
               }
             }
@@ -3786,13 +3786,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Laisser les réponses incertaines vides aurait rapporté %lld point."
+                  "value" : "Laisser les réponses incertaines vides t’aurait rapporté %lld point."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Laisser les réponses incertaines vides aurait rapporté %lld points."
+                  "value" : "Laisser les réponses incertaines vides t’aurait rapporté %lld points."
                 }
               }
             }
@@ -3804,13 +3804,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Deixar em branco as respostas das quais você não tinha certeza teria somado %lld ponto."
+                  "value" : "Deixar em branco as respostas das quais você não tinha certeza teria acrescentado %lld ponto."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Deixar em branco as respostas das quais você não tinha certeza teria somado %lld pontos."
+                  "value" : "Deixar em branco as respostas das quais você não tinha certeza teria acrescentado %lld pontos."
                 }
               }
             }
@@ -3824,25 +3824,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hören gibt es in Probeprüfungen noch nicht."
+            "value" : "Hören ist noch nicht Teil der Probeprüfungen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La escucha aún no está disponible en los simulacros."
+            "value" : "La escucha aún no está incluida en los simulacros."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’écoute n’est pas encore proposée dans les examens blancs."
+            "value" : "L’écoute n’est pas encore incluse dans les examens blancs."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A escuta ainda não está disponível nos simulados."
+            "value" : "A escuta ainda não faz parte dos simulados."
           }
         }
       }
@@ -3888,13 +3888,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulacro de examen entregado"
+            "value" : "Simulacro entregado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Examen blanc remis"
+            "value" : "Examen blanc rendu"
           }
         },
         "pt" : {
@@ -3911,25 +3911,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Probeprüfung mit Zeitlimit wie bei der echten Prüfung"
+            "value" : "Probeprüfung mit derselben Zeitvorgabe wie die echte Prüfung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulacro de examen con el mismo tiempo que el real"
+            "value" : "Simulacro con el mismo tiempo que el examen real"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Examen blanc, chronométré comme le vrai"
+            "value" : "Examen blanc, avec la même durée que le vrai"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulado com tempo igual ao da prova oficial"
+            "value" : "Simulado com o mesmo tempo da prova"
           }
         }
       }
@@ -3940,25 +3940,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Probeprüfungen gibt es mit Plus: wann immer du willst und jede Woche in deinem Plan."
+            "value" : "Mit Plus kannst du jederzeit Probeprüfungen machen und findest jede Woche eine in deinem Plan."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Plus tienes simulacros de examen cuando quieras y cada semana en tu plan."
+            "value" : "Plus incluye simulacros cuando quieras y uno cada semana en tu plan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les examens blancs sont inclus avec Plus : quand tu veux et chaque semaine dans ton plan."
+            "value" : "Avec Plus, passe des examens blancs quand tu veux et chaque semaine dans ton plan."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os simulados estão incluídos no Plus: faça quando quiser e toda semana no seu plano."
+            "value" : "Com o Plus, você faz simulados quando quiser e toda semana no seu plano."
           }
         }
       }
@@ -3969,25 +3969,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Probeprüfungen gibt es mit Plus. Ohne Plus ermitteln kurze Fragen deinen Ausgangspunkt."
+            "value" : "Probeprüfungen gibt es mit Plus. Ohne Plus ermitteln die kurzen Fragen deinen Ausgangspunkt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con Plus tienes simulacros de examen. Sin Plus, unas preguntas rápidas te ayudan a encontrar tu punto de partida."
+            "value" : "Plus incluye simulacros. Sin Plus, las preguntas rápidas ayudan a encontrar tu punto de partida."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les examens blancs sont inclus avec Plus. Sans Plus, les questions rapides déterminent ton point de départ."
+            "value" : "Les examens blancs sont inclus dans Plus. Sans Plus, les questions rapides permettent de trouver ton point de départ."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os simulados estão incluídos no Plus. Sem ele, perguntas rápidas ajudam você a encontrar seu ponto de partida."
+            "value" : "Os simulados fazem parte do Plus. Sem ele, as perguntas rápidas identificam seu ponto de partida."
           }
         }
       }
@@ -4004,7 +4004,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se han cargado los simulacros de examen"
+            "value" : "No se han cargado los simulacros"
           }
         },
         "fr" : {
@@ -4027,25 +4027,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nächsten Monat kannst du wieder mehr Fragen für deine Probeprüfungen erstellen lassen."
+            "value" : "Nächsten Monat können weitere Fragen für deine Probeprüfungen erstellt werden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El mes que viene podrás preparar más preguntas para tus simulacros."
+            "value" : "El mes que viene podremos preparar más preguntas para tus simulacros."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu pourras préparer d’autres examens blancs le mois prochain."
+            "value" : "D’autres questions pourront être préparées pour tes examens blancs le mois prochain."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você poderá criar mais questões para seus simulados no mês que vem."
+            "value" : "Mais perguntas para seus simulados poderão ser criadas no mês que vem."
           }
         }
       }
@@ -4056,25 +4056,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Morgen kannst du wieder mehr Fragen für deine Probeprüfungen erstellen lassen."
+            "value" : "Morgen können weitere Fragen für deine Probeprüfungen erstellt werden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mañana podrás preparar más preguntas para tus simulacros."
+            "value" : "Mañana podremos preparar más preguntas para tus simulacros."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu pourras préparer d’autres examens blancs demain."
+            "value" : "D’autres questions pourront être préparées pour tes examens blancs demain."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você poderá criar mais questões para seus simulados amanhã."
+            "value" : "Mais perguntas para seus simulados poderão ser criadas amanhã."
           }
         }
       }
@@ -4097,7 +4097,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más tiempo para %1$@ (%2$@ de %3$lld respuestas correctas)"
+            "value" : "Más tiempo para %1$@ (%2$@ de %3$lld correctas)"
           }
         },
         "fr" : {
@@ -4138,7 +4138,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Score net : %1$@ sur %2$lld"
+            "value" : "Score net : %1$@ sur %2$lld"
           }
         },
         "pt" : {
@@ -4173,7 +4173,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pontuação líquida de %lld"
+            "value" : "Pontuação líquida de %lld pontos"
           }
         }
       }
@@ -4219,13 +4219,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sección siguiente"
+            "value" : "Siguiente sección"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Partie suivante"
+            "value" : "Section suivante"
           }
         },
         "pt" : {
@@ -4248,19 +4248,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Siguiente: %@"
+            "value" : "A continuación: %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ensuite : %@"
+            "value" : "À suivre : %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Próximo: %@"
+            "value" : "A seguir: %@"
           }
         }
       }
@@ -4271,7 +4271,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wie am Prüfungstag gibt es erst am Ende eine Rückmeldung."
+            "value" : "Wie in der echten Prüfung bekommst du erst am Ende Feedback."
           }
         },
         "es" : {
@@ -4283,13 +4283,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu ne recevras de retour qu’à la fin, comme le jour de l’examen."
+            "value" : "Pas de correction avant la fin, comme le jour de l’examen."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sem feedback até o final, como no dia da prova."
+            "value" : "Sem feedback até o fim, como no dia da prova."
           }
         }
       }
@@ -4300,25 +4300,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für dieses Ziel gibt es keine Probeprüfungen"
+            "value" : "Keine Probeprüfungen für dieses Ziel"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay simulacros de examen para este objetivo"
+            "value" : "No hay simulacros para este objetivo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun examen blanc pour cet objectif"
+            "value" : "Pas d’examen blanc pour cet objectif"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não há simulados para esta meta"
+            "value" : "Sem simulados para esta meta"
           }
         }
       }
@@ -4329,7 +4329,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht jetzt"
+            "value" : "Jetzt nicht"
           }
         },
         "es" : {
@@ -4358,25 +4358,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch nicht gespeichert · erneuter Versuch läuft"
+            "value" : "Noch nicht gespeichert · neuer Versuch läuft"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no se ha guardado · reintentando"
+            "value" : "Aún sin guardar · reintentando"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas encore enregistré · nouvel essai en cours"
+            "value" : "Pas encore enregistré · nouvelle tentative en cours"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não foi salvo · tentando de novo"
+            "value" : "Ainda não foi salva · tentando novamente"
           }
         }
       }
@@ -4387,7 +4387,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "nur der schriftliche Teil"
+            "value" : "nur der objektive Teil"
           }
         },
         "es" : {
@@ -4399,13 +4399,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Partie écrite uniquement"
+            "value" : "partie objective uniquement"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "somente a parte objetiva"
+            "value" : "apenas a parte objetiva"
           }
         }
       }
@@ -4451,7 +4451,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O haz un simulacro de examen"
+            "value" : "O haz un simulacro"
           }
         },
         "fr" : {
@@ -4492,7 +4492,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parcialmente certa"
+            "value" : "Parcialmente correta"
           }
         }
       }
@@ -4509,19 +4509,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parcialmente correcta: ha obtenido parte de los puntos."
+            "value" : "Parcialmente correcta: has conseguido parte de los puntos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Partiellement correct : cette réponse a rapporté une partie des points."
+            "value" : "Partiellement correcte : cette réponse a rapporté une partie des points."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parcialmente certa: valeu parte dos pontos."
+            "value" : "Parcialmente correta: você ganhou parte dos pontos."
           }
         }
       }
@@ -4532,7 +4532,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle, wie viel von der Prüfung du jetzt machst."
+            "value" : "Wähle, wie viel von der Prüfung du jetzt machen möchtest."
           }
         },
         "es" : {
@@ -4544,13 +4544,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis la partie de l’examen que tu veux passer maintenant."
+            "value" : "Choisis quelle partie de l’examen passer maintenant."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha quanto da prova fazer agora."
+            "value" : "Escolha quanto da prova você quer fazer agora."
           }
         }
       }
@@ -4561,13 +4561,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Probeprüfung wird vorbereitet"
+            "value" : "Wir bereiten deine Probeprüfung vor"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando tu simulacro de examen"
+            "value" : "Estamos preparando tu simulacro"
           }
         },
         "fr" : {
@@ -4608,7 +4608,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questão %lld"
+            "value" : "Pergunta %lld"
           }
         }
       }
@@ -4643,7 +4643,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questão %1$lld · %2$@"
+            "value" : "Pergunta %1$lld · %2$@"
           }
         }
       }
@@ -4678,7 +4678,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questão %1$lld de %2$lld"
+            "value" : "Pergunta %1$lld de %2$lld"
           }
         }
       }
@@ -4713,7 +4713,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questão %1$lld de %2$lld · %3$@"
+            "value" : "Pergunta %1$lld de %2$lld · %3$@"
           }
         }
       }
@@ -4753,13 +4753,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fragen, die sich mit wenigen Worten beantworten lassen, werden als Multiple-Choice-Fragen gestellt."
+            "value" : "Fragen, die mit wenigen Worten beantwortet werden, stellen wir mit Antwortmöglichkeiten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las preguntas que se responden con pocas palabras se plantean como tipo test."
+            "value" : "Las preguntas que se responden con pocas palabras se presentan con varias opciones."
           }
         },
         "fr" : {
@@ -4771,7 +4771,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perguntas respondidas com poucas palavras são apresentadas como questões de múltipla escolha."
+            "value" : "Perguntas respondidas em poucas palavras aparecem com alternativas."
           }
         }
       }
@@ -4782,13 +4782,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fragen, die sich mit einer Zahl beantworten lassen, werden als Multiple-Choice-Fragen gestellt."
+            "value" : "Fragen, die mit einer Zahl beantwortet werden, stellen wir mit Antwortmöglichkeiten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las preguntas que se responden con un número se plantean como tipo test."
+            "value" : "Las preguntas que se responden con un número se presentan con varias opciones."
           }
         },
         "fr" : {
@@ -4800,7 +4800,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perguntas respondidas com um número são apresentadas como questões de múltipla escolha."
+            "value" : "Perguntas respondidas com um número aparecem com alternativas."
           }
         }
       }
@@ -4811,7 +4811,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fragen pro Fach im %1$@, gezählt von %2$@."
+            "value" : "Fragen pro Fach in %1$@, gezählt von %2$@."
           }
         },
         "en" : {
@@ -4823,19 +4823,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preguntas por materia en %1$@, según el recuento de %2$@."
+            "value" : "Preguntas por asignatura en %1$@, según el recuento de %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nombre de questions par matière dans %1$@, selon %2$@."
+            "value" : "Nombre de questions par matière dans %1$@, selon le décompte de %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perguntas por matéria no %1$@, segundo %2$@."
+            "value" : "Perguntas por matéria em %1$@, conforme a contagem de %2$@."
           }
         }
       }
@@ -4852,19 +4852,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preguntas por materia en el examen más reciente, según el recuento de %@."
+            "value" : "Preguntas por asignatura en el último examen, según el recuento de %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nombre de questions par matière au dernier examen, selon %@."
+            "value" : "Nombre de questions par matière dans le dernier examen, selon le décompte de %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perguntas por matéria na prova mais recente, segundo %@."
+            "value" : "Perguntas por matéria na prova mais recente, conforme a contagem de %@."
           }
         }
       }
@@ -4875,19 +4875,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu überprüfende Fragen"
+            "value" : "Fragen zum Nacharbeiten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preguntas por revisar"
+            "value" : "Preguntas para repasar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questions à réviser"
+            "value" : "Questions à revoir"
           }
         },
         "pt" : {
@@ -4922,7 +4922,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar de novo"
+            "value" : "Tentar novamente"
           }
         }
       }
@@ -4936,13 +4936,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Den Fehler ansehen"
+                  "value" : "Fehler nacharbeiten"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Die %lld Fehler ansehen"
+                  "value" : "%lld Fehler nacharbeiten"
                 }
               }
             }
@@ -4972,13 +4972,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Revisa el error"
+                  "value" : "Repasar el error"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Revisa los %lld errores"
+                  "value" : "Repasar los %lld errores"
                 }
               }
             }
@@ -4990,13 +4990,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Révise l’erreur"
+                  "value" : "Réviser l’erreur"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Révise les %lld erreurs"
+                  "value" : "Réviser les %lld erreurs"
                 }
               }
             }
@@ -5008,13 +5008,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Revise o erro"
+                  "value" : "Revisar o erro"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Revise os %lld erros"
+                  "value" : "Revisar os %lld erros"
                 }
               }
             }
@@ -5028,7 +5028,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bei der Überprüfung kannst du zu jeder Frage zurückgehen."
+            "value" : "Überprüfung: Du kannst zu jeder Frage zurückgehen."
           }
         },
         "es" : {
@@ -5040,13 +5040,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Révision : tu peux revenir à n’importe quelle question."
+            "value" : "Vérification : tu peux revenir à n’importe quelle question."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revisão: você pode voltar a qualquer questão."
+            "value" : "Revisão: você pode voltar a qualquer pergunta."
           }
         }
       }
@@ -5063,7 +5063,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Correcta"
+            "value" : "Correctas"
           }
         },
         "fr" : {
@@ -5075,7 +5075,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Certo"
+            "value" : "Corretas"
           }
         }
       }
@@ -5098,13 +5098,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réponses correctes"
+            "value" : "Bonnes réponses"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Respostas certas"
+            "value" : "Respostas corretas"
           }
         }
       }
@@ -5179,19 +5179,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver cómo te ha ido"
+            "value" : "Ver qué tal ha ido"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Voir ton résultat"
+            "value" : "Voir mes résultats"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Veja como foi"
+            "value" : "Ver como fui"
           }
         }
       }
@@ -5266,7 +5266,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar el simulacro de examen"
+            "value" : "Empezar el simulacro"
           }
         },
         "fr" : {
@@ -5330,7 +5330,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commencer la partie orale"
+            "value" : "Commencer l’expression orale"
           }
         },
         "pt" : {
@@ -5386,13 +5386,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Empieza con %lld pregunta"
+                  "value" : "Empezar con %lld pregunta"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Empieza con %lld preguntas"
+                  "value" : "Empezar con %lld preguntas"
                 }
               }
             }
@@ -5404,13 +5404,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Commencer par %lld question"
+                  "value" : "Commencer avec %lld question"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Commencer par %lld questions"
+                  "value" : "Commencer avec %lld questions"
                 }
               }
             }
@@ -5471,19 +5471,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird noch abgegeben. Das dauert länger als sonst."
+            "value" : "Wir geben noch ab. Das dauert länger als üblich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún se está entregando. Está tardando más de lo habitual."
+            "value" : "Seguimos enviándolo. Está tardando más de lo habitual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoi toujours en cours. C’est plus long que d’habitude."
+            "value" : "Envoi toujours en cours. Cela prend plus de temps que d’habitude."
           }
         },
         "pt" : {
@@ -5500,25 +5500,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du kannst jederzeit aufhören: Dein Plan berücksichtigt die Fragen, die du beantwortet hast. Dein Ergebnis siehst du am Ende."
+            "value" : "Du kannst jederzeit aufhören: Dein Plan nutzt die Fragen, die du beantwortet hast. Dein Ergebnis siehst du am Ende."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para cuando quieras: tu plan tendrá en cuenta las preguntas que hayas respondido. Verás el resultado al final."
+            "value" : "Puedes parar cuando quieras: tu plan usa las preguntas que has respondido. Verás tu resultado al final."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrête quand tu veux : ton plan tiendra compte des questions auxquelles tu as répondu. Tu verras ton résultat à la fin."
+            "value" : "Arrête-toi quand tu veux : ton plan tient compte des questions auxquelles tu as répondu. Ton résultat s’affiche à la fin."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pare quando quiser: seu plano vai usar as perguntas que você respondeu. O resultado aparece no final."
+            "value" : "Pare quando quiser: seu plano usa as perguntas que você respondeu. Seu resultado aparece no final."
           }
         }
       }
@@ -5541,19 +5541,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguras: %1$lld de %2$lld correctas. Marcadas como dudosas: %3$lld de %4$lld correctas."
+            "value" : "Con seguridad: %1$lld de %2$lld correctas. Marcadas con dudas: %3$lld de %4$lld correctas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sûres : %1$lld bonnes réponses sur %2$lld. Marquées comme incertaines : %3$lld bonnes réponses sur %4$lld."
+            "value" : "Réponses sûres : %1$lld sur %2$lld correctes. Réponses signalées comme incertaines : %3$lld sur %4$lld correctes."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com certeza: %1$lld de %2$lld certas. Marcadas como incertas: %3$lld de %4$lld certas."
+            "value" : "Com certeza: %1$lld de %2$lld corretas. Marcadas com dúvida: %3$lld de %4$lld corretas."
           }
         }
       }
@@ -5564,13 +5564,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Probeprüfung machen"
+            "value" : "Eine Probeprüfung machen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haz un simulacro de examen"
+            "value" : "Haz un simulacro"
           }
         },
         "fr" : {
@@ -5593,13 +5593,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neue Probeprüfung machen"
+            "value" : "Eine neue Probeprüfung machen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Haz un simulacro de examen nuevo"
+            "value" : "Haz un nuevo simulacro"
           }
         },
         "fr" : {
@@ -5634,7 +5634,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tâche %lld"
+            "value" : "Exercice %lld"
           }
         },
         "pt" : {
@@ -5651,13 +5651,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das hat nicht geklappt. Versuch es gleich noch einmal."
+            "value" : "Das hat nicht geklappt. Versuche es gleich noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido completar. Inténtalo de nuevo dentro de un momento."
+            "value" : "No se ha podido completar. Vuelve a intentarlo dentro de un momento."
           }
         },
         "fr" : {
@@ -5680,13 +5680,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das hat nicht geklappt. Deine Antworten sind gespeichert. Versuch es gleich noch einmal."
+            "value" : "Das hat nicht geklappt. Deine Antworten sind gespeichert. Versuche es gleich noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido completar. Tus respuestas están guardadas. Inténtalo de nuevo dentro de un momento."
+            "value" : "No se ha podido completar. Tus respuestas están guardadas. Vuelve a intentarlo dentro de un momento."
           }
         },
         "fr" : {
@@ -5712,13 +5712,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Das wichtigste Fach. In deinen ersten Tagen geht es um die übrigen."
+                  "value" : "Das Thema mit der höchsten Gewichtung. In den ersten Tagen folgen Fragen zu den übrigen Themen."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Die %lld wichtigsten Fächer. In deinen ersten Tagen geht es um die übrigen."
+                  "value" : "Die %lld Themen mit der höchsten Gewichtung. In den ersten Tagen folgen Fragen zu den übrigen Themen."
                 }
               }
             }
@@ -5748,13 +5748,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La asignatura con más peso. Los primeros días te preguntaremos por el resto."
+                  "value" : "La materia que más puntuación aporta. Durante los primeros días, responderás preguntas sobre las demás."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Las %lld asignaturas con más peso. Los primeros días te preguntaremos por el resto."
+                  "value" : "Las %lld materias que más puntuación aportan. Durante los primeros días, responderás preguntas sobre las demás."
                 }
               }
             }
@@ -5766,13 +5766,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La matière qui compte le plus. Les premiers jours, tu verras le reste."
+                  "value" : "La matière qui compte le plus. Les autres seront abordées pendant tes premiers jours."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Les %lld matières qui comptent le plus. Les premiers jours, tu verras le reste."
+                  "value" : "Les %lld matières qui comptent le plus. Les autres seront abordées pendant tes premiers jours."
                 }
               }
             }
@@ -5784,13 +5784,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A matéria mais importante. Nos primeiros dias, você verá o restante."
+                  "value" : "A matéria que vale mais pontos. Nos primeiros dias, você responde perguntas sobre as outras."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "As %lld matérias mais importantes. Nos primeiros dias, você verá o restante."
+                  "value" : "As %lld matérias que valem mais pontos. Nos primeiros dias, você responde perguntas sobre as outras."
                 }
               }
             }
@@ -5833,7 +5833,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der praktische Prüfungsteil kann nicht in einer Probeprüfung enthalten sein."
+            "value" : "Der praktische Teil der Prüfung kann nicht Teil einer Probeprüfung sein."
           }
         },
         "es" : {
@@ -5851,7 +5851,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A prova prática não pode fazer parte do simulado."
+            "value" : "A parte prática da prova não pode fazer parte de um simulado."
           }
         }
       }
@@ -5862,25 +5862,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die prüfende Person stellt dir die Aufgaben nacheinander, wie am Prüfungstag."
+            "value" : "Du bekommst eine Aufgabe nach der anderen, genau wie am Prüfungstag."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El examinador te irá dando cada tarea, como el día del examen."
+            "value" : "El examinador te presenta las tareas una a una, como el día del examen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’examinateur te donne les tâches l’une après l’autre, comme le jour de l’examen."
+            "value" : "L’examinateur te donne les exercices un par un, comme le jour de l’examen."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O examinador apresenta cada tarefa na sequência, como no dia da prova."
+            "value" : "O examinador passa uma tarefa de cada vez, como no dia da prova."
           }
         }
       }
@@ -5897,7 +5897,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha cargado el simulacro de examen"
+            "value" : "No se ha podido cargar el simulacro"
           }
         },
         "fr" : {
@@ -5909,7 +5909,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar o simulado"
+            "value" : "O simulado não carregou"
           }
         }
       }
@@ -5926,13 +5926,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El simulacro de examen ha mostrado lo que aún te falta."
+            "value" : "El simulacro ha mostrado lo que aún te falta por preparar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’examen blanc a révélé ce qu’il te reste à travailler."
+            "value" : "L’examen blanc a montré ce qu’il te reste à travailler."
           }
         },
         "pt" : {
@@ -5978,13 +5978,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der nächste Abschnitt beginnt automatisch, wenn die Pause vorbei ist."
+            "value" : "Der nächste Abschnitt beginnt automatisch, wenn die Pause endet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La siguiente sección empezará automáticamente cuando termine la pausa."
+            "value" : "La siguiente sección empieza automáticamente cuando termina el descanso."
           }
         },
         "fr" : {
@@ -6007,19 +6007,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In der Mitteilung steht nicht, wie lange die Prüfung dauert."
+            "value" : "In der Ausschreibung steht nicht, wie lange die Prüfung dauert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El aviso no indica cuánto dura el examen."
+            "value" : "La convocatoria no indica la duración del examen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La notice n’indique pas la durée de l’examen."
+            "value" : "L’avis ne précise pas la durée de l’examen."
           }
         },
         "pt" : {
@@ -6036,19 +6036,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In der Mitteilung steht nicht, wie viele Fragen es je Aufgabenformat gibt. Deshalb werden sie gleichmäßig aufgeteilt."
+            "value" : "In der Ausschreibung steht nicht, wie viele Fragen es pro Format gibt. Deshalb werden sie gleichmäßig verteilt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El aviso no indica cuántas preguntas tiene cada formato, así que se reparten por igual."
+            "value" : "La convocatoria no indica cuántas preguntas hay de cada formato, así que se reparten por igual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La notice n’indique pas le nombre de questions par format, elles sont donc réparties équitablement."
+            "value" : "L’avis ne précise pas le nombre de questions par format. Elles sont donc réparties à parts égales."
           }
         },
         "pt" : {
@@ -6065,19 +6065,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In der Mitteilung steht nicht, wie viele Fragen es je Fach gibt. Deshalb werden sie gleichmäßig aufgeteilt."
+            "value" : "In der Ausschreibung steht nicht, wie viele Fragen es pro Thema gibt. Deshalb werden sie gleichmäßig verteilt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El aviso no indica cuántas preguntas tiene cada materia, así que se reparten por igual."
+            "value" : "La convocatoria no indica cuántas preguntas hay de cada materia, así que se reparten por igual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La notice n’indique pas le nombre de questions par matière, elles sont donc réparties équitablement."
+            "value" : "L’avis ne précise pas le nombre de questions par matière. Elles sont donc réparties à parts égales."
           }
         },
         "pt" : {
@@ -6094,19 +6094,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In der Mitteilung steht nicht, wie viele Fragen die Prüfung hat."
+            "value" : "In der Ausschreibung steht nicht, wie viele Fragen die Prüfung enthält."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El aviso no indica cuántas preguntas tiene el examen."
+            "value" : "La convocatoria no indica cuántas preguntas tiene el examen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La notice n’indique pas le nombre de questions de l’examen."
+            "value" : "L’avis ne précise pas le nombre de questions de l’examen."
           }
         },
         "pt" : {
@@ -6129,13 +6129,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La guía oficial no indica cuánto dura el examen."
+            "value" : "La guía oficial no indica la duración del examen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le guide officiel n’indique pas la durée de l’examen."
+            "value" : "Le guide officiel ne précise pas la durée de l’examen."
           }
         },
         "pt" : {
@@ -6152,19 +6152,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im offiziellen Leitfaden steht nicht, wie viele Fragen es je Aufgabenformat gibt. Deshalb werden sie gleichmäßig aufgeteilt."
+            "value" : "Im offiziellen Leitfaden steht nicht, wie viele Fragen es pro Format gibt. Deshalb werden sie gleichmäßig verteilt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La guía oficial no indica cuántas preguntas tiene cada formato, así que se reparten por igual."
+            "value" : "La guía oficial no indica cuántas preguntas hay de cada formato, así que se reparten por igual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le guide officiel n’indique pas le nombre de questions par format, elles sont donc réparties équitablement."
+            "value" : "Le guide officiel ne précise pas le nombre de questions par format. Elles sont donc réparties à parts égales."
           }
         },
         "pt" : {
@@ -6181,7 +6181,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im offiziellen Leitfaden steht nicht, wie viele Fragen es je Abschnitt gibt. Deshalb werden sie gleichmäßig aufgeteilt."
+            "value" : "Im offiziellen Leitfaden steht nicht, wie viele Fragen es pro Teil gibt. Deshalb werden sie gleichmäßig verteilt."
           }
         },
         "es" : {
@@ -6193,7 +6193,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le guide officiel n’indique pas le nombre de questions par partie, elles sont donc réparties équitablement."
+            "value" : "Le guide officiel ne précise pas le nombre de questions par partie. Elles sont donc réparties à parts égales."
           }
         },
         "pt" : {
@@ -6210,7 +6210,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im offiziellen Leitfaden steht nicht, wie viele Fragen die Prüfung hat."
+            "value" : "Im offiziellen Leitfaden steht nicht, wie viele Fragen die Prüfung enthält."
           }
         },
         "es" : {
@@ -6222,7 +6222,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le guide officiel n’indique pas le nombre de questions de l’examen."
+            "value" : "Le guide officiel ne précise pas le nombre de questions de l’examen."
           }
         },
         "pt" : {
@@ -6239,25 +6239,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Fragenbank enthält dafür noch keine weiteren neuen Fragen."
+            "value" : "In der Fragensammlung gibt es dafür noch keine weiteren neuen Fragen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todavía no hay más preguntas nuevas en el banco para este examen."
+            "value" : "El banco de preguntas aún no tiene más preguntas nuevas para este simulacro."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La banque de questions n’en propose pas encore d’autres inédites."
+            "value" : "La banque de questions ne contient pas encore d’autres questions inédites pour cet examen blanc."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não há outras perguntas novas no banco."
+            "value" : "O banco de perguntas ainda não tem mais perguntas novas para este simulado."
           }
         }
       }
@@ -6268,7 +6268,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im echten Examen reicht der Score von %1$@ bis %2$@."
+            "value" : "In der echten Prüfung reicht der Score von %1$@ bis %2$@."
           }
         },
         "en" : {
@@ -6280,19 +6280,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En el examen real, la puntuación va de %1$@ a %2$@."
+            "value" : "El examen real se puntúa de %1$@ a %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À l’examen, les notes vont de %1$@ à %2$@."
+            "value" : "À l’examen officiel, le score va de %1$@ à %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A pontuação da prova real vai de %1$@ a %2$@."
+            "value" : "A pontuação da prova vai de %1$@ a %2$@."
           }
         }
       }
@@ -6303,7 +6303,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Im echten Examen reicht der Score auf der Skala %1$@ von %2$@ bis %3$@."
+            "value" : "In der echten Prüfung wird der Score auf der Skala %1$@ von %2$@ bis %3$@ angegeben."
           }
         },
         "en" : {
@@ -6315,19 +6315,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En el examen real, la puntuación va de %2$@ a %3$@ en la escala %1$@."
+            "value" : "El examen real se puntúa en la escala %1$@, de %2$@ a %3$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À l’examen, les notes vont de %2$@ à %3$@ sur l’échelle %1$@."
+            "value" : "L’examen officiel utilise l’échelle %1$@, de %2$@ à %3$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A pontuação da prova real na escala %1$@ vai de %2$@ a %3$@."
+            "value" : "A prova usa a escala %1$@, de %2$@ a %3$@."
           }
         }
       }
@@ -6338,25 +6338,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der mündliche Teil ist in Probeprüfungen noch nicht enthalten."
+            "value" : "Der mündliche Teil ist noch nicht in Probeprüfungen enthalten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La parte de expresión oral aún no está disponible en los simulacros."
+            "value" : "La parte de expresión oral aún no está incluida en los simulacros."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’épreuve d’expression orale n’est pas encore proposée dans les examens blancs."
+            "value" : "L’expression orale ne fait pas encore partie des examens blancs."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A parte de conversação ainda não está disponível nos simulados."
+            "value" : "A parte de conversação ainda não está nos simulados."
           }
         }
       }
@@ -6367,13 +6367,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für diese Probeprüfung gibt es noch nicht genug Fragen. Versuch es mit der vollständigen Prüfung oder einem anderen Fach."
+            "value" : "Für diese Probeprüfung gibt es noch nicht genug Fragen. Versuche die ganze Prüfung oder ein anderes Thema."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no hay suficientes preguntas para este simulacro. Prueba con el examen completo o con otra asignatura."
+            "value" : "Aún no hay suficientes preguntas para este simulacro. Prueba el examen completo u otra materia."
           }
         },
         "fr" : {
@@ -6396,25 +6396,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für %@ gibt es noch keinen Aufsatz. Du kannst das Schreiben in deinen Schreib-Lerneinheiten üben."
+            "value" : "Für %@ gibt es noch keinen Aufsatz. Du übst das Schreiben daher in deinen Aufsatz-Lerneinheiten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no hay una redacción para %@, así que puedes practicarla en tus sesiones de redacción."
+            "value" : "Aún no hay ninguna redacción para %@, así que puedes practicarla en tus sesiones de redacción."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il n’y a pas encore de rédaction pour %@, alors tu t’y entraînes pendant tes séances de rédaction."
+            "value" : "Il n’y a pas encore de rédaction pour %@. Tu t’y entraînes donc pendant tes séances de rédaction."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não há redação para %@, então você pode praticar nas sessões de redação."
+            "value" : "Ainda não há redação para %@, então você pratica nas suas sessões de redação."
           }
         }
       }
@@ -6425,7 +6425,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Probeprüfung enthält %1$lld von %2$lld Fragen, weil es noch nicht genug neue gab."
+            "value" : "Diese Probeprüfung enthält %1$lld von %2$lld Fragen: Es gab noch nicht genug neue Fragen."
           }
         },
         "en" : {
@@ -6437,13 +6437,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este simulacro incluye %1$lld de %2$lld preguntas porque aún no había suficientes preguntas nuevas."
+            "value" : "Este simulacro incluye %1$lld de %2$lld preguntas: aún no había suficientes preguntas nuevas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cet examen blanc comporte %1$lld questions sur %2$lld : il n’y avait pas encore assez de nouvelles questions."
+            "value" : "Cet examen blanc comporte %1$lld questions sur %2$lld : il n’y avait pas encore assez de questions inédites."
           }
         },
         "pt" : {
@@ -6463,13 +6463,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Diese Probeprüfung enthält %lld Frage, wie auch eine frühere Ausgabe."
+                  "value" : "Diese Probeprüfung enthält %lld Frage, wie eine frühere Ausgabe der Prüfung."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Diese Probeprüfung enthält %lld Fragen, wie auch eine frühere Ausgabe."
+                  "value" : "Diese Probeprüfung enthält %lld Fragen, wie eine frühere Ausgabe der Prüfung."
                 }
               }
             }
@@ -6499,13 +6499,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Este simulacro tiene %lld pregunta, como una edición anterior."
+                  "value" : "Este simulacro incluye %lld pregunta, como en una convocatoria anterior."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Este simulacro tiene %lld preguntas, como una edición anterior."
+                  "value" : "Este simulacro incluye %lld preguntas, como en una convocatoria anterior."
                 }
               }
             }
@@ -6514,12 +6514,6 @@
         "fr" : {
           "variations" : {
             "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Cet examen blanc comporte %lld questions, comme une édition précédente."
-                }
-              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -6538,22 +6532,16 @@
         "pt" : {
           "variations" : {
             "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Este simulado tem %lld perguntas, como edições anteriores."
-                }
-              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Este simulado tem %lld pergunta, como uma edição anterior."
+                  "value" : "Este simulado tem %lld pergunta, assim como uma edição anterior."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Este simulado tem %lld perguntas, como uma edição anterior."
+                  "value" : "Este simulado tem %lld perguntas, assim como uma edição anterior."
                 }
               }
             }
@@ -6606,13 +6594,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Este simulacro tiene %lld pregunta."
+                  "value" : "Este simulacro incluye %lld pregunta."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Este simulacro tiene %lld preguntas."
+                  "value" : "Este simulacro incluye %lld preguntas."
                 }
               }
             }
@@ -6621,12 +6609,6 @@
         "fr" : {
           "variations" : {
             "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Cet examen blanc comporte %lld questions."
-                }
-              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -6645,12 +6627,6 @@
         "pt" : {
           "variations" : {
             "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Este simulado tem %lld perguntas."
-                }
-              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -6674,25 +6650,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Probeprüfung gibt es hier nicht"
+            "value" : "Diese Probeprüfung gibt es nicht"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este simulacro de examen no está disponible"
+            "value" : "Este simulacro no existe"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cet examen blanc est introuvable"
+            "value" : "Cet examen blanc n’existe pas"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este simulado não está disponível"
+            "value" : "Este simulado não está aqui"
           }
         }
       }
@@ -6703,13 +6679,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Probeprüfung dauert %@."
+            "value" : "Für diese Probeprüfung hast du %@ Zeit."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este simulacro dura %@."
+            "value" : "Este simulacro da %@."
           }
         },
         "fr" : {
@@ -6721,7 +6697,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este simulado dura %@."
+            "value" : "Este simulado dá %@."
           }
         }
       }
@@ -6732,13 +6708,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Probeprüfung zeigt, wie viele Antworten richtig waren."
+            "value" : "Diese Probeprüfung zeigt, wie viele Fragen du richtig beantwortet hast."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este simulacro muestra cuántas respuestas has acertado."
+            "value" : "Este simulacro muestra cuántas preguntas has acertado."
           }
         },
         "fr" : {
@@ -6750,7 +6726,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este simulado mostra quantas respostas você acertou."
+            "value" : "Este simulado mostra quantas perguntas você acertou."
           }
         }
       }
@@ -6854,7 +6830,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se acabó el tiempo mientras no estabas"
+            "value" : "El tiempo se ha agotado mientras estabas fuera"
           }
         },
         "fr" : {
@@ -6883,13 +6859,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se acabó el tiempo"
+            "value" : "Se ha agotado el tiempo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Temps écoulé"
+            "value" : "Le temps est écoulé"
           }
         },
         "pt" : {
@@ -6906,7 +6882,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tempo"
+            "value" : "Zeiteinteilung"
           }
         },
         "es" : {
@@ -6935,25 +6911,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zum Bestehen brauchst du laut Hinweis"
+            "value" : "Laut Ausschreibung brauchst du zum Bestehen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para aprobar, el aviso indica"
+            "value" : "Para aprobar, la convocatoria indica"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour réussir, la notice indique"
+            "value" : "Pour réussir, selon l’avis"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para passar, o edital diz"
+            "value" : "Para passar, o edital exige"
           }
         }
       }
@@ -6964,7 +6940,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zum Bestehen brauchst du laut offizieller Anleitung"
+            "value" : "Laut offiziellem Leitfaden brauchst du zum Bestehen"
           }
         },
         "es" : {
@@ -6976,13 +6952,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour réussir, le guide officiel indique"
+            "value" : "Pour réussir, selon le guide officiel"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para passar, o guia oficial diz"
+            "value" : "Para passar, o guia oficial exige"
           }
         }
       }
@@ -6993,7 +6969,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zum Bestehen brauchst du mindestens %@."
+            "value" : "Zum Bestehen: %@ oder mehr."
           }
         },
         "es" : {
@@ -7051,13 +7027,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten die Probeprüfung nicht starten. Versuch es noch einmal."
+            "value" : "Die Probeprüfung konnte nicht gestartet werden. Versuch es erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido iniciar el simulacro. Inténtalo de nuevo."
+            "value" : "No hemos podido iniciar el simulacro. Vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -7069,7 +7045,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível iniciar o simulado. Tente novamente."
+            "value" : "Não foi possível começar o simulado. Tente novamente."
           }
         }
       }
@@ -7080,25 +7056,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir erstellen Fragen wie in der Prüfung für dich. Sobald sie fertig sind, geht es hier los."
+            "value" : "Wir erstellen für dich Fragen wie in der Prüfung. Sobald sie fertig sind, beginnt die Probeprüfung hier."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estamos preparando preguntas similares a las del examen. El simulacro empezará aquí en cuanto estén listas."
+            "value" : "Estamos preparando preguntas como las del examen. El simulacro empezará aquí en cuanto estén listas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous préparons des questions similaires à celles de l’examen. L’examen blanc commencera ici dès qu’elles seront prêtes."
+            "value" : "Nous préparons des questions semblables à celles de l’examen. Il commencera ici dès qu’elles seront prêtes."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estamos criando perguntas parecidas com as da prova para você. O simulado começa aqui assim que elas estiverem prontas."
+            "value" : "Estamos criando perguntas parecidas com as da prova para você. O simulado começa aqui assim que elas ficarem prontas."
           }
         }
       }
@@ -7109,19 +7085,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Ergebnis deiner Probeprüfung"
+            "value" : "Was die Probeprüfung gezeigt hat"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que mostró el simulacro de examen"
+            "value" : "Lo que ha mostrado el simulacro"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce que l’examen blanc a montré"
+            "value" : "Ce que l’examen blanc a révélé"
           }
         },
         "pt" : {
@@ -7138,7 +7114,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was du in dieser Probeprüfung gezeigt hast, zählt für deine Vorbereitung."
+            "value" : "Was du in dieser Probeprüfung gezeigt hast, fließt in deine Vorbereitung ein."
           }
         },
         "es" : {
@@ -7150,7 +7126,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce que tu as montré dans cet examen blanc compte dans ta préparation."
+            "value" : "Ce que tu as montré dans cet examen blanc compte pour ta préparation."
           }
         },
         "pt" : {
@@ -7167,7 +7143,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wann du die Antwort leer lassen solltest"
+            "value" : "Wann du eine Antwort offen lassen solltest"
           }
         },
         "es" : {
@@ -7179,7 +7155,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quand laisser la réponse vide"
+            "value" : "Quand laisser une réponse vide"
           }
         },
         "pt" : {
@@ -7196,25 +7172,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du die meisten Fragen unbeantwortet lässt, wird die Probeprüfung nicht bewertet und deine Vorbereitung ändert sich nicht."
+            "value" : "Da du die meisten Fragen nicht beantwortet hast, wird die Probeprüfung nicht bewertet und deine Vorbereitung bleibt unverändert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Si dejas la mayoría de las preguntas sin responder, no se calcula la puntuación y tu preparación no cambia."
+            "value" : "Como has dejado la mayoría sin responder, no se puntúa ni cambia tu preparación."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comme la plupart des réponses sont vides, cet examen n’est pas noté et ne change pas ta préparation."
+            "value" : "Comme tu n’as pas répondu à la plupart des questions, cet examen blanc n’est pas noté et ne change pas ta préparation."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como a maioria das perguntas ficou sem resposta, o simulado não recebe pontuação e não altera seu preparo."
+            "value" : "Como a maior parte ficou sem resposta, o simulado não recebe uma nota e não altera seu preparo."
           }
         }
       }
@@ -7225,13 +7201,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Aufgabenkarten werden erstellt…"
+            "value" : "Wir erstellen deine Aufgabenkarten…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preparando tus tarjetas de expresión oral…"
+            "value" : "Preparando tus tarjetas de tareas…"
           }
         },
         "fr" : {
@@ -7243,7 +7219,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Criando seus cartões de tarefa…"
+            "value" : "Criando seus cartões de atividades…"
           }
         }
       }
@@ -7365,7 +7341,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Errado"
+            "value" : "Erradas"
           }
         }
       }
@@ -7376,19 +7352,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du weitergehst, kannst du nicht mehr zu einer Frage zurückkehren."
+            "value" : "Sobald du zur nächsten Frage gehst, kannst du nicht mehr zurück."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No puedes volver a una pregunta cuando hayas pasado a la siguiente."
+            "value" : "Una vez que avances, no podrás volver a una pregunta."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu ne peux pas revenir à une question une fois passée à la suivante."
+            "value" : "Tu ne peux pas revenir à une question après être passé à la suivante."
           }
         },
         "pt" : {
@@ -7408,13 +7384,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Du hast alle Fragen in %lld Thema richtig beantwortet"
+                  "value" : "Du hast bei %lld Thema alles richtig beantwortet"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Du hast alle Fragen in %lld Themen richtig beantwortet"
+                  "value" : "Du hast bei %lld Themen alles richtig beantwortet"
                 }
               }
             }
@@ -7441,22 +7417,16 @@
         "es" : {
           "variations" : {
             "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Has acertado todas las respuestas en %lld temas"
-                }
-              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Has acertado todas las respuestas en %lld tema"
+                  "value" : "Has acertado todo en %lld tema"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Has acertado todas las respuestas en %lld temas"
+                  "value" : "Has acertado todo en %lld temas"
                 }
               }
             }
@@ -7468,13 +7438,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tu as tout trouvé dans %lld thème"
+                  "value" : "Tu as répondu correctement à toutes les questions sur %lld sujet"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tu as tout trouvé dans %lld thèmes"
+                  "value" : "Tu as répondu correctement à toutes les questions sur %lld sujets"
                 }
               }
             }
@@ -7506,19 +7476,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast es leer gelassen."
+            "value" : "Du hast das Feld leer gelassen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La has dejado en blanco."
+            "value" : "Lo has dejado en blanco."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as laissé la réponse vide."
+            "value" : "Tu as laissé cette réponse vide."
           }
         },
         "pt" : {
@@ -7535,7 +7505,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast die Aufsatzbewertungen für heute aufgebraucht. Versuch es morgen wieder."
+            "value" : "Du hast heute alle Bewertungen für deine Texte aufgebraucht. Versuch es morgen erneut."
           }
         },
         "es" : {
@@ -7547,13 +7517,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as utilisé toutes les corrections de rédaction disponibles aujourd’hui. Réessaie demain."
+            "value" : "Tu as utilisé toutes tes corrections de rédaction pour aujourd’hui. Réessaie demain."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já usou todas as correções de redação de hoje. Tente novamente amanhã."
+            "value" : "Você já usou suas correções de redação de hoje. Tente novamente amanhã."
           }
         }
       }
@@ -7628,7 +7598,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu último simulacro de examen"
+            "value" : "Tu último simulacro"
           }
         },
         "fr" : {
@@ -7651,7 +7621,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Material gibt nicht an, wie lange der Test dauert. Diese Probeprüfung enthält %#@questions@ in %2$@."
+            "value" : "Dein Material gibt nicht an, wie lange der Test dauert. Diese Probeprüfung umfasst %#@questions@ in %2$@."
           },
           "substitutions" : {
             "questions" : {
@@ -7707,7 +7677,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El material no indica cuánto dura la prueba. Este simulacro incluye %#@questions@ en %2$@."
+            "value" : "Tu material no indica cuánto dura la prueba. Este simulacro tiene %#@questions@ para responder en %2$@."
           },
           "substitutions" : {
             "questions" : {
@@ -7735,7 +7705,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton support n’indique pas la durée du test. Cet examen blanc comporte %#@questions@ en %2$@."
+            "value" : "Tes documents ne précisent pas la durée du test. Cet examen blanc comporte %#@questions@ à faire en %2$@."
           },
           "substitutions" : {
             "questions" : {
@@ -7743,12 +7713,6 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
-                  "many" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg questions"
-                    }
-                  },
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -7769,7 +7733,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu material não informa a duração da prova. Este simulado tem %#@questions@ em %2$@."
+            "value" : "Seu material não diz quanto tempo dura a prova. Este simulado tem %#@questions@ em %2$@."
           },
           "substitutions" : {
             "questions" : {
@@ -7777,12 +7741,6 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
-                  "many" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg perguntas"
-                    }
-                  },
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
@@ -7808,25 +7766,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Material gibt nicht an, wie viele Fragen es je Aufgabenformat gibt. Deshalb werden sie gleichmäßig aufgeteilt."
+            "value" : "Dein Material gibt nicht an, wie viele Fragen es pro Format gibt. Deshalb sind sie gleichmäßig verteilt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El material no indica cuántas preguntas tiene cada formato, así que se reparten por igual."
+            "value" : "Tu material no indica cuántas preguntas hay de cada formato, así que se han repartido por igual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton support n’indique pas le nombre de questions par format, elles sont donc réparties équitablement."
+            "value" : "Tes documents ne précisent pas le nombre de questions par format. Elles sont donc réparties à parts égales."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu material não informa quantas perguntas há em cada formato, então elas são divididas igualmente."
+            "value" : "Seu material não diz quantas perguntas há em cada formato, então elas foram divididas igualmente."
           }
         }
       }
@@ -7866,19 +7824,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Plan wurde bereits angepasst. Hier ist nichts mehr zu tun."
+            "value" : "Dein Plan hat sich bereits geändert, deshalb ist hier nichts mehr zu tun."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan ya ha cambiado, así que aquí no tienes que hacer nada más."
+            "value" : "Tu plan ya ha cambiado, así que no queda nada por hacer aquí."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan a déjà été modifié. Il n’y a donc plus rien à faire ici."
+            "value" : "Ton plan a déjà changé, il n’y a donc plus rien à faire ici."
           }
         },
         "pt" : {
@@ -7895,25 +7853,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Plan enthält bereits alle Lektionen dazu. Es musste nichts verschoben werden."
+            "value" : "Dein Plan enthält bereits alle zugehörigen Lektionen, deshalb musste nichts verschoben werden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan ya incluye todas sus lecciones, así que no había que mover nada."
+            "value" : "Tu plan ya incluye todas sus lecciones, así que no ha hecho falta cambiar nada."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan contient déjà toutes ses leçons. Rien n’avait donc besoin d’être déplacé."
+            "value" : "Ton plan contient déjà toutes ses leçons, donc rien n’a dû être déplacé."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano já tem todas as aulas dessa matéria, então não foi preciso mover nada."
+            "value" : "Seu plano já tem todas as aulas, então nada precisou mudar de lugar."
           }
         }
       }
@@ -7924,7 +7882,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Plan bleibt unverändert."
+            "value" : "Dein Plan bleibt, wie er ist."
           }
         },
         "es" : {
@@ -7936,7 +7894,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan reste inchangé."
+            "value" : "Ton plan reste tel quel."
           }
         },
         "pt" : {
@@ -7982,25 +7940,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein echtes Ergebnis hängt davon ab, wie alle in deinem Prüfungsdurchgang abschneiden."
+            "value" : "Dein tatsächliches Ergebnis hängt davon ab, wie alle abschneiden, die mit dir an der Prüfung teilnehmen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu resultado real depende de cómo le vaya a todo el mundo que se presente contigo."
+            "value" : "Tu resultado real depende de cómo les vaya a los demás que se presenten contigo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton résultat réel dépend des résultats des autres candidats de ta session."
+            "value" : "Ton résultat réel dépend des résultats de tous les candidats de ta session."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu resultado na prova real depende do desempenho de todas as pessoas que fizerem a prova com você."
+            "value" : "Seu resultado real depende do desempenho de todas as pessoas que fizerem a prova junto com você."
           }
         }
       }
@@ -8011,7 +7969,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Ergebnis wird erst am Ende angezeigt, wie am Prüfungstag."
+            "value" : "Dein Ergebnis wird erst am Ende angezeigt, genau wie am Prüfungstag."
           }
         },
         "es" : {
@@ -8040,25 +7998,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Auch mit unsicheren Antworten hast du Punkte bekommen. Beantworte sie also weiter."
+            "value" : "Auch für Antworten, bei denen du unsicher warst, hast du Punkte bekommen. Beantworte solche Fragen also weiter."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus respuestas aunque no estés seguro también suman puntos, así que sigue respondiendo."
+            "value" : "Las respuestas en las que dudabas también te han dado puntos, así que sigue respondiéndolas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Même quand tu n’étais pas sûr, tes réponses t’ont rapporté des points. Continue à répondre."
+            "value" : "Tes réponses incertaines t’ont quand même rapporté des points, alors continue à répondre même en cas de doute."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas respostas mesmo quando você não tinha certeza valeram pontos, então continue respondendo."
+            "value" : "Suas respostas às perguntas em que você tinha dúvida também renderam pontos, então continue respondendo."
           }
         }
       }

@@ -1,6 +1,41 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "%@ · %@" : {
+      "comment" : "The buddy's growth stage and glasses, as in “Baby · Round glasses”\nWhere a remembered fact came from and its day, as in “From a chat · Oct 11”",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      }
+    },
     "%@ %@" : {
       "comment" : "A deleted fact, struck through after “Memory updated:”",
       "localizations" : {
@@ -42,7 +77,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ pro Tag"
+            "value" : "%@ am Tag"
           }
         },
         "es" : {
@@ -61,41 +96,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ por dia"
-          }
-        }
-      }
-    },
-    "%@ · %@" : {
-      "comment" : "The buddy's growth stage and glasses, as in “Baby · Round glasses”\nWhere a remembered fact came from and its day, as in “From a chat · Oct 11”",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@"
-          }
-        },
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ · %2$@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ · %2$@"
           }
         }
       }
@@ -193,7 +193,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pilotenbrille"
+            "value" : "Eine Pilotenbrille"
           }
         },
         "es" : {
@@ -205,13 +205,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lunettes d’aviateur"
+            "value" : "Lunettes aviateur"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Óculos de aviador"
+            "value" : "Óculos aviador"
           }
         }
       }
@@ -257,7 +257,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Información personal"
+            "value" : "Contexto"
           }
         },
         "fr" : {
@@ -269,7 +269,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Histórico"
+            "value" : "Sobre você"
           }
         }
       }
@@ -321,7 +321,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Œil-de-chat"
+            "value" : "Œil de chat"
           }
         },
         "pt" : {
@@ -350,7 +350,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lunettes œil-de-chat"
+            "value" : "Lunettes œil de chat"
           }
         },
         "pt" : {
@@ -385,7 +385,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mudar"
+            "value" : "Alterar"
           }
         }
       }
@@ -425,13 +425,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Überprüfe deine Verbindung und versuche es erneut."
+            "value" : "Prüfe deine Verbindung und versuche es erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comprueba tu conexión e inténtalo de nuevo."
+            "value" : "Comprueba tu conexión y vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -460,13 +460,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige a tu compañero"
+            "value" : "Elige tu compañero"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis ton compagnon"
+            "value" : "Choisis ton Compagnon"
           }
         },
         "pt" : {
@@ -483,19 +483,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gehört zu deinem Kumpel"
+            "value" : "Bei deinem Kumpel dabei"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Viene con tu compañero"
+            "value" : "Incluidas con tu compañero"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Offertes avec ton compagnon"
+            "value" : "Inclus avec ton Compagnon"
           }
         },
         "pt" : {
@@ -512,7 +512,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kontext"
+            "value" : "Hintergrund"
           }
         },
         "es" : {
@@ -541,7 +541,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Seite konnte nicht geladen werden"
+            "value" : "Seite konnte nicht geladen werden"
           }
         },
         "es" : {
@@ -570,7 +570,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Konnte nicht rückgängig gemacht werden. Inzwischen hat sich etwas geändert."
+            "value" : "Konnte nicht rückgängig gemacht werden. Der Eintrag wurde inzwischen geändert."
           }
         },
         "es" : {
@@ -588,7 +588,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível desfazer. Isso mudou desde então."
+            "value" : "Não foi possível desfazer. A informação mudou desde então."
           }
         }
       }
@@ -605,19 +605,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Límite diario de estudio"
+            "value" : "Límite de tiempo diario"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Limite de durée quotidienne"
+            "value" : "Limite de temps quotidienne"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Limite diário de estudo"
+            "value" : "Limite diário de tempo"
           }
         }
       }
@@ -686,7 +686,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meine Erinnerungen herunterladen"
+            "value" : "Mein Gedächtnis herunterladen"
           }
         },
         "es" : {
@@ -744,13 +744,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erinnerung bearbeiten"
+            "value" : "Gedächtniseintrag bearbeiten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Editar memoria"
+            "value" : "Editar recuerdo"
           }
         },
         "fr" : {
@@ -773,7 +773,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alles, was du dir gemerkt hast, in einer Datei"
+            "value" : "Alles aus deinem Gedächtnis in einer Datei"
           }
         },
         "es" : {
@@ -785,13 +785,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout ce que contient ta mémoire, dans un seul fichier"
+            "value" : "Tout le contenu de ta mémoire dans un seul fichier"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo o que está na sua memória, em um arquivo"
+            "value" : "Tudo na sua memória, em um só arquivo"
           }
         }
       }
@@ -802,7 +802,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "50 Wiederholungen abschließen"
+            "value" : "Schließe 50 Wiederholungen ab"
           }
         },
         "es" : {
@@ -831,7 +831,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle Missionen an 7 verschiedenen Tagen abschließen"
+            "value" : "Schließe an 7 verschiedenen Tagen alle Missionen ab"
           }
         },
         "es" : {
@@ -866,13 +866,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completa tu primer desafío semanal"
+            "value" : "Completa tu primer Desafío semanal"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminer ton premier défi hebdomadaire"
+            "value" : "Termine ton premier Défi hebdomadaire"
           }
         },
         "pt" : {
@@ -889,7 +889,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aus einem Gespräch"
+            "value" : "Aus einem Chat"
           }
         },
         "es" : {
@@ -901,7 +901,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Depuis une conversation"
+            "value" : "Issu d’une conversation"
           }
         },
         "pt" : {
@@ -930,7 +930,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Depuis une séance d’étude"
+            "value" : "Issu d’une séance d’étude"
           }
         },
         "pt" : {
@@ -947,25 +947,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aus der Einführung"
+            "value" : "Aus der Einrichtung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Del inicio"
+            "value" : "De la configuración inicial"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lors de la prise en main"
+            "value" : "Issu de ton inscription"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Do início do app"
+            "value" : "Da configuração inicial"
           }
         }
       }
@@ -1040,7 +1040,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudio"
+            "value" : "Aprendizaje"
           }
         },
         "fr" : {
@@ -1052,7 +1052,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudo"
+            "value" : "Aprendizado"
           }
         }
       }
@@ -1092,7 +1092,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erinnerungen"
+            "value" : "Gedächtnis"
           }
         },
         "es" : {
@@ -1121,25 +1121,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erinnerungen sind ausgeschaltet. Es werden keine neuen Fakten gespeichert und vorhandene Fakten nicht verwendet."
+            "value" : "Das Gedächtnis ist ausgeschaltet. Es wird nichts Neues gemerkt und diese Einträge werden nicht verwendet."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La memoria está desactivada. No se aprende nada nuevo y estos datos no se utilizan."
+            "value" : "La memoria está desactivada. No se aprende nada nuevo y no se usan estos datos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La mémoire est désactivée. Aucun nouveau fait n’est enregistré et ces informations ne sont pas utilisées."
+            "value" : "La mémoire est désactivée. Rien de nouveau n’est retenu et ces informations ne sont pas utilisées."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A memória está desativada. Nada novo é aprendido, e esses fatos não são usados."
+            "value" : "A memória está desativada. Nada de novo é aprendido, e essas informações não são usadas."
           }
         }
       }
@@ -1150,7 +1150,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erinnerung aktualisiert:"
+            "value" : "Gedächtnis aktualisiert:"
           }
         },
         "es" : {
@@ -1208,7 +1208,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Keine Begrenzung"
+            "value" : "Kein Limit"
           }
         },
         "es" : {
@@ -1220,7 +1220,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune limite"
+            "value" : "Sans limite"
           }
         },
         "pt" : {
@@ -1266,25 +1266,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hier ist nichts. Solange Erinnerungen ausgeschaltet sind, speichert Zoonk keine Notizen über dich."
+            "value" : "Hier ist nichts. Solange das Gedächtnis ausgeschaltet ist, merkt sich Zoonk nichts über dich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aquí no hay nada. Zoonk no guarda notas sobre ti mientras la memoria está desactivada."
+            "value" : "No hay nada aquí. Zoonk no guarda notas sobre ti mientras la memoria está desactivada."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rien ici. Zoonk ne garde aucune note sur toi quand la mémoire est désactivée."
+            "value" : "Rien ici. Zoonk ne garde aucune note sur toi tant que la mémoire est désactivée."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nada por aqui. O Zoonk não guarda informações sobre você enquanto a memória está desativada."
+            "value" : "Nada por aqui. Zoonk não guarda anotações sobre você enquanto a memória está desativada."
           }
         }
       }
@@ -1295,25 +1295,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch nichts. Während du lernst und chattest, erscheinen hier kurze Notizen, die Zoonk beim Erklären helfen."
+            "value" : "Noch nichts da. Wenn du lernst und chattest, erscheinen hier kurze Notizen, mit denen Zoonk dich beim Lernen unterstützt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todavía no hay nada. A medida que estudies y charles, aquí aparecerán notas breves que ayudarán a Zoonk a enseñarte."
+            "value" : "Todavía no hay nada. A medida que estudies y converses, aquí aparecerán notas breves que ayudan a Zoonk a enseñarte."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rien pour le moment. Au fil de tes séances et de tes conversations, de courtes notes qui aident Zoonk à t’apprendre des choses apparaîtront ici."
+            "value" : "Rien pour le moment. Au fil de tes séances et de tes conversations, de courtes notes qui aident Zoonk à t’accompagner apparaîtront ici."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nada por enquanto. À medida que você estuda e conversa, aparecem aqui anotações que ajudam o Zoonk a ensinar você."
+            "value" : "Nada por enquanto. Conforme você estuda e conversa, aparecem aqui anotações curtas que ajudam Zoonk a ensinar você."
           }
         }
       }
@@ -1336,13 +1336,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repéré dans ton activité"
+            "value" : "Remarqué grâce à ton activité"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Percebido durante sua atividade"
+            "value" : "Percebido pela sua atividade"
           }
         }
       }
@@ -1359,7 +1359,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Opciones para «%@»"
+            "value" : "Opciones de «%@»"
           }
         },
         "fr" : {
@@ -1411,25 +1411,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Persönliche Beispiele und Pläne, die in deine Woche passen"
+            "value" : "Persönliche Beispiele und Pläne, die zu deiner Woche passen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ejemplos personalizados y planes que encajan con tu semana"
+            "value" : "Ejemplos personalizados y planes que se adaptan a tu semana"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Des exemples personnels et des plans adaptés à ta semaine"
+            "value" : "Des exemples personnalisés et des plans adaptés à ta semaine"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exemplos pessoais e planos que cabem na sua semana"
+            "value" : "Exemplos personalizados e planos que cabem na sua semana"
           }
         }
       }
@@ -1440,7 +1440,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vorlieben"
+            "value" : "Einstellungen"
           }
         },
         "es" : {
@@ -1469,7 +1469,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird vorbereitet…"
+            "value" : "Wir bereiten vor…"
           }
         },
         "es" : {
@@ -1527,7 +1527,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retro-Brille"
+            "value" : "Retrobrille"
           }
         },
         "es" : {
@@ -1614,7 +1614,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alltag"
+            "value" : "Routine"
           }
         },
         "es" : {
@@ -1643,25 +1643,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Formuliere es so, wie es für dich stimmt."
+            "value" : "Schreibe es so, wie es für dich stimmt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dilo con tus propias palabras, tal como es para ti."
+            "value" : "Exprésalo con tus propias palabras para que refleje tu realidad."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dis-le avec tes mots, comme tu le ressens."
+            "value" : "Formule-le avec tes mots pour que ce soit juste."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diga do seu jeito, de acordo com o que é verdade para você."
+            "value" : "Escreva do jeito que faz sentido para você."
           }
         }
       }
@@ -1730,7 +1730,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sternbrille"
+            "value" : "Sternenbrille"
           }
         },
         "es" : {
@@ -1742,7 +1742,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lunettes étoilées"
+            "value" : "Lunettes étoiles"
           }
         },
         "pt" : {
@@ -1759,25 +1759,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nach dieser Lernzeit ist für heute Schluss."
+            "value" : "Hör für heute auf, sobald du so lange gelernt hast."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al llegar a este tiempo de estudio, termina por hoy."
+            "value" : "Termina el estudio del día al alcanzar este tiempo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrête tes séances pour aujourd’hui après cette durée d’étude."
+            "value" : "Arrête ta séance quand tu as atteint cette durée."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encerre o estudo do dia depois desse tempo."
+            "value" : "Encerre os estudos do dia ao atingir esse tempo."
           }
         }
       }
@@ -1806,7 +1806,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível salvar. Tente novamente."
+            "value" : "Não foi possível salvar. Tente de novo."
           }
         }
       }
@@ -1817,13 +1817,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentarlo"
+            "value" : "Intentar de nuevo"
           }
         },
         "fr" : {
@@ -1835,7 +1835,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tente de novo"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -1846,7 +1846,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rückgängig"
+            "value" : "Rückgängig machen"
           }
         },
         "es" : {
@@ -1875,7 +1875,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erinnerungen verwenden"
+            "value" : "Erinnerungen nutzen"
           }
         },
         "es" : {
@@ -1904,25 +1904,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Download konnte nicht vorbereitet werden. Versuch es noch einmal."
+            "value" : "Wir konnten den Download nicht vorbereiten. Versuch es noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido preparar la descarga. Inténtalo de nuevo."
+            "value" : "No hemos podido preparar la descarga. Inténtalo de nuevo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de préparer le téléchargement. Réessaie."
+            "value" : "Le téléchargement n’a pas pu être préparé. Réessaie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível preparar o download. Tente novamente."
+            "value" : "Não foi possível preparar o download. Tente de novo."
           }
         }
       }
@@ -1951,7 +1951,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que o Zoonk lembra"
+            "value" : "O que Zoonk lembra"
           }
         }
       }
@@ -1962,13 +1962,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was Zoonk sich merkt, damit Beispiele und Pläne zu deinem Leben passen."
+            "value" : "Was Zoonk sich merkt, um dir Beispiele und Pläne zu geben, die zu deinem Leben passen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que recuerda Zoonk para darte ejemplos y planes que encajen con tu vida."
+            "value" : "Lo que Zoonk recuerda para ofrecerte ejemplos y planes que se adapten a tu vida."
           }
         },
         "fr" : {
@@ -1980,7 +1980,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que o Zoonk lembra para dar a você exemplos e planos que combinam com sua vida."
+            "value" : "O que Zoonk lembra para criar exemplos e planos que combinam com sua vida."
           }
         }
       }
@@ -1991,19 +1991,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du richtig antwortest oder fertig bist"
+            "value" : "Wenn du richtig antwortest oder etwas abschließt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al acertar o terminar"
+            "value" : "Cuando aciertas o terminas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quand tu as la bonne réponse ou que tu termines"
+            "value" : "Quand tu réponds correctement ou que tu termines"
           }
         },
         "pt" : {
@@ -2032,7 +2032,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remporter le défi final"
+            "value" : "Remporte le défi final"
           }
         },
         "pt" : {
@@ -2055,13 +2055,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gana tu primer desafío de fase"
+            "value" : "Gana tu primer desafío de la fase"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remporter ton premier défi de la phase"
+            "value" : "Remporte ton premier défi de la phase"
           }
         },
         "pt" : {
@@ -2142,19 +2142,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero"
+            "value" : "Tu Compañero"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon"
+            "value" : "Ton Compagnon"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu parceiro"
+            "value" : "Seu Parceiro"
           }
         }
       }
@@ -2165,25 +2165,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk speichert keine Angaben zu Gesundheit, Religion oder anderen sensiblen Themen, außer du bittest darum."
+            "value" : "Zoonk merkt sich keine Angaben zu Gesundheit, Religion oder andere sensible Informationen, es sei denn, du bittest darum."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no guarda información sobre tu salud, religión u otros datos sensibles a menos que se lo pidas."
+            "value" : "Zoonk no guarda datos sobre tu salud, religión u otros datos sensibles a menos que se lo pidas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk ne conserve pas d’informations sensibles sur ta santé, ta religion ou d’autres sujets, sauf si tu le lui demandes."
+            "value" : "Zoonk ne retient pas les informations sur ta santé, ta religion ou d’autres sujets sensibles, sauf si tu le lui demandes."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk não guarda informações sensíveis sobre saúde, religião ou outros assuntos, a menos que você peça."
+            "value" : "Zoonk não guarda informações sobre saúde, religião ou outros dados sensíveis, a menos que você peça."
           }
         }
       }
@@ -2206,13 +2206,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk utilise la langue de ton appareil. Pour changer uniquement la langue de Zoonk, va dans Réglages."
+            "value" : "Zoonk utilise la langue de ton appareil. Tu peux changer la langue de Zoonk dans Réglages."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk usa o idioma do seu dispositivo. Para mudar o idioma só do Zoonk, acesse os Ajustes."
+            "value" : "Zoonk usa o idioma do seu aparelho. Você pode mudar o idioma só de Zoonk nos Ajustes."
           }
         }
       }

@@ -25,7 +25,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ · %2$@ d’Énergie"
+            "value" : "%1$@ · %2$@ d’énergie"
           }
         },
         "pt" : {
@@ -199,7 +199,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · Aucune Énergie enregistrée"
+            "value" : "%@ · Aucune énergie enregistrée"
           }
         },
         "pt" : {
@@ -379,13 +379,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ à %2$@ points de Puissance Mentale"
+            "value" : "%1$@ à %2$@ de Puissance Mentale"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ com %2$@ PM"
+            "value" : "%1$@ com %2$@ de Poder Mental"
           }
         }
       }
@@ -455,7 +455,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@/%2$@ certas"
+            "value" : "%1$@/%2$@ acertos"
           }
         }
       }
@@ -976,16 +976,10 @@
         "de" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld BP fehlt noch"
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld BP fehlen noch"
+                  "value" : "Noch %lld"
                 }
               }
             }
@@ -1012,16 +1006,10 @@
         "es" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld para llegar"
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld para llegar"
+                  "value" : "Faltan %lld"
                 }
               }
             }
@@ -1030,16 +1018,10 @@
         "fr" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Encore %lld"
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Encore %lld"
+                  "value" : "%lld à gagner"
                 }
               }
             }
@@ -1048,16 +1030,10 @@
         "pt" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld restante"
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld restantes"
+                  "value" : "Faltam %lld"
                 }
               }
             }
@@ -1132,13 +1108,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Ein Tag oder eine Tageszeit muss mindestens %lld Antwort umfassen, damit sie zählt. So bildet ein einzelner Glückstreffer nie ein Muster."
+                  "value" : "Ein Tag oder eine Tageszeit zählt erst ab %lld Antwort, damit eine einzelne zufällig richtige Antwort nicht als Muster gilt."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Ein Tag oder eine Tageszeit muss mindestens %lld Antworten umfassen, damit sie zählt. So bildet ein einzelner Glückstreffer nie ein Muster."
+                  "value" : "Ein Tag oder eine Tageszeit zählt erst ab %lld Antworten, damit eine einzelne zufällig richtige Antwort nicht als Muster gilt."
                 }
               }
             }
@@ -1168,13 +1144,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un día o una franja horaria necesita %lld respuesta para contar; una respuesta acertada por casualidad no crea un patrón."
+                  "value" : "Un día o una franja horaria necesita %lld respuesta para contar, así una respuesta acertada por suerte no crea un patrón."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Un día o una franja horaria necesita %lld respuestas para contar; una respuesta acertada por casualidad no crea un patrón."
+                  "value" : "Un día o una franja horaria necesita %lld respuestas para contar, así una respuesta acertada por suerte no crea un patrón."
                 }
               }
             }
@@ -1186,13 +1162,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Il faut %lld réponse pour qu’un jour ou un moment de la journée soit pris en compte. Une bonne réponse par chance ne suffit pas à faire une tendance."
+                  "value" : "Il faut %lld réponse pour qu’un jour ou un moment de la journée compte. Une réponse donnée au hasard ne suffit donc pas à dégager une tendance."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Il faut %lld réponses pour qu’un jour ou un moment de la journée soit pris en compte. Une bonne réponse par chance ne suffit pas à faire une tendance."
+                  "value" : "Il faut %lld réponses pour qu’un jour ou un moment de la journée compte. Une réponse donnée au hasard ne suffit donc pas à dégager une tendance."
                 }
               }
             }
@@ -1204,13 +1180,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Um dia ou horário precisa de %lld resposta para contar. Assim, um acerto de sorte não vira um padrão."
+                  "value" : "Um dia ou horário precisa de %lld resposta para contar, para que um acerto por sorte não pareça um padrão."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Um dia ou horário precisa de %lld respostas para contar. Assim, um acerto de sorte não vira um padrão."
+                  "value" : "Um dia ou horário precisa de %lld respostas para contar, para que um acerto por sorte não pareça um padrão."
                 }
               }
             }
@@ -1253,7 +1229,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktivität nach Tag"
+            "value" : "Aktivität nach Tagen"
           }
         },
         "es" : {
@@ -1271,7 +1247,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Atividades por dia"
+            "value" : "Atividade por dia"
           }
         }
       }
@@ -1282,7 +1258,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktivität von wenig bis viel"
+            "value" : "Aktivität von weniger bis mehr"
           }
         },
         "es" : {
@@ -1294,7 +1270,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Activité, de la plus faible à la plus élevée"
+            "value" : "Activité de la plus faible à la plus forte"
           }
         },
         "pt" : {
@@ -1410,7 +1386,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "N’importe quel jour"
+            "value" : "Tous les jours"
           }
         },
         "pt" : {
@@ -1427,7 +1403,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jeder Lerntag"
+            "value" : "Jeder Tag, an dem du gelernt hast"
           }
         },
         "es" : {
@@ -1456,7 +1432,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jede Uhrzeit"
+            "value" : "Jede Tageszeit"
           }
         },
         "es" : {
@@ -1468,7 +1444,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "N’importe quel moment"
+            "value" : "À tout moment"
           }
         },
         "pt" : {
@@ -1497,7 +1473,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À 100 %"
+            "value" : "À 100 %"
           }
         },
         "pt" : {
@@ -1543,19 +1519,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Durchschnitt %@"
+            "value" : "Durchschnitt: %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Media %@"
+            "value" : "Media: %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Moyenne %@"
+            "value" : "Moyenne de %@"
           }
         },
         "pt" : {
@@ -1578,19 +1554,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Contando hacia atrás desde hoy"
+            "value" : "Hasta hoy"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En remontant depuis aujourd’hui"
+            "value" : "En remontant à partir d’aujourd’hui"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Contando para trás a partir de hoje"
+            "value" : "Contado a partir de hoje"
           }
         }
       }
@@ -1607,7 +1583,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Progreso de los cinturones"
+            "value" : "Progreso de cinturones"
           }
         },
         "fr" : {
@@ -1619,7 +1595,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Progressão das faixas"
+            "value" : "Progresso das faixas"
           }
         }
       }
@@ -1665,7 +1641,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mejor momento del día"
+            "value" : "Mejor hora"
           }
         },
         "fr" : {
@@ -1677,7 +1653,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Melhor período"
+            "value" : "Melhor horário"
           }
         }
       }
@@ -1926,19 +1902,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Días con la Energía al máximo"
+            "value" : "Días con la energía al máximo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jours avec une Énergie maximale"
+            "value" : "Jours avec une Énergie au maximum"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dias com Energia no máximo"
+            "value" : "Dias com Energia cheia"
           }
         }
       }
@@ -1978,7 +1954,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energie nach Tag"
+            "value" : "Energie nach Tagen"
           }
         },
         "es" : {
@@ -2007,25 +1983,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Energieintensität von niedrig bis hoch"
+            "value" : "Energie von niedrig bis hoch"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Intensidad de la Energía de menor a mayor"
+            "value" : "Intensidad de la energía de baja a alta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Intensité de l’Énergie, de la plus faible à la plus élevée"
+            "value" : "Intensité de l’Énergie, de faible à élevée"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Intensidade da Energia, da menor para a maior"
+            "value" : "Intensidade da Energia, de baixa a alta"
           }
         }
       }
@@ -2065,7 +2041,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jede Antwort zählt gleich viel. Deshalb kann dein Score bei schwierigeren Lektionen eine Weile sinken."
+            "value" : "Jede Antwort zählt gleich viel. Deshalb können schwierigere Lektionen deinen Score vorübergehend senken."
           }
         },
         "es" : {
@@ -2077,7 +2053,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toutes les réponses comptent autant. Les leçons plus difficiles peuvent donc faire baisser ton Score pendant quelque temps."
+            "value" : "Toutes les réponses comptent autant, donc les leçons plus difficiles peuvent faire baisser ton Score pendant quelque temps."
           }
         },
         "pt" : {
@@ -2094,13 +2070,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jeder Gürtel verdient"
+            "value" : "Alle Gürtel verdient"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos los cinturones conseguidos"
+            "value" : "Has conseguido todos los cinturones"
           }
         },
         "fr" : {
@@ -2123,25 +2099,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jede Lektion bringt %lld Brain Power, und dieser Wert sinkt nie."
+            "value" : "Jede Lektion bringt %lld Brain Power dazu. Sie nimmt nie ab."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada lección suma %lld de Poder Mental, y nunca disminuye."
+            "value" : "Cada lección suma %lld de Poder Mental y nunca baja."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chaque leçon ajoute %lld points de Puissance Mentale, qui ne diminue jamais."
+            "value" : "Chaque leçon rapporte %lld de Puissance Mentale, qui ne diminue jamais."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada aula acrescenta %lld PM, e essa quantidade nunca diminui."
+            "value" : "Cada aula soma %lld de Poder Mental, e ele nunca diminui."
           }
         }
       }
@@ -2152,25 +2128,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jede abgeschlossene Lektion erhöht deine Energie. An lernfreien Tagen sinkt sie ein wenig, aber dein Gürtel und dein Fortschritt bleiben erhalten."
+            "value" : "Jede abgeschlossene Lektion erhöht deine Energie. An freien Tagen sinkt sie etwas, aber dein Gürtel und dein Fortschritt bleiben erhalten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada lección que terminas aumenta tu Energía. En los días de descanso baja un poco, pero conservas tu cinturón y tu progreso."
+            "value" : "Cada lección que completas aumenta tu energía. Los días que descansas baja un poco, pero conservas tu cinturón y tu progreso."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chaque leçon terminée augmente ton Énergie. Elle baisse un peu les jours de repos, mais ta ceinture et ta progression restent les mêmes."
+            "value" : "Chaque leçon terminée augmente ton Énergie. Les jours de pause, elle baisse un peu, mais tu gardes ta ceinture et ta progression."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada aula concluída aumenta sua Energia. Nos dias de descanso, ela cai um pouco, mas sua faixa e seu progresso continuam."
+            "value" : "Cada aula que você conclui aumenta sua Energia. Nos dias de descanso, ela diminui um pouco, mas sua faixa e seu progresso continuam."
           }
         }
       }
@@ -2680,19 +2656,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sinkt nie"
+            "value" : "Nimmt nie ab"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nunca disminuye"
+            "value" : "Nunca baja"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne baisse jamais"
+            "value" : "Ne diminue jamais"
           }
         },
         "pt" : {
@@ -2750,7 +2726,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Niveau suivant"
+            "value" : "Prochain niveau"
           }
         },
         "pt" : {
@@ -2843,7 +2819,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nenhuma resposta"
+            "value" : "Sem respostas"
           }
         }
       }
@@ -2854,19 +2830,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kein Lernen"
+            "value" : "Nicht gelernt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin estudio"
+            "value" : "Sin estudiar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas d’étude"
+            "value" : "Aucune étude"
           }
         },
         "pt" : {
@@ -2883,25 +2859,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kein Lerntag in den letzten 12 Monaten"
+            "value" : "In den letzten 12 Monaten nicht gelernt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin días de estudio en los últimos 12 meses"
+            "value" : "Sin estudiar en los últimos 12 meses"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune séance au cours des 12 derniers mois"
+            "value" : "Aucune étude au cours des 12 derniers mois"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sem dias de estudo nos últimos 12 meses"
+            "value" : "Nenhum estudo nos últimos 12 meses"
           }
         }
       }
@@ -2970,7 +2946,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Von allen deinen Antworten"
+            "value" : "Von all deinen Antworten"
           }
         },
         "es" : {
@@ -2982,7 +2958,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sur l’ensemble de tes réponses"
+            "value" : "Sur toutes tes réponses"
           }
         },
         "pt" : {
@@ -3086,7 +3062,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lernmuster"
+            "value" : "Muster"
           }
         },
         "es" : {
@@ -3098,7 +3074,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendances"
+            "value" : "Habitudes"
           }
         },
         "pt" : {
@@ -3127,7 +3103,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendances · 90 jours"
+            "value" : "Habitudes · 90 jours"
           }
         },
         "pt" : {
@@ -3173,7 +3149,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vorige Woche"
+            "value" : "Vorherige Woche"
           }
         },
         "es" : {
@@ -3214,13 +3190,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Violet"
+            "value" : "Violette"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Roxo"
+            "value" : "Roxa"
           }
         }
       }
@@ -3278,7 +3254,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vermelho"
+            "value" : "Vermelha"
           }
         }
       }
@@ -3330,13 +3306,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Justes"
+            "value" : "Correctes"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Certo"
+            "value" : "Acertos"
           }
         }
       }
@@ -3359,7 +3335,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réponses justes"
+            "value" : "Bonnes réponses"
           }
         },
         "pt" : {
@@ -3388,7 +3364,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réponses justes au cours des 90 derniers jours"
+            "value" : "Bonnes réponses sur les 90 derniers jours"
           }
         },
         "pt" : {
@@ -3463,7 +3439,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alle anzeigen"
+            "value" : "Alle ansehen"
           }
         },
         "es" : {
@@ -3481,7 +3457,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver tudo"
+            "value" : "Ver todos"
           }
         }
       }
@@ -3521,25 +3497,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verteilung über die Woche"
+            "value" : "Spanne über die Woche"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Distribución a lo largo de la semana"
+            "value" : "Diferencia durante la semana"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réparti sur la semaine"
+            "value" : "Écart sur la semaine"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Distribuição ao longo da semana"
+            "value" : "Variação durante a semana"
           }
         }
       }
@@ -3550,13 +3526,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lerne, um deinen Fortschritt zu verfolgen"
+            "value" : "Beginne zu lernen, um deinen Fortschritt zu sehen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empieza a aprender para seguir tu progreso"
+            "value" : "Empieza a estudiar para seguir tu progreso"
           }
         },
         "fr" : {
@@ -3591,7 +3567,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les statistiques ne se sont pas chargées"
+            "value" : "Impossible de charger les statistiques"
           }
         },
         "pt" : {
@@ -3649,7 +3625,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Temps total d’apprentissage"
+            "value" : "Temps d’étude total"
           }
         },
         "pt" : {
@@ -3695,7 +3671,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Über die Woche"
+            "value" : "Im Wochenverlauf"
           }
         },
         "es" : {
@@ -3707,7 +3683,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout au long de la semaine"
+            "value" : "Au fil de la semaine"
           }
         },
         "pt" : {
@@ -3759,19 +3735,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para llegar al cinturón negro"
+            "value" : "Para el cinturón negro"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’à la ceinture noire"
+            "value" : "Avant la ceinture noire"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a faixa preta"
+            "value" : "Para a faixa preta"
           }
         }
       }
@@ -3788,19 +3764,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para llegar al cinturón azul"
+            "value" : "Para el cinturón azul"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’à la ceinture bleue"
+            "value" : "Avant la ceinture bleue"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a faixa azul"
+            "value" : "Para a faixa azul"
           }
         }
       }
@@ -3817,19 +3793,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para llegar al cinturón marrón"
+            "value" : "Para el cinturón marrón"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’à la ceinture marron"
+            "value" : "Avant la ceinture marron"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a faixa marrom"
+            "value" : "Para a faixa marrom"
           }
         }
       }
@@ -3846,19 +3822,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para llegar al cinturón gris"
+            "value" : "Para el cinturón gris"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’à la ceinture grise"
+            "value" : "Avant la ceinture grise"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a faixa cinza"
+            "value" : "Para a faixa cinza"
           }
         }
       }
@@ -3875,19 +3851,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para llegar al cinturón verde"
+            "value" : "Para el cinturón verde"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’à la ceinture verte"
+            "value" : "Avant la ceinture verte"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a faixa verde"
+            "value" : "Para a faixa verde"
           }
         }
       }
@@ -3904,19 +3880,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para llegar al nivel %lld"
+            "value" : "Para el nivel %lld"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’au niveau %lld"
+            "value" : "Avant le niveau %lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até o nível %lld"
+            "value" : "Para o nível %lld"
           }
         }
       }
@@ -3927,25 +3903,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bis zum orangenen Gürtel"
+            "value" : "Bis zum orangefarbenen Gürtel"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para llegar al cinturón naranja"
+            "value" : "Para el cinturón naranja"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’à la ceinture orange"
+            "value" : "Avant la ceinture orange"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a faixa laranja"
+            "value" : "Para a faixa laranja"
           }
         }
       }
@@ -3956,25 +3932,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bis zum lilafarbenen Gürtel"
+            "value" : "Bis zum violetten Gürtel"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para llegar al cinturón morado"
+            "value" : "Para el cinturón morado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’à la ceinture violette"
+            "value" : "Avant la ceinture violette"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a faixa roxa"
+            "value" : "Para a faixa roxa"
           }
         }
       }
@@ -3991,19 +3967,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para llegar al cinturón rojo"
+            "value" : "Para el cinturón rojo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’à la ceinture rouge"
+            "value" : "Avant la ceinture rouge"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a faixa vermelha"
+            "value" : "Para a faixa vermelha"
           }
         }
       }
@@ -4020,19 +3996,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para llegar al siguiente cinturón"
+            "value" : "Para el siguiente cinturón"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’à la prochaine ceinture"
+            "value" : "Avant la prochaine ceinture"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a próxima faixa"
+            "value" : "Para a próxima faixa"
           }
         }
       }
@@ -4049,19 +4025,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para llegar al cinturón amarillo"
+            "value" : "Para el cinturón amarillo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jusqu’à la ceinture jaune"
+            "value" : "Avant la ceinture jaune"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Até a faixa amarela"
+            "value" : "Para a faixa amarela"
           }
         }
       }
@@ -4107,7 +4083,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reintentar"
+            "value" : "Intentar de nuevo"
           }
         },
         "fr" : {
@@ -4119,7 +4095,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tente de novo"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -4165,19 +4141,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendencia semanal de la puntuación"
+            "value" : "Evolución semanal de la puntuación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Évolution hebdomadaire du score"
+            "value" : "Évolution hebdomadaire du Score"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendência semanal da pontuação"
+            "value" : "Evolução semanal da pontuação"
           }
         }
       }
@@ -4194,19 +4170,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuándo respondes mejor, durante los últimos 90 días."
+            "value" : "Cuándo respondes mejor, según los últimos 90 días."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les moments où tu réponds le mieux, au cours des 90 derniers jours."
+            "value" : "Les moments où tu réponds le mieux, sur les 90 derniers jours."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quando você acerta mais, nos últimos 90 dias."
+            "value" : "Quando você responde melhor, nos últimos 90 dias."
           }
         }
       }
@@ -4229,13 +4205,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Blanc"
+            "value" : "Blanche"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Branco"
+            "value" : "Branca"
           }
         }
       }
@@ -4278,13 +4254,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Abweichung von höchstens %lld Punkt"
+                  "value" : "Höchstens %lld Punkt Unterschied"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Abweichung von höchstens %lld Punkten"
+                  "value" : "Höchstens %lld Punkte Unterschied"
                 }
               }
             }
@@ -4311,22 +4287,16 @@
         "es" : {
           "variations" : {
             "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Con una diferencia de %lld puntos"
-                }
-              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Con una diferencia de %lld punto"
+                  "value" : "Diferencia máxima de %lld punto"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Con una diferencia de %lld puntos"
+                  "value" : "Diferencia máxima de %lld puntos"
                 }
               }
             }
@@ -4376,13 +4346,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abweichung von 0 Punkten"
+            "value" : "0 Punkte Unterschied"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con una diferencia de 0 puntos"
+            "value" : "Diferencia de 0 puntos"
           }
         },
         "fr" : {
@@ -4394,7 +4364,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diferença de até 0 pontos"
+            "value" : "Diferença de 0 pontos"
           }
         }
       }
@@ -4481,7 +4451,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você está sem internet"
+            "value" : "Você está sem conexão"
           }
         }
       }
@@ -4495,13 +4465,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Deine Tage unterscheiden sich um höchstens %lld Punkt. Jeder Tag passt."
+                  "value" : "Deine Scores unterscheiden sich zwischen den Tagen um höchstens %lld Punkt. Du kannst also an jedem Tag lernen."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Deine Tage unterscheiden sich um höchstens %lld Punkten. Jeder Tag passt."
+                  "value" : "Deine Scores unterscheiden sich zwischen den Tagen um höchstens %lld Punkte. Du kannst also an jedem Tag lernen."
                 }
               }
             }
@@ -4528,22 +4498,16 @@
         "es" : {
           "variations" : {
             "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "La puntuación de tus días varía como mucho %lld puntos, así que cualquier día te va bien."
-                }
-              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La puntuación de tus días varía como mucho %lld punto, así que cualquier día te va bien."
+                  "value" : "La diferencia entre tus días es de %lld punto como máximo, así que cualquier día te viene bien."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La puntuación de tus días varía como mucho %lld puntos, así que cualquier día te va bien."
+                  "value" : "La diferencia entre tus días es de %lld puntos como máximo, así que cualquier día te viene bien."
                 }
               }
             }
@@ -4555,13 +4519,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tes journées ont un écart de %lld point, donc n’importe quel jour convient."
+                  "value" : "Tes scores varient de %lld point au maximum selon le jour, donc tous les jours se valent."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Tes journées ont un écart de %lld points, donc n’importe quel jour convient."
+                  "value" : "Tes scores varient de %lld points au maximum selon le jour, donc tous les jours se valent."
                 }
               }
             }
@@ -4573,13 +4537,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A pontuação dos seus dias varia até %lld ponto, então qualquer dia serve."
+                  "value" : "A diferença entre seus dias é de até %lld ponto, então qualquer dia serve."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A pontuação dos seus dias varia até %lld pontos, então qualquer dia serve."
+                  "value" : "A diferença entre seus dias é de até %lld pontos, então qualquer dia serve."
                 }
               }
             }
@@ -4593,25 +4557,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Tage unterscheiden sich um 0 Punkte. Jeder Tag passt."
+            "value" : "Deine Scores unterscheiden sich zwischen den Tagen um 0 Punkte. Du kannst also an jedem Tag lernen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La puntuación de tus días es la misma, así que cualquier día te va bien."
+            "value" : "La diferencia entre tus días es de 0 puntos, así que cualquier día te viene bien."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes journées ont toutes le même score, donc n’importe quel jour convient."
+            "value" : "Tes scores varient de 0 point selon le jour, donc tous les jours se valent."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A pontuação dos seus dias não varia, então qualquer dia serve."
+            "value" : "A diferença entre seus dias é de 0 pontos, então qualquer dia serve."
           }
         }
       }
@@ -4622,7 +4586,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Fortschritt ist gespeichert. Versuch es gleich noch einmal."
+            "value" : "Dein Fortschritt ist sicher. Versuche es gleich noch einmal."
           }
         },
         "es" : {
@@ -4634,7 +4598,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta progression est bien enregistrée. Réessaie dans un instant."
+            "value" : "Tes progrès sont bien enregistrés. Réessaie dans un instant."
           }
         },
         "pt" : {
@@ -4651,7 +4615,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Score wird nach deinen ersten Antworten angezeigt."
+            "value" : "Dein Score erscheint nach deinen ersten Antworten."
           }
         },
         "es" : {
@@ -4663,13 +4627,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton score s’affichera après tes premières réponses."
+            "value" : "Ton Score s’affichera après tes premières réponses."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua pontuação vai aparecer depois que você responder pela primeira vez."
+            "value" : "Sua pontuação aparece depois das suas primeiras respostas."
           }
         }
       }
@@ -4683,13 +4647,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Deine Tageszeiten unterscheiden sich um höchstens %lld Punkt. Jede Uhrzeit passt."
+                  "value" : "Deine Scores unterscheiden sich zwischen den Tageszeiten um höchstens %lld Punkt. Du kannst also zu jeder Tageszeit lernen."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Deine Tageszeiten unterscheiden sich um höchstens %lld Punkten. Jede Uhrzeit passt."
+                  "value" : "Deine Scores unterscheiden sich zwischen den Tageszeiten um höchstens %lld Punkte. Du kannst also zu jeder Tageszeit lernen."
                 }
               }
             }
@@ -4716,22 +4680,16 @@
         "es" : {
           "variations" : {
             "plural" : {
-              "many" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "La puntuación de las distintas horas del día varía como mucho %lld puntos, así que cualquier hora te va bien."
-                }
-              },
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La puntuación de las distintas horas del día varía como mucho %lld punto, así que cualquier hora te va bien."
+                  "value" : "La diferencia entre los momentos del día es de %lld punto como máximo, así que cualquier momento te viene bien."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "La puntuación de las distintas horas del día varía como mucho %lld puntos, así que cualquier hora te va bien."
+                  "value" : "La diferencia entre los momentos del día es de %lld puntos como máximo, así que cualquier momento te viene bien."
                 }
               }
             }
@@ -4743,13 +4701,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Les scores selon l’heure de la journée ont un écart de %lld point, donc n’importe quelle heure convient."
+                  "value" : "Tes scores varient de %lld point au maximum selon le moment de la journée, donc tous les moments se valent."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Les scores selon l’heure de la journée ont un écart de %lld points, donc n’importe quelle heure convient."
+                  "value" : "Tes scores varient de %lld points au maximum selon le moment de la journée, donc tous les moments se valent."
                 }
               }
             }
@@ -4761,13 +4719,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A pontuação dos horários varia até %lld ponto, então qualquer horário serve."
+                  "value" : "A diferença entre os períodos do dia é de até %lld ponto, então qualquer horário serve."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "A pontuação dos horários varia até %lld pontos, então qualquer horário serve."
+                  "value" : "A diferença entre os períodos do dia é de até %lld pontos, então qualquer horário serve."
                 }
               }
             }
@@ -4781,25 +4739,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Tageszeiten unterscheiden sich um 0 Punkte. Jede Uhrzeit passt."
+            "value" : "Deine Scores unterscheiden sich zwischen den Tageszeiten um 0 Punkte. Du kannst also zu jeder Tageszeit lernen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La puntuación de las distintas horas del día es la misma, así que cualquier hora te va bien."
+            "value" : "La diferencia entre los momentos del día es de 0 puntos, así que cualquier momento te viene bien."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les scores sont les mêmes à chaque moment de la journée, donc n’importe quelle heure convient."
+            "value" : "Tes scores varient de 0 point selon le moment de la journée, donc tous les moments se valent."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A pontuação dos horários não varia, então qualquer horário serve."
+            "value" : "A diferença entre os períodos do dia é de 0 pontos, então qualquer horário serve."
           }
         }
       }

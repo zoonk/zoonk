@@ -7,7 +7,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ übermäßig"
+            "value" : "%@ übermäßiger Dreiklang"
           }
         },
         "es" : {
@@ -36,7 +36,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ vermindert"
+            "value" : "%@ verminderter Dreiklang"
           }
         },
         "es" : {
@@ -65,13 +65,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ Dominantseptakkord"
+            "value" : "%@-Dominantseptakkord"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ séptima dominante"
+            "value" : "%@ séptima de dominante"
           }
         },
         "fr" : {
@@ -83,7 +83,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ com sétima da dominante"
+            "value" : "%@ com sétima dominante"
           }
         }
       }
@@ -94,7 +94,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ b"
+            "value" : "%@, erniedrigt"
           }
         },
         "es" : {
@@ -123,7 +123,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ Dur"
+            "value" : "%@-Dur"
           }
         },
         "es" : {
@@ -152,7 +152,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ großer Septakkord"
+            "value" : "%@-Dur mit großer Septime"
           }
         },
         "es" : {
@@ -164,7 +164,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ majeure septième"
+            "value" : "%@ septième majeure"
           }
         },
         "pt" : {
@@ -181,7 +181,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ Moll"
+            "value" : "%@-Moll"
           }
         },
         "es" : {
@@ -210,7 +210,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ kleiner Septakkord"
+            "value" : "%@-Moll mit kleiner Septime"
           }
         },
         "es" : {
@@ -222,13 +222,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ mineure septième"
+            "value" : "%@ septième mineure"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ com sétima menor"
+            "value" : "%@ menor com sétima"
           }
         }
       }
@@ -239,7 +239,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ Kreuz"
+            "value" : "%@, erhöht"
           }
         },
         "es" : {
@@ -274,19 +274,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "cuerda %@"
+            "value" : "Cuerda de %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "corde %@"
+            "value" : "Corde de %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "corda %@"
+            "value" : "Corda %@"
           }
         }
       }
@@ -369,16 +369,10 @@
         "pt" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld compasso"
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld compassos"
+                  "value" : "Compassos: %lld"
                 }
               }
             }
@@ -392,7 +386,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%lld bpm"
+            "value" : "%lld BPM"
           }
         },
         "es" : {
@@ -424,13 +418,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld zusätzlicher Schlag."
+                  "value" : "%lld zusätzlicher Tipp."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld zusätzliche Schläge."
+                  "value" : "%lld zusätzliche Tipps."
                 }
               }
             }
@@ -478,13 +472,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld frappe supplémentaire."
+                  "value" : "%lld frappe en trop."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld frappes supplémentaires."
+                  "value" : "%lld frappes en trop."
                 }
               }
             }
@@ -493,16 +487,10 @@
         "pt" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld batida extra."
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld batidas extras."
+                  "value" : "Toques extras: %lld."
                 }
               }
             }
@@ -588,16 +576,10 @@
         "pt" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld nota"
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld notas"
+                  "value" : "Notas: %lld"
                 }
               }
             }
@@ -611,7 +593,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld von %2$lld Schlägen im Takt."
+            "value" : "%1$lld von %2$lld Mal im Takt getippt."
           }
         },
         "en" : {
@@ -629,13 +611,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld frappes sur %2$lld sont tombées sur le temps."
+            "value" : "%1$lld frappes sur %2$lld dans le rythme."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld batidas no tempo."
+            "value" : "%1$lld de %2$lld toques no tempo."
           }
         }
       }
@@ -685,13 +667,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld repetición"
+                  "value" : "%lld vuelta"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld repeticiones"
+                  "value" : "%lld vueltas"
                 }
               }
             }
@@ -718,16 +700,10 @@
         "pt" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld repetição"
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld repetições"
+                  "value" : "Repetições: %lld"
                 }
               }
             }
@@ -741,7 +717,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Rhythmus mit %1$lld Schritten und einem Schlag alle %2$lld. Tippe bei den Schritten %3$@ im Takt zu jedem Klick."
+            "value" : "Ein Rhythmus mit %1$lld Schritten und einem Schlag alle %2$lld Schritte. Tippe bei den Schritten %3$@. Zu jedem Schlag hörst du ein Klicken."
           }
         },
         "en" : {
@@ -753,19 +729,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ritmo de %1$lld pasos, con un pulso cada %2$lld. Da un toque en los pasos %3$@, siguiendo el clic de cada pulso."
+            "value" : "Un ritmo de %1$lld pasos con un pulso cada %2$lld. Pulsa en los pasos %3$@; oirás un clic en cada pulso."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un rythme de %1$lld temps, avec un battement tous les %2$lld. Tape sur les temps %3$@, en suivant le clic à chaque battement."
+            "value" : "Un rythme de %1$lld pas avec un temps tous les %2$lld pas. Tape aux pas %3$@, en suivant un clic à chaque temps."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um ritmo de %1$lld passos, com uma batida a cada %2$lld. Toque nos passos %3$@, junto com um clique a cada batida."
+            "value" : "Um ritmo de %1$lld passos, com uma batida a cada %2$lld. Toque nos passos %3$@, acompanhando um clique a cada batida."
           }
         }
       }
@@ -829,7 +805,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mesure %1$lld : %2$@."
+            "value" : "Mesure %1$lld : %2$@."
           }
         },
         "pt" : {
@@ -881,7 +857,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a comprobar el retraso del sonido"
+            "value" : "Comprobar de nuevo el retardo del sonido"
           }
         },
         "fr" : {
@@ -893,7 +869,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conferir o atraso do som novamente"
+            "value" : "Conferir o atraso do som de novo"
           }
         }
       }
@@ -986,7 +962,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Traste %1$lld, %2$@"
+            "value" : "Casa %1$lld, %2$@"
           }
         }
       }
@@ -1009,7 +985,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trastes %1$lld a %2$lld"
+            "value" : "Trastes del %1$lld al %2$lld"
           }
         },
         "fr" : {
@@ -1021,7 +997,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trastes %1$lld a %2$lld"
+            "value" : "Casas %1$lld a %2$lld"
           }
         }
       }
@@ -1090,25 +1066,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bei Kopfhörern kann der Ton etwas verzögert sein. Tippe einmal zu %lld Klicks mit, damit Rhythmen auf diesem Gerät richtig getaktet sind."
+            "value" : "Kopfhörer können den Ton etwas verzögert wiedergeben. Tippe einmal zu %lld Klicks mit, damit dein Timing auf diesem Gerät fair bewertet wird."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los auriculares pueden reproducir el sonido con un pequeño retraso. Sigue %lld clics una vez para ajustar el ritmo en este dispositivo."
+            "value" : "Los auriculares pueden reproducir el sonido con un poco de retraso. Pulsa al ritmo de %lld clics una vez para que se mida bien tu ritmo en este dispositivo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le son peut être légèrement retardé dans un casque. Tape une fois au rythme de %lld clics pour que les rythmes soient bien calés sur cet appareil."
+            "value" : "Le son de ton casque peut arriver avec un léger retard. Tape une fois en suivant %lld clics pour que tes rythmes soient évalués avec précision sur cet appareil."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O som dos fones pode atrasar um pouco. Acompanhe %lld cliques uma vez para que os ritmos neste dispositivo sejam cronometrados corretamente."
+            "value" : "O som pode chegar com um pequeno atraso nos fones. Acompanhe %lld cliques com toques uma vez para ajustar o tempo dos ritmos neste dispositivo."
           }
         }
       }
@@ -1125,7 +1101,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escúchalo"
+            "value" : "Escuchar"
           }
         },
         "fr" : {
@@ -1154,7 +1130,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuerda mi aguda"
+            "value" : "Cuerda de mi agudo"
           }
         },
         "fr" : {
@@ -1189,13 +1165,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cases supérieures"
+            "value" : "Cases plus hautes"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trastes mais altos"
+            "value" : "Casas mais altas"
           }
         }
       }
@@ -1224,7 +1200,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvir primeiro"
+            "value" : "Ouça primeiro"
           }
         }
       }
@@ -1235,7 +1211,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hör dir die Klicks an…"
+            "value" : "Hör auf die Klicks…"
           }
         },
         "es" : {
@@ -1270,7 +1246,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuerda mi grave"
+            "value" : "Cuerda de mi grave"
           }
         },
         "fr" : {
@@ -1305,13 +1281,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cases inférieures"
+            "value" : "Cases plus basses"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trastes mais baixos"
+            "value" : "Casas mais baixas"
           }
         }
       }
@@ -1363,7 +1339,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune note pour l’instant"
+            "value" : "Pas encore de notes"
           }
         },
         "pt" : {
@@ -1450,13 +1426,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Au clavier : %@"
+            "value" : "Notes jouées : %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No teclado: %@"
+            "value" : "Nas teclas: %@"
           }
         }
       }
@@ -1479,7 +1455,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sur le temps"
+            "value" : "Dans le rythme"
           }
         },
         "pt" : {
@@ -1525,7 +1501,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leere Saite, %@"
+            "value" : "Leersaite, %@"
           }
         },
         "es" : {
@@ -1554,7 +1530,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "oder die Leertaste drücken"
+            "value" : "oder drücke die Leertaste"
           }
         },
         "es" : {
@@ -1566,13 +1542,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ou appuie sur Espace"
+            "value" : "ou appuie sur la barre d’espace"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ou pressione Espaço"
+            "value" : "ou pressione a barra de espaço"
           }
         }
       }
@@ -1583,7 +1559,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pianotasten"
+            "value" : "Klaviertasten"
           }
         },
         "es" : {
@@ -1612,13 +1588,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Melodie spielen"
+            "value" : "Melodie abspielen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca la melodía"
+            "value" : "Reproducir la melodía"
           }
         },
         "fr" : {
@@ -1630,7 +1606,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque a melodia"
+            "value" : "Tocar a melodia"
           }
         }
       }
@@ -1647,7 +1623,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reproduce el sonido"
+            "value" : "Reproducir el sonido"
           }
         },
         "fr" : {
@@ -1659,7 +1635,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque o som"
+            "value" : "Reproduzir o som"
           }
         }
       }
@@ -1670,13 +1646,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rhythmusschläge"
+            "value" : "Tippstellen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Golpes del ritmo"
+            "value" : "Pulsaciones del ritmo"
           }
         },
         "fr" : {
@@ -1688,7 +1664,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Batidas do ritmo"
+            "value" : "Toques do ritmo"
           }
         }
       }
@@ -1711,19 +1687,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repetición %1$lld de %2$lld"
+            "value" : "Ronda %1$lld de %2$lld"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Répétition %1$lld sur %2$lld"
+            "value" : "Tour %1$lld sur %2$lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repetição %1$lld de %2$lld"
+            "value" : "Rodada %1$lld de %2$lld"
           }
         }
       }
@@ -1752,7 +1728,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mesmo acorde no violão"
+            "value" : "O mesmo acorde no violão"
           }
         }
       }
@@ -1763,7 +1739,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieselben Noten auf der Gitarre"
+            "value" : "Dieselben Töne auf der Gitarre"
           }
         },
         "es" : {
@@ -1781,7 +1757,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mesmas notas no violão"
+            "value" : "As mesmas notas no violão"
           }
         }
       }
@@ -1792,25 +1768,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton einstellen"
+            "value" : "Ton einrichten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Configura el sonido"
+            "value" : "Ajusta el sonido"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Régler le son"
+            "value" : "Règle le son"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Configure o som"
+            "value" : "Ajuste o som"
           }
         }
       }
@@ -1862,7 +1838,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ignorer pour le moment"
+            "value" : "Passer pour l’instant"
           }
         },
         "pt" : {
@@ -1879,25 +1855,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Ton auf diesem Gerät kommt etwa %lld ms verzögert an. Die Rhythmen hier gleichen das aus."
+            "value" : "Der Ton kommt auf diesem Gerät etwa %lld ms zu spät an. Das wird bei den Rhythmen ausgeglichen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El sonido de este dispositivo llega con unos %lld ms de retraso. Aquí se compensa en los ritmos."
+            "value" : "El sonido llega con unos %lld ms de retraso en este dispositivo. Los ejercicios de ritmo compensan ese retraso."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le son de cet appareil a environ %lld ms de retard. Les rythmes en tiennent compte."
+            "value" : "Le son de cet appareil arrive avec environ %lld ms de retard. Les rythmes en tiennent compte."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O som neste dispositivo chega com cerca de %lld ms de atraso. Os ritmos levam isso em conta."
+            "value" : "O som neste aparelho chega com cerca de %lld ms de atraso. Os ritmos levam esse atraso em conta."
           }
         }
       }
@@ -1908,25 +1884,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Ton auf diesem Gerät kommt rechtzeitig."
+            "value" : "Der Ton kommt auf diesem Gerät rechtzeitig an."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El sonido de este dispositivo llega a tiempo."
+            "value" : "El sonido llega a tiempo en este dispositivo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le son de cet appareil est synchronisé."
+            "value" : "Le son de cet appareil arrive à temps."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O som neste dispositivo chega no tempo certo."
+            "value" : "O som neste aparelho chega sem atraso."
           }
         }
       }
@@ -1937,7 +1913,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Notensystem"
+            "value" : "Noten"
           }
         },
         "es" : {
@@ -1955,7 +1931,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Partitura"
+            "value" : "Pauta"
           }
         }
       }
@@ -1972,7 +1948,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Empezar a marcar el ritmo"
+            "value" : "Empezar a pulsar"
           }
         },
         "fr" : {
@@ -1984,7 +1960,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Começar a marcar o ritmo"
+            "value" : "Começar a tocar"
           }
         }
       }
@@ -1995,7 +1971,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Soundcheck starten"
+            "value" : "Tonprüfung starten"
           }
         },
         "es" : {
@@ -2013,7 +1989,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Iniciar o teste de som"
+            "value" : "Começar o teste de som"
           }
         }
       }
@@ -2030,7 +2006,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parar"
+            "value" : "Detener"
           }
         },
         "fr" : {
@@ -2082,7 +2058,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bei Schlag %1$lld hast du %2$lld ms zu früh getippt."
+            "value" : "Tipp %1$lld kam %2$lld ms zu früh."
           }
         },
         "en" : {
@@ -2094,19 +2070,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El toque %1$lld se adelantó %2$lld ms."
+            "value" : "La pulsación %1$lld llegó %2$lld ms antes."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le tapotement %1$lld a eu %2$lld ms d’avance."
+            "value" : "La frappe %1$lld est arrivée avec %2$lld ms d’avance."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A batida %1$lld saiu %2$lld ms adiantada."
+            "value" : "O toque %1$lld veio %2$lld ms antes."
           }
         }
       }
@@ -2117,7 +2093,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bei Schlag %1$lld hast du %2$lld ms zu spät getippt."
+            "value" : "Tipp %1$lld kam %2$lld ms zu spät."
           }
         },
         "en" : {
@@ -2129,19 +2105,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El toque %1$lld se retrasó %2$lld ms."
+            "value" : "La pulsación %1$lld llegó %2$lld ms tarde."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le tapotement %1$lld a eu %2$lld ms de retard."
+            "value" : "La frappe %1$lld est arrivée avec %2$lld ms de retard."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A batida %1$lld saiu %2$lld ms atrasada."
+            "value" : "O toque %1$lld veio %2$lld ms depois."
           }
         }
       }
@@ -2152,25 +2128,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast Schlag %lld verpasst."
+            "value" : "Tipp %lld wurde ausgelassen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se dio el toque %lld."
+            "value" : "Faltó la pulsación %lld."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le tapotement %lld a été manqué."
+            "value" : "La frappe %lld a été manquée."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você não marcou a batida %lld."
+            "value" : "Faltou o toque %lld."
           }
         }
       }
@@ -2187,7 +2163,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca aquí"
+            "value" : "Pulsa aquí"
           }
         },
         "fr" : {
@@ -2210,7 +2186,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit jedem Klick tippen · %1$lld von %2$lld"
+            "value" : "Tippe bei jedem Klick · %1$lld von %2$lld"
           }
         },
         "en" : {
@@ -2222,19 +2198,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca con cada clic · %1$lld de %2$lld"
+            "value" : "Pulsa con cada clic · %1$lld de %2$lld"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tape sur chaque clic · %1$lld sur %2$lld"
+            "value" : "Tape à chaque clic · %1$lld sur %2$lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque junto com cada clique · %1$lld de %2$lld"
+            "value" : "Toque a cada clique · %1$lld de %2$lld"
           }
         }
       }
@@ -2274,19 +2250,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Ton konnte nicht abgespielt werden. Du kannst trotzdem jede Note sehen."
+            "value" : "Der Ton konnte nicht abgespielt werden. Du kannst trotzdem alle Noten sehen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido reproducir el sonido. Puedes ver todas las notas."
+            "value" : "No se ha podido reproducir el sonido. Aun así, puedes ver todas las notas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le son n’a pas pu être diffusé. Tu peux quand même voir chaque note."
+            "value" : "Le son n’a pas pu être joué. Tu peux quand même voir toutes les notes."
           }
         },
         "pt" : {
@@ -2303,7 +2279,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Noten passen auf der Gitarre nicht zu einer einzigen Griffposition."
+            "value" : "Diese Töne lassen sich auf der Gitarre nicht mit einem Griff spielen."
           }
         },
         "es" : {
@@ -2315,13 +2291,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ces notes ne tiennent pas dans une seule position de main sur la guitare."
+            "value" : "Ces notes ne peuvent pas être jouées avec une seule position de la main sur la guitare."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não dá para tocar estas notas com uma única posição da mão no violão."
+            "value" : "Não dá para tocar essas notas juntas em uma só posição da mão no violão."
           }
         }
       }
@@ -2332,7 +2308,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Musik konnte nicht dargestellt werden."
+            "value" : "Die Noten konnten nicht angezeigt werden."
           }
         },
         "es" : {
@@ -2350,7 +2326,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível exibir esta partitura."
+            "value" : "Não foi possível mostrar a notação desta música."
           }
         }
       }
@@ -2361,13 +2337,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch mal versuchen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentarlo"
+            "value" : "Intentar de nuevo"
           }
         },
         "fr" : {
@@ -2390,25 +2366,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es konnten nicht genügend Tipper den Klicks zugeordnet werden. Versuch es noch einmal und tippe bei jedem Klick."
+            "value" : "Wir konnten nicht genug Tipps den Klicks zuordnen. Versuch es noch mal und tippe bei jedem Klick."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido asociar suficientes toques con los clics. Vuelve a intentarlo tocando con cada clic."
+            "value" : "No hemos podido asociar suficientes pulsaciones a los clics. Inténtalo de nuevo y pulsa con cada clic."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous n’avons pas pu faire correspondre assez de tapotements aux clics. Réessaie en tapant sur chacun."
+            "value" : "Trop peu de frappes correspondent aux clics. Réessaie en tapant à chaque clic."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível associar toques suficientes aos cliques. Tente de novo, tocando junto com cada clique."
+            "value" : "Não conseguimos associar toques suficientes aos cliques. Tente de novo, tocando a cada clique."
           }
         }
       }

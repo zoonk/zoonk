@@ -36,13 +36,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Überprüfe deine E-Mail-Adresse und deine Nachricht und versuche es dann erneut."
+            "value" : "Prüfe deine E-Mail-Adresse und deine Nachricht und versuche es dann erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revisa tu correo electrónico y tu mensaje e inténtalo de nuevo."
+            "value" : "Comprueba tu correo y tu mensaje y vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -54,7 +54,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira seu email e mensagem e tente de novo."
+            "value" : "Confira seu e-mail e sua mensagem e tente novamente."
           }
         }
       }
@@ -83,7 +83,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "OK"
+            "value" : "Concluído"
           }
         }
       }
@@ -112,7 +112,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Endereço de email"
+            "value" : "Endereço de e-mail"
           }
         }
       }
@@ -135,13 +135,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Commentaires"
+            "value" : "Avis"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Feedback"
+            "value" : "Comentários"
           }
         }
       }
@@ -152,25 +152,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Feedback konnte nicht gesendet werden. Versuche es später erneut."
+            "value" : "Dein Feedback konnte nicht gesendet werden. Versuche es später erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No pudimos enviar tus comentarios. Inténtalo más tarde."
+            "value" : "No se han podido enviar tus comentarios. Vuelve a intentarlo más tarde."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’envoyer ton message. Réessaie plus tard."
+            "value" : "Ton avis n’a pas pu être envoyé. Réessaie plus tard."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível enviar o feedback. Tente de novo mais tarde."
+            "value" : "Não foi possível enviar seus comentários. Tente novamente mais tarde."
           }
         }
       }
@@ -181,7 +181,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wie können wir dir helfen?"
+            "value" : "Wie können wir helfen?"
           }
         },
         "es" : {
@@ -193,7 +193,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comment peut-on t’aider ?"
+            "value" : "Comment pouvons-nous t’aider ?"
           }
         },
         "pt" : {
@@ -263,7 +263,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Relatar um problema"
+            "value" : "Informar um problema"
           }
         }
       }
@@ -315,13 +315,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoi du message"
+            "value" : "Envoi de ton avis"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviando feedback"
+            "value" : "Enviando comentários"
           }
         }
       }
@@ -332,25 +332,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gib uns Feedback, stell eine Frage oder sag uns, was wir verbessern können."
+            "value" : "Gib uns Feedback, stelle eine Frage oder sag uns, was wir verbessern können."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comparte tus comentarios, haznos una pregunta o cuéntanos qué podríamos mejorar."
+            "value" : "Comparte tus comentarios, haz una pregunta o cuéntanos qué podríamos mejorar."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Donne-nous ton avis, pose une question ou dis-nous ce que nous pourrions améliorer."
+            "value" : "Donne ton avis, pose une question ou dis-nous ce que nous pourrions améliorer."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envie seu feedback, faça uma pergunta ou conte para a gente o que podemos melhorar."
+            "value" : "Compartilhe sua opinião, faça uma pergunta ou conte o que a gente pode melhorar."
           }
         }
       }
@@ -373,13 +373,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Merci pour ton message"
+            "value" : "Merci pour ton avis"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agradecemos seu feedback"
+            "value" : "Agradecemos seus comentários"
           }
         }
       }
@@ -390,19 +390,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieser Bildschirm wird angehängt"
+            "value" : "Diese Seite wird mitgesendet"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se adjunta esta pantalla"
+            "value" : "Esta pantalla se adjuntará al mensaje"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une capture de cet écran est jointe"
+            "value" : "Cette page est jointe au message"
           }
         },
         "pt" : {
@@ -425,7 +425,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usaremos este correo electrónico para contactarte."
+            "value" : "Usaremos este correo para contactar contigo."
           }
         },
         "fr" : {
@@ -437,7 +437,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente vai usar este email para falar com você."
+            "value" : "Vamos usar este e-mail para entrar em contato com você."
           }
         }
       }
@@ -448,13 +448,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du bist offline. Überprüfe deine Verbindung und versuche es erneut."
+            "value" : "Du bist offline. Prüfe deine Verbindung und versuche es erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No tienes conexión. Comprueba tu conexión e inténtalo de nuevo."
+            "value" : "No tienes conexión. Comprueba tu conexión y vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -466,7 +466,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você está sem conexão. Confira sua internet e tente de novo."
+            "value" : "Você está sem conexão. Confira sua internet e tente novamente."
           }
         }
       }

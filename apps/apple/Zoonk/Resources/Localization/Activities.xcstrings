@@ -7,7 +7,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "„%@“ hat keine passende Karte."
+            "value" : "Zu „%@“ gibt es keine passende Karte."
           }
         },
         "es" : {
@@ -118,7 +118,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ y %2$@ no van juntos."
+            "value" : "%1$@ y %2$@ no forman pareja."
           }
         },
         "fr" : {
@@ -130,7 +130,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ e %2$@ não combinam."
+            "value" : "%1$@ e %2$@ não formam um par."
           }
         }
       }
@@ -170,7 +170,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ gehört zu %2$@."
+            "value" : "%1$@ gehört in %2$@."
           }
         },
         "en" : {
@@ -182,7 +182,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ va en %2$@."
+            "value" : "%1$@ pertenece a %2$@."
           }
         },
         "fr" : {
@@ -194,7 +194,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ fica em %2$@."
+            "value" : "%1$@ pertence a %2$@."
           }
         }
       }
@@ -234,7 +234,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ führte hier nicht direkt zu %2$@. Versuch eine andere Verbindung."
+            "value" : "%1$@ führte hier nicht direkt zu %2$@. Versuche eine andere Verbindung."
           }
         },
         "en" : {
@@ -246,13 +246,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ no lleva directamente a %2$@ aquí. Prueba con otro enlace."
+            "value" : "En este caso, %1$@ no llevó directamente a %2$@. Prueba otra conexión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ici, %1$@ ne mène pas directement à %2$@. Essaie un autre lien."
+            "value" : "Ici, %1$@ n’a pas directement mené à %2$@. Essaie un autre lien."
           }
         },
         "pt" : {
@@ -281,7 +281,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ de %2$@ (%3$@) a %4$@ (%5$@)"
+            "value" : "%1$@ desde %2$@ (%3$@) hasta %4$@ (%5$@)"
           }
         },
         "fr" : {
@@ -328,7 +328,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ combina com %2$@, não com %3$@."
+            "value" : "%1$@ forma par com %2$@, não com %3$@."
           }
         }
       }
@@ -351,19 +351,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ está en %2$@. %3$lld de %4$lld colocados."
+            "value" : "%1$@ está en %2$@. %3$lld de %4$lld clasificados."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ est dans %2$@. %3$lld sur %4$lld triés."
+            "value" : "%1$@ est dans %2$@. %3$lld éléments sur %4$lld triés."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ está em %2$@. %3$lld de %4$lld organizados."
+            "value" : "%1$@ está em %2$@. %3$lld de %4$lld itens agrupados."
           }
         }
       }
@@ -386,7 +386,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ahora está en el paso %2$lld."
+            "value" : "%1$@ es ahora el paso %2$lld."
           }
         },
         "fr" : {
@@ -398,7 +398,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ agora está no passo %2$lld."
+            "value" : "%1$@ agora é a etapa %2$lld."
           }
         }
       }
@@ -444,7 +444,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ auf Platz %2$@."
+            "value" : "%1$@ auf Position %2$@."
           }
         },
         "en" : {
@@ -456,7 +456,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ en la posición %2$@."
+            "value" : "%1$@ en el lugar %2$@."
           }
         },
         "fr" : {
@@ -468,7 +468,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ no espaço %2$@."
+            "value" : "%1$@ na posição %2$@."
           }
         }
       }
@@ -479,25 +479,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ausgewählt. Wähle jetzt aus, was daraus entstand."
+            "value" : "%@ ausgewählt. Wähle jetzt aus, wozu es führte."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has elegido %@. Ahora elige qué provocó."
+            "value" : "Has elegido %@. Ahora elige a qué llevó."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ sélectionné. Choisis maintenant ce qui en a résulté."
+            "value" : "%@ a été sélectionné. Choisis maintenant ce qui en a découlé."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ selecionado. Agora selecione o que ele causou."
+            "value" : "%@ foi selecionado. Agora selecione o que resultou disso."
           }
         }
       }
@@ -514,19 +514,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ quitado."
+            "value" : "Se ha retirado %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ retiré."
+            "value" : "%@ a été retiré."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ removido."
+            "value" : "%@ foi removido."
           }
         }
       }
@@ -601,7 +601,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, emparejada"
+            "value" : "%@, con pareja"
           }
         },
         "fr" : {
@@ -613,7 +613,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, combinado"
+            "value" : "%@, par encontrado"
           }
         }
       }
@@ -624,7 +624,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@, keine Zuordnung"
+            "value" : "%@, keine passende Karte"
           }
         },
         "es" : {
@@ -653,7 +653,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@ (%3$@) an der Seite, %4$@ (%5$@) oben; jedes Feld zeigt ihr Produkt."
+            "value" : "%1$@: %2$@ (%3$@) an der Seite, %4$@ (%5$@) oben, jedes Feld zeigt das Produkt."
           }
         },
         "en" : {
@@ -665,19 +665,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@ (%3$@) en el lateral y %4$@ (%5$@) en la parte superior; cada casilla muestra su producto."
+            "value" : "%1$@: %2$@ (%3$@) en el lateral, %4$@ (%5$@) en la parte superior y su producto en cada casilla."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ : %2$@ (%3$@) sur le côté, %4$@ (%5$@) en haut, chaque case contient leur produit."
+            "value" : "%1$@ : %2$@ (%3$@) sur le côté, %4$@ (%5$@) en haut, chaque case contient leur produit."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@ (%3$@) na lateral, %4$@ (%5$@) no topo; cada quadrado mostra o produto."
+            "value" : "%1$@: %2$@ (%3$@) na lateral, %4$@ (%5$@) no topo; cada quadrado mostra o produto dos dois."
           }
         }
       }
@@ -688,7 +688,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@ (%3$@) an der Seite, %4$@ (%5$@) oben; jedes Feld zeigt ihre Summe."
+            "value" : "%1$@: %2$@ (%3$@) an der Seite, %4$@ (%5$@) oben, jedes Feld zeigt die Summe."
           }
         },
         "en" : {
@@ -700,19 +700,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@ (%3$@) en el lateral y %4$@ (%5$@) en la parte superior; cada casilla muestra su suma."
+            "value" : "%1$@: %2$@ (%3$@) en el lateral, %4$@ (%5$@) en la parte superior y su suma en cada casilla."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ : %2$@ (%3$@) sur le côté, %4$@ (%5$@) en haut, chaque case contient leur somme."
+            "value" : "%1$@ : %2$@ (%3$@) sur le côté, %4$@ (%5$@) en haut, chaque case contient leur somme."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@ (%3$@) na lateral, %4$@ (%5$@) no topo; cada quadrado mostra a soma."
+            "value" : "%1$@: %2$@ (%3$@) na lateral, %4$@ (%5$@) no topo; cada quadrado mostra a soma dos dois."
           }
         }
       }
@@ -741,7 +741,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ : %2$lld sur %3$lld · %4$@ : %5$lld sur %6$lld"
+            "value" : "%1$@ : %2$lld sur %3$lld · %4$@ : %5$lld sur %6$lld"
           }
         },
         "pt" : {
@@ -770,13 +770,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@. Tu respuesta: %2$@"
+            "value" : "%1$@. Tu suposición: %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@. Ta réponse : %2$@"
+            "value" : "%1$@. Ta réponse : %2$@"
           }
         },
         "pt" : {
@@ -796,13 +796,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Karte hat keine Zuordnung"
+                  "value" : "Für %lld Karte gibt es kein Gegenstück"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Karten haben keine Zuordnung"
+                  "value" : "Für %lld Karten gibt es kein Gegenstück"
                 }
               }
             }
@@ -850,13 +850,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld carte sans correspondance"
+                  "value" : "%lld carte n’a pas de correspondance"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld cartes sans correspondance"
+                  "value" : "%lld cartes n’ont pas de correspondance"
                 }
               }
             }
@@ -868,13 +868,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld cartão sem par"
+                  "value" : "%lld cartão não tem par"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld cartões sem par"
+                  "value" : "%lld cartões não têm par"
                 }
               }
             }
@@ -891,13 +891,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Ereignis muss noch platziert werden"
+                  "value" : "%lld Ereignis noch einzuordnen"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Ereignisse müssen noch platziert werden"
+                  "value" : "%lld Ereignisse noch einzuordnen"
                 }
               }
             }
@@ -927,13 +927,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld evento por colocar"
+                  "value" : "%lld acontecimiento por colocar"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld eventos por colocar"
+                  "value" : "%lld acontecimientos por colocar"
                 }
               }
             }
@@ -995,7 +995,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld explorados"
+            "value" : "%1$lld de %2$lld lugares explorados"
           }
         },
         "fr" : {
@@ -1120,13 +1120,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg enlace"
+                      "value" : "%arg relación"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg enlaces"
+                      "value" : "%arg relaciones"
                     }
                   }
                 }
@@ -1210,19 +1210,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld parejas emparejadas"
+            "value" : "%1$lld de %2$lld parejas encontradas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %2$lld paires associées"
+            "value" : "%1$lld paires associées sur %2$lld"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld pares combinados"
+            "value" : "%1$lld de %2$lld pares encontrados"
           }
         }
       }
@@ -1245,19 +1245,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld colocados"
+            "value" : "%1$lld de %2$lld clasificados"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %2$lld triés"
+            "value" : "%1$lld sur %2$lld classés"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %2$lld organizados"
+            "value" : "%1$lld de %2$lld classificados"
           }
         }
       }
@@ -1324,7 +1324,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %#@squares@ completadas"
+            "value" : "%1$lld de %#@squares@"
           },
           "substitutions" : {
             "squares" : {
@@ -1335,13 +1335,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg casilla"
+                      "value" : "%arg casilla rellenada"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg casillas"
+                      "value" : "%arg casillas rellenadas"
                     }
                   }
                 }
@@ -1352,7 +1352,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %#@squares@ remplies"
+            "value" : "%1$lld sur %#@squares@"
           },
           "substitutions" : {
             "squares" : {
@@ -1363,13 +1363,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg case"
+                      "value" : "%arg case remplie"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg cases"
+                      "value" : "%arg cases remplies"
                     }
                   }
                 }
@@ -1380,7 +1380,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %#@squares@ preenchidos"
+            "value" : "%1$lld de %#@squares@"
           },
           "substitutions" : {
             "squares" : {
@@ -1391,13 +1391,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg quadrado"
+                      "value" : "%arg quadrado preenchido"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg quadrados"
+                      "value" : "%arg quadrados preenchidos"
                     }
                   }
                 }
@@ -1469,7 +1469,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %#@squares@ correctas"
+            "value" : "%1$lld de %#@squares@"
           },
           "substitutions" : {
             "squares" : {
@@ -1480,13 +1480,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg casilla"
+                      "value" : "%arg casilla correcta"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg casillas"
+                      "value" : "%arg casillas correctas"
                     }
                   }
                 }
@@ -1497,7 +1497,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %#@squares@ correctes"
+            "value" : "%1$lld sur %#@squares@"
           },
           "substitutions" : {
             "squares" : {
@@ -1508,13 +1508,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg case"
+                      "value" : "%arg case correcte"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg cases"
+                      "value" : "%arg cases correctes"
                     }
                   }
                 }
@@ -1525,7 +1525,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld de %#@squares@ corretos"
+            "value" : "%1$lld de %#@squares@"
           },
           "substitutions" : {
             "squares" : {
@@ -1536,13 +1536,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg quadrado"
+                      "value" : "%arg quadrado correto"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg quadrados"
+                      "value" : "%arg quadrados corretos"
                     }
                   }
                 }
@@ -1642,7 +1642,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %#@squares@ : %3$@"
+            "value" : "%1$lld sur %#@squares@ : %3$@"
           },
           "substitutions" : {
             "squares" : {
@@ -1833,7 +1833,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Punnett-Quadrat für %1$@: %2$@ (%3$@) an der Seite, %4$@ (%5$@) oben."
+            "value" : "Ein Kreuzungsschema für %1$@: %2$@ (%3$@) an der Seite, %4$@ (%5$@) oben."
           }
         },
         "en" : {
@@ -1845,19 +1845,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuadro de Punnett para %1$@: %2$@ (%3$@) en el lateral y %4$@ (%5$@) en la parte superior."
+            "value" : "Un cuadro de Punnett para %1$@: %2$@ (%3$@) en el lateral, %4$@ (%5$@) en la parte superior."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tableau de croisement de Punnett pour %1$@ : %2$@ (%3$@) sur le côté, %4$@ (%5$@) en haut."
+            "value" : "Un échiquier de Punnett pour %1$@ : %2$@ (%3$@) sur le côté, %4$@ (%5$@) en haut."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quadrado de Punnett para %1$@: %2$@ (%3$@) na lateral, %4$@ (%5$@) no topo."
+            "value" : "Um quadro de Punnett para %1$@: %2$@ (%3$@) na lateral, %4$@ (%5$@) na parte de cima."
           }
         }
       }
@@ -1880,7 +1880,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Línea de tiempo de %1$@ a %2$@. %3$@."
+            "value" : "Una línea temporal de %1$@ a %2$@. %3$@."
           }
         },
         "fr" : {
@@ -1892,7 +1892,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Linha do tempo de %1$@ a %2$@. %3$@."
+            "value" : "Uma linha do tempo de %1$@ a %2$@. %3$@."
           }
         }
       }
@@ -1998,25 +1998,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alles ist zugeordnet. Prüfe deine Antwort, wenn du bereit bist."
+            "value" : "Alles zugeordnet. Prüfe deine Zuordnung, wenn du bereit bist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo está colocado. Compruébalo cuando quieras."
+            "value" : "Todo clasificado. Comprueba cuando quieras."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout est trié. Vérifie quand tu es prêt."
+            "value" : "Tout est classé. Vérifie quand tu es prêt."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo organizado. Confira quando estiver pronto."
+            "value" : "Tudo classificado. Confira quando estiver pronto."
           }
         }
       }
@@ -2027,25 +2027,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "These"
+            "value" : "Behauptung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tesis"
+            "value" : "Afirmación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thèse"
+            "value" : "Affirmation"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tese"
+            "value" : "Afirmação"
           }
         }
       }
@@ -2056,13 +2056,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zieh die Schritte in die richtige Reihenfolge oder tippe erst auf einen Schritt und dann auf seinen Platz."
+            "value" : "Ziehe die Schritte in die richtige Reihenfolge oder tippe auf einen Schritt und dann auf seinen Platz."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrastra los pasos para ordenarlos o toca uno y luego el lugar que le corresponde."
+            "value" : "Arrastra los pasos para ordenarlos o toca uno y luego su posición."
           }
         },
         "fr" : {
@@ -2074,7 +2074,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arraste os passos para colocá-los em ordem ou toque em um passo e depois na posição dele."
+            "value" : "Arraste as etapas para colocá-las em ordem ou toque em uma e depois no lugar dela."
           }
         }
       }
@@ -2085,19 +2085,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zieh, um zu schätzen"
+            "value" : "Zum Schätzen ziehen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrastra para responder"
+            "value" : "Arrastra para hacer tu suposición"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fais glisser pour répondre"
+            "value" : "Fais glisser pour estimer"
           }
         },
         "pt" : {
@@ -2114,25 +2114,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jeder Platz hat einen Namen. Tippe auf einen Platz, um ihn zu ändern."
+            "value" : "Jede Stelle hat einen Namen. Tippe auf eine Stelle, um ihren Namen zu ändern."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cada posición tiene un nombre. Toca una para cambiarlo."
+            "value" : "Todos los puntos tienen nombre. Toca uno para cambiarlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chaque emplacement a un nom. Touche un emplacement pour le modifier."
+            "value" : "Chaque repère a un nom. Touche un repère pour le modifier."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos os espaços têm um nome. Toque em um para alterá-lo."
+            "value" : "Todos os pontos têm um nome. Toque em um ponto para mudar o nome."
           }
         }
       }
@@ -2143,13 +2143,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jedes Feld ist ausgefüllt. Tippe auf eines, um es zu ändern."
+            "value" : "Alle Felder sind ausgefüllt. Tippe auf ein Feld, um es zu ändern."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todas las casillas están completas. Toca una para cambiarla."
+            "value" : "Todas las casillas están rellenadas. Toca una para cambiarla."
           }
         },
         "fr" : {
@@ -2161,7 +2161,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos os quadrados estão preenchidos. Toque em um para alterá-lo."
+            "value" : "Todos os quadrados estão preenchidos. Toque em um para mudar o valor."
           }
         }
       }
@@ -2178,7 +2178,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pruebas"
+            "value" : "Prueba"
           }
         },
         "fr" : {
@@ -2201,13 +2201,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hör dir die beste Antwort an"
+            "value" : "Beste Antwort anhören"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escucha la mejor respuesta"
+            "value" : "Escuchar la mejor respuesta"
           }
         },
         "fr" : {
@@ -2230,13 +2230,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hör dir diese Zeile an"
+            "value" : "Diesen Satz anhören"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escucha esta frase"
+            "value" : "Escuchar esta frase"
           }
         },
         "fr" : {
@@ -2259,13 +2259,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es führt zu %@."
+            "value" : "Das führt zu %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lleva a %@."
+            "value" : "El resultado es %@."
           }
         },
         "fr" : {
@@ -2294,7 +2294,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Llevó a %@"
+            "value" : "Dio lugar a %@"
           }
         },
         "fr" : {
@@ -2329,19 +2329,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enlace creado: %1$@ llevó a %2$@."
+            "value" : "Relacionados: %1$@ dio lugar a %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lien créé : %1$@ a mené à %2$@."
+            "value" : "Lien établi : %1$@ a mené à %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ligação criada: %1$@ levou a %2$@."
+            "value" : "Ligação feita: %1$@ levou a %2$@."
           }
         }
       }
@@ -2352,25 +2352,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verknüpft es als Folge der ausgewählten Ursache."
+            "value" : "Verbindet das Ereignis als Folge mit der gewählten Ursache."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo enlaza como resultado de la causa elegida."
+            "value" : "Lo relaciona como el efecto de la causa elegida."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Associe cet élément au résultat de la cause sélectionnée."
+            "value" : "Relie cet événement à la cause choisie comme son effet."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vincula este evento ao resultado da causa selecionada."
+            "value" : "Liga este evento à causa escolhida como consequência dela."
           }
         }
       }
@@ -2381,25 +2381,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ähnliche ohne passende Karte"
+            "value" : "Ähnliche Karten ohne Gegenstück"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parecidas sin pareja"
+            "value" : "Tarjetas parecidas sin pareja"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cartes similaires sans correspondance"
+            "value" : "Cartes ressemblantes sans correspondance"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pares sem correspondência"
+            "value" : "Cartões parecidos sem par"
           }
         }
       }
@@ -2422,7 +2422,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Marquer : %@"
+            "value" : "Marquer : %@"
           }
         },
         "pt" : {
@@ -2451,19 +2451,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ emparejado con %2$@. %3$lld de %4$lld parejas emparejadas."
+            "value" : "Has emparejado %1$@ con %2$@. %3$lld de %4$lld parejas encontradas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ associé à %2$@. %3$lld paires sur %4$lld associées."
+            "value" : "%1$@ associé à %2$@. %3$lld paires associées sur %4$lld."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ combinado com %2$@. %3$lld de %4$lld pares combinados."
+            "value" : "Par formado: %1$@ e %2$@. %3$lld de %4$lld pares encontrados."
           }
         }
       }
@@ -2480,7 +2480,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No marcado"
+            "value" : "Sin marcar"
           }
         },
         "fr" : {
@@ -2503,25 +2503,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Übersehener Zusammenhang"
+            "value" : "Übersehene Verbindung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enlace no encontrado"
+            "value" : "Relación que faltaba"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lien manqué"
+            "value" : "Lien oublié"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Relação não identificada"
+            "value" : "Ligação não encontrada"
           }
         }
       }
@@ -2532,25 +2532,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beim ersten Versuch nicht zugeordnet"
+            "value" : "Beim ersten Versuch übersehen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No acertadas a la primera"
+            "value" : "No encontradas al primer intento"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ratées au premier essai"
+            "value" : "Manquées au premier essai"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não acertados na primeira tentativa"
+            "value" : "Não encontrados na primeira tentativa"
           }
         }
       }
@@ -2561,19 +2561,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nach unten bewegen"
+            "value" : "Nach unten verschieben"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bajar"
+            "value" : "Mover hacia abajo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Descendre"
+            "value" : "Déplacer vers le bas"
           }
         },
         "pt" : {
@@ -2590,19 +2590,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nach oben bewegen"
+            "value" : "Nach oben verschieben"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Subir"
+            "value" : "Mover hacia arriba"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Monter"
+            "value" : "Déplacer vers le haut"
           }
         },
         "pt" : {
@@ -2625,19 +2625,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A continuación: explica cómo la cita demuestra la afirmación"
+            "value" : "Después: explica cómo la cita demuestra la afirmación"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ensuite : explique comment la citation prouve l’affirmation"
+            "value" : "Ensuite : explique comment la citation prouve l’affirmation"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Próximo: explique como a citação comprova a afirmação"
+            "value" : "A seguir: explique como a citação comprova a afirmação"
           }
         }
       }
@@ -2648,7 +2648,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Keine Änderung"
+            "value" : "Keine Veränderung"
           }
         },
         "es" : {
@@ -2683,7 +2683,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no has hecho ninguna estimación"
+            "value" : "Aún no has hecho una suposición"
           }
         },
         "fr" : {
@@ -2706,25 +2706,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In dieser Geschichte besteht kein Zusammenhang"
+            "value" : "Kein Zusammenhang in dieser Geschichte"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay relación entre estos hechos"
+            "value" : "No hay una relación en esta historia"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce lien n’existe pas dans ce récit"
+            "value" : "Ce lien n’existe pas dans cette histoire"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não há relação entre esses fatos nesta história"
+            "value" : "Essa ligação não existe nesta história"
           }
         }
       }
@@ -2747,13 +2747,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pas tout à fait :"
+            "value" : "Pas tout à fait :"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quase:"
+            "value" : "Não é bem assim:"
           }
         }
       }
@@ -2770,13 +2770,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no hay nada"
+            "value" : "Aún no hay nada aquí"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rien pour l’instant"
+            "value" : "Rien ici pour l’instant"
           }
         },
         "pt" : {
@@ -2793,13 +2793,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch keine Stelle markiert."
+            "value" : "Noch nichts markiert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no has marcado ningún fragmento."
+            "value" : "Aún no has marcado nada."
           }
         },
         "fr" : {
@@ -2811,7 +2811,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nenhum trecho marcado ainda."
+            "value" : "Nada marcado ainda."
           }
         }
       }
@@ -2828,19 +2828,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ahora elige qué ocurrió a raíz de %@."
+            "value" : "Ahora elige qué ocurrió como resultado de %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis maintenant ce que %@ a entraîné."
+            "value" : "Choisis maintenant ce à quoi %@ a mené."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agora escolha o que %@ causou."
+            "value" : "Agora escolha a consequência de %@."
           }
         }
       }
@@ -2851,25 +2851,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle eine Ursache und dann ihre Folge aus."
+            "value" : "Wähle eine Ursache und dann ihre Folge."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige una causa y luego su consecuencia."
+            "value" : "Elige una causa y luego su efecto."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis une cause, puis ce qu’elle a entraîné."
+            "value" : "Choisis une cause, puis ce à quoi elle a mené."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha uma causa e depois o que ela causou."
+            "value" : "Escolha uma causa e depois escolha a consequência dela."
           }
         }
       }
@@ -2880,7 +2880,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Namen auswählen"
+            "value" : "Wähle einen Namen"
           }
         },
         "es" : {
@@ -2892,7 +2892,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisir un nom"
+            "value" : "Choisis un nom"
           }
         },
         "pt" : {
@@ -2915,7 +2915,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige cómo la cita demuestra la afirmación"
+            "value" : "Elige cómo demuestra la cita la afirmación"
           }
         },
         "fr" : {
@@ -2938,25 +2938,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle das Element und dann seine Gruppe aus."
+            "value" : "Wähle es aus und dann seine Gruppe."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige el elemento y después su grupo."
+            "value" : "Elígelo y luego elige su grupo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisis l’élément, puis son groupe."
+            "value" : "Sélectionne cet élément, puis son groupe."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha o item e depois o grupo dele."
+            "value" : "Escolha este item e depois escolha o grupo dele."
           }
         }
       }
@@ -2967,13 +2967,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle das Zitat aus, das die Behauptung am besten stützt"
+            "value" : "Wähle das Zitat, das die Behauptung am besten stützt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige la cita que mejor respalda la afirmación"
+            "value" : "Elige la cita que mejor respalde la afirmación"
           }
         },
         "fr" : {
@@ -2985,7 +2985,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha a citação que melhor apoia a afirmação"
+            "value" : "Escolha a citação que melhor sustenta a afirmação"
           }
         }
       }
@@ -2996,13 +2996,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Platziere %@ auf dem Zeitstrahl"
+            "value" : "%@ auf dem Zeitstrahl platzieren"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Coloca %@ en la línea de tiempo"
+            "value" : "Coloca %@ en la línea del tiempo"
           }
         },
         "fr" : {
@@ -3014,7 +3014,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Colocar %@ na linha do tempo"
+            "value" : "Coloque %@ na linha do tempo"
           }
         }
       }
@@ -3054,7 +3054,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ in %2$@ legen"
+            "value" : "%1$@ in %2$@ einordnen"
           }
         },
         "en" : {
@@ -3066,13 +3066,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Coloca %1$@ en %2$@"
+            "value" : "Colocar %1$@ en %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Placer %1$@ dans %2$@"
+            "value" : "Place %1$@ dans %2$@"
           }
         },
         "pt" : {
@@ -3089,7 +3089,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ auf Platz %2$@ setzen"
+            "value" : "%1$@ auf Position %2$@ setzen"
           }
         },
         "en" : {
@@ -3101,19 +3101,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Coloca %1$@ en la posición %2$@"
+            "value" : "Colocar %1$@ en el punto %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Placer %1$@ à l’emplacement %2$@"
+            "value" : "Place %1$@ à l’emplacement %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Colocar %1$@ no espaço %2$@"
+            "value" : "Colocar %1$@ no ponto %2$@"
           }
         }
       }
@@ -3124,7 +3124,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In %@ legen"
+            "value" : "In %@ einordnen"
           }
         },
         "es" : {
@@ -3153,25 +3153,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hier ablegen"
+            "value" : "Hier einordnen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Colócalo aquí"
+            "value" : "Ponlo aquí"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Placer ici"
+            "value" : "Place-le ici"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Colocar aqui"
+            "value" : "Coloque aqui"
           }
         }
       }
@@ -3182,13 +3182,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Auf Platz %@ setzen"
+            "value" : "Auf Position %@ setzen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Colocar en la posición %@"
+            "value" : "Colocar en el punto %@"
           }
         },
         "fr" : {
@@ -3200,7 +3200,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Colocar no espaço %@"
+            "value" : "Colocar no ponto %@"
           }
         }
       }
@@ -3229,7 +3229,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Citações"
+            "value" : "Trechos"
           }
         }
       }
@@ -3252,7 +3252,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Valeur réelle : %@"
+            "value" : "Valeur réelle : %@"
           }
         },
         "pt" : {
@@ -3275,7 +3275,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Razonamiento"
+            "value" : "Razonamientos"
           }
         },
         "fr" : {
@@ -3298,7 +3298,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Den Zusammenhang zwischen %1$@ und %2$@ entfernen"
+            "value" : "Verbindung von %1$@ zu %2$@ entfernen"
           }
         },
         "en" : {
@@ -3310,19 +3310,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quitar el enlace de %1$@ a %2$@"
+            "value" : "Eliminar la relación entre %1$@ y %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer le lien de %1$@ vers %2$@"
+            "value" : "Supprimer le lien de %1$@ à %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remover a relação entre %1$@ e %2$@"
+            "value" : "Remover a ligação de %1$@ a %2$@"
           }
         }
       }
@@ -3345,19 +3345,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminado: %1$@ llevó a %2$@."
+            "value" : "Eliminado: %1$@ dio lugar a %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lien supprimé : %1$@ a entraîné %2$@."
+            "value" : "Lien supprimé : %1$@ a entraîné %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Removido: %1$@ causava %2$@."
+            "value" : "Removido: %1$@ levou a %2$@."
           }
         }
       }
@@ -3386,7 +3386,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Certo"
+            "value" : "Correto"
           }
         }
       }
@@ -3397,19 +3397,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Danach anzeigen: %@"
+            "value" : "Danach zeigen: %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mostrar el después: %@"
+            "value" : "Mostrar después: %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afficher l’après : %@"
+            "value" : "Afficher l’état après : %@"
           }
         },
         "pt" : {
@@ -3426,7 +3426,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die tatsächlichen Jahreszahlen anzeigen"
+            "value" : "Tatsächliche Jahreszahlen zeigen"
           }
         },
         "es" : {
@@ -3438,7 +3438,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Afficher les dates réelles"
+            "value" : "Afficher les vraies dates"
           }
         },
         "pt" : {
@@ -3455,13 +3455,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jemand hat eine KI gefragt"
+            "value" : "Jemand hat einen KI-Assistenten gefragt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alguien hizo una pregunta a un asistente de IA"
+            "value" : "Alguien preguntó a un asistente de IA"
           }
         },
         "fr" : {
@@ -3473,7 +3473,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alguém fez uma pergunta a um assistente de IA"
+            "value" : "Alguém perguntou a um assistente de IA"
           }
         }
       }
@@ -3484,7 +3484,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Platz %1$@: %2$@"
+            "value" : "Position %1$@: %2$@"
           }
         },
         "en" : {
@@ -3496,19 +3496,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Posición %1$@: %2$@"
+            "value" : "Punto %1$@: %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emplacement %1$@ : %2$@"
+            "value" : "Emplacement %1$@ : %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Espaço %1$@: %2$@"
+            "value" : "Ponto %1$@: %2$@"
           }
         }
       }
@@ -3519,7 +3519,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Platz %1$@: %2$@, richtig"
+            "value" : "Position %1$@: %2$@, richtig"
           }
         },
         "en" : {
@@ -3531,19 +3531,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Posición %1$@: %2$@, correcto"
+            "value" : "Punto %1$@: %2$@, correcto"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emplacement %1$@ : %2$@, correct"
+            "value" : "Emplacement %1$@ : %2$@, correct"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Espaço %1$@: %2$@, correto"
+            "value" : "Ponto %1$@: %2$@, correto"
           }
         }
       }
@@ -3554,25 +3554,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Platz %@: leer"
+            "value" : "Position %@: leer"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Posición %@: vacía"
+            "value" : "Punto %@: vacío"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emplacement %@ : vide"
+            "value" : "Emplacement %@ : vide"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Espaço %@: vazio"
+            "value" : "Ponto %@: vazio"
           }
         }
       }
@@ -3583,7 +3583,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Platz %1$@: deine Antwort %2$@, richtige Antwort %3$@"
+            "value" : "Position %1$@: deine Antwort %2$@, richtige Antwort %3$@"
           }
         },
         "en" : {
@@ -3595,19 +3595,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Posición %1$@: tu respuesta, %2$@; respuesta correcta, %3$@"
+            "value" : "Punto %1$@: tu respuesta %2$@, respuesta correcta %3$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emplacement %1$@ : ta réponse, %2$@ ; bonne réponse, %3$@"
+            "value" : "Emplacement %1$@ : ta réponse %2$@, bonne réponse %3$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Espaço %1$@: sua resposta %2$@, resposta correta %3$@"
+            "value" : "Ponto %1$@: sua resposta %2$@, resposta correta %3$@"
           }
         }
       }
@@ -3630,13 +3630,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuadrícula %1$lld, %2$@ y %3$@: %4$@"
+            "value" : "Casilla %1$lld, %2$@ y %3$@: %4$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Case %1$lld, %2$@ et %3$@ : %4$@"
+            "value" : "Case %1$lld, %2$@ et %3$@ : %4$@"
           }
         },
         "pt" : {
@@ -3665,13 +3665,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuadrícula %1$lld, %2$@ y %3$@: vacía"
+            "value" : "Casilla %1$lld, %2$@ y %3$@: vacía"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Case %1$lld, %2$@ et %3$@ : vide"
+            "value" : "Case %1$lld, %2$@ et %3$@ : vide"
           }
         },
         "pt" : {
@@ -3706,7 +3706,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Étape %1$lld : %2$@"
+            "value" : "Étape %1$lld : %2$@"
           }
         },
         "pt" : {
@@ -3723,7 +3723,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weiterhin möglich"
+            "value" : "Noch möglich"
           }
         },
         "es" : {
@@ -3735,13 +3735,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Encore possible"
+            "value" : "Encore possibles"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda possível"
+            "value" : "Ainda possíveis"
           }
         }
       }
@@ -3758,13 +3758,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sólida"
+            "value" : "Sólido"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Solide"
+            "value" : "Convaincant"
           }
         },
         "pt" : {
@@ -3787,13 +3787,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Evidencia más sólida"
+            "value" : "Prueba más sólida"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Argument plus convaincant"
+            "value" : "Preuve plus convaincante"
           }
         },
         "pt" : {
@@ -3857,7 +3857,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remover a citação"
+            "value" : "Remover o trecho"
           }
         }
       }
@@ -3897,25 +3897,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tippe auf einen Namen für Feld %@ oder ziehe ihn auf ein beliebiges Feld."
+            "value" : "Tippe auf einen Namen für Position %@ oder ziehe ihn auf eine beliebige Position."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca un nombre para la posición %@ o arrástralo hasta cualquier posición."
+            "value" : "Toca un nombre para el punto %@ o arrástralo a cualquier punto."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touche un nom pour l’associer à l’emplacement %@, ou fais-le glisser vers n’importe quel emplacement."
+            "value" : "Touche un nom pour l’emplacement %@, ou fais-le glisser vers un emplacement."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque em um nome para o espaço %@ ou arraste-o para qualquer espaço."
+            "value" : "Toque em um nome para o ponto %@ ou arraste até qualquer ponto."
           }
         }
       }
@@ -3938,13 +3938,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touche un lieu numéroté pour découvrir ce qui s’y trouve."
+            "value" : "Touche un lieu numéroté pour voir ce qui s’y trouve."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque em um lugar numerado para ver o que há nele."
+            "value" : "Toque em um lugar numerado para ver o que tem lá."
           }
         }
       }
@@ -3961,19 +3961,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La respuesta de la IA. Hay un paso incorrecto: encuentra el error."
+            "value" : "La respuesta de la IA. Hay un paso incorrecto: encuentra el error de la IA."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La réponse de l’IA. Une étape est fausse : repère l’erreur de l’IA."
+            "value" : "La réponse de l’IA. Une étape est fausse : trouve l’erreur de l’IA."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resposta da IA. Um passo está errado: encontre o erro da IA."
+            "value" : "A resposta da IA. Um passo está errado: encontre o erro da IA."
           }
         }
       }
@@ -4019,7 +4019,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La clave lleva a"
+            "value" : "La clave conduce a"
           }
         },
         "fr" : {
@@ -4048,7 +4048,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La clave lleva a %@."
+            "value" : "La clave conduce a %@."
           }
         },
         "fr" : {
@@ -4112,7 +4112,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le cheminement pour ce cas"
+            "value" : "Le chemin pour ce cas"
           }
         },
         "pt" : {
@@ -4129,7 +4129,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der falsche Schritt ist Schritt %lld."
+            "value" : "Schritt %lld ist falsch."
           }
         },
         "es" : {
@@ -4205,7 +4205,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’autre personne dit : %1$@, %2$@"
+            "value" : "La personne dit : %1$@, %2$@"
           }
         },
         "pt" : {
@@ -4222,13 +4222,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese beiden passen nicht zusammen."
+            "value" : "Die beiden passen nicht zusammen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esas dos no van juntas."
+            "value" : "Esas dos tarjetas no van juntas."
           }
         },
         "fr" : {
@@ -4251,19 +4251,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch zu sortieren"
+            "value" : "Noch einzuordnen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por ordenar"
+            "value" : "Por clasificar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À classer"
+            "value" : "À trier"
           }
         },
         "pt" : {
@@ -4321,7 +4321,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne plus marquer : %@"
+            "value" : "Retirer le marquage : %@"
           }
         },
         "pt" : {
@@ -4350,7 +4350,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utiliser comme preuve : %@"
+            "value" : "Utiliser comme preuve : %@"
           }
         },
         "pt" : {
@@ -4379,13 +4379,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utiliser comme raisonnement : %@"
+            "value" : "Utiliser comme raisonnement : %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar como justificativa: %@"
+            "value" : "Usar como raciocínio: %@"
           }
         }
       }
@@ -4408,7 +4408,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faible"
+            "value" : "Peu convaincant"
           }
         },
         "pt" : {
@@ -4443,7 +4443,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que vai na casa %lld?"
+            "value" : "O que vai no quadrado %lld?"
           }
         }
       }
@@ -4454,7 +4454,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu markierende Textstellen"
+            "value" : "Gesuchte Textstellen"
           }
         },
         "es" : {
@@ -4495,13 +4495,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quel génotype faut-il mettre dans la case %lld ?"
+            "value" : "Quel génotype va dans la case %lld ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qual genótipo vai na casa %lld?"
+            "value" : "Qual genótipo vai no quadrado %lld?"
           }
         }
       }
@@ -4518,19 +4518,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incorrecto"
+            "value" : "Incorrecta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incorrect"
+            "value" : "Mal placé"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Incorreto"
+            "value" : "Errado"
           }
         }
       }
@@ -4547,7 +4547,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has elegido %@"
+            "value" : "Elegiste %@"
           }
         },
         "fr" : {
@@ -4570,13 +4570,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hattest es bei %lld"
+            "value" : "Du hattest ihn an Position %lld"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo habías puesto en %lld"
+            "value" : "Lo colocaste en %lld"
           }
         },
         "fr" : {
@@ -4605,13 +4605,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has marcado: %@."
+            "value" : "Marcaste: %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as marqué : %@."
+            "value" : "Tu as marqué : %@."
           }
         },
         "pt" : {
@@ -4640,13 +4640,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has dicho: %1$@, %2$@"
+            "value" : "Dijiste: %1$@, %2$@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as dit : %1$@, %2$@"
+            "value" : "Tu as dit : %1$@, %2$@"
           }
         },
         "pt" : {
@@ -4663,7 +4663,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Argument ist fertig. Prüfe es oder nimm einen Teil heraus, um es zu ändern."
+            "value" : "Dein Argument ist fertig. Prüfe es oder entferne einen Teil, um es zu ändern."
           }
         },
         "es" : {
@@ -4681,7 +4681,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu argumento está pronto. Confira ou remova uma parte para alterá-lo."
+            "value" : "Seu argumento está pronto. Confira ou retire uma parte para mudar."
           }
         }
       }
@@ -4704,7 +4704,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton premier choix : %@"
+            "value" : "Ton premier choix : %@"
           }
         },
         "pt" : {
@@ -4727,7 +4727,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu estimación"
+            "value" : "Tu suposición"
           }
         },
         "fr" : {
@@ -4750,13 +4750,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Schätzung ist etwa %@-mal zu hoch."
+            "value" : "Deine Schätzung ist etwa %@-mal so groß wie der tatsächliche Wert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu estimación es aproximadamente %@ veces mayor."
+            "value" : "Tu suposición es aproximadamente %@ veces mayor que el valor real."
           }
         },
         "fr" : {
@@ -4768,7 +4768,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu palpite é cerca de %@ vezes maior."
+            "value" : "Seu palpite é cerca de %@ vezes maior que o valor real."
           }
         }
       }
@@ -4779,25 +4779,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Schätzung ist etwa %@-mal zu niedrig."
+            "value" : "Deine Schätzung ist etwa %@-mal so klein wie der tatsächliche Wert."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu estimación es aproximadamente %@ veces menor."
+            "value" : "Tu suposición es aproximadamente %@ veces menor que el valor real."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton estimation est environ %@ fois trop faible."
+            "value" : "Ton estimation est environ %@ fois trop basse."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu palpite é cerca de %@ vezes menor."
+            "value" : "Seu palpite é cerca de %@ vezes menor que o valor real."
           }
         }
       }
@@ -4814,7 +4814,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu estimación se acerca al valor real."
+            "value" : "Tu suposición se acerca al valor real."
           }
         },
         "fr" : {
@@ -4843,19 +4843,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu estimación se desvía en %@."
+            "value" : "Tu suposición se aleja del valor real en %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton estimation est éloignée de %@."
+            "value" : "Ton estimation s’écarte de la valeur réelle de %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu palpite está distante %@ do valor real."
+            "value" : "Seu palpite está a %@ de distância do valor real."
           }
         }
       }
@@ -4872,13 +4872,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu estimación: %@"
+            "value" : "Tu suposición: %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton estimation : %@"
+            "value" : "Ton estimation : %@"
           }
         },
         "pt" : {

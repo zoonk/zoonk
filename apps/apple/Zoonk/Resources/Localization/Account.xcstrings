@@ -7,7 +7,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heute %1$@/%2$@ Buddy-Nachrichten verwendet"
+            "value" : "Heute %1$@/%2$@ Kumpel-Nachrichten genutzt"
           }
         },
         "en" : {
@@ -19,19 +19,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mensajes del compañero usados hoy: %1$@/%2$@"
+            "value" : "%1$@/%2$@ mensajes del Compañero usados hoy"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@/%2$@ messages du Compagnon utilisées aujourd’hui"
+            "value" : "%1$@/%2$@ messages avec ton Compagnon utilisés aujourd’hui"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@/%2$@ mensagens do parceiro usadas hoje"
+            "value" : "%1$@/%2$@ mensagens para o Parceiro usadas hoje"
           }
         }
       }
@@ -60,13 +60,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De 3 à 30 caractères. Lettres, chiffres et tirets bas uniquement."
+            "value" : "3 à 30 caractères. Lettres, chiffres et tirets bas uniquement."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De 3 a 30 caracteres. Apenas letras, números e sublinhados."
+            "value" : "De 3 a 30 caracteres. Use apenas letras, números e sublinhados."
           }
         }
       }
@@ -106,7 +106,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Sicherheitsprüfung hat diese Anfrage blockiert. Versuch es noch einmal oder kontaktiere hello@zoonk.com."
+            "value" : "Eine Sicherheitsprüfung hat diese Anfrage blockiert. Versuch es erneut oder kontaktiere hello@zoonk.com."
           }
         },
         "es" : {
@@ -124,7 +124,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O sistema de segurança bloqueou este pedido. Tente de novo ou mande um email para contato@zoonk.com."
+            "value" : "O sistema de segurança bloqueou esta solicitação. Tente de novo ou entre em contato pelo contato@zoonk.com."
           }
         }
       }
@@ -193,7 +193,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Löschen des Kontos kann nicht rückgängig gemacht werden."
+            "value" : "Das Löschen deines Kontos kann nicht rückgängig gemacht werden."
           }
         },
         "es" : {
@@ -240,7 +240,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Email da conta"
+            "value" : "E-mail da conta"
           }
         }
       }
@@ -309,25 +309,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein KI-Lernbuddy, der dir hilft, wenn du nicht weiterkommst"
+            "value" : "Ein KI-Lernkumpel, wenn du nicht weiterkommst"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un compañero de estudio con IA cuando te atasques"
+            "value" : "Un Compañero de estudio con IA para cuando te quedes atascado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un Compagnon d’étude IA quand tu bloques"
+            "value" : "Un Compagnon d’apprentissage IA quand tu bloques"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um parceiro de estudos com IA para quando você travar"
+            "value" : "Um Parceiro de estudos com IA para quando você precisar de ajuda"
           }
         }
       }
@@ -373,13 +373,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al continuar, aceptas los Términos del Servicio y la Política de Privacidad de Zoonk."
+            "value" : "Al continuar, aceptas las condiciones de servicio y la política de privacidad de Zoonk."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En continuant, tu acceptes les Conditions d’utilisation et la Politique de confidentialité de Zoonk."
+            "value" : "En continuant, tu acceptes les conditions d’utilisation et la politique de confidentialité de Zoonk."
           }
         },
         "pt" : {
@@ -449,7 +449,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mudar"
+            "value" : "Alterar"
           }
         }
       }
@@ -484,7 +484,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mudar nome de usuário"
+            "value" : "Alterar nome de usuário"
           }
         }
       }
@@ -495,13 +495,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Überprüfe die Angaben und versuche es erneut."
+            "value" : "Prüfe deine Angaben und versuch es erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revisa la información e inténtalo de nuevo."
+            "value" : "Comprueba los datos e inténtalo de nuevo."
           }
         },
         "fr" : {
@@ -524,25 +524,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deinen Einkaufsverlauf im App Store und wende dich dann an den Support."
+            "value" : "Prüfe deine Käufe im App Store und wende dich dann an den Support."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revisa tu historial de compras del App Store y luego contacta con soporte para obtener ayuda."
+            "value" : "Consulta tu historial de compras en App Store y ponte en contacto con soporte para recibir ayuda."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consulte l’historique de tes achats dans l’App Store, puis contacte l’assistance pour obtenir de l’aide."
+            "value" : "Vérifie ton historique d’achats dans l’App Store, puis contacte l’assistance pour obtenir de l’aide."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira seu histórico de compras na App Store e depois fale com o suporte para receber ajuda."
+            "value" : "Confira seu histórico de compras na App Store e entre em contato com o suporte para receber ajuda."
           }
         }
       }
@@ -553,25 +553,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deinen Einkaufsverlauf im App Store und wende dich an den Support, wenn du Hilfe brauchst."
+            "value" : "Prüfe deine Käufe im App Store und wende dich bei Bedarf an den Support."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Revisa tu historial de compras del App Store y luego contacta con soporte si necesitas ayuda."
+            "value" : "Consulta tu historial de compras en App Store y ponte en contacto con soporte si necesitas ayuda."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Consulte l’historique de tes achats dans l’App Store, puis contacte l’assistance si tu as besoin d’aide."
+            "value" : "Vérifie ton historique d’achats dans l’App Store, puis contacte l’assistance si tu as besoin d’aide."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira seu histórico de compras na App Store e depois fale com o suporte se precisar de ajuda."
+            "value" : "Confira seu histórico de compras na App Store e, se precisar de ajuda, entre em contato com o suporte."
           }
         }
       }
@@ -582,7 +582,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deine Internetverbindung und versuche erneut, deine Käufe wiederherzustellen."
+            "value" : "Prüfe deine Verbindung und versuch erneut, deine Käufe wiederherzustellen."
           }
         },
         "es" : {
@@ -594,13 +594,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vérifie ta connexion, puis réessaie de restaurer tes achats."
+            "value" : "Vérifie ta connexion et réessaie de restaurer tes achats."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira sua conexão e tente restaurar as compras novamente."
+            "value" : "Confira sua conexão e tente restaurar de novo."
           }
         }
       }
@@ -664,7 +664,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fale com o suporte"
+            "value" : "Entrar em contato com o suporte"
           }
         }
       }
@@ -687,13 +687,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continue avec Apple pour confirmer que ce compte t’appartient avant de le supprimer."
+            "value" : "Continue avec Apple pour confirmer que ce compte est bien le tien avant de le supprimer."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continue com a Apple para confirmar que esta conta é sua antes de excluí-la."
+            "value" : "Continue com a Apple para confirmar que esta conta é sua antes de excluir ela."
           }
         }
       }
@@ -704,7 +704,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weiter mit E-Mail"
+            "value" : "Mit E-Mail fortfahren"
           }
         },
         "es" : {
@@ -716,13 +716,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuer avec un e-mail"
+            "value" : "Continuer avec une adresse e-mail"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar com email"
+            "value" : "Continuar com e-mail"
           }
         }
       }
@@ -768,7 +768,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudieron restaurar las compras"
+            "value" : "No se han podido restaurar las compras"
           }
         },
         "fr" : {
@@ -797,7 +797,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo actualizar tu cuenta"
+            "value" : "No se ha podido actualizar tu cuenta"
           }
         },
         "fr" : {
@@ -867,7 +867,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La période de facturation en cours se termine le %@."
+            "value" : "La période de facturation actuelle se termine le %@."
           }
         },
         "pt" : {
@@ -954,7 +954,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer ton compte Zoonk ?"
+            "value" : "Supprimer ton compte Zoonk ?"
           }
         },
         "pt" : {
@@ -971,25 +971,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dadurch werden dein Konto und alle darin gespeicherten Daten endgültig gelöscht. Plus-Abos, die du im Web abgeschlossen hast, werden gekündigt. Käufe im App Store verwaltest du im App Store."
+            "value" : "Löscht dein Konto und alle zugehörigen Daten endgültig. Im Web gekauftes Plus wird gekündigt; Käufe im App Store verwaltest du dort."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elimina tu cuenta y todo su contenido para siempre. Plus comprado en la web se cancela; las compras del App Store se gestionan en el App Store."
+            "value" : "Elimina tu cuenta y todo su contenido de forma permanente. Si compraste Plus en la web, se cancela; las compras de App Store se gestionan en App Store."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprime définitivement ton compte et tout ce qu’il contient. L’abonnement Plus acheté sur le Web est résilié ; les achats de l’App Store se gèrent dans l’App Store."
+            "value" : "Supprime définitivement ton compte et tout son contenu. L’abonnement Plus acheté sur le web est résilié ; les achats effectués dans l’App Store sont gérés dans l’App Store."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua conta e tudo nela serão excluídos permanentemente. O Plus comprado pela web será cancelado; compras pela App Store são gerenciadas na App Store."
+            "value" : "Exclui sua conta e tudo o que está nela para sempre. O Plus comprado pelo site é cancelado; as compras pela App Store são gerenciadas na App Store."
           }
         }
       }
@@ -1000,25 +1000,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Durch das Löschen deines Zoonk-Kontos wird die Abrechnung im App Store nicht beendet. Kündige zuerst das Abonnement, wenn es nicht verlängert werden soll."
+            "value" : "Wenn du dein Zoonk-Konto löschst, wird dein App-Store-Abo nicht gekündigt. Kündige das Abo zuerst, wenn es sich nicht verlängern soll."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar tu cuenta de Zoonk no cancela la facturación del App Store. Cancela primero la suscripción si no quieres que se renueve."
+            "value" : "Eliminar tu cuenta de Zoonk no cancela la facturación de App Store. Cancela primero la suscripción si no quieres que se renueve."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer ton compte Zoonk n’annule pas la facturation via l’App Store. Résilie d’abord l’abonnement si tu ne veux pas qu’il soit renouvelé."
+            "value" : "La suppression de ton compte Zoonk ne met pas fin à la facturation par l’App Store. Résilie d’abord l’abonnement si tu ne veux pas qu’il soit renouvelé."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excluir sua conta do Zoonk não cancela a cobrança da App Store. Cancele primeiro a assinatura se não quiser que ela seja renovada."
+            "value" : "Excluir sua conta do Zoonk não cancela a cobrança pela App Store. Cancele a assinatura antes se não quiser que ela seja renovada."
           }
         }
       }
@@ -1029,25 +1029,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du dein Zoonk-Konto löschst, endet dein über Google Play abgerechnetes Abo nicht. Kündige es zuerst über Google Play auf einem Android-Gerät, wenn es sich nicht verlängern soll."
+            "value" : "Wenn du dein Zoonk-Konto löschst, wird dein Google-Play-Abo nicht gekündigt. Kündige es zuerst über Google Play auf einem Android-Gerät, wenn es sich nicht verlängern soll."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminar tu cuenta de Zoonk no cancela la facturación de Google Play. Si no quieres que se renueve, cancela primero la suscripción desde Google Play en un dispositivo Android."
+            "value" : "Eliminar tu cuenta de Zoonk no cancela la facturación de Google Play. Si no quieres que se renueve, cancela primero la suscripción en Google Play desde un dispositivo Android."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La suppression de ton compte Zoonk n’annule pas la facturation Google Play. Si tu ne veux pas que ton abonnement soit renouvelé, annule-le d’abord dans Google Play sur un appareil Android."
+            "value" : "La suppression de ton compte Zoonk ne met pas fin à la facturation par Google Play. Si tu ne veux pas que l’abonnement soit renouvelé, résilie-le d’abord dans Google Play sur un appareil Android."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Excluir sua conta do Zoonk não cancela a cobrança do Google Play. Se você não quiser renovar, cancele primeiro pelo Google Play em um dispositivo Android."
+            "value" : "Excluir sua conta do Zoonk não cancela a cobrança pelo Google Play. Se não quiser que a assinatura seja renovada, cancele ela antes pelo Google Play em um dispositivo Android."
           }
         }
       }
@@ -1128,13 +1128,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "E-mail"
+            "value" : "Adresse e-mail"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Email"
+            "value" : "E-mail"
           }
         }
       }
@@ -1151,7 +1151,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicio de sesión con correo"
+            "value" : "Inicio de sesión con correo electrónico"
           }
         },
         "fr" : {
@@ -1163,7 +1163,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entrar com email"
+            "value" : "Entrar com e-mail"
           }
         }
       }
@@ -1180,7 +1180,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ingresa un correo electrónico válido."
+            "value" : "Introduce una dirección de correo válida."
           }
         },
         "fr" : {
@@ -1192,7 +1192,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Digite um email válido."
+            "value" : "Digite um endereço de e-mail válido."
           }
         }
       }
@@ -1209,13 +1209,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos tus objetivos · todas las lecciones"
+            "value" : "Todos los objetivos · todas las lecciones"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tous tes objectifs · toutes tes leçons"
+            "value" : "Tous les objectifs · toutes les leçons"
           }
         },
         "pt" : {
@@ -1232,25 +1232,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alles, was Zoonk über dich speichert, in einer Datei"
+            "value" : "Alle Daten, die Zoonk über dich speichert, in einer Datei"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo lo que Zoonk guarda sobre ti, en un solo archivo"
+            "value" : "Toda la información que Zoonk guarda sobre ti, en un solo archivo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout ce que Zoonk conserve sur toi, dans un seul fichier"
+            "value" : "Toutes les données que Zoonk conserve sur toi, dans un seul fichier"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tudo que o Zoonk guarda sobre você, em um arquivo"
+            "value" : "Tudo o que Zoonk guarda sobre você em um só arquivo"
           }
         }
       }
@@ -1261,13 +1261,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gib zu deiner Sicherheit einen neuen Code ein, der an die E-Mail-Adresse dieses Kontos gesendet wurde."
+            "value" : "Gib zu deiner Sicherheit einen neuen Code ein, der an die E-Mail-Adresse dieses Kontos gesendet wird."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por tu seguridad, introduce un nuevo código enviado al correo de esta cuenta."
+            "value" : "Por tu seguridad, introduce un código nuevo enviado al correo de esta cuenta."
           }
         },
         "fr" : {
@@ -1279,7 +1279,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para sua segurança, insira um novo código enviado para o email desta conta."
+            "value" : "Para sua segurança, digite um novo código enviado para o e-mail desta conta."
           }
         }
       }
@@ -1290,7 +1290,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kostenlos"
+            "value" : "Free"
           }
         },
         "es" : {
@@ -1302,7 +1302,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gratuit"
+            "value" : "Gratuite"
           }
         },
         "pt" : {
@@ -1412,7 +1412,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más tiempo para las llamadas de expresión oral"
+            "value" : "Más tiempo para llamadas de expresión oral"
           }
         },
         "fr" : {
@@ -1424,7 +1424,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mais tempo para conversas de prática oral"
+            "value" : "Mais tempo para conversas de prática"
           }
         }
       }
@@ -1435,7 +1435,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wie Zoonk und dein Kumpel dich nennen"
+            "value" : "So nennen dich Zoonk und dein Kumpel"
           }
         },
         "en" : {
@@ -1447,19 +1447,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cómo te llamarán Zoonk y tu compañero"
+            "value" : "Cómo te llaman Zoonk y tu Compañero"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le nom que Zoonk et ton compagnon utilisent pour t’appeler"
+            "value" : "Le nom utilisé par Zoonk et ton Compagnon pour s’adresser à toi"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como o Zoonk e seu parceiro chamam você"
+            "value" : "Como Zoonk e seu Parceiro chamam você"
           }
         }
       }
@@ -1470,13 +1470,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Behalte deinen Plan und Fortschritt auf all deinen Geräten."
+            "value" : "Nutze deinen Plan und behalte deinen Fortschritt auf allen Geräten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guarda tu plan y tu progreso en todos tus dispositivos."
+            "value" : "Conserva tu plan y tu progreso en todos tus dispositivos."
           }
         },
         "fr" : {
@@ -1488,7 +1488,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acesse seu plano e seu progresso em todos os seus dispositivos."
+            "value" : "Tenha seu plano e seu progresso em todos os seus dispositivos."
           }
         }
       }
@@ -1557,19 +1557,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stelle sicher, dass du mit dem Apple Account angemeldet bist, den du für den Kauf verwendet hast, und versuche es erneut."
+            "value" : "Stelle sicher, dass du mit dem Apple Account angemeldet bist, mit dem du den Kauf getätigt hast, und versuche es erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Asegúrate de haber iniciado sesión con la Cuenta de Apple que usaste para la compra e inténtalo de nuevo."
+            "value" : "Asegúrate de haber iniciado sesión con la cuenta de Apple usada para la compra y vuelve a intentarlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vérifie que tu es connecté au compte Apple utilisé pour l’achat, puis réessaie."
+            "value" : "Vérifie que tu es connecté au compte Apple utilisé pour cet achat, puis réessaie."
           }
         },
         "pt" : {
@@ -1586,13 +1586,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "App-Store-Abonnement verwalten"
+            "value" : "App Store-Abo verwalten"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gestionar suscripción del App Store"
+            "value" : "Gestionar suscripción de App Store"
           }
         },
         "fr" : {
@@ -1621,19 +1621,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gestionar Inicio de sesión con Apple"
+            "value" : "Gestionar el inicio de sesión con Apple"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gérer Connexion avec Apple"
+            "value" : "Gérer Se connecter avec Apple"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gerenciar Iniciar Sessão com a Apple"
+            "value" : "Gerenciar Iniciar sessão com a Apple"
           }
         }
       }
@@ -1662,7 +1662,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gerenciada pelo Google Play"
+            "value" : "Gerenciada no Google Play"
           }
         }
       }
@@ -1702,7 +1702,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gespeicherte Informationen, Feedback und Uploads"
+            "value" : "Erinnerungen, Feedback und hochgeladene Dateien"
           }
         },
         "es" : {
@@ -1714,13 +1714,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mémoire, retours et fichiers importés"
+            "value" : "Mémoire, commentaires et fichiers importés"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Memória, comentários e arquivos enviados"
+            "value" : "Memória, feedback e arquivos enviados"
           }
         }
       }
@@ -1731,7 +1731,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Probeprüfungen mit der Zeitvorgabe der echten Prüfung"
+            "value" : "Probeprüfungen unter echten Zeitbedingungen"
           }
         },
         "es" : {
@@ -1749,7 +1749,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Simulados com tempo igual ao da prova"
+            "value" : "Simulados com tempo de prova"
           }
         }
       }
@@ -1795,7 +1795,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se encontró ninguna suscripción activa"
+            "value" : "No se ha encontrado ninguna suscripción activa"
           }
         },
         "fr" : {
@@ -1824,7 +1824,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se encontraron compras"
+            "value" : "No se han encontrado compras"
           }
         },
         "fr" : {
@@ -1882,7 +1882,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eliminado permanentemente"
+            "value" : "Se elimina permanentemente"
           }
         },
         "fr" : {
@@ -1987,7 +1987,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Política de privacidade"
+            "value" : "Política de Privacidade"
           }
         }
       }
@@ -2027,19 +2027,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Profil- und Kontoinformationen"
+            "value" : "Profil und Kontoinformationen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Información del perfil y de la cuenta"
+            "value" : "Perfil e información de la cuenta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Informations du profil et du compte"
+            "value" : "Profil et informations du compte"
           }
         },
         "pt" : {
@@ -2062,13 +2062,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo vincular la compra"
+            "value" : "No se ha podido vincular la compra"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible d’associer l’achat"
+            "value" : "Impossible de lier l’achat"
           }
         },
         "pt" : {
@@ -2091,7 +2091,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se pudo verificar la compra"
+            "value" : "No se ha podido verificar la compra"
           }
         },
         "fr" : {
@@ -2114,7 +2114,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Kauf ist mit einem anderen Konto verknüpft"
+            "value" : "Kauf mit einem anderen Konto verknüpft"
           }
         },
         "es" : {
@@ -2126,7 +2126,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Achat associé à un autre compte"
+            "value" : "Achat lié à un autre compte"
           }
         },
         "pt" : {
@@ -2155,7 +2155,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Achat non finalisé"
+            "value" : "Achat non effectué"
           }
         },
         "pt" : {
@@ -2300,7 +2300,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar un código nuevo"
+            "value" : "Enviar un nuevo código"
           }
         },
         "fr" : {
@@ -2312,7 +2312,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviar novo código"
+            "value" : "Enviar um novo código"
           }
         }
       }
@@ -2445,7 +2445,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a iniciar sesión"
+            "value" : "Vuelve a iniciar sesión"
           }
         },
         "fr" : {
@@ -2457,7 +2457,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entrar novamente"
+            "value" : "Entre novamente"
           }
         }
       }
@@ -2480,7 +2480,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connecte-toi ou crée un compte"
+            "value" : "Se connecter ou créer un compte"
           }
         },
         "pt" : {
@@ -2497,19 +2497,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Melde dich bei dem Zoonk-Konto an, mit dem dieser Kauf im App Store verknüpft ist, oder wende dich an den Support."
+            "value" : "Melde dich bei dem Zoonk-Konto an, mit dem dieser App Store-Kauf verknüpft ist, oder wende dich an den Support."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inicia sesión en la cuenta de Zoonk vinculada a esta compra del App Store o contacta con soporte para obtener ayuda."
+            "value" : "Inicia sesión en la cuenta de Zoonk a la que pertenece esta compra de App Store o contacta con soporte para obtener ayuda."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Connecte-toi au compte Zoonk auquel cet achat de l’App Store est associé, ou contacte l’assistance pour obtenir de l’aide."
+            "value" : "Connecte-toi au compte Zoonk associé à cet achat App Store ou contacte l’assistance pour obtenir de l’aide."
           }
         },
         "pt" : {
@@ -2544,7 +2544,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Assine o Zoonk Plus"
+            "value" : "Assine Zoonk Plus"
           }
         }
       }
@@ -2596,19 +2596,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suscripción a punto de finalizar"
+            "value" : "La suscripción está a punto de finalizar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fin de l’abonnement"
+            "value" : "Abonnement bientôt terminé"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Assinatura encerrando"
+            "value" : "Assinatura terminando"
           }
         }
       }
@@ -2619,25 +2619,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Temporäre E-Mail-Adressen werden nicht unterstützt. Verwende eine andere E-Mail-Adresse oder eine Alias-Adresse zum Schutz deiner Privatsphäre."
+            "value" : "Temporäre E-Mail-Adressen werden nicht unterstützt. Verwende eine andere E-Mail-Adresse oder einen Datenschutz-Alias."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se admiten direcciones de correo temporales. Usa otro correo o un alias privado."
+            "value" : "No se admiten direcciones de correo temporales. Usa otra dirección o un alias de privacidad."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les adresses e-mail temporaires ne sont pas acceptées. Utilise une autre adresse ou un alias qui protège ta vie privée."
+            "value" : "Les adresses e-mail temporaires ne sont pas acceptées. Utilise une autre adresse ou un alias de confidentialité."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Endereços de email temporários não são aceitos. Use outro email ou um alias de privacidade."
+            "value" : "Endereços de e-mail temporários não são aceitos. Use outro e-mail ou um endereço alternativo de privacidade."
           }
         }
       }
@@ -2654,7 +2654,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Términos del Servicio"
+            "value" : "Condiciones del servicio"
           }
         },
         "fr" : {
@@ -2683,19 +2683,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ese código pertenece a otra cuenta. Solicita un código nuevo para esta cuenta."
+            "value" : "Ese código pertenece a otra cuenta. Solicita un nuevo código para esta cuenta."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce code appartient à un autre compte. Demande un nouveau code pour ce compte."
+            "value" : "Ce code est associé à un autre compte. Demande un nouveau code pour ce compte."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esse código pertence a outra conta. Solicite um novo código para esta conta."
+            "value" : "Esse código pertence a outra conta. Peça um novo código para esta conta."
           }
         }
       }
@@ -2712,7 +2712,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ese código no es válido o ha caducado. Solicita uno nuevo e inténtalo de nuevo."
+            "value" : "Ese código no es válido o ha caducado. Solicita uno nuevo y vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -2724,7 +2724,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esse código é inválido ou expirou. Solicite um novo código e tente novamente."
+            "value" : "Esse código é inválido ou expirou. Peça um novo código e tente novamente."
           }
         }
       }
@@ -2764,19 +2764,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der App Store konnte diesen Kauf nicht abschließen. Prüfe deine Internetverbindung und versuche es erneut."
+            "value" : "Der App Store konnte diesen Kauf nicht abschließen. Prüfe deine Verbindung und versuche es erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El App Store no pudo completar esta compra. Comprueba tu conexión e inténtalo de nuevo."
+            "value" : "App Store no ha podido completar esta compra. Comprueba tu conexión y vuelve a intentarlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’App Store n’a pas pu finaliser cet achat. Vérifie ta connexion, puis réessaie."
+            "value" : "L’App Store n’a pas pu finaliser cet achat. Vérifie ta connexion et réessaie."
           }
         },
         "pt" : {
@@ -2793,25 +2793,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Profil, deine Ziele, Pläne, dein Fortschritt, gespeicherte Informationen, dein Feedback und deine Uploads werden dauerhaft gelöscht. Das lässt sich nicht rückgängig machen."
+            "value" : "Dein Profil, deine Ziele, Pläne, Fortschritte, Erinnerungen, dein Feedback und deine hochgeladenen Dateien werden dauerhaft gelöscht. Das kann nicht rückgängig gemacht werden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esto eliminará permanentemente tu perfil, objetivos, planes, progreso, memoria, comentarios y archivos subidos. Esta acción no se puede deshacer."
+            "value" : "Esto elimina permanentemente tu perfil, objetivos, planes, progreso, memoria, comentarios y archivos subidos. Esta acción no se puede deshacer."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette action supprimera définitivement ton profil, tes objectifs, tes plans, ta progression, ta mémoire, tes retours et tes fichiers importés. Cette action est irréversible."
+            "value" : "Cela supprimera définitivement ton profil, tes objectifs, tes plans, ta progression, ta mémoire, tes commentaires et tes fichiers importés. Cette action est irréversible."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso apaga permanentemente seu perfil, metas, planos, progresso, memória, comentários e arquivos enviados. Não dá para desfazer."
+            "value" : "Isso exclui permanentemente seu perfil, metas, planos, progresso, memória, feedback e arquivos enviados. Essa ação não pode ser desfeita."
           }
         }
       }
@@ -2822,7 +2822,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieses Abo wird von Zoonk verwaltet. Wenn du Hilfe beim Ändern oder Kündigen brauchst, wende dich an den Support."
+            "value" : "Dieses Abo wird von Zoonk verwaltet. Wende dich an den Support, wenn du Hilfe beim Ändern oder Kündigen brauchst."
           }
         },
         "en" : {
@@ -2846,7 +2846,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta assinatura é gerenciada pelo Zoonk. Fale com o suporte se precisar de ajuda para alterá-la ou cancelá-la."
+            "value" : "Esta assinatura é gerenciada por Zoonk. Fale com o suporte se precisar de ajuda para alterar ou cancelar a assinatura."
           }
         }
       }
@@ -2857,7 +2857,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu viele Versuche. Warte einen Moment und versuche es dann erneut."
+            "value" : "Zu viele Versuche. Warte einen Moment und versuche es erneut."
           }
         },
         "es" : {
@@ -2869,13 +2869,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trop de tentatives. Attends un instant, puis réessaie."
+            "value" : "Trop de tentatives. Attends un moment, puis réessaie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muitas tentativas. Espere um pouco e tente de novo."
+            "value" : "Muitas tentativas. Aguarde um pouco e tente novamente."
           }
         }
       }
@@ -2892,7 +2892,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inténtalo de nuevo"
+            "value" : "Volver a intentar"
           }
         },
         "fr" : {
@@ -2904,7 +2904,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar de novo"
+            "value" : "Tentar novamente"
           }
         }
       }
@@ -2921,7 +2921,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar otro correo electrónico"
+            "value" : "Usar otro correo"
           }
         },
         "fr" : {
@@ -2933,7 +2933,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar outro email"
+            "value" : "Usar outro e-mail"
           }
         }
       }
@@ -2950,19 +2950,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar correo electrónico"
+            "value" : "Usar el correo en su lugar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utiliser l’adresse e-mail"
+            "value" : "Utiliser l’e-mail à la place"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Usar email"
+            "value" : "Usar e-mail"
           }
         }
       }
@@ -2973,7 +2973,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verwende Google Play auf einem Android-Gerät, um dieses Abo zu ändern oder zu kündigen."
+            "value" : "Ändere oder kündige dieses Abo über Google Play auf einem Android-Gerät."
           }
         },
         "es" : {
@@ -2985,13 +2985,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Utilise Google Play sur un appareil Android pour modifier ou annuler cet abonnement."
+            "value" : "Utilise Google Play sur un appareil Android pour modifier ou résilier cet abonnement."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use o Google Play em um dispositivo Android para alterar ou cancelar esta assinatura."
+            "value" : "Use o Google Play em um aparelho Android para alterar ou cancelar esta assinatura."
           }
         }
       }
@@ -3031,7 +3031,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "benutzername"
+            "value" : "Benutzername"
           }
         },
         "es" : {
@@ -3118,25 +3118,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir haben dir einen Anmeldecode per E-Mail gesendet. Er ist 5 Minuten lang gültig."
+            "value" : "Wir haben dir einen Anmeldecode per E-Mail geschickt. Er ist 5 Min. lang gültig."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviamos un código de inicio de sesión a tu correo. Caduca en 5 minutos."
+            "value" : "Te hemos enviado un código de acceso por correo electrónico. Caduca en 5 minutos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous avons envoyé un code de connexion à ton adresse e-mail. Il expire dans 5 minutes."
+            "value" : "Nous t’avons envoyé un code de connexion par e-mail. Il expire dans 5 minutes."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enviamos um código de acesso para seu email. Ele expira em 5 minutos."
+            "value" : "Enviamos um código de acesso para seu e-mail. Ele expira em 5 minutos."
           }
         }
       }
@@ -3159,19 +3159,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Cómo te llamamos?"
+            "value" : "¿Cómo quieres que te llamemos?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Comment veux-tu qu’on t’appelle\n?"
+            "value" : "Comment veux-tu qu’on t’appelle ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como devemos chamar você?"
+            "value" : "Como podemos te chamar?"
           }
         }
       }
@@ -3182,7 +3182,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du kannst das später in deinem Profil ändern."
+            "value" : "Du kannst beides später in deinem Profil ändern."
           }
         },
         "en" : {
@@ -3194,13 +3194,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puedes cambiarlo más adelante en tu perfil."
+            "value" : "Podrás cambiarlo más adelante en tu perfil."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu pourras le modifier plus tard dans ton profil."
+            "value" : "Tu pourras les modifier plus tard dans ton profil."
           }
         },
         "pt" : {
@@ -3217,19 +3217,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "du@beispiel.de"
+            "value" : "you@example.com"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "tu@ejemplo.com"
+            "value" : "you@example.com"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "toi@exemple.fr"
+            "value" : "you@example.com"
           }
         },
         "pt" : {
@@ -3246,19 +3246,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Käufe im App Store sind jetzt für dieses Zoonk-Konto verfügbar."
+            "value" : "Deine App Store-Käufe sind jetzt in diesem Zoonk-Konto verfügbar."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus compras del App Store ya están disponibles en esta cuenta de Zoonk."
+            "value" : "Tus compras de App Store ya están disponibles en esta cuenta de Zoonk."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes achats sur l’App Store sont maintenant disponibles sur ce compte Zoonk."
+            "value" : "Tes achats App Store sont maintenant disponibles sur ce compte Zoonk."
           }
         },
         "pt" : {
@@ -3316,7 +3316,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton nom"
+            "value" : "Ton prénom"
           }
         },
         "pt" : {
@@ -3333,7 +3333,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Tarif"
+            "value" : "Dein Plan"
           }
         },
         "es" : {
@@ -3362,25 +3362,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kauf geht nicht verloren und ist noch nicht abgeschlossen. Stelle deine Käufe wieder her, sobald du wieder online bist."
+            "value" : "Dein Kauf ist sicher und wurde noch nicht abgeschlossen. Stelle deine Käufe wieder her, sobald du wieder online bist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compra está segura y todavía no se ha completado. Restaura las compras cuando vuelvas a tener conexión."
+            "value" : "Tu compra está a salvo y aún no se ha completado. Restaura las compras cuando vuelvas a tener conexión."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton achat est bien enregistré, mais il n’est pas encore finalisé. Restaure tes achats quand tu seras de nouveau en ligne."
+            "value" : "Ton achat est en sécurité et n’est pas encore finalisé. Restaure tes achats une fois reconnecté."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua compra está segura e ainda não foi concluída. Restaure as compras quando estiver online novamente."
+            "value" : "Sua compra está segura e ainda não foi concluída. Restaure suas compras quando estiver online novamente."
           }
         }
       }
@@ -3391,25 +3391,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kauf geht nicht verloren. Melde dich an und stelle dann deine Käufe wieder her, um Plus für dein Zoonk-Konto zu aktivieren."
+            "value" : "Dein Kauf ist sicher. Melde dich an und stelle dann deine Käufe wieder her, um Plus zu deinem Zoonk-Konto hinzuzufügen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compra está segura. Inicia sesión y restaura las compras para añadir Plus a tu cuenta de Zoonk."
+            "value" : "Tu compra está a salvo. Inicia sesión y restaura las compras para añadir Plus a tu cuenta de Zoonk."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton achat est bien enregistré. Connecte-toi, puis restaure tes achats pour ajouter Plus à ton compte Zoonk."
+            "value" : "Ton achat est en sécurité. Connecte-toi, puis restaure tes achats pour ajouter Plus à ton compte Zoonk."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua compra está segura. Entre na sua conta e depois restaure as compras para ativar o Plus na sua conta do Zoonk."
+            "value" : "Sua compra está segura. Entre na sua conta e restaure suas compras para adicionar o Plus à sua conta do Zoonk."
           }
         }
       }
@@ -3455,7 +3455,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Nutzername: @%@"
+            "value" : "Dein Benutzername: @%@"
           }
         },
         "en" : {
@@ -3473,7 +3473,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton nom d’utilisateur\n: @%@"
+            "value" : "Ton nom d’utilisateur : @%@"
           }
         },
         "pt" : {
@@ -3490,25 +3490,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein kompletter Prüfungsplan, Tag für Tag bis zur Prüfung"
+            "value" : "Dein ganzer Prüfungsplan, für jeden Tag bis zur Prüfung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todo tu plan de preparación para el examen, día a día hasta la fecha"
+            "value" : "Tu plan completo de preparación, para cada día hasta el examen"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tout ton plan de préparation à l’examen, jour après jour jusqu’à l’examen"
+            "value" : "Tout ton plan de préparation, chaque jour jusqu’à l’examen"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano completo para a prova, dia a dia até o exame"
+            "value" : "Seu plano completo de estudos, para cada dia até a prova"
           }
         }
       }
@@ -3519,19 +3519,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Zoonk-Konto und deine personalisierten Daten wurden dauerhaft gelöscht."
+            "value" : "Dein Zoonk-Konto und deine personalisierten Daten wurden endgültig gelöscht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu cuenta de Zoonk y tus datos personalizados se eliminaron permanentemente."
+            "value" : "Tu cuenta de Zoonk y tus datos personalizados se han eliminado definitivamente."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compte Zoonk et tes données personnalisées ont été supprimés définitivement."
+            "value" : "Ton compte Zoonk et tes données personnalisées ont été définitivement supprimés."
           }
         },
         "pt" : {
@@ -3554,19 +3554,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tus datos de Zoonk se eliminaron, pero Apple no pudo confirmar que se retirara la autorización. Elimina Zoonk de Inicio de sesión con Apple para finalizar."
+            "value" : "Tus datos de Zoonk se han eliminado, pero Apple no ha podido confirmar que se haya retirado la autorización. Para terminar, elimina Zoonk de Iniciar sesión con Apple."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer le retrait de l’autorisation. Retire Zoonk de Connexion avec Apple pour terminer."
+            "value" : "Tes données Zoonk ont été supprimées, mais Apple n’a pas pu confirmer que son autorisation avait été retirée. Pour terminer, retire Zoonk de Connexion avec Apple."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar a remoção da autorização. Remova o Zoonk de Iniciar Sessão com a Apple para concluir."
+            "value" : "Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar que a autorização foi removida. Para terminar, remova Zoonk do Sign in with Apple."
           }
         }
       }
@@ -3577,25 +3577,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk hat deine App-Store-Käufe geprüft, aber derzeit enthält keiner davon Plus."
+            "value" : "Zoonk hat deine App Store-Käufe geprüft, aber derzeit ist kein aktives Plus-Abo dabei."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk revisó tus compras en App Store, pero actualmente ninguna te da acceso a Plus."
+            "value" : "Zoonk ha comprobado tus compras de App Store, pero ninguna incluye Plus actualmente."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk a vérifié tes achats sur l’App Store, mais aucun ne donne actuellement accès à Plus."
+            "value" : "Zoonk a vérifié tes achats App Store, mais aucun ne donne actuellement accès à Plus."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk verificou suas compras na App Store, mas nenhuma delas dá acesso ao Plus no momento."
+            "value" : "Zoonk conferiu suas compras na App Store, mas nenhuma delas dá acesso ao Plus no momento."
           }
         }
       }
@@ -3606,13 +3606,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk konnte keine Verbindung herstellen. Überprüfe deine Verbindung und versuche es erneut."
+            "value" : "Zoonk konnte keine Verbindung herstellen. Prüfe deine Verbindung und versuche es erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no pudo conectarse. Revisa tu conexión e inténtalo de nuevo."
+            "value" : "Zoonk no ha podido conectarse. Comprueba tu conexión y vuelve a intentarlo."
           }
         },
         "fr" : {
@@ -3624,7 +3624,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk não conseguiu se conectar. Confira sua conexão e tente de novo."
+            "value" : "Zoonk não conseguiu se conectar. Confira sua conexão e tente novamente."
           }
         }
       }
@@ -3635,13 +3635,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk konnte dein Konto nicht löschen. Versuche es erneut oder kontaktiere hello@zoonk.com."
+            "value" : "Zoonk konnte dein Konto nicht löschen. Versuche es erneut oder wende dich an hello@zoonk.com."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no ha podido eliminar tu cuenta. Inténtalo de nuevo o escribe a contacto@zoonk.com."
+            "value" : "Zoonk no ha podido eliminar tu cuenta. Vuelve a intentarlo o escribe a contacto@zoonk.com."
           }
         },
         "fr" : {
@@ -3653,7 +3653,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk não conseguiu excluir sua conta. Tente de novo ou mande um email para contato@zoonk.com."
+            "value" : "Zoonk não conseguiu excluir sua conta. Tente novamente ou entre em contato pelo e-mail contato@zoonk.com."
           }
         }
       }
@@ -3670,19 +3670,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no pudo cargar tu cuenta. Tu inicio de sesión sigue guardado de forma segura."
+            "value" : "Zoonk no ha podido cargar tu cuenta. Tu sesión sigue guardada de forma segura."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk n’a pas pu charger ton compte. Ta connexion reste enregistrée en toute sécurité."
+            "value" : "Zoonk n’a pas pu charger ton compte. Ta connexion est toujours enregistrée en toute sécurité."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk não conseguiu carregar sua conta. Seu acesso continua salvo com segurança."
+            "value" : "Zoonk não conseguiu carregar sua conta. Seu acesso continua salvo com segurança."
           }
         }
       }
@@ -3693,13 +3693,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk konnte den Bestätigungscode nicht senden. Versuch es noch einmal oder kontaktiere hello@zoonk.com."
+            "value" : "Zoonk konnte den Bestätigungscode nicht senden. Versuche es erneut oder wende dich an hello@zoonk.com."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no ha podido enviar el código de verificación. Inténtalo de nuevo o escribe a contacto@zoonk.com."
+            "value" : "Zoonk no ha podido enviar el código de verificación. Vuelve a intentarlo o escribe a contacto@zoonk.com."
           }
         },
         "fr" : {
@@ -3711,7 +3711,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O Zoonk não conseguiu enviar o código de verificação. Tente de novo ou mande um email para contato@zoonk.com."
+            "value" : "Zoonk não conseguiu enviar o código de verificação. Tente novamente ou entre em contato pelo e-mail contato@zoonk.com."
           }
         }
       }
@@ -3722,13 +3722,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk konnte dich nicht anmelden. Versuche es erneut oder kontaktiere hello@zoonk.com."
+            "value" : "Zoonk konnte dich nicht anmelden. Versuche es erneut oder wende dich an hello@zoonk.com."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk no ha podido iniciar tu sesión. Inténtalo de nuevo o escribe a contacto@zoonk.com."
+            "value" : "Zoonk no ha podido iniciar tu sesión. Vuelve a intentarlo o escribe a contacto@zoonk.com."
           }
         },
         "fr" : {
@@ -3740,7 +3740,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível entrar no Zoonk. Tente de novo ou mande um email para contato@zoonk.com."
+            "value" : "Zoonk não conseguiu conectar você à sua conta. Tente novamente ou entre em contato pelo e-mail contato@zoonk.com."
           }
         }
       }

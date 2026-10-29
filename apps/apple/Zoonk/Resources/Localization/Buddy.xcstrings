@@ -1,64 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "%@ today" : {
-      "comment" : "Title of the buddy's day; the argument is its name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Heute: %@"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoy, %@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ aujourd’hui"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hoje com %@"
-          }
-        }
-      }
-    },
-    "%@ took a nap. Anything you learn wakes it up." : {
-      "comment" : "The buddy naps; the argument is its name",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ hat ein Nickerchen gemacht. Alles, was du lernst, weckt es wieder auf."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ se ha echado una siesta. Cualquier cosa que aprendas hará que se despierte."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ a fait une sieste. Chaque leçon le réveille."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@ tirou uma soneca. Aprender qualquer coisa já ajuda a acordar."
-          }
-        }
-      }
-    },
     "%@ · ~%lld min" : {
       "comment" : "How many missions today and about how long they take; the first argument is the count",
       "localizations" : {
@@ -90,6 +32,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%1$@ · ~%2$lld min"
+          }
+        }
+      }
+    },
+    "%@ today" : {
+      "comment" : "Title of the buddy's day; the argument is its name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ heute"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hoy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ aujourd’hui"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ hoje"
+          }
+        }
+      }
+    },
+    "%@ took a nap. Anything you learn wakes it up." : {
+      "comment" : "The buddy naps; the argument is its name",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ macht ein Nickerchen. Wenn du etwas lernst, wacht dein Kumpel wieder auf."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ está echando una siesta. Aprender cualquier cosa le despertará."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ fait une sieste. Il suffit d’apprendre quelque chose pour le réveiller."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ tirou uma soneca. Aprender qualquer coisa faz %1$@ acordar."
           }
         }
       }
@@ -230,7 +230,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld von %2$lld Tagen, an denen du alle Missionen abgeschlossen hast"
+            "value" : "%1$lld von %2$lld Tagen mit allen Missionen abgeschlossen"
           }
         },
         "en" : {
@@ -248,7 +248,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %2$lld jours avec toutes les missions terminées"
+            "value" : "%1$lld jours sur %2$lld avec toutes les missions terminées"
           }
         },
         "pt" : {
@@ -283,7 +283,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld sur %2$lld révisions"
+            "value" : "%1$lld révisions sur %2$lld"
           }
         },
         "pt" : {
@@ -312,7 +312,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "+%lld PM"
+            "value" : "+%lld Puissance Mentale"
           }
         },
         "pt" : {
@@ -329,7 +329,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Übernehmen"
+            "value" : "Hinzufügen"
           }
         },
         "es" : {
@@ -387,7 +387,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stell eine Frage oder bitte um eine Änderung"
+            "value" : "Stelle eine Frage oder wünsche dir eine Änderung"
           }
         },
         "es" : {
@@ -399,7 +399,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pose une question ou demande un changement"
+            "value" : "Pose une question ou demande une modification"
           }
         },
         "pt" : {
@@ -474,13 +474,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gehirn auf Beinen"
+            "value" : "Gehirn mit Beinen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cerebro con patas"
+            "value" : "Cerebro con piernas"
           }
         },
         "fr" : {
@@ -492,7 +492,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um cérebro com pernas"
+            "value" : "Cérebro com pernas"
           }
         }
       }
@@ -544,7 +544,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Préparer mon plan"
+            "value" : "Créer mon plan"
           }
         },
         "pt" : {
@@ -567,19 +567,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ojos de gato"
+            "value" : "Ojo de gato"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Œil-de-chat"
+            "value" : "Œil de chat"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Olho de gato"
+            "value" : "Gatinho"
           }
         }
       }
@@ -648,25 +648,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gibt es zusammen mit deinem Kumpel"
+            "value" : "Ist bei deinem Kumpel dabei"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Viene con tu compañero"
+            "value" : "Vienen con tu compañero"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fourni avec ton compagnon"
+            "value" : "Incluses avec ton Compagnon"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vem com seu parceiro"
+            "value" : "Vem com seu Parceiro"
           }
         }
       }
@@ -677,7 +677,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neugieriger Außerirdischer"
+            "value" : "Neugieriges Alien"
           }
         },
         "es" : {
@@ -689,7 +689,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un extraterrestre curieux"
+            "value" : "Extraterrestre curieux"
           }
         },
         "pt" : {
@@ -828,7 +828,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit deiner ersten Lektion bekommt dein Kumpel Energie, und sie wächst, während du lernst."
+            "value" : "Deine erste Lektion gibt deinem Kumpel Energie. Sie wächst, während du lernst."
           }
         },
         "es" : {
@@ -840,13 +840,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’énergie apparaît avec ta première leçon et augmente à mesure que tu apprends."
+            "value" : "L’énergie apparaît dès ta première leçon et augmente à mesure que tu apprends."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A energia começa com sua primeira aula e aumenta conforme você aprende."
+            "value" : "A Energia começa com sua primeira aula e cresce conforme você aprende."
           }
         }
       }
@@ -886,7 +886,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erklär mir meinen letzten Fehler"
+            "value" : "Erkläre mir meinen letzten Fehler"
           }
         },
         "es" : {
@@ -904,7 +904,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Me explica meu último erro"
+            "value" : "Explique meu último erro"
           }
         }
       }
@@ -915,7 +915,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "50 Wiederholungen abschließen"
+            "value" : "Schließe 50 Wiederholungen ab"
           }
         },
         "es" : {
@@ -927,13 +927,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termine 50 révisions"
+            "value" : "Terminer 50 révisions"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Concluir 50 revisões"
+            "value" : "Conclua 50 revisões"
           }
         }
       }
@@ -944,25 +944,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "An 7 verschiedenen Tagen alle Missionen abschließen"
+            "value" : "Schließe an 7 verschiedenen Tagen alle Missionen ab"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completa todas las misiones en 7 días distintos"
+            "value" : "Completa todas las misiones en 7 días diferentes"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termine toutes les missions pendant 7 jours différents"
+            "value" : "Terminer toutes les missions pendant 7 jours différents"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Concluir todas as missões em 7 dias diferentes"
+            "value" : "Conclua todas as missões em 7 dias diferentes"
           }
         }
       }
@@ -973,25 +973,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine erste wöchentliche Herausforderung abschließen"
+            "value" : "Schließe deine erste wöchentliche Herausforderung ab"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completa tu primer desafío semanal"
+            "value" : "Completa tu primer Desafío semanal"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termine ton premier défi hebdomadaire"
+            "value" : "Terminer ton premier Défi hebdomadaire"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Concluir seu primeiro desafio semanal"
+            "value" : "Conclua seu primeiro Desafio semanal"
           }
         }
       }
@@ -1014,7 +1014,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dans une ancienne version de %@"
+            "value" : "D’une version précédente de %@"
           }
         },
         "pt" : {
@@ -1043,7 +1043,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dans une ancienne version de ce cours"
+            "value" : "D’une version précédente de ce cours"
           }
         },
         "pt" : {
@@ -1078,7 +1078,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das suas respostas recentes"
+            "value" : "Com base nas suas respostas recentes"
           }
         }
       }
@@ -1095,7 +1095,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya ha crecido del todo"
+            "value" : "Crecimiento completo"
           }
         },
         "fr" : {
@@ -1107,7 +1107,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Adulto"
+            "value" : "Crescimento completo"
           }
         }
       }
@@ -1176,13 +1176,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird bei %@ erwachsen"
+            "value" : "Ab %@: Erwachsen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se convierte en adulto en %@"
+            "value" : "Llegará a Adulto en %@"
           }
         },
         "fr" : {
@@ -1194,7 +1194,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vira adulto em %@"
+            "value" : "Chega à fase adulta em %@"
           }
         }
       }
@@ -1205,25 +1205,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird bei %@ zum Jungtier"
+            "value" : "Ab %@: Jung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se hace joven en %@"
+            "value" : "Llegará a Joven en %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Devient jeune au niveau %@"
+            "value" : "Passe au stade jeune au niveau %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vira jovem em %@"
+            "value" : "Chega à fase jovem em %@"
           }
         }
       }
@@ -1234,25 +1234,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hallo! Ich bin %@, dein KI-Lernkumpel. Frag mich alles zu dem, was du gerade lernst, oder sag mir, was du an deinem Plan ändern möchtest."
+            "value" : "Hi! Ich bin %@, dein KI-Lernkumpel. Frag mich alles über das, was du gerade lernst, oder sag mir, was du an deinem Plan ändern möchtest."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Hola! Soy %@, tu compañero de estudio con IA. Pregúntame lo que quieras sobre lo que estás estudiando o dime qué te gustaría cambiar de tu plan."
+            "value" : "¡Hola! Soy %@, tu compañero de estudio con IA. Pregúntame lo que quieras sobre lo que estudias o dime qué te gustaría cambiar de tu plan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salut ! Je suis %@, ton compagnon d’étude IA. Pose-moi toutes tes questions sur ce que tu étudies ou dis-moi ce que tu veux changer dans ton plan."
+            "value" : "Salut ! Je suis %@, ton Compagnon d’apprentissage IA. Pose-moi tes questions sur ce que tu étudies ou dis-moi ce que tu aimerais changer dans ton plan."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Eu sou %@, seu parceiro de estudos com IA. Pergunte o que quiser sobre o que você está estudando ou me conte o que gostaria de mudar no seu plano."
+            "value" : "Oi! Sou %@, seu Parceiro de estudos com IA. Me pergunte o que quiser sobre o que você está estudando ou me conte o que gostaria de mudar no seu plano."
           }
         }
       }
@@ -1263,25 +1263,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hallo! Ich bin %@, dein KI-Lernkumpel. Was möchtest du bis wann lernen? Ich erstelle dir dafür einen Plan mit täglichen Schritten."
+            "value" : "Hi! Ich bin %@, dein KI-Lernkumpel. Was möchtest du lernen und bis wann? Ich erstelle dir einen Plan für jeden Tag bis dahin."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¡Hola! Soy %@, tu compañero de estudio con IA. ¿Qué quieres aprender y para cuándo? Lo convertiré en un plan para cada día hasta entonces."
+            "value" : "¡Hola! Soy %@, tu compañero de estudio con IA. ¿Qué quieres aprender y para cuándo? Prepararé un plan para cada día hasta entonces."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Salut ! Je suis %@, ton compagnon d’étude IA. Qu’aimerais-tu apprendre, et pour quand ? Je te préparerai un plan pour chaque jour d’ici là."
+            "value" : "Salut ! Je suis %@, ton Compagnon d’apprentissage IA. Qu’aimerais-tu apprendre et pour quand ? Je te préparerai un plan pour chaque jour d’ici là."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oi! Eu sou %@, seu parceiro de estudos com IA. O que você quer aprender e até quando? Vou montar um plano para cada dia até lá."
+            "value" : "Oi! Sou %@, seu Parceiro de estudos com IA. O que você quer aprender e até quando? Vou criar um plano para cada dia até lá."
           }
         }
       }
@@ -1304,13 +1304,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Je veux moins étudier cette semaine"
+            "value" : "Je veux étudier moins cette semaine"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quero estudar menos nesta semana"
+            "value" : "Quero estudar menos esta semana"
           }
         }
       }
@@ -1327,19 +1327,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conservarla"
+            "value" : "Mantenerla"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Garder"
+            "value" : "La garder"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Manter"
+            "value" : "Manter aula"
           }
         }
       }
@@ -1350,7 +1350,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Besserwisser-Oktopus"
+            "value" : "Besserwisserischer Oktopus"
           }
         },
         "es" : {
@@ -1362,7 +1362,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une pieuvre qui sait tout"
+            "value" : "Poulpe qui sait tout"
           }
         },
         "pt" : {
@@ -1414,13 +1414,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Más información sobre %@"
+            "value" : "Más sobre %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Plus sur %@"
+            "value" : "En savoir plus sur %@"
           }
         },
         "pt" : {
@@ -1449,7 +1449,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Déplacer mon heure d’étude à %@"
+            "value" : "Déplacer mon temps d’étude à %@"
           }
         },
         "pt" : {
@@ -1542,7 +1542,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agora não"
+            "value" : "Não, obrigado"
           }
         }
       }
@@ -1553,7 +1553,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht jetzt"
+            "value" : "Jetzt nicht"
           }
         },
         "es" : {
@@ -1646,19 +1646,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Preguntas anteriores"
+            "value" : "Preguntas más antiguas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Questions précédentes"
+            "value" : "Questions plus anciennes"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Perguntas anteriores"
+            "value" : "Perguntas mais antigas"
           }
         }
       }
@@ -1681,100 +1681,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réussir le bac"
+            "value" : "Réussir l’Abitur"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passar no Abitur"
-          }
-        }
-      }
-    },
-    "Pass the ENEM" : {
-      "comment" : "An example goal: Brazil's national exam",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Das ENEM bestehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprobar el ENEM"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réussir l’ENEM"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passar no Enem"
-          }
-        }
-      }
-    },
-    "Pass the PAU" : {
-      "comment" : "An example goal: Spain's university entrance exam",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Die PAU bestehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprobar la PAU"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réussir la PAU"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passar na PAU"
-          }
-        }
-      }
-    },
-    "Pass the SAT" : {
-      "comment" : "An example goal: the US college entrance exam",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Den SAT bestehen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Aprobar el SAT"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Réussir le SAT"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passar no SAT"
+            "value" : "Passar no vestibular"
           }
         }
       }
@@ -1803,7 +1716,94 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Passar no bac"
+            "value" : "Passar na prova da OAB"
+          }
+        }
+      }
+    },
+    "Pass the ENEM" : {
+      "comment" : "An example goal: Brazil's national exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den ENEM bestehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobar el ENEM"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réussir l’ENEM"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ir bem no Enem"
+          }
+        }
+      }
+    },
+    "Pass the PAU" : {
+      "comment" : "An example goal: Spain's university entrance exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die PAU bestehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobar la PAU"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réussir la PAU"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passar no vestibular"
+          }
+        }
+      }
+    },
+    "Pass the SAT" : {
+      "comment" : "An example goal: the US college entrance exam",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Den SAT bestehen"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aprobar el SAT"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réussir le SAT"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passar em um concurso público"
           }
         }
       }
@@ -1814,13 +1814,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Such dir ein verdientes Paar aus, das du tragen möchtest."
+            "value" : "Wähle eine freigeschaltete Brille aus, damit dein Kumpel sie trägt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige una de las gafas que has conseguido para ponértela."
+            "value" : "Elige unas gafas que hayas conseguido para ponértelas."
           }
         },
         "fr" : {
@@ -1832,7 +1832,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha um par que você conquistou para usar."
+            "value" : "Escolha um óculos que você conquistou para usar."
           }
         }
       }
@@ -1884,7 +1884,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ronde"
+            "value" : "Rondes"
           }
         },
         "pt" : {
@@ -1936,19 +1936,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Algo ha salido mal. Inténtalo de nuevo."
+            "value" : "Algo ha ido mal. Inténtalo de nuevo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une erreur s’est produite. Réessaie."
+            "value" : "Un problème est survenu. Réessaie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Algo deu errado. Tente novamente."
+            "value" : "Algo deu errado. Tente de novo."
           }
         }
       }
@@ -1959,19 +1959,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Für ein Vorstellungsgespräch %@ sprechen"
+            "value" : "%@ für ein Vorstellungsgespräch sprechen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Habla %@ en una entrevista de trabajo"
+            "value" : "Hablar %@ en una entrevista de trabajo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Parler %@ lors d’un entretien d’embauche"
+            "value" : "Parler %@ pour un entretien d’embauche"
           }
         },
         "pt" : {
@@ -1994,13 +1994,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estrella"
+            "value" : "De estrella"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Étoile"
+            "value" : "Étoiles"
           }
         },
         "pt" : {
@@ -2017,19 +2017,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Lernzeit wurde verschoben."
+            "value" : "Lernzeit verschoben."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha cambiado la hora de estudio."
+            "value" : "Hora de estudio cambiada."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’horaire d’étude a été modifié."
+            "value" : "Temps d’étude déplacé."
           }
         },
         "pt" : {
@@ -2046,25 +2046,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wenn du heute lernst, bleibt deine Energie erhalten."
+            "value" : "Wenn du heute lernst, bleibt die Energie erhalten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudiar hoy mantiene la Energía."
+            "value" : "Estudiar hoy mantiene la energía."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Étudier aujourd’hui permet de garder ton Énergie."
+            "value" : "Étudier aujourd’hui permet de garder ton énergie."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estudar hoje mantém a Energia alta."
+            "value" : "Estudar hoje mantém a Energia em alta."
           }
         }
       }
@@ -2104,7 +2104,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Missionen für heute"
+            "value" : "Heutige Missionen"
           }
         },
         "es" : {
@@ -2133,13 +2133,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch einmal versuchen"
+            "value" : "Erneut versuchen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Inténtalo de nuevo"
+            "value" : "Volver a intentarlo"
           }
         },
         "fr" : {
@@ -2220,19 +2220,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Antwort konnte nicht gespeichert werden. Versuch es noch einmal."
+            "value" : "Deine Antwort konnte nicht gespeichert werden. Versuch es erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido guardar tu respuesta. Inténtalo de nuevo."
+            "value" : "No hemos podido guardar tu respuesta. Vuelve a intentarlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous n’avons pas pu enregistrer ta réponse. Réessaie."
+            "value" : "Impossible d’enregistrer ta réponse. Réessaie."
           }
         },
         "pt" : {
@@ -2249,19 +2249,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel konnte nicht gespeichert werden. Versuch es noch einmal."
+            "value" : "Dein Kumpel konnte nicht gespeichert werden. Versuch es erneut."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hemos podido guardar a tu compañero. Inténtalo de nuevo."
+            "value" : "No hemos podido guardar tu Compañero. Vuelve a intentarlo."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous n’avons pas pu enregistrer ton compagnon. Réessaie."
+            "value" : "Impossible d’enregistrer ton Compagnon. Réessaie."
           }
         },
         "pt" : {
@@ -2307,7 +2307,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was %@ sich merkt"
+            "value" : "Woran sich %@ erinnert"
           }
         },
         "es" : {
@@ -2319,7 +2319,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce que %@ se rappelle"
+            "value" : "Ce que %@ retient"
           }
         },
         "pt" : {
@@ -2348,13 +2348,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sur quoi devrais-je me concentrer en premier ?"
+            "value" : "Sur quoi me concentrer en premier ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No que devo focar primeiro?"
+            "value" : "Em que devo focar primeiro?"
           }
         }
       }
@@ -2365,25 +2365,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Was du in deinen Kursen gefragt hast, bevor wir sie überarbeitet haben. Die Lektionen haben sich geändert. Deine Fragen bleiben hier, damit du sie noch einmal lesen kannst."
+            "value" : "Deine Fragen aus deinen Kursen, bevor wir sie neu erstellt haben. Die Lektionen haben sich geändert, deshalb kannst du deine Fragen hier noch einmal lesen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que preguntaste en tus cursos antes de que los actualizáramos. Las lecciones han cambiado, así que aquí puedes volver a leer tus preguntas."
+            "value" : "Lo que preguntaste en tus cursos antes de que los preparáramos de nuevo. Las lecciones han cambiado, así que tus preguntas se quedan aquí para que puedas volver a leerlas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les questions que tu as posées dans tes cours avant leur réécriture. Les leçons ont changé, mais tu peux toujours relire tes questions ici."
+            "value" : "Les questions que tu as posées dans tes cours avant que nous les réécrivions. Les leçons ont changé, mais tes questions restent ici pour que tu puisses les relire."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que você perguntou nos cursos antes de eles serem reformulados. As aulas mudaram, então suas perguntas ficam aqui para você reler."
+            "value" : "O que você perguntou nos seus cursos antes de a gente refazer eles. As aulas mudaram, então suas perguntas ficam aqui para você reler."
           }
         }
       }
@@ -2429,13 +2429,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Qué tengo en mi plan para hoy?"
+            "value" : "¿Qué hay en mi plan para hoy?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qu’est-ce qui est prévu dans mon plan aujourd’hui ?"
+            "value" : "Qu’y a-t-il dans mon plan aujourd’hui ?"
           }
         },
         "pt" : {
@@ -2458,7 +2458,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Por qué estudio esto hoy?"
+            "value" : "¿Por qué estoy estudiando esto hoy?"
           }
         },
         "fr" : {
@@ -2499,7 +2499,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vencer o desafio final"
+            "value" : "Vença o desafio final"
           }
         }
       }
@@ -2516,19 +2516,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gana tu primer desafío de fase"
+            "value" : "Gana tu primer Desafío de la fase"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Remporter ton premier défi de phase"
+            "value" : "Remporter ton premier Défi de la phase"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Vencer seu primeiro desafio da fase"
+            "value" : "Vença seu primeiro Desafio da fase"
           }
         }
       }
@@ -2539,7 +2539,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast keine älteren Fragen."
+            "value" : "Du hast keine früheren Fragen."
           }
         },
         "es" : {
@@ -2551,7 +2551,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu n’as pas posé de questions auparavant."
+            "value" : "Tu n’as pas de questions précédentes."
           }
         },
         "pt" : {
@@ -2568,25 +2568,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast heute gelernt, deshalb sinkt deine Energie nicht."
+            "value" : "Du hast heute gelernt, deshalb sinkt die Energie nicht."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has estudiado hoy, así que la Energía no bajará."
+            "value" : "Has estudiado hoy, así que tu Energía no bajará."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as étudié aujourd’hui, ton Énergie ne baissera donc pas."
+            "value" : "Tu as étudié aujourd’hui, donc l’Énergie ne baissera pas."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você estudou hoje, então sua Energia não vai cair."
+            "value" : "Você estudou hoje, então a Energia não vai cair."
           }
         }
       }
@@ -2632,13 +2632,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero"
+            "value" : "Tu Compañero"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon"
+            "value" : "Ton Compagnon"
           }
         },
         "pt" : {
@@ -2690,19 +2690,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A partir de ahora, tu plan lo tendrá en cuenta."
+            "value" : "Tu plan seguirá este cambio a partir de ahora."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan le prend désormais en compte."
+            "value" : "Ton plan en tient compte dès maintenant."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano vai seguir essa mudança daqui pra frente."
+            "value" : "Seu plano segue essa mudança a partir de agora."
           }
         }
       }
@@ -2719,7 +2719,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan se queda como estaba."
+            "value" : "Tu plan seguirá como estaba."
           }
         },
         "fr" : {
@@ -2748,13 +2748,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compañero de estudio · %@"
+            "value" : "Tu Compañero de estudio · %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton compagnon d’apprentissage · %@"
+            "value" : "Ton Compagnon d’étude · %@"
           }
         },
         "pt" : {
@@ -2777,13 +2777,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu tiempo de estudio no cambia."
+            "value" : "Tu tiempo de estudio seguirá igual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta durée d’étude reste la même."
+            "value" : "Ta durée d’étude reste inchangée."
           }
         },
         "pt" : {

@@ -7,7 +7,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "1 kurze Frage zum Schluss"
+            "value" : "1 kurze Frage am Ende"
           }
         },
         "es" : {
@@ -48,7 +48,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créer un plan pour %@"
+            "value" : "Prépare un plan pour %@"
           }
         },
         "pt" : {
@@ -65,7 +65,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erstelle einen Plan für das gesamte Fach"
+            "value" : "Erstelle einen Plan für das ganze Thema"
           }
         },
         "es" : {
@@ -77,7 +77,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Créer un plan pour toute la matière"
+            "value" : "Prépare un plan pour tout le sujet"
           }
         },
         "pt" : {
@@ -100,7 +100,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hecho"
+            "value" : "Listo"
           }
         },
         "fr" : {
@@ -123,7 +123,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ich möchte das gründlich lernen"
+            "value" : "Ich möchte das ausführlich lernen"
           }
         },
         "es" : {
@@ -181,25 +181,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Es muss kein Plan erstellt werden."
+            "value" : "Du musst keinen Plan erstellen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay ningún plan que preparar."
+            "value" : "Sin tener que preparar un plan."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun plan à préparer."
+            "value" : "Pas de plan à préparer."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não há nenhum plano para montar."
+            "value" : "Sem precisar montar um plano."
           }
         }
       }
@@ -210,7 +210,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jetzt weißt du Bescheid"
+            "value" : "Das weißt du jetzt"
           }
         },
         "es" : {
@@ -222,13 +222,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu en sais plus maintenant"
+            "value" : "Ce que tu sais maintenant"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agora você sabe"
+            "value" : "Agora você já sabe"
           }
         }
       }
@@ -274,19 +274,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a leerlo"
+            "value" : "Volver a leer"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La relire"
+            "value" : "Relire"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leia de novo"
+            "value" : "Ler novamente"
           }
         }
       }
@@ -326,25 +326,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Erklärung wird noch erstellt. Sobald sie fertig ist, erscheint sie hier."
+            "value" : "Wir erstellen noch deine Erklärung. Sie erscheint hier, sobald sie fertig ist."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estamos preparando tu explicación. Aparecerá aquí en cuanto esté lista."
+            "value" : "Seguimos preparando tu explicación. Aparecerá aquí en cuanto esté lista."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton explication est en cours de préparation. Elle s’affichera ici dès qu’elle sera prête."
+            "value" : "Ton explication est encore en préparation. Elle apparaîtra ici dès qu’elle sera prête."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda estamos criando sua explicação. Ela vai aparecer aqui assim que ficar pronta."
+            "value" : "Sua explicação ainda está sendo criada. Ela aparece aqui assim que estiver pronta."
           }
         }
       }
@@ -361,7 +361,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Intentarlo de nuevo"
+            "value" : "Volver a intentarlo"
           }
         },
         "fr" : {
@@ -373,7 +373,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar de novo"
+            "value" : "Tentar novamente"
           }
         }
       }
@@ -384,19 +384,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Möchtest du tiefer einsteigen?"
+            "value" : "Möchtest du mehr erfahren?"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Quieres profundizar?"
+            "value" : "¿Quieres profundizar más?"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu veux aller plus loin ?"
+            "value" : "Envie d’aller plus loin ?"
           }
         },
         "pt" : {
@@ -413,7 +413,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das ließ sich nicht starten."
+            "value" : "Wir konnten das nicht starten."
           }
         },
         "es" : {
@@ -425,13 +425,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de lancer cette explication."
+            "value" : "Nous n’avons pas pu lancer la préparation."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível iniciar."
+            "value" : "Não conseguimos começar."
           }
         }
       }
@@ -442,7 +442,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Erklärung konnte nicht geladen werden"
+            "value" : "Wir konnten diese Erklärung nicht laden"
           }
         },
         "es" : {
@@ -454,13 +454,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impossible de charger cette explication"
+            "value" : "Nous n’avons pas pu charger cette explication"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar esta explicação"
+            "value" : "Não conseguimos carregar esta explicação"
           }
         }
       }
@@ -477,7 +477,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que viene"
+            "value" : "Qué vas a ver"
           }
         },
         "fr" : {

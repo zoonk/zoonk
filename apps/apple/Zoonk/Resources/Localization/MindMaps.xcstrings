@@ -7,12 +7,6 @@
         "de" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld Kapitel"
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
@@ -120,7 +114,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Como texto"
+            "value" : "Em texto"
           }
         }
       }
@@ -160,13 +154,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abgeschlossene Kapitel"
+            "value" : "Deine abgeschlossenen Kapitel"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Capítulos que has completado"
+            "value" : "Capítulos completados"
           }
         },
         "fr" : {
@@ -247,25 +241,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird erstellt…"
+            "value" : "Wir zeichnen…"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Creando…"
+            "value" : "Dibujando…"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Création en cours…"
+            "value" : "Dessin en cours…"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Criando…"
+            "value" : "Desenhando…"
           }
         }
       }
@@ -276,25 +270,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schließe ein Kapitel ab, um seine Mindmap mit den wichtigsten Ideen auf einen Blick zu erstellen."
+            "value" : "Schließe ein Kapitel ab, um seine Mindmap zu erstellen: die wichtigsten Ideen auf einen Blick."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Completa un capítulo para crear su mapa mental: sus ideas principales en una sola imagen."
+            "value" : "Completa un capítulo para crear su mapa mental: sus ideas principales en una imagen."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termine un chapitre pour créer sa carte mentale : ses idées principales réunies en une image."
+            "value" : "Termine un chapitre pour créer sa carte mentale : ses idées principales en une image."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conclua um capítulo para criar seu mapa mental com as principais ideias em uma imagem."
+            "value" : "Conclua um capítulo para criar seu mapa mental: as ideias principais em uma imagem."
           }
         }
       }
@@ -317,7 +311,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En bref : %@"
+            "value" : "En bref : %@"
           }
         },
         "pt" : {
@@ -334,13 +328,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Mindmap konnte diesmal nicht erstellt werden."
+            "value" : "Diesmal konnte sie nicht erstellt werden."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta vez no se ha podido crear."
+            "value" : "No se ha podido crear esta vez."
           }
         },
         "fr" : {
@@ -439,7 +433,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda não há mapas mentais"
+            "value" : "Nenhum mapa mental ainda"
           }
         }
       }
@@ -456,7 +450,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta vez no se ha podido crear el mapa mental."
+            "value" : "No se ha podido crear el mapa mental esta vez."
           }
         },
         "fr" : {
@@ -497,7 +491,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -508,13 +502,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Server ist nicht erreichbar."
+            "value" : "Wir konnten den Server nicht erreichen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido conectar con el servidor."
+            "value" : "No hemos podido conectar con el servidor."
           }
         },
         "fr" : {
@@ -537,25 +531,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Plan hat vorerst alle Mindmaps erstellt."
+            "value" : "Du hast vorerst alle Mindmaps erstellt, die dein Tarif erlaubt."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan ya ha creado todos los mapas mentales disponibles."
+            "value" : "Tu plan ya ha creado todos los mapas mentales que permite por ahora."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan a utilisé toutes ses cartes mentales pour le moment."
+            "value" : "Tu as atteint la limite de cartes mentales de ta formule pour le moment."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano já criou todos os mapas mentais disponíveis."
+            "value" : "Seu plano atingiu o limite de mapas mentais por enquanto."
           }
         }
       }

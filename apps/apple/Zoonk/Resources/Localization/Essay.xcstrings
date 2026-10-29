@@ -155,7 +155,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um detalhe"
+            "value" : "Um detalhamento"
           }
         }
       }
@@ -184,7 +184,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De que forma"
+            "value" : "Por quais meios"
           }
         }
       }
@@ -230,19 +230,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redacción · criterios del ENEM"
+            "value" : "Redacción · criterios de ENEM"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rédaction · barème de l’ENEM"
+            "value" : "Rédaction · Grille d’évaluation de l’ENEM"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Redação · critérios do Enem"
+            "value" : "Redação · Critérios do ENEM"
           }
         }
       }
@@ -253,7 +253,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Geschätzter Score von 0 bis %@"
+            "value" : "Geschätzter Score, von 0 bis %@"
           }
         },
         "es" : {
@@ -271,7 +271,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pontuação estimada, de 0 a %@"
+            "value" : "Nota estimada, de 0 a %@"
           }
         }
       }
@@ -282,25 +282,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In dieser Schätzung ist jedes Kriterium mit der Höchstpunktzahl bewertet."
+            "value" : "Bei dieser Schätzung erreichst du in jedem Kriterium die volle Punktzahl."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En esta estimación, todos los criterios tienen la puntuación máxima."
+            "value" : "Esta estimación da la máxima puntuación en todos los criterios."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cette estimation attribue la note maximale à chaque critère."
+            "value" : "Dans cette estimation, tous les critères ont la note maximale."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nesta estimativa, todos os critérios têm pontuação máxima."
+            "value" : "Nesta estimativa, todos os critérios receberam a nota máxima."
           }
         }
       }
@@ -346,19 +346,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Respuesta libre · criterios de evaluación del AP"
+            "value" : "Respuesta libre · criterios de evaluación de AP"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réponse libre · critères de notation de l’AP"
+            "value" : "Réponse libre · Grille d’évaluation AP"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Resposta dissertativa · critérios de avaliação do AP"
+            "value" : "Resposta dissertativa · Critérios de correção do AP"
           }
         }
       }
@@ -369,7 +369,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neufassung bewerten"
+            "value" : "Überarbeitung bewerten lassen"
           }
         },
         "es" : {
@@ -381,7 +381,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Évaluer la nouvelle rédaction"
+            "value" : "Faire corriger la nouvelle version"
           }
         },
         "pt" : {
@@ -398,7 +398,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird bewertet…"
+            "value" : "Wir bewerten deinen Text…"
           }
         },
         "es" : {
@@ -410,7 +410,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Évaluation…"
+            "value" : "Correction en cours…"
           }
         },
         "pt" : {
@@ -427,7 +427,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Weiter schreiben"
+            "value" : "Weiterschreiben"
           }
         },
         "es" : {
@@ -485,7 +485,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Jetzt verlassen?"
+            "value" : "Fürs Erste verlassen?"
           }
         },
         "es" : {
@@ -520,19 +520,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "falta"
+            "value" : "ausente"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "manquant"
+            "value" : "absent"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "faltando"
+            "value" : "ausente"
           }
         }
       }
@@ -543,19 +543,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Impulstexte"
+            "value" : "Anregende Texte"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Textos de referencia"
+            "value" : "Textos motivadores"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Textes de départ"
+            "value" : "Textes de référence"
           }
         },
         "pt" : {
@@ -636,19 +636,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya no queda nada por mejorar"
+            "value" : "No queda nada por mejorar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Il ne reste rien à améliorer"
+            "value" : "Rien à améliorer"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não há mais nada a melhorar"
+            "value" : "Nada mais para melhorar"
           }
         }
       }
@@ -665,7 +665,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "está presente"
+            "value" : "presente"
           }
         },
         "fr" : {
@@ -688,25 +688,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Aufsatz wird anhand der einzelnen Kriterien bewertet. Das kann bis zu 30 Sekunden dauern."
+            "value" : "Wir prüfen deinen Aufsatz anhand der einzelnen Kriterien. Das kann bis zu 30 Sekunden dauern."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estamos revisando tu redacción según cada criterio. Puede tardar hasta 30 s."
+            "value" : "Estamos revisando tu redacción según cada criterio. Puede tardar hasta 30 segundos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lecture de ta rédaction selon chaque critère. Cela peut prendre jusqu’à 30 secondes."
+            "value" : "Nous examinons ta rédaction selon chaque critère. Cela peut prendre jusqu’à 30 s."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Analisando sua redação com base em cada critério. Isso pode levar até 30 segundos."
+            "value" : "Analisando seu texto de acordo com cada critério. Isso pode levar até 30 segundos."
           }
         }
       }
@@ -717,7 +717,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neu schreiben"
+            "value" : "Überarbeiten"
           }
         },
         "es" : {
@@ -746,19 +746,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Überarbeite, was noch verbessert werden muss"
+            "value" : "Überarbeite, was noch verbessert werden kann"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reescribe lo que haya que mejorar"
+            "value" : "Reescribe lo que necesite mejorar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Réécris les passages à améliorer"
+            "value" : "Réécris ce qui doit être amélioré"
           }
         },
         "pt" : {
@@ -793,7 +793,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pontuação por critério"
+            "value" : "Nota por critério"
           }
         }
       }
@@ -810,7 +810,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver la evaluación"
+            "value" : "Ver la calificación"
           }
         },
         "fr" : {
@@ -822,7 +822,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ver a correção"
+            "value" : "Ver a nota"
           }
         }
       }
@@ -845,7 +845,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Envoyer pour évaluation"
+            "value" : "Envoyer pour correction"
           }
         },
         "pt" : {
@@ -862,7 +862,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neufassung überspringen"
+            "value" : "Überarbeitung überspringen"
           }
         },
         "es" : {
@@ -891,25 +891,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wird noch bewertet. Das dauert länger als gewöhnlich."
+            "value" : "Wir bewerten deinen Text noch. Das dauert länger als üblich."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La evaluación sigue en curso. Está tardando más de lo habitual."
+            "value" : "Seguimos evaluando. Está tardando más de lo habitual."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’évaluation est toujours en cours. Cela prend plus de temps que d’habitude."
+            "value" : "La correction est toujours en cours. Cela prend plus de temps que d’habitude."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ainda estamos corrigindo. Está demorando mais que o normal."
+            "value" : "Ainda estamos corrigindo. Está levando mais tempo que o normal."
           }
         }
       }
@@ -920,7 +920,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zusatztexte"
+            "value" : "Begleittexte"
           }
         },
         "es" : {
@@ -932,7 +932,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Textes d’appui"
+            "value" : "Textes de référence"
           }
         },
         "pt" : {
@@ -955,19 +955,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido completar. Vuelve a intentarlo dentro de un momento."
+            "value" : "No se ha podido completar. Inténtalo de nuevo dentro de un momento."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’envoi n’a pas abouti. Réessaie dans un instant."
+            "value" : "Ça n’a pas marché. Réessaie dans un instant."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu certo. Tente novamente daqui a pouco."
+            "value" : "Não deu certo. Tente novamente em instantes."
           }
         }
       }
@@ -984,19 +984,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido completar. Tu texto sigue aquí. Vuelve a intentarlo dentro de un momento."
+            "value" : "No se ha podido completar. Tu texto sigue aquí. Inténtalo de nuevo dentro de un momento."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "L’envoi n’a pas abouti. Ton texte est toujours là. Réessaie dans un instant."
+            "value" : "Ça n’a pas marché. Ton texte est toujours là. Réessaie dans un instant."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu certo. Seu texto continua aqui. Tente novamente daqui a pouco."
+            "value" : "Não deu certo. Seu texto continua aqui. Tente novamente em instantes."
           }
         }
       }
@@ -1019,7 +1019,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le cas"
+            "value" : "Le cas pratique"
           }
         },
         "pt" : {
@@ -1042,7 +1042,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha cargado la redacción"
+            "value" : "No se ha podido cargar la redacción"
           }
         },
         "fr" : {
@@ -1054,7 +1054,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar a redação"
+            "value" : "O texto não carregou"
           }
         }
       }
@@ -1065,7 +1065,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die fünf Elemente des Vorschlags"
+            "value" : "Die fünf Elemente des Lösungsvorschlags"
           }
         },
         "es" : {
@@ -1083,7 +1083,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os cinco elementos da proposta"
+            "value" : "Os cinco elementos da proposta de intervenção"
           }
         }
       }
@@ -1100,7 +1100,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta redacción no está disponible"
+            "value" : "Esta redacción no está aquí"
           }
         },
         "fr" : {
@@ -1112,7 +1112,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta redação não está disponível"
+            "value" : "Este texto não está aqui"
           }
         }
       }
@@ -1123,7 +1123,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit welchem Ziel"
+            "value" : "Zu welchem Zweck"
           }
         },
         "es" : {
@@ -1141,7 +1141,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com que objetivo"
+            "value" : "Para qual finalidade"
           }
         }
       }
@@ -1158,13 +1158,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La redacción es demasiado corta para evaluarla"
+            "value" : "Demasiado breve para evaluar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rédaction trop courte pour être évaluée"
+            "value" : "Trop court pour être corrigé"
           }
         },
         "pt" : {
@@ -1187,7 +1187,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a intentarlo"
+            "value" : "Intentar de nuevo"
           }
         },
         "fr" : {
@@ -1216,19 +1216,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qué hacen"
+            "value" : "Qué hace"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce qu’ils font"
+            "value" : "Ce qui est fait"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que fazem"
+            "value" : "O que faz"
           }
         }
       }
@@ -1268,7 +1268,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schreib den ganzen Aufsatz und sende ihn dann noch einmal."
+            "value" : "Schreib den ganzen Aufsatz und sende ihn dann erneut."
           }
         },
         "es" : {
@@ -1280,13 +1280,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Écris toute la rédaction, puis renvoie-la."
+            "value" : "Écris la rédaction en entier, puis envoie-la à nouveau."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escreva a redação inteira e envie de novo."
+            "value" : "Escreva o texto completo e envie novamente."
           }
         }
       }
@@ -1326,25 +1326,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast alle Aufsatzbewertungen für heute aufgebraucht. Dein Text bleibt hier. Sende ihn morgen."
+            "value" : "Du hast deine Aufsatzbewertungen für heute aufgebraucht. Dein Text bleibt hier. Sende ihn morgen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ya has usado todas las evaluaciones de redacciones de hoy. Tu texto sigue aquí; envíalo mañana."
+            "value" : "Ya has usado las evaluaciones de redacciones de hoy. Tu texto se queda aquí; envíalo mañana."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu as utilisé toutes tes évaluations de rédaction du jour. Ton texte reste ici ; renvoie-le demain."
+            "value" : "Tu as utilisé toutes tes corrections de rédaction pour aujourd’hui. Ton texte reste ici ; envoie-le demain."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você usou todas as correções de redação de hoje. Seu texto continua aqui; envie amanhã."
+            "value" : "Você já usou suas correções de hoje. Seu texto continua aqui; envie amanhã."
           }
         }
       }
@@ -1419,7 +1419,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu última evaluación"
+            "value" : "Tu última calificación"
           }
         },
         "fr" : {
@@ -1431,7 +1431,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua última correção"
+            "value" : "Sua última nota"
           }
         }
       }
@@ -1442,25 +1442,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Text bleibt auf diesem Gerät und ist wieder da, wenn du zurückkommst."
+            "value" : "Dein Text bleibt auf diesem Gerät und ist noch da, wenn du zurückkommst."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu texto se guarda en este dispositivo y seguirá aquí cuando vuelvas."
+            "value" : "Tu texto se guarda en este dispositivo y estará aquí cuando vuelvas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton texte reste sur cet appareil. Tu le retrouveras à ton retour."
+            "value" : "Ton texte reste sur cet appareil et sera là à ton retour."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu texto fica neste dispositivo e estará aqui quando você voltar."
+            "value" : "Seu texto fica salvo neste aparelho e estará aqui quando você voltar."
           }
         }
       }

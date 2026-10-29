@@ -182,13 +182,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ desde el principio"
+            "value" : "%@ desde el inicio"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ depuis le début"
+            "value" : "%@ depuis le départ"
           }
         },
         "pt" : {
@@ -217,7 +217,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ baisse"
+            "value" : "%@ diminue"
           }
         },
         "pt" : {
@@ -246,7 +246,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ monte"
+            "value" : "%@ augmente"
           }
         },
         "pt" : {
@@ -263,7 +263,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ hat mehr Bindungen, als es eingehen kann."
+            "value" : "%@ hat mehr Bindungen, als möglich sind."
           }
         },
         "es" : {
@@ -281,7 +281,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ tem mais ligações do que consegue fazer."
+            "value" : "%@ tem mais ligações do que pode fazer."
           }
         }
       }
@@ -321,7 +321,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ hat sich nicht bewegt"
+            "value" : "%@ wurde nicht verschoben"
           }
         },
         "es" : {
@@ -403,13 +403,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ dans %2$@ des simulations. La probabilité exacte est %3$@."
+            "value" : "%1$@ dans %2$@ des essais. La probabilité exacte est de %3$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ em %2$@ das simulações. A probabilidade exata é %3$@."
+            "value" : "%1$@ em %2$@ das tentativas. A chance exata é %3$@."
           }
         }
       }
@@ -420,25 +420,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ist ausgewählt. Tippe auf ein anderes Atom, um die beiden zu verbinden, oder auf ein Element, um ein damit verbundenes Atom hinzuzufügen."
+            "value" : "%@ ist ausgewählt. Tippe auf ein anderes Atom, um beide zu verbinden, oder auf ein Element, um ein damit verbundenes Atom hinzuzufügen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ está seleccionado. Toca otro átomo para enlazarlos o un elemento para añadir uno unido a él."
+            "value" : "%@ está seleccionado. Toca otro átomo para enlazarlos o un elemento para añadir un átomo enlazado a este."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ est sélectionné. Touchez un autre atome pour les lier, ou un élément pour en ajouter un qui lui sera lié."
+            "value" : "%@ est sélectionné. Touche un autre atome pour les lier, ou un élément pour ajouter un atome qui lui sera lié."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ está selecionado. Toque em outro átomo para ligá-los ou em um elemento para adicionar outro ligado a ele."
+            "value" : "Átomo selecionado: %@. Toque em outro átomo para ligá-los ou em um elemento para adicionar um átomo ligado ao selecionado."
           }
         }
       }
@@ -455,13 +455,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se ha movido hacia abajo"
+            "value" : "%@ se ha desplazado hacia abajo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a baissé"
+            "value" : "%@ a été déplacé vers le bas"
           }
         },
         "pt" : {
@@ -484,13 +484,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se ha movido a la izquierda"
+            "value" : "%@ se ha desplazado hacia la izquierda"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ s’est déplacé vers la gauche"
+            "value" : "%@ a été déplacé vers la gauche"
           }
         },
         "pt" : {
@@ -513,13 +513,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se ha movido a la derecha"
+            "value" : "%@ se ha desplazado hacia la derecha"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ s’est déplacé vers la droite"
+            "value" : "%@ a été déplacé vers la droite"
           }
         },
         "pt" : {
@@ -542,13 +542,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ se ha movido hacia arriba"
+            "value" : "%@ se ha desplazado hacia arriba"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ a monté"
+            "value" : "%@ a été déplacé vers le haut"
           }
         },
         "pt" : {
@@ -577,19 +577,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El %1$@ de los valores está entre %2$@ y %3$@: %4$@ por debajo y %5$@ por encima."
+            "value" : "%1$@ de los valores están entre %2$@ y %3$@, %4$@ por debajo y %5$@ por encima."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ des valeurs se situent entre %2$@ et %3$@, avec %4$@ en dessous et %5$@ au-dessus."
+            "value" : "%1$@ des valeurs se trouvent entre %2$@ et %3$@, %4$@ en dessous et %5$@ au-dessus."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ dos valores ficam entre %2$@ e %3$@, com %4$@ abaixo e %5$@ acima."
+            "value" : "%1$@ dos valores ficam entre %2$@ e %3$@, %4$@ abaixo e %5$@ acima."
           }
         }
       }
@@ -682,13 +682,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ simulations de %2$@"
+            "value" : "%1$@ essais de %2$@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ simulações de %2$@"
+            "value" : "%1$@ tentativas de %2$@"
           }
         }
       }
@@ -699,7 +699,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ Stichproben aus %2$@"
+            "value" : "%1$@ Stichproben mit je %2$@"
           }
         },
         "en" : {
@@ -734,7 +734,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ Stichproben aus %2$@ aus %3$@. Der tatsächliche Wert beträgt %4$@; 95%% der Stichproben lagen zwischen %5$@ und %6$@."
+            "value" : "%1$@ Stichproben mit je %2$@ aus %3$@. Der tatsächliche Wert beträgt %4$@; 95%% der Stichproben lagen zwischen %5$@ und %6$@."
           }
         },
         "en" : {
@@ -746,19 +746,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ muestras de %2$@ a partir de %3$@. El valor real es %4$@; el 95%% de las muestras quedó entre %5$@ y %6$@."
+            "value" : "%1$@ muestras de %2$@ de %3$@. El valor real es %4$@; el 95%% de las muestras quedó entre %5$@ y %6$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ échantillons de %2$@ tirés de %3$@. La valeur réelle est %4$@ ; 95%% des échantillons se situent entre %5$@ et %6$@."
+            "value" : "%1$@ échantillons de %2$@ issus de %3$@. La valeur réelle est de %4$@ ; 95%% des échantillons ont donné une valeur entre %5$@ et %6$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ amostras de %2$@ de %3$@. O valor real é %4$@; 95%% das amostras ficaram entre %5$@ e %6$@."
+            "value" : "%1$@ amostras de %2$@ retiradas de %3$@. O valor real é %4$@; 95%% das amostras ficaram entre %5$@ e %6$@."
           }
         }
       }
@@ -787,7 +787,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ selecionado."
+            "value" : "Átomo selecionado: %@."
           }
         }
       }
@@ -810,13 +810,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ reste inchangé"
+            "value" : "%@ reste stable"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ permanece igual"
+            "value" : "%@ continua igual"
           }
         }
       }
@@ -862,7 +862,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@ kam in %3$@ davon vor."
+            "value" : "%1$@: %2$@ trat in %3$@ der Durchläufe auf."
           }
         },
         "en" : {
@@ -880,13 +880,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ : %2$@ est apparu dans %3$@ d’entre elles."
+            "value" : "%1$@ : %2$@ est apparu dans %3$@ des essais."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@ apareceu em %3$@ delas."
+            "value" : "%1$@: %2$@ apareceu em %3$@ das tentativas."
           }
         }
       }
@@ -932,7 +932,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$@, wähle den Abschluss"
+            "value" : "%1$@: %2$@, wähle die Ergänzung"
           }
         },
         "en" : {
@@ -950,7 +950,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ : %2$@, choisissez la fin"
+            "value" : "%1$@ : %2$@, choisis la fin"
           }
         },
         "pt" : {
@@ -1114,7 +1114,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@: %2$lld de %#@bonds@"
+            "value" : "%1$@: ligações usadas: %2$lld de %#@bonds@"
           },
           "substitutions" : {
             "bonds" : {
@@ -1122,16 +1122,10 @@
               "formatSpecifier" : "lld",
               "variations" : {
                 "plural" : {
-                  "one" : {
-                    "stringUnit" : {
-                      "state" : "translated",
-                      "value" : "%arg ligação"
-                    }
-                  },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg ligações"
+                      "value" : "%arg"
                     }
                   }
                 }
@@ -1165,13 +1159,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@. %2$@ entre les poignées."
+            "value" : "%1$@. %2$@ entre les curseurs."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@. %2$@ entre os marcadores."
+            "value" : "%1$@. %2$@ entre os controles."
           }
         }
       }
@@ -1217,7 +1211,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@. 95%% der Stichproben innerhalb von %2$@."
+            "value" : "%1$@. 95%% der Stichproben liegen innerhalb von %2$@."
           }
         },
         "en" : {
@@ -1235,7 +1229,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@. 95%% des échantillons dans la plage %2$@."
+            "value" : "%1$@. 95%% des échantillons ont donné une valeur à moins de %2$@."
           }
         },
         "pt" : {
@@ -1255,13 +1249,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Atom hat offene Bindungen, die als Punkte dargestellt sind."
+                  "value" : "%lld Atom hat offene Bindungen, die als Punkte dargestellt werden."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Atome haben offene Bindungen, die als Punkte dargestellt sind."
+                  "value" : "%lld Atome haben offene Bindungen, die als Punkte dargestellt werden."
                 }
               }
             }
@@ -1291,13 +1285,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld átomo tiene enlaces libres, indicados con puntos."
+                  "value" : "%lld átomo tiene enlaces libres, representados con puntos."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld átomos tienen enlaces libres, indicados con puntos."
+                  "value" : "%lld átomos tienen enlaces libres, representados con puntos."
                 }
               }
             }
@@ -1324,16 +1318,10 @@
         "pt" : {
           "variations" : {
             "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld átomo tem ligações abertas, indicadas por pontos."
-                }
-              },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld átomos têm ligações abertas, indicadas por pontos."
+                  "value" : "Átomos com ligações abertas, representadas por pontos: %lld."
                 }
               }
             }
@@ -1445,13 +1433,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Bindung insgesamt, wobei eine Doppelbindung als zwei zählt."
+                  "value" : "Insgesamt %lld Bindung, wobei eine Doppelbindung als zwei zählt."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Bindungen insgesamt, wobei eine Doppelbindung als zwei zählt."
+                  "value" : "Insgesamt %lld Bindungen, wobei eine Doppelbindung als zwei zählt."
                 }
               }
             }
@@ -1481,13 +1469,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld enlace en total, contando un enlace doble como dos."
+                  "value" : "%lld enlace en total, contando cada enlace doble como dos."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld enlaces en total, contando un enlace doble como dos."
+                  "value" : "%lld enlaces en total, contando cada enlace doble como dos."
                 }
               }
             }
@@ -1499,13 +1487,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld liaison au total, une double liaison comptant pour deux."
+                  "value" : "%lld liaison au total, en comptant une liaison double comme deux."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld liaisons au total, une double liaison comptant pour deux."
+                  "value" : "%lld liaisons au total, en comptant une liaison double comme deux."
                 }
               }
             }
@@ -1548,13 +1536,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg von %2$lld Beispielen ist richtig."
+                      "value" : "%arg von %2$lld Beispielen passt."
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg von %2$lld Beispielen sind richtig."
+                      "value" : "%arg von %2$lld Beispielen passen."
                     }
                   }
                 }
@@ -1660,13 +1648,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg de %2$lld exemplos passaram."
+                      "value" : "%arg de %2$lld exemplos passa."
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg de %2$lld exemplos passaram."
+                      "value" : "%arg de %2$lld exemplos passam."
                     }
                   }
                 }
@@ -1835,19 +1823,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "95% der Stichproben liegen innerhalb von"
+            "value" : "95 % der Stichproben liegen innerhalb von"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "El 95% de las muestras queda dentro de"
+            "value" : "El 95 % de las muestras queda dentro de"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "95 % des échantillons se situent dans"
+            "value" : "95 % des échantillons se situent dans une marge de"
           }
         },
         "pt" : {
@@ -1864,7 +1852,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Waage. Linke Waagschale: %1$@. Rechte Waagschale: %2$@."
+            "value" : "Eine Waage. Linke Schale: %1$@. Rechte Schale: %2$@."
           }
         },
         "en" : {
@@ -1899,7 +1887,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Glockenkurve von %1$@ mit einem Mittelwert von %2$@ und einer Standardabweichung von %3$@."
+            "value" : "Eine Glockenkurve für %1$@ mit einem Mittelwert von %2$@ und einer Standardabweichung von %3$@."
           }
         },
         "en" : {
@@ -1917,13 +1905,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une courbe en cloche de %1$@, avec une moyenne de %2$@ et un écart-type de %3$@."
+            "value" : "Une courbe en cloche pour %1$@, avec une moyenne de %2$@ et un écart-type de %3$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma curva em sino de %1$@, com média de %2$@ e desvio padrão de %3$@."
+            "value" : "Uma curva em forma de sino de %1$@, com média de %2$@ e desvio padrão de %3$@."
           }
         }
       }
@@ -1934,7 +1922,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Diagramm mit zwei Linien, %1$@ und %2$@, das %3$@ in Abhängigkeit von %4$@ zeigt."
+            "value" : "Ein Diagramm mit zwei Linien, %1$@ und %2$@, das %3$@ gegenüber %4$@ zeigt."
           }
         },
         "en" : {
@@ -1946,19 +1934,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un gráfico de dos líneas, %1$@ y %2$@, que muestra %3$@ frente a %4$@."
+            "value" : "Un gráfico de dos líneas, %1$@ y %2$@, con %3$@ frente a %4$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un graphique à deux courbes, %1$@ et %2$@, représentant %3$@ en fonction de %4$@."
+            "value" : "Un graphique à deux courbes, %1$@ et %2$@, montrant %3$@ en fonction de %4$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um gráfico com duas linhas, %1$@ e %2$@, que mostra %3$@ em relação a %4$@."
+            "value" : "Um gráfico de duas linhas, %1$@ e %2$@, com %3$@ em função de %4$@."
           }
         }
       }
@@ -1969,7 +1957,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Kreis mit Radius 1 und einem Punkt bei %1$@. Seine Höhe entspricht dem Sinus und sein waagerechter Abstand vom Mittelpunkt dem Kosinus: %2$@."
+            "value" : "Ein Kreis mit dem Radius 1 und einem Punkt bei %1$@. Seine Höhe ist der Sinus und sein seitlicher Abstand vom Mittelpunkt ist der Kosinus: %2$@."
           }
         },
         "en" : {
@@ -1987,7 +1975,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un cercle de rayon 1 avec un point en %1$@. Sa hauteur correspond au sinus et sa distance horizontale au centre au cosinus : %2$@."
+            "value" : "Un cercle de rayon 1 avec un point à %1$@. Sa hauteur correspond au sinus et sa distance horizontale par rapport au centre correspond au cosinus : %2$@."
           }
         },
         "pt" : {
@@ -2004,7 +1992,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Gleichverteilung von %1$@ zwischen %2$@ und %3$@."
+            "value" : "Eine Gleichverteilung von %1$@, von %2$@ bis %3$@."
           }
         },
         "en" : {
@@ -2016,7 +2004,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una distribución uniforme de %1$@, de %2$@ a %3$@."
+            "value" : "Una distribución uniforme de %1$@, desde %2$@ hasta %3$@."
           }
         },
         "fr" : {
@@ -2039,13 +2027,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine funktionierende Formel"
+            "value" : "Eine passende Formel"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una fórmula correcta"
+            "value" : "Una fórmula que funciona"
           }
         },
         "fr" : {
@@ -2068,7 +2056,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "einen vollen Kreis"
+            "value" : "eine volle Drehung"
           }
         },
         "es" : {
@@ -2109,19 +2097,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un gráfico lineal de %1$@ según %2$@, desde %3$@ en %4$@ hasta %5$@ en %6$@."
+            "value" : "Un gráfico de líneas de %1$@ según %2$@, desde %3$@ en %4$@ hasta %5$@ en %6$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un graphique linéaire de %1$@ en fonction de %2$@, de %3$@ à %4$@ jusqu’à %5$@ à %6$@."
+            "value" : "Un graphique montrant %1$@ en fonction de %2$@, allant de %3$@ à %4$@ jusqu’à %5$@ à %6$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Um gráfico de linhas de %1$@ por %2$@, de %3$@ em %4$@ até %5$@ em %6$@."
+            "value" : "Um gráfico de linha de %1$@ por %2$@, de %3$@ em %4$@ até %5$@ em %6$@."
           }
         }
       }
@@ -2132,7 +2120,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein Zahlenstrahl für %1$@ von %2$@ bis %3$@. Er beginnt bei %4$@, und dein Punkt liegt bei %5$@."
+            "value" : "Ein Zahlenstrahl für %1$@ von %2$@ bis %3$@. Er beginnt bei %4$@ und dein Punkt liegt bei %5$@."
           }
         },
         "en" : {
@@ -2144,7 +2132,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recta numérica de %1$@ desde %2$@ hasta %3$@. Empieza en %4$@ y tu punto está en %5$@."
+            "value" : "Una recta numérica para %1$@, desde %2$@ hasta %3$@. Empieza en %4$@ y tu punto está en %5$@."
           }
         },
         "fr" : {
@@ -2156,7 +2144,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Reta numérica de %1$@ de %2$@ a %3$@. Ela começa em %4$@, e seu ponto está em %5$@."
+            "value" : "Uma reta numérica para %1$@, de %2$@ a %3$@. Ela começa em %4$@, e seu ponto está em %5$@."
           }
         }
       }
@@ -2167,7 +2155,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein funktionierendes Muster"
+            "value" : "Ein passendes Muster"
           }
         },
         "es" : {
@@ -2179,7 +2167,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un modèle qui fonctionne"
+            "value" : "Un motif qui fonctionne"
           }
         },
         "pt" : {
@@ -2196,7 +2184,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Form mit %1$lld Ecken auf einem Raster. %#@moves@"
+            "value" : "Eine Figur mit %1$lld Ecken auf einem Raster. %#@moves@"
           },
           "substitutions" : {
             "moves" : {
@@ -2207,13 +2195,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Eine Ecke bewegt sich."
+                      "value" : "%arg Ecke lässt sich bewegen."
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg Ecken bewegen sich."
+                      "value" : "%arg Ecken lassen sich bewegen."
                     }
                   }
                 }
@@ -2263,13 +2251,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Se mueve %arg vértice."
+                      "value" : "Se puede mover %arg vértice."
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "Se mueven %arg vértices."
+                      "value" : "Se pueden mover %arg vértices."
                     }
                   }
                 }
@@ -2291,13 +2279,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg sommet bouge."
+                      "value" : "%arg sommet est mobile."
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg sommets bougent."
+                      "value" : "%arg sommets sont mobiles."
                     }
                   }
                 }
@@ -2319,13 +2307,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg vértice se move."
+                      "value" : "%arg vértice pode ser movido."
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "%arg vértices se movem."
+                      "value" : "%arg vértices podem ser movidos."
                     }
                   }
                 }
@@ -2399,7 +2387,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ hinzufügen, gebunden an %2$@"
+            "value" : "%1$@ hinzufügen und mit %2$@ verbinden"
           }
         },
         "en" : {
@@ -2411,7 +2399,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Añadir %1$@ unido a %2$@"
+            "value" : "Añadir %1$@ con un enlace a %2$@"
           }
         },
         "fr" : {
@@ -2434,7 +2422,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ wurde hinzugefügt und an %2$@ gebunden."
+            "value" : "%1$@ hinzugefügt und mit %2$@ verbunden."
           }
         },
         "en" : {
@@ -2446,19 +2434,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha añadido %1$@, unido a %2$@."
+            "value" : "Se ha añadido %1$@ con un enlace a %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ ajouté, lié à %2$@."
+            "value" : "Ajout de %1$@, lié à %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ adicionado, ligado a %2$@."
+            "value" : "Adicionado %1$@, ligado a %2$@."
           }
         }
       }
@@ -2469,7 +2457,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ wurde hinzugefügt."
+            "value" : "%@ hinzugefügt."
           }
         },
         "es" : {
@@ -2481,13 +2469,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ ajouté."
+            "value" : "Ajout de %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ adicionado."
+            "value" : "Adicionado %@."
           }
         }
       }
@@ -2516,13 +2504,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Angles : %1$@, pour un total de %2$@."
+            "value" : "Angles : %1$@, pour un total de %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ângulos: %1$@, cuja soma é %2$@."
+            "value" : "Ângulos: %1$@, somando %2$@."
           }
         }
       }
@@ -2545,7 +2533,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Angles : %@."
+            "value" : "Angles : %@."
           }
         },
         "pt" : {
@@ -2620,7 +2608,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beliebiger Buchstabe, Ziffer oder Unterstrich"
+            "value" : "Beliebiger Buchstabe, beliebige Ziffer oder Unterstrich"
           }
         },
         "es" : {
@@ -2632,7 +2620,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "N’importe quelle lettre, n’importe quel chiffre ou le caractère souligné"
+            "value" : "N’importe quelle lettre, chiffre ou caractère de soulignement"
           }
         },
         "pt" : {
@@ -2649,25 +2637,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beliebiges Leerzeichen"
+            "value" : "Beliebiges Leerraumzeichen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cualquier espacio"
+            "value" : "Cualquier espacio en blanco"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "N’importe quelle espace"
+            "value" : "N’importe quel espace blanc"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qualquer espaço"
+            "value" : "Qualquer espaço em branco"
           }
         }
       }
@@ -2678,7 +2666,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fläche"
+            "value" : "Flächeninhalt"
           }
         },
         "es" : {
@@ -2707,7 +2695,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fläche: %@."
+            "value" : "Flächeninhalt: %@."
           }
         },
         "es" : {
@@ -2719,7 +2707,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aire : %@."
+            "value" : "Aire : %@."
           }
         },
         "pt" : {
@@ -2742,7 +2730,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A medida que gira el punto"
+            "value" : "Al girar el punto"
           }
         },
         "fr" : {
@@ -2783,7 +2771,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En %1$@, %2$@. %3$@"
+            "value" : "À %1$@, %2$@. %3$@"
           }
         },
         "pt" : {
@@ -2806,7 +2794,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Al inicio"
+            "value" : "Al principio"
           }
         },
         "fr" : {
@@ -2858,7 +2846,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Davor"
+            "value" : "Vorher"
           }
         },
         "es" : {
@@ -2945,7 +2933,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bisher aufgebaut: %@"
+            "value" : "Gebaut: %@"
           }
         },
         "es" : {
@@ -2957,7 +2945,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Éléments assemblés : %@"
+            "value" : "Construit : %@"
           }
         },
         "pt" : {
@@ -3073,7 +3061,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bonne réponse : %@"
+            "value" : "Bonne réponse : %@"
           }
         },
         "pt" : {
@@ -3148,7 +3136,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "stimmt nicht überein"
+            "value" : "passt nicht"
           }
         },
         "es" : {
@@ -3206,25 +3194,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ziehe eine Ecke, um sie Schritt für Schritt über das Raster zu bewegen."
+            "value" : "Ziehe eine Ecke, um sie schrittweise auf dem Raster zu bewegen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrastra un vértice para moverlo de una en una casilla."
+            "value" : "Arrastra un vértice para moverlo de una casilla en una casilla."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fais glisser un sommet pour le déplacer d’une case à la fois."
+            "value" : "Fais glisser un sommet pour le déplacer d’un cran à la fois sur la grille."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arraste um vértice para movê-lo uma posição de cada vez na grade."
+            "value" : "Arraste um vértice para movê-lo uma posição por vez na grade."
           }
         }
       }
@@ -3235,25 +3223,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ziehe die Linie an ihrem Griff."
+            "value" : "Ziehe eine Linie an ihrem Anfasser."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrastra la línea desde el control para moverla."
+            "value" : "Arrastra una línea desde su control."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fais glisser une ligne par sa poignée."
+            "value" : "Fais glisser une courbe à l’aide de sa poignée."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arraste a linha pela alça."
+            "value" : "Arraste uma linha pela alça."
           }
         }
       }
@@ -3264,13 +3252,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Textende"
+            "value" : "Ende des Textes"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Final del texto"
+            "value" : "Fin del texto"
           }
         },
         "fr" : {
@@ -3305,13 +3293,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminaisons de %@"
+            "value" : "Terminaisons pour %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Terminações de %@"
+            "value" : "Terminações para %@"
           }
         }
       }
@@ -3409,7 +3397,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zum Vergleich: Bei %1$@ beträgt der Wert %2$@."
+            "value" : "Zum Vergleich: Bei %1$@ sind es %2$@."
           }
         },
         "en" : {
@@ -3421,19 +3409,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A modo de comparación, en %1$@ es %2$@."
+            "value" : "Para comparar, en %1$@ es %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pour comparer, en %1$@, la valeur est %2$@."
+            "value" : "À titre de comparaison, pour %1$@, la valeur est de %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para comparar, em %1$@, o valor é %2$@."
+            "value" : "Para comparar, em %1$@ é %2$@."
           }
         }
       }
@@ -3462,7 +3450,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De %1$@ à %2$@, la marge passe à %3$@ de sa taille."
+            "value" : "De %1$@ à %2$@, la marge se réduit à %3$@ de sa taille initiale."
           }
         },
         "pt" : {
@@ -3485,7 +3473,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Grupo"
+            "value" : "Agrupar"
           }
         },
         "fr" : {
@@ -3624,7 +3612,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unterer Griff"
+            "value" : "Unterer Regler"
           }
         },
         "es" : {
@@ -3642,7 +3630,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alça inferior"
+            "value" : "Controle inferior"
           }
         }
       }
@@ -3653,19 +3641,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "wurde erkannt"
+            "value" : "fälschlich erkannt"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "coincide"
+            "value" : "ha coincidido"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "correspond"
+            "value" : "correspondance inattendue"
           }
         },
         "pt" : {
@@ -3682,7 +3670,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "stimmt überein"
+            "value" : "erkannt"
           }
         },
         "es" : {
@@ -3746,7 +3734,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mover hacia abajo"
+            "value" : "Mover abajo"
           }
         },
         "fr" : {
@@ -3839,7 +3827,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Déplacer la droite %@"
+            "value" : "Déplacer la ligne %@"
           }
         },
         "pt" : {
@@ -3862,7 +3850,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mover hacia arriba"
+            "value" : "Mover arriba"
           }
         },
         "fr" : {
@@ -3891,13 +3879,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no se ha movido ninguna de las dos líneas."
+            "value" : "Aún no se ha movido ninguna línea."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune des deux droites n’a encore bougé."
+            "value" : "Aucune des deux lignes n’a encore bougé."
           }
         },
         "pt" : {
@@ -4001,7 +3989,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "keine Übereinstimmung"
+            "value" : "nicht erkannt"
           }
         },
         "es" : {
@@ -4019,7 +4007,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "não corresponde"
+            "value" : "sem correspondência"
           }
         }
       }
@@ -4036,19 +4024,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No hay ninguna hipótesis activada."
+            "value" : "No hay hipótesis activadas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucune hypothèse activée."
+            "value" : "Aucun scénario hypothétique activé."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nenhuma hipótese ativada."
+            "value" : "Nenhum cenário hipotético ativado."
           }
         }
       }
@@ -4071,7 +4059,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aucun atome sélectionné."
+            "value" : "Rien n’est sélectionné."
           }
         },
         "pt" : {
@@ -4117,25 +4105,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine richtige Struktur"
+            "value" : "Eine richtige Lösung"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una molécula bien montada"
+            "value" : "Una estructura correcta"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Une molécule correctement construite"
+            "value" : "Un assemblage correct"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma estrutura correta"
+            "value" : "Uma montagem correta"
           }
         }
       }
@@ -4175,7 +4163,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein oder mehrere"
+            "value" : "Einmal oder öfter"
           }
         },
         "es" : {
@@ -4349,7 +4337,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nächsten Zug auswählen"
+            "value" : "Wähle den nächsten Schritt"
           }
         },
         "es" : {
@@ -4361,7 +4349,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choisir le prochain mouvement"
+            "value" : "Choisis la prochaine action"
           }
         },
         "pt" : {
@@ -4378,13 +4366,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wähle deine Vermutung aus und prüfe sie, um die Simulation zu starten."
+            "value" : "Wähle deine Vermutung und prüfe sie, um die Simulation zu starten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige tu respuesta y compruébala para ejecutar la simulación."
+            "value" : "Elige tu suposición y compruébala para ejecutar la simulación."
           }
         },
         "fr" : {
@@ -4396,7 +4384,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escolha seu palpite e confira para executar a simulação."
+            "value" : "Escolha seu palpite e confira para iniciar a simulação."
           }
         }
       }
@@ -4442,7 +4430,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Punto de la circunferencia"
+            "value" : "Punto en la circunferencia"
           }
         },
         "fr" : {
@@ -4471,13 +4459,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quitar"
+            "value" : "Eliminar"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer"
+            "value" : "Retirer"
           }
         },
         "pt" : {
@@ -4500,13 +4488,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quitar %@"
+            "value" : "Eliminar %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer %@"
+            "value" : "Retirer %@"
           }
         },
         "pt" : {
@@ -4529,13 +4517,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quitar el átomo seleccionado"
+            "value" : "Eliminar el átomo seleccionado"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supprimer l’atome sélectionné"
+            "value" : "Retirer l’atome sélectionné"
           }
         },
         "pt" : {
@@ -4558,19 +4546,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Se ha quitado %@."
+            "value" : "Se ha eliminado %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ supprimé."
+            "value" : "%@ retiré."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ removido."
+            "value" : "%@ foi removido."
           }
         }
       }
@@ -4581,7 +4569,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine bestimmte Anzahl an Wiederholungen"
+            "value" : "Mehrmals wiederholen"
           }
         },
         "es" : {
@@ -4599,7 +4587,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Repetir várias vezes"
+            "value" : "Repetir um número de vezes"
           }
         }
       }
@@ -4645,7 +4633,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Volver a ejecutar"
+            "value" : "Ejecutar de nuevo"
           }
         },
         "fr" : {
@@ -4668,7 +4656,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ von %2$@ läuft…"
+            "value" : "Wir führen Durchlauf %1$@ von %2$@ aus…"
           }
         },
         "en" : {
@@ -4686,7 +4674,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Exécution de %1$@ sur %2$@…"
+            "value" : "Simulation %1$@ sur %2$@ en cours…"
           }
         },
         "pt" : {
@@ -4732,7 +4720,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Soll ergeben"
+            "value" : "Sollte ergeben"
           }
         },
         "es" : {
@@ -4761,19 +4749,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Soll übereinstimmen"
+            "value" : "Soll passen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Debería coincidir"
+            "value" : "Debe coincidir"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Doivent correspondre"
+            "value" : "Doit correspondre"
           }
         },
         "pt" : {
@@ -4790,19 +4778,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Soll nicht übereinstimmen"
+            "value" : "Soll nicht passen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No debería coincidir"
+            "value" : "No debe coincidir"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ne doivent pas correspondre"
+            "value" : "Ne doit pas correspondre"
           }
         },
         "pt" : {
@@ -4877,7 +4865,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seiten: %1$@, zusammen ergibt das einen Umfang von %2$@."
+            "value" : "Seiten: %1$@, zusammen mit einem Umfang von %2$@."
           }
         },
         "en" : {
@@ -4895,13 +4883,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Côtés : %1$@, pour un périmètre total de %2$@."
+            "value" : "Côtés : %1$@, pour un périmètre de %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lados: %1$@, que somam um perímetro de %2$@."
+            "value" : "Lados: %1$@, com perímetro total de %2$@."
           }
         }
       }
@@ -4924,7 +4912,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Côtés : %@."
+            "value" : "Côtés : %@."
           }
         },
         "pt" : {
@@ -5028,7 +5016,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schieberegler und ein Diagramm zu %1$@ über %2$@."
+            "value" : "Schieberegler und ein Diagramm von %1$@ über %2$@."
           }
         },
         "en" : {
@@ -5040,7 +5028,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deslizadores y una gráfica de %1$@ en función de %2$@."
+            "value" : "Controles deslizantes y un gráfico de %1$@ en función de %2$@."
           }
         },
         "fr" : {
@@ -5052,7 +5040,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Controles deslizantes e um gráfico de %1$@ ao longo de %2$@."
+            "value" : "Controles deslizantes e um gráfico de %1$@ em função de %2$@."
           }
         }
       }
@@ -5063,25 +5051,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu messende Abschnitte"
+            "value" : "Strecken zum Messen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tramos que medir"
+            "value" : "Tramos para medir"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Segments à mesurer"
+            "value" : "Intervalles à mesurer"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Segmentos para medir"
+            "value" : "Intervalos para medir"
           }
         }
       }
@@ -5092,25 +5080,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Über die Höhe teilen"
+            "value" : "Teilung über die Höhe"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dividir a lo alto"
+            "value" : "División a lo largo de la altura"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diviser sur la hauteur"
+            "value" : "Division sur la hauteur"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dividir ao longo da altura"
+            "value" : "Dividir na altura"
           }
         }
       }
@@ -5121,25 +5109,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Über die Breite teilen"
+            "value" : "Teilung über die Breite"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dividir a lo ancho"
+            "value" : "División a lo largo de la anchura"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diviser sur la largeur"
+            "value" : "Division sur la largeur"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dividir ao longo da largura"
+            "value" : "Dividir na largura"
           }
         }
       }
@@ -5150,19 +5138,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beide Seiten in %lld gleich große Gruppen aufteilen"
+            "value" : "Teile beide Seiten in %lld gleich große Gruppen"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dividir ambos lados en %lld grupos iguales"
+            "value" : "Divide ambos lados en %lld grupos iguales"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Répartir les deux côtés en %lld groupes égaux"
+            "value" : "Diviser chaque plateau en %lld groupes égaux"
           }
         },
         "pt" : {
@@ -5179,7 +5167,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In %#@parts@ aufteilen: %2$@."
+            "value" : "Aufgeteilt in %#@parts@: %2$@."
           },
           "substitutions" : {
             "parts" : {
@@ -5235,7 +5223,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dividir en %#@parts@: %2$@."
+            "value" : "Dividido en %#@parts@: %2$@."
           },
           "substitutions" : {
             "parts" : {
@@ -5263,7 +5251,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Divisé en %#@parts@ : %2$@."
+            "value" : "Divisé en %#@parts@ : %2$@."
           },
           "substitutions" : {
             "parts" : {
@@ -5291,7 +5279,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dividir em %#@parts@: %2$@."
+            "value" : "Dividido em %#@parts@: %2$@."
           },
           "substitutions" : {
             "parts" : {
@@ -5324,7 +5312,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quadrate an den beiden kürzeren Seiten: %@."
+            "value" : "Quadrate über den beiden kürzeren Seiten: %@."
           }
         },
         "es" : {
@@ -5336,13 +5324,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Carrés construits sur les deux côtés les plus courts : %@."
+            "value" : "Carrés sur les deux côtés les plus courts : %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quadrados nos dois lados menores: %@."
+            "value" : "Quadrados sobre os dois lados menores: %@."
           }
         }
       }
@@ -5353,7 +5341,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quadrate auf den beiden kürzeren Seiten: %1$@. Quadrat auf der längsten Seite: %2$@."
+            "value" : "Quadrate über den beiden kürzeren Seiten: %1$@. Quadrat über der längsten Seite: %2$@."
           }
         },
         "en" : {
@@ -5365,19 +5353,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuadrados de los dos lados más cortos: %1$@. Cuadrado del lado más largo: %2$@."
+            "value" : "Cuadrados sobre los dos lados más cortos: %1$@. Cuadrado sobre el lado más largo: %2$@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Carrés sur les deux côtés les plus courts : %1$@. Carré sur le côté le plus long : %2$@."
+            "value" : "Carrés sur les deux côtés les plus courts : %1$@. Carré sur le côté le plus long : %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quadrados nos dois lados menores: %1$@. Quadrado no lado maior: %2$@."
+            "value" : "Quadrados sobre os dois lados menores: %1$@. Quadrado sobre o lado maior: %2$@."
           }
         }
       }
@@ -5475,25 +5463,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Von der linken Seite entfernen: %@"
+            "value" : "Von der linken Seite nehmen: %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quita esto del lado izquierdo: %@"
+            "value" : "Quitar del lado izquierdo: %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retirer du plateau de gauche : %@"
+            "value" : "Retirer du plateau gauche : %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tirar do lado esquerdo: %@"
+            "value" : "Retirar do lado esquerdo: %@"
           }
         }
       }
@@ -5504,25 +5492,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Von der rechten Seite entfernen: %@"
+            "value" : "Von der rechten Seite nehmen: %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quita esto del lado derecho: %@"
+            "value" : "Quitar del lado derecho: %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Retirer du plateau de droite : %@"
+            "value" : "Retirer du plateau droit : %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tirar do lado direito: %@"
+            "value" : "Retirar do lado direito: %@"
           }
         }
       }
@@ -5551,7 +5539,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "tan"
+            "value" : "tg"
           }
         }
       }
@@ -5568,19 +5556,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toca un intervalo para medirlo"
+            "value" : "Toca un tramo para medirlo"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touchez un intervalle pour le mesurer"
+            "value" : "Touche un intervalle pour le mesurer"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque em um intervalo para medi-lo"
+            "value" : "Toque em um intervalo para medir"
           }
         }
       }
@@ -5603,13 +5591,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touchez un atome pour le sélectionner."
+            "value" : "Touche un atome pour le sélectionner."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toque em um átomo para selecioná-lo."
+            "value" : "Toque em um átomo para selecionar."
           }
         }
       }
@@ -5632,7 +5620,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touchez un élément pour ajouter son premier atome."
+            "value" : "Touche un élément pour ajouter son premier atome."
           }
         },
         "pt" : {
@@ -5661,13 +5649,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cible : %@"
+            "value" : "Molécule à construire : %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alvo: %@"
+            "value" : "Objetivo: %@"
           }
         }
       }
@@ -5678,13 +5666,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Trenne die Ecken ab und lege sie nebeneinander"
+            "value" : "Reiße die Ecken ab und lege sie nebeneinander"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Recorta las esquinas y colócalas una junto a otra"
+            "value" : "Separa las esquinas y colócalas una junto a otra"
           }
         },
         "fr" : {
@@ -5696,7 +5684,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Destaque os cantos e coloque-os lado a lado"
+            "value" : "Destaque os cantos e coloque lado a lado"
           }
         }
       }
@@ -5707,7 +5695,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Sprünge verlaufen %1$@ und enden bei %2$@."
+            "value" : "Die Sprünge gehen %1$@ und landen bei %2$@."
           }
         },
         "en" : {
@@ -5725,13 +5713,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les sauts vont de %1$@ à %2$@."
+            "value" : "Les sauts vont %1$@ et arrivent à %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os saltos seguem %1$@ e chegam a %2$@."
+            "value" : "Os saltos vão %1$@ e chegam a %2$@."
           }
         }
       }
@@ -5754,7 +5742,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le plateau de gauche est plus lourd."
+            "value" : "Le plateau gauche est plus lourd."
           }
         },
         "pt" : {
@@ -5783,7 +5771,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les plateaux sont à l’équilibre."
+            "value" : "Les plateaux sont en équilibre."
           }
         },
         "pt" : {
@@ -5824,7 +5812,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A pergunta é sobre %1$@, em que %2$@ = %3$@."
+            "value" : "A pergunta é sobre %1$@, onde %2$@ = %3$@."
           }
         }
       }
@@ -5847,7 +5835,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le plateau de droite est plus lourd."
+            "value" : "Le plateau droit est plus lourd."
           }
         },
         "pt" : {
@@ -5864,25 +5852,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieses Muster kann nicht ausgeführt werden. Prüfe, ob alle Klammern geschlossen sind und keine Gruppe wiederholt wird, die bereits eine Wiederholung enthält."
+            "value" : "Dieses Muster kann nicht ausgeführt werden. Prüfe, ob alle Klammern geschlossen sind, und wiederhole keine Gruppe, die bereits eine Wiederholung enthält."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este patrón no se puede ejecutar. Comprueba que los paréntesis estén cerrados y que no repitas un grupo que ya contiene una repetición."
+            "value" : "Este patrón no se puede ejecutar. Comprueba que los paréntesis y corchetes estén cerrados y no repitas un grupo que ya tenga repeticiones dentro."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce motif ne peut pas être exécuté. Vérifie que les parenthèses sont fermées et ne répète pas un groupe qui contient déjà une répétition."
+            "value" : "Ce motif ne peut pas être utilisé. Vérifie que les parenthèses et les crochets sont fermés et ne répète pas un groupe qui contient déjà une répétition."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não é possível executar esse padrão. Confira se os colchetes estão fechados e se nenhum grupo que já contém uma repetição está sendo repetido."
+            "value" : "Não é possível executar esse padrão. Confira se os colchetes estão fechados e não repita um grupo que já tenha uma repetição dentro dele."
           }
         }
       }
@@ -5905,7 +5893,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Multiplié par"
+            "value" : "Fois"
           }
         },
         "pt" : {
@@ -5922,7 +5910,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "hoch"
+            "value" : "Hoch"
           }
         },
         "es" : {
@@ -5934,7 +5922,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puissance"
+            "value" : "À la puissance"
           }
         },
         "pt" : {
@@ -5957,13 +5945,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "En total, forman %@."
+            "value" : "En total suman %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ensemble, ils font %@."
+            "value" : "Ensemble, ils forment %@."
           }
         },
         "pt" : {
@@ -6009,7 +5997,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tatsächlicher Wert: %@"
+            "value" : "Wahrer Wert: %@"
           }
         },
         "es" : {
@@ -6021,7 +6009,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Valeur réelle : %@"
+            "value" : "Valeur réelle : %@"
           }
         },
         "pt" : {
@@ -6050,7 +6038,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "non défini"
+            "value" : "non définie"
           }
         },
         "pt" : {
@@ -6067,7 +6055,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Rückgängig"
+            "value" : "Rückgängig machen"
           }
         },
         "es" : {
@@ -6125,25 +6113,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Oberer Ziehpunkt"
+            "value" : "Oberer Regler"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Controlador superior"
+            "value" : "Control superior"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Curseur supérieur"
+            "value" : "Poignée supérieure"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Alça superior"
+            "value" : "Controle do limite superior"
           }
         }
       }
@@ -6154,25 +6142,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aktivierte Was-wäre-wenn-Ereignisse: %@."
+            "value" : "Aktivierte Was-wäre-wenn-Szenarien: %@."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supuestos activados: %@."
+            "value" : "Hipótesis activadas: %@."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hypothèses activées : %@."
+            "value" : "Scénarios activés : %@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hipóteses ativadas: %@."
+            "value" : "Cenários hipotéticos ativados: %@."
           }
         }
       }
@@ -6189,19 +6177,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lo que indican las matemáticas"
+            "value" : "Lo que dicen las matemáticas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Résultat du calcul"
+            "value" : "Ce que disent les maths"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O que a matemática mostra"
+            "value" : "O que a matemática diz"
           }
         }
       }
@@ -6218,13 +6206,13 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Supuestos"
+            "value" : "Situaciones hipotéticas"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Événements hypothétiques"
+            "value" : "Scénarios hypothétiques"
           }
         },
         "pt" : {
@@ -6241,7 +6229,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Welche Endung hat %@?"
+            "value" : "Welche Endung bekommt %@?"
           }
         },
         "es" : {
@@ -6253,13 +6241,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Quelle terminaison prend %@ ?"
+            "value" : "Quelle terminaison prend %@ ?"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qual terminação %@ usa?"
+            "value" : "Qual terminação %@ recebe?"
           }
         }
       }
@@ -6270,25 +6258,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mit den Was-wäre-wenn-Ereignissen"
+            "value" : "Mit den Was-wäre-wenn-Szenarien"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Con los supuestos"
+            "value" : "Con las hipótesis"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec les hypothèses"
+            "value" : "Avec les scénarios"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com as hipóteses"
+            "value" : "Com os cenários hipotéticos"
           }
         }
       }
@@ -6340,7 +6328,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ta réponse sur la droite numérique"
+            "value" : "Ta réponse sur la droite graduée"
           }
         },
         "pt" : {
@@ -6386,19 +6374,19 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Schätzung: %@"
+            "value" : "Deine Vermutung: %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu predicción: %@"
+            "value" : "Tu suposición: %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton estimation : %@"
+            "value" : "Ton estimation : %@"
           }
         },
         "pt" : {
