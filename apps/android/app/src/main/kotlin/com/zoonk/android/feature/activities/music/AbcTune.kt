@@ -91,6 +91,8 @@ data class AbcTune(
         val chordSymbol: String? = null,
         /** The number over a tuplet, on its first note, with how many notes it spans. */
         val tuplet: Tuplet? = null,
+        /** A new key signature from this note on (sharps positive, flats negative). */
+        val fifths: Int? = null,
     ) {
         val isRest: Boolean get() = pitches.isEmpty()
     }
@@ -104,8 +106,6 @@ data class AbcTune(
         /** A first or second ending: played only on that pass through the repeat. */
         val ending: Int? = null,
         val end: BarLine = BarLine.None,
-        /** A new key signature from this bar on (sharps positive, flats negative). */
-        val fifths: Int? = null,
     )
 
     val hasMusic: Boolean get() = bars.any { it.elements.isNotEmpty() }
@@ -195,9 +195,13 @@ private class AbcReader {
     private var chordSymbol: String? = null
     private var tuplet: TupletState? = null
     private var broken: Double? = null
-    private var tiedMidis = setOf<Int>()
+
+    /** The notes the last note or chord ties over, by letter step: the next one holds their pitch, accidental and all. */
+    private var tied = mapOf<Int, Int>()
+    private var pendingFifths: Int? = null
     private var inBody = false
-    private var voices = 0
+    private var firstVoice: String? = null
+    private var voice: String? = null
 
     private class TupletState(
         val number: Int,
@@ -213,7 +217,7 @@ private class AbcReader {
 
             if (field != null) {
                 readField(field.first, field.second)
-            } else if (inBody && voices <= 1) {
+            } else if (inBody) {
                 readBody(line)
                 breaksBeam = true
             }
@@ -251,13 +255,16 @@ private class AbcReader {
                 unitLength = readFraction(value)
             }
 
+            // Voices declared in the header don't choose one: the body starts in the first.
             'K' -> {
                 readKey(value)
+                if (!inBody) voice = firstVoice
                 inBody = true
             }
 
             'V' -> {
-                voices += 1
+                voice = value.substringBefore(' ')
+                if (firstVoice == null) firstVoice = voice
             }
         }
     }
@@ -279,14 +286,18 @@ private class AbcReader {
             }
 
             else -> {
-                val numbers = parts(value).mapNotNull { it.toIntOrNull() }
-                if (numbers.size == 2 && numbers[1] > 0) AbcTune.Meter.Fraction(numbers[0], numbers[1]) else AbcTune.Meter.None
+                val numbers = positiveFraction(value)
+                if (numbers != null) AbcTune.Meter.Fraction(numbers.first, numbers.second) else AbcTune.Meter.None
             }
         }
 
-    private fun readFraction(value: String): Double? {
-        val numbers = parts(value).mapNotNull { it.toDoubleOrNull() }
-        return if (numbers.size == 2 && numbers[1] > 0) numbers[0] / numbers[1] else null
+    private fun readFraction(value: String): Double? = positiveFraction(value)?.let { it.first.toDouble() / it.second }
+
+    private fun positiveFraction(value: String): Pair<Int, Int>? {
+        val numbers = parts(value).map { it.toIntOrNull() }
+        val num = numbers.getOrNull(0)
+        val den = numbers.getOrNull(1)
+        return if (numbers.size == 2 && num != null && den != null && num > 0 && den > 0) num to den else null
     }
 
     /** The unit note length: L: when given, else an eighth (a sixteenth in meters under 3/4). */
@@ -345,7 +356,7 @@ private class AbcReader {
 
         val clamped = signature.coerceIn(-7, 7)
 
-        if (hasMusic) bar = bar.copy(fifths = clamped) else fifths = clamped
+        if (hasMusic) pendingFifths = clamped else fifths = clamped
 
         keyAccidentals =
             "FCGDAEB".take(maxOf(clamped, 0)).associateWith { 1 } +
@@ -370,6 +381,11 @@ private class AbcReader {
 
         while (index < characters.length) {
             val character = characters[index]
+
+            if (voice != firstVoice && !characters.startsWith("[V:", index)) {
+                index += 1
+                continue
+            }
 
             index =
                 when (character) {
@@ -430,7 +446,7 @@ private class AbcReader {
     private fun tieLast() {
         val last = elements.lastOrNull() ?: return
         elements[elements.lastIndex] = last.copy(pitches = last.pitches.map { it.copy(isTied = true) })
-        tiedMidis = last.pitches.map { it.midi }.toSet()
+        tied = last.pitches.associate { it.step to it.midi }
     }
 
     private fun skip(
@@ -464,7 +480,7 @@ private class AbcReader {
         val numbers = mutableListOf<Int?>()
 
         while (numbers.size < 3) {
-            val digits = characters.drop(index).takeWhile { it.isDigit() }
+            val digits = digits(characters, index)
             index += digits.length
 
             // A slur.
@@ -682,6 +698,11 @@ private class AbcReader {
         return ReadPitch(AbcTune.Pitch(step, midi, accidental?.second), length.value, length.end)
     }
 
+    private fun digits(
+        characters: String,
+        start: Int,
+    ): String = characters.drop(start).takeWhile { it in '0'..'9' }
+
     private class Length(
         val value: Double,
         val end: Int,
@@ -692,15 +713,15 @@ private class AbcReader {
         characters: String,
         start: Int,
     ): Length {
-        val digits = characters.drop(start).takeWhile { it.isDigit() }
+        val digits = digits(characters, start)
         var index = start + digits.length
-        var value = digits.toDoubleOrNull() ?: 1.0
+        var value = digits.toIntOrNull()?.toDouble() ?: 1.0
 
         while (characters.getOrNull(index) == '/') {
-            val divisor = characters.drop(index + 1).takeWhile { it.isDigit() }
+            val divisor = digits(characters, index + 1)
             index += 1 + divisor.length
-            // A zero (`C/0`) isn't a length: it's read past.
-            value /= if (divisor.isEmpty()) 2.0 else divisor.toDouble().takeIf { it > 0 } ?: 1.0
+            // A zero (`C/0`) or a number past an Int isn't a length: it's read past.
+            value /= if (divisor.isEmpty()) 2.0 else divisor.toIntOrNull()?.takeIf { it > 0 }?.toDouble() ?: 1.0
         }
 
         return Length(value, index)
@@ -728,14 +749,24 @@ private class AbcReader {
             tuplet = if (current.left > 1) TupletState(current.number, current.count, current.left - 1, current.factor) else null
         }
 
-        val tied = pitches.map { if (it.midi in tiedMidis) it.copy(continuesTie = true) else it }
+        val held =
+            pitches.map { pitch ->
+                val midi = tied[pitch.step]
+                if (midi != null &&
+                    (pitch.accidental == null || pitch.midi == midi)
+                ) {
+                    pitch.copy(midi = midi, continuesTie = true)
+                } else {
+                    pitch
+                }
+            }
 
         // A chord's own ties (`[C-EG]`) carry to the next note; a tie after it is read later.
-        tiedMidis = tied.filter { it.isTied }.map { it.midi }.toSet()
+        tied = held.filter { it.isTied }.associate { it.step to it.midi }
 
         elements +=
             AbcTune.Element(
-                pitches = tied,
+                pitches = held,
                 written = written,
                 sounding = sounding,
                 isInvisible = isInvisible,
@@ -743,9 +774,11 @@ private class AbcReader {
                 breaksBeam = breaksBeam,
                 chordSymbol = chordSymbol,
                 tuplet = tupletMark,
+                fifths = pendingFifths,
             )
         breaksBeam = false
         chordSymbol = null
+        pendingFifths = null
     }
 
     private companion object {

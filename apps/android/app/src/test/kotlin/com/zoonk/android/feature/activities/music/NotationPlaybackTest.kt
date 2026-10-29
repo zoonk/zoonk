@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.activities.music
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 import kotlin.math.roundToInt
 
@@ -97,5 +98,48 @@ class NotationPlaybackTest {
         )
         assertEquals(listOf(0, 500, 1000, 1500, 2500, 3000, 4500), schedule.events.map { (it.start * 1000).roundToInt() })
         assertEquals(6.0, schedule.seconds, 1e-9)
+    }
+
+    @Test
+    fun aTieCarriesItsAccidentalOverTheBarLineButNotToTheNextNote() {
+        assertEquals("0/66/1000 1000/65/500", sounds("M:4/4\nL:1/4\nK:C\n^F-|F F|]", 120))
+    }
+
+    @Test
+    fun aVoiceChosenAgainPlaysOn() {
+        assertEquals(
+            "0/60/500 500/62/500 1000/64/500 1500/65/500 2000/67/500 2500/69/500 3000/71/500 3500/72/500",
+            sounds("M:4/4\nL:1/4\nK:C\nV:1\nC D E F|\nV:1\nG A B c|]", 120),
+        )
+    }
+
+    @Test
+    fun voicesDeclaredInTheHeaderLeaveTheBodyInTheFirst() {
+        assertEquals("0/60/500 500/62/500 1000/64/500 1500/65/500", sounds("M:4/4\nL:1/4\nV:1\nV:2\nK:C\nC D E F|]", 120))
+    }
+
+    @Test
+    fun anInlineKeyChangeSoundsFromWhereItIsWritten() {
+        assertEquals("0/65/500 500/66/500 1000/67/500 1500/66/500", sounds("M:4/4\nL:1/4\nK:C\nF [K:G] F G F|]", 120))
+    }
+
+    @Test
+    fun malformedLengthsMeterAndTupletsStillGiveAFiniteTune() {
+        val malformed =
+            listOf(
+                "M:-1/4\nK:C\nC|",
+                "K:C\nCD(3:2:2147483647E|",
+                "K:C\nC/\u0662|",
+                "L:NaN/1\nK:C\nCD|",
+                "K:C\nC${"9".repeat(310)}|",
+            )
+
+        for (notation in malformed) {
+            val tune = AbcTune.parse(notation)
+            val schedule = NotationPlayback.schedule(tune, 120)
+
+            NotationDrawing.of(tune, width = 326f, space = 8f, tabSpace = 12f, textHeight = 16f)
+            assertTrue(notation, schedule.seconds.isFinite() && schedule.sounds.all { it.at.isFinite() && (it.duration ?: 0.0).isFinite() })
+        }
     }
 }

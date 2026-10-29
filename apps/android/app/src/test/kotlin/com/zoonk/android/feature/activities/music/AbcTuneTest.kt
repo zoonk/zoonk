@@ -43,7 +43,13 @@ class AbcTuneTest {
         assertEquals("Traditional", chromatic.composer)
         assertEquals(AbcTune.Meter.Common, chromatic.meter)
         assertEquals(3, chromatic.fifths)
-        assertEquals(-3, chromatic.bars[1].fifths)
+        assertEquals(
+            -3,
+            chromatic.bars[1]
+                .elements
+                .first()
+                .fifths,
+        )
         assertEquals(AbcTune.Clef.Bass, bass.clef)
         assertEquals(-2, bass.fifths)
         assertEquals(null, rests.title)
@@ -80,5 +86,26 @@ class AbcTuneTest {
         assertEquals(AbcTune.Tuplet(3, 3), triplet[1].tuplet)
         assertEquals(listOf(0.125, 0.125, 0.125), triplet.subList(1, 4).map { it.written })
         assertEquals(listOf(1.0 / 12, 1.0 / 12, 1.0 / 12), triplet.subList(1, 4).map { it.sounding })
+    }
+
+    @Test
+    fun aMeterOrUnitLengthThatIsntPositiveIsReadPast() {
+        val tune = AbcTune.parse("M:-3/4\nL:-1/8\nK:C\nCDE z|")
+
+        assertEquals(AbcTune.Meter.None, tune.meter)
+        assertEquals(
+            listOf(0.125, 0.125, 0.125, 0.125),
+            tune.bars
+                .single()
+                .elements
+                .map { it.written },
+        )
+        assertEquals(
+            1,
+            NotationDrawing.of(tune, width = 326f, space = 8f, tabSpace = 12f, textHeight = 16f).items.count {
+                it.element ==
+                    NotationElementId(0, 3)
+            },
+        )
     }
 }

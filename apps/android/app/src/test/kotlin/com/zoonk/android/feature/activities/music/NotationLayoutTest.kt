@@ -70,4 +70,36 @@ class NotationLayoutTest {
 
         assertEquals(held.x - 1.6f, tie.toX, 1e-3f)
     }
+
+    @Test
+    fun anInlineKeyChangeIsDrawnWhereItIsWritten() {
+        val drawing = drawing("M:4/4\nL:1/4\nK:C\nF [K:G] F G F|]")
+        val heads =
+            (0..1).map { index ->
+                drawing.items.first { it.element == NotationElementId(0, index) }.mark as NotationDrawing.Mark.Glyph
+            }
+        val sharp =
+            drawing.items
+                .single {
+                    (it.mark as? NotationDrawing.Mark.Glyph)?.glyph == MusicGlyph.Sharp
+                }.mark as NotationDrawing.Mark.Glyph
+
+        assertTrue(sharp.x > heads[0].x && sharp.x < heads[1].x)
+    }
+
+    @Test
+    fun aBeamedSecondSitsOnTheBeamsSideOfTheStemWithTheHigherNoteToTheRight() {
+        val drawing = drawing("M:4/4\nL:1/8\nK:C\n[EF][ef] [EF][ef] z4|]")
+        val chord = drawing.items.filter { it.element == NotationElementId(0, 0) }.map { it.mark }
+        val heads =
+            chord
+                .filterIsInstance<NotationDrawing.Mark.Glyph>()
+                .filter {
+                    it.glyph == MusicGlyph.BlackNote
+                }.sortedByDescending { it.y }
+        val stem = chord.filterIsInstance<NotationDrawing.Mark.Box>().single()
+
+        assertTrue(heads[0].x < heads[1].x)
+        assertEquals(stem.left, heads[1].x, 1e-3f)
+    }
 }

@@ -195,7 +195,9 @@ private class NotationLayout(
         val data = tune.bars[bar]
         return data.elements.fold(space * 1.6f) { total, element -> total + elementWidth(element) } +
             (if (data.startsRepeat) space * 1.5f else 0f) +
-            (data.fifths?.let { (cancelled(keyBefore(bar), it).count() + abs(it)) * space * 1.05f + space * 1.1f } ?: 0f)
+            data.elements.indices
+                .sumOf { keyChangeWidth(NotationElementId(bar, it)).toDouble() }
+                .toFloat()
     }
 
     /** Draws one line and returns how much it stretched its bars: full lines fill the width, and a short last line keeps the spacing of the line before it. */
@@ -205,7 +207,11 @@ private class NotationLayout(
         isLast: Boolean,
         previous: Float?,
     ): Float {
-        tune.bars[bars.first()].fifths?.let { fifths = it }
+        tune.bars[bars.first()]
+            .elements
+            .first()
+            .fifths
+            ?.let { fifths = it }
 
         val start = items.size
         var x = drawHeader(isFirst)
@@ -292,11 +298,22 @@ private class NotationLayout(
         return if (fifths == 0) x else x + space * 0.6f
     }
 
-    private fun keyBefore(bar: Int): Int =
-        tune.bars
-            .take(bar)
-            .lastOrNull { it.fifths != null }
-            ?.fifths ?: tune.fifths
+    /** Each key change with the key it replaces, by the note it comes before. */
+    private val keyChanges: Map<NotationElementId, Pair<Int, Int>> =
+        buildMap {
+            var key = tune.fifths
+            tune.bars.forEachIndexed { bar, data ->
+                data.elements.forEachIndexed { index, element ->
+                    element.fifths?.let {
+                        put(NotationElementId(bar, index), key to it)
+                        key = it
+                    }
+                }
+            }
+        }
+
+    private fun keyChangeWidth(id: NotationElementId): Float =
+        keyChanges[id]?.let { (from, to) -> (cancelled(from, to).count() + abs(to)) * space * 1.05f + space * 1.1f } ?: 0f
 
     /** Which of the old signature's accidentals a new one drops: all of them when sharps turn to flats or the reverse. */
     private fun cancelled(
@@ -373,13 +390,6 @@ private class NotationLayout(
         val data = tune.bars[bar]
         var x = start
 
-        // A key change mid-line cancels the old signature and shows the new one where it starts; at a line's start the header shows it.
-        if (data.fifths != null && !startsLine) {
-            x = drawNaturals(fifths, data.fifths, x + space * 0.5f)
-            fifths = data.fifths
-            x = drawKeySignature(x)
-        }
-
         if (data.startsRepeat) {
             add(NotationDrawing.Mark.Box(x + space * 0.2f, 0f, space * 0.45f, space * 4))
             add(NotationDrawing.Mark.Box(x + space * 0.85f, 0f, stemWidth, space * 4))
@@ -392,6 +402,15 @@ private class NotationLayout(
         val notesStart = x
         val placed =
             data.elements.mapIndexed { index, element ->
+                val change = keyChanges[NotationElementId(bar, index)]
+
+                // A key change mid-line cancels the old signature and shows the new one where it starts; at a line's start the header shows it.
+                if (change != null && !(startsLine && index == 0)) {
+                    x = drawNaturals(change.first, change.second, x + space * 0.5f)
+                    fifths = change.second
+                    x = drawKeySignature(x)
+                }
+
                 val hasAccidental = element.pitches.any { it.accidental != null }
                 val head = if (element.isRest) 0f else head(noteType(element.written).base).width * scale
                 val item = Placed(NotationElementId(bar, index), element, x + if (hasAccidental) space * 1.2f else 0f, head)
@@ -477,15 +496,16 @@ private class NotationLayout(
     }
 
     private fun drawElements(placed: List<Placed>) {
-        val beamed = mutableSetOf<Int>()
+        val beamUp = mutableMapOf<Int, Boolean>()
 
         for (group in beamGroups(placed)) {
-            drawBeamGroup(group.map { placed[it] })
-            beamed += group
+            val up = stemsUp(group.map { placed[it].element })
+            drawBeamGroup(group.map { placed[it] }, up)
+            group.forEach { beamUp[it] = up }
         }
 
         placed.forEachIndexed { index, item ->
-            if (item.element.isRest) drawRest(item) else drawNote(item, hasBeam = index in beamed)
+            if (item.element.isRest) drawRest(item) else drawNote(item, beamUp[index])
 
             item.element.chordSymbol?.let { symbol ->
                 val y = min(-space * 1.4f, topOfNote(item) - space * 1.2f)
@@ -493,7 +513,7 @@ private class NotationLayout(
             }
 
             item.element.tuplet?.let { tuplet ->
-                val lastIndex = min(index + tuplet.count - 1, placed.lastIndex)
+                val lastIndex = index + min(tuplet.count - 1, placed.lastIndex - index)
                 val last = placed[lastIndex]
                 val isUp = stemsUp(placed.subList(index, lastIndex + 1).map { it.element })
                 val centerX = (item.x + last.x + last.headWidth) / 2
@@ -553,21 +573,22 @@ private class NotationLayout(
         up: Boolean,
     ): Float = if (up) item.x + item.headWidth - stemWidth / 2 else item.x + stemWidth / 2
 
+    /** [beamUp] is the direction of the beam the note joins, or null for a note on its own. */
     private fun drawNote(
         item: Placed,
-        hasBeam: Boolean,
+        beamUp: Boolean?,
     ) {
         val type = noteType(item.element.written)
-        val up = stemsUp(listOf(item.element))
+        val up = beamUp ?: stemsUp(listOf(item.element))
         val head = head(type.base)
         val sorted = item.element.pitches.sortedBy { it.step }
         var previous: Int? = null
         var shifted = false
 
-        for (pitch in sorted) {
+        // In a second the higher note sits to the right: stem up, it moves past the stem; stem down, the lower note moves left of it.
+        for (pitch in if (up) sorted else sorted.reversed()) {
             val position = position(pitch.step)
-            // A second above (stem up) or below sits on the other side of the stem.
-            shifted = if (previous != null && position - previous == 1) !shifted else false
+            shifted = if (previous != null && abs(position - previous) == 1) !shifted else false
             val offset =
                 if (!shifted) {
                     0f
@@ -593,7 +614,7 @@ private class NotationLayout(
             previous = position
         }
 
-        if (type.base >= 1 || hasBeam) return
+        if (type.base >= 1 || beamUp != null) return
 
         val x = stemX(item, up)
         val outer = y(position((if (up) sorted.first() else sorted.last()).step))
@@ -685,10 +706,12 @@ private class NotationLayout(
         return groups
     }
 
-    private fun drawBeamGroup(group: List<Placed>) {
+    private fun drawBeamGroup(
+        group: List<Placed>,
+        up: Boolean,
+    ) {
         val first = group.first()
         val last = group.last()
-        val up = stemsUp(group.map { it.element })
         val firstX = stemX(first, up)
         val lastX = stemX(last, up)
         var startY = stemEnd(first, up)
