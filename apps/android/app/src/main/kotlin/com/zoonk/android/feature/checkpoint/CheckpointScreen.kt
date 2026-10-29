@@ -66,6 +66,7 @@ import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.ActionFlow
+import com.zoonk.android.feature.practice.ListeningSet
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
 import com.zoonk.android.feature.practice.RunNotFound
@@ -81,6 +82,7 @@ import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.WorkedSteps
 import com.zoonk.android.feature.questions.answerText
+import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.Trickster
@@ -273,6 +275,7 @@ private fun QuestionCard(
 ) {
     val feedback = state.feedback?.takeIf { it.itemId == question.itemId }
 
+    question.set?.takeIf { it.listening != null }?.let { ListeningSet(it) }
     ItemSupport(question)
     if (question.format != QuestionFormat.TrueFalse) QuestionTitle(question.question, graded = feedback != null)
     // A wrong pick never reveals the right one until the end.
@@ -705,7 +708,7 @@ private fun Section(
 @Composable
 private fun WonDetails(duel: Duel) {
     val checkpoint = duel.read.checkpoint
-    val points = duel.state.completion?.brainPower ?: checkpoint.reward.brainPower
+    val points = duel.state.completion?.ownBrainPower ?: checkpoint.reward.brainPower
     val phase = checkpoint.phase?.let { (it.index + 1).toString() }
 
     Section(stringResource(R.string.checkpoint_rewards)) {
@@ -734,7 +737,7 @@ private fun NotWonDetails(duel: Duel) {
     val lessons = duel.state.reinforcementLessons
     val retry = if (duel.state.completion != null) Checkpoint.Retry.TOMORROW else checkpoint.retry
     val nextPhase = checkpoint.nextPhase?.takeIf { checkpoint.retry != Checkpoint.Retry.PASSED }
-    val earned = duel.state.completion?.brainPower ?: 0
+    val earned = duel.state.completion?.ownBrainPower ?: 0
 
     if (retry != null || nextPhase != null) {
         Section(stringResource(R.string.checkpoint_whats_next)) {

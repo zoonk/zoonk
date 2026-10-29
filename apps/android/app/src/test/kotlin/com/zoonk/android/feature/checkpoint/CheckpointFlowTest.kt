@@ -36,6 +36,47 @@ class CheckpointFlowTest {
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
+    fun aWonResultCountsOnlyTheCheckpointsOwnBrainPower() {
+        val cache =
+            AppCache(
+                FakeSession(AuthenticatedSession(ANA, "token", "local")),
+                CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+            )
+        val read = checkpoint()
+        val viewModel =
+            CheckpointViewModel(
+                read.blockId,
+                CheckpointStore(
+                    object : CheckpointApi {
+                        override suspend fun checkpoint(
+                            session: AuthenticatedSession,
+                            blockId: UUID,
+                        ) = read
+
+                        override suspend fun answer(
+                            session: AuthenticatedSession,
+                            checkpoint: Checkpoint,
+                            input: StudyAnswerInput,
+                        ) = error("Not used")
+
+                        override suspend fun finish(
+                            session: AuthenticatedSession,
+                            checkpoint: Checkpoint,
+                            timeZone: String,
+                        ): StudyBlockCompletion = error("Not used")
+                    },
+                    cache,
+                ) { "UTC" },
+            )
+        val duel = Duel(read.read(), DuelState.of(read).finished(wonCompletion()))
+
+        rule.setContent { ZoonkTheme { DuelResult(duel, viewModel, AppContainer.preview(rule.activity)) } }
+
+        rule.onNodeWithText("You beat the Trickster!").assertIsDisplayed()
+        rule.onNodeWithText("+30").assertIsDisplayed()
+    }
+
+    @Test
     fun aWonDuelSaysSoAndAsksNoMore() {
         val sent = mutableListOf<StudyAnswerInput>()
         val api =

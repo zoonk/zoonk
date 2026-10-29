@@ -106,6 +106,32 @@ class CheckpointViewModelTest {
         }
 
     @Test
+    fun aFinishThatFailsEndsOnTryAgain() =
+        runTest(dispatcher) {
+            val viewModel = started()
+            repeat(2) {
+                viewModel.confirm(Answer.Choice(0))
+                advanceUntilIdle()
+                viewModel.next()
+            }
+            advanceUntilIdle()
+            assertEquals(DuelError.Finish, viewModel.state.error)
+
+            finish = { wonCompletion() }
+            viewModel.retry()
+            advanceUntilIdle()
+
+            assertEquals(true, viewModel.state.showsResult)
+            assertEquals(
+                true,
+                viewModel.state.completion
+                    ?.checkpoint
+                    ?.passed,
+            )
+            assertNull(viewModel.state.error)
+        }
+
+    @Test
     fun tryAgainSendsTheSameAnswer() =
         runTest(dispatcher) {
             answer = { throw ApiException(ApiError.Network) }

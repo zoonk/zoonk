@@ -39,6 +39,7 @@ import com.zoonk.android.feature.player.engine.Segment
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.steps.count
+import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.Limit
@@ -282,7 +283,7 @@ internal fun LessonReadouts(
     val correct = segments.count { it == Segment.Right }
     val answered = correct + segments.count { it == Segment.Wrong }
     val block = result.studyBlock
-    val brainPower = if (block == null) result.brainPower else block.brainPower - if (block.fullMeal.paid) block.fullMeal.bonus else 0
+    val brainPower = block?.ownBrainPower ?: result.brainPower
     val locale = currentLocale()
 
     val review =

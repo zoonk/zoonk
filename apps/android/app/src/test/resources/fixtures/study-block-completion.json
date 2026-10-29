@@ -1,0 +1,21 @@
+{
+  "blockId": "2b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+  "brainPower": 50,
+  "capsulesOpened": 0,
+  "ceremony": null,
+  "checkpoint": null,
+  "comesBackOn": null,
+  "completedMissions": [],
+  "correct": 2,
+  "fullMeal": { "bonus": 20, "paid": true },
+  "milestones": [],
+  "missions": [],
+  "netScore": null,
+  "nextBlockId": null,
+  "reached": { "energy": null, "level": null },
+  "sessionBar": { "completed": 1, "total": 3 },
+  "sessionCompleted": false,
+  "testOutOffer": null,
+  "topHyperdrive": 0,
+  "total": 3
+}

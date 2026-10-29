@@ -41,6 +41,7 @@ import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.session.blockTitle
+import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.feature.session.toDayStep
 import com.zoonk.android.feature.today.TodayRead
 import com.zoonk.android.navigation.AppNavigator
@@ -148,7 +149,7 @@ private fun BlockFinished(
         action = stringResource(R.string.practice_continue),
         saving = completion == null,
         onClose = onClose,
-    ) { completion?.let { MomentReadouts(it.brainPower, score = MomentScore(it.total.toInt(), it.correct.toInt())) } }
+    ) { completion?.let { MomentReadouts(it.ownBrainPower, score = MomentScore(it.total.toInt(), it.correct.toInt())) } }
 }
 
 private val StudyBlockDetail.isReview get() = block.kind == StudyBlock.Kind.REVIEW
