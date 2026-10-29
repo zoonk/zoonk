@@ -140,9 +140,6 @@
     <string name="goalcontent_skipped_known">Skipped because you already know it</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s done</string>
-    <string name="goalcontent_done">Done</string>
-    <string name="goalcontent_up_next">Up next</string>
-    <string name="goalcontent_coming_up">Coming up</string>
     <!-- A topic's state for screen readers. -->
     <string name="goalcontent_topic_known">You know this</string>
     <string name="goalcontent_topic_in_progress">In progress</string>
@@ -175,12 +172,8 @@
     <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
     <string name="goalcontent_subject_chapter">%1$s · Chapter %2$s</string>
     <string name="goalcontent_chapter_number">Chapter %1$s</string>
-    <string name="goalcontent_lessons">Lessons</string>
     <string name="goalcontent_progress">Progress</string>
     <string name="goalcontent_practice">Practice</string>
-    <!-- Offers a test that skips a chapter the learner already knows. -->
-    <string name="goalcontent_test_out_title">Already know this?</string>
-    <string name="goalcontent_test_out_description">Take the test and skip the chapter</string>
     <string name="goalcontent_practice_chapter">Practice this chapter</string>
     <string name="goalcontent_practice_daily_cap">That\'s all the bonus practice for today. Tomorrow\'s session picks this chapter up.</string>
     <string name="goalcontent_practice_nothing">Nothing to practice in this chapter yet.</string>

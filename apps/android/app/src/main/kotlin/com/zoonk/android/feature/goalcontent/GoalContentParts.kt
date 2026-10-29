@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -450,23 +449,6 @@ internal fun PageNotFound(
             description = stringResource(R.string.goalcontent_not_found_description),
         ) {
             Button(onClick = { navigator.showRoot(AppTab.Today) }) { Text(stringResource(R.string.goalcontent_not_found_action)) }
-        }
-    }
-}
-
-/** Adds [rows] with a hairline between each. */
-internal inline fun <T> LazyListScope.dividedItems(
-    rows: List<T>,
-    crossinline key: (T) -> Any,
-    contentType: Any,
-    crossinline row: @Composable (T) -> Unit,
-) {
-    rows.forEachIndexed { index, value ->
-        item(key = key(value), contentType = contentType) {
-            Column {
-                if (index > 0) RowDivider()
-                row(value)
-            }
         }
     }
 }

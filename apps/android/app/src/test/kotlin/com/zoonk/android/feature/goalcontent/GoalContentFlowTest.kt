@@ -264,7 +264,7 @@ class GoalContentFlowTest {
     fun aLessonRowOpensThatLesson() {
         showChapter()
 
-        rule.onNodeWithText("4. The Doppler effect").performClick()
+        rule.onNodeWithText("The Doppler effect").performClick()
 
         assertEquals(AppRoute.Lesson(lessonId(4)), navigator.currentRoute)
     }

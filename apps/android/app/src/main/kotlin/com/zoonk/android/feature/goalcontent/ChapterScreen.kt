@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.goalcontent
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,18 +13,23 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
@@ -47,7 +53,6 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.mindmaps.ChapterMindMapCard
-import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
@@ -55,16 +60,19 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.RoutePlaceholder
 import com.zoonk.android.ui.components.DisclosureRow
-import com.zoonk.android.ui.components.KindDot
+import com.zoonk.android.ui.components.KindDotLeading
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.LessonList
+import com.zoonk.android.ui.components.LessonProgress
 import com.zoonk.android.ui.components.LessonSummaries
 import com.zoonk.android.ui.components.LessonSummary
+import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.components.MarkStatus
-import com.zoonk.android.ui.components.MeterPart
-import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
-import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.TestOutRow
+import com.zoonk.android.ui.components.TestOutScope
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -239,6 +247,7 @@ internal fun ChapterPage(
     mindMap: MindMapSlot? = null,
 ) {
     val reference = mindMap?.takeIf { it.map.status != ChapterMindMap.Status.UNAVAILABLE }
+    val lessons = remember(chapter.lessons) { chapter.lessons.map { it.listed() } }
 
     DetailPage(
         title = chapter.chapter.title,
@@ -247,27 +256,14 @@ internal fun ChapterPage(
         ask = ask,
         menu = menu,
         aside = {
-            ChapterProgress(chapter)
+            ChapterProgress(lessons)
             ChapterPractice(chapter, practice, actions)
             ChapterReference(chapter, reference)
         },
     ) { asideBeside ->
-        if (chapter.lessons.isNotEmpty()) {
-            val done = chapter.lessons.count { it.state == ChapterLesson.State.DONE }
-            sectionTitle(
-                key = "lessons-title",
-                title = { stringResource(R.string.goalcontent_lessons) },
-                detail = {
-                    val locale = currentLocale()
-                    stringResource(
-                        R.string.goalcontent_count_of,
-                        formatNumber(done.toDouble(), locale),
-                        formatNumber(chapter.lessons.size.toDouble(), locale),
-                    )
-                },
-            )
-            dividedItems(chapter.lessons.withIndex().toList(), key = { it.value.lessonId }, contentType = "lesson") { (index, lesson) ->
-                LessonRow(lesson, index + 1, onClick = { actions.openLesson(lesson.lessonId) })
+        if (lessons.isNotEmpty()) {
+            item(key = "lessons", contentType = "lessons") {
+                LessonList(lessons, upNext = true, onOpen = actions.openLesson, modifier = Modifier.padding(top = SECTION_GAP))
             }
         }
 
@@ -280,6 +276,16 @@ internal fun ChapterPage(
         }
     }
 }
+
+private fun ChapterLesson.listed() =
+    ListedLesson(
+        id = lessonId,
+        title = title,
+        minutes = minutes.toInt(),
+        done = state == ChapterLesson.State.DONE,
+        next = state == ChapterLesson.State.NEXT,
+        plusRequired = plusRequired,
+    )
 
 @Composable
 private fun ChapterHero(
@@ -332,89 +338,20 @@ private fun ChapterHero(
 }
 
 @Composable
-private fun LessonRow(
-    lesson: ChapterLesson,
-    position: Int,
-    onClick: () -> Unit,
-) {
-    val isNext = lesson.state == ChapterLesson.State.NEXT
-    val locale = currentLocale()
-
-    ContentRow(
-        headline = {
-            TitleWithChip(chip = if (lesson.plusRequired) ({ PlusMark() }) else null) {
-                Text(
-                    text = numberedTitle(position.toLong(), lesson.title),
-                    color =
-                        if (lesson.state ==
-                            ChapterLesson.State.DONE
-                        ) {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        } else {
-                            MaterialTheme.colorScheme.onSurface
-                        },
-                )
-            }
-        },
-        onClick = onClick,
-        current = isNext,
-        leading = {
-            when (lesson.state) {
-                ChapterLesson.State.DONE -> {
-                    StatusMark(MarkStatus.Done, contentDescription = stringResource(R.string.goalcontent_done))
-                }
-
-                ChapterLesson.State.NEXT -> {
-                    StatusMark(MarkStatus.Next, contentDescription = stringResource(R.string.goalcontent_up_next))
-                }
-
-                ChapterLesson.State.UPCOMING -> {
-                    StatusMark(
-                        MarkStatus.Todo,
-                        contentDescription = stringResource(R.string.goalcontent_coming_up),
-                    )
-                }
-            }
-        },
-        trailing = lesson.minutes.takeIf { it > 0 }?.let { { Text(formatMinutes(it.toInt(), locale), style = factsStyle()) } },
-    )
-}
-
-/** Each lesson a part of the meter, blue once done: the aside's how far along. */
-@Composable
-private fun ChapterProgress(chapter: GoalChapter) {
-    val lessons = chapter.lessons
+private fun ChapterProgress(lessons: List<ListedLesson>) {
     if (lessons.isEmpty()) return
 
     val locale = currentLocale()
-    val done = lessons.count { it.state == ChapterLesson.State.DONE }
-    val studied = MaterialTheme.colorScheme.tertiary
 
     AsideSection(
         title = stringResource(R.string.goalcontent_progress),
         detail =
             stringResource(
                 R.string.goalcontent_count_of,
-                formatNumber(done.toDouble(), locale),
+                formatNumber(lessons.count { it.done }.toDouble(), locale),
                 formatNumber(lessons.size.toDouble(), locale),
             ),
-    ) {
-        MeterParts(
-            parts =
-                lessons.map {
-                    MeterPart(
-                        if (it.state ==
-                            ChapterLesson.State.DONE
-                        ) {
-                            MeterPart.Fill.Solid(studied)
-                        } else {
-                            MeterPart.Fill.Track
-                        },
-                    )
-                },
-            modifier = Modifier.padding(horizontal = PAGE_PADDING),
-        )
-    }
+    ) { LessonProgress(lessons, Modifier.padding(horizontal = PAGE_PADDING)) }
 }
 
 @Composable
@@ -428,48 +365,43 @@ private fun ChapterPractice(
     val mistakes = chapter.mistakes.open > 0
     if (!canTestOut && !mistakes) return
 
-    Column(modifier) {
-        SectionTitle(stringResource(R.string.goalcontent_practice), Modifier.padding(bottom = 4.dp))
-
-        if (canTestOut) {
-            ContentRow(
-                headline = {
-                    TitleWithChip(chip = if (chapter.testOut.plusRequired) ({ PlusMark() }) else null) {
-                        Text(stringResource(R.string.goalcontent_test_out_title))
-                    }
-                },
-                onClick = actions.testOut,
-                leading = { KindDot(LearnKind.Practice) },
-                supporting = { Text(stringResource(R.string.goalcontent_test_out_description)) },
-            )
-        }
-
-        if (mistakes) {
-            if (canTestOut) RowDivider()
-            ContentRow(
-                headline = {
-                    Text(
-                        stringResource(R.string.goalcontent_practice_chapter),
-                        color = if (practice.running) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-                    )
-                },
-                onClick = if (practice.running) null else actions.practice,
-                chevron = true,
-                leading = { KindDot(LearnKind.Practice) },
-            )
-            practiceMessage(practice.outcome)?.let {
-                Text(
-                    text = it,
-                    modifier =
-                        Modifier.padding(horizontal = PAGE_PADDING).padding(bottom = 12.dp).semantics {
-                            liveRegion =
-                                LiveRegionMode.Polite
-                        },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(stringResource(R.string.goalcontent_practice), Modifier.padding(horizontal = LIST_ITEM_INSET))
+        Column {
+            if (canTestOut) TestOutRow(TestOutScope.Chapter, onOpen = actions.testOut, plusRequired = chapter.testOut.plusRequired)
+            if (mistakes) {
+                if (canTestOut) HorizontalDivider()
+                PracticeChapterRow(practice, onPractice = actions.practice)
             }
         }
+    }
+}
+
+@Composable
+private fun PracticeChapterRow(
+    practice: PracticeState,
+    onPractice: () -> Unit,
+) {
+    ListItem(
+        headlineContent = { Text(stringResource(R.string.goalcontent_practice_chapter)) },
+        modifier = Modifier.clickable(enabled = !practice.running, onClick = onPractice),
+        leadingContent = { KindDotLeading(LearnKind.Practice) },
+        colors =
+            ListItemDefaults.colors(
+                containerColor = Color.Transparent,
+                headlineColor = if (practice.running) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+            ),
+    )
+    practiceMessage(practice.outcome)?.let {
+        Text(
+            text = it,
+            modifier =
+                Modifier.padding(horizontal = LIST_ITEM_INSET).padding(bottom = 12.dp).semantics {
+                    liveRegion = LiveRegionMode.Polite
+                },
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 

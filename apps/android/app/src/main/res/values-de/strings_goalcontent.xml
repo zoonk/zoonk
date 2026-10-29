@@ -15,14 +15,12 @@
   "goalcontent_chapters_done": "a55cb0f6d5129ba24824bfb0a1acee391f9310951f51148126dd49cda18cb7de",
   "goalcontent_chapters_known": "c31415d9b570ce373ec668106fa650b56e0ca4a0dc9b2e97822e6e0f25f680ed",
   "goalcontent_chapters_known_after_done": "d760591d6ab39b31205cd835404eade7bc850759f7ef402b1b3b4e147def3dd0",
-  "goalcontent_coming_up": "4da300ba2f1d1c16b50f9e008718f8f68798720b6f0a0f546eee997dd48c4870",
   "goalcontent_continue": "6790170687e620707a85fba4c290d6b4026f4c803ee1882630209925b95bc1c9",
   "goalcontent_count_of": "91eb8d20037cd23099dfd219e0083a4031713a79e195deee74c3cfcdcabe20b4",
   "goalcontent_course_weights_even": "3f58cf3fe1a26162406c51b981f0847b0c224302ee94f0a1d1f41208e03e631b",
   "goalcontent_course_weights_heavier": "2872b8010641c36671271d6bc2a238b69cb671faf1eb983b5282b20aa91db424",
   "goalcontent_coverage": "fc9564a62e2f3a8015117867aa9d5c129ecaaf03d5e5d48563502c9afade8a73",
   "goalcontent_details": "0daac85f4bc4c072b9b65b727ee1b3fe71c0edd10c1b877d1d8e89250b4abc0c",
-  "goalcontent_done": "586d8b0b1ce3c3920016fe75f313b17952a41065e681ac832a9db203c682ab74",
   "goalcontent_done_and_known": "4f537c1b5091df63156d0efd4269287fdf36509eb0dde67275cdb783a5413746",
   "goalcontent_for_reference": "dcc61fa2ddac6a878706c1c020e59d7cfcab4de3d7b1813e1ca8cbb2b2e1ff45",
   "goalcontent_frequency_material": "fc268c90156ffbb6eff11cc7c972f7e9851f29ee3cd0d5679e0daea98d38cb99",
@@ -35,7 +33,6 @@
   "goalcontent_known": "6c9f1c48e83ff4c46a3047ad98aaf0b0aee64548a88e66d6276ec49a8231092d",
   "goalcontent_known_before": "89a995869ec3b716fd0ab13a3ffd73189e56a0a8b4fdaa8edab859b5ea03d0ec",
   "goalcontent_lesson_count": "062f0846140364b77afe30a5be591772486f8ba3123c42a29b80eb80eb8f6602",
-  "goalcontent_lessons": "4411c8367decf34749d35f98627dc228ba182d43f5a9a533962439562473531a",
   "goalcontent_lessons_done": "c535fcd48dc18b6240595338cfbf1b5314196e7180fd54ca1c0df549031fba4e",
   "goalcontent_lessons_known_skipped": "d56320a839576ed61dc2cffd390032dbd13bee1449f0d3296776d348e53929ca",
   "goalcontent_lessons_skipped": "6706a3cba50ac4b3c95205172a3c4b07f217524e1e4f70db3f7f2a0d8e2fe0e2",
@@ -84,8 +81,6 @@
   "goalcontent_subject_skipped": "1ef848968c08a37699270f4c74046b9b8c9783aa0ca82e36f18a7a801ef9b08b",
   "goalcontent_subject_time": "0d546963a74edc3db17f0c7be6e2f0117d883eaee576fd12bf767b2234ac4a21",
   "goalcontent_subjects": "d6f7742e6ce03a3722b1cab692188636dbb90f577715fc17bf7521dbb09c6de9",
-  "goalcontent_test_out_description": "1af6ab1b1ddcb975fc42d473802cfb56b9af3f029575917582097b424dd62529",
-  "goalcontent_test_out_title": "e6c9542095816fdcd949fe643c5456c333b1d97c6217dee78bba17a58bfec382",
   "goalcontent_to_review": "73c8baac1197100eab321fe125da6a75c57cf04bc73f6c8c26f5936edb175079",
   "goalcontent_topic_count": "a92fa1a73b9c7a543863a3f809ce6b42a9c8d739c57a3e145602f389ee985f89",
   "goalcontent_topic_in_progress": "292789d6bbf38507a26944ea394c2d2e6ff0bec2defc50acb64e4041c1726b56",
@@ -104,8 +99,7 @@
   "goalcontent_topics_in_notice": "9b8fec188a3e7ee3d09b31fb79b0a75c9381fbeb82b19b76bc9e53f6ef9619e2",
   "goalcontent_topics_known_skipped": "b5bd25e9c62bb5c335397b0be91b2213ada94aeb35bb16fced540577fe8ab7dd",
   "goalcontent_topics_studied_of": "4226deaf96b1643246476fa6ff916c5a26ed4898b34411cfa3a2fa161bf612c4",
-  "goalcontent_topics_studied_spoken": "9d3d0395cfec38116ee4f89d77423a097a242f4ea257bbe63e9353019b617bba",
-  "goalcontent_up_next": "ec76bee9c33fcc2759a52798b7074090c12839ef8b33636cb47bb9cea8784a38"
+  "goalcontent_topics_studied_spoken": "9d3d0395cfec38116ee4f89d77423a097a242f4ea257bbe63e9353019b617bba"
 }
 -->
 <resources>
@@ -248,9 +242,6 @@
     <string name="goalcontent_skipped_known">Ausgelassen, weil dir das schon bekannt ist</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s abgeschlossen</string>
-    <string name="goalcontent_done">Erledigt</string>
-    <string name="goalcontent_up_next">Als Nächstes</string>
-    <string name="goalcontent_coming_up">Demnächst</string>
     <!-- A topic's state for screen readers. -->
     <string name="goalcontent_topic_known">Schon bekannt</string>
     <string name="goalcontent_topic_in_progress">Im Aufbau</string>
@@ -282,12 +273,8 @@
     <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
     <string name="goalcontent_subject_chapter">%1$s · Kapitel %2$s</string>
     <string name="goalcontent_chapter_number">Kapitel %1$s</string>
-    <string name="goalcontent_lessons">Lektionen</string>
     <string name="goalcontent_progress">Fortschritt</string>
     <string name="goalcontent_practice">Üben</string>
-    <!-- Offers a test that skips a chapter the learner already knows. -->
-    <string name="goalcontent_test_out_title">Kennst du das schon?</string>
-    <string name="goalcontent_test_out_description">Mach den Test und überspringe das Kapitel</string>
     <string name="goalcontent_practice_chapter">Dieses Kapitel üben</string>
     <string name="goalcontent_practice_daily_cap">Das war das Bonusüben für heute. Morgen geht es in der Lerneinheit mit diesem Kapitel weiter.</string>
     <string name="goalcontent_practice_nothing">In diesem Kapitel gibt es noch nichts zu üben.</string>
