@@ -4,15 +4,6 @@
   "name": "abcjs",
   "description": "",
   "website": "https://github.com/paulrosen/abcjs",
-  "developers": [
-    {
-      "name": "Paul Rosen"
-    },
-    {
-      "name": "Gregory Dyke"
-    }
-  ],
-  "licenses": [
-    "abcjs-mit"
-  ]
+  "developers": [{ "name": "Paul Rosen" }, { "name": "Gregory Dyke" }],
+  "licenses": ["abcjs-mit"]
 }
