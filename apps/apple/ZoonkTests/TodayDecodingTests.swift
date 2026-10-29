@@ -5,13 +5,24 @@ import XCTest
 
 final class TodayDecodingTests: XCTestCase {
   func testAnExamGoalsTodayDecodes() throws {
-    let generated = try decoder().decode(
-      Components.Schemas.Today.self, from: Data(anaToday.utf8))
-    let today: TodayView = try StudyJSON.recode(generated)
+    let today = try anaTodayView()
 
     XCTAssertEqual(today.goal.kind, .exam)
     XCTAssertEqual(today.session.blocks.count, 8)
     XCTAssertEqual(today.planChange?.status, "proposed")
+  }
+
+  func testTheWeekCountsEveryDayStudiedOfItsStudyDays() throws {
+    let week = try anaTodayView().session.week
+
+    XCTAssertEqual(week.daysStudied, 3)
+    XCTAssertEqual(week.studyDayCount, 7)
+  }
+
+  private func anaTodayView() throws -> TodayView {
+    let generated = try decoder().decode(
+      Components.Schemas.Today.self, from: Data(anaToday.utf8))
+    return try StudyJSON.recode(generated)
   }
 
   private func decoder() -> JSONDecoder {

@@ -345,13 +345,33 @@ struct TodayWeekSection: View {
     Text("This week", tableName: "Today", comment: "The week's header")
   }
 
+  @ViewBuilder
   private var numbers: some View {
-    Text(
-      "\(week.daysHitGoal) of \(week.studyDays) days · \(studyDuration(minutes: week.time.studiedMinutes)) / \(studyDuration(minutes: Int(week.time.targetMinutes)))",
-      tableName: "Today", comment: "Days the goal was reached and the week's time"
-    )
-    .monospacedDigit()
-    .lineLimit(1)
+    let days =
+      week.studyDayCount > 0
+      ? String(
+        localized: "\(week.daysStudied) of \(week.studyDayCount) days", table: "Today",
+        comment: "Days studied of the week's study days")
+      : nil
+    let studied = studyDuration(minutes: week.time.studiedMinutes)
+    let planned = studyDuration(minutes: Int(week.time.targetMinutes))
+    let hasTime = week.time.targetMinutes > 0
+    let parts = [days, hasTime ? "\(studied) / \(planned)" : nil].compactMap(\.self)
+
+    if !parts.isEmpty {
+      Text(verbatim: parts.joined(separator: " · "))
+        .monospacedDigit()
+        .lineLimit(1)
+        .accessibilityLabel(
+          [
+            days,
+            hasTime
+              ? String(
+                localized: "\(studied) of \(planned) studied this week", table: "Today",
+                comment: "Spoken time studied of the week's planned time")
+              : nil,
+          ].compactMap(\.self).joined(separator: ", "))
+    }
   }
 
   var body: some View {

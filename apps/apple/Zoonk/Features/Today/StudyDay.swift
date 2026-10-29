@@ -285,10 +285,12 @@ struct StudyWeek: Decodable, Equatable, Sendable {
   }
 
   let days: [Day]
-  let daysHitGoal: Int
   let nextStudyDate: String?
-  let studyDays: Int
   let time: Time
+
+  /// Main's week counts any study, and a rest day the learner studied anyway among its days.
+  var daysStudied: Int { days.filter(\.studied).count }
+  var studyDayCount: Int { days.filter { $0.kind == "study" || $0.studied }.count }
 }
 
 /// Core's `DayBlockRef`: opening the day with it resolves only to that same work.
