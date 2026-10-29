@@ -1,6 +1,6 @@
 ---
 name: verify
-description: Verify finished work before calling it done, committing, or opening or updating a PR. Size the checks to the change, run its automated checks and the diff audit, use the change in the running app, measure its pages on every screen size (speed, blocking time, layout shift, skeletons, flashes, memory, client data fetching, data exposure, errors, overflow, accessibility, prefetching), review it as a principal engineer, a security researcher and a designer, walk it as learners, fix and recheck, and report the evidence.
+description: Verify finished work before calling it done, committing, or opening or updating a PR. Size the checks to the change, audit ownership and duplication of shared rules, run its automated checks and the diff audit, use the change in the running app, measure its pages on every screen size (speed, blocking time, layout shift, skeletons, flashes, memory, client data fetching, data exposure, errors, overflow, accessibility, prefetching), review it as a principal engineer, a security researcher and a designer, walk it as learners, fix and recheck, and report the evidence.
 license: MIT
 metadata:
   author: zoonk
@@ -31,7 +31,18 @@ Read the whole diff since the work started, then take every row it touches. A on
 
 Use the [development guide](../../guides/development.md)'s table for the change's checks before a commit: format and lint the touched files (lint after format), typecheck, the affected tests, and the containing suites when the impact is broad. Before a PR, run the full gate the root `AGENTS.md` describes, reading `.github/workflows` for the commands. A check that fails is investigated and fixed, never rerun until green.
 
-Then `pnpm verify:diff` (`--base <ref>` for a branch) reads the change as a principal engineer, a security researcher and a designer would: every client component, effect, browser fetch, waterfall (an `await` that waits for one it doesn't use), cache, migration, entry point, model call, raw HTML or SQL, public env value, dependency, raw color or `aria-label` it adds, each with the question to answer. Answer every item in your report, by fixing the code or saying why it's right; credentials, env files, focused tests and a vulnerable dependency the change adds block.
+Before introducing or modifying a constant, predicate, formula, schema, or helper, establish its owner and existing implementations:
+
+- Search the repository with `rg` for the identifier and for equivalent behavior: literal values with their units, kind lists, arithmetic, validation bounds, and the fields a predicate checks. Follow imports and callers beyond the changed files. A new name or an inline expression can hide an existing rule.
+- Compare every relevant definition and its consumers, including near copies whose values or branches have drifted. Decide whether they represent one product rule or intentionally different domains; matching numbers alone are not evidence of shared semantics.
+- Keep a shared rule in its owning feature module (`@zoonk/core` for reusable business behavior), with direct leaf imports. Respect dependency direction: pass the owner's value into a lower-level dependency when importing the owner would create a cycle. Migrate all relevant consumers and remove superseded definitions, aliases, types and tests.
+- Search again after the change for the old names, values and equivalent expressions. Report the owner, migrated consumers, any remaining copies with their distinct semantics, and the checks that cover the affected consumers. A focused test of the new helper alone does not verify its integrations.
+
+Then `pnpm verify:diff` (`--base <ref>` for a branch) reads the change as a principal engineer, a security researcher and a designer would: every client component, effect, browser fetch, waterfall (an `await` that waits for one it doesn't use), cache, migration, entry point, model call, raw HTML or SQL, public env value, dependency, raw color or `aria-label` it adds, each with the question to answer.
+
+`Repeated definition` is a nonblocking review prompt. For module-level `ALL_CAPS` constants and lowercase-named functions (declarations or direct function/arrow initializers), it lists same-name definitions in TypeScript source under `apps/*/src` and `packages/*/src`, excluding test files, `_test-utils` and generated paths. An added diff line must overlap the declaration, including an initializer- or body-only edit. It does not cover camelCase schema constants, wrapped helpers such as `cache(...)`, classes, deletion-only changes or equivalent rules under other names. Use the `rg` searches above for those cases and compare complete implementations and consumers for drift; matching names are not proof of shared semantics.
+
+Answer every item in your report, by fixing the code or saying why it's right; credentials, env files, focused tests and a vulnerable dependency the change adds block.
 
 ## 3. Use the change in the running app
 
@@ -79,6 +90,7 @@ Fix what fails within the change's scope, rerun the check that caught it, and on
 Say what you ran and what it returned, so nobody has to run it again:
 
 - each check's command and result (counts, failures with their output), and your answer to every `verify:diff` item
+- shared-rule searches, ownership and consumer coverage, including intentionally separate definitions and why they stay separate
 - what you did in the running app, with screenshot paths
 - the `verify:pages` report path, its failures and what you changed for them, and the key numbers (before and after for speed work)
 - each review's findings and what you did about them, and the persona walk in that skill's format
