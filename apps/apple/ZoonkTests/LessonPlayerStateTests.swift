@@ -25,6 +25,22 @@ final class LessonPlayerStateTests: XCTestCase {
     XCTAssertEqual(state.firstVerdicts, ["check": true])
   }
 
+  func testTheAnswerInViewIsTheCheckedOneWhileItsResultShows() throws {
+    var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
+    state.continueLesson()
+    state.continueLesson()
+    state.select(.check(optionId: "wrong"), for: "check")
+
+    XCTAssertNil(state.answerInView, "not checked yet")
+
+    try answerCheck(&state, optionId: "wrong")
+    XCTAssertEqual(state.answerInView, .check(optionId: "wrong"))
+    XCTAssertEqual(state.lessonOrder, ["hook", "explanation", "check", "summary"])
+
+    state.continueLesson()
+    XCTAssertNil(state.answerInView, "the next screen")
+  }
+
   func testMissedCheckComesBackOnceAndKeepsItsFirstVerdict() throws {
     var state = LessonPlayerState(lessonId: "lesson", steps: try lessonSteps())
     state.continueLesson()

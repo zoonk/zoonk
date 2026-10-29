@@ -71,7 +71,7 @@ struct LessonPlayerState: Hashable, Sendable {
 
   let lessonId: String
   private(set) var steps: [String: LessonStep]
-  private let lessonOrder: [String]
+  let lessonOrder: [String]
   private(set) var support: LessonSupport?
   private(set) var queue: [String]
   private(set) var position = 0
@@ -132,6 +132,20 @@ struct LessonPlayerState: Hashable, Sendable {
 
   var currentResult: LessonStepResult? {
     currentStep.flatMap { results[$0.id] }
+  }
+
+  /// Mirrors main's tutor context: a checked answer is what a question is about once its result
+  /// shows. A hook's guess only reveals the answer.
+  var answerInView: LessonAnswer? {
+    guard phase == .feedback, currentResult != nil, let answer = currentAnswer else {
+      return nil
+    }
+
+    if case .hookGuess = answer {
+      return nil
+    }
+
+    return answer
   }
 
   var runId: String? {

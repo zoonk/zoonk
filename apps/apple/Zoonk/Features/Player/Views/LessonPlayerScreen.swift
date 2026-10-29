@@ -333,6 +333,7 @@ struct LessonAskPanel: View {
         LessonTutorScope(
           lessonId: lesson.id, stepId: store.state?.currentStep?.id,
           stepNumber: store.state.flatMap { $0.currentStep == nil ? nil : $0.position + 1 },
+          answer: store.state?.answerInView, stepIds: store.state?.lessonOrder ?? [],
           suggestions: lesson.tutorSuggestions, startingSuggestionId: store.askingSuggestionId),
         isBeside)
     }

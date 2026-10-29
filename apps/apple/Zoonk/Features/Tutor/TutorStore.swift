@@ -69,8 +69,16 @@ final class TutorConversation {
     }
   }
 
+  /// Mirrors main's `getShownLessonQuestionSession`: questions about a checked answer show while
+  /// that answer is in view, or while one still holds up a new question.
   var turns: [TutorTurn] {
-    thread.value?.turns ?? []
+    let turns = thread.value?.turns ?? []
+
+    guard !scope.isAboutCheckedAnswer else {
+      return turns
+    }
+
+    return turns.filter { $0.about != .answer || $0.status != .completed }
   }
 
   /// Nothing can be asked until it resets, so it takes the composer's place.

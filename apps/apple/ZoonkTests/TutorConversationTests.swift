@@ -223,6 +223,50 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertFalse(store.conversation(.chapter(chapterId: "c")) === checked)
   }
 
+  func testALessonAsksAboutTheScreenInViewAndItsCheckedAnswer() {
+    let screen = TutorScope(
+      LessonTutorScope(
+        lessonId: "l", stepId: "s2", stepNumber: 2, stepIds: ["s1", "s2"], suggestions: []))
+    let answer = TutorScope(
+      LessonTutorScope(
+        lessonId: "l", stepId: "s2", stepNumber: 2, answer: .check(optionId: "a"),
+        stepIds: ["s1", "s2"], suggestions: []))
+    let lesson = TutorScope(
+      LessonTutorScope(lessonId: "l", stepId: nil, stepIds: ["s1", "s2"], suggestions: []))
+
+    XCTAssertEqual(
+      screen,
+      .step(lessonId: "l", stepId: "s2", stepNumber: 2, answer: nil, suggestions: []))
+    XCTAssertFalse(screen.isAboutCheckedAnswer)
+    XCTAssertTrue(answer.isAboutCheckedAnswer)
+    XCTAssertEqual(screen.conversationKey, answer.conversationKey, "one conversation per screen")
+    XCTAssertEqual(lesson, .lesson(lessonId: "l", stepIds: ["s1", "s2"], suggestions: []))
+  }
+
+  func testQuestionsAboutACheckedAnswerShowWhileItsInView() async {
+    let thread = TutorThreadPage(
+      turns: [
+        .fixture(id: "screen", about: .step), .fixture(id: "answered", about: .answer),
+        .fixture(id: "asking", status: .running, about: .answer),
+      ],
+      hasMore: false, nextCursor: nil)
+    let store = TutorStore(
+      api: TutorAPIStub(thread: thread),
+      cache: AppCache(session: .preview(account: .tutorTestAccount)))
+    let screen = TutorScope.step(
+      lessonId: "l", stepId: "s", stepNumber: 1, answer: nil, suggestions: [])
+    let conversation = store.conversation(screen)
+    await conversation.thread.load()
+
+    XCTAssertEqual(conversation.turns.map(\.id), ["screen", "asking"])
+
+    _ = store.conversation(
+      .step(
+        lessonId: "l", stepId: "s", stepNumber: 1, answer: .check(optionId: "a"), suggestions: []))
+
+    XCTAssertEqual(conversation.turns.map(\.id), ["screen", "answered", "asking"])
+  }
+
   func testChunksDecodeToAnswerEvents() throws {
     func event(_ json: String) throws -> TutorAnswerEvent? {
       try JSONDecoder().decode(TutorAnswerChunk.self, from: Data(json.utf8)).event()
@@ -335,12 +379,12 @@ private final class TutorAPIStub: TutorAPIClient, @unchecked Sendable {
 
 extension TutorTurn {
   fileprivate static func fixture(
-    id: String, question: String = "Question", status: Status = .completed,
+    id: String, question: String = "Question", status: Status = .completed, about: About = .plan,
     planChange: Components.Schemas.PlanChange? = nil
   ) -> TutorTurn {
     TutorTurn(
       id: id, question: question, answer: status == .completed ? "Answer" : nil, status: status,
-      createdAt: .now, about: .plan, planChange: planChange, toolOffer: nil)
+      createdAt: .now, about: about, planChange: planChange, toolOffer: nil)
   }
 }
 

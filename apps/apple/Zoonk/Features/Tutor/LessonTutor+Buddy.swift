@@ -7,13 +7,21 @@ extension LessonTutor {
 }
 
 extension TutorScope {
+  /// Mirrors main's lesson tutor context: the screen in view, its checked answer once the result
+  /// shows, or the whole lesson when no screen is in view.
   init(_ scope: LessonTutorScope) {
-    self = .lesson(
-      lessonId: scope.lessonId,
-      suggestions: scope.suggestions.map { suggestion in
-        TutorSuggestion(
-          id: suggestion.id.rawValue, label: suggestion.label,
-          lessonSuggestionID: suggestion.id.rawValue)
-      })
+    let suggestions = scope.suggestions.map { suggestion in
+      TutorSuggestion(
+        id: suggestion.id.rawValue, label: suggestion.label,
+        lessonSuggestionID: suggestion.id.rawValue)
+    }
+
+    if let stepId = scope.stepId, let stepNumber = scope.stepNumber {
+      self = .step(
+        lessonId: scope.lessonId, stepId: stepId, stepNumber: stepNumber, answer: scope.answer,
+        suggestions: suggestions)
+    } else {
+      self = .lesson(lessonId: scope.lessonId, stepIds: scope.stepIds, suggestions: suggestions)
+    }
   }
 }

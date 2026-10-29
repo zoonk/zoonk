@@ -35,18 +35,19 @@ extension TutorScope {
       Text(
         "Ask questions about this lesson", tableName: "Tutor",
         comment: "What the buddy's panel is about")
+    case .step,
+      .item where isAboutCheckedAnswer:
+      Text(
+        "Ask about your answer", tableName: "Tutor",
+        comment: "What the buddy's panel is about: a checked answer")
     case .step:
       Text(
         "Ask about this screen", tableName: "Tutor",
         comment: "What the buddy's panel is about: the lesson screen in view")
-    case .item(_, _, let answered, _):
-      answered
-        ? Text(
-          "Ask about your answer", tableName: "Tutor",
-          comment: "What the buddy's panel is about: a checked practice question")
-        : Text(
-          "Ask about this question", tableName: "Tutor",
-          comment: "What the buddy's panel is about: a practice question")
+    case .item:
+      Text(
+        "Ask about this question", tableName: "Tutor",
+        comment: "What the buddy's panel is about: a practice question")
     }
   }
 
@@ -100,25 +101,26 @@ extension TutorScope {
       String(
         localized: "Ask \(name) about this mock exam", table: "Tutor",
         comment: "Ask button for VoiceOver; the argument is the buddy's name")
+    case .step,
+      .item where isAboutCheckedAnswer:
+      String(
+        localized: "Ask \(name) about your answer", table: "Tutor",
+        comment: "Ask button for VoiceOver; the argument is the buddy's name")
     case .lesson, .step:
       String(
         localized: "Ask \(name) about this screen", table: "Tutor",
         comment: "Ask button for VoiceOver; the argument is the buddy's name")
-    case .item(_, _, let answered, _):
-      answered
-        ? String(
-          localized: "Ask \(name) about your answer", table: "Tutor",
-          comment: "Ask button for VoiceOver; the argument is the buddy's name")
-        : String(
-          localized: "Ask \(name) about this question", table: "Tutor",
-          comment: "Ask button for VoiceOver; the argument is the buddy's name")
+    case .item:
+      String(
+        localized: "Ask \(name) about this question", table: "Tutor",
+        comment: "Ask button for VoiceOver; the argument is the buddy's name")
     }
   }
 
   /// A few questions to start with, never a list.
   var suggestions: [TutorSuggestion] {
     switch self {
-    case .lesson(_, let suggestions), .step(_, _, _, let suggestions):
+    case .lesson(_, _, let suggestions), .step(_, _, _, _, let suggestions):
       return suggestions
     case .chapter:
       return [

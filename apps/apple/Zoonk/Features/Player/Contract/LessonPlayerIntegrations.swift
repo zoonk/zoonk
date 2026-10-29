@@ -59,6 +59,10 @@ struct LessonTutorScope: Hashable, Sendable {
   let stepId: String?
   /// From 1.
   var stepNumber: Int?
+  /// The learner's answer to the screen in view, once its result shows.
+  var answer: LessonAnswer?
+  /// The lesson's screens, for a question about the whole lesson.
+  var stepIds: [String] = []
   let suggestions: [Components.Schemas.LessonTutorSuggestion]
   /// The suggestion to have ready to send (`simpler` when the learner seems stuck), if any.
   var startingSuggestionId: String?
