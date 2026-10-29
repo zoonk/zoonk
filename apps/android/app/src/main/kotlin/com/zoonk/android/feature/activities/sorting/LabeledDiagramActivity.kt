@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -50,6 +51,7 @@ import com.zoonk.android.feature.activities.ActivityDragDrop
 import com.zoonk.android.feature.activities.ActivityDragDropState
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
+import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.activityDraggable
 import com.zoonk.android.feature.activities.activityDropTarget
 import com.zoonk.android.feature.activities.assignmentPairs
@@ -116,6 +118,7 @@ private fun LabeledDiagramActivity(props: ActivityProps) {
     }
 
     val dragDrop = rememberActivityDragDrop { name, target -> place(name, target) }
+    RestoreActivityAnswer(props) { diagramAnswer(slots, placements) }
 
     ActivityDragDrop(dragDrop) {
         ActivityCanvas(gap = 16.dp) {
@@ -180,14 +183,16 @@ private fun NameChip(
     modifier: Modifier,
 ) {
     val label = activeNumber?.let { stringResource(R.string.activities_sorting_put_on_spot, name, it) } ?: name
+    val colors = MaterialTheme.colorScheme
+    val placeable = activeNumber != null
     Row(
         modifier
             .activityDraggable(dragDrop, name, enabled, CircleShape, actions)
             .heightIn(min = 48.dp)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.surface)
-            .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
-            .clickable(enabled = enabled && activeNumber != null, role = Role.Button, onClick = onPlace)
+            .border(1.dp, if (placeable) colors.outline else colors.outlineVariant, CircleShape)
+            .clickable(enabled = enabled && placeable, role = Role.Button, onClick = onPlace)
             .semantics { contentDescription = label }
             .padding(start = 10.dp, end = 14.dp),
         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -199,7 +204,11 @@ private fun NameChip(
             modifier = Modifier.size(16.dp),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Text(name, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
+        Text(
+            name,
+            color = if (placeable) colors.onSurface else colors.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
+        )
     }
 }
 
@@ -275,6 +284,7 @@ private fun SlotButton(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun CheckedSlot(
     slot: DiagramSlot,
@@ -288,11 +298,10 @@ private fun CheckedSlot(
         if (right) {
             stringResource(R.string.activities_sorting_spot_named, slot.number, slot.label)
         } else {
-            listOfNotNull(
-                stringResource(R.string.activities_sorting_spot_named, slot.number, ""),
-                name?.let { stringResource(R.string.activities_sorting_your_answer, it) },
+            listOf(
+                stringResource(R.string.activities_sorting_spot_named, slot.number, name.orEmpty()),
                 stringResource(R.string.activities_sorting_correct_answer, slot.label),
-            ).joinToString(" ")
+            ).joinToString(". ")
         }
 
     Column(
@@ -304,10 +313,11 @@ private fun CheckedSlot(
             .padding(horizontal = 10.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
-        Row(
+        FlowRow(
             Modifier.clearAndSetSemantics { contentDescription = description },
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            itemVerticalAlignment = Alignment.CenterVertically,
         ) {
             SpotNumber(slot.number, if (right) SpotState.Right else SpotState.Wrong)
             if (right) {
@@ -356,7 +366,7 @@ private fun SpotNumber(
         }
     Box(
         Modifier
-            .size(24.dp)
+            .defaultMinSize(SPOT, SPOT)
             .background(fill, CircleShape)
             .then(
                 if (state ==
@@ -371,6 +381,7 @@ private fun SpotNumber(
     ) {
         Text(
             "$number",
+            Modifier.padding(horizontal = 4.dp),
             color = ink,
             style =
                 MaterialTheme.typography.labelSmall
@@ -382,3 +393,4 @@ private fun SpotNumber(
 
 private const val SOFT = 0.16f
 private const val EMPTY_RING = 0.7f
+private val SPOT = 24.dp

@@ -108,10 +108,10 @@
     <string name="activities_sorting_remove_link">Remove the link from %1$s to %2$s</string>
 
     <string name="activities_sorting_badge_place_in_time">Place in time</string>
-    <!-- A year before the common era, like "51 BCE". -->
-    <string name="activities_sorting_year_bce">%1$s BCE</string>
-    <!-- A year of the common era, on a timeline that also has BCE years, like "1969 CE". -->
-    <string name="activities_sorting_year_ce">%1$s CE</string>
+    <!-- A year before the common era, like "51 BCE". The no-break space keeps the year and its era on one line. -->
+    <string name="activities_sorting_year_bce">%1$s\u00A0BCE</string>
+    <!-- A year of the common era, on a timeline that also has BCE years, like "1969 CE". The no-break space keeps the year and its era on one line. -->
+    <string name="activities_sorting_year_ce">%1$s\u00A0CE</string>
     <!-- What TalkBack reads for an event once the real dates show: its real year, then the learner's guess, like "51 BCE. Your guess: 2000 CE". -->
     <string name="activities_sorting_year_and_guess">%1$s. Your guess: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
@@ -122,7 +122,7 @@
     </plurals>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">Place %1$s on the timeline</string>
-    <string name="activities_sorting_drag_onto_timeline">Tap to place, or hold and drag onto the timeline</string>
+    <string name="activities_sorting_drag_onto_timeline">Tap to place, or hold and drag onto the timeline.</string>
     <string name="activities_sorting_show_real_dates">Show the real dates</string>
     <!-- The name of the list of gaps between dates, for TalkBack. -->
     <string name="activities_sorting_time_between">Time between the dates</string>
@@ -161,8 +161,6 @@
     <string name="activities_sorting_spot_named">Spot %1$d: %2$s</string>
     <!-- On the spot waiting for a name. -->
     <string name="activities_sorting_pick_a_name">Pick a name</string>
-    <!-- For TalkBack, before the learner's wrong name once checked, like "Your answer: Left atrium". -->
-    <string name="activities_sorting_your_answer">Your answer: %1$s</string>
-    <!-- For TalkBack, before the right name once checked, like "Correct answer: Right atrium". -->
+    <!-- For TalkBack, after a spot's wrong name once checked, like "Correct answer: Right atrium". -->
     <string name="activities_sorting_correct_answer">Correct answer: %1$s</string>
 </resources>

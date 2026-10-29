@@ -20,7 +20,7 @@
   "activities_sorting_correct_answer": "d07bdfe65d24be9d6528b48fbd152ecee183ffb02669d1d17528819281316b29",
   "activities_sorting_dont_go_together": "e255f9346221623707a1ab382a1de55295d339f03720fe75e3bc79f099b851a5",
   "activities_sorting_dont_go_together_short": "8f4aa638db63745fe490a1d3f0e476a58c9aa64b7b7cd969549546a9e1ab4f30",
-  "activities_sorting_drag_onto_timeline": "9073d3d50094fcf131ecc83b2bb2fd9445ed879bb1e07f7c18400d8544a505cd",
+  "activities_sorting_drag_onto_timeline": "1afe70f6472a67ca3a125e12c9cb4a22c4fa57cd868ada07b5a38afde3de4b56",
   "activities_sorting_drag_steps": "a8b7b0466c14f79b9f73d192a028c46abdcd51aceff89700e2379b3607bd4cf8",
   "activities_sorting_events_to_place": "14ad7d693c013dcf47e0eac13146eb6fbf39fbb96b255df72f66dbb0bf4de460",
   "activities_sorting_every_spot_named": "2e5beff178483f63cb60665b3b21e41f017148010c46f8d22f5877f53efd9157",
@@ -67,11 +67,10 @@
   "activities_sorting_to_sort": "45ad10b49d09d4eaf39a2aa45d9790def5701b6bd4ca6f3871d9a453d06d4888",
   "activities_sorting_wrong_group": "38c7f44fce23b60ccf0e5f76deffec30743c49f8eb6c124559206df6a0b8b2ff",
   "activities_sorting_year_and_guess": "c6c32eefebc3c19236cfbfc5a8b30bb35e25dc6991370727af195f00683fd98c",
-  "activities_sorting_year_bce": "9e0087b40aa9d8ede995fabc272b131ae1e0b15a7fc7213d2abdf3a1dfbb54e4",
-  "activities_sorting_year_ce": "d5027a4b5ed822a2af6b8a75c5e9ac1df2fd07dfc52f5e9c27bb6bc3644c2001",
+  "activities_sorting_year_bce": "4a78c5aad5362cdcdc718e0bab083b7ac182ee8bd36e3e455217bdba4e65bb99",
+  "activities_sorting_year_ce": "4678141619e76b923e6762939bca3e7537867837114821b710c229632d89ef04",
   "activities_sorting_years": "35370fd15b8ada7270513f77c3823dca848da1a7f839f8c07c539bbf70de3c7b",
   "activities_sorting_you_had_it_at": "47710486aaa4fd104f5d426e43b80382279ad88df5100a7d8533ee1271da6d2a",
-  "activities_sorting_your_answer": "10cf7357b412e4267ad81c5325a9572d161f0f8e8571efc83f10902d0c85d34e",
   "activities_sorting_your_guess": "525ce323adab0b2272c735eac1113aaa0964568cc8f933208a3a638c4aa3beaf",
   "activities_sorting_your_links": "1fb582fbea4b571dfbed97cb8e1dee763ca16b768160d6db5adc36a7debd7f69"
 }
@@ -186,10 +185,10 @@
     <!-- A button that takes a link away, like "Remove the link from Years of drought to Dust storms". -->
     <string name="activities_sorting_remove_link">Quita el enlace de %1$s a %2$s</string>
     <string name="activities_sorting_badge_place_in_time">Coloca en el tiempo</string>
-    <!-- A year before the common era, like "51 BCE". -->
-    <string name="activities_sorting_year_bce">%1$s a. C.</string>
-    <!-- A year of the common era, on a timeline that also has BCE years, like "1969 CE". -->
-    <string name="activities_sorting_year_ce">%1$s d. C.</string>
+    <!-- A year before the common era, like "51 BCE". The no-break space keeps the year and its era on one line. -->
+    <string name="activities_sorting_year_bce">%1$s a. C.</string>
+    <!-- A year of the common era, on a timeline that also has BCE years, like "1969 CE". The no-break space keeps the year and its era on one line. -->
+    <string name="activities_sorting_year_ce">%1$s d. C.</string>
     <!-- What TalkBack reads for an event once the real dates show: its real year, then the learner's guess, like "51 BCE. Your guess: 2000 CE". -->
     <string name="activities_sorting_year_and_guess">%1$s. Tu suposición: %2$s</string>
     <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
@@ -201,7 +200,7 @@
     </plurals>
     <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
     <string name="activities_sorting_place_on_timeline">Coloca %1$s en la línea del tiempo</string>
-    <string name="activities_sorting_drag_onto_timeline">Toca para colocar o mantén pulsado y arrastra a la línea del tiempo</string>
+    <string name="activities_sorting_drag_onto_timeline">Toca para colocar o mantén pulsado y arrastra hasta la línea del tiempo.</string>
     <string name="activities_sorting_show_real_dates">Mostrar las fechas reales</string>
     <!-- The name of the list of gaps between dates, for TalkBack. -->
     <string name="activities_sorting_time_between">Tiempo entre las fechas</string>
@@ -241,8 +240,6 @@
     <string name="activities_sorting_spot_named">Lugar %1$d: %2$s</string>
     <!-- On the spot waiting for a name. -->
     <string name="activities_sorting_pick_a_name">Elige un nombre</string>
-    <!-- For TalkBack, before the learner's wrong name once checked, like "Your answer: Left atrium". -->
-    <string name="activities_sorting_your_answer">Tu respuesta: %1$s</string>
-    <!-- For TalkBack, before the right name once checked, like "Correct answer: Right atrium". -->
+    <!-- For TalkBack, after a spot's wrong name once checked, like "Correct answer: Right atrium". -->
     <string name="activities_sorting_correct_answer">Respuesta correcta: %1$s</string>
 </resources>

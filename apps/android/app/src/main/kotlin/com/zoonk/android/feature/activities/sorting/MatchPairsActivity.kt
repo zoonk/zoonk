@@ -28,22 +28,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.Hyphens
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityAnnouncement
@@ -53,7 +49,10 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityReason
 import com.zoonk.android.feature.activities.ActivityReasons
 import com.zoonk.android.feature.activities.ActivityRenderer
+import com.zoonk.android.feature.activities.LineMarker
+import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.assignmentPairs
+import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -85,6 +84,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
     var announcement by remember { mutableStateOf("") }
     val resources = LocalResources.current
     val isComplete = progress.matched.size == pairIds.size
+    RestoreActivityAnswer(props) { matchAnswer(pairIds, progress) }
     val expected = props.expected.assignmentPairs.takeIf { props.isChecked }
 
     fun tryPair(
@@ -100,7 +100,14 @@ private fun MatchPairsActivity(props: ActivityProps) {
         if (isMatch(leftCard, rightCard)) {
             miss = null
             announcement =
-                resources.getQuantityString(R.plurals.activities_sorting_matched, pairIds.size, leftCard.text, rightCard.text, next.matched.size, pairIds.size)
+                resources.getQuantityString(
+                    R.plurals.activities_sorting_matched,
+                    pairIds.size,
+                    leftCard.text,
+                    rightCard.text,
+                    next.matched.size,
+                    pairIds.size,
+                )
             return
         }
 
@@ -203,7 +210,7 @@ private fun MatchCardButton(
         when (state) {
             CardState.Idle -> BorderStroke(1.dp, colors.outline) to colors.surface
             CardState.Selected -> answerTone(picked = true, result = null).let { it.border to it.container }
-            CardState.Matched -> BorderStroke(1.dp, colors.tertiary.copy(alpha = SOFT_LINE)) to colors.tertiaryContainer
+            CardState.Matched -> answerTone(picked = false, result = AnswerResult.Right).let { it.border to it.container }
             CardState.Missed -> BorderStroke(2.dp, colors.error) to colors.errorContainer
             CardState.NoMatch -> null to Color.Transparent
         }
@@ -235,7 +242,7 @@ private fun MatchCardButton(
             .then(if (border == null) Modifier.dashedOutline(colors.outline) else Modifier.border(border, shape))
             .selectable(selected = state == CardState.Selected, enabled = enabled, role = Role.Button, onClick = onPick)
             .then(if (label == null) Modifier else Modifier.semantics { contentDescription = label })
-            .padding(horizontal = 14.dp, vertical = 8.dp),
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -245,6 +252,8 @@ private fun MatchCardButton(
             style =
                 MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Medium,
+                    hyphens = Hyphens.Auto,
+                    lineBreak = LineBreak.Paragraph,
                     color =
                         when (state) {
                             CardState.Matched -> colors.onTertiaryContainer
@@ -276,16 +285,18 @@ private fun MissNote(explanation: String?) {
         Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.errorContainer, shape)
-            .semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite }
+            .semantics(mergeDescendants = true) {}
             .padding(horizontal = 14.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
-        Icon(
-            painterResource(R.drawable.ic_cancel),
-            contentDescription = null,
-            modifier = Modifier.padding(top = 2.dp).size(16.dp),
-            tint = MaterialTheme.colorScheme.error,
-        )
+        LineMarker(MaterialTheme.typography.bodyMedium) {
+            Icon(
+                painterResource(R.drawable.ic_cancel),
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.error,
+            )
+        }
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(
                 stringResource(R.string.activities_sorting_not_quite),
@@ -362,5 +373,4 @@ private val MatchProgressSaver =
         restore = { (tries, matched, traps) -> MatchProgress(tries.chunked(2).associate { (key, value) -> key to value }, matched, traps) },
     )
 
-private const val SOFT_LINE = 0.4f
 private const val SHAKE_MILLIS = 300

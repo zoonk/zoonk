@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.activities.sorting
 
-import androidx.activity.ComponentActivity
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.semantics.SemanticsActions
@@ -8,48 +7,27 @@ import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
-import androidx.compose.ui.test.TouchInjectionScope
 import androidx.compose.ui.test.assert
-import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
-import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
-import androidx.compose.ui.test.hasText
-import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
-import androidx.compose.ui.test.onChildren
-import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
-import androidx.compose.ui.test.performMouseInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.pressKey
-import androidx.compose.ui.test.requestFocus
-import androidx.compose.ui.test.swipe
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
-import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
-import com.zoonk.api.ApiJson
-import com.zoonk.api.models.LessonStepCheckInput
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.add
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
-import kotlinx.serialization.json.putJsonArray
-import org.junit.Assert.assertEquals
+import kotlinx.coroutines.CompletableDeferred
 import org.junit.Assert.assertTrue
-import org.junit.Rule
 import org.junit.Test
-import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
-import kotlin.math.abs
 
 /** Main's timeline tests. */
 @OptIn(ExperimentalTestApi::class)
@@ -69,7 +47,7 @@ class TimelineFlowTest : SortingFlow() {
 
         rule.onNodeWithContentDescription("Place Moon landing on the timeline").performScrollTo().performClick()
         slider("Moon landing").assertIsFocused().performKeyInput { pressKey(Key.MoveEnd) }
-        sliderSays("Moon landing", "2000 CE")
+        sliderSays("Moon landing", "2000\u00A0CE")
         rule.onNodeWithContentDescription("Place Cleopatra rules Egypt on the timeline").performScrollTo().performClick()
         harness.tap("Check")
 
@@ -87,7 +65,7 @@ class TimelineFlowTest : SortingFlow() {
         slider("Cleopatra rules Egypt").performKeyInput { pressKey(Key.MoveEnd) }
         harness.tap("Check")
 
-        sliderSays("Cleopatra rules Egypt", "51 BCE. Your guess: 2000 CE")
+        sliderSays("Cleopatra rules Egypt", "51\u00A0BCE. Your guess: 2000\u00A0CE")
     }
 
     @Test
@@ -113,7 +91,7 @@ class TimelineFlowTest : SortingFlow() {
     fun timelineAnEventHeldAndDraggedOntoTheAxisLandsWhereItIsDropped() {
         play("timeline", isCorrect = true)
         val tray = rule.onNodeWithContentDescription("Place Moon landing on the timeline").performScrollTo()
-        val track = rule.onNodeWithContentDescription("A timeline from 3000 BCE to 2000 CE.").fetchSemanticsNode().boundsInRoot
+        val track = rule.onNodeWithContentDescription("A timeline from 3000\u00A0BCE to 2000\u00A0CE.").fetchSemanticsNode().boundsInRoot
         val start = tray.fetchSemanticsNode().boundsInRoot.topLeft
         val to = Offset(track.center.x, track.top + with(rule.density) { NEAR_THE_START.toPx() }) - start
 
@@ -125,6 +103,70 @@ class TimelineFlowTest : SortingFlow() {
         slider("Moon landing").assert(SemanticsMatcher("BCE") { it.config[SemanticsProperties.StateDescription].endsWith("BCE") })
     }
 
+    private fun nearTheStart(from: androidx.compose.ui.test.SemanticsNodeInteraction): Offset {
+        val track = rule.onNodeWithContentDescription("A timeline from 3000\u00A0BCE to 2000\u00A0CE.").fetchSemanticsNode().boundsInRoot
+        val start = from.fetchSemanticsNode().boundsInRoot.topLeft
+        return Offset(track.center.x, track.top + with(rule.density) { NEAR_THE_START.toPx() }) - start
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp")
+    fun timelineTheNextEventInTheTrayIsTheOneDragged() {
+        play("timeline", isCorrect = true)
+
+        rule.onNodeWithContentDescription("Place Moon landing on the timeline").performScrollTo().performClick()
+        val tray = rule.onNodeWithContentDescription("Place Cleopatra rules Egypt on the timeline").performScrollTo()
+        val to = nearTheStart(tray)
+        tray.performTouchInput {
+            holdAndDrag(to)
+            up()
+        }
+
+        sliderSays("Moon landing", "500\u00A0BCE")
+        slider("Cleopatra rules Egypt").assertExists()
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp")
+    fun timelineADragTheSystemTakesBackKeepsTheLastMove() {
+        play("timeline", isCorrect = true)
+
+        rule.onNodeWithContentDescription("Place Moon landing on the timeline").performScrollTo().performClick()
+        slider("Moon landing").performKeyInput { pressKey(Key.MoveEnd) }
+        sliderSays("Moon landing", "2000\u00A0CE")
+        val card = slider("Moon landing")
+        val to = nearTheStart(card)
+        card.performTouchInput { holdAndDrag(to) }
+        slider("Moon landing").assert(SemanticsMatcher("BCE") { it.config[SemanticsProperties.StateDescription].endsWith("BCE") })
+        card.performTouchInput { cancel() }
+
+        sliderSays("Moon landing", "2000\u00A0CE")
+    }
+
+    @Test
+    fun timelineKeepsTheRealDatesHiddenWhileTheAnswerIsChecked() {
+        val gate = CompletableDeferred<Unit>()
+        harness.play(
+            listOf(
+                ActivityFixtures.step(
+                    "timeline",
+                    check = choiceCheck("Cleopatra lived closer in time to...", "The Moon landing", "The pyramid builders"),
+                ),
+            ),
+        ) {
+            this.gate = gate
+            grade = { _, _ -> checkResult(true, expected = ActivityFixtures.expected("timeline")) }
+        }
+
+        rule.onNodeWithContentDescription("Place Moon landing on the timeline").performScrollTo().performClick()
+        rule.onNodeWithContentDescription("Place Cleopatra rules Egypt on the timeline").performScrollTo().performClick()
+        tap("The Moon landing")
+        harness.tap("Check")
+
+        rule.onNodeWithText("Show the real dates").assertIsNotEnabled()
+        gate.complete(Unit)
+    }
+
     @Test
     fun timelineTakesTheYearTalkBackSets() {
         play("timeline", isCorrect = true)
@@ -132,7 +174,7 @@ class TimelineFlowTest : SortingFlow() {
         rule.onNodeWithContentDescription("Place Moon landing on the timeline").performScrollTo().performClick()
         slider("Moon landing").performSemanticsAction(SemanticsActions.SetProgress) { it(1969f) }
 
-        sliderSays("Moon landing", "1950 CE")
+        sliderSays("Moon landing", "1950\u00A0CE")
     }
 }
 

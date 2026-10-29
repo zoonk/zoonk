@@ -167,6 +167,7 @@ fun ActivitySortableList(
                         }
                     val shown by animateFloatAsState(shift, if (dragged == null) snap() else tween(SHIFT_MILLIS), label = "shift")
                     val lifted = id == dragged || keyed?.id == id
+                    var focused by remember { mutableStateOf(false) }
                     val moves =
                         listOfNotNull(
                             CustomAccessibilityAction(resources.getString(R.string.activities_sortable_move_up)) {
@@ -195,8 +196,10 @@ fun ActivitySortableList(
                                             if (drops && to != null) drop(id, to)
                                         },
                                     )
-                                }.onFocusChanged { if (!it.isFocused && keyed?.id == id) keyed = null }
-                                .onKeyEvent { onKey(id, it) }
+                                }.onFocusChanged {
+                                    focused = it.isFocused
+                                    if (!it.isFocused && keyed?.id == id) keyed = null
+                                }.onKeyEvent { onKey(id, it) }
                                 .focusable()
                         } else {
                             Modifier
@@ -204,6 +207,7 @@ fun ActivitySortableList(
 
                     SortableRow(
                         lifted = lifted,
+                        focused = focused,
                         enabled = enabled,
                         modifier =
                             Modifier
@@ -233,6 +237,7 @@ private data class KeyboardMove(
 @Composable
 private fun SortableRow(
     lifted: Boolean,
+    focused: Boolean,
     enabled: Boolean,
     modifier: Modifier,
     content: @Composable RowScope.() -> Unit,
@@ -248,7 +253,7 @@ private fun SortableRow(
                 this.shape = shape
             }.clip(shape)
             .background(if (lifted) colors.surface else Color.Transparent)
-            .border(if (lifted) 2.dp else 1.dp, if (lifted) colors.primary else colors.outline, shape)
+            .border(if (lifted || focused) 2.dp else 1.dp, if (lifted || focused) colors.primary else colors.outline, shape)
             .heightIn(min = 48.dp)
             .padding(horizontal = 12.dp, vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),

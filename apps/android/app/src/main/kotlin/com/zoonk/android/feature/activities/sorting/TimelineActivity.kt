@@ -25,6 +25,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -34,12 +35,15 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.key
@@ -50,6 +54,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -66,6 +71,7 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
@@ -76,6 +82,8 @@ import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
+import com.zoonk.android.feature.activities.LIFTED_ELEVATION
+import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.detectLift
 import com.zoonk.android.feature.activities.orderAnswer
 import com.zoonk.android.feature.activities.orderIds
@@ -158,6 +166,7 @@ private fun TimelineActivity(props: ActivityProps) {
     }
 
     LaunchedEffect(focusId) { focusId?.let { focus[it]?.requestFocus() } }
+    RestoreActivityAnswer(props) { orderAnswer(placedOrder(placements)).takeIf { !isQuestion && placements.size == fields.events.size } }
 
     val events =
         fields.events.mapNotNull { event ->
@@ -177,14 +186,16 @@ private fun TimelineActivity(props: ActivityProps) {
         var track by remember { mutableStateOf<LayoutCoordinates?>(null) }
         BoxWithConstraints(Modifier.fillMaxWidth()) {
             val fontScale = LocalDensity.current.fontScale
+            val gutter = rememberTrackGutter(fields.start, fields.end, formatYear)
             val labels = (fields.anchors.map { it.label } + fields.events.map { it.label })
-            val gap = cardGap(labels, maxWidth, fontScale)
+            val gap = cardGap(labels, maxWidth, fontScale, gutter)
             val axis = TrackAxis(fields.start, fields.end, max(MIN_HEIGHT.value, gap.value * (labels.size + 1)).dp)
             TimelineTrack(
                 axis = axis,
                 anchors = fields.anchors.map { Dated(it.label, it.year) },
                 events = events,
                 cardGap = gap,
+                gutter = gutter,
                 width = maxWidth,
                 step = step,
                 movable = !props.isLocked && !showTruth,
@@ -219,7 +230,9 @@ private fun TimelineActivity(props: ActivityProps) {
         }
 
         if (isQuestion && !showTruth && unplaced.isEmpty()) {
-            OutlinedButton(onClick = { revealed = true }) { Text(stringResource(R.string.activities_sorting_show_real_dates)) }
+            OutlinedButton(onClick = { revealed = true }, enabled = !props.isLocked) {
+                Text(stringResource(R.string.activities_sorting_show_real_dates))
+            }
         }
 
         if (showTruth) {
@@ -244,14 +257,37 @@ private fun yearAtOf(
     return snapYear(start + share.toDouble() * (end - start), start, end)
 }
 
+/** Where the axis and the cards start: after the widest year on the axis, so its era always shows. */
+private class TrackGutter(
+    val tickRight: Dp,
+) {
+    val axisX = tickRight + TICK_GAP
+    val cardLeft = axisX + CARD_GAP
+}
+
+@Composable
+private fun rememberTrackGutter(
+    start: Long,
+    end: Long,
+    formatYear: (Long) -> String,
+): TrackGutter {
+    val measurer = rememberTextMeasurer()
+    val style = MaterialTheme.typography.labelSmall.withTabularFigures()
+    val density = LocalDensity.current
+    val widest = yearTicks(start, end).maxOfOrNull { measurer.measure(formatYear(it), style).size.width } ?: 0
+    return TrackGutter(maxOf(TICK_RIGHT, with(density) { widest.toDp() }))
+}
+
 /** Main's estimate of a card's height from its longest label, so cards spread far enough apart. */
 private fun cardGap(
     labels: List<String>,
     width: Dp,
     fontScale: Float,
+    gutter: TrackGutter,
 ): Dp {
     val longest = labels.maxOfOrNull { it.length } ?: 1
-    val lines = ceil(longest * CHARACTER_WIDTH * fontScale / max(width.value - CARD_CHROME, 1f)).toInt()
+    val chrome = gutter.cardLeft.value + CARD_PADDING
+    val lines = ceil(longest * CHARACTER_WIDTH * fontScale / max(width.value - chrome, 1f)).toInt()
     return ((CARD_BASE + LINE_HEIGHT * max(lines, 1)) * fontScale).dp
 }
 
@@ -277,6 +313,7 @@ private fun TimelineTrack(
     anchors: List<Dated>,
     events: List<TrackEvent>,
     cardGap: Dp,
+    gutter: TrackGutter,
     width: Dp,
     step: Long,
     movable: Boolean,
@@ -307,13 +344,13 @@ private fun TimelineTrack(
                 coordinates = it
                 onTrack(it)
             }.semantics { contentDescription = description }
-            .drawBehind { drawTrack(axis, anchors, events, cardYs, colors, rtl) },
+            .drawBehind { drawTrack(axis, gutter, anchors, events, cardYs, colors, rtl) },
     ) {
         yearTicks(axis.start, axis.end).forEach { tick ->
             Text(
                 formatYear(tick),
                 Modifier
-                    .width(TICK_RIGHT)
+                    .width(gutter.tickRight)
                     .centeredAt(axis.yOf(tick, density))
                     .clearAndSetSemantics {},
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -323,7 +360,11 @@ private fun TimelineTrack(
             )
         }
         anchors.forEachIndexed { index, anchor ->
-            AnchorCard(anchor, formatYear, Modifier.padding(start = CARD_LEFT).width(width - CARD_LEFT).centeredAt(cardYs[index]))
+            AnchorCard(
+                anchor,
+                formatYear,
+                Modifier.padding(start = gutter.cardLeft).width(width - gutter.cardLeft).centeredAt(cardYs[index]),
+            )
         }
         events.forEachIndexed { index, event ->
             EventCard(
@@ -347,8 +388,8 @@ private fun TimelineTrack(
                 },
                 modifier =
                     Modifier
-                        .padding(start = CARD_LEFT)
-                        .width(width - CARD_LEFT)
+                        .padding(start = gutter.cardLeft)
+                        .width(width - gutter.cardLeft)
                         .centeredAt(cardYs[anchors.size + index])
                         .then(focus[event.id]?.let { Modifier.focusRequester(it) } ?: Modifier),
             )
@@ -386,6 +427,7 @@ private fun trackColors() =
 /** Main's track: the axis, the spans between known dates, each date's dot and the line to its card. */
 private fun DrawScope.drawTrack(
     axis: TrackAxis,
+    gutter: TrackGutter,
     anchors: List<Dated>,
     events: List<TrackEvent>,
     cardYs: List<Float>,
@@ -394,7 +436,7 @@ private fun DrawScope.drawTrack(
 ) {
     val x = { dp: Dp -> if (rtl) size.width - dp.toPx() else dp.toPx() }
     val y = { year: Long -> axis.yOf(year, density) }
-    val axisX = x(AXIS_X)
+    val axisX = x(gutter.axisX)
     drawLine(colors.axis, Offset(axisX, y(axis.start)), Offset(axisX, y(axis.end)), strokeWidth = 2.dp.toPx())
 
     val known = (anchors.map { it.year } + events.filter { it.isRevealed }.map { it.year }).sorted()
@@ -429,7 +471,7 @@ private fun DrawScope.drawTrack(
         drawLine(
             if (guessing) colors.accent else colors.axis,
             Offset(axisX + if (rtl) -dot else dot, dotY),
-            Offset(x(CARD_LEFT), cardYs[index]),
+            Offset(x(gutter.cardLeft), cardYs[index]),
             1.5.dp.toPx(),
             pathEffect = if (guessing) dash(4.dp, 3.dp) else null,
         )
@@ -479,8 +521,10 @@ private fun EventCard(
     val colors = MaterialTheme.colorScheme
     val accent = MaterialTheme.zoonk.vizAccent
     val shape = RoundedCornerShape(12.dp)
+    val haptics = LocalHapticFeedback.current
     var card by remember { mutableStateOf<LayoutCoordinates?>(null) }
     var liftedFrom by remember { mutableStateOf<Long?>(null) }
+    var focused by remember { mutableStateOf(false) }
     val value =
         if (event.isRevealed) {
             stringResource(R.string.activities_sorting_year_and_guess, formatYear(event.year), formatYear(event.guess))
@@ -489,20 +533,27 @@ private fun EventCard(
         }
     val border =
         when {
+            liftedFrom != null || focused -> colors.primary
             movable -> accent
             event.isRight == false -> colors.error
             event.isRight == true -> colors.tertiary
             else -> colors.outlineVariant
         }
     val moveTo = { year: Long -> if (movable) onMove(year.coerceIn(start, end)) }
+    val current by rememberUpdatedState(event)
+    val move by rememberUpdatedState(moveTo)
+    val at by rememberUpdatedState(yearAt)
 
     Row(
         modifier
             .heightIn(min = 48.dp)
             .onGloballyPositioned { card = it }
-            .clip(shape)
+            .graphicsLayer {
+                shadowElevation = if (liftedFrom != null) LIFTED_ELEVATION.toPx() else 0f
+                this.shape = shape
+            }.clip(shape)
             .background(colors.surface)
-            .border(1.dp, border, shape)
+            .border(if (liftedFrom != null || focused) 2.dp else 1.dp, border, shape)
             .semantics(mergeDescendants = true) {
                 contentDescription = event.label
                 stateDescription = value
@@ -530,13 +581,17 @@ private fun EventCard(
                                 } ?: return@onKeyEvent false
                             moveTo(next)
                             true
-                        }.focusable()
+                        }.onFocusChanged { focused = it.isFocused }
+                        .focusable()
                         .pointerInput(event.id) {
                             detectLift(
-                                onLift = { liftedFrom = event.guess },
-                                onMove = { point -> card?.let { yearAt(it, point) }?.let(moveTo) },
+                                onLift = {
+                                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    liftedFrom = current.guess
+                                },
+                                onMove = { point -> card?.let { at(it, point) }?.let(move) },
                                 onEnd = { drops ->
-                                    if (!drops) liftedFrom?.let(moveTo)
+                                    if (!drops) liftedFrom?.let(move)
                                     liftedFrom = null
                                 },
                             )
@@ -594,7 +649,11 @@ private fun TimelineTray(
     val accent = MaterialTheme.zoonk.vizAccent
     val shape = RoundedCornerShape(12.dp)
     var coordinates by remember { mutableStateOf<LayoutCoordinates?>(null) }
+    var held by remember { mutableStateOf(false) }
     val density = LocalDensity.current.density
+    val haptics = LocalHapticFeedback.current
+    val drag by rememberUpdatedState(onDrag)
+    val end by rememberUpdatedState(onDragEnd)
     val placeLabel = stringResource(R.string.activities_sorting_place_on_timeline, label)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -612,17 +671,26 @@ private fun TimelineTray(
                     if (enabled) {
                         Modifier.pointerInput(Unit) {
                             detectLift(
-                                onLift = {},
-                                onMove = { point -> coordinates?.let { onDrag(it, point, density) } },
-                                onEnd = onDragEnd,
+                                onLift = {
+                                    haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    held = true
+                                },
+                                onMove = { point -> coordinates?.let { drag(it, point, density) } },
+                                onEnd = { drops ->
+                                    held = false
+                                    end(drops)
+                                },
                             )
                         }
                     } else {
                         Modifier
                     },
-                ).clip(shape)
+                ).graphicsLayer {
+                    shadowElevation = if (held) LIFTED_ELEVATION.toPx() else 0f
+                    this.shape = shape
+                }.clip(shape)
                 .background(MaterialTheme.colorScheme.surface)
-                .dashedOutline(accent)
+                .then(if (held) Modifier.border(2.dp, MaterialTheme.colorScheme.primary, shape) else Modifier.dashedOutline(accent, 2.dp))
                 .clickable(enabled = enabled, role = Role.Button, onClick = onPlace)
                 .semantics { contentDescription = placeLabel }
                 .padding(horizontal = 12.dp, vertical = 8.dp),
@@ -710,13 +778,13 @@ private val KEY_STEPS =
     )
 
 private val TRACK_INSET = 20.dp
-private val AXIS_X = 76.dp
-private val CARD_LEFT = 96.dp
 private val TICK_RIGHT = 68.dp
+private val TICK_GAP = 12.dp
+private val CARD_GAP = 20.dp
 private val DOT_RADIUS = 6.dp
 private val MIN_HEIGHT = 320.dp
 private const val CHARACTER_WIDTH = 7.2f
-private const val CARD_CHROME = 150f
+private const val CARD_PADDING = 54f
 private const val LINE_HEIGHT = 20f
 private const val CARD_BASE = 34f
 private const val HALF = 0.5f

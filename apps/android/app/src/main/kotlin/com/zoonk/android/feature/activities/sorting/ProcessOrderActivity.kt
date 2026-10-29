@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +24,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.CollectionItemInfo
@@ -31,6 +33,7 @@ import androidx.compose.ui.semantics.collectionItemInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
@@ -38,6 +41,7 @@ import com.zoonk.android.feature.activities.ActivityCanvasLabel
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.ActivitySortableList
+import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.SortableItem
 import com.zoonk.android.feature.activities.orderAnswer
 import com.zoonk.android.feature.activities.orderIds
@@ -63,6 +67,8 @@ private fun ProcessOrderActivity(props: ActivityProps) {
     val steps = content.fields.steps
     val shuffled = remember(content) { shuffleSteps(steps, "${content.prompt}:${steps.joinToString(",") { it.id }}") }
     var order by rememberSaveable { mutableStateOf(props.answer.orderIds ?: shuffled.map { it.id }) }
+    var moved by rememberSaveable { mutableStateOf(props.answer != null) }
+    RestoreActivityAnswer(props) { orderAnswer(order).takeIf { moved } }
     val byId = steps.associateBy { it.id }
 
     if (props.isChecked) {
@@ -80,6 +86,7 @@ private fun ProcessOrderActivity(props: ActivityProps) {
             label = stringResource(R.string.activities_sorting_steps_in_your_order),
             onReorder = { ids ->
                 order = ids
+                moved = true
                 props.onAnswerChange(orderAnswer(ids))
             },
             enabled = !props.isLocked,
@@ -87,7 +94,7 @@ private fun ProcessOrderActivity(props: ActivityProps) {
             StepMarks(byId[item.id]?.icon, index + 1, result = null)
             RichText(
                 item.label,
-                Modifier.weight(1f).padding(top = 6.dp),
+                Modifier.weight(1f).padding(top = TEXT_TOP),
                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
             )
         }
@@ -115,7 +122,7 @@ private fun OrderedStep(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         StepMarks(step.icon, result.position, outcome)
-        Column(Modifier.weight(1f).padding(top = 6.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(Modifier.weight(1f).padding(top = TEXT_TOP), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             RichText(step.text, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
             step.why?.let {
                 RichText(it, style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
@@ -147,13 +154,17 @@ private fun StepMarks(
             else -> colors.surfaceContainerHighest to colors.onSurface
         }
 
+    val line =
+        with(LocalDensity.current) {
+            MaterialTheme.typography.bodyMedium.lineHeight
+                .toDp()
+        }
     Row(
-        Modifier.height(32.dp).clearAndSetSemantics {
-        },
+        Modifier.height(max(MARKS, line + TEXT_TOP * 2)).clearAndSetSemantics {},
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.size(28.dp).background(fill, CircleShape), contentAlignment = Alignment.Center) {
+        Box(Modifier.defaultMinSize(BADGE, BADGE).background(fill, CircleShape).padding(2.dp), contentAlignment = Alignment.Center) {
             Text(
                 "$position",
                 color = ink,
@@ -173,3 +184,9 @@ private fun StepMarks(
         }
     }
 }
+
+private val MARKS = 32.dp
+private val BADGE = 28.dp
+
+/** The step text sits this far below the top of its marks, so both share one first line. */
+private val TEXT_TOP = 6.dp

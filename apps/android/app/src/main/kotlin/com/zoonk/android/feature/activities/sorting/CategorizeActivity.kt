@@ -30,12 +30,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.geometry.CornerRadius
-import androidx.compose.ui.graphics.PathEffect
-import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -57,6 +54,7 @@ import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityReason
 import com.zoonk.android.feature.activities.ActivityReasons
 import com.zoonk.android.feature.activities.ActivityRenderer
+import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.activityDraggable
 import com.zoonk.android.feature.activities.activityDropTarget
 import com.zoonk.android.feature.activities.assignmentPairs
@@ -106,11 +104,20 @@ private fun CategorizeActivity(props: ActivityProps) {
         placements = next
         selectedId = null
         props.onAnswerChange(placementsAnswer(ids, next))
-        announcement = resources.getQuantityString(R.plurals.activities_sorting_placed, ids.size, item.text, group.label, ids.count { it in next }, ids.size)
+        announcement =
+            resources.getQuantityString(
+                R.plurals.activities_sorting_placed,
+                ids.size,
+                item.text,
+                group.label,
+                ids.count { it in next },
+                ids.size,
+            )
         nextUnplacedId(ids, itemId, next)?.let { focus[it]?.requestFocus() }
     }
 
     val dragDrop = rememberActivityDragDrop(::place)
+    RestoreActivityAnswer(props) { placementsAnswer(ids, placements) }
 
     @Composable
     fun chip(
@@ -134,17 +141,23 @@ private fun CategorizeActivity(props: ActivityProps) {
         ActivityCanvas(gap = 16.dp) {
             if (!props.isChecked) {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Bottom) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text(
                             stringResource(
                                 if (waiting.isEmpty()) R.string.activities_sorting_all_sorted else R.string.activities_sorting_to_sort,
                             ),
-                            Modifier.weight(1f),
+                            Modifier.weight(1f).alignByBaseline(),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
                         )
                         Text(
-                            pluralStringResource(R.plurals.activities_sorting_sorted_count, items.size, items.size - waiting.size, items.size),
+                            pluralStringResource(
+                                R.plurals.activities_sorting_sorted_count,
+                                items.size,
+                                items.size - waiting.size,
+                                items.size,
+                            ),
+                            Modifier.alignByBaseline(),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelMedium.withTabularFigures(),
                         )
@@ -159,7 +172,13 @@ private fun CategorizeActivity(props: ActivityProps) {
             }
 
             BoxWithConstraints {
-                val columns = if (fields.groups.size == 3) (if (maxWidth >= THREE_ACROSS) 3 else 1) else 2
+                val roomy = maxWidth / LocalDensity.current.fontScale
+                val columns =
+                    when {
+                        roomy < TWO_ACROSS -> 1
+                        fields.groups.size == 3 -> if (roomy >= THREE_ACROSS) 3 else 1
+                        else -> 2
+                    }
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     fields.groups.chunked(columns).forEach { row ->
                         Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
@@ -348,5 +367,6 @@ private fun CategorizeResults(
     }
 }
 
+private val TWO_ACROSS = 240.dp
 private val THREE_ACROSS = 480.dp
 private const val SOFT_RING = 0.4f

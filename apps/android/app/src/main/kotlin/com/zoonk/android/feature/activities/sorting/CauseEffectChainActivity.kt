@@ -5,6 +5,8 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -24,7 +26,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
@@ -49,6 +50,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -56,10 +58,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.activities.ActivityAnnouncement
 import com.zoonk.android.feature.activities.ActivityBadge
 import com.zoonk.android.feature.activities.ActivityCanvas
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
+import com.zoonk.android.feature.activities.LineMarker
+import com.zoonk.android.feature.activities.RestoreActivityAnswer
 import com.zoonk.android.feature.activities.links
 import com.zoonk.android.feature.activities.linksAnswer
 import com.zoonk.android.ui.format.currentLocale
@@ -96,10 +101,15 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
     }
     var causeId by rememberSaveable { mutableStateOf<String?>(null) }
     var notice by remember { mutableStateOf("") }
+    var announcement by remember { mutableStateOf("") }
     val centers = remember { mutableStateMapOf<String, Float>() }
     val resources = LocalResources.current
     val locked = props.isChecked || props.isLocked
     val labelOf = { id: String -> fields.nodes.firstOrNull { it.id == id }?.label ?: id }
+
+    RestoreActivityAnswer(
+        props,
+    ) { links.takeIf { !isGuided && it.isNotEmpty() }?.let { linksAnswer(it.map { link -> link.from to link.to }) } }
 
     fun update(next: List<CauseLink>) {
         links = next
@@ -127,7 +137,8 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
         val cause = causeId
         if (cause == null) {
             causeId = id
-            notice = resources.getString(R.string.activities_sorting_cause_picked, labelOf(id))
+            notice = ""
+            announcement = resources.getString(R.string.activities_sorting_cause_picked, labelOf(id))
             return
         }
         causeId = null
@@ -141,67 +152,73 @@ private fun CauseEffectChainActivity(props: ActivityProps) {
             links.map { LinkResult(it, if (isGuided) LinkState.Correct else LinkState.Made) }
         }
 
-    ActivityCanvas {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Bottom) {
-            Text(
-                causeId?.let { stringResource(R.string.activities_sorting_now_pick, labelOf(it)) }
-                    ?: stringResource(R.string.activities_sorting_pick_cause),
-                Modifier.weight(1f),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            if (!isGuided) {
+    Box {
+        ActivityCanvas {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(
-                    pluralStringResource(R.plurals.activities_sorting_links_count, truth.size, links.size, truth.size),
+                    causeId?.let { stringResource(R.string.activities_sorting_now_pick, labelOf(it)) }
+                        ?: stringResource(R.string.activities_sorting_pick_cause),
+                    Modifier.weight(1f).alignByBaseline(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                if (!isGuided) {
+                    Text(
+                        pluralStringResource(R.plurals.activities_sorting_links_count, truth.size, links.size, truth.size),
+                        Modifier.alignByBaseline(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                    )
+                }
+            }
+
+            val listLabel = stringResource(R.string.activities_sorting_causes_and_effects)
+            val arcs = arcColors()
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .drawBehind { drawArcs(results, centers, order, arcs) }
+                    .padding(start = ARC_GUTTER.dp)
+                    .semantics { contentDescription = listLabel },
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                nodes.forEach { node ->
+                    NodeCard(
+                        node = node,
+                        isCause = causeId == node.id,
+                        isCandidate = causeId != null && causeId != node.id,
+                        enabled = !locked,
+                        onPress = { press(node.id) },
+                        onCancel = {
+                            (causeId != null).also {
+                                causeId = null
+                                notice = ""
+                            }
+                        },
+                        modifier = Modifier.onGloballyPositioned { centers[node.id] = it.positionInParent().y + it.size.height / 2f },
+                    )
+                }
+            }
+
+            if (!locked) {
+                Text(
+                    notice,
+                    Modifier.fillMaxWidth().heightIn(min = 20.dp).semantics { liveRegion = LiveRegionMode.Polite },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
                 )
             }
+
+            LinkList(
+                results = results,
+                labelOf = labelOf,
+                why = { link -> fields.links.firstOrNull { it.from == link.from && it.to == link.to }?.why },
+                showWhy = isGuided || locked,
+                canRemove = !locked && !isGuided,
+                onRemove = { update(links.toggle(it)) },
+            )
         }
-
-        val listLabel = stringResource(R.string.activities_sorting_causes_and_effects)
-        val arcs = arcColors()
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .drawBehind { drawArcs(results, centers, order, arcs) }
-                .padding(start = ARC_GUTTER.dp)
-                .semantics { contentDescription = listLabel },
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            nodes.forEach { node ->
-                NodeCard(
-                    node = node,
-                    isCause = causeId == node.id,
-                    isCandidate = causeId != null && causeId != node.id,
-                    enabled = !locked,
-                    onPress = { press(node.id) },
-                    onCancel = {
-                        (causeId != null).also {
-                            causeId = null
-                            notice = ""
-                        }
-                    },
-                    modifier = Modifier.onGloballyPositioned { centers[node.id] = it.positionInParent().y + it.size.height / 2f },
-                )
-            }
-        }
-
-        Text(
-            if (locked) "" else notice,
-            Modifier.fillMaxWidth().heightIn(min = 20.dp).semantics { liveRegion = LiveRegionMode.Polite },
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-
-        LinkList(
-            results = results,
-            labelOf = labelOf,
-            why = { link -> fields.links.firstOrNull { it.from == link.from && it.to == link.to }?.why },
-            showWhy = isGuided || locked,
-            canRemove = !locked && !isGuided,
-            onRemove = { update(links.toggle(it)) },
-        )
+        ActivityAnnouncement(if (locked) "" else announcement)
     }
 }
 
@@ -293,11 +310,7 @@ private fun LinkList(
             ) {
                 StateIcon(state)
                 Column(Modifier.weight(1f).semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                    Text(
-                        "${labelOf(link.from)} → ${labelOf(link.to)}",
-                        Modifier.semantics { contentDescription = "${labelOf(link.from)} $ledTo ${labelOf(link.to)}" },
-                        style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                    )
+                    LinkLine(labelOf(link.from), labelOf(link.to), ledTo)
                     when (state) {
                         LinkState.Incorrect -> R.string.activities_sorting_not_a_link
                         LinkState.Missed -> R.string.activities_sorting_missed_link
@@ -327,6 +340,32 @@ private fun LinkList(
     }
 }
 
+/** Main's cause, arrow and effect, read as "cause led to effect"; the arrow turns with right-to-left text. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun LinkLine(
+    cause: String,
+    effect: String,
+    ledTo: String,
+) {
+    val style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium)
+    FlowRow(
+        Modifier.clearAndSetSemantics { contentDescription = "$cause $ledTo $effect" },
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        Text(cause, style = style)
+        LineMarker(style) {
+            Icon(
+                painterResource(R.drawable.ic_arrow_forward),
+                contentDescription = null,
+                modifier = Modifier.size(14.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Text(effect, style = style)
+    }
+}
+
 @Composable
 private fun StateIcon(state: LinkState) {
     val colors = MaterialTheme.colorScheme
@@ -337,7 +376,9 @@ private fun StateIcon(state: LinkState) {
             LinkState.Missed -> R.drawable.ic_radio_button_unchecked to colors.tertiary
             LinkState.Made -> return
         }
-    Icon(painterResource(icon), contentDescription = null, modifier = Modifier.padding(top = 2.dp).size(16.dp), tint = tint)
+    LineMarker(MaterialTheme.typography.bodyMedium) {
+        Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(16.dp), tint = tint)
+    }
 }
 
 private data class ArcColors(
