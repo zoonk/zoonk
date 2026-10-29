@@ -7,7 +7,6 @@ import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/c
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { BigQuantity } from "../../_components/big-quantity";
 import { useFormatDuration } from "../../_utils/time-format";
 import { type GenerationRun } from "../../generation/generation-run";
 import { type FindStatus, findPickedChip, findTimeChip } from "../../plan/plan-coverage";
@@ -17,11 +16,12 @@ import {
   readTimeToCover,
   useTimeToCoverTexts,
 } from "../../plan/use-time-to-cover";
-import { type Choice, ChoiceList } from "../choice-list";
+import { type Choice } from "../choice-list";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
 import { AdviceSentence } from "./advice-sentence";
 import { CoverEverything, FULL_COURSE_ID, getShownShare } from "./cover-everything";
-import { OtherTimeSelect, getTimeChoices } from "./daily-minutes";
+import { MINUTES_ID, ScheduleTimeChoices, getTimeChoices } from "./daily-minutes";
+import { FinishEstimate } from "./finish-estimate";
 import { StepForm } from "./step-form";
 import {
   EVERY_DAY,
@@ -76,7 +76,6 @@ function useWeekendChoices({
   return options.map((value) => ({ label: formatDuration(value), value: String(value) }));
 }
 
-const MINUTES_ID = "onboarding-minutes";
 const FIND_LINE_ID = "onboarding-find";
 
 function findAnswerTarget({
@@ -133,54 +132,6 @@ function useFocusFound({
   };
 }
 
-function MinutesReadout({ minutes }: { minutes: number }) {
-  const t = useExtracted();
-  const formatDuration = useFormatDuration();
-
-  return (
-    <p className="flex items-baseline justify-between gap-3">
-      <BigQuantity className="text-5xl">{formatDuration(minutes)}</BigQuantity>
-      <span className="text-muted-foreground font-mono text-sm">{t("per day")}</span>
-    </p>
-  );
-}
-
-function TimeChoices({
-  choices,
-  minutes,
-  onChange,
-}: {
-  choices: Choice<string>[];
-  minutes: string;
-  onChange: (minutes: string) => void;
-}) {
-  const t = useExtracted();
-
-  return (
-    <div className="flex flex-col gap-4">
-      <MinutesReadout minutes={Number(minutes)} />
-
-      <div className="flex flex-col gap-2">
-        <div id={MINUTES_ID}>
-          <ChoiceList
-            choices={choices}
-            label={t("Minutes a day")}
-            onChange={onChange}
-            value={minutes}
-            variant="chips"
-          />
-        </div>
-
-        <OtherTimeSelect
-          label={t("Other time a day")}
-          minutes={Number(minutes)}
-          onPick={(next) => onChange(String(next))}
-        />
-      </div>
-    </div>
-  );
-}
-
 export function ScheduleStep({
   dated,
   exam = false,
@@ -233,7 +184,6 @@ export function ScheduleStep({
 
   const asking = useTimeAdvice({
     answer,
-    dated,
     getAdvice: getTimeAdvice,
     known: pickedShare.known,
     minutes: Number(minutes),
@@ -286,7 +236,17 @@ export function ScheduleStep({
     >
       <PlanReceiptChips className="min-[72rem]:hidden" goal={goal} />
 
-      <TimeChoices choices={choices} minutes={minutes} onChange={setMinutes} />
+      <ScheduleTimeChoices choices={choices} minutes={minutes} onChange={setMinutes} />
+
+      {!dated && (
+        <FinishEstimate
+          advice={pickedShare.known ? advice : null}
+          onRetry={asking.restart}
+          status={asking.status}
+          stopped={isRunStopped(run)}
+          studyDays={days.length}
+        />
+      )}
 
       {showsEstimate && <TimeEstimatePanel {...estimateProps} />}
 

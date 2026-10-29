@@ -357,6 +357,7 @@ msgstr "{done, number} de {total, number}"
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/mind-map-card.tsx
 #: src/mind-maps/mind-map-tiles.tsx
+#: src/onboarding/steps/finish-estimate.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
 #: src/onboarding/steps/time-estimate.tsx
 #: src/plan/plan-bases-advice.tsx
@@ -8432,17 +8433,20 @@ msgid "Other time…"
 msgstr "Outro tempo…"
 
 #: src/onboarding/steps/daily-minutes.tsx
-#: src/onboarding/steps/schedule-step.tsx
 msgctxt "NnJcB-"
 msgid "Minutes a day"
 msgstr "Minutos por dia"
 
 #: src/onboarding/steps/daily-minutes.tsx
-#: src/onboarding/steps/schedule-step.tsx
 #: src/plan/plan-schedule.tsx
 msgctxt "fhjtBs"
 msgid "Other time a day"
 msgstr "Outro tempo por dia"
+
+#: src/onboarding/steps/daily-minutes.tsx
+msgctxt "zbSUYV"
+msgid "per day"
+msgstr "por dia"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "_2I8Hl"
@@ -8508,6 +8512,31 @@ msgstr "Decidir depois"
 msgctxt "y_efbE"
 msgid "{count, plural, one {Which one will you take?} other {Which ones will you take?}}"
 msgstr "{count, plural, one {Qual você vai fazer?} other {Quais você vai fazer?}}"
+
+#: src/onboarding/steps/finish-estimate.tsx
+msgctxt "vGUvKA"
+msgid "Choose at least one study day to estimate when your plan would finish."
+msgstr "Escolha pelo menos um dia de estudo para estimar quando seu plano vai terminar."
+
+#: src/onboarding/steps/finish-estimate.tsx
+msgctxt "gw6vBu"
+msgid "Estimated plan finish: <month>{date}</month>"
+msgstr "Término estimado do plano: <month>{date}</month>"
+
+#: src/onboarding/steps/finish-estimate.tsx
+msgctxt "lNNBTL"
+msgid "We can't estimate a finish date for this schedule yet. Try more time or more study days."
+msgstr "Ainda não dá para estimar uma data de término para esse cronograma. Tente reservar mais tempo ou escolher mais dias de estudo."
+
+#: src/onboarding/steps/finish-estimate.tsx
+msgctxt "TM-y-9"
+msgid "We couldn't estimate when your plan would finish."
+msgstr "Não foi possível estimar quando seu plano vai terminar."
+
+#: src/onboarding/steps/finish-estimate.tsx
+msgctxt "TIU4ZA"
+msgid "Working out when your plan would finish…"
+msgstr "Calculando quando seu plano vai terminar…"
 
 #: src/onboarding/steps/full-course-toggle.tsx
 #: src/plan/plan-coverage-suggestion.tsx
@@ -9081,11 +9110,6 @@ msgstr "Para que você vai usar isso"
 msgctxt "LHVFe7"
 msgid "E.g., reports, A/B tests"
 msgstr "Ex.: relatórios, testes A/B"
-
-#: src/onboarding/steps/schedule-step.tsx
-msgctxt "zbSUYV"
-msgid "per day"
-msgstr "por dia"
 
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "h2ifto"

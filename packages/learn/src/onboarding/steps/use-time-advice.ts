@@ -166,7 +166,6 @@ export function hasEstimate({
 
 export function useTimeAdvice({
   answer,
-  dated,
   getAdvice,
   known,
   minutes,
@@ -175,7 +174,6 @@ export function useTimeAdvice({
   week,
 }: {
   answer: AdviceAnswer | null;
-  dated: boolean;
   getAdvice: (week: StudyWeek & { dailyMinutes: number }) => Promise<PlanTimeAdvice | null>;
   known: boolean;
   minutes: number;
@@ -187,7 +185,7 @@ export function useTimeAdvice({
   const current = getWeekAdvice({ answer, week }) !== null;
 
   return usePoll({
-    active: dated && !(current && known) && !stopped,
+    active: week.studyDays.length > 0 && !(current && known) && !stopped,
     intervalMs: ADVICE_POLL_MS,
     key: JSON.stringify({ ...week, dailyMinutes: minutes }),
     onPoll: async (signal) => {

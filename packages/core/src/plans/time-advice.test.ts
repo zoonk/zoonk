@@ -125,6 +125,70 @@ describe(getPlanTimeAdvice, () => {
     vi.useRealTimers();
   });
 
+  it("estimates an undated plan for the selected week without saving a deadline or schedule", async () => {
+    const { goal, library } = await setup(18, 15);
+    await prisma.goal.update({ data: { targetDate: null }, where: { id: goal.id } });
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    const before = await prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } });
+
+    const ask = (input: PlanTimeAdviceInput) => getPlanTimeAdvice({ goalId: goal.id, input });
+
+    const [short, long, weekdays, weekends] = await Promise.all([
+      ask({ dailyMinutes: 15, studyDays: EVERY_DAY }),
+      ask({ dailyMinutes: 30, studyDays: EVERY_DAY }),
+      ask({ dailyMinutes: 15, studyDays: WEEKDAYS }),
+      ask({ dailyMinutes: 15, studyDays: EVERY_DAY, weekendMinutes: 60 }),
+    ]);
+
+    if ([short, long, weekdays, weekends].some((result) => result.status !== "ready")) {
+      throw new Error("Expected the time advice");
+    }
+
+    expect(short).toMatchObject({
+      advice: { endDate: expect.any(String), ready: true, targetDate: null },
+    });
+
+    const end = (result: typeof short) =>
+      result.status === "ready" ? (result.advice.endDate ?? "") : "";
+
+    expect(Date.parse(end(long))).toBeLessThan(Date.parse(end(short)));
+    expect(Date.parse(end(weekdays))).toBeGreaterThan(Date.parse(end(short)));
+    expect(Date.parse(end(weekends))).toBeLessThan(Date.parse(end(short)));
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } }),
+    ).resolves.toStrictEqual(before);
+
+    await expect(prisma.goal.findUniqueOrThrow({ where: { id: goal.id } })).resolves.toMatchObject({
+      dailyMinutes: 15,
+      targetDate: null,
+    });
+
+    await updateGoal({
+      goalId: goal.id,
+      input: { dailyMinutes: 30, studyDays: EVERY_DAY, timeZone: "UTC" },
+    });
+
+    const saved = await getGoalPlan(goal.id);
+    expect(saved.status === "ready" && saved.plan.estimate.endDate).toBe(end(long));
+  });
+
+  it("has no finish date when an undated plan cannot schedule the whole curriculum", async () => {
+    const { goal, library } = await setup(0, 5);
+    await prisma.goal.update({ data: { targetDate: null }, where: { id: goal.id } });
+
+    const large = {
+      ...library.graph,
+      skills: library.graph.skills.map((skill) => ({ ...skill, lessons: 600 })),
+    };
+
+    await createGoalPlan({ goalId: goal.id, graph: large });
+
+    await expect(
+      getPlanTimeAdvice({ goalId: goal.id, input: { dailyMinutes: 5, studyDays: [0] } }),
+    ).resolves.toMatchObject({ advice: { endDate: null, ready: true }, status: "ready" });
+  });
+
   it("recommends the least fitting accepted time when more time adds an exam mock", async () => {
     const [user, library] = await Promise.all([
       userFixture(),
@@ -704,6 +768,7 @@ describe(getPlanTimeAdvice, () => {
 
     await expect(readAdvice(goal.id, EVERY_DAY)).resolves.toStrictEqual({
       coveredShare: null,
+      endDate: null,
       fullCourseEndDate: null,
       measure: "goal",
       numbers: null,

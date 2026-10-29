@@ -15,7 +15,7 @@ import {
   listPlanDays,
   scheduleUnits,
 } from "./schedule-units";
-import { type SkillMinutes } from "./skill-minutes";
+import { type SkillMinutes, hasCompleteSkillCoverage } from "./skill-minutes";
 
 export type AfterExamSpan = { end: Date; minutes: number; start: Date };
 
@@ -46,7 +46,7 @@ export function getFullCourseEnd({
   end: string | null;
   targetDate: string | null;
 }): string | null {
-  const holdsAll = built.skillMinutes.every((skill) => skill.covered >= skill.total);
+  const holdsAll = hasCompleteSkillCoverage(built.skillMinutes);
   return holdsAll && endsAfterExam({ end, targetDate }) ? end : null;
 }
 

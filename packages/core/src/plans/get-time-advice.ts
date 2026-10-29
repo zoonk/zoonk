@@ -18,6 +18,7 @@ import { addDays, toIsoDate } from "./planner/plan-calendar";
 import { applyPlanOperations } from "./planner/plan-operations";
 import { type PlanState } from "./planner/plan-state";
 import { getScheduleOperations } from "./planner/schedule-operations";
+import { hasCompleteSkillCoverage } from "./planner/skill-minutes";
 import {
   type PlanTimeAdvice,
   type PlanTimeAdviceInput,
@@ -150,6 +151,7 @@ export async function getPlanTimeAdvice({
     return {
       advice: {
         coveredShare: null,
+        endDate: null,
         fullCourseEndDate: null,
         measure: "goal",
         numbers: null,
@@ -187,6 +189,10 @@ export async function getPlanTimeAdvice({
   return {
     advice: {
       coveredShare: feasibility.deadline ? roundShare(feasibility.coveredShare) : null,
+      endDate:
+        !targetDate && end && hasCompleteSkillCoverage(computed.built.skillMinutes)
+          ? toIsoDate(end)
+          : null,
       fullCourseEndDate: fullCourse
         ? getFullCourseEnd({ built: computed.built, end: end && toIsoDate(end), targetDate })
         : null,

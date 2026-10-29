@@ -15,6 +15,7 @@ const EVERY_DAY = [0, 1, 2, 3, 4, 5, 6];
 
 const ADVICE: PlanTimeAdvice = {
   coveredShare: 0.6,
+  endDate: null,
   fullCourseEndDate: null,
   measure: "exam",
   numbers: null,
@@ -43,6 +44,27 @@ function answerFor({
 }
 
 describe(getPickedShare, () => {
+  it("uses an undated finish estimate only for the exact time and week requested", () => {
+    const advice = { ...ADVICE, coveredShare: null, endDate: "2027-05-15", targetDate: null };
+    const answer = answerFor({ advice, minutes: 30 });
+    const week = toStudyWeek({ days: EVERY_DAY, minutes: "30", weekend: null });
+
+    expect(
+      getPickedShare({ advice: getWeekAdvice({ answer, week }), answer, found: null, minutes: 30 }),
+    ).toStrictEqual({ known: true, share: null });
+
+    expect(
+      getPickedShare({ advice: getWeekAdvice({ answer, week }), answer, found: null, minutes: 15 })
+        .known,
+    ).toBe(false);
+
+    const weekdays = toStudyWeek({ days: [1, 2, 3, 4, 5], minutes: "30", weekend: null });
+    expect(getWeekAdvice({ answer, week: weekdays })).toBeNull();
+
+    const weekends = toStudyWeek({ days: EVERY_DAY, minutes: "30", weekend: "60" });
+    expect(getWeekAdvice({ answer, week: weekends })).toBeNull();
+  });
+
   it("knows only the exact time Find found covers everything without asking", () => {
     const answer = answerFor({ minutes: 45 });
 

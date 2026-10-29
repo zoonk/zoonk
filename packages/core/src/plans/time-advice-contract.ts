@@ -43,6 +43,12 @@ export const planTimeAdviceSchema = z
         description:
           "What the week asked about covers in depth by the goal's date at the daily time asked about (dailyMinutes, else the goal's own), studying everything when fullCourse is asked: a share of the exam's questions and points or of the goal's skills by weight (see measure). Null without a date, or while not ready",
       }),
+    endDate: isoDateSchema
+      .nullable()
+      .default(null)
+      .describe(
+        "Estimated finish date for an undated goal at the requested daily time and study week, including practice and milestones. Null for dated goals, while not ready, or when the schedule cannot hold the whole selected curriculum. This estimate does not set a deadline.",
+      ),
     fullCourseEndDate: isoDateSchema
       .nullable()
       .default(null)

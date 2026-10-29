@@ -4,8 +4,9 @@ import { MAX_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { BigQuantity } from "../../_components/big-quantity";
 import { useFormatDuration } from "../../_utils/time-format";
-import { ChoiceList } from "../choice-list";
+import { type Choice, ChoiceList } from "../choice-list";
 
 const MINUTE_OPTIONS = ["15", "30", "45", "60", "90", "120", "180", "240"].map(Number);
 
@@ -21,6 +22,8 @@ const DAILY_TIMES = [
     (_, index) => FINE_UNTIL + (index + 1) * COARSE_STEP,
   ),
 ];
+
+export const MINUTES_ID = "onboarding-minutes";
 
 export function getTimeChoices(...times: (number | null)[]): number[] {
   const own = times.filter((time) => time !== null);
@@ -130,5 +133,53 @@ export function DailyMinutesChoice({
       <OtherTimeSelect label={t("Other time a day")} minutes={minutes} onPick={setMinutes} />
       <input name={name} type="hidden" value={minutes} />
     </>
+  );
+}
+
+function MinutesReadout({ minutes }: { minutes: number }) {
+  const t = useExtracted();
+  const formatDuration = useFormatDuration();
+
+  return (
+    <p className="flex items-baseline justify-between gap-3">
+      <BigQuantity className="text-5xl">{formatDuration(minutes)}</BigQuantity>
+      <span className="text-muted-foreground font-mono text-sm">{t("per day")}</span>
+    </p>
+  );
+}
+
+export function ScheduleTimeChoices({
+  choices,
+  minutes,
+  onChange,
+}: {
+  choices: Choice<string>[];
+  minutes: string;
+  onChange: (minutes: string) => void;
+}) {
+  const t = useExtracted();
+
+  return (
+    <div className="flex flex-col gap-4">
+      <MinutesReadout minutes={Number(minutes)} />
+
+      <div className="flex flex-col gap-2">
+        <div id={MINUTES_ID}>
+          <ChoiceList
+            choices={choices}
+            label={t("Minutes a day")}
+            onChange={onChange}
+            value={minutes}
+            variant="chips"
+          />
+        </div>
+
+        <OtherTimeSelect
+          label={t("Other time a day")}
+          minutes={Number(minutes)}
+          onPick={(next) => onChange(String(next))}
+        />
+      </div>
+    </div>
   );
 }

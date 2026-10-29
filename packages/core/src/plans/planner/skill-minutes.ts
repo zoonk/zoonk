@@ -5,6 +5,10 @@ type CoveredMinutes = { covered: number; total: number };
 
 export type SkillMinutes = CoveredMinutes & { skillId: string; standIn?: CoveredMinutes };
 
+export function hasCompleteSkillCoverage(skills: readonly SkillMinutes[]): boolean {
+  return skills.every((skill) => skill.covered >= skill.total);
+}
+
 function sumCovered(parts: readonly CoveredMinutes[]): CoveredMinutes {
   return {
     covered: parts.reduce((sum, part) => sum + part.covered, 0),
