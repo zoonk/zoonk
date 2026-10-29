@@ -2,14 +2,24 @@ package com.zoonk.android.ui.scaffold
 
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsFocused
+import androidx.compose.ui.test.assertIsNotFocused
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Rule
 import org.junit.Test
@@ -57,5 +67,22 @@ class PageWithSupportingPaneTest {
 
         rule.onNodeWithText("Page").assertIsDisplayed()
         rule.onNodeWithText("Aside beside").assertIsDisplayed()
+    }
+
+    @Test
+    fun aTextFieldWaitsForATap() {
+        InstrumentationRegistry.getInstrumentation().setInTouchMode(true)
+        rule.setContent {
+            ZoonkTheme {
+                PageWithSupportingPane(supportingPane = {}) {
+                    var text by remember { mutableStateOf("") }
+                    TextField(text, { text = it })
+                }
+            }
+        }
+
+        rule.onNode(hasSetTextAction()).assertIsNotFocused()
+        rule.onNode(hasSetTextAction()).performClick()
+        rule.onNode(hasSetTextAction()).assertIsFocused()
     }
 }
