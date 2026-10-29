@@ -528,6 +528,7 @@ private struct WeekRings: View {
             : Text("Not studied", tableName: "Session", comment: "A day not studied"))
       }
     }
+    .dynamicTypeSize(...DynamicTypeSize.accessibility1)
     .padding(.vertical, 4)
   }
 }

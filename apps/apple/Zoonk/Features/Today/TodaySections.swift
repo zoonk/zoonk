@@ -539,6 +539,7 @@ struct TodayWeekSection: View {
             .frame(maxWidth: .infinity)
         }
       }
+      .dynamicTypeSize(...DynamicTypeSize.accessibility1)
       .padding(.vertical, 4)
 
       // A challenge in a later week waits for its week: the Plan says when the next one is.
