@@ -47,6 +47,5 @@ internal fun formatDay(
 private const val YEAR_AWAY_DAYS = 365
 private const val MILLIS_PER_DAY = 86_400_000L
 
-/** The learner's day as the plan marks it. */
 val Plan.today: LocalDate
     get() = (week.days.firstOrNull { it.state == PlanDay.State.TODAY }?.date ?: week.startDate).toJavaLocalDate()

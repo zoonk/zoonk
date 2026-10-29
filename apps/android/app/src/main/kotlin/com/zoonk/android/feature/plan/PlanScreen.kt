@@ -32,6 +32,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
@@ -42,7 +43,6 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.LoadState
-import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
@@ -53,7 +53,6 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
-import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Plan
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -65,20 +64,32 @@ fun PlanScreen(
     navigator: AppNavigator,
 ) {
     val summary by app.learnerSummary.summary.collectShown()
+    val scope = rememberCoroutineScope()
 
     TabRootScaffold(app, navigator) { padding ->
         val loaded = summary.value
         val goal = loaded?.planGoal
 
         when {
-            loaded == null -> PlanLoading(padding)
-            goal == null -> PlanNoGoal(navigator, padding)
-            else -> key(goal.id) { GoalPlan(goal, loaded, app, navigator, padding) }
+            loaded == null && summary is LoadState.Failed -> {
+                PlanLoadFailed(padding) { scope.launch { app.learnerSummary.summary.refresh() } }
+            }
+
+            loaded == null -> {
+                PlanLoading(padding)
+            }
+
+            goal == null -> {
+                PlanNoGoal(navigator, padding)
+            }
+
+            else -> {
+                key(goal.id) { GoalPlan(goal, loaded, app, navigator, padding) }
+            }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun GoalPlan(
     goal: LearnerSummaryGoal,
@@ -89,26 +100,21 @@ private fun GoalPlan(
 ) {
     val resource = app.plans.plan[goal.id]
     val state by resource.collectShown()
-    val refreshing by resource.isRefreshing.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
     val read = state.value
+    val courseSetup = if (goal.courseId != null) setupLeft(app, goal, course = true) else SetupLeft.No
 
     when {
+        courseSetup == SetupLeft.Unknown -> {
+            SetupLoading(app, goal, padding)
+        }
+
+        courseSetup == SetupLeft.Yes -> {
+            PlanStateColumn(padding) { PlanSetupLeft(goal, navigator) }
+        }
+
         read != null && read.plan.ready -> {
-            val viewModel = viewModel(key = "plan-${goal.id}") { PlanViewModel(app.plans, goal.id) }
-            PlanPolling(read.plan, resource)
-            PullToRefreshBox(
-                isRefreshing = refreshing,
-                onRefresh = { scope.launch { resource.refresh() } },
-                modifier = Modifier.fillMaxSize().padding(padding),
-            ) {
-                PlanPage(
-                    page = PlanPageState(goal, read.plan, summary),
-                    app = app,
-                    navigator = navigator,
-                    viewModel = viewModel,
-                )
-            }
+            ReadyPlan(goal, summary, read.plan, app, navigator, padding)
         }
 
         state is LoadState.Loaded || state is LoadState.Empty || (state as? LoadState.Failed)?.error == ApiError.NotFound -> {
@@ -116,9 +122,7 @@ private fun GoalPlan(
         }
 
         state is LoadState.Failed -> {
-            Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-                LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } })
-            }
+            PlanLoadFailed(padding) { scope.launch { resource.refresh() } }
         }
 
         else -> {
@@ -127,7 +131,66 @@ private fun GoalPlan(
     }
 }
 
-/** A plan not built yet: its setup's questions are left, or the planner is building it. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun ReadyPlan(
+    goal: LearnerSummaryGoal,
+    summary: LearnerSummary,
+    plan: Plan,
+    app: AppContainer,
+    navigator: AppNavigator,
+    padding: PaddingValues,
+) {
+    val resource = app.plans.plan[goal.id]
+    val refreshing by resource.isRefreshing.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
+    val viewModel = viewModel(key = "plan-${goal.id}") { PlanViewModel(app.plans, goal.id) }
+
+    WhileShown(plan.isPhaseBeingWritten) {
+        while (true) {
+            delay(WRITING_REFRESH)
+            app.plans.refreshIfChanged(goal.id)
+        }
+    }
+
+    PullToRefreshBox(
+        isRefreshing = refreshing,
+        onRefresh = { scope.launch { resource.refresh() } },
+        modifier = Modifier.fillMaxSize().padding(padding),
+    ) {
+        PlanPage(page = PlanPageState(goal, plan, summary), app = app, navigator = navigator, viewModel = viewModel)
+    }
+}
+
+private enum class SetupLeft { Yes, No, Unknown }
+
+@Composable
+private fun setupLeft(
+    app: AppContainer,
+    goal: LearnerSummaryGoal,
+    course: Boolean = false,
+): SetupLeft {
+    val setup by app.plans.setup[goal.id].collectShown()
+    val loaded = setup.value ?: return if (setup is LoadState.Empty) SetupLeft.No else SetupLeft.Unknown
+    val left = if (course) loaded.courseSetupLeft else loaded.questionsLeft
+    return if (left) SetupLeft.Yes else SetupLeft.No
+}
+
+@Composable
+private fun SetupLoading(
+    app: AppContainer,
+    goal: LearnerSummaryGoal,
+    padding: PaddingValues,
+) {
+    val setup by app.plans.setup[goal.id].collectShown()
+    val scope = rememberCoroutineScope()
+    if (setup is LoadState.Failed) {
+        PlanLoadFailed(padding) { scope.launch { app.plans.setup[goal.id].refresh() } }
+    } else {
+        PlanLoading(padding)
+    }
+}
+
 @Composable
 private fun PlanWithoutPlan(
     goal: LearnerSummaryGoal,
@@ -136,28 +199,20 @@ private fun PlanWithoutPlan(
     padding: PaddingValues,
     onRefresh: suspend () -> Unit,
 ) {
-    val steps by app.plans.setupSteps[goal.id].collectShown()
-    val setupLeft = steps.value?.any { it != OnboardingStep.PLAN }
-
-    PlanStateColumn(padding) {
-        when (setupLeft) {
-            true -> {
-                Text(text = goal.title, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
-                PlanTitle()
-                PlanSetupLeft(onContinue = { navigator.open(AppRoute.GoalSetup(goal.id.toString())) })
-            }
-
-            false -> {
-                PlanBuilding(goal, app, onRefresh)
-            }
-
-            null -> {}
-        }
+    when (setupLeft(app, goal)) {
+        SetupLeft.Yes -> PlanStateColumn(padding) { PlanSetupLeft(goal, navigator) }
+        SetupLeft.No -> PlanStateColumn(padding) { PlanBuilding(goal, app, onRefresh) }
+        SetupLeft.Unknown -> SetupLoading(app, goal, padding)
     }
 }
 
 @Composable
-private fun PlanSetupLeft(onContinue: () -> Unit) {
+private fun PlanSetupLeft(
+    goal: LearnerSummaryGoal,
+    navigator: AppNavigator,
+) {
+    Text(text = goal.title, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    PlanTitle()
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
             text = stringResource(R.string.plan_setup_left_title),
@@ -169,13 +224,17 @@ private fun PlanSetupLeft(onContinue: () -> Unit) {
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Button(onClick = onContinue, modifier = Modifier.padding(top = 8.dp)) {
+        Button(onClick = { navigator.open(AppRoute.GoalSetup(goal.id.toString())) }, modifier = Modifier.padding(top = 8.dp)) {
             Text(stringResource(R.string.plan_continue))
         }
     }
 }
 
-/** The planner is building the plan: main's `JourneyBuilding`, which reads the plan again until it shows. */
+/**
+ * The planner is building the plan: main's `JourneyBuilding`, which follows the run and reads the
+ * plan again until it shows. It follows only while the Plan shows, and only for the session that
+ * started it.
+ */
 @Composable
 private fun PlanBuilding(
     goal: LearnerSummaryGoal,
@@ -183,11 +242,16 @@ private fun PlanBuilding(
     onRefresh: suspend () -> Unit,
 ) {
     val session = app.sessions.current ?: return
-    val viewModel = viewModel(key = "plan-building-${goal.id}") { PlanBuildingViewModel(app.plans, app.api, session, goal.id) }
+    val viewModel =
+        viewModel(key = "plan-building-${goal.id}-${session.localId}") { PlanBuildingViewModel(app.plans, app.api, session, goal.id) }
     val run by viewModel.follower.run.collectAsStateWithLifecycle()
     val ready = run.status == GenerationRun.Status.Ready
 
-    LaunchedEffect(ready) {
+    LifecycleStartEffect(viewModel) {
+        if (viewModel.follower.run.value.status != GenerationRun.Status.Ready) viewModel.follower.follow(null)
+        onStopOrDispose { viewModel.follower.stop() }
+    }
+    WhileShown(true, ready) {
         while (true) {
             delay(if (ready) READY_REFRESH else FALLBACK_REFRESH)
             onRefresh()
@@ -215,27 +279,31 @@ private fun PlanBuilding(
 
 private val READY_REFRESH = 2.seconds
 private val FALLBACK_REFRESH = 20.seconds
+private val WRITING_REFRESH = 10.seconds
 
-/** Reads the plan again every few seconds while the current phase's lessons are being written. */
+/** Runs [block] while the screen is started and [active], restarting it when [key] changes. */
 @Composable
-private fun PlanPolling(
-    plan: Plan,
-    resource: Resource<PlanRead>,
+private fun WhileShown(
+    active: Boolean,
+    key: Any? = null,
+    block: suspend () -> Unit,
 ) {
-    if (!plan.isPhaseBeingWritten) return
+    if (!active) return
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-
-    LaunchedEffect(resource, lifecycle) {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-            while (true) {
-                delay(WRITING_REFRESH)
-                resource.refresh()
-            }
-        }
+    LaunchedEffect(lifecycle, key) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { block() }
     }
 }
 
-private val WRITING_REFRESH = 10.seconds
+@Composable
+private fun PlanLoadFailed(
+    padding: PaddingValues,
+    onRetry: () -> Unit,
+) {
+    Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
+        LoadFailedMessage(onRetry = onRetry)
+    }
+}
 
 /** A quick explanation has no plan, so the Plan offers to start a goal. */
 @Composable

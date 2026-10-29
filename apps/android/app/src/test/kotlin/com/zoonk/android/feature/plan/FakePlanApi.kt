@@ -47,10 +47,10 @@ internal class FakePlanApi : PlanApi {
         goalId: UUID,
     ) = false
 
-    override suspend fun setupSteps(
+    override suspend fun setup(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = emptyList<OnboardingStep>()
+    ) = GoalSetup(listOf(OnboardingStep.PLAN), courseStart = false)
 
     override suspend fun buildingRunId(
         session: AuthenticatedSession,

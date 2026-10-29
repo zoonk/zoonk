@@ -285,14 +285,16 @@
   "plan_resume_title": "27cffbf0f11a759e00068a96b5ef28bd8e85cb757d3c6a6fae1e3e000c9924a1",
   "plan_retention_caption": "59a2696d172a33b78eb83825b6af1f8b0f3c53c4f716c364883f9f677d8a2230",
   "plan_roadmap_day_of": "cfe25f724e79d7c6d5ee3ccbcc5a7376fa9493ab0cf48feae082a78c09c0a842",
+  "plan_roadmap_from": "75526b7a2d8fb593d79a16d125a8bd16d56e21f465cf2bcaf8cef5e870b8e361",
   "plan_roadmap_number_of": "b52e876f7fc516995f6cd680d141d9e612b6a6baf4172e6df0b3431cf8fac36d",
   "plan_roadmap_phase_of": "a14cb0240852c0476dfb7825f1e0f4ea31855c2a61a7bea6247dcd50db778b64",
+  "plan_roadmap_until": "3fa1cc1633a11ad10555b158556113db1a65d46a409cedfb6e61f4553629186e",
   "plan_saturdays": "da33ff9fd0448e0a3cab80a2a1469cc2aca87a9d56d0992cdb0c71088ff24d3d",
   "plan_save_failed": "ca361adcb523a0a75080453e0abc4631bcf84367e89357b1365b88dca9b7e9dc",
-  "plan_score_band": "20d774f19bd0fabf6b2c0ab27d0bea035c4ae0e7e29010b977c8cee391158669",
-  "plan_score_band_range": "7e10b036055251600aedf1b067f67ef911ab045af316e0087a5495ff5143b3a7",
-  "plan_score_percent": "46e564c249c5e307cb317ae926f4615ed60dbbf6a4b7e0ae7f20a78cc5999500",
-  "plan_score_percent_range": "af2b43a44dc08a8ab3b59a2474c9ee131792d97072f0f2436cd45ac474d49c6e",
+  "plan_score_band": "b0906692a4a2569bfe6e5599bce8bcc5af19eba5c0419163fadf089c66d3f180",
+  "plan_score_band_range": "50df925c59f957bfe2977c89a952eb4df2928b9973894967d240b90f031c1b88",
+  "plan_score_percent": "0ce2f6db1e4b6e3a444ab3114654cf8230a0abf0aaa575e408b86cd2977df156",
+  "plan_score_percent_range": "65e9754675206d13ef9d05f662cdeebca8e95313098bb3471abcbd543fc1fc4b",
   "plan_score_range": "90f28c4657bcd184d53d799e64880149cccdaaf2d06546941e7e8f0cbbff4f93",
   "plan_setup_left_description": "5c7aea161544064dc6c5cc73b160d2a7e985f8d5dcbf38b18c2aef1c46d2755b",
   "plan_setup_left_title": "4cab399a15eba8b89a16dfd029bed30c9cec3cdf1185b0d27acc308a7159910a",
@@ -404,6 +406,8 @@
     <string name="plan_roadmap_day_of">jour %1$d sur %2$d</string>
     <string name="plan_roadmap_number_of">%1$d sur %2$d</string>
     <string name="plan_roadmap_phase_of">phase %1$d sur %2$d</string>
+    <string name="plan_roadmap_from">À partir du %1$s</string>
+    <string name="plan_roadmap_until">Jusqu’au %1$s</string>
     <string name="plan_today">Aujourd’hui</string>
     <string name="plan_mock_exam">Examen blanc</string>
     <string name="plan_phase_challenge">Défi de la phase</string>
@@ -647,10 +651,10 @@
         <item quantity="many">Basé sur tes %d derniers examens blancs</item>
         <item quantity="other">Basé sur tes %d derniers examens blancs</item>
     </plurals>
-    <string name="plan_score_percent">%1$d%%</string>
-    <string name="plan_score_percent_range">%1$d%% à %2$d%%</string>
-    <string name="plan_score_band">Niveau %1$d</string>
-    <string name="plan_score_band_range">Niveau %1$d à %2$d</string>
+    <string name="plan_score_percent">%1$s%%</string>
+    <string name="plan_score_percent_range">De %1$s%% à %2$s%%</string>
+    <string name="plan_score_band">Tranche %1$s</string>
+    <string name="plan_score_band_range">Tranches %1$s à %2$s</string>
     <string name="plan_score_range">%1$s à %2$s</string>
     <string name="plan_lessons">Leçons</string>
     <string name="plan_coverage">Couverture</string>

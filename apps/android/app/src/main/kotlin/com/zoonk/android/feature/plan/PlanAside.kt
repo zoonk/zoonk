@@ -19,6 +19,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,7 +39,6 @@ import kotlinx.datetime.toJavaLocalDate
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 
-/** Main's "Next on your path": the next mock, chapter and challenge, the goal, and what comes after the exam. */
 @Composable
 internal fun NextOnPath(
     page: PlanPageState,
@@ -258,7 +258,6 @@ internal fun PlanProperties(
     }
 }
 
-/** Where Adjust plan opens from a row of the plan's settings. */
 enum class PlanSection { Date, Time, Days, Choices, Practice }
 
 @Composable
@@ -273,10 +272,16 @@ private fun PropertyRow(
         modifier =
             Modifier
                 .fillMaxWidth()
+                .bleed(ROW_BLEED)
                 .clip(MaterialTheme.shapes.small)
-                .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
-                .heightIn(min = 48.dp)
-                .padding(horizontal = 8.dp, vertical = 4.dp),
+                .then(
+                    if (onClick != null) {
+                        Modifier.clickable(role = Role.Button, onClick = onClick)
+                    } else {
+                        Modifier.semantics(mergeDescendants = true) {}
+                    },
+                ).heightIn(min = 48.dp)
+                .padding(horizontal = ROW_BLEED, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -316,7 +321,6 @@ private fun goalDateValue(page: PlanPageState): String {
     return planDate(target.toJavaLocalDate(), page.today, schedule.targetDateEstimated, schedule.targetDateNamedMonth).text
 }
 
-/** The week's time: the weekdays' and, when it differs, the weekend's. */
 @Composable
 private fun dailyTimeValue(page: PlanPageState): String {
     val locale = currentLocale()
@@ -354,7 +358,6 @@ internal fun weekShape(
 private fun common(minutes: List<Int>): Int? =
     minutes.maxWithOrNull(compareBy<Int> { value -> minutes.count { it == value } }.thenBy { it })
 
-/** "Every day", a run of three or more days ("Mon – Fri"), or the days listed, Monday first. */
 internal fun studyDaysText(
     weekdayMinutes: List<Int>,
     locale: java.util.Locale,

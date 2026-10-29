@@ -9,7 +9,6 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.LiveGenerationSource
 import java.util.UUID
 
-/** Follows the run building the plan (main's `JourneyBuildingClient`); "Try again" starts it again. */
 class PlanBuildingViewModel(
     store: PlanStore,
     api: ApiClients,
@@ -24,8 +23,4 @@ class PlanBuildingViewModel(
             readGenerationId = { store.buildingRunId(session, goalId) },
             restart = { store.rebuild(goalId) },
         )
-
-    init {
-        follower.follow(null)
-    }
 }

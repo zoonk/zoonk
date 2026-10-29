@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.PathEffect
@@ -54,8 +57,10 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.EstimatedScore
@@ -71,7 +76,6 @@ import java.util.Locale
 import kotlin.math.min
 import kotlin.math.roundToInt
 
-/** Main's two numbers that answer "will I make it?": the standing beside the pace, each opening its details. */
 enum class NumberVariant { Tiles, Stats }
 
 private data class PlanNumber(
@@ -87,7 +91,7 @@ private enum class NumberSheet { Standing, Pace }
 @Composable
 internal fun PlanNumbers(
     page: PlanPageState,
-    standing: Standing,
+    standing: Standing?,
     variant: NumberVariant,
     links: PlanLinks,
     modifier: Modifier = Modifier,
@@ -96,9 +100,12 @@ internal fun PlanNumbers(
     var open by rememberSaveable { mutableStateOf<NumberSheet?>(null) }
     val pace = page.plan.status?.pace
     val gap = if (variant == NumberVariant.Tiles) 8.dp else 24.dp
+    if (standing == null && pace == null) return
 
     Row(modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
-        NumberButton(standingNumber(standing), variant, Modifier.weight(1f)) { open = NumberSheet.Standing }
+        if (standing != null) {
+            NumberButton(standingNumber(standing), variant, Modifier.weight(1f)) { open = NumberSheet.Standing }
+        }
         if (pace != null) {
             NumberButton(paceNumber(page, pace), variant, Modifier.weight(1f)) { open = NumberSheet.Pace }
         }
@@ -106,6 +113,7 @@ internal fun PlanNumbers(
 
     when (open) {
         NumberSheet.Standing -> {
+            if (standing == null) return
             DetailsSheet(standingTitle(standing), onDismiss = { open = null }) {
                 when (standing) {
                     is Standing.Preparation -> PreparationDetails(standing.progress, forExam = true, lessons = null, links = links)
@@ -254,7 +262,6 @@ private fun NumberButton(
     onOpen: () -> Unit,
 ) {
     val content: @Composable ColumnScope.() -> Unit = {
-        val readout = MaterialTheme.typography.headlineMedium
         Text(
             text = number.label,
             style = if (variant == NumberVariant.Tiles) MaterialTheme.typography.labelLarge else MaterialTheme.typography.titleSmall,
@@ -264,7 +271,7 @@ private fun NumberButton(
         )
         Text(
             text = number.value,
-            style = if (number.numeric) readout.withTabularFigures() else MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.headlineMedium.let { if (number.numeric) it.withTabularFigures() else it },
             fontWeight = if (number.numeric) null else FontWeight.SemiBold,
         )
         number.share?.let { Meter(it, Modifier.padding(vertical = 2.dp)) }
@@ -283,9 +290,10 @@ private fun NumberButton(
         Column(
             modifier =
                 modifier
+                    .bleed(ROW_BLEED)
                     .clip(MaterialTheme.shapes.medium)
                     .clickable(role = Role.Button, onClick = onOpen)
-                    .padding(8.dp),
+                    .padding(ROW_BLEED),
             verticalArrangement = Arrangement.spacedBy(6.dp),
             content = content,
         )
@@ -301,7 +309,7 @@ private fun DetailsSheet(
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
-            modifier = Modifier.verticalScroll(rememberScrollState()).padding(start = 24.dp, end = 24.dp, bottom = 32.dp),
+            modifier = Modifier.verticalScroll(rememberScrollState()).padding(start = SHEET_MARGIN, end = SHEET_MARGIN, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(28.dp),
         ) {
             Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
@@ -323,8 +331,7 @@ internal fun PaceDetails(
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
         Text(
             text = if (resting) stringResource(R.string.plan_pace_value_paused) else paceText(pace),
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
+            style = MaterialTheme.typography.titleMedium,
         )
         if (resting) MetaLine(stringResource(R.string.plan_nothing_planned_until_resume))
         fix?.let { MetaLine(it.text) }
@@ -351,7 +358,12 @@ private fun PlanWeek(page: PlanPageState) {
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(verticalAlignment = Alignment.Bottom) {
-            SectionHeader(stringResource(R.string.plan_this_week), Modifier.weight(1f))
+            Text(
+                text = stringResource(R.string.plan_this_week),
+                modifier = Modifier.weight(1f).semantics { heading() },
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
             if (time.targetMinutes > 0) {
                 Text(
                     text =
@@ -360,7 +372,7 @@ private fun PlanWeek(page: PlanPageState) {
                             formatMinutes(time.studiedMinutes.toInt(), locale),
                             formatMinutes(time.targetMinutes.roundToInt(), locale),
                         ),
-                    style = MaterialTheme.typography.bodySmall.withTabularFigures(),
+                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -401,7 +413,6 @@ private fun dayStatus(state: PlanDay.State): String =
 
 private val PlanItem.isDone: Boolean get() = status == PlanItem.Status.DONE || status == PlanItem.Status.TESTED_OUT
 
-/** Main's goal ring: the day's share done; a missed day's track dashed, a rest day's faint. */
 @Composable
 private fun DayRing(day: PlanDay) {
     val ink = MaterialTheme.colorScheme.onSurface
@@ -419,8 +430,9 @@ private fun DayRing(day: PlanDay) {
             else -> 0.1f
         }
 
-    Box(Modifier.size(36.dp), contentAlignment = Alignment.Center) {
-        Canvas(Modifier.size(36.dp)) {
+    val ring = markSize() * DAY_RING_SHARE
+    Box(Modifier.size(ring), contentAlignment = Alignment.Center) {
+        Canvas(Modifier.size(ring)) {
             val width = 3.dp.toPx()
             val inset = width / 2
             val arcSize = Size(size.width - width, size.height - width)
@@ -500,9 +512,12 @@ private fun EstimatedScoreBlock(preparation: GoalPreparation) {
 /** Always a range, so it never reads as a promise; whole-number scales as their reports print them. */
 @Composable
 private fun scoreRange(score: EstimatedScore): String {
-    val low = score.low.roundToInt()
-    val high = score.high.roundToInt()
-    val single = low == high
+    val locale = currentLocale()
+    val single = score.low == score.high
+    // Whole-number scales read as their score reports print them: "1170", never "1,170".
+    val grouping = score.scale == EstimatedScore.Scale.PERCENT || score.scale == EstimatedScore.Scale.TOEFL
+    val low = formatNumber(score.low, locale, grouping = grouping)
+    val high = formatNumber(score.high, locale, grouping = grouping)
     return when (score.scale) {
         EstimatedScore.Scale.PERCENT -> {
             if (single) stringResource(R.string.plan_score_percent, low) else stringResource(R.string.plan_score_percent_range, low, high)
@@ -513,7 +528,7 @@ private fun scoreRange(score: EstimatedScore): String {
         }
 
         else -> {
-            if (single) low.toString() else stringResource(R.string.plan_score_range, low.toString(), high.toString())
+            if (single) low else stringResource(R.string.plan_score_range, low, high)
         }
     }
 }
@@ -645,15 +660,25 @@ private fun PartRing(
 ) {
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
     val fill = MaterialTheme.colorScheme.tertiary
-    Box(Modifier.size(56.dp), contentAlignment = Alignment.Center) {
-        Canvas(Modifier.size(56.dp)) {
-            val width = 4.dp.toPx()
-            val inset = width / 2
-            val arcSize = Size(size.width - width, size.height - width)
-            drawArc(track, 0f, 360f, false, Offset(inset, inset), arcSize, style = Stroke(width))
-            val sweep = 360f * (share ?: 0.0).coerceIn(0.0, 1.0).toFloat()
-            if (sweep > 0) drawArc(fill, -90f, sweep, false, Offset(inset, inset), arcSize, style = Stroke(width, cap = StrokeCap.Round))
-        }
+    Box(
+        modifier =
+            Modifier
+                .sizeIn(minWidth = 56.dp, minHeight = 56.dp)
+                .aspectRatio(1f)
+                .drawBehind {
+                    val width = 4.dp.toPx()
+                    val inset = width / 2
+                    val arcSize = Size(size.width - width, size.height - width)
+                    drawArc(track, 0f, 360f, false, Offset(inset, inset), arcSize, style = Stroke(width))
+                    val sweep = 360f * (share ?: 0.0).coerceIn(0.0, 1.0).toFloat()
+                    if (sweep >
+                        0
+                    ) {
+                        drawArc(fill, -90f, sweep, false, Offset(inset, inset), arcSize, style = Stroke(width, cap = StrokeCap.Round))
+                    }
+                }.padding(10.dp),
+        contentAlignment = Alignment.Center,
+    ) {
         Text(
             text = value ?: "–",
             style = MaterialTheme.typography.labelLarge.withTabularFigures(),
@@ -761,6 +786,7 @@ private fun StillToDo(
 }
 
 private const val MAX_STILL_SHOWN = 2
+private const val DAY_RING_SHARE = 1.5f
 private const val MINUTES_PER_HOUR = 60
 
 /** Under two hours as is; beyond, to the hour, so an estimate never looks exact. */

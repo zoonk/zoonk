@@ -93,7 +93,6 @@ fun paceText(pace: Pace): String =
         }
     }
 
-/** What brings the learner back on pace, and whether adjusting the plan is the way. */
 data class PaceFix(
     val text: String,
     val adjust: Boolean,

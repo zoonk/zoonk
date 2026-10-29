@@ -17,12 +17,9 @@ import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.Syllabus
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import java.util.UUID
 import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 import kotlin.time.Instant
 
 /** [readAt] is when it was read, a little early, to ask the server whether it changed since. */
@@ -30,6 +27,19 @@ data class PlanRead(
     val plan: Plan,
     val readAt: Instant,
 )
+
+/**
+ * [steps] are the setup's questions the learner hasn't answered (`plan` alone: it's being built).
+ * A course start's default plan reads as ready before them, so main shows setup for it while any
+ * are left, a buddy aside (core's `isCourseSetupLeft`).
+ */
+data class GoalSetup(
+    val steps: List<OnboardingStep>,
+    val courseStart: Boolean,
+) {
+    val questionsLeft: Boolean get() = steps.any { it != OnboardingStep.PLAN }
+    val courseSetupLeft: Boolean get() = courseStart && steps.any { it != OnboardingStep.PLAN && it != OnboardingStep.BUDDY }
+}
 
 interface PlanApi {
     suspend fun plan(
@@ -59,11 +69,10 @@ interface PlanApi {
         goalId: UUID,
     ): Boolean
 
-    /** Steps of the goal's setup the learner hasn't answered yet; `plan` alone means it's being built. */
-    suspend fun setupSteps(
+    suspend fun setup(
         session: AuthenticatedSession,
         goalId: UUID,
-    ): List<OnboardingStep>
+    ): GoalSetup
 
     /** The run building the plan; null until it saves its id, a few seconds after it starts. */
     suspend fun buildingRunId(
@@ -114,10 +123,10 @@ class LivePlanApi(
         goalId: UUID,
     ) = perform { api.clients(session).plans.previewGoalResume(goalId) }
 
-    override suspend fun setupSteps(
+    override suspend fun setup(
         session: AuthenticatedSession,
         goalId: UUID,
-    ) = perform { api.clients(session).onboarding.getOnboarding(goalId) }.steps
+    ) = perform { api.clients(session).onboarding.getOnboarding(goalId) }.let { GoalSetup(it.steps, "courseStart" in it.goal.details) }
 
     override suspend fun buildingRunId(
         session: AuthenticatedSession,
@@ -147,10 +156,9 @@ class PlanStore(
     private val api: PlanApi,
     private val cache: AppCache,
     private val now: () -> Instant = Clock.System::now,
-    private val timeZone: () -> TimeZone = TimeZone::currentSystemDefault,
 ) {
     val plan: KeyedResources<UUID, PlanRead> =
-        cache.keyed(Audience.SignedIn, PLAN_DOMAINS, maxAge = PLAN_CHECK_AGE) { session, goalId ->
+        cache.keyed(Audience.SignedIn, PLAN_DOMAINS) { session, goalId ->
             session?.let { read(it, goalId) }
         }
 
@@ -163,9 +171,9 @@ class PlanStore(
     val resumeChangesPlan: KeyedResources<UUID, Boolean> =
         cache.keyed(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId -> session?.let { api.resumeChangesPlan(it, goalId) } }
 
-    val setupSteps: KeyedResources<UUID, List<OnboardingStep>> =
+    val setup: KeyedResources<UUID, GoalSetup> =
         cache.keyed(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearningProfile)) { session, goalId ->
-            session?.let { api.setupSteps(it, goalId) }
+            session?.let { api.setup(it, goalId) }
         }
 
     suspend fun buildingRunId(
@@ -188,22 +196,29 @@ class PlanStore(
     ): MutationResult<Unit> = cache.mutate(invalidating = WRITE_DOMAINS + DataDomain.LearningProfile) { api.setStatus(it, goalId, status) }
 
     /**
-     * The server plans again on every read, so the one shown is kept while nothing changed since it
-     * was read. A new day changes it without a write, so it's read again then too.
+     * While lessons are being written: asks whether anything changed since the plan shown was read,
+     * and reads it again only then, since the server plans again on every read. Other reads and
+     * invalidations always read the plan, as main's page does.
      */
+    suspend fun refreshIfChanged(goalId: UUID) {
+        polls += goalId
+        try {
+            plan[goalId].refresh()
+        } finally {
+            polls -= goalId
+        }
+    }
+
+    private val polls = mutableSetOf<UUID>()
+
     private suspend fun read(
         session: AuthenticatedSession,
         goalId: UUID,
     ): PlanRead {
         val shown = plan[goalId].state.value.value
-        if (shown != null && day(shown.readAt) == day(now()) && !api.planChanged(session, goalId, shown.readAt)) {
-            return shown
-        }
-        val readAt = now() - CLOCK_MARGIN
-        return PlanRead(api.plan(session, goalId), readAt)
+        if (polls.remove(goalId) && shown != null && !api.planChanged(session, goalId, shown.readAt)) return shown
+        return PlanRead(api.plan(session, goalId), now() - CLOCK_MARGIN)
     }
-
-    private fun day(instant: Instant) = instant.toLocalDateTime(timeZone()).date
 
     companion object {
         val PLAN_DOMAINS = setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress, DataDomain.UserSubscription)
@@ -211,8 +226,6 @@ class PlanStore(
 
         /** Plan writes revalidate these, as core's `revalidatePlanTags` does. */
         val WRITE_DOMAINS = setOf(DataDomain.Goals, DataDomain.LearnerModel)
-
-        private val PLAN_CHECK_AGE = 30.seconds
 
         /** Device clocks run a little apart from the server's: asking from a minute earlier never misses a change. */
         private val CLOCK_MARGIN = 1.minutes

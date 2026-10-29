@@ -83,7 +83,6 @@ private fun SupportingLine(text: String) {
     Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
-/** Several phases' new ends, one row each. */
 @Composable
 fun PhaseEndMoves(
     effect: PlanEffect?,
@@ -96,7 +95,6 @@ fun PhaseEndMoves(
     }
 }
 
-/** A goal's date before and after a change, for a change that moves it. */
 data class GoalDateMove(
     val after: LocalDate,
     val before: LocalDate?,

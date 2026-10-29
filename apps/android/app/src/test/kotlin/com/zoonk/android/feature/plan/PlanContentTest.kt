@@ -2,6 +2,7 @@ package com.zoonk.android.feature.plan
 
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -30,17 +31,19 @@ class PlanContentTest {
     private fun show(
         status: String = "active",
         resumeChangesPlan: Boolean = false,
+        kind: String = "learn",
+        resume: Resume = if (resumeChangesPlan) Resume.Confirm else Resume.Plain,
     ) {
-        val summary = learnerSummary(status = status)
+        val summary = learnerSummary(status = status, kind = kind)
         val page = PlanPageState(summary.goals.first(), learnPlan(), summary)
         compose.setContent {
             navigator = rememberAppNavigator()
             ZoonkTheme {
                 PlanContent(
                     page = page,
-                    standing = Standing.Progress(progress(), done = 13, total = 46),
+                    standing = if (kind == "language") null else Standing.Progress(progress(), done = 13, total = 46),
                     links = PlanLinks(navigator, page),
-                    resumeChangesPlan = resumeChangesPlan,
+                    resume = resume,
                     isSaving = false,
                     onSetStatus = { statuses += it },
                 )
@@ -102,5 +105,21 @@ class PlanContentTest {
         compose.onNodeWithText("Python basics").performClick()
 
         compose.onNodeWithText("Variables and types").assertIsDisplayed()
+    }
+
+    @Test
+    fun resumeWaitsForWhatResumingChanges() {
+        show(status = "paused", resume = Resume.Pending)
+
+        compose.onNodeWithContentDescription("Plan options").performClick()
+        compose.onNodeWithText("Resume this goal").assertIsNotEnabled()
+    }
+
+    @Test
+    fun aLanguageGoalKeepsItsPaceWhileItsLevelLoadsElsewhere() {
+        show(kind = "language")
+
+        compose.onNodeWithText("Behind").assertIsDisplayed()
+        compose.onNodeWithText("Progress").assertDoesNotExist()
     }
 }

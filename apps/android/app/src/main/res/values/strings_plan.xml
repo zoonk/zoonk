@@ -52,6 +52,8 @@
     <string name="plan_roadmap_day_of">day %1$d of %2$d</string>
     <string name="plan_roadmap_number_of">%1$d of %2$d</string>
     <string name="plan_roadmap_phase_of">phase %1$d of %2$d</string>
+    <string name="plan_roadmap_from">From %1$s</string>
+    <string name="plan_roadmap_until">Until %1$s</string>
     <string name="plan_today">Today</string>
     <string name="plan_mock_exam">Mock exam</string>
     <string name="plan_phase_challenge">Phase challenge</string>
@@ -278,10 +280,10 @@
         <item quantity="one">Based on your last %d mock exam</item>
         <item quantity="other">Based on your last %d mock exams</item>
     </plurals>
-    <string name="plan_score_percent">%1$d%%</string>
-    <string name="plan_score_percent_range">%1$d%% to %2$d%%</string>
-    <string name="plan_score_band">Band %1$d</string>
-    <string name="plan_score_band_range">Band %1$d to %2$d</string>
+    <string name="plan_score_percent">%1$s%%</string>
+    <string name="plan_score_percent_range">%1$s%% to %2$s%%</string>
+    <string name="plan_score_band">Band %1$s</string>
+    <string name="plan_score_band_range">Band %1$s to %2$s</string>
     <string name="plan_score_range">%1$s to %2$s</string>
     <string name="plan_lessons">Lessons</string>
     <string name="plan_coverage">Coverage</string>

@@ -19,7 +19,6 @@ import java.util.UUID
  */
 enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
 
-/** The Plan's writes from the learner's taps; its reads stay in [PlanStore]. */
 class PlanViewModel(
     private val store: PlanStore,
     private val goalId: UUID,

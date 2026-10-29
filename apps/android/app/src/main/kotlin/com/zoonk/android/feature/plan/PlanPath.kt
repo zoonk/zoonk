@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -29,7 +31,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -52,6 +54,7 @@ import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -63,7 +66,6 @@ import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import kotlin.math.roundToInt
 
-/** Main's "Your path": the phases in order, the one with the next chapter open, then the goal. */
 @Composable
 internal fun PathSection(
     page: PlanPageState,
@@ -84,7 +86,7 @@ internal fun PathSection(
                 val done = roadmap.count { it.state == PlanPhase.State.DONE }
                 Text(
                     text = pluralStringResource(R.plurals.plan_phases_done, roadmap.size, done, roadmap.size),
-                    style = MaterialTheme.typography.bodySmall,
+                    style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
@@ -152,7 +154,7 @@ private fun PhaseItem(
                 Icon(
                     painter = painterResource(if (expanded) R.drawable.ic_expand_less else R.drawable.ic_expand_more),
                     contentDescription = null,
-                    modifier = Modifier.size(18.dp),
+                    modifier = Modifier.size(ICON_SIZE),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             },
@@ -233,7 +235,6 @@ private fun LessonsCount(
     )
 }
 
-/** When a phase ends: "until Nov 3", about a month ahead for a later learn phase, or a short plan's days. */
 @Composable
 private fun phaseUntil(
     page: PlanPageState,
@@ -258,7 +259,6 @@ private fun phaseUntil(
     }
 }
 
-/** The line under a phase: left out, set aside, when the current one continues, or lessons on the way. */
 @Composable
 private fun phaseMeta(
     page: PlanPageState,
@@ -318,20 +318,14 @@ private fun PhaseMark(phase: PlanPhase) {
 private fun CurrentPhaseMark() {
     val ink = MaterialTheme.colorScheme.onSurface
     Canvas(Modifier.size(markSize())) {
-        drawCircle(ink.copy(alpha = HALO_ALPHA), radius = 9.dp.toPx())
-        drawCircle(ink, radius = 5.dp.toPx())
+        drawCircle(ink.copy(alpha = HALO_ALPHA), radius = size.minDimension * HALO_SHARE)
+        drawCircle(ink, radius = size.minDimension * DOT_SHARE)
     }
 }
 
 private const val HALO_ALPHA = 0.15f
-
-/** A mark is one line of body text tall, so it grows with the font, as the shared marks do. */
-@Composable
-internal fun markSize(): Dp =
-    with(LocalDensity.current) {
-        MaterialTheme.typography.bodyLarge.lineHeight
-            .toDp()
-    }
+private const val HALO_SHARE = 0.4f
+private const val DOT_SHARE = 0.22f
 
 @Composable
 internal fun ChapterMark(
@@ -375,7 +369,6 @@ internal fun ChapterMark(
 
 private const val RING_SHARE = 0.8f
 
-/** A phase's chapters: four around the next one, the rest behind "N more chapters". */
 @Composable
 internal fun PhaseChapters(
     page: PlanPageState,
@@ -484,7 +477,7 @@ internal fun WritingAheadLine(
     Text(
         text = text,
         modifier = Modifier.padding(vertical = 8.dp),
-        style = MaterialTheme.typography.bodySmall,
+        style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }
@@ -584,27 +577,32 @@ private fun FinishItem(page: PlanPageState) {
 
 @Composable
 internal fun FlagMark() {
-    Icon(painterResource(R.drawable.ic_flag), contentDescription = null, modifier = Modifier.size(18.dp))
+    Icon(painterResource(R.drawable.ic_flag), contentDescription = null)
 }
 
-/** Main's path row: a mark, the words, numbers or a date at the end, and a chevron when it leads somewhere. */
 @Composable
 internal fun PathRow(
     modifier: Modifier = Modifier,
     onClick: (() -> Unit)? = null,
     highlighted: Boolean = false,
-    end: @Composable () -> Unit = { Box(Modifier.size(18.dp)) },
+    end: @Composable () -> Unit = { Box(Modifier.size(ICON_SIZE)) },
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(
         modifier =
             modifier
                 .fillMaxWidth()
+                .bleed(ROW_BLEED)
                 .clip(MaterialTheme.shapes.medium)
                 .then(if (highlighted) Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh) else Modifier)
-                .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
-                .heightIn(min = 48.dp)
-                .padding(horizontal = 8.dp, vertical = 6.dp),
+                .then(
+                    if (onClick != null) {
+                        Modifier.clickable(role = Role.Button, onClick = onClick)
+                    } else {
+                        Modifier.semantics(mergeDescendants = true) {}
+                    },
+                ).heightIn(min = 48.dp)
+                .padding(horizontal = ROW_BLEED, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -612,6 +610,25 @@ internal fun PathRow(
         end()
     }
 }
+
+/** Rows reach past the page's margin by [amount] on each side, so their words line up with the headings above them. */
+internal fun Modifier.bleed(amount: Dp): Modifier =
+    layout { measurable, constraints ->
+        val extra = (amount * 2).roundToPx()
+        val wide =
+            if (constraints.hasBoundedWidth) {
+                constraints.copy(minWidth = constraints.minWidth + extra, maxWidth = constraints.maxWidth + extra)
+            } else {
+                constraints
+            }
+        val placeable = measurable.measure(wide)
+        layout(placeable.width - extra, placeable.height) { placeable.placeRelative(-amount.roundToPx(), 0) }
+    }
+
+internal val ROW_BLEED = 8.dp
+
+/** Icons in rows take Material's 24dp, so they keep pace with the words beside them. */
+internal val ICON_SIZE = 24.dp
 
 /**
  * A row's words with its numbers or date at the end, as main's rows show them; when the words would
@@ -655,6 +672,8 @@ internal fun TitleAndMeta(
     }
 }
 
+internal val SHEET_MARGIN = 24.dp
+
 @Composable
 internal fun Leading(content: @Composable () -> Unit) {
     Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { content() }
@@ -662,7 +681,7 @@ internal fun Leading(content: @Composable () -> Unit) {
 
 @Composable
 internal fun MetaLine(text: String) {
-    Text(text = text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
 }
 
 @Composable
@@ -670,13 +689,12 @@ internal fun TrailingText(words: PlanDateWords) {
     Text(
         text = words.text,
         modifier = Modifier.semantics { contentDescription = words.spoken },
-        style = MaterialTheme.typography.bodySmall.withTabularFigures(),
+        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 1,
     )
 }
 
-/** Main's quiet "Plus" chip beside something Plus unlocks. */
 @Composable
 internal fun PlusMark() {
     val spoken = stringResource(R.string.plan_available_with_plus)
@@ -686,7 +704,6 @@ internal fun PlusMark() {
     )
 }
 
-/** The phase's details, from its band on the roadmap: its dates, lessons and chapters or exam events. */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun PhaseDetailsSheet(
@@ -697,7 +714,7 @@ internal fun PhaseDetailsSheet(
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
         Column(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 24.dp),
+            modifier = Modifier.verticalScroll(rememberScrollState()).padding(start = SHEET_MARGIN, end = SHEET_MARGIN, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             PhaseDetails(page, phase, links)

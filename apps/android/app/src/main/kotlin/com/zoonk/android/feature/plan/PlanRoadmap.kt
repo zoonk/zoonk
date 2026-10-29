@@ -39,7 +39,11 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
@@ -124,10 +128,10 @@ private fun RoadmapCompact(
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             if (position != null) {
                 Text(
-                    text = listOfNotNull(position.name, position.day).joinToString(" · "),
+                    text = positionWords(position.name, listOfNotNull(position.day)),
                     modifier = Modifier.weight(1f),
                     style = small,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
                 val spoken = stringResource(R.string.plan_roadmap_phase_of, position.number, position.total)
@@ -150,7 +154,6 @@ private fun RoadmapCompact(
     }
 }
 
-/** A part per phase as long as its time, filled as far as its lessons are done; the current one ringed. */
 @Composable
 private fun RoadmapMeter(phases: List<PlanPhase>) {
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
@@ -220,14 +223,13 @@ private fun RoadmapFull(
             position?.let {
                 Text(
                     text =
-                        listOfNotNull(
+                        positionWords(
                             it.name,
-                            it.day,
-                            stringResource(R.string.plan_roadmap_phase_of, it.number, it.total),
-                        ).joinToString(" · "),
+                            listOfNotNull(it.day, stringResource(R.string.plan_roadmap_phase_of, it.number, it.total)),
+                        ),
                     modifier = Modifier.weight(1f),
                     style = MaterialTheme.typography.labelMedium,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
@@ -301,14 +303,14 @@ private fun PhaseColumn(
         Column(
             Modifier.drawBehind {
                 todayShare ?: return@drawBehind
-                val x = size.width * todayShare
+                val x = size.width * if (layoutDirection == LayoutDirection.Rtl) 1 - todayShare else todayShare
                 val tick = 6.dp.toPx()
                 val line = 1.5.dp.toPx()
                 drawRect(ink, Offset(x, -tick), Size(line, tick))
                 drawRect(ink, Offset(x, BAND_HEIGHT.toPx()), Size(line, tick))
             },
         ) {
-            PhaseBand(page, phase, onOpen)
+            PhaseBand(page, phase, isLast, onOpen)
             PhaseLane(page, phase, isLast, overrun, hasOverrun)
             PhaseAxis(page, phase, isLast, labelled, todayShare, overrun, hasOverrun, width)
         }
@@ -321,11 +323,18 @@ private val BAND_HEIGHT = 32.dp
 private fun PhaseBand(
     page: PlanPageState,
     phase: PlanPhase,
+    isLast: Boolean,
     onOpen: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
     val name = phaseName(phase, page.mocksRequirePlus)
-    val label = name + phaseStateWords(phase.state)
+    val from = phase.start?.let { stringResource(R.string.plan_roadmap_from, formatPlanDate(it, page.today, currentLocale())) }
+    val until =
+        page.finish
+            ?.takeIf {
+                isLast
+            }?.let { stringResource(R.string.plan_roadmap_until, planDate(it.date, page.today, it.estimate, it.month).spoken) }
+    val label = listOfNotNull(name + phaseStateWords(phase.state), from, until).joinToString(". ")
     val (container, content) =
         when (phase.state) {
             PlanPhase.State.CURRENT -> colors.surfaceContainerHighest to colors.onSurface
@@ -352,7 +361,9 @@ private fun PhaseBand(
                 if (current &&
                     share > 0
                 ) {
-                    drawRect(colors.tertiary, Offset(0f, size.height - 2.dp.toPx()), Size(size.width * share, 2.dp.toPx()))
+                    val width = size.width * share
+                    val left = if (layoutDirection == LayoutDirection.Rtl) size.width - width else 0f
+                    drawRect(colors.tertiary, Offset(left, size.height - 2.dp.toPx()), Size(width, 2.dp.toPx()))
                 }
             },
         ) {
@@ -370,7 +381,6 @@ private fun PhaseBand(
     }
 }
 
-/** Mock dots, the phase challenge and the goal's flag, where they fall in the phase's time. */
 @Composable
 private fun PhaseLane(
     page: PlanPageState,
@@ -405,7 +415,6 @@ private fun PhaseLane(
 
 private const val PHASE_END_SHARE = 0.9f
 
-/** Today, the phase's start, and the goal's date under the band. */
 @Composable
 private fun PhaseAxis(
     page: PlanPageState,
@@ -488,7 +497,6 @@ private class FractionScope {
     }
 }
 
-/** Places each child at a share of the row's width, by its start, middle or end. */
 @Composable
 private fun FractionRow(
     modifier: Modifier,
@@ -516,7 +524,6 @@ private fun FractionRow(
     }
 }
 
-/** Main's flex row of phases: each gets [minimum], then its share of the rest by weight. */
 @Composable
 private fun WeightedRow(
     weights: List<Float>,
@@ -545,11 +552,23 @@ private fun WeightedRow(
 }
 
 @Composable
+private fun positionWords(
+    name: String,
+    details: List<String>,
+): AnnotatedString {
+    val quiet = MaterialTheme.colorScheme.onSurfaceVariant
+    return buildAnnotatedString {
+        append(name)
+        withStyle(SpanStyle(color = quiet)) { details.forEach { append(" · $it") } }
+    }
+}
+
+@Composable
 internal fun Chevron(modifier: Modifier = Modifier) {
     Icon(
         painter = painterResource(R.drawable.ic_chevron_right),
         contentDescription = null,
-        modifier = modifier.size(18.dp),
+        modifier = modifier.size(ICON_SIZE),
         tint = MaterialTheme.colorScheme.onSurfaceVariant,
     )
 }

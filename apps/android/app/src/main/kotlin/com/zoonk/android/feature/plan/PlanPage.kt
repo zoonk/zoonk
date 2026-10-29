@@ -1,8 +1,10 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,12 +24,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.feedback.FeedbackTarget
+import com.zoonk.android.feature.feedback.ReportProblem
+import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LearnerSummary
@@ -35,7 +43,6 @@ import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
 import java.time.LocalDate
 
-/** What every part of the Plan reads: the goal, its plan and the learner's frame. */
 @Immutable
 data class PlanPageState(
     val goal: LearnerSummaryGoal,
@@ -49,7 +56,6 @@ data class PlanPageState(
     val finish: PlanFinish? = plan.finish(goal.kind)
 }
 
-/** Where the Plan's rows lead (main's `JourneyLinks`). */
 class PlanLinks(
     private val navigator: AppNavigator,
     private val page: PlanPageState,
@@ -90,16 +96,12 @@ internal fun PlanPage(
 ) {
     val syllabus by app.plans.syllabus[page.goal.id].collectShown()
     val progress by app.plans.progress[page.goal.id].collectShown()
-    val resumeChangesPlan =
-        if (page.isPaused) {
-            app.plans.resumeChangesPlan[page.goal.id]
-                .collectShown()
-                .value
-                .value ?: false
-        } else {
-            false
-        }
     val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
+    val report =
+        rememberReportProblem(
+            app,
+            FeedbackTarget(screen = "plan", contentKind = FeedbackSubmissionContext.ContentKind.PLAN, contentId = page.plan.planId),
+        )
 
     PlanEvents(viewModel, navigator)
 
@@ -107,49 +109,67 @@ internal fun PlanPage(
         page = page,
         standing = standingOf(page, progress.value, syllabus.value),
         links = PlanLinks(navigator, page),
-        resumeChangesPlan = resumeChangesPlan,
+        resume =
+            if (page.isPaused) {
+                resumeOf(
+                    app.plans.resumeChangesPlan[page.goal.id]
+                        .collectShown()
+                        .value,
+                )
+            } else {
+                Resume.Plain
+            },
         isSaving = isSaving,
         onSetStatus = viewModel::setStatus,
+        report = report,
     )
 }
 
-/** The Plan's main column and, where there's room, its numbers and settings beside it. */
+/** Whether resuming asks first, which waits for the preview of what resuming changes; a failed preview asks. */
+internal enum class Resume { Plain, Confirm, Pending }
+
+private fun resumeOf(state: LoadState<Boolean>): Resume =
+    when (state) {
+        is LoadState.Loaded -> if (state.value) Resume.Confirm else Resume.Plain
+        is LoadState.Failed -> Resume.Confirm
+        LoadState.Empty -> Resume.Plain
+        LoadState.Idle, LoadState.Loading -> Resume.Pending
+    }
+
 @Composable
 internal fun PlanContent(
     page: PlanPageState,
     standing: Standing?,
     links: PlanLinks,
-    resumeChangesPlan: Boolean,
+    resume: Resume,
     isSaving: Boolean,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
+    report: ReportProblem? = null,
 ) {
-    val numbers = @Composable { variant: NumberVariant -> standing?.let { PlanNumbers(page, it, variant, links) } }
+    val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links) }
 
     PageWithSupportingPane(
         supportingPane = {
-            Column(
-                modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(32.dp),
-            ) {
-                numbers(NumberVariant.Stats)
-                NextOnPath(page, links)
-                PlanProperties(page, links)
+            Row {
+                VerticalDivider()
+                Column(
+                    modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(PAGE_MARGIN),
+                    verticalArrangement = Arrangement.spacedBy(32.dp),
+                ) {
+                    numbers(NumberVariant.Stats)
+                    NextOnPath(page, links)
+                    PlanProperties(page, links)
+                }
             }
         },
     ) { asideBeside ->
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 32.dp),
+            contentPadding = PaddingValues(start = PAGE_MARGIN, end = PAGE_MARGIN, top = 8.dp, bottom = 32.dp),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) {
             item(key = "header", contentType = "header") {
-                PlanHeader(
-                    page = page,
-                    links = links,
-                    resumeChangesPlan = resumeChangesPlan,
-                    isSaving = isSaving,
-                    onSetStatus = onSetStatus,
-                )
+                PlanHeader(page = page, links = links, resume = resume, isSaving = isSaving, onSetStatus = onSetStatus, report = report)
             }
             item(key = "roadmap", contentType = "roadmap") { PlanRoadmap(page, links) }
             if (!asideBeside) {
@@ -157,12 +177,35 @@ internal fun PlanContent(
             }
             item(key = "path", contentType = "path") { PathSection(page, links) }
             if (!asideBeside) {
-                item(key = "next", contentType = "next") { NextOnPath(page, links) }
-                item(key = "more", contentType = "more") { MoreSection(links) }
+                item(key = "next", contentType = "next") { NextAndMore(page, links) }
             }
         }
     }
 }
+
+internal val PAGE_MARGIN = 16.dp
+
+@Composable
+private fun NextAndMore(
+    page: PlanPageState,
+    links: PlanLinks,
+) {
+    BoxWithConstraints {
+        if (maxWidth >= SIDE_BY_SIDE_WIDTH) {
+            Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
+                NextOnPath(page, links, Modifier.weight(1f))
+                MoreSection(links, Modifier.weight(1f))
+            }
+        } else {
+            Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                NextOnPath(page, links)
+                MoreSection(links)
+            }
+        }
+    }
+}
+
+private val SIDE_BY_SIDE_WIDTH = 600.dp
 
 @Composable
 private fun PlanEvents(
@@ -184,7 +227,6 @@ private fun PlanEvents(
     }
 }
 
-/** The number beside the pace: the exam's preparation, the goal's progress, or a language's level. */
 internal sealed interface Standing {
     data class Preparation(
         val progress: GoalProgress,

@@ -9,12 +9,10 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
-import kotlinx.datetime.TimeZone
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertSame
 import org.junit.Test
 import java.util.UUID
-import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
@@ -24,7 +22,7 @@ class PlanStoreTest {
     private val goalId = UUID.fromString(GOAL)
 
     @Test
-    fun aPlanThatDidntChangeSinceItWasReadIsKept() =
+    fun whileLessonsAreWrittenThePlanIsReadAgainOnlyOnceItChanged() =
         runTest {
             var now = Instant.parse("2026-10-28T12:00:00Z")
             val api = FakePlanApi()
@@ -34,31 +32,32 @@ class PlanStoreTest {
             resource.load()
             val first = resource.state.value.value
             now += 10.minutes
-            resource.refresh()
+            store.refreshIfChanged(goalId)
 
             assertEquals(1, api.plans)
             assertEquals(listOf(Instant.parse("2026-10-28T11:59:00Z")), api.askedSince)
             assertSame(first, resource.state.value.value)
 
             api.changed = true
-            resource.refresh()
+            store.refreshIfChanged(goalId)
             assertEquals(2, api.plans)
         }
 
     @Test
-    fun aNewDayReadsThePlanAgainWithoutAsking() =
+    fun anyOtherReadReadsThePlanWithoutAsking() =
         runTest {
-            var now = Instant.parse("2026-10-28T20:00:00Z")
             val api = FakePlanApi()
-            val store = store(api) { now }
+            val store = store(api) { Instant.parse("2026-10-28T12:00:00Z") }
             val resource = store.plan[goalId]
 
             resource.load()
-            now += 6.hours
+            store.refreshIfChanged(goalId)
             resource.refresh()
+            resource.invalidate()
+            resource.load()
 
-            assertEquals(2, api.plans)
-            assertEquals(emptyList<Instant>(), api.askedSince)
+            assertEquals(3, api.plans)
+            assertEquals(1, api.askedSince.size)
         }
 
     private fun kotlinx.coroutines.test.TestScope.store(
@@ -66,6 +65,6 @@ class PlanStoreTest {
         now: () -> Instant,
     ): PlanStore {
         val scope = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
-        return PlanStore(api, AppCache(FakeSession(ana), scope), now, timeZone = { TimeZone.UTC })
+        return PlanStore(api, AppCache(FakeSession(ana), scope), now)
     }
 }

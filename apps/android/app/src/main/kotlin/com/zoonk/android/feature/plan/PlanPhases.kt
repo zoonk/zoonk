@@ -83,7 +83,6 @@ fun Plan.finish(goalKind: LearnerSummaryGoal.Kind): PlanFinish? {
     return PlanFinish(end, estimate = true, month = ChronoUnit.DAYS.between(start, end) > NEAR_ESTIMATE_DAYS)
 }
 
-/** Where the goal's date falls when phases go on past it. */
 data class PlanOverrun(
     val phaseIndex: Long,
     val share: Float,
@@ -101,7 +100,6 @@ fun Plan.overrun(goalKind: LearnerSummaryGoal.Kind): PlanOverrun? {
 
 private const val NEAR_ESTIMATE_DAYS = 42
 
-/** The phase the path opens: the one holding the next chapter, else the current one. */
 fun findOpenPhase(phases: List<PlanPhase>): Long? =
     (
         phases.firstOrNull { phase -> phase.chapters.any { it.state == PlanPhaseChaptersInner.State.CURRENT } }
@@ -142,7 +140,6 @@ val PlanPhaseChaptersInner.isSkipped: Boolean get() = skills.isNotEmpty() || tes
 /** Lessons on the way inside the next two weeks: said in a line under the phase, not as a row. */
 val PlanPhaseChaptersInner.isWritingAhead: Boolean get() = writing && !far && skills.isEmpty()
 
-/** Main shows four chapters around the next one; the rest behind "N more chapters". */
 fun chapterWindow(states: List<PlanPhaseChaptersInner.State>): IntRange {
     val current = states.indexOf(PlanPhaseChaptersInner.State.CURRENT)
     val focus = if (current == -1) states.indexOfFirst { it != PlanPhaseChaptersInner.State.DONE } else current
@@ -153,7 +150,6 @@ fun chapterWindow(states: List<PlanPhaseChaptersInner.State>): IntRange {
 
 private const val SHOWN_CHAPTERS = 4
 
-/** Phases still to walk, before the exam. */
 private val Plan.phasesAhead: List<PlanPhase>
     get() =
         phases.filter {

@@ -252,7 +252,6 @@ private fun noticeSentence(
     }
 }
 
-/** Main's `useNoticeDayText`. */
 @Composable
 fun noticeDayText(
     date: LocalDate,
@@ -418,7 +417,6 @@ private fun activityList(activities: List<String>): String =
         },
     )
 
-/** Main's `useDifficultySentence`. */
 @Composable
 fun difficultySentence(bias: String): String =
     stringResource(
@@ -645,7 +643,6 @@ private fun phaseEndsText(effect: PlanEffect?): String? {
     )
 }
 
-/** Main's `usePhaseEndRows`: several phase ends, one row each. */
 @Composable
 internal fun phaseEndRows(effect: PlanEffect?): List<String> {
     val moves = effect?.phaseEnds.orEmpty()
@@ -947,7 +944,6 @@ private fun lessonCounts(
     }
 }
 
-/** "Leaves out 3 lessons: A, B and C." or "…, such as A, B and C." */
 @Composable
 private fun withNames(
     counts: String,

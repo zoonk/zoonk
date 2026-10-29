@@ -91,7 +91,6 @@ fun shortFocusName(
         }
     }
 
-/** For a plan of a few days: which of them a phase takes. */
 @Composable
 fun shortDays(
     plan: Plan,
@@ -117,7 +116,6 @@ fun chapterTitle(chapter: PlanPhaseChaptersInner): String =
         else -> stringResource(R.string.plan_more_lessons)
     }
 
-/** The line under a chapter row: lessons on the way, a far topic's lessons and start, a skip, or going deeper. */
 @Composable
 fun chapterLine(chapter: PlanPhaseChaptersInner): String? =
     when {
