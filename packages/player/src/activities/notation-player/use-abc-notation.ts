@@ -45,6 +45,29 @@ export function tuneSound({
 
 type TuneOutline = number[][];
 
+const MAX_LINES = 64;
+
+/**
+ * abcjs drops the guitar tab when it wraps lines itself (https://github.com/paulrosen/abcjs/issues/1195),
+ * so the tab view breaks its lines at fixed measures instead.
+ */
+function lineLayout({ barsPerLine, view }: { barsPerLine: number; view: NotationView }) {
+  if (view === "tab") {
+    return {
+      lineBreaks: Array.from({ length: MAX_LINES }, (_, line) => (line + 1) * barsPerLine - 1),
+      tablature: [{ instrument: "guitar" as const, label: " " }],
+    };
+  }
+
+  return {
+    wrap: {
+      maxSpacing: MAX_SPACING,
+      minSpacing: MIN_SPACING,
+      preferredMeasuresPerLine: barsPerLine,
+    },
+  };
+}
+
 function outlineTune(abcjs: Abcjs, tune: TuneObject): TuneOutline {
   const events = new abcjs.TimingCallbacks(tune, {}).noteTimings.filter(
     (event) => event.type === "event" && (event.midiPitches?.length ?? 0) > 0,
@@ -103,6 +126,8 @@ export function useAbcNotation({
           return;
         }
 
+        const barsPerLine = width < WIDE_STAFF ? BARS_PER_NARROW_LINE : BARS_PER_WIDE_LINE;
+
         const [tune] = abcjs.renderAbc(container, notationToDraw(notation), {
           add_classes: true,
           ariaLabel: label,
@@ -113,13 +138,7 @@ export function useAbcNotation({
           paddingtop: 0,
           responsive: "resize",
           staffwidth: width - STAFF_MARGIN,
-          tablature: view === "tab" ? [{ instrument: "guitar", label: " " }] : undefined,
-          wrap: {
-            maxSpacing: MAX_SPACING,
-            minSpacing: MIN_SPACING,
-            preferredMeasuresPerLine:
-              width < WIDE_STAFF ? BARS_PER_NARROW_LINE : BARS_PER_WIDE_LINE,
-          },
+          ...lineLayout({ barsPerLine, view }),
         });
 
         tune.setUpAudio({});

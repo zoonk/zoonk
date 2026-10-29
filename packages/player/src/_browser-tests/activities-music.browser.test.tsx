@@ -113,6 +113,11 @@ describe("music activities", () => {
     await expect.element(page.getByText(/Bar 1: E, E, F, G\./u)).toBeInTheDocument();
     await page.getByRole("radio", { name: "Tab" }).click();
     await expect.element(page.getByRole("img", { name: "Ode to Joy" })).toBeVisible();
+
+    await expect
+      .poll(() => document.querySelectorAll(".abcjs-tab-number").length)
+      .toBeGreaterThan(0);
+
     await page.getByRole("button", { name: "Play the melody" }).click();
     await expect.element(page.getByText(/^Bar \d of 4$/u)).toBeVisible();
     await page.getByRole("button", { name: "Stop" }).click();
