@@ -19,6 +19,7 @@ const TARGET = `<resources>
   <string name="greeting">¡Hola, %1$s!</string>
   <plurals name="lessons">
     <item quantity="one">%1$d lección</item>
+    <item quantity="many">%1$d lecciones</item>
     <item quantity="other">%1$d lecciones</item>
   </plurals>
   <string-array name="levels"><item>Principiante</item><item>Avanzado</item></string-array>
@@ -226,4 +227,13 @@ test("each catalog's target is written from its own source and checked against i
 
   assert.equal(decode([SOURCE, today])[0]?.message, "Hoy");
   assert.equal(decode([SOURCE, today.replace(">Today<", ">Your day<")])[0]?.message, "");
+});
+
+test("a plural gets every category its locale has, and stays fresh", () => {
+  const target = translatedXml({
+    target: TARGET.replace(/\n *<item quantity="many">.*<\/item>/u, ""),
+  });
+
+  assert.match(target, /<item quantity="many">%1\$d lecciones<\/item>/u);
+  assert.ok(readTranslations({ target }).every((message) => message.message !== ""));
 });

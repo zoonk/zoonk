@@ -7,6 +7,7 @@ import {
   readFingerprints,
   stripFingerprints,
 } from "./fingerprints.mts";
+import { completePluralCategories } from "./plural-categories.mts";
 import { translationTemplate } from "./translation-template.mts";
 
 function decodeXml(content: string) {
@@ -63,11 +64,13 @@ export function createTrackedAndroidXmlCodec({
 
       codec.decode(locale === sourceLocale ? sourceXml : translationTemplate(sourceXml));
       const complete = completeMessages({ messages, sources: sourceMessagesById });
-      const xml = codec.encode(complete, { sourceMessagesById });
+      const encoded = codec.encode(complete, { sourceMessagesById });
 
       if (locale === sourceLocale) {
-        return xml;
+        return encoded;
       }
+
+      const xml = completePluralCategories({ locale, xml: encoded });
 
       function fingerprintEntry(target: (typeof messages)[number]): [string, string][] {
         const source = sourceMessagesById.get(target.id);
