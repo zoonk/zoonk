@@ -19,6 +19,7 @@ import com.zoonk.api.models.StudyAnswerInput
 import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudyBlockDetail
 import com.zoonk.api.models.StudySessionSummary
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -27,6 +28,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.json.JsonArray
@@ -50,7 +52,7 @@ class QuestionBlockViewModelTest {
     private var status = "active"
     private var answer: () -> StudyAnswerFeedback = { feedback(isCorrect = true) }
     private var finishes = 0
-    private var finish: () -> StudyBlockCompletion = {
+    private var finish: suspend () -> StudyBlockCompletion = {
         finishes++
         throw ApiException(ApiError.Network)
     }
@@ -204,6 +206,33 @@ class QuestionBlockViewModelTest {
             viewModel.finish()
             advanceUntilIdle()
             assertEquals(2, finishes)
+        }
+
+    @Test
+    fun leavingWhileTheBlockFinishesWaitsForTheSave() =
+        runTest(dispatcher) {
+            val saved = CompletableDeferred<Unit>()
+            finish = {
+                saved.await()
+                throw ApiException(ApiError.Network)
+            }
+            val viewModel = viewModel()
+            val read = started(viewModel)
+
+            viewModel.submit(read.questions[0], Answer.Choice(0))
+            advanceUntilIdle()
+            viewModel.next(read.questions)
+            viewModel.submit(read.questions[1], Answer.Choice(0))
+            advanceUntilIdle()
+            viewModel.next(read.questions)
+            runCurrent()
+            viewModel.close()
+            runCurrent()
+            assertEquals(false, viewModel.closed.value)
+
+            saved.complete(Unit)
+            advanceUntilIdle()
+            assertTrue(viewModel.closed.value)
         }
 
     @Test

@@ -14,6 +14,7 @@ import com.zoonk.android.feature.practice.segments
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Drill
 import com.zoonk.android.feature.questions.TrueFalseWords
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -22,6 +23,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.json.JsonArray
@@ -216,6 +218,70 @@ class MistakePracticeViewModelTest {
         }
 
     @Test
+    fun oneItemAskedUnderTwoMistakesIsTwoAnswers() =
+        runTest(dispatcher) {
+            val planet = practiceQuestion(FIRST)
+            val star = practiceQuestion(SECOND, "question" to "Which is a star?")
+            val api =
+                FakeMistakesApi(
+                    practice(
+                        practiceEntry(FIRST_MISTAKE, planet, star),
+                        practiceEntry(SECOND_MISTAKE, star, planet, snapshot = "Which is a star?" to "Venus"),
+                    ),
+                )
+            val viewModel = viewModel(api)
+            val read = started(viewModel).read
+            assertEquals(mapOf(0 to "Moon", 2 to "Venus"), read.lastAnswers)
+
+            api.answer = { practiceFeedback(isCorrect = true) }
+            viewModel.answer()
+            advanceUntilIdle()
+            viewModel.next(read.questions)
+            api.answer = { practiceFeedback(isCorrect = false) }
+            viewModel.answer(Answer.Choice(1))
+            advanceUntilIdle()
+            viewModel.next(read.questions)
+            api.answer = { practiceFeedback(isCorrect = true) }
+            viewModel.answer()
+            advanceUntilIdle()
+
+            assertEquals(
+                3,
+                api.answers
+                    .map { it.attemptId }
+                    .distinct()
+                    .size,
+            )
+            assertEquals(listOf(Segment.Right, Segment.Wrong, Segment.Right, Segment.Ahead), segments(read.questions, viewModel.now.run))
+        }
+
+    @Test
+    fun leavingWhileTheEndSavesWaitsForIt() =
+        runTest(dispatcher) {
+            val saved = CompletableDeferred<Unit>()
+            val api = FakeMistakesApi(twoMistakes)
+            api.finish = {
+                saved.await()
+                completion()
+            }
+            val viewModel = viewModel(api)
+            started(viewModel)
+
+            viewModel.answer()
+            advanceUntilIdle()
+            viewModel.end()
+            runCurrent()
+            viewModel.close()
+            runCurrent()
+            assertEquals(false, viewModel.closed.value)
+
+            saved.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(true, viewModel.closed.value)
+            assertEquals(1, api.finishes.size)
+        }
+
+    @Test
     fun theLastAnswerShowsOnlyBesideTheMistakesOwnQuestion() {
         val read =
             practice(
@@ -233,7 +299,7 @@ class MistakePracticeViewModelTest {
                 )
             }.toQuestions()
 
-        assertEquals(mapOf(FIRST to "Moon"), read.lastAnswers)
+        assertEquals(mapOf(0 to "Moon"), read.lastAnswers)
         assertEquals(listOf(FIRST_MISTAKE, FIRST_MISTAKE), read.questions.map { it.mistakeId })
         assertEquals(Drill.Kind.Retry, read.questions[1].drill?.kind)
         assertEquals(TrueFalseWords.TrueFalse, read.words)

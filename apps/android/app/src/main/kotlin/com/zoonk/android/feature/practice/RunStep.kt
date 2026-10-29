@@ -22,6 +22,7 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.Saver
@@ -41,8 +42,10 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.SessionState
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.player.LessonTitle
@@ -420,14 +423,28 @@ internal fun runReportTarget(
     return FeedbackTarget(screen, FeedbackSubmissionContext.ContentKind.ITEM, UUID.fromString(question.itemId))
 }
 
-/** The pick before Check, kept with its question so a pick restored after the process was gone never answers another. */
+/**
+ * The pick before Check, kept with its step and item: a pick restored after the process was gone
+ * never answers another question, nor the same item asked again under another mistake.
+ */
 @Serializable
 internal data class Draft(
+    val step: Int,
     val itemId: String,
     val answer: Answer?,
 )
 
-internal fun Draft?.answerFor(question: Question?): Answer? = this?.takeIf { it.itemId == question?.itemId }?.answer
+internal fun Draft?.answerFor(
+    run: QuestionRun,
+    question: Question?,
+): Answer? = this?.takeIf { it.step == run.index && it.itemId == question?.itemId }?.answer
+
+/** A run belongs to the account that started it: another account signing in gets its own. */
+@Composable
+internal fun runAccount(app: AppContainer): String? {
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    return (session as? SessionState.SignedIn)?.session?.localId
+}
 
 @Composable
 internal fun rememberDraft(): MutableState<Draft?> = rememberSaveable(stateSaver = DraftSaver) { mutableStateOf(null) }

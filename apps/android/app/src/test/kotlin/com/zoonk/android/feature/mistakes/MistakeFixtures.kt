@@ -38,7 +38,14 @@ internal fun practiceEntry(
     mistakeId: String,
     vararg questions: JsonObject,
     drill: JsonObject = drill("retry"),
-) = fixture("mistake-practice-entry", "mistakeId" to mistakeId, "questions" to JsonArray(questions.toList()), "drill" to drill)
+    snapshot: Pair<String, String> = "Which is a planet?" to "Moon",
+) = fixture(
+    "mistake-practice-entry",
+    "mistakeId" to mistakeId,
+    "questions" to JsonArray(questions.toList()),
+    "drill" to drill,
+    "snapshot" to JsonObject(mapOf("question" to JsonPrimitive(snapshot.first), "answer" to JsonPrimitive(snapshot.second))),
+)
 
 internal fun practice(vararg entries: JsonObject): MistakePractice =
     ApiJson.decodeFromJsonElement(
@@ -74,7 +81,7 @@ internal fun completion(
 internal class FakeMistakesApi(
     var read: MistakePractice,
     var answer: (MistakePracticeAnswerInput) -> MistakePracticeFeedback = { practiceFeedback() },
-    var finish: (MistakePracticeFinishInput) -> MistakePracticeCompletion = { completion() },
+    var finish: suspend (MistakePracticeFinishInput) -> MistakePracticeCompletion = { completion() },
 ) : MistakesApi {
     val answers = mutableListOf<MistakePracticeAnswerInput>()
     val finishes = mutableListOf<MistakePracticeFinishInput>()
@@ -94,7 +101,10 @@ internal class FakeMistakesApi(
     override suspend fun finish(
         session: AuthenticatedSession,
         input: MistakePracticeFinishInput,
-    ) = input.also(finishes::add).let(finish)
+    ): MistakePracticeCompletion {
+        finishes += input
+        return finish(input)
+    }
 }
 
 internal fun practiceViewModel(

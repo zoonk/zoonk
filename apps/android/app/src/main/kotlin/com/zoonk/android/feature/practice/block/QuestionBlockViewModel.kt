@@ -46,8 +46,10 @@ class QuestionBlockViewModel(
 
     private val closing = MutableStateFlow(false)
 
-    /** The block isn't open anymore (finished elsewhere) or the session stopped: the screen leaves. */
+    /** The learner left, the block isn't open anymore (finished elsewhere) or the session stopped. */
     val closed: StateFlow<Boolean> = closing.asStateFlow()
+
+    private var closeWhenFinished = false
 
     private val stopping = MutableStateFlow<StopState>(StopState.Idle)
     val stop: StateFlow<StopState> = stopping.asStateFlow()
@@ -98,7 +100,7 @@ class QuestionBlockViewModel(
             when (val result = store.answer(key, question.itemId, answer, duration)) {
                 is MutationResult.Done -> {
                     sent = null
-                    run.update { it?.answered(question.itemId, answer, result.value.recode<StudyAnswerFeedback, AnswerFeedback>()) }
+                    run.update { it?.answered(answer, result.value.recode<StudyAnswerFeedback, AnswerFeedback>()) }
                 }
 
                 is MutationResult.Failed -> {
@@ -109,9 +111,7 @@ class QuestionBlockViewModel(
                     }
                 }
 
-                MutationResult.Obsolete -> {
-                    run.update { it?.failed(RunPhase.AnswerFailed) }
-                }
+                MutationResult.Obsolete -> {}
             }
         }
     }
@@ -146,7 +146,13 @@ class QuestionBlockViewModel(
                     is MutationResult.Failed -> run.update { it?.failed(RunPhase.FinishFailed) }
                     MutationResult.Obsolete -> Unit
                 }
+                if (closeWhenFinished) closing.value = true
             }
+    }
+
+    /** Leaving while the block finishes waits for it: leaving the screen would cancel the save. */
+    fun close() {
+        if (finishing?.isActive == true) closeWhenFinished = true else closing.value = true
     }
 
     /** "You already answered this question": read the block again and go on where it is. */

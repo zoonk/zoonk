@@ -35,6 +35,7 @@ import com.zoonk.android.feature.practice.SaveErrorText
 import com.zoonk.android.feature.practice.answerAction
 import com.zoonk.android.feature.practice.answerFor
 import com.zoonk.android.feature.practice.rememberDraft
+import com.zoonk.android.feature.practice.runAccount
 import com.zoonk.android.feature.practice.runReportTarget
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
@@ -83,16 +84,18 @@ fun QuestionBlock(
     examTomorrow: Boolean = false,
     finished: (@Composable (StudyBlockCompletion) -> Unit)? = null,
 ) {
-    BackHandler(onBack = onClose)
     val key = remember(sessionId, blockId) { blockKey(sessionId, blockId) }
     if (key == null) {
+        BackHandler(onBack = onClose)
         RunNotFound(onClose)
         return
     }
-    val viewModel = viewModel(key = "block:$blockId") { QuestionBlockViewModel(key, app.questionBlocks) }
+    val viewModel = viewModel(key = "block:$blockId:${runAccount(app)}") { QuestionBlockViewModel(key, app.questionBlocks) }
     val loaded by viewModel.block.collectShown()
     val closed by viewModel.closed.collectAsStateWithLifecycle()
+    val close = viewModel::close
 
+    BackHandler(onBack = close)
     LaunchedEffect(closed) { if (closed) onClose() }
 
     when (val state = loaded) {
@@ -103,27 +106,27 @@ fun QuestionBlock(
             run?.let { shown ->
                 val phase = shown.phase
                 when {
-                    phase !is RunPhase.Finished -> Runner(read, shown, viewModel, app, navigator, onClose, examTomorrow)
+                    phase !is RunPhase.Finished -> Runner(read, shown, viewModel, app, navigator, close, examTomorrow)
                     finished != null -> finished(phase.completion)
-                    else -> BlockFinished(phase.completion, read.detail.isReview, onClose)
+                    else -> BlockFinished(phase.completion, read.detail.isReview, close)
                 }
             }
         }
 
         is LoadState.Failed -> {
             if (state.error == ApiError.NotFound) {
-                RunNotFound(onClose)
+                RunNotFound(close)
             } else {
-                RunLoadFailed(onClose, onRetry = viewModel::reread)
+                RunLoadFailed(close, onRetry = viewModel::reread)
             }
         }
 
         LoadState.Empty -> {
-            RunNotFound(onClose)
+            RunNotFound(close)
         }
 
         else -> {
-            RunLoading(onClose)
+            RunLoading(close)
         }
     }
 }
@@ -164,7 +167,7 @@ internal fun Runner(
     val questions = read.questions
     val question = questions.getOrNull(run.index)
     var saved by rememberDraft()
-    val draft = saved.answerFor(question)
+    val draft = saved.answerFor(run, question)
 
     if (run.phase == RunPhase.Finishing) {
         BlockFinished(null, detail.isReview, onClose)
@@ -192,7 +195,7 @@ internal fun Runner(
         if (run.phase == RunPhase.FinishReady) {
             FinishReady()
         } else if (question != null) {
-            key(question.itemId) {
+            key(run.index) {
                 RunQuestion(
                     questions = questions,
                     run = run,
@@ -201,7 +204,7 @@ internal fun Runner(
                     words = detail.trueFalseWords,
                     navigator = navigator,
                     inlineSet = inlineSet,
-                    onDraft = { answer -> saved = Draft(question.itemId, answer) },
+                    onDraft = { answer -> saved = Draft(run.index, question.itemId, answer) },
                     netScored = isNetScored(question, detail),
                     examTomorrow = examTomorrow,
                 ) { if ((run.phase as? RunPhase.Checked)?.feedback?.pauseSuggested == true) PauseSuggestion(viewModel) }

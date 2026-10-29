@@ -55,7 +55,7 @@ class MistakePracticeFlowTest {
             ZoonkTheme {
                 val navigator = rememberAppNavigator()
                 val state by viewModel.state.collectAsStateWithLifecycle()
-                state?.let { PracticeRun(it, viewModel, AppContainer.preview(rule.activity), navigator, onClose = {}) }
+                state?.let { PracticeRun(it, viewModel, AppContainer.preview(rule.activity), navigator) }
             }
         }
 

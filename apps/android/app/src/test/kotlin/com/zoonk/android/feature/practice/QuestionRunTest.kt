@@ -46,7 +46,7 @@ class QuestionRunTest {
         assertEquals(DrillStage.Ideas, run.stage)
         assertEquals(DrillStage.Open, run.start(questions).stage)
 
-        val second = run.start(questions).answered("1", Answer.Choice(0), AnswerFeedback(isCorrect = true)).next(questions)
+        val second = run.start(questions).answered(Answer.Choice(0), AnswerFeedback(isCorrect = true)).next(questions)
         assertEquals(DrillStage.Open, second.stage)
     }
 
@@ -61,7 +61,7 @@ class QuestionRunTest {
     @Test
     fun movingPastTheLastQuestionFinishes() {
         val questions = listOf(question("1"))
-        val run = QuestionRun.begin(questions).answered("1", Answer.Choice(1), AnswerFeedback(isCorrect = false)).next(questions)
+        val run = QuestionRun.begin(questions).answered(Answer.Choice(1), AnswerFeedback(isCorrect = false)).next(questions)
         assertEquals(RunPhase.Finishing, run.phase)
     }
 
@@ -71,11 +71,11 @@ class QuestionRunTest {
         val run =
             QuestionRun
                 .begin(questions)
-                .answered("1", Answer.Choice(0), AnswerFeedback(isCorrect = true))
+                .answered(Answer.Choice(0), AnswerFeedback(isCorrect = true))
                 .next(questions)
-                .answered("2", Answer.DontKnow, AnswerFeedback(isCorrect = false))
+                .answered(Answer.DontKnow, AnswerFeedback(isCorrect = false))
                 .next(questions)
-                .answered("3", Answer.DontKnow, AnswerFeedback(isCorrect = false, blank = true))
+                .answered(Answer.DontKnow, AnswerFeedback(isCorrect = false, blank = true))
                 .next(questions)
 
         assertEquals(listOf(Segment.Right, Segment.Read, Segment.Read, Segment.Current, Segment.Ahead), segments(questions, run))
@@ -88,7 +88,7 @@ class QuestionRunTest {
         val run =
             QuestionRun
                 .begin(questions)
-                .answered("3", Answer.TrueFalse(true), AnswerFeedback(isCorrect = false))
+                .answered(Answer.TrueFalse(true), AnswerFeedback(isCorrect = false))
 
         assertEquals(NetTally(right = 1, wrong = 1), netTally(questions, run))
     }

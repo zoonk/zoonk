@@ -42,13 +42,13 @@ data class Graded(
     val blank: Boolean,
 )
 
-/** [answers] are this visit's, by item. */
+/** [answers] are this visit's, by step: a mistakes practice can ask one item under two mistakes. */
 data class QuestionRun(
     val index: Int,
     val phase: RunPhase,
     val stage: DrillStage,
     val timedOut: Boolean = false,
-    val answers: Map<String, Graded> = emptyMap(),
+    val answers: Map<Int, Graded> = emptyMap(),
 ) {
     val canAnswer: Boolean get() = phase == RunPhase.Answering || phase == RunPhase.AnswerFailed
 
@@ -56,13 +56,12 @@ data class QuestionRun(
 
     /** [blank] answers are neither right nor wrong: a block's blank statement, a practice's honest "I don't know". */
     fun answered(
-        itemId: String,
         answer: Answer,
         feedback: AnswerFeedback,
         blank: Boolean = feedback.blank,
     ) = copy(
         phase = RunPhase.Checked(answer, feedback),
-        answers = answers + (itemId to Graded(feedback.isCorrect, blank)),
+        answers = answers + (index to Graded(feedback.isCorrect, blank)),
     )
 
     fun failed(phase: RunPhase) = copy(phase = phase)
@@ -128,7 +127,7 @@ fun segments(
     run: QuestionRun,
 ): List<Segment> =
     questions.mapIndexed { index, question ->
-        val graded = run.answers[question.itemId] ?: question.answered?.let { Graded(it.isCorrect, it.blank) }
+        val graded = run.answers[index] ?: question.answered?.let { Graded(it.isCorrect, it.blank) }
         when {
             graded == null -> if (index == run.index) Segment.Current else Segment.Ahead
             question.placement || graded.blank -> Segment.Read
@@ -147,7 +146,10 @@ fun netTally(
     questions: List<Question>,
     run: QuestionRun,
 ): NetTally {
-    val graded = questions.mapNotNull { run.answers[it.itemId] ?: it.answered?.let { mark -> Graded(mark.isCorrect, mark.blank) } }
+    val graded =
+        questions.mapIndexedNotNull { index, question ->
+            run.answers[index] ?: question.answered?.let { Graded(it.isCorrect, it.blank) }
+        }
     val right = graded.count { it.isCorrect }
     val blank = graded.count { !it.isCorrect && it.blank }
     return NetTally(right, graded.size - right - blank)

@@ -33,8 +33,8 @@ import kotlin.time.Duration.Companion.seconds
 data class PracticeQuestions(
     val questions: List<Question>,
     val words: TrueFalseWords,
-    /** The learner's earlier answer by item, only on the mistake's own question: beside another it misleads. */
-    val lastAnswers: Map<String, String>,
+    /** The learner's earlier answer by step, only on the mistake's own question: beside another it misleads. */
+    val lastAnswers: Map<Int, String>,
 )
 
 /** How the run ended; [summary] is null when its count didn't get through. */
@@ -63,9 +63,15 @@ class MistakePracticeViewModel(
 
     val practice get() = store.practices[key]
 
+    private val closing = MutableStateFlow(false)
+    val closed: StateFlow<Boolean> = closing.asStateFlow()
+    private var closeWhenEnded = false
+
     private var shownAt = now()
     private var sent: Submission? = null
-    private val attempts = mutableMapOf<String, UUID>()
+
+    /** By step: one item asked under two mistakes is two answers. */
+    private val attempts = mutableMapOf<Int, UUID>()
 
     private data class Submission(
         val question: Question,
@@ -100,19 +106,21 @@ class MistakePracticeViewModel(
         if (!current.run.canAnswer) return
         mutableState.value = current.copy(run = current.run.checking())
         sent = Submission(question, answer, minDurationMs)
-        val attemptId = attempts.getOrPut(question.itemId) { UUID.randomUUID() }
+        val attemptId = attempts.getOrPut(current.run.index) { UUID.randomUUID() }
 
         viewModelScope.launch {
             val duration = max(minDurationMs, now() - shownAt)
             when (val result = store.answer(key, mistakeId, question.itemId, answer, duration, attemptId, current.answerIds)) {
                 is MutationResult.Done -> {
                     sent = null
-                    mutableState.update { it?.answered(question, mistakeId, answer, result.value) }
+                    mutableState.update { it?.answered(mistakeId, answer, result.value) }
                 }
 
-                is MutationResult.Failed, MutationResult.Obsolete -> {
+                is MutationResult.Failed -> {
                     updateRun { it.failed(RunPhase.AnswerFailed) }
                 }
+
+                MutationResult.Obsolete -> {}
             }
         }
     }
@@ -150,7 +158,14 @@ class MistakePracticeViewModel(
             // A count that didn't get through still ends the run: each answer was counted as it came.
             val summary = if (answerIds.isEmpty()) null else (store.finish(key, answerIds) as? MutationResult.Done)?.value
             mutableState.update { it?.copy(end = PracticeEnd(summary)) }
+            if (closeWhenEnded) closing.value = true
         }
+    }
+
+    /** Leaving while the end is saving waits for it: leaving the screen would cancel the count. */
+    fun close() {
+        val current = mutableState.value
+        if (current?.run?.phase == RunPhase.Finishing && current.end == null) closeWhenEnded = true else closing.value = true
     }
 
     private fun updateRun(change: (QuestionRun) -> QuestionRun) = mutableState.update { it?.copy(run = change(it.run)) }
@@ -158,14 +173,12 @@ class MistakePracticeViewModel(
 
 /** An honest "I don't know" is neither right nor wrong; the clock running out stays a miss. */
 private fun PracticeState.answered(
-    question: Question,
     mistakeId: String,
     answer: Answer,
     feedback: MistakePracticeFeedback,
 ) = copy(
     run =
         run.answered(
-            question.itemId,
             answer,
             feedback.recode<MistakePracticeFeedback, AnswerFeedback>(),
             blank = answer == Answer.DontKnow && !run.timedOut,
@@ -202,7 +215,7 @@ internal fun MistakePractice.toQuestions(): PracticeQuestions {
     return PracticeQuestions(
         questions = asked.map { it.first },
         words = trueFalseLabels.recode<TrueFalseLabels, TrueFalseWords>(),
-        lastAnswers = asked.mapNotNull { (question, answer) -> answer?.let { question.itemId to it } }.toMap(),
+        lastAnswers = asked.mapIndexedNotNull { step, (_, answer) -> answer?.let { step to it } }.toMap(),
     )
 }
 

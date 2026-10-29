@@ -34,6 +34,7 @@ import com.zoonk.android.feature.practice.RunQuestion
 import com.zoonk.android.feature.practice.answerAction
 import com.zoonk.android.feature.practice.answerFor
 import com.zoonk.android.feature.practice.rememberDraft
+import com.zoonk.android.feature.practice.runAccount
 import com.zoonk.android.feature.practice.runReportTarget
 import com.zoonk.android.feature.questions.savedAnswerText
 import com.zoonk.android.navigation.AppNavigator
@@ -58,12 +59,15 @@ fun MistakePracticeScreen(
         return
     }
     val key = PracticeKey(learner.activeGoalId, route.skillId?.let { runCatching { UUID.fromString(it) }.getOrNull() })
-    val viewModel = viewModel(key = "mistake-practice:${route.skillId}") { MistakePracticeViewModel(key, app.mistakes) }
+    val viewModel = viewModel(key = "mistake-practice:${route.skillId}:${runAccount(app)}") { MistakePracticeViewModel(key, app.mistakes) }
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val closed by viewModel.closed.collectAsStateWithLifecycle()
+
+    LaunchedEffect(closed) { if (closed) navigator.closeTask() }
 
     when (val shown = state) {
         null -> PracticeRead(viewModel, onClose = navigator::closeTask)
-        else -> PracticeRun(shown, viewModel, app, navigator, onClose = navigator::closeTask)
+        else -> PracticeRun(shown, viewModel, app, navigator)
     }
 }
 
@@ -108,24 +112,23 @@ internal fun PracticeRun(
     viewModel: MistakePracticeViewModel,
     app: AppContainer,
     navigator: AppNavigator,
-    onClose: () -> Unit,
 ) {
     val run = state.run
     val ending = run.phase == RunPhase.Finishing
     val endsRun = state.answerIds.isNotEmpty() && !ending
-    val leave = { if (endsRun) viewModel.end() else onClose() }
+    val leave = { if (endsRun) viewModel.end() else viewModel.close() }
 
     BackHandler(onBack = leave)
 
     if (ending) {
-        PracticeDone(state, onClose)
+        PracticeDone(state, onClose = viewModel::close)
         return
     }
 
     val questions = state.read.questions
     val question = questions.getOrNull(run.index)
     var saved by rememberDraft()
-    val draft = saved.answerFor(question)
+    val draft = saved.answerFor(run, question)
 
     RunFrame(
         title = stringResource(R.string.mistakes_practice_title),
@@ -152,7 +155,7 @@ internal fun PracticeRun(
         closeLabel = if (endsRun) stringResource(R.string.mistakes_practice_end) else null,
     ) { inlineSet ->
         question?.let {
-            key(it.itemId) {
+            key(run.index) {
                 RunQuestion(
                     questions = questions,
                     run = run,
@@ -161,8 +164,8 @@ internal fun PracticeRun(
                     words = state.read.words,
                     navigator = navigator,
                     inlineSet = inlineSet,
-                    onDraft = { answer -> saved = Draft(it.itemId, answer) },
-                    lastAnswer = state.read.lastAnswers[it.itemId]?.let { answer -> savedAnswerText(answer, state.read.words) },
+                    onDraft = { answer -> saved = Draft(run.index, it.itemId, answer) },
+                    lastAnswer = state.read.lastAnswers[run.index]?.let { answer -> savedAnswerText(answer, state.read.words) },
                 )
             }
         }
