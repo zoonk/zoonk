@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="goal_switcher_start_goal">Start a goal</string>
+    <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
+    <string name="goal_switcher_current_goal">%1$s, current goal. Switch goal</string>
+    <string name="goal_switcher_your_goals">Your goals</string>
+    <string name="goal_switcher_quick_explanations">Quick explanations</string>
+    <string name="goal_switcher_new_goal">Start a new goal</string>
+    <string name="goal_switcher_explore_courses">Explore courses</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="goal_switcher_daily">%1$s a day</string>
+    <string name="goal_switcher_finished">Finished</string>
+    <string name="goal_switcher_paused">Paused</string>
+</resources>

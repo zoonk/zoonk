@@ -1,0 +1,206 @@
+package com.zoonk.android.feature.today
+
+import androidx.compose.runtime.Immutable
+import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.Audience
+import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.DataDomain
+import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.Resource
+import com.zoonk.android.data.value
+import com.zoonk.android.feature.session.DayView
+import com.zoonk.android.feature.session.toDayView
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.SuggestedGoal
+import com.zoonk.api.models.Today
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Contextual
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.decodeFromJsonElement
+import java.util.UUID
+import kotlin.time.Duration.Companion.milliseconds
+
+/** What `GET /today` says about the learner's day, its "no" answers included. */
+sealed interface TodayRead {
+    @Immutable
+    data class Day(
+        val today: Today,
+        val day: DayView,
+    ) : TodayRead
+
+    /** Only quick explanations, or nothing: a course from before goals may be offered first. */
+    data class NoGoal(
+        val suggestedGoal: SuggestedGoal?,
+    ) : TodayRead
+
+    /** The plan is still being built after onboarding. */
+    data class Preparing(
+        val goalId: UUID,
+        val title: String,
+    ) : TodayRead
+
+    /** Paused, finished or archived. */
+    data object GoalNotActive : TodayRead
+}
+
+interface TodayApi {
+    /** The day in the device's [timeZone], which the goal follows. */
+    suspend fun today(
+        session: AuthenticatedSession,
+        timeZone: String,
+    ): Today
+
+    /** Whether resuming a paused goal moves the paused days' lessons to today. */
+    suspend fun resumePreview(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): Boolean
+
+    /** Whether onboarding has questions left before the plan, so no plan is coming yet. */
+    suspend fun onboardingLeft(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): Boolean
+
+    /** Throws `GOAL_LIMIT_REACHED` when the learner's plan follows no more goals. */
+    suspend fun resume(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    )
+
+    /** The answer as saved: answered elsewhere first, it may differ. */
+    suspend fun answerSuggestedGoal(
+        session: AuthenticatedSession,
+        suggestionId: UUID,
+        accepted: Boolean,
+    ): SuggestedGoal
+}
+
+class TodayStore(
+    private val api: TodayApi,
+    private val cache: AppCache,
+    scope: CoroutineScope,
+    timeZone: () -> String,
+    now: () -> Long = System::currentTimeMillis,
+) {
+    val today: Resource<TodayRead> =
+        cache.resource(Audience.SignedIn, DOMAINS) { session ->
+            session?.let { read(api, it, timeZone()) }
+        }
+
+    val resumePreview =
+        cache.keyed<UUID, Boolean>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
+            session?.let { api.resumePreview(it, goalId) }
+        }
+
+    val onboardingLeft =
+        cache.keyed<UUID, Boolean>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
+            session?.let { api.onboardingLeft(it, goalId) }
+        }
+
+    /** False when the learner's plan follows no more goals. */
+    suspend fun resume(goalId: UUID): MutationResult<Boolean> =
+        cache.mutate(invalidating = setOf(DataDomain.Goals, DataDomain.UserSession)) { session ->
+            try {
+                api.resume(session, goalId)
+                true
+            } catch (e: ApiException) {
+                if (e.code == "GOAL_LIMIT_REACHED") false else throw e
+            }
+        }
+
+    suspend fun answer(
+        suggestion: SuggestedGoal,
+        accepted: Boolean,
+    ): MutationResult<SuggestedGoal> =
+        cache.mutate(invalidating = setOf(DataDomain.Goals)) { api.answerSuggestedGoal(it, suggestion.id, accepted) }
+
+    init {
+        // The day gives way at its end (midnight, or later for a session carried past it) without a write.
+        scope.launch {
+            today.state
+                .map { (it.value as? TodayRead.Day)?.day?.dayEndsAt }
+                .distinctUntilChanged()
+                .collectLatest { endsAt ->
+                    endsAt ?: return@collectLatest
+                    delay((endsAt - now()).coerceAtLeast(0).milliseconds)
+                    today.invalidate()
+                }
+        }
+    }
+
+    companion object {
+        /** What the day is built from: the goal and plan, progress, the day's session and the tier. */
+        val DOMAINS =
+            setOf(
+                DataDomain.Goals,
+                DataDomain.LearningProfile,
+                DataDomain.UserProgress,
+                DataDomain.UserSession,
+                DataDomain.UserSubscription,
+            )
+    }
+}
+
+internal suspend fun read(
+    api: TodayApi,
+    session: AuthenticatedSession,
+    timeZone: String,
+): TodayRead =
+    try {
+        api.today(session, timeZone).let { TodayRead.Day(it, it.session.toDayView()) }
+    } catch (e: ApiException) {
+        when (e.code) {
+            "NO_ACTIVE_GOAL" -> {
+                TodayRead.NoGoal(e.details.decode<NoGoalDetails>()?.suggestedGoal)
+            }
+
+            "GOAL_NOT_ACTIVE" -> {
+                TodayRead.GoalNotActive
+            }
+
+            "PLAN_NOT_READY" -> {
+                e.details
+                    .decode<PreparingDetails>()
+                    ?.goal
+                    ?.let { TodayRead.Preparing(it.id, it.title) } ?: throw e
+            }
+
+            else -> {
+                throw e
+            }
+        }
+    }
+
+private inline fun <reified T> JsonElement?.decode(): T? =
+    (this as? JsonObject)?.let {
+        try {
+            ApiJson.decodeFromJsonElement<T>(it)
+        } catch (e: IllegalArgumentException) {
+            null
+        }
+    }
+
+@Serializable
+private data class NoGoalDetails(
+    val suggestedGoal: SuggestedGoal? = null,
+)
+
+@Serializable
+private data class PreparingDetails(
+    val goal: PreparingGoal? = null,
+)
+
+@Serializable
+private data class PreparingGoal(
+    @Contextual val id: UUID,
+    val title: String,
+)
