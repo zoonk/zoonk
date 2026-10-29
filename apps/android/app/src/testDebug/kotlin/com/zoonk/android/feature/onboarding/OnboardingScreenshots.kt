@@ -352,6 +352,7 @@ class OnboardingScreenshots {
                             advice = {
                                 PlanTimeAdvice(
                                     coveredShare = 0.6,
+                                    endDate = null,
                                     fullCourseEndDate = null,
                                     measure = PlanTimeAdvice.Measure.EXAM,
                                     numbers = null,
