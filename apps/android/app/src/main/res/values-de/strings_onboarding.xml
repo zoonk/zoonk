@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "onboarding_add_link": "5ac0a335abdce82700495873fcfff8e8a481c02d7c914cb20c2956a564868ae9",
+  "onboarding_add_text": "6dc62b178f36f612b6bef2c9a5589e91ad288fccd90ef34ca4e2022320c2e3c6",
+  "onboarding_adding_material": "c6312c648219db7437608377250683270794b3da649dc7b71988cdc0f151eb33",
+  "onboarding_ask": "e89cb29fc7f785c5ea8c5fceb834ff5d637c204e8746b967859d422c1de152a0",
+  "onboarding_attach_failed": "d784c7e271c9180f8253a2d4b9906882c91beb721c110eba603a26a5d3c66530",
+  "onboarding_attach_limit_day": "ee1d66fa6eb0c3c6c60eb86a983cf6242ab94da29d8f0112b71ac960de758ec7",
+  "onboarding_attach_limit_month": "034d6dc33197d2479e187b0cb0748ad5df759d665b31b0705bf2745e9a5e5063",
+  "onboarding_attach_limit_plus": "b9addf74e53a945ca7e20afad1c95dcfce540d5896de69e0e2c850089c098104",
+  "onboarding_attach_sign_in": "95b02339b73adbb5a6432b4812a00a1f391a9f4a2aa387851dced1d91a4a5ab0",
+  "onboarding_attach_slow_down": "fe8018e5e3281fc1412937531128e564c39c081abd221c3eca8768c6c8d806a9",
+  "onboarding_attach_unsupported": "92a7dbe361735ae0c34a55f6ac7962f1bb1588fb143e2830dc55e24533008ea8",
+  "onboarding_back_to_today": "6d623cf3144e50e999daaed341ad715c8487de3bef29fc94d9fee4c29207e5e2",
+  "onboarding_cancel": "1b2978937718830f42dbfb19cadcaa3e85898f4149e64279f9e732fa07de0f14",
+  "onboarding_citation_page": "4b72278480b0dda9958c86d8fb644edd02a8e9e84b96dfcb83f5b5ad2aa4fc18",
+  "onboarding_citation_slide": "61739bd4cf222eb7610fb0fe4534567ea77054ee3f62820ba51e63a94eeb6924",
+  "onboarding_create_account": "ac27f94ba2e9fb3763e2eb55408c08646c6dd14d676ae3845512812e31ec3848",
+  "onboarding_create_account_short": "dcd1dc6344997a95fb2e4346e7eb2016ee36ad5096ec47b737000c075e2e2e29",
+  "onboarding_declined_description": "864657a11640b2e323b08d11eaf599663b2d529e1c8c1726b7edb84f487b7e0c",
+  "onboarding_declined_title": "46b73416fd1c4f0051ae89bcedf773860de90784bc52361e18d47d1b7b0f1f9c",
+  "onboarding_edit_fact": "46a8c46dd06fb215c9dd530331bf42fb1e8731c0bfdeb8993b043bf0a4088d07",
+  "onboarding_error_could_not_read": "ad735f44bb63cfa14219a258b87b85f4d37c2e84942303d775918271bf72fdc6",
+  "onboarding_error_could_not_save": "d543733c5cbc67da37e76c27f09d6755e808b0d5c45a617f3dd3edb7700cfd84",
+  "onboarding_error_one_moment": "a0bd75621bae3f72d13d3d6257be248c2aafd51b0d88393d2dec7eb6177786cc",
+  "onboarding_explain_description": "af8d4ceab05183c748eef19825d4c0e306fe16f01164bea52509d00e1a425a1f",
+  "onboarding_explain_it": "d239d136aa151cf50a3ad6e81803ba8d8e9ec8d76de4704877bd1f4a63a271e0",
+  "onboarding_fix_something": "15594c04eb0ab5d632f62b51bba964587e066d94e69f4254d91cd8c6f03cb984",
+  "onboarding_go_to_plan": "08460db82cadaf635addfae7eff51813230d9d0107429cc306f95c80b9630790",
+  "onboarding_guest_gate_description": "2380f6f16011769567d4dbf3c92958c16b82e3d40108556d3c33a0a712bb2c40",
+  "onboarding_guest_gate_title": "5d90d0f3a6bff9163cf72d4e64e7470cb8d6a320f379e88a4551108980b035c2",
+  "onboarding_how_it_works": "b3c7f3e3cddd2fb63b8fb2f60cc1dd09b53492e832e8d1b9d02efe118af8c633",
+  "onboarding_how_it_works_answer": "fb0e1920d76c8670c88bad4e289eb9093cc957032cc79a573516abeb951a1e77",
+  "onboarding_how_it_works_plan": "8efe00237a9112dd294d4bc109e074ed8c180b89ddfc283debca42d0e9f07e92",
+  "onboarding_how_it_works_say": "2ae20f361d3d3fef3adf662a00d35bf0f4da2b28581a8a52a48649e0775b01e6",
+  "onboarding_instrument_description": "e9d37e353e37f78c2f34807c92bd437a3d8bf8e7075329efc03bd1b12cac0357",
+  "onboarding_instrument_title": "c35c100692d9e76b36538cbc0988033b781b5835eeb375a881748a97922c4194",
+  "onboarding_intent_exam": "cd473b33fbdf07df3f421de9ab019d9f6ec25c0691263a2563a1bdfabbb297a3",
+  "onboarding_intent_exam_description": "101774ecb7545ff80a449ff8c2b141a4488a6ea159423837f10619a56328e48c",
+  "onboarding_intent_questions": "e52f37cc3fbdb69edc93c72b3d95a1ba991a3f0cf0ed4401b29b749dfc18e9f5",
+  "onboarding_intent_questions_description": "d891e70c1508f6610da5e8a1e7211a645c972f7d35a0a5c917d8c08f64bb79c6",
+  "onboarding_intent_title": "e68207cae2157de6a4fd7debe1eb965d2b3afbb417187d79b3472a5c022b6c55",
+  "onboarding_intent_understand": "89456833157e8ed1343e1a6f0b42a181e20f94b04d3f3a95d9b287bf70bb5f90",
+  "onboarding_intent_understand_description": "3bc7fc66bf7562d0fd242f3053bf13ad9ce227a1b0092909f9bec079ad0cf06f",
+  "onboarding_join_waitlist": "fc339691530b3aca241b78779642fafd6278b4a8a03af321f8e143bfc5b26756",
+  "onboarding_limit_daily_explanations": "2fea9e4befb05213baf42572cc5f34e3a2f3159469dd3a2fbb61f047193b4235",
+  "onboarding_limit_daily_goals": "c1ad143ed2abec478b388d903f4b5ec81dbaa1b93f6bb9aeb89db4dd7bd8de69",
+  "onboarding_limit_guest": "7befa30343333618c4a45a8be3639461a80c7a8a78e34c8a0781186f0b09083f",
+  "onboarding_limit_monthly_explanations": "6ac1c47bffb823246162b4916c0b3fd9e006e59601f76417c9bc58a7131d0dc6",
+  "onboarding_limit_monthly_goals": "41f2d8aba2a7e1362201c4b1b24f533b1135b9f2aece46df750b0d416e407b08",
+  "onboarding_limit_one_active_goal": "3e17c51524e6c90916ce9fbf07ce9d9716a1bde4066b44299bae53a6eddca019",
+  "onboarding_limit_sign_up_required": "570578799bd233b618f978cee4f2bcb34624b38e11b15ae7dffc2113ce13d9ca",
+  "onboarding_limit_slow_down": "a3a908f13a07e5550bf342a1da309961259d7ad8c24be5525aa44bc1a65ef2d9",
+  "onboarding_link": "71d172b3ad8f22498d7275112540a6196e6bc0b788a0a33d1e64d8e86c14afad",
+  "onboarding_looks_right": "1d5d9f69ef668be1d42c132586d18ceb2dc55f1c0f37c249198943c0c30aa53f",
+  "onboarding_material_description": "3098027a80988bc038d4bc34802961d53a91f11639f5cc09fb973b7cb067dbba",
+  "onboarding_material_goal_exam": "d16e28b7c1ae232406a0f765737db4546dd843333bfae3c9071aaddc3b1baf0a",
+  "onboarding_material_goal_understand": "9b2cf89af8902df291bc2a11567634a8487944c50010e1e5e63a8fd5bcb1efca",
+  "onboarding_material_sign_up": "6bc83d88b3e9c1225644c4ffbf0283a3883b8fc61de5204e34318a969a90fef5",
+  "onboarding_musicianship_card": "c6411896a318e31906ee3d147835434f953cc927d48f6bfc9910d4876db09b9f",
+  "onboarding_musicianship_subject": "76c0419084a838e64049610cd30ca5804f9854bdb4fa2732a42f2bb0928a3640",
+  "onboarding_musicianship_title": "10220344725828efa7e5ae0dd8026b3dadd9f2f051e015e4b5192b1718a00e9c",
+  "onboarding_my_notes": "85067b4a404f59533c705b39f9046a21dac4ab2954a36f2e588ffeed2080097e",
+  "onboarding_opening_explanation": "4ceb67b1026bc1c9717709a837922e20004dc68f4c727f2be3e31fc0e088e114",
+  "onboarding_paste_link": "7b7b6eac41e808feb9bab08062e6384067705caf0fda9b5870a9633b7e7acffb",
+  "onboarding_paste_link_placeholder": "ba841d4d806a4197359ad020a5ee6ef64fa02d4c3359eed344fae28c87a24f6b",
+  "onboarding_paste_text": "e6b50f1d835e0def5193977c86389e4f18da246e709eb3d716152c14f73e35fc",
+  "onboarding_paste_text_placeholder": "30722be362471326bab4b7c1e1dd60c166a97136af2e56858fc6b38717e396ff",
+  "onboarding_plus_more_goals": "a706eab2ba5ce1cda03752820c23bd2336404a92d258eeeaa1137331297d03ce",
+  "onboarding_plus_more_goals_up_front": "7e8dfb2f476d42aa2a2ebbedcff2eb887e4ca97f961d5ec1dc3269af876a6f94",
+  "onboarding_question_failed": "144b96fad80870610ba8599a35484f58ae266011b36c01a75f11565924553606",
+  "onboarding_question_limit_day": "c2c3e7c6c49a2e347e676ca3cfd956f77e49cdfa23974bd239ad90998cfeed21",
+  "onboarding_question_limit_month": "af125283134ddfa2e4410a46009d6113f42154e1ac4f520de0ee3093a674b60c",
+  "onboarding_question_limit_plus": "024529640157cedf469f2a8fcb84c00b418b5b9d38e4e27b2b0df7e03757335e",
+  "onboarding_question_placeholder": "f77a950e9e428e78f1a357caa5a2ce339d2bd66be4f35709f55732c221ef08ee",
+  "onboarding_question_sign_in": "8d593ea2d8b3cd8f11974552e508e320bfb0767c80de0240dc40fff617bbcc65",
+  "onboarding_question_slow_down": "4793f3b52f94c34348f4cd510b00a6060f48b4d516b9bce199dc932d9b148cb6",
+  "onboarding_questions_description": "fbe222394e7eea5f84e2f18bb55c5d7818e05ec885b237079385f06de6dee1cd",
+  "onboarding_questions_reading": "6052fc9d8a50728810a06c01ab6c88068021eccc3ee0b08fc880f709533d1fa8",
+  "onboarding_questions_title": "f9f30e314eba541ee71fe9770096e14cc09fc8dcbd5d55ef225b8c16c87fc30f",
+  "onboarding_read_again": "79dfd960938904387f2568daf576c3de6b62f4c53d78b3e697970dfed8140e57",
+  "onboarding_read_limit_free_day": "31286c6de9d436d81f22e3cae27c31ac73da9220aaa811ce694e8f5e379085b4",
+  "onboarding_read_limit_free_month": "37b75d4e81cc17be68e621dda025c7929c48d54b0b53080d78cd0af45ad2381c",
+  "onboarding_read_limit_guest": "ea4c1c5c1882a2bb18e2c9a720fb36704ddb6bb6d0d049f04be9af97110f3eea",
+  "onboarding_read_limit_plus": "acde741ef3ce598e183e45e03dd31cbc94209f04bb348eebdafca303e534165f",
+  "onboarding_remove_material": "a27b2c2661cd7889ed6eeffe7ee58359ac8adde3566ec91303699b8845ab6daf",
+  "onboarding_rewrite_hint": "b7a739d89688c0e904f2e4661ed31c64cc9fb13f3934027567e268e5aa4fc245",
+  "onboarding_row_course": "6fe16e362ce4fdd0dc9cc15abd0fe85f47aabc80cb6ffdf28641863c2d7f5a15",
+  "onboarding_row_cutoff_score": "82e5aa43743e63b754d7c7799d185de76939894ba6d81bcf6b1295efd67ea22e",
+  "onboarding_row_date_not_out_guide": "964051688957c7f89bf4c2e0b9e76d68815a13a33a84506321564ed3ed2124e1",
+  "onboarding_row_date_not_out_notice": "ebb82fd1943d2f03ff48abec8b765c649c87e570377822bc4c199bfc523093d4",
+  "onboarding_row_date_to_be_confirmed": "a2a4cbc2e6ff0ea3622623e1b8d4240a2e03c79830fc27b0d16cb36150ba36e3",
+  "onboarding_row_dates_estimated": "0ac535db41f57e5cfa57b53c2f143370311af061c5b8cf5ce12966dfd7f0c6a4",
+  "onboarding_row_days_left": "73f68830908a02e6c3dc12ab8610cdcbf54556195bbe2e625e617bb44eb3bf1a",
+  "onboarding_row_deadline": "68c0ea144990304aa20cdb581a93293ffb7cdaefc59dfe1fc80075c691febad5",
+  "onboarding_row_exam_date": "fcfb97067df54a195faa591e3f4d913df6555d5398c882adfee9b6cff95e9d2c",
+  "onboarding_row_exam_dates": "8b75718bc14e7e5660c097b0d4020a1329db64ec63a26792c8159373480b2339",
+  "onboarding_row_goal": "893b281b87d92e62bebea819f02f4feb73f9f5382667025855832eac11a6e936",
+  "onboarding_row_guide_says": "bba09972c27c8c9d9f029a7bedf67486208e4423a46af987cd6c4e7aab073494",
+  "onboarding_row_language": "730a80e658f1fbc7d64c324b94c3e002b341dd6892518de6f1728ecbe37f94ba",
+  "onboarding_row_last_cutoff": "d37bd860a957be0296b40ec018a598c7f3df66a53b6f4d8e1e0006dd45e064ab",
+  "onboarding_row_level": "5acf4681319f93c3972182e60b2b9959da94b3e7d646be013ca34fc70c2655e7",
+  "onboarding_row_level_aiming": "684cdcffd568981b854a56292740ad4ba7036ee460c5c213f05473822e88bdaa",
+  "onboarding_row_material": "293398b52eef1d9bc7e2fceb022081546a701a6a59708c02a9b7e4bb90dbe715",
+  "onboarding_row_material_note": "6b97dcad282ca232d17ca84436c8ea28b348c2ac1c50cd43c824c9cd477465bd",
+  "onboarding_row_minutes_a_day": "2355fcb7b285f271debd6edce0c0496b376f823b116d5d428851f69f7f1a3cd6",
+  "onboarding_row_notice_says": "aceb020314facd067340d5ae1cc5c71999d3753756a32fae5eb92a43b3a7af9f",
+  "onboarding_row_pick_date": "707eb339b9cd4edfa7d816ea03105100a1ba7e173a2e6f8027ccc001dc8d0beb",
+  "onboarding_row_position": "18ace96905a3954636b3e900a50580f211e9f61d9bcbc7c9b8622c168eaeb095",
+  "onboarding_row_reason": "cfb0c7184e0018e98f069ef0f2f9af7fe841d8edfbddc4ad76f614208b69441e",
+  "onboarding_row_role_you_want": "5b8f466919a2053ad8b7282db8c61431d2b94eac26128c1975f1bf67d731cb9d",
+  "onboarding_row_several_sittings": "7f191d83bb0e8af856800b8252d94ea14b386d1411cfb9bcc330a03847219236",
+  "onboarding_row_target_score": "08fb9fac11d496f5c589133ede5e5e8d2f3920f1279ea631b7a8c6fdab857b6b",
+  "onboarding_row_to_be_confirmed": "3a2f2c10575d0eaf48a71aed6dca749d0a8c47a1bfc5a7af7ddc00ef917b345b",
+  "onboarding_row_what_you_do": "12ebc34e8b3ef51ff59560cce1dae578322b31fb10cd809dcc05c4c1d47a2b59",
+  "onboarding_row_when_you_study": "6438c936bc05a0a0721d2e15a3c61b5a3f9b09714c9467890a90c33dea6dd125",
+  "onboarding_row_where": "13023582ed633c7baa33a12f8a18527f9a7e7d834eb4a005b7ef6babca1a772d",
+  "onboarding_row_where_note": "13039a7d864c486d8be7809817c6f30700aa5f70303d4f401eeafd11cd041a95",
+  "onboarding_row_year_to_be_confirmed": "162e4799351508c359df9d561c1521a0426011a1f1aeed45c780d451c37d9a4e",
+  "onboarding_row_you_said": "02a16a5837969911341214c9f8df1b8e75aa247954693c58ffbf35dff7897193",
+  "onboarding_row_you_speak": "d3de8ee456caa1d56669cde2e1511fb1f394cbddf9cd47259417cd159f73f1f1",
+  "onboarding_row_your_role": "70253595ee75caeb1137d2e2f47e0a901183c1653c1b59e9713958112463e0fb",
+  "onboarding_save": "384d71683bca9459395f315aeff3d0731cd5c3773094d228047bdb49a88e8ace",
+  "onboarding_save_failed": "147a8563dd01110867b7511f21fbaa530557ca81bc71e50e72baa7785138aaef",
+  "onboarding_saving": "600767115d42df797714e53d419b8ed3e991b6086a260c3aab5fb534095dfb2d",
+  "onboarding_saving_goal": "0de96d54cde6bff093c94cf39caa718e2d7adee3fa122f76b7bfd9c97636dd8a",
+  "onboarding_see_plus": "019e051ef4e9b8a04a442ef1ca15922b6cdfce66a993b92601ad475c1ba22e22",
+  "onboarding_source": "4e851ce3b49a18f3d0226aa374243abd795b207f945ec497dba053ded011c4b3",
+  "onboarding_start_description": "8c47d80099c983c57023158f2e5fcc4be931bcadfcdbac0234906e13b5611fe5",
+  "onboarding_start_description_shared": "b350441dd79f7476603e0a7b4958cd9dcce607f4a7c573d99d62884a37521e22",
+  "onboarding_start_free": "fac7c189e57da7b5f64acb7c026df2c5923f865a54a4818e2440d31e77c667f3",
+  "onboarding_start_musicianship": "53a2c71b4f5c5984a0d5b0b6c4141234accb39f0f0510faaf2a228f065bd9448",
+  "onboarding_start_title": "1f7971ab87560f6e45b92766d7c841bf59ce8e79e01c1b382ff31c72f29975a4",
+  "onboarding_study_material": "26f1e59cc8658b3f6fe82bff65ba6b1340a964ca82de6de3d128108dbb95970d",
+  "onboarding_try_another_goal": "5213e41305b5ef0fe68a998b643b41bd4e59bf5aff03fa4295588b0fc276ad67",
+  "onboarding_unclear_description": "49892136725a3c24856dfbb1f712a128ab8d8701c4e383c9d702c45f7578e99a",
+  "onboarding_unclear_title": "b1e86f6be99d37ae29cef2183a861bf855c3f3604f37da1d09ba1b7e6a3de1cb",
+  "onboarding_understanding_description": "39184e0a1986705e9a0f45c12a02abba11ccf34553f2c185da2525b6170dadce",
+  "onboarding_understanding_title": "b472b2109e7a15f217d516c8a5a3ec2401699b952b0634bfd9d7e1957b2d74a9",
+  "onboarding_understood_description": "b9da635614c81e65c6536be5c87544724a0e3186511e0412b7a839d087b91249",
+  "onboarding_understood_description_shared": "10c997da998ab30d0785d442108258c397f7e52aa57b0b9449b263ae8d49698c",
+  "onboarding_understood_title": "2c942ba34f12a5203ea2d81428ee41f21dc5ac5333b5b02b800fafb78674eb03",
+  "onboarding_upload_file": "fd88c1cb1c0d5de31addf5e7c19971e76b295b359292ad4cced2567568dcc4f4",
+  "onboarding_use_this_date": "6048b7234fb672089d5a1d9cd0839ab92e32966c188ad3932960581e32075c06",
+  "onboarding_waitlist_joined": "f0cb55b763a835ec640ee337616b888bb56010b8fc261226d240775998f82a3f",
+  "onboarding_waitlist_sign_in": "febcaf9addfa353933755edea0541ec401067a1c0f104f27831131db326d376d",
+  "onboarding_what_you_wrote": "5b305da868185d0ae68452aa1418770f2e898128f8148a1f0382fa6b52e04c84",
+  "onboarding_where_from": "5a162d22332c2f35178b5197b3ef2cf9ae4cda8f47fedb353145108b09af284a",
+  "onboarding_write_again": "5286c9535d1c8c0e7a07ad271e89c536ba2de156b1d80ded44007cf2725b23be",
+  "onboarding_your_material": "f207013c0ab2f8bbd38f953fc0825cf1fe5bdcbdcd95f8f355b6d99550175e46",
+  "onboarding_your_question": "f514b9a0b9ca30212d86bbe73e89923eb9024d442d429f1b33aa8672b670bca2",
+  "onboarding_your_text": "80fa1b77e51a217ef0c8b051eb06c468231801b9e933856044bef184e5cd02cc"
+}
+-->
+<resources>
+    <!-- Title of the screen where a learner writes their goal. -->
+    <string name="onboarding_start_title">Was möchtest du erreichen?</string>
+    <string name="onboarding_start_description">Erzähl es uns mit deinen eigenen Worten. Wir erstellen den Plan.</string>
+    <!-- Under the title when the goal starts from a plan someone shared. -->
+    <string name="onboarding_start_description_shared">Erzähl es uns mit deinen eigenen Worten. Dein Plan baut auf dem Plan auf, den jemand mit dir geteilt hat.</string>
+    <!-- Aside on wide screens. -->
+    <string name="onboarding_how_it_works">So funktioniert es</string>
+    <string name="onboarding_how_it_works_say">Sag, was du erreichen möchtest</string>
+    <string name="onboarding_how_it_works_answer">Beantworte ein paar Fragen</string>
+    <string name="onboarding_how_it_works_plan">Du bekommst einen Plan mit Terminen und deiner ersten Lektion</string>
+    <string name="onboarding_start_free">Starte kostenlos, ganz ohne Konto.</string>
+    <!-- The goal written for material the learner attached without typing anything. %1$s lists the material's titles. -->
+    <string name="onboarding_material_goal_exam">Mich mit meinen Unterlagen auf eine Prüfung vorbereiten: %1$s</string>
+    <string name="onboarding_material_goal_understand">Meine Unterlagen verstehen: %1$s</string>
+    <!-- Stands for pasted text without a title, in a goal's words. -->
+    <string name="onboarding_my_notes">meine Notizen</string>
+    <!-- Stands for pasted text without a title. -->
+    <string name="onboarding_your_text">Dein Text</string>
+    <string name="onboarding_limit_daily_explanations">Du hast heute schon so viele neue Fragen gestellt, wie dein Free-Tarif erlaubt. Versuch es morgen wieder oder hol dir Plus, um jetzt weiterzumachen.</string>
+    <string name="onboarding_limit_daily_goals">Du hast heute schon so viele neue Ziele gestartet, wie dein Tarif erlaubt. Versuch es morgen wieder.</string>
+    <string name="onboarding_limit_guest">Ohne Konto kannst du einem Ziel folgen. Erstelle ein kostenloses Konto, um weiterzumachen.</string>
+    <string name="onboarding_limit_monthly_explanations">Du hast diesen Monat schon so viele neue Fragen gestellt, wie dein Free-Tarif erlaubt. Versuch es nächsten Monat wieder oder hol dir Plus, um jetzt weiterzumachen.</string>
+    <string name="onboarding_limit_monthly_goals">Du hast diesen Monat schon so viele neue Ziele gestartet, wie dein Free-Tarif erlaubt. Versuch es nächsten Monat wieder oder hol dir Plus, um jetzt weiterzumachen.</string>
+    <string name="onboarding_limit_one_active_goal">Mit dem Free-Tarif kannst du immer nur einem Ziel folgen. Um dieses Ziel zu starten, pausiere dein aktuelles Ziel über das Menü in deinem Plan oder hol dir Plus.</string>
+    <string name="onboarding_limit_sign_up_required">Erstelle ein kostenloses Konto, um weiterzumachen.</string>
+    <string name="onboarding_limit_slow_down">Du startest gerade sehr schnell neue Ziele. Versuch es in ein paar Minuten noch einmal.</string>
+    <string name="onboarding_read_limit_guest">Ohne Konto kannst du täglich ein paar neue Ziele senden. Erstelle ein kostenloses Konto, um weiterzumachen.</string>
+    <string name="onboarding_read_limit_plus">Du hast heute schon so viele neue Ziele gesendet, wie dein Tarif erlaubt. Versuch es morgen wieder.</string>
+    <string name="onboarding_read_limit_free_month">Du hast diesen Monat schon so viele neue Ziele gesendet, wie dein Free-Tarif erlaubt. Versuch es nächsten Monat wieder oder hol dir Plus, um jetzt weiterzumachen.</string>
+    <string name="onboarding_read_limit_free_day">Du hast heute schon so viele neue Ziele gesendet, wie dein Free-Tarif erlaubt. Versuch es morgen wieder oder hol dir Plus, um jetzt weiterzumachen.</string>
+    <string name="onboarding_error_one_moment">Einen Moment. Versuch es in ein paar Sekunden noch einmal.</string>
+    <string name="onboarding_error_could_not_read">Wir konnten dein Ziel nicht lesen. Versuch es gleich noch einmal.</string>
+    <string name="onboarding_error_could_not_save">Wir konnten dein Ziel nicht speichern. Versuch es gleich noch einmal.</string>
+    <string name="onboarding_save_failed">Das konnten wir nicht speichern. Versuch es noch einmal.</string>
+    <!-- Plus notice before typing, for a free learner who already follows a goal. -->
+    <string name="onboarding_plus_more_goals">Mit Plus kannst du mehrere Ziele gleichzeitig verfolgen</string>
+    <string name="onboarding_plus_more_goals_up_front">Mit dem Free-Tarif kannst du immer nur einem Ziel folgen. Um ein weiteres zu starten, pausiere dein aktuelles Ziel über das Menü in deinem Plan. Kurze Fragen kannst du jederzeit stellen.</string>
+    <string name="onboarding_go_to_plan">Zu deinem Plan</string>
+    <string name="onboarding_see_plus">Plus ansehen</string>
+    <string name="onboarding_create_account">Kostenloses Konto erstellen</string>
+    <string name="onboarding_create_account_short">Konto erstellen</string>
+    <string name="onboarding_guest_gate_title">Erstelle ein kostenloses Konto, um ein weiteres Ziel zu starten</string>
+    <string name="onboarding_guest_gate_description">Ohne Konto kannst du einem Ziel folgen. Dein Plan und dein Fortschritt bleiben erhalten.</string>
+    <string name="onboarding_back_to_today">Zurück zu Heute</string>
+    <!-- The wait while a typed goal is read. -->
+    <string name="onboarding_understanding_title">Dein Ziel verstehen</string>
+    <string name="onboarding_understanding_description">Als Nächstes prüfst du, was wir verstanden haben.</string>
+    <string name="onboarding_understood_title">Das habe ich verstanden</string>
+    <string name="onboarding_understood_description">Du kannst alles später noch ändern.</string>
+    <!-- When the learner's words became more than one goal. -->
+    <string name="onboarding_understood_description_shared">Diese Ziele teilen sich deine tägliche Lernzeit. Du kannst alles später noch ändern.</string>
+    <string name="onboarding_looks_right">Sieht richtig aus</string>
+    <string name="onboarding_saving_goal">Dein Ziel wird gespeichert…</string>
+    <string name="onboarding_fix_something">Etwas korrigieren</string>
+    <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
+    <string name="onboarding_what_you_wrote">Was du geschrieben hast</string>
+    <string name="onboarding_rewrite_hint">Wir lesen es noch einmal. Um ein Detail zu korrigieren, tippe unten auf den passenden Stift.</string>
+    <string name="onboarding_read_again">Noch einmal lesen</string>
+    <string name="onboarding_cancel">Abbrechen</string>
+    <string name="onboarding_save">Speichern</string>
+    <string name="onboarding_saving">Wird gespeichert…</string>
+    <!-- Edit button of a fact. %1$s is the fact's label, like "Exam date". -->
+    <string name="onboarding_edit_fact">%1$s bearbeiten</string>
+    <string name="onboarding_use_this_date">Dieses Datum verwenden</string>
+    <!-- A link to where a fact came from. %1$s is a site or document name. -->
+    <string name="onboarding_source">Quelle: %1$s</string>
+    <string name="onboarding_row_goal">Ziel</string>
+    <string name="onboarding_row_level">Level</string>
+    <!-- A small mark beside a fact the learner stated themselves. -->
+    <string name="onboarding_row_you_said">Deine Angabe</string>
+    <string name="onboarding_row_language">Sprache</string>
+    <string name="onboarding_row_you_speak">Du sprichst</string>
+    <string name="onboarding_row_course">Kurs</string>
+    <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
+    <string name="onboarding_row_where_note">Ort: %1$s</string>
+    <string name="onboarding_row_where">Ort</string>
+    <!-- For someone changing careers. -->
+    <string name="onboarding_row_role_you_want">Deine Wunschrolle</string>
+    <string name="onboarding_row_position">Stelle</string>
+    <string name="onboarding_row_level_aiming">Dein angestrebtes Level</string>
+    <string name="onboarding_row_target_score">Ziel-Score</string>
+    <string name="onboarding_row_last_cutoff">Letzter Grenzwert</string>
+    <!-- A score on an exam\'s scale, like "712 out of 1,000". -->
+    <string name="onboarding_row_cutoff_score">%1$s von %2$s</string>
+    <string name="onboarding_row_reason">Grund</string>
+    <string name="onboarding_row_what_you_do">Was du jetzt machst</string>
+    <string name="onboarding_row_your_role">Deine Rolle</string>
+    <string name="onboarding_row_when_you_study">Wann du lernst</string>
+    <!-- %1$s is a duration, like "20 min". -->
+    <string name="onboarding_row_minutes_a_day">%1$s pro Tag</string>
+    <string name="onboarding_row_material">Dein Lernmaterial</string>
+    <string name="onboarding_row_material_note">Dein Plan und deine Lektionen richten sich nach diesem Material</string>
+    <string name="onboarding_row_exam_date">Prüfungstermin</string>
+    <plurals name="onboarding_row_exam_dates">
+        <item quantity="one">Prüfungstermin</item>
+        <item quantity="other">Prüfungstermine</item>
+    </plurals>
+    <string name="onboarding_row_deadline">Frist</string>
+    <plurals name="onboarding_row_days_left">
+        <item quantity="one">%d Tag übrig</item>
+        <item quantity="other">%d Tage übrig</item>
+    </plurals>
+    <string name="onboarding_row_to_be_confirmed">Noch zu bestätigen</string>
+    <!-- %1$s is a year. -->
+    <string name="onboarding_row_year_to_be_confirmed">%1$s, noch zu bestätigen</string>
+    <!-- %1$s is a month and year, like "November 2027". -->
+    <string name="onboarding_row_date_to_be_confirmed">%1$s, noch zu bestätigen</string>
+    <string name="onboarding_row_date_not_out_notice">Der offizielle Termin steht in der Prüfungsbekanntmachung. Kennst du ihn schon? Trag ihn hier ein.</string>
+    <string name="onboarding_row_date_not_out_guide">Der offizielle Termin steht im Prüfungskalender. Kennst du ihn schon? Trag ihn hier ein.</string>
+    <string name="onboarding_row_dates_estimated">Aus den üblichen Terminen abgeleitet. Wir sagen dir Bescheid, sobald die offiziellen Termine feststehen.</string>
+    <string name="onboarding_row_pick_date">Wähle deinen Termin</string>
+    <string name="onboarding_row_several_sittings">Diese Prüfung findet mehrmals im Jahr statt. Bis du einen Termin auswählst, verwendet dein Plan den ersten.</string>
+    <!-- %1$s is a date. -->
+    <string name="onboarding_row_notice_says">In der Prüfungsbekanntmachung steht: %1$s.</string>
+    <string name="onboarding_row_guide_says">Im offiziellen Prüfungskalender steht: %1$s.</string>
+    <!-- After a goal the learner typed turned out to be a question. -->
+    <string name="onboarding_explain_description">Eine kurze, persönliche Erklärung von etwa 5 Minuten.</string>
+    <string name="onboarding_explain_it">Lass es dir erklären</string>
+    <string name="onboarding_opening_explanation">Deine Erklärung wird geöffnet…</string>
+    <string name="onboarding_declined_title">Bei diesem Ziel können wir dir nicht helfen</string>
+    <string name="onboarding_declined_description">Zoonk vermittelt nichts, womit du dir oder anderen schaden, Glücksspiele spielen oder betrügen könntest. Möchtest du etwas anderes lernen?</string>
+    <string name="onboarding_try_another_goal">Ein anderes Ziel ausprobieren</string>
+    <string name="onboarding_unclear_title">Erzähl uns etwas mehr</string>
+    <string name="onboarding_unclear_description">Was möchtest du lernen oder können? Zum Beispiel: „die Fahrprüfung bestehen“, „Statistik für die Arbeit verstehen“ oder „auf meiner Reise Französisch sprechen“.</string>
+    <string name="onboarding_write_again">Mein Ziel neu formulieren</string>
+    <!-- %1$s is an instrument in the learner\'s words, like "guitar". -->
+    <string name="onboarding_instrument_title">Bald gibt es Lektionen für %1$s</string>
+    <string name="onboarding_instrument_description">Damit wir dir das Spielen beibringen können, müssen wir hören, wie du spielst. Diese Funktion entwickeln wir noch. Trag dich in die Warteliste ein und lerne schon heute Musiktheorie, Gehörbildung und Rhythmus.</string>
+    <string name="onboarding_musicianship_card">Musikalität für %1$s: Akkorde hören, kurze Melodien lesen und den Takt halten. Du brauchst kein Mikrofon.</string>
+    <string name="onboarding_start_musicianship">Musikalität starten</string>
+    <string name="onboarding_join_waitlist">In die Warteliste eintragen</string>
+    <string name="onboarding_waitlist_joined">Du stehst auf der Liste. Wir sagen dir Bescheid, sobald Lektionen zum Spielen bereit sind.</string>
+    <string name="onboarding_waitlist_sign_in">Erstelle ein Konto, damit wir dir Bescheid sagen können.</string>
+    <!-- Title of the goal that teaches musicianship for an instrument. %1$s is the instrument. -->
+    <string name="onboarding_musicianship_title">Musikalität für %1$s</string>
+    <!-- The subject of a musicianship goal, mid-sentence. -->
+    <string name="onboarding_musicianship_subject">Musikalität</string>
+    <!-- The paperclip beside the goal box. -->
+    <string name="onboarding_study_material">Mit eigenen Materialien lernen</string>
+    <string name="onboarding_material_description">Dein Plan und deine Lektionen richten sich danach.</string>
+    <string name="onboarding_material_sign_up">Erstelle ein kostenloses Konto, um deinem Ziel ein PDF, ein Foto deiner Notizen oder einen beliebigen Text hinzuzufügen.</string>
+    <string name="onboarding_upload_file">Datei hochladen</string>
+    <string name="onboarding_paste_text">Text einfügen</string>
+    <string name="onboarding_paste_link">Link einfügen</string>
+    <string name="onboarding_paste_text_placeholder">Füge den Lehrplan, deine Notizen oder ein Kapitel ein</string>
+    <string name="onboarding_add_text">Text hinzufügen</string>
+    <string name="onboarding_link">Link</string>
+    <string name="onboarding_paste_link_placeholder">https://… ein Artikel, eine Kursseite oder ein PDF</string>
+    <string name="onboarding_add_link">Link hinzufügen</string>
+    <string name="onboarding_adding_material">Material wird hinzugefügt…</string>
+    <string name="onboarding_your_material">Dein Material</string>
+    <!-- Removes an attached file or text. %1$s is its title. -->
+    <string name="onboarding_remove_material">%1$s entfernen</string>
+    <string name="onboarding_attach_limit_plus">Du hast heute so viel Material hinzugefügt, wie dein Tarif erlaubt. Versuch es morgen wieder.</string>
+    <string name="onboarding_attach_limit_month">Du hast diesen Monat so viel Material hinzugefügt, wie der kostenlose Tarif erlaubt. Versuch es nächsten Monat wieder oder hol dir jetzt Plus, um weiterzumachen.</string>
+    <string name="onboarding_attach_limit_day">Du hast heute so viel Material hinzugefügt, wie der kostenlose Tarif erlaubt. Versuch es morgen wieder oder hol dir jetzt Plus, um weiterzumachen.</string>
+    <string name="onboarding_attach_slow_down">Du fügst gerade sehr schnell Material hinzu. Versuch es in ein paar Minuten noch einmal.</string>
+    <string name="onboarding_attach_unsupported">Diese Datei können wir nicht lesen. Versuch es mit einem PDF, Foto, Word- oder PowerPoint-Dokument oder einer Textdatei.</string>
+    <string name="onboarding_attach_sign_in">Erstelle ein Konto, um eigene Materialien hinzuzufügen.</string>
+    <string name="onboarding_attach_failed">Das konnten wir nicht hinzufügen. Versuch es gleich noch einmal.</string>
+    <string name="onboarding_intent_title">Was möchtest du tun?</string>
+    <string name="onboarding_intent_exam">Dich auf eine Prüfung vorbereiten</string>
+    <string name="onboarding_intent_exam_description">Nenne ein Datum, dann planen wir bis dahin</string>
+    <string name="onboarding_intent_understand">Dieses Material verstehen</string>
+    <string name="onboarding_intent_understand_description">Kurze Lektionen in der richtigen Reihenfolge</string>
+    <string name="onboarding_intent_questions">Fragen stellen</string>
+    <string name="onboarding_intent_questions_description">Die Antworten zeigen, von welcher Seite sie stammen</string>
+    <string name="onboarding_questions_title">Fragen zu deinem Material stellen</string>
+    <string name="onboarding_questions_description">Die Antworten stammen aus deinen Seiten und zeigen, woher sie kommen.</string>
+    <string name="onboarding_questions_reading">Dein Material wird gelesen…</string>
+    <string name="onboarding_your_question">Deine Frage</string>
+    <string name="onboarding_question_placeholder">Zum Beispiel: Warum entstehen bei der Glykolyse netto nur 2 ATP?</string>
+    <string name="onboarding_ask">Fragen</string>
+    <string name="onboarding_where_from">Quelle</string>
+    <!-- %1$s is a document\'s title, %2$s a page number. -->
+    <string name="onboarding_citation_page">%1$s, Seite %2$s</string>
+    <string name="onboarding_citation_slide">%1$s, Folie %2$s</string>
+    <string name="onboarding_question_failed">Darauf konnten wir nicht antworten. Versuch es gleich noch einmal.</string>
+    <string name="onboarding_question_sign_in">Erstelle ein Konto, um Fragen zu deinem Material zu stellen.</string>
+    <string name="onboarding_question_slow_down">Du stellst gerade sehr schnell Fragen. Versuch es in ein paar Minuten noch einmal.</string>
+    <string name="onboarding_question_limit_plus">Du hast heute so viele Fragen gestellt, wie dein Tarif erlaubt.</string>
+    <string name="onboarding_question_limit_month">Du hast diesen Monat so viele Fragen gestellt, wie der kostenlose Tarif erlaubt. Frag nächsten Monat wieder oder hol dir jetzt Plus, um weiterzumachen.</string>
+    <string name="onboarding_question_limit_day">Du hast heute so viele Fragen gestellt, wie der kostenlose Tarif erlaubt. Frag morgen wieder oder hol dir jetzt Plus, um weiterzumachen.</string>
+</resources>

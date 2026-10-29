@@ -125,7 +125,7 @@ class AccountScreenshots {
 
     private val screens: List<Pair<String, @Composable () -> Unit>> =
         listOf(
-            "welcome" to { VisitorWelcome(rememberAppNavigator(), PaddingValues()) },
+            "welcome" to { VisitorWelcome(rememberAppNavigator(), PaddingValues(), isSending = false, error = null, onSend = {}) },
             "login" to {
                 val signIn = remember { SignInViewModel(stores.second, stores.first, SavedStateHandle()) }
                 Task { Methods(signIn, rememberAppNavigator()) }

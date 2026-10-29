@@ -28,23 +28,24 @@ class VisitorWelcomeTest {
     val rule: ComposeContentTestRule = createComposeRule()
 
     private lateinit var navigator: AppNavigator
+    private val sent = mutableListOf<String>()
 
     @Before
     fun show() {
         rule.setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                VisitorWelcome(navigator, PaddingValues())
+                VisitorWelcome(navigator, PaddingValues(), isSending = false, error = null, onSend = { sent += it })
             }
         }
     }
 
     @Test
-    fun typedGoalStartsIt() {
+    fun typedGoalIsSentFromTheTap() {
         rule.onNode(hasSetTextAction()).performTextInput("  pass the bar exam ")
         rule.onNodeWithText("Build my plan").performClick()
 
-        assertEquals(AppRoute.StartGoal(goal = "pass the bar exam"), navigator.currentRoute)
+        assertEquals(listOf("pass the bar exam"), sent)
     }
 
     @Test
@@ -52,13 +53,13 @@ class VisitorWelcomeTest {
         rule.onNodeWithText("Build my plan").performClick()
 
         rule.onNodeWithText("Write your goal in the box first, in your own words.").assertIsDisplayed()
-        assertEquals(AppRoute.Today, navigator.currentRoute)
+        assertEquals(emptyList<String>(), sent)
     }
 
     @Test
-    fun exampleStartsThatGoal() {
+    fun exampleIsSentAsTheGoal() {
         rule.onNodeWithText("Understand quantum physics").performScrollTo().performClick()
 
-        assertEquals(AppRoute.StartGoal(goal = "Understand quantum physics"), navigator.currentRoute)
+        assertEquals(listOf("Understand quantum physics"), sent)
     }
 }

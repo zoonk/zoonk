@@ -18,6 +18,7 @@ import com.zoonk.android.data.PrivateImages
 import com.zoonk.android.data.SessionCredentials
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
+import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.StoredSession
 import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.clearCredentialState
@@ -42,6 +43,8 @@ import com.zoonk.android.feature.livecall.OngoingCalls
 import com.zoonk.android.feature.livecall.WebRtcLiveCallTransport
 import com.zoonk.android.feature.memory.LiveMemoryApi
 import com.zoonk.android.feature.memory.MemoryStore
+import com.zoonk.android.feature.onboarding.LiveOnboardingApi
+import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.LivePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.player.LessonPlayerStore
@@ -188,6 +191,14 @@ class AppContainer private constructor(
     val calls = OngoingCalls(context.applicationContext, scope)
     val callTransports =
         LiveCallTransports { microphone, onEvent, onLost -> WebRtcLiveCallTransport(context, microphone, onEvent, onLost) }
+
+    val onboarding =
+        OnboardingStore(
+            api = LiveOnboardingApi(api),
+            cache = cache,
+            sessions = sessions,
+            startGuest = { account.startAsGuest() == SignInResult.SignedIn },
+        )
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =

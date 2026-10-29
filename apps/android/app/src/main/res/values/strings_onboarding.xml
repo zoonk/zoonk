@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Title of the screen where a learner writes their goal. -->
+    <string name="onboarding_start_title">What do you want to achieve?</string>
+    <string name="onboarding_start_description">Tell us in your own words. We\'ll build the plan.</string>
+    <!-- Under the title when the goal starts from a plan someone shared. -->
+    <string name="onboarding_start_description_shared">Tell us in your own words. Your plan starts from the plan someone shared with you.</string>
+    <!-- Aside on wide screens. -->
+    <string name="onboarding_how_it_works">How it works</string>
+    <string name="onboarding_how_it_works_say">Say what you want to achieve</string>
+    <string name="onboarding_how_it_works_answer">Answer a few questions</string>
+    <string name="onboarding_how_it_works_plan">Get a plan with dates, and your first lesson</string>
+    <string name="onboarding_start_free">Start free, no account needed.</string>
+    <!-- The goal written for material the learner attached without typing anything. %1$s lists the material's titles. -->
+    <string name="onboarding_material_goal_exam">Prepare for an exam on my material: %1$s</string>
+    <string name="onboarding_material_goal_understand">Understand my material: %1$s</string>
+    <!-- Stands for pasted text without a title, in a goal's words. -->
+    <string name="onboarding_my_notes">my notes</string>
+    <!-- Stands for pasted text without a title. -->
+    <string name="onboarding_your_text">Your text</string>
+
+    <string name="onboarding_limit_daily_explanations">You\'ve asked as many new questions as the free plan allows today. Try again tomorrow, or get Plus to keep going now.</string>
+    <string name="onboarding_limit_daily_goals">You\'ve started as many new goals as your plan allows today. Try again tomorrow.</string>
+    <string name="onboarding_limit_guest">Without an account, you can follow one goal. Create a free account to keep going.</string>
+    <string name="onboarding_limit_monthly_explanations">You\'ve asked as many new questions as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
+    <string name="onboarding_limit_monthly_goals">You\'ve started as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
+    <string name="onboarding_limit_one_active_goal">The free plan follows one goal at a time. To start this one, pause your current goal from the menu on your Plan, or get Plus.</string>
+    <string name="onboarding_limit_sign_up_required">Create your free account to continue.</string>
+    <string name="onboarding_limit_slow_down">You\'re starting goals quickly. Try again in a few minutes.</string>
+    <string name="onboarding_read_limit_guest">Without an account, you can send a few new goals a day. Create a free account to keep going.</string>
+    <string name="onboarding_read_limit_plus">You\'ve sent as many new goals as your plan allows today. Try again tomorrow.</string>
+    <string name="onboarding_read_limit_free_month">You\'ve sent as many new goals as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
+    <string name="onboarding_read_limit_free_day">You\'ve sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now.</string>
+    <string name="onboarding_error_one_moment">One moment. Try again in a few seconds.</string>
+    <string name="onboarding_error_could_not_read">We couldn\'t read your goal. Try again in a moment.</string>
+    <string name="onboarding_error_could_not_save">We couldn\'t save your goal. Try again in a moment.</string>
+    <string name="onboarding_save_failed">We couldn\'t save that. Try again.</string>
+
+    <!-- Plus notice before typing, for a free learner who already follows a goal. -->
+    <string name="onboarding_plus_more_goals">More goals at once with Plus</string>
+    <string name="onboarding_plus_more_goals_up_front">The free plan follows one goal at a time. To start another, pause your current goal from the menu on your Plan. Quick questions work anytime.</string>
+    <string name="onboarding_go_to_plan">Go to your Plan</string>
+    <string name="onboarding_see_plus">See Plus</string>
+    <string name="onboarding_create_account">Create a free account</string>
+    <string name="onboarding_create_account_short">Create an account</string>
+    <string name="onboarding_guest_gate_title">Create a free account to start another goal</string>
+    <string name="onboarding_guest_gate_description">Without an account, you can follow one goal. Your plan and progress come with you.</string>
+    <string name="onboarding_back_to_today">Back to Today</string>
+
+    <!-- The wait while a typed goal is read. -->
+    <string name="onboarding_understanding_title">Understanding your goal</string>
+    <string name="onboarding_understanding_description">Next, you check what we understood.</string>
+
+    <string name="onboarding_understood_title">Here\'s what I understood</string>
+    <string name="onboarding_understood_description">You can change all of this later.</string>
+    <!-- When the learner's words became more than one goal. -->
+    <string name="onboarding_understood_description_shared">These goals share your daily time. You can change all of this later.</string>
+    <string name="onboarding_looks_right">Looks right</string>
+    <string name="onboarding_saving_goal">Saving your goal…</string>
+    <string name="onboarding_fix_something">Fix something</string>
+    <!-- Label of the box holding the words the learner wrote, while they rewrite them. -->
+    <string name="onboarding_what_you_wrote">What you wrote</string>
+    <string name="onboarding_rewrite_hint">We\'ll read it again. To fix one detail, use its pencil below.</string>
+    <string name="onboarding_read_again">Read it again</string>
+    <string name="onboarding_cancel">Cancel</string>
+    <string name="onboarding_save">Save</string>
+    <string name="onboarding_saving">Saving…</string>
+    <!-- Edit button of a fact. %1$s is the fact's label, like "Exam date". -->
+    <string name="onboarding_edit_fact">Edit %1$s</string>
+    <string name="onboarding_use_this_date">Use this date</string>
+    <!-- A link to where a fact came from. %1$s is a site or document name. -->
+    <string name="onboarding_source">Source: %1$s</string>
+
+    <string name="onboarding_row_goal">Goal</string>
+    <string name="onboarding_row_level">Level</string>
+    <!-- A small mark beside a fact the learner stated themselves. -->
+    <string name="onboarding_row_you_said">you said</string>
+    <string name="onboarding_row_language">Language</string>
+    <string name="onboarding_row_you_speak">You speak</string>
+    <string name="onboarding_row_course">Course</string>
+    <!-- Where the course is taught. %1$s is an institution\'s name, kept as a label because its article varies. -->
+    <string name="onboarding_row_where_note">Where: %1$s</string>
+    <string name="onboarding_row_where">Where</string>
+    <!-- For someone changing careers. -->
+    <string name="onboarding_row_role_you_want">The role you want</string>
+    <string name="onboarding_row_position">Position</string>
+    <string name="onboarding_row_level_aiming">Level you\'re aiming for</string>
+    <string name="onboarding_row_target_score">Target score</string>
+    <string name="onboarding_row_last_cutoff">Last cut-off</string>
+    <!-- A score on an exam\'s scale, like "712 out of 1,000". -->
+    <string name="onboarding_row_cutoff_score">%1$s out of %2$s</string>
+    <string name="onboarding_row_reason">Reason</string>
+    <string name="onboarding_row_what_you_do">What you do now</string>
+    <string name="onboarding_row_your_role">Your role</string>
+    <string name="onboarding_row_when_you_study">When you study</string>
+    <!-- %1$s is a duration, like "20 min". -->
+    <string name="onboarding_row_minutes_a_day">%1$s a day</string>
+    <string name="onboarding_row_material">Your material</string>
+    <string name="onboarding_row_material_note">Your plan and lessons follow this material</string>
+    <string name="onboarding_row_exam_date">Exam date</string>
+    <plurals name="onboarding_row_exam_dates">
+        <item quantity="one">Exam date</item>
+        <item quantity="other">Exam dates</item>
+    </plurals>
+    <string name="onboarding_row_deadline">Deadline</string>
+    <plurals name="onboarding_row_days_left">
+        <item quantity="one">%d day left</item>
+        <item quantity="other">%d days left</item>
+    </plurals>
+    <string name="onboarding_row_to_be_confirmed">To be confirmed</string>
+    <!-- %1$s is a year. -->
+    <string name="onboarding_row_year_to_be_confirmed">%1$s, to be confirmed</string>
+    <!-- %1$s is a month and year, like "November 2027". -->
+    <string name="onboarding_row_date_to_be_confirmed">%1$s, to be confirmed</string>
+    <string name="onboarding_row_date_not_out_notice">The official date comes out in the exam\'s notice. Know it already? Set it here.</string>
+    <string name="onboarding_row_date_not_out_guide">The official date comes out on the exam\'s official calendar. Know it already? Set it here.</string>
+    <string name="onboarding_row_dates_estimated">From its usual dates. We\'ll tell you when the official ones are out.</string>
+    <string name="onboarding_row_pick_date">Pick your date</string>
+    <string name="onboarding_row_several_sittings">This exam is held several times a year. Until you pick one, your plan uses the first.</string>
+    <!-- %1$s is a date. -->
+    <string name="onboarding_row_notice_says">The exam notice says %1$s.</string>
+    <string name="onboarding_row_guide_says">The exam\'s official calendar says %1$s.</string>
+
+    <!-- After a goal the learner typed turned out to be a question. -->
+    <string name="onboarding_explain_description">A short explanation written for you, about 5 minutes.</string>
+    <string name="onboarding_explain_it">Explain it</string>
+    <string name="onboarding_opening_explanation">Opening your explanation…</string>
+    <string name="onboarding_declined_title">We can\'t help with this goal</string>
+    <string name="onboarding_declined_description">Zoonk doesn\'t teach anything that could hurt you or others, gambling or ways to cheat. Is there something else you\'d like to learn?</string>
+    <string name="onboarding_try_another_goal">Try another goal</string>
+    <string name="onboarding_unclear_title">Tell us a bit more</string>
+    <string name="onboarding_unclear_description">What do you want to learn or be able to do? For example: “pass the driving test”, “understand statistics for work” or “speak French on my trip”.</string>
+    <string name="onboarding_write_again">Write my goal again</string>
+    <!-- %1$s is an instrument in the learner\'s words, like "guitar". -->
+    <string name="onboarding_instrument_title">Lessons for playing %1$s are coming</string>
+    <string name="onboarding_instrument_description">To teach you to play, we need to hear you play, and we\'re still building that. Join the waitlist, and start with musicianship today: reading music, ear training and rhythm.</string>
+    <string name="onboarding_musicianship_card">Musicianship for %1$s: hear chords, read short melodies and keep the beat. No microphone needed.</string>
+    <string name="onboarding_start_musicianship">Start musicianship</string>
+    <string name="onboarding_join_waitlist">Join the waitlist</string>
+    <string name="onboarding_waitlist_joined">You\'re on the list. We\'ll let you know when lessons for playing are ready.</string>
+    <string name="onboarding_waitlist_sign_in">Create an account so we can let you know.</string>
+    <!-- Title of the goal that teaches musicianship for an instrument. %1$s is the instrument. -->
+    <string name="onboarding_musicianship_title">Musicianship for %1$s</string>
+    <!-- The subject of a musicianship goal, mid-sentence. -->
+    <string name="onboarding_musicianship_subject">musicianship</string>
+
+    <!-- The paperclip beside the goal box. -->
+    <string name="onboarding_study_material">Study your own material</string>
+    <string name="onboarding_material_description">Your plan and lessons will use it.</string>
+    <string name="onboarding_material_sign_up">Create a free account to add a PDF, a photo of your notes or any text to your goal.</string>
+    <string name="onboarding_upload_file">Upload a file</string>
+    <string name="onboarding_paste_text">Paste text</string>
+    <string name="onboarding_paste_link">Paste a link</string>
+    <string name="onboarding_paste_text_placeholder">Paste the syllabus, your notes or a chapter</string>
+    <string name="onboarding_add_text">Add text</string>
+    <string name="onboarding_link">Link</string>
+    <string name="onboarding_paste_link_placeholder">https://… an article, a class page or a PDF</string>
+    <string name="onboarding_add_link">Add link</string>
+    <string name="onboarding_adding_material">Adding your material…</string>
+    <string name="onboarding_your_material">Your material</string>
+    <!-- Removes an attached file or text. %1$s is its title. -->
+    <string name="onboarding_remove_material">Remove %1$s</string>
+    <string name="onboarding_attach_limit_plus">You\'ve added as much material as your plan allows today. Try again tomorrow.</string>
+    <string name="onboarding_attach_limit_month">You\'ve added as much material as the free plan allows this month. Try again next month, or get Plus to keep going now.</string>
+    <string name="onboarding_attach_limit_day">You\'ve added as much material as the free plan allows today. Try again tomorrow, or get Plus to keep going now.</string>
+    <string name="onboarding_attach_slow_down">You\'re adding material quickly. Try again in a few minutes.</string>
+    <string name="onboarding_attach_unsupported">We can\'t read this file. Try a PDF, a photo, Word, PowerPoint or text.</string>
+    <string name="onboarding_attach_sign_in">Create an account to add your own material.</string>
+    <string name="onboarding_attach_failed">We couldn\'t add that. Try again in a moment.</string>
+    <string name="onboarding_intent_title">What do you want to do?</string>
+    <string name="onboarding_intent_exam">Prepare for an exam</string>
+    <string name="onboarding_intent_exam_description">Give a date and we\'ll plan up to it</string>
+    <string name="onboarding_intent_understand">Understand this material</string>
+    <string name="onboarding_intent_understand_description">Short lessons, in the right order</string>
+    <string name="onboarding_intent_questions">Ask questions</string>
+    <string name="onboarding_intent_questions_description">Answers show the page they came from</string>
+
+    <string name="onboarding_questions_title">Ask about your material</string>
+    <string name="onboarding_questions_description">Answers come from your pages and show where they came from.</string>
+    <string name="onboarding_questions_reading">Reading your material…</string>
+    <string name="onboarding_your_question">Your question</string>
+    <string name="onboarding_question_placeholder">E.g., why does glycolysis net only 2 ATP?</string>
+    <string name="onboarding_ask">Ask</string>
+    <string name="onboarding_where_from">Where this comes from</string>
+    <!-- %1$s is a document\'s title, %2$s a page number. -->
+    <string name="onboarding_citation_page">%1$s, page %2$s</string>
+    <string name="onboarding_citation_slide">%1$s, slide %2$s</string>
+    <string name="onboarding_question_failed">We couldn\'t answer that. Try again in a moment.</string>
+    <string name="onboarding_question_sign_in">Create an account to ask about your material.</string>
+    <string name="onboarding_question_slow_down">You\'re asking quickly. Try again in a few minutes.</string>
+    <string name="onboarding_question_limit_plus">You\'ve asked as many questions as your plan allows today.</string>
+    <string name="onboarding_question_limit_month">You\'ve asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now.</string>
+    <string name="onboarding_question_limit_day">You\'ve asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now.</string>
+</resources>
