@@ -32,8 +32,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,9 +61,12 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
+import com.zoonk.android.feature.conversation.PracticeCallState
 import com.zoonk.android.feature.conversation.PracticeConversation
+import com.zoonk.android.feature.conversation.rememberPracticeCallState
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.questions.ItemText
 import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
@@ -95,13 +103,11 @@ import com.zoonk.api.models.PlanPhaseChaptersInner
 import kotlinx.coroutines.launch
 import java.util.UUID
 
-/** Where a unit's page leads. */
 internal class UnitActions(
     val open: (AppRoute) -> Unit,
     val start: suspend (CallRequest) -> CallStart,
 )
 
-/** Main's `/content/units/{chapterId}`: a language unit's lessons, practice and what to look back on. */
 @Composable
 fun LanguageUnitScreen(
     route: AppRoute.LanguageUnit,
@@ -131,8 +137,10 @@ private fun UnitEntry(
     val heroScrolledAway by remember(listState) { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
     val unit = load.value
     val actions = remember(navigator) { UnitActions(open = navigator::open, start = app.conversations::start) }
-    val goalId = unit?.goalId
-    val plan = remember(goalId) { goalId?.let { app.plans.plan[it] } }
+    // Main reads the selected goal's plan, so a unit of another goal opened from a link marks nothing.
+    val summary by app.learnerSummary.summary.collectShown()
+    val planGoalId = summary.value?.planGoal?.id
+    val plan = remember(planGoalId) { planGoalId?.let { app.plans.plan[it] } }
     val planRead = plan?.collectShown()?.value?.value
     val upNext =
         planRead
@@ -197,11 +205,7 @@ private fun UnitFrame(
     }
 }
 
-/**
- * The unit's hero, lessons and what it teaches, with its progress, practice and reference beside
- * them where there's room, else after them, as main's aside. [upNext] marks the next lesson when the
- * unit is the plan's current one.
- */
+/** [upNext]: the unit is the selected plan's current one, so its next lesson is marked. */
 @Composable
 internal fun UnitPage(
     unit: LanguageUnit,
@@ -214,6 +218,9 @@ internal fun UnitPage(
     val padding = PaddingValues(horizontal = (if (compact) 16.dp else 24.dp) - LIST_ITEM_INSET, vertical = 24.dp)
     val aboutLabel = stringResource(R.string.language_unit_about)
     val openLesson = { id: UUID -> actions.open(AppRoute.Lesson(id.toString())) }
+    // Practice and reference move between the aside and the page as the window changes, so what's open lives here.
+    val practiceCall = rememberPracticeCallState(unit.conversation.defaultMinutes)
+    val expanded = rememberSaveable(saver = EXPANDED_SAVER) { mutableStateListOf() }
 
     PageWithSupportingPane(
         supportingPane = {
@@ -228,8 +235,8 @@ internal fun UnitPage(
                     verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
                 ) {
                     if (lessons.isNotEmpty()) UnitProgress(lessons)
-                    UnitPractice(unit, actions)
-                    UnitReference(unit)
+                    UnitPractice(unit, actions, practiceCall, expanded)
+                    UnitReference(unit, expanded)
                 }
             }
         },
@@ -253,8 +260,8 @@ internal fun UnitPage(
                     }
                 }
                 if (!asideBeside) {
-                    item(key = "practice") { UnitPractice(unit, actions) }
-                    if (hasReference(unit)) item(key = "reference") { UnitReference(unit) }
+                    item(key = "practice") { UnitPractice(unit, actions, practiceCall, expanded) }
+                    if (hasReference(unit)) item(key = "reference") { UnitReference(unit, expanded) }
                 }
             }
         }
@@ -341,16 +348,20 @@ private fun UnitProgress(lessons: List<ListedLesson>) {
 private fun UnitPractice(
     unit: LanguageUnit,
     actions: UnitActions,
+    practiceCall: PracticeCallState,
+    expanded: SnapshotStateList<String>,
 ) {
     val chapterId = unit.unit.chapterId
     val rows =
         buildList<@Composable () -> Unit> {
-            add { PracticeConversation(unit.conversation, chapterId, unit.goalId, actions.start, actions.open) }
+            add { PracticeConversation(unit.conversation, chapterId, unit.goalId, actions.start, actions.open, state = practiceCall) }
             if (unit.canTestOut) add { TestOutRow(TestOutScope.Unit, onOpen = { actions.open(AppRoute.TestOut(chapterId.toString())) }) }
             if (unit.mistakes.isNotEmpty()) {
                 add {
                     DisclosureRow(
                         stringResource(R.string.language_unit_mistakes),
+                        expanded = "mistakes" in expanded,
+                        onExpandedChange = { expanded.show("mistakes", it) },
                         leading = { KindDotLeading(LearnKind.Mistakes) },
                         count = unit.mistakes.size,
                     ) { UnitMistakes(unit.mistakes) }
@@ -425,7 +436,10 @@ private fun skillLabel(skill: LanguageUnitMistakesInner.Skill): String =
 private fun hasReference(unit: LanguageUnit) = unit.grammarTips.isNotEmpty() || unit.words.count > 0 || unit.summaries.isNotEmpty()
 
 @Composable
-private fun UnitReference(unit: LanguageUnit) {
+private fun UnitReference(
+    unit: LanguageUnit,
+    expanded: SnapshotStateList<String>,
+) {
     if (!hasReference(unit)) return
     val locale = currentLocale()
     val rows =
@@ -434,6 +448,8 @@ private fun UnitReference(unit: LanguageUnit) {
                 add {
                     DisclosureRow(
                         stringResource(R.string.language_unit_grammar_tips),
+                        expanded = "tips" in expanded,
+                        onExpandedChange = { expanded.show("tips", it) },
                         leading = { Icon(painterResource(R.drawable.ic_menu_book), contentDescription = null) },
                         count = unit.grammarTips.size,
                     ) {
@@ -454,6 +470,8 @@ private fun UnitReference(unit: LanguageUnit) {
                 add {
                     DisclosureRow(
                         stringResource(R.string.language_unit_words),
+                        expanded = "words" in expanded,
+                        onExpandedChange = { expanded.show("words", it) },
                         leading = { Icon(painterResource(R.drawable.ic_translate), contentDescription = null) },
                         count = unit.words.count.toInt(),
                     ) {
@@ -477,6 +495,8 @@ private fun UnitReference(unit: LanguageUnit) {
                 add {
                     DisclosureRow(
                         stringResource(R.string.language_unit_summary),
+                        expanded = "summary" in expanded,
+                        onExpandedChange = { expanded.show("summary", it) },
                         leading = { Icon(painterResource(R.drawable.ic_checklist), contentDescription = null) },
                     ) { LessonSummaries(unit.summaries.map { LessonSummary(it.title, it.ideas) }) }
                 }
@@ -502,6 +522,15 @@ private fun LanguageUnitLessonsInner.listed() =
         done = done,
         next = state == LanguageUnitLessonsInner.State.NEXT,
     )
+
+private fun SnapshotStateList<String>.show(
+    section: String,
+    open: Boolean,
+) {
+    if (open) add(section) else remove(section)
+}
+
+private val EXPANDED_SAVER = listSaver<SnapshotStateList<String>, String>(save = { it.toList() }, restore = { it.toMutableStateList() })
 
 private const val SEPARATOR = " · "
 private val MARK_SLOT = 24.dp

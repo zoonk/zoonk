@@ -11,10 +11,6 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
@@ -28,27 +24,24 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.withTabularFigures
 
-/**
- * Main's `Disclosure`: a row that opens to what's under it, as a page's mistakes, grammar tips or
- * summaries. [count] sits at its end, as main's `aside`.
- */
 @Composable
 fun DisclosureRow(
     title: String,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
     leading: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     count: Int? = null,
     content: @Composable () -> Unit,
 ) {
-    var open by rememberSaveable(title) { mutableStateOf(false) }
-    val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
+    val state = stringResource(if (expanded) R.string.disclosure_expanded else R.string.disclosure_collapsed)
 
     Column(modifier) {
         ListItem(
             headlineContent = { Text(title) },
             modifier =
                 Modifier
-                    .clickable(role = Role.Button) { open = !open }
+                    .clickable(role = Role.Button) { onExpandedChange(!expanded) }
                     .semantics { stateDescription = state },
             leadingContent = leading,
             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
@@ -58,11 +51,11 @@ fun DisclosureRow(
                     Icon(
                         painterResource(R.drawable.ic_expand_more),
                         contentDescription = null,
-                        modifier = Modifier.rotate(if (open) 180f else 0f),
+                        modifier = Modifier.rotate(if (expanded) 180f else 0f),
                     )
                 }
             },
         )
-        if (open) Column(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) { content() }
+        if (expanded) Column(Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp)) { content() }
     }
 }

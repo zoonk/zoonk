@@ -26,7 +26,6 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import java.util.UUID
 
-/** A lesson as a chapter's or a unit's page lists it; [next] is the one the learner does next. */
 @Immutable
 data class ListedLesson(
     val id: UUID,
@@ -38,9 +37,8 @@ data class ListedLesson(
 )
 
 /**
- * Main's `LessonList`: the lessons in order, numbered, with how many are done. The next one is
- * marked and tinted only when [upNext] (its chapter is the plan's current one). Its rows reach its
- * edges and inset their content, so place it without the page's side padding.
+ * The next lesson is marked only when [upNext]: its chapter is the plan's current one. Rows reach
+ * the list's edges and inset their own content, so place it without the page's side padding.
  */
 @Composable
 fun LessonList(
@@ -122,7 +120,6 @@ private fun LessonRow(
     )
 }
 
-/** Main's `LessonProgress`: one part per lesson, filled once it's done. */
 @Composable
 fun LessonProgress(
     lessons: List<ListedLesson>,

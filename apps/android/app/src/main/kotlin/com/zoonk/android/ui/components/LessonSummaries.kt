@@ -16,14 +16,12 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.richtext.RichText
 
-/** What a lesson left once done: its title and the ideas it taught. */
 @Immutable
 data class LessonSummary(
     val title: String,
     val ideas: List<String>,
 )
 
-/** Main's `LessonSummaries`: each finished lesson's ideas, in lesson text. */
 @Composable
 fun LessonSummaries(
     summaries: List<LessonSummary>,

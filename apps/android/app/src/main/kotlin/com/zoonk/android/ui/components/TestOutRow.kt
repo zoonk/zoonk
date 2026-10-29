@@ -17,7 +17,6 @@ import com.zoonk.android.feature.subscription.PlusMark
 
 enum class TestOutScope { Chapter, Unit }
 
-/** Main's `TestOutStartRow`: the test that skips a chapter or unit the learner already knows. */
 @Composable
 fun TestOutRow(
     scope: TestOutScope,

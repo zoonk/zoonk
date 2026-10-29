@@ -1,6 +1,12 @@
 package com.zoonk.android.feature.language
 
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.hasText
@@ -9,6 +15,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
@@ -144,6 +151,25 @@ class LanguageUnitTest {
 
         compose.onNodeWithText("Words in this unit").performClick()
         seen("hola · gracias and 10 more")
+    }
+
+    /** A Fold opening or a tablet turning moves practice and reference between the aside and the page. */
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land")
+    fun whatsOpenStaysOpenWhenTheAsideMovesBelow() {
+        var wide by mutableStateOf(true)
+        val actions = UnitActions(open = {}, start = { CallStart.Started(STARTED) })
+        compose.setContent {
+            ZoonkTheme { Box(Modifier.width(if (wide) 1280.dp else 480.dp)) { UnitPage(languageUnit(), upNext = true, actions = actions) } }
+        }
+        compose.onNodeWithText("Grammar tips").performClick()
+        compose.onNodeWithText("Practice a conversation").performClick()
+
+        wide = false
+        compose.waitForIdle()
+
+        compose.onNodeWithText("Start the call").assertExists()
+        seen("Use quisiera to ask politely.")
     }
 
     @Test

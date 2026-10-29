@@ -93,7 +93,6 @@ fun LoadFailedMessage(
     }
 }
 
-/** Main's `NotFoundMessage`: a link to something that isn't there, or isn't the learner's. */
 @Composable
 fun NotFoundMessage(
     modifier: Modifier = Modifier,

@@ -22,7 +22,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatList
 import com.zoonk.android.ui.theme.zoonk
 
-/** Main's `CanDoMark`: a "can do" line's dot, filled once the learner can. Decorative: its line says what. */
+/** Decorative: its line says what the learner can do. */
 @Composable
 fun CanDoMark(
     done: Boolean,
@@ -42,7 +42,6 @@ fun CanDoMark(
     }
 }
 
-/** Main's `PatternRow`: a pattern noticed in the learner's mistakes, or that they were just typos. */
 @Composable
 fun PatternRow(
     typos: Boolean,
@@ -65,7 +64,6 @@ fun PatternRow(
     )
 }
 
-/** Main's `PronunciationRow`: the words due to be said again. */
 @Composable
 fun PronunciationRow(
     count: Int,

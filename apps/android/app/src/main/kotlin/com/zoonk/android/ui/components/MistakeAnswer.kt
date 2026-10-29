@@ -16,7 +16,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
-/** Main's `MistakeAnswer`: what the learner answered, or the right answer, on its answer's tone. */
 @Composable
 fun MistakeAnswer(
     text: String,

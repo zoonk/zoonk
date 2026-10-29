@@ -19,9 +19,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -109,10 +111,22 @@ class CallStartModel(
     }
 }
 
-/**
- * Main's `PracticeConversation`: a unit's "Practice a conversation" row, whose sheet picks the
- * call's length (Plus lengths locked) and starts it. For the unit page and the tutor's offers.
- */
+/** Hoist it above a layout that moves the row, as between a page and its aside, so the open sheet and its length stay. */
+@Stable
+class PracticeCallState internal constructor(
+    sheetOpen: Boolean,
+    minutes: Long,
+) {
+    var sheetOpen by mutableStateOf(sheetOpen)
+    var minutes by mutableLongStateOf(minutes)
+}
+
+@Composable
+fun rememberPracticeCallState(defaultMinutes: Long): PracticeCallState =
+    rememberSaveable(
+        saver = listSaver(save = { listOf(it.sheetOpen, it.minutes) }, restore = { PracticeCallState(it[0] as Boolean, it[1] as Long) }),
+    ) { PracticeCallState(sheetOpen = false, minutes = defaultMinutes) }
+
 @Composable
 fun PracticeConversation(
     call: LanguagePracticeCall,
@@ -121,7 +135,8 @@ fun PracticeConversation(
     app: AppContainer,
     navigator: AppNavigator,
     modifier: Modifier = Modifier,
-) = PracticeConversation(call, chapterId, goalId, app.conversations::start, navigator::open, modifier)
+    state: PracticeCallState = rememberPracticeCallState(call.defaultMinutes),
+) = PracticeConversation(call, chapterId, goalId, app.conversations::start, navigator::open, modifier, state)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -132,8 +147,8 @@ internal fun PracticeConversation(
     start: suspend (CallRequest) -> CallStart,
     open: (AppRoute) -> Unit,
     modifier: Modifier = Modifier,
+    state: PracticeCallState = rememberPracticeCallState(call.defaultMinutes),
 ) {
-    var sheet by rememberSaveable { mutableStateOf(false) }
     val character = call.character
     val with = character?.let { stringResource(R.string.conversation_practice_with, it.name, it.role) }
 
@@ -142,12 +157,12 @@ internal fun PracticeConversation(
         supportingContent =
             (if (call.paused) stringResource(R.string.conversation_paused_title) else with)?.let { text -> { Text(text) } },
         leadingContent = { KindDotLeading(LearnKind.Conversation) },
-        modifier = modifier.clickable(role = Role.Button) { sheet = true },
+        modifier = modifier.clickable(role = Role.Button) { state.sheetOpen = true },
         colors = ListItemDefaults.colors(containerColor = Color.Transparent),
     )
 
-    if (sheet) {
-        ModalBottomSheet(onDismissRequest = { sheet = false }) {
+    if (state.sheetOpen) {
+        ModalBottomSheet(onDismissRequest = { state.sheetOpen = false }) {
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -164,7 +179,7 @@ internal fun PracticeConversation(
                     )
                     with?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
                 }
-                CallSetup(call, chapterId, goalId, start, open, onStarted = { sheet = false })
+                CallSetup(call, chapterId, goalId, start, open, state)
             }
         }
     }
@@ -177,13 +192,13 @@ private fun CallSetup(
     goalId: UUID?,
     start: suspend (CallRequest) -> CallStart,
     open: (AppRoute) -> Unit,
-    onStarted: () -> Unit,
+    state: PracticeCallState,
 ) {
     val model = viewModel(key = "practice-call:$chapterId") { CallStartModel(start) }
-    var minutes by rememberSaveable { mutableLongStateOf(call.defaultMinutes) }
+    val minutes = state.minutes
     val startCall = {
         model.start(CallRequest.Practice(chapterId, goalId, minutes)) { id ->
-            onStarted()
+            state.sheetOpen = false
             open(AppRoute.Conversation(id.toString()))
         }
     }
@@ -234,7 +249,7 @@ private fun CallSetup(
         }
 
         else -> {
-            LengthChoices(call, minutes, onChange = { minutes = it })
+            LengthChoices(call, minutes, onChange = { state.minutes = it })
             if (minutes in call.plusMinutes) {
                 PlusNotice(
                     onSeePlus = { open(AppRoute.Subscription) },
