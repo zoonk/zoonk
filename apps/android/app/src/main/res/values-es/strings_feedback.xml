@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "feedback_email": "c1892ef9fe415abe64fdd1cdf153959dd2b8be6b564c5ae43848d6c9848141c8",
+  "feedback_failed": "d70a119d10927b5c270a71043565228e951aa8971ccd18b5b9994ab33b00a23c",
+  "feedback_follow_us": "758efa95605c5ac3bc12b82df740d2c5a59be89db19626d01ae692680f8cc8d2",
+  "feedback_help_description": "2e567c49daee07f677eb61b3356d6085999ae48621e6ade12071cf9d437a522d",
+  "feedback_message": "d55386602530e510164132f734f371429a556960ed4e2ffd01fdfeed15a4e9ae",
+  "feedback_message_placeholder": "4a4e23d11011ae349bf44cea743f40b153d0dce16ac21e0d7941539b26300fdb",
+  "feedback_more": "189e8be041499f1df9be2a935bf457b727b1e4267f66496d24a6326a42dc8db0",
+  "feedback_report_problem": "252b4a468c66f76136b3432a6addd86b7a191a8df137e0aaa12437a97d9a34fe",
+  "feedback_screen_attached": "f517582099ac00f29940b548369fbea184add3a65e54c40980309d7ee0040484",
+  "feedback_send": "a041af7440ddde5423456317caf19e9f0725955d71ae847a0c85565a2509bcef",
+  "feedback_sent": "08db8c9cab20a0e78ecf6a57c54f5ab94d15e102669f28d55eccc8d165ae996c"
+}
+-->
+<resources>
+    <string name="feedback_help_description">Haz una pregunta, cuéntanos un problema o comparte una idea. Te responderemos por correo electrónico.</string>
+    <string name="feedback_message">Mensaje</string>
+    <string name="feedback_message_placeholder">¿En qué podemos ayudarte?</string>
+    <string name="feedback_screen_attached">Esta pantalla está adjunta</string>
+    <string name="feedback_email">Tu correo electrónico para responderte</string>
+    <string name="feedback_send">Enviar mensaje</string>
+    <string name="feedback_sent">¡Mensaje enviado! Te responderemos pronto.</string>
+    <string name="feedback_failed">No hemos podido enviar tu mensaje. Inténtalo de nuevo o escríbenos a contacto@zoonk.com.</string>
+    <string name="feedback_follow_us">Síguenos</string>
+    <string name="feedback_report_problem">Informar de un problema</string>
+    <string name="feedback_more">Más opciones</string>
+</resources>

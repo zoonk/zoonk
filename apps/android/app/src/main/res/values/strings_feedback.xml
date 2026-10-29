@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feedback_help_description">Ask a question, report a problem or share an idea. We answer by email.</string>
+    <string name="feedback_message">Message</string>
+    <string name="feedback_message_placeholder">How can we help you?</string>
+    <string name="feedback_screen_attached">This screen is attached</string>
+    <string name="feedback_email">Your email, for our reply</string>
+    <string name="feedback_send">Send message</string>
+    <string name="feedback_sent">Message sent! We\'ll get back to you soon.</string>
+    <string name="feedback_failed">We couldn\'t send your message. Try again, or email us at hello@zoonk.com.</string>
+    <string name="feedback_follow_us">Follow us</string>
+    <string name="feedback_report_problem">Report a problem</string>
+    <string name="feedback_more">More options</string>
+</resources>

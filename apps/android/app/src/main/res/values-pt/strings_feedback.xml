@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "feedback_email": "c464479d22bd74bc191444f960ada12853d6d5cb1c6119ff74cbd03eca1e663d",
+  "feedback_failed": "59ef655ae147e05f21e4842b8bad3b07d301ad5ce430c897cf5a8d1669639760",
+  "feedback_follow_us": "de1131ca4110b9504332f220ae458ca0c334d7a0ee93b0d467ccdff39fc713a1",
+  "feedback_help_description": "0001391fe3560ea9ec746d77318e398e20d55afae1f29769b7eba941a4953fe0",
+  "feedback_message": "b73c807fce9191842849556c5224c1d7828de27acfc9b699cad8ccc8b6fcee69",
+  "feedback_message_placeholder": "e9ba33e2d653273ed9f321a14bd07595dad52fa04fd7c18871d5c0fa1fbebc68",
+  "feedback_more": "567d8709c6b5c739928a41d6b6e36f0338fb2168d6f96df099518fd7a853e4cf",
+  "feedback_report_problem": "4a0d96223665991b88f5b31eaedb0777797e7495961e9be9e3887be410eb7306",
+  "feedback_screen_attached": "91444966084060645ebd80fe0c194152fd01042d670899dca8607fd677a30fe7",
+  "feedback_send": "e102e8ce929cb346697ed4ef6ceed9fcb807cb6a443efa20b43a09e7f053b4af",
+  "feedback_sent": "b7dc5b7fdc5f9e73a26d68ddb0e2b1091d7801f08e0d94a5e98585822d541664"
+}
+-->
+<resources>
+    <string name="feedback_help_description">Faça uma pergunta, conte um problema ou compartilhe uma ideia. A gente responde por e-mail.</string>
+    <string name="feedback_message">Mensagem</string>
+    <string name="feedback_message_placeholder">Como a gente pode te ajudar?</string>
+    <string name="feedback_screen_attached">Esta tela está anexada</string>
+    <string name="feedback_email">Seu e-mail para receber nossa resposta</string>
+    <string name="feedback_send">Enviar mensagem</string>
+    <string name="feedback_sent">Mensagem enviada! A gente responde em breve.</string>
+    <string name="feedback_failed">Não foi possível enviar sua mensagem. Tente novamente ou escreva para contato@zoonk.com.</string>
+    <string name="feedback_follow_us">Siga a gente</string>
+    <string name="feedback_report_problem">Relatar um problema</string>
+    <string name="feedback_more">Mais opções</string>
+</resources>

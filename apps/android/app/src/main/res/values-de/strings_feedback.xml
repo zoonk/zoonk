@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "feedback_email": "af8259b8edd2eeb3605381765612e873814972e3891c0554fa669f186c1b9e03",
+  "feedback_failed": "85e2abbcbfd2bdfc6cd1c7988a0cb40dec9485708324ef3f85ca6b12d0bb59de",
+  "feedback_follow_us": "ba2d558d8fa408a8ac278e8a4f62cbbbc194ef5524c8e57c5db8fac5ee33a4af",
+  "feedback_help_description": "8a10e2cebeae15daa835528f67a1d888b791855dc83447a4d2b10bd8e3477964",
+  "feedback_message": "e0b95995ffd31e50c7bd8c4ba0f85fab1245faad936ab6b03e661fcccb2903c2",
+  "feedback_message_placeholder": "b3f37bcfbac28347bec4bbb66b18f59ed1533c7058e05e1ef84483e0fce601be",
+  "feedback_more": "5054331af2ae38998e8fc9620780c955a5c1880d86b212acc41b5c32e525542d",
+  "feedback_report_problem": "02e1b578f8e8beb83cedeb8ddbe6cf3a13bceb27749897f1ec6264f4b1b5227b",
+  "feedback_screen_attached": "f71dfadcf8e4c45d874392e0d2f6887fbbcd33322791a5a4f22c607c5f4ce116",
+  "feedback_send": "6d9b5c35c1061794eb2081bad4033ae45b6282321e00bfa9734daab88cd62f2f",
+  "feedback_sent": "911e90a95d0fc2c996c558b493fd50857641a2e07327123d07b6efed2d4e9fd9"
+}
+-->
+<resources>
+    <string name="feedback_help_description">Stell eine Frage, melde ein Problem oder teile eine Idee. Wir antworten per E-Mail.</string>
+    <string name="feedback_message">Nachricht</string>
+    <string name="feedback_message_placeholder">Wie können wir dir helfen?</string>
+    <string name="feedback_screen_attached">Dieser Bildschirm ist angehängt</string>
+    <string name="feedback_email">Deine E-Mail-Adresse für unsere Antwort</string>
+    <string name="feedback_send">Nachricht senden</string>
+    <string name="feedback_sent">Nachricht gesendet! Wir melden uns bald bei dir.</string>
+    <string name="feedback_failed">Deine Nachricht konnte nicht gesendet werden. Versuch es noch einmal oder schreib uns an hello@zoonk.com.</string>
+    <string name="feedback_follow_us">Folge uns</string>
+    <string name="feedback_report_problem">Problem melden</string>
+    <string name="feedback_more">Weitere Optionen</string>
+</resources>

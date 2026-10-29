@@ -23,6 +23,8 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.LiveAccountApi
 import com.zoonk.android.feature.account.NoBotProof
+import com.zoonk.android.feature.feedback.FeedbackSender
+import com.zoonk.android.feature.feedback.LiveFeedbackApi
 import com.zoonk.android.feature.memory.LiveMemoryApi
 import com.zoonk.android.feature.memory.MemoryStore
 import com.zoonk.android.navigation.LearnerAccess
@@ -76,6 +78,7 @@ class AppContainer private constructor(
     // Account and Plus (L1).
     val account = AccountStore(LiveAccountApi(api, NoBotProof), sessions, cache)
     val memory = MemoryStore(LiveMemoryApi(api), cache)
+    val feedback = FeedbackSender(LiveFeedbackApi(api), sessions)
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "feedback_email": "67d5e127ca04e1124cf2c01e7ab05a8d0854cb35045e12fb2d80890e50a70823",
+  "feedback_failed": "fd82a3f0024804cb320cc850f88b0c1885acec203dcd084cdaa45fdf42f90375",
+  "feedback_follow_us": "a1ec8172c339efa6adb42bbe654815edd80c11760d73cb9bc58341fa31e17db0",
+  "feedback_help_description": "01210271d856541c0336bfca328f39fe3bcb0eb79df2fb3eb43741f59b118efa",
+  "feedback_message": "d9b645d04d1b9682f38826c924fb6641163b2a4916ddbd542d907dc6f099030b",
+  "feedback_message_placeholder": "b48532763d06e3d8155cf502c83229642ce8ecb37ffb5222db22af148505ce42",
+  "feedback_more": "0103d2f9686960a4c3e13f571f43e822dacde60cc32f9efc740da0e29a29ecb9",
+  "feedback_report_problem": "87842cffdca5bcdb6686f657e4364abaf66fdd205f3c66efd6941f1e93b3b98e",
+  "feedback_screen_attached": "47c4ce0777661393d560b94b0e5a0851cf65ccdc077867423d3b36985a3be2ad",
+  "feedback_send": "ed433f79e7d6efe4457ae88399e341c42948e0222c0b3f97f57d3d7dbf45fa68",
+  "feedback_sent": "db2209a1517f614b8cc1533b74579f369b8642f7540f0ae7ec593e5743bbc8bb"
+}
+-->
+<resources>
+    <string name="feedback_help_description">Pose une question, signale un problème ou partage une idée. Nous te répondrons par e-mail.</string>
+    <string name="feedback_message">Message</string>
+    <string name="feedback_message_placeholder">Comment pouvons-nous t’aider ?</string>
+    <string name="feedback_screen_attached">Cet écran est joint</string>
+    <string name="feedback_email">Ton adresse e-mail, pour notre réponse</string>
+    <string name="feedback_send">Envoyer le message</string>
+    <string name="feedback_sent">Message envoyé ! Nous te répondrons bientôt.</string>
+    <string name="feedback_failed">Nous n’avons pas pu envoyer ton message. Réessaie ou écris-nous à hello@zoonk.com.</string>
+    <string name="feedback_follow_us">Suis-nous</string>
+    <string name="feedback_report_problem">Signaler un problème</string>
+    <string name="feedback_more">Plus d’options</string>
+</resources>
