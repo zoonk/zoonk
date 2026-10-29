@@ -60,7 +60,7 @@ function lineLayout({ barsPerLine, view }: { barsPerLine: number; view: Notation
     );
 
     return {
-      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- abcjs's types declare a flat list, but its parser reads one list per section.
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- abcjs's types declare a flat list, but its parser reads one list per section (https://github.com/paulrosen/abcjs/issues/1196).
       lineBreaks: breaks as unknown as number[],
       tablature: [{ instrument: "guitar" as const, label: " " }],
     };
