@@ -197,7 +197,7 @@ private fun RowScope.FretCell(
 ) {
     val string = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = STRING_ALPHA)
     val wire = MaterialTheme.colorScheme.outlineVariant
-    val nut = MaterialTheme.colorScheme.onSurface.copy(alpha = NUT_ALPHA)
+    val nut = MaterialTheme.colorScheme.onSurface
 
     Box(
         Modifier
@@ -248,7 +248,6 @@ private fun OpenMark(isPicked: Boolean) {
 
 private const val MUTED = "×"
 private const val STRING_ALPHA = 0.5f
-private const val NUT_ALPHA = 0.7f
 private const val FAINT_ALPHA = 0.4f
 private const val OPEN_FILL_ALPHA = 0.1f
 private const val OPEN_FAINT_ALPHA = 0.3f
