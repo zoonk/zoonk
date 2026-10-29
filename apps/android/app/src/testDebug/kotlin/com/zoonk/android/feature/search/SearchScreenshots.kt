@@ -24,6 +24,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
@@ -43,6 +44,31 @@ class SearchScreenshots {
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
     fun phone() = capture("search-phone")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("search-phone-font200")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun overAPageAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        lateinit var search: AppSearch
+        compose.setContent {
+            ZoonkTheme {
+                Surface {
+                    val context = LocalContext.current
+                    val app = remember { AppContainer.preview(context) }
+                    SearchHost(app, rememberAppNavigator(), signedIn = true) { search = checkNotNull(LocalAppSearch.current) }
+                }
+            }
+        }
+        compose.runOnIdle { search.open() }
+        write("search-over-page-font200")
+    }
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp-xhdpi")
