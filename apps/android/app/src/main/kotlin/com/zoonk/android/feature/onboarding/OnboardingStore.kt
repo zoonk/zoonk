@@ -17,9 +17,16 @@ import com.zoonk.api.models.CreateUploadRequestOneOf2
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
+import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlacementAnswer
+import com.zoonk.api.models.PlacementAnswerInput
+import com.zoonk.api.models.PlacementAnswerResult
+import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanLinkStartInput
+import com.zoonk.api.models.Syllabus
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonElement
@@ -27,6 +34,7 @@ import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.jsonObject
 import java.net.URI
 import java.net.URISyntaxException
+import java.util.TimeZone
 import java.util.UUID
 
 /** What a learner's plan or the server's pace refused; any other failure is [WriteOutcome.Failed]. */
@@ -236,6 +244,64 @@ class OnboardingStore(
             MutationResult.Obsolete -> WriteOutcome.Obsolete
         }
     }
+
+    val placements =
+        cache.keyed<String, Placement>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearnerModel)) { session, goalId ->
+            session?.let { api.placement(it, goalId) }
+        }
+
+    val placementMocks =
+        cache.keyed<String, MockOptions>(
+            Audience.SignedIn,
+            setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserSubscription),
+        ) { session, goalId ->
+            session?.let {
+                try {
+                    api.mockOptions(it, goalId)
+                } catch (e: ApiException) {
+                    if (e.code == "NOT_AN_EXAM") null else throw e
+                }
+            }
+        }
+
+    val plans =
+        cache.keyed<String, Plan>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearnerModel)) { session, goalId ->
+            session?.let { api.plan(it, goalId) }
+        }
+
+    val syllabi =
+        cache.keyed<String, Syllabus>(
+            Audience.SignedIn,
+            setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress),
+        ) { session, goalId -> session?.let { api.syllabus(it, goalId) } }
+
+    suspend fun answerPlacement(
+        goalId: String,
+        itemId: String,
+        answer: PlacementAnswer,
+        durationMs: Long,
+    ): WriteOutcome<PlacementAnswerResult> =
+        write(
+            setOf(DataDomain.LearnerModel),
+            replacing = { listOf(placements[goalId].replacing(it.placement)) },
+        ) { session ->
+            val input =
+                PlacementAnswerInput(
+                    answer = answer,
+                    durationMs = durationMs,
+                    itemId = UUID.fromString(itemId),
+                    timeZone = TimeZone.getDefault().id,
+                )
+            api.answerPlacement(session, goalId, input)
+        }
+
+    /** The API starts writing the lessons the plan now opens with, so nothing else prepares them. */
+    suspend fun finishPlacement(
+        goalId: String,
+        fromScratch: Boolean,
+    ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel)) { api.finishPlacement(it, goalId, fromScratch) }
+
+    suspend fun stopPlacementMock(mockId: String) = write(setOf(DataDomain.LearnerModel)) { api.finishMock(it, mockId) }
 }
 
 /** [period] is `day`, `month` or `total`; [resource] what ran out (`goal`, `activeGoals`, `upload`); [tier] `guest`, `free` or `plus`. */

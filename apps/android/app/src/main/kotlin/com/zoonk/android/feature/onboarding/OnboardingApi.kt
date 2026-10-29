@@ -18,10 +18,18 @@ import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.JoinInstrumentWaitlistRequest
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
+import com.zoonk.api.models.MockOptions
+import com.zoonk.api.models.MockTimeZoneInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlacementAnswerInput
+import com.zoonk.api.models.PlacementAnswerResult
+import com.zoonk.api.models.PlacementCompletionInput
+import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.Source
+import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.UploadToken
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -113,6 +121,44 @@ interface OnboardingApi {
     ): MaterialQuestionAnswer
 
     fun generations(session: AuthenticatedSession?): GenerationSource
+
+    /** Reading it writes nothing and starts no work. */
+    suspend fun placement(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): Placement
+
+    suspend fun answerPlacement(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: PlacementAnswerInput,
+    ): PlacementAnswerResult
+
+    suspend fun finishPlacement(
+        session: AuthenticatedSession,
+        goalId: String,
+        fromScratch: Boolean,
+    )
+
+    suspend fun mockOptions(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): MockOptions
+
+    suspend fun finishMock(
+        session: AuthenticatedSession,
+        mockId: String,
+    )
+
+    suspend fun plan(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): Plan
+
+    suspend fun syllabus(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): Syllabus
 }
 
 class LiveOnboardingApi(
@@ -278,6 +324,52 @@ class LiveOnboardingApi(
         const val BLOB_API = "https://vercel.com/api/blob/"
         const val BLOB_API_VERSION = "12"
     }
+
+    override suspend fun placement(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = perform { api.clients(session).learner.getGoalPlacement(UUID.fromString(goalId), timeZone = TimeZone.getDefault().id) }
+
+    override suspend fun answerPlacement(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: PlacementAnswerInput,
+    ) = perform { api.clients(session).learner.createPlacementAnswer(UUID.fromString(goalId), input) }
+
+    override suspend fun finishPlacement(
+        session: AuthenticatedSession,
+        goalId: String,
+        fromScratch: Boolean,
+    ) {
+        perform {
+            api.clients(session).learner.completeGoalPlacement(
+                UUID.fromString(goalId),
+                PlacementCompletionInput(fromScratch = fromScratch, timeZone = TimeZone.getDefault().id),
+            )
+        }
+    }
+
+    override suspend fun mockOptions(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = perform { api.clients(session).exams.listMocks(UUID.fromString(goalId)) }
+
+    override suspend fun finishMock(
+        session: AuthenticatedSession,
+        mockId: String,
+    ) {
+        perform { api.clients(session).exams.finishMock(UUID.fromString(mockId), MockTimeZoneInput(TimeZone.getDefault().id)) }
+    }
+
+    override suspend fun plan(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = perform { api.clients(session).plans.getGoalPlan(UUID.fromString(goalId)) }
+
+    override suspend fun syllabus(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = perform { api.clients(session).learner.getGoalSyllabus(UUID.fromString(goalId)) }
 }
 
 @Serializable

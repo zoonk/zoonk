@@ -14,10 +14,16 @@ import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
+import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
+import com.zoonk.api.models.Placement
+import com.zoonk.api.models.PlacementAnswerInput
+import com.zoonk.api.models.PlacementAnswerResult
+import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.Source
+import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
@@ -174,4 +180,65 @@ internal class FakeOnboardingApi : OnboardingApi {
             override suspend fun status(id: String) = Generation.Status.RUNNING
         }
     }
+
+    var placement: Placement = placementOf()
+    var answered: (PlacementAnswerInput) -> Placement = { placementOf(status = "done", next = null, answered = 1, complete = true) }
+    var mockOptions: MockOptions? = null
+    var plan: Plan = planOf()
+    var syllabus: Syllabus = syllabusOf(emptyList(), kind = "modules")
+    var writeFailure: ApiException? = null
+    var placementReads = 0
+    val placementAnswers = mutableListOf<PlacementAnswerInput>()
+    val finishedPlacements = mutableListOf<Boolean>()
+    val finishedMocks = mutableListOf<String>()
+
+    override suspend fun placement(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): Placement {
+        placementReads++
+        return placement
+    }
+
+    override suspend fun answerPlacement(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: PlacementAnswerInput,
+    ): PlacementAnswerResult {
+        placementAnswers += input
+        writeFailure?.let { throw it }
+        placement = answered(input)
+        return PlacementAnswerResult(isCorrect = true, placement = placement)
+    }
+
+    override suspend fun finishPlacement(
+        session: AuthenticatedSession,
+        goalId: String,
+        fromScratch: Boolean,
+    ) {
+        writeFailure?.let { throw it }
+        finishedPlacements += fromScratch
+    }
+
+    override suspend fun mockOptions(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): MockOptions = mockOptions ?: throw ApiException(ApiError.Unavailable, code = "NOT_AN_EXAM")
+
+    override suspend fun finishMock(
+        session: AuthenticatedSession,
+        mockId: String,
+    ) {
+        finishedMocks += mockId
+    }
+
+    override suspend fun plan(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): Plan = plan
+
+    override suspend fun syllabus(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): Syllabus = syllabus
 }
