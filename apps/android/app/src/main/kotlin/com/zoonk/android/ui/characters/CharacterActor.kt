@@ -5,7 +5,7 @@ import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.MutatorMutex
-import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
@@ -24,6 +24,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
+import com.zoonk.android.ui.components.celebrates
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.ensureActive
@@ -46,7 +48,11 @@ class ActorState<Expression, Act> internal constructor(
     private val acts: CharacterActs<Expression, Act>,
     landed: Expression?,
     internal var reacted: Boolean,
+    playedFor: String?,
 ) {
+    internal var playedFor: String? = playedFor
+        private set
+
     internal var landed: Expression? by mutableStateOf(landed)
         private set
 
@@ -66,6 +72,19 @@ class ActorState<Expression, Act> internal constructor(
      * another act stopped it, which lands this one at once.
      */
     suspend fun play(act: Act): Boolean = play(act, delayMillis = 0)
+
+    /**
+     * Plays `act` once for `event` (the answer it reacts to), so an effect that runs again after
+     * rotation or folding doesn't play it twice.
+     */
+    suspend fun play(
+        act: Act,
+        event: String,
+    ): Boolean {
+        if (event == playedFor) return false
+        playedFor = event
+        return play(act)
+    }
 
     internal suspend fun play(
         name: Act,
@@ -127,19 +146,19 @@ internal class Playing<Expression>(
 
 @Composable
 internal fun <Expression : Enum<Expression>, Act> rememberActorState(acts: CharacterActs<Expression, Act>): ActorState<Expression, Act> =
-    rememberSaveable(saver = actorStateSaver(acts)) { ActorState(acts, landed = null, reacted = false) }
+    rememberSaveable(saver = actorStateSaver(acts)) { ActorState(acts, landed = null, reacted = false, playedFor = null) }
 
 internal fun <Expression : Enum<Expression>, Act> actorStateSaver(
     acts: CharacterActs<Expression, Act>,
 ): Saver<ActorState<Expression, Act>, Any> =
     listSaver(
-        save = { listOf(it.landingNow?.ordinal ?: -1, it.reacted) },
-        restore = { ActorState(acts, acts.expressions.getOrNull(it[0] as Int), it[1] as Boolean) },
+        save = { listOf(it.landingNow?.ordinal ?: -1, it.reacted, it.playedFor) },
+        restore = { ActorState(acts, acts.expressions.getOrNull(it[0] as Int), it[1] as Boolean, it[2] as String?) },
     )
 
 /**
- * `reaction` plays once, on the moment's beat; where the moment doesn't play again (rotation, the way
- * back) it's drawn still in the act's landing.
+ * `reaction` plays once, on the moment's beat, where `celebrates()`; elsewhere, and once it played
+ * (rotation, the way back), it's drawn still in the act's landing.
  */
 @Composable
 internal fun <Expression, Act> CharacterActor(
@@ -150,11 +169,12 @@ internal fun <Expression, Act> CharacterActor(
     label: String?,
     modifier: Modifier,
 ) {
-    val resting = if (reaction != null && state.reacted) state.landing(reaction.act) ?: expression else expression
+    val celebrates = celebrates()
+    val resting = reaction?.takeIf { state.reacted || !celebrates }?.let { state.landing(it.act) } ?: expression
 
     SideEffect { state.resting = resting }
 
-    if (reaction != null) {
+    if (reaction != null && celebrates) {
         LaunchedEffect(state, reaction) { state.react(reaction) }
     }
 
@@ -175,9 +195,9 @@ internal fun <Expression> CharacterStill(
     Canvas(modifier.characterFrame(label)) { drawCharacter(drawing, expression) }
 }
 
-/** Hidden from TalkBack unless `label` names it: omit it only when words beside it already do. */
+/** 96 dp unless `modifier` sizes it, as main does. Hidden from TalkBack unless `label` names it. */
 private fun Modifier.characterFrame(label: String?): Modifier =
-    aspectRatio(1f).then(
+    size(DEFAULT_SIZE).then(
         if (label == null) {
             Modifier
         } else {
@@ -207,3 +227,4 @@ private fun <Expression> DrawScope.drawAct(
 }
 
 private const val BLINK_AFTER_FRAMES = 48f
+private val DEFAULT_SIZE = 96.dp

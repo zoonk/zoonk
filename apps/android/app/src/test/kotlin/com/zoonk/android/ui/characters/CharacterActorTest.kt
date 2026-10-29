@@ -22,6 +22,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.ui.components.Belt
+import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -140,6 +141,48 @@ class CharacterActorTest {
         val saved = with(saver) { SaverScope { true }.save(state) }
 
         assertEquals(BuddyExpression.Wow, saved?.let(saver::restore)?.landed)
+    }
+
+    @Test
+    fun aMomentAlreadySeenDrawsItsReactionsLandingStill() {
+        compose.mainClock.autoAdvance = false
+        compose.setContent {
+            state = rememberBuddyActorState()
+            CelebrationScope(play = false) {
+                BuddyActor(BuddyLook(energy = 50.0), Modifier.size(96.dp), reaction = ActReaction(BuddyAct.Cheer), state = state)
+            }
+        }
+        compose.waitForIdle()
+        advance(CHEER)
+
+        assertNull(state.playing)
+        assertNull(state.landed)
+        assertEquals(BuddyExpression.Cheer, state.resting)
+    }
+
+    @Test
+    fun anEventPlaysItsActOnceEvenAfterRecreation() {
+        lateinit var scope: CoroutineScope
+        compose.mainClock.autoAdvance = false
+        compose.setContent {
+            scope = rememberCoroutineScope()
+            state = rememberBuddyActorState()
+            BuddyActor(BuddyLook(energy = 50.0), Modifier.size(96.dp), state = state)
+        }
+        compose.waitForIdle()
+
+        val plays = mutableListOf<Boolean>()
+        scope.launch { plays += state.play(BuddyAct.Smile, event = "item-1") }
+        advance(SMILE)
+        scope.launch { plays += state.play(BuddyAct.Smile, event = "item-1") }
+        advance(FRAME)
+
+        val saver = actorStateSaver(BuddyActing)
+        val restored = with(saver) { SaverScope { true }.save(state) }?.let(saver::restore)
+        scope.launch { restored?.let { plays += it.play(BuddyAct.Smile, event = "item-1") } }
+        advance(FRAME)
+
+        assertEquals(listOf(true, false, false), plays)
     }
 
     @Test

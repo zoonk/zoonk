@@ -10,7 +10,7 @@ typealias TricksterActorState = ActorState<TricksterExpression, TricksterAct>
 @Composable
 fun rememberTricksterActorState(): TricksterActorState = rememberActorState(TricksterActing)
 
-/** The Trickster, still: in marks, rows and the roadmap. Size it with `modifier`. */
+/** The Trickster, still: in marks, rows and the roadmap. */
 @Composable
 fun Trickster(
     modifier: Modifier = Modifier,
@@ -22,9 +22,9 @@ fun Trickster(
 }
 
 /**
- * A challenge's Trickster: he holds his sign until he's beaten. `reacts` where the challenge just
- * opened or its result just came in, smug or defeated a beat in; a revisit passes none, and he's
- * still. `state.play(act)` reacts to each verdict in a duel.
+ * A challenge's Trickster: he holds his sign until he's beaten. `reacts` on its intro and result:
+ * smug, or defeated when beaten, a beat in, and drawn still where the moment doesn't play
+ * (`CelebrationScope`). In a duel, `state.play(act, event)` reacts to each verdict.
  */
 @Composable
 fun TricksterArt(

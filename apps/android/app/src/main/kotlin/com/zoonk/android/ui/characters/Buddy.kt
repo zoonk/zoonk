@@ -12,7 +12,8 @@ fun rememberBuddyActorState(): BuddyActorState = rememberActorState(BuddyActing)
 
 /**
  * The buddy, still: where it only illustrates a screen or is small (the navigation, Today, rows,
- * marks, pickers, empty states). Size it with `modifier`; `Face` crops to its face for icon sizes.
+ * marks, pickers, empty states). `Face` crops to its face for icon sizes. Omit `label` only when
+ * words beside it already name the buddy.
  */
 @Composable
 fun Buddy(
@@ -27,8 +28,8 @@ fun Buddy(
 
 /**
  * The buddy where something happened: `reaction` plays once as the moment plays (a mission done, the
- * summary, a ceremony), and `state.play(act)` reacts on cue (its chat). A screen that knows its
- * moment was already seen passes no reaction and the act's landing as `expression`.
+ * summary, a ceremony) and is drawn in its landing where it doesn't (`CelebrationScope`); `state.play`
+ * reacts on cue (its chat).
  */
 @Composable
 fun BuddyActor(

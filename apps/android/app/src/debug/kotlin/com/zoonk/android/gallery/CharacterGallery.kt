@@ -12,6 +12,7 @@ import androidx.compose.material3.AssistChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,9 +25,11 @@ import com.zoonk.android.ui.characters.BuddyExpression
 import com.zoonk.android.ui.characters.BuddyGlasses
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.CharacterActor
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.characters.TricksterAct
 import com.zoonk.android.ui.characters.TricksterArt
+import com.zoonk.android.ui.characters.TricksterDrawing
 import com.zoonk.android.ui.characters.TricksterExpression
 import com.zoonk.android.ui.characters.rememberBuddyActorState
 import com.zoonk.android.ui.characters.rememberTricksterActorState
@@ -87,14 +90,27 @@ internal fun Acts() {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Row(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
             BuddyActor(BuddyLook(BuddyKind.Zu, belt = Belt.Orange, energy = 70.0), Modifier.size(120.dp), state = buddy)
-            TricksterArt(Modifier.size(120.dp), state = trickster)
+            // Without his sign, as main's stage plays him, so Defeated ends in the pose a learner sees.
+            CharacterActor(
+                remember { TricksterDrawing(holdsSign = false) },
+                TricksterExpression.Sly,
+                null,
+                trickster,
+                null,
+                Modifier.size(120.dp),
+            )
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             BuddyAct.entries.forEach { act -> AssistChip(onClick = { scope.launch { buddy.play(act) } }, label = { Text(act.name) }) }
         }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            TricksterAct.entries.forEach { act ->
-                AssistChip(onClick = { scope.launch { trickster.play(act) } }, label = { Text("Trickster ${act.name}") })
+            listOf(
+                "Blink" to TricksterAct.Blink,
+                "Smug" to TricksterAct.Smug,
+                "Back to sly" to TricksterAct.Sly,
+                "Defeated" to TricksterAct.Defeat,
+            ).forEach { (name, act) ->
+                AssistChip(onClick = { scope.launch { trickster.play(act) } }, label = { Text(name) })
             }
         }
     }
