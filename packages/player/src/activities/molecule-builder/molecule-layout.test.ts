@@ -4,11 +4,14 @@ import {
   type Layout,
   layoutBuild,
   placeNewAtom,
-  relaxLayout,
   settleLayout,
 } from "./molecule-layout";
 
 const size = { height: 240, width: 320 };
+
+function atomsOf(layout: Layout): { id: string }[] {
+  return Object.keys(layout).map((id) => ({ id }));
+}
 
 function distance(layout: Layout, first: string, second: string): number {
   const [a, b] = [layout[first], layout[second]];
@@ -51,12 +54,12 @@ describe(placeNewAtom, () => {
   });
 });
 
-describe(relaxLayout, () => {
+describe(settleLayout, () => {
   it("keeps methane's bonds even, its atoms apart and everything on the canvas", () => {
     const ids = ["h1", "h2", "h3", "h4"];
     const bonds = ids.map((id) => ({ from: "c1", to: id }));
     const start = grow([{ anchor: null, id: "c1" }, ...ids.map((id) => ({ anchor: "c1", id }))]);
-    const layout = relaxLayout({ bonds, layout: start, size });
+    const layout = settleLayout({ atoms: atomsOf(start), bonds, layout: start });
 
     for (const id of ids) {
       expect(distance(layout, "c1", id)).toBeGreaterThan(50);
@@ -81,10 +84,10 @@ describe(relaxLayout, () => {
 
   it("separates atoms that start on top of each other and gives the same result every time", () => {
     const start = { a: { x: 100, y: 100 }, b: { x: 100, y: 100 } };
-    const layout = relaxLayout({ bonds: [], layout: start, size });
+    const layout = settleLayout({ atoms: atomsOf(start), bonds: [], layout: start });
 
     expect(distance(layout, "a", "b")).toBeGreaterThan(ATOM_RADIUS * 2);
-    expect(relaxLayout({ bonds: [], layout: start, size })).toStrictEqual(layout);
+    expect(settleLayout({ atoms: atomsOf(start), bonds: [], layout: start })).toStrictEqual(layout);
   });
 });
 

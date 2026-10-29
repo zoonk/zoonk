@@ -110,7 +110,7 @@ function relaxStep(layout: Layout, bonds: readonly LayoutBond[], size: LayoutSiz
   );
 }
 
-export function relaxLayout({
+function relaxLayout({
   bonds,
   layout,
   size,
