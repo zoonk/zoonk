@@ -493,6 +493,7 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
     let total: Int
   }
 
+  let examDocument: ExamDocument
   let fromMaterial: Bool
   let goal: Goal
   /// `notice` (an exam's own subjects) or `modules`.
@@ -500,6 +501,8 @@ struct GoalSyllabus: Decodable, Equatable, Sendable {
   let lessons: Lessons
   let subjects: [SyllabusSubject]
   let topicCount: Int
+  /// The plan says which skills teach which topic, so topics have a status.
+  let topicsMapped: Bool
 
   var hasSubjectPages: Bool {
     goal.kind == "exam" ? !subjects.isEmpty : subjects.count >= 2
@@ -553,6 +556,7 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   let notPlannedReason: String?
   let preparation: Double?
   let questions: Int?
+  let shortName: String
   let source: String
   let topics: [Topic]
   let topicsStudied: Int?

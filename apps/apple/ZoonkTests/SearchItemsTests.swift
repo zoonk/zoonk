@@ -137,6 +137,7 @@ extension GoalSyllabus {
         #"""
         {
           "fromMaterial": false,
+          "examDocument": "notice",
           "goal": { "kind": "\#(kind)" },
           "kind": "notice",
           "lessons": { "done": 0, "known": 0, "total": 2 },
@@ -156,15 +157,17 @@ extension GoalSyllabus {
               ],
               "key": "math", "lessonsDone": 0, "lessonsKnown": 0, "lessonsTotal": 2,
               "name": "Math", "nextDate": null, "notPlannedReason": null, "preparation": null,
-              "questions": null, "source": "notice", "topics": []
+              "questions": null, "shortName": "Math", "source": "notice", "topics": []
             },
             {
               "chapters": [], "key": "physics", "lessonsDone": 0, "lessonsKnown": 0,
               "lessonsTotal": 0, "name": "Physics", "nextDate": null, "notPlannedReason": null,
-              "preparation": null, "questions": null, "source": "notice", "topics": []
+              "preparation": null, "questions": null, "shortName": "Physics", "source": "notice",
+              "topics": []
             }
           ],
-          "topicCount": 2
+          "topicCount": 2,
+          "topicsMapped": false
         }
         """#.utf8))
   }

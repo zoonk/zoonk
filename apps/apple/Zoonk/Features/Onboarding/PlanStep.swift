@@ -147,6 +147,7 @@ private struct PlanReveal: View {
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(PlanStore.self) private var plans
   @State private var adjusting: AdjustPlanSheet.Section?
+  @State private var showsTopics = false
 
   var body: some View {
     let goal = learnerGoal
@@ -241,7 +242,16 @@ private struct PlanReveal: View {
       PlanSuggestionSection(context: context)
 
       if let structure {
-        PlanSyllabusSection(goalKind: goal.kind, syllabus: structure)
+        Section {
+          Text(syllabusSummary(structure, dailyMinutes: plan.schedule.dailyMinutes))
+            .foregroundStyle(.secondary)
+
+          Button {
+            showsTopics = true
+          } label: {
+            Text("See topics", tableName: "Onboarding", comment: "Opens what the plan studies")
+          }
+        }
       } else if plan.roadPhases.count > 1 {
         PlanPathSection(context: context)
       }
@@ -249,6 +259,11 @@ private struct PlanReveal: View {
     .loads(syllabus, refreshable: false)
     .sheet(item: $adjusting) { section in
       AdjustPlanSheet(goal: goal, plan: plan, section: section, store: plans)
+    }
+    .sheet(isPresented: $showsTopics) {
+      if let structure {
+        SyllabusTopicsSheet(syllabus: structure)
+      }
     }
   }
 
@@ -352,5 +367,164 @@ private struct RevealChapters: View {
         }
       }
     }
+  }
+}
+
+/// Main's `useSyllabusSummaryText`: the plan's subjects in one line.
+func syllabusSummary(_ syllabus: GoalSyllabus, dailyMinutes: Int) -> String {
+  let firstSubjects = syllabus.subjects.prefix(2).map(\.shortName).joined(separator: " · ")
+  let noticeSubjects = syllabus.subjects.filter { $0.source == "notice" }.count
+  let coverage = syllabusCoverage(syllabus, dailyMinutes: dailyMinutes)
+  let title: String
+  let detail: String?
+
+  if syllabus.kind != "notice" {
+    title = String(
+      localized: "\(syllabus.subjects.count) modules", table: "Onboarding",
+      comment: "How many modules a plan has")
+    detail = firstSubjects
+  } else if syllabus.fromMaterial {
+    title = String(
+      localized:
+        "\(syllabus.topicCount > 0 ? syllabus.topicCount : noticeSubjects) topics from your material",
+      table: "Onboarding", comment: "How many topics the learner's material lists")
+    detail =
+      syllabus.topicCount == 0 ? firstSubjects : syllabus.topicsMapped ? coverage : nil
+  } else {
+    title =
+      syllabus.examDocument == .notice
+      ? String(
+        localized: "\(noticeSubjects) subjects from the notice", table: "Onboarding",
+        comment: "How many subjects the exam notice lists")
+      : String(
+        localized: "\(noticeSubjects) parts from the official guide", table: "Onboarding",
+        comment: "How many parts the exam's official guide lists")
+
+    if syllabus.topicCount == 0 {
+      detail = heaviestSubjects(syllabus) ?? firstSubjects
+    } else if !syllabus.topicsMapped {
+      detail = String(
+        localized: "\(syllabus.topicCount) topics", table: "Onboarding",
+        comment: "How many topics the exam notice lists")
+    } else {
+      detail = coverage
+    }
+  }
+
+  return [title, detail].compactMap { $0?.isEmpty == false ? $0 : nil }.joined(separator: " · ")
+}
+
+/// A subject's basics the learner starts past aren't left out: the plan counts them as known.
+private func syllabusCoverage(_ syllabus: GoalSyllabus, dailyMinutes: Int) -> String {
+  let topics = syllabus.subjects.flatMap(\.topics)
+  let out = topics.filter { $0.status == "notPlanned" && $0.notPlannedReason != "pastBasics" }
+  let total = syllabus.topicCount
+
+  if out.isEmpty {
+    return String(
+      localized: "\(total) topics, all in your plan", table: "Onboarding",
+      comment: "Every topic of the goal fits in the plan")
+  }
+
+  if out.allSatisfy({ $0.notPlannedReason == "time" }) {
+    return String(
+      localized:
+        "\(out.count) of \(total) topics don't fit in \(planDurationText(minutes: Double(dailyMinutes))) a day",
+      table: "Onboarding", comment: "Topics left out because the daily time can't reach them")
+  }
+
+  return String(
+    localized: "\(total - out.count) of \(total) topics in your plan", table: "Onboarding",
+    comment: "Topics the plan holds of the goal's topics")
+}
+
+private func heaviestSubjects(_ syllabus: GoalSyllabus) -> String? {
+  let subjects = syllabus.subjects.filter { $0.source == "notice" }
+  let counted = subjects.compactMap { subject in subject.questions.map { (subject, $0) } }
+
+  guard !counted.isEmpty, counted.count == subjects.count else {
+    return nil
+  }
+
+  let heaviest = counted.prefix(3).map { "\($0.0.shortName) \($0.1)" }.joined(separator: " · ")
+  return String(
+    localized: "Most questions: \(heaviest)", table: "Onboarding",
+    comment: "The exam's subjects with the most questions and how many each has")
+}
+
+/// Main's topics sheet: each subject with how much it asks and its topics.
+private struct SyllabusTopicsSheet: View {
+  @Environment(\.dismiss) private var dismiss
+
+  let syllabus: GoalSyllabus
+
+  var body: some View {
+    NavigationStack {
+      List {
+        ForEach(syllabus.subjects) { subject in
+          if subject.topics.isEmpty {
+            label(subject)
+          } else {
+            DisclosureGroup {
+              ForEach(subject.topics) { topic in
+                Text(topic.name)
+                  .foregroundStyle(topic.status == "notPlanned" ? .secondary : .primary)
+              }
+            } label: {
+              label(subject)
+            }
+          }
+        }
+      }
+      .navigationTitle(
+        Text("What you'll study", tableName: "Onboarding", comment: "Title of the topics sheet")
+      )
+      .toolbarTitleDisplayMode(.inline)
+      .toolbar {
+        ToolbarItem(placement: .cancellationAction) {
+          Button(role: .close) {
+            dismiss()
+          }
+        }
+      }
+    }
+  }
+
+  private func label(_ subject: SyllabusSubject) -> some View {
+    VStack(alignment: .leading, spacing: 2) {
+      Text(subject.name)
+
+      if let line = subjectLine(subject) {
+        Text(line)
+          .font(.footnote)
+          .monospacedDigit()
+          .foregroundStyle(.secondary)
+      }
+    }
+  }
+
+  private func subjectLine(_ subject: SyllabusSubject) -> String? {
+    let total = subject.topics.count
+    let leftOut = subject.topics.filter { $0.status == "notPlanned" }.count
+    let topics: String? =
+      leftOut > 0
+      ? String(
+        localized: "\(total) topics, \(leftOut) out of your plan", table: "Onboarding",
+        comment: "A subject's topics and how many the plan leaves out")
+      : total > 0
+        ? String(
+          localized: "\(total) topics", table: "Onboarding",
+          comment: "How many topics the exam notice lists")
+        : nil
+    let questions = subject.questions.flatMap { count in
+      count > 0
+        ? String(
+          localized: "\(count) questions", table: "Onboarding",
+          comment: "How many questions a subject has on the exam")
+        : nil
+    }
+    let parts = [questions, topics].compactMap(\.self)
+
+    return parts.isEmpty ? nil : parts.joined(separator: " · ")
   }
 }
