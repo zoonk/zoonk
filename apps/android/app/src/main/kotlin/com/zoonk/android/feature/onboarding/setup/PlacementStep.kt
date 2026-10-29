@@ -98,11 +98,7 @@ import kotlin.math.max
 import kotlin.time.Duration.Companion.seconds
 import com.zoonk.api.models.LessonVisual as ApiLessonVisual
 
-/**
- * Main's `PlacementStep`: a few questions that find where the plan starts, or a mock exam in their
- * place. A language goal with a target language takes its level test instead (F48), which its
- * caller picks before this.
- */
+/** A language goal with a target language takes its level test instead, which its caller picks before this. */
 @Composable
 internal fun ColumnScope.PlacementStep(
     goalId: String,
@@ -323,7 +319,7 @@ private class Choice(
     val rich: Boolean,
 )
 
-/** Main's `PlacementQuestionScreen`, shared with the language level test; only a typed question needs [typedWords]. */
+/** Shared with the language level test; only a typed question needs [typedWords]. */
 @Composable
 internal fun ColumnScope.PlacementQuestion(
     item: PlacementItem,
@@ -417,7 +413,7 @@ internal fun ColumnScope.PlacementQuestion(
     }
 }
 
-/** Main's wrapping answer row: [end] moves above [start] when [start] can't fit on one line beside it, so no label breaks mid-word. */
+/** [end] moves above [start] when [start] can't fit on one line beside it, so no label breaks mid-word. */
 @Composable
 private fun BesideOrAbove(
     start: @Composable () -> Unit,
@@ -599,7 +595,6 @@ internal fun FinishFailed(failed: Boolean) {
     )
 }
 
-/** Main's `OnboardingSubject`: what the screen is about, above its title. */
 @Composable
 internal fun Eyebrow(text: String) {
     Text(text = text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)

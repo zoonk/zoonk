@@ -25,8 +25,8 @@ private class SentTestAnswer(
 )
 
 /**
- * Main's `LanguageLevelTestStep`: opening it only reads; only the learner's Start asks for a
- * language pair's questions, and answering and finishing are POSTs from their taps.
+ * Opening it only reads; only the learner's Start asks for a language pair's questions, and
+ * answering and finishing are POSTs from their taps.
  */
 internal class LevelTestViewModel(
     private val goalId: String,
@@ -37,7 +37,7 @@ internal class LevelTestViewModel(
 
     private var started by mutableStateOf(savedStarted)
 
-    /** Main's wait shows from this screen's Start until the questions arrive or writing them stops. */
+    /** The wait shows from this screen's Start until the questions arrive or writing them stops. */
     private var begun by mutableStateOf(false)
 
     private var stopped by mutableStateOf(false)

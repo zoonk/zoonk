@@ -40,9 +40,9 @@ internal sealed interface LevelTestPhase {
 }
 
 /**
- * Main's `toResumedPhase`: the test resumes once the learner tapped Start ([started]) or answered,
- * and waits for its questions after this screen's Start ([begun]) or while a run it started writes
- * them. [stopped] is the learner leaving the questions for their levels.
+ * The test resumes once the learner tapped Start ([started]) or answered, and waits for its
+ * questions after this screen's Start ([begun]) or while a run it started writes them. [stopped] is
+ * the learner leaving the questions for their levels.
  */
 internal fun levelTestPhase(
     test: LoadState<LanguageLevelTest>,
@@ -75,7 +75,7 @@ private fun LanguageLevelTestOneOf1.phase(): LevelTestPhase {
     }
 }
 
-/** Main's `BankWait`: what the wait for a language pair's questions has seen since the learner's Start. */
+/** What the wait for a language pair's questions has seen since the learner's Start. */
 internal data class BankWait(
     val askedAt: Long? = null,
     val writing: Boolean = false,

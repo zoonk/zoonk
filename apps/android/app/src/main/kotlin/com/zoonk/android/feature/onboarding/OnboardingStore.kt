@@ -89,10 +89,7 @@ data class AttachedSource(
     val title: String,
 )
 
-/**
- * Onboarding's reads and writes, shared by the start, setup and course screens. A visitor's first
- * write starts a guest session, as main's anonymous sign-in does.
- */
+/** A visitor's first write starts a guest session, as an anonymous sign-in does. */
 class OnboardingStore(
     private val api: OnboardingApi,
     private val cache: AppCache,
@@ -153,8 +150,8 @@ class OnboardingStore(
     ) = write(replacing = ::replacingDraft) { api.revise(it, draftId, edit) }
 
     /**
-     * The main goal's id. From a shared plan ([planId]) the goal follows that plan, as main's
-     * `/start?plan=` does; a learner who owns the plan gets their own goal back.
+     * The main goal's id. From a shared plan ([planId]) the goal follows that plan; a learner who
+     * owns the plan gets their own goal back.
      */
     suspend fun createGoals(
         input: GoalCreateInput,

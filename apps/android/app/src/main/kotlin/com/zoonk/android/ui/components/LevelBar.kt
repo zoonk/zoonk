@@ -15,8 +15,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
 /**
- * Main's `LevelBar`: one band per CEFR level, A1 to C2, filled up to [score] (0 for A1 to 5 for
- * C2, in half steps). Hidden from TalkBack, since the level's label beside it says it.
+ * One band per CEFR level, A1 to C2, filled up to [score] (0 for A1 to 5 for C2, in half steps).
+ * Hidden from TalkBack, since the level's label beside it says it.
  */
 @Composable
 fun LevelBar(
