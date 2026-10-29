@@ -240,6 +240,8 @@ final class TutorConversationTests: XCTestCase {
     XCTAssertFalse(screen.isAboutCheckedAnswer)
     XCTAssertTrue(answer.isAboutCheckedAnswer)
     XCTAssertEqual(screen.conversationKey, answer.conversationKey, "one conversation per screen")
+    XCTAssertEqual(screen.askLabel("Zu"), "Ask Zu about this screen")
+    XCTAssertEqual(answer.askLabel("Zu"), "Ask Zu about your answer")
     XCTAssertEqual(lesson, .lesson(lessonId: "l", stepIds: ["s1", "s2"], suggestions: []))
   }
 

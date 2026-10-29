@@ -973,7 +973,7 @@
       }
     },
     "Ask about your answer" : {
-      "comment" : "What the buddy's panel is about: a checked practice question",
+      "comment" : "What the buddy's panel is about: a checked answer",
       "localizations" : {
         "de" : {
           "stringUnit" : {

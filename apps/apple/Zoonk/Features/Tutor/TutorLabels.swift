@@ -35,8 +35,7 @@ extension TutorScope {
       Text(
         "Ask questions about this lesson", tableName: "Tutor",
         comment: "What the buddy's panel is about")
-    case .step,
-      .item where isAboutCheckedAnswer:
+    case .step where isAboutCheckedAnswer, .item where isAboutCheckedAnswer:
       Text(
         "Ask about your answer", tableName: "Tutor",
         comment: "What the buddy's panel is about: a checked answer")
@@ -101,8 +100,7 @@ extension TutorScope {
       String(
         localized: "Ask \(name) about this mock exam", table: "Tutor",
         comment: "Ask button for VoiceOver; the argument is the buddy's name")
-    case .step,
-      .item where isAboutCheckedAnswer:
+    case .step where isAboutCheckedAnswer, .item where isAboutCheckedAnswer:
       String(
         localized: "Ask \(name) about your answer", table: "Tutor",
         comment: "Ask button for VoiceOver; the argument is the buddy's name")
