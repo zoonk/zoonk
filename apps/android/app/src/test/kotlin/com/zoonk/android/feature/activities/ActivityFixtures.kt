@@ -8,6 +8,7 @@ import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ActivityExpectedAnswer
+import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.doubleOrNull
@@ -60,8 +61,13 @@ object ActivityFixtures {
     fun step(
         name: String,
         id: String = name,
+    ): LessonStep = step(entry(name).getValue("content"), id)
+
+    /** A step of content a fixture doesn't have, written as the API sends it. */
+    fun step(
+        json: JsonElement,
+        id: String,
     ): LessonStep {
-        val json = entry(name).getValue("content")
         val content = ApiJson.decodeFromJsonElement(ActivityStepContent.serializer(), json)
         val frame = ApiJson.decodeFromJsonElement(ActivityFrame.serializer(), json)
         return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null))

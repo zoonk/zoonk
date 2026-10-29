@@ -173,7 +173,7 @@ private val SQL_BUILTINS =
 
 // Main's patterns (`highlight-code.ts`) with JavaScript's meaning spelled out, because `\s`, `\w`, `.` and `$`
 // differ between JavaScript, the JVM and Android's ICU engine.
-private const val SPACE_CHARS = """\t\n\u000B\f\r \u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF"""
+internal const val SPACE_CHARS = """\t\n\u000B\f\r \u00A0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF"""
 private const val WORD_CHARS = "A-Za-z0-9_"
 private const val ANY_BUT_LINE_END = """[^\n\r\u2028\u2029]"""
 

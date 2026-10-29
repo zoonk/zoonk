@@ -17,6 +17,8 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.activities.code.CodeSandbox
+import com.zoonk.android.feature.activities.code.LocalCodeSandbox
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
@@ -42,6 +44,9 @@ internal class LessonPlayerHarness(
     lateinit var api: FakeLessonPlayerApi
     lateinit var openAgain: () -> LessonPlayerViewModel
     lateinit var viewModel: LessonPlayerViewModel
+
+    /** The code templates' sandbox; by default one whose page can't open. */
+    var codeSandbox: (CoroutineScope) -> CodeSandbox = { CodeSandbox(openPage = { null }, scope = it) }
 
     val exits =
         object : LessonPlayerExits {
@@ -89,11 +94,12 @@ internal class LessonPlayerHarness(
             )
         }
         viewModel = newViewModel()
+        val sandbox = codeSandbox(scope)
         openAgain = { newViewModel().also { it.open(lesson) } }
 
         val content: @Composable () -> Unit = {
             ZoonkTheme {
-                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
+                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState(), LocalCodeSandbox provides sandbox) {
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()
                     LaunchedEffect(Unit) { viewModel.open(lesson) }

@@ -19,6 +19,8 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.activities.code.LocalCodeSandbox
+import com.zoonk.android.feature.activities.code.ScriptedSandbox
 import com.zoonk.android.feature.player.FakeLessonPlayerApi
 import com.zoonk.android.feature.player.LESSON_ID
 import com.zoonk.android.feature.player.LessonEnding
@@ -138,6 +140,7 @@ class ActivityScreenshots {
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
         val cache = AppCache(session, scope)
         val drafts = DraftStore(temporary.newFolder(), scope)
+        val sandbox = ScriptedSandbox(scope).sandbox
         val screens =
             shots.flatMap { shot ->
                 states(shot).map { (state, player) ->
@@ -167,7 +170,7 @@ class ActivityScreenshots {
 
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
+                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState(), LocalCodeSandbox provides sandbox) {
                     key(index) {
                         val (_, lesson, state) = screens[index]
                         LessonPlayer(lesson, state, LessonEnding(), viewModel, exits, rememberAppNavigator())

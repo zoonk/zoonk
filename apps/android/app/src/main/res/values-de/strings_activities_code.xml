@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_code_badge_run": "4765fd41ff3983cab48ddc19818d355f587598f23cfdb705c51de2a1346970a5",
+  "activities_code_changed_code": "61974c0977d8cec6f5d939ee74f8fac99c0362d3dd5068ee1a1c153529658be8",
+  "activities_code_code": "59f9739696514843d6cc97e2ecbe5bbaaee6e50fc2fafa8e150cb71cd0adfce5",
+  "activities_code_error_line": "e9420ebd212be30c6eaad572c5e5ae2d3c770d7bce360aa75d1898a5f9cae5ba",
+  "activities_code_expected": "d8a934d273316c38881808dd848ddd098350ac60a8a56808ee8386d005123d52",
+  "activities_code_line_yours": "49015406183f6ce66f2eb86c1ba5f905eebc4da8d5b3829953cd0443571dc50d",
+  "activities_code_lines_yours": "c04fa0f930871609dc885dab732a822dd0accbed19860547de553da3c22233af",
+  "activities_code_not_quite": "47c84dcbe7d3a98187ceab9aae70659edbc6bae64abafadd48dafded665eea4d",
+  "activities_code_nothing_printed": "0167a831dc7663e499cff6cff67245c7b40a60b259c679ff7e5ba9e7476051f1",
+  "activities_code_run": "89d1764a30cfdb1a0fd418c350d071dcda2665765f8560de7e27ac5175514486",
+  "activities_code_run_again": "6e1b580294f19af115f16a5adfe8083172f19bc855ee2cd005aca153147838fb",
+  "activities_code_run_to_see": "a82978082c389b38155a45e91ee88eccf4a7be8b0df73ef0c371bb2aa241e2dc",
+  "activities_code_running": "25c59930932df28e60e7eef6d84a3e68fef9e020d35d3d9c969937dc2a298b57",
+  "activities_code_runtime_failed": "eb78f3c8821e6c8c245a9b6d4cb7040e67ef4993f387692a37ead81ed1791f77",
+  "activities_code_runtime_loading": "3a075fa7c7f92981df10d41cbd33907b3fb8116b85b2af449af0470bd3caa51e",
+  "activities_code_start_over": "496fe69a3bfc8b0343c67fae6fd909e6f1d41694779312346ad19f045f7f6b6c",
+  "activities_code_stopped_after": "c3af8741acb22f60c6199edafd278d06a3f26db762e648241ccb8fa29b617273",
+  "activities_code_too_much_output": "2f7f78d34ca0aa348de07f7ecf4716e173d36368ee04c676476d223618c97dd0",
+  "activities_code_your_output": "fb3e652322cf44adb360dcae47d2d06b8d8247501ab7b91db6360b7c478baeca"
+}
+-->
+<resources>
+    <string name="activities_code_badge_run">Führe den Code aus</string>
+    <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
+    <string name="activities_code_runtime_loading">Wir bereiten %1$s vor. Das dauert beim ersten Mal ein paar Sekunden.</string>
+    <!-- %1$s is a runtime's name, like Python, JavaScript or SQLite. -->
+    <string name="activities_code_runtime_failed">%1$s wurde nicht geladen. Prüfe deine Verbindung und versuche es noch einmal.</string>
+    <string name="activities_code_run">Ausführen</string>
+    <string name="activities_code_run_again">Noch einmal ausführen</string>
+    <string name="activities_code_running">Wird ausgeführt</string>
+    <string name="activities_code_start_over">Mit dem ursprünglichen Code von vorn beginnen</string>
+    <!-- The name of a block of program code, for TalkBack. -->
+    <string name="activities_code_code">Code</string>
+    <!-- The lines of a program the learner may edit; %1$s lists their numbers, like "2 and 3". -->
+    <plurals name="activities_code_lines_yours">
+        <item quantity="one">Zeile %1$s gehört dir</item>
+        <item quantity="other">Die Zeilen %1$s gehören dir</item>
+    </plurals>
+    <!-- A line of code the learner may edit, for TalkBack. -->
+    <string name="activities_code_line_yours">Zeile %1$d, die du bearbeiten kannst</string>
+    <string name="activities_code_your_output">Deine Ausgabe</string>
+    <!-- The output the program should print. -->
+    <string name="activities_code_expected">Erwartet</string>
+    <string name="activities_code_run_to_see">Führe den Code aus, um das Ergebnis zu sehen</string>
+    <string name="activities_code_nothing_printed">Es wurde nichts ausgegeben</string>
+    <string name="activities_code_changed_code">Du hast den Code geändert. Führe ihn noch einmal aus, um die neue Ausgabe zu sehen.</string>
+    <!-- A program's error and the line it happened on, like "Line 2: NameError: name 'x' is not defined". -->
+    <string name="activities_code_error_line">Zeile %1$d: %2$s</string>
+    <plurals name="activities_code_stopped_after">
+        <item quantity="one">Nach %d Sekunde gestoppt. Gibt es eine Endlosschleife?</item>
+        <item quantity="other">Nach %d Sekunden gestoppt. Gibt es eine Endlosschleife?</item>
+    </plurals>
+    <string name="activities_code_too_much_output">Wurde gestoppt, weil zu viel ausgegeben wurde. Gibt es eine Endlosschleife?</string>
+    <!-- Before the feedback for a likely mistake the program's output shows. -->
+    <string name="activities_code_not_quite">Fast:</string>
+</resources>

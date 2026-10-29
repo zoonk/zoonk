@@ -45,6 +45,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.accountFailure
+import com.zoonk.android.feature.activities.code.LocalCodeSandbox
 import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonLoad
@@ -199,6 +200,7 @@ internal fun PlayingLesson(
     CompositionLocalProvider(
         LocalPrivatePictures provides PrivatePictures(app.images, signedIn),
         LocalLessonSpeech provides app.speech,
+        LocalCodeSandbox provides app.codeSandbox,
         LocalChallengeTeam provides team,
     ) {
         LessonPlayer(

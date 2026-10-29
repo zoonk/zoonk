@@ -35,6 +35,7 @@ import com.zoonk.android.feature.activities.beforeAfterRenderer
 import com.zoonk.android.feature.activities.chartReaderRenderer
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.activities.choiceId
+import com.zoonk.android.feature.activities.code.codeRunnerRenderer
 import com.zoonk.android.feature.activities.decisionTreeRenderer
 import com.zoonk.android.feature.activities.dialogueSimulatorRenderer
 import com.zoonk.android.feature.activities.findErrorRenderer
@@ -84,6 +85,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
     mapOf(
         "beforeAfter" to beforeAfterRenderer,
         "chartReader" to chartReaderRenderer,
+        "codeRunner" to codeRunnerRenderer,
         "decisionTree" to decisionTreeRenderer,
         "dialogueSimulator" to dialogueSimulatorRenderer,
         "findError" to findErrorRenderer,

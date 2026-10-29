@@ -15,6 +15,15 @@ enum class CodeLanguage {
 
     @SerialName("sql")
     Sql,
+    ;
+
+    /** Core's `PROGRAM_TIME_LIMIT_MS`, which the sandbox page stops a run at. */
+    val timeLimitSeconds: Int
+        get() =
+            when (this) {
+                JavaScript, Sql -> 3
+                Python -> 5
+            }
 }
 
 @Serializable
@@ -26,6 +35,9 @@ data class ProgramRun(
 ) {
     companion object {
         val Unavailable = ProgramRun(error = null, errorOutput = "", output = "", stop = ProgramStop.Unavailable)
+
+        /** A run known only by what it printed, like one restored from the learner's answer. */
+        fun printed(output: String) = ProgramRun(error = null, errorOutput = "", output = output, stop = ProgramStop.Done)
     }
 }
 
