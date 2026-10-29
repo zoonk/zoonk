@@ -2,6 +2,8 @@
 <resources>
     <string name="search_placeholder">Search or ask…</string>
     <string name="search_close">Close search</string>
+    <string name="search_clear">Clear search</string>
+    <string name="search_continue_failed">Couldn\'t open your next step. Try again.</string>
 
     <string name="search_group_actions">Actions</string>
     <string name="search_group_go_to">Go to</string>
@@ -17,7 +19,7 @@
 
     <string name="search_continue">Continue today\'s session</string>
     <string name="search_take_mock">Take a mock exam</string>
-    <string name="search_take_mock_detail">full, half or one subject</string>
+    <string name="search_take_mock_detail">Full, half or one subject</string>
     <string name="search_practice_mistakes">Practice your mistakes</string>
     <string name="search_ask_buddy">Ask %1$s…</string>
     <string name="search_start_new_goal">Start a new goal</string>
@@ -42,7 +44,7 @@
     <string name="search_appearance">Appearance</string>
     <string name="search_language">Language</string>
     <string name="search_ask_question">Ask %1$s: “%2$s”</string>
-    <string name="search_ask_detail">opens the chat</string>
+    <string name="search_ask_detail">Opens the chat</string>
     <string name="search_start_new_goal_named">Start a new goal: “%1$s”</string>
     <string name="search_start_goal_named">Start a goal: “%1$s”</string>
 </resources>

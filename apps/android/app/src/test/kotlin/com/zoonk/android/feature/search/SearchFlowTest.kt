@@ -9,6 +9,7 @@ import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onLast
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performImeAction
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
@@ -72,7 +73,7 @@ class SearchFlowTest {
         groupsFor("")
 
         assertEquals(listOf("Home page", "Explore courses", "Start a goal", "Pricing", "Log in"), labels("pages"))
-        assertEquals(listOf("Blog", "Send feedback", "Help"), labels("help"))
+        assertEquals(listOf("Blog", "Help"), labels("help"))
     }
 
     @Test
@@ -86,6 +87,7 @@ class SearchFlowTest {
     @Test
     fun matchingIgnoresAccentsAndCase() {
         assertTrue(matchesSearch("ESTATISTICA", "Estatística"))
+        assertFalse(matchesSearch("ば", "は"))
         assertTrue(matchesSearch("  ", "anything"))
         assertFalse(matchesSearch("plan", "Today"))
     }
@@ -97,6 +99,21 @@ class SearchFlowTest {
         val chapter = groups.first { it.id == "catalog" }.items.single()
         assertEquals(SearchAction.Open(AppRoute.CatalogChapter(CHAPTER_TWO, COURSE)), chapter.action)
         assertEquals("Atoms", chapter.detail)
+    }
+
+    @Test
+    fun enterOpensWhatTheWordsShowAtOnce() {
+        show { app, navigator -> TabSearchBar(app, navigator) }
+
+        rule.onNodeWithText("Search or ask…").performClick()
+        rule.mainClock.autoAdvance = false
+        rule.onAllNodes(hasSetTextAction()).onLast().performTextInput("settings")
+        // One frame, far less than the server search's wait: the places filter on the words as typed.
+        rule.mainClock.advanceTimeBy(100)
+        rule.onAllNodes(hasSetTextAction()).onLast().performImeAction()
+        rule.mainClock.autoAdvance = true
+
+        assertEquals(AppRoute.Settings, navigator.currentRoute)
     }
 
     @Test

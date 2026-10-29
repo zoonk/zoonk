@@ -3,12 +3,14 @@
 {
   "search_appearance": "4045b138e202978d37dc4c49ceffe03004a56f57445f97714ff4e4d4006e8d7d",
   "search_ask_buddy": "4626364b34ff6ad161383560a08da4629d73e67c38c16119db429eba2e039ced",
-  "search_ask_detail": "800ec39edcd702c865a82e232d6fbd2b659f5cb680565287b383cce5bb392bbf",
+  "search_ask_detail": "d40b466af5d682641e9fd28202fe5d6a96e865c629490402b50fd3bc4ab0cdd5",
   "search_ask_question": "ff5add80bed8349b9395326ba156fbb8ede37a11f0eb900bdae4022fb4352e96",
   "search_blog": "dc013f0414b752a69f8b0052be2ddfbbc5639fa52273ab3fa21561078c931c32",
   "search_buddy_keyword": "fb396cc539464812313db94199f1d24e77f28c2329bad8996fefb76c92fd7741",
+  "search_clear": "063aea3d2b74ac622fc235a0a41b76edb6df38aefbbad545b0cd7eba40168cd7",
   "search_close": "6a2364db159d61b89c1ab61e4c9b3d33a4e51afe7c07bd29c623a196c81616f0",
   "search_continue": "7140c96c161e39f0a63e60d755afdc3be668feaa080fc793fd500d756183acc3",
+  "search_continue_failed": "f50d44a4106b5fe9048422d74b59c8ce88aafa9939065188f47c04b2eac0d2b2",
   "search_group_account": "829c1cabd2d852e69c9b5893449a5e89478192c6e2eeba26c0d1a64798603437",
   "search_group_actions": "087faa68c1dc25c1c286bb17196ee5112b89eb3d7a4b620f8a6f5427909a0fbd",
   "search_group_ask": "5894711c360b0d2625ab3c681ea3e8eb95ee91fca7b64caff2e027cdae1ed670",
@@ -43,12 +45,14 @@
   "search_subscription": "4d0397414321766714cbff8063bc7a1de057c203a49c78ca4be1662476366a21",
   "search_switch_goal": "59007bdf9a0ca457a1ec941143c361c6cad09c419da99708cd3a67ec2dd02328",
   "search_take_mock": "f7673d888354c73b0e636c7a4829bf6ad88af744b124c68d3cefa5d0542d3d88",
-  "search_take_mock_detail": "85458c70bad2748e07da8c59631f9ce6937b6a53746809c31b772063e5592624"
+  "search_take_mock_detail": "fc0e82a0076e05b4159b974e93acca82d1bb827c897eed86747cc514bfc16e2e"
 }
 -->
 <resources>
     <string name="search_placeholder">Suchen oder fragen…</string>
     <string name="search_close">Suche schließen</string>
+    <string name="search_clear">Suche löschen</string>
+    <string name="search_continue_failed">Dein nächster Schritt ließ sich nicht öffnen. Versuch es noch einmal.</string>
     <string name="search_group_actions">Aktionen</string>
     <string name="search_group_go_to">Gehe zu</string>
     <string name="search_group_goals">Deine Ziele</string>
@@ -62,7 +66,7 @@
     <string name="search_group_new_goal">Neues Ziel</string>
     <string name="search_continue">Heutige Lerneinheit fortsetzen</string>
     <string name="search_take_mock">Probeprüfung machen</string>
-    <string name="search_take_mock_detail">ganz, halb oder ein Fach</string>
+    <string name="search_take_mock_detail">Vollständig, halb oder ein Fach</string>
     <string name="search_practice_mistakes">Deine Fehler üben</string>
     <string name="search_ask_buddy">%1$s fragen…</string>
     <string name="search_start_new_goal">Neues Ziel starten</string>
@@ -87,7 +91,7 @@
     <string name="search_appearance">Aussehen</string>
     <string name="search_language">Sprache</string>
     <string name="search_ask_question">%1$s fragen: „%2$s“</string>
-    <string name="search_ask_detail">öffnet den Chat</string>
+    <string name="search_ask_detail">Öffnet den Chat</string>
     <string name="search_start_new_goal_named">Neues Ziel starten: „%1$s“</string>
     <string name="search_start_goal_named">Ein Ziel starten: „%1$s“</string>
 </resources>
