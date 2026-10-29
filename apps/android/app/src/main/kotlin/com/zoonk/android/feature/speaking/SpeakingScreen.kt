@@ -85,8 +85,6 @@ import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.ListRowChevron
-import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
@@ -502,21 +500,11 @@ fun SpeakingPracticeRow(
     modifier: Modifier = Modifier,
 ) {
     ListRow(
+        headline = { Text(stringResource(R.string.speaking_eyebrow)) },
         modifier = modifier,
         onClick = onOpen,
-        end = {
-            if (plusRequired) PlusMark()
-            ListRowChevron()
-        },
-    ) {
-        ListRowLeading { KindDot(LearnKind.Conversation) }
-        Column(Modifier.weight(1f)) {
-            Text(stringResource(R.string.speaking_eyebrow), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-            Text(
-                stringResource(R.string.speaking_row, title),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-    }
+        leading = { KindDot(LearnKind.Conversation) },
+        supporting = { Text(stringResource(R.string.speaking_row, title)) },
+        meta = if (plusRequired) ({ PlusMark() }) else null,
+    )
 }
