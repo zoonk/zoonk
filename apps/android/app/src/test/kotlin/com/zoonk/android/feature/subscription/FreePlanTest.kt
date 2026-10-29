@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasClickAction
+import androidx.compose.ui.test.hasStateDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -60,9 +62,11 @@ class FreePlanTest {
         questions(hasAccount = true)
 
         rule.onNode(hasText("With the free plan, you get:")).assertIsDisplayed()
+        val cancel = rule.onNode(hasText("What happens if I cancel?") and hasClickAction())
         rule.onNode(hasText("You keep Plus", substring = true)).assertDoesNotExist()
-        rule.onNode(hasText("What happens if I cancel?") and hasClickAction()).performScrollTo().performClick()
+        cancel.assert(hasStateDescription("Collapsed")).performScrollTo().performClick()
         rule.onNode(hasText("You keep Plus", substring = true)).assertIsDisplayed()
+        cancel.assert(hasStateDescription("Expanded"))
     }
 
     private fun questions(hasAccount: Boolean) {

@@ -84,6 +84,9 @@
     <string name="subscription_questions_email">hello@zoonk.com</string>
     <string name="subscription_show_answer">show the answer</string>
     <string name="subscription_hide_answer">hide the answer</string>
+    <!-- What TalkBack says about a question: its answer is showing or not. -->
+    <string name="subscription_answer_shown">Expanded</string>
+    <string name="subscription_answer_hidden">Collapsed</string>
     <string name="subscription_question_free">What\'s in the free plan?</string>
     <plurals name="subscription_answer_free_guest_lead">
         <item quantity="one">Start free with %d lesson, no account needed. With a free account, you get:</item>

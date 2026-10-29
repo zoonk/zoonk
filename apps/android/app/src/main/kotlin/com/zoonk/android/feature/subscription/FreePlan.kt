@@ -28,6 +28,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
@@ -202,6 +203,7 @@ private fun Question(
     answer: @Composable () -> Unit,
 ) {
     var open by rememberSaveable(question) { mutableStateOf(initiallyOpen) }
+    val state = stringResource(if (open) R.string.subscription_answer_shown else R.string.subscription_answer_hidden)
 
     HorizontalDivider()
     Row(
@@ -212,6 +214,7 @@ private fun Question(
                     onClickLabel = stringResource(if (open) R.string.subscription_hide_answer else R.string.subscription_show_answer),
                     role = Role.Button,
                 ) { open = !open }
+                .semantics { stateDescription = state }
                 .padding(vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),

@@ -320,6 +320,7 @@ private fun Offer(
         }
     }
 
+    if (freePlan is LoadState.Failed) LoadFailedMessage(onRetry = { scope.launch { app.subscriptions.freePlan.refresh() } })
     freePlan.value?.let { limits ->
         if (isVisitor) {
             FreePlanCard(
