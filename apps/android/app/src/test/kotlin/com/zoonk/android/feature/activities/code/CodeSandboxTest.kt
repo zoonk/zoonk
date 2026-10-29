@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.activities.code
 
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.test.TestScope
@@ -236,6 +237,48 @@ class CodeSandboxTest {
                 answer("true")
             }
             assertTrue(next.await())
+            assertEquals(2, pages.size)
+        }
+
+    @Test
+    fun `ends every waiting request when the page's process ends, even ones that resume at once`() =
+        runTest {
+            val sandbox = sandbox()
+            val first = async(Dispatchers.Unconfined) { sandbox.runProgram("first()", CodeLanguage.JavaScript) }
+            val second = async(Dispatchers.Unconfined) { sandbox.runProgram("second()", CodeLanguage.JavaScript) }
+            pages.single().apply {
+                load()
+                gone()
+            }
+
+            assertEquals(ProgramRun.Unavailable, first.await())
+            assertEquals(ProgramRun.Unavailable, second.await())
+        }
+
+    @Test
+    fun `reads a regex the page doesn't answer in time as invalid and replaces the stuck page`() =
+        runTest {
+            val sandbox = sandbox()
+            val stuck = async { sandbox.testRegex("a*".repeat(20) + "b", listOf("a".repeat(40)), listOf("b")) }
+            runCurrent()
+            advanceTimeBy(10.seconds)
+            val page = pages.single().apply { load() }
+            runCurrent()
+
+            advanceTimeBy(2.seconds)
+            assertFalse(page.closed)
+            advanceTimeBy(1.seconds)
+            assertEquals(RegexTest.Invalid, stuck.await())
+            assertTrue(page.closed)
+
+            val next = async { sandbox.testRegex("b", listOf("b"), listOf("a")) }
+            runCurrent()
+            pages.last().apply {
+                load()
+                runCurrent()
+                answer("""{"status":"empty"}""")
+            }
+            assertEquals(RegexTest.Empty, next.await())
             assertEquals(2, pages.size)
         }
 

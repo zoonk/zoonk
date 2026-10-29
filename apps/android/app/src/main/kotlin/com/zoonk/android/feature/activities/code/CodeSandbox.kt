@@ -6,8 +6,10 @@ import com.zoonk.api.ApiJson
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.TimeoutCancellationException
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -25,6 +27,7 @@ import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 internal interface SandboxPage {
     fun send(message: String)
@@ -112,14 +115,17 @@ class CodeSandbox internal constructor(
             put("tables", ApiJson.encodeToJsonElement(ListSerializer(SqlTable.serializer()), tables))
         }.decodeOr<QueryRun>(QueryRun.Unavailable)
 
-    /** A JavaScript regex with the `u` flag, as core grades it, against each sample. */
+    /**
+     * A JavaScript regex with the `u` flag, as core grades it, against each sample. One that takes over
+     * [REGEX_TIME_LIMIT] reads as invalid, core's meaning for a pattern too slow to run.
+     */
     @MainThread
     suspend fun testRegex(
         pattern: String,
         shouldMatch: List<String>,
         shouldNotMatch: List<String>,
     ): RegexTest =
-        request("testRegex") {
+        request("testRegex", timeLimit = REGEX_TIME_LIMIT, timedOut = sandboxJson.encodeToJsonElement<RegexTest>(RegexTest.Invalid)) {
             put("pattern", pattern)
             put("shouldMatch", sandboxJson.encodeToJsonElement(shouldMatch))
             put("shouldNotMatch", sandboxJson.encodeToJsonElement(shouldNotMatch))
@@ -127,6 +133,8 @@ class CodeSandbox internal constructor(
 
     private suspend fun request(
         type: String,
+        timeLimit: Duration = Duration.INFINITE,
+        timedOut: JsonElement? = null,
         fields: JsonObjectBuilder.() -> Unit,
     ): JsonElement? {
         val hold = hold()
@@ -140,7 +148,10 @@ class CodeSandbox internal constructor(
 
             try {
                 current.view.send(sandboxRequest(id, type, buildJsonObject(fields)))
-                return reply.await()
+                return withTimeout(timeLimit) { reply.await() }
+            } catch (stuck: TimeoutCancellationException) {
+                close()
+                return timedOut
             } finally {
                 replies.remove(id)
             }
@@ -160,7 +171,9 @@ class CodeSandbox internal constructor(
         val current = page ?: return
         page = null
         current.loaded.complete(false)
-        replies.values.forEach { it.complete(null) }
+        val waiting = replies.values.toList()
+        replies.clear()
+        waiting.forEach { it.complete(null) }
         current.view.close()
     }
 
@@ -188,6 +201,9 @@ class CodeSandbox internal constructor(
 }
 
 internal val sandboxJson = Json { classDiscriminator = "status" }
+
+// Regexes run on the page's own thread, where one that backtracks without end would stall every request.
+private val REGEX_TIME_LIMIT = 3.seconds
 
 internal sealed interface SandboxReply {
     data object Loaded : SandboxReply

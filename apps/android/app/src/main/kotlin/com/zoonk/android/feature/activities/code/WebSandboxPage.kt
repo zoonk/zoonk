@@ -2,12 +2,12 @@ package com.zoonk.android.feature.activities.code
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.net.Uri
 import android.webkit.RenderProcessGoneDetail
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.net.toUri
 import androidx.webkit.JavaScriptReplyProxy
 import androidx.webkit.WebViewAssetLoader
 import androidx.webkit.WebViewCompat
@@ -24,6 +24,7 @@ internal class WebSandboxPage private constructor(
 ) : SandboxPage {
     private var replies: JavaScriptReplyProxy? = null
 
+    @SuppressLint("RequiresFeature") // A reply proxy exists only once the listener, added after the feature check, got a message.
     override fun send(message: String) {
         replies?.postMessage(message)
     }
@@ -35,7 +36,7 @@ internal class WebSandboxPage private constructor(
     companion object {
         private const val PAGE_HOST = WebViewAssetLoader.DEFAULT_DOMAIN
         private const val RUNTIME_HOST = "cdn.jsdelivr.net"
-        private val pageOrigin = Uri.parse("https://$PAGE_HOST")
+        private val pageOrigin = "https://$PAGE_HOST".toUri()
 
         /** Null when this device's WebView can't host it, like while the WebView app updates. */
         @SuppressLint("SetJavaScriptEnabled") // The page runs only its own script; learner code runs in its workers.

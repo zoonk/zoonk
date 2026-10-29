@@ -38,19 +38,33 @@ async function answer(request: Request): Promise<unknown> {
   }
 }
 
-function send(message: object) {
+// Learner code decides how much a run prints or a query returns, and the app reads replies on its main thread.
+const MAX_REPLY_LENGTH = 1_000_000;
+
+function post(message: string) {
   // oxlint-disable-next-line unicorn/require-post-message-target-origin -- The injected object only talks to the app, so its postMessage has no target origin.
-  zoonkSandbox.postMessage(JSON.stringify(message));
+  zoonkSandbox.postMessage(message);
+}
+
+function reply(id: number, result: unknown): string {
+  const message = JSON.stringify({ id, result });
+
+  if (message.length > MAX_REPLY_LENGTH) {
+    throw new RangeError("The result is too large to send");
+  }
+
+  return message;
 }
 
 zoonkSandbox.addEventListener("message", (event) => {
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- Only the app posts to this object, and it sends these requests.
   const request = JSON.parse(event.data) as Request;
 
-  void answer(request).then(
-    (result) => send({ id: request.id, result }),
-    (error: unknown) => send({ error: String(error), id: request.id }),
-  );
+  // Learner code can post its own messages to main's host, so a result may not even serialize.
+  void answer(request)
+    .then((result) => reply(request.id, result))
+    .catch((error: unknown) => JSON.stringify({ error: String(error), id: request.id }))
+    .then(post);
 });
 
-send({ type: "loaded" });
+post(JSON.stringify({ type: "loaded" }));

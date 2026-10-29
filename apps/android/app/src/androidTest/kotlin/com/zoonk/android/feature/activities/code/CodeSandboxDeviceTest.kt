@@ -71,6 +71,17 @@ class CodeSandboxDeviceTest {
     }
 
     @Test
+    fun aRunWhoseResultCantReachTheAppIsUnavailable() {
+        val cyclic = "const message = {}\nmessage.self = message\npost({ id: state.id, line: null, message, type: 'error' })"
+        assertEquals(ProgramRun.Unavailable, onMain { runProgram(cyclic, CodeLanguage.JavaScript) })
+
+        val flood = "console.error('x'.repeat(2_000_000))"
+        assertEquals(ProgramRun.Unavailable, onMain { runProgram(flood, CodeLanguage.JavaScript) })
+
+        assertEquals("ok\n", onMain { runProgram("console.log('ok')", CodeLanguage.JavaScript) }.output)
+    }
+
+    @Test
     fun runsPythonThroughPyodide() {
         assertTrue(onMain(2.minutes) { warmUp(CodeLanguage.Python) })
         assertEquals("6\n", onMain { runProgram("print(sum(range(4)))", CodeLanguage.Python) }.output)
@@ -125,5 +136,10 @@ class CodeSandboxDeviceTest {
         )
         assertEquals(RegexTest.Invalid, onMain { testRegex("(a+)+", listOf("a"), listOf("b")) })
         assertEquals(RegexTest.Empty, onMain { testRegex("", listOf("a"), listOf("b")) })
+
+        val started = System.nanoTime()
+        assertEquals(RegexTest.Invalid, onMain { testRegex("a*".repeat(20) + "b", listOf("a".repeat(40)), emptyList()) })
+        assertTrue((System.nanoTime() - started) / 1_000_000 in 3_000L..6_000L)
+        assertEquals(RegexTest.Empty, onMain { testRegex("", listOf("a"), emptyList()) })
     }
 }
