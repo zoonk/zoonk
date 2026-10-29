@@ -8,4 +8,8 @@ export const PROGRAM_TIME_LIMIT_MS: Record<ProgramKind, number> = {
 
 export const MAX_PROGRAM_OUTPUT_LENGTH = 10_000;
 
+export function capProgramText(text: string): string {
+  return text.slice(0, MAX_PROGRAM_OUTPUT_LENGTH);
+}
+
 export const MAX_TRACE_STEPS = 1000;

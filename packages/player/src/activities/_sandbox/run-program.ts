@@ -1,5 +1,8 @@
 import { formatConsoleArgs } from "@zoonk/core/library/activities/console-values";
-import { MAX_PROGRAM_OUTPUT_LENGTH } from "@zoonk/core/library/activities/program-limits";
+import {
+  MAX_PROGRAM_OUTPUT_LENGTH,
+  capProgramText,
+} from "@zoonk/core/library/activities/program-limits";
 import { parsePythonError } from "@zoonk/core/library/activities/python-error";
 import { type SandboxMessage, runInSandbox } from "./sandbox-host";
 
@@ -47,8 +50,8 @@ export async function runProgram({
   });
 
   const base = {
-    errorOutput: streams.stderr,
-    output: streams.stdout.slice(0, MAX_PROGRAM_OUTPUT_LENGTH),
+    errorOutput: capProgramText(streams.stderr),
+    output: capProgramText(streams.stdout),
   };
 
   if (outcome.status === "error") {
@@ -57,7 +60,7 @@ export async function runProgram({
         ? parsePythonError(outcome.message)
         : { line: outcome.line, message: outcome.message };
 
-    return { ...base, error, stop: "error" };
+    return { ...base, error: { ...error, message: capProgramText(error.message) }, stop: "error" };
   }
 
   if (outcome.status === "done") {

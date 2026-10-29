@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { type ActivityCell } from "../activity-expected-answer";
 import { formatConsoleArgs, formatConsoleValue } from "./console-values";
-import { MAX_PROGRAM_OUTPUT_LENGTH, type ProgramKind } from "./program-limits";
+import { MAX_PROGRAM_OUTPUT_LENGTH, type ProgramKind, capProgramText } from "./program-limits";
 import { parsePythonError } from "./python-error";
 import { toSqlCell } from "./sql-setup";
 
@@ -94,16 +94,17 @@ function streamsOf(result: RunnerResult): { stderr: string; stdout: string } {
   return { stderr: text("stderr"), stdout: text("stdout") };
 }
 
+function parseErrorText(kind: ProgramKind, text: string): NonNullable<ProgramRun["error"]> {
+  return kind === "python" ? parsePythonError(text) : { line: null, message: text };
+}
+
 function errorOf(kind: ProgramKind, error: RunnerResult["error"]): ProgramRun["error"] {
   if (!error) {
     return null;
   }
 
-  if (typeof error !== "string") {
-    return error;
-  }
-
-  return kind === "python" ? parsePythonError(error) : { line: null, message: error };
+  const parsed = typeof error === "string" ? parseErrorText(kind, error) : error;
+  return { ...parsed, message: capProgramText(parsed.message) };
 }
 
 export function toProgramRun(kind: ProgramKind, result: RunnerResult): ProgramRun {
@@ -112,7 +113,7 @@ export function toProgramRun(kind: ProgramKind, result: RunnerResult): ProgramRu
 
   return {
     error: errorOf(kind, result.error),
-    output: stdout.slice(0, MAX_PROGRAM_OUTPUT_LENGTH),
+    output: capProgramText(stdout),
     status: flooded && result.status === "done" ? "tooMuchOutput" : result.status,
     steps: (result.steps ?? []).map(([line, values]) => ({
       line,
