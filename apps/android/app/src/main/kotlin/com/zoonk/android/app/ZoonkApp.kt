@@ -124,7 +124,7 @@ fun ZoonkApp(
     val access = app.learnerAccess.collectAsStateWithLifecycle()
     val summary by app.learnerSummary.summary.collectShown()
     val entryProvider = remember(app, navigator) { gatedEntries(appEntries(app, navigator), access, app, navigator) }
-    val signedIn =
+    val session =
         app.sessions.state
             .collectAsStateWithLifecycle()
             .value as? SessionState.SignedIn
@@ -132,8 +132,8 @@ fun ZoonkApp(
     var shownGuest by rememberSaveable { mutableStateOf(false) }
 
     // As main reloads its tabs when someone signs in: another learner's screens aren't theirs.
-    LaunchedEffect(signedIn?.session?.accountId) {
-        val learner = signedIn ?: return@LaunchedEffect
+    LaunchedEffect(session?.session?.accountId) {
+        val learner = session ?: return@LaunchedEffect
         if (startsAnotherLearner(shownAccountId, shownGuest, learner)) navigator.popToRoots()
         shownAccountId = learner.session.accountId
         shownGuest = learner.isGuest
