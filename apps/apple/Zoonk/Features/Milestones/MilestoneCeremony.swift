@@ -81,6 +81,7 @@ struct MilestoneCeremony: View {
         }
         .buttonStyle(.mainAction)
         .controlSize(.large)
+        .keyboardShortcut(.defaultAction)
 
         Button(action: onClose) {
           Text(
@@ -98,6 +99,7 @@ struct MilestoneCeremony: View {
         }
         .buttonStyle(.mainAction)
         .controlSize(.large)
+        .keyboardShortcut(.defaultAction)
       }
     }
   }
