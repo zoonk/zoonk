@@ -58,6 +58,7 @@ import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.RoutePlaceholder
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.KindDotLeading
@@ -69,6 +70,7 @@ import com.zoonk.android.ui.components.LessonSummaries
 import com.zoonk.android.ui.components.LessonSummary
 import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.TestOutRow
@@ -103,7 +105,9 @@ fun ChapterScreen(
     WithPlanGoal(app.learnerSummary.summary, navigator) { goal ->
         when {
             chapterId == null -> {
-                PageScaffold(onBack = { navigator.back() }) { PageNotFound(navigator, it) }
+                PageScaffold(onBack = { navigator.back() }) {
+                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it))
+                }
             }
 
             // A language's chapters are its units: drawn here too, as main does, so a link never redirects.
@@ -190,7 +194,7 @@ internal fun ChapterContent(
         is LoadState.Failed -> {
             PageScaffold(onBack = back) { padding ->
                 if (shown.error == ApiError.NotFound) {
-                    PageNotFound(navigator, padding)
+                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(padding))
                 } else {
                     LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }, modifier = Modifier.padding(padding))
                 }
@@ -198,7 +202,7 @@ internal fun ChapterContent(
         }
 
         LoadState.Empty -> {
-            PageScaffold(onBack = back) { PageNotFound(navigator, it) }
+            PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
         }
 
         LoadState.Idle, LoadState.Loading -> {
@@ -427,7 +431,10 @@ private fun ChapterReference(
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier) {
-        SectionTitle(stringResource(R.string.goalcontent_for_reference), Modifier.padding(bottom = 12.dp))
+        SectionHeader(
+            stringResource(R.string.goalcontent_for_reference),
+            Modifier.padding(horizontal = PAGE_PADDING).padding(bottom = 12.dp),
+        )
         mindMap?.card?.invoke()
         if (!hasSummary) return@Column
         if (mindMap != null) Spacer(Modifier.height(12.dp))

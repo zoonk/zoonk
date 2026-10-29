@@ -165,9 +165,6 @@
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
     <string name="goalcontent_matrix_title">What the questions ask</string>
     <string name="goalcontent_see_all">See all %1$s</string>
-    <string name="goalcontent_not_found_title">We couldn\'t find this page</string>
-    <string name="goalcontent_not_found_description">The link may be old or mistyped.</string>
-    <string name="goalcontent_not_found_action">Go to the home page</string>
 
     <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
     <string name="goalcontent_subject_chapter">%1$s · Chapter %2$s</string>

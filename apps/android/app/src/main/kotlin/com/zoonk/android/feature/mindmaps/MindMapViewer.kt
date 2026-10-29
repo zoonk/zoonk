@@ -58,7 +58,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
@@ -66,14 +65,12 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.feature.goalcontent.PageLoading
-import com.zoonk.android.feature.goalcontent.PageNotFound
 import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LocalPrivatePictures
-import com.zoonk.android.ui.components.OutlinedButton
-import com.zoonk.android.ui.components.OutlinedIconButton
-import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.TaskScaffold
@@ -104,7 +101,7 @@ fun MindMapScreen(
         val host = mindMapsHost(app)
         val chapterId = runCatching { UUID.fromString(route.chapterId) }.getOrNull()
         if (host == null || chapterId == null) {
-            TaskScaffold(onClose = close) { PageNotFound(navigator, it) }
+            TaskScaffold(onClose = close) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
             return@WithPlanGoal
         }
 
@@ -124,7 +121,7 @@ fun MindMapScreen(
             }
 
             Viewed.Missing -> {
-                TaskScaffold(onClose = close) { PageNotFound(navigator, it) }
+                TaskScaffold(onClose = close) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
             }
 
             is Viewed.Shown -> {

@@ -72,6 +72,7 @@ import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.KindDotLeading
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
@@ -116,7 +117,7 @@ fun LanguageUnitScreen(
 ) {
     val chapterId = remember(route.chapterId) { runCatching { UUID.fromString(route.chapterId) }.getOrNull() }
     if (chapterId == null) {
-        UnitFrame(navigator, title = null) { NotFoundMessage() }
+        UnitFrame(navigator, title = null) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }) }
         return
     }
     UnitEntry(chapterId, app, navigator)
@@ -178,7 +179,7 @@ private fun UnitEntry(
                 }
 
                 current is LoadState.Failed || current is LoadState.Empty -> {
-                    NotFoundMessage()
+                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) })
                 }
 
                 else -> {

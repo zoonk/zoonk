@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,8 +37,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
@@ -66,9 +63,9 @@ import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.TitleAndMeta
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
@@ -84,29 +81,6 @@ internal val PAGE_PADDING = 16.dp
 
 /** Main's gap between a page's blocks. */
 internal val SECTION_GAP = 32.dp
-
-/** A block's title with its count at the end, as a TalkBack heading. */
-@Composable
-internal fun SectionTitle(
-    title: String,
-    modifier: Modifier = Modifier,
-    detail: String? = null,
-) {
-    Row(
-        modifier = modifier.fillMaxWidth().padding(horizontal = PAGE_PADDING),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            text = title,
-            modifier = Modifier.weight(1f).semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
-        )
-        if (detail != null) {
-            Text(text = detail, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        }
-    }
-}
 
 @Composable
 internal fun SectionNote(
@@ -421,10 +395,11 @@ internal fun WithPlanGoal(
     val state by summary.collectShown()
     val scope = rememberCoroutineScope()
     val goal = state.value?.planGoal
+    val goHome = { navigator.showRoot(AppTab.Today) }
 
     when {
         goal != null -> content(goal)
-        state.value != null || state == LoadState.Empty -> frame { PageNotFound(navigator, it) }
+        state.value != null || state == LoadState.Empty -> frame { NotFoundMessage(goHome, Modifier.padding(it)) }
         state is LoadState.Failed -> frame { LoadFailedMessage(onRetry = { scope.launch { summary.refresh() } }, Modifier.padding(it)) }
         else -> frame { PageLoading(it) }
     }
@@ -434,22 +409,6 @@ internal fun WithPlanGoal(
 internal fun PageLoading(padding: PaddingValues) {
     Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
         CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
-    }
-}
-
-@Composable
-internal fun PageNotFound(
-    navigator: AppNavigator,
-    padding: PaddingValues,
-) {
-    Box(Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.Center) {
-        StatusMessage(
-            icon = R.drawable.ic_search_off,
-            title = stringResource(R.string.goalcontent_not_found_title),
-            description = stringResource(R.string.goalcontent_not_found_description),
-        ) {
-            Button(onClick = { navigator.showRoot(AppTab.Today) }) { Text(stringResource(R.string.goalcontent_not_found_action)) }
-        }
     }
 }
 

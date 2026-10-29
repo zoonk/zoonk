@@ -50,6 +50,7 @@
   "navigation_today": "797d355eb2b1e46bf90bd415faeff70a9c42b76904bae823d8d7a4bd4da9d095",
   "navigation_user_menu": "aa0d6f9b07be2db17049f069e73ffc6ac80559d1ee9db474bbec1c642f6bc384",
   "not_found_description": "cd5a24c65cdf37ffc9baa817fd55c3d9a91965987eaceada5f9ad35d40f32bfa",
+  "not_found_go_home": "15848291f200ce64248588b5e9bbb365050e83c8efc34ba5163b8a0af9879db0",
   "not_found_title": "b97e0b9ac0cbc24bce8fee1bb399786151b91f1cee47951c780650ec73cb1ee7",
   "other_time": "a20a3e8c150b804a77d235ad70d994e3fa4aa44e23b92d44593010a9cae6dbae",
   "suggestion_save_failed": "cf84bd9a1f3bf0c8c3071f7530f4c3ca9586046a179c7579ecabd845dad930c8",
@@ -122,6 +123,7 @@
     <string name="test_out_skip_unit">Mach den Test und überspringe die Einheit</string>
     <string name="not_found_title">Diese Seite wurde nicht gefunden</string>
     <string name="not_found_description">Der Link ist möglicherweise veraltet oder falsch eingegeben.</string>
+    <string name="not_found_go_home">Zur Startseite</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
 </resources>

@@ -95,16 +95,17 @@ fun LoadFailedMessage(
 
 @Composable
 fun NotFoundMessage(
+    onGoHome: () -> Unit,
     modifier: Modifier = Modifier,
-    actions: @Composable ColumnScope.() -> Unit = {},
 ) {
     StatusMessage(
         icon = R.drawable.ic_search_off,
         title = stringResource(R.string.not_found_title),
         description = stringResource(R.string.not_found_description),
         modifier = modifier,
-        actions = actions,
-    )
+    ) {
+        Button(onClick = onGoHome) { Text(stringResource(R.string.not_found_go_home)) }
+    }
 }
 
 @Composable

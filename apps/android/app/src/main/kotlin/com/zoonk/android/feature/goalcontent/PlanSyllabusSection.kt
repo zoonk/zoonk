@@ -17,8 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.heading
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatProgressShare
@@ -59,23 +58,19 @@ fun PlanSyllabusSection(
         val barWidth = (maxWidth * BAR_SHARE).coerceIn(BAR_MIN, BAR_MAX)
 
         Column {
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = PAGE_PADDING),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    text = stringResource(if (exam) R.string.goalcontent_subjects else R.string.goalcontent_modules),
-                    modifier = Modifier.weight(1f).semantics { heading() },
-                    style = MaterialTheme.typography.titleMedium,
+            if (exam) {
+                SectionHeader(
+                    stringResource(R.string.goalcontent_subjects),
+                    Modifier.padding(horizontal = PAGE_PADDING),
+                    detail = stringResource(R.string.goalcontent_preparation),
                 )
-                if (exam) {
-                    Text(
-                        stringResource(R.string.goalcontent_preparation),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                } else {
+            } else {
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(horizontal = PAGE_PADDING),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    SectionHeader(stringResource(R.string.goalcontent_modules), Modifier.weight(1f))
                     Row(Modifier.clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         LegendItem(LegendDot.Studied, stringResource(R.string.goalcontent_studied))
                         LegendItem(LegendDot.Known, stringResource(R.string.goalcontent_known))

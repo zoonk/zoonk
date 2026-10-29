@@ -33,10 +33,10 @@ fun SectionHeader(
 
     Row(
         modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+        Text(title, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleMedium)
         Text(
             detail,
             color = MaterialTheme.colorScheme.onSurfaceVariant,

@@ -52,7 +52,6 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
@@ -60,7 +59,6 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.PageLoading
-import com.zoonk.android.feature.goalcontent.PageNotFound
 import com.zoonk.android.feature.goalcontent.WithPlanGoal
 import com.zoonk.android.feature.plan.PendingLabel
 import com.zoonk.android.navigation.AppNavigator
@@ -69,7 +67,7 @@ import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.LocalPrivatePictures
-import com.zoonk.android.ui.components.PrivatePictures
+import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -87,7 +85,9 @@ fun MindMapsScreen(
     WithPlanGoal(app.learnerSummary.summary, navigator) { goal ->
         val host = mindMapsHost(app)
         if (host == null) {
-            PageScaffold(onBack = { navigator.back() }) { PageNotFound(navigator, it) }
+            PageScaffold(onBack = { navigator.back() }) {
+                NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it))
+            }
         } else {
             MindMapsContent(goal.id, host, navigator, subject = route.subject)
         }
@@ -136,7 +136,7 @@ internal fun MindMapsContent(
         is LoadState.Failed -> {
             PageScaffold(onBack = back) { padding ->
                 if (shown.error == ApiError.NotFound) {
-                    PageNotFound(navigator, padding)
+                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(padding))
                 } else {
                     LoadFailedMessage(onRetry = { scope.launch { resource.refresh() } }, modifier = Modifier.padding(padding))
                 }
@@ -144,7 +144,7 @@ internal fun MindMapsContent(
         }
 
         LoadState.Empty -> {
-            PageScaffold(onBack = back) { PageNotFound(navigator, it) }
+            PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
         }
 
         LoadState.Idle, LoadState.Loading -> {

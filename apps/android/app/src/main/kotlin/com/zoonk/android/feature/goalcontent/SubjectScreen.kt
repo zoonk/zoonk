@@ -1,10 +1,5 @@
 package com.zoonk.android.feature.goalcontent
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.material3.MaterialTheme
@@ -44,7 +39,10 @@ import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.NotFoundMessage
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.scaffold.PageScaffold
@@ -108,7 +106,7 @@ internal fun SubjectContent(
         is LoadState.Loaded -> {
             val subject = shown.value.subjects.firstOrNull { it.key == subjectKey }
             if (subject == null) {
-                PageScaffold(onBack = back) { PageNotFound(navigator, it) }
+                PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
             } else {
                 val writes = viewModel(key = "subject-$goalId") { SubjectViewModel(plans, syllabus, goalId) }
                 val farTopics = viewModel(key = "far-topics-$goalId") { FarTopicViewModel(plans, goalId) }
@@ -145,7 +143,7 @@ internal fun SubjectContent(
         is LoadState.Failed -> {
             PageScaffold(onBack = back) { padding ->
                 if (shown.error == ApiError.NotFound) {
-                    PageNotFound(navigator, padding)
+                    NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(padding))
                 } else {
                     LoadFailedMessage(onRetry = { scope.launch { syllabus.refresh() } }, modifier = Modifier.padding(padding))
                 }
@@ -153,7 +151,7 @@ internal fun SubjectContent(
         }
 
         LoadState.Empty -> {
-            PageScaffold(onBack = back) { PageNotFound(navigator, it) }
+            PageScaffold(onBack = back) { NotFoundMessage(onGoHome = { navigator.showRoot(AppTab.Today) }, Modifier.padding(it)) }
         }
 
         LoadState.Idle, LoadState.Loading -> {
@@ -380,7 +378,7 @@ internal fun LazyListScope.sectionTitle(
     detail: @Composable () -> String? = { null },
 ) {
     item(key = key, contentType = "section-title") {
-        SectionTitle(title(), Modifier.padding(top = SECTION_GAP, bottom = 4.dp), detail = detail())
+        SectionHeader(title(), Modifier.padding(horizontal = PAGE_PADDING).padding(top = SECTION_GAP, bottom = 4.dp), detail = detail())
     }
 }
 

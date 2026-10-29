@@ -47,9 +47,6 @@
   "goalcontent_more_chapters": "c168fd1dd9872045ad802c6cc39b5ff014aa0ebe6db146359c43930fabcdf3da",
   "goalcontent_new": "6310642d9784f4de27976fb7a2397e10b7e92546ad62ae038695113f0b7e3693",
   "goalcontent_next_date": "2c0ad1c81966adfcc4dbe8f1ad06f2204a873df7d08a97a4a3ff0f13dec83edd",
-  "goalcontent_not_found_action": "bd4298bacf513d16f0abc37c3a3e83df6e72f020f1de22534288b4c25e0b928e",
-  "goalcontent_not_found_description": "62a52d813d6bf53099bb59ba4988a3235254bbac85b8714441f6e118aa75459c",
-  "goalcontent_not_found_title": "7454d6b965ecf425d3ae2dfba931466766194b9cabd32b182a7fc66425604616",
   "goalcontent_not_in_plan": "682f3e7da2a962d75a2ab207dcf75a904d2c52779463e7684d0aa325e87dc5b9",
   "goalcontent_percent_done": "b68fdc6da17534e40884d2c21239c5bff0353654b69c524124e4fc24507939c4",
   "goalcontent_practice": "d49d285025edaab5a43e203fa20640376fd217363f2541e313dea1955e81ecbf",
@@ -284,9 +281,6 @@
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
     <string name="goalcontent_matrix_title">Qué preguntan en el examen</string>
     <string name="goalcontent_see_all">Ver todos: %1$s</string>
-    <string name="goalcontent_not_found_title">No hemos encontrado esta página</string>
-    <string name="goalcontent_not_found_description">Puede que el enlace sea antiguo o esté mal escrito.</string>
-    <string name="goalcontent_not_found_action">Ir a la página de inicio</string>
     <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
     <string name="goalcontent_subject_chapter">%1$s · Capítulo %2$s</string>
     <string name="goalcontent_chapter_number">Capítulo %1$s</string>

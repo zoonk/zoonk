@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -43,6 +42,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.feature.tutor.AskTutorAppearance
+import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.scaffold.PageScaffold
 
 /**
@@ -176,7 +176,7 @@ internal fun AsideSection(
     content: @Composable ColumnScope.() -> Unit,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        SectionTitle(title, detail = detail)
+        SectionHeader(title, Modifier.padding(horizontal = PAGE_PADDING), detail = detail)
         content()
     }
 }
