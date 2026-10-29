@@ -13,6 +13,7 @@ import com.zoonk.android.feature.questions.AnswerFeedback
 import com.zoonk.android.feature.questions.Drill
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.feature.session.ReachedFacts
 import com.zoonk.api.models.MistakeDrill
 import com.zoonk.api.models.MistakePractice
 import com.zoonk.api.models.MistakePracticeCompletion
@@ -48,6 +49,7 @@ data class PracticeState(
     val run: QuestionRun,
     val answerIds: List<UUID> = emptyList(),
     val fixedIds: Set<String> = emptySet(),
+    val reached: ReachedFacts = ReachedFacts(level = null, energy = null),
     val end: PracticeEnd? = null,
 )
 
@@ -186,7 +188,12 @@ class MistakePracticeViewModel(
         viewModelScope.launch {
             // A count that didn't get through still ends the run: each answer was counted as it came.
             val summary = if (answerIds.isEmpty()) null else (store.finish(key, answerIds) as? MutationResult.Done)?.value
-            mutableState.update { it?.copy(end = PracticeEnd(summary)) }
+            mutableState.update { state ->
+                state?.copy(
+                    end = PracticeEnd(summary),
+                    reached = summary?.let { state.reached.then(ReachedFacts(it.reached.level, it.reached.energy)) } ?: state.reached,
+                )
+            }
             if (closeWhenEnded) closing.value = true
         }
     }
@@ -208,7 +215,15 @@ private fun PracticeState.answered(
         ),
     answerIds = answerIds + feedback.answerId,
     fixedIds = fixedIds.updatedBy(feedback, mistakeId),
+    reached = reached.then(ReachedFacts(feedback.reached.level, feedback.reached.energy)),
 )
+
+/** Main's `mergeReached`: Brain Power only goes up, so the later level; a later count can dip Energy, so the higher one. */
+private fun ReachedFacts.then(later: ReachedFacts) =
+    ReachedFacts(
+        level = later.level ?: level,
+        energy = listOfNotNull(energy, later.energy).maxOrNull(),
+    )
 
 /** A later answer can open a mistake this run fixed again. */
 private fun Set<String>.updatedBy(

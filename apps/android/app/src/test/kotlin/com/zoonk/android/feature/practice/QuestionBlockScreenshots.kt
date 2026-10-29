@@ -16,12 +16,15 @@ import com.zoonk.android.data.ANA
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.practice.block.BlockFinished
 import com.zoonk.android.feature.practice.block.Runner
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.StudyBlockCompletion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import org.junit.Assume.assumeTrue
@@ -195,6 +198,47 @@ class QuestionBlockScreenshots {
     fun tabletPassageBeside() {
         show("tablet-passage", questions = arrayOf(planet("set" to passage), next))
     }
+
+    private val missions =
+        JsonArray(
+            listOf("practice" to "done", "review" to "todo").map { (kind, status) ->
+                JsonObject(
+                    mapOf(
+                        "done" to JsonPrimitive(if (status == "done") 1 else 0),
+                        "kind" to JsonPrimitive(kind),
+                        "status" to JsonPrimitive(status),
+                        "total" to JsonPrimitive(1),
+                    ),
+                )
+            },
+        )
+
+    private fun showDone(name: String) {
+        val completion: StudyBlockCompletion =
+            com.zoonk.android.feature.session.decodeFixture(
+                "study-block-completion",
+                "missions" to missions,
+                "completedMissions" to JsonArray(listOf(JsonPrimitive("practice"))),
+                "reached" to
+                    JsonObject(
+                        mapOf(
+                            "energy" to JsonPrimitive(64),
+                            "level" to JsonObject(mapOf("color" to JsonPrimitive("yellow"), "level" to JsonPrimitive(3))),
+                        ),
+                    ),
+            )
+        rule.setContent { ZoonkTheme { BlockFinished(completion, review = false, AppContainer.preview(rule.activity), onClose = {}) } }
+        rule.mainClock.advanceTimeBy(10_000)
+        write(name)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneDone() = showDone("phone-block-done")
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tabletDone() = showDone("tablet-block-done")
 
     private fun write(name: String) {
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()

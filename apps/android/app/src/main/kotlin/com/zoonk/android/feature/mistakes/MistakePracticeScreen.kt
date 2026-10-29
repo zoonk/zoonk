@@ -21,6 +21,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.practice.AnswerActions
 import com.zoonk.android.feature.practice.Draft
 import com.zoonk.android.feature.practice.RunAskButton
@@ -37,6 +38,8 @@ import com.zoonk.android.feature.practice.rememberDraft
 import com.zoonk.android.feature.practice.runAccount
 import com.zoonk.android.feature.practice.runReportTarget
 import com.zoonk.android.feature.questions.savedAnswerText
+import com.zoonk.android.feature.session.DayMoment
+import com.zoonk.android.feature.session.missionMomentFacts
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.MomentReadouts
@@ -119,7 +122,7 @@ internal fun PracticeRun(
     BackHandler(onBack = viewModel::leave)
 
     if (ending) {
-        PracticeDone(state, onClose = viewModel::leave)
+        PracticeDone(state, app, onClose = viewModel::leave)
         return
     }
 
@@ -173,6 +176,7 @@ internal fun PracticeRun(
 @Composable
 private fun PracticeDone(
     state: PracticeState,
+    app: AppContainer,
     onClose: () -> Unit,
 ) {
     val end = state.end
@@ -180,18 +184,27 @@ private fun PracticeDone(
     val fixed = state.fixedIds.size
     val comesBack = if (summary != null) summary.correct < summary.total else fixed == 0
 
-    RunFinished(
-        title = stringResource(R.string.practice_done_title),
-        action = stringResource(R.string.navigation_back),
-        saving = end == null,
-        onClose = onClose,
-        detail = if (end != null && comesBack) stringResource(R.string.mistakes_practice_comes_back) else null,
-    ) {
-        MomentReadouts(
-            brainPower = summary?.brainPower ?: 0,
-            score = summary?.let { MomentScore(it.total.toInt(), it.correct.toInt()) },
-            facts = listOfNotNull(fixed.takeIf { it > 0 }?.let { pluralStringResource(R.plurals.mistakes_practice_fixed, it, it) }),
-        )
+    MomentAfterCeremony(app, summary?.ceremony) { buddy ->
+        RunFinished(
+            title = stringResource(R.string.practice_done_title),
+            action = stringResource(R.string.navigation_back),
+            saving = end == null,
+            onClose = onClose,
+            detail = if (end != null && comesBack) stringResource(R.string.mistakes_practice_comes_back) else null,
+        ) {
+            MomentReadouts(
+                brainPower = summary?.brainPower ?: 0,
+                score = summary?.let { MomentScore(it.total.toInt(), it.correct.toInt()) },
+                facts = listOfNotNull(fixed.takeIf { it > 0 }?.let { pluralStringResource(R.plurals.mistakes_practice_fixed, it, it) }),
+            )
+            DayMoment(
+                missions = summary?.missionMoment?.missionMomentFacts(),
+                reached = state.reached,
+                ceremony = summary?.ceremony?.kind,
+                buddy = buddy.look,
+                buddyName = buddy.name,
+            )
+        }
     }
 }
 

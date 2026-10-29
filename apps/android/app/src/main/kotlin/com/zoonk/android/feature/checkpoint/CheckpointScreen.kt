@@ -68,6 +68,8 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
+import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
+import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.player.LessonTitle
@@ -91,6 +93,7 @@ import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.WorkedSteps
 import com.zoonk.android.feature.questions.answerText
+import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -143,7 +146,13 @@ fun CheckpointScreen(
 
     when (val shown = duel) {
         null -> CheckpointRead(blockId, route, viewModel, app, navigator)
-        else -> if (shown.state.showsResult) DuelResult(shown, viewModel, app) else DuelPlay(shown, viewModel, app)
+        else -> {
+            if (shown.state.showsResult) {
+                MomentAfterCeremony(app, shown.state.completion?.ceremony) { buddy -> DuelResult(shown, viewModel, app, buddy) }
+            } else {
+                DuelPlay(shown, viewModel, app)
+            }
+        }
     }
 }
 
@@ -672,6 +681,7 @@ internal fun DuelResult(
     duel: Duel,
     viewModel: CheckpointViewModel,
     app: AppContainer,
+    buddy: MomentBuddy,
 ) {
     val checkpoint = duel.read.checkpoint
     val outcome = duel.outcome()
@@ -742,6 +752,7 @@ internal fun DuelResult(
                                 },
                             ),
                     )
+                    duel.state.completion?.let { DayMoment(it, buddy.look, buddy.name) }
                     if (!wide) ResultDetails(duel, won)
                     if (wide && answers.isNotEmpty()) Review(duel, answers, app)
                 }

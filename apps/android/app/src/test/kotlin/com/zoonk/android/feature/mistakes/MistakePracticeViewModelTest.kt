@@ -14,6 +14,10 @@ import com.zoonk.android.feature.practice.segments
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Drill
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.feature.session.ReachedFacts
+import com.zoonk.api.models.MistakePatternPracticeResultReached
+import com.zoonk.api.models.MistakePatternPracticeResultReachedLevel
+import com.zoonk.api.models.MistakePracticeFeedbackReached
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -92,6 +96,28 @@ class MistakePracticeViewModelTest {
             assertEquals(listOf(FIRST_ANSWER, SECOND_ANSWER).map(UUID::fromString), api.finishes.single().answerIds)
             assertEquals(true, api.finishes.single().ended)
             assertEquals(completion(), viewModel.now.end?.summary)
+        }
+
+    @Test
+    fun theEndKeepsTheLaterLevelAndTheHigherEnergyItsAnswersReached() =
+        runTest(dispatcher) {
+            val yellow = MistakePatternPracticeResultReachedLevel(MistakePatternPracticeResultReachedLevel.Color.YELLOW, 3)
+            val api = FakeMistakesApi(twoMistakes)
+            val reached = mutableListOf(MistakePracticeFeedbackReached(energy = 62, level = yellow), MistakePracticeFeedbackReached(58, null))
+            api.answer = { practiceFeedback().copy(reached = reached.removeAt(0)) }
+            api.finish = { completion().copy(reached = MistakePatternPracticeResultReached(energy = 60, level = null)) }
+            val viewModel = viewModel(api)
+            val read = started(viewModel).read
+
+            viewModel.answer()
+            advanceUntilIdle()
+            viewModel.next(read.questions)
+            viewModel.answer()
+            advanceUntilIdle()
+            viewModel.next(read.questions)
+            advanceUntilIdle()
+
+            assertEquals(ReachedFacts(level = yellow, energy = 62), viewModel.now.reached)
         }
 
     @Test

@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LocalContentColor
@@ -133,9 +135,9 @@ internal fun RunDone(
     saving: Boolean,
     modifier: Modifier = Modifier,
     detail: String? = null,
-    readouts: @Composable () -> Unit,
+    content: @Composable () -> Unit,
 ) {
-    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
+    Box(modifier.fillMaxWidth().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
         Column(
             Modifier.widthIn(max = DONE_WIDTH).fillMaxWidth().padding(horizontal = 16.dp, vertical = 24.dp),
             verticalArrangement = Arrangement.spacedBy(20.dp),
@@ -154,7 +156,7 @@ internal fun RunDone(
                     style = MaterialTheme.typography.bodyLarge,
                 )
             } else {
-                readouts()
+                content()
             }
         }
     }
@@ -169,7 +171,7 @@ internal fun RunFinished(
     saving: Boolean,
     onClose: () -> Unit,
     detail: String? = null,
-    readouts: @Composable () -> Unit,
+    content: @Composable () -> Unit,
 ) {
     TaskScaffold(
         onClose = onClose,
@@ -183,7 +185,7 @@ internal fun RunFinished(
                 }
             }
         },
-    ) { padding -> RunDone(title, saving, Modifier.fillMaxSize().padding(padding), detail, readouts) }
+    ) { padding -> RunDone(title, saving, Modifier.fillMaxSize().padding(padding), detail, content) }
 }
 
 @Composable

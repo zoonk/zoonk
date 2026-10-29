@@ -94,7 +94,7 @@ class CheckpointScreenshots {
                 val duel by viewModel.duel.collectAsStateWithLifecycle()
                 duel?.let {
                     val app = AppContainer.preview(rule.activity)
-                    if (it.state.showsResult) DuelResult(it, viewModel, app) else DuelPlay(it, viewModel, app)
+                    if (it.state.showsResult) DuelResult(it, viewModel, app, ZU) else DuelPlay(it, viewModel, app)
                 }
             }
         }
@@ -245,7 +245,7 @@ class CheckpointScreenshots {
             }
         val viewModel = CheckpointViewModel(read.blockId, CheckpointStore(api, cache) { "UTC" })
         val duel = Duel(read.read(), DuelState.of(read).finished(completion))
-        rule.setContent { ZoonkTheme { DuelResult(duel, viewModel, AppContainer.preview(rule.activity)) } }
+        rule.setContent { ZoonkTheme { DuelResult(duel, viewModel, AppContainer.preview(rule.activity), ZU) } }
         rule.waitForIdle()
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }

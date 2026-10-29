@@ -18,6 +18,7 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.ceremonies.MomentAfterCeremony
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.ActionFlow
 import com.zoonk.android.feature.practice.AnswerActions
@@ -40,6 +41,7 @@ import com.zoonk.android.feature.practice.runReportTarget
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.feature.session.toDayStep
@@ -109,7 +111,7 @@ fun QuestionBlock(
                 when {
                     phase !is RunPhase.Finished -> Runner(read, shown, viewModel, app, navigator, close, examTomorrow)
                     finished != null -> finished(phase.completion)
-                    else -> BlockFinished(phase.completion, read.detail.isReview, close)
+                    else -> BlockFinished(phase.completion, read.detail.isReview, app, close)
                 }
             }
         }
@@ -139,17 +141,25 @@ private fun blockKey(
 
 /** The block's result in place of its questions; [completion] null while it saves. */
 @Composable
-private fun BlockFinished(
+internal fun BlockFinished(
     completion: StudyBlockCompletion?,
     review: Boolean,
+    app: AppContainer,
     onClose: () -> Unit,
 ) {
-    RunFinished(
-        title = stringResource(if (review) R.string.practice_done_review else R.string.practice_done_title),
-        action = stringResource(R.string.practice_continue),
-        saving = completion == null,
-        onClose = onClose,
-    ) { completion?.let { MomentReadouts(it.ownBrainPower, score = MomentScore(it.total.toInt(), it.correct.toInt())) } }
+    MomentAfterCeremony(app, completion?.ceremony) { buddy ->
+        RunFinished(
+            title = stringResource(if (review) R.string.practice_done_review else R.string.practice_done_title),
+            action = stringResource(R.string.practice_continue),
+            saving = completion == null,
+            onClose = onClose,
+        ) {
+            completion?.let {
+                MomentReadouts(it.ownBrainPower, score = MomentScore(it.total.toInt(), it.correct.toInt()))
+                DayMoment(it, buddy.look, buddy.name)
+            }
+        }
+    }
 }
 
 private val StudyBlockDetail.isReview get() = block.kind == StudyBlock.Kind.REVIEW
@@ -171,7 +181,7 @@ internal fun Runner(
     val draft = saved.answerFor(run, question)
 
     if (run.phase == RunPhase.Finishing) {
-        BlockFinished(null, detail.isReview, onClose)
+        BlockFinished(null, detail.isReview, app, onClose)
         return
     }
 

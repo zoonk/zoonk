@@ -7,6 +7,7 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
@@ -15,7 +16,9 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.ceremonies.MomentBuddy
 import com.zoonk.android.feature.practice.studyFeedback
+import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Checkpoint
 import com.zoonk.api.models.StudyAnswerInput
@@ -29,6 +32,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.UUID
+
+internal val ZU = MomentBuddy(BuddyLook(), "Zu")
 
 @RunWith(AndroidJUnit4::class)
 class CheckpointFlowTest {
@@ -70,10 +75,10 @@ class CheckpointFlowTest {
             )
         val duel = Duel(read.read(), DuelState.of(read).finished(wonCompletion()))
 
-        rule.setContent { ZoonkTheme { DuelResult(duel, viewModel, AppContainer.preview(rule.activity)) } }
+        rule.setContent { ZoonkTheme { DuelResult(duel, viewModel, AppContainer.preview(rule.activity), ZU) } }
 
         rule.onNodeWithText("You beat the Trickster!").assertIsDisplayed()
-        rule.onNodeWithText("+30").assertIsDisplayed()
+        rule.onNodeWithText("+30").performScrollTo().assertIsDisplayed()
     }
 
     @Test
