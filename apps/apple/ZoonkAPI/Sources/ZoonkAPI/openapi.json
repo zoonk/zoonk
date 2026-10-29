@@ -660,9 +660,17 @@
     },
     "/catalog/lessons/{lessonId}": {
       "get": {
-        "description": "A Library lesson's public page: what it teaches and its first screen, the same for everyone. A first question lists its options without the answer; the lesson's screens load in the player.",
+        "description": "A Library lesson's public page as a published course places it: what it teaches and its first screen, the same for everyone. A first question lists its options without the answer; the lesson's screens load in the player.",
         "operationId": "getCatalogLesson",
-        "security": [],
+        "security": [
+          {},
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
         "summary": "Get a lesson's public page",
         "tags": [
           "Library lessons"
@@ -679,6 +687,18 @@
             },
             "required": true,
             "description": "Lesson ID"
+          },
+          {
+            "in": "query",
+            "name": "courseId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Course the lesson is read in; a lesson its outline doesn't hold, or a course that isn't published, is not found"
+            },
+            "required": true,
+            "description": "Course the lesson is read in; a lesson its outline doesn't hold, or a course that isn't published, is not found"
           }
         ],
         "responses": {

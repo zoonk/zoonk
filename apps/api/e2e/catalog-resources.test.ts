@@ -359,8 +359,9 @@ test.describe("Catalog resource API", () => {
   });
 
   test("shows visitors a lesson's public page and each page's lesson to try, never the answers", async () => {
-    const [{ chapters, course, lessons }, owner] = await Promise.all([
+    const [{ chapters, course, lessons }, unpublished, owner] = await Promise.all([
       catalogCourseFixture({ lessonCounts: [1, 1] }),
+      catalogCourseFixture({ isPublished: false, lessonCounts: [1] }),
       userFixture(),
     ]);
 
@@ -400,7 +401,7 @@ test.describe("Catalog resource API", () => {
     const [courseResponse, lessonResponse, firstChapter, secondChapter, textLesson, responses] =
       await Promise.all([
         apiContext.get(`/v1/courses/${course.id}`),
-        apiContext.get(`/v1/catalog/lessons/${guessed!.id}`),
+        apiContext.get(`/v1/catalog/lessons/${guessed!.id}?courseId=${course.id}`),
         apiContext
           .get(`/v1/chapters/${chapters[0]!.id}`)
           .then((response) => readBody({ response, schema: chapterResourceSchema })),
@@ -408,11 +409,16 @@ test.describe("Catalog resource API", () => {
           .get(`/v1/chapters/${chapters[1]!.id}`)
           .then((response) => readBody({ response, schema: chapterResourceSchema })),
         apiContext
-          .get(`/v1/catalog/lessons/${told!.id}`)
+          .get(`/v1/catalog/lessons/${told!.id}?courseId=${course.id}`)
           .then((response) => readBody({ response, schema: catalogLessonSchema })),
         getAll({
           apiContext,
-          paths: [`/v1/catalog/lessons/${privateLesson.id}`, `/v1/catalog/lessons/${randomUUID()}`],
+          paths: [
+            `/v1/catalog/lessons/${privateLesson.id}?courseId=${course.id}`,
+            `/v1/catalog/lessons/${randomUUID()}?courseId=${course.id}`,
+            `/v1/catalog/lessons/${guessed!.id}?courseId=${unpublished.course.id}`,
+            `/v1/catalog/lessons/${unpublished.lessons[0]![0]!.id}?courseId=${unpublished.course.id}`,
+          ],
         }),
       ]);
 
@@ -461,7 +467,7 @@ test.describe("Catalog resource API", () => {
     expect(courseResponse.status()).toBe(200);
     expect(lessonResponse.status()).toBe(200);
     expect(rawCourse + rawLesson).not.toMatch(/isCorrect|cloud of chances/u);
-    expect(responses.map((response) => response.status())).toStrictEqual([404, 404]);
+    expect(responses.map((response) => response.status())).toStrictEqual([404, 404, 404, 404]);
 
     await apiContext.dispose();
   });

@@ -40,6 +40,7 @@
     "./catalog/course-exam-days-contract": "./src/catalog/course-exam-days-contract.ts",
     "./catalog/course-plan-example": "./src/catalog/course-plan-example.ts",
     "./catalog/course-plan-example-contract": "./src/catalog/course-plan-example-contract.ts",
+    "./catalog/lesson": "./src/catalog/lesson.ts",
     "./catalog/next-lesson": "./src/catalog/next-lesson.ts",
     "./catalog/progress": "./src/catalog/progress.ts",
     "./catalog/search": "./src/catalog/search-catalog.ts",

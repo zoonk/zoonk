@@ -1,4 +1,5 @@
 import {
+  catalogLessonQuerySchema,
   catalogLessonSchema,
   catalogSearchQuerySchema,
   catalogSearchResponseSchema,
@@ -25,9 +26,9 @@ export const catalogResourcePaths = {
   "/catalog/lessons/{lessonId}": {
     get: {
       description:
-        "A Library lesson's public page: what it teaches and its first screen, the same for everyone. A first question lists its options without the answer; the lesson's screens load in the player.",
+        "A Library lesson's public page as a published course places it: what it teaches and its first screen, the same for everyone. A first question lists its options without the answer; the lesson's screens load in the player.",
       operationId: "getCatalogLesson",
-      requestParams: { path: lessonPathParamsSchema },
+      requestParams: { path: lessonPathParamsSchema, query: catalogLessonQuerySchema },
       responses: {
         "200": {
           content: { "application/json": { schema: catalogLessonSchema } },
@@ -35,7 +36,7 @@ export const catalogResourcePaths = {
         },
         ...resourceNotFoundResponses,
       },
-      security: PUBLIC_SECURITY,
+      security: OPTIONAL_AUTHENTICATION_SECURITY,
       summary: "Get a lesson's public page",
       tags: ["Library lessons"],
     },

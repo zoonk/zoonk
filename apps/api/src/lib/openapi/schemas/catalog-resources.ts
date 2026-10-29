@@ -44,6 +44,17 @@ export const chapterCourseContextQuerySchema = z
   })
   .meta({ id: "ChapterCourseContextQuery" });
 
+export const catalogLessonQuerySchema = z
+  .object({
+    courseId: z
+      .uuid()
+      .meta({
+        description:
+          "Course the lesson is read in; a lesson its outline doesn't hold, or a course that isn't published, is not found",
+      }),
+  })
+  .meta({ id: "CatalogLessonQuery" });
+
 export const organizationSummarySchema = z
   .object({
     id: z.uuid().meta({ description: "Organization ID" }),
