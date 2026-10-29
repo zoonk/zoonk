@@ -6887,12 +6887,12 @@ msgstr "Réponses"
 #: src/mock/mock-sheet-sections.tsx
 msgctxt "pP1R8y"
 msgid "Sections"
-msgstr "Sections"
+msgstr "Parties"
 
 #: src/mock/mock-break.tsx
 msgctxt "Z3Nz3l"
 msgid "Start the next section"
-msgstr "Commencer la section suivante"
+msgstr "Commencer la partie suivante"
 
 #: src/mock/mock-break.tsx
 msgctxt "gTq4jF"
@@ -6907,7 +6907,7 @@ msgstr "Temps de pause restant"
 #: src/mock/mock-break.tsx
 msgctxt "nyrCLe"
 msgid "The next section starts on its own when the break ends."
-msgstr "La section suivante commence automatiquement à la fin de la pause."
+msgstr "La partie suivante commence automatiquement à la fin de la pause."
 
 #: src/mock/mock-break.tsx
 msgctxt "zMR5Za"
@@ -6917,7 +6917,7 @@ msgstr "À suivre : {name}"
 #: src/mock/mock-break.tsx
 msgctxt "gVB2Pv"
 msgid "Next section"
-msgstr "Section suivante"
+msgstr "Partie suivante"
 
 #: src/mock/mock-chooser-last-mock.tsx
 msgctxt "fdQ7Q-"
@@ -7738,7 +7738,7 @@ msgstr "{count, plural, one {Voir la question} other {Voir les # questions}}"
 #: src/mock/mock-runner-view.tsx
 msgctxt "rD-WPb"
 msgid "Questions answered in this section"
-msgstr "Questions auxquelles tu as répondu dans cette section"
+msgstr "Questions auxquelles tu as répondu dans cette partie"
 
 #: src/mock/mock-runner-view.tsx
 msgctxt "sK0sq-"
@@ -7760,7 +7760,7 @@ msgstr "Rendre l’examen blanc"
 #: src/mock/mock-speaking.tsx
 msgctxt "z1R1nT"
 msgid "Hand in this section"
-msgstr "Rendre cette section"
+msgstr "Rendre cette partie"
 
 #: src/mock/mock-runner-view.tsx
 #: src/mock/mock-screen.tsx
@@ -7781,7 +7781,7 @@ msgstr "Tes réponses ont été enregistrées jusqu’ici."
 #: src/mock/mock-sheet-sections.tsx
 msgctxt "4osCkq"
 msgid "Section {number, number}"
-msgstr "Section {number, number}"
+msgstr "Partie {number, number}"
 
 #: src/mock/mock-size-note.tsx
 #: src/syllabus/syllabus-notes.tsx
@@ -7843,7 +7843,7 @@ msgstr "Fais les tâches dans l’ordre. Chacune se déroule pendant un appel, p
 #: src/mock/mock-speaking.tsx
 msgctxt "fSmt4A"
 msgid "Every task is done. Hand in this section to go on."
-msgstr "Toutes les tâches sont terminées. Rends cette section pour continuer."
+msgstr "Toutes les tâches sont terminées. Rends cette partie pour continuer."
 
 #: src/mock/mock-speaking.tsx
 msgctxt "f8rK0A"
