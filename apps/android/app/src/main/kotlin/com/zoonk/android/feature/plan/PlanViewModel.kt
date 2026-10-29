@@ -33,7 +33,7 @@ import java.util.UUID
 enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
 
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
-enum class PlanPart { Date, Schedule, ExamChoices, Bases, Activities, Writing, Steering, Tools, FullCourse, Focus }
+enum class PlanPart { Date, Schedule, ExamChoices, Bases, Activities, Writing, Steering, Tools, FullCourse, Focus, Suggestion }
 
 /** The editor's latest applied change, which it shows with Undo. */
 data class EditorChange(
@@ -57,6 +57,7 @@ class PlanViewModel(
     private val timeToCoverState = MutableStateFlow<TimeToCoverState>(TimeToCoverState.Idle)
     private var search: TimeToCoverSearch? = null
     private val previewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
+    private val slotPreviewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
 
     /** Counts the editor's openings, so a change saved in one doesn't show its answer in the next. */
     private var openings = 0
@@ -91,6 +92,9 @@ class PlanViewModel(
 
     /** Read it with [of]: it's the operations and plan it was asked of. */
     val preview: StateFlow<PlanPreviewState> = previewState.asStateFlow()
+
+    /** The suggestion slot's own, as main's: Study everything's preview never replaces what the slot shows. */
+    val slotPreview: StateFlow<PlanPreviewState> = slotPreviewState.asStateFlow()
 
     fun setStatus(status: GoalUpdateInput.Status) {
         if (saving.value) return
@@ -258,18 +262,29 @@ class PlanViewModel(
     fun requestPreview(
         plan: Plan,
         operations: List<PlanOp>,
+    ) = ask(previewState, plan, operations)
+
+    fun requestSlotPreview(
+        plan: Plan,
+        operations: List<PlanOp>,
+    ) = ask(slotPreviewState, plan, operations)
+
+    fun clearSlotPreview() {
+        slotPreviewState.value = PlanPreviewState.Idle
+    }
+
+    private fun ask(
+        state: MutableStateFlow<PlanPreviewState>,
+        plan: Plan,
+        operations: List<PlanOp>,
     ) {
         val request = PlanPreviewState.Loading(operations, plan)
-        previewState.value = request
+        state.value = request
         viewModelScope.launch {
             val result = store.preview(goalId, operations)
             if (result is MutationResult.Obsolete) return@launch
-            previewState.update { it.resolve(request, (result as? MutationResult.Done)?.value) }
+            state.update { it.resolve(request, (result as? MutationResult.Done)?.value) }
         }
-    }
-
-    fun clearPreview() {
-        previewState.value = PlanPreviewState.Idle
     }
 
     /** The editor opens without the change it showed last time, as main's does. */

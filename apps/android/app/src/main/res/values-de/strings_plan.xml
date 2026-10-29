@@ -322,9 +322,12 @@
   "plan_more_explanation": "42c5a12710bbaea8a18f9f38c0654fd6e34febee591eefa0fa5ac76a3413efc3",
   "plan_more_lessons": "8bcf0b9d368244fe25241f347139d6634ac9c25b13ad6ede56c320aa0bb1c9cc",
   "plan_more_lessons_challenge_on": "1c4d456a4bdeae2e6e5141540ee01875d948c4d15d926861a248d69b9c275500",
+  "plan_more_lessons_fit": "326f07fea5761f6f28233dbfe414f25a774ecd5a7e0c4f6294bfae76684f75c4",
   "plan_more_lessons_on_the_way": "948553f27fa6d9cf74edb00df2f27cd21ece2eebb4aa699ef9afae6c78808501",
   "plan_more_practice": "34ca28ef524f2c83d3749fa40f1b0a8e99725521757c55682005c3b1ed9947d9",
+  "plan_most_asked_first_until_exam": "d19328c45462ae2eb3c703505f349441028dbcf3422d06313348fceac5751b59",
   "plan_move_date": "4c1c8127f35fd4ed84d3a738e63338af9cdf44a6fec77e89ecef895271638455",
+  "plan_move_date_covers_whats_left": "ee7df1a06dd09a389540ad12c1543b8fde4ac468df0d5eafd2f57319672fa968",
   "plan_move_date_to": "893b8a344fefcd113a367d93c0bbcba300c49f4ec35d9248361f2adc25518eb1",
   "plan_named_month_note": "ba1edf4b0be220112a678c14a2a2e3bf99925e146d8fdb667c08e853d48c7105",
   "plan_next_on_path": "8378ba2f72cc63f0f08f21e02bf616b5c4c67a8b2bea3d673904a3c31f1219f0",
@@ -341,6 +344,7 @@
   "plan_nothing_planned": "6d6580174fd99c769e79695fe6095c5e169181f412eb69c1897fd9b9162aba71",
   "plan_nothing_planned_until_resume": "addd1fe523be39bda28bd83949fc81fa1cf0a4f1a129380d4cb86515efad8aa8",
   "plan_options": "20ba5d8e946906cb0697a069be299a60fe73bb4768c5c7d59cf2738c1a2ec168",
+  "plan_other_options": "ab4da7e7547430f8f3e4a803ed1f311860697ed923417fdacd58b8aa10f030b7",
   "plan_other_time": "e253c68f5685ef829374c3c5f245fb027abcf25a008746794e169f68d0b4e687",
   "plan_pace": "c3efd7e3bdd4539222f91923c9b7d396f7aaf936a4680cb9c5bf5089736c6628",
   "plan_pace_challenges_left": "90b01f4c5e434813984fb7e1ecf201671d44bd01eaab416f78339393e3cb6212",
@@ -368,7 +372,9 @@
   "plan_pace_win_challenge": "026ff9f52c21ebd6cf7e4251cd58109b1e28de4fda99459260e3a3615a89a7f9",
   "plan_pace_win_challenges": "fe21a2c0ca124d833eb69cd840b29acf6d566375155b1c66e9fd09eeb2af28cd",
   "plan_past_date_exam_sentence": "8403ea3e03fe5ee830d44092ca29d1ecb8199bb7fb3a5ef8955d05d09c925d9c",
+  "plan_past_date_exam_title": "fafed1f7b4dd5902476ba0aad793b98dc3e98293e988cec7cfca28fb5517cffd",
   "plan_past_date_goal_sentence": "655143ade550c7399c1f76302525f1f760bd2afdede802becab6b2b7348172f6",
+  "plan_past_date_goal_title": "713255afc28398b33c12a87b5a4c086de2d75beba7750f052861681a50953d6a",
   "plan_pause_goal": "ca6760c7890b9fb7f502138e0dc182709a5a3ee37d291202d2f3ce8c11bd14fa",
   "plan_phase_after_exam": "3e4c74267eb90dd1ac6dce22e1102442b3c1fedf652fc4f2e2762104a6c27b63",
   "plan_phase_challenge": "ff0f4ffd45a49e23c00d2599dec52cd9eb5859d8c9721dae7914cc29a7533e61",
@@ -385,6 +391,7 @@
   "plan_prerequisites": "57792c042355caf1359814a80b3f924c7b4da1fa00eacb3aaf98073a2cb20723",
   "plan_prerequisites_exam": "c8c98a73e841660db079d3699c2b889e5b0f8ab57eb2e3157c5e27e5bd517112",
   "plan_prerequisites_goal": "102a8e52a11bf5faf7f6b1ef72373f9510011ba9550aa59052141e9f0cdcb8e7",
+  "plan_preview": "116de3f21290f77a84e9f4f916698bda17104b594ce383bc9f343709b4b7027c",
   "plan_progress": "59f20748503668c0559c80f2424095abf252107d959ad625b54f3ec7c056ea14",
   "plan_recommend_deep": "c18ac501d5ea58eb1966c70384b91a6d8340c4b31d56c9f33c174818082bb1f0",
   "plan_recommend_essential_exam": "3891d778a1d74b82fe4b3b723292b3845edf81f1b090dd35ae178dc19d9f9b40",
@@ -444,8 +451,10 @@
   "plan_still_topics_solid": "f58aeb7efe9991c04e98a9c81b8f9905e24ff9199c0ee6cbb4ed6607b19b890f",
   "plan_study_days": "6b1565b71becdee39e72b9a89796eba8f58293a30226e3a0f590b3fbb202c704",
   "plan_study_everything": "c8f7dd035b03271b29422288c39327142968addb934e95693368d0810a08a761",
+  "plan_study_everything_after_exam": "a1c56a151f108b2b1c4af6ac6e4b5fc89f5a8f21ade42c1a9bf915a62e17facf",
   "plan_study_everything_exam_description": "79a4baff09247c9bcbe5cb5dd6084137fed83a660e4890cd7c28ef3a51623544",
   "plan_study_everything_goal_description": "c437c3b1bd10cf4847aec60725234b3df0c8a25654a0d03238aaf9f7e8a83259",
+  "plan_suggestion": "9fd219a6d3c7cbbd45bba00c008502952ff1d0f0c5f57733469bf429604e375a",
   "plan_suggestion_next": "7d9555d318268234f3a19e617bf7d649bc0f2d75900a70cafb7d66091b34bd0b",
   "plan_suggestion_position": "91248ca065f527f60305b9c252f789aed93a4334dce6c1c7bb57051df211b0e6",
   "plan_suggestion_previous": "498a5ab5c80a33a25f68db69b8c086bc551751f88581022ffdc325667fe52776",
@@ -462,6 +471,7 @@
   "plan_time_a_day": "02c2db4e9f4c4acf1d31fdca0683f4a0ea5d86c2733afe54167f928bd8f89d32",
   "plan_time_a_day_label": "70eafdcf694537cbaefcb78837dbe854db96bb982b660fca9d2f6a932abf94b2",
   "plan_time_covers_everything_by": "41c55afde77b36c3712a9ee415892c89fae9c84c621a557b94f6bec3cbfb8288",
+  "plan_time_covers_everything_in_depth": "69f2bd1b800eefb6fb9b073fa82bfa68ed6f5ffdff48fbdaa638bf6c24d3bf01",
   "plan_time_on_weekends": "9889e6bb0cc87842edb6d80d715a534406315d983f3039694165b664603ac28d",
   "plan_time_weekends": "65145ce4391afcbf7473ad9139b1def1e97c2c27f918c920bae3038ce21296aa",
   "plan_title": "ee72226d53de3d9dbf47f949706e4ddba7435afb303293719bb7c660976bbc8b",
@@ -499,6 +509,8 @@
   "plan_until_estimate_spoken": "814773286cff976240fb646165c0df02200699a47bbec17fb47888c581be4fc7",
   "plan_up_next": "4035049bbd9630a764c1dcc08376c42316860adad6a175846f225dbc5cd47148",
   "plan_up_next_suffix": "e2831cc86ab189d607c04e8a9770ca2d14ea8a78e868480fb6199e5b9272f642",
+  "plan_updated": "ec58b6273f79d8ded911d7095aa36511656459e73d367cb0f99f42170b72eb15",
+  "plan_updated_sentence": "da5aad118d52b61e1aed2970706ec761c48b5d4ab01f5d9370e3c51739d8115c",
   "plan_use_this_date": "496754ba70e688e624568d56fa796bbe3297c6cd961f5fa3e4558dc50fc80416",
   "plan_wednesdays": "229b05adbfe0216f11052f4d9189235e18fbf4ae60be89a71ddb6d56dabd6c8e",
   "plan_week_day": "43b4e08a0adb3c4c4ed011da6e5991a0b4d29d4d838deb977a4b0942e6332cc1",
@@ -1279,4 +1291,25 @@
     <string name="plan_see_plus">Plus ansehen</string>
     <string name="plan_free_week_over_title">Deine kostenlose Woche zur Prüfungsvorbereitung ist vorbei</string>
     <string name="plan_free_week_over_body">Wiederholen und Fehler korrigieren bleibt kostenlos. Mit Plus bekommst du Zugriff auf neue Lektionen, den Rest deines Plans und Probeprüfungen.</string>
+    <string name="plan_suggestion">Planvorschlag</string>
+    <string name="plan_updated">Plan aktualisiert</string>
+    <string name="plan_updated_sentence">Dein Plan wurde aktualisiert.</string>
+    <string name="plan_preview">Vorschau</string>
+    <string name="plan_other_options">Weitere Optionen</string>
+    <string name="plan_study_everything_after_exam">Alles lernen, auch nach der Prüfung</string>
+    <string name="plan_most_asked_first_until_exam">Bis zur Prüfung kommt zuerst dran, was am häufigsten gefragt wird.</string>
+    <string name="plan_time_covers_everything_in_depth">Mit %1$s pro Tag kannst du alles gründlich lernen</string>
+    <plurals name="plan_more_lessons_fit">
+        <item quantity="one">%1$d weitere Lektion passt in deine verfügbare Zeit</item>
+        <item quantity="other">%1$d weitere Lektionen passen in deine verfügbare Zeit</item>
+    </plurals>
+    <plurals name="plan_past_date_goal_title">
+        <item quantity="one">Dein Termin ist verstrichen und %1$d Lektion ist noch offen</item>
+        <item quantity="other">Dein Termin ist verstrichen und %1$d Lektionen sind noch offen</item>
+    </plurals>
+    <plurals name="plan_past_date_exam_title">
+        <item quantity="one">Vor deiner Prüfung war noch %1$d Lektion offen</item>
+        <item quantity="other">Vor deiner Prüfung waren noch %1$d Lektionen offen</item>
+    </plurals>
+    <string name="plan_move_date_covers_whats_left">Verschiebe deinen Termin, damit deine Zeit für alles reicht, was noch ansteht.</string>
 </resources>

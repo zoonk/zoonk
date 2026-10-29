@@ -197,16 +197,18 @@ internal fun planChange(
 
 internal fun effect(fields: String = ""): String = """{"lessonsAdded":0,"lessonsRemoved":0${if (fields.isEmpty()) "" else ",$fields"}}"""
 
-/** A plan whose time a day doesn't cover everything by its date. */
+/** A plan whose time a day doesn't cover everything by its date; [extra]'s top-level fields add to it. */
 internal fun coveragePlan(
     kind: String = "goal",
     coreFits: Boolean = true,
     timeCovers: Boolean = false,
     fullCourse: Boolean = false,
     areas: String = "[]",
+    extra: String = "",
 ): Plan =
     plan(
         """
+        ${if (extra.isEmpty()) "" else "$extra,"}
         "areas":$areas,
         "feasibility":{"coreFits":$coreFits,"coveredShare":0.6,"deadline":"2027-01-31","deepensMostAsked":false,"fits":false,
          "measure":"$kind","timeCovers":$timeCovers},

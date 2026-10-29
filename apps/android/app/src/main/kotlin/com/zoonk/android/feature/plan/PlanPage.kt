@@ -143,6 +143,7 @@ internal fun PlanPage(
     val sheetAnswers by viewModel.sheetAnswers.collectAsStateWithLifecycle()
     val timeToCover by viewModel.timeToCover.collectAsStateWithLifecycle()
     val preview by viewModel.preview.collectAsStateWithLifecycle()
+    val slotPreview by viewModel.slotPreview.collectAsStateWithLifecycle()
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME) }
     var editingAt by rememberSaveable { mutableStateOf(if (focus == ADJUST_TIME) PlanSection.Time else null) }
     var choosingFocus by rememberSaveable { mutableStateOf(focus == CHOOSE_FOCUS) }
@@ -200,6 +201,12 @@ internal fun PlanPage(
             editing = true
         },
         edits = edits,
+        slot =
+            SlotHost(
+                preview = slotPreview,
+                requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
+                clearPreview = viewModel::clearSlotPreview,
+            ),
     )
 
     if (editing) {
@@ -270,12 +277,24 @@ internal fun PlanContent(
     report: ReportProblem? = null,
     onAdjust: ((PlanSection?) -> Unit)? = null,
     edits: PlanEdits = PlanEdits(),
+    slot: SlotHost = SlotHost(),
 ) {
     val adjust = onAdjust?.let { { it(null) } }
+    val slotState = rememberSlotState()
     val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links, onAdjust = adjust) }
     val suggestion =
         @Composable { layout: SuggestionLayout ->
-            PlanSuggestionSlot(page, edits, links, resume, onSetStatus, onAdjust = { adjust?.invoke() }, layout = layout)
+            PlanSuggestionSlot(
+                page = page,
+                edits = edits,
+                links = links,
+                resume = resume,
+                onSetStatus = onSetStatus,
+                onAdjust = { onAdjust?.invoke(it) },
+                layout = layout,
+                host = slot,
+                state = slotState,
+            )
         }
 
     var pathOpen by rememberSaveable { mutableStateOf(false) }

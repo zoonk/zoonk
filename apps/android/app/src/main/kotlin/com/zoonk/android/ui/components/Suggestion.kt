@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -169,14 +170,24 @@ fun SuggestionAction(
     onClick: () -> Unit,
     enabled: Boolean = true,
     secondary: Boolean = false,
+) = SuggestionAction(onClick, enabled = enabled, secondary = secondary) { Text(text) }
+
+/** [content] is the button's label, say with a spinner while its work runs. */
+@Composable
+fun SuggestionAction(
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    secondary: Boolean = false,
+    content: @Composable RowScope.() -> Unit,
 ) {
     val presentation = LocalPresentation.current
-    val modifier = if (presentation == Presentation.Sheet) Modifier.fillMaxWidth() else Modifier
+    val width = if (presentation == Presentation.Sheet) Modifier.fillMaxWidth() else Modifier
 
     if (secondary || presentation == Presentation.Line) {
-        FilledTonalButton(onClick = onClick, modifier = modifier, enabled = enabled) { Text(text) }
+        FilledTonalButton(onClick = onClick, modifier = modifier.then(width), enabled = enabled, content = content)
     } else {
-        Button(onClick = onClick, modifier = modifier, enabled = enabled) { Text(text) }
+        Button(onClick = onClick, modifier = modifier.then(width), enabled = enabled, content = content)
     }
 }
 

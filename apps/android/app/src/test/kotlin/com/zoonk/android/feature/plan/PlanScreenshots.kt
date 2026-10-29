@@ -28,6 +28,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlanBasesAdvice
@@ -243,6 +244,126 @@ class PlanScreenshots {
     fun coverageAtTwiceTheFontSize() {
         RuntimeEnvironment.setFontScale(2f)
         captureCoverage("phone-font200")
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun slot() = captureSlot("phone")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
+    fun slotDarkMoreContrast() = captureSlot("phone-dark-more-contrast", dark = true, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h2600dp-xhdpi")
+    fun slotAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureSlot("phone-font200")
+    }
+
+    /** Each item as a line, then as the panel it is beside the page, which is also what its sheet shows. */
+    private fun captureSlot(
+        suffix: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        val learn = learnerSummary()
+        val exam = learnerSummary(kind = "exam", title = "ENEM")
+        val goalPlan = coveragePlan(areas = "[${area("Mathematics")},${area("Natural sciences")}]")
+        val fitPlan =
+            plan(
+                """"fitOffer":{"canApply":true,"fits":false,"operations":[{"kind":"fitLessons"}],"effect":{"lessonsAdded":6,""" +
+                    """"lessonsRemoved":0,"topicsAdded":[{"area":"Web apps","topics":["Flask","Django","FastAPI"]}]}}""",
+            )
+        val pastDate = plan(""""status":{"kind":"pastDate","lessons":4}""")
+        val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75))
+        val moved = listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))
+        val change = planChange(operations = """[{"kind":"setDailyMinutes","minutes":75}]""", effect = effect(""""lessonsAdded":14"""))
+
+        fun ready(
+            operations: List<PlanOp>,
+            plan: com.zoonk.api.models.Plan,
+        ) = PlanPreviewState.Loading(operations, plan).let {
+            it.resolve(
+                it,
+                PlanChangePreview(
+                    effect =
+                        ApiJson.decodeFromString(
+                            effect(""""lessonsAdded":14,"endDateBefore":"2027-01-31","endDateAfter":"2027-04-18""""),
+                        ),
+                    feasibility = null,
+                    ready = true,
+                    unchanged = false,
+                ),
+            )
+        }
+
+        class Shot(
+            val plan: com.zoonk.api.models.Plan,
+            val summary: com.zoonk.api.models.LearnerSummary = learn,
+            val edits: PlanEdits = PlanEdits(),
+            val host: SlotHost = SlotHost(),
+            val state: () -> SlotState = { SlotState() },
+        )
+        val shots =
+            mapOf(
+                "plan-slot-coverage-ask" to Shot(goalPlan),
+                "plan-slot-coverage-found" to Shot(goalPlan, edits = PlanEdits(timeToCover = found)),
+                "plan-slot-coverage-preview" to
+                    Shot(
+                        goalPlan,
+                        edits = PlanEdits(timeToCover = found),
+                        host = SlotHost(preview = ready(listOf(PlanOp.DailyMinutes(75)), goalPlan)),
+                    ),
+                "plan-slot-coverage-checking-date" to
+                    Shot(
+                        goalPlan,
+                        edits = PlanEdits(timeToCover = TimeToCoverState.Pending(timeToCoverRevision(goalPlan))),
+                        state = { SlotState(intent = CoverageIntent.Date) },
+                    ),
+                "plan-slot-coverage-applied" to
+                    Shot(goalPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
+                        SlotState().apply { result = SlotResult(SlotItem.Coverage, change) }
+                    }),
+                "plan-slot-fit" to Shot(fitPlan),
+                "plan-slot-past-date" to Shot(pastDate),
+                "plan-slot-past-date-exam" to Shot(pastDate, summary = exam),
+                "plan-slot-past-date-preview" to Shot(pastDate, host = SlotHost(preview = ready(moved, pastDate))),
+                "plan-slot-past-date-no-date" to Shot(pastDate, state = { SlotState().apply { dateSearch = DateSearch.NoDate } }),
+            )
+        var shown by mutableStateOf(shots.keys.first())
+        compose.setContent {
+            val navigator = rememberAppNavigator()
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
+                Surface {
+                    val shot = shots.getValue(shown)
+                    val page = PlanPageState(shot.summary.goals.first(), shot.plan, shot.summary)
+                    androidx.compose.runtime.key(shown) {
+                        val state = androidx.compose.runtime.remember { shot.state() }
+                        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                            SuggestionLayout.entries.forEach { layout ->
+                                PlanSuggestionSlot(
+                                    page,
+                                    shot.edits,
+                                    PlanLinks(navigator, page),
+                                    Resume.Plain,
+                                    {},
+                                    onAdjust = {},
+                                    layout = layout,
+                                    host = shot.host,
+                                    state = state,
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        shots.keys.forEach { name ->
+            shown = name
+            compose.waitForIdle()
+            write("$name-$suffix", compose.onRoot().captureToImage().asAndroidBitmap())
+        }
     }
 
     /** The coverage block and the sheets it opens; sheets are drawn inline, as Robolectric copies only the activity's window. */

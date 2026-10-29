@@ -775,4 +775,25 @@
     <string name="plan_see_plus">See Plus</string>
     <string name="plan_free_week_over_title">Your free week of exam prep is over</string>
     <string name="plan_free_week_over_body">Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.</string>
+    <string name="plan_suggestion">Plan suggestion</string>
+    <string name="plan_updated">Plan updated</string>
+    <string name="plan_updated_sentence">Your plan is updated.</string>
+    <string name="plan_preview">Preview</string>
+    <string name="plan_other_options">Other options</string>
+    <string name="plan_study_everything_after_exam">Study everything, even after the exam</string>
+    <string name="plan_most_asked_first_until_exam">Until the exam, what comes up most comes first.</string>
+    <string name="plan_time_covers_everything_in_depth">%1$s a day covers everything in depth</string>
+    <plurals name="plan_more_lessons_fit">
+        <item quantity="one">%1$d more lesson fits in your time</item>
+        <item quantity="other">%1$d more lessons fit in your time</item>
+    </plurals>
+    <plurals name="plan_past_date_goal_title">
+        <item quantity="one">Your date came with %1$d lesson left</item>
+        <item quantity="other">Your date came with %1$d lessons left</item>
+    </plurals>
+    <plurals name="plan_past_date_exam_title">
+        <item quantity="one">%1$d lesson was left before your exam</item>
+        <item quantity="other">%1$d lessons were left before your exam</item>
+    </plurals>
+    <string name="plan_move_date_covers_whats_left">Move your date so your time covers what\'s left.</string>
 </resources>

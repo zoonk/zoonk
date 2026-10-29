@@ -92,7 +92,7 @@ internal fun goalDateMove(
 /**
  * Main's `OfferPreview`, in a suggestion: what a previewed change would do, and Apply, which is never
  * offered without the diff it makes. [goalDate] adds the goal's date to the diff for a change that
- * moves it.
+ * moves it; [pending] while Apply saves.
  */
 @Composable
 internal fun PlanPreviewResult(
@@ -101,6 +101,7 @@ internal fun PlanPreviewResult(
     onRetry: () -> Unit,
     onDismiss: () -> Unit,
     goalDate: GoalDateMove? = null,
+    pending: Boolean = false,
 ) {
     val notNow = stringResource(R.string.plan_not_now)
 
@@ -108,12 +109,11 @@ internal fun PlanPreviewResult(
         PlanPreviewState.Idle -> {}
 
         is PlanPreviewState.Loading -> {
-            PreviewStatus(stringResource(R.string.plan_checking_changes))
-            SuggestionActions { SuggestionAction(notNow, onDismiss, secondary = true) }
+            CheckingChange(onDismiss)
         }
 
         is PlanPreviewState.Failed -> {
-            PreviewStatus(stringResource(R.string.plan_couldnt_check_changes))
+            StatusDescription(stringResource(R.string.plan_couldnt_check_changes))
             SuggestionActions {
                 SuggestionAction(stringResource(R.string.plan_try_again), onRetry)
                 SuggestionAction(notNow, onDismiss, secondary = true)
@@ -129,14 +129,23 @@ internal fun PlanPreviewResult(
                 if (preview.feasibility?.fits == true) SuggestionDescription(stringResource(R.string.plan_then_covers_everything))
             }
             SuggestionActions {
-                if (!preview.unchanged && preview.effect != null) SuggestionAction(stringResource(R.string.plan_apply), onApply)
-                SuggestionAction(notNow, onDismiss, secondary = true)
+                if (!preview.unchanged && preview.effect != null) {
+                    SuggestionAction(stringResource(R.string.plan_apply), onApply, enabled = !pending)
+                }
+                SuggestionAction(notNow, onDismiss, enabled = !pending, secondary = true)
             }
         }
     }
 }
 
+/** Main's `CheckingChange`. */
 @Composable
-private fun PreviewStatus(text: String) {
+internal fun CheckingChange(onCancel: () -> Unit) {
+    StatusDescription(stringResource(R.string.plan_checking_changes))
+    SuggestionActions { SuggestionAction(stringResource(R.string.plan_not_now), onCancel, secondary = true) }
+}
+
+@Composable
+internal fun StatusDescription(text: String) {
     Box(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) { SuggestionDescription(text) }
 }

@@ -312,6 +312,23 @@ class PlanViewModelTest {
             assertTrue(api.changes.isEmpty())
         }
 
+    @Test
+    fun theSlotsPreviewIsItsOwnSoStudyEverythingNeverReplacesIt() =
+        runTest {
+            val plan = shown()
+
+            viewModel.requestSlotPreview(plan, listOf(PlanOp.DailyMinutes(45)))
+            viewModel.requestPreview(plan, listOf(PlanOp.TargetDate(null)))
+
+            assertEquals(listOf<PlanOp>(PlanOp.DailyMinutes(45)), (viewModel.slotPreview.value as PlanPreviewState.Ready).operations)
+            assertEquals(listOf<PlanOp>(PlanOp.TargetDate(null)), (viewModel.preview.value as PlanPreviewState.Ready).operations)
+
+            viewModel.clearSlotPreview()
+
+            assertEquals(PlanPreviewState.Idle, viewModel.slotPreview.value)
+            assertTrue(viewModel.preview.value is PlanPreviewState.Ready)
+        }
+
     private suspend fun shown(plan: Plan = coveragePlan()): Plan {
         api.shownPlan = plan
         withContext(Dispatchers.Main) { store.plan[goalId].refresh() }

@@ -544,11 +544,15 @@ private fun estimateSentence(
     return "$count ${stringResource(R.string.plan_change_time_lessons_need)}"
 }
 
-/** Main's `useTopicsMovedSentence`: `added = false` leaves out the topics it brings in, for a change whose sentence names them. */
+/**
+ * Main's `useTopicsMovedSentence`: `added = false` leaves out the topics it brings in, for a change
+ * whose sentence names them; [named] caps the names said.
+ */
 @Composable
-private fun topicsMoved(
+internal fun topicsMoved(
     effect: PlanEffect?,
     added: Boolean = true,
+    named: Int = NAMED,
 ): String? {
     val out = effect?.topicsLeftOut.orEmpty().flatMap { it.topics }
     val back = if (added) effect?.topicsAdded.orEmpty().flatMap { it.topics } else emptyList()
@@ -558,7 +562,7 @@ private fun topicsMoved(
                 pluralStringResource(
                     R.plurals.plan_change_topics_no_longer_fit,
                     out.size,
-                    shortList(out, ListKind.Topics),
+                    shortList(out, ListKind.Topics, named),
                 )
             } else {
                 null
@@ -567,7 +571,7 @@ private fun topicsMoved(
                 pluralStringResource(
                     R.plurals.plan_change_topics_now_fit,
                     back.size,
-                    shortList(back, ListKind.Topics),
+                    shortList(back, ListKind.Topics, named),
                 )
             } else {
                 null

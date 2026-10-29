@@ -2,6 +2,7 @@ package com.zoonk.android.feature.plan
 
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlanChangeOperationsInner
+import com.zoonk.api.models.PlanOperationOutput
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
@@ -148,6 +149,9 @@ data class ToolPick(
 
 val PlanChangeOperationsInner.op: PlanOp
     get() = PlanOp.of(ApiJson.encodeToJsonElement(PlanChangeOperationsInner.serializer(), this).jsonObject)
+
+val PlanOperationOutput.op: PlanOp
+    get() = PlanOp.of(ApiJson.encodeToJsonElement(PlanOperationOutput.serializer(), this).jsonObject)
 
 fun PlanOp.Companion.of(json: JsonObject): PlanOp =
     when (json.string("kind")) {

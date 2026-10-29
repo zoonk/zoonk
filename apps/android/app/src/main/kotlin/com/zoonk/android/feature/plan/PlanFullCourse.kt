@@ -70,7 +70,7 @@ internal fun fullCourse(page: PlanPageState): FullCourse? {
 
 /** Names the exam's year beside the finish's, so November 2027 never reads as the exam's month. */
 @Composable
-private fun finishText(
+internal fun finishText(
     course: FullCourse,
     endDate: LocalDate?,
     page: PlanPageState,

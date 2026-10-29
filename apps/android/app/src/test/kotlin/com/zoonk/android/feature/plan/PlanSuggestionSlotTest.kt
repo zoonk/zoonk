@@ -15,9 +15,13 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanChange
+import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanEffect
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -35,6 +39,10 @@ class PlanSuggestionSlotTest {
     private val chosen = mutableListOf<Pair<String, String>>()
     private val undone = mutableListOf<PlanChange>()
     private var changes by mutableStateOf(emptyMap<java.util.UUID, EditorChange>())
+    private var search by mutableStateOf<TimeToCoverState>(TimeToCoverState.Idle)
+    private var preview by mutableStateOf<PlanPreviewState>(PlanPreviewState.Idle)
+    private val applied = mutableListOf<List<PlanOp>>()
+    private val adjusted = mutableListOf<PlanSection?>()
 
     private fun show(
         extra: String = "",
@@ -107,5 +115,145 @@ class PlanSuggestionSlotTest {
 
         assertEquals(listOf("Foreign language" to "Spanish"), chosen)
         assertEquals(CHANGE_ID, undone.single().id.toString())
+    }
+
+    /** A slot whose finds, previews and changes answer at once, as the plan's would. */
+    private fun showSlot(
+        plan: Plan,
+        found: com.zoonk.api.models.PlanTimeToCover = timeToCover(),
+    ) {
+        val summary = learnerSummary()
+        val page = PlanPageState(summary.goals.first(), plan, summary)
+        compose.setContent {
+            navigator = rememberAppNavigator()
+            val edits =
+                PlanEdits(
+                    changes = changes,
+                    undo = { undone += it },
+                    timeToCover = search,
+                    findTimeToCover = { asked, answer ->
+                        search = TimeToCoverState.Answered(timeToCoverRevision(asked), found)
+                        answer(TimeToCoverOutcome.Answered(found))
+                    },
+                    change = { _, operations, answered ->
+                        applied += operations
+                        val change = planChange(operations = """[{"kind":"fitLessons"}]""")
+                        changes = changes + (change.id to EditorChange(change))
+                        answered(PlanChangeResult(change = change, status = PlanChangeResult.Status.APPLIED))
+                    },
+                )
+            val host =
+                SlotHost(
+                    preview = preview,
+                    requestPreview = { preview = ready(it, plan) },
+                    clearPreview = { preview = PlanPreviewState.Idle },
+                )
+            ZoonkTheme {
+                PlanSuggestionSlot(
+                    page,
+                    edits,
+                    PlanLinks(navigator, page),
+                    Resume.Plain,
+                    {},
+                    onAdjust = { adjusted += it },
+                    layout = SuggestionLayout.Panel,
+                    host = host,
+                )
+            }
+        }
+    }
+
+    private fun ready(
+        operations: List<PlanOp>,
+        plan: Plan,
+    ) = PlanPreviewState.Loading(operations, plan).let {
+        it.resolve(
+            it,
+            PlanChangePreview(
+                effect = ApiJson.decodeFromString<PlanEffect>(effect()).copy(lessonsAdded = 14),
+                feasibility = null,
+                ready = true,
+                unchanged = false,
+            ),
+        )
+    }
+
+    @Test
+    fun theCoverageItemFindsTheTimeThenPreviewsAndAppliesIt() {
+        showSlot(coveragePlan(), found = timeToCover(recommended = 45))
+
+        compose.onNodeWithText("Find the time that covers everything").performClick()
+        compose.onNodeWithText("covers everything in depth", substring = true).assertIsDisplayed()
+        compose.onNodeWithText("Apply").performClick()
+
+        assertEquals(listOf(listOf<PlanOp>(PlanOp.DailyMinutes(45))), applied)
+        compose.onNodeWithText("Plan updated").assertIsDisplayed()
+        compose.onNodeWithText("Undo").performClick()
+        assertEquals(CHANGE_ID, undone.single().id.toString())
+    }
+
+    @Test
+    fun aGoalsCoverageMovesItsDateFromOtherOptions() {
+        showSlot(coveragePlan(), found = timeToCover(recommended = 45, fittingDate = "2027-04-18"))
+
+        compose.onNodeWithText("Other options").performClick()
+        compose.onNodeWithText("Move your date to cover everything").performClick()
+        compose.onNodeWithText("Apply").performClick()
+
+        assertEquals(listOf(listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))), applied)
+    }
+
+    @Test
+    fun notNowPutsAnItemOffForThisOpening() {
+        val status = """"status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null}"""
+        showSlot(coveragePlan(extra = status))
+
+        compose.onNodeWithContentDescription("Next").performClick()
+        compose.onNodeWithText("Other options").performClick()
+        compose.onNodeWithText("Not now").performClick()
+
+        compose.onNodeWithText("A little to catch up").assertIsDisplayed()
+        compose.onNodeWithText("1 of 2").assertDoesNotExist()
+    }
+
+    @Test
+    fun theLessonsTheTimeFitsAreAppliedAfterTheirDiff() {
+        showSlot(
+            plan(
+                """"fitOffer":{"canApply":true,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":false,""" +
+                    """"operations":[{"kind":"fitLessons"}]}""",
+            ),
+        )
+
+        compose.onNodeWithText("6 more lessons fit in your time").assertIsDisplayed()
+        compose.onNodeWithText("Apply").performClick()
+
+        assertEquals(listOf(listOf<PlanOp>(PlanOp.FitLessons)), applied)
+        compose.onNodeWithText("Plan updated").assertIsDisplayed()
+    }
+
+    @Test
+    fun aPassedDateFindsTheDateThatCoversWhatsLeftOnlyFromPreview() {
+        showSlot(
+            plan(""""status":{"kind":"pastDate","lessons":4}"""),
+            found = timeToCover(recommended = null, fittingDate = "2027-04-18"),
+        )
+
+        compose.onNodeWithText("Your date came with 4 lessons left").assertIsDisplayed()
+        assertEquals(TimeToCoverState.Idle, search)
+        compose.onNodeWithText("Preview").performClick()
+        compose.onNodeWithText("Apply").performClick()
+
+        assertEquals(listOf(listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))), applied)
+    }
+
+    @Test
+    fun aPassedDateOpensTheDateToAdjust() {
+        showSlot(plan(""""status":{"kind":"pastDate","lessons":4}"""))
+
+        compose.onNodeWithText("Other options").performClick()
+        compose.onNodeWithText("Adjust plan").performClick()
+
+        assertEquals(listOf<PlanSection?>(PlanSection.Date), adjusted)
     }
 }

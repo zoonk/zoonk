@@ -10,11 +10,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -28,11 +29,14 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
+import com.zoonk.android.ui.components.SuggestionContentScope
 import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionOpen
+import com.zoonk.android.ui.components.SuggestionResult
+import com.zoonk.android.ui.components.SuggestionSaveError
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.api.models.ExamChoice
@@ -55,6 +59,20 @@ internal sealed interface SlotItem {
         override val key get() = "choice:${choice.group}"
     }
 
+    data class PastDate(
+        val lessons: Int,
+    ) : SlotItem {
+        override val key get() = "pastDate"
+    }
+
+    data object FitLessons : SlotItem {
+        override val key = "fitLessons"
+    }
+
+    data object Coverage : SlotItem {
+        override val key = "coverage"
+    }
+
     data class Pace(
         val tooTight: Boolean,
         val text: String,
@@ -67,26 +85,156 @@ internal sealed interface SlotItem {
     }
 }
 
-@Composable
-internal fun slotItems(page: PlanPageState): List<SlotItem> {
-    val pace = page.plan.status?.pace
-    val fix = pace?.let { paceFix(it, page.isExam) }
+/** [fix] is the pace's sentence. */
+internal fun slotItems(
+    page: PlanPageState,
+    fix: PaceFix?,
+): List<SlotItem> {
+    val plan = page.plan
+    val pace = plan.status?.pace
+    val pastDate = pace as? Pace.PastDate
+    val open = !plan.access.freeWeekOver && pastDate == null
+    val time =
+        listOfNotNull(
+            SlotItem.FitLessons.takeIf { open && plan.fitOffer != null },
+            SlotItem.Coverage.takeIf { open && planCoverage(plan) != null && !timeEnough(plan) },
+        )
+
     return buildList {
         if (page.isPaused) add(SlotItem.Paused)
-        page.plan.examChoices
+        plan.examChoices
             .filter { it.subject == null }
             .forEach { add(SlotItem.Choice(it)) }
+        pastDate?.let { add(SlotItem.PastDate(it.lessons)) }
         if (pace is Pace.NeedsAdjusting && fix != null) add(SlotItem.Pace(tooTight = true, fix.text))
         if (pace is Pace.Behind && fix != null) add(SlotItem.Pace(tooTight = false, fix.text))
-        if (page.plan.access.freeWeekOver) add(SlotItem.FreeWeekOver)
+        addAll(time)
+        if (plan.access.freeWeekOver) add(SlotItem.FreeWeekOver)
     }
 }
 
-/** What a suggestion the learner answered changed, shown with its Undo for a moment. */
-private class SlotResult(
+/** What a suggestion the learner answered changed, shown with its Undo for a moment; no change when it saved without one. */
+internal class SlotResult(
     val item: SlotItem,
-    val change: PlanChange,
+    val change: PlanChange?,
 )
+
+internal enum class CoverageIntent { Time, Date }
+
+internal enum class DateSearch { Finding, Building, Failed, NoDate }
+
+/**
+ * Main's `PlanSuggestionProvider`, kept above the slot: a resized window swaps its line for its
+ * panel, and both show this one state.
+ */
+@Stable
+internal class SlotState(
+    position: Int = 0,
+    dismissed: List<String> = emptyList(),
+    intent: CoverageIntent = CoverageIntent.Time,
+) {
+    var position by mutableIntStateOf(position)
+
+    /** Keys put off with Not now until the Plan is opened again. */
+    var dismissed by mutableStateOf(dismissed)
+    var result by mutableStateOf<SlotResult?>(null)
+
+    /** The key of the item whose change didn't save. */
+    var failed by mutableStateOf<String?>(null)
+    var intent by mutableStateOf(intent)
+    var dateSearch by mutableStateOf<DateSearch?>(null)
+
+    /** The coverage search the learner waits for; null once they stop. */
+    var asking: CoverageIntent? = null
+
+    /** The date search the learner waits for (0 for none), so one put off or superseded shows nothing. */
+    var waiting = 0
+    var searches = 0
+
+    /** What one item asked, which paging away drops, as main's items keyed by their key do. */
+    fun resetItem() {
+        failed = null
+        intent = CoverageIntent.Time
+        dateSearch = null
+        asking = null
+        waiting = 0
+    }
+
+    companion object {
+        val Saver =
+            listSaver<SlotState, Any>(
+                save = { listOf(it.position, ArrayList(it.dismissed), it.intent.name) },
+                restore = {
+                    SlotState(it[0] as Int, (it[1] as List<*>).filterIsInstance<String>(), CoverageIntent.valueOf(it[2] as String))
+                },
+            )
+    }
+}
+
+@Composable
+internal fun rememberSlotState(): SlotState = rememberSaveable(saver = SlotState.Saver) { SlotState() }
+
+/** What the slot reads beside the plan: its own preview. */
+internal class SlotHost(
+    val preview: PlanPreviewState = PlanPreviewState.Idle,
+    val requestPreview: (List<PlanOp>) -> Unit = {},
+    val clearPreview: () -> Unit = {},
+)
+
+/** What every item reads and does, as main's `usePlanSuggestionSlot`. */
+internal class Slot(
+    val page: PlanPageState,
+    val edits: PlanEdits,
+    val links: PlanLinks,
+    val host: SlotHost,
+    val state: SlotState,
+    val layout: SuggestionLayout,
+) {
+    /** The result shows until it's undone. */
+    val answered: SlotResult?
+        get() = state.result?.takeIf { result -> result.change?.let { edits.changes[it.id]?.undone } != true }
+
+    fun answer(item: SlotItem): SlotResult? = answered?.takeIf { it.item.key == item.key }
+
+    fun move(
+        step: Int,
+        index: Int,
+        count: Int,
+    ) {
+        leave()
+        state.position = (index + step + count) % count
+    }
+
+    fun dismiss(item: SlotItem) {
+        leave()
+        state.dismissed += item.key
+    }
+
+    /** Saves [operations] from [item], whose answer then shows with Undo. */
+    fun apply(
+        item: SlotItem,
+        operations: List<PlanOp>,
+    ) {
+        state.failed = null
+        edits.change(PlanPart.Suggestion, operations) { saved ->
+            when {
+                saved == null -> {
+                    state.failed = item.key
+                }
+
+                saved.status == PlanChangeResult.Status.APPLIED -> {
+                    host.clearPreview()
+                    state.result = SlotResult(item, saved.change)
+                }
+            }
+        }
+    }
+
+    private fun leave() {
+        host.clearPreview()
+        state.resetItem()
+    }
+}
 
 /**
  * Main's suggestion slot: one item at a time with a pager, as a line on narrow pages and a panel
@@ -99,15 +247,20 @@ internal fun PlanSuggestionSlot(
     links: PlanLinks,
     resume: Resume,
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
-    onAdjust: () -> Unit,
+    onAdjust: (PlanSection?) -> Unit,
     layout: SuggestionLayout,
     modifier: Modifier = Modifier,
+    host: SlotHost = SlotHost(),
+    state: SlotState = rememberSlotState(),
 ) {
-    val items = slotItems(page)
-    var position by rememberSaveable { mutableIntStateOf(0) }
-    var result by remember { mutableStateOf<SlotResult?>(null) }
-    val answered = result?.takeIf { edits.changes[it.change.id]?.undone != true }
-    val index = position.coerceIn(0, (items.size - 1).coerceAtLeast(0))
+    val fix =
+        page.plan.status
+            ?.pace
+            ?.let { paceFix(it, page.isExam) }
+    val items = slotItems(page, fix).filter { it.key !in state.dismissed }
+    val slot = Slot(page, edits, links, host, state, layout)
+    val answered = slot.answered
+    val index = state.position.coerceIn(0, (items.size - 1).coerceAtLeast(0))
     val item = answered?.item ?: items.getOrNull(index) ?: return
     val timeout =
         LocalAccessibilityManager.current?.calculateRecommendedTimeoutMillis(RESULT_MILLIS, containsControls = true) ?: RESULT_MILLIS
@@ -115,16 +268,12 @@ internal fun PlanSuggestionSlot(
     LaunchedEffect(answered) {
         if (answered != null) {
             delay(timeout)
-            result = null
+            state.result = null
         }
     }
 
-    fun move(step: Int) {
-        position = (index + step + items.size) % items.size
-    }
-
     val pager = @Composable {
-        if (answered == null && items.size > 1) SlotPager(index, items.size, ::move)
+        if (answered == null && items.size > 1) SlotPager(index, items.size) { slot.move(it, index, items.size) }
     }
 
     Column(modifier.semantics { isTraversalGroup = true }) {
@@ -136,7 +285,7 @@ internal fun PlanSuggestionSlot(
                 }
 
                 is SlotItem.Choice -> {
-                    val change = answered?.change
+                    val change = slot.answer(item)?.change
                     ExamChoiceSuggestion(
                         choice = item.choice,
                         layout = layout,
@@ -145,13 +294,24 @@ internal fun PlanSuggestionSlot(
                         onChoose = { subject ->
                             edits.chooseExamOption(item.choice.group, subject) { answer ->
                                 answer?.change?.takeIf { answer.status == PlanChangeResult.Status.APPLIED }?.let {
-                                    result =
-                                        SlotResult(item, it)
+                                    state.result = SlotResult(item, it)
                                 }
                             }
                         },
                         undo = { change?.takeIf { it.canUndo }?.let { SlotUndo(it, edits) } },
                     )
+                }
+
+                is SlotItem.PastDate -> {
+                    PastDateSuggestion(item, slot, onAdjust)
+                }
+
+                SlotItem.FitLessons -> {
+                    FitLessonsSuggestion(slot)
+                }
+
+                SlotItem.Coverage -> {
+                    CoverageSuggestion(slot)
                 }
 
                 is SlotItem.Pace -> {
@@ -207,6 +367,41 @@ private fun SlotUndo(
     )
 }
 
+/** Main's `PlanChangeSuggestion`: a change to offer, which says what it did, with Undo, once applied. */
+@Composable
+internal fun PlanChangeSuggestion(
+    item: SlotItem,
+    title: String,
+    slot: Slot,
+    mark: SuggestionMark = SuggestionMark.New,
+    content: @Composable SuggestionContentScope.() -> Unit,
+) {
+    val answer = slot.answer(item)
+    val change = answer?.change
+    val result = answer?.let { change?.let { planChangeSentence(it) } ?: stringResource(R.string.plan_updated_sentence) }
+    val undo = @Composable { if (change?.canUndo == true) SlotUndo(change, slot.edits) }
+
+    Suggestion(
+        label = stringResource(R.string.plan_suggestion),
+        summary = result ?: title,
+        layout = slot.layout,
+        mark = if (answer != null) SuggestionMark.Done else mark,
+        answered = answer != null,
+        lineAction = if (answer != null) undo else ({ SuggestionOpen() }),
+    ) {
+        if (result != null) {
+            SuggestionHeader(stringResource(R.string.plan_updated))
+            SuggestionResult(result)
+            SuggestionActions(undo)
+            if (change?.let { slot.edits.changes[it.id]?.undoFailed } == true) SuggestionSaveError()
+            return@Suggestion
+        }
+        SuggestionHeader(title)
+        content()
+        if (slot.state.failed == item.key) SuggestionSaveError()
+    }
+}
+
 @Composable
 private fun PausedSuggestion(
     page: PlanPageState,
@@ -244,7 +439,7 @@ private fun PaceSuggestion(
     item: SlotItem.Pace,
     layout: SuggestionLayout,
     links: PlanLinks,
-    onAdjust: () -> Unit,
+    onAdjust: (PlanSection?) -> Unit,
 ) {
     val title = stringResource(if (item.tooTight) R.string.plan_no_longer_fits else R.string.plan_catch_up)
 
@@ -255,14 +450,19 @@ private fun PaceSuggestion(
         mark = SuggestionMark.Symbol(R.drawable.ic_calendar_clock),
         lineAction =
             if (item.tooTight) {
-                { SuggestionAction(stringResource(R.string.plan_adjust), onClick = onAdjust) }
+                { SuggestionAction(stringResource(R.string.plan_adjust), onClick = { onAdjust(null) }) }
             } else {
                 { SuggestionOpen() }
             },
     ) {
         SuggestionHeader(title)
         if (item.tooTight) {
-            SuggestionActions { SuggestionAction(stringResource(R.string.plan_adjust_plan), onClick = onAdjust) }
+            SuggestionActions {
+                SuggestionAction(stringResource(R.string.plan_adjust_plan), onClick = {
+                    close()
+                    onAdjust(null)
+                })
+            }
         } else {
             SuggestionDescription(item.text)
             SuggestionActions {
