@@ -329,6 +329,7 @@ private struct PasteMaterialRow: View {
       }
       .controlSize(.small)
     }
+    .keepsOffFold()
     .onAppear { isFocused = true }
   }
 
