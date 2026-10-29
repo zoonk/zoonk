@@ -102,8 +102,10 @@ fun GenerationFailureNotice(
     failure: GenerationFailure,
     onRetry: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    title: String? = null,
+    description: String? = null,
 ) {
-    val (icon, title, description) =
+    val (icon, titleRes, descriptionRes) =
         when (failure) {
             GenerationFailure.Connection -> {
                 Triple(R.drawable.ic_wifi_off, R.string.generation_connection_lost, R.string.generation_connection_lost_description)
@@ -122,9 +124,9 @@ fun GenerationFailureNotice(
         Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(stringResource(title), style = MaterialTheme.typography.titleSmall)
+                Text(title ?: stringResource(titleRes), style = MaterialTheme.typography.titleSmall)
                 Text(
-                    stringResource(description),
+                    description ?: stringResource(descriptionRes),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
