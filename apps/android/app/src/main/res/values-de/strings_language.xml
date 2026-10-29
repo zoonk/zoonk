@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "language_pattern_noticed": "cf16386231591382235cc843bd83fc6ce864d5f9849a8722f04fbad074848391",
+  "language_pattern_typos": "940d9d0fd9d278cc04d979a227d87f75bd72d55fad57a874a271e1c39cd7419a",
+  "language_pattern_typos_description": "ab41b188d3c4ac6ca31ee2158d1490d9afe78292bbc744b8b082f0a1ab9dd092",
+  "language_say_again": "3d3a275045e31eb15de523921bfe801c3d7540f8fefb0e096e9f2f2afe1d57b0",
+  "language_skill_listening": "9f74258365d43e9adcb4c18eacc590c5fbf73059f8b0bc122729625227f28919",
+  "language_skill_speaking": "2574958596e22e9ab0f428c044258a9a84ee38a9721b750b32b78eaae38c84b3",
+  "language_skill_words": "3e8d1534bf332d820758cb19d3b3c48561bb6768cd42eaec6cf1312b1a190844",
+  "language_skill_writing": "999f638a1720dcd0e23f6f50bae0cc5ca15f4ba4159039918f572fd60fde48e3",
+  "language_unit_about": "1dfe91c8a0962b02a5ad45661a1bff444d97db699d360160fdf1999221571768",
+  "language_unit_can_already": "db251b15c335d6454f981fcafee375b55c74b60a03142b468d26bdc21d97be27",
+  "language_unit_continue": "8b6515a1860b17c0d4a0c9adcc9f0a3becf82ceb068f4aa01afa36a44844877a",
+  "language_unit_done_share": "e713f6e2f139550b11a2285734c6a20e42685b9c6979e41fdbca19ccaa5f1fe3",
+  "language_unit_eyebrow": "8180e4ea4fdc071780d420ed57db079b11c772572f52b89b409d5521858fbc54",
+  "language_unit_grammar_tips": "99f1b91a80323d3f0bd03912e7c1cbe5404318f1697a5702a5322e4d1f07be10",
+  "language_unit_lessons": "9234bbbb27ce186be4570843d4407669f45db508beef42b0aa1441aa1a07c456",
+  "language_unit_mistakes": "67dd9125c671c4e3588213b9c1504141b108cbeb0e0c923b15d915362859b308",
+  "language_unit_objectives": "07f8aa35b3fa52357115f828ee8a8d1c630feaef4a7f21abd6e0d02f498f112b",
+  "language_unit_practice": "5d4506905028064a212840c114c4931b70e08059f9b290ea2b176d718342e496",
+  "language_unit_progress": "cd8dfb2aa263e0bcbfd6f948aab582ba031d0fff718f4b0cc01fd00d67ddac27",
+  "language_unit_reference": "a22837305da2baa40cccba3f0713b8a41f1de57bb017cac853e09d8fa3153099",
+  "language_unit_start": "6cd4b28e380b65e4522fd18abe8e583d9c1f65bee4012e630f99ecba95ea7a18",
+  "language_unit_summary": "68008dc9b18cbb53612cffd5a1980bdf6bda585c761ab76016bdbee1d0205977",
+  "language_unit_words": "ea66f71f87ee4b481138705ebec714c1e8c5977d49d9c5f8b2bfd4c1bc84adf9",
+  "language_unit_words_more": "809be2911ef3862f4e6da2e92a7c4052a5d5fd397aff40bb44d6f1a1b808887c"
+}
+-->
+<resources>
+    <!-- A unit's place and its levels: "Unit 3 · A1–A2". -->
+    <string name="language_unit_eyebrow">Einheit %1$s · %2$s</string>
+    <plurals name="language_unit_lessons">
+        <item quantity="one">%d Lektion</item>
+        <item quantity="other">%d Lektionen</item>
+    </plurals>
+    <!-- How much of the unit is done, the unit being the subject: "33% done". -->
+    <string name="language_unit_done_share">%1$s erledigt</string>
+    <string name="language_unit_start">Starten</string>
+    <string name="language_unit_continue">Weiter</string>
+    <string name="language_unit_objectives">Am Ende dieser Einheit</string>
+    <!-- Heads a finished unit's list of things the learner is now able to do in the language. -->
+    <string name="language_unit_can_already">Das kann ich schon …</string>
+    <string name="language_unit_progress">Fortschritt</string>
+    <string name="language_unit_practice">Üben</string>
+    <string name="language_unit_mistakes">Deine Fehler</string>
+    <string name="language_unit_reference">Zum Nachschlagen</string>
+    <string name="language_unit_grammar_tips">Grammatik-Tipps</string>
+    <string name="language_unit_words">Wörter in dieser Einheit</string>
+    <!-- A few of the unit's words, then how many more it teaches: "hola · gracias · adiós and 12 more". -->
+    <string name="language_unit_words_more">%1$s und %2$s weitere</string>
+    <string name="language_unit_summary">Zusammenfassung der Einheit</string>
+    <!-- TalkBack's name for the pane beside the unit's lessons. -->
+    <string name="language_unit_about">Über diese Einheit</string>
+    <string name="language_skill_listening">Hören</string>
+    <string name="language_skill_speaking">Sprechen</string>
+    <string name="language_skill_words">Wörter</string>
+    <string name="language_skill_writing">Schreiben</string>
+    <string name="language_pattern_noticed">Wir haben ein Muster erkannt</string>
+    <string name="language_pattern_typos">Nur Tippfehler</string>
+    <string name="language_pattern_typos_description">Deine letzten Fehler waren Flüchtigkeitsfehler und keine Regel, die du lernen musst.</string>
+    <!-- A practice row. %d is how many words are due to be said out loud again, a count, never a word's number: "Say 2 words again" means repeat two words. -->
+    <plurals name="language_say_again">
+        <item quantity="one">Sag %d Wort noch einmal</item>
+        <item quantity="other">Sag %d Wörter noch einmal</item>
+    </plurals>
+</resources>

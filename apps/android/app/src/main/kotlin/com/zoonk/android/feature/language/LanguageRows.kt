@@ -1,0 +1,88 @@
+package com.zoonk.android.feature.language
+
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import com.zoonk.android.R
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatList
+import com.zoonk.android.ui.theme.zoonk
+
+/** Main's `CanDoMark`: a "can do" line's dot, filled once the learner can. Decorative: its line says what. */
+@Composable
+fun CanDoMark(
+    done: Boolean,
+    modifier: Modifier = Modifier,
+) {
+    val fill = MaterialTheme.colorScheme.tertiary
+    val ring = MaterialTheme.colorScheme.onSurface.copy(alpha = RING_ALPHA)
+
+    Canvas(modifier.size(MARK_BOX)) {
+        val radius = DOT.toPx() / 2
+        if (done) {
+            drawCircle(fill, radius)
+        } else {
+            val width = RING.toPx()
+            drawCircle(ring, radius - width / 2, style = Stroke(width))
+        }
+    }
+}
+
+/** Main's `PatternRow`: a pattern noticed in the learner's mistakes, or that they were just typos. */
+@Composable
+fun PatternRow(
+    typos: Boolean,
+    title: String,
+    onOpen: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    ListItem(
+        headlineContent = { Text(stringResource(if (typos) R.string.language_pattern_typos else R.string.language_pattern_noticed)) },
+        modifier = modifier.clickable(onClick = onOpen),
+        supportingContent = { Text(if (typos) stringResource(R.string.language_pattern_typos_description) else title) },
+        leadingContent = {
+            Icon(
+                painterResource(if (typos) R.drawable.ic_keyboard else R.drawable.ic_auto_awesome),
+                contentDescription = null,
+                tint = if (typos) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.zoonk.warning,
+            )
+        },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+    )
+}
+
+/** Main's `PronunciationRow`: the words due to be said again. */
+@Composable
+fun PronunciationRow(
+    count: Int,
+    words: List<String>,
+    onOpen: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    ListItem(
+        headlineContent = { Text(pluralStringResource(R.plurals.language_say_again, count, count)) },
+        modifier = modifier.clickable(onClick = onOpen),
+        supportingContent = { Text(formatList(words, currentLocale()), maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        leadingContent = { Icon(painterResource(R.drawable.ic_mic), contentDescription = null) },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+    )
+}
+
+private val MARK_BOX = 16.dp
+private val DOT = 8.dp
+private val RING = 1.5.dp
+private const val RING_ALPHA = 0.3f

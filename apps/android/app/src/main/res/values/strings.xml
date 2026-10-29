@@ -44,4 +44,20 @@
     <string name="suggestion_save_failed">That didn\'t save. Try again.</string>
     <!-- Under the daily time chips; opens a menu of every other daily study time. -->
     <string name="other_time">Other time…</string>
+    <string name="disclosure_expanded">Expanded</string>
+    <string name="disclosure_collapsed">Collapsed</string>
+    <string name="lessons_title">Lessons</string>
+    <!-- Lessons done of the total: "2 of 6". -->
+    <string name="lessons_done_count">%1$s of %2$s</string>
+    <!-- A lesson's number in its list: "3." -->
+    <string name="lessons_position">%1$s.</string>
+    <!-- TalkBack names each lesson's mark. Done: finished. Up next: the one lesson to do now. Coming up: the lessons after it, for later. The three must read as clearly different states. -->
+    <string name="lessons_done">Done</string>
+    <string name="lessons_up_next">Up next</string>
+    <string name="lessons_coming_up">Coming up</string>
+    <string name="test_out_title">Already know this?</string>
+    <string name="test_out_skip_chapter">Take the test and skip the chapter</string>
+    <string name="test_out_skip_unit">Take the test and skip the unit</string>
+    <string name="not_found_title">We couldn\'t find this page</string>
+    <string name="not_found_description">The link may be old or mistyped.</string>
 </resources>

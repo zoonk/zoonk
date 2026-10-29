@@ -32,8 +32,6 @@
     <string name="speaking_prep">%1$s to prepare</string>
     <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
     <string name="speaking_rated_on">Rated on %1$s.</string>
-    <string name="speaking_expanded">Expanded</string>
-    <string name="speaking_collapsed">Collapsed</string>
     <!-- Today's row for the paper: the exam, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s tasks on a call</string>
     <string name="speaking_mock_ielts">A short speaking test with an examiner. After it, an estimated band for each criterion.</string>

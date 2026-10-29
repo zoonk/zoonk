@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A unit's place and its levels: "Unit 3 · A1–A2". -->
+    <string name="language_unit_eyebrow">Unit %1$s · %2$s</string>
+    <plurals name="language_unit_lessons">
+        <item quantity="one">%d lesson</item>
+        <item quantity="other">%d lessons</item>
+    </plurals>
+    <!-- How much of the unit is done, the unit being the subject: "33% done". -->
+    <string name="language_unit_done_share">%1$s done</string>
+    <string name="language_unit_start">Start</string>
+    <string name="language_unit_continue">Continue</string>
+    <string name="language_unit_objectives">By the end of this unit</string>
+    <!-- Heads a finished unit's list of things the learner is now able to do in the language. -->
+    <string name="language_unit_can_already">I can already…</string>
+    <string name="language_unit_progress">Progress</string>
+    <string name="language_unit_practice">Practice</string>
+    <string name="language_unit_mistakes">Your mistakes</string>
+    <string name="language_unit_reference">For reference</string>
+    <string name="language_unit_grammar_tips">Grammar tips</string>
+    <string name="language_unit_words">Words in this unit</string>
+    <!-- A few of the unit's words, then how many more it teaches: "hola · gracias · adiós and 12 more". -->
+    <string name="language_unit_words_more">%1$s and %2$s more</string>
+    <string name="language_unit_summary">Unit summary</string>
+    <!-- TalkBack's name for the pane beside the unit's lessons. -->
+    <string name="language_unit_about">About this unit</string>
+    <string name="language_skill_listening">Listening</string>
+    <string name="language_skill_speaking">Speaking</string>
+    <string name="language_skill_words">Words</string>
+    <string name="language_skill_writing">Writing</string>
+    <string name="language_pattern_noticed">We noticed a pattern</string>
+    <string name="language_pattern_typos">Just typos</string>
+    <string name="language_pattern_typos_description">Your recent mistakes were slips, not a rule to learn.</string>
+    <!-- A practice row. %d is how many words are due to be said out loud again, a count, never a word's number: "Say 2 words again" means repeat two words. -->
+    <plurals name="language_say_again">
+        <item quantity="one">Say %d word again</item>
+        <item quantity="other">Say %d words again</item>
+    </plurals>
+</resources>

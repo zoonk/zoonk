@@ -93,6 +93,21 @@ fun LoadFailedMessage(
     }
 }
 
+/** Main's `NotFoundMessage`: a link to something that isn't there, or isn't the learner's. */
+@Composable
+fun NotFoundMessage(
+    modifier: Modifier = Modifier,
+    actions: @Composable ColumnScope.() -> Unit = {},
+) {
+    StatusMessage(
+        icon = R.drawable.ic_search_off,
+        title = stringResource(R.string.not_found_title),
+        description = stringResource(R.string.not_found_description),
+        modifier = modifier,
+        actions = actions,
+    )
+}
+
 @Composable
 fun EmptyState(
     @DrawableRes icon: Int,

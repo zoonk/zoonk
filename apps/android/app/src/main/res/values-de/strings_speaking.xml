@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "speaking_collapsed": "dfe93d8e9ca83317c32a685628b4a7ea8ec1be8beead643f94aaf24be01a5eea",
-  "speaking_expanded": "a08cd72c9e23842c0ceaaf7537e3d2f1dcfee32546557233537e5716ec81723c",
   "speaking_eyebrow": "a33ba39537b9e43f1e84c702e53af8f89e9454e3f5557b392418fb53e772cbe5",
   "speaking_facts": "4e32e80d0c7adc7bdaa426581a4dcf70c9e30075dc3db86863cc4cceb54de012",
   "speaking_footer": "07c29bc6e66383a2004d265ca0b2b5f649691df534ee10af98da1cf89da5fd52",
@@ -73,8 +71,6 @@
     <string name="speaking_prep">%1$s zur Vorbereitung</string>
     <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
     <string name="speaking_rated_on">Bewertet nach %1$s.</string>
-    <string name="speaking_expanded">Ausgeklappt</string>
-    <string name="speaking_collapsed">Eingeklappt</string>
     <!-- Today's row for the paper: the exam, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s Aufgaben im Gespräch</string>
     <string name="speaking_mock_ielts">Ein kurzer Sprechtest mit einer prüfenden Person. Danach erhältst du für jedes Kriterium ein geschätztes Band.</string>

@@ -14,6 +14,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
@@ -24,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -47,7 +49,7 @@ import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.GenerationWait
-import com.zoonk.android.ui.components.KindDot
+import com.zoonk.android.ui.components.KindDotLeading
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -139,8 +141,9 @@ internal fun PracticeConversation(
         headlineContent = { Text(stringResource(R.string.conversation_practice)) },
         supportingContent =
             (if (call.paused) stringResource(R.string.conversation_paused_title) else with)?.let { text -> { Text(text) } },
-        leadingContent = { KindDot(LearnKind.Conversation) },
+        leadingContent = { KindDotLeading(LearnKind.Conversation) },
         modifier = modifier.clickable(role = Role.Button) { sheet = true },
+        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
     )
 
     if (sheet) {

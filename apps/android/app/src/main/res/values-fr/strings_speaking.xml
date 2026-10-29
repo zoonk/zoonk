@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "speaking_collapsed": "4f59d0e9eade0a5de650d016913c74158d1196db781a08994ca402ef0b4e2a14",
-  "speaking_expanded": "28ef40bd5e1384ba24bb353207273388e81b04a8a0f76dfcf2b1a32769910f2d",
   "speaking_eyebrow": "ba048e3dd30f2939c2e1edf78b575a3f06b7f7a8753eecaa29de458bb7cc720c",
   "speaking_facts": "51e9dc37c864a2bc95952c0ad882ce6a98f22699c831cc5c1f4a4a80ed32e5ce",
   "speaking_footer": "73334a59d52488c34bdb145e7e3fcd88728e7f82ac6bed74d47bc8aaf801953d",
@@ -74,8 +72,6 @@
     <string name="speaking_prep">%1$s pour préparer</string>
     <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
     <string name="speaking_rated_on">Évalué selon %1$s.</string>
-    <string name="speaking_expanded">Développé</string>
-    <string name="speaking_collapsed">Réduit</string>
     <!-- Today's row for the paper: the exam, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s tâches par appel</string>
     <string name="speaking_mock_ielts">Un court examen oral avec un examinateur. Ensuite, une estimation de la note pour chaque critère.</string>

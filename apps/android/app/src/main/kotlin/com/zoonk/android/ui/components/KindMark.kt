@@ -2,14 +2,17 @@ package com.zoonk.android.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.zoonk
 
@@ -85,3 +88,11 @@ fun KindDot(
         drawCircle(color)
     }
 }
+
+/** A list row's kind dot in the room an icon takes, so its words line up with the rows that have icons. */
+@Composable
+fun KindDotLeading(kind: LearnKind) {
+    Box(Modifier.size(LEADING_SIZE), contentAlignment = Alignment.Center) { KindDot(kind) }
+}
+
+private val LEADING_SIZE = 24.dp

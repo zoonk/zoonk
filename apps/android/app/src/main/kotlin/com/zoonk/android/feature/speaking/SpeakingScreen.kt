@@ -448,7 +448,7 @@ private fun TaskRow(
                 else -> stringResource(R.string.speaking_last_below, level)
             }
         }
-    val state = stringResource(if (open) R.string.speaking_expanded else R.string.speaking_collapsed)
+    val state = stringResource(if (open) R.string.disclosure_expanded else R.string.disclosure_collapsed)
 
     ListItem(
         headlineContent = { Text(inLanguage(task.name, paper.language)) },

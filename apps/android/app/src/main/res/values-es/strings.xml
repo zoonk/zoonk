@@ -15,6 +15,8 @@
   "belt_red": "fe93443f09d2cc8a014820bf1db79fa2e108e040049e1cc29b6e934dd6d4a7fe",
   "belt_white": "fd145aa314fa6543afb18c900913ee4b68364d0777fc81cd1fc85d0f600efe85",
   "belt_yellow": "cad650ac9deaec8a4d6c37ed40821e69b39cb1811790e0468314fe4534bd3c4c",
+  "disclosure_collapsed": "6f9dca9787c560ef2907407e1cd5a0b0a9e3c21ad7925d5ff08322f0ceed91f3",
+  "disclosure_expanded": "013db6d62b926cc6d10009fa4c596f352dbb25b7325be503a5fede5bb42f6c68",
   "gate_log_in": "772b65c922e7aa6ef30b7dad741657f19021095b9da76931416bc9da26374101",
   "gate_session_ended_description": "7126f430fbc2e101277c10d15e10148ddc30b150cedddbc52720ac4cce052612",
   "gate_session_ended_title": "54d41570c0c3a45402f44d85f5f723f64d00b38f2044e9ff15b84ea5850948e1",
@@ -25,6 +27,12 @@
   "gate_start_goal_description": "e5fa6b5ef700946efd97fabeda2e3bde76808b2199b54424ac66c2c40be3ebe7",
   "gate_start_goal_title": "b2bf60c7d698ff9c259faf93c1beb09c982439ac586b8fd82eb9cbad3df0b0ca",
   "gate_start_something_new": "1fd8c025fef3409b4a76578cd54eb084658b2798690ae7c0180ed76046806bf7",
+  "lessons_coming_up": "3ec8662f7fdb88920aad8d709b960b094ed0ca6ab59b9e45157a3a63f409dfe8",
+  "lessons_done": "04b3bcd956d129fa1342e39cb6f7afcf957542d0e857653ac505e7772e168f1e",
+  "lessons_done_count": "e51557388da18380715c2ca5b4ede818877c85eb6eec2f53284df7dafb72950e",
+  "lessons_position": "544c9bf2ae35579b4b58fd73d82242ae3ee266cb020aea424b1083af7e6d6d45",
+  "lessons_title": "0f2a283125c77bf67522eedf5032044d1468ab0b5eda8c6637625c61e93692c2",
+  "lessons_up_next": "b57f9b5d70d0fd3b6513dbf5612f11aa6383d0a9239c226842a2503dd542e4cb",
   "load_failed_description": "067b3a78163c415e1a7d7545f117486e00e95cb793574ddb2c2b63b57e1ff2ca",
   "load_failed_title": "62ff8a0e058fc2bd67435cdbf8b616ec6dd56da2d6ab8b9a62b334a15b9483c0",
   "load_failed_try_again": "001fb66e6dbecd7aa9457e150fe4e1194434571b596794b64efab6eb7e473456",
@@ -39,10 +47,15 @@
   "navigation_study": "051cb8f8f5b8edd416ba7f932489129a8517be830f9c11c2ee16c159d181fe12",
   "navigation_today": "de857016589edaad4a7a18f8f66a03cbd3e0a0483b49f21acd268a996a6d0e7c",
   "navigation_user_menu": "5799775025868fe68723cf9058ddd37482169ceba20b7322d3c0cc17efc9fa60",
+  "not_found_description": "cb36d5aafc1b8ea23cf1a615c07e0facc6e302c94816df48671f05524e349b51",
+  "not_found_title": "54cc56f3bf2ff7386221cd81bef2df110ff503679d91f76d56fa9529d6f45443",
   "other_time": "63dacb77e56add4d4a0e4b0be534183791d768fda0b1b20a0b0eac9decb9e792",
   "suggestion_save_failed": "6cc7e9104ccda4f7739cb892007a5c0a24504d50746bdc0b28b1d89d3725eee2",
   "suggestion_view": "87e0754a658b539b073255533eaad7665d04cf81e81cefabfde2ef18471f35a7",
-  "task_leave": "35cab1a652e1aed3abba5390d6e524cfee544775b6c5e81e98651f5c04fac094"
+  "task_leave": "35cab1a652e1aed3abba5390d6e524cfee544775b6c5e81e98651f5c04fac094",
+  "test_out_skip_chapter": "2929e5cf2df62ed033b789fbe149672658a7ec323e204c42e6fdcce82c943665",
+  "test_out_skip_unit": "034f35415778bc76ba4053818240e809050ecb174024a325d9ff051919acf82d",
+  "test_out_title": "3c2221f1836811538f9a4e2d695ccbbe7ac03c0b0af452687ab5c541ba7baf66"
 }
 -->
 <resources>
@@ -89,4 +102,20 @@
     <string name="suggestion_save_failed">No se ha guardado. Inténtalo de nuevo.</string>
     <!-- Under the daily time chips; opens a menu of every other daily study time. -->
     <string name="other_time">Otro tiempo…</string>
+    <string name="disclosure_expanded">Ampliado</string>
+    <string name="disclosure_collapsed">Contraído</string>
+    <string name="lessons_title">Lecciones</string>
+    <!-- Lessons done of the total: "2 of 6". -->
+    <string name="lessons_done_count">%1$s de %2$s</string>
+    <!-- A lesson's number in its list: "3." -->
+    <string name="lessons_position">%1$s.</string>
+    <!-- TalkBack names each lesson's mark. Done: finished. Up next: the one lesson to do now. Coming up: the lessons after it, for later. The three must read as clearly different states. -->
+    <string name="lessons_done">Hecho</string>
+    <string name="lessons_up_next">A continuación</string>
+    <string name="lessons_coming_up">Próximamente</string>
+    <string name="test_out_title">¿Ya te lo sabes?</string>
+    <string name="test_out_skip_chapter">Haz la prueba y omite el capítulo</string>
+    <string name="test_out_skip_unit">Haz la prueba y omite la unidad</string>
+    <string name="not_found_title">No hemos encontrado esta página</string>
+    <string name="not_found_description">Puede que el enlace sea antiguo o esté mal escrito.</string>
 </resources>
