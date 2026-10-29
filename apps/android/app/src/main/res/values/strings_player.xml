@@ -107,6 +107,11 @@
     <string name="player_back">Back</string>
     <string name="player_not_found_title">Lesson not available</string>
     <string name="player_not_found_description">This lesson isn\'t available anymore.</string>
+    <string name="player_cant_talk_now">I can\'t talk now</string>
+    <string name="player_can_talk_now">I can talk now</string>
+    <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
+    <string name="player_say_it_instead">Say it instead</string>
+    <string name="player_microphone_blocked">The microphone is blocked. Type your answer instead.</string>
     <string name="player_drawing_picture">Drawing the picture…</string>
     <string name="player_not_in_app_title">This lesson isn\'t in the app yet</string>
     <string name="player_not_in_app_description">It has screens the app can\'t show yet. You can do it on zoonk.com.</string>

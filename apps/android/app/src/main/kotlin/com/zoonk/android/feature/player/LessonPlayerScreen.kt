@@ -65,6 +65,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
+import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonNotice
 import com.zoonk.android.feature.player.engine.LessonPhase
@@ -82,6 +83,7 @@ import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.SummaryIdeas
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.optionAnswer
+import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LocalPrivatePictures
@@ -134,6 +136,7 @@ fun LessonPlayer(
     ending: LessonEnding,
     viewModel: LessonPlayerViewModel,
     exits: LessonPlayerExits,
+    navigator: AppNavigator,
 ) {
     val screen = remember(state) { state?.screen() }
     val actions =
@@ -154,6 +157,15 @@ fun LessonPlayer(
                 override fun skipWriting() = viewModel.skipWriting()
 
                 override fun explainFirst() = viewModel.dispatch(LessonAction.ExplainFirst)
+
+                override val cantTalk get() = viewModel.cantTalk
+
+                override fun setCantTalk(chosen: Boolean) = viewModel.setCantTalk(chosen)
+
+                override suspend fun gradeSpoken(
+                    stepId: String,
+                    recording: VoiceRecording,
+                ) = viewModel.gradeSpoken(stepId, recording)
             }
         }
     val focus = remember { FocusRequester() }
@@ -211,7 +223,7 @@ fun LessonPlayer(
                 Starting()
             } else {
                 Segments(screen.segments, state)
-                Content(state, screen, ending, viewModel, actions, exits)
+                Content(state, screen, ending, viewModel, actions, exits, navigator)
             }
         }
     }
@@ -324,6 +336,7 @@ private fun Content(
     viewModel: LessonPlayerViewModel,
     actions: StepActions,
     exits: LessonPlayerExits,
+    navigator: AppNavigator,
 ) {
     val run = state.run
 
@@ -368,7 +381,7 @@ private fun Content(
             ) {
                 LessonColumn {
                     Notice(state, screen, viewModel)
-                    StepView(step, state, screen, actions)
+                    StepView(step, state, screen, actions, navigator)
                     Result(state, screen)
                 }
             }

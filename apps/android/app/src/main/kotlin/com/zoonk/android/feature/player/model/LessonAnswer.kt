@@ -18,6 +18,7 @@ import com.zoonk.api.models.LessonStepAnswerOneOf9
 import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LessonStepCheckResultCorrectionsInner
 import com.zoonk.api.models.LessonStepCheckResultKeyPointsInner
+import com.zoonk.api.models.SpokenAnswerGrade
 import com.zoonk.api.models.SpokenPracticeWord
 import com.zoonk.api.models.SpokenWordResult
 import kotlin.time.Instant
@@ -199,4 +200,16 @@ fun LessonStepCheckResult.toStepResult(answerText: String?): StepResult =
         savedMistake = savedMistake,
         score = score,
         spelling = spelling,
+    )
+
+/** Main's `fromSpokenGrade`: what was heard, and the sentence to say when it wasn't right. */
+fun SpokenAnswerGrade.toStepResult(targetText: String): StepResult =
+    StepResult(
+        isCorrect = isCorrect,
+        answerText = transcript,
+        correctAnswer = targetText.takeUnless { isCorrect },
+        feedback = explanation,
+        score = score,
+        attemptId = attemptId.toString(),
+        heard = SpokenHeard(transcript, words, wordsToPractice),
     )

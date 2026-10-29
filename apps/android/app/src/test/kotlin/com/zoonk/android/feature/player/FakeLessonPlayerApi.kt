@@ -3,6 +3,7 @@ package com.zoonk.android.feature.player
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.PlayableLesson
@@ -15,6 +16,7 @@ import com.zoonk.api.models.LessonStepCheckInput
 import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonRun
+import com.zoonk.api.models.SpokenAnswerGrade
 import kotlinx.coroutines.CompletableDeferred
 
 const val LESSON_ID = "00000000-0000-4000-8000-0000000000aa"
@@ -111,6 +113,19 @@ class FakeLessonPlayerApi(
             throw ApiException(ApiError.Network)
         }
         return grade(stepId, input)
+    }
+
+    var spokenGrade: suspend () -> SpokenAnswerGrade = { throw ApiException(ApiError.Unavailable) }
+    val spokenTakes = mutableListOf<String>()
+
+    override suspend fun speak(
+        session: AuthenticatedSession,
+        stepId: String,
+        recording: VoiceRecording,
+        studySessionId: String?,
+    ): SpokenAnswerGrade {
+        spokenTakes += stepId
+        return spokenGrade()
     }
 
     override suspend fun complete(

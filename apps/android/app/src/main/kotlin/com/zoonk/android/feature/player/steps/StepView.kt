@@ -2,12 +2,15 @@ package com.zoonk.android.feature.player.steps
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
+import com.zoonk.android.feature.audio.GradeOutcome
+import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.navigation.AppNavigator
 
 /** What a screen's view can ask the player to do. */
 @Stable
@@ -22,6 +25,16 @@ interface StepActions {
     fun skipWriting()
 
     fun explainFirst()
+
+    /** The day's "I can't talk now", which types spoken screens instead. */
+    val cantTalk: Boolean
+
+    fun setCantTalk(chosen: Boolean)
+
+    suspend fun gradeSpoken(
+        stepId: String,
+        recording: VoiceRecording,
+    ): GradeOutcome<Unit>
 }
 
 /**
@@ -35,6 +48,7 @@ fun StepView(
     state: LessonPlayerState,
     screen: LessonScreen,
     actions: StepActions,
+    navigator: AppNavigator,
 ) {
     val answer = state.answers[step.id]
     val result = state.results[step.id]
@@ -48,7 +62,7 @@ fun StepView(
         is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions)
         is StepContent.Summary -> SummaryView(content)
         is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions)
-        is StepContent.SpokenAnswer -> SpokenAnswerView(content, answer, state, actions)
+        is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator)
         is StepContent.Activity, is StepContent.Challenge, is StepContent.Language -> Unit
     }
 }

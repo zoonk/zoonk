@@ -7,6 +7,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.perform
+import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toLessonLoad
@@ -21,6 +22,7 @@ import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonCompletionInput
 import com.zoonk.api.models.LibraryLessonRun
 import com.zoonk.api.models.LibraryLessonStartInput
+import com.zoonk.api.models.SpokenAnswerGrade
 import java.time.ZoneId
 import java.util.UUID
 
@@ -48,6 +50,14 @@ interface LessonPlayerApi {
         stepId: String,
         input: LessonStepCheckInput,
     ): LessonStepCheckResult
+
+    /** A spoken screen's take, graded by the server. */
+    suspend fun speak(
+        session: AuthenticatedSession,
+        stepId: String,
+        recording: VoiceRecording,
+        studySessionId: String?,
+    ): SpokenAnswerGrade
 
     suspend fun complete(
         session: AuthenticatedSession,
@@ -114,6 +124,21 @@ class LiveLessonPlayerApi(
         stepId: String,
         input: LessonStepCheckInput,
     ) = perform { api.streamingClients(session).libraryLessons.createStepCheck(UUID.fromString(stepId), input) }
+
+    override suspend fun speak(
+        session: AuthenticatedSession,
+        stepId: String,
+        recording: VoiceRecording,
+        studySessionId: String?,
+    ) = perform {
+        api.streamingClients(session).language.createSpokenAnswer(
+            UUID.fromString(stepId),
+            recording.durationMs,
+            recording.part(),
+            studySessionId?.let(UUID::fromString),
+            timeZone(),
+        )
+    }
 
     override suspend fun complete(
         session: AuthenticatedSession,

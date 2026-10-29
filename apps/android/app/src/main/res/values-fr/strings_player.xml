@@ -18,6 +18,8 @@
   "player_back_to_chapter": "b13d90c1ba4ce0653c8c110cb87b55b6cd46e2c4d9785f0bf2a38e22469da5b9",
   "player_back_to_unit": "118935561852a046c1413926a8d231b0af6aadb9698f60ddd52e5832517da8ad",
   "player_build_my_plan": "02277a7dc28e85d5ede500f49586f1fc3a8692566c0fc641196a48cbcd6e149e",
+  "player_can_talk_now": "bab11818c6669056c15f0d514d9d1669fff2230ebcd80f0e78950ce2dac42560",
+  "player_cant_talk_now": "caba6fe3a67e472c2b0c2035d1a4e3ab44da83a2f386e1ba7c80781c236cdd38",
   "player_cant_write_now": "778dd85d71021e72ea9b99487b511f317c1f3be323c0dcc4c81b115a4091b9d1",
   "player_check_failed": "6573e46bd968f338ca965bae277ddb64dbd4918468a1b56a3b2313748e299002",
   "player_comes_back_at_end": "3380024c6d67169ae4ebed2cc4411d3d1a4bb9453b56bd78d57b8f2ae9d00ff9",
@@ -59,6 +61,7 @@
   "player_lesson_complete": "6233462eee97f4fce15433c2cf99884419f1fcb6cb0d52ce6549c6228c2b10a5",
   "player_lesson_of": "8f6a2d33eb423d3dc9ff4bc4121dca54eeec333bbbb319ee0fafbd23a6a35e59",
   "player_lesson_summary": "6d402c71fdcad053df64a95d7b9a1af63c9767c6f86d7bd57ac8eed2f7f87780",
+  "player_microphone_blocked": "810ce0eb4cc51bf5a714fa24c64d336f75e713aec335222c8e02d809c004234a",
   "player_next_lesson": "b00fccbe9c29eda0ceab8b948e61124faa4f9af58d7b524a2308fe1e70986da2",
   "player_not_found_description": "0900170d4ef4646593638816d6632119d2ebd0a39f94613c9becbd4e89e9d617",
   "player_not_found_title": "c5995cd035b62c43c415b6ab4ff36334abadceffa18703525af484f17baca95d",
@@ -97,6 +100,7 @@
   "player_saved_to_mistakes_back_tomorrow": "b4481a5d7ebc976f27d20a46936f9597c7f60a45474398b8fc995e71955b2a76",
   "player_saved_to_mistakes_back_weekday": "98e088709d98e1bbd476427c3531d435b51aa5ed506dec409faa1b11de01a759",
   "player_saving_progress": "42a818f1e45dc359825f0f69f5b5aa7b4daf6b6cf667bf3ffd7b1c0c34bd36e7",
+  "player_say_it_instead": "4c7d8eebc1d9cced0b80f4aae2f5bf0f4354010271c9629603df2cc6491e3d25",
   "player_screen_options": "c2738c921bfc3b59243b674b9ce5faf3fc5d8ecba0b3482f01bd2010c28f4084",
   "player_see_plus": "d5ec54f7a771c207c57ff8ab42b68548312f2feb2d259cd9d9eb909728bc7699",
   "player_set_aside_description": "bfe4a4c9f556005018f012d69e677c0c42e864682736c84d5d37805905cd755a",
@@ -236,6 +240,11 @@
     <string name="player_back">Retour</string>
     <string name="player_not_found_title">Leçon indisponible</string>
     <string name="player_not_found_description">Cette leçon n’est plus disponible.</string>
+    <string name="player_cant_talk_now">Je ne peux pas parler maintenant</string>
+    <string name="player_can_talk_now">Je peux parler maintenant</string>
+    <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
+    <string name="player_say_it_instead">Dis-le à la place</string>
+    <string name="player_microphone_blocked">Le micro est bloqué. Écris ta réponse à la place.</string>
     <string name="player_drawing_picture">Dessin de l’image…</string>
     <string name="player_not_in_app_title">Cette leçon n’est pas encore disponible dans l’application</string>
     <string name="player_not_in_app_description">Certaines pages ne s’affichent pas encore dans l’application. Tu peux suivre cette leçon sur zoonk.com.</string>

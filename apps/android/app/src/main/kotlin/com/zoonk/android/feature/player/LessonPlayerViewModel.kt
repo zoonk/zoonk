@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.player
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.ApiException
@@ -11,6 +12,9 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.audio.GradeOutcome
+import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.audio.toGradeOutcome
 import com.zoonk.android.feature.player.engine.CheckIssue
 import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.HyperdriveStart
@@ -203,6 +207,61 @@ class LessonPlayerViewModel(
         dispatch(LessonAction.RestoreWriting)
     }
 
+    /** "I can't talk now": spoken screens are typed for the rest of the day on this device. */
+    private val talkChoice = mutableStateOf(false)
+    val cantTalk: Boolean get() = talkChoice.value
+
+    fun setCantTalk(chosen: Boolean) {
+        talkChoice.value = chosen
+        owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantTalk, chosen) } }
+    }
+
+    /**
+     * Grades a spoken screen's take on the server; the recorder says what went wrong, and the
+     * screen goes back to waiting for another take.
+     */
+    suspend fun gradeSpoken(
+        stepId: String,
+        recording: VoiceRecording,
+    ): GradeOutcome<Unit> {
+        val step = mutableState.value?.currentStep?.takeIf { it.id == stepId && mutableState.value?.phase == LessonPhase.Playing }
+        val spoken = step?.content as? StepContent.SpokenAnswer
+
+        if (spoken == null || sessions.current != owner) return GradeOutcome.Obsolete
+
+        dispatch(LessonAction.CheckStarted(stepId))
+        val outcome =
+            withTimeoutOrNull(SPOKEN_TIMEOUT) {
+                cache.mutate { session -> store.api.speak(session, stepId, recording, studySessionId) }.toGradeOutcome()
+            } ?: GradeOutcome.Failed
+
+        return when (outcome) {
+            is GradeOutcome.Graded -> {
+                dispatch(LessonAction.CheckResolved(stepId, outcome.value.toStepResult(spoken.content.targetText), counts = true))
+                GradeOutcome.Graded(Unit)
+            }
+
+            GradeOutcome.NoSpeech -> {
+                dispatch(LessonAction.CheckFailed(stepId, CheckIssue.NoSpeech))
+                GradeOutcome.NoSpeech
+            }
+
+            is GradeOutcome.Limited -> {
+                dispatch(LessonAction.CheckFailed(stepId, CheckIssue.Refused(LessonRefusal.Limited(outcome.limit))))
+                outcome
+            }
+
+            GradeOutcome.Failed -> {
+                dispatch(LessonAction.CheckFailed(stepId))
+                GradeOutcome.Failed
+            }
+
+            GradeOutcome.Obsolete -> {
+                GradeOutcome.Obsolete
+            }
+        }
+    }
+
     /**
      * Grades the answer in view: a guess reveals at once, the screens the device can grade show
      * their verdict at once and are recorded in the background, and the rest wait for the server.
@@ -306,6 +365,7 @@ class LessonPlayerViewModel(
         if (session != null && choices.isChosen(session, TodayChoice.CantWrite)) {
             state = reduce(state, LessonAction.SkipWriting(opening = true), started)
         }
+        talkChoice.value = session != null && choices.isChosen(session, TodayChoice.CantTalk)
 
         return state.withFirstAnswer(started)
     }

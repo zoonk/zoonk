@@ -24,6 +24,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key
@@ -46,6 +47,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.audio.VoiceAnswerRecorder
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
@@ -55,6 +57,7 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.SpokenAnswerStepContent
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
+import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.AnswerOption
 import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
@@ -328,22 +331,74 @@ internal fun TypedAnswerView(
     }
 }
 
-/** Main's spoken screen typed instead of said, as it is wherever the device can't record. */
+/**
+ * Main's spoken screen: said into L8's recorder, or typed when the learner can't talk today or the
+ * microphone is blocked. Both are graded by the server.
+ */
 @Composable
 internal fun SpokenAnswerView(
+    step: LessonStep,
     content: StepContent.SpokenAnswer,
     answer: LessonAnswer?,
     state: LessonPlayerState,
     actions: StepActions,
+    navigator: AppNavigator,
 ) {
     val spoken = content.content
+    val locked = state.phase != LessonPhase.Playing
+    var micBlocked by rememberSaveable(step.id) { mutableStateOf(false) }
+    val types = actions.cantTalk || micBlocked
 
     QuestionScene {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             QuestionText(spoken.prompt, answered = state.phase == LessonPhase.Feedback)
             TargetText(spoken)
         }
-        AnswerField((answer as? LessonAnswer.Spoken)?.text.orEmpty(), { actions.select(it?.let(LessonAnswer::Spoken)) }, state, actions)
+
+        when {
+            types -> {
+                if (micBlocked && !locked) {
+                    Text(
+                        stringResource(R.string.player_microphone_blocked),
+                        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+                AnswerField(
+                    (answer as? LessonAnswer.Spoken)?.text.orEmpty(),
+                    { actions.select(it?.let(LessonAnswer::Spoken)) },
+                    state,
+                    actions,
+                )
+            }
+
+            !locked -> {
+                VoiceAnswerRecorder(
+                    grade = { recording -> actions.gradeSpoken(step.id, recording) },
+                    onGraded = {},
+                    navigator = navigator,
+                    key = "spoken:${step.id}",
+                    onBlocked = { micBlocked = true },
+                )
+            }
+        }
+
+        if (!locked) {
+            val switchTo = { cantTalk: Boolean ->
+                actions.select(null)
+                micBlocked = false
+                actions.setCantTalk(cantTalk)
+            }
+            if (types) {
+                GhostAction(
+                    R.drawable.ic_mic,
+                    stringResource(if (actions.cantTalk) R.string.player_can_talk_now else R.string.player_say_it_instead),
+                ) { switchTo(false) }
+            } else {
+                GhostAction(R.drawable.ic_keyboard, stringResource(R.string.player_cant_talk_now)) { switchTo(true) }
+            }
+        }
     }
 }
 

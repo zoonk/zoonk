@@ -107,7 +107,7 @@ fun LessonRouteScreen(
         is LoadState.Loaded -> {
             when (val lesson = state.value) {
                 is LessonLoad.Ready -> {
-                    PlayingLesson(route, app, lesson, exits)
+                    PlayingLesson(route, app, lesson, navigator, exits)
                 }
 
                 is LessonLoad.SessionRequired -> {
@@ -136,6 +136,7 @@ private fun PlayingLesson(
     route: AppRoute.Lesson,
     app: AppContainer,
     load: LessonLoad.Ready,
+    navigator: AppNavigator,
     exits: LessonPlayerExits,
 ) {
     val viewModel =
@@ -166,7 +167,7 @@ private fun PlayingLesson(
     LaunchedEffect(load.lesson.id, signedIn) { viewModel.open(load.lesson) }
 
     CompositionLocalProvider(LocalPrivatePictures provides PrivatePictures(app.images, signedIn)) {
-        LessonPlayer(load.lesson, state, ending, viewModel, exits)
+        LessonPlayer(load.lesson, state, ending, viewModel, exits, navigator)
         LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
     }
 }

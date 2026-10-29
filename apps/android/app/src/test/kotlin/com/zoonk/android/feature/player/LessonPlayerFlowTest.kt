@@ -30,13 +30,17 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.audio.GradeOutcome
+import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepAnswer
+import com.zoonk.api.models.SpokenAnswerGrade
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -63,6 +67,7 @@ class LessonPlayerFlowTest {
     private var closed = 0
     private lateinit var api: FakeLessonPlayerApi
     private lateinit var openAgain: () -> Unit
+    private lateinit var viewModel: LessonPlayerViewModel
 
     private val exits =
         object : LessonPlayerExits {
@@ -104,7 +109,7 @@ class LessonPlayerFlowTest {
                 activeGoalId = { GOAL_ID },
             )
         }
-        val viewModel = newViewModel()
+        viewModel = newViewModel()
         openAgain = { newViewModel().open(lesson) }
 
         rule.setContent {
@@ -113,7 +118,7 @@ class LessonPlayerFlowTest {
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()
                     LaunchedEffect(Unit) { viewModel.open(lesson) }
-                    LessonPlayer(lesson, state, ending, viewModel, exits)
+                    LessonPlayer(lesson, state, ending, viewModel, exits, rememberAppNavigator())
                 }
             }
         }
@@ -206,6 +211,7 @@ class LessonPlayerFlowTest {
         play(listOf(spokenStep("say"), summaryStep("end")))
 
         rule.onNodeWithText("Tengo hambre").assertIsDisplayed()
+        tap("I can't talk now")
         rule.onNode(hasSetTextAction()).performTextInput("Tengo hambre")
         tap("Check")
 
@@ -215,6 +221,36 @@ class LessonPlayerFlowTest {
             api.checks
                 .single()
                 .second.answer::class,
+        )
+    }
+
+    @Test
+    fun aSpokenTakeIsGradedByTheServerAndShowsWhatWasHeard() {
+        play(listOf(spokenStep("say"), summaryStep("end"))) {
+            spokenGrade = {
+                ApiJson.decodeFromString(
+                    SpokenAnswerGrade.serializer(),
+                    """
+                    {"attemptId":"00000000-0000-4000-8000-000000000021","explanation":"Say the h softly.","isCorrect":false,"score":0.5,
+                     "transcript":"Tengo ambre","words":[{"heard":"Tengo","status":"correct","text":"Tengo"},{"heard":"ambre","status":"different","text":"hambre"}],
+                     "wordsToPractice":[]}
+                    """.trimIndent(),
+                )
+            }
+        }
+
+        val outcome = runBlocking { viewModel.gradeSpoken("say", VoiceRecording(ByteArray(8), 1_200)) }
+
+        assertEquals(GradeOutcome.Graded(Unit), outcome)
+        assertEquals(listOf("say"), api.spokenTakes)
+        rule.onNodeWithText("Say the h softly.").assertIsDisplayed()
+        assertEquals(
+            "Tengo ambre",
+            viewModel.state.value
+                ?.results
+                ?.get("say")
+                ?.heard
+                ?.transcript,
         )
     }
 
