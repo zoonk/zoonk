@@ -364,7 +364,7 @@ struct PracticeResultHeader: View {
 
         if brainPower > 0 {
           Readout(
-            value: Text(brainPower, format: .number),
+            value: Text(brainPower, format: .number.sign(strategy: .always())),
             label: Text(
               "Brain Power", tableName: "Practice", comment: "Readout label: Brain Power earned."),
             tint: .brain)
