@@ -451,7 +451,8 @@ private struct TextQuestion: View {
   }
 }
 
-/// A deadline is optional: without one, the learner studies everything at their own pace.
+/// A deadline is optional: without one, the learner studies everything at their own pace. Like
+/// main, there's no date until the learner chooses one.
 private struct DateQuestion: View {
   let subject: String
   let examDays: Components.Schemas.Onboarding.ExamDaysPayload?
@@ -459,7 +460,7 @@ private struct DateQuestion: View {
   let onAnswer: ([String: Any]) -> Void
 
   @State private var picksOtherDate = false
-  @State private var date: Date
+  @State private var date: Date?
 
   init(
     subject: String,
@@ -474,9 +475,7 @@ private struct DateQuestion: View {
     let firstDay = examDays?.days.first
     _picksOtherDate = State(
       initialValue: examDays == nil || (initialDate != nil && initialDate != firstDay))
-    _date = State(
-      initialValue: initialDate.flatMap(UnderstoodRows.day)
-        ?? Calendar.current.date(byAdding: .month, value: 3, to: .now) ?? .now)
+    _date = State(initialValue: initialDate.flatMap(UnderstoodRows.day))
   }
 
   var body: some View {
@@ -495,16 +494,40 @@ private struct DateQuestion: View {
           tableName: "Onboarding", comment: "Under the date question"))
 
       Section {
-        DatePicker(selection: $date, in: range, displayedComponents: .date) {
-          Text("Date", tableName: "Onboarding", comment: "Label of the goal's date picker")
+        if let date {
+          DatePicker(
+            selection: Binding {
+              date
+            } set: {
+              self.date = $0
+            }, in: range,
+            displayedComponents: .date
+          ) {
+            Text("Date", tableName: "Onboarding", comment: "Label of the goal's date picker")
+          }
+        } else {
+          Button {
+            date = Calendar.current.date(byAdding: .month, value: 3, to: .now)
+          } label: {
+            LabeledContent {
+              Text(
+                "Choose a date", tableName: "Onboarding", comment: "Shows the goal's date picker")
+            } label: {
+              Text("Date", tableName: "Onboarding", comment: "Label of the goal's date picker")
+                .foregroundStyle(.primary)
+            }
+          }
         }
       }
 
       StepButtons(
+        canContinue: date != nil,
         skipLabel: Text(
           "No date, study everything", tableName: "Onboarding", comment: "Skips the goal's date")
       ) {
-        onAnswer(["question": "targetDate", "targetDate": isoDay(date)])
+        if let date {
+          onAnswer(["question": "targetDate", "targetDate": isoDay(date)])
+        }
       } onSkip: {
         onAnswer(["question": "targetDate", "targetDate": NSNull()])
       }

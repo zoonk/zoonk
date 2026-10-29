@@ -1959,6 +1959,41 @@
         }
       }
     },
+    "Choose a date" : {
+      "comment" : "Shows the goal's date picker",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datum auswählen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Choose a date"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elige una fecha"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisir une date"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escolha uma data"
+          }
+        }
+      }
+    },
     "Choose your buddy" : {
       "comment" : "Onboarding step",
       "localizations" : {
