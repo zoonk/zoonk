@@ -124,7 +124,7 @@ private fun Options(
     draft: MockDraft?,
     locked: Boolean,
 ) {
-    val words = if (run.view.trueFalseLabels.value == "rightWrong") TrueFalseWords.RightWrong else TrueFalseWords.TrueFalse
+    val words = run.view.trueFalseWords
     val labels = question.question.options.orEmpty()
     // Main's `getOptionMarks`: where a wrong statement cancels a right one, the keys say ✓, ✗ and –.
     val glyphs = question.question.format == QuestionFormat.TrueFalse && run.view.scoring == MockExam.Scoring.NET
@@ -442,3 +442,6 @@ private const val MS_PER_SECOND = 1000L
 
 /** Material's disabled emphasis. */
 private const val DISABLED_ALPHA = 0.38f
+
+internal val MockExam.trueFalseWords: TrueFalseWords
+    get() = if (trueFalseLabels.value == "rightWrong") TrueFalseWords.RightWrong else TrueFalseWords.TrueFalse

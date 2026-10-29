@@ -11,6 +11,7 @@ import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.isMulti
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.MockAnswer
+import com.zoonk.api.models.MockEssay
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamCurrent
 import com.zoonk.api.models.MockExamCurrentPlaysInner
@@ -58,6 +59,8 @@ fun MockExamCurrentQuestionsInner.toMockQuestion(): MockQuestion {
 }
 
 enum class MockStep { Submit, EndBreak, StartSpeaking, Finish }
+
+enum class EssayGrading { Idle, Grading, Failed, LimitReached }
 
 /** The running mock as the learner sees it; [view] is the mock as the server last answered. */
 data class MockRun(
@@ -115,9 +118,14 @@ class MockRunnerViewModel(
     private var heldRead: MockExam? = null
     private var timedOutDuringStep = false
     private var away = false
+    private val grading = MutableStateFlow(EssayGrading.Idle)
 
     val state: StateFlow<MockRun> = run.asStateFlow()
+
+    /** A result opened finished was seen before, so it never celebrates again. */
+    val openedFinished: Boolean = opened.view.status == MockExam.Status.FINISHED
     val saveStatus: StateFlow<DraftSaveStatus> = queue.status
+    val essayGrading: StateFlow<EssayGrading> = grading.asStateFlow()
 
     init {
         enter(opened.view, opened.keptHere)
@@ -231,6 +239,23 @@ class MockRunnerViewModel(
 
     fun finish() = step(MockStep.Finish) { store.finish(blockId) }
 
+    /** Grades the essays a finished mock left pending, from the hand-in that finished it or the learner's Grade it. */
+    fun gradeEssays() {
+        if (grading.value == EssayGrading.Grading) return
+        grading.value = EssayGrading.Grading
+        viewModelScope.launch {
+            val result = withTimeoutOrNull(ESSAY_GRADING_TIMEOUT) { store.gradeEssays(blockId) }
+            val graded = (result as? MutationResult.Done)?.value
+            if (graded != null) reset(graded.mock)
+            grading.value =
+                when {
+                    graded != null -> if (graded.limitReached) EssayGrading.LimitReached else EssayGrading.Idle
+                    result == MutationResult.Obsolete -> EssayGrading.Idle
+                    else -> EssayGrading.Failed
+                }
+        }
+    }
+
     /**
      * Back on screen, the clocks catch up with the time away, and the mock is read again where it
      * may have moved on: a call that finished a speaking task, or a deadline long past. Never hands
@@ -278,6 +303,7 @@ class MockRunnerViewModel(
         request: suspend () -> MutationResult<MockExam?>,
     ) {
         if (run.value.pending) return
+        val wasFinished = run.value.view.status == MockExam.Status.FINISHED
         run.value.question?.let { leaveQuestion(it.itemId) }
         run.update { it.copy(busy = kind, error = false) }
         viewModelScope.launch {
@@ -291,7 +317,9 @@ class MockRunnerViewModel(
             slow.cancel()
             val next = (result as? MutationResult.Done)?.value
             run.update { it.copy(busy = null, slow = false, error = next == null && result !is MutationResult.Obsolete) }
-            if (next != null) reset(next) else afterFailedStep()
+            if (next == null) return@launch afterFailedStep()
+            reset(next)
+            if (kind in HANDING_IN && !wasFinished && next.hasPendingEssays) gradeEssays()
         }
     }
 
@@ -510,6 +538,11 @@ class MockRunnerViewModel(
 
         /** Core's `MOCK_ABANDONMENT_DELAY_MS`. */
         val ABANDONMENT_DELAY = 10.minutes
+
+        /** Essays grade at once, about 9 to 17 s each and up to 24 s on the fallback model. */
+        val ESSAY_GRADING_TIMEOUT = 120.seconds
+
+        val HANDING_IN = setOf(MockStep.Submit, MockStep.Finish)
     }
 }
 
@@ -524,6 +557,9 @@ private val OpenedMock.keptHere: List<MockDraft>
                 .toSet()
         return unsent.filter { it.itemId in items }
     }
+
+private val MockExam.hasPendingEssays: Boolean
+    get() = status == MockExam.Status.FINISHED && essays.any { it.status == MockEssay.Status.PENDING }
 
 private fun MockExam.withPlayed(
     setId: String,

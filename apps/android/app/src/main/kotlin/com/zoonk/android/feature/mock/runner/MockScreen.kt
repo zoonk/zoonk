@@ -57,6 +57,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.mock.mockShapeLabel
 import com.zoonk.android.feature.mock.rememberNow
+import com.zoonk.android.feature.mock.result.MockResult
 import com.zoonk.android.feature.questions.formatClock
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -128,7 +129,7 @@ fun MockScreen(
                     viewModel.onStart()
                     onStopOrDispose { viewModel.onStop() }
                 }
-                MockRunScreen(viewModel, route, navigator, MockAudio(app.speech, app.listeningPlays, app.sessions.current))
+                MockRunScreen(viewModel, route, app, store, navigator)
             }
         }
     }
@@ -159,8 +160,9 @@ private fun MockNotFound(navigator: AppNavigator) {
 private fun MockRunScreen(
     viewModel: MockRunnerViewModel,
     route: AppRoute.Mock,
+    app: AppContainer,
+    store: MockRunStore,
     navigator: AppNavigator,
-    audio: MockAudio,
 ) {
     val run by viewModel.state.collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
@@ -182,11 +184,11 @@ private fun MockRunScreen(
 
     when {
         view.status == MockExam.Status.EXPIRED -> MockExpired(viewModel, run, route, navigator, leave)
-        view.status == MockExam.Status.FINISHED -> MockFinished(run, navigator)
+        view.status == MockExam.Status.FINISHED -> MockResult(viewModel, run, route, app, store, navigator)
         view.breakUntil != null && current == null -> MockBreak(viewModel, run, view.breakUntil!!, leave)
         current != null && run.timeUp -> MockTimeUp(viewModel, run, leave)
         current?.kind == MockExamCurrent.Kind.SPEAKING -> MockSpeaking(viewModel, run, current, navigator, leave)
-        current != null -> MockRunnerView(viewModel, run, current, audio, leave)
+        current != null -> MockRunnerView(viewModel, run, current, MockAudio(app.speech, app.listeningPlays, app.sessions.current), leave)
         else -> MockHandedIn(viewModel, run, leave)
     }
 }

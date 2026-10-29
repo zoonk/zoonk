@@ -26,8 +26,10 @@ import com.zoonk.api.models.MockSizeSource
 import com.zoonk.api.models.MockSizeSourcePastEdition
 
 /**
- * Main's `MockSizeNote`: where the mock's size comes from whenever it isn't the notice, and
- * `MockLeftOutNote`: what the real exam has that the mock leaves out, and why.
+ * Main's `MockSizeNote`: where the mock's size comes from whenever it isn't the notice, then [short]
+ * (a mock that asks fewer questions than the exam), and `MockLeftOutNote`: what the real exam has
+ * that the mock leaves out, and why. A result names a written part only full mocks ask
+ * ([namesWrittenInFull]); the chooser shows it on the full options instead.
  */
 @Composable
 internal fun MockNotes(
@@ -37,8 +39,12 @@ internal fun MockNotes(
     minutes: Long,
     leftOut: List<MockLeftOut>,
     modifier: Modifier = Modifier,
+    short: String? = null,
+    namesWrittenInFull: Boolean = false,
 ) {
-    val lines = sizeLines(document, source, questions, minutes) + leftOut.mapNotNull { leftOutLine(it) }
+    val lines =
+        sizeLines(document, source, questions, minutes) + listOfNotNull(short) +
+            leftOut.mapNotNull { leftOutLine(it, namesWrittenInFull) }
     val pastEdition = source.pastEdition
     if (lines.isEmpty() && pastEdition == null) return
 
@@ -126,9 +132,11 @@ private fun sizeLines(
     )
 }
 
-/** Null for a written part only full mocks ask: the chooser names it on the full ones. */
 @Composable
-private fun leftOutLine(leftOut: MockLeftOut): String? {
+private fun leftOutLine(
+    leftOut: MockLeftOut,
+    namesWrittenInFull: Boolean,
+): String? {
     val name = leftOut.name
     return when (leftOut.part) {
         MockLeftOut.Part.LISTENING -> {
@@ -159,7 +167,7 @@ private fun leftOutLine(leftOut: MockLeftOut): String? {
         }
 
         MockLeftOut.Part.WRITTEN_IN_FULL -> {
-            null
+            stringResource(R.string.mock_result_left_out_written_in_full, name.orEmpty()).takeIf { namesWrittenInFull }
         }
     }
 }

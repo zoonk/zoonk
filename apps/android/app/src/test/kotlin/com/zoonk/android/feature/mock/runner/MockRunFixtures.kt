@@ -5,6 +5,8 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.MockExam
+import com.zoonk.api.models.MockPlanOfferInput
+import com.zoonk.api.models.MockPlanOfferResult
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -91,12 +93,23 @@ internal class FakeMockRunApi(
     val saved = mutableListOf<MockDraft>()
     val submitted = mutableListOf<Int>()
     var afterSubmit: MockExam? = null
+    var afterFinish: MockExam? = null
     var saveFailure: ApiException? = null
 
     /** Holds a hand-in until completed, then fails it with [stepFailure] if set. */
     var stepGate: CompletableDeferred<Unit>? = null
     var stepFailure: ApiException? = null
     var plays = 0
+
+    /** The mock as read once its essays are graded; [gradeGate] holds grading until completed. */
+    var afterGrade: MockExam? = null
+    var gradeOutcome = EssayGradeOutcome.Graded
+    var gradeFailure: ApiException? = null
+    var gradeGate: CompletableDeferred<Unit>? = null
+    var grades = 0
+    val offers = mutableListOf<MockPlanOfferInput.Offer>()
+    var offerResult = MockPlanOfferResult(changeId = null, lessonsSkipped = 3, reason = null, status = MockPlanOfferResult.Status.APPLIED)
+    var offerFailure: ApiException? = null
 
     override suspend fun mock(
         session: AuthenticatedSession,
@@ -145,7 +158,32 @@ internal class FakeMockRunApi(
         session: AuthenticatedSession,
         blockId: String,
         timeZone: String,
-    ) = Unit
+    ) {
+        afterFinish?.let { mock = it }
+    }
+
+    override suspend fun gradeEssays(
+        session: AuthenticatedSession,
+        blockId: String,
+        timeZone: String,
+    ): EssayGradeOutcome {
+        grades++
+        gradeGate?.await()
+        gradeFailure?.let { throw it }
+        afterGrade?.let { mock = it }
+        return gradeOutcome
+    }
+
+    override suspend fun adapt(
+        session: AuthenticatedSession,
+        blockId: String,
+        offer: MockPlanOfferInput.Offer,
+        timeZone: String,
+    ): MockPlanOfferResult {
+        offerFailure?.let { throw it }
+        offers += offer
+        return offerResult
+    }
 }
 
 internal val UNREACHABLE = ApiException(ApiError.Network)

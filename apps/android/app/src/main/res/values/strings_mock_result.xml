@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- %1$s is the mock's title, such as "Mock exam 3". -->
+    <string name="mock_result_done">%1$s done</string>
+    <string name="mock_result_estimated_score">Estimated score</string>
+    <string name="mock_result_net_score">Net score out of %1$d</string>
+    <string name="mock_result_right_answers">Right answers</string>
+    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60". -->
+    <string name="mock_result_of">%1$s of %2$d</string>
+    <!-- A score's range, such as "610–680". -->
+    <string name="mock_result_range">%1$s–%2$s</string>
+    <plurals name="mock_result_subjects">
+        <item quantity="one">%d subject</item>
+        <item quantity="other">%d subjects</item>
+    </plurals>
+    <string name="mock_result_up">+%1$s since the last one</string>
+    <!-- %1$s is the drop with its minus sign, such as "−12". -->
+    <string name="mock_result_down">%1$s since the last one</string>
+    <string name="mock_result_right">Right</string>
+    <string name="mock_result_wrong">Wrong</string>
+    <string name="mock_result_partly_right">Partly right</string>
+    <string name="mock_result_blank">Blank</string>
+    <string name="mock_result_blank_exam_day">Blank answers count as wrong, as on exam day.</string>
+    <string name="mock_result_blank_this_score">Blank answers count as wrong in this score.</string>
+    <string name="mock_result_to_pass_notice">To pass, the notice says</string>
+    <string name="mock_result_to_pass_guide">To pass, the official guide says</string>
+    <!-- %1$s is a language's name, such as "Portuguese". -->
+    <string name="mock_result_pass_marks_language">In %1$s, as the exam\'s documents say it.</string>
+    <!-- %1$s is the scale's name, such as "ENEM"; %2$s and %3$s are its lowest and highest scores. -->
+    <string name="mock_result_scale_named">The real exam scores on the %1$s scale, from %2$s to %3$s.</string>
+    <string name="mock_result_scale">The real exam scores from %1$s to %2$s.</string>
+    <!-- %1$s is the mock's score on the exam's scale; %2$s is the scale's name; %3$s and %4$s are its lowest and highest scores. -->
+    <string name="mock_result_scale_score_named">About %1$s on the %2$s scale, from %3$s to %4$s.</string>
+    <string name="mock_result_scale_score">About %1$s on the exam\'s scale, from %2$s to %3$s.</string>
+    <string name="mock_result_pass_score">To pass: %1$s or more.</string>
+    <!-- %1$s is the rule in the notice's own words. -->
+    <string name="mock_result_notice_scoring">How the real exam scores it: %1$s</string>
+    <string name="mock_result_relative">Your real result depends on how everyone in your sitting does.</string>
+    <string name="mock_result_shows_right">This mock shows how many you got right.</string>
+    <string name="mock_result_left_out_written_in_full">%1$s is only in full mocks.</string>
+    <string name="mock_result_by_topic">By topic</string>
+    <string name="mock_result_by_area">By area</string>
+    <plurals name="mock_result_more_topics">
+        <item quantity="one">%d more topic</item>
+        <item quantity="other">%d more topics</item>
+    </plurals>
+    <!-- Read by TalkBack on an area that opens to show its topics. -->
+    <string name="mock_result_expanded">Expanded</string>
+    <string name="mock_result_collapsed">Collapsed</string>
+    <string name="mock_result_insights">What the mock exam showed</string>
+    <string name="mock_result_timing">Timing</string>
+    <!-- %1$d is the seconds the learner took per question in the subject %2$s; %3$s is the seconds to aim for. -->
+    <plurals name="mock_result_timing_area">
+        <item quantity="one">%1$d second per %2$s question. Aim for %3$s or less.</item>
+        <item quantity="other">%1$d seconds per %2$s question. Aim for %3$s or less.</item>
+    </plurals>
+    <plurals name="mock_result_left_at_timeout">
+        <item quantity="one">%d question was left when time ran out.</item>
+        <item quantity="other">%d questions were left when time ran out.</item>
+    </plurals>
+    <string name="mock_result_consistency">Consistency</string>
+    <!-- Read with mock_result_consistency_detail: "3 easy ones wrong, 2 hard ones right." -->
+    <plurals name="mock_result_easy_wrong">
+        <item quantity="one">%d easy one wrong</item>
+        <item quantity="other">%d easy ones wrong</item>
+    </plurals>
+    <plurals name="mock_result_hard_right">
+        <item quantity="one">%d hard one right</item>
+        <item quantity="other">%d hard ones right</item>
+    </plurals>
+    <!-- %1$s is mock_result_easy_wrong, %2$s is mock_result_hard_right. -->
+    <string name="mock_result_consistency_detail">%1$s, %2$s. The score counts that against you: review the easy ones first.</string>
+    <string name="mock_result_calibration">When to leave it blank</string>
+    <!-- Read with mock_result_calibration_detail: "8 of 10 right". -->
+    <plurals name="mock_result_right_of">
+        <item quantity="one">%1$d of %2$d right</item>
+        <item quantity="other">%1$d of %2$d right</item>
+    </plurals>
+    <!-- %1$s is how the sure answers went, %2$s how those flagged as unsure went, each a mock_result_right_of. -->
+    <string name="mock_result_calibration_detail">Sure: %1$s. Flagged as unsure: %2$s.</string>
+    <!-- %1$s can be a decimal, such as "1.5". -->
+    <plurals name="mock_result_blank_gain">
+        <item quantity="one">Leaving the unsure ones blank would have added %1$s point.</item>
+        <item quantity="other">Leaving the unsure ones blank would have added %1$s points.</item>
+    </plurals>
+    <string name="mock_result_keep_answering">Your unsure answers still earned points, so keep answering them.</string>
+    <string name="mock_result_review">Questions to review</string>
+    <string name="mock_result_see_question">See the question</string>
+    <plurals name="mock_result_see_questions">
+        <item quantity="one">See the %d question</item>
+        <item quantity="other">See the %d questions</item>
+    </plurals>
+    <!-- %2$s is the question's subject, such as "Mathematics". -->
+    <string name="mock_result_question_area">Question %1$d · %2$s</string>
+    <string name="mock_result_question">Question %1$d</string>
+    <string name="mock_result_left_blank">You left it blank.</string>
+    <string name="mock_result_answers">Your answer and the right one</string>
+    <string name="mock_result_partly_right_note">Partly right: it earned part of its points.</string>
+    <string name="mock_result_written_part">Written part · %1$d of %2$d</string>
+    <string name="mock_result_your_essay">Your essay</string>
+    <string name="mock_result_your_answer">Your answer</string>
+    <string name="mock_result_too_short">Too short to grade</string>
+    <string name="mock_result_grading">Grading it with the exam\'s rubric. It can take up to 30 seconds.</string>
+    <string name="mock_result_grading_slow">Still grading. This is taking longer than usual.</string>
+    <string name="mock_result_grading_failed">That didn\'t go through. Try again in a moment.</string>
+    <string name="mock_result_not_graded">It hasn\'t been graded yet.</string>
+    <string name="mock_result_grading_limit">You\'ve used today\'s essay grades. Try again tomorrow.</string>
+    <string name="mock_result_grade_it">Grade it</string>
+    <!-- %1$s is the essay's highest possible score. -->
+    <string name="mock_result_essay_scale">Estimated score, from 0 to %1$s</string>
+    <string name="mock_result_criteria">Score by criterion</string>
+    <!-- A criterion's score, such as "160 of 200". -->
+    <string name="mock_result_score_of">%1$s of %2$s</string>
+    <string name="mock_result_criterion_formal_writing">Formal writing</string>
+    <string name="mock_result_criterion_topic">Topic and references</string>
+    <string name="mock_result_criterion_argument">Argument</string>
+    <string name="mock_result_criterion_cohesion">Cohesion</string>
+    <string name="mock_result_criterion_intervention">Intervention proposal</string>
+    <string name="mock_result_criterion_addressing">Addressing and parties</string>
+    <string name="mock_result_criterion_facts">Facts</string>
+    <string name="mock_result_criterion_legal_basis">Legal basis</string>
+    <string name="mock_result_criterion_requests">Requests</string>
+    <string name="mock_result_criterion_closing">Closing and form</string>
+    <string name="mock_result_next_step">Next step</string>
+    <string name="mock_result_what_to_rewrite">What to rewrite</string>
+    <string name="mock_result_for_example">For example: %1$s</string>
+    <string name="mock_result_nothing_left">Nothing left to work on</string>
+    <string name="mock_result_full_marks">Every criterion has full marks in this estimate.</string>
+    <string name="mock_result_no_estimate">No estimate</string>
+    <!-- %1$s is the estimated points, %2$s the paper's total. -->
+    <string name="mock_result_about_points">About %1$s of %2$s</string>
+    <string name="mock_result_about_range">About %1$s to %2$s of %3$s</string>
+    <string name="mock_result_estimate_detail">An estimate, not an official score.</string>
+    <string name="mock_result_not_every_task">Not every task was done, so there\'s no estimate for this paper.</string>
+    <string name="mock_result_typed_no_estimate">You typed in at least one task, and typing shows nothing of how you sound, so the speaking part has no estimate. Speak every task next time to get one.</string>
+    <string name="mock_result_task_not_graded">A task couldn\'t be graded, so the speaking part has no estimate.</string>
+    <string name="mock_result_typed_estimate">You typed in at least one task, so the estimate leaves out how you sounded there.</string>
+    <!-- %1$s is the points the exam asks for, %2$s the points of this paper and listening together. -->
+    <string name="mock_result_pass_group">The exam asks for at least %1$s of %2$s on this paper and listening together.</string>
+    <string name="mock_result_pass_paper">The exam asks for at least %1$s on this paper.</string>
+    <string name="mock_result_pass_floor">Below %1$s on this paper, the whole exam isn\'t passed.</string>
+    <string name="mock_result_tasks">Tasks</string>
+    <string name="mock_result_see_feedback">See feedback</string>
+    <string name="mock_result_not_done">Not done</string>
+    <string name="mock_result_your_preparation">Your preparation</string>
+    <string name="mock_result_your_plan">Your plan</string>
+    <string name="mock_result_preparation_fell">The mock exam showed what\'s still missing.</string>
+    <string name="mock_result_preparation_counts">What you showed in this mock exam counts toward it.</string>
+    <plurals name="mock_result_skip_title">
+        <item quantity="one">You got everything right in %d topic</item>
+        <item quantity="other">You got everything right in %d topics</item>
+    </plurals>
+    <!-- %1$s is a subject, such as "Mathematics". -->
+    <string name="mock_result_focus_title">Focus more on %1$s?</string>
+    <plurals name="mock_result_lessons_less">
+        <item quantity="one">%d lesson less</item>
+        <item quantity="other">%d lessons less</item>
+    </plurals>
+    <!-- %1$s is a subject, %2$s how it went, such as "4 of 10 right". -->
+    <string name="mock_result_more_time">More time for %1$s (%2$s)</string>
+    <string name="mock_result_new">New</string>
+    <string name="mock_result_off_plan">Off your plan</string>
+    <string name="mock_result_apply">Apply</string>
+    <string name="mock_result_keep_plan">Keep my plan</string>
+    <string name="mock_result_plan_stays">Your plan stays as it is.</string>
+    <string name="mock_result_plan_not_saved">That didn\'t save. Try again.</string>
+    <plurals name="mock_result_skip_done">
+        <item quantity="one">Done: %d lesson off your plan.</item>
+        <item quantity="other">Done: %d lessons off your plan.</item>
+    </plurals>
+    <string name="mock_result_focus_done">Done: your plan gives it more time from now on.</string>
+    <string name="mock_result_already_in">Your plan already has every lesson of it, so nothing had to move.</string>
+    <string name="mock_result_cant_move">It already starts as early as what it builds on allows.</string>
+    <string name="mock_result_already_changed">Your plan already changed, so there\'s nothing left to do here.</string>
+    <string name="mock_result_after">After this mock exam</string>
+    <string name="mock_result_now">Now</string>
+    <plurals name="mock_result_mistakes_to_review">
+        <item quantity="one">%d mistake to review</item>
+        <item quantity="other">%d mistakes to review</item>
+    </plurals>
+    <string name="mock_result_see_plan">See my plan</string>
+    <string name="mock_result_continue">Continue</string>
+    <string name="mock_result_review_mistake">Review the mistake</string>
+    <plurals name="mock_result_review_mistakes">
+        <item quantity="one">Review the %d mistake</item>
+        <item quantity="other">Review the %d mistakes</item>
+    </plurals>
+    <string name="mock_result_continue_session">Continue today\'s session</string>
+    <string name="mock_result_not_now">Not now</string>
+</resources>
