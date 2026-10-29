@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "earlier_questions_description": "0e46b25978c529f749f3268eb21fe76e12c828351a1f8f2a168e279b3baffd43",
+  "earlier_questions_empty": "4214a90d720417540a627b869b891db5d230a37fe9bee75370cd74bf7e384f12",
+  "earlier_questions_from": "06ab764e51233c4f0761949dc639bf8f5a8636d8f044396cf3d621fc207c0563",
+  "earlier_questions_from_course": "7648863739119e45c3f641f49faf68d797320bd8ab2a15d2e87897f66855ff37",
+  "earlier_questions_from_course_lesson": "5e23f56a5eeef113d45b82c699bbc7763ec981b47ef9b2f33a09316dd629d397",
+  "earlier_questions_from_lesson": "4edf0f2a31e8a469e74760247ce5e959f0c95e2b0c48a0a8c19ea27650472205",
+  "earlier_questions_no_answer": "db640c98f7f9dff12e6d933b1681db01f9f05ee79bf3c12d2ef749fd8623b6e8",
+  "earlier_questions_older": "603e8d2919fe354e81050c96e17925779f8230242bdd698efa4e08b70db492da",
+  "earlier_questions_older_failed": "9157f5136166339b8507b0d2bec2058538b576163322b92c60c7b7f8912a4a1c",
+  "earlier_questions_title": "0bcd11a010d552eca43c98614771ee06e8f8f91292cf104ada9897f0d7a6a623"
+}
+-->
+<resources>
+    <!-- Title of the page that keeps the questions the learner asked about lessons before every course was rewritten. -->
+    <string name="earlier_questions_title">Questions précédentes</string>
+    <!-- Keep "before we rewrote them": every course was rewritten, which is why these questions moved here. -->
+    <string name="earlier_questions_description">Les questions que tu as posées dans tes cours avant leur réécriture. Les leçons ont changé, alors tes questions restent ici pour que tu puisses les relire.</string>
+    <string name="earlier_questions_empty">Tu n’as pas de questions précédentes.</string>
+    <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it, %2$s the lesson's. -->
+    <string name="earlier_questions_from_course_lesson">D’une version précédente de %1$s · %2$s</string>
+    <!-- Above a question about a lesson that no longer exists. %1$s is the course's title as the learner saw it. -->
+    <string name="earlier_questions_from_course">D’une version précédente de %1$s</string>
+    <!-- Above a question about a lesson that no longer exists, when the course's title wasn't saved. %1$s is the lesson's title. -->
+    <string name="earlier_questions_from_lesson">D’une version précédente de ce cours · %1$s</string>
+    <!-- Above a question about a lesson that no longer exists, when neither title was saved. -->
+    <string name="earlier_questions_from">D’une version précédente de ce cours</string>
+    <string name="earlier_questions_no_answer">Aucune réponse n’a été enregistrée.</string>
+    <!-- Loads the next page of the learner's earlier questions. -->
+    <string name="earlier_questions_older">Questions plus anciennes</string>
+    <string name="earlier_questions_older_failed">Impossible de charger les questions plus anciennes. Réessaie.</string>
+</resources>

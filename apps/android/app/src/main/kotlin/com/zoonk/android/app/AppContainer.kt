@@ -32,6 +32,7 @@ import com.zoonk.android.feature.audio.ExoAudioOutput
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
 import com.zoonk.android.feature.buddy.BuddyStore
+import com.zoonk.android.feature.buddy.EarlierQuestionsStore
 import com.zoonk.android.feature.buddy.LiveBuddyApi
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.LiveCatalogApi
@@ -175,6 +176,12 @@ class AppContainer private constructor(
         )
 
     val tutor = TutorStore(LiveTutorApi(api), cache, sessions, memory::undo, plans::decideChange)
+    val earlierQuestions =
+        EarlierQuestionsStore(
+            api = { session, cursor -> perform { api.clients(session).lessons.listEarlierQuestions(cursor) } },
+            cache = cache,
+            sessions = sessions,
+        )
 
     // Speech clips and recorded answers.
     val voiceFiles = VoiceFiles(File(context.cacheDir, "voice-clips"), api.http, images::isPrivate, sessions)

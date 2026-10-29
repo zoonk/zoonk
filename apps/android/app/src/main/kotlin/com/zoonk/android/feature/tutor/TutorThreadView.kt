@@ -347,7 +347,7 @@ private fun Answer(
         }
 
         turn.status == TutorTurn.Status.Failed -> {
-            turn.answer?.let { AnswerText(it, linksChecked, routes) }
+            turn.answer?.let { AnswerText(it, linksChecked, routes.open) }
             if (failure?.helpLimit != null) {
                 Text(
                     stringResource(R.string.tutor_not_answered),
@@ -365,7 +365,7 @@ private fun Answer(
         }
 
         turn.answer != null -> {
-            AnswerText(turn.answer, linksChecked, routes)
+            AnswerText(turn.answer, linksChecked, routes.open)
             if (turn.status == TutorTurn.Status.Running && !streaming) CheckAgain(enabled = !busy && others == 0) { vm.checkAgain(turn.id) }
         }
 
@@ -401,16 +401,16 @@ private val TutorFailure?.isGeneric: Boolean
 
 /** Unchecked links read as their words. A checked one opens Zoonk's page in the app, or a website after asking. */
 @Composable
-private fun AnswerText(
+internal fun AnswerText(
     answer: String,
     linksChecked: Boolean,
-    routes: TutorRoutes,
+    onOpenRoute: (AppRoute) -> Unit,
 ) {
     var asked by remember { mutableStateOf<String?>(null) }
     val open: (String) -> Unit = { url ->
         val route = AppLink.parse(url)
         if (route != null) {
-            routes.open(route)
+            onOpenRoute(route)
         } else if (url.isWebAddress) {
             asked = url
         }
