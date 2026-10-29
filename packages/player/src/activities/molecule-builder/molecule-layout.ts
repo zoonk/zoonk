@@ -125,6 +125,26 @@ export function relaxLayout({
   );
 }
 
+/** Only the build's own atoms take part: a removed atom's old place would keep pushing the rest. */
+export function settleLayout({
+  atoms,
+  bonds,
+  layout,
+}: {
+  atoms: readonly { id: string }[];
+  bonds: readonly LayoutBond[];
+  layout: Layout;
+}): Layout {
+  const kept = Object.fromEntries(
+    atoms.flatMap((atom) => {
+      const point = layout[atom.id];
+      return point ? [[atom.id, point] as const] : [];
+    }),
+  );
+
+  return relaxLayout({ bonds, layout: kept, size: LAYOUT_SIZE });
+}
+
 function partnersOf(bonds: readonly LayoutBond[], id: string): string[] {
   return bonds.flatMap((bond) => {
     if (bond.from === id) {

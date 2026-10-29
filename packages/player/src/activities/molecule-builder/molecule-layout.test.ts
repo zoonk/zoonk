@@ -5,6 +5,7 @@ import {
   layoutBuild,
   placeNewAtom,
   relaxLayout,
+  settleLayout,
 } from "./molecule-layout";
 
 const size = { height: 240, width: 320 };
@@ -101,5 +102,22 @@ describe(layoutBuild, () => {
     expect(distance(layout, "c1", "o1")).toBeLessThan(110);
     expect(distance(layout, "c1", "o2")).toBeLessThan(110);
     expect(distance(layout, "o1", "o2")).toBeGreaterThan(ATOM_RADIUS * 2);
+  });
+});
+
+describe(settleLayout, () => {
+  it("lets a removed atom's old place push nothing", () => {
+    const atoms = [{ id: "c1" }, { id: "o1" }];
+    const bonds = [{ from: "c1", to: "o1" }];
+    const layout = { c1: { x: 150, y: 120 }, o1: { x: 210, y: 120 } };
+
+    const withRemoved = settleLayout({
+      atoms,
+      bonds,
+      layout: { ...layout, h1: { x: 170, y: 125 } },
+    });
+
+    expect(withRemoved).toStrictEqual(settleLayout({ atoms, bonds, layout }));
+    expect(withRemoved).not.toHaveProperty("h1");
   });
 });

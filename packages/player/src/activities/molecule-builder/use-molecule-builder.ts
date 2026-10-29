@@ -7,7 +7,7 @@ import {
   type Layout,
   layoutBuild,
   placeNewAtom,
-  relaxLayout,
+  settleLayout,
 } from "./molecule-layout";
 import {
   type Build,
@@ -27,7 +27,7 @@ export type BuilderChange =
   | { kind: "selected" | "undone"; atom: string | null };
 
 function settle(build: Build, layout: Layout): Layout {
-  return relaxLayout({ bonds: build.bonds, layout, size: LAYOUT_SIZE });
+  return settleLayout({ atoms: build.atoms, bonds: build.bonds, layout });
 }
 
 function initialState(answer: ActivityAnswer | null): BuilderState {
