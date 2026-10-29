@@ -174,6 +174,15 @@ class ExamFlowTest {
     }
 
     @Test
+    fun anIeltsExamOffersItsSpeakingMock() {
+        api.exam = exam(""""examName":"IELTS","speakingMock":"ielts"""")
+        show()
+
+        scrollTo("Start the mock")
+        rule.onNodeWithText("A short speaking test with an examiner. After it, an estimated band for each criterion.").assertIsDisplayed()
+    }
+
+    @Test
     fun aGoalThatIsntAnExamIsNotFound() {
         api.exam = null
         show()

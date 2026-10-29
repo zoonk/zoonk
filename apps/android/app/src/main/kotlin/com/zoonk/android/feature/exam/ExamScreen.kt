@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.exam
 
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,12 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -48,6 +51,8 @@ import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.mock.mockEntryRoute
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.plan.planGoal
+import com.zoonk.android.feature.speaking.SpeakingMockCard
+import com.zoonk.android.feature.speaking.SpeakingPaperSection
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -117,7 +122,7 @@ internal fun GoalExam(
         PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = refresh, modifier = Modifier.fillMaxSize()) {
             val current = state
             when {
-                loaded != null -> ExamPage(loaded, options.value, viewModel, navigator, listState)
+                loaded != null -> ExamPage(loaded, options.value, viewModel, app, navigator, listState)
                 current is LoadState.Failed && current.error != ApiError.NotFound -> LoadFailedMessage(onRetry = refresh)
                 current is LoadState.Failed || current is LoadState.Empty -> ExamNotFound(navigator)
                 else -> ExamLoading()
@@ -168,6 +173,7 @@ private fun ExamPage(
     exam: ExamView,
     options: MockOptions?,
     viewModel: ExamViewModel,
+    app: AppContainer,
     navigator: AppNavigator,
     listState: LazyListState,
 ) {
@@ -196,7 +202,7 @@ private fun ExamPage(
                 verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
             ) {
                 item(key = "hero", contentType = "hero") { ExamHero(exam, options, navigator) }
-                examSections(exam, mockOffered = options?.let(::mockEntryRoute) != null, viewModel, navigator)
+                examSections(exam, mockOffered = options?.let(::mockEntryRoute) != null, viewModel, app, navigator)
                 if (!aboutBeside) {
                     about.forEach { section ->
                         item(key = "about-$section", contentType = section) { AboutSection(section, exam) }
@@ -211,6 +217,7 @@ private fun LazyListScope.examSections(
     exam: ExamView,
     mockOffered: Boolean,
     viewModel: ExamViewModel,
+    app: AppContainer,
     navigator: AppNavigator,
 ) {
     if (exam.noticeDay != null || exam.noSitting != null) {
@@ -227,6 +234,26 @@ private fun LazyListScope.examSections(
     }
     if (exam.mocksRequirePlus || exam.progress != null) {
         item(key = "progress", contentType = "progress") { ExamMockProgressSection(exam) }
+    }
+    val paper = exam.speaking
+    val speakingMock = exam.speakingMock
+    if (paper != null) {
+        item(key = "speaking", contentType = "speaking") {
+            val context = LocalContext.current
+            SpeakingPaperSection(
+                paper = paper,
+                goalId = exam.goalId,
+                openTask = null,
+                start = app.conversations::start,
+                open = navigator::open,
+                openWeb = { CustomTabsIntent.Builder().build().launchUrl(context, it.toUri()) },
+                from = FROM_EXAM,
+            )
+        }
+    } else if (speakingMock != null) {
+        item(key = "speaking", contentType = "speaking") {
+            SpeakingMockCard(speakingMock, exam.goalId, exam.speakingMockPaused, start = app.conversations::start, open = navigator::open)
+        }
     }
 }
 
@@ -259,5 +286,6 @@ private fun ExamHero(
 }
 
 private val PAGE_WIDTH = 720.dp
+private const val FROM_EXAM = "exam"
 private val SECTION_GAP = 40.dp
 private val PANE_PADDING = PaddingValues(horizontal = 16.dp, vertical = 24.dp)
