@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "practice_already_answered": "ed10832f930fa271536b338dbe21917434cd9f7446c50a639e4888605af801aa",
+  "practice_back_to_today": "12d2333f382d0fead9d65ca18daaa792c49040c7679ab27e6ec6428759527576",
+  "practice_check": "6407ea2c775d226fb5a988ff41066c359b8f931a6dd663f99bb67257ed9c1427",
+  "practice_continue": "df69d7f33c844d95eeee7417b847ca8e28eb0a05a9b3da701a320a25887724bd",
+  "practice_done_title": "6d204805ed20e16b37680e2afc22a1fa5b854c79670396adb3a14929800d3d6e",
+  "practice_finish": "b25632a84594d07e8b18f0c6e47d5166023547a3e5b4c883c242e264151a8293",
+  "practice_finish_ready_detail": "e5f43013c63e9707787230294df9105b4099156256b16d5a5c57a2af5ebb6fe7",
+  "practice_finish_ready_title": "6214c9a240254c32b75c14645594feaca9c9cb25b6e4ba5470babfa87b37ef4c",
+  "practice_net": "3702440fef55f2bce0295aeccf5905133e51346f2b999bbe3fd55a73944232ca",
+  "practice_net_hint": "3c0ca8e7f735d83dc5f2c8c5728fe6d9152b64228f3fc3babc0349d7859ae6df",
+  "practice_net_right": "61de1ea3bf0de1d541f7b8b1fd42aa343fe012033b8031ef97b896218c0a9c77",
+  "practice_net_tally": "732158dc2d55b2e71c5a1d18e326c5c135646c3a842925ef173b622c5bb92427",
+  "practice_net_wrong": "728bbb7d6268d7a196aa93a17a9aa6944163035e73b147a47291644349522ddf",
+  "practice_not_found_description": "303f3794993cf6d270c1c2d6f67a1617e0b889aae78ba652756954afe781424f",
+  "practice_not_found_title": "518ded674bfb5440c6f945a99249baa97649f99afd75ab33733679513832e3ce",
+  "practice_pause_failed": "e36a2f033f8ea3c513f094fac2e54959621635e6c96a270a38cb59eaa6f1583a",
+  "practice_pause_stop": "0c3937460124c9a1f50fec1b8d897e8056ed90ff9e189722ff2d4495847fe3e7",
+  "practice_pause_text": "cf110b7b30e83ca8d06038fbe4673f4432550dc2223f9e3dad74130bb03317fc",
+  "practice_progress": "00a778f09dc80d92642d4637c3be526cbeca9181a62672f10d3c2529638d3bf4",
+  "practice_save_error": "a9cb53781e7aaaa26da7e75eb062357288e8f47a394cb5e19d947c1d40be132e",
+  "practice_time_machine_answered": "339b64a0c26e40fe712a80e6505834b1bb31473e759ea4a230977c82e424ba81",
+  "practice_time_machine_right_again": "0e6080d84aaf2b90aef5311b0c39353fc2ba6c460bda9e0d26c852a4b46b3ae8",
+  "practice_time_machine_right_before": "c0318981e8210b2461bd7e66d02007eb008f4bc1b6d7f3e61ef102cd4de7d7be",
+  "practice_time_machine_seen": "01678a2fbeb15646e78ad6822c57b96af66ee065c3ae661cc3061267f54aa778",
+  "practice_time_machine_tripped": "c4494070d1ac3d65fe51f19b413f99415d6b13c6c149660eeafe6334c6488693",
+  "practice_try_again": "7393399edc6c2425b66e3fd700a9204ec71cb484e79491e0c44c2d2971033b46"
+}
+-->
+<resources>
+    <string name="practice_progress">Pergunta %1$d de %2$d</string>
+    <string name="practice_check">Conferir</string>
+    <string name="practice_continue">Continuar</string>
+    <string name="practice_finish">Finalizar</string>
+    <string name="practice_try_again">Tentar de novo</string>
+    <string name="practice_finish_ready_title">Não falta responder nada</string>
+    <string name="practice_finish_ready_detail">Finalize para ver como foi.</string>
+    <string name="practice_already_answered">Você já respondeu a esta pergunta.</string>
+    <string name="practice_save_error">Não foi possível salvar. Suas respostas estão guardadas.</string>
+    <plurals name="practice_net_right">
+        <item quantity="one">%d certa</item>
+        <item quantity="many">%d certas</item>
+        <item quantity="other">%d certas</item>
+    </plurals>
+    <plurals name="practice_net_wrong">
+        <item quantity="one">%d errada</item>
+        <item quantity="many">%d erradas</item>
+        <item quantity="other">%d erradas</item>
+    </plurals>
+    <!-- Right answers minus wrong ones, which can be negative. -->
+    <string name="practice_net">saldo %1$d</string>
+    <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
+    <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
+    <string name="practice_net_hint">Uma resposta errada anula uma certa. Não tem certeza? Deixe em branco.</string>
+    <!-- %1$s is a day and month, like October 8. -->
+    <string name="practice_time_machine_seen">Você viu isso em %1$s.</string>
+    <string name="practice_time_machine_right_again">Certo de novo, como em %1$s.</string>
+    <string name="practice_time_machine_right_before">Você acertou em %1$s. Revisar agora ajuda a fixar.</string>
+    <!-- %1$s is a day and month; %2$s is the answer the learner gave then. -->
+    <string name="practice_time_machine_answered">Em %1$s, você respondeu “%2$s”.</string>
+    <string name="practice_time_machine_tripped">Em %1$s, essa questão confundiu você.</string>
+    <string name="practice_pause_text">Você errou algumas seguidas. Uma pausa curta costuma ajudar, e tudo o que você fez hoje conta.</string>
+    <string name="practice_pause_stop">Parar por hoje</string>
+    <string name="practice_pause_failed">Não foi possível encerrar a sessão. Tente de novo.</string>
+    <string name="practice_done_title">Prática concluída</string>
+    <string name="practice_not_found_title">Esta prática não está disponível</string>
+    <string name="practice_not_found_description">Ela pode ter terminado ou mudado de lugar. Confira o que vem a seguir em Hoje.</string>
+    <string name="practice_back_to_today">Voltar para Hoje</string>
+</resources>

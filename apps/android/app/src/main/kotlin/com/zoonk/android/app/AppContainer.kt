@@ -50,6 +50,8 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.player.LessonPlayerStore
 import com.zoonk.android.feature.player.LiveLessonPlayerApi
 import com.zoonk.android.feature.player.TodayChoices
+import com.zoonk.android.feature.practice.block.LiveQuestionBlockApi
+import com.zoonk.android.feature.practice.block.QuestionBlockStore
 import com.zoonk.android.feature.recap.RecapStore
 import com.zoonk.android.feature.session.LiveStudyApi
 import com.zoonk.android.feature.session.StudyOpener
@@ -199,6 +201,9 @@ class AppContainer private constructor(
             sessions = sessions,
             startGuest = { account.startAsGuest() == SignInResult.SignedIn },
         )
+
+    // Practice and checks (lane L6).
+    val questionBlocks = QuestionBlockStore(LiveQuestionBlockApi(api), cache, timeZone)
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =

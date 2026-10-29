@@ -289,6 +289,8 @@ data class AnswerFeedback(
     val fixedMistakeIds: List<String> = emptyList(),
     val savedToNotebook: Boolean = false,
     val transcript: List<TranscriptLine>? = null,
+    /** A few misses in a row: the runner suggests a break. */
+    val pauseSuggested: Boolean = false,
 ) {
     @Serializable
     data class Hyperdrive(

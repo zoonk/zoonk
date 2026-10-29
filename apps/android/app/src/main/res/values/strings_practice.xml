@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="practice_progress">Question %1$d of %2$d</string>
+    <string name="practice_check">Check</string>
+    <string name="practice_continue">Continue</string>
+    <string name="practice_finish">Finish</string>
+    <string name="practice_try_again">Try again</string>
+    <string name="practice_finish_ready_title">Nothing left to answer</string>
+    <string name="practice_finish_ready_detail">Finish to see how it went.</string>
+    <string name="practice_already_answered">You already answered this question.</string>
+    <string name="practice_save_error">That didn\'t go through. Your answers are kept.</string>
+    <plurals name="practice_net_right">
+        <item quantity="one">%d right</item>
+        <item quantity="other">%d right</item>
+    </plurals>
+    <plurals name="practice_net_wrong">
+        <item quantity="one">%d wrong</item>
+        <item quantity="other">%d wrong</item>
+    </plurals>
+    <!-- Right answers minus wrong ones, which can be negative. -->
+    <string name="practice_net">net %1$d</string>
+    <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
+    <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
+    <string name="practice_net_hint">A wrong answer cancels a right one. Not sure? Leave it blank.</string>
+    <!-- %1$s is a day and month, like October 8. -->
+    <string name="practice_time_machine_seen">You saw this on %1$s.</string>
+    <string name="practice_time_machine_right_again">Right again, like on %1$s.</string>
+    <string name="practice_time_machine_right_before">You got it right on %1$s. Reviewing it now helps it stick.</string>
+    <!-- %1$s is a day and month; %2$s is the answer the learner gave then. -->
+    <string name="practice_time_machine_answered">On %1$s you answered “%2$s”.</string>
+    <string name="practice_time_machine_tripped">On %1$s this one tripped you up.</string>
+    <string name="practice_pause_text">A few misses in a row. A short break often helps, and everything you did today counts.</string>
+    <string name="practice_pause_stop">Stop for today</string>
+    <string name="practice_pause_failed">We couldn\'t stop the session. Try again.</string>
+    <string name="practice_done_title">Practice done</string>
+    <string name="practice_not_found_title">This practice isn\'t available</string>
+    <string name="practice_not_found_description">It may have ended or moved. Today has what\'s next.</string>
+    <string name="practice_back_to_today">Back to Today</string>
+</resources>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "practice_already_answered": "7fe9432a1332d0fdf29017ff1c3bec5a6342415d3252db2fbf58a3769805745c",
+  "practice_back_to_today": "56fd2c8c409f7cf941ddd64aa8764ae0e3cc8ba9d18eb9306c85d69856a69618",
+  "practice_check": "f265d5e786dd2788516f70ee64d3c56eff5c075ac530793a0cbdc30c750064c1",
+  "practice_continue": "eba33facb75d6f337aa804f2727e0de04f44ced7aec16f13aff415a53086cbb6",
+  "practice_done_title": "48dc429c4408e302cbb06c4240e84313c9ffd2df5603b1cc89380bde44e62c3a",
+  "practice_finish": "2a0892e4f4042c35a8ded465e06f28b1ed4a938c3ae1648448b446338137bb41",
+  "practice_finish_ready_detail": "eb35825e1ab3006ffcb954068e7ea7f7d89e21927a285f7cef621c9dbdf621f6",
+  "practice_finish_ready_title": "9a4f2ab8644ef124f77e008c5c14003af239ab76412a4ac3c86fdb638657ab3e",
+  "practice_net": "4706151811e6438eb34cfc534d317c33277601badd0ad6f0245eb96cd3c6def5",
+  "practice_net_hint": "9fc1b69e209dc8c273ac66910f683bca85e36980c11a1623e421c2f9c36282c4",
+  "practice_net_right": "e813ce58a66a6446aea5559704f3cd7829c4193ee096e9226bb7be6cc821e8dc",
+  "practice_net_tally": "58cb3dc280800b6e8c9e7794660d2121a471b250d09b2fbc04596d8affaaad48",
+  "practice_net_wrong": "54abbc1074fca4def04c4a57790d8458c7d3f9e1382917c7f166ef8387d044e6",
+  "practice_not_found_description": "e82dec30e6b14dcc15f5d3e0795137b14bd0b02de4dea4a3710917c1f7b1c39d",
+  "practice_not_found_title": "0c5c487d66c96084764a2c6d8dcac709fd028b3de0661abb6db663cea90772b9",
+  "practice_pause_failed": "7874ea85ac2ae2794f1cee7ac093ad9a6443f6286747acc7ee4eebeb409a9289",
+  "practice_pause_stop": "fea96b27bf850935e3d3631431ebc09f09f383bf170084c7b7df010830a28b73",
+  "practice_pause_text": "05541185e9a489edcbe979d733503f3473331572282d3989a555cbcbe2a8c178",
+  "practice_progress": "77ef3640b5f3cb2a53840adbcd50d425cbe33e4a17a2507e6200ba9943e094e3",
+  "practice_save_error": "3574638047aaaf457cf701a79cef64de97947f41c0ceb00d202858736ed8c309",
+  "practice_time_machine_answered": "2871033abc61dfa2c9f44e54d18b65b8330e774f9b90b652ac86cb1a286c6ff1",
+  "practice_time_machine_right_again": "39b51784efa22a430d4dd703910d749d2ca602e07d1de023e758f229f907009a",
+  "practice_time_machine_right_before": "ba9e064482bc2751ba63de2d2c1cc3f4dffc198bc40d652d3165897f40704a72",
+  "practice_time_machine_seen": "3c6d60358b7ea4641cc974cfd62e4ac939698e216fc62c75578aa75cf1b5bd90",
+  "practice_time_machine_tripped": "39ab820ea831ae95f5d9d47339cdd4e6061a41c74254272241eecce0c4f19ef3",
+  "practice_try_again": "c29d521202cf605b08968464f1356d0c5259dc50866ece8ccced28a451967bca"
+}
+-->
+<resources>
+    <string name="practice_progress">Question %1$d sur %2$d</string>
+    <string name="practice_check">Vérifier</string>
+    <string name="practice_continue">Continuer</string>
+    <string name="practice_finish">Terminer</string>
+    <string name="practice_try_again">Réessayer</string>
+    <string name="practice_finish_ready_title">Plus rien à faire</string>
+    <string name="practice_finish_ready_detail">Termine pour voir comment ça s’est passé.</string>
+    <string name="practice_already_answered">Tu as déjà répondu à cette question.</string>
+    <string name="practice_save_error">Ça n’a pas fonctionné. Tes réponses sont conservées.</string>
+    <plurals name="practice_net_right">
+        <item quantity="one">%d bonne réponse</item>
+        <item quantity="many">%d bonnes réponses</item>
+        <item quantity="other">%d bonnes réponses</item>
+    </plurals>
+    <plurals name="practice_net_wrong">
+        <item quantity="one">%d mauvaise réponse</item>
+        <item quantity="many">%d mauvaises réponses</item>
+        <item quantity="other">%d mauvaises réponses</item>
+    </plurals>
+    <!-- Right answers minus wrong ones, which can be negative. -->
+    <string name="practice_net">net %1$d</string>
+    <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
+    <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
+    <string name="practice_net_hint">Une mauvaise réponse annule une bonne réponse. Tu hésites ? Laisse la réponse vide.</string>
+    <!-- %1$s is a day and month, like October 8. -->
+    <string name="practice_time_machine_seen">Tu as vu cette question le %1$s.</string>
+    <string name="practice_time_machine_right_again">Encore juste, comme le %1$s.</string>
+    <string name="practice_time_machine_right_before">Tu as trouvé la bonne réponse le %1$s. La revoir maintenant t’aidera à la retenir.</string>
+    <!-- %1$s is a day and month; %2$s is the answer the learner gave then. -->
+    <string name="practice_time_machine_answered">Le %1$s, tu as répondu « %2$s ».</string>
+    <string name="practice_time_machine_tripped">Le %1$s, cette question t’a posé problème.</string>
+    <string name="practice_pause_text">Plusieurs erreurs d’affilée. Une courte pause peut aider, et tout ce que tu as fait aujourd’hui compte.</string>
+    <string name="practice_pause_stop">Arrêter pour aujourd’hui</string>
+    <string name="practice_pause_failed">Impossible d’arrêter la séance. Réessaie.</string>
+    <string name="practice_done_title">Entraînement terminé</string>
+    <string name="practice_not_found_title">Cet entraînement n’est pas disponible</string>
+    <string name="practice_not_found_description">Il est peut-être terminé ou déplacé. Tu trouveras la suite dans Aujourd’hui.</string>
+    <string name="practice_back_to_today">Retour à Aujourd’hui</string>
+</resources>
