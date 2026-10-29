@@ -3,10 +3,11 @@ package com.zoonk.android.feature.activities
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.detectHorizontalDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.gestures.awaitHorizontalTouchSlopOrCancellation
+import androidx.compose.foundation.gestures.awaitVerticalTouchSlopOrCancellation
 import androidx.compose.foundation.gestures.drag
+import androidx.compose.foundation.gestures.horizontalDrag
+import androidx.compose.foundation.gestures.verticalDrag
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +31,8 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.input.pointer.PointerIcon
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.changedToUp
 import androidx.compose.ui.input.pointer.pointerHoverIcon
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.layout
@@ -45,8 +48,6 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.LinearScale
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
 enum class PlaceOrientation { Horizontal, Vertical }
@@ -144,23 +145,26 @@ fun ActivityPlaceTrack(
             .inPlot(area)
             .pointerHoverIcon(PointerIcon.Hand)
             .pointerInput(orientation) {
-                coroutineScope {
-                    launch { detectTapGestures { place(it) } }
-                    launch {
+                awaitEachGesture {
+                    val down = awaitFirstDown()
+                    val dragged =
                         when (orientation) {
-                            PlaceOrientation.Horizontal -> {
-                                detectHorizontalDragGestures(onDragStart = { place(it) }) { change, _ ->
-                                    change.consume()
-                                    place(change.position)
-                                }
-                            }
-
-                            PlaceOrientation.Vertical -> {
-                                detectVerticalDragGestures(onDragStart = { place(it) }) { change, _ ->
-                                    change.consume()
-                                    place(change.position)
-                                }
-                            }
+                            PlaceOrientation.Horizontal -> awaitHorizontalTouchSlopOrCancellation(down.id) { change, _ -> change.consume() }
+                            PlaceOrientation.Vertical -> awaitVerticalTouchSlopOrCancellation(down.id) { change, _ -> change.consume() }
+                        }
+                    if (dragged == null) {
+                        currentEvent.changes
+                            .find { it.id == down.id && it.changedToUp() }
+                            ?.let { place(it.position) }
+                    } else {
+                        place(dragged.position)
+                        val follow = { change: PointerInputChange ->
+                            change.consume()
+                            place(change.position)
+                        }
+                        when (orientation) {
+                            PlaceOrientation.Horizontal -> horizontalDrag(dragged.id, follow)
+                            PlaceOrientation.Vertical -> verticalDrag(dragged.id, follow)
                         }
                     }
                 }
