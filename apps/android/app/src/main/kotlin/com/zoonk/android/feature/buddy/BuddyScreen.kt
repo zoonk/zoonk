@@ -52,6 +52,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.settings.BuddyEditor
+import com.zoonk.android.feature.tutor.TutorAccess
 import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.feature.tutor.TutorPage
 import com.zoonk.android.feature.tutor.TutorPanel
@@ -129,12 +130,13 @@ private val LearnerSummary.tutoredGoalId: String?
             ?.toString()
 
 @Composable
-private fun BuddyPage(
+internal fun BuddyPage(
     status: BuddyStatus,
     goalId: String,
     ask: String?,
     app: AppContainer,
     navigator: AppNavigator,
+    access: TutorAccess = rememberTutorAccess(app),
 ) {
     val vm = viewModel { BuddyViewModel(app.buddy, app.learningProfile, app.today, app.studyOpener) }
     val look = status.look()
@@ -181,7 +183,7 @@ private fun BuddyPage(
                 }
                 if (vm.saveFailed && !editing) SaveFailed(Modifier.padding(horizontal = 16.dp))
                 if (vm.openFailed) OpenFailed(Modifier.padding(horizontal = 16.dp))
-                TutorPanel(tutor, rememberTutorAccess(app), TutorIdentity(name, look), routes, Modifier.weight(1f), page = page)
+                TutorPanel(tutor, access, TutorIdentity(name, look), routes, Modifier.weight(1f), page = page)
             }
         }
     }
