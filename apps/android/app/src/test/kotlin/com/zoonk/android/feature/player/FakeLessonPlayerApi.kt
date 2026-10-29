@@ -8,6 +8,7 @@ import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
@@ -44,10 +45,16 @@ fun checkResult(
     feedback: String? = null,
     keyPoints: String = "null",
     checked: Boolean = true,
+    expected: ActivityExpected? = null,
 ): LessonStepCheckResult =
     ApiJson.decodeFromString(
         """
-        {"checked":$checked,"correctAnswer":null,"corrections":[],"expected":null,"feedback":${feedback?.let { "\"$it\"" } ?: "null"},
+        {"checked":$checked,"correctAnswer":null,"corrections":[],"expected":${expected?.let {
+            ApiJson.encodeToString(
+                ActivityExpected.serializer(),
+                it,
+            )
+        }},"feedback":${feedback?.let { "\"$it\"" } ?: "null"},
          "isCorrect":$isCorrect,"keyPoints":$keyPoints,"nextReviewAt":"2026-10-30T09:00:00Z","savedMistake":false,"score":null,"spelling":null}
         """.trimIndent(),
     )

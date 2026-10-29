@@ -66,74 +66,20 @@ class LessonPlayerFlowTest {
     @get:Rule
     val folder = TemporaryFolder()
 
-    private val ana = AuthenticatedSession(ANA, "token-a", "local-a")
-    private val session = FakeSession(ana)
-    private val opened = mutableListOf<AppRoute>()
-    private val replaced = mutableListOf<AppRoute>()
-    private var closed = 0
-    private lateinit var api: FakeLessonPlayerApi
-    private lateinit var openAgain: () -> LessonPlayerViewModel
-    private lateinit var viewModel: LessonPlayerViewModel
-
-    private val exits =
-        object : LessonPlayerExits {
-            override fun close() {
-                closed++
-            }
-
-            override fun open(route: AppRoute) {
-                opened += route
-            }
-
-            override fun replace(route: AppRoute) {
-                replaced += route
-            }
-        }
+    private val harness = LessonPlayerHarness(rule) { folder.newFolder() }
+    private val session get() = harness.session
+    private val opened get() = harness.opened
+    private val replaced get() = harness.replaced
+    private val closed get() = harness.closed
+    private val api get() = harness.api
+    private val openAgain get() = harness.openAgain
+    private val viewModel get() = harness.viewModel
 
     private fun play(
         steps: List<LessonStep>,
         guest: Boolean = false,
         configure: FakeLessonPlayerApi.() -> Unit = {},
-    ) {
-        val lesson = playable(steps)
-        api = FakeLessonPlayerApi(LessonLoad.Ready(lesson)).apply(configure)
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-        val cache = AppCache(session, scope)
-        val drafts = DraftStore(folder.newFolder(), scope, io = Dispatchers.Main.immediate)
-        runBlocking { drafts.follow { DraftsChange(ana.accountId) } }
-        val newViewModel = {
-            LessonPlayerViewModel(
-                lessonId = LESSON_ID,
-                studySessionId = null,
-                firstAnswer = null,
-                store = LessonPlayerStore(api, cache),
-                cache = cache,
-                sessions = session,
-                choices = TodayChoices(drafts),
-                drafts = drafts,
-                isGuest = { guest },
-                activeGoalId = { GOAL_ID },
-            )
-        }
-        viewModel = newViewModel()
-        openAgain = { newViewModel().also { it.open(lesson) } }
-
-        rule.setContent {
-            ZoonkTheme {
-                CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
-                    val state by viewModel.state.collectAsState()
-                    val ending by viewModel.ending.collectAsState()
-                    LaunchedEffect(Unit) { viewModel.open(lesson) }
-                    LessonPlayer(lesson, state, ending, viewModel, exits, rememberAppNavigator())
-                }
-            }
-        }
-        rule.waitUntil {
-            viewModel.state.value
-                ?.run
-                .let { it is LessonRun.Started || it is LessonRun.Refused }
-        }
-    }
+    ) = harness.play(steps, guest, configure)
 
     private fun tap(text: String) = rule.onNodeWithText(text).performClick()
 
@@ -507,4 +453,3 @@ class LessonPlayerFlowTest {
 }
 
 private const val BLANK_ID = "00000000-0000-4000-8000-0000000000ee"
-private const val GOAL_ID = "00000000-0000-4000-8000-000000000011"
