@@ -23,6 +23,7 @@ import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
+import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
@@ -178,6 +179,12 @@ class BuddyViewModelTest {
             goalId: UUID,
             body: JsonObject,
         ): OpenedStudyDay = error("Not used")
+
+        override suspend fun summary(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+            timeZone: String,
+        ): StudySessionSummary = error("Not used")
 
         override suspend fun addExtraBlock(
             session: AuthenticatedSession,

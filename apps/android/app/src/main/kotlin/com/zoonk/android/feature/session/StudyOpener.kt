@@ -9,6 +9,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
+import com.zoonk.api.models.StudySessionSummary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -19,7 +20,7 @@ import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
 import java.util.UUID
 
-/** The study writes a tap makes; nothing here starts AI work. */
+/** The study reads, and the writes a tap makes; nothing here starts AI work. */
 interface StudyApi {
     suspend fun openDay(
         session: AuthenticatedSession,
@@ -32,6 +33,12 @@ interface StudyApi {
         sessionId: UUID,
         timeZone: String,
     ): StudySession
+
+    suspend fun summary(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+        timeZone: String,
+    ): StudySessionSummary
 
     /** A "10 more minutes" block after the day's session. */
     suspend fun addExtraBlock(
@@ -153,22 +160,24 @@ class StudyOpener(
             return AppRoute.Lesson(lessonId.toString(), sessionId.toString())
         }
 
+        val waits = AppRoute.Session(blockId = blockId.toString(), sessionId = sessionId.toString())
+
         return when (step.screen) {
             StudyBlock.Screen.SESSION -> {
                 if (step.kind == StudyBlock.Kind.LEARN) {
-                    unstarted(session, sessionId, AppRoute.Session(blockId = blockId.toString()))
+                    unstarted(session, sessionId, waits)
                 } else {
                     started(session, sessionId, blockId) { AppRoute.QuestionBlock(sessionId.toString(), blockId.toString()) }
                 }
             }
 
             StudyBlock.Screen.UNKNOWN -> {
-                unstarted(session, sessionId, AppRoute.Session(blockId = blockId.toString()))
+                unstarted(session, sessionId, waits)
             }
 
             StudyBlock.Screen.LESSON -> {
                 if (lessonId == null) {
-                    unstarted(session, sessionId, AppRoute.Session(blockId = blockId.toString()))
+                    unstarted(session, sessionId, waits)
                 } else {
                     started(session, sessionId, blockId) { AppRoute.Lesson(lessonId.toString(), sessionId.toString()) }
                 }
@@ -228,7 +237,7 @@ class StudyOpener(
         } catch (e: ApiException) {
             when (e.code) {
                 // Finished meanwhile, on another device: the session says what's next.
-                "BLOCK_FINISHED" -> AppRoute.Session()
+                "BLOCK_FINISHED" -> AppRoute.Session(sessionId = sessionId.toString())
 
                 "DAILY_LIMIT_REACHED", "EARLIER_FIRST" -> null
 
@@ -243,6 +252,10 @@ class StudyOpener(
         val STARTABLE = setOf(OpenedStudyDay.TargetStatus.NEXT, OpenedStudyDay.TargetStatus.RESOLVED)
     }
 }
+
+/** A lesson step whose lesson isn't made yet, which [StudyOpener] opens on the session screen to wait for it. */
+internal fun DayStep.waitsForItsLesson(): Boolean =
+    lessonId == null && (screen == StudyBlock.Screen.LESSON || (screen == StudyBlock.Screen.SESSION && kind == StudyBlock.Kind.LEARN))
 
 /**
  * Names the shown step by its work, never by position alone, so a changed day never opens other

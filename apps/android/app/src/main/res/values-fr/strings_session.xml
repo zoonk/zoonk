@@ -29,8 +29,38 @@
   "session_energy_glowing_brightest": "af47c1ee29e5e2f948e878746f15c95b9fbd7f1cffd2de04980bc04fbf753e95",
   "session_energy_max": "f5a8582a80ae25784d7a319428fbacaea37a0f7e3ab8ff0a9b5d4f556894b3f7",
   "session_level_up": "9ebf40b654dcc8315b07de863dc883ae0e2f0726b70d1988d232a3daa6e9b66e",
+  "session_next_getting_ready": "d9af6e18f51ffce6d6d7d607d0e595771606c6821855960a349fad7fa56fa401",
+  "session_next_start": "bcb67a5b784924ba728cdcecee496365f2511cd9c37e11666a817116440fac3f",
   "session_opening_slow": "a65296b4f88c225dbab5c63ee55dba9a3591d7975d9dfa3b9af9427b869917bc",
   "session_opening_very_slow": "de01cfac0eeee7f3f6f6af6cb448134b18bdcca867bdbb600709db58dd78b4b2",
+  "session_summary_back_on": "7c558ea660585601ffcb20026b9934e84d675c0eaa345d156f34f635cef4ac01",
+  "session_summary_brain_power": "2eb9b12d19b6a4f6437292a2b1be8c4749ecf9ece67fbc912950ff30f089fb3a",
+  "session_summary_buddy_happy": "cc6fc44b85fe7cb9fe94e4615cc592929d89b0e48cfed551a20a9c6bebb1824e",
+  "session_summary_create_account": "f4611665adcb8e99ff93cc78f9f7ba99a76b56dd23694aec60641e6978941df1",
+  "session_summary_done_for_now": "0b3de700727ab75971ab9c8e4f75e23e245e944e1032587c1ab4f932e6987cf2",
+  "session_summary_done_in": "31f16d3a98d7dce5f5a6f5f5dc2663e4af503c43394915a5fa2f04dcd64d89a0",
+  "session_summary_done_under_minute": "ae5b9edf69857f8fbf8aba03ac0e25983cdf8c626627b262e2d11c0aae518f3d",
+  "session_summary_earned_today": "a2a69e434aae02193d87fbb381df63e8e098dc4b8c69cc3b8a7d7e9a78b36d86",
+  "session_summary_eyebrow": "bb7dd1aab6ccb5aa30f1057b50d321147813b520d138d5712fca0fe07353fbd6",
+  "session_summary_finish": "4c12239fe1bdfcbf67e8ab34485fcf8193b45137f974464586339570ac4e151f",
+  "session_summary_keep_going": "80305ca4d5f27e6a735c1f9ced18f64e8a9e2f5031a30f8d8e4f8bf47a6c8133",
+  "session_summary_levels_gained": "9520d1ef5fe58a6c0b9cd93f957c091561c074e2e38b6c21b15394a473190997",
+  "session_summary_mission_done": "a58dd2ba9f404751a66539eba1c8071edb76f989efe49a3413ea61702a745f33",
+  "session_summary_missions_done": "0b738a431ee70a23477486a2bb1ac327d2c53d63ec92ab0654ae78d3026041d5",
+  "session_summary_net": "5dc32a4e68141bae4cd04bb3d60c52b52266f9bafd1894678fb4502c0ec32121",
+  "session_summary_plus": "9cdf2e6717dd6abbf17dafbd9a9d5505b0a1446a33724f7fa7929fcb00389a46",
+  "session_summary_preparation": "284bf3e631162a0e191e9033c9ea22f0bcd25534ab689448bec7be493d37eab1",
+  "session_summary_progress": "207fe4b9304ee20649c1fddc425bafb5e2a25340e58b02dcca8a994075ae8c52",
+  "session_summary_rewards": "d8939efaeea9100ccccfc32ffaaaa1648e13854807a543c748554faa426f52cb",
+  "session_summary_right": "f5f7c72592623c0b7828b0de6d857d7c4bd5d64175231e93eb5fe358c82465ad",
+  "session_summary_right_spoken": "e5fcf8f7d9330a52f7803a3aafd0308ef3be8dea9761b6338eff866e6677170a",
+  "session_summary_save_note": "1aa1f7ae5fa0c804d367eb88348fb31c92847afd6ab322dd24425ce80e082363",
+  "session_summary_see_mistakes": "ccbe09eff1da3732a2e7ad61e690e4d209e941f1104351a099b06128cee9c32c",
+  "session_summary_skills_rose": "aab968d4d060f551ed05253e96dd7f6a25c72600d262549ad1b58626c94fa42b",
+  "session_summary_so_far": "b85fe8b68a09dbb9695b6a7583a4fa4ae398055211a408c2d00b4039519ab28b",
+  "session_summary_streak": "f1b82d1eccfabe812b157dd815cbc4a53822d662b28d6b310f8fd15ad7cd4135",
+  "session_summary_to_review": "73e987f0f6ad779868078b5f9ee34c29d4bac1cd42f8d7aa720bd60c1b08d127",
+  "session_summary_tomorrow": "c4dacf00d17c9a6e5bb5538509b5007380e9ee5ca3acda5e93579866217812fc",
   "session_topics_and_more": "2206b15e59e14adeacac18bcfb104487f78fcc8835bc82442753cf8d34ff7eef"
 }
 -->
@@ -106,4 +136,52 @@
     <!-- %1$s is the buddy's name. -->
     <string name="session_energy_glowing">%1$s rayonne maintenant.</string>
     <string name="session_energy_detail">Les bonnes réponses l’augmentent. Une journée sans étudier la fait un peu baisser.</string>
+    <string name="session_summary_eyebrow">Séance du jour</string>
+    <string name="session_summary_done_for_now">C’est tout pour le moment</string>
+    <string name="session_summary_done_under_minute">Terminé en moins d’une minute</string>
+    <!-- %1$s is how long the session took, such as "13 min". -->
+    <string name="session_summary_done_in">Terminé en %1$s</string>
+    <!-- After Stop for today; %1$s is the time studied, such as "13 min". -->
+    <string name="session_summary_so_far">%1$s jusqu’ici</string>
+    <string name="session_summary_right">Bonnes réponses</string>
+    <!-- What TalkBack says for "3/5" right answers. -->
+    <string name="session_summary_right_spoken">%1$d sur %2$d</string>
+    <!-- Right minus wrong on questions that take points off for a wrong answer. -->
+    <string name="session_summary_net">net %1$s</string>
+    <string name="session_summary_preparation">Préparation</string>
+    <string name="session_summary_progress">Progression</string>
+    <!-- How many skills come back for review on later days. -->
+    <string name="session_summary_to_review">À revoir</string>
+    <!-- %1$s lists the days they come back, such as "Nov 3 and Nov 5". -->
+    <string name="session_summary_back_on">De retour %1$s</string>
+    <string name="session_summary_brain_power">Puissance Mentale</string>
+    <!-- Points earned, such as "+120". -->
+    <string name="session_summary_plus">+%1$s</string>
+    <string name="session_summary_skills_rose">Compétences en progrès</string>
+    <string name="session_summary_tomorrow">Demain</string>
+    <string name="session_summary_earned_today">Gagné aujourd’hui</string>
+    <string name="session_summary_rewards">Récompenses</string>
+    <!-- The learner's study buddy, by name, as TalkBack describes the picture. -->
+    <string name="session_summary_buddy_happy">%1$s a apprécié la journée</string>
+    <!-- The day's only mission is done. -->
+    <string name="session_summary_mission_done">Terminée</string>
+    <plurals name="session_summary_missions_done">
+        <item quantity="one">Les %d missions sont toutes terminées</item>
+        <item quantity="many">Les %d missions sont toutes terminées</item>
+        <item quantity="other">Les %d missions sont toutes terminées</item>
+    </plurals>
+    <plurals name="session_summary_levels_gained">
+        <item quantity="one">+%d niveau</item>
+        <item quantity="many">+%d niveaux</item>
+        <item quantity="other">+%d niveaux</item>
+    </plurals>
+    <!-- %1$s is how many questions in a row were right, such as "5". -->
+    <string name="session_summary_streak">%1$s bonnes réponses d’affilée</string>
+    <string name="session_summary_see_mistakes">Voir les erreurs</string>
+    <string name="session_summary_keep_going">Continuer</string>
+    <string name="session_summary_finish">Terminer</string>
+    <string name="session_summary_save_note">Enregistre ton plan pour le retrouver la prochaine fois.</string>
+    <string name="session_summary_create_account">Créer un compte</string>
+    <string name="session_next_start">Commencer</string>
+    <string name="session_next_getting_ready">Préparation en cours…</string>
 </resources>

@@ -10,6 +10,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
+import com.zoonk.api.models.StudySessionSummary
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -60,6 +61,12 @@ class StudyOpenerTest {
             sessionId: UUID,
             timeZone: String,
         ): StudySession = this.session
+
+        override suspend fun summary(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+            timeZone: String,
+        ): StudySessionSummary = error("Not used")
 
         override suspend fun addExtraBlock(
             session: AuthenticatedSession,
@@ -178,7 +185,10 @@ class StudyOpenerTest {
             val essay = step(0, kind = StudyBlock.Kind.PRODUCE, screen = StudyBlock.Screen.ESSAY, lessonId = null)
 
             api.startError = "BLOCK_FINISHED"
-            assertEquals(MutationResult.Done(AppRoute.Session()), opener(api).open(day(listOf(essay)), essay, next = false, goalId = GOAL))
+            assertEquals(
+                MutationResult.Done(AppRoute.Session(sessionId = SESSION.toString())),
+                opener(api).open(day(listOf(essay)), essay, next = false, goalId = GOAL),
+            )
 
             api.startError = "DAILY_LIMIT_REACHED"
             assertEquals(MutationResult.Done(null), opener(api).open(day(listOf(essay)), essay, next = false, goalId = GOAL))

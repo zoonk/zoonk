@@ -7,6 +7,7 @@ import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockStart
 import com.zoonk.api.models.StudySession
+import com.zoonk.api.models.StudySessionSummary
 import com.zoonk.api.models.StudySessionTimeZone
 import kotlinx.serialization.json.JsonObject
 import java.util.UUID
@@ -25,6 +26,12 @@ class LiveStudyApi(
         sessionId: UUID,
         timeZone: String,
     ): StudySession = perform { api.clients(session).studySessions.getStudySession(sessionId, timeZone) }
+
+    override suspend fun summary(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+        timeZone: String,
+    ): StudySessionSummary = perform { api.clients(session).studySessions.getStudySessionSummary(sessionId, timeZone) }
 
     override suspend fun addExtraBlock(
         session: AuthenticatedSession,

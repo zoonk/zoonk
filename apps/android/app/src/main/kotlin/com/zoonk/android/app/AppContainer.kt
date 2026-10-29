@@ -89,6 +89,7 @@ import com.zoonk.android.feature.search.LiveSearchApi
 import com.zoonk.android.feature.search.SearchStore
 import com.zoonk.android.feature.session.LiveStudyApi
 import com.zoonk.android.feature.session.StudyOpener
+import com.zoonk.android.feature.session.StudySessionStore
 import com.zoonk.android.feature.speaking.LiveSpeakingApi
 import com.zoonk.android.feature.speaking.SpeakingStore
 import com.zoonk.android.feature.stats.LiveStatsApi
@@ -223,7 +224,9 @@ class AppContainer private constructor(
             .id
     }
     val today = TodayStore(LiveTodayApi(api), cache, scope, timeZone)
-    val studyOpener = StudyOpener(LiveStudyApi(api), cache, timeZone, scope)
+    private val studyApi = LiveStudyApi(api)
+    val studyOpener = StudyOpener(studyApi, cache, timeZone, scope)
+    val studySessions = StudySessionStore(studyApi, cache, timeZone)
     val recap =
         RecapStore(
             api = { session, goalId, timeZone ->

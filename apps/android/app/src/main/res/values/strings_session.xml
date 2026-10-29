@@ -63,4 +63,50 @@
     <!-- %1$s is the buddy's name. -->
     <string name="session_energy_glowing">%1$s is glowing now.</string>
     <string name="session_energy_detail">Right answers raise it. A day away lowers it a little.</string>
+    <string name="session_summary_eyebrow">Today\'s session</string>
+    <string name="session_summary_done_for_now">Done for now</string>
+    <string name="session_summary_done_under_minute">Done in under a minute</string>
+    <!-- %1$s is how long the session took, such as "13 min". -->
+    <string name="session_summary_done_in">Done in %1$s</string>
+    <!-- After Stop for today; %1$s is the time studied, such as "13 min". -->
+    <string name="session_summary_so_far">%1$s so far</string>
+    <string name="session_summary_right">Right</string>
+    <!-- What TalkBack says for "3/5" right answers. -->
+    <string name="session_summary_right_spoken">%1$d of %2$d</string>
+    <!-- Right minus wrong on questions that take points off for a wrong answer. -->
+    <string name="session_summary_net">net %1$s</string>
+    <string name="session_summary_preparation">Preparation</string>
+    <string name="session_summary_progress">Progress</string>
+    <!-- How many skills come back for review on later days. -->
+    <string name="session_summary_to_review">To review</string>
+    <!-- %1$s lists the days they come back, such as "Nov 3 and Nov 5". -->
+    <string name="session_summary_back_on">Back %1$s</string>
+    <string name="session_summary_brain_power">Brain Power</string>
+    <!-- Points earned, such as "+120". -->
+    <string name="session_summary_plus">+%1$s</string>
+    <string name="session_summary_skills_rose">Skills that rose</string>
+    <string name="session_summary_tomorrow">Tomorrow</string>
+    <string name="session_summary_earned_today">Earned today</string>
+    <string name="session_summary_rewards">Rewards</string>
+    <!-- The learner's study buddy, by name, as TalkBack describes the picture. -->
+    <string name="session_summary_buddy_happy">%1$s, happy with today</string>
+    <!-- The day's only mission is done. -->
+    <string name="session_summary_mission_done">Done</string>
+    <plurals name="session_summary_missions_done">
+        <item quantity="one">All %d done</item>
+        <item quantity="other">All %d done</item>
+    </plurals>
+    <plurals name="session_summary_levels_gained">
+        <item quantity="one">+%d level</item>
+        <item quantity="other">+%d levels</item>
+    </plurals>
+    <!-- %1$s is how many questions in a row were right, such as "5". -->
+    <string name="session_summary_streak">%1$s right in a row</string>
+    <string name="session_summary_see_mistakes">See mistakes</string>
+    <string name="session_summary_keep_going">Keep going</string>
+    <string name="session_summary_finish">Finish</string>
+    <string name="session_summary_save_note">Save your plan so it\'s here next time.</string>
+    <string name="session_summary_create_account">Create an account</string>
+    <string name="session_next_start">Start</string>
+    <string name="session_next_getting_ready">Getting it ready…</string>
 </resources>
