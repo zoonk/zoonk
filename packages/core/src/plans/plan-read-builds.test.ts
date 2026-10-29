@@ -1,8 +1,11 @@
 import { randomUUID } from "node:crypto";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { createLessonQuestion } from "../lesson-questions/create-lesson-question";
 import { seedV2PersonaCopy } from "../seed/seed-v2";
+import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
+import { createGoalPlan } from "./create-goal-plan";
 import { getPlanBasesAdvice } from "./get-bases-advice";
 import { getGoalPlan } from "./get-goal-plan";
 import { findPlanTimeToCover, getPlanTimeAdvice } from "./get-time-advice";
@@ -83,4 +86,38 @@ describe("plans laid out per read", () => {
     const advice = await countBuilds(() => getPlanBasesAdvice(user.goalId));
     expect(advice.result.status).toBe("ready");
   }, 120_000);
+
+  it("finds no time for a date that has passed without searching every daily time", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2020-09-28T12:00:00Z"));
+
+    const user = await userFixture();
+    const library = await planLibraryFixture({ skills: [{ lessons: 6 }, { lessons: 6 }] });
+
+    const { goal } = await unplannedGoalFixture({
+      dailyMinutes: 5,
+      details: { placementDeclined: true },
+      settings: { startDate: "2020-09-28" },
+      targetDate: new Date("2020-10-19T00:00:00Z"),
+      timezone: "UTC",
+      userId: user.id,
+    });
+
+    await createGoalPlan({ goalId: goal.id, graph: library.graph });
+    mockSession(user.id);
+    vi.setSystemTime(new Date("2020-10-20T12:00:00Z"));
+
+    const found = await countBuilds(() =>
+      findPlanTimeToCover({ goalId: goal.id, input: { studyDays: [1, 2, 3, 4, 5] } }),
+    );
+
+    vi.useRealTimers();
+
+    expect(found.result).toMatchObject({
+      status: "ready",
+      time: { coreMinutes: null, recommendedMinutes: null, targetDate: "2020-10-19" },
+    });
+
+    expect(found.builds).toBeLessThanOrEqual(2);
+  });
 });

@@ -269,11 +269,12 @@ export async function findPlanTimeToCover({
   return {
     status: "ready",
     time: {
-      coreMinutes: feasibility.coreMinutes,
+      // Nothing covers a date that has passed, so no time is searched for.
+      coreMinutes: pastDate ? null : feasibility.coreMinutes,
       fittingDate: movesDate && context.goal.targetDate ? await findCoveringDate(context) : null,
       readingNotice: false,
       ready: true,
-      recommendedMinutes: feasibility.recommendedMinutes,
+      recommendedMinutes: pastDate ? null : feasibility.recommendedMinutes,
       targetDate: context.goal.targetDate ? toIsoDate(context.goal.targetDate) : null,
       targetDateNamedMonth: dateKind.namedMonth,
     },
