@@ -7,9 +7,11 @@
         <activity
             android:name="com.zoonk.android.gallery.GalleryActivity"
             android:exported="true" />
+        <!-- adb's shell holds DUMP, so `adb shell am broadcast` reaches it and other apps can't. -->
         <receiver
             android:name="com.zoonk.android.app.DebugSignInReceiver"
-            android:exported="true">
+            android:exported="true"
+            android:permission="android.permission.DUMP">
             <intent-filter>
                 <action android:name="com.zoonk.debug.SIGN_IN" />
             </intent-filter>

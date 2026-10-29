@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
@@ -178,16 +179,18 @@ class LanguageStepsScreenshots {
             val (_, steps, actions) = states[index]
             val lesson = playable(steps).copy(targetLanguage = "es")
             val viewModel =
-                LessonPlayerViewModel(
-                    LESSON_ID,
-                    null,
-                    null,
-                    LessonPlayerStore(FakeLessonPlayerApi(LessonLoad.Ready(lesson)), cache),
-                    cache,
-                    session,
-                    TodayChoices(drafts),
-                    drafts,
-                )
+                viewModel(key = "screen-$index") {
+                    LessonPlayerViewModel(
+                        LESSON_ID,
+                        null,
+                        null,
+                        LessonPlayerStore(FakeLessonPlayerApi(LessonLoad.Ready(lesson)), cache),
+                        cache,
+                        session,
+                        TodayChoices(drafts),
+                        drafts,
+                    )
+                }
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState(), LocalLessonSpeech provides previewSpeech()) {
                     key(index) { LessonPlayer(lesson, at(steps, *actions), LessonEnding(), viewModel, exits, rememberAppNavigator()) }

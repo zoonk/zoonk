@@ -1,3 +1,6 @@
+// Debug-only samples for reviewers: never shipped, so never translated.
+@file:Suppress("HardcodedComposeText")
+
 package com.zoonk.android.ui.richtext
 
 import androidx.compose.foundation.layout.Arrangement

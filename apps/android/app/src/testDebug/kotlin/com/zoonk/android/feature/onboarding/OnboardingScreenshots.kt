@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -402,9 +403,10 @@ class OnboardingScreenshots {
             native: String = "en",
         ) {
             val context = LocalContext.current
+            val resources = LocalResources.current
             val speech =
                 remember {
-                    val config = context.resources.getIdentifier("_generated_res_locale_config", "xml", context.packageName)
+                    val config = resources.getIdentifier("_generated_res_locale_config", "xml", context.packageName)
                     ReflectionHelpers.setField(context.applicationInfo, "localeConfigRes", config)
                     api.setup = {
                         setupView(
