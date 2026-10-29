@@ -92,7 +92,6 @@ internal data class PlanEdits(
     val findTimeToCover: (Plan, (TimeToCoverOutcome) -> Unit) -> Unit = { _, _ -> },
     val chooseFocus: () -> Unit = {},
     val studyEverything: () -> Unit = {},
-
     val chooseExamOption: (group: String, subject: String, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
 ) {
     fun isPending(part: PlanPart) = part in pending
