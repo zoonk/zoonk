@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -194,15 +195,14 @@ private fun BuddySection(
                 supportingContent = {
                     Text(stringResource(R.string.settings_preferences_buddy_line, stageName(look.stage), stringResource(glasses.worn)))
                 },
-                trailingContent = {
-                    OutlinedButton(
-                        onClick = { isEditing = true },
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-                    ) {
-                        Text(stringResource(editLabel))
-                    }
-                },
             )
+            OutlinedButton(
+                onClick = { isEditing = true },
+                modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+            ) {
+                Text(stringResource(editLabel))
+            }
         }
     }
 
@@ -239,7 +239,8 @@ private fun BuddyEditor(
                     .verticalScroll(rememberScrollState())
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 24.dp)
-                    .navigationBarsPadding(),
+                    .navigationBarsPadding()
+                    .imePadding(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(stringResource(R.string.settings_preferences_buddy), style = MaterialTheme.typography.titleLarge)

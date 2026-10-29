@@ -109,7 +109,7 @@ fun SettingsScreen(
                 Group {
                     Row(
                         title = stringResource(R.string.settings_preferences),
-                        trailing = preferencesSummary(summary.value),
+                        supporting = preferencesSummary(summary.value),
                         selected = navigator.currentRoute == AppRoute.Preferences,
                     ) { open(AppRoute.Preferences) }
                     HorizontalDivider()

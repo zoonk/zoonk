@@ -181,7 +181,10 @@ private fun CurrentPlan(
                     },
                 ) { Text(stringResource(R.string.subscription_manage_google)) }
             }
-            OutlinedButton(onClick = { navigator.open(AppRoute.Help) }) { Text(stringResource(R.string.subscription_contact_support)) }
+            OutlinedButton(
+                onClick = { navigator.open(AppRoute.Help) },
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+            ) { Text(stringResource(R.string.subscription_contact_support)) }
         }
     }
 }
