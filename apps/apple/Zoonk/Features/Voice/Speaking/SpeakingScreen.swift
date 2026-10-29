@@ -83,91 +83,113 @@ private struct SpeakingPaperView: View {
   }
 
   private func list(_ paper: Components.Schemas.SpeakingPaper) -> some View {
-    List {
-      Section {
-        VStack(alignment: .leading, spacing: 6) {
-          Text("Exam-style speaking", tableName: "Voice", comment: "Eyebrow over the exam's name")
-            .font(.caption.monospaced())
-            .foregroundStyle(.tertiary)
-          Text(paper.title)
-            .font(.title2.weight(.semibold))
-          Text(
-            "\(paper.tasks.count) tasks · \(minutesText(min: paper.minutes.min, max: paper.minutes.max)) in the exam",
-            tableName: "Voice",
-            comment: "How many tasks the speaking paper has and how long it is"
-          )
-          .font(.subheadline.monospacedDigit())
-          .foregroundStyle(.secondary)
-          Text(
-            "\(paper.title) is an official exam. Practice its speaking tasks whether or not you plan to take it.",
-            tableName: "Voice", comment: "The exam is official; practicing doesn't mean taking it"
-          )
-          .font(.subheadline)
-          .foregroundStyle(.secondary)
-        }
-        .listRowBackground(Color.clear)
-        .listRowSeparator(.hidden)
+    PaneSplit(primaryShare: 0.55) {
+      List {
+        exam(paper)
+        access(paper)
       }
+    } secondary: {
+      List {
+        tasks(paper)
+      }
+    } single: {
+      List {
+        exam(paper)
+        access(paper)
+        tasks(paper)
+      }
+    }
+  }
 
-      if paper.access == .plusRequired {
-        Section {
-          PlusNotice(
-            description: Text(
-              "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.",
-              tableName: "Voice", comment: "Speaking practice needs Plus"),
-            isInset: true)
-        }
-      } else if paper.access == .callsPaused {
-        Section {
-          Label {
-            VStack(alignment: .leading, spacing: 2) {
-              Text("Calls are paused", tableName: "Voice", comment: "Calls are off for everyone")
-                .font(.headline)
-              Text(
-                "It's the same for everyone right now. Try again later.", tableName: "Voice",
-                comment: "Calls are paused for everyone"
-              )
-              .font(.subheadline)
-              .foregroundStyle(.secondary)
-            }
-          } icon: {
-            Image(systemName: "phone.down")
+  private func exam(_ paper: Components.Schemas.SpeakingPaper) -> some View {
+    Section {
+      VStack(alignment: .leading, spacing: 6) {
+        Text("Exam-style speaking", tableName: "Voice", comment: "Eyebrow over the exam's name")
+          .font(.caption.monospaced())
+          .foregroundStyle(.tertiary)
+        Text(paper.title)
+          .font(.title2.weight(.semibold))
+        Text(
+          "\(paper.tasks.count) tasks · \(minutesText(min: paper.minutes.min, max: paper.minutes.max)) in the exam",
+          tableName: "Voice",
+          comment: "How many tasks the speaking paper has and how long it is"
+        )
+        .font(.subheadline.monospacedDigit())
+        .foregroundStyle(.secondary)
+        Text(
+          "\(paper.title) is an official exam. Practice its speaking tasks whether or not you plan to take it.",
+          tableName: "Voice", comment: "The exam is official; practicing doesn't mean taking it"
+        )
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+      }
+      .listRowBackground(Color.clear)
+      .listRowSeparator(.hidden)
+    }
+  }
+
+  @ViewBuilder
+  private func access(_ paper: Components.Schemas.SpeakingPaper) -> some View {
+    if paper.access == .plusRequired {
+      Section {
+        PlusNotice(
+          description: Text(
+            "Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.",
+            tableName: "Voice", comment: "Speaking practice needs Plus"),
+          isInset: true)
+      }
+    } else if paper.access == .callsPaused {
+      Section {
+        Label {
+          VStack(alignment: .leading, spacing: 2) {
+            Text("Calls are paused", tableName: "Voice", comment: "Calls are off for everyone")
+              .font(.headline)
+            Text(
+              "It's the same for everyone right now. Try again later.", tableName: "Voice",
+              comment: "Calls are paused for everyone"
+            )
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
           }
+        } icon: {
+          Image(systemName: "phone.down")
         }
       }
+    }
+  }
 
-      Section {
-        ForEach(Array(paper.tasks.enumerated()), id: \.element.key) { index, task in
-          DisclosureGroup(
-            isExpanded: Binding(
-              get: { openTask == task.key }, set: { openTask = $0 ? task.key : nil })
-          ) {
-            taskDetails(task, paper: paper)
-          } label: {
-            taskHeader(task, index: index)
-          }
+  private func tasks(_ paper: Components.Schemas.SpeakingPaper) -> some View {
+    Section {
+      ForEach(Array(paper.tasks.enumerated()), id: \.element.key) { index, task in
+        DisclosureGroup(
+          isExpanded: Binding(
+            get: { openTask == task.key }, set: { openTask = $0 ? task.key : nil })
+        ) {
+          taskDetails(task, paper: paper)
+        } label: {
+          taskHeader(task, index: index)
         }
-      } header: {
-        Text("Tasks", tableName: "Voice", comment: "The speaking paper's tasks")
-      } footer: {
-        VStack(alignment: .leading, spacing: 8) {
-          if paper.tasks.contains(where: { $0.role == .partner }) {
-            Text(
-              "An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-              tableName: "Voice", comment: "What a practice exam task with a partner is")
-          } else {
-            Text(
-              "An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
-              tableName: "Voice", comment: "What a practice exam task is")
-          }
+      }
+    } header: {
+      Text("Tasks", tableName: "Voice", comment: "The speaking paper's tasks")
+    } footer: {
+      VStack(alignment: .leading, spacing: 8) {
+        if paper.tasks.contains(where: { $0.role == .partner }) {
+          Text(
+            "An AI stands in for the human examiner or the other candidate. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
+            tableName: "Voice", comment: "What a practice exam task with a partner is")
+        } else {
+          Text(
+            "An AI stands in for the human examiner. Each try has a new card, and after it you get an estimate on the exam's official criteria, not an official score.",
+            tableName: "Voice", comment: "What a practice exam task is")
+        }
 
-          if let source = URL(string: paper.source) {
-            Link(destination: source) {
-              Text(
-                "Official format", tableName: "Voice", comment: "Link to the exam's official page"
-              )
-              .underline()
-            }
+        if let source = URL(string: paper.source) {
+          Link(destination: source) {
+            Text(
+              "Official format", tableName: "Voice", comment: "Link to the exam's official page"
+            )
+            .underline()
           }
         }
       }
