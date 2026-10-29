@@ -358,6 +358,16 @@
     <string name="plan_change_daily_time">Daily time: %1$s.</string>
     <string name="plan_change_weekly_challenge">Weekly challenge: %1$s.</string>
     <string name="plan_change_goal_date">Goal date: %1$s.</string>
+    <string name="plan_change_leave_out">Leave out: %1$s.</string>
+    <string name="plan_change_back_in_lessons">Back in your lessons: %1$s.</string>
+    <string name="plan_change_leave_out_of_plan">Leave out of the plan: %1$s.</string>
+    <string name="plan_change_back_in_plan">Back in the plan: %1$s.</string>
+    <string name="plan_change_add_to_plan">Add to your plan: %1$s.</string>
+    <string name="plan_change_suggest_more_practice">More practice.</string>
+    <string name="plan_change_suggest_more_explanation">More explanation.</string>
+    <string name="plan_change_suggest_harder">Harder material.</string>
+    <string name="plan_change_suggest_easier">Easier material.</string>
+    <string name="plan_change_suggest_usual_difficulty">Lessons at the usual difficulty.</string>
     <string name="plan_change_daily_time_changed">Daily time changed to %1$s.</string>
     <string name="plan_change_rest_day">%1$s: rest day.</string>
     <string name="plan_change_days_time">%1$s: %2$s a day.</string>

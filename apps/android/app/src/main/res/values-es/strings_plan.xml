@@ -59,6 +59,7 @@
   "plan_change_about_more_lessons": "6f7f792f0282e65fabc678177e88690634bb34ef6de68208905555b40a5bcd72",
   "plan_change_activities_back": "e534ce7c4bc3c9cc4b2f6b9efc163da8bb13e1d2ff9af6878f6e0e44b6e9b47d",
   "plan_change_activities_left_out": "e3ecb762f7c33ead0563e443ae8d7a3977678d18c61e74d6776c610998ac34fe",
+  "plan_change_add_to_plan": "eaa8df54c5732cfba943a3d2fdb4f7f0b53d5ab51938bbcdb6d0ade136da966f",
   "plan_change_adds": "4ef1b8cfedffd882182ff91448eaca14f32673930be20bdaae7cdb930a2fa8e4",
   "plan_change_adds_about": "4e0db0ddfdf8a564137048ef3244fdb9f774a4b5f62d4feeb6878cba35f9b9f2",
   "plan_change_adds_and_leaves_out": "4f1ea7add6e0b01f04b459109fb970f543ca630f002cd674a3c2a788db961145",
@@ -70,6 +71,8 @@
   "plan_change_area_to_go": "3c7b3b6157973207a39a4e475a032997832ed59ce18a854a52690cdb60ee4639",
   "plan_change_areas_back": "b447947e7206a89ac44f79e76c187b78f6c279c1dd7b9db548a1702bcc96f9c1",
   "plan_change_areas_left_out": "11544bc7fc63a5a2023dac3f859e305279cf6e4f3d9ee878a1f2884c00d6128f",
+  "plan_change_back_in_lessons": "077c978405fd9752563f8a2ca4e509f3fc8bc5cc89edd0d10a0e429f63de7f13",
+  "plan_change_back_in_plan": "d37703ab21bdb618618c4528f50818446b5359fff2ffb20ed7fbb54228f604be",
   "plan_change_bases_deep": "e274c1367a053e87da725376fbffb63b72c2f3e850653cc537811338c24a2371",
   "plan_change_bases_essential": "fd4eb9ee9e0cb396dd23724bbaa724ae64720db44b2e17e8669fd284146af5f8",
   "plan_change_bases_quick": "d409b51a2cacd15b09a1d66ba62129b95c16b94bc50e15d634c0d5b38d1bd3d4",
@@ -103,6 +106,8 @@
   "plan_change_harder": "1268b34a43c861d27be525eed8b7889059c729731d559ed56396ffc3f85713f5",
   "plan_change_keep_notice_date": "26402ffc422c50e6a5e05a32a3718a38ffecb5579dc1f9a566341580736577c8",
   "plan_change_keep_official_date": "26d7b80741906878c81c94f6438c765111714f4e6a05c60fab038b06d7c9f050",
+  "plan_change_leave_out": "a22f824856329e95a15b376f703d94b2d94985ba648e3b27ecad6502c7d1c077",
+  "plan_change_leave_out_of_plan": "d189793b5267c78814d4fc16049b6ed18e315acff8d7f5a99dc2a30caea18afe",
   "plan_change_leaves_out": "fb03b78c0446e65dde12513e63a8d413f3401698a2c823cc1d4f915033cbf56a",
   "plan_change_left_out": "ddc67a82cc76d5896162ce74f7ccd7c86b38518efd62d76ac863241961f0c004",
   "plan_change_left_out_include": "fc378ee4ac303b9535c593687c09bd4b0e12d5eecd814a7ea1cb402fcbb8a2f1",
@@ -165,6 +170,11 @@
   "plan_change_still_finish_area": "1665c360cac2523503a9a7111a3245eea99860924efbaf54ca6cb775d8f780ad",
   "plan_change_still_start_area": "3d345cfdad7d92d056aa573e66626bae036210217747f76458d6198ccf02f079",
   "plan_change_such_as": "895b855c1416b9b1642e486247dfe6414680c182cfd0eec4317c07ea1e0ebbe8",
+  "plan_change_suggest_easier": "d9432cf0800303e7cd8a3af168b8071617e58285096cada925931b4cc9f1c46e",
+  "plan_change_suggest_harder": "dc5e5eecb97cdaada2073d4275404e848e8c8b58b48b5e8e45ddefc726a65835",
+  "plan_change_suggest_more_explanation": "3782f6a4e9213be42b7e4d6ccbca06975d629f3530fc9c6bd08bb4500980e047",
+  "plan_change_suggest_more_practice": "90081e70e9a1d71b03155912fde06d2bb5c89ef46612c452629b6abfe64e65e1",
+  "plan_change_suggest_usual_difficulty": "fc9e6ab699040631b83976f9960c8db8359611f522108e17b07c690fdb83681c",
   "plan_change_tested_out": "357d7f8eb90f51270a83910a08fd40a9fb6cf0f68e032e8d946127a2bf57a9c9",
   "plan_change_time_lessons_need": "fe719871c9aec26ca10355de84b45695e68c79be01c256fdbfcdfc11e49d56f5",
   "plan_change_today_changed": "3b0eace7b0ce3ed478f66f99dd11e34c289c7d1cbe4356962d2299689060e851",
@@ -913,6 +923,16 @@
     <string name="plan_change_daily_time">Tiempo diario: %1$s.</string>
     <string name="plan_change_weekly_challenge">Desafío semanal: %1$s.</string>
     <string name="plan_change_goal_date">Fecha del objetivo: %1$s.</string>
+    <string name="plan_change_leave_out">Omitir: %1$s.</string>
+    <string name="plan_change_back_in_lessons">De vuelta en tus lecciones: %1$s.</string>
+    <string name="plan_change_leave_out_of_plan">Omitir del plan: %1$s.</string>
+    <string name="plan_change_back_in_plan">De vuelta en el plan: %1$s.</string>
+    <string name="plan_change_add_to_plan">Añadir al plan: %1$s.</string>
+    <string name="plan_change_suggest_more_practice">Más práctica.</string>
+    <string name="plan_change_suggest_more_explanation">Más explicaciones.</string>
+    <string name="plan_change_suggest_harder">Contenido más difícil.</string>
+    <string name="plan_change_suggest_easier">Contenido más fácil.</string>
+    <string name="plan_change_suggest_usual_difficulty">Lecciones con la dificultad habitual.</string>
     <string name="plan_change_daily_time_changed">El tiempo diario ha cambiado a %1$s.</string>
     <string name="plan_change_rest_day">%1$s: día de descanso.</string>
     <string name="plan_change_days_time">%1$s: %2$s al día.</string>

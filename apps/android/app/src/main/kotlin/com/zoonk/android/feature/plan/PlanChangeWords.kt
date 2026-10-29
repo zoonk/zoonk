@@ -274,11 +274,67 @@ private fun followsNotice(document: ExamDocument): String =
 @Composable
 private fun proposedOperationSentence(op: PlanOp): String? =
     when (op) {
-        is PlanOp.DailyMinutes -> stringResource(R.string.plan_change_daily_time, formatMinutes(op.minutes, currentLocale()))
-        is PlanOp.MoveWeeklyEvent -> stringResource(R.string.plan_change_weekly_challenge, longDate(op.to))
-        is PlanOp.TargetDate -> op.date?.let { stringResource(R.string.plan_change_goal_date, longDate(it)) }
-        is PlanOp.NoticeDate -> stringResource(R.string.plan_change_goal_date, longDate(op.date))
-        else -> null
+        is PlanOp.DailyMinutes -> {
+            stringResource(R.string.plan_change_daily_time, formatMinutes(op.minutes, currentLocale()))
+        }
+
+        is PlanOp.MoveWeeklyEvent -> {
+            stringResource(R.string.plan_change_weekly_challenge, longDate(op.to))
+        }
+
+        is PlanOp.TargetDate -> {
+            op.date?.let { stringResource(R.string.plan_change_goal_date, longDate(it)) }
+        }
+
+        is PlanOp.NoticeDate -> {
+            stringResource(R.string.plan_change_goal_date, longDate(op.date))
+        }
+
+        is PlanOp.SkipActivities -> {
+            stringResource(R.string.plan_change_leave_out, activityList(op.activities))
+        }
+
+        is PlanOp.RestoreActivities -> {
+            stringResource(R.string.plan_change_back_in_lessons, activityList(op.activities))
+        }
+
+        is PlanOp.SkipAreas -> {
+            stringResource(R.string.plan_change_leave_out_of_plan, joinList(op.areas))
+        }
+
+        is PlanOp.RestoreAreas -> {
+            stringResource(R.string.plan_change_back_in_plan, joinList(op.areas))
+        }
+
+        is PlanOp.AddSkills -> {
+            stringResource(R.string.plan_change_add_to_plan, shortList(op.names, ListKind.Topics))
+        }
+
+        is PlanOp.PracticeBias -> {
+            stringResource(
+                if (op.bias ==
+                    "morePractice"
+                ) {
+                    R.string.plan_change_suggest_more_practice
+                } else {
+                    R.string.plan_change_suggest_more_explanation
+                },
+            )
+        }
+
+        is PlanOp.DifficultyBias -> {
+            stringResource(
+                when (op.bias) {
+                    "harder" -> R.string.plan_change_suggest_harder
+                    "easier" -> R.string.plan_change_suggest_easier
+                    else -> R.string.plan_change_suggest_usual_difficulty
+                },
+            )
+        }
+
+        else -> {
+            null
+        }
     }
 
 @Composable

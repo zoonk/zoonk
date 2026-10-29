@@ -61,6 +61,18 @@ class PlanChangeWordsTest {
     }
 
     @Test
+    fun everyKindOfDeclinedChangeReadsAsASuggestion() {
+        assertEquals(
+            listOf("Leave out of the plan: Algebra.", "Harder material.", "More practice."),
+            words(
+                { planChangeSentence(planChange("""[{"kind":"skipAreas","areas":["Algebra"]}]""", status = "declined")) },
+                { planChangeSentence(planChange("""[{"kind":"setDifficultyBias","bias":"harder"}]""", status = "declined")) },
+                { planChangeSentence(planChange("""[{"kind":"setPracticeBias","bias":"morePractice"}]""", status = "replaced")) },
+            ),
+        )
+    }
+
+    @Test
     fun aWrittenReasonIsShownAsWritten() {
         assertEquals(
             listOf("Your buddy moved it."),
