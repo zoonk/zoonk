@@ -14,7 +14,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -51,6 +50,7 @@ import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.components.rememberGoalExamples
 import com.zoonk.android.ui.format.DateStyle

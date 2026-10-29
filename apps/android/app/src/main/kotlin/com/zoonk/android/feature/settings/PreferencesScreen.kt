@@ -30,7 +30,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -77,6 +76,7 @@ import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.characters.worn
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
