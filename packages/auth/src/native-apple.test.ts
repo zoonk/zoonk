@@ -327,6 +327,42 @@ describe(signInWithNativeApple, () => {
     },
   );
 
+  it("keeps a new account another sign-in already uses when this one fails to save its grant", async () => {
+    const subject = `apple-${randomUUID()}`;
+    const user = await createTestUser();
+
+    const [account, sessionResponse, otherSignIn] = await Promise.all([
+      createAppleAccount({ subject, userId: user.id }),
+      createSessionResponse({ userId: user.id }),
+      createSessionResponse({ userId: user.id }),
+    ]);
+
+    const otherGuestGoal = await createGoal(user.id);
+
+    verifySubject(subject);
+    mocks.exchangeAuthorizationCode.mockResolvedValue({ ...authorization, expiresIn: Number.NaN });
+
+    mocks.signInNativeAppleAccount.mockResolvedValue({
+      changes: { accountId: account.id, sessionToken: sessionResponse.token, userId: user.id },
+      response: sessionResponse,
+      success: true,
+    });
+
+    await expect(signInWithNativeApple(nativeSignInRequest)).rejects.toThrow();
+
+    const [ownSession, otherSession, keptAccount, keptGoal] = await Promise.all([
+      prisma.session.findUnique({ where: { token: sessionResponse.token } }),
+      prisma.session.findUnique({ where: { token: otherSignIn.token } }),
+      prisma.account.findUnique({ where: { id: account.id } }),
+      prisma.goal.findUnique({ where: { id: otherGuestGoal.id } }),
+    ]);
+
+    expect(ownSession).toBeNull();
+    expect(otherSession?.userId).toBe(user.id);
+    expect(keptAccount?.userId).toBe(user.id);
+    expect(keptGoal?.userId).toBe(user.id);
+  });
+
   it("keeps the new account when the guest can't move, since another sign-in may already use it", async () => {
     const subject = `apple-${randomUUID()}`;
     const user = await createTestUser();

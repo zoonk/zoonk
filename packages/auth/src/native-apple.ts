@@ -85,8 +85,10 @@ async function rollbackNativeAppleAuthChanges({
     await prisma.session.deleteMany({ where: { token: { in: sessionTokens } } });
   }
 
+  // The new user is visible as soon as Better Auth creates it, so another device may already be
+  // signed into it; it goes only while no session uses it, checked in the same statement.
   if (changes.userId) {
-    await prisma.user.deleteMany({ where: { id: changes.userId } });
+    await prisma.user.deleteMany({ where: { id: changes.userId, sessions: { none: {} } } });
     return;
   }
 
@@ -298,8 +300,8 @@ export async function signInWithNativeApple(request: NativeAppleSessionRequest) 
     verifiedAuthorization,
   });
 
-  // Once its grant is saved the account is published and another sign-in may already use it, so a
-  // guest that can't move takes back only this request's session; the guest keeps its progress.
+  // The sign-in is complete and the account may already be in use elsewhere, so a guest that can't
+  // move takes back only this request's session; the guest keeps its progress.
   await linkNativeAppleGuest({ headers, userId: session.user.id }).catch(async (error: unknown) => {
     await prisma.session.deleteMany({ where: { token: session.token } });
     throw error;
