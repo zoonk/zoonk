@@ -102,7 +102,10 @@ function PlanCardSkeleton() {
 export function PricingQuestions() {
   return (
     <div className={cn(PUBLIC_CONTAINER_CLASS, "pt-24 lg:pt-32")}>
-      <PlusQuestions className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12" />
+      <PlusQuestions
+        className="lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-12"
+        freePlanShown
+      />
     </div>
   );
 }
@@ -159,6 +162,7 @@ export function PlusPricing({
   yearlyPrice: PriceInfo | null;
 }) {
   const currency = (monthlyPrice ?? yearlyPrice)?.currency ?? null;
+  const freePlanShown = viewerState.status === "visitor";
 
   return (
     <>
@@ -171,12 +175,14 @@ export function PlusPricing({
           yearlyPrice={yearlyPrice}
         />
 
-        {viewerState.status === "visitor" && (
-          <FreePlan currency={currency} viewerState={viewerState} />
-        )}
+        {freePlanShown && <FreePlan currency={currency} viewerState={viewerState} />}
       </div>
 
-      <PlusQuestions className="max-w-form" viewerState={viewerState} />
+      <PlusQuestions
+        className="max-w-form"
+        freePlanShown={freePlanShown}
+        viewerState={viewerState}
+      />
     </>
   );
 }

@@ -91,9 +91,12 @@ async function FreePlanAnswer({ viewerState }: { viewerState?: PlusViewerState }
 /** Speaking calls have daily and monthly limits, said honestly but never in minutes, on any plan. */
 export async function PlusQuestions({
   className,
+  freePlanShown,
   viewerState,
 }: {
   className?: string;
+  /** The Free card above already lists what the free plan includes, so its question starts closed. */
+  freePlanShown: boolean;
   viewerState?: PlusViewerState;
 }) {
   const t = await getExtracted();
@@ -118,7 +121,7 @@ export async function PlusQuestions({
       </div>
 
       <div>
-        <PublicDisclosure open summary={t("What's in the free plan?")}>
+        <PublicDisclosure open={!freePlanShown} summary={t("What's in the free plan?")}>
           <FreePlanAnswer viewerState={viewerState} />
         </PublicDisclosure>
 
