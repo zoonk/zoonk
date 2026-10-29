@@ -75,6 +75,8 @@ import com.zoonk.android.feature.player.LiveLessonPlayerApi
 import com.zoonk.android.feature.player.TodayChoices
 import com.zoonk.android.feature.practice.block.LiveQuestionBlockApi
 import com.zoonk.android.feature.practice.block.QuestionBlockStore
+import com.zoonk.android.feature.pronunciation.LivePronunciationApi
+import com.zoonk.android.feature.pronunciation.PronunciationStore
 import com.zoonk.android.feature.recap.RecapStore
 import com.zoonk.android.feature.search.LiveSearchApi
 import com.zoonk.android.feature.search.SearchStore
@@ -225,6 +227,9 @@ class AppContainer private constructor(
         )
     val goalSwitch = GoalSwitch(learningProfile::setActiveGoal)
     val milestoneViews = MilestoneViews(api, cache)
+
+    // Pronunciation reviews (L8).
+    val pronunciation = PronunciationStore(LivePronunciationApi(api), cache, timeZone)
 
     // Live calls and speaking (L9).
     val conversations = ConversationStore(LiveConversationApi(api), cache)

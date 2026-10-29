@@ -327,18 +327,7 @@ private fun Segments(
     segments: List<Segment>,
     state: LessonPlayerState,
 ) {
-    val parts =
-        segments.map { segment ->
-            MeterPart(
-                when (segment) {
-                    Segment.Ahead -> MeterPart.Fill.Track
-                    Segment.Current -> MeterPart.Fill.Place()
-                    Segment.Right -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.tertiary)
-                    Segment.Wrong -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.error)
-                    Segment.Read -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.onSurface.copy(alpha = READ_ALPHA))
-                },
-            )
-        }
+    val parts = segmentParts(segments)
     val label = stringResource(R.string.player_progress)
     val done = if (state.phase == LessonPhase.Completed) state.queue.size else state.position
 
@@ -357,6 +346,20 @@ private fun Segments(
         MeterParts(parts)
     }
 }
+
+@Composable
+internal fun segmentParts(segments: List<Segment>): List<MeterPart> =
+    segments.map { segment ->
+        MeterPart(
+            when (segment) {
+                Segment.Ahead -> MeterPart.Fill.Track
+                Segment.Current -> MeterPart.Fill.Place()
+                Segment.Right -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.tertiary)
+                Segment.Wrong -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.error)
+                Segment.Read -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.onSurface.copy(alpha = READ_ALPHA))
+            },
+        )
+    }
 
 private const val READ_ALPHA = 0.25f
 

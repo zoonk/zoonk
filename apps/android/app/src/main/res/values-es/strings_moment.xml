@@ -2,7 +2,8 @@
 <!-- eloqnt-fingerprints-v1
 {
   "moment_brain_power": "dfa8235c8e1f07cc439c7eaa1d89977b63c1b9b7d133299caca66087183435a0",
-  "moment_score": "868e1ff425790d56c21dee97d6a4d112ec626612db75dbe6a959632bb467b419"
+  "moment_score": "868e1ff425790d56c21dee97d6a4d112ec626612db75dbe6a959632bb467b419",
+  "moment_score_spoken": "f829f3f241709e6a57c249b727691c21094c3dfddff43b65780e2c5653637548"
 }
 -->
 <resources>
@@ -11,6 +12,12 @@
         <item quantity="one">%1$s de %2$s correctas</item>
         <item quantity="many">%1$s de %2$s correctas</item>
         <item quantity="other">%1$s de %2$s correctas</item>
+    </plurals>
+    <!-- Words said out loud. %1$s is the number that sounded right, drawn large; %2$s is how many were said. -->
+    <plurals name="moment_score_spoken">
+        <item quantity="one">%1$s de %2$s ha sonado bien</item>
+        <item quantity="many">%1$s de %2$s han sonado bien</item>
+        <item quantity="other">%1$s de %2$s han sonado bien</item>
     </plurals>
     <!-- %1$s is the points earned, drawn large with their plus sign. -->
     <string name="moment_brain_power">+%1$s Poder Mental</string>

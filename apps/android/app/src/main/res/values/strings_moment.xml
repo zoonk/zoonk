@@ -5,6 +5,11 @@
         <item quantity="one">%1$s of %2$s right</item>
         <item quantity="other">%1$s of %2$s right</item>
     </plurals>
+    <!-- Words said out loud. %1$s is the number that sounded right, drawn large; %2$s is how many were said. -->
+    <plurals name="moment_score_spoken">
+        <item quantity="one">%1$s of %2$s sounded right</item>
+        <item quantity="other">%1$s of %2$s sounded right</item>
+    </plurals>
     <!-- %1$s is the points earned, drawn large with their plus sign. -->
     <string name="moment_brain_power">+%1$s Brain Power</string>
 </resources>

@@ -29,6 +29,7 @@ import kotlin.math.ceil
 data class MomentScore(
     val answered: Int,
     val correct: Int,
+    val spoken: Boolean = false,
 )
 
 /**
@@ -64,7 +65,13 @@ fun MomentReadouts(
 private fun ScoreReadout(score: MomentScore) {
     val locale = currentLocale()
     val number = formatNumber(score.correct.toDouble(), locale)
-    val sentence = pluralStringResource(R.plurals.moment_score, score.correct, MARK, formatNumber(score.answered.toDouble(), locale))
+    val sentence =
+        pluralStringResource(
+            if (score.spoken) R.plurals.moment_score_spoken else R.plurals.moment_score,
+            score.correct,
+            MARK,
+            formatNumber(score.answered.toDouble(), locale),
+        )
 
     Readout(sentence, number, MaterialTheme.colorScheme.onSurface)
 }

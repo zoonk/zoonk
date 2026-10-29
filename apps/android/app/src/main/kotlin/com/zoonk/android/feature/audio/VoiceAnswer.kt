@@ -172,29 +172,22 @@ fun <T> VoiceAnswerRecorder(
     onBlocked: (() -> Unit)? = null,
 ) {
     val context = LocalContext.current
-    val activity = LocalActivity.current
     val model = viewModel(key = key) { VoiceAnswerModel(context) }
     val currentGrade by rememberUpdatedState(grade)
     val currentOnGraded by rememberUpdatedState(onGraded)
     val record = { model.record({ currentGrade(it) }, { currentOnGraded(it) }) }
-    val permission =
-        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
-            when {
-                granted -> record()
-
-                onBlocked != null -> onBlocked()
-
-                // Android asks again after a first refusal; only a lasting one needs Settings.
-                activity?.shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO) != true -> model.microphoneOff = true
-            }
-        }
-    LifecycleResumeEffect(model) {
-        if (model.recorder.hasPermission) model.microphoneOff = false
-        onPauseOrDispose {}
-    }
-    LifecycleStartEffect(model) {
-        onStopOrDispose { if (activity?.isChangingConfigurations != true) model.recorder.cancel() }
-    }
+    val tapRecord =
+        rememberRecordTap(
+            recorder = model.recorder,
+            onAllowed = { model.microphoneOff = false },
+            onRefused = { lasting ->
+                when {
+                    onBlocked != null -> onBlocked()
+                    lasting -> model.microphoneOff = true
+                }
+            },
+            record = record,
+        )
 
     if (model.microphoneOff && onBlocked == null) {
         MicrophoneOff(stringResource(R.string.audio_microphone_off_answer), modifier)
@@ -229,7 +222,7 @@ fun <T> VoiceAnswerRecorder(
             level = { level },
             onStop = model.recorder::stop,
             enabled = !model.checking,
-            onStart = { if (model.recorder.hasPermission) record() else permission.launch(Manifest.permission.RECORD_AUDIO) },
+            onStart = tapRecord,
         )
         hint?.let {
             Text(
@@ -246,6 +239,41 @@ fun <T> VoiceAnswerRecorder(
             }, onSeePlus = { navigator.open(AppRoute.Subscription) })
         }
     }
+}
+
+/**
+ * The Record tap: it asks for the microphone first when needed, then [record]s. [onRefused] hears
+ * whether the refusal lasts (Android asks again after a first one; only Settings undoes a lasting
+ * one), and [onAllowed] runs when the learner comes back with the microphone on. A take still
+ * running when the screen leaves or the app goes to the background is thrown away.
+ */
+@Composable
+fun rememberRecordTap(
+    recorder: VoiceRecorder,
+    onAllowed: () -> Unit,
+    onRefused: (lasting: Boolean) -> Unit,
+    record: () -> Unit,
+): () -> Unit {
+    val activity = LocalActivity.current
+    val currentRecord by rememberUpdatedState(record)
+    val currentOnRefused by rememberUpdatedState(onRefused)
+    val currentOnAllowed by rememberUpdatedState(onAllowed)
+    val permission =
+        rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            if (granted) {
+                currentRecord()
+            } else {
+                currentOnRefused(activity?.shouldShowRequestPermissionRationale(Manifest.permission.RECORD_AUDIO) != true)
+            }
+        }
+    LifecycleResumeEffect(recorder) {
+        if (recorder.hasPermission) currentOnAllowed()
+        onPauseOrDispose {}
+    }
+    LifecycleStartEffect(recorder) {
+        onStopOrDispose { if (activity?.isChangingConfigurations != true) recorder.cancel() }
+    }
+    return { if (recorder.hasPermission) currentRecord() else permission.launch(Manifest.permission.RECORD_AUDIO) }
 }
 
 /**
