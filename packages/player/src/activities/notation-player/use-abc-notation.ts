@@ -46,15 +46,22 @@ export function tuneSound({
 type TuneOutline = number[][];
 
 const MAX_LINES = 64;
+const MAX_SECTIONS = 16;
 
 /**
  * abcjs drops the guitar tab when it wraps lines itself (https://github.com/paulrosen/abcjs/issues/1195),
- * so the tab view breaks its lines at fixed measures instead.
+ * so the tab view breaks its lines at fixed measures instead: abcjs reads one list per section of
+ * the tune, each the last measure of every line.
  */
 function lineLayout({ barsPerLine, view }: { barsPerLine: number; view: NotationView }) {
   if (view === "tab") {
+    const breaks = Array.from({ length: MAX_SECTIONS }, () =>
+      Array.from({ length: MAX_LINES }, (_, line) => (line + 1) * barsPerLine - 1),
+    );
+
     return {
-      lineBreaks: Array.from({ length: MAX_LINES }, (_, line) => (line + 1) * barsPerLine - 1),
+      // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- abcjs's types declare a flat list, but its parser reads one list per section.
+      lineBreaks: breaks as unknown as number[],
       tablature: [{ instrument: "guitar" as const, label: " " }],
     };
   }
