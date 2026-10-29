@@ -39607,7 +39607,7 @@
         "properties": {
           "courseId": {
             "nullable": true,
-            "description": "The Library course the goal follows; null for any other goal",
+            "description": "The Library course the goal follows while it's active and not an explanation, so that course's page offers to continue it instead of starting it again; null for any other goal",
             "type": "string",
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"

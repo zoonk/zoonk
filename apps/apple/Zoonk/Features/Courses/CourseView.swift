@@ -96,22 +96,14 @@ private struct CourseLandingList: View {
     CourseClosingSection(courseID: detail.course.id, follows: follows)
   }
 
+  /// Its page offers "Continue your plan" then, since starting it again would only lead back to
+  /// that goal.
   private var follows: Bool {
-    learner.summary.value?.followsCourse(detail.course.id) ?? false
+    learner.summary.value?.goals.contains { $0.courseID == detail.course.id } ?? false
   }
 
   private var outlineLead: String? {
     detail.course.landingPage == nil ? nil : catalogText(detail.course.description)
-  }
-}
-
-extension LearnerSummary {
-  /// Its page offers "Continue your plan" then, since starting it again would only lead back to
-  /// that goal.
-  func followsCourse(_ courseID: String) -> Bool {
-    goals.contains { goal in
-      goal.courseID == courseID && goal.status == .active && goal.kind != .explain
-    }
   }
 }
 

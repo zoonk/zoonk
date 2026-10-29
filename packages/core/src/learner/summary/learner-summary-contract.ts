@@ -12,6 +12,7 @@ export type LearnerIdentity = {
 export type LearnerTier = "free" | "guest" | "plus";
 
 export type LearnerSummaryGoal = {
+  /** Set only while the goal follows its course, so that course's page offers to continue it. */
   courseId: string | null;
   dailyMinutes: number;
   id: string;

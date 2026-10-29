@@ -19,6 +19,7 @@ struct LearnerSummary: Equatable, Sendable {
 }
 
 struct LearnerGoal: Equatable, Identifiable, Sendable {
+  /// Set only while the goal follows its course, so that course's page offers to continue it.
   var courseID: String? = nil
   let dailyMinutes: Int
   let id: String

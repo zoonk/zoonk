@@ -11,7 +11,10 @@ const learnerSummaryGoalSchema = z
     courseId: z
       .uuid()
       .nullable()
-      .meta({ description: "The Library course the goal follows; null for any other goal" }),
+      .meta({
+        description:
+          "The Library course the goal follows while it's active and not an explanation, so that course's page offers to continue it instead of starting it again; null for any other goal",
+      }),
     dailyMinutes: z.int(),
     id: z.uuid(),
     isActive: z.boolean().meta({ description: "The goal the tabs show" }),

@@ -12,6 +12,7 @@ import {
   getUserSessionCacheTag,
   getUserSubscriptionCacheTag,
 } from "../../cache/tags";
+import { followsCourse } from "../../goals/_utils/follows-course";
 import {
   type PlanPhaseFacts,
   getCurrentPhaseFromFacts,
@@ -59,7 +60,7 @@ function toSummaryGoals({
     .filter((goal) => goal.status !== "archived")
     .toSorted((a, b) => Number(b.id === activeGoalId) - Number(a.id === activeGoalId))
     .map((goal) => ({
-      courseId: goal.primaryCourseId,
+      courseId: followsCourse(goal) ? goal.primaryCourseId : null,
       dailyMinutes: goal.dailyMinutes,
       id: goal.id,
       isActive: goal.id === activeGoalId,

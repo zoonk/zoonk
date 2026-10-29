@@ -21,15 +21,6 @@ final class CourseCatalogPresentationTests: XCTestCase {
     XCTAssertNil(flagEmoji("arab"))
   }
 
-  func testOnlyAnActiveGoalOnTheCourseFollowsIt() {
-    let course = "course"
-
-    XCTAssertTrue(summary(goals: [goal(courseID: course)]).followsCourse(course))
-    XCTAssertFalse(summary(goals: [goal(courseID: "another")]).followsCourse(course))
-    XCTAssertFalse(summary(goals: [goal(courseID: course, status: .paused)]).followsCourse(course))
-    XCTAssertFalse(summary(goals: [goal(courseID: course, kind: .explain)]).followsCourse(course))
-  }
-
   func testOnlyACourseInAnotherLanguagePointsToTheReadersEdition() {
     XCTAssertEqual(Course.testFixture.edition(in: "pt")?.title, "Astronomia")
     XCTAssertNil(Course.testFixture.edition(in: "en"))
@@ -70,22 +61,5 @@ final class CourseCatalogPresentationTests: XCTestCase {
           workload: CoursePlanEstimate.Workload(
             checkpointMinutes: 0, lessonMinutes: 30, practiceMinutes: 0, unwrittenLessonMinutes: 0)),
         minutes: 30))
-  }
-
-  private func goal(
-    courseID: String, kind: LearnerGoal.Kind = .learn, status: LearnerGoal.Status = .active
-  ) -> LearnerGoal {
-    LearnerGoal(
-      courseID: courseID, dailyMinutes: 15, id: UUID().uuidString, kind: kind, status: status,
-      targetDate: nil, title: "A goal")
-  }
-
-  private func summary(goals: [LearnerGoal]) -> LearnerSummary {
-    LearnerSummary(
-      activeGoalID: goals.first?.id, buddy: BuddyLook(), buddyName: nil, goals: goals,
-      identity: LearnerIdentity(isAnonymous: false, signedInAt: .now, userID: "learner"),
-      level: nil, nextChangeAt: .distantFuture,
-      places: LearnerPlaces(exam: false, mindMaps: false, readyMistakes: 0, speaking: false),
-      readAt: .now, tier: .free, timeZone: nil, todayBlocksLeft: nil)
   }
 }

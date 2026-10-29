@@ -237,6 +237,16 @@ describe(getLearnerSummary, () => {
     await expect(getLearnerSummary()).resolves.toMatchObject({ goals: [{ courseId: course.id }] });
   });
 
+  it("names no course for a paused goal or an explanation, which a course's page starts again", async () => {
+    const course = await courseFixture({ isPublished: true });
+    const { user } = await learnerWithGoal({ primaryCourseId: course.id, status: "paused" });
+    await goalFixture({ kind: "explain", primaryCourseId: course.id, userId: user.id });
+
+    const summary = await getLearnerSummary();
+
+    expect(summary?.goals.map((goal) => goal.courseId)).toStrictEqual([null, null]);
+  });
+
   it("counts the blocks left and goes on with the active one", async () => {
     const { goal, user } = await learnerWithGoal();
     const day = await studySessionFixture({ goalId: goal.id, localDate: TODAY, userId: user.id });

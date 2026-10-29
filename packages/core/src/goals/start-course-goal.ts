@@ -16,6 +16,7 @@ import { loadCourseExam } from "./_utils/course-exam";
 import { getCourseGoalKind } from "./_utils/course-goal-kind";
 import { loadCourseOutline, plansFromCourseOutline } from "./_utils/course-outline";
 import { toCoursePlanGraph } from "./_utils/course-plan-graph";
+import { followsCourse } from "./_utils/follows-course";
 import { findActiveGoalId, loadGoalViews } from "./_utils/goal-view";
 import { type CourseGoalStartInput } from "./course-start-contract";
 import { type CourseStart } from "./course-start-details";
@@ -43,12 +44,14 @@ function findStartableCourse({ courseId, userId }: { courseId: string; userId: s
   });
 }
 
-function findCourseGoal({ courseId, userId }: { courseId: string; userId: string }) {
-  return prisma.goal.findFirst({
+async function findCourseGoal({ courseId, userId }: { courseId: string; userId: string }) {
+  const goals = await prisma.goal.findMany({
     orderBy: { createdAt: "desc" },
-    select: { id: true },
-    where: { kind: { not: "explain" }, primaryCourseId: courseId, status: "active", userId },
+    select: { id: true, kind: true, status: true },
+    where: { primaryCourseId: courseId, userId },
   });
+
+  return goals.find((goal) => followsCourse(goal)) ?? null;
 }
 
 async function toExistingResult(goalId: string): Promise<CourseGoalStartResult> {
