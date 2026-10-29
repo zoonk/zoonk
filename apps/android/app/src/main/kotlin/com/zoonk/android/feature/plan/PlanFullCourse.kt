@@ -22,6 +22,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
@@ -111,7 +113,7 @@ private fun fullCourseRule(
 internal fun FullCourseSwitch(
     page: PlanPageState,
     edits: PlanEdits,
-    switchModifier: Modifier = Modifier,
+    focus: FocusRequester,
 ) {
     val course = fullCourse(page)?.takeIf { it.isExam } ?: return
     val on =
@@ -125,7 +127,8 @@ internal fun FullCourseSwitch(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
             modifier =
-                switchModifier
+                Modifier
+                    .focusRequester(focus)
                     .fillMaxWidth()
                     .heightIn(min = 48.dp)
                     .toggleable(

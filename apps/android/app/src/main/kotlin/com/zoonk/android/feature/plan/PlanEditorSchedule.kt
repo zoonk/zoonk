@@ -31,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
@@ -102,7 +101,7 @@ private fun DailyMinutes(
                     formatMinutes(minutes, locale),
                     selected = minutes == shown,
                     onClick = { setMinutes(minutes) },
-                    modifier = focus.timeChip(minutes, offered = answer?.offeredMinutes, picked = shown),
+                    modifier = Modifier.coverageTimeChip(focus, minutes, offered = answer?.offeredMinutes, picked = shown),
                     role = Role.RadioButton,
                     description = answer?.let { timeNote(it, minutes) },
                 )
@@ -110,7 +109,7 @@ private fun DailyMinutes(
             OtherTime(shown, onPick = ::setMinutes)
         }
         DailyCoverage(page, edits, focus)
-        FullCourseSwitch(page, edits, Modifier.focusRequester(focus.studyEverything))
+        FullCourseSwitch(page, edits, focus.studyEverything)
     }
 }
 

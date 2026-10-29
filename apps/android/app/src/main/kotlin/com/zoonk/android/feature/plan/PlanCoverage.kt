@@ -355,15 +355,6 @@ internal class CoverageFocus {
     val moveDate = FocusRequester()
     val studyEverything = FocusRequester()
 
-    fun timeChip(
-        minutes: Int,
-        offered: Int?,
-        picked: Int,
-    ): Modifier =
-        Modifier
-            .then(if (minutes == offered) Modifier.focusRequester(offeredTime) else Modifier)
-            .then(if (minutes == picked) Modifier.focusRequester(pickedTime) else Modifier)
-
     /** The time offered, else Move date for a goal, else an exam's Study everything switch, else the time picked. */
     fun afterFound(
         time: PlanTimeToCover,
@@ -379,6 +370,16 @@ internal class CoverageFocus {
         if (target?.requestFocus(FocusDirection.Enter) != true) pickedTime.requestFocus(FocusDirection.Enter)
     }
 }
+
+/** A daily time's chip, which [focus] can reach as the time offered or the time picked. */
+internal fun Modifier.coverageTimeChip(
+    focus: CoverageFocus,
+    minutes: Int,
+    offered: Int?,
+    picked: Int,
+): Modifier =
+    then(if (minutes == offered) Modifier.focusRequester(focus.offeredTime) else Modifier)
+        .then(if (minutes == picked) Modifier.focusRequester(focus.pickedTime) else Modifier)
 
 /** A button's label with a spinner before it while its work runs, as main's `PendingLabel`. */
 @Composable
