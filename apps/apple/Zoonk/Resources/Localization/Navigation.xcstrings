@@ -160,6 +160,64 @@
         }
       }
     },
+    "A chapter of your plan, with its lessons and how far you are." : {
+      "comment" : "What a chapter page shows, under its title until it can open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ein Kapitel deines Plans mit seinen Lektionen und deinem Fortschritt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un capítulo de tu plan, con sus lecciones y tu progreso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Un chapitre de ton plan, avec ses leçons et ta progression."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Um capítulo do seu plano, com as aulas e seu progresso."
+          }
+        }
+      }
+    },
+    "A unit of your language plan, with its lessons and how far you are." : {
+      "comment" : "What a language unit page shows, under its title until it can open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eine Einheit deines Sprachplans mit ihren Lektionen und deinem Fortschritt."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Una unidad de tu plan de idiomas, con sus lecciones y tu progreso."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une unité de ton plan de langue, avec ses leçons et ta progression."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uma unidade do seu plano de idioma, com as aulas e seu progresso."
+          }
+        }
+      }
+    },
     "Buddy" : {
       "comment" : "Tab for the learner's study buddy, used until the buddy's name is known",
       "localizations" : {
@@ -218,6 +276,35 @@
         }
       }
     },
+    "Chapter" : {
+      "comment" : "Title shown instead of a chapter of the plan until it can open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kapitel"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capítulo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chapitre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Capítulo"
+          }
+        }
+      }
+    },
     "Current goal. Switch goal" : {
       "comment" : "Spoken hint of the goal switcher, after the current goal's title",
       "localizations" : {
@@ -243,6 +330,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Meta atual. Trocar de meta"
+          }
+        }
+      }
+    },
+    "Each chapter's ideas on one map, to review how they connect." : {
+      "comment" : "What the mind maps page shows, under its title until it can open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Ideen aus jedem Kapitel auf einer Karte, damit du sehen kannst, wie sie zusammenhängen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las ideas de cada capítulo en un mismo mapa, para repasar cómo se relacionan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les idées de chaque chapitre réunies sur une carte pour voir leurs liens."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As ideias de cada capítulo em um só mapa, para revisar como elas se conectam."
           }
         }
       }
@@ -885,6 +1001,35 @@
         }
       }
     },
+    "The questions you got wrong, why, and practice until you get them right." : {
+      "comment" : "What the mistakes notebook shows, under its title until it can open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Die Fragen, die du falsch beantwortet hast, warum, und Übungen, bis du sie richtig beantwortest."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Las preguntas que has fallado, por qué y cómo practicarlas hasta acertarlas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les questions auxquelles tu as mal répondu, les raisons et des exercices pour trouver la bonne réponse."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As perguntas que você errou, o motivo de cada erro e prática até acertar."
+          }
+        }
+      }
+    },
     "Today" : {
       "comment" : "Tab for the learner's day of lessons and reviews",
       "localizations" : {
@@ -910,6 +1055,93 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hoje"
+          }
+        }
+      }
+    },
+    "Unit" : {
+      "comment" : "Title shown instead of a unit of a language plan until it can open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einheit"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unité"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unidade"
+          }
+        }
+      }
+    },
+    "What you'll study each day until your goal, and what it covers." : {
+      "comment" : "What the plan shows, under its title until it can open",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Was du jeden Tag bis zu deinem Ziel lernst und welche Themen es umfasst."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lo que estudiarás cada día hasta alcanzar tu objetivo y qué incluye."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ce que tu étudieras chaque jour jusqu’à ton objectif et ce que cela couvre."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O que você vai estudar a cada dia até alcançar sua meta, e o que ela abrange."
+          }
+        }
+      }
+    },
+    "Your buddy answers your questions and adjusts your plan." : {
+      "comment" : "What the buddy is for, under its title until someone logs in",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Kumpel beantwortet deine Fragen und passt deinen Plan an."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu compañero responde a tus preguntas y adapta tu plan."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton compagnon répond à tes questions et ajuste ton plan."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu parceiro responde suas perguntas e ajusta seu plano."
           }
         }
       }

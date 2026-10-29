@@ -35,6 +35,7 @@ struct ShellGate<Content: View>: View {
 
   let requirement: AppRoute.Requirement
   let title: LocalizedStringResource
+  var description: LocalizedStringResource?
   var startsGoalHere = false
   @ViewBuilder let content: Content
 
@@ -48,16 +49,19 @@ struct ShellGate<Content: View>: View {
     case (_, .visitor):
       signInGate
         .navigationTitle(Text(title))
+        .navigationSubtitle(subtitle)
+    case (.goal, .noGoal) where startsGoalHere:
+      goalBox
+        .navigationTitle(Text(title))
     case (.goal, .noGoal):
-      Group {
-        if startsGoalHere {
-          goalBox
-        } else {
-          startGoalGate
-        }
-      }
-      .navigationTitle(Text(title))
+      startGoalGate
+        .navigationTitle(Text(title))
+        .navigationSubtitle(subtitle)
     }
+  }
+
+  private var subtitle: Text {
+    description.map { Text($0) } ?? Text(verbatim: "")
   }
 
   private var signInGate: some View {
