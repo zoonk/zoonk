@@ -311,7 +311,7 @@ private fun DetailsSheet(
 }
 
 @Composable
-private fun PaceDetails(
+internal fun PaceDetails(
     page: PlanPageState,
     pace: Pace,
     links: PlanLinks,
@@ -452,7 +452,7 @@ private fun DayRing(day: PlanDay) {
 }
 
 @Composable
-private fun PreparationDetails(
+internal fun PreparationDetails(
     progress: GoalProgress,
     forExam: Boolean,
     lessons: Standing.Progress?,

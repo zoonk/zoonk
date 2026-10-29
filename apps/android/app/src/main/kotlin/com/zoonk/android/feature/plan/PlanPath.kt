@@ -706,7 +706,7 @@ internal fun PhaseDetailsSheet(
 }
 
 @Composable
-private fun ColumnScope.PhaseDetails(
+internal fun ColumnScope.PhaseDetails(
     page: PlanPageState,
     phase: PlanPhase,
     links: PlanLinks,
