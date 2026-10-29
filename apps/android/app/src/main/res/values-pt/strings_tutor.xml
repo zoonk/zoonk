@@ -71,8 +71,7 @@
   "tutor_thinking": "635f5c62217358520d5531c9210200d942a668595f269c69da2f96980fb7218e",
   "tutor_try_again": "e7a898ba8b6d39abc72cf3d620f97b8625e4c7a90dd07a7b2404d902cee6a5ce",
   "tutor_view_plans": "3e8cd1ec9175472d3a927372d63432ebaf1580d99692f1a89991e6df0ca2b1cf",
-  "tutor_your_buddy": "2d2b3030aea0e8c094cff8461694625fdcc6671bf94742b4d3732ebcf6be89db",
-  "tutor_your_question": "7ce17c5adf0ac745d5c91fad3bd4c46045827b89e0f67e2e3c0268ab8eda4db3"
+  "tutor_your_buddy": "2d2b3030aea0e8c094cff8461694625fdcc6671bf94742b4d3732ebcf6be89db"
 }
 -->
 <resources>
@@ -108,7 +107,6 @@
     <string name="tutor_empty_ai">%1$s é um parceiro de estudos com IA e pode cometer erros.</string>
     <string name="tutor_guest_title">Crie uma conta grátis para fazer perguntas</string>
     <string name="tutor_loading">Carregando a conversa…</string>
-    <string name="tutor_your_question">Sua pergunta</string>
     <string name="tutor_get_answer">Ver resposta</string>
     <string name="tutor_not_answered">Esta pergunta não foi respondida.</string>
     <string name="tutor_answer_failed">Não foi possível concluir esta resposta.</string>

@@ -71,8 +71,7 @@
   "tutor_thinking": "fe3c1cba6e6c1c3ab955aed45c04f67425186b579c9990fbfb5d978e01886f5e",
   "tutor_try_again": "36f7d6fa69c3fdd7862bd37ec7675e16c3b788e45d2a6f19863078d1503ddb29",
   "tutor_view_plans": "0c7f841b3964955a79274da08a7f1bc441f2b30728b752b9d443e281776634f3",
-  "tutor_your_buddy": "0186bf3bafa76fb10a40b960468c2feccfd3e709558a73e234b735bae4da548a",
-  "tutor_your_question": "807657ddbd0ba1b30185e5eb95944cb6604dea7dd7bc1c5cdfa2710e6347723b"
+  "tutor_your_buddy": "0186bf3bafa76fb10a40b960468c2feccfd3e709558a73e234b735bae4da548a"
 }
 -->
 <resources>
@@ -108,7 +107,6 @@
     <string name="tutor_empty_ai">%1$s est un compagnon d’étude IA et peut se tromper.</string>
     <string name="tutor_guest_title">Crée un compte gratuit pour poser des questions</string>
     <string name="tutor_loading">Chargement de la conversation…</string>
-    <string name="tutor_your_question">Ta question</string>
     <string name="tutor_get_answer">Obtenir une réponse</string>
     <string name="tutor_not_answered">Cette question n’a pas reçu de réponse.</string>
     <string name="tutor_answer_failed">Impossible de terminer cette réponse.</string>

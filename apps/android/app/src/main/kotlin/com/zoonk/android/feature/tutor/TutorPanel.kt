@@ -3,9 +3,11 @@ package com.zoonk.android.feature.tutor
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
@@ -26,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -60,17 +63,23 @@ internal fun rememberTutor(
     return vm
 }
 
-/** Visitors and guests see the sign-up prompt: the tutor isn't part of a guest's allowance. */
+/** Visitors and guests are asked to create an account: the tutor isn't part of a guest's allowance. */
+internal enum class TutorAccess { Ask, Guest, SignedOut }
+
 @Composable
-internal fun rememberCanAsk(app: AppContainer): Boolean {
+internal fun rememberTutorAccess(app: AppContainer): TutorAccess {
     val session by app.sessions.state.collectAsStateWithLifecycle()
-    return (session as? SessionState.SignedIn)?.isGuest == false
+    return when (val current = session) {
+        is SessionState.SignedIn -> if (current.isGuest) TutorAccess.Guest else TutorAccess.Ask
+        is SessionState.SignedOut -> if (current.sessionEnded) TutorAccess.SignedOut else TutorAccess.Guest
+        SessionState.Restoring, SessionState.Unavailable -> TutorAccess.Guest
+    }
 }
 
 @Composable
 internal fun TutorPanel(
     vm: TutorViewModel,
-    canAsk: Boolean,
+    access: TutorAccess,
     identity: TutorIdentity,
     routes: TutorRoutes,
     modifier: Modifier = Modifier,
@@ -79,8 +88,8 @@ internal fun TutorPanel(
     val suggestions = tutorSuggestions(vm.scope, lessonSuggestions)
 
     Column(modifier) {
-        if (!canAsk) {
-            GuestThread(routes.createAccount, Modifier.weight(1f))
+        if (access != TutorAccess.Ask) {
+            AccountPrompt(access, routes, Modifier.weight(1f))
             return@Column
         }
 
@@ -100,7 +109,7 @@ internal fun TutorPanel(
 }
 
 /** Main's drawer: on every window the conversation opens from the screen it's about. */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 internal fun TutorSheet(
     scope: TutorScope,
@@ -112,18 +121,23 @@ internal fun TutorSheet(
     val sheet = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutines = rememberCoroutineScope()
     val close: () -> Unit = { coroutines.launch { sheet.hide() }.invokeOnCompletion { onDismiss() } }
-    val leaveFor: (AppRoute) -> () -> Unit = { route ->
-        {
-            onDismiss()
-            navigator.open(route)
-        }
+    val open: (AppRoute) -> Unit = { route ->
+        onDismiss()
+        navigator.open(route)
     }
     val routes =
-        TutorRoutes(createAccount = leaveFor(AppRoute.Login), signIn = leaveFor(AppRoute.Login), seePlus = leaveFor(AppRoute.Subscription))
+        TutorRoutes(
+            createAccount = { open(AppRoute.Login) },
+            signIn = { open(AppRoute.Login) },
+            seePlus = { open(AppRoute.Subscription) },
+            open = open,
+        )
     val tall = currentWindowAdaptiveInfoV2().windowSizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
+    // The sheet already sits above the keyboard, so typing takes all the height that's left.
+    val share = if (tall && !WindowInsets.isImeVisible) SHEET_SHARE else 1f
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheet) {
-        Column(Modifier.fillMaxHeight(if (tall) SHEET_SHARE else 1f).imePadding()) {
+        Column(Modifier.fillMaxHeight(share).semantics { paneTitle = identity.name }) {
             Row(
                 Modifier.padding(start = 16.dp, end = 4.dp, bottom = 8.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
@@ -149,7 +163,7 @@ internal fun TutorSheet(
                 }
             }
             HorizontalDivider()
-            TutorPanel(rememberTutor(scope, app), rememberCanAsk(app), identity, routes, Modifier.weight(1f))
+            TutorPanel(rememberTutor(scope, app), rememberTutorAccess(app), identity, routes, Modifier.weight(1f))
         }
     }
 }

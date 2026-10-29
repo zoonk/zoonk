@@ -3,9 +3,11 @@ package com.zoonk.android.feature.tutor
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,13 +16,15 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -39,13 +43,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.navigation.AppLink
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.richtext.MarkdownText
 import kotlinx.coroutines.launch
 
@@ -53,6 +61,7 @@ internal class TutorRoutes(
     val createAccount: () -> Unit,
     val signIn: () -> Unit,
     val seePlus: () -> Unit,
+    val open: (AppRoute) -> Unit,
 )
 
 @Composable
@@ -72,7 +81,7 @@ internal fun TutorThreadView(
             thread is LoadState.Loaded -> {
                 val turns = thread.value.turns
                 if (turns.isEmpty() && !thread.value.hasMore) {
-                    EmptyThread(identity, suggestions.takeIf { state.limit(turns) == null && state.canAsk(turns) }.orEmpty(), vm::send)
+                    EmptyThread(identity, suggestions.takeIf { state.limit(turns) == null }.orEmpty(), state.canAsk(turns), vm::send)
                 } else {
                     Turns(vm, thread.value, state, identity, routes)
                 }
@@ -151,6 +160,10 @@ private fun EarlierQuestions(
             )
         }
         FilledTonalButton(onClick = onLoad, enabled = !state.loadingEarlier) {
+            if (state.loadingEarlier) {
+                CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), strokeWidth = 2.dp)
+                Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+            }
             Text(stringResource(R.string.tutor_load_earlier))
         }
     }
@@ -165,11 +178,9 @@ private fun TurnView(
     routes: TutorRoutes,
     others: Int,
 ) {
-    val description = stringResource(R.string.tutor_your_question)
-
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Column(
-            Modifier.fillMaxWidth().semantics { contentDescription = description },
+            Modifier.fillMaxWidth().semantics(mergeDescendants = true) { heading() },
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
@@ -185,7 +196,12 @@ private fun TurnView(
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Box(Modifier.size(AVATAR_SIZE)) { TutorAvatar(identity, AVATAR_SIZE) }
-            Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            // A finished or failed answer is read out once; while it streams nothing is, word by word.
+            val finished = turn.status == TutorTurn.Status.Completed || turn.status == TutorTurn.Status.Failed
+            Column(
+                Modifier.weight(1f).padding(top = 4.dp).semantics { if (finished) liveRegion = LiveRegionMode.Polite },
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
                 Answer(turn, vm, state, routes, others)
             }
         }
@@ -213,7 +229,7 @@ private fun Answer(
         }
 
         turn.status == TutorTurn.Status.Failed -> {
-            turn.answer?.let { AnswerText(it, linksChecked) }
+            turn.answer?.let { AnswerText(it, linksChecked, routes) }
             if (failure?.helpLimit != null) {
                 Text(
                     stringResource(R.string.tutor_not_answered),
@@ -231,7 +247,7 @@ private fun Answer(
         }
 
         turn.answer != null -> {
-            AnswerText(turn.answer, linksChecked)
+            AnswerText(turn.answer, linksChecked, routes)
             if (turn.status == TutorTurn.Status.Running && !streaming) CheckAgain(enabled = !busy && others == 0) { vm.checkAgain(turn.id) }
         }
 
@@ -265,16 +281,26 @@ private fun Answer(
 private val TutorFailure?.isGeneric: Boolean
     get() = this == null || this == TutorFailure.Failed || this == TutorFailure.Invalid
 
+/** Unchecked links read as their words. A checked one opens Zoonk's page in the app, or a website after asking. */
 @Composable
 private fun AnswerText(
     answer: String,
     linksChecked: Boolean,
+    routes: TutorRoutes,
 ) {
     var asked by remember { mutableStateOf<String?>(null) }
+    val open: (String) -> Unit = { url ->
+        val route = AppLink.parse(url)
+        if (route != null) {
+            routes.open(route)
+        } else if (url.isWebAddress) {
+            asked = url
+        }
+    }
 
     MarkdownText(
         markdown = answer,
-        onOpenLink = { url -> if (linksChecked && url.isWebAddress) asked = url },
+        onOpenLink = open.takeIf { linksChecked },
         style = MaterialTheme.typography.bodyLarge,
     )
 
@@ -357,48 +383,62 @@ internal fun FailureAction(
 private fun EmptyThread(
     identity: TutorIdentity,
     suggestions: List<TutorSuggestion>,
+    canAsk: Boolean,
     onSelect: (TutorSuggestion) -> Unit,
 ) {
-    Column(
-        Modifier.fillMaxSize().padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
-    ) {
+    CenteredState {
         TutorAvatar(identity, EMPTY_AVATAR_SIZE)
-        Text(stringResource(R.string.tutor_empty_title), style = MaterialTheme.typography.titleMedium)
+        Text(stringResource(R.string.tutor_empty_title), textAlign = TextAlign.Center, style = MaterialTheme.typography.titleMedium)
         Text(
             stringResource(R.string.tutor_empty_ai, identity.name),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Center,
             style = MaterialTheme.typography.bodyMedium,
         )
         if (suggestions.isNotEmpty()) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)) {
                 suggestions.forEach { suggestion ->
-                    // A suggestion is a choice, so its words stay ink; an outlined button's quiet label reads as disabled.
-                    OutlinedButton(
-                        onClick = { onSelect(suggestion) },
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
-                    ) { Text(suggestion.label) }
+                    FilledTonalButton(onClick = { onSelect(suggestion) }, enabled = canAsk) { Text(suggestion.label) }
                 }
             }
         }
     }
 }
 
+/** Who can't ask yet: a guest creates an account, a learner whose session ended signs in again. */
 @Composable
-internal fun GuestThread(
-    onCreateAccount: () -> Unit,
+internal fun AccountPrompt(
+    access: TutorAccess,
+    routes: TutorRoutes,
     modifier: Modifier = Modifier,
 ) {
-    Column(
-        modifier.fillMaxSize().padding(24.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
-    ) {
+    val signedOut = access == TutorAccess.SignedOut
+
+    CenteredState(modifier) {
         Icon(painterResource(R.drawable.ic_forum), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        Text(stringResource(R.string.tutor_guest_title), style = MaterialTheme.typography.titleMedium)
-        FilledTonalButton(onClick = onCreateAccount) { Text(stringResource(R.string.limit_create_account)) }
+        Text(
+            stringResource(if (signedOut) R.string.tutor_error_session else R.string.tutor_guest_title),
+            textAlign = TextAlign.Center,
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Button(onClick = if (signedOut) routes.signIn else routes.createAccount) {
+            Text(stringResource(if (signedOut) R.string.tutor_sign_in else R.string.limit_create_account))
+        }
     }
+}
+
+/** Scrolls when it doesn't fit, as at twice the font size or with the keyboard open. */
+@Composable
+private fun CenteredState(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    Column(
+        modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.CenterVertically),
+        content = content,
+    )
 }
 
 @Composable

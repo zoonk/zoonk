@@ -8,6 +8,7 @@ import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performFirstLinkClick
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
@@ -15,6 +16,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import kotlinx.coroutines.CoroutineScope
@@ -35,16 +37,17 @@ class TutorPanelTest {
     private val api = FakeTutorApi()
     private val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
     private var openedLogin = 0
-    private val routes = TutorRoutes(createAccount = { openedLogin++ }, signIn = { openedLogin++ }, seePlus = {})
+    private val opened = mutableListOf<AppRoute>()
+    private val routes = TutorRoutes(createAccount = { openedLogin++ }, signIn = { openedLogin++ }, seePlus = {}, open = { opened += it })
 
     private fun show(
         scope: TutorScope = TutorScope.Chapter("chapter"),
-        canAsk: Boolean = true,
+        access: TutorAccess = TutorAccess.Ask,
     ) {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main))
         val vm = TutorViewModel(scope, TutorStore(api, cache, session))
         compose.setContent {
-            ZoonkTheme { TutorPanel(vm, canAsk, TutorIdentity("Zu", BuddyLook()), routes) }
+            ZoonkTheme { TutorPanel(vm, access, TutorIdentity("Zu", BuddyLook()), routes) }
         }
     }
 
@@ -81,7 +84,7 @@ class TutorPanelTest {
 
     @Test
     fun aGuestIsAskedToCreateAnAccountFirst() {
-        show(canAsk = false)
+        show(access = TutorAccess.Guest)
 
         compose.onNodeWithText("Create a free account to ask questions").assertExists()
         compose.onNodeWithText("Create a free account").performClick()
@@ -123,5 +126,26 @@ class TutorPanelTest {
         compose.onNodeWithText("Try again").performClick()
 
         compose.onNodeWithText("Because.").assertExists()
+    }
+
+    @Test
+    fun aLearnerWhoseSessionEndedIsAskedToSignInAgain() {
+        show(access = TutorAccess.SignedOut)
+
+        compose.onNodeWithText("Your session expired. Sign in again.").assertExists()
+        compose.onNodeWithText("Sign in").performClick()
+
+        assertEquals(1, openedLogin)
+    }
+
+    @Test
+    fun aCheckedLinkToZoonkOpensItsPageInTheApp() {
+        api.thread =
+            TutorThread(listOf(turn("q1", TutorTurn.Status.Completed, "Look at [your plan](/plan).")), hasMore = false, nextCursor = null)
+        show()
+
+        compose.onNodeWithText("Look at your plan.", substring = true).performFirstLinkClick()
+
+        assertEquals(listOf<AppRoute>(AppRoute.Plan()), opened)
     }
 }

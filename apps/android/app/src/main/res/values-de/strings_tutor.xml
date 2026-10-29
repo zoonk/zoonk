@@ -71,8 +71,7 @@
   "tutor_thinking": "52d4befb1aea5433ee19153b8718d347682964a37f12ec5c992ddaa882f57e19",
   "tutor_try_again": "be71def06be76635836bd8b2436b5ff5c60b2f798360b9d310235c9d0027c81a",
   "tutor_view_plans": "ea33ab7b45736ed15fff6b2818bc49ffb344ddd771c9638aadb7eaf6ccfc361d",
-  "tutor_your_buddy": "4b3009cbbd5c7b089efb1e833bc110e5c9b35ac5dfb03a0f51cdac80545adfec",
-  "tutor_your_question": "fd4c32e36f151a739e7a9fe7e5d7e02e592b3a77c9a210904695fc432ef176bd"
+  "tutor_your_buddy": "4b3009cbbd5c7b089efb1e833bc110e5c9b35ac5dfb03a0f51cdac80545adfec"
 }
 -->
 <resources>
@@ -108,7 +107,6 @@
     <string name="tutor_empty_ai">%1$s ist ein KI-Lernkumpel und kann Fehler machen.</string>
     <string name="tutor_guest_title">Erstelle ein kostenloses Konto, um Fragen zu stellen</string>
     <string name="tutor_loading">Unterhaltung wird geladen…</string>
-    <string name="tutor_your_question">Deine Frage</string>
     <string name="tutor_get_answer">Antwort erhalten</string>
     <string name="tutor_not_answered">Diese Frage wurde nicht beantwortet.</string>
     <string name="tutor_answer_failed">Diese Antwort konnte nicht fertiggestellt werden.</string>

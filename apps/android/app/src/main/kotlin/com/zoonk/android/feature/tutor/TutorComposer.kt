@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.tutor
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,9 +28,11 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -48,7 +51,11 @@ internal fun TutorComposer(
     val limit = turns?.let(state::limit)
 
     if (limit != null) {
-        Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.large, color = MaterialTheme.colorScheme.surfaceContainerLow) {
+        Surface(
+            modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.large,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+        ) {
             LimitNotice(
                 limit = limit,
                 subject = LimitSubject.Help,
@@ -82,7 +89,7 @@ internal fun TutorComposer(
             trailingIcon = { SendButton(state.asking, resending, enabled = canSend, onClick = vm::send) },
             inputTransformation = InputTransformation.maxLength(MAX_QUESTION_LENGTH),
             lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = MAX_LINES),
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
+            keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Send),
             onKeyboardAction = { if (canSend) vm.send() },
             shape = MaterialTheme.shapes.large,
         )
@@ -118,7 +125,7 @@ private fun SendButton(
 
     FilledIconButton(onClick = onClick, enabled = enabled, modifier = Modifier.padding(end = 4.dp)) {
         when {
-            asking -> CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+            asking -> CircularProgressIndicator(Modifier.size(18.dp).semantics { contentDescription = label }, strokeWidth = 2.dp)
             resending -> Icon(painterResource(R.drawable.ic_refresh), contentDescription = label)
             else -> Icon(painterResource(R.drawable.ic_arrow_upward), contentDescription = label)
         }
