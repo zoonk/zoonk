@@ -50,6 +50,7 @@ import com.zoonk.android.feature.activities.sorting.categorizeRenderer
 import com.zoonk.android.feature.activities.sorting.causeEffectChainRenderer
 import com.zoonk.android.feature.activities.sorting.matchPairsRenderer
 import com.zoonk.android.feature.activities.sorting.processOrderRenderer
+import com.zoonk.android.feature.activities.sorting.timelineRenderer
 import com.zoonk.android.feature.activities.stepSolverRenderer
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
@@ -106,6 +107,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "processOrder" to processOrderRenderer,
         "sqlPlayground" to sqlPlaygroundRenderer,
         "stepSolver" to stepSolverRenderer,
+        "timeline" to timelineRenderer,
     )
 
 private val KeptAnswer: Saver<ActivityAnswer?, String> =

@@ -94,4 +94,38 @@
     <string name="activities_sorting_missed_link">Missed link</string>
     <!-- A button that takes a link away, like "Remove the link from Years of drought to Dust storms". -->
     <string name="activities_sorting_remove_link">Remove the link from %1$s to %2$s</string>
+
+    <string name="activities_sorting_badge_place_in_time">Place in time</string>
+    <!-- A year before the common era, like "51 BCE". -->
+    <string name="activities_sorting_year_bce">%1$s BCE</string>
+    <!-- A year of the common era, on a timeline that also has BCE years, like "1969 CE". -->
+    <string name="activities_sorting_year_ce">%1$s CE</string>
+    <!-- What TalkBack reads for an event once the real dates show: its real year, then the learner's guess, like "51 BCE. Your guess: 2000 CE". -->
+    <string name="activities_sorting_year_and_guess">%1$s. Your guess: %2$s</string>
+    <!-- Where the learner placed an event, like "Your guess: 2000 CE". -->
+    <string name="activities_sorting_your_guess">Your guess: %1$s</string>
+    <plurals name="activities_sorting_events_to_place">
+        <item quantity="one">%d event to place</item>
+        <item quantity="other">%d events to place</item>
+    </plurals>
+    <!-- Places the next event on the timeline, like "Place Moon landing on the timeline". -->
+    <string name="activities_sorting_place_on_timeline">Place %1$s on the timeline</string>
+    <string name="activities_sorting_drag_onto_timeline">Tap to place, or hold and drag onto the timeline</string>
+    <string name="activities_sorting_show_real_dates">Show the real dates</string>
+    <!-- The name of the list of gaps between dates, for TalkBack. -->
+    <string name="activities_sorting_time_between">Time between the dates</string>
+    <!-- An exact gap in years, like "66 years". -->
+    <plurals name="activities_sorting_years">
+        <item quantity="one">%1$s year</item>
+        <item quantity="other">%1$s years</item>
+    </plurals>
+    <!-- A rounded gap in years, like "about 2,000 years". -->
+    <plurals name="activities_sorting_about_years">
+        <item quantity="one">about %1$s year</item>
+        <item quantity="other">about %1$s years</item>
+    </plurals>
+    <!-- After a gap in years: the two events and their years, like "from Cleopatra rules Egypt (51 BCE) to Moon landing (1969 CE)". -->
+    <string name="activities_sorting_gap_between">from %1$s (%2$s) to %3$s (%4$s)</string>
+    <!-- What the timeline's drawing covers, for TalkBack, like "A timeline from 3000 BCE to 2000 CE." -->
+    <string name="activities_sorting_timeline_from">A timeline from %1$s to %2$s.</string>
 </resources>
