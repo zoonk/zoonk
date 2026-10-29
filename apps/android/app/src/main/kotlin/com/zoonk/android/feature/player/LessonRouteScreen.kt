@@ -50,6 +50,8 @@ import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonOutline
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.steps.LocalChallengeTeam
+import com.zoonk.android.feature.tutor.TutorAskButton
+import com.zoonk.android.feature.tutor.TutorSuggestion
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -170,6 +172,8 @@ internal fun PlayingLesson(
     val ending by viewModel.ending.collectAsStateWithLifecycle()
     val profile by app.learningProfile.profile.collectShown()
 
+    val suggestions = remember(load.lesson) { load.lesson.tutorSuggestions.map { TutorSuggestion(it.label, it.id.value) } }
+
     LaunchedEffect(load.lesson.id, signedIn) { viewModel.open(load.lesson) }
 
     val hasChallenge = remember(load.lesson) { load.lesson.steps.any { it.content is StepContent.Challenge } }
@@ -188,7 +192,9 @@ internal fun PlayingLesson(
         LocalLessonSpeech provides app.speech,
         LocalChallengeTeam provides team,
     ) {
-        LessonPlayer(load.lesson, state, ending, viewModel, exits, navigator, endSlot)
+        LessonPlayer(load.lesson, state, ending, viewModel, exits, navigator, endSlot) { scope, worded ->
+            TutorAskButton(scope, app, navigator, worded, suggestions)
+        }
         LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
     }
 }

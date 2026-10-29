@@ -4,15 +4,27 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipAnchorPosition
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -60,6 +72,46 @@ fun AskTutor(
     }
 
     if (open) TutorSheet(scope, app, navigator, identity, onDismiss = { open = false })
+}
+
+/**
+ * Main's "Ask {buddy}" beside a task's main action, as on a lesson's screen: an icon, or [worded]
+ * after a missed answer, opening the conversation about [scope].
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TutorAskButton(
+    scope: TutorScope,
+    app: AppContainer,
+    navigator: AppNavigator,
+    worded: Boolean,
+    lessonSuggestions: List<TutorSuggestion> = emptyList(),
+) {
+    val summary by app.learnerSummary.summary.collectShown()
+    val identity = tutorIdentity(summary.value)
+    val label = stringResource(R.string.tutor_ask, identity.name)
+    var open by rememberSaveable { mutableStateOf(false) }
+
+    if (worded) {
+        OutlinedButton(onClick = {
+            open = true
+        }, colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)) {
+            Icon(painterResource(R.drawable.ic_contact_support), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
+            Text(label, Modifier.padding(start = ButtonDefaults.IconSpacing))
+        }
+    } else {
+        TooltipBox(
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(TooltipAnchorPosition.Above),
+            tooltip = { PlainTooltip { Text(label) } },
+            state = rememberTooltipState(),
+        ) {
+            OutlinedIconButton(onClick = { open = true }) {
+                Icon(painterResource(R.drawable.ic_contact_support), contentDescription = label)
+            }
+        }
+    }
+
+    if (open) TutorSheet(scope, app, navigator, identity, onDismiss = { open = false }, lessonSuggestions = lessonSuggestions)
 }
 
 private val BUTTON_AVATAR_SIZE = 24.dp

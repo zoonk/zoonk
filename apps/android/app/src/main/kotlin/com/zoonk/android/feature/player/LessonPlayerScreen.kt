@@ -84,6 +84,7 @@ import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.SummaryIdeas
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.keyPick
+import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LabelChip
@@ -139,6 +140,7 @@ fun LessonPlayer(
     exits: LessonPlayerExits,
     navigator: AppNavigator,
     endSlot: LessonEndSlot? = null,
+    ask: (@Composable (TutorScope, worded: Boolean) -> Unit)? = null,
 ) {
     val screen = remember(state) { state?.screen() }
     val ownEnd =
@@ -225,7 +227,14 @@ fun LessonPlayer(
                 }
 
                 screen.primary != null -> {
-                    { BarColumn { ActionBar(screen, actions, onBack = { viewModel.dispatch(LessonAction.GoBack) }) } }
+                    {
+                        BarColumn {
+                            ActionBar(screen, actions, onBack = { viewModel.dispatch(LessonAction.GoBack) }) {
+                                // A screen that already offers help keeps the ask quiet.
+                                ask?.invoke(state.tutorScope(screen), state.showsMiss(screen) && screen.struggleOffer == null)
+                            }
+                        }
+                    }
                 }
 
                 else -> {
@@ -504,6 +513,7 @@ private fun ActionBar(
     screen: LessonScreen,
     actions: StepActions,
     onBack: () -> Unit,
+    ask: @Composable () -> Unit,
 ) {
     val primary = screen.primary ?: return
 
@@ -519,6 +529,7 @@ private fun ActionBar(
             }
             Text(stringResource(primary.label.text()))
         }
+        ask()
     }
 }
 

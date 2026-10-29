@@ -122,6 +122,7 @@ internal fun TutorSheet(
     navigator: AppNavigator,
     identity: TutorIdentity,
     onDismiss: () -> Unit,
+    lessonSuggestions: List<TutorSuggestion> = emptyList(),
 ) {
     val sheet = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val coroutines = rememberCoroutineScope()
@@ -168,7 +169,7 @@ internal fun TutorSheet(
                 }
             }
             HorizontalDivider()
-            TutorPanel(rememberTutor(scope, app), rememberTutorAccess(app), identity, routes, Modifier.weight(1f))
+            TutorPanel(rememberTutor(scope, app), rememberTutorAccess(app), identity, routes, Modifier.weight(1f), lessonSuggestions)
         }
     }
 }
