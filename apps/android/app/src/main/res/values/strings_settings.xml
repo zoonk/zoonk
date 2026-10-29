@@ -32,4 +32,19 @@
     <string name="settings_apple_not_revoked">Your Zoonk data was deleted, but Apple couldn\'t confirm that Zoonk was removed from your Apple ID. Remove Zoonk from Sign in with Apple to finish.</string>
     <string name="settings_manage_apple">Manage Sign in with Apple</string>
     <string name="settings_done">Done</string>
+    <string name="settings_preferences_buddy">Your buddy</string>
+    <string name="settings_preferences_change">Change</string>
+    <string name="settings_preferences_choose_buddy">Choose your buddy</string>
+    <!-- %1$s is the buddy's stage ("Baby") and %2$s what it wears ("Round glasses"). -->
+    <string name="settings_preferences_buddy_line">%1$s · %2$s</string>
+    <string name="settings_preferences_lessons">Lessons</string>
+    <string name="settings_preferences_sounds">Sounds</string>
+    <string name="settings_preferences_sounds_description">When you get it right or finish</string>
+    <string name="settings_preferences_daily_limit">Daily time limit</string>
+    <string name="settings_preferences_daily_limit_description">Stop for the day after this much study.</string>
+    <string name="settings_preferences_no_limit">No limit</string>
+    <!-- %1$s is a duration, like "45 min". -->
+    <string name="settings_preferences_limit_a_day">%1$s a day</string>
+    <string name="settings_preferences_language">Language</string>
+    <string name="settings_preferences_save_failed">That didn\'t save. Try again.</string>
 </resources>

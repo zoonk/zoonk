@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="buddy_glasses">Glasses</string>
+    <string name="buddy_glasses_round">Round</string>
+    <string name="buddy_glasses_star">Star</string>
+    <string name="buddy_glasses_aviator">Aviator</string>
+    <string name="buddy_glasses_cat_eye">Cat-eye</string>
+    <string name="buddy_glasses_retro">Retro</string>
+    <string name="buddy_glasses_monocle">Monocle</string>
+    <string name="buddy_glasses_worn_round">Round glasses</string>
+    <string name="buddy_glasses_worn_star">Star glasses</string>
+    <string name="buddy_glasses_worn_aviator">Aviator glasses</string>
+    <string name="buddy_glasses_worn_cat_eye">Cat-eye glasses</string>
+    <string name="buddy_glasses_worn_retro">Retro glasses</string>
+    <string name="buddy_glasses_worn_monocle">A monocle</string>
+    <string name="buddy_glasses_earn_round">Comes with your buddy</string>
+    <string name="buddy_glasses_earn_star">Win your first phase challenge</string>
+    <string name="buddy_glasses_earn_aviator">Finish your first weekly challenge</string>
+    <string name="buddy_glasses_earn_cat_eye">Finish every mission on 7 different days</string>
+    <string name="buddy_glasses_earn_retro">Finish 50 reviews</string>
+    <string name="buddy_glasses_earn_monocle">Win the final challenge</string>
+    <string name="buddy_stage_baby">Baby</string>
+    <string name="buddy_stage_young">Young</string>
+    <string name="buddy_stage_adult">Adult</string>
+</resources>

@@ -25,6 +25,19 @@
   "settings_manage_apple": "ad7fb33c7e43c1f657a21565f9766c9f941c59d31a9e99973d232f8081111a23",
   "settings_memory": "4629b94f827295a1d5abd94e05806354f46cf748ebab24abf969cd633672e660",
   "settings_preferences": "03ae7ef82c6e59feb9f27f09ea2714063a525d360650158086d0c2eff6a04aac",
+  "settings_preferences_buddy": "6d4fa9f96d2d4d4c770b5be61717508ccfb7b97c45b28d1562b6cc0c2a4d70fc",
+  "settings_preferences_buddy_line": "fd892e099f757c8608f531d02b7660c6b480991b3b92c4890d83f04a0634f91c",
+  "settings_preferences_change": "95bac5b386e7f626ff6518ccacdd8f8758f85819e0722c89d9d571b8565476bb",
+  "settings_preferences_choose_buddy": "e6ae49982eeae019bfe9559697410d134d4405896f872bcc60457ce5ef2ecb1a",
+  "settings_preferences_daily_limit": "c31638581fdf0fbd8d51d67bc990a900970492ee4102934c875b9dcac22b9e79",
+  "settings_preferences_daily_limit_description": "d6bf43d8bc6cb3d1a5b3f5fe1cc6720243fc7383022d0ff39bdca41ce43dd3af",
+  "settings_preferences_language": "a721c3d7be18a616f225cd9d72b5b8c663f4b9881b785d7620b16fc93726a9f1",
+  "settings_preferences_lessons": "b199392d81507f6b91224c0699cde5854ae48ef26825983b8dec6b529156e12c",
+  "settings_preferences_limit_a_day": "062640dd1f0a1ad21ad10c6b94c34260c8abe1b1393477b10aa930e1f4298f2f",
+  "settings_preferences_no_limit": "9413daff7a1ba9b157c27480e5a21bc4ea058720038da29369dcb56ef0e0dc8d",
+  "settings_preferences_save_failed": "3517153ccc3af705f02f406a131a3c8ad259429b1d637ab64ad2ba321b782cb2",
+  "settings_preferences_sounds": "8e2c87a4e0a9871e5fa832c94492c901923112c8d4a40d0f844c3a3ffb198012",
+  "settings_preferences_sounds_description": "d771feb92a8ef380699bc87b7400aeac6a15a51b19bc3fa1d58acddf68304303",
   "settings_preferences_summary": "8ee2718234138a1af1c7737a9a01ce3a3ba2875ffbbbc84acc6ec61e38a001f5",
   "settings_profile": "d4e8ee363435bfc28e09ea598ce371ae20039874c1fa74f8df6d02d57bce39bb",
   "settings_profile_needs_account": "ba816b537247b02b29dc56725dee0dbc46c786b03484c0e611bee80a4817c6fc",
@@ -66,4 +79,19 @@
     <string name="settings_apple_not_revoked">Tus datos de Zoonk se han eliminado, pero Apple no ha podido confirmar que Zoonk se haya eliminado de tu ID de Apple. Elimina Zoonk de «Iniciar sesión con Apple» para terminar.</string>
     <string name="settings_manage_apple">Gestionar «Iniciar sesión con Apple»</string>
     <string name="settings_done">Listo</string>
+    <string name="settings_preferences_buddy">Tu compañero</string>
+    <string name="settings_preferences_change">Cambiar</string>
+    <string name="settings_preferences_choose_buddy">Elige a tu compañero</string>
+    <!-- %1$s is the buddy's stage ("Baby") and %2$s what it wears ("Round glasses"). -->
+    <string name="settings_preferences_buddy_line">%1$s · %2$s</string>
+    <string name="settings_preferences_lessons">Lecciones</string>
+    <string name="settings_preferences_sounds">Sonidos</string>
+    <string name="settings_preferences_sounds_description">Cuando aciertas o terminas</string>
+    <string name="settings_preferences_daily_limit">Límite diario de estudio</string>
+    <string name="settings_preferences_daily_limit_description">Deja de estudiar por hoy al alcanzar este tiempo.</string>
+    <string name="settings_preferences_no_limit">Sin límite</string>
+    <!-- %1$s is a duration, like "45 min". -->
+    <string name="settings_preferences_limit_a_day">%1$s al día</string>
+    <string name="settings_preferences_language">Idioma</string>
+    <string name="settings_preferences_save_failed">No se ha guardado. Inténtalo de nuevo.</string>
 </resources>

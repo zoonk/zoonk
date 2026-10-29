@@ -10,7 +10,6 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.navigation.RoutePlaceholder
 
 /**
  * The hub is the list; its pages are the details beside it from a tablet up, with the first page
@@ -29,11 +28,11 @@ fun EntryProviderScope<NavKey>.settingsEntries(
                     if ((session as? SessionState.SignedIn)?.isGuest == false) {
                         ProfileScreen(app, navigator)
                     } else {
-                        RoutePlaceholder(AppRoute.Preferences, app, navigator)
+                        PreferencesScreen(app, navigator)
                     }
                 },
             ),
     ) { SettingsScreen(app, navigator) }
-    entry<AppRoute.Preferences>(metadata = ListDetailSceneStrategy.detailPane()) { RoutePlaceholder(it, app, navigator) }
+    entry<AppRoute.Preferences>(metadata = ListDetailSceneStrategy.detailPane()) { PreferencesScreen(app, navigator) }
     entry<AppRoute.Profile>(metadata = ListDetailSceneStrategy.detailPane()) { ProfileScreen(app, navigator) }
 }
