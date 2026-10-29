@@ -49,6 +49,8 @@ class CheckpointViewModel(
         shownAt = now()
     }
 
+    fun select(answer: Answer?) = update { if (it.pending || it.feedback != null) it else it.copy(selected = answer) }
+
     fun confirm(answer: Answer) {
         val current = mutableDuel.value ?: return
         val question = current.state.current(current.read) ?: return

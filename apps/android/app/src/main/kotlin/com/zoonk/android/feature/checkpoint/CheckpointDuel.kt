@@ -54,6 +54,7 @@ data class DuelState(
     val verdicts: Map<String, Boolean>,
     val reinforcementLessons: Int,
     val showsResult: Boolean,
+    val selected: Answer? = null,
     val feedback: DuelFeedback? = null,
     val pending: Boolean = false,
     val error: DuelError? = null,
@@ -69,6 +70,7 @@ data class DuelState(
         transcript: Pair<String, List<TranscriptLine>>?,
     ) = copy(
         feedback = DuelFeedback(itemId, answer, isCorrect),
+        selected = null,
         pending = false,
         error = null,
         verdicts = verdicts + (itemId to isCorrect),

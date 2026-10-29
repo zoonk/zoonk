@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="checkpoint_trickster">The Trickster</string>
+    <string name="checkpoint_weekly">Weekly challenge</string>
+    <string name="checkpoint_final">Final challenge</string>
+    <!-- %1$s is the phase's number. -->
+    <string name="checkpoint_phase">Phase %1$s challenge</string>
+    <string name="checkpoint_phase_plain">Phase challenge</string>
+    <string name="checkpoint_confirm">Confirm</string>
+    <string name="checkpoint_next">Next</string>
+    <string name="checkpoint_see_result">See how it went</string>
+    <string name="checkpoint_why_later">You\'ll see why at the end.</string>
+    <string name="checkpoint_won_line">His shield is broken. You won!</string>
+    <string name="checkpoint_lost_line">His shield held this time.</string>
+    <string name="checkpoint_retry_tomorrow">New try tomorrow. Nothing is lost.</string>
+    <plurals name="checkpoint_retry_after_lessons">
+        <item quantity="one">New try tomorrow, after %d short lesson. Nothing is lost.</item>
+        <item quantity="other">New try tomorrow, after %d short lessons. Nothing is lost.</item>
+    </plurals>
+    <string name="checkpoint_every_answered">Every question is answered.</string>
+    <string name="checkpoint_shield">The Trickster\'s shield</string>
+    <!-- The shield's plates broken so far, out of all of them. -->
+    <string name="checkpoint_shield_value">%1$d of %2$d broken</string>
+    <plurals name="checkpoint_to_go">
+        <item quantity="one">%d to go</item>
+        <item quantity="other">%d to go</item>
+    </plurals>
+    <!-- The shield wasn't broken: the boss won. -->
+    <string name="checkpoint_held">Held</string>
+    <!-- The whole shield is broken: the learner won. -->
+    <string name="checkpoint_broken_all">Broken</string>
+    <plurals name="checkpoint_broken">
+        <item quantity="one">%d broken</item>
+        <item quantity="other">%d broken</item>
+    </plurals>
+    <string name="checkpoint_no_questions_left">No questions left</string>
+    <plurals name="checkpoint_questions_left">
+        <item quantity="one">%d question left</item>
+        <item quantity="other">%d questions left</item>
+    </plurals>
+    <plurals name="checkpoint_right_to_win">
+        <item quantity="one">%d right to win</item>
+        <item quantity="other">%d right to win</item>
+    </plurals>
+    <string name="checkpoint_no_hints_boss">No hints. You\'ll see right or wrong after each answer, and why at the end, with the traps he set.</string>
+    <string name="checkpoint_no_hints_weekly">No hints. You\'ll see right or wrong after each answer, and why at the end.</string>
+    <string name="checkpoint_winning">Winning</string>
+    <string name="checkpoint_finishing">Finishing</string>
+    <!-- %1$s is the Brain Power the challenge gives, like 30. -->
+    <string name="checkpoint_prize">+%1$s</string>
+    <!-- %1$s is the Brain Power; %2$s is the phase's number. -->
+    <string name="checkpoint_prize_phase">+%1$s · phase %2$s done</string>
+    <string name="checkpoint_removed_title">The questions were removed</string>
+    <string name="checkpoint_removed_detail">You hadn\'t answered any yet, so this challenge isn\'t scored. Nothing is lost.</string>
+    <string name="checkpoint_weekly_done">Weekly challenge done</string>
+    <string name="checkpoint_beat">You beat the Trickster!</string>
+    <string name="checkpoint_not_this_time">Not this time</string>
+    <!-- %1$d right answers were needed out of %2$d questions. -->
+    <plurals name="checkpoint_right_to_win_of">
+        <item quantity="one">%1$d of %2$d right to win</item>
+        <item quantity="other">%1$d of %2$d right to win</item>
+    </plurals>
+    <string name="checkpoint_rewards">Rewards</string>
+    <string name="checkpoint_brain_power">Brain Power</string>
+    <!-- %1$s is the phase's number. -->
+    <string name="checkpoint_phase_complete">Phase %1$s complete</string>
+    <string name="checkpoint_phase_complete_plain">Phase complete</string>
+    <string name="checkpoint_badge">Trap hunter badge</string>
+    <string name="checkpoint_next_phase">Next phase</string>
+    <!-- A phase without a name, by its number. -->
+    <string name="checkpoint_phase_name">Phase %1$d</string>
+    <string name="checkpoint_whats_next">What\'s next</string>
+    <string name="checkpoint_passed_later">Passed on a later try</string>
+    <string name="checkpoint_phase_done">This phase is complete.</string>
+    <string name="checkpoint_new_try_tomorrow">New try tomorrow</string>
+    <string name="checkpoint_new_try_next">New try in your next session</string>
+    <string name="checkpoint_nothing_lost">Nothing is lost.</string>
+    <plurals name="checkpoint_after_lessons">
+        <item quantity="one">After %d short lesson on what tripped you up. Nothing is lost.</item>
+        <item quantity="other">After %d short lessons on what tripped you up. Nothing is lost.</item>
+    </plurals>
+    <!-- %1$s is the next phase's name. -->
+    <string name="checkpoint_next_phase_open">The next phase, %1$s, is already open.</string>
+    <string name="checkpoint_earned">Earned</string>
+    <string name="checkpoint_answers">The answers</string>
+    <string name="checkpoint_review">Review the answers</string>
+    <!-- %1$s is the right answer. -->
+    <string name="checkpoint_answer">Answer: %1$s</string>
+</resources>

@@ -6,13 +6,12 @@ import com.zoonk.android.app.AppContainer
 import com.zoonk.android.feature.conversation.LanguageCheckpointCall
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
-import com.zoonk.android.navigation.RoutePlaceholder
 
 fun EntryProviderScope<NavKey>.checkpointEntries(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
     entry<AppRoute.Checkpoint> { route ->
-        LanguageCheckpointCall(route, app, navigator) { RoutePlaceholder(route, app, navigator) }
+        LanguageCheckpointCall(route, app, navigator) { CheckpointScreen(route, app, navigator) }
     }
 }
