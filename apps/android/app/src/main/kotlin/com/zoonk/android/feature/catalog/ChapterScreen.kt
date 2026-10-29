@@ -102,7 +102,7 @@ private fun LazyListScope.chapterContent(
             Column(modifier.widthIn(max = COLUMN_WIDTH)) {
                 CourseEyebrow(navigator, detail)
                 Spacer(Modifier.size(8.dp))
-                Text(chapter.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+                Text(chapter.title, modifier = layout.headline.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
                 Spacer(Modifier.size(16.dp))
                 Text(chapter.description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
                 Spacer(Modifier.size(16.dp))

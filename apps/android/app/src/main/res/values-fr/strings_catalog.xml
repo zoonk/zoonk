@@ -42,8 +42,8 @@
   "catalog_lesson_minutes": "42a41372c66f85761e2e3987b355f7405610d434902d1076cca5370e69d8c5c5",
   "catalog_lesson_part_of": "468f64a7e03e705130d3750e4b7ae552545c99dc034b6eae9793239639910692",
   "catalog_lessons": "c520e9cf649e9768100605de82c9d6843ea85755599a3f3bc122648159f28821",
-  "catalog_lessons_fit": "ffe47ba4fc5f672656fa78289620aad26693af596d7008054696b7a7d17da751",
-  "catalog_lessons_in_plan": "21851680f7c5e3b310fabba3f1ddfe7d398b190b6e5376391d0357fb18112a7f",
+  "catalog_lessons_fit": "ff64a64323e6ecb92fbfa2e821e83f80dfae7f110a85134d7c71e178b9fcd144",
+  "catalog_lessons_in_plan": "b3ca8ecc36006a76397dcd3201c968a43fbecbf5bad791f969321e6e1a35120b",
   "catalog_level_advanced": "942cacab06e6a7c4f4e3d158ca2a58e68cd73c72245a3c4a5c58adbc35a042ef",
   "catalog_level_beginner": "41910d1cdf608b93d2e3b5c78e75fe218d0f47a15f48d1b33ce26f2474686c9d",
   "catalog_level_intermediate": "42b4f62c94daa67ba206735059b06b2b25e4c005abec78ad023ae16463f5531f",
@@ -279,12 +279,8 @@
         <item quantity="many">%1$d chapitres laissés de côté</item>
         <item quantity="other">%1$d chapitres laissés de côté</item>
     </plurals>
-    <!-- Chosen by %1$d, the lessons that fit; %2$s is the area's lessons in all. -->
-    <plurals name="catalog_lessons_fit">
-        <item quantity="one">%1$d leçon sur %2$s tient</item>
-        <item quantity="many">%1$d leçons sur %2$s tiennent</item>
-        <item quantity="other">%1$d leçons sur %2$s tiennent</item>
-    </plurals>
+    <!-- %1$s of an exam area's %2$s lessons fit in the plan. -->
+    <string name="catalog_lessons_fit">%1$s leçons sur %2$s tiennent</string>
     <plurals name="catalog_plus_quick_lessons">
         <item quantity="one">+ %1$d leçon courte</item>
         <item quantity="many">+ %1$d leçons courtes</item>
@@ -298,12 +294,8 @@
     <string name="catalog_quick_and_written_later">leçons courtes et leçons préparées au fur et à mesure</string>
     <string name="catalog_quick_lessons">leçons courtes</string>
     <string name="catalog_written_later">leçons préparées au fur et à mesure</string>
-    <!-- Chosen by %1$d, the chapter's lessons the plan holds; %2$s is its lessons in all. -->
-    <plurals name="catalog_lessons_in_plan">
-        <item quantity="one">%1$d leçon sur %2$s</item>
-        <item quantity="many">%1$d leçons sur %2$s</item>
-        <item quantity="other">%1$d leçons sur %2$s</item>
-    </plurals>
+    <!-- %1$s of a chapter's %2$s lessons the plan holds; shown only when it holds some but not all, so %2$s is always 2 or more. -->
+    <string name="catalog_lessons_in_plan">%1$s leçons sur %2$s</string>
     <string name="catalog_closing_start">Commence aujourd’hui, à ton niveau</string>
     <string name="catalog_closing_follows">Ton plan suit ce cours</string>
     <string name="catalog_closing_steps">Quelques questions rapides, puis ton plan et ta première leçon.</string>

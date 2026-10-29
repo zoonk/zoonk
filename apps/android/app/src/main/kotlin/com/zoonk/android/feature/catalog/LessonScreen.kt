@@ -66,7 +66,7 @@ fun LessonScreen(
 
     CatalogPage(app, navigator, detail, shown, outlineLesson?.title, alsoShown = listOf(lesson)) { value, layout ->
         val found = placeOf(value, route.chapterId) ?: return@CatalogPage
-        lessonContent(app, navigator, value, found, route.lessonId, lesson, lessonState, layout.beside)
+        lessonContent(app, navigator, value, found, route.lessonId, lesson, lessonState, layout)
     }
 }
 
@@ -78,8 +78,10 @@ private fun LazyListScope.lessonContent(
     lessonId: String,
     lesson: Resource<CatalogLesson>,
     state: LoadState<CatalogLesson>,
-    beside: Boolean,
+    layout: CatalogPageLayout,
 ) {
+    val beside = layout.beside
+    val headline = layout.headline
     val outlineLesson = place.chapter.lessons.first { it.id.toString() == lessonId }
     val courseId = detail.course.id.toString()
     val page = state.value
@@ -90,7 +92,7 @@ private fun LazyListScope.lessonContent(
             Column(Modifier.weight(1f).widthIn(max = COLUMN_WIDTH)) {
                 CourseEyebrow(navigator, detail)
                 Spacer(Modifier.size(8.dp))
-                Text(outlineLesson.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+                Text(outlineLesson.title, modifier = headline.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
 
                 page?.description?.let {
                     Spacer(Modifier.size(12.dp))

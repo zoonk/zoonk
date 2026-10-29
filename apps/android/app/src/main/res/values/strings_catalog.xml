@@ -145,11 +145,8 @@
         <item quantity="one">%1$d chapter left out</item>
         <item quantity="other">%1$d chapters left out</item>
     </plurals>
-    <!-- Chosen by %1$d, the lessons that fit; %2$s is the area's lessons in all. -->
-    <plurals name="catalog_lessons_fit">
-        <item quantity="one">%1$d of %2$s lessons fit</item>
-        <item quantity="other">%1$d of %2$s lessons fit</item>
-    </plurals>
+    <!-- %1$s of an exam area's %2$s lessons fit in the plan. -->
+    <string name="catalog_lessons_fit">%1$s of %2$s lessons fit</string>
     <plurals name="catalog_plus_quick_lessons">
         <item quantity="one">+ %1$d quick lesson</item>
         <item quantity="other">+ %1$d quick lessons</item>
@@ -161,11 +158,8 @@
     <string name="catalog_quick_and_written_later">quick lessons and lessons written as you reach them</string>
     <string name="catalog_quick_lessons">quick lessons</string>
     <string name="catalog_written_later">lessons written as you reach them</string>
-    <!-- Chosen by %1$d, the chapter's lessons the plan holds; %2$s is its lessons in all. -->
-    <plurals name="catalog_lessons_in_plan">
-        <item quantity="one">%1$d of %2$s lessons</item>
-        <item quantity="other">%1$d of %2$s lessons</item>
-    </plurals>
+    <!-- %1$s of a chapter's %2$s lessons the plan holds; shown only when it holds some but not all, so %2$s is always 2 or more. -->
+    <string name="catalog_lessons_in_plan">%1$s of %2$s lessons</string>
 
     <string name="catalog_closing_start">Start today, at your level</string>
     <string name="catalog_closing_follows">Your plan follows this course</string>

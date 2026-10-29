@@ -273,10 +273,9 @@ private fun areaFitText(
                 }
             } else {
                 listOfNotNull(
-                    pluralStringResource(
-                        R.plurals.catalog_lessons_fit,
-                        area.fitting.toInt(),
-                        area.fitting.toInt(),
+                    stringResource(
+                        R.string.catalog_lessons_fit,
+                        formatNumber(area.fitting.toDouble(), locale),
                         formatNumber(area.total.toDouble(), locale),
                     ),
                     pluralStringResource(
@@ -327,10 +326,9 @@ private fun areaChapterMark(
             }
 
             row.lessonsInPlan < chapter.lessons.size -> {
-                pluralStringResource(
-                    R.plurals.catalog_lessons_in_plan,
-                    row.lessonsInPlan.toInt(),
-                    row.lessonsInPlan.toInt(),
+                stringResource(
+                    R.string.catalog_lessons_in_plan,
+                    formatNumber(row.lessonsInPlan.toDouble(), locale),
                     formatNumber(chapter.lessons.size.toDouble(), locale),
                 )
             }

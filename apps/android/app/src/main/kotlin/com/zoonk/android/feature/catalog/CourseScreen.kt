@@ -30,10 +30,14 @@ import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.boundsInWindow
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -101,11 +105,18 @@ internal fun <T : Any> CatalogPage(
     val scope = rememberCoroutineScope()
     val isRefreshing by resource.isRefreshing.collectAsStateWithLifecycle()
     val listState = rememberLazyListState()
-    val headlineScrolledAway by remember(listState) { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
+    var listTop by remember { mutableFloatStateOf(0f) }
+    var headlineBottom by remember { mutableFloatStateOf(Float.POSITIVE_INFINITY) }
+    val headlineScrolledAway by remember(listState) { derivedStateOf { listState.firstVisibleItemIndex > 0 || headlineBottom < listTop } }
     val refresh: () -> Unit = { (listOf(resource) + alsoShown).forEach { scope.launch { it.refresh() } } }
     val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
     val wide = sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-    val layout = CatalogPageLayout(listState, beside = sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND))
+    val layout =
+        CatalogPageLayout(
+            listState = listState,
+            beside = sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND),
+            headline = Modifier.onGloballyPositioned { headlineBottom = it.boundsInWindow().bottom },
+        )
 
     PageScaffold(
         onBack = { navigator.back() },
@@ -138,7 +149,11 @@ internal fun <T : Any> CatalogPage(
                     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
                         LazyColumn(
                             state = listState,
-                            modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
+                            modifier =
+                                Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize().onGloballyPositioned {
+                                    listTop =
+                                        it.boundsInWindow().top
+                                },
                             contentPadding = PaddingValues(horizontal = if (wide) 24.dp else 16.dp, vertical = 16.dp),
                             verticalArrangement = Arrangement.spacedBy(56.dp),
                         ) {
@@ -155,6 +170,8 @@ internal fun <T : Any> CatalogPage(
 internal data class CatalogPageLayout(
     val listState: LazyListState,
     val beside: Boolean,
+    /** Goes on the page's headline, so the top app bar takes the title once the headline scrolls under it. */
+    val headline: Modifier,
 )
 
 /** A course, chapter or lesson that no longer exists is a not-found page inside the frame, as on main. */
@@ -194,6 +211,7 @@ private fun LazyListScope.courseContent(
                 promise = promise,
                 pace = pace,
                 onTryLesson = tryLesson?.takeUnless { beside }?.let { { scope.launch { layout.listState.animateScrollToItem(1) } } },
+                headline = layout.headline,
                 modifier = modifier,
             )
         }
@@ -260,6 +278,7 @@ private fun CourseHero(
     promise: String?,
     pace: Long?,
     onTryLesson: (() -> Unit)?,
+    headline: Modifier,
     modifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
@@ -324,7 +343,7 @@ private fun CourseHero(
             Spacer(Modifier.size(12.dp))
         }
 
-        Text(course.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        Text(course.title, modifier = headline.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
 
         if (!promise.isNullOrBlank()) {
             Spacer(Modifier.size(16.dp))

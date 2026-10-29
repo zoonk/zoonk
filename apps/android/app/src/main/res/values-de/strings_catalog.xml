@@ -42,8 +42,8 @@
   "catalog_lesson_minutes": "bb03192df8a6c620413d23a9248a3d355e9e3a2c7db542552a43094b2372720d",
   "catalog_lesson_part_of": "adc86664b5bf9f7dfbb6211a3da071370b07dee0e6b9f6d5043d7a9e4dcc1150",
   "catalog_lessons": "732d5abda6433336a1cf6bfe8c6cd6130f8e9e3e7d7dad440ae485bdf0322bbd",
-  "catalog_lessons_fit": "e2eab13da1e95986925cd4c6f91c4897f944a84501dd716a12a940aed2788e87",
-  "catalog_lessons_in_plan": "effc81a3a9e86b7082fcd3ddd511e3baa503e27a1a0d4f2b2b8a927e3fa697e8",
+  "catalog_lessons_fit": "ccb311a679a1b5b15c339fb4173f1504cb6a05a8f695f7e1b8d6b905f0588f93",
+  "catalog_lessons_in_plan": "b95afefecec9884f52486b70c22dd367244a13c3846215a680b097d853ff29d2",
   "catalog_level_advanced": "013727510dac8c94643e9ae1a30c434040a91186c69db74bf697c150fdbf9809",
   "catalog_level_beginner": "6486366063527541d6cf281ca3c653eb41066e05fef95ed84d833e3aead547c8",
   "catalog_level_intermediate": "23a6820cfbe0f5130f072eacc5adddb39d59f87c931f91660f05bb41a0afd335",
@@ -265,11 +265,8 @@
         <item quantity="one">%1$d Kapitel ausgelassen</item>
         <item quantity="other">%1$d Kapitel ausgelassen</item>
     </plurals>
-    <!-- Chosen by %1$d, the lessons that fit; %2$s is the area's lessons in all. -->
-    <plurals name="catalog_lessons_fit">
-        <item quantity="one">%1$d von %2$s Lektion passt in den Plan</item>
-        <item quantity="other">%1$d von %2$s Lektionen passen in den Plan</item>
-    </plurals>
+    <!-- %1$s of an exam area's %2$s lessons fit in the plan. -->
+    <string name="catalog_lessons_fit">%1$s von %2$s Lektionen passen</string>
     <plurals name="catalog_plus_quick_lessons">
         <item quantity="one">+ %1$d kurze Lektion</item>
         <item quantity="other">+ %1$d kurze Lektionen</item>
@@ -281,11 +278,8 @@
     <string name="catalog_quick_and_written_later">kurze Lektionen und Lektionen, die erstellt werden, sobald du sie erreichst</string>
     <string name="catalog_quick_lessons">kurze Lektionen</string>
     <string name="catalog_written_later">Lektionen, die erstellt werden, sobald du sie erreichst</string>
-    <!-- Chosen by %1$d, the chapter's lessons the plan holds; %2$s is its lessons in all. -->
-    <plurals name="catalog_lessons_in_plan">
-        <item quantity="one">%1$d von %2$s Lektion</item>
-        <item quantity="other">%1$d von %2$s Lektionen</item>
-    </plurals>
+    <!-- %1$s of a chapter's %2$s lessons the plan holds; shown only when it holds some but not all, so %2$s is always 2 or more. -->
+    <string name="catalog_lessons_in_plan">%1$s von %2$s Lektionen</string>
     <string name="catalog_closing_start">Starte heute auf deinem Level</string>
     <string name="catalog_closing_follows">Dein Plan folgt diesem Kurs</string>
     <string name="catalog_closing_steps">Ein paar kurze Fragen, dann bekommst du deinen Plan und deine erste Lektion.</string>
