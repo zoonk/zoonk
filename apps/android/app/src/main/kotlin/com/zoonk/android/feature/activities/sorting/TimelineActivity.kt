@@ -19,7 +19,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -81,6 +80,7 @@ import com.zoonk.android.feature.activities.detectLift
 import com.zoonk.android.feature.activities.orderAnswer
 import com.zoonk.android.feature.activities.orderIds
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
