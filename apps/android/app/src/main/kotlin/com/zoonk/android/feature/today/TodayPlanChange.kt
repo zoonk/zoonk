@@ -126,7 +126,7 @@ private fun ChangeNotice(
             ChangeActions(change, enabled = !saving) { status -> viewModel.decidePlanChange(state.read, change, status) }
         }
 
-        if (viewModel.planChangeFailed) SuggestionSaveError()
+        if (viewModel.planChangeFailedOn == state.read.noticeVisit()) SuggestionSaveError()
     }
 }
 
@@ -229,7 +229,7 @@ private fun FallingBehindNotice(
             }
         }
 
-        if (viewModel.planChangeFailed) SuggestionSaveError()
+        if (viewModel.planChangeFailedOn == state.read.noticeVisit()) SuggestionSaveError()
     }
 }
 

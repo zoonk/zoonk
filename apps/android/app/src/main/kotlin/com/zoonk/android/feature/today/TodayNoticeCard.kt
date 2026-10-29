@@ -122,7 +122,7 @@ private fun ExamChoiceNotice(
                 {
                     SuggestionAction(
                         stringResource(R.string.today_undo),
-                        { viewModel.undoExamChoice(state.read, made) },
+                        { viewModel.undoExamChoice(made) },
                         enabled = !saving,
                         secondary = true,
                     )
@@ -144,7 +144,7 @@ private fun ExamChoiceNotice(
             planChangeProposalEffect(made.change.effect, planEnd(state), besideDiff = true)?.let { SuggestionDescription(it) }
             PlanEffectDiff(made.change.effect)
             undo?.let { SuggestionActions { it() } }
-            if (viewModel.examChoiceFailed) SuggestionSaveError()
+            if (viewModel.examChoiceFailedOn == state.read.noticeVisit()) SuggestionSaveError()
         }
         return
     }
@@ -172,7 +172,7 @@ private fun ExamChoiceNotice(
                 )
             }
         }
-        if (viewModel.examChoiceFailed) SuggestionSaveError()
+        if (viewModel.examChoiceFailedOn == state.read.noticeVisit()) SuggestionSaveError()
     }
 }
 

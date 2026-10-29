@@ -154,9 +154,9 @@ class TodayViewModel(
         visit++
         noticeHold = null
         planChangeAnswer = null
-        planChangeFailed = false
+        planChangeFailedOn = null
         examChoiceMade = null
-        examChoiceFailed = false
+        examChoiceFailedOn = null
     }
 
     /** An answer that comes back after the learner left Today belongs to no card. */
@@ -166,7 +166,8 @@ class TodayViewModel(
     var planChangeAnswer by mutableStateOf<PlanChangeAnswer?>(null)
         private set
 
-    var planChangeFailed by mutableStateOf(false)
+    /** The goal and day whose plan change didn't save, so the error shows on that notice only. */
+    var planChangeFailedOn by mutableStateOf<NoticeVisit?>(null)
         private set
 
     var isSavingPlanChange by mutableStateOf(false)
@@ -177,11 +178,29 @@ class TodayViewModel(
         read: TodayRead.Day,
         change: PlanChange,
         status: PlanChangeDecisionInput.Status,
-    ) = save(isSaving = { isSavingPlanChange = it }, onFailed = { planChangeFailed = true }) {
-        planChangeFailed = false
-        plans.decideChange(read.today.goal.id, change.id, status).then { saved ->
-            planChangeAnswer =
-                saved.takeIf { it.status != PlanChange.Status.PROPOSED }?.let { PlanChangeAnswer(read.noticeVisit(), status, it) }
+    ) {
+        if (isSavingPlanChange) return
+        isSavingPlanChange = true
+        val on = read.noticeVisit()
+        val started = visit
+        planChangeFailedOn = null
+
+        viewModelScope.launch {
+            val result = plans.decideChange(on.goalId, change.id, status)
+            isSavingPlanChange = false
+            if (visit != started) return@launch
+            when (result) {
+                is MutationResult.Done -> {
+                    planChangeAnswer =
+                        result.value.takeIf { it.status != PlanChange.Status.PROPOSED }?.let { PlanChangeAnswer(on, status, it) }
+                }
+
+                is MutationResult.Failed -> {
+                    planChangeFailedOn = on
+                }
+
+                MutationResult.Obsolete -> {}
+            }
         }
     }
 
@@ -194,7 +213,8 @@ class TodayViewModel(
     var examChoiceMade by mutableStateOf<ExamChoiceMade?>(null)
         private set
 
-    var examChoiceFailed by mutableStateOf(false)
+    /** The goal and day whose exam choice didn't save, so the error shows on that notice only. */
+    var examChoiceFailedOn by mutableStateOf<NoticeVisit?>(null)
         private set
 
     var isSavingExamChoice by mutableStateOf(false)
@@ -204,43 +224,52 @@ class TodayViewModel(
         read: TodayRead.Day,
         group: String,
         subject: String,
-    ) = save(isSaving = { isSavingExamChoice = it }, onFailed = { examChoiceFailed = true }) {
-        examChoiceFailed = false
-        plans.chooseExamOption(read.today.goal.id, group, subject).then { result ->
-            val change = result.change?.takeIf { result.status == PlanChangeResult.Status.APPLIED }
-            if (change == null) examChoiceFailed = true else examChoiceMade = ExamChoiceMade(read.noticeVisit(), change)
+    ) {
+        if (isSavingExamChoice) return
+        isSavingExamChoice = true
+        val on = read.noticeVisit()
+        val started = visit
+        examChoiceFailedOn = null
+
+        viewModelScope.launch {
+            val result = plans.chooseExamOption(on.goalId, group, subject)
+            isSavingExamChoice = false
+            if (visit != started) return@launch
+            when (result) {
+                is MutationResult.Done -> {
+                    val change = result.value.change?.takeIf { result.value.status == PlanChangeResult.Status.APPLIED }
+                    if (change == null) examChoiceFailedOn = on else examChoiceMade = ExamChoiceMade(on, change)
+                }
+
+                is MutationResult.Failed -> {
+                    examChoiceFailedOn = on
+                }
+
+                MutationResult.Obsolete -> {}
+            }
         }
     }
 
-    fun undoExamChoice(
-        read: TodayRead.Day,
-        made: ExamChoiceMade,
-    ) = save(isSaving = { isSavingExamChoice = it }, onFailed = { examChoiceFailed = true }) {
-        examChoiceFailed = false
-        plans.decideChange(read.today.goal.id, made.change.id, PlanChangeDecisionInput.Status.UNDONE).then { examChoiceMade = null }
-    }
-
-    /**
-     * One save at a time; its result lands only on the visit that made it. [write] answers what to
-     * show once saved; a refusal calls [onFailed], and a write its session didn't outlive changes nothing.
-     */
-    private fun save(
-        isSaving: (Boolean) -> Unit,
-        onFailed: () -> Unit,
-        write: suspend () -> MutationResult<() -> Unit>,
-    ) {
-        if (isSavingPlanChange || isSavingExamChoice) return
-        isSaving(true)
+    fun undoExamChoice(made: ExamChoiceMade) {
+        if (isSavingExamChoice) return
+        isSavingExamChoice = true
         val started = visit
+        examChoiceFailedOn = null
 
         viewModelScope.launch {
-            val result = write()
-            isSaving(false)
+            val result = plans.decideChange(made.visit.goalId, made.change.id, PlanChangeDecisionInput.Status.UNDONE)
+            isSavingExamChoice = false
             if (visit != started) return@launch
             when (result) {
-                is MutationResult.Done -> result.value()
-                is MutationResult.Failed -> onFailed()
-                MutationResult.Obsolete -> Unit
+                is MutationResult.Done -> {
+                    if (examChoiceMade == made) examChoiceMade = null
+                }
+
+                is MutationResult.Failed -> {
+                    examChoiceFailedOn = made.visit
+                }
+
+                MutationResult.Obsolete -> {}
             }
         }
     }
@@ -359,11 +388,3 @@ data class ExamChoiceMade(
     val visit: NoticeVisit,
     val change: PlanChange,
 )
-
-/** Turns a saved value into what to show, keeping a refusal or an obsolete write as it was. */
-private fun <T> MutationResult<T>.then(show: (T) -> Unit): MutationResult<() -> Unit> =
-    when (this) {
-        is MutationResult.Done -> MutationResult.Done { show(value) }
-        is MutationResult.Failed -> this
-        MutationResult.Obsolete -> MutationResult.Obsolete
-    }
