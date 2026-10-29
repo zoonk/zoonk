@@ -130,14 +130,17 @@ internal fun CallLimitMessage(
     onCreateAccount: () -> Unit,
     onSeePlus: () -> Unit,
     modifier: Modifier = Modifier,
+    title: String? = null,
 ) {
-    val title =
-        when (limit.period) {
-            LimitPeriod.Month -> R.string.conversation_no_calls_month
-            LimitPeriod.Total -> R.string.conversation_calls_need_account
-            else -> R.string.conversation_no_calls_today
-        }
-    CallOffMessage(stringResource(title), modifier) {
+    val heading =
+        title ?: stringResource(
+            when (limit.period) {
+                LimitPeriod.Month -> R.string.conversation_no_calls_month
+                LimitPeriod.Total -> R.string.conversation_calls_need_account
+                else -> R.string.conversation_no_calls_today
+            },
+        )
+    CallOffMessage(heading, modifier) {
         Text(
             limitMessage(limit, LimitSubject.Calls),
             color = MaterialTheme.colorScheme.onSurfaceVariant,

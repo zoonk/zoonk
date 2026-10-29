@@ -110,4 +110,85 @@
     <string name="conversation_writing_call_line_2">Writing what they say first…</string>
     <string name="conversation_writing_call_line_3">Picking what to get across…</string>
     <string name="conversation_writing_call_line_4">Adding phrases you can lean on…</string>
+    <!-- Exam speaking tasks: an official exam's speaking task practiced on a call, with an AI in the examiner's place. -->
+    <!-- The exam and the task's place in its paper, such as "DELE B2 · Task 2 of 4". -->
+    <string name="conversation_exam_task_title">%1$s · Task %2$s of %3$s</string>
+    <string name="conversation_opens_and_card">%1$s opens the call, and your card stays on screen.</string>
+    <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
+    <string name="conversation_rated_on">Rated on %1$s.</string>
+    <string name="conversation_stand_in_partner">%1$s is an AI playing the other candidate, in place of a real one.</string>
+    <string name="conversation_stand_in_examiner">%1$s is an AI standing in for a human examiner.</string>
+    <string name="conversation_practice_estimate">It\'s practice: the estimate after it isn\'t an official score.</string>
+    <string name="conversation_speak_answers">Speak your answers: typed ones aren\'t rated on how you sound. The microphone is used only during the call.</string>
+    <string name="conversation_your_card">Your card</string>
+    <string name="conversation_preparation">Preparation</string>
+    <!-- The exam's shared preparation time, the tasks it covers, then this task's share. -->
+    <string name="conversation_prep_shared">The exam gives %1$s to prepare tasks %2$s together, about %3$s for this one.</string>
+    <string name="conversation_prep">The exam gives %1$s to prepare with the card.</string>
+    <string name="conversation_start_preparing">Start preparing</string>
+    <string name="conversation_prep_over">Preparation time is over. Start the call when you\'re ready.</string>
+    <string name="conversation_prep_again">Start again</string>
+    <!-- A task's length when the exam gives a range, such as "3–4 min". -->
+    <string name="conversation_minutes_range">%1$s–%2$s min</string>
+    <string name="conversation_role_partner_label">With another candidate (AI)</string>
+    <string name="conversation_role_examiner_label">With an examiner (AI)</string>
+    <!-- Who the AI plays in a task, after its name: "Ana · other candidate". -->
+    <string name="conversation_role_partner">other candidate</string>
+    <string name="conversation_role_examiner">examiner</string>
+    <string name="conversation_criterion_accuracy">Accuracy</string>
+    <string name="conversation_criterion_coherence">Coherence</string>
+    <string name="conversation_criterion_discourse">Organizing what you say</string>
+    <string name="conversation_criterion_fluency">Fluency</string>
+    <string name="conversation_criterion_overall">Overall impression</string>
+    <string name="conversation_criterion_grammar">Grammar</string>
+    <string name="conversation_criterion_grammar_vocabulary">Grammar and vocabulary</string>
+    <string name="conversation_criterion_interaction">Interaction</string>
+    <string name="conversation_criterion_interviewer">The examiner\'s overall rating</string>
+    <string name="conversation_criterion_language">Language</string>
+    <string name="conversation_criterion_language_use">Use of language</string>
+    <string name="conversation_criterion_vocabulary">Vocabulary</string>
+    <string name="conversation_criterion_pronunciation">Pronunciation</string>
+    <string name="conversation_criterion_questions">Questions and answers</string>
+    <string name="conversation_criterion_range">Range of language</string>
+    <string name="conversation_criterion_task">Doing the task</string>
+    <!-- An estimate on the exam's scale for points, such as "18–20 of 25 points". -->
+    <string name="conversation_band_points">%1$s of %2$s points</string>
+    <!-- An estimate on the exam's band scale, such as "3–4 of 5". -->
+    <string name="conversation_band">%1$s of %2$s</string>
+    <!-- How an estimate stands against the exam's level, such as "At B2". -->
+    <string name="conversation_at_level">At %1$s</string>
+    <string name="conversation_near_level">Near %1$s</string>
+    <string name="conversation_below_level">Below %1$s</string>
+    <string name="conversation_level_line">On these scales, %1$s is the %2$s level.</string>
+    <string name="conversation_typed_note">You typed your replies, so this estimate leaves out how you sound.</string>
+    <string name="conversation_brief_note">You said little in this task, so there wasn\'t much to judge. A longer try gives a closer estimate.</string>
+    <string name="conversation_focus">Focus</string>
+    <string name="conversation_not_rated">Not rated</string>
+    <string name="conversation_estimate_sound">An estimate from one practice task, not an official score. How you sound is rated by how easy you are to understand, never by your accent.</string>
+    <string name="conversation_estimate">An estimate from one practice task, not an official score.</string>
+    <string name="conversation_work_on_first">Work on this first</string>
+    <string name="conversation_no_estimate_title">This task has no estimate</string>
+    <string name="conversation_no_estimate">Try the task again when you\'re ready.</string>
+    <string name="conversation_try_new_card">Try this task with a new card</string>
+    <string name="conversation_go_to_task">Go to task %1$s</string>
+    <string name="conversation_every_criterion">See every criterion</string>
+    <string name="conversation_by_criterion">By criterion</string>
+    <!-- A criterion, its estimate and how it stands, such as "Fluency · 3–4 of 5 · At B2". -->
+    <string name="conversation_criterion_line">%1$s · %2$s · %3$s</string>
+    <string name="conversation_mock_band_ielts">Estimated band, from 0 to 9</string>
+    <string name="conversation_mock_band_toefl">Estimated band, from 1 to 6</string>
+    <string name="conversation_mock_estimate">An estimate from one short mock, not an official score.</string>
+    <string name="conversation_no_score_title">This mock has no score</string>
+    <string name="conversation_no_score">Try another one when you\'re ready.</string>
+    <string name="conversation_try_another_mock">Try another mock</string>
+    <string name="conversation_mock_delivery">Pace and pronunciation</string>
+    <string name="conversation_mock_elaboration">Clear, developed answers</string>
+    <string name="conversation_mock_fluency_coherence">Fluency and coherence</string>
+    <string name="conversation_mock_repetition">Repeating sentences</string>
+    <string name="conversation_writing_task">Writing your task</string>
+    <string name="conversation_writing_task_phase">Writing a card like the exam\'s</string>
+    <string name="conversation_writing_task_line_1">Picking a new topic…</string>
+    <string name="conversation_writing_task_line_2">Writing the card\'s instructions…</string>
+    <string name="conversation_writing_task_line_3">Preparing what the examiner says…</string>
+    <string name="conversation_writing_task_line_4">Adding phrases you can lean on…</string>
 </resources>

@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -72,7 +73,7 @@ fun ConversationScreen(
         NotFound(onClose = exits::close)
         return
     }
-    ConversationEntry(id, app, exits)
+    ConversationEntry(id, app, exits, from = route.from)
 }
 
 /** With [startWith], the call starts as soon as it's read, from the tap that opened it (a checkpoint's Start). */
@@ -82,6 +83,7 @@ internal fun ConversationEntry(
     app: AppContainer,
     exits: ConversationExits,
     startWith: Boolean? = null,
+    from: String? = null,
 ) {
     val model =
         viewModel(key = "conversation:$id") {
@@ -91,9 +93,10 @@ internal fun ConversationEntry(
                 newCall = { script -> LiveCall(script, LiveConversationCalls(id, app.api, app.cache), app.callTransports, app.scope) },
                 ongoing = app.calls,
                 timeZone = { TimeZone.getDefault().id },
+                prep = DraftPrepTimes(app.drafts, app.sessions),
             )
         }
-    ConversationContent(model, app.speech, exits, startWith)
+    ConversationContent(model, app.speech, exits, startWith, fromExam = from == FROM_EXAM)
 }
 
 @Composable
@@ -102,6 +105,7 @@ internal fun ConversationContent(
     speech: SpeechPlayer,
     exits: ConversationExits,
     startWith: Boolean? = null,
+    fromExam: Boolean = false,
 ) {
     val load by model.conversation.collectShown()
     val scope = rememberCoroutineScope()
@@ -130,7 +134,7 @@ internal fun ConversationContent(
         }
 
         is LoadState.Loaded -> {
-            Conversation(state.value, model, speech, exits, startWith)
+            Conversation(state.value, model, speech, exits, startWith, fromExam)
         }
     }
 }
@@ -142,6 +146,7 @@ private fun Conversation(
     speech: SpeechPlayer,
     exits: ConversationExits,
     startWith: Boolean?,
+    fromExam: Boolean,
 ) {
     val completed = model.completed
     val conversation = remember(completed, stored) { completed?.recode<CompletedLanguageConversation, LanguageConversation>() ?: stored }
@@ -152,16 +157,59 @@ private fun Conversation(
     val onSeePlus = { exits.open(AppRoute.Subscription) }
     LaunchedEffect(model) { if (startWith != null && result == null) model.startOnce(conversation, startWith) }
 
-    if (result != null) {
-        ConversationResult(
-            conversation = conversation,
-            result = result,
-            speech = speech,
+    val examTask = conversation.examTask
+    val goalId = conversation.goalId
+    val again =
+        when {
+            goalId == null -> null
+            conversation.kind == LanguageConversation.Kind.SPEAKING_MOCK -> CallRequest.SpeakingMock(goalId)
+            examTask != null && examTask.sectionId == null -> CallRequest.ExamSpeaking(goalId, examTask.task.key)
+            else -> null
+        }
+    val resultActions =
+        ResultActions(
             onContinue = exits::close,
             onClose = exits::close,
-            onSeePlus = onSeePlus,
+            onTryAgain =
+                again?.let { request ->
+                    {
+                        model.startAgain(request) { id ->
+                            exits.close()
+                            exits.open(AppRoute.Conversation(id.toString(), from = if (fromExam) FROM_EXAM else null))
+                        }
+                    }
+                },
+            nextTask =
+                examTask?.nextTask?.takeIf { !fromExam }?.let { next ->
+                    {
+                        exits.close()
+                        exits.open(AppRoute.Speaking(task = next))
+                    }
+                },
         )
-        return
+
+    when {
+        result != null && conversation.kind == LanguageConversation.Kind.SPEAKING_MOCK -> {
+            SpeakingMockResult(conversation, resultActions)
+            return
+        }
+
+        result != null && examTask != null -> {
+            ExamSpeakingResult(conversation, examTask, resultActions)
+            return
+        }
+
+        result != null -> {
+            ConversationResult(
+                conversation = conversation,
+                result = result,
+                speech = speech,
+                onContinue = exits::close,
+                onClose = exits::close,
+                onSeePlus = onSeePlus,
+            )
+            return
+        }
     }
 
     val call = model.call
@@ -180,6 +228,13 @@ private fun Conversation(
     when {
         conversation.locked || callState?.failure == LiveCallFailure.PlusRequired -> {
             CallIntro(intro, CallIntroStart.PlusRequired, onStart = {}, onSeePlus = onSeePlus, onClose = exits::close)
+        }
+
+        callState == null && examTask != null -> {
+            val prepStartedAt by model.prepStartedAt.collectAsStateWithLifecycle(null)
+            ExamTaskIntro(conversation, examTask, prepStartedAt, model::startPrep, exits::close) {
+                StartCallButton(starting = false, onClick = { startCall(false) }, modifier = Modifier.fillMaxWidth())
+            }
         }
 
         callState == null -> {
@@ -222,6 +277,8 @@ private fun Conversation(
         }
     }
 }
+
+private const val FROM_EXAM = "exam"
 
 /** A speaking mock and an exam task are graded on the exam's criteria when they end, which takes longer. */
 private val LanguageConversation.grades: Boolean

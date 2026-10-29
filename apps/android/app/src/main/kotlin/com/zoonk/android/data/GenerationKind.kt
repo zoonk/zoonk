@@ -236,6 +236,24 @@ enum class GenerationKind(
             ),
         steps = mapOf("writeCall" to StepPlace.Phase("write")),
     ),
+    ExamSpeaking(
+        label = R.string.conversation_writing_task,
+        phases =
+            listOf(
+                GenerationPhase(
+                    "write",
+                    30,
+                    R.string.conversation_writing_task_phase,
+                    listOf(
+                        R.string.conversation_writing_task_line_1,
+                        R.string.conversation_writing_task_line_2,
+                        R.string.conversation_writing_task_line_3,
+                        R.string.conversation_writing_task_line_4,
+                    ),
+                ),
+            ),
+        steps = mapOf("writeTask" to StepPlace.Phase("write")),
+    ),
     ;
 
     fun isDone(steps: Map<String, StepState>): Boolean =

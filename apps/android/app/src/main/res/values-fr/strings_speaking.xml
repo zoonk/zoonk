@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "speaking_collapsed": "4f59d0e9eade0a5de650d016913c74158d1196db781a08994ca402ef0b4e2a14",
+  "speaking_expanded": "28ef40bd5e1384ba24bb353207273388e81b04a8a0f76dfcf2b1a32769910f2d",
+  "speaking_eyebrow": "ba048e3dd30f2939c2e1edf78b575a3f06b7f7a8753eecaa29de458bb7cc720c",
+  "speaking_facts": "51e9dc37c864a2bc95952c0ad882ce6a98f22699c831cc5c1f4a4a80ed32e5ce",
+  "speaking_footer": "73334a59d52488c34bdb145e7e3fcd88728e7f82ac6bed74d47bc8aaf801953d",
+  "speaking_footer_partner": "74460f8d5e3b921c3455fbafc6d15d092cb4fdce23c1a03c752e3d0581254f55",
+  "speaking_last_at": "266b3102e6201bc4096c82e8ee0cae21cff09ed63c5923f67fe4ef2b34676c88",
+  "speaking_last_below": "91ad1085d5fe4fe0846e118bc97cad2250dede473c3b052e09d091567bfed7a7",
+  "speaking_last_near": "523076cb5c6305c1b560c5aa39ca5370529d641912dac8f27d49ef3cb575f01a",
+  "speaking_last_none": "0b14fcc37d1f41ceab7b184348757c05cd82fd7afe297ca3a67703bfaab6656a",
+  "speaking_last_result": "e759aa65556a8264000425afeeed4e9781b17704968ec79767aeb2ce147c3bec",
+  "speaking_no_time_day": "dc7ec7256f8e4b8e1eebbdbc6b5ae44d5071da6585f4a5fcccb1a9ce4a62ac9e",
+  "speaking_no_time_month": "b7033d7c603b1ebf0d7d84365ed3c194c5eddb5876d6f73035abb55b19665817",
+  "speaking_official": "6a34600ff236f6a761c09360850aab8badfeb044e438db4bb1f03cd9401f2d28",
+  "speaking_official_format": "8cd2e239cb7aa6bc0ae74f5cb5c33a60cf98d5795549a22a34745c81b208b6a6",
+  "speaking_opens_when_ready": "5ee7d40208bb672171d3a7456acf08a1c3472ba19685d3f029b7dd4335f3c3c1",
+  "speaking_plus": "ac869524693e65257e6795849b7505bfe5a18b9c858da33b7761ad1d62982bb1",
+  "speaking_prep": "10446b54c0d0d096c31f0ba0d5ded2ff119d70f37e3a91897f5abdc799a0cb5a",
+  "speaking_prep_shared": "d11b06485f910b2c4f70e97b651dfc9d18cbbf8fc8aed679ef6070a1cf41f81e",
+  "speaking_rated_on": "8cdd0f4ba49c063e86619f0bef2226184b6b5f2e146dcf13ac5108ca514dad93",
+  "speaking_row": "a62bc903faa8e358669af482b162dad2dd28df17b45aec32de79713b4b57d53b",
+  "speaking_start_failed": "d72371b8a8b7adf031ef684faeddc21d42146798242158ff325944676e1b0b7a",
+  "speaking_start_task": "e52ebf79e1ee1a07ccb95fd60018c8308535fda9b79b1c2e105330d47abf9b8e",
+  "speaking_tasks": "f328ec19e86d08ba2b4e842b6a8082b311823ef115a483e49bb2152f305a58d2",
+  "speaking_title": "468b13dabed31f6320b56120fbdac9314642285183f14db986bd066e42d98623"
+}
+-->
+<resources>
+    <!-- Practicing an official language exam's speaking paper (DELE, DELF, Goethe, Cambridge) on calls with an AI in the examiner's place. -->
+    <string name="speaking_title">Entraînement à l’expression orale</string>
+    <string name="speaking_eyebrow">Expression orale type examen</string>
+    <!-- The paper's task count and how long its speaking part lasts in the exam, such as "4 tasks · 15 min in the exam". -->
+    <plurals name="speaking_facts">
+        <item quantity="one">%1$d tâche · %2$s à l’examen</item>
+        <item quantity="many">%1$d tâches · %2$s à l’examen</item>
+        <item quantity="other">%1$d tâches · %2$s à l’examen</item>
+    </plurals>
+    <string name="speaking_official">%1$s est un examen officiel. Entraîne-toi à ses épreuves d’expression orale, que tu prévoies de le passer ou non.</string>
+    <string name="speaking_tasks">Tâches</string>
+    <string name="speaking_plus">L’entraînement à l’expression orale est inclus avec Plus : toutes les épreuves de l’examen par appel, avec une estimation selon les critères officiels après chacune.</string>
+    <string name="speaking_opens_when_ready">Ta tâche s’ouvre dès que sa fiche est prête.</string>
+    <string name="speaking_no_time_month">Tu n’as pas assez de temps d’appel ce mois-ci pour cette tâche</string>
+    <string name="speaking_no_time_day">Tu n’as pas assez de temps d’appel aujourd’hui pour cette tâche</string>
+    <string name="speaking_start_failed">La tâche n’a pas démarré. Réessaie dans un instant.</string>
+    <string name="speaking_footer_partner">Une IA remplace l’examinateur ou l’autre candidat. Chaque essai utilise une nouvelle fiche. Ensuite, tu reçois une estimation selon les critères officiels de l’examen, pas un score officiel.</string>
+    <string name="speaking_footer">Une IA remplace l’examinateur. Chaque essai utilise une nouvelle fiche. Ensuite, tu reçois une estimation selon les critères officiels de l’examen, pas un score officiel.</string>
+    <string name="speaking_official_format">Format officiel</string>
+    <string name="speaking_start_task">Commencer cette tâche</string>
+    <string name="speaking_last_result">Voir ton dernier résultat</string>
+    <string name="speaking_last_none">Dernier essai : aucune estimation</string>
+    <!-- How many criteria were at the exam's level on the last try, such as "Last try: 3 of 4 at B2". -->
+    <string name="speaking_last_at">Dernier essai : %1$s sur %2$s le %3$s</string>
+    <string name="speaking_last_near">Dernier essai : %1$s sur %2$s vers le %3$s</string>
+    <string name="speaking_last_below">Dernier essai : en dessous de %1$s</string>
+    <!-- Preparation time shared by several tasks, such as "20 min to prepare tasks 1 and 2". -->
+    <string name="speaking_prep_shared">%1$s pour préparer les tâches %2$s</string>
+    <string name="speaking_prep">%1$s pour préparer</string>
+    <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
+    <string name="speaking_rated_on">Évalué selon %1$s.</string>
+    <string name="speaking_expanded">Développé</string>
+    <string name="speaking_collapsed">Réduit</string>
+    <!-- Today's row for the paper: the exam, such as "DELE B2 tasks on a call". -->
+    <string name="speaking_row">%1$s tâches par appel</string>
+</resources>

@@ -33,6 +33,7 @@ import com.zoonk.api.models.LanguageConversationCompletionInput
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.map
 import org.robolectric.Shadows.shadowOf
 import java.io.File
 import java.util.UUID
@@ -64,6 +65,7 @@ internal class ConversationHarness(
         }
     private val speech by lazy { silentSpeech(context, session, scope) }
     private val models = mutableMapOf<UUID, ConversationViewModel>()
+    val prep = MemoryPrepTimes()
 
     init {
         shadowOf(context).grantPermissions(Manifest.permission.RECORD_AUDIO)
@@ -84,6 +86,7 @@ internal class ConversationHarness(
                 },
                 ongoing = OngoingCalls(context, scope),
                 timeZone = { "Europe/Madrid" },
+                prep = prep,
             )
         }
 
@@ -219,3 +222,39 @@ internal fun checkpointIntro(dailyLimitReached: Boolean = false): LanguageCheckp
     )
 
 internal fun checkpointStatus(json: String): LanguageCheckpointCall = ApiJson.decodeFromString(json)
+
+internal class MemoryPrepTimes : PrepTimes {
+    private val starts = kotlinx.coroutines.flow.MutableStateFlow<Map<UUID, Long>>(emptyMap())
+
+    fun started(card: UUID) = card in starts.value
+
+    override fun startedAt(card: UUID) = starts.map { it[card] }
+
+    override suspend fun start(
+        card: UUID,
+        at: Long,
+    ) {
+        starts.value += card to at
+    }
+}
+
+internal val EXAM_GOAL: UUID = UUID.fromString("00000000-0000-4000-8000-0000000000e1")
+
+/** An exam task's or a speaking mock's conversation, with [result] once graded. */
+internal fun examConversation(
+    id: UUID,
+    result: String? = null,
+    kind: String = "examSpeaking",
+    examTask: String? = com.zoonk.android.feature.speaking.EXAM_TASK,
+    exam: String? = null,
+): LanguageConversation =
+    ApiJson.decodeFromString(
+        """
+        {"character":{"name":"Marta","place":"Instituto Cervantes","role":"Examiner"},"exam":${exam?.let {
+            "\"$it\""
+        }},"examTask":$examTask,
+        "goalId":"$EXAM_GOAL","hints":[],"id":"$id","kind":"$kind","level":"B2","locked":false,"minutes":7,"objectives":[],
+        "openingLine":"Buenos días.","result":$result,"situation":"An exam room.","status":"${if (result == null) "ready" else "completed"}",
+        "targetLanguage":"es","title":"Valorar propuestas","unit":null}
+        """.trimIndent(),
+    )

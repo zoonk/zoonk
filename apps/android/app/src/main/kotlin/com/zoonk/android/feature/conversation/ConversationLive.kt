@@ -53,6 +53,7 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationSetup.EndsAtLimit
 import com.zoonk.api.models.LanguageConversationTurn.Speaker
+import com.zoonk.api.models.SpeakingTask
 
 /** What the learner can do during the call. */
 internal class LiveCallActions(
@@ -107,14 +108,24 @@ internal fun ConversationLive(
                     SectionTitle(stringResource(R.string.conversation_goals), trailing = goalsMeta)
                     Checklist(conversation.objectives, conversation.targetLanguage, met = { it in call.metLabels })
                 }
+            } else {
+                SpeakingCardView(examTask.card, conversation.targetLanguage, compact = true)
             }
             CallTip(call.limitNear, next?.description)
             if (usedHelp) Phrases(conversation)
         },
     ) { beside ->
         item(key = "character") {
-            val detail = stringResource(R.string.conversation_character_detail, character.role, character.place)
+            val detail =
+                if (examTask != null) {
+                    taskRoleNoun(examTask.task.role == SpeakingTask.Role.PARTNER)
+                } else {
+                    stringResource(R.string.conversation_character_detail, character.role, character.place)
+                }
             CharacterRow(character.name, detail, Modifier.callItem(), talking = call.characterTalking)
+        }
+        if (!beside && examTask != null) {
+            item(key = "card") { SpeakingCardView(examTask.card, conversation.targetLanguage, Modifier.callItem(), compact = true) }
         }
         if (!beside && examTask == null) {
             item(key = "goals") {

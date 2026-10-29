@@ -50,6 +50,8 @@ import com.zoonk.android.feature.player.TodayChoices
 import com.zoonk.android.feature.recap.RecapStore
 import com.zoonk.android.feature.session.LiveStudyApi
 import com.zoonk.android.feature.session.StudyOpener
+import com.zoonk.android.feature.speaking.LiveSpeakingApi
+import com.zoonk.android.feature.speaking.SpeakingStore
 import com.zoonk.android.feature.subscription.GooglePlayBilling
 import com.zoonk.android.feature.subscription.LiveSubscriptionApi
 import com.zoonk.android.feature.subscription.NoPlayBilling
@@ -182,6 +184,7 @@ class AppContainer private constructor(
 
     // Live calls and speaking (L9).
     val conversations = ConversationStore(LiveConversationApi(api), cache)
+    val speaking = SpeakingStore(LiveSpeakingApi(api), cache)
     val calls = OngoingCalls(context.applicationContext, scope)
     val callTransports =
         LiveCallTransports { microphone, onEvent, onLost -> WebRtcLiveCallTransport(context, microphone, onEvent, onLost) }

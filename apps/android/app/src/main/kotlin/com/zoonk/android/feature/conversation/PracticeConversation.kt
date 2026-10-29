@@ -64,6 +64,10 @@ class CallStartModel(
     var state by mutableStateOf(State.Idle)
         private set
 
+    /** The plan's call time a refused start ran into. */
+    var limit by mutableStateOf<Limit.Reached?>(null)
+        private set
+
     /** [onStarted] opens the call; the sheet is ready for a fresh start when the learner is back. */
     fun start(
         request: CallRequest,
@@ -71,6 +75,7 @@ class CallStartModel(
     ) {
         val wasWriting = state == State.WriteFailed
         state = if (wasWriting) State.Writing else State.Starting
+        limit = null
         viewModelScope.launch {
             val writing =
                 launch {
@@ -80,6 +85,7 @@ class CallStartModel(
             val started = start(request)
             writing.cancel()
             val wrote = state == State.Writing
+            limit = (started as? CallStart.Limited)?.limit
             state =
                 if (started is CallStart.Started) {
                     onStarted(started.conversationId)
