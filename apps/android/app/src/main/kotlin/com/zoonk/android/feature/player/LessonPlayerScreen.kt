@@ -561,7 +561,7 @@ private fun SummarySheet(
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss) {
-        LessonColumn(Modifier.padding(bottom = 24.dp)) {
+        LessonColumn(Modifier.verticalScroll(rememberScrollState()).padding(bottom = 24.dp)) {
             Text(stringResource(R.string.player_lesson_summary), style = MaterialTheme.typography.titleLarge)
             SummaryIdeas(ideas)
         }
