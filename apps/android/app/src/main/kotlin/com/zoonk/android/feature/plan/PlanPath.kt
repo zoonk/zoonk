@@ -1,21 +1,15 @@
 package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,38 +23,27 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.Layout
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Constraints
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindMark
-import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.ListRowChevron
-import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.ProgressMark
-import com.zoonk.android.ui.components.ROW_ICON_SIZE
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.components.TitleAndMeta
+import com.zoonk.android.ui.components.bleed
+import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -102,7 +85,7 @@ internal fun PathSection(
 
         alphabet?.invoke()
 
-        Column {
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
             beforeFinish.forEachIndexed { position, phase ->
                 if (position > 0) HorizontalDivider()
                 PhaseItem(page, phase, phase.index == lastIndex, phase.index == openIndex, links)
@@ -127,16 +110,23 @@ private fun PhaseItem(
 ) {
     val name = phaseName(phase, page.mocksRequirePlus)
     val own = phase.ownChapter(name)
+    val nested = Modifier.padding(start = listRowWordsStart() - LIST_ITEM_INSET)
 
     if (own != null) {
         val chapterId = own.chapterId.toString()
         val isNext = own.state == PlanPhaseChaptersInner.State.CURRENT
         Column {
-            ListRow(onClick = { links.chapter(chapterId) }, highlighted = isNext, end = { ListRowChevron() }) {
-                PhaseColumns(page, phase, isLast, open, nextChapter = own.takeIf { isNext })
-            }
+            PhaseRow(
+                page,
+                phase,
+                isLast,
+                open,
+                onClick = { links.chapter(chapterId) },
+                highlighted = isNext,
+                nextChapter = own.takeIf { isNext },
+            )
             if (open) {
-                Column(Modifier.padding(start = NESTED_INDENT)) {
+                Column(nested) {
                     phase.checkpoint?.let { CheckpointRow(page, it, links) }
                     WritingAheadLine(phase.chapters, unit = page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE)
                 }
@@ -147,7 +137,7 @@ private fun PhaseItem(
 
     val hasContent = phase.chapters.isNotEmpty() || phase.checkpoint != null
     if (!hasContent) {
-        ListRow { PhaseColumns(page, phase, isLast, open) }
+        PhaseRow(page, phase, isLast, open)
         return
     }
 
@@ -156,70 +146,61 @@ private fun PhaseItem(
     val byPlace = phase.isNamedLikeAChapter(name)
 
     Column {
-        ListRow(onClick = { expanded = !expanded }, expanded = expanded) {
-            PhaseColumns(page, phase, isLast, open, byPlace = byPlace && expanded)
-        }
+        PhaseRow(page, phase, isLast, open, onClick = { expanded = !expanded }, expanded = expanded, byPlace = byPlace && expanded)
         if (expanded) {
-            Column(Modifier.padding(start = NESTED_INDENT)) {
+            Column(nested) {
                 PhaseChapters(page, phase.chapters, phase.checkpoint, links)
             }
         }
     }
 }
 
-private val NESTED_INDENT = 28.dp
-
 @Composable
-private fun RowScope.PhaseColumns(
+private fun PhaseRow(
     page: PlanPageState,
     phase: PlanPhase,
     isLast: Boolean,
     open: Boolean,
+    onClick: (() -> Unit)? = null,
+    highlighted: Boolean = false,
+    expanded: Boolean? = null,
     byPlace: Boolean = false,
     nextChapter: PlanPhaseChaptersInner? = null,
 ) {
-    ListRowLeading {
-        if (nextChapter != null) ChapterMark(nextChapter, isNext = true) else PhaseMark(phase)
-    }
     val until = phaseUntil(page, phase, isLast)
-    TitleAndMeta(
-        modifier = Modifier.weight(1f),
-        meta = {
-            PhaseLessons(phase)
-            until?.let { TrailingText(it) }
-        },
-    ) {
-        val name = phaseName(phase, page.mocksRequirePlus, byPlace = byPlace)
-        val state =
-            if (nextChapter != null &&
-                phase.state != PlanPhase.State.CURRENT
-            ) {
-                stringResource(R.string.plan_up_next_suffix)
-            } else {
-                phaseStateWords(phase.state)
-            }
-        Text(
-            text = name,
-            modifier = Modifier.semantics { contentDescription = name + state },
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
-            color =
-                if (phase.state ==
-                    PlanPhase.State.DONE
-                ) {
-                    MaterialTheme.colorScheme.onSurfaceVariant
-                } else {
-                    MaterialTheme.colorScheme.onSurface
-                },
-        )
-        phaseMeta(page, phase, open)?.let { MetaLine(it) }
-    }
-}
+    val name = phaseName(phase, page.mocksRequirePlus, byPlace = byPlace)
+    val state =
+        if (nextChapter != null && phase.state != PlanPhase.State.CURRENT) {
+            stringResource(R.string.plan_up_next_suffix)
+        } else {
+            phaseStateWords(phase.state)
+        }
+    val line = phaseMeta(page, phase, open)
+    val color = if (phase.state == PlanPhase.State.DONE) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface
 
-@Composable
-private fun PhaseLessons(phase: PlanPhase) {
-    if (phase.lessonsTotal == 0L) return
-    LessonsCount(phase.lessonsDone, phase.lessonsTotal)
+    ListRow(
+        headline = {
+            Text(
+                text = name,
+                modifier = Modifier.semantics { contentDescription = name + state },
+                color = color,
+            )
+        },
+        onClick = onClick,
+        highlighted = highlighted,
+        expanded = expanded,
+        leading = { if (nextChapter != null) ChapterMark(nextChapter, isNext = true) else PhaseMark(phase) },
+        supporting = line?.let { { Text(it) } },
+        meta =
+            if (phase.lessonsTotal > 0 || until != null) {
+                {
+                    if (phase.lessonsTotal > 0) LessonsCount(phase.lessonsDone, phase.lessonsTotal)
+                    until?.let { TrailingText(it) }
+                }
+            } else {
+                null
+            },
+    )
 }
 
 @Composable
@@ -389,29 +370,21 @@ internal fun PhaseChapters(
     Column {
         shown.forEach { ChapterRow(it, links) }
         if (hidden > 0) {
-            ListRow(onClick = { showAll = !showAll }) {
-                ListRowLeading {
-                    Icon(
-                        painter = painterResource(if (showAll) R.drawable.ic_remove else R.drawable.ic_add),
-                        contentDescription = null,
-                        modifier = Modifier.size(16.dp),
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            ListRow(
+                headline = {
+                    Text(
+                        text =
+                            if (showAll) {
+                                stringResource(R.string.plan_show_fewer_chapters)
+                            } else {
+                                pluralStringResource(R.plurals.plan_more_chapters, hidden, hidden)
+                            },
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
-                }
-                Text(
-                    text =
-                        if (showAll) {
-                            stringResource(
-                                R.string.plan_show_fewer_chapters,
-                            )
-                        } else {
-                            pluralStringResource(R.plurals.plan_more_chapters, hidden, hidden)
-                        },
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+                },
+                onClick = { showAll = !showAll },
+                leading = { Icon(painterResource(if (showAll) R.drawable.ic_remove else R.drawable.ic_add), contentDescription = null) },
+            )
         }
         checkpoint?.let { CheckpointRow(page, it, links) }
         WritingAheadLine(chapters)
@@ -427,26 +400,15 @@ private fun ChapterRow(
     val chapterId = chapter.chapterId?.toString()
     val skillId = chapter.skillId
     val title = chapterTitle(chapter)
-    val content: @Composable RowScope.() -> Unit = {
-        ListRowLeading { ChapterMark(chapter, isNext) }
-        TitleAndMeta(
-            modifier = Modifier.weight(1f),
-            meta = {
-                if (!chapter.writing && chapter.lessonsTotal > 0 &&
-                    !chapter.isSkipped
-                ) {
-                    LessonsCount(chapter.lessonsDone, chapter.lessonsTotal)
-                }
-            },
-        ) {
+    val opensChapter = !(chapter.writing && skillId != null) && chapterId != null
+    val line = chapterLine(chapter)
+
+    ListRow(
+        headline = {
             Text(
                 text = title,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
                 color =
-                    if (chapter.state ==
-                        PlanPhaseChaptersInner.State.DONE
-                    ) {
+                    if (chapter.state == PlanPhaseChaptersInner.State.DONE) {
                         MaterialTheme.colorScheme.onSurfaceVariant
                     } else {
                         MaterialTheme.colorScheme.onSurface
@@ -454,23 +416,23 @@ private fun ChapterRow(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
-            chapterLine(chapter)?.let { MetaLine(it) }
-        }
-    }
-
-    when {
-        chapter.writing && skillId != null -> {
-            ListRow(onClick = links.farTopic(FarTopic(skillId, title, chapter.plannedLessons, chapter.nextDate)), content = content)
-        }
-
-        chapterId == null -> {
-            ListRow(content = content)
-        }
-
-        else -> {
-            ListRow(onClick = { links.chapter(chapterId) }, highlighted = isNext, end = { ListRowChevron() }, content = content)
-        }
-    }
+        },
+        onClick =
+            when {
+                chapter.writing && skillId != null -> links.farTopic(FarTopic(skillId, title, chapter.plannedLessons, chapter.nextDate))
+                chapterId != null -> ({ links.chapter(chapterId) })
+                else -> null
+            },
+        highlighted = isNext && opensChapter,
+        leading = { ChapterMark(chapter, isNext) },
+        supporting = line?.let { { Text(it) } },
+        meta =
+            if (!chapter.writing && chapter.lessonsTotal > 0 && !chapter.isSkipped) {
+                { LessonsCount(chapter.lessonsDone, chapter.lessonsTotal) }
+            } else {
+                null
+            },
+    )
 }
 
 /** Lessons on the way inside the next two weeks: one line for the phase, not a row each. */
@@ -490,7 +452,7 @@ internal fun WritingAheadLine(
         }
     Text(
         text = text,
-        modifier = Modifier.padding(vertical = 8.dp),
+        modifier = Modifier.padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp),
         style = MaterialTheme.typography.bodyMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
     )
@@ -515,26 +477,26 @@ internal fun CheckpointRow(
             else -> null
         }
     val planItemId = checkpoint.planItemId?.toString()
-    val content: @Composable RowScope.() -> Unit = {
-        ListRowLeading { Trickster(Modifier.size(markSize() + 4.dp)) }
-        TitleAndMeta(modifier = Modifier.weight(1f), meta = { trailing?.let { TrailingText(PlanDateWords(it, it)) } }) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = stringResource(R.string.plan_phase_challenge),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                    color = if (done) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-                )
-                if (checkpoint.locked) PlusMark()
-            }
-        }
-    }
 
-    if (planItemId != null) {
-        ListRow(onClick = { links.challenge(planItemId) }, end = { ListRowChevron() }, content = content)
-    } else {
-        ListRow(content = content)
-    }
+    ListRow(
+        headline = {
+            Text(
+                text = stringResource(R.string.plan_phase_challenge),
+                color = if (done) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+            )
+        },
+        onClick = planItemId?.let { { links.challenge(it) } },
+        leading = { Trickster(Modifier.size(markSize())) },
+        meta =
+            if (checkpoint.locked || trailing != null) {
+                {
+                    if (checkpoint.locked) PlusMark()
+                    trailing?.let { TrailingText(PlanDateWords(it, it)) }
+                }
+            } else {
+                null
+            },
+    )
 }
 
 @Composable
@@ -559,34 +521,31 @@ internal fun MockRow(
                 null
             }
         }
-    val content: @Composable RowScope.() -> Unit = {
-        ListRowLeading { KindMark(LearnKind.Mock) }
-        val words = formatPlanDate(date, page.today, currentLocale())
-        TitleAndMeta(modifier = Modifier.weight(1f), meta = { TrailingText(PlanDateWords(words, words)) }) {
-            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    text = stringResource(if (forNextSitting) R.string.plan_mock_next_sitting else R.string.plan_mock_exam),
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
-                )
-                if (page.mocksRequirePlus) PlusMark()
-            }
-            funded?.minutes?.takeIf { it > 0 }?.let { MetaLine(formatMinutes(it.roundToInt(), currentLocale())) }
-        }
-    }
+    val locale = currentLocale()
+    val words = formatPlanDate(date, page.today, locale)
+    val minutes = funded?.minutes?.takeIf { it > 0 }
 
-    if (onClick != null) ListRow(onClick = onClick, end = { ListRowChevron() }, content = content) else ListRow(content = content)
+    ListRow(
+        headline = { Text(stringResource(if (forNextSitting) R.string.plan_mock_next_sitting else R.string.plan_mock_exam)) },
+        onClick = onClick,
+        leading = { KindMark(LearnKind.Mock) },
+        supporting = minutes?.let { { Text(formatMinutes(it.roundToInt(), locale)) } },
+        meta = {
+            if (page.mocksRequirePlus) PlusMark()
+            TrailingText(PlanDateWords(words, words))
+        },
+    )
 }
 
 @Composable
 private fun FinishItem(page: PlanPageState) {
-    ListRow {
-        ListRowLeading { FlagMark() }
-        val finish = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
-        TitleAndMeta(modifier = Modifier.weight(1f), meta = { finish?.let { TrailingText(it) } }) {
-            Text(text = page.goal.title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-        }
-    }
+    val finish = page.finish?.let { planDate(it.date, page.today, it.estimate, it.month) }
+
+    ListRow(
+        headline = { Text(page.goal.title) },
+        leading = { FlagMark() },
+        meta = finish?.let { { TrailingText(it) } },
+    )
 }
 
 @Composable

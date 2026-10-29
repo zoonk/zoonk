@@ -2,12 +2,8 @@ package com.zoonk.android.feature.goalcontent
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,14 +12,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -37,7 +29,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -47,7 +38,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -58,15 +48,11 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.ListRowChevron
-import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.ProgressMark
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.components.TitleAndMeta
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -93,108 +79,6 @@ internal fun SectionNote(
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodySmall,
     )
-}
-
-/** Main's hairline between a list's rows, as wide as the page's column. */
-@Composable
-internal fun RowDivider() {
-    HorizontalDivider(Modifier.padding(horizontal = PAGE_PADDING))
-}
-
-/** A row of a list, drawn as the Plan's rows are; one that opens a page ends in a chevron. */
-@Composable
-internal fun ContentRow(
-    headline: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    onClick: (() -> Unit)? = null,
-    current: Boolean = false,
-    chevron: Boolean = onClick != null,
-    leading: (@Composable () -> Unit)? = null,
-    supporting: (@Composable () -> Unit)? = null,
-    trailing: (@Composable () -> Unit)? = null,
-    stateDescription: String? = null,
-) {
-    ListRow(
-        modifier = modifier.padding(horizontal = PAGE_PADDING),
-        onClick = onClick,
-        highlighted = current,
-        stateDescription = stateDescription,
-        end = if (chevron) ({ ListRowChevron() }) else null,
-    ) {
-        RowWords(headline, leading, supporting, trailing)
-    }
-}
-
-/** A row that opens what's under it in place. */
-@Composable
-internal fun ExpandableRow(
-    expanded: Boolean,
-    onToggle: () -> Unit,
-    headline: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
-    leading: (@Composable () -> Unit)? = null,
-    supporting: (@Composable () -> Unit)? = null,
-    trailing: (@Composable () -> Unit)? = null,
-    stateDescription: String? = null,
-    content: @Composable () -> Unit,
-) {
-    Column(modifier) {
-        ListRow(
-            modifier = Modifier.padding(horizontal = PAGE_PADDING),
-            onClick = onToggle,
-            expanded = expanded,
-            stateDescription = stateDescription,
-        ) {
-            RowWords(headline, leading, supporting, trailing)
-        }
-        if (expanded) content()
-    }
-}
-
-@Composable
-private fun RowScope.RowWords(
-    headline: @Composable () -> Unit,
-    leading: (@Composable () -> Unit)?,
-    supporting: (@Composable () -> Unit)?,
-    trailing: (@Composable () -> Unit)?,
-) {
-    val quiet = MaterialTheme.colorScheme.onSurfaceVariant
-    if (leading != null) ListRowLeading(leading)
-    TitleAndMeta(
-        modifier = Modifier.weight(1f),
-        meta = { if (trailing != null) CompositionLocalProvider(LocalContentColor provides quiet, content = trailing) },
-    ) {
-        ProvideTextStyle(MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium), headline)
-        if (supporting != null) {
-            CompositionLocalProvider(LocalContentColor provides quiet) {
-                ProvideTextStyle(MaterialTheme.typography.bodyMedium, supporting)
-            }
-        }
-    }
-}
-
-/** Where words under a row's start, past its mark. */
-@Composable
-internal fun rowWordsStart(): Dp = PAGE_PADDING + markSize() + 12.dp
-
-/** A row's words with a chip after them, which moves under them when the line has no room. */
-@Composable
-internal fun TitleWithChip(
-    chip: (@Composable () -> Unit)?,
-    title: @Composable () -> Unit,
-) {
-    if (chip == null) {
-        title()
-        return
-    }
-    FlowRow(
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        itemVerticalAlignment = Alignment.CenterVertically,
-    ) {
-        title()
-        chip()
-    }
 }
 
 /** "4. Title": a row's number quiet before its words. */

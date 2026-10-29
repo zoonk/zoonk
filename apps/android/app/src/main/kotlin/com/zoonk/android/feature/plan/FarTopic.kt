@@ -31,7 +31,6 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
@@ -44,11 +43,12 @@ import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineChapter
 import com.zoonk.api.models.SkillOutlineGeneration
@@ -308,18 +308,12 @@ private fun FarTopicBody(
         }
 
         is FarTopicShown.Ready -> {
-            Column {
+            Column(Modifier.bleed(LIST_ITEM_INSET)) {
                 shown.chapters.forEach { chapter ->
-                    ListRow(onClick = { onChapter(chapter.chapterId) }, end = { ListRowChevron() }) {
-                        Text(
-                            text = chapter.title,
-                            modifier = Modifier.weight(1f),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Medium,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
+                    ListRow(
+                        headline = { Text(chapter.title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
+                        onClick = { onChapter(chapter.chapterId) },
+                    )
                 }
             }
         }

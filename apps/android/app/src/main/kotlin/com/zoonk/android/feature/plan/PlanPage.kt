@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -48,6 +47,7 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalProgress
@@ -373,7 +373,9 @@ internal fun PlanContent(
                     if (hasSuggestion) item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
                 }
                 if (structure != null) {
-                    item(key = "structure", contentType = "structure") { PlanSyllabusSection(structure, onOpenSubject = links::subject) }
+                    item(key = "structure", contentType = "structure") {
+                        PlanSyllabusSection(structure, onOpenSubject = links::subject, modifier = Modifier.bleed(PAGE_MARGIN))
+                    }
                 } else {
                     item(key = "path", contentType = "path") { PathSection(page, links, alphabet = alphabet) }
                 }

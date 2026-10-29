@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,14 +18,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.format.currentLocale
@@ -83,7 +82,7 @@ fun PlanSyllabusSection(
                 val name = if (group.extra) beyondGroupName(syllabus) else group.name
                 if (name != null) SectionLabel(name, Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 16.dp, bottom = 4.dp))
                 group.subjects.forEachIndexed { index, subject ->
-                    if (index > 0) RowDivider()
+                    if (index > 0) HorizontalDivider()
                     SubjectRow(subject, layout, barWidth, onClick = { onOpenSubject(subject.key) })
                 }
             }
@@ -114,8 +113,6 @@ private fun SubjectRow(
             text = subject.name,
             modifier = nameModifier,
             color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.bodyLarge,
-            fontWeight = FontWeight.Medium,
             maxLines = if (layout == RowLayout.Stacked) Int.MAX_VALUE else 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -133,34 +130,39 @@ private fun SubjectRow(
         }
     }
 
-    ListRow(modifier = Modifier.padding(horizontal = PAGE_PADDING), onClick = onClick, end = { ListRowChevron() }) {
-        if (layout == RowLayout.Stacked) {
-            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    ListRow(
+        headline = {
+            if (layout == RowLayout.Stacked) {
                 name(Modifier)
-                progress(Modifier)
+            } else {
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    name(Modifier.weight(1f))
+                    if (layout == RowLayout.WithQuestions) {
+                        Text(
+                            text = questions?.let { pluralStringResource(R.plurals.goalcontent_question_count, it, it) }.orEmpty(),
+                            modifier = Modifier.width(QUESTIONS_WIDTH),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = factsStyle(),
+                            textAlign = TextAlign.End,
+                            maxLines = 1,
+                        )
+                    }
+                    progress(Modifier.width(barWidth))
+                }
             }
-        } else {
-            name(Modifier.weight(1f))
-            if (layout == RowLayout.WithQuestions) {
-                Text(
-                    text = questions?.let { pluralStringResource(R.plurals.goalcontent_question_count, it, it) }.orEmpty(),
-                    modifier = Modifier.width(QUESTIONS_WIDTH),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = factsStyle(),
-                    textAlign = TextAlign.End,
-                    maxLines = 1,
-                )
-            }
-            progress(Modifier.width(barWidth))
-        }
-        Text(
-            text = share?.let { formatProgressShare(it, locale) }.orEmpty(),
-            modifier = Modifier.widthIn(min = SHARE_WIDTH),
-            color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-            style = factsStyle(),
-            textAlign = TextAlign.End,
-        )
-    }
+        },
+        onClick = onClick,
+        supporting = if (layout == RowLayout.Stacked) ({ progress(Modifier.padding(top = 8.dp)) }) else null,
+        meta = {
+            Text(
+                text = share?.let { formatProgressShare(it, locale) }.orEmpty(),
+                modifier = Modifier.widthIn(min = SHARE_WIDTH),
+                color = if (notPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                style = factsStyle(),
+                textAlign = TextAlign.End,
+            )
+        },
+    )
 }
 
 /** How much the section holds, as the plan's reveal counted it: the notice's own subjects, not the plan's extras. */

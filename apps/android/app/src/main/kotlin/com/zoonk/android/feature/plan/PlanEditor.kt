@@ -73,8 +73,9 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBase
@@ -367,20 +368,13 @@ private fun PlanEditRequest(
 ) {
     val buddy = page.summary.buddy
 
-    ListRow(onClick = onTellBuddy, end = { ListRowChevron() }) {
-        Icon(painterResource(R.drawable.ic_chat_bubble), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(
-                text = stringResource(R.string.plan_tell_buddy, buddyName(BuddyKind.of(buddy.kind.value), buddy.name)),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Text(
-                text = stringResource(R.string.plan_tell_buddy_description),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-    }
+    ListRow(
+        headline = { Text(stringResource(R.string.plan_tell_buddy, buddyName(BuddyKind.of(buddy.kind.value), buddy.name))) },
+        modifier = Modifier.bleed(LIST_ITEM_INSET),
+        onClick = onTellBuddy,
+        leading = { Icon(painterResource(R.drawable.ic_chat_bubble), contentDescription = null) },
+        supporting = { Text(stringResource(R.string.plan_tell_buddy_description)) },
+    )
 }
 
 /**

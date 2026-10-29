@@ -34,7 +34,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -61,12 +60,10 @@ import com.zoonk.android.feature.speaking.SpeakingPracticeRow
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.ListRowChevron
-import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.Meter
-import com.zoonk.android.ui.components.ROW_BLEED
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.components.markSize
@@ -349,10 +346,9 @@ private fun NumberButton(
         Column(
             modifier =
                 modifier
-                    .bleed(ROW_BLEED)
-                    .clip(MaterialTheme.shapes.medium)
+                    .bleed(LIST_ITEM_INSET)
                     .clickable(role = Role.Button, onClick = onOpen)
-                    .padding(ROW_BLEED),
+                    .padding(horizontal = LIST_ITEM_INSET, vertical = 8.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
             content = content,
         )
@@ -404,9 +400,11 @@ internal fun PaceDetails(
 
     PlanWeek(page)
 
-    ListRow(onClick = links::logbook, end = { ListRowChevron() }) {
-        Text(stringResource(R.string.plan_last_week_recap), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-    }
+    ListRow(
+        headline = { Text(stringResource(R.string.plan_last_week_recap)) },
+        modifier = Modifier.bleed(LIST_ITEM_INSET),
+        onClick = links::logbook,
+    )
 }
 
 @Composable
@@ -842,19 +840,15 @@ private fun StillToDo(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_still_to_do))
-        items.forEach { item ->
-            val content: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit = {
-                ListRowLeading { KindMark(item.kind) }
-                Column(Modifier.weight(1f)) {
-                    Text(item.label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
-                    item.detail?.let { MetaLine(it) }
-                }
-                if (item.plusRequired) PlusMark()
-            }
-            if (item.opensExam && links.hasExam) {
-                ListRow(onClick = links::exam, end = { ListRowChevron() }, content = content)
-            } else {
-                ListRow(content = content)
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
+            items.forEach { item ->
+                ListRow(
+                    headline = { Text(item.label) },
+                    onClick = if (item.opensExam && links.hasExam) links::exam else null,
+                    leading = { KindMark(item.kind) },
+                    supporting = item.detail?.let { { Text(it) } },
+                    meta = if (item.plusRequired) ({ PlusMark() }) else null,
+                )
             }
         }
     }

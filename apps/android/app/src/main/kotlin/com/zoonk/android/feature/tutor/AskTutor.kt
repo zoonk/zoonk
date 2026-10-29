@@ -8,7 +8,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TooltipAnchorPosition
@@ -25,7 +24,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
@@ -33,8 +31,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.ListRowChevron
-import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 
@@ -77,10 +73,12 @@ fun AskTutor(
         }
 
         AskTutorAppearance.Row -> {
-            ListRow(modifier = modifier, onClick = { open = true }, end = { ListRowChevron() }) {
-                ListRowLeading { TutorAvatar(identity, ROW_AVATAR_SIZE) }
-                Text(label, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-            }
+            ListRow(
+                headline = { Text(label) },
+                modifier = modifier,
+                onClick = { open = true },
+                leading = { TutorAvatar(identity, ROW_AVATAR_SIZE) },
+            )
         }
     }
 

@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -26,14 +25,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.PlusMark
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.ListRowChevron
-import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.MarkStatus
-import com.zoonk.android.ui.components.ROW_BLEED
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.components.TitleAndMeta
 import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -63,26 +59,20 @@ internal fun NextOnPath(
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_next_on_path))
-        Column {
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
             mockDate?.let { MockRow(page, it, links) }
             chapter?.chapterId?.let { id ->
-                ListRow(onClick = { links.chapter(id.toString()) }, end = { ListRowChevron() }) {
-                    ListRowLeading { ChapterMark(chapter, isNext = true) }
-                    val count =
-                        PlanDateWords(
-                            stringResource(R.string.plan_lessons_count, chapter.lessonsDone.toInt(), chapter.lessonsTotal.toInt()),
-                            lessonsDoneSpoken(chapter.lessonsDone, chapter.lessonsTotal),
-                        )
-                    TitleAndMeta(modifier = Modifier.weight(1f), meta = { TrailingText(count) }) {
-                        Text(
-                            text = chapter.title,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Medium,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
+                val count =
+                    PlanDateWords(
+                        stringResource(R.string.plan_lessons_count, chapter.lessonsDone.toInt(), chapter.lessonsTotal.toInt()),
+                        lessonsDoneSpoken(chapter.lessonsDone, chapter.lessonsTotal),
+                    )
+                ListRow(
+                    headline = { Text(chapter.title, maxLines = 2, overflow = TextOverflow.Ellipsis) },
+                    onClick = { links.chapter(id.toString()) },
+                    leading = { ChapterMark(chapter, isNext = true) },
+                    meta = { TrailingText(count) },
+                )
             }
             checkpoint?.let { CheckpointRow(page, it, links) }
             FinishRow(page, links)
@@ -96,30 +86,20 @@ private fun FinishRow(
     page: PlanPageState,
     links: PlanLinks,
 ) {
-    val content: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit = {
-        ListRowLeading { FlagMark() }
-        Column(Modifier.weight(1f)) {
-            Text(
-                text = page.goal.title,
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Medium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
-            val finish = page.finish
-            when {
-                finish != null -> {
-                    val words = planDate(finish.date, page.today, finish.estimate, finish.month)
-                    MetaLine(words.text)
-                }
-
-                page.isExam -> {
-                    MetaLine(stringResource(R.string.plan_date_to_be_confirmed))
-                }
-            }
+    val finish = page.finish
+    val date =
+        when {
+            finish != null -> planDate(finish.date, page.today, finish.estimate, finish.month).text
+            page.isExam -> stringResource(R.string.plan_date_to_be_confirmed)
+            else -> null
         }
-    }
-    if (links.hasExam) ListRow(onClick = links::exam, end = { ListRowChevron() }, content = content) else ListRow(content = content)
+
+    ListRow(
+        headline = { Text(page.goal.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        onClick = if (links.hasExam) links::exam else null,
+        leading = { FlagMark() },
+        supporting = date?.let { { Text(it) } },
+    )
 }
 
 @Composable
@@ -127,20 +107,24 @@ private fun AfterExamRow(
     page: PlanPageState,
     phase: PlanPhase,
 ) {
-    ListRow {
-        ListRowLeading { StatusMark(MarkStatus.Todo) }
-        val end = phase.end?.let { planDate(it, page.today, estimate = true, month = true) }
-        TitleAndMeta(modifier = Modifier.weight(1f), meta = { end?.let { TrailingText(it) } }) {
-            Text(phaseName(phase, page.mocksRequirePlus), style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.Medium)
-            val count = phase.mocks.count.toInt()
-            if (count > 0) {
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    MetaLine(mocksForNextSitting(page, count))
-                    if (page.mocksRequirePlus) PlusMark()
+    val end = phase.end?.let { planDate(it, page.today, estimate = true, month = true) }
+    val count = phase.mocks.count.toInt()
+    val locked = count > 0 && page.mocksRequirePlus
+
+    ListRow(
+        headline = { Text(phaseName(phase, page.mocksRequirePlus)) },
+        leading = { StatusMark(MarkStatus.Todo) },
+        supporting = if (count > 0) ({ Text(mocksForNextSitting(page, count)) }) else null,
+        meta =
+            if (locked || end != null) {
+                {
+                    if (locked) PlusMark()
+                    end?.let { TrailingText(it) }
                 }
-            }
-        }
-    }
+            } else {
+                null
+            },
+    )
 }
 
 @Composable
@@ -168,7 +152,7 @@ internal fun MoreSection(
 
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionHeader(stringResource(R.string.plan_more))
-        Column {
+        Column(Modifier.bleed(LIST_ITEM_INSET)) {
             if (links.hasExam) LinkRow(R.drawable.ic_school, stringResource(R.string.plan_about_exam), links::exam)
             if (links.hasMindMaps) LinkRow(R.drawable.ic_lan, stringResource(R.string.plan_mind_maps), links::mindMaps)
         }
@@ -181,17 +165,11 @@ private fun LinkRow(
     text: String,
     onClick: () -> Unit,
 ) {
-    ListRow(onClick = onClick, end = { ListRowChevron() }) {
-        ListRowLeading {
-            Icon(
-                painterResource(icon),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Text(text, modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-    }
+    ListRow(
+        headline = { Text(text) },
+        onClick = onClick,
+        leading = { Icon(painterResource(icon), contentDescription = null) },
+    )
 }
 
 /**
@@ -292,8 +270,7 @@ private fun PropertyRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .bleed(ROW_BLEED)
-                .clip(MaterialTheme.shapes.small)
+                .bleed(LIST_ITEM_INSET)
                 .then(
                     if (onClick != null) {
                         Modifier.clickable(onClickLabel = onClickLabel, role = Role.Button, onClick = onClick)
@@ -301,7 +278,7 @@ private fun PropertyRow(
                         Modifier.semantics(mergeDescendants = true) {}
                     },
                 ).heightIn(min = 48.dp)
-                .padding(horizontal = ROW_BLEED, vertical = 4.dp),
+                .padding(horizontal = LIST_ITEM_INSET, vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {

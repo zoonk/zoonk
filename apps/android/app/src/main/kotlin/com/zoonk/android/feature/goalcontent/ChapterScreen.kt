@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.goalcontent
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,8 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -61,13 +58,14 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.navigation.RoutePlaceholder
 import com.zoonk.android.ui.components.DisclosureRow
-import com.zoonk.android.ui.components.KindDotLeading
+import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LessonList
 import com.zoonk.android.ui.components.LessonProgress
 import com.zoonk.android.ui.components.LessonSummaries
 import com.zoonk.android.ui.components.LessonSummary
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ListedLesson
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.NotFoundMessage
@@ -386,15 +384,16 @@ private fun PracticeChapterRow(
     practice: PracticeState,
     onPractice: () -> Unit,
 ) {
-    ListItem(
-        headlineContent = { Text(stringResource(R.string.goalcontent_practice_chapter)) },
-        modifier = Modifier.clickable(enabled = !practice.running, onClick = onPractice),
-        leadingContent = { KindDotLeading(LearnKind.Practice) },
-        colors =
-            ListItemDefaults.colors(
-                containerColor = Color.Transparent,
-                headlineColor = if (practice.running) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-            ),
+    ListRow(
+        headline = {
+            Text(
+                stringResource(R.string.goalcontent_practice_chapter),
+                color = if (practice.running) MaterialTheme.colorScheme.onSurfaceVariant else Color.Unspecified,
+            )
+        },
+        onClick = onPractice,
+        enabled = !practice.running,
+        leading = { KindDot(LearnKind.Practice) },
     )
     practiceMessage(practice.outcome)?.let {
         Text(

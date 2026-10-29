@@ -1,19 +1,14 @@
 package com.zoonk.android.ui.components
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -86,8 +81,8 @@ private fun LessonRow(
         }
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
-    ListItem(
-        headlineContent = {
+    ListRow(
+        headline = {
             Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                 Text(
                     stringResource(R.string.lessons_position, formatNumber(position.toDouble(), locale)),
@@ -98,25 +93,18 @@ private fun LessonRow(
                 Text(lesson.title, Modifier.alignByBaseline(), color = if (lesson.done) muted else Color.Unspecified)
             }
         },
-        modifier =
-            Modifier
-                .clickable(onClick = onOpen)
-                .then(if (isNext) Modifier.background(MaterialTheme.colorScheme.surfaceContainerHigh) else Modifier),
-        leadingContent = { StatusMark(status, contentDescription = label) },
-        trailingContent =
+        onClick = onOpen,
+        highlighted = isNext,
+        leading = { StatusMark(status, contentDescription = label) },
+        meta =
             if (lesson.plusRequired || lesson.minutes > 0) {
                 {
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                        if (lesson.plusRequired) PlusMark()
-                        if (lesson.minutes > 0) {
-                            Text(formatMinutes(lesson.minutes, locale), style = MaterialTheme.typography.labelMedium.withTabularFigures())
-                        }
-                    }
+                    if (lesson.plusRequired) PlusMark()
+                    if (lesson.minutes > 0) Text(formatMinutes(lesson.minutes, locale))
                 }
             } else {
                 null
             },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
     )
 }
 

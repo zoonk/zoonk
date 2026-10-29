@@ -51,10 +51,13 @@ import com.zoonk.android.feature.plan.farTopicLine
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.ui.components.KindDot
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.listRowWordsStart
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatProgressShare
@@ -253,7 +256,7 @@ internal fun ColumnScope.SubjectAside(
         AsideSection(stringResource(R.string.goalcontent_also)) {
             Column {
                 if (openMindMaps != null) MindMapsRow(openMindMaps)
-                if (ask != null) Box(Modifier.padding(horizontal = PAGE_PADDING)) { ask(AskTutorAppearance.Row) }
+                if (ask != null) ask(AskTutorAppearance.Row)
             }
         }
     }
@@ -262,7 +265,7 @@ internal fun ColumnScope.SubjectAside(
 /** The goal's mind maps, where this subject's finished chapters have theirs. */
 @Composable
 internal fun MindMapsRow(onClick: () -> Unit) {
-    ContentRow(
+    ListRow(
         headline = { Text(stringResource(R.string.navigation_mind_maps)) },
         onClick = onClick,
         leading = { KindDot(LearnKind.MindMap) },
@@ -340,17 +343,16 @@ internal fun LazyListScope.subjectChapters(
     if (done.isNotEmpty()) {
         item(key = "chapters-done", contentType = "expandable") {
             var expanded by rememberSaveable { mutableStateOf(false) }
-            ExpandableRow(
-                expanded = expanded,
-                onToggle = { expanded = !expanded },
-                headline = { Text(doneLine(done), color = MaterialTheme.colorScheme.onSurfaceVariant) },
-                leading = {
-                    StatusMark(if (done.all { it.known }) MarkStatus.Skipped else MarkStatus.Done)
-                },
-            ) {
-                Column {
+            Column {
+                ListRow(
+                    headline = { Text(doneLine(done), color = MaterialTheme.colorScheme.onSurfaceVariant) },
+                    onClick = { expanded = !expanded },
+                    expanded = expanded,
+                    leading = { StatusMark(if (done.all { it.known }) MarkStatus.Skipped else MarkStatus.Done) },
+                )
+                if (expanded) {
                     done.forEach { chapter ->
-                        RowDivider()
+                        HorizontalDivider()
                         SyllabusChapterRow(chapter, today, actions)
                     }
                 }
@@ -365,12 +367,12 @@ internal fun LazyListScope.subjectChapters(
 
         Column {
             shown.forEachIndexed { index, chapter ->
-                if (index > 0 || done.isNotEmpty()) RowDivider()
+                if (index > 0 || done.isNotEmpty()) HorizontalDivider()
                 SyllabusChapterRow(chapter, today, actions)
             }
             if (hidden > 0) {
-                RowDivider()
-                ContentRow(
+                HorizontalDivider()
+                ListRow(
                     headline = {
                         Text(
                             pluralStringResource(R.plurals.goalcontent_more_chapters, hidden, hidden),
@@ -378,7 +380,6 @@ internal fun LazyListScope.subjectChapters(
                         )
                     },
                     onClick = { showAll = true },
-                    chevron = false,
                     leading = {
                         Icon(
                             painterResource(R.drawable.ic_add),
@@ -443,7 +444,7 @@ internal fun SyllabusChapterRow(
     val nextDate = chapter.nextDate?.takeIf { chapter.state != SyllabusChapter.State.DONE }
     val locale = currentLocale()
 
-    ContentRow(
+    ListRow(
         headline = {
             Text(
                 text = numberedTitle(chapter.position, chapter.title),
@@ -453,7 +454,7 @@ internal fun SyllabusChapterRow(
             )
         },
         onClick = onClick,
-        current = isNext,
+        highlighted = isNext,
         leading = {
             ChapterMark(
                 isNext = isNext,
@@ -465,7 +466,7 @@ internal fun SyllabusChapterRow(
             )
         },
         supporting = line?.let { { Text(it) } },
-        trailing = nextDate?.let { { Text(formatPlanDate(it.toJavaLocalDate(), today, locale), style = factsStyle()) } },
+        meta = nextDate?.let { { Text(formatPlanDate(it.toJavaLocalDate(), today, locale)) } },
     )
 }
 
@@ -545,7 +546,7 @@ internal fun LazyListScope.subjectTopics(
         groupTopics(run.topics) { it.name }.forEachIndexed { index, group ->
             item(key = "topic-$runIndex-$index", contentType = "topic") {
                 Column {
-                    if (index > 0) RowDivider()
+                    if (index > 0) HorizontalDivider()
                     TopicGroupRow(group, showFrequency, syllabus.knownTopicsReturn, actions)
                 }
             }
@@ -568,45 +569,49 @@ private fun TopicGroupRow(
     val chapters = group.chapters
     val status = topicMarkWords(mark)
     val headline: @Composable () -> Unit = {
-        TitleWithChip(chip = if (showFrequency && group.frequency == SyllabusTopic.Frequency.HIGH) ({ FrequencyChip() }) else null) {
-            Text(
-                text = numberedTopic(group.number, group.text),
-                color =
-                    if (mark ==
-                        TopicMark.NotPlanned
-                    ) {
-                        MaterialTheme.colorScheme.onSurfaceVariant
-                    } else {
-                        MaterialTheme.colorScheme.onSurface
-                    },
-            )
-        }
+        Text(
+            text = numberedTopic(group.number, group.text),
+            color = if (mark == TopicMark.NotPlanned) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+        )
     }
     val supporting: (@Composable () -> Unit)? =
         if (group.children.isEmpty()) topicNote(group.topic, knownReturn)?.let { note -> { Text(note) } } else null
-    val trailing: (@Composable () -> Unit)? = group.studiedCount?.let { (studied, total) -> { GroupCount(studied, total) } }
+    val frequent = showFrequency && group.frequency == SyllabusTopic.Frequency.HIGH
+    val count = group.studiedCount
+    val meta: (@Composable () -> Unit)? =
+        if (frequent || count != null) {
+            {
+                if (frequent) FrequencyChip()
+                count?.let { (studied, total) -> GroupCount(studied, total) }
+            }
+        } else {
+            null
+        }
     val leading: @Composable () -> Unit = { TopicMarkIcon(mark) }
 
     if (group.children.isEmpty() && chapters.isEmpty()) {
-        ContentRow(headline = headline, leading = leading, supporting = supporting, trailing = trailing, stateDescription = status)
+        ListRow(headline = headline, leading = leading, supporting = supporting, meta = meta, stateDescription = status)
         return
     }
 
     var expanded by rememberSaveable { mutableStateOf(false) }
-    ExpandableRow(
-        expanded = expanded,
-        onToggle = { expanded = !expanded },
-        headline = headline,
-        leading = leading,
-        supporting = supporting,
-        trailing = trailing,
-        stateDescription = status,
-    ) {
-        Column(Modifier.padding(start = rowWordsStart(), end = PAGE_PADDING, bottom = 8.dp)) {
-            group.children.forEach { child -> ChildTopic(child, knownReturn) }
-            if (chapters.isNotEmpty()) {
-                if (group.children.isNotEmpty()) HorizontalDivider(Modifier.padding(vertical = 4.dp))
-                chapters.forEach { TopicChapterLink(it, actions) }
+    Column {
+        ListRow(
+            headline = headline,
+            onClick = { expanded = !expanded },
+            expanded = expanded,
+            stateDescription = status,
+            leading = leading,
+            supporting = supporting,
+            meta = meta,
+        )
+        if (expanded) {
+            Column(Modifier.padding(start = listRowWordsStart(), end = LIST_ITEM_INSET, bottom = 8.dp)) {
+                group.children.forEach { child -> ChildTopic(child, knownReturn) }
+                if (chapters.isNotEmpty()) {
+                    if (group.children.isNotEmpty()) HorizontalDivider(Modifier.padding(vertical = 4.dp))
+                    chapters.forEach { TopicChapterLink(it, actions) }
+                }
             }
         }
     }
@@ -711,14 +716,6 @@ private fun TopicChapterLink(
             overflow = TextOverflow.Ellipsis,
         )
         if (line != null) Text(line, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
-        if (chapterId != null) {
-            Icon(
-                painterResource(R.drawable.ic_chevron_right),
-                contentDescription = null,
-                modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
     }
 }
 
@@ -841,12 +838,12 @@ internal fun LazyListScope.subjectMatrix(matrix: List<String>) {
 
         Column {
             shown.forEachIndexed { index, group ->
-                if (index > 0) RowDivider()
+                if (index > 0) HorizontalDivider()
                 MatrixGroupRow(group)
             }
             if (groups.size > shown.size) {
-                RowDivider()
-                ContentRow(
+                HorizontalDivider()
+                ListRow(
                     headline = {
                         Text(
                             stringResource(R.string.goalcontent_see_all, formatNumber(groups.size.toDouble(), currentLocale())),
@@ -873,23 +870,26 @@ private fun MatrixGroupRow(group: TopicGroup<String>) {
     val supporting: (@Composable () -> Unit)? = line?.let { { Text(it) } }
 
     if (group.children.isEmpty()) {
-        ContentRow(headline = headline, supporting = supporting)
+        ListRow(headline = headline, supporting = supporting)
         return
     }
 
     var expanded by rememberSaveable { mutableStateOf(false) }
-    ExpandableRow(expanded = expanded, onToggle = { expanded = !expanded }, headline = headline, supporting = supporting) {
-        Column(
-            Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, bottom = 14.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            group.children.forEach { child ->
-                Text(
-                    text = numberedTopic(child.number, child.text),
-                    modifier = Modifier.padding(start = if (child.depth > 1) CHILD_INDENT else 0.dp),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
+    Column {
+        ListRow(headline = headline, onClick = { expanded = !expanded }, expanded = expanded, supporting = supporting)
+        if (expanded) {
+            Column(
+                Modifier.padding(start = LIST_ITEM_INSET, end = LIST_ITEM_INSET, bottom = 14.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                group.children.forEach { child ->
+                    Text(
+                        text = numberedTopic(child.number, child.text),
+                        modifier = Modifier.padding(start = if (child.depth > 1) CHILD_INDENT else 0.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
             }
         }
     }

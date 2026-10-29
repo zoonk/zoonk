@@ -2,15 +2,14 @@ package com.zoonk.android.feature.plan
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.ListRow
-import com.zoonk.android.ui.components.ListRowChevron
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
@@ -18,6 +17,7 @@ import com.zoonk.android.ui.components.SuggestionDescription
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.SuggestionSaveError
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.api.models.StudyNext
 import com.zoonk.api.models.StudyNextNextLevel
 
@@ -44,16 +44,13 @@ internal fun StudyNextSuggestion(
         }
         if (next.related.isNotEmpty()) {
             val links = slot.links.closing(close)
-            Column {
+            Column(Modifier.bleed(LIST_ITEM_INSET)) {
                 next.related.forEach { course ->
-                    ListRow(onClick = { links.course(course.courseId.toString()) }, end = { ListRowChevron() }) {
-                        Icon(
-                            painterResource(R.drawable.ic_library_books),
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Text(course.title, Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-                    }
+                    ListRow(
+                        headline = { Text(course.title) },
+                        onClick = { links.course(course.courseId.toString()) },
+                        leading = { Icon(painterResource(R.drawable.ic_library_books), contentDescription = null) },
+                    )
                 }
             }
         }
