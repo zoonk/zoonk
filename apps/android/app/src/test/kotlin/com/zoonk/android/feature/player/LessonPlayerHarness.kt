@@ -59,6 +59,7 @@ internal class LessonPlayerHarness(
     fun play(
         steps: List<LessonStep>,
         guest: Boolean = false,
+        ceremony: LessonCeremony? = null,
         configure: FakeLessonPlayerApi.() -> Unit = {},
     ) {
         val lesson = playable(steps)
@@ -90,7 +91,7 @@ internal class LessonPlayerHarness(
                     val state by viewModel.state.collectAsState()
                     val ending by viewModel.ending.collectAsState()
                     LaunchedEffect(Unit) { viewModel.open(lesson) }
-                    LessonPlayer(lesson, state, ending, viewModel, exits, rememberAppNavigator())
+                    LessonPlayer(lesson, state, ending, viewModel, exits, rememberAppNavigator(), ceremony = ceremony)
                 }
             }
         }

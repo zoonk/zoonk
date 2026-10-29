@@ -101,6 +101,7 @@ import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.OutlinedIconButton
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.api.models.LearnerSummaryBuddy
 import kotlin.math.abs
 
 /** Where the player leads: other features' routes, over the lesson or in its place. */
@@ -148,6 +149,8 @@ fun LessonPlayer(
     exits: LessonPlayerExits,
     navigator: AppNavigator,
     endSlot: LessonEndSlot? = null,
+    buddy: LearnerSummaryBuddy? = null,
+    ceremony: LessonCeremony? = null,
     ask: (@Composable (TutorScope, worded: Boolean) -> Unit)? = null,
 ) {
     val screen = remember(state) { state?.screen() }
@@ -257,7 +260,7 @@ fun LessonPlayer(
                 Starting()
             } else {
                 Segments(screen.segments, state)
-                Content(state, screen, ending, viewModel, actions, exits, navigator, ownEnd, language)
+                Content(state, screen, ending, viewModel, actions, exits, navigator, ownEnd, language, buddy, ceremony)
             }
         }
     }
@@ -376,6 +379,8 @@ private fun Content(
     navigator: AppNavigator,
     ownEnd: LessonEndSlot?,
     language: LessonLanguage,
+    buddy: LearnerSummaryBuddy?,
+    ceremony: LessonCeremony?,
 ) {
     val run = state.run
 
@@ -387,8 +392,10 @@ private fun Content(
         }
 
         state.phase == LessonPhase.Completed -> {
-            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                if (ownEnd == null) LessonCompletionView(state, ending) else ownEnd.body(state)
+            AfterCeremony(state.completion?.result, ceremony) {
+                Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                    if (ownEnd == null) LessonCompletionView(state, ending, buddy) else ownEnd.body(state)
+                }
             }
         }
 

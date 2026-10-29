@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,8 +40,12 @@ import com.zoonk.android.feature.player.engine.Segment
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.steps.count
+import com.zoonk.android.feature.session.DayMoment
 import com.zoonk.android.feature.session.ownBrainPower
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.FeedbackNote
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -57,7 +62,10 @@ import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.LearnerSummaryBuddy
 import com.zoonk.api.models.LessonFit
+import com.zoonk.api.models.LibraryLessonCompletion
+import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.delay
 import java.time.ZoneId
 import kotlin.math.roundToLong
@@ -223,11 +231,38 @@ private fun SlowDown(
     )
 }
 
-/** What the lesson's end says (main's `LessonCompletionMoment`): its title, then the score once saved. */
+/** Shows a milestone's full-screen ceremony and calls `onClose` when the learner leaves it. */
+typealias LessonCeremony = @Composable (milestone: Milestone, onClose: () -> Unit) -> Unit
+
+/** Main's `MomentAfterCeremony`: the lesson's end shows once the ceremony it earned closes. */
+@Composable
+internal fun AfterCeremony(
+    result: LibraryLessonCompletion?,
+    ceremony: LessonCeremony?,
+    content: @Composable () -> Unit,
+) {
+    val milestone = result?.ceremonyMilestone()
+    var closed by rememberSaveable(milestone?.id) { mutableStateOf(false) }
+
+    if (milestone == null || ceremony == null || closed) {
+        content()
+    } else {
+        ceremony(milestone) { closed = true }
+    }
+}
+
+/** Main's `getLessonCelebration`: a lesson played in a session carries its ceremony in its block. */
+private fun LibraryLessonCompletion.ceremonyMilestone(): Milestone? {
+    val block = studyBlock ?: return ceremony
+    return block.ceremony
+}
+
+/** What the lesson's end says (main's `LessonCompletionMoment`): its title, then the score and the day's moment once saved. */
 @Composable
 fun LessonCompletionView(
     state: LessonPlayerState,
     ending: LessonEnding,
+    buddy: LearnerSummaryBuddy? = null,
 ) {
     val completion = state.completion ?: return
     val title = stringResource(if (completion.testedOut) R.string.player_already_knew else R.string.player_lesson_complete)
@@ -259,6 +294,12 @@ fun LessonCompletionView(
                 Text(stringResource(R.string.player_save_failed), color = MaterialTheme.colorScheme.error)
             }
             if (completion.status == CompletionStatus.Saved) LessonReadouts(state)
+        }
+
+        val result = completion.result
+        if (completion.status == CompletionStatus.Saved && result != null) {
+            val look = buddy?.look() ?: BuddyLook()
+            DayMoment(result, look, buddyName(look.kind, buddy?.name))
         }
 
         if (completion.status == CompletionStatus.Saved && ending.guest) {

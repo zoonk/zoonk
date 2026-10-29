@@ -45,6 +45,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.account.AccountFailure
 import com.zoonk.android.feature.account.accountFailure
+import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonOutline
@@ -171,6 +172,7 @@ internal fun PlayingLesson(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val ending by viewModel.ending.collectAsStateWithLifecycle()
     val profile by app.learningProfile.profile.collectShown()
+    val summary by app.learnerSummary.summary.collectShown()
 
     val suggestions = remember(load.lesson) { load.lesson.tutorSuggestions.map { TutorSuggestion(it.label, it.id.value) } }
 
@@ -192,7 +194,17 @@ internal fun PlayingLesson(
         LocalLessonSpeech provides app.speech,
         LocalChallengeTeam provides team,
     ) {
-        LessonPlayer(load.lesson, state, ending, viewModel, exits, navigator, endSlot) { scope, worded ->
+        LessonPlayer(
+            load.lesson,
+            state,
+            ending,
+            viewModel,
+            exits,
+            navigator,
+            endSlot,
+            buddy = summary.value?.buddy,
+            ceremony = { milestone, onClose -> SessionCeremony(app, milestone, onClose) },
+        ) { scope, worded ->
             TutorAskButton(scope, app, navigator, worded, suggestions)
         }
         LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)

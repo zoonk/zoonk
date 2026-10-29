@@ -79,7 +79,7 @@ class LessonPlayerFlowTest {
         steps: List<LessonStep>,
         guest: Boolean = false,
         configure: FakeLessonPlayerApi.() -> Unit = {},
-    ) = harness.play(steps, guest, configure)
+    ) = harness.play(steps, guest, configure = configure)
 
     private fun tap(text: String) = rule.onNodeWithText(text).performClick()
 

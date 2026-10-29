@@ -78,6 +78,7 @@ class FakeLessonPlayerApi(
     var checkFailures = 0
     var grade: (String, LessonStepCheckInput) -> LessonStepCheckResult = { _, _ -> checkResult(isCorrect = true) }
     var completeFails = false
+    var completion = COMPLETION
     var gate: CompletableDeferred<Unit>? = null
     val readinessStates = ArrayDeque<String>()
     var writes = 0
@@ -143,7 +144,7 @@ class FakeLessonPlayerApi(
     ): LibraryLessonCompletion {
         completions += runId
         if (completeFails) throw ApiException(ApiError.Unavailable)
-        return ApiJson.decodeFromString(COMPLETION)
+        return ApiJson.decodeFromString(completion)
     }
 
     override suspend fun readiness(
