@@ -111,6 +111,32 @@ android {
     }
 }
 
+/** Copies main's base map drawings into the app's assets, so both draw the same maps from one source. */
+abstract class CopyBaseMaps : DefaultTask() {
+    @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    abstract val drawings: DirectoryProperty
+
+    @get:OutputDirectory
+    abstract val assets: DirectoryProperty
+
+    @TaskAction
+    fun copy() {
+        val target = assets.get().asFile.resolve("base-maps")
+        target.deleteRecursively()
+        drawings.get().asFile.copyRecursively(target)
+    }
+}
+
+val copyBaseMaps =
+    tasks.register<CopyBaseMaps>("copyBaseMaps") {
+        drawings.set(layout.projectDirectory.dir("../../../packages/player/src/activities/_assets/base-maps/generated"))
+    }
+
+androidComponents {
+    onVariants { variant -> variant.sources.assets?.addGeneratedSourceDirectory(copyBaseMaps, CopyBaseMaps::assets) }
+}
+
 composeCompiler {
     stabilityConfigurationFiles.add(layout.projectDirectory.file("compose-stability.conf"))
 }

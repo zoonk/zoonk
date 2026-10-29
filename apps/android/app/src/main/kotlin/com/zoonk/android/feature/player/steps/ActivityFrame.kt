@@ -52,6 +52,7 @@ import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.activities.patternTableRenderer
 import com.zoonk.android.feature.activities.reasoning.combinationGridRenderer
+import com.zoonk.android.feature.activities.reasoning.mapExplorerRenderer
 import com.zoonk.android.feature.activities.reasoning.sourceComparisonRenderer
 import com.zoonk.android.feature.activities.sorting.categorizeRenderer
 import com.zoonk.android.feature.activities.sorting.causeEffectChainRenderer
@@ -113,6 +114,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "guessReveal" to guessRevealRenderer,
         "keyboardFretboard" to keyboardFretboardRenderer,
         "labeledDiagram" to labeledDiagramRenderer,
+        "mapExplorer" to mapExplorerRenderer,
         "matchPairs" to matchPairsRenderer,
         "notationPlayer" to notationPlayerRenderer,
         "numberLine" to numberLineRenderer,

@@ -56,4 +56,59 @@
     <string name="activities_reasoning_source_what_to_mark">What to mark</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
     <string name="activities_reasoning_source_missed">Missed</string>
+
+    <!-- A map the learner explores by tapping its numbered places. -->
+    <string name="activities_reasoning_badge_explore_map">Explore the map</string>
+    <!-- How many of the map's places the learner has opened, like "2 of 3 explored". -->
+    <string name="activities_reasoning_map_explored">%1$d of %2$d explored</string>
+    <string name="activities_reasoning_map_hint">Tap a numbered place to see what\'s there.</string>
+    <!-- A numbered place on the map, like "1. Broad Street pump". -->
+    <string name="activities_reasoning_map_place">%1$d. %2$s</string>
+    <!-- The name of the list of the map's places, for TalkBack. -->
+    <string name="activities_reasoning_map_places">Places</string>
+    <!-- What the map shows, for TalkBack: its name, then its numbered places, like "Map of Soho, London, in 1854 with 3 places to explore: 1. Broad Street pump, 2. Brewery on Broad Street, 3. Poland Street workhouse." -->
+    <plurals name="activities_reasoning_map_description">
+        <item quantity="one">%1$s with %2$d place to explore: %3$s.</item>
+        <item quantity="other">%1$s with %2$d places to explore: %3$s.</item>
+    </plurals>
+    <string name="activities_reasoning_map_unavailable">This map can\'t be shown. Continue to the next screen.</string>
+    <string name="activities_reasoning_map_africa">Map of Africa</string>
+    <string name="activities_reasoning_map_americas">Map of the Americas</string>
+    <string name="activities_reasoning_map_asia">Map of Asia</string>
+    <string name="activities_reasoning_map_brazil_states">Map of Brazil by state</string>
+    <string name="activities_reasoning_map_europe">Map of Europe</string>
+    <string name="activities_reasoning_map_europe_1914">Map of Europe in 1914</string>
+    <!-- Soho is a district of London. -->
+    <string name="activities_reasoning_map_london_1854">Map of Soho, London, in 1854</string>
+    <string name="activities_reasoning_map_roman_empire_117">Map of the Roman Empire in 117 CE</string>
+    <string name="activities_reasoning_map_usa_states">Map of the United States by state</string>
+    <string name="activities_reasoning_map_world">World map</string>
+    <string name="activities_reasoning_map_world_continents">World map of the continents</string>
+    <!-- Below a historical map whose borders are drawn simply. -->
+    <string name="activities_reasoning_map_note_borders">Borders are simplified.</string>
+    <!-- Below the 1854 map of Soho, drawn after the map the physician John Snow made of a cholera outbreak. -->
+    <string name="activities_reasoning_map_note_london_1854">Simplified street plan, after John Snow\'s 1854 map.</string>
+    <!-- Names written on the maps. -->
+    <string name="activities_reasoning_map_label_africa">Africa</string>
+    <string name="activities_reasoning_map_label_antarctica">Antarctica</string>
+    <string name="activities_reasoning_map_label_asia">Asia</string>
+    <string name="activities_reasoning_map_label_austria_hungary">Austria-Hungary</string>
+    <string name="activities_reasoning_map_label_europe">Europe</string>
+    <string name="activities_reasoning_map_label_france">France</string>
+    <string name="activities_reasoning_map_label_german_empire">German Empire</string>
+    <string name="activities_reasoning_map_label_italy">Italy</string>
+    <string name="activities_reasoning_map_label_north_america">North America</string>
+    <string name="activities_reasoning_map_label_oceania">Oceania</string>
+    <string name="activities_reasoning_map_label_ottoman_empire">Ottoman Empire</string>
+    <string name="activities_reasoning_map_label_parthian_empire">Parthian Empire</string>
+    <string name="activities_reasoning_map_label_roman_empire">Roman Empire</string>
+    <string name="activities_reasoning_map_label_russian_empire">Russian Empire</string>
+    <string name="activities_reasoning_map_label_serbia">Serbia</string>
+    <string name="activities_reasoning_map_label_south_america">South America</string>
+    <string name="activities_reasoning_map_label_spain">Spain</string>
+    <!-- The alliance of Germany, Austria-Hungary and Italy before the First World War. -->
+    <string name="activities_reasoning_map_label_triple_alliance">Triple Alliance</string>
+    <!-- The alliance of France, the United Kingdom and Russia before the First World War. -->
+    <string name="activities_reasoning_map_label_triple_entente">Triple Entente</string>
+    <string name="activities_reasoning_map_label_united_kingdom">United Kingdom</string>
 </resources>

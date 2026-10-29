@@ -6,6 +6,7 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasClickAction
@@ -150,5 +151,28 @@ class ReasoningFlowTest {
         harness.tap("Check")
 
         rule.onNode(rebels).performScrollTo().assert(states("Nothing marked yet. Missed: the rebels fired first."))
+    }
+
+    @Test
+    fun mapExplorerTappingPlacesUncoversWhatIsThere() {
+        play("mapExplorer", isCorrect = true)
+
+        rule.onNode(hasContentDescription("2. Brewery on Broad Street")).performScrollTo().performClick()
+        shows("Over 70 workers and no cholera deaths")
+        rule.onNode(hasContentDescription("3. Poland Street workhouse")).performScrollTo().performClick()
+        shows("535 people lived here")
+        shows("2 of 3 explored")
+        tap("Their water didn't come from the Broad Street pump")
+        harness.tap("Check")
+    }
+
+    @Test
+    fun mapExplorerListsItsPlacesForKeyboardAndTalkBack() {
+        play("mapExplorer", isCorrect = false)
+
+        rule.onNode(hasText("Broad Street pump") and hasAnyAncestor(hasContentDescription("Places"))).performScrollTo().performClick()
+        shows("Most of the deaths were in houses a few streets from this pump.")
+        rule.onNode(hasContentDescription("1. Broad Street pump")).assertIsSelected()
+        shows("1 of 3 explored")
     }
 }

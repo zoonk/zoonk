@@ -2,6 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_reasoning_badge_compare_sources": "bcb6bc0338ea98be2bdbc1e9e5e26bc7b9b2746644c4b0b7ab8bf62f91bed2a1",
+  "activities_reasoning_badge_explore_map": "4e7d7a84bbd5d3a821da97b5c6bdf6c1fe1418323c24d4f400de629d735e3204",
   "activities_reasoning_badge_fill_square": "6bff0f2b4d73928aad77a4b1965456e0aabbb9d6bbbdf5f24a6c0ad352960d25",
   "activities_reasoning_grid_all_filled": "82bbc3688f480eac1255cc05b89d9965fe6355b96115ae36fd943486e90582f1",
   "activities_reasoning_grid_counted": "ff3d78c79ee46544a2a500a7c949af10ea098dc1fa8029abb39dd59b6e14fc59",
@@ -17,6 +18,45 @@
   "activities_reasoning_grid_what_goes": "8dc1676418e41f36ad06031bd51530b0f7fbf2c1257d426bb41549fc5d204ebe",
   "activities_reasoning_grid_which_genotype": "121a9ab1d4e74620e873cb864bca9bf95c5eb9b9bcd43b1a18a4c12f63cdabc6",
   "activities_reasoning_grid_your_answer": "a4cdb43d31c11c6f9d73b3a05de60906284da29ecff2ca427f8cd57f39ec69f3",
+  "activities_reasoning_map_africa": "71670c39074c74554f2baf4b6e11aae2d805a192f00088d60f554bb80f2f8687",
+  "activities_reasoning_map_americas": "5a80e95faad3dd8c88ea00cbe8932b3af7cdde48075011110e7dd7c6c9b56352",
+  "activities_reasoning_map_asia": "2bdd70b08cfd88b3889d9b8efc63091bddf8b430c223caf6570f791be8eb87d2",
+  "activities_reasoning_map_brazil_states": "20b261ecdc39a41bf792dcd5f17f5bac4fc9d1480eeac72f4bb3075ee81ce2d6",
+  "activities_reasoning_map_description": "8ebb8dcdf83e380f6959346aa81a6ce97dd83918c84acf6bafbf41f8b86b2d12",
+  "activities_reasoning_map_europe": "71817e7e56e2df908bba6f7aa75c9f39301c7de697ea3b789afaf6b49af99b5f",
+  "activities_reasoning_map_europe_1914": "a983c75bc4ba631bd67bb913a860d4a2d4ddc93c4a2d0a29a7799e36e4ad58e7",
+  "activities_reasoning_map_explored": "41a28190908cb2450d9f136fa8dff89ba03c08a9c74c022cfec03377ee476971",
+  "activities_reasoning_map_hint": "dc67ef57f935e283f322c0d2d653066fac48fc38ea1f9a6dccfd75631d720ddd",
+  "activities_reasoning_map_label_africa": "0eaeb18ea518aeca7ac5381f1161b859e37b9046d2a906e0f60608fbaa83218c",
+  "activities_reasoning_map_label_antarctica": "78ee43d749f9f69bce2514af3c3744a75bca4309123ffb009edd68ec9cae70fd",
+  "activities_reasoning_map_label_asia": "5a255a0c951376d124cf39e24f5225f6be25e92108a25d7b40f84d3a30b00076",
+  "activities_reasoning_map_label_austria_hungary": "3cea8e725fb6af8fcb386259b438fb4f7979e16a2890123a0064b121e645c645",
+  "activities_reasoning_map_label_europe": "4838f9e83404c46ad22e87bbcbe6d2627d6ef831943f586b909147e709682c04",
+  "activities_reasoning_map_label_france": "d8af54427e2b2e5f3c0d953bcd94584068d0b06cf14ec33fee102ea84690043d",
+  "activities_reasoning_map_label_german_empire": "d3490d8b5f38a7404ab1fe264eaf6471435df1b5efa2303bc5e216548b9a8d10",
+  "activities_reasoning_map_label_italy": "b84366f8fea87b8e1631fb1dea50252fb8aebbc5c111ff2a680f74056a0932e5",
+  "activities_reasoning_map_label_north_america": "f19b9b3ae1b7c8f98708bb07416e0e5a268674bc76d81a2abf17294ca74cfa3e",
+  "activities_reasoning_map_label_oceania": "f373ee247b2d4d8196d8404db53d26ec66f2540234d34cee1fcfcbccb25379a5",
+  "activities_reasoning_map_label_ottoman_empire": "1a52273f6af2fe976b4f076ebc0244b9a14d9f47d7445ff757f2481be85b4494",
+  "activities_reasoning_map_label_parthian_empire": "8470766a4e7dd2e80fbda998b2c9d878e8e81d5214797ae5e0112b11ed26a50c",
+  "activities_reasoning_map_label_roman_empire": "2fd3394994ac384c5f552fb6bc74e8c57c1321d2a962ab0037a9cdbd5a7ae96f",
+  "activities_reasoning_map_label_russian_empire": "1b4f5a9009235ce989fef3e4ba5258d386dc933771816a18d84690a45a19fd74",
+  "activities_reasoning_map_label_serbia": "0ac8bd6a28685be68abe885583a304c8dc50574ebab681f8a7a1c5000e900fa3",
+  "activities_reasoning_map_label_south_america": "a46edb7d495cfca6f430387ddbab93ab10cc700aaecac65e9a7ceafdfec8b94f",
+  "activities_reasoning_map_label_spain": "f05195d0dc805e1341e9b8dd3a18beb5625c31f3f8bf8c87df806da0fc84996a",
+  "activities_reasoning_map_label_triple_alliance": "b65a072c7a118591c539519d8adfe6ed1b941ee99fbc05b3518d8b4ccd294f68",
+  "activities_reasoning_map_label_triple_entente": "505688f109697ebc37de75abe11870f6a9c4b397e58317d418f8fe46cb4d0fca",
+  "activities_reasoning_map_label_united_kingdom": "4bc952a0266e18628ab4975219b409c9cc877ab5807395285da364579065bcc8",
+  "activities_reasoning_map_london_1854": "36f7a9867eb5e51e4917bcfc5ab289ce02756272e8dc476531aeafdb7377d61d",
+  "activities_reasoning_map_note_borders": "2fce99eed5e1c1c5d9e80efecd301c6df6a06b36f25c126ead157f51c0fa67c6",
+  "activities_reasoning_map_note_london_1854": "b4beda3be0d66d95d2018986b30e71e1817638012e073c4f2d5d180266170590",
+  "activities_reasoning_map_place": "98fcc44951154507a11e077d0121dae4eaf58818caf1af5029c26e7cb5a17c9f",
+  "activities_reasoning_map_places": "11a64e00c63a4c53d69a306c2f15326d74d03316a1ac49607e2f06062de3afba",
+  "activities_reasoning_map_roman_empire_117": "32b0d1a83f607c5523368c06527d36282e9a4eac91b1baf774322421545815d8",
+  "activities_reasoning_map_unavailable": "429e7215449cd2b574dde2f76b8608688726892ac6ade9c2717689f4a489d873",
+  "activities_reasoning_map_usa_states": "1437622baa7ee0eb11f41758b96398687b8b18fbdcb0fc04e8f9a9c20e997248",
+  "activities_reasoning_map_world": "768a3624f2f593369780c0ce66a3ef2d9aca7d14026c61a716527643f5276305",
+  "activities_reasoning_map_world_continents": "2cccec370e145ea674070994f5da385fa21e1b82611cf1a3958978c20df7c7f1",
   "activities_reasoning_source_mark": "8f2069c9a7f6e37bc408288576204f92cbcecf3696f9d514638df3ca05da9ca0",
   "activities_reasoning_source_missed": "85657da9bd85106379f363f255e70370a898badb2f45e5904bba20c872126a7d",
   "activities_reasoning_source_missed_passages": "56ae374cc661aca2fcacfbf44ef2351f4df6b5da0504552e1952be8570d00dd6",
@@ -84,4 +124,59 @@
     <string name="activities_reasoning_source_what_to_mark">À marquer</string>
     <!-- Legend once checked: the dashed line under a passage the learner should have marked. -->
     <string name="activities_reasoning_source_missed">Oubliés</string>
+    <!-- A map the learner explores by tapping its numbered places. -->
+    <string name="activities_reasoning_badge_explore_map">Explorer la carte</string>
+    <!-- How many of the map's places the learner has opened, like "2 of 3 explored". -->
+    <string name="activities_reasoning_map_explored">%1$d sur %2$d explorés</string>
+    <string name="activities_reasoning_map_hint">Appuie sur un lieu numéroté pour voir ce qui s’y trouve.</string>
+    <!-- A numbered place on the map, like "1. Broad Street pump". -->
+    <string name="activities_reasoning_map_place">%1$d. %2$s</string>
+    <!-- The name of the list of the map's places, for TalkBack. -->
+    <string name="activities_reasoning_map_places">Lieux</string>
+    <!-- What the map shows, for TalkBack: its name, then its numbered places, like "Map of Soho, London, in 1854 with 3 places to explore: 1. Broad Street pump, 2. Brewery on Broad Street, 3. Poland Street workhouse." -->
+    <plurals name="activities_reasoning_map_description">
+        <item quantity="one">%1$s avec %2$d lieu à explorer : %3$s.</item>
+        <item quantity="many">%1$s avec %2$d lieux à explorer : %3$s.</item>
+        <item quantity="other">%1$s avec %2$d lieux à explorer : %3$s.</item>
+    </plurals>
+    <string name="activities_reasoning_map_unavailable">Cette carte ne peut pas s’afficher. Passe à l’écran suivant.</string>
+    <string name="activities_reasoning_map_africa">Carte de l’Afrique</string>
+    <string name="activities_reasoning_map_americas">Carte des Amériques</string>
+    <string name="activities_reasoning_map_asia">Carte de l’Asie</string>
+    <string name="activities_reasoning_map_brazil_states">Carte du Brésil par État</string>
+    <string name="activities_reasoning_map_europe">Carte de l’Europe</string>
+    <string name="activities_reasoning_map_europe_1914">Carte de l’Europe en 1914</string>
+    <!-- Soho is a district of London. -->
+    <string name="activities_reasoning_map_london_1854">Carte de Soho, à Londres, en 1854</string>
+    <string name="activities_reasoning_map_roman_empire_117">Carte de l’Empire romain en 117 apr. J.-C.</string>
+    <string name="activities_reasoning_map_usa_states">Carte des États-Unis par État</string>
+    <string name="activities_reasoning_map_world">Carte du monde</string>
+    <string name="activities_reasoning_map_world_continents">Carte des continents du monde</string>
+    <!-- Below a historical map whose borders are drawn simply. -->
+    <string name="activities_reasoning_map_note_borders">Les frontières sont simplifiées.</string>
+    <!-- Below the 1854 map of Soho, drawn after the map the physician John Snow made of a cholera outbreak. -->
+    <string name="activities_reasoning_map_note_london_1854">Plan de rues simplifié, d’après la carte de John Snow de 1854.</string>
+    <!-- Names written on the maps. -->
+    <string name="activities_reasoning_map_label_africa">Afrique</string>
+    <string name="activities_reasoning_map_label_antarctica">Antarctique</string>
+    <string name="activities_reasoning_map_label_asia">Asie</string>
+    <string name="activities_reasoning_map_label_austria_hungary">Autriche-Hongrie</string>
+    <string name="activities_reasoning_map_label_europe">Europe</string>
+    <string name="activities_reasoning_map_label_france">France</string>
+    <string name="activities_reasoning_map_label_german_empire">Empire allemand</string>
+    <string name="activities_reasoning_map_label_italy">Italie</string>
+    <string name="activities_reasoning_map_label_north_america">Amérique du Nord</string>
+    <string name="activities_reasoning_map_label_oceania">Océanie</string>
+    <string name="activities_reasoning_map_label_ottoman_empire">Empire ottoman</string>
+    <string name="activities_reasoning_map_label_parthian_empire">Empire parthe</string>
+    <string name="activities_reasoning_map_label_roman_empire">Empire romain</string>
+    <string name="activities_reasoning_map_label_russian_empire">Empire russe</string>
+    <string name="activities_reasoning_map_label_serbia">Serbie</string>
+    <string name="activities_reasoning_map_label_south_america">Amérique du Sud</string>
+    <string name="activities_reasoning_map_label_spain">Espagne</string>
+    <!-- The alliance of Germany, Austria-Hungary and Italy before the First World War. -->
+    <string name="activities_reasoning_map_label_triple_alliance">Triple-Alliance</string>
+    <!-- The alliance of France, the United Kingdom and Russia before the First World War. -->
+    <string name="activities_reasoning_map_label_triple_entente">Triple-Entente</string>
+    <string name="activities_reasoning_map_label_united_kingdom">Royaume-Uni</string>
 </resources>
