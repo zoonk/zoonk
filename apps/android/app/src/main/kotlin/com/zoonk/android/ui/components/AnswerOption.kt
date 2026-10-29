@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -42,7 +43,8 @@ fun AnswerOptionGroup(
  * One option of a question (main's `AnswerOption`): its number key (for keyboards, so TalkBack
  * skips it), its words and, once checked,
  * the word its result shows. The word sits beside the option's words while their longest word fits
- * next to it, and under them otherwise, so a long word never breaks at a large font.
+ * next to it, and under them otherwise, so a long word never breaks at a large font. An option
+ * among several picks is a [Role.Checkbox]; [tag] replaces the result's word (an order step's place).
  */
 @Composable
 fun AnswerOption(
@@ -52,6 +54,8 @@ fun AnswerOption(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    role: Role = Role.RadioButton,
+    tag: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     val tone = answerTone(picked, result)
@@ -65,15 +69,20 @@ fun AnswerOption(
                 .clip(shape)
                 .background(tone.container)
                 .border(tone.border, shape)
-                .selectable(selected = picked, enabled = enabled, role = Role.RadioButton, onClick = onClick)
-                .padding(horizontal = 14.dp, vertical = 12.dp),
+                .then(
+                    if (role == Role.Checkbox) {
+                        Modifier.toggleable(value = picked, enabled = enabled, role = role, onValueChange = { onClick() })
+                    } else {
+                        Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
+                    },
+                ).padding(horizontal = 14.dp, vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         NumberKey(marker, Modifier.alignByBaseline())
         TagBesideOrUnder(
             modifier = Modifier.weight(1f).alignByBaseline(),
             content = content,
-            tag = { if (result != null) AnswerTag(picked, result) },
+            tag = tag ?: { if (result != null) AnswerTag(picked, result) },
         )
     }
 }
