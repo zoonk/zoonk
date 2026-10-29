@@ -30,6 +30,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.shortDayRange
+import com.zoonk.android.feature.plan.shortFocusName
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.Readout
@@ -152,6 +154,11 @@ private fun todayEyebrow(model: TodayDayModel): AnnotatedString {
                 else -> pluralStringResource(R.plurals.today_days_left, daysLeft, daysLeft)
             }
         parts += AnnotatedString(text)
+    }
+
+    today.shortPlan?.let { short ->
+        parts += AnnotatedString(shortDayRange(short.days.toInt(), short.day.toInt()))
+        parts += AnnotatedString(shortFocusName(short.focus, mocksRequirePlus = !model.day.examAccess.includesMockExams))
     }
 
     when (exam?.stage) {

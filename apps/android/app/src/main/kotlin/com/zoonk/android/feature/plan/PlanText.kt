@@ -98,14 +98,20 @@ fun shortDays(
 ): String? {
     val short = phase.short ?: return null
     val days = plan.shortPlan?.days?.toInt() ?: return null
-    val first = short.firstDay.toInt()
-    val last = short.lastDay.toInt()
-    return if (first == last) {
+    return shortDayRange(days, short.firstDay.toInt(), short.lastDay.toInt())
+}
+
+@Composable
+fun shortDayRange(
+    days: Int,
+    first: Int,
+    last: Int = first,
+): String =
+    if (first == last) {
         stringResource(R.string.plan_short_day, first, days)
     } else {
         stringResource(R.string.plan_short_days, first, last, days)
     }
-}
 
 /** Core leaves the title empty for lessons being written in the goal's own course. */
 @Composable

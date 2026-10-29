@@ -170,6 +170,21 @@ class TodayScreenshots {
                 },
                 "unopened" to unopened(),
                 "started" to started(),
+                "short-plan" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "shortPlan" to
+                                    buildJsonObject {
+                                        put("day", 2)
+                                        put("days", 5)
+                                        put("focus", "mockAndReview")
+                                        put("mockDate", null as String?)
+                                    },
+                            ),
+                    ),
                 "mock-funding" to
                     day(
                         blocks = lessons(3),
