@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "player_language_all_matched": "34ef1dd433187c7d0aae31b3d929af2a79d1e3d005729b4b2d0bea99279dfa99",
+  "player_language_alphabet": "e6d1ca2c2224672852172c2db7fe1e693b5a34efc4c8c7dfb7553ba26dcbabc9",
+  "player_language_blank": "d56a0d50768b3d19b83c174116a64166bda2047db12947373daf23ede3f6da14",
+  "player_language_blank_checked": "b28e220f954907f4104b4db98a85deadc01cc3c2d5c85408b5b2bd77d6414513",
+  "player_language_blank_filled": "64b01ee39aeace6e9fa80c81a620b55e112e850732281a64c08dc57667b85db7",
+  "player_language_checked_word": "ebdc576d8370eba99dc14e35e9fff77860fda1136e5ebf3779adb44ef8bbef33",
+  "player_language_correct": "2477d22129f31580774bf38ccbb5e24035b20ee55dc4c70fd34809da169253a9",
+  "player_language_incorrect": "c4572a502f3f1fd3aa4495ad67d7de1eb10ec4a74fdb84a9dd98c13b26ac831a",
+  "player_language_match_the_pairs": "4949221009d59bf74d30758826e66fd54c70a0de677c8f439854e4086fdd1f89",
+  "player_language_matched": "5d06dcbd4794e55ec9ebb1a09f85cb98728f4d25c01b25122e5eff87f30846cb",
+  "player_language_move_earlier": "925c37dccb03454383be4617739d8308de6b8e4be27c7b7051be8c27e5f98506",
+  "player_language_move_later": "a21b2b3fb27ccb7d32003f0f01eaead78ca83752bd54a1d43d4c06b6fbf8004c",
+  "player_language_not_a_pair": "95bfd1c4a931b3b110ac288bade9722e3635180bc53436d4fdfc0961afb566fe",
+  "player_language_pick_words": "82645d4b47806edd10aada5dc30713035cd333f9ff6465e8d9717debe3a4d308",
+  "player_language_play": "7d3ae87f92a53bd0353ed0b21087540540b72895eeb7c1441ea5ff6e26ac3887",
+  "player_language_play_pronunciation": "d0e5aa73fe74536b15521d45183570d9b67148a9de75ea21adba00823cd2fd82",
+  "player_language_position": "53be05b3f546962c21f3f538785e02329d5e5bddea47db3d07aee084b387b785",
+  "player_language_pronunciation_tip": "67f7255c670a0b8286963811d08b7da689c6506fc0276263cf929028e3674a5a",
+  "player_language_remove": "6023582fd97f79ebe7ee821b057bb50f53e752101f12692c2d7724405dd7aef6",
+  "player_language_selected": "e57cc644de7f75b51b0752c39fe7428f4f4a67cd403682cefa05023a40bdfef7",
+  "player_language_show_translation": "64bf1166cfd16cb0d558fc92814bc068ea160def48b12a805215a7e81a2d5dce",
+  "player_language_stop": "39384a67f7ceff696783ee13a339d83f4559316da05e351dccaddb9b4a3d3519",
+  "player_language_translate": "e0af578872ba5252afe283a2f55b61f1e6d0d58063cd9488995baaec6c40a873",
+  "player_language_usage": "316d589b51836c8fe37412350330dc5fe21321cf1783a36ad82b3c1963ca0373",
+  "player_language_vocabulary": "c51ab5d310158807edfc9400f4a277ebd4990a9af90643ffb1e04e8fca61d2f8",
+  "player_language_what_do_you_hear": "9e8437948e8d4eb0b982a6126f8182c68fbc1357bf0f36417f758f9534f3fc22",
+  "player_language_which_means_this": "534389d6ab931a82855a56469257cc6c988b7c52d6f4e937d5dbd51345583696",
+  "player_language_word_bank": "70bef1b992fadf3067302df4539bb82571679c9a36060a415840232de868b940",
+  "player_language_your_answer": "03277700b2dd611cda2b962013a3e014a4b5a7a2df9ba5562ee869376b181abd"
+}
+-->
+<resources>
+    <string name="player_language_translate">Übersetzen</string>
+    <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
+    <string name="player_language_which_means_this">Welches davon bedeutet das?</string>
+    <string name="player_language_what_do_you_hear">Was hörst du?</string>
+    <string name="player_language_play">Abspielen</string>
+    <!-- Stops the sentence playing. -->
+    <string name="player_language_stop">Stopp</string>
+    <string name="player_language_play_pronunciation">Aussprache abspielen</string>
+    <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
+    <string name="player_language_vocabulary">Wortschatz: %1$s</string>
+    <!-- Screen reader name of an alphabet screen; %1$s is the letter. -->
+    <string name="player_language_alphabet">Alphabet: %1$s</string>
+    <!-- Read before a note on how a word is used. -->
+    <string name="player_language_usage">Verwendung:</string>
+    <!-- Read before a tip on how to say a word. -->
+    <string name="player_language_pronunciation_tip">Tipp zur Aussprache:</string>
+    <string name="player_language_word_bank">Wortauswahl</string>
+    <string name="player_language_your_answer">Deine Antwort</string>
+    <string name="player_language_pick_words">Wähle Wörter für deine Antwort aus</string>
+    <!-- Screen reader name of a placed word; %1$d is its place in the answer, %2$s the word. -->
+    <string name="player_language_position">Position %1$d: %2$s</string>
+    <!-- Screen reader name of a checked word; %1$s is the word, %2$s says whether it's correct. -->
+    <string name="player_language_checked_word">%1$s. %2$s.</string>
+    <string name="player_language_correct">Richtig</string>
+    <string name="player_language_incorrect">Falsch</string>
+    <!-- Screen reader action that moves a placed word one place earlier in the answer. -->
+    <string name="player_language_move_earlier">Weiter nach vorn</string>
+    <!-- Screen reader action that moves a placed word one place later in the answer. -->
+    <string name="player_language_move_later">Weiter nach hinten</string>
+    <!-- Screen reader action that shows a word's translation. -->
+    <string name="player_language_show_translation">Übersetzung anzeigen</string>
+    <!-- Screen reader name of an empty blank; %1$d is its place in the sentence. -->
+    <string name="player_language_blank">Lücke %1$d</string>
+    <string name="player_language_blank_filled">Lücke %1$d: %2$s</string>
+    <!-- Screen reader action that takes a placed word back to the word bank. -->
+    <string name="player_language_remove">Entfernen</string>
+    <!-- %1$d is the blank's place, %2$s the word, %3$s says whether it's correct. -->
+    <string name="player_language_blank_checked">Lücke %1$d: %2$s. %3$s.</string>
+    <string name="player_language_match_the_pairs">Ordne die Paare zu.</string>
+    <string name="player_language_all_matched">Alle Paare sind zugeordnet. Tippe auf „Prüfen“, um fortzufahren.</string>
+    <!-- Screen reader state of a word already paired with its match. -->
+    <string name="player_language_matched">Zugeordnet</string>
+    <!-- Screen reader state of the word picked to pair next. -->
+    <string name="player_language_selected">Ausgewählt</string>
+    <!-- Said by the screen reader when two picked words don't go together. -->
+    <string name="player_language_not_a_pair">Kein Paar</string>
+</resources>

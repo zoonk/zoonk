@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_language_translate">Translate</string>
+    <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
+    <string name="player_language_which_means_this">Which one means this?</string>
+    <string name="player_language_what_do_you_hear">What do you hear?</string>
+    <string name="player_language_play">Play</string>
+    <!-- Stops the sentence playing. -->
+    <string name="player_language_stop">Stop</string>
+    <string name="player_language_play_pronunciation">Play pronunciation</string>
+    <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
+    <string name="player_language_vocabulary">Vocabulary: %1$s</string>
+    <!-- Screen reader name of an alphabet screen; %1$s is the letter. -->
+    <string name="player_language_alphabet">Alphabet: %1$s</string>
+    <!-- Read before a note on how a word is used. -->
+    <string name="player_language_usage">Usage:</string>
+    <!-- Read before a tip on how to say a word. -->
+    <string name="player_language_pronunciation_tip">Pronunciation tip:</string>
+    <string name="player_language_word_bank">Word bank</string>
+    <string name="player_language_your_answer">Your answer</string>
+    <string name="player_language_pick_words">Pick words to build your answer</string>
+    <!-- Screen reader name of a placed word; %1$d is its place in the answer, %2$s the word. -->
+    <string name="player_language_position">Position %1$d: %2$s</string>
+    <!-- Screen reader name of a checked word; %1$s is the word, %2$s says whether it's correct. -->
+    <string name="player_language_checked_word">%1$s. %2$s.</string>
+    <string name="player_language_correct">Correct</string>
+    <string name="player_language_incorrect">Incorrect</string>
+    <!-- Screen reader action that moves a placed word one place earlier in the answer. -->
+    <string name="player_language_move_earlier">Move earlier</string>
+    <!-- Screen reader action that moves a placed word one place later in the answer. -->
+    <string name="player_language_move_later">Move later</string>
+    <!-- Screen reader action that shows a word's translation. -->
+    <string name="player_language_show_translation">Show translation</string>
+    <!-- Screen reader name of an empty blank; %1$d is its place in the sentence. -->
+    <string name="player_language_blank">Blank %1$d</string>
+    <string name="player_language_blank_filled">Blank %1$d: %2$s</string>
+    <!-- Screen reader action that takes a placed word back to the word bank. -->
+    <string name="player_language_remove">Remove</string>
+    <!-- %1$d is the blank's place, %2$s the word, %3$s says whether it's correct. -->
+    <string name="player_language_blank_checked">Blank %1$d: %2$s. %3$s.</string>
+    <string name="player_language_match_the_pairs">Match the pairs.</string>
+    <string name="player_language_all_matched">All pairs matched. Press Check to continue.</string>
+    <!-- Screen reader state of a word already paired with its match. -->
+    <string name="player_language_matched">Matched</string>
+    <!-- Screen reader state of the word picked to pair next. -->
+    <string name="player_language_selected">Selected</string>
+    <!-- Said by the screen reader when two picked words don't go together. -->
+    <string name="player_language_not_a_pair">Not a pair</string>
+</resources>

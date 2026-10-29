@@ -158,6 +158,9 @@ fun stepResult(
 private const val ACTIVITY_CHECK =
     """{"kind":"choice","question":"Which line rises fastest?","options":[{"id":"a","isCorrect":true,"reason":"It doubles every step.","text":"Line A"},{"id":"b","isCorrect":false,"reason":"It stays flat.","text":"Line B"}]}"""
 
+/** A check only the template's own canvas can answer, so a template without a renderer can't be played. */
+const val INTERACTION_ACTIVITY_CHECK = """{"kind":"interaction","explanation":"The lines cross at x = 2."}"""
+
 const val NUMERIC_ACTIVITY_CHECK =
     """{"kind":"numeric","question":"How much do you pay?","answer":52,"tolerance":{"kind":"absolute","value":0},"unit":"R$","explanation":"You pay 65% of R$80."}"""
 

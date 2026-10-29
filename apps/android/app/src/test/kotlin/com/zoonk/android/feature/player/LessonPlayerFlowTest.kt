@@ -361,7 +361,7 @@ class LessonPlayerFlowTest {
 
     @Test
     fun aLessonNeedingAScreenTheAppCantShowYetSaysSoInsteadOfOpening() {
-        play(listOf(explanationStep("idea"), fillBlankStep(BLANK_ID), summaryStep("end")))
+        play(listOf(explanationStep("idea"), activityStep(BLANK_ID, INTERACTION_ACTIVITY_CHECK), summaryStep("end")))
 
         rule.onNodeWithText("This lesson isn't in the app yet").assertIsDisplayed()
         tap("Back")
@@ -370,7 +370,10 @@ class LessonPlayerFlowTest {
 
     @Test
     fun aScreenTheLessonCanDoWithoutIsLeftOut() {
-        play(listOf(explanationStep("idea"), fillBlankStep(BLANK_ID), summaryStep("end"))) { optionalStepIds = """["$BLANK_ID"]""" }
+        play(listOf(explanationStep("idea"), activityStep(BLANK_ID, INTERACTION_ACTIVITY_CHECK), summaryStep("end"))) {
+            optionalStepIds =
+                """["$BLANK_ID"]"""
+        }
 
         tap("Next")
         rule.onNodeWithText("One idea.").assertIsDisplayed()

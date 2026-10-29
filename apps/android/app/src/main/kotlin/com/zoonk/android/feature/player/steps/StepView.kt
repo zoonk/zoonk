@@ -10,6 +10,9 @@ import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.challengeProgress
 import com.zoonk.android.feature.player.engine.pickChallengeChoice
+import com.zoonk.android.feature.player.language.LanguageStepView
+import com.zoonk.android.feature.player.language.LessonLanguage
+import com.zoonk.android.feature.player.language.languageOptionAnswer
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
@@ -53,6 +56,7 @@ fun StepView(
     screen: LessonScreen,
     actions: StepActions,
     navigator: AppNavigator,
+    language: LessonLanguage,
 ) {
     val answer = state.answers[step.id]
     val result = state.results[step.id]
@@ -69,14 +73,13 @@ fun StepView(
         is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator)
         is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions)
         is StepContent.Challenge -> ChallengeView(step, content, answer, result, state, actions)
-        is StepContent.Language -> Unit
+        is StepContent.Language -> LanguageStepView(content, answer, result, locked, language, actions)
     }
 }
 
 fun isPlayable(step: LessonStep): Boolean =
     when (val content = step.content) {
         is StepContent.Activity -> content.isPlayable
-        is StepContent.Language -> false
         else -> true
     }
 
@@ -127,6 +130,10 @@ fun keyPick(
                 (content.frame.check as? ChoiceCheckValue)?.value?.options?.getOrNull(index)?.let {
                     LessonAnswer.Activity(choiceAnswer(it.id))
                 }
+            }
+
+            is StepContent.Language -> {
+                languageOptionAnswer(content, index)
             }
 
             else -> {

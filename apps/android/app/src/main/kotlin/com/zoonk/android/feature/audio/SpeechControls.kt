@@ -139,13 +139,16 @@ fun speechActionLabel(
         SpeechState.Idle -> idle
     }
 
-/** [text] is what the audio says, shown when it couldn't play; a limit that only waits can't be retried. */
+/**
+ * [text] is what the audio says, shown when it couldn't play; a limit that only waits can't be
+ * retried. Without [navigator] (a recording, which no limit refuses) there are no limit actions.
+ */
 @Composable
 fun SpeechFailedNote(
     language: String,
     limit: Limit?,
     onRetry: () -> Unit,
-    navigator: AppNavigator,
+    navigator: AppNavigator?,
     modifier: Modifier = Modifier,
     text: String? = null,
 ) {
@@ -174,9 +177,9 @@ fun SpeechFailedNote(
                 Text(stringResource(R.string.audio_try_again))
             }
         }
-        limit?.let {
+        if (limit != null && navigator != null) {
             LimitActions(
-                it,
+                limit,
                 onCreateAccount = { navigator.open(AppRoute.Login) },
                 onSeePlus = { navigator.open(AppRoute.Subscription) },
             )

@@ -85,7 +85,7 @@ private val SLOW_CHECK = 15.seconds
 fun count(value: Int): String = formatNumber(value.toDouble(), currentLocale())
 
 @Composable
-private fun ReadScene(content: @Composable ColumnScope.() -> Unit) {
+internal fun ReadScene(content: @Composable ColumnScope.() -> Unit) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp), content = content)
 }
 

@@ -36,6 +36,7 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -76,7 +77,14 @@ import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.PrimaryLabel
 import com.zoonk.android.feature.player.engine.Segment
 import com.zoonk.android.feature.player.engine.isLanguageStep
+import com.zoonk.android.feature.player.engine.isReadStep
 import com.zoonk.android.feature.player.engine.screen
+import com.zoonk.android.feature.player.language.LessonLanguage
+import com.zoonk.android.feature.player.language.PromptAudio
+import com.zoonk.android.feature.player.language.PromptAudioEffect
+import com.zoonk.android.feature.player.language.PromptAudioIconButton
+import com.zoonk.android.feature.player.language.promptAudioUrl
+import com.zoonk.android.feature.player.language.rememberLessonLanguage
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.android.feature.player.steps.StepActions
@@ -148,6 +156,8 @@ fun LessonPlayer(
             state?.completion?.status == CompletionStatus.Saving ||
                 state?.completion?.status == CompletionStatus.Saved
         }
+    val language = rememberLessonLanguage(lesson.language, lesson.targetLanguage)
+    language.prompt?.let { PromptAudioEffect(screen?.step, it) }
     val actions =
         remember(viewModel) {
             object : StepActions {
@@ -229,7 +239,7 @@ fun LessonPlayer(
                 screen.primary != null -> {
                     {
                         BarColumn {
-                            ActionBar(screen, actions, onBack = { viewModel.dispatch(LessonAction.GoBack) }) {
+                            ActionBar(screen, actions, language.prompt, onBack = { viewModel.dispatch(LessonAction.GoBack) }) {
                                 // A screen that already offers help keeps the ask quiet.
                                 ask?.invoke(state.tutorScope(screen), state.showsMiss(screen) && screen.struggleOffer == null)
                             }
@@ -247,7 +257,7 @@ fun LessonPlayer(
                 Starting()
             } else {
                 Segments(screen.segments, state)
-                Content(state, screen, ending, viewModel, actions, exits, navigator, ownEnd)
+                Content(state, screen, ending, viewModel, actions, exits, navigator, ownEnd, language)
             }
         }
     }
@@ -362,6 +372,7 @@ private fun Content(
     exits: LessonPlayerExits,
     navigator: AppNavigator,
     ownEnd: LessonEndSlot?,
+    language: LessonLanguage,
 ) {
     val run = state.run
 
@@ -408,7 +419,8 @@ private fun Content(
             ) {
                 LessonColumn {
                     Notice(state, screen, viewModel)
-                    StepView(step, state, screen, actions, navigator)
+                    // A screen's own picks (placed words, filled blanks) start over on the next screen.
+                    key(step.id) { StepView(step, state, screen, actions, navigator, language) }
                     Result(state, screen)
                 }
             }
@@ -512,10 +524,13 @@ private fun Result(
 private fun ActionBar(
     screen: LessonScreen,
     actions: StepActions,
+    prompt: PromptAudio?,
     onBack: () -> Unit,
     ask: @Composable () -> Unit,
 ) {
     val primary = screen.primary ?: return
+    // A screen that's read (a word, a letter) has its recording here; listening plays it on the screen.
+    val promptUrl = screen.step?.takeIf { it.isReadStep }?.let(::promptAudioUrl)
 
     TaskActions { width ->
         if (screen.canGoBack) {
@@ -523,6 +538,7 @@ private fun ActionBar(
                 Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.player_previous_screen))
             }
         }
+        if (promptUrl != null && prompt != null) PromptAudioIconButton(promptUrl, prompt)
         Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width) {
             if (primary.busy) {
                 CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
