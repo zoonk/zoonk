@@ -176,7 +176,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
         avoid: "Calm failures (a page that didn't load), which stay neutral.",
         meaning: "Wrong or removed: a soft red leaning pink.",
         name: "destructive",
-        use: "A wrong answer's ring and tint, a wrong segment, bad news in a plan change, a destructive action.",
+        use: "A wrong answer's ring and tint, a wrong segment, a destructive action.",
       },
       {
         meaning: "Wrong or removed, in words.",
@@ -188,7 +188,7 @@ export const COLOR_GROUPS: readonly ColorGroup[] = [
         avoid: "A dot: an amber dot is review and practice.",
         meaning: "Look here: a flag, a suggestion, the one thing to improve.",
         name: "warning",
-        use: "A suggestion's mark, a flagged question, Appears a lot, an almost-right answer.",
+        use: "A suggestion's mark, a flagged question, Appears a lot, an almost-right answer, the lessons a plan change leaves out.",
       },
       {
         meaning: "Look here, in words.",
