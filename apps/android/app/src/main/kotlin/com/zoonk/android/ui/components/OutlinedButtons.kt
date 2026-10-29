@@ -66,9 +66,14 @@ fun OutlinedIconButton(
     content = content,
 )
 
-/** Material's width, and its disabled look. */
+/** Material's width. Disabled, the outline dims to half, as main dims a disabled button. */
 @Composable
 private fun outlinedBorder(
     enabled: Boolean,
     material: BorderStroke,
-): BorderStroke = if (enabled) BorderStroke(material.width, MaterialTheme.colorScheme.outline) else material
+): BorderStroke {
+    val outline = MaterialTheme.colorScheme.outline
+    return BorderStroke(material.width, if (enabled) outline else outline.copy(alpha = outline.alpha * DISABLED_ALPHA))
+}
+
+private const val DISABLED_ALPHA = 0.5f

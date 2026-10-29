@@ -8,6 +8,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PixelMap
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.graphics.toPixelMap
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.test.captureToImage
@@ -80,6 +82,41 @@ class OutlinedButtonsTest {
             assertTrue("$look writes its label in $label, not onSurface ${role.onSurface}", distance(label, role.onSurface) < BLENDED)
         }
     }
+
+    @Test
+    fun aDisabledOutlinedButtonsBorderIsTheOutlineDimmedToHalfInEveryLook() {
+        val backgrounds = mutableMapOf<Look, Color>()
+        val outlines = mutableMapOf<Look, Color>()
+
+        compose.setContent {
+            Column {
+                looks.forEach { look ->
+                    ZoonkTheme(darkTheme = look.dark, moreContrast = look.moreContrast) {
+                        backgrounds[look] = MaterialTheme.colorScheme.background
+                        outlines[look] = MaterialTheme.colorScheme.outline
+                        Surface {
+                            OutlinedButton(onClick = {}, enabled = false, modifier = Modifier.padding(8.dp).testTag("off $look")) {
+                                Text("Not now")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        looks.forEach { look ->
+            val background = backgrounds.getValue(look)
+            val dimmed = outlines.getValue(look).copy(alpha = 0.5f).compositeOver(background)
+            val off = border(compose.onNodeWithTag("off $look").captureToImage().toPixelMap(), background)
+
+            assertTrue("$look draws a disabled border $off, not the dimmed outline $dimmed", distance(off, dimmed) < BLENDED)
+        }
+    }
+
+    private fun border(
+        pixels: PixelMap,
+        background: Color,
+    ): Color = (0 until 4).map { pixels[pixels.width / 2, it] }.maxBy { distance(it, background) }
 
     private fun distance(
         a: Color,
