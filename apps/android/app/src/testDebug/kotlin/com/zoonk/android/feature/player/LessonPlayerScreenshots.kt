@@ -173,6 +173,7 @@ class LessonPlayerScreenshots {
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val session = FakeSession(AuthenticatedSession(ANA, "token", "local"))
         val cache = AppCache(session, scope)
+        val drafts = DraftStore(temporary.newFolder(), scope)
         val viewModel =
             LessonPlayerViewModel(
                 LESSON_ID,
@@ -181,7 +182,8 @@ class LessonPlayerScreenshots {
                 LessonPlayerStore(FakeLessonPlayerApi(LessonLoad.Ready(playable(steps))), cache),
                 cache,
                 session,
-                TodayChoices(DraftStore(temporary.newFolder(), scope)),
+                TodayChoices(drafts),
+                drafts,
             )
         val lesson = playable(steps)
         var index by mutableIntStateOf(0)

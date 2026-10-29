@@ -148,6 +148,7 @@ private fun PlayingLesson(
                 cache = app.cache,
                 sessions = app.sessions,
                 choices = app.todayChoices,
+                drafts = app.drafts,
                 isGuest = { (app.sessions.state.value as? SessionState.SignedIn)?.isGuest == true },
                 activeGoalId = {
                     app.learnerSummary.summary.state.value.value

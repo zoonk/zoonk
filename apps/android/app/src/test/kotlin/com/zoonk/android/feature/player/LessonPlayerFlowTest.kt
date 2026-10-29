@@ -28,6 +28,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
+import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
@@ -38,6 +39,7 @@ import com.zoonk.api.models.LessonStepAnswer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import org.junit.Assert.assertEquals
@@ -59,6 +61,7 @@ class LessonPlayerFlowTest {
     private val opened = mutableListOf<AppRoute>()
     private var closed = 0
     private lateinit var api: FakeLessonPlayerApi
+    private lateinit var openAgain: () -> Unit
 
     private val exits =
         object : LessonPlayerExits {
@@ -84,7 +87,9 @@ class LessonPlayerFlowTest {
         api = FakeLessonPlayerApi(LessonLoad.Ready(lesson)).apply(configure)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val cache = AppCache(session, scope)
-        val viewModel =
+        val drafts = DraftStore(folder.newFolder(), scope)
+        runBlocking { drafts.follow { DraftsChange(ana.accountId) } }
+        val newViewModel = {
             LessonPlayerViewModel(
                 lessonId = LESSON_ID,
                 studySessionId = null,
@@ -92,10 +97,14 @@ class LessonPlayerFlowTest {
                 store = LessonPlayerStore(api, cache),
                 cache = cache,
                 sessions = session,
-                choices = TodayChoices(DraftStore(folder.newFolder(), scope)),
+                choices = TodayChoices(drafts),
+                drafts = drafts,
                 isGuest = { guest },
                 activeGoalId = { GOAL_ID },
             )
+        }
+        val viewModel = newViewModel()
+        openAgain = { newViewModel().open(lesson) }
 
         rule.setContent {
             ZoonkTheme {
@@ -218,6 +227,27 @@ class LessonPlayerFlowTest {
 
         tap("Next")
         rule.onNodeWithText("One idea.").assertIsDisplayed()
+    }
+
+    @Test
+    fun anAnswerTheAppNeverSentGoesOutWhenTheLessonOpensAgain() {
+        play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 1 }
+
+        tap("Right")
+        tap("Check")
+        rule.onNodeWithText("Correct!").assertIsDisplayed()
+        rule.waitForIdle()
+
+        openAgain()
+        rule.waitUntil { api.checks.size == 2 }
+
+        assertEquals(
+            1,
+            api.checks
+                .map { it.second.attemptId }
+                .distinct()
+                .size,
+        )
     }
 
     @Test
