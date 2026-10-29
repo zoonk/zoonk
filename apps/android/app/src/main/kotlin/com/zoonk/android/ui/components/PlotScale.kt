@@ -7,15 +7,26 @@ import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
 
-/** Main's `@zoonk/utils/plot-scale`: a flat domain maps everything to the middle of the range. */
+/** Main's `@zoonk/utils/plot-scale`: a flat domain maps everything to the middle of the range, and a flat range to the domain's start. */
 class LinearScale(
     val domain: ClosedFloatingPointRange<Double>,
-    private val range: Pair<Float, Float>,
+    val range: Pair<Float, Float>,
 ) {
     fun toPixel(value: Double): Float {
         val span = domain.endInclusive - domain.start
         val (start, end) = range
         return if (span == 0.0) (start + end) / 2 else (start + (value - domain.start) / span * (end - start)).toFloat()
+    }
+
+    fun toValue(position: Float): Double {
+        val (start, end) = range
+        return if (end ==
+            start
+        ) {
+            domain.start
+        } else {
+            domain.start + (position - start) / (end - start).toDouble() * (domain.endInclusive - domain.start)
+        }
     }
 }
 
@@ -57,7 +68,7 @@ private fun niceStep(
 }
 
 /** JavaScript's `Number(value.toPrecision(12))`, which drops floating-point dust like 0.30000000000000004. */
-private fun cleanFloat(value: Double): Double = BigDecimal(value).round(MathContext(PRECISION)).toDouble()
+internal fun cleanFloat(value: Double): Double = BigDecimal(value).round(MathContext(PRECISION)).toDouble()
 
 private val NICE_STEPS = listOf(1.0, 2.0, 2.5, 5.0, 10.0)
 private const val DEFAULT_TICK_COUNT = 4
