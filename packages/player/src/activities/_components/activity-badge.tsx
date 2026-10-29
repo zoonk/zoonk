@@ -148,7 +148,11 @@ function useBadgeLabel(kind: ActivityBadgeKind): string {
     exploreMap: t("Explore the map"),
     fillSquare: t("Fill the square"),
     findError: t("Find the error"),
-    followKey: t("Follow the key"),
+    followKey: t({
+      description:
+        "A short imperative badge, about as long as the English. The key is an identification key, as in biology: questions that lead to a name. Not a musical key.",
+      message: "Follow the key",
+    }),
     handsOn: t("Hands on"),
     labelIt: t("Label it"),
     linkCauses: t("Link causes"),

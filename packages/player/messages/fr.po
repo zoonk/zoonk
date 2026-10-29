@@ -66,10 +66,11 @@ msgctxt "Xl9ymg"
 msgid "Find the error"
 msgstr "Trouve l’erreur"
 
+#. A short imperative badge, about as long as the English. The key is an identification key, as in biology: questions that lead to a name. Not a musical key.
 #: src/activities/_components/activity-badge.tsx
 msgctxt "Md3D5Q"
 msgid "Follow the key"
-msgstr "Suis la tonalité"
+msgstr "Suis la clé"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "XsJOM5"
