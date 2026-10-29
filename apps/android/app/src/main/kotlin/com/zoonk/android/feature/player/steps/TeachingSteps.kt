@@ -86,7 +86,7 @@ private fun ReadScene(content: @Composable ColumnScope.() -> Unit) {
 }
 
 @Composable
-private fun QuestionScene(content: @Composable ColumnScope.() -> Unit) {
+internal fun QuestionScene(content: @Composable ColumnScope.() -> Unit) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(24.dp), content = content)
 }
 

@@ -1,5 +1,8 @@
 package com.zoonk.android.feature.player
 
+import com.zoonk.android.feature.player.model.ActivityCheck
+import com.zoonk.android.feature.player.model.ActivityFrame
+import com.zoonk.android.feature.player.model.ActivityStepContent
 import com.zoonk.android.feature.player.model.CheckOption
 import com.zoonk.android.feature.player.model.CheckStepContent
 import com.zoonk.android.feature.player.model.ExplanationStepContent
@@ -149,3 +152,18 @@ fun stepResult(
     feedback = "Because.",
     attemptId = attemptId,
 )
+
+private const val ACTIVITY_CHECK =
+    """{"kind":"choice","question":"Which line rises fastest?","options":[{"id":"a","isCorrect":true,"reason":"It doubles every step.","text":"Line A"},{"id":"b","isCorrect":false,"reason":"It stays flat.","text":"Line B"}]}"""
+
+/** A choice activity whose template has no renderer: the frame alone asks it. */
+fun activityStep(id: String): LessonStep {
+    val content =
+        ApiJson.decodeFromString(
+            ActivityStepContent.serializer(),
+            """{"template":"formulaModel","prompt":"Compare the two lines.","fields":{"outputs":[],"variables":[]},"check":$ACTIVITY_CHECK}""",
+        )
+    val frame =
+        ActivityFrame("formulaModel", "Compare the two lines.", ApiJson.decodeFromString(ActivityCheck.serializer(), ACTIVITY_CHECK))
+    return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null))
+}

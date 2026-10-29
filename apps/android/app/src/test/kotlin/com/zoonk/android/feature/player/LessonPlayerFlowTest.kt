@@ -255,6 +255,23 @@ class LessonPlayerFlowTest {
     }
 
     @Test
+    fun anActivityIsAskedFromItsFrameAndCheckedByTheServer() {
+        play(listOf(activityStep("act"), summaryStep("end")))
+
+        rule.onNodeWithText("Compare the two lines.").assertIsDisplayed()
+        tap("Line A")
+        tap("Check")
+
+        rule.onNodeWithText("It doubles every step.").assertIsDisplayed()
+        assertEquals(
+            LessonStepAnswer.LessonStepAnswerOneOf3Value::class,
+            api.checks
+                .single()
+                .second.answer::class,
+        )
+    }
+
+    @Test
     fun aLessonNeedingAScreenTheAppCantShowYetSaysSoInsteadOfOpening() {
         play(listOf(explanationStep("idea"), fillBlankStep(BLANK_ID), summaryStep("end")))
 

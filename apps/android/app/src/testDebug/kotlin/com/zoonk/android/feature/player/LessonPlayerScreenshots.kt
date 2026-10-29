@@ -29,6 +29,7 @@ import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepVisual
 import com.zoonk.android.feature.player.model.toStepResult
+import com.zoonk.android.feature.player.steps.choiceAnswer
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.Limit
@@ -98,6 +99,7 @@ class LessonPlayerScreenshots {
             checkStep("quiz"),
             typedAnswerStep("why"),
             spokenStep("say"),
+            activityStep("act"),
             summaryStep("end"),
         )
 
@@ -171,6 +173,15 @@ class LessonPlayerScreenshots {
                     LessonAction.CheckResolved("say", heard, counts = true),
                 )
             },
+            "activity-checked" to {
+                at(
+                    *toQuiz(),
+                    LessonAction.SkipSteps(listOf("quiz", "why", "say")),
+                    LessonAction.SelectAnswer("act", LessonAnswer.Activity(choiceAnswer("b"))),
+                    LessonAction.CheckStarted("act"),
+                    LessonAction.CheckResolved("act", checkResult(false).toStepResult(null), counts = true),
+                )
+            },
             "free-limit" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)))) },
             "slow-down" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.SlowDown(30)))) },
             "finish-ready" to { LessonPlayerState.initial(LESSON_ID, emptyList(), now = 0) },
@@ -180,7 +191,7 @@ class LessonPlayerScreenshots {
                     LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right")),
                     LessonAction.CheckResolved("quiz", checkResult(true).toStepResult("Right"), counts = true),
                     LessonAction.Continue,
-                    LessonAction.SkipSteps(listOf("why", "say")),
+                    LessonAction.SkipSteps(listOf("why", "say", "act")),
                     LessonAction.Continue,
                     LessonAction.CompletionSaved(ApiJson.decodeFromString(LibraryLessonCompletion.serializer(), COMPLETION)),
                 )

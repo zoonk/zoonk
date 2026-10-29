@@ -122,6 +122,11 @@
     <string name="player_sounds_like">sounds like %1$s</string>
     <string name="player_listen">Listen</string>
     <string name="player_slowly">Slowly</string>
+    <string name="player_activity_example_data">Example numbers, not real data</string>
+    <!-- %1$s names where an activity's data comes from, such as "World Bank (2023)". -->
+    <string name="player_activity_source">Source: %1$s</string>
+    <string name="player_activity_your_answer">Your answer:</string>
+    <string name="player_activity_correct_answer">Correct answer:</string>
     <string name="player_drawing_picture">Drawing the picture…</string>
     <string name="player_not_in_app_title">This lesson isn\'t in the app yet</string>
     <string name="player_not_in_app_description">It has screens the app can\'t show yet. You can do it on zoonk.com.</string>

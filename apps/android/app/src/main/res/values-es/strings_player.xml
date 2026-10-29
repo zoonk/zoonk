@@ -10,6 +10,10 @@
   "player_action_see_answer": "234f54829930b4a3a70f7b87727fe5d04b4ebad8f11a7eed339f731011f9dedc",
   "player_action_see_how_it_went": "981a79b69e2fdfaa183049048c20b81412e8555d2920d6728c6f36142fab0392",
   "player_action_start": "871c53e6a5276ab3e8ed44595bcb7b2e474ecdaaf293a9134c5f94e8d8046a90",
+  "player_activity_correct_answer": "692ce2440ddad80c34eaf76b4e280779e65ec35c2b2f393a57172c59053b2f11",
+  "player_activity_example_data": "bf842e5f50d5dba943c4524eeeecda947c392e1a45d0c85e2d3611f849ba6af1",
+  "player_activity_source": "5a8c4af820451cd681a44eea18c8d50ef516ee28465cb585266e8b1c5539125e",
+  "player_activity_your_answer": "fb618931ac5d7f01d9dbdf8036cdce48cefda2cae61b13fb43864806fe433a72",
   "player_ai_note": "a38ab019c23c1a2272b157cbf5fe7d86a37ea411c887bc1503b7b182edb9bf11",
   "player_already_knew": "f142c6d391c6fc096fa88dafe3ed474c61f832f6ec34623804a3a8023e9ae987",
   "player_answer_feedback": "e1d70dc905cd03cd88edffd650467056cccb479e6f0ba5f992dfbae705c60961",
@@ -262,6 +266,11 @@
     <string name="player_sounds_like">suena como %1$s</string>
     <string name="player_listen">Escuchar</string>
     <string name="player_slowly">Despacio</string>
+    <string name="player_activity_example_data">Números de ejemplo, no son datos reales</string>
+    <!-- %1$s names where an activity's data comes from, such as "World Bank (2023)". -->
+    <string name="player_activity_source">Fuente: %1$s</string>
+    <string name="player_activity_your_answer">Tu respuesta:</string>
+    <string name="player_activity_correct_answer">Respuesta correcta:</string>
     <string name="player_drawing_picture">Dibujando la imagen…</string>
     <string name="player_not_in_app_title">Esta lección aún no está disponible en la app</string>
     <string name="player_not_in_app_description">Tiene pantallas que la app aún no puede mostrar. Puedes hacerla en zoonk.com.</string>

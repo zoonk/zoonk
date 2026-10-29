@@ -11,6 +11,7 @@ import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.navigation.AppNavigator
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheckValue
 
 /** What a screen's view can ask the player to do. */
 @Stable
@@ -63,13 +64,15 @@ fun StepView(
         is StepContent.Summary -> SummaryView(content)
         is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions)
         is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator)
-        is StepContent.Activity, is StepContent.Challenge, is StepContent.Language -> Unit
+        is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions)
+        is StepContent.Challenge, is StepContent.Language -> Unit
     }
 }
 
 fun isPlayable(step: LessonStep): Boolean =
-    when (step.content) {
-        is StepContent.Activity, is StepContent.Challenge, is StepContent.Language -> false
+    when (val content = step.content) {
+        is StepContent.Activity -> content.isPlayable
+        is StepContent.Challenge, is StepContent.Language -> false
         else -> true
     }
 
@@ -89,6 +92,14 @@ fun optionAnswer(
             content.content.options
                 .getOrNull(index)
                 ?.let { LessonAnswer.Hook(it.id) }
+        }
+
+        is StepContent.Activity -> {
+            (content.frame.check as? ChoiceCheckValue)
+                ?.value
+                ?.options
+                ?.getOrNull(index)
+                ?.let { LessonAnswer.Activity(choiceAnswer(it.id)) }
         }
 
         else -> {

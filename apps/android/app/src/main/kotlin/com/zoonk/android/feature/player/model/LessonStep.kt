@@ -23,6 +23,9 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOf9WordHints
 import com.zoonk.api.models.PlayableLibraryStepAnyOfCitation
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfMinTolerance
@@ -33,6 +36,9 @@ typealias ActivityCheck = PlayableLibraryStepAnyOfContentOneOfCheck
 typealias ActivityData = PlayableLibraryStepAnyOfContentOneOfData
 typealias ActivityAnswer = LessonStepAnswerOneOf3Answer
 typealias ActivityTolerance = PlayableLibraryStepAnyOfMinTolerance
+typealias ChoiceCheck = PlayableLibraryStepAnyOfContentOneOfCheckOneOf
+typealias InteractionCheck = PlayableLibraryStepAnyOfContentOneOfCheckOneOf1
+typealias NumericCheck = PlayableLibraryStepAnyOfContentOneOfCheckOneOf2
 typealias ChallengeStepContent = PlayableLibraryStepAnyOf1Content
 typealias ChallengeNode = PlayableLibraryStepAnyOf1ContentNodesInner
 typealias ChallengeChoice = PlayableLibraryStepAnyOf1ContentNodesInnerChoicesInner
