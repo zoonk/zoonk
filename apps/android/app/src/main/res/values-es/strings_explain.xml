@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "explain_coming": "e91f54a0aad2167472d7c8a31dac5f448ebdf3ec6fc70e27cecffa3e20ca6e38",
+  "explain_coming": "6694f12d6f8fb66c46814965188d8e6ae1eb63affdbe81a25a3d94f807e5392d",
   "explain_deeper": "620b01675624e17e3bdd2bbb0a052e0cb501f12dbf8889cf0dd0abdc5f6dc2ab",
   "explain_deeper_course": "a58d37947c31f1b42b9f8727d0fc47f7bdb71901a59490b98b16f48e143a8193",
   "explain_deeper_goal": "c34a10e6b0c6a09c5b10ac761ba0531dcc7a50306891e6bff85c7706b693fd38",
-  "explain_deeper_subject": "eef5c4344153a231e5159506443cd20d4f040ac0b2fc41b333f66e5bc021cffe",
+  "explain_deeper_subject": "ab3eb7f080036f09171e477c0a6574067591df91145b02f61fa028025bb48026",
   "explain_go_further": "aeee8a233b6bfe53f3c956cb23f5603f42994655832b656417459ad55e918d24",
   "explain_load_failed": "8b1ad26f4c0d8300e62c74886cbc0123ca81b20fba2074bd965ffb95cbbc0266",
-  "explain_no_plan": "7198ed5f1d41ebc872c1e77f7c20d3e8cd3aaf3ec429a7e3599287e40e203c85",
+  "explain_no_plan": "fcd7f90df5997eb6b0a194b775d15ed64e45c10995769e4114853623c1f910f0",
   "explain_now_you_know": "8f6dd7cfb1dff031ad9a5d26ef8d7b81ca7978e12bb4f5772c5858ff9bb8588b",
   "explain_one_question": "2b8981aecb6f08b713f1fa1e7b35200fb5f6b846b771c4e6498c54695f3be7da",
-  "explain_phase_find": "8462344204b78a716f17ae82fc284c95d392e36f1ce3a6a273258eb1dc8587d8",
-  "explain_phase_find_line": "b72722e85435f5da77f12c07cf1a9a148b290e88c6403e89e984207df47f3b9e",
+  "explain_phase_find": "e07f54b1db47cee4018aebf246b315c05cb77e8616df84e0392cd72637dc9caa",
+  "explain_phase_find_line": "c67780fee37f9e001bf10d0d1eda3069b4df2167f0fe23dd1f2879d0d0bc972f",
   "explain_phase_read": "eafb74b325d75f5589567527c926be4e60e22d99b843a4a71d12fada7610cd8b",
   "explain_phase_read_line": "bfa0ef138f89aff9ecec232cbb005310eab8dc89513a4915aff11fdade8c542e",
   "explain_phase_write": "27f790d0dee8d58cf60675ece34d57f6f6879fed11bda16e248457a449466d50",
@@ -31,20 +31,20 @@
     <string name="explain_writing">Preparando tu explicación</string>
     <string name="explain_phase_read">Leyendo tu pregunta</string>
     <string name="explain_phase_read_line">Leyendo tu pregunta…</string>
-    <string name="explain_phase_find">Comprobando si alguien ya lo ha preguntado</string>
-    <string name="explain_phase_find_line">Buscando una explicación similar…</string>
+    <string name="explain_phase_find">Comprobando si alguien ya ha hecho esta pregunta</string>
+    <string name="explain_phase_find_line">Buscando una explicación que encaje…</string>
     <string name="explain_phase_write">Preparando unas 5 pantallas breves</string>
     <string name="explain_phase_write_line">Preparando la pantalla %1$d…</string>
     <string name="explain_phase_write_review">Comprobando los datos…</string>
     <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
     <string name="explain_quick">Explicación rápida · %1$s</string>
-    <string name="explain_no_plan">No hay ningún plan que preparar.</string>
-    <string name="explain_coming">Lo que viene</string>
+    <string name="explain_no_plan">Sin tener que preparar un plan.</string>
+    <string name="explain_coming">Qué encontrarás</string>
     <string name="explain_one_question">1 pregunta rápida al final</string>
     <string name="explain_deeper">Quiero aprender esto en profundidad</string>
     <!-- %1$s is a course's title. -->
     <string name="explain_deeper_course">Preparar un plan para %1$s</string>
-    <string name="explain_deeper_subject">Preparar un plan para toda la asignatura</string>
+    <string name="explain_deeper_subject">Preparar un plan para toda la materia</string>
     <!-- A goal typed for the learner from the explanation's topic, which %1$s is, mid-sentence. -->
     <string name="explain_deeper_goal">Quiero entender %1$s en profundidad</string>
     <string name="explain_slow">Esto está tardando más de lo habitual.</string>

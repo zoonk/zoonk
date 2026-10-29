@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "goal_switcher_current_goal": "f4a14ebf7689942f9367b7e4a367d70c26256eefdad971310406ccad27b54c1a",
+  "goal_switcher_current_goal": "6f6c357555f103a908f42fd17c1c4bc345496bc3a57b61469fd6bdfeea4a8d26",
   "goal_switcher_daily": "75a30107e9ef2e49ecb178f5f3949d57bb1a4caed7cc6b82cb96fc0e548e7e2a",
   "goal_switcher_explore_courses": "1a3347cbf72f4d58d0cdaf0a6ff6189cb26f5596b25d3561a82fa7c81a6e63e2",
   "goal_switcher_failed": "6287d1685278059c1baf8d718a3a72472902f522901899d21da69b2cc4f09bd1",
@@ -16,7 +16,7 @@
 <resources>
     <string name="goal_switcher_start_goal">Commencer un objectif</string>
     <!-- Read by TalkBack on the top bar's goal button; %1$s is the goal's title. -->
-    <string name="goal_switcher_current_goal">%1$s, objectif en cours. Changer d’objectif</string>
+    <string name="goal_switcher_current_goal">%1$s, objectif actuel. Changer d’objectif</string>
     <string name="goal_switcher_your_goals">Tes objectifs</string>
     <string name="goal_switcher_quick_explanations">Explications rapides</string>
     <string name="goal_switcher_new_goal">Commencer un nouvel objectif</string>

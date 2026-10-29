@@ -3,19 +3,19 @@
 {
   "missions_after_challenge": "047e744f2e27b5751a492bb3d351c79a5d394d9882e5194110ddf0d4bf78af99",
   "missions_after_lessons": "daee1748881b0b3504a466c246cd35371598fc4664ca370b342ba28e4b3b064a",
-  "missions_already_earned": "dafc60f3910396aa6d2ae67a06be44ce2818eca16962baac033c97a995f94913",
-  "missions_ask_anything": "94f8edf7918aee6bffa0ac51e96bf9214417940399782af5913cae654500bb94",
+  "missions_already_earned": "c5ed20574e7abeeb14f822e8ddc2fc6e9ba355fcbc36878c64eadab19ed2556a",
+  "missions_ask_anything": "e15e0b04345105e8f6e9d0fc38926f2eb2d80b20d6cadf18eb34e6b8cc87335f",
   "missions_ask_buddy": "aa7b425602a28170a834910fd381d84aa68af6858322a5979caf5ceb6da1ee4f",
   "missions_brain_power": "69c8397141788975a87fd2722ff0d4d52182979fb51bbc9b3dc05541bacb5a59",
-  "missions_brain_power_about": "0782ecb40d13b46ab0cff63e2d239f9b6ae083f7e6833be4d4e8bb046200ac2f",
+  "missions_brain_power_about": "b9faeb2348488ff039683e1cbfc8458fa1194249f9669d7b3dc716c1bac479c1",
   "missions_brain_power_total": "fb3e6cd8055226942658e9117920e3aebe0fa7cdd11089607004200db5aac39c",
   "missions_call": "733a6f58de256249a35d7cacdcc35360c1d422334fa3919ee036d4ec089d48c8",
   "missions_challenge": "924fb3251fdcfd6fa22ff776667f18ba1ba8b4e8b05a7dbbf899839fd964219e",
   "missions_count": "31eed96b1a9d71f0d09423f13631bf3822c0985540203756d4e89178791a885a",
   "missions_done": "a1dbe0744a09c17ca185eaf962b1181fe41d3b663a639a358e161e5f151dda5d",
   "missions_due_today": "63611f49e6ff99ece704a80f78b389e8cdbacb0cbc377131e08ab77d00bc2e4f",
-  "missions_earned": "3a1ef0d03cb0a8109528c33b836c0b1ea724e205d977d6566730be49948433b2",
-  "missions_essay": "90135a213454d764bfce1cfb2c190fcea137c658792f9e8fba1e5341424e2fcc",
+  "missions_earned": "c6da742e93bceff49b548eb96dab0328c9d63528b3fe1636235a9f691e35888e",
+  "missions_essay": "5b44f985733ea7082300c2084a0e1fdee264e78facd274bd57dd5e7aef76d173",
   "missions_estimate": "eaeb12ef52f1ad0de6fdaa6c191b0b6741e9d861f4b69a9ed0d8d1cdbe41ba7d",
   "missions_finish_chapter": "e699c3a64a0aaf7e7c670ad82356b730d4233afd60eb834b86434c7758c64727",
   "missions_finish_chapter_named": "3d0ffd67ada23806764fa2b0eb760c983d2b116207b078563065adb12366829a",
@@ -25,16 +25,16 @@
   "missions_from_notebook": "38e5151841326084a0ce00363c73143ca28072e62f61ab386f3a06d8a7b3f299",
   "missions_just_done": "620a309cc5df65bcd45a42be83dbf5942366db52cc93fa6d99516cf217399052",
   "missions_last_lesson": "9fb78e482263c5dab5f02fc4294c5a8a40fb7c12b2005f7b7d75de5e8a768ba7",
-  "missions_last_lessons": "35f9ed01b02a07b46f5cd1fcb5e17ff89fb1eff9dab565d44f70cf493aa37e6b",
-  "missions_left": "ff239eb07471ef6da503786fe1fe93e5eba3d391a8bd0cba1ee05325e05d7821",
+  "missions_last_lessons": "6ff56ce8589e0d2abc73de474d52ed898fb2832c09e532196cbc6c5ed0535add",
+  "missions_left": "c309b92ffdd0a83b5b8aff4349aa617e8b936935c6d1d4864a60a0a2cd20233d",
   "missions_lesson_and_more": "0c8b9ac06e834801fa9c0ff509dcfa46fb2c5867b52eb0620b97fd6e739f2131",
   "missions_mock": "d046f057af1665cd684a5d22d45f01229db014228b4004fcd8bb6e34454c38e8",
   "missions_moment_all_done": "e3d5c7d02cb52f9d1fa93ea666ac215efc3359ade4a805572c3da5248376283d",
   "missions_moment_done": "e344c1b753cbdb6201cc6e094138221e2cb7095df44f4197a6bdbdb9d74b09dd",
-  "missions_moment_more": "83ba031abf68d84014b9b30bf09fd0e3de1a60e77fe69c2fc51364a6fbfeae19",
+  "missions_moment_more": "d07f716305400446829fb868ba168ca9e3de2233988c55a4220881392c1a001c",
   "missions_moment_one_done": "befe26dccd534be1f1c83e58343ea4b43ce9d99b95597b4730856b84399eb428",
-  "missions_most_room": "d89334d8d213a2bc0229b497677b64a3f1483a721e5c1b22bf32fc5117e158d2",
-  "missions_open_buddy": "13ef9acd790dd85104423da2067d7fd808d61fd6e3af16ee884351afc96088af",
+  "missions_most_room": "7a669b43881b7d0096f6cabc44d8ff7461adb129f6f7a1e99ca14238a6209b24",
+  "missions_open_buddy": "1a3a70cfdd6d9589cee9d54bd9b68e953509424e4da487034f51c906ea5721bb",
   "missions_open_call": "378f39b91d18232918ce1cd3bbeeab2a8ac62a4f74c43a8726527943b5ecc513",
   "missions_open_challenge": "bdb7e1b5080b579bb1da0027b71a50439d22e4791995695b87a965658f3fd1f6",
   "missions_open_chapter": "0604464d5d2ea8e3286a0c9559f27b9c8dcefafed7d06f25ce71ff3710c0efdc",
@@ -66,17 +66,17 @@
     <string name="missions_title">Missões de hoje</string>
     <string name="missions_done">Missões concluídas</string>
     <!-- %1$s is a formatted number of points. -->
-    <string name="missions_earned">Você ganhou +%1$s de Poder Mental.</string>
-    <string name="missions_already_earned">Os +%1$s de Poder Mental de hoje já foram ganhos.</string>
+    <string name="missions_earned">Você ganhou +%1$s Poder Mental.</string>
+    <string name="missions_already_earned">Você já ganhou os +%1$s Poder Mental de hoje.</string>
     <plurals name="missions_count">
         <item quantity="one">%d missão</item>
         <item quantity="many">%d missões</item>
         <item quantity="other">%d missões</item>
     </plurals>
     <plurals name="missions_left">
-        <item quantity="one">resta %d</item>
-        <item quantity="many">restam %d</item>
-        <item quantity="other">restam %d</item>
+        <item quantity="one">Faltam %d</item>
+        <item quantity="many">Faltam %d</item>
+        <item quantity="other">Faltam %d</item>
     </plurals>
     <string name="missions_moment_all_done">Missões de hoje concluídas!</string>
     <string name="missions_moment_one_done">Missão concluída!</string>
@@ -87,9 +87,9 @@
     </plurals>
     <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
     <plurals name="missions_moment_more">
-        <item quantity="one">mais %1$d para ganhar +%2$s Poder Mental</item>
-        <item quantity="many">mais %1$d para ganhar +%2$s Poder Mental</item>
-        <item quantity="other">mais %1$d para ganhar +%2$s Poder Mental</item>
+        <item quantity="one">Mais %1$d para +%2$s Poder Mental</item>
+        <item quantity="many">Mais %1$d para +%2$s Poder Mental</item>
+        <item quantity="other">Mais %1$d para +%2$s Poder Mental</item>
     </plurals>
     <string name="missions_just_done">Concluída agora</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
@@ -97,7 +97,7 @@
     <string name="missions_brain_power">Poder Mental</string>
     <!-- %1$s is a formatted number of Brain Power points: "+50". -->
     <string name="missions_points">+%1$s</string>
-    <string name="missions_brain_power_about">O que você aprendeu, em pontos: aumenta seu nível e ajuda seu parceiro a crescer. Respostas, aulas e desafios somam pontos. Ao concluir as missões de hoje, você ganha +%1$s.</string>
+    <string name="missions_brain_power_about">O que você aprendeu, em pontos: aumenta sua faixa e faz seu parceiro crescer. Respostas, aulas e desafios somam pontos, e concluir as missões de hoje soma +%1$s.</string>
     <string name="missions_brain_power_total">Você tem %1$s</string>
     <string name="missions_review">Revisar</string>
     <string name="missions_something_new">Fazer uma aula nova</string>
@@ -108,7 +108,7 @@
     <string name="missions_challenge">Enfrentar o Pegadinha</string>
     <string name="missions_weekly_challenge">Desafio semanal</string>
     <string name="missions_mock">Fazer o simulado</string>
-    <string name="missions_essay">Praticar a escrita</string>
+    <string name="missions_essay">Praticar redação</string>
     <!-- A verb: a mission to practice. -->
     <string name="missions_practice">Praticar</string>
     <string name="missions_fix_a_mistake">Corrigir um erro</string>
@@ -131,10 +131,10 @@
     <!-- %1$s is a language unit's title. -->
     <string name="missions_quick_call_unit">Conversa rápida · %1$s</string>
     <string name="missions_quick_call">Uma conversa rápida</string>
-    <string name="missions_ask_anything">Qualquer dúvida sobre as aulas de hoje</string>
+    <string name="missions_ask_anything">Qualquer coisa sobre as aulas de hoje</string>
     <string name="missions_last_lesson">A última aula está no plano de hoje</string>
     <plurals name="missions_last_lessons">
-        <item quantity="one">A última aula de %d está no plano de hoje</item>
+        <item quantity="one">A última %d aula está no plano de hoje</item>
         <item quantity="many">As últimas %d aulas estão no plano de hoje</item>
         <item quantity="other">As últimas %d aulas estão no plano de hoje</item>
     </plurals>
@@ -145,7 +145,7 @@
         <item quantity="other">%1$s (+%2$d aulas)</item>
     </plurals>
     <string name="missions_finish_new_lesson">Concluir a aula nova de hoje</string>
-    <string name="missions_most_room">Maior espaço para crescer</string>
+    <string name="missions_most_room">Mais espaço para crescer</string>
     <!-- %1$s is a duration, such as "10 min"; the tilde marks an estimate. -->
     <string name="missions_estimate">~%1$s</string>
     <!-- What TalkBack says a tap on a mission does: "Double tap to go to today's review". -->
@@ -162,5 +162,5 @@
     <string name="missions_open_pronunciation">Ir para a prática de pronúncia</string>
     <string name="missions_open_call">Escolher uma conversa</string>
     <!-- %1$s is the learner's buddy's name. -->
-    <string name="missions_open_buddy">Acesse %1$s</string>
+    <string name="missions_open_buddy">Ir para %1$s</string>
 </resources>

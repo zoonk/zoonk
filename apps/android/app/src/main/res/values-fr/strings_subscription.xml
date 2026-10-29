@@ -1,107 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "subscription_active": "04690b806fd539f8fc83ce861be91a12d86553b6ca674004b95564a6d6b4b135",
-  "subscription_answer_cancel": "79e3442343c9c233f1a28da2ee3c870c3680119b981e4b8b1f8829a942644a00",
-  "subscription_answer_fair_use": "6523e9ef70c2e1f4586d637f2a43cb3f112ab7ee92bcfa97b952c9e5b1fbbf9f",
-  "subscription_answer_free_buddy": "2e76156792a08e2b26ba0217af6ebc2247e543b463c684f46d50a55c7b9e7075",
+  "subscription_active": "10c8e8de707d432e118da243816d9354896de75ce0dc7cfeef185f85e351f079",
+  "subscription_answer_cancel": "d3132813b894ffe378a842b5ce29953128c4f2753be236c43de0689bf3eff1b0",
+  "subscription_answer_fair_use": "7039a345156a7f6adf68211317c6b7edeef24d203018653e7b765ccc1a0ca7ce",
+  "subscription_answer_free_buddy": "63c190dd1186e249b909a371b44b0dc35260aa84bfc3e5b572141ca6581c5a1b",
   "subscription_answer_free_buddy_uploads": "67cb73256a734250f59ab207b8a620208938367534b6019f8e130459077a1855",
-  "subscription_answer_free_calls": "a5ff552977bd4583987ead3ca9b04e5e64169229543b4415e93897ef89752e6b",
-  "subscription_answer_free_exam": "ea901c20807d560bffeca8a157887669b77d23c6697cf9163f8264a90db4ec63",
+  "subscription_answer_free_calls": "455c642cb1322e891bdbe97512bc3f22b03951234d47d02a1d7876f47b21eabc",
+  "subscription_answer_free_exam": "dc3a1b45045d30cfec92c71ea67582962be82ba036ecf50a736c9f9de69012a7",
   "subscription_answer_free_exam_day": "3de1468dc6420d38efcb88d4699c4a7d0ee032c5d84b8734c7abb2038f6b35ab",
-  "subscription_answer_free_exam_week": "a2f48d27a311a620accd4076581dec2693d9f145eb99690446368d5c86093f91",
+  "subscription_answer_free_exam_week": "216b1eec732b4d18507c37c92308999db5ff61cb25e1c6a7a02632c3a7c5e1a9",
   "subscription_answer_free_goals": "146985b1c1526059bc0146992d939b26c3c4ef3cc1873101a761c506f5ab4b52",
-  "subscription_answer_free_guest_lead": "e33afb3f550ee773ffecc0ebea18c2748c4c9efc1454a8c5565f8098eda44eb6",
-  "subscription_answer_free_lead": "b37ed8b19cc2b1a96ebfdac127b1012711af15aa1475c64419359520e57040e6",
+  "subscription_answer_free_guest_lead": "4c90032f5d46d3edf40cbd3d192df9967d98b8c6daa89414d1a871d6260df021",
+  "subscription_answer_free_lead": "6d24da9fe3189a69b14935526f572a8bf42040e81eb7ce7477567ea0d7a41454",
   "subscription_answer_free_lessons": "1acb9eecff8a89bd88b17e74909dc49f1a13da36eda463e7431c2cffa1e9e27a",
-  "subscription_answer_free_uploads": "e42ea5461791ba39808ea4cd8bed387b9a08d286959c24ca0288a75d15985585",
-  "subscription_answer_hidden": "d7cb3a6be50e8b99bb95882fcc8df180b70e91c4fe6d2ab199dc3cd7e804f971",
-  "subscription_answer_refund": "4892fbf059da12e3b5ddf887ea5b001b33a5b48c395df8695191853e9a26fc72",
-  "subscription_answer_shown": "6e47fb2c1487bd75f5d38c8cf5659058b247e38c40749ffdda7802e1abfb06fe",
-  "subscription_answer_unlimited": "61f409219a0ab66b0e80af742357d14127e60a8e9a8dee02daada638ece4b324",
+  "subscription_answer_free_uploads": "cdca4c8d6b2358c6df87cc960ee248cbedca341d70eb51b7060855e6fc491116",
+  "subscription_answer_hidden": "b5bd02eddd0ab239a908f1723d3489fbadff9d1052e4cf967b024af33a2f1776",
+  "subscription_answer_refund": "796100a7df45ec1552bb12bb3e7c1fc32f2b78cb82e6d072586d1bdb6d9c0dc1",
+  "subscription_answer_shown": "6d9fc68f7a6940d5ad502c73e90baaa0a77d59d3560ded8c2e72d8b05b4fc471",
+  "subscription_answer_unlimited": "ddaa7ade6d12c40364ee1a549f78d688292b5faaac8e128dd38403eb999db2a3",
   "subscription_available_with_plus": "7cd7b0aaee2632e2489afa3f3f925647a7c42923529005cf98f9bd78c9820013",
-  "subscription_benefit_buddy": "9472eeea1cf1687e9388a73ed8f569445fedd65cd6126a266c1f2da8d831d294",
-  "subscription_benefit_calls": "93812c03a8ae6b1bd31d404c7a065e6273451a4c6971276be050cb7d633a0b49",
-  "subscription_benefit_exam": "48b2ad515cf1f87b4b661504ab4e51d6a416dcb3f2bf14ba53a012d487dd03ed",
+  "subscription_benefit_buddy": "e3d3d539c397a67a6435cf8f5930eb73dc6c6b049178a63cc1c67c601f671e6a",
+  "subscription_benefit_calls": "15a914da8b40b4dfee62bd57ef57d4adf44fbf746a12c299613dc93c8d79f1d4",
+  "subscription_benefit_exam": "6467e1f1bfe0f4d0e4aa57c51634a222ff48b80810abf28162db3241ba7cf8f1",
   "subscription_benefit_mocks": "cd1aad5ec78ec3baa29d102ab29033894fe8954cfa7bd4c6d28b26ebb833724e",
-  "subscription_benefits_summary": "856fac9075fc96d17bd4e274a6276959d30ed4bbde34785a644d80357cd8ffc5",
-  "subscription_billed_monthly": "108620078712a43c74e5c5192877bd9ac249d15c6c00755a57365dfe281cd993",
+  "subscription_benefits_summary": "f2039b997e4b9d35c0861c5f92cfedd7ac843df00ea0cb3f98b5c340a13b9efc",
+  "subscription_billed_monthly": "79d337b66ba01baaeec9130117c083a4274ca59020b6d22e0692905545969d18",
   "subscription_billing_period": "eb82a1d2b891a3d1762d9e02e0f70924fc4b319f8974f8b4a25f85103873ffa6",
-  "subscription_cancel_anytime": "5c8dfe276b103688f4cb46578fe4cfb7ad9156ceb29c2524ae9e7ecee0805373",
+  "subscription_cancel_anytime": "2f215df53f49a230a553a1f38b76d83d9eb535ee76272bd1900badd2fdf01841",
   "subscription_contact_support": "1a8c3b492a0574a1627aef472fb5790c20be64a81121ec6b1dfd62a6464160ad",
-  "subscription_ending": "25821316ee7d4b7787285b6577574874f3a0711dc72e0a82b3d381f43e7032d4",
+  "subscription_ending": "15fb2387151e922c521d96f22f8c555b3a3eb5d7c8c3b2b42dc267c4bf15d28d",
   "subscription_ends_on": "c1976f512b793fa39f1e912853ca3e4f31f04fb1647faa9be7ead93ec37e45f5",
   "subscription_free": "f2e5f3c52c974703ca35778dedfad4bd1f1598f485fb50b2fc812214d3de77a2",
-  "subscription_free_buddy": "16ccf879de115732b96506dc10453568c5bad1d3edda13ac1be209b7f28058f7",
-  "subscription_free_calls": "b024fe0aecb0122c4f0db51d15dfb04fce35bf293858d6d22ab67d14f33a4771",
-  "subscription_free_exam": "ab5b8289d06fef76a309bea54392ecd786d88c5d97fe823afb0213605f331076",
-  "subscription_free_exam_day": "a8aa2a22742b6b76640392cf2200bb3caf04f0118f4a3b2ace161635756eaeef",
-  "subscription_free_exam_week": "1b81e3b510ed6513b30c7ef2b25af96e94c57b2bc7644fb10fa9e3aba8fa92ee",
+  "subscription_free_buddy": "041f7a911ca84630851255f5dddd04c91688c90d3b5004bbef47c27b46d6363b",
+  "subscription_free_calls": "f188828ce1b318dd26098b976f0b4f5e1897e3fac8aed8dba168953bddf864db",
+  "subscription_free_exam": "fc5b9d20ee8829205429d40a1f3ef9d1f014c8a115539251dc8992501a64cb01",
+  "subscription_free_exam_day": "61ae2056d6e6472a22cf1c74d2f01c181b6477b82084d4cd12a9bb431a45bc52",
+  "subscription_free_exam_week": "ac5f9ea371ced628028224438d9ac0ca72389843afe545728809b41d392c52e7",
   "subscription_free_goals": "361b81f5d07a6ba1510e7b0522c928eee37f0004970ba0e007715135932c66ce",
   "subscription_free_lessons_a_month": "3138d2ebbe3dc3c33dd1829e853f5ac4f70a4e7950030f3ba5461f4d6d5c179d",
-  "subscription_free_plan": "4a282f0229b9e8cf9c7318f3625e66c8661b384844db707df72cff49a6a31146",
+  "subscription_free_plan": "4db22e629a78291ecb50a87aee32336822b05d6b18e4617067df55b61748faa4",
   "subscription_free_summary": "982ce64aeab1fcd1db729d823a7cd97d7ef789746203aebf829f1d5473fb9471",
-  "subscription_free_week_over_description": "6a77f25a4d8f0e503207f74da1ddcf7a8a5ffe584781b297c1e04434cae93bc0",
-  "subscription_free_week_over_title": "1db5853d630828f60fa7c75947ba5b9a21df2df941284a3e0498130530e4f0b1",
+  "subscription_free_week_over_description": "75d78b55e34c0f85470e3bac020ffd22a4010e46b208d54cc433bb624434c926",
+  "subscription_free_week_over_title": "36ef8e8580f57fe648e8cc234e937c9d0f0ec197a3b450fcf3d67d85e4788762",
   "subscription_get_plus": "11bbacf52d235c2a60c19a3b99012716c402f1164a4a7462b332fd3228f50b64",
   "subscription_hide_answer": "f78641011a7f2c94f3df56fc306f3175c04c1b15d52a932ba75dbaa1290189e5",
-  "subscription_manage_google": "00aa4ae71d40b7eafe5dc1a657fe442d0ed86d25173d0c0376464efe8fde0662",
+  "subscription_manage_google": "dd534b011c2d612956bd9acb735d1df4b0acdbd0a4afc98cb7e9004938396782",
   "subscription_manage_web": "91e38cf219c78f5d38dbee44c6ed47d3f4633aa40ef931f6091dbf818dd14fb4",
-  "subscription_managed_apple": "6369144d019c44dd0ea7ba2e021344b213f3756d193dbf382d7987e27ca02ade",
-  "subscription_managed_google": "991977e3f2a27823e6beb8842859d69c3764c911a8dea5a5195407a8d4b12975",
-  "subscription_managed_web": "c750cbe486bfad399f2ed19f8205933ac735e298d03138f0b98073f58adef07a",
+  "subscription_managed_apple": "37cb74852b77b6d0b970e8266c55190aee70f4739f65b9907d336600dc9702db",
+  "subscription_managed_google": "468762302db1685c90fd98df2df77649d344cd858020e39435ab135bcb1b9e25",
+  "subscription_managed_web": "b26cda40dd9952aea121072f519c03d85e493e1fd1a66f98ab9184ad9b9d17b2",
   "subscription_managed_zoonk": "ad1c3469392e91336bc5cbe767532b83bb5ce9d1440f5062145ff820f4c0f831",
-  "subscription_messages_used": "84f1a3ae18538019663bed2bf11c3385a5bfa23a656b728da2ac86325be6e646",
-  "subscription_monthly": "6e3d22afc30f65b4a3e72ddae39a7b3b7b09ec0885089641aa79931671967f0e",
-  "subscription_no_card_needed": "86d63524579118fe74ff43dafed0a292ff106b5ad11d794943866e08200bf7b4",
+  "subscription_messages_used": "35cac036f04122a5110eb34474360270577b4b1fb002d43fcf4db639f36ebd7b",
+  "subscription_monthly": "25946e99cd564afbfc0bb1dd0ced429ccae990375391347807f55b7b8466ee52",
+  "subscription_no_card_needed": "0e25a412b4bf074b3b70f2184bc98c88ea80dce1a36db380e0878252de5a3d91",
   "subscription_offer_title": "78b3b54b466d3dbce7821782ada26b4ee3940bc71dc048bbbabf0b945ca8a60d",
   "subscription_per_month": "ca9e07ba80b29da82ffcac62618552b24c979c7d7589a8ce833b0ac9569b870b",
   "subscription_per_year": "747850ee66f091fa25a410af21e35213db7e573a76e229b28fef6ab4745faf4b",
-  "subscription_period_ends_on": "f1a9d9b1d00faa408a97f4f941cb4b7d1fe5291001e7c579c786450650814f28",
+  "subscription_period_ends_on": "44811966f545ec9de802f2cb6c13300e3960eb259487b317d6e2b384ef1bcb37",
   "subscription_plus": "d227331db2ddb53b35779128abcfbe57a5110ce9331d9b8dbd1cddaeb0c0d1cb",
-  "subscription_purchase_confirm_failed": "41f49f6fec10c0bd003f749a9543ae56265b611f4160e669bf483731f7e300f6",
+  "subscription_purchase_confirm_failed": "bbb9429b1e4707ccea9a6c4a9a97e94acd95762ac9f38e79d31e1d1083f27ce7",
   "subscription_purchase_confirming": "6af57bdaf55ca7be7b49684ce8bf746714e31e461e5fc28f4d5641bbd4081215",
-  "subscription_purchase_other_account": "1d381e82be8a363a07a95b8c6d0106f94b0e3a7665aea9a8918aa621d587b8b6",
-  "subscription_purchase_pending": "98cc7145391a05eb4838deb8ba5781f1607362e6fd709b9aa571d77464e981e5",
+  "subscription_purchase_other_account": "b27c109c86327a29a5f8b8d632f08eb9d8aa9fd661426c84bd52c04168b3a667",
+  "subscription_purchase_pending": "b5482167e2f7b16ea9228428fe2c02143eaaba9379740b0020aec8b3f38eecc4",
   "subscription_purchase_play_failed": "f430a33385fc6a2b34600941dda94b7c0ecb77cd1895d5542e99fc972e8826d8",
-  "subscription_question_cancel": "efbd3f7eba94be65928d43d7ec65eeda212283fe4b2975ca864a1d6b5ef6e103",
-  "subscription_question_free": "55720fbfa449f447cfe573a6d59d59d2586b4a7e86a35ec420579970787d9328",
-  "subscription_question_refund": "1b5eac6e24a4befbe1db7b32e91437584d7240562fab4ef4f436210c6b3c6afa",
-  "subscription_question_unlimited": "913c672a9c53b6471de1a6c97f5d966e124177531a37d9d2790167cbf33eba16",
+  "subscription_question_cancel": "c0bdc10269e36373ab0661633929f0e02ea603c3f7812dfb1ec8653b091b649d",
+  "subscription_question_free": "3377f22d0eb99ab3b368d5098e455d441d51747aa6d34392065a7e03efdc9fef",
+  "subscription_question_refund": "d087be5ed52111fecfaecff03b4bd06c0201d4860f95ec3e523321c79fbb7332",
+  "subscription_question_unlimited": "f8f03099a5620b2ceca0bca1757995847732499f17366f585ac78c6ed1311d32",
   "subscription_questions_email": "b23b57165698d30ece5c91044b314a4cff84c0c9b8a56501fcd31be63c50e3e7",
   "subscription_questions_title": "c8f40b140274e5f122d3caaa91950df9fd64ffb5f2a41329bf145685a4c4fcef",
-  "subscription_questions_unsure": "97ccd85d5eef117490271d7edbfd1eeb33d97014ee80ace974bd995da2581ad1",
+  "subscription_questions_unsure": "d306bef1ed419f293449d8924cf09c2ed0f96e0bfc16cf8c8681cab10275d64d",
   "subscription_renews_on": "bcd6d756519bd85af6055a5a0fdecc5ef80df6aa1462e21350a28bad93c3e5c6",
-  "subscription_save": "3aca70242bb55a906d77c027a0814142ac9441d4e9630fb6e4fdc199c292abe4",
-  "subscription_see_plus": "38f5e97be13978dd48a504f083979830f8318ecba4779ea5bb547a9f66cd61f6",
+  "subscription_save": "f6268e9b488b2858e9cebe5f995fe96287814aa932bb6571c8540e6fcdaf6db5",
+  "subscription_see_plus": "17fc611063b17d8a7ed683bf829451b89d8d62dc8bbf480995f881b109e8b706",
   "subscription_show_answer": "eb7289559a3dc18c0df8ae4c883228306ee02f7b508a8849d9738c49318a3971",
   "subscription_start_free": "6959777fcc6384725d80c2c8baa1164fc80358dfb3a8664747c5f40f55419105",
   "subscription_subscribe": "ef2e7ab2071a28ef90ad6a2da9fe7f10d39fb90ee347d49b242fbfc8747175e0",
-  "subscription_unavailable": "32174ef0f13259b254732a1a02a3db59f45c04b58b9014ffbe1f5f45598ae2d2",
-  "subscription_yearly": "13f54dbef1e1591c0683eebe98260775b12b80f4888a6e153e27f8ace169219d",
-  "subscription_yearly_per_month": "156b07619a78d8b206a590198714ae7840d4db11b60d6871b38c490641dd9eb7",
+  "subscription_unavailable": "e03f6252a367cd197a35017e070d097ec59ada25fac317cd571e02e3384b7748",
+  "subscription_yearly": "a01d217d21ebd632f5aa36631833f38c5bbf5a47d392456886ff6e2a7260f611",
+  "subscription_yearly_per_month": "8e7d72dbc15fad4ab47a14bb866d79c89925881796874e0a7ebd3ad89735f417",
   "subscription_your_plan": "b8823845f4f1fc0234001c66567623a3441df94ac51053bf0be13be0d4ed1383"
 }
 -->
 <resources>
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Disponible avec Plus</string>
-    <string name="subscription_see_plus">Voir Plus</string>
-    <string name="subscription_free_week_over_title">Ta semaine gratuite de préparation aux examens est terminée</string>
-    <string name="subscription_free_week_over_description">Les révisions et la correction de tes erreurs restent gratuites. Plus donne accès à de nouvelles leçons, au reste de ton plan et aux examens blancs.</string>
-    <string name="subscription_active">Active</string>
-    <string name="subscription_ending">Abonnement qui prend fin</string>
+    <string name="subscription_see_plus">Découvrir Plus</string>
+    <string name="subscription_free_week_over_title">Ta semaine gratuite de préparation à l’examen est terminée</string>
+    <string name="subscription_free_week_over_description">Les révisions et la correction de tes erreurs restent gratuites. Plus donne accès à de nouvelles leçons, à la suite de ton plan et aux examens blancs.</string>
+    <string name="subscription_active">Actif</string>
+    <string name="subscription_ending">Abonnement bientôt terminé</string>
     <!-- %1$s is a date. -->
     <string name="subscription_ends_on">Ton abonnement prendra fin le %1$s.</string>
     <!-- %1$s is a date. -->
     <string name="subscription_renews_on">Renouvellement le %1$s.</string>
     <!-- %1$s is a date. -->
-    <string name="subscription_period_ends_on">La période de facturation en cours se termine le %1$s.</string>
-    <string name="subscription_managed_google">Cet abonnement est géré via Google Play. Pour le modifier ou le résilier, utilise Google Play.</string>
-    <string name="subscription_managed_apple">Cet abonnement est géré via l’App Store. Pour le modifier ou le résilier, accède aux réglages d’abonnement de ton identifiant Apple sur un iPhone, un iPad ou un Mac.</string>
-    <string name="subscription_managed_web">Cette formule est gérée sur le site web de Zoonk, où tu peux la modifier ou la résilier.</string>
+    <string name="subscription_period_ends_on">La période de facturation actuelle prend fin le %1$s.</string>
+    <string name="subscription_managed_google">Cet abonnement est géré sur Google Play. Pour le modifier ou le résilier, utilise Google Play.</string>
+    <string name="subscription_managed_apple">Cet abonnement est géré sur l’App Store. Pour le modifier ou le résilier, utilise les réglages des abonnements de ton identifiant Apple sur un iPhone, iPad ou Mac.</string>
+    <string name="subscription_managed_web">Cet abonnement est géré sur le site de Zoonk, où tu peux le modifier ou le résilier.</string>
     <string name="subscription_managed_zoonk">Cet abonnement est géré par Zoonk. Contacte l’assistance si tu as besoin d’aide pour le modifier ou le résilier.</string>
-    <string name="subscription_manage_google">Gérer dans Google Play</string>
+    <string name="subscription_manage_google">Gérer sur Google Play</string>
     <string name="subscription_manage_web">Gérer ta formule</string>
     <string name="subscription_contact_support">Contacter l’assistance</string>
     <string name="subscription_offer_title">S’abonner à Zoonk Plus</string>
@@ -109,37 +109,37 @@
     <string name="subscription_free">Gratuite</string>
     <!-- %1$d is how many buddy messages were used today and %2$d the day's limit, which picks the plural. -->
     <plurals name="subscription_messages_used">
-        <item quantity="one">%1$d/%2$d message de Compagnon utilisé aujourd’hui</item>
-        <item quantity="many">%1$d/%2$d messages de Compagnon utilisés aujourd’hui</item>
-        <item quantity="other">%1$d/%2$d messages de Compagnon utilisés aujourd’hui</item>
+        <item quantity="one">%1$d/%2$d message utilisé aujourd’hui avec ton Compagnon</item>
+        <item quantity="many">%1$d/%2$d messages utilisés aujourd’hui avec ton Compagnon</item>
+        <item quantity="other">%1$d/%2$d messages utilisés aujourd’hui avec ton Compagnon</item>
     </plurals>
-    <string name="subscription_monthly">Mensuelle</string>
-    <string name="subscription_yearly">Annuelle</string>
+    <string name="subscription_monthly">Mensuel</string>
+    <string name="subscription_yearly">Annuel</string>
     <!-- What TalkBack calls the Monthly / Yearly switch. -->
     <string name="subscription_billing_period">Période de facturation</string>
     <!-- Beside "Yearly" in the billing period switch, lowercase as a continuation. %1$s is the price, like $20. -->
-    <string name="subscription_save">économiser %1$s</string>
+    <string name="subscription_save">économise %1$s</string>
     <string name="subscription_per_month">par mois</string>
     <string name="subscription_per_year">par an</string>
-    <string name="subscription_billed_monthly">Facturée chaque mois.</string>
+    <string name="subscription_billed_monthly">Facturé chaque mois.</string>
     <!-- %1$s is a price, like "$5.00". -->
-    <string name="subscription_yearly_per_month">Cela revient à %1$s par mois.</string>
-    <string name="subscription_unavailable">Tu ne peux pas acheter Plus sur cet appareil pour le moment. Vérifie que Google Play est installé et que tu es connecté.</string>
+    <string name="subscription_yearly_per_month">Soit %1$s par mois.</string>
+    <string name="subscription_unavailable">Impossible d’acheter Plus sur cet appareil pour le moment. Vérifie que Google Play est installé et que tu y es connecté.</string>
     <string name="subscription_get_plus">Passer à Plus</string>
     <string name="subscription_subscribe">S’abonner</string>
-    <string name="subscription_cancel_anytime">Résiliable à tout moment.</string>
-    <string name="subscription_purchase_pending">Ton paiement est en attente. Plus sera activé dès que Google Play l’aura confirmé.</string>
+    <string name="subscription_cancel_anytime">Résilie à tout moment.</string>
+    <string name="subscription_purchase_pending">Ton paiement est en attente. Plus commence dès que Google Play le confirme.</string>
     <string name="subscription_purchase_confirming">Confirmation de ton achat…</string>
-    <string name="subscription_purchase_other_account">Cet abonnement Google Play est associé à un autre compte Zoonk. Connecte-toi à ce compte pour en profiter.</string>
+    <string name="subscription_purchase_other_account">Cet abonnement Google Play appartient à un autre compte Zoonk. Connecte-toi à ce compte pour l’utiliser.</string>
     <string name="subscription_purchase_play_failed">Google Play n’a pas pu finaliser l’achat. Réessaie.</string>
-    <string name="subscription_purchase_confirm_failed">Ton achat a bien été effectué, mais nous n’avons pas encore pu le confirmer. Nous réessaierons quand tu reviendras.</string>
-    <string name="subscription_benefits_summary">Tous tes objectifs · toutes tes leçons</string>
-    <string name="subscription_benefit_exam">Tout ton plan de préparation à l’examen, jusqu’au jour J</string>
+    <string name="subscription_purchase_confirm_failed">Ton achat a bien été effectué, mais nous n’avons pas encore pu le confirmer. Nous réessaierons à ton retour.</string>
+    <string name="subscription_benefits_summary">Tous les objectifs · toutes les leçons</string>
+    <string name="subscription_benefit_exam">Tout ton plan d’examen, chaque jour jusqu’à l’examen</string>
     <string name="subscription_benefit_mocks">Des examens blancs chronométrés comme le vrai</string>
-    <string name="subscription_benefit_buddy">Un compagnon d’étude IA dès que tu bloques</string>
-    <string name="subscription_benefit_calls">Des plafonds plus élevés pour les appels d’expression orale</string>
+    <string name="subscription_benefit_buddy">Un Compagnon d’étude IA dès que tu bloques</string>
+    <string name="subscription_benefit_calls">Plus d’appels pour pratiquer l’expression orale</string>
     <string name="subscription_start_free">Commencer gratuitement</string>
-    <string name="subscription_no_card_needed">Aucune carte bancaire nécessaire.</string>
+    <string name="subscription_no_card_needed">Pas de carte bancaire nécessaire.</string>
     <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
     <string name="subscription_free_summary">%1$s · %2$s</string>
     <!-- %d is the number as a digit, at the start: "1 goal". -->
@@ -153,38 +153,38 @@
         <item quantity="many">%d leçons par mois</item>
         <item quantity="other">%d leçons par mois</item>
     </plurals>
-    <string name="subscription_free_plan">Un plan pour ton objectif et ta date</string>
-    <string name="subscription_free_exam_week">Pour un examen : le diagnostic, ton plan et sa première semaine</string>
-    <string name="subscription_free_exam_day">Pour un examen : le diagnostic, ton plan et son premier jour</string>
+    <string name="subscription_free_plan">Un plan adapté à ton objectif et à ta date</string>
+    <string name="subscription_free_exam_week">Pour un examen : le diagnostic, ton plan et sa première semaine</string>
+    <string name="subscription_free_exam_day">Pour un examen : le diagnostic, ton plan et son premier jour</string>
     <!-- Never shown for 1 or 7 days, which have their own strings; "one" is there only because every language needs it. -->
     <plurals name="subscription_free_exam">
-        <item quantity="one">Pour un examen : le diagnostic, ton plan et ses %d premiers jours</item>
-        <item quantity="many">Pour un examen : le diagnostic, ton plan et ses %d premiers jours</item>
-        <item quantity="other">Pour un examen : le diagnostic, ton plan et ses %d premiers jours</item>
+        <item quantity="one">Pour un examen : le diagnostic, ton plan et son premier jour (%d jour)</item>
+        <item quantity="many">Pour un examen : le diagnostic, ton plan et ses %d premiers jours</item>
+        <item quantity="other">Pour un examen : le diagnostic, ton plan et ses %d premiers jours</item>
     </plurals>
     <plurals name="subscription_free_buddy">
-        <item quantity="one">Un compagnon d’étude IA : %d message par jour</item>
-        <item quantity="many">Un compagnon d’étude IA : %d messages par jour</item>
-        <item quantity="other">Un compagnon d’étude IA : %d messages par jour</item>
+        <item quantity="one">Un Compagnon d’étude IA : %d message par jour</item>
+        <item quantity="many">Un Compagnon d’étude IA : %d messages par jour</item>
+        <item quantity="other">Un Compagnon d’étude IA : %d messages par jour</item>
     </plurals>
     <!-- Calls are spoken practice conversations with an AI partner. -->
-    <string name="subscription_free_calls">Appels d’entraînement à l’oral, avec des limites plus basses que Plus</string>
+    <string name="subscription_free_calls">Des appels pour pratiquer l’expression orale, avec des limites plus basses que Plus</string>
     <string name="subscription_questions_title">Questions fréquentes</string>
-    <string name="subscription_questions_unsure">Tu hésites encore ?</string>
+    <string name="subscription_questions_unsure">Tu hésites encore ?</string>
     <!-- Each language writes to its own support inbox: keep the address for this language's support (Portuguese: contato@zoonk.com). -->
     <string name="subscription_questions_email">hello@zoonk.com</string>
     <string name="subscription_show_answer">afficher la réponse</string>
     <string name="subscription_hide_answer">masquer la réponse</string>
     <!-- What TalkBack says about a question: its answer is showing or not. -->
-    <string name="subscription_answer_shown">Développé</string>
-    <string name="subscription_answer_hidden">Réduit</string>
-    <string name="subscription_question_free">Que comprend la formule gratuite ?</string>
+    <string name="subscription_answer_shown">Déplié</string>
+    <string name="subscription_answer_hidden">Replié</string>
+    <string name="subscription_question_free">Que comprend la formule gratuite ?</string>
     <plurals name="subscription_answer_free_guest_lead">
-        <item quantity="one">Commence gratuitement avec %d leçon, sans compte. Avec un compte gratuit, tu as :</item>
-        <item quantity="many">Commence gratuitement avec %d leçons, sans compte. Avec un compte gratuit, tu as :</item>
-        <item quantity="other">Commence gratuitement avec %d leçons, sans compte. Avec un compte gratuit, tu as :</item>
+        <item quantity="one">Commence gratuitement avec %d leçon, sans compte. Avec un compte gratuit, tu as accès à :</item>
+        <item quantity="many">Commence gratuitement avec %d leçons, sans compte. Avec un compte gratuit, tu as accès à :</item>
+        <item quantity="other">Commence gratuitement avec %d leçons, sans compte. Avec un compte gratuit, tu as accès à :</item>
     </plurals>
-    <string name="subscription_answer_free_lead">Avec la formule gratuite, tu as :</string>
+    <string name="subscription_answer_free_lead">Avec la formule gratuite, tu as accès à :</string>
     <!-- %d is the number as a digit, at the start of every form, "one" included ("1 goal at a time"); never spell it out or move it to the end. -->
     <plurals name="subscription_answer_free_goals">
         <item quantity="one">%d objectif à la fois</item>
@@ -197,32 +197,32 @@
         <item quantity="many">%1$d leçons par mois, jusqu’à %2$d par jour</item>
         <item quantity="other">%1$d leçons par mois, jusqu’à %2$d par jour</item>
     </plurals>
-    <string name="subscription_answer_free_exam_week">La première semaine de préparation aux examens</string>
+    <string name="subscription_answer_free_exam_week">La première semaine de préparation à l’examen</string>
     <string name="subscription_answer_free_exam_day">Le premier jour de préparation à l’examen</string>
     <!-- Never shown for 1 or 7 days, which have their own strings; "one" is there only because every language needs it. -->
     <plurals name="subscription_answer_free_exam">
-        <item quantity="one">Les %d premiers jours de préparation à l’examen</item>
+        <item quantity="one">Le premier %d jour de préparation à l’examen</item>
         <item quantity="many">Les %d premiers jours de préparation à l’examen</item>
         <item quantity="other">Les %d premiers jours de préparation à l’examen</item>
     </plurals>
     <!-- %1$s is the buddy messages ("10 messages to your buddy"), %2$s the uploads ("3 uploads"). -->
     <string name="subscription_answer_free_buddy_uploads">%1$s et %2$s par jour</string>
     <plurals name="subscription_answer_free_buddy">
-        <item quantity="one">%d message à ton compagnon</item>
-        <item quantity="many">%d messages à ton compagnon</item>
-        <item quantity="other">%d messages à ton compagnon</item>
+        <item quantity="one">%d message à ton Compagnon</item>
+        <item quantity="many">%d messages à ton Compagnon</item>
+        <item quantity="other">%d messages à ton Compagnon</item>
     </plurals>
     <plurals name="subscription_answer_free_uploads">
-        <item quantity="one">%d import</item>
-        <item quantity="many">%d imports</item>
-        <item quantity="other">%d imports</item>
+        <item quantity="one">%d ajout de document</item>
+        <item quantity="many">%d ajouts de documents</item>
+        <item quantity="other">%d ajouts de documents</item>
     </plurals>
-    <string name="subscription_answer_free_calls">Des appels pour t’entraîner, avec des limites plus basses qu’avec Plus (les exercices d’expression orale des examens sont inclus avec Plus)</string>
-    <string name="subscription_question_unlimited">Plus est vraiment sans limites ?</string>
-    <string name="subscription_answer_unlimited">Presque. Les leçons, les objectifs et ton compagnon sont limités uniquement pour bloquer les bots et les outils automatisés, pas les personnes qui apprennent. Les appels en expression orale ont des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite.</string>
-    <string name="subscription_answer_fair_use">Lire notre politique d’utilisation raisonnable</string>
-    <string name="subscription_question_cancel">Que se passe-t-il si j’annule ?</string>
-    <string name="subscription_answer_cancel">Tu gardes Plus jusqu’à la fin de la période déjà payée. Ensuite, tu repasses à la formule gratuite, et tu conserves tes objectifs et ta progression.</string>
-    <string name="subscription_question_refund">Puis-je obtenir un remboursement ?</string>
-    <string name="subscription_answer_refund">Contacte-nous simplement et explique-nous ce qui s’est passé. Nous ferons de notre mieux pour te rembourser.</string>
+    <string name="subscription_answer_free_calls">Appels d’entraînement avec des limites plus basses que Plus (les tâches d’expression orale pour les examens sont incluses dans Plus)</string>
+    <string name="subscription_question_unlimited">Plus est-il vraiment illimité ?</string>
+    <string name="subscription_answer_unlimited">Presque. Les leçons, les objectifs et ton Compagnon ont des limites qui visent uniquement à bloquer les robots et les outils automatisés, pas les personnes qui apprennent. Les appels d’expression orale ont des limites quotidiennes et mensuelles, plus élevées qu’avec la formule gratuite.</string>
+    <string name="subscription_answer_fair_use">Lire notre politique d’utilisation équitable</string>
+    <string name="subscription_question_cancel">Que se passe-t-il si je résilie ?</string>
+    <string name="subscription_answer_cancel">Tu gardes Plus jusqu’à la fin de la période déjà payée. Tu repasses ensuite à la formule gratuite et tu conserves tes objectifs et ta progression.</string>
+    <string name="subscription_question_refund">Puis-je obtenir un remboursement ?</string>
+    <string name="subscription_answer_refund">Contacte-nous et raconte-nous ce qui s’est passé. Nous ferons de notre mieux pour te rembourser.</string>
 </resources>

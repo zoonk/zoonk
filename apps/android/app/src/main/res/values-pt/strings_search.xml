@@ -3,12 +3,12 @@
 {
   "search_appearance": "a555ab33df7bacae45da9dc418edf21e619d1c9d9c3e9e50176b11b5efd52673",
   "search_ask_buddy": "98af4685a01e840f5cfa544647e00b4f559319ab30543443d66b63dcea2c0aa7",
-  "search_ask_detail": "fc314b5a92e6b3329fa4b5a30a696049cca5a8126bb20480b115e75cd6b9adaa",
+  "search_ask_detail": "86530a7b22c223c2048cc430d97ea709f1c80417062b4bc0e61bc0025424cfe9",
   "search_ask_question": "11a6970f0559b0a447b27d4387af70467a3a744c80888c625cc293460d958f10",
   "search_blog": "188ae076fb9bfc2179a71be194b9d95cb00f77c99a44ee3151e6820314f1d71f",
   "search_buddy_keyword": "668de5a7e295ba71c89b4863a006045313d8a41f3dc63e1b29403aeb350cbefc",
   "search_clear": "1f92e52a0d148910495246459fb8187a3133b8db4671155c5295df6e01706bfd",
-  "search_close": "1201c61c9d449ccbe946c511ebb3b10b7cb2a086c3699c59f2773979d6888ec6",
+  "search_close": "77919f3a64a3b151ea005f007b6881d2721c9eff85e441eb92604573a4f8f4ff",
   "search_continue": "16830cd2d2f6fa652f23275591c114cc43f321e1d865fa701e580da9cd1fed38",
   "search_continue_failed": "ef4c870966fa92daf608aa77453d52a17efcd19d51c5c819af866c1e2ee09ff5",
   "search_group_account": "69ea4af971e1f98c06e968fe52b4aa9011857c80712e31bf032380bd24efdd46",
@@ -31,8 +31,8 @@
   "search_memory": "a881172e98d67687913880673f68b552735c421c936decf149b00ae8cd231fc7",
   "search_mistakes_notebook": "a8c55e720d67fba9a306e27ff06b157ea435fb9073d15c40d378fa2b0af51972",
   "search_mock_exam": "b73611f96d7590bba424e7152d17a30b6f14e15ed92690d9bc16696dfe7a4eeb",
-  "search_open": "c02ab28f551a46ae78da11fbecfc8eadb63a9fa8c198f877a40610592da9ccce",
-  "search_placeholder": "7e5a7ad0536dd8ec96ced0abb3acc6db66b224f84e491c305d77193954f80fc4",
+  "search_open": "d233fc5c694240c3592a695bd95940968feb7e61cc900a5d744d98fe51f2b8dd",
+  "search_placeholder": "28f4d4407d400be4f3a9f1fc93422b5b4310da06bc8e85eec18c390d3c212b24",
   "search_practice_mistakes": "304b98bea056e4c054c18ed6a1cebe259ee8f920f79ecc1f9b138cb6740c1ce6",
   "search_preferences": "c0943b65788ec0aff16ee368b794d925ff0a9136c2017384a0273ce805285375",
   "search_pricing": "78a07454af96ddac6fba13970fb3aa4ef6b8c37115cc60eef0e39a895b458061",
@@ -46,13 +46,13 @@
   "search_subscription": "752e3b15187c3882ae8fc4d4d74fa9bb51ba5b0aa22611e7dca6f82733d74658",
   "search_switch_goal": "aa790988879aaa4c85e16a056bcc0b17ca0a13d0d723c9de148148df950188ad",
   "search_take_mock": "72167a438b806f43dda8882fe742684225dc0fe1c4de1602a6c5aa5f9d5ee0fc",
-  "search_take_mock_detail": "3fbb20162278de5a633f155866e5fad6b271d7fe52196e912482a0de5d2f8c45"
+  "search_take_mock_detail": "2f07ab9afd2b06b6facc40bcec6c5698ff4f9b1de90afcea4121c0b4c81673e6"
 }
 -->
 <resources>
-    <string name="search_placeholder">Pesquise ou pergunte…</string>
-    <string name="search_open">Pesquisar ou perguntar</string>
-    <string name="search_close">Fechar pesquisa</string>
+    <string name="search_placeholder">Busque ou pergunte…</string>
+    <string name="search_open">Buscar ou perguntar</string>
+    <string name="search_close">Fechar busca</string>
     <string name="search_clear">Limpar busca</string>
     <string name="search_continue_failed">Não foi possível abrir seu próximo passo. Tente de novo.</string>
     <string name="search_group_actions">Ações</string>
@@ -68,7 +68,7 @@
     <string name="search_group_new_goal">Nova meta</string>
     <string name="search_continue">Continuar a sessão de hoje</string>
     <string name="search_take_mock">Fazer um simulado</string>
-    <string name="search_take_mock_detail">Completo, meio simulado ou uma matéria</string>
+    <string name="search_take_mock_detail">Completo, metade ou uma matéria</string>
     <string name="search_practice_mistakes">Praticar o que você errou</string>
     <string name="search_ask_buddy">Pergunte para %1$s…</string>
     <string name="search_start_new_goal">Começar uma nova meta</string>
@@ -93,7 +93,7 @@
     <string name="search_appearance">Aparência</string>
     <string name="search_language">Idioma</string>
     <string name="search_ask_question">Pergunte para %1$s: “%2$s”</string>
-    <string name="search_ask_detail">Abre a conversa</string>
+    <string name="search_ask_detail">Abre o chat</string>
     <string name="search_start_new_goal_named">Começar uma nova meta: “%1$s”</string>
     <string name="search_start_goal_named">Começar uma meta: “%1$s”</string>
 </resources>

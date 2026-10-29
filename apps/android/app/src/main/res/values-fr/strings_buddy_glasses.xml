@@ -3,23 +3,23 @@
 {
   "buddy_glasses": "34b12559d54e858170be7b3a357f91e30281ba9bfaaea68328adac37001cbf62",
   "buddy_glasses_aviator": "94cac9dab5af6944734ccf5c5d2e946fc4ba914c4423e3511327d3aae67450dc",
-  "buddy_glasses_cat_eye": "cd84414757ae1d0600012b68c1b03e39bfe7c2f67506b1bb6178a76a2471b8d7",
-  "buddy_glasses_earn_aviator": "2550eb759132748ae8183370d23cd27bf702802eadcfb0d7d0e82614f661bffd",
+  "buddy_glasses_cat_eye": "0673eeefdeea1ffd80cc785245e2c9acfbf235796e424562f93a78c85d5ea2ab",
+  "buddy_glasses_earn_aviator": "9d0fc832940862e742d8cd6ae03da3cdd3e0bef5fc68aa3eed40cca3a8d54d4a",
   "buddy_glasses_earn_cat_eye": "9f702004bd5f4c434ca5a7f41f77764214a9c9b1f6293f8c439a32df9498fcbe",
   "buddy_glasses_earn_monocle": "19dd1c85f2f2105bc6091ebc139ac77779921f3cba4294ffd34e7ff598a94b49",
   "buddy_glasses_earn_retro": "a942e433e4583f3d244160600455729fd9ad516fb52a77f3de90d3d02e6a853b",
-  "buddy_glasses_earn_round": "125c9801ed4787460b1cd5f7a8d9836f7ba242ad9c3721c47a1a953bee39a0c6",
-  "buddy_glasses_earn_star": "d1b84da70b71579e095276889fe4099b48caf025f84d9f58dd29dcddbe9865fd",
+  "buddy_glasses_earn_round": "0b291e309023a364f159154196b391c3ca414f58d6b1579a74ad2e0caf0ff804",
+  "buddy_glasses_earn_star": "2702217dbce202cc598019ed9098af7090bbfad7b4d8b0abb9d62cedb85dd7e2",
   "buddy_glasses_monocle": "d90508917e7f561106455fc1f6406a0734a07cbecf42b63754b238e21ffb65d2",
   "buddy_glasses_retro": "be40217964cca26506fe26c89d10b9807e51dece9348313ad58dfbc13da75ea0",
   "buddy_glasses_round": "afc8e9e1fcc7c52b82af59a295e4d5ba38a0034e547c899d9b7660cbbffd0eaf",
   "buddy_glasses_star": "a75003f23c78c3e416db34b7738fe7474bad6c8d2614beccaa6f0daa4191200d",
-  "buddy_glasses_worn_aviator": "31d382d380e21e739c8a2e62047d44a75ba2330b8d20bb8795133415048e5d68",
+  "buddy_glasses_worn_aviator": "7d750337ee5f77a0cf0d8bf3f80cd69f0afe511add6f5c37d2092451ff25100d",
   "buddy_glasses_worn_cat_eye": "c05a538e904f1faee88d562b0864de2eeb327f531dca9117426b5e3ca01aa241",
   "buddy_glasses_worn_monocle": "07650f7b301cba3ed3047284fab3ea88abd30993c27e1f0e998006baf04c8bf6",
   "buddy_glasses_worn_retro": "80a0654b1c109ed2233608cd6917b5a519218b847f65c47a9b50bb7d7f389edc",
   "buddy_glasses_worn_round": "7fb72142b15a6c70c2d8769ae2333872313daa2f2974a28d63515d43877d66f3",
-  "buddy_glasses_worn_star": "c291119010e4938c2e6defd10d3518232011484bcea5b6144695c006008ea549",
+  "buddy_glasses_worn_star": "2fcd6c7c0c8305c7722c7cd9455b89480fcc48f54d1e1b733ef0d863efa53482",
   "buddy_stage_adult": "4080d4165ba7901f5a9c2f1696edc0b325b1f2bc3d82bd81d61a3ad71a8ebe35",
   "buddy_stage_baby": "30b390ed714d03910aa40890e1a30dd1f474cec1258e9d7303dfeccb888af0b2",
   "buddy_stage_young": "68601b221d3b5ff07c8a7cea313188c951549bf55f15d68900190936cdc83395"
@@ -30,18 +30,18 @@
     <string name="buddy_glasses_round">Rondes</string>
     <string name="buddy_glasses_star">Étoile</string>
     <string name="buddy_glasses_aviator">Aviateur</string>
-    <string name="buddy_glasses_cat_eye">Œil-de-chat</string>
+    <string name="buddy_glasses_cat_eye">Œil de chat</string>
     <string name="buddy_glasses_retro">Rétro</string>
     <string name="buddy_glasses_monocle">Monocle</string>
     <string name="buddy_glasses_worn_round">Lunettes rondes</string>
-    <string name="buddy_glasses_worn_star">Lunettes étoilées</string>
-    <string name="buddy_glasses_worn_aviator">Lunettes d’aviateur</string>
+    <string name="buddy_glasses_worn_star">Lunettes en étoile</string>
+    <string name="buddy_glasses_worn_aviator">Lunettes aviateur</string>
     <string name="buddy_glasses_worn_cat_eye">Lunettes œil-de-chat</string>
     <string name="buddy_glasses_worn_retro">Lunettes rétro</string>
     <string name="buddy_glasses_worn_monocle">Un monocle</string>
-    <string name="buddy_glasses_earn_round">Fourni avec ton compagnon</string>
-    <string name="buddy_glasses_earn_star">Remporte ton premier défi de la phase</string>
-    <string name="buddy_glasses_earn_aviator">Termine ton premier défi hebdomadaire</string>
+    <string name="buddy_glasses_earn_round">Incluses avec ton compagnon</string>
+    <string name="buddy_glasses_earn_star">Remporte ton premier Défi de la phase</string>
+    <string name="buddy_glasses_earn_aviator">Termine ton premier Défi hebdomadaire</string>
     <string name="buddy_glasses_earn_cat_eye">Termine toutes les missions pendant 7 jours différents</string>
     <string name="buddy_glasses_earn_retro">Termine 50 révisions</string>
     <string name="buddy_glasses_earn_monocle">Remporte le défi final</string>

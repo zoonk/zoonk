@@ -6,7 +6,7 @@
   "buddy_tagline_beep": "dad520e6ed40f297bc35d5873e8a11fe2a29a0acc26a265b3e7071b5550245c9",
   "buddy_tagline_noodle": "5b1623a73fd0e6fe27657064dcc908ad756f5c97103dc208be8c271ae9a9c6bf",
   "buddy_tagline_otto": "5c2e313b8f8a42b7f20c8bb56b299ea59985f7943b0f77099f6b6fa12d3c68bb",
-  "buddy_tagline_zu": "6044d43dbbe00251b4dee0588f650be52267bb1a6acf3fb313ae350327a930c1"
+  "buddy_tagline_zu": "63a511871d1f116157df9f325dd9d1b3147b47b9fb30f0c149f0bdc67a9b8aa7"
 }
 -->
 <resources>
@@ -15,7 +15,7 @@
     <!-- Label of the field for a custom buddy name. -->
     <string name="buddy_picker_name">Nombre</string>
     <!-- Under the buddy Zu, an alien, in the buddy picker. -->
-    <string name="buddy_tagline_zu">Alienígena curioso</string>
+    <string name="buddy_tagline_zu">Extraterrestre curioso</string>
     <!-- Under the buddy Noodle, a brain, in the buddy picker. -->
     <string name="buddy_tagline_noodle">Cerebro con patas</string>
     <!-- Under the buddy Beep, a robot, in the buddy picker. -->

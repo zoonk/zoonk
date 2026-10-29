@@ -1,46 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "player_language_all_matched": "bce069f56f53e69e1b0dbc14ad5a68e186c831263592738674c5cac08a28579b",
+  "player_language_all_matched": "d002c21c6ca82608acc639ad929e299293738ab22ca1f2cd4357042a35d718db",
   "player_language_alphabet": "eeeb6586f5178c1462d161e7939214b6027ad89c50e7a2f4a0e31ec8b2e21756",
-  "player_language_blank": "9397254f6a4b2c585875f221d9ddd31e16baaa61531a956f42a096a629b5a00b",
-  "player_language_blank_checked": "27edb0a6d89a7fec6e924d5804143a9043a1888a09aee6abefc0384ba6ce43c6",
-  "player_language_blank_filled": "3f33ad5a663b9b0b587be203836b178760006b97aae14f5c0e04e62673221eac",
+  "player_language_blank": "1287918960997188ce4efc7fc8dc8d7de6563be5607689741e133a409c69ebca",
+  "player_language_blank_checked": "f270f8bfd9bc385f84ca2b4ce74b84cea2cfced68ae7fb72263b5ce723061d86",
+  "player_language_blank_filled": "608812fca74485a2c948e2513a90ebb9012149fc2f522ff9596b2aa3a3aee050",
   "player_language_checked_word": "f22060cb86519691f3e3c9ea110722aba282d0dd8f8a8a65c81b5b0b3f4d3f15",
-  "player_language_correct": "abb4563b5e08804e844b3b45ac0dbd6642ed4e3adfb9a67131e0b5f65e0d85b4",
-  "player_language_incorrect": "b8584e07a99511903ef488c4995600e81d3cfc20e8d4970ae24e4ea1668c13ee",
+  "player_language_correct": "88f533cfdf85a5a0e1f9cb5a62eebf46c736f9f64d06af801c4078946fd7dcc4",
+  "player_language_incorrect": "8d11929e75473ff84ab57ce8bfffe8bc261e48f82501dd7f05e33eb673e51351",
   "player_language_match_the_pairs": "5efbe4009c84007d390e591c6a025855b8dc491ec163c2ec71986a861e8cd710",
-  "player_language_matched": "688bae9a950dbdaae3bb124a10ff80664ac5fb1239c1d84e572463d8040c0d08",
+  "player_language_matched": "bde4717c5600c52a3892860213bdaad4d947e683c5301827773a2f4bb0105933",
   "player_language_move_earlier": "5befccd1c6ab49e9898c15fdf6b8a66bf1aca85afecf8d8ee6a32f69ba6abee9",
   "player_language_move_later": "9c854455b90b7004d23758761255ea7fc7fb3a5afd2d474a5e51df2ea7d7282c",
-  "player_language_not_a_pair": "589e6de655e362a50e58f4f394b8964684f846e7a38b850f64ba956832e3bd91",
+  "player_language_not_a_pair": "5acfdf43a00676c026aea589341424d4d0ba301274af75d692202f0b29d0b83e",
   "player_language_pick_words": "d1188ced69b8a30beeedb53edbc449f346bd57d1bf6afb128472479eafb6f641",
   "player_language_play": "b08998a1c52a4186bef71b25d55b53460ca88164d4ae820c33cabed3658b0570",
-  "player_language_play_pronunciation": "61da6f270ee4ce9ca5a12884714a3cd9db665e2af34ddca6b82430040018098f",
+  "player_language_play_pronunciation": "28b5ab81ea11edc02ffd1338e75f78738b9a6ab8568b7d2d01bcc53ef4b255a9",
   "player_language_position": "f7b6ca01e7dafa2a304edc6a47314d4369ea5393edd1e3e97e844425ecd680fb",
   "player_language_pronunciation_tip": "3e585b139f8a1297dd5d84491870d9444af32b621b8342be60ef52f3901ebd6b",
   "player_language_remove": "30032ab536c44c33fcc3905e0549ed60537fce9782a9d92c920f39230e564931",
   "player_language_selected": "26120ee8b56e0602e6563273f420053de00960ee72bf72573ab6dc3cc21d6983",
   "player_language_show_translation": "4d23175614710461c127a5d03aa10ddb3a2f3b65cd2afe552b177b2ceb1d73e4",
   "player_language_stop": "6ba3879cad0bec77ab2eaa3536b80152daba1bfecba19c57f6480a9185a09fc9",
-  "player_language_translate": "b37d43712b129803e11604089e58c192384cbd2a71cb79da62ac973b6670cc7a",
+  "player_language_translate": "2f7bbdfdc824b4da1dd5d09489acda8e9a73fb189eaab05bd88d66f067d20584",
   "player_language_usage": "56a91713474bd7e2ef8fbd6a7d19e7a6b1f2e32b9795f0d616124771b9fd6570",
   "player_language_vocabulary": "3cde074fdc078a7fa0773f9f45ee8a38a66af7044dbed6a54e8dabc9ef09122b",
   "player_language_what_do_you_hear": "3d53c4fddd9d130e5fccdb05e3c0a89722cb5de81628080cf7fc1aa155b78539",
-  "player_language_which_means_this": "8bd2831100d2e6859c9311dfbf6a79c7ab95b97b80d69164c05a785afc99db1b",
+  "player_language_which_means_this": "04cb939e9d2311d7b83e6431fc3a83257a386c3981b7f3f231049f2af5fd39dd",
   "player_language_word_bank": "27b345c7344c5138dd6ef792625b2faf8ba1883931a2020e72a8ebd59cdd6576",
   "player_language_your_answer": "e18b4b3923283f60e07a5e00f2ff3f354bfca186b45143ee4e6600a83b599b06"
 }
 -->
 <resources>
-    <string name="player_language_translate">Traduzir</string>
+    <string name="player_language_translate">Traduza</string>
     <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
-    <string name="player_language_which_means_this">Qual deles significa isso?</string>
+    <string name="player_language_which_means_this">Qual tem esse significado?</string>
     <string name="player_language_what_do_you_hear">O que você ouve?</string>
     <string name="player_language_play">Reproduzir</string>
     <!-- Stops the sentence playing. -->
     <string name="player_language_stop">Parar</string>
-    <string name="player_language_play_pronunciation">Ouvir a pronúncia</string>
+    <string name="player_language_play_pronunciation">Ouvir pronúncia</string>
     <!-- Screen reader name of a vocabulary screen; %1$s is the word. -->
     <string name="player_language_vocabulary">Vocabulário: %1$s</string>
     <!-- Screen reader name of an alphabet screen; %1$s is the letter. -->
@@ -56,8 +56,8 @@
     <string name="player_language_position">Posição %1$d: %2$s</string>
     <!-- Screen reader name of a checked word; %1$s is the word, %2$s says whether it's correct. -->
     <string name="player_language_checked_word">%1$s. %2$s.</string>
-    <string name="player_language_correct">Certo</string>
-    <string name="player_language_incorrect">Errado</string>
+    <string name="player_language_correct">Correto</string>
+    <string name="player_language_incorrect">Incorreto</string>
     <!-- Screen reader action that moves a placed word one place earlier in the answer. -->
     <string name="player_language_move_earlier">Mover para antes</string>
     <!-- Screen reader action that moves a placed word one place later in the answer. -->
@@ -65,18 +65,18 @@
     <!-- Screen reader action that shows a word's translation. -->
     <string name="player_language_show_translation">Mostrar tradução</string>
     <!-- Screen reader name of an empty blank; %1$d is its place in the sentence. -->
-    <string name="player_language_blank">Espaço em branco %1$d</string>
-    <string name="player_language_blank_filled">Espaço em branco %1$d: %2$s</string>
+    <string name="player_language_blank">Lacuna %1$d</string>
+    <string name="player_language_blank_filled">Lacuna %1$d: %2$s</string>
     <!-- Screen reader action that takes a placed word back to the word bank. -->
     <string name="player_language_remove">Remover</string>
     <!-- %1$d is the blank's place, %2$s the word, %3$s says whether it's correct. -->
-    <string name="player_language_blank_checked">Espaço em branco %1$d: %2$s. %3$s.</string>
+    <string name="player_language_blank_checked">Lacuna %1$d: %2$s. %3$s.</string>
     <string name="player_language_match_the_pairs">Combine os pares.</string>
-    <string name="player_language_all_matched">Todos os pares foram combinados. Pressione Conferir para continuar.</string>
+    <string name="player_language_all_matched">Todos os pares foram combinados. Toque em Conferir para continuar.</string>
     <!-- Screen reader state of a word already paired with its match. -->
-    <string name="player_language_matched">Encontrado</string>
+    <string name="player_language_matched">Combinado</string>
     <!-- Screen reader state of the word picked to pair next. -->
     <string name="player_language_selected">Selecionado</string>
     <!-- Said by the screen reader when two picked words don't go together. -->
-    <string name="player_language_not_a_pair">Não é um par</string>
+    <string name="player_language_not_a_pair">Não formam um par</string>
 </resources>

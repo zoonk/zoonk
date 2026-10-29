@@ -2,15 +2,15 @@
 <!-- eloqnt-fingerprints-v1
 {
   "search_appearance": "856f5107215810107d28d838c481d631b2a06c364f673758b7a8f3a16a934ed7",
-  "search_ask_buddy": "10482eb8424444413f6f4c99b93f8f9381a8c9ff5b65f6bd40883b1bce75ec82",
+  "search_ask_buddy": "c543a33c48a1af62cdc1cce323560b09664cc31b4d675ca11a35e3e6ba866f01",
   "search_ask_detail": "b57c16be2c0ef95919375d47ad16ed81ac037769f27567c3d7a830686ba10591",
-  "search_ask_question": "7d11bdb7694ce1641a2640b91c2e33c80c435ada2018ad11e565af39a1fbeaac",
+  "search_ask_question": "3a8961779f2954840ac2e1099776a8f9ce123d31af94118325e9961082928fea",
   "search_blog": "5cb46e5fdceb6c0d6b8855d6876874003cbb6f7582b4acf81c6246363c1eafb1",
   "search_buddy_keyword": "b67fca40279b1973377c1c800fab907bde9762edca9bc8376135a9accc243f0e",
   "search_clear": "9711eee1babd1e1b90ea6cfca265f68b74e5c2421345750b89262acd02fac229",
   "search_close": "ac5c882fa4b9c86057fa6c45d2cabf6ed29f0d49dc2fd1a18c87b6e57464da35",
   "search_continue": "03de24d2b37c7887f1c5d673b85fe9fd5d1a537e6cd60aaa8d3a9891c00388c6",
-  "search_continue_failed": "192995ee9c6f7385e54fba60297d7b0126a7575fc2c7124d251abad3568c6ea4",
+  "search_continue_failed": "f5a5120b3317edf641a6a5c179815506aae626b5af8cb451baf0c5e884a6b795",
   "search_group_account": "a7b17783224a8c8f64efed929c62f7ad6f8c11ded2ee35039a439bfa7dbc82e3",
   "search_group_actions": "26ca1f02d26d76e5c8d51ca0a6c60a87680b0c47949e0192b767e59717e2ee99",
   "search_group_ask": "8d3bd01ee7dff4e4c9d37d2e1896ed57da0368a0b2b4c89ecb7e27b334974a57",
@@ -23,15 +23,15 @@
   "search_group_new_goal": "4eeee81dfbf6073d09ab03f6080418b020428aaf8bbb444b6184fe175fbe9131",
   "search_group_plan": "78c6d0ef9a62ed8cff40ef700afaa8a11dc89489010e27d1f26b334f3937308e",
   "search_help": "027a93a1de32f411ffbd35e932e08e15b8d8740ba8765eec06ef1379abb7c557",
-  "search_home": "e56e798c39ae42124597e87e4483270ea4f8b72b22c9ecfb1fef7c03dfaae997",
+  "search_home": "603db6def84d1dc374be2f9554e3a61d97299a88130946b49a3e4d5ec1cb4be4",
   "search_language": "e96d8b0c338ed3d039c71f9c25959459ab79a5c479f9685ba2f599dad086fd54",
   "search_log_in": "40c1ab1a9b6d2c77399d38c27e2ea20b0d99213e19c7128c4e76983f9644a6bd",
   "search_log_out": "b8d651a6bce909534d5b11b61a77f7d77dd529fb2183e51e3d6cc28091f6e118",
   "search_logbook": "49a05adeb3ddffc53ea71f455d2a8e46dff27c7f2e906dcd88065941617bb919",
   "search_memory": "957d292f5f00fa7ec032f929eb3b54926b2f83a03a1d67a019cb67060572c3de",
   "search_mistakes_notebook": "ae0cf89a447481b53a80a739fc7a8ea987c69ff96663a1bbf07efcb3bfc05f09",
-  "search_mock_exam": "1fba93e75e5a2c279988bd6c50cae15d1d872b9232a271fcc435881f75b8c89b",
-  "search_open": "33d2f366f75be72f566d76aab8d10f4b5111f492eaeee9cf62888ebafc19fa39",
+  "search_mock_exam": "7cfab1a79488e90cd644a0b2270fd1615ae9a1ea82d057dab6dbb132ee84b8e8",
+  "search_open": "901b9755a4f0615971e5a0cf7c1d152a200245bc118b8e6cd07d669c35c535bf",
   "search_placeholder": "17847cc0a5a65738d6645fe4e054f32f72260f1e63e74538d1d8dba40994208c",
   "search_practice_mistakes": "45ecec1ff6993a319de62c595b0280b12561d33690d9eb2190b1f37e7ffe43df",
   "search_preferences": "65221acf6a50d878c8c86263192d2d90d6dc2305c1b997569715903df67a890d",
@@ -41,20 +41,20 @@
   "search_settings": "d45f1a6533171809f016a5e792a5f64375cb9e9ca5b1f5812b250b9f2b1369b4",
   "search_start_goal": "af24ed442d33c511a7dfa9544933adf418f87520e22005e55accff435986f1ae",
   "search_start_goal_named": "ce1efd3177d7c66e20a07da438e53646a9003e27376710a3c95d03fa9aeb3b4b",
-  "search_start_new_goal": "0b12f167e758373b9f85cfb9153d37d3a2714b25275c474fb2ecba616126e01f",
-  "search_start_new_goal_named": "8898a83da98ceb326e7d8f6af2f2379de2d24356750e6f89f62749fe6b99222b",
+  "search_start_new_goal": "cfc7b38776fdbc89579a74be1796c6e477e4cc35dc29a3325aa6cceb941ab3db",
+  "search_start_new_goal_named": "5f063f6758bc6f2f2b086f79a10f643780b027a2005de0f7004878a1cfb917f0",
   "search_subscription": "60bbe7b7c741dd528a12c2a3d1e79030cf4f3178250031c4f386880d7a7d6d50",
   "search_switch_goal": "8307eca81fff24899c2efb5373f4107ca5f2a812062c9051a4440cc3968af65e",
-  "search_take_mock": "3f510ddee93a8e5a98b835dd9b8887abefd4a514d4435e8268301e12b0ba426b",
-  "search_take_mock_detail": "702f9ed705742d5c36e976b3ab5c4cdb8934afdd185a8701347a56bd1122fad1"
+  "search_take_mock": "addc81d822f8b914ba77811679586ac8a1e2ef871182f56f20a2f92e7f308b42",
+  "search_take_mock_detail": "51773932c2123769076ecb604c838dc758ada06a5b9b6abbbff4d6aaf83fb41c"
 }
 -->
 <resources>
     <string name="search_placeholder">Busca o pregunta…</string>
-    <string name="search_open">Busca o pregunta</string>
+    <string name="search_open">Buscar o preguntar</string>
     <string name="search_close">Cerrar búsqueda</string>
     <string name="search_clear">Borrar búsqueda</string>
-    <string name="search_continue_failed">No se ha podido abrir el siguiente paso. Inténtalo de nuevo.</string>
+    <string name="search_continue_failed">No se ha podido abrir tu siguiente paso. Inténtalo de nuevo.</string>
     <string name="search_group_actions">Acciones</string>
     <string name="search_group_go_to">Ir a</string>
     <string name="search_group_goals">Tus objetivos</string>
@@ -67,17 +67,17 @@
     <string name="search_group_ask">Preguntar</string>
     <string name="search_group_new_goal">Nuevo objetivo</string>
     <string name="search_continue">Continuar la sesión de hoy</string>
-    <string name="search_take_mock">Hacer un simulacro de examen</string>
-    <string name="search_take_mock_detail">Completo, medio o una asignatura</string>
+    <string name="search_take_mock">Hacer un simulacro</string>
+    <string name="search_take_mock_detail">Completo, medio o de una asignatura</string>
     <string name="search_practice_mistakes">Practicar tus errores</string>
-    <string name="search_ask_buddy">Preguntar a %1$s…</string>
-    <string name="search_start_new_goal">Empezar un objetivo nuevo</string>
+    <string name="search_ask_buddy">Pregunta a %1$s…</string>
+    <string name="search_start_new_goal">Empezar un nuevo objetivo</string>
     <string name="search_buddy_keyword">Compañero</string>
     <string name="search_mistakes_notebook">Cuaderno de errores</string>
     <string name="search_logbook">Cuaderno de bitácora</string>
     <string name="search_switch_goal">Cambiar a %1$s</string>
-    <string name="search_mock_exam">Simulacro de examen %1$s</string>
-    <string name="search_home">Página principal</string>
+    <string name="search_mock_exam">Simulacro %1$s</string>
+    <string name="search_home">Página de inicio</string>
     <string name="search_start_goal">Empezar un objetivo</string>
     <string name="search_pricing">Precios</string>
     <string name="search_log_in">Iniciar sesión</string>
@@ -92,8 +92,8 @@
     <string name="search_preferences">Preferencias</string>
     <string name="search_appearance">Apariencia</string>
     <string name="search_language">Idioma</string>
-    <string name="search_ask_question">Preguntar a %1$s: «%2$s»</string>
+    <string name="search_ask_question">Pregunta a %1$s: «%2$s»</string>
     <string name="search_ask_detail">Abre el chat</string>
-    <string name="search_start_new_goal_named">Empezar un objetivo nuevo: «%1$s»</string>
+    <string name="search_start_new_goal_named">Empezar un nuevo objetivo: «%1$s»</string>
     <string name="search_start_goal_named">Empezar un objetivo: «%1$s»</string>
 </resources>

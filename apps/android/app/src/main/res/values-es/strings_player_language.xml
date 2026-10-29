@@ -3,17 +3,17 @@
 {
   "player_language_all_matched": "c1e142c79b06b35b4816dbcf00d477e2cf752e6a4a002f1b8a6d43b3be10bf78",
   "player_language_alphabet": "dddfe3122eca275f49b48239fe771fb42527b586e5ae9868fbaa5e8937fa4096",
-  "player_language_blank": "d2c2e015f288322fae8204c559a8b9cfd59bb9c72b0c2e3ab8ef4234abcae737",
-  "player_language_blank_checked": "feb7d28175e694cc69e15dda328f5184e8d18f8b85653b0601cc7eb50ea530d6",
+  "player_language_blank": "1cd581a828d5802113195a570de9ca352b618ed4c10950446561a684f3503c0b",
+  "player_language_blank_checked": "d3939f19a771e00f10f6e3c4e045d64fc27aea32dcb91c867bfdb6c967b43e04",
   "player_language_blank_filled": "6d5725ef4d37ed6e043773a8ef494a805bec14d8648180cbab208f166fa07d9c",
   "player_language_checked_word": "fe759c1c82e7936e2b63363367f5873f6f6739e260c38882d9a7c022ecee51b7",
   "player_language_correct": "e59cd3cc2fe9bd561248d82e41d560e43230806aab81285982b5b08e3eee1ff4",
   "player_language_incorrect": "46df0629f29b4fd351e4d9b69ecf5a22d4a1f5a6e9d858d9974df1646aba0914",
   "player_language_match_the_pairs": "4c4075032ff78a162d75dc9f5d551e679d4e7851af164cb75e5900d481aa1a60",
-  "player_language_matched": "97fce25149f288e25e0845037159fb3e5bb4444f330e0e9b311e89fcfb453d18",
+  "player_language_matched": "21499d920659455a1ac33ecfba7b78b5c657859e6b9c796288119a7f80bd0406",
   "player_language_move_earlier": "2683383c89723a0fc08ac516f741260fffc10ea8ff6e6c274047069faeebd22e",
   "player_language_move_later": "08962fdf8ffa0e6b684db9f0e89c0695107ca348ca3a95732c3d91d96d7398e4",
-  "player_language_not_a_pair": "00768947cda3adc418ca49a0c24f06090101ae83fd2590d4cfb4d20d55591981",
+  "player_language_not_a_pair": "c2672bf73d3e43bdaf0a91ed034c45c7ad9c8206c9f4eb939bb4bddd5676108e",
   "player_language_pick_words": "21b45987a50a15d20175117932726f08ca2169dce71742f806bdf09ccbfdf343",
   "player_language_play": "17fadedc0542cce2350837bd26383f415b9546bdfad9adf2e2b63ef1d3f2ea23",
   "player_language_play_pronunciation": "31e7025815f6c29c0468a1011132cd687e53aa12b66364e6dbb00f49427b60a3",
@@ -23,7 +23,7 @@
   "player_language_selected": "a8f66e182f4c6b445b07cb209fefe986d055cf5c2321024de14cb63c56604365",
   "player_language_show_translation": "42d1cbffdfd595f8b78e6ca92602d3313c7a5d8c0e4cb3cb86de21b0bc2d9af2",
   "player_language_stop": "4be1104e58643b4c449e5af654861890bd9940b0c57f17ddc911b9ea0ebeb6e9",
-  "player_language_translate": "8dd487866fed7cffceb5085fef34fce2ba97754bca6753148a8cd63cc74780c8",
+  "player_language_translate": "fe343639bb19d874ef2ae28d0c149dd6dd6aa70fa19a97d5650fd7207abf2e51",
   "player_language_usage": "71a9feb2c08bf509ebce97dff251e017c06a0ec315645a370f1e43ac33adc91c",
   "player_language_vocabulary": "0bab6f7c0389aacb48a2cd31b43ba2c8056a24f4e2da26851bce1f4ab39690cd",
   "player_language_what_do_you_hear": "d0a629acedb27018bd3d8b970e078af45e9fc25d4d23be293b35d8e5d9858f0e",
@@ -33,7 +33,7 @@
 }
 -->
 <resources>
-    <string name="player_language_translate">Traducir</string>
+    <string name="player_language_translate">Traduce</string>
     <!-- Shown over a word to pick its match when the lesson is in the learner's own language. -->
     <string name="player_language_which_means_this">¿Cuál significa esto?</string>
     <string name="player_language_what_do_you_hear">¿Qué oyes?</string>
@@ -65,18 +65,18 @@
     <!-- Screen reader action that shows a word's translation. -->
     <string name="player_language_show_translation">Mostrar traducción</string>
     <!-- Screen reader name of an empty blank; %1$d is its place in the sentence. -->
-    <string name="player_language_blank">Espacio en blanco %1$d</string>
+    <string name="player_language_blank">Hueco %1$d</string>
     <string name="player_language_blank_filled">Hueco %1$d: %2$s</string>
     <!-- Screen reader action that takes a placed word back to the word bank. -->
     <string name="player_language_remove">Quitar</string>
     <!-- %1$d is the blank's place, %2$s the word, %3$s says whether it's correct. -->
-    <string name="player_language_blank_checked">Espacio en blanco %1$d: %2$s. %3$s.</string>
+    <string name="player_language_blank_checked">Hueco %1$d: %2$s. %3$s.</string>
     <string name="player_language_match_the_pairs">Une las parejas.</string>
     <string name="player_language_all_matched">Has unido todas las parejas. Pulsa Comprobar para continuar.</string>
     <!-- Screen reader state of a word already paired with its match. -->
-    <string name="player_language_matched">Emparejado</string>
+    <string name="player_language_matched">Pareja formada</string>
     <!-- Screen reader state of the word picked to pair next. -->
     <string name="player_language_selected">Seleccionado</string>
     <!-- Said by the screen reader when two picked words don't go together. -->
-    <string name="player_language_not_a_pair">No forman una pareja</string>
+    <string name="player_language_not_a_pair">No forman pareja</string>
 </resources>

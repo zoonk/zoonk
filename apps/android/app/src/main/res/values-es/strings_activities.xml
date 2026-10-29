@@ -1,107 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "activities_badge_before_after": "66651e1b49163c0ab77322cb4af3c819b635eef765a571e117389a5f740f9078",
-  "activities_badge_estimate_first": "ccae6ae3ace1e778ea1e207c8143f7c712e9b271b22d1060fd96e68186dc5cbf",
+  "activities_badge_before_after": "ea7be06ce5b9c7dfe1a3fccd3ac2ba5e4741aad8553aab056496eb4208524ba0",
+  "activities_badge_estimate_first": "db56ad47c53641c6c637f57ec37dcd3e43ba889eb3b5a325cb718fed896a514c",
   "activities_badge_find_error": "4d2ff11e3c85011d466d02625030036b186918ff8a746742d9d38a60749aed31",
   "activities_badge_follow_questions": "cead1647e2b0591b853db63259e475ab9a58705b978c69ca927f4f7c66809e3e",
   "activities_badge_read_chart": "61d0cd18fa3d5e9acfe734272ba9ebe790976621c7174d7a96a1d5397a85d880",
   "activities_badge_reply": "20e14c63f889309e5432f1713ddf937fe29be2ac92f8194a0559c88c1be15bc5",
-  "activities_badge_spot_pattern": "967f16c889ee59a8832ddead64b9c0b3d26e259e4189932d9f96328d82b1cd4e",
-  "activities_badge_step_by_step": "5dd6d09d5f5d4898200f058dfee8ba67a233d19ffd576d0f5f8fc6f996f79a0f",
+  "activities_badge_spot_pattern": "600a870ae28a8e35dd47956bce246fad146221af76fc07ab88e35564546d5db9",
+  "activities_badge_step_by_step": "e3c2ced637248a998f03a11aad9a104415af7ea3e7a4ba064347816ccf03936b",
   "activities_before_after_less": "e5c28029b05b709d0dfa06f34512617354da2c28dc70fcf0a25b7c6f3d5d3a2b",
   "activities_before_after_more": "4663c1cea20011e96be789305e5feef9936ee25ce87f799134a5b2511da24cb3",
   "activities_before_after_no_change": "9e87ce492d34282a2f80191c3cebde175acfa4b215d1f55c734419e2a9f909cf",
-  "activities_before_after_show": "0db1c6f361c34bbf312b9919eb9fe105feb4de1834d57752b46574bf461541b0",
-  "activities_chart_description": "017c19eebb3099eccad1794cc1dfbad5930d0164a2f46b1895c209d3fde98c63",
+  "activities_before_after_show": "8a8103a4dfc54e3a63a44abacc5af88d1034174a62e8eb16ee2ddf191a60a730",
+  "activities_chart_description": "7ea1d999ecee38be240ace09e5d7c1bb1ffa3a1502f03a1c960edc06c580197f",
   "activities_chart_rate": "3c3f91bb66987798a0e1073bd239d32b7f2eb08a15f5b472976e1f2c3caa1032",
   "activities_chart_span": "23b7e14b624c3af484e264bd0d62fab36658ba602546604cef71165d9b8cdc8d",
-  "activities_chart_spans": "b28628b405d786546d70ca4f2f812e990d8a805eb86a951192320bd5dda605df",
+  "activities_chart_spans": "289ad2e4cc11896f0284dc96d3f7572e9d4b2663b52b4d1e2c86b5aff555b449",
   "activities_chart_tap_span": "619e2c3c7cece7faa732696aa06be508dacaca99e9d18b451d7ff6a24836e30e",
   "activities_dialogue_conversation": "60dd8cb33493f22ae6f5b0328a517fed98448b9c7b6b9838b3dc97af2e937415",
-  "activities_dialogue_hear_best": "c7fb507b6577cb102a7309055de95f3e92f25262bf5e66c6d2f524fd5d461fc5",
-  "activities_dialogue_hear_line": "5a2db7e9266299f99938a1fc7e51216235523d2dee9332f55aa55eb654097c45",
-  "activities_dialogue_they_say": "8870c6617be336fed083b6972f4df990c809be5e0f964db805e75a726f809609",
+  "activities_dialogue_hear_best": "898508abaf14d71118600d1dbdec1a2a574ebb635b6724ca0cc3b9a14cc6e75b",
+  "activities_dialogue_hear_line": "0cd69d17bd81691a425a531ecce7662e086a252ffdd1b379028bd9936a1c2b9c",
+  "activities_dialogue_they_say": "d95a4144725ab66ff36834301ce46448e5a164c6d057fd84ca9000c4b6c3fdc3",
   "activities_dialogue_you_said": "e6b2a0b7cba96e950ad04132f7b681c9a64d7bb8b8372cae1807b4545883b3d6",
   "activities_find_error_ai_answer": "adfbd4423aa540dc8ebb38b7b07b9e2fed7099e4a25ceb6f30a9203cec7e3cb1",
-  "activities_find_error_ai_asked": "d20ed0a89ae653b5bca753172b1ed8a30d86e72124366ed71c832e84f298a777",
-  "activities_find_error_ai_note": "6c9094bd3466753a62bfb300a2cbcc27ae3bd79953e3108cfd3606e857523e15",
+  "activities_find_error_ai_asked": "3777733f6a96d732561060c222ca17cb11061d7a17e208f61db7967cebec6a86",
+  "activities_find_error_ai_note": "956df1ec213f78c73bcdd3fb20cccec30a782beeab9beced452e19b83b721454",
   "activities_find_error_problem": "8f59aede2b9216623999343df024a7e08dd05c872bc16170bff165be656f47c1",
   "activities_find_error_step": "651627ea17451ca5dd296e0971ff61504d8eabacf2a70b3c73b7ffb5369af60e",
   "activities_find_error_the_wrong_step": "f759490bd595a61da3de4023d1f52defcafbab49550763521376ce24bfd4648a",
-  "activities_find_error_worked": "f1c3ae6b0e76e43c58fe9eea30b5ad029e75dda7c2633df4b811d4428ed3f679",
+  "activities_find_error_worked": "0aef38d3e0811acc8d10ae44019446760b55da2ade9fc8045312c14ac7dd9021",
   "activities_find_error_wrong_step": "ddfcf9bb29267b77a245e0788a0202cc639eeb2d9914099d35c558bf4d8cf52c",
   "activities_find_error_your_pick": "bc9a21116d3889517f828d699b9191fb0c15071b97ba6614d222ddcca48e8ab6",
   "activities_guess_close": "8a81ed62db43dcae9522a06c6cb7f2ec6662ec82ddcce643a709f70132b873e5",
-  "activities_guess_drag": "9f4e1c54671e7a8983bca8ddecf9de47aebe4cf6a8f62ce5830720b71124366e",
-  "activities_guess_none": "bf52dfdf20b1b48a41cbe41dca82239f02e9bda34d98d3a1160592920d5d0bc3",
-  "activities_guess_off_by": "196ea391fd2e7b88f8b6ae04daa3b8d2532b079dc58ddc13f7025af1140d3898",
+  "activities_guess_drag": "f260d1f25cf93c675cefe05fd000ca3d273990c7f0b796efb894289d15568435",
+  "activities_guess_none": "cce371f6e91bb780fa085f207808c6236e3a71ce8ba94086007aa7132ca8deb5",
+  "activities_guess_off_by": "c1f6c7c79458edc9402cd014ae5ec5d597e8e65c6dd14a76d7b9ac7d0079dd2d",
   "activities_guess_real_value": "87c0a5dd30609fbe861fea3c9da1675c2bfb4a46d562d56e228debbf51380887",
   "activities_guess_scale": "4b0c470febaa20238e9ca2b0a35a813f3f764c0c91c0b816a3760184646dbe16",
   "activities_guess_scale_revealed": "0b927e9e535bc64c3ff5772672cb2af720f89835909dcd04eedaf75bd2349a0e",
   "activities_guess_slider": "ce401d7ea0b2130508c358d59d1dd4af1791ae286dcd02b3235956fdd2f8259c",
-  "activities_guess_too_big": "ecb8369996e5672ea197ecaf1fb6a3eb9dbdc481d9d4d224bef9eb9c9594b105",
-  "activities_guess_too_small": "a3983fd0453cfa3f4dede51ecfa189f41ac30ec6bf39a631df02c018712b9760",
+  "activities_guess_too_big": "dc38da70137ca1b9323ab78ee3900d2d009701f27a7e4d5ef27dc6c50c7edb1f",
+  "activities_guess_too_small": "a356f72cf6b442f12897b30a8714340ab50cd4a83007e3f30a472a88a91f0e7f",
   "activities_guess_yours": "bd5db82b7e134c296de13f1d2fe35b92fe46d210af10f2d5bedb5594c92d1af3",
   "activities_pattern_blank": "2cb580e4d684a31ed39f8a39dcd31b044b621efc6a59e58c302287e27803df74",
   "activities_pattern_correct": "ae377cca71d1d9998fe8bafb59c16b0be1c8057adb35a3acc011fabe455336d9",
-  "activities_pattern_endings": "7b4bf14d91c14cc044848bcf3d625cd00e81620f1a88038b92d86d9fdd5df9af",
+  "activities_pattern_endings": "ec593cf138ef69b1b8bad26ecb7ceb747f7d9c8f0e3778507988f2fda034c704",
   "activities_pattern_which_ending": "2f6e20fcb60351a01a50d9acfb43ab3b6c8f4e02f7bd0c4bf9c34040bf2f08a5",
   "activities_solver_first_pick": "e21137f2c8bdbb5b75f71a739dd18d67760986e82e9c0a049324f65f230982a4",
-  "activities_solver_not_quite": "6fa885ba75ac7c6638c0e0303129bb541c7b98ac7778c972a31eb31c7cbd195d",
+  "activities_solver_not_quite": "7dc192b39720425f33aa8f5bb22091eb6c75b133cbcec586fcfe2842a52cb3c9",
   "activities_solver_right": "9c72433ee677b122639e2a8619a0a3639be19c41a43b081797a29acf63ad64a7",
   "activities_solver_steps": "d5b281db39167c8ec5a25d3c1194e32af680b379e6c7bbf739ed36874369d989",
   "activities_tree_case": "6a7b175d82a1b113b6aa7d4113fd1b42d34d60f1b422a6e7205b8d60a10c100f",
-  "activities_tree_it_leads_to": "a6f6ed394b3206d92b83d6bb69c305c5d81681d546457a3e83cd088c835186b9",
-  "activities_tree_leads_to": "4e8aaed566f389cf750cd2a858b8d64debbeab1c7fffe129a3488bc7204d0261",
+  "activities_tree_it_leads_to": "548da26e1cb38cb15e85e09a261e1077f6fb84f0c874acc9e5a169d6fa5d21fb",
+  "activities_tree_leads_to": "4790ec1cfff55b12b9f0afede3b4b4a64c7c25e016acfdf4f670eec1b8e00848",
   "activities_tree_still_possible": "c594b63587f94e44e73e3c34b6df5c9b611d1a6b0b110fc7798710dbdaad3cbc",
   "activities_tree_undo": "e075560c089e9a40092adfc23555b01ec2f7eb00013dfb830209766d48d3b36d",
-  "activities_tree_walk": "b3f214ae30cd6e86f9bf0e44c4ce8875fd6c7417eb8f3b2dbb5a6b6a2fe00ddb",
+  "activities_tree_walk": "0d254b50962f587286dca9457927e0669d2250c8502c50306050ce8a99736df4",
   "activities_tree_you_chose": "b6342bf8187373364c692fc52059913eada523394a50e344052246f7ed4091e2",
   "activities_tree_your_answers": "b0984ca5e9aea94496d620fcefb72f80f381b21c85d51914d2504248ba606bcb"
 }
 -->
 <resources>
-    <string name="activities_badge_estimate_first">Estima primero</string>
+    <string name="activities_badge_estimate_first">Haz una estimación primero</string>
     <string name="activities_badge_read_chart">Lee el gráfico</string>
-    <string name="activities_badge_before_after">Antes y después</string>
+    <string name="activities_badge_before_after">Compara el antes y el después</string>
     <!-- A key here is an identification key: questions that branch until they name something, like a key to trees. -->
     <string name="activities_badge_follow_questions">Sigue las preguntas</string>
     <string name="activities_badge_find_error">Encuentra el error</string>
-    <string name="activities_badge_step_by_step">Paso a paso</string>
-    <string name="activities_badge_spot_pattern">Detecta el patrón</string>
+    <string name="activities_badge_step_by_step">Ve paso a paso</string>
+    <string name="activities_badge_spot_pattern">Descubre el patrón</string>
     <string name="activities_badge_reply">Responde</string>
     <!-- The guess scale's ends, written with their unit, like "1 day" and "3,650 days". -->
     <string name="activities_guess_scale">Una escala de %1$s a %2$s.</string>
     <!-- The guess scale once checked; the last value is the real one. -->
     <string name="activities_guess_scale_revealed">Una escala de %1$s a %2$s. El valor real es %3$s.</string>
     <string name="activities_guess_real_value">Valor real: %1$s</string>
-    <string name="activities_guess_drag">Arrastra para hacer tu suposición</string>
+    <string name="activities_guess_drag">Arrastra para hacer una suposición</string>
     <string name="activities_guess_yours">Tu suposición: %1$s</string>
     <!-- The guess slider's name, for TalkBack. -->
     <string name="activities_guess_slider">Tu suposición</string>
-    <string name="activities_guess_none">Aún no hay ninguna suposición</string>
+    <string name="activities_guess_none">Aún no has hecho una suposición</string>
     <string name="activities_guess_close">Tu suposición se acerca al valor real.</string>
     <!-- How far a guess was, written with its unit, like "3 days". -->
-    <string name="activities_guess_off_by">Tu suposición se desvía %1$s.</string>
+    <string name="activities_guess_off_by">Tu suposición se desvía en %1$s.</string>
     <!-- How many times bigger the guess was than the real value, like "3.5". -->
-    <string name="activities_guess_too_big">Tu suposición es aproximadamente %1$s veces demasiado alta.</string>
+    <string name="activities_guess_too_big">Tu suposición es unas %1$s veces mayor que el valor real.</string>
     <!-- How many times smaller the guess was than the real value, like "3.5". -->
-    <string name="activities_guess_too_small">Tu suposición es aproximadamente %1$s veces demasiado baja.</string>
+    <string name="activities_guess_too_small">Tu suposición es unas %1$s veces menor que el valor real.</string>
     <!-- Shows the state after the change, named like "With the assembly line". -->
-    <string name="activities_before_after_show">Mostrar después: %1$s</string>
+    <string name="activities_before_after_show">Mostrar el después: %1$s</string>
     <string name="activities_before_after_no_change">Sin cambios</string>
     <!-- How a fact shrank, like "3 times less". -->
     <string name="activities_before_after_less">%1$s veces menos</string>
     <!-- How a fact grew, like "8 times more". -->
     <string name="activities_before_after_more">%1$s veces más</string>
     <!-- What a line chart shows, for TalkBack: its value name, its axis name, then its first and last values with where they sit, like "A line chart of CO₂ by Year, from 316 ppm at 1960 to 421 ppm at 2023." -->
-    <string name="activities_chart_description">Un gráfico de líneas de %1$s por %2$s, de %3$s en %4$s a %5$s en %6$s.</string>
+    <string name="activities_chart_description">Un gráfico de líneas de %1$s por %2$s, desde %3$s en %4$s hasta %5$s en %6$s.</string>
     <!-- A measured span and its change, like "1960 to 1990: +38 ppm." -->
     <string name="activities_chart_span">%1$s: %2$s.</string>
     <string name="activities_chart_tap_span">Toca un tramo para medirlo</string>
     <!-- The name of the group of spans the learner can measure, for TalkBack. -->
-    <string name="activities_chart_spans">Tramos por medir</string>
+    <string name="activities_chart_spans">Tramos para medir</string>
     <!-- A change per unit of the chart's axis, like "+1.3 ppm per Year". -->
     <string name="activities_chart_rate">%1$s por %2$s</string>
     <!-- The panel with the case the learner follows through the questions. -->
@@ -109,21 +109,21 @@
     <!-- The outcomes the learner's answers can still reach from here. -->
     <string name="activities_tree_still_possible">Aún es posible</string>
     <string name="activities_tree_your_answers">Tus respuestas</string>
-    <string name="activities_tree_leads_to">Tus respuestas llevan a</string>
+    <string name="activities_tree_leads_to">Tus respuestas conducen a</string>
     <string name="activities_tree_undo">Deshacer</string>
-    <string name="activities_tree_walk">El recorrido de este caso</string>
+    <string name="activities_tree_walk">El recorrido para este caso</string>
     <!-- The branch the learner took where the key went another way, like "You chose Single". -->
     <string name="activities_tree_you_chose">Has elegido %1$s</string>
     <!-- The outcome the right walk reaches, like "It leads to Pine." -->
-    <string name="activities_tree_it_leads_to">Lleva a %1$s.</string>
+    <string name="activities_tree_it_leads_to">Esto conduce a %1$s.</string>
     <!-- Above a problem that was given to an AI assistant, whose answer has a mistake. -->
-    <string name="activities_find_error_ai_asked">Alguien le ha preguntado a un asistente de IA</string>
+    <string name="activities_find_error_ai_asked">Alguien le preguntó a un asistente de IA</string>
     <string name="activities_find_error_problem">Problema</string>
-    <string name="activities_find_error_ai_note">La respuesta de la IA. Un paso es incorrecto: encuentra el error de la IA.</string>
+    <string name="activities_find_error_ai_note">La respuesta de la IA. Hay un paso incorrecto: encuentra el error de la IA.</string>
     <!-- The name of the list of the AI's steps, for TalkBack. -->
     <string name="activities_find_error_ai_answer">La respuesta del asistente de IA</string>
     <!-- The name of the list of a worked answer's steps, for TalkBack. -->
-    <string name="activities_find_error_worked">Resolución</string>
+    <string name="activities_find_error_worked">Respuesta desarrollada</string>
     <!-- Read before a step of the answer, for TalkBack, like "Step 2". -->
     <string name="activities_find_error_step">Paso %1$d</string>
     <!-- For TalkBack, on the step that has the error once checked. -->
@@ -134,7 +134,7 @@
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Pasos</string>
     <!-- Before why a pick is wrong, like "Not quite: that adds the tax first." -->
-    <string name="activities_solver_not_quite">No exactamente:</string>
+    <string name="activities_solver_not_quite">No del todo:</string>
     <!-- Before why the right pick is right. -->
     <string name="activities_solver_right">Correcto:</string>
     <!-- The learner's first, wrong pick at a step, like "Your first pick: Add 8% first". -->
@@ -142,7 +142,7 @@
     <!-- Asks which ending a row's person takes, like "Which ending does nosotros take?" -->
     <string name="activities_pattern_which_ending">¿Qué terminación lleva %1$s?</string>
     <!-- The name of the group of endings to pick, for TalkBack, like "Endings for nosotros". -->
-    <string name="activities_pattern_endings">Terminaciones de %1$s</string>
+    <string name="activities_pattern_endings">Terminaciones para %1$s</string>
     <!-- An open cell, for TalkBack: the row's person and the word so far, like "nosotros: habl…, choose the ending". -->
     <string name="activities_pattern_blank">%1$s: %2$s, elige la terminación</string>
     <!-- Read after a wrong form, for TalkBack, like "Correct answer: hablamos". -->
@@ -150,9 +150,9 @@
     <!-- The name of the list of lines spoken so far, for TalkBack. -->
     <string name="activities_dialogue_conversation">La conversación hasta ahora</string>
     <!-- Read before the other person's line, for TalkBack. -->
-    <string name="activities_dialogue_they_say">Dicen:</string>
+    <string name="activities_dialogue_they_say">Dice:</string>
     <!-- Read before the learner's own earlier line, for TalkBack. -->
     <string name="activities_dialogue_you_said">Has dicho:</string>
-    <string name="activities_dialogue_hear_line">Escucha esta frase</string>
-    <string name="activities_dialogue_hear_best">Escucha la mejor respuesta</string>
+    <string name="activities_dialogue_hear_line">Escuchar esta frase</string>
+    <string name="activities_dialogue_hear_best">Escuchar la mejor respuesta</string>
 </resources>

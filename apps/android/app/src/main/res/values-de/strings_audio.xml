@@ -2,42 +2,42 @@
 <!-- eloqnt-fingerprints-v1
 {
   "audio_check_failed": "d2934c4728ba9b4b8cd776e3e47ef135575caaf75455b7f27843ed5ca18c6735",
-  "audio_checking": "de9aad857efb0869ea1a1a1fc91c9886d55f3e073e0a9cd1293af7aa54ea9a6b",
-  "audio_checking_slow": "6f2c9f07fd6b9620d0a7ff84541933fd8bf0acc21bbf111ea8d83c4bd1f51402",
-  "audio_did_not_play": "c7d58997dccdd9436cdc8563eae22ff4d6bf118117122a2395958a631cce0b8f",
-  "audio_getting_ready": "6ab75418d2566a33bf31c429e23c3b49ca5df51206cf6b7073136832f37e2df6",
-  "audio_here_is_what_it_says": "0d222039ca833c83ee3a362c3eb4b41fc65ec50624ca5ae9ede2f3b6d0c238ee",
-  "audio_listening": "cd80f9a990da3a91aca80e03a4a5670438c47cacb05be35ca3c110caa2b1845a",
-  "audio_microphone_off_answer": "297f2ba80aff479ea6531ebe232cd5e17c9e8bec9388f257c2edf4c7c26e17cc",
+  "audio_checking": "e2467baaecfe0c7fa2790186aad02f406849275f0b3b860d6d01cf0ea60f03e0",
+  "audio_checking_slow": "375a12fe9b2cefc05cb2e2929764ecbeb063d2948540aeee8bb4488c5088cb11",
+  "audio_did_not_play": "b148a8404ca5af9eb9db55b389c410424b42d8f5f9dc600e610927a6a8596196",
+  "audio_getting_ready": "3455a448e240b5d943045aee48ce4994296af154acbe13145909677f7fbf78d4",
+  "audio_here_is_what_it_says": "2d69b8ce3e90cf023d0131389069f2dc426b0b595466b145d47f486d3a2e771c",
+  "audio_listening": "e21edd9f28ea97fd5dfee57c2c8431381cde68d50a25d359b097312070e1b89d",
+  "audio_microphone_off_answer": "c8cd147c64664b2980e1da74026a9dfc8deb6c631a33d9e3ea83e18be4bc5474",
   "audio_microphone_off_title": "5f7afc0750443c7193fcc591441dc373e4dffaca8ec864256e84cd4815954356",
-  "audio_no_speech": "54883930ba2cda1161ceee7245cfd2fd6bf8d6c111713d5a29ad944e4dee5ae9",
+  "audio_no_speech": "287cba3f7b11ebe3497f8830a7f44053015c5ea676048609f135d423934274c9",
   "audio_open_settings": "3c509064eed7ea6452dc877695c6a226781d7be7b1aeb09662bea8655e3a1b5d",
   "audio_record": "4e6695e18715ef1a3a0e4ec1d35be771a1e555bf2545325003fe7688e72d93a9",
-  "audio_record_stop": "f7a1ab08b08cceb6c26b01f29781fc25f7da4dfefe70d3d065c6732c6ebd13a4",
-  "audio_say_it": "580f12d1c1e953e7b2ba4496af29e7bd5d9b849caaed76cf4cb889c5cef24c41",
-  "audio_stop": "79d2b473f193c0aa4c67d8ef0e4617f90d015e9b001e99ed6c779fc47fe49136",
-  "audio_try_again": "0594074493363a428a05efacfe86e96cffea43db5366dd7d0d31e131bf9ccdad",
-  "audio_try_again_label": "eef7e6cc4c38730f2957010b3a103363eba9e647ea592f6d6fc5d2c0e01d67e3"
+  "audio_record_stop": "691ae82306fbd06c7123634517a8ad76d9156ca8dbebe30367a89a3791b67c04",
+  "audio_say_it": "a889a5a659d600cedcb503e8ed80f00cc975b8899257b70bea9d276914c848cd",
+  "audio_stop": "831b933ba5a10364a48bddd6508168c4594a154b6438630eef67c6f9dc66f8a8",
+  "audio_try_again": "2e791bb58bd643ae0da535b488d4681b3434eb0aaf1867780496e078609bc7d5",
+  "audio_try_again_label": "d172de2abf5d6b9e43b2ee0818a7a65d0d9c7f502c070e76370f136d718cae1f"
 }
 -->
 <resources>
-    <string name="audio_getting_ready">Audio wird vorbereitet…</string>
-    <string name="audio_stop">Audio stoppen</string>
-    <string name="audio_try_again_label">Audio noch einmal abspielen</string>
-    <string name="audio_did_not_play">Das Audio wurde nicht abgespielt.</string>
+    <string name="audio_getting_ready">Wir bereiten die Audioaufnahme vor…</string>
+    <string name="audio_stop">Wiedergabe stoppen</string>
+    <string name="audio_try_again_label">Audio erneut abspielen</string>
+    <string name="audio_did_not_play">Das Audio konnte nicht abgespielt werden.</string>
     <!-- %1$s is why the audio didn't play; the text it says follows on its own line. -->
-    <string name="audio_here_is_what_it_says">%1$s Das sagt es:</string>
-    <string name="audio_try_again">Noch einmal versuchen</string>
+    <string name="audio_here_is_what_it_says">%1$s Das wird gesagt:</string>
+    <string name="audio_try_again">Erneut versuchen</string>
     <string name="audio_record">Aufnehmen</string>
     <!-- Stops recording the learner. -->
-    <string name="audio_record_stop">Stopp</string>
-    <string name="audio_listening">Höre zu… Tippe auf „Stopp“, um deine Antwort zu prüfen.</string>
-    <string name="audio_checking">Wird geprüft…</string>
-    <string name="audio_checking_slow">Wird noch geprüft. Das dauert länger als sonst.</string>
-    <string name="audio_no_speech">Wir konnten keine Wörter hören. Versuch es noch einmal.</string>
+    <string name="audio_record_stop">Stoppen</string>
+    <string name="audio_listening">Wir hören zu… Tippe auf „Stoppen“, um deine Antwort zu prüfen.</string>
+    <string name="audio_checking">Wir prüfen deine Antwort…</string>
+    <string name="audio_checking_slow">Wir prüfen noch. Es dauert länger als sonst.</string>
+    <string name="audio_no_speech">Wir konnten keine Worte hören. Versuch es noch einmal.</string>
     <string name="audio_check_failed">Wir konnten deine Antwort diesmal nicht prüfen. Versuch es noch einmal.</string>
-    <string name="audio_say_it">Tippe und sprich es laut aus</string>
+    <string name="audio_say_it">Tippe und sprich laut</string>
     <string name="audio_microphone_off_title">Das Mikrofon ist ausgeschaltet</string>
-    <string name="audio_microphone_off_answer">Aktiviere in den Einstellungen das Mikrofon für Zoonk, um deine Antwort laut auszusprechen.</string>
+    <string name="audio_microphone_off_answer">Aktiviere das Mikrofon für Zoonk in den Einstellungen, um laut zu antworten.</string>
     <string name="audio_open_settings">Einstellungen öffnen</string>
 </resources>

@@ -5,12 +5,12 @@
   "planlink_eyebrow": "4f23dcb898a4e3fc43041af8e352a26fe4b2914c59a7c1f05600c88b24f5aecb",
   "planlink_facts": "5b5ad0f07df645c795233481d2db211c5800eea23f7dcb87ac0499c108d8dda4",
   "planlink_failed": "26b09ff04ff0b84eb798920d1809259aafd1be8d77ab7010d7cdb1aa7272f29e",
-  "planlink_make_it_yours": "89c29d4ddb45d7d4a3cb0a5c0e09cc2084307f56e75189307c40e50db7c1ce5b",
+  "planlink_make_it_yours": "efae0f677497b9392b8db9f7ab851e2e62aec9c1a14268d247fb83657715fc26",
   "planlink_minutes_label": "769d450d7a9aa37f53ced32c61e11a74af2805278b2f976ddbfed5fb2999533d",
   "planlink_not_found": "ccd2aea1d00e7fdf34237442b94552ec05431b616eef1d11bc955654df2d19dc",
-  "planlink_not_found_description": "58e8400c1d0828057746749444795b8288f596ba8303bc3e379ffa9d2d30bc29",
+  "planlink_not_found_description": "cdc034564ed74599a952205e199b3c8b6dcf9a6ebf3aa865ff47abf53c91e903",
   "planlink_phases": "1066b418f2c9513346aca7764d459c12d0d63324a6d682498276366e2a0fb6d1",
-  "planlink_refused": "d602823fac529f363d0a6bff8f36c81d2dbcedb7929e974a0c53dcdc42fffeb6",
+  "planlink_refused": "7683c46c9b12971bfe9b9134d25f565e9aca903c4e80b3db06ee38e45c439d49",
   "planlink_skills": "278c92f3e4a8c109fb59234a2875c0d2059eea5112acc7751d1b93a771a8d271",
   "planlink_start": "c5db14c7a239cb784fbde32b4b09be672c9799ab1f1c2e251f47badc74b94593",
   "planlink_study_plan": "634c0c0d3e44b08d1ba155d8eb596cc2de64592b261b31a4e9bc94eddbc80459"
@@ -24,8 +24,8 @@
     <string name="planlink_minutes_label">Combien de temps par jour ?</string>
     <!-- Starts the learner's own plan from a shared one. -->
     <string name="planlink_start">Commencer avec ce plan</string>
-    <string name="planlink_make_it_yours">Tu auras ton propre plan pour le même sujet, à ton rythme. Réponds à quelques questions, puis passe ce que tu connais déjà.</string>
-    <string name="planlink_refused">Tu ne peux pas commencer un autre objectif pour le moment. Termine-en un ou mets-le en pause d’abord.</string>
+    <string name="planlink_make_it_yours">Tu obtiens ton propre plan pour le même sujet, à ton rythme. Quelques questions permettent ensuite de passer ce que tu connais déjà.</string>
+    <string name="planlink_refused">Tu ne peux pas commencer un autre objectif pour le moment. Termine ou mets d’abord un objectif en pause.</string>
     <string name="planlink_failed">Ça n’a pas marché. Réessaie dans un instant.</string>
     <!-- A shared plan's size: %1$s is its study time, such as "40 hr"; %2$s its phases, such as "5 phases"; %3$s its skills, such as "24 skills". -->
     <string name="planlink_facts">~%1$s d’étude · %2$s · %3$s</string>
@@ -42,5 +42,5 @@
     <!-- A phase's approximate study time. %1$s is a duration, such as "2 hr". -->
     <string name="planlink_about">~%1$s</string>
     <string name="planlink_not_found">Ce plan n’est pas disponible</string>
-    <string name="planlink_not_found_description">Le lien est peut-être ancien, ou son propriétaire a arrêté de le partager.</string>
+    <string name="planlink_not_found_description">Le lien est peut-être ancien ou la personne qui l’a partagé a arrêté de le partager.</string>
 </resources>

@@ -1,182 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "today_activities_so_far": "3e1aac686caa030fa34db95167c2d8e5dbb04148dd58fb85516815f8f70c2a3f",
-  "today_already_know_this": "201032609797529d0580414127270bcd3a76f4b53837e356edb4d63c57920584",
-  "today_behind": "5e544ccc76f247860a4225de80ba9ea7fc8fa7355b56c2febf4c48f6bb753d22",
-  "today_behind_exam": "1cb12a6f20a1d37405d367a063d747ddb6646852bf896ed06cf84d9fda6fc7f7",
-  "today_behind_goal": "dca38bec492423bc8be06350ed280d5c4b3a90552cbeaadfd044b3bb9b7d8c12",
-  "today_behind_kept": "cc30ff277aad2e29751b8694741d08bbd7923adc05bbc46ae58c9e78671ff8f0",
+  "today_activities_so_far": "6f1edae5de6dc349cd48d04a146db5e93dc96fb3d2e8e5c1b6d83903df5f73ef",
+  "today_already_know_this": "882f57d8d527f7f8bd028e0446a636857b7c546279a557c973b040ad1ef71ff5",
+  "today_behind": "e7fcfbe7cf3a85ec32578fdf1a8ddf420b49dc59dcf47ca3a0212668b653574b",
+  "today_behind_exam": "2bed9d526a26536613205b38df849fe552bda410fd176feff57580ab4207da41",
+  "today_behind_goal": "8508b31c091b7e47cd7066a6d3906249d7176246e14ee3a30d6836d39a2484e1",
+  "today_behind_kept": "a5a0e560edd05c63b473cbb1b3e93c9cc230cf8a325492e438e936760a0d3049",
   "today_building_plan": "18c6d34f36eb9c4f3818c49cedd01472b8bac024971cc51a5215fac97eb8d9e4",
   "today_building_plan_detail": "4d621bbdb3714bd5c472b9febac1316c6556d176c787ba51a122d8948de001ec",
   "today_building_plan_goal": "05419c0cd3601c342f2a35a965020f126f365f5f212ea73b842fb8d62b56cb6e",
-  "today_catch_up_before_exam": "6c6187ffe037f71b6db31d0a707a47ff5a85f302c27213f70d246ffbdc248b6a",
-  "today_catch_up_next_days": "ccd93c573bbaa9ec83b5cd09c6ab44c7a0df582d7e716a1d61cf736ea8d1e212",
-  "today_catch_up_today": "809f3fc4f19e19874ad2e912650824693ab6dda5e39b613b4ec774057044a8a9",
-  "today_catch_up_tomorrow": "b4145c6deccbb96b8fb6df06eea180306466fc13c550063b9dc6305e57abba9f",
+  "today_catch_up_before_exam": "ebf7ecbc411b1f4386d19c363514c4fcaa5b970c01688c087dd2cff5c32ac843",
+  "today_catch_up_next_days": "6d3ac9c46fcbb3a45b3a92491fe8db71dceef1f02fe3e6e9586ecc70c8c4e525",
+  "today_catch_up_today": "8ef87e63f3bcfc1119361fa9eda3ae71328a542f0571b8f62a8b1782f9462dab",
+  "today_catch_up_tomorrow": "455e41c4dfda0dac392eea1274670e9c97e77145a03a6805c6606c75647c9901",
   "today_choose_focus": "4ed68b961faf157e464059a5f4c80366976a417a8da75ff4820e7554150e8c00",
-  "today_connection_lost": "53a8b1f7b26e893eadad156f756c7120bc36a526d491ec2c13cc2cad586c7b07",
+  "today_connection_lost": "8dc06c681783ab7ca203116b2265d1bb34468af95d646da3460b71943b5f074f",
   "today_connection_lost_detail": "eed5380699f48f28ecd42a56808cbf81437fc45ae33c548f0fcc6559e725ca08",
-  "today_continue_explanation": "0c42c2baabb31d2b85ef196bf4d656c987d7312cb21bbe1a7e5597ecc77b9e50",
-  "today_continue_mock": "652ca90a9a02e98abcabd4922b90013869edac3c4e6027809b3b43a817eaecc6",
-  "today_continue_mock_detail": "edf34eea44fcad20d2a41ee0b8198ad428a911ab1668fb539782d7da3b028c85",
+  "today_continue_explanation": "6ba568e18228f3fa421b85c12f7d2a567b7f797e4ff1a23072754602d13ecf30",
+  "today_continue_mock": "00aed44290aeccd0bd5cd0bc30fba9e1ed31184a086e1bcc70ba32a1596a346b",
+  "today_continue_mock_detail": "d9237b9182734de69c211c8a9b0d67314db21b33824cead8b821e5092cb90641",
   "today_continue_session": "9abc91d2850c2231ea2e68045d6ba428be62e168e7cce51a450f06b326bcb2a5",
-  "today_continue_setting_up": "ee03792138420aa6e1daa320ae1bc45317b33368f6963b785cdc8e01e1bbb876",
-  "today_day_is_here": "bc9b95e788b8f360b5aad0b628f703aa534a52f469fd672dde868b501cce3645",
+  "today_continue_setting_up": "ca9b5a35c3ee4804e780712969cc543d079d2caeabdd5184e9bbe9484de5792d",
+  "today_day_is_here": "39d67e8e03cc3114e26e96130cca5a5e79d5990a57682fd9df8a00f23f4e6598",
   "today_days_left": "02f09d7fec926776109af34b4b06eae316e6b791cbba42b999d740ac9fa7682d",
   "today_days_left_estimated": "14b711992e481affd103850b217ed260b5ebdad5fd7b1ca7b05dad7e681e61f9",
   "today_done": "c9840fad1541fd7efe168cfb473888a6367433e464d42138d1e35c1cbc4b7110",
-  "today_done_count": "e23aa0db2a250a881470775c0ce5c3af7b0e3ae66e09ea142f4c6530f354f78f",
-  "today_done_day_off": "064bdec3d11516c9df77126994f693b79be69a24b140d2fb51e0dd3371a58dc3",
-  "today_earlier_work": "347ed0b4e99b464ed4185ecac92a431009bcb7544764130411e982c39bfa1d3c",
-  "today_earlier_work_detail": "8143e9cf07d09b2d2f8f9de843ecefc43c3a1c377020b9bd8360aacb2377e883",
+  "today_done_count": "7da6f1e33cb888c6d2f3f1895855ec32d063f35c5e9081d4c41f084b2894fe2d",
+  "today_done_day_off": "eb03c8f76090a22c4dc40e4700210bb394aade011b1cf29436189f90da168962",
+  "today_earlier_work": "e382e3a7925a54083f40fe3b73041cc9ae4484e272318f147ce7649f40709f63",
+  "today_earlier_work_detail": "d92d62ed678eaa34ff3e532845c8f081c56a7bb9856e5f6715bad998b5780f17",
   "today_exam_choice_choose": "98da2ef8581db6b02454aff3c21c6bbb1429944d70b52d55c155f4dff8c51b0b",
   "today_exam_choice_detail": "822eb5194a184cf63c2033f8bd7419104b7cf86c9fb99b159f14e51d10263040",
   "today_exam_choice_question": "b882276d965cf7a79f6131a2309b17100e1b73a17ee9f0e7e9b8bac01458c23b",
-  "today_exam_speaking": "4098dc34e4997c2bbee4c77af7e7a611257f898b526a024790dffc74b639bbdf",
+  "today_exam_speaking": "a795ad38a57785abfaf3e03fe6d4f4cc01dceed931dd718a6384ec842457e3fe",
   "today_exam_speaking_detail": "60a933e03b4f74a9b76f2bbe5c8dcf2c71ccb954a65b4ae074a0091112fb1d29",
   "today_exam_today": "d9a18a38090e928c92968c26e037f04f11b541dfb161589e717623ebdbc8809d",
   "today_exam_tomorrow": "cfdd0a4f462c7746bfc58445dd2dc1930bc621234ec20beb60d7c8dea69b165f",
   "today_finished": "d323b6b953ef8e8f69eebd111514d1d5081dfd0746571042489d09481d4f80fb",
-  "today_finished_detail": "26a0ca2e155c97b7400075c8fc6fcb7c0c1c65b980be057ff75417b58a45d180",
+  "today_finished_detail": "40953d61b33e07a0560c7faedb90dc65cca34358d5b2860023a5105ab67e3500",
   "today_finished_goal": "3711f3ad28a9846704e6c22ac4185887e3e276d635ff5132ed04ef5e5f7be49d",
-  "today_fresh_start_new_phase": "9dc7d7a0bfa91afbed01cfd4ad1c651b28de044e44f2ce59e80b211f402fc94a",
-  "today_fresh_start_new_week": "74e9a9cfb35449de08fef8305581289fead8104ba43e669e021e32df70364c64",
-  "today_fresh_start_welcome_back": "f8cba8472c2fbab4308327c52c771f8e624f7d7a742a098dca02755fbf781c9d",
-  "today_fresh_start_welcome_back_trial_ended": "0b47fd8a68706188f02ae16af9cfe82e9abc0ad5a6b8b7be4da59609a5b47c3b",
-  "today_get_lessons": "29be1d9174d909a6c75cee602b2358530e977065832525b81905d18d2fae436d",
-  "today_insight_add_it": "60ce5fd19a291ce235ababe87590e18d861f64ef22cd5bb0be2b56477bd91c0a",
+  "today_fresh_start_new_phase": "938859d1ba8b5ea137bb246d5896f5ab8eec0386b2a2908448367225b6eb87df",
+  "today_fresh_start_new_week": "d0d746f1180d9d99525dd6b6f107874b5e8730fcd01fe52317538ba24f6bdafe",
+  "today_fresh_start_welcome_back": "55810cf81eff0473b625aad857ca0a9a5041481ee3afea435793a11c7a71f604",
+  "today_fresh_start_welcome_back_trial_ended": "26c9d89104b9f33ecb0ccd8e62c9977295f70b660fd5d993cad648657ee1cfb1",
+  "today_get_lessons": "371f071ca4d89b130d75a8e78fd37510cbe944ae51cb95a2c58ef13fe1d6f208",
+  "today_insight_add_it": "aad5c5085a3b20edd24a5bbad68e4562f8c520e4f78cfd3abd0e4e0fc1350417",
   "today_insight_got_it": "c38955229e0be0bd63a3d4935b0693d613a8773d28825ad38355773f0a3cd955",
-  "today_insight_keep_it": "2f40e0d92e4a3434f090b2cf81820e1c6c7be4511aa5bb9a38b7157c4a72f3ff",
+  "today_insight_keep_it": "b14d9c28e9b20cabbeaeafb101db797cbd1969eeb77a58ab6e26ef139457753a",
   "today_insight_label": "4140a51a9c7bf2a73d91c7a5cb65abf28b57535cca2c90b7fbce0a5c6931639e",
   "today_insight_move_time": "dc09e1a986b9e989720102db4f59a355256699a1d8f50285b645ca14bf2635eb",
   "today_insight_no_thanks": "8a044e42e33a607a5a142829e792ec2644374ab7d39099bb62bda1fe9a7e81e0",
-  "today_insight_time_moved": "03f8cfb1889856152b1c5dee7f2f0786be8f4ce0bef6d25f69ee02fe66ba2e17",
-  "today_insight_time_stays": "025d6a25a0a10760f6f9d3a7cfcb67625f5d041e0db42f9cf7917a979fb1abfe",
-  "today_keep_learning": "6627840be32294097588cc8ce17de9bf5fe12d1039240eabfcaf086e84918e3b",
-  "today_keep_learning_failed": "a2970d0d82733902ed313c0ec72ef298b89b532d320d72eaf6e99d223d2f7a75",
+  "today_insight_time_moved": "c0e3283b5c9da1db5fec60fc5b7d26cf91adb89335c2f22d69296f95b03b778e",
+  "today_insight_time_stays": "7fcc2366dab525e5a5f30c72fc84301bfad45810e4e11c1381e452252a22ef5c",
+  "today_keep_learning": "c5276f039b9414b82fa0ff4744b8f0ff857460d8e977606cda62dad35b89ea5e",
+  "today_keep_learning_failed": "311b1fe614b0253008a7cc21282a1ae93708b3bd8d972fd8e80776cafa9cad11",
   "today_keep_my_time": "203dde1082a6447f01999b0d02376a83ddcaf4d6658cfe25f31056e3eeebb24c",
   "today_lessons_not_written": "2e862a0879caa013d4865be6658ff504ffd7d4562a5fb5bcf13d0b1d62ddb645",
-  "today_lessons_so_far": "5d8f58e85826cf0c3892661a089dbd5e30491e3bd32a93aa40197a034d01073a",
-  "today_limit": "36966cdf5fe95f0474af374fda0d30947106dd5895e45eb21adb945277af499d",
+  "today_lessons_so_far": "adee09c73c0cb229e29090df31f3ff30b8e98566b2041f81b65db5849832ab85",
+  "today_limit": "7bb1a87b7fab786377b70cdfd213cc482f1a2c767c7c9c4d44d250cbd97934e1",
   "today_mistakes_notebook": "1020376f5e6e336a0a03fa62e739827339e9fca90c3a9d70e0b2dd718ea827da",
-  "today_mistakes_ready": "c7bc5414ca9e7d40bd949114869d4058dc07d3cc8c99b5d5c03fba6362f7642e",
-  "today_mistakes_redo": "6c7c4eefd92d8aa660dc58a56eab9983344b48663ff5f1844484013f19bacb74",
-  "today_mistakes_return_tomorrow": "81a46783b6800f81848c5ffdb10587523167fd60dbe1264e8b709d0a1600b409",
-  "today_mistakes_tomorrow": "674f0ed44a0401c9f40dacc43cd9e46fd3ebc14ea49eed93779cd955873e54d3",
-  "today_mock_funding": "0ebfbf023d77545e339532df8c57dcf3863477b39ead7b7e41ae72434cf5fc70",
-  "today_mock_funding_welcome_back": "2bf59f205408e1fa9fa1e43fbeb7079185be0e8dd8406b3fca9777a40e1ef586",
+  "today_mistakes_ready": "8482ce05549ac67ef3fff1489e9deb69e321c565d44f487c96a460505cd4ebaa",
+  "today_mistakes_redo": "4ef3d0edb01663a6950348b7c4776b16705b5ecb20bdfda8bf2081c7f58b9a26",
+  "today_mistakes_return_tomorrow": "b4a2956d3a220ba2c3ccf24c5d5d13c78f86a8a6674570703eb80c318be2317f",
+  "today_mistakes_tomorrow": "6451f565f40e9fc84df5cab1b24ed19a6c91e7d754831550f6901a46c965913b",
+  "today_mock_funding": "c495a7021c6bc5ea953f76d858918e5aef3f8655acaed2244d4a052d034eda1a",
+  "today_mock_funding_welcome_back": "e3a540745d6e3fcc6fa859741021e4ff23396d99a9abd2552509ba90a85ea3af",
   "today_more_count": "d215d2706b8c9e61d311419d08a7997432394364b8b259bfa002bc3899140d49",
   "today_more_time_a_day": "ca55d7b0ea91806b4db361f181ca54b305f48b3b03051f723cd2f11b7a9f0d65",
   "today_more_time_or_later_date": "d46375bd2894894360e5f40cc19f0b0a4195f1edd438c4ca71d744a25a9f9f0d",
-  "today_new_goal": "abfc628696277d4e26e63d9c1ead9f83790dabc2ad4e2535c54a1b32c43f676d",
+  "today_new_goal": "d2f4ffeb98f59b82eea9733e0b408cf8598c081937e3267702180535df4285fd",
   "today_next_suggestion": "09c32e48bf30d361dd0c337ed1e38fe044cb08b1e7beaa4476df3878f4ebf2d8",
   "today_not_now": "7d15274e66116674b7318ba10a1ff04723a59308f80d69b10c568a6e06c22031",
   "today_noted": "78476c1191852cb25fc59f2b93803dfb672bf329a73e07712eff238b0f314ec4",
   "today_nothing_new": "bda36dbbed2ef5e49b8b13410935e615c370f6e6f155ca68caeba0b5d4accb2f",
-  "today_nothing_new_detail": "57a868f94f15c96c821f0f3e8361fd3a09a099735705efac66ac6ce305108bb5",
-  "today_nothing_to_review": "2269422cdf5f3be38ff4484d5349cda626f2fb4781ec60bbe5dd7522c0480000",
+  "today_nothing_new_detail": "5eba5219505d6b8b73ea182ab88fde414ff1da8f1f66b1c931de8c70740a3f52",
+  "today_nothing_to_review": "bba53d1a89f7ff03b9a9b9f802ee5b31d6e704aab15c3e12d2d311fce436a924",
   "today_notice_exam": "103b67cdf149265749a023d617fe7caa8ff659cbb5353f8518d13c704984034e",
-  "today_notice_exam_access": "a9339b2641b12aa3e5fb21a7277f225cb6b015716da7e66701eb85616790fbbc",
+  "today_notice_exam_access": "38aafac4e74e7e75be4b53be747f17e4aa0f2e3e7b63ac6a787dbab796870450",
   "today_notice_exam_choice": "f74343068f462af0c31f2b55f23f58a32a12ee244908bce4c4ba0f84e86fe84f",
   "today_notice_falling_behind": "872b4854cbc11d55c0e622431a50ec39528712319ce87bbb4db19a942a284e06",
   "today_notice_plan_change": "05c146c93639d3a2a2a7b3ff18bdf564748445b1fb6fe2b945ffac2d69e6795e",
   "today_notice_suggested_goal": "ac360e7e9546fc1a04eea8eaa20f18594cad0dbc212a2018b23c9db47d63facd",
-  "today_open_failed": "92470853a41c78697187b6d86cd8606ae1bdec93a428e545b9fa36cbe9dcbc11",
-  "today_pace_ahead": "5d905064fc94ac7ea77b000d823f92a22af33fcc27709672a4b0977f52e0ea71",
-  "today_pace_behind_days": "2cdf98bcf67f4d5ac53be88a027fda18eab697df50e92ada6162e20bbf28dcc6",
+  "today_open_failed": "bd739617b7bce2423f77e1f1e4458ace8f0223ff1998dab3bf7efc4d4a71648b",
+  "today_pace_ahead": "15446fedfae7f60c3a48c0f2bca947760915b78889606da2daccf0fbed84a72c",
+  "today_pace_behind_days": "24439cfcffe66a79ed33968528d4f949ff1484824cba19f4022b8c694a2483c0",
   "today_pace_challenges_left": "ae49d083eab73217b8dcd741c4013aaf072ec89cb664079e25f068e67a6bcc7e",
   "today_pace_finished": "d74d6ac4fae856fae208788ffbf8e3112bd8a00f35eedd80c09df2b1db5381f6",
   "today_pace_lessons_to_catch_up": "b9f9494e9ebf4db1ca4ede94d0240129b721a9892be297d411256b60a450f669",
   "today_pace_needs_adjusting": "1cec6453466ccc19cb1debab0253818c49db45c4da466a70726a1a9d8d7db97a",
-  "today_pace_on_track": "6eb3f9196e62a0553404a7a3b65915aaea5a83216f9b2a65cd1ca35b8ba8c7d9",
-  "today_pace_one_day_ahead": "81c402bb069271d415db37a6b1b20bbc8abcd276eae6d6c5a2ab332654019378",
-  "today_pace_one_day_behind": "056f7f2291fc7fe929f6b8ecdc8846abf2e55caeb1b7a0c434fbc181cb88a774",
+  "today_pace_on_track": "c22652095b286c9baa18a56ee7490c3d7f850bb169c64570a16c5f3ebf2ad260",
+  "today_pace_one_day_ahead": "6c02fd76dd8668e9d36121423ecd6443a07311b0baef6960da07a340d178c378",
+  "today_pace_one_day_behind": "f9bb5d7606d18f60cd7b29caa7252e9aaca06ad47818544922071664f313f19e",
   "today_pace_past_date": "50ee8daf67dfcc156850575bc7e2bec31186d97fd9c917a9663dcd461bb73361",
-  "today_past_date": "5fc9e4547a40f5366a73fea9da5f000ee8774f2d33859dc8257ce3102fb42620",
-  "today_past_date_detail": "55df752e365c827d52517095489a9215fd6e64f68744ddd501685dff0f82b635",
-  "today_past_date_exam": "65ce97f3ff11d144c05747441df200c8b942e472f769ec9c74991a568cfbc98d",
+  "today_past_date": "6e1c8086e389060b8038f08468b9ea6fcf7c8f698f9af1c85f5e40527487aded",
+  "today_past_date_detail": "d1fcd1d8d63179008524e87ec69c0c312152f39c9e7f303c7abb1ea135d899f5",
+  "today_past_date_exam": "98792c15618ec2630b139c51a608d343e41730bf351376c082c432ce8794fc2b",
   "today_paused": "75c3f32e5ab34b9a758bbbd729c651f9aace62bd50b63ed48bbb6f5477623481",
-  "today_paused_detail": "c333b9db1ffd74b66217142d929bce210421ec9c6a2e355c526ab941defa0e00",
-  "today_paused_goal": "d225824852c4c831f09dfbba14cfb707919359337e41ba4fa581bf8ea7788193",
+  "today_paused_detail": "4d15159dd1bd45208c9ceb6ec9b07d19c14b8e16f6e63f2792231f957f6e1506",
+  "today_paused_goal": "48933d8f702ebc798982abae1f7458887530d53c4662552eb67e654a9ad20ded",
   "today_paused_this_goal": "8ef02272aeabd96ea235ce682864c90493e916528e7a3004795ce6f607e457e9",
   "today_plan_apply": "ac78a60db62160f4ef157c3cbaa3f9a4310a188f3033ce39391205971b27dc51",
-  "today_plan_keep_mine": "7cdcc097e1db8c81ef70a3253c4637156780ab50cfb2b7bbaa1498a8014c17be",
-  "today_plan_stays": "c946a704b8c3870752b979867c17d256de08d983561fdb10f3e299048cdd44c7",
+  "today_plan_keep_mine": "421f41658fe15802613388c67e2e2658792e7f58ed46a53ef1ec69c096677ab2",
+  "today_plan_stays": "32fa72ec2fb415049501b0efd97ff1325971f0e22ebeb5b66fec48fa6af4676c",
   "today_plan_suggestion": "49ef82efb1016e24c026afcddd96ff6d78386cd746f9dc45ffbecdebb8f15af2",
   "today_plan_use_my_date": "b9d633d23ff303de16a3f3df24b318c7e2f809c1632a4566bed688d6a72e4d9d",
   "today_practice_anytime": "e49fa62dc493955b7aec31d62a9608d1100c9e8a45688759434509ccaf40a72e",
-  "today_practice_minutes": "e9640558ecb074d97dde46f5c4f35022f49de964896ce59c7c8bf634befb3147",
-  "today_practice_with_buddy": "0f3d36057dcc0fe30556953b83bff49fa7bd5761b9fdb3075d54e60f432abbdf",
+  "today_practice_minutes": "5168f3b1ea4ba60b18121027f9fff3e6b8a35bc660f25e18d2fbb6b104cf1e9d",
+  "today_practice_with_buddy": "6115127322824bcad7b31314638377fb33e1e56ec6a78871e1254699f9c99cfa",
   "today_quick_explanation": "784c8e31c191e2557e4e4483580347c32d6bbd68ebe7daa77f5e9d9ef47f0358",
   "today_reconnect": "3beab12e1eb4ff6fa34b6266b4760e79aef1dc8b88f4e865992186c828f0bca5",
   "today_rest": "baaa6f2940efe6c719af02ae14331707f6bfb51d2a580151980bf23e72540de4",
-  "today_rest_enjoy": "9a47be649334da67b816bbc7647e0763aaa465c8805bbae384a240a060f9e83a",
-  "today_rest_next_lessons": "8338a461b45ecd50584f79398a5b5d70dbdc1f1a6a7308c5747fd887c32df26f",
-  "today_rest_next_lessons_welcome_back": "67008f97e20019ec747452d78bd1ac00cdc0fb19a7e0398b9e63136c76df7985",
-  "today_rest_welcome_back": "01eebce52c75f09baaec75c8b78074fc4b614a23e50d181fd09dd0872cb246d8",
-  "today_resume_effect": "397418af3b41fdd738c6a731088f75cb97269a8b3d3d1ca256eb8ee56429f80b",
+  "today_rest_enjoy": "48435f5e733ed6c16e09f387d680039978e40f10e79cf1913975e587233b1ad5",
+  "today_rest_next_lessons": "9a822cdb180c957af5698a25ca4987eca6acd1146faeaca184ca430a5b5592f5",
+  "today_rest_next_lessons_welcome_back": "1e05736fe30efb5c290033671e93c4ed47db4e6b76805d8f0122bbce406843fa",
+  "today_rest_welcome_back": "065a1ea3182759c40f009f863429b1f3bb32131fcfe94681a0d14b2a114ca0a9",
+  "today_resume_effect": "fb8e87749543f4fef78e9bd953fcda9cace8c72ce75b5920f7d27ee587592e5b",
   "today_resume_goal": "1c7c7d17cd25a58c1e2d9cbc1d1be3de1e7e86692095c750dfb63d7b5daec051",
-  "today_resume_goal_limit": "7a0ef73624677b5d1cb1990e372ecb0506fe338612cdb90d26f73af534109877",
+  "today_resume_goal_limit": "4124aa900d1c46a0db464aa69b8f52dc15bf2b509279b6305dcae14c2e77c135",
   "today_save_failed": "4bf1988f80902cc834c897ecf4b23e9f3081b40cf763f5cb30711e862c37af84",
   "today_see_day_challenge": "1543a396d4ca81f5fe844152a6306fa7f28418634e22400ad5e183da00b60dd6",
-  "today_see_day_mock": "bfcb8562dd8ded0ba1d8a311948d17b89cf79e7ea575d208038d8a37b0870a2e",
+  "today_see_day_mock": "4925d9dfa6cbddfe10214f860b4a0db923c41b11a6fa5f9f06f2d0351584d377",
   "today_see_plan": "0a9fb1d57be18f7336e384bcf2bd5c1c841cfb2986b6b2cb7d46125188169e09",
   "today_see_summary": "bb57625643e2d56e3f33d7f89f799caf3937b5fbd6d82a8640eab5ca2c8f0a01",
   "today_see_you_day": "50667af07da8bbb29359aed9fe04c3d456a095eebcfc2479bab5c4f19ce5f3b3",
-  "today_see_you_next_session": "72fd12c32b4797dfdeb15af9faab4e829b21c06e5072e5072e228089518ee5e9",
+  "today_see_you_next_session": "81a9785dcd4965df388532cb696e407b0d7dc70152161cb7e0c03c1fdac6e675",
   "today_see_you_tomorrow": "0068fdc29d7634e90480c6b6102bbe1f37ffa696e2abede5a29ceda73066657d",
-  "today_session_ended_description": "922729abf3846c953f741cf230e99a615fc7d3a3fe1b6a1e1b162435b71f1436",
-  "today_setting_up": "72eb5bd9213cb4c083d94b3198589003cef04df7eea70e0931ca79240ac06eff",
-  "today_setting_up_detail": "f830d849a9ecd54d72e2916de012cc97ffc0bdbd4e32fa83bb9fbb48a74d4978",
-  "today_setting_up_goal": "c984f1534c32daf437f5eccc10ee559d412ef71a9af32749f476da59d4aefe40",
+  "today_session_ended_description": "521be8e29dc7204f7d0681db8cda302e3d3bfc32b117fbbdac9c30ec88c4252a",
+  "today_setting_up": "d1ae6d4aedf0ae4021f57890290049dcf1980ee4b0f0c770ef53b23b7c772a34",
+  "today_setting_up_detail": "3abee4382f633db35a6efbf5479b13ceab04367ad230cb81e84a2ffdaa9df207",
+  "today_setting_up_goal": "0f5fc5ce28e9f4fec99bcfa77fb5e5a72b5da19bae7f9a3ad1dd11129ad4696c",
   "today_start_new_goal": "6cf68d430f32b47b91bf98cbcc145163affc52cf7ac6dfc63f3df72b41027a15",
   "today_start_session": "bb8cda88e1fd941bdf87f31a46cb277d916d9277a94028febce4a986e22c76c7",
   "today_step_after_challenge": "78987443c9e0f50555b97657c0c663161769074ddcb4f74ed1368e03195407bd",
   "today_step_after_challenge_phase": "8d30fdd11f6b7f6b15ea2217da4baace999a86dc6fcc97e4ea0416786b507fcc",
   "today_step_after_lessons": "ef60d1670aabe99d802368cb8ed40e8ba4d3bc803e0b6d16354a3529dc0750a7",
   "today_step_after_lessons_phase": "ad81faa2b4f1b0de9790f99b33862c55e7b99886cdd9c33bed800f9e44b95430",
-  "today_step_being_written": "c04b1088debfea231da04def262ecdf0380c1e8825e989846f705bec487c2f7f",
-  "today_step_catching_up": "51bdd86c7a8cbea680aa03b7341772866e56e84481e1eb26227d7621cfd0f948",
-  "today_step_catching_up_subject": "42c413871766c6a071608003ced7b2f13ecfdb248cd9d687750a21db01519890",
+  "today_step_being_written": "f891d2ae60b2b85055e6c7020b6af787d5a60ac4804b324d8a8b72bd0e275521",
+  "today_step_catching_up": "8d9e92484b992bb88ec979e1de72608c31a48290fdc712f54fc73c3b78108061",
+  "today_step_catching_up_subject": "7a1d44c1f7530be2acdec07749cf4736e024dc4b138a8605c5156b10d2bf409a",
   "today_step_counts_toward_mission": "c1072de570d91ace93549fe3f9d1fb29495a97170eedcd3eb7b1ee20bb81595b",
   "today_step_done": "284985c48fcb5585797169b3bbe29787f117e81cba6505649d8fa85ff0abcc06",
   "today_step_next": "72ccd4cf0ff18a254daa5494a789d1ad5f1c8c7a1dd5cb3e4f6f7d97f00a842f",
-  "today_step_often_tested": "77385e20bb4a3b66ee81b29c38552cbdb0a3f8ad876ebe1d953e0f8cd48a228b",
-  "today_step_often_tested_label": "b0de1d44f2ab93879849bf701c9b45dfa61b2483f223a8cd362b53a647fb4b4a",
-  "today_step_skipped": "117af3c118d053a7334dc6a1cb21d140621ca4f39faba01746c65b2b8fe847c5",
+  "today_step_often_tested": "927222d5b58d1d72875b40d0c261d1b500487c563d282a194a0ab7a55fc58082",
+  "today_step_often_tested_label": "b70795aec668f2783a644a89c24d4b521bf16d832f5d41dcc8426a1e7f67fe36",
+  "today_step_skipped": "dfed79d5af76b5af552ca6595899f57f7ab9cde90ce99663d91a630a8c2e13da",
   "today_steps_done": "6321238aac6979b0a29a11b5a64bece1f59aca296cb928ba4d21df87d0684ace",
-  "today_study_everything": "df12aa2cc5fe288b30175bece925c2ff453b137f98c1ca2621a0038cd22089b0",
-  "today_study_minutes": "2609d634f331325b7483669935481d15f957db47a3916967f896044ee6f49194",
-  "today_study_more_minutes": "7dbbaee6010c964f015d789e891cd3eddac9405e955c4ac81256f92ff14fc2db",
+  "today_study_everything": "27f17e1996ef68e7292020a400bf91e479b5ab66f64356b5acce5bc0f4f51681",
+  "today_study_minutes": "ef5c68d4dfc72a803d3fc7eb4ac03e6447da223bbfe4a03885f003067eb565cc",
+  "today_study_more_minutes": "9daebe66f575d61ce07110b55698b19d1eb1251d6d4ba435c37497ead14aacf4",
   "today_suggested_goal_accept": "68a16cb9900047c84f18a8f5a86328b0c71b0f0b401bfe6fea0e10b97eac50f6",
   "today_suggested_goal_detail": "c6583428be84b3ab3ec6c9cec6b14131e8994d1bbb40ec31fbebd87c94cc722c",
-  "today_suggested_goal_question": "ce861633724411addad3963490cb22b2b59785b04948ed134c57ab6ba5c59c3c",
-  "today_take_mock": "abf4feab8249d905525fa1f174daf6de57654169c239edf7d60ac568ca09ae92",
+  "today_suggested_goal_question": "d8ef6263274c557838bbff15eaea095c36058e353517cdef74b2d5b6de88b304",
+  "today_take_mock": "4f0371daee1d299ad3210f6b1b8c41f6961612ca3278dc48e0cb354d2794bf76",
   "today_take_mock_detail": "d978ef934220685c702468f0e9c0e921b2eea455bc10ce9f176f31a09f909741",
   "today_take_mock_detail_by_subject": "df106fbf54ee9a42fe3fecf9cbd6d7215d262e4228dc628c20358a91268c017b",
-  "today_take_the_test": "50cbfb2507733734766a34769ad3c6d2b8633249fa0fcb3820b887eb77e9a835",
+  "today_take_the_test": "860a1d48d96fbabe437044504778e56e75cd5021209b0adea0beb259dde5d98a",
   "today_time_left": "c4d9efaafaf48c006c3adbf27a27620aef3758869c49334e04a2ee2b7741fb92",
   "today_time_studied": "3390a17278dc48f098f080cbfb456f85714e013bb18284c5d61ccf1492b810cd",
   "today_title": "aad21e290bd4e5efcfc1d41cb8041f7b69b70346b6b474c3cd08bab1449da86f",
   "today_undo": "3c776fd3df00ce3975ac6b1dbac36a4adaa99d0b9759a7803e17abb1d1d834e1",
-  "today_up_next": "ce1148e56ad18c15a113c5d48ec7f468dcc82028d351e797376b000c66587ab1",
+  "today_up_next": "649d695ce074bcd941ba9b50a38e8f7d3089e1ca1af5745bf32b97fc1861b0b1",
   "today_waiting": "5b8065f8cd458691016515b1e60b8b35cb42d35c3a1913b363a1e1223fad4d49",
   "today_waiting_detail": "8c0ab27ebbdb4d5f1c082fe63145af860760b65abf68017a80a34776a9f8407c",
   "today_waiting_stalled": "e778d4e21ef1fba2318a1fc74ceac0666f0bac638eb2ba474637cc545fd91386",
-  "today_waiting_stalled_detail": "fcd9141a206cdfb522c53b3563525d8a55ac7156049e98755b6242de2b6cfc3d",
-  "today_week_after_date": "aeae1d8277ecee2a1c5f2d7594f7f4ec76bd65a872473eaa0cbe54557b12f8de",
+  "today_waiting_stalled_detail": "8c99770e42aac26dc910ee4a95539549a6e6a6db0d13099f27e5d59e20198a93",
+  "today_week_after_date": "04643eb74c5bd6c7c39eb08110c40c02256099002fae9227a566b6b57f8b9ec7",
   "today_week_before_plan": "a6132c4c8cf273c8f9ef9c456543202a66690085d21a947478c6f75a2f1d1384",
   "today_week_challenge_day": "da0a82efa7931ea57e25e5f8e4f99a3fee251e6c42508135ccbf0529b1ebfd05",
   "today_week_challenge_name": "54c1a552099f7ba5db22bbc3086d0701130b04f91f38637398ff70b0cf1c8150",
   "today_week_day": "d559da0d0a4c849b2679660d74791f8b73fb48127ea328313f9cc5006cfa249d",
   "today_week_days": "c73eef3b8156036a134a7e31858f11530de0f848e545fbc034427d21a02d3a03",
-  "today_week_deadline": "9b71a0e6cbbd239777ffb12600bd341ebc1a5a4d84bbc6f2e6836cfc674c5c2c",
+  "today_week_deadline": "c28605eec51ade9515dc7fa9daaedcb8c6e9dc4817a8666d29f42e0b13b05385",
   "today_week_exam_day": "b553856e99521bb08928607151377348c9a5054ad2462b4cd8b37b6d89698e41",
-  "today_week_full_review_detail": "4f37a14bc9e384ff13cc23a72981c74db86f81aac461be3e1addd71acfaa99a7",
+  "today_week_full_review_detail": "c1b3139a968c48ba77c9b34f23fa0b7a81fbbe933542288c8b607b49a9eae4f3",
   "today_week_full_review_name": "f4e09874728ed3937bb73740e821b1bc7debb1c3f901f29e845d9c4b571d86aa",
   "today_week_goal_reached": "8a2305fa691c09907d633c9e7a39408be9832b11eff89217492bd64ace1b17a5",
-  "today_week_mock_name": "7da715d03b15d61073978cb4a589dfe3ec14f039c322c9a4b5d1479530b8a789",
+  "today_week_mock_name": "6a2dfa5fee7dac455c2e0ebf0068b0040ea71ab01589581b8a43cb4def988ae5",
   "today_week_not_studied": "a176bb201ae40cbc89310c1e9bb52b0a5bf0ba051f5d72eca950c2a91a6b2ab8",
   "today_week_planned": "0b37f9c51563b2a7fb0b086e1a394ef9d944442fb55b3568e2b5bc9c8bd11eea",
   "today_week_rest_day": "1400cca6fcede739cdf4da91a1237b50f6390f4dce0d8880ff14438aa2c61137",
@@ -189,7 +189,7 @@
 -->
 <resources>
     <string name="today_title">Hoy</string>
-    <string name="today_day_is_here">El día ha llegado</string>
+    <string name="today_day_is_here">Ha llegado el día</string>
     <plurals name="today_days_left">
         <item quantity="one">Queda %d día</item>
         <item quantity="many">Quedan %d días</item>
@@ -201,18 +201,18 @@
         <item quantity="many">Quedan ~%d días</item>
         <item quantity="other">Quedan ~%d días</item>
     </plurals>
-    <string name="today_behind">Atrasado</string>
-    <string name="today_pace_one_day_ahead">Un día por delante</string>
+    <string name="today_behind">Con retraso</string>
+    <string name="today_pace_one_day_ahead">Un día de adelanto</string>
     <plurals name="today_pace_ahead">
-        <item quantity="one">%d día por delante</item>
-        <item quantity="many">%d días por delante</item>
-        <item quantity="other">%d días por delante</item>
+        <item quantity="one">%d día de adelanto</item>
+        <item quantity="many">%d días de adelanto</item>
+        <item quantity="other">%d días de adelanto</item>
     </plurals>
-    <string name="today_pace_one_day_behind">Un día por detrás</string>
+    <string name="today_pace_one_day_behind">Un día de retraso</string>
     <plurals name="today_pace_behind_days">
-        <item quantity="one">%d día por detrás</item>
-        <item quantity="many">%d días por detrás</item>
-        <item quantity="other">%d días por detrás</item>
+        <item quantity="one">%d día de retraso</item>
+        <item quantity="many">%d días de retraso</item>
+        <item quantity="other">%d días de retraso</item>
     </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
         <item quantity="one">%d lección para ponerte al día</item>
@@ -226,7 +226,7 @@
     </plurals>
     <string name="today_pace_finished">Plan completado</string>
     <string name="today_pace_needs_adjusting">Necesita ajustes</string>
-    <string name="today_pace_on_track">Vas al ritmo previsto</string>
+    <string name="today_pace_on_track">Sigues el ritmo</string>
     <string name="today_pace_past_date">Fecha pasada</string>
     <!-- %1$s is the exam's name, such as "ENEM". -->
     <string name="today_exam_tomorrow">%1$s mañana</string>
@@ -236,24 +236,24 @@
     <!-- %1$s and %2$s are formatted numbers: "2 of 5 done". -->
     <string name="today_steps_done">%1$s de %2$s completados</string>
     <!-- %1$s is a duration, such as "55 min". -->
-    <string name="today_fresh_start_welcome_back">¡Cuánto tiempo! Hoy tienes menos que hacer, unos %1$s, así que te resultará fácil volver a empezar.</string>
-    <string name="today_fresh_start_welcome_back_trial_ended">¡Cuánto tiempo! Hoy te llevará unos %1$s, así que te resultará fácil volver a empezar.</string>
-    <string name="today_fresh_start_new_phase">Hoy empieza una nueva fase, primero con un calentamiento sencillo.</string>
-    <string name="today_fresh_start_new_week">Empieza una nueva semana. Hoy toca un calentamiento sencillo.</string>
+    <string name="today_fresh_start_welcome_back">¡Te damos la bienvenida de nuevo! Hoy tienes menos trabajo, unos %1$s, para que te resulte fácil retomar el ritmo.</string>
+    <string name="today_fresh_start_welcome_back_trial_ended">¡Te damos la bienvenida de nuevo! Hoy te llevará unos %1$s, para que te resulte fácil retomar el ritmo.</string>
+    <string name="today_fresh_start_new_phase">Hoy empieza una nueva fase, con un calentamiento sencillo para empezar.</string>
+    <string name="today_fresh_start_new_week">Una nueva semana. Hoy empiezas con un calentamiento sencillo.</string>
     <plurals name="today_lessons_so_far">
-        <item quantity="one">%d lección hasta ahora · habrá más a medida que avances</item>
-        <item quantity="many">%d lecciones hasta ahora · habrá más a medida que avances</item>
-        <item quantity="other">%d lecciones hasta ahora · habrá más a medida que avances</item>
+        <item quantity="one">%d lección por ahora · habrá más a medida que avances</item>
+        <item quantity="many">%d lecciones por ahora · habrá más a medida que avances</item>
+        <item quantity="other">%d lecciones por ahora · habrá más a medida que avances</item>
     </plurals>
     <plurals name="today_activities_so_far">
-        <item quantity="one">%d actividad hasta ahora · habrá más a medida que avances</item>
-        <item quantity="many">%d actividades hasta ahora · habrá más a medida que avances</item>
-        <item quantity="other">%d actividades hasta ahora · habrá más a medida que avances</item>
+        <item quantity="one">%d actividad por ahora · habrá más a medida que avances</item>
+        <item quantity="many">%d actividades por ahora · habrá más a medida que avances</item>
+        <item quantity="other">%d actividades por ahora · habrá más a medida que avances</item>
     </plurals>
     <plurals name="today_done_count">
-        <item quantity="one">%d completada</item>
-        <item quantity="many">%d completadas</item>
-        <item quantity="other">%d completadas</item>
+        <item quantity="one">%d completados</item>
+        <item quantity="many">%d completados</item>
+        <item quantity="other">%d completados</item>
     </plurals>
     <plurals name="today_more_count">
         <item quantity="one">+%d más</item>
@@ -263,63 +263,63 @@
     <string name="today_step_done">Completado</string>
     <!-- TalkBack's state for the session's next step. -->
     <string name="today_step_next">Siguiente paso</string>
-    <string name="today_step_skipped">Omitido</string>
+    <string name="today_step_skipped">Ya conocido</string>
     <string name="today_step_counts_toward_mission">Cuenta para una misión</string>
-    <string name="today_step_being_written">Preparándose para ti…</string>
-    <string name="today_step_catching_up">Para ponerte al día</string>
+    <string name="today_step_being_written">Preparándolo para ti…</string>
+    <string name="today_step_catching_up">Ponerse al día</string>
     <!-- %1$s is the subject the block studies. -->
-    <string name="today_step_catching_up_subject">%1$s · para ponerte al día</string>
-    <string name="today_step_often_tested">Suele aparecer en los exámenes</string>
-    <string name="today_step_often_tested_label">%1$s · suele aparecer en los exámenes</string>
+    <string name="today_step_catching_up_subject">Ponerse al día · %1$s</string>
+    <string name="today_step_often_tested">Suele aparecer en exámenes</string>
+    <string name="today_step_often_tested_label">%1$s · suele aparecer en exámenes</string>
     <string name="today_step_after_lessons">Después de las lecciones de hoy</string>
     <!-- %1$s is the phase's name. -->
     <string name="today_step_after_lessons_phase">%1$s · después de las lecciones de hoy</string>
     <string name="today_step_after_challenge">Después del desafío anterior</string>
     <string name="today_step_after_challenge_phase">%1$s · después del desafío anterior</string>
     <string name="today_done">Has completado la sesión de hoy.</string>
-    <string name="today_done_day_off">Hoy has estudiado aunque era tu día libre.</string>
+    <string name="today_done_day_off">Has estudiado en tu día de descanso.</string>
     <string name="today_see_summary">Ver el resumen de hoy</string>
     <string name="today_rest">Hoy no tienes estudio previsto.</string>
-    <string name="today_rest_next_lessons_welcome_back">¡Cuánto tiempo! Tus próximas lecciones están aquí por si te apetece estudiar.</string>
-    <string name="today_rest_next_lessons">Tus próximas lecciones están aquí por si te apetece estudiar.</string>
-    <string name="today_rest_welcome_back">¡Cuánto tiempo! Hoy toca descansar según tu plan, así que disfruta.</string>
-    <string name="today_rest_enjoy">¡Disfruta de tu día libre!</string>
+    <string name="today_rest_next_lessons_welcome_back">¡Te damos la bienvenida de nuevo! Tus próximas lecciones están aquí por si quieres estudiar.</string>
+    <string name="today_rest_next_lessons">Tus próximas lecciones están aquí por si quieres estudiar.</string>
+    <string name="today_rest_welcome_back">¡Te damos la bienvenida de nuevo! Hoy tu plan tiene un día de descanso, así que disfrútalo.</string>
+    <string name="today_rest_enjoy">¡Disfruta de tu día de descanso!</string>
     <string name="today_waiting">Preparando las lecciones de hoy…</string>
     <string name="today_waiting_detail">Aparecerán aquí automáticamente.</string>
     <string name="today_waiting_stalled">Las lecciones de hoy están tardando más de lo habitual.</string>
-    <string name="today_waiting_stalled_detail">Vuelve dentro de unos minutos.</string>
+    <string name="today_waiting_stalled_detail">Vuelve en unos minutos.</string>
     <plurals name="today_past_date_exam">
-        <item quantity="one">Te quedó %d lección por hacer antes del examen.</item>
-        <item quantity="many">Te quedaron %d lecciones por hacer antes del examen.</item>
-        <item quantity="other">Te quedaron %d lecciones por hacer antes del examen.</item>
+        <item quantity="one">Quedaba %d lección antes de tu examen.</item>
+        <item quantity="many">Quedaban %d lecciones antes de tu examen.</item>
+        <item quantity="other">Quedaban %d lecciones antes de tu examen.</item>
     </plurals>
     <plurals name="today_past_date">
-        <item quantity="one">Llegó la fecha que marcaste y te quedaba %d lección.</item>
-        <item quantity="many">Llegó la fecha que marcaste y te quedaban %d lecciones.</item>
-        <item quantity="other">Llegó la fecha que marcaste y te quedaban %d lecciones.</item>
+        <item quantity="one">Llegó la fecha prevista y quedaba %d lección.</item>
+        <item quantity="many">Llegó la fecha prevista y quedaban %d lecciones.</item>
+        <item quantity="other">Llegó la fecha prevista y quedaban %d lecciones.</item>
     </plurals>
-    <string name="today_past_date_detail">Ajusta tu plan para seguir.</string>
-    <string name="today_limit">Ese es todo el tiempo de estudio de hoy.</string>
-    <string name="today_see_you_next_session">¡Hasta la próxima sesión!</string>
+    <string name="today_past_date_detail">Ajusta tu plan para seguir adelante.</string>
+    <string name="today_limit">Ese es el tiempo de estudio de hoy.</string>
+    <string name="today_see_you_next_session">¡Hasta tu próxima sesión!</string>
     <string name="today_see_you_tomorrow">¡Hasta mañana!</string>
     <!-- %1$s is a weekday, such as "Monday". -->
     <string name="today_see_you_day">¡Hasta %1$s!</string>
-    <string name="today_nothing_to_review">Hoy no tienes nada que repasar.</string>
+    <string name="today_nothing_to_review">Hoy no hay nada que repasar.</string>
     <string name="today_nothing_new">Hoy no hay nada nuevo.</string>
-    <string name="today_nothing_new_detail">Has completado todas las lecciones de tu plan o ya te las sabes.</string>
-    <string name="today_up_next">Lo siguiente de tu plan</string>
+    <string name="today_nothing_new_detail">Has completado todas las lecciones de tu plan o ya sabías su contenido.</string>
+    <string name="today_up_next">Lo próximo en tu plan</string>
     <string name="today_start_session">Empezar sesión</string>
     <string name="today_continue_session">Continuar sesión</string>
-    <string name="today_keep_learning">Seguir estudiando</string>
-    <string name="today_practice_minutes">Practica durante %1$s minutos</string>
+    <string name="today_keep_learning">Seguir aprendiendo</string>
+    <string name="today_practice_minutes">Practicar durante %1$s minutos</string>
     <string name="today_see_plan">Ver tu plan</string>
     <string name="today_lessons_not_written">Las lecciones de hoy aún no están preparadas.</string>
-    <string name="today_get_lessons">Preparar las lecciones de hoy</string>
-    <string name="today_open_failed">No se ha podido abrir el siguiente paso. Inténtalo de nuevo.</string>
-    <string name="today_keep_learning_failed">No se han podido abrir tus próximas lecciones. Inténtalo de nuevo.</string>
+    <string name="today_get_lessons">Obtener las lecciones de hoy</string>
+    <string name="today_open_failed">No hemos podido abrir el siguiente paso. Inténtalo de nuevo.</string>
+    <string name="today_keep_learning_failed">No hemos podido abrir tus próximas lecciones. Inténtalo de nuevo.</string>
     <string name="today_welcome_back">Te damos la bienvenida de nuevo</string>
     <!-- %1$s is a course's title. -->
-    <string name="today_suggested_goal_question">¿Quieres continuar con %1$s?</string>
+    <string name="today_suggested_goal_question">¿Continuar con %1$s?</string>
     <string name="today_suggested_goal_detail">Prepara un plan en 1 minuto.</string>
     <string name="today_suggested_goal_accept">Preparar mi plan</string>
     <string name="today_not_now">Ahora no</string>
@@ -327,26 +327,26 @@
     <string name="today_finished">Completado</string>
     <!-- %1$s is the goal's title. -->
     <string name="today_finished_goal">Has completado %1$s.</string>
-    <string name="today_finished_detail">Empieza un objetivo nuevo o elige otro de arriba.</string>
+    <string name="today_finished_detail">Empieza un objetivo nuevo o elige otro de los de arriba.</string>
     <string name="today_start_new_goal">Empezar un objetivo nuevo</string>
     <string name="today_paused">En pausa</string>
-    <string name="today_paused_goal">%1$s está en pausa.</string>
+    <string name="today_paused_goal">El objetivo %1$s está en pausa.</string>
     <string name="today_paused_this_goal">Este objetivo está en pausa.</string>
-    <string name="today_paused_detail">No hay nada planeado hasta que lo reanudes.</string>
+    <string name="today_paused_detail">No hay nada previsto hasta que lo reanudes.</string>
     <string name="today_resume_goal">Reanudar %1$s</string>
-    <string name="today_new_goal">Objetivo nuevo</string>
-    <string name="today_resume_effect">Tu plan retoma el ritmo desde hoy e incluye las lecciones previstas para los días que estuvo en pausa.</string>
-    <string name="today_resume_goal_limit">El plan gratuito permite seguir un objetivo a la vez. Pon en pausa tu otro objetivo para reanudar este, o pásate a Plus para seguir más.</string>
-    <string name="today_setting_up">Configurando</string>
-    <string name="today_setting_up_goal">Necesitamos algunas respuestas más para preparar tu plan para %1$s.</string>
-    <string name="today_setting_up_detail">Lo preparamos a partir de lo que nos cuentes.</string>
-    <string name="today_continue_setting_up">Seguir configurando</string>
+    <string name="today_new_goal">Nuevo objetivo</string>
+    <string name="today_resume_effect">Tu plan se retoma desde hoy, empezando por las lecciones previstas para los días que pausaste.</string>
+    <string name="today_resume_goal_limit">El plan gratuito permite seguir un objetivo a la vez. Pausa tu otro objetivo para retomar este o consigue Plus para seguir más.</string>
+    <string name="today_setting_up">Preparando</string>
+    <string name="today_setting_up_goal">Tu plan para %1$s necesita algunas respuestas más.</string>
+    <string name="today_setting_up_detail">Lo preparamos con lo que nos cuentas.</string>
+    <string name="today_continue_setting_up">Continuar con la preparación</string>
     <string name="today_building_plan">Preparando tu plan</string>
     <string name="today_building_plan_goal">Preparando tu plan para %1$s</string>
     <string name="today_building_plan_detail">Suele tardar uno o dos minutos. Tu primer día aparecerá aquí en cuanto esté listo.</string>
     <string name="today_quick_explanation">Explicación rápida</string>
-    <string name="today_continue_explanation">Continuar con la explicación</string>
-    <string name="today_session_ended_description">Las lecciones, los repasos y las prácticas de cada día de tu objetivo.</string>
+    <string name="today_continue_explanation">Continuar la explicación</string>
+    <string name="today_session_ended_description">Las lecciones, repasos y prácticas de cada día para tu objetivo.</string>
     <string name="today_week_title">Esta semana</string>
     <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
     <plurals name="today_week_days">
@@ -363,86 +363,86 @@
     <string name="today_week_goal_reached">objetivo alcanzado</string>
     <string name="today_week_studied">estudiado</string>
     <string name="today_week_exam_day">día del examen</string>
-    <string name="today_week_deadline">la fecha de tu objetivo</string>
+    <string name="today_week_deadline">fecha de tu objetivo</string>
     <string name="today_week_before_plan">antes de tu plan</string>
-    <string name="today_week_after_date">después de la fecha</string>
+    <string name="today_week_after_date">después de tu fecha</string>
     <string name="today_week_rest_day">día de descanso</string>
     <string name="today_week_today">hoy</string>
     <string name="today_week_planned">planificado</string>
     <string name="today_week_not_studied">sin estudiar</string>
     <string name="today_week_full_review_name">revisión completa</string>
-    <string name="today_week_mock_name">simulacro de examen</string>
+    <string name="today_week_mock_name">simulacro</string>
     <string name="today_week_challenge_name">desafío semanal</string>
-    <string name="today_week_full_review_detail">todos los temas, empezando por los que peor llevas</string>
+    <string name="today_week_full_review_detail">todos los temas, empezando por los que más te cuestan</string>
     <!-- %1$s is a formatted number of minutes. -->
-    <string name="today_study_minutes">Estudia durante %1$s min</string>
-    <string name="today_study_more_minutes">Estudia %1$s min más</string>
+    <string name="today_study_minutes">Estudia durante %1$s minutos</string>
+    <string name="today_study_more_minutes">Estudia %1$s minutos más</string>
     <plurals name="today_catch_up_next_days">
-        <item quantity="one">Los próximos días empezarás con la lección que te queda por recuperar: %d.</item>
-        <item quantity="many">Los próximos días empezarás con las lecciones que te quedan por recuperar: %d.</item>
-        <item quantity="other">Los próximos días empezarás con las lecciones que te quedan por recuperar: %d.</item>
+        <item quantity="one">Tus próximos días empezarán con la %d lección que te queda por recuperar.</item>
+        <item quantity="many">Tus próximos días empezarán con las %d lecciones que te quedan por recuperar.</item>
+        <item quantity="other">Tus próximos días empezarán con las %d lecciones que te quedan por recuperar.</item>
     </plurals>
     <plurals name="today_catch_up_before_exam">
-        <item quantity="one">Si tienes tiempo, todavía puedes recuperar hoy %d lección.</item>
-        <item quantity="many">Si tienes tiempo, todavía puedes recuperar hoy %d lecciones.</item>
-        <item quantity="other">Si tienes tiempo, todavía puedes recuperar hoy %d lecciones.</item>
+        <item quantity="one">Aún puedes recuperar %d lección hoy, si tienes tiempo.</item>
+        <item quantity="many">Aún puedes recuperar %d lecciones hoy, si tienes tiempo.</item>
+        <item quantity="other">Aún puedes recuperar %d lecciones hoy, si tienes tiempo.</item>
     </plurals>
     <plurals name="today_catch_up_tomorrow">
-        <item quantity="one">Mañana, lo primero será recuperar %d lección más.</item>
-        <item quantity="many">Mañana, lo primero será recuperar %d lecciones más.</item>
-        <item quantity="other">Mañana, lo primero será recuperar %d lecciones más.</item>
+        <item quantity="one">Mañana empezarás con %d lección más por recuperar.</item>
+        <item quantity="many">Mañana empezarás con %d lecciones más por recuperar.</item>
+        <item quantity="other">Mañana empezarás con %d lecciones más por recuperar.</item>
     </plurals>
     <!-- %1$s is a duration, such as "25 min". -->
-    <string name="today_catch_up_today">Recupera hoy · +%1$s</string>
+    <string name="today_catch_up_today">Recuperar hoy · +%1$s</string>
     <!-- %1$s is a weekday, such as "Saturday". -->
     <string name="today_see_day_challenge">Ver el desafío de %1$s</string>
-    <string name="today_see_day_mock">Ver el simulacro de examen de %1$s</string>
+    <string name="today_see_day_mock">Ver el simulacro de %1$s</string>
     <!-- %1$s is the learner's buddy's name. -->
-    <string name="today_practice_with_buddy">Practica con %1$s</string>
-    <string name="today_already_know_this">¿Ya te lo sabes?</string>
-    <string name="today_take_the_test">Haz la prueba</string>
+    <string name="today_practice_with_buddy">Practicar con %1$s</string>
+    <string name="today_already_know_this">¿Ya sabes esto?</string>
+    <string name="today_take_the_test">Hacer la prueba</string>
     <!-- %1$s is a formatted count of lessons. -->
-    <string name="today_earlier_work">Tareas anteriores sin terminar · %1$s</string>
-    <string name="today_earlier_work_detail">Empieza por estas. Al iniciar la sesión, el plan se ajusta al tiempo que tienes hoy.</string>
+    <string name="today_earlier_work">Trabajo anterior sin terminar · %1$s</string>
+    <string name="today_earlier_work_detail">Empieza por aquí. Al iniciar tu sesión, el plan se ajusta al tiempo que tienes hoy.</string>
     <string name="today_practice_anytime">Practica cuando quieras</string>
     <string name="today_mistakes_notebook">Cuaderno de errores</string>
-    <string name="today_mistakes_redo">Vuelve a hacer lo que te salió mal</string>
-    <string name="today_mistakes_return_tomorrow">Mañana volverás a ver los errores de hoy</string>
+    <string name="today_mistakes_redo">Vuelve a intentar lo que fallaste</string>
+    <string name="today_mistakes_return_tomorrow">Los errores de hoy vuelven mañana</string>
     <plurals name="today_mistakes_ready">
-        <item quantity="one">%d listo para practicar</item>
-        <item quantity="many">%d listos para practicar</item>
-        <item quantity="other">%d listos para practicar</item>
+        <item quantity="one">%d para practicar</item>
+        <item quantity="many">%d para practicar</item>
+        <item quantity="other">%d para practicar</item>
     </plurals>
     <plurals name="today_mistakes_tomorrow">
-        <item quantity="one">%d disponible mañana</item>
-        <item quantity="many">%d disponibles mañana</item>
-        <item quantity="other">%d disponibles mañana</item>
+        <item quantity="one">Mañana podrás acceder a %d</item>
+        <item quantity="many">Mañana podrás acceder a %d</item>
+        <item quantity="other">Mañana podrás acceder a %d</item>
     </plurals>
     <!-- %1$s is the mock's date, such as Nov 3. -->
-    <string name="today_mock_funding">Día más ligero: reservamos tiempo para el simulacro del %1$s</string>
+    <string name="today_mock_funding">Día más ligero: ahorramos tiempo para el simulacro del %1$s</string>
     <!-- %1$s is the mock's date, such as Nov 3. -->
-    <string name="today_mock_funding_welcome_back">Reservamos tiempo para el simulacro del %1$s</string>
-    <string name="today_take_mock">Hacer un simulacro de examen</string>
+    <string name="today_mock_funding_welcome_back">Ahorramos tiempo para el simulacro del %1$s</string>
+    <string name="today_take_mock">Haz un simulacro</string>
     <string name="today_take_mock_detail">Cuando quieras: un día completo de examen o medio día</string>
     <string name="today_take_mock_detail_by_subject">Cuando quieras: un día completo de examen, medio día o una asignatura</string>
-    <string name="today_continue_mock">Continuar el simulacro de examen</string>
-    <string name="today_continue_mock_detail">Justo donde lo dejaste</string>
-    <string name="today_exam_speaking">Expresión oral con formato de examen</string>
+    <string name="today_continue_mock">Continúa tu simulacro</string>
+    <string name="today_continue_mock_detail">Está donde lo dejaste</string>
+    <string name="today_exam_speaking">Expresión oral tipo examen</string>
     <!-- %1$s is the exam's name, such as IELTS. -->
     <string name="today_exam_speaking_detail">%1$s tareas en una llamada</string>
     <string name="today_notice_exam">Tu examen</string>
-    <string name="today_notice_exam_access">Preparación para el examen en el plan gratuito</string>
+    <string name="today_notice_exam_access">Preparación de exámenes en el plan gratuito</string>
     <string name="today_notice_suggested_goal">Objetivo sugerido</string>
     <string name="today_insight_label">Según tus respuestas recientes</string>
-    <string name="today_insight_add_it">Añadirlo</string>
+    <string name="today_insight_add_it">Añadir</string>
     <string name="today_insight_no_thanks">No, gracias</string>
-    <string name="today_insight_keep_it">Mantenerlo</string>
+    <string name="today_insight_keep_it">Mantener</string>
     <!-- %1$s is a time of day, such as 7:00 PM. -->
     <string name="today_insight_move_time">Cambiar mi tiempo de estudio a %1$s</string>
     <string name="today_insight_got_it">Entendido</string>
-    <string name="today_insight_time_moved">Se ha cambiado tu tiempo de estudio.</string>
-    <string name="today_insight_time_stays">Tu tiempo de estudio se mantiene igual.</string>
-    <string name="today_plan_stays">Tu plan se queda como estaba.</string>
+    <string name="today_insight_time_moved">Tiempo de estudio cambiado.</string>
+    <string name="today_insight_time_stays">Tu tiempo de estudio sigue igual.</string>
+    <string name="today_plan_stays">Tu plan sigue como estaba.</string>
     <string name="today_noted">Anotado.</string>
     <string name="today_undo">Deshacer</string>
     <string name="today_notice_exam_choice">Elección de examen</string>
@@ -455,20 +455,20 @@
     <string name="today_plan_suggestion">Sugerencia para el plan</string>
     <string name="today_plan_apply">Aplicar</string>
     <string name="today_plan_use_my_date">Usar mi fecha de todos modos</string>
-    <string name="today_plan_keep_mine">Mantener mi plan</string>
+    <string name="today_plan_keep_mine">Mantener mi opción</string>
     <string name="today_next_suggestion">Siguiente sugerencia</string>
     <string name="today_notice_falling_behind">Cambio en el plan</string>
     <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->
-    <string name="today_behind_exam">Con %1$s al día, tu plan ahora cubre %2$s del examen, frente a %3$s antes.</string>
+    <string name="today_behind_exam">Con %1$s al día, tu plan cubre ahora %2$s del examen, frente al %3$s anterior.</string>
     <!-- %1$s is the learner's time a day, such as 30 min; %2$s and %3$s are shares, such as 72% and 80%. -->
-    <string name="today_behind_goal">Con %1$s al día, tu plan ahora cubre %2$s de tu objetivo, frente a %3$s antes.</string>
+    <string name="today_behind_goal">Con %1$s al día, tu plan cubre ahora %2$s de tu objetivo, frente al %3$s anterior.</string>
     <string name="today_more_time_a_day">Más tiempo al día</string>
     <string name="today_more_time_or_later_date">Más tiempo o una fecha posterior</string>
     <string name="today_choose_focus">Elige en qué centrarte</string>
-    <string name="today_study_everything">Estudiarlo todo</string>
+    <string name="today_study_everything">Estudiar todo</string>
     <string name="today_keep_my_time">Mantener mi tiempo</string>
-    <string name="today_behind_kept">Entendido. Mantienes el tiempo que tienes, con menos profundidad en lo menos importante.</string>
-    <string name="today_connection_lost">Se ha perdido la conexión</string>
+    <string name="today_behind_kept">Anotado. Mantienes tu tiempo y estudiarás con menos profundidad lo menos importante.</string>
+    <string name="today_connection_lost">Conexión perdida</string>
     <string name="today_connection_lost_detail">Hemos dejado de recibir actualizaciones. Puede que siga funcionando.</string>
     <string name="today_reconnect">Volver a conectar</string>
 </resources>

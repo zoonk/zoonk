@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "buddy_glasses": "248a257e1bfd40767fbe7a37645eb23535837098841e73f257c6fc76d3ec5b0e",
+  "buddy_glasses": "ebc0f35b44d265bb91ee071b455eb9da168751a59aafcac46ebfebf8873b94c8",
   "buddy_glasses_aviator": "3bced2e085a2ad0a9db8b6df237fdfa1340149f99526cbcb3a38ae84ba7f57ca",
-  "buddy_glasses_cat_eye": "71139c46d0df5b4c8b574a41a7577169d92dd4abbb57d749310b284ff93dfd14",
+  "buddy_glasses_cat_eye": "012681e8c0b5c3e496c48254ac7ea78b8162bc59eb1413edf228a1e22a07999d",
   "buddy_glasses_earn_aviator": "337a9970f5aa6e68dae8e327b3a5f6a3093a76db2d3338a0eb7091035d465c02",
   "buddy_glasses_earn_cat_eye": "0925011dd79d8e0aa79bfb4bc8a3b2b8e09914c4912069cf6c20e0ef1d72d55b",
   "buddy_glasses_earn_monocle": "3c9aa4617b7a6727a7484a13260962d6663a76b0f4614fdeb213ae5cacd4f822",
   "buddy_glasses_earn_retro": "98502393983f4e087218d6e1e9c74d5b1cf598488ecd98a86464772f1a7dface",
-  "buddy_glasses_earn_round": "50ec1f8607b35626089eca9075fdac0811bf91bb1a5a70d36331327c4c5ed018",
+  "buddy_glasses_earn_round": "c22c6e0410fa320132da39c32fd4e002242bbfb1a9425e7abf8e45a9b6002b2d",
   "buddy_glasses_earn_star": "bf29ff434e652e38c39b5be6b1c9e06779879fc7c6b9a603bedb6bdefe7c042b",
   "buddy_glasses_monocle": "91b8262631df8c76dbe5fb6b74058226159d3a24dbe229b169bf573a083533a5",
   "buddy_glasses_retro": "822bd5d0d25bb2735465aebde08868d733055d7dcd43cbfac16f78ea693fcb3b",
   "buddy_glasses_round": "67866217cf013a7bb524b2b34a959f9aea6acee5f09181b0b66b2211537fc7b1",
-  "buddy_glasses_star": "ae11f5348cc61cc09cc0750fbe19acc5b199ce017e46d1ed73bc9b46d57a31f0",
+  "buddy_glasses_star": "457c50bc10f04427338b71bd6efe322c9317d22b38c64ceb82aef08dffa7d395",
   "buddy_glasses_worn_aviator": "94e885ab7366336c38a167940978afc65a612962d944940717faa25adc28cc56",
   "buddy_glasses_worn_cat_eye": "4b309fb19cbadac4c2907438925c6eca32b215e091d7f20f849af3b1e3123a9a",
   "buddy_glasses_worn_monocle": "7e3c7244c5b1b5f1b7af854d7432c810fcbbbcbcf6b0ea33b7664b82916dedae",
@@ -26,11 +26,11 @@
 }
 -->
 <resources>
-    <string name="buddy_glasses">Brillen</string>
+    <string name="buddy_glasses">Brille</string>
     <string name="buddy_glasses_round">Rund</string>
-    <string name="buddy_glasses_star">Stern</string>
+    <string name="buddy_glasses_star">Sternförmig</string>
     <string name="buddy_glasses_aviator">Pilotenbrille</string>
-    <string name="buddy_glasses_cat_eye">Katzenaugen</string>
+    <string name="buddy_glasses_cat_eye">Katzenaugenform</string>
     <string name="buddy_glasses_retro">Retro</string>
     <string name="buddy_glasses_monocle">Monokel</string>
     <string name="buddy_glasses_worn_round">Runde Brille</string>
@@ -39,7 +39,7 @@
     <string name="buddy_glasses_worn_cat_eye">Katzenaugenbrille</string>
     <string name="buddy_glasses_worn_retro">Retrobrille</string>
     <string name="buddy_glasses_worn_monocle">Ein Monokel</string>
-    <string name="buddy_glasses_earn_round">Gehört zu deinem Kumpel</string>
+    <string name="buddy_glasses_earn_round">Ist bei deinem Kumpel dabei</string>
     <string name="buddy_glasses_earn_star">Gewinne deine erste Phasen-Herausforderung</string>
     <string name="buddy_glasses_earn_aviator">Schließe deine erste wöchentliche Herausforderung ab</string>
     <string name="buddy_glasses_earn_cat_eye">Schließe an 7 verschiedenen Tagen alle Missionen ab</string>

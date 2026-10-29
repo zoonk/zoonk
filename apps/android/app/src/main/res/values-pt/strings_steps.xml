@@ -2,11 +2,11 @@
 <!-- eloqnt-fingerprints-v1
 {
   "steps_continue": "dcb6501d8853cbd12dce819f013857693dad740a0f3a6d6014bc1db6b93feaa6",
-  "steps_progress": "3c0d3dc202e297b43ee4ef08d95427a5299a166e01b545f096d661ded8d6a114"
+  "steps_progress": "f7c71b3a6f6cf778b317b72a9f59791141a008724dc468c9365512e9f616e2da"
 }
 -->
 <resources>
     <string name="steps_continue">Continuar</string>
     <!-- Read by TalkBack for the step dots: "Step 2 of 4". -->
-    <string name="steps_progress">Passo %1$d de %2$d</string>
+    <string name="steps_progress">Etapa %1$d de %2$d</string>
 </resources>

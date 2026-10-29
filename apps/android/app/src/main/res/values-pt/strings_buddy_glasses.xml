@@ -3,7 +3,7 @@
 {
   "buddy_glasses": "04f8415e03986d7f0c5a6bcddf8dd4a85187b61f66e2d2fa7dc490f17a2ba40f",
   "buddy_glasses_aviator": "1dec26345bd2fc264ffe1714cc201a0f56821afa12f9d008c147a0c25cabfe0f",
-  "buddy_glasses_cat_eye": "0063527fef41a25f12b271fc39302a9a3b17ccb9ccf465f8b0689c3a2cfeeee0",
+  "buddy_glasses_cat_eye": "dadf67150c702567775663c42b31039c0bdbdf09d7abb9db6a7d855ae969adfa",
   "buddy_glasses_earn_aviator": "22fefddaf9eb20189fd0aa05d1bf4e32de40a43f36218b5708ff12b02a961777",
   "buddy_glasses_earn_cat_eye": "61cbc06fe897ad66026860f2eb4a373622a42f9a95d51d2f78b5e11e28e89442",
   "buddy_glasses_earn_monocle": "3d6f8457d1192a13e47e29f3d6ec9862dc4e4783c0f75e4a018e57f2b2634972",
@@ -12,7 +12,7 @@
   "buddy_glasses_earn_star": "4744e688bc1cff57b501345702c59d9d065690a3c214ca10fd23a049f0f94873",
   "buddy_glasses_monocle": "7977968ab1c058f51a775d1cde03622beef3a1854aacf9fabe0b2115cae05e67",
   "buddy_glasses_retro": "a3c8ac8f4a089c4b4b01fb86eb4864b41c30c5614f8058081f65cdafab175001",
-  "buddy_glasses_round": "79a4f93829fed54618bc06cdbdec38bfff5ce76471866058a7159798f29fc9cb",
+  "buddy_glasses_round": "c777a095438b400b9166587936d26847cc36c3cf2dc809f172e61b41c216a075",
   "buddy_glasses_star": "34359372c92d5359f6d9e196b6506e1bc13766a04ae02dd61c3510339acc6657",
   "buddy_glasses_worn_aviator": "836b5b188d7c16abc922f009e580a973392e6045b1b8adacef094659dfa9b8d3",
   "buddy_glasses_worn_cat_eye": "ecc6f203fdb7b39e6b058de0f9971c8c698326b986e639e2ab8eaabc9b440a30",
@@ -27,10 +27,10 @@
 -->
 <resources>
     <string name="buddy_glasses">Óculos</string>
-    <string name="buddy_glasses_round">Redondos</string>
+    <string name="buddy_glasses_round">Redondo</string>
     <string name="buddy_glasses_star">Estrela</string>
     <string name="buddy_glasses_aviator">Aviador</string>
-    <string name="buddy_glasses_cat_eye"> gatinho</string>
+    <string name="buddy_glasses_cat_eye">Gatinho</string>
     <string name="buddy_glasses_retro">Retrô</string>
     <string name="buddy_glasses_monocle">Monóculo</string>
     <string name="buddy_glasses_worn_round">Óculos redondos</string>

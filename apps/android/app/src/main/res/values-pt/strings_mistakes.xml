@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "mistakes_not_found_description": "826c898c2c3d2cb12d8b15775d8c7ff1228b731c2f29dc171b38e1d885847358",
-  "mistakes_nothing_description": "9a49600552e8354c7712fa629ac73199d5c5b1657d9024ace1fda749906f4721",
+  "mistakes_not_found_description": "3acf40ba3622f53c7b1fee9921c839a706f21c24162f8da4f636246245acfcb3",
+  "mistakes_nothing_description": "d1f510209794ed8db12784f57aab59a8a45c1ecca1ec83d4b19bd0bf06863719",
   "mistakes_nothing_title": "7848741fa5472d906066f541068c18833d273f0b932ce5ef8a78d5cd6f9062fb",
-  "mistakes_practice_comes_back": "ad87f80974e54993a67c6f4e147a77e4f38419b04a0809004cc785c61480fc95",
-  "mistakes_practice_end": "1f9b1a2594a43ac48afe6465395f913019da2888b19888f372d17796e33cf4e7",
+  "mistakes_practice_comes_back": "ccafbf5f8ee4e7e0801ba9b109132f072a57561d30644e5579cbae27df4a246d",
+  "mistakes_practice_end": "46fa3a94c4563fed94c6a45caa7285744daa5ceb5c25893bf05a72de48f7a4f6",
   "mistakes_practice_fixed": "3d59de796bc533f20670d215f8e1b32b447077afda622482e249b5cdc23fb339",
   "mistakes_practice_title": "5744d6900917a3f7691f536856253acf2d7b181e7bc97271c40b62bc0074463c"
 }
@@ -13,14 +13,14 @@
 <resources>
     <string name="mistakes_practice_title">Praticar o que você errou</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
-    <string name="mistakes_practice_end">Encerrar prática. O que você respondeu já conta.</string>
-    <string name="mistakes_practice_comes_back">O restante volta outro dia, quando você tiver mais chance de fixar.</string>
+    <string name="mistakes_practice_end">Encerrar a prática. Suas respostas contam.</string>
+    <string name="mistakes_practice_comes_back">O restante volta outro dia, quando fica mais fácil de aprender.</string>
     <plurals name="mistakes_practice_fixed">
         <item quantity="one">%d erro corrigido</item>
         <item quantity="many">%d erros corrigidos</item>
         <item quantity="other">%d erros corrigidos</item>
     </plurals>
-    <string name="mistakes_not_found_description">Talvez já tenham sido corrigidos ou removidos.</string>
+    <string name="mistakes_not_found_description">Eles podem ter sido corrigidos ou removidos.</string>
     <string name="mistakes_nothing_title">Nada para praticar ainda</string>
-    <string name="mistakes_nothing_description">Os erros voltam para você praticar a partir do dia seguinte ao que cometeu cada um.</string>
+    <string name="mistakes_nothing_description">Os erros voltam para prática a partir do dia seguinte.</string>
 </resources>

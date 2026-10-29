@@ -4,23 +4,23 @@
   "settings_account": "846fc191a3ba06f7fa86bb4cc06913ddf4664d1e30c458f9434a34f91c583e59",
   "settings_account_deleted": "4e985d272495e7aa641558f478082a6469ace3ff8bd10482b0a8eabbbbbbbaee",
   "settings_account_deleted_title": "aa32fa33230cac3b79f35ac252f84c9aeb70448818fa59737e222a95e905282f",
-  "settings_apple_not_revoked": "ebd3891da00b7b485a09ab5742b8adcacdd87595c12ca1f8698e8ee800d122ba",
+  "settings_apple_not_revoked": "319cf665d40340126066d8fd22f90680bb1704dfbe0facb105a16779fe99eb6b",
   "settings_cancel": "ec59718fbcc1be4426033fbfa8a8e68db5e7208ba93fd4ebfe068d3efeb05cf7",
   "settings_delete_account": "626c2663f651d2575dbf2ae0f5b24a02c5d743d065039ef98d870e57f9e0002d",
-  "settings_delete_account_description": "d4da92f860befdbc2de4f8c7fd079dbb362dabd4d3805b5bfd66622bbda23510",
-  "settings_delete_code_description": "3ab396317a974493e33b48aa8cc13cf4669372affe6bc2c6c8d15dda1a10e168",
-  "settings_delete_code_title": "4fc923e2054eda6c833617634e735e6e4f5f72c72339a9c72d2325d6b1f0e85e",
-  "settings_delete_confirm_description": "aaa5d424da4601b629c7ce0e87a6995228536e99da48ba47b21274ae673780a9",
-  "settings_delete_confirm_title": "2277e39dcdb84203320692c9676659e9c9a92ff55c51370427ef30328a86cc8b",
+  "settings_delete_account_description": "267dc81e7d516cd653dbd4501333b39c2e5f2b19796da25f05968267bb9488e9",
+  "settings_delete_code_description": "178188d63881cf713042ad9e3a326ec400cf527dd7038082851215afd4361d9a",
+  "settings_delete_code_title": "30b7f21a5b181db0efc194f9ee3a6ed7d2fb075851277bdff15ed65103f40c95",
+  "settings_delete_confirm_description": "1bfc3b14582c5313c2e7a0b4edb41dcf9e8e4e0ab278e3108e95f9ff4ba90681",
+  "settings_delete_confirm_title": "c6c5d778946bbdc8864d984e8c08585a16e6d094ba13084c450f8a91e421ce6c",
   "settings_delete_ellipsis": "4709a4680b8b9fb3cc92e76f63a3e6185db677822766e6cc9cbe4e36cfcb1bbc",
-  "settings_delete_failed": "5aefaa5ecd54bb231db1ac68f3c33b857907135324e9acea69611884bea3e3d9",
+  "settings_delete_failed": "a6cfdd45c28406a443e4a8d88f34a0bc5c8f9ebb71d3e49d43392504335ab734",
   "settings_delete_my_account": "591eb25556255668189fcdeee01a3129ad448e38d2f065af680dcf3d1b7caa50",
   "settings_delete_verify": "649865bcd03964a02c6cc2d93457c2ea13e5008e5cadde2af4572c803e36db34",
   "settings_done": "f110a5eb417d807ebde6f077efc82252c0c37447aaa7ceb5ba7d54b4a34d7bdd",
   "settings_download": "9fd2f0a0197558430ae7367386bc0eaabd9413ff6e173bc78f85d15a2555766c",
   "settings_download_data": "d4ec600954eb9e072b053bf8a3ff5d32b29e4b59cada8db5d17783ec00a2701e",
   "settings_download_data_description": "e8fdc8712b47a26ffc940d67a08d3157987f535bcf1bbfbf02f5d1eb84fe4f46",
-  "settings_download_failed": "147fde490ebcec8e19d49f81ead8fce4a9960c6603818afc6877143ede856532",
+  "settings_download_failed": "b1fadb6d4795fc78debd8a567c7b9324fef463d21869f83f4c7689093f6f5c4b",
   "settings_download_preparing": "c70f9f5319d7ee63fd47cfabb2c7cc4a5eb7ddf78daf805287c90715c4fcef1a",
   "settings_licenses": "88faf8ac61a4bca320672d1aa30b601cd42f6d7997b1c16860f8bc5d71e9e192",
   "settings_licenses_read": "05b805a7c999c8caa32345d0b590b2d7d06f9e8d8fd1c8f780a36893218105a8",
@@ -33,21 +33,21 @@
   "settings_preferences_buddy_line": "e791877baf1c1205653a97eab75b0cd70ef60b9cdd426082ca6c7eac2765c6ad",
   "settings_preferences_change": "43bcbc53a761ef69add36d11196e002787ef7c2d7909be82befda3e6838f1cb4",
   "settings_preferences_choose_buddy": "8beb67fa01fbd849a5c1756b277df5c53f462b1751a1199f7da961c463227037",
-  "settings_preferences_daily_limit": "a9b2a0a3fe22883171f0125126f252c836bf6d73854d8de271b7cb31f5e0a92e",
-  "settings_preferences_daily_limit_description": "fe4572c1779b2ea35b0260089a5fa661e83ace9ecedc431c96cfcc1b32eb79ec",
-  "settings_preferences_description": "9ea2aecaee93878748ac836c13e34628a95d8d1b98761053f9f41eade7dfe1a8",
+  "settings_preferences_daily_limit": "644a55883c2cb59269f257a329c360dd15ae8f45d1452fa9500d31cc16f536eb",
+  "settings_preferences_daily_limit_description": "ec867a75df3d2449df6c8ce4ca100c0679611caedbad8d7baddced375fc75b59",
+  "settings_preferences_description": "3c3041a35a219a69b2a428ed9c85989ef8f2089f4a5b14feabc975138bd59c43",
   "settings_preferences_language": "8c130bdb19849e0b66c17747945e792b13ca80119eb1ca7d28487e3025def8f9",
   "settings_preferences_lessons": "14d36aa72a2644f3bfb51ede00e8456935309c8966ae296e780c3d0988305b6d",
   "settings_preferences_limit_a_day": "8f1a8c1c929c73c3759fb767b55f62d5c2cdfd854ee336682ad6f316493df98c",
   "settings_preferences_no_limit": "f196e8cb4aba138a559b21ccc0a936866fe0aa99414057122b1fdee492145507",
   "settings_preferences_on_this_device": "14e3095f177933ef610626ea65e0ac046a37c166cc4a35627e69712184fcc191",
-  "settings_preferences_save_failed": "aa787d4049acddb890477ed7ac84fddf791e873ceff393380ad372974c606297",
+  "settings_preferences_save_failed": "165cbb167c1ea28b5aced5b3bf5ee8066a8444c6f81fe2880e4ee3082340c329",
   "settings_preferences_sounds": "835e4109f126ee0f7bb938ceb6abd3ebf10aa00c74d05b8980e0ae1e093db439",
-  "settings_preferences_sounds_description": "9db87a54deead2526d952318d7f72f451df7baeb0e3e5dd2c7c3e2f2a2a6d593",
+  "settings_preferences_sounds_description": "27ead4c0abf19d997a59d907bc0fe6753f623ca9ab72eedaa996708399576baf",
   "settings_preferences_summary": "97c610e0158a8a0402afce0e090fb76e0d336ab1fcc201b7cabc292c779ff22b",
   "settings_profile": "e7793decc781e7a27ec6d05153361a758408e396d546b05d66b399a635b5e747",
-  "settings_profile_description": "424b3dae83a2c2261d475d599a1008b98a9ad6d292f9b41e0c2bb717db3adb97",
-  "settings_profile_needs_account": "4702447e7ac25a78cfc7217835b220bae0a3fd842d2390d6a8caf37c2fdca6e2",
+  "settings_profile_description": "d348dca6709a6ab0db23401c2cf9270cf3b0db74c4c9324330d3b38d905e9dcf",
+  "settings_profile_needs_account": "56d236b9497c584fa988e31319e82b68f47c61ac2b9cbd89c6a0cc17d501af72",
   "settings_save": "b9ab5944cece2671e669cac4b45ea853d6580313f57916ad0f9545e2324113b0",
   "settings_saved": "2358a573b1ccc9a979d1795a99bb25cc5dd1a5e96e88751e27f4faaf8243b0f4",
   "settings_your_data": "86660be01fc723ff57a1b15bc9aa3f0eae47b00bfa557e32983e00bed388bb0a"
@@ -59,7 +59,7 @@
     <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
     <string name="settings_preferences_summary">%1$s · %2$s</string>
     <string name="settings_profile">Profil</string>
-    <string name="settings_profile_needs_account">Erstelle ein Konto, um ein Profil zu haben. Dein Plan und dein Fortschritt bleiben erhalten.</string>
+    <string name="settings_profile_needs_account">Erstelle ein Konto, um ein Profil zu haben. Dein Plan und dein Fortschritt werden übernommen.</string>
     <string name="settings_account">Konto</string>
     <string name="settings_save">Speichern</string>
     <string name="settings_saved">Gespeichert.</string>
@@ -68,22 +68,22 @@
     <string name="settings_download_data_description">Alles, was Zoonk über dich speichert, in einer Datei</string>
     <string name="settings_download">Herunterladen</string>
     <string name="settings_download_preparing">Wird vorbereitet…</string>
-    <string name="settings_download_failed">Der Download konnte nicht vorbereitet werden. Versuch es noch einmal.</string>
+    <string name="settings_download_failed">Wir konnten den Download nicht vorbereiten. Versuch es erneut.</string>
     <string name="settings_delete_account">Konto löschen</string>
     <string name="settings_delete_my_account">Mein Konto löschen</string>
-    <string name="settings_delete_account_description">Dein Konto und alle darin gespeicherten Daten werden endgültig gelöscht. Ein im Web gekauftes Plus-Abo wird gekündigt. Käufe über Google Play und den App Store verwaltest du dort, wo du sie getätigt hast.</string>
+    <string name="settings_delete_account_description">Löscht dein Konto und alle darin enthaltenen Daten endgültig. Im Web gekauftes Plus wird gekündigt. Käufe über Google Play und den App Store verwaltest du dort, wo du sie gekauft hast.</string>
     <string name="settings_delete_ellipsis">Löschen…</string>
-    <string name="settings_delete_confirm_title">Möchtest du dein Konto löschen?</string>
-    <string name="settings_delete_confirm_description">Deine Ziele, Pläne, dein Fortschritt, dein Gedächtnis, dein Feedback und deine Uploads werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.</string>
+    <string name="settings_delete_confirm_title">Dein Konto löschen?</string>
+    <string name="settings_delete_confirm_description">Deine Ziele, Pläne, Fortschritte, dein Gedächtnis, Feedback und deine hochgeladenen Dateien werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.</string>
     <string name="settings_cancel">Abbrechen</string>
-    <string name="settings_delete_code_title">Bestätige, dass du es bist</string>
+    <string name="settings_delete_code_title">Bestätige deine Identität</string>
     <!-- %1$s is the account's email address. -->
-    <string name="settings_delete_code_description">Gib zu deiner Sicherheit den Code ein, den wir an %1$s gesendet haben.</string>
+    <string name="settings_delete_code_description">Gib zu deiner Sicherheit den Code ein, den wir an %1$s geschickt haben.</string>
     <string name="settings_delete_verify">Bestätigen und löschen</string>
-    <string name="settings_delete_failed">Dein Konto konnte nicht gelöscht werden. Versuch es noch einmal oder schreib an hello@zoonk.com.</string>
+    <string name="settings_delete_failed">Wir konnten dein Konto nicht löschen. Versuch es erneut oder schreib an hello@zoonk.com.</string>
     <string name="settings_account_deleted">Dein Konto wurde gelöscht.</string>
     <string name="settings_account_deleted_title">Konto gelöscht</string>
-    <string name="settings_apple_not_revoked">Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass Zoonk aus deiner Apple-ID entfernt wurde. Entferne Zoonk unter „Mit Apple anmelden“, um den Vorgang abzuschließen.</string>
+    <string name="settings_apple_not_revoked">Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass Zoonk von deiner Apple-ID entfernt wurde. Entferne Zoonk unter „Mit Apple anmelden“, um den Vorgang abzuschließen.</string>
     <string name="settings_manage_apple">„Mit Apple anmelden“ verwalten</string>
     <string name="settings_done">Fertig</string>
     <string name="settings_preferences_buddy">Dein Kumpel</string>
@@ -93,19 +93,19 @@
     <string name="settings_preferences_buddy_line">%1$s · %2$s</string>
     <string name="settings_preferences_lessons">Lektionen</string>
     <string name="settings_preferences_sounds">Töne</string>
-    <string name="settings_preferences_sounds_description">Wenn du eine Aufgabe richtig löst oder abschließt</string>
-    <string name="settings_preferences_daily_limit">Tägliche Lernzeit</string>
-    <string name="settings_preferences_daily_limit_description">Nach dieser Lernzeit ist für heute Schluss.</string>
+    <string name="settings_preferences_sounds_description">Bei richtigen Antworten oder wenn du fertig bist</string>
+    <string name="settings_preferences_daily_limit">Tägliches Zeitlimit</string>
+    <string name="settings_preferences_daily_limit_description">Nach dieser Lernzeit für heute aufhören.</string>
     <string name="settings_preferences_no_limit">Kein Limit</string>
     <!-- %1$s is a duration, like "45 min". -->
     <string name="settings_preferences_limit_a_day">%1$s pro Tag</string>
     <string name="settings_preferences_language">Sprache</string>
     <string name="settings_preferences_app_language">App-Sprache</string>
     <string name="settings_preferences_on_this_device">Auf diesem Gerät</string>
-    <string name="settings_preferences_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
+    <string name="settings_preferences_save_failed">Das hat nicht geklappt. Versuch es erneut.</string>
     <string name="settings_licenses">Open-Source-Lizenzen</string>
     <string name="settings_licenses_website">Website</string>
     <string name="settings_licenses_read">Lizenz lesen</string>
-    <string name="settings_profile_description">Dein Name, Nutzername und Konto.</string>
-    <string name="settings_preferences_description">Dein Kumpel, deine Lektionen und deine Sprache – so, wie du sie magst.</string>
+    <string name="settings_profile_description">Dein Name, Benutzername und Konto.</string>
+    <string name="settings_preferences_description">Dein Kumpel, deine Lektionen und deine Sprache, ganz nach deinem Geschmack.</string>
 </resources>

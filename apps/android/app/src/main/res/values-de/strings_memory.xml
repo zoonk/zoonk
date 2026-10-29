@@ -9,41 +9,41 @@
   "memory_category_routine": "0b321c82142c42d3dcaf4ad5530ffc7c05b5ad40ba4ed0e7b5d13f14e2d44eed",
   "memory_change_undone": "04dda1dfc2d1d7dbfab89987aed7888e02e4dbb1fcc32d093f672d916f86c0ee",
   "memory_delete": "e9c91f37395e60269af80a78ba62a6cca18cf1d166ae7b4cf0ce3a9626d527ed",
-  "memory_description": "666e7ed8e7dc164d248a1008294a7c1c2c828f4f8c5a94a82ced63cbe89bbf49",
+  "memory_description": "6117f23a0ae90c2c48c3cb7e9ac61e316538557e6075920959c17bebde2207d7",
   "memory_download": "eaf3ac77bcf5230890c77f461c10dd18d11d4f87c90f671f547a767ba2afe76c",
-  "memory_download_description": "a5b18e9d1fcbd629550b98ab1768d1f5e271662ebeb1ab3703035d618db62994",
+  "memory_download_description": "845bbe2527ae219e114ff6639cb76ccb09263b5f2cd61870dec1fc1b9f12ef7a",
   "memory_edit": "82d875b2d6949e82fc4c83167d6b44713100a8cb5540c3d18c4f52e38c02edf5",
   "memory_edit_description": "0733fe3027363fa2f877c37d61f03cfee5f78f9a066274d71386980ad57f1bfa",
   "memory_edit_label": "6d3f0a5de48580ad99905a3e0a288632464dfdc81ef85a395c6e04df24609e0e",
   "memory_edit_title": "e6e857b2dc815a8a80836f685fb683818ffbbc7dd2d1d81dc1c7ec978a503d0e",
-  "memory_empty_off": "c9a32a97e7f0038e6d42bac0d81d06e4987426991de9e994ec48ff848b590f71",
-  "memory_empty_on": "96fd96083892b1c90ff5951a96f91c80f01286c420889587dca27a8676cd00ec",
+  "memory_empty_off": "df5fbb8e662f216667bacf90415ed979dbb7ca07d5e381ba119cd9be94e05a4a",
+  "memory_empty_on": "be5e607df7c4538b4f67c986b0158cd5881f6340d877db997d3688e75a5cd009",
   "memory_fact_options": "77fffd63eb5bfc6451aede5794bdff4f052d6a994d274796f07e376672609a2c",
   "memory_fact_source": "bcd5e26ccd31d059da6b647ac0de55b7959af5339c88d71f7bb79e4e85bcfd39",
-  "memory_save_failed": "b9b722b782352903b83d0e7302a27a5cf1a730d1115291260d746edb11a6dd92",
-  "memory_sensitive_note": "fcdbec088235d93463a80ef2e9d19bcd4f1cf70b32ae9f7e4b02f7d154cacff2",
+  "memory_save_failed": "0b29df1d4ff0fbdf856c0523fe6f5546b16ddb7174be76d7d6d8fde9ccf9b4d5",
+  "memory_sensitive_note": "83eed73b7de521382606834656d0c7cb42fcdb3b80919f9602d3598a88eada2f",
   "memory_source_chat": "a4c1243ce5d684c0b55a0f042058aff8bf0fcd973800e0f2b532c681a3934a63",
   "memory_source_noticed": "ab3d7c714ffbb27966a8ae88be8e37651f850ef5f8cd7a35e118c1d757b77ac4",
-  "memory_source_onboarding": "e986802703f9fbae58bf1a8c480e99a21c3fddca3d7fa1085262e67bbe7d9b75",
+  "memory_source_onboarding": "78fe03c4a10a2da81e4fe4ac1bfb50fef854e0230926265c3f222af712a61077",
   "memory_source_session": "12f0f3577409220de2352fc543e28d2fae910a084509e5ec5b71b63004c3f31b",
-  "memory_source_you": "d7a39e78a6c052e8fc16f3d18b9674b50e0cf7acea94e454def3538becc0400a",
-  "memory_undo": "c19111d7dbdbca2fac24949fccd947194d90731c288ffc96ee1bec72ad4ff3cc",
-  "memory_undo_failed": "0ab7b9e40dfddb2deeabee6311cd50b07ab7c726f955a7bd987b74406f6782a8",
+  "memory_source_you": "803ddbb090651199d1109da5339aaeee67176b78012a38364980abc1336ece72",
+  "memory_undo": "b592cff653daf11ea9610f59989aae6c2f581150897d839bd36201dbef2da839",
+  "memory_undo_failed": "66f8d888457a9efd5c0d1d53570389c066e1157244d51bb525f21d4d90d2f10e",
   "memory_updated": "4a142d4a8877ed27695f5df9ae6c71375c12f184ed27451f3ba8d031849e63a2",
   "memory_updated_more": "5def2e4f944c2a00696253739021ef1548ba9c1e6562b158cca077dde68bac1f",
-  "memory_use": "3a4de16106f2a8433d5a89624c8108789115571668e08e41fa237a749f4353dc",
-  "memory_use_off": "efd0c1757f4b68e3bcc12600ae2d1ce9557ca6c0b76edf488c74322bafcfb562",
+  "memory_use": "3227098aeb8c9e241a709dbc5204cd6790e2334c931d2c880eae8d7af7448f4c",
+  "memory_use_off": "5b01f597cf0f8bd72abc06de4735365d36ad21b39d7a959a4b920fb9ca573118",
   "memory_use_on": "ebc22ab83a670c8c5c1af03367e176809c0004c89452d41111dae09a60eb5c90"
 }
 -->
 <resources>
-    <string name="memory_description">Was Zoonk sich merkt, damit Beispiele und Pläne zu deinem Alltag passen.</string>
-    <string name="memory_use">Erinnerungen verwenden</string>
+    <string name="memory_description">Was Zoonk sich merkt, um dir Beispiele und Pläne zu geben, die zu deinem Leben passen.</string>
+    <string name="memory_use">Erinnerungen nutzen</string>
     <string name="memory_use_on">Persönliche Beispiele und Pläne, die zu deiner Woche passen</string>
-    <string name="memory_use_off">Erinnerungen sind ausgeschaltet. Es wird nichts Neues gelernt und diese Angaben werden nicht verwendet.</string>
-    <string name="memory_empty_on">Noch nichts gespeichert. Wenn du lernst und chattest, erscheinen hier kurze Notizen, die Zoonk beim Unterrichten helfen.</string>
-    <string name="memory_empty_off">Hier ist nichts. Solange Erinnerungen ausgeschaltet sind, merkt sich Zoonk nichts über dich.</string>
-    <string name="memory_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
+    <string name="memory_use_off">Erinnerungen sind ausgeschaltet. Es wird nichts Neues gespeichert und diese Angaben werden nicht verwendet.</string>
+    <string name="memory_empty_on">Noch nichts vorhanden. Wenn du lernst und chattest, erscheinen hier kurze Notizen, die Zoonk beim Unterrichten helfen.</string>
+    <string name="memory_empty_off">Hier ist nichts. Zoonk speichert keine Notizen über dich, solange Erinnerungen ausgeschaltet sind.</string>
+    <string name="memory_save_failed">Das hat nicht geklappt. Versuch es erneut.</string>
     <string name="memory_category_goals">Ziele</string>
     <string name="memory_category_background">Hintergrund</string>
     <string name="memory_category_routine">Alltag</string>
@@ -51,9 +51,9 @@
     <string name="memory_category_learning">Lernen</string>
     <string name="memory_category_context">Kontext</string>
     <string name="memory_source_noticed">Aus deiner Aktivität erkannt</string>
-    <string name="memory_source_you">Von dir erzählt</string>
+    <string name="memory_source_you">Von dir mitgeteilt</string>
     <string name="memory_source_chat">Aus einem Chat</string>
-    <string name="memory_source_onboarding">Aus der Einführung</string>
+    <string name="memory_source_onboarding">Aus der Einrichtung</string>
     <string name="memory_source_session">Aus einer Lerneinheit</string>
     <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
     <string name="memory_fact_source">%1$s · %2$s</string>
@@ -65,14 +65,14 @@
     <string name="memory_edit_description">Formuliere es so, wie es für dich stimmt.</string>
     <string name="memory_edit_label">Was Zoonk sich merkt</string>
     <string name="memory_download">Meine Erinnerungen herunterladen</string>
-    <string name="memory_download_description">Alles, was Zoonk sich merkt, in einer Datei</string>
-    <string name="memory_sensitive_note">Zoonk merkt sich keine Angaben zu Gesundheit, Religion oder anderen sensiblen Themen, außer du bittest darum.</string>
+    <string name="memory_download_description">Alles, was du in deinen Erinnerungen gespeichert hast, als eine Datei</string>
+    <string name="memory_sensitive_note">Zoonk speichert keine Angaben zu Gesundheit, Religion oder andere sensible Informationen, es sei denn, du bittest darum.</string>
     <string name="memory_updated">Erinnerungen aktualisiert:</string>
     <plurals name="memory_updated_more">
         <item quantity="one">und %d weitere</item>
         <item quantity="other">und %d weitere</item>
     </plurals>
-    <string name="memory_undo">Rückgängig</string>
+    <string name="memory_undo">Rückgängig machen</string>
     <string name="memory_change_undone">Änderung rückgängig gemacht</string>
-    <string name="memory_undo_failed">Das ließ sich nicht rückgängig machen. Inzwischen hat sich etwas geändert.</string>
+    <string name="memory_undo_failed">Rückgängig machen fehlgeschlagen. Die Information wurde inzwischen geändert.</string>
 </resources>

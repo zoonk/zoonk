@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "buddy_page_change": "5f64776236c3f992b87fb9ccb17fc05d67510e14e63a5055c8b1a4da7905d846",
+  "buddy_page_change": "ce16b780eb2d849fa040daa5290f19e8c15071a27f95ad804e7b70611a346250",
   "buddy_page_choose": "492797cb976c56b0dea9fa1c172b76f85a3e1e273c6d39ffcbd6bc1c9d296e62",
   "buddy_page_count": "7667921acb46e446c9332dd169c1a8684badfa9390152db5999ebdf98013e56d",
   "buddy_page_earlier_questions": "d60e26692c517a3b781455752727b45fb96f675e72da6a1a4794accbc8188517",
   "buddy_page_energy": "30e2657a84e0ed6c764674c7d02cfdcc9abdd2b69a91112310986e1d93498efd",
-  "buddy_page_energy_napping": "f269b8ded2a1b4cb3a1aa177bd9977651dc600a96fff2d3bf8cd54a07a986bc6",
-  "buddy_page_energy_starts": "f40f7270b1567ef50db79bb711908e670fb5d04490eef75d033829d19c64c36c",
-  "buddy_page_energy_studied": "792d9942d3f7e03c4225e902d263a131d0baecec3ad0cfb35c766f6ea3a7f639",
-  "buddy_page_energy_study": "45adcb65e8a6a1bf260e32d117361dc0f16f41d7c6faaa65cbc872ab14da149a",
+  "buddy_page_energy_napping": "b5ab26ad2595066e3204514348bd87f3745fa3e4e4e08c50a1a0da6d9bd47d98",
+  "buddy_page_energy_starts": "a2390848d4665a964e01a6ee989c848dc21afafc3857b7a089fda4581f109ff8",
+  "buddy_page_energy_studied": "ce9485ba9cd5a74e527537c9ee5aaad56769fef729abbf1b083ccddd50750a37",
+  "buddy_page_energy_study": "5b2081ba1f987f1b0ec228cdea4d86c6a78655d613900993bf59af87251f092d",
   "buddy_page_first_anytime": "4960a7d476c19e3a9127b2eaa06f71d23d87b0e5edd2a6fbde7deaf269b87b15",
   "buddy_page_first_ask": "8a8440d9642054f67c1751ac42011d8b8d99cb75ce9d1a14b15ace47dec3a181",
   "buddy_page_first_call": "0df5d64b31e32f715040eab32beabacdf160cff8ceb196d8501fb98b2b822869",
@@ -21,14 +21,14 @@
   "buddy_page_first_pattern": "7770bcbfb227e0100ff4ac06d920c904714bfb4be0b9b09ade6d3e1e8a950aa7",
   "buddy_page_first_review": "1e94dd1c7467f4426848e83b0eaaeb826d12cf1d9f4abaeae88d21e16a4e9ff2",
   "buddy_page_first_steps": "491e9d3f188d54e5fc13e92cfddadcaec6d758fb2cd8ab96e8df19c724dde0a9",
-  "buddy_page_first_steps_done": "dac8243cb10480e313c184aa9dc3e6c6b8637b4f68b773e73abbb4cc93e4c361",
+  "buddy_page_first_steps_done": "5e44c008436a4d3245e73a7f73112c13197695fb2b0d5fbdec2ba2140e3baee7",
   "buddy_page_first_today": "9e8d14224c0719000a032c2e225a8c9d5ff6b3d90fbcace7c57627810a59b5d5",
-  "buddy_page_fully_grown": "1509542d2168238aecc0dfecc54be2ee6138323681912dbe5a193064107407f9",
-  "buddy_page_glasses_description": "cb3170ae48a0774b928579038d6153f7824458696b0402993e966d5be88b5c7f",
+  "buddy_page_fully_grown": "3e4fd80c21f33d48b008851bbe9a9bd15051d129b23971d83fe935a6809f9f78",
+  "buddy_page_glasses_description": "0cd90db34adfd5f09dbb65c0f888a7e135304561f317efe05ed1138b1a494492",
   "buddy_page_goal_greeting": "c6aca39dd413fbe22878839827ba9bae4744cf2ad1d668a97392728c3221e3d4",
-  "buddy_page_greeting": "ff663e7d139e2fd5c09416a2d66794d88ab0b2be3213949e81a114669b617cb2",
-  "buddy_page_grows_adult": "3cfe92f671b00ca126f433c665a3020158f2ab6abd3225628336856cbdc36604",
-  "buddy_page_grows_young": "cafca8b65cf113c89cafa9009335b286659c839ddb188f469343ae25c8d39f46",
+  "buddy_page_greeting": "aa7d5445eb9fba9afbba5d38f0f3a05e005dcdf1b5a655745fb37dbeec7748d3",
+  "buddy_page_grows_adult": "c289614be53495f0cb2952197d4078f0d0bdbdc64cccee4acde30cff9eec5fab",
+  "buddy_page_grows_young": "dace71675482581bb70ff4a9ba0f2c2f79f3617b37311a3b04ecea99c6015365",
   "buddy_page_line": "151097b4ec2cd3622acc9fdd2f0c80a39fd4842592c5075433aabfa7daf74b50",
   "buddy_page_missions": "012a51c6f6cf281e5dc7d93297455948821946d118a27c029e96dd87d42dcdf1",
   "buddy_page_missions_done": "e38241576f551f5d3c67d7525976e3b445300765eebaabe9d13ba9125a55f767",
@@ -39,28 +39,28 @@
   "buddy_page_remembers": "5d5f2ff969968f0033a2580054411fd451f21db5bd90e77057cd174333d4fe30",
   "buddy_page_save_failed": "29c70ff6ce5fb815e55708af905a0477ebdf68fdc13642ee52eb690ce5878671",
   "buddy_page_suggest_focus": "325e4b44bab7393be7f37e99675a2f4ae353a7a99fd7ffd52ab17ab8da644a9e",
-  "buddy_page_suggest_lighter": "8cfed85e5141b86b6ec806f88f0f53f2d59ac2db058c3f28771d920981099e56",
+  "buddy_page_suggest_lighter": "c29e5a61ef5fb9b66f78a1aef914b1311e4d2b64aef288d551c0abc2484c8a35",
   "buddy_page_suggest_mistake": "7c5abd92215e7a3378e6271c54c9df4208c39aa14a3e73571e6a32a2e8dadbd3",
-  "buddy_page_suggest_plan_today": "35c1077da27dd114bb9dcab67b47c34281978ecedfa1705dc5de5d34b8223ba6",
+  "buddy_page_suggest_plan_today": "815504124684cf8ed9bbc6c74170fac7b360e07be140138cba549e0da231e2bd",
   "buddy_page_today": "386a64a10ceb98d26b1ebdeeaf977ad28eb77b0b8b24389532213aa9d9304d7a",
   "buddy_page_weekly_summary": "e9534b6478d4c6a79e821cfa4a85a15c186e1d4e350c1d686b7f92cf8929afa2",
   "buddy_page_when_buddy": "971a5d253aa68582c2de5998a87ce4fceca5aa252822ace475b9e520c99adab8",
-  "buddy_page_when_call": "b774287b062e181b75c0bbe971f1740dacc2957cefd3a1e8d89a51bc0b9ca93f",
+  "buddy_page_when_call": "edd4db6fb5511b6cd447a291f9c9fa1402d197ec736a44f1110facb49359808b",
   "buddy_page_when_challenge": "ae94b3fd2408df9de11fbcd41466bf0457aa2c2d67a3158c88e3bf263dc40266",
   "buddy_page_when_challenge_on": "7ac936dee79c296a9963952e5192ca2e57e324796c4aa29cdb79988791c0f48b",
   "buddy_page_when_essay": "27af6b7f9c921090f9b78eea2d7fe0ffcdaf0378de3d4182fd4d65db4b32089f",
-  "buddy_page_when_lesson": "41da67c97021b980fe0088b2740018f4934c1ebf0e3a75f28af55aed69c06b91",
-  "buddy_page_when_mistake": "3ca9725ef0b5af7dfc847184730f31b0d2a56514c6138dbc930fb1c86cd97c45",
+  "buddy_page_when_lesson": "f2a7d0dbd523e83b7702cd47ee75f02db94f9e5af5d03b260facd48522536c6a",
+  "buddy_page_when_mistake": "360bd21fa09cca17d2f7af934da94c9034f0f45132816ae4b284763f004def26",
   "buddy_page_when_mock": "996b1e7ca7ea5e04d0ceef7493aa75fa137de80859bc711830167d72c4278a19",
-  "buddy_page_when_pattern": "0c3b10abe66b34d1ba5cd059f22f166ea4e628d53942fc512086b7f55f4d4332",
-  "buddy_page_when_review": "df047d89b3b5dcfc57c59be46e87d09fbb6a489fb6b935dc9a1c7cf429e2bc19"
+  "buddy_page_when_pattern": "b856e80c085ae49fc3b1d15a6609e25d241f036e55d3716427fc2cb9a18ffdbc",
+  "buddy_page_when_review": "d15eb2f13fb107b387034f18b0feeb1792762cba1aad960bf0ec4ef299ccd1a4"
 }
 -->
 <resources>
     <!-- Under the buddy's name; %1$s is its stage, like "Baby". -->
     <string name="buddy_page_line">Tu compañero de estudio · %1$s</string>
     <string name="buddy_page_more">Más sobre %1$s</string>
-    <string name="buddy_page_change">Cambiar %1$s</string>
+    <string name="buddy_page_change">Cambiar a %1$s</string>
     <string name="buddy_page_choose">Elige a tu compañero</string>
     <string name="buddy_page_weekly_summary">Resumen semanal</string>
     <string name="buddy_page_earlier_questions">Preguntas anteriores</string>
@@ -69,31 +69,31 @@
     <string name="buddy_page_save_failed">No se ha guardado. Inténtalo de nuevo.</string>
     <string name="buddy_page_open_failed">No se ha abierto. Inténtalo de nuevo.</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
-    <string name="buddy_page_greeting">¡Hola! Soy %1$s, tu compañero de estudio con IA. Pregúntame lo que quieras sobre lo que estás estudiando o dime qué te gustaría cambiar de tu plan.</string>
+    <string name="buddy_page_greeting">¡Hola! Soy %1$s, tu compañero de estudio con IA. Pregúntame lo que quieras sobre lo que estudias o dime qué te gustaría cambiar en tu plan.</string>
     <string name="buddy_page_goal_greeting">¡Hola! Soy %1$s, tu compañero de estudio con IA. ¿Qué quieres aprender y para cuándo? Prepararé un plan para cada día hasta entonces.</string>
     <string name="buddy_page_placeholder">Haz una pregunta o pide un cambio</string>
-    <string name="buddy_page_suggest_plan_today">¿Qué incluye mi plan de hoy?</string>
-    <string name="buddy_page_suggest_lighter">Esta semana quiero estudiar menos</string>
+    <string name="buddy_page_suggest_plan_today">¿Qué hay en mi plan de hoy?</string>
+    <string name="buddy_page_suggest_lighter">Quiero estudiar menos esta semana</string>
     <string name="buddy_page_suggest_mistake">Explícame mi último error</string>
     <string name="buddy_page_suggest_focus">¿En qué debería centrarme primero?</string>
     <string name="buddy_page_today">%1$s hoy</string>
     <string name="buddy_page_energy">Energía</string>
-    <string name="buddy_page_energy_starts">La Energía empieza con tu primera lección y crece a medida que aprendes.</string>
-    <string name="buddy_page_energy_napping">%1$s se ha echado una siesta. Cualquier cosa que aprendas hará que se despierte.</string>
-    <string name="buddy_page_energy_studied">Hoy has estudiado, así que la Energía no bajará.</string>
-    <string name="buddy_page_energy_study">Estudiar hoy mantiene alta la Energía.</string>
+    <string name="buddy_page_energy_starts">La energía empieza con tu primera lección y crece a medida que aprendes.</string>
+    <string name="buddy_page_energy_napping">%1$s se ha echado una siesta. Cualquier cosa que aprendas le despertará.</string>
+    <string name="buddy_page_energy_studied">Has estudiado hoy, así que la energía no bajará.</string>
+    <string name="buddy_page_energy_study">Estudiar hoy mantiene la energía.</string>
     <string name="buddy_page_not_yet">Todavía no</string>
     <string name="buddy_page_missions">Misiones</string>
     <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_missions_done">Misiones completadas: %1$d de %2$d</string>
-    <string name="buddy_page_fully_grown">Ha crecido del todo</string>
+    <string name="buddy_page_fully_grown">Crecimiento completado</string>
     <!-- %1$s is a belt, like "Orange belt". -->
-    <string name="buddy_page_grows_young">Llegará a joven el %1$s</string>
-    <string name="buddy_page_grows_adult">Llegará a adulto el %1$s</string>
+    <string name="buddy_page_grows_young">Pasa a joven en %1$s</string>
+    <string name="buddy_page_grows_adult">Pasa a adulto en %1$s</string>
     <string name="buddy_page_remembers">Lo que recuerda %1$s</string>
-    <string name="buddy_page_glasses_description">Elige unas gafas que hayas conseguido para que las lleve.</string>
+    <string name="buddy_page_glasses_description">Elige unas gafas que hayas conseguido para ponértelas.</string>
     <string name="buddy_page_first_steps">Primeros pasos</string>
-    <string name="buddy_page_first_steps_done">Ya has probado todo lo que incluye tu plan.</string>
+    <string name="buddy_page_first_steps_done">Has probado todo lo que incluye tu plan.</string>
     <string name="buddy_page_first_lesson">Completa tu primera lección</string>
     <string name="buddy_page_first_review">Haz tu primer repaso</string>
     <string name="buddy_page_first_mistake">Corrige tu primer error</string>
@@ -110,11 +110,11 @@
     <string name="buddy_page_when_challenge_on">Con tu primer desafío, %1$s</string>
     <string name="buddy_page_when_challenge">Con tu primer desafío</string>
     <string name="buddy_page_when_essay">El día de tu primera redacción</string>
-    <string name="buddy_page_when_mistake">El día después de tu primer error</string>
-    <string name="buddy_page_when_review">Cuando tengas que hacer tu primer repaso</string>
-    <string name="buddy_page_when_pattern">Cuando tus errores sigan un patrón</string>
-    <string name="buddy_page_when_call">Cuando vuelvas a tener tiempo para una llamada</string>
+    <string name="buddy_page_when_mistake">Al día siguiente de tu primer error</string>
+    <string name="buddy_page_when_review">Cuando llegue tu primer repaso</string>
+    <string name="buddy_page_when_pattern">Cuando tus errores muestren un patrón</string>
+    <string name="buddy_page_when_call">Cuando vuelvas a tener tiempo de llamada</string>
     <string name="buddy_page_when_buddy">Cuando puedas volver a preguntar</string>
-    <string name="buddy_page_when_lesson">En tu próximo día de lecciones</string>
+    <string name="buddy_page_when_lesson">En tu próximo día de lección</string>
     <string name="buddy_page_when_mock">Cuando tu plan incluya un simulacro</string>
 </resources>

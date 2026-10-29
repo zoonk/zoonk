@@ -6,58 +6,58 @@
   "mock_chooser_failed": "719118296c47d9101fae2d25c01e206f5097bfc026e1b26435175a337eb08bea",
   "mock_chooser_getting_ready": "8b92fb7886869f84790affd35fc147f627baf17fb5ba2eab96a50fc934f34f26",
   "mock_chooser_last_mock": "3f26ce94a6c4ffeb49f73d7d347217959bbee5e47914c1e508337f2e79b276bc",
-  "mock_chooser_left_out_listening": "3f6144a8283c466698fb7220cbd5aed807fa14df9c4dbedd14fe0180e6248a51",
-  "mock_chooser_left_out_named": "a8f5f0db6fdeac5b8314a5b19053f284a7dcff961d7fd244763f2405a3521ece",
+  "mock_chooser_left_out_listening": "89c84fa59e80578237d371a6801a27dc1813952370077bc0316e4b0fab44b15e",
+  "mock_chooser_left_out_named": "16bc0076c0ddbe7f1b20089ddc5e44301444bbfcd1e5cd416e66643f3bca8b07",
   "mock_chooser_left_out_numeric": "1582a6cefe55c48ef846c5791f91ad1d9a8140e8d27b2cd67ccd4d0f9b3ac2b3",
-  "mock_chooser_left_out_practical": "d00fec99c7cb3bef66797e0e8a13b79cb8fa724b81adf1e4bb43b436b9e18515",
-  "mock_chooser_left_out_practical_named": "a2c4a77c86dee448c8533851ac30e6bd73632ca3b6e731ba0c20c977648fa523",
-  "mock_chooser_left_out_short_answer": "f7f709969432ef44c7bd3c21b390d18eead452adf52b4f5b1499e383ce3481ad",
-  "mock_chooser_left_out_speaking": "e235460aa5892cf6d5b54c3fe7084a809ef7a7279f703711d6e8446b331814bb",
-  "mock_chooser_left_out_written": "005a7c836df215408a6f90f2b5c457678ab2e7dd0d08707b88d59232765fe686",
-  "mock_chooser_not_enough": "3c03bd5a4c814b5379021beeb0c75b253aae7c25a09342b7d3c0533d1e232aa2",
+  "mock_chooser_left_out_practical": "8156fd28319a422acae0fec53f744ec2cbbd41428804b62ced354027ca45e066",
+  "mock_chooser_left_out_practical_named": "3114809bd38dc5c52425fb932945c965a6ad77cb235f655cfb730276727cd2d1",
+  "mock_chooser_left_out_short_answer": "34fcdc7b00fa9a51b206435ecea68aa7a3d548796c53a8de81c8eb4548ca9e41",
+  "mock_chooser_left_out_speaking": "f59a4181f36b1c0ea4511966984708ba521faa60f3489562ad4a6f89302675f4",
+  "mock_chooser_left_out_written": "a4c007c95eee319c8d9649098461f572cf5b361ad7b8ac27b51ef70300e02d67",
+  "mock_chooser_not_enough": "de97e2b361995b9dfd0097719ff53f5f21d28f844b15371732851d7f5a20bfaf",
   "mock_chooser_objective_only": "f86652ca3758b81fd1e64edd85574ae69fc98a895540267ce8ba59888b6b74ce",
   "mock_chooser_one_subject": "063908ea394847a8be0d174e05a1019e45d5720d7eec41ee1c02a551302d8a90",
-  "mock_chooser_option_size": "cd08b46db3759aff8873f169bfbf5fb04563230cff20f37fce428bca3d15c267",
+  "mock_chooser_option_size": "2be8f50cf2c9e08ea7c638f5a6261a00ba1e22511f3e7b0ae49c4470f8a9059c",
   "mock_chooser_option_size_spoken": "1b5e29ad83ac2bef6f2fc57dd1971f429c81c66b4eba4f1b407cdd9f0addce4d",
   "mock_chooser_parts": "152d7c0e2406bdad0ec975b50079c6e970a9903dc4ff3ee9202625cee738a54b",
-  "mock_chooser_pick_free": "d5564e96700113903fbc3082ce390e744b5280ecd43e4f550c9f55b2ccca2a8f",
-  "mock_chooser_picked": "1808dadff2561c7f3f3ca86c37a973b4657ff799b0d38580b78fd3caee12bcbc",
-  "mock_chooser_placement_detail": "d659cf88c31b85ab5cf8056eb262e91efef2c97b3bdcfb332e02706a39edf848",
-  "mock_chooser_placement_long": "5f9a35ec9af44ffc7a0ee74937e3a08aa40819ee1030d8b03374293f44bcf381",
-  "mock_chooser_placement_medium": "0a9feb6f738ee9751b058d69487e8d7d7419d631a6778028b85d4077c503fedb",
-  "mock_chooser_placement_note": "b58f0fc27178e75805f403d61208a16e2a81cd2c88865ff0d5ba6a0bac0dd1a7",
-  "mock_chooser_placement_plus": "4b784e6961b54c4f20a93bdbdede658fb72c06f590210635f33b47ba89e0a762",
-  "mock_chooser_placement_short": "d89de2f19fa9da4545c4e1c7b094c3d24a5a8a9988a798978afc0bf05ef7d487",
-  "mock_chooser_placement_size": "7f1fa97d6e8994ecff027a222998d0e8b4b8f8898f28bedb47361f893f255438",
+  "mock_chooser_pick_free": "b6f996387f1b8d4f729dc09a0665566502677190f75f755f4e961145964d5de4",
+  "mock_chooser_picked": "550e7a85d31bd2479d18fe0acd4d00c9d2c45e1c8caf0454c36cfa100cab7654",
+  "mock_chooser_placement_detail": "2971f00fdc419e234b79b128473bb702e70578328c969f25c5a6d7683164f476",
+  "mock_chooser_placement_long": "3b7a24cf4d207c4fdac6726ae0900c924ec925adfecb73a87b836e840391cf67",
+  "mock_chooser_placement_medium": "2629d9c6d4436bf4438e752f56a80b7ce3d90c6ec2104ac54a8fbc1c66d81c02",
+  "mock_chooser_placement_note": "3bb30ae475fe9b1acf3546ce2ff41ab185088b9a6bc84c828d33f08aa63c1164",
+  "mock_chooser_placement_plus": "cc55729acb708a7c3022be043c7a15c2844a758c46add2c2221460a20118747e",
+  "mock_chooser_placement_short": "ea24dedf91f6935a90c627dc34d322b8d38913f200b3b5bd2c431118472dc463",
+  "mock_chooser_placement_size": "ea7be1b9fb22e5da53590761a1e0cb0b5146d2d179cbedf8a2acb0a4d1c5ba99",
   "mock_chooser_placement_size_spoken": "97e8b37c124281d43e95fe0e54d1681c0e541397bfe8f0ed8bb4450625a6cd6e",
   "mock_chooser_placement_start": "fda8d908361708ac029c71cac6f2c3405c85e6f696401399e0072f7e7f98dbcf",
-  "mock_chooser_placement_title": "be7f1c3e645f18e72111c1bf408707124b730c19f40222a854c485734b1f764b",
-  "mock_chooser_placement_top_subject": "6a02b29284464cce5c13ba168f96af7dfc152247a0ead430573effa84e12478e",
-  "mock_chooser_placement_top_subjects": "40afe46ab53b59b091b4455bd62c51cab09a0caad4813a6262292766e3d3bbd7",
-  "mock_chooser_plus": "7e7fdff68e33ceb9916c942ae960c10e6254b9980f7425b1b9c6bfca532fde14",
+  "mock_chooser_placement_title": "af4021604d67f6b6794a7e6c11da969b8e680f70cc2928bfcfda912abc642742",
+  "mock_chooser_placement_top_subject": "ed98df6d977a0f921d7746641657a8ed6b4d533e4774e70c8af8d16bd444baab",
+  "mock_chooser_placement_top_subjects": "75745f5f83de194f0ea7b740147b7a7638a27ad7a409a43dbfea6d3196452a5e",
+  "mock_chooser_plus": "cbcad90c06d2a4b790b1d8ef7ca0ea1835c21885210ebd456fafa94e151c6b0e",
   "mock_chooser_preparing": "5d1bb8d3f57b12679121947e6ebc864849df7e546cb7c54d5b121b75676377d2",
-  "mock_chooser_preparing_detail": "50846115ec1cc508e3061c9e4ceeab4869dee66bdffdb75ca10bd6f5ec13cca2",
+  "mock_chooser_preparing_detail": "2cb577d6bbebfc8e5c85edb71136fc654c9eea31a474fa7ff5e257f31717fe60",
   "mock_chooser_questions": "bf852472dd68e5942093e6599899824fb3426bf4d1b40cfad6d807e6b322a47c",
   "mock_chooser_rule": "943996c8c3b994d568c775347c60ad7bc5dd8fcef32ea9684ba7e2fe9920d7a6",
   "mock_chooser_see_plus": "d006d83678e9b4215ae8fca20c65a3ef2f0cea1c0f328f3c82fe1d7a6b1b4620",
-  "mock_chooser_short": "d2a96ff9be3417cbb1b2aa5ac2f73004e0e709b68f143ca6bf10aef127549aa7",
-  "mock_chooser_short_day": "ed33ee0af22429bc5231cc1653e1914b297b494ee4324a95b7d93b38b74feee0",
-  "mock_chooser_short_month": "1942df2d45fccc89ae74f077f32471dff4a848cd82f146c90fa73c1bace60b69",
-  "mock_chooser_short_none": "3a6df0d0daec3907853c62658e5b0cdb392e2f8c2d40df85f2cf1005be114176",
-  "mock_chooser_size_guide_formats": "0433bfaa21cf84acd36c8fcfe7897d444c26d9e16746fe3fbcbd8cde3f3f1269",
-  "mock_chooser_size_guide_past_edition": "9140ede88dd5e687cdc5408d166a0093e0e3012dd5101b08a882af515742aecf",
-  "mock_chooser_size_guide_questions": "8e868db59bd7dc32e90356a670edaabafc1797bca1b53193896f17626edb6b72",
-  "mock_chooser_size_guide_subjects": "097bda5eb25cc2edd0f887a215dcb5c301a693a0794d0a85b1142ef0b60547de",
-  "mock_chooser_size_guide_time": "88991358a0b69226307fc6bd87a6fbf00bd6fa1b4064df33cc6cd105920beb09",
+  "mock_chooser_short": "e2324a6bd800a626b827d90024a878cad849e1e5712564621fe388f8615861ff",
+  "mock_chooser_short_day": "3da60ff44c0b28ebc0688c231c9ed3d17f194de9a986a10ba4bf293a392d96db",
+  "mock_chooser_short_month": "c392308ac046d7a97f254d579540e40dcc80748470ee5069991ca076035ce53a",
+  "mock_chooser_short_none": "c07ca055020445f9c07a30df0222784aa1dbbad6fce9f42b457c1b7fbf0087c0",
+  "mock_chooser_size_guide_formats": "11b6fb2a619014da433a0b1eaf5e1536b00fdd4c668b3a6bb5dff4bef1f12122",
+  "mock_chooser_size_guide_past_edition": "6697fb56f9025139feec2db01473f028b07be77602bb95a6919137f1241e85a5",
+  "mock_chooser_size_guide_questions": "d4819e9c00af37830c1d870f8b28fde6b9e12b152f7150bbffb9d96418a1a1b5",
+  "mock_chooser_size_guide_subjects": "6cc838adde25e7a04610a8989ffe4e4bf9ff49822d26fe1b925011fef4543f84",
+  "mock_chooser_size_guide_time": "3e31131c3e1457829240a0f9288d2bcd85969fa96a286402f20e4b2b4703c12b",
   "mock_chooser_size_latest_exam": "6ea8d941b3f274d7a73084f46e3de7241d480c56e1509d23cb2863b69a5ca114",
-  "mock_chooser_size_material_formats": "8edd80fb70916c79b96b744e67bda06272e0c1f9d738f6b0efcdabdd279cd305",
-  "mock_chooser_size_material_length": "3ae2cb11e9deb74df9d0e3c532ee211bc805aa79749fd11762de1e5c8edcfafa",
-  "mock_chooser_size_notice_formats": "eba7fb6c3b05d2f25dd22b2337af9714b0c4611d602fb5f9f31089b68b76c4fe",
-  "mock_chooser_size_notice_past_edition": "d587c10a71ca30bb1b92157506e57eb6cf5d18938f41e24191896cb6a991f366",
-  "mock_chooser_size_notice_questions": "f13c29cd58835a5f242f213768363b2ef7ee3de15e431f3b381566797b7b46be",
-  "mock_chooser_size_notice_subjects": "433f66c9ee8f5b528d502982b30d05330131563b99ead6201f88ba4f8a94379e",
-  "mock_chooser_size_notice_time": "5f9b9eb0753eba5c648f092eab4f2eabaf69fccb923c0668885514e843021bda",
-  "mock_chooser_size_past_edition": "3e053e1d16a1bdfb9bf6116fe4f244d3adbfaff09af58c37078b69c3700d2377",
+  "mock_chooser_size_material_formats": "2c7ee3b926c86be2bb905ec267f0ad708a019b20852d68ed91f2dceafc052da4",
+  "mock_chooser_size_material_length": "170f4952c8d0061425cebc3780da4c38328e760ea01c0f39e0fb2598bc553956",
+  "mock_chooser_size_notice_formats": "ac03264520d6f8f8b9dd5fc93ac75c0d5c219ee5f5c10d5db74b9466cf700d9c",
+  "mock_chooser_size_notice_past_edition": "ac9536dc5f836cd447a88b6c57c4a0c49aa0c27d634a7f8f97364191d9e68b9c",
+  "mock_chooser_size_notice_questions": "914873a747ef478b43ee3644f062a230368db722e7557444e076744a6dd5fe24",
+  "mock_chooser_size_notice_subjects": "e72211d4dacad462e9077574b482b9a604c1920e2dca4582165580de0219e1b9",
+  "mock_chooser_size_notice_time": "790dee8b45a6a90ac57f5e1ef2903ebef1d1607d396a83ef5396d331974b27c2",
+  "mock_chooser_size_past_edition": "7d25e6e0667ba198427340aebef4d8865a6f516f1b9bce256745492df3144e66",
   "mock_chooser_start": "80a37114fade7fff5078ca7bb3916a332d94d0f2ab5b2b1604b36101f8f51273",
   "mock_chooser_start_with": "ed8117e6d6a35968fbc011610271679a0f041c50f7ef653e2bc985cf96f3702b",
   "mock_chooser_subjects": "62b615e0d155ee9740bb40f4e1ca7da6aee177be3c73dd82e0bb4f7c70a0b0e8",
@@ -65,8 +65,8 @@
   "mock_chooser_title": "f15e80cbd0b099315380d2d9dae80afd2dfdf34d5ea8476de78ddaf777450c8f",
   "mock_chooser_usually_takes": "b586b6302d6c4310292f8b64f92c243bf674cff4919072cced61ba81f482b89d",
   "mock_chooser_writing": "f6b59625b0aecf630963782e594a9acfe879a1431085452aaecb7585e77b1564",
-  "mock_chooser_writing_questions": "95ef997632c8f425d04da58356e3057a6110f40e4f8b495d3b0a4113eaf20375",
-  "mock_chooser_writing_questions_line": "dc00b9db6714a8d5e1a8b9f8bac96d0fe1e08a423bc4eb590e9e70e9eee4698a",
+  "mock_chooser_writing_questions": "5d6066ea3560d261d4ce02401be965282033f552f03cca6434ed90b02aeb62ff",
+  "mock_chooser_writing_questions_line": "0a5bb3fb387fdb45bbe495991fc0792cef194ee5af4d74bb5e3c6bab1b149470",
   "mock_chooser_written": "d3af24f472df0189081faec60b34d992638defc09096dd031bc747c6e7a47f85",
   "mock_chooser_written_part": "c08a1268c4f6d12e755b8d357c5baa78a6ffbc972177be0913f6f57031d71f8b"
 }
@@ -74,7 +74,7 @@
 <resources>
     <string name="mock_chooser_title">Probeprüfung machen</string>
     <string name="mock_chooser_rule">Dein Ergebnis siehst du erst am Ende, wie am Prüfungstag.</string>
-    <string name="mock_chooser_pick_free">Wähle, wie viel von der Prüfung du jetzt machen möchtest.</string>
+    <string name="mock_chooser_pick_free">Wähle, wie viel der Prüfung du jetzt machen möchtest.</string>
     <string name="mock_chooser_start">Starten</string>
     <string name="mock_chooser_getting_ready">Wir bereiten alles vor…</string>
     <plurals name="mock_chooser_start_with">
@@ -82,42 +82,42 @@
         <item quantity="other">Mit %d Fragen starten</item>
     </plurals>
     <string name="mock_chooser_see_plus">Plus ansehen</string>
-    <string name="mock_chooser_plus">Probeprüfungen gibt’s mit Plus: wann immer du möchtest und jede Woche in deinem Plan.</string>
+    <string name="mock_chooser_plus">Mit Plus kannst du jederzeit Probeprüfungen machen und jede Woche eine in deinem Plan.</string>
     <string name="mock_chooser_one_subject">Ein Fach</string>
     <!-- After a mock's parts or subjects, when it leaves the exam day's written part out. -->
     <string name="mock_chooser_objective_only">nur der objektive Teil</string>
     <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
     <string name="mock_chooser_written">+ %1$s</string>
     <!-- A mock's size in a row: %1$d questions ("q" is short for questions) and about %2$s, a duration such as "5 hr". -->
-    <string name="mock_chooser_option_size">%1$d Fr. · ~%2$s</string>
+    <string name="mock_chooser_option_size">%1$d Fragen · ca. %2$s</string>
     <!-- What screen readers say for a mock's size: %2$s is a duration such as "5 hr". -->
     <plurals name="mock_chooser_option_size_spoken">
         <item quantity="one">%1$d Frage, etwa %2$s</item>
         <item quantity="other">%1$d Fragen, etwa %2$s</item>
     </plurals>
     <!-- A placement mock's questions in a row; "q" is short for questions. -->
-    <string name="mock_chooser_placement_size">%1$d Fr.</string>
+    <string name="mock_chooser_placement_size">%1$d Fragen</string>
     <plurals name="mock_chooser_placement_size_spoken">
         <item quantity="one">%d Frage</item>
         <item quantity="other">%d Fragen</item>
     </plurals>
     <!-- How many of the picked mock's questions the bank has now (%1$d) of the real exam's (%2$s), and about how long it takes (%3$s, a duration). -->
     <plurals name="mock_chooser_short">
-        <item quantity="one">%1$d von %2$s Fragen ist jetzt bereit. Diese Probeprüfung dauert etwa %3$s.</item>
-        <item quantity="other">%1$d von %2$s Fragen sind jetzt bereit. Diese Probeprüfung dauert etwa %3$s.</item>
+        <item quantity="one">%1$d der %2$s Fragen ist jetzt bereit, daher dauert diese Probeprüfung etwa %3$s.</item>
+        <item quantity="other">%1$d der %2$s Fragen sind jetzt bereit, daher dauert diese Probeprüfung etwa %3$s.</item>
     </plurals>
-    <string name="mock_chooser_short_day">Morgen können weitere Fragen für deine Probeprüfungen erstellt werden.</string>
-    <string name="mock_chooser_short_month">Nächsten Monat können weitere Fragen für deine Probeprüfungen erstellt werden.</string>
-    <string name="mock_chooser_short_none">Die Fragenbank hat noch keine weiteren neuen Fragen dafür.</string>
-    <string name="mock_chooser_not_enough">Für diese Probeprüfung gibt es noch nicht genug Fragen. Versuch es mit der ganzen Prüfung oder einem anderen Fach.</string>
+    <string name="mock_chooser_short_day">Morgen können wir weitere Fragen für deine Probeprüfungen erstellen.</string>
+    <string name="mock_chooser_short_month">Nächsten Monat können wir weitere Fragen für deine Probeprüfungen erstellen.</string>
+    <string name="mock_chooser_short_none">Im Fragenpool gibt es dafür noch keine weiteren neuen Fragen.</string>
+    <string name="mock_chooser_not_enough">Für diese Probeprüfung gibt es noch nicht genug Fragen. Versuche es mit der ganzen Prüfung oder einem anderen Fach.</string>
     <string name="mock_chooser_failed">Wir konnten die Probeprüfung nicht starten. Versuch es noch einmal.</string>
     <string name="mock_chooser_preparing">Wir bereiten deine Probeprüfung vor</string>
-    <string name="mock_chooser_preparing_detail">Wir erstellen Fragen im Stil der Prüfung für dich. Sobald sie fertig sind, geht es hier los.</string>
+    <string name="mock_chooser_preparing_detail">Wir erstellen für dich Fragen wie in der Prüfung. Sobald sie bereit sind, beginnt deine Probeprüfung hier.</string>
     <string name="mock_chooser_writing">Wir erstellen deine Probeprüfung</string>
-    <string name="mock_chooser_writing_questions">Wir erstellen Fragen im Stil der Prüfung</string>
-    <string name="mock_chooser_writing_questions_line">Wir wählen aus, was in den einzelnen Fächern gefragt wird…</string>
+    <string name="mock_chooser_writing_questions">Wir erstellen Fragen wie in der Prüfung</string>
+    <string name="mock_chooser_writing_questions_line">Wir wählen Fragen für jedes Fach aus…</string>
     <!-- The panel beside the options, about the one picked. -->
-    <string name="mock_chooser_picked">Die ausgewählte Probeprüfung</string>
+    <string name="mock_chooser_picked">Die gewählte Probeprüfung</string>
     <string name="mock_chooser_questions">Fragen</string>
     <string name="mock_chooser_time_limit">Zeitlimit</string>
     <string name="mock_chooser_usually_takes">Dauert normalerweise</string>
@@ -131,63 +131,63 @@
     <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
     <string name="mock_chooser_written_part">Schriftlicher Teil</string>
     <string name="mock_chooser_last_mock">Deine letzte Probeprüfung</string>
-    <string name="mock_chooser_placement_title">Eine Probeprüfung, um dein Level zu finden</string>
-    <string name="mock_chooser_placement_detail">Im Prüfungsformat. Dein Plan richtet sich nach deinen Antworten.</string>
+    <string name="mock_chooser_placement_title">Eine Probeprüfung, um dein Level zu bestimmen</string>
+    <string name="mock_chooser_placement_detail">Im Format der Prüfung. Dein Plan baut auf deinen Antworten auf.</string>
     <string name="mock_chooser_placement_start">Probeprüfung starten</string>
-    <string name="mock_chooser_placement_note">Hör auf, wann immer du möchtest: Dein Plan berücksichtigt die Fragen, die du beantwortet hast. Dein Ergebnis siehst du am Ende.</string>
-    <string name="mock_chooser_placement_plus">Probeprüfungen gibt’s mit Plus. Ohne Plus finden die kurzen Fragen deinen Startpunkt.</string>
-    <string name="mock_chooser_placement_top_subject">Das Fach mit der höchsten Gewichtung. In den ersten Tagen geht es um die übrigen Fächer.</string>
+    <string name="mock_chooser_placement_note">Du kannst jederzeit aufhören: Dein Plan berücksichtigt die Fragen, die du beantwortet hast. Dein Ergebnis siehst du am Ende.</string>
+    <string name="mock_chooser_placement_plus">Probeprüfungen sind in Plus enthalten. Ohne Plus bestimmen die kurzen Fragen deinen Ausgangspunkt.</string>
+    <string name="mock_chooser_placement_top_subject">Das Fach, das am stärksten gewichtet wird. In den ersten Tagen folgen Fragen zu den übrigen Fächern.</string>
     <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
     <plurals name="mock_chooser_placement_top_subjects">
-        <item quantity="one">Das wichtigste Fach: %d. In den ersten Tagen geht es um die anderen.</item>
-        <item quantity="other">Die %d wichtigsten Fächer. In den ersten Tagen geht es um die übrigen.</item>
+        <item quantity="one">Das %d Fach, das am stärksten gewichtet wird. In den ersten Tagen folgen Fragen zu den übrigen Fächern.</item>
+        <item quantity="other">Die %d Fächer, die am stärksten gewichtet werden. In den ersten Tagen folgen Fragen zu den übrigen Fächern.</item>
     </plurals>
-    <string name="mock_chooser_placement_short">Ein kurzer Check. In den ersten Tagen wird dein Plan verfeinert.</string>
-    <string name="mock_chooser_placement_medium">Alle Fächer. Ein guter Startpunkt.</string>
-    <string name="mock_chooser_placement_long">Der genaueste Startpunkt.</string>
+    <string name="mock_chooser_placement_short">Eine kurze Prüfung. In den ersten Tagen wird dein Ausgangspunkt genauer bestimmt.</string>
+    <string name="mock_chooser_placement_medium">Alle Fächer. Ein guter Ausgangspunkt.</string>
+    <string name="mock_chooser_placement_long">Der genaueste Ausgangspunkt.</string>
     <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
-    <string name="mock_chooser_size_past_edition">Fragen pro Fach in der Ausgabe %1$s, gezählt von %2$s.</string>
+    <string name="mock_chooser_size_past_edition">Fragen pro Fach in %1$s, gezählt von %2$s.</string>
     <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
     <string name="mock_chooser_size_latest_exam">Fragen pro Fach in der letzten Prüfung, gezählt von %1$s.</string>
     <!-- %2$s is a duration, such as "1 hr 20 min". -->
     <plurals name="mock_chooser_size_material_length">
-        <item quantity="one">In deinen Unterlagen steht nicht, wie lange der Test dauert. Diese Probeprüfung enthält %1$d Frage und dauert %2$s.</item>
-        <item quantity="other">In deinen Unterlagen steht nicht, wie lange der Test dauert. Diese Probeprüfung enthält %1$d Fragen und dauert %2$s.</item>
+        <item quantity="one">Dein Material gibt nicht an, wie lange die Prüfung dauert. Diese Probeprüfung enthält %1$d Frage für %2$s</item>
+        <item quantity="other">Dein Material gibt nicht an, wie lange die Prüfung dauert. Diese Probeprüfung enthält %1$d Fragen für %2$s</item>
     </plurals>
-    <string name="mock_chooser_size_material_formats">In deinen Unterlagen steht nicht, wie viele Fragen es pro Format gibt. Deshalb sind sie gleichmäßig aufgeteilt.</string>
+    <string name="mock_chooser_size_material_formats">Dein Material gibt nicht an, wie viele Fragen es pro Format gibt. Deshalb werden sie gleichmäßig verteilt.</string>
     <plurals name="mock_chooser_size_notice_questions">
-        <item quantity="one">In der Mitteilung steht nicht, wie viele Fragen die Prüfung hat. Diese Probeprüfung enthält %d Frage.</item>
-        <item quantity="other">In der Mitteilung steht nicht, wie viele Fragen die Prüfung hat. Diese Probeprüfung enthält %d Fragen.</item>
+        <item quantity="one">Die Ausschreibung gibt nicht an, wie viele Fragen die Prüfung enthält. Diese Probeprüfung enthält %d Frage.</item>
+        <item quantity="other">Die Ausschreibung gibt nicht an, wie viele Fragen die Prüfung enthält. Diese Probeprüfung enthält %d Fragen.</item>
     </plurals>
     <plurals name="mock_chooser_size_guide_questions">
-        <item quantity="one">Im offiziellen Leitfaden steht nicht, wie viele Fragen die Prüfung hat. Diese Probeprüfung enthält %d Frage.</item>
-        <item quantity="other">Im offiziellen Leitfaden steht nicht, wie viele Fragen die Prüfung hat. Diese Probeprüfung enthält %d Fragen.</item>
+        <item quantity="one">Der offizielle Leitfaden gibt nicht an, wie viele Fragen die Prüfung enthält. Diese Probeprüfung enthält %d Frage.</item>
+        <item quantity="other">Der offizielle Leitfaden gibt nicht an, wie viele Fragen die Prüfung enthält. Diese Probeprüfung enthält %d Fragen.</item>
     </plurals>
     <plurals name="mock_chooser_size_notice_past_edition">
-        <item quantity="one">In der Bekanntmachung steht nicht, wie viele Fragen die Prüfung hat. Diese Probeprüfung enthält %d Frage, wie eine frühere Ausgabe.</item>
-        <item quantity="other">In der Bekanntmachung steht nicht, wie viele Fragen die Prüfung hat. Diese Probeprüfung enthält %d Fragen, wie eine frühere Ausgabe.</item>
+        <item quantity="one">Die Ausschreibung gibt nicht an, wie viele Fragen die Prüfung enthält. Diese Probeprüfung enthält %d Frage, wie eine frühere Ausgabe der Prüfung.</item>
+        <item quantity="other">Die Ausschreibung gibt nicht an, wie viele Fragen die Prüfung enthält. Diese Probeprüfung enthält %d Fragen, wie eine frühere Ausgabe der Prüfung.</item>
     </plurals>
     <plurals name="mock_chooser_size_guide_past_edition">
-        <item quantity="one">Im offiziellen Leitfaden steht nicht, wie viele Fragen die Prüfung hat. Diese Probeprüfung enthält %d Frage, wie eine frühere Ausgabe.</item>
-        <item quantity="other">Im offiziellen Leitfaden steht nicht, wie viele Fragen die Prüfung hat. Diese Probeprüfung enthält %d Fragen, wie eine frühere Ausgabe.</item>
+        <item quantity="one">Der offizielle Leitfaden gibt nicht an, wie viele Fragen die Prüfung enthält. Diese Probeprüfung enthält %d Frage, wie eine frühere Ausgabe der Prüfung.</item>
+        <item quantity="other">Der offizielle Leitfaden gibt nicht an, wie viele Fragen die Prüfung enthält. Diese Probeprüfung enthält %d Fragen, wie eine frühere Ausgabe der Prüfung.</item>
     </plurals>
-    <string name="mock_chooser_size_notice_subjects">In der Bekanntmachung steht nicht, wie viele Fragen es je Fach gibt. Deshalb werden sie gleichmäßig aufgeteilt.</string>
-    <string name="mock_chooser_size_guide_subjects">Im offiziellen Leitfaden steht nicht, wie viele Fragen es je Prüfungsteil gibt. Deshalb werden sie gleichmäßig aufgeteilt.</string>
-    <string name="mock_chooser_size_notice_formats">In der Bekanntmachung steht nicht, wie viele Fragen es je Format gibt. Deshalb werden sie gleichmäßig aufgeteilt.</string>
-    <string name="mock_chooser_size_guide_formats">Im offiziellen Leitfaden steht nicht, wie viele Fragen es je Format gibt. Deshalb werden sie gleichmäßig aufgeteilt.</string>
+    <string name="mock_chooser_size_notice_subjects">Die Ausschreibung gibt nicht an, wie viele Fragen es pro Fach gibt. Deshalb werden sie gleichmäßig verteilt.</string>
+    <string name="mock_chooser_size_guide_subjects">Der offizielle Leitfaden gibt nicht an, wie viele Fragen es pro Teil gibt. Deshalb werden sie gleichmäßig verteilt.</string>
+    <string name="mock_chooser_size_notice_formats">Die Ausschreibung gibt nicht an, wie viele Fragen es pro Format gibt. Deshalb werden sie gleichmäßig verteilt.</string>
+    <string name="mock_chooser_size_guide_formats">Der offizielle Leitfaden gibt nicht an, wie viele Fragen es pro Format gibt. Deshalb werden sie gleichmäßig verteilt.</string>
     <!-- %1$s is a duration, such as "4 hr". -->
-    <string name="mock_chooser_size_notice_time">In der Bekanntmachung steht keine Prüfungsdauer. Diese Probeprüfung dauert %1$s.</string>
+    <string name="mock_chooser_size_notice_time">Die Ausschreibung gibt keine Prüfungsdauer an. Für diese Probeprüfung hast du %1$s</string>
     <!-- %1$s is a duration, such as "4 hr". -->
-    <string name="mock_chooser_size_guide_time">Im offiziellen Leitfaden steht keine Prüfungsdauer. Diese Probeprüfung dauert %1$s.</string>
+    <string name="mock_chooser_size_guide_time">Der offizielle Leitfaden gibt keine Prüfungsdauer an. Für diese Probeprüfung hast du %1$s</string>
     <!-- %1$s is the exam's name for a section, such as "Listening". -->
-    <string name="mock_chooser_left_out_named">%1$s ist noch nicht in den Probeprüfungen enthalten.</string>
-    <string name="mock_chooser_left_out_listening">Hören ist noch nicht in den Probeprüfungen enthalten.</string>
-    <string name="mock_chooser_left_out_speaking">Der Prüfungsteil Sprechen ist noch nicht in den Probeprüfungen enthalten.</string>
+    <string name="mock_chooser_left_out_named">%1$s ist in Probeprüfungen noch nicht enthalten.</string>
+    <string name="mock_chooser_left_out_listening">Hören ist in Probeprüfungen noch nicht enthalten.</string>
+    <string name="mock_chooser_left_out_speaking">Der Teil Sprechen ist in Probeprüfungen noch nicht enthalten.</string>
     <!-- %1$s is the exam's name for a practical test, such as "Driving test". -->
-    <string name="mock_chooser_left_out_practical_named">%1$s kann nicht Teil einer Probeprüfung sein, weil es eine praktische Prüfung ist.</string>
-    <string name="mock_chooser_left_out_practical">Die praktische Prüfung kann nicht Teil einer Probeprüfung sein.</string>
+    <string name="mock_chooser_left_out_practical_named">%1$s kann nicht Teil einer Probeprüfung sein: Es ist eine praktische Prüfung.</string>
+    <string name="mock_chooser_left_out_practical">Der praktische Teil der Prüfung kann nicht Teil einer Probeprüfung sein.</string>
     <string name="mock_chooser_left_out_numeric">Fragen, die mit einer Zahl beantwortet werden, werden als Multiple-Choice-Fragen gestellt.</string>
-    <string name="mock_chooser_left_out_short_answer">Fragen, die mit wenigen Wörtern beantwortet werden, werden als Multiple-Choice-Fragen gestellt.</string>
+    <string name="mock_chooser_left_out_short_answer">Fragen, die mit wenigen Worten beantwortet werden, werden als Multiple-Choice-Fragen gestellt.</string>
     <!-- %1$s is the exam's name for a written part, such as "Essay". -->
-    <string name="mock_chooser_left_out_written">Für %1$s gibt es noch keinen Aufsatz. Du übst das in deinen Aufsatz-Lerneinheiten.</string>
+    <string name="mock_chooser_left_out_written">Für %1$s gibt es noch keinen Aufsatz. Du übst ihn daher in deinen Aufsatz-Lerneinheiten.</string>
 </resources>

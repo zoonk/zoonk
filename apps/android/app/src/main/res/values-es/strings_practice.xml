@@ -5,69 +5,69 @@
   "practice_check": "bd74e58aad8c08e30e719fb88373f1232ca8c0b6025926940944fa28ec7e49b4",
   "practice_close": "d8e2753b564e2dc2f8e38f3f6127224fda63b711535ac985dd05858fce7fbb4e",
   "practice_continue": "5f6522086a795954cbbb061549cf6cbe67861565cea30820e49c149fece50cfc",
-  "practice_done_review": "8abaa935838aaceec2fbc41b5b6b0bde648ba35d39ee7797361ecf1cfde14907",
+  "practice_done_review": "55fc48964238487a4c181033119ab8b7233ad44495159eb21383fd53cb947a3d",
   "practice_done_title": "32497b7285e00d6f811fefeda86433f50d38ed9116f286e14576f647f8edbe00",
-  "practice_finish": "e136bd24d89170575e19cb02b1fdc0812728b8bc1a50b313a3fba998274b2b8e",
-  "practice_finish_ready_detail": "c38ffb8226f35c62e81f1977d5fdf9a100502b5d48ed99eb67c3b6a6bf956892",
-  "practice_finish_ready_title": "9f53d0b1515dcf6526d4082f6643842eb72710c74b09e4f4ead949da9ad57fe6",
+  "practice_finish": "0358c780ea26852a101b0253773b60c0bb16436743295c40672d28a50ae524c3",
+  "practice_finish_ready_detail": "1bb753151a53d13e9bd2a0e76f4e4d1beb8cd161d16da36250965f0ff6d45dc9",
+  "practice_finish_ready_title": "03063aa2170481973a2e4b84e393ec57e8032b013910b30bec1378669f8b3079",
   "practice_net": "3a87d7e35a6f1aaa7edbd53292191c9f101e3af51d68cc3f9835d0b3a7be1b1c",
-  "practice_net_hint": "f248b434e3f9a9514b62f24514793f682408a25cb6374f668f38181144906554",
-  "practice_net_right": "f67fdacf30c02264842fc11f455f3ab00f402ac55c93f7177ceeb3421c2f1cc6",
+  "practice_net_hint": "625b411bb9a2c4002d8300d466e78dce07a885f8196daf9d356fad5f367a95a1",
+  "practice_net_right": "50126986393a5f47fe691d0b6a74dbb509029b89be4d049bf905a560f18c3fa4",
   "practice_net_tally": "a2444581c7a02081998dcddbcaf34567e87564bed12b0114c5807a8e52c0b675",
-  "practice_net_wrong": "7260c0153786be72de5527664802c1f2c61bb17ff384e19cedf310635797ff0c",
-  "practice_not_found_description": "95530149a58ccde5e52aebe47b49be64c1b55317a0e9c635952a8ea988b7f051",
-  "practice_not_found_title": "c439cf97d15117b1d8901a60719ceced92257722e05983890a074c74df8f0c7f",
-  "practice_pause_failed": "1465f4f5f4e15ab1bfe34d632e184e6b5f7630752398737fdcdc64dd6a6953ab",
-  "practice_pause_stop": "3a88432a4068acc659e763a561b0fb450233d52d246e862ea51e3a2222b9b74c",
-  "practice_pause_text": "b6d694ce013b1938052f90e6947e119dda70b946f90d5831f564ac8113d74b3c",
+  "practice_net_wrong": "f601261c4ebafeec3bba57bbf8c415820ef368e5e6d7e718be49f65250123679",
+  "practice_not_found_description": "b138b405950b060f7c4408c642b0b105373423070a3e07642303b593edc61f22",
+  "practice_not_found_title": "3a9bde8374bad4a31c95d34c4204c3bd4a5267cfed301b5754ed07c89f8ef2d9",
+  "practice_pause_failed": "a50092614840c3810075493e16a07366c2b6570e4c694cb3d23439d70d89673d",
+  "practice_pause_stop": "2e3e4463175765a5dd47aedc4e39ec8239c534629efb7bfc625470dc8146b684",
+  "practice_pause_text": "af24993c3eab1bd33f9a052447a0bebd709aaf84ee05b5bed2e32e45f6ffdb4e",
   "practice_progress": "7b1cb4776c23ca1ef10357efd8cc07fac3d373274822ea50aa16fb6b9e40e1c0",
-  "practice_save_error": "42f42b0edfeded6ad674e64ad3ab69091feeb4147f7187e0e32f8fc234b3bcbe",
+  "practice_save_error": "589ecd31c85cdb9242683e070a289088d368e62138d989b2da8528c12375d7d1",
   "practice_time_machine_answered": "098c0ae49184e74aeb83a833a64b187c7e5f97970458c562e1121b3dd1ca621d",
   "practice_time_machine_right_again": "abbe4189cfbd7752e3d9a7fa2124e51f85461f4f65f4a8bcdbf21029e3cb9aa9",
-  "practice_time_machine_right_before": "35604902ac7d03f3877c82b0fd4162886f70a54e0038e7fea7b1fd0392a9f2d5",
+  "practice_time_machine_right_before": "90320b4252b4509ff3f8cae278413aebcdc51fc63fc02a20b2b75c74aa1d00fd",
   "practice_time_machine_seen": "e6c2be8d1be091c59bf56905fcdb867f0b155f4cb4fb078a6908b5e248df4264",
-  "practice_time_machine_tripped": "44e31d36960c44ce331f7257d162c1ba795ab3d49177fe0cfbd1f2847eccb9ca",
-  "practice_try_again": "7b0a7010b3f233ea291bbb06234b8f7d937acc2ac16c0d2c6cecd9367818faff"
+  "practice_time_machine_tripped": "d22f986b601d17196464d650d7d957a860ff78424c6632cfed9be81c6520d9de",
+  "practice_try_again": "0405777f92540c2cc89921b49f3985852be232fa031461c0ac18c8f829d6738e"
 }
 -->
 <resources>
     <string name="practice_progress">Pregunta %1$d de %2$d</string>
     <string name="practice_check">Comprobar</string>
     <string name="practice_continue">Continuar</string>
-    <string name="practice_finish">Terminar</string>
-    <string name="practice_try_again">Intentarlo de nuevo</string>
-    <string name="practice_finish_ready_title">No queda ninguna pregunta por responder</string>
-    <string name="practice_finish_ready_detail">Termina para ver qué tal te ha ido.</string>
+    <string name="practice_finish">Finalizar</string>
+    <string name="practice_try_again">Volver a intentarlo</string>
+    <string name="practice_finish_ready_title">No quedan preguntas por responder</string>
+    <string name="practice_finish_ready_detail">Finaliza para ver qué tal te ha ido.</string>
     <string name="practice_already_answered">Ya has respondido a esta pregunta.</string>
-    <string name="practice_save_error">No se ha podido guardar. Tus respuestas se conservan.</string>
+    <string name="practice_save_error">No se ha podido completar. Tus respuestas están guardadas.</string>
     <plurals name="practice_net_right">
-        <item quantity="one">%d correcta</item>
-        <item quantity="many">%d correctas</item>
-        <item quantity="other">%d correctas</item>
+        <item quantity="one">%d acierto</item>
+        <item quantity="many">%d aciertos</item>
+        <item quantity="other">%d aciertos</item>
     </plurals>
     <plurals name="practice_net_wrong">
-        <item quantity="one">%d incorrecta</item>
-        <item quantity="many">%d incorrectas</item>
-        <item quantity="other">%d incorrectas</item>
+        <item quantity="one">%d error</item>
+        <item quantity="many">%d errores</item>
+        <item quantity="other">%d errores</item>
     </plurals>
     <!-- Right answers minus wrong ones, which can be negative. -->
     <string name="practice_net">neto %1$d</string>
     <!-- The block's score so far: right (%1$s), wrong (%2$s) and net (%3$s). -->
     <string name="practice_net_tally">%1$s · %2$s · %3$s</string>
-    <string name="practice_net_hint">Cada respuesta incorrecta anula una correcta. ¿No lo tienes claro? Déjala en blanco.</string>
+    <string name="practice_net_hint">Una respuesta incorrecta anula una correcta. ¿No estás seguro? Déjala en blanco.</string>
     <!-- %1$s is a day and month, like October 8. -->
     <string name="practice_time_machine_seen">Viste esto el %1$s.</string>
     <string name="practice_time_machine_right_again">Has vuelto a acertar, como el %1$s.</string>
-    <string name="practice_time_machine_right_before">Acertaste el %1$s. Repasarlo ahora te ayudará a recordarlo.</string>
+    <string name="practice_time_machine_right_before">Acertaste el %1$s. Repasarlo ahora te ayuda a recordarlo.</string>
     <!-- %1$s is a day and month; %2$s is the answer the learner gave then. -->
     <string name="practice_time_machine_answered">El %1$s respondiste «%2$s».</string>
-    <string name="practice_time_machine_tripped">El %1$s esta pregunta te despistó.</string>
-    <string name="practice_pause_text">Has fallado varias seguidas. Un descanso corto suele ayudar, y todo lo que has hecho hoy cuenta.</string>
-    <string name="practice_pause_stop">Parar por hoy</string>
-    <string name="practice_pause_failed">No se ha podido detener la sesión. Inténtalo de nuevo.</string>
+    <string name="practice_time_machine_tripped">Esta pregunta se te resistió el %1$s.</string>
+    <string name="practice_pause_text">Has fallado varias seguidas. Una pausa breve suele ayudar, y todo lo que has hecho hoy cuenta.</string>
+    <string name="practice_pause_stop">Dejarlo por hoy</string>
+    <string name="practice_pause_failed">No hemos podido detener la sesión. Inténtalo de nuevo.</string>
     <string name="practice_done_title">Práctica completada</string>
-    <string name="practice_done_review">Revisión completada</string>
-    <string name="practice_not_found_title">Estas preguntas ya no están disponibles</string>
-    <string name="practice_not_found_description">Puede que hayan terminado o cambiado de sitio. En Hoy tienes lo siguiente.</string>
+    <string name="practice_done_review">Repaso completado</string>
+    <string name="practice_not_found_title">Estas preguntas ya no están aquí</string>
+    <string name="practice_not_found_description">Puede que hayan terminado o se hayan movido. En Hoy encontrarás lo siguiente.</string>
     <string name="practice_close">Cerrar</string>
 </resources>

@@ -2,42 +2,42 @@
 <!-- eloqnt-fingerprints-v1
 {
   "audio_check_failed": "9e15bb9306e2b45ffad52a69f99cf0112c1620ef52cb7be619952d5b716c7ebe",
-  "audio_checking": "f973dcece57152e0e3ed67db672a28a488c64d3ccbfe3937492fee18aea021fb",
-  "audio_checking_slow": "7e4afe367d3ec75843a7c74fd2d919429e515212d7350a2b57ef741d46c28e5f",
-  "audio_did_not_play": "6e7b542b31ba8e00760e85e0e05315d4a31386040e1b94d104cf8b0f9f96950d",
+  "audio_checking": "2d43131c7945316e0cd82bc58ab90ca5fd79e32c9269b2128e508d9c024e2b88",
+  "audio_checking_slow": "d07baec7cb762751a82729173213978940a864d78b6586aefcf8c634b6a9752a",
+  "audio_did_not_play": "294995803f58317eed55f285c57d49ba9e0248de1e47dcdee1c83ad25dd77358",
   "audio_getting_ready": "d596797d368b08d32f814b97170ed894e46ccd16ed3a572bbf95c0524b88fc60",
   "audio_here_is_what_it_says": "ff34f0e71bad7db406e8ca4cf59f37860f97033562780917b07d482bd255b167",
-  "audio_listening": "cf91e6665d45891d4e13f45527a78cf064d34524851ec653ab84bf3f2c43ff59",
-  "audio_microphone_off_answer": "a989a1f2d61708d89e1be1dfa9167c14da4b581a0c96b0fdbfae34044ee04bd9",
-  "audio_microphone_off_title": "684188beb34b702b19e8bb14a7733a0a42d422fbe0bfee71a5c47896aa0eca00",
+  "audio_listening": "5e9cc21d824e786167521c6fe99e8dbbce3b8e1b85effca73e34a52aa7071d98",
+  "audio_microphone_off_answer": "65c9e2d3df9d350b1debe020f170ccfa00bf0f35b27d34f9148370f693b725ee",
+  "audio_microphone_off_title": "1c2d83b96bd413081e3ace44f3249b4bb75b01e8a7691c0d3e14dee60f6c5953",
   "audio_no_speech": "f80a543348f9749c667047c72ed05ae1c1298f8d1952d8de44d11e9df887a887",
-  "audio_open_settings": "739927c5adbfd54cb16ffae96a1bf6f072ec4bfd014fc90f10e719ab148d411f",
+  "audio_open_settings": "faa9ebb2a645f11f29ebbbeb0157e1a089f28264e5b1fd8124ae24aa788e9761",
   "audio_record": "693b387c4398cce4334373939e42ca9fbac2522d6bc88237da4c5f5ab04568d4",
   "audio_record_stop": "41d858f4fb46369b514886843f1ed6d01ea678cf59c01a8801ff677e1f4c08a0",
   "audio_say_it": "132331ba05ab4804a916caabb0fe8ee6090150e3f2fb704c8c04d31def482175",
   "audio_stop": "3154d3d82c1f2d2cda28468ff17b700e528ebf00d80111cada3d089aacf91d63",
   "audio_try_again": "9bbd06183246ed1b589a5cf33708391401616f279fd4f157b1f273e030ceea1d",
-  "audio_try_again_label": "a8ef3eda45d7636edaa6ec6e07f432ca4c23b9dc84136eec5a8b986452aac4e8"
+  "audio_try_again_label": "7f57095bf65ca085095074c4ede013d95164b65ea583037d9bebec53f9cbcf68"
 }
 -->
 <resources>
     <string name="audio_getting_ready">Préparation de l’audio…</string>
     <string name="audio_stop">Arrêter l’audio</string>
-    <string name="audio_try_again_label">Réécouter l’audio</string>
-    <string name="audio_did_not_play">L’audio n’a pas été lu.</string>
+    <string name="audio_try_again_label">Réessayer l’audio</string>
+    <string name="audio_did_not_play">L’audio ne s’est pas lancé.</string>
     <!-- %1$s is why the audio didn't play; the text it says follows on its own line. -->
     <string name="audio_here_is_what_it_says">%1$s Voici ce qui est dit :</string>
     <string name="audio_try_again">Réessayer</string>
     <string name="audio_record">Enregistrer</string>
     <!-- Stops recording the learner. -->
     <string name="audio_record_stop">Arrêter</string>
-    <string name="audio_listening">Écoute… Appuie sur Arrêter pour vérifier.</string>
-    <string name="audio_checking">Vérification…</string>
-    <string name="audio_checking_slow">Vérification en cours. Ça prend plus de temps que d’habitude.</string>
+    <string name="audio_listening">Écoute en cours… Appuie sur Arrêter pour vérifier.</string>
+    <string name="audio_checking">Vérification en cours…</string>
+    <string name="audio_checking_slow">La vérification est toujours en cours. Cela prend plus de temps que d’habitude.</string>
     <string name="audio_no_speech">Nous n’avons entendu aucun mot. Réessaie.</string>
     <string name="audio_check_failed">Nous n’avons pas pu vérifier ta réponse cette fois. Réessaie.</string>
     <string name="audio_say_it">Appuie et dis-le à voix haute</string>
-    <string name="audio_microphone_off_title">Le micro est désactivé</string>
-    <string name="audio_microphone_off_answer">Active le micro pour Zoonk dans les réglages pour répondre à voix haute.</string>
-    <string name="audio_open_settings">Ouvrir les réglages</string>
+    <string name="audio_microphone_off_title">Le microphone est désactivé</string>
+    <string name="audio_microphone_off_answer">Active le microphone pour Zoonk dans les paramètres pour répondre à voix haute.</string>
+    <string name="audio_open_settings">Ouvrir les paramètres</string>
 </resources>

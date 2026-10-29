@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "mistakes_not_found_description": "387b1cc66e5433619eedd1d8ae81de976daa0c4cfa609c277c9a6ad400746710",
-  "mistakes_nothing_description": "d028f3e140f4a267da40a948ff4bdc51b5152e93f48228f633b49b1c2806e2ca",
+  "mistakes_not_found_description": "7979e3624aff3ad7d9d3b5f763a65293274423332915aaf4498c1cce84e3bb8f",
+  "mistakes_nothing_description": "85cfd59ed67bd03f07f54056e49dd128d21c38c7d512b556e279bc95b3e99366",
   "mistakes_nothing_title": "ef7dccdbfc65183c0306c8de80d565f0d682174423430a123072828359827b8f",
-  "mistakes_practice_comes_back": "faa93416c8974efe5049f1d790d40e03f73c96d5458f686749f06ea713d6b58d",
-  "mistakes_practice_end": "1a5a0a04dfd70e22c87c2d40a5c109c6a128bea1cb38b9084300d18cc5b48de6",
+  "mistakes_practice_comes_back": "2f8aa50fd8a9ac2bdaec7a08e78abcfa87394deb4053c860a2367ede13527b28",
+  "mistakes_practice_end": "794a05f59a7bd24e1d7713b16bbf1a4a093bbaecad9dcfd881390a90f9ee8a6e",
   "mistakes_practice_fixed": "359d4c4bfa5dff995bf2474902ee064caec8307572f048ce1f49b05cc10820d8",
   "mistakes_practice_title": "e3820f9cc6c6850516df19a3c19e4fa2f0550169d5a10dedf0c3782684a668f9"
 }
@@ -13,14 +13,14 @@
 <resources>
     <string name="mistakes_practice_title">Practicar errores</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
-    <string name="mistakes_practice_end">Termina la práctica. Tus respuestas cuentan.</string>
-    <string name="mistakes_practice_comes_back">El resto volverá otro día, cuando se te quede mejor.</string>
+    <string name="mistakes_practice_end">Terminar la práctica. Tus respuestas cuentan.</string>
+    <string name="mistakes_practice_comes_back">El resto volverá otro día, cuando puedas recordarlo mejor.</string>
     <plurals name="mistakes_practice_fixed">
         <item quantity="one">%d error corregido</item>
         <item quantity="many">%d errores corregidos</item>
         <item quantity="other">%d errores corregidos</item>
     </plurals>
-    <string name="mistakes_not_found_description">Puede que ya se hayan corregido o eliminado.</string>
+    <string name="mistakes_not_found_description">Puede que se hayan corregido o eliminado.</string>
     <string name="mistakes_nothing_title">Aún no hay nada que practicar</string>
-    <string name="mistakes_nothing_description">Los errores vuelven para practicar a partir del día siguiente a cuando los cometes.</string>
+    <string name="mistakes_nothing_description">Los errores vuelven para practicarlos a partir del día siguiente.</string>
 </resources>

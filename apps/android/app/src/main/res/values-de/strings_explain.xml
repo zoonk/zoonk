@@ -2,16 +2,16 @@
 <!-- eloqnt-fingerprints-v1
 {
   "explain_coming": "021ce1aefe00cd722ced97367cc9ab66613f1f0feb37bd86bc36aac49ff43913",
-  "explain_deeper": "7ff22b8581eeab4dc6ad7416ea3b9f60f8482a255cca65b6f35191ffc9b29c98",
+  "explain_deeper": "404b3ceb3815ff8b7bca676d1ee33cf57df72d3b4e93f04a372f41a36f2f633f",
   "explain_deeper_course": "3376b3c3763e3070b2c522f4dadf708ca5b3123997ba0ffcc65f9f4cf64bc21a",
-  "explain_deeper_goal": "11d5c8fe07cf275c80cea61530ab88def7020fa9cc1399e10a6e71f307b469bc",
+  "explain_deeper_goal": "8e87dd2288984047859d034afe65827fefa3d6775779a154503d1fd361a60325",
   "explain_deeper_subject": "a6d2ed2cee3ecfa9b5b30d2d7090727a4216403a8b01c37935cf4b1158e82d61",
-  "explain_go_further": "bfd4b12b7a2d8be48a7dec89b87f9b85f1b632e8d2f70245c40e51301403b8a9",
+  "explain_go_further": "cb417030bda9986ab746c24499f7f8db21c893ae4f61003b1a599f9c788c3e8f",
   "explain_load_failed": "f5bd24ac913c6dde691317d75ca4044d09691fec674f7d50175ef6beacd10bbb",
-  "explain_no_plan": "c54efcddc2b0def8ec9a7ac9134f5eb3677b216b6afd1d9a57eb14f862e918fc",
+  "explain_no_plan": "8ecf5dd34903f518d2048732765d6cabdd34005092a212ae1d0cd40f0c4d2986",
   "explain_now_you_know": "9e1d69dfd3b340d4ed1d43eced728c026cbe1e614c9aec67fac0f51c0e88e447",
-  "explain_one_question": "bdf96fe55e3dfc4ffb4d82a7643ccb1346e34a05fa0e15b5de5b75c1c0caf590",
-  "explain_phase_find": "6074eb02127a8e095326ada863f8d137ad1bf682975f5831f928a033c56c8742",
+  "explain_one_question": "251ab624e5ce0837ff86169dddeea7cb9788d917ffe52102b57adf21e0115f80",
+  "explain_phase_find": "4fa5c3aa6725b8ffcadca0baa9c715130be0b0d31244f96455dda0dd66fdfc24",
   "explain_phase_find_line": "41409d47772c90546e48e4775ae3339bc0430d70c366626bd53690ddab2f0b4e",
   "explain_phase_read": "9fd4b509e1481ef8e4dc7cf6bd8ed91b5c9e47195dae5cfddbbcefdd4b9c376c",
   "explain_phase_read_line": "ae8a55843bde04c02deb4b05a18f4394015131214fb29c763dc04be664cf2549",
@@ -21,9 +21,9 @@
   "explain_quick": "4e73cf99a02eef5066706cde02836850f4069758738737a5e5852ca5dd35a6cb",
   "explain_recap": "b750361ed8a2fb7721803dc992119444c36e3ffec6076e3bf32400aee83793c0",
   "explain_see": "bfda2943f52a9b2f1d07a7e910e85522484560a1b743369df995421cfa529728",
-  "explain_slow": "5ce1dd28b36f1183faa0a7a9f4b8b3dbec3551d16059e7d5ec377e7df4e92705",
-  "explain_still_writing": "e44ca03ecce7fa13cd084c3f3be65e2e15b31e1974411b2523b54b7468b7807b",
-  "explain_try_again": "c3581b1b8c413dfca88e590e519b7da427519568a69f3fcd27d02ca888a5b742",
+  "explain_slow": "3fa44892e7f31044fb2651057152d590d2fa4512a60026212e54267361084de6",
+  "explain_still_writing": "c706c4fca0549a526675359dd1022d28e22d124e915b34d4d0a19bb2bb655cd1",
+  "explain_try_again": "f10a261a3e032746f448ae0b7190c12bde9fe89f090a58b0128d00b189f05d51",
   "explain_writing": "177b4fc070e63e47b63aa83e4586c6dfaca7347a5218cf95488232beb32baf27"
 }
 -->
@@ -31,25 +31,25 @@
     <string name="explain_writing">Wir erstellen deine Erklärung</string>
     <string name="explain_phase_read">Wir lesen deine Frage</string>
     <string name="explain_phase_read_line">Wir lesen deine Frage…</string>
-    <string name="explain_phase_find">Wir prüfen, ob jemand das schon einmal gefragt hat</string>
+    <string name="explain_phase_find">Wir prüfen, ob jemand diese Frage schon gestellt hat</string>
     <string name="explain_phase_find_line">Wir suchen nach einer passenden Erklärung…</string>
     <string name="explain_phase_write">Wir erstellen etwa 5 kurze Seiten</string>
     <string name="explain_phase_write_line">Wir erstellen Seite %1$d…</string>
     <string name="explain_phase_write_review">Wir prüfen die Fakten…</string>
     <!-- Eyebrow over a quick explanation's title: %1$s is how long it takes, such as "5 min". -->
     <string name="explain_quick">Kurze Erklärung · %1$s</string>
-    <string name="explain_no_plan">Kein Plan einzurichten.</string>
+    <string name="explain_no_plan">Du musst keinen Plan erstellen.</string>
     <string name="explain_coming">Das erwartet dich</string>
-    <string name="explain_one_question">1 kurze Frage zum Schluss</string>
-    <string name="explain_deeper">Ich möchte das gründlich lernen</string>
+    <string name="explain_one_question">1 kurze Frage am Ende</string>
+    <string name="explain_deeper">Ich möchte das genauer lernen</string>
     <!-- %1$s is a course's title. -->
     <string name="explain_deeper_course">Einen Plan für %1$s erstellen</string>
     <string name="explain_deeper_subject">Einen Plan für das ganze Fach erstellen</string>
     <!-- A goal typed for the learner from the explanation's topic, which %1$s is, mid-sentence. -->
-    <string name="explain_deeper_goal">Ich möchte %1$s gründlich verstehen</string>
-    <string name="explain_slow">Das dauert länger als sonst.</string>
-    <string name="explain_still_writing">Wir erstellen deine Erklärung noch. Sie wird hier angezeigt, sobald sie fertig ist.</string>
-    <string name="explain_try_again">Noch einmal versuchen</string>
+    <string name="explain_deeper_goal">Ich möchte %1$s genauer verstehen</string>
+    <string name="explain_slow">Das dauert länger als gewöhnlich.</string>
+    <string name="explain_still_writing">Wir erstellen deine Erklärung noch. Sie erscheint hier, sobald sie fertig ist.</string>
+    <string name="explain_try_again">Erneut versuchen</string>
     <string name="explain_see">Erklärung ansehen</string>
     <string name="explain_load_failed">Wir konnten diese Erklärung nicht laden</string>
     <string name="explain_now_you_know">Jetzt weißt du Bescheid</string>
@@ -57,5 +57,5 @@
         <item quantity="one">In %1$s Satz</item>
         <item quantity="other">In %1$s Sätzen</item>
     </plurals>
-    <string name="explain_go_further">Möchtest du noch tiefer einsteigen?</string>
+    <string name="explain_go_further">Möchtest du mehr erfahren?</string>
 </resources>

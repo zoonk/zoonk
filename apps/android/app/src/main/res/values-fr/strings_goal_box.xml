@@ -2,10 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "goal_box_example_exam": "63e3dbe8bdd101accf666e91065a56e87a0786abed1ade549603f72b9b38d575",
-  "goal_box_example_explanation": "0d848aa055b19ec5f14e534bb5d4593d2e69ad2cd992dfbbb30ed1e9faf37fc2",
+  "goal_box_example_explanation": "ca88d5276b938859d57c44d889f7036c4d1b57d42b873feb22774641cc4c031d",
   "goal_box_example_language": "04cca04e9712a689a2ae8b1140da266c43de168addaadec22175cb1dd8d96005",
   "goal_box_example_music": "792dbcdd6852cdb4a15631b25cc5b9ed2ca9c58b231aa7dd6c6ffc14d7f8e90e",
-  "goal_box_example_pick": "ec438263859bc6fe635448ab19ea8d6b075821b2a5fd4204bacbbf04b8db6045",
+  "goal_box_example_pick": "81eb31653c36cd9193161b58fa7833e46c4fef0265f8ed367e32e0ac2567e3c4",
   "goal_box_example_topic": "31476036117cfa704e3d7326abe08e7edb1fa9ace94d828b36dabfd1e3860023",
   "goal_box_examples": "3e7d03ff2ddcbb589ce02550e555dac808783de5a7eb84168a148436ba2011b4",
   "goal_box_kind_exam": "4d131a762d394aa5b4302f853eeda1aa8bd0ee5f9d3fe23ce7be86b3ebafcc74",
@@ -15,26 +15,26 @@
   "goal_box_kind_topic": "648060e816cc443d2bfd473b630c062a8c94c1b13938c0aeef4c1b7dbdc322b6",
   "goal_box_label": "dbaec0f372f90ad4f52d3c288ba23f5d89e152ab54cec28f3aea0a087f47737c",
   "goal_box_placeholder": "b9cebca52c41105a2f5640c2dd1a2d9adb0c0fca413f57f14b2440209f9f3e2a",
-  "goal_box_submit": "7bd3a986f5651f000ce3d7b0bb0ef70b2b1e622c13238819d488be6e07216e0f",
-  "goal_box_write_first": "78e2bbaa5a75a0e396a34ee736cc7a33a79f31c92926977fd3302500a19c670c"
+  "goal_box_submit": "d5815ba2324ca90de748871a9e68eef23e20728873057fd0b4e671efd5b084ac",
+  "goal_box_write_first": "0ceeac1c4eaed9e96e92658e1594ca9da6f84d1c258aa11ec7c8c8c4827be95f"
 }
 -->
 <resources>
     <string name="goal_box_label">Je veux</string>
     <!-- Example in the empty goal box. Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the PAU in Spanish, the bac in French, the Abitur in German. %1$s is a language name. -->
     <string name="goal_box_placeholder">réussir le bac, parler %1$s…</string>
-    <string name="goal_box_submit">Créer mon plan</string>
-    <string name="goal_box_write_first">Écris d’abord ton objectif dans le champ, avec tes propres mots.</string>
+    <string name="goal_box_submit">Préparer mon plan</string>
+    <string name="goal_box_write_first">Écris d’abord ton objectif dans la zone de texte, avec tes propres mots.</string>
     <string name="goal_box_examples">Exemples</string>
     <!-- What TalkBack says a tap on an example does: it sends that example as the learner's goal. -->
-    <string name="goal_box_example_pick">démarrer cet objectif</string>
+    <string name="goal_box_example_pick">commencer cet objectif</string>
     <!-- Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the PAU in Spanish, the bac in French, the Abitur in German. -->
     <string name="goal_box_example_exam">Réussir le bac</string>
     <!-- %1$s is a language name. -->
     <string name="goal_box_example_language">Parler %1$s pour un entretien d’embauche</string>
     <string name="goal_box_example_topic">Comprendre la physique quantique</string>
     <string name="goal_box_example_music">Apprendre la musique en partant de zéro</string>
-    <string name="goal_box_example_explanation">Comment fonctionne l’inflation ?</string>
+    <string name="goal_box_example_explanation">Comment fonctionne l’inflation ?</string>
     <string name="goal_box_kind_exam">Examen</string>
     <string name="goal_box_kind_language">Langue</string>
     <string name="goal_box_kind_topic">Apprendre un sujet</string>

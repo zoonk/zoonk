@@ -2,10 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "mistakes_not_found_description": "a02788ba07c12db971098911dfc64355675146b4bbfd782f34416f1362b7f5a2",
-  "mistakes_nothing_description": "d5f6a5668b326ac48e4e372bc25c3d3ec3aeea829db1e24a8b30a34c04d03cc7",
+  "mistakes_nothing_description": "412e03da0ceaff6022004247a230acf671325c541fd8bb219dd63e23fff2071a",
   "mistakes_nothing_title": "eb4d195aa22831c48a571ffea0b6dcf393bc1dc7988ffd937a118c69ae255d64",
-  "mistakes_practice_comes_back": "315aa988f072086756632df0db825ab01750c70c0bceda86c8d69cf9b3b7ab42",
-  "mistakes_practice_end": "1a40ce9c84f931dc2491d8f739425be8a44b6c1379078e4a6337cb0c1637f5b5",
+  "mistakes_practice_comes_back": "9fb6f42cd89f59db1820aadf1fa60f41e6b56889fce94ff73c2a889068725f9c",
+  "mistakes_practice_end": "836c28c5c7fb233510968462c98f92575ea9b7d31317b7d02747175a3d19192f",
   "mistakes_practice_fixed": "bf05209e7b8fd3c4f4cce6e5669cd386225dea8f3a459115e1b6e1f10cff025f",
   "mistakes_practice_title": "5d929cbdcc899aff49ee0fd727d49cdf76b16ab4516b58815b662071ce5879de"
 }
@@ -13,13 +13,13 @@
 <resources>
     <string name="mistakes_practice_title">Fehler üben</string>
     <!-- The close button's spoken label once a question is answered: closing ends the practice. -->
-    <string name="mistakes_practice_end">Übung beenden. Deine Antworten zählen.</string>
-    <string name="mistakes_practice_comes_back">Die übrigen kommen an einem anderen Tag wieder, wenn sie besser sitzen.</string>
+    <string name="mistakes_practice_end">Übung beenden. Deine bisherigen Antworten zählen.</string>
+    <string name="mistakes_practice_comes_back">Der Rest kommt an einem anderen Tag wieder, wenn er besser hängen bleibt.</string>
     <plurals name="mistakes_practice_fixed">
         <item quantity="one">%d Fehler korrigiert</item>
         <item quantity="other">%d Fehler korrigiert</item>
     </plurals>
     <string name="mistakes_not_found_description">Sie wurden möglicherweise korrigiert oder entfernt.</string>
     <string name="mistakes_nothing_title">Noch nichts zum Üben</string>
-    <string name="mistakes_nothing_description">Fehler kommen ab dem Tag nach ihrem Auftreten zum Üben zurück.</string>
+    <string name="mistakes_nothing_description">Fehler kannst du ab dem nächsten Tag üben.</string>
 </resources>

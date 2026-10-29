@@ -4,8 +4,8 @@
   "buddy_picker_label": "c8f2121d1863421cd8e6cdfe25a67f639694a0ad7d825f7fbe23429e7c920175",
   "buddy_picker_name": "ecb380844c080b982413c05c5494864a79f92c99759a3a7177fd4b8f538a4ec5",
   "buddy_tagline_beep": "496944e9b02aeae6c9affd3129ddf2e084676f3938e98eb8907ade518f400afc",
-  "buddy_tagline_noodle": "849c2a94ff17afb57f1fb82bf330853afee7bb902f9b2a5893f0a528f308f6e7",
-  "buddy_tagline_otto": "ded16ff0e1346ed158b7e006a19eae6394143839b04d6f6801f96bc68d2c0271",
+  "buddy_tagline_noodle": "e95d8ea82d38b46452c952274dd22d5e67c9b6f6e882e8641d2f269ba23f3da0",
+  "buddy_tagline_otto": "f0793123004861304cdafecbc9d0faa9fd92b283135517b8bd8a2b96bca5bd38",
   "buddy_tagline_zu": "1c1ecc782c6df6fbd7cda4f562f5617cb3e7a2eae18d3dbb701df2239de93d5e"
 }
 -->
@@ -17,9 +17,9 @@
     <!-- Under the buddy Zu, an alien, in the buddy picker. -->
     <string name="buddy_tagline_zu">Neugieriger Außerirdischer</string>
     <!-- Under the buddy Noodle, a brain, in the buddy picker. -->
-    <string name="buddy_tagline_noodle">Gehirn auf Beinen</string>
+    <string name="buddy_tagline_noodle">Gehirn mit Beinen</string>
     <!-- Under the buddy Beep, a robot, in the buddy picker. -->
     <string name="buddy_tagline_beep">Ordentlicher Roboter</string>
     <!-- Under the buddy Otto, an octopus, in the buddy picker. -->
-    <string name="buddy_tagline_otto">Besserwisser-Oktopus</string>
+    <string name="buddy_tagline_otto">Besserwisserischer Oktopus</string>
 </resources>

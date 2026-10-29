@@ -4,26 +4,26 @@
   "settings_account": "478da329f89b9d94cf200774b32abffd83a43fe299079f620f006dd001a6775a",
   "settings_account_deleted": "5a4c26a7aa736ec24587d1013d769471d5d86addd9fe565c2535a39faa7f4e47",
   "settings_account_deleted_title": "b94b9ee7abcb1f8e792c1f101c504bf31c0d8d41058b2b71ee2b38c5059e2043",
-  "settings_apple_not_revoked": "5aabed0ded2516af26077de84dc02fb65abe6d8ef8f8d32fe65a657031d2a664",
+  "settings_apple_not_revoked": "8d7c771cd4f41adfcbc78239d689ffdeff1d553df002c73cfe4acad994156d18",
   "settings_cancel": "3e74c1bebf2410579b702e6923602c3de0c99b0e094b61d4ae3b5e3cc449ff44",
   "settings_delete_account": "4dae1103810d1431c932025ecda549571db813e7600061b232149098e1ead898",
-  "settings_delete_account_description": "3a5ae89caf98088a92063aa53305d0dfb69ad6bffd5e2aace129f50068467b9b",
+  "settings_delete_account_description": "6d7781d1cbbcfa675cbdb9ae25cfc49f3d08e419af590586c7838b17ab1bbe93",
   "settings_delete_code_description": "b719b25ad23b9f311703cbdec02fcd6d7d5e2900780a8f54b5c6fa85a97b27c6",
   "settings_delete_code_title": "c19459d668a5da55082341f9b6be6e2837553320b733a1bb89b2956654f3c406",
-  "settings_delete_confirm_description": "af1d2058942b77ab01e58a018b9c9c7eb96173451aaa46bce1241a364f54b782",
+  "settings_delete_confirm_description": "2ffce7f3768626779477ee17e62bbfce5be95ca1e722c54ed8010382684251b5",
   "settings_delete_confirm_title": "9c88ebaafb73f470625147866ebaf0586a637fa75a725119597ae3ec4a2f746e",
   "settings_delete_ellipsis": "72b13a62eb947838c7a6ebf9209883fa9361131070f839d478220b76f17f8c74",
-  "settings_delete_failed": "7aa1d9d6a86e1c28eaff9fab3dea0be3710414dc95eb7f4bfab47b2ebe5b1b1e",
+  "settings_delete_failed": "13bfd51c3b8d3e1ede2249af3d2939860a5898ba7b5b252dd1a5687738ea2f6b",
   "settings_delete_my_account": "080f16d30b024b5a91a5164c2e0be78e83fd1f42fb1484e939071f775585edfa",
-  "settings_delete_verify": "13ae907ecc580e918624337ce474eeb9ebee2abbb157339d24b8d2aa24133255",
-  "settings_done": "5fb6b766e5393440cd092ab9fc1e53e9476abf7160c2ae6ae6748d8abc29d28a",
+  "settings_delete_verify": "09b220e33cb55103148dbbdf9cb40679ef05e1b61bf2c576aca48ec54603a7eb",
+  "settings_done": "fc75c098c387266e4d508061b388ceb90c67ace132c2970b19d0e57875cdf97e",
   "settings_download": "cb81e59ace03621a9cc2a68e43d84b385d3d0061a17a077a672b01f467b48e85",
   "settings_download_data": "c56d7663ed6636f59ea9799c324fc70a94b21da8a53a9a9570cba4a966641cf9",
-  "settings_download_data_description": "cfe13cf955ac7035444315b4b166f11e0bc402f1b9a2e26064620b12ea80efbc",
-  "settings_download_failed": "e8e9d6afb109b3806a46b5071c15ecaee5bd97dac2a439e9acc1cf1460073a71",
+  "settings_download_data_description": "6e172bc021f693733163db5764b685aadd0a3e302f8410bd2778e1f903b36da5",
+  "settings_download_failed": "5d47c4f4e1e73fe81cd2ccbc8aa77e120d1891026c282a7eadb2e4389d598145",
   "settings_download_preparing": "132c57777691b79592648329414ea98c3f53cd43f7dba02f043c57ee9cc415a6",
   "settings_licenses": "3f23ae170af001ac0ebc41a308407a3ea3dd762aad0d113c6869d383ca309771",
-  "settings_licenses_read": "57881e86ea041eda04fe686c68eda2aae85e5ae987ed5b5068f3da77c49e5b25",
+  "settings_licenses_read": "84f5cfd8cb25b136324ec19523b6bed8462da62dacc1acdff0f839753f20a63c",
   "settings_licenses_website": "86223ccf13dd4be2fc4c5c8f85321def04de2937de128691ee69deb29e4ffc43",
   "settings_manage_apple": "54ea7b0a585c3b1c84d09f43f879651eb21c9b4a4893a904d30d745a5db2f0c7",
   "settings_memory": "b26ad80748ef1f65f98051eea9262ac7289642114abdd171ef67439d0fc02b87",
@@ -33,9 +33,9 @@
   "settings_preferences_buddy_line": "0c5edbef9e293064b55bd4c25d6173802380a749b982a5f4b18bb6eddee43bd0",
   "settings_preferences_change": "ff44a8afc5b03cff9f8fdcb7f11a6683eabff82d8ddb1a5705308593750d4d49",
   "settings_preferences_choose_buddy": "85b5c3f0e8461c8a85b841fd3c0718c2e2392984d6c1051e21acebb0cc530bd8",
-  "settings_preferences_daily_limit": "e7a00298fe9ab0a006c607b246a1de79b73351177e966988d3172f3fc1b9bd73",
-  "settings_preferences_daily_limit_description": "867cf030cc45d74ee3f987ef8d372507abad304840f0a61244bfa553f25cf247",
-  "settings_preferences_description": "e7a9787be147c9f335c20d8755ab450e536acc1bcba3d783e2ea88f23c93aaa4",
+  "settings_preferences_daily_limit": "97113d61b7edf7e76aabb55b4e6e1c8077cb40ee4b6dbf74c7eabd6578633aeb",
+  "settings_preferences_daily_limit_description": "c0d78c20e126313f71003a7dca9c548148701832d24eadb90bb098d511822e4a",
+  "settings_preferences_description": "6daf06a680b3201f80a21ad099a1ba038fe7f40ac2b9527942980bf48674f1e8",
   "settings_preferences_language": "ef65eea774db75c7ad1b7369ba62ac86758c601390235dbb61478869ae44d42f",
   "settings_preferences_lessons": "3acaf6bef42cdc6071b9fb136c2d86e3e91a9f170dc0847b35be56ec7fa1a17f",
   "settings_preferences_limit_a_day": "c7be6e5f90a3dc93fbac0bca5b30ac455cda4b7d2fac376f1ca76fb9db6eafc6",
@@ -47,7 +47,7 @@
   "settings_preferences_summary": "67ea5c77fa256efe55df86bcf61b27701932f352f14e4c87aa3ddd27a949e1b8",
   "settings_profile": "3ac0f382033488d93e1ce7e9e71d31356bd4514738c43c85899083f40cc2367f",
   "settings_profile_description": "c4635244a91a525562067b051d4425ae5d34561821378cca4fe2e8d9706ca766",
-  "settings_profile_needs_account": "00b60a13340aa0e1441b4129ce638feb4fdee67f0196d64fd4eeb0e2a8f114bc",
+  "settings_profile_needs_account": "00f2510996286dc900eaed37934b9ec8b812cd3e947db27b0619011043eac1ea",
   "settings_save": "1f754d4239310a6ab2245a737c2c4075009f9db1e10d5367a68b755ef9cef402",
   "settings_saved": "ae7022e51ed168e0b235bf55d148b2c4c5d7bba71ba20013bcf938bc801f8ca4",
   "settings_your_data": "bca91e0a14e024f5b4636048504fc05555de5f75ece2a9c6ccb52bc6ff7b9cb1"
@@ -59,33 +59,33 @@
     <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
     <string name="settings_preferences_summary">%1$s · %2$s</string>
     <string name="settings_profile">Perfil</string>
-    <string name="settings_profile_needs_account">Crie uma conta para ter um perfil. Seu plano e seu progresso acompanham você.</string>
+    <string name="settings_profile_needs_account">Crie uma conta para ter um perfil. Seu plano e seu progresso vão com você.</string>
     <string name="settings_account">Conta</string>
     <string name="settings_save">Salvar</string>
     <string name="settings_saved">Salvo.</string>
     <string name="settings_your_data">Seus dados</string>
     <string name="settings_download_data">Baixar meus dados</string>
-    <string name="settings_download_data_description">Tudo o que o Zoonk guarda sobre você, em um único arquivo</string>
+    <string name="settings_download_data_description">Tudo que o Zoonk guarda sobre você em um arquivo</string>
     <string name="settings_download">Baixar</string>
     <string name="settings_download_preparing">Preparando…</string>
-    <string name="settings_download_failed">Não foi possível preparar o download. Tente de novo.</string>
+    <string name="settings_download_failed">Não conseguimos preparar o download. Tente novamente.</string>
     <string name="settings_delete_account">Excluir conta</string>
     <string name="settings_delete_my_account">Excluir minha conta</string>
-    <string name="settings_delete_account_description">Sua conta e tudo que há nela serão excluídos permanentemente. O Plus comprado no site será cancelado. Compras feitas no Google Play ou na App Store são gerenciadas na loja onde você comprou.</string>
+    <string name="settings_delete_account_description">Exclui sua conta e tudo que está nela de forma permanente. O Plus comprado no site é cancelado; compras no Google Play e na App Store são gerenciadas onde foram feitas.</string>
     <string name="settings_delete_ellipsis">Excluir…</string>
     <string name="settings_delete_confirm_title">Excluir sua conta?</string>
-    <string name="settings_delete_confirm_description">Suas metas, seus planos, seu progresso, sua memória, seus comentários e seus arquivos enviados serão excluídos permanentemente. Não dá para desfazer.</string>
+    <string name="settings_delete_confirm_description">Suas metas, planos, progresso, memória, feedback e arquivos enviados serão excluídos permanentemente. Não é possível desfazer essa ação.</string>
     <string name="settings_cancel">Cancelar</string>
     <string name="settings_delete_code_title">Confirme que é você</string>
     <!-- %1$s is the account's email address. -->
     <string name="settings_delete_code_description">Para sua segurança, digite o código que enviamos para %1$s.</string>
-    <string name="settings_delete_verify">Conferir e excluir</string>
-    <string name="settings_delete_failed">Não foi possível excluir sua conta. Tente de novo ou envie um e-mail para contato@zoonk.com.</string>
+    <string name="settings_delete_verify">Verificar e excluir</string>
+    <string name="settings_delete_failed">Não conseguimos excluir sua conta. Tente novamente ou envie um e-mail para contato@zoonk.com.</string>
     <string name="settings_account_deleted">Sua conta foi excluída.</string>
     <string name="settings_account_deleted_title">Conta excluída</string>
-    <string name="settings_apple_not_revoked">Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar que o Zoonk foi removido do seu ID Apple. Remova o Zoonk do recurso Iniciar sessão com a Apple para concluir.</string>
+    <string name="settings_apple_not_revoked">Seus dados do Zoonk foram excluídos, mas a Apple não conseguiu confirmar que o Zoonk foi removido da sua Conta Apple. Para terminar, remova o Zoonk de Iniciar sessão com a Apple.</string>
     <string name="settings_manage_apple">Gerenciar Iniciar sessão com a Apple</string>
-    <string name="settings_done">Concluído</string>
+    <string name="settings_done">Concluir</string>
     <string name="settings_preferences_buddy">Seu parceiro</string>
     <string name="settings_preferences_change">Alterar</string>
     <string name="settings_preferences_choose_buddy">Escolha seu parceiro</string>
@@ -94,8 +94,8 @@
     <string name="settings_preferences_lessons">Aulas</string>
     <string name="settings_preferences_sounds">Sons</string>
     <string name="settings_preferences_sounds_description">Quando você acerta ou termina</string>
-    <string name="settings_preferences_daily_limit">Limite diário de estudo</string>
-    <string name="settings_preferences_daily_limit_description">Pare de estudar pelo resto do dia depois desse tempo.</string>
+    <string name="settings_preferences_daily_limit">Limite de tempo diário</string>
+    <string name="settings_preferences_daily_limit_description">Pare de estudar por hoje ao atingir esse tempo.</string>
     <string name="settings_preferences_no_limit">Sem limite</string>
     <!-- %1$s is a duration, like "45 min". -->
     <string name="settings_preferences_limit_a_day">%1$s por dia</string>
@@ -105,7 +105,7 @@
     <string name="settings_preferences_save_failed">Não foi possível salvar. Tente novamente.</string>
     <string name="settings_licenses">Licenças de código aberto</string>
     <string name="settings_licenses_website">Site</string>
-    <string name="settings_licenses_read">Leia a licença</string>
+    <string name="settings_licenses_read">Ler a licença</string>
     <string name="settings_profile_description">Seu nome, nome de usuário e conta.</string>
-    <string name="settings_preferences_description">Seu parceiro, suas aulas e seu idioma, do seu jeito.</string>
+    <string name="settings_preferences_description">Seu Parceiro, suas aulas e seu idioma, do seu jeito.</string>
 </resources>

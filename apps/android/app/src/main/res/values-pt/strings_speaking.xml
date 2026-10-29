@@ -1,88 +1,88 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "speaking_eyebrow": "73d4a1059b53fd78f32bc154a9666ed0d5176fc55e1846baa5d0478089af4a16",
+  "speaking_eyebrow": "432272c43ffa9ddf449f9c71f82ec0a9efc541476135acb03259ba4a93553bd4",
   "speaking_facts": "aa4b6fd97af220f60f5aeab8e1574d756e08beddab1ea7ee7b0c28e0edfaad36",
-  "speaking_footer": "bfb1441eae58b8684c3cc4031efe91a60f7baa511fbe8b880c38b3cc0c63c218",
-  "speaking_footer_partner": "5fa3836caa3bf373238fcb28fda55db089fc8508e0b75c60e8494339e0c49ff0",
+  "speaking_footer": "f3d3b8ce896f629349c341c4ffb7714f5b21957b87f7c578ca095491e9a04703",
+  "speaking_footer_partner": "0810ed7418979cea4d36df9d14771a285d76dec74187920d24f89580c46ed924",
   "speaking_last_at": "0729ed8f3ba625b40c77a4cb3cd4409c493bae69c6b0d448190738162e1bc932",
   "speaking_last_below": "cce5e126b2497d5dd83437da7a09f6cb50d9d8a09018689398ae63aaad082ce8",
-  "speaking_last_near": "69dd045e549d7740ecc8d77d8dd0706c316b78f73ff6d044b25c072764427306",
+  "speaking_last_near": "3bc7870cd25b7099191a50341692e6f7ce7f0ec448cb65b8a8992b5799815dce",
   "speaking_last_none": "16276557bfd2eee25905c761c5c0b0eefd694f0950baf8dbdbb29edc4f141aa7",
   "speaking_last_result": "a1757e4efa6d89d6ce7b9b72e914ec75bdd97fbef631f01654b52d687bfae979",
-  "speaking_mock_failed": "8ddce2bdfd7ae1da74158b267f8ec5465fe4069bee0cd696927f99c30efb0038",
-  "speaking_mock_ielts": "e00fae2b2a268205d28e75aa1f237004ab838760a8a10cf25c3840eb6104851c",
+  "speaking_mock_failed": "52b69466ea3fdb5685e3f4fa07f2199b8ac9800ef36deba2a14a26a8bdc85776",
+  "speaking_mock_ielts": "32aee1bc156b032bbe87a0cc13c2b3a4c538608e8457722d3d233c98dcac39e1",
   "speaking_mock_opens": "133f7333f7eea73921d44fd9e890362807e55fbe971f2a602c3e1c1fe58daa77",
   "speaking_mock_start": "391c3c3319427e3be8bfa4458dba481581ab0c996e48cd06a473035633ae43af",
-  "speaking_mock_toefl": "b464bed105e88f99e5c8e80c7e1a3da19e7fd4236ddf02ef541d21e3a80318ee",
-  "speaking_no_time_day": "55dd2aabbb698803f83b5b8b4ea6f11fe3a4e4dbb92694c28e26d4630600a631",
-  "speaking_no_time_month": "3c76786aebcee19817adb2c1b791d55da3e8d1bb5b8d06fa2be70be6ae4feb8e",
-  "speaking_official": "a59a258ca16f8419ab987689b456dc5283093f72980e4428c01f67fa14f2ce06",
+  "speaking_mock_toefl": "19afebc1f763819745f47f70fc9294de70325c70393ef5a4bb6c2ff3be6e63c9",
+  "speaking_no_time_day": "f956f2be6685e74727d329315f543a59aa9fc18e33dbfd8fdce9e92bb87cf9d2",
+  "speaking_no_time_month": "f5cf855138183c2e79d03f3599d44d689b154d4c0937570aa8992539a57db63f",
+  "speaking_official": "69465b42594acd6c388fe3420e67b57bbf7372a435783806482c913afd230d55",
   "speaking_official_format": "70db97464ebc2e32071f03d8b4d2b56730b84cb3ab1812f51ef5c49f03b6d5d3",
-  "speaking_opens_when_ready": "f733d54f7795bce3e7d9736bdf2496f0c4f4e53f5971d175fa3ff32120fa2eb5",
-  "speaking_plus": "296445527a1059ea0ed7c74c87d71fa3f6568568539d4bae1688469793fa7de9",
+  "speaking_opens_when_ready": "0918e39c49b9d7ecfb9107a087800dc9d94a48cdbf0510aead698a982c71cbb1",
+  "speaking_plus": "1217e5e372b07567de6281ae8a0fa0329c19771adc0d7dbeedfae45b3a0733e5",
   "speaking_prep": "bac9cbf55aeb53107fb1e0da911a0aefc775ba9cc9b809e60b8000b93764c5d9",
   "speaking_prep_shared": "799db57107a70ab68f9b42480320fa3b2877a3eae4a3c6433d598e5f693160cb",
-  "speaking_rated_on": "0623c4e7d70408b69d4c7c9f6e25d5fd9dbc4499bc0fe971382ec4c4ecb7f51b",
+  "speaking_rated_on": "aa70774801af1e9f8364899696b56773202f6bfdac846e15511290118d2194fd",
   "speaking_row": "8aea7c7c4284e0cb5cc68dbf56c04362eacb812747382973d4196e590741da69",
   "speaking_section": "e6e382d4a2e8d81bef09fbd6539ef1a5d73b31b55ee9be5db1a011808b4ed780",
-  "speaking_start_failed": "13317804525de08a4e9528b07bf5db28835a975115c3fddacc85067188e0530f",
+  "speaking_start_failed": "b97d47e7ed8f651e66840cf7eae35a29082cf228a63ba6325b93e9174eb7ccf0",
   "speaking_start_task": "3d75e89211f91501a8da6713b6483bb721ee1b080083a0f256798c9ae0f0695d",
   "speaking_tasks": "0c6c16db6af97fddc5687d7ab90ec78662c529d31d6c80c54fc60ed5c2bd2453",
   "speaking_title": "dcd07e9a43e0bbf4b2b542e419644cae2cbfdea5c31b624982aa76bf5570f555",
   "speaking_writing_mock": "d290fa619bf6c213db9d1d5bcb59f66f83883f4686281c7d49af357c25af11c2",
   "speaking_writing_mock_line_1": "2a0651ada3295e16eb166b70b28f92bbfa04a8e72ce141a354cbcef6ed80be1a",
   "speaking_writing_mock_line_2": "22fb62b6c2ad2e14171b775d891f622341f3c37cc7bd79548353b42ec0cfe3da",
-  "speaking_writing_mock_line_3": "9cca2f50548d700019da63d57f7d6b723fd1babb9f14d797473df21cd45bf86e",
-  "speaking_writing_mock_line_4": "2d7929a1e23de6ed0eb66a11d4dfd57c2bd98a5226bf09abaae0710a98fbdc09",
+  "speaking_writing_mock_line_3": "4b1ef4c8e2360a7f4bcde56a7a82587bf97a67fbbf417016104b66d0cd2e850b",
+  "speaking_writing_mock_line_4": "6ff51229c139127a51da557d2e273f29bfd2736fdb57b77aba7d1eaa7a9fa1ca",
   "speaking_writing_mock_phase": "183bf751f7850780248d02e3161b98c14d190babdfd0ed020860c0f8e56a04e0"
 }
 -->
 <resources>
     <!-- Practicing an official language exam's speaking paper (DELE, DELF, Goethe, Cambridge) on calls with an AI in the examiner's place. -->
     <string name="speaking_title">Prática de conversação</string>
-    <string name="speaking_eyebrow">Conversação no estilo da prova</string>
+    <string name="speaking_eyebrow">Conversação no formato da prova</string>
     <!-- The paper's task count and how long its speaking part lasts in the exam, such as "4 tasks · 15 min in the exam". -->
     <plurals name="speaking_facts">
         <item quantity="one">%1$d tarefa · %2$s na prova</item>
         <item quantity="many">%1$d tarefas · %2$s na prova</item>
         <item quantity="other">%1$d tarefas · %2$s na prova</item>
     </plurals>
-    <string name="speaking_official">%1$s é uma prova oficial. Pratique as tarefas de conversação mesmo que você não pretenda fazê-la.</string>
+    <string name="speaking_official">%1$s é uma prova oficial. Pratique as tarefas de conversação mesmo que você não pretenda fazer a prova.</string>
     <string name="speaking_tasks">Tarefas</string>
     <!-- The exam page's speaking section, with the paper's title beside it. -->
     <string name="speaking_section">Conversação</string>
-    <string name="speaking_plus">A prática de conversação está incluída no Plus: todas as tarefas da prova em uma conversa, com uma estimativa baseada nos critérios oficiais após cada uma.</string>
-    <string name="speaking_opens_when_ready">Sua tarefa abre assim que o cartão fica pronto.</string>
-    <string name="speaking_no_time_month">Você não tem tempo de conversa suficiente neste mês para esta tarefa</string>
-    <string name="speaking_no_time_day">Você não tem tempo de conversa suficiente hoje para esta tarefa</string>
-    <string name="speaking_start_failed">A tarefa não começou. Tente novamente daqui a pouco.</string>
-    <string name="speaking_footer_partner">Uma IA faz o papel do examinador ou do outro candidato. Cada tentativa tem um novo cartão e, depois, você recebe uma estimativa baseada nos critérios oficiais da prova, não uma pontuação oficial.</string>
-    <string name="speaking_footer">Uma IA faz o papel do examinador. Cada tentativa tem um novo cartão e, depois, você recebe uma estimativa baseada nos critérios oficiais da prova, não uma pontuação oficial.</string>
+    <string name="speaking_plus">A prática de conversação faz parte do Plus: todas as tarefas da prova em uma conversa, com uma estimativa baseada nos critérios oficiais após cada tarefa.</string>
+    <string name="speaking_opens_when_ready">Sua tarefa abre assim que o cartão estiver pronto.</string>
+    <string name="speaking_no_time_month">Tempo de conversa insuficiente neste mês para esta tarefa</string>
+    <string name="speaking_no_time_day">Tempo de conversa insuficiente hoje para esta tarefa</string>
+    <string name="speaking_start_failed">A tarefa não começou. Tente novamente em instantes.</string>
+    <string name="speaking_footer_partner">Uma IA faz o papel do examinador ou do outro candidato. Cada tentativa tem um novo cartão e, ao final, você recebe uma estimativa baseada nos critérios oficiais da prova, não uma nota oficial.</string>
+    <string name="speaking_footer">Uma IA faz o papel do examinador. Cada tentativa tem um novo cartão e, ao final, você recebe uma estimativa baseada nos critérios oficiais da prova, não uma nota oficial.</string>
     <string name="speaking_official_format">Formato oficial</string>
     <string name="speaking_start_task">Começar esta tarefa</string>
     <string name="speaking_last_result">Ver seu último resultado</string>
     <string name="speaking_last_none">Última tentativa: sem estimativa</string>
     <!-- How many criteria were at the exam's level on the last try, such as "Last try: 3 of 4 at B2". -->
     <string name="speaking_last_at">Última tentativa: %1$s de %2$s em %3$s</string>
-    <string name="speaking_last_near">Última tentativa: %1$s de %2$s, perto de %3$s</string>
+    <string name="speaking_last_near">Última tentativa: %1$s de %2$s perto de %3$s</string>
     <string name="speaking_last_below">Última tentativa: abaixo de %1$s</string>
     <!-- Preparation time shared by several tasks, such as "20 min to prepare tasks 1 and 2". -->
     <string name="speaking_prep_shared">%1$s para preparar as tarefas %2$s</string>
     <string name="speaking_prep">%1$s para se preparar</string>
     <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
-    <string name="speaking_rated_on">Avaliado em %1$s.</string>
-    <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
+    <string name="speaking_rated_on">Avaliação baseada em %1$s.</string>
+    <!-- Today's row for the paper: the exam, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s tarefas em uma conversa</string>
-    <string name="speaking_mock_ielts">Uma prova curta de conversação com um examinador. Depois, você recebe uma pontuação estimada para cada critério.</string>
-    <string name="speaking_mock_toefl">Repita frases e depois faça uma entrevista curta com um examinador. Depois, você recebe uma pontuação estimada de 1 a 6 para cada critério.</string>
+    <string name="speaking_mock_ielts">Um teste curto de conversação com um examinador. Ao final, uma faixa estimada para cada critério.</string>
+    <string name="speaking_mock_toefl">Repita frases e faça uma entrevista curta com um examinador. Ao final, uma faixa estimada de 1 a 6 para cada critério.</string>
     <string name="speaking_mock_start">Começar o simulado</string>
     <string name="speaking_mock_opens">Seu simulado abre assim que estiver pronto.</string>
-    <string name="speaking_mock_failed">O simulado não começou. Tente de novo daqui a pouco.</string>
+    <string name="speaking_mock_failed">O simulado não começou. Tente novamente em instantes.</string>
     <string name="speaking_writing_mock">Criando seu simulado</string>
     <string name="speaking_writing_mock_phase">Criando o roteiro do examinador</string>
     <string name="speaking_writing_mock_line_1">Escolhendo seu examinador…</string>
     <string name="speaking_writing_mock_line_2">Criando as perguntas do examinador…</string>
-    <string name="speaking_writing_mock_line_3">Ajustando as partes para durar cerca de 5 minutos…</string>
-    <string name="speaking_writing_mock_line_4">Adicionando frases que podem ajudar…</string>
+    <string name="speaking_writing_mock_line_3">Ajustando as partes para caberem em cerca de cinco minutos…</string>
+    <string name="speaking_writing_mock_line_4">Adicionando frases que podem te ajudar…</string>
 </resources>

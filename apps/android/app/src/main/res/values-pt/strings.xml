@@ -18,24 +18,24 @@
   "disclosure_collapsed": "f49121409f18b6d4eb2d5c5f87fcd6e7883b31987745452e63a3550f2847fa0b",
   "disclosure_expanded": "02e11e04e3cfd7f7f8dd0b5458f7d4b0917eee97af279d7c7efb1650da415a09",
   "gate_log_in": "2b0884dd61bbc490df35f2b14bf94c213eb0b7c5dec16b99c03c1651f2d73f52",
-  "gate_session_ended_description": "a9fe09eb2b9d82f50b857e846509ab671399c3a6f44d1318e4918258eb4c862d",
+  "gate_session_ended_description": "9827a2669afccc474161e590b1fb1563f2a22ca4903e537f68a789d160e1de5d",
   "gate_session_ended_title": "6f0d4f323add0fd2b672ce977655c96e977dd6c9246769cd8015052b6e2c3182",
   "gate_sign_in_description": "e8d7e3cbc66be9eec0da72a0be13372c68a1d238a2c4f16f0e7a10129918c13a",
   "gate_sign_in_title": "ef3321dd0e7aeda405ae9d362baef1d98e23e42e37c6df0332fbe822f90aacf8",
   "gate_start_free": "ab3489d336362e2ef5bf5151b9729e55296974af5d130efe162df798614ff6dd",
   "gate_start_goal": "ebc12b7a9158adbd89c5c372eccc9effd4bda89de3658d8737582fe4876cd759",
-  "gate_start_goal_description": "1ca1cd5aa0d0000fcdca3a5b54d83bc3ef83b1a398068eb69af852a45a03d02b",
+  "gate_start_goal_description": "f980d8439336c84c90159c4cac4bc141940509f1fdbbc960d6b794b01deaa942",
   "gate_start_goal_title": "095f10629b91a7fe6db156ee88ab49402589ffc973d2e3d05ce7e3c26542b271",
   "gate_start_something_new": "256aa5116e78bb6672baf3c9fbdba93a00de239938226339af6285d4cf2bdff8",
   "lesson_summaries_title": "3b1f2450312d780f2e8a1a8e6637af6fc8e2fb05a2d0708ee267fa3292f42da9",
-  "lessons_coming_up": "b3155a0545716aeecda00d27885278725e09b41b59afb465860c1686b3e0323b",
-  "lessons_done": "35e1eab502c54ec36aadc37d1d16da8b5af422e343e58f05dc05ee97e8e4a530",
+  "lessons_coming_up": "02783708e6847c46d1421e3d18b5fd3f71a2466b0db25c86e6a2d2ddd208e1b4",
+  "lessons_done": "0a4d564cf14d669fffee439554f45e399b589d767349b72f9e9a3871b31907e6",
   "lessons_done_count": "7b48bbc0fcfb68fab483cb82a864f58a40799a3d32d3e1d8f5c0d146014d709b",
   "lessons_position": "8ae66e3e2122810855977b6415740d89f58146a21779f7c40af87a23e6ec1011",
   "lessons_title": "13c14aedb185c8588b2c2c9e6c1de142e3f92a53bfb326e90eb97157ee002c48",
-  "lessons_up_next": "ae9e45287249d71c911b85dca52d266c090dd5e31c4725437c4d89c76dc9f499",
+  "lessons_up_next": "a2e9ca05197cbbf1d8c69782893ac7427d6de10a58e05c1130da3557b57a348c",
   "list_row_states": "650143092dcd67d306bba2f1f8b6b4ef9bf5a5b9b5942eac57b5ef7579f5cbb6",
-  "load_failed_description": "93516c35a7c24e5942ac614c4ceb31c51aba595c9b79baffc527842450c055ae",
+  "load_failed_description": "37dabdb27760546ae50e7a1a1a8f65c95475dcfc201f7a6277a87004f4f4a321",
   "load_failed_title": "785e5861dd84250db47b3c38ae5393a7bb7068ddf7d5463c7355b504745117bb",
   "load_failed_try_again": "b2fb2fb6f246e570782d8e78c5d54a370ad40c10e896581b53ca646acaf96077",
   "navigation_back": "fc505d03120503d5e190f98ec4ce47fe4e3142c3f81b679073fa054882640c3d",
@@ -49,16 +49,16 @@
   "navigation_study": "c5fe961403c0e30352498926e67186e459ad45a259db67b0d434c0fa7b0633e1",
   "navigation_today": "00fc3cdb77556b66390b459bb3f7dd19b73c3fa1fd535288a540ae4dafa6b3a9",
   "navigation_user_menu": "9c89aff9ce59cdf1d035b55c0a3e8307dcb320777370b2c7a584305f7557f7f6",
-  "not_found_description": "fa906e05fe873da647adf1a90171217b4088e4c5233e3cf38a8090a65e39a905",
+  "not_found_description": "1f9f90c25b9cdd4a59d58f3d29c44e56568fd95d2d3d254a1779cd835ac342ca",
   "not_found_go_home": "17eae6ccbed3804a1cf0525babe20b1cd764510e1c14871e498ecf775fd017ad",
-  "not_found_title": "7c3755f0d0a1c553363ed2eb7432470b63938cdba2d6f6916792a4d47ab9d5b7",
-  "other_time": "2856d96f68b49ddafffcb298ca08e5b92153242985a7d5ea1d6461376b6337f1",
+  "not_found_title": "36d73057b035834eec15241d391c42523400f7217c2c558c7cbb499a07f6692b",
+  "other_time": "4e3715540a13dc1a7df4f2466eb58fdde4bc91675dd5e917191f6ace38afe6de",
   "suggestion_save_failed": "64f77e2077e7d4f067f974eabdcc53a20ac52105964c1a1d6fe1a1f03e6f09e6",
   "suggestion_view": "3d160efc2a851cc8cb8b887b76439d4c85bf15bdbeec4eb2da058732e8bcad57",
   "task_leave": "177cb39387567943127b8e077274966476e8573f7f4bec70580fe56164773c57",
   "test_out_skip_chapter": "959fcd03ac16cbd73942e953c1f1d33fa7bf225c482740ee1e450e180f4ae972",
   "test_out_skip_unit": "146dc4caf6779fdf3d7eb8e3d8fb62df68e8f7d3cb80994ff331771d4353d621",
-  "test_out_title": "1266e0002b404993e79b05236409e3e0f2da7ff818d83551dc9d8367449179ad"
+  "test_out_title": "ec2c7ef6ecff571ff05931dd8c3e275821c334ef7a4909a70210ecfe1e11f5a2"
 }
 -->
 <resources>
@@ -77,12 +77,12 @@
     <string name="gate_sign_in_title">Entre para continuar</string>
     <string name="gate_sign_in_description">Entre para continuar de onde parou ou comece grátis.</string>
     <string name="gate_session_ended_title">Sua sessão terminou</string>
-    <string name="gate_session_ended_description">Entre para retomar seu plano.</string>
+    <string name="gate_session_ended_description">Entre para continuar seu plano.</string>
     <string name="gate_log_in">Entrar</string>
     <string name="gate_start_free">Começar grátis</string>
     <string name="gate_start_something_new">Começar algo novo</string>
     <string name="gate_start_goal_title">Comece com uma meta</string>
-    <string name="gate_start_goal_description">Conte pra gente o que você quer aprender, e vamos planejar cada dia até você chegar lá.</string>
+    <string name="gate_start_goal_description">Conte o que você quer aprender e a gente planeja cada dia até você chegar lá.</string>
     <string name="gate_start_goal">Começar uma meta</string>
     <string name="belt_white">Faixa branca</string>
     <string name="belt_yellow">Faixa amarela</string>
@@ -99,12 +99,12 @@
     <string name="answer_tag_your_answer">Sua resposta</string>
     <string name="answer_tag_your_guess">Seu palpite</string>
     <string name="load_failed_title">Esta página não carregou</string>
-    <string name="load_failed_description">Pode ser sua conexão ou um problema do nosso lado. Tentar de novo costuma resolver.</string>
+    <string name="load_failed_description">Pode ser sua conexão ou um problema do nosso lado. Tentar de novo geralmente resolve.</string>
     <string name="load_failed_try_again">Tentar de novo</string>
     <string name="suggestion_view">Ver</string>
     <string name="suggestion_save_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- Under the daily time chips; opens a menu of every other daily study time. -->
-    <string name="other_time">Outro tempo…</string>
+    <string name="other_time">Outro horário…</string>
     <string name="disclosure_expanded">Expandido</string>
     <string name="disclosure_collapsed">Recolhido</string>
     <string name="lessons_title">Aulas</string>
@@ -113,16 +113,16 @@
     <!-- A lesson's number in its list: "3." -->
     <string name="lessons_position">%1$s.</string>
     <!-- TalkBack names each lesson's mark. Done: finished. Up next: the one lesson to do now. Coming up: the lessons after it, for later. The three must read as clearly different states. -->
-    <string name="lessons_done">Concluído</string>
-    <string name="lessons_up_next">Próxima</string>
-    <string name="lessons_coming_up">A seguir</string>
+    <string name="lessons_done">Concluída</string>
+    <string name="lessons_up_next">A seguir</string>
+    <string name="lessons_coming_up">Em breve</string>
     <!-- Heads the key ideas of each lesson in a chapter's or unit's summary. -->
     <string name="lesson_summaries_title">Resumos</string>
-    <string name="test_out_title">Você já sabe isso?</string>
+    <string name="test_out_title">Já sabe isso?</string>
     <string name="test_out_skip_chapter">Faça o teste e pule o capítulo</string>
     <string name="test_out_skip_unit">Faça o teste e pule a unidade</string>
-    <string name="not_found_title">Não foi possível encontrar esta página</string>
-    <string name="not_found_description">O link pode estar desatualizado ou digitado errado.</string>
+    <string name="not_found_title">Não encontramos esta página</string>
+    <string name="not_found_description">O link pode ser antigo ou ter sido digitado errado.</string>
     <string name="not_found_go_home">Ir para a página inicial</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>

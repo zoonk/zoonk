@@ -11,171 +11,167 @@
   "player_action_see_how_it_went": "eabc7b454e8678b1b97b1c286e2a1f312b6d07fe94e43d0e8f1bd3d4f4536771",
   "player_action_start": "0064b61042693f9b668b0eb07222aea4cae9a514b2572b4a7986b7bc9f0df2dd",
   "player_activity_correct_answer": "231ad25e343a6a02c897e0ac9a1c53bf016b61ffde3f9ae9751f53f8447f75ca",
-  "player_activity_example_data": "082abd90ccf6ad596080705053d086bcbd53a5acab59a662a1f70d6076d15ac3",
+  "player_activity_example_data": "726fbb53c405dd61927179fed5b1b64358730efac7c563cd6af55969232e4e88",
   "player_activity_source": "a275d08971fa4fdbcb7bde64ddf61c714c47d7bf7a54f0671647027534cb212e",
   "player_activity_your_answer": "edd5c041dbb677ffb282f70d6466dfbea3b71c2237e4ca8f5cce8c8811d83ab6",
-  "player_ai_note": "612a32b6cdc7374395090c784a795827ee2238cff4bde118e949588a8b62c26f",
-  "player_already_knew": "81977c477284b7fb67ead8168b3bfebf0a0de9b6886c23a14ce71c7b3a37086f",
+  "player_ai_note": "4b78fdeba5f176a73c2bcfa2753fbfae6f2641998bf65c5fb39b51ba9a709660",
+  "player_already_knew": "cc358ba1285aaf0a82635bf9135f21f87f80775aa87ddaf4ed9da78d95b6da88",
   "player_answer_feedback": "fb6d3e6f838e9c5ba5a534d723f63fc9e8b8225ed1356879a38e211eea6d2eab",
-  "player_answer_options": "50878486e8b5946c07a5d590ef2ccf86bc984d7653cdf2cd7e4eb591c5416836",
+  "player_answer_options": "daca0a3059c7926f1e218a0134331f0c3dbf10f80126724bcc61a59b05387bf8",
   "player_back": "0a70e5bcd7acf620cfd8dfcdde649947d1a120d37568ec0e959778a6b5aac4f2",
   "player_back_to_chapter": "b13d90c1ba4ce0653c8c110cb87b55b6cd46e2c4d9785f0bf2a38e22469da5b9",
   "player_back_to_unit": "118935561852a046c1413926a8d231b0af6aadb9698f60ddd52e5832517da8ad",
-  "player_build_my_plan": "02277a7dc28e85d5ede500f49586f1fc3a8692566c0fc641196a48cbcd6e149e",
+  "player_build_my_plan": "eef69464bd28f46e9ef407922bc253f8e41668e5aec2d13cf293f8d9756e5ea5",
   "player_can_talk_now": "bab11818c6669056c15f0d514d9d1669fff2230ebcd80f0e78950ce2dac42560",
   "player_cant_talk_now": "caba6fe3a67e472c2b0c2035d1a4e3ab44da83a2f386e1ba7c80781c236cdd38",
   "player_cant_write_now": "778dd85d71021e72ea9b99487b511f317c1f3be323c0dcc4c81b115a4091b9d1",
-  "player_challenge_bit_higher": "d3f5b8d942358ee65623fbd9e23b0fe2059abff30b169950440a7ae7bfa307e0",
-  "player_challenge_bit_lower": "8442390c3c8e6063bf61632425ecc436c32d174d0d6b8c413aa0001d5eecde68",
+  "player_challenge_bit_higher": "5c02789f44eaa39218cbca25f6df527653b487e26fb05d2017d0b0ad4197e1e7",
+  "player_challenge_bit_lower": "c5847fb87f7fcd5b9dfb45aecd87ee97cc60f2ab7e6e33cf0e9c3383e437c8cc",
   "player_challenge_case": "125129f0150b80f205193c59b006a50f94ce2715ce9a7e8f4fbbb63fe8eaed91",
   "player_challenge_complete": "3c3c8e825ca5ac00a795642c181d6054d8258c18f9203a8ce8951ccb2907a5f1",
   "player_challenge_good": "c635aa67bd5cb61ae521656f41418257ffdb699bd92799ad93ad05d13ced1e6f",
-  "player_challenge_help": "59e7d9379e8b2a3e7b91ee34509f180998965ddbd5a01cb59d113c4d900a018b",
-  "player_challenge_help_ai": "ee62576bdf913e5c25eb485e9a5742c40dc9c432cfdc0b0dae62d610f0f21837",
+  "player_challenge_help": "9b12693ff00f79b4547aaadff0e975bec72882fb7f623294713cb6636415943e",
+  "player_challenge_help_ai": "2884336eabfb5173fb0ab042d8af09791c3af90e5bd3b1490e7e67222a154b4f",
   "player_challenge_improve": "cecb87356249c61af5da7c4f0b9c4c558ea2c89a86563b868e0a97fe46663077",
-  "player_challenge_meters": "78ec52fc3482d12d61d29a1e34c1be76961184cb57bc46b214e6aa4f00761c63",
+  "player_challenge_meters": "c6cefc963917f9c1efcc33259cb02ae327f3d315adadf4d4bc42ac98ec0cd089",
   "player_challenge_mission": "2bf7769a88ac30c3284eeec05133fdcedb31baa2d5d2d2a1506a5114247745f2",
-  "player_challenge_much_higher": "e9ccd5a47969be53f24ab657dbcbc2defc5583290554d5e3f2de158f3ef65de0",
-  "player_challenge_much_lower": "c31945da843dd242e64ee73540c521af344db7fed1e5ae024c9c943a161d17a2",
+  "player_challenge_much_higher": "e13f2ce6097ca38882489c7c93ceb1c9e7e6d465581281bb7bbaeb60ad58d711",
+  "player_challenge_much_lower": "babf535da75a4a90b2edb22254a381b03340bd9996d3e3cb2f118e1246d3685b",
   "player_challenge_no_change": "a828f68efcfff311e819d3598b96b04b6a48cb5c0102339fee9910599b8e4057",
-  "player_challenge_practice": "a4575df740baa4d84b4fdf42ed2488ca12bf0059ce061124eaff70f74e8df4c9",
+  "player_challenge_practice": "366b3e847f3d9e9c69c2c3461eeb97b669eb2ed9625bc4e0bf789ee6952b6f46",
   "player_challenge_scenario_complete": "187060011c5305b75bc2cb6e3044a1f184ad372f3e9573185690524e4d9e788e",
   "player_challenge_skills": "93a9dbb5d2e92203f85a10a9ee1182057757563fab1360813c611367d3f75826",
   "player_challenge_team": "debc114cb9e26be9d9f68ed10babb78ebd240a55b78b8a77b105608dee2b88e7",
   "player_challenge_what_happened": "76be6f4e6f1d28639ba52bc090b73de6c2bd2528c9849e5072617cf755f2dfa8",
   "player_challenge_what_if": "b5d98cfa262824c2548039a6aa98eecb1a5af3888b0bcf7b2d352e9b0f52bb78",
-  "player_challenge_you": "a38350a25912acd7bce3ac78ae03a0a5907c55c9e2bf46cbe1e3a0cc0f0f4db9",
+  "player_challenge_you": "3e25244d7771edce056ff876d5e419916c664bd0af320332498f095bc4283ef1",
   "player_check_failed": "6573e46bd968f338ca965bae277ddb64dbd4918468a1b56a3b2313748e299002",
-  "player_comes_back_at_end": "3380024c6d67169ae4ebed2cc4411d3d1a4bb9453b56bd78d57b8f2ae9d00ff9",
-  "player_comes_back_date": "f36134e0657d55f7e9fbbf7c8b836db8350baefdf12f39cd1e2d50f7c2ad6bc3",
-  "player_comes_back_today": "90999ca6866b01be0a88b00367cf95272cfd5160bef2a7c9f00317d7f4ebece5",
+  "player_comes_back_at_end": "6b6c511e545385ae586117bfb14bbf3dd66fd38f5d7dfff320db145a0982fee5",
+  "player_comes_back_date": "f76d429b98d838e0ae88c37b23094961c9e88c181bbdc0e5cd74a4af591d3024",
+  "player_comes_back_today": "a02589fa1a53e904eabe764babea6d0463933e584d965dc351352d38fb7c255a",
   "player_comes_back_tomorrow": "08085f0c867d6b4e1052f722de4dd8361d4fde5cd21dce9294cb24b6b5ce7142",
   "player_comes_back_weekday": "40cd59ffa8ea347888ff578279dc12de21f3398105923c9be9010e3589422e27",
-  "player_correct_answer_label": "f27c6a1670ba4302b88f4550b99d70ee76b1a24c3416c3df433d81e1bb707c09",
-  "player_correction_right": "9a04b6df5927e83c9b9bf8e03801bddd9f849b9068544d1e852433982db0796b",
+  "player_correct_answer_label": "6c17c450b8fe6c0b5c8aac20eb58416b194c79e84f583e40fa06d856a178996e",
+  "player_correction_right": "250bc108d96d43d497c713d77ecfd257cc7d6a59cfed3670a57cee5eee9b2fbd",
   "player_correction_yours": "58ff182bffcb5653d94717f3a4c6a45f3c1b01dc1d14bc7a0fc965a62718e8ed",
   "player_course_size": "c907dfd3c48bed7c9d2e7c94fb12b003ac412ccafc41c4e3118b4ad8e6d72665",
   "player_create_account_to_save": "f69a62663112964576be9cab10262c7c1e98b5d39f37b48b5b5c3b516e2bb9a5",
   "player_create_free_account": "0059a5dfdbb5cefd3ca4ac6a8ec134f1e03b870a34a78ad77b369cfee9880ca3",
   "player_done": "a4e9646c524011e053a3f1bc023df5902c0b97981df586214b70bed93bc3eb5d",
   "player_dont_know_yet": "7e05563ef48817f0d8c348a88cd47b29e124f5148532d056bf5e3d6db66c05ca",
-  "player_drawing_picture": "416a982f9da51704271ecddd847643d4ef896a460ad247231cf04d43c74d8846",
+  "player_drawing_picture": "6a2bfe1939744e01b878d99f7e44d237380229b17aca82578f48c5f601f8a3a6",
   "player_enter_hint": "06108e643aaf58826b9fdf6b737ed38ae91af43e51a42473120fdcc2edc9aa2e",
   "player_explain_first": "113506c017611be215aaefb2177bed7d22299b9b8448203a116ce7357dc8b8df",
   "player_finish": "2dca9741c7e1e9718dd81bd623f95d5496c40684a15797ed08d1f7ee101cae7c",
-  "player_free_limit_day_description": "5e4f68168cc526dcc7cd2b9481c58efa9876513ae49a13df9bc1f38c2028feb3",
-  "player_free_limit_day_title": "5dca473273434dd3e57def452c14e9a835a7719714fac100d9eb0032974b44d1",
-  "player_free_limit_month_description": "80927db28b241d0d445232c10d3bcbefba7dcab9d790a4128686225f33eccfa2",
-  "player_free_limit_month_title": "baa13d93883978dbe69aba9d4ce1cef04a61e246f2b2cb9fb62c6f9be2e3ee65",
-  "player_guess_first": "15fa61e2bb794c67dadfadc31d96f46db5af25197deafdff33eebf7c720c0f75",
-  "player_guess_hint": "bf5107fcece71f49b287b389398d1cc909ac133e01b4ed1362981ddd59828b78",
-  "player_guest_limit_description": "8cd60608c08d272e487823c2aad11c5168a7bc2b464f248ded454fd830e90f87",
+  "player_free_limit_day_description": "89143c613a87c1b3158120b2251a318268d87b668c191429cf976035272c7f12",
+  "player_free_limit_day_title": "7cedb80ea2cd458312493047637eb9829d95d5ebf9da97d81559abec9e8a2324",
+  "player_free_limit_month_description": "aad59fe4821aac3acd7986ea5bafd51f41beb1dc19d48729fb423dd55da4038c",
+  "player_free_limit_month_title": "bf4b783e5621ca35bd17a55463af2c50dc12799ec004bd133c82c25748a2627d",
+  "player_guess_first": "f796654bb7ecdc1336441de92f3e12401f955571b2260c3ca2f99061231fbf82",
+  "player_guess_hint": "112e59f8549c809bf7c92928f5b5c944f4a20e7b3881f2b84c0b28c34da9c0c8",
+  "player_guest_limit_description": "0145905226b4580a226c33354fd3be55a82fa3dd0bc61f43574f17d5973ec4dc",
   "player_guest_limit_title": "0cb2294d54cb469b28a28d54c726649b6e282125d4a9f3a9adbe3ae9679887bd",
-  "player_guest_save_note": "cdc3b87140d226d74daea4b9e0374fa86d50c540c76032a74a43fbefd8574156",
+  "player_guest_save_note": "9ff5504d0be62d0bf1f5f519d4f2b5dea0864dc62814f193c2a1ae8f3bfab2ea",
   "player_how_to_say": "d0049115c4897deac1edf90cc5bd6a251c089fef8cef6886fa1d889452289491",
-  "player_hyperdrive_streak": "39bc63bd52bab9c872541860ed0b6b48b67243b3ed6309ca9b0cdcc7e2a9da2e",
+  "player_hyperdrive_streak": "ccd134a59ac63ca604b44572d566b60390422454670b2ad77c4af906777e91f3",
   "player_in_your_own_words": "11bff033479c723b7871cfe56d3d25a638ad28a45f7f6b50e2836d1f0c851f6c",
   "player_keep_writing": "0d3b42d4f08c32ffbd2af73119e329b83c362bdd44a6507543894fac3c055f80",
-  "player_key_point_missing": "461d9e7c390e79742bda0c4dabedebd9a6a6a60c900a9845528893ef9cff7476",
-  "player_key_point_stated": "5c3052c9ad07ba387e59fb4e367d8bbb600df0a530ecf709cf1e69adbea8c24b",
-  "player_key_points": "43f415d432c72a8b63a50f83f6a6403b14f0717ef77ea9fbffd6017a1b93cedb",
-  "player_know_this": "b9b81969970449f779757fccde51a704b240996ac68ba5cfc995fa750ff9fee7",
+  "player_key_point_missing": "31136817a3e6b577ffe3edd5a8596de8cb0203a25023416c1f7b320d638295ef",
+  "player_key_point_stated": "be3c6cac9418870258e0648ec6cc49b0ccb3eef061aeca17db4bf27d3dc40e67",
+  "player_key_points": "4901e6706743504d5f18a54878043caa97b88de829fd24bfe29aa9126c3c4291",
+  "player_know_this": "4fa389d976991325532b1e1df8f79e816c734a16c0e2f3f8cb7bc44053b5b98b",
   "player_leave_description": "7832a09b222a44f22220cb866ba75f90acbf75131f4294a0c5354a6a08e633d1",
-  "player_leave_title": "43af9edbe0c2a9d82f740f85d3c772daf6c2da9aea31f3239657e3ba7b932f0a",
+  "player_leave_title": "134c50ec794c495beeae551a86b1a72be768e400a249cef36200071f73217d57",
   "player_lesson_complete": "6233462eee97f4fce15433c2cf99884419f1fcb6cb0d52ce6549c6228c2b10a5",
-  "player_lesson_of": "8f6a2d33eb423d3dc9ff4bc4121dca54eeec333bbbb319ee0fafbd23a6a35e59",
+  "player_lesson_of": "2cca02e8bb2d4a5925e506f368b57a442f0b2203eaba854c1207ad8cc4f7c059",
   "player_lesson_summary": "6d402c71fdcad053df64a95d7b9a1af63c9767c6f86d7bd57ac8eed2f7f87780",
   "player_listen": "33c25f4330c7d879754a4b64be21df831570adff59c8eed9c194d146ccfb27f9",
   "player_microphone_blocked": "810ce0eb4cc51bf5a714fa24c64d336f75e713aec335222c8e02d809c004234a",
   "player_next_lesson": "b00fccbe9c29eda0ceab8b948e61124faa4f9af58d7b524a2308fe1e70986da2",
-  "player_next_step_failed": "4f2ef1f591229a5c346c87175fbe44a08422dc197f9efea2a8bec8515bed9e37",
   "player_not_found_description": "0900170d4ef4646593638816d6632119d2ebd0a39f94613c9becbd4e89e9d617",
   "player_not_found_title": "c5995cd035b62c43c415b6ab4ff36334abadceffa18703525af484f17baca95d",
-  "player_not_in_app_description": "54215c065552bfe2896ea207e9b11901bafd808f033a77a890093785e82427ea",
-  "player_not_in_app_title": "fa8827167a37fc94c96e05d24c697263981e5e1e2cbcda3915d449b1d062738a",
-  "player_not_written_description": "f1870c505f0274ee3a8eec1ecde9765e1145152d4ae8e6869e95c870dd550dc1",
-  "player_not_written_title": "e7fdaea3138e4290047cc7b21ec8ade04c84cc1ed73c7f5743a79921ca314d12",
-  "player_nothing_left_description": "edbe2abb381856c0b6f28f8149b24e72d6d218dad89af92190c867dbfc863065",
-  "player_nothing_left_title": "5eacdee2b78a13b393d5b382cf42e377c79f7b5c6520acb32024c3b938dc51a8",
-  "player_notice_answer_not_saved": "11c559b5fc5d68d69d6be1965a8f6d8fdad6858366255f223d0adb9b501fd7bd",
+  "player_not_in_app_description": "a09e4f500187a2d5d8df0899d4a3c7fd89004659acda1d10afaff3500abe93ae",
+  "player_not_in_app_title": "2eb01ef3d2b228c3aebe22ae66cc8a0e95cb346d1bc9585629e101bfc2ca5182",
+  "player_not_written_description": "d3f2b7ddd13cd5d6b19cc13c54f36fd83e411a75cc9dcafdba0e98ee2e623ae2",
+  "player_not_written_title": "a6badd0ae9d5a05c2c4c4523e0c8286f895eef504a8c30d66c27d0f211775312",
+  "player_nothing_left_description": "5f3ec79504f03a69d0f1ae162f4b3e752f1c07e70b6b600fb65b676f68c79c0e",
+  "player_nothing_left_title": "c0b16cddab711190c257beccb198a40c2952bba0f9867121e22c9141e2dce5c8",
+  "player_notice_answer_not_saved": "56f75c60eb844d8849658737700fbee81abc5e2ba9763189647c760292172e78",
   "player_notice_picture_ready": "dcf5e54e5edbd59bab7c7e850bd4d5d0f4db789a877675e1d30d4d2c32a8c8fe",
-  "player_notice_self_correct": "f50025351acdd6ceb9afface05e956d9b848a005c02a4e028bd58ce5c9ebcc4f",
-  "player_notice_writing_skipped": "df608a326d1df562e79309f0a8cfe16453d2adb5559db21a41a557ac3edc49f8",
+  "player_notice_self_correct": "59c6b1f58c2ca6f119060a7ef124dc9b4c0a7b66272fcb5496e80d91ded9170f",
+  "player_notice_writing_skipped": "df007e8a56ecbfea724de47b420bd9f5ad326f7cfe2396a005846fbbd8f4c785",
   "player_open_failed": "2b81deb6cd9d5c6bcbffd3d0b07ea80c46c104e0fd6d1211f9b88fe066ac4650",
   "player_opening_lesson": "2def0126b2d22c708245cd90e5f53e62c3a2b0b3c0f3962731e13f63c38a2e60",
-  "player_part_of": "dacf9410d7a32d8a5cde0d5a23cd5bc4a4542c84a9d2292334b203551be97cb1",
-  "player_phase_plan": "873d51ed305b21343f17f838d4b931ea6a63fd8e7102dc270fb06019fa3075a3",
-  "player_phase_plan_line_1": "94a4b9261f1f965bd2192c6a527e5e6f0d4e2667b17589bd904a7198340b8e8c",
+  "player_part_of": "76f09d23881de278a0e932932beb4e68203b4f34a2b545e340027b1de171a045",
+  "player_phase_plan": "0173f4f3fd6ef8728124eecf1cc234f4ce60942c443b8b40c1c519c4325e0a13",
+  "player_phase_plan_line_1": "c2153f7e20d2c98bb0f9cf104165d829a0d026425889ed7160889a78ba4604c3",
   "player_phase_plan_line_2": "842363cbcabd56dfc2cbe33553180c960dd496d6f2bac20ff75bc19650a1adec",
   "player_phase_write": "81ff78230ab34c914dbd358c669177c9cc0b185a7e8b737f5c8965c9a0409139",
   "player_phase_write_line": "483f3d6a17ca53ba7bcc82dc32a5e25935bfd0ab128572f3aba0dfbc0435fbd3",
-  "player_plus_limit_description": "29a27847f6478b094034b376e98f19b2626016c2e8da52274bf9b101c9eee535",
-  "player_plus_limit_title": "95f0afa1dd8560ba7e9a7a2b3184b20b8c040ae2942c5c55833461ef4c9dd484",
+  "player_plus_limit_description": "afa3e3a833fa69374d06a15ceb009596fa01c765256690f5fa4ede44d25842bf",
+  "player_plus_limit_title": "fe89a6ff09128d1a4c474436707ec65cd28891441e19b5c567c2d7028a0a1586",
   "player_previous_screen": "5e133610492d8158e69996a788a9e49405ef6bb76777604b5419f11900ddf919",
-  "player_progress": "e405c65e7054fc49d3951a3c3fb6b559da4d4bd8075fc14775a127d9d62e8240",
+  "player_progress": "784e8a02b57b3cc5f02837ad987021de3a9701a565471c90dd99aea158ee04ab",
   "player_quick_check": "39781d0f319cfd2db7a81bec0d09f5f348bc4582c90e2937816d61a713361b7f",
-  "player_ready_instead": "1124a38b4ddb957abf6a4fe93fa684a46da93cebf841d287b1cf501ed09ef747",
-  "player_ready_while_waiting": "28354d0555351ca251edf5a46776c90bfdbcfa1f3e14a86f54811a16cb623110",
+  "player_ready_instead": "f626c6460f1b206e11d741aed0d14ccd19566f6365a3356c94967e272677a3d2",
+  "player_ready_while_waiting": "38286d6278dabf0e2d7c31b160b4d060fe3b955b5eaa8251d0319f5eade8437a",
   "player_review_ideas": "327ae348479aa648083730680f21250a27967744c649ba1df33e6de8b29a662c",
   "player_review_on": "a8153f82dba84c476047067081e6631b693f85f246ecf9b20eac3edae02d9510",
   "player_save_failed": "d1987bd52db878f734aa87a28d732162709154e4640d35958dd95a93d84ac4fa",
-  "player_saved_to_mistakes": "6e7efaa738e99ebcdb1c825a53451217d765133ccd304cbc1699003f4afb6a84",
-  "player_saved_to_mistakes_back_at_end": "80231811c2517e57ba710ead993e49d2e1c339b5b7643a977eed44b5cd00c2de",
-  "player_saved_to_mistakes_back_date": "d2bfc15c593c1765d9879f9c67ac85734b8cc2bf1be8e2cc219b9469e828ecaa",
-  "player_saved_to_mistakes_back_today": "899cef52cbe21bf4ded05d2208bda6de2afa44c1aa093b06a714d05fe1ecf79c",
-  "player_saved_to_mistakes_back_tomorrow": "b4481a5d7ebc976f27d20a46936f9597c7f60a45474398b8fc995e71955b2a76",
-  "player_saved_to_mistakes_back_weekday": "98e088709d98e1bbd476427c3531d435b51aa5ed506dec409faa1b11de01a759",
+  "player_saved_to_mistakes": "2416cd00b01f8d38c3916e97869f1643a50cef3e48e53a4da4c4365a58267bb0",
+  "player_saved_to_mistakes_back_at_end": "1bd7248c1b827649fad2fcd0eb69717e84794c551812219e2ccd8499b2545ada",
+  "player_saved_to_mistakes_back_date": "56833966817c461c34442437552863003bd3f04e232fdc6c9d1f81f7d72b232a",
+  "player_saved_to_mistakes_back_today": "d42b4d91f221f8441835e418c7048fd64ab322d9841d6a0d228076aa076b4594",
+  "player_saved_to_mistakes_back_tomorrow": "74945eb60a963ce903f94ff8fc6aae1613684740a930d301ad4c1c3c2b8787f4",
+  "player_saved_to_mistakes_back_weekday": "48a89df7c07fc5b2390d07d947cf88b64c3570106dacf819dde05a6ec00571a7",
   "player_saving_progress": "42a818f1e45dc359825f0f69f5b5aa7b4daf6b6cf667bf3ffd7b1c0c34bd36e7",
-  "player_say_it_instead": "4c7d8eebc1d9cced0b80f4aae2f5bf0f4354010271c9629603df2cc6491e3d25",
-  "player_screen_options": "c2738c921bfc3b59243b674b9ce5faf3fc5d8ecba0b3482f01bd2010c28f4084",
+  "player_say_it_instead": "785c9c4b63e85cdecee1dc39fbec00282b88b53197d96d6ea59547083b18b6cd",
+  "player_screen_options": "1371cbf567e6f1ecd49cd9197e5007149b44c3bb26d1cdedeb82d041104633d0",
   "player_see_plus": "d5ec54f7a771c207c57ff8ab42b68548312f2feb2d259cd9d9eb909728bc7699",
-  "player_see_todays_summary": "fc1b4629715015e41be83b9f140eeb15b084588a331672ecc40b203af6f54f44",
   "player_set_aside_description": "bfe4a4c9f556005018f012d69e677c0c42e864682736c84d5d37805905cd755a",
   "player_set_aside_title": "58ec14edf499fc8c9c54c2dcb5fbf6ae93484119f537ca2585b870034c14f8ec",
   "player_slow_down_description": "7a4f32c995d56bee757575979740febe824eec96e1706e1b038193b3d162f078",
   "player_slow_down_title": "0a8f9b79cfaf1aef148479c0049a0026a49c7e985330ff9e588134cce125a8b1",
   "player_slowly": "a5cd396b950d2824e660365a6368312e188ec91b3679dee27544bac82ab1c851",
   "player_sounds_like": "afdab48c12ac7e483dcfe2e1f7cf3abf824c1a190e68de984069916ad22993eb",
-  "player_spelled": "13ef7366ef8e9241b03b1fda1cb8c2842e0ccdaf3f7959ffbed22699ba7c859e",
-  "player_start_failed_description": "4ed431355b84ecf7020dcf18cec482dc1500a5d94044e2a15eccb2eed8f927c0",
-  "player_start_failed_title": "9e71329e6c6272f9ebaaef8560f9ca70286643d2a9f294e1da9bb44b11163109",
+  "player_spelled": "01e3018f9ed48328d1d35dbe399fa99ca0fd294acba65aeeac0944836b772cfb",
+  "player_start_failed_description": "158749721613e897e1bc1a2dc610b760e754934c0235235a1d04aeb9eb079869",
+  "player_start_failed_title": "3b5efdd1f16857399ad0edbe952192f849d0541d71b08bd828cdef5a6ce1a6a6",
   "player_start_this_lesson": "18cb82fc63c666695e681a26e449ad69e5fcfab1ff369d2b85748c0332b8ee1d",
   "player_starting": "2e781063d991f9bbd1487fb301eac4d01b3f55e75cd51fb51a2433c5e50f1226",
-  "player_still_checking": "d1ecb7f3081f2f9cdb70b41523f22ec3e656cdbc8e1ce6896318739a751e4370",
-  "player_stop_failed": "37e13c5d517a50dd17e56ab314497b71722d002ac9bd619e0a17d558e9842b5c",
-  "player_stop_for_today": "0f63477dc3f1aeac247207477e2a1b275ccda3bebedad5f21edf3d2cdddacf45",
+  "player_still_checking": "1e47cac3ee5cf7c5b68959355d68978cdaaca8ee5d400cd6eab958df6f47a64f",
   "player_summary": "93992c2c4e9242927a420d20eff2d4f1f47c44004fd341682302647cb42c0316",
   "player_summary_ideas": "f52ee79a8c0cb12ab86d298e33084f9f863b7280c7a7033d41417772f4c1e662",
   "player_try_again": "d1a991547322d000dd857669394a2cbc6d4497e844e593cf2b44a494fd341270",
-  "player_unchecked_compare": "bea3989142062fb8f052d0515901ae6e386687d23368c249aec15f46c11b50a4",
-  "player_verdict_almost": "b51ac5a1a3e668874ff487d9dfb7eba97f1a26a48fb51e7e8b6541cd58f2d9fc",
-  "player_verdict_correct": "6ebdac1aa36cb2940938e2c79520347173ee110faa38cdaafa0df83f5bc68457",
+  "player_unchecked_compare": "b794a7b7b4233965984d2c8aaf4a2a1256c6ebb589d2b27f98d00b23fb938c5d",
+  "player_verdict_almost": "7334d95922ae0c87089bb1859821242d481e5bde0aca77f7e385f5fad9ecf505",
+  "player_verdict_correct": "50ea600d79b2233a449350b6917df7d5af0a7339968df8cd0b46d0d40992ca87",
   "player_verdict_guess": "25c4156473eece9581cb0348086ee4c8df36938f9a85db9391157570dc5a0617",
-  "player_verdict_guess_right": "4a42e4c984a355feeb4ca61f34d506e9605188744ecce5db8523df38b7f491f4",
+  "player_verdict_guess_right": "115ba834a5e128587142486352df765bc275867e8c7026882698e67c16d61165",
   "player_verdict_incorrect": "b91cae23dc1a7c65994600b6318e8685077c4e4c54ce9cf64464883edd721be9",
-  "player_verdict_sample_answer": "46011745550a2f41a863016f32ddd135a82136859dff331822587d6a998dd790",
-  "player_verdict_typo": "07bdb1e6cf687a41f98ca8fe04ae38d3b799d386c267331e3d6373485707d132",
-  "player_verdict_unchecked": "2677766f5e51b9d3cfeab254635b06f497663924d1157cfa4cc6757399076675",
-  "player_what_we_heard": "f776c0034f6ed070b2679696feb9e745dfe6fad4d1cdf0d41661c99644ea602d",
+  "player_verdict_sample_answer": "8a6d12d6e693a703b58762ea3cdb43e2a2ea830d9371a4b44c4c32a259e9cb04",
+  "player_verdict_typo": "ee8149a01f684e9d0b8ee1e5145f862fc112a9cf13fdfcec34cb1d8dcd8e01bc",
+  "player_verdict_unchecked": "277d5decb264716278e906534d3231cd51c968599afb1104f4245b8ea1200be5",
+  "player_what_we_heard": "dd15a1e48810d26ce842a6b4696161857031bd1f4afefb20c08debb1dec67a6d",
   "player_word_heard_as": "6d8bae8a52ad0a8e579422745ba982bba7685a7da382c277d747cc514a3a44db",
   "player_word_not_heard": "583c24b74ce07ab8b9ba535e85d2f34829da2f92a5dc3beac7c88da1de22c4cc",
-  "player_worked_example": "d22aeb1440da937426e29868f8f2465bdae7b3d69b7f5a01a03e9e166f9370f1",
+  "player_worked_example": "9d7137d7ca29ab80d0092c14fe58756a63d5b7e1df064a444e15fb98e5ab2e2c",
   "player_worked_example_result": "ce1f5ccb42ff17be5e572132c3b17f93c7be24baa534d9d6db4d61b3e32ca6ec",
   "player_worked_example_steps": "e1a5bebe5ffa38368d8efb639bdb008dfce7dd7fe065482b2402b352be4ecfb9",
   "player_write_again": "0c535b56f4deeaadf750d29e553659dd025db4ac7b21abcd6492257db7394207",
   "player_write_your_answer": "e1c16190c02a438984cd1c63db0276699090637ed13f7d368fb32d87090355c3",
   "player_writing_lesson": "3a5e5d20c8638656c638ebf8e95645e2305e4c7375338ff30fd0f321982e0f69",
-  "player_writing_note": "89571e148c19e6736ad8189ddef7913ab033512c37c8df94353827901c55fd6c",
+  "player_writing_note": "356fc4922e6aa500cb8978579432f0186d891924a4cf4ecf438af32c2239ff7f",
   "player_your_answer": "6ac1c7a7117b3803e61af959b36598f94a37d6695f1ae09f1d3b49c11c245795"
 }
 -->
 <resources>
-    <string name="player_screen_options">Options d’affichage</string>
-    <string name="player_ai_note">Créé avec l’IA. Il peut contenir des erreurs.</string>
-    <string name="player_know_this">Je connais déjà ça</string>
+    <string name="player_screen_options">Options de l’écran</string>
+    <string name="player_ai_note">Créé avec l’IA. Peut contenir des erreurs.</string>
+    <string name="player_know_this">Je connais déjà</string>
     <string name="player_lesson_summary">Résumé de la leçon</string>
-    <string name="player_progress">Progression de la leçon</string>
-    <string name="player_leave_title">Partir pour l’instant ?</string>
+    <string name="player_progress">Progression dans la leçon</string>
+    <string name="player_leave_title">Partir pour l’instant ?</string>
     <string name="player_leave_description">Ta réponse n’a pas été vérifiée, elle ne sera donc pas conservée.</string>
     <string name="player_keep_writing">Continuer à écrire</string>
     <string name="player_action_check">Vérifier</string>
@@ -189,48 +185,48 @@
     <string name="player_action_start">Commencer</string>
     <string name="player_previous_screen">Écran précédent</string>
     <string name="player_quick_check">Vérification rapide · %1$s sur %2$s</string>
-    <string name="player_notice_self_correct">Pas tout à fait. Relis et corrige ta réponse, puis vérifie-la.</string>
-    <string name="player_notice_answer_not_saved">Ta réponse n’a pas été enregistrée. Réponds à nouveau pour terminer la leçon.</string>
+    <string name="player_notice_self_correct">Pas tout à fait. Regarde à nouveau et corrige toi-même, puis vérifie.</string>
+    <string name="player_notice_answer_not_saved">Ta réponse à cette question n’a pas été enregistrée. Réponds à nouveau pour terminer la leçon.</string>
     <string name="player_notice_picture_ready">Cette question attendait son image. Réponds-y pour terminer la leçon.</string>
-    <string name="player_notice_writing_skipped">Tu as assez écrit pour aujourd’hui.</string>
+    <string name="player_notice_writing_skipped">Tu n’as plus besoin d’écrire aujourd’hui.</string>
     <string name="player_write_again">Écrire à nouveau</string>
-    <string name="player_verdict_almost">Presque</string>
-    <string name="player_verdict_correct">Correct !</string>
+    <string name="player_verdict_almost">Tu y es presque</string>
+    <string name="player_verdict_correct">Correct !</string>
     <string name="player_verdict_guess">Voici la réponse</string>
-    <string name="player_verdict_guess_right">Bien deviné !</string>
+    <string name="player_verdict_guess_right">Bien deviné !</string>
     <string name="player_verdict_incorrect">Pas tout à fait</string>
-    <string name="player_verdict_sample_answer">Voici un bon exemple de réponse</string>
-    <string name="player_verdict_typo">C’est juste, attention à l’orthographe</string>
-    <string name="player_verdict_unchecked">Pas vérifiée cette fois</string>
+    <string name="player_verdict_sample_answer">Voici une bonne réponse</string>
+    <string name="player_verdict_typo">Correct, attention à l’orthographe</string>
+    <string name="player_verdict_unchecked">Non vérifié cette fois</string>
     <string name="player_answer_feedback">Retour sur ta réponse</string>
-    <string name="player_spelled">Orthographe :</string>
-    <string name="player_correct_answer_label">Réponse :</string>
-    <string name="player_unchecked_compare">Chaque question est vérifiée plusieurs fois par jour. Compare ta réponse avec celle-ci :</string>
+    <string name="player_spelled">Orthographe :</string>
+    <string name="player_correct_answer_label">Réponse :</string>
+    <string name="player_unchecked_compare">Chaque question est vérifiée quelques fois par jour. Compare ta réponse avec celle-ci :</string>
     <plurals name="player_key_points">
-        <item quantity="one">%1$s point clé sur %2$s</item>
-        <item quantity="many">%1$s points clés sur %2$s</item>
-        <item quantity="other">%1$s points clés sur %2$s</item>
+        <item quantity="one">%1$s sur %2$s point clé</item>
+        <item quantity="many">%1$s sur %2$s points clés</item>
+        <item quantity="other">%1$s sur %2$s points clés</item>
     </plurals>
-    <string name="player_key_point_stated">Mentionné : %1$s</string>
-    <string name="player_key_point_missing">Manquant : %1$s</string>
+    <string name="player_key_point_stated">Mentionné : %1$s</string>
+    <string name="player_key_point_missing">Manquant : %1$s</string>
     <string name="player_correction_yours">Ta réponse</string>
-    <string name="player_correction_right">Réponse correcte</string>
-    <string name="player_hyperdrive_streak">%1$s bonnes réponses d’affilée</string>
-    <string name="player_comes_back_at_end">Cette question revient à la fin de la leçon</string>
-    <string name="player_saved_to_mistakes">Ajouté à ton carnet d’erreurs</string>
-    <string name="player_saved_to_mistakes_back_at_end">Ajouté à ton carnet d’erreurs · de retour à la fin de cette leçon</string>
-    <string name="player_saved_to_mistakes_back_today">Ajouté à ton carnet d’erreurs · de retour dans une révision plus tard aujourd’hui</string>
-    <string name="player_saved_to_mistakes_back_tomorrow">Ajouté à ton carnet d’erreurs · de retour dans la révision de demain</string>
-    <string name="player_saved_to_mistakes_back_weekday">Ajouté à ton carnet d’erreurs · de retour dans la révision de %1$s</string>
-    <string name="player_saved_to_mistakes_back_date">Ajouté à ton carnet d’erreurs · de retour dans une révision le %1$s</string>
-    <string name="player_comes_back_today">Cette idée reviendra dans une révision plus tard dans la journée</string>
+    <string name="player_correction_right">Bonne réponse</string>
+    <string name="player_hyperdrive_streak">%1$s bonnes réponses de suite</string>
+    <string name="player_comes_back_at_end">Cette question reviendra à la fin de la leçon</string>
+    <string name="player_saved_to_mistakes">Enregistré dans ton Carnet d’erreurs</string>
+    <string name="player_saved_to_mistakes_back_at_end">Enregistré dans ton Carnet d’erreurs · reviendra à la fin de cette leçon</string>
+    <string name="player_saved_to_mistakes_back_today">Enregistré dans ton Carnet d’erreurs · à revoir plus tard aujourd’hui</string>
+    <string name="player_saved_to_mistakes_back_tomorrow">Enregistré dans ton Carnet d’erreurs · à revoir demain</string>
+    <string name="player_saved_to_mistakes_back_weekday">Enregistré dans ton Carnet d’erreurs · à revoir %1$s</string>
+    <string name="player_saved_to_mistakes_back_date">Enregistré dans ton Carnet d’erreurs · à revoir le %1$s</string>
+    <string name="player_comes_back_today">Cette idée reviendra dans une révision plus tard aujourd’hui</string>
     <string name="player_comes_back_tomorrow">Cette idée reviendra dans la révision de demain</string>
     <string name="player_comes_back_weekday">Cette idée reviendra dans la révision de %1$s</string>
-    <string name="player_comes_back_date">Cette idée reviendra lors d’une révision le %1$s</string>
-    <string name="player_guess_first">Essaie d’abord de deviner</string>
-    <string name="player_guess_hint">Te tromper maintenant t’aidera à t’en souvenir plus tard.</string>
-    <string name="player_answer_options">Options de réponse</string>
-    <string name="player_worked_example">Exemple résolu</string>
+    <string name="player_comes_back_date">Cette idée reviendra dans une révision le %1$s</string>
+    <string name="player_guess_first">Devine d’abord</string>
+    <string name="player_guess_hint">Te tromper maintenant t’aidera à retenir la réponse plus tard.</string>
+    <string name="player_answer_options">Choix de réponse</string>
+    <string name="player_worked_example">Exemple détaillé</string>
     <string name="player_worked_example_steps">Étapes</string>
     <string name="player_worked_example_result">Résultat</string>
     <string name="player_summary">Résumé</string>
@@ -244,23 +240,23 @@
     <string name="player_dont_know_yet">Je ne sais pas encore</string>
     <string name="player_explain_first">Explique d’abord</string>
     <string name="player_check_failed">Nous n’avons pas pu vérifier ta réponse cette fois. Réessaie.</string>
-    <string name="player_still_checking">La vérification est toujours en cours. Ça prend plus de temps que d’habitude.</string>
+    <string name="player_still_checking">Vérification en cours. Cela prend plus de temps que d’habitude.</string>
     <string name="player_enter_hint">Appuie sur Entrée pour vérifier, Maj+Entrée pour passer à la ligne.</string>
     <string name="player_your_answer">Ta réponse</string>
     <string name="player_write_your_answer">Écris ta réponse</string>
-    <string name="player_not_written_title">Cette leçon n’est pas encore préparée</string>
-    <string name="player_not_written_description">Zoonk la prépare quand tu la commences. Ça prend une ou deux minutes.</string>
+    <string name="player_not_written_title">Cette leçon n’est pas encore prête</string>
+    <string name="player_not_written_description">Zoonk la prépare quand tu la commences. Cela prend une ou deux minutes.</string>
     <string name="player_start_this_lesson">Commencer cette leçon</string>
     <string name="player_starting">Démarrage…</string>
     <string name="player_writing_lesson">Préparation de ta leçon</string>
-    <string name="player_phase_plan">Préparation du plan de la leçon</string>
-    <string name="player_phase_plan_line_1">Choix des notions à aborder…</string>
+    <string name="player_phase_plan">Planification de la leçon</string>
+    <string name="player_phase_plan_line_1">Choix des sujets à aborder…</string>
     <string name="player_phase_plan_line_2">Choix de la meilleure façon de les expliquer…</string>
     <string name="player_phase_write">Préparation de la leçon</string>
     <string name="player_phase_write_line">Préparation de l’écran %1$d…</string>
-    <string name="player_writing_note">Ça prend généralement une ou deux minutes. La leçon s’ouvre ici dès qu’elle est prête.</string>
-    <string name="player_ready_while_waiting">Prêt pendant que tu attends</string>
-    <string name="player_ready_instead">Prêt à faire à la place</string>
+    <string name="player_writing_note">Cela prend généralement une ou deux minutes. La leçon s’ouvrira ici dès qu’elle sera prête.</string>
+    <string name="player_ready_while_waiting">À faire en attendant</string>
+    <string name="player_ready_instead">À faire à la place</string>
     <plurals name="player_review_ideas">
         <item quantity="one">Réviser %1$s idée</item>
         <item quantity="many">Réviser %1$s idées</item>
@@ -277,9 +273,9 @@
     <string name="player_cant_talk_now">Je ne peux pas parler maintenant</string>
     <string name="player_can_talk_now">Je peux parler maintenant</string>
     <!-- On a speaking screen being typed because the microphone was blocked: goes back to answering out loud. -->
-    <string name="player_say_it_instead">Dis-le à la place</string>
+    <string name="player_say_it_instead">Dis-le à voix haute</string>
     <string name="player_microphone_blocked">Le micro est bloqué. Écris ta réponse à la place.</string>
-    <string name="player_what_we_heard">Ce qu’on a entendu</string>
+    <string name="player_what_we_heard">Ce que nous avons entendu</string>
     <!-- Read by screen readers after a word of a spoken answer the learner skipped. -->
     <string name="player_word_not_heard">%1$s (non entendu)</string>
     <!-- Read by screen readers: %1$s is the word asked for, %2$s what the learner said instead. -->
@@ -289,7 +285,7 @@
     <string name="player_sounds_like">se prononce comme %1$s</string>
     <string name="player_listen">Écouter</string>
     <string name="player_slowly">Lentement</string>
-    <string name="player_activity_example_data">Chiffres d’exemple, pas des données réelles</string>
+    <string name="player_activity_example_data">Chiffres donnés en exemple, pas des données réelles</string>
     <!-- %1$s names where an activity's data comes from, such as "World Bank (2023)". -->
     <string name="player_activity_source">Source : %1$s</string>
     <string name="player_activity_your_answer">Ta réponse :</string>
@@ -300,17 +296,17 @@
     <string name="player_challenge_what_if">Et si · %1$s</string>
     <string name="player_challenge_mission">Ta mission</string>
     <string name="player_challenge_team">Ton équipe</string>
-    <string name="player_challenge_help_ai">Tu peux demander de l’aide à l’équipe ou à l’IA. Tes décisions changent la suite.</string>
-    <string name="player_challenge_help">Tu peux demander de l’aide à l’équipe. Tes décisions changent la suite.</string>
-    <string name="player_challenge_meters">Où en est le dossier</string>
+    <string name="player_challenge_help_ai">Tu peux demander de l’aide à l’équipe ou à l’IA. Tes décisions changent le résultat.</string>
+    <string name="player_challenge_help">Tu peux demander de l’aide à l’équipe. Tes décisions changent le résultat.</string>
+    <string name="player_challenge_meters">Comment la situation évolue</string>
     <!-- How a meter moved after the learner's decision. -->
     <string name="player_challenge_no_change">aucun changement</string>
-    <string name="player_challenge_much_higher">beaucoup plus haut</string>
-    <string name="player_challenge_bit_higher">un peu plus haut</string>
-    <string name="player_challenge_much_lower">beaucoup plus bas</string>
-    <string name="player_challenge_bit_lower">un peu plus bas</string>
+    <string name="player_challenge_much_higher">beaucoup plus élevé</string>
+    <string name="player_challenge_bit_higher">un peu plus élevé</string>
+    <string name="player_challenge_much_lower">beaucoup moins élevé</string>
+    <string name="player_challenge_bit_lower">un peu moins élevé</string>
     <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
-    <string name="player_challenge_you">Toi : %1$s</string>
+    <string name="player_challenge_you">Toi : %1$s</string>
     <string name="player_challenge_what_happened">Ce qui s’est passé</string>
     <string name="player_challenge_complete">Défi terminé</string>
     <string name="player_challenge_scenario_complete">Scénario terminé</string>
@@ -318,56 +314,52 @@
     <string name="player_challenge_improve">À améliorer</string>
     <string name="player_challenge_skills">Compétences travaillées</string>
     <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
-    <string name="player_challenge_practice">S’entraîner sur « %1$s » · %2$s</string>
+    <string name="player_challenge_practice">Entraîne-toi sur « %1$s » · %2$s</string>
     <string name="player_done">Terminé</string>
-    <string name="player_drawing_picture">Dessin de l’image…</string>
-    <string name="player_not_in_app_title">Cette leçon n’est pas encore disponible dans l’application</string>
-    <string name="player_not_in_app_description">Certaines pages ne s’affichent pas encore dans l’application. Tu peux suivre cette leçon sur zoonk.com.</string>
-    <string name="player_start_failed_title">Nous n’avons pas pu ouvrir cette leçon</string>
-    <string name="player_start_failed_description">Réessaie dans un instant. Tu n’as rien perdu.</string>
+    <string name="player_drawing_picture">Dessin en cours…</string>
+    <string name="player_not_in_app_title">Cette leçon n’est pas encore disponible dans l’appli</string>
+    <string name="player_not_in_app_description">Elle contient des écrans que l’appli ne peut pas encore afficher. Tu peux la faire sur zoonk.com.</string>
+    <string name="player_start_failed_title">Impossible d’ouvrir cette leçon</string>
+    <string name="player_start_failed_description">Réessaie dans un instant. Rien de ce que tu as fait n’a été perdu.</string>
     <string name="player_slow_down_title">Fais une petite pause</string>
     <plurals name="player_slow_down_description">
         <item quantity="one">Tu as commencé beaucoup de leçons en peu de temps. Celle-ci s’ouvre dans %1$s seconde.</item>
         <item quantity="many">Tu as commencé beaucoup de leçons en peu de temps. Celle-ci s’ouvre dans %1$s secondes.</item>
         <item quantity="other">Tu as commencé beaucoup de leçons en peu de temps. Celle-ci s’ouvre dans %1$s secondes.</item>
     </plurals>
-    <string name="player_free_limit_day_title">Tu as terminé les nouvelles leçons pour aujourd’hui</string>
-    <string name="player_free_limit_day_description">Tu peux encore réviser ce que tu as appris et corriger tes erreurs. De nouvelles leçons seront disponibles demain, ou passe à Plus pour continuer maintenant.</string>
-    <string name="player_free_limit_month_title">Tu as terminé les nouvelles leçons de ce mois-ci</string>
-    <string name="player_free_limit_month_description">Tu peux encore réviser ce que tu as appris et corriger tes erreurs. De nouvelles leçons seront disponibles le mois prochain, ou passe à Plus pour continuer maintenant.</string>
+    <string name="player_free_limit_day_title">C’est tout pour les nouvelles leçons aujourd’hui</string>
+    <string name="player_free_limit_day_description">Tu peux toujours revoir ce que tu as appris et réviser tes erreurs. De nouvelles leçons seront disponibles demain, ou tu peux passer à Plus pour continuer dès maintenant.</string>
+    <string name="player_free_limit_month_title">C’est tout pour les nouvelles leçons ce mois-ci</string>
+    <string name="player_free_limit_month_description">Tu peux toujours revoir ce que tu as appris et réviser tes erreurs. De nouvelles leçons seront disponibles le mois prochain, ou tu peux passer à Plus pour continuer dès maintenant.</string>
     <string name="player_see_plus">Découvrir Plus</string>
     <string name="player_guest_limit_title">Enregistre ta progression pour continuer</string>
-    <string name="player_guest_limit_description">Tu as suivi toutes les leçons accessibles sans compte. Crée un compte gratuit pour continuer et retrouver tout ce que tu as appris.</string>
+    <string name="player_guest_limit_description">Tu as terminé les leçons que tu peux essayer sans compte. Crée un compte gratuit pour continuer et garder tout ce que tu as appris.</string>
     <string name="player_create_free_account">Créer un compte gratuit</string>
-    <string name="player_plus_limit_title">Ça fait beaucoup d’apprentissages pour aujourd’hui</string>
-    <string name="player_plus_limit_description">Tu as atteint ta limite du jour. De nouvelles leçons seront disponibles demain.</string>
+    <string name="player_plus_limit_title">Tu as beaucoup appris aujourd’hui</string>
+    <string name="player_plus_limit_description">Tu as atteint la limite pour aujourd’hui. De nouvelles leçons seront disponibles demain.</string>
     <string name="player_lesson_complete">Leçon terminée</string>
-    <string name="player_already_knew">Tu le savais déjà</string>
+    <string name="player_already_knew">Tu savais déjà ça</string>
     <string name="player_saving_progress">Enregistrement de ta progression…</string>
     <string name="player_save_failed">L’enregistrement a échoué. Tes réponses sont conservées.</string>
     <string name="player_review_on">À réviser le %1$s</string>
     <string name="player_next_lesson">Leçon suivante</string>
-    <string name="player_stop_for_today">Arrêter pour aujourd’hui</string>
-    <string name="player_see_todays_summary">Voir le résumé du jour</string>
-    <string name="player_next_step_failed">Impossible d’ouvrir l’étape suivante. Réessaie.</string>
-    <string name="player_stop_failed">Impossible d’arrêter la séance. Réessaie.</string>
     <string name="player_back_to_chapter">Retour au chapitre</string>
     <string name="player_back_to_unit">Retour à l’unité</string>
-    <string name="player_part_of">Cette leçon fait partie de</string>
+    <string name="player_part_of">Fait partie de</string>
     <plurals name="player_course_size">
         <item quantity="one">%1$s chapitre · environ %2$s à ton rythme</item>
         <item quantity="many">%1$s chapitres · environ %2$s à ton rythme</item>
         <item quantity="other">%1$s chapitres · environ %2$s à ton rythme</item>
     </plurals>
     <plurals name="player_lesson_of">
-        <item quantity="one">%1$s leçon sur %2$s</item>
-        <item quantity="many">%1$s leçons sur %2$s</item>
-        <item quantity="other">%1$s leçons sur %2$s</item>
+        <item quantity="one">Leçon %1$s sur %2$s</item>
+        <item quantity="many">Leçon %1$s sur %2$s</item>
+        <item quantity="other">Leçon %1$s sur %2$s</item>
     </plurals>
-    <string name="player_guest_save_note">Enregistre ta progression pour retrouver une courte révision qui t’aidera à retenir ce que tu as appris.</string>
-    <string name="player_build_my_plan">Créer mon plan</string>
+    <string name="player_guest_save_note">Enregistre ta progression et une courte révision t’aidera à retenir ce que tu as appris.</string>
+    <string name="player_build_my_plan">Construire mon plan</string>
     <string name="player_create_account_to_save">Créer un compte pour enregistrer</string>
-    <string name="player_nothing_left_title">Plus rien à répondre</string>
-    <string name="player_nothing_left_description">Termine pour voir le résultat.</string>
+    <string name="player_nothing_left_title">Plus aucune question</string>
+    <string name="player_nothing_left_description">Termine pour voir ton résultat.</string>
     <string name="player_finish">Terminer</string>
 </resources>

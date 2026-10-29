@@ -5,7 +5,7 @@
   "buddy_glasses_aviator": "55bfa30395f14c8e8ebb0a15519080c432005a62460af3c2d1adc9fbb65b8af9",
   "buddy_glasses_cat_eye": "8ed801c480030b63a2fff930b0eb240d685f717647a374be805eb7b4b5e5c1d5",
   "buddy_glasses_earn_aviator": "05195c939d3d0b5cb49ccfdbf2c2dd593eeb833445a98422ccc15dd57eae9780",
-  "buddy_glasses_earn_cat_eye": "4fc7a1b74c6a1c07414bd991f460708e4b07b7bd6a703aa2d5bf4338a2e110b8",
+  "buddy_glasses_earn_cat_eye": "fea548655a54087e1113a7efb0688c51e40079daf965a8af6ca61c0a7f398835",
   "buddy_glasses_earn_monocle": "3b51fb6ccf11f5d98a158d37bda5e258b661238644f134760d8bf779b8d7e1af",
   "buddy_glasses_earn_retro": "4a29f705cf0519d75225ed493e010c50d3cc005bbd023a61a9ef747eddd6b4c9",
   "buddy_glasses_earn_round": "b51e132531565820fc053a21152d942b8e64ba8f6f47aa2e7872ea71e7dff020",
@@ -13,7 +13,7 @@
   "buddy_glasses_monocle": "6f26f5bc173f864349d8248c7b9760d7970d44c024f5343602a487fce05c0e44",
   "buddy_glasses_retro": "c6dbfbdd15fc543223b4398d621b8a0fa3afd2dd2a44aa6ed1e4c73e4a989e9b",
   "buddy_glasses_round": "5b8f379790f04be74e50d1d18f071128982f8bde0be777ea3d2dc11931d23141",
-  "buddy_glasses_star": "752bb862aeb57a6c4aa8d798607d3b3763aa734be06cacb0621eb883a043dff6",
+  "buddy_glasses_star": "25f6b270dad170d674b426a65093e3416bd4f63f81cf5289d1e070cafe125ddf",
   "buddy_glasses_worn_aviator": "93e1d73316e902c3429f0d768f71dca263d3a48d48f688a46f8d15ce23a2f057",
   "buddy_glasses_worn_cat_eye": "716a6a21912c6c263807dbf0b20283bc2d2b91e2ccaea48fdcad3be2597d253a",
   "buddy_glasses_worn_monocle": "027361703053e604c29e9d3700f6934cac2910f25d938063b0c9930e1a433590",
@@ -28,7 +28,7 @@
 <resources>
     <string name="buddy_glasses">Gafas</string>
     <string name="buddy_glasses_round">Redondas</string>
-    <string name="buddy_glasses_star">Estrella</string>
+    <string name="buddy_glasses_star">De estrella</string>
     <string name="buddy_glasses_aviator">De aviador</string>
     <string name="buddy_glasses_cat_eye">Ojo de gato</string>
     <string name="buddy_glasses_retro">Retro</string>
@@ -42,7 +42,7 @@
     <string name="buddy_glasses_earn_round">Vienen con tu compañero</string>
     <string name="buddy_glasses_earn_star">Gana tu primer desafío de la fase</string>
     <string name="buddy_glasses_earn_aviator">Completa tu primer desafío semanal</string>
-    <string name="buddy_glasses_earn_cat_eye">Completa todas las misiones durante 7 días distintos</string>
+    <string name="buddy_glasses_earn_cat_eye">Completa todas las misiones en 7 días distintos</string>
     <string name="buddy_glasses_earn_retro">Completa 50 repasos</string>
     <string name="buddy_glasses_earn_monocle">Gana el desafío final</string>
     <string name="buddy_stage_baby">Bebé</string>

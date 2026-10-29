@@ -1,87 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "speaking_eyebrow": "a33ba39537b9e43f1e84c702e53af8f89e9454e3f5557b392418fb53e772cbe5",
+  "speaking_eyebrow": "33b25e32fb88be7013a3974fd3e99e5070345052bfa9e5651aa31d04d40f4290",
   "speaking_facts": "4e32e80d0c7adc7bdaa426581a4dcf70c9e30075dc3db86863cc4cceb54de012",
-  "speaking_footer": "07c29bc6e66383a2004d265ca0b2b5f649691df534ee10af98da1cf89da5fd52",
-  "speaking_footer_partner": "4ba4b274487f3850b82a22b7f8d51244b3b342bf043e1c310a9c42de7382cbe2",
-  "speaking_last_at": "5c18b70494ecadbaebf503fb5bdc637ce91fdf18814e9070855f1a31641b2880",
+  "speaking_footer": "2885fd237eef00a222d92ce23512360abd97a74ec94ff7d0ab3a365ba05086d9",
+  "speaking_footer_partner": "3705780509c308a48da1a6fa05c8dc07d3594a48377259c97e33a6f6ee65aa17",
+  "speaking_last_at": "88d9b34ac6adc9437f0fa43b838d79cf68558df1b90ca868501ca5efe397f09c",
   "speaking_last_below": "9eb00f767b665ae448dfb71d2fe6257873e5f2259890b5363e1c991b32e7b26e",
-  "speaking_last_near": "fd921981337fb932afd634021dca0008fd34682dd006b41b5cb90d2aefa510cb",
-  "speaking_last_none": "90f35ca1130d349273253baf57a7ee9cfd6c6543265497a81102e0ba56582332",
+  "speaking_last_near": "9557bced161198458ab767ed3afd358f375c7ebade07d1e69c633945f5b100d6",
+  "speaking_last_none": "c68405decf7c8d45d10b30728d381a617900eae4f9b3d935c4abec63e4b477d7",
   "speaking_last_result": "cd15092c3227e32e9f9e10be7b26e0dac4f682b287f02851567c983565ca2248",
-  "speaking_mock_failed": "0fa0552337c21f33974fda757218c188ab6e6a4b81178fb354bc79a822b6aae9",
-  "speaking_mock_ielts": "63714f2f60bc21e878ab9494cc92062ecd99e467a1bebba0dfad2b8c3a0038c3",
-  "speaking_mock_opens": "54e563e77436531402dc30284cbaebdcffd72445605d923ab2f1316483930ec9",
+  "speaking_mock_failed": "b6b84b91ee1ac6e84596076f53d34c1b204994bc7a77a640d1bbd53586e89cb8",
+  "speaking_mock_ielts": "383d76e5ebeb927c47d9667f79dee14395ac8a2cca5feedd702147228b94d733",
+  "speaking_mock_opens": "95253fd0fca965294ceccb797c7d3f0f0ec424ebe9f18e955ab97f8f9222e187",
   "speaking_mock_start": "f104e6da82ab489b6e23b1a3cffe2c569ed0e9b7b5eaef864bcffe0712d2525d",
-  "speaking_mock_toefl": "865cbd174d6ee9e77e4fd530ca4a6f43a765de18e9ed7d03e7c26e66f1960542",
-  "speaking_no_time_day": "e927771f9967248713f39c169d224b1542e38e7d90b9422296553e733bf178d3",
-  "speaking_no_time_month": "38ceb7abb3bd2b6dd22860599fc36137c07cc3dcc39c720b166ad09bd8500207",
-  "speaking_official": "bc16711432b1750386ce8a49b5c64a2197f4fda8cc4cdc1315b66559141fbeb5",
+  "speaking_mock_toefl": "3449867d9fb165545c990ea438d08eac60a14674d502d18937beacc1928f0b44",
+  "speaking_no_time_day": "1ac7e76db39caebcb58e5edc90c414b665b59c07d03dd192ed5c79a5b2d2285b",
+  "speaking_no_time_month": "414e7b6a63a2ec655399da5b21467f6aaea33a811196d70b99963c44f00a9290",
+  "speaking_official": "eaf0230978c9319bb445c497051080ba5df4c62128b5757c27cdf04c6e223304",
   "speaking_official_format": "3b0382df9dd071c3cdc8bc91dcfbdd54df6c7d7b482aa6b6a457b445da0a13e3",
-  "speaking_opens_when_ready": "77d9ae5e13a465057538126db7b19db996a7182e45e593033803a7f010cfc513",
-  "speaking_plus": "59220bf7b431d72654ee5c72bffb8bdd221d14edee02703f23091a3832c68b2c",
+  "speaking_opens_when_ready": "06e1a661804c8e4778a3855ea88ca8cbc7027d58b9c62ad12eded7bec8c72db5",
+  "speaking_plus": "0ee3a0a4fb8cb21b1d49135e5533c0d82e1d228e4f5a1f5453df468df6edff84",
   "speaking_prep": "f95c7b801b17dbcf4661bc481701fbb7e7f938b278f8245223fddd229795a26e",
-  "speaking_prep_shared": "39b1abfbc476784fd8a4d800e907020caaf36dce32245b99316cda55d6af211c",
+  "speaking_prep_shared": "5885c73fd958958901b5cb71f3cad1f5378e1c8f01bcfa1e57b8e2da64d75934",
   "speaking_rated_on": "b1fbb23621ee09a56da814f0edeebd1700bab42b7d6e8c4e63e5e543aca0869c",
-  "speaking_row": "d661adb5f8007e63d3bad04cf45cfafe60b5eea02696dee06defaaed27272bc6",
+  "speaking_row": "3eaaf4ea9b51b85bd6737c2d01805b7017eb2566ce774b31666f1ab566d7b2ad",
   "speaking_section": "8d1999352744f56192c5c3b9576689ca7d2994ce7822d5c559636a026bf9844f",
   "speaking_start_failed": "1c722788a7e72bc577e577c7faf82cb3c122fc6c0741eae4b8414a971c13bf90",
   "speaking_start_task": "ee7ea541c14e49ade4c6536ed8e424891edb264c23018890035877100c3cc937",
   "speaking_tasks": "11af098887a8e2b8b822e5c812733c236264f84ff098af4cc924802a3a8dc35e",
-  "speaking_title": "524f684f58e6b15be0f996f0178d5556e8067b443f6170242e6133d0d5101b0c",
+  "speaking_title": "b4a528d4662676a6416957d889ee5a582240467b3a530e6e1fe7b7c51bc47a20",
   "speaking_writing_mock": "9a313de190942898dabe6b9ab7606db76f0030dac0fae665c27c144f185d3b20",
-  "speaking_writing_mock_line_1": "e4485fea044b376f4d829263aa6038abc55969e62fbf5b30f1b6571f49a3ed92",
-  "speaking_writing_mock_line_2": "78bfbc1218314b3a1bdb033f7affaa008d769e9cffd89ab6f8c48f8dd6323521",
+  "speaking_writing_mock_line_1": "ae32425313900af5c103834af53cbe01972d8d7f8a742cf73f2df63b5fa8623e",
+  "speaking_writing_mock_line_2": "eb9bd4aa486082b2ddf66bb06a8fea1ed99e38095061addc090e918ffe06e29b",
   "speaking_writing_mock_line_3": "7f085c15cc2ac481a1c44ce015209a192b80dd5ab41dbf93c0a0599dbd08836f",
-  "speaking_writing_mock_line_4": "7f8468f2592a15d6527277f53d9ce5bc588460ca21510c6cf3d3f334f0b7b7ad",
-  "speaking_writing_mock_phase": "67cde1d2d7b87ff251f171052f737c5944c10717ace583a97449f91507936980"
+  "speaking_writing_mock_line_4": "463d83cfbaebb11a76dd960810d1de11be767808385b19605e370a49794078fa",
+  "speaking_writing_mock_phase": "429fb3391c3dfa303a11540564d5cf8ef120bbb538fa4d6838285d110229e91f"
 }
 -->
 <resources>
     <!-- Practicing an official language exam's speaking paper (DELE, DELF, Goethe, Cambridge) on calls with an AI in the examiner's place. -->
-    <string name="speaking_title">Sprechübung</string>
-    <string name="speaking_eyebrow">Sprechen im Prüfungsstil</string>
+    <string name="speaking_title">Sprechen üben</string>
+    <string name="speaking_eyebrow">Sprechen wie in der Prüfung</string>
     <!-- The paper's task count and how long its speaking part lasts in the exam, such as "4 tasks · 15 min in the exam". -->
     <plurals name="speaking_facts">
         <item quantity="one">%1$d Aufgabe · %2$s in der Prüfung</item>
         <item quantity="other">%1$d Aufgaben · %2$s in der Prüfung</item>
     </plurals>
-    <string name="speaking_official">%1$s ist eine offizielle Prüfung. Übe die Sprechaufgaben, egal ob du vorhast, sie abzulegen.</string>
+    <string name="speaking_official">%1$s ist eine offizielle Prüfung. Übe die Sprechaufgaben, ob du die Prüfung ablegen möchtest oder nicht.</string>
     <string name="speaking_tasks">Aufgaben</string>
     <!-- The exam page's speaking section, with the paper's title beside it. -->
     <string name="speaking_section">Sprechen</string>
-    <string name="speaking_plus">Sprechübungen gibt es mit Plus: Jede Aufgabe der Prüfung im Gespräch und nach jeder eine Schätzung anhand der offiziellen Kriterien.</string>
-    <string name="speaking_opens_when_ready">Deine Aufgabe öffnet sich, sobald die Karte fertig ist.</string>
-    <string name="speaking_no_time_month">Diesen Monat reicht deine Gesprächszeit für diese Aufgabe nicht aus</string>
-    <string name="speaking_no_time_day">Heute reicht deine Gesprächszeit für diese Aufgabe nicht aus</string>
+    <string name="speaking_plus">Sprechübungen gibt es mit Plus: alle Aufgaben des Prüfungsteils in einem Gespräch und nach jeder Aufgabe eine Einschätzung anhand der offiziellen Kriterien.</string>
+    <string name="speaking_opens_when_ready">Deine Aufgabe öffnet sich, sobald die Aufgabenkarte bereit ist.</string>
+    <string name="speaking_no_time_month">Diesen Monat ist nicht genug Gesprächszeit für diese Aufgabe übrig</string>
+    <string name="speaking_no_time_day">Heute ist nicht genug Gesprächszeit für diese Aufgabe übrig</string>
     <string name="speaking_start_failed">Die Aufgabe konnte nicht gestartet werden. Versuch es gleich noch einmal.</string>
-    <string name="speaking_footer_partner">Eine KI übernimmt die Rolle der prüfenden Person oder der anderen Kandidatin bzw. des anderen Kandidaten. Bei jedem Versuch bekommst du eine neue Karte und anschließend eine Schätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score.</string>
-    <string name="speaking_footer">Eine KI übernimmt die Rolle der prüfenden Person. Bei jedem Versuch bekommst du eine neue Karte und anschließend eine Schätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score.</string>
+    <string name="speaking_footer_partner">Eine KI übernimmt die Rolle der prüfenden Person oder der anderen Person in der Prüfung. Bei jedem Versuch bekommst du eine neue Aufgabenkarte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score.</string>
+    <string name="speaking_footer">Eine KI übernimmt die Rolle der prüfenden Person. Bei jedem Versuch bekommst du eine neue Aufgabenkarte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score.</string>
     <string name="speaking_official_format">Offizielles Format</string>
     <string name="speaking_start_task">Diese Aufgabe starten</string>
     <string name="speaking_last_result">Dein letztes Ergebnis ansehen</string>
-    <string name="speaking_last_none">Letzter Versuch: keine Schätzung</string>
+    <string name="speaking_last_none">Letzter Versuch: keine Einschätzung</string>
     <!-- How many criteria were at the exam's level on the last try, such as "Last try: 3 of 4 at B2". -->
-    <string name="speaking_last_at">Letzter Versuch: %1$s von %2$s am %3$s</string>
-    <string name="speaking_last_near">Letzter Versuch: %1$s von %2$s, ungefähr am %3$s</string>
+    <string name="speaking_last_at">Letzter Versuch: %1$s von %2$s bei %3$s</string>
+    <string name="speaking_last_near">Letzter Versuch: %1$s von %2$s nahe %3$s</string>
     <string name="speaking_last_below">Letzter Versuch: unter %1$s</string>
     <!-- Preparation time shared by several tasks, such as "20 min to prepare tasks 1 and 2". -->
-    <string name="speaking_prep_shared">%1$s, um die Aufgaben %2$s vorzubereiten</string>
+    <string name="speaking_prep_shared">%1$s zur Vorbereitung auf die Aufgaben %2$s</string>
     <string name="speaking_prep">%1$s zur Vorbereitung</string>
     <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
     <string name="speaking_rated_on">Bewertet nach %1$s.</string>
-    <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
-    <string name="speaking_row">%1$s Aufgaben im Gespräch</string>
-    <string name="speaking_mock_ielts">Ein kurzer Sprechtest mit einer prüfenden Person. Danach erhältst du für jedes Kriterium ein geschätztes Band.</string>
-    <string name="speaking_mock_toefl">Wiederhole Sätze und führe anschließend ein kurzes Gespräch mit einer prüfenden Person. Danach erhältst du für jedes Kriterium ein geschätztes Band von 1 bis 6.</string>
+    <!-- Today's row for the paper: the exam, such as "DELE B2 tasks on a call". -->
+    <string name="speaking_row">%1$s Aufgaben in einem Gespräch</string>
+    <string name="speaking_mock_ielts">Eine kurze mündliche Prüfung mit einer prüfenden Person. Danach gibt es für jedes Kriterium eine geschätzte Bandstufe.</string>
+    <string name="speaking_mock_toefl">Wiederhole Sätze und führe dann ein kurzes Gespräch mit einer prüfenden Person. Danach gibt es für jedes Kriterium eine geschätzte Bandstufe von 1 bis 6.</string>
     <string name="speaking_mock_start">Probeprüfung starten</string>
-    <string name="speaking_mock_opens">Deine Probeprüfung öffnet sich, sobald sie fertig ist.</string>
-    <string name="speaking_mock_failed">Die Probeprüfung wurde nicht gestartet. Versuch es gleich noch einmal.</string>
+    <string name="speaking_mock_opens">Deine Probeprüfung öffnet sich, sobald sie bereit ist.</string>
+    <string name="speaking_mock_failed">Die Probeprüfung konnte nicht gestartet werden. Versuch es gleich noch einmal.</string>
     <string name="speaking_writing_mock">Wir erstellen deine Probeprüfung</string>
-    <string name="speaking_writing_mock_phase">Wir erstellen das Skript für die prüfende Person</string>
-    <string name="speaking_writing_mock_line_1">Wir wählen deine prüfende Person aus…</string>
-    <string name="speaking_writing_mock_line_2">Wir erstellen die Fragen für die prüfende Person…</string>
+    <string name="speaking_writing_mock_phase">Wir erstellen den Leitfaden für die prüfende Person</string>
+    <string name="speaking_writing_mock_line_1">Wir wählen die prüfende Person aus…</string>
+    <string name="speaking_writing_mock_line_2">Wir erstellen die Prüfungsfragen…</string>
     <string name="speaking_writing_mock_line_3">Wir stimmen die Teile auf etwa fünf Minuten ab…</string>
-    <string name="speaking_writing_mock_line_4">Wir ergänzen hilfreiche Formulierungen…</string>
+    <string name="speaking_writing_mock_line_4">Wir ergänzen Formulierungen, die dir helfen können…</string>
 </resources>

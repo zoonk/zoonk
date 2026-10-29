@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "answer_tag_correct": "b1c83078b74a9180fddf50be37e172dea26c0b9ea3240e36ebdba53e037335d5",
+  "answer_tag_correct": "6e66c2e78491f0ebcc9590bee58526db0208ce27ebca37bb63ac4ba36bf10055",
   "answer_tag_your_answer": "f21a660d020fdc139f14ef8785f5fcc21501ff4cf40515c6fa157e73de215482",
   "answer_tag_your_guess": "1da3ccf30863913e98ae6bac3aa72a2d1d53028c659ea379eaa74377bd8b5339",
   "belt_black": "b3b0ce9935f967c4851912520d6f98fc56b3632368674fa8bbbd1e3d83aa0a39",
@@ -16,28 +16,28 @@
   "belt_white": "fd145aa314fa6543afb18c900913ee4b68364d0777fc81cd1fc85d0f600efe85",
   "belt_yellow": "cad650ac9deaec8a4d6c37ed40821e69b39cb1811790e0468314fe4534bd3c4c",
   "disclosure_collapsed": "6f9dca9787c560ef2907407e1cd5a0b0a9e3c21ad7925d5ff08322f0ceed91f3",
-  "disclosure_expanded": "013db6d62b926cc6d10009fa4c596f352dbb25b7325be503a5fede5bb42f6c68",
+  "disclosure_expanded": "81486aaf9513609fb46ba4b9542332f99563ba20e2fcea55a5eebbd2c641851c",
   "gate_log_in": "772b65c922e7aa6ef30b7dad741657f19021095b9da76931416bc9da26374101",
   "gate_session_ended_description": "7126f430fbc2e101277c10d15e10148ddc30b150cedddbc52720ac4cce052612",
-  "gate_session_ended_title": "54d41570c0c3a45402f44d85f5f723f64d00b38f2044e9ff15b84ea5850948e1",
-  "gate_sign_in_description": "8f9c693cdafec1093ac063fddcb6e6c8eaad56f88fe1bfa8ed8ca3dd7893b437",
+  "gate_session_ended_title": "7bf59289887daafdce15379e2d4fbbd0e0e3e803ae4767e0dae25161997f93dd",
+  "gate_sign_in_description": "a8503f1421c8dac30e874e9b78c290ae9042b81ec29a56e5c5011131e9448bbc",
   "gate_sign_in_title": "7c683ad5e2f602a68fe51d6dc2be9a35543f63d6e5ab5d265b42d8024278c4fd",
   "gate_start_free": "0fb55a9738941b1c872dc8fc32c0f2131d71fc01365e614b60dae255220abc52",
   "gate_start_goal": "350e973e4121df22e40a43ff87b06c23b574fd5b578b25d15e6ebf55e28d1944",
   "gate_start_goal_description": "e5fa6b5ef700946efd97fabeda2e3bde76808b2199b54424ac66c2c40be3ebe7",
   "gate_start_goal_title": "b2bf60c7d698ff9c259faf93c1beb09c982439ac586b8fd82eb9cbad3df0b0ca",
-  "gate_start_something_new": "1fd8c025fef3409b4a76578cd54eb084658b2798690ae7c0180ed76046806bf7",
+  "gate_start_something_new": "943e4150786364a29871075cf587d8445dd9c16d9ecb74bcff71b8c1e7a29d1a",
   "lesson_summaries_title": "b5240cc2ba409b5352441a2107d143a60d5a0d78e558dddf2b6ae4fb4acbfb3f",
   "lessons_coming_up": "3ec8662f7fdb88920aad8d709b960b094ed0ca6ab59b9e45157a3a63f409dfe8",
-  "lessons_done": "04b3bcd956d129fa1342e39cb6f7afcf957542d0e857653ac505e7772e168f1e",
+  "lessons_done": "c4aa3bb9cb704e61ab19956c20620ce36661cfb9e176620da92ff6518ee12f6c",
   "lessons_done_count": "e51557388da18380715c2ca5b4ede818877c85eb6eec2f53284df7dafb72950e",
   "lessons_position": "544c9bf2ae35579b4b58fd73d82242ae3ee266cb020aea424b1083af7e6d6d45",
   "lessons_title": "0f2a283125c77bf67522eedf5032044d1468ab0b5eda8c6637625c61e93692c2",
   "lessons_up_next": "b57f9b5d70d0fd3b6513dbf5612f11aa6383d0a9239c226842a2503dd542e4cb",
   "list_row_states": "fc9f319c90153a44d507f801420669bee7b7d60b7c2bdc9268536b732f9c3276",
-  "load_failed_description": "067b3a78163c415e1a7d7545f117486e00e95cb793574ddb2c2b63b57e1ff2ca",
+  "load_failed_description": "bba9a8300e512650a7f0b15e74528895dcb21ba7bc2bf2c65eb9b4429ef80b02",
   "load_failed_title": "62ff8a0e058fc2bd67435cdbf8b616ec6dd56da2d6ab8b9a62b334a15b9483c0",
-  "load_failed_try_again": "001fb66e6dbecd7aa9457e150fe4e1194434571b596794b64efab6eb7e473456",
+  "load_failed_try_again": "e0fbb12306ca8e296e4a29357180b3531c82eae34750a2fe74a5348814650ea5",
   "navigation_back": "afa907f7f0a6a5cdca735e48e8ec9a6199bb04e2989a6c03dbcce0166e9b8ba4",
   "navigation_buddy": "7af21930a62dbc0e8c578fc5848d245c71aa80842190d4c2de35ff5e7696cf8d",
   "navigation_exam": "543b46265c4aa2ce2e4e9812eb9eac18184e20b9d6563239859f55bb1651faee",
@@ -52,13 +52,13 @@
   "not_found_description": "cb36d5aafc1b8ea23cf1a615c07e0facc6e302c94816df48671f05524e349b51",
   "not_found_go_home": "8991f7934124c7dd48c8301ecb5bba9e6185dacc1a64c0d3e58429ef7f6e95d9",
   "not_found_title": "54cc56f3bf2ff7386221cd81bef2df110ff503679d91f76d56fa9529d6f45443",
-  "other_time": "63dacb77e56add4d4a0e4b0be534183791d768fda0b1b20a0b0eac9decb9e792",
+  "other_time": "583a56d7582a9f9cb300ff3de659b872a3a06ac33aca1737b57a85b6b06acb9d",
   "suggestion_save_failed": "6cc7e9104ccda4f7739cb892007a5c0a24504d50746bdc0b28b1d89d3725eee2",
   "suggestion_view": "87e0754a658b539b073255533eaad7665d04cf81e81cefabfde2ef18471f35a7",
   "task_leave": "35cab1a652e1aed3abba5390d6e524cfee544775b6c5e81e98651f5c04fac094",
-  "test_out_skip_chapter": "2929e5cf2df62ed033b789fbe149672658a7ec323e204c42e6fdcce82c943665",
-  "test_out_skip_unit": "034f35415778bc76ba4053818240e809050ecb174024a325d9ff051919acf82d",
-  "test_out_title": "3c2221f1836811538f9a4e2d695ccbbe7ac03c0b0af452687ab5c541ba7baf66"
+  "test_out_skip_chapter": "8b105d968f1ecdec8579c8dbe64f1815e26c4ba2faea2a5760551bc9d67bdbd4",
+  "test_out_skip_unit": "7b6a099897a466ae16edfd81a681e30aa4d08d10c7bb1dee232cac5047a9bf21",
+  "test_out_title": "3c47a5b1f7daaa8b961f078722d272df8ed58b4d7b937eada73a21242f637eae"
 }
 -->
 <resources>
@@ -75,12 +75,12 @@
     <string name="navigation_user_menu">Menú de usuario</string>
     <string name="task_leave">Salir</string>
     <string name="gate_sign_in_title">Inicia sesión para continuar</string>
-    <string name="gate_sign_in_description">Inicia sesión para continuar donde lo dejaste o empezar gratis.</string>
-    <string name="gate_session_ended_title">Tu sesión ha caducado</string>
+    <string name="gate_sign_in_description">Inicia sesión para continuar donde lo dejaste o empieza gratis.</string>
+    <string name="gate_session_ended_title">Tu sesión ha terminado</string>
     <string name="gate_session_ended_description">Inicia sesión para retomar tu plan.</string>
     <string name="gate_log_in">Iniciar sesión</string>
     <string name="gate_start_free">Empezar gratis</string>
-    <string name="gate_start_something_new">Empezar algo nuevo</string>
+    <string name="gate_start_something_new">Empieza algo nuevo</string>
     <string name="gate_start_goal_title">Empieza con un objetivo</string>
     <string name="gate_start_goal_description">Cuéntanos qué quieres aprender y planificaremos cada día hasta que lo consigas.</string>
     <string name="gate_start_goal">Empezar un objetivo</string>
@@ -95,17 +95,17 @@
     <string name="belt_gray">Cinturón gris</string>
     <string name="belt_black">Cinturón negro</string>
     <string name="belt_level">%1$s, nivel %2$s</string>
-    <string name="answer_tag_correct">Correcta</string>
+    <string name="answer_tag_correct">Correcto</string>
     <string name="answer_tag_your_answer">Tu respuesta</string>
     <string name="answer_tag_your_guess">Tu suposición</string>
     <string name="load_failed_title">No se ha cargado esta página</string>
-    <string name="load_failed_description">Puede que haya un problema con tu conexión o con la página. Normalmente, volver a intentarlo lo soluciona.</string>
-    <string name="load_failed_try_again">Volver a intentarlo</string>
+    <string name="load_failed_description">Puede deberse a tu conexión o a un problema por nuestra parte. Normalmente se soluciona al intentarlo de nuevo.</string>
+    <string name="load_failed_try_again">Intentar de nuevo</string>
     <string name="suggestion_view">Ver</string>
     <string name="suggestion_save_failed">No se ha guardado. Inténtalo de nuevo.</string>
     <!-- Under the daily time chips; opens a menu of every other daily study time. -->
-    <string name="other_time">Otro tiempo…</string>
-    <string name="disclosure_expanded">Ampliado</string>
+    <string name="other_time">Otro momento…</string>
+    <string name="disclosure_expanded">Desplegado</string>
     <string name="disclosure_collapsed">Contraído</string>
     <string name="lessons_title">Lecciones</string>
     <!-- Lessons done of the total: "2 of 6". -->
@@ -113,14 +113,14 @@
     <!-- A lesson's number in its list: "3." -->
     <string name="lessons_position">%1$s.</string>
     <!-- TalkBack names each lesson's mark. Done: finished. Up next: the one lesson to do now. Coming up: the lessons after it, for later. The three must read as clearly different states. -->
-    <string name="lessons_done">Hecho</string>
+    <string name="lessons_done">Completada</string>
     <string name="lessons_up_next">A continuación</string>
     <string name="lessons_coming_up">Próximamente</string>
     <!-- Heads the key ideas of each lesson in a chapter's or unit's summary. -->
     <string name="lesson_summaries_title">Resúmenes</string>
-    <string name="test_out_title">¿Ya te lo sabes?</string>
-    <string name="test_out_skip_chapter">Haz la prueba y omite el capítulo</string>
-    <string name="test_out_skip_unit">Haz la prueba y omite la unidad</string>
+    <string name="test_out_title">¿Ya sabes esto?</string>
+    <string name="test_out_skip_chapter">Haz la prueba y salta el capítulo</string>
+    <string name="test_out_skip_unit">Haz la prueba y salta la unidad</string>
     <string name="not_found_title">No hemos encontrado esta página</string>
     <string name="not_found_description">Puede que el enlace sea antiguo o esté mal escrito.</string>
     <string name="not_found_go_home">Ir a la página de inicio</string>
