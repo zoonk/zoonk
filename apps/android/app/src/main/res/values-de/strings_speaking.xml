@@ -71,7 +71,7 @@
     <string name="speaking_prep">%1$s zur Vorbereitung</string>
     <!-- The criteria the exam rates, listed, such as "Rated on fluency, vocabulary and grammar." -->
     <string name="speaking_rated_on">Bewertet nach %1$s.</string>
-    <!-- Today's row for the paper: the exam, such as "DELE B2 tasks on a call". -->
+    <!-- A row into the speaking paper's practice: the exam and level, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s Aufgaben im Gespräch</string>
     <string name="speaking_mock_ielts">Ein kurzer Sprechtest mit einer prüfenden Person. Danach erhältst du für jedes Kriterium ein geschätztes Band.</string>
     <string name="speaking_mock_toefl">Wiederhole Sätze und führe anschließend ein kurzes Gespräch mit einer prüfenden Person. Danach erhältst du für jedes Kriterium ein geschätztes Band von 1 bis 6.</string>

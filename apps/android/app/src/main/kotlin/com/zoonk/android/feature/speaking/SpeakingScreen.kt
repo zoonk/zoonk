@@ -83,13 +83,15 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.ListRow
+import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
-import com.zoonk.api.models.LanguageTodaySpeaking
 import com.zoonk.api.models.SpeakingPaper
 import com.zoonk.api.models.SpeakingPaperTask
 import kotlinx.coroutines.launch
@@ -489,18 +491,30 @@ private fun TaskRow(
     }
 }
 
-/** Main's Today row for the paper ("Practice anytime"), for Today to show. */
+/** Main's row into the exam's speaking paper, whose [title] names the exam and level ("DELE B2"). */
 @Composable
 fun SpeakingPracticeRow(
-    entry: LanguageTodaySpeaking,
+    title: String,
+    plusRequired: Boolean,
     onOpen: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    ListItem(
-        headlineContent = { Text(stringResource(R.string.speaking_eyebrow)) },
-        supportingContent = { Text(stringResource(R.string.speaking_row, entry.title)) },
-        leadingContent = { KindDot(LearnKind.Conversation) },
-        trailingContent = if (entry.access == LanguageTodaySpeaking.Access.PLUS_REQUIRED) ({ PlusMark() }) else null,
-        modifier = modifier.clickable(role = Role.Button, onClick = onOpen),
-    )
+    ListRow(
+        modifier = modifier,
+        onClick = onOpen,
+        end = {
+            if (plusRequired) PlusMark()
+            ListRowChevron()
+        },
+    ) {
+        ListRowLeading { KindDot(LearnKind.Conversation) }
+        Column(Modifier.weight(1f)) {
+            Text(stringResource(R.string.speaking_eyebrow), style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+            Text(
+                stringResource(R.string.speaking_row, title),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+    }
 }

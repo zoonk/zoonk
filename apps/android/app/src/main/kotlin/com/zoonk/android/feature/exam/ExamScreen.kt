@@ -238,7 +238,14 @@ private fun LazyListScope.examSections(
         }
     } else if (speakingMock != null) {
         item(key = "speaking", contentType = "speaking") {
-            SpeakingMockCard(speakingMock, exam.goalId, exam.speakingMockPaused, start = app.conversations::start, open = navigator::open)
+            SpeakingMockCard(
+                speakingMock,
+                exam.goalId,
+                exam.speakingMockPaused,
+                start = app.conversations::start,
+                open = navigator::open,
+                from = FROM_EXAM,
+            )
         }
     }
 }

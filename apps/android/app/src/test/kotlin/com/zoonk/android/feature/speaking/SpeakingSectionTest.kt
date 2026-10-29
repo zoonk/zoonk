@@ -62,7 +62,16 @@ class SpeakingSectionTest {
     @Test
     fun theMockCardStartsAMockFromTheExam() {
         compose.setContent {
-            ZoonkTheme { SpeakingMockCard(SpeakingMockExam.IELTS, goal, paused = false, start = start, open = { opened += it }) }
+            ZoonkTheme {
+                SpeakingMockCard(
+                    SpeakingMockExam.IELTS,
+                    goal,
+                    paused = false,
+                    start = start,
+                    open = { opened += it },
+                    from = "exam",
+                )
+            }
         }
 
         compose.onNodeWithText("IELTS speaking mock").assertExists()
