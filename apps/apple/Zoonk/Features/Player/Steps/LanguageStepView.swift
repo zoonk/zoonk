@@ -284,34 +284,49 @@ private struct FillBlankView: View {
       Text("Word bank", tableName: "Player", comment: "The words to build an answer from"))
   }
 
+  @ViewBuilder
   private func blank(_ index: Int) -> some View {
     let word = blanks[index]
-    let isRight = context.result.map { _ in
-      (exercise.content.answers ?? []).indices.contains(index)
-        && exercise.content.answers?[index].lowercased() == word.lowercased()
-    }
 
-    return Button {
-      var answers = blanks
-      answers[index] = ""
-      context.select(answers.allSatisfy(\.isEmpty) ? nil : .fillBlank(userAnswers: answers))
-    } label: {
-      Text(word.isEmpty ? "      " : word)
-        .font(.title3.weight(.medium))
-        .padding(.horizontal, 6)
-        .overlay(alignment: .bottom) {
-          Rectangle().frame(height: 2).foregroundStyle(
-            isRight.map { $0 ? Color.success : .destructive } ?? .secondary)
-        }
+    if context.result != nil {
+      let isRight =
+        (exercise.content.answers ?? []).indices.contains(index)
+        && exercise.content.answers?[index].lowercased() == word.lowercased()
+
+      blankWord(word, line: isRight ? .success : .destructive)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(
+          Text(
+            "Blank \(index + 1): \(word)", tableName: "Player",
+            comment: "A checked blank in a sentence")
+        )
+        .accessibilityValue(CheckedWord.verdict(isRight: isRight))
+    } else {
+      Button {
+        var answers = blanks
+        answers[index] = ""
+        context.select(answers.allSatisfy(\.isEmpty) ? nil : .fillBlank(userAnswers: answers))
+      } label: {
+        blankWord(word, line: .secondary)
+      }
+      .buttonStyle(.plain)
+      .disabled(context.isLocked || word.isEmpty)
+      .accessibilityLabel(
+        word.isEmpty
+          ? Text("Blank \(index + 1)", tableName: "Player", comment: "An empty blank in a sentence")
+          : Text(
+            "Blank \(index + 1): \(word). Tap to remove.", tableName: "Player",
+            comment: "A filled blank in a sentence"))
     }
-    .buttonStyle(.plain)
-    .disabled(context.isLocked || word.isEmpty)
-    .accessibilityLabel(
-      word.isEmpty
-        ? Text("Blank \(index + 1)", tableName: "Player", comment: "An empty blank in a sentence")
-        : Text(
-          "Blank \(index + 1): \(word). Tap to remove.", tableName: "Player",
-          comment: "A filled blank in a sentence"))
+  }
+
+  private func blankWord(_ word: String, line: Color) -> some View {
+    Text(word.isEmpty ? "      " : word)
+      .font(.title3.weight(.medium))
+      .padding(.horizontal, 6)
+      .overlay(alignment: .bottom) {
+        Rectangle().frame(height: 2).foregroundStyle(line)
+      }
   }
 
   private func fill(_ word: String) {
@@ -386,18 +401,34 @@ private struct ArrangeWordsView: View {
     }
   }
 
+  private var marks: [Bool]? {
+    guard let result = context.result, let target = LessonGrading.arrangedTarget(exercise) else {
+      return nil
+    }
+
+    return LessonGrading.arrangedWordMarks(
+      arranged.map { exercise.wordBankOptions[$0].word }, target: target,
+      isCorrect: result.isCorrect)
+  }
+
   @ViewBuilder
   private var turn: some View {
     FlowLayout(spacing: 8) {
-      ForEach(arranged, id: \.self) { index in
-        Button {
-          set(arranged.filter { $0 != index })
-        } label: {
-          Text(exercise.wordBankOptions[index].word)
+      ForEach(Array(arranged.enumerated()), id: \.element) { position, index in
+        let word = exercise.wordBankOptions[index].word
+
+        if let marks {
+          CheckedWord(word: word, isRight: marks[position])
+        } else {
+          Button {
+            set(arranged.filter { $0 != index })
+          } label: {
+            Text(word)
+          }
+          .buttonStyle(.bordered)
+          .tint(.primary)
+          .disabled(context.isLocked)
         }
-        .buttonStyle(.bordered)
-        .tint(context.result.map { $0.isCorrect ? .success : .destructive } ?? .primary)
-        .disabled(context.isLocked)
       }
     }
     .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
@@ -429,6 +460,33 @@ private struct ArrangeWordsView: View {
       context.select(
         isListening ? .listening(arrangedWords: words) : .reading(arrangedWords: words))
     }
+  }
+}
+
+/// Not a disabled button, which would gray out the learner's checked answer.
+private struct CheckedWord: View {
+  let word: String
+  let isRight: Bool
+
+  var body: some View {
+    let tone: Color = isRight ? .success : .destructive
+
+    Text(word)
+      .padding(.horizontal, 12)
+      .padding(.vertical, 6)
+      .background(tone.opacity(0.15), in: .capsule)
+      .overlay {
+        Capsule().strokeBorder(tone, lineWidth: 1.5)
+      }
+      .accessibilityValue(Self.verdict(isRight: isRight))
+  }
+
+  static func verdict(isRight: Bool) -> Text {
+    isRight
+      ? Text(
+        "Correct", tableName: "Player", comment: "VoiceOver: a checked word in its right place")
+      : Text(
+        "Incorrect", tableName: "Player", comment: "VoiceOver: a checked word in a wrong place")
   }
 }
 

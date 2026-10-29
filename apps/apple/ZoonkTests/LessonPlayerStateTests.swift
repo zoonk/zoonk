@@ -273,6 +273,17 @@ final class LessonGradingTests: XCTestCase {
     XCTAssertEqual(wrong?.isCorrect, false)
   }
 
+  func testEachArrangedWordIsMarkedAgainstItsPlaceInTheSentence() {
+    XCTAssertEqual(
+      LessonGrading.arrangedWordMarks(
+        ["Marie", "suis", "je", "ici"], target: "Je suis Marie.", isCorrect: false),
+      [false, true, false, false])
+    XCTAssertEqual(
+      LessonGrading.arrangedWordMarks(
+        ["je", "suis", "Marie"], target: "Je suis Marie.", isCorrect: true),
+      [true, true, true])
+  }
+
   func testFillBlankShowsTheWholeSentence() throws {
     let grade = LessonGrading.grade(.fillBlank(userAnswers: ["es"]), step: try step(fillBlank))
 

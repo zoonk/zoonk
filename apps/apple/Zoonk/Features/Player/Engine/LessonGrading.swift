@@ -204,18 +204,12 @@ enum LessonGrading {
         answerText: userAnswers.joined(separator: ", "),
         correctAnswer: fillBlankSentence(exercise.content.template ?? "", answers: answers),
         feedback: exercise.content.feedback)
-    case (.reading, .reading(let words)):
-      guard let sentence = exercise.sentence else {
+    case (.reading, .reading(let words)), (.listening, .listening(let words)):
+      guard let target = arrangedTarget(exercise) else {
         return nil
       }
 
-      return gradeArrangedWords(words, target: sentence.sentence, feedback: sentence.explanation)
-    case (.listening, .listening(let words)):
-      guard let sentence = exercise.sentence else {
-        return nil
-      }
-
-      return gradeArrangedWords(words, target: sentence.translation, feedback: sentence.explanation)
+      return gradeArrangedWords(words, target: target, feedback: exercise.sentence?.explanation)
     case (.matchColumns, .matchColumns(let pairs, let mistakes)):
       let expected = (exercise.content.pairs ?? []).map { pairKey($0.left, $0.right) }.sorted()
       let given = pairs.map { pairKey($0.left, $0.right) }.sorted()
@@ -251,6 +245,26 @@ enum LessonGrading {
       answerText: words.joined(separator: " "),
       correctAnswer: expected.joined(separator: " "),
       feedback: feedback)
+  }
+
+  /// A reading builds the sentence it translates; a listening builds the translation of what it plays.
+  static func arrangedTarget(_ exercise: LanguageExercise) -> String? {
+    guard let sentence = exercise.sentence else {
+      return nil
+    }
+
+    return exercise.kind == .listening ? sentence.translation : sentence.sentence
+  }
+
+  /// Whether each arranged word sits where the sentence has it, as main marks them after a check.
+  static func arrangedWordMarks(_ words: [String], target: String, isCorrect: Bool) -> [Bool] {
+    let expected = segmentWords(target)
+
+    return words.indices.map { index in
+      isCorrect
+        || (expected.indices.contains(index)
+          && arrangementKey([words[index]], "") == arrangementKey([expected[index]], ""))
+    }
   }
 
   /// Punctuation and case never decide an arranged answer. Text without spaces (Japanese,
