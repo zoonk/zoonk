@@ -740,35 +740,6 @@
         }
       }
     },
-    "Start with a goal" : {
-      "comment" : "Title shown instead of a page that needs a goal, to a learner without one",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mit einem Ziel starten"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Empieza con un objetivo"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Commence par un objectif"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comece com uma meta"
-          }
-        }
-      }
-    },
     "Statistics" : {
       "comment" : "Study place with the learner's statistics",
       "localizations" : {

@@ -85,29 +85,21 @@ struct ShellGate<Content: View>: View {
     }
   }
 
+  /// Main's page without a goal: what the page does, and the goal's box right there.
   private var startGoalGate: some View {
-    ContentUnavailableView {
-      Label {
+    List {
+      Section {
         Text(
-          "Start with a goal", tableName: "Navigation",
-          comment: "Title shown instead of a page that needs a goal, to a learner without one")
-      } icon: {
-        Image(systemName: "target")
+          "Tell us what you want to learn, and we'll plan every day until you get there.",
+          tableName: "Navigation",
+          comment: "Explains what starting a goal does, on a page that needs one"
+        )
+        .foregroundStyle(.secondary)
       }
-    } description: {
-      Text(
-        "Tell us what you want to learn, and we'll plan every day until you get there.",
-        tableName: "Navigation",
-        comment: "Explains what starting a goal does, on a page that needs one")
-    } actions: {
-      Button {
-        router.showRoot(of: .today)
-      } label: {
-        Text(
-          "Start a goal", tableName: "Navigation",
-          comment: "Opens Today, where the learner starts a goal")
-      }
-      .buttonStyle(.glassProminent)
+      .listRowBackground(Color.clear)
+      .listRowInsets(EdgeInsets())
+
+      GoalStartEntry(isBoxOnly: true)
     }
   }
 }
