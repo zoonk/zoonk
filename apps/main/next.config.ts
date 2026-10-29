@@ -1,3 +1,4 @@
+import { availableParallelism } from "node:os";
 import createMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs/config";
 import { getPublicAppSecurityHeaders } from "@zoonk/core/security/headers";
@@ -48,6 +49,7 @@ const nextConfig: NextConfig = {
   distDir: isE2E ? ".next-e2e" : ".next",
   experimental: {
     authInterrupts: true,
+    cpus: availableParallelism(),
     exposeTestingApiInProductionBuild: isE2E,
     // The root layout sits under `[lang]`, so URLs no route matches need `app/global-not-found.tsx`.
     globalNotFound: true,
