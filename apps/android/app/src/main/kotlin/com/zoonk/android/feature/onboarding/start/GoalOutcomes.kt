@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,6 +40,7 @@ import com.zoonk.android.feature.onboarding.GoalError
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalErrorMessage
 import com.zoonk.android.feature.onboarding.goalLimitMessage
+import com.zoonk.android.feature.subscription.PlusNotice
 
 @Composable
 internal fun OnboardingHeading(
@@ -107,6 +110,7 @@ internal fun GoalErrorAlert(
     error: GoalError?,
     onCreateAccount: () -> Unit,
     onOpenPlan: () -> Unit,
+    onSeePlus: () -> Unit,
 ) {
     error ?: return
     val alert = Modifier.semantics { liveRegion = LiveRegionMode.Polite }
@@ -114,7 +118,7 @@ internal fun GoalErrorAlert(
 
     when {
         limit != null && limit.isPlusLimit -> {
-            GoalLimitNotice(limit, upFront = false, onOpenPlan = onOpenPlan, modifier = alert)
+            GoalLimitNotice(limit, upFront = false, onOpenPlan = onOpenPlan, onSeePlus = onSeePlus, modifier = alert)
         }
 
         error.needsAccount -> {
@@ -141,13 +145,14 @@ internal fun ColumnScope.GoalFooter(
     error: GoalError?,
     onCreateAccount: () -> Unit,
     onOpenPlan: () -> Unit,
+    onSeePlus: () -> Unit,
     actions: @Composable ColumnScope.() -> Unit,
 ) {
     if (error?.needsAccount == true) {
-        OnboardingActions { GoalErrorAlert(error, onCreateAccount, onOpenPlan) }
+        OnboardingActions { GoalErrorAlert(error, onCreateAccount, onOpenPlan, onSeePlus) }
         return
     }
-    GoalErrorAlert(error, onCreateAccount, onOpenPlan)
+    GoalErrorAlert(error, onCreateAccount, onOpenPlan, onSeePlus)
     OnboardingActions(actions)
 }
 
@@ -157,35 +162,29 @@ internal fun GoalLimitNotice(
     reason: GoalLimitReason,
     upFront: Boolean,
     onOpenPlan: () -> Unit,
+    onSeePlus: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     if (!reason.isPlusLimit) return
 
-    OutlinedCard(modifier = modifier.fillMaxWidth()) {
-        Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(painterResource(R.drawable.ic_lock), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                if (reason == GoalLimitReason.OneActiveGoal) {
-                    Text(stringResource(R.string.onboarding_plus_more_goals), style = MaterialTheme.typography.titleSmall)
-                }
-                Text(
-                    text =
-                        if (upFront && reason == GoalLimitReason.OneActiveGoal) {
-                            stringResource(R.string.onboarding_plus_more_goals_up_front)
-                        } else {
-                            goalLimitMessage(reason)
-                        },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                if (reason == GoalLimitReason.OneActiveGoal) {
-                    FilledTonalButton(onClick = onOpenPlan, modifier = Modifier.padding(top = 8.dp)) {
-                        Text(stringResource(R.string.onboarding_go_to_plan))
-                    }
-                }
-            }
-        }
+    if (reason != GoalLimitReason.OneActiveGoal) {
+        PlusNotice(onSeePlus = onSeePlus, modifier = modifier, description = goalLimitMessage(reason))
+        return
     }
+    PlusNotice(
+        onSeePlus = onSeePlus,
+        modifier = modifier,
+        title = stringResource(R.string.onboarding_plus_more_goals),
+        description = if (upFront) stringResource(R.string.onboarding_plus_more_goals_up_front) else goalLimitMessage(reason),
+        action = {
+            OutlinedButton(
+                onClick = onOpenPlan,
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
+            ) {
+                Text(stringResource(R.string.onboarding_go_to_plan))
+            }
+        },
+    )
 }
 
 /** In place of confirming, when Plus is what lifts the limit. */
@@ -222,11 +221,12 @@ internal fun ColumnScope.ExplainGoal(
     onStart: () -> Unit,
     onCreateAccount: () -> Unit,
     onOpenPlan: () -> Unit,
+    onSeePlus: () -> Unit,
 ) {
     TypedGoal(goal)
     OutcomeIcon(R.drawable.ic_lightbulb)
     OnboardingHeading(question, stringResource(R.string.onboarding_explain_description))
-    GoalFooter(error, onCreateAccount, onOpenPlan) {
+    GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
         Button(onClick = onStart, enabled = !isStarting, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(if (isStarting) R.string.onboarding_opening_explanation else R.string.onboarding_explain_it))
         }
@@ -271,6 +271,7 @@ internal fun ColumnScope.InstrumentGoal(
     onJoinWaitlist: () -> Unit,
     onCreateAccount: () -> Unit,
     onOpenPlan: () -> Unit,
+    onSeePlus: () -> Unit,
 ) {
     TypedGoal(goal)
     OutcomeIcon(R.drawable.ic_music_note)
@@ -319,7 +320,7 @@ internal fun ColumnScope.InstrumentGoal(
         null -> {}
     }
 
-    GoalFooter(error, onCreateAccount, onOpenPlan) {
+    GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
         Button(onClick = onStartMusicianship, enabled = !isStarting, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(if (isStarting) R.string.onboarding_saving_goal else R.string.onboarding_start_musicianship))
         }

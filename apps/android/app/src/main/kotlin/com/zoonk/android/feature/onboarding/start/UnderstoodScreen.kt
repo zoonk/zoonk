@@ -144,7 +144,7 @@ internal fun ColumnScope.UnderstoodScreen(
     if (plusLimit != null) {
         GoalLimitWall(plusLimit, onSeePlus, onOpenPlan)
     } else {
-        GoalFooter(error, onCreateAccount, onOpenPlan) {
+        GoalFooter(error, onCreateAccount, onOpenPlan, onSeePlus) {
             Button(onClick = onConfirm, enabled = !isCreating && !rewriting, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(if (isCreating) R.string.onboarding_saving_goal else R.string.onboarding_looks_right))
             }

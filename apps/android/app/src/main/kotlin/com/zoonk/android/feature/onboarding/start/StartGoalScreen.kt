@@ -228,7 +228,7 @@ private fun ColumnScope.Entry(
         stringResource(if (route.planId != null) R.string.onboarding_start_description_shared else R.string.onboarding_start_description),
     )
 
-    upFront?.let { GoalLimitNotice(it, upFront = true, onOpenPlan = actions.openPlan) }
+    upFront?.let { GoalLimitNotice(it, upFront = true, onOpenPlan = actions.openPlan, onSeePlus = actions.seePlus) }
 
     GoalBox(
         value = flow.words,
@@ -255,7 +255,7 @@ private fun ColumnScope.Entry(
         )
     }
 
-    GoalErrorAlert(vm.entryError, actions.createAccount, actions.openPlan)
+    GoalErrorAlert(vm.entryError, actions.createAccount, actions.openPlan, actions.seePlus)
 
     GoalExamples(examples = rememberGoalExamples(), onPick = submit)
 }
@@ -351,7 +351,7 @@ private fun ColumnScope.DraftContent(
                 limit != null -> {
                     TypedGoal(draft.prompt)
                     OnboardingHeading(stringResource(R.string.onboarding_understanding_title))
-                    GoalErrorAlert(limit, actions.createAccount, actions.openPlan)
+                    GoalErrorAlert(limit, actions.createAccount, actions.openPlan, actions.seePlus)
                 }
 
                 vm.readFailed -> {
@@ -418,6 +418,7 @@ private fun ColumnScope.DraftContent(
                 onStart = { vm.create(explanationInput(draft, understanding.value.question, language), actions.toExplanation) },
                 onCreateAccount = actions.createAccount,
                 onOpenPlan = actions.openPlan,
+                onSeePlus = actions.seePlus,
             )
         }
 
@@ -436,6 +437,7 @@ private fun ColumnScope.DraftContent(
                 onJoinWaitlist = { vm.joinWaitlist(instrument, language) },
                 onCreateAccount = actions.createAccount,
                 onOpenPlan = actions.openPlan,
+                onSeePlus = actions.seePlus,
             )
         }
 

@@ -115,7 +115,12 @@ fun VisitorWelcome(
                 isSubmitting = isSending,
             )
 
-            GoalErrorAlert(error, onCreateAccount = { navigator.open(AppRoute.Login) }, onOpenPlan = { navigator.open(AppRoute.Plan()) })
+            GoalErrorAlert(
+                error,
+                onCreateAccount = { navigator.open(AppRoute.Login) },
+                onOpenPlan = { navigator.open(AppRoute.Plan()) },
+                onSeePlus = { navigator.open(AppRoute.Subscription) },
+            )
 
             GoalExamples(examples = rememberGoalExamples(), onPick = onSend)
 
