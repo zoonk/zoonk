@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_geometry_badge_build_it": "abde8a737f3f87f24f604180d26f4097f3d52c902a40dc19ad5fec5d7326970f",
   "activities_geometry_badge_drag_corner": "1daefff7afd13c81ebae109d2bc9a3b403dd0739a15a9bcc4d155dab617b4299",
   "activities_geometry_badge_turn_it": "50f33eb34e5c1106e29d186f7ec2dad4671095bd8e6d30135bd14c566f4ae61e",
   "activities_geometry_board_angles": "836d762c749f411113fd5dd2ba5cd93525441b7914a69636fb5f4c9855fb0dbc",
@@ -25,6 +26,48 @@
   "activities_geometry_board_squares_total": "fcf1656a276e0e5aa954463dbe02514c875cc9c69e5c1bec3311129df7518a1c",
   "activities_geometry_board_straight_line": "bf7d5e7bec857be7405795648f3fcafd1b86681bf1b937e5c31c32434d44cf74",
   "activities_geometry_cos": "ea5e3cc6161115338c5c96b34129334664da60ada5961b672a47794d44b26288",
+  "activities_geometry_element_boron": "ab570e517aa811557074d14774cca63313aa67f380b44b4673a20ef886358282",
+  "activities_geometry_element_bromine": "5bfb352ee7db03d33fb3e291c5d10538b2c7b43c85b03b3478495b144bfb2d9d",
+  "activities_geometry_element_carbon": "2d8936aa07d4e9c24edc88be29d436fb3babf98a314ae0d183a496f06076188b",
+  "activities_geometry_element_chlorine": "f5dfb78c2a1e3c016894f2745c54166b83c8bffe7cc65362409614558f92634d",
+  "activities_geometry_element_fluorine": "e5f71805ecd86bb68dc860438d831a39e5e78642edeaaa8a5a1de19c6bbea38d",
+  "activities_geometry_element_hydrogen": "a89c53748a8ae5bf545d53587530b8a9b82db5ac8d82f1d2a17cc96b8bd3b806",
+  "activities_geometry_element_iodine": "ba7ae1e6d943334a5f7a06394ff15d23a59bda036d7355ffd772bc65cb2649a1",
+  "activities_geometry_element_nitrogen": "2903f2d321d687eb40553fdcf44b012910d14f377e0d8dbf6d15dfe14ca32d20",
+  "activities_geometry_element_oxygen": "86fd7fb10b34642b3af2a8f6ccc072ddb6a5525b79929489ef5bebe44a0b19eb",
+  "activities_geometry_element_phosphorus": "a03a619d61a349b11133b9f0d5a8ab2575099f9c647485fcb6cf19e79e98864b",
+  "activities_geometry_element_silicon": "2769a95756895e9485780321c29c8e2cb41703f6042575e23d486e85c841eeef",
+  "activities_geometry_element_sulfur": "841fd5d46187bb56fc9c356dfe3266460ba53ee286aafa18f919c8f74f58d051",
+  "activities_geometry_molecule_add": "710407d98dbe7cba0d9c225d03268af496560f18c736c1a4e28e8a8d0f2c6c28",
+  "activities_geometry_molecule_add_bonded": "7d21514a5ff0e3229848f9dd49123b4df969e0dd7d9fd0f2eea3cd9bdf8f7c5c",
+  "activities_geometry_molecule_added": "2f5e02e1e4d6b0a918e12b55647da914d7e98dda274f1dffa777d3ffede7d1f9",
+  "activities_geometry_molecule_added_bonded": "78a73bd9b701500a691a77eee2394971351f9a75ead4c9ede7a88173138fa515",
+  "activities_geometry_molecule_atom": "1291863c4f5a867d28ea67909ff17c891898ea6138396e380c75eff3b5861edb",
+  "activities_geometry_molecule_atom_bonds": "31ecf897255d69796cfe9dfc0ab82c8a483b36e80920e86386ade37bd1246e61",
+  "activities_geometry_molecule_bonds": "50a78425f1e4ccec476df3280c6a01a55616b37746a459b36ecab1990c471a11",
+  "activities_geometry_molecule_bonds_in_all": "787edfdbc593c4342b73619621941aaf630fa5209bb6e48f8a92168c1c932f43",
+  "activities_geometry_molecule_build": "ce5c07dc1887a58b65fab64d3aae0dbb6a6f97e7071299fe5e911eb313ed4620",
+  "activities_geometry_molecule_built": "266efa534027fa64a9884ffe4131554c0977c0dc0b224a734a91090e3aec8dda",
+  "activities_geometry_molecule_double_bond": "df9cf9d8338a5d292f8a78ae299d118e0ea8d40f59f4dedf3c0c0ac1e6fbf2ce",
+  "activities_geometry_molecule_example": "15301e0a3cc6419bce2a21818faf132627c5000c1b8ef4cb01c875003c1b6db0",
+  "activities_geometry_molecule_full": "de1ea01336ed37db2b0c06e0249511e7fbd47d7aca1e1a8351e08a46a5a92118",
+  "activities_geometry_molecule_loose": "8a9b48a3d52b463fe44d4130995a69df9253ad000312e30fcd5650f886b8bd80",
+  "activities_geometry_molecule_no_bond": "29fdaf5ef4c7f01a1aaf0d4b3c9c859c8deaf02787a5aefbd86c7b8dc88d5d84",
+  "activities_geometry_molecule_none_selected": "14924a54dc45f3f3827535f4637567af950805bac2d3ead02c607065403c53e8",
+  "activities_geometry_molecule_open": "a625f1359608d78327078fe3d3883be6ccb4d56107458451a03719031952ea71",
+  "activities_geometry_molecule_over": "5c306ac2c5fe43c023e2da0b52026a8db7f02b7501f3db7aadb5790798b9b727",
+  "activities_geometry_molecule_remove": "28a870fa3d03d4740dee833c76ae87f378f21e58e86fb73b220b4489623c34f1",
+  "activities_geometry_molecule_remove_selected": "0dd9b0ec015a3b40590d346841b8fbdeeba577e92c92158055e241d721d8f8dc",
+  "activities_geometry_molecule_removed": "a0b98e6444ef334bad507170a14e41b93be5d961b961443bca4e9f296b48df52",
+  "activities_geometry_molecule_select_hint": "998e5100542239370dfbcc3137ef98ffac3c1bd497dcbfbc88b4cebb5fe767ea",
+  "activities_geometry_molecule_selected": "bc0fef1359f8d9bb21db0c31fc4fa8a40e4e5d5c2a6df6b5591197b37721fa15",
+  "activities_geometry_molecule_selected_hint": "29d5a97fad0641c226de12dd5a55e01a32badd46ba197d1265afe55021e69239",
+  "activities_geometry_molecule_single_bond": "b69b76a23a14e508d0afc7354760ae599e42037bdfddece5253e4da51d70a8af",
+  "activities_geometry_molecule_start": "a0914477ca9eacacfd4d41b2b85337767a8948da21698764d0bc1b18e30a429d",
+  "activities_geometry_molecule_target": "f67aef082a9dfafb0cb8f42519c275b64c571b3b6954e689ea490a537f74136b",
+  "activities_geometry_molecule_triple_bond": "b329de7239b06840b970748cff682b23a93e01191dd3a55050495a98b0398de9",
+  "activities_geometry_molecule_undo": "624187b2cdfd45e00fe2ac7c804cee02e37492390b363a6be1c2bdfe32ad13b8",
+  "activities_geometry_molecule_undone": "10bf9555c5dced8484658db296616b9fec6bbd11c683bc571fe97fd820852a69",
   "activities_geometry_radians": "085830d927983c6e2384449bbc5f1018160f135fd086d3102227396af5356adf",
   "activities_geometry_sin": "4c01766cf6f003058260da7720b3e8a16f2e8b1285ab76c2c845331ea51d42fe",
   "activities_geometry_tan": "f7a8a16d94f48a9111fcfc9a22a5b897a71b430364326451890419bf40dd01f2",
@@ -100,4 +143,82 @@
     <string name="activities_geometry_board_full_turn">uma volta completa</string>
     <!-- Before a shape's area, like "Area 6". -->
     <string name="activities_geometry_board_area">Área</string>
+    <string name="activities_geometry_badge_build_it">Monte</string>
+    <!-- The molecule to build, like "Target: CO₂". -->
+    <string name="activities_geometry_molecule_target">Alvo: %1$s</string>
+    <!-- The molecule built so far, like "Built: CO". -->
+    <string name="activities_geometry_molecule_built">Montado: %1$s</string>
+    <!-- An atom: its element and its number, like "Oxygen 2". -->
+    <string name="activities_geometry_molecule_atom">%1$s %2$s</string>
+    <!-- An atom and how many of its bonds are made, for TalkBack, like "Oxygen 1: 1 of 2 bonds". -->
+    <plurals name="activities_geometry_molecule_atom_bonds">
+        <item quantity="one">%1$s: %2$d de %3$d ligação</item>
+        <item quantity="many">%1$s: %2$d de %3$d ligações</item>
+        <item quantity="other">%1$s: %2$d de %3$d ligações</item>
+    </plurals>
+    <string name="activities_geometry_element_boron">Boro</string>
+    <string name="activities_geometry_element_bromine">Bromo</string>
+    <string name="activities_geometry_element_carbon">Carbono</string>
+    <string name="activities_geometry_element_chlorine">Cloro</string>
+    <string name="activities_geometry_element_fluorine">Flúor</string>
+    <string name="activities_geometry_element_hydrogen">Hidrogênio</string>
+    <string name="activities_geometry_element_iodine">Iodo</string>
+    <string name="activities_geometry_element_nitrogen">Nitrogênio</string>
+    <string name="activities_geometry_element_oxygen">Oxigênio</string>
+    <string name="activities_geometry_element_phosphorus">Fósforo</string>
+    <string name="activities_geometry_element_sulfur">Enxofre</string>
+    <string name="activities_geometry_element_silicon">Silício</string>
+    <!-- An element button, for TalkBack, like "Add Carbon". -->
+    <string name="activities_geometry_molecule_add">Adicionar %1$s</string>
+    <!-- An element button while an atom is selected, like "Add Oxygen bonded to Carbon 1". -->
+    <string name="activities_geometry_molecule_add_bonded">Adicionar %1$s ligado a %2$s</string>
+    <!-- How many bonds an element makes, under its symbol. -->
+    <plurals name="activities_geometry_molecule_bonds">
+        <item quantity="one">%1$d ligação</item>
+        <item quantity="many">%1$d ligações</item>
+        <item quantity="other">%1$d ligações</item>
+    </plurals>
+    <string name="activities_geometry_molecule_undo">Desfazer</string>
+    <!-- Removes the selected atom, like "Remove Oxygen 2". -->
+    <string name="activities_geometry_molecule_remove">Remover %1$s</string>
+    <string name="activities_geometry_molecule_remove_selected">Remover o átomo selecionado</string>
+    <string name="activities_geometry_molecule_start">Toque em um elemento para adicionar o primeiro átomo.</string>
+    <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
+    <string name="activities_geometry_molecule_over">%1$s tem mais ligações do que pode fazer.</string>
+    <plurals name="activities_geometry_molecule_open">
+        <item quantity="one">%1$d átomo tem ligações abertas, mostradas como pontos.</item>
+        <item quantity="many">%1$d átomos têm ligações abertas, mostradas como pontos.</item>
+        <item quantity="other">%1$d átomos têm ligações abertas, mostradas como pontos.</item>
+    </plurals>
+    <string name="activities_geometry_molecule_full">Todos os átomos têm todas as suas ligações.</string>
+    <!-- Like "Carbon 1 is selected. Tap another atom to bond them, or an element to add one bonded to it." -->
+    <string name="activities_geometry_molecule_selected_hint">%1$s está selecionado. Toque em outro átomo para ligá-los ou em um elemento para adicionar outro ligado a ele.</string>
+    <string name="activities_geometry_molecule_select_hint">Toque em um átomo para selecioná-lo.</string>
+    <!-- Said to TalkBack after adding an atom, like "Added Carbon 1." -->
+    <string name="activities_geometry_molecule_added">%1$s adicionado.</string>
+    <!-- Said to TalkBack after adding a bonded atom, like "Added Oxygen 1, bonded to Carbon 1." -->
+    <string name="activities_geometry_molecule_added_bonded">%1$s adicionado, ligado a %2$s.</string>
+    <!-- Two atoms and the bond between them, like "Carbon 1 and Oxygen 1: no bond." -->
+    <string name="activities_geometry_molecule_no_bond">%1$s e %2$s: sem ligação.</string>
+    <string name="activities_geometry_molecule_single_bond">%1$s e %2$s: ligação simples.</string>
+    <string name="activities_geometry_molecule_double_bond">%1$s e %2$s: ligação dupla.</string>
+    <string name="activities_geometry_molecule_triple_bond">%1$s e %2$s: ligação tripla.</string>
+    <!-- Said to TalkBack after removing an atom, like "Removed Oxygen 2." -->
+    <string name="activities_geometry_molecule_removed">%1$s removido.</string>
+    <!-- Said to TalkBack after undoing a change. -->
+    <string name="activities_geometry_molecule_undone">Ação desfeita.</string>
+    <!-- Said to TalkBack after selecting an atom, like "Carbon 1 selected." -->
+    <string name="activities_geometry_molecule_selected">%1$s selecionado.</string>
+    <string name="activities_geometry_molecule_none_selected">Nada selecionado.</string>
+    <!-- The molecule builder, for TalkBack, like "Build CO₂." -->
+    <string name="activities_geometry_molecule_build">Monte %1$s.</string>
+    <!-- An atom without bonds, for TalkBack, like "Hydrogen 3 has no bonds." -->
+    <string name="activities_geometry_molecule_loose">%1$s não tem ligações.</string>
+    <!-- Above a complete molecule shown after checking. -->
+    <string name="activities_geometry_molecule_example">Uma montagem correta</string>
+    <plurals name="activities_geometry_molecule_bonds_in_all">
+        <item quantity="one">%1$d ligação no total, contando uma ligação dupla como duas.</item>
+        <item quantity="many">%1$d ligações no total, contando uma ligação dupla como duas.</item>
+        <item quantity="other">%1$d ligações no total, contando uma ligação dupla como duas.</item>
+    </plurals>
 </resources>

@@ -63,4 +63,79 @@
     <string name="activities_geometry_board_full_turn">a full turn</string>
     <!-- Before a shape's area, like "Area 6". -->
     <string name="activities_geometry_board_area">Area</string>
+
+    <string name="activities_geometry_badge_build_it">Build it</string>
+    <!-- The molecule to build, like "Target: CO₂". -->
+    <string name="activities_geometry_molecule_target">Target: %1$s</string>
+    <!-- The molecule built so far, like "Built: CO". -->
+    <string name="activities_geometry_molecule_built">Built: %1$s</string>
+    <!-- An atom: its element and its number, like "Oxygen 2". -->
+    <string name="activities_geometry_molecule_atom">%1$s %2$s</string>
+    <!-- An atom and how many of its bonds are made, for TalkBack, like "Oxygen 1: 1 of 2 bonds". -->
+    <plurals name="activities_geometry_molecule_atom_bonds">
+        <item quantity="one">%1$s: %2$d of %3$d bond</item>
+        <item quantity="other">%1$s: %2$d of %3$d bonds</item>
+    </plurals>
+    <string name="activities_geometry_element_boron">Boron</string>
+    <string name="activities_geometry_element_bromine">Bromine</string>
+    <string name="activities_geometry_element_carbon">Carbon</string>
+    <string name="activities_geometry_element_chlorine">Chlorine</string>
+    <string name="activities_geometry_element_fluorine">Fluorine</string>
+    <string name="activities_geometry_element_hydrogen">Hydrogen</string>
+    <string name="activities_geometry_element_iodine">Iodine</string>
+    <string name="activities_geometry_element_nitrogen">Nitrogen</string>
+    <string name="activities_geometry_element_oxygen">Oxygen</string>
+    <string name="activities_geometry_element_phosphorus">Phosphorus</string>
+    <string name="activities_geometry_element_sulfur">Sulfur</string>
+    <string name="activities_geometry_element_silicon">Silicon</string>
+    <!-- An element button, for TalkBack, like "Add Carbon". -->
+    <string name="activities_geometry_molecule_add">Add %1$s</string>
+    <!-- An element button while an atom is selected, like "Add Oxygen bonded to Carbon 1". -->
+    <string name="activities_geometry_molecule_add_bonded">Add %1$s bonded to %2$s</string>
+    <!-- How many bonds an element makes, under its symbol. -->
+    <plurals name="activities_geometry_molecule_bonds">
+        <item quantity="one">%1$d bond</item>
+        <item quantity="other">%1$d bonds</item>
+    </plurals>
+    <string name="activities_geometry_molecule_undo">Undo</string>
+    <!-- Removes the selected atom, like "Remove Oxygen 2". -->
+    <string name="activities_geometry_molecule_remove">Remove %1$s</string>
+    <string name="activities_geometry_molecule_remove_selected">Remove the selected atom</string>
+    <string name="activities_geometry_molecule_start">Tap an element to add its first atom.</string>
+    <!-- An atom with too many bonds, like "Oxygen 1 has more bonds than it can make." -->
+    <string name="activities_geometry_molecule_over">%1$s has more bonds than it can make.</string>
+    <plurals name="activities_geometry_molecule_open">
+        <item quantity="one">%1$d atom has open bonds, shown as dots.</item>
+        <item quantity="other">%1$d atoms have open bonds, shown as dots.</item>
+    </plurals>
+    <string name="activities_geometry_molecule_full">Every atom has all its bonds.</string>
+    <!-- Like "Carbon 1 is selected. Tap another atom to bond them, or an element to add one bonded to it." -->
+    <string name="activities_geometry_molecule_selected_hint">%1$s is selected. Tap another atom to bond them, or an element to add one bonded to it.</string>
+    <string name="activities_geometry_molecule_select_hint">Tap an atom to select it.</string>
+    <!-- Said to TalkBack after adding an atom, like "Added Carbon 1." -->
+    <string name="activities_geometry_molecule_added">Added %1$s.</string>
+    <!-- Said to TalkBack after adding a bonded atom, like "Added Oxygen 1, bonded to Carbon 1." -->
+    <string name="activities_geometry_molecule_added_bonded">Added %1$s, bonded to %2$s.</string>
+    <!-- Two atoms and the bond between them, like "Carbon 1 and Oxygen 1: no bond." -->
+    <string name="activities_geometry_molecule_no_bond">%1$s and %2$s: no bond.</string>
+    <string name="activities_geometry_molecule_single_bond">%1$s and %2$s: single bond.</string>
+    <string name="activities_geometry_molecule_double_bond">%1$s and %2$s: double bond.</string>
+    <string name="activities_geometry_molecule_triple_bond">%1$s and %2$s: triple bond.</string>
+    <!-- Said to TalkBack after removing an atom, like "Removed Oxygen 2." -->
+    <string name="activities_geometry_molecule_removed">Removed %1$s.</string>
+    <!-- Said to TalkBack after undoing a change. -->
+    <string name="activities_geometry_molecule_undone">Undone.</string>
+    <!-- Said to TalkBack after selecting an atom, like "Carbon 1 selected." -->
+    <string name="activities_geometry_molecule_selected">%1$s selected.</string>
+    <string name="activities_geometry_molecule_none_selected">Nothing selected.</string>
+    <!-- The molecule builder, for TalkBack, like "Build CO₂." -->
+    <string name="activities_geometry_molecule_build">Build %1$s.</string>
+    <!-- An atom without bonds, for TalkBack, like "Hydrogen 3 has no bonds." -->
+    <string name="activities_geometry_molecule_loose">%1$s has no bonds.</string>
+    <!-- Above a complete molecule shown after checking. -->
+    <string name="activities_geometry_molecule_example">One correct build</string>
+    <plurals name="activities_geometry_molecule_bonds_in_all">
+        <item quantity="one">%1$d bond in all, counting a double bond as two.</item>
+        <item quantity="other">%1$d bonds in all, counting a double bond as two.</item>
+    </plurals>
 </resources>

@@ -1,6 +1,9 @@
 package com.zoonk.android.feature.activities
 
 import com.zoonk.android.feature.activities.code.patternAnswer
+import com.zoonk.android.feature.activities.geometry.Molecule
+import com.zoonk.android.feature.activities.geometry.moleculeAnswer
+import com.zoonk.android.feature.activities.geometry.moleculeElements
 import com.zoonk.android.feature.activities.music.KeyboardFretboard
 import com.zoonk.android.feature.activities.music.notesAnswer
 import com.zoonk.android.feature.player.model.ActivityAnswer
@@ -41,7 +44,7 @@ object ActivityFixtures {
 
     fun value(name: String): Double? = entry(name)["value"]?.jsonPrimitive?.doubleOrNull
 
-    /** The learner's answer that reaches the expected end state: where both are written alike, a pattern template's solution, or a pitch-class answer's notes. */
+    /** The learner's answer that reaches the expected end state: where both are written alike, a pattern template's solution, a pitch-class answer's notes, or a complete molecule with the expected atoms. */
     fun rightAnswer(name: String): ActivityAnswer? =
         when (val expected = expected(name)) {
             is ActivityExpected.ChoiceWrapper -> {
@@ -60,6 +63,10 @@ object ActivityFixtures {
 
                     is ActivityExpectedAnswer.PitchclassesWrapper -> {
                         notesAnswer(KeyboardFretboard.notes(answer.value.pitchClasses.map { it.toInt() }))
+                    }
+
+                    is ActivityExpectedAnswer.MoleculeWrapper -> {
+                        expected.moleculeElements?.let(Molecule::findStructure)?.let(::moleculeAnswer)
                     }
 
                     else -> {

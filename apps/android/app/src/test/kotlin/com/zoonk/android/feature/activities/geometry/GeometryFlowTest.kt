@@ -32,6 +32,8 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.LessonPlayerHarness
 import com.zoonk.android.feature.player.checkResult
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LessonStepAnswer
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -193,6 +195,63 @@ class GeometryFlowTest {
         val corner = handle(CORNER_C).fetchSemanticsNode().boundsInRoot
         rule.onRoot().performTouchInput { click(corner.center + Offset(0f, corner.height * 0.75f)) }
         assertEquals(true, handle(CORNER_C).state()?.startsWith("At 1, 2."))
+    }
+
+    private fun add(element: String) = rule.onNodeWithContentDescription(element).performScrollTo().performClick()
+
+    private fun buildCarbonDioxide(doubleBonds: Boolean) {
+        add("Add Carbon")
+        add("Add Oxygen bonded to Carbon 1")
+        add("Add Oxygen bonded to Carbon 1")
+        if (doubleBonds) {
+            rule.onNodeWithContentDescription("Oxygen 1: 1 of 2 bonds").performClick()
+            rule.onNodeWithContentDescription("Oxygen 2: 1 of 2 bonds").performClick()
+        }
+    }
+
+    private fun sentAnswer() =
+        ApiJson.encodeToString(
+            LessonStepAnswer.serializer(),
+            harness.api.checks
+                .single()
+                .second.answer,
+        )
+
+    @Test
+    fun moleculeBuilderTwoDoubleBondsMakeCarbonDioxide() {
+        play("moleculeBuilder", isCorrect = true)
+
+        buildCarbonDioxide(doubleBonds = true)
+        shows("Every atom has all its bonds.")
+        harness.tap("Check")
+
+        val answer = sentAnswer()
+        assertTrue(answer, answer.contains(""""from":"c1","order":2,"to":"o1"""") && answer.contains(""""from":"c1","order":2,"to":"o2""""))
+        rule.onNodeWithText("One correct build").assertDoesNotExist()
+    }
+
+    @Test
+    fun moleculeBuilderShowsACorrectBuildAfterOpenBonds() {
+        play("moleculeBuilder", isCorrect = false)
+
+        buildCarbonDioxide(doubleBonds = false)
+        shows("3 atoms have open bonds, shown as dots.")
+        harness.tap("Check")
+
+        shows("One correct build")
+        shows("4 bonds in all, counting a double bond as two.")
+    }
+
+    @Test
+    fun moleculeBuilderUndoesAndRemovesAtoms() {
+        play("moleculeBuilder", isCorrect = true)
+
+        buildCarbonDioxide(doubleBonds = false)
+        rule.onNodeWithContentDescription("Undo").performScrollTo().performClick()
+        rule.onNodeWithContentDescription("Oxygen 2:", substring = true).assertDoesNotExist()
+        rule.onNodeWithContentDescription("Remove Carbon 1").performScrollTo().performClick()
+        rule.onNodeWithContentDescription("Carbon 1:", substring = true).assertDoesNotExist()
+        shows("1 atom has open bonds, shown as dots.")
     }
 
     private companion object {
