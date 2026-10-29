@@ -4,15 +4,11 @@ import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
 import { mergeAddedTwins, saveAddedSkills } from "./goal-added-skills";
 import { isBuiltBeforeResearch, loadResearchedInputs } from "./goal-content-inputs";
-import { type BuiltCurriculum, startOutlines } from "./goal-curriculum";
+import { type BuiltCurriculum } from "./goal-curriculum";
+import { outlinePlanAhead } from "./goal-outlines";
 import { type GoalRunContext } from "./goal-run-context";
 import { preparePlacementItems } from "./placement-items";
 import { checkGraphCoverageStep, saveExamSkillGraphStep } from "./steps/goal-curriculum-steps";
-import {
-  listPlanOutlineNeedsStep,
-  readGoalLookaheadStep,
-  readPlanFirstSkillStep,
-} from "./steps/goal-lookahead-steps";
 import { followNoticeStep } from "./steps/goal-plan-steps";
 import {
   claimNoticeLandingStep,
@@ -165,15 +161,8 @@ async function replan({
 
   await keepExamGraph({ curriculum, graph, idsByKey, researched, scope });
 
-  const lookahead = await readGoalLookaheadStep(goalId);
-
-  const [needs, firstSkillId] = await Promise.all([
-    listPlanOutlineNeedsStep({ days: lookahead.outlineDays, goalId }),
-    readPlanFirstSkillStep(goalId),
-  ]);
-
   await Promise.all([
-    startOutlines({ context, courses: needs, firstSkillId, forGuest: researched.isGuest }),
+    outlinePlanAhead({ context, forGuest: researched.isGuest, goalId }),
     preparePlacementItems({ ...context, forPlacement: true, goalId }),
   ]);
 

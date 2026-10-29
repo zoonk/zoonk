@@ -10,12 +10,11 @@ import {
   toGoalCourses,
 } from "@zoonk/core/library/curriculum/goal-course-bands";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
-import { type CourseBandNeed, type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
+import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { type PlanSetupTask } from "@zoonk/core/plans/setup";
-import { start } from "workflow/api";
 import { retryPlanConflicts } from "../_shared/plan-conflict-retry";
-import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { isBuiltBeforeResearch, loadGoalReferences } from "./goal-content-inputs";
+import { startOutlines } from "./goal-outlines";
 import { prepareGraphPlacement } from "./goal-placement-items";
 import { type GoalRunContext, type SavedSlice } from "./goal-run-context";
 import {
@@ -104,33 +103,6 @@ export function setUpPlan({
     (previous, task) =>
       previous.then(() => runPlanSetupTaskStep({ goalId, task }).catch(() => null)),
     Promise.resolve(),
-  );
-}
-
-type OutlineCourse = { bands: CourseBandNeed[]; courseId: string; scope: CurriculumScope };
-
-export async function startOutlines({
-  context,
-  courses,
-  firstSkillId,
-  forGuest,
-}: {
-  context: GoalRunContext;
-  courses: OutlineCourse[];
-  firstSkillId: string | null;
-  forGuest: boolean;
-}) {
-  await Promise.all(
-    courses.map((course) =>
-      start(courseOutlineWorkflow, [
-        {
-          ...course,
-          analytics: context.analytics,
-          forGuest,
-          waitedSkillId: firstSkillId ?? undefined,
-        },
-      ]),
-    ),
   );
 }
 

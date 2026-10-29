@@ -8,8 +8,9 @@ import { trackGenerationFailedStep } from "../_shared/generation-failed-step";
 import { claimRunToken } from "../_shared/run-token";
 import { prepareAhead, startPairLevelTest } from "./goal-ahead";
 import { isBuiltBeforeResearch, waitForGraphInputs } from "./goal-content-inputs";
-import { type BuiltCurriculum, buildCurriculum, setUpPlan, startOutlines } from "./goal-curriculum";
+import { type BuiltCurriculum, buildCurriculum, setUpPlan } from "./goal-curriculum";
 import { followPlanStart } from "./goal-lookahead";
+import { outlinePlanAhead } from "./goal-outlines";
 import { preparePlanPlacement } from "./goal-placement-items";
 import { reconcileResearch, reconcileStoredPlan } from "./goal-research-reconcile";
 import { type GoalRunContext } from "./goal-run-context";
@@ -19,11 +20,6 @@ import {
   keepMaterialPrivate,
   loadGoalCurriculumStep,
 } from "./steps/goal-curriculum-steps";
-import {
-  listPlanOutlineNeedsStep,
-  readGoalLookaheadStep,
-  readPlanFirstSkillStep,
-} from "./steps/goal-lookahead-steps";
 import { listPlanSetupTasksStep } from "./steps/goal-plan-steps";
 import { goalProgressStep } from "./steps/goal-progress-step";
 import { recordGoalRunStep } from "./steps/record-goal-run-step";
@@ -108,14 +104,7 @@ async function prepareExistingPlan({
     return { goalId, speculativeLessonIds: [], status: "ready" };
   }
 
-  const lookahead = await readGoalLookaheadStep(goalId);
-
-  const [needs, firstSkillId] = await Promise.all([
-    listPlanOutlineNeedsStep({ days: lookahead.outlineDays, goalId }),
-    readPlanFirstSkillStep(goalId),
-  ]);
-
-  await startOutlines({ context, courses: needs, firstSkillId, forGuest: inputs.isGuest });
+  await outlinePlanAhead({ context, forGuest: inputs.isGuest, goalId });
   await goalProgressStep({ entityId: goalId, status: "started", step: "prepareFirstLessons" });
 
   const [[speculativeLessonIds]] = await Promise.all([
