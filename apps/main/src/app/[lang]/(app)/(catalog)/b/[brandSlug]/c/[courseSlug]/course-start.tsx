@@ -9,6 +9,7 @@ function CoursePlanLink({ courseId, pace }: { courseId: string; pace: number | n
   return (
     <CourseGoalSwitch
       continueLink={<StartPlanLink showContinueLabel courseId={courseId} />}
+      courseId={courseId}
       startLinks={<StartPlanLink courseId={courseId} minutes={pace ?? undefined} />}
     />
   );

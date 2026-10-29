@@ -156,6 +156,7 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
       <RouteTitle id={titleId} station="end">
         <CourseGoalSwitch
           continueLink={t("Your plan follows this course")}
+          courseId={courseId}
           startLinks={t({
             description:
               "Heading over the ways to start a plan. “your level” is what the learner already knows.",
@@ -166,6 +167,7 @@ async function CourseClosing({ courseId, pace }: { courseId: string; pace: numbe
 
       <CourseGoalSwitch
         continueLink={null}
+        courseId={courseId}
         startLinks={
           <p className="text-muted-foreground max-w-column text-[0.9375rem] leading-relaxed text-pretty">
             {t("A few quick questions, then your plan and your first lesson.")}

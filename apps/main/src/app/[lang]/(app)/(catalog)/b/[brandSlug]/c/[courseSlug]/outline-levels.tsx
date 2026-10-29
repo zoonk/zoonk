@@ -1,5 +1,5 @@
+import { CourseLevelZone } from "@/components/catalog/course-progress";
 import { type UndatedEstimate } from "@zoonk/core/catalog/course-plan-example-contract";
-import { RouteZone } from "@zoonk/learn/route-line";
 import { getExtracted } from "next-intl/server";
 import {
   OUTLINE_SEPARATOR,
@@ -16,15 +16,15 @@ export async function OutlineLevel({
   band,
   estimate,
   firstNumber,
+  isFirst,
   label,
-  open,
   params,
 }: {
   band: OutlineBand;
   estimate: UndatedEstimate | null;
   firstNumber: number;
+  isFirst: boolean;
   label: string;
-  open: boolean;
   params: OutlineParams;
 }) {
   const t = await getExtracted();
@@ -60,9 +60,10 @@ export async function OutlineLevel({
   const span = spanText();
 
   return (
-    <RouteZone
+    <CourseLevelZone
       aside={[chapterCount, span].filter(Boolean).join(OUTLINE_SEPARATOR)}
-      open={open}
+      isFirst={isFirst}
+      level={band.level}
       summary={
         <span className="flex flex-col gap-1">
           <span>{label}</span>
@@ -86,6 +87,6 @@ export async function OutlineLevel({
           />
         ))}
       />
-    </RouteZone>
+    </CourseLevelZone>
   );
 }

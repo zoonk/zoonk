@@ -136,9 +136,9 @@ export async function LibraryCourseOutline({
             <OutlineLevel
               band={band}
               firstNumber={firstNumbers[index] ?? 1}
+              isFirst={index === 0}
               key={band.level}
               label={levelLabels[band.level]}
-              open={index === 0}
               params={params}
               estimate={weeks}
             />

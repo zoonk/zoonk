@@ -1,9 +1,18 @@
 "use client";
 
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
+import { CourseLevel } from "@zoonk/db/enums";
+import { RouteZone } from "@zoonk/learn/route-line";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isJsonObject } from "@zoonk/utils/json";
-import { type ReactNode, createContext, use, useEffect, useSyncExternalStore } from "react";
+import {
+  type ComponentProps,
+  type ReactNode,
+  createContext,
+  use,
+  useEffect,
+  useSyncExternalStore,
+} from "react";
 import { type CourseProgress } from "./course-progress-contract";
 
 type ProgressScope = { courseId: string; lessonId: string | null };
@@ -32,11 +41,17 @@ function getProgressUrl({ courseId, lessonId }: ProgressScope): string {
   return lessonId ? `${path}?lesson=${encodeURIComponent(lessonId)}` : path;
 }
 
+const LEVELS: readonly unknown[] = Object.values(CourseLevel);
+
+function isCourseLevel(value: unknown): value is CourseLevel {
+  return LEVELS.includes(value);
+}
+
 function toProgress(body: unknown): CourseProgress | null {
   return isJsonObject(body) &&
-    typeof body.followsCourse === "boolean" &&
-    typeof body.lessonStarted === "boolean"
-    ? { followsCourse: body.followsCourse, lessonStarted: body.lessonStarted }
+    typeof body.lessonStarted === "boolean" &&
+    (body.level === null || isCourseLevel(body.level))
+    ? { lessonStarted: body.lessonStarted, level: body.level }
     : null;
 }
 
@@ -98,14 +113,43 @@ export function CourseProgressScope({
   return <ProgressKeyContext value={key}>{children}</ProgressKeyContext>;
 }
 
+/**
+ * Until the summary answers, a browser whose session hint says it holds a session keeps the start
+ * out of sight in its own room, so a learner never sees "Build my plan" turn into "Continue your plan".
+ */
 export function CourseGoalSwitch({
   continueLink,
+  courseId,
   startLinks,
 }: {
   continueLink: ReactNode;
+  courseId: string;
   startLinks: ReactNode;
 }) {
-  return useCourseProgress()?.followsCourse ? continueLink : startLinks;
+  const learner = useLearnerSummary();
+
+  if (learner.status === "ready") {
+    return learner.summary.goals.some((goal) => goal.courseId === courseId)
+      ? continueLink
+      : startLinks;
+  }
+
+  return (
+    <span className={cn("contents", learner.status === "not-loaded" && "signed-in:invisible")}>
+      {startLinks}
+    </span>
+  );
+}
+
+/** Opens the level the learner's plan is at, or the first one when no plan follows the course. */
+export function CourseLevelZone({
+  isFirst,
+  level,
+  ...zone
+}: Omit<ComponentProps<typeof RouteZone>, "open"> & { isFirst: boolean; level: CourseLevel }) {
+  const learnerLevel = useCourseProgress()?.level ?? null;
+
+  return <RouteZone {...zone} open={learnerLevel ? learnerLevel === level : isFirst} />;
 }
 
 const LESSON_VERSION_CLASS = "col-start-1 row-start-1 flex min-w-0 flex-col";

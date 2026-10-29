@@ -1,5 +1,5 @@
 import { type CourseProgress } from "@/components/catalog/course-progress-contract";
-import { hasCourseGoal } from "@zoonk/core/goals/start-course";
+import { getCourseGoalLevel } from "@zoonk/core/goals/start-course";
 import { hasStartedLesson } from "@zoonk/core/lesson-player/progress";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
@@ -26,7 +26,7 @@ export async function GET(
   }
 
   const { data, error } = await safeAsync(() =>
-    Promise.all([hasCourseGoal(courseId), lessonId ? hasStartedLesson({ lessonId }) : false]),
+    Promise.all([getCourseGoalLevel(courseId), lessonId ? hasStartedLesson({ lessonId }) : false]),
   );
 
   if (error) {
@@ -34,8 +34,8 @@ export async function GET(
     return new Response(null, { status: 500 });
   }
 
-  const [followsCourse, lessonStarted] = data;
-  const progress: CourseProgress = { followsCourse, lessonStarted };
+  const [level, lessonStarted] = data;
+  const progress: CourseProgress = { lessonStarted, level };
 
   return Response.json(progress, { headers: { "Cache-Control": "private, no-store" } });
 }
