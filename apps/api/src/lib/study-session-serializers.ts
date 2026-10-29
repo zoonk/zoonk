@@ -55,6 +55,7 @@ export function serializeStudySessionSummary(summary: StudySessionSummary) {
       ...capsule,
       opensOn: toOptionalLogicalDate(capsule.opensOn),
     })),
+    ceremony: summary.ceremony ? serializeMilestone(summary.ceremony) : null,
     comesBack: summary.comesBack.map((day) => ({ ...day, date: toLogicalDate(day.date) })),
   };
 }
