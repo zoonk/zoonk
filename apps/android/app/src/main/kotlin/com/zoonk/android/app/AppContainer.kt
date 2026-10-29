@@ -68,6 +68,8 @@ import com.zoonk.android.feature.mock.LiveMockApi
 import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.mock.chooser.LiveMockStartApi
 import com.zoonk.android.feature.mock.chooser.MockStarter
+import com.zoonk.android.feature.mock.runner.LiveMockRunApi
+import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.onboarding.LiveOnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.LivePlanApi
@@ -79,6 +81,7 @@ import com.zoonk.android.feature.practice.block.LiveQuestionBlockApi
 import com.zoonk.android.feature.practice.block.QuestionBlockStore
 import com.zoonk.android.feature.pronunciation.LivePronunciationApi
 import com.zoonk.android.feature.pronunciation.PronunciationStore
+import com.zoonk.android.feature.questions.ListeningPlays
 import com.zoonk.android.feature.recap.RecapStore
 import com.zoonk.android.feature.search.LiveSearchApi
 import com.zoonk.android.feature.search.SearchStore
@@ -272,6 +275,8 @@ class AppContainer private constructor(
     val exams = ExamStore(LiveExamApi(api), cache, timeZone)
     val mocks = MockStore(LiveMockApi(api), cache)
     val mockStarter = MockStarter(LiveMockStartApi(api), cache)
+    val mockRuns = MockRunStore(LiveMockRunApi(api), cache, drafts, timeZone)
+    val listeningPlays = ListeningPlays(drafts, scope)
 
     init {
         scope.launch { sessions.restore() }

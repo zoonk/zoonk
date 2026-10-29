@@ -23,4 +23,145 @@
     <string name="mock_row_detail">%1$s · %2$s</string>
     <string name="mock_take">Take a mock exam</string>
     <string name="mock_continue">Continue your mock exam</string>
+    <string name="mock_label">Mock exam</string>
+    <!-- %1$s is what the mock covers, such as "Mathematics" or "A full exam day". -->
+    <string name="mock_label_shape">Mock exam · %1$s</string>
+    <string name="mock_not_found_title">We couldn\'t find this page</string>
+    <string name="mock_not_found_description">The link may be old or mistyped.</string>
+    <string name="mock_go_to_today">Go to Today</string>
+    <!-- What screen readers call the section's countdown. -->
+    <string name="mock_time_left_label">Time left</string>
+    <!-- Under the section's countdown, such as "1:24:09". -->
+    <string name="mock_time_left_caption">time left</string>
+    <string name="mock_time_left_question">Time left for this question</string>
+    <string name="mock_progress_label">Questions answered in this section</string>
+    <!-- Where the learner is among a section's questions: "12 of 45". -->
+    <string name="mock_place">%1$d of %2$d</string>
+    <string name="mock_written_part">Written part</string>
+    <!-- %1$s is the essay's area, such as Portuguese. -->
+    <string name="mock_written_part_area">Written part · %1$s</string>
+    <string name="mock_question_place">Question %1$d of %2$d</string>
+    <!-- %3$s is the question's area, such as Mathematics. -->
+    <string name="mock_question_place_area">Question %1$d of %2$d · %3$s</string>
+    <string name="mock_flag">Flag</string>
+    <string name="mock_next">Next</string>
+    <string name="mock_hand_in_mock">Hand in the mock exam</string>
+    <string name="mock_hand_in_section">Hand in this section</string>
+    <string name="mock_handing_in">Handing in…</string>
+    <string name="mock_moves_review_any">Review: you can go back to any question.</string>
+    <string name="mock_moves_review_none">Review: no more answers can change.</string>
+    <plurals name="mock_moves_review_changes">
+        <item quantity="one">Review: you can change %d more answer.</item>
+        <item quantity="other">Review: you can change %d more answers.</item>
+    </plurals>
+    <string name="mock_moves_forward_must">Answer each question to move on. You can\'t go back to it.</string>
+    <string name="mock_moves_forward">You can\'t go back to a question once you move on.</string>
+    <string name="mock_moves_must">Answer each question to move on.</string>
+    <string name="mock_hand_in_mock_title">Hand in the mock exam?</string>
+    <string name="mock_hand_in_section_title">Hand in this section?</string>
+    <!-- Read with mock_left_flagged: "3 questions are blank and 2 are flagged." -->
+    <plurals name="mock_left_blank">
+        <item quantity="one">%d question is blank</item>
+        <item quantity="other">%d questions are blank</item>
+    </plurals>
+    <plurals name="mock_left_flagged">
+        <item quantity="one">%d is flagged</item>
+        <item quantity="other">%d are flagged</item>
+    </plurals>
+    <!-- %1$s is mock_left_blank, %2$s is mock_left_flagged. -->
+    <string name="mock_left_blank_and_flagged">%1$s and %2$s.</string>
+    <plurals name="mock_left_blank_only">
+        <item quantity="one">%d question is blank.</item>
+        <item quantity="other">%d questions are blank.</item>
+    </plurals>
+    <plurals name="mock_left_flagged_only">
+        <item quantity="one">%d question is flagged.</item>
+        <item quantity="other">%d questions are flagged.</item>
+    </plurals>
+    <string name="mock_every_answered">Every question is answered.</string>
+    <string name="mock_essay_blank">The essay is blank.</string>
+    <plurals name="mock_essays_blank">
+        <item quantity="one">%d essay is blank.</item>
+        <item quantity="other">%d essays are blank.</item>
+    </plurals>
+    <string name="mock_hand_in_final">After this, your answers can\'t change.</string>
+    <string name="mock_keep_answering">Keep answering</string>
+    <string name="mock_hand_in">Hand in</string>
+    <string name="mock_sheet">Sheet</string>
+    <string name="mock_answer_sheet">Answer sheet</string>
+    <!-- Read with mock_flagged_count: "12 answered · 2 flagged". -->
+    <plurals name="mock_answered_count">
+        <item quantity="one">%d answered</item>
+        <item quantity="other">%d answered</item>
+    </plurals>
+    <plurals name="mock_flagged_count">
+        <item quantity="one">%d flagged</item>
+        <item quantity="other">%d flagged</item>
+    </plurals>
+    <string name="mock_questions">Questions</string>
+    <!-- A cell on the answer sheet, for screen readers: "Question 12". -->
+    <string name="mock_question_number">Question %1$d</string>
+    <string name="mock_cell_answered">answered</string>
+    <string name="mock_cell_flagged">flagged</string>
+    <string name="mock_legend">flagged · no feedback until the end, like on exam day</string>
+    <plurals name="mock_reused">
+        <item quantity="one">%d question repeats.</item>
+        <item quantity="other">%d questions repeat, missed ones first.</item>
+    </plurals>
+    <!-- %1$d is how many questions this mock asks, %2$d how many the real exam asks. -->
+    <plurals name="mock_short">
+        <item quantity="one">This mock asks %1$d of %2$d questions: there weren\'t enough new ones yet.</item>
+        <item quantity="other">This mock asks %1$d of %2$d questions: there weren\'t enough new ones yet.</item>
+    </plurals>
+    <string name="mock_sections">Sections</string>
+    <string name="mock_section_number">Section %1$d</string>
+    <string name="mock_handed_in">Handed in</string>
+    <!-- A section's answered questions of all of them: "12/45". -->
+    <string name="mock_section_answered">%1$d/%2$d</string>
+    <string name="mock_not_saved_retrying">Not saved yet · retrying</string>
+    <string name="mock_retry">Retry</string>
+    <string name="mock_last_not_saved">Your last answer wasn\'t saved.</string>
+    <string name="mock_step_failed_saved">That didn\'t go through. Your answers are saved. Try again in a moment.</string>
+    <string name="mock_step_failed">That didn\'t go through. Try again in a moment.</string>
+    <string name="mock_step_slow">Still handing it in. This is taking longer than usual.</string>
+    <string name="mock_handed_in_title">Mock exam handed in</string>
+    <string name="mock_see_how">See how it went</string>
+    <string name="mock_grading">Grading…</string>
+    <string name="mock_continue_section">Continue</string>
+    <string name="mock_time_up">Time\'s up</string>
+    <string name="mock_answers_saved">Your answers so far are saved.</string>
+    <string name="mock_break">Break</string>
+    <string name="mock_break_time_left">Break time left</string>
+    <string name="mock_break_detail">The next section starts on its own when the break ends.</string>
+    <!-- %1$s is the next section's name, such as Mathematics. -->
+    <string name="mock_next_named">Next: %1$s</string>
+    <string name="mock_next_section">Next section</string>
+    <string name="mock_start_next">Start the next section</string>
+    <string name="mock_expired_title">Time ran out while you were away</string>
+    <string name="mock_expired_detail">With most of it unanswered, it isn\'t scored and doesn\'t change your preparation.</string>
+    <string name="mock_take_new">Take a new mock exam</string>
+    <string name="mock_your_essay">Your essay</string>
+    <plurals name="mock_words">
+        <item quantity="one">%d word</item>
+        <item quantity="other">%d words</item>
+    </plurals>
+    <string name="mock_speaking">Speaking</string>
+    <string name="mock_speaking_intro">Each task is a live call with an examiner, as in the exam: an AI stands in for the person. Your task cards are written when you start, which takes about half a minute.</string>
+    <string name="mock_speaking_start">Start the speaking part</string>
+    <string name="mock_speaking_writing">Writing your task cards…</string>
+    <plurals name="mock_speaking_left">
+        <item quantity="one">Do the tasks in order. Each one is a call, and you come back here after it. %d task left.</item>
+        <item quantity="other">Do the tasks in order. Each one is a call, and you come back here after it. %d tasks left.</item>
+    </plurals>
+    <string name="mock_speaking_all_done">Every task is done. Hand in this section to go on.</string>
+    <!-- %2$s is how long the task lasts, such as "4–5 min". -->
+    <string name="mock_speaking_task">Task %1$d · %2$s</string>
+    <string name="mock_speaking_done">Done</string>
+    <string name="mock_speaking_start_task">Start</string>
+    <plurals name="mock_speaking_hand_in_left">
+        <item quantity="one">%d task isn\'t done, so this paper gets no estimate. After this, you can\'t do it in this mock.</item>
+        <item quantity="other">%d tasks aren\'t done, so this paper gets no estimate. After this, you can\'t do them in this mock.</item>
+    </plurals>
+    <string name="mock_speaking_hand_in_done">Every task is done. After this, you can\'t do them again in this mock.</string>
+    <string name="mock_keep_going">Keep going</string>
 </resources>
