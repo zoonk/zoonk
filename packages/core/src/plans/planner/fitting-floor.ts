@@ -7,7 +7,7 @@ import { createDays, getPlanStart } from "./plan-run-days";
 import { DEFAULT_LESSON_MINUTES } from "./plan-units";
 import { type ExamSubjectShare, getWholeShortfall } from "./selected-coverage";
 import { getCoverageDeadline } from "./selected-plan-summary";
-import { type SkillRequirement, listSettled, readRequirement } from "./selected-requirement";
+import { type SkillRequirement, listSettled, readLeastRequirement } from "./selected-requirement";
 
 /** Room the floor leaves for lesson time it can't see, so it never rises above a time that fits. */
 const UNSEEN_SHARE = 0.05;
@@ -35,20 +35,21 @@ function getLessonRoom({
 
 /** A lesson laid out past the last day's room lands on its own day, so one can count beyond the room. */
 function getLongestLesson({
-  paceFactor,
+  input,
   requirement,
 }: {
-  paceFactor: number;
+  input: BuildPlanInput;
   requirement: ReadonlyMap<string, SkillRequirement>;
 }): number {
   const standIn = [...requirement.values()].some((skill) => skill.standIn > 0)
-    ? DEFAULT_LESSON_MINUTES * paceFactor
+    ? DEFAULT_LESSON_MINUTES
     : 0;
 
-  return [...requirement.values()].reduce(
-    (longest, skill) =>
-      [...skill.lessons.values()].reduce((most, minutes) => Math.max(most, minutes), longest),
-    standIn,
+  const lessons = [...input.lessons, ...(input.quickLessons?.values() ?? [])];
+
+  return (
+    lessons.reduce((longest, lesson) => Math.max(longest, lesson.minutes), standIn) *
+    input.paceFactor
   );
 }
 
@@ -76,7 +77,7 @@ export function getFittingFloor({
     return 0;
   }
 
-  const requirement = readRequirement({ built, input });
+  const requirement = readLeastRequirement({ built, input });
 
   const shortfall = getWholeShortfall({
     built,
@@ -89,7 +90,7 @@ export function getFittingFloor({
 
   const needed =
     shortfall * (1 - UNSEEN_SHARE) -
-    getLongestLesson({ paceFactor: input.paceFactor, requirement }) -
+    getLongestLesson({ input, requirement }) -
     requirement.size * PLAN_EPSILON;
 
   if (needed <= 0) {

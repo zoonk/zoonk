@@ -8,13 +8,15 @@ import { getSettledSkillIds } from "./settled-skills";
 
 export type SkillRequirement = { lessons: ReadonlyMap<string, number>; standIn: number };
 
-function toTaughtLesson({
+type Teach = (lesson: PlannerLesson) => PlannerLesson;
+
+function findHolder({
   built,
   lessons,
 }: {
   built: BuiltPlan;
   lessons: readonly PlannerLesson[];
-}): (lesson: PlannerLesson) => PlannerLesson {
+}): (lesson: PlannerLesson) => PlannerLesson | undefined {
   const held = new Set(built.items.flatMap((item) => (item.lessonId ? [item.lessonId] : [])));
 
   const holders = new Map(
@@ -23,20 +25,30 @@ function toTaughtLesson({
       .map((lesson) => [getTitleKey(lesson.title), lesson] as const),
   );
 
-  return (lesson) =>
-    held.has(lesson.lessonId) ? lesson : (holders.get(getTitleKey(lesson.title)) ?? lesson);
+  return (lesson) => (held.has(lesson.lessonId) ? lesson : holders.get(getTitleKey(lesson.title)));
 }
 
-export function readRequirement({
-  built,
+function toCheapestLesson(lessons: readonly PlannerLesson[]): Teach {
+  const cheapest = new Map(
+    [...Map.groupBy(lessons, (lesson) => getTitleKey(lesson.title))].map(([title, same]) => [
+      title,
+      same.reduce((least, lesson) => (lesson.minutes < least.minutes ? lesson : least)),
+    ]),
+  );
+
+  return (lesson) => cheapest.get(getTitleKey(lesson.title)) ?? lesson;
+}
+
+function linkRequirement({
   input,
+  teach,
 }: {
-  built: BuiltPlan;
   input: BuildPlanInput;
+  teach: (lessons: readonly PlannerLesson[]) => Teach;
 }): Map<string, SkillRequirement> {
   const chosen = withBaseChoices({ choices: getKeptBaseChoices(input), input });
   const standIns = getStandInLessons({ lessons: chosen.lessons, skills: chosen.graph.skills });
-  const taught = toTaughtLesson({ built, lessons: chosen.lessons });
+  const taught = teach(chosen.lessons);
 
   const linked = Map.groupBy(
     chosen.lessons.flatMap((lesson) =>
@@ -59,6 +71,47 @@ export function readRequirement({
       },
     ]),
   );
+}
+
+export function readRequirement({
+  built,
+  input,
+}: {
+  built: BuiltPlan;
+  input: BuildPlanInput;
+}): Map<string, SkillRequirement> {
+  return linkRequirement({
+    input,
+    teach: (lessons) => {
+      const holder = findHolder({ built, lessons });
+      return (lesson) => holder(lesson) ?? lesson;
+    },
+  });
+}
+
+/**
+ * The least any daily time's plan requires: each teaches a repeated title once, but not always
+ * through the lesson `built` holds, so every title counts once, at its cheapest lesson's minutes.
+ */
+export function readLeastRequirement({
+  built,
+  input,
+}: {
+  built: BuiltPlan;
+  input: BuildPlanInput;
+}): Map<string, SkillRequirement> {
+  return linkRequirement({
+    input,
+    teach: (lessons) => {
+      const holder = findHolder({ built, lessons });
+      const cheapest = toCheapestLesson(lessons);
+
+      return (lesson) => ({
+        ...(holder(lesson) ?? cheapest(lesson)),
+        minutes: cheapest(lesson).minutes,
+      });
+    },
+  });
 }
 
 export function isCompleted(item: Pick<PlannedItem, "status">): boolean {
