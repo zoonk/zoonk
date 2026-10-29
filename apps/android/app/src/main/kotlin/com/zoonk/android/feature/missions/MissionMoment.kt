@@ -24,9 +24,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -127,8 +130,13 @@ fun MissionMoment(
                         },
                 )
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(if (payoff) 12.dp else 2.dp)) {
+                    // The payoff shows the bonus as a large readout; it's said in words once, with the title.
                     Column(
-                        modifier = Modifier.semantics(mergeDescendants = true) { liveRegion = LiveRegionMode.Polite },
+                        modifier =
+                            Modifier.semantics(mergeDescendants = true) {
+                                liveRegion = LiveRegionMode.Polite
+                                if (payoff) contentDescription = "$title $status"
+                            },
                         verticalArrangement = Arrangement.spacedBy(2.dp),
                     ) {
                         Text(
@@ -141,7 +149,7 @@ fun MissionMoment(
                             Text(status, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
                         }
                     }
-                    if (payoff) MomentReadouts(facts.bonus)
+                    if (payoff) MomentReadouts(facts.bonus, Modifier.clearAndSetSemantics {})
                 }
             }
 
@@ -170,9 +178,15 @@ private fun MomentMissionRow(
 ) {
     val now = order >= 0
     val muted = mission.done && !now
+    val done = stringResource(R.string.today_step_done)
 
     Row(
-        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).padding(vertical = 10.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .semantics(mergeDescendants = true) { if (muted) stateDescription = done }
+                .heightIn(min = 48.dp)
+                .padding(vertical = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
