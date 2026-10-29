@@ -13,6 +13,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.ChallengeGeneration
 import com.zoonk.api.models.ChallengeStart
+import com.zoonk.api.models.PlanEffect
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,6 +48,7 @@ sealed interface MoveRefusal {
 data class Moved(
     val changeId: UUID,
     val date: LocalDate,
+    val effect: PlanEffect?,
 )
 
 /** Where starting, writing and moving stand; the challenge itself is the store's read. */
@@ -118,7 +120,7 @@ class ChallengeViewModel(
                         it.copy(
                             moving = false,
                             planItemId = move.planItemId ?: it.planItemId,
-                            moved = move.changeId?.let { changeId -> Moved(changeId, move.date) },
+                            moved = move.changeId?.let { changeId -> Moved(changeId, move.date, move.effect) },
                         )
                     }
                 }

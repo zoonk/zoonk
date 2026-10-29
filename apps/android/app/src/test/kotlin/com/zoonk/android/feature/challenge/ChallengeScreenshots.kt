@@ -88,7 +88,7 @@ class ChallengeScreenshots {
                     session: AuthenticatedSession,
                     planItemId: UUID,
                     timeZone: String,
-                ) = ChallengeMove(UUID.randomUUID(), LocalDate(2026, 11, 2), null)
+                ) = ChallengeMove(UUID.randomUUID(), LocalDate(2026, 11, 2), leftOutEffect, null)
 
                 override suspend fun undoMove(
                     session: AuthenticatedSession,
@@ -121,6 +121,13 @@ class ChallengeScreenshots {
         val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
         File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
     }
+
+    private val leftOutEffect =
+        com.zoonk.api.ApiJson.decodeFromString(
+            com.zoonk.api.models.PlanEffect
+                .serializer(),
+            """{"endDateAfter":"2026-12-04","endDateBefore":"2026-12-04","lessonsAdded":0,"lessonsRemoved":2,"lessonsLeftOut":["Cell respiration","Photosynthesis"]}""",
+        )
 
     private val sections =
         JsonArray(

@@ -54,6 +54,18 @@ internal fun MockNotes(
     }
 }
 
+/** Main's `MockLeftOutNote` on its own, for a mock's intro. */
+@Composable
+internal fun MockLeftOutNote(
+    leftOut: List<MockLeftOut>,
+    modifier: Modifier = Modifier,
+) {
+    val lines = leftOut.mapNotNull { leftOutLine(it) }
+    if (lines.isEmpty()) return
+
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) { lines.forEach { NoteLine(AnnotatedString(it)) } }
+}
+
 @Composable
 private fun NoteLine(text: AnnotatedString) {
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)

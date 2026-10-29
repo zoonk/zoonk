@@ -51,7 +51,7 @@ class ChallengeViewModelTest {
     private var reads = 0
     private var start: (StudyBlockStart) -> ChallengeStart = { ChallengeStart(blockId, ChallengeStart.Kind.CHECKPOINT, sessionId) }
     private var write: () -> ChallengeGeneration = { ChallengeGeneration("gen-1", ChallengeGeneration.Status.GENERATING) }
-    private var move: () -> ChallengeMove = { ChallengeMove(UUID.randomUUID(), LocalDate(2026, 11, 2), null) }
+    private var move: () -> ChallengeMove = { ChallengeMove(UUID.randomUUID(), LocalDate(2026, 11, 2), null, null) }
 
     @Before
     fun main() = Dispatchers.setMain(dispatcher)

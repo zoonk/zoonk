@@ -54,8 +54,10 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.checkpoint.checkpointName
 import com.zoonk.android.feature.conversation.ChecklistRow
+import com.zoonk.android.feature.mock.chooser.MockLeftOutNote
 import com.zoonk.android.feature.mock.mockDaySize
 import com.zoonk.android.feature.mock.mockTitle
+import com.zoonk.android.feature.plan.lessonsText
 import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.ActionFlow
@@ -264,8 +266,9 @@ private fun MovedScreen(
                     },
                 style = MaterialTheme.typography.headlineSmall,
             )
+            val leftOut = moved.effect?.takeIf { it.lessonsRemoved > 0 }?.let { lessonsText(it) }
             Text(
-                stringResource(R.string.challenge_moved_detail),
+                listOfNotNull(stringResource(R.string.challenge_moved_detail), leftOut).joinToString(" "),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodyLarge,
             )
@@ -655,6 +658,7 @@ private fun MockDetails(challenge: Challenge) {
                 }
             }
         }
+        MockLeftOutNote(challenge.leftOut.filter { it.part != MockLeftOut.Part.WRITTEN && it.part != MockLeftOut.Part.WRITTEN_IN_FULL })
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(
                 painterResource(if (challenge.netScored) R.drawable.ic_balance else R.drawable.ic_visibility_off),
