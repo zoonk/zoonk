@@ -45,12 +45,12 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonOutline
-import com.zoonk.android.feature.player.steps.LessonPictures
-import com.zoonk.android.feature.player.steps.LocalLessonPictures
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import kotlinx.coroutines.launch
 
@@ -158,7 +158,7 @@ private fun PlayingLesson(
 
     LaunchedEffect(load.lesson.id, signedIn) { viewModel.open(load.lesson) }
 
-    CompositionLocalProvider(LocalLessonPictures provides LessonPictures(app.images, signedIn)) {
+    CompositionLocalProvider(LocalPrivatePictures provides PrivatePictures(app.images, signedIn)) {
         LessonPlayer(load.lesson, state, ending, viewModel, exits)
         LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
     }

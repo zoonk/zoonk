@@ -74,7 +74,6 @@ import com.zoonk.android.feature.player.engine.isLanguageStep
 import com.zoonk.android.feature.player.engine.screen
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.PlayableLesson
-import com.zoonk.android.feature.player.steps.LocalLessonPictures
 import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.SummaryIdeas
@@ -82,6 +81,7 @@ import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.feature.player.steps.optionAnswer
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.scaffold.TaskExitConfirmation
@@ -378,7 +378,7 @@ private const val PICTURES_AHEAD = 2
 /** The next screens' pictures load ahead, so they show at once when the learner gets there. */
 @Composable
 private fun PrefetchPictures(state: LessonPlayerState) {
-    val pictures = LocalLessonPictures.current ?: return
+    val pictures = LocalPrivatePictures.current ?: return
     val context = LocalContext.current
     val ahead =
         state.queue
