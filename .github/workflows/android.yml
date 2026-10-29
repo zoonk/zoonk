@@ -50,12 +50,20 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6
         with:
-          cache-provider: basic
+          cache-provider: enhanced
           # Pull requests write their own cache scope too, so each run after a PR's first starts
           # warm. They read main's scope but never write it.
           cache-read-only: false
 
       - name: Run Gradle
         env:
-          GRADLE_ARGUMENTS: --no-daemon --console=plain
+          # Full Release lint, including fatal issues, runs in the checks job.
+          GRADLE_ARGUMENTS: --no-daemon --console=plain --profile -Dorg.gradle.jvmargs="-Xmx4g -Dfile.encoding=UTF-8" -Pkotlin.daemon.jvmargs=-Xmx2g ${{ matrix.job == 'release' && '-x :app:lintVitalRelease' || '' }}
         run: make -C apps/android ${{ matrix.target }}
+
+      - name: Upload task profiles
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: profile-${{ matrix.job }}
+          path: apps/android/build/reports/profile/
