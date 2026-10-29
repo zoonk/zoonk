@@ -6,7 +6,6 @@ struct PlanMenu: View {
   @Environment(AppRouter.self) private var router
   @Environment(PlanStore.self) private var store
   @Environment(LearnerSummaryStore.self) private var learner
-  @State private var isReporting = false
   @State private var confirming: Confirmation?
   @State private var failure: GoalStatusOutcome?
   @State private var isSaving = false
@@ -71,7 +70,7 @@ struct PlanMenu: View {
       }
 
       Button {
-        isReporting = true
+        context.report()
       } label: {
         Label {
           Text(
@@ -95,12 +94,6 @@ struct PlanMenu: View {
       .frame(maxHeight: .infinity)
     }
     .disabled(isSaving)
-    .sheet(isPresented: $isReporting) {
-      FeedbackSheet(
-        api: FeedbackAPI.live(),
-        context: FeedbackContext(contentID: context.plan.planId, contentKind: .plan),
-        isReport: true)
-    }
     .confirmationDialog(
       confirmationTitle, isPresented: isConfirming, titleVisibility: .visible,
       presenting: confirming
