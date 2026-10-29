@@ -37,12 +37,13 @@ sealed interface Limit {
 
     companion object {
         /** The API's refusal (`SLOW_DOWN`, `USAGE_LIMIT_REACHED`, `SIGN_UP_REQUIRED`), or null for any other error. */
-        fun of(error: ApiException): Limit? = of(error.code, error.details)
+        fun of(error: ApiException): Limit? = of(error.code, error.status, error.details)
 
-        fun of(failed: MutationResult.Failed): Limit? = of(failed.code, failed.details)
+        fun of(failed: MutationResult.Failed): Limit? = of(failed.code, failed.status, failed.details)
 
         private fun of(
             code: String?,
+            status: Int?,
             details: JsonElement?,
         ): Limit? =
             when (code) {
@@ -55,7 +56,7 @@ sealed interface Limit {
                         details
                             ?.field("retryAfterSeconds")
                             ?.jsonPrimitive
-                            ?.int ?: 0,
+                            ?.int ?: DEFAULT_RETRY_SECONDS,
                     )
                 }
 
@@ -73,7 +74,8 @@ sealed interface Limit {
                             ?.jsonPrimitive
                             ?.content
                             ?.let { LimitPeriod.entries.named(it) }
-                    tier?.let { Reached(it, period) }
+                    // Like main's readRefusedLimit, the status says whose cap it was when the details don't.
+                    Reached(tier ?: tierOf(status), period)
                 }
 
                 else -> {
@@ -105,14 +107,24 @@ fun LimitNotice(
             style = MaterialTheme.typography.bodyMedium,
         )
 
-        when {
-            limit.needsAccount -> {
-                FilledTonalButton(onClick = onCreateAccount) { Text(stringResource(R.string.limit_create_account)) }
-            }
+        LimitActions(limit, onCreateAccount, onSeePlus)
+    }
+}
 
-            limit is Limit.Reached && limit.tier == LimitTier.Free -> {
-                FilledTonalButton(onClick = onSeePlus) { Text(stringResource(R.string.limit_see_plus)) }
-            }
+/** "Create a free account" for a guest, "See Plus" on Free, nothing when the limit only waits. */
+@Composable
+fun LimitActions(
+    limit: Limit,
+    onCreateAccount: () -> Unit,
+    onSeePlus: () -> Unit,
+) {
+    when {
+        limit.needsAccount -> {
+            FilledTonalButton(onClick = onCreateAccount) { Text(stringResource(R.string.limit_create_account)) }
+        }
+
+        limit is Limit.Reached && limit.tier == LimitTier.Free -> {
+            FilledTonalButton(onClick = onSeePlus) { Text(stringResource(R.string.limit_see_plus)) }
         }
     }
 }
@@ -225,6 +237,15 @@ private fun reachedMessage(
         },
     )
 }
+
+private const val DEFAULT_RETRY_SECONDS = 60
+
+private fun tierOf(status: Int?): LimitTier =
+    when (status) {
+        403 -> LimitTier.Guest
+        402 -> LimitTier.Free
+        else -> LimitTier.Plus
+    }
 
 private fun JsonElement.field(name: String) = (this as? JsonObject)?.get(name)
 
