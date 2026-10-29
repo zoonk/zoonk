@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mock_continue": "367b8aae2d85f9cf5093968c5d7afd0155a1a97217608c85729a4788d27e25bd",
+  "mock_full_day": "83ec4d660fed82771f144594b8318d67a0658bc61fca918221aa3911d6f03411",
+  "mock_full_day_number": "04b73de18bae633934c68272749eec25e1c57c5980ccb5b0409bd612a7d006c1",
+  "mock_half_day": "eb0ef8c48ddc82660df8c68149332a88c7e5215777386aa4425fc7203ebb434a",
+  "mock_half_day_number": "6bf89ff0b0ce89528ba8d370b64a329d3cd0995ca05303bb9dedef74fa36fe73",
+  "mock_net_score": "66a5ae4bf76e6805ffb58a35bec28d1b22d3429b52539d3380f2c5544c49cd53",
+  "mock_right_answers": "5bdb63343ae2db38e62cacba72fb07e2b739b3deff3413eadee1e71bc2065c16",
+  "mock_row_detail": "9938c24b3d1692f37c5fc1ef4ba4ee814cd3ffc60cecd451a0c3fee5c86928ec",
+  "mock_shape_of_questions": "32362caa327e0569d305f0501d5013fba75ae3143d02166ca3f2824aef6bead4",
+  "mock_starting_point": "2ac931f330568a7cbf4bba61127ef6b204f27d4c9ba4cb3c3523aa1db4844356",
+  "mock_take": "021aeefaf8d3b037a7bffbcc40d9d0307bb7b2e0c04c65bca41900fe447d8afc",
+  "mock_title": "b402c6c3a77c0c06124a494ca6874f10d9d9307361d36ee12baafc501dba301b"
+}
+-->
+<resources>
+    <string name="mock_title">Probeprüfung %1$d</string>
+    <string name="mock_full_day">Ein ganzer Prüfungstag</string>
+    <string name="mock_half_day">Ein halber Prüfungstag</string>
+    <string name="mock_full_day_number">Ein ganzer Prüfungstag, Tag %1$d</string>
+    <string name="mock_half_day_number">Ein halber Prüfungstag, Tag %1$d</string>
+    <!-- A placement mock, the one that finds where the learner starts. -->
+    <string name="mock_starting_point">Ausgangspunkt</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Nettowert %1$s von %2$d</string>
+    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <plurals name="mock_right_answers">
+        <item quantity="one">%1$s von %2$d richtig</item>
+        <item quantity="other">%1$s von %2$d richtig</item>
+    </plurals>
+    <!-- %1$s is what the mock covered, such as "Mathematics"; it asked %2$d of the exam's %3$d questions. -->
+    <plurals name="mock_shape_of_questions">
+        <item quantity="one">%1$s, %2$d von %3$d Fragen</item>
+        <item quantity="other">%1$s, %2$d von %3$d Fragen</item>
+    </plurals>
+    <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
+    <string name="mock_row_detail">%1$s · %2$s</string>
+    <string name="mock_take">Probeprüfung machen</string>
+    <string name="mock_continue">Probeprüfung fortsetzen</string>
+</resources>

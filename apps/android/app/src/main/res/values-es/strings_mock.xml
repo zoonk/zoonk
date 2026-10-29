@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mock_continue": "b857c0c7723534c6558245a62263c85cf49b7843a22451de434100716320d4b8",
+  "mock_full_day": "aba5208147c0ead68f1cfdeed240286a1c09fcb08afbb8f1a343ee42d89d87fc",
+  "mock_full_day_number": "230468a22a922be0a9e9bda577fb5ee6c52691fb31e271b5e1cfd65f2de828cb",
+  "mock_half_day": "c9aa60a1f9257f221eb24352183e4b6809eae865fdda2d7600ce664d9a6e9ede",
+  "mock_half_day_number": "bff670142d83ce648546de0f983ac03fc43b83b1242a0d287f9150a2de1b724f",
+  "mock_net_score": "d636bedb876b8defeb882cefd47a7e815899618fcff31627a17a65cd5f839446",
+  "mock_right_answers": "72da209c1ea4e186e4fba95648a6eedcfe4b5054b7f6f36fbe83a3e5bc265452",
+  "mock_row_detail": "f770baac074b770bc612e9023fe026e3c6bbd89e62c139f37e4f0e4052c70d2c",
+  "mock_shape_of_questions": "6ef250d1ce742fd4e96363426ad1a68ec79349a1eedb75cd9dfa579f4a4074b7",
+  "mock_starting_point": "1643680dbda15133d803cd7dc8dc121e43e466265ed06ef76bcb3fdbb4a98ca0",
+  "mock_take": "8919a6fd23923a5ec792b22fd1f900c3d4cfcaec4ab5811500c1a397ba8336b0",
+  "mock_title": "811cc41a300f06c962f0e20bf4c1b3232c9b9ea2ba8ac20e77e043cc611ead0e"
+}
+-->
+<resources>
+    <string name="mock_title">Simulacro %1$d</string>
+    <string name="mock_full_day">Un día completo de examen</string>
+    <string name="mock_half_day">Medio día de examen</string>
+    <string name="mock_full_day_number">Un día completo de examen, día %1$d</string>
+    <string name="mock_half_day_number">Medio día de examen, día %1$d</string>
+    <!-- A placement mock, the one that finds where the learner starts. -->
+    <string name="mock_starting_point">Punto de partida</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Puntuación neta: %1$s de %2$d</string>
+    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <plurals name="mock_right_answers">
+        <item quantity="one">%1$s de %2$d correcta</item>
+        <item quantity="many">%1$s de %2$d correctas</item>
+        <item quantity="other">%1$s de %2$d correctas</item>
+    </plurals>
+    <!-- %1$s is what the mock covered, such as "Mathematics"; it asked %2$d of the exam's %3$d questions. -->
+    <plurals name="mock_shape_of_questions">
+        <item quantity="one">%1$s, %2$d de %3$d pregunta</item>
+        <item quantity="many">%1$s, %2$d de %3$d preguntas</item>
+        <item quantity="other">%1$s, %2$d de %3$d preguntas</item>
+    </plurals>
+    <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
+    <string name="mock_row_detail">%1$s · %2$s</string>
+    <string name="mock_take">Hacer un simulacro</string>
+    <string name="mock_continue">Continuar el simulacro</string>
+</resources>

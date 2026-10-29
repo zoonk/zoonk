@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "exam_about": "a636958686944bc9ba900cc993681e27cef6e0586fc03ab7cd80783980cff463",
   "exam_add_result": "1fd372262b816cc8070249e7a3585e2ff867cd2739589f8dd9ac18ab4a6f7554",
   "exam_add_result_detail": "171c2e75eb74ab0e3c881a209e73b5153db2397de3ed9fcc59e1d2c8339b23bc",
+  "exam_best_area": "f7ae632dea7660971e1a4e297a483a86afd9fbe09f40f6f69111542bc029160d",
+  "exam_by_subject": "b295fd745a47af7832819a2e5986a3a13b686559a2ca1d9f9bba084f75bf755c",
+  "exam_calibration": "53ec9f8821692145a11dc5ab9620ff47d04625627372fbd81266912941c61602",
+  "exam_calibration_blank_unsure": "8d5d2a3ef6f2b4342dea1b120df0410627c2b6970abb82774dcda129e173083b",
+  "exam_calibration_keep_answering": "7e1a13bcae326ebb835feb33fda84686f1aa6ced24ed0adca55ad059678df193",
+  "exam_calibration_right": "b169673ec23f37542494e4b625ea2d8aba69beaf78c4726ae447a835d2dbd0fa",
   "exam_checklist_black_pen": "91f709b05df759093dfe0d0992322b5eda199896a7bcd203ac4866b23fe32d09",
   "exam_checklist_count": "4ed46201cd744f7fcbdcf6d8f3e3871ee3caffb7fe82ddb094bfc77d76d7b4d3",
   "exam_checklist_documents": "630541ba32ed450d73c0f83da90d212b43f1113088e1d3a5d02921f20b07d577",
@@ -11,22 +18,99 @@
   "exam_checklist_route": "ee53d2f960f4187f8cad1509dde68ed6ceb08643424ab5651363e5aecb1c4b29",
   "exam_checklist_sleep": "ccf4b346ad97ad44623302732fac5129a1cdb7526256329291b6a76dfeaa8f2d",
   "exam_checklist_title": "d2a656f5dca0e3a71884abea48114f0f88407462a832d9a53dbedc6f80766087",
+  "exam_cutoff_goal": "195c281c60e4e9e8bd7d94450a17e192c1a21ca928faa0d9a095cb8625d105e5",
+  "exam_cutoff_score": "330bc803926a44c3d98bf7812d1b747c048c1942b063899ec77a28a6e13eac72",
+  "exam_cutoff_source": "0dabd3580d22e9055ab95d7e14e0d22fd000b9dee764081efc2c9b982bb4f1b2",
+  "exam_cutoff_title": "168fad4b9948384ff2a5a65e091f7ac8e0dab597c28182daf375ce1182fafa09",
   "exam_day_before_learn": "58746eb608dcfc9e2d2768b95140779ce1c5f2e27bc74b94651dfaba88010b9c",
   "exam_day_before_learn_and_mock": "84efba36007877a4577fdd8e5d1e56e32254842b9e8fa2374d3026e5e09975e3",
   "exam_day_before_light": "80235fd18112e638aa97c8c2bc273a03e4cea652629093acf7d327cdb42997da",
   "exam_day_before_mock": "6b157689688b20180ed6f88c7c5d451249cb94bafd865629d1360eac8a274fa3",
   "exam_day_before_review": "0cfc67c63cffdcf769757bc81ca82c7512cb15a3ba7b5c02f95d866fb74ef815",
   "exam_day_time": "b856c516cdf8aaae46cf7f882b28c5b2ae09641257dca506f7ddbba8d295911e",
+  "exam_did_you_pass": "70e36e20ac75b620701cf5d67464851802225559e865ddb4ba5646f22b367623",
+  "exam_estimated_from_past": "73906dd38594240dea50125a52ad88b2b3b6d90dc89be1e131e1733c126b7e75",
+  "exam_estimated_note_guide": "b6fa45774e4d3566b666a02a961d653972ae80f02b8710e71648fb852e9f8e51",
+  "exam_estimated_note_notice": "4a2043838e8c2bf4d20c754d8da6d398a209543d416d42ae46196a747e7b36e5",
+  "exam_eyebrow": "a4a1344c6df9eaaf98982f92c91b64d880c71c5a08489ec00a97d4fdd858b7d4",
+  "exam_eyebrow_days_left": "465971ce5d504d99c7342f9dbd063abd96f56b0590deae2178929454eb373227",
+  "exam_eyebrow_days_left_about": "33665652f1583325ea78e06657ac7cac1fd1e434933f52c0a9c1ae626e48796a",
+  "exam_eyebrow_days_left_estimated": "efab123da55521e21cf8bd484dd09af90500178c842de4ce9d3a1d939ebf5a14",
   "exam_final_stretch": "186a0495d97cb124a3aee7db652ccdb602bf9d85fc7b0e47c7850d73a4b23811",
   "exam_final_stretch_detail": "862b0ab9c36f1632d1181b77461b6b4e74833cfa7e2605f2f016734798d299e3",
+  "exam_format_day": "57fc70ad17709d2f9c01a2b15f743895b6e13293dc10689270a5d54cc2ab70c2",
+  "exam_format_days": "e8087cccd9793e7dd0c6a66bce855188c4b2fb1ab88b04aaf06d86f63ed58580",
+  "exam_format_one_day": "4b63448509889fa360b07e51d177a3fcca1d81f7f62d7bd20abc1660800cac0b",
+  "exam_format_parts_questions": "63102319d1b76f29584890a027ffc23dbdeefaa99253707334ebb51b3adb1fa7",
+  "exam_format_two_days": "da6ab32afe2470dfb4070d81b7208a4e766866ebc42795f0061a7789f4d8316d",
+  "exam_go_to_today": "99ac99f404ae9c0386648ab3964d99c53ff6a3e22202e8b8ca240d3d2d3454ae",
   "exam_how_did_it_go": "c37488c83bb7978abbeccf2670f91e308b6e84061457de860ab974c91ad22f13",
+  "exam_latest_mock": "966231d534730e2c511ef23c1ed5605650b4f580ce749b168f8e4966c12573bc",
+  "exam_mock_answered": "443f43881ecf23c91505ef17d1b520d9aefa044865bb6f61a7cfbe30615cfdb9",
+  "exam_mock_handed_in": "5ad31f2d41f004a08a260c384987882bfedb723fd8cfd0e452861bb33a1589c7",
+  "exam_mock_time_left": "a89bff54fa470bb66efb91131fb69b750a8ffdd1ef283f47eca795a17a24a7b2",
+  "exam_mock_time_up": "4ad41ecc03a1795b0f1c87d50caf8c8538df00f3dd7769823faf1424188447d1",
   "exam_mocks": "17ff1e98f5c6c6effbb2dfcf55132078b76b841286d8f7861465e055bbe303e0",
+  "exam_mocks_plus": "d4862b3926e728a214d207d6c5655c678d40d83310fd51922b7ccc4ef28160f2",
+  "exam_mocks_taken": "f7e201fc4c56d7c37e4302b12cd3d984096dd3065932e35d184c180fb5d29c85",
+  "exam_mocks_title": "62b1ce3abca5749d51c03f078478eac476bc9acdf259bfbbc221e5f95c43724d",
+  "exam_named_month_note_guide": "646d68d32ebf9bd7cec681fd5a0da0578a8c098cd42fcdda0d06aa128ed61bed",
+  "exam_named_month_note_notice": "2eb9ce6e87539ca7fad1592b7828962b0d83e562c8fe716894dc5ea855ff7276",
+  "exam_net_score_in": "d417348cf57b04c686d4a7295dcd8de6941c73658f9966b8c9f72afcb4c5e4c7",
+  "exam_no_sitting_detail": "a838359485217a662165254df5a27fd4bd63b6d986e0780c6750af8b5a39a783",
+  "exam_no_sitting_title": "d775710c738917b6cdbb5002797b8083384729a0d37036b4923929091baa7722",
+  "exam_not_found_description": "6f8a79ec36e77642a52d1f330204ba54a7d8828255a07ae18dfc196fa8881e58",
+  "exam_not_found_title": "cc922324b2ad6f3fb9433919c6c9b80caded05029b661a098b1cfa6e9ea8487f",
+  "exam_out_of": "eeecbe976b305addbf67cd5b54544e10217ec5c4244796cbfddd290911264936",
+  "exam_pass_marks_language": "eff0e9f8777dd065a85dcd8ee85d121e7aafbeef38a17406e0520b9b2f018e4b",
+  "exam_passed_no": "1c1a267638ed91f0ce0abb99b2f7ae47871bed5f968c0fe4677eaddb5a5d5bce",
+  "exam_passed_unknown": "9b7cdcaceaa25eb07ccac450bf1548609ef30ceb495f149e7e445ccaa0de9649",
+  "exam_passed_yes": "3af698138fd676b441d55cbb31b422cdf107efd82dfba37fd338ed3037339227",
   "exam_prepared": "af2e749d330dd2cd961e4dbebc1ea6d71f8fa3efb75bbe63f602179800e92cd9",
+  "exam_progress_better": "b4121a99f3101e17eaa8c7ed798b6b8d9756707a1002ac45b35c00e041b68e54",
+  "exam_progress_better_and_needs_work": "c4faea6c5157c921a63006a8762b0b23320a426bb68ddde1ffcb19713d0cca36",
+  "exam_progress_chart_label": "43000ffbaa23d2ca707e13b9b628c93bd8edde5b7e2fdd13a471b84d25a9ebeb",
+  "exam_progress_locked": "4ba5f8afa73206c656bf375991416b6050515a06a838f12321d7eff1b4e80ed2",
+  "exam_progress_needs_work": "84d3cfbbdb909d535d9730c94b2c8b0aec61b6a8827077089324bf4493d6755f",
+  "exam_progress_no_change": "4f2d398f65b6a54c6fdaa1eb4dcc544d7e037432c22de0d5307cf2cc65f96fa1",
+  "exam_progress_take_another": "6068ab68a3065ba1decc5e070ef9493a58715043c22f81b3c1ffdb6ceef68e7a",
+  "exam_progress_title": "d3ad3e97ec6536433269087c2918b54fa54599f041bac82136b65fd1b25621cc",
+  "exam_progress_trends_later": "184e101ed070b260ae687a06f191aa05de1a9e3a227e2facacfb25584da442ed",
+  "exam_questions": "ee612d3cbe64a74e064ac0b83824fef8e973281609384df0b0a60655ac9f3d1e",
+  "exam_result_detail": "bb200627a9d64324a1324572d3086376f9fe301a963f9d820fa5d2f3d290b521",
+  "exam_result_saved": "cd95a60ef4dd71fbfc8ac32d7a7e374367942c53595df8bcceab0bafb8c72962",
+  "exam_result_saved_score": "772c9dfd58a81071bc3f79c2e3841f5b6b3a79738ab93877d8dba537e4b05f98",
+  "exam_right_answers_in": "231908dc815de9b85b1d906714fb3fb72bfbc047ee6d13d64014fd7a22bfd773",
+  "exam_rule_irt": "9dba3ed7920d53b5cb789c74c8993bc3899ca6b6ff42d66c81e7a095b7410016",
+  "exam_rule_irt_title": "59b150fde9557c66db448353c8d1af8301243ac3f3bd983513a37f9d7d2100d5",
+  "exam_rule_net": "60505d0b8c99f4fdba447be4444e3fc370f29b37ab83aa13a9c273de000093c0",
+  "exam_rule_net_cancels": "fa5b71277aa82a34cb4eb25da1c0e3a77b4155e68a580c0b2b69fe2741f48d28",
+  "exam_rule_net_costs": "db3a677457602a41587081827a6b36b2798f0337aebfbdb8b786179cd97c4943",
+  "exam_rule_raw": "851186a43bd9dfb28c7db7ccbd643d85fb43337999160837cc974fb4ab6b5a47",
+  "exam_rule_raw_title": "3e34c448a59fbe32b4caff7f0c7d591b45a628953670b61f44d1dcdf6cb4708f",
+  "exam_save_result": "75cba38e40b6dd73ee839ef591978fb5748872ff6bd20b87269d4dc500790ed9",
+  "exam_scale_named": "77e82000512ab5f0cc49884ae7cdfe32e42b48651a3b47d511f898e3d2a83785",
+  "exam_scale_own": "45850d1222b63ec54830c6a201f66256b7fa0805962efa404b41abf8a25148bc",
+  "exam_scale_pass": "d65da499fb563b00f579bd831c78578c5b17b996a2181d7d377eefa7dd86ed9c",
+  "exam_scale_range": "6b0ae2f51af5ae1367a2ac7edc2b207f59cc4a5d69c32798ccddfab2074f2760",
+  "exam_score": "41d3627771957918c6510631149590652cf3575654aa3f802298d824ec23ffc8",
+  "exam_score_ap": "4eef0b4c133c6a3c68e10faa2fdcdbeaf6a79fb6139ddc2df96a8aff2bcac0f9",
+  "exam_score_invalid": "29288afdd9b540bb259d369a0563b5bf656af4a0966a5eb127647cfd09408fc1",
+  "exam_score_irt": "757b20409c1d6f7de872f1bf09dcd4fcaf2fa616df2425269bd6572509a72c0a",
+  "exam_score_off_scale": "831b9292370980f3ad04bdf233b8f5a0439b9a2cfac57bc5af357ec91bbf9e02",
+  "exam_score_sat": "98c87b7af5deaaa4a96e49ac2575d7d0adf045d8df6cf17ac6a69dfe85806aee",
+  "exam_score_toefl": "3e04970fd0e6ffbe946cd535b552ab58a3ce87e0281a3ea156b1acd94f04c24d",
+  "exam_scoring_title": "32fea18db90c3d1f9ab3ece85485ee6cf1f2545b5661eb1891f42ece30d4d4f8",
   "exam_see_exam": "e8a3779f07c663ad425802a750cc92925776aa0cc33951c9f8a091fc235bb39c",
   "exam_sessions": "6d90c25147758796caa8125702bec32d6dae668dc3cf5707eeca0e8015dec9a0",
+  "exam_since_first": "ebdc1a60671938460b03674510e6b2dbb2366828403d609e483dc5598e25bbbe",
+  "exam_since_first_mock": "bbbd9d3fb826e51b4dbd44b43d5c2cb7181f531fb8765d86f95dabb38701505d",
+  "exam_to_pass": "09c6d3d90efdad5516c21b44226d9a9fc03139fbc3c648a4cf3d5d8e3ad3b7fe",
   "exam_today": "42a046e50276ca409ba02382bc90b1a813c9f06fa807b93ed8cd25c6e1676638",
   "exam_tomorrow": "256b0dda7ee745f1f746f8d636ccb3e6dd522328a4e8eadd752e700bbe51d798",
   "exam_tools_title": "1eceb26617a29d37800db0b1dbafb9d8dedc75bccf043382d0ed50e8fc2b5d30",
+  "exam_use_date": "9e6919c5e43dc3f0453d761b2b178a92e70fad840e35932daff73b0e82826ec2",
+  "exam_use_this_date": "374e0408e26347aace1b4805176a2b23d3e3be271b5c4ab67a6e14b39374a170",
   "exam_work_sessions": "e001e67b9396ee1fc951513c64f8e2998f7af8e292f0262329e967e0a5e16f17",
   "exam_work_sessions_and_mocks": "d6e703321d2bafaef7c5ab5ec49a09348845c3c5d615fef3abc53eb71bd37cb7"
 }
@@ -77,4 +161,133 @@
     <string name="exam_tools_title">Zugelassene Hilfsmittel</string>
     <string name="exam_see_exam">Prüfung ansehen</string>
     <string name="exam_add_result">Ergebnis eintragen</string>
+    <string name="exam_eyebrow">Prüfung</string>
+    <plurals name="exam_eyebrow_days_left">
+        <item quantity="one">Prüfung · noch %d Tag</item>
+        <item quantity="other">Prüfung · noch %d Tage</item>
+    </plurals>
+    <!-- The exam's date is estimated, so the days left are approximate ("~"). -->
+    <plurals name="exam_eyebrow_days_left_estimated">
+        <item quantity="one">Prüfung · noch ca. %d Tag</item>
+        <item quantity="other">Prüfung · noch ca. %d Tage</item>
+    </plurals>
+    <!-- What screen readers say for exam_eyebrow_days_left_estimated. -->
+    <plurals name="exam_eyebrow_days_left_about">
+        <item quantity="one">Prüfung · noch etwa %d Tag</item>
+        <item quantity="other">Prüfung · noch etwa %d Tage</item>
+    </plurals>
+    <string name="exam_estimated_from_past">geschätzt anhand früherer Ausgaben</string>
+    <string name="exam_named_month_note_notice">Der Monat, den du uns genannt hast. Sobald die Mitteilung den Tag nennt, sagen wir dir Bescheid.</string>
+    <string name="exam_named_month_note_guide">Der Monat, den du uns genannt hast. Sobald der offizielle Kalender den Tag nennt, sagen wir dir Bescheid.</string>
+    <string name="exam_estimated_note_notice">Geschätzt anhand früherer Ausgaben. Wir sagen dir Bescheid, sobald die offizielle Mitteilung da ist.</string>
+    <string name="exam_estimated_note_guide">Geschätzt anhand früherer Ausgaben. Wir sagen dir Bescheid, sobald die offiziellen Termine feststehen.</string>
+    <string name="exam_use_this_date">Dieses Datum verwenden</string>
+    <!-- %1$s is a month and year, such as "November 2027". -->
+    <string name="exam_no_sitting_title">Kein Prüfungstermin im Jahr %1$s</string>
+    <plurals name="exam_no_sitting_detail">
+        <item quantity="one">Dein Plan behält deinen Termin bei, es sei denn, du wechselst zum nächstgelegenen.</item>
+        <item quantity="other">Dein Plan behält deinen Termin bei, es sei denn, du wechselst zu einem der nächstgelegenen Termine.</item>
+    </plurals>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="exam_use_date">%1$s verwenden</string>
+    <string name="exam_result_detail">Trag dein offizielles Ergebnis ein, sobald es vorliegt. Du kannst es später ändern.</string>
+    <string name="exam_result_saved">Ergebnis gespeichert. Danke, dass du es uns mitgeteilt hast.</string>
+    <!-- %1$s is the score the learner reported, such as 712.4. -->
+    <string name="exam_result_saved_score">Ergebnis gespeichert: %1$s. Danke, dass du es uns mitgeteilt hast.</string>
+    <string name="exam_score">Dein Score</string>
+    <string name="exam_score_irt">Dein Score (bei mehreren der Durchschnitt)</string>
+    <string name="exam_score_ap">Dein AP-Score (1 bis 5)</string>
+    <string name="exam_score_sat">Dein Gesamt-Score (400 bis 1.600)</string>
+    <string name="exam_score_toefl">Dein Gesamtband (1 bis 6)</string>
+    <!-- Between a score and the most points possible: "62 out of 80". -->
+    <string name="exam_out_of">von</string>
+    <string name="exam_score_invalid">Gib eine Zahl ein.</string>
+    <!-- %1$s and %2$s are the lowest and highest scores, %3$s the step between two scores (10 for the SAT). -->
+    <string name="exam_score_off_scale">Scores reichen von %1$s bis %2$s in Schritten von %3$s.</string>
+    <string name="exam_did_you_pass">Hast du bestanden?</string>
+    <string name="exam_passed_yes">Ja</string>
+    <string name="exam_passed_no">Nein</string>
+    <string name="exam_passed_unknown">Noch nicht</string>
+    <string name="exam_save_result">Mein Ergebnis speichern</string>
+    <string name="exam_mocks_title">Probeprüfungen</string>
+    <plurals name="exam_mocks_taken">
+        <item quantity="one">%d absolviert</item>
+        <item quantity="other">%d absolviert</item>
+    </plurals>
+    <string name="exam_mocks_plus">Mit Plus kannst du jederzeit Probeprüfungen machen, jede Woche eine in deinem Plan und deinen Fortschritt über die Zeit verfolgen.</string>
+    <!-- How far into a running mock: "12 of 45 answered". -->
+    <string name="exam_mock_answered">%1$s von %2$s beantwortet</string>
+    <string name="exam_mock_handed_in">Abgegeben</string>
+    <string name="exam_mock_time_up">Die Zeit ist um</string>
+    <!-- %1$s is a duration, such as "1 hr 20 min". -->
+    <string name="exam_mock_time_left">Noch %1$s</string>
+    <plurals name="exam_questions">
+        <item quantity="one">%d Frage</item>
+        <item quantity="other">%d Fragen</item>
+    </plurals>
+    <string name="exam_progress_title">So liefen deine Probeprüfungen</string>
+    <string name="exam_latest_mock">Letzte Probeprüfung</string>
+    <!-- %1$s names the mock, such as "Mock exam 3". -->
+    <string name="exam_net_score_in">Nettopunktzahl in %1$s</string>
+    <!-- %1$s names the mock, such as "Mock exam 3". -->
+    <string name="exam_right_answers_in">Richtige Antworten in %1$s</string>
+    <!-- %1$s is a change in percentage points, such as +12. -->
+    <string name="exam_since_first">%1$s seit der ersten</string>
+    <string name="exam_best_area">Stärkster Bereich</string>
+    <!-- %1$s and %2$s are the first and latest scores, such as 45%. -->
+    <string name="exam_progress_chart_label">Deine Scores in Probeprüfungen, von %1$s bis %2$s</string>
+    <string name="exam_by_subject">Nach Fach</string>
+    <!-- Read before a subject's change in percentage points, such as "+12". -->
+    <string name="exam_since_first_mock">Seit der ersten Probeprüfung: %1$s</string>
+    <string name="exam_progress_take_another">Mach eine weitere Probeprüfung, um zu sehen, wie sich dein Score verändert.</string>
+    <!-- %1$s and %2$s are lists of subjects. -->
+    <string name="exam_progress_better_and_needs_work">Besser in %1$s. Hier gibt es noch Übungsbedarf: %2$s.</string>
+    <string name="exam_progress_better">Besser in %1$s.</string>
+    <string name="exam_progress_needs_work">Hier gibt es noch Übungsbedarf: %1$s.</string>
+    <string name="exam_progress_no_change">Bei keinem Fach hat sich bisher viel verändert.</string>
+    <string name="exam_progress_trends_later">Trends pro Fach werden angezeigt, sobald deine Probeprüfungen zu jedem Fach genügend neue Fragen enthalten.</string>
+    <string name="exam_progress_locked">Der Score jeder Probeprüfung im Zeitverlauf und wie sich die einzelnen Fächer entwickeln.</string>
+    <string name="exam_format_one_day">Der Prüfungstag</string>
+    <string name="exam_format_two_days">Die beiden Prüfungstage</string>
+    <string name="exam_format_days">Die %1$d Prüfungstage</string>
+    <string name="exam_format_day">Tag %1$d</string>
+    <!-- %1$s lists the day's parts, %2$s counts its questions: "Languages and Humanities · 90 questions". -->
+    <string name="exam_format_parts_questions">%1$s · %2$s</string>
+    <string name="exam_about">Über die Prüfung</string>
+    <string name="exam_scoring_title">So funktioniert der Score</string>
+    <string name="exam_rule_net_cancels">Eine falsche Antwort hebt eine richtige auf</string>
+    <!-- %1$s is a share, such as 25%. -->
+    <string name="exam_rule_net_costs">Eine falsche Antwort ist %1$s einer richtigen wert</string>
+    <!-- %1$s is a share, such as 50%. -->
+    <string name="exam_rule_net">Antworte nur, wenn du dir zu mehr als %1$s sicher bist.</string>
+    <string name="exam_rule_irt_title">Richtige Antworten auf einfache Fragen zählen mehr</string>
+    <string name="exam_rule_irt">Eine einfache Frage falsch zu beantworten kostet mehr als eine schwierige. Löse deshalb zuerst die einfachen Fragen.</string>
+    <string name="exam_rule_raw_title">Jede richtige Antwort zählt einen Punkt</string>
+    <string name="exam_rule_raw">Beantworte jede Frage.</string>
+    <!-- %1$s and %2$s are exam_calibration_right: "In your mock exams: sure, 8 of 10 right. Unsure, 2 of 6 right." -->
+    <string name="exam_calibration">In deinen Probeprüfungen: sicher, %1$s. Unsicher, %2$s.</string>
+    <plurals name="exam_calibration_right">
+        <item quantity="one">%1$d von %2$d richtig</item>
+        <item quantity="other">%1$d von %2$d richtig</item>
+    </plurals>
+    <string name="exam_calibration_blank_unsure">Mit deinen unsicheren Antworten verlierst du mehr Punkte, als du gewinnst. Lass diese Fragen unbeantwortet.</string>
+    <string name="exam_calibration_keep_answering">Auch mit deinen unsicheren Antworten gewinnst du Punkte. Beantworte sie also weiter.</string>
+    <string name="exam_to_pass">Zum Bestehen</string>
+    <!-- %1$s is a language's name, such as Spanish. -->
+    <string name="exam_pass_marks_language">In %1$s, wie es in den Prüfungsunterlagen steht.</string>
+    <!-- %1$s is the scale's name, such as CEFR. -->
+    <string name="exam_scale_named">Bewertung nach der %1$s-Skala</string>
+    <string name="exam_scale_own">Bewertung nach der eigenen Skala</string>
+    <string name="exam_scale_range">Von %1$s bis %2$s.</string>
+    <string name="exam_scale_pass">Zum Bestehen: %1$s oder mehr.</string>
+    <!-- %1$s is exam_cutoff_score, such as "712.4 out of 1,000". -->
+    <string name="exam_cutoff_title">Letzter Grenzwert: %1$s</string>
+    <string name="exam_cutoff_score">%1$s von %2$s</string>
+    <!-- %1$s describes the cut-off (course, place, edition), %2$s is the website it comes from, such as sisu.mec.gov.br. -->
+    <string name="exam_cutoff_source">%1$s, laut %2$s</string>
+    <!-- %1$s is the learner's goal, such as "Medicine at USP". -->
+    <string name="exam_cutoff_goal">Dein Ziel: %1$s</string>
+    <string name="exam_not_found_title">Diese Seite wurde nicht gefunden</string>
+    <string name="exam_not_found_description">Der Link ist möglicherweise veraltet oder falsch geschrieben.</string>
+    <string name="exam_go_to_today">Zu Heute</string>
 </resources>

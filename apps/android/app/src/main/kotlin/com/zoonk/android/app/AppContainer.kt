@@ -35,6 +35,8 @@ import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.LiveCatalogApi
 import com.zoonk.android.feature.conversation.ConversationStore
 import com.zoonk.android.feature.conversation.LiveConversationApi
+import com.zoonk.android.feature.exam.ExamStore
+import com.zoonk.android.feature.exam.LiveExamApi
 import com.zoonk.android.feature.explain.ExplainStore
 import com.zoonk.android.feature.explain.LiveExplainApi
 import com.zoonk.android.feature.feedback.FeedbackSender
@@ -44,6 +46,8 @@ import com.zoonk.android.feature.livecall.OngoingCalls
 import com.zoonk.android.feature.livecall.WebRtcLiveCallTransport
 import com.zoonk.android.feature.memory.LiveMemoryApi
 import com.zoonk.android.feature.memory.MemoryStore
+import com.zoonk.android.feature.mock.LiveMockApi
+import com.zoonk.android.feature.mock.MockStore
 import com.zoonk.android.feature.onboarding.LiveOnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.LivePlanApi
@@ -222,6 +226,10 @@ class AppContainer private constructor(
     val catalog = CatalogStore(LiveCatalogApi(api), cache)
     val search = SearchStore(LiveSearchApi(api), cache)
     val stats = StatsStore(LiveStatsApi(api), cache)
+
+    // Exams and mocks (L7).
+    val exams = ExamStore(LiveExamApi(api), cache, timeZone)
+    val mocks = MockStore(LiveMockApi(api), cache)
 
     init {
         scope.launch { sessions.restore() }

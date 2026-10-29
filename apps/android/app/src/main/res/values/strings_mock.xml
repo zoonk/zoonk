@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mock_title">Mock exam %1$d</string>
+    <string name="mock_full_day">A full exam day</string>
+    <string name="mock_half_day">Half an exam day</string>
+    <string name="mock_full_day_number">A full exam day, day %1$d</string>
+    <string name="mock_half_day_number">Half an exam day, day %1$d</string>
+    <!-- A placement mock, the one that finds where the learner starts. -->
+    <string name="mock_starting_point">Starting point</string>
+    <!-- A mock's net score where wrong answers cancel right ones: "Net 32.5 of 60". -->
+    <string name="mock_net_score">Net %1$s of %2$d</string>
+    <!-- %1$s can be a decimal, since some questions give partial credit: "41.5 of 60 right". -->
+    <plurals name="mock_right_answers">
+        <item quantity="one">%1$s of %2$d right</item>
+        <item quantity="other">%1$s of %2$d right</item>
+    </plurals>
+    <!-- %1$s is what the mock covered, such as "Mathematics"; it asked %2$d of the exam's %3$d questions. -->
+    <plurals name="mock_shape_of_questions">
+        <item quantity="one">%1$s, %2$d of %3$d questions</item>
+        <item quantity="other">%1$s, %2$d of %3$d questions</item>
+    </plurals>
+    <!-- Two facts about a mock, such as its date and what it covered: "Oct 28 · Mathematics". -->
+    <string name="mock_row_detail">%1$s · %2$s</string>
+    <string name="mock_take">Take a mock exam</string>
+    <string name="mock_continue">Continue your mock exam</string>
+</resources>

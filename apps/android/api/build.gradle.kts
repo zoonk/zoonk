@@ -47,6 +47,8 @@ openApiGenerate {
     schemaMappings =
         listOf(
             "ExamTopicFrequency",
+            // Its keys are required even when null (no score, a pass not known yet), which the model would drop.
+            "ExamResultInput",
             "LanguageLevelTestSpokenAnswerRequest",
             // Its explicit nulls mean "clear it" (no daily limit, no active goal), which the model can't tell from absent.
             "LearningProfileUpdate",

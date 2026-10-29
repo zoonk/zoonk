@@ -45,4 +45,133 @@
     <string name="exam_tools_title">What you may use</string>
     <string name="exam_see_exam">See your exam</string>
     <string name="exam_add_result">Add your result</string>
+    <string name="exam_eyebrow">Exam</string>
+    <plurals name="exam_eyebrow_days_left">
+        <item quantity="one">Exam · %d day left</item>
+        <item quantity="other">Exam · %d days left</item>
+    </plurals>
+    <!-- The exam's date is estimated, so the days left are approximate ("~"). -->
+    <plurals name="exam_eyebrow_days_left_estimated">
+        <item quantity="one">Exam · ~%d day left</item>
+        <item quantity="other">Exam · ~%d days left</item>
+    </plurals>
+    <!-- What screen readers say for exam_eyebrow_days_left_estimated. -->
+    <plurals name="exam_eyebrow_days_left_about">
+        <item quantity="one">Exam · About %d day left</item>
+        <item quantity="other">Exam · About %d days left</item>
+    </plurals>
+    <string name="exam_estimated_from_past">estimated from past editions</string>
+    <string name="exam_named_month_note_notice">The month you told us. We\'ll tell you the day once the notice sets it.</string>
+    <string name="exam_named_month_note_guide">The month you told us. We\'ll tell you the day once the official calendar sets it.</string>
+    <string name="exam_estimated_note_notice">Estimated from past editions. We\'ll tell you when the official notice is out.</string>
+    <string name="exam_estimated_note_guide">Estimated from past editions. We\'ll tell you when the official dates are out.</string>
+    <string name="exam_use_this_date">Use this date</string>
+    <!-- %1$s is a month and year, such as "November 2027". -->
+    <string name="exam_no_sitting_title">No exam date in %1$s</string>
+    <plurals name="exam_no_sitting_detail">
+        <item quantity="one">Your plan keeps your date unless you switch to the closest one.</item>
+        <item quantity="other">Your plan keeps your date unless you switch to one of the closest.</item>
+    </plurals>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="exam_use_date">Use %1$s</string>
+    <string name="exam_result_detail">Add your official result when it comes out. You can change it later.</string>
+    <string name="exam_result_saved">Result saved. Thank you for telling us.</string>
+    <!-- %1$s is the score the learner reported, such as 712.4. -->
+    <string name="exam_result_saved_score">Result saved: %1$s. Thank you for telling us.</string>
+    <string name="exam_score">Your score</string>
+    <string name="exam_score_irt">Your score (the average, if there are several)</string>
+    <string name="exam_score_ap">Your AP score (1 to 5)</string>
+    <string name="exam_score_sat">Your total score (400 to 1600)</string>
+    <string name="exam_score_toefl">Your total band (1 to 6)</string>
+    <!-- Between a score and the most points possible: "62 out of 80". -->
+    <string name="exam_out_of">out of</string>
+    <string name="exam_score_invalid">Enter a number.</string>
+    <!-- %1$s and %2$s are the lowest and highest scores, %3$s the step between two scores (10 for the SAT). -->
+    <string name="exam_score_off_scale">Scores go from %1$s to %2$s in steps of %3$s.</string>
+    <string name="exam_did_you_pass">Did you pass?</string>
+    <string name="exam_passed_yes">Yes</string>
+    <string name="exam_passed_no">No</string>
+    <string name="exam_passed_unknown">Not yet</string>
+    <string name="exam_save_result">Save my result</string>
+    <string name="exam_mocks_title">Mock exams</string>
+    <plurals name="exam_mocks_taken">
+        <item quantity="one">%d taken</item>
+        <item quantity="other">%d taken</item>
+    </plurals>
+    <string name="exam_mocks_plus">Mock exams come with Plus: whenever you want, every week in your plan, and your progress over time.</string>
+    <!-- How far into a running mock: "12 of 45 answered". -->
+    <string name="exam_mock_answered">%1$s of %2$s answered</string>
+    <string name="exam_mock_handed_in">Handed in</string>
+    <string name="exam_mock_time_up">Time\'s up</string>
+    <!-- %1$s is a duration, such as "1 hr 20 min". -->
+    <string name="exam_mock_time_left">%1$s left</string>
+    <plurals name="exam_questions">
+        <item quantity="one">%d question</item>
+        <item quantity="other">%d questions</item>
+    </plurals>
+    <string name="exam_progress_title">How your mocks went</string>
+    <string name="exam_latest_mock">Latest mock</string>
+    <!-- %1$s names the mock, such as "Mock exam 3". -->
+    <string name="exam_net_score_in">Net score in %1$s</string>
+    <!-- %1$s names the mock, such as "Mock exam 3". -->
+    <string name="exam_right_answers_in">Right answers in %1$s</string>
+    <!-- %1$s is a change in percentage points, such as +12. -->
+    <string name="exam_since_first">%1$s since the first</string>
+    <string name="exam_best_area">Best area</string>
+    <!-- %1$s and %2$s are the first and latest scores, such as 45%. -->
+    <string name="exam_progress_chart_label">Your mock exam scores, from %1$s to %2$s</string>
+    <string name="exam_by_subject">By subject</string>
+    <!-- Read before a subject's change in percentage points, such as "+12". -->
+    <string name="exam_since_first_mock">Since the first mock: %1$s</string>
+    <string name="exam_progress_take_another">Take another mock exam to see how your score changes.</string>
+    <!-- %1$s and %2$s are lists of subjects. -->
+    <string name="exam_progress_better_and_needs_work">Better in %1$s. Still needs work: %2$s.</string>
+    <string name="exam_progress_better">Better in %1$s.</string>
+    <string name="exam_progress_needs_work">Still needs work: %1$s.</string>
+    <string name="exam_progress_no_change">No subject has changed much yet.</string>
+    <string name="exam_progress_trends_later">Trends by subject show once your mocks ask enough new questions of each one.</string>
+    <string name="exam_progress_locked">Each mock\'s score over time, and how each subject is going.</string>
+    <string name="exam_format_one_day">The exam day</string>
+    <string name="exam_format_two_days">The two days</string>
+    <string name="exam_format_days">The %1$d days</string>
+    <string name="exam_format_day">Day %1$d</string>
+    <!-- %1$s lists the day's parts, %2$s counts its questions: "Languages and Humanities · 90 questions". -->
+    <string name="exam_format_parts_questions">%1$s · %2$s</string>
+    <string name="exam_about">About the exam</string>
+    <string name="exam_scoring_title">How the score works</string>
+    <string name="exam_rule_net_cancels">A wrong answer cancels a right one</string>
+    <!-- %1$s is a share, such as 25%. -->
+    <string name="exam_rule_net_costs">A wrong answer costs %1$s of a right one</string>
+    <!-- %1$s is a share, such as 50%. -->
+    <string name="exam_rule_net">Answer only when you\'re more than %1$s sure.</string>
+    <string name="exam_rule_irt_title">Getting the easy ones right counts more</string>
+    <string name="exam_rule_irt">Missing an easy question costs more than missing a hard one, so solve the easy ones first.</string>
+    <string name="exam_rule_raw_title">Each right answer counts one point</string>
+    <string name="exam_rule_raw">Answer every question.</string>
+    <!-- %1$s and %2$s are exam_calibration_right: "In your mock exams: sure, 8 of 10 right. Unsure, 2 of 6 right." -->
+    <string name="exam_calibration">In your mock exams: sure, %1$s. Unsure, %2$s.</string>
+    <plurals name="exam_calibration_right">
+        <item quantity="one">%1$d of %2$d right</item>
+        <item quantity="other">%1$d of %2$d right</item>
+    </plurals>
+    <string name="exam_calibration_blank_unsure">Your unsure answers cost more than they earn: leave those blank.</string>
+    <string name="exam_calibration_keep_answering">Your unsure answers still earn points: keep answering them.</string>
+    <string name="exam_to_pass">To pass</string>
+    <!-- %1$s is a language's name, such as Spanish. -->
+    <string name="exam_pass_marks_language">In %1$s, as the exam\'s documents say it.</string>
+    <!-- %1$s is the scale's name, such as CEFR. -->
+    <string name="exam_scale_named">Scored on the %1$s scale</string>
+    <string name="exam_scale_own">Scored on its own scale</string>
+    <string name="exam_scale_range">From %1$s to %2$s.</string>
+    <string name="exam_scale_pass">To pass: %1$s or more.</string>
+    <!-- %1$s is exam_cutoff_score, such as "712.4 out of 1,000". -->
+    <string name="exam_cutoff_title">Last cut-off: %1$s</string>
+    <string name="exam_cutoff_score">%1$s out of %2$s</string>
+    <!-- %1$s describes the cut-off (course, place, edition), %2$s is the website it comes from, such as sisu.mec.gov.br. -->
+    <string name="exam_cutoff_source">%1$s, according to %2$s</string>
+    <!-- %1$s is the learner's goal, such as "Medicine at USP". -->
+    <string name="exam_cutoff_goal">Your goal: %1$s</string>
+    <string name="exam_not_found_title">We couldn\'t find this page</string>
+    <string name="exam_not_found_description">The link may be old or mistyped.</string>
+    <string name="exam_go_to_today">Go to Today</string>
 </resources>
