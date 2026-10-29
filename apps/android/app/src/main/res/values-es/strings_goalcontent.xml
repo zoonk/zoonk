@@ -3,6 +3,7 @@
 {
   "goalcontent_about_lessons": "310a78ff668bde5028a99f748b9522021cd068d54a698bdb90d18d059a4c3729",
   "goalcontent_adjust_plan": "2b7c06c287b10eb825cb1e2d6456a08d13b9ca526700e28a22d88ce4fcc2ba5e",
+  "goalcontent_also": "3aa17540ac6cf70c8ac95550ce48774ac3a640f33603acf46c8db343c8c6cc53",
   "goalcontent_also_in_plan": "5fd9e83bb092789b1c23a45e124f7c1ed6d45f72903c2990dd8aee7f89147251",
   "goalcontent_appears_a_lot": "599e8a13861be100383f2d5ec4842a2e32eea50fe78e1a5574430eff99234032",
   "goalcontent_beyond_guide": "80747614a937f3f6f8e34322a33285578b12c67015f33c2b85aebc57aff9940c",
@@ -231,6 +232,8 @@
     <string name="goalcontent_topics_in_notice">Temas de la convocatoria</string>
     <string name="goalcontent_topics_in_guide">Temas de la guía oficial</string>
     <string name="goalcontent_details">Detalles</string>
+    <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
+    <string name="goalcontent_also">También</string>
     <string name="goalcontent_questions">Preguntas</string>
     <string name="goalcontent_topics">Temas</string>
     <string name="goalcontent_chapters">Capítulos</string>

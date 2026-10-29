@@ -46,6 +46,9 @@ import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.subscription.PlusMark
+import com.zoonk.android.feature.tutor.AskTutor
+import com.zoonk.android.feature.tutor.AskTutorAppearance
+import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.RoutePlaceholder
@@ -96,12 +99,22 @@ fun ChapterScreen(
         }
 
         else -> {
-            ChapterContent(ChapterKey(goal.id, chapterId), app.goalContent, navigator) {
-                ReportProblemMenu(
-                    app,
-                    FeedbackTarget(screen = "chapter", contentKind = FeedbackSubmissionContext.ContentKind.CHAPTER, contentId = chapterId),
-                )
-            }
+            ChapterContent(
+                key = ChapterKey(goal.id, chapterId),
+                store = app.goalContent,
+                navigator = navigator,
+                menu = {
+                    ReportProblemMenu(
+                        app,
+                        FeedbackTarget(
+                            screen = "chapter",
+                            contentKind = FeedbackSubmissionContext.ContentKind.CHAPTER,
+                            contentId = chapterId,
+                        ),
+                    )
+                },
+                ask = { AskTutor(TutorScope.Chapter(route.chapterId), app, navigator, appearance = it) },
+            )
         }
     }
 }
@@ -112,6 +125,7 @@ internal fun ChapterContent(
     store: GoalContentStore,
     navigator: AppNavigator,
     menu: @Composable () -> Unit = {},
+    ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
 ) {
     val resource = store.chapter[key]
     val state by resource.collectShown()
@@ -135,6 +149,7 @@ internal fun ChapterContent(
                 chapter = shown.value,
                 practice = practiceState,
                 menu = menu,
+                ask = ask,
                 actions =
                     ChapterActions(
                         back = back,
@@ -201,11 +216,15 @@ internal fun ChapterPage(
     practice: PracticeState,
     actions: ChapterActions,
     menu: @Composable () -> Unit = {},
+    ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
 ) {
     DetailPage(
         title = chapter.chapter.title,
         onBack = actions.back,
-        actions = { menu() },
+        actions = {
+            ask?.invoke(AskTutorAppearance.Button)
+            menu()
+        },
         aside = {
             ChapterProgress(chapter)
             ChapterPractice(chapter, practice, actions)

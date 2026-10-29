@@ -98,6 +98,8 @@
     <string name="goalcontent_topics_in_notice">Topics in the notice</string>
     <string name="goalcontent_topics_in_guide">Topics in the official guide</string>
     <string name="goalcontent_details">Details</string>
+    <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
+    <string name="goalcontent_also">Also</string>
     <string name="goalcontent_questions">Questions</string>
     <string name="goalcontent_topics">Topics</string>
     <string name="goalcontent_chapters">Chapters</string>

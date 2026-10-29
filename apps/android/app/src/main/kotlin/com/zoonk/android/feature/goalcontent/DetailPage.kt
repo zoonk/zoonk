@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -47,47 +48,59 @@ internal fun DetailPage(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
-    actions: @Composable RowScope.() -> Unit = {},
+    actions: @Composable RowScope.(asideBeside: Boolean) -> Unit = {},
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val titleAway by remember { derivedStateOf { listState.firstVisibleItemIndex > 0 } }
 
-    PageScaffold(
-        onBack = onBack,
-        modifier = modifier,
-        title = { if (titleAway) Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-        actions = actions,
-    ) { padding ->
-        val direction = LocalLayoutDirection.current
-        val listPadding =
-            PaddingValues(
-                start = padding.calculateStartPadding(direction),
-                top = padding.calculateTopPadding() + 8.dp,
-                end = padding.calculateEndPadding(direction),
-                bottom = padding.calculateBottomPadding() + SECTION_GAP,
-            )
+    BoxWithConstraints(modifier) {
+        val asideBeside = aside != null && maxWidth >= ASIDE_FROM
 
-        BoxWithConstraints(Modifier.fillMaxSize()) {
-            if (aside != null && maxWidth >= ASIDE_FROM) {
-                Row(Modifier.fillMaxSize()) {
-                    LazyColumn(Modifier.weight(1f), state = listState, contentPadding = listPadding) { content(true) }
-                    VerticalDivider(Modifier.padding(top = padding.calculateTopPadding()))
-                    Column(
-                        modifier =
-                            Modifier
-                                .width(ASIDE_WIDTH)
-                                .fillMaxHeight()
-                                .verticalScroll(rememberScrollState())
-                                .padding(listPadding.copyWithoutStart(direction)),
-                        verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
-                        content = aside,
-                    )
-                }
-            } else {
-                LazyColumn(Modifier.fillMaxSize(), state = listState, contentPadding = listPadding) { content(false) }
-            }
+        PageScaffold(
+            onBack = onBack,
+            title = { if (titleAway) Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            actions = { actions(asideBeside) },
+        ) { padding ->
+            DetailPageContent(listState, padding, if (asideBeside) aside else null, content)
         }
+    }
+}
+
+@Composable
+private fun DetailPageContent(
+    listState: LazyListState,
+    padding: PaddingValues,
+    aside: (@Composable ColumnScope.() -> Unit)?,
+    content: LazyListScope.(asideBeside: Boolean) -> Unit,
+) {
+    val direction = LocalLayoutDirection.current
+    val listPadding =
+        PaddingValues(
+            start = padding.calculateStartPadding(direction),
+            top = padding.calculateTopPadding() + 8.dp,
+            end = padding.calculateEndPadding(direction),
+            bottom = padding.calculateBottomPadding() + SECTION_GAP,
+        )
+
+    if (aside == null) {
+        LazyColumn(Modifier.fillMaxSize(), state = listState, contentPadding = listPadding) { content(false) }
+        return
+    }
+
+    Row(Modifier.fillMaxSize()) {
+        LazyColumn(Modifier.weight(1f), state = listState, contentPadding = listPadding) { content(true) }
+        VerticalDivider(Modifier.padding(top = padding.calculateTopPadding()))
+        Column(
+            modifier =
+                Modifier
+                    .width(ASIDE_WIDTH)
+                    .fillMaxHeight()
+                    .verticalScroll(rememberScrollState())
+                    .padding(listPadding.copyWithoutStart(direction)),
+            verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
+            content = aside,
+        )
     }
 }
 

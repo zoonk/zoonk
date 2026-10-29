@@ -33,6 +33,9 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.plan.planGoal
+import com.zoonk.android.feature.tutor.AskTutor
+import com.zoonk.android.feature.tutor.AskTutorAppearance
+import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -70,9 +73,15 @@ fun SubjectScreen(
         return
     }
 
-    SubjectContent(goal.id, route.subjectKey, app.plans.syllabus[goal.id], app.goalContent, navigator) {
-        ReportProblemMenu(app, FeedbackTarget(screen = "subject"))
-    }
+    SubjectContent(
+        goalId = goal.id,
+        subjectKey = route.subjectKey,
+        syllabus = app.plans.syllabus[goal.id],
+        store = app.goalContent,
+        navigator = navigator,
+        menu = { ReportProblemMenu(app, FeedbackTarget(screen = "subject")) },
+        ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
+    )
 }
 
 @Composable
@@ -83,6 +92,7 @@ internal fun SubjectContent(
     store: GoalContentStore,
     navigator: AppNavigator,
     menu: @Composable () -> Unit = {},
+    ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
 ) {
     val back: () -> Unit = { navigator.back() }
     val state by syllabus.collectShown()
@@ -100,6 +110,7 @@ internal fun SubjectContent(
                     subject = subject,
                     writes = writes.state.collectAsStateWithLifecycle().value,
                     menu = menu,
+                    ask = ask,
                     actions =
                         SubjectActions(
                             back = back,
@@ -193,12 +204,16 @@ internal fun SubjectPage(
     actions: SubjectActions,
     today: LocalDate = LocalDate.now(),
     menu: @Composable () -> Unit = {},
+    ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
 ) {
     DetailPage(
         title = subject.name,
         onBack = actions.back,
-        aside = { SubjectAside(syllabus, subject, today) },
-        actions = { menu() },
+        aside = { SubjectAside(syllabus, subject, today, ask) },
+        actions = { asideBeside ->
+            if (!asideBeside) ask?.invoke(AskTutorAppearance.Button)
+            menu()
+        },
     ) { asideBeside ->
         item(key = "hero", contentType = "hero") { SubjectHero(syllabus, subject, actions) }
 

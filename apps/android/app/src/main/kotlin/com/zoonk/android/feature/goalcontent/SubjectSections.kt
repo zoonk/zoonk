@@ -50,6 +50,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.formatPlanDate
+import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.markSize
@@ -287,6 +288,7 @@ internal fun ColumnScope.SubjectAside(
     syllabus: Syllabus,
     subject: SyllabusSubject,
     today: LocalDate,
+    ask: (@Composable (AskTutorAppearance) -> Unit)?,
 ) {
     if (subject.notPlannedReason == null || subject.preparation != null) {
         AsideSection(
@@ -295,6 +297,8 @@ internal fun ColumnScope.SubjectAside(
     }
 
     AsideSection(stringResource(R.string.goalcontent_details)) { SubjectDetails(syllabus, subject, today) }
+
+    if (ask != null) AsideSection(stringResource(R.string.goalcontent_also)) { ask(AskTutorAppearance.Row) }
 }
 
 @Composable

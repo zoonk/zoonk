@@ -10,14 +10,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.app.AppContainer
+import com.zoonk.android.feature.feedback.FeedbackTarget
+import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.tutor.AskTutor
+import com.zoonk.android.feature.tutor.AskTutorAppearance
+import com.zoonk.android.feature.tutor.TutorScope
+import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -99,10 +108,29 @@ class GoalContentScreenshots {
         val TODAY: LocalDate = LocalDate.of(2026, 10, 28)
         val NO_ACTIONS = SubjectActions(back = {}, openChapter = {}, adjustPlan = {}, restore = {}, setCadence = {})
 
+        /** The page's own tools, as the screens add them: Ask the buddy and Report a problem. */
+        @Composable
+        fun tools(scope: TutorScope): Pair<@Composable () -> Unit, @Composable (AskTutorAppearance) -> Unit> {
+            val context = LocalContext.current
+            val app = remember { AppContainer.preview(context) }
+            val navigator = rememberAppNavigator()
+            return Pair(
+                { ReportProblemMenu(app, FeedbackTarget(screen = "screenshots")) },
+                { AskTutor(scope, app, navigator, appearance = it) },
+            )
+        }
+
         @Composable
         fun Subject(key: String) {
             val syllabus = if (key == "basics") modulesSyllabus() else examSyllabus()
-            SubjectPage(syllabus, syllabus.subjects.first { it.key == key }, SubjectWrites(), NO_ACTIONS, TODAY)
+            val (menu, ask) = tools(TutorScope.Subject(GOAL, key))
+            SubjectPage(syllabus, syllabus.subjects.first { it.key == key }, SubjectWrites(), NO_ACTIONS, TODAY, menu, ask)
+        }
+
+        @Composable
+        fun Chapter() {
+            val (menu, ask) = tools(TutorScope.Chapter(chapterId(3)))
+            ChapterPage(goalChapter(), PracticeState(outcome = PracticeOutcome.DailyCap), ChapterActions({}, {}, {}, {}), menu, ask)
         }
 
         val SCREENS: List<Pair<String, @Composable () -> Unit>> =
@@ -111,8 +139,7 @@ class GoalContentScreenshots {
                 "subject-skipped" to { Subject("spanish") },
                 "subject-written" to { Subject("essay") },
                 "subject-module" to { Subject("basics") },
-                "chapter" to
-                    { ChapterPage(goalChapter(), PracticeState(outcome = PracticeOutcome.DailyCap), ChapterActions({}, {}, {}, {})) },
+                "chapter" to { Chapter() },
                 "plan-section-exam" to {
                     PlanSyllabusSection(examSyllabus(), {}, Modifier.verticalScroll(rememberScrollState()).padding(vertical = 16.dp))
                 },
