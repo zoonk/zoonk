@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="missions_title">Today\'s missions</string>
+    <string name="missions_done">Missions done</string>
+    <!-- %1$s is a formatted number of points. -->
+    <string name="missions_earned">You earned +%1$s Brain Power.</string>
+    <string name="missions_already_earned">Today\'s +%1$s Brain Power is already earned.</string>
+    <plurals name="missions_count">
+        <item quantity="one">%d mission</item>
+        <item quantity="other">%d missions</item>
+    </plurals>
+    <plurals name="missions_left">
+        <item quantity="one">%d left</item>
+        <item quantity="other">%d left</item>
+    </plurals>
+    <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
+    <string name="missions_progress">%1$s of %2$s done</string>
+    <string name="missions_brain_power">Brain Power</string>
+    <string name="missions_brain_power_about">What you\'ve learned, in points: it raises your belt and grows your buddy. Answers, lessons and challenges add to it, and finishing today\'s missions adds +%1$s.</string>
+    <string name="missions_brain_power_total">You have %1$s</string>
+
+    <string name="missions_review">Review</string>
+    <string name="missions_something_new">Do a new lesson</string>
+    <!-- %1$s is a chapter's title. -->
+    <string name="missions_finish_chapter_named">Finish “%1$s”</string>
+    <string name="missions_finish_chapter">Finish the chapter</string>
+    <string name="missions_rematch">Rematch the Trickster</string>
+    <string name="missions_challenge">Take on the Trickster</string>
+    <string name="missions_weekly_challenge">Weekly challenge</string>
+    <string name="missions_mock">Take the mock</string>
+    <string name="missions_essay">Practice writing</string>
+    <!-- A verb: a mission to practice. -->
+    <string name="missions_practice">Practice</string>
+    <plurals name="missions_fix_mistakes">
+        <item quantity="one">Fix a mistake</item>
+        <item quantity="other">Fix %d mistakes</item>
+    </plurals>
+    <string name="missions_pattern">Practice a pattern</string>
+    <string name="missions_pronunciation">Pronunciation</string>
+    <string name="missions_call">Have a call</string>
+    <!-- %1$s is the learner's buddy's name. -->
+    <string name="missions_ask_buddy">Ask %1$s something</string>
+    <!-- %1$s is a skill area's title. -->
+    <string name="missions_practice_area">Practice %1$s</string>
+
+    <string name="missions_after_lessons">After today\'s lessons</string>
+    <string name="missions_after_challenge">After the challenge before it</string>
+    <string name="missions_from_notebook">From your mistakes notebook</string>
+    <string name="missions_due_today">Due today</string>
+    <!-- %1$s is a language unit's title. -->
+    <string name="missions_quick_call_unit">Quick call · %1$s</string>
+    <string name="missions_quick_call">A quick call</string>
+    <string name="missions_ask_anything">Anything about today\'s lessons</string>
+    <plurals name="missions_last_lessons">
+        <item quantity="one">The last lesson is in today\'s plan</item>
+        <item quantity="other">The last %d lessons are in today\'s plan</item>
+    </plurals>
+    <!-- %1$s is a lesson's title; %2$d counts the chapter's other lessons left. -->
+    <plurals name="missions_lesson_and_more">
+        <item quantity="one">%1$s (+%2$d lesson)</item>
+        <item quantity="other">%1$s (+%2$d lessons)</item>
+    </plurals>
+    <string name="missions_finish_new_lesson">Finish today\'s new lesson</string>
+    <string name="missions_most_room">Most room to grow</string>
+    <!-- %1$s is a duration, such as "10 min"; the tilde marks an estimate. -->
+    <string name="missions_estimate">~%1$s</string>
+    <!-- What TalkBack says a tap on a mission does: "Double tap to go to today's review". -->
+    <string name="missions_open_review">Go to today\'s review</string>
+    <string name="missions_open_new_lesson">Go to today\'s new lesson</string>
+    <string name="missions_open_chapter">Go to the chapter\'s next lesson</string>
+    <string name="missions_open_challenge">Go to the challenge</string>
+    <string name="missions_open_mock_chooser">Choose a mock exam</string>
+    <string name="missions_open_mock">Go to today\'s mock</string>
+    <string name="missions_open_essay">Go to today\'s essay</string>
+    <string name="missions_open_practice">Go to today\'s practice</string>
+    <string name="missions_open_mistakes">Practice your mistakes</string>
+    <string name="missions_open_pattern">Go to the pattern</string>
+    <string name="missions_open_pronunciation">Go to pronunciation practice</string>
+    <string name="missions_open_call">Choose a call</string>
+    <!-- %1$s is the learner's buddy's name. -->
+    <string name="missions_open_buddy">Go to %1$s</string>
+</resources>

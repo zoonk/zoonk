@@ -151,4 +151,72 @@
     <string name="today_quick_explanation">Quick explanation</string>
     <string name="today_continue_explanation">Continue explanation</string>
     <string name="today_session_ended_description">Each day\'s lessons, reviews and practice for your goal.</string>
+    <string name="today_week_title">This week</string>
+    <!-- %1$s is a formatted number of days studied, %2$d the week's study days: "3 of 5 days". -->
+    <plurals name="today_week_days">
+        <item quantity="one">%1$s of %2$d day</item>
+        <item quantity="other">%1$s of %2$d days</item>
+    </plurals>
+    <!-- Read by TalkBack; both are durations, such as "1 hr 20 min of 3 hr 45 min". -->
+    <string name="today_week_time">%1$s of %2$s studied this week</string>
+    <!-- Read by TalkBack for each day of the week: "Monday: goal reached". -->
+    <string name="today_week_day">%1$s: %2$s</string>
+    <!-- "Saturday: weekly challenge, not studied". -->
+    <string name="today_week_challenge_day">%1$s: %2$s, %3$s</string>
+    <string name="today_week_goal_reached">goal reached</string>
+    <string name="today_week_studied">studied</string>
+    <string name="today_week_exam_day">exam day</string>
+    <string name="today_week_deadline">your goal\'s date</string>
+    <string name="today_week_before_plan">before your plan</string>
+    <string name="today_week_after_date">after your date</string>
+    <string name="today_week_rest_day">rest day</string>
+    <string name="today_week_today">today</string>
+    <string name="today_week_planned">planned</string>
+    <string name="today_week_not_studied">not studied</string>
+    <string name="today_week_full_review_name">full review</string>
+    <string name="today_week_mock_name">mock exam</string>
+    <string name="today_week_challenge_name">weekly challenge</string>
+    <string name="today_week_full_review_detail">every topic, your weakest first</string>
+    <!-- %1$s is a formatted number of minutes. -->
+    <string name="today_study_minutes">Study for %1$s minutes</string>
+    <string name="today_study_more_minutes">Study %1$s more minutes</string>
+    <plurals name="today_catch_up_next_days">
+        <item quantity="one">Your next days start with the %d lesson left to catch up.</item>
+        <item quantity="other">Your next days start with the %d lessons left to catch up.</item>
+    </plurals>
+    <plurals name="today_catch_up_before_exam">
+        <item quantity="one">You can still catch up on %d lesson today, if you have time.</item>
+        <item quantity="other">You can still catch up on %d lessons today, if you have time.</item>
+    </plurals>
+    <plurals name="today_catch_up_tomorrow">
+        <item quantity="one">%d more lesson to catch up comes first tomorrow.</item>
+        <item quantity="other">%d more lessons to catch up come first tomorrow.</item>
+    </plurals>
+    <!-- %1$s is a duration, such as "25 min". -->
+    <string name="today_catch_up_today">Catch up today · +%1$s</string>
+    <!-- %1$s is a weekday, such as "Saturday". -->
+    <string name="today_see_day_challenge">See %1$s\'s challenge</string>
+    <string name="today_see_day_mock">See %1$s\'s mock exam</string>
+    <!-- %1$s is the learner's buddy's name. -->
+    <string name="today_practice_with_buddy">Practice with %1$s</string>
+    <string name="today_already_know_this">Already know this?</string>
+    <string name="today_take_the_test">Take the test</string>
+    <!-- %1$s is a formatted count of lessons. -->
+    <string name="today_earlier_work">Earlier unfinished work · %1$s</string>
+    <string name="today_earlier_work_detail">Start with these. Starting your session fits the plan to today\'s time.</string>
+    <string name="today_practice_anytime">Practice anytime</string>
+    <string name="today_mistakes_notebook">Mistakes notebook</string>
+    <string name="today_mistakes_redo">Redo what you got wrong</string>
+    <string name="today_mistakes_return_tomorrow">Today\'s mistakes return tomorrow</string>
+    <plurals name="today_mistakes_ready">
+        <item quantity="one">%d ready to practice</item>
+        <item quantity="other">%d ready to practice</item>
+    </plurals>
+    <plurals name="today_mistakes_tomorrow">
+        <item quantity="one">%d available tomorrow</item>
+        <item quantity="other">%d available tomorrow</item>
+    </plurals>
+    <string name="today_connection_lost">Connection lost</string>
+    <string name="today_connection_lost_detail">We stopped getting updates. It may still be working.</string>
+    <string name="today_reconnect">Reconnect</string>
 </resources>

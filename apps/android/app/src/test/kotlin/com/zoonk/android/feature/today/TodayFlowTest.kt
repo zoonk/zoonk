@@ -102,8 +102,8 @@ class TodayFlowTest {
         rule.setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                LaunchedEffect(viewModel) { viewModel.routes.collect(navigator::open) }
-                TodayDay(read, store.today, MutableStateFlow(null), viewModel, navigator, PaddingValues())
+                LaunchedEffect(viewModel) { viewModel.routes.collect { navigator.open(it.route) } }
+                TodayDay(read, store.today, false, viewModel, navigator, PaddingValues(), buddyName = "Zu")
             }
         }
     }
@@ -174,6 +174,12 @@ class TodayFlowTest {
             sessionId: UUID,
         ): StudyBlock = error("Not used")
 
+        override suspend fun catchUp(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+            timeZone: String,
+        ) = Unit
+
         override suspend fun startBlock(
             session: AuthenticatedSession,
             sessionId: UUID,
@@ -189,6 +195,14 @@ class TodayFlowTest {
             session: AuthenticatedSession,
             timeZone: String,
         ): Today = error("Shown from the test's read")
+
+        override suspend fun brainPower(session: AuthenticatedSession): Long? = null
+
+        override suspend fun mistakes(
+            session: AuthenticatedSession,
+            goalId: UUID,
+        ) = com.zoonk.api.models
+            .MistakeListAvailability(ready = 0, tomorrow = 0)
 
         override suspend fun resumePreview(
             session: AuthenticatedSession,

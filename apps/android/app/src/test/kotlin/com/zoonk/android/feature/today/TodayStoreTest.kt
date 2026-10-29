@@ -28,6 +28,14 @@ class TodayStoreTest {
                 timeZone: String,
             ) = answer()
 
+            override suspend fun brainPower(session: AuthenticatedSession): Long? = null
+
+            override suspend fun mistakes(
+                session: AuthenticatedSession,
+                goalId: UUID,
+            ) = com.zoonk.api.models
+                .MistakeListAvailability(ready = 0, tomorrow = 0)
+
             override suspend fun resumePreview(
                 session: AuthenticatedSession,
                 goalId: UUID,

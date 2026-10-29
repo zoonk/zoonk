@@ -105,7 +105,7 @@ class TodayScreenshots {
         val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today) }
 
         TabRootScaffold(app, navigator) { padding ->
-            TodayDay(read, app.today.today, MutableStateFlow(null), viewModel, navigator, padding)
+            TodayDay(read, app.today.today, false, viewModel, navigator, padding, buddyName = "Zu", brainPower = 1240)
         }
     }
 
@@ -120,7 +120,14 @@ class TodayScreenshots {
 
     private companion object {
         val DAYS: List<Pair<String, TodayRead.Day>> by lazy {
-            listOf(
+            listOfNotNull(
+                // A real read saved as `today.json` in the shots folder (GET /v1/today) renders first.
+                File(System.getProperty("zoonk.shots").orEmpty(), "today.json").takeIf { it.isFile }?.let { file ->
+                    val read =
+                        com.zoonk.api.ApiJson
+                            .decodeFromString<Today>(file.readText())
+                    "real" to TodayRead.Day(read, read.session.toDayView())
+                },
                 "unopened" to unopened(),
                 "started" to started(),
                 "done-up-next" to doneWithUpNext(),
@@ -184,17 +191,27 @@ class TodayScreenshots {
                     put(
                         "days",
                         buildJsonArray {
-                            add(
-                                buildJsonObject {
-                                    put("date", "2026-10-28")
-                                    put("goalMinutes", dailyGoal)
-                                    put("hitGoal", false)
-                                    put("isToday", true)
-                                    put("kind", "study")
-                                    put("minutes", 22)
-                                    put("studied", true)
-                                },
-                            )
+                            listOf(
+                                Triple("2026-10-26", "study", 45),
+                                Triple("2026-10-27", "study", 0),
+                                Triple("2026-10-28", "study", 22),
+                                Triple("2026-10-29", "study", 0),
+                                Triple("2026-10-30", "study", 0),
+                                Triple("2026-10-31", "study", 0),
+                                Triple("2026-11-01", "rest", 0),
+                            ).forEach { (date, kind, minutes) ->
+                                add(
+                                    buildJsonObject {
+                                        put("date", date)
+                                        put("goalMinutes", if (kind == "rest") 0 else dailyGoal)
+                                        put("hitGoal", minutes >= dailyGoal && dailyGoal > 0)
+                                        put("isToday", date == "2026-10-28")
+                                        put("kind", kind)
+                                        put("minutes", minutes)
+                                        put("studied", minutes > 0)
+                                    },
+                                )
+                            }
                         },
                     )
                     put("daysHitGoal", 2)
@@ -233,8 +250,25 @@ class TodayScreenshots {
                     put("value", 0.42)
                     put("weekGain", 0.03)
                 }
+            val challenge =
+                buildJsonObject {
+                    put("access", "open")
+                    put("date", "2026-10-31")
+                    put("kind", "mixed")
+                    put("planItemId", "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d99")
+                    put("questions", 12)
+                    put("timeLimitMinutes", 20)
+                    put("title", null as String?)
+                }
             val read =
-                decodeFixture<Today>("today", "session" to session, "goal" to goal, "progress" to progress, *today.toList().toTypedArray())
+                decodeFixture<Today>(
+                    "today",
+                    "session" to session,
+                    "goal" to goal,
+                    "progress" to progress,
+                    "weeklyChallenge" to challenge,
+                    *today.toList().toTypedArray(),
+                )
             return TodayRead.Day(read, read.session.toDayView())
         }
 
@@ -311,7 +345,50 @@ class TodayScreenshots {
                         block(5),
                     ),
                 next = 3,
+                extra = mapOf("missions" to missions(), "fullMeal" to fullMeal()),
             )
+
+        fun missions(): JsonElement =
+            buildJsonArray {
+                add(
+                    buildJsonObject {
+                        put("done", 1)
+                        put("kind", "review")
+                        put("status", "done")
+                        put("total", 1)
+                    },
+                )
+                add(
+                    buildJsonObject {
+                        put("done", 0)
+                        put("kind", "somethingNew")
+                        put("status", "todo")
+                        put("total", 1)
+                        put("minutes", 6)
+                        putJsonObject("opens") {
+                            put("kind", "block")
+                            put("blockId", "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c0004")
+                        }
+                    },
+                )
+                add(
+                    buildJsonObject {
+                        put("done", 1)
+                        put("kind", "fixMistake")
+                        put("status", "todo")
+                        put("total", 3)
+                        put("minutes", 4)
+                        putJsonObject("opens") { put("kind", "mistakesPractice") }
+                    },
+                )
+            }
+
+        fun fullMeal() =
+            buildJsonObject {
+                put("bonus", 20)
+                put("earned", false)
+                put("ready", false)
+            }
 
         fun doneWithUpNext(): TodayRead.Day {
             val extraTime =

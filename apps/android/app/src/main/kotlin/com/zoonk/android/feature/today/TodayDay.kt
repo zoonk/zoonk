@@ -39,15 +39,17 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.Resource
+import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.OpeningWaitLine
 import com.zoonk.android.feature.session.rememberWaitState
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
-import kotlinx.coroutines.flow.StateFlow
+import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.api.models.MistakeListAvailability
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.util.UUID
 
 /** What Today shows of a day, worked out once per read. */
 internal class TodayDayModel(
@@ -68,14 +70,21 @@ internal class TodayDayModel(
 internal fun TodayDay(
     read: TodayRead.Day,
     today: Resource<TodayRead>,
-    switching: StateFlow<UUID?>,
+    switching: Boolean,
     viewModel: TodayViewModel,
     navigator: AppNavigator,
     padding: PaddingValues,
+    buddyName: String,
+    brainPower: Long? = null,
+    mistakes: MistakeListAvailability? = null,
 ) {
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-    val switchingTo by switching.collectAsStateWithLifecycle()
-    val stalled = pollWhile(active = read.day.isWaitingForLessons(read.today.lessonStatus), read = today)
+    val stalled =
+        pollWhile(
+            active = read.day.isWaitingForLessons(read.today.lessonStatus),
+            read = today,
+            context = Triple(read.today.goal.id, read.day.localDate, read.day.sessionId),
+        ).stalled
     val model = remember(read, stalled) { TodayDayModel(read, stalled) }
     val scope = rememberCoroutineScope()
     var pulled by remember { mutableStateOf(false) }
@@ -83,8 +92,8 @@ internal fun TodayDay(
     var moreOpen by rememberSaveable { mutableStateOf(false) }
     val folds = TodayFolds(doneOpen, moreOpen, toggleDone = { doneOpen = !doneOpen }, toggleMore = { moreOpen = !moreOpen })
     val actions =
-        remember(viewModel, navigator, model) {
-            val idle = { switching.value == null }
+        remember(viewModel, navigator, model, switching) {
+            val idle = { !switching }
             TodayActionHandlers(
                 open = { step -> if (idle()) viewModel.open(read, step, next = false) },
                 next = { model.day.nextStep?.let { if (idle()) viewModel.open(read, it, next = true) } },
@@ -104,23 +113,90 @@ internal fun TodayDay(
         },
         modifier = Modifier.fillMaxSize().padding(padding),
     ) {
+        val aside =
+            TodayAsideState(
+                buddyName = buddyName,
+                brainPower = brainPower,
+                mistakes = mistakes,
+                onMission = { opens -> openMission(opens, model, actions, today, scope) },
+                navigate = navigator::open,
+            )
+
         // While a switch is on its way the page still shows the previous goal; a tap would open its session.
-        Column(Modifier.fillMaxSize().alpha(if (switchingTo != null) SWITCHING_ALPHA else 1f)) {
-            LazyColumn(
-                modifier = Modifier.weight(1f).fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
-            ) {
-                item(key = "heading", contentType = "heading") {
-                    TodayHeading(model, wide, Modifier.pageItem()) {
-                        if (wide) TodayAction(model, viewModel, actions, Modifier.widthIn(max = WIDE_ACTION_WIDTH), docked = false)
+        PageWithSupportingPane(
+            supportingPane = { TodayAsidePane(model, aside) },
+            modifier = Modifier.alpha(if (switching) SWITCHING_ALPHA else 1f),
+        ) { beside ->
+            Column(Modifier.fillMaxSize()) {
+                LazyColumn(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
+                ) {
+                    item(key = "heading", contentType = "heading") {
+                        TodayHeading(model, wide, Modifier.pageItem()) {
+                            if (wide) TodayAction(model, viewModel, actions, Modifier.widthIn(max = WIDE_ACTION_WIDTH), docked = false)
+                        }
+                    }
+
+                    todaySession(model, viewModel, actions, folds, wide, buddyName)
+
+                    if (!beside) {
+                        item(key = "aside", contentType = "aside") {
+                            TodayAside(model, aside, beside = false, modifier = Modifier.pageItem().padding(top = 32.dp))
+                        }
                     }
                 }
 
-                todaySession(model, viewModel, actions, folds, wide)
+                if (!wide) TodayActionBar(model, viewModel, actions)
             }
+        }
+    }
+}
 
-            if (!wide) TodayActionBar(model, viewModel, actions)
+/** A mission's block opens as its row does; its page opens where it lives. */
+private fun openMission(
+    opens: MissionOpens,
+    model: TodayDayModel,
+    actions: TodayActionHandlers,
+    today: Resource<TodayRead>,
+    scope: CoroutineScope,
+) {
+    val goalId = (model.day.goalId ?: model.today.goal.id).toString()
+
+    when (opens) {
+        is MissionOpens.Block -> {
+            val step = model.day.steps.firstOrNull { if (opens.blockId != null) it.id == opens.blockId else it.position == opens.position }
+            // Done or gone meanwhile: Today reads the day again so the learner sees why.
+            if (step != null) actions.open(step) else scope.launch { today.refresh() }
+        }
+
+        MissionOpens.MistakesPractice -> {
+            actions.navigate(AppRoute.MistakePractice())
+        }
+
+        is MissionOpens.Pattern -> {
+            actions.navigate(AppRoute.Pattern(opens.patternId.toString()))
+        }
+
+        MissionOpens.Pronunciation -> {
+            actions.navigate(AppRoute.Pronunciation(goalId))
+        }
+
+        is MissionOpens.Call -> {
+            actions.navigate(AppRoute.LanguageUnit(opens.chapterId.toString()))
+        }
+
+        MissionOpens.Buddy -> {
+            actions.navigate(AppRoute.Buddy())
+        }
+
+        is MissionOpens.AreaPractice -> {
+            actions.navigate(AppRoute.Chapter(opens.areaId.toString()))
+        }
+
+        MissionOpens.MockChooser -> {
+            actions.navigate(AppRoute.MockChooser)
         }
     }
 }

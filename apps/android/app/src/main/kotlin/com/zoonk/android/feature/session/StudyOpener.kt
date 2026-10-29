@@ -30,6 +30,13 @@ interface StudyApi {
         sessionId: UUID,
     ): StudyBlock
 
+    /** Moves the lessons left to catch up into today. */
+    suspend fun catchUp(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+        timeZone: String,
+    )
+
     /** Throws [ApiException] with `DAILY_LIMIT_REACHED`, `BLOCK_FINISHED` or `EARLIER_FIRST` when it can't start. */
     suspend fun startBlock(
         session: AuthenticatedSession,
@@ -76,6 +83,18 @@ class StudyOpener(
                 day.sessionId
                     ?: api.openDay(session, day.goalId ?: goalId, openDayBody(day.localDate, null, next = false, timeZone())).sessionId
             route(session, sessionId, api.addExtraBlock(session, sessionId).toDayStep())
+        }
+
+    /** Saves an unopened day first, keeping it even with nothing in it. */
+    suspend fun catchUp(
+        day: DayView,
+        goalId: UUID,
+    ): MutationResult<Unit> =
+        cache.mutate(invalidating = setOf(DataDomain.Goals, DataDomain.UserSession)) { session ->
+            val sessionId =
+                day.sessionId
+                    ?: api.openDay(session, day.goalId ?: goalId, openDayBody(day.localDate, null, next = false, timeZone())).sessionId
+            api.catchUp(session, sessionId, timeZone())
         }
 
     private suspend fun route(

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
@@ -19,6 +20,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -43,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.FreshStart
 import com.zoonk.android.feature.session.MissionOpens
@@ -86,9 +92,14 @@ internal fun LazyListScope.todaySession(
     actions: TodayActionHandlers,
     folds: TodayFolds,
     wide: Boolean,
+    buddyName: String,
 ) {
     val day = model.day
     val next = day.nextStep?.takeIf { !model.session.limitReached }
+
+    if (model.today.earlierWork.isNotEmpty()) {
+        item(key = "earlier-work", contentType = "earlier-work") { EarlierWork(model, Modifier.pageItem().padding(top = 16.dp)) }
+    }
 
     freshStartItem(model)
 
@@ -118,6 +129,8 @@ internal fun LazyListScope.todaySession(
     if (model.upNext.isNotEmpty()) {
         upNext(model.upNext, busy = viewModel.pending == TodayTap.KeepLearning, actions)
     }
+
+    item(key = "more", contentType = "more") { TodayMore(model, viewModel, actions, buddyName, Modifier.pageItem().padding(top = 16.dp)) }
 }
 
 private fun LazyListScope.freshStartItem(model: TodayDayModel) {
@@ -209,6 +222,7 @@ private fun LazyListScope.sessionQueue(
             busy = pending == step.position || (isNext && viewModel.pending == TodayTap.Continue),
             onOpen = { actions.open(step) },
             modifier = Modifier.pageItem(),
+            onNavigate = actions.navigate,
         )
     }
 
@@ -307,6 +321,7 @@ private fun StepRow(
     busy: Boolean,
     onOpen: () -> Unit,
     modifier: Modifier,
+    onNavigate: (AppRoute) -> Unit = {},
 ) {
     val finished = step.isFinished
     val mission = model.countsTowardMission(step)
@@ -323,7 +338,7 @@ private fun StepRow(
         onClick = if (opens) onOpen else null,
         modifier = modifier.semantics { if (state != null) stateDescription = state },
     ) {
-        RowMark { StepMark(step) }
+        RowMark { BlockMark(step) }
 
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(1.dp)) {
             Text(
@@ -335,6 +350,7 @@ private fun StepRow(
             )
 
             if (!finished) StepLines(model, step)
+            if (isNext && step.canTestOut && step.chapterId != null) TestOutLink(model, step.chapterId, onNavigate)
         }
 
         if (!finished) {
@@ -384,6 +400,67 @@ private fun StepLines(
     if (reviewDetail != null) SubLine(reviewDetail)
 }
 
+/** Earlier unfinished lessons, which the session fits into today's time once it starts; a long list starts folded. */
+@Composable
+private fun EarlierWork(
+    model: TodayDayModel,
+    modifier: Modifier,
+) {
+    val items = model.today.earlierWork
+    var open by rememberSaveable { mutableStateOf(items.size <= OPEN_BACKLOG_LIMIT) }
+    val count = formatNumber(items.size.toDouble(), currentLocale())
+
+    Column(modifier) {
+        FoldRow(
+            label = stringResource(R.string.today_earlier_work, count),
+            done = false,
+            open = open,
+            minutes = null,
+            onToggle = { open = !open },
+            modifier = Modifier,
+        )
+        if (open) {
+            Text(
+                text = stringResource(R.string.today_earlier_work_detail),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Column(Modifier.padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                items.forEach { Text(it.title, style = MaterialTheme.typography.bodyMedium) }
+            }
+        }
+        HorizontalDivider(Modifier.padding(top = 12.dp))
+    }
+}
+
+/** The test that skips the chapter, offered on the next lesson unless it was failed today. */
+@Composable
+private fun TestOutLink(
+    model: TodayDayModel,
+    chapterId: java.util.UUID,
+    onNavigate: (AppRoute) -> Unit,
+) {
+    val take = stringResource(R.string.today_take_the_test)
+    val text =
+        buildAnnotatedString {
+            append(stringResource(R.string.today_already_know_this))
+            append(" ")
+            withLink(
+                LinkAnnotation.Clickable(
+                    tag = "test-out",
+                    styles = TextLinkStyles(SpanStyle(fontWeight = FontWeight.Medium, textDecoration = TextDecoration.Underline)),
+                ) { onNavigate(AppRoute.TestOut(chapterId.toString(), model.day.sessionId?.toString())) },
+            ) { append(take) }
+        }
+
+    Text(
+        text,
+        modifier = Modifier.padding(top = 6.dp),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.bodySmall,
+    )
+}
+
 @Composable
 private fun rowLabel(
     model: TodayDayModel,
@@ -418,19 +495,10 @@ private fun SubLine(text: String) {
     )
 }
 
-/** The Trickster marks a phase's boss once the characters land; until then its kind's mark does. */
+/** One width for every mark, so the rows' titles start in one place. */
 @Composable
-private fun StepMark(step: DayStep) {
-    when (step.status) {
-        StudyBlock.Status.COMPLETED -> DoneMark()
-        StudyBlock.Status.SKIPPED -> StatusMark(MarkStatus.Skipped)
-        else -> KindMark(step.learnKind)
-    }
-}
-
-@Composable
-private fun RowMark(content: @Composable () -> Unit) {
-    Box(Modifier.heightIn(min = 20.dp), contentAlignment = Alignment.Center) { content() }
+internal fun RowMark(content: @Composable () -> Unit) {
+    Box(Modifier.width(MARK_WIDTH).heightIn(min = 20.dp), contentAlignment = Alignment.Center) { content() }
 }
 
 /** The next block sits on a tinted card; the others are separated by hairlines. */
@@ -505,7 +573,7 @@ private fun FoldRow(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.size(20.dp), contentAlignment = Alignment.Center) { if (done) DoneMark() }
+        RowMark { if (done) DoneMark() }
         Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(text = label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleSmall)
             Icon(
@@ -714,7 +782,10 @@ private fun seeYou(model: TodayDayModel): String {
     return stringResource(R.string.today_see_you_day, formatDate(date, currentLocale(), DateStyle.Weekday, date))
 }
 
+internal val MARK_WIDTH = 20.dp
+
 private const val PHONE_DONE_ROWS = 2
+private const val OPEN_BACKLOG_LIMIT = 5
 private const val PHONE_UPCOMING_ROWS = 6
 private const val WIDE_UPCOMING_ROWS = 12
 private const val BUSY_ALPHA = 0.6f

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "missions_after_challenge": "047e744f2e27b5751a492bb3d351c79a5d394d9882e5194110ddf0d4bf78af99",
+  "missions_after_lessons": "daee1748881b0b3504a466c246cd35371598fc4664ca370b342ba28e4b3b064a",
+  "missions_already_earned": "dafc60f3910396aa6d2ae67a06be44ce2818eca16962baac033c97a995f94913",
+  "missions_ask_anything": "94f8edf7918aee6bffa0ac51e96bf9214417940399782af5913cae654500bb94",
+  "missions_ask_buddy": "aa7b425602a28170a834910fd381d84aa68af6858322a5979caf5ceb6da1ee4f",
+  "missions_brain_power": "69c8397141788975a87fd2722ff0d4d52182979fb51bbc9b3dc05541bacb5a59",
+  "missions_brain_power_about": "0782ecb40d13b46ab0cff63e2d239f9b6ae083f7e6833be4d4e8bb046200ac2f",
+  "missions_brain_power_total": "fb3e6cd8055226942658e9117920e3aebe0fa7cdd11089607004200db5aac39c",
+  "missions_call": "733a6f58de256249a35d7cacdcc35360c1d422334fa3919ee036d4ec089d48c8",
+  "missions_challenge": "924fb3251fdcfd6fa22ff776667f18ba1ba8b4e8b05a7dbbf899839fd964219e",
+  "missions_count": "31eed96b1a9d71f0d09423f13631bf3822c0985540203756d4e89178791a885a",
+  "missions_done": "a1dbe0744a09c17ca185eaf962b1181fe41d3b663a639a358e161e5f151dda5d",
+  "missions_due_today": "63611f49e6ff99ece704a80f78b389e8cdbacb0cbc377131e08ab77d00bc2e4f",
+  "missions_earned": "3a1ef0d03cb0a8109528c33b836c0b1ea724e205d977d6566730be49948433b2",
+  "missions_essay": "90135a213454d764bfce1cfb2c190fcea137c658792f9e8fba1e5341424e2fcc",
+  "missions_estimate": "eaeb12ef52f1ad0de6fdaa6c191b0b6741e9d861f4b69a9ed0d8d1cdbe41ba7d",
+  "missions_finish_chapter": "e699c3a64a0aaf7e7c670ad82356b730d4233afd60eb834b86434c7758c64727",
+  "missions_finish_chapter_named": "3d0ffd67ada23806764fa2b0eb760c983d2b116207b078563065adb12366829a",
+  "missions_finish_new_lesson": "318a639fd245b45880680f7eccb2ebf45d5169f445db8f5d1e903d56a25dceb5",
+  "missions_fix_mistakes": "cf9fe444c2507b3baad96e84b9c4125930a46e3f0401742e3764ecb6e88adc57",
+  "missions_from_notebook": "38e5151841326084a0ce00363c73143ca28072e62f61ab386f3a06d8a7b3f299",
+  "missions_last_lessons": "42d8c8b223d1a7637f22bbfe1c1216540483a48de3ff7f3aa78a7aa51c253bd3",
+  "missions_left": "ff239eb07471ef6da503786fe1fe93e5eba3d391a8bd0cba1ee05325e05d7821",
+  "missions_lesson_and_more": "0c8b9ac06e834801fa9c0ff509dcfa46fb2c5867b52eb0620b97fd6e739f2131",
+  "missions_mock": "d046f057af1665cd684a5d22d45f01229db014228b4004fcd8bb6e34454c38e8",
+  "missions_most_room": "d89334d8d213a2bc0229b497677b64a3f1483a721e5c1b22bf32fc5117e158d2",
+  "missions_open_buddy": "13ef9acd790dd85104423da2067d7fd808d61fd6e3af16ee884351afc96088af",
+  "missions_open_call": "378f39b91d18232918ce1cd3bbeeab2a8ac62a4f74c43a8726527943b5ecc513",
+  "missions_open_challenge": "bdb7e1b5080b579bb1da0027b71a50439d22e4791995695b87a965658f3fd1f6",
+  "missions_open_chapter": "0604464d5d2ea8e3286a0c9559f27b9c8dcefafed7d06f25ce71ff3710c0efdc",
+  "missions_open_essay": "f1bd7d68cebca1b2414822b41de6257aff9da59af0f4de7aed5fb8e1b0d67e67",
+  "missions_open_mistakes": "3755a62490ce7348fbae227a7a39e3a34a0ebb7d39313caf3aa4cfb932a72b9c",
+  "missions_open_mock": "4d76e2ef2c7a120d3115a5319af93c990c56c89d91f03f28d74d3124170ca4e0",
+  "missions_open_mock_chooser": "6ccae8304917462646a68d3bbc4f3f869c3911fc25ada2bf5131c2bd394a3928",
+  "missions_open_new_lesson": "a73b91dfad12257bc0787e165bc4df82de9040a7aad231100de3c1f700e54800",
+  "missions_open_pattern": "1c9821aa024943488717297a936421a249bbeef1efc0e713299c77c84cfe2cea",
+  "missions_open_practice": "cb9e4b4d4ba50d86bc947eaab24895e986e23e0c3e5c2bde4fb49c3a402a22e8",
+  "missions_open_pronunciation": "d335f7d01bdd5e13c5b8d2f0e6af6f1b44e3f2e83b1ebaa113e8cc771cd015b3",
+  "missions_open_review": "834e1f593980673f3ece7fa3baaac3634422eedbe5b35d5c7e5cc3dac3e3c93c",
+  "missions_pattern": "8a726aec8c8e829ddeef3a014ff8b7f446435fcfea514313b5a557d6e702517d",
+  "missions_practice": "5e601c7e43c9909ef0bb67dc9cc7c4ff2294191e5b45659614f6d5048337ae11",
+  "missions_practice_area": "410a5d16e3bf8724549c2d45cbd1070307415624ec20afc10b1c092c3967b5e8",
+  "missions_progress": "99d192bb6a37b8344f18b53be34a57c81b7557dc84ad71fb172542812844e92e",
+  "missions_pronunciation": "3c679f083d27b14a3d5f6eedba2187e2c4adfa1aa287082cec030a1b717cce97",
+  "missions_quick_call": "5b548ebb5b31d26577579ffb28ad2c5e4ddfb6bc29315fc16f19bd0e52559dac",
+  "missions_quick_call_unit": "91097b43b66ae8c398c5c4bbd8715d79bf17a42d2c5ee5dad8d7ffccef03d0c7",
+  "missions_rematch": "4f499616e4f88d07a4f8408842102a8e2cef284373ca765cad3e33bf8dfc3766",
+  "missions_review": "14a56131e72147ee06b6b2416827e7bcb00392466d47d03a2d0c9fa45b4d3aa5",
+  "missions_something_new": "6de95bd0382a152b124ad5669cb43af3310018c1fdfc261e85ea10b482abfc5c",
+  "missions_title": "776d6e6b4efd8118d9aa665ec7aa9de8795867a185a746b62ecc458816d45210",
+  "missions_weekly_challenge": "6b8ec6f40f72d25453bf095c899e1924ac2f9d20bb7a6df3d44e4e19122f972b"
+}
+-->
+<resources>
+    <string name="missions_title">Missões de hoje</string>
+    <string name="missions_done">Missões concluídas</string>
+    <!-- %1$s is a formatted number of points. -->
+    <string name="missions_earned">Você ganhou +%1$s de Poder Mental.</string>
+    <string name="missions_already_earned">Os +%1$s de Poder Mental de hoje já foram ganhos.</string>
+    <plurals name="missions_count">
+        <item quantity="one">%d missão</item>
+        <item quantity="many">%d missões</item>
+        <item quantity="other">%d missões</item>
+    </plurals>
+    <plurals name="missions_left">
+        <item quantity="one">resta %d</item>
+        <item quantity="many">restam %d</item>
+        <item quantity="other">restam %d</item>
+    </plurals>
+    <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
+    <string name="missions_progress">%1$s de %2$s concluídas</string>
+    <string name="missions_brain_power">Poder Mental</string>
+    <string name="missions_brain_power_about">O que você aprendeu, em pontos: aumenta seu nível e ajuda seu parceiro a crescer. Respostas, aulas e desafios somam pontos. Ao concluir as missões de hoje, você ganha +%1$s.</string>
+    <string name="missions_brain_power_total">Você tem %1$s</string>
+    <string name="missions_review">Revisar</string>
+    <string name="missions_something_new">Fazer uma aula nova</string>
+    <!-- %1$s is a chapter's title. -->
+    <string name="missions_finish_chapter_named">Concluir “%1$s”</string>
+    <string name="missions_finish_chapter">Concluir o capítulo</string>
+    <string name="missions_rematch">Enfrentar o Pegadinha de novo</string>
+    <string name="missions_challenge">Enfrentar o Pegadinha</string>
+    <string name="missions_weekly_challenge">Desafio semanal</string>
+    <string name="missions_mock">Fazer o simulado</string>
+    <string name="missions_essay">Praticar a escrita</string>
+    <!-- A verb: a mission to practice. -->
+    <string name="missions_practice">Praticar</string>
+    <plurals name="missions_fix_mistakes">
+        <item quantity="one">Corrigir um erro</item>
+        <item quantity="many">Corrigir %d erros</item>
+        <item quantity="other">Corrigir %d erros</item>
+    </plurals>
+    <string name="missions_pattern">Praticar um padrão</string>
+    <string name="missions_pronunciation">Pronúncia</string>
+    <string name="missions_call">Ter uma conversa</string>
+    <!-- %1$s is the learner's buddy's name. -->
+    <string name="missions_ask_buddy">Perguntar algo para %1$s</string>
+    <!-- %1$s is a skill area's title. -->
+    <string name="missions_practice_area">Praticar %1$s</string>
+    <string name="missions_after_lessons">Depois das aulas de hoje</string>
+    <string name="missions_after_challenge">Depois do desafio anterior</string>
+    <string name="missions_from_notebook">Do seu Caderno de erros</string>
+    <string name="missions_due_today">Para hoje</string>
+    <!-- %1$s is a language unit's title. -->
+    <string name="missions_quick_call_unit">Conversa rápida · %1$s</string>
+    <string name="missions_quick_call">Uma conversa rápida</string>
+    <string name="missions_ask_anything">Qualquer dúvida sobre as aulas de hoje</string>
+    <plurals name="missions_last_lessons">
+        <item quantity="one">A última aula está no plano de hoje</item>
+        <item quantity="many">As últimas %d aulas estão no plano de hoje</item>
+        <item quantity="other">As últimas %d aulas estão no plano de hoje</item>
+    </plurals>
+    <!-- %1$s is a lesson's title; %2$d counts the chapter's other lessons left. -->
+    <plurals name="missions_lesson_and_more">
+        <item quantity="one">%1$s (+%2$d aula)</item>
+        <item quantity="many">%1$s (+%2$d aulas)</item>
+        <item quantity="other">%1$s (+%2$d aulas)</item>
+    </plurals>
+    <string name="missions_finish_new_lesson">Concluir a aula nova de hoje</string>
+    <string name="missions_most_room">Maior espaço para crescer</string>
+    <!-- %1$s is a duration, such as "10 min"; the tilde marks an estimate. -->
+    <string name="missions_estimate">~%1$s</string>
+    <!-- What TalkBack says a tap on a mission does: "Double tap to go to today's review". -->
+    <string name="missions_open_review">Ir para a revisão de hoje</string>
+    <string name="missions_open_new_lesson">Ir para a aula nova de hoje</string>
+    <string name="missions_open_chapter">Ir para a próxima aula do capítulo</string>
+    <string name="missions_open_challenge">Ir para o desafio</string>
+    <string name="missions_open_mock_chooser">Escolher um simulado</string>
+    <string name="missions_open_mock">Ir para o simulado de hoje</string>
+    <string name="missions_open_essay">Ir para a redação de hoje</string>
+    <string name="missions_open_practice">Ir para a prática de hoje</string>
+    <string name="missions_open_mistakes">Praticar o que você errou</string>
+    <string name="missions_open_pattern">Ir para o padrão</string>
+    <string name="missions_open_pronunciation">Ir para a prática de pronúncia</string>
+    <string name="missions_open_call">Escolher uma conversa</string>
+    <!-- %1$s is the learner's buddy's name. -->
+    <string name="missions_open_buddy">Acesse %1$s</string>
+</resources>

@@ -38,7 +38,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
-import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
@@ -71,7 +70,7 @@ fun GoalSwitcher(
     val explanations = goals.filter { it.kind == LearnerSummaryGoal.Kind.EXPLAIN }
     val selectedId = pending ?: learner.activeGoalId ?: followed.firstOrNull()?.id
     val selected = followed.firstOrNull { it.id == selectedId } ?: followed.firstOrNull()
-    val viewModel = viewModel { GoalSwitcherViewModel(app.goalSwitch, listOf(app.learnerSummary.summary, app.today.today)) }
+    val viewModel = viewModel { GoalSwitcherViewModel(app) }
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     if (selected == null && explanations.isEmpty()) {
@@ -86,110 +85,114 @@ fun GoalSwitcher(
         selected?.let { stringResource(R.string.goal_switcher_current_goal, it.title) } ?: stringResource(R.string.goal_switcher_start_goal)
 
     Box {
-        TextButton(
-            onClick = { expanded = true },
-            modifier = Modifier.clearAndSetSemantics { contentDescription = description },
-        ) {
-            if (selected !=
-                null
-            ) {
-                GoalMark(selected)
-            } else {
-                Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
+        // The button keeps its role and click action; only the words it reads are replaced.
+        TextButton(onClick = { expanded = true }, modifier = Modifier.semantics { contentDescription = description }) {
+            Row(Modifier.clearAndSetSemantics {}, verticalAlignment = Alignment.CenterVertically) {
+                SwitcherTitle(selected)
             }
-            Text(
-                text = selected?.title ?: stringResource(R.string.goal_switcher_start_goal),
-                modifier = Modifier.padding(horizontal = 8.dp).widthIn(max = TITLE_WIDTH),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurface,
-            )
-            Icon(
-                painterResource(R.drawable.ic_expand_more),
-                contentDescription = null,
-                modifier = Modifier.size(18.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
         }
 
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }, modifier = Modifier.widthIn(max = MENU_WIDTH)) {
-            if (selected != null) {
-                MenuLabel(stringResource(R.string.goal_switcher_your_goals))
-                followed.forEach { goal ->
-                    val isSelected = goal.id == selected.id
-                    DropdownMenuItem(
-                        text = {
-                            Column {
-                                Text(goal.title)
-                                GoalLine(goal)
-                            }
-                        },
-                        leadingIcon = { GoalMark(goal) },
-                        trailingIcon =
-                            if (isSelected) {
-                                (
-                                    {
-                                        Icon(
-                                            painterResource(R.drawable.ic_check),
-                                            contentDescription = null,
-                                        )
-                                    }
-                                )
-                            } else {
-                                null
-                            },
-                        onClick = {
-                            expanded = false
-                            if (!isSelected) viewModel.select(goal.id)
-                        },
-                        modifier = Modifier.semantics { this.selected = isSelected },
-                    )
-                }
-            }
-
-            if (explanations.isNotEmpty()) {
-                if (selected != null) HorizontalDivider()
-                MenuLabel(stringResource(R.string.goal_switcher_quick_explanations))
-                explanations.forEach { goal ->
-                    DropdownMenuItem(
-                        text = { Text(goal.title) },
-                        leadingIcon = { Icon(painterResource(R.drawable.ic_lightbulb), contentDescription = null) },
-                        onClick = {
-                            expanded = false
-                            navigator.open(AppRoute.Explain(goal.id.toString()))
-                        },
-                    )
-                }
-            }
-
-            HorizontalDivider()
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.goal_switcher_new_goal)) },
-                leadingIcon = { Icon(painterResource(R.drawable.ic_add), contentDescription = null) },
-                onClick = {
-                    expanded = false
-                    navigator.open(AppRoute.StartGoal())
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.goal_switcher_explore_courses)) },
-                leadingIcon = { Icon(painterResource(R.drawable.ic_grid_view), contentDescription = null) },
-                onClick = {
-                    expanded = false
-                    navigator.open(AppRoute.Catalog())
-                },
-            )
+            MenuItems(selected, followed, explanations, onDismiss = { expanded = false }, navigator = navigator, viewModel = viewModel)
         }
     }
 }
 
+@Composable
+private fun SwitcherTitle(selected: LearnerSummaryGoal?) {
+    if (selected != null) {
+        GoalMark(selected)
+    } else {
+        Icon(painterResource(R.drawable.ic_add), contentDescription = null, modifier = Modifier.size(18.dp))
+    }
+    Text(
+        text = selected?.title ?: stringResource(R.string.goal_switcher_start_goal),
+        modifier = Modifier.padding(horizontal = 8.dp).widthIn(max = TITLE_WIDTH),
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurface,
+    )
+    Icon(
+        painterResource(R.drawable.ic_expand_more),
+        contentDescription = null,
+        modifier = Modifier.size(18.dp),
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+@Composable
+private fun MenuItems(
+    selected: LearnerSummaryGoal?,
+    followed: List<LearnerSummaryGoal>,
+    explanations: List<LearnerSummaryGoal>,
+    onDismiss: () -> Unit,
+    navigator: AppNavigator,
+    viewModel: GoalSwitcherViewModel,
+) {
+    if (selected != null) {
+        MenuLabel(stringResource(R.string.goal_switcher_your_goals))
+        followed.forEach { goal ->
+            val isSelected = goal.id == selected.id
+            DropdownMenuItem(
+                text = {
+                    Column {
+                        Text(goal.title)
+                        GoalLine(goal)
+                    }
+                },
+                leadingIcon = { GoalMark(goal) },
+                trailingIcon = if (isSelected) ({ Icon(painterResource(R.drawable.ic_check), contentDescription = null) }) else null,
+                onClick = {
+                    onDismiss()
+                    if (!isSelected) viewModel.select(goal.id)
+                },
+                modifier = Modifier.semantics { this.selected = isSelected },
+            )
+        }
+    }
+
+    if (explanations.isNotEmpty()) {
+        if (selected != null) HorizontalDivider()
+        MenuLabel(stringResource(R.string.goal_switcher_quick_explanations))
+        explanations.forEach { goal ->
+            DropdownMenuItem(
+                text = { Text(goal.title) },
+                leadingIcon = { Icon(painterResource(R.drawable.ic_lightbulb), contentDescription = null) },
+                onClick = {
+                    onDismiss()
+                    navigator.open(AppRoute.Explain(goal.id.toString()))
+                },
+            )
+        }
+    }
+
+    HorizontalDivider()
+    DropdownMenuItem(
+        text = { Text(stringResource(R.string.goal_switcher_new_goal)) },
+        leadingIcon = { Icon(painterResource(R.drawable.ic_add), contentDescription = null) },
+        onClick = {
+            onDismiss()
+            navigator.open(AppRoute.StartGoal())
+        },
+    )
+    DropdownMenuItem(
+        text = { Text(stringResource(R.string.goal_switcher_explore_courses)) },
+        leadingIcon = { Icon(painterResource(R.drawable.ic_grid_view), contentDescription = null) },
+        onClick = {
+            onDismiss()
+            navigator.open(AppRoute.Catalog())
+        },
+    )
+}
+
 class GoalSwitcherViewModel(
-    private val goalSwitch: GoalSwitch,
-    private val shown: List<Resource<*>>,
+    private val app: AppContainer,
 ) : ViewModel() {
     fun select(goalId: UUID) {
-        viewModelScope.launch { goalSwitch.select(goalId, shown) }
+        viewModelScope.launch {
+            app.goalSwitch.select(goalId, listOf(app.learnerSummary.summary, app.today.today), shows = app.today::shows)
+        }
     }
 }
 

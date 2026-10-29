@@ -50,6 +50,12 @@ class StudyOpenerTest {
             sessionId: UUID,
         ): StudyBlock = error("Not used")
 
+        override suspend fun catchUp(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+            timeZone: String,
+        ) = Unit
+
         override suspend fun startBlock(
             session: AuthenticatedSession,
             sessionId: UUID,

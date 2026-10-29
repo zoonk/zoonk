@@ -34,10 +34,10 @@ class TodayViewModel(
     private val opener: StudyOpener,
     private val store: TodayStore,
 ) : ViewModel() {
-    private val opened = Channel<AppRoute>(Channel.BUFFERED)
+    private val opened = Channel<TodayRoute>(Channel.BUFFERED)
 
-    /** Where a tap leads, for the screen's navigator. */
-    val routes: Flow<AppRoute> = opened.receiveAsFlow()
+    /** Where a tap leads, for the screen's navigator, with the day it was made on. */
+    val routes: Flow<TodayRoute> = opened.receiveAsFlow()
 
     var pending by mutableStateOf<TodayTap?>(null)
         private set
@@ -49,44 +49,69 @@ class TodayViewModel(
         read: TodayRead.Day,
         step: DayStep,
         next: Boolean,
-    ) = run(if (next) TodayTap.Continue else TodayTap.Step(step.position)) {
+    ) = run(read, if (next) TodayTap.Continue else TodayTap.Step(step.position)) {
         opener.open(read.day, step, next, read.today.goal.id)
     }
 
     fun keepLearning(read: TodayRead.Day) =
-        run(TodayTap.KeepLearning) {
+        run(read, TodayTap.KeepLearning) {
             opener.addExtraTime(read.day, read.today.goal.id)
         }
+
+    var isCatchingUp by mutableStateOf(false)
+        private set
+
+    var catchUpFailed by mutableStateOf(false)
+        private set
+
+    fun catchUp(read: TodayRead.Day) {
+        if (isCatchingUp) return
+        isCatchingUp = true
+        catchUpFailed = false
+
+        viewModelScope.launch {
+            catchUpFailed = opener.catchUp(read.day, read.today.goal.id) is MutationResult.Failed
+            isCatchingUp = false
+        }
+    }
 
     var resumeFailure by mutableStateOf<ResumeFailure?>(null)
         private set
 
-    var isResuming by mutableStateOf(false)
+    /** The goal being resumed; it stays busy once saved, until Today shows its day ([resumed]). */
+    var resuming by mutableStateOf<UUID?>(null)
         private set
 
-    /** Stays busy once saved: Today reads the resumed goal's day, which replaces this state. */
     fun resume(goalId: UUID) {
-        if (isResuming) return
-        isResuming = true
+        if (resuming != null) return
+        resuming = goalId
         resumeFailure = null
 
         viewModelScope.launch {
             when (val result = store.resume(goalId)) {
                 is MutationResult.Done -> {
-                    if (!result.value) resumeFailure = ResumeFailure.GoalLimit
-                    isResuming = result.value
+                    if (!result.value) {
+                        resumeFailure = ResumeFailure.GoalLimit
+                        resuming = null
+                    }
                 }
 
                 is MutationResult.Failed -> {
                     resumeFailure = ResumeFailure.Failed
-                    isResuming = false
+                    resuming = null
                 }
 
                 MutationResult.Obsolete -> {
-                    isResuming = false
+                    resuming = null
                 }
             }
         }
+    }
+
+    /** Today no longer shows a paused goal, so a later pause can be resumed again. */
+    fun resumed() {
+        resuming = null
+        resumeFailure = null
     }
 
     var isAnswering by mutableStateOf(false)
@@ -111,13 +136,13 @@ class TodayViewModel(
                     val answered = result.value
                     when {
                         accepted -> {
-                            opened.send(
-                                answered.courseId?.let { AppRoute.CourseStart(it.toString()) } ?: AppRoute.StartGoal(goal = answered.title),
-                            )
+                            val route =
+                                answered.courseId?.let { AppRoute.CourseStart(it.toString()) } ?: AppRoute.StartGoal(goal = answered.title)
+                            opened.send(TodayRoute(route))
                         }
 
                         !hasGoal -> {
-                            opened.send(AppRoute.StartGoal())
+                            opened.send(TodayRoute(AppRoute.StartGoal()))
                         }
                     }
                 }
@@ -133,6 +158,7 @@ class TodayViewModel(
     }
 
     private fun run(
+        read: TodayRead.Day,
         tap: TodayTap,
         write: suspend () -> MutationResult<AppRoute?>,
     ) {
@@ -142,7 +168,7 @@ class TodayViewModel(
 
         viewModelScope.launch {
             when (val result = write()) {
-                is MutationResult.Done -> result.value?.let { opened.send(it) }
+                is MutationResult.Done -> result.value?.let { opened.send(TodayRoute(it, read.today.goal.id, read.day.localDate)) }
                 is MutationResult.Failed -> failed = tap
                 MutationResult.Obsolete -> Unit
             }
@@ -153,3 +179,10 @@ class TodayViewModel(
 }
 
 enum class ResumeFailure { Failed, GoalLimit }
+
+/** A tap's destination; one made on a day opens only while Today still shows that goal and day. */
+data class TodayRoute(
+    val route: AppRoute,
+    val goalId: UUID? = null,
+    val localDate: kotlinx.datetime.LocalDate? = null,
+)

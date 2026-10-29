@@ -12,6 +12,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
@@ -58,6 +59,15 @@ interface TodayApi {
         timeZone: String,
     ): Today
 
+    /** Everything the learner has learned, in points; null before any. */
+    suspend fun brainPower(session: AuthenticatedSession): Long?
+
+    /** Mistakes ready to practice now and those back tomorrow. */
+    suspend fun mistakes(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): MistakeListAvailability
+
     /** Whether resuming a paused goal moves the paused days' lessons to today. */
     suspend fun resumePreview(
         session: AuthenticatedSession,
@@ -96,6 +106,15 @@ class TodayStore(
             session?.let { read(api, it, timeZone()) }
         }
 
+    /** Read where the missions' reward explains Brain Power. */
+    val brainPower: Resource<Long> =
+        cache.resource(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session -> session?.let { api.brainPower(it) } }
+
+    val mistakes =
+        cache.keyed<UUID, MistakeListAvailability>(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session, goalId ->
+            session?.let { api.mistakes(it, goalId) }
+        }
+
     val resumePreview =
         cache.keyed<UUID, Boolean>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
             session?.let { api.resumePreview(it, goalId) }
@@ -105,6 +124,9 @@ class TodayStore(
         cache.keyed<UUID, Boolean>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
             session?.let { api.onboardingLeft(it, goalId) }
         }
+
+    /** Whether Today shows [goalId]'s day, or no goal's day at all (nothing stale is on screen). */
+    fun shows(goalId: UUID): Boolean = (today.state.value.value as? TodayRead.Day)?.let { it.today.goal.id == goalId } ?: true
 
     /** False when the learner's plan follows no more goals. */
     suspend fun resume(goalId: UUID): MutationResult<Boolean> =

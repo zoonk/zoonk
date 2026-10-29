@@ -3,7 +3,9 @@ package com.zoonk.android.feature.today
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.perform
+import com.zoonk.api.apis.MistakesApi
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.SuggestedGoalAnswer
@@ -17,6 +19,21 @@ class LiveTodayApi(
         session: AuthenticatedSession,
         timeZone: String,
     ): Today = perform { api.clients(session).studySessions.getToday(timeZone = timeZone) }
+
+    override suspend fun brainPower(session: AuthenticatedSession): Long? =
+        perform { api.clients(session).progress.getCurrentUserLevel() }.level?.totalBrainPower
+
+    override suspend fun mistakes(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): MistakeListAvailability =
+        perform {
+            api
+                .clients(
+                    session,
+                ).mistakes
+                .listCurrentUserMistakes(goalId = goalId, limit = 1, status = MistakesApi.StatusListCurrentUserMistakes.OPEN)
+        }.availability
 
     override suspend fun resumePreview(
         session: AuthenticatedSession,

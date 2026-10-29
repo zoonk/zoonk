@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
@@ -68,7 +69,14 @@ fun TodayScreen(
     val access by app.learnerAccess.collectAsStateWithLifecycle()
     val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today) }
 
-    LaunchedEffect(viewModel, navigator) { viewModel.routes.collect(navigator::open) }
+    LaunchedEffect(viewModel, navigator) {
+        viewModel.routes.collect { tapped ->
+            // A goal switch or a new day since the tap: what it opened belongs to the day no longer shown.
+            val shown = app.today.today.state.value.value as? TodayRead.Day
+            val same = tapped.goalId == null || (shown?.today?.goal?.id == tapped.goalId && shown.day.localDate == tapped.localDate)
+            if (same && app.goalSwitch.pending.value == null) navigator.open(tapped.route)
+        }
+    }
 
     TabRootScaffold(app, navigator) { padding ->
         when (access) {
@@ -105,7 +113,15 @@ private fun TodayRead(
 ) {
     val state by app.today.today.collectShown()
     val summary by app.learnerSummary.summary.collectShown()
+    val switchingTo by app.goalSwitch.pending.collectAsStateWithLifecycle()
+    val saving by app.goalSwitch.saving.collectAsStateWithLifecycle()
+    val refreshing by app.today.today.isRefreshing
+        .collectAsStateWithLifecycle()
     val scope = rememberCoroutineScope()
+    val shown = state.value
+
+    LaunchedEffect(shown) { if (shown !is TodayRead.GoalNotActive) viewModel.resumed() }
+    LaunchedEffect(shown, switchingTo) { switchingTo?.takeIf { app.today.shows(it) }?.let(app.goalSwitch::settle) }
 
     when (val shown = state) {
         LoadState.Idle, LoadState.Loading -> {
@@ -119,7 +135,27 @@ private fun TodayRead(
         is LoadState.Loaded -> {
             when (val read = shown.value) {
                 is TodayRead.Day -> {
-                    TodayDay(read, app.today.today, app.goalSwitch.pending, viewModel, navigator, padding)
+                    val behind = switchingTo != null && read.today.goal.id != switchingTo
+
+                    // The switch saved but Today couldn't read the new goal's day: never offer the old one's.
+                    if (behind && !saving && !refreshing) {
+                        LoadFailedMessage(onRetry = { scope.launch { app.today.today.refresh() } }, modifier = Modifier.padding(padding))
+                        return
+                    }
+
+                    val brainPower by app.today.brainPower.collectShown()
+                    val mistakes by app.today.mistakes[read.today.goal.id].collectShown()
+                    TodayDay(
+                        read = read,
+                        today = app.today.today,
+                        switching = behind,
+                        viewModel = viewModel,
+                        navigator = navigator,
+                        padding = padding,
+                        buddyName = summary.value?.buddy?.name ?: stringResource(R.string.navigation_buddy),
+                        brainPower = brainPower.value,
+                        mistakes = mistakes.value,
+                    )
                 }
 
                 is TodayRead.NoGoal -> {
@@ -284,7 +320,7 @@ private fun GoalAtRest(
             },
     ) {
         if (goal != null) {
-            Button(enabled = !viewModel.isResuming, onClick = { viewModel.resume(goal.id) }) {
+            Button(enabled = viewModel.resuming == null, onClick = { viewModel.resume(goal.id) }) {
                 Text(stringResource(R.string.today_resume_goal, goal.title), maxLines = 1, overflow = TextOverflow.Ellipsis)
             }
             OutlinedButton(onClick = { navigator.open(AppRoute.StartGoal()) }) { Text(stringResource(R.string.today_new_goal)) }
@@ -336,11 +372,45 @@ private fun Preparing(
         return
     }
 
-    pollWhile(active = left.value == false, read = app.today.today)
+    val scope = rememberCoroutineScope()
+
+    if (left is LoadState.Failed) {
+        LoadFailedMessage(
+            onRetry = { scope.launch { app.today.onboardingLeft[read.goalId].refresh() } },
+            modifier = Modifier.padding(padding),
+        )
+        return
+    }
+
+    val poll = pollWhile(active = left.value == false, read = app.today.today, context = read.goalId)
 
     TodayPage(padding) {
         TodayPageHeader(date = stringResource(R.string.today_building_plan), state = null, title = stringResource(R.string.today_title))
-        TodayPlanWait(read.title)
+        if (poll.stalled) PlanWaitStalled(poll.restart) else TodayPlanWait(read.title)
+    }
+}
+
+/** Polling gave up: it may still be building, so Reconnect starts reading again. */
+@Composable
+private fun PlanWaitStalled(onReconnect: () -> Unit) {
+    Column(
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text(
+            stringResource(R.string.today_connection_lost),
+            modifier =
+                Modifier.semantics {
+                    heading()
+                },
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            text = stringResource(R.string.today_connection_lost_detail),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        OutlinedButton(onClick = onReconnect) { Text(stringResource(R.string.today_reconnect)) }
     }
 }
 

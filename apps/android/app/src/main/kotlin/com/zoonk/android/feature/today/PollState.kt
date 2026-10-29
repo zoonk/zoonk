@@ -3,6 +3,7 @@ package com.zoonk.android.feature.today
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -15,19 +16,28 @@ import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.TimeSource
 
+/** [stalled] once polling gave up; [restart] starts it over, as Reconnect does. */
+internal class PollState(
+    val stalled: Boolean,
+    val restart: () -> Unit,
+)
+
 /**
  * Reads [read] again every 5 seconds while [active] and the app is in the foreground, as main does
- * while lessons are written. True once it gave up: 3 failed reads in a row, or 10 minutes.
+ * while lessons are written, and gives up after 3 failed reads in a row or 10 minutes. A new
+ * [context] (another goal or day) starts over.
  */
 @Composable
 internal fun pollWhile(
     active: Boolean,
     read: Resource<*>,
-): Boolean {
-    var stalled by remember { mutableStateOf(false) }
+    context: Any,
+): PollState {
+    var stalled by remember(context) { mutableStateOf(false) }
+    var round by remember(context) { mutableIntStateOf(0) }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
 
-    LaunchedEffect(active, read) {
+    LaunchedEffect(active, read, context, round) {
         stalled = false
         if (!active) return@LaunchedEffect
 
@@ -46,7 +56,7 @@ internal fun pollWhile(
         }
     }
 
-    return active && stalled
+    return PollState(active && stalled) { round++ }
 }
 
 private val INTERVAL = 5.seconds

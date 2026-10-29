@@ -20,29 +20,46 @@ fun interface GoalSwitchApi {
 }
 
 /**
- * The goal the learner switched to, while the switch is on its way: the tab roots still show the
- * previous goal, so they dim, since a tap on Today's Start would open that goal's session.
+ * The goal the learner switched to, until the tabs show it: they still show the previous goal
+ * meanwhile, and a tap on Today's Start would open that goal's session.
  */
 class GoalSwitch(
     private val api: GoalSwitchApi,
     private val cache: AppCache,
 ) {
-    private val switching = MutableStateFlow<UUID?>(null)
-    val pending: StateFlow<UUID?> = switching.asStateFlow()
+    private val target = MutableStateFlow<UUID?>(null)
+    private val writing = MutableStateFlow(false)
 
-    /** Pending until [shown] (the frame's and tab's reads) show the new goal, not only until it's saved. */
+    val pending: StateFlow<UUID?> = target.asStateFlow()
+
+    /** The switch is being saved; until it is, the tabs can't have read the new goal. */
+    val saving: StateFlow<Boolean> = writing.asStateFlow()
+
+    /** [shown] are the reads that show the active goal, read again once it's saved; [shows] says when they do. */
     suspend fun select(
         goalId: UUID,
         shown: List<Resource<*>>,
+        shows: (UUID) -> Boolean,
     ) {
-        if (switching.value != null) return
-        switching.value = goalId
+        if (writing.value) return
+        writing.value = true
+        target.value = goalId
 
         try {
             val result = cache.mutate(invalidating = setOf(DataDomain.LearningProfile)) { session -> api.makeActive(session, goalId) }
-            if (result is MutationResult.Done) coroutineScope { shown.forEach { launch { it.refresh() } } }
+            if (result is MutationResult.Done) {
+                coroutineScope { shown.forEach { launch { it.refresh() } } }
+                if (shows(goalId)) settle(goalId)
+            } else {
+                settle(goalId)
+            }
         } finally {
-            switching.value = null
+            writing.value = false
         }
+    }
+
+    /** A tab shows [goalId] now (or no goal's day at all), so the switch is over. */
+    fun settle(goalId: UUID) {
+        target.compareAndSet(goalId, null)
     }
 }
