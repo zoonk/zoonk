@@ -63,6 +63,8 @@ import com.zoonk.android.feature.mistakes.LiveMistakesApi
 import com.zoonk.android.feature.mistakes.MistakesStore
 import com.zoonk.android.feature.mock.LiveMockApi
 import com.zoonk.android.feature.mock.MockStore
+import com.zoonk.android.feature.mock.chooser.LiveMockStartApi
+import com.zoonk.android.feature.mock.chooser.MockStarter
 import com.zoonk.android.feature.onboarding.LiveOnboardingApi
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.plan.LivePlanApi
@@ -259,6 +261,7 @@ class AppContainer private constructor(
     // Exams and mocks (L7).
     val exams = ExamStore(LiveExamApi(api), cache, timeZone)
     val mocks = MockStore(LiveMockApi(api), cache)
+    val mockStarter = MockStarter(LiveMockStartApi(api), cache)
 
     init {
         scope.launch { sessions.restore() }

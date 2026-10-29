@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="mock_chooser_title">Take a mock exam</string>
+    <string name="mock_chooser_rule">Your result only shows at the end, like on exam day.</string>
+    <string name="mock_chooser_pick_free">Pick how much of the exam to take now.</string>
+    <string name="mock_chooser_start">Start</string>
+    <string name="mock_chooser_getting_ready">Getting it ready…</string>
+    <plurals name="mock_chooser_start_with">
+        <item quantity="one">Start with %d question</item>
+        <item quantity="other">Start with %d questions</item>
+    </plurals>
+    <string name="mock_chooser_see_plus">See Plus</string>
+    <string name="mock_chooser_plus">Mock exams come with Plus: whenever you want, and every week in your plan.</string>
+    <string name="mock_chooser_one_subject">One subject</string>
+    <!-- After a mock's parts or subjects, when it leaves the exam day's written part out. -->
+    <string name="mock_chooser_objective_only">objective part only</string>
+    <!-- %1$s lists the written parts a mock asks besides its questions, such as "Essay". -->
+    <string name="mock_chooser_written">+ %1$s</string>
+    <!-- A mock's size in a row: %1$d questions ("q" is short for questions) and about %2$s, a duration such as "5 hr". -->
+    <string name="mock_chooser_option_size">%1$d q · ~%2$s</string>
+    <!-- What screen readers say for a mock's size: %2$s is a duration such as "5 hr". -->
+    <plurals name="mock_chooser_option_size_spoken">
+        <item quantity="one">%1$d question, about %2$s</item>
+        <item quantity="other">%1$d questions, about %2$s</item>
+    </plurals>
+    <!-- A placement mock's questions in a row; "q" is short for questions. -->
+    <string name="mock_chooser_placement_size">%1$d q</string>
+    <plurals name="mock_chooser_placement_size_spoken">
+        <item quantity="one">%d question</item>
+        <item quantity="other">%d questions</item>
+    </plurals>
+    <!-- How many of the picked mock's questions the bank has now (%1$d) of the real exam's (%2$s), and about how long it takes (%3$s, a duration). -->
+    <plurals name="mock_chooser_short">
+        <item quantity="one">%1$d of the %2$s questions is ready now, so this mock takes about %3$s.</item>
+        <item quantity="other">%1$d of the %2$s questions are ready now, so this mock takes about %3$s.</item>
+    </plurals>
+    <string name="mock_chooser_short_day">More can be written for your mocks tomorrow.</string>
+    <string name="mock_chooser_short_month">More can be written for your mocks next month.</string>
+    <string name="mock_chooser_short_none">The question bank doesn\'t have more new ones for it yet.</string>
+    <string name="mock_chooser_not_enough">There aren\'t enough questions for this mock yet. Try the full exam or another subject.</string>
+    <string name="mock_chooser_failed">We couldn\'t start the mock. Try again.</string>
+    <string name="mock_chooser_preparing">Preparing your mock exam</string>
+    <string name="mock_chooser_preparing_detail">We\'re writing questions like the exam\'s for you. It starts here as soon as they\'re ready.</string>
+    <string name="mock_chooser_writing">Writing your mock exam</string>
+    <string name="mock_chooser_writing_questions">Writing questions like the exam\'s</string>
+    <string name="mock_chooser_writing_questions_line">Picking what to ask in each subject…</string>
+    <!-- The panel beside the options, about the one picked. -->
+    <string name="mock_chooser_picked">The picked mock exam</string>
+    <string name="mock_chooser_questions">Questions</string>
+    <string name="mock_chooser_time_limit">Time limit</string>
+    <string name="mock_chooser_usually_takes">Usually takes</string>
+    <!-- %1$s is a duration, such as "1 hr 20 min". -->
+    <string name="mock_chooser_about">About %1$s</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="mock_chooser_about_recommended">About %1$s (recommended)</string>
+    <string name="mock_chooser_subjects">Subjects</string>
+    <!-- The exam's sections a mock sits, such as Listening and Reading. -->
+    <string name="mock_chooser_parts">Parts</string>
+    <!-- Under a part such as "Essay", which the learner writes rather than answers. -->
+    <string name="mock_chooser_written_part">Written part</string>
+    <string name="mock_chooser_last_mock">Your last mock exam</string>
+    <string name="mock_chooser_placement_title">A mock exam to find your level</string>
+    <string name="mock_chooser_placement_detail">In the exam\'s format. Your plan starts from your answers.</string>
+    <string name="mock_chooser_placement_start">Start the mock exam</string>
+    <string name="mock_chooser_placement_note">Stop whenever you want: your plan uses the questions you answered. Your result shows at the end.</string>
+    <string name="mock_chooser_placement_plus">Mock exams come with Plus. Without it, the quick questions find your starting point.</string>
+    <string name="mock_chooser_placement_top_subject">The subject worth most. Your first days ask about the rest.</string>
+    <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
+    <plurals name="mock_chooser_placement_top_subjects">
+        <item quantity="one">The %d subject worth most. Your first days ask about the rest.</item>
+        <item quantity="other">The %d subjects worth most. Your first days ask about the rest.</item>
+    </plurals>
+    <string name="mock_chooser_placement_short">A quick check. Your first days fine-tune it.</string>
+    <string name="mock_chooser_placement_medium">Every subject. A good starting point.</string>
+    <string name="mock_chooser_placement_long">The most precise starting point.</string>
+    <!-- %1$s is a past exam edition, such as "2024 exam"; %2$s the site that counted its questions, such as "inep.gov.br". -->
+    <string name="mock_chooser_size_past_edition">Questions per subject in the %1$s, as counted by %2$s.</string>
+    <!-- %1$s is the site that counted the questions, such as "inep.gov.br". -->
+    <string name="mock_chooser_size_latest_exam">Questions per subject in the latest exam, as counted by %1$s.</string>
+    <!-- %2$s is a duration, such as "1 hr 20 min". -->
+    <plurals name="mock_chooser_size_material_length">
+        <item quantity="one">Your material doesn\'t say how long the test is. This mock asks %1$d question in %2$s.</item>
+        <item quantity="other">Your material doesn\'t say how long the test is. This mock asks %1$d questions in %2$s.</item>
+    </plurals>
+    <string name="mock_chooser_size_material_formats">Your material doesn\'t say how many questions each format has, so they\'re split evenly.</string>
+    <plurals name="mock_chooser_size_notice_questions">
+        <item quantity="one">The notice doesn\'t say how many questions the exam has. This mock asks %d question.</item>
+        <item quantity="other">The notice doesn\'t say how many questions the exam has. This mock asks %d questions.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_guide_questions">
+        <item quantity="one">The official guide doesn\'t say how many questions the exam has. This mock asks %d question.</item>
+        <item quantity="other">The official guide doesn\'t say how many questions the exam has. This mock asks %d questions.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_notice_past_edition">
+        <item quantity="one">The notice doesn\'t say how many questions the exam has. This mock asks %d question, as a past edition did.</item>
+        <item quantity="other">The notice doesn\'t say how many questions the exam has. This mock asks %d questions, as a past edition did.</item>
+    </plurals>
+    <plurals name="mock_chooser_size_guide_past_edition">
+        <item quantity="one">The official guide doesn\'t say how many questions the exam has. This mock asks %d question, as a past edition did.</item>
+        <item quantity="other">The official guide doesn\'t say how many questions the exam has. This mock asks %d questions, as a past edition did.</item>
+    </plurals>
+    <string name="mock_chooser_size_notice_subjects">The notice doesn\'t say how many questions each subject has, so they\'re split evenly.</string>
+    <string name="mock_chooser_size_guide_subjects">The official guide doesn\'t say how many questions each part has, so they\'re split evenly.</string>
+    <string name="mock_chooser_size_notice_formats">The notice doesn\'t say how many questions each format has, so they\'re split evenly.</string>
+    <string name="mock_chooser_size_guide_formats">The official guide doesn\'t say how many questions each format has, so they\'re split evenly.</string>
+    <!-- %1$s is a duration, such as "4 hr". -->
+    <string name="mock_chooser_size_notice_time">The notice doesn\'t give the exam\'s time. This mock gives %1$s.</string>
+    <!-- %1$s is a duration, such as "4 hr". -->
+    <string name="mock_chooser_size_guide_time">The official guide doesn\'t give the exam\'s time. This mock gives %1$s.</string>
+    <!-- %1$s is the exam's name for a section, such as "Listening". -->
+    <string name="mock_chooser_left_out_named">%1$s isn\'t in mocks yet.</string>
+    <string name="mock_chooser_left_out_listening">Listening isn\'t in mocks yet.</string>
+    <string name="mock_chooser_left_out_speaking">The speaking part isn\'t in mocks yet.</string>
+    <!-- %1$s is the exam's name for a practical test, such as "Driving test". -->
+    <string name="mock_chooser_left_out_practical_named">%1$s can\'t be part of a mock: it\'s a practical test.</string>
+    <string name="mock_chooser_left_out_practical">The exam\'s practical test can\'t be part of a mock.</string>
+    <string name="mock_chooser_left_out_numeric">Questions answered with a number are asked as multiple choice.</string>
+    <string name="mock_chooser_left_out_short_answer">Questions answered in a few words are asked as multiple choice.</string>
+    <!-- %1$s is the exam's name for a written part, such as "Essay". -->
+    <string name="mock_chooser_left_out_written">There\'s no essay for %1$s yet, so you practice it in your essay sessions.</string>
+</resources>
