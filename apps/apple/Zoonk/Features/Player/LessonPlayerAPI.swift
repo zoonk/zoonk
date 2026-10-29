@@ -60,7 +60,7 @@ enum LessonCheckOutcome: Hashable, Sendable {
   case refused
 }
 
-enum LessonCompletionOutcome: Hashable, Sendable {
+enum LessonCompletionOutcome: Equatable, Sendable {
   case completed(LessonCompletionSummary)
   /// An answer the screens show never reached the server.
   case incomplete
@@ -241,14 +241,19 @@ struct LessonPlayerAPI: Sendable {
         return .failed
       }
 
+      let block = completion.studyBlock.flatMap {
+        try? StudyJSON.recode($0, as: BlockMoment.self)
+      }
+
       return .completed(
         LessonCompletionSummary(
-          brainPower: completion.brainPower, totalBrainPower: completion.totalBrainPower,
+          brainPower: block?.ownBrainPower ?? completion.brainPower,
+          totalBrainPower: completion.totalBrainPower,
           correctCount: completion.correctCount, incorrectCount: completion.incorrectCount,
           energyDelta: completion.energyDelta, seconds: completion.seconds,
           isFirstCompletion: completion.isFirstCompletion,
           nextReviewAt: completion.nextReviewAt,
-          reachedLevel: completion.reached.level?.level))
+          day: block?.day ?? DayResult(completion)))
     case .unprocessableContent:
       return .incomplete
     case .unauthorized:

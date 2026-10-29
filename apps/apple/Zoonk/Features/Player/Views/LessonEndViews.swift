@@ -16,16 +16,19 @@ struct LessonCompletionView: View {
       }
     } secondary: {
       page {
+        dayMoment
         guestEndingView
       }
       .safeAreaBar(edge: .bottom) { actionBar }
     } single: {
       page {
         moment
+        dayMoment
         guestEndingView
       }
       .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
+    .milestoneCeremony(day?.ceremony)
     .sensoryFeedback(.success, trigger: completion.status == .saved)
     .onChange(of: completion.status) { _, status in
       if status == .saved, soundsEnabled {
@@ -75,6 +78,17 @@ struct LessonCompletionView: View {
       if let summary = completion.summary {
         readouts(summary)
       }
+    }
+  }
+
+  private var day: DayResult? {
+    completion.status == .saved ? completion.summary?.day : nil
+  }
+
+  @ViewBuilder
+  private var dayMoment: some View {
+    if let day, !day.isEmpty {
+      DayMomentSections(result: day)
     }
   }
 
@@ -150,17 +164,6 @@ struct LessonCompletionView: View {
         }
       }
       .accessibilityElement(children: .combine)
-
-      if let level = summary.reachedLevel {
-        Label {
-          Text(
-            "You reached level \(level)", tableName: "Player",
-            comment: "A lesson took the learner to a new belt level")
-        } icon: {
-          Image(systemName: "rosette")
-        }
-        .font(.headline)
-      }
 
       if let reviewAt = summary.nextReviewAt {
         Text(

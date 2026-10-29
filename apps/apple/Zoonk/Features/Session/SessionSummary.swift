@@ -87,6 +87,11 @@ struct BlockMoment: Decodable, Equatable, Sendable {
   let sessionCompleted: Bool
   let total: Int
 
+  /// Without the day's bonus it paid, which its missions show.
+  var ownBrainPower: Int {
+    brainPower - (fullMeal.paid ? fullMeal.bonus : 0)
+  }
+
   var day: DayResult {
     DayResult(
       ceremony: ceremony,

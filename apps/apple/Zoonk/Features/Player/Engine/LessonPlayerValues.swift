@@ -94,7 +94,7 @@ enum LessonRunRefusal: Hashable, Sendable, Error {
   case slowDown(retryAfterSeconds: Int)
 }
 
-struct LessonCompletionSummary: Hashable, Sendable {
+struct LessonCompletionSummary: Equatable, Sendable {
   let brainPower: Int
   let totalBrainPower: Double
   let correctCount: Int
@@ -103,5 +103,5 @@ struct LessonCompletionSummary: Hashable, Sendable {
   let seconds: Int
   let isFirstCompletion: Bool
   let nextReviewAt: Date?
-  let reachedLevel: Int?
+  let day: DayResult?
 }

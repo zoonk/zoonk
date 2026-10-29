@@ -87,6 +87,25 @@ final class LessonPlayerLoadingTests: XCTestCase {
     XCTAssertEqual(reopened.state?.steps["check"]?.image?.url, "https://example.com/a.png")
   }
 
+  func testASessionLessonEndsWithTheMissionsItCompletedAndItsOwnBrainPower() async throws {
+    let api = LessonPlayerAPI(
+      clients: APIClientFactory(
+        baseURL: URL(string: "https://api.zoonk.test")!,
+        transport: JSONTransport(body: sessionLessonCompletion)))
+
+    let outcome = try await api.completeLesson(
+      id: "lesson", runId: "run", skippedWritingStepIds: [], token: "token")
+
+    guard case .completed(let summary) = outcome else {
+      return XCTFail("Expected a completed lesson, got \(outcome)")
+    }
+
+    XCTAssertEqual(summary.brainPower, 12, "the day's bonus shows with the missions")
+    XCTAssertEqual(summary.day?.missionMoment?.completed, [.somethingNew])
+    XCTAssertEqual(summary.day?.missionMoment?.fullMeal.bonus, 50)
+    XCTAssertEqual(summary.day?.reached?.level?.level, 3)
+  }
+
   private func player(
     cache: AppCache, content: Resource<LessonLoad>,
     transport: any ClientTransport = UnexpectedLessonTransport()
@@ -155,3 +174,30 @@ private struct UnexpectedLessonTransport: ClientTransport {
     throw APIError.network
   }
 }
+
+private struct JSONTransport: ClientTransport {
+  let body: String
+
+  func send(
+    _ request: HTTPRequest, body _: HTTPBody?, baseURL: URL, operationID: String
+  ) async throws -> (HTTPResponse, HTTPBody?) {
+    var headerFields = HTTPFields()
+    headerFields[.contentType] = "application/json"
+    return (HTTPResponse(status: .ok, headerFields: headerFields), HTTPBody(body))
+  }
+}
+
+private let sessionLessonCompletion = #"""
+  {"brainPower": 62, "ceremony": null, "correctCount": 1, "energyDelta": 0.5, "incorrectCount": 0,
+   "isFirstCompletion": true, "nextReviewAt": null, "seconds": 120, "totalBrainPower": 400,
+   "reached": {"energy": null, "level": {"color": "yellow", "level": 3}},
+   "studyBlock": {
+     "blockId": "0192f8a4-3c2b-7d1e-8f00-000000000001", "brainPower": 62, "capsulesOpened": 0,
+     "ceremony": null, "checkpoint": null, "comesBackOn": null, "completedMissions": ["somethingNew"],
+     "correct": 1, "fullMeal": {"bonus": 50, "paid": true}, "milestones": [],
+     "missions": [{"kind": "somethingNew", "status": "done", "done": 1, "total": 1}],
+     "netScore": null, "nextBlockId": null,
+     "reached": {"energy": null, "level": {"color": "yellow", "level": 3}},
+     "sessionBar": {"completed": 1, "total": 3}, "sessionCompleted": false, "testOutOffer": null,
+     "topHyperdrive": 0, "total": 1}}
+  """#

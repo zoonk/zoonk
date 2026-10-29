@@ -3958,35 +3958,6 @@
         }
       }
     },
-    "You reached level %lld" : {
-      "comment" : "A lesson took the learner to a new belt level",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Du hast Level %lld erreicht"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Has alcanzado el nivel %lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tu as atteint le niveau %lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Você chegou ao nível %lld"
-          }
-        }
-      }
-    },
     "You used today's AI help. Plus gives you more." : {
       "comment" : "A free learner used the day's AI help",
       "localizations" : {

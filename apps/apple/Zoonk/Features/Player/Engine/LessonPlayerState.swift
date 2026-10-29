@@ -1,7 +1,7 @@
 import Foundation
 
 /// Network work happens outside and reports back through its methods.
-struct LessonPlayerState: Hashable, Sendable {
+struct LessonPlayerState: Equatable, Sendable {
   enum Phase: Hashable, Sendable {
     case playing
     case checking
@@ -24,7 +24,7 @@ struct LessonPlayerState: Hashable, Sendable {
     case writingSkipped
   }
 
-  struct Completion: Hashable, Sendable {
+  struct Completion: Equatable, Sendable {
     enum Status: Hashable, Sendable {
       /// Every screen was answered in an earlier sitting: Finish saves it.
       case ready
