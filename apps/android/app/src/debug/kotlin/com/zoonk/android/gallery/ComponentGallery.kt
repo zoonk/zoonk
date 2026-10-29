@@ -81,6 +81,7 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LessonVisual
+import com.zoonk.android.ui.components.LevelBar
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitPeriod
@@ -391,6 +392,7 @@ private fun Meters() {
                     .map { MeterPart(it) },
             )
         }
+        Labeled("A skill's level, B1") { LevelBar(2.0) }
         Labeled("A plan's time by kind") {
             MeterParts(
                 listOf(
