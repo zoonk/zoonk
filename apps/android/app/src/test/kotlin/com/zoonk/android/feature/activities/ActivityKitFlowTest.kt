@@ -10,6 +10,7 @@ import androidx.compose.ui.test.assertIsOn
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -191,6 +192,23 @@ class ActivityKitFlowTest {
         rule.onNodeWithContentDescription("Previous screen").performClick()
 
         shows("Your first pick: Add the tax")
+    }
+
+    @Test
+    fun aCanvasAnswerComesBackAfterAndroidClosesTheAppInTheBackground() {
+        val restoration = StateRestorationTester(rule)
+        harness.play(listOf(ActivityFixtures.step("decisionTree")), restoration = restoration) {
+            grade = { _, _ -> checkResult(true, expected = ActivityFixtures.expected("decisionTree")) }
+        }
+        tap("Needles")
+        tap("In bundles")
+
+        harness.viewModel = harness.openAgain()
+        restoration.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithText("Check").assertIsEnabled()
+        harness.tap("Check")
+        shows("It leads to Pine.")
     }
 
     @Test

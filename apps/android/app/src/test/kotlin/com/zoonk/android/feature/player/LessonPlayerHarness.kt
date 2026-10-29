@@ -1,11 +1,13 @@
 package com.zoonk.android.feature.player
 
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import com.zoonk.android.app.LocalSnackbarHostState
@@ -62,6 +64,7 @@ internal class LessonPlayerHarness(
         ceremony: LessonCeremony? = null,
         sessionId: String? = null,
         sessionSteps: SessionSteps? = null,
+        restoration: StateRestorationTester? = null,
         configure: FakeLessonPlayerApi.() -> Unit = {},
     ) {
         val lesson = playable(steps)
@@ -88,7 +91,7 @@ internal class LessonPlayerHarness(
         viewModel = newViewModel()
         openAgain = { newViewModel().also { it.open(lesson) } }
 
-        rule.setContent {
+        val content: @Composable () -> Unit = {
             ZoonkTheme {
                 CompositionLocalProvider(LocalSnackbarHostState provides SnackbarHostState()) {
                     val state by viewModel.state.collectAsState()
@@ -98,6 +101,7 @@ internal class LessonPlayerHarness(
                 }
             }
         }
+        if (restoration != null) restoration.setContent(content) else rule.setContent(content)
         rule.waitUntil {
             viewModel.state.value
                 ?.run

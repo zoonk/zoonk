@@ -9,8 +9,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -66,7 +68,10 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.parseLocalizedNumber
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Tolerance
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlin.math.abs
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value as InteractionCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value as NumericCheckValue
@@ -87,6 +92,9 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "stepSolver" to stepSolverRenderer,
     )
 
+private val KeptAnswer: Saver<ActivityAnswer?, String> =
+    Saver(save = { answer -> answer?.let { ApiJson.encodeToString(it) } }, restore = { ApiJson.decodeFromString(it) })
+
 /** Apple's rule: a choice or number check can be answered from the frame alone; an interaction needs its canvas. */
 val StepContent.Activity.isPlayable: Boolean
     get() = frame.check !is InteractionCheckValue || frame.template in activityRenderers
@@ -106,7 +114,15 @@ internal fun ActivityView(
     val phase = if (result == null) ActivityPhase.Answering else ActivityPhase.Checked
     val activityAnswer = (answer as? LessonAnswer.Activity)?.answer
     val locked = state.phase != LessonPhase.Playing
-    val onAnswerChange = { next: ActivityAnswer? -> if (!locked) actions.select(next?.let(LessonAnswer::Activity)) }
+    var kept by rememberSaveable(step.id, stateSaver = KeptAnswer) { mutableStateOf<ActivityAnswer?>(null) }
+    val onAnswerChange = { next: ActivityAnswer? ->
+        if (!locked) {
+            kept = next
+            actions.select(next?.let(LessonAnswer::Activity))
+        }
+    }
+    // After Android closes the app in the background, a canvas gets its saved work back but the player doesn't get its answer.
+    LaunchedEffect(step.id) { if (activityAnswer == null && result == null) kept?.let(onAnswerChange) }
     val checkFirst = renderer?.checkFirst?.invoke(content.content) == true
     val check = @Composable { ActivityCheckArea(frame.check, activityAnswer, phase, locked, onAnswerChange) }
 
