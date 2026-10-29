@@ -2,10 +2,15 @@ package com.zoonk.android.feature.player.engine
 
 import com.zoonk.android.feature.player.model.ChallengeChoice
 import com.zoonk.android.feature.player.model.ChallengeEnding
+import com.zoonk.android.feature.player.model.ChallengeMeter
 import com.zoonk.android.feature.player.model.ChallengeNode
+import com.zoonk.android.feature.player.model.ChallengeNote
+import com.zoonk.android.feature.player.model.ChallengeSkill
+import com.zoonk.android.feature.player.model.ChallengeSlot
 import com.zoonk.android.feature.player.model.ChallengeStepContent
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.api.models.PlayableLibraryStepAnyOf1ContentNodesInnerChoicesInner.Quality
+import com.zoonk.api.models.PlayableLibraryStepAnyOf1ContentNodesInnerChoicesInnerNotesInner.Kind as NoteKind
 
 data class ChallengeMove(
     val node: ChallengeNode,
@@ -124,3 +129,67 @@ fun gradeChallengePath(
 
     return ChallengeGrade(walk.ending, score >= PASS_SCORE, score, walk.moves)
 }
+
+private const val METER_MAX = 100L
+
+/** A meter after the moves so far, and how the last move changed it. */
+data class ChallengeMeterState(
+    val meter: ChallengeMeter,
+    val value: Long,
+    val change: Long,
+)
+
+/** Core's `getChallengeMeters`: each meter from its start through every move, kept within 0 to 100. */
+fun challengeMeters(
+    content: ChallengeStepContent,
+    moves: List<ChallengeMove>,
+): List<ChallengeMeterState> =
+    content.meters.map { meter ->
+        val value = moves.fold(meter.start) { current, move -> (current + move.change(meter.id)).coerceIn(0, METER_MAX) }
+        ChallengeMeterState(meter, value, moves.lastOrNull()?.change(meter.id) ?: 0)
+    }
+
+private fun ChallengeMove.change(meterId: String): Long = choice.effects.firstOrNull { it.meter == meterId }?.change ?: 0
+
+data class ChallengeDebrief(
+    val good: List<ChallengeNote>,
+    val improve: List<ChallengeNote>,
+    /** The skill most notes said to improve, offered as practice. */
+    val practice: ChallengeSkill?,
+)
+
+/** Core's `getChallengeDebrief`. */
+fun challengeDebrief(
+    content: ChallengeStepContent,
+    moves: List<ChallengeMove>,
+): ChallengeDebrief {
+    val notes = moves.flatMap { it.choice.notes }
+    val improve = notes.filter { it.kind == NoteKind.IMPROVE }
+    val counts = improve.groupingBy { it.skill }.eachCount()
+    val practice =
+        content.skills.fold<ChallengeSkill, ChallengeSkill?>(null) { weakest, skill ->
+            if ((counts[skill.id] ?: 0) > (weakest?.let { counts[it.id] } ?: 0)) skill else weakest
+        }
+
+    return ChallengeDebrief(notes.filter { it.kind == NoteKind.GOOD }, improve, practice)
+}
+
+private val CHALLENGE_NAME = Regex("\\{\\{([\\w-]+)\\}\\}")
+
+/** Core's `getChallengeNames`: each colleague takes the team's next name in order; an AI or a missing team keeps its role. */
+fun challengeNames(
+    slots: List<ChallengeSlot>,
+    team: List<String>?,
+): Map<String, String> {
+    val people = slots.filterNot { it.ai }
+    return slots.associate { slot ->
+        val name = if (slot.ai) null else team?.getOrNull(people.indexOf(slot))
+        slot.id to (name ?: slot.role)
+    }
+}
+
+/** Core's `fillChallengeNames`: `{{slot}}` becomes that colleague's name. */
+fun fillChallengeNames(
+    text: String,
+    names: Map<String, String>,
+): String = CHALLENGE_NAME.replace(text) { match -> names[match.groupValues[1]] ?: match.value }

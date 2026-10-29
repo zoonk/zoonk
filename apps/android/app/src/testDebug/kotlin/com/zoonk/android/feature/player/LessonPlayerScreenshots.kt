@@ -100,6 +100,7 @@ class LessonPlayerScreenshots {
             typedAnswerStep("why"),
             spokenStep("say"),
             activityStep("act"),
+            challengeStep("case"),
             summaryStep("end"),
         )
 
@@ -182,6 +183,25 @@ class LessonPlayerScreenshots {
                     LessonAction.CheckResolved("act", checkResult(false).toStepResult(null), counts = true),
                 )
             },
+            "challenge-intro" to { at(*toQuiz(), LessonAction.SkipSteps(listOf("quiz", "why", "say", "act"))) },
+            "challenge-deciding" to {
+                at(
+                    *toQuiz(),
+                    LessonAction.SkipSteps(listOf("quiz", "why", "say", "act")),
+                    LessonAction.Continue,
+                    LessonAction.SelectAnswer("case", LessonAnswer.Challenge(listOf("ask"))),
+                )
+            },
+            "challenge-debrief" to {
+                at(
+                    *toQuiz(),
+                    LessonAction.SkipSteps(listOf("quiz", "why", "say", "act")),
+                    LessonAction.Continue,
+                    LessonAction.SelectAnswer("case", LessonAnswer.Challenge(listOf("quote"))),
+                    LessonAction.Continue,
+                    LessonAction.CheckResolved("case", stepResult(false), counts = true),
+                )
+            },
             "free-limit" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)))) },
             "slow-down" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.SlowDown(30)))) },
             "finish-ready" to { LessonPlayerState.initial(LESSON_ID, emptyList(), now = 0) },
@@ -191,7 +211,7 @@ class LessonPlayerScreenshots {
                     LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right")),
                     LessonAction.CheckResolved("quiz", checkResult(true).toStepResult("Right"), counts = true),
                     LessonAction.Continue,
-                    LessonAction.SkipSteps(listOf("why", "say", "act")),
+                    LessonAction.SkipSteps(listOf("why", "say", "act", "case")),
                     LessonAction.Continue,
                     LessonAction.CompletionSaved(ApiJson.decodeFromString(LibraryLessonCompletion.serializer(), COMPLETION)),
                 )

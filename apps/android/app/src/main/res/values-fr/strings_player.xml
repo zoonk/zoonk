@@ -10,10 +10,10 @@
   "player_action_see_answer": "e2d51663ad5e75773e4e5886906bd9aad344c6d47f8c50cfce5a083444e54901",
   "player_action_see_how_it_went": "eabc7b454e8678b1b97b1c286e2a1f312b6d07fe94e43d0e8f1bd3d4f4536771",
   "player_action_start": "0064b61042693f9b668b0eb07222aea4cae9a514b2572b4a7986b7bc9f0df2dd",
-  "player_activity_correct_answer": "ec5d1fa9534182f49f398c9dc4da68707d1429af7513895f0618c5c695d8d99b",
+  "player_activity_correct_answer": "231ad25e343a6a02c897e0ac9a1c53bf016b61ffde3f9ae9751f53f8447f75ca",
   "player_activity_example_data": "082abd90ccf6ad596080705053d086bcbd53a5acab59a662a1f70d6076d15ac3",
-  "player_activity_source": "7a54e28998dbf183abfe3d449570f5a79dd2cac55844ff30959647cf80dbf221",
-  "player_activity_your_answer": "6b3ee5df9d70ed147bffef7ea4ed19fdc17f871b322c27b63ec8439975b11cef",
+  "player_activity_source": "a275d08971fa4fdbcb7bde64ddf61c714c47d7bf7a54f0671647027534cb212e",
+  "player_activity_your_answer": "edd5c041dbb677ffb282f70d6466dfbea3b71c2237e4ca8f5cce8c8811d83ab6",
   "player_ai_note": "612a32b6cdc7374395090c784a795827ee2238cff4bde118e949588a8b62c26f",
   "player_already_knew": "81977c477284b7fb67ead8168b3bfebf0a0de9b6886c23a14ce71c7b3a37086f",
   "player_answer_feedback": "fb6d3e6f838e9c5ba5a534d723f63fc9e8b8225ed1356879a38e211eea6d2eab",
@@ -25,6 +25,26 @@
   "player_can_talk_now": "bab11818c6669056c15f0d514d9d1669fff2230ebcd80f0e78950ce2dac42560",
   "player_cant_talk_now": "caba6fe3a67e472c2b0c2035d1a4e3ab44da83a2f386e1ba7c80781c236cdd38",
   "player_cant_write_now": "778dd85d71021e72ea9b99487b511f317c1f3be323c0dcc4c81b115a4091b9d1",
+  "player_challenge_bit_higher": "d3f5b8d942358ee65623fbd9e23b0fe2059abff30b169950440a7ae7bfa307e0",
+  "player_challenge_bit_lower": "8442390c3c8e6063bf61632425ecc436c32d174d0d6b8c413aa0001d5eecde68",
+  "player_challenge_case": "125129f0150b80f205193c59b006a50f94ce2715ce9a7e8f4fbbb63fe8eaed91",
+  "player_challenge_complete": "3c3c8e825ca5ac00a795642c181d6054d8258c18f9203a8ce8951ccb2907a5f1",
+  "player_challenge_good": "c635aa67bd5cb61ae521656f41418257ffdb699bd92799ad93ad05d13ced1e6f",
+  "player_challenge_help": "59e7d9379e8b2a3e7b91ee34509f180998965ddbd5a01cb59d113c4d900a018b",
+  "player_challenge_help_ai": "ee62576bdf913e5c25eb485e9a5742c40dc9c432cfdc0b0dae62d610f0f21837",
+  "player_challenge_improve": "cecb87356249c61af5da7c4f0b9c4c558ea2c89a86563b868e0a97fe46663077",
+  "player_challenge_meters": "78ec52fc3482d12d61d29a1e34c1be76961184cb57bc46b214e6aa4f00761c63",
+  "player_challenge_mission": "2bf7769a88ac30c3284eeec05133fdcedb31baa2d5d2d2a1506a5114247745f2",
+  "player_challenge_much_higher": "e9ccd5a47969be53f24ab657dbcbc2defc5583290554d5e3f2de158f3ef65de0",
+  "player_challenge_much_lower": "c31945da843dd242e64ee73540c521af344db7fed1e5ae024c9c943a161d17a2",
+  "player_challenge_no_change": "a828f68efcfff311e819d3598b96b04b6a48cb5c0102339fee9910599b8e4057",
+  "player_challenge_practice": "a4575df740baa4d84b4fdf42ed2488ca12bf0059ce061124eaff70f74e8df4c9",
+  "player_challenge_scenario_complete": "187060011c5305b75bc2cb6e3044a1f184ad372f3e9573185690524e4d9e788e",
+  "player_challenge_skills": "93a9dbb5d2e92203f85a10a9ee1182057757563fab1360813c611367d3f75826",
+  "player_challenge_team": "debc114cb9e26be9d9f68ed10babb78ebd240a55b78b8a77b105608dee2b88e7",
+  "player_challenge_what_happened": "76be6f4e6f1d28639ba52bc090b73de6c2bd2528c9849e5072617cf755f2dfa8",
+  "player_challenge_what_if": "b5d98cfa262824c2548039a6aa98eecb1a5af3888b0bcf7b2d352e9b0f52bb78",
+  "player_challenge_you": "a38350a25912acd7bce3ac78ae03a0a5907c55c9e2bf46cbe1e3a0cc0f0f4db9",
   "player_check_failed": "6573e46bd968f338ca965bae277ddb64dbd4918468a1b56a3b2313748e299002",
   "player_comes_back_at_end": "3380024c6d67169ae4ebed2cc4411d3d1a4bb9453b56bd78d57b8f2ae9d00ff9",
   "player_comes_back_date": "f36134e0657d55f7e9fbbf7c8b836db8350baefdf12f39cd1e2d50f7c2ad6bc3",
@@ -271,6 +291,31 @@
     <string name="player_activity_source">Source : %1$s</string>
     <string name="player_activity_your_answer">Ta réponse :</string>
     <string name="player_activity_correct_answer">Bonne réponse :</string>
+    <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
+    <string name="player_challenge_case">Défi · %1$s</string>
+    <!-- A what-if scenario's label: %1$s is where it happens. -->
+    <string name="player_challenge_what_if">Et si · %1$s</string>
+    <string name="player_challenge_mission">Ta mission</string>
+    <string name="player_challenge_team">Ton équipe</string>
+    <string name="player_challenge_help_ai">Tu peux demander de l’aide à l’équipe ou à l’IA. Tes décisions changent la suite.</string>
+    <string name="player_challenge_help">Tu peux demander de l’aide à l’équipe. Tes décisions changent la suite.</string>
+    <string name="player_challenge_meters">Où en est le dossier</string>
+    <!-- How a meter moved after the learner's decision. -->
+    <string name="player_challenge_no_change">aucun changement</string>
+    <string name="player_challenge_much_higher">beaucoup plus haut</string>
+    <string name="player_challenge_bit_higher">un peu plus haut</string>
+    <string name="player_challenge_much_lower">beaucoup plus bas</string>
+    <string name="player_challenge_bit_lower">un peu plus bas</string>
+    <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
+    <string name="player_challenge_you">Toi : %1$s</string>
+    <string name="player_challenge_what_happened">Ce qui s’est passé</string>
+    <string name="player_challenge_complete">Défi terminé</string>
+    <string name="player_challenge_scenario_complete">Scénario terminé</string>
+    <string name="player_challenge_good">Bien joué</string>
+    <string name="player_challenge_improve">À améliorer</string>
+    <string name="player_challenge_skills">Compétences travaillées</string>
+    <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
+    <string name="player_challenge_practice">S’entraîner sur « %1$s » · %2$s</string>
     <string name="player_drawing_picture">Dessin de l’image…</string>
     <string name="player_not_in_app_title">Cette leçon n’est pas encore disponible dans l’application</string>
     <string name="player_not_in_app_description">Certaines pages ne s’affichent pas encore dans l’application. Tu peux suivre cette leçon sur zoonk.com.</string>

@@ -127,6 +127,31 @@
     <string name="player_activity_source">Source: %1$s</string>
     <string name="player_activity_your_answer">Your answer:</string>
     <string name="player_activity_correct_answer">Correct answer:</string>
+    <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
+    <string name="player_challenge_case">Challenge · %1$s</string>
+    <!-- A what-if scenario's label: %1$s is where it happens. -->
+    <string name="player_challenge_what_if">What if · %1$s</string>
+    <string name="player_challenge_mission">Your mission</string>
+    <string name="player_challenge_team">Your team</string>
+    <string name="player_challenge_help_ai">You can ask the team or the AI for help. Your decisions change the outcome.</string>
+    <string name="player_challenge_help">You can ask the team for help. Your decisions change the outcome.</string>
+    <string name="player_challenge_meters">How the case is going</string>
+    <!-- How a meter moved after the learner's decision. -->
+    <string name="player_challenge_no_change">no change</string>
+    <string name="player_challenge_much_higher">much higher</string>
+    <string name="player_challenge_bit_higher">a bit higher</string>
+    <string name="player_challenge_much_lower">much lower</string>
+    <string name="player_challenge_bit_lower">a bit lower</string>
+    <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
+    <string name="player_challenge_you">You: %1$s</string>
+    <string name="player_challenge_what_happened">What happened</string>
+    <string name="player_challenge_complete">Challenge complete</string>
+    <string name="player_challenge_scenario_complete">Scenario complete</string>
+    <string name="player_challenge_good">Nicely done</string>
+    <string name="player_challenge_improve">To improve</string>
+    <string name="player_challenge_skills">Skills practiced</string>
+    <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
+    <string name="player_challenge_practice">Practice “%1$s” · %2$s</string>
     <string name="player_drawing_picture">Drawing the picture…</string>
     <string name="player_not_in_app_title">This lesson isn\'t in the app yet</string>
     <string name="player_not_in_app_description">It has screens the app can\'t show yet. You can do it on zoonk.com.</string>

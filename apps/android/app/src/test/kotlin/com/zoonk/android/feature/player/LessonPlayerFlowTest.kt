@@ -272,6 +272,28 @@ class LessonPlayerFlowTest {
     }
 
     @Test
+    fun aChallengeGoesFromItsMissionThroughItsDecisionsToItsDebrief() {
+        play(listOf(challengeStep("case"), summaryStep("end")))
+
+        rule.onNodeWithText("Your mission").assertIsDisplayed()
+        tap("Start")
+        rule.onNodeWithText("The customer is upset.").assertIsDisplayed()
+        tap("Ask what happened")
+        tap("Confirm")
+        rule.onNodeWithText("The customer left calmer.").assertIsDisplayed()
+        tap("See how it went")
+
+        rule.onNodeWithText("Challenge complete").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("You listened first.").performScrollTo().assertIsDisplayed()
+        assertEquals(
+            LessonStepAnswer.LessonStepAnswerOneOf4Value::class,
+            api.checks
+                .single()
+                .second.answer::class,
+        )
+    }
+
+    @Test
     fun aLessonNeedingAScreenTheAppCantShowYetSaysSoInsteadOfOpening() {
         play(listOf(explanationStep("idea"), fillBlankStep(BLANK_ID), summaryStep("end")))
 

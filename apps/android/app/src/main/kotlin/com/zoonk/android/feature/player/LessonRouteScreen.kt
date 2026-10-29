@@ -46,6 +46,8 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonOutline
+import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.steps.LocalChallengeTeam
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -166,7 +168,22 @@ private fun PlayingLesson(
 
     LaunchedEffect(load.lesson.id, signedIn) { viewModel.open(load.lesson) }
 
-    CompositionLocalProvider(LocalPrivatePictures provides PrivatePictures(app.images, signedIn), LocalLessonSpeech provides app.speech) {
+    val hasChallenge = remember(load.lesson) { load.lesson.steps.any { it.content is StepContent.Challenge } }
+    val team =
+        if (hasChallenge) {
+            app.lessonPlayer
+                .challengeTeam(route.lessonId)
+                .collectShown()
+                .value.value
+        } else {
+            null
+        }
+
+    CompositionLocalProvider(
+        LocalPrivatePictures provides PrivatePictures(app.images, signedIn),
+        LocalLessonSpeech provides app.speech,
+        LocalChallengeTeam provides team,
+    ) {
         LessonPlayer(load.lesson, state, ending, viewModel, exits, navigator)
         LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
     }

@@ -3,6 +3,7 @@ package com.zoonk.android.feature.player
 import com.zoonk.android.feature.player.model.ActivityCheck
 import com.zoonk.android.feature.player.model.ActivityFrame
 import com.zoonk.android.feature.player.model.ActivityStepContent
+import com.zoonk.android.feature.player.model.ChallengeStepContent
 import com.zoonk.android.feature.player.model.CheckOption
 import com.zoonk.android.feature.player.model.CheckStepContent
 import com.zoonk.android.feature.player.model.ExplanationStepContent
@@ -167,3 +168,23 @@ fun activityStep(id: String): LessonStep {
         ActivityFrame("formulaModel", "Compare the two lines.", ApiJson.decodeFromString(ActivityCheck.serializer(), ACTIVITY_CHECK))
     return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null))
 }
+
+private const val CHALLENGE =
+    """
+    {"variant":"work","setting":"Customer support","title":"A refund gone wrong","mission":"Calm the customer {{c1}} called about.",
+     "team":[{"id":"c1","ai":false,"expertise":"support","role":"Support lead"},{"id":"ai","ai":true,"expertise":"policy","role":"Policy assistant"}],
+     "meters":[{"id":"trust","goodWhen":"high","label":"Customer trust","start":80}],"panels":[],
+     "skills":[{"id":"listen","name":"Listening","practice":"Repeat back what you heard."},{"id":"policy","name":"Policy","practice":"Read the policy."}],
+     "startNodeId":"n1",
+     "nodes":[{"id":"n1","prompt":"What do you say first?","messages":[{"from":"c1","text":"The customer is upset."}],
+       "choices":[
+         {"id":"ask","text":"Ask what happened","next":"end","quality":"strong","effects":[{"meter":"trust","change":30}],
+          "notes":[{"kind":"good","skill":"listen","text":"You listened first."}],"replies":[{"from":"c1","text":"That calmed them."}]},
+         {"id":"quote","text":"Quote the policy","next":"end","quality":"weak","effects":[{"meter":"trust","change":-10}],
+          "notes":[{"kind":"improve","skill":"listen","text":"Listen before quoting rules.","example":"Tell me what happened."}],"replies":[]}]}],
+     "endings":[{"id":"end","outcome":"The customer left calmer."}]}
+    """
+
+fun challengeContent(): ChallengeStepContent = ApiJson.decodeFromString(ChallengeStepContent.serializer(), CHALLENGE)
+
+fun challengeStep(id: String) = LessonStep(id, null, StepContent.Challenge(challengeContent()))

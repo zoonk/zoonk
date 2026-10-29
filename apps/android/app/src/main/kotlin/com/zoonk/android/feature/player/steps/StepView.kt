@@ -65,14 +65,15 @@ fun StepView(
         is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions)
         is StepContent.SpokenAnswer -> SpokenAnswerView(step, content, answer, state, actions, navigator)
         is StepContent.Activity -> ActivityView(step, content, answer, result, state, actions)
-        is StepContent.Challenge, is StepContent.Language -> Unit
+        is StepContent.Challenge -> ChallengeView(step, content, answer, result, state, actions)
+        is StepContent.Language -> Unit
     }
 }
 
 fun isPlayable(step: LessonStep): Boolean =
     when (val content = step.content) {
         is StepContent.Activity -> content.isPlayable
-        is StepContent.Challenge, is StepContent.Language -> false
+        is StepContent.Language -> false
         else -> true
     }
 

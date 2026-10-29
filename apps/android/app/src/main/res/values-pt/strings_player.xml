@@ -25,6 +25,26 @@
   "player_can_talk_now": "efebcffb84a15cf3a327f4fdc118e3bfb380533e90ab8f1d561ecce7524a5274",
   "player_cant_talk_now": "638f10b4513d725063192ab92351a3ed009c94e090eea6e380514802e8f589a3",
   "player_cant_write_now": "ae350165bb7e5ea84268250b6d0835228986f7b8ebe32f59bbded2151d72a104",
+  "player_challenge_bit_higher": "7f678f0503af6f483fa6c74c300903e6164b8174a354fa4bfb09f0824ac326ec",
+  "player_challenge_bit_lower": "4344bf0f44c682e1ae66be5d818682c57bef4c6ffeab8a79c7fb0e30667bb769",
+  "player_challenge_case": "7e8e3f262fcb7a4a8642ce2bde0141b739b6fb925b84256db2f4ec6ec43fe57a",
+  "player_challenge_complete": "563d85403269ea7c8af9c404f6120c4f996eb861bd205613a66daaf5d1ffc5ac",
+  "player_challenge_good": "3c67c52c0f6ed86b319810d8addec61b058ec691ed86cd5320b91f3c2d32b0ee",
+  "player_challenge_help": "28115c0bed0369cf46fbf8f8354e901228665786c3185c983bd1c981d7d5a958",
+  "player_challenge_help_ai": "4b6e8668a690fa1cb54827616611db4bdba4ba209da50a3982500ec258a1c765",
+  "player_challenge_improve": "03fba610528679a3758b087230a76950bb0e8818e39a5d7690a03891f26e8f98",
+  "player_challenge_meters": "9bba156084756749498e272e2dbc90944bd789d8a2135f3559b0d1a0b8d6f9f0",
+  "player_challenge_mission": "3fb6c3e261bb510bebbe830a9dac0d5c5c279e5f623025ceafd22a6a1b2fd544",
+  "player_challenge_much_higher": "49e2ea7d2afc150b0e1955d846788393bd3b715d44c9dd776d3130099ac4cb65",
+  "player_challenge_much_lower": "c35a3222ccf1b063dedfa25ceb305af67d05df2236657089665e0a4e2165d57f",
+  "player_challenge_no_change": "dcf34b95bf7f2ebb14d0c1298a751b2ecc5bc4946594654e39cf12e6f8b0dec6",
+  "player_challenge_practice": "0b610a4b95eb727d577f53659bf36d5add0209b424cfd33d0312157fd72daee5",
+  "player_challenge_scenario_complete": "a81fafff4ff9ddbb8f14d79d9a8441ed4c968766cfbcee28aca040a1b883a83b",
+  "player_challenge_skills": "8ed5cb9001fcdca82185d4f8f889b8075f6c2f2e740a6ca3a6250df244097fb7",
+  "player_challenge_team": "310dac9bcf76c607de68fee93e01d1281866ec5f819b779f4de1f1fdbc073090",
+  "player_challenge_what_happened": "7c62b96a7db03b9ff7c999a3583f2b1d9b8fb5e3b99ef3453add8fcde3ed5898",
+  "player_challenge_what_if": "27e1a7dc5ddabc11fdc739790a67bdb18e33ebfa933ebf58dbe79d59cfa90a7e",
+  "player_challenge_you": "46c069d110246c53f19ed66a6dfd5bf9a7275b11d5172c98b54aa7910fe2e224",
   "player_check_failed": "58413506bf6b1f4c0d9a504fc4277f0a1bf313ec4fa0494d3990049faa5694ca",
   "player_comes_back_at_end": "802833163756c0a63a189e211f06e3b03adfb3a07daa8c7890c12797d8387a1e",
   "player_comes_back_date": "4b7c8c9f94d8933a448c788d62f0b9d489a26eb0b2ac179d50bfa9950ddec5a9",
@@ -271,6 +291,31 @@
     <string name="player_activity_source">Fonte: %1$s</string>
     <string name="player_activity_your_answer">Sua resposta:</string>
     <string name="player_activity_correct_answer">Resposta correta:</string>
+    <!-- A work challenge's label: %1$s is where it happens, such as "Customer support". -->
+    <string name="player_challenge_case">Desafio · %1$s</string>
+    <!-- A what-if scenario's label: %1$s is where it happens. -->
+    <string name="player_challenge_what_if">E se · %1$s</string>
+    <string name="player_challenge_mission">Sua missão</string>
+    <string name="player_challenge_team">Sua equipe</string>
+    <string name="player_challenge_help_ai">Você pode pedir ajuda à equipe ou à IA. Suas decisões mudam o resultado.</string>
+    <string name="player_challenge_help">Você pode pedir ajuda à equipe. Suas decisões mudam o resultado.</string>
+    <string name="player_challenge_meters">Como está o caso</string>
+    <!-- How a meter moved after the learner's decision. -->
+    <string name="player_challenge_no_change">sem mudanças</string>
+    <string name="player_challenge_much_higher">bem mais alto</string>
+    <string name="player_challenge_bit_higher">um pouco mais alto</string>
+    <string name="player_challenge_much_lower">bem mais baixo</string>
+    <string name="player_challenge_bit_lower">um pouco mais baixo</string>
+    <!-- Read by screen readers before the learner's own reply in a challenge's conversation. -->
+    <string name="player_challenge_you">Você: %1$s</string>
+    <string name="player_challenge_what_happened">O que aconteceu</string>
+    <string name="player_challenge_complete">Desafio concluído</string>
+    <string name="player_challenge_scenario_complete">Cenário concluído</string>
+    <string name="player_challenge_good">Mandou bem</string>
+    <string name="player_challenge_improve">Para melhorar</string>
+    <string name="player_challenge_skills">Habilidades praticadas</string>
+    <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
+    <string name="player_challenge_practice">Praticar “%1$s” · %2$s</string>
     <string name="player_drawing_picture">Desenhando a imagem…</string>
     <string name="player_not_in_app_title">Esta aula ainda não está no app</string>
     <string name="player_not_in_app_description">Ela tem telas que o app ainda não consegue mostrar. Você pode fazer essa aula em zoonk.com.</string>
