@@ -51,6 +51,12 @@
   "activities_solver_not_quite": "3b7737f8062817c036ca61e1c476d8f496b9a307ac93134b84e6fa089bafc79e",
   "activities_solver_right": "4665a37cb5aaa3f0bb43bfabd1048b8f50dc4f72a4fa9c58a9c3180bc8e5c6d6",
   "activities_solver_steps": "0b34bda829e1d5c7b800fd1e35640008b3b5208c605aba38fe3498ed257dec1a",
+  "activities_sortable_dropped": "cbdc7631c8f45f03d92834479dfe4c5783e79319202bdbe6476f0a411c5648ac",
+  "activities_sortable_move_down": "f516acf52e244d331f759723018313b4c8f92e5214c2e508a891fb3e40e3f011",
+  "activities_sortable_move_up": "d72d29c745c154daaba66840679d2e4b9aee823f2d6c935a1be161525acaf8a5",
+  "activities_sortable_over": "9b05fbac9e503696826b325c179eafa1b582fc4fc34bda2b71adacb626111be9",
+  "activities_sortable_picked_up": "2629b9eb4e9572651c45d624a1d3f07445744732912d9f10837cb1f5aa530410",
+  "activities_sortable_stopped": "abcff9c4347fda0018374b2f13de83f82f0afbade1055d23fb766869fae7df2a",
   "activities_tree_case": "8e82f701cdf1af3145a2ab44564a7518542674829849d39a3d16103799d8ae78",
   "activities_tree_it_leads_to": "5e28eda2d07552ce659ff99500fdfa7735d434d5453defbc35a7d99149853c82",
   "activities_tree_leads_to": "290218c1977b2765f665700e1a4b9f53c7f9a3700af9fc68f5fa991fb0a47bec",
@@ -155,4 +161,15 @@
     <string name="activities_dialogue_you_said">Du hast gesagt:</string>
     <string name="activities_dialogue_hear_line">Diesen Satz anhören</string>
     <string name="activities_dialogue_hear_best">Die beste Antwort anhören</string>
+    <!-- Read by TalkBack when a row is lifted with the keyboard, like "Picked up Water is split at position 2." -->
+    <string name="activities_sortable_picked_up">%1$s an Position %2$d aufgenommen.</string>
+    <!-- Read by TalkBack as a lifted row moves, like "Water is split is over position 3." -->
+    <string name="activities_sortable_over">%1$s befindet sich über Position %2$d.</string>
+    <!-- Read by TalkBack when a row is put down, like "Water is split dropped at position 3." -->
+    <string name="activities_sortable_dropped">%1$s an Position %2$d abgelegt.</string>
+    <!-- Read by TalkBack when moving a row is cancelled. -->
+    <string name="activities_sortable_stopped">%1$s nicht weiterbewegt. Es bleibt an seinem Platz.</string>
+    <!-- TalkBack actions that move a row of a list one place. -->
+    <string name="activities_sortable_move_up">Nach oben verschieben</string>
+    <string name="activities_sortable_move_down">Nach unten verschieben</string>
 </resources>

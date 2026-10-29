@@ -54,7 +54,7 @@
     <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
     <string name="activities_sorting_dont_go_together">%1$s and %2$s don\'t go together.</string>
     <string name="activities_sorting_dont_go_together_short">Those two don\'t go together.</string>
-    <!-- Before why a pair is wrong. -->
+    <!-- Before why a picked pair is wrong, like "Not quite: those two don't go together." The pair is wrong, not almost right. -->
     <string name="activities_sorting_not_quite">Not quite:</string>
     <!-- Above the pairs the learner got wrong on the first try. -->
     <string name="activities_sorting_missed_first_try">Missed on the first try</string>
