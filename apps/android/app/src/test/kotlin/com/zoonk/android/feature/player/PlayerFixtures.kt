@@ -23,6 +23,7 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlayableLibraryStepAnyOf4ContentOneOf
 import com.zoonk.api.models.PlayableLibraryStepAnyOf6ContentIdeasInner
 import com.zoonk.api.models.PlayableLibraryStepAnyOf8ContentStepsInner
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf11FieldsPicture as OptionPicture
 
 fun explanationStep(
     id: String,
@@ -188,3 +189,14 @@ private const val CHALLENGE =
 fun challengeContent(): ChallengeStepContent = ApiJson.decodeFromString(ChallengeStepContent.serializer(), CHALLENGE)
 
 fun challengeStep(id: String) = LessonStep(id, null, StepContent.Challenge(challengeContent()))
+
+/** A check whose options are pictures: their names show only once it's checked. */
+fun pictureCheckStep(id: String): LessonStep {
+    val check = checkStep(id)
+    val content = (check.content as StepContent.Check).content
+    val options =
+        content.options.map {
+            it.copy(picture = OptionPicture(alt = "A doorway with a ${it.text.lowercase()} arch", prompt = "A doorway"))
+        }
+    return check.copy(content = StepContent.Check(content.copy(options = options)))
+}

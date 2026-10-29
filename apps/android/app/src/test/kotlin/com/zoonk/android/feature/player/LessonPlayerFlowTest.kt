@@ -8,11 +8,13 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
@@ -32,6 +34,7 @@ import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
@@ -41,6 +44,7 @@ import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepAnswer
 import com.zoonk.api.models.SpokenAnswerGrade
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -66,7 +70,7 @@ class LessonPlayerFlowTest {
     private val opened = mutableListOf<AppRoute>()
     private var closed = 0
     private lateinit var api: FakeLessonPlayerApi
-    private lateinit var openAgain: () -> Unit
+    private lateinit var openAgain: () -> LessonPlayerViewModel
     private lateinit var viewModel: LessonPlayerViewModel
 
     private val exits =
@@ -110,7 +114,7 @@ class LessonPlayerFlowTest {
             )
         }
         viewModel = newViewModel()
-        openAgain = { newViewModel().open(lesson) }
+        openAgain = { newViewModel().also { it.open(lesson) } }
 
         rule.setContent {
             ZoonkTheme {
@@ -291,6 +295,48 @@ class LessonPlayerFlowTest {
                 .single()
                 .second.answer::class,
         )
+    }
+
+    @Test
+    fun picturedOptionsKeepTheirNamesUntilTheQuestionIsChecked() {
+        play(listOf(pictureCheckStep("arch"), summaryStep("end")))
+
+        rule.onNodeWithText("A doorway with a right arch").assertIsDisplayed()
+        rule.onAllNodesWithText("Right").assertCountEquals(0)
+        tap("A doorway with a right arch")
+        tap("Check")
+
+        rule.onNodeWithText("Right").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun aRunWaitsWhileAnAnswerTheAppNeverSentStillCantGetThrough() {
+        play(listOf(checkStep("quiz"), summaryStep("end"))) { checkFailures = 2 }
+
+        tap("Right")
+        tap("Check")
+        rule.onNodeWithText("Correct!").assertIsDisplayed()
+        rule.waitForIdle()
+
+        val reopened = openAgain()
+        rule.waitUntil(timeoutMillis = 5_000) { reopened.state.value?.run != null && reopened.state.value?.run !is LessonRun.Starting }
+
+        assertEquals(LessonRun.Refused(LessonRefusal.Failed), reopened.state.value?.run)
+    }
+
+    @Test
+    fun theLessonsEndWaitsForWhereItLeadsBeforeItsButtonWorks() {
+        val gate = CompletableDeferred<Unit>()
+        play(listOf(checkStep("quiz"))) { chapterGate = gate }
+
+        tap("Right")
+        tap("Check")
+        tap("Continue")
+        rule.waitForIdle()
+        rule.onNodeWithText("Continue").assertIsNotEnabled()
+
+        gate.complete(Unit)
+        rule.onNodeWithText("Next lesson").assertIsDisplayed()
     }
 
     @Test

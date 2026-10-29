@@ -57,7 +57,7 @@ fun StepPicture(
 }
 
 @Composable
-private fun PicturePending(frame: PictureFrame) {
+internal fun PicturePending(frame: PictureFrame) {
     val windowHeight =
         with(LocalDensity.current) {
             LocalWindowInfo.current.containerSize.height

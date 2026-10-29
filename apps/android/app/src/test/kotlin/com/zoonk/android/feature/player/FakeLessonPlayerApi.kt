@@ -155,11 +155,18 @@ class FakeLessonPlayerApi(
         return writeResponse()
     }
 
+    var chapterGate: CompletableDeferred<Unit>? = null
+
     override suspend fun chapterLessons(
         session: AuthenticatedSession,
         goalId: String,
         chapterId: String,
-    ): List<ChapterLesson> =
+    ): List<ChapterLesson> {
+        chapterGate?.await()
+        return chapterLessonsRead()
+    }
+
+    private fun chapterLessonsRead(): List<ChapterLesson> =
         listOf(LESSON_ID to "done", DONE_LESSON_ID to "done", NEXT_LESSON_ID to "upcoming").map { (id, state) ->
             ApiJson.decodeFromString(
                 ChapterLesson.serializer(),

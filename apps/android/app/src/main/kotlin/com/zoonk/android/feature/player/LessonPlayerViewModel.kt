@@ -309,8 +309,13 @@ class LessonPlayerViewModel(
         dispatch(LessonAction.RunStarting)
         starting =
             work.launch {
-                sendUnsent()
-                when (val outcome = start(runId = null) ?: return@launch) {
+                val outcome =
+                    if (sendUnsent()) {
+                        start(runId = null) ?: return@launch
+                    } else {
+                        StartOutcome.Refused(LessonRefusal.Failed)
+                    }
+                when (outcome) {
                     is StartOutcome.Started -> {
                         val state = playFrom(lesson, outcome.run)
                         if (sessions.current != owner) return@launch
@@ -445,8 +450,11 @@ class LessonPlayerViewModel(
             true
         }
 
-    /** Answers the app closed before sending go first, so the run resumes with them. */
-    private suspend fun sendUnsent() {
+    /**
+     * Answers the app closed before sending go first, so the run resumes with them; false while one
+     * still can't get through, since a run started without it would ask that screen again.
+     */
+    private suspend fun sendUnsent(): Boolean {
         val queued =
             unsaved.values
                 .flatten()
@@ -458,7 +466,10 @@ class LessonPlayerViewModel(
             .map { PendingCheck(it.stepId, ApiJson.decodeFromJsonElement<LessonStepCheckInput>(it.input)) }
             .filterNot { it.attemptId in queued }
             .forEach { unsaved.getOrPut(it.stepId) { mutableListOf() } += it }
-        unsaved.keys.toList().forEach { saveScreen(it) }
+        return unsaved.keys
+            .toList()
+            .map { saveScreen(it) }
+            .all { it }
     }
 
     private suspend fun keepUnsent() {
@@ -518,8 +529,8 @@ class LessonPlayerViewModel(
 
         when (val outcome = (result as? MutationResult.Done)?.value) {
             is CompletionOutcome.Completed -> {
-                dispatch(LessonAction.CompletionSaved(outcome.completion))
                 readEnding()
+                dispatch(LessonAction.CompletionSaved(outcome.completion))
             }
 
             CompletionOutcome.Incomplete -> {

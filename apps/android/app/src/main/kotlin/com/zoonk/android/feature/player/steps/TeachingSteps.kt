@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -45,6 +46,7 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.intl.LocaleList
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.VoiceAnswerRecorder
@@ -52,6 +54,7 @@ import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.isNumberAnswer
+import com.zoonk.android.feature.player.model.CheckOption
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.SpokenAnswerStepContent
@@ -63,6 +66,7 @@ import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.PictureFrame
+import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.richtext.MathText
@@ -241,6 +245,7 @@ internal fun CheckView(
             QuestionText(check.question, answered = result != null)
         }
 
+        val pictured = screen.step?.takeIf { check.options.any { it.picture != null } }
         ChoiceOptions(
             options = check.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
             selectedId = (answer as? LessonAnswer.Check)?.optionId,
@@ -248,6 +253,13 @@ internal fun CheckView(
             isGuess = false,
             locked = locked,
             onSelect = { id -> actions.select(id?.let(LessonAnswer::Check)) },
+            columns = if (pictured != null) 2 else 1,
+            optionContent =
+                if (pictured != null) {
+                    { option -> PictureOption(pictured, check.options.first { it.id == option.id }, isChecked = result != null) }
+                } else {
+                    { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) }
+                },
         )
 
         ExplainFirstButton(screen, actions)
@@ -514,7 +526,8 @@ data class ChoiceOption(
 
 /**
  * Options picked by a tap or a number key; tapping a pick again clears it. Once checked, only the
- * right option and a wrong pick stay, marked (a guess keeps every option).
+ * right option and a wrong pick stay, marked (a guess keeps every option). [columns] lays them out
+ * as a grid, as picture options are.
  */
 @Composable
 fun ChoiceOptions(
@@ -524,11 +537,12 @@ fun ChoiceOptions(
     isGuess: Boolean,
     locked: Boolean,
     onSelect: (String?) -> Unit,
+    columns: Int = 1,
+    optionContent: @Composable (ChoiceOption) -> Unit = { RichInlineText(text = it.text, style = MaterialTheme.typography.bodyLarge) },
 ) {
     val label = stringResource(R.string.player_answer_options)
-
-    AnswerOptionGroup(Modifier.semantics { contentDescription = label }) {
-        options.forEachIndexed { index, option ->
+    val shown =
+        options.mapIndexedNotNull { index, option ->
             val picked = selectedId == option.id
             val result =
                 when {
@@ -538,18 +552,68 @@ fun ChoiceOptions(
                     isGuess -> AnswerResult.Guess
                     else -> AnswerResult.Wrong
                 }
+            if (isChecked && result == null && !isGuess) null else ShownOption(index + 1, option, picked, result)
+        }
 
-            if (isChecked && result == null && !isGuess) return@forEachIndexed
-
-            AnswerOption(
-                marker = index + 1,
-                picked = picked,
-                result = result,
-                enabled = !locked && !isChecked,
-                onClick = { onSelect(if (picked) null else option.id) },
-            ) {
-                RichInlineText(text = option.text, style = MaterialTheme.typography.bodyLarge)
+    AnswerOptionGroup(Modifier.semantics { contentDescription = label }) {
+        shown.chunked(columns).forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                row.forEach { item ->
+                    AnswerOption(
+                        marker = item.marker,
+                        picked = item.picked,
+                        result = item.result,
+                        modifier = Modifier.weight(1f),
+                        enabled = !locked && !isChecked,
+                        onClick = { onSelect(if (item.picked) null else item.option.id) },
+                    ) { optionContent(item.option) }
+                }
+                repeat(columns - row.size) { Spacer(Modifier.weight(1f)) }
             }
+        }
+    }
+}
+
+private data class ShownOption(
+    val marker: Int,
+    val option: ChoiceOption,
+    val picked: Boolean,
+    val result: AnswerResult?,
+)
+
+/** Main's `PictureOptionContent`: the option's picture, drawn or still drawing, and its name only once checked. */
+@Composable
+private fun PictureOption(
+    step: LessonStep,
+    option: CheckOption,
+    isChecked: Boolean,
+) {
+    val image = step.optionPictures[option.id]
+    val alt = option.picture?.alt ?: option.text
+
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        when {
+            image != null -> {
+                PrivatePicture(image.url, image.alt, image.width, image.height, PictureFrame.Question, Modifier.fillMaxWidth())
+            }
+
+            step.imagePending -> {
+                PicturePending(PictureFrame.Question)
+            }
+
+            else -> {
+                Surface(color = MaterialTheme.colorScheme.surfaceContainerHigh, shape = MaterialTheme.shapes.medium) {
+                    Text(
+                        alt,
+                        modifier = Modifier.padding(12.dp),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                }
+            }
+        }
+        if (isChecked) {
+            Text(option.text, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center, style = MaterialTheme.typography.labelLarge)
         }
     }
 }
