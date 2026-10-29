@@ -2,11 +2,13 @@ package com.zoonk.android.feature.questions
 
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -52,6 +54,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LessonVisual
+import com.zoonk.android.ui.components.PictureFrame
+import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -60,7 +64,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
 
-/** What a question stands on before it's asked: its situation, picture and chart. */
+/** What a question stands on before it's asked: its situation, picture and chart. Pictures load through [com.zoonk.android.ui.components.LocalPrivatePictures]. */
 @Composable
 fun ItemSupport(
     question: Question,
@@ -68,6 +72,12 @@ fun ItemSupport(
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(16.dp)) {
         question.context?.let { ItemText(it, style = MaterialTheme.typography.bodyLarge) }
+        question.image?.let { image ->
+            Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                // Main caps a question's picture at 55% of the window, as a lesson's hero.
+                PrivatePicture(image.url, image.alt, image.width, image.height, PictureFrame.Hero)
+            }
+        }
         question.visual?.let { LessonVisual(it) }
     }
 }
