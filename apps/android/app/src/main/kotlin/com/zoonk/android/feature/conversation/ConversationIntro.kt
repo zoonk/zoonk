@@ -2,6 +2,7 @@ package com.zoonk.android.feature.conversation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -24,7 +25,7 @@ import com.zoonk.android.R
 import com.zoonk.android.feature.subscription.PlusNotice
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
-import com.zoonk.api.models.LanguageConversation
+import com.zoonk.api.models.LanguageConversationIntro
 
 /** What the intro's Start does now. */
 enum class CallIntroStart { Idle, Starting, Failed, PlusRequired }
@@ -35,26 +36,30 @@ enum class CallIntroStart { Idle, Starting, Failed, PlusRequired }
  */
 @Composable
 internal fun CallIntro(
-    conversation: LanguageConversation,
+    conversation: LanguageConversationIntro,
     start: CallIntroStart,
     onStart: () -> Unit,
     onSeePlus: () -> Unit,
     onClose: () -> Unit,
-    footerNote: (@Composable () -> Unit)? = null,
+    actions: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val locale = currentLocale()
     val character = conversation.character
     val goals: @Composable () -> Unit = {
         Column {
             SectionTitle(stringResource(R.string.conversation_get_across))
-            Checklist(conversation, met = { false }, describe = true)
+            Checklist(conversation.objectives, conversation.targetLanguage, met = { false }, describe = true)
         }
     }
 
     CallFrame(
         title = conversationTitle(conversation),
         onClose = onClose,
-        bottomBar = { IntroActions(start, onStart, onSeePlus, footerNote) },
+        bottomBar = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                if (actions != null) actions() else IntroActions(start, onStart, onSeePlus)
+            }
+        },
         aside = { goals() },
     ) { beside ->
         item(key = "header") {
@@ -93,10 +98,8 @@ private fun IntroActions(
     start: CallIntroStart,
     onStart: () -> Unit,
     onSeePlus: () -> Unit,
-    footerNote: (@Composable () -> Unit)?,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        footerNote?.invoke()
         if (start == CallIntroStart.PlusRequired) {
             PlusNotice(onSeePlus = null, description = stringResource(R.string.conversation_challenge_plus), inset = true)
             Button(onClick = onSeePlus, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.subscription_see_plus)) }
@@ -119,6 +122,7 @@ internal fun StartCallButton(
     starting: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    label: String = stringResource(R.string.conversation_start),
 ) {
     Button(onClick = onClick, enabled = !starting, modifier = modifier) {
         if (starting) {
@@ -127,6 +131,6 @@ internal fun StartCallButton(
             Icon(painterResource(R.drawable.ic_call), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
         }
         Spacer(Modifier.size(ButtonDefaults.IconSpacing))
-        Text(stringResource(if (starting) R.string.conversation_starting else R.string.conversation_start))
+        Text(if (starting) stringResource(R.string.conversation_starting) else label)
     }
 }

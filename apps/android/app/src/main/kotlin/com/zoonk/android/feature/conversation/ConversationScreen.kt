@@ -9,6 +9,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +40,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.api.models.CompletedLanguageConversation
 import com.zoonk.api.models.LanguageConversation
+import com.zoonk.api.models.LanguageConversationIntro
 import kotlinx.coroutines.launch
 import java.util.TimeZone
 import java.util.UUID
@@ -70,6 +72,17 @@ fun ConversationScreen(
         NotFound(onClose = exits::close)
         return
     }
+    ConversationEntry(id, app, exits)
+}
+
+/** With [startWith], the call starts as soon as it's read, from the tap that opened it (a checkpoint's Start). */
+@Composable
+internal fun ConversationEntry(
+    id: UUID,
+    app: AppContainer,
+    exits: ConversationExits,
+    startWith: Boolean? = null,
+) {
     val model =
         viewModel(key = "conversation:$id") {
             ConversationViewModel(
@@ -80,7 +93,7 @@ fun ConversationScreen(
                 timeZone = { TimeZone.getDefault().id },
             )
         }
-    ConversationContent(model, app.speech, exits)
+    ConversationContent(model, app.speech, exits, startWith)
 }
 
 @Composable
@@ -88,6 +101,7 @@ internal fun ConversationContent(
     model: ConversationViewModel,
     speech: SpeechPlayer,
     exits: ConversationExits,
+    startWith: Boolean? = null,
 ) {
     val load by model.conversation.collectShown()
     val scope = rememberCoroutineScope()
@@ -116,7 +130,7 @@ internal fun ConversationContent(
         }
 
         is LoadState.Loaded -> {
-            Conversation(state.value, model, speech, exits)
+            Conversation(state.value, model, speech, exits, startWith)
         }
     }
 }
@@ -127,13 +141,16 @@ private fun Conversation(
     model: ConversationViewModel,
     speech: SpeechPlayer,
     exits: ConversationExits,
+    startWith: Boolean?,
 ) {
     val completed = model.completed
     val conversation = remember(completed, stored) { completed?.recode<CompletedLanguageConversation, LanguageConversation>() ?: stored }
+    val intro = remember(conversation) { conversation.recode<LanguageConversation, LanguageConversationIntro>() }
     val result = conversation.result
     val title = conversationTitle(conversation)
     val startCall = rememberCallStart { microphone, takeover -> model.start(conversation, microphone, takeover) }
     val onSeePlus = { exits.open(AppRoute.Subscription) }
+    LaunchedEffect(model) { if (startWith != null && result == null) model.startOnce(conversation, startWith) }
 
     if (result != null) {
         ConversationResult(
@@ -162,11 +179,11 @@ private fun Conversation(
 
     when {
         conversation.locked || callState?.failure == LiveCallFailure.PlusRequired -> {
-            CallIntro(conversation, CallIntroStart.PlusRequired, onStart = {}, onSeePlus = onSeePlus, onClose = exits::close)
+            CallIntro(intro, CallIntroStart.PlusRequired, onStart = {}, onSeePlus = onSeePlus, onClose = exits::close)
         }
 
         callState == null -> {
-            CallIntro(conversation, CallIntroStart.Idle, onStart = { startCall(false) }, onSeePlus = onSeePlus, onClose = exits::close)
+            CallIntro(intro, CallIntroStart.Idle, onStart = { startCall(false) }, onSeePlus = onSeePlus, onClose = exits::close)
         }
 
         save == CallSave.Ended || save == CallSave.TakenOver -> {

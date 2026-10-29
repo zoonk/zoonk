@@ -27,6 +27,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CompletedLanguageConversation
+import com.zoonk.api.models.LanguageCheckpointCall
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationCompletionInput
 import kotlinx.coroutines.CoroutineScope
@@ -47,22 +48,32 @@ internal class ConversationHarness(
     var closed = 0
         private set
     val opened = mutableListOf<AppRoute>()
-    lateinit var model: ConversationViewModel
-        private set
+    val context: Application = ApplicationProvider.getApplicationContext()
+    val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
+    private val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+    val store = ConversationStore(api, AppCache(session, scope))
+    val exits =
+        object : ConversationExits {
+            override fun close() {
+                closed++
+            }
 
-    fun show(
-        compose: ComposeContentTestRule,
-        dark: Boolean = false,
-    ) {
-        val context = ApplicationProvider.getApplicationContext<Application>()
+            override fun open(route: AppRoute) {
+                opened += route
+            }
+        }
+    private val speech by lazy { silentSpeech(context, session, scope) }
+    private val models = mutableMapOf<UUID, ConversationViewModel>()
+
+    init {
         shadowOf(context).grantPermissions(Manifest.permission.RECORD_AUDIO)
-        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
-        val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
-        val cache = AppCache(session, scope)
-        model =
+    }
+
+    fun model(conversationId: UUID = id): ConversationViewModel =
+        models.getOrPut(conversationId) {
             ConversationViewModel(
-                conversationId = id,
-                store = ConversationStore(api, cache),
+                conversationId = conversationId,
+                store = store,
                 newCall = { script ->
                     LiveCall(
                         script,
@@ -74,18 +85,19 @@ internal class ConversationHarness(
                 ongoing = OngoingCalls(context, scope),
                 timeZone = { "Europe/Madrid" },
             )
-        val exits =
-            object : ConversationExits {
-                override fun close() {
-                    closed++
-                }
+        }
 
-                override fun open(route: AppRoute) {
-                    opened += route
-                }
-            }
-        val speech = silentSpeech(context, session, scope)
-        compose.setContent { ZoonkTheme(darkTheme = dark) { ConversationContent(model, speech, exits) } }
+    @Composable
+    fun Conversation(
+        conversationId: UUID = id,
+        startWith: Boolean? = null,
+    ) = ConversationContent(model(conversationId), speech, exits, startWith)
+
+    fun show(
+        compose: ComposeContentTestRule,
+        dark: Boolean = false,
+    ) {
+        compose.setContent { ZoonkTheme(darkTheme = dark) { Conversation() } }
     }
 
     fun goLive(compose: ComposeContentTestRule) {
@@ -122,6 +134,12 @@ internal class FakeConversationApi(
     var stored: LanguageConversation,
 ) : ConversationApi {
     val completions = mutableListOf<LanguageConversationCompletionInput>()
+    var checkpoint: LanguageCheckpointCall = checkpointIntro()
+    var checkpointReads = 0
+    val starts = mutableListOf<CallRequest>()
+
+    /** The API's refusal of the next start, as `ApiException`. */
+    var startRefusal: ApiException? = null
     var completion: ((LanguageConversationCompletionInput) -> CallCompletion)? = null
 
     override suspend fun conversation(
@@ -129,10 +147,22 @@ internal class FakeConversationApi(
         id: UUID,
     ) = stored
 
+    override suspend fun checkpointCall(
+        session: AuthenticatedSession?,
+        blockId: UUID,
+    ): LanguageCheckpointCall {
+        checkpointReads++
+        return checkpoint
+    }
+
     override suspend fun start(
         session: AuthenticatedSession,
         request: CallRequest,
-    ) = stored.id
+    ): UUID {
+        starts += request
+        startRefusal?.let { throw it }
+        return stored.id
+    }
 
     override suspend fun complete(
         session: AuthenticatedSession,
@@ -177,3 +207,15 @@ private fun conversationJson(
     "openingLine":"¡Hola!","result":$result,"situation":"You're at a café.","status":"${if (result == null) "ready" else "completed"}",
     "targetLanguage":"es","title":"Order at the café","unit":null}
     """.trimIndent()
+
+internal fun checkpointIntro(dailyLimitReached: Boolean = false): LanguageCheckpointCall =
+    ApiJson.decodeFromString(
+        """
+        {"status":"notStarted","dailyLimitReached":$dailyLimitReached,"intro":{"character":{"name":"Lucía","place":"Café in Madrid","role":"Waiter"},
+        "exam":null,"examTask":null,"kind":"checkpoint","level":"A2","minutes":3,
+        "objectives":[{"description":"Say what you'd like","label":"Ask for a coffee","met":false}],
+        "situation":"You're at a café.","targetLanguage":"es","title":"Order at the café"}}
+        """.trimIndent(),
+    )
+
+internal fun checkpointStatus(json: String): LanguageCheckpointCall = ApiJson.decodeFromString(json)

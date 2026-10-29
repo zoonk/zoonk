@@ -105,7 +105,7 @@ internal fun ConversationLive(
             if (examTask == null) {
                 Column {
                     SectionTitle(stringResource(R.string.conversation_goals), trailing = goalsMeta)
-                    Checklist(conversation, met = { it in call.metLabels })
+                    Checklist(conversation.objectives, conversation.targetLanguage, met = { it in call.metLabels })
                 }
             }
             CallTip(call.limitNear, next?.description)
@@ -117,7 +117,14 @@ internal fun ConversationLive(
             CharacterRow(character.name, detail, Modifier.callItem(), talking = call.characterTalking)
         }
         if (!beside && examTask == null) {
-            item(key = "goals") { Checklist(conversation, met = { it in call.metLabels }, modifier = Modifier.callItem()) }
+            item(key = "goals") {
+                Checklist(
+                    conversation.objectives,
+                    conversation.targetLanguage,
+                    met = { it in call.metLabels },
+                    modifier = Modifier.callItem(),
+                )
+            }
         }
         call.turns.forEachIndexed { index, turn ->
             // Turns only grow at the end, so their position identifies them.

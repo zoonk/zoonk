@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.conversation
 
 import com.zoonk.android.data.ApiClients
+import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
@@ -12,6 +13,7 @@ import com.zoonk.android.data.recode
 import com.zoonk.android.feature.livecall.CallReservation
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.CompletedLanguageConversation
+import com.zoonk.api.models.LanguageCheckpointCall
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationCompletionInput
 import kotlinx.serialization.json.JsonObject
@@ -86,6 +88,20 @@ sealed interface CallStart {
     data object Failed : CallStart
 }
 
+/** A checkpoint call's start, read as main's `startCheckpointCallAction` reads it: only [Failed] is worth another try. */
+sealed interface CheckpointStart {
+    data class Started(
+        val conversationId: UUID,
+    ) : CheckpointStart
+
+    data object PlusRequired : CheckpointStart
+
+    /** The day moved on meanwhile (done, earlier blocks first, time used up): read the checkpoint again. */
+    data object Changed : CheckpointStart
+
+    data object Failed : CheckpointStart
+}
+
 sealed interface CallCompletion {
     data class Completed(
         val conversation: CompletedLanguageConversation,
@@ -105,6 +121,12 @@ interface ConversationApi {
         session: AuthenticatedSession?,
         id: UUID,
     ): LanguageConversation?
+
+    /** What a checkpoint's call is now: its intro, being prepared, ready, or not a call at all. */
+    suspend fun checkpointCall(
+        session: AuthenticatedSession?,
+        blockId: UUID,
+    ): LanguageCheckpointCall
 
     /** Writes the call when it isn't written yet: it runs AI, so only on the learner's tap. */
     suspend fun start(
@@ -133,6 +155,11 @@ class LiveConversationApi(
             if (e.status == UNPROCESSABLE) null else throw e
         }
 
+    override suspend fun checkpointCall(
+        session: AuthenticatedSession?,
+        blockId: UUID,
+    ) = perform { api.clients(session).language.getLanguageCheckpointCall(blockId) }
+
     override suspend fun start(
         session: AuthenticatedSession,
         request: CallRequest,
@@ -149,6 +176,8 @@ class LiveConversationApi(
     }
 }
 
+private val CHANGED = setOf("BLOCK_FINISHED", "DAILY_LIMIT_REACHED", "EARLIER_FIRST", "NOT_LANGUAGE")
+
 class ConversationStore(
     private val api: ConversationApi,
     private val cache: AppCache,
@@ -158,7 +187,22 @@ class ConversationStore(
             api.conversation(session, id)
         }
 
+    private val checkpointCalls =
+        cache.keyed<UUID, LanguageCheckpointCall>(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session, blockId ->
+            api.checkpointCall(session, blockId)
+        }
+
     fun conversation(id: UUID) = conversations[id]
+
+    fun checkpointCall(blockId: UUID) = checkpointCalls[blockId]
+
+    suspend fun startCheckpoint(blockId: UUID): CheckpointStart =
+        when (val started = cache.mutate { session -> api.start(session, CallRequest.Checkpoint(blockId)) }) {
+            is MutationResult.Done -> CheckpointStart.Started(started.value)
+            is MutationResult.Failed if started.code == "PLUS_REQUIRED" -> CheckpointStart.PlusRequired
+            is MutationResult.Failed if started.code in CHANGED || started.error == ApiError.NotFound -> CheckpointStart.Changed
+            else -> CheckpointStart.Failed
+        }
 
     suspend fun start(request: CallRequest): CallStart =
         when (val started = cache.mutate { session -> api.start(session, request) }) {

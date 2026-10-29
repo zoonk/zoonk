@@ -3,6 +3,7 @@
 {
   "conversation_almost_up_day": "6ee8e24977c07c60ad95ad574f6ca04a636ed198b557db21f925853a2e369551",
   "conversation_almost_up_month": "d078da8915eef14f5b9d37119d3c2ef15ba84426480a121a75aac31f0e327e71",
+  "conversation_back_to_today": "4613b2c34c6999333596642749873be768d0782a9661bf27454efba22502f65b",
   "conversation_better": "e12a83617a2e17937c910a0aabee363a3e2789f31513400ad6a665c15d1ca091",
   "conversation_brain_power": "e3545924cfcc9dc7c39423202b5790b2848d41b5ba5559ade20ae9fb93c6bad3",
   "conversation_call_again": "6d7337e6216d304c356d1383179e75a282f78da0ad37934331501700cbdae041",
@@ -21,6 +22,9 @@
   "conversation_ended": "385c184fa2938ede23fb3ca6a5faf63b11f7cd789a29f4772610bf864828edef",
   "conversation_ended_title": "a29f5f974cacf80a2f14a26d358a260e6ee708f90d033fc0788d746509ea2954",
   "conversation_get_across": "2adae57675a56923ce20e96828fb177a6e3b7fff76bf3f3694c1585490e58ca5",
+  "conversation_get_ready": "e10da02b4424f50be259fd9403ec835a966bd594e54f787a58f13e1d79bafea0",
+  "conversation_get_ready_description": "dfbfd62e74be36126d8c57c9f9269944e03a1476934d00ae1ce92083c5992567",
+  "conversation_getting_ready": "ed8848f7c67f83ce670a58da506e885b6e172b6846a6ec5a25c5326432141a09",
   "conversation_goal_done": "b70b17fe7c08e902ab6aa55a43c80ae5d75b3c98c78c0e3ea0c67bbd04760928",
   "conversation_goal_not_yet": "a4bd66508867a16a34feae470048b20ceb670750e1bf65ccfa52413e6fd16203",
   "conversation_goals": "f75ca96c94c6bc2a9cb89f1de5776c4e8637db9ee420959c5678c2b72b4c6042",
@@ -45,6 +49,7 @@
   "conversation_not_found_description": "251493e51df21f37517eafa9f8227fe7b46d0646dc63aec4211a426815fb9853",
   "conversation_not_found_title": "9fe36153734d0131d717e5365b70306a098760a06db59c0a5ff3d8467b911ae7",
   "conversation_not_this_time": "cf03fdb17f422778b5bc030c55f0ffa74b2a5bfc260916d66655112b587e817d",
+  "conversation_opens_here": "825fc8d46216e514edc92b353351528e53673bc005fa5914a2823547733d0806",
   "conversation_opens_when_ready": "09d09c00b847469b3e3d08bed9227c5350432e36366d84df3f19257ba331c3a0",
   "conversation_paused": "f4f554b39aa601da30f2f4c57fa445a2146df52d95166beea25f393bec335b23",
   "conversation_paused_title": "aaaf0ccb52b9f71cca34406d61f3626a51635314676dd6e63d92b8e2d2dedd2b",
@@ -65,6 +70,7 @@
   "conversation_starting": "ae572d4a99eb397c5daac86f571de21deb19bb3b6e893db2d78a98b4d3418779",
   "conversation_still_closing": "4136058967fb9922e051605ceda6ca98b1ea0607e125bd4e695cc1d6a3b73b1c",
   "conversation_still_to_get_across": "c235e47badefafe696e223751a35bbd43ef40edca1e2c5615c1c64a57d9c879f",
+  "conversation_study_time_used_up": "58874efac59dd03abb9dac36cf56d2a064c5e090258545c026277a8b3138804e",
   "conversation_take_over": "53e40e7355ec1fe836911ebf6fd55b862f89536a6e6e3e2f32ef1e2ccfd22bce",
   "conversation_taken_over": "fd9bf69c4df68decf9004d980c03132206c4d93fc1295353dd25a0876a15cd72",
   "conversation_talking": "2f27f36b91ae97b7d1b30c0d09ada94b9009cee48379a59a8232c3da3046e461",
@@ -186,6 +192,12 @@
     <string name="conversation_call_length">Duración de la llamada</string>
     <string name="conversation_longer_calls_plus">Con Plus, las llamadas son más largas.</string>
     <string name="conversation_opens_when_ready">La llamada se abrirá en cuanto esté lista.</string>
+    <string name="conversation_study_time_used_up">Has llegado al límite de tiempo de estudio de hoy. Lo verás en tu próxima sesión.</string>
+    <string name="conversation_back_to_today">Volver a Hoy</string>
+    <string name="conversation_get_ready">Preparar la llamada</string>
+    <string name="conversation_get_ready_description">Este desafío consiste en una llamada breve sobre la unidad. Primero se adapta a tu nivel de expresión oral y tarda hasta 30 s.</string>
+    <string name="conversation_getting_ready">Preparando la llamada</string>
+    <string name="conversation_opens_here">Aparecerá aquí en cuanto esté lista.</string>
     <string name="conversation_writing_call">Preparando tu llamada</string>
     <string name="conversation_writing_call_phase">Preparando la llamada para tu nivel</string>
     <string name="conversation_writing_call_line_1">Eligiendo con quién hablarás…</string>

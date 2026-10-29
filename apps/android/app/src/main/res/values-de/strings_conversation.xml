@@ -3,6 +3,7 @@
 {
   "conversation_almost_up_day": "d6b84100fca3cc9d9b40f7315386472aba93d681b40a5ee731778b1e8dc473b6",
   "conversation_almost_up_month": "79ccf95396fa8575cca043d2fdcd255719c2536e80608287bf762b6484a2279e",
+  "conversation_back_to_today": "498030ad7b68e9600bb31aa298f793cfd4f409437ef7e409f75f184131392467",
   "conversation_better": "21b65ba8c1ffc50184ce2adf30ae0dcb999c26faf202738377b882e88f1576ff",
   "conversation_brain_power": "65ee3834c6e6e9625eeaf871f7f2de8de39800bf3aeebe1512ec1ba300c793fb",
   "conversation_call_again": "16d2da1a5b3fac9dc7e81601c5ebe285c4d05671fdc884b5cd82e2c811afbfae",
@@ -21,6 +22,9 @@
   "conversation_ended": "0b8b82117656f923223fb2e6515e5095fe67275e8a4b9daaf846ced9eea32f59",
   "conversation_ended_title": "3edf0930da10b50bd73719ec5fc010748a6d175f3f913301195bda394481eca7",
   "conversation_get_across": "77b75a39f4dc19c56612f2ca6b54409badf53206d47ff05322d0783e653a6732",
+  "conversation_get_ready": "7f1559db16f91ae375cfe7518044ee3e8caddb07e0984dcb8335de98c0093f78",
+  "conversation_get_ready_description": "0b1a75414b929c2e11dc08a31647cafcaa3f67333f2d8e0b98967c6c088db985",
+  "conversation_getting_ready": "0af34f445d823e5a7ca4b1b7f4384f0c97dacb649251324cfe8818e727760584",
   "conversation_goal_done": "6d91644f611fe61391cc470103255ee1b9992ebd278a7ed134fe51ecabc90c18",
   "conversation_goal_not_yet": "a92fc2c64094760ce1596b32785481b327a1e24596a24648f37b4a42bda96b83",
   "conversation_goals": "a4bea659b85414875d90fcb0825df7d4ccd6ced95956f383fa1d0a0253c9abfb",
@@ -45,6 +49,7 @@
   "conversation_not_found_description": "476357ff4990654cc786b60f655388c2f976bfe37eede0ed05ac65f415d885a4",
   "conversation_not_found_title": "150abe708c9c16aec96f90791d722dea585ba21170958dce471cdbbbce184f0f",
   "conversation_not_this_time": "5afc6c8de9041a52a0e429fb49d9368d081a87d60a1fc36ec0e4a68123b70fc2",
+  "conversation_opens_here": "63cb1946afec2cb9818f006ae1971692765bfa86a3566631a01504728b8c0686",
   "conversation_opens_when_ready": "30c1d9958390898d12c9cbdccbe724abb3097a6fc81188d822bf1ceecf2d5e3c",
   "conversation_paused": "5ba533f23f564b4058375ada032f9c9e458a35a89d62f6cce222bb56e3bb4424",
   "conversation_paused_title": "ddcd52d0471b3fe2eb470dc57cff5401bde0deed0e324dd6e601081fc0e9538b",
@@ -65,6 +70,7 @@
   "conversation_starting": "799e1b2732117c46535b34a1a9f0e44b2638cc67827238a7f9111dc847ac0201",
   "conversation_still_closing": "d5437f3ce77c03bea2a4f644cf0344f65155a1752ba735995ce281bab219bf1b",
   "conversation_still_to_get_across": "b0c0db3f4f739bd82278eabc82b83bcf384f56a72a075ec4df610081177514d5",
+  "conversation_study_time_used_up": "0cf1b24937f40c9cc3c9d02b128034f49f070ea92c97e2a813b1d246effa1050",
   "conversation_take_over": "15f446f205a55395ea340e481766c132acb4d12e477d437c2e31bf9e3fd1caf7",
   "conversation_taken_over": "1a96af311c1b09ffc5134155e190e4e83bdc65f3ac77e01b07fcdd5180c205e9",
   "conversation_talking": "d4e6a87623d68d6e103762c562073f9d82d6224bf649881cfbc36e8fce54c0cf",
@@ -185,6 +191,12 @@
     <string name="conversation_call_length">Gesprächsdauer</string>
     <string name="conversation_longer_calls_plus">Längere Gespräche gibt es mit Plus.</string>
     <string name="conversation_opens_when_ready">Dein Gespräch öffnet sich, sobald es bereit ist.</string>
+    <string name="conversation_study_time_used_up">Du hast deine Lernzeit für heute aufgebraucht. In deiner nächsten Lerneinheit geht es weiter.</string>
+    <string name="conversation_back_to_today">Zurück zu Heute</string>
+    <string name="conversation_get_ready">Gespräch vorbereiten</string>
+    <string name="conversation_get_ready_description">Bei dieser Herausforderung führst du ein kurzes Gespräch über das Kapitel. Wir passen es zuerst an dein Sprechlevel an. Das dauert bis zu 30 Sek.</string>
+    <string name="conversation_getting_ready">Wir bereiten dein Gespräch vor</string>
+    <string name="conversation_opens_here">Sobald es fertig ist, wird es hier geöffnet.</string>
     <string name="conversation_writing_call">Wir erstellen dein Gespräch</string>
     <string name="conversation_writing_call_phase">Wir erstellen das Gespräch für dein Level</string>
     <string name="conversation_writing_call_line_1">Wir wählen aus, mit wem du sprichst…</string>

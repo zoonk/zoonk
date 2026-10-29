@@ -48,7 +48,10 @@ import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.api.models.ExamSpeakingTask
 import com.zoonk.api.models.LanguageConversation
+import com.zoonk.api.models.LanguageConversationIntro
+import com.zoonk.api.models.LanguageConversationIntroObjectivesInner
 import com.zoonk.api.models.SpeakingMockExam
 
 internal val CALL_COLUMN = 640.dp
@@ -108,11 +111,23 @@ internal fun Modifier.callItem(): Modifier = widthIn(max = CALL_COLUMN).fillMaxW
 
 @Composable
 internal fun conversationTitle(conversation: LanguageConversation): String =
+    callTitle(conversation.exam, conversation.examTask, conversation.kind == LanguageConversation.Kind.CHECKPOINT)
+
+@Composable
+internal fun conversationTitle(intro: LanguageConversationIntro): String =
+    callTitle(intro.exam, intro.examTask, intro.kind == LanguageConversationIntro.Kind.CHECKPOINT)
+
+@Composable
+private fun callTitle(
+    exam: SpeakingMockExam?,
+    examTask: ExamSpeakingTask?,
+    checkpoint: Boolean,
+): String =
     when {
-        conversation.exam == SpeakingMockExam.IELTS -> stringResource(R.string.conversation_ielts_mock)
-        conversation.exam == SpeakingMockExam.TOEFL -> stringResource(R.string.conversation_toefl_mock)
-        conversation.examTask != null -> conversation.examTask?.title.orEmpty()
-        conversation.kind == LanguageConversation.Kind.CHECKPOINT -> stringResource(R.string.conversation_unit_challenge)
+        exam == SpeakingMockExam.IELTS -> stringResource(R.string.conversation_ielts_mock)
+        exam == SpeakingMockExam.TOEFL -> stringResource(R.string.conversation_toefl_mock)
+        examTask != null -> examTask.title
+        checkpoint -> stringResource(R.string.conversation_unit_challenge)
         else -> stringResource(R.string.conversation_practice_call)
     }
 
@@ -152,19 +167,20 @@ internal fun CharacterRow(
     }
 }
 
-/** A call's goals, met or not, in the call's language; [description] says how, on the intro. */
+/** A call's goals, met or not, in the call's language; [describe] says how, on the intro. */
 @Composable
 internal fun Checklist(
-    conversation: LanguageConversation,
+    objectives: List<LanguageConversationIntroObjectivesInner>,
+    language: String,
     met: (String) -> Boolean,
     modifier: Modifier = Modifier,
     describe: Boolean = false,
 ) {
     Column(modifier) {
-        conversation.objectives.forEachIndexed { index, objective ->
+        objectives.forEachIndexed { index, objective ->
             if (index > 0) HorizontalDivider()
             ChecklistRow(
-                label = inLanguage(objective.label, conversation.targetLanguage),
+                label = inLanguage(objective.label, language),
                 done = met(objective.label),
                 description = objective.description.takeIf { describe },
             )

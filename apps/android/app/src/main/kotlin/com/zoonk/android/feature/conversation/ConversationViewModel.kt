@@ -65,6 +65,18 @@ class ConversationViewModel(
         }
     }
 
+    private var startedOnOpen = false
+
+    /** The start a screen opened with, once: back from a later state, it doesn't call again. */
+    fun startOnce(
+        conversation: LanguageConversation,
+        microphone: Boolean,
+    ) {
+        if (startedOnOpen) return
+        startedOnOpen = true
+        start(conversation, microphone)
+    }
+
     /** Back to the intro, as ending a call that hasn't connected does. */
     fun showIntro() {
         call?.leave()
