@@ -30,7 +30,7 @@
   "activities_sorting_linked": "74022a08b2bdeb10790786b6934d57a7c4787f2f7347d3f04e76ae6d61774983",
   "activities_sorting_links_count": "957de39097ab19d271435cd67db3e007c50b6ff534e8f5ec9b54ecc971325354",
   "activities_sorting_look_alikes": "cc7cd13f5575d7acda8516e47b6c04f7f9bbcef5257addeafcfc11fe8805e2b5",
-  "activities_sorting_matched": "16d9a4346b5f3c7db373e8ee6b8e16e2fb6a35a7edd80460cf6e576ba397ab7b",
+  "activities_sorting_matched": "0fa68113e845cbc54d0dbbcbbc41b60cce041d6ecbf029d3c2472348f0c89a57",
   "activities_sorting_missed_first_try": "0cd9ec7c8e6aaa452649dbba7ebd71b3ddf813a1a57809db8392c6744dead9d0",
   "activities_sorting_missed_link": "87d07643c2380abb1708d1bde273cc94bdc90869be57f98e1508bd4a0ad80422",
   "activities_sorting_name_on_spot": "beb5cde4e6dd842626397040d9fee00db960bf79cb88f2555d70ecf9643070ca",
@@ -42,11 +42,11 @@
   "activities_sorting_not_straight": "1b1d305f3dd10d0d0db0ec7bc052ad6dd2663613bf6fe408fe9c79ef004734d4",
   "activities_sorting_nothing_here": "72b3616f1e8518391d94a8efd537492db9e87b23dfe606d39c4bdc0ca23b3c25",
   "activities_sorting_now_pick": "02f06e7f1fca849838568dca788b93be2eaf88dc02074b45db719fc1da496aa9",
-  "activities_sorting_pairs_matched": "90896c440e772f260d885e7470fcadfde432637c7514c7bc841005155f0e6a1c",
+  "activities_sorting_pairs_matched": "efdb2cf984cc2f357bdc45e8463e4356e8858ea9d70fbea4b9f58cfaaa72e88a",
   "activities_sorting_pick_a_name": "a0633f5584a6c0639e9fb99d2f0fe219cc9045333ee4e2a5eb7752d24606baee",
   "activities_sorting_pick_cause": "4cbb043797d05aa23ad7d38e674b1170e94546c2df33b2dfac01928eabc6810c",
   "activities_sorting_place_on_timeline": "495e1f61f64402321174b40d002e985329deacb2634d4faeea7f39c1f3e75e60",
-  "activities_sorting_placed": "69b5c69445e74a782866c40e36ff99b1fc37440db07a6b969a65503002de840e",
+  "activities_sorting_placed": "b15d490141e6e9ff2d97b39fb8195062d3db556647cc6e72c12b8da2abb0e5d5",
   "activities_sorting_put_in": "3babb42f27b3e19591d05df7eed0bbe700574d24c8521a5ebdfbfa375c976571",
   "activities_sorting_put_it_here": "248ef1f5b8ce0676dbedfa62e2d81e370f0f242df6ea843f9cec9bcc62087062",
   "activities_sorting_put_on_spot": "d1d4a9cb34b5c64c921af9e4299ffa3b6b12ea87acd660433d5fe5d2306e0097",
@@ -56,7 +56,7 @@
   "activities_sorting_right_group": "fe034b192fce5b40772943bcb32fb5a19ca253aebdd4c53cc1e7aabd463bc5bd",
   "activities_sorting_right_order": "43c108e475c353ff904ae270bddc80f50a2680c903ac71b16ad0921de3765e84",
   "activities_sorting_show_real_dates": "55a4e1e605ac1534583363b5794e7309f95361ddea1d3092ea53525de79a37fb",
-  "activities_sorting_sorted_count": "8e754e43244d9d3c742609185bf116825c1d901516e131ce9278be9394b25e1b",
+  "activities_sorting_sorted_count": "a791d022f8d4d18029d9fee7159f0dbe65e08c678e4e3a09be100270576e998f",
   "activities_sorting_spot_empty": "45b635a467f4bb4a069a79c0214b9df50dad16efeeda0f19fd5c1682e6d35fab",
   "activities_sorting_spot_named": "f2e49f22293a0d6869fdc0c38897f4da5a8c9ca1863143e4c0066b5ae85e3b69",
   "activities_sorting_spots_to_label": "d005d4eff6a91682cdd2175c759a349eee63dbb5f3f8ca04495f48f12232cebc",
@@ -82,7 +82,11 @@
     <string name="activities_sorting_to_sort">Para organizar</string>
     <string name="activities_sorting_all_sorted">Tudo organizado. Confira quando quiser.</string>
     <!-- How many items are in a group so far, like "1 of 3 sorted". -->
-    <string name="activities_sorting_sorted_count">%1$d de %2$d organizados</string>
+    <plurals name="activities_sorting_sorted_count">
+        <item quantity="one">%1$d de %2$d organizado</item>
+        <item quantity="many">%1$d de %2$d organizados</item>
+        <item quantity="other">%1$d de %2$d organizados</item>
+    </plurals>
     <!-- Places the picked item in a group, like "Put Melting ice in Same substance". Also a TalkBack action on each item. -->
     <string name="activities_sorting_put_in">Coloque %1$s em %2$s</string>
     <!-- In an empty group while an item is picked. -->
@@ -90,7 +94,11 @@
     <!-- In an empty group. -->
     <string name="activities_sorting_nothing_here">Ainda não há nada aqui</string>
     <!-- Read by TalkBack when an item is placed, like "Melting ice is in Same substance. 2 of 3 sorted." -->
-    <string name="activities_sorting_placed">%1$s está em %2$s. %3$d de %4$d organizados.</string>
+    <plurals name="activities_sorting_placed">
+        <item quantity="one">%1$s está em %2$s. %3$d de %4$d organizado.</item>
+        <item quantity="many">%1$s está em %2$s. %3$d de %4$d organizados.</item>
+        <item quantity="other">%1$s está em %2$s. %3$d de %4$d organizados.</item>
+    </plurals>
     <!-- An item once checked, for TalkBack, like "Melting ice, right group". -->
     <string name="activities_sorting_right_group">%1$s, grupo certo</string>
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
@@ -109,7 +117,11 @@
     <string name="activities_sorting_you_had_it_at">Você colocou na posição %1$d</string>
     <string name="activities_sorting_badge_match_pairs">Combine os pares</string>
     <!-- Pairs matched so far, like "1 of 3 pairs matched". -->
-    <string name="activities_sorting_pairs_matched">%1$d de %2$d pares combinados</string>
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="one">%1$d de %2$d par combinado</item>
+        <item quantity="many">%1$d de %2$d pares combinados</item>
+        <item quantity="other">%1$d de %2$d pares combinados</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="one">%d cartão sem par</item>
@@ -123,7 +135,11 @@
     <!-- A card with no match, for TalkBack, like "embarrassed, no match". -->
     <string name="activities_sorting_card_no_match">%1$s, sem par</string>
     <!-- Read by TalkBack after a match, like "Matched éxito with success. 2 of 3 pairs matched." -->
-    <string name="activities_sorting_matched">Você combinou %1$s com %2$s. %3$d de %4$d pares combinados.</string>
+    <plurals name="activities_sorting_matched">
+        <item quantity="one">%1$s combinado com %2$s. %3$d de %4$d par combinado.</item>
+        <item quantity="many">%1$s combinado com %2$s. %3$d de %4$d pares combinados.</item>
+        <item quantity="other">%1$s combinado com %2$s. %3$d de %4$d pares combinados.</item>
+    </plurals>
     <!-- Starts the reason a picked card has no match, like "“embarrassed” has no match." -->
     <string name="activities_sorting_no_match_note">“%1$s” não tem par.</string>
     <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->

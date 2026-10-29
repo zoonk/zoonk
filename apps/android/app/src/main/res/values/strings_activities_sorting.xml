@@ -6,7 +6,10 @@
     <string name="activities_sorting_to_sort">To sort</string>
     <string name="activities_sorting_all_sorted">All sorted. Check when you\'re ready.</string>
     <!-- How many items are in a group so far, like "1 of 3 sorted". -->
-    <string name="activities_sorting_sorted_count">%1$d of %2$d sorted</string>
+    <plurals name="activities_sorting_sorted_count">
+        <item quantity="one">%1$d of %2$d sorted</item>
+        <item quantity="other">%1$d of %2$d sorted</item>
+    </plurals>
     <!-- Places the picked item in a group, like "Put Melting ice in Same substance". Also a TalkBack action on each item. -->
     <string name="activities_sorting_put_in">Put %1$s in %2$s</string>
     <!-- In an empty group while an item is picked. -->
@@ -14,7 +17,10 @@
     <!-- In an empty group. -->
     <string name="activities_sorting_nothing_here">Nothing here yet</string>
     <!-- Read by TalkBack when an item is placed, like "Melting ice is in Same substance. 2 of 3 sorted." -->
-    <string name="activities_sorting_placed">%1$s is in %2$s. %3$d of %4$d sorted.</string>
+    <plurals name="activities_sorting_placed">
+        <item quantity="one">%1$s is in %2$s. %3$d of %4$d sorted.</item>
+        <item quantity="other">%1$s is in %2$s. %3$d of %4$d sorted.</item>
+    </plurals>
     <!-- An item once checked, for TalkBack, like "Melting ice, right group". -->
     <string name="activities_sorting_right_group">%1$s, right group</string>
     <!-- An item once checked, for TalkBack, like "Melting ice, wrong group". -->
@@ -35,7 +41,10 @@
 
     <string name="activities_sorting_badge_match_pairs">Match pairs</string>
     <!-- Pairs matched so far, like "1 of 3 pairs matched". -->
-    <string name="activities_sorting_pairs_matched">%1$d of %2$d pairs matched</string>
+    <plurals name="activities_sorting_pairs_matched">
+        <item quantity="one">%1$d of %2$d pair matched</item>
+        <item quantity="other">%1$d of %2$d pairs matched</item>
+    </plurals>
     <!-- Cards that look like they match one on the other side but don't. -->
     <plurals name="activities_sorting_cards_without_match">
         <item quantity="one">%d card has no match</item>
@@ -48,7 +57,10 @@
     <!-- A card with no match, for TalkBack, like "embarrassed, no match". -->
     <string name="activities_sorting_card_no_match">%1$s, no match</string>
     <!-- Read by TalkBack after a match, like "Matched éxito with success. 2 of 3 pairs matched." -->
-    <string name="activities_sorting_matched">Matched %1$s with %2$s. %3$d of %4$d pairs matched.</string>
+    <plurals name="activities_sorting_matched">
+        <item quantity="one">Matched %1$s with %2$s. %3$d of %4$d pair matched.</item>
+        <item quantity="other">Matched %1$s with %2$s. %3$d of %4$d pairs matched.</item>
+    </plurals>
     <!-- Starts the reason a picked card has no match, like "“embarrassed” has no match." -->
     <string name="activities_sorting_no_match_note">“%1$s” has no match.</string>
     <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->

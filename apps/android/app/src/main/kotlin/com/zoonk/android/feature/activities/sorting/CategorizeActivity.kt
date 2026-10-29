@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -105,7 +106,7 @@ private fun CategorizeActivity(props: ActivityProps) {
         placements = next
         selectedId = null
         props.onAnswerChange(placementsAnswer(ids, next))
-        announcement = resources.getString(R.string.activities_sorting_placed, item.text, group.label, ids.count { it in next }, ids.size)
+        announcement = resources.getQuantityString(R.plurals.activities_sorting_placed, ids.size, item.text, group.label, ids.count { it in next }, ids.size)
         nextUnplacedId(ids, itemId, next)?.let { focus[it]?.requestFocus() }
     }
 
@@ -143,7 +144,7 @@ private fun CategorizeActivity(props: ActivityProps) {
                             style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Medium),
                         )
                         Text(
-                            stringResource(R.string.activities_sorting_sorted_count, items.size - waiting.size, items.size),
+                            pluralStringResource(R.plurals.activities_sorting_sorted_count, items.size, items.size - waiting.size, items.size),
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                             style = MaterialTheme.typography.labelMedium.withTabularFigures(),
                         )

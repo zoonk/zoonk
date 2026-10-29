@@ -100,7 +100,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
         if (isMatch(leftCard, rightCard)) {
             miss = null
             announcement =
-                resources.getString(R.string.activities_sorting_matched, leftCard.text, rightCard.text, next.matched.size, pairIds.size)
+                resources.getQuantityString(R.plurals.activities_sorting_matched, pairIds.size, leftCard.text, rightCard.text, next.matched.size, pairIds.size)
             return
         }
 
@@ -150,7 +150,7 @@ private fun MatchPairsActivity(props: ActivityProps) {
             val traps = fields.distractors.size
             Text(
                 listOfNotNull(
-                    stringResource(R.string.activities_sorting_pairs_matched, progress.matched.size, pairIds.size),
+                    pluralStringResource(R.plurals.activities_sorting_pairs_matched, pairIds.size, progress.matched.size, pairIds.size),
                     if (traps > 0) pluralStringResource(R.plurals.activities_sorting_cards_without_match, traps, traps) else null,
                 ).joinToString(" · "),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
