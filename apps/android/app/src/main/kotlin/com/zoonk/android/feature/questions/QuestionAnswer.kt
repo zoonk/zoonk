@@ -10,7 +10,10 @@ data class AnswerCheck(
     val answer: Answer,
     val correct: Answer?,
     val isCorrect: Boolean,
-)
+) {
+    /** A checkpoint names the right answer only at its end: until then a right pick is the one to mark. */
+    val marked: Answer? get() = correct ?: answer.takeIf { isCorrect }
+}
 
 /**
  * The answer controls for any format (main's `QuestionView`). [onAnswer] gets the answer as it's
@@ -66,7 +69,7 @@ fun QuestionAnswer(
             val order = check?.answer as? Answer.Order
             OrderQuestion(
                 steps = question.options.orEmpty(),
-                check = order?.let { OrderCheck(it.order, (check.correct as? Answer.Order)?.order.orEmpty()) },
+                check = order?.let { OrderCheck(it.order, (check.marked as? Answer.Order)?.order.orEmpty()) },
                 enabled = enabled,
                 onAnswer = onAnswer,
                 modifier = modifier,
@@ -82,7 +85,7 @@ fun QuestionAnswer(
                 statement = question.question,
                 words = words,
                 allowBlank = allowBlank,
-                check = check?.let { TrueFalseCheck(it.answer, (it.correct as? Answer.TrueFalse)?.isTrue) },
+                check = check?.let { TrueFalseCheck(it.answer, (it.marked as? Answer.TrueFalse)?.isTrue) },
                 enabled = enabled,
                 onAnswer = onAnswer,
                 modifier = modifier,
@@ -93,7 +96,7 @@ fun QuestionAnswer(
             ChoiceQuestion(
                 options = question.options.orEmpty(),
                 select = question.select,
-                check = check?.let { ChoiceCheck(it.correct.picks, it.answer.picks) },
+                check = check?.let { ChoiceCheck(it.marked.picks, it.answer.picks) },
                 enabled = enabled,
                 onAnswer = onAnswer,
                 modifier = modifier,

@@ -139,4 +139,11 @@ class QuestionModelsTest {
         assertEquals("The cell wall", plainItemLine("The **cell**\n  wall"))
         assertEquals("15 %", plainItemLine("15 %"))
     }
+
+    @Test
+    fun anUnrevealedRightAnswerMarksTheLearnersPickAndAMissMarksNone() {
+        assertEquals(Answer.Choice(0), AnswerCheck(Answer.Choice(0), correct = null, isCorrect = true).marked)
+        assertEquals(null, AnswerCheck(Answer.Choice(1), correct = null, isCorrect = false).marked)
+        assertEquals(Answer.Choice(0), AnswerCheck(Answer.Choice(1), correct = Answer.Choice(0), isCorrect = false).marked)
+    }
 }
