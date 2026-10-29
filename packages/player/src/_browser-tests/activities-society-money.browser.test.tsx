@@ -43,6 +43,31 @@ const chainQuestion = {
 const { calculator, scenario } = engineModeFixtures.formulaModel;
 const { breakEven } = engineModeFixtures.lineCrossing;
 
+function openWithWrongPassage() {
+  const fixture = activityContentFixtures.sourceComparison;
+  const [first, second] = fixture.fields.sources;
+
+  openActivity({
+    content: {
+      ...fixture,
+      fields: {
+        ...fixture.fields,
+        sources: [
+          {
+            ...first,
+            passages: [
+              ...(first?.passages ?? []),
+              { id: "p3", isTarget: false, text: "without any provocation" },
+            ],
+          },
+          second,
+        ],
+      },
+    },
+    template: "sourceComparison",
+  });
+}
+
 describe("money and society activities", () => {
   it("formula model calculator: moving the extra payment gives the months to check", async () => {
     openActivity({ content: calculator, template: "formulaModel" });
@@ -232,33 +257,20 @@ describe("money and society activities", () => {
   });
 
   it("source comparison: a passage marked by mistake has its own legend entry", async () => {
-    const fixture = activityContentFixtures.sourceComparison;
-    const [first, second] = fixture.fields.sources;
-
-    openActivity({
-      content: {
-        ...fixture,
-        fields: {
-          ...fixture.fields,
-          sources: [
-            {
-              ...first,
-              passages: [
-                ...(first?.passages ?? []),
-                { id: "p3", isTarget: false, text: "without any provocation" },
-              ],
-            },
-            second,
-          ],
-        },
-      },
-      template: "sourceComparison",
-    });
+    openWithWrongPassage();
 
     await page.getByRole("checkbox", { name: "The regulars fired on us" }).click();
     await page.getByRole("checkbox", { name: "without any provocation" }).click();
     await checkActivity();
     await expect.element(page.getByText("Wrong mark", { exact: true })).toBeInTheDocument();
+  });
+
+  it("source comparison: the legend names no passage marked right when none was", async () => {
+    openWithWrongPassage();
+    await page.getByRole("checkbox", { name: "without any provocation" }).click();
+    await checkActivity();
+    await expect.element(page.getByText("Missed", { exact: true })).toBeInTheDocument();
+    await expect.element(page.getByText("What to mark", { exact: true })).not.toBeInTheDocument();
   });
 
   it("source comparison: marking one of two shows the one missed", async () => {

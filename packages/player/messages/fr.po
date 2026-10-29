@@ -2612,10 +2612,11 @@ msgctxt "3-2MvO"
 msgid "Missed"
 msgstr "Oubliés"
 
+#. Legend entry: a passage the learner marked by mistake.
 #: src/activities/source-comparison/source-comparison-activity.tsx
 msgctxt "zR6-ei"
 msgid "Wrong mark"
-msgstr "Marque incorrecte"
+msgstr "Passage marqué par erreur"
 
 #: src/activities/source-comparison/source-comparison-activity.tsx
 msgctxt "4O8gKs"

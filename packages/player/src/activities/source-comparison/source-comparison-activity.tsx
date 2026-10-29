@@ -183,6 +183,7 @@ export function SourceComparisonActivity({
     .filter((passage) => marked.includes(passage.id))
     .map((passage) => passage.text);
 
+  const found = passages.some((passage) => passage.isTarget && marked.includes(passage.id));
   const missed = passages.some((passage) => passage.isTarget && !marked.includes(passage.id));
   const wrong = passages.some((passage) => !passage.isTarget && marked.includes(passage.id));
 
@@ -210,10 +211,12 @@ export function SourceComparisonActivity({
           aria-hidden="true"
           className="text-muted-foreground flex flex-wrap gap-x-4 gap-y-1 text-xs"
         >
-          <span className="flex items-center gap-1.5">
-            <span className="bg-success/25 h-3 w-4 rounded-sm" />
-            {t("What to mark")}
-          </span>
+          {found && (
+            <span className="flex items-center gap-1.5">
+              <span className="bg-success/25 h-3 w-4 rounded-sm" />
+              {t("What to mark")}
+            </span>
+          )}
           {missed && (
             <span className="flex items-center gap-1.5">
               <span className="border-success w-4 border-b-2 border-dashed" />
@@ -223,7 +226,10 @@ export function SourceComparisonActivity({
           {wrong && (
             <span className="flex items-center gap-1.5">
               <span className="bg-destructive/25 h-3 w-4 rounded-sm" />
-              {t("Wrong mark")}
+              {t({
+                description: "Legend entry: a passage the learner marked by mistake.",
+                message: "Wrong mark",
+              })}
             </span>
           )}
         </div>
