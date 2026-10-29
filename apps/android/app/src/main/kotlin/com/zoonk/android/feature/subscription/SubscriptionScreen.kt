@@ -321,16 +321,17 @@ private fun Offer(
     }
 
     if (freePlan is LoadState.Failed) LoadFailedMessage(onRetry = { scope.launch { app.subscriptions.freePlan.refresh() } })
-    freePlan.value?.let { limits ->
-        if (isVisitor) {
-            FreePlanCard(
-                limits,
-                currency = plans?.let { (it.monthly ?: it.yearly)?.currency },
-                onStart = { navigator.showRoot(AppTab.Today) },
-            )
-        }
+    val limits = freePlan.value
+    val freeCard = limits?.takeIf { isVisitor }
+    if (freeCard != null) {
+        FreePlanCard(
+            freeCard,
+            currency = plans?.let { (it.monthly ?: it.yearly)?.currency },
+            onStart = { navigator.showRoot(AppTab.Today) },
+        )
     }
-    CommonQuestions(freePlan.value, hasAccount, navigator)
+    // The card already lists what the first answer would.
+    CommonQuestions(limits, hasAccount, navigator, isFreePlanOpen = freeCard == null)
 }
 
 @Composable

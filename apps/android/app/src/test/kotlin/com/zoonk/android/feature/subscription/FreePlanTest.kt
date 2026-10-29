@@ -69,10 +69,23 @@ class FreePlanTest {
         cancel.assert(hasStateDescription("Expanded"))
     }
 
-    private fun questions(hasAccount: Boolean) {
+    @Test
+    fun theFirstAnswerStartsClosedBesideTheFreeCard() {
+        questions(hasAccount = false, isFreePlanOpen = false)
+
+        rule.onNode(hasText("With a free account", substring = true)).assertDoesNotExist()
+        rule.onNode(hasText("What's in the free plan?") and hasClickAction()).assert(hasStateDescription("Collapsed"))
+    }
+
+    private fun questions(
+        hasAccount: Boolean,
+        isFreePlanOpen: Boolean = true,
+    ) {
         rule.setContent {
             ZoonkTheme {
-                Column(Modifier.verticalScroll(rememberScrollState())) { CommonQuestions(limits, hasAccount, rememberAppNavigator()) }
+                Column(
+                    Modifier.verticalScroll(rememberScrollState()),
+                ) { CommonQuestions(limits, hasAccount, rememberAppNavigator(), isFreePlanOpen) }
             }
         }
     }

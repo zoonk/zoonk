@@ -100,6 +100,7 @@ internal fun CommonQuestions(
     limits: FreePlan?,
     hasAccount: Boolean,
     navigator: AppNavigator,
+    isFreePlanOpen: Boolean,
 ) {
     val email = stringResource(R.string.subscription_questions_email)
     val linkStyle = TextLinkStyles(SpanStyle(textDecoration = TextDecoration.Underline))
@@ -124,7 +125,7 @@ internal fun CommonQuestions(
 
         Column {
             if (limits != null) {
-                Question(stringResource(R.string.subscription_question_free), initiallyOpen = true) {
+                Question(stringResource(R.string.subscription_question_free), initiallyOpen = isFreePlanOpen) {
                     FreePlanAnswer(limits, hasAccount)
                 }
             }
