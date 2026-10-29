@@ -30,6 +30,8 @@
     </plurals>
     <string name="subscription_monthly">Monthly</string>
     <string name="subscription_yearly">Yearly</string>
+    <!-- What TalkBack calls the Monthly / Yearly switch. -->
+    <string name="subscription_billing_period">Billing period</string>
     <!-- Beside "Yearly" in the billing period switch, lowercase as a continuation. %1$s is the price, like $20. -->
     <string name="subscription_save">save %1$s</string>
     <string name="subscription_per_month">per month</string>

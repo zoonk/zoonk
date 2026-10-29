@@ -52,4 +52,6 @@
     <string name="settings_licenses">Open source licenses</string>
     <string name="settings_licenses_website">Website</string>
     <string name="settings_licenses_read">Read the license</string>
+    <string name="settings_profile_description">Your name, username and account.</string>
+    <string name="settings_preferences_description">Your buddy, lessons and language, the way you like them.</string>
 </resources>

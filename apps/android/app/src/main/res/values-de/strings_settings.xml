@@ -35,6 +35,7 @@
   "settings_preferences_choose_buddy": "8beb67fa01fbd849a5c1756b277df5c53f462b1751a1199f7da961c463227037",
   "settings_preferences_daily_limit": "a9b2a0a3fe22883171f0125126f252c836bf6d73854d8de271b7cb31f5e0a92e",
   "settings_preferences_daily_limit_description": "fe4572c1779b2ea35b0260089a5fa661e83ace9ecedc431c96cfcc1b32eb79ec",
+  "settings_preferences_description": "9ea2aecaee93878748ac836c13e34628a95d8d1b98761053f9f41eade7dfe1a8",
   "settings_preferences_language": "8c130bdb19849e0b66c17747945e792b13ca80119eb1ca7d28487e3025def8f9",
   "settings_preferences_lessons": "14d36aa72a2644f3bfb51ede00e8456935309c8966ae296e780c3d0988305b6d",
   "settings_preferences_limit_a_day": "8f1a8c1c929c73c3759fb767b55f62d5c2cdfd854ee336682ad6f316493df98c",
@@ -45,6 +46,7 @@
   "settings_preferences_sounds_description": "9db87a54deead2526d952318d7f72f451df7baeb0e3e5dd2c7c3e2f2a2a6d593",
   "settings_preferences_summary": "97c610e0158a8a0402afce0e090fb76e0d336ab1fcc201b7cabc292c779ff22b",
   "settings_profile": "e7793decc781e7a27ec6d05153361a758408e396d546b05d66b399a635b5e747",
+  "settings_profile_description": "424b3dae83a2c2261d475d599a1008b98a9ad6d292f9b41e0c2bb717db3adb97",
   "settings_profile_needs_account": "4702447e7ac25a78cfc7217835b220bae0a3fd842d2390d6a8caf37c2fdca6e2",
   "settings_save": "b9ab5944cece2671e669cac4b45ea853d6580313f57916ad0f9545e2324113b0",
   "settings_saved": "2358a573b1ccc9a979d1795a99bb25cc5dd1a5e96e88751e27f4faaf8243b0f4",
@@ -104,4 +106,6 @@
     <string name="settings_licenses">Open-Source-Lizenzen</string>
     <string name="settings_licenses_website">Website</string>
     <string name="settings_licenses_read">Lizenz lesen</string>
+    <string name="settings_profile_description">Dein Name, Nutzername und Konto.</string>
+    <string name="settings_preferences_description">Dein Kumpel, deine Lektionen und deine Sprache – so, wie du sie magst.</string>
 </resources>

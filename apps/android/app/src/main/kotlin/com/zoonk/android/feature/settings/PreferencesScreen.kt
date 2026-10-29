@@ -180,6 +180,12 @@ fun PreferencesScreen(
                         .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
+                Text(
+                    text = stringResource(R.string.settings_preferences_description),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+
                 when (val state = profile) {
                     is LoadState.Loaded -> {
                         val look = summary.value?.buddy?.look() ?: BuddyLook()

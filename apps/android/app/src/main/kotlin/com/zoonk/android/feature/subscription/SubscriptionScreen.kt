@@ -41,7 +41,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.isTraversalGroup
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
@@ -256,7 +258,13 @@ private fun Offer(
             Text(stringResource(R.string.subscription_plus), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
 
             if (plans?.monthly != null && plans.yearly != null) {
-                SingleChoiceSegmentedButtonRow(Modifier.fillMaxWidth()) {
+                val billingPeriod = stringResource(R.string.subscription_billing_period)
+                SingleChoiceSegmentedButtonRow(
+                    Modifier.fillMaxWidth().semantics {
+                        isTraversalGroup = true
+                        contentDescription = billingPeriod
+                    },
+                ) {
                     BillingPeriod.entries.forEachIndexed { index, choice ->
                         SegmentedButton(
                             selected = period == choice,

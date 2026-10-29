@@ -26,6 +26,7 @@
   "subscription_benefit_mocks": "cd1aad5ec78ec3baa29d102ab29033894fe8954cfa7bd4c6d28b26ebb833724e",
   "subscription_benefits_summary": "856fac9075fc96d17bd4e274a6276959d30ed4bbde34785a644d80357cd8ffc5",
   "subscription_billed_monthly": "108620078712a43c74e5c5192877bd9ac249d15c6c00755a57365dfe281cd993",
+  "subscription_billing_period": "eb82a1d2b891a3d1762d9e02e0f70924fc4b319f8974f8b4a25f85103873ffa6",
   "subscription_cancel_anytime": "5c8dfe276b103688f4cb46578fe4cfb7ad9156ceb29c2524ae9e7ecee0805373",
   "subscription_contact_support": "1a8c3b492a0574a1627aef472fb5790c20be64a81121ec6b1dfd62a6464160ad",
   "subscription_ending": "25821316ee7d4b7787285b6577574874f3a0711dc72e0a82b3d381f43e7032d4",
@@ -114,6 +115,8 @@
     </plurals>
     <string name="subscription_monthly">Mensuelle</string>
     <string name="subscription_yearly">Annuelle</string>
+    <!-- What TalkBack calls the Monthly / Yearly switch. -->
+    <string name="subscription_billing_period">Période de facturation</string>
     <!-- Beside "Yearly" in the billing period switch, lowercase as a continuation. %1$s is the price, like $20. -->
     <string name="subscription_save">économiser %1$s</string>
     <string name="subscription_per_month">par mois</string>

@@ -90,6 +90,12 @@ fun ProfileScreen(
                         .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
+                Text(
+                    text = stringResource(R.string.settings_profile_description),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+
                 when {
                     signedIn == null -> {}
 
