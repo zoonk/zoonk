@@ -52,7 +52,7 @@ fun DayMoment(
     )
 }
 
-/** A lesson's end, from L4's player; only a lesson played in a session has missions. */
+/** A lesson's end, from L4's player. A lesson played in a session carries its moment, ceremony included, in its block. */
 @Composable
 fun DayMoment(
     completion: LibraryLessonCompletion,
@@ -60,8 +60,14 @@ fun DayMoment(
     buddyName: String,
     modifier: Modifier = Modifier,
 ) {
+    val block = completion.studyBlock
+    if (block != null) {
+        DayMoment(block, buddy, buddyName, modifier)
+        return
+    }
+
     DayMoment(
-        missions = completion.studyBlock?.missionMomentFacts(),
+        missions = null,
         reached = ReachedFacts(completion.reached.level, completion.reached.energy),
         ceremony = completion.ceremony?.kind,
         buddy = buddy,
