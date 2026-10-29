@@ -7062,25 +7062,25 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Diese Themen zählen viel und hier hattest du die meisten Fehler. Dein Plan behandelt sie jetzt ausführlicher. Alle anderen Themen bleiben ebenfalls dabei."
+            "value" : "Diese Fächer sind besonders wichtig, und hier hast du die meisten Fehler gemacht. Dein Plan behandelt sie jetzt ausführlicher, und alle anderen Themen bleiben im Plan."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estas materias cuentan mucho y son en las que más has fallado. Ahora tu plan les dedica más tiempo y mantiene todos los demás temas."
+            "value" : "Estas materias son muy importantes y es en ellas donde más has fallado. Ahora tu plan profundiza más en ellas y mantiene todos los demás temas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ces matières comptent beaucoup, et c’est là que tu as fait le plus d’erreurs. Ton plan leur consacre désormais plus de temps, tout en gardant les autres sujets."
+            "value" : "Ces matières comptent beaucoup, et c’est là où tu as fait le plus d’erreurs. Ton plan va maintenant approfondir ces matières, et tous les autres sujets y restent."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essas matérias têm bastante peso e foram onde você mais errou. Agora, seu plano aprofunda essas matérias e mantém todos os outros tópicos."
+            "value" : "Essas matérias têm bastante peso, e foi nelas que você mais errou. Seu plano agora explora essas matérias com mais profundidade, e todos os outros tópicos continuam no plano."
           }
         }
       }
@@ -7139,6 +7139,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Não foi possível carregar"
+          }
+        }
+      }
+    },
+    "This subject counts a lot, and it's where you missed most. Your plan now gives it more depth, and every other topic stays in it." : {
+      "comment" : "Why a focus test chose its one subject.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dieses Fach ist besonders wichtig, und hier hast du die meisten Fehler gemacht. Dein Plan behandelt es jetzt ausführlicher, und alle anderen Themen bleiben im Plan."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Esta materia es muy importante y es en ella donde más has fallado. Ahora tu plan profundiza más en ella y mantiene todos los demás temas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette matière compte beaucoup, et c’est là où tu as fait le plus d’erreurs. Ton plan va maintenant approfondir cette matière, et tous les autres sujets y restent."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essa matéria tem bastante peso, e foi nela que você mais errou. Seu plano agora explora essa matéria com mais profundidade, e todos os outros tópicos continuam no plano."
           }
         }
       }

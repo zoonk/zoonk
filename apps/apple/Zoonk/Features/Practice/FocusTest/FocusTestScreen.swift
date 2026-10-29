@@ -20,6 +20,7 @@ struct FocusTestScreen: View {
   @State private var result: Components.Schemas.FocusTestResult?
   @State private var undone = false
   @State private var undoFailed = false
+  @State private var ceremonyClosed = false
 
   private var draftKey: String { "focus-test:\(goalId)" }
 
@@ -27,7 +28,13 @@ struct FocusTestScreen: View {
     NavigationStack {
       Group {
         if let result {
-          resultView(result)
+          if let milestone = result.ceremony?.value1, !ceremonyClosed,
+            let ceremony = hooks.ceremony
+          {
+            ceremony(milestone) { ceremonyClosed = true }
+          } else {
+            resultView(result)
+          }
         } else {
           switch load {
           case .loading:
@@ -101,7 +108,7 @@ struct FocusTestScreen: View {
           comment: "After undoing a focus test's change."
         )
         .font(.largeTitle.bold())
-      } else {
+      } else if !chosen.isEmpty {
         VStack(alignment: .leading, spacing: 6) {
           Text(
             "Your new focus", tableName: "Practice",
@@ -109,10 +116,17 @@ struct FocusTestScreen: View {
           )
           .font(.subheadline.weight(.medium)).foregroundStyle(.secondary)
           Text(chosen.formatted(.list(type: .and))).font(.largeTitle.bold())
-          Text(
-            "These subjects count a lot, and they're where you missed most. Your plan now gives them more depth, and every other topic stays in it.",
-            tableName: "Practice", comment: "Why a focus test chose its subjects."
-          )
+          Group {
+            if chosen.count == 1 {
+              Text(
+                "This subject counts a lot, and it's where you missed most. Your plan now gives it more depth, and every other topic stays in it.",
+                tableName: "Practice", comment: "Why a focus test chose its one subject.")
+            } else {
+              Text(
+                "These subjects count a lot, and they're where you missed most. Your plan now gives them more depth, and every other topic stays in it.",
+                tableName: "Practice", comment: "Why a focus test chose its subjects.")
+            }
+          }
           .foregroundStyle(.secondary)
         }
       }
@@ -139,6 +153,11 @@ struct FocusTestScreen: View {
           .accessibilityElement(children: .combine)
         }
       }
+
+      PracticeResultNumbers(
+        reached: PracticeReached(
+          energy: result.reached.energy,
+          level: result.reached.level.map { .init(color: $0.color.rawValue, level: $0.level) }))
 
       if undoFailed {
         Text(
