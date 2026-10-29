@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -263,7 +264,7 @@ private fun SqlRowsTable(
     val texts = rows.map { row -> row.map { cellText(it) } }
     val measurer = rememberTextMeasurer()
     val density = LocalDensity.current
-    val widths =
+    val naturalWidths =
         columns.indices.map { column ->
             val widest =
                 texts
@@ -275,54 +276,60 @@ private fun SqlRowsTable(
     val extra = stringResource(R.string.activities_code_row_extra)
     val missing = stringResource(R.string.activities_code_row_missing)
 
-    Column(
+    BoxWithConstraints(
         modifier
             .fillMaxWidth()
             .clip(shape)
             .background(colors.surface)
             .border(1.dp, colors.outlineVariant, shape)
-            .semantics { contentDescription = caption }
-            .horizontalScroll(rememberScrollState()),
+            .semantics { contentDescription = caption },
     ) {
-        Row(Modifier.background(colors.surfaceContainer)) {
-            columns.forEachIndexed { index, name ->
-                Text(
-                    name,
-                    Modifier.width(widths[index]).padding(horizontal = CELL_PADDING, vertical = 6.dp),
-                    color = colors.onSurfaceVariant,
-                    style = header,
-                )
-            }
-        }
-        rows.forEachIndexed { index, row ->
-            val state = rowStates?.getOrNull(index) ?: RowState.Plain
-            HorizontalDivider(Modifier.width(widths.fold(0.dp) { sum, width -> sum + width }), color = colors.outlineVariant)
-            Row(
-                Modifier
-                    .background(
-                        when (state) {
-                            RowState.Extra -> colors.error.copy(alpha = SOFT_ALPHA)
-                            RowState.Missing -> colors.tertiary.copy(alpha = SOFT_ALPHA)
-                            RowState.Plain -> colors.surface
-                        },
-                    ).semantics(mergeDescendants = true) {
-                        when (state) {
-                            RowState.Extra -> stateDescription = extra
-                            RowState.Missing -> stateDescription = missing
-                            RowState.Plain -> Unit
-                        }
-                    },
-            ) {
-                row.forEachIndexed { column, cell ->
-                    val isNumber = cell !is JsonNull && !cell.isString
+        val natural = naturalWidths.fold(0.dp) { sum, width -> sum + width }
+        val tableWidth = maxOf(natural, maxWidth)
+        val widths = naturalWidths.map { it * (tableWidth / natural) }
+        Column(Modifier.horizontalScroll(rememberScrollState())) {
+            Row(Modifier.background(colors.surfaceContainer)) {
+                columns.forEachIndexed { index, name ->
                     Text(
-                        texts[index].getOrElse(column) { "" },
-                        Modifier.width(widths.getOrElse(column) { CELL_PADDING * 2 }).padding(horizontal = CELL_PADDING, vertical = 8.dp),
-                        color = if (cell is JsonNull) colors.onSurfaceVariant else colors.onSurface,
-                        textAlign = if (isNumber) TextAlign.End else TextAlign.Start,
-                        softWrap = false,
-                        style = body.copy(fontStyle = if (cell is JsonNull) FontStyle.Italic else FontStyle.Normal),
+                        name,
+                        Modifier.width(widths[index]).padding(horizontal = CELL_PADDING, vertical = 6.dp),
+                        color = colors.onSurfaceVariant,
+                        style = header,
                     )
+                }
+            }
+            rows.forEachIndexed { index, row ->
+                val state = rowStates?.getOrNull(index) ?: RowState.Plain
+                HorizontalDivider(Modifier.width(tableWidth), color = colors.outlineVariant)
+                Row(
+                    Modifier
+                        .background(
+                            when (state) {
+                                RowState.Extra -> colors.error.copy(alpha = SOFT_ALPHA)
+                                RowState.Missing -> colors.tertiary.copy(alpha = SOFT_ALPHA)
+                                RowState.Plain -> colors.surface
+                            },
+                        ).semantics(mergeDescendants = true) {
+                            when (state) {
+                                RowState.Extra -> stateDescription = extra
+                                RowState.Missing -> stateDescription = missing
+                                RowState.Plain -> Unit
+                            }
+                        },
+                ) {
+                    row.forEachIndexed { column, cell ->
+                        val isNumber = cell !is JsonNull && !cell.isString
+                        Text(
+                            texts[index].getOrElse(column) { "" },
+                            Modifier
+                                .width(widths.getOrElse(column) { CELL_PADDING * 2 })
+                                .padding(horizontal = CELL_PADDING, vertical = 8.dp),
+                            color = if (cell is JsonNull) colors.onSurfaceVariant else colors.onSurface,
+                            textAlign = if (isNumber) TextAlign.End else TextAlign.Start,
+                            softWrap = false,
+                            style = body.copy(fontStyle = if (cell is JsonNull) FontStyle.Italic else FontStyle.Normal),
+                        )
+                    }
                 }
             }
         }
