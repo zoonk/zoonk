@@ -119,24 +119,25 @@ class StudyOpener(
             return AppRoute.Lesson(lessonId.toString(), sessionId.toString())
         }
 
-        prepare(session, sessionId)
-
         return when (step.screen) {
             StudyBlock.Screen.SESSION -> {
                 if (step.kind == StudyBlock.Kind.LEARN) {
-                    AppRoute.Session(blockId = blockId.toString())
+                    unstarted(session, sessionId, AppRoute.Session(blockId = blockId.toString()))
                 } else {
                     started(session, sessionId, blockId) { AppRoute.QuestionBlock(sessionId.toString(), blockId.toString()) }
                 }
             }
 
             StudyBlock.Screen.UNKNOWN -> {
-                AppRoute.Session(blockId = blockId.toString())
+                unstarted(session, sessionId, AppRoute.Session(blockId = blockId.toString()))
             }
 
             StudyBlock.Screen.LESSON -> {
-                lessonId ?: return AppRoute.Session(blockId = blockId.toString())
-                started(session, sessionId, blockId) { AppRoute.Lesson(lessonId.toString(), sessionId.toString()) }
+                if (lessonId == null) {
+                    unstarted(session, sessionId, AppRoute.Session(blockId = blockId.toString()))
+                } else {
+                    started(session, sessionId, blockId) { AppRoute.Lesson(lessonId.toString(), sessionId.toString()) }
+                }
             }
 
             StudyBlock.Screen.ESSAY -> {
@@ -148,7 +149,7 @@ class StudyOpener(
 
                 // A challenge not begun yet opens on its intro, which starts it.
                 if (step.status != StudyBlock.Status.ACTIVE && planItemId != null) {
-                    AppRoute.Challenge(planItemId.toString(), sessionId.toString())
+                    unstarted(session, sessionId, AppRoute.Challenge(planItemId.toString(), sessionId.toString()))
                 } else {
                     started(session, sessionId, blockId) {
                         if (step.checkpointFacts?.mock == true) {
@@ -162,17 +163,23 @@ class StudyOpener(
         }
     }
 
-    /** Not awaited, so the block opens at once; a failed request only means the next opened block asks again. */
-    private fun prepare(
+    /**
+     * Opens without starting a block, so it asks the session to write its coming lessons, as a
+     * block's start does on the server. Not awaited, so the screen opens at once; a failed request
+     * only means the next open asks again.
+     */
+    private fun unstarted(
         session: AuthenticatedSession,
         sessionId: UUID,
-    ) {
+        route: AppRoute,
+    ): AppRoute {
         scope.launch {
             try {
                 api.prepare(session, sessionId)
             } catch (_: ApiException) {
             }
         }
+        return route
     }
 
     private suspend fun started(

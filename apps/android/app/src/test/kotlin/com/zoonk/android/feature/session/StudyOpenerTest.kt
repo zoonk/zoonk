@@ -94,8 +94,6 @@ class StudyOpenerTest {
             assertEquals(MutationResult.Done(AppRoute.Lesson(lesson.lessonId.toString(), SESSION.toString())), result)
             assertEquals(listOf(blockId(0)), api.started)
             assertEquals(emptyList<JsonObject>(), api.opened)
-            advanceUntilIdle()
-            assertEquals(listOf(SESSION), api.prepared)
         }
 
     @Test
@@ -186,5 +184,34 @@ class StudyOpenerTest {
 
             assertEquals(MutationResult.Done(AppRoute.Challenge(planItem.toString(), SESSION.toString())), result)
             assertEquals(emptyList<UUID>(), api.started)
+        }
+
+    @Test
+    fun onlyAnOpenWithoutAStartPreparesTheSessionSinceAStartPreparesItOnTheServer() =
+        runTest {
+            val lesson = step(0)
+            val review = step(1, kind = StudyBlock.Kind.REVIEW, screen = StudyBlock.Screen.SESSION, lessonId = null)
+            val challenge =
+                step(
+                    2,
+                    kind = StudyBlock.Kind.CHECKPOINT,
+                    screen = StudyBlock.Screen.CHALLENGE,
+                    lessonId = null,
+                    planItemId = UUID.randomUUID(),
+                )
+            val unpicked = step(3, screen = StudyBlock.Screen.SESSION, lessonId = null)
+            val day = day(listOf(lesson, review, challenge, unpicked))
+
+            suspend fun preparedFor(step: DayStep): List<UUID> {
+                val api = FakeStudyApi()
+                opener(api).open(day, step, next = false, goalId = GOAL)
+                advanceUntilIdle()
+                return api.prepared
+            }
+
+            assertEquals(emptyList<UUID>(), preparedFor(lesson))
+            assertEquals(emptyList<UUID>(), preparedFor(review))
+            assertEquals(listOf(SESSION), preparedFor(challenge))
+            assertEquals(listOf(SESSION), preparedFor(unpicked))
         }
 }
