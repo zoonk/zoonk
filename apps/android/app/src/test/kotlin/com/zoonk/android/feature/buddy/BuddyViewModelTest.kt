@@ -60,7 +60,12 @@ class BuddyViewModelTest {
             val opened =
                 decodeFixture<Today>(
                     "today",
-                    "session" to fixture("study-session", "blocks" to JsonArray(listOf(fixture("study-block", "id" to BLOCK.toString())))),
+                    "session" to
+                        fixture(
+                            "study-session",
+                            "id" to SESSION.toString(),
+                            "blocks" to JsonArray(listOf(fixture("study-block", "id" to BLOCK.toString()))),
+                        ),
                 )
             val today = FakeTodayApi(listOf(unopened, opened))
             val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
@@ -69,14 +74,14 @@ class BuddyViewModelTest {
                     BuddyStore(NoBuddyApi, cache, { "UTC" }, cache.resource(Audience.SignedIn) { learnerSummary() }, backgroundScope),
                     LearningProfileStore(NoProfileApi, cache),
                     TodayStore(today, cache, backgroundScope, { "UTC" }),
-                    StudyOpener(NoStudyApi, cache, { "UTC" }),
+                    StudyOpener(NoStudyApi, cache, { "UTC" }, backgroundScope),
                 )
 
             vm.openMission(MissionOpens.Block(blockId = BLOCK, position = null), GOAL)
             advanceUntilIdle()
 
             assertEquals(2, today.reads)
-            assertEquals(AppRoute.Session(blockId = BLOCK.toString()), vm.routes.first())
+            assertEquals(AppRoute.QuestionBlock(SESSION.toString(), BLOCK.toString()), vm.routes.first())
         }
 
     private class FakeTodayApi(
@@ -156,6 +161,11 @@ class BuddyViewModelTest {
     }
 
     private object NoStudyApi : StudyApi {
+        override suspend fun prepare(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+        ) = Unit
+
         override suspend fun openDay(
             session: AuthenticatedSession,
             goalId: UUID,
@@ -183,6 +193,7 @@ class BuddyViewModelTest {
 
     private companion object {
         const val GOAL = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d00"
+        val SESSION: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d55")
         val BLOCK: UUID = UUID.fromString("5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d77")
     }
 }
