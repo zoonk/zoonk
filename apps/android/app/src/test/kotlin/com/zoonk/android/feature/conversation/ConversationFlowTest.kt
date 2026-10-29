@@ -122,6 +122,35 @@ class ConversationFlowTest {
     }
 
     @Test
+    fun aMilestoneTheCallEarnedShowsItsCeremonyBeforeTheResultAndItsMoment() {
+        api.ceremony =
+            """{"id":"00000000-0000-4000-8000-0000000000c9","key":"yellow","kind":"belt","earnedAt":"2026-10-29T12:00:00Z","shownAt":null}"""
+        show()
+        goLive()
+        transport.onEvent(learnerSays("Un café, por favor.", 1000.0, 3000.0))
+
+        compose.onNodeWithContentDescription("End").performClick()
+        compose.waitForIdle()
+
+        compose.onNodeWithText("Ceremony: yellow").assertExists()
+        compose.onNodeWithText("You did well.").assertDoesNotExist()
+        compose.onNodeWithText("Close ceremony").performClick()
+        compose.onNodeWithText("You did well.").assertExists()
+        seen("Day moment")
+        compose.onNodeWithText("Continue").performClick()
+        compose.onNodeWithText("Day moment").assertDoesNotExist()
+    }
+
+    @Test
+    fun aCallOpenedAfterItEndedShowsNoCeremonyOrMoment() {
+        api.stored = endedConversation(harness.id)
+        show()
+
+        compose.onNodeWithText("You did well.").assertExists()
+        compose.onNodeWithText("Day moment").assertDoesNotExist()
+    }
+
+    @Test
     fun endingACallThatHasntConnectedGoesBackToItsIntro() {
         show()
         compose.onNodeWithText("Start the call").performClick()

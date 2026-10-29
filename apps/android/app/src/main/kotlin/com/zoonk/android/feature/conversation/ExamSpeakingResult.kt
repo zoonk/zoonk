@@ -61,6 +61,7 @@ private fun ResultSteps(
     steps: List<@Composable ColumnScope.() -> Unit>,
     actions: ResultActions,
     nextLabel: String?,
+    dayMoment: @Composable () -> Unit,
     options: @Composable ColumnScope.() -> Unit,
 ) {
     var index by rememberSaveable { mutableIntStateOf(0) }
@@ -77,6 +78,7 @@ private fun ResultSteps(
         item(key = "step-$shown") {
             Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 steps[shown]()
+                if (shown == 0) dayMoment()
                 if (shown == steps.lastIndex) options()
             }
         }
@@ -89,6 +91,7 @@ internal fun ExamSpeakingResult(
     conversation: LanguageConversation,
     task: ExamSpeakingTask,
     actions: ResultActions,
+    dayMoment: @Composable () -> Unit = {},
 ) {
     val feedback = (conversation.result?.feedback as? LanguageConversationResultFeedback.ExamspeakingWrapper)?.value
     val language = conversation.targetLanguage
@@ -127,6 +130,7 @@ internal fun ExamSpeakingResult(
             } else {
                 null
             },
+        dayMoment = dayMoment,
     ) {
         actions.onTryAgain?.let { TextButton(onClick = it) { Text(stringResource(R.string.conversation_try_new_card)) } }
         if (graded.isNotEmpty()) {
@@ -375,6 +379,7 @@ private fun bandRange(
 internal fun SpeakingMockResult(
     conversation: LanguageConversation,
     actions: ResultActions,
+    dayMoment: @Composable () -> Unit = {},
 ) {
     val feedback =
         when (val mock = (conversation.result?.feedback as? LanguageConversationResultFeedback.SpeakingmockWrapper)?.value) {
@@ -464,7 +469,7 @@ internal fun SpeakingMockResult(
             }
             focus?.let { add { FocusStep(mockCriterionName(it.criterion), null, it.evidence, it.tip, conversation.targetLanguage) } }
         }
-    ResultSteps(title = title, steps = steps, actions = actions, nextLabel = null) {
+    ResultSteps(title = title, steps = steps, actions = actions, nextLabel = null, dayMoment = dayMoment) {
         actions.onTryAgain?.let { TextButton(onClick = it) { Text(stringResource(R.string.conversation_try_another_mock)) } }
         if (feedback != null && feedback.criteria.isNotEmpty()) {
             EveryCriterion(

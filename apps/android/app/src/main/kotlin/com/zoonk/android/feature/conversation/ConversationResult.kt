@@ -79,6 +79,7 @@ internal fun ConversationResult(
     onContinue: () -> Unit,
     onClose: () -> Unit,
     onSeePlus: () -> Unit,
+    dayMoment: @Composable () -> Unit = {},
 ) {
     val feedback = (result.feedback as? LanguageConversationResultFeedback.CallWrapper)?.value
     val language = conversation.targetLanguage
@@ -107,7 +108,10 @@ internal fun ConversationResult(
         },
     ) {
         item(key = "step-$shown") {
-            Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(20.dp)) { steps[shown]() }
+            Column(Modifier.callItem(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+                steps[shown]()
+                if (shown == 0) dayMoment()
+            }
         }
     }
 }

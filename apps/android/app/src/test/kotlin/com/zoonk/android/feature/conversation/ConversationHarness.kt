@@ -3,6 +3,9 @@ package com.zoonk.android.feature.conversation
 import android.Manifest
 import android.app.Application
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.onNodeWithText
@@ -91,12 +94,24 @@ internal class ConversationHarness(
             )
         }
 
+    /** Stand-ins for L3's ceremony and day's moment, which read the learner's buddy from the app. */
+    val moments =
+        CallMoments(
+            ceremony = { milestone, onClose ->
+                Column {
+                    Text("Ceremony: ${milestone.key}")
+                    TextButton(onClick = onClose) { Text("Close ceremony") }
+                }
+            },
+            dayMoment = { Text("Day moment") },
+        )
+
     @Composable
     fun Conversation(
         conversationId: UUID = id,
         startWith: Boolean? = null,
         fromMock: Boolean = false,
-    ) = ConversationContent(model(conversationId), speech, exits, startWith, fromMock = fromMock)
+    ) = ConversationContent(model(conversationId), speech, exits, moments, startWith, fromMock = fromMock)
 
     fun show(
         compose: ComposeContentTestRule,
@@ -147,6 +162,9 @@ internal class FakeConversationApi(
     var startRefusal: ApiException? = null
     var completion: ((LanguageConversationCompletionInput) -> CallCompletion)? = null
 
+    /** The completion's `ceremony` JSON: a milestone the call earned, or `null`. */
+    var ceremony = "null"
+
     override suspend fun conversation(
         session: AuthenticatedSession?,
         id: UUID,
@@ -179,7 +197,7 @@ internal class FakeConversationApi(
             CallCompletion.Ended -> throw ApiException(ApiError.Unavailable, "CONVERSATION_ENDED", 409)
             else -> Unit
         }
-        return completed(stored)
+        return completed(stored, ceremony)
     }
 }
 
@@ -189,14 +207,24 @@ internal fun conversation(
     kind: LanguageConversation.Kind = LanguageConversation.Kind.PRACTICE,
 ): LanguageConversation = ApiJson.decodeFromString(conversationJson(id, locked, kind, result = null))
 
-private fun completed(conversation: LanguageConversation): CompletedLanguageConversation {
-    val result =
-        """
-        {"brainPower":12,"passed":true,"spokenSeconds":2,"stars":2,"feedback":{"kind":"call","encouragement":"You did well.",
-        "wentWell":["Un café, por favor"],"improve":{"said":"Un café","better":"Un café, por favor","why":"Add please."},"pronunciation":[]}}
-        """.trimIndent()
-    val json = conversationJson(conversation.id, conversation.locked, conversation.kind, result, met = true)
-    return ApiJson.decodeFromString(json.dropLast(1) + ""","ceremony":null,"missionMoment":null,"reached":{"energy":null,"level":null}}""")
+private val CALL_RESULT =
+    """
+    {"brainPower":12,"passed":true,"spokenSeconds":2,"stars":2,"feedback":{"kind":"call","encouragement":"You did well.",
+    "wentWell":["Un café, por favor"],"improve":{"said":"Un café","better":"Un café, por favor","why":"Add please."},"pronunciation":[]}}
+    """.trimIndent()
+
+/** A practice call that ended before this screen opened, as a later visit reads it. */
+internal fun endedConversation(id: UUID): LanguageConversation =
+    ApiJson.decodeFromString(conversationJson(id, locked = false, LanguageConversation.Kind.PRACTICE, CALL_RESULT, met = true))
+
+private fun completed(
+    conversation: LanguageConversation,
+    ceremony: String,
+): CompletedLanguageConversation {
+    val json = conversationJson(conversation.id, conversation.locked, conversation.kind, CALL_RESULT, met = true)
+    return ApiJson.decodeFromString(
+        json.dropLast(1) + ""","ceremony":$ceremony,"missionMoment":null,"reached":{"energy":null,"level":null}}""",
+    )
 }
 
 private fun conversationJson(

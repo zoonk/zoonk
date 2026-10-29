@@ -14,6 +14,7 @@ import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.Milestone
 import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudyMission
+import com.zoonk.api.models.StudyMissionMoment
 
 /**
  * Main's `DayMoment`, shown where a finished block or lesson says how it went: the missions it
@@ -80,6 +81,14 @@ fun StudyBlockCompletion.missionMomentFacts(): MissionMomentFacts =
     MissionMomentFacts(
         missions = missions.map { it.toDayMission() },
         completed = completedMissions.map { done -> StudyMission.Kind.entries.first { it.value == done.value } },
+        bonus = fullMeal.bonus,
+        bonusPaid = fullMeal.paid,
+    )
+
+fun StudyMissionMoment.missionMomentFacts(): MissionMomentFacts =
+    MissionMomentFacts(
+        missions = missions.map { it.toDayMission() },
+        completed = completed.map { done -> StudyMission.Kind.entries.first { it.value == done.value } },
         bonus = fullMeal.bonus,
         bonusPaid = fullMeal.paid,
     )
