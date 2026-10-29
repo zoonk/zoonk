@@ -54,6 +54,7 @@ class LessonPlayerFlowTest {
     val folder = TemporaryFolder()
 
     private val ana = AuthenticatedSession(ANA, "token-a", "local-a")
+    private val session = FakeSession(ana)
     private val opened = mutableListOf<AppRoute>()
     private var closed = 0
     private lateinit var api: FakeLessonPlayerApi
@@ -81,7 +82,6 @@ class LessonPlayerFlowTest {
         val lesson = playable(steps)
         api = FakeLessonPlayerApi(LessonLoad.Ready(lesson)).apply(configure)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
-        val session = FakeSession(ana)
         val cache = AppCache(session, scope)
         val viewModel =
             LessonPlayerViewModel(
@@ -166,6 +166,22 @@ class LessonPlayerFlowTest {
         assertEquals(2, attempts.size)
         assertEquals(1, attempts.distinct().size)
         assertEquals(listOf(RUN_ID), api.completions)
+    }
+
+    @Test
+    fun aLessonFinishedAfterAnotherLearnerSignedInIsNotSavedForThem() {
+        play(listOf(checkStep("quiz"), summaryStep("end")))
+
+        tap("Right")
+        tap("Check")
+        rule.onNodeWithText("Correct!").assertIsDisplayed()
+        rule.waitForIdle()
+        session.session = AuthenticatedSession("bia", "token-b", "local-b")
+        tap("Continue")
+        tap("Continue")
+        rule.waitForIdle()
+
+        assertEquals(emptyList<String>(), api.completions)
     }
 
     @Test

@@ -41,11 +41,15 @@ import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonRun
 import com.zoonk.api.models.NextLessonResponse
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -127,6 +131,7 @@ class LessonPlayerViewModel(
 
     private var lesson: PlayableLesson? = null
     private var owner = sessions.current
+    private var work = openScope()
     private var starting: Job? = null
     private var completing: Job? = null
     private val unsaved = mutableMapOf<String, MutableList<PendingCheck>>()
@@ -141,9 +146,12 @@ class LessonPlayerViewModel(
 
         if (this.lesson?.id == lesson.id && owner == session && (mutableState.value != null || starting?.isActive == true)) return
 
+        work.cancel()
+        work = openScope()
         this.lesson = lesson
         owner = session
         unsaved.clear()
+        screenLocks.clear()
         mutableEnding.value = LessonEnding()
         mutableState.value = null
         startRun()
@@ -167,12 +175,12 @@ class LessonPlayerViewModel(
 
     /** "Can't write now", kept for the rest of the day on this device. */
     fun skipWriting() {
-        owner?.let { session -> viewModelScope.launch { choices.set(session, TodayChoice.CantWrite, true) } }
+        owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantWrite, true) } }
         dispatch(LessonAction.SkipWriting())
     }
 
     fun restoreWriting() {
-        owner?.let { session -> viewModelScope.launch { choices.set(session, TodayChoice.CantWrite, false) } }
+        owner?.let { session -> work.launch { choices.set(session, TodayChoice.CantWrite, false) } }
         dispatch(LessonAction.RestoreWriting)
     }
 
@@ -202,17 +210,18 @@ class LessonPlayerViewModel(
 
         dispatch(LessonAction.CheckResolved(step.id, local.copy(attemptId = pending.attemptId), counts = true))
         unsaved.getOrPut(step.id) { mutableListOf() } += pending
-        viewModelScope.launch { saveScreen(step.id) }
+        work.launch { saveScreen(step.id) }
     }
 
     private fun startRun() {
         val lesson = lesson ?: return
         dispatch(LessonAction.RunStarting)
         starting =
-            viewModelScope.launch {
+            work.launch {
                 when (val outcome = start(runId = null) ?: return@launch) {
                     is StartOutcome.Started -> {
-                        mutableState.value = playFrom(lesson, outcome.run)
+                        val state = playFrom(lesson, outcome.run)
+                        if (sessions.current == owner) mutableState.value = state
                     }
 
                     is StartOutcome.Refused -> {
@@ -227,6 +236,7 @@ class LessonPlayerViewModel(
     private suspend fun start(runId: String?): StartOutcome? {
         val result =
             cache.mutate { session ->
+                if (session != owner) return@mutate null
                 try {
                     StartOutcome.Started(store.api.start(session, lessonId, studySessionId, runId))
                 } catch (e: ApiException) {
@@ -276,7 +286,7 @@ class LessonPlayerViewModel(
         pending: PendingCheck,
     ) {
         dispatch(LessonAction.CheckStarted(step.id))
-        viewModelScope.launch {
+        work.launch {
             val timeout = if (step.kind == StepKind.SpokenAnswer) SPOKEN_TIMEOUT else TYPED_TIMEOUT
             when (val outcome = withTimeoutOrNull(timeout) { send(pending) }) {
                 is CheckOutcome.Checked -> {
@@ -338,7 +348,7 @@ class LessonPlayerViewModel(
     }
 
     private fun saveCompletion() {
-        if (completing?.isActive != true) completing = viewModelScope.launch { complete() }
+        if (completing?.isActive != true) completing = work.launch { complete() }
     }
 
     private suspend fun complete() {
@@ -357,6 +367,7 @@ class LessonPlayerViewModel(
 
         val result =
             cache.mutate(invalidating = setOf(DataDomain.UserProgress, DataDomain.LearnerModel)) { session ->
+                if (session != owner) return@mutate null
                 try {
                     CompletionOutcome.Completed(store.api.complete(session, lessonId, runId, state.skippedWritingStepIds))
                 } catch (e: ApiException) {
@@ -434,6 +445,9 @@ class LessonPlayerViewModel(
         val next = (store.api.nextLesson(session, chapterId) as? NextLessonResponse.LessonWrapper)?.value ?: return null
         return next.lessonId.toString().takeIf { !next.completed && it != lessonId }
     }
+
+    /** The work for one learner's run, cancelled when another session opens the lesson. */
+    private fun openScope() = CoroutineScope(viewModelScope.coroutineContext + SupervisorJob(viewModelScope.coroutineContext.job))
 
     private fun LessonPlayerState.answerDurationMs() = (now() - stepStartedAt).coerceIn(0, MAX_ANSWER_DURATION_MS)
 
