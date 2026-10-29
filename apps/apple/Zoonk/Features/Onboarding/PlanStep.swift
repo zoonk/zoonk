@@ -239,6 +239,10 @@ private struct PlanReveal: View {
         }
       }
 
+      if let syllabus = syllabus.value {
+        AreaWeights(syllabus: syllabus)
+      }
+
       PlanSuggestionSection(context: context)
 
       if let structure {
@@ -527,4 +531,91 @@ private struct SyllabusTopicsSheet: View {
 
     return parts.isEmpty ? nil : parts.joined(separator: " · ")
   }
+}
+
+private struct AreaWeights: View {
+  let syllabus: GoalSyllabus
+
+  var body: some View {
+    let weighed = syllabus.subjects
+      .compactMap { subject in subject.displayWeight.map { (subject, $0) } }
+      .sorted { $0.1.share > $1.1.share }
+    let assumed = weighed.filter { $0.1.basis == .assumed }.count
+
+    if weighed.count >= 2 {
+      Section {
+        ForEach(weighed, id: \.0.id) { subject, weight in
+          VStack(alignment: .leading, spacing: 6) {
+            PlanPathRow {
+              Text(subject.name)
+            } value: {
+              Text(percentText(weight))
+                .font(.subheadline)
+                .monospacedDigit()
+                .foregroundStyle(.secondary)
+            }
+
+            ProgressView(value: weight.share)
+              .tint(.primary)
+              .accessibilityHidden(true)
+          }
+          .accessibilityElement(children: .combine)
+        }
+      } header: {
+        Text(
+          "Weight by area", tableName: "Onboarding",
+          comment: "Header over an exam's areas and how much each weighs")
+      } footer: {
+        if assumed > 0 {
+          Text(estimateNote(assumed))
+        }
+      }
+    }
+  }
+
+  private func percentText(_ weight: SyllabusSubject.DisplayWeight) -> String {
+    let percent = (Double(weight.percent) / 100).formatted(.percent)
+
+    return weight.basis == .assumed
+      ? String(
+        localized: "~\(percent)", table: "Onboarding",
+        comment: "An area's weight the official documents don't give, so it's estimated")
+      : percent
+  }
+
+  private func estimateNote(_ count: Int) -> String {
+    switch (syllabus.fromMaterial, syllabus.examDocument, count == 1) {
+    case (true, _, true):
+      String(
+        localized: "~ Estimated: your material doesn't say how much this area weighs.",
+        table: "Onboarding",
+        comment: "Under a weight estimated because the learner's material doesn't give it")
+    case (true, _, false):
+      String(
+        localized: "~ Estimated: your material doesn't say how much these areas weigh.",
+        table: "Onboarding",
+        comment: "Under weights estimated because the learner's material doesn't give them")
+    case (false, .guide, true):
+      String(
+        localized: "~ Estimated: the official guide doesn't say how much this area weighs.",
+        table: "Onboarding",
+        comment: "Under a weight estimated because the exam's official guide doesn't give it")
+    case (false, .guide, false):
+      String(
+        localized: "~ Estimated: the official guide doesn't say how much these areas weigh.",
+        table: "Onboarding",
+        comment: "Under weights estimated because the exam's official guide doesn't give them")
+    case (false, .notice, true):
+      String(
+        localized: "~ Estimated: the notice doesn't say how much this area weighs.",
+        table: "Onboarding",
+        comment: "Under a weight estimated because the exam notice doesn't give it")
+    case (false, .notice, false):
+      String(
+        localized: "~ Estimated: the notice doesn't say how much these areas weigh.",
+        table: "Onboarding",
+        comment: "Under weights estimated because the exam notice doesn't give them")
+    }
+  }
+
 }

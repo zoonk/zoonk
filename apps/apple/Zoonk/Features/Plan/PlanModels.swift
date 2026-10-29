@@ -526,6 +526,17 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
     var id: String { chapterId ?? skillId ?? "\(position)" }
   }
 
+  struct DisplayWeight: Decodable, Equatable, Sendable {
+    enum Basis: String, Decodable, Sendable {
+      case assumed
+      case stated
+    }
+
+    let basis: Basis
+    let percent: Int
+    let share: Double
+  }
+
   struct Mastery: Decodable, Equatable, Sendable {
     let answered: Int
     let correct: Int
@@ -546,6 +557,7 @@ struct SyllabusSubject: Decodable, Equatable, Identifiable, Sendable {
   }
 
   let chapters: [Chapter]
+  let displayWeight: DisplayWeight?
   let key: String
   let lessonsDone: Int
   let lessonsKnown: Int

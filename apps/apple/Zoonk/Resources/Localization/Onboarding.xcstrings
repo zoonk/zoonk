@@ -1828,6 +1828,209 @@
         }
       }
     },
+    "~ Estimated: the notice doesn't say how much these areas weigh." : {
+      "comment" : "Under weights estimated because the exam notice doesn't give them",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Geschätzt: Aus der Bekanntmachung geht nicht hervor, wie stark diese Bereiche gewichtet werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimación: la convocatoria no indica qué peso tienen estas áreas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimation : l’avis officiel ne précise pas le poids de ces domaines."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimativa: o edital não informa o peso destas áreas."
+          }
+        }
+      }
+    },
+    "~ Estimated: the notice doesn't say how much this area weighs." : {
+      "comment" : "Under a weight estimated because the exam notice doesn't give it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Geschätzt: Aus der Bekanntmachung geht nicht hervor, wie stark dieser Bereich gewichtet wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimación: la convocatoria no indica qué peso tiene esta área."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimation : l’avis officiel ne précise pas le poids de ce domaine."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimativa: o edital não informa o peso desta área."
+          }
+        }
+      }
+    },
+    "~ Estimated: the official guide doesn't say how much these areas weigh." : {
+      "comment" : "Under weights estimated because the exam's official guide doesn't give them",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Geschätzt: Im offiziellen Leitfaden steht nicht, wie stark diese Bereiche gewichtet werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimación: la guía oficial no indica qué peso tienen estas áreas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimation : le guide officiel ne précise pas le poids de ces domaines."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimativa: o guia oficial não informa o peso destas áreas."
+          }
+        }
+      }
+    },
+    "~ Estimated: the official guide doesn't say how much this area weighs." : {
+      "comment" : "Under a weight estimated because the exam's official guide doesn't give it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Geschätzt: Im offiziellen Leitfaden steht nicht, wie stark dieser Bereich gewichtet wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimación: la guía oficial no indica qué peso tiene esta área."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimation : le guide officiel ne précise pas le poids de ce domaine."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimativa: o guia oficial não informa o peso desta área."
+          }
+        }
+      }
+    },
+    "~ Estimated: your material doesn't say how much these areas weigh." : {
+      "comment" : "Under weights estimated because the learner's material doesn't give them",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Geschätzt: Aus deinem Material geht nicht hervor, wie stark diese Bereiche gewichtet werden."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimación: tu material no indica qué peso tienen estas áreas."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimation : ton contenu ne précise pas le poids de ces domaines."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimativa: seu material não informa o peso destas áreas."
+          }
+        }
+      }
+    },
+    "~ Estimated: your material doesn't say how much this area weighs." : {
+      "comment" : "Under a weight estimated because the learner's material doesn't give it",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Geschätzt: Aus deinem Material geht nicht hervor, wie stark dieser Bereich gewichtet wird."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimación: tu material no indica qué peso tiene esta área."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimation : ton contenu ne précise pas le poids de ce domaine."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~ Estimativa: seu material não informa o peso desta área."
+          }
+        }
+      }
+    },
+    "~%@" : {
+      "comment" : "An area's weight the official documents don't give, so it's estimated",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~%@"
+          }
+        }
+      }
+    },
     "~%@ of the plan's exam topics in depth by %@, what comes up most first." : {
       "comment" : "What a time a day covers of an exam by its date",
       "localizations" : {
@@ -9981,6 +10184,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estamos escolhendo o que você vai aprender primeiro e distribuindo o conteúdo nos seus dias. Uma matéria nova pode levar um ou dois minutos."
+          }
+        }
+      }
+    },
+    "Weight by area" : {
+      "comment" : "Header over an exam's areas and how much each weighs",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gewichtung nach Bereich"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peso por área"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répartition par domaine"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peso por área"
           }
         }
       }
