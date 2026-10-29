@@ -4968,35 +4968,6 @@
         }
       }
     },
-    "Phase %lld" : {
-      "comment" : "Eyebrow naming a phase challenge's phase.",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Phase %lld"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fase %lld"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Phase %lld"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fase %lld"
-          }
-        }
-      }
-    },
     "Phase %lld challenge" : {
       "comment" : "Eyebrow naming a phase's checkpoint, as in “Phase 2 challenge”.",
       "localizations" : {
@@ -8444,6 +8415,64 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você viu isto em %@."
+          }
+        }
+      }
+    },
+    "You'll see right or wrong after each answer, and why at the end." : {
+      "comment" : "How a weekly challenge gives feedback, on its intro.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach jeder Antwort siehst du, ob sie richtig oder falsch war. Am Ende erfährst du auch, warum."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Después de cada respuesta sabrás si has acertado o no; al final, descubrirás por qué."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu verras après chaque réponse si elle est juste ou fausse, puis à la fin pourquoi."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você vai ver se acertou ou errou depois de cada resposta e, no final, vai saber por quê."
+          }
+        }
+      }
+    },
+    "You'll see right or wrong after each answer, and why at the end, with the traps he set." : {
+      "comment" : "How a phase challenge gives feedback, on its intro.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nach jeder Antwort siehst du, ob sie richtig oder falsch war. Am Ende erfährst du auch, warum und welche Fallen der Trickser gestellt hat."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Después de cada respuesta sabrás si has acertado o no; al final, descubrirás por qué y qué trampas ha preparado."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu verras après chaque réponse si elle est juste ou fausse, puis à la fin pourquoi et quels pièges il a tendus."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você vai ver se acertou ou errou depois de cada resposta e, no final, vai saber por quê e quais armadilhas ele preparou."
           }
         }
       }

@@ -140,6 +140,10 @@ struct ChallengeScreen: View {
         }
       }
 
+      if let rule = duelRule(challenge) {
+        Text(rule).font(.footnote).foregroundStyle(.secondary)
+      }
+
       if challenge.reward.brainPower > 0, !won {
         Label {
           Text(
@@ -297,11 +301,7 @@ struct ChallengeScreen: View {
     let phase = challenge.phase.map { $0.value1.index + 1 }
 
     guard isCheckpoint(challenge) else {
-      return phase.map {
-        String(
-          localized: "Phase \($0)", table: "Practice",
-          comment: "Eyebrow naming a phase challenge's phase.")
-      }
+      return when(challenge)
     }
 
     let name =
@@ -324,6 +324,48 @@ struct ChallengeScreen: View {
         localized: "New try · \(name)", table: "Practice",
         comment: "Eyebrow of a lost checkpoint's rematch; the argument names the checkpoint.")
       : name
+  }
+
+  /// A mock always says when it is; a weekly challenge only once it has a start time, as on main.
+  private func when(_ challenge: Components.Schemas.Challenge) -> String? {
+    guard let date = challenge.date, challenge.mock || challenge.startTime != nil else {
+      return nil
+    }
+
+    return [dayLabel(date, today: challenge.today), challenge.startTime.flatMap(clockTime)]
+      .compactMap(\.self)
+      .joined(separator: " · ")
+  }
+
+  private func clockTime(_ text: String) -> String? {
+    let parts = text.split(separator: ":").compactMap { Int($0) }
+    guard parts.count >= 2,
+      let date = Calendar(identifier: .gregorian).date(
+        from: DateComponents(
+          timeZone: .gmt, year: 2000, month: 1, day: 1, hour: parts[0], minute: parts[1]))
+    else {
+      return nil
+    }
+
+    return date.formatted(Date.FormatStyle(timeZone: .gmt).hour().minute())
+  }
+
+  private func duelRule(_ challenge: Components.Schemas.Challenge) -> LocalizedStringResource? {
+    if challenge.mock || challenge.call != nil {
+      return nil
+    }
+
+    if challenge.kind == .weekly {
+      return LocalizedStringResource(
+        "You'll see right or wrong after each answer, and why at the end.", table: "Practice",
+        comment: "How a weekly challenge gives feedback, on its intro.")
+    }
+
+    return challenge.status == .done
+      ? nil
+      : LocalizedStringResource(
+        "You'll see right or wrong after each answer, and why at the end, with the traps he set.",
+        table: "Practice", comment: "How a phase challenge gives feedback, on its intro.")
   }
 
   private func titleText(_ challenge: Components.Schemas.Challenge) -> Text {
@@ -428,7 +470,7 @@ struct ChallengeScreen: View {
           .units(allowed: [.hours, .minutes], width: .abbreviated)))
     }
 
-    if let date = challenge.date, challenge.status == .upcoming {
+    if let date = challenge.date, challenge.status == .upcoming, when(challenge) == nil {
       facts.append(dayLabel(date, today: challenge.today))
     }
 
