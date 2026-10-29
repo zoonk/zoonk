@@ -658,6 +658,8 @@ private struct WeekDayMark: View {
         comment: "A day of the week and how it went"))
   }
 
+  /// Main's `DayRing`: a study day gone by without study reads as missed, and days outside the
+  /// plan as a dash.
   @ViewBuilder
   private var symbol: some View {
     if day.hitGoal {
@@ -666,12 +668,21 @@ private struct WeekDayMark: View {
     } else if day.studied {
       Image(systemName: "circle.lefthalf.filled")
         .foregroundStyle(.success)
+    } else if day.kind == "exam" || day.kind == "deadline" {
+      Image(systemName: "graduationcap")
+        .foregroundStyle(.primary)
+    } else if (day.kind == "beforeStart" || day.kind == "afterEnd") && !day.isToday {
+      Image(systemName: "minus")
+        .foregroundStyle(.quaternary)
     } else if day.kind == "rest" {
       Image(systemName: "moon")
         .foregroundStyle(.tertiary)
     } else if day.isToday {
       Image(systemName: "circle")
         .fontWeight(.semibold)
+        .foregroundStyle(.secondary)
+    } else if day.kind == "study" && day.date < localDate {
+      Image(systemName: "circle.dashed")
         .foregroundStyle(.secondary)
     } else {
       Image(systemName: "circle")
