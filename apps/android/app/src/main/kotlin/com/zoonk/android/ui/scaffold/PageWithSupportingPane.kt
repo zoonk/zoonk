@@ -1,10 +1,12 @@
 package com.zoonk.android.ui.scaffold
 
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffold
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffoldRole
+import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -22,7 +24,11 @@ fun PageWithSupportingPane(
     modifier: Modifier = Modifier,
     mainPane: @Composable (supportingPaneBeside: Boolean) -> Unit,
 ) {
-    val navigator = rememberSupportingPaneScaffoldNavigator()
+    // Material's default lays the aside under the page on tall windows, halving a tall phone's page.
+    val navigator =
+        rememberSupportingPaneScaffoldNavigator(
+            scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2()).copy(maxVerticalPartitions = 1),
+        )
     val supportingPaneBeside = navigator.scaffoldValue[SupportingPaneScaffoldRole.Supporting] == PaneAdaptedValue.Expanded
 
     SupportingPaneScaffold(
