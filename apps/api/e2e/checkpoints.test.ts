@@ -14,8 +14,10 @@ import { choiceItemContent, itemFixture, skillFixture } from "@zoonk/testing/fix
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import {
   challengeGenerationSchema,
-  challengeResponseSchema,
   challengeStartResponseSchema,
+} from "../src/lib/openapi/schemas/challenge-actions";
+import {
+  challengeResponseSchema,
   checkpointResponseSchema,
 } from "../src/lib/openapi/schemas/checkpoints";
 import { languageConversationCreatedSchema } from "../src/lib/openapi/schemas/language";

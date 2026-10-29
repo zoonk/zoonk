@@ -8,9 +8,11 @@ import { studySessionErrorCodes } from "../../study-session-errors";
 import {
   challengeGenerationSchema,
   challengeMoveResponseSchema,
-  challengeResponseSchema,
   challengeStartResponseSchema,
   challengeUndoResponseSchema,
+} from "../schemas/challenge-actions";
+import {
+  challengeResponseSchema,
   checkpointMoveResponseSchema,
   checkpointResponseSchema,
 } from "../schemas/checkpoints";
