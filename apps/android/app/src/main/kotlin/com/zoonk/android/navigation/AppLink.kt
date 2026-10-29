@@ -114,7 +114,7 @@ object AppLink {
                     "score" -> AppRoute.StatsScore
                     "patterns" -> AppRoute.StatsPatterns
                     "courses" -> AppRoute.Catalog()
-                    "start" -> AppRoute.StartGoal(goal = query["goal"], planId = query["plan"])
+                    "start" -> AppRoute.StartGoal(goal = query["goal"], planId = query["plan"], draftId = query["draft"])
                     "session" -> AppRoute.Session(blockId = query["block"], goalId = query["goal"])
                     "logbook" -> AppRoute.Logbook
                     "focus-test" -> AppRoute.FocusTest(goalId = query["goal"])

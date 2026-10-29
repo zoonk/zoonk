@@ -123,11 +123,15 @@ sealed interface AppRoute : NavKey {
         val courseId: String,
     ) : AppRoute
 
-    /** `goal` fills the box (reading it waits for the learner's tap); `planId` starts from a shared plan. */
+    /**
+     * `goal` fills the box (reading it waits for the learner's tap); `planId` starts from a shared
+     * plan; `draftId` shows a goal already sent, which opening only reads.
+     */
     @Serializable
     data class StartGoal(
         val goal: String? = null,
         val planId: String? = null,
+        val draftId: String? = null,
     ) : AppRoute
 
     @Serializable

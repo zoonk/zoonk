@@ -41,6 +41,7 @@ class AppLinkTest {
             "/courses/math" to AppRoute.Catalog(category = "math"),
             "/start" to AppRoute.StartGoal(),
             "/start?goal=Pass%20the%20ENEM&plan=plan-1" to AppRoute.StartGoal(goal = "Pass the ENEM", planId = "plan-1"),
+            "/start?draft=draft-1" to AppRoute.StartGoal(draftId = "draft-1"),
             "/start/goal-1" to AppRoute.GoalSetup("goal-1"),
             "/start/course/course-1" to AppRoute.CourseStart("course-1"),
             "/start/course/course-1?chapter=chapter-2&minutes=30" to AppRoute.CourseStart("course-1", "chapter-2", 30),
