@@ -150,8 +150,6 @@
         <item quantity="one">%1$d of %2$d lesson</item>
         <item quantity="other">%1$d of %2$d lessons</item>
     </plurals>
-    <string name="plan_plus" translatable="false">Plus</string>
-    <string name="plan_available_with_plus">Available with Plus</string>
 
     <string name="plan_next_on_path">Next on your path</string>
     <string name="plan_date_to_be_confirmed">Date to be confirmed</string>

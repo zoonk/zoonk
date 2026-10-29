@@ -11,7 +11,6 @@
   "plan_archive_description": "f9a4cb89c11cadb5541863af280d177c733093f6cfa4c86956925ee3bc1a2f63",
   "plan_archive_goal": "fafc99fcae049d6b1c2a7cbcc4c23745f3dc382d680238b6042c15324ff1c394",
   "plan_archive_title": "33954c05fbde10aaa409530993df12d18ad150258f8d2f858f74c7f731bae888",
-  "plan_available_with_plus": "7cbe40a319d393aa95277e8bad0cfbfbafb4d60a8283806dcd0fa2d6c01a04b8",
   "plan_building_description": "b9ee2460aaf6abe2c3a639abeb1a29a92d805521c7bdeb7d1841b5ccf60bf86b",
   "plan_building_eyebrow": "522c1db368154abcceb2f4ee9c5fa10e8e0a5bdfc67086b75e22f340a18da573",
   "plan_cadence_biweekly": "897cf639d31dad9e46500cf66e36bdafee67c96c342291f66c40c2603a2e9ffd",
@@ -525,7 +524,6 @@
         <item quantity="one">%1$d von %2$d Lektion</item>
         <item quantity="other">%1$d von %2$d Lektionen</item>
     </plurals>
-    <string name="plan_available_with_plus">Mit Plus verfügbar</string>
     <string name="plan_next_on_path">Als Nächstes auf deinem Weg</string>
     <string name="plan_date_to_be_confirmed">Termin wird noch bestätigt</string>
     <string name="plan_more">Mehr</string>

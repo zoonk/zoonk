@@ -11,7 +11,6 @@
   "plan_archive_description": "b90972fd418c6b11b5a4c52553a655b4ad7911a5e874c4fbfa1d9eb34c25359e",
   "plan_archive_goal": "8083b6a5770ab05db56927d743e0ac8329944468d112222c2c786ed1006d3b39",
   "plan_archive_title": "10aaee5c589928a3602d0c432ff2103f55c42dffa811cdb113ec6a2b06561f2d",
-  "plan_available_with_plus": "4b698cbfa066c3adedb925947249ceb42d2885aa14f342db8819a31ffde1f89e",
   "plan_building_description": "de5a7da2debfaeef394f2d35e32fce2ca0e28fb84a2e8d4ce3f3bfd27720067c",
   "plan_building_eyebrow": "3a99227c8318ccaa33595c121ec0a2e40b3f2e6f02a801d76bb5d5dd51366c6d",
   "plan_cadence_biweekly": "1cd29a3c73bc1d42ade29288f7d061d3704cbfed962b56c66abd34ef39601471",
@@ -539,7 +538,6 @@
         <item quantity="many">%1$d leçons sur %2$d</item>
         <item quantity="other">%1$d leçons sur %2$d</item>
     </plurals>
-    <string name="plan_available_with_plus">Disponible avec Plus</string>
     <string name="plan_next_on_path">La suite de ton parcours</string>
     <string name="plan_date_to_be_confirmed">Date à confirmer</string>
     <string name="plan_more">Plus</string>

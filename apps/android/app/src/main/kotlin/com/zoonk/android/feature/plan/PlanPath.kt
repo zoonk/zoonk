@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LabelChip
@@ -692,15 +693,6 @@ internal fun TrailingText(words: PlanDateWords) {
         style = MaterialTheme.typography.labelMedium.withTabularFigures(),
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         maxLines = 1,
-    )
-}
-
-@Composable
-internal fun PlusMark() {
-    val spoken = stringResource(R.string.plan_available_with_plus)
-    LabelChip(
-        text = stringResource(R.string.plan_plus),
-        modifier = Modifier.clearAndSetSemantics { contentDescription = spoken },
     )
 }
 
