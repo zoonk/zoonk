@@ -92,10 +92,10 @@
   "onboarding_row_date_not_out_notice": "5b5d0456e95adc1017e7d5d87dacb863b7e9d5e25479180a6c6650fad1e1eecf",
   "onboarding_row_date_to_be_confirmed": "3e3f16d6db2703aa51bfff275ec109f72f09777aae352188cbadfc1165c784ba",
   "onboarding_row_dates_estimated": "4db99ce2b9467026981091982971846e164946008faacb25ebccb387fccfb4dc",
-  "onboarding_row_days_left": "583fd7217deab5bf447d94b72002e59db449cb3be6a9b217db4d459d2fbc750d",
+  "onboarding_row_days_left": "d1ec02c9a3e82b849c802c93564c6580ca75f5b09689672a8cda20fee152c4f8",
   "onboarding_row_deadline": "874ddcc082ff6082d8245f90e723054a8e06843940977d52b4411f72693bffef",
   "onboarding_row_exam_date": "3a2342f7c2bdeaf27e2311a44b9a2ff1de65f57e854a9d6bcdd351acfd4c4d49",
-  "onboarding_row_exam_dates": "a6d1285bdb0d0bae5efccbebea920aaee91e0b8ba5d95de7307490e0606c96f5",
+  "onboarding_row_exam_dates": "e7d59cdf2c63c1a53144f05ad17f4dd2843d8257f52115f14920e828a1c355cf",
   "onboarding_row_goal": "bec93abb72556f1f0d9b62f497681f0cc7250317eae55e65374ab9af18a97993",
   "onboarding_row_guide_says": "5256ede924c600f5e8f9d78175dbbb8ec997c7ac596340f106f8d360ee175d99",
   "onboarding_row_language": "3b7262f45257569ebb166d4a50c0c64544d1a6de8a1e9875bee8c58bd3696c90",
@@ -146,9 +146,7 @@
   "onboarding_waitlist_joined": "5d5fb6e4475c1174e30cace6057f210c5f8802db2323ed04a2d2087b1bb3c6f4",
   "onboarding_waitlist_sign_in": "f8e232cd9800d90d55afa8e6d7999d8cab6dc554385bc3b4a58edbf20c7e0712",
   "onboarding_what_you_wrote": "7b81a0db8d44298bcaaf030cca561d7ebcb742ab88bbcc4a36dd39043b484e55",
-  "onboarding_where_from": "44f3f71c51db7f3404d4f450b2bdacc7a334f9344171ad6a2e74e7878f6f2143",
   "onboarding_write_again": "a85d245f52c15a4b79481631ad4c553f19d021919bf78df3862ec833f30e75df",
-  "onboarding_your_material": "43deaf430d21c1455ef347c7322d8bed8650b30c0dc5804e68802d4950ceb06d",
   "onboarding_your_question": "f737bb2d1b45163af1114013a0a3de060470d6faeaed2f999ad5ecf7a1726a07",
   "onboarding_your_text": "0f790053472cf8508eae1cbfb5244d5d51533168247d426d6b89c97f9e6a20bd"
 }
@@ -247,14 +245,13 @@
     <string name="onboarding_row_material">Tes supports</string>
     <string name="onboarding_row_material_note">Ton plan et tes leçons suivent ces supports</string>
     <string name="onboarding_row_exam_date">Date de l’examen</string>
-    <plurals name="onboarding_row_exam_dates">
-        <item quantity="one">Date de l’examen</item>
-        <item quantity="other">Dates de l’examen</item>
-    </plurals>
+    <!-- An exam's dates when it takes several days. -->
+    <string name="onboarding_row_exam_dates">Dates des examens</string>
     <string name="onboarding_row_deadline">Date limite</string>
     <plurals name="onboarding_row_days_left">
-        <item quantity="one">%d jour restant</item>
-        <item quantity="other">%d jours restants</item>
+        <item quantity="one">Encore %d jour</item>
+        <item quantity="many">Encore %d jours</item>
+        <item quantity="other">Encore %d jours</item>
     </plurals>
     <string name="onboarding_row_to_be_confirmed">À confirmer</string>
     <!-- %1$s is a year. -->
@@ -304,7 +301,6 @@
     <string name="onboarding_paste_link_placeholder">https://… un article, une page de cours ou un PDF</string>
     <string name="onboarding_add_link">Ajouter un lien</string>
     <string name="onboarding_adding_material">Ajout de tes documents…</string>
-    <string name="onboarding_your_material">Tes documents</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">Supprimer %1$s</string>
     <string name="onboarding_attach_limit_plus">Tu as ajouté autant de documents que ta formule le permet aujourd’hui. Réessaie demain.</string>
@@ -327,7 +323,6 @@
     <string name="onboarding_your_question">Ta question</string>
     <string name="onboarding_question_placeholder">Par exemple, pourquoi la glycolyse ne produit-elle que 2 ATP nets ?</string>
     <string name="onboarding_ask">Poser la question</string>
-    <string name="onboarding_where_from">Source</string>
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="onboarding_citation_page">%1$s, page %2$s</string>
     <string name="onboarding_citation_slide">%1$s, diapositive %2$s</string>

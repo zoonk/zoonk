@@ -98,10 +98,8 @@
     <string name="onboarding_row_material">Your material</string>
     <string name="onboarding_row_material_note">Your plan and lessons follow this material</string>
     <string name="onboarding_row_exam_date">Exam date</string>
-    <plurals name="onboarding_row_exam_dates">
-        <item quantity="one">Exam date</item>
-        <item quantity="other">Exam dates</item>
-    </plurals>
+    <!-- An exam's dates when it takes several days. -->
+    <string name="onboarding_row_exam_dates">Exam dates</string>
     <string name="onboarding_row_deadline">Deadline</string>
     <plurals name="onboarding_row_days_left">
         <item quantity="one">%d day left</item>
@@ -157,7 +155,6 @@
     <string name="onboarding_paste_link_placeholder">https://… an article, a class page or a PDF</string>
     <string name="onboarding_add_link">Add link</string>
     <string name="onboarding_adding_material">Adding your material…</string>
-    <string name="onboarding_your_material">Your material</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">Remove %1$s</string>
     <string name="onboarding_attach_limit_plus">You\'ve added as much material as your plan allows today. Try again tomorrow.</string>
@@ -181,7 +178,6 @@
     <string name="onboarding_your_question">Your question</string>
     <string name="onboarding_question_placeholder">E.g., why does glycolysis net only 2 ATP?</string>
     <string name="onboarding_ask">Ask</string>
-    <string name="onboarding_where_from">Where this comes from</string>
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="onboarding_citation_page">%1$s, page %2$s</string>
     <string name="onboarding_citation_slide">%1$s, slide %2$s</string>

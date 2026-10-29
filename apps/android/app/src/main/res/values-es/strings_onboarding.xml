@@ -92,10 +92,10 @@
   "onboarding_row_date_not_out_notice": "548ef09ea9b363a0b4d8689833f61463c3e9aaaeabf82e9f9c6c194497508f95",
   "onboarding_row_date_to_be_confirmed": "ad61889bdcfb5ba37e0708b9396e314c41552c0de48eab16244f774d0df73b65",
   "onboarding_row_dates_estimated": "2451f6126b305a80f2fd220036e041562c85c7b32803e1c95b875d1df472eb66",
-  "onboarding_row_days_left": "5ec5176f9cbb150405c9ed04ad05b49fc92657cef7b0034b877f05442923dfb4",
+  "onboarding_row_days_left": "b93a94d007b6570fe82c5152344982850b85a95632b9b8a5e329df87665cfe85",
   "onboarding_row_deadline": "ac841a973e982753e096f413f1cc8453d1856a414a798a079c95b10cdaff1d2d",
   "onboarding_row_exam_date": "d7b4cea0f573e722c101b6b9958a8c4cc5737ec35b7b7b1621ff00b7e03c3842",
-  "onboarding_row_exam_dates": "ac77d3d2deebb8ca9cebdb46655523054453b05fed1d523acccb7342291df803",
+  "onboarding_row_exam_dates": "75bfc583ef10111ea96fbf58c4d5a38e5b90a25b96df783dd53965d3011c8875",
   "onboarding_row_goal": "5904b7f58a4385a54f8c19cd07a05c7c12b6e4c55bd595faf4f4980d454c22a8",
   "onboarding_row_guide_says": "7fe2a463dc368ac5ad6b60975ceb18e513173e018b33af715fdc37b5d6989963",
   "onboarding_row_language": "2ac73803cdd7aed0a3d92c73e0dbe9336ed263dd8055df2262cc2853d3de2453",
@@ -146,9 +146,7 @@
   "onboarding_waitlist_joined": "fe147b16a5ed805821d33d01a6697e46b9cb90d1ac8f33cd0a7fba6af6a14e84",
   "onboarding_waitlist_sign_in": "d94706508e24947285f3ea31093d2cb6f723c7ab4cb97daeef4917d3c2ecca17",
   "onboarding_what_you_wrote": "1132d6aacdd526e0abee5e583ea9b3a7c5fa2528c379403ffbba75a692e3cf9e",
-  "onboarding_where_from": "0653c0e45be3a7ce50f7ffa2f207558c3b88eaf9e26670b189d618d5dea3f2c4",
   "onboarding_write_again": "1d075e113f71889d664a88452ec62fc11f79f5e8708526eb4c5425f7c548f54b",
-  "onboarding_your_material": "68c5fd404b4dffe3e43377dcbe03f9f65b1a3ca80fefcf9ef5fd369362dfeb75",
   "onboarding_your_question": "7d13f49ea65530dc9a0e7ca8db934d40048186d9b0bb2a58265add08e1af53d4",
   "onboarding_your_text": "1b55cc31a38d0b66963e4344718fb49bafb04287bcb1e0cbc89bd8b2f87a4c59"
 }
@@ -247,16 +245,13 @@
     <string name="onboarding_row_material">Tu temario</string>
     <string name="onboarding_row_material_note">Tu plan y tus lecciones seguirán este temario</string>
     <string name="onboarding_row_exam_date">Fecha del examen</string>
-    <plurals name="onboarding_row_exam_dates">
-        <item quantity="one">Fecha del examen</item>
-        <item quantity="many">Fechas del examen</item>
-        <item quantity="other">Fechas del examen</item>
-    </plurals>
+    <!-- An exam's dates when it takes several days. -->
+    <string name="onboarding_row_exam_dates">Fechas de los exámenes</string>
     <string name="onboarding_row_deadline">Fecha límite</string>
     <plurals name="onboarding_row_days_left">
-        <item quantity="one">%d día restante</item>
-        <item quantity="many">%d días restantes</item>
-        <item quantity="other">%d días restantes</item>
+        <item quantity="one">Queda %d día</item>
+        <item quantity="many">Quedan %d días</item>
+        <item quantity="other">Quedan %d días</item>
     </plurals>
     <string name="onboarding_row_to_be_confirmed">Por confirmar</string>
     <!-- %1$s is a year. -->
@@ -306,7 +301,6 @@
     <string name="onboarding_paste_link_placeholder">https://… un artículo, una página de clase o un PDF</string>
     <string name="onboarding_add_link">Añadir enlace</string>
     <string name="onboarding_adding_material">Añadiendo tus materiales…</string>
-    <string name="onboarding_your_material">Tus materiales</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">Quitar %1$s</string>
     <string name="onboarding_attach_limit_plus">Hoy has añadido todo el material que permite tu plan. Vuelve a intentarlo mañana.</string>
@@ -329,7 +323,6 @@
     <string name="onboarding_your_question">Tu pregunta</string>
     <string name="onboarding_question_placeholder">Por ejemplo, ¿por qué la glucólisis produce solo 2 ATP netos?</string>
     <string name="onboarding_ask">Preguntar</string>
-    <string name="onboarding_where_from">De dónde sale esta información</string>
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="onboarding_citation_page">%1$s, página %2$s</string>
     <string name="onboarding_citation_slide">%1$s, diapositiva %2$s</string>

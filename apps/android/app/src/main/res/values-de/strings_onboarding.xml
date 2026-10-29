@@ -95,7 +95,7 @@
   "onboarding_row_days_left": "73f68830908a02e6c3dc12ab8610cdcbf54556195bbe2e625e617bb44eb3bf1a",
   "onboarding_row_deadline": "68c0ea144990304aa20cdb581a93293ffb7cdaefc59dfe1fc80075c691febad5",
   "onboarding_row_exam_date": "fcfb97067df54a195faa591e3f4d913df6555d5398c882adfee9b6cff95e9d2c",
-  "onboarding_row_exam_dates": "8b75718bc14e7e5660c097b0d4020a1329db64ec63a26792c8159373480b2339",
+  "onboarding_row_exam_dates": "36f1e75af4a2d3c189c5a45b5ccf1226b87e7d18f3a502467627ecbb0750cd43",
   "onboarding_row_goal": "893b281b87d92e62bebea819f02f4feb73f9f5382667025855832eac11a6e936",
   "onboarding_row_guide_says": "bba09972c27c8c9d9f029a7bedf67486208e4423a46af987cd6c4e7aab073494",
   "onboarding_row_language": "730a80e658f1fbc7d64c324b94c3e002b341dd6892518de6f1728ecbe37f94ba",
@@ -146,9 +146,7 @@
   "onboarding_waitlist_joined": "f0cb55b763a835ec640ee337616b888bb56010b8fc261226d240775998f82a3f",
   "onboarding_waitlist_sign_in": "febcaf9addfa353933755edea0541ec401067a1c0f104f27831131db326d376d",
   "onboarding_what_you_wrote": "5b305da868185d0ae68452aa1418770f2e898128f8148a1f0382fa6b52e04c84",
-  "onboarding_where_from": "5a162d22332c2f35178b5197b3ef2cf9ae4cda8f47fedb353145108b09af284a",
   "onboarding_write_again": "5286c9535d1c8c0e7a07ad271e89c536ba2de156b1d80ded44007cf2725b23be",
-  "onboarding_your_material": "f207013c0ab2f8bbd38f953fc0825cf1fe5bdcbdcd95f8f355b6d99550175e46",
   "onboarding_your_question": "f514b9a0b9ca30212d86bbe73e89923eb9024d442d429f1b33aa8672b670bca2",
   "onboarding_your_text": "80fa1b77e51a217ef0c8b051eb06c468231801b9e933856044bef184e5cd02cc"
 }
@@ -247,10 +245,8 @@
     <string name="onboarding_row_material">Dein Lernmaterial</string>
     <string name="onboarding_row_material_note">Dein Plan und deine Lektionen richten sich nach diesem Material</string>
     <string name="onboarding_row_exam_date">Prüfungstermin</string>
-    <plurals name="onboarding_row_exam_dates">
-        <item quantity="one">Prüfungstermin</item>
-        <item quantity="other">Prüfungstermine</item>
-    </plurals>
+    <!-- An exam's dates when it takes several days. -->
+    <string name="onboarding_row_exam_dates">Prüfungstermine</string>
     <string name="onboarding_row_deadline">Frist</string>
     <plurals name="onboarding_row_days_left">
         <item quantity="one">%d Tag übrig</item>
@@ -304,7 +300,6 @@
     <string name="onboarding_paste_link_placeholder">https://… ein Artikel, eine Kursseite oder ein PDF</string>
     <string name="onboarding_add_link">Link hinzufügen</string>
     <string name="onboarding_adding_material">Material wird hinzugefügt…</string>
-    <string name="onboarding_your_material">Dein Material</string>
     <!-- Removes an attached file or text. %1$s is its title. -->
     <string name="onboarding_remove_material">%1$s entfernen</string>
     <string name="onboarding_attach_limit_plus">Du hast heute so viel Material hinzugefügt, wie dein Tarif erlaubt. Versuch es morgen wieder.</string>
@@ -327,7 +322,6 @@
     <string name="onboarding_your_question">Deine Frage</string>
     <string name="onboarding_question_placeholder">Zum Beispiel: Warum entstehen bei der Glykolyse netto nur 2 ATP?</string>
     <string name="onboarding_ask">Fragen</string>
-    <string name="onboarding_where_from">Quelle</string>
     <!-- %1$s is a document\'s title, %2$s a page number. -->
     <string name="onboarding_citation_page">%1$s, Seite %2$s</string>
     <string name="onboarding_citation_slide">%1$s, Folie %2$s</string>

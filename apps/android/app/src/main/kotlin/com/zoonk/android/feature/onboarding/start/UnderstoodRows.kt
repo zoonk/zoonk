@@ -264,7 +264,7 @@ class UnderstoodRows(
 
         return UnderstoodRow(
             id = "examDates",
-            label = resources.getQuantityString(R.plurals.onboarding_row_exam_dates, sitting.size),
+            label = text(if (sitting.size == 1) R.string.onboarding_row_exam_date else R.string.onboarding_row_exam_dates),
             value = examDaysText(sitting),
             note = if (estimated) text(R.string.onboarding_row_dates_estimated) else daysLeft(day.day),
             source = if (estimated) null else day.source?.let { RowSource(it.title, it.url) },
