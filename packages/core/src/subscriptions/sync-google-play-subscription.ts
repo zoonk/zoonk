@@ -1,8 +1,8 @@
 import { getSession } from "../users/get-session";
 import { GooglePlayError } from "./google-play-error";
 import {
+  type ScheduleRenewalCheck,
   findGooglePlayLineOwner,
-  getGooglePlayRenewalCheck,
   saveGooglePlayPurchase,
 } from "./reconcile-google-play-subscription";
 import { isActiveStoreSubscription } from "./reconcile-store-subscription";
@@ -15,8 +15,10 @@ import { isActiveStoreSubscription } from "./reconcile-store-subscription";
  */
 export async function syncCurrentUserGooglePlaySubscription({
   purchaseToken,
+  scheduleRenewalCheck,
 }: {
   purchaseToken: string;
+  scheduleRenewalCheck: ScheduleRenewalCheck;
 }) {
   const session = await getSession();
 
@@ -38,10 +40,8 @@ export async function syncCurrentUserGooglePlaySubscription({
       return session.user.id;
     },
     purchaseToken,
+    scheduleRenewalCheck,
   });
 
-  return {
-    isActive: subscription ? isActiveStoreSubscription(subscription) : false,
-    renewalCheck: getGooglePlayRenewalCheck(subscription),
-  };
+  return { isActive: subscription ? isActiveStoreSubscription(subscription) : false };
 }

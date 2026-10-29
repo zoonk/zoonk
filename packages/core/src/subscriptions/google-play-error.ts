@@ -2,6 +2,7 @@ export type GooglePlayErrorReason =
   | "accountMismatch"
   | "configuration"
   | "conflict"
+  | "ended"
   | "invalidProduct"
   | "invalidPurchase"
   | "unauthorized"

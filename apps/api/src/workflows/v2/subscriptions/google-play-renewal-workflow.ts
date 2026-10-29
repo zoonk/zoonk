@@ -1,46 +1,42 @@
 import { sleep } from "workflow";
 import { start } from "workflow/api";
 import { claimRunToken } from "../_shared/run-token";
-import { checkGooglePlayRenewalStep } from "./steps/check-google-play-renewal-step";
-
-const RETRY_AFTER_MS = 86_400_000;
-
-export type GooglePlayRenewalInput = { checkAt: Date; subscriptionId: string };
+import {
+  checkGooglePlayRenewalStep,
+  findGooglePlayRenewalCheckAtStep,
+} from "./steps/google-play-renewal-steps";
 
 /**
- * One short run per checkpoint, rather than one for a subscription's whole life; every save
- * schedules one, so a second start for the same checkpoint ends at once. A check that keeps failing
- * (Google down, broken credentials) hands off to a run a day later, on the latest deployment so a
- * fix reaches it, until Google answers. Returns the next run's id.
+ * One live run per subscription row, so checks can't fork: it sleeps to the checkpoint the row
+ * gives, checks, and hands the row's token to a run on the latest deployment, so a credentials fix
+ * reaches the next check. A check that fails leaves the row as it was, so the same rule picks the
+ * next checkpoint. Returns the next run's id, or null once the row needs no more checks.
  */
-export async function googlePlayRenewalWorkflow(
-  input: GooglePlayRenewalInput,
-): Promise<string | null> {
+export async function googlePlayRenewalWorkflow(subscriptionId: string): Promise<string | null> {
   "use workflow";
 
-  using claim = await claimRunToken(
-    `google-play-renewal:${input.subscriptionId}:${input.checkAt.toISOString()}`,
-  );
+  {
+    using claim = await claimRunToken(`google-play-renewal:${subscriptionId}`);
 
-  if (claim.conflict) {
-    return null;
+    if (claim.conflict) {
+      return null;
+    }
+
+    const checkAt = await findGooglePlayRenewalCheckAtStep(subscriptionId);
+
+    if (!checkAt) {
+      return null;
+    }
+
+    await sleep(checkAt);
+    await checkGooglePlayRenewalStep(subscriptionId).catch(() => null);
+
+    if (!(await findGooglePlayRenewalCheckAtStep(subscriptionId))) {
+      return null;
+    }
   }
 
-  await sleep(input.checkAt);
-
-  const checkAt = await checkGooglePlayRenewalStep(input.subscriptionId).catch(
-    () => new Date(Date.now() + RETRY_AFTER_MS),
-  );
-
-  if (!checkAt) {
-    return null;
-  }
-
-  const next = await start(
-    googlePlayRenewalWorkflow,
-    [{ checkAt, subscriptionId: input.subscriptionId }],
-    { deploymentId: "latest" },
-  );
+  const next = await start(googlePlayRenewalWorkflow, [subscriptionId], { deploymentId: "latest" });
 
   return next.runId;
 }

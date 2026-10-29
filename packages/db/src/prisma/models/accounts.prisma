@@ -210,6 +210,8 @@ model Subscription {
   /// Rejects delayed notifications and concurrent stale updates.
   providerSignedAt       DateTime?            @map("provider_signed_at")
   providerEventId        String?              @map("provider_event_id")
+  /// Google Play refunds a purchase left unacknowledged for three days, so a pending one is checked again within hours. Null for other stores.
+  providerAcknowledged   Boolean?             @map("provider_acknowledged")
   /// Database checks keep it equal to `referenceId` for Apple and Google; its cascade closes
   /// notification races during account deletion.
   userId                 String?              @map("user_id") @db.Uuid

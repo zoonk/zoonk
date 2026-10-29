@@ -14,11 +14,12 @@ const PUSH_AUDIENCE = new URL("/v1/subscriptions/google/notifications", API_URL)
 async function createGooglePlayNotification(request: NextRequest) {
   const { message } = await readBody(request, googlePlayNotificationSchema);
 
-  const { data: result, error } = await safeAsync(() =>
+  const { error } = await safeAsync(() =>
     processGooglePlayNotification({
       audience: PUSH_AUDIENCE,
       authorization: request.headers.get("authorization"),
       message,
+      scheduleRenewalCheck: scheduleGooglePlayRenewalCheck,
     }),
   );
 
@@ -30,10 +31,6 @@ async function createGooglePlayNotification(request: NextRequest) {
     }
 
     throw error;
-  }
-
-  if (result?.renewalCheck) {
-    await scheduleGooglePlayRenewalCheck(result.renewalCheck);
   }
 
   return new Response(null, { status: 204 });

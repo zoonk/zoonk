@@ -13,7 +13,10 @@ async function createGooglePlaySubscription(request: NextRequest) {
   const parsed = await readBody(request, googlePlaySubscriptionRequestSchema);
 
   const { data: result, error } = await safeAsync(() =>
-    syncCurrentUserGooglePlaySubscription(parsed),
+    syncCurrentUserGooglePlaySubscription({
+      ...parsed,
+      scheduleRenewalCheck: scheduleGooglePlayRenewalCheck,
+    }),
   );
 
   if (error) {
@@ -24,10 +27,6 @@ async function createGooglePlaySubscription(request: NextRequest) {
     }
 
     throw error;
-  }
-
-  if (result.renewalCheck) {
-    await scheduleGooglePlayRenewalCheck(result.renewalCheck);
   }
 
   const currentAccount = await getMeResponseData();

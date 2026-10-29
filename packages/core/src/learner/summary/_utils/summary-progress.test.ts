@@ -24,6 +24,7 @@ function appleSubscription({
     periodStart: new Date(periodEnd.getTime() - 30 * 24 * HOUR_MS),
     plan: "plus",
     provider: "apple",
+    providerAcknowledged: null,
     providerEnvironment: "Production",
     providerEventId: null,
     providerProductId: "plus.monthly",

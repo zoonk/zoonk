@@ -2,8 +2,8 @@ import { z } from "zod";
 import { GOOGLE_PLAY_PACKAGE_NAME } from "./google-play-api";
 import { verifyGooglePlayPush } from "./google-play-push";
 import {
+  type ScheduleRenewalCheck,
   findGooglePlayLineOwner,
-  getGooglePlayRenewalCheck,
   saveGooglePlayPurchase,
 } from "./reconcile-google-play-subscription";
 import { findNotificationOwner } from "./reconcile-store-subscription";
@@ -48,10 +48,12 @@ export async function processGooglePlayNotification({
   audience,
   authorization,
   message,
+  scheduleRenewalCheck,
 }: {
   audience: string;
   authorization: string | null;
   message: { data: string; messageId: string };
+  scheduleRenewalCheck: ScheduleRenewalCheck;
 }) {
   await verifyGooglePlayPush({ audience, authorization });
 
@@ -61,7 +63,7 @@ export async function processGooglePlayNotification({
     return null;
   }
 
-  const subscription = await saveGooglePlayPurchase({
+  return saveGooglePlayPurchase({
     eventId: message.messageId,
     findOwner: async (purchase, seen) =>
       seen?.referenceId ??
@@ -70,9 +72,6 @@ export async function processGooglePlayNotification({
         existingReferenceId: null,
       }),
     purchaseToken,
+    scheduleRenewalCheck,
   });
-
-  return subscription
-    ? { renewalCheck: getGooglePlayRenewalCheck(subscription), subscription }
-    : null;
 }

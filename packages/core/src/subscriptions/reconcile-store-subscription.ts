@@ -23,6 +23,7 @@ export type StoreSubscriptionSnapshot = {
   periodStart: Date;
   plan: "plus";
   provider: StoreProvider;
+  providerAcknowledged?: boolean;
   providerEnvironment: string;
   providerEventId: string | null;
   providerProductId: string;
@@ -110,7 +111,17 @@ async function updateReadSnapshot(
   return tx.subscription.findUniqueOrThrow({ where: { id: existing.id } });
 }
 
-/** Its version moves on too, so a read of it that started earlier can't save it as active again. */
+/** Ending moves the version on too, so a read that started earlier can't save the row as active. */
+function getEndedData({ endedAt, signedAt }: { endedAt: Date; signedAt: Date }) {
+  return {
+    cancelAt: null,
+    cancelAtPeriodEnd: false,
+    endedAt,
+    providerSignedAt: signedAt,
+    status: "canceled",
+  };
+}
+
 async function endPreviousSubscription({
   previousSubscriptionId,
   snapshot,
@@ -138,13 +149,7 @@ async function endPreviousSubscription({
   }
 
   await tx.subscription.updateMany({
-    data: {
-      cancelAt: null,
-      cancelAtPeriodEnd: false,
-      endedAt: snapshot.periodStart,
-      providerSignedAt: snapshot.providerSignedAt,
-      status: "canceled",
-    },
+    data: getEndedData({ endedAt: snapshot.periodStart, signedAt: snapshot.providerSignedAt }),
     where: { endedAt: null, id: previous.id },
   });
 }
@@ -237,6 +242,30 @@ export async function findNotificationOwner({
 
   const user = await prisma.user.findUnique({ where: { id: accountId } });
   return user?.id ?? null;
+}
+
+/** Ends a chain the store no longer reports, unless another save changed it since it was read. */
+export async function endStoreSubscription(subscription: Subscription) {
+  const endedAt = new Date();
+
+  const ended = await writeLearnerChange(
+    { planInputs: true, userId: subscription.referenceId },
+    async (tx) => {
+      const { count } = await tx.subscription.updateMany({
+        data: getEndedData({ endedAt, signedAt: endedAt }),
+        where: { id: subscription.id, providerSignedAt: subscription.providerSignedAt },
+      });
+
+      if (count === 0) {
+        throw new StoreSubscriptionChangedError();
+      }
+
+      return tx.subscription.findUniqueOrThrow({ where: { id: subscription.id } });
+    },
+  );
+
+  revalidateCacheTags([getUserSubscriptionCacheTag(subscription.referenceId)]);
+  return ended;
 }
 
 /** Persists one ordered store snapshot and expires every cached entitlement derived from it. */

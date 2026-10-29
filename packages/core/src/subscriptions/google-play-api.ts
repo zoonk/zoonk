@@ -19,7 +19,7 @@ const HTTP_GONE = 410;
 const HTTP_SERVER_ERROR = 500;
 
 /** Statuses for a token Google doesn't know, or no longer reports (expired more than 60 days ago). */
-const INVALID_PURCHASE_STATUSES = new Set([HTTP_BAD_REQUEST, HTTP_NOT_FOUND, HTTP_GONE]);
+const INVALID_PURCHASE_STATUSES = new Set([HTTP_BAD_REQUEST, HTTP_NOT_FOUND]);
 
 const serviceAccountKeySchema = z.object({
   client_email: z.email(),
@@ -131,6 +131,11 @@ export async function getGooglePlaySubscription(purchaseToken: string) {
   const response = await callAndroidPublisher(
     `purchases/subscriptionsv2/tokens/${encodeURIComponent(purchaseToken)}`,
   );
+
+  /** Google says a 410 token will never be valid again: stop asking about it. */
+  if (response.status === HTTP_GONE) {
+    throw new GooglePlayError("ended");
+  }
 
   if (INVALID_PURCHASE_STATUSES.has(response.status)) {
     throw new GooglePlayError("invalidPurchase");

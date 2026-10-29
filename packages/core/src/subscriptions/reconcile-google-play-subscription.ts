@@ -10,6 +10,7 @@ import { type VerifiedGooglePlaySubscription } from "./google-play-purchase";
 import {
   StoreSubscriptionConflictError,
   type StoreSubscriptionSnapshot,
+  endStoreSubscription,
   findStoreSubscription,
   reconcileStoreSubscription,
 } from "./reconcile-store-subscription";
@@ -17,6 +18,7 @@ import { StoreSubscriptionChangedError } from "./store-subscription-changed-erro
 
 /** A save that keeps racing other writes gives up after this many reads, for its caller to retry. */
 const MAX_READS = 3;
+const HOUR_MS = 3_600_000;
 const DAY_MS = 86_400_000;
 
 type ReconcileGooglePlaySubscriptionInput = {
@@ -28,10 +30,18 @@ type ReconcileGooglePlaySubscriptionInput = {
   seen: Subscription | null;
 };
 
-type FindOwner = (
-  purchase: VerifiedGooglePlaySubscription,
-  seen: Subscription | null,
-) => Promise<string | null>;
+/** Starts the saved row's renewal workflow; a save outside it schedules one. */
+export type ScheduleRenewalCheck = (subscriptionId: string) => Promise<unknown>;
+
+type SaveGooglePlayPurchaseInput = {
+  eventId: string | null;
+  findOwner: (
+    purchase: VerifiedGooglePlaySubscription,
+    seen: Subscription | null,
+  ) => Promise<string | null>;
+  purchaseToken: string;
+  scheduleRenewalCheck?: ScheduleRenewalCheck;
+};
 
 function getGooglePlaySubscriptionSnapshot({
   eventId,
@@ -54,6 +64,7 @@ function getGooglePlaySubscriptionSnapshot({
     periodStart: purchase.startTime,
     plan: product.plan,
     provider: "google",
+    providerAcknowledged: purchase.isAcknowledged,
     providerEnvironment: purchase.environment,
     providerEventId: eventId,
     providerProductId: purchase.basePlanId
@@ -94,10 +105,13 @@ async function acknowledge({ purchase, referenceId }: ReconcileGooglePlaySubscri
 
 /**
  * Google blocks replacing a purchase until it's acknowledged, so acknowledging only once it's saved
- * means a replacement always finds its predecessor stored with its owner. An acknowledgement that
- * fails is retried by the next POST, notification or checkpoint, within Google's three days.
+ * means a replacement always finds its predecessor stored with its owner. The row's renewal check
+ * is scheduled first: it retries a failed acknowledgement within Google's three days.
  */
-async function save(input: ReconcileGooglePlaySubscriptionInput) {
+async function save(
+  input: ReconcileGooglePlaySubscriptionInput,
+  scheduleRenewalCheck: SaveGooglePlayPurchaseInput["scheduleRenewalCheck"],
+) {
   const { purchase, seen } = input;
 
   const subscription = await reconcileStoreSubscription(getGooglePlaySubscriptionSnapshot(input), {
@@ -111,6 +125,10 @@ async function save(input: ReconcileGooglePlaySubscriptionInput) {
 
     throw error;
   });
+
+  if (scheduleRenewalCheck && getGooglePlayRenewalCheckAt(subscription)) {
+    await scheduleRenewalCheck(subscription.id);
+  }
 
   if (purchase.isActive && !purchase.isAcknowledged) {
     await acknowledge(input);
@@ -138,24 +156,28 @@ export async function findGooglePlayLineOwner(purchase: VerifiedGooglePlaySubscr
   return previous?.referenceId ?? purchase.accountId;
 }
 
-/**
- * Google signs no version, so a save replaces only the row read before asking Google, and reads
- * Google again when another save landed in between. `findOwner` returning null saves nothing.
- */
-export async function saveGooglePlayPurchase(
-  {
-    eventId,
-    findOwner,
-    purchaseToken,
-  }: { eventId: string | null; findOwner: FindOwner; purchaseToken: string },
-  read = 1,
-): Promise<Subscription | null> {
-  const seen = await findStoreSubscription({
-    provider: "google",
-    providerSubscriptionId: purchaseToken,
-  });
+async function readGooglePlayPurchase(purchaseToken: string, seen: Subscription | null) {
+  try {
+    return await getGooglePlaySubscription(purchaseToken);
+  } catch (error) {
+    if (!(error instanceof GooglePlayError) || error.reason !== "ended") {
+      throw error;
+    }
 
-  const purchase = await getGooglePlaySubscription(purchaseToken);
+    if (!seen) {
+      throw new GooglePlayError("invalidPurchase", { cause: error });
+    }
+
+    return "ended" as const;
+  }
+}
+
+async function readAndSave(input: SaveGooglePlayPurchaseInput, seen: Subscription | null) {
+  const purchase = await readGooglePlayPurchase(input.purchaseToken, seen);
+
+  if (purchase === "ended") {
+    return seen && !seen.endedAt ? endStoreSubscription(seen) : seen;
+  }
 
   if (!purchase) {
     return null;
@@ -167,15 +189,33 @@ export async function saveGooglePlayPurchase(
     throw new GooglePlayError("invalidProduct");
   }
 
-  const referenceId = await findOwner(purchase, seen);
+  const referenceId = await input.findOwner(purchase, seen);
 
   if (!referenceId) {
     return null;
   }
 
-  const { data, error } = await safeAsync(() =>
-    save({ eventId, product, purchase, referenceId, seen }),
+  return save(
+    { eventId: input.eventId, product, purchase, referenceId, seen },
+    input.scheduleRenewalCheck,
   );
+}
+
+/**
+ * Google signs no version, so a save replaces only the row read before asking Google, and reads
+ * Google again when another save landed in between. `findOwner` returning null saves nothing. A
+ * stored purchase Google answers with 410 is ended.
+ */
+export async function saveGooglePlayPurchase(
+  input: SaveGooglePlayPurchaseInput,
+  read = 1,
+): Promise<Subscription | null> {
+  const seen = await findStoreSubscription({
+    provider: "google",
+    providerSubscriptionId: input.purchaseToken,
+  });
+
+  const { data, error } = await safeAsync(() => readAndSave(input, seen));
 
   if (!(error instanceof StoreSubscriptionChangedError)) {
     if (error) {
@@ -189,13 +229,14 @@ export async function saveGooglePlayPurchase(
     throw new GooglePlayError("unavailable", { cause: error });
   }
 
-  return saveGooglePlayPurchase({ eventId, findOwner, purchaseToken }, read + 1);
+  return saveGooglePlayPurchase(input, read + 1);
 }
 
 /**
- * When to read a saved purchase from Google again: at its period end, when it renews, ends or goes
- * into grace, or a day on while Google still calls a lapsed period active (the silent grace while
- * it retries a payment). Null once Google has ended it.
+ * The renewal workflow's one checkpoint rule, after a check or a failed one alike: within the hour
+ * while Google waits for an acknowledgement, at the period end, then a day at a time while Google
+ * still calls a lapsed period active (the silent grace while it retries a payment). Null once
+ * Google has ended it.
  */
 export function getGooglePlayRenewalCheckAt(subscription: Subscription | null, now = new Date()) {
   if (subscription?.status !== "active" || subscription.endedAt || !subscription.periodEnd) {
@@ -204,15 +245,14 @@ export function getGooglePlayRenewalCheckAt(subscription: Subscription | null, n
 
   const { periodEnd } = subscription;
 
+  if (!subscription.providerAcknowledged) {
+    return new Date(now.getTime() + HOUR_MS);
+  }
+
   if (periodEnd > now) {
     return periodEnd;
   }
 
   const days = Math.floor((now.getTime() - periodEnd.getTime()) / DAY_MS) + 1;
   return new Date(periodEnd.getTime() + days * DAY_MS);
-}
-
-export function getGooglePlayRenewalCheck(subscription: Subscription | null) {
-  const checkAt = getGooglePlayRenewalCheckAt(subscription);
-  return checkAt && subscription ? { checkAt, subscriptionId: subscription.id } : null;
 }
