@@ -25,7 +25,8 @@ class ProfileFormViewModel(
     user: MeUser,
     handle: SavedStateHandle,
 ) : ViewModel() {
-    private val savedUsername = user.username.orEmpty()
+    private var savedName = user.name
+    private var savedUsername = user.username.orEmpty()
 
     var name by handle.saveable { mutableStateOf(user.name) }
         private set
@@ -38,7 +39,14 @@ class ProfileFormViewModel(
     var failure by mutableStateOf<AccountFailure?>(null)
         private set
 
+    /** The last save went through and nothing changed since. */
+    var isSaved by mutableStateOf(false)
+        private set
+
     private var check: Job? = null
+
+    val isChanged: Boolean
+        get() = name.trim() != savedName || username != savedUsername
 
     val canSave: Boolean
         get() =
@@ -57,6 +65,7 @@ class ProfileFormViewModel(
     fun onNameChange(value: String) {
         name = value
         failure = null
+        isSaved = false
     }
 
     fun onUsernameChange(value: String) {
@@ -64,6 +73,7 @@ class ProfileFormViewModel(
         if (normalized == username) return
         username = normalized
         failure = null
+        isSaved = false
         check?.cancel()
         usernameStatus =
             when {
@@ -84,14 +94,19 @@ class ProfileFormViewModel(
             }
     }
 
-    fun save(onSaved: () -> Unit = {}) {
+    fun save() {
         if (!canSave) return
         isSaving = true
         viewModelScope.launch {
             try {
                 failure = account.saveProfile(name.trim(), username)
                 if (failure == AccountFailure.UsernameTaken) usernameStatus = UsernameStatus.Taken
-                if (failure == null) onSaved()
+                if (failure == null) {
+                    savedName = name.trim()
+                    savedUsername = username
+                    usernameStatus = UsernameStatus.Idle
+                    isSaved = true
+                }
             } finally {
                 isSaving = false
             }

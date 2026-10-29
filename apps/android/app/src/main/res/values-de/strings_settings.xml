@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "settings_account": "846fc191a3ba06f7fa86bb4cc06913ddf4664d1e30c458f9434a34f91c583e59",
+  "settings_account_deleted": "4e985d272495e7aa641558f478082a6469ace3ff8bd10482b0a8eabbbbbbbaee",
+  "settings_account_deleted_title": "aa32fa33230cac3b79f35ac252f84c9aeb70448818fa59737e222a95e905282f",
+  "settings_apple_not_revoked": "ebd3891da00b7b485a09ab5742b8adcacdd87595c12ca1f8698e8ee800d122ba",
+  "settings_cancel": "ec59718fbcc1be4426033fbfa8a8e68db5e7208ba93fd4ebfe068d3efeb05cf7",
+  "settings_delete_account": "626c2663f651d2575dbf2ae0f5b24a02c5d743d065039ef98d870e57f9e0002d",
+  "settings_delete_account_description": "d4da92f860befdbc2de4f8c7fd079dbb362dabd4d3805b5bfd66622bbda23510",
+  "settings_delete_code_description": "3ab396317a974493e33b48aa8cc13cf4669372affe6bc2c6c8d15dda1a10e168",
+  "settings_delete_code_title": "4fc923e2054eda6c833617634e735e6e4f5f72c72339a9c72d2325d6b1f0e85e",
+  "settings_delete_confirm_description": "aaa5d424da4601b629c7ce0e87a6995228536e99da48ba47b21274ae673780a9",
+  "settings_delete_confirm_title": "2277e39dcdb84203320692c9676659e9c9a92ff55c51370427ef30328a86cc8b",
+  "settings_delete_ellipsis": "4709a4680b8b9fb3cc92e76f63a3e6185db677822766e6cc9cbe4e36cfcb1bbc",
+  "settings_delete_failed": "5aefaa5ecd54bb231db1ac68f3c33b857907135324e9acea69611884bea3e3d9",
+  "settings_delete_my_account": "591eb25556255668189fcdeee01a3129ad448e38d2f065af680dcf3d1b7caa50",
+  "settings_delete_verify": "649865bcd03964a02c6cc2d93457c2ea13e5008e5cadde2af4572c803e36db34",
+  "settings_done": "f110a5eb417d807ebde6f077efc82252c0c37447aaa7ceb5ba7d54b4a34d7bdd",
+  "settings_download": "9fd2f0a0197558430ae7367386bc0eaabd9413ff6e173bc78f85d15a2555766c",
+  "settings_download_data": "d4ec600954eb9e072b053bf8a3ff5d32b29e4b59cada8db5d17783ec00a2701e",
+  "settings_download_data_description": "e8fdc8712b47a26ffc940d67a08d3157987f535bcf1bbfbf02f5d1eb84fe4f46",
+  "settings_download_failed": "147fde490ebcec8e19d49f81ead8fce4a9960c6603818afc6877143ede856532",
+  "settings_download_preparing": "c70f9f5319d7ee63fd47cfabb2c7cc4a5eb7ddf78daf805287c90715c4fcef1a",
+  "settings_manage_apple": "42c3517c90ca4b0be69d9c0d8dac99e83f07bcf08b05e13969a2c02b93b83fe9",
+  "settings_memory": "b4bd4298a4abe3dac40c56bd0c773a89a4acfe83d1d120138d02bf93c8ab23f4",
+  "settings_preferences": "319ebe1061d4c3e9ec9294a7404ea8afedcfa58848fd62b1f1214bca3e837850",
+  "settings_preferences_summary": "97c610e0158a8a0402afce0e090fb76e0d336ab1fcc201b7cabc292c779ff22b",
+  "settings_profile": "e7793decc781e7a27ec6d05153361a758408e396d546b05d66b399a635b5e747",
+  "settings_profile_needs_account": "4702447e7ac25a78cfc7217835b220bae0a3fd842d2390d6a8caf37c2fdca6e2",
+  "settings_save": "b9ab5944cece2671e669cac4b45ea853d6580313f57916ad0f9545e2324113b0",
+  "settings_saved": "2358a573b1ccc9a979d1795a99bb25cc5dd1a5e96e88751e27f4faaf8243b0f4",
+  "settings_your_data": "86660be01fc723ff57a1b15bc9aa3f0eae47b00bfa557e32983e00bed388bb0a"
+}
+-->
+<resources>
+    <string name="settings_preferences">Einstellungen</string>
+    <string name="settings_memory">Gedächtnis</string>
+    <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
+    <string name="settings_preferences_summary">%1$s · %2$s</string>
+    <string name="settings_profile">Profil</string>
+    <string name="settings_profile_needs_account">Erstelle ein Konto, um ein Profil zu haben. Dein Plan und dein Fortschritt bleiben erhalten.</string>
+    <string name="settings_account">Konto</string>
+    <string name="settings_save">Speichern</string>
+    <string name="settings_saved">Gespeichert.</string>
+    <string name="settings_your_data">Deine Daten</string>
+    <string name="settings_download_data">Meine Daten herunterladen</string>
+    <string name="settings_download_data_description">Alles, was Zoonk über dich speichert, in einer Datei</string>
+    <string name="settings_download">Herunterladen</string>
+    <string name="settings_download_preparing">Wird vorbereitet…</string>
+    <string name="settings_download_failed">Der Download konnte nicht vorbereitet werden. Versuch es noch einmal.</string>
+    <string name="settings_delete_account">Konto löschen</string>
+    <string name="settings_delete_my_account">Mein Konto löschen</string>
+    <string name="settings_delete_account_description">Dein Konto und alle darin gespeicherten Daten werden endgültig gelöscht. Ein im Web gekauftes Plus-Abo wird gekündigt. Käufe über Google Play und den App Store verwaltest du dort, wo du sie getätigt hast.</string>
+    <string name="settings_delete_ellipsis">Löschen…</string>
+    <string name="settings_delete_confirm_title">Möchtest du dein Konto löschen?</string>
+    <string name="settings_delete_confirm_description">Deine Ziele, Pläne, dein Fortschritt, dein Gedächtnis, dein Feedback und deine Uploads werden endgültig gelöscht. Das lässt sich nicht rückgängig machen.</string>
+    <string name="settings_cancel">Abbrechen</string>
+    <string name="settings_delete_code_title">Bestätige, dass du es bist</string>
+    <!-- %1$s is the account's email address. -->
+    <string name="settings_delete_code_description">Gib zu deiner Sicherheit den Code ein, den wir an %1$s gesendet haben.</string>
+    <string name="settings_delete_verify">Bestätigen und löschen</string>
+    <string name="settings_delete_failed">Dein Konto konnte nicht gelöscht werden. Versuch es noch einmal oder schreib an hello@zoonk.com.</string>
+    <string name="settings_account_deleted">Dein Konto wurde gelöscht.</string>
+    <string name="settings_account_deleted_title">Konto gelöscht</string>
+    <string name="settings_apple_not_revoked">Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass Zoonk aus deiner Apple-ID entfernt wurde. Entferne Zoonk unter „Mit Apple anmelden“, um den Vorgang abzuschließen.</string>
+    <string name="settings_manage_apple">„Mit Apple anmelden“ verwalten</string>
+    <string name="settings_done">Fertig</string>
+</resources>

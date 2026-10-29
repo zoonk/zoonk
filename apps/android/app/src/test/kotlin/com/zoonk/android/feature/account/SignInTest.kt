@@ -15,6 +15,7 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.account
+import com.zoonk.api.models.AccountDataExport
 import com.zoonk.api.models.MeResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +46,10 @@ internal class FakeAccountApi : AccountApi {
     var saveFailure: ApiException? = null
     var suggestion: String? = "ana_learner"
     val saved = mutableListOf<Pair<String, String>>()
+    val deletionCodesSent = mutableListOf<String>()
+    val deletions = mutableListOf<String?>()
+    var deletionFailures = mutableListOf<ApiException>()
+    var appleAuthorizationRevoked: Boolean? = null
 
     override suspend fun sendEmailCode(email: String) {
         sendFailure?.let { throw it }
@@ -83,6 +88,25 @@ internal class FakeAccountApi : AccountApi {
         saveFailure?.let { throw it }
         saved += name to username
         return account(session.accountId).let { it.copy(user = it.user.copy(name = name, username = username)) }
+    }
+
+    override suspend fun exportData(session: AuthenticatedSession): AccountDataExport = throw ApiException(ApiError.Unavailable)
+
+    override suspend fun sendDeletionCode(
+        session: AuthenticatedSession,
+        email: String,
+    ) {
+        deletionCodesSent += email
+    }
+
+    override suspend fun deleteAccount(
+        session: AuthenticatedSession,
+        emailCode: String?,
+        email: String,
+    ): Boolean? {
+        deletionFailures.removeFirstOrNull()?.let { throw it }
+        deletions += emailCode
+        return appleAuthorizationRevoked
     }
 }
 

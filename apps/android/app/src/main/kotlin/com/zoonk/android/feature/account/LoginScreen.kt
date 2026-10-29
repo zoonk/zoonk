@@ -412,7 +412,7 @@ private fun failureMessage(failure: AccountFailure): String =
             AccountFailure.WrongCode -> R.string.account_failure_wrong_code
             AccountFailure.CodeExpired -> R.string.account_failure_code_expired
             AccountFailure.CodeLocked -> R.string.account_failure_code_locked
-            AccountFailure.UsernameTaken, AccountFailure.Save, AccountFailure.SignIn -> R.string.account_failure_sign_in
+            else -> R.string.account_failure_sign_in
         },
     )
 

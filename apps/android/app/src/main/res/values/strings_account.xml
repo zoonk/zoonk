@@ -40,6 +40,7 @@
     <string name="account_setup_title">What should we call you?</string>
     <string name="account_setup_description">You can change it later in your profile.</string>
     <string name="account_name">Name</string>
+    <string name="account_name_description">How Zoonk and your buddy call you</string>
     <string name="account_username">Username</string>
     <!-- %1$s is a username. -->
     <string name="account_username_line">Your username: @%1$s</string>

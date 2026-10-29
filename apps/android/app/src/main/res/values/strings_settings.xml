@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_preferences">Preferences</string>
+    <string name="settings_memory">Memory</string>
+    <!-- %1$s is the buddy's name and %2$s the app's language, like "Zu · English". -->
+    <string name="settings_preferences_summary">%1$s · %2$s</string>
+    <string name="settings_profile">Profile</string>
+    <string name="settings_profile_needs_account">Create an account to have a profile. Your plan and progress come with you.</string>
+    <string name="settings_account">Account</string>
+    <string name="settings_save">Save</string>
+    <string name="settings_saved">Saved.</string>
+    <string name="settings_your_data">Your data</string>
+    <string name="settings_download_data">Download my data</string>
+    <string name="settings_download_data_description">Everything Zoonk keeps about you, as one file</string>
+    <string name="settings_download">Download</string>
+    <string name="settings_download_preparing">Preparing…</string>
+    <string name="settings_download_failed">We couldn\'t prepare the download. Try again.</string>
+    <string name="settings_delete_account">Delete account</string>
+    <string name="settings_delete_my_account">Delete my account</string>
+    <string name="settings_delete_account_description">Deletes your account and everything in it for good. Plus bought on the web is canceled; Google Play and App Store purchases are managed where you bought them.</string>
+    <string name="settings_delete_ellipsis">Delete…</string>
+    <string name="settings_delete_confirm_title">Delete your account?</string>
+    <string name="settings_delete_confirm_description">Your goals, plans, progress, memory, feedback and uploads are deleted for good. This can\'t be undone.</string>
+    <string name="settings_cancel">Cancel</string>
+    <string name="settings_delete_code_title">Confirm it\'s you</string>
+    <!-- %1$s is the account's email address. -->
+    <string name="settings_delete_code_description">For your safety, enter the code we sent to %1$s.</string>
+    <string name="settings_delete_verify">Verify and delete</string>
+    <string name="settings_delete_failed">We couldn\'t delete your account. Try again or email hello@zoonk.com.</string>
+    <string name="settings_account_deleted">Your account was deleted.</string>
+    <string name="settings_account_deleted_title">Account deleted</string>
+    <string name="settings_apple_not_revoked">Your Zoonk data was deleted, but Apple couldn\'t confirm that Zoonk was removed from your Apple ID. Remove Zoonk from Sign in with Apple to finish.</string>
+    <string name="settings_manage_apple">Manage Sign in with Apple</string>
+    <string name="settings_done">Done</string>
+</resources>

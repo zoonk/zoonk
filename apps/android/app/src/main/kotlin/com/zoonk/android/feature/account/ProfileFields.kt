@@ -61,6 +61,7 @@ fun ProfileFields(
                     .focusRequester(nameFocus)
                     .semantics { contentType = ContentType.PersonFullName },
             label = { Text(stringResource(R.string.account_name)) },
+            supportingText = if (isSetup) null else ({ Text(stringResource(R.string.account_name_description)) }),
             singleLine = true,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words, imeAction = ImeAction.Next),
         )

@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
@@ -25,14 +23,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.LocalSnackbarHostState
@@ -73,7 +70,12 @@ fun AccountMenu(
 
     Box {
         IconButton(onClick = { isOpen = true }) {
-            Avatar(user)
+            if (user == null) {
+                Icon(painterResource(R.drawable.ic_account_circle), contentDescription = stringResource(R.string.navigation_user_menu))
+            } else {
+                val label = stringResource(R.string.navigation_user_menu)
+                AccountAvatar(user, size = 32.dp, modifier = Modifier.semantics { contentDescription = label })
+            }
         }
 
         DropdownMenu(expanded = isOpen, onDismissRequest = { isOpen = false }, modifier = Modifier.widthIn(min = 256.dp)) {
@@ -117,26 +119,6 @@ fun AccountMenu(
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun Avatar(user: MeUser?) {
-    val label = stringResource(R.string.navigation_user_menu)
-    val image = user?.image
-
-    if (image == null) {
-        Icon(painterResource(R.drawable.ic_account_circle), contentDescription = label)
-    } else {
-        AsyncImage(
-            model = image,
-            contentDescription = label,
-            modifier =
-                Modifier
-                    .size(32.dp)
-                    .clip(CircleShape),
-            contentScale = ContentScale.Crop,
-        )
     }
 }
 

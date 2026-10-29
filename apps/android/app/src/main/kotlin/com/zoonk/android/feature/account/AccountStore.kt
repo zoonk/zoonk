@@ -3,12 +3,18 @@ package com.zoonk.android.feature.account
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.SignInResult
 import com.zoonk.android.data.toApiError
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.AccountDataExport
 import com.zoonk.api.models.MeUser
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
 import kotlin.coroutines.cancellation.CancellationException
 
 /** Signing in, starting as a guest and setting up the profile, through [SessionStore]. */
@@ -87,7 +93,114 @@ class AccountStore(
             }
         }
     }
+
+    /** The learner's data as pretty JSON, nulls kept: everything Zoonk keeps about them. Null when it couldn't be read. */
+    suspend fun exportData(): String? {
+        val session = sessions.current ?: return null
+        return try {
+            val data = api.exportData(session)
+            withContext(Dispatchers.Default) { ExportJson.encodeToString(AccountDataExport.serializer(), data) }
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            if (e.toApiError() == ApiError.Unauthorized) sessions.expire(session)
+            null
+        }
+    }
+
+    /**
+     * Deletes the account the learner sees ([session]). A session too old to delete it answers
+     * [AccountDeletion.NeedsCode]: a code to the account's email then proves it's them.
+     */
+    suspend fun deleteAccount(
+        session: AuthenticatedSession,
+        email: String,
+        code: String? = null,
+    ): AccountDeletion {
+        if (sessions.current != session) return AccountDeletion.Obsolete
+        return try {
+            AccountDeletion.Deleted(api.deleteAccount(session, code, email))
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            val error = e.toApiError()
+            val errorCode = (e as? ApiException)?.code
+            when {
+                sessions.current != session -> {
+                    AccountDeletion.Obsolete
+                }
+
+                errorCode == "FORBIDDEN" && code == null -> {
+                    AccountDeletion.NeedsCode
+                }
+
+                errorCode == "ACCOUNT_DELETION_INVALID_OTP" -> {
+                    AccountDeletion.Failed(AccountFailure.WrongCode)
+                }
+
+                errorCode == "ACCOUNT_DELETION_OTP_EXPIRED" -> {
+                    AccountDeletion.Failed(AccountFailure.CodeExpired)
+                }
+
+                errorCode == "ACCOUNT_DELETION_OTP_LOCKED" -> {
+                    AccountDeletion.Failed(AccountFailure.CodeLocked)
+                }
+
+                error == ApiError.Unauthorized && errorCode == "UNAUTHORIZED" -> {
+                    sessions.expire(session)
+                    AccountDeletion.Obsolete
+                }
+
+                error == ApiError.Network -> {
+                    AccountDeletion.Failed(AccountFailure.Network)
+                }
+
+                else -> {
+                    AccountDeletion.Failed(AccountFailure.Delete)
+                }
+            }
+        }
+    }
+
+    /** Null when the code went out. */
+    suspend fun sendDeletionCode(
+        session: AuthenticatedSession,
+        email: String,
+    ): AccountFailure? =
+        try {
+            api.sendDeletionCode(session, email)
+            null
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            accountFailure(e.toApiError(), (e as? ApiException)?.code)
+        }
+
+    /** After deletion: the session belonged to an account that no longer exists. */
+    suspend fun forgetDeletedAccount(session: AuthenticatedSession) = sessions.forgetDeletedAccount(session)
 }
+
+sealed interface AccountDeletion {
+    /** [appleAuthorizationRevoked] is null without a linked Apple account. */
+    data class Deleted(
+        val appleAuthorizationRevoked: Boolean?,
+    ) : AccountDeletion
+
+    data object NeedsCode : AccountDeletion
+
+    data class Failed(
+        val failure: AccountFailure,
+    ) : AccountDeletion
+
+    /** Another session took over meanwhile: nothing to show. */
+    data object Obsolete : AccountDeletion
+}
+
+private val ExportJson =
+    Json(from = ApiJson) {
+        prettyPrint = true
+        explicitNulls = true
+    }
 
 /** Main's profile setup asks a new account for a name and a username before anything else. */
 val MeUser.needsProfileSetup: Boolean
@@ -105,6 +218,7 @@ enum class AccountFailure {
     UsernameTaken,
     Save,
     SignIn,
+    Delete,
 }
 
 fun accountFailure(

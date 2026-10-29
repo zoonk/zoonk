@@ -30,6 +30,7 @@
   "account_menu_settings": "869be5ddbebcfe9f207d0ffdba3da2345188b1f528bbed034f902c99f360a5ef",
   "account_menu_subscription": "bc84494ab056102f473ab4601db3bb5ca34f9046292ecb1afefb5697579ccec7",
   "account_name": "5118c593cbc9fd62ba338856e789559394e766fe333346462d7ab41f3746a3a1",
+  "account_name_description": "2f3bcacc5e9fd405725f50bd1e631dd6a3507327cccb78c964b42a3880fdd0fc",
   "account_new_code_failed": "bd0974a44560f8da51b6b6cd0fde9a242ad8449927b16223d07337b90d7fe908",
   "account_new_code_sent": "cbfdb66ce35fe35d588159f9881eba6e94c11dec2916dcf6480a6936b61f8fb1",
   "account_new_code_wait": "d4c7f89ff37d9c87617aaa980910cc7f9e1772855ffcd9a027bce00cc3fede9d",
@@ -99,6 +100,7 @@
     <string name="account_setup_title">¿Cómo te llamamos?</string>
     <string name="account_setup_description">Puedes cambiarlo más adelante en tu perfil.</string>
     <string name="account_name">Nombre</string>
+    <string name="account_name_description">Cómo te llaman Zoonk y tu compañero</string>
     <string name="account_username">Nombre de usuario</string>
     <!-- %1$s is a username. -->
     <string name="account_username_line">Tu nombre de usuario: @%1$s</string>
