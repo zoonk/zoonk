@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.VisibleForTesting
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -22,10 +23,12 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // A recreated activity already opened its link; its saved stacks show it.
-        if (savedInstanceState == null) {
+        // Only a recreation in this process (a rotation or a resize) already opened its link. After a
+        // restart Android restores the old stacks with the launching intent, and the link wins.
+        if (savedInstanceState == null || !createdInThisProcess) {
             pendingLink = intent.appLink()
         }
+        createdInThisProcess = true
 
         val container = (application as ZoonkApplication).container
         handleAppleLink(intent)
@@ -54,5 +57,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+
+/** Whether this process has created the activity before, unlike one Android started to restore it. */
+@VisibleForTesting
+internal var createdInThisProcess = false
 
 private fun Intent.appLink(): AppRoute? = if (action == Intent.ACTION_VIEW) dataString?.let(AppLink::parse) else null

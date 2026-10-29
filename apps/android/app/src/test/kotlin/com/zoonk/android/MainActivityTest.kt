@@ -2,6 +2,7 @@ package com.zoonk.android
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Bundle
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isSelected
@@ -47,6 +48,23 @@ class MainActivityTest {
         controller.recreate()
         rule.onNode(hasText("Today") and isSelected()).assertIsDisplayed()
         rule.onNodeWithText("learn piano").assertDoesNotExist()
+    }
+
+    @Test
+    fun aLinkLaunchAfterARestartWinsOverTheRestoredStack() {
+        val before = Robolectric.buildActivity(MainActivity::class.java).setup()
+        rule.onNode(hasText("Today") and isSelected()).assertIsDisplayed()
+        val saved = Bundle()
+        before
+            .saveInstanceState(saved)
+            .pause()
+            .stop()
+            .destroy()
+        createdInThisProcess = false
+
+        Robolectric.buildActivity(MainActivity::class.java, link("https://zoonk.com/start?goal=learn+piano")).setup(saved)
+
+        rule.onNodeWithText("learn piano").assertIsDisplayed()
     }
 
     @Test
