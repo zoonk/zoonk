@@ -98,14 +98,12 @@ internal fun PianoKeyboard(
                         val index = keys.indexOf(key)
                         val keyWidth = if (key.isBlack) whiteWidth * BLACK_KEY_SHARE else whiteWidth
                         val left = if (key.isBlack) whiteWidth * key.whiteIndex - keyWidth / 2 else whiteWidth * key.whiteIndex
-                        val press =
+                        val focus =
                             onPress?.let {
-                                Modifier
-                                    .rovingFocus(roving, index)
-                                    .semantics {
-                                        contentDescription = spokenNameOf(key.midi)
-                                        traversalIndex = index.toFloat()
-                                    }.toggleable(isPressed(key.midi), enabled = enabled, role = Role.Checkbox) { onPress(key.midi) }
+                                Modifier.rovingFocus(roving, index).semantics {
+                                    contentDescription = spokenNameOf(key.midi)
+                                    traversalIndex = index.toFloat()
+                                }
                             } ?: Modifier
 
                         Key(
@@ -113,8 +111,10 @@ internal fun PianoKeyboard(
                             mark = marks[key.midi],
                             name = nameOf(key.midi),
                             colors = colors,
-                            press = press,
-                            modifier = Modifier.offset(x = left).width(keyWidth),
+                            isPressed = isPressed(key.midi),
+                            enabled = enabled,
+                            onPress = onPress?.let { { it(key.midi) } },
+                            modifier = Modifier.offset(x = left).width(keyWidth).then(focus),
                         )
                     }
                 }
@@ -129,9 +129,12 @@ private fun Key(
     mark: NoteMarkKind?,
     name: String,
     colors: PianoColors,
-    press: Modifier,
+    isPressed: Boolean,
+    enabled: Boolean,
+    onPress: (() -> Unit)?,
     modifier: Modifier,
 ) {
+    val press = onPress?.let { Modifier.toggleable(isPressed, enabled = enabled, role = Role.Checkbox) { it() } } ?: Modifier
     val shape =
         if (key.isBlack) {
             RoundedCornerShape(bottomStart = 8.dp, bottomEnd = 8.dp)
