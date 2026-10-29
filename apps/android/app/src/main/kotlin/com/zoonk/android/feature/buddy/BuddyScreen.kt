@@ -23,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -77,6 +76,7 @@ import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.buddyStageName
 import com.zoonk.android.ui.characters.rememberBuddyActorState
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.api.models.BuddyStatus
@@ -295,7 +295,7 @@ private fun BuddyStill(look: BuddyLook) {
 
 @Composable
 private fun PickBuddyButton(onPick: () -> Unit) {
-    OutlinedButton(onClick = onPick, colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)) {
+    OutlinedButton(onClick = onPick) {
         Icon(painterResource(R.drawable.ic_mood), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
         Text(stringResource(R.string.buddy_page_choose), Modifier.padding(start = ButtonDefaults.IconSpacing))
     }
