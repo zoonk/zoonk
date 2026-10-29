@@ -164,7 +164,6 @@ private fun CriteriaStep(
     val aboutSound = feedback.heard && task.criteria.any { it.sound }
 
     Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(examTaskTitle(task), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
         Text(inLanguage(task.task.name, language), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineMedium)
         if (numbered && levelBand != null) Note(stringResource(R.string.conversation_level_line, levelBand.toString(), task.level.value))
         if (!feedback.heard) Note(stringResource(R.string.conversation_typed_note))
@@ -393,7 +392,6 @@ internal fun SpeakingMockResult(
             }
             add {
                 Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    Text(title, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
                     Readout(bandRange(feedback.overall.bandLow, feedback.overall.bandHigh), style = MaterialTheme.typography.displaySmall)
                     Note(
                         stringResource(
