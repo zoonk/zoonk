@@ -53,4 +53,14 @@
     </plurals>
     <string name="session_opening_slow">Opening your next step…</string>
     <string name="session_opening_very_slow">This is taking longer than usual. It opens on its own, no need to tap again.</string>
+    <string name="session_level_up">Level up!</string>
+    <!-- %1$s is the learner's Energy as a share, such as 70%. -->
+    <string name="session_energy_at">Energy at %1$s</string>
+    <!-- %1$s is the learner's Energy as a share, such as 100%. -->
+    <string name="session_energy_max">Max Energy: %1$s</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing_brightest">%1$s is glowing as bright as it gets.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing">%1$s is glowing now.</string>
+    <string name="session_energy_detail">Right answers raise it. A day away lowers it a little.</string>
 </resources>

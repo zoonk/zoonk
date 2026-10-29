@@ -23,6 +23,12 @@
   "session_block_weekly_challenge": "b3e959bb0c8e69691a6c821bc3b8ca792a3612c3d9f478b3ea6f146097439814",
   "session_block_what_you_know": "9b5359a0466c6ad81b838068ba12c7cb8eccecf2617c2939bf4cd846dcc3a2bf",
   "session_block_writing_practice": "fdc84147d9d9aa269b73311b7615a0ebf51014df028d60f7559bb2b1c28651d7",
+  "session_energy_at": "9748751203dc0b93cce603cf59f44e3fe455e64d7cd0e5a950696253e296b7b4",
+  "session_energy_detail": "fa5febd5617dc59729381cc76a3767a6c3f4977522424f2aa39ced3b4ce1452e",
+  "session_energy_glowing": "42c74b3e3c9a05b9dabd9c61060e01422c609c7101ff96f8cbb4c46de8fd80af",
+  "session_energy_glowing_brightest": "b422d16a913e87b90814f892706619144f3fdb663fec9ffe04e99980697cc843",
+  "session_energy_max": "1d3bb47dc7678c67cacfa31e931794d1ce57ebab16253a7ba2506a78617bf7dc",
+  "session_level_up": "77641613b48b903c8e447b08bdf76715fad1aba623f93c269b986a07d5e0f47c",
   "session_opening_slow": "b8cce8b3e48a2581e50e48730313e0269e43065e40bf5f5991f2365baa698a8a",
   "session_opening_very_slow": "3bb38500fff2906684171401b70339f8f945eea0db7b6137bb26ad1546053ec7",
   "session_topics_and_more": "0ebea96b8412bcf52bc00a9b0eac9b5a619e70091a1b2592aaa81447e6e6d06c"
@@ -90,4 +96,14 @@
     </plurals>
     <string name="session_opening_slow">Abrindo seu próximo passo…</string>
     <string name="session_opening_very_slow">Está demorando mais que o normal. Vai abrir sozinho, não precisa tocar de novo.</string>
+    <string name="session_level_up">Subiu de nível!</string>
+    <!-- %1$s is the learner's Energy as a share, such as 70%. -->
+    <string name="session_energy_at">Energia em %1$s</string>
+    <!-- %1$s is the learner's Energy as a share, such as 100%. -->
+    <string name="session_energy_max">Energia máxima: %1$s</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing_brightest">%1$s está brilhando no máximo.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing">%1$s está brilhando agora.</string>
+    <string name="session_energy_detail">As respostas certas aumentam a Energia. Um dia sem estudar reduz um pouco.</string>
 </resources>

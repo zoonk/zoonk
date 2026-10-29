@@ -23,6 +23,12 @@
   "session_block_weekly_challenge": "9f695f03355828e93b367f09c4839fa1d865cd943562f595bd439b6292982547",
   "session_block_what_you_know": "352c5bca9b3a0fa52154d3586a5f4a387e00d73f722343fce811a76d2ed1dc14",
   "session_block_writing_practice": "bbbd364ad678d35b5d4100c26ed0808470a5051289592c0887ae59c6c06b413e",
+  "session_energy_at": "34005aed26ed7eb25542d4e4afd7e0f1f4c521ab4743856ae73975485336ff2b",
+  "session_energy_detail": "33f647f5fe3d265dd282ba41299eff0d6c3b2503b90ae6a3f0dd1405b3134c55",
+  "session_energy_glowing": "0e6cc3011711ec87ed166e3e3a4aa5c118eeaace1178cce995dba0d255fb5faf",
+  "session_energy_glowing_brightest": "8eaace20159ba2531895dcd9632e86ec6ecad21b2f6054d4a59ba89aec08f2a7",
+  "session_energy_max": "0ae36156b07f20cb0542c96d13f3546260944dd44549e2b9e5ddcd2b0d0bf7b7",
+  "session_level_up": "103aaec73ea808e508820a536e7a91945b02c0f7dd52e0a966b19af43d8b59cc",
   "session_opening_slow": "8df68df13a43f23f5ea531785b9173cbd200114703a435006fb7316ca60322e5",
   "session_opening_very_slow": "f978be73b1decd756b560adc40c49e0837f963d221e1bcd24b1310feef5fbfb1",
   "session_topics_and_more": "94611e088b86f336d379a72718e981221e88f8a1bf75d2363714056740faca09"
@@ -82,4 +88,14 @@
     </plurals>
     <string name="session_opening_slow">Dein nächster Schritt wird geöffnet…</string>
     <string name="session_opening_very_slow">Das dauert länger als sonst. Es öffnet sich von selbst. Du musst nicht noch einmal tippen.</string>
+    <string name="session_level_up">Levelaufstieg!</string>
+    <!-- %1$s is the learner's Energy as a share, such as 70%. -->
+    <string name="session_energy_at">Energie bei %1$s</string>
+    <!-- %1$s is the learner's Energy as a share, such as 100%. -->
+    <string name="session_energy_max">Maximale Energie: %1$s</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing_brightest">%1$s strahlt so hell wie möglich.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing">%1$s strahlt jetzt.</string>
+    <string name="session_energy_detail">Richtige Antworten erhöhen sie. Ein Tag Pause senkt sie ein wenig.</string>
 </resources>

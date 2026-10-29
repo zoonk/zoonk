@@ -23,6 +23,12 @@
   "session_block_weekly_challenge": "a71f3801eec48936670e3cce9f0fd9a6ae3e70a38097a9dd5d33eddf6af4975b",
   "session_block_what_you_know": "29d769ef1d128879ac05973a5a2fbe6fbd656be928a1040aa77421b7776b19cc",
   "session_block_writing_practice": "9668a62c1935d27a968d6c06898f66067065a4d37aa7bb771e251a32215809dd",
+  "session_energy_at": "a53be1f5367c4bc53d7a380f4e3a0fefd4022cb960dc7efe0045b2a415cd3a53",
+  "session_energy_detail": "35f2b976b51cd43135e2dc6f2c95ee30a0fd9d37744bc33a33ca6d21354c9987",
+  "session_energy_glowing": "437562f7a26953418f0c1cd7aedb2e3e85d65bfe00d2c0ec7bcf61ef2f210eb7",
+  "session_energy_glowing_brightest": "515d6a591624269d88979036d97a269358140060581cff7842fd75846fe0556d",
+  "session_energy_max": "3c9f9b0c6f909a82be4d0332a7012245e696da39161cc772f0a304ecaa79aa2a",
+  "session_level_up": "4b11bf1fd1dd9838f88bfebcabcc591adaaf54ad290c56185fdba321c47ff46d",
   "session_opening_slow": "6698bb19986bf44eb304ad3da4a84d32b244458ff776a1e5610d19ac23f455f7",
   "session_opening_very_slow": "3403a43b94ff5caf9aaf09ed1ec504362e8e6664f1e9540b519c79020c6c96d8",
   "session_topics_and_more": "2206b15e59e14adeacac18bcfb104487f78fcc8835bc82442753cf8d34ff7eef"
@@ -90,4 +96,14 @@
     </plurals>
     <string name="session_opening_slow">Ouverture de la prochaine étape…</string>
     <string name="session_opening_very_slow">C’est plus long que d’habitude. L’écran s’ouvrira tout seul, inutile d’appuyer à nouveau.</string>
+    <string name="session_level_up">Niveau supérieur !</string>
+    <!-- %1$s is the learner's Energy as a share, such as 70%. -->
+    <string name="session_energy_at">Énergie à %1$s</string>
+    <!-- %1$s is the learner's Energy as a share, such as 100%. -->
+    <string name="session_energy_max">Énergie maximale : %1$s</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing_brightest">%1$s brille de tout son éclat.</string>
+    <!-- %1$s is the buddy's name. -->
+    <string name="session_energy_glowing">%1$s brille maintenant.</string>
+    <string name="session_energy_detail">Les bonnes réponses la font monter. Une journée sans étudier la fait légèrement baisser.</string>
 </resources>
