@@ -34,6 +34,9 @@ import com.zoonk.android.feature.memory.LiveMemoryApi
 import com.zoonk.android.feature.memory.MemoryStore
 import com.zoonk.android.feature.plan.LivePlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.player.LessonPlayerStore
+import com.zoonk.android.feature.player.LiveLessonPlayerApi
+import com.zoonk.android.feature.player.TodayChoices
 import com.zoonk.android.feature.subscription.GooglePlayBilling
 import com.zoonk.android.feature.subscription.LiveSubscriptionApi
 import com.zoonk.android.feature.subscription.NoPlayBilling
@@ -132,6 +135,10 @@ class AppContainer private constructor(
             sessions = sessions,
             scope = scope,
         )
+
+    // Lesson player (L4).
+    val lessonPlayer = LessonPlayerStore(LiveLessonPlayerApi(api), cache)
+    val todayChoices = TodayChoices(drafts)
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =

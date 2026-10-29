@@ -11,6 +11,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
+/** Routes whose screens are drawn: their features' own tests open them. */
+private val drawn = setOf(AppRoute.Lesson::class)
+
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")
 class RoutePlaceholderTest {
@@ -25,7 +28,7 @@ class RoutePlaceholderTest {
             ZoonkApp(app = AppContainer.preview(rule.activity), navigator = navigator)
         }
 
-        routeSamples.filter { it.presentation != Presentation.Web }.forEach { route ->
+        routeSamples.filter { it.presentation != Presentation.Web && it::class !in drawn }.forEach { route ->
             rule.runOnIdle { navigator.open(route) }
             rule.runOnIdle { assertEquals(route, navigator.currentRoute) }
         }

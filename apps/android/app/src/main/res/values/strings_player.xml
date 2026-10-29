@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="player_screen_options">Screen options</string>
+    <string name="player_ai_note">Made with AI. It may contain mistakes.</string>
+    <string name="player_know_this">I already know this</string>
+    <string name="player_lesson_summary">Lesson summary</string>
+    <string name="player_progress">Lesson progress</string>
+    <string name="player_leave_title">Leave for now?</string>
+    <string name="player_leave_description">Your answer hasn\'t been checked, so it won\'t be kept.</string>
+    <string name="player_keep_writing">Keep writing</string>
+
+    <string name="player_action_check">Check</string>
+    <string name="player_action_checking">Checking your answer</string>
+    <string name="player_action_confirm">Confirm</string>
+    <string name="player_action_continue">Continue</string>
+    <string name="player_action_next">Next</string>
+    <string name="player_action_next_step">Show the next step</string>
+    <string name="player_action_see_answer">See the answer</string>
+    <string name="player_action_see_how_it_went">See how it went</string>
+    <string name="player_action_start">Start</string>
+    <string name="player_previous_screen">Previous screen</string>
+
+    <string name="player_quick_check">Quick check · %1$s of %2$s</string>
+    <string name="player_notice_self_correct">Not quite. Look again and fix it yourself, then check.</string>
+    <string name="player_notice_answer_not_saved">Your answer here didn\'t save. Answer it again to finish the lesson.</string>
+    <string name="player_notice_picture_ready">This question was waiting for its picture. Answer it to finish the lesson.</string>
+    <string name="player_notice_writing_skipped">No more writing today.</string>
+    <string name="player_write_again">Write again</string>
+
+    <string name="player_verdict_almost">Almost there</string>
+    <string name="player_verdict_correct">Correct!</string>
+    <string name="player_verdict_guess">Here\'s the answer</string>
+    <string name="player_verdict_guess_right">Good guess!</string>
+    <string name="player_verdict_incorrect">Not quite</string>
+    <string name="player_verdict_sample_answer">Here\'s a good answer</string>
+    <string name="player_verdict_typo">Right, watch the spelling</string>
+    <string name="player_verdict_unchecked">Not checked this time</string>
+    <string name="player_answer_feedback">Answer feedback</string>
+    <string name="player_spelled">Spelled:</string>
+    <string name="player_correct_answer_label">Answer:</string>
+    <string name="player_unchecked_compare">Each question is checked a few times a day. Compare your answer with this one:</string>
+    <plurals name="player_key_points">
+        <item quantity="one">%1$s of %2$s key point</item>
+        <item quantity="other">%1$s of %2$s key points</item>
+    </plurals>
+    <string name="player_key_point_stated">Stated: %1$s</string>
+    <string name="player_key_point_missing">Missing: %1$s</string>
+    <string name="player_correction_yours">Your answer</string>
+    <string name="player_correction_right">Correct answer</string>
+    <string name="player_hyperdrive_streak">%1$s right in a row</string>
+    <string name="player_comes_back_at_end">This question comes back at the end of the lesson</string>
+    <string name="player_saved_to_mistakes">Saved to your mistakes</string>
+    <string name="player_saved_to_mistakes_back_at_end">Saved to your mistakes · back at the end of this lesson</string>
+    <string name="player_saved_to_mistakes_back_today">Saved to your mistakes · back in a review later today</string>
+    <string name="player_saved_to_mistakes_back_tomorrow">Saved to your mistakes · back in tomorrow\'s review</string>
+    <string name="player_saved_to_mistakes_back_weekday">Saved to your mistakes · back in %1$s\'s review</string>
+    <string name="player_saved_to_mistakes_back_date">Saved to your mistakes · back in a review on %1$s</string>
+    <string name="player_comes_back_today">This idea comes back in a review later today</string>
+    <string name="player_comes_back_tomorrow">This idea comes back in tomorrow\'s review</string>
+    <string name="player_comes_back_weekday">This idea comes back in %1$s\'s review</string>
+    <string name="player_comes_back_date">This idea comes back in a review on %1$s</string>
+
+    <string name="player_guess_first">Guess first</string>
+    <string name="player_guess_hint">Getting it wrong now helps you remember later.</string>
+    <string name="player_answer_options">Answer options</string>
+    <string name="player_worked_example">Worked example</string>
+    <string name="player_worked_example_steps">Steps</string>
+    <string name="player_worked_example_result">Result</string>
+    <string name="player_summary">Summary</string>
+    <plurals name="player_summary_ideas">
+        <item quantity="one">%1$s idea to take from this lesson</item>
+        <item quantity="other">%1$s ideas to take from this lesson</item>
+    </plurals>
+    <string name="player_in_your_own_words">In your own words</string>
+    <string name="player_cant_write_now">Can\'t write now</string>
+    <string name="player_dont_know_yet">I don\'t know yet</string>
+    <string name="player_explain_first">Explain first</string>
+    <string name="player_check_failed">We couldn\'t check your answer this time. Try again.</string>
+    <string name="player_still_checking">Still checking. This is taking longer than usual.</string>
+    <string name="player_enter_hint">Press Enter to check, Shift+Enter for a new line.</string>
+    <string name="player_your_answer">Your answer</string>
+    <string name="player_write_your_answer">Write your answer</string>
+
+    <string name="player_not_written_title">This lesson isn\'t written yet</string>
+    <string name="player_not_written_description">Zoonk writes it when you start. It takes a minute or two.</string>
+    <string name="player_start_this_lesson">Start this lesson</string>
+    <string name="player_starting">Starting…</string>
+    <string name="player_writing_lesson">Writing your lesson</string>
+    <string name="player_phase_plan">Planning the lesson</string>
+    <string name="player_phase_write">Writing the lesson</string>
+    <string name="player_phase_active">in progress</string>
+    <string name="player_phase_done">done</string>
+    <string name="player_phase_pending">not started yet</string>
+    <string name="player_writing_note">It usually takes a minute or two. The lesson opens here as soon as it\'s ready.</string>
+    <string name="player_ready_while_waiting">Ready while you wait</string>
+    <string name="player_ready_instead">Ready to do instead</string>
+    <plurals name="player_review_ideas">
+        <item quantity="one">Review %1$s idea</item>
+        <item quantity="other">Review %1$s ideas</item>
+    </plurals>
+    <string name="player_writing_failed_title">This didn\'t finish</string>
+    <string name="player_writing_failed_description">Something went wrong on our side.</string>
+    <string name="player_set_aside_title">This lesson isn\'t available</string>
+    <string name="player_set_aside_description">It didn\'t pass our quality checks, so your plan goes on without it.</string>
+
+    <string name="player_opening_lesson">Opening your lesson</string>
+    <string name="player_open_failed">We couldn\'t open the lesson. Try again, or log in to keep going.</string>
+    <string name="player_try_again">Try again</string>
+    <string name="player_back">Back</string>
+    <string name="player_not_found_title">Lesson not available</string>
+    <string name="player_not_found_description">This lesson isn\'t available anymore.</string>
+    <string name="player_start_failed_title">We couldn\'t open this lesson</string>
+    <string name="player_start_failed_description">Try again in a moment. Nothing you did was lost.</string>
+    <string name="player_slow_down_title">Take a short break</string>
+    <plurals name="player_slow_down_description">
+        <item quantity="one">You started a lot of lessons in a short time. This one opens in %1$s second.</item>
+        <item quantity="other">You started a lot of lessons in a short time. This one opens in %1$s seconds.</item>
+    </plurals>
+    <string name="player_free_limit_day_title">That\'s all the new lessons for today</string>
+    <string name="player_free_limit_day_description">You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now.</string>
+    <string name="player_free_limit_month_title">That\'s all the new lessons for this month</string>
+    <string name="player_free_limit_month_description">You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now.</string>
+    <string name="player_see_plus">See Plus</string>
+    <string name="player_free_week_over_title">Your free week of exam prep is over</string>
+    <string name="player_free_week_over_description">Reviews and fixing your mistakes stay free. Plus opens new lessons, the rest of your plan and mock exams.</string>
+    <string name="player_guest_limit_title">Save your progress to keep going</string>
+    <string name="player_guest_limit_description">You\'ve taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you.</string>
+    <string name="player_create_free_account">Create a free account</string>
+    <string name="player_plus_limit_title">That\'s a lot of learning today</string>
+    <string name="player_plus_limit_description">You\'ve reached today\'s limit. New lessons open again tomorrow.</string>
+
+    <string name="player_lesson_complete">Lesson complete</string>
+    <string name="player_already_knew">You already knew this</string>
+    <string name="player_saving_progress">Saving your progress…</string>
+    <string name="player_save_failed">That didn\'t go through. Your answers are kept.</string>
+    <plurals name="player_score">
+        <item quantity="one">%1$s of %2$s right</item>
+        <item quantity="other">%1$s of %2$s right</item>
+    </plurals>
+    <string name="player_brain_power">+%1$s Brain Power</string>
+    <string name="player_review_on">Review on %1$s</string>
+    <string name="player_next_lesson">Next lesson</string>
+    <string name="player_back_to_chapter">Back to chapter</string>
+    <string name="player_back_to_unit">Back to unit</string>
+    <string name="player_part_of">This is part of</string>
+    <plurals name="player_course_size">
+        <item quantity="one">%1$s chapter · about %2$s at your pace</item>
+        <item quantity="other">%1$s chapters · about %2$s at your pace</item>
+    </plurals>
+    <plurals name="player_lesson_of">
+        <item quantity="one">%1$s of %2$s lesson</item>
+        <item quantity="other">%1$s of %2$s lessons</item>
+    </plurals>
+    <string name="player_guest_save_note">Save your progress and a quick review comes back to help it stick.</string>
+    <string name="player_build_my_plan">Build my plan</string>
+    <string name="player_create_account_to_save">Create an account to save</string>
+    <string name="player_nothing_left_title">Nothing left to answer</string>
+    <string name="player_nothing_left_description">Finish to see how it went.</string>
+    <string name="player_finish">Finish</string>
+</resources>
