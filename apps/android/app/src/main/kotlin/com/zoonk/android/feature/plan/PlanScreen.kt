@@ -142,7 +142,7 @@ private fun ReadyPlan(
     padding: PaddingValues,
 ) {
     val resource = app.plans.plan[goal.id]
-    val refreshing by resource.isRefreshing.collectAsStateWithLifecycle()
+    var pulled by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     val viewModel = viewModel(key = "plan-${goal.id}") { PlanViewModel(app.plans, goal.id) }
 
@@ -154,8 +154,14 @@ private fun ReadyPlan(
     }
 
     PullToRefreshBox(
-        isRefreshing = refreshing,
-        onRefresh = { scope.launch { resource.refresh() } },
+        isRefreshing = pulled,
+        onRefresh = {
+            pulled = true
+            scope.launch {
+                resource.refresh()
+                pulled = false
+            }
+        },
         modifier = Modifier.fillMaxSize().padding(padding),
     ) {
         PlanPage(page = PlanPageState(goal, plan, summary), app = app, navigator = navigator, viewModel = viewModel)
