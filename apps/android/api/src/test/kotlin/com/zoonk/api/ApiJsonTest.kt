@@ -1,15 +1,19 @@
 package com.zoonk.api
 
+import com.zoonk.api.models.ActivityExpectedRows
 import com.zoonk.api.models.ExamBlueprintSource
 import com.zoonk.api.models.ItemSetListening
 import com.zoonk.api.models.LanguageConversationStartInputOneOf
+import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf12
 import com.zoonk.api.models.MeUpdate
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf18Fields
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.util.UUID
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf18FieldsExpectedRowsInnerInner as Cell
 
 class ApiJsonTest {
     private val source =
@@ -69,5 +73,27 @@ class ApiJsonTest {
                 minutes = LanguageConversationStartInputOneOf.Minutes._1,
             )
         assertTrue(ApiJson.encodeToString(LanguageConversationStartInputOneOf.serializer(), start).contains("\"minutes\":1.0"))
+    }
+
+    @Test
+    fun aSqlCellCanBeNullInTablesExpectedRowsAndAnswers() {
+        val fields =
+            ApiJson.decodeFromString<PlayableLibraryStepAnyOfContentOneOf18Fields>(
+                """
+                {"expected":{"columns":["name","capital"],"orderMatters":false,"rows":[["Atlantis",null]]},"mistakes":[],
+                 "solution":"SELECT * FROM countries","tables":[{"name":"countries",
+                 "columns":[{"name":"name","type":"text"},{"name":"capital","type":"text"}],
+                 "rows":[["Atlantis",null],["Brazil","Brasília"]]}]}
+                """.trimIndent(),
+            )
+        assertEquals(listOf(Cell.StringValue("Atlantis"), null), fields.tables.single().rows.first())
+        assertEquals(listOf(listOf(Cell.StringValue("Atlantis"), null)), fields.expected.rows)
+
+        val expected = ApiJson.decodeFromString<ActivityExpectedRows>("""{"columns":["capital"],"kind":"rows","orderMatters":true,"rows":[[null]]}""")
+        assertEquals(listOf(listOf(null)), expected.rows)
+
+        val answer = """{"columns":["name","capital"],"kind":"rows","rows":[["Atlantis",null]]}"""
+        val serializer = LessonStepAnswerOneOf3AnswerOneOf12.serializer()
+        assertEquals(answer, ApiJson.encodeToString(serializer, ApiJson.decodeFromString(serializer, answer)))
     }
 }

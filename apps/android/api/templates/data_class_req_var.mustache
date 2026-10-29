@@ -1,0 +1,31 @@
+{{!
+OpenAPI Generator 7.26.0's kotlin-client/data_class_req_var.mustache, keeping a nested list's nullable
+items nullable (`List<List<Cell?>>`): the generator types the inner list from its items' bare `$ref`,
+which drops the referenced schema's `nullable`, so a null item can't be decoded. Nothing else differs.
+https://github.com/OpenAPITools/openapi-generator/issues/25471
+}}
+{{#description}}
+    /* {{{.}}} */
+{{/description}}
+    {{^multiplatform}}
+    {{#moshi}}
+    @Json(name = "{{{vendorExtensions.x-base-name-literal}}}")
+    {{/moshi}}
+    {{#gson}}
+    @SerializedName("{{{vendorExtensions.x-base-name-literal}}}")
+    {{/gson}}
+    {{#jackson}}
+    @param:JsonProperty("{{{vendorExtensions.x-base-name-literal}}}")
+    @get:JsonProperty("{{{vendorExtensions.x-base-name-literal}}}")
+    {{/jackson}}
+    {{#kotlinx_serialization}}
+    {{^isEnum}}{{^isArray}}{{^isPrimitiveType}}{{^isModel}}@Contextual {{/isModel}}{{/isPrimitiveType}}{{/isArray}}{{/isEnum}}@SerialName(value = "{{{vendorExtensions.x-base-name-literal}}}")
+    {{/kotlinx_serialization}}
+    {{/multiplatform}}
+    {{#vendorExtensions.x-field-extra-annotation}}
+    {{{.}}}
+    {{/vendorExtensions.x-field-extra-annotation}}
+    {{#deprecated}}
+    @Deprecated(message = "This property is deprecated.")
+    {{/deprecated}}
+    {{#multiplatform}}@SerialName(value = "{{{vendorExtensions.x-base-name-literal}}}") @Required {{/multiplatform}}{{#isInherited}}override {{/isInherited}}{{>modelMutable}} {{{name}}}: {{#isArray}}{{#isList}}kotlin.collections.{{#modelMutable}}Mutable{{/modelMutable}}{{#uniqueItems}}Set{{/uniqueItems}}{{^uniqueItems}}List{{/uniqueItems}}{{/isList}}{{^isList}}kotlin.Array{{/isList}}<{{^items.isEnum}}{{^items.isPrimitiveType}}{{^items.isModel}}{{#kotlinx_serialization}}@Contextual {{/kotlinx_serialization}}{{/items.isModel}}{{/items.isPrimitiveType}}{{#items.isArray}}{{#items}}kotlin.collections.{{#uniqueItems}}Set{{/uniqueItems}}{{^uniqueItems}}List{{/uniqueItems}}<{{{items.dataType}}}{{#items.isNullable}}?{{/items.isNullable}}>{{/items}}{{/items.isArray}}{{^items.isArray}}{{{items.dataType}}}{{/items.isArray}}{{/items.isEnum}}{{#items.isEnum}}{{classname}}.{{{nameInPascalCase}}}{{/items.isEnum}}{{#items.isNullable}}?{{/items.isNullable}}>{{/isArray}}{{^isEnum}}{{^isArray}}{{{dataType}}}{{/isArray}}{{/isEnum}}{{#isEnum}}{{^isArray}}{{classname}}.{{{nameInPascalCase}}}{{/isArray}}{{/isEnum}}{{#isNullable}}?{{/isNullable}}{{#defaultValue}} = {{^isNumber}}{{{defaultValue}}}{{/isNumber}}{{#isNumber}}{{^multiplatform}}{{{dataType}}}("{{{defaultValue}}}"){{/multiplatform}}{{#multiplatform}}({{{defaultValue}}}).toDouble(){{/multiplatform}}{{/isNumber}}{{/defaultValue}}
