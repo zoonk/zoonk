@@ -40,7 +40,8 @@ data class TaskExitConfirmation(
 /**
  * A task's frame (main's `TaskFrame`): the whole window, leave at the top start, its title centered
  * with any actions at the end, one column, and its actions pinned to the bottom over a hairline.
- * With an [exitConfirmation], leaving (the close action or back) asks first.
+ * With an [exitConfirmation], leaving (the close action or back) asks first. [closeLabel] says what
+ * closing does when it's more than leaving, as ending a practice that keeps its answers.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,6 +51,7 @@ fun TaskScaffold(
     title: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     exitConfirmation: TaskExitConfirmation? = null,
+    closeLabel: String? = null,
     bottomBar: (@Composable () -> Unit)? = null,
     content: @Composable (PaddingValues) -> Unit,
 ) {
@@ -63,7 +65,7 @@ fun TaskScaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = title,
-                navigationIcon = { CloseButton(onClick = leave) },
+                navigationIcon = { CloseButton(onClick = leave, label = closeLabel) },
                 actions = actions,
             )
         },

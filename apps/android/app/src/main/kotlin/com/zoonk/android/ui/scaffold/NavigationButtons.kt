@@ -15,8 +15,11 @@ fun BackButton(onClick: () -> Unit) {
 }
 
 @Composable
-fun CloseButton(onClick: () -> Unit) {
+fun CloseButton(
+    onClick: () -> Unit,
+    label: String? = null,
+) {
     IconButton(onClick = onClick) {
-        Icon(painterResource(R.drawable.ic_close), contentDescription = stringResource(R.string.task_leave))
+        Icon(painterResource(R.drawable.ic_close), contentDescription = label ?: stringResource(R.string.task_leave))
     }
 }
