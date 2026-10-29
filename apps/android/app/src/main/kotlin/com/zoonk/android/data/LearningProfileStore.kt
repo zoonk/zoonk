@@ -2,10 +2,13 @@ package com.zoonk.android.data
 
 import com.zoonk.api.models.Buddy
 import com.zoonk.api.models.LearningProfile
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import kotlinx.serialization.json.putJsonObject
+import kotlin.coroutines.cancellation.CancellationException
 
 interface LearningProfileApi {
     suspend fun profile(session: AuthenticatedSession): LearningProfile
@@ -63,22 +66,35 @@ class LearningProfileStore(
             },
         )
 
+    private val writing = Mutex()
+    private var pending = 0
+
     /**
-     * Shows [optimistic] at once and keeps the server's answer; puts the old profile back only
-     * when the write failed. Everything that shows the buddy or the day reads it again.
+     * Shows [optimistic] at once. Writes go out one at a time, in the order they were made. The
+     * last one's answer has every earlier change, so it's shown as saved; a refused or abandoned
+     * last write reads the profile again rather than restoring an older copy over later changes.
      */
     private suspend fun update(
         optimistic: (LearningProfile) -> LearningProfile,
         change: JsonObject,
     ): Boolean {
-        val before = profile.state.value.value
-        if (before != null) profile.update(optimistic)
+        if (profile.state.value.value != null) profile.update(optimistic)
+        pending++
         val result =
-            cache.mutate(
-                invalidating = setOf(DataDomain.LearningProfile),
-                replacing = { saved: LearningProfile -> listOf(profile.replacing(saved)) },
-            ) { session -> api.update(session, change) }
-        if (result is MutationResult.Failed && before != null) profile.update { before }
+            try {
+                writing.withLock {
+                    cache.mutate(
+                        invalidating = setOf(DataDomain.LearningProfile),
+                        replacing = { saved: LearningProfile -> if (pending == 1) listOf(profile.replacing(saved)) else emptyList() },
+                    ) { session -> api.update(session, change) }
+                }
+            } catch (e: CancellationException) {
+                profile.invalidate()
+                throw e
+            } finally {
+                pending--
+            }
+        if (result is MutationResult.Failed) profile.invalidate()
         return result is MutationResult.Done
     }
 }

@@ -48,14 +48,10 @@ private fun memory(enabled: Boolean = true): Memory =
 
 private class FakeMemoryApi : MemoryApi {
     var current = memory()
-    var reads = 0
     var gate: CompletableDeferred<Unit>? = null
     var failure: ApiException? = null
 
-    override suspend fun memory(session: AuthenticatedSession): Memory {
-        reads++
-        return current
-    }
+    override suspend fun memory(session: AuthenticatedSession): Memory = current
 
     override suspend fun setEnabled(
         session: AuthenticatedSession,
@@ -117,7 +113,7 @@ class MemoryStoreTest {
     }
 
     @Test
-    fun aDeletedFactLeavesAtOnceAndIsntReadAgain() =
+    fun aDeletedFactLeavesAtOnce() =
         runTest {
             val store = loadedStore()
             api.gate = CompletableDeferred()
@@ -138,16 +134,16 @@ class MemoryStoreTest {
                     .facts
                     .isEmpty(),
             )
-            assertEquals(1, api.reads)
         }
 
     @Test
-    fun aRefusedChangePutsTheOldMemoryBack() =
+    fun aRefusedChangeShowsTheSavedMemoryAgain() =
         runTest {
             val store = loadedStore()
             api.failure = ApiException(ApiError.Unavailable, "INTERNAL_ERROR", 500)
 
             assertFalse(store.setEnabled(false))
+            store.memory.load()
             advanceUntilIdle()
 
             assertTrue(
@@ -162,17 +158,19 @@ class MemoryStoreTest {
         }
 
     @Test
-    fun turningMemoryOffShowsAtOnce() =
+    fun turningMemoryOffIsSaved() =
         runTest {
             val store = loadedStore()
 
             assertTrue(store.setEnabled(false))
             advanceUntilIdle()
 
+            store.memory.load()
+            advanceUntilIdle()
+
             assertFalse(
                 store.memory.state.value.value!!
                     .enabled,
             )
-            assertEquals(1, api.reads)
         }
 }

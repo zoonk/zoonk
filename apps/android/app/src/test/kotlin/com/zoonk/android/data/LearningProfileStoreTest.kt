@@ -5,9 +5,11 @@ import com.zoonk.api.models.LearningProfile
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
@@ -82,13 +84,42 @@ class LearningProfileStoreTest {
         }
 
     @Test
-    fun aRefusedChangePutsTheOldProfileBack() =
+    fun aRefusedChangeShowsTheSavedProfileAgain() =
         runTest {
             val store = loaded()
             api.failure = ApiException(ApiError.Unavailable, "INTERNAL_ERROR", 500)
 
             assertFalse(store.setSoundsEnabled(false))
+            store.profile.load()
+            advanceUntilIdle()
 
+            assertTrue(
+                store.profile.state.value.value!!
+                    .soundsEnabled,
+            )
+        }
+
+    @Test
+    fun aLaterSavedChangeSurvivesAnEarlierOneFailing() =
+        runTest {
+            val store = loaded()
+            api.failure = ApiException(ApiError.Unavailable, "INTERNAL_ERROR", 500)
+            val sounds = async { store.setSoundsEnabled(false) }
+            runCurrent()
+            api.failure = null
+            api.current = api.current.copy(dailyLimitMinutes = 90)
+            val limit = async { store.setDailyLimit(90) }
+
+            assertFalse(sounds.await())
+            assertTrue(limit.await())
+            store.profile.load()
+            advanceUntilIdle()
+
+            assertEquals(
+                90L,
+                store.profile.state.value.value!!
+                    .dailyLimitMinutes,
+            )
             assertTrue(
                 store.profile.state.value.value!!
                     .soundsEnabled,

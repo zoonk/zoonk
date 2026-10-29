@@ -19,9 +19,12 @@ import com.zoonk.api.models.MemoryFactUpdate
 import com.zoonk.api.models.MemorySettingsUpdate
 import com.zoonk.api.models.MemoryUndoInput
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import java.util.UUID
+import kotlin.coroutines.cancellation.CancellationException
 
 interface MemoryApi {
     suspend fun memory(session: AuthenticatedSession): Memory
@@ -129,25 +132,25 @@ class MemoryStore(
             }
         }
 
-    /** Shows [optimistic] at once and keeps it once saved; puts the old memory back only when the write failed. */
+    private val writing = Mutex()
+
+    /**
+     * Shows [optimistic] at once; writes go out one at a time, in order, and memory is read again
+     * once they're done, since an answer carries only the fact it changed.
+     */
     private suspend fun edit(
         optimistic: (Memory) -> Memory,
         write: suspend (AuthenticatedSession) -> Any?,
     ): Boolean {
-        val before = memory.state.value.value
-        if (before != null) memory.update(optimistic)
+        if (memory.state.value.value != null) memory.update(optimistic)
         val result =
-            cache.mutate(
-                invalidating = setOf(DataDomain.Memory),
-                replacing = {
-                    listOfNotNull(
-                        memory.state.value.value
-                            ?.let(memory::replacing),
-                    )
-                },
-                write = write,
-            )
-        if (result is MutationResult.Failed && before != null) memory.update { before }
+            try {
+                writing.withLock { cache.mutate(invalidating = setOf(DataDomain.Memory), write = write) }
+            } catch (e: CancellationException) {
+                memory.invalidate()
+                throw e
+            }
+        if (result is MutationResult.Failed) memory.invalidate()
         return result is MutationResult.Done
     }
 }

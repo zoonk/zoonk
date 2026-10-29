@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -121,7 +122,8 @@ class SubscriptionStore(
         scope.launch {
             combine(isForeground, sessions.state) { foreground, _ -> fullAccount() to foreground }
                 .distinctUntilChanged()
-                .collect { (session, foreground) ->
+                // A newer account or foreground cancels the last one's relinking rather than waiting on it.
+                .collectLatest { (session, foreground) ->
                     if (session != reconciledFor) mutablePurchase.value = PurchaseState.Idle
                     reconciledFor = session
                     if (session != null && foreground) reconcile(session)
@@ -142,13 +144,13 @@ class SubscriptionStore(
         try {
             // Play's details go stale; a checkout always starts from fresh ones.
             val offers = billing.offers()
-            val offer = offers?.let { it.offerFor(period) ?: it.monthly ?: it.yearly }
-            val opened =
-                offers != null && offer != null && sessions.current == session && billing.buy(activity, offers, offer, session.accountId)
             if (offers != null) this.offers.replace(offers)
-            if (!opened) mutablePurchase.value = PurchaseState.PlayFailed
+            val offer = offers?.let { it.offerFor(period) ?: it.monthly ?: it.yearly }
+            if (fullAccount() != session) return
+            val opened = offers != null && offer != null && billing.buy(activity, offers, offer, session.accountId)
+            if (!opened && fullAccount() == session) mutablePurchase.value = PurchaseState.PlayFailed
         } catch (e: CancellationException) {
-            mutablePurchase.value = PurchaseState.Idle
+            if (fullAccount() == session && mutablePurchase.value == PurchaseState.Buying) mutablePurchase.value = PurchaseState.Idle
             throw e
         }
     }
@@ -171,6 +173,8 @@ class SubscriptionStore(
                     invalidating = setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession),
                     replacing = { listOf(account.replacing(it.currentAccount)) },
                 ) { current -> api.linkGooglePlay(current, purchaseToken) }
+            // Linked or not, a state for a session that ended belongs to nobody on screen.
+            if (fullAccount() != session) return
             when (result) {
                 is MutationResult.Done -> {
                     sessions.showAccount(session, result.value.currentAccount)

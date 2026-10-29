@@ -24,6 +24,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -42,10 +43,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -298,8 +301,23 @@ private fun LessonsSection(
                     modifier = Modifier.align(Alignment.TopEnd),
                 ) {
                     (listOf<Long?>(null) + DAILY_LIMIT_CHOICES).forEach { minutes ->
+                        val isCurrent = minutes == profile.dailyLimitMinutes
                         DropdownMenuItem(
                             text = { Text(limitLabel(minutes)) },
+                            trailingIcon =
+                                if (isCurrent) {
+                                    (
+                                        {
+                                            Icon(
+                                                painterResource(R.drawable.ic_check),
+                                                contentDescription = null,
+                                            )
+                                        }
+                                    )
+                                } else {
+                                    null
+                                },
+                            modifier = Modifier.semantics { selected = isCurrent },
                             onClick = {
                                 isChoosingLimit = false
                                 if (minutes != profile.dailyLimitMinutes) preferences.setDailyLimit(minutes)
