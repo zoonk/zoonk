@@ -1,3 +1,4 @@
+import { runRegexExamples } from "#regex-examples";
 import { type ActivityFormulaExample } from "../../activity-expected-answer";
 import { type ActivityTolerance } from "../../activity-schemas";
 import { characters, evaluateOrNull, isClose } from "./template-helpers";
@@ -100,11 +101,7 @@ export function regexPassesExamples(
 ): boolean {
   const regex = compileSafeRegex(pattern);
 
-  return (
-    regex !== null &&
-    examples.shouldMatch.every((sample) => regex.test(sample)) &&
-    !examples.shouldNotMatch.some((sample) => regex.test(sample))
-  );
+  return regex !== null && runRegexExamples(regex, examples);
 }
 
 export function withinTolerance({

@@ -2,6 +2,12 @@
   "name": "@zoonk/core",
   "private": true,
   "type": "module",
+  "imports": {
+    "#regex-examples": {
+      "browser": "./src/library/activities/templates/_utils/regex-examples.browser.ts",
+      "default": "./src/library/activities/templates/_utils/regex-examples.ts"
+    }
+  },
   "exports": {
     "./ai": "./src/ai.ts",
     "./ai-calls/log": "./src/ai-calls/ai-call-log.ts",
