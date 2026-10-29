@@ -43,6 +43,9 @@ tink = "1.24.0"
 # Account and Plus.
 googleid = "1.2.1"
 
+# Speech clips and recorded answers.
+media3 = "1.11.1"
+
 [libraries]
 lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "lint" }
 lint-tests = { module = "com.android.tools.lint:lint-tests", version.ref = "lint" }
@@ -101,6 +104,9 @@ tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "
 
 # Account and Plus.
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
+
+# Speech clips and recorded answers.
+androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

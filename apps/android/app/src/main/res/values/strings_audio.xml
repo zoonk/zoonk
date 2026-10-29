@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="audio_getting_ready">Getting the audio ready…</string>
+    <string name="audio_stop">Stop the audio</string>
+    <string name="audio_try_again_label">Try the audio again</string>
+    <string name="audio_did_not_play">The audio didn\'t play.</string>
+    <!-- %1$s is why the audio didn't play; the text it says follows on its own line. -->
+    <string name="audio_here_is_what_it_says">%1$s Here\'s what it says:</string>
+    <string name="audio_try_again">Try again</string>
+    <string name="audio_record">Record</string>
+    <!-- Stops recording the learner. -->
+    <string name="audio_record_stop">Stop</string>
+    <string name="audio_listening">Listening… Tap Stop to check.</string>
+    <string name="audio_checking">Checking…</string>
+    <string name="audio_checking_slow">Still checking. This is taking longer than usual.</string>
+    <string name="audio_no_speech">We couldn\'t hear any words. Try again.</string>
+    <string name="audio_check_failed">We couldn\'t check your answer this time. Try again.</string>
+    <string name="audio_say_it">Tap and say it out loud</string>
+    <string name="audio_microphone_off_title">The microphone is off</string>
+    <string name="audio_microphone_off_answer">Turn on the microphone for Zoonk in Settings to answer out loud.</string>
+    <string name="audio_open_settings">Open Settings</string>
+</resources>

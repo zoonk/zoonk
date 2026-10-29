@@ -154,6 +154,9 @@ dependencies {
     // Account and Plus.
     implementation(libs.googleid)
 
+    // Speech clips and recorded answers.
+    implementation(libs.androidx.media3.exoplayer)
+
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.leakcanary.android)

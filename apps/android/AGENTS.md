@@ -23,6 +23,7 @@ The [repository guidance](../../AGENTS.md) applies. This file adds Android-speci
 - When using a Material Symbol, first check what symbol is used for this feature in the `apple` and `main` apps. Then, choose the closest Material Symbol. Symbols/icons should be consistent across platforms.
 - Everyday screens are still. Celebrations are rare and earned, follow [Zoonk motion](../../.agents/skills/zoonk-motion/SKILL.md), and stay still when the animator duration scale is 0.
 - Private pictures (the API's `/v1/files/`) load through `images.request(context, url, session)` with the session the screen shows: the bearer goes in that request's own headers, the session's `localId` in its memory key, and nothing on disk. Never add the bearer through an interceptor that reads the current token.
+- Sound goes through the container's `speech` player (`feature/audio`), one sound at a time for the whole app: listen buttons use `rememberSpokenAudio` and `ListenButton`, and a clip is requested only from the tap. Recorded answers use `VoiceAnswerRecorder`, which asks for the microphone on the first Record tap and grades through the screen's write; never create another `ExoPlayer` or `MediaRecorder`.
 
 ## Data loading and caching
 

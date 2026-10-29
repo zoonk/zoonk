@@ -22,6 +22,9 @@ import com.zoonk.android.data.perform
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.LiveAccountApi
 import com.zoonk.android.feature.account.NoBotProof
+import com.zoonk.android.feature.audio.ExoAudioOutput
+import com.zoonk.android.feature.audio.SpeechPlayer
+import com.zoonk.android.feature.audio.VoiceFiles
 import com.zoonk.android.feature.feedback.FeedbackSender
 import com.zoonk.android.feature.feedback.LiveFeedbackApi
 import com.zoonk.android.feature.memory.LiveMemoryApi
@@ -33,6 +36,7 @@ import com.zoonk.android.feature.tutor.TutorStore
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
+import com.zoonk.api.models.SpeechClipRequest
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -65,7 +69,10 @@ class AppContainer private constructor(
             drafts = drafts,
             onChange = { previous, _ ->
                 cache.followSession()
-                previous?.let(images::forget)
+                previous?.let {
+                    images.forget(it)
+                    voiceFiles.forget(it)
+                }
             },
             clearCredentialState = { clearCredentialState(context) },
         )
@@ -89,6 +96,19 @@ class AppContainer private constructor(
     val account = AccountStore(LiveAccountApi(api, NoBotProof), sessions, cache)
     val memory = MemoryStore(LiveMemoryApi(api), cache)
     val feedback = FeedbackSender(LiveFeedbackApi(api), sessions)
+
+    // Speech clips and recorded answers.
+    val voiceFiles = VoiceFiles(File(context.cacheDir, "voice-clips"), api.http, images::isPrivate, sessions)
+    val speech =
+        SpeechPlayer(
+            clips = { session, language, text, personal ->
+                perform { api.clients(session).language.requestSpeechClip(SpeechClipRequest(language, text, personal)) }.url.toString()
+            },
+            files = voiceFiles,
+            output = ExoAudioOutput(context),
+            sessions = sessions,
+            scope = scope,
+        )
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =

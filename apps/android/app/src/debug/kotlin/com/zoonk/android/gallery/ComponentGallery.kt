@@ -3,6 +3,7 @@
 
 package com.zoonk.android.gallery
 
+import android.os.SystemClock
 import android.text.format.DateFormat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -20,6 +22,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
 import androidx.compose.foundation.lazy.staggeredgrid.items
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -51,7 +54,21 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.app.ZoonkApplication
+import com.zoonk.android.feature.audio.GradeOutcome
+import com.zoonk.android.feature.audio.ListenButton
+import com.zoonk.android.feature.audio.MicrophoneOff
+import com.zoonk.android.feature.audio.RecordButton
+import com.zoonk.android.feature.audio.SpeechFailedNote
+import com.zoonk.android.feature.audio.SpeechState
+import com.zoonk.android.feature.audio.SpeechStatusIcon
+import com.zoonk.android.feature.audio.SpokenText
+import com.zoonk.android.feature.audio.VoiceAnswerRecorder
+import com.zoonk.android.feature.audio.VoiceRecorder
+import com.zoonk.android.feature.audio.buttonIconSize
+import com.zoonk.android.feature.audio.rememberSpokenAudio
 import com.zoonk.android.navigation.PlaceIcon
+import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.AnswerTag
 import com.zoonk.android.ui.components.Belt
@@ -90,6 +107,7 @@ import com.zoonk.android.ui.format.formatTimeOfDay
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import kotlinx.coroutines.delay
 import java.time.LocalDate
 import java.time.LocalTime
 
@@ -118,6 +136,7 @@ internal val gallerySections =
         GallerySection("Limit notices") { LimitNotices() },
         GallerySection("Load failed") { LoadFailedMessage(onRetry = {}) { TextButton(onClick = {}) { Text("Go to Today") } } },
         GallerySection("Formatting") { Formatting() },
+        GallerySection("Audio") { Audio() },
     )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -579,6 +598,41 @@ private fun Formatting() {
                 Text(value, style = MaterialTheme.typography.bodyMedium.withTabularFigures())
             }
         }
+    }
+}
+
+@Composable
+private fun Audio() {
+    val navigator = rememberAppNavigator()
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            val audio = rememberSpokenAudio((LocalContext.current.applicationContext as ZoonkApplication).container.speech, "it")
+            ListenButton(audio, listOf(SpokenText("Ciao")), "Listen")
+            listOf(SpeechState.Loading, SpeechState.Playing, SpeechState.Failed(null)).forEach { state ->
+                FilledTonalButton(onClick = {}) {
+                    SpeechStatusIcon(state) {
+                        Icon(painterResource(R.drawable.ic_volume_up), contentDescription = null, Modifier.size(buttonIconSize()))
+                    }
+                    Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+                    Text("Listen")
+                }
+            }
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            RecordButton(VoiceRecorder.Status.Idle, level = { 0f }, onStart = {}, onStop = {})
+            RecordButton(VoiceRecorder.Status.Recording(SystemClock.elapsedRealtime() - 7_000), level = { 0.6f }, onStart = {}, onStop = {})
+        }
+        VoiceAnswerRecorder(
+            grade = { recording ->
+                delay(800)
+                if (recording.durationMs < 2_000) GradeOutcome.NoSpeech else GradeOutcome.Failed
+            },
+            onGraded = { _: Unit -> },
+            navigator = navigator,
+        )
+        SpeechFailedNote(language = "it", limit = null, onRetry = {}, navigator = navigator, text = "Vorrei un caffè, per favore.")
+        SpeechFailedNote(language = "it", limit = Limit.SignUpRequired, onRetry = {}, navigator = navigator)
+        MicrophoneOff(stringResource(R.string.audio_microphone_off_answer))
     }
 }
 
