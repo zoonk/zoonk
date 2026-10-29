@@ -587,6 +587,9 @@
     <string name="plan_other_time">Other time…</string>
     <string name="plan_weekend_time_differs">Different time on weekends</string>
     <string name="plan_time_on_weekends">Time on weekends</string>
+    <string name="plan_exam_choice_left_out">Pick the one you\'ll take. Until you do, your plan leaves %1$s out.</string>
+    <string name="plan_exam_choice_question">%1$s: which one will you take?</string>
+    <string name="plan_exam_choice_until_you_pick">Until you pick, your plan leaves %1$s out.</string>
     <string name="plan_what_you_practice">What you practice</string>
     <string name="plan_when_to_practice">When to practice %1$s</string>
     <string name="plan_cadence_weekly">Every week</string>

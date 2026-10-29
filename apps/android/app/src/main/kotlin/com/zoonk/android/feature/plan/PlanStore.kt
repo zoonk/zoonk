@@ -13,6 +13,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.value
+import com.zoonk.api.models.ExamChoiceInput
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.OnboardingStep
@@ -138,6 +139,13 @@ interface PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
     ): PlanTimeToCover
+
+    suspend fun chooseExamOption(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        group: String,
+        subject: String,
+    ): PlanChangeResult
 }
 
 class LivePlanApi(
@@ -220,6 +228,13 @@ class LivePlanApi(
         goalId: UUID,
     ) = perform { api.clients(session).plans.findPlanTimeToCover(goalId, PlanTimeToCoverInput()) }
 
+    override suspend fun chooseExamOption(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        group: String,
+        subject: String,
+    ) = perform { api.clients(session).plans.createPlanExamChoice(goalId, ExamChoiceInput(group, subject, deviceTimeZone())) }
+
     private fun changeInput(operations: List<PlanOp>) =
         buildJsonObject {
             put("operations", JsonArray(operations.mapNotNull { it.toJson() }))
@@ -290,6 +305,12 @@ class PlanStore(
         changeId: UUID,
         status: PlanChangeDecisionInput.Status,
     ): MutationResult<PlanChange> = write(goalId) { api.decide(it, goalId, changeId, status) }
+
+    suspend fun chooseExamOption(
+        goalId: UUID,
+        group: String,
+        subject: String,
+    ): MutationResult<PlanChangeResult> = write(goalId) { api.chooseExamOption(it, goalId, group, subject) }
 
     /** What an edit would do: it saves nothing, so nothing is read again. */
     suspend fun preview(

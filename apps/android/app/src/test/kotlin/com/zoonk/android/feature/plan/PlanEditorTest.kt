@@ -36,6 +36,7 @@ class PlanEditorTest {
 
     private val changes = mutableListOf<Pair<PlanPart, List<PlanOp>>>()
     private val undone = mutableListOf<PlanChange>()
+    private val examChoices = mutableListOf<Pair<String, String>>()
     private var asked by mutableStateOf(emptyMap<PlanPart, List<PlanOp>>())
 
     private fun show(
@@ -57,6 +58,10 @@ class PlanEditorTest {
                         asked = asked + (part to operations)
                     },
                     undo = { undone += it },
+                    chooseExamOption = { group, subject, _ ->
+                        examChoices += group to subject
+                        asked = asked + (PlanPart.ExamChoices to listOf(PlanOp.ExamChoice(group, subject)))
+                    },
                 )
             ZoonkTheme { Column { PlanEditorBody(page, edits) } }
         }
@@ -143,5 +148,22 @@ class PlanEditorTest {
 
         compose.onNodeWithText("Undone. Your plan is back as it was.").assertIsDisplayed()
         compose.onNodeWithText("Undo").assertDoesNotExist()
+    }
+
+    @Test
+    fun anExamOptionSavesAtOnceAndShowsAsPicked() {
+        show(EXAM_CHOICES)
+
+        compose.onNodeWithText("Pick the one you'll take. Until you do, your plan leaves Foreign language out.").assertIsDisplayed()
+        compose.onNodeWithText("Spanish").performScrollTo().performClick()
+
+        assertEquals(listOf("Foreign language" to "Spanish"), examChoices)
+        compose.onNodeWithText("Spanish").assertIsSelected()
+    }
+
+    private companion object {
+        const val EXAM_CHOICES =
+            """"examChoices":[{"group":"Foreign language","options":[{"name":"English","shortName":null},""" +
+                """{"name":"Spanish","shortName":null}],"subject":null}]"""
     }
 }

@@ -31,7 +31,7 @@ import java.util.UUID
 enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
 
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
-enum class PlanPart { Date, Schedule, Activities, Writing, Steering, FullCourse, Focus }
+enum class PlanPart { Date, Schedule, ExamChoices, Activities, Writing, Steering, FullCourse, Focus }
 
 /** The editor's latest applied change, which it shows with Undo. */
 data class EditorChange(
@@ -110,6 +110,20 @@ class PlanViewModel(
         part: PlanPart,
         operations: List<PlanOp>,
         answered: (PlanChangeResult?) -> Unit = {},
+    ) = save(part, operations, answered) { store.change(goalId, operations) }
+
+    fun chooseExamOption(
+        group: String,
+        subject: String,
+        answered: (PlanChangeResult?) -> Unit = {},
+    ) = save(PlanPart.ExamChoices, listOf(PlanOp.ExamChoice(group, subject)), answered) { store.chooseExamOption(goalId, group, subject) }
+
+    /** [write] saves [operations], which show as asked for until the plan shown has them. */
+    private fun save(
+        part: PlanPart,
+        operations: List<PlanOp>,
+        answered: (PlanChangeResult?) -> Unit,
+        write: suspend () -> MutationResult<PlanChangeResult>,
     ) {
         if (part in savingParts.value) return
         val opening = openings
@@ -117,7 +131,7 @@ class PlanViewModel(
         failedParts.update { it - part }
         askedOperations.update { it + (part to operations) }
         viewModelScope.launch {
-            val result = store.change(goalId, operations)
+            val result = write()
             val saved = (result as? MutationResult.Done)?.value
             val shown = if (saved != null) store.awaitWritesShown(goalId) else null
             val sameOpening = opening == openings

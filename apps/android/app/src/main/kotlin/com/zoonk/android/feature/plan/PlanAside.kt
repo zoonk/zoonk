@@ -243,7 +243,8 @@ internal fun PlanProperties(
                 PropertyRow(
                     label = choice.group,
                     value = picked?.let { it.shortName ?: it.name } ?: stringResource(R.string.plan_choose),
-                    onClick = null,
+                    onClick = onOpen?.let { { it(PlanSection.Choices) } },
+                    onClickLabel = adjust,
                     warning = picked == null,
                 )
             }

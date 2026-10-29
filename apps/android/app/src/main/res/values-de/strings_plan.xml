@@ -202,6 +202,9 @@
   "plan_estimated_score": "7945c81279e5e3cceee7d6444fac1882bf0b5d514ce94fee80924050bd9c73c2",
   "plan_every_day": "dff76e68074267fac608ca3548d475c2b38a68853e7de1fbc8c1bf6ffaf92e45",
   "plan_everything": "1b2cfc1c8ce6b801ab5288f66dbed792c53328d6dd2984ed0b14c766d415fbde",
+  "plan_exam_choice_left_out": "40cdaa67d4c608f0c2e89a2ff86b89a41e0a3cb35370d560ef2620e9f1fcd5bf",
+  "plan_exam_choice_question": "9b5fc4c044bd87e2fb69880fe4c2ea44cb7f49edbc52861158b386a347a12f4d",
+  "plan_exam_choice_until_you_pick": "d3dd50f492571f8017afe3e22ce4b667dcb130266f33d2e5219353bbacbbfd33",
   "plan_exam_date": "41a05252c5d853f8537f4ee8b40bfe29e2d2e6e6e4ee696a5ad46f2dd843f02c",
   "plan_exam_date_label": "007432210ce2e1beb26c7fc359785247b4bd9a58e4b1302738e032b73b702f41",
   "plan_exam_day": "9dd20b958bfe79dbc1f5d50d63963b0eadba74458cd6427d547a3d598d2b5fad",
@@ -1007,6 +1010,9 @@
     <string name="plan_other_time">Andere Zeit…</string>
     <string name="plan_weekend_time_differs">Am Wochenende andere Lernzeit</string>
     <string name="plan_time_on_weekends">Lernzeit am Wochenende</string>
+    <string name="plan_exam_choice_left_out">Such dir die Prüfung aus, die du ablegen wirst. Bis dahin lässt dein Plan %1$s aus.</string>
+    <string name="plan_exam_choice_question">%1$s: Welche Prüfung wirst du ablegen?</string>
+    <string name="plan_exam_choice_until_you_pick">Bis du dich entscheidest, lässt dein Plan %1$s aus.</string>
     <string name="plan_what_you_practice">Was du übst</string>
     <string name="plan_when_to_practice">Wann möchtest du %1$s üben?</string>
     <string name="plan_cadence_weekly">Jede Woche</string>

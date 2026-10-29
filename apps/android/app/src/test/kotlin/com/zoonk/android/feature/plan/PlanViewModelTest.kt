@@ -344,4 +344,23 @@ class PlanViewModelTest {
             )
             assertEquals(false, viewModel.latest.value?.undone)
         }
+
+    @Test
+    fun anExamChoiceShowsItsChangeOnceThePlanShownHasIt() =
+        runTest {
+            var readsWhenAnswered = -1
+
+            viewModel.chooseExamOption("Foreign language", "Spanish") { readsWhenAnswered = api.plans }
+
+            assertEquals(listOf("Foreign language" to "Spanish"), api.examChoices)
+            assertEquals(emptyMap<PlanPart, List<PlanOp>>(), viewModel.asked.value)
+            assertEquals(1, readsWhenAnswered)
+            assertEquals(
+                CHANGE_ID,
+                viewModel.latest.value
+                    ?.change
+                    ?.id
+                    .toString(),
+            )
+        }
 }

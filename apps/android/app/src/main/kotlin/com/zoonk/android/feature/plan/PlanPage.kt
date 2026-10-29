@@ -144,6 +144,7 @@ internal fun PlanPage(
             findTimeToCover = viewModel::findTimeToCover,
             chooseFocus = { choosingFocus = true },
             studyEverything = { studyingEverything = true },
+            chooseExamOption = viewModel::chooseExamOption,
         )
     val report =
         rememberReportProblem(

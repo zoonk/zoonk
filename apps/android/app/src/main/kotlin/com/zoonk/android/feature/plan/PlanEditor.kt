@@ -92,6 +92,8 @@ internal data class PlanEdits(
     val findTimeToCover: (Plan, (TimeToCoverOutcome) -> Unit) -> Unit = { _, _ -> },
     val chooseFocus: () -> Unit = {},
     val studyEverything: () -> Unit = {},
+
+    val chooseExamOption: (group: String, subject: String, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
 ) {
     fun isPending(part: PlanPart) = part in pending
 
@@ -205,6 +207,7 @@ internal fun ColumnScope.PlanEditorBody(
             modifier = Modifier.section(PlanSection.Time),
             daysModifier = Modifier.section(PlanSection.Days),
         )
+        PlanExamChoices(page, edits, Modifier.section(PlanSection.Choices))
         PlanActivities(page, edits, Modifier.section(PlanSection.Practice))
         PlanWrittenPractice(page, edits)
         PlanSteering(page, edits)

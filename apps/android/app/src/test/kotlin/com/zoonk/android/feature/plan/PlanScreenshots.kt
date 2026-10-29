@@ -264,7 +264,8 @@ class PlanScreenshots {
                  "targetDateEstimated":false,"targetDateNamedMonth":false,"noticeDay":{"date":"2027-11-14","estimated":false},
                  "weekdayMinutes":[0,45,45,45,45,45,90]},
                 "steering":{"difficultyBias":"harder","lessonsStudied":12,"practiceBias":"balanced","skippedActivities":[]},
-                "writtenPractice":{"cadence":"weekly","finalWeeksFrom":"2027-09-01","parts":["the essay"]}
+                "writtenPractice":{"cadence":"weekly","finalWeeksFrom":"2027-09-01","parts":["the essay"]},
+                $EDITOR_CHOICES
                 """.trimIndent(),
             )
         val page = PlanPageState(summary.goals.first(), plan, summary)
@@ -324,5 +325,13 @@ class PlanScreenshots {
     ) {
         val file = File(folder, "$name.png").apply { parentFile?.mkdirs() }
         file.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    private companion object {
+        val EDITOR_CHOICES =
+            """
+            "examChoices":[{"group":"Língua estrangeira","options":[{"name":"Inglês","shortName":null},
+             {"name":"Espanhol","shortName":null}],"subject":null}]
+            """.trimIndent()
     }
 }

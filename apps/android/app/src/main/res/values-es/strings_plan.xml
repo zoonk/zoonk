@@ -202,6 +202,9 @@
   "plan_estimated_score": "4e0184206c0263d4817064c6df2a3556f9744185f07d8bcde9bad3da84e15a1b",
   "plan_every_day": "3a6a23cf2b886c2d43df42fd6d80cc199282ba434c4edf54efd17f39a70f8d27",
   "plan_everything": "b21c98179d3a019b875738f5d53dcccf08ffca198d73584c2d5f8254432ee7f9",
+  "plan_exam_choice_left_out": "b8ea7d2b07ce5d5ea1ed768ce99ae838e157382a30d2689712c8e88b8114f9a2",
+  "plan_exam_choice_question": "56b6918ef512a010fdde9adda608d996ca4db67498dd4630e2276c5e017a31d4",
+  "plan_exam_choice_until_you_pick": "2d718e7d57d5ac99ffd08773334ac5519ed82da7f4f3d914bfdb18459f79e111",
   "plan_exam_date": "a059a0212363e0ca4e2aafd54ec1f5d95893b0b8de07b3902d5b5ac58ce33317",
   "plan_exam_date_label": "6d66c48aa216d597e9f1de130c31ac53aed1d10b60d7bd4984c65ca5d985b826",
   "plan_exam_day": "5f93cb66f01a1e3f3de68af3daf89a66137764ca5d7c4bd8d71c9471a4136d55",
@@ -1077,6 +1080,9 @@
     <string name="plan_other_time">Otro momento…</string>
     <string name="plan_weekend_time_differs">Horario distinto los fines de semana</string>
     <string name="plan_time_on_weekends">Horario de los fines de semana</string>
+    <string name="plan_exam_choice_left_out">Elige cuál vas a hacer. Hasta que lo hagas, tu plan omite %1$s.</string>
+    <string name="plan_exam_choice_question">%1$s: ¿cuál vas a hacer?</string>
+    <string name="plan_exam_choice_until_you_pick">Hasta que elijas, tu plan omite %1$s.</string>
     <string name="plan_what_you_practice">Qué practicas</string>
     <string name="plan_when_to_practice">Cuándo practicar %1$s</string>
     <string name="plan_cadence_weekly">Todas las semanas</string>

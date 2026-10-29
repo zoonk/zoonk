@@ -202,6 +202,9 @@
   "plan_estimated_score": "23c9cae7314afe000eec6765c33f1a1cc2a489f2677da396718968d618abe6e4",
   "plan_every_day": "218543d1c5c2c19e7dddaf7ebe21dd17dc76f4f873e8ae3c2595966403a2e653",
   "plan_everything": "4b1a86b344e110d5a16c5ebe737783960d777848840a43aa23a1f182ad243362",
+  "plan_exam_choice_left_out": "fc560e67ae2b53492f8da1a5a9c9a8660b6415e016ae602b3ee3f0bcddefbb5b",
+  "plan_exam_choice_question": "9ef52370040785bbd33ede30f53d883e96af22990dc80b8084fd0ebf0b565cf6",
+  "plan_exam_choice_until_you_pick": "c0d124e57ed7cc5384ce07b08992069594c9924cd3a341e76ddae1e13db66258",
   "plan_exam_date": "3a8e4929b3e01122fc6050233fe6a01195ccbf0648bb1af65108ab4df9f1667d",
   "plan_exam_date_label": "7bde510e991987c981221f3a521dd05872d23ef4c791cdef929c52f88308384a",
   "plan_exam_day": "0b032c6ce85e563879c4ab61fd3d9f6d945fc2d358ab739fdd881466c56cc8a6",
@@ -1077,6 +1080,9 @@
     <string name="plan_other_time">Outro tempo…</string>
     <string name="plan_weekend_time_differs">Tempo diferente nos fins de semana</string>
     <string name="plan_time_on_weekends">Tempo nos fins de semana</string>
+    <string name="plan_exam_choice_left_out">Escolha qual prova você vai fazer. Até escolher, seu plano deixa %1$s de fora.</string>
+    <string name="plan_exam_choice_question">%1$s: qual prova você vai fazer?</string>
+    <string name="plan_exam_choice_until_you_pick">Até você escolher, seu plano deixa %1$s de fora.</string>
     <string name="plan_what_you_practice">O que você pratica</string>
     <string name="plan_when_to_practice">Quando praticar %1$s</string>
     <string name="plan_cadence_weekly">Toda semana</string>
