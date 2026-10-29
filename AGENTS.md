@@ -76,11 +76,15 @@ Some models over-engineer, and a reviewer from another family catches the bugs, 
 - Read the current [.github/workflows](.github/workflows), including reusable workflows, as the source of truth for commands, setup, matrices, and platform-specific path conditions. Cover formatting, lint, type checks, both Knip modes, translations, generated API contracts, deployment orchestration tests, all Vitest suites (unit, database integration, and player browser tests), and the full Main and API E2E suites (`pnpm e2e`, which builds and migrates what it tests). Cover every configured test project and shard; an unsharded run is sufficient when it exercises the same full suite. Include applicable native CI checks. Use the [development guide](.agents/guides/development.md) for local environment and browser execution requirements.
 - Verify the final tree before opening a PR, marking it ready for review, or merging it. If it changes after verification, rerun the full gate. Fix failures in the affected scope and report unrelated failures or missing prerequisites with evidence; do not open a PR, mark it ready, or merge it while required checks are failing, blocked, or unrun. Report the checks and results with the handoff.
 
+## Translations
+
+- Translations come only from Eloqnt: after changing English copy, run `pnpm --filter <app> i18n`, then its `i18n:lint`. Never write, edit or copy a translation by hand, including from another app's catalog.
+- When a translation is wrong or inconsistent, fix the English source, its translator comment, or the style guides, then re-translate it with Eloqnt (`--id <message id>`).
+- The shared [Eloqnt style guides](packages/i18n/.eloqnt/styleguide.md) hold recurring tone and terminology; locale-specific choices go in `styleguide.<locale>.md`. Eloqnt sends them with every request and supplies translation best practices itself, so add only terms and expressions used across apps (`goal → meta`, “Brain Power”, the verb for “say” in pronunciation practice), never individual strings, ordinary UI words like “Save”, or generic i18n rules.
+
 ## Task-specific guidance
 
 Read the scoped `AGENTS.md` files governing paths you change, including when working from the repository root. Read shared guides only when the task matches their scope; this index is not a required reading list for every edit.
-
-Use the shared [Eloqnt style guides](packages/i18n/.eloqnt/styleguide.md) for recurring Zoonk tone and terminology choices; put locale-specific choices in `styleguide.<locale>.md`. Keep them brief and self-contained: Eloqnt supplies translation best practices, so avoid generic i18n rules and one-off copy fixes. For example, `goal → meta` belongs in the Portuguese glossary; lists of ordinary UI translations like “Save”, “Cancel”, and “Next”, or tutorials on ICU plurals, do not.
 
 | Task                                                            | Guidance                                                                           |
 | --------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
