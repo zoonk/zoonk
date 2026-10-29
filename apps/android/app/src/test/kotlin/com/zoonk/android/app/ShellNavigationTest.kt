@@ -138,6 +138,16 @@ class ShellNavigationTest {
     }
 
     @Test
+    fun aTaskOverTodayTakesTodayOutOfComposition() {
+        open(AppRoute.MistakePractice())
+
+        rule.onNodeWithTag("list:today").assertDoesNotExist()
+
+        rule.onNodeWithContentDescription("Leave").performClick()
+        rule.onNodeWithTag("list:today").assertIsDisplayed()
+    }
+
+    @Test
     fun onboardingHidesTheBarOnAPhone() {
         open(AppRoute.StartGoal())
 

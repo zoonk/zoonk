@@ -48,7 +48,10 @@ import com.zoonk.api.models.StudySessionWeekDaysInner
 import com.zoonk.api.models.TodayWeeklyChallenge
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
+import java.time.DayOfWeek
 import java.time.format.TextStyle
+import java.util.Locale
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToInt
 
 private typealias WeekDay = StudySessionWeekDaysInner
@@ -69,10 +72,11 @@ internal fun TodayWeek(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         WeekHeader(day)
 
+        val names = weekdayNames(currentLocale())
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
             week.days.forEach { weekDay ->
                 val challengeDay = challenge?.takeIf { it.date == weekDay.date }
-                DayCell(weekDay, weekDate, challengeDay, Modifier.weight(1f))
+                DayCell(weekDay, weekDate, challengeDay, names, Modifier.weight(1f))
             }
         }
 
@@ -148,11 +152,11 @@ private fun DayCell(
     day: WeekDay,
     weekDate: LocalDate,
     challenge: TodayWeeklyChallenge?,
+    names: WeekdayNames,
     modifier: Modifier,
 ) {
-    val locale = currentLocale()
-    val date = day.date.toJavaLocalDate()
-    val weekday = date.dayOfWeek.getDisplayName(TextStyle.FULL_STANDALONE, locale).replaceFirstChar { it.titlecase(locale) }
+    val dayOfWeek = day.date.toJavaLocalDate().dayOfWeek
+    val weekday = names.full.getValue(dayOfWeek)
     val status = dayStatus(day, weekDate)
     val description =
         when {
@@ -170,7 +174,7 @@ private fun DayCell(
             if (challenge != null && day.share == 0f) KindMark(challenge.kind())
         }
         Text(
-            text = date.dayOfWeek.getDisplayName(TextStyle.NARROW_STANDALONE, locale).uppercase(locale),
+            text = names.narrow.getValue(dayOfWeek),
             color = if (day.isToday) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
             fontWeight = if (day.isToday) FontWeight.Medium else null,
             style = MaterialTheme.typography.labelSmall,
@@ -329,3 +333,20 @@ private fun ChallengeRow(
 }
 
 private val RING = 30.dp
+
+internal class WeekdayNames(
+    locale: Locale,
+) {
+    val full =
+        DayOfWeek.entries.associateWith {
+            it.getDisplayName(TextStyle.FULL_STANDALONE, locale).replaceFirstChar { c ->
+                c.titlecase(locale)
+            }
+        }
+    val narrow = DayOfWeek.entries.associateWith { it.getDisplayName(TextStyle.NARROW_STANDALONE, locale).uppercase(locale) }
+}
+
+private val weekdayNamesByLocale = ConcurrentHashMap<Locale, WeekdayNames>()
+
+/** Kept per locale: a lookup loads the locale's calendar data, slow enough on a loaded device to stall composition. */
+internal fun weekdayNames(locale: Locale): WeekdayNames = weekdayNamesByLocale.getOrPut(locale) { WeekdayNames(locale) }
