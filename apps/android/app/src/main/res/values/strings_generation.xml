@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Title when the updates of something being written stopped. -->
+    <string name="generation_connection_lost">Connection lost</string>
+    <string name="generation_connection_lost_description">We stopped getting updates. It may still be working.</string>
+    <!-- Follows a run again after its updates stopped. -->
+    <string name="generation_reconnect">Reconnect</string>
+    <!-- Title when something being written failed. -->
+    <string name="generation_failed">This didn\'t finish</string>
+    <string name="generation_failed_description">Something went wrong on our side.</string>
+    <!-- Title when something to be written never started. -->
+    <string name="generation_not_started">This didn\'t start</string>
+    <string name="generation_not_started_description">We couldn\'t get this started.</string>
+    <!-- Starts something that failed or never started again. -->
+    <string name="generation_try_again">Try again</string>
+    <!-- Screen reader state of a step of a wait. -->
+    <string name="generation_phase_pending">not started yet</string>
+    <string name="generation_phase_active">in progress</string>
+    <string name="generation_phase_completed">done</string>
+    <string name="generation_phase_failed">stopped here</string>
+    <!-- A detail line while questions are written, with the question's number. -->
+    <string name="generation_question_line">Writing question %1$d…</string>
+    <string name="generation_question_review">Checking the answers…</string>
+    <string name="generation_goal">Reading your goal</string>
+    <string name="generation_goal_line_1">Reading your answers…</string>
+    <string name="generation_goal_line_2">Deciding how deep to go…</string>
+    <!-- A step that only runs for a plan built from the learner's own material. -->
+    <string name="generation_notice">Reading your material</string>
+    <string name="generation_notice_line_1">Finding the topics it covers…</string>
+    <string name="generation_notice_line_2">Putting them in the order it teaches…</string>
+    <string name="generation_skills">Mapping the skills it takes</string>
+    <string name="generation_skills_line_1">Listing what your goal asks for…</string>
+    <string name="generation_skills_line_2">Putting the skills in order…</string>
+    <string name="generation_skills_line_3">Checking nothing important is missing…</string>
+    <!-- The wait while a typed goal is read. -->
+    <string name="generation_understanding">Reading your goal</string>
+    <string name="generation_understanding_read">Reading your goal</string>
+    <string name="generation_understanding_read_line_1">Reading what you wrote…</string>
+    <string name="generation_understanding_read_line_2">Working out what you want to reach…</string>
+    <string name="generation_understanding_read_line_3">Checking if it\'s an exam, a language or a subject…</string>
+    <string name="generation_understanding_dates">Checking the exam dates</string>
+    <string name="generation_understanding_dates_line_1">Looking up the exam calendar…</string>
+    <string name="generation_understanding_dates_line_2">Finding the dates for your year…</string>
+    <!-- The wait while a plan is built. -->
+    <string name="generation_curriculum">Building your plan</string>
+    <string name="generation_curriculum_plan">Fitting the plan into your days</string>
+    <string name="generation_curriculum_plan_line_1">Finding lessons in the Library…</string>
+    <string name="generation_curriculum_plan_line_2">Spreading the skills over your days…</string>
+    <string name="generation_curriculum_plan_line_3">Saving your plan…</string>
+    <!-- The wait while placement questions are written. -->
+    <string name="generation_placement">Getting your questions ready</string>
+    <string name="generation_placement_questions">Writing your questions</string>
+    <string name="generation_placement_questions_line">Picking the skills to ask about…</string>
+    <!-- The wait while the first day of a plan is prepared. -->
+    <string name="generation_first_lesson">Getting your first day ready</string>
+    <string name="generation_first_lesson_day">Planning your first day</string>
+    <string name="generation_first_lesson_day_line_1">Finding lessons in the Library…</string>
+    <string name="generation_first_lesson_day_line_2">Choosing where to start…</string>
+    <!-- The wait while a language's level test questions are written. -->
+    <string name="generation_level_test">Preparing your level test</string>
+    <string name="generation_level_test_bank">Writing the level test questions</string>
+    <string name="generation_level_test_bank_line_1">Choosing texts from beginner to advanced…</string>
+    <string name="generation_level_test_bank_line_2">Writing the reading questions…</string>
+    <string name="generation_level_test_bank_line_3">Writing the listening questions…</string>
+    <string name="generation_level_test_bank_line_4">Checking each question has one right answer…</string>
+</resources>

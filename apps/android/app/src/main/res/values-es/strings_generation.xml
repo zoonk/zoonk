@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "generation_connection_lost": "91dc1a90a40387d5039c197bb37c08bcef3df646d1ab50b3e33eca97a6aacc21",
+  "generation_connection_lost_description": "bbda6523eaae1f60a28112d7c36a96a01f4900c340554b684c2afb3d504a9d20",
+  "generation_curriculum": "85757c25c0346a1d925110507a39812127b30d9f088884fb8a24264e89a3512c",
+  "generation_curriculum_plan": "6c137f721043dcd7461361559824f548df04db6868388bd493d43cbdf66529c9",
+  "generation_curriculum_plan_line_1": "1ad61ca50dd510be818002ab58d3c5eaad6011d596c50d27487acf42ee48a291",
+  "generation_curriculum_plan_line_2": "09ec2d628a185d99f3dcf39a70f8541adc20cfb0854d652de9eb1b7be8ac2011",
+  "generation_curriculum_plan_line_3": "2948a8e70e30804818557b16ac2c3e5a4d0edb4935f5e114addfda4f6e70c296",
+  "generation_failed": "878767cc18373274e7d4408c8bcd746a3e29732c3f6b24b5cc1405babfa9394d",
+  "generation_failed_description": "8c7e7877957aaed317ae556c8e2dec16a7feb781fca92709eb2966505db702cf",
+  "generation_first_lesson": "c934c60b0fb399ecb69328a121bbc3c314ac8301328939bd9ddf135a97f24b43",
+  "generation_first_lesson_day": "66e2b323f83b759677bdc421a490ba683b7ea5d6996236400ba67a79d3bb6000",
+  "generation_first_lesson_day_line_1": "cd6426a6660d87d58c8e6253308e0aad1d1671c9602d4414f3250f6444e94f11",
+  "generation_first_lesson_day_line_2": "bead2f9934180309d0b99249089716b8a483db1a90afe7d8ed2bd87db791e021",
+  "generation_goal": "7ef863e5be0874a21524bdd91c326b9f7eff9d2fb6e4abf742f5ecdfdf58eba0",
+  "generation_goal_line_1": "fb774a57562a9768a9e5ac55cf6982948a3fe7e1550f33725af1bcf62efdbd21",
+  "generation_goal_line_2": "0b2cc258cde4d2dd4456194ca97611a9f328ad4b53f9ee1d00f0242995ebac2d",
+  "generation_level_test": "b01b7a91be64eeecde8e48cd8c9734de89c923b1fad7c5eada944c36110808b8",
+  "generation_level_test_bank": "da0f2061710da6b62db814bdf37089b2f9d6c2728c4daf2208aae2df4394d71f",
+  "generation_level_test_bank_line_1": "81c4c57b2b653f60d6434180da55bdeea76c599a4f2a305077a89ded1882dbb5",
+  "generation_level_test_bank_line_2": "4d0d36e89292c5478186ab25444789ad3d58a5c979192056e786313e48b657c7",
+  "generation_level_test_bank_line_3": "8f0cf38fa0534a198238819860089baa65ebb2bab108ba77a443afc2e1084ddd",
+  "generation_level_test_bank_line_4": "592805cd6f335607da9bdabac1dd866282486ba226a55cdb09227b74ae66f512",
+  "generation_not_started": "12dbce375388b0a30db4b11b2a3286e24d6bdbe3bcfaebcc46a63f8fc78fffc4",
+  "generation_not_started_description": "4b2030c25438bc0f14b19971980d3ee5ac7e46930b277f095e6a5b8cde620edf",
+  "generation_notice": "a25fc2fd0ab0376381b8627dd9d6f5abb225eec4bcbf359ef63525267162e0a1",
+  "generation_notice_line_1": "1b70ccd90e8099e10636ab70659b36d744be1cdbc6eb36d7ae3d5ad8f955c8ba",
+  "generation_notice_line_2": "1fff5ef849fcac0824fef768a4239118fff7a2a2a0e98a3890b08e355bd84b3f",
+  "generation_phase_active": "ea736c85e98531f6230614f41e780556c1356607f6e37f7ae7544f16fff168cc",
+  "generation_phase_completed": "e1b21dd92d3ff7be6a6146f5818826710df9d970b89344a9618f831c3836a151",
+  "generation_phase_failed": "0f2c5972a6c4f78f35d9c2b8b4d628343ed45c751de32505a7a27f97d8f68a1a",
+  "generation_phase_pending": "41d83a30e4c23258bf351e0e9d5fc8e2b20d25914fdfc0931eb3243e3b6d9fd5",
+  "generation_placement": "cb1a6f84cf9a4ebfbc887ff90a42a9483eec465779c9214eabbfd8ec472d2569",
+  "generation_placement_questions": "121633a4a6de41a06dc4cdf06eb34b51fddc546341501a5fd774cf2c8604c1c0",
+  "generation_placement_questions_line": "96903e8dd284e2920bea946ed06a5de8a314d1c748416889c868fe9ebaa04368",
+  "generation_question_line": "34affb872da76742622d1ccd74cfe6b4bf8cbee384705e2be6553b6ae4c0ef5a",
+  "generation_question_review": "af96787c4f316f6bbda886fce702439820c1397a1f102ae9812f0a2b2cc9f51f",
+  "generation_reconnect": "e074cf6dbaa9e56f3ee9dded2ee6fb1074bd64bca924ebdbc080379a9c9d91ed",
+  "generation_skills": "4de389b207b588be920e35390be567f0b2c93145139db78c82c953f39fd7fa6b",
+  "generation_skills_line_1": "619f93e3b58cb95d9fdf31a9934ce41d5b6898bedf3475ad433601b5f769fcab",
+  "generation_skills_line_2": "ed708f734d3a5dcfd3e66c0f60280c1bd76c464bef36e1afbb8bec4865556ae7",
+  "generation_skills_line_3": "f31dc9c62ec533af17baab086b190e95d6d2a579c7cb34c927a0571e67e80b8e",
+  "generation_try_again": "6385064fd400ea112f8c5d3231c7bbede113c6ccff971478dd706c42716ca310",
+  "generation_understanding": "39e7b14a4f0686b49444a80b273a9f8587bd1bc6ae64dce920dab9aeeb2619ea",
+  "generation_understanding_dates": "d0dd8f0e0dc7f5fdcc49af8408904bc2c4662382c17dabe7cfeb6df337d71fc5",
+  "generation_understanding_dates_line_1": "a131d2be2004f78fe5c61b81e36f57a2332437e338c00357c59dd14e3fcabb2b",
+  "generation_understanding_dates_line_2": "fdc65d1a6fbca52b7481c6fe2508a68e7b8bd92f1246ad5662a1da5ac404bfab",
+  "generation_understanding_read": "953d27f6766cae8895f02678934bbe51aeb3bdabde519de827db04bea3e22569",
+  "generation_understanding_read_line_1": "4fcc437d008ae5a7701cfe6d52b1028cc6052ec3803a95a329e9310102ce93bc",
+  "generation_understanding_read_line_2": "239fc76e60f78a651998061c2f365f3a005ca16f32b16cd81fd31029f9593e48",
+  "generation_understanding_read_line_3": "a8c3b7f27c4228bab351308ba5c678a851bafed8c21f50e9883ada348b8126ba"
+}
+-->
+<resources>
+    <!-- Title when the updates of something being written stopped. -->
+    <string name="generation_connection_lost">Se ha perdido la conexión</string>
+    <string name="generation_connection_lost_description">Hemos dejado de recibir actualizaciones. Puede que siga en marcha.</string>
+    <!-- Follows a run again after its updates stopped. -->
+    <string name="generation_reconnect">Reconectar</string>
+    <!-- Title when something being written failed. -->
+    <string name="generation_failed">No se ha completado</string>
+    <string name="generation_failed_description">Ha habido un problema por nuestra parte.</string>
+    <!-- Title when something to be written never started. -->
+    <string name="generation_not_started">No se ha iniciado</string>
+    <string name="generation_not_started_description">No hemos podido iniciarlo.</string>
+    <!-- Starts something that failed or never started again. -->
+    <string name="generation_try_again">Volver a intentarlo</string>
+    <!-- Screen reader state of a step of a wait. -->
+    <string name="generation_phase_pending">todavía sin iniciar</string>
+    <string name="generation_phase_active">en curso</string>
+    <string name="generation_phase_completed">completado</string>
+    <string name="generation_phase_failed">se ha detenido aquí</string>
+    <!-- A detail line while questions are written, with the question's number. -->
+    <string name="generation_question_line">Preparando la pregunta %1$d…</string>
+    <string name="generation_question_review">Comprobando las respuestas…</string>
+    <string name="generation_goal">Leyendo tu objetivo</string>
+    <string name="generation_goal_line_1">Leyendo tus respuestas…</string>
+    <string name="generation_goal_line_2">Decidiendo hasta dónde llegar…</string>
+    <!-- A step that only runs for a plan built from the learner's own material. -->
+    <string name="generation_notice">Leyendo tu material</string>
+    <string name="generation_notice_line_1">Buscando los temas que incluye…</string>
+    <string name="generation_notice_line_2">Ordenándolos según se enseñan…</string>
+    <string name="generation_skills">Trazando las habilidades necesarias</string>
+    <string name="generation_skills_line_1">Enumerando lo que requiere tu objetivo…</string>
+    <string name="generation_skills_line_2">Ordenando las habilidades…</string>
+    <string name="generation_skills_line_3">Comprobando que no falte nada importante…</string>
+    <!-- The wait while a typed goal is read. -->
+    <string name="generation_understanding">Leyendo tu objetivo</string>
+    <string name="generation_understanding_read">Leyendo tu objetivo</string>
+    <string name="generation_understanding_read_line_1">Leyendo lo que has escrito…</string>
+    <string name="generation_understanding_read_line_2">Averiguando qué quieres conseguir…</string>
+    <string name="generation_understanding_read_line_3">Comprobando si es un examen, un idioma o una asignatura…</string>
+    <string name="generation_understanding_dates">Comprobando las fechas del examen</string>
+    <string name="generation_understanding_dates_line_1">Consultando el calendario de exámenes…</string>
+    <string name="generation_understanding_dates_line_2">Buscando las fechas del año que te interesa…</string>
+    <!-- The wait while a plan is built. -->
+    <string name="generation_curriculum">Preparando tu plan</string>
+    <string name="generation_curriculum_plan">Distribuyendo el plan en tus días</string>
+    <string name="generation_curriculum_plan_line_1">Buscando lecciones en la Biblioteca…</string>
+    <string name="generation_curriculum_plan_line_2">Repartiendo las habilidades entre tus días…</string>
+    <string name="generation_curriculum_plan_line_3">Guardando tu plan…</string>
+    <!-- The wait while placement questions are written. -->
+    <string name="generation_placement">Preparando tus preguntas</string>
+    <string name="generation_placement_questions">Preparando tus preguntas</string>
+    <string name="generation_placement_questions_line">Eligiendo las habilidades sobre las que preguntarte…</string>
+    <!-- The wait while the first day of a plan is prepared. -->
+    <string name="generation_first_lesson">Preparando tu primer día</string>
+    <string name="generation_first_lesson_day">Planificando tu primer día</string>
+    <string name="generation_first_lesson_day_line_1">Buscando lecciones en la Biblioteca…</string>
+    <string name="generation_first_lesson_day_line_2">Eligiendo por dónde empezar…</string>
+    <!-- The wait while a language's level test questions are written. -->
+    <string name="generation_level_test">Preparando tu prueba de nivel</string>
+    <string name="generation_level_test_bank">Preparando las preguntas de la prueba de nivel</string>
+    <string name="generation_level_test_bank_line_1">Eligiendo textos de nivel básico a avanzado…</string>
+    <string name="generation_level_test_bank_line_2">Preparando las preguntas de lectura…</string>
+    <string name="generation_level_test_bank_line_3">Preparando las preguntas de escucha…</string>
+    <string name="generation_level_test_bank_line_4">Comprobando que cada pregunta tenga una única respuesta correcta…</string>
+</resources>
