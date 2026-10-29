@@ -12,6 +12,11 @@
   "speaking_last_near": "fd921981337fb932afd634021dca0008fd34682dd006b41b5cb90d2aefa510cb",
   "speaking_last_none": "90f35ca1130d349273253baf57a7ee9cfd6c6543265497a81102e0ba56582332",
   "speaking_last_result": "cd15092c3227e32e9f9e10be7b26e0dac4f682b287f02851567c983565ca2248",
+  "speaking_mock_failed": "0fa0552337c21f33974fda757218c188ab6e6a4b81178fb354bc79a822b6aae9",
+  "speaking_mock_ielts": "63714f2f60bc21e878ab9494cc92062ecd99e467a1bebba0dfad2b8c3a0038c3",
+  "speaking_mock_opens": "54e563e77436531402dc30284cbaebdcffd72445605d923ab2f1316483930ec9",
+  "speaking_mock_start": "f104e6da82ab489b6e23b1a3cffe2c569ed0e9b7b5eaef864bcffe0712d2525d",
+  "speaking_mock_toefl": "865cbd174d6ee9e77e4fd530ca4a6f43a765de18e9ed7d03e7c26e66f1960542",
   "speaking_no_time_day": "e927771f9967248713f39c169d224b1542e38e7d90b9422296553e733bf178d3",
   "speaking_no_time_month": "38ceb7abb3bd2b6dd22860599fc36137c07cc3dcc39c720b166ad09bd8500207",
   "speaking_official": "bc16711432b1750386ce8a49b5c64a2197f4fda8cc4cdc1315b66559141fbeb5",
@@ -22,10 +27,17 @@
   "speaking_prep_shared": "39b1abfbc476784fd8a4d800e907020caaf36dce32245b99316cda55d6af211c",
   "speaking_rated_on": "b1fbb23621ee09a56da814f0edeebd1700bab42b7d6e8c4e63e5e543aca0869c",
   "speaking_row": "d661adb5f8007e63d3bad04cf45cfafe60b5eea02696dee06defaaed27272bc6",
+  "speaking_section": "8d1999352744f56192c5c3b9576689ca7d2994ce7822d5c559636a026bf9844f",
   "speaking_start_failed": "1c722788a7e72bc577e577c7faf82cb3c122fc6c0741eae4b8414a971c13bf90",
   "speaking_start_task": "ee7ea541c14e49ade4c6536ed8e424891edb264c23018890035877100c3cc937",
   "speaking_tasks": "11af098887a8e2b8b822e5c812733c236264f84ff098af4cc924802a3a8dc35e",
-  "speaking_title": "524f684f58e6b15be0f996f0178d5556e8067b443f6170242e6133d0d5101b0c"
+  "speaking_title": "524f684f58e6b15be0f996f0178d5556e8067b443f6170242e6133d0d5101b0c",
+  "speaking_writing_mock": "9a313de190942898dabe6b9ab7606db76f0030dac0fae665c27c144f185d3b20",
+  "speaking_writing_mock_line_1": "e4485fea044b376f4d829263aa6038abc55969e62fbf5b30f1b6571f49a3ed92",
+  "speaking_writing_mock_line_2": "78bfbc1218314b3a1bdb033f7affaa008d769e9cffd89ab6f8c48f8dd6323521",
+  "speaking_writing_mock_line_3": "7f085c15cc2ac481a1c44ce015209a192b80dd5ab41dbf93c0a0599dbd08836f",
+  "speaking_writing_mock_line_4": "7f8468f2592a15d6527277f53d9ce5bc588460ca21510c6cf3d3f334f0b7b7ad",
+  "speaking_writing_mock_phase": "67cde1d2d7b87ff251f171052f737c5944c10717ace583a97449f91507936980"
 }
 -->
 <resources>
@@ -39,6 +51,8 @@
     </plurals>
     <string name="speaking_official">%1$s ist eine offizielle Prüfung. Übe die Sprechaufgaben, egal ob du vorhast, sie abzulegen.</string>
     <string name="speaking_tasks">Aufgaben</string>
+    <!-- The exam page's speaking section, with the paper's title beside it. -->
+    <string name="speaking_section">Sprechen</string>
     <string name="speaking_plus">Sprechübungen gibt es mit Plus: Jede Aufgabe der Prüfung im Gespräch und nach jeder eine Schätzung anhand der offiziellen Kriterien.</string>
     <string name="speaking_opens_when_ready">Deine Aufgabe öffnet sich, sobald die Karte fertig ist.</string>
     <string name="speaking_no_time_month">Diesen Monat reicht deine Gesprächszeit für diese Aufgabe nicht aus</string>
@@ -63,4 +77,15 @@
     <string name="speaking_collapsed">Eingeklappt</string>
     <!-- Today's row for the paper: the exam, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s Aufgaben im Gespräch</string>
+    <string name="speaking_mock_ielts">Ein kurzer Sprechtest mit einer prüfenden Person. Danach erhältst du für jedes Kriterium ein geschätztes Band.</string>
+    <string name="speaking_mock_toefl">Wiederhole Sätze und führe anschließend ein kurzes Gespräch mit einer prüfenden Person. Danach erhältst du für jedes Kriterium ein geschätztes Band von 1 bis 6.</string>
+    <string name="speaking_mock_start">Probeprüfung starten</string>
+    <string name="speaking_mock_opens">Deine Probeprüfung öffnet sich, sobald sie fertig ist.</string>
+    <string name="speaking_mock_failed">Die Probeprüfung wurde nicht gestartet. Versuch es gleich noch einmal.</string>
+    <string name="speaking_writing_mock">Wir erstellen deine Probeprüfung</string>
+    <string name="speaking_writing_mock_phase">Wir erstellen das Skript für die prüfende Person</string>
+    <string name="speaking_writing_mock_line_1">Wir wählen deine prüfende Person aus…</string>
+    <string name="speaking_writing_mock_line_2">Wir erstellen die Fragen für die prüfende Person…</string>
+    <string name="speaking_writing_mock_line_3">Wir stimmen die Teile auf etwa fünf Minuten ab…</string>
+    <string name="speaking_writing_mock_line_4">Wir ergänzen hilfreiche Formulierungen…</string>
 </resources>

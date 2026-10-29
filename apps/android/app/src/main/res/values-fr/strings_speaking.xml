@@ -12,6 +12,11 @@
   "speaking_last_near": "523076cb5c6305c1b560c5aa39ca5370529d641912dac8f27d49ef3cb575f01a",
   "speaking_last_none": "0b14fcc37d1f41ceab7b184348757c05cd82fd7afe297ca3a67703bfaab6656a",
   "speaking_last_result": "e759aa65556a8264000425afeeed4e9781b17704968ec79767aeb2ce147c3bec",
+  "speaking_mock_failed": "dfb6e9b99075ce0a8c466e689d1f4df211705239511a9322473e50d7b55256e4",
+  "speaking_mock_ielts": "5ec22bf276713a748de5967215bef0366b20166587c9b729e6eda224eb5c772c",
+  "speaking_mock_opens": "3baa3e79c62e61aa339e1908d8260bb4630ccf26da09ed01f4270ef4e3a8dc45",
+  "speaking_mock_start": "144431a211a393f2e0274cd2faedc31434f4bb22e4aa50b6387c72ef1acc3e58",
+  "speaking_mock_toefl": "8ac5ac555044f172da80ebb0f66f3c6f03efac1f131dace7943e8978d4b244ac",
   "speaking_no_time_day": "dc7ec7256f8e4b8e1eebbdbc6b5ae44d5071da6585f4a5fcccb1a9ce4a62ac9e",
   "speaking_no_time_month": "b7033d7c603b1ebf0d7d84365ed3c194c5eddb5876d6f73035abb55b19665817",
   "speaking_official": "6a34600ff236f6a761c09360850aab8badfeb044e438db4bb1f03cd9401f2d28",
@@ -22,10 +27,17 @@
   "speaking_prep_shared": "d11b06485f910b2c4f70e97b651dfc9d18cbbf8fc8aed679ef6070a1cf41f81e",
   "speaking_rated_on": "8cdd0f4ba49c063e86619f0bef2226184b6b5f2e146dcf13ac5108ca514dad93",
   "speaking_row": "a62bc903faa8e358669af482b162dad2dd28df17b45aec32de79713b4b57d53b",
+  "speaking_section": "3bd231949dd2a18318ad2e2196b1364be03d1aeffd141f4d5ccf1646bb63acfc",
   "speaking_start_failed": "d72371b8a8b7adf031ef684faeddc21d42146798242158ff325944676e1b0b7a",
   "speaking_start_task": "e52ebf79e1ee1a07ccb95fd60018c8308535fda9b79b1c2e105330d47abf9b8e",
   "speaking_tasks": "f328ec19e86d08ba2b4e842b6a8082b311823ef115a483e49bb2152f305a58d2",
-  "speaking_title": "468b13dabed31f6320b56120fbdac9314642285183f14db986bd066e42d98623"
+  "speaking_title": "468b13dabed31f6320b56120fbdac9314642285183f14db986bd066e42d98623",
+  "speaking_writing_mock": "d267e2463978725da01e42ef9c07f78d46700d8048bf878cc6e4d2030816db36",
+  "speaking_writing_mock_line_1": "651aa97b737ef170d763e02aab105c0bc1343b9e40d04e1649581b65270f8dba",
+  "speaking_writing_mock_line_2": "b293ddc7beac613c04595e63ca22a2804111964ea08997a79614b33018aa380c",
+  "speaking_writing_mock_line_3": "d2a21150b6de9a48bda2fa2ecf506fff20d5d366185bdb3e9c2d484f3364e8bb",
+  "speaking_writing_mock_line_4": "3cea483a05ddd0c76f6385f54498a6792ddee37b87c52b445dedcd6a3b58c746",
+  "speaking_writing_mock_phase": "001496fb83b55478d974f2ac5817db6b6527c5f01ab35b58c650fb82ac4f050b"
 }
 -->
 <resources>
@@ -40,6 +52,8 @@
     </plurals>
     <string name="speaking_official">%1$s est un examen officiel. Entraîne-toi à ses épreuves d’expression orale, que tu prévoies de le passer ou non.</string>
     <string name="speaking_tasks">Tâches</string>
+    <!-- The exam page's speaking section, with the paper's title beside it. -->
+    <string name="speaking_section">Expression orale</string>
     <string name="speaking_plus">L’entraînement à l’expression orale est inclus avec Plus : toutes les épreuves de l’examen par appel, avec une estimation selon les critères officiels après chacune.</string>
     <string name="speaking_opens_when_ready">Ta tâche s’ouvre dès que sa fiche est prête.</string>
     <string name="speaking_no_time_month">Tu n’as pas assez de temps d’appel ce mois-ci pour cette tâche</string>
@@ -64,4 +78,15 @@
     <string name="speaking_collapsed">Réduit</string>
     <!-- Today's row for the paper: the exam, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s tâches par appel</string>
+    <string name="speaking_mock_ielts">Un court examen oral avec un examinateur. Ensuite, une estimation de la note pour chaque critère.</string>
+    <string name="speaking_mock_toefl">Répète des phrases, puis passe un court entretien avec un examinateur. Ensuite, une estimation de la note de 1 à 6 pour chaque critère.</string>
+    <string name="speaking_mock_start">Commencer l’examen blanc</string>
+    <string name="speaking_mock_opens">Ton examen blanc s’ouvre dès qu’il est prêt.</string>
+    <string name="speaking_mock_failed">L’examen blanc n’a pas démarré. Réessaie dans un instant.</string>
+    <string name="speaking_writing_mock">Préparation de ton examen blanc</string>
+    <string name="speaking_writing_mock_phase">Préparation du script de l’examinateur</string>
+    <string name="speaking_writing_mock_line_1">Choix de ton examinateur…</string>
+    <string name="speaking_writing_mock_line_2">Préparation des questions de l’examinateur…</string>
+    <string name="speaking_writing_mock_line_3">Assemblage des différentes parties pour durer environ cinq minutes…</string>
+    <string name="speaking_writing_mock_line_4">Ajout de phrases pour t’aider à répondre…</string>
 </resources>

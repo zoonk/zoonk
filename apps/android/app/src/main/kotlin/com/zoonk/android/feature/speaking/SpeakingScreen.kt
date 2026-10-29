@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,8 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -171,17 +174,24 @@ private fun Paper(
 ) {
     val hero: @Composable () -> Unit = { PaperHero(paper) }
     PageWithSupportingPane(supportingPane = { Column(Modifier.padding(24.dp)) { hero() } }) { beside ->
-        val list = rememberLazyListState()
-        val opened = paper.tasks.indexOfFirst { it.key == openTask }
-        LaunchedEffect(openTask) { if (opened >= 0) list.scrollToItem(opened + if (beside) 1 else 2) }
         LazyColumn(
-            state = list,
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             contentPadding = PaddingValues(bottom = 24.dp),
         ) {
             if (!beside) item(key = "hero") { Box(Modifier.pageItem().padding(top = 8.dp, bottom = 24.dp)) { hero() } }
-            tasksSection(paper, goalId, openTask, actions)
+            item(key = "paper") {
+                SpeakingPaperSection(
+                    paper = paper,
+                    goalId = goalId,
+                    openTask = openTask,
+                    start = actions.start,
+                    open = actions.open,
+                    openWeb = actions.openWeb,
+                    modifier = Modifier.pageItem(),
+                    title = stringResource(R.string.speaking_tasks),
+                )
+            }
         }
     }
 }
@@ -218,80 +228,97 @@ private fun Modifier.pageItem(): Modifier = widthIn(max = PAGE_WIDTH).fillMaxWid
 
 private val PAGE_WIDTH = 720.dp
 
-/** Main's `SpeakingPaperSection`: the paper's tasks, each opening to its criteria and its Start. */
-private fun LazyListScope.tasksSection(
+/**
+ * Main's `SpeakingPaperSection`, for the speaking page and the exam page: the paper's tasks, each
+ * opening to its criteria and its Start, with the card written on the learner's tap. [title] null
+ * names it Speaking with the paper's title beside it; [from] is the conversation route's `from`.
+ * The task [openTask] names starts open and scrolled into view.
+ */
+@Composable
+fun SpeakingPaperSection(
     paper: SpeakingPaper,
     goalId: UUID,
     openTask: String?,
-    actions: SpeakingActions,
+    start: suspend (CallRequest) -> CallStart,
+    open: (AppRoute) -> Unit,
+    openWeb: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    from: String? = null,
 ) {
     val locked = paper.access == SpeakingPaper.Access.PLUS_REQUIRED
     val paused = paper.access == SpeakingPaper.Access.CALLS_PAUSED
+    val model = viewModel(key = "speaking-start:$goalId") { CallStartModel(start) }
+    var started by rememberSaveable { mutableStateOf<String?>(null) }
+    val busy = model.state == CallStartModel.State.Starting || model.state == CallStartModel.State.Writing
+    val openCall = { id: UUID -> open(AppRoute.Conversation(id.toString(), from = from)) }
+    val startTask = { key: String ->
+        started = key
+        model.start(CallRequest.ExamSpeaking(goalId, key), openCall)
+    }
+    val actions = SpeakingActions(start, open, openWeb)
 
-    item(key = "title") {
-        Column(Modifier.pageItem().padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(stringResource(R.string.speaking_tasks), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-            if (locked) {
-                PlusNotice(
-                    onSeePlus = { actions.open(AppRoute.Subscription) },
-                    description = stringResource(R.string.speaking_plus),
-                )
-            }
-            if (paused) {
-                OutlinedCard(Modifier.fillMaxWidth()) {
-                    Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        Text(stringResource(R.string.conversation_paused_title), style = MaterialTheme.typography.titleSmall)
-                        Text(
-                            stringResource(R.string.conversation_paused),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            }
-        }
-    }
-    item(key = "tasks") {
-        val model = viewModel(key = "speaking-start:$goalId") { CallStartModel(actions.start) }
-        var started by rememberSaveable { mutableStateOf<String?>(null) }
-        val busy =
-            model.state != CallStartModel.State.Idle && model.state != CallStartModel.State.Failed &&
-                model.state != CallStartModel.State.WriteFailed
-        Column(Modifier.pageItem()) {
-            paper.tasks.forEachIndexed { index, task ->
-                if (index > 0) HorizontalDivider()
-                TaskRow(
-                    task = task,
-                    index = index,
-                    paper = paper,
-                    openAtFirst = task.key == openTask,
-                    locked = locked || paused,
-                    busy = busy,
-                    starting = model.state == CallStartModel.State.Starting && started == task.key,
-                    onStart = {
-                        started = task.key
-                        model.start(CallRequest.ExamSpeaking(goalId, task.key)) { id -> actions.open(AppRoute.Conversation(id.toString())) }
+    Column(modifier) {
+        Column(Modifier.padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    title ?: stringResource(R.string.speaking_section),
+                    Modifier.weight(1f).semantics {
+                        heading()
                     },
-                    onLastResult = { id -> actions.open(AppRoute.Conversation(id.toString())) },
+                    style = MaterialTheme.typography.titleMedium,
                 )
-            }
-            StartState(model, retry = {
-                started?.let { key ->
-                    model.start(CallRequest.ExamSpeaking(goalId, key)) { id -> actions.open(AppRoute.Conversation(id.toString())) }
+                if (title ==
+                    null
+                ) {
+                    Text(paper.title, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
                 }
-            }, actions = actions)
+            }
+            if (locked) PlusNotice(onSeePlus = { open(AppRoute.Subscription) }, description = stringResource(R.string.speaking_plus))
+            if (paused) CallsPaused()
         }
-    }
-    item(key = "footer") {
+        paper.tasks.forEachIndexed { index, task ->
+            if (index > 0) HorizontalDivider()
+            TaskRow(
+                task = task,
+                index = index,
+                paper = paper,
+                openAtFirst = task.key == openTask,
+                locked = locked || paused,
+                busy = busy,
+                starting = model.state == CallStartModel.State.Starting && started == task.key,
+                onStart = { startTask(task.key) },
+                onLastResult = openCall,
+            )
+        }
+        StartState(model, retry = { started?.let(startTask) }, actions = actions)
         val partner = paper.tasks.any { it.role == SpeakingPaperTask.Role.PARTNER }
-        Column(Modifier.pageItem().padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
                 stringResource(if (partner) R.string.speaking_footer_partner else R.string.speaking_footer),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.bodySmall,
             )
-            TextButton(onClick = { actions.openWeb(paper.source) }, contentPadding = PaddingValues(0.dp)) {
+            TextButton(onClick = { openWeb(paper.source) }, contentPadding = PaddingValues(0.dp)) {
                 Text(stringResource(R.string.speaking_official_format))
+            }
+        }
+    }
+}
+
+/** Main's paused-calls notice, the same for everyone. */
+@Composable
+internal fun CallsPaused(modifier: Modifier = Modifier) {
+    OutlinedCard(modifier.fillMaxWidth()) {
+        Row(Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(painterResource(R.drawable.ic_call_end), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Text(stringResource(R.string.conversation_paused_title), style = MaterialTheme.typography.titleSmall)
+                Text(
+                    stringResource(R.string.conversation_paused),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
             }
         }
     }
@@ -371,6 +398,8 @@ private fun TaskRow(
 ) {
     val locale = currentLocale()
     var open by rememberSaveable(task.key) { mutableStateOf(openAtFirst) }
+    val requester = remember { BringIntoViewRequester() }
+    LaunchedEffect(openAtFirst) { if (openAtFirst) requester.bringIntoView() }
     val level = paper.level.value
     val prep =
         when {
@@ -422,6 +451,7 @@ private fun TaskRow(
         },
         modifier =
             Modifier
+                .bringIntoViewRequester(requester)
                 .clickable(role = Role.Button) { open = !open }
                 .semantics { stateDescription = state },
     )

@@ -10,6 +10,8 @@
     </plurals>
     <string name="speaking_official">%1$s is an official exam. Practice its speaking tasks whether or not you plan to take it.</string>
     <string name="speaking_tasks">Tasks</string>
+    <!-- The exam page's speaking section, with the paper's title beside it. -->
+    <string name="speaking_section">Speaking</string>
     <string name="speaking_plus">Speaking practice comes with Plus: every task of the paper on a call, and an estimate on the official criteria after each one.</string>
     <string name="speaking_opens_when_ready">Your task opens as soon as its card is ready.</string>
     <string name="speaking_no_time_month">Not enough call time this month for this task</string>
@@ -34,4 +36,15 @@
     <string name="speaking_collapsed">Collapsed</string>
     <!-- Today's row for the paper: the exam, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s tasks on a call</string>
+    <string name="speaking_mock_ielts">A short speaking test with an examiner. After it, an estimated band for each criterion.</string>
+    <string name="speaking_mock_toefl">Repeat sentences, then a short interview with an examiner. After it, an estimated band from 1 to 6 for each criterion.</string>
+    <string name="speaking_mock_start">Start the mock</string>
+    <string name="speaking_mock_opens">Your mock opens as soon as it\'s ready.</string>
+    <string name="speaking_mock_failed">The mock didn\'t start. Try again in a moment.</string>
+    <string name="speaking_writing_mock">Writing your mock</string>
+    <string name="speaking_writing_mock_phase">Writing the examiner\'s script</string>
+    <string name="speaking_writing_mock_line_1">Choosing your examiner…</string>
+    <string name="speaking_writing_mock_line_2">Writing the examiner\'s questions…</string>
+    <string name="speaking_writing_mock_line_3">Fitting the parts into about five minutes…</string>
+    <string name="speaking_writing_mock_line_4">Adding phrases you can lean on…</string>
 </resources>

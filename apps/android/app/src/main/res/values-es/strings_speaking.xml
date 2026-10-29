@@ -12,6 +12,11 @@
   "speaking_last_near": "a9a926187f64d8a37861a13e1a83cb0a78a4486613ac679e9f18ae5914cc5b2b",
   "speaking_last_none": "62cb7fd3b3e63e1aa7586ec89136f099d5c67a72ce05fd7ff621a2cbd3516c04",
   "speaking_last_result": "5590b907ff18df5f3a92b2440b26e513b3a0b593956ce721311b36bf96e97eac",
+  "speaking_mock_failed": "87c3bbe14f7c73c3d8e9b9c9c8dd170b3d0980ed051a5c3cb29d755bc9c068cf",
+  "speaking_mock_ielts": "6288fa9d2dda0a33d38c5ce21c2ada3d80d3f69e4729ed8ef4625d707bbd05ac",
+  "speaking_mock_opens": "7ed0649455d77f86002390fd1bd473821375ac6228af37e411b6d5d8ea3e076a",
+  "speaking_mock_start": "35730430ed5af547637895b9512fb3f915da8207fde2322ec99a87c4a4d0a479",
+  "speaking_mock_toefl": "48bf6a43a3e8de02613971968c8c5b397fcf38467a35c456faaedd005eaf8bc0",
   "speaking_no_time_day": "1dea7a93af8ce88fef5328b7acd53266bebca4e433f33433a5cb6f8aaeba9019",
   "speaking_no_time_month": "78d5ab6e28db75bc4d725ec31a43c2fc0fca5510c2020de3386f733950ebb86d",
   "speaking_official": "0788ff18c3157c37b3cb6ab47e561100f9cf1af344df69f041cbc850552d0b3c",
@@ -22,10 +27,17 @@
   "speaking_prep_shared": "e1de5c77821f150189a20e87a7ec85e23f7c55130c3ccb274d2d48e7348ce246",
   "speaking_rated_on": "c3d51c9854d48a50ef71ee84ab120d57bef832dcf86bcdbc5f1065fdedb71c70",
   "speaking_row": "d2601456be7ce50785628215652085b14f464539c12a0708f55a3ba63ac40d69",
+  "speaking_section": "be53c5448332c079799dc0cf4b5c74e4301c43ed3da1ee521e0a658495a3930a",
   "speaking_start_failed": "9dd2cad17860acb5cfb892df84cc663fc5d59b266ade5d1e6c36e988cffc10b6",
   "speaking_start_task": "1d3d2004ea6bd9b3d421f344f84280abc1662332e9fb2b183a5a76013973d5ba",
   "speaking_tasks": "322fa46e45de896150f3464a494d084378ef8f74a6533e2d562e714b70b8437d",
-  "speaking_title": "7581e6599dbb7206ea4041c3e0bf22c38454f744f241f57b959e285b89124019"
+  "speaking_title": "7581e6599dbb7206ea4041c3e0bf22c38454f744f241f57b959e285b89124019",
+  "speaking_writing_mock": "9160f4401841bafaf31d1ccecf2c9f74c6f577720f50b33ffb3df0fc6c35b275",
+  "speaking_writing_mock_line_1": "80ce0bba3612419442753e50e382e473404db3ef15f14ac2e4c9a202b9fdaf9c",
+  "speaking_writing_mock_line_2": "82510f929d22f3ddc756983a1ba3180dd321829265ce174ea2f4620f21432fb4",
+  "speaking_writing_mock_line_3": "7eee2bdf04c7c1c92d20090723108b07a3c6f36ef717a0172e6be919599c751c",
+  "speaking_writing_mock_line_4": "3f51708d0d74da2bbea861395bfb9be750643f5fbfde37c4fd7f29151e3657a9",
+  "speaking_writing_mock_phase": "0e4a99e2aaf22c2ddc6cdaa42930881b856b5f41b892cdece9e1f5487a98a08e"
 }
 -->
 <resources>
@@ -40,6 +52,8 @@
     </plurals>
     <string name="speaking_official">%1$s es un examen oficial. Practica sus tareas de expresión oral tanto si piensas presentarte como si no.</string>
     <string name="speaking_tasks">Tareas</string>
+    <!-- The exam page's speaking section, with the paper's title beside it. -->
+    <string name="speaking_section">Expresión oral</string>
     <string name="speaking_plus">La práctica de expresión oral está incluida en Plus: todas las tareas del examen en una llamada y una estimación basada en los criterios oficiales después de cada tarea.</string>
     <string name="speaking_opens_when_ready">La tarea se abrirá en cuanto esté lista la tarjeta.</string>
     <string name="speaking_no_time_month">No te queda tiempo de llamada suficiente este mes para esta tarea</string>
@@ -64,4 +78,15 @@
     <string name="speaking_collapsed">Contraído</string>
     <!-- Today's row for the paper: the exam, such as "DELE B2 tasks on a call". -->
     <string name="speaking_row">%1$s tareas en una llamada</string>
+    <string name="speaking_mock_ielts">Una breve prueba oral con un examinador. Al terminar, verás una puntuación estimada para cada criterio.</string>
+    <string name="speaking_mock_toefl">Repite frases y, después, haz una breve entrevista con un examinador. Al terminar, verás una puntuación estimada del 1 al 6 para cada criterio.</string>
+    <string name="speaking_mock_start">Empezar el simulacro</string>
+    <string name="speaking_mock_opens">El simulacro se abrirá en cuanto esté listo.</string>
+    <string name="speaking_mock_failed">No se ha podido iniciar el simulacro. Vuelve a intentarlo dentro de un momento.</string>
+    <string name="speaking_writing_mock">Preparando tu simulacro</string>
+    <string name="speaking_writing_mock_phase">Preparando el guion del examinador</string>
+    <string name="speaking_writing_mock_line_1">Eligiendo al examinador…</string>
+    <string name="speaking_writing_mock_line_2">Preparando las preguntas del examinador…</string>
+    <string name="speaking_writing_mock_line_3">Ajustando las partes para que dure unos cinco minutos…</string>
+    <string name="speaking_writing_mock_line_4">Añadiendo frases que te servirán de apoyo…</string>
 </resources>
