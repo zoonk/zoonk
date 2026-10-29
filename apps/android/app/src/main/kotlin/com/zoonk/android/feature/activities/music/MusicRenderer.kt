@@ -77,6 +77,7 @@ internal class MusicRenderer(
     val wasSilent: Boolean get() = silent
 
     fun schedule(events: List<Event>) {
+        if (events.isEmpty()) return
         lock.withLock { inbox.addAll(events) }
         silent = false
     }

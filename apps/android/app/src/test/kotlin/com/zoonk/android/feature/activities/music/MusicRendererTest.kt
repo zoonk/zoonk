@@ -65,4 +65,11 @@ class MusicRendererTest {
         assertTrue(renderer.isSilent)
         assertTrue(heardAt in 0.45..0.6)
     }
+
+    @Test
+    fun schedulingNothingLeavesTheRendererSilent() {
+        renderer.schedule(emptyList())
+
+        assertTrue(renderer.isSilent)
+    }
 }

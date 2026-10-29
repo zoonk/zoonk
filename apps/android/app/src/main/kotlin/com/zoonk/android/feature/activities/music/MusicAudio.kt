@@ -67,8 +67,9 @@ object MusicClock {
 
 /**
  * Every sound is scheduled at the moment it is heard on [MusicClock], with the output's delay read from the track's
- * timestamps. Losing audio focus or the output device stops what's playing, since a timed run can't go on with a different
- * delay. The screen holds audio focus from its first sound until it closes. Call it on the main thread.
+ * timestamps. A route without timestamps counts only the frames still queued, not the device's own delay; a rhythm's grading
+ * takes that steady delay out. Losing audio focus or the output stops what's playing, since a timed run can't go on with a
+ * different delay. The screen holds audio focus from its first sound until it closes. Call it on the main thread.
  */
 class MusicAudio(
     context: Context,
@@ -124,11 +125,9 @@ class MusicAudio(
     fun release() {
         output?.close()
         output = null
-
-        if (hasFocus) {
-            hasFocus = false
-            audioManager.abandonAudioFocusRequest(focusRequest)
-        }
+        hasFocus = false
+        // Also after a transient loss, so the system lets go of the request and its listener.
+        audioManager.abandonAudioFocusRequest(focusRequest)
     }
 
     private fun start(): MusicOutput? {
@@ -139,7 +138,7 @@ class MusicAudio(
 
         output?.takeIf { it.isRunning }?.let { return it }
         output?.close()
-        output = MusicOutput.open(audioManager, mainHandler, ::interrupted)
+        output = MusicOutput.open(audioManager, mainHandler) { if (it === output) interrupted() }
         return output
     }
 
@@ -195,6 +194,8 @@ class MusicAudio(
     private class MusicOutput(
         private val track: AudioTrack,
         private val burst: Int,
+        private val handler: Handler,
+        private val onInterrupt: (MusicOutput) -> Unit,
     ) {
         private val renderer = MusicRenderer(track.sampleRate.toDouble())
         private val sampleRate = track.sampleRate.toDouble()
@@ -270,6 +271,7 @@ class MusicAudio(
                 // The track stopped working (the audio server restarted): the next sound opens a new one.
             } finally {
                 track.release()
+                if (!closed) handler.post { onInterrupt(this) }
             }
         }
 
@@ -280,7 +282,7 @@ class MusicAudio(
             fun open(
                 audioManager: AudioManager,
                 handler: Handler,
-                onRouteChange: () -> Unit,
+                onInterrupt: (MusicOutput) -> Unit,
             ): MusicOutput? {
                 val track =
                     try {
@@ -311,7 +313,7 @@ class MusicAudio(
                 val burst =
                     audioManager.getProperty(AudioManager.PROPERTY_OUTPUT_FRAMES_PER_BUFFER)?.toIntOrNull()?.takeIf { it > 0 }
                         ?: DEFAULT_BURST
-                val output = MusicOutput(track, burst)
+                val output = MusicOutput(track, burst, handler, onInterrupt)
                 var device: Int? = null
 
                 track.addOnRoutingChangedListener(
@@ -323,7 +325,7 @@ class MusicAudio(
 
                         if (previous != null && previous != routed) {
                             output.routeChanged()
-                            onRouteChange()
+                            onInterrupt(output)
                         }
                     },
                     handler,
