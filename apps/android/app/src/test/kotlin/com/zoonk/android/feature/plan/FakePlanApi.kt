@@ -37,6 +37,9 @@ internal class FakePlanApi : PlanApi {
     var timeToCoverGate: CompletableDeferred<Unit>? = null
     var timeToCoverFailure: ApiException? = null
     var timeToCoverRequests = 0
+    val previews = mutableListOf<List<PlanOp>>()
+    var previewGate: CompletableDeferred<Unit>? = null
+    var preview = PlanChangePreview(effect = null, feasibility = null, ready = true, unchanged = true)
 
     override suspend fun plan(
         session: AuthenticatedSession,
@@ -114,7 +117,11 @@ internal class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
         operations: List<PlanOp>,
-    ) = PlanChangePreview(effect = null, feasibility = null, ready = true, unchanged = true)
+    ): PlanChangePreview {
+        previews += operations
+        previewGate?.await()
+        return preview
+    }
 
     override suspend fun decide(
         session: AuthenticatedSession,

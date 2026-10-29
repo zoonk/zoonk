@@ -293,6 +293,23 @@ class PlanViewModelTest {
             assertTrue(api.changes.isEmpty())
         }
 
+    @Test
+    fun aPreviewSavesNothingAndALateOneGivesWayToTheNewer() =
+        runTest {
+            val plan = shown()
+            api.previewGate = CompletableDeferred()
+
+            viewModel.requestPreview(plan, listOf(PlanOp.DailyMinutes(45)))
+            viewModel.requestPreview(plan, listOf(PlanOp.DailyMinutes(60)))
+            api.previewGate?.complete(Unit)
+
+            val state = viewModel.preview.value
+            assertTrue(state is PlanPreviewState.Ready)
+            assertEquals(listOf<PlanOp>(PlanOp.DailyMinutes(60)), (state as PlanPreviewState.Ready).operations)
+            assertEquals(1, api.plans)
+            assertTrue(api.changes.isEmpty())
+        }
+
     private suspend fun shown(plan: Plan = coveragePlan()): Plan {
         api.shownPlan = plan
         withContext(Dispatchers.Main) { store.plan[goalId].refresh() }

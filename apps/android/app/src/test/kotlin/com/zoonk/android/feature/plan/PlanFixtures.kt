@@ -212,6 +212,14 @@ internal fun coveragePlan(
         """.trimIndent(),
     )
 
+internal fun area(
+    name: String,
+    focused: Boolean = false,
+    partOf: String? = null,
+    skipped: Boolean = false,
+) = """{"focusPart":null,"focused":$focused,"name":"$name","partOf":${partOf?.let { "\"$it\"" }},"pastBasics":false,
+    "reduced":false,"skillCount":4,"skipped":$skipped}"""
+
 internal fun timeToCover(
     recommended: Long? = 45,
     core: Long? = null,

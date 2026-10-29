@@ -75,8 +75,8 @@ import com.zoonk.api.models.PlanChangeResult
 import kotlinx.datetime.toJavaLocalDate
 
 /**
- * What the editor's parts save through, what each asked for while it saves, and which failed; and
- * the search for the time that covers everything.
+ * What the editor's parts save through, what each asked for while it saves, and which failed; the
+ * search for the time that covers everything, and the sheets the editor opens.
  */
 @Immutable
 internal data class PlanEdits(
@@ -88,6 +88,8 @@ internal data class PlanEdits(
     val undo: (PlanChange) -> Unit = {},
     val timeToCover: TimeToCoverState = TimeToCoverState.Idle,
     val findTimeToCover: (Plan, (TimeToCoverOutcome) -> Unit) -> Unit = { _, _ -> },
+    val chooseFocus: () -> Unit = {},
+    val studyEverything: () -> Unit = {},
 ) {
     fun isPending(part: PlanPart) = part in pending
 

@@ -26,6 +26,7 @@ class PlanCoverageTest {
 
     private val changes = mutableListOf<Pair<PlanPart, List<PlanOp>>>()
     private var finds = 0
+    private val opened = mutableListOf<String>()
 
     private fun show(
         plan: Plan = coveragePlan(),
@@ -41,6 +42,8 @@ class PlanCoverageTest {
                 change = { part, operations, _: (PlanChangeResult?) -> Unit -> changes += part to operations },
                 timeToCover = found,
                 findTimeToCover = { _, _ -> finds++ },
+                chooseFocus = { opened += "focus" },
+                studyEverything = { opened += "everything" },
             )
         compose.setContent { ZoonkTheme { Column { PlanEditorBody(page, edits) } } }
     }
@@ -116,6 +119,16 @@ class PlanCoverageTest {
         compose.onNodeWithText("Study everything, even after the exam").performScrollTo().performClick()
 
         assertEquals(listOf(PlanPart.FullCourse to listOf<PlanOp>(PlanOp.FullCourse(true))), changes)
+    }
+
+    @Test
+    fun aDatedGoalOpensStudyEverythingAndTheFocusChoice() {
+        show(plan = coveragePlan(areas = "[${area("Algebra")},${area("Geometry")}]"))
+
+        compose.onNodeWithText("Study everything").performScrollTo().performClick()
+        compose.onNodeWithText("Choose where to focus").performScrollTo().performClick()
+
+        assertEquals(listOf("everything", "focus"), opened)
     }
 
     @Test

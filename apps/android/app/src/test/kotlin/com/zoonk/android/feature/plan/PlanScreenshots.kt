@@ -153,7 +153,7 @@ class PlanScreenshots {
         captureCoverage("phone-font200")
     }
 
-    /** The coverage block under the time a day, in each of its states. */
+    /** The coverage block and the sheets it opens; sheets are drawn inline, as Robolectric copies only the activity's window. */
     private fun captureCoverage(
         suffix: String,
         dark: Boolean = false,
@@ -161,24 +161,85 @@ class PlanScreenshots {
     ) {
         val learn = learnerSummary()
         val exam = learnerSummary(kind = "exam", title = "ENEM")
-        val goalPlan = coveragePlan()
+        val areas = "[${area(
+            "Mathematics",
+            focused = true,
+        )},${area("Natural sciences")},${area("Languages")},${area("English", partOf = "Languages")}]"
+        val goalPlan = coveragePlan(areas = areas)
         val goal = PlanPageState(learn.goals.first(), goalPlan, learn)
         val examPlan = coveragePlan(kind = "exam", fullCourse = true)
         val examPage = PlanPageState(exam.goals.first(), examPlan, exam)
         val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75, fittingDate = "2027-04-18"))
 
+        fun preview(
+            operations: List<PlanOp>,
+            end: String,
+            added: Long,
+        ) = PlanPreviewState.Loading(operations, goalPlan).let {
+            it.resolve(
+                it,
+                com.zoonk.api.models.PlanChangePreview(
+                    effect =
+                        com.zoonk.api.models.PlanEffect(
+                            endDateAfter = kotlinx.datetime.LocalDate.parse(end),
+                            endDateBefore = kotlinx.datetime.LocalDate.parse("2027-01-31"),
+                            lessonsAdded = added,
+                            lessonsRemoved = 0,
+                        ),
+                    feasibility = null,
+                    ready = true,
+                    unchanged = false,
+                ),
+            )
+        }
+        val fasterTime = preview(listOf(PlanOp.DailyMinutes(75)), "2027-01-20", 14)
+        val everything = preview(listOf(PlanOp.TargetDate(null)), "2028-03-10", 40)
         val parts: Map<String, @Composable ColumnScope.() -> Unit> =
             mapOf(
                 "plan-coverage-found" to { PlanScheduleSection(goal, PlanEdits(timeToCover = found), EditorDrafts()) },
                 "plan-coverage-ask" to { PlanScheduleSection(goal, PlanEdits(), EditorDrafts()) },
                 "plan-coverage-working-out" to { PlanScheduleSection(goal, PlanEdits(pending = setOf(PlanPart.Schedule)), EditorDrafts()) },
                 "plan-coverage-exam" to { PlanScheduleSection(examPage, PlanEdits(), EditorDrafts()) },
+                "plan-date-study-everything" to { PlanDateSection(goal, PlanEdits(), EditorDrafts()) },
+                "plan-sheet-focus" to { ChooseFocusBody(goal, PlanEdits(), onFocusTest = {}, onDone = {}) },
+                "plan-sheet-study-everything" to { StudyEverythingBody(goal, PlanEdits(), everything, onPreview = {}, onDone = {}) },
+                "plan-sheet-study-everything-checking" to {
+                    StudyEverythingBody(
+                        goal,
+                        PlanEdits(),
+                        PlanPreviewState.Loading(listOf(PlanOp.TargetDate(null)), goalPlan),
+                        onPreview = {},
+                        onDone = {},
+                    )
+                },
+                "plan-sheet-focus-applied" to {
+                    PlanChangeApplied(
+                        page = goal,
+                        title = "Where to focus",
+                        description = "The subjects you pick come first and get more depth.",
+                        latest =
+                            EditorChange(
+                                planChange(operations = """[{"kind":"focusAreas","areas":["Mathematics"]}]""", effect = effect()),
+                            ),
+                        icon = com.zoonk.android.R.drawable.ic_my_location,
+                        onUndo = {},
+                        onDone = {},
+                    )
+                },
+                "plan-preview-result" to {
+                    PlanPreviewResult(fasterTime, onApply = {}, onRetry = {}, onDismiss = {})
+                },
             )
         var shown by mutableStateOf(parts.keys.first())
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
-                    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(28.dp)) { parts.getValue(shown)(this) }
+                    val part = parts.getValue(shown)
+                    if (shown.startsWith("plan-sheet")) {
+                        Column(Modifier.padding(top = 24.dp)) { part() }
+                    } else {
+                        Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(28.dp)) { part() }
+                    }
                 }
             }
         }

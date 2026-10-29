@@ -3,6 +3,7 @@ package com.zoonk.android.feature.plan
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -156,7 +157,14 @@ internal fun DailyCoverage(
                 color = muted,
             )
             FindLine(page, edits, canFind = !timeEnough(plan))
-            if (canMoveDate(page)) MoveDateSwitch(page, edits)
+            val canMove = canMoveDate(page)
+            val canFocus = canChooseFocus(plan)
+            if (canMove || canFocus) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (canMove) MoveDateSwitch(page, edits)
+                    if (canFocus) ChooseFocusAction(edits.chooseFocus)
+                }
+            }
         }
         if (pending) {
             Text(stringResource(R.string.plan_working_out_coverage), style = MaterialTheme.typography.bodyMedium, color = muted)
@@ -320,6 +328,11 @@ internal fun MoveDateSwitch(
 @Composable
 private fun ErrorLine(text: String) {
     Text(text = text, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.error)
+}
+
+@Composable
+internal fun ChooseFocusAction(onChoose: () -> Unit) {
+    FilledTonalButton(onClick = onChoose) { Text(stringResource(R.string.plan_choose_focus)) }
 }
 
 /** A button's label with a spinner before it while its work runs, as main's `PendingLabel`. */

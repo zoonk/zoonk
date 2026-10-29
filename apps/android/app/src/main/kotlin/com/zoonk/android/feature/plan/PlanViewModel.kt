@@ -28,7 +28,7 @@ import java.util.UUID
 enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
 
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
-enum class PlanPart { Date, Schedule, Activities, Writing, Steering, FullCourse }
+enum class PlanPart { Date, Schedule, Activities, Writing, Steering, FullCourse, Focus }
 
 /** The editor's latest applied change, which it shows with Undo. */
 data class EditorChange(
@@ -50,6 +50,7 @@ class PlanViewModel(
     private val latestChange = MutableStateFlow<EditorChange?>(null)
     private val timeToCoverState = MutableStateFlow<TimeToCoverState>(TimeToCoverState.Idle)
     private var search: TimeToCoverSearch? = null
+    private val previewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
 
     /** Counts the editor's openings, so a change saved in one doesn't show its answer in the next. */
     private var openings = 0
@@ -70,6 +71,9 @@ class PlanViewModel(
 
     /** Read it with [forPlan]: it's the plan revision it was asked of. */
     val timeToCover: StateFlow<TimeToCoverState> = timeToCoverState.asStateFlow()
+
+    /** Read it with [of]: it's the operations and plan it was asked of. */
+    val preview: StateFlow<PlanPreviewState> = previewState.asStateFlow()
 
     fun setStatus(status: GoalUpdateInput.Status) {
         if (saving.value) return
@@ -200,6 +204,24 @@ class PlanViewModel(
             is MutationResult.Failed -> TimeToCoverState.Failed(revision)
             MutationResult.Obsolete -> TimeToCoverState.Idle
         }
+
+    /** What [operations] would do to [plan], from the learner's tap: it saves nothing. */
+    fun requestPreview(
+        plan: Plan,
+        operations: List<PlanOp>,
+    ) {
+        val request = PlanPreviewState.Loading(operations, plan)
+        previewState.value = request
+        viewModelScope.launch {
+            val result = store.preview(goalId, operations)
+            if (result is MutationResult.Obsolete) return@launch
+            previewState.update { it.resolve(request, (result as? MutationResult.Done)?.value) }
+        }
+    }
+
+    fun clearPreview() {
+        previewState.value = PlanPreviewState.Idle
+    }
 
     /** The editor opens without the change it showed last time, as main's does. */
     fun forgetLatest() {

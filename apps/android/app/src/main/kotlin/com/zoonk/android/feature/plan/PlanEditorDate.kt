@@ -95,6 +95,8 @@ internal fun PlanDateSection(
             }
         }
 
+        if (fullCourse(page)?.isExam == false) StudyEverythingAction(edits.studyEverything)
+
         if (edits.hasFailed(PlanPart.Date)) SaveFailedText()
     }
 }

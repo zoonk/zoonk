@@ -124,8 +124,11 @@ internal fun PlanPage(
     val failed by viewModel.failed.collectAsStateWithLifecycle()
     val latest by viewModel.latest.collectAsStateWithLifecycle()
     val timeToCover by viewModel.timeToCover.collectAsStateWithLifecycle()
+    val preview by viewModel.preview.collectAsStateWithLifecycle()
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME) }
     var editingAt by rememberSaveable { mutableStateOf(if (focus == ADJUST_TIME) PlanSection.Time else null) }
+    var choosingFocus by rememberSaveable { mutableStateOf(focus == CHOOSE_FOCUS) }
+    var studyingEverything by rememberSaveable { mutableStateOf(focus == STUDY_EVERYTHING && fullCourse(page) != null) }
     val links = PlanLinks(navigator, page)
     val edits =
         PlanEdits(
@@ -137,6 +140,8 @@ internal fun PlanPage(
             undo = viewModel::undo,
             timeToCover = timeToCover,
             findTimeToCover = viewModel::findTimeToCover,
+            chooseFocus = { choosingFocus = true },
+            studyEverything = { studyingEverything = true },
         )
     val report =
         rememberReportProblem(
@@ -183,11 +188,36 @@ internal fun PlanPage(
             onDismiss = { editing = false },
         )
     }
+
+    if (choosingFocus) {
+        ChooseFocusSheet(
+            page = page,
+            edits = edits,
+            onFocusTest = {
+                choosingFocus = false
+                editing = false
+                navigator.open(AppRoute.FocusTest())
+            },
+            onDismiss = { choosingFocus = false },
+        )
+    }
+
+    if (studyingEverything) {
+        StudyEverythingSheet(
+            page = page,
+            edits = edits,
+            preview = preview,
+            onPreview = { viewModel.requestPreview(page.plan, it) },
+            onDismiss = { studyingEverything = false },
+        )
+    }
 }
 
-/** Main's `?focus=` arrivals that open Adjust plan, as Today's and the tutor's links do. */
+/** Main's `?focus=` arrivals, as Today's and the tutor's links open the Plan. */
 private const val ADJUST = "adjust"
 private const val ADJUST_TIME = "time"
+private const val CHOOSE_FOCUS = "choose"
+private const val STUDY_EVERYTHING = "everything"
 
 /** Whether resuming asks first, which waits for the preview of what resuming changes; a failed preview asks. */
 internal enum class Resume { Plain, Confirm, Pending }
