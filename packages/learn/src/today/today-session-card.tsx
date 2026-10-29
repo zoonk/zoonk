@@ -46,7 +46,7 @@ function getUpcomingFold({
 function SessionQueue({ next }: { next: DayStep }) {
   const t = useExtracted();
   const { today } = useTodayScreen();
-  const { blocks, lessonsComing, plusLessons } = today.session;
+  const { blocks, lessonsComing, lessonsToPrepare, plusLessons } = today.session;
   const [doneOpen, setDoneOpen] = useState(false);
   const [moreOpen, setMoreOpen] = useState(false);
   const countsTowardMission = useCountsTowardMission();
@@ -59,7 +59,8 @@ function SessionQueue({ next }: { next: DayStep }) {
     wide: Math.max(WIDE_UPCOMING_ROWS, marked),
   };
 
-  const coming = lessonsComing ? 1 : 0;
+  const lessonsAhead = lessonsComing || lessonsToPrepare;
+  const coming = lessonsAhead ? 1 : 0;
   const upcoming = after.length + coming + plusLessons.length;
   const phoneMore = Math.max(0, upcoming - rows.phone);
   const wideMore = Math.max(0, upcoming - rows.wide);
@@ -101,7 +102,7 @@ function SessionQueue({ next }: { next: DayStep }) {
           />
         ))}
 
-        {lessonsComing && (
+        {lessonsAhead && (
           <ComingLessonsRow fold={getUpcomingFold({ index: after.length, open: moreOpen, rows })} />
         )}
 

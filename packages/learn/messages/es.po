@@ -12523,6 +12523,7 @@ msgid "Practice for {minutes} minutes"
 msgstr "Practica durante {minutes} minutos"
 
 #: src/today/today-action.tsx
+#: src/today/today-coming-lessons.tsx
 msgctxt "Nb8Jg7"
 msgid "Get today's lessons"
 msgstr "Preparar las lecciones de hoy"
@@ -12599,6 +12600,11 @@ msgstr "Recuperar hoy · +{time}"
 msgctxt "ZoDO4s"
 msgid "What changed"
 msgstr "Qué ha cambiado"
+
+#: src/today/today-coming-lessons.tsx
+msgctxt "Ay_6I8"
+msgid "Not written yet."
+msgstr "Aún no están preparadas."
 
 #: src/today/today-coming-lessons.tsx
 msgctxt "FAEHQ7"
