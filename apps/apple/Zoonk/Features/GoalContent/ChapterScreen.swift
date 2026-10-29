@@ -16,15 +16,7 @@ struct ChapterScreen: View {
         case .loaded(let value):
           ChapterContent(goal: goal, chapter: value)
         case .failed(.notFound), .empty:
-          ContentUnavailableView {
-            Label {
-              Text(
-                "This chapter isn't in your plan", tableName: "Plan",
-                comment: "Shown for a chapter that isn't in the learner's plan")
-            } icon: {
-              Image(systemName: "book")
-            }
-          }
+          notInPlan
         case .failed:
           ContentUnavailableView {
             Label {
@@ -85,6 +77,20 @@ struct ChapterScreen: View {
           context: FeedbackContext(contentID: chapterId, contentKind: .chapter), isReport: true)
       }
       .loads(chapter)
+    } else if learner.summary.value != nil {
+      notInPlan
+    }
+  }
+
+  private var notInPlan: some View {
+    ContentUnavailableView {
+      Label {
+        Text(
+          "This chapter isn't in your plan", tableName: "Plan",
+          comment: "Shown for a chapter that isn't in the learner's plan")
+      } icon: {
+        Image(systemName: "book")
+      }
     }
   }
 }

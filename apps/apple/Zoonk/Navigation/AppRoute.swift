@@ -64,9 +64,9 @@ enum AppRoute: Hashable, Identifiable {
   /// `AuthGateScreen`).
   var requirement: Requirement {
     switch self {
-    case .subject, .chapter, .languageUnit, .mindMaps, .exam, .mockChooser, .mistakes, .speaking:
+    case .subject, .mindMaps, .exam, .mockChooser, .mistakes, .speaking:
       .goal
-    case .earlierQuestions, .statistics:
+    case .chapter, .languageUnit, .earlierQuestions, .statistics:
       .account
     default:
       .none

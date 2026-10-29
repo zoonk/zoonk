@@ -125,8 +125,8 @@ final class GoalContentStore {
     return chapter
   }
 
-  func unit(goalId: String, chapterId: String) -> Resource<LanguageUnit> {
-    let key = "\(goalId):\(chapterId)"
+  func unit(goalId: String?, chapterId: String) -> Resource<LanguageUnit> {
+    let key = "\(goalId ?? ""):\(chapterId)"
 
     if let unit = units[key] {
       return unit

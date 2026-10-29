@@ -58,6 +58,7 @@ struct LanguageUnit: Decodable, Equatable, Sendable {
 
   let canTestOut: Bool
   let conversation: Conversation?
+  let goalId: String?
   let grammarTips: [Tip]
   let lessons: [Lesson]
   let mistakes: [Mistake]
@@ -66,7 +67,7 @@ struct LanguageUnit: Decodable, Equatable, Sendable {
 }
 
 extension GoalContentAPI {
-  func unit(token: String, goalId: String, chapterId: String) async throws -> LanguageUnit {
+  func unit(token: String, goalId: String?, chapterId: String) async throws -> LanguageUnit {
     try await clients.perform(token: token) { client in
       switch try await client.getLanguageUnit(
         path: .init(chapterId: chapterId), query: .init(goalId: goalId))
@@ -88,13 +89,13 @@ struct LanguageUnitScreen: View {
   let chapterId: String
 
   var body: some View {
-    if let goal = learner.summary.value?.shownGoal {
-      let unit = store.unit(goalId: goal.id, chapterId: chapterId)
+    if let summary = learner.summary.value {
+      let unit = store.unit(goalId: summary.shownGoal?.id, chapterId: chapterId)
 
       Group {
         switch unit.state {
         case .loaded(let value):
-          LanguageUnitContent(goalId: goal.id, unit: value)
+          LanguageUnitContent(unit: value)
         case .failed(.notFound), .empty:
           ContentUnavailableView {
             Label {
@@ -173,7 +174,6 @@ private struct LanguageUnitContent: View {
   /// Above the split: folding iPhone Duo recreates its panes, and the call's picker is in one.
   @State private var callMinutes: Int?
 
-  let goalId: String
   let unit: LanguageUnit
 
   var body: some View {
@@ -281,7 +281,7 @@ private struct LanguageUnitContent: View {
   private var practice: some View {
     if let conversation = unit.conversation {
       UnitPracticeCallSection(
-        conversation: conversation, chapterId: unit.unit.chapterId, goalId: goalId,
+        conversation: conversation, chapterId: unit.unit.chapterId, goalId: unit.goalId,
         minutes: $callMinutes)
     }
 
@@ -395,7 +395,7 @@ private struct UnitPracticeCallSection: View {
 
   let conversation: LanguageUnit.Conversation
   let chapterId: String
-  let goalId: String
+  let goalId: String?
   @Binding var minutes: Int?
 
   var body: some View {
@@ -508,7 +508,7 @@ private struct UnitPracticeCallSection: View {
 
 private struct PracticeCallRequest: Encodable {
   let chapterId: String
-  let goalId: String
+  let goalId: String?
   let kind = "practice"
   let minutes: Int
 }
