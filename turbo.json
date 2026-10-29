@@ -33,6 +33,8 @@
   },
   "tasks": {
     "//#format": {},
+    "@zoonk/learn#build": { "outputs": ["messages/**"] },
+    "@zoonk/player#build": { "outputs": ["messages/**"] },
     "//#format:fix": { "cache": false },
     "//#lint": { "dependsOn": ["@zoonk/db#db:generate"] },
     "//#lint:fix": { "cache": false, "dependsOn": ["@zoonk/db#db:generate"] },
@@ -61,11 +63,7 @@
         "src/app/.well-known/workflow/**"
       ]
     },
-    "db:generate": {
-      "cache": false,
-      "dependsOn": ["^db:generate"],
-      "outputs": ["src/generated/**"]
-    },
+    "db:generate": { "dependsOn": ["^db:generate"], "outputs": ["src/generated/**"] },
     "db:setup:test": { "cache": false, "dependsOn": ["^db:setup:test"] },
     "dev": { "cache": false, "dependsOn": ["db:generate", "^dev"], "persistent": true },
     "dev:direct": {
