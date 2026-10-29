@@ -171,6 +171,9 @@ dependencies {
     // Live calls.
     implementation(libs.webrtc)
 
+    // Code sandbox.
+    implementation(libs.androidx.webkit)
+
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.leakcanary.android)

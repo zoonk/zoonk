@@ -27,6 +27,7 @@ import com.zoonk.android.data.perform
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.LiveAccountApi
 import com.zoonk.android.feature.account.PlayIntegrity
+import com.zoonk.android.feature.activities.code.CodeSandbox
 import com.zoonk.android.feature.audio.ExoAudioOutput
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
@@ -168,6 +169,9 @@ class AppContainer private constructor(
     val lessonPlayer = LessonPlayerStore(LiveLessonPlayerApi(api), cache)
     val todayChoices = TodayChoices(drafts)
     val explain = ExplainStore(LiveExplainApi(api), cache)
+
+    // Activities (L5).
+    val codeSandbox = CodeSandbox(context, scope)
 
     // Today and the session (lane L3).
     private val timeZone = {

@@ -51,6 +51,9 @@ media3 = "1.11.1"
 # Live calls.
 webrtc = "150.7871.04"
 
+# Code sandbox.
+androidxWebkit = "1.18.0"
+
 [libraries]
 lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "lint" }
 lint-tests = { module = "com.android.tools.lint:lint-tests", version.ref = "lint" }
@@ -119,6 +122,9 @@ androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", versi
 
 # Live calls.
 webrtc = { module = "io.github.webrtc-sdk:android-prefixed-stripped", version.ref = "webrtc" }
+
+# Code sandbox.
+androidx-webkit = { module = "androidx.webkit:webkit", version.ref = "androidxWebkit" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
