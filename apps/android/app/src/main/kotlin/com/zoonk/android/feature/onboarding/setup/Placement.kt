@@ -73,8 +73,8 @@ internal data class Shown(
 )
 
 /**
- * Main's `toResumedPhase`: a mock exam taken instead of the questions wins, then questions already
- * started, then the intro until the learner taps Start ([started]).
+ * A mock exam taken instead of the questions wins, then questions already started, then the intro
+ * until the learner taps Start ([started]).
  */
 internal fun placementPhase(
     placement: LoadState<Placement>,

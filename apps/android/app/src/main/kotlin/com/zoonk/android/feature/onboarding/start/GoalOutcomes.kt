@@ -101,7 +101,7 @@ internal fun CreateAccountButton(onClick: () -> Unit) {
     Button(onClick = onClick, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_create_account)) }
 }
 
-/** Main's `GoalErrorAlert`: an account asks for one, a Plus limit says what Plus lifts, anything else in words. */
+/** An account asks for one, a Plus limit says what Plus lifts, anything else in words. */
 @Composable
 internal fun GoalErrorAlert(
     error: GoalError?,
@@ -135,7 +135,7 @@ internal fun GoalErrorAlert(
     }
 }
 
-/** Main's `GoalFooter`: a goal that needs an account offers only that. */
+/** A goal that needs an account offers only that. */
 @Composable
 internal fun ColumnScope.GoalFooter(
     error: GoalError?,

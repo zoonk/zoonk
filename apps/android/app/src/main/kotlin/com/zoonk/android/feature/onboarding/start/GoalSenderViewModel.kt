@@ -12,8 +12,8 @@ import com.zoonk.android.feature.onboarding.startError
 import kotlinx.coroutines.launch
 
 /**
- * Main's home `useSendGoal`: the learner's tap sends the words, and the saved draft opens the start
- * screen, which only reads it. For a goal box outside the start screen.
+ * For a goal box outside the start screen: the learner's tap sends the words, and the saved draft
+ * opens the start screen, which only reads it.
  */
 class GoalSenderViewModel(
     private val store: OnboardingStore,

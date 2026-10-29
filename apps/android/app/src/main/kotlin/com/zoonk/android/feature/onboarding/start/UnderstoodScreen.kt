@@ -280,7 +280,6 @@ private fun FactRow(
     }
 }
 
-/** Main's note line: the note, then where it came from as a link that opens the page in a Custom Tab. */
 @Composable
 private fun RowNote(row: UnderstoodRow) {
     val context = LocalContext.current

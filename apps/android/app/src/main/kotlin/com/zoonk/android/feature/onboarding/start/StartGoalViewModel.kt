@@ -60,11 +60,7 @@ data class StartFlowState(
 
 enum class WaitlistOutcome { Joined, SignInRequired, Failed }
 
-/**
- * Main's `StartFlow`: the words, then the read with its progress, then what was understood. Reading
- * words, reading them again and creating goals are POSTs from the learner's taps; opening a draft
- * only reads it.
- */
+/** Reading words, reading them again and creating goals are POSTs from the learner's taps; opening a draft only reads it. */
 class StartGoalViewModel(
     private val store: OnboardingStore,
     handle: SavedStateHandle,
@@ -222,7 +218,7 @@ class StartGoalViewModel(
         }
     }
 
-    /** Main's `useSubmitGoal`: questions about material stay here; anything else is read. */
+    /** Questions about material stay here; anything else is read. */
     fun submit(
         typed: String,
         materialGoal: String,
@@ -375,7 +371,7 @@ class StartGoalViewModel(
 
     /**
      * A goal this process sent from a tap that turns out to be a question opens its explanation at
-     * once (main's `settle`); coming back to it later waits for "Explain it".
+     * once; coming back to it later waits for "Explain it".
      */
     fun settle(
         draft: OnboardingDraft,

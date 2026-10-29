@@ -15,7 +15,6 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 import kotlin.math.roundToInt
 
-/** Main's `RevealFacts`: how long the plan runs, the time a day, and the study it adds up to. */
 internal data class RevealFacts(
     /** Days to the goal's date; null without one. */
     val days: Int?,
@@ -111,7 +110,6 @@ internal sealed interface RevealCoverage {
     ) : RevealCoverage
 }
 
-/** Main's `RevealCoverage`: what the learner's time covers, or the syllabus the plan follows when it covers everything. */
 internal fun revealCoverage(
     plan: Plan,
     goalKind: Goal.Kind,
@@ -177,7 +175,6 @@ internal sealed interface SummaryDetail {
     ) : SummaryDetail
 }
 
-/** Main's `useSummaryLines`: the syllabus in a line, and how much of it the plan holds. */
 private fun Syllabus.summary(): RevealCoverage.Summary {
     val noticeSubjects = subjects.count { it.source == SyllabusSubject.Source.NOTICE }
     val firstNames = SummaryDetail.Names(subjects.take(2).map { it.shortName })
@@ -241,7 +238,7 @@ internal data class AreaWeights(
     val assumed get() = areas.count { it.assumed }
 }
 
-/** Main's `AreaWeights`, heaviest first; null below two areas, which have nothing to compare. */
+/** Heaviest first; null below two areas, which have nothing to compare. */
 internal fun Syllabus.areaWeights(): AreaWeights? {
     val areas =
         subjects

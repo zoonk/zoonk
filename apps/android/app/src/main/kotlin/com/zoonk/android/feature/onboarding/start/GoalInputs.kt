@@ -12,7 +12,7 @@ import java.util.UUID
 private const val EXPLANATION_MINUTES = 5L
 private const val MUSICIANSHIP_MINUTES = 15L
 
-/** Main's `toGoalCreateInput`: the first goal carries what the learner wants from their material. */
+/** The first goal carries what the learner wants from their material. */
 internal fun understoodGoalsInput(
     understanding: GoalUnderstandingOneOf,
     materialIntent: MaterialIntent?,

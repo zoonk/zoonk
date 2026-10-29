@@ -70,7 +70,7 @@ fun Refusal.goalLimitReason(): GoalLimitReason =
         }
     }
 
-/** Main's `useStartError`: a guest's one goal asks for an account, other caps say when to try again. */
+/** A guest's one goal asks for an account; other caps say when to try again. */
 fun WriteOutcome<*>.startError(): GoalError =
     when (this) {
         is WriteOutcome.Refused -> {
@@ -102,7 +102,7 @@ fun WriteOutcome<*>.startError(): GoalError =
         }
     }
 
-/** Main's `findGoalStartLimit`: the first cap a new goal would hit, checked in core's order. */
+/** The first cap a new goal would hit, checked in core's order. */
 fun AllowanceResponse.goalStartLimit(): GoalLimitReason? {
     val goal = items.find { it.kind == AllowanceItem.Kind.GOAL }
     val period =

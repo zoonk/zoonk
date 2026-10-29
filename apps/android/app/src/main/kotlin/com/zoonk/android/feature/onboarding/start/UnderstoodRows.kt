@@ -444,7 +444,7 @@ internal fun Map<String, JsonElement>?.text(key: String): String? =
         }?.content
         ?.takeIf { it.isNotBlank() }
 
-/** Main's `isSaidInTitle`: as whole words, ignoring accents and case, so "dev" isn't said in "development". */
+/** As whole words, ignoring accents and case, so "dev" isn't said in "development". */
 internal fun isSaidIn(
     title: String,
     value: String,

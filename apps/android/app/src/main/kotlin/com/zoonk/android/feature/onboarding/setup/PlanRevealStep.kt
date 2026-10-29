@@ -69,11 +69,7 @@ import com.zoonk.api.models.Syllabus
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 
-/**
- * Main's `PlanReveal`, the setup's last step: the plan while it's built, the exam's documents while
- * they're read, then the plan with its start. Reading the plan starts no work; only Start and
- * Adjust leave.
- */
+/** Reading the plan starts no work; only Start and Adjust leave. */
 @Composable
 internal fun ColumnScope.PlanRevealStep(
     goal: Goal,
@@ -118,7 +114,7 @@ internal fun ColumnScope.PlanRevealStep(
                     navigator.closeSection()
                     navigator.open(AppRoute.Today)
                 },
-                // F16: Adjust opens the plan editor (main's `PlanEditor` sheet) here once it exists; until then, the Plan tab.
+                // Adjust opens the Plan tab until the plan editor (F16) can open here.
                 onAdjust = {
                     navigator.closeSection()
                     navigator.open(AppRoute.Plan())
@@ -572,7 +568,6 @@ private fun CoverageWords(
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
 
-/** Main's `useCoveredText`. */
 @Composable
 private fun coveredText(
     coverage: RevealCoverage.Covered,
@@ -649,7 +644,7 @@ private fun summaryDetail(
         }
     }
 
-/** Main's `FreeWeekOverNotice`: the plan stays, locked, with what Plus opens. */
+/** The plan stays, locked, with what Plus opens. */
 @Composable
 private fun FreeWeekOverNotice(onSeePlus: () -> Unit) {
     Card(

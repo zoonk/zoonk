@@ -21,7 +21,7 @@ private class SentAnswer(
     val durationMs: Long,
 )
 
-/** Main's `PlacementStep`: answering and finishing are POSTs from the learner's taps; opening it only reads. */
+/** Answering and finishing are POSTs from the learner's taps; opening it only reads. */
 internal class PlacementViewModel(
     private val goalId: String,
     private val store: OnboardingStore,

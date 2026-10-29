@@ -97,10 +97,7 @@ fun attachErrorMessage(outcome: WriteOutcome<*>): String =
 
 private enum class Pasting { Text, Link }
 
-/**
- * Main's `AttachControls`: a file through the system picker, or pasted text or a link. Shared with
- * Today's research ask. [error] is the last attempt's, in words.
- */
+/** Shared with Today's research ask. [error] is the last attempt's, in words. */
 @Composable
 fun AttachControls(
     pending: Boolean,
