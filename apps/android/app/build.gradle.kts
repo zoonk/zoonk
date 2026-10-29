@@ -168,6 +168,9 @@ dependencies {
     // Speech clips and recorded answers.
     implementation(libs.androidx.media3.exoplayer)
 
+    // Live calls.
+    implementation(libs.webrtc)
+
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.leakcanary.android)

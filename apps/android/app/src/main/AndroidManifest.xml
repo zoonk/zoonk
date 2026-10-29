@@ -3,6 +3,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <!-- Recorded answers; asked on the first Record tap. -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <!-- Live calls: WebRTC follows the network and sets call audio; a microphone service keeps the call in the background. -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MICROPHONE" />
 
     <application
         android:name=".app.ZoonkApplication"
@@ -39,5 +44,10 @@
                 <data android:path="/auth/apple" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".feature.livecall.LiveCallService"
+            android:exported="false"
+            android:foregroundServiceType="microphone" />
     </application>
 </manifest>

@@ -35,6 +35,9 @@ import com.zoonk.android.feature.explain.ExplainStore
 import com.zoonk.android.feature.explain.LiveExplainApi
 import com.zoonk.android.feature.feedback.FeedbackSender
 import com.zoonk.android.feature.feedback.LiveFeedbackApi
+import com.zoonk.android.feature.livecall.LiveCallTransports
+import com.zoonk.android.feature.livecall.OngoingCalls
+import com.zoonk.android.feature.livecall.WebRtcLiveCallTransport
 import com.zoonk.android.feature.memory.LiveMemoryApi
 import com.zoonk.android.feature.memory.MemoryStore
 import com.zoonk.android.feature.plan.LivePlanApi
@@ -174,6 +177,11 @@ class AppContainer private constructor(
             timeZone = timeZone,
         )
     val goalSwitch = GoalSwitch(learningProfile::setActiveGoal)
+
+    // Live calls and speaking (L9).
+    val calls = OngoingCalls(context.applicationContext, scope)
+    val callTransports =
+        LiveCallTransports { microphone, onEvent, onLost -> WebRtcLiveCallTransport(context, microphone, onEvent, onLost) }
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =

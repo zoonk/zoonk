@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The notification channel of an ongoing call with an AI character. -->
+    <string name="livecall_channel">Calls</string>
+</resources>

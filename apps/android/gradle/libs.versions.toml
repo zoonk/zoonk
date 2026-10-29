@@ -48,6 +48,9 @@ playIntegrity = "1.6.0"
 # Speech clips and recorded answers.
 media3 = "1.11.1"
 
+# Live calls.
+webrtc = "150.7871.04"
+
 [libraries]
 lint-api = { module = "com.android.tools.lint:lint-api", version.ref = "lint" }
 lint-tests = { module = "com.android.tools.lint:lint-tests", version.ref = "lint" }
@@ -113,6 +116,9 @@ play-integrity = { module = "com.google.android.play:integrity", version.ref = "
 
 # Speech clips and recorded answers.
 androidx-media3-exoplayer = { module = "androidx.media3:media3-exoplayer", version.ref = "media3" }
+
+# Live calls.
+webrtc = { module = "io.github.webrtc-sdk:android-prefixed-stripped", version.ref = "webrtc" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
