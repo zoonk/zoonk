@@ -5,6 +5,7 @@
   "goal_box_example_explanation": "024d3f8bce9225c60c7e54ec3dc7b55e33a4f4f2e5fb120242ab45d17b4e2870",
   "goal_box_example_language": "e8280b7b9816a1cf2622d8d511904a38429d01b8d5f5d54eb4fb73e94e9bfa6e",
   "goal_box_example_music": "664caa9bcfbe6c40880a84a666e3b4e414463773d93fcf3b96f0396a56e81de4",
+  "goal_box_example_pick": "1126cc8947e71db51519bcdc4ff6fc43fe7409448a2eee2ddd85bdfd4e12e891",
   "goal_box_example_topic": "58481e4633ca8dddffb547b8defa53195ba6da83ce7786b8d1a25e419fd3fad7",
   "goal_box_examples": "fdaaf4f7bb08d030c8e664af4e01f8cb1836f8a141c25eed44519c53d06c669b",
   "goal_box_kind_exam": "2f52ec2b472c7c48e724f9d23ace0a1293e3b4904a8ccb16e5fa19406ad9b4c5",
@@ -25,6 +26,8 @@
     <string name="goal_box_submit">Montar meu plano</string>
     <string name="goal_box_write_first">Escreva sua meta no campo primeiro, com suas próprias palavras.</string>
     <string name="goal_box_examples">Exemplos</string>
+    <!-- What TalkBack says a tap on an example does: it sends that example as the learner's goal. -->
+    <string name="goal_box_example_pick">começar esta meta</string>
     <!-- Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the PAU in Spanish, the bac in French, the Abitur in German. -->
     <string name="goal_box_example_exam">Passar no Enem</string>
     <!-- %1$s is a language name. -->

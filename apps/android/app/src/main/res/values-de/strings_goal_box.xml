@@ -5,6 +5,7 @@
   "goal_box_example_explanation": "dc7e0aa1cd763621ae6243df48082b6aeae7b604846cea45282ab8507b4c9992",
   "goal_box_example_language": "fef1212ba8fa3d2b4c6465e0d465ca3dc8e00f7980ceda78fbf59b87b5581722",
   "goal_box_example_music": "47bc5cf71e93c4a18015b45942ecfac3e4ec70f7d7c422132eb9ce3a8645dc78",
+  "goal_box_example_pick": "44525a5f19a026a3d112fcf3283448059a05a5f52091fdf440b89bdf5ccf897a",
   "goal_box_example_topic": "6d2d8ee5eba3144030da7bb1e2cd379a7e1efc9f88c967d142f071bb54556884",
   "goal_box_examples": "418259aeca1e60f035b7832d27e2a025713be8913f2797082f31ef39bb940b5a",
   "goal_box_kind_exam": "c518700da256c81ceb80fbeeab810f245f2261c98edc0b4c21de90e574d0066e",
@@ -25,6 +26,8 @@
     <string name="goal_box_submit">Meinen Plan erstellen</string>
     <string name="goal_box_write_first">Schreib zuerst dein Ziel in eigenen Worten in das Feld.</string>
     <string name="goal_box_examples">Beispiele</string>
+    <!-- What TalkBack says a tap on an example does: it sends that example as the learner's goal. -->
+    <string name="goal_box_example_pick">dieses Ziel starten</string>
     <!-- Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the PAU in Spanish, the bac in French, the Abitur in German. -->
     <string name="goal_box_example_exam">Das Abitur bestehen</string>
     <!-- %1$s is a language name. -->

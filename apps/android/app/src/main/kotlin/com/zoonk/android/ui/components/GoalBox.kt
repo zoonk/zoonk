@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardActions
@@ -14,9 +15,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,7 +29,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
@@ -80,6 +83,10 @@ fun GoalBox(
     val line = if (isAskingForWords) stringResource(R.string.goal_box_write_first) else note
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        // At large font sizes "I want to" beside the words would leave them a narrow strip.
+        val labelAbove = LocalDensity.current.fontScale > LARGE_FONT_SCALE
+        if (labelAbove) Text(stringResource(R.string.goal_box_label), style = MaterialTheme.typography.bodyLarge)
+
         OutlinedTextField(
             value = value,
             onValueChange = { typed ->
@@ -96,7 +103,7 @@ fun GoalBox(
                     .fillMaxWidth()
                     .focusRequester(focusRequester),
             readOnly = isSubmitting,
-            prefix = { Text(stringResource(R.string.goal_box_label), Modifier.padding(end = 4.dp)) },
+            prefix = if (labelAbove) null else ({ Text(stringResource(R.string.goal_box_label), Modifier.padding(end = 4.dp)) }),
             placeholder = { Text(stringResource(R.string.goal_box_placeholder, spokenLanguage(currentLocale()))) },
             supportingText = line?.let { { Text(it) } },
             isError = isAskingForWords,
@@ -143,13 +150,27 @@ fun GoalExamples(
     Column(modifier = modifier.fillMaxWidth()) {
         SectionHeader(stringResource(R.string.goal_box_examples))
         Spacer(Modifier.size(8.dp))
-        OutlinedCard {
-            examples.forEachIndexed { index, example ->
-                if (index > 0) HorizontalDivider()
-                ListItem(
-                    headlineContent = { Text(example.label) },
-                    supportingContent = { Text(example.kind) },
-                    modifier = Modifier.clickable { onPick(example.label) },
+        val pickLabel = stringResource(R.string.goal_box_example_pick)
+        examples.forEachIndexed { index, example ->
+            if (index > 0) HorizontalDivider()
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .heightIn(min = 56.dp)
+                        .clickable(role = Role.Button, onClickLabel = pickLabel) { onPick(example.label) }
+                        .padding(vertical = 12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                Column(Modifier.weight(1f)) {
+                    Text(example.label, style = MaterialTheme.typography.bodyLarge)
+                    Text(example.kind, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                }
+                Icon(
+                    painterResource(R.drawable.ic_chevron_right),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
             }
         }
@@ -179,3 +200,4 @@ private fun spokenLanguage(locale: Locale): String {
 }
 
 private const val QUICK_EXPLANATION_MINUTES = 5
+private const val LARGE_FONT_SCALE = 1.5f
