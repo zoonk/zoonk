@@ -83,7 +83,6 @@ data class BuddyLook(
                 else -> BuddyEnergyState.Awake
             }
 
-    /** The face on everyday screens: sleepy while it naps, happy awake, cheering from 80% Energy. */
     val everydayExpression: BuddyExpression
         get() =
             when (energyState) {

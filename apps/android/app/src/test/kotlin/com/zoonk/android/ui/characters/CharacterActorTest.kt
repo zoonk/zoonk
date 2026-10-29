@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.SaverScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.MotionDurationScale
 import androidx.compose.ui.graphics.toPixelMap
@@ -123,6 +124,25 @@ class CharacterActorTest {
     }
 
     @Test
+    fun anActUnderWayIsSavedAsTheExpressionItLandsIn() {
+        lateinit var scope: CoroutineScope
+        compose.mainClock.autoAdvance = false
+        compose.setContent {
+            scope = rememberCoroutineScope()
+            state = rememberBuddyActorState()
+            BuddyActor(BuddyLook(energy = 50.0), Modifier.size(96.dp), state = state)
+        }
+        compose.waitForIdle()
+
+        scope.launch { state.play(BuddyAct.Surprise) }
+        advance(FRAME * 3)
+        val saver = actorStateSaver(BuddyActing)
+        val saved = with(saver) { SaverScope { true }.save(state) }
+
+        assertEquals(BuddyExpression.Wow, saved?.let(saver::restore)?.landed)
+    }
+
+    @Test
     fun aLabelNamesItForTalkBackAndNoLabelHidesIt() {
         compose.setContent {
             Column {
@@ -187,7 +207,7 @@ class CharacterActorWithAnimationsOffTest {
         )
 
     @Test
-    fun aReactionLandsAtOnce() {
+    fun aReactionLandsBeforeAnyFrameDraws() {
         lateinit var state: TricksterActorState
         compose.mainClock.autoAdvance = false
         compose.setContent {
@@ -195,9 +215,8 @@ class CharacterActorWithAnimationsOffTest {
             TricksterArt(Modifier.size(96.dp), beaten = true, reacts = true, state = state)
         }
         compose.waitForIdle()
-        compose.mainClock.advanceTimeByFrame()
-        compose.waitForIdle()
 
+        assertNull(state.playing)
         assertEquals(TricksterExpression.Defeated, state.landed)
     }
 }

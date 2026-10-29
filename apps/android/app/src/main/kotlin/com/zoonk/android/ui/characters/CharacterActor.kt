@@ -13,6 +13,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -31,7 +32,6 @@ import kotlin.coroutines.cancellation.CancellationException
 internal class CharacterActs<Expression, Act>(
     val act: (Act) -> CharacterAct<Expression>,
     val blink: Act,
-    /** The only faces a blink can close. */
     val openEyes: Set<Expression>,
     val expressions: List<Expression>,
 )
@@ -63,7 +63,7 @@ class ActorState<Expression, Act> internal constructor(
 
     /**
      * Plays the act from the face shown and lands on its expression. True once it lands; false when
-     * another act stopped it, which lands this one at once. With animations off it lands at once.
+     * another act stopped it, which lands this one at once.
      */
     suspend fun play(act: Act): Boolean = play(act, delayMillis = 0)
 
@@ -75,8 +75,17 @@ class ActorState<Expression, Act> internal constructor(
 
         return try {
             mutex.mutate {
-                delay(scaled(delayMillis))
+                val scale = currentCoroutineContext()[MotionDurationScale]?.scaleFactor ?: 1f
+                // Off the frame clock, so nothing draws while it waits.
+                delay((delayMillis * scale).toLong())
                 val from = landed ?: resting ?: return@mutate false
+
+                // With animations off it lands before the next frame, so the face it leaves never shows.
+                if (scale == 0f) {
+                    landed = act.to ?: from
+                    return@mutate true
+                }
+
                 frame = 0f
                 playing = Playing(act, from)
 
@@ -95,9 +104,6 @@ class ActorState<Expression, Act> internal constructor(
         }
     }
 
-    /** Waits off the frame clock, so nothing draws until the act starts; animations off wait nothing. */
-    private suspend fun scaled(millis: Int): Long = (millis * (currentCoroutineContext()[MotionDurationScale]?.scaleFactor ?: 1f)).toLong()
-
     /** After a reaction, one blink about 2 s later where its eyes are open, then rest. */
     internal suspend fun react(reaction: ActReaction<Act>) {
         if (reacted) return
@@ -109,6 +115,9 @@ class ActorState<Expression, Act> internal constructor(
     }
 
     internal fun landing(act: Act): Expression? = acts.act(act).to
+
+    /** An act under way is saved as landed, so rotation or the way back draws where it was going. */
+    internal val landingNow: Expression? get() = playing?.let { it.act.to ?: it.from } ?: landed
 }
 
 internal class Playing<Expression>(
@@ -118,13 +127,15 @@ internal class Playing<Expression>(
 
 @Composable
 internal fun <Expression : Enum<Expression>, Act> rememberActorState(acts: CharacterActs<Expression, Act>): ActorState<Expression, Act> =
-    rememberSaveable(
-        saver =
-            listSaver(
-                save = { listOf(it.landed?.ordinal ?: -1, it.reacted) },
-                restore = { ActorState(acts, acts.expressions.getOrNull(it[0] as Int), it[1] as Boolean) },
-            ),
-    ) { ActorState(acts, landed = null, reacted = false) }
+    rememberSaveable(saver = actorStateSaver(acts)) { ActorState(acts, landed = null, reacted = false) }
+
+internal fun <Expression : Enum<Expression>, Act> actorStateSaver(
+    acts: CharacterActs<Expression, Act>,
+): Saver<ActorState<Expression, Act>, Any> =
+    listSaver(
+        save = { listOf(it.landingNow?.ordinal ?: -1, it.reacted) },
+        restore = { ActorState(acts, acts.expressions.getOrNull(it[0] as Int), it[1] as Boolean) },
+    )
 
 /**
  * `reaction` plays once, on the moment's beat; where the moment doesn't play again (rotation, the way

@@ -141,7 +141,6 @@ internal class TricksterDrawing(
     }
 }
 
-/** Where the lid clips the eye's white: lower for a smug or beaten look. */
 private class MaskEye(
     white: FloatArray,
     pupil: FloatArray,
