@@ -6,40 +6,51 @@ import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
-import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class ScheduleRulesTest {
-    private val advice =
-        PlanTimeAdvice(
-            coveredShare = 0.6,
-            endDate = null,
-            fullCourseEndDate = null,
-            measure = PlanTimeAdvice.Measure.EXAM,
-            numbers = null,
-            ready = true,
-            targetDate = LocalDate(2026, 11, 8),
-            targetDateNamedMonth = false,
-        )
-
-    private fun found(recommended: Long?) =
+    private fun found(
+        recommended: Long? = 35,
+        core: Long? = null,
+        pastDate: Boolean = false,
+    ) = FoundTime(
         PlanTimeToCover(
-            coreMinutes = null,
+            coreMinutes = core,
             fittingDate = null,
             ready = true,
             recommendedMinutes = recommended,
-            targetDate = null,
+            targetDate = LocalDate(2028, 10, 29),
             targetDateNamedMonth = false,
-        )
+        ),
+        pastDate = pastDate,
+    )
 
-    private fun answerFor(
-        minutes: Int,
-        days: List<Int> = EVERY_DAY,
-        advice: PlanTimeAdvice = this.advice,
-    ) = AdviceAnswer(advice, studyWeek(days, 60, null), minutes)
+    private fun advice(
+        share: Double? = 0.48,
+        endDate: LocalDate? = null,
+    ) = PlanTimeAdvice(
+        coveredShare = share,
+        endDate = endDate,
+        fullCourseEndDate = null,
+        measure = PlanTimeAdvice.Measure.GOAL,
+        numbers = null,
+        ready = true,
+        targetDate = LocalDate(2028, 10, 29),
+        targetDateNamedMonth = false,
+    )
 
-    private val unknown = PickedShare(false, null)
+    private val tooClose = found(recommended = 900, core = 300)
+
+    private fun line(
+        advice: PlanTimeAdvice? = null,
+        askFailed: Boolean = false,
+        dated: Boolean = true,
+        findFailed: Boolean = false,
+        found: FoundTime? = found(),
+        hasDays: Boolean = true,
+        minutes: Int? = 35,
+    ) = timeLine(advice, askFailed, dated, findFailed, found, hasDays, minutes)
 
     @Test
     fun aNewGoalsEveryDayWeekOpensOnWeekdaysButAChosenWeekStays() {
@@ -52,79 +63,107 @@ class ScheduleRulesTest {
     fun findKeepsTheWeekendsOwnTimeEvenWhenItEqualsTheWeekdayPick() {
         assertEquals(StudyWeek(EVERY_DAY, 60), findWeek(EVERY_DAY, 60))
         assertEquals(StudyWeek(EVERY_DAY), studyWeek(EVERY_DAY, 60, 60))
-        assertEquals(StudyWeek(listOf(1, 2, 3)), findWeek(listOf(1, 2, 3), null))
+        assertEquals(StudyWeek(listOf(1, 6), 60, fullCourse = true), studyWeek(listOf(1, 6), 30, 60, fullCourse = true))
     }
 
     @Test
-    fun aWeeksAdviceHoldsWhileAnotherTimeIsAskedAboutButNotAnotherWeekOrABuildingPlan() {
-        assertSame(advice, weekAdvice(answerFor(45), studyWeek(EVERY_DAY, 90, null)))
-        assertNull(weekAdvice(answerFor(45), studyWeek(listOf(1, 2, 3, 4, 5), 90, null)))
-        assertNull(weekAdvice(answerFor(45, advice = advice.copy(ready = false)), studyWeek(EVERY_DAY, 45, null)))
+    fun theSuggestionCoversEverythingUpToFourHoursOrElseReachesEveryTopic() {
+        assertEquals(240, suggestedMinutes(found(recommended = 240)))
+        assertEquals(45, suggestedMinutes(found(recommended = 300, core = 45)))
+        assertNull(suggestedMinutes(tooClose))
+        assertNull(suggestedMinutes(found(recommended = null)))
+        assertNull(suggestedMinutes(found(pastDate = true)))
     }
 
     @Test
-    fun thePlansShareCountsOnlyForTheTimeItWasAskedAboutOrTheTimeFindFound() {
-        val answer = answerFor(45)
-        assertEquals(PickedShare(true, 0.6), pickedShare(advice, answer, found(100), 45))
-        assertEquals(unknown, pickedShare(advice, answer, found(100), 60))
-        assertEquals(PickedShare(true, 1.0), pickedShare(advice, answer, found(100), 100))
-        assertEquals(unknown, pickedShare(advice, answer, found(100), 240))
-        assertEquals(unknown, pickedShare(advice, answer, null, 100))
-        assertEquals(PickedShare(true, 0.6), pickedShare(advice, answerFor(100), found(100), 100))
-        assertEquals(unknown, pickedShare(null, null, found(100), 45))
+    fun theTimeShownStartsOnTheSuggestionFollowsItAndKeepsTheLearnersOwn() {
+        fun shown(
+            first: FoundTime? = found(),
+            found: FoundTime? = found(),
+            picked: Int? = null,
+            settled: Boolean = false,
+        ) = shownMinutes(60, first, found, picked, settled)
+
+        assertNull(shown(first = null, found = null))
+        assertEquals(35, shown())
+        assertEquals(30, shown(found = found(recommended = 30)))
+        assertEquals(35, shown(found = tooClose))
+        assertEquals(90, shown(picked = 90))
+        assertEquals(60, shown(first = tooClose, found = found()))
+        assertEquals(60, shown(first = found(recommended = null, pastDate = true), found = null))
+        assertEquals(60, shown(first = null, found = null, settled = true))
     }
 
     @Test
-    fun moreTimeThanCoversTheSundayExamIsAskedAboutRatherThanAssumed() {
-        val whole = advice.copy(coveredShare = 1.0)
-        assertEquals(unknown, pickedShare(whole, answerFor(65, listOf(0), whole), found(65), 70))
+    fun pickingTheSuggestionBackFollowsItAgainWhereItIsFollowed() {
+        assertNull(pickedMinutes(found(), found(), 35))
+        assertEquals(30, pickedMinutes(found(), found(), 30))
+        assertEquals(35, pickedMinutes(tooClose, found(), 35))
     }
 
     @Test
-    fun anExamKeepsStudyingEverythingUntilThePickedTimeIsKnownToCoverIt() {
-        val half = advice.copy(coveredShare = 0.5)
-        val answer = answerFor(45, advice = half)
-        assertTrue(keepsFullCourse(true, pickedShare(half, answer, null, 60)))
-        assertTrue(keepsFullCourse(true, pickedShare(half, answer, null, 45)))
-        assertFalse(keepsFullCourse(false, pickedShare(half, answer, null, 45)))
-        assertFalse(keepsFullCourse(true, PickedShare(true, 1.0)))
+    fun theLineSaysWhatTheTimeShownMeansOrWhyThatIsNotKnownYet() {
+        assertEquals(TimeLine.NoDays, line(hasDays = false))
+        assertEquals(TimeLine.Everything(suggested = true), line())
+        assertEquals(TimeLine.EveryTopic, line(found = found(recommended = 300, core = 45), minutes = 45))
+        assertEquals(TimeLine.Asking, line(minutes = 15))
+        assertEquals(TimeLine.Share(0.48), line(advice = advice(), minutes = 15))
+        assertEquals(TimeLine.Everything(suggested = false), line(advice = advice(share = 1.0), minutes = 60))
+        assertEquals(TimeLine.Working, line(found = null, minutes = null))
+        assertEquals(TimeLine.FindFailed, line(findFailed = true, found = null, minutes = 15))
+        assertEquals(TimeLine.AskFailed, line(askFailed = true, minutes = 15))
+        assertEquals(TimeLine.PastDate, line(found = found(recommended = null, pastDate = true)))
     }
 
     @Test
-    fun theEstimateDimsTheLastShareWhileAnotherTimeIsAskedAboutAndSaysWhenAskingStopped() {
-        val answer = answerFor(45)
-        assertEquals(Estimate(advice, 0.6, false, null, false), estimate(advice, answer, PickedShare(true, 0.6), PollStatus.Idle))
-        assertEquals(Estimate(advice, 0.6, true, 45, false), estimate(advice, answer, unknown, PollStatus.Polling))
-        assertEquals(Estimate(advice, 0.6, true, 45, false), estimate(null, answer, unknown, PollStatus.Polling))
-        assertEquals(Estimate(null, null, true, null, false), estimate(null, null, unknown, PollStatus.Polling))
-        assertEquals(Estimate(advice, 0.6, true, 45, true), estimate(advice, answer, unknown, PollStatus.Failed))
-    }
-
-    @Test
-    fun theEstimateShowsWhileAShareIsComingOrKeptAndLeavesWhenThereIsNone() {
-        val none = Estimate(null, null, true, null, false)
-        assertTrue(showsEstimate(none, unknown, PollStatus.Polling))
-        assertFalse(showsEstimate(none, PickedShare(true, null), PollStatus.Idle))
-        assertFalse(showsEstimate(none, unknown, PollStatus.Failed))
-        assertTrue(showsEstimate(none.copy(share = 0.6, failed = true), unknown, PollStatus.Failed))
-        assertTrue(showsEstimate(none.copy(failed = true), unknown, PollStatus.Failed))
-    }
-
-    @Test
-    fun theFullCourseEndIsSaidOnlyForTheTimeItWasWorkedOutFor() {
-        val ends = advice.copy(fullCourseEndDate = LocalDate(2027, 1, 10))
+    fun anUndatedGoalsLineSaysWhenItWouldFinish() {
+        assertEquals(TimeLine.Asking, line(dated = false, found = null, minutes = 15))
         assertEquals(
-            Finish(45, LocalDate(2027, 1, 10), LocalDate(2026, 11, 8), false),
-            fullCourseEnd(ends, answerFor(45, advice = ends), 45),
+            TimeLine.Finish(LocalDate(2027, 3, 15)),
+            line(advice = advice(share = null, endDate = LocalDate(2027, 3, 15)), dated = false, found = null, minutes = 15),
         )
-        assertNull(fullCourseEnd(ends, answerFor(45, advice = ends), 60))
-        assertNull(fullCourseEnd(advice, answerFor(45), 45))
+        assertEquals(TimeLine.NoFinish, line(advice = advice(share = null), dated = false, found = null, minutes = 15))
     }
 
     @Test
-    fun theOfferedTimeCoversEverythingOrElseBringsInEveryTopic() {
-        assertEquals(100, offeredMinutes(found(100)))
-        assertEquals(300, offeredMinutes(found(null).copy(coreMinutes = 300)))
-        assertNull(offeredMinutes(null))
+    fun onlyATimeTheSuggestionDoesntExplainIsAskedAbout() {
+        assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = 35))
+        assertTrue(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = 30))
+        assertTrue(asksAboutTime(dated = true, found = found(), fullCourse = true, minutes = 35))
+        assertTrue(asksAboutTime(dated = false, found = null, fullCourse = false, minutes = 35))
+        assertFalse(asksAboutTime(dated = true, found = null, fullCourse = false, minutes = 35))
+        assertFalse(asksAboutTime(dated = true, found = found(), fullCourse = false, minutes = null))
+        assertFalse(asksAboutTime(dated = true, found = found(pastDate = true), fullCourse = false, minutes = 30))
+    }
+
+    @Test
+    fun aTooCloseDateIsSaidOnlyWhenNoSensibleTimeCoversEverything() {
+        val short = TimeLine.Share(0.15)
+        assertNull(tooClose(found(), short))
+        assertNull(tooClose(found(pastDate = true), short))
+        assertEquals(TooClose(900), tooClose(tooClose, short))
+        assertNull(tooClose(tooClose, TimeLine.Everything(suggested = false)))
+    }
+
+    @Test
+    fun theSuggestionIsOfferedBackOnlyWhileAnotherTimeFallsShort() {
+        val short = TimeLine.Share(0.48)
+        assertNull(offer(found(), short, 35))
+        assertEquals(SuggestedTime(coversEverything = true, minutes = 35), offer(found(), short, 15))
+        assertNull(offer(found(recommended = 900, core = 240), TimeLine.Everything(suggested = false), 900))
+    }
+
+    @Test
+    fun anExamKeepsStudyingEverythingUntilTheTimePickedCoversItAll() {
+        assertTrue(keepsFullCourse(true, TimeLine.Asking))
+        assertFalse(keepsFullCourse(true, TimeLine.Everything(suggested = false)))
+        assertFalse(keepsFullCourse(false, TimeLine.Share(0.4)))
+    }
+
+    @Test
+    fun aDateBeforeTodayHasPassed() {
+        val time = found().time
+        assertTrue(foundTime(time, LocalDate(2028, 10, 30)).pastDate)
+        assertFalse(foundTime(time, LocalDate(2028, 10, 29)).pastDate)
     }
 }

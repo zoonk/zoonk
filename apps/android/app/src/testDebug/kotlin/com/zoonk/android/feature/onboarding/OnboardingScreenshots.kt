@@ -347,20 +347,10 @@ class OnboardingScreenshots {
                     Setup(
                         FakeOnboardingApi().apply {
                             setup = {
-                                setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2026-11-08")
+                                setupView(listOf("schedule", "plan"), kind = "exam", details = ENEM_DETAILS, targetDate = "2030-11-08")
                             }
-                            advice = {
-                                PlanTimeAdvice(
-                                    coveredShare = 0.6,
-                                    endDate = null,
-                                    fullCourseEndDate = null,
-                                    measure = PlanTimeAdvice.Measure.EXAM,
-                                    numbers = null,
-                                    ready = true,
-                                    targetDate = kotlinx.datetime.LocalDate(2026, 11, 8),
-                                    targetDateNamedMonth = false,
-                                )
-                            }
+                            cover = { coverOf(recommended = 300) }
+                            advice = { adviceOf(0.6) }
                         },
                     )
                 },
@@ -368,18 +358,7 @@ class OnboardingScreenshots {
                     Setup(
                         FakeOnboardingApi().apply {
                             setup = { setupView(listOf("schedule", "plan")) }
-                            advice = {
-                                PlanTimeAdvice(
-                                    coveredShare = null,
-                                    endDate = kotlinx.datetime.LocalDate(2027, 3, 15),
-                                    fullCourseEndDate = null,
-                                    measure = PlanTimeAdvice.Measure.GOAL,
-                                    numbers = null,
-                                    ready = true,
-                                    targetDate = null,
-                                    targetDateNamedMonth = false,
-                                )
-                            }
+                            advice = { adviceOf(null, endDate = kotlinx.datetime.LocalDate(2027, 3, 15), targetDate = null) }
                         },
                     )
                 },

@@ -506,63 +506,57 @@
         <item quantity="other">%d days</item>
     </plurals>
     <string name="onboarding_schedule_title">How much time can you study each day?</string>
-    <!-- Beside the big daily time, like "45 min · per day". -->
-    <string name="onboarding_schedule_per_day">per day</string>
-    <string name="onboarding_schedule_minutes_label">Minutes a day</string>
     <string name="onboarding_schedule_other_time_label">Other time a day</string>
-    <string name="onboarding_weekend_other_time_label">Other time on weekends</string>
-    <string name="onboarding_finish_choose_day">Choose at least one study day.</string>
     <!-- %1$s is a month and year, like "March 2027". -->
     <string name="onboarding_finish_around">You finish around %1$s.</string>
     <string name="onboarding_finish_unknown">We can\'t estimate a finish date for this schedule. Try more time or more study days.</string>
     <string name="onboarding_finish_failed">We couldn\'t work out when you\'d finish.</string>
     <string name="onboarding_finish_working">Working out when you\'d finish…</string>
-    <!-- Under the daily time the plan found that studies everything. -->
-    <string name="onboarding_schedule_covers_everything">Covers everything</string>
-    <!-- Under the daily time the plan found that reaches every topic, some in less depth. -->
-    <string name="onboarding_schedule_every_topic">Every topic</string>
-    <string name="onboarding_schedule_change_anytime">You can change this anytime.</string>
-    <string name="onboarding_schedule_building">Building your plan…</string>
-    <string name="onboarding_schedule_reading_notice">Reading the exam\'s official documents first…</string>
-    <!-- %1$s is a daily time, like "30 min". -->
-    <string name="onboarding_schedule_move_date">To cover everything at %1$s a day, move your date on the next screen.</string>
-    <string name="onboarding_estimate">Estimate</string>
-    <!-- %1$s is a daily time. -->
-    <string name="onboarding_estimate_failed">We couldn\'t work out what %1$s a day covers.</string>
-    <!-- %1$s is a daily time. -->
-    <string name="onboarding_estimate_last">Last estimate, for %1$s a day</string>
-    <string name="onboarding_estimate_working">Working out what your time covers…</string>
-    <!-- %1$s is a share like "100%", shown large; %2$s a date. -->
-    <string name="onboarding_estimate_exam_all">%1$s of the plan\'s exam topics in depth by %2$s.</string>
-    <string name="onboarding_estimate_goal_all">%1$s of your goal in depth by %2$s.</string>
-    <!-- %1$s is an approximate share like "60%", shown large; %2$s a date. -->
-    <string name="onboarding_estimate_exam_part">~%1$s of the plan\'s exam topics in depth by %2$s, what comes up most first.</string>
-    <string name="onboarding_estimate_goal_part">~%1$s of your goal in depth by %2$s, what matters most first.</string>
     <string name="onboarding_try_again">Try again</string>
-    <string name="onboarding_find_time">Find the time that covers everything</string>
-    <string name="onboarding_find_finding">Finding the time…</string>
-    <string name="onboarding_find_building">Your plan is still being built. Try again in a moment.</string>
-    <string name="onboarding_find_failed">We couldn\'t work out the time needed.</string>
-    <!-- %1$s is a daily time, %2$s a date. -->
-    <string name="onboarding_find_covers">%1$s a day covers everything in depth by %2$s.</string>
-    <!-- %1$s is a date. -->
-    <string name="onboarding_find_none">No amount of time a day covers everything in depth by %1$s.</string>
-    <!-- %1$s is a daily time. -->
-    <string name="onboarding_find_every_topic">%1$s a day studies every topic, some in less depth.</string>
     <string name="onboarding_full_course">Study everything, even after the exam</string>
     <string name="onboarding_full_course_rule">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
     <string name="onboarding_full_course_until_exam">Until the exam, what comes up most comes first.</string>
     <!-- %1$s is a daily time, %2$s a month and year, %3$s the exam\'s date. -->
     <string name="onboarding_full_course_finish">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
-    <string name="onboarding_which_days">Which days?</string>
-    <!-- %1$d is a number of study days, %2$s a weekly time, like "5 days · 1 hr 15 min a week". -->
-    <plurals name="onboarding_week_summary">
-        <item quantity="one">%1$d day · %2$s a week</item>
-        <item quantity="other">%1$d days · %2$s a week</item>
-    </plurals>
     <string name="onboarding_weekend_time">Different time on weekends</string>
-    <string name="onboarding_expanded">expanded</string>
-    <string name="onboarding_collapsed">collapsed</string>
+    <string name="onboarding_schedule_time_label">Time a day</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_schedule_suggested">%1$s (suggested)</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_schedule_close">Your date is close: covering everything in depth takes %1$s a day.</string>
+    <string name="onboarding_schedule_too_close">Your date is too close to cover everything in depth.</string>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="onboarding_schedule_takes_exam_all">What it takes to cover all your exam topics by %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="onboarding_schedule_takes_goal_all">What it takes to cover your whole goal by %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="onboarding_schedule_covers_exam_all">Covers all your exam topics by %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="onboarding_schedule_covers_goal_all">Covers your whole goal by %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="onboarding_schedule_reaches_exam">Reaches every exam topic by %1$s, some in less depth.</string>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="onboarding_schedule_reaches_goal">Reaches every part of your goal by %1$s, some in less depth.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a date, such as "November 8". -->
+    <string name="onboarding_schedule_share_exam">Covers about %1$s of your exam topics in depth by %2$s, what comes up most first.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a date, such as "November 8". -->
+    <string name="onboarding_schedule_share_goal">Covers about %1$s of your goal in depth by %2$s, what matters most first.</string>
+    <!-- %1$s is a date, such as "November 8". -->
+    <string name="onboarding_schedule_past_date">Your date, %1$s, has passed. You can choose a new one on the next screen.</string>
+    <string name="onboarding_schedule_no_days">Choose at least one study day.</string>
+    <string name="onboarding_schedule_working">Working out the time your goal needs…</string>
+    <string name="onboarding_schedule_find_failed">We couldn\'t work out the time your goal needs.</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_schedule_asking">Working out what %1$s a day covers…</string>
+    <!-- %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_schedule_ask_failed">We couldn\'t work out what %1$s a day covers.</string>
+    <!-- A link under the time a day. %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_schedule_offer_everything">Cover everything with %1$s a day</string>
+    <!-- A link under the time a day. %1$s is a duration, such as "30 min". -->
+    <string name="onboarding_schedule_offer_every_topic">Reach every topic with %1$s a day</string>
+    <string name="onboarding_study_days">Study days</string>
+    <string name="onboarding_weekend_time_label">Time on weekends</string>
+    <string name="onboarding_answers_saved">Your answers are saved.</string>
     <!-- On a setup question when the plan's run never started. -->
     <string name="onboarding_plan_not_started">We couldn\'t start building your plan</string>
     <!-- On a setup question when the plan's run failed. -->

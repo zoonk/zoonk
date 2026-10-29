@@ -218,7 +218,7 @@ class OnboardingStore(
             session?.let { api.timeAdvice(it, query.goal.id.toString(), query.input) }
         }
 
-    /** Read only from the learner's tap: the server plans the goal at each daily time. */
+    /** The time a dated goal needs on the days asked about: the server plans the goal at each daily time. */
     val timesToCover =
         cache.keyed<CoverQuery, PlanTimeToCover>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearnerModel)) { session, query ->
             session?.let { api.timeToCover(it, query.goal.id.toString(), query.input) }
@@ -460,9 +460,7 @@ data class AdviceQuery(
     val input: PlanTimeAdviceInput,
 )
 
-/** [build] counts the plan's rebuilds, so a time found for an earlier build is never shown again. */
 data class CoverQuery(
     val goal: Goal,
     val input: PlanTimeToCoverInput,
-    val build: Int,
 )

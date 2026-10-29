@@ -7,6 +7,7 @@
   "onboarding_admission_placeholder": "38528cf7ef959d96337650509f081bd69d79eadfd5b6f9c5e80a41ed8e1dcf78",
   "onboarding_admission_title": "070aa4f522ff3bf3e94fbc1563ba1a12c51bfc9274c4be3e89ebc9d727f435ce",
   "onboarding_another_date": "15c7f1049cc3ee1152081eb0a4b7ab186c11b2c1459bc9597d3c6d4be49d0b0a",
+  "onboarding_answers_saved": "8df23ef363caaf1efc9dd2a34bd0ea2956a879f68cf330e6ef5f1ff7c5dad759",
   "onboarding_ask": "9bff2a9fc0111554cdd92ec058b3557afe004b78008ef7d8570d812ae02f6c14",
   "onboarding_attach_failed": "791833d548b5cf904cb27e96381c3a8c558321de50fc23e395fe8fd4f9a77704",
   "onboarding_attach_limit_day": "312fce0a57fecf0bd3df3a40c18cca9f8d724a6565f0da9a5e98161bdd573161",
@@ -21,7 +22,6 @@
   "onboarding_cancel": "b647c7cb1e486ecf5d493e8edc143ba461acb1ddb3f339fcdd81a84d6b18eb91",
   "onboarding_citation_page": "224520b0dd0f3a500db40e3352d351ca075aa1568350689911196202e04411cf",
   "onboarding_citation_slide": "273e773477dcfc907789c9265ede7da2ac2167a70172857130661f85eee817b2",
-  "onboarding_collapsed": "3b4b71fa2739d4dd25f48a8fecdc3b1bee03bcc076d6fd98a72d058a926ca233",
   "onboarding_continue": "c4ae02c13ebf34514d9aa110867ebe4ed15001a61332870dded5bcd29092a8bd",
   "onboarding_create_account": "e156329ca281c90dc90348e9aa9bf992f5667a4810cd559f16049104cd38d519",
   "onboarding_create_account_short": "ee492c0efad78a304cc1c43399d677e2aaea92f5f76466299d8fffa3cc4b3325",
@@ -37,14 +37,6 @@
   "onboarding_error_could_not_read": "ac6a7ef92fd1e3c4b3498c5bc20412d2ac8d59a3ceef2fa9165c66a1e8ec4500",
   "onboarding_error_could_not_save": "4a1ffa033757a4719f621785efed5f0207dc9c05c4e6c60fc75c39a79e225ec4",
   "onboarding_error_one_moment": "ef89a73e24c6a16613e7269438aec996723a344a0f3e244c91180014e71947b1",
-  "onboarding_estimate": "84ecc1f8306ebbf1746c4f5ee11521766cf488e6584b3dd16c908759e7b4ed3c",
-  "onboarding_estimate_exam_all": "2c0763ba520b1654698889a923a2519be2015443bdc677e998629c0d16d51e9d",
-  "onboarding_estimate_exam_part": "0f9e2b05c038703cf684b47c3f558d26f2a9df64ddb9f11840282bde39d87c0a",
-  "onboarding_estimate_failed": "497bad74673283061995f69db4057cd644b209c4cb9427b39cf92c784c2b6619",
-  "onboarding_estimate_goal_all": "dbc03a9f501fd5cdabb6759c1b907ea9c6b04517858437db753017a5bced0f05",
-  "onboarding_estimate_goal_part": "2cda54f72eb26ed1699c1b9e3f560f611fc5b5dafcdd265a31424775cc4adead",
-  "onboarding_estimate_last": "a79b8b421ee792e18c91b5a2fefc456d989ca209dcc81823aed08cf2c3160297",
-  "onboarding_estimate_working": "6872c3d427684941cb82a259580718c20efcfa05faf5ffe8bdfec0d56e2956fc",
   "onboarding_exam_choice_description": "55c00e8b9002ded30f70a7acf90291e0c809170fa7368911078c3e7f91d2845b",
   "onboarding_exam_choice_title_one": "aa63f90ad824fd9301e2545652ef0a7a271b731415de299a9f9e7d57b057c66a",
   "onboarding_exam_choice_title_other": "38835411189e81e3aff1d7a9da7c781b0c48d787d751a38376a4aeb9fcf6323c",
@@ -53,18 +45,9 @@
   "onboarding_exam_on_two": "ea75f059b14b21853fbd0f80e066876f9f02a1cfc068a2a4ddfc7e47d4fef8ad",
   "onboarding_exam_ready": "d91b0e6ff393bf906c97edb364d332a97b227ef4a2f2fb35ff6cede53efd4cd9",
   "onboarding_exam_ready_first_day": "9379db36b09a86f06b51e51213dbe113df98fd47fd1b44233777f12e4a88ad78",
-  "onboarding_expanded": "4f744fae6850d21d01d96a830b1231f16ec6c4df34fe407db76bd041b58c8478",
   "onboarding_explain_description": "bb0afcabe8a4180f8679405e1847b1c8d36efcd8f04827cb123796b7e6172033",
   "onboarding_explain_it": "4dc090b788b2218bb58d67b299295bb5694a89d0584c241a09af66d0634f7d24",
-  "onboarding_find_building": "d9332f0844133f1cd9f4a0b2837ba421b7c0c7a02284a7d976d86b906f883c08",
-  "onboarding_find_covers": "b8c46092b7d48321a2654252726c8f6277c34fb15540efd436577ba0665e537d",
-  "onboarding_find_every_topic": "f919f42c834d1f86cf47bfe6795b50e14dd9ead2a69031d6ffb501ea46e6c892",
-  "onboarding_find_failed": "096c3f2f03a850440a02fc8baafe7c7ae89e97d1fcbacfd77eee9af06d363759",
-  "onboarding_find_finding": "c84d8312a7ea6f890184cf248f5c58d2e1af20b3d429cc46627aa67d67439eec",
-  "onboarding_find_none": "21a4624e2fe2e0120e0b62ea4bf8d8510258b8e4a8a20e4a33873677c6cdebd3",
-  "onboarding_find_time": "6e9eb9c0d720a38a567cc763e35059fbf8a5f9ad0c6dd24a1dbc6ca7a58fe73f",
   "onboarding_finish_around": "bb6aa790813edd6942b283a66e905b6397495c4ddd6cd93067708547ed073798",
-  "onboarding_finish_choose_day": "1f63b94ee1f5436e0670eeb325709db2021429f5aee7735bcde41a9553100e01",
   "onboarding_finish_failed": "69557ff3c949192d1ba0b23672f809a2a295afb09ed4c5a13af9785e2f664848",
   "onboarding_finish_later": "5252cd1b1e50dd66862986664fcf2881e1bb0e599ffb3450837d74f28d4d5587",
   "onboarding_finish_later_description": "abddf07131cba39f1adafd033c04cba6df70ea08cceb3b9bc7c1ede315d7c97d",
@@ -367,16 +350,28 @@
   "onboarding_save_failed": "45664f81e7d59e1dd1191e17907ccefeac0512a82f7a8e91c275c6e0a6df105e",
   "onboarding_saving": "59877331b1cb6890f76e0da9203a201dd1d9a77d3323683fe7e0efd423d5b4b3",
   "onboarding_saving_goal": "04be2ec0c178b66bc33ed6156923b0943d2fd1acaf37519e7ac603bbd31fefe7",
-  "onboarding_schedule_building": "23dc01d863fe28ddd891ace05f12bc9c9b49a068db9c28a7af1a4bd59ea043b5",
-  "onboarding_schedule_change_anytime": "b660c4653e5566ddbe1b8bc420751cc87214af36b3a5d133b17d032e764c74a6",
-  "onboarding_schedule_covers_everything": "bbfbf23d527915e9914748b0aa57c052eefc5725edd4de52539fa2e8cda79579",
-  "onboarding_schedule_every_topic": "efd4d980a81adc042118e7510fb437402c800636c51d733b6ccd4bc503adeb74",
-  "onboarding_schedule_minutes_label": "c991e326fea009b70e15bf7083b4a7dd4abccd32b4064ac0c362477e2ed1f287",
-  "onboarding_schedule_move_date": "18430fe9d6699c5e377e863d1e60042c683a50d56016429e67b912fb4a37d8ae",
+  "onboarding_schedule_ask_failed": "320211e21189716726af7c67662b8c80aad25d5b29862785539ac5af363ab4ff",
+  "onboarding_schedule_asking": "fc27e715eacaa4aad9076d9396d7db3c2a862c1cb0e31d6da13fa23f96b26932",
+  "onboarding_schedule_close": "9627eafc7a9ae28234fb051299e416397d9ed4779eb6432132665411ca83ce0b",
+  "onboarding_schedule_covers_exam_all": "eaf9f3120618e95ea0f265da1fd9fbd36083a2c6aaa9e5ea523a97f58196275f",
+  "onboarding_schedule_covers_goal_all": "bb97fcee3c0272ece47e9f8064b1432d17d54c4eb144744978480ba6d0e61be4",
+  "onboarding_schedule_find_failed": "523839b62b3fcb79ec9513ab3f4928088704518614bbe1d890c0348cbcaa5ce0",
+  "onboarding_schedule_no_days": "2beeb022cbdf1382dbd3d0b753da0941e3e0602188aa8619000b58eed63c2fee",
+  "onboarding_schedule_offer_every_topic": "f06dfd2a1d1c3467053f7785e170a53cc1b3b812dfc63d6ea22b987c043256a1",
+  "onboarding_schedule_offer_everything": "48b21ab5d05fae9ccf0019a2446192ff10563fcc803011c43519d8c347831a9d",
   "onboarding_schedule_other_time_label": "c75fa233cdd181189a17de6496d2a4ce786c465287b27dd5bec34a9e9a3035e9",
-  "onboarding_schedule_per_day": "5433898b58a379ce3a0b6881a6ecdfdff320eab518caabe371b9916ee65cc2ae",
-  "onboarding_schedule_reading_notice": "af67b6eb3dc73406e9aeadc8c9710f56d1a22494a148e60c24daa1dd3ef028a8",
+  "onboarding_schedule_past_date": "9ba39dd3a0378ddc64e84bd86096b647446b2bbd781acbca153d2d4ff4f21e11",
+  "onboarding_schedule_reaches_exam": "f2bdd27322d325018e129449ebe426d6066ccb6eb28c43579e5acf55be6d51e4",
+  "onboarding_schedule_reaches_goal": "508e423127dd70cd8fab1b2b6fe80980570430358b89356dd176373bcb43d00d",
+  "onboarding_schedule_share_exam": "e4424d75f2937b6830bd533ea33c6e0f08e40469462a04ce02fd50605993b207",
+  "onboarding_schedule_share_goal": "6cf96be21ac9e22ea18276bd732a64e4b599e0d841e83fa19345eff89b37ea48",
+  "onboarding_schedule_suggested": "071b766e0f068cb85e58d4ab9cc4b7545251c0db95a86a592476704a1961e457",
+  "onboarding_schedule_takes_exam_all": "00e74d4fcb18227782a13c188d3fc6e6589d893af929877341c814c07c5fab9a",
+  "onboarding_schedule_takes_goal_all": "b30d0b5ba9edecd09cf0dfff5d19d955d6f2d44ca395bb01a51ba173c078e4f1",
+  "onboarding_schedule_time_label": "a39ddd5637a753bd42dff5698526aa9dae7df17907b133fa9d0d1cbff9ad0acf",
   "onboarding_schedule_title": "6c3007daea9ac1b25742c84dfc090e424caeeccafc70d1caa01efc02f6732da5",
+  "onboarding_schedule_too_close": "9f6d7fe2973567a05bda08a6e53b15205fb11c455d4d0e2687217d5a236b520c",
+  "onboarding_schedule_working": "5ae4815adb7f231e73361bc0604460586968d97c964cca27000a4b9705514f5d",
   "onboarding_score_placeholder": "80826cf90765730885febced766a4022a831b7a73ec9742dfd014f291f4e50c8",
   "onboarding_score_title": "712838f82d5b43bfbdd1a9b0ab3f1b582cb2069d6f5ea5bb721cc7b14e567108",
   "onboarding_see_plus": "3e18fb74561b7967f9f74a91933dcb40231be9ccaf05b754c66787dc149f31ef",
@@ -392,6 +387,7 @@
   "onboarding_start_over_title": "3767ec0cfc8332fcd27becda2451aefb73a3bb5b83bef8f51e1d2120064ca6ef",
   "onboarding_start_title": "3279c71964ae0fc5ca606dbcbed5bdbae7186d9d83f99c0f2e24c91d9f6b03a2",
   "onboarding_step_of": "04c72883bc2c08c79421ee240eb8818ff186ea1fb0db686ebf3f2af9d8903602",
+  "onboarding_study_days": "40625aae3b47d08b61bde97e9013a6cf59d6c0eb107bf74f59c5f6db1ed9cecc",
   "onboarding_study_material": "e02a9e934220e5357db934ff104d5485a4d2624d0db76a3a05ee3d2c1fb272fe",
   "onboarding_subjects_description": "0a4f1c8860b5003747f20036e59f6b9c6ee45e9946305df0e43960c60ae43a29",
   "onboarding_subjects_from_scratch": "493fe3bbcd0a76a8253dd6e6c7bbf908a46b880206698a0832643ff8becef70e",
@@ -414,11 +410,9 @@
   "onboarding_use_this_date": "d7cae458cace5fd68ad4af2f9493f65557ba2ad2af1207f0aa1342aed579432e",
   "onboarding_waitlist_joined": "5d5fb6e4475c1174e30cace6057f210c5f8802db2323ed04a2d2087b1bb3c6f4",
   "onboarding_waitlist_sign_in": "f8e232cd9800d90d55afa8e6d7999d8cab6dc554385bc3b4a58edbf20c7e0712",
-  "onboarding_week_summary": "727da5bd54c07a75b4328be29e6757d172ccbde28925f7a93f8dd8e446e3c119",
-  "onboarding_weekend_other_time_label": "7e17b119458b106b681761783a1e7d6892ee71fa0827aaa448e21331f4323060",
   "onboarding_weekend_time": "dc22dc322141f2486e5ec96b42d6b2851f9a73765164f040143d1388fb9ba87a",
+  "onboarding_weekend_time_label": "be4d77c3f3121f080b7dfcb16b38e93930e2a5f6919405bbf93bb22860b5edb4",
   "onboarding_what_you_wrote": "7b81a0db8d44298bcaaf030cca561d7ebcb742ab88bbcc4a36dd39043b484e55",
-  "onboarding_which_days": "648c543d9065dd525ef9c15448f3d24cbf7bbcc35493414912a04a07f1f05a96",
   "onboarding_write_again": "a85d245f52c15a4b79481631ad4c553f19d021919bf78df3862ec833f30e75df",
   "onboarding_your_answer": "451ec0b01a91c49ed7ec6ffdb88205703644a5653c3c66200a6cf4d48aed218c",
   "onboarding_your_question": "f737bb2d1b45163af1114013a0a3de060470d6faeaed2f999ad5ecf7a1726a07",
@@ -938,63 +932,41 @@
         <item quantity="other">%d jours</item>
     </plurals>
     <string name="onboarding_schedule_title">Combien de temps peux-tu étudier chaque jour ?</string>
-    <!-- Beside the big daily time, like "45 min · per day". -->
-    <string name="onboarding_schedule_per_day">par jour</string>
-    <string name="onboarding_schedule_minutes_label">Minutes par jour</string>
     <string name="onboarding_schedule_other_time_label">Autre durée par jour</string>
-    <string name="onboarding_weekend_other_time_label">Autre durée le week-end</string>
-    <string name="onboarding_finish_choose_day">Choisis au moins un jour d’étude.</string>
     <string name="onboarding_finish_around">Tu termineras vers %1$s.</string>
     <string name="onboarding_finish_unknown">Impossible d’estimer une date de fin avec ce planning. Essaie d’y consacrer plus de temps ou d’étudier plus de jours.</string>
     <string name="onboarding_finish_failed">Impossible de déterminer quand tu termineras.</string>
     <string name="onboarding_finish_working">Calcul de ta date de fin…</string>
-    <!-- Under the daily time the plan found that studies everything. -->
-    <string name="onboarding_schedule_covers_everything">Tout est couvert</string>
-    <!-- Under the daily time the plan found that reaches every topic, some in less depth. -->
-    <string name="onboarding_schedule_every_topic">Tous les sujets</string>
-    <string name="onboarding_schedule_change_anytime">Tu peux modifier ce choix à tout moment.</string>
-    <string name="onboarding_schedule_building">Création de ton plan…</string>
-    <string name="onboarding_schedule_reading_notice">Lecture des documents officiels de l’examen…</string>
-    <!-- %1$s is a daily time, like "30 min". -->
-    <string name="onboarding_schedule_move_date">Pour tout couvrir à raison de %1$s par jour, décale ta date à l’écran suivant.</string>
-    <string name="onboarding_estimate">Estimer</string>
-    <!-- %1$s is a daily time. -->
-    <string name="onboarding_estimate_failed">Nous n’avons pas pu déterminer ce que permet de couvrir %1$s par jour.</string>
-    <!-- %1$s is a daily time. -->
-    <string name="onboarding_estimate_last">Dernière estimation, pour %1$s par jour</string>
-    <string name="onboarding_estimate_working">Calcul de ce que permet de couvrir ton temps…</string>
-    <!-- %1$s is a share like "100%", shown large; %2$s a date. -->
-    <string name="onboarding_estimate_exam_all">%1$s des sujets d’examen du plan en profondeur d’ici le %2$s.</string>
-    <string name="onboarding_estimate_goal_all">%1$s de ton objectif en profondeur d’ici le %2$s.</string>
-    <!-- %1$s is an approximate share like "60%", shown large; %2$s a date. -->
-    <string name="onboarding_estimate_exam_part">~%1$s des sujets d’examen du plan en profondeur d’ici le %2$s, en commençant par les plus fréquents.</string>
-    <string name="onboarding_estimate_goal_part">~%1$s de ton objectif en profondeur d’ici le %2$s, en commençant par le plus important.</string>
     <string name="onboarding_try_again">Réessayer</string>
-    <string name="onboarding_find_time">Trouver le temps nécessaire pour tout couvrir</string>
-    <string name="onboarding_find_finding">Recherche du temps nécessaire…</string>
-    <string name="onboarding_find_building">Ton plan est en cours de préparation. Réessaie dans un instant.</string>
-    <string name="onboarding_find_failed">Nous n’avons pas pu déterminer le temps nécessaire.</string>
-    <!-- %1$s is a daily time, %2$s a date. -->
-    <string name="onboarding_find_covers">%1$s par jour suffit pour tout couvrir en profondeur d’ici le %2$s.</string>
-    <!-- %1$s is a date. -->
-    <string name="onboarding_find_none">Aucune durée quotidienne ne permet de tout couvrir en profondeur d’ici le %1$s.</string>
-    <!-- %1$s is a daily time. -->
-    <string name="onboarding_find_every_topic">%1$s par jour permet d’étudier chaque sujet, certains moins en profondeur.</string>
     <string name="onboarding_full_course">Tout étudier, même après l’examen</string>
     <string name="onboarding_full_course_rule">Jusqu’à l’examen, les sujets les plus fréquents passent en premier. Ceux qui ne rentrent pas dans le planning viennent après.</string>
     <string name="onboarding_full_course_until_exam">Jusqu’à l’examen, les sujets les plus fréquents passent en premier.</string>
     <!-- %1$s is a daily time, %2$s a month and year, %3$s the exam\'s date. -->
     <string name="onboarding_full_course_finish">À raison de %1$s par jour, tu termines en %2$s, après l’examen du %3$s.</string>
-    <string name="onboarding_which_days">Quels jours ?</string>
-    <!-- %1$d is a number of study days, %2$s a weekly time, like "5 days · 1 hr 15 min a week". -->
-    <plurals name="onboarding_week_summary">
-        <item quantity="one">%1$d jour · %2$s par semaine</item>
-        <item quantity="many">%1$d jours · %2$s par semaine</item>
-        <item quantity="other">%1$d jours · %2$s par semaine</item>
-    </plurals>
     <string name="onboarding_weekend_time">Durée différente le week-end</string>
-    <string name="onboarding_expanded">développé</string>
-    <string name="onboarding_collapsed">réduit</string>
+    <string name="onboarding_schedule_time_label">Temps par jour</string>
+    <string name="onboarding_schedule_suggested">%1$s (conseillé)</string>
+    <string name="onboarding_schedule_close">Cette date approche : pour tout approfondir, il faut y consacrer %1$s par jour.</string>
+    <string name="onboarding_schedule_too_close">Il ne te reste pas assez de temps pour tout approfondir avant cette date.</string>
+    <string name="onboarding_schedule_takes_exam_all">Le temps nécessaire pour approfondir tous les sujets de ton examen avant le %1$s.</string>
+    <string name="onboarding_schedule_takes_goal_all">Le temps nécessaire pour atteindre ton objectif entier avant le %1$s.</string>
+    <string name="onboarding_schedule_covers_exam_all">Tous les sujets de ton examen seront couverts avant le %1$s.</string>
+    <string name="onboarding_schedule_covers_goal_all">Ton objectif entier sera couvert avant le %1$s.</string>
+    <string name="onboarding_schedule_reaches_exam">Tous les sujets de ton examen seront abordés avant le %1$s, certains moins en profondeur.</string>
+    <string name="onboarding_schedule_reaches_goal">Toutes les parties de ton objectif seront abordées avant le %1$s, certaines moins en profondeur.</string>
+    <string name="onboarding_schedule_share_exam">Environ %1$s de tes sujets d’examen seront approfondis avant le %2$s, en commençant par les plus fréquents.</string>
+    <string name="onboarding_schedule_share_goal">Environ %1$s de ton objectif sera approfondi avant le %2$s, en commençant par ce qui compte le plus.</string>
+    <string name="onboarding_schedule_past_date">La date du %1$s est passée. Tu peux en choisir une nouvelle à l’écran suivant.</string>
+    <string name="onboarding_schedule_no_days">Choisis au moins un jour d’étude.</string>
+    <string name="onboarding_schedule_working">Calcul du temps nécessaire pour ton objectif…</string>
+    <string name="onboarding_schedule_find_failed">Impossible de calculer le temps nécessaire pour ton objectif.</string>
+    <string name="onboarding_schedule_asking">Calcul de ce que tu peux couvrir en %1$s par jour…</string>
+    <string name="onboarding_schedule_ask_failed">On n’a pas réussi à estimer ce que couvrent %1$s par jour.</string>
+    <string name="onboarding_schedule_offer_everything">Tout couvrir en y consacrant %1$s par jour</string>
+    <string name="onboarding_schedule_offer_every_topic">Atteindre tous les sujets en y consacrant %1$s par jour</string>
+    <string name="onboarding_study_days">Jours d’étude</string>
+    <string name="onboarding_weekend_time_label">Temps d’étude le week-end</string>
+    <string name="onboarding_answers_saved">Tes réponses sont enregistrées.</string>
     <!-- On a setup question when the plan's run never started. -->
     <string name="onboarding_plan_not_started">Nous n’avons pas pu préparer ton plan</string>
     <!-- On a setup question when the plan's run failed. -->

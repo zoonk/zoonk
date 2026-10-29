@@ -46,91 +46,176 @@ internal fun findWeek(
     weekend: Int?,
 ) = StudyWeek(days, weekend)
 
-internal data class AdviceAnswer(
-    val advice: PlanTimeAdvice,
-    val week: StudyWeek,
+/** The plan's answer for the days shown, with whether the goal's date has passed. */
+internal data class FoundTime(
+    val time: PlanTimeToCover,
+    val pastDate: Boolean,
+)
+
+internal fun foundTime(
+    time: PlanTimeToCover,
+    today: LocalDate,
+) = FoundTime(time, pastDate = time.targetDate?.let { it < today } == true)
+
+internal data class SuggestedTime(
+    val coversEverything: Boolean,
     val minutes: Int,
 )
 
-internal fun weekAdvice(
-    answer: AdviceAnswer?,
-    week: StudyWeek,
-): PlanTimeAdvice? = answer?.takeIf { it.week == week && it.advice.ready }?.advice
+/** What the time shown means, or why that isn't known yet. */
+internal sealed interface TimeLine {
+    data object Asking : TimeLine
 
-/** Times not asked about are unknown: extra time can change an exam's mock cadence. */
-internal data class PickedShare(
-    val known: Boolean,
-    val share: Double?,
+    data object AskFailed : TimeLine
+
+    data object EveryTopic : TimeLine
+
+    data class Everything(
+        val suggested: Boolean,
+    ) : TimeLine
+
+    data object FindFailed : TimeLine
+
+    data class Finish(
+        val endDate: LocalDate,
+    ) : TimeLine
+
+    data object NoDays : TimeLine
+
+    data object NoFinish : TimeLine
+
+    data object PastDate : TimeLine
+
+    data class Share(
+        val share: Double,
+    ) : TimeLine
+
+    data object Working : TimeLine
+}
+
+/** More time a day than this is never a learner's starting time, even when it's what covers it all. */
+private const val LONGEST_SUGGESTED_MINUTES = 240
+
+private fun PlanTimeToCover.suggestedTime(): SuggestedTime? {
+    val everything = recommendedMinutes?.toInt()?.takeIf { it <= LONGEST_SUGGESTED_MINUTES }
+    val everyTopic = coreMinutes?.toInt()?.takeIf { it <= LONGEST_SUGGESTED_MINUTES }
+    return when {
+        everything != null -> SuggestedTime(coversEverything = true, minutes = everything)
+        everyTopic != null -> SuggestedTime(coversEverything = false, minutes = everyTopic)
+        else -> null
+    }
+}
+
+internal fun suggestedMinutes(found: FoundTime?): Int? =
+    found
+        ?.takeUnless { it.pastDate }
+        ?.time
+        ?.suggestedTime()
+        ?.minutes
+
+/**
+ * Null while the first time is still being worked out: no other time is shown in its place. The time
+ * follows the suggestion as the days change only when the screen started on one; [settled] says none
+ * is coming (no date, or asking failed), so the screen's own time shows.
+ */
+internal fun shownMinutes(
+    fallback: Int,
+    first: FoundTime?,
+    found: FoundTime?,
+    picked: Int?,
+    settled: Boolean,
+): Int? {
+    if (picked != null) return picked
+    if (first == null) return fallback.takeIf { settled }
+    val firstSuggested = suggestedMinutes(first) ?: return fallback
+    return suggestedMinutes(found) ?: firstSuggested
+}
+
+/** Picking the suggested time again follows the suggestion as the days change, where it's followed. */
+internal fun pickedMinutes(
+    first: FoundTime?,
+    found: FoundTime?,
+    minutes: Int,
+): Int? = minutes.takeUnless { suggestedMinutes(first) != null && suggestedMinutes(found) == minutes }
+
+internal data class TooClose(
+    val recommendedMinutes: Int?,
 )
 
-internal fun pickedShare(
-    advice: PlanTimeAdvice?,
-    answer: AdviceAnswer?,
-    found: PlanTimeToCover?,
-    minutes: Int,
-): PickedShare =
+/** Why no suggestion covers everything; null when one does, the time shown does, or the date passed. */
+internal fun tooClose(
+    found: FoundTime?,
+    line: TimeLine,
+): TooClose? =
     when {
-        advice == null -> PickedShare(false, null)
-        answer?.minutes == minutes -> PickedShare(true, advice.coveredShare)
-        found != null && found.recommendedMinutes?.toInt() == minutes -> PickedShare(true, 1.0)
-        else -> PickedShare(false, null)
+        found == null || found.pastDate || line is TimeLine.Everything -> null
+        found.time.suggestedTime()?.coversEverything == true -> null
+        else -> TooClose(found.time.recommendedMinutes?.toInt())
     }
 
-internal data class Finish(
-    val minutes: Int,
-    val end: LocalDate,
-    val examDate: LocalDate,
-    val namedMonth: Boolean,
-)
+/** Only while the time shown falls short of everything. */
+internal fun offer(
+    found: FoundTime?,
+    line: TimeLine,
+    minutes: Int?,
+): SuggestedTime? =
+    found
+        ?.takeUnless { it.pastDate }
+        ?.time
+        ?.suggestedTime()
+        ?.takeIf { it.minutes != minutes && line !is TimeLine.Everything }
 
-internal fun fullCourseEnd(
+/** [found] is the plan's answer for the days shown, [advice] its answer for the time shown on them; either is null while it's asked for. */
+internal fun timeLine(
     advice: PlanTimeAdvice?,
-    answer: AdviceAnswer?,
-    minutes: Int,
-): Finish? {
-    val end = advice?.fullCourseEndDate?.takeIf { answer?.minutes == minutes } ?: return null
-    val examDate = advice.targetDate ?: return null
-    return Finish(minutes, end, examDate, advice.targetDateNamedMonth)
+    askFailed: Boolean,
+    dated: Boolean,
+    findFailed: Boolean,
+    found: FoundTime?,
+    hasDays: Boolean,
+    minutes: Int?,
+): TimeLine {
+    val asking = if (askFailed) TimeLine.AskFailed else TimeLine.Asking
+    return when {
+        !hasDays -> TimeLine.NoDays
+        minutes == null -> TimeLine.Working
+        !dated && advice == null -> asking
+        !dated -> advice?.endDate?.let(TimeLine::Finish) ?: TimeLine.NoFinish
+        found == null -> if (findFailed) TimeLine.FindFailed else TimeLine.Working
+        found.pastDate -> TimeLine.PastDate
+        else -> datedLine(advice, asking, found.time.suggestedTime(), minutes)
+    }
 }
 
-/** Studying everything only matters while the picked time doesn't already cover it. */
+private fun datedLine(
+    advice: PlanTimeAdvice?,
+    asking: TimeLine,
+    suggested: SuggestedTime?,
+    minutes: Int,
+): TimeLine {
+    if (suggested?.minutes == minutes) {
+        return if (suggested.coversEverything) TimeLine.Everything(suggested = true) else TimeLine.EveryTopic
+    }
+    val share = (advice ?: return asking).coveredShare ?: 0.0
+    return if (share >= 1) TimeLine.Everything(suggested = false) else TimeLine.Share(share)
+}
+
+/** The time picked needs the plan's own answer, except the one it suggested. */
+internal fun asksAboutTime(
+    dated: Boolean,
+    found: FoundTime?,
+    fullCourse: Boolean,
+    minutes: Int?,
+): Boolean =
+    when {
+        minutes == null -> false
+        !dated -> true
+        found == null || found.pastDate -> false
+        else -> fullCourse || found.time.suggestedTime()?.minutes != minutes
+    }
+
+/** An exam's choice to study everything holds until the time picked is known to cover it all. */
 internal fun keepsFullCourse(
     checked: Boolean,
-    picked: PickedShare,
-): Boolean = checked && !(picked.known && (picked.share ?: 0.0) >= 1)
-
-internal data class Estimate(
-    val advice: PlanTimeAdvice?,
-    val share: Double?,
-    val stale: Boolean,
-    val staleMinutes: Int?,
-    val failed: Boolean,
-)
-
-internal fun estimate(
-    advice: PlanTimeAdvice?,
-    answer: AdviceAnswer?,
-    picked: PickedShare,
-    status: PollStatus,
-): Estimate {
-    val last = answer?.advice?.takeIf { it.ready }
-    val stale = !picked.known
-    return Estimate(
-        advice = advice ?: last,
-        share = if (picked.known) picked.share else last?.coveredShare,
-        stale = stale,
-        staleMinutes = if (stale) answer?.minutes else null,
-        failed = stale && status == PollStatus.Failed,
-    )
-}
-
-internal fun showsEstimate(
-    estimate: Estimate,
-    picked: PickedShare,
-    status: PollStatus,
-): Boolean = if (picked.known) picked.share != null else estimate.share != null || estimate.failed || status != PollStatus.Failed
-
-/** The time the plan offered: one that covers everything, or one that studies every topic. */
-internal fun offeredMinutes(found: PlanTimeToCover?): Int? = (found?.recommendedMinutes ?: found?.coreMinutes)?.toInt()
-
-internal enum class FindStatus { Pending, Answered, Building, Failed }
+    line: TimeLine,
+): Boolean = checked && line !is TimeLine.Everything

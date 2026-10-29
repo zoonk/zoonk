@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,39 +13,30 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -52,31 +44,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
-import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationRun
-import com.zoonk.android.data.LoadState
-import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.onboarding.AdviceQuery
 import com.zoonk.android.feature.onboarding.CoverQuery
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.ui.components.LabelChip
-import com.zoonk.android.ui.components.Meter
-import com.zoonk.android.ui.components.OtherTime
-import com.zoonk.android.ui.components.timeChoices
+import com.zoonk.android.ui.components.TimeMenu
+import com.zoonk.android.ui.components.TimeSelect
+import com.zoonk.android.ui.components.otherTimes
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatPercent
 import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingAnswerInput
 import com.zoonk.api.models.OnboardingAnswerInputOneOf8
 import com.zoonk.api.models.PlanTimeAdvice
 import com.zoonk.api.models.PlanTimeToCover
-import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.toKotlinLocalDate
 import java.time.DayOfWeek
 import java.time.format.TextStyle
 import java.util.TimeZone
@@ -92,59 +82,88 @@ internal fun ColumnScope.ScheduleStep(
     factsBeside: Boolean,
 ) {
     val exam = goal.kind == Goal.Kind.EXAM
-    val dated = goal.targetDate != null || exam
-    var minutes by rememberSaveable { mutableIntStateOf(recommendedMinutes) }
-    var weekendMinutes by rememberSaveable { mutableStateOf<Int?>(null) }
-    var days by rememberSaveable { mutableStateOf(startingDays(goal.studyDays.map(Long::toInt))) }
+    var picked by rememberSaveable { mutableStateOf<Int?>(null) }
     var fullCourse by rememberSaveable { mutableStateOf(false) }
-    val weekend = weekendMinutes.takeIf { days.any(::isWeekend) }
-    val week = studyWeek(days, minutes, weekend, exam && fullCourse)
-    var answer by remember { mutableStateOf<AdviceAnswer?>(null) }
-    var build by remember { mutableIntStateOf(0) }
-    var finding by remember { mutableStateOf<CoverQuery?>(null) }
-    val adviceQuery = AdviceQuery(goal, week.adviceInput(minutes))
-    val adviceResource = store.timeAdvice[adviceQuery]
-    val adviceState by adviceResource.collectShown()
-    LaunchedEffect(adviceState) {
-        val next = (adviceState as? LoadState.Loaded)?.value ?: return@LaunchedEffect
-        // Each rebuild of the plan (an exam's notice reading landed) makes what Find found before stale.
-        if (answer?.advice?.ready == true && !next.ready) build++
-        answer = AdviceAnswer(next, week, minutes)
-    }
-    val advice = weekAdvice(answer, week)
-    val lookup = findWeek(days, weekend)
-    val coverQuery = CoverQuery(goal, lookup.coverInput(), build)
-    val finds = store.timesToCover[coverQuery]
-    val findState = if (finding == coverQuery) finds.collectShown().value else null
-    val found = (findState as? LoadState.Loaded)?.value?.takeIf { it.ready && answer?.advice?.ready != false }
-    val picked = pickedShare(advice, answer, found, minutes)
-    val studiesEverything = exam && keepsFullCourse(fullCourse, picked)
-    val stopped = run.isStopped
-    val asksAdvice = days.isNotEmpty() && !(advice != null && picked.known) && !stopped
-    val poll = rememberPoll(active = asksAdvice, key = adviceQuery) { adviceResource.refreshed() }
-    val adviceStatus = poll.status(asksAdvice)
-    val scope = rememberCoroutineScope()
-    val find: () -> Unit = {
-        if (finding == coverQuery) {
-            scope.launch { finds.refresh() }
+    var days by rememberSaveable { mutableStateOf(startingDays(goal.studyDays.map(Long::toInt))) }
+    var weekendOn by rememberSaveable { mutableStateOf(false) }
+    var weekendPicked by rememberSaveable { mutableStateOf<Int?>(null) }
+    val weekend = weekendPicked.takeIf { weekendOn && days.any(::isWeekend) }
+    val hasDays = days.isNotEmpty()
+    val paused = run.isStopped
+    val today =
+        java.time.LocalDate
+            .now()
+            .toKotlinLocalDate()
+
+    val covering =
+        rememberPlanAnswer(
+            store.timesToCover,
+            CoverQuery(goal, findWeek(days, weekend).coverInput()),
+            enabled = (goal.targetDate != null || exam) && hasDays,
+            paused = paused,
+            serializer = PlanTimeToCover.serializer(),
+            ready = { it.ready },
+        )
+    val found = covering.answer?.takeIf { it.ready }?.let { foundTime(it, today) }
+    val lastFound = covering.last?.takeIf { it.ready }?.let { foundTime(it, today) }
+    val first = covering.first?.let { foundTime(it, today) }
+    val dated = lastFound?.let { it.time.targetDate != null } ?: (goal.targetDate != null || exam)
+    val findFailed = covering.status == PollStatus.Failed
+    val shownFound = found ?: lastFound
+    val minutes = shownMinutes(recommendedMinutes, first, shownFound, picked, settled = !dated || findFailed)
+    val studiesEverything = exam && fullCourse
+    val asked = studyWeek(days, minutes ?: recommendedMinutes, weekend, studiesEverything)
+
+    val timeAdvice =
+        rememberPlanAnswer(
+            store.timeAdvice,
+            AdviceQuery(goal, asked.adviceInput(minutes ?: recommendedMinutes)),
+            enabled = hasDays && asksAboutTime(dated, found, studiesEverything, minutes),
+            paused = paused,
+            serializer = PlanTimeAdvice.serializer(),
+            ready = { it.ready },
+        )
+    val advice = timeAdvice.answer?.takeIf { it.ready }
+    val line = timeLine(advice, timeAdvice.status == PollStatus.Failed, dated, findFailed, found, hasDays, minutes)
+
+    val gate =
+        if (dated) {
+            covering.last?.let { PlanGate(it.ready, it.readingNotice) }
         } else {
-            finding = coverQuery
+            timeAdvice.last?.let { PlanGate(it.ready, it.readingNotice) }
         }
+    val gatePoll = if (dated) covering.poll else timeAdvice.poll
+    if (gate?.waits(run) == true) {
+        if (gate.readingNotice) {
+            val document = if (exam && goal.targetLanguage != null) ExamDocument.GUIDE else ExamDocument.NOTICE
+            NoticeReading(document, lastEdition = false)
+        } else {
+            val retry = if (gatePoll.stopped) gatePoll::restart else LocalPlanStart.current?.onRetry
+            PlanBuilding(run.withPoll(gatePoll), retry)
+        }
+        return
     }
-    val shown = estimate(advice, answer, picked, adviceStatus)
-    val planReady = answer?.advice?.ready == true || (adviceStatus != PollStatus.Polling && !stopped)
+
+    val date =
+        shownFound
+            ?.time
+            ?.targetDate
+            ?.takeIf { dated }
+            ?.let { ShownDate(it, shownFound.time.targetDateNamedMonth) }
+    val pick = { next: Int -> picked = pickedMinutes(first, shownFound, next) }
 
     StepForm(
         title = stringResource(R.string.onboarding_schedule_title),
-        canContinue = days.isNotEmpty(),
+        canContinue = hasDays && minutes != null,
         pending = pending,
         onContinue = {
+            val time = minutes ?: return@StepForm
             vm.answer(
                 OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value(
                     OnboardingAnswerInputOneOf8(
-                        dailyMinutes = minutes.toLong(),
+                        dailyMinutes = time.toLong(),
                         question = OnboardingAnswerInputOneOf8.Question.SCHEDULE,
-                        fullCourse = if (exam) studiesEverything else null,
+                        fullCourse = if (exam) keepsFullCourse(fullCourse, line) else null,
                         studyDays = days.takeIf { it.size < EVERY_DAY.size }?.map(Int::toLong),
                         timeZone = TimeZone.getDefault().id,
                         weekendMinutes = weekend?.toLong(),
@@ -155,211 +174,253 @@ internal fun ColumnScope.ScheduleStep(
     ) {
         if (!factsBeside) PlanFactChips(goal)
 
-        TimeChoices(minutes, found, onChange = { minutes = it })
-
-        if (dated && showsEstimate(shown, picked, adviceStatus)) {
-            EstimatePanel(shown, minutes, onRetry = poll::restart)
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            DailyTimePicker(
+                minutes = minutes,
+                suggested = suggestedMinutes(found),
+                stale = picked == null && dated && found == null && !findFailed && lastFound != null,
+                onChange = pick,
+            )
+            ScheduleLine(
+                date = date,
+                exam = exam,
+                line = line,
+                minutes = minutes,
+                offer = offer(found, line, minutes),
+                tooClose = tooClose(found, line),
+                onRetry = if (findFailed) covering.poll::restart else timeAdvice.poll::restart,
+                onUseOffer = { picked = pickedMinutes(first, found, it) },
+            )
         }
 
-        val share = shown.share.takeUnless { shown.failed }
-        val short = share != null && share < 1
-        if (share == null || short) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                if (!dated) FinishEstimate(advice.takeIf { picked.known }, adviceStatus, stopped, days.size, onRetry = poll::restart)
-                AdviceSentence(dated, planReady, answer?.advice?.readingNotice == true, found, findStatus(findState), onFind = find)
+        val short = line is TimeLine.Share || line is TimeLine.EveryTopic
+        if (exam && date != null && (short || keepsFullCourse(fullCourse, line))) {
+            val end = minutes?.let { time -> advice?.fullCourseEndDate?.let { ExamFinish(time, it, date) } }
+            FullCourseToggle(fullCourse, end, onCheckedChange = { fullCourse = it })
+        }
+
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            WeekdayToggles(days, onChange = { days = it })
+            if (days.any(::isWeekend)) {
+                WeekendTime(
+                    checked = weekendOn,
+                    minutes = weekendPicked ?: minutes ?: recommendedMinutes,
+                    onCheckedChange = {
+                        weekendOn = it
+                        weekendPicked = null
+                    },
+                    onChange = { weekendPicked = it },
+                )
             }
         }
-        if (exam && (short || studiesEverything)) {
-            FullCourseToggle(
-                checked = fullCourse,
-                end = fullCourseEnd(advice, answer, minutes),
-                onCheckedChange = { fullCourse = it },
-            )
-        }
-        if (!exam && short) {
-            Text(
-                stringResource(R.string.onboarding_schedule_move_date, formatMinutes(minutes, currentLocale())),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-
-        StudyWeekDisclosure(days, minutes, weekend, onDays = { days = it }, weekendMinutes = weekendMinutes, onWeekend = {
-            weekendMinutes =
-                it
-        })
     }
 }
 
+private data class PlanGate(
+    val ready: Boolean,
+    val readingNotice: Boolean,
+) {
+    /** A run that's done leaves the time question to say the plan is still working the time out. */
+    fun waits(run: GenerationRun) = !ready && (readingNotice || run.status != GenerationRun.Status.Ready)
+}
+
+/** A goal's date as the plan answered it. */
+private data class ShownDate(
+    val date: LocalDate,
+    val namedMonth: Boolean,
+)
+
+private data class ExamFinish(
+    val minutes: Int,
+    val end: LocalDate,
+    val exam: ShownDate,
+)
+
+/** The big time a day; its menu marks the time the plan suggests. */
 @Composable
-private fun TimeChoices(
-    minutes: Int,
-    found: PlanTimeToCover?,
+private fun DailyTimePicker(
+    minutes: Int?,
+    suggested: Int?,
+    stale: Boolean,
     onChange: (Int) -> Unit,
 ) {
-    val locale = currentLocale()
-    val offered = offeredMinutes(found)
-    val note =
-        when {
-            found?.recommendedMinutes != null -> stringResource(R.string.onboarding_schedule_covers_everything)
-            found?.coreMinutes != null -> stringResource(R.string.onboarding_schedule_every_topic)
-            else -> null
-        }
-    val label = stringResource(R.string.onboarding_schedule_minutes_label)
+    if (minutes == null) {
+        Box(
+            Modifier
+                .size(width = 160.dp, height = 48.dp)
+                .background(MaterialTheme.colorScheme.surfaceContainerHighest, MaterialTheme.shapes.small),
+        )
+        return
+    }
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
-            Text(formatMinutes(minutes, locale), style = MaterialTheme.typography.displaySmall.withTabularFigures())
-            Text(
-                stringResource(R.string.onboarding_schedule_per_day),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        FlowRow(
-            modifier = Modifier.semantics { contentDescription = label },
+    var open by rememberSaveable { mutableStateOf(false) }
+    val locale = currentLocale()
+    val label = stringResource(R.string.onboarding_schedule_time_label)
+    val shown = formatMinutes(minutes, locale)
+
+    Box {
+        Row(
+            modifier =
+                Modifier
+                    .clip(MaterialTheme.shapes.small)
+                    .clickable(role = Role.DropdownList) { open = true }
+                    .semantics(mergeDescendants = true) { contentDescription = "$label, $shown" }
+                    .alpha(if (stale) STALE_ALPHA else 1f)
+                    .padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            timeChoices(minutes, offered).forEach { option ->
-                FilterChip(
-                    selected = option == minutes,
-                    onClick = { onChange(option) },
-                    leadingIcon = selectedCheck(option == minutes),
-                    label = {
-                        Column {
-                            Text(formatMinutes(option, locale), style = MaterialTheme.typography.labelLarge.withTabularFigures())
-                            if (option == offered && note != null) Text(note, style = MaterialTheme.typography.labelSmall)
-                        }
-                    },
-                )
-            }
+            Text(shown, style = MaterialTheme.typography.displaySmall.withTabularFigures())
+            Icon(painterResource(R.drawable.ic_expand_more), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
-        OtherTime(minutes, stringResource(R.string.onboarding_schedule_other_time_label), onChange)
-    }
-}
-
-@Composable
-private fun EstimatePanel(
-    estimate: Estimate,
-    minutes: Int,
-    onRetry: () -> Unit,
-) {
-    val locale = currentLocale()
-    OutlinedCard(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(stringResource(R.string.onboarding_estimate), style = MaterialTheme.typography.titleSmall)
-            Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                if (estimate.failed) {
-                    Text(
-                        stringResource(R.string.onboarding_estimate_failed, formatMinutes(minutes, locale)),
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    TextButton(onClick = onRetry) { Text(stringResource(R.string.onboarding_try_again)) }
+        TimeMenu(
+            expanded = open,
+            onDismissRequest = { open = false },
+            times = otherTimes(minutes, suggested),
+            shown = minutes,
+            onPick = onChange,
+            label = { time ->
+                if (time == suggested) {
+                    stringResource(R.string.onboarding_schedule_suggested, formatMinutes(time, locale))
+                } else {
+                    formatMinutes(time, locale)
                 }
-                if (estimate.failed && estimate.staleMinutes != null) {
-                    Text(
-                        stringResource(R.string.onboarding_estimate_last, formatMinutes(estimate.staleMinutes, locale)),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
-                val advice = estimate.advice
-                val share = estimate.share
-                if (!estimate.failed || share != null) {
-                    if (advice != null && share != null) {
-                        EstimateWords(advice, share, Modifier.alpha(if (estimate.stale) STALE_ALPHA else 1f))
-                    } else {
-                        Text(
-                            stringResource(R.string.onboarding_estimate_working),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                }
-            }
-            Meter(share = (estimate.share ?: 0.0).toFloat(), modifier = Modifier.alpha(if (estimate.stale) STALE_ALPHA else 1f))
-        }
-    }
-}
-
-@Composable
-private fun EstimateWords(
-    advice: PlanTimeAdvice,
-    share: Double,
-    modifier: Modifier = Modifier,
-) {
-    val percent = formatPercent(share, currentLocale())
-    val date = advice.targetDate?.let { goalDate(it, advice.targetDateNamedMonth) }.orEmpty()
-    val exam = advice.measure == PlanTimeAdvice.Measure.EXAM
-    val sentence =
-        stringResource(
-            when {
-                share >= 1 && exam -> R.string.onboarding_estimate_exam_all
-                share >= 1 -> R.string.onboarding_estimate_goal_all
-                exam -> R.string.onboarding_estimate_exam_part
-                else -> R.string.onboarding_estimate_goal_part
             },
-            percent,
-            date,
         )
-    Text(
-        sentence.emphasizing(
-            percent,
-            SpanStyle(
-                fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                fontWeight = FontWeight.Medium,
-                color = MaterialTheme.colorScheme.onSurface,
-            ),
-        ),
-        modifier = modifier,
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium,
-    )
+    }
 }
 
-/** Main's finish estimate for an undated goal: about when it ends at the time and week picked. */
+/** One polite live region for the time shown: what it means, why, and the way back to the suggestion. */
 @Composable
-private fun FinishEstimate(
-    advice: PlanTimeAdvice?,
-    status: PollStatus,
-    stopped: Boolean,
-    studyDays: Int,
+private fun ScheduleLine(
+    date: ShownDate?,
+    exam: Boolean,
+    line: TimeLine,
+    minutes: Int?,
+    offer: SuggestedTime?,
+    tooClose: TooClose?,
     onRetry: () -> Unit,
+    onUseOffer: (Int) -> Unit,
 ) {
-    if (stopped && studyDays > 0 && advice == null) return
-    val muted = MaterialTheme.colorScheme.onSurfaceVariant
-    val body = MaterialTheme.typography.bodyMedium
-    val end = advice?.endDate
-    Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+    val failed = line is TimeLine.AskFailed || line is TimeLine.FindFailed
+    val words = lineWords(date, exam, line, minutes)
+    val close = tooClose?.let { tooCloseWords(it) }
+    val locale = currentLocale()
+
+    Column(Modifier.heightIn(min = 48.dp).semantics { liveRegion = LiveRegionMode.Polite }) {
+        Text(
+            buildAnnotatedString {
+                close?.let { append("$it ") }
+                append(words)
+            },
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyMedium,
+        )
         when {
-            studyDays == 0 -> {
-                Text(stringResource(R.string.onboarding_finish_choose_day), color = muted, style = body)
-            }
-
-            end != null -> {
-                val month = goalDate(end, namedMonth = true)
-                Text(
-                    stringResource(R.string.onboarding_finish_around, month)
-                        .emphasizing(month, SpanStyle(fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)),
-                    color = muted,
-                    style = body,
-                )
-            }
-
-            advice != null -> {
-                Text(stringResource(R.string.onboarding_finish_unknown), color = muted, style = body)
-            }
-
-            status == PollStatus.Failed -> {
-                Text(stringResource(R.string.onboarding_finish_failed), color = muted, style = body)
+            failed -> {
                 TextButton(onClick = onRetry) { Text(stringResource(R.string.onboarding_try_again)) }
             }
 
-            else -> {
-                Text(stringResource(R.string.onboarding_finish_working), color = muted, style = body)
+            offer != null -> {
+                val words =
+                    when {
+                        offer.coversEverything -> R.string.onboarding_schedule_offer_everything
+                        else -> R.string.onboarding_schedule_offer_every_topic
+                    }
+                TextButton(onClick = { onUseOffer(offer.minutes) }) {
+                    Text(stringResource(words, formatMinutes(offer.minutes, locale)))
+                }
             }
         }
     }
+}
+
+@Composable
+private fun tooCloseWords(tooClose: TooClose): String =
+    tooClose.recommendedMinutes?.let {
+        stringResource(R.string.onboarding_schedule_close, formatMinutes(it, currentLocale()))
+    } ?: stringResource(R.string.onboarding_schedule_too_close)
+
+@Composable
+private fun lineWords(
+    date: ShownDate?,
+    exam: Boolean,
+    line: TimeLine,
+    minutes: Int?,
+): AnnotatedString {
+    val locale = currentLocale()
+    val shown = date?.let { goalDate(it.date, it.namedMonth, DateStyle.Long) }.orEmpty()
+    val time = formatMinutes(minutes ?: 0, locale)
+    val text =
+        when (line) {
+            is TimeLine.Everything -> {
+                stringResource(
+                    when {
+                        line.suggested && exam -> R.string.onboarding_schedule_takes_exam_all
+                        line.suggested -> R.string.onboarding_schedule_takes_goal_all
+                        exam -> R.string.onboarding_schedule_covers_exam_all
+                        else -> R.string.onboarding_schedule_covers_goal_all
+                    },
+                    shown,
+                )
+            }
+
+            TimeLine.EveryTopic -> {
+                val reaches = if (exam) R.string.onboarding_schedule_reaches_exam else R.string.onboarding_schedule_reaches_goal
+                stringResource(reaches, shown)
+            }
+
+            is TimeLine.Share -> {
+                stringResource(
+                    if (exam) R.string.onboarding_schedule_share_exam else R.string.onboarding_schedule_share_goal,
+                    formatPercent(line.share, locale),
+                    shown,
+                )
+            }
+
+            TimeLine.PastDate -> {
+                stringResource(R.string.onboarding_schedule_past_date, shown)
+            }
+
+            is TimeLine.Finish -> {
+                val month = formatDate(line.endDate.toJavaLocalDate(), locale, DateStyle.Month)
+                return stringResource(R.string.onboarding_finish_around, month)
+                    .emphasizing(month, SpanStyle(fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface))
+            }
+
+            TimeLine.NoFinish -> {
+                stringResource(R.string.onboarding_finish_unknown)
+            }
+
+            TimeLine.NoDays -> {
+                stringResource(R.string.onboarding_schedule_no_days)
+            }
+
+            TimeLine.Working -> {
+                stringResource(R.string.onboarding_schedule_working)
+            }
+
+            TimeLine.FindFailed -> {
+                stringResource(R.string.onboarding_schedule_find_failed)
+            }
+
+            TimeLine.Asking -> {
+                if (date == null) {
+                    stringResource(R.string.onboarding_finish_working)
+                } else {
+                    stringResource(R.string.onboarding_schedule_asking, time)
+                }
+            }
+
+            TimeLine.AskFailed -> {
+                if (date == null) {
+                    stringResource(R.string.onboarding_finish_failed)
+                } else {
+                    stringResource(R.string.onboarding_schedule_ask_failed, time)
+                }
+            }
+        }
+    return AnnotatedString(text)
 }
 
 private fun String.emphasizing(
@@ -378,175 +439,33 @@ private fun String.emphasizing(
     }
 }
 
-/** Find works out the time only when asked: it plans the goal at each daily time. */
-@Composable
-private fun AdviceSentence(
-    dated: Boolean,
-    planReady: Boolean,
-    readingNotice: Boolean,
-    found: PlanTimeToCover?,
-    status: FindStatus?,
-    onFind: () -> Unit,
-) {
-    val muted = MaterialTheme.colorScheme.onSurfaceVariant
-    val body = MaterialTheme.typography.bodyMedium
-    if (!dated) {
-        Text(stringResource(R.string.onboarding_schedule_change_anytime), color = muted, style = body)
-        return
-    }
-
-    Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        when {
-            !planReady -> {
-                Text(
-                    stringResource(
-                        if (readingNotice) R.string.onboarding_schedule_reading_notice else R.string.onboarding_schedule_building,
-                    ),
-                    color = muted,
-                    style = body,
-                )
-            }
-
-            status == FindStatus.Answered && found != null -> {
-                FoundWords(found)
-            }
-
-            else -> {
-                if (status == FindStatus.Building || status == FindStatus.Failed) {
-                    Text(
-                        stringResource(
-                            if (status ==
-                                FindStatus.Building
-                            ) {
-                                R.string.onboarding_find_building
-                            } else {
-                                R.string.onboarding_find_failed
-                            },
-                        ),
-                        color = muted,
-                        style = body,
-                    )
-                }
-                val retry = status == FindStatus.Building || status == FindStatus.Failed
-                FilledTonalButton(onClick = onFind, enabled = status != FindStatus.Pending) {
-                    Text(
-                        stringResource(
-                            when {
-                                status == FindStatus.Pending -> R.string.onboarding_find_finding
-                                retry -> R.string.onboarding_try_again
-                                else -> R.string.onboarding_find_time
-                            },
-                        ),
-                    )
-                }
-            }
-        }
-    }
-}
-
-@Composable
-private fun FoundWords(found: PlanTimeToCover) {
-    val date = found.targetDate ?: return
-    val locale = currentLocale()
-    val shown = goalDate(date, found.targetDateNamedMonth)
-    val recommended = found.recommendedMinutes
-    if (recommended != null) {
-        Text(
-            stringResource(R.string.onboarding_find_covers, formatMinutes(recommended.toInt(), locale), shown),
-            fontWeight = FontWeight.Medium,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-        return
-    }
-    Text(
-        stringResource(R.string.onboarding_find_none, shown),
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyMedium,
-    )
-    found.coreMinutes?.let {
-        Text(
-            stringResource(R.string.onboarding_find_every_topic, formatMinutes(it.toInt(), locale)),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
-}
-
 @Composable
 private fun FullCourseToggle(
     checked: Boolean,
-    end: Finish?,
+    end: ExamFinish?,
     onCheckedChange: (Boolean) -> Unit,
 ) {
     val locale = currentLocale()
-    val after = stringResource(R.string.onboarding_full_course_until_exam)
     val description =
-        if (checked && end != null) {
-            stringResource(
-                R.string.onboarding_full_course_finish,
-                formatMinutes(end.minutes, locale),
-                formatDate(end.end.toJavaLocalDate(), locale, DateStyle.Month),
-                goalDate(end.examDate, end.namedMonth, DateStyle.LongYear),
-            ) + " " + after
-        } else {
-            stringResource(R.string.onboarding_full_course_rule)
+        when {
+            !checked -> {
+                null
+            }
+
+            end != null -> {
+                stringResource(
+                    R.string.onboarding_full_course_finish,
+                    formatMinutes(end.minutes, locale),
+                    formatDate(end.end.toJavaLocalDate(), locale, DateStyle.Month),
+                    goalDate(end.exam.date, end.exam.namedMonth, DateStyle.LongYear),
+                ) + " " + stringResource(R.string.onboarding_full_course_until_exam)
+            }
+
+            else -> {
+                stringResource(R.string.onboarding_full_course_rule)
+            }
         }
     SwitchRow(stringResource(R.string.onboarding_full_course), checked, onCheckedChange, description)
-}
-
-@Composable
-private fun StudyWeekDisclosure(
-    days: List<Int>,
-    minutes: Int,
-    weekend: Int?,
-    onDays: (List<Int>) -> Unit,
-    weekendMinutes: Int?,
-    onWeekend: (Int?) -> Unit,
-) {
-    var open by rememberSaveable { mutableStateOf(false) }
-    val locale = currentLocale()
-    val weekly = days.sumOf { if (isWeekend(it) && weekend != null) weekend else minutes }
-    val summary = pluralStringResource(R.plurals.onboarding_week_summary, days.size, days.size, formatMinutes(weekly, locale))
-    val stateLabel = stringResource(if (open) R.string.onboarding_expanded else R.string.onboarding_collapsed)
-
-    Column {
-        HorizontalDivider()
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .clickable { open = !open }
-                    .semantics(mergeDescendants = true) { stateDescription = stateLabel }
-                    .padding(vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Column(Modifier.weight(1f)) {
-                Text(stringResource(R.string.onboarding_which_days), style = MaterialTheme.typography.bodyLarge)
-                Text(
-                    summary,
-                    modifier =
-                        Modifier.semantics {
-                            liveRegion = LiveRegionMode.Polite
-                        },
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-            Icon(
-                painterResource(if (open) R.drawable.ic_expand_less else R.drawable.ic_expand_more),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        if (open) {
-            Column(Modifier.padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                WeekdayToggles(days, onDays)
-                if (days.any(::isWeekend)) WeekendTime(minutes, weekendMinutes, onWeekend)
-            }
-        }
-        HorizontalDivider()
-    }
 }
 
 @Composable
@@ -555,43 +474,35 @@ private fun WeekdayToggles(
     onChange: (List<Int>) -> Unit,
 ) {
     val locale = currentLocale()
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        EVERY_DAY.forEach { day ->
-            val weekday = DayOfWeek.of(if (day == 0) 7 else day)
-            val picked = day in days
-            FilterChip(
-                selected = picked,
-                onClick = { onChange(if (picked) days - day else (days + day).sorted()) },
-                leadingIcon = selectedCheck(picked),
-                label = { Text(weekday.getDisplayName(TextStyle.NARROW, locale)) },
-                modifier = Modifier.semantics { contentDescription = weekday.getDisplayName(TextStyle.FULL, locale) },
-            )
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(stringResource(R.string.onboarding_study_days), fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyMedium)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            EVERY_DAY.forEach { day ->
+                val weekday = DayOfWeek.of(if (day == 0) 7 else day)
+                val picked = day in days
+                FilterChip(
+                    selected = picked,
+                    onClick = { onChange(if (picked) days - day else (days + day).sorted()) },
+                    leadingIcon = selectedCheck(picked),
+                    label = { Text(weekday.getDisplayName(TextStyle.NARROW, locale)) },
+                    modifier = Modifier.semantics { contentDescription = weekday.getDisplayName(TextStyle.FULL, locale) },
+                )
+            }
         }
     }
 }
 
+/** The weekend has a time of its own only once one is picked: switched on, it starts as the weekdays'. */
 @Composable
 private fun WeekendTime(
+    checked: Boolean,
     minutes: Int,
-    weekendMinutes: Int?,
-    onChange: (Int?) -> Unit,
+    onCheckedChange: (Boolean) -> Unit,
+    onChange: (Int) -> Unit,
 ) {
-    val locale = currentLocale()
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SwitchRow(stringResource(R.string.onboarding_weekend_time), weekendMinutes != null, { on -> onChange(if (on) minutes else null) })
-        if (weekendMinutes != null) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                timeChoices(minutes, weekendMinutes).forEach { option ->
-                    FilterChip(
-                        selected = option == weekendMinutes,
-                        onClick = { onChange(option) },
-                        leadingIcon = selectedCheck(option == weekendMinutes),
-                        label = { Text(formatMinutes(option, locale), style = MaterialTheme.typography.labelLarge.withTabularFigures()) },
-                    )
-                }
-            }
-            OtherTime(weekendMinutes, stringResource(R.string.onboarding_weekend_other_time_label), onChange)
-        }
+        SwitchRow(stringResource(R.string.onboarding_weekend_time), checked, onCheckedChange)
+        if (checked) TimeSelect(stringResource(R.string.onboarding_weekend_time_label), minutes, onChange)
     }
 }
 
@@ -611,14 +522,6 @@ internal fun goalDate(
     namedMonth: Boolean,
     style: DateStyle = DateStyle.Day,
 ): String = formatDate(date.toJavaLocalDate(), currentLocale(), if (namedMonth) DateStyle.Month else style)
-
-private fun findStatus(state: LoadState<PlanTimeToCover>?): FindStatus? =
-    when (state) {
-        null -> null
-        is LoadState.Loaded -> if (state.value.ready) FindStatus.Answered else FindStatus.Building
-        LoadState.Idle, LoadState.Loading -> FindStatus.Pending
-        else -> FindStatus.Failed
-    }
 
 private const val STALE_ALPHA = 0.6f
 

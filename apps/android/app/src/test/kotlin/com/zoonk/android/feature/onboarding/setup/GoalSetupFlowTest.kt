@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -8,6 +9,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -27,6 +29,8 @@ import com.zoonk.android.feature.onboarding.EXAM_GOAL_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.adviceOf
+import com.zoonk.android.feature.onboarding.coverOf
 import com.zoonk.android.feature.onboarding.levelTestOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.setupView
@@ -69,25 +73,25 @@ class GoalSetupFlowTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private var screen by mutableIntStateOf(0)
 
-    private fun undatedAdvice(endDate: LocalDate?) =
-        PlanTimeAdvice(
-            coveredShare = null,
-            endDate = endDate,
-            fullCourseEndDate = null,
-            measure = PlanTimeAdvice.Measure.GOAL,
-            numbers = null,
-            ready = true,
-            targetDate = null,
-            targetDateNamedMonth = false,
-        )
+    private fun pickTime(
+        from: String,
+        to: String,
+    ) {
+        rule.onNodeWithContentDescription("Time a day, $from").performScrollTo().performClick()
+        rule.onNodeWithText(to).performClick()
+        // A new time asks the plan once the picks settle.
+        rule.mainClock.advanceTimeBy(1_000)
+    }
 
     private fun show(
         goalId: String = GOAL_ID,
         drafts: SetupDrafts? = null,
+        restoration: StateRestorationTester? = null,
     ) {
         val session = FakeSession(ana)
         val store = OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
-        rule.setContent {
+        val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
+        setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 CompositionLocalProvider(LocalSetupDrafts provides drafts) {
@@ -184,12 +188,12 @@ class GoalSetupFlowTest {
     @Test
     fun anUndatedGoalSaysAboutWhenItsPlanFinishesOrThatItCantTell() {
         api.setup = { setupView(listOf("schedule", "plan")) }
-        api.advice = { input -> undatedAdvice(endDate = LocalDate(2027, 3, 15).takeIf { input.dailyMinutes == 30L }) }
+        api.advice = { input -> adviceOf(null, LocalDate(2027, 3, 15).takeIf { input.dailyMinutes == 30L }, targetDate = null) }
         show()
 
         rule.onNodeWithText("You finish around March 2027.").performScrollTo().assertIsDisplayed()
 
-        rule.onNodeWithText("15\u00A0min").performScrollTo().performClick()
+        pickTime(from = "30\u00A0min", to = "15\u00A0min")
         rule
             .onNodeWithText(
                 "We can't estimate a finish date for this schedule. Try more time or more study days.",
@@ -198,35 +202,76 @@ class GoalSetupFlowTest {
     }
 
     @Test
-    fun theEstimateStopsAskingAfterItsLoadAndThreeFailedPollsAndTryAgainAsksAgain() {
-        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2026-11-08") }
+    fun aDatedGoalStartsOnTheTimeItNeedsAndOffersItBackWhenAnotherFallsShort() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { coverOf(recommended = 45) }
+        api.advice = { adviceOf(0.6) }
+        show()
+
+        rule.onNodeWithText("What it takes to cover all your exam topics by November 8, 2030.").performScrollTo().assertIsDisplayed()
+
+        pickTime(from = "45\u00A0min", to = "30\u00A0min")
+        rule
+            .onNodeWithText(
+                "Covers about 60% of your exam topics in depth by November 8, 2030, what comes up most first.",
+            ).assertIsDisplayed()
+
+        rule.onNodeWithText("Cover everything with 45\u00A0min a day").performClick()
+        rule.onNodeWithText("Continue").performScrollTo().performClick()
+        rule.waitForIdle()
+        assertEquals(45L, (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value).value.dailyMinutes)
+    }
+
+    @Test
+    fun theTimeAScreenStartedOnStaysThroughRecreationWhenFewerDaysHaveNoSuggestion() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { input -> coverOf(recommended = if (input.studyDays.orEmpty().size == 5) 45 else 900) }
+        api.advice = { adviceOf(0.6) }
+        val restoration = StateRestorationTester(rule)
+        show(restoration = restoration)
+
+        rule.onNodeWithContentDescription("Time a day, 45\u00A0min").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Friday").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithContentDescription("Time a day, 45\u00A0min").assertIsDisplayed()
+
+        restoration.emulateSavedInstanceStateRestore()
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithContentDescription("Time a day, 45\u00A0min").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
+    fun aDatedGoalWaitsForItsPlanBeforeAskingTheTime() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.generationId = { "run-1" }
+        api.cover = { coverOf(recommended = null, ready = false) }
+        show()
+
+        rule.onNodeWithText("Building your plan").performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("How much time can you study each day?").assertDoesNotExist()
+    }
+
+    @Test
+    fun theTimesWorthStopsAskingAfterItsLoadAndThreeFailedPollsAndTryAgainAsksAgain() {
+        api.setup = { setupView(listOf("schedule", "plan"), kind = "exam", targetDate = "2030-11-08") }
+        api.cover = { coverOf(recommended = 45) }
         var reads = 0
         api.advice = {
             reads++
             throw ApiException(ApiError.Unavailable)
         }
         show()
+        pickTime(from = "45\u00A0min", to = "30\u00A0min")
 
         rule.mainClock.advanceTimeBy(10_000)
-        rule.onNodeWithText("We couldn't work out what", substring = true).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("We couldn't work out what 30\u00A0min a day covers.").performScrollTo().assertIsDisplayed()
         assertEquals(4, reads)
 
-        api.advice = {
-            PlanTimeAdvice(
-                coveredShare = 0.6,
-                endDate = null,
-                fullCourseEndDate = null,
-                measure = PlanTimeAdvice.Measure.EXAM,
-                numbers = null,
-                ready = true,
-                targetDate = LocalDate(2026, 11, 8),
-                targetDateNamedMonth = false,
-            )
-        }
+        api.advice = { adviceOf(0.6) }
         rule.onNodeWithText("Try again").performScrollTo().performClick()
         rule.waitForIdle()
 
-        rule.onNodeWithText("of the plan's exam topics in depth", substring = true).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText("Covers about 60% of your exam topics", substring = true).performScrollTo().assertIsDisplayed()
     }
 
     @Test

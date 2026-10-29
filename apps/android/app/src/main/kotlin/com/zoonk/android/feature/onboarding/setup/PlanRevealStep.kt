@@ -100,7 +100,7 @@ internal fun ColumnScope.PlanRevealStep(
         }
 
         readingNotice -> {
-            NoticeReading(plan)
+            NoticeReading(plan.examDocument, lastEdition = plan.schedule.targetDateEstimated)
         }
 
         else -> {
@@ -127,24 +127,26 @@ internal fun ColumnScope.PlanRevealStep(
 }
 
 @Composable
-private fun PlanBuilding(
+internal fun PlanBuilding(
     run: GenerationRun,
     onRetry: (() -> Unit)?,
 ) {
     GenerationWait(kind = GenerationKind.Curriculum, run = run, onRetry = onRetry) {
         OnboardingHeading(
             stringResource(R.string.onboarding_reveal_building_title),
-            stringResource(R.string.onboarding_reveal_building_description),
+            stringResource(if (run.isStopped) R.string.onboarding_answers_saved else R.string.onboarding_reveal_building_description),
         )
     }
 }
 
 /** The plan exists; its exam's official documents are still being read, and the plan will follow them. */
 @Composable
-private fun NoticeReading(plan: Plan) {
-    val lastEdition = plan.schedule.targetDateEstimated
+internal fun NoticeReading(
+    document: ExamDocument,
+    lastEdition: Boolean,
+) {
     GenerationWait(
-        kind = if (plan.examDocument == ExamDocument.GUIDE) GenerationKind.GuideReading else GenerationKind.NoticeReading,
+        kind = if (document == ExamDocument.GUIDE) GenerationKind.GuideReading else GenerationKind.NoticeReading,
         run = READING_RUN,
         onRetry = null,
     ) {
@@ -153,7 +155,7 @@ private fun NoticeReading(plan: Plan) {
             stringResource(
                 when {
                     lastEdition -> R.string.onboarding_reveal_reading_last
-                    plan.examDocument == ExamDocument.GUIDE -> R.string.onboarding_reveal_reading_guide
+                    document == ExamDocument.GUIDE -> R.string.onboarding_reveal_reading_guide
                     else -> R.string.onboarding_reveal_reading_notice
                 },
             ),

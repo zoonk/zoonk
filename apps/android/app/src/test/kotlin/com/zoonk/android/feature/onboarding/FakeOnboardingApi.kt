@@ -41,6 +41,7 @@ import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.datetime.LocalDate
 
 internal const val DRAFT_ID = "6f9d2c1e-3b4a-4c5d-8e6f-7a8b9c0d1e2f"
 internal const val GOAL_ID = "1a2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d"
@@ -261,11 +262,13 @@ internal class FakeOnboardingApi : OnboardingApi {
         input: PlanTimeAdviceInput,
     ) = advice(input)
 
+    var cover: (PlanTimeToCoverInput) -> PlanTimeToCover = { throw ApiException(ApiError.Unavailable) }
+
     override suspend fun timeToCover(
         session: AuthenticatedSession,
         goalId: String,
         input: PlanTimeToCoverInput,
-    ): PlanTimeToCover = throw ApiException(ApiError.Unavailable)
+    ) = cover(input)
 
     override suspend fun uploadFile(
         session: AuthenticatedSession,
@@ -412,3 +415,31 @@ internal class FakeOnboardingApi : OnboardingApi {
         finishedLevelTests++
     }
 }
+
+internal fun coverOf(
+    recommended: Long?,
+    targetDate: LocalDate = LocalDate(2030, 11, 8),
+    ready: Boolean = true,
+) = PlanTimeToCover(
+    coreMinutes = null,
+    fittingDate = null,
+    ready = ready,
+    recommendedMinutes = recommended,
+    targetDate = targetDate,
+    targetDateNamedMonth = false,
+)
+
+internal fun adviceOf(
+    share: Double?,
+    endDate: LocalDate? = null,
+    targetDate: LocalDate? = LocalDate(2030, 11, 8),
+) = PlanTimeAdvice(
+    coveredShare = share,
+    endDate = endDate,
+    fullCourseEndDate = null,
+    measure = if (targetDate != null) PlanTimeAdvice.Measure.EXAM else PlanTimeAdvice.Measure.GOAL,
+    numbers = null,
+    ready = true,
+    targetDate = targetDate,
+    targetDateNamedMonth = false,
+)
