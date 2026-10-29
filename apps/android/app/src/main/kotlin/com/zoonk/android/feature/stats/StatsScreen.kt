@@ -12,8 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -27,6 +29,7 @@ import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +52,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.scaffold.PageScaffold
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.launch
 
 /** Main's stats section: its pages, in its nav's order. */
@@ -90,10 +94,10 @@ fun StatsScreen(
     val besideList = sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
     val context =
         StatsContext(app, navigator, stats, wide = sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND))
-    val shown = shownBy(page, stats)
-    val primary = shown.first()
-    val state by primary.collectShown()
-    val isRefreshing by primary.isRefreshing.collectAsStateWithLifecycle()
+    val shown = shownBy(page, stats, context.wide)
+    val state by shown.first().collectShown()
+    val isRefreshing by remember(shown) { combine(shown.map { it.isRefreshing }) { reads -> reads.any { it } } }
+        .collectAsStateWithLifecycle(false)
     val scope = rememberCoroutineScope()
     val refresh: () -> Unit = { shown.forEach { scope.launch { it.refresh() } } }
 
@@ -138,12 +142,14 @@ fun StatsScreen(
     }
 }
 
+/** The overview's score trend shows only on wide windows. */
 private fun shownBy(
     page: StatsPage,
     stats: StatsStore,
+    wide: Boolean,
 ): List<Resource<*>> =
     when (page) {
-        StatsPage.Overview -> listOf(stats.progress, stats.energy, stats.activity, stats.score, stats.patterns)
+        StatsPage.Overview -> listOfNotNull(stats.progress, stats.energy, stats.activity, stats.score.takeIf { wide }, stats.patterns)
         StatsPage.Level -> listOf(stats.progress)
         StatsPage.Energy -> listOf(stats.energy)
         StatsPage.Activity -> listOf(stats.activity)
@@ -209,7 +215,13 @@ private fun StatsNavList(
     val label = stringResource(R.string.stats_nav)
     val selected = MaterialTheme.colorScheme.surfaceContainerHigh
 
-    Column(modifier.padding(vertical = 12.dp).selectableGroup().semantics { contentDescription = label }) {
+    Column(
+        modifier
+            .verticalScroll(rememberScrollState())
+            .padding(vertical = 12.dp)
+            .selectableGroup()
+            .semantics { contentDescription = label },
+    ) {
         StatsPage.entries.forEach { entry ->
             ListItem(
                 headlineContent = { Text(stringResource(entry.label)) },

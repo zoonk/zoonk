@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.stats
 
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CurrentUserActivityResponseActivity
@@ -11,6 +13,8 @@ import com.zoonk.api.models.CurrentUserScoreResponseScore
 internal class FakeStatsApi(
     val studied: Boolean,
 ) : StatsApi {
+    var activityFails = false
+
     override suspend fun progress(session: AuthenticatedSession): CurrentUserProgressResponse =
         ApiJson.decodeFromString(
             if (studied) {
@@ -25,14 +29,18 @@ internal class FakeStatsApi(
 
     override suspend fun energy(session: AuthenticatedSession): CurrentUserEnergyResponseEnergy =
         ApiJson.decodeFromString(
-            """{"currentEnergy":64,"days":[{"date":"2026-10-27","energy":50},{"date":"2026-10-28","energy":64}],"insights":{"averageEnergy":58,"fullEnergyDays":2}}""",
+            """{"currentEnergy":64,"days":[{"date":"2026-10-27","energy":50},{"date":"2026-10-28","energy":64}],"insights":{"averageEnergy":58.25,"fullEnergyDays":2}}""",
         )
 
     override suspend fun activity(session: AuthenticatedSession): CurrentUserActivityResponseActivity =
-        ApiJson.decodeFromString(
-            """{"learningDays":12,"totalLearningSeconds":5400,"totalLessonCompletions":20,
+        if (activityFails) {
+            throw ApiException(ApiError.Network)
+        } else {
+            ApiJson.decodeFromString(
+                """{"learningDays":12,"totalLearningSeconds":5400,"totalLessonCompletions":20,
                 "days":[{"activitiesCompleted":3,"date":"2026-10-27","lessonCompletions":2},{"activitiesCompleted":5,"date":"2026-10-28","lessonCompletions":3}]}""",
-        )
+            )
+        }
 
     override suspend fun score(session: AuthenticatedSession): CurrentUserScoreResponseScore =
         ApiJson.decodeFromString(

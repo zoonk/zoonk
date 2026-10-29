@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "stats_activities": "22449abb15298ffa49529e883bf6fa96b40cd30c512e7e90d0ac2396656b7784",
+  "stats_activities": "409cb003d50652a1c33acc0255b51cc5c3f318f81c872ce93bafd493df6812e1",
   "stats_activity": "ca76541195e3e5fc44668c9ace34ff38ee9339a9bc1daea47f217fe3068804c4",
   "stats_afternoon": "294d90ae24a30150fff932dcb887c98fcf99146f2758d865421f3904b1b50308",
   "stats_all_goals": "d495b80b5d5f513d4b098f7129c5485fb61f04deecd2ca5572d700d5f5d4d1ef",
-  "stats_answer_count": "6644139f076c764e64caa2708ce29dcccfb95b820bb7606d8dbade3b0f30409c",
+  "stats_answer_count": "5fee7ebe4a2e2ef4479a707b080ce12a67923b15d66cc113f45a032e7deaacf8",
   "stats_answers": "e97ebd0a2b28faefc10567c17f690efcd9ffeb8bfb4160571b5dd560909756ab",
   "stats_any_day": "55923cd97ecb3ac27c3d473b3634c6b743ef0d110123d38bf0eea6cba9b2d2f7",
   "stats_any_day_studied": "6760150c0c5a5acb8145309329d0c78193976be1bcaa71f5692fc320be25a777",
@@ -17,10 +17,10 @@
   "stats_best_day": "3dc73f55d73f8695f07ab556f7f1c375699b31bfb68916e963617fac21641760",
   "stats_best_time": "e1a6acc2bd22bdd8560fb025b9e006d9f67addfe53f5269509f96260ef7e5c4b",
   "stats_brain_power": "d3bb9ff02d892493ef012b468064eebf61750d32244e7bdcb940613a5806ff9d",
-  "stats_calendar_activity_summary": "1e4131b13731b3ae01b92e09e27ea7cbc603d7df0dc95991939a027fd834df23",
-  "stats_calendar_energy_summary": "244eaf15a6276dd0d719e33c64f98dffedb41ca8614f26116cc541f58359d507",
+  "stats_calendar_activity_summary": "6e3dfe91ad336d17e273a64c2089f229fc254393bb6dc5bc30fb2adab6336322",
+  "stats_calendar_energy_summary": "8e7ac48d996e729badf9b747473a2f86564a3d76f0c12b77eabbb5deacd53217",
   "stats_correct_of_total": "f5094d2eb1ba873df20c1cee35df97c45142750b53657d38670a02e91f588134",
-  "stats_days": "63f4a53f889dadadf9d6dbb6b7a0d9255ac9078d5edff6da51b894412261c015",
+  "stats_days": "ceb159d20f8d93be0f1b09fcec8286f0fb443d6ebe032e2f6e16fc394c2f62e9",
   "stats_days_even": "37efde0b62e23702dc06ce4406a52f371727ee12d0abb850edf0aaada4357ed1",
   "stats_empty_title": "f434b2ef164f33219e3f70a8dc0231dea78dfea8c92152c9250a743175660c8a",
   "stats_energy": "b682786da8300e2d41be394b6c8d454e8d676e3357ab01d7225f7d43e904f2fc",
@@ -36,7 +36,7 @@
   "stats_last_90": "b7578f79feb437b4b483d16a0b0e2f9d65f5b6d083be45e7514b515bae55f97f",
   "stats_less": "f655bacfe05c841303ea6c21028c43633174a6a67a33d0dd757206fb6ae6f551",
   "stats_lessons": "b0164410580713355ffafdd93cebd5963637c2055ec667e5a6f8e9afe4eb7fcb",
-  "stats_lessons_time": "534387f67e42925c753f17482a989c7104c4147e6ad365bf12b3261e547c19c9",
+  "stats_lessons_time": "7ad17c742cf0cbd69ac439074588506d5c38a84fc164ff243737e39d80def4fc",
   "stats_level": "34403377b3e2d9f78c8d611f05f86cbb06d1f3fdc553b85a4b72f7d65c65e4a4",
   "stats_level_line": "58a7242c1debe2afc055d01e0af3e170573717569351c92596fd14ac51117930",
   "stats_level_of": "e1d6c957c77dd51e0e4ed942ff4035748d74462e1fa805456f157b0fa703fe0e",
@@ -55,6 +55,7 @@
   "stats_not_yet": "7de0b22f3688fc6a5767e27b296522bfe8d60839cf6aaf85627479ce430b61a5",
   "stats_of_all_answers": "79d656eb3b3cac0d206d737f78e081ce0e7a253233f5590b3ae9cf1f70dcfec0",
   "stats_overview": "11fb6c0016027a644be58c9951008f1809cfc05d25ad5e13389a3f416724a683",
+  "stats_part_failed": "4cdd07523a0d2ec967ec07fca3be637956924715cc8b99af744725036d9aa4e8",
   "stats_past_year": "1e1eae063d7dfee1df5496a319a6871c456321190ad84c46549b5139527a922a",
   "stats_patterns": "70f91d2e38342b6077f375a6cab6144d73994fc56a3b5524fc4e2862ac186222",
   "stats_patterns_90": "8f21585c95210a4a163a96c386d292d266aba5c75af002a8d5e87cc6e7435ea5",
@@ -66,8 +67,9 @@
   "stats_right_last_90": "eaf6e8bd3a562c41ea9adf913ca05e74312d28b5f69de58aeb82f6e9a1d9ac26",
   "stats_score": "ee3b0c5cee8bd5bd0e12942b2097130ed9b5b608de8043f0dac256e8940fee69",
   "stats_score_90": "5d39306b5da5176661916f1cba911512a3e9b7e02de3fefef1ac68e4d0d82d40",
+  "stats_score_90_value": "1b9c0b9619b929873b0559d0fd2ff1ae8a6877a6f84be2790d899021cbff2cda",
   "stats_score_after_answers": "0d2d0f64f15b525dc8a0bf358fa3cbc67379ede81973027f92cdd14595e322fe",
-  "stats_score_answers": "c85dc86d77d452a46db74e616d45669b4336ad164a6efe18e29fb3e9a5b55d55",
+  "stats_score_answers": "f8271c357795b713972002f9b408b99c778e7d247da0ec3e6e16b8067f434e57",
   "stats_score_line": "5e9e321481207062e5b37563f968346b5486a9e8789f60609de2bd0ec9fb7286",
   "stats_score_percent": "1fbb83c5d609791b9be7b0dc1cf59d2fd3c9855558dc1f209d6c939f05533e91",
   "stats_see_all": "55133e68085ea7605323ecef79a040c518426314aef89be6732229e4e303f0fd",
@@ -99,16 +101,18 @@
     <string name="stats_empty_title">Commence à apprendre pour suivre tes progrès</string>
     <string name="stats_go_to_today">Aller à Aujourd’hui</string>
     <string name="stats_not_yet">Pas encore</string>
+    <string name="stats_part_failed">Impossible de charger cette partie.</string>
     <string name="stats_energy_average">Moyenne : %1$s</string>
     <string name="stats_study_days">Jours d’étude</string>
     <plurals name="stats_lessons_time">
-        <item quantity="one">%1$d leçon · %2$s</item>
-        <item quantity="many">%1$d leçons · %2$s</item>
-        <item quantity="other">%1$d leçons · %2$s</item>
+        <item quantity="one">%1$s leçon · %2$s</item>
+        <item quantity="many">%1$s leçons · %2$s</item>
+        <item quantity="other">%1$s leçons · %2$s</item>
     </plurals>
     <string name="stats_right_count">%1$s/%2$s bonnes réponses</string>
     <string name="stats_right_last_90">Bonnes réponses au cours des 90 derniers jours</string>
     <string name="stats_score_90">Score · 90 jours</string>
+    <string name="stats_score_90_value">Score · 90 jours · %1$s</string>
     <string name="stats_score_after_answers">Ton score s’affiche après tes premières réponses.</string>
     <string name="stats_patterns_90">Habitudes · 90 jours</string>
     <string name="stats_see_all">Tout voir</string>
@@ -146,16 +150,16 @@
     <string name="stats_less">Moins</string>
     <string name="stats_more">Plus</string>
     <plurals name="stats_calendar_activity_summary">
-        <item quantity="one">%1$d jour avec de l’activité au cours des 12 derniers mois, le plus actif étant celui avec %2$s</item>
-        <item quantity="many">%1$d jours avec de l’activité au cours des 12 derniers mois, le plus actif étant celui avec %2$s</item>
-        <item quantity="other">%1$d jours avec de l’activité au cours des 12 derniers mois, le plus actif étant celui avec %2$s</item>
+        <item quantity="one">%1$s jour avec de l’activité au cours des 12 derniers mois, le plus chargé avec %2$s</item>
+        <item quantity="many">%1$s jours avec de l’activité au cours des 12 derniers mois, le plus chargé avec %2$s</item>
+        <item quantity="other">%1$s jours avec de l’activité au cours des 12 derniers mois, le plus chargé avec %2$s</item>
     </plurals>
     <plurals name="stats_activities">
-        <item quantity="one">%1$d activité</item>
-        <item quantity="many">%1$d activités</item>
-        <item quantity="other">%1$d activités</item>
+        <item quantity="one">%1$s activité</item>
+        <item quantity="many">%1$s activités</item>
+        <item quantity="other">%1$s activités</item>
     </plurals>
-    <string name="stats_calendar_energy_summary">Énergie au cours des 12 derniers mois : %1$s en moyenne, %2$s aujourd’hui</string>
+    <string name="stats_calendar_energy_summary">Énergie au cours des 12 derniers mois : %1$s aujourd’hui, %2$s en moyenne depuis le début</string>
     <string name="stats_right_answers">Bonnes réponses</string>
     <string name="stats_right">Correctes</string>
     <string name="stats_of_all_answers">Sur toutes tes réponses</string>
@@ -163,9 +167,9 @@
     <string name="stats_period">Période</string>
     <string name="stats_back_from_today">À partir d’aujourd’hui</string>
     <plurals name="stats_days">
-        <item quantity="one">%1$d jour</item>
-        <item quantity="many">%1$d jours</item>
-        <item quantity="other">%1$d jours</item>
+        <item quantity="one">%1$s jour</item>
+        <item quantity="many">%1$s jours</item>
+        <item quantity="other">%1$s jours</item>
     </plurals>
     <string name="stats_score_line">Toutes les réponses comptent autant. Les leçons plus difficiles peuvent donc faire baisser ton score pendant un moment.</string>
     <string name="stats_week">Semaine</string>
@@ -179,14 +183,14 @@
         <item quantity="other">À %1$d points près</item>
     </plurals>
     <plurals name="stats_score_answers">
-        <item quantity="one">%1$s · %2$d réponse</item>
-        <item quantity="many">%1$s · %2$d réponses</item>
-        <item quantity="other">%1$s · %2$d réponses</item>
+        <item quantity="one">%1$s · %2$s réponse</item>
+        <item quantity="many">%1$s · %2$s réponses</item>
+        <item quantity="other">%1$s · %2$s réponses</item>
     </plurals>
     <plurals name="stats_answer_count">
-        <item quantity="one">%1$d réponse</item>
-        <item quantity="many">%1$d réponses</item>
-        <item quantity="other">%1$d réponses</item>
+        <item quantity="one">%1$s réponse</item>
+        <item quantity="many">%1$s réponses</item>
+        <item quantity="other">%1$s réponses</item>
     </plurals>
     <string name="stats_no_answers">Aucune réponse</string>
     <string name="stats_throughout_week">Tout au long de la semaine</string>

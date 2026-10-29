@@ -105,4 +105,15 @@ class FormattersTest {
         assertEquals("13:30", formatTimeOfDay(time, en, is24Hour = true))
         assertEquals("13:30", formatTimeOfDay(time, pt, is24Hour = true))
     }
+
+    @Test
+    fun hourRangesNameTheDayPeriodOnceWhenTheyShareIt() {
+        fun plain(range: String) = range.replace('\u2009', ' ').replace('\u202F', ' ')
+
+        assertEquals("12 – 6 AM", plain(formatHourRange(0, 6, en, is24Hour = false)))
+        assertEquals("6 AM – 12 PM", plain(formatHourRange(6, 12, en, is24Hour = false)))
+        assertEquals("6 PM – 12 AM", plain(formatHourRange(18, 24, en, is24Hour = false)))
+        assertEquals("18 – 00", plain(formatHourRange(18, 24, en, is24Hour = true)))
+        assertEquals("00h - 06h", plain(formatHourRange(0, 6, pt, is24Hour = true)))
+    }
 }

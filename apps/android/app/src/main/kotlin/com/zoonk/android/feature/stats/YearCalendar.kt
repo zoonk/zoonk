@@ -23,9 +23,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.ui.components.SectionHeader
 import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
-import java.time.temporal.WeekFields
-import java.util.Locale
+import java.time.temporal.ChronoUnit
 
 /** A day's band from 0 (nothing) to [levels]. */
 internal data class CalendarDay(
@@ -34,8 +32,9 @@ internal data class CalendarDay(
 )
 
 /**
- * Main's year calendars (Activity, Energy): a week per column, oldest at the start, each day in its
- * band of [color]. Drawn for the eye; TalkBack reads [summary] instead, as main's figure caption.
+ * Main's year calendars (Activity, Energy): a week per column from the first day the API sends
+ * (which starts its week), each day in its band of [color]. Drawn for the eye; TalkBack reads
+ * [summary] instead, as main's figure caption.
  */
 @Composable
 internal fun YearCalendar(
@@ -46,13 +45,12 @@ internal fun YearCalendar(
     low: String,
     high: String,
     summary: String,
-    locale: Locale,
     modifier: Modifier = Modifier,
 ) {
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
-    val firstDay = WeekFields.of(locale).firstDayOfWeek
-    val newest = days.maxOfOrNull { it.date } ?: return
-    val start = newest.minusWeeks(WEEKS - 1L).with(TemporalAdjusters.previousOrSame(firstDay))
+    val start = days.minOfOrNull { it.date } ?: return
+    val length = ChronoUnit.DAYS.between(start, days.maxOf { it.date }) + 1
+    val weeks = ((length + DAYS_PER_WEEK - 1) / DAYS_PER_WEEK).toInt()
     val bands = days.associate { it.date to it.band }
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
 
@@ -62,23 +60,19 @@ internal fun YearCalendar(
         Canvas(
             Modifier
                 .fillMaxWidth()
-                .aspectRatio(WEEKS / DAYS_PER_WEEK.toFloat())
+                .aspectRatio(weeks / DAYS_PER_WEEK.toFloat())
                 .clearAndSetSemantics { contentDescription = summary },
         ) {
             val gap = 2.dp.toPx()
-            val cell = (size.width - gap * (WEEKS - 1)) / WEEKS
+            val cell = (size.width - gap * (weeks - 1)) / weeks
             val radius = CornerRadius(cell / 4)
 
-            for (week in 0 until WEEKS) {
-                for (row in 0 until DAYS_PER_WEEK) {
-                    val date = start.plusDays(week * DAYS_PER_WEEK.toLong() + row)
-                    if (date.isAfter(newest)) continue
-
-                    val band = bands[date] ?: 0
-                    val fill = if (band == 0) track else color.copy(alpha = band.toFloat() / levels)
-                    val column = if (rtl) WEEKS - 1 - week else week
-                    drawRoundRect(fill, Offset(column * (cell + gap), row * (cell + gap)), Size(cell, cell), radius)
-                }
+            for (index in 0 until length.toInt()) {
+                val band = bands[start.plusDays(index.toLong())] ?: 0
+                val fill = if (band == 0) track else color.copy(alpha = band.toFloat() / levels)
+                val week = index / DAYS_PER_WEEK
+                val column = if (rtl) weeks - 1 - week else week
+                drawRoundRect(fill, Offset(column * (cell + gap), index % DAYS_PER_WEEK * (cell + gap)), Size(cell, cell), radius)
             }
         }
 
@@ -125,5 +119,4 @@ internal const val ACTIVITY_LEVELS = 4
 internal const val ENERGY_LEVELS = 5
 private const val ENERGY_STEP = 25.0
 private const val FULL_ENERGY = 100.0
-private const val WEEKS = 53
 private const val DAYS_PER_WEEK = 7

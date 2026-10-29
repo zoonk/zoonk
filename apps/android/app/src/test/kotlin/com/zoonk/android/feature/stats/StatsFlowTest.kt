@@ -2,6 +2,7 @@ package com.zoonk.android.feature.stats
 
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -17,12 +18,6 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
-import com.zoonk.api.ApiJson
-import com.zoonk.api.models.CurrentUserActivityResponseActivity
-import com.zoonk.api.models.CurrentUserEnergyResponseEnergy
-import com.zoonk.api.models.CurrentUserProgressResponse
-import com.zoonk.api.models.CurrentUserScorePatternsResponsePatterns
-import com.zoonk.api.models.CurrentUserScoreResponseScore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -43,6 +38,7 @@ class StatsFlowTest {
     private fun show(
         page: StatsPage,
         studied: Boolean = true,
+        api: FakeStatsApi = FakeStatsApi(studied),
     ) {
         rule.setContent {
             ZoonkTheme {
@@ -52,7 +48,7 @@ class StatsFlowTest {
                 val stats =
                     remember {
                         StatsStore(
-                            FakeStatsApi(studied),
+                            api,
                             AppCache(
                                 session,
                                 CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
@@ -70,9 +66,9 @@ class StatsFlowTest {
         show(StatsPage.Overview)
 
         rule.onNodeWithText("Yellow belt").assertIsDisplayed()
-        rule.onNodeWithText("Average 58%").assertIsDisplayed()
+        rule.onNodeWithText("Average 58.3%").assertIsDisplayed()
         rule.onNodeWithText("45/60 right").assertIsDisplayed()
-        rule.onNodeWithText("Average 58%").performClick()
+        rule.onNodeWithText("Average 58.3%").performClick()
 
         assertEquals(AppRoute.StatsEnergy, navigator.currentRoute)
     }
@@ -82,6 +78,25 @@ class StatsFlowTest {
         show(StatsPage.Overview, studied = false)
 
         rule.onNodeWithText("Start learning to track your progress").assertIsDisplayed()
+        rule.runOnIdle { navigator.open(AppRoute.Statistics) }
+        rule.onNodeWithText("Go to Today").performClick()
+
+        assertEquals(AppRoute.Today, navigator.currentRoute)
+    }
+
+    @Test
+    fun aPartThatFailedLoadsAgainOnRetry() {
+        val api = FakeStatsApi(studied = true).apply { activityFails = true }
+        show(StatsPage.Overview, api = api)
+
+        rule.onNodeWithText("We couldn't load this part.").assertIsDisplayed()
+        rule.onNodeWithText("Yellow belt").assertIsDisplayed()
+
+        api.activityFails = false
+        rule.onNodeWithText("Try again").performClick()
+
+        rule.onNodeWithText("Past 12 months").assertExists()
+        rule.onAllNodesWithText("We couldn't load this part.").assertCountEquals(0)
     }
 
     @Test

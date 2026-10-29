@@ -19,6 +19,18 @@ class StatsRulesTest {
     }
 
     @Test
+    fun tenAnswersCountAndNineDont() {
+        assertEquals(best, verdict(listOf(80.0 to 10L, 60.0 to 10L), best))
+        assertEquals(Verdict.NotEnough, verdict(listOf(80.0 to 10L, 60.0 to 9L), best))
+    }
+
+    @Test
+    fun aLeadOfFivePointsIsAPattern() {
+        assertEquals(best, verdict(listOf(80.0 to 12L, 75.0 to 12L), best))
+        assertEquals(Verdict.Even(5), verdict(listOf(80.0 to 12L, 75.1 to 12L), best))
+    }
+
+    @Test
     fun activityBandsAreRelativeToTheBusiestDay() {
         assertEquals(0, activityBand(0, 9))
         assertEquals(1, activityBand(1, 9))

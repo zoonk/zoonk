@@ -2,10 +2,12 @@ package com.zoonk.android.ui.format
 
 import android.icu.math.BigDecimal
 import android.icu.text.DateFormat
+import android.icu.text.DateIntervalFormat
 import android.icu.text.DecimalFormatSymbols
 import android.icu.text.ListFormatter
 import android.icu.text.MeasureFormat
 import android.icu.text.NumberFormat
+import android.icu.util.DateInterval
 import android.icu.util.Measure
 import android.icu.util.MeasureUnit
 import android.icu.util.TimeZone
@@ -59,14 +61,16 @@ fun formatNumber(
     }
 }
 
+/** A tenth of a point (`maximumFractionDigits = 1`) is main's `formatMetricPercent`, for averages and scores. */
 fun formatPercent(
     share: Double,
     locale: Locale,
+    maximumFractionDigits: Int = 0,
 ): String =
     NumberFormat
         .getPercentInstance(ULocale.forLocale(locale))
         .apply {
-            maximumFractionDigits = 0
+            this.maximumFractionDigits = maximumFractionDigits
             roundingMode = BigDecimal.ROUND_HALF_UP
         }.format(share)
 
@@ -118,6 +122,21 @@ fun formatTimeOfDay(
     locale: Locale,
     is24Hour: Boolean,
 ): String = formatUtc(Date(time.toSecondOfDay() * MILLIS_PER_SECOND), if (is24Hour) "Hm" else "hm", locale)
+
+/**
+ * Whole hours from [startHour] to [endHour] in the locale's interval style ("12–6 AM", "18–00").
+ * Both are read on one day, since a range ending on the next day's midnight would name both dates.
+ */
+fun formatHourRange(
+    startHour: Int,
+    endHour: Int,
+    locale: Locale,
+    is24Hour: Boolean,
+): String =
+    DateIntervalFormat
+        .getInstance(if (is24Hour) "HH" else "h", ULocale.forLocale(locale))
+        .apply { timeZone = TimeZone.GMT_ZONE }
+        .format(DateInterval(startHour * MILLIS_PER_HOUR, endHour % HOURS_PER_DAY * MILLIS_PER_HOUR))
 
 enum class DateStyle(
     internal val skeleton: String,
@@ -179,6 +198,8 @@ internal const val NO_BREAK_SPACE = ' '
 private const val SECONDS_PER_MINUTE = 60L
 private const val MINUTES_PER_HOUR = 60L
 private const val MILLIS_PER_SECOND = 1_000L
+private const val MILLIS_PER_HOUR = 3_600_000L
+private const val HOURS_PER_DAY = 24
 private const val MILLIS_PER_DAY = 86_400_000L
 
 private const val WHOLE_PERCENT = 0.01

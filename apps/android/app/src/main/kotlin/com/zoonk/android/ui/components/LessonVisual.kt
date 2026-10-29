@@ -78,6 +78,8 @@ sealed interface LessonVisual {
         val series: List<Series>,
         val unit: String? = null,
         val axisStart: Double? = null,
+        /** A fixed top for a scale with one, such as a score's 100%; otherwise the values set it. */
+        val axisEnd: Double? = null,
         val source: String? = null,
     ) : LessonVisual {
         @Serializable
@@ -260,8 +262,11 @@ private class ChartLayout(
     private val wholeNumbers = values.all { it == Math.floor(it) }
 
     private val domain =
-        niceDomain(visual.axisStart?.let { values + it } ?: values, includeZero = visual.chart == LessonVisual.Chart.Kind.Bar).let { nice ->
-            visual.axisStart?.let { it..nice.endInclusive } ?: nice
+        niceDomain(
+            values + listOfNotNull(visual.axisStart, visual.axisEnd),
+            includeZero = visual.chart == LessonVisual.Chart.Kind.Bar,
+        ).let { nice ->
+            (visual.axisStart ?: nice.start)..(visual.axisEnd ?: nice.endInclusive)
         }
 
     val ticks =

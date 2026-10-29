@@ -11,16 +11,18 @@
     <string name="stats_empty_title">Start learning to track your progress</string>
     <string name="stats_go_to_today">Go to Today</string>
     <string name="stats_not_yet">Not yet</string>
+    <string name="stats_part_failed">We couldn\'t load this part.</string>
 
     <string name="stats_energy_average">Average %1$s</string>
     <string name="stats_study_days">Study days</string>
     <plurals name="stats_lessons_time">
-        <item quantity="one">%1$d lesson · %2$s</item>
-        <item quantity="other">%1$d lessons · %2$s</item>
+        <item quantity="one">%1$s lesson · %2$s</item>
+        <item quantity="other">%1$s lessons · %2$s</item>
     </plurals>
     <string name="stats_right_count">%1$s/%2$s right</string>
     <string name="stats_right_last_90">Right answers in the last 90 days</string>
     <string name="stats_score_90">Score · 90 days</string>
+    <string name="stats_score_90_value">Score · 90 days · %1$s</string>
     <string name="stats_score_after_answers">Your score shows after your first answers.</string>
     <string name="stats_patterns_90">Patterns · 90 days</string>
     <string name="stats_see_all">See all</string>
@@ -61,14 +63,14 @@
     <string name="stats_less">Less</string>
     <string name="stats_more">More</string>
     <plurals name="stats_calendar_activity_summary">
-        <item quantity="one">%1$d day with activity in the past 12 months, the busiest with %2$s</item>
-        <item quantity="other">%1$d days with activity in the past 12 months, the busiest with %2$s</item>
+        <item quantity="one">%1$s day with activity in the past 12 months, the busiest with %2$s</item>
+        <item quantity="other">%1$s days with activity in the past 12 months, the busiest with %2$s</item>
     </plurals>
     <plurals name="stats_activities">
-        <item quantity="one">%1$d activity</item>
-        <item quantity="other">%1$d activities</item>
+        <item quantity="one">%1$s activity</item>
+        <item quantity="other">%1$s activities</item>
     </plurals>
-    <string name="stats_calendar_energy_summary">Energy over the past 12 months: %1$s on average, %2$s today</string>
+    <string name="stats_calendar_energy_summary">Energy over the past 12 months: %1$s today, %2$s on average since you started</string>
 
     <string name="stats_right_answers">Right answers</string>
     <string name="stats_right">Right</string>
@@ -77,8 +79,8 @@
     <string name="stats_period">Period</string>
     <string name="stats_back_from_today">Back from today</string>
     <plurals name="stats_days">
-        <item quantity="one">%1$d day</item>
-        <item quantity="other">%1$d days</item>
+        <item quantity="one">%1$s day</item>
+        <item quantity="other">%1$s days</item>
     </plurals>
     <string name="stats_score_line">Every answer counts the same, so harder lessons can lower your score for a while.</string>
     <string name="stats_week">Week</string>
@@ -92,12 +94,12 @@
         <item quantity="other">Within %1$d points</item>
     </plurals>
     <plurals name="stats_score_answers">
-        <item quantity="one">%1$s · %2$d answer</item>
-        <item quantity="other">%1$s · %2$d answers</item>
+        <item quantity="one">%1$s · %2$s answer</item>
+        <item quantity="other">%1$s · %2$s answers</item>
     </plurals>
     <plurals name="stats_answer_count">
-        <item quantity="one">%1$d answer</item>
-        <item quantity="other">%1$d answers</item>
+        <item quantity="one">%1$s answer</item>
+        <item quantity="other">%1$s answers</item>
     </plurals>
     <string name="stats_no_answers">No answers</string>
     <string name="stats_throughout_week">Throughout the week</string>
