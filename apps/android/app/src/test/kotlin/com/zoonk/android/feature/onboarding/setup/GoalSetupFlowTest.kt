@@ -27,12 +27,14 @@ import com.zoonk.android.feature.onboarding.EXAM_GOAL_ID
 import com.zoonk.android.feature.onboarding.FakeOnboardingApi
 import com.zoonk.android.feature.onboarding.GOAL_ID
 import com.zoonk.android.feature.onboarding.OnboardingStore
+import com.zoonk.android.feature.onboarding.levelTestOf
 import com.zoonk.android.feature.onboarding.setupView
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.OnboardingAnswerInput
+import com.zoonk.api.models.OnboardingAnswerInputOneOf9
 import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -228,5 +230,23 @@ class GoalSetupFlowTest {
         rule.waitForIdle()
         assertEquals(listOf(GOAL_ID), api.answers.map { it.first })
         rule.waitUntil(5_000) { runBlocking { drafts.words(GOAL_ID, "reason").value.first() } == null }
+    }
+
+    @Test
+    fun aLanguageGoalPlacesWithItsLevelTestWhoseEndAnswersPlacement() {
+        api.setup = { setupView(listOf("placement", "plan"), kind = "language", targetLanguage = "it") }
+        api.levelTest = levelTestOf(answered = 3)
+        show()
+
+        rule.onNodeWithText("When does Marco go to the market?").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Questions answered").assertIsDisplayed()
+        rule.onNodeWithText("Stop here and see my plan").performScrollTo().performClick()
+        api.reply = { goalId, _ -> setupView(listOf("plan"), goalId = goalId) }
+        rule.onNodeWithText("Build my plan").performScrollTo().performClick()
+        rule.waitForIdle()
+
+        assertEquals(1, api.finishedLevelTests)
+        val answer = api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value
+        assertEquals(OnboardingAnswerInputOneOf9.Question.PLACEMENT, answer.value.question)
     }
 }

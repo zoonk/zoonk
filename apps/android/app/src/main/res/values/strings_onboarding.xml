@@ -251,6 +251,35 @@
     <string name="onboarding_placement_continue_mock">Continue the mock exam</string>
     <string name="onboarding_placement_stop_mock">Stop and see my plan</string>
 
+    <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
+    <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
+    <string name="onboarding_language_test_title">Let\'s see your level in %1$s</string>
+    <string name="onboarding_language_test_description">About three minutes of reading, listening and one sentence out loud, so your plan starts at your level.</string>
+    <string name="onboarding_language_test_new_alphabet">New to its alphabet? Skip the test. Your first session starts with a short lesson on reading it.</string>
+    <string name="onboarding_language_test_skip">Skip the test</string>
+    <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
+    <string name="onboarding_language_test_use_app_in">Use the app in %1$s</string>
+    <string name="onboarding_language_test_preparing_title">Preparing your level test</string>
+    <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
+    <string name="onboarding_language_test_preparing_description">The %1$s test is new in your language, so its questions are being written now. It usually takes a minute or two, and only this once.</string>
+    <string name="onboarding_language_test_skip_note">Your plan starts from the level you gave, and your first sessions fine-tune it.</string>
+    <!-- Answers a listening question without guessing. -->
+    <string name="onboarding_language_test_did_not_understand">I didn\'t understand the audio</string>
+    <string name="onboarding_language_test_play">Play the message</string>
+    <string name="onboarding_language_test_play_again">Play the message again</string>
+    <string name="onboarding_language_test_message_loading">Getting the message ready. The first time can take a few seconds.</string>
+    <string name="onboarding_language_test_message">You got a voice message. Listen and answer.</string>
+    <string name="onboarding_language_test_say_it">Say it out loud</string>
+    <string name="onboarding_language_test_skip_part">Skip this part</string>
+    <string name="onboarding_language_test_done_title">Your level today</string>
+    <string name="onboarding_language_test_done_description">Based on the test. It gets more accurate every week.</string>
+    <string name="onboarding_language_test_build_plan">Build my plan</string>
+    <!-- Language skills, each beside its level. -->
+    <string name="onboarding_language_test_reading">Reading</string>
+    <string name="onboarding_language_test_listening">Listening</string>
+    <string name="onboarding_language_test_speaking">Speaking</string>
+    <string name="onboarding_language_test_writing">Writing</string>
+
     <!-- The plan reveal: the plan the setup built, ready to start. -->
     <string name="onboarding_reveal_building_title">Building your plan</string>
     <string name="onboarding_reveal_building_description">We\'re choosing what to learn first and fitting it into your days. A new subject can take a minute or two.</string>

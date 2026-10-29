@@ -91,6 +91,28 @@
   "onboarding_intent_understand": "89456833157e8ed1343e1a6f0b42a181e20f94b04d3f3a95d9b287bf70bb5f90",
   "onboarding_intent_understand_description": "3bc7fc66bf7562d0fd242f3053bf13ad9ce227a1b0092909f9bec079ad0cf06f",
   "onboarding_join_waitlist": "fc339691530b3aca241b78779642fafd6278b4a8a03af321f8e143bfc5b26756",
+  "onboarding_language_test_build_plan": "69e464df699419d32db26a92fcae4f246b81f7569ddfb6e5f2cead33e416ee08",
+  "onboarding_language_test_description": "017bfca8c6032e2d4521565a15f86df83d354fe29e4d423edfcdf7e745e5709c",
+  "onboarding_language_test_did_not_understand": "26aa7fb269a44c01ef46d3bbbf336ead47365c88817cfa4deac384121637234f",
+  "onboarding_language_test_done_description": "ff2aba09849985e755471ec1d490a09aac2ba23bd77a4111f8b6c7e7b05a475f",
+  "onboarding_language_test_done_title": "cd165b0e560a487b730f5ceb7dca5e9c04eb53dfad2437d81508c34fd814962b",
+  "onboarding_language_test_listening": "e4861e8df917772e5c4de09179cc87317baf0aaff513cbc1b44c542bbc5745ac",
+  "onboarding_language_test_message": "2439502cc683338a2a02c21ef053e531ba5d25a2cf2a5d3e82e7def28972d33c",
+  "onboarding_language_test_message_loading": "d5af2ef0dc8cc76d14e3f11796f08c433f1d8198c93159d7c0240b235eff4116",
+  "onboarding_language_test_new_alphabet": "c9d3c1ffcfa21da5b674b242557f14dd24cf62c8ce68b2dd87751a36f51bf630",
+  "onboarding_language_test_play": "bb71f558bdeb475de4ac51cf5eb90b0bae272d616116297bbe907340cb092cb1",
+  "onboarding_language_test_play_again": "b68df9f0ed2f48d1a7d68b45502882629e4c58b4ad2957a8efb6d2f9700fa84f",
+  "onboarding_language_test_preparing_description": "731f4fefc7c8100e1177fdba8aa98e995d7fabbef7abc7c15074831f4f91e46b",
+  "onboarding_language_test_preparing_title": "8f638ad848204386acc63bdf8156e4100daade32e5f364d2fd44d612afa6590b",
+  "onboarding_language_test_reading": "447d320b3399e9876cf2071a747b461f051873950c3025047a036f00a26d1d28",
+  "onboarding_language_test_say_it": "cf16d8564164d93c1cf0ca4a2a1b197d3591e7df3baf516d28efba977ab29cbe",
+  "onboarding_language_test_skip": "3c65abf71c1829fb7f0cb19f74b632cd50b2531f8fae8c2eed3662d6523df9ee",
+  "onboarding_language_test_skip_note": "fead112af633b7a1b3b62b5438851ed50f80079711a3f1da7715bf5d25c6e607",
+  "onboarding_language_test_skip_part": "113d8a615a19dd3d0cc9fd7c7cd3717d9c58cf4a50d445441b5568dffdddfd9b",
+  "onboarding_language_test_speaking": "5bea8f9773d471b13425e1e5a950cfb0842f7cbc92ad0a640eee2b26ce692948",
+  "onboarding_language_test_title": "3b67823605f6bd49380da6f14b5c5d04cc9777230ddae44c75a36b18c9d4ed29",
+  "onboarding_language_test_use_app_in": "79247269be4cdfc300e09fb38159ae4063dc242731c13f1d07cb0a1750b277e2",
+  "onboarding_language_test_writing": "e74362bf304c8b5d26befcc1dfad6092c1c68323011d8df17f7e089269b2caf9",
   "onboarding_level_advanced": "10a82e9f0f074d30d120fc7ac5cb1c80c400ad818d92757d7995e11a47cab540",
   "onboarding_level_advanced_description": "e8fed0aa2582900338e1bedd6017762db27310cb06eeec84f93f130ed738c5a8",
   "onboarding_level_basic": "9bed99de4abd13503275511f2dd1123e95744b49784013372dc5792a2300d210",
@@ -641,6 +663,34 @@
     <string name="onboarding_placement_mock_waiting_description">Mach dort weiter, wo du aufgehört hast, oder höre jetzt auf: Dein Plan basiert auf den Fragen, die du beantwortet hast.</string>
     <string name="onboarding_placement_continue_mock">Probeprüfung fortsetzen</string>
     <string name="onboarding_placement_stop_mock">Aufhören und meinen Plan ansehen</string>
+    <!-- The level test: a language goal's placement, in reading, listening and one sentence out loud. -->
+    <!-- %1$s is the name of the language the learner is learning, written as it reads in the middle of a sentence, such as "Italian". -->
+    <string name="onboarding_language_test_title">Finden wir dein Niveau in %1$s heraus</string>
+    <string name="onboarding_language_test_description">Etwa drei Minuten Lesen und Hören und ein Satz zum Vorlesen. So beginnt dein Plan auf deinem Niveau.</string>
+    <string name="onboarding_language_test_new_alphabet">Du kennst das Alphabet noch nicht? Überspring den Test. In deiner ersten Lerneinheit lernst du in einer kurzen Lektion, es zu lesen.</string>
+    <string name="onboarding_language_test_skip">Test überspringen</string>
+    <!-- Switches the app to the learner's own language. %1$s is that language's name in that language itself, such as "português". -->
+    <string name="onboarding_language_test_use_app_in">App auf %1$s umstellen</string>
+    <string name="onboarding_language_test_preparing_title">Wir bereiten deinen Einstufungstest vor</string>
+    <!-- %1$s is the name of the language the learner is learning, such as "Italian". -->
+    <string name="onboarding_language_test_preparing_description">Der Test für %1$s ist neu in deiner Sprache. Wir erstellen gerade die Fragen. Das dauert meistens ein bis zwei Minuten und passiert nur dieses eine Mal.</string>
+    <string name="onboarding_language_test_skip_note">Dein Plan startet auf dem Niveau, das du angegeben hast. In den ersten Lerneinheiten wird es genauer bestimmt.</string>
+    <!-- Answers a listening question without guessing. -->
+    <string name="onboarding_language_test_did_not_understand">Ich habe die Nachricht nicht verstanden</string>
+    <string name="onboarding_language_test_play">Nachricht abspielen</string>
+    <string name="onboarding_language_test_play_again">Nachricht noch einmal abspielen</string>
+    <string name="onboarding_language_test_message_loading">Wir bereiten die Nachricht vor. Beim ersten Mal kann das ein paar Sekunden dauern.</string>
+    <string name="onboarding_language_test_message">Du hast eine Sprachnachricht bekommen. Hör sie dir an und antworte.</string>
+    <string name="onboarding_language_test_say_it">Sag es laut</string>
+    <string name="onboarding_language_test_skip_part">Diesen Teil überspringen</string>
+    <string name="onboarding_language_test_done_title">Dein Niveau heute</string>
+    <string name="onboarding_language_test_done_description">Das Ergebnis basiert auf dem Test und wird jede Woche genauer.</string>
+    <string name="onboarding_language_test_build_plan">Meinen Plan erstellen</string>
+    <!-- Language skills, each beside its level. -->
+    <string name="onboarding_language_test_reading">Lesen</string>
+    <string name="onboarding_language_test_listening">Hören</string>
+    <string name="onboarding_language_test_speaking">Sprechen</string>
+    <string name="onboarding_language_test_writing">Schreiben</string>
     <!-- The plan reveal: the plan the setup built, ready to start. -->
     <string name="onboarding_reveal_building_title">Dein Plan wird erstellt</string>
     <string name="onboarding_reveal_building_description">Wir wählen aus, was du zuerst lernst, und teilen es auf deine Tage auf. Ein neues Fach kann ein bis zwei Minuten dauern.</string>

@@ -16,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -25,6 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -32,6 +34,8 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
@@ -40,7 +44,12 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.StepState
 import com.zoonk.android.data.StepTimes
+import com.zoonk.android.feature.audio.AudioOutput
+import com.zoonk.android.feature.audio.PlaybackEnd
+import com.zoonk.android.feature.audio.SpeechPlayer
+import com.zoonk.android.feature.audio.VoiceFiles
 import com.zoonk.android.feature.onboarding.setup.GoalSetupScreen
+import com.zoonk.android.feature.onboarding.setup.LocalSetupSpeech
 import com.zoonk.android.feature.onboarding.setup.PlacementStep
 import com.zoonk.android.feature.onboarding.setup.PlanRevealStep
 import com.zoonk.android.feature.onboarding.start.StartGoalScreen
@@ -52,6 +61,7 @@ import com.zoonk.api.models.PlanTimeAdvice
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import okhttp3.OkHttpClient
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -60,6 +70,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
+import org.robolectric.util.ReflectionHelpers
 import java.io.File
 import java.time.LocalDate
 
@@ -124,6 +135,43 @@ class OnboardingScreenshots {
         run = GenerationRun(status = GenerationRun.Status.Failed, failure = GenerationFailure.Generation)
         compose.waitForIdle()
         write("placement-waiting-failed-phone-screen", compose.onRoot().captureToImage().asAndroidBitmap())
+    }
+
+    /** The questions of a new language pair wait for the learner's Start, so it's tapped first. */
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun levelTestWaiting() = captureLevelTestWaiting("phone-screen")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-night-xxhdpi")
+    fun levelTestWaitingDarkMoreContrast() = captureLevelTestWaiting("phone-dark-more-contrast", dark = true, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h1400dp-xxhdpi")
+    fun levelTestWaitingAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureLevelTestWaiting("phone-font200")
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun levelTestWaitingTablet() = captureLevelTestWaiting("tablet")
+
+    private fun captureLevelTestWaiting(
+        name: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        val api = FakeOnboardingApi().apply { levelTest = preparingTestOf() }
+        compose.setContent { ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) { Surface { LevelTest(api) } } }
+        compose.onNodeWithText("Start").performClick()
+        compose.waitForIdle()
+        write("level-test-waiting-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+
+        api.levelTest = preparingTestOf(startedAt = "2026-10-29T10:00:03Z")
+        compose.mainClock.advanceTimeBy(3_500)
+        compose.waitForIdle()
+        write("level-test-writing-$name", compose.onRoot().captureToImage().asAndroidBitmap())
     }
 
     private fun capture(
@@ -315,7 +363,76 @@ class OnboardingScreenshots {
                     )
                 },
                 "setup-buddy" to { Setup(FakeOnboardingApi().apply { setup = { setupView(listOf("buddy", "plan")) } }) },
+                "level-test-intro" to { LevelTest(FakeOnboardingApi(), targetLanguage = "ja", native = "pt") },
+                "level-test-reading" to { LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(answered = 3) }) },
+                "level-test-listening" to {
+                    LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(next = listeningQuestion(), answered = 6) })
+                },
+                "level-test-speaking" to {
+                    LevelTest(FakeOnboardingApi().apply { levelTest = levelTestOf(next = SPEAKING_NEXT, answered = 11) })
+                },
+                "level-test-done" to {
+                    LevelTest(
+                        FakeOnboardingApi().apply {
+                            levelTest =
+                                levelTestOf(
+                                    next = DONE_NEXT,
+                                    answered = 12,
+                                    levels =
+                                        listOf(
+                                            skillLevelOf("reading", "B1", 2.0),
+                                            skillLevelOf("listening", "A2+", 1.5),
+                                            skillLevelOf("speaking", "A2", 1.0),
+                                        ),
+                                )
+                        },
+                    )
+                },
             )
+
+        /**
+         * A language goal's setup at its level test, with the app's locale config, which Robolectric
+         * doesn't read from the manifest, and a speech player that never plays.
+         */
+        @Composable
+        private fun LevelTest(
+            api: FakeOnboardingApi,
+            targetLanguage: String = "it",
+            native: String = "en",
+        ) {
+            val context = LocalContext.current
+            val speech =
+                remember {
+                    val config = context.resources.getIdentifier("_generated_res_locale_config", "xml", context.packageName)
+                    ReflectionHelpers.setField(context.applicationInfo, "localeConfigRes", config)
+                    api.setup = {
+                        setupView(
+                            listOf("placement", "plan"),
+                            kind = "language",
+                            details = """{"answered":["level","schedule"],"nativeLanguage":"$native"}""",
+                            targetLanguage = targetLanguage,
+                        )
+                    }
+                    val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+                    SpeechPlayer(
+                        clips = { _, _, _, _ -> throw ApiException(ApiError.Unavailable) },
+                        files = VoiceFiles(File(context.cacheDir, "voice"), OkHttpClient(), { false }, session),
+                        output =
+                            object : AudioOutput {
+                                override suspend fun play(
+                                    file: File,
+                                    rate: Float,
+                                    onStart: () -> Unit,
+                                ) = PlaybackEnd.Ended
+
+                                override fun stop() = Unit
+                            },
+                        sessions = session,
+                        scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+                    )
+                }
+            CompositionLocalProvider(LocalSetupSpeech provides speech) { Setup(api) }
+        }
 
         @Composable
         private fun Setup(api: FakeOnboardingApi) {

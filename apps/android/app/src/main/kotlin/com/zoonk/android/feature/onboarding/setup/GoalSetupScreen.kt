@@ -83,6 +83,7 @@ fun GoalSetupScreen(
     CompositionLocalProvider(
         LocalPrivatePictures provides PrivatePictures(app.images, signedIn?.session),
         LocalSetupDrafts provides signedIn?.session?.let { SetupDrafts(app.drafts, it) },
+        LocalSetupSpeech provides app.speech,
     ) {
         GoalSetupScreen(route, app.onboarding, isGuest = signedIn?.isGuest == true, navigator)
     }
@@ -273,22 +274,39 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.PLACEMENT -> {
-            PlacementStep(
-                goalId = view.goal.id.toString(),
-                subject = subject,
-                areaCount = view.examSubjects.size,
-                run = run,
-                onRetryRun = onRetryRun,
-                store = store,
-                navigator = navigator,
-                onProgress = { vm.placementProgress = it },
-                onDone = {
-                    vm.answer(
-                        OnboardingAnswerInputOneOf9Value(OnboardingAnswerInputOneOf9(OnboardingAnswerInputOneOf9.Question.PLACEMENT)),
-                        from = OnboardingStep.PLACEMENT,
-                    )
-                },
-            )
+            val placed = {
+                vm.answer(
+                    OnboardingAnswerInputOneOf9Value(OnboardingAnswerInputOneOf9(OnboardingAnswerInputOneOf9.Question.PLACEMENT)),
+                    from = OnboardingStep.PLACEMENT,
+                )
+            }
+            val targetLanguage = view.goal.targetLanguage
+            if (view.goal.kind == Goal.Kind.LANGUAGE && targetLanguage != null) {
+                LanguageLevelTestStep(
+                    goalId = view.goal.id.toString(),
+                    language =
+                        view.goal.details
+                            .text("nativeLanguage")
+                            ?.takeIf(String::isNotBlank) ?: view.goal.language,
+                    targetLanguage = targetLanguage,
+                    store = store,
+                    navigator = navigator,
+                    onProgress = { vm.placementProgress = it },
+                    onDone = placed,
+                )
+            } else {
+                PlacementStep(
+                    goalId = view.goal.id.toString(),
+                    subject = subject,
+                    areaCount = view.examSubjects.size,
+                    run = run,
+                    onRetryRun = onRetryRun,
+                    store = store,
+                    navigator = navigator,
+                    onProgress = { vm.placementProgress = it },
+                    onDone = placed,
+                )
+            }
         }
 
         OnboardingStep.PLAN -> {

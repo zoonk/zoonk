@@ -5,6 +5,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.CreateUploadRequest
@@ -13,6 +14,11 @@ import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
 import com.zoonk.api.models.GoalGenerationRun
+import com.zoonk.api.models.LanguageLevelTest
+import com.zoonk.api.models.LanguageLevelTestAnswerInput
+import com.zoonk.api.models.LanguageLevelTestGeneration
+import com.zoonk.api.models.LanguageLevelTestSpokenResult
+import com.zoonk.api.models.LanguageLevelTestSpokenResultHeard
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
 import com.zoonk.api.models.MockOptions
@@ -91,6 +97,7 @@ internal fun setupView(
     kind: String = "learn",
     details: String = """{"answered":[]}""",
     targetDate: String? = null,
+    targetLanguage: String? = null,
 ): Onboarding =
     ApiJson.decodeFromString(
         """
@@ -100,7 +107,7 @@ internal fun setupView(
           "isActive":true,"kind":"$kind","language":"en","plan":null,"primaryCourseId":null,"prompt":"learn statistics","status":"active",
           "studyDays":[],"studyTime":null,"targetDate":${targetDate?.let {
             "\"$it\""
-        } ?: "null"},"targetLanguage":null,"timezone":null,"title":"Learn statistics"}}
+        } ?: "null"},"targetLanguage":${targetLanguage?.let { "\"$it\"" } ?: "null"},"timezone":null,"title":"Learn statistics"}}
         """.trimIndent(),
     )
 
@@ -326,4 +333,61 @@ internal class FakeOnboardingApi : OnboardingApi {
         session: AuthenticatedSession,
         goalId: String,
     ): Syllabus = syllabus
+
+    var levelTest: LanguageLevelTest = levelTestOf()
+    var levelTestReads = 0
+    var preparation = LanguageLevelTestGeneration(generationId = "bank-run", status = LanguageLevelTestGeneration.Status.STARTED)
+    var prepared = 0
+    var levelTestAnswered: (LanguageLevelTestAnswerInput) -> LanguageLevelTest = { levelTestOf(answered = 1, next = DONE_NEXT) }
+    val levelTestAnswers = mutableListOf<LanguageLevelTestAnswerInput>()
+    var spoken: () -> LanguageLevelTest = { levelTestOf(answered = 1, next = DONE_NEXT) }
+    val spokenTakes = mutableListOf<VoiceRecording>()
+    var finishedLevelTests = 0
+
+    override suspend fun levelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): LanguageLevelTest {
+        levelTestReads++
+        return levelTest
+    }
+
+    override suspend fun prepareLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): LanguageLevelTestGeneration {
+        prepared++
+        writeFailure?.let { throw it }
+        return preparation
+    }
+
+    override suspend fun answerLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: LanguageLevelTestAnswerInput,
+    ): LanguageLevelTest {
+        levelTestAnswers += input
+        writeFailure?.let { throw it }
+        levelTest = levelTestAnswered(input)
+        return levelTest
+    }
+
+    override suspend fun speakLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+        recording: VoiceRecording,
+    ): LanguageLevelTestSpokenResult {
+        spokenTakes += recording
+        writeFailure?.let { throw it }
+        levelTest = spoken()
+        return LanguageLevelTestSpokenResult(LanguageLevelTestSpokenResultHeard(1.0, "Vorrei un caffè", emptyList()), levelTest)
+    }
+
+    override suspend fun finishLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) {
+        writeFailure?.let { throw it }
+        finishedLevelTests++
+    }
 }

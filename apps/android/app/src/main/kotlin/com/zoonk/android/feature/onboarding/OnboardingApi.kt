@@ -8,6 +8,7 @@ import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.withBearer
+import com.zoonk.android.feature.audio.VoiceRecording
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.CreateUploadRequest
@@ -18,6 +19,10 @@ import com.zoonk.api.models.GoalGenerationRun
 import com.zoonk.api.models.GoalUnderstandingInput
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.JoinInstrumentWaitlistRequest
+import com.zoonk.api.models.LanguageLevelTest
+import com.zoonk.api.models.LanguageLevelTestAnswerInput
+import com.zoonk.api.models.LanguageLevelTestGeneration
+import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
 import com.zoonk.api.models.MockOptions
@@ -206,6 +211,35 @@ interface OnboardingApi {
         session: AuthenticatedSession,
         goalId: String,
     ): Syllabus
+
+    /** Reading it never starts writing the language pair's questions. */
+    suspend fun levelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): LanguageLevelTest
+
+    /** Starts writing the pair's questions, or joins the run already writing them. */
+    suspend fun prepareLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+    ): LanguageLevelTestGeneration
+
+    suspend fun answerLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: LanguageLevelTestAnswerInput,
+    ): LanguageLevelTest
+
+    suspend fun speakLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+        recording: VoiceRecording,
+    ): LanguageLevelTestSpokenResult
+
+    suspend fun finishLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+    )
 }
 
 class LiveOnboardingApi(
@@ -463,6 +497,35 @@ class LiveOnboardingApi(
         session: AuthenticatedSession,
         goalId: String,
     ) = perform { api.clients(session).learner.getGoalSyllabus(UUID.fromString(goalId)) }
+
+    override suspend fun levelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = perform { api.clients(session).language.getLanguageLevelTest(UUID.fromString(goalId)) }
+
+    override suspend fun prepareLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) = perform { api.clients(session).language.createLanguageLevelTestGeneration(UUID.fromString(goalId)) }
+
+    override suspend fun answerLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+        input: LanguageLevelTestAnswerInput,
+    ) = perform { api.clients(session).language.answerLanguageLevelTest(UUID.fromString(goalId), input) }
+
+    override suspend fun speakLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+        recording: VoiceRecording,
+    ) = perform { api.streamingClients(session).language.answerLanguageLevelTestOutLoud(UUID.fromString(goalId), recording.part()) }
+
+    override suspend fun finishLevelTest(
+        session: AuthenticatedSession,
+        goalId: String,
+    ) {
+        perform { api.clients(session).language.finishLanguageLevelTest(UUID.fromString(goalId)) }
+    }
 }
 
 @Serializable

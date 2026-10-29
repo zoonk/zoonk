@@ -2,6 +2,7 @@ package com.zoonk.android.feature.onboarding
 
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Goal
+import com.zoonk.api.models.LanguageLevelTest
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.Plan
@@ -189,3 +190,46 @@ internal fun syllabusOf(
     )
 
 internal fun examGoal(): Goal = goalCreated().goals.single()
+
+internal fun readingQuestion(
+    id: String = "reading-1",
+    passage: String = "Marco va al mercato ogni sabato.",
+) = """
+    {"kind":"question","question":{"id":"$id","level":"A2","options":["Every Saturday","Every Sunday","Never"],
+     "passage":"$passage","question":"When does Marco go to the market?","skill":"reading"}}
+    """.trimIndent()
+
+internal fun listeningQuestion(id: String = "listening-1") =
+    """
+    {"kind":"question","question":{"id":"$id","level":"A2","options":["At the station","At home"],
+     "passage":"Ci vediamo alla stazione alle otto.","question":"Where are they meeting?","skill":"listening"}}
+    """.trimIndent()
+
+internal const val SPEAKING_NEXT =
+    """{"kind":"speaking","speaking":{"level":"A2","sentence":"Vorrei un caffè, per favore.","translation":"I'd like a coffee, please."}}"""
+
+internal const val DONE_NEXT = """{"kind":"done"}"""
+
+internal fun skillLevelOf(
+    skill: String,
+    label: String,
+    score: Double,
+) = """{"label":"$label","score":$score,"skill":"$skill"}"""
+
+internal fun levelTestOf(
+    next: String = readingQuestion(),
+    answered: Int = 0,
+    total: Int = 12,
+    levels: List<String> = emptyList(),
+): LanguageLevelTest =
+    ApiJson.decodeFromString(
+        """
+        {"answered":$answered,"lastCorrect":null,"levels":[${levels.joinToString(",")}],"next":$next,"status":"ready",
+         "targetLanguage":"it","total":$total}
+        """.trimIndent(),
+    )
+
+internal fun preparingTestOf(startedAt: String? = null): LanguageLevelTest =
+    ApiJson.decodeFromString(
+        """{"expectedSeconds":120,"startedAt":${startedAt?.let { "\"$it\"" } ?: "null"},"status":"preparing"}""",
+    )

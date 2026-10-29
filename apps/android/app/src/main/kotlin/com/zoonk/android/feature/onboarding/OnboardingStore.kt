@@ -9,6 +9,9 @@ import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Replacement
 import com.zoonk.android.data.SessionSource
+import com.zoonk.android.feature.audio.GradeOutcome
+import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.audio.toGradeOutcome
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.CreateUploadRequestOneOf
@@ -17,6 +20,9 @@ import com.zoonk.api.models.CreateUploadRequestOneOf2
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalGenerationRun
+import com.zoonk.api.models.LanguageLevelTest
+import com.zoonk.api.models.LanguageLevelTestAnswerInput
+import com.zoonk.api.models.LanguageLevelTestSpokenResult
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
 import com.zoonk.api.models.MockOptions
@@ -360,6 +366,43 @@ class OnboardingStore(
         mockId: String,
     ) = write(setOf(DataDomain.LearnerModel)) { api.finishMock(it, mockId) }
         .also { if (it is WriteOutcome.Done) placementMocks[goalId].invalidate() }
+
+    /** A language goal's level test; each answer replies with its next step. */
+    val levelTests =
+        cache.keyed<String, LanguageLevelTest>(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId ->
+            session?.let { api.levelTest(it, goalId) }
+        }
+
+    suspend fun prepareLevelTest(goalId: String) = write { api.prepareLevelTest(it, goalId) }
+
+    suspend fun answerLevelTest(
+        goalId: String,
+        questionId: String,
+        answerIndex: Long?,
+        durationMs: Long,
+    ) = write(replacing = { listOf(levelTests[goalId].replacing(it)) }) {
+        api.answerLevelTest(it, goalId, LanguageLevelTestAnswerInput(questionId, answerIndex, durationMs))
+    }
+
+    /** The recorder's grading write; its reply is the test's next step. */
+    suspend fun speakLevelTest(
+        goalId: String,
+        recording: VoiceRecording,
+    ): GradeOutcome<LanguageLevelTestSpokenResult> =
+        cache
+            .mutate(setOf(DataDomain.Allowance), replacing = { listOf(levelTests[goalId].replacing(it.test)) }) {
+                api.speakLevelTest(it, goalId, recording)
+            }.toGradeOutcome()
+
+    /** Saves the test's levels as the plan's start; a test whose questions were never written has none to save. */
+    suspend fun finishLevelTest(goalId: String) =
+        write(setOf(DataDomain.Goals, DataDomain.UserProgress)) { session ->
+            try {
+                api.finishLevelTest(session, goalId)
+            } catch (e: ApiException) {
+                if (e.code != "LEVEL_TEST_PREPARING") throw e
+            }
+        }
 }
 
 /** [period] is `day`, `month` or `total`; [resource] what ran out (`goal`, `activeGoals`, `upload`); [tier] `guest`, `free` or `plus`. */
