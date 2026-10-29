@@ -68,6 +68,25 @@ class MainActivityTest {
     }
 
     @Test
+    fun aReturnFromRecentsAfterARestartKeepsTheRestoredStack() {
+        val before = Robolectric.buildActivity(MainActivity::class.java).setup()
+        rule.onNode(hasText("Today") and isSelected()).assertIsDisplayed()
+        val saved = Bundle()
+        before
+            .saveInstanceState(saved)
+            .pause()
+            .stop()
+            .destroy()
+        createdInThisProcess = false
+
+        val fromRecents = link("https://zoonk.com/start?goal=learn+piano").addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY)
+        Robolectric.buildActivity(MainActivity::class.java, fromRecents).setup(saved)
+
+        rule.onNode(hasText("Today") and isSelected()).assertIsDisplayed()
+        rule.onNodeWithText("learn piano").assertDoesNotExist()
+    }
+
+    @Test
     fun aLinkTheAppHasNoPlaceForOpensToday() {
         Robolectric.buildActivity(MainActivity::class.java, link("https://zoonk.com/auth/apple?token=abc")).setup()
 

@@ -23,9 +23,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        // Only a recreation in this process (a rotation or a resize) already opened its link. After a
-        // restart Android restores the old stacks with the launching intent, and the link wins.
-        if (savedInstanceState == null || !createdInThisProcess) {
+        // A recreation in this process (a rotation or a resize) already opened its link, and so did a
+        // return from Recents, which hands back the original intent. Only a new launch after a restart
+        // brings a link to open over the restored stacks.
+        val fromHistory = intent.flags and Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY != 0
+        if (!fromHistory && (savedInstanceState == null || !createdInThisProcess)) {
             pendingLink = intent.appLink()
         }
         createdInThisProcess = true
