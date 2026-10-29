@@ -167,7 +167,7 @@ struct QuestionBlockView: View {
         }
 
         if let drill = run.drill, !drill.isIdeaFirst, run.isFirstOfDrill || drill.isReadFirst {
-          DrillNoteView(drill: drill, isAnswered: graded != nil)
+          DrillNoteView(drill: drill)
         }
 
         if let seconds = run.drill?.timeLimitSeconds, phase == .answering {
