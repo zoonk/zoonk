@@ -374,6 +374,16 @@ private struct CheckpointResultView: View {
             correct: correct, total: total,
             // A win's Brain Power is its rewards' first row, as on main.
             brainPower: won ? 0 : state.completion?.ownBrainPower ?? 0,
+            facts: won
+              ? []
+              : (result?.passMark).map { passMark in
+                [
+                  String(
+                    localized: "\(passMark) of \(state.questionCount) right to win",
+                    table: "Practice",
+                    comment: "Under a lost phase challenge's score: the right answers it needed.")
+                ]
+              } ?? [],
             reached: PracticeReached(
               energy: state.completion?.reached.energy,
               level: state.completion?.reached.level.map {
