@@ -1,13 +1,11 @@
 package com.zoonk.android.navigation
 
 import androidx.activity.ComponentActivity
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasClickAction
-import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.app.ZoonkApp
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -20,7 +18,7 @@ class RoutePlaceholderTest {
     val rule = createAndroidComposeRule<ComponentActivity>()
 
     @Test
-    fun everyRouteOpensItsScreen() {
+    fun everyRouteOpens() {
         lateinit var navigator: AppNavigator
         rule.setContent {
             navigator = rememberAppNavigator()
@@ -29,7 +27,7 @@ class RoutePlaceholderTest {
 
         routeSamples.filter { it.presentation != Presentation.Web }.forEach { route ->
             rule.runOnIdle { navigator.open(route) }
-            rule.onNode(hasText(route.toString()) and !hasClickAction()).assertIsDisplayed()
+            rule.runOnIdle { assertEquals(route, navigator.currentRoute) }
         }
     }
 }

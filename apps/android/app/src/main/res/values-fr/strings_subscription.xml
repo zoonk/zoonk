@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "subscription_available_with_plus": "7cd7b0aaee2632e2489afa3f3f925647a7c42923529005cf98f9bd78c9820013",
+  "subscription_plus": "d227331db2ddb53b35779128abcfbe57a5110ce9331d9b8dbd1cddaeb0c0d1cb"
+}
+-->
+<resources>
+    <string name="subscription_plus">Plus</string>
+    <string name="subscription_available_with_plus">Disponible avec Plus</string>
+</resources>

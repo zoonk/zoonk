@@ -6,4 +6,59 @@
     <string name="account_welcome_have_account">Already have an account?</string>
     <string name="account_terms">Terms of Service</string>
     <string name="account_privacy">Privacy Policy</string>
+    <string name="account_sign_in_title">Sign in or create an account</string>
+    <string name="account_sign_in_expired">That sign-in expired. Try again.</string>
+    <string name="account_continue_with_google">Continue with Google</string>
+    <string name="account_continue_with_apple">Continue with Apple</string>
+    <string name="account_or">Or</string>
+    <string name="account_email">Email</string>
+    <string name="account_email_placeholder">me@gmail.com</string>
+    <string name="account_continue">Continue</string>
+    <!-- %1$s is "Terms of Service" and %2$s is "Privacy Policy", each a link. -->
+    <string name="account_agreement">By clicking on Continue, you agree to our %1$s and %2$s.</string>
+    <string name="account_check_email_title">Check your email</string>
+    <!-- %1$s is an email address. -->
+    <string name="account_check_email_description">Enter the code we sent to %1$s.</string>
+    <string name="account_code_label">Code from the email</string>
+    <string name="account_send_new_code">Send a new code</string>
+    <string name="account_did_not_get_it">Didn\'t get it?</string>
+    <string name="account_send_again">Send again</string>
+    <string name="account_change_email">Change email</string>
+    <!-- %1$s is an email address. -->
+    <string name="account_new_code_sent">We sent a new code to %1$s.</string>
+    <string name="account_new_code_wait">Wait a minute before asking for another code.</string>
+    <string name="account_new_code_failed">We couldn\'t send a new code. Try again.</string>
+    <string name="account_failure_invalid_email">Enter a valid email address</string>
+    <string name="account_failure_disposable_email">Temporary email addresses aren\'t supported. Use another email or a privacy alias.</string>
+    <string name="account_failure_bot_detected">A security check blocked this request. Try Continue with Google, or contact hello@zoonk.com.</string>
+    <string name="account_failure_network">Zoonk couldn\'t connect. Check your connection and try again.</string>
+    <string name="account_failure_rate_limited">Too many tries. Wait a minute, then try again.</string>
+    <string name="account_failure_wrong_code">That code isn\'t right. Check the email and try again.</string>
+    <string name="account_failure_code_expired">This code expired. Get a new one.</string>
+    <string name="account_failure_code_locked">Too many wrong tries with this code. Get a new one.</string>
+    <string name="account_failure_sign_in">There was an error signing you in. Please try again or contact hello@zoonk.com</string>
+    <string name="account_setup_title">What should we call you?</string>
+    <string name="account_setup_description">You can change it later in your profile.</string>
+    <string name="account_name">Name</string>
+    <string name="account_username">Username</string>
+    <!-- %1$s is a username. -->
+    <string name="account_username_line">Your username: @%1$s</string>
+    <string name="account_change">Change</string>
+    <string name="account_change_username">Change username</string>
+    <string name="account_username_checking">Checking…</string>
+    <!-- %1$s is a username. -->
+    <string name="account_username_available">%1$s is available</string>
+    <!-- %1$s is a username. -->
+    <string name="account_username_taken">%1$s is already taken</string>
+    <string name="account_username_rules">3–30 characters. Letters, numbers, and underscores only.</string>
+    <string name="account_save_failed">We couldn\'t save your profile. Try again.</string>
+    <string name="account_menu_settings">Settings</string>
+    <string name="account_menu_subscription">Subscription</string>
+    <string name="account_menu_pricing">Pricing</string>
+    <string name="account_menu_help">Help</string>
+    <string name="account_menu_log_out">Log out</string>
+    <string name="account_menu_create_account">Create an account</string>
+    <string name="account_sign_out_failed">Zoonk couldn\'t log you out. Check your connection and try again.</string>
+    <string name="account_unavailable_title">We couldn\'t check your account</string>
+    <string name="account_unavailable_description">You\'re still signed in. It might be your connection, so try again in a moment.</string>
 </resources>

@@ -222,6 +222,15 @@ class SessionStore(
         return SignInResult.Obsolete
     }
 
+    /** A profile write's answer, shown only while [session] is still the one signed in. */
+    fun showAccount(
+        session: AuthenticatedSession,
+        account: MeResponse,
+    ) {
+        val signedIn = mutableState.value as? SessionState.SignedIn ?: return
+        if (signedIn.session == session) mutableState.value = signedIn.copy(account = account)
+    }
+
     override suspend fun expire(session: AuthenticatedSession) = leave(session, sessionEnded = true)
 
     suspend fun forgetDeletedAccount(session: AuthenticatedSession) = leave(session, sessionEnded = false)

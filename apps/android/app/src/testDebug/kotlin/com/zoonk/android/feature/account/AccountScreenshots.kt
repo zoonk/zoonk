@@ -2,20 +2,34 @@ package com.zoonk.android.feature.account
 
 import android.graphics.Bitmap
 import androidx.activity.ComponentActivity
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onRoot
+import androidx.lifecycle.SavedStateHandle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.BIA
+import com.zoonk.android.data.DraftStore
+import com.zoonk.android.data.FakeSessionApi
+import com.zoonk.android.data.MemoryCredentials
+import com.zoonk.android.data.SessionStore
+import com.zoonk.android.data.account
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.ZoonkTheme
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -68,13 +82,13 @@ class AccountScreenshots {
         var index by mutableIntStateOf(0)
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
-                Surface { key(index) { SCREENS[index].second() } }
+                Surface { key(index) { screens[index].second() } }
             }
         }
-        SCREENS.indices.forEach { screen ->
+        screens.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            write("${SCREENS[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            write("${screens[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
     }
 
@@ -87,10 +101,45 @@ class AccountScreenshots {
         println("Screenshot ${file.path}")
     }
 
-    private companion object {
-        val SCREENS: List<Pair<String, @Composable () -> Unit>> =
-            listOf(
-                "welcome" to { VisitorWelcome(rememberAppNavigator(), PaddingValues()) },
+    private val stores by lazy {
+        val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+        val context = RuntimeEnvironment.getApplication()
+        val sessions =
+            SessionStore(
+                FakeSessionApi().apply { accounts += "token-b" to BIA },
+                MemoryCredentials(),
+                DraftStore(File(context.cacheDir, "drafts"), scope),
+                onChange = { _, _ -> },
+                clearCredentialState = {},
             )
+        sessions to AccountStore(FakeAccountApi(), sessions, AppCache(sessions, scope))
+    }
+
+    private val screens: List<Pair<String, @Composable () -> Unit>> =
+        listOf(
+            "welcome" to { VisitorWelcome(rememberAppNavigator(), PaddingValues()) },
+            "login" to {
+                val signIn = remember { SignInViewModel(stores.second, stores.first, SavedStateHandle()) }
+                Task { Methods(signIn, rememberAppNavigator()) }
+            },
+            "login-code" to {
+                val signIn =
+                    remember {
+                        SignInViewModel(stores.second, stores.first, SavedStateHandle()).apply {
+                            onEmailChange("ana@zoonk.test")
+                            sendCode()
+                        }
+                    }
+                Task { signIn.codeSentTo?.let { CodeEntry(signIn, it) } }
+            },
+            "setup" to {
+                val form = remember { ProfileFormViewModel(stores.second, account(BIA).user, SavedStateHandle()) }
+                Task { ProfileSetupForm(form) }
+            },
+        )
+
+    @Composable
+    private fun Task(content: @Composable ColumnScope.() -> Unit) {
+        TaskScaffold(onClose = {}) { padding -> AuthColumn(padding, content) }
     }
 }

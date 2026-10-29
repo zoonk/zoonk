@@ -95,9 +95,9 @@ fun ShellGate(
             LearnerAccess.Unavailable -> {
                 val scope = rememberCoroutineScope()
                 GateMessage(
-                    icon = R.drawable.ic_lock,
-                    title = stringResource(R.string.load_failed_title),
-                    description = stringResource(R.string.load_failed_description),
+                    icon = R.drawable.ic_warning,
+                    title = stringResource(R.string.account_unavailable_title),
+                    description = stringResource(R.string.account_unavailable_description),
                     padding = padding,
                 ) {
                     Button(onClick = { scope.launch { app.sessions.retryRestore() } }) {

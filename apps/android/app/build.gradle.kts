@@ -25,6 +25,12 @@ android {
         targetSdk = 37
         versionCode = 1
         versionName = "0.1.0"
+        // Google's Web client, the audience Zoonk's API accepts; without it there's no Google button.
+        buildConfigField(
+            "String",
+            "GOOGLE_SERVER_CLIENT_ID",
+            "\"${providers.environmentVariable("GOOGLE_SERVER_CLIENT_ID").getOrElse("")}\"",
+        )
         buildConfigField("String", "APPLE_CLIENT_ID", "\"${providers.environmentVariable("APPLE_CLIENT_ID").getOrElse("")}\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -144,6 +150,9 @@ dependencies {
     implementation(libs.androidx.datastore.tink)
     implementation(libs.okhttp.sse)
     implementation(libs.tink.android)
+
+    // Account and Plus.
+    implementation(libs.googleid)
 
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
