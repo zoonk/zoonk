@@ -29,6 +29,7 @@ import com.zoonk.api.models.PlanToolChoiceInput
 import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineGeneration
+import com.zoonk.api.models.StudyNext
 import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.JsonArray
@@ -175,6 +176,18 @@ interface PlanApi {
         goalId: UUID,
         skillId: UUID,
     ): SkillOutlineGeneration
+
+    /** Null until the plan is finished. */
+    suspend fun studyNext(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): StudyNext?
+
+    /** Completes the goal and starts its course's next level as the active goal, with its research and writing. */
+    suspend fun continueAtNextLevel(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    )
 }
 
 class LivePlanApi(
@@ -297,6 +310,18 @@ class LivePlanApi(
         skillId: UUID,
     ) = perform { api.clients(session).learner.createSkillOutlineGeneration(goalId, skillId) }
 
+    override suspend fun studyNext(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = perform { api.clients(session).learner.getGoalMap(goalId) }.next
+
+    override suspend fun continueAtNextLevel(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) {
+        perform { api.clients(session).goals.continueGoalAtNextLevel(goalId) }
+    }
+
     private fun changeInput(operations: List<PlanOp>) =
         buildJsonObject {
             put("operations", JsonArray(operations.mapNotNull { it.toJson() }))
@@ -325,6 +350,10 @@ class PlanStore(
 
     val resumeChangesPlan: KeyedResources<UUID, Boolean> =
         cache.keyed(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId -> session?.let { api.resumeChangesPlan(it, goalId) } }
+
+    /** Read only once the plan has ended (`plan.end`): before, there's nothing to study next. */
+    val studyNext: KeyedResources<UUID, StudyNext> =
+        cache.keyed(Audience.SignedIn, READ_DOMAINS) { session, goalId -> session?.let { api.studyNext(it, goalId) } }
 
     val setup: KeyedResources<UUID, GoalSetup> =
         cache.keyed(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearningProfile)) { session, goalId ->
@@ -380,6 +409,10 @@ class PlanStore(
     ): MutationResult<PlanChangeResult> = write(goalId) { api.chooseTools(it, goalId, answer) }
 
     suspend fun basesAdvice(goalId: UUID): MutationResult<PlanBasesAdvice> = cache.mutate { api.basesAdvice(it, goalId) }
+
+    /** From the learner's tap only: it starts research and writing. The new goal becomes the active one, as main's `createGoals` revalidates. */
+    suspend fun continueAtNextLevel(goalId: UUID): MutationResult<Unit> =
+        cache.mutate(invalidating = setOf(DataDomain.Goals, DataDomain.LearningProfile)) { api.continueAtNextLevel(it, goalId) }
 
     /** What an edit would do: it saves nothing, so nothing is read again. */
     suspend fun preview(

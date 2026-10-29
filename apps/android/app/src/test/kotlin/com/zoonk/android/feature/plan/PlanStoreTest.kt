@@ -60,6 +60,24 @@ class PlanStoreTest {
             assertEquals(1, api.askedSince.size)
         }
 
+    @Test
+    fun continuingAtTheNextLevelReadsTheLearnersGoalsAgain() =
+        runTest {
+            val api = FakePlanApi()
+            val store = store(api) { Instant.parse("2026-10-28T12:00:00Z") }
+            val next = store.studyNext[goalId]
+
+            next.load()
+            next.load()
+            assertEquals(1, api.studyNextReads)
+
+            store.continueAtNextLevel(goalId)
+            next.load()
+
+            assertEquals(1, api.continued)
+            assertEquals(2, api.studyNextReads)
+        }
+
     private fun kotlinx.coroutines.test.TestScope.store(
         api: PlanApi,
         now: () -> Instant,

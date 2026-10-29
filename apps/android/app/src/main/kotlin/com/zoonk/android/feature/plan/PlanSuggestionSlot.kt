@@ -43,6 +43,7 @@ import com.zoonk.api.models.ExamChoice
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.StudyNext
 import kotlinx.coroutines.delay
 
 /** One thing to know or decide about the plan, in the order main's slot gives them. */
@@ -73,6 +74,10 @@ internal sealed interface SlotItem {
         override val key = "coverage"
     }
 
+    data object Finished : SlotItem {
+        override val key = "finished"
+    }
+
     data class Pace(
         val tooTight: Boolean,
         val text: String,
@@ -85,10 +90,11 @@ internal sealed interface SlotItem {
     }
 }
 
-/** [fix] is the pace's sentence. */
+/** [finished] once what to study next is known; [fix] is the pace's sentence. */
 internal fun slotItems(
     page: PlanPageState,
     fix: PaceFix?,
+    finished: Boolean,
 ): List<SlotItem> {
     val plan = page.plan
     val pace = plan.status?.pace
@@ -106,9 +112,13 @@ internal fun slotItems(
             .filter { it.subject == null }
             .forEach { add(SlotItem.Choice(it)) }
         pastDate?.let { add(SlotItem.PastDate(it.lessons)) }
+        if (finished) {
+            addAll(time)
+            add(SlotItem.Finished)
+        }
         if (pace is Pace.NeedsAdjusting && fix != null) add(SlotItem.Pace(tooTight = true, fix.text))
         if (pace is Pace.Behind && fix != null) add(SlotItem.Pace(tooTight = false, fix.text))
-        addAll(time)
+        if (!finished) addAll(time)
         if (plan.access.freeWeekOver) add(SlotItem.FreeWeekOver)
     }
 }
@@ -174,11 +184,14 @@ internal class SlotState(
 @Composable
 internal fun rememberSlotState(): SlotState = rememberSaveable(saver = SlotState.Saver) { SlotState() }
 
-/** What the slot reads beside the plan: its own preview. */
+/** What the slot reads beside the plan: its own preview, and what to study next once the plan has ended. */
 internal class SlotHost(
     val preview: PlanPreviewState = PlanPreviewState.Idle,
     val requestPreview: (List<PlanOp>) -> Unit = {},
     val clearPreview: () -> Unit = {},
+    val next: StudyNext? = null,
+    val nextLevel: NextLevelStart = NextLevelStart.Idle,
+    val onContinue: () -> Unit = {},
 )
 
 /** What every item reads and does, as main's `usePlanSuggestionSlot`. */
@@ -257,7 +270,7 @@ internal fun PlanSuggestionSlot(
         page.plan.status
             ?.pace
             ?.let { paceFix(it, page.isExam) }
-    val items = slotItems(page, fix).filter { it.key !in state.dismissed }
+    val items = slotItems(page, fix, finished = host.next != null).filter { it.key !in state.dismissed }
     val slot = Slot(page, edits, links, host, state, layout)
     val answered = slot.answered
     val index = state.position.coerceIn(0, (items.size - 1).coerceAtLeast(0))
@@ -312,6 +325,10 @@ internal fun PlanSuggestionSlot(
 
                 SlotItem.Coverage -> {
                     CoverageSuggestion(slot)
+                }
+
+                SlotItem.Finished -> {
+                    host.next?.let { StudyNextSuggestion(it, slot) }
                 }
 
                 is SlotItem.Pace -> {

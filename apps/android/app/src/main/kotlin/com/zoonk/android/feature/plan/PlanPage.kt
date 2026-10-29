@@ -144,6 +144,15 @@ internal fun PlanPage(
     val timeToCover by viewModel.timeToCover.collectAsStateWithLifecycle()
     val preview by viewModel.preview.collectAsStateWithLifecycle()
     val slotPreview by viewModel.slotPreview.collectAsStateWithLifecycle()
+    val nextLevel by viewModel.nextLevel.collectAsStateWithLifecycle()
+    val next =
+        if (page.plan.end != null) {
+            app.plans.studyNext[page.goal.id]
+                .collectShown()
+                .value.value
+        } else {
+            null
+        }
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME) }
     var editingAt by rememberSaveable { mutableStateOf(if (focus == ADJUST_TIME) PlanSection.Time else null) }
     var choosingFocus by rememberSaveable { mutableStateOf(focus == CHOOSE_FOCUS) }
@@ -206,6 +215,9 @@ internal fun PlanPage(
                 preview = slotPreview,
                 requestPreview = { viewModel.requestSlotPreview(page.plan, it) },
                 clearPreview = viewModel::clearSlotPreview,
+                next = next,
+                nextLevel = nextLevel,
+                onContinue = viewModel::continueAtNextLevel,
             ),
     )
 

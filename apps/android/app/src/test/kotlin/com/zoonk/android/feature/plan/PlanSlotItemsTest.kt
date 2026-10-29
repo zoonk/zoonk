@@ -10,16 +10,22 @@ class PlanSlotItemsTest {
 
     private fun keys(
         extra: String,
+        finished: Boolean = false,
         kind: String = "goal",
     ): List<String> {
         val summary = learnerSummary()
         val page = PlanPageState(summary.goals.first(), coveragePlan(kind = kind, extra = extra), summary)
-        return slotItems(page, fix).map { it.key }
+        return slotItems(page, fix, finished).map { it.key }
     }
 
     @Test
     fun whatTheLearnersTimeCouldAddComesAfterThePace() {
         assertEquals(listOf("behind", "fitLessons", "coverage"), keys("$BEHIND,$FIT_OFFER"))
+    }
+
+    @Test
+    fun aFinishedPlanOffersWhatItsTimeCouldAddBeforeWhatToStudyNext() {
+        assertEquals(listOf("fitLessons", "coverage", "finished", "behind"), keys("$BEHIND,$FIT_OFFER", finished = true))
     }
 
     @Test

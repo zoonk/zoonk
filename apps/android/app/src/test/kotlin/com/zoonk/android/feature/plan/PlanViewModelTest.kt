@@ -329,6 +329,29 @@ class PlanViewModelTest {
             assertTrue(viewModel.preview.value is PlanPreviewState.Ready)
         }
 
+    @Test
+    fun theNextLevelStartsOnceAndStaysStartedForTheNewGoal() =
+        runTest {
+            viewModel.continueAtNextLevel()
+            viewModel.continueAtNextLevel()
+
+            assertEquals(1, api.continued)
+            assertEquals(NextLevelStart.Started, viewModel.nextLevel.value)
+        }
+
+    @Test
+    fun aNextLevelThatDidntStartCanBeTriedAgain() =
+        runTest {
+            api.continueFailure = ApiException(ApiError.Unavailable, status = 409)
+
+            viewModel.continueAtNextLevel()
+            assertEquals(NextLevelStart.Failed, viewModel.nextLevel.value)
+
+            api.continueFailure = null
+            viewModel.continueAtNextLevel()
+            assertEquals(NextLevelStart.Started, viewModel.nextLevel.value)
+        }
+
     private suspend fun shown(plan: Plan = coveragePlan()): Plan {
         api.shownPlan = plan
         withContext(Dispatchers.Main) { store.plan[goalId].refresh() }

@@ -279,6 +279,24 @@ class PlanScreenshots {
         val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75))
         val moved = listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))
         val change = planChange(operations = """[{"kind":"setDailyMinutes","minutes":75}]""", effect = effect(""""lessonsAdded":14"""))
+        val course = java.util.UUID.fromString(CHANGE_ID)
+        val next =
+            com.zoonk.api.models.StudyNext(
+                nextLevel =
+                    com.zoonk.api.models.StudyNextNextLevel(
+                        0,
+                        course,
+                        com.zoonk.api.models.StudyNextNextLevel.Level.INTERMEDIATE,
+                        "Python",
+                    ),
+                related =
+                    listOf(
+                        com.zoonk.api.models
+                            .StudyNextRelatedInner("zoonk", course, "data-science", "Data science with Python"),
+                        com.zoonk.api.models
+                            .StudyNextRelatedInner("zoonk", course, "web", "Web apps with Flask"),
+                    ),
+            )
 
         fun ready(
             operations: List<PlanOp>,
@@ -330,6 +348,8 @@ class PlanScreenshots {
                 "plan-slot-past-date-exam" to Shot(pastDate, summary = exam),
                 "plan-slot-past-date-preview" to Shot(pastDate, host = SlotHost(preview = ready(moved, pastDate))),
                 "plan-slot-past-date-no-date" to Shot(pastDate, state = { SlotState().apply { dateSearch = DateSearch.NoDate } }),
+                "plan-slot-finished" to Shot(plan(), host = SlotHost(next = next)),
+                "plan-slot-finished-starting" to Shot(plan(), host = SlotHost(next = next, nextLevel = NextLevelStart.Starting)),
             )
         var shown by mutableStateOf(shots.keys.first())
         compose.setContent {

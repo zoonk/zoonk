@@ -196,6 +196,7 @@
   "plan_choose_focus_yourself": "863cb67e3a7d315c1ffb3c571dbc64755bce8cb6df2f8e3c24faf52dbc45bd08",
   "plan_choose_prerequisites": "570d93577693c74eca573e1732c090e45095a80f537e5afb34acc321891aca95",
   "plan_continue": "e24e4816dfd093d1320edccbd889b1d7ce46d631836c025e13ef67c073738314",
+  "plan_continue_at": "769808861d37ab59f93ebe46c331ccc9eb899d061ac944e168e8adf61456e6ec",
   "plan_continues_on": "e0c8890bcc42cc51e2c443a8efccdf777177074605239926c426747624c37b68",
   "plan_continues_today": "e48237c532de0054d34e6a79287c4465d6e7e7e5ec1a81c2bbb97954baf2ab7e",
   "plan_couldnt_check_changes": "81f0cb84d7c5a5a502d772a5cfbfd46eb0f34f7659061942c1a3db497bc75a49",
@@ -262,6 +263,7 @@
   "plan_finding": "d9f0dadc332b662a6dffa882cc44bd71c9ac0c5f481187c22485ea9f87722219",
   "plan_finish": "a6c1e372a262687e5bbebecd6564090ac323067b2d4fcf934aceb803a761d01a",
   "plan_finish_after_exam": "2f1a4279fc407f55723be62d6611e7f93f5f6256136fc0ea7bb8379ebd1d37ce",
+  "plan_finished_title": "725c7e10b447c14fc3d4042c38bd9aa8c535ae571e4876d8c2445cafad9bbcbd",
   "plan_focus_already_in": "07bc2eaf9f141518ee2857fced166d8e6ab2c92c1073a42582be5eb6736a4e0c",
   "plan_focus_cant_move": "a20f87d3f6d7710907702752fb25e5ff83035598a87a5541e4ca488904a6d58e",
   "plan_focus_includes": "6aa8972ef920ccbf73e7aab2940bef14f949f9d8899c5a09b41cb24082a0ada2",
@@ -454,6 +456,7 @@
   "plan_study_everything_after_exam": "f7ecd7e249f5a88600b29dfb17f0effaf72ff867109b2c275690764e640c42a5",
   "plan_study_everything_exam_description": "2d6d452b92f04ae4eb08c3f7b241afdb3b81d13acfd2acc051fb0a9fe20a6382",
   "plan_study_everything_goal_description": "ed0bdfbb63dd394deecc0360ec808a18d2a683cd83a4ea5a78b024d915f4bca7",
+  "plan_study_next": "0dd75ffab62a78fe9882a69a0d31f6dfa6033e9acf316adae63f52f296e2056a",
   "plan_suggestion": "1472d3bb7de9f0be748422df75a3c23cb62a17f66e429e6975690e7cbd802e1f",
   "plan_suggestion_next": "69cba2a5a19d1721fb74c2109ddf559f273260bde79e91c25444d2a813120375",
   "plan_suggestion_position": "ab967893d5cc74217c4cca505b5f545e0d7a87da330fe891c322b0ebcead1727",
@@ -1395,4 +1398,7 @@
         <item quantity="other">Te quedaban %1$d lecciones antes del examen</item>
     </plurals>
     <string name="plan_move_date_covers_whats_left">Cambia la fecha para que te dé tiempo a estudiar lo que te queda.</string>
+    <string name="plan_finished_title">Has completado tu plan</string>
+    <string name="plan_study_next">Esto es lo siguiente que tienes que estudiar.</string>
+    <string name="plan_continue_at">Continúa en %1$s</string>
 </resources>

@@ -22,6 +22,9 @@ import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanEffect
+import com.zoonk.api.models.StudyNext
+import com.zoonk.api.models.StudyNextNextLevel
+import com.zoonk.api.models.StudyNextRelatedInner
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -121,6 +124,8 @@ class PlanSuggestionSlotTest {
     private fun showSlot(
         plan: Plan,
         found: com.zoonk.api.models.PlanTimeToCover = timeToCover(),
+        next: StudyNext? = null,
+        onContinue: () -> Unit = {},
     ) {
         val summary = learnerSummary()
         val page = PlanPageState(summary.goals.first(), plan, summary)
@@ -147,6 +152,8 @@ class PlanSuggestionSlotTest {
                     preview = preview,
                     requestPreview = { preview = ready(it, plan) },
                     clearPreview = { preview = PlanPreviewState.Idle },
+                    next = next,
+                    onContinue = onContinue,
                 )
             ZoonkTheme {
                 PlanSuggestionSlot(
@@ -255,5 +262,27 @@ class PlanSuggestionSlotTest {
         compose.onNodeWithText("Adjust plan").performClick()
 
         assertEquals(listOf<PlanSection?>(PlanSection.Date), adjusted)
+    }
+
+    @Test
+    fun aFinishedPlanContinuesAtTheNextLevelOrOpensARelatedCourse() {
+        var continued = 0
+        val course = java.util.UUID.fromString(CHANGE_ID)
+        showSlot(
+            plan(),
+            next =
+                StudyNext(
+                    nextLevel = StudyNextNextLevel(0, course, StudyNextNextLevel.Level.INTERMEDIATE, "Python"),
+                    related = listOf(StudyNextRelatedInner("zoonk", course, "data-science", "Data science")),
+                ),
+            onContinue = { continued++ },
+        )
+
+        compose.onNodeWithText("You finished your plan").assertIsDisplayed()
+        compose.onNodeWithText("Continue at Intermediate").performClick()
+        assertEquals(1, continued)
+
+        compose.onNodeWithText("Data science").performClick()
+        compose.runOnIdle { assertEquals(AppRoute.CatalogCourse(CHANGE_ID), navigator.currentRoute) }
     }
 }

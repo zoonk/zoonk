@@ -13,6 +13,7 @@ import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.SkillOutline
 import com.zoonk.api.models.SkillOutlineGeneration
+import com.zoonk.api.models.StudyNext
 import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlin.time.Instant
@@ -49,6 +50,10 @@ internal class FakePlanApi : PlanApi {
     var toolFailure: ApiException? = null
     var advice = PlanBasesAdvice(daysLeft = 40, ready = true, recommended = PlanBasesAdvice.Recommended.ESSENTIAL)
     var advised = 0
+    var studyNext: StudyNext? = null
+    var studyNextReads = 0
+    var continued = 0
+    var continueFailure: ApiException? = null
 
     var outline: () -> SkillOutline = { SkillOutline(emptyList(), SkillOutline.Status.AVAILABLE) }
     var outlineReads = 0
@@ -209,5 +214,21 @@ internal class FakePlanApi : PlanApi {
         outlineGate?.await()
         outlineWrites += skillId
         return writeOutline()
+    }
+
+    override suspend fun studyNext(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): StudyNext? {
+        studyNextReads++
+        return studyNext
+    }
+
+    override suspend fun continueAtNextLevel(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) {
+        continueFailure?.let { throw it }
+        continued++
     }
 }

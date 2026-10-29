@@ -796,4 +796,7 @@
         <item quantity="other">%1$d lessons were left before your exam</item>
     </plurals>
     <string name="plan_move_date_covers_whats_left">Move your date so your time covers what\'s left.</string>
+    <string name="plan_finished_title">You finished your plan</string>
+    <string name="plan_study_next">Here\'s what to study next.</string>
+    <string name="plan_continue_at">Continue at %1$s</string>
 </resources>

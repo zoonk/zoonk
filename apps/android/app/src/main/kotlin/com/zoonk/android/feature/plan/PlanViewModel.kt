@@ -35,6 +35,9 @@ enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
 enum class PlanPart { Date, Schedule, ExamChoices, Bases, Activities, Writing, Steering, Tools, FullCourse, Focus, Suggestion }
 
+/** [Started] stays: the new goal becomes the active one, which the Plan then shows. */
+enum class NextLevelStart { Idle, Starting, Started, Failed }
+
 /** The editor's latest applied change, which it shows with Undo. */
 data class EditorChange(
     val change: PlanChange,
@@ -58,6 +61,7 @@ class PlanViewModel(
     private var search: TimeToCoverSearch? = null
     private val previewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
     private val slotPreviewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
+    private val nextLevelStart = MutableStateFlow(NextLevelStart.Idle)
 
     /** Counts the editor's openings, so a change saved in one doesn't show its answer in the next. */
     private var openings = 0
@@ -95,6 +99,8 @@ class PlanViewModel(
 
     /** The suggestion slot's own, as main's: Study everything's preview never replaces what the slot shows. */
     val slotPreview: StateFlow<PlanPreviewState> = slotPreviewState.asStateFlow()
+
+    val nextLevel: StateFlow<NextLevelStart> = nextLevelStart.asStateFlow()
 
     fun setStatus(status: GoalUpdateInput.Status) {
         if (saving.value) return
@@ -284,6 +290,19 @@ class PlanViewModel(
             val result = store.preview(goalId, operations)
             if (result is MutationResult.Obsolete) return@launch
             state.update { it.resolve(request, (result as? MutationResult.Done)?.value) }
+        }
+    }
+
+    fun continueAtNextLevel() {
+        if (nextLevelStart.value == NextLevelStart.Starting || nextLevelStart.value == NextLevelStart.Started) return
+        nextLevelStart.value = NextLevelStart.Starting
+        viewModelScope.launch {
+            nextLevelStart.value =
+                when (store.continueAtNextLevel(goalId)) {
+                    is MutationResult.Done -> NextLevelStart.Started
+                    is MutationResult.Failed -> NextLevelStart.Failed
+                    MutationResult.Obsolete -> NextLevelStart.Idle
+                }
         }
     }
 
