@@ -1,5 +1,6 @@
 package com.zoonk.android.ui.scaffold
 
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.AnimatedPane
@@ -10,6 +11,8 @@ import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 
 /**
  * A page with what helps with it beside it where there's room (main's page aside and task aside):
@@ -24,18 +27,26 @@ fun PageWithSupportingPane(
     modifier: Modifier = Modifier,
     mainPane: @Composable (supportingPaneBeside: Boolean) -> Unit,
 ) {
-    // Material's default lays the aside under the page on tall windows, halving a tall phone's page.
-    val navigator =
-        rememberSupportingPaneScaffoldNavigator(
-            scaffoldDirective = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2()).copy(maxVerticalPartitions = 1),
-        )
-    val supportingPaneBeside = navigator.scaffoldValue[SupportingPaneScaffoldRole.Supporting] == PaneAdaptedValue.Expanded
+    BoxWithConstraints(modifier) {
+        // Material reads the window, but a rail or drawer beside the page can leave it a phone's width,
+        // as on an unfolded foldable. Its default also lays the aside under the page on tall windows.
+        val window = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
+        val roomForTwo = maxWidth >= WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND.dp
+        val navigator =
+            rememberSupportingPaneScaffoldNavigator(
+                scaffoldDirective =
+                    window.copy(
+                        maxHorizontalPartitions = if (roomForTwo) window.maxHorizontalPartitions else 1,
+                        maxVerticalPartitions = 1,
+                    ),
+            )
+        val supportingPaneBeside = navigator.scaffoldValue[SupportingPaneScaffoldRole.Supporting] == PaneAdaptedValue.Expanded
 
-    SupportingPaneScaffold(
-        directive = navigator.scaffoldDirective,
-        value = navigator.scaffoldValue,
-        modifier = modifier,
-        mainPane = { AnimatedPane { mainPane(supportingPaneBeside) } },
-        supportingPane = { AnimatedPane { supportingPane() } },
-    )
+        SupportingPaneScaffold(
+            directive = navigator.scaffoldDirective,
+            value = navigator.scaffoldValue,
+            mainPane = { AnimatedPane { mainPane(supportingPaneBeside) } },
+            supportingPane = { AnimatedPane { supportingPane() } },
+        )
+    }
 }
