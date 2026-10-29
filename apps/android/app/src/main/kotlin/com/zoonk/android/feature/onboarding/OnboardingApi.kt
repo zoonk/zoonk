@@ -4,14 +4,13 @@ import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
-import com.zoonk.android.data.GenerationEvent
-import com.zoonk.android.data.generationEvents
+import com.zoonk.android.data.GenerationSource
+import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.withBearer
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.CreateUploadRequest
-import com.zoonk.api.models.Generation
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalCreateResponse
@@ -25,7 +24,6 @@ import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.Source
 import com.zoonk.api.models.UploadToken
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonNull
@@ -114,15 +112,7 @@ interface OnboardingApi {
         input: MaterialQuestionInput,
     ): MaterialQuestionAnswer
 
-    fun generationEvents(
-        session: AuthenticatedSession,
-        id: String,
-    ): Flow<GenerationEvent>
-
-    suspend fun generationStatus(
-        session: AuthenticatedSession,
-        id: String,
-    ): Generation.Status
+    fun generations(session: AuthenticatedSession?): GenerationSource
 }
 
 class LiveOnboardingApi(
@@ -228,15 +218,7 @@ class LiveOnboardingApi(
         input: MaterialQuestionInput,
     ) = perform { api.streamingClients(session).sources.askMaterialQuestion(input) }
 
-    override fun generationEvents(
-        session: AuthenticatedSession,
-        id: String,
-    ) = api.generationEvents(id, session)
-
-    override suspend fun generationStatus(
-        session: AuthenticatedSession,
-        id: String,
-    ) = perform { api.clients(session).workflows.getGeneration(id) }.status
+    override fun generations(session: AuthenticatedSession?) = LiveGenerationSource(api, session)
 
     /**
      * The request `@vercel/blob`'s `uploadPresigned()` makes from a browser (API version 12), as

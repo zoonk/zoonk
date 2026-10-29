@@ -1,12 +1,10 @@
 package com.zoonk.android.feature.onboarding
 
-import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
-import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Replacement
@@ -16,16 +14,12 @@ import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.CreateUploadRequestOneOf
 import com.zoonk.api.models.CreateUploadRequestOneOf1
 import com.zoonk.api.models.CreateUploadRequestOneOf2
-import com.zoonk.api.models.Generation
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.MaterialQuestionAnswer
 import com.zoonk.api.models.MaterialQuestionInput
 import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
 import com.zoonk.api.models.PlanLinkStartInput
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.JsonElement
@@ -100,16 +94,12 @@ class OnboardingStore(
         sent -= draftId
     }
 
+    /** Reads as whoever is signed in at each read: a visitor's first send signs in a guest while its run is followed. */
     val generations: GenerationSource =
         object : GenerationSource {
-            override fun events(id: String): Flow<GenerationEvent> =
-                flow {
-                    val session = sessions.current ?: return@flow
-                    emitAll(api.generationEvents(session, id))
-                }
+            override fun events(id: String) = api.generations(sessions.current).events(id)
 
-            override suspend fun status(id: String): Generation.Status =
-                api.generationStatus(sessions.current ?: throw ApiException(ApiError.Unauthorized), id)
+            override suspend fun status(id: String) = api.generations(sessions.current).status(id)
         }
 
     suspend fun sendGoal(

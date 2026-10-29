@@ -4,6 +4,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.GenerationEvent
+import com.zoonk.android.data.GenerationSource
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.CreateUploadRequest
@@ -74,6 +75,7 @@ internal class FakeOnboardingApi : OnboardingApi {
     var draft: OnboardingDraft = understoodDraft()
     var refusal: ApiException? = null
     var events: Flow<GenerationEvent> = flowOf()
+    val generationSessions = mutableListOf<AuthenticatedSession?>()
     val understandCalls = mutableListOf<Pair<String, String>>()
     val drafts = mutableListOf<String>()
     val created = mutableListOf<GoalCreateInput>()
@@ -164,13 +166,12 @@ internal class FakeOnboardingApi : OnboardingApi {
         input: MaterialQuestionInput,
     ): MaterialQuestionAnswer = throw ApiException(ApiError.Unavailable)
 
-    override fun generationEvents(
-        session: AuthenticatedSession,
-        id: String,
-    ): Flow<GenerationEvent> = events
+    override fun generations(session: AuthenticatedSession?): GenerationSource {
+        generationSessions += session
+        return object : GenerationSource {
+            override fun events(id: String) = this@FakeOnboardingApi.events
 
-    override suspend fun generationStatus(
-        session: AuthenticatedSession,
-        id: String,
-    ): Generation.Status = Generation.Status.RUNNING
+            override suspend fun status(id: String) = Generation.Status.RUNNING
+        }
+    }
 }

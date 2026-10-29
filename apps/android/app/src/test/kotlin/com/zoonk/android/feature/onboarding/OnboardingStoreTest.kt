@@ -13,6 +13,7 @@ import com.zoonk.api.models.GoalDraft
 import com.zoonk.api.models.PlanLinkStartInput
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.runTest
 import kotlinx.serialization.json.JsonObject
@@ -57,6 +58,24 @@ class OnboardingStoreTest {
             assertEquals(listOf("pass the bar exam" to "pt"), api.understandCalls)
             assertTrue(store.drafts[DRAFT_ID].state.value is LoadState.Loaded)
             assertTrue(store.wasSentHere(DRAFT_ID))
+        }
+
+    @Test
+    fun aRunIsFollowedAsWhoeverIsSignedInWhenItReads() =
+        runTest {
+            val session = FakeSession(null)
+            val api = FakeOnboardingApi()
+            val store =
+                OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))), session) {
+                    true
+                }
+            val generations = store.generations
+
+            session.session = ana
+            generations.events("run-1").toList()
+            generations.status("run-1")
+
+            assertEquals(listOf(ana, ana), api.generationSessions)
         }
 
     @Test
