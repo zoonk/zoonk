@@ -229,12 +229,12 @@ class GoalContentFlowTest {
     }
 
     @Test
-    fun aSubjectWithFinishedChaptersLeadsToTheirMindMaps() {
+    fun aSubjectWithFinishedChaptersLeadsToItsOwnMindMaps() {
         showSubject("natural-sciences", mindMapChapters = setOf(UUID.fromString(chapterId(1))))
 
         rule.onNodeWithText("Mind maps").performClick()
 
-        assertEquals(AppRoute.MindMaps(), navigator.currentRoute)
+        assertEquals(AppRoute.MindMaps(subject = "natural-sciences"), navigator.currentRoute)
     }
 
     @Test

@@ -78,6 +78,7 @@ import java.util.UUID
 
 @Composable
 fun MindMapsScreen(
+    route: AppRoute.MindMaps,
     app: AppContainer,
     navigator: AppNavigator,
 ) {
@@ -86,7 +87,7 @@ fun MindMapsScreen(
         if (host == null) {
             PageScaffold(onBack = { navigator.back() }) { PageNotFound(navigator, it) }
         } else {
-            MindMapsContent(goal.id, host, navigator)
+            MindMapsContent(goal.id, host, navigator, subject = route.subject)
         }
     }
 }
@@ -96,6 +97,7 @@ internal fun MindMapsContent(
     goalId: UUID,
     host: MindMapsHost,
     navigator: AppNavigator,
+    subject: String? = null,
 ) {
     val resource = host.store.list[goalId]
     val state by resource.collectShown()
@@ -123,6 +125,7 @@ internal fun MindMapsContent(
                             retry = maps::retry,
                         ),
                     navigator = navigator,
+                    subject = subject,
                     follow = { chapterId, mapShown, local -> FollowWhileDrawn(maps, chapterId, mapShown, local) },
                 )
             }
@@ -157,7 +160,10 @@ internal data class MindMapsActions(
     val retry: (UUID) -> Unit,
 )
 
-/** Main's mind maps page: the goal's maps by subject, one per finished chapter, each made on a tap. */
+/**
+ * Main's mind maps page: the goal's maps by subject, one per finished chapter, each made on a tap.
+ * It opens at [subject]'s maps the first time, as main's `#key` does; a return keeps where it was.
+ */
 @Composable
 internal fun MindMapsPage(
     mindMaps: GoalMindMaps,
@@ -165,14 +171,15 @@ internal fun MindMapsPage(
     cap: Limit?,
     actions: MindMapsActions,
     navigator: AppNavigator,
+    subject: String? = null,
     follow: @Composable (UUID, MindMapShown, MindMapLocal?) -> Unit = { _, _, _ -> },
 ) {
     val title = stringResource(R.string.navigation_mind_maps)
-    val gridState = rememberLazyGridState()
+    val groups = groupBySubject(mindMaps.chapters)
+    val gridState = rememberLazyGridState(initialFirstVisibleItemIndex = groups.gridIndexOf(subject) ?: 0)
     val titleAway by remember { derivedStateOf { gridState.firstVisibleItemIndex > 0 } }
     val drawn = mindMaps.chapters.count { it.status == GoalMindMap.Status.READY }
     val capped = cap != null && drawn < mindMaps.chapters.size
-    val groups = groupBySubject(mindMaps.chapters)
 
     PageScaffold(onBack = actions.back, title = { if (titleAway) Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) }) { padding ->
         BoxWithConstraints(Modifier.fillMaxSize()) {
@@ -207,6 +214,16 @@ internal fun MindMapsPage(
             }
         }
     }
+}
+
+/** Where [subject]'s title sits in the grid: after the hero, each group is its title and then its maps. */
+internal fun List<MindMapGroup>.gridIndexOf(subject: String?): Int? {
+    var index = 1
+    for (group in this) {
+        if (group.key == subject) return index
+        index += 1 + group.maps.size
+    }
+    return null
 }
 
 private fun LazyGridScope.fullWidth(

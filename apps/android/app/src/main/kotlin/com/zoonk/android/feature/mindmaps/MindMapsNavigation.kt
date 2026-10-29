@@ -10,6 +10,6 @@ fun EntryProviderScope<NavKey>.mindMapsEntries(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    entry<AppRoute.MindMaps> { MindMapsScreen(app, navigator) }
+    entry<AppRoute.MindMaps> { MindMapsScreen(it, app, navigator) }
     entry<AppRoute.MindMap> { MindMapScreen(it, app, navigator) }
 }

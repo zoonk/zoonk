@@ -95,6 +95,16 @@ class MindMapRulesTest {
         assertEquals(4, groups.first().maps.size)
     }
 
+    @Test
+    fun aSubjectsMapsStartAfterTheHeroAndEveryEarlierGroup() {
+        val groups = groupBySubject(goalMindMaps().chapters)
+
+        assertEquals(1, groups.gridIndexOf("natural-sciences"))
+        assertEquals(6, groups.gridIndexOf("mathematics"))
+        assertEquals(null, groups.gridIndexOf("history"))
+        assertEquals(null, groups.gridIndexOf(null))
+    }
+
     private fun allowance(
         remaining: String,
         monthly: String = "null",

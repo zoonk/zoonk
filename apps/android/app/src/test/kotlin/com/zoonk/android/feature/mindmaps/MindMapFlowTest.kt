@@ -7,11 +7,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasScrollToIndexAction
+import androidx.compose.ui.test.isNotDisplayed
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.AppCache
@@ -30,6 +34,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -63,6 +68,16 @@ class MindMapFlowTest {
 
     private fun showGrid() = show { MindMapsContent(goalId, it, navigator) }
 
+    @Composable
+    private fun Grid(subject: String) {
+        ZoonkTheme {
+            navigator = rememberAppNavigator()
+            val context = LocalContext.current
+            val host = remember { MindMapsHost(store, ana, PrivatePictures(AppContainer.preview(context).images, ana)) { cap } }
+            MindMapsContent(goalId, host, navigator, subject = subject)
+        }
+    }
+
     @Test
     fun aTapOnAFinishedChaptersTileDrawsItsMap() {
         showGrid()
@@ -72,6 +87,27 @@ class MindMapFlowTest {
 
         assertEquals(listOf(ChapterKey(goalId, UUID.fromString(mapChapter(3)))), api.created)
         rule.onAllNodesWithText("Drawing…").assertCountEquals(2)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h480dp")
+    fun mindMapsOpenedFromASubjectStartAtItsMaps() {
+        rule.setContent { Grid(subject = "mathematics") }
+
+        rule.onNodeWithText("Mathematics").assertIsDisplayed()
+        assertTrue(rule.onNodeWithText("Pass ENEM").isNotDisplayed())
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h480dp")
+    fun aReturnKeepsWhereTheLearnerScrolledInsteadOfJumpingBackToTheSubject() {
+        val restoration = StateRestorationTester(rule)
+        restoration.setContent { Grid(subject = "mathematics") }
+
+        rule.onNode(hasScrollToIndexAction()).performScrollToIndex(0)
+        restoration.emulateSavedInstanceStateRestore()
+
+        rule.onNodeWithText("Pass ENEM").assertIsDisplayed()
     }
 
     @Test
