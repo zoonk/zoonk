@@ -46,7 +46,7 @@
   "checkpoint_right_to_win_of": "2cd2b67b12b4989464f80635b4cb71c59b1653b9cd483f76bbe8a373bb21c4fa",
   "checkpoint_see_result": "44c97a546f2c3b3791d653b4bc87d1e98809928248c481df791ddcbd84d207ef",
   "checkpoint_shield": "d08bece7f08d1707f2d88d9ddf173186293b4d99f66a78532a756e3a6be4188e",
-  "checkpoint_shield_value": "0ef599dee279f22253aee4d2813a0d0a81627b4189ff7f6ca696508a2113c48d",
+  "checkpoint_shield_value": "d97ef526d06b445c7384fc00dd4c864259f7cffa21b94682b8815d9323401b21",
   "checkpoint_to_go": "fb8a6d0eb4e9b0a4f851b075cb45cf0ea06afb806e786e8485e80825dea1f315",
   "checkpoint_trickster": "95f660f18cc19cc33c523513b868baa3d808212808e595d65bb858d9ee3429a8",
   "checkpoint_weekly": "ea1fd0fbd4a4b81910b4c7175caaa4022dc3ec62b5b4b5bd8b867c8fea9332e1",
@@ -77,8 +77,11 @@
     </plurals>
     <string name="checkpoint_every_answered">Alle Fragen sind beantwortet.</string>
     <string name="checkpoint_shield">Schild des Trickser</string>
-    <!-- The shield's plates broken so far, out of all of them. -->
-    <string name="checkpoint_shield_value">%1$d von %2$d zerbrochen</string>
+    <!-- The shield's plates broken so far (%1$d), out of all of them (%2$d). -->
+    <plurals name="checkpoint_shield_value">
+        <item quantity="one">%1$d von %2$d zerbrochen</item>
+        <item quantity="other">%1$d von %2$d zerbrochen</item>
+    </plurals>
     <plurals name="checkpoint_to_go">
         <item quantity="one">Noch %d</item>
         <item quantity="other">Noch %d</item>

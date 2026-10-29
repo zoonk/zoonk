@@ -46,7 +46,7 @@
   "checkpoint_right_to_win_of": "6416c82fbb06e77dde2d4bf39f87037901e37c57114957a5aed19a2f470d9981",
   "checkpoint_see_result": "cf43e634c9cd5929b4cf7da6542b9502596649fa9fd91eaa66570bd650f55678",
   "checkpoint_shield": "92f634ffcdb63b734f4ec3cfceb3b42a1206519a309e6ffe3c0be058f9c90ccc",
-  "checkpoint_shield_value": "ebd9d9ff98c8dbd189cb0b97ac8b57df5adf9e231b84afb42d8a83daa2c3f812",
+  "checkpoint_shield_value": "8004671d247b8231e6735251191aac7b820f49b838ecfc135320b3f3d8cd92c2",
   "checkpoint_to_go": "d67993cf81b0e219aa6b6651eff5716d4f101f9ba80528df70276be6e12d9c2f",
   "checkpoint_trickster": "538da9590d0758ad8e52b39dc8bfca40bec4c3212ab0ec52930bf16341e7ab7b",
   "checkpoint_weekly": "92d767ca139ccbce914ab07d7383ee36facbabcf9dfe76a225b947e398c1e77f",
@@ -78,8 +78,12 @@
     </plurals>
     <string name="checkpoint_every_answered">Toutes les questions ont une réponse.</string>
     <string name="checkpoint_shield">Bouclier du Farceur</string>
-    <!-- The shield's plates broken so far, out of all of them. -->
-    <string name="checkpoint_shield_value">%1$d sur %2$d brisé(s)</string>
+    <!-- The shield's plates broken so far (%1$d), out of all of them (%2$d). -->
+    <plurals name="checkpoint_shield_value">
+        <item quantity="one">%1$d sur %2$d brisé</item>
+        <item quantity="many">%1$d sur %2$d brisés</item>
+        <item quantity="other">%1$d sur %2$d brisés</item>
+    </plurals>
     <plurals name="checkpoint_to_go">
         <item quantity="one">Encore %d</item>
         <item quantity="many">Encore %d</item>

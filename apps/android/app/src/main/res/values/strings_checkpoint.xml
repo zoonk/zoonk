@@ -19,8 +19,11 @@
     </plurals>
     <string name="checkpoint_every_answered">Every question is answered.</string>
     <string name="checkpoint_shield">The Trickster\'s shield</string>
-    <!-- The shield's plates broken so far, out of all of them. -->
-    <string name="checkpoint_shield_value">%1$d of %2$d broken</string>
+    <!-- The shield's plates broken so far (%1$d), out of all of them (%2$d). -->
+    <plurals name="checkpoint_shield_value">
+        <item quantity="one">%1$d of %2$d broken</item>
+        <item quantity="other">%1$d of %2$d broken</item>
+    </plurals>
     <plurals name="checkpoint_to_go">
         <item quantity="one">%d to go</item>
         <item quantity="other">%d to go</item>

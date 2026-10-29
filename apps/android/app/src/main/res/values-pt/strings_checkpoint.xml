@@ -46,7 +46,7 @@
   "checkpoint_right_to_win_of": "c503d137c71df8a8db10e6175b4a7c1acd25cb4c345627b10697145f0a10d152",
   "checkpoint_see_result": "f499877dea627a3689505d031f1955f2b677bb5dda204d3744bf89823b66c834",
   "checkpoint_shield": "7e57f3d8c621a1306b09e40a9cc2734b0175062318f69c62d7eba01b5f790765",
-  "checkpoint_shield_value": "c71ba13f12dded8995576f0a91bc60110965597a679b56d81408e00b0e682247",
+  "checkpoint_shield_value": "471e9caea79e2d81788dd2054cf5fc799b5ddc6e5dd342a6ad9f69b023bfd770",
   "checkpoint_to_go": "1cf828525d3228815f2e5782dcfdbda63fd772fd20ee38fe047068b47155c82b",
   "checkpoint_trickster": "5cc52c952bf1c4754606c285aa927a6b499021861458fd33c7e8e278a59f4e1e",
   "checkpoint_weekly": "a92306ae14f6a749c73936c7725c2529e1bfdc173c50d7bc1fa8516782f7fafb",
@@ -78,8 +78,12 @@
     </plurals>
     <string name="checkpoint_every_answered">Todas as perguntas foram respondidas.</string>
     <string name="checkpoint_shield">Escudo do Pegadinha</string>
-    <!-- The shield's plates broken so far, out of all of them. -->
-    <string name="checkpoint_shield_value">%1$d de %2$d quebradas</string>
+    <!-- The shield's plates broken so far (%1$d), out of all of them (%2$d). -->
+    <plurals name="checkpoint_shield_value">
+        <item quantity="one">%1$d de %2$d quebrado</item>
+        <item quantity="many">%1$d de %2$d quebrados</item>
+        <item quantity="other">%1$d de %2$d quebrados</item>
+    </plurals>
     <plurals name="checkpoint_to_go">
         <item quantity="one">Falta %d</item>
         <item quantity="many">Faltam %d</item>

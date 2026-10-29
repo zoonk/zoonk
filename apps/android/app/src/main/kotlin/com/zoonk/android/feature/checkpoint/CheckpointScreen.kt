@@ -144,13 +144,12 @@ private fun CheckpointRead(
 ) {
     val loaded by viewModel.checkpoint.collectShown()
     val scope = rememberCoroutineScope()
-    val plusRequired =
-        (
-            app.conversations
-                .checkpointCall(
-                    blockId,
-                ).state.value as? LoadState.Loaded
-        )?.value is LanguageCheckpointCall.PlusrequiredWrapper
+    // L9's call screen read this before handing over; a call that needs Plus opens the challenge's intro.
+    val call by app.conversations
+        .checkpointCall(blockId)
+        .state
+        .collectAsStateWithLifecycle()
+    val plusRequired = (call as? LoadState.Loaded)?.value is LanguageCheckpointCall.PlusrequiredWrapper
 
     when (val read = loaded) {
         is LoadState.Loaded -> {
@@ -366,17 +365,9 @@ private fun DuelActions(
     viewModel: CheckpointViewModel,
 ) {
     ActionColumn {
-        if (state.error != null) SaveErrorText()
+        if (state.error != null) SaveErrorText(onRetry = viewModel::retry.takeIf { !state.pending })
         ActionFlow { width ->
             when {
-                state.error != null -> {
-                    Button(
-                        onClick = viewModel::retry,
-                        enabled = !state.pending,
-                        modifier = width,
-                    ) { Text(stringResource(R.string.practice_try_again)) }
-                }
-
                 question == null || state.feedback != null -> {
                     BusyButton(busy = state.pending, enabled = true, modifier = width, onClick = viewModel::next) {
                         stringResource(if (score.done) R.string.checkpoint_see_result else R.string.checkpoint_next)
@@ -477,7 +468,7 @@ private fun ShieldPlates(
     plate: Int,
 ) {
     val cracked = minOf(broken, plates)
-    val value = stringResource(R.string.checkpoint_shield_value, cracked, plates)
+    val value = pluralStringResource(R.plurals.checkpoint_shield_value, plates, cracked, plates)
     val shield = stringResource(R.string.checkpoint_shield)
     Row(
         modifier.semantics {
@@ -513,7 +504,16 @@ private fun DuelAside(
     score: DuelScore,
 ) {
     val note = stringResource(if (read.isBoss) R.string.checkpoint_no_hints_boss else R.string.checkpoint_no_hints_weekly)
-    Text(eyebrow(read.checkpoint), modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(eyebrow(read.checkpoint), modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+        if (read.isBoss) {
+            Text(
+                pluralStringResource(R.plurals.checkpoint_right_to_win, read.passMark, read.passMark),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
     if (read.isBoss) {
         val actor = rememberTricksterActorState()
         LaunchedEffect(

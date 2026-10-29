@@ -46,7 +46,7 @@
   "checkpoint_right_to_win_of": "13102ffd90c31cf8cef2376931d23e0f808eb9951b5214c26e19a74410cf12f0",
   "checkpoint_see_result": "fdca332893d284891230691b1b2081985c569a089a06edfa97059ed4a61cc639",
   "checkpoint_shield": "3a56e50164fb8b973dafd1b88082c4bf2bd5354204ebafb7b1c44cb7a1bf72ee",
-  "checkpoint_shield_value": "b845fa5f8c71a899f64275e29a8541cb91f2919762aaeb2ed44ac018ad22a157",
+  "checkpoint_shield_value": "8db880d9c2d564482d9d9c46af44290d7969c612543e818e6e6cd6efc9371091",
   "checkpoint_to_go": "00c04a1b3d55a9545d57acc07ad29387ae648bea6fc3c425a32c9192217a5bdf",
   "checkpoint_trickster": "182ebd2ba38bcb64330c4cba99ab872d60b957e3a1c75b0c2a08f46bdd0fa0df",
   "checkpoint_weekly": "323ca3d3eff5688342dac9efcabe34be0a74ee0c4f3fb1f6ca288bc94f31f65c",
@@ -78,8 +78,12 @@
     </plurals>
     <string name="checkpoint_every_answered">Has respondido a todas las preguntas.</string>
     <string name="checkpoint_shield">El escudo del Tramposo</string>
-    <!-- The shield's plates broken so far, out of all of them. -->
-    <string name="checkpoint_shield_value">%1$d de %2$d rotas</string>
+    <!-- The shield's plates broken so far (%1$d), out of all of them (%2$d). -->
+    <plurals name="checkpoint_shield_value">
+        <item quantity="one">%1$d de %2$d rotas</item>
+        <item quantity="many">%1$d de %2$d rotas</item>
+        <item quantity="other">%1$d de %2$d rotas</item>
+    </plurals>
     <plurals name="checkpoint_to_go">
         <item quantity="one">Queda %d</item>
         <item quantity="many">Quedan %d</item>
