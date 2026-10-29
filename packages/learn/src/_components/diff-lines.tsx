@@ -23,8 +23,9 @@ const NEUTRAL_CLASS: Readonly<Record<DiffLine["kind"], string>> = {
   removed: "text-muted-foreground",
 };
 
+/** Bad news isn't a mistake, so it takes the warning's amber; pink means wrong. */
 const TONE_CLASS: Readonly<Record<Exclude<DiffTone, "neutral">, string>> = {
-  bad: "bg-destructive/12 text-destructive-text",
+  bad: "bg-warning/12 text-warning-text",
   good: "bg-success/12 text-success-text",
 };
 

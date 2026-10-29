@@ -10740,6 +10740,16 @@ msgctxt "j3OVHp"
 msgid "Leaves out {lessons, plural, one {# lesson} other {# lessons}}: {names}."
 msgstr "Retire {lessons, plural, one {# leçon} other {# leçons}} : {names}."
 
+#: src/plan/use-effect-counts.ts
+msgctxt "NeqKcc"
+msgid "Lessons left out include {names}."
+msgstr "Les leçons laissées de côté comprennent {names}."
+
+#: src/plan/use-effect-counts.ts
+msgctxt "GOzVd7"
+msgid "Lessons left out: {names}."
+msgstr "Leçons laissées de côté : {names}."
+
 #: src/plan/use-effect-text.ts
 msgctxt "IUkTus"
 msgid "Ends {after} instead of {before}."

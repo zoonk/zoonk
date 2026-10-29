@@ -177,6 +177,16 @@ export function useLessonsEffectText() {
       : t("Leaves out {lessons, plural, one {# lesson} other {# lessons}}.", { lessons: removed });
   };
 
+  const namesText = ({ names, removed, someOf }: Counted): string | null => {
+    if (!names) {
+      return null;
+    }
+
+    return someOf && removed > 0
+      ? t("Lessons left out include {names}.", { names })
+      : t("Lessons left out: {names}.", { names });
+  };
+
   return function lessonsText(
     effect: ChangeEffect,
     {
@@ -184,10 +194,7 @@ export function useLessonsEffectText() {
       named = false,
     }: {
       byDate?: boolean;
-      /**
-       * Beside a diff, which counts them first: only a sentence that names the lessons left out
-       * says more. Null otherwise.
-       */
+      /** Beside a diff, which already counts them: only the names of the lessons left out. */
       named?: boolean;
     } = {},
   ): string | null {
@@ -204,8 +211,8 @@ export function useLessonsEffectText() {
 
     const unwritten = unwrittenText(effect);
 
-    if (named && counted.names === null) {
-      return unwritten;
+    if (named) {
+      return [namesText(counted), unwritten].filter(Boolean).join(" ") || null;
     }
 
     const counts = sayLessons(byDate ? { addedText, bothText, removedText } : fewer, {
