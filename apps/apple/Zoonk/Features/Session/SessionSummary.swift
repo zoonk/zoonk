@@ -21,6 +21,13 @@ struct SessionSummary: Decodable, Equatable, Sendable {
     let before: Double
   }
 
+  /// A goal's share before and after the session: progress for a goal that isn't an exam,
+  /// preparation for an exam.
+  struct Share: Decodable, Equatable, Sendable {
+    let after: Double?
+    let before: Double?
+  }
+
   struct NewCard: Decodable, Equatable, Sendable {
     let description: String
     let name: String
@@ -40,7 +47,6 @@ struct SessionSummary: Decodable, Equatable, Sendable {
 
   let accuracy: Double?
   let belt: Belt?
-  let bestStreak: Int
   let brainPower: Int
   let ceremony: Milestone?
   let comesBack: [ComesBack]
@@ -52,7 +58,10 @@ struct SessionSummary: Decodable, Equatable, Sendable {
   let minutes: Int
   let missions: [StudyMission]
   let mistakesSaved: Int
+  let netScore: Int?
   let newCards: [NewCard]
+  let preparation: Share
+  let progress: Share
   let questions: Int
   let sessionId: String
   let skillsMoved: [SkillMove]

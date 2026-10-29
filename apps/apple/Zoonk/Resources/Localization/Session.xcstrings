@@ -369,6 +369,41 @@
         }
       }
     },
+    "%@ so far" : {
+      "comment" : "Time studied in a session stopped for today",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bisher %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ so far"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Llevas %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ pour le moment"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ até agora"
+          }
+        }
+      }
+    },
     "%@, level %lld" : {
       "comment" : "The belt and level reached",
       "localizations" : {
@@ -896,31 +931,37 @@
         }
       }
     },
-    "Best streak" : {
-      "comment" : "Most right in a row",
+    "Back %@" : {
+      "comment" : "When the topics to review come back, such as Back Oct 30 and Nov 7",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Längste Serie"
+            "value" : "Wieder am %@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Back %@"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mejor racha"
+            "value" : "Vuelve %@"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Meilleure série"
+            "value" : "De retour le %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Melhor sequência"
+            "value" : "Volta em %@"
           }
         }
       }
@@ -1592,6 +1633,41 @@
         }
       }
     },
+    "Keep going" : {
+      "comment" : "Goes on with a stopped session",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weitermachen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Keep going"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seguir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuer"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar"
+          }
+        }
+      }
+    },
     "Keep learning" : {
       "comment" : "Adds the next lessons",
       "localizations" : {
@@ -1762,6 +1838,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Erros corrigidos"
+          }
+        }
+      }
+    },
+    "net %lld" : {
+      "comment" : "Right minus wrong answers",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saldo %lld"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "net %lld"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balance %lld"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "solde %lld"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "saldo %lld"
           }
         }
       }
@@ -2004,6 +2115,76 @@
         }
       }
     },
+    "Preparation" : {
+      "comment" : "An exam's preparation",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vorbereitung"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Preparation"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparación"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Préparation"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparo"
+          }
+        }
+      }
+    },
+    "Progress" : {
+      "comment" : "The goal's progress",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fortschritt"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Progress"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progreso"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progrès"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Progresso"
+          }
+        }
+      }
+    },
     "Purple belt" : {
       "comment" : "A belt",
       "localizations" : {
@@ -2236,31 +2417,37 @@
         }
       }
     },
-    "Session complete" : {
-      "comment" : "Summary of a finished day",
+    "See mistakes" : {
+      "comment" : "Opens the mistakes notebook",
       "localizations" : {
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lerneinheit abgeschlossen"
+            "value" : "Fehler ansehen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "See mistakes"
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sesión completada"
+            "value" : "Ver errores"
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Séance terminée"
+            "value" : "Voir les erreurs"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sessão concluída"
+            "value" : "Ver erros"
           }
         }
       }
@@ -2704,6 +2891,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tempo"
+          }
+        }
+      }
+    },
+    "To review" : {
+      "comment" : "Topics that come back to review",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zum Wiederholen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "To review"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Por repasar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À revoir"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para revisar"
           }
         }
       }

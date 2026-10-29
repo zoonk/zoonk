@@ -13,7 +13,6 @@ struct SessionSummaryView: View {
   @State private var action: Task<Void, Never>?
   @State private var isAddingTime = false
   @State private var failed = false
-  @ScaledMetric(relativeTo: .body) private var beltDotSize: CGFloat = 12
 
   var body: some View {
     let summary = store.summary(id: sessionID)
@@ -74,29 +73,25 @@ struct SessionSummaryView: View {
           .font(.largeTitle.bold())
           .accessibilityAddTraits(.isHeader)
 
-        Text(time(summary))
+        if stopped, summary.minutes >= 1 {
+          Text(
+            "\(studyDuration(minutes: summary.minutes)) so far", tableName: "Session",
+            comment: "Time studied in a session stopped for today"
+          )
+          .monospacedDigit()
           .foregroundStyle(.secondary)
+        }
       }
       .listRowBackground(Color.clear)
     }
 
     Section {
-      Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 4) {
-        GridRow {
-          stat(
-            Text("Right", tableName: "Session", comment: "Questions answered right"),
-            value: summary.questions > 0 ? "\(summary.correct)/\(summary.questions)" : "–")
-          stat(
-            Text("Brain Power", tableName: "Session", comment: "Brain Power earned"),
-            value: "+\(summary.brainPower)", color: .brain)
-          stat(
-            Text("Best streak", tableName: "Session", comment: "Most right in a row"),
-            value: "\(summary.bestStreak)")
-        }
-      }
+      SummaryTiles(summary: summary, goalKind: learner.summary.value?.shownGoal?.kind)
     }
+    .listRowBackground(Color.clear)
+    .listRowInsets(EdgeInsets())
 
-    if !summary.missions.isEmpty {
+    if !stopped, !summary.missions.isEmpty {
       Section {
         ForEach(Array(summary.missions.enumerated()), id: \.offset) { _, mission in
           MissionRow(mission: mission, buddyName: buddyName)
@@ -109,23 +104,6 @@ struct SessionSummaryView: View {
         }
       }
     }
-
-    if let belt = summary.belt {
-      Section {
-        Label {
-          Text(
-            "\(beltName(belt.after.color) ?? belt.after.color), level \(belt.after.level)",
-            tableName: "Session", comment: "The belt and level reached")
-        } icon: {
-          // The belt's own color, ringed so a white belt shows on a light row.
-          Circle()
-            .fill(ProgressBelt(rawValue: belt.after.color)?.color ?? .secondary)
-            .strokeBorder(.secondary.opacity(0.35), lineWidth: 1)
-            .frame(width: beltDotSize, height: beltDotSize)
-        }
-      }
-    }
-
   }
 
   @ViewBuilder
@@ -140,7 +118,7 @@ struct SessionSummaryView: View {
       }
     }
 
-    if let tomorrow = summary.tomorrow {
+    if !stopped, let tomorrow = summary.tomorrow {
       Section {
         Label {
           Text(tomorrow.title)
@@ -162,6 +140,29 @@ struct SessionSummaryView: View {
         }
         .buttonStyle(.mainAction)
         .controlSize(.large)
+
+        if stopped, let next = store.session(id: sessionID).value?.nextBlock {
+          Button {
+            keepGoing(next)
+          } label: {
+            Text("Keep going", tableName: "Session", comment: "Goes on with a stopped session")
+              .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.bordered)
+          .controlSize(.large)
+          .disabled(isAddingTime)
+        }
+
+        if summary.mistakesSaved > 0 {
+          Button {
+            router.open(.mistakes)
+          } label: {
+            Text("See mistakes", tableName: "Session", comment: "Opens the mistakes notebook")
+              .frame(maxWidth: .infinity)
+          }
+          .buttonStyle(.bordered)
+          .controlSize(.large)
+        }
 
         if summary.finished && summary.extraTime.available {
           Button {
@@ -206,29 +207,39 @@ struct SessionSummaryView: View {
   }
 
   private func title(_ summary: SessionSummary) -> Text {
-    stopped || !summary.finished
-      ? Text("Done for now", tableName: "Session", comment: "Summary after stopping")
-      : Text("Session complete", tableName: "Session", comment: "Summary of a finished day")
-  }
+    if stopped || !summary.finished {
+      return Text("Done for now", tableName: "Session", comment: "Summary after stopping")
+    }
 
-  private func time(_ summary: SessionSummary) -> String {
-    summary.minutes < 1
-      ? String(localized: "Done in under a minute", table: "Session", comment: "Session time")
-      : String(
-        localized: "Done in \(studyDuration(minutes: summary.minutes))", table: "Session",
+    return summary.minutes < 1
+      ? Text("Done in under a minute", tableName: "Session", comment: "Session time")
+      : Text(
+        "Done in \(studyDuration(minutes: summary.minutes))", tableName: "Session",
         comment: "Session time")
   }
 
-  private func stat(_ label: Text, value: String, color: Color = .primary) -> some View {
-    VStack(alignment: .leading, spacing: 2) {
-      Text(value)
-        .font(.title2.bold().monospacedDigit())
-        .foregroundStyle(color)
-      label
-        .font(.footnote)
-        .foregroundStyle(.secondary)
+  /// Main's "Keep going" opens the next block, as the next stop's button does.
+  private func keepGoing(_ next: StudyBlock) {
+    isAddingTime = true
+    failed = false
+
+    action = Task {
+      let result = await today.open(next, sessionID: sessionID)
+      isAddingTime = false
+
+      switch result {
+      case .done(.session), .done(.lessonWait):
+        // The next stop shows the step, and follows a lesson being written.
+        store.resume(sessionID: sessionID)
+      case .done(let destination) where !Task.isCancelled:
+        store.resume(sessionID: sessionID)
+        router.openStudy(destination, sessions: store)
+      case .failed:
+        failed = true
+      case .done, .obsolete:
+        break
+      }
     }
-    .accessibilityElement(children: .combine)
   }
 
   private func keepLearning() {
@@ -248,6 +259,102 @@ struct SessionSummaryView: View {
         break
       }
     }
+  }
+}
+
+/// Main's session numbers: right answers, where the goal stands, what comes back to review and the
+/// Brain Power earned.
+private struct SummaryTiles: View {
+  let summary: SessionSummary
+  let goalKind: LearnerGoal.Kind?
+
+  @ScaledMetric(relativeTo: .body) private var minimumWidth = 150.0
+
+  var body: some View {
+    StatTileGrid(columns: [4, 2], minimumWidth: minimumWidth) {
+      if summary.questions > 0 {
+        StatTile(
+          label: Text("Right", tableName: "Session", comment: "Questions answered right"),
+          value: Text(verbatim: "\(summary.correct)/\(summary.questions)"),
+          systemImage: "target", tone: .success, detail: rightDetail)
+      }
+
+      if let goal = goalNumber {
+        StatTile(
+          label: goal.label, value: Text(verbatim: goal.value),
+          systemImage: goal.dropped ? "chart.line.downtrend.xyaxis" : "chart.line.uptrend.xyaxis",
+          tone: goal.dropped ? .neutral : .success,
+          detail: goal.before.map { Text(verbatim: "\($0) → \(goal.value)") })
+      }
+
+      StatTile(
+        label: Text("To review", tableName: "Session", comment: "Topics that come back to review"),
+        value: Text(summary.comesBack.reduce(0) { $0 + $1.skills }, format: .number),
+        systemImage: "arrow.counterclockwise", detail: comesBack)
+
+      StatTile(
+        label: Text("Brain Power", tableName: "Session", comment: "Brain Power earned"),
+        value: Text(verbatim: "+\(summary.brainPower)"), systemImage: "brain", tone: .brain,
+        detail: summary.belt.map {
+          Text(
+            "\(beltName($0.after.color) ?? $0.after.color), level \($0.after.level)",
+            tableName: "Session", comment: "The belt and level reached")
+        })
+    }
+  }
+
+  private var rightDetail: Text? {
+    let parts = [
+      summary.accuracy.map { $0.formatted(.percent.precision(.fractionLength(0))) },
+      summary.netScore.map {
+        String(localized: "net \($0)", table: "Session", comment: "Right minus wrong answers")
+      },
+    ].compactMap(\.self)
+
+    return parts.isEmpty ? nil : Text(verbatim: parts.joined(separator: " · "))
+  }
+
+  /// A language goal has no number here; an exam shows its preparation, any other goal its
+  /// progress.
+  private var goalNumber: (label: Text, value: String, before: String?, dropped: Bool)? {
+    let share: SessionSummary.Share
+
+    switch goalKind {
+    case .exam: share = summary.preparation
+    case .learn: share = summary.progress
+    case .language, .explain, nil: return nil
+    }
+
+    guard let after = share.after else {
+      return nil
+    }
+
+    let start = share.before ?? after
+    let format: (Double) -> String =
+      goalKind == .exam
+      ? { $0.formatted(.percent.precision(.fractionLength(0))) }
+      : { $0.formatted(.percent.precision(.fractionLength(0...2))) }
+    let moved = format(after) != format(start)
+
+    return (
+      goalKind == .exam
+        ? Text("Preparation", tableName: "Session", comment: "An exam's preparation")
+        : Text("Progress", tableName: "Session", comment: "The goal's progress"),
+      format(after), moved ? format(start) : nil, moved && after < start
+    )
+  }
+
+  private var comesBack: Text? {
+    guard !summary.comesBack.isEmpty else {
+      return nil
+    }
+
+    let days = summary.comesBack.compactMap { studyDate($0.date) }
+      .map { $0.formatted(.studyDay.month(.abbreviated).day()) }
+
+    return Text(
+      "Back \(days.formatted(.list(type: .and)))", tableName: "Session",
+      comment: "When the topics to review come back, such as Back Oct 30 and Nov 7")
   }
 }
 

@@ -105,6 +105,13 @@ final class StudySessionStore {
     moment = completion
   }
 
+  /// "Keep going" after "Stop for today": the next stop shows again.
+  func resume(sessionID: String) {
+    if stoppedSessionID == sessionID {
+      stoppedSessionID = nil
+    }
+  }
+
   func leave() {
     playingBlockID = nil
     moment = nil
