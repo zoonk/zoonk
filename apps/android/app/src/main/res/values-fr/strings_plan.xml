@@ -6,6 +6,7 @@
   "plan_activity_speaking": "ede9d226ed5e9966d286fbb578ede073c19b553a87c82146229a52b754ac45fa",
   "plan_activity_vocabulary": "04352c0f279dbd48eee0b5bcbb42c2fff5752fa9aa557a817e571054d5c2ca1e",
   "plan_activity_writing": "a0ebb9f68e73f66928b57325db010e6b723ba0cf2ade6656faadf9535779ca2c",
+  "plan_adjust": "2d41cf0e974f87914d7aa1ec39c119de41514b67e2e86e9170b35d2a5db9eb04",
   "plan_adjust_plan": "7e775996e4acd9e7a92b124de49e69349459303e3514bf514cbe7cc2ad25dd1d",
   "plan_all_prerequisites": "f937c2573798efbf32e3584afeedcc0d4e3d7bf27a11771f5b6cfb63e4715250",
   "plan_apply": "9a5dc900b7c8cbaa73433142574832e1ff4a1fb6a18ca9993251178dd88fc688",
@@ -49,6 +50,7 @@
   "plan_cadence_weekly": "c231275879c99b347940b74b1ac3b4825e6e2df95fc79fe034810465420aba0c",
   "plan_cadence_weekly_effect": "7d92e47da5c4808e52c675c81267a997a84456b41431bb216351206918691cfa",
   "plan_cancel": "cabd34e89ddd2d27312bbed403c2c3c296a60d264568707cf9af27ed58f67706",
+  "plan_catch_up": "72563cdbbc0fc6c4c7c41cffaa95fb3b30241c5a037b55202b8d359a3392a716",
   "plan_challenge_after_previous": "00304acabd1472c2191026d0e9149cc0adb71fe046393b46bfca603dfc95bd16",
   "plan_challenge_left_out": "af8bdc7fcc768f965b331ad3b70ca91c2012469d1614965ac7d1c124481818ec",
   "plan_challenge_next_session": "acf42c16e8387437b070e32f31d4d16f3c7a6d27fc880e984d4dcfd4fdb9ac04",
@@ -262,6 +264,8 @@
   "plan_focus_includes": "103a64975758ccb63dedf600fe22295de501ec4510d20578d1f677349c594966",
   "plan_focus_on_these": "888ece5ffe5996f7baae6e31bb54427bbc2a5d487968a30ec001723f4a6d8c27",
   "plan_focus_only": "e25278ddf170898ce905d954b633f3df12686ba02738381d26c4ec32a1193499",
+  "plan_free_week_over_body": "5dae9c4ccff254d6771142535ee4998c4fee81546b2285be62e05efa6f31aa8d",
+  "plan_free_week_over_title": "c2b1669bec5093498aa2215a015e0ed5348f10dde67ea1bdb1f166c14c62309f",
   "plan_fridays": "3c3b6818e0a423a76d3b8878d719a6943790570b84983581b3bdb8c989e52578",
   "plan_full_course": "e7d390b198af96d80034ebbdc05dd93bf7125293603683f5c219ad049b2ddbfe",
   "plan_full_course_off": "2c2361321d8baa820932e8221514b756a3de5345aae46e1ba8e1064a2544d7b0",
@@ -275,8 +279,10 @@
   "plan_gain_this_week": "c8668ec3a6941c6f3803ee20e5a0319b36330789d8fabd2fe84c0d78b45b009d",
   "plan_get_recommendation": "f24515c2590b7df8d16af9d261aee8df22977333b92d0494424acde1447ca651",
   "plan_getting_recommendation": "b9ad11d86bd714e583df04cb793bde11de9eb2fa2a437e950ad122b2e56c7078",
+  "plan_go_to_today": "be8c0eb7cd0237fa0f17ccf53251a872e38e415f31033705d09ab23a47d20c77",
   "plan_goal_date": "ecfe72e4f1a3c8d91472e88c7032e3472b235f28660a0fead76f48a6a787dd1e",
   "plan_goal_limit_reached": "e9c1d59dbe59d6714042c5f71f79be6a219b280c69b21bfbf16063a7c85f2281",
+  "plan_goal_paused": "492362dcec6f419fe10abafe31bb6802f9d26d934f595fc4e6b9726f8a105000",
   "plan_going_deeper": "ad54ab3a0baf1d3d9abbcb22730de5c1502dcd11c57c423bc3979f74162bcd5f",
   "plan_how_is_it_going": "9301d7a8f3c94e05043fbce985a5dae3337b43fc001d75a1defeeeb3b1d8478f",
   "plan_last_week_recap": "092c5dbc5a418fe4db038710a537cd5d6180bb8e19eaf5907a18388e5a40c0cf",
@@ -323,6 +329,7 @@
   "plan_no_date": "739b93797dc54938d24b47bee7f70c1cb15c51b3a93eaaa5c4cd38680d55716f",
   "plan_no_deadline_note": "51ebf9ef12601015c633ecd4e705e219e2fa681e356dad4a00dff355ab3088ad",
   "plan_no_goal_description": "75e896ee02aecf2d61f66829677b88d9e804f70762807bfd2fe46aef1216471c",
+  "plan_no_longer_fits": "fe4d18ecd45bbdfff62f9e3c2d0969b143ec9b2eb6f78f6daafa0a8512eab0a5",
   "plan_not_in_your_plan": "567d311fefb93f3b53190f2caa1a869cfac1caf845d718b92f872c70dc195e56",
   "plan_not_now": "fa78c66730c77e35af2e8bba580443a80403f88a07b15410a0eda8257bae1028",
   "plan_not_yet": "56b07d40c84af024f552a94f8a5a9274e545c9fbf2bdacfb18fa390cd6a1ad8d",
@@ -404,6 +411,7 @@
   "plan_score_percent": "0ce2f6db1e4b6e3a444ab3114654cf8230a0abf0aaa575e408b86cd2977df156",
   "plan_score_percent_range": "65e9754675206d13ef9d05f662cdeebca8e95313098bb3471abcbd543fc1fc4b",
   "plan_score_range": "90f28c4657bcd184d53d799e64880149cccdaaf2d06546941e7e8f0cbbff4f93",
+  "plan_see_plus": "691a175cb0fb51fa53ef4e2f43f36590fe9e131f54799c217f6bff5c4007870d",
   "plan_setup_left_description": "5c7aea161544064dc6c5cc73b160d2a7e985f8d5dcbf38b18c2aef1c46d2755b",
   "plan_setup_left_title": "4cab399a15eba8b89a16dfd029bed30c9cec3cdf1185b0d27acc308a7159910a",
   "plan_share": "50355d4ba263c4ae21fe75e9a48336edde773ee932b279e82470f19d7688eace",
@@ -435,6 +443,9 @@
   "plan_study_everything": "157a0c33ca174c1afa6bc245d42c0264f6cfe9d60439731c42347a6cb838f157",
   "plan_study_everything_exam_description": "0b06f475bc42f21ad65c234791ed33852395b1815a052dcb97b23f763b5ce5e1",
   "plan_study_everything_goal_description": "210a2273c333d7e4e4fb351daf503bd2e6829fb3f37ac9add7ea3745916dfac7",
+  "plan_suggestion_next": "f10fef47a1356d60c6049e90392d916086e0e07edca35b206f7ea35fb18fe93c",
+  "plan_suggestion_position": "afcf0aef38f393f65892e3a0ddda2a3e12d2da1a6a50585093a07f6a11e47ad3",
+  "plan_suggestion_previous": "067cd8c5a4ad495293b467935e6caac8e13bb958da732e93a4a2f38ae23f7ea5",
   "plan_sundays": "3aadda6d109ad940445856e5b299469a83858c236107525693b60bd45e31bb82",
   "plan_system_phone": "2b9f07a0063fbfdc514fa9f832d99d6ea7da292dfb3c849d901910ffcb637947",
   "plan_take_short_test": "94843e5a7bcb4cb644d8a3aec6f75c764ee92dccc859b6f4614d8c41cc5abd78",
@@ -1328,4 +1339,15 @@
     <string name="plan_then_covers_everything">Ton plan couvre alors tout en détail.</string>
     <string name="plan_apply">Appliquer</string>
     <string name="plan_not_now">Pas maintenant</string>
+    <string name="plan_suggestion_previous">Précédent</string>
+    <string name="plan_suggestion_next">Suivant</string>
+    <string name="plan_suggestion_position">%1$s sur %2$s</string>
+    <string name="plan_goal_paused">%1$s est en pause</string>
+    <string name="plan_no_longer_fits">Ton plan ne te convient plus</string>
+    <string name="plan_catch_up">Un petit rattrapage</string>
+    <string name="plan_adjust">Ajuster</string>
+    <string name="plan_go_to_today">Aller à Aujourd’hui</string>
+    <string name="plan_see_plus">Voir Plus</string>
+    <string name="plan_free_week_over_title">Ta semaine gratuite de préparation à l’examen est terminée</string>
+    <string name="plan_free_week_over_body">Les révisions et la correction de tes erreurs restent gratuites. Plus te donne accès aux nouvelles leçons, au reste de ton plan et aux examens blancs.</string>
 </resources>

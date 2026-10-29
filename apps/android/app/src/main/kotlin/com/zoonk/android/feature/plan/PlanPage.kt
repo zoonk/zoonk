@@ -43,6 +43,7 @@ import com.zoonk.android.feature.goalcontent.hasSubjectPages
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
+import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalProgress
@@ -98,6 +99,10 @@ class PlanLinks(
     fun buddy() = open(AppRoute.Buddy())
 
     fun subject(key: String) = open(AppRoute.Subject(key))
+
+    fun today() = open(AppRoute.Today)
+
+    fun plus() = open(AppRoute.Subscription)
 
     /** These links run [close] before leaving, so a sheet they're in doesn't stay over the page they open. */
     fun closing(close: () -> Unit) = PlanLinks(navigator, page) { close() }
@@ -180,6 +185,7 @@ internal fun PlanPage(
             editingAt = section
             editing = true
         },
+        edits = edits,
     )
 
     if (editing) {
@@ -247,9 +253,14 @@ internal fun PlanContent(
     onSetStatus: (GoalUpdateInput.Status) -> Unit,
     report: ReportProblem? = null,
     onAdjust: ((PlanSection?) -> Unit)? = null,
+    edits: PlanEdits = PlanEdits(),
 ) {
     val adjust = onAdjust?.let { { it(null) } }
     val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links, onAdjust = adjust) }
+    val suggestion =
+        @Composable { layout: SuggestionLayout ->
+            PlanSuggestionSlot(page, edits, links, resume, onSetStatus, onAdjust = { adjust?.invoke() }, layout = layout)
+        }
 
     var pathOpen by rememberSaveable { mutableStateOf(false) }
     val list = rememberLazyListState()
@@ -277,6 +288,7 @@ internal fun PlanContent(
                 }
                 if (!asideBeside) {
                     item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
+                    item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
                 }
                 if (structure != null) {
                     item(key = "structure", contentType = "structure") { PlanSyllabusSection(structure, onOpenSubject = links::subject) }
@@ -303,6 +315,7 @@ internal fun PlanContent(
                             verticalArrangement = Arrangement.spacedBy(32.dp),
                         ) {
                             numbers(NumberVariant.Stats)
+                            suggestion(SuggestionLayout.Panel)
                             NextOnPath(page, links)
                             PlanProperties(page, links, onOpen = onAdjust)
                         }
