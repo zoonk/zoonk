@@ -100,31 +100,6 @@ private struct LessonPlayerContent: View {
           }
       }
     }
-    .confirmationDialog(
-      Text(
-        "Leave for now?", tableName: "Player",
-        comment: "Title of the dialog when closing a lesson in progress"),
-      isPresented: $isLeaving,
-      titleVisibility: .visible
-    ) {
-      Button(role: .destructive) {
-        dismiss()
-      } label: {
-        Text(
-          "Leave", tableName: "Player",
-          comment: "Closes the lesson, dropping an answer not checked yet")
-      }
-
-      Button(role: .cancel) {
-      } label: {
-        Text(
-          "Keep writing", tableName: "Player", comment: "Stays in the lesson to finish an answer")
-      }
-    } message: {
-      Text(
-        "Your answer hasn't been checked, so it won't be kept.", tableName: "Player",
-        comment: "Closing a lesson with a written answer not checked yet")
-    }
     // Beside the lesson on a spread (the stage shows it); a sheet where the lesson is one column.
     .sheet(isPresented: isShowingAskSheet) {
       LessonAskPanel(store: store, isBeside: false)
@@ -208,6 +183,32 @@ private struct LessonPlayerContent: View {
       }
     }
     .keyboardShortcut(.cancelAction)
+    // On the button, so the dialog comes from it.
+    .confirmationDialog(
+      Text(
+        "Leave for now?", tableName: "Player",
+        comment: "Title of the dialog when closing a lesson in progress"),
+      isPresented: $isLeaving,
+      titleVisibility: .visible
+    ) {
+      Button(role: .destructive) {
+        dismiss()
+      } label: {
+        Text(
+          "Leave", tableName: "Player",
+          comment: "Closes the lesson, dropping an answer not checked yet")
+      }
+
+      Button(role: .cancel) {
+      } label: {
+        Text(
+          "Keep writing", tableName: "Player", comment: "Stays in the lesson to finish an answer")
+      }
+    } message: {
+      Text(
+        "Your answer hasn't been checked, so it won't be kept.", tableName: "Player",
+        comment: "Closing a lesson with a written answer not checked yet")
+    }
   }
 
   private var askButton: some View {
