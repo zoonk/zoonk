@@ -63,8 +63,13 @@
   "onboarding_find_finding": "c84d8312a7ea6f890184cf248f5c58d2e1af20b3d429cc46627aa67d67439eec",
   "onboarding_find_none": "21a4624e2fe2e0120e0b62ea4bf8d8510258b8e4a8a20e4a33873677c6cdebd3",
   "onboarding_find_time": "6e9eb9c0d720a38a567cc763e35059fbf8a5f9ad0c6dd24a1dbc6ca7a58fe73f",
+  "onboarding_finish_around": "bb6aa790813edd6942b283a66e905b6397495c4ddd6cd93067708547ed073798",
+  "onboarding_finish_choose_day": "1f63b94ee1f5436e0670eeb325709db2021429f5aee7735bcde41a9553100e01",
+  "onboarding_finish_failed": "69557ff3c949192d1ba0b23672f809a2a295afb09ed4c5a13af9785e2f664848",
   "onboarding_finish_later": "5252cd1b1e50dd66862986664fcf2881e1bb0e599ffb3450837d74f28d4d5587",
   "onboarding_finish_later_description": "abddf07131cba39f1adafd033c04cba6df70ea08cceb3b9bc7c1ede315d7c97d",
+  "onboarding_finish_unknown": "6fb47a273aebe7d114600e92df9e5cb5ccc233e0aa6cb4d5469c1c28aea94dfc",
+  "onboarding_finish_working": "cd15df532fd5e2c246fa01ec74afd628f1b078b6ebd37678dc3c361ba728998b",
   "onboarding_fix_something": "302b3f1a20924af59a5ea7d270beee68c77b9097f258e28c20a0055e5274875a",
   "onboarding_follow_ups_description": "edc242d9421baa979d5016eb639e7db2d5a223621c6aac3e1ca5026d9fcac9f2",
   "onboarding_follow_ups_title": "9ea82850868be6005e950c60c92fa85f12b7e32e58cb61f389f6c94f09aafe14",
@@ -938,6 +943,11 @@
     <string name="onboarding_schedule_minutes_label">Minutes par jour</string>
     <string name="onboarding_schedule_other_time_label">Autre durée par jour</string>
     <string name="onboarding_weekend_other_time_label">Autre durée le week-end</string>
+    <string name="onboarding_finish_choose_day">Choisis au moins un jour d’étude.</string>
+    <string name="onboarding_finish_around">Tu termineras vers %1$s.</string>
+    <string name="onboarding_finish_unknown">Impossible d’estimer une date de fin avec ce planning. Essaie d’y consacrer plus de temps ou d’étudier plus de jours.</string>
+    <string name="onboarding_finish_failed">Impossible de déterminer quand tu termineras.</string>
+    <string name="onboarding_finish_working">Calcul de ta date de fin…</string>
     <!-- Under the daily time the plan found that studies everything. -->
     <string name="onboarding_schedule_covers_everything">Tout est couvert</string>
     <!-- Under the daily time the plan found that reaches every topic, some in less depth. -->

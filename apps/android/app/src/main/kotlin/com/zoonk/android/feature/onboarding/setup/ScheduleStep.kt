@@ -45,6 +45,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -103,14 +104,12 @@ internal fun ColumnScope.ScheduleStep(
     var finding by remember { mutableStateOf<CoverQuery?>(null) }
     val adviceQuery = AdviceQuery(goal, week.adviceInput(minutes))
     val adviceResource = store.timeAdvice[adviceQuery]
-    if (dated) {
-        val adviceState by adviceResource.collectShown()
-        LaunchedEffect(adviceState) {
-            val next = (adviceState as? LoadState.Loaded)?.value ?: return@LaunchedEffect
-            // Each rebuild of the plan (an exam's notice reading landed) makes what Find found before stale.
-            if (answer?.advice?.ready == true && !next.ready) build++
-            answer = AdviceAnswer(next, week, minutes)
-        }
+    val adviceState by adviceResource.collectShown()
+    LaunchedEffect(adviceState) {
+        val next = (adviceState as? LoadState.Loaded)?.value ?: return@LaunchedEffect
+        // Each rebuild of the plan (an exam's notice reading landed) makes what Find found before stale.
+        if (answer?.advice?.ready == true && !next.ready) build++
+        answer = AdviceAnswer(next, week, minutes)
     }
     val advice = weekAdvice(answer, week)
     val lookup = findWeek(days, weekend)
@@ -121,7 +120,7 @@ internal fun ColumnScope.ScheduleStep(
     val picked = pickedShare(advice, answer, found, minutes)
     val studiesEverything = exam && keepsFullCourse(fullCourse, picked)
     val stopped = run.isStopped
-    val asksAdvice = dated && !(advice != null && picked.known) && !stopped
+    val asksAdvice = days.isNotEmpty() && !(advice != null && picked.known) && !stopped
     val poll = rememberPoll(active = asksAdvice, key = adviceQuery) { adviceResource.refreshed() }
     val adviceStatus = poll.status(asksAdvice)
     val scope = rememberCoroutineScope()
@@ -165,7 +164,10 @@ internal fun ColumnScope.ScheduleStep(
         val share = shown.share.takeUnless { shown.failed }
         val short = share != null && share < 1
         if (share == null || short) {
-            AdviceSentence(dated, planReady, answer?.advice?.readingNotice == true, found, findStatus(findState), onFind = find)
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                if (!dated) FinishEstimate(advice.takeIf { picked.known }, adviceStatus, stopped, days.size, onRetry = poll::restart)
+                AdviceSentence(dated, planReady, answer?.advice?.readingNotice == true, found, findStatus(findState), onFind = find)
+            }
         }
         if (exam && (short || studiesEverything)) {
             FullCourseToggle(
@@ -300,29 +302,80 @@ private fun EstimateWords(
             percent,
             date,
         )
-    val start = sentence.indexOf(percent)
     Text(
-        buildAnnotatedString {
-            if (start < 0) {
-                append(sentence)
-            } else {
-                append(sentence.substring(0, start))
-                withStyle(
-                    SpanStyle(
-                        fontSize = MaterialTheme.typography.titleLarge.fontSize,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                    ),
-                ) {
-                    append(percent)
-                }
-                append(sentence.substring(start + percent.length))
-            }
-        },
+        sentence.emphasizing(
+            percent,
+            SpanStyle(
+                fontSize = MaterialTheme.typography.titleLarge.fontSize,
+                fontWeight = FontWeight.Medium,
+                color = MaterialTheme.colorScheme.onSurface,
+            ),
+        ),
         modifier = modifier,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
         style = MaterialTheme.typography.bodyMedium,
     )
+}
+
+/** Main's finish estimate for an undated goal: about when it ends at the time and week picked. */
+@Composable
+private fun FinishEstimate(
+    advice: PlanTimeAdvice?,
+    status: PollStatus,
+    stopped: Boolean,
+    studyDays: Int,
+    onRetry: () -> Unit,
+) {
+    if (stopped && studyDays > 0 && advice == null) return
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    val body = MaterialTheme.typography.bodyMedium
+    val end = advice?.endDate
+    Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
+        when {
+            studyDays == 0 -> {
+                Text(stringResource(R.string.onboarding_finish_choose_day), color = muted, style = body)
+            }
+
+            end != null -> {
+                val month = goalDate(end, namedMonth = true)
+                Text(
+                    stringResource(R.string.onboarding_finish_around, month)
+                        .emphasizing(month, SpanStyle(fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onSurface)),
+                    color = muted,
+                    style = body,
+                )
+            }
+
+            advice != null -> {
+                Text(stringResource(R.string.onboarding_finish_unknown), color = muted, style = body)
+            }
+
+            status == PollStatus.Failed -> {
+                Text(stringResource(R.string.onboarding_finish_failed), color = muted, style = body)
+                TextButton(onClick = onRetry) { Text(stringResource(R.string.onboarding_try_again)) }
+            }
+
+            else -> {
+                Text(stringResource(R.string.onboarding_finish_working), color = muted, style = body)
+            }
+        }
+    }
+}
+
+private fun String.emphasizing(
+    part: String,
+    style: SpanStyle,
+): AnnotatedString {
+    val start = indexOf(part)
+    return buildAnnotatedString {
+        if (start < 0) {
+            append(this@emphasizing)
+        } else {
+            append(substring(0, start))
+            withStyle(style) { append(part) }
+            append(substring(start + part.length))
+        }
+    }
 }
 
 /** Find works out the time only when asked: it plans the goal at each daily time. */

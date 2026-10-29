@@ -511,6 +511,12 @@
     <string name="onboarding_schedule_minutes_label">Minutes a day</string>
     <string name="onboarding_schedule_other_time_label">Other time a day</string>
     <string name="onboarding_weekend_other_time_label">Other time on weekends</string>
+    <string name="onboarding_finish_choose_day">Choose at least one study day.</string>
+    <!-- %1$s is a month and year, like "March 2027". -->
+    <string name="onboarding_finish_around">You finish around %1$s.</string>
+    <string name="onboarding_finish_unknown">We can\'t estimate a finish date for this schedule. Try more time or more study days.</string>
+    <string name="onboarding_finish_failed">We couldn\'t work out when you\'d finish.</string>
+    <string name="onboarding_finish_working">Working out when you\'d finish…</string>
     <!-- Under the daily time the plan found that studies everything. -->
     <string name="onboarding_schedule_covers_everything">Covers everything</string>
     <!-- Under the daily time the plan found that reaches every topic, some in less depth. -->

@@ -69,6 +69,18 @@ class GoalSetupFlowTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private var screen by mutableIntStateOf(0)
 
+    private fun undatedAdvice(endDate: LocalDate?) =
+        PlanTimeAdvice(
+            coveredShare = null,
+            endDate = endDate,
+            fullCourseEndDate = null,
+            measure = PlanTimeAdvice.Measure.GOAL,
+            numbers = null,
+            ready = true,
+            targetDate = null,
+            targetDateNamedMonth = false,
+        )
+
     private fun show(
         goalId: String = GOAL_ID,
         drafts: SetupDrafts? = null,
@@ -167,6 +179,22 @@ class GoalSetupFlowTest {
         val answer = (api.answers.single().second as OnboardingAnswerInput.OnboardingAnswerInputOneOf8Value).value
         assertEquals(30L, answer.dailyMinutes)
         assertEquals(listOf(1L, 2L, 3L, 4L, 5L), answer.studyDays)
+    }
+
+    @Test
+    fun anUndatedGoalSaysAboutWhenItsPlanFinishesOrThatItCantTell() {
+        api.setup = { setupView(listOf("schedule", "plan")) }
+        api.advice = { input -> undatedAdvice(endDate = LocalDate(2027, 3, 15).takeIf { input.dailyMinutes == 30L }) }
+        show()
+
+        rule.onNodeWithText("You finish around March 2027.").performScrollTo().assertIsDisplayed()
+
+        rule.onNodeWithText("15\u00A0min").performScrollTo().performClick()
+        rule
+            .onNodeWithText(
+                "We can't estimate a finish date for this schedule. Try more time or more study days.",
+            ).performScrollTo()
+            .assertIsDisplayed()
     }
 
     @Test

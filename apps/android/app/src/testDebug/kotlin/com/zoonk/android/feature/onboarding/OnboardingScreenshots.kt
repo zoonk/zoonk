@@ -364,6 +364,25 @@ class OnboardingScreenshots {
                         },
                     )
                 },
+                "setup-schedule-undated" to {
+                    Setup(
+                        FakeOnboardingApi().apply {
+                            setup = { setupView(listOf("schedule", "plan")) }
+                            advice = {
+                                PlanTimeAdvice(
+                                    coveredShare = null,
+                                    endDate = kotlinx.datetime.LocalDate(2027, 3, 15),
+                                    fullCourseEndDate = null,
+                                    measure = PlanTimeAdvice.Measure.GOAL,
+                                    numbers = null,
+                                    ready = true,
+                                    targetDate = null,
+                                    targetDateNamedMonth = false,
+                                )
+                            }
+                        },
+                    )
+                },
                 "setup-buddy" to { Setup(FakeOnboardingApi().apply { setup = { setupView(listOf("buddy", "plan")) } }) },
                 "plan-link" to { PlanLink(FakeOnboardingApi()) },
                 "level-test-intro" to { LevelTest(FakeOnboardingApi(), targetLanguage = "ja", native = "pt") },

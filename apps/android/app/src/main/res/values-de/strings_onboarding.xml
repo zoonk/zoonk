@@ -63,8 +63,13 @@
   "onboarding_find_finding": "02db0a6e90d6b2f2d9c24b955fce5313718421a603e21bcef07838421df781df",
   "onboarding_find_none": "380db793486574415ac6cd99e9247e5515bfb059ef836718d4911d2674aef7e7",
   "onboarding_find_time": "36da5c419f76899bd0dfc7f2c4330259f979c3e8d2741443532422b82d25d9bc",
+  "onboarding_finish_around": "968347c1a6a24818b27e9c09bb83f958bb1fbd75a2336c2ae0e0aa86f7cabbc0",
+  "onboarding_finish_choose_day": "73f8f165edfed8e0d2106164d4971a020739c4684dcce34d801d793730b0a8d5",
+  "onboarding_finish_failed": "7604643dab4ae64da256ffc1f7624c731e02bb03e57dee6994a6f425dc588019",
   "onboarding_finish_later": "a8bee1ba5b5e721627b6b4e169eacc57fff861edb611c8220f937e008c2333b0",
   "onboarding_finish_later_description": "0eb55f18b277206710807a96d620e3d78b66bfe28ba43e6b39d6ba2527e464bd",
+  "onboarding_finish_unknown": "c42cb4308c43270d96376f0043682648746a156e5abdec08af9514e5a1fe08ba",
+  "onboarding_finish_working": "f3d1b064b604baccc96044c1eac9e542a5658157c1dec59eaae0727d187e29be",
   "onboarding_fix_something": "15594c04eb0ab5d632f62b51bba964587e066d94e69f4254d91cd8c6f03cb984",
   "onboarding_follow_ups_description": "fd69ab1ead01df2ba80ee0ff4fd426a800579c2ecdc59b72b09bc79cb44ce778",
   "onboarding_follow_ups_title": "6b8744a37cf0cd5f71c2437ea483fb3e205b3f51327c753b33a17504cd8d21e8",
@@ -921,6 +926,11 @@
     <string name="onboarding_schedule_minutes_label">Minuten pro Tag</string>
     <string name="onboarding_schedule_other_time_label">Andere Lernzeit pro Tag</string>
     <string name="onboarding_weekend_other_time_label">Andere Lernzeit am Wochenende</string>
+    <string name="onboarding_finish_choose_day">Wähle mindestens einen Lerntag aus.</string>
+    <string name="onboarding_finish_around">Du bist ungefähr im %1$s fertig.</string>
+    <string name="onboarding_finish_unknown">Für diesen Zeitplan lässt sich kein Abschlussdatum schätzen. Plane mehr Zeit oder mehr Lerntage ein.</string>
+    <string name="onboarding_finish_failed">Wir konnten nicht ermitteln, wann du fertig bist.</string>
+    <string name="onboarding_finish_working">Wir ermitteln, wann du fertig bist…</string>
     <!-- Under the daily time the plan found that studies everything. -->
     <string name="onboarding_schedule_covers_everything">Deckt alles ab</string>
     <!-- Under the daily time the plan found that reaches every topic, some in less depth. -->
