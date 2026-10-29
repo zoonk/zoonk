@@ -84,7 +84,7 @@ fun TodayScreen(
     TabRootScaffold(app, navigator) { padding ->
         when (access) {
             LearnerAccess.Visitor -> {
-                VisitorWelcome(navigator, padding)
+                VisitorWelcome(app, navigator, padding)
             }
 
             LearnerAccess.SessionEnded -> {
