@@ -362,7 +362,7 @@
     <string name="plan_change_calendar_sets_date">The exam\'s official calendar sets the exam for %1$s.</string>
     <string name="plan_change_keep_notice_date">Keep the notice\'s date</string>
     <string name="plan_change_keep_official_date">Keep the official date</string>
-    <string name="plan_change_daily_time">Daily time: %1$s.</string>
+    <string name="plan_change_daily_time">Daily time: %1$s</string>
     <string name="plan_change_weekly_challenge">Weekly challenge: %1$s.</string>
     <string name="plan_change_goal_date">Goal date: %1$s.</string>
     <string name="plan_change_leave_out">Leave out: %1$s.</string>

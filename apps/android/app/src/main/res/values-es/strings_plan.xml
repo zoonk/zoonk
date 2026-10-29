@@ -80,7 +80,7 @@
   "plan_change_calendar_says": "931d27ab2aef0f2052bb6fa046429bdea59e939af176216358037a671ac2c592",
   "plan_change_calendar_sets_date": "7ff98537962c0a85fabac4d953fe641c13eb9e7af870e98e43aa1912bbab1cf0",
   "plan_change_changed": "185896e7b9ecf0388c4748d6ad35e10604d18274778a06595b678bd9ea389307",
-  "plan_change_daily_time": "b40066538f3f53fbd30a07df4fdad60a02333a49bbbdf1f69c043fdd1c699a27",
+  "plan_change_daily_time": "1649468a46f9676f2342dcd32025554d6f0109ca884ab17b0f54c4d5a21353bb",
   "plan_change_daily_time_changed": "7a129ffd1c515372e192c74dc6dba938bf026ce94ae81873015632a617469434",
   "plan_change_date_moved": "ba0d4ed4b52673be965913dcc3328acdcee56c48dd2c1f433256cbe161ae5878",
   "plan_change_days_time": "b7acbefd7719dcada86a142a5c14570cbbc66a1165c01508e08f1b37b9d5a715",
@@ -931,7 +931,7 @@
     <string name="plan_change_calendar_sets_date">El calendario oficial fija la fecha del examen para el %1$s.</string>
     <string name="plan_change_keep_notice_date">Mantener la fecha del aviso</string>
     <string name="plan_change_keep_official_date">Mantener la fecha oficial</string>
-    <string name="plan_change_daily_time">Tiempo diario: %1$s.</string>
+    <string name="plan_change_daily_time">Tiempo diario: %1$s</string>
     <string name="plan_change_weekly_challenge">Desafío semanal: %1$s.</string>
     <string name="plan_change_goal_date">Fecha del objetivo: %1$s.</string>
     <string name="plan_change_leave_out">Omitir: %1$s.</string>

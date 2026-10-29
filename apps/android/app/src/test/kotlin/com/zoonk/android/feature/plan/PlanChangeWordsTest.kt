@@ -36,7 +36,7 @@ class PlanChangeWordsTest {
         assertEquals(
             listOf(
                 "Daily time changed to 40$NBSP" + "min.",
-                "Daily time: 40$NBSP" + "min.",
+                "Daily time: 40$NBSP" + "min",
                 "No deadline: you study everything at your own pace.",
             ),
             words(
@@ -52,7 +52,7 @@ class PlanChangeWordsTest {
         val minutes = """[{"kind":"setDailyMinutes","minutes":20}]"""
 
         assertEquals(
-            listOf("Daily time: 20$NBSP" + "min.", "Daily time: 20$NBSP" + "min."),
+            listOf("Daily time: 20$NBSP" + "min", "Daily time: 20$NBSP" + "min"),
             words(
                 { planChangeSentence(planChange(minutes, status = "declined")) },
                 { planChangeSentence(planChange(minutes, status = "replaced")) },
