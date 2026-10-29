@@ -5,12 +5,14 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ChapterMindMapStatus
+import com.zoonk.api.models.GoalMindMap
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -25,6 +27,7 @@ import kotlinx.coroutines.test.setMain
 import kotlinx.serialization.json.JsonElement
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
@@ -40,6 +43,7 @@ class MindMapViewModelTest {
     private val key = ChapterKey(goalId, chapterId)
     private val dispatcher = StandardTestDispatcher()
     private val api = FakeMindMapApi()
+    private var current: AuthenticatedSession? = ana
 
     @Before
     fun main() = Dispatchers.setMain(dispatcher)
@@ -120,6 +124,7 @@ class MindMapViewModelTest {
             val (maps, store) = setUp()
             val shown = launch { store.list[goalId].shown.collect {} }
             advanceUntilIdle()
+            api.mindMaps = { goalMindMaps(listOf(mapJson(3, "Waves and sound", "ready"))) }
             api.statuses.addAll(listOf(ChapterMindMapStatus.Status.GENERATING, ChapterMindMapStatus.Status.READY))
 
             maps.follow(chapterId)
@@ -160,6 +165,98 @@ class MindMapViewModelTest {
         }
 
     @Test
+    fun aMapBeingDrawnShowsAsDrawingWhereItWasRead() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            val shown = launch { store.list[goalId].shown.collect {} }
+            advanceUntilIdle()
+
+            maps.create(chapterId)
+            advanceUntilIdle()
+
+            val listed =
+                store.list[goalId]
+                    .state.value.value
+                    ?.chapters
+                    ?.first { it.chapterId == chapterId }
+            assertEquals(GoalMindMap.Status.GENERATING, listed?.status)
+            assertEquals(1, api.lists)
+            shown.cancel()
+        }
+
+    @Test
+    fun aReadThatDoesntCatchUpAfterTheMapIsDrawnKeepsFollowing() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            val shown = launch { store.list[goalId].shown.collect {} }
+            advanceUntilIdle()
+            var reads = 0
+            api.mindMaps = {
+                reads++
+                if (reads == 1) throw ApiException(ApiError.Network)
+                goalMindMaps(listOf(mapJson(3, "Waves and sound", "ready")))
+            }
+            api.statuses.addAll(List(3) { ChapterMindMapStatus.Status.READY })
+
+            maps.follow(chapterId)
+            advanceUntilIdle()
+
+            assertEquals(2, api.asked)
+            assertEquals(
+                GoalMindMap.Status.READY,
+                store.list[goalId]
+                    .state.value.value
+                    ?.chapters
+                    ?.single()
+                    ?.status,
+            )
+            shown.cancel()
+        }
+
+    @Test
+    fun readsThatNeverCatchUpGiveUpWithTryAgain() =
+        runTest(dispatcher) {
+            val (maps, store) = setUp()
+            val shown = launch { store.list[goalId].shown.collect {} }
+            advanceUntilIdle()
+            api.mindMaps = { throw ApiException(ApiError.Network) }
+            api.statuses.addAll(List(3) { ChapterMindMapStatus.Status.READY })
+
+            maps.follow(chapterId)
+
+            assertEquals(MindMapLocal(stuck = true), maps.requests.value[chapterId])
+            shown.cancel()
+        }
+
+    @Test
+    fun aPictureThatArrivesAfterItsSessionEndedIsNeitherWrittenNorReported() =
+        runTest(dispatcher) {
+            val (maps) = setUp()
+            val file = ByteArrayOutputStream()
+            api.picture = {
+                current = null
+                byteArrayOf(1, 2, 3)
+            }
+
+            maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { file }
+            advanceUntilIdle()
+
+            assertEquals(0, file.size())
+            assertNull(maps.save.value)
+        }
+
+    @Test
+    fun aDestinationTheAppCantWriteIsAFailedSave() =
+        runTest(dispatcher) {
+            val (maps) = setUp()
+
+            maps.savePicture("https://api.zoonk.test/v1/files/images/a/b.webp") { throw SecurityException("revoked") }
+            advanceUntilIdle()
+
+            assertEquals(PictureSave.Failed, maps.save.value)
+        }
+
+    @Test
     fun aSavedPictureIsWrittenWhereTheLearnerChose() =
         runTest(dispatcher) {
             val (maps) = setUp()
@@ -186,7 +283,7 @@ class MindMapViewModelTest {
     private fun TestScope.setUp(): Pair<MindMapViewModel, MindMapStore> {
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + dispatcher))
         val store = MindMapStore(api, cache)
-        return MindMapViewModel(store, ana, goalId, timeSource = testScheduler.timeSource, io = dispatcher) to store
+        return MindMapViewModel(store, ana, goalId, { current }, timeSource = testScheduler.timeSource, io = dispatcher) to store
     }
 
     private fun refusal(

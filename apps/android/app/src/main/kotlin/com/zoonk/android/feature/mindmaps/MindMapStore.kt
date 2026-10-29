@@ -10,12 +10,15 @@ import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.KeyedResources
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.PrivateImages
+import com.zoonk.android.data.hasContent
 import com.zoonk.android.data.perform
+import com.zoonk.android.data.value
 import com.zoonk.android.data.withBearer
 import com.zoonk.android.feature.goalcontent.ChapterKey
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.ChapterMindMapStatus
+import com.zoonk.api.models.GoalMindMap
 import com.zoonk.api.models.GoalMindMaps
 import com.zoonk.api.models.MindMapGeneration
 import kotlinx.coroutines.Dispatchers
@@ -123,11 +126,21 @@ class MindMapStore(
     val chapter: KeyedResources<ChapterKey, ChapterMindMap> =
         cache.keyed(Audience.SignedIn, DOMAINS) { session, key -> session?.let { api.chapter(it, key) } }
 
-    /** Null when the session changed meanwhile. */
+    /**
+     * Null when the session changed meanwhile. A map being drawn shows as drawing in the reads kept
+     * of it, so a screen opened again follows it; one already drawn is read again.
+     */
     suspend fun create(key: ChapterKey): MindMapCreated? =
         when (val result = cache.mutate(invalidating = setOf(DataDomain.Allowance)) { api.create(it, key) }) {
             is MutationResult.Done -> {
-                if (result.value.status == MindMapGeneration.Status.READY) MindMapCreated.Ready else MindMapCreated.Generating
+                if (result.value.status == MindMapGeneration.Status.READY) {
+                    list[key.goalId].invalidate()
+                    chapter[key].invalidate()
+                    MindMapCreated.Ready
+                } else {
+                    drawing(key)
+                    MindMapCreated.Generating
+                }
             }
 
             is MutationResult.Failed -> {
@@ -153,11 +166,32 @@ class MindMapStore(
             null
         }
 
-    /** A map that changed reads again where it's shown, and when next shown elsewhere. */
-    fun changed(key: ChapterKey) {
-        list[key.goalId].invalidate()
-        chapter[key].invalidate()
+    /**
+     * Reads the map again wherever a read of it is kept (the others when next shown) and says whether
+     * those reads now show [status]; false when one couldn't be read, which the poll counts as a miss.
+     */
+    suspend fun reread(
+        key: ChapterKey,
+        status: MindMapShown,
+    ): Boolean {
+        val list = list[key.goalId]
+        val chapter = chapter[key]
+        listOf(list, chapter).forEach { if (it.state.value.hasContent) it.refresh() else it.invalidate() }
+
+        val listed =
+            list.state.value.value
+                ?.chapters
+                ?.firstOrNull { it.chapterId == key.chapterId }
+        val read = chapter.state.value.value
+        return listOfNotNull(listed?.status?.shown, read?.status?.shown).all { it == status }
     }
+
+    private fun drawing(key: ChapterKey) {
+        list[key.goalId].update { maps -> maps.copy(chapters = maps.chapters.map { it.drawingIf(key.chapterId) }) }
+        chapter[key].update { it.copy(status = ChapterMindMap.Status.GENERATING) }
+    }
+
+    private fun GoalMindMap.drawingIf(id: UUID) = if (chapterId == id) copy(status = GoalMindMap.Status.GENERATING) else this
 
     suspend fun picture(
         session: AuthenticatedSession,

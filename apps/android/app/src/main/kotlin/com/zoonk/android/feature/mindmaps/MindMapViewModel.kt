@@ -33,6 +33,7 @@ class MindMapViewModel(
     private val store: MindMapStore,
     private val session: AuthenticatedSession,
     private val goalId: UUID,
+    private val currentSession: () -> AuthenticatedSession?,
     private val pollEvery: Duration = POLL_EVERY,
     private val timeSource: TimeSource = TimeSource.Monotonic,
     private val io: CoroutineDispatcher = Dispatchers.IO,
@@ -60,7 +61,6 @@ class MindMapViewModel(
                     is MindMapCreated.Refused -> MindMapLocal(shown = MindMapShown.Refused, limit = created.limit)
                 }
             locals.update { it + (chapterId to local) }
-            if (created == MindMapCreated.Ready) store.changed(key)
         }
     }
 
@@ -73,7 +73,10 @@ class MindMapViewModel(
         }
     }
 
-    /** Runs while the screen shows the map being drawn; the server ends a drawing that stalls. */
+    /**
+     * Runs while the screen shows the map being drawn, until the screen's reads show how it ended; a
+     * status or a read that fails counts as a miss. The server ends a drawing that stalls.
+     */
     suspend fun follow(chapterId: UUID) {
         val key = ChapterKey(goalId, chapterId)
         val started = timeSource.markNow()
@@ -82,12 +85,21 @@ class MindMapViewModel(
         while (true) {
             delay(pollEvery)
             val status = store.status(session, key)
-            misses = if (status == null) misses + 1 else 0
 
-            if (status != null && status != ChapterMindMapStatus.Status.GENERATING) {
-                locals.update { it + (chapterId to MindMapLocal(shown = status.shown)) }
-                store.changed(key)
-                return
+            when {
+                status == null -> {
+                    misses++
+                }
+
+                status == ChapterMindMapStatus.Status.GENERATING -> {
+                    misses = 0
+                }
+
+                else -> {
+                    locals.update { it + (chapterId to MindMapLocal(shown = status.shown)) }
+                    if (store.reread(key, status.shown)) return
+                    misses++
+                }
             }
 
             if (misses >= MAX_MISSES || started.elapsedNow() >= GIVE_UP_AFTER) {
@@ -97,16 +109,20 @@ class MindMapViewModel(
         }
     }
 
+    /** Writes only for the session that asked, and says nothing once it ended. */
     fun savePicture(
         url: String,
         open: () -> OutputStream?,
     ) {
         viewModelScope.launch {
             val bytes = store.picture(session, url)
-            val written = bytes != null && withContext(io) { write(open, bytes) }
-            saved.value = if (written) PictureSave.Saved else PictureSave.Failed
+            if (!isCurrent) return@launch
+            val written = bytes != null && withContext(io) { isCurrent && write(open, bytes) }
+            if (isCurrent) saved.value = if (written) PictureSave.Saved else PictureSave.Failed
         }
     }
+
+    private val isCurrent get() = currentSession() == session
 
     fun savedShown() {
         saved.value = null
@@ -119,6 +135,8 @@ class MindMapViewModel(
         try {
             open()?.use { it.write(bytes) } != null
         } catch (e: IOException) {
+            false
+        } catch (e: SecurityException) {
             false
         }
 

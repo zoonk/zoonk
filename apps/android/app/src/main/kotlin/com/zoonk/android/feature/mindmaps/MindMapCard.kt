@@ -37,6 +37,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.ChapterKey
+import com.zoonk.android.feature.plan.PendingLabel
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.KindDot
@@ -105,19 +106,26 @@ internal class MindMapsHost(
     val session: AuthenticatedSession,
     val pictures: PrivatePictures,
     val cap: @Composable () -> Limit?,
+    private val currentSession: () -> AuthenticatedSession?,
 ) {
     @Composable
     fun maps(goalId: UUID): MindMapViewModel =
-        viewModel(key = "mindmaps-$goalId-${session.localId}") { MindMapViewModel(store, session, goalId) }
+        viewModel(key = "mindmaps-$goalId-${session.localId}") { MindMapViewModel(store, session, goalId, currentSession) }
 }
 
 @Composable
 internal fun mindMapsHost(app: AppContainer): MindMapsHost? {
     val session = app.sessions.current ?: return null
-    return MindMapsHost(app.mindMaps, session, PrivatePictures(app.images, session)) {
-        val allowance by app.subscriptions.allowance.collectShown()
-        allowance.value?.reachedCap(AllowanceItem.Kind.MIND_MAP)
-    }
+    return MindMapsHost(
+        store = app.mindMaps,
+        session = session,
+        pictures = PrivatePictures(app.images, session),
+        cap = {
+            val allowance by app.subscriptions.allowance.collectShown()
+            allowance.value?.reachedCap(AllowanceItem.Kind.MIND_MAP)
+        },
+        currentSession = { app.sessions.current },
+    )
 }
 
 internal data class MindMapCardActions(
@@ -174,7 +182,7 @@ private fun MindMapPictureCard(
     OutlinedCard(modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
         MapPicture(
             url = image.url,
-            contentDescription = mindMapAlt(mindMap.outline, mindMap.title),
+            contentDescription = mindMapDescription(mindMap.outline, mindMap.title),
             modifier =
                 Modifier
                     .fillMaxWidth()
@@ -244,7 +252,10 @@ private fun MindMapRequest(
                 onClick = if (failure) actions.retry else actions.create,
                 enabled = local?.pending != true && !capped,
             ) {
-                Text(stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_card_create))
+                PendingLabel(
+                    local?.pending == true,
+                    stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_card_create),
+                )
             }
         }
 

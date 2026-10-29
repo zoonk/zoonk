@@ -45,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
@@ -61,6 +62,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.goalcontent.PageLoading
 import com.zoonk.android.feature.goalcontent.PageNotFound
 import com.zoonk.android.feature.goalcontent.WithPlanGoal
+import com.zoonk.android.feature.plan.PendingLabel
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -321,9 +323,8 @@ private fun MapTile(
         }
 
         image != null -> {
-            val alt = stringResource(R.string.mindmaps_alt_chapter, map.title)
-            TileFrame(map, onClick = { actions.open(map.chapterId) }) {
-                MapPicture(image.thumbnailUrl, alt, Modifier.fillMaxSize())
+            TileFrame(map, onClick = { actions.open(map.chapterId) }, onClickLabel = stringResource(R.string.mindmaps_full_screen)) {
+                MapPicture(image.thumbnailUrl, contentDescription = null, Modifier.fillMaxSize())
             }
         }
 
@@ -352,10 +353,11 @@ private fun MapTile(
 private fun TileFrame(
     map: GoalMindMap,
     onClick: () -> Unit,
+    onClickLabel: String? = null,
     square: @Composable () -> Unit,
 ) {
     Column(
-        modifier = Modifier.clip(TILE_SHAPE).clickable(onClick = onClick),
+        modifier = Modifier.clip(TILE_SHAPE).clickable(onClickLabel = onClickLabel, onClick = onClick),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Box(
@@ -431,11 +433,16 @@ private fun RequestTile(
                     )
                 }
             } else {
+                val spoken = stringResource(if (failure) R.string.mindmaps_try_again_spoken else R.string.mindmaps_create_spoken, map.title)
                 FilledTonalButton(
                     onClick = { if (failure) actions.retry(map.chapterId) else actions.create(map.chapterId) },
+                    modifier = Modifier.semantics { contentDescription = spoken },
                     enabled = local?.pending != true && !blocked,
                 ) {
-                    Text(stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_create))
+                    PendingLabel(
+                        local?.pending == true,
+                        stringResource(if (failure) R.string.mindmaps_try_again else R.string.mindmaps_create),
+                    )
                 }
             }
         }

@@ -19,6 +19,7 @@
   "mindmaps_continue": "b9d3d02253ff098bbc030595979e83143ff5bc8e4827528dea082a011b53feb0",
   "mindmaps_count": "0fc9cc6dde71ee29cfdb406e13a09fe6186aead32e889038b0a780e34385ac06",
   "mindmaps_create": "81d6d735e06d6566fca73d6200b66b03396cd74c7df7acbf4861030f8abe648a",
+  "mindmaps_create_spoken": "0a15fc95b2e32980c1c8544f7d96e0819d17a005de04bc2127077b78d98520f2",
   "mindmaps_download": "695cbc5b887ab007787c3873f5288738e297d1eb7e170c5824ee0674a0942c41",
   "mindmaps_drawing": "f562cdbf05a566f091f93f72dce949b177060858dea985dda5ed686ecc03988f",
   "mindmaps_empty_description": "329a6e6245b59006129a8b39007e31b2947a6e81289160da59ce885e4b41f81e",
@@ -32,6 +33,7 @@
   "mindmaps_save_failed": "9ac2641e593586b5c2412d20e590cfc2837363295fe7a18c3f18ae4aa46f62ad",
   "mindmaps_saved": "3f2087db0d86094b81688e8803cec93d627fe3d470f10fa9a98f730ebd3014ec",
   "mindmaps_try_again": "d18c92113d59794675b473266cf49a8e6cfad01ae36c61c0d429694bd385b49e",
+  "mindmaps_try_again_spoken": "494c3111f3222c9c454d835c005448bd57cb6d29a116ea981b1e8a5a679418a6",
   "mindmaps_unreachable_short": "9000d0874e2cc41d4f065bb1c0e8dc355d20eef0f19712ebc46326c901889452",
   "mindmaps_viewer_hint": "0e22099c17b6f5a49aad87077adde281f22cf0ff0cc07ea6347d51b107979daf",
   "mindmaps_zoom_in": "f7c7804e0013bb2140b497130354d8aa20bc99dbb38b51e92866fa2249a4473d",
@@ -74,6 +76,10 @@
     <!-- Makes a chapter's mind map. -->
     <string name="mindmaps_create">Erstellen</string>
     <string name="mindmaps_try_again">Noch einmal versuchen</string>
+    <!-- What screen readers say for a tile's Create, naming its chapter. -->
+    <string name="mindmaps_create_spoken">Erstelle die Mindmap zu %1$s</string>
+    <!-- What screen readers say for a tile's Try again, naming its chapter. -->
+    <string name="mindmaps_try_again_spoken">Versuche es noch einmal mit der Mindmap zu %1$s</string>
     <string name="mindmaps_failed_short">Diesmal konnte sie nicht erstellt werden.</string>
     <string name="mindmaps_unreachable_short">Wir konnten den Server nicht erreichen.</string>
     <string name="mindmaps_card_title">Mindmap</string>

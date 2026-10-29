@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -185,6 +187,7 @@ internal fun MindMapViewer(
                 Column(Modifier.weight(1f).fillMaxHeight()) {
                     ZoomFrame(
                         map = map,
+                        outlineShown = outlineBeside,
                         view = { view },
                         onView = { view = it },
                         frame = { frame },
@@ -199,7 +202,7 @@ internal fun MindMapViewer(
                     )
                 }
 
-                if (outline != null && outlineBeside) {
+                if (outlineBeside) {
                     VerticalDivider()
                     MindMapOutlineText(
                         outline = outline,
@@ -219,13 +222,15 @@ internal fun MindMapViewer(
 @Composable
 private fun ZoomFrame(
     map: ViewedMap,
+    outlineShown: Boolean,
     view: () -> PanZoom,
     onView: (PanZoom) -> Unit,
     frame: () -> Size,
     onFrame: (Size) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val description = "${mindMapAlt(map.outline, map.title)} ${stringResource(R.string.mindmaps_viewer_hint)}"
+    val picture = if (outlineShown) mindMapAlt(map.outline, map.title) else mindMapDescription(map.outline, map.title)
+    val description = "$picture\n${stringResource(R.string.mindmaps_viewer_hint)}"
     val side = with(LocalDensity.current) { fitSide(frame()).toDp() }
 
     Box(
@@ -316,11 +321,11 @@ private fun ZoomControls(
         horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        OutlinedIconButton(onClick = onZoomOut, enabled = scale > 1f) {
+        FilledTonalIconButton(onClick = onZoomOut, enabled = scale > 1f) {
             Icon(painterResource(R.drawable.ic_remove), contentDescription = stringResource(R.string.mindmaps_zoom_out))
         }
         val fit = stringResource(R.string.mindmaps_fit)
-        OutlinedButton(
+        FilledTonalButton(
             onClick = onFit,
             enabled = scale > 1f,
             modifier = Modifier.semantics { contentDescription = fit },
@@ -333,7 +338,7 @@ private fun ZoomControls(
                 style = MaterialTheme.typography.labelLarge.copy(fontFeatureSettings = "tnum"),
             )
         }
-        OutlinedIconButton(onClick = onZoomIn, enabled = scale < PanZoom.MAX_SCALE) {
+        FilledTonalIconButton(onClick = onZoomIn, enabled = scale < PanZoom.MAX_SCALE) {
             Icon(painterResource(R.drawable.ic_add), contentDescription = stringResource(R.string.mindmaps_zoom_in))
         }
     }

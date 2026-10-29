@@ -19,6 +19,7 @@
   "mindmaps_continue": "04d0335775e2e3b716d60df9b5435917e836d199a91faa610ed961648f12e2be",
   "mindmaps_count": "9e611e16b08fe502f897eb8808c2d3adce6095e650ea004aab30125bf81a1f3d",
   "mindmaps_create": "dd166465d5cb830d6e7c9bcb68b974d4692bfa55056f200e55b5c7329038170b",
+  "mindmaps_create_spoken": "22b7ed74ddc718faea97dd46e066a08fe854912cd046379e5119c144f1865418",
   "mindmaps_download": "8003a638b0f9cb44385860d5e2055aeb317dc7a73e065b2aa3d27442966344df",
   "mindmaps_drawing": "4e24ef51cdd5327094872b56b82fec5cf90f74fefb4f11f9c2e3e5004b4d04b6",
   "mindmaps_empty_description": "f84413692d85be73bfac83f86b99480aa1f808c7de64a702de0136502ad96ccf",
@@ -32,6 +33,7 @@
   "mindmaps_save_failed": "c8ea56ac714fb06eaef22809b28e76c28859b40abfdf798efbaf532add4a8c8b",
   "mindmaps_saved": "380b0a16b6650c9c58968248af84dc05c929c52a1fcb605b67b8a113450b3d0b",
   "mindmaps_try_again": "e2475de61ff6d400e7930904514c13b917b2cef9694c2b60ef7982115b6ab71f",
+  "mindmaps_try_again_spoken": "7ac71f419544cf8daf4448200f92a1d24d5e67a914fa5bd315aec9e23d5e5a39",
   "mindmaps_unreachable_short": "4ff3770ce991a9ad1578f6f7540d3b024a81569428d924677aec8cf838a5736a",
   "mindmaps_viewer_hint": "36268ecf42957ce2a9d2054adbe687a06c393efd8d2eef66d9eade9cceeb2c9b",
   "mindmaps_zoom_in": "696a9e0716460fe5f51e3a800b2513b02172b73e8c0b7f4673256dbb768dbb0c",
@@ -77,6 +79,10 @@
     <!-- Makes a chapter's mind map. -->
     <string name="mindmaps_create">Criar</string>
     <string name="mindmaps_try_again">Tentar de novo</string>
+    <!-- What screen readers say for a tile's Create, naming its chapter. -->
+    <string name="mindmaps_create_spoken">Criar o mapa mental de %1$s</string>
+    <!-- What screen readers say for a tile's Try again, naming its chapter. -->
+    <string name="mindmaps_try_again_spoken">Tentar o mapa mental de %1$s novamente</string>
     <string name="mindmaps_failed_short">Não foi possível criar desta vez.</string>
     <string name="mindmaps_unreachable_short">Não foi possível acessar o servidor.</string>
     <string name="mindmaps_card_title">Mapa mental</string>

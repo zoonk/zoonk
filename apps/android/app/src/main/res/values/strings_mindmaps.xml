@@ -35,6 +35,10 @@
     <!-- Makes a chapter's mind map. -->
     <string name="mindmaps_create">Create</string>
     <string name="mindmaps_try_again">Try again</string>
+    <!-- What screen readers say for a tile's Create, naming its chapter. -->
+    <string name="mindmaps_create_spoken">Create the mind map of %1$s</string>
+    <!-- What screen readers say for a tile's Try again, naming its chapter. -->
+    <string name="mindmaps_try_again_spoken">Try the mind map of %1$s again</string>
     <string name="mindmaps_failed_short">It couldn\'t be made this time.</string>
     <string name="mindmaps_unreachable_short">We couldn\'t reach the server.</string>
     <string name="mindmaps_card_title">Mind map</string>

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertCountEquals
+import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasScrollToIndexAction
@@ -60,7 +61,16 @@ class MindMapFlowTest {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 val context = LocalContext.current
-                val host = remember { MindMapsHost(store, ana, PrivatePictures(AppContainer.preview(context).images, ana)) { cap } }
+                val host =
+                    remember {
+                        MindMapsHost(
+                            store,
+                            ana,
+                            PrivatePictures(AppContainer.preview(context).images, ana),
+                            cap = { cap },
+                            currentSession = { ana },
+                        )
+                    }
                 content(host)
             }
         }
@@ -108,6 +118,22 @@ class MindMapFlowTest {
         restoration.emulateSavedInstanceStateRestore()
 
         rule.onNodeWithText("Pass ENEM").assertIsDisplayed()
+    }
+
+    @Test
+    fun eachTilesActionNamesItsChapterForTalkBack() {
+        showGrid()
+
+        rule.onNodeWithContentDescription("Create the mind map of Waves and sound").assertExists()
+        rule.onNodeWithContentDescription("Try the mind map of Functions again").assertExists()
+    }
+
+    @Test
+    fun aDrawnMapsTileNamesItsChapterOnce() {
+        showGrid()
+
+        rule.onNodeWithContentDescription("Mind map of Motion and forces").assertDoesNotExist()
+        rule.onNodeWithText("Motion and forces").assertHasClickAction()
     }
 
     @Test
@@ -169,6 +195,22 @@ class MindMapFlowTest {
         rule.onNodeWithText("Full screen").performClick()
 
         assertEquals(AppRoute.MindMap(mapChapter(3)), navigator.currentRoute)
+    }
+
+    @Test
+    fun talkBackReadsAChaptersMapInWords() {
+        show { MindMapCard(chapterMindMap("ready"), ChapterKey(goalId, UUID.fromString(mapChapter(3))), it, navigator) }
+
+        rule.onNodeWithContentDescription("Frequency and pitch", substring = true).assertExists()
+        rule.onNodeWithContentDescription("In short: A wave is energy on the move", substring = true).assertExists()
+    }
+
+    @Test
+    fun talkBackReadsTheMapInWordsInAPhonesViewer() {
+        val map = chapterMindMap("ready")
+        show { MindMapViewer(ViewedMap(map.title, map.image!!, map.outline), onClose = {}, onSave = {}) }
+
+        rule.onNodeWithContentDescription("High frequency, high pitch", substring = true).assertExists()
     }
 
     @Test

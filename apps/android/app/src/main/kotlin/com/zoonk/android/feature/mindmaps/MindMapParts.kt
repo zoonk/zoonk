@@ -97,6 +97,37 @@ internal fun mindMapAlt(
 
 private val SENTENCE_ENDS = setOf('.', '!', '?', '…')
 
+/**
+ * The picture's alt text followed by the map in words, for TalkBack where the outline isn't on
+ * screen beside it (main pairs them with `aria-describedby`); a line per idea, so it pauses between.
+ */
+@Composable
+internal fun mindMapDescription(
+    outline: MindMapOutline?,
+    chapterTitle: String,
+): String {
+    val alt = mindMapAlt(outline, chapterTitle)
+    if (outline == null) return alt
+    val inShort = stringResource(R.string.mindmaps_in_short)
+
+    return buildList {
+        add(alt)
+        outline.branches.forEachIndexed { index, branch ->
+            add("${index + 1}. ${branch.title}")
+            add(branch.explanation)
+            addAll(branch.points)
+        }
+        outline.comparison?.let { comparison ->
+            add(comparison.title)
+            comparison.columns.forEach { column ->
+                add(column.name)
+                addAll(column.points)
+            }
+        }
+        add("$inShort ${outline.summary}")
+    }.joinToString("\n")
+}
+
 /** The map in words: its title and central idea, its numbered branches, a comparison and the gist. */
 @Composable
 internal fun MindMapOutlineText(
