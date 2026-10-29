@@ -11,20 +11,27 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asAndroidBitmap
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.R
 import com.zoonk.android.ui.theme.ZoonkTheme
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
@@ -73,6 +80,45 @@ class SuggestionTest {
 
         compose.onNodeWithText("Nothing is planned until you resume it.").assertIsDisplayed()
         compose.onNodeWithText("View").assertDoesNotExist()
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    @Config(qualifiers = "w800dp-h360dp")
+    fun aSheetScrollsToItsActionsAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        var dismissed = 0
+        compose.setContent {
+            ZoonkTheme {
+                Suggestion("Plan suggestion", "6 more lessons fit in your time", SuggestionLayout.Line) {
+                    SuggestionHeader("6 more lessons fit in your time")
+                    SuggestionDescription("Adds Flask, Django and FastAPI from Web apps.")
+                    SuggestionDescription("Your plan still ends on January 31, 2027.")
+                    SuggestionActions {
+                        SuggestionAction("Apply", onClick = {})
+                        SuggestionAction("Not now", onClick = { dismissed++ }, secondary = true)
+                    }
+                }
+            }
+        }
+
+        compose.onNodeWithText("View").performClick()
+        compose.onNodeWithText("Not now").performScrollTo().performClick()
+
+        assertEquals(1, dismissed)
+    }
+
+    @Test
+    @GraphicsMode(GraphicsMode.Mode.NATIVE)
+    fun aLineShowsItsWholeSummaryAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        val summary = "Your time covers 80% of the exam by November 7, 2026"
+        compose.setContent { ZoonkTheme { Suggestion("Plan suggestion", summary, SuggestionLayout.Line) {} } }
+
+        val layouts = mutableListOf<TextLayoutResult>()
+        compose.onNodeWithText(summary).performSemanticsAction(SemanticsActions.GetTextLayoutResult) { it(layouts) }
+
+        assertFalse(layouts.single().hasVisualOverflow)
     }
 
     /** Review renders, written only with `-Pzoonk.shots=<folder>`. No goldens. */

@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -33,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -216,7 +219,7 @@ private fun SuggestionLine(
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = if (answered) FontWeight.Medium else null,
                     color = if (answered) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = if (answered) Int.MAX_VALUE else 2,
+                    maxLines = if (answered || LocalDensity.current.fontScale > FULL_SUMMARY_FONT_SCALE) Int.MAX_VALUE else 2,
                     overflow = TextOverflow.Ellipsis,
                 )
                 action?.invoke()
@@ -235,7 +238,11 @@ private fun SuggestionSheet(
     ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         CompositionLocalProvider(LocalPresentation provides Presentation.Sheet) {
             Column(
-                modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 32.dp).semantics { paneTitle = label },
+                modifier =
+                    Modifier
+                        .verticalScroll(rememberScrollState())
+                        .padding(start = 24.dp, end = 24.dp, bottom = 32.dp)
+                        .semantics { paneTitle = label },
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 SuggestionContentScope(this, onClose).content()
@@ -274,4 +281,7 @@ private val LocalPresentation = staticCompositionLocalOf { Presentation.Panel }
 private val LocalFrame = staticCompositionLocalOf { Frame(SuggestionMark.New) {} }
 
 private val PANEL_MARK = 18.dp
+
+/** From here two lines hold only the start of a summary, cutting off its key words. */
+private const val FULL_SUMMARY_FONT_SCALE = 1.3f
 private val SHEET_MARK = 24.dp
