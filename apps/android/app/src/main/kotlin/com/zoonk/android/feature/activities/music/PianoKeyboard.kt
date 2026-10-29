@@ -100,8 +100,8 @@ internal fun PianoKeyboard(
                         val left = if (key.isBlack) whiteWidth * key.whiteIndex - keyWidth / 2 else whiteWidth * key.whiteIndex
                         val press =
                             onPress?.let {
-                                roving
-                                    .item(index)
+                                Modifier
+                                    .rovingFocus(roving, index)
                                     .semantics {
                                         contentDescription = spokenNameOf(key.midi)
                                         traversalIndex = index.toFloat()

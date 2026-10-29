@@ -155,8 +155,8 @@ private fun RowScope.StringPicker(
         options.forEachIndexed { column, fret ->
             val isPicked = current == fret
             val pick =
-                roving
-                    .item(column) { if (enabled) onPick(options[it]) }
+                Modifier
+                    .rovingFocus(roving, column) { if (enabled) onPick(options[it]) }
                     .semantics { contentDescription = labels.position(string, fret) }
                     .selectable(isPicked, enabled = enabled, role = Role.RadioButton) {
                         roving.active = column

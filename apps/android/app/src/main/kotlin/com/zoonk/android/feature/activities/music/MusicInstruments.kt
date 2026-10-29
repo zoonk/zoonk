@@ -131,7 +131,7 @@ internal fun MusicSoundNote(
 
 /**
  * Main's `useRovingFocus`: a row of controls is one Tab stop, at its [active] item; the arrows, Home and End move along it
- * (calling `onMove`) and never reach the lesson, whose arrows change screens.
+ * and never reach the lesson, whose arrows change screens.
  */
 @Stable
 internal class RovingFocus(
@@ -139,34 +139,40 @@ internal class RovingFocus(
     initial: Int,
 ) {
     var active by mutableIntStateOf(initial)
-    private val requesters = List(count) { FocusRequester() }
+    internal val requesters = List(count) { FocusRequester() }
 
-    fun item(
+    internal fun target(
         index: Int,
-        onMove: (Int) -> Unit = {},
-    ): Modifier =
-        Modifier
-            .focusRequester(requesters[index])
-            .focusProperties { canFocus = index == active }
-            .onFocusChanged { if (it.isFocused) active = index }
-            .onPreviewKeyEvent { event ->
-                val target =
-                    when (event.key) {
-                        Key.DirectionLeft, Key.DirectionUp -> index - 1
-                        Key.DirectionRight, Key.DirectionDown -> index + 1
-                        Key.MoveHome -> 0
-                        Key.MoveEnd -> count - 1
-                        else -> return@onPreviewKeyEvent false
-                    }.coerceIn(0, count - 1)
-
-                if (event.type == KeyEventType.KeyDown && target != index) {
-                    active = target
-                    requesters[target].requestFocus()
-                    onMove(target)
-                }
-                true
-            }
+        key: Key,
+    ): Int? =
+        when (key) {
+            Key.DirectionLeft, Key.DirectionUp -> index - 1
+            Key.DirectionRight, Key.DirectionDown -> index + 1
+            Key.MoveHome -> 0
+            Key.MoveEnd -> count - 1
+            else -> null
+        }?.coerceIn(0, count - 1)
 }
+
+/** Item [index] of [focus]'s row; [onMove] gets the item the keys moved to. */
+internal fun Modifier.rovingFocus(
+    focus: RovingFocus,
+    index: Int,
+    onMove: (Int) -> Unit = {},
+): Modifier =
+    focusRequester(focus.requesters[index])
+        .focusProperties { canFocus = index == focus.active }
+        .onFocusChanged { if (it.isFocused) focus.active = index }
+        .onPreviewKeyEvent { event ->
+            val target = focus.target(index, event.key) ?: return@onPreviewKeyEvent false
+
+            if (event.type == KeyEventType.KeyDown && target != index) {
+                focus.active = target
+                focus.requesters[target].requestFocus()
+                onMove(target)
+            }
+            true
+        }
 
 @Composable
 internal fun rememberRovingFocus(
