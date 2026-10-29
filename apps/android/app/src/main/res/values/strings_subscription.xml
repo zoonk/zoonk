@@ -2,4 +2,50 @@
 <resources>
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Available with Plus</string>
+    <string name="subscription_see_plus">See Plus</string>
+    <string name="subscription_active">Active</string>
+    <string name="subscription_ending">Subscription ending</string>
+    <!-- %1$s is a date. -->
+    <string name="subscription_ends_on">Your subscription will end on %1$s.</string>
+    <!-- %1$s is a date. -->
+    <string name="subscription_renews_on">Renews on %1$s.</string>
+    <!-- %1$s is a date. -->
+    <string name="subscription_period_ends_on">Current billing period ends on %1$s.</string>
+    <string name="subscription_managed_google">This subscription is managed through Google Play. To change or cancel it, use Google Play.</string>
+    <string name="subscription_managed_apple">This subscription is managed through the App Store. To change or cancel it, use your Apple ID\'s subscription settings on an iPhone, iPad or Mac.</string>
+    <string name="subscription_managed_web">This subscription is managed on the Zoonk website. To change or cancel it, go to Subscription there.</string>
+    <string name="subscription_managed_zoonk">This subscription is managed by Zoonk. Contact support if you need help changing or canceling it.</string>
+    <string name="subscription_manage_google">Manage in Google Play</string>
+    <string name="subscription_contact_support">Contact support</string>
+    <string name="subscription_offer_title">Subscribe to Zoonk Plus</string>
+    <string name="subscription_your_plan">Your plan</string>
+    <string name="subscription_free">Free</string>
+    <!-- %1$d is how many buddy messages were used today and %2$d the day's limit, which picks the plural. -->
+    <plurals name="subscription_messages_used">
+        <item quantity="one">%1$d/%2$d buddy message used today</item>
+        <item quantity="other">%1$d/%2$d buddy messages used today</item>
+    </plurals>
+    <string name="subscription_monthly">Monthly</string>
+    <string name="subscription_yearly">Yearly</string>
+    <string name="subscription_per_month">per month</string>
+    <string name="subscription_per_year">per year</string>
+    <string name="subscription_billed_monthly">Billed every month.</string>
+    <!-- %1$s is a price, like "$5.00". -->
+    <string name="subscription_yearly_per_month">That\'s %1$s a month.</string>
+    <!-- %1$s is a price, like "$20.00". -->
+    <string name="subscription_yearly_saves">You save %1$s a year.</string>
+    <string name="subscription_unavailable">Plus can\'t be bought on this device right now. Make sure Google Play is installed and signed in.</string>
+    <string name="subscription_get_plus">Get Plus</string>
+    <string name="subscription_subscribe">Subscribe</string>
+    <string name="subscription_cancel_anytime">Cancel anytime.</string>
+    <string name="subscription_purchase_pending">Your payment is pending. Plus starts once Google Play confirms it.</string>
+    <string name="subscription_purchase_confirming">Confirming your purchase…</string>
+    <string name="subscription_purchase_other_account">This Google Play subscription belongs to another Zoonk account. Log in to that account to use it.</string>
+    <string name="subscription_purchase_play_failed">Google Play couldn\'t complete the purchase. Try again.</string>
+    <string name="subscription_purchase_confirm_failed">Your purchase went through, but we couldn\'t confirm it yet. We\'ll try again when you come back, or contact hello@zoonk.com.</string>
+    <string name="subscription_benefits_summary">Every goal · every lesson</string>
+    <string name="subscription_benefit_exam">Your whole exam plan, every day to the exam</string>
+    <string name="subscription_benefit_mocks">Mock exams, timed like the real one</string>
+    <string name="subscription_benefit_buddy">An AI study buddy whenever you\'re stuck</string>
+    <string name="subscription_benefit_calls">Higher limits for speaking calls</string>
 </resources>

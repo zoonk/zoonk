@@ -152,6 +152,8 @@ dependencies {
     implementation(libs.tink.android)
 
     // Account and Plus.
+    implementation(libs.androidx.lifecycle.process)
+    implementation(libs.billing.ktx)
     implementation(libs.googleid)
 
     // Speech clips and recorded answers.

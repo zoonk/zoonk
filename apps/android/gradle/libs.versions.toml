@@ -41,6 +41,7 @@ retrofit = "3.0.0"
 tink = "1.24.0"
 
 # Account and Plus.
+billing = "9.1.0"
 googleid = "1.2.1"
 
 # Speech clips and recorded answers.
@@ -103,6 +104,8 @@ retrofit-converter-kotlinx-serialization = { module = "com.squareup.retrofit2:co
 tink-android = { module = "com.google.crypto.tink:tink-android", version.ref = "tink" }
 
 # Account and Plus.
+androidx-lifecycle-process = { module = "androidx.lifecycle:lifecycle-process", version.ref = "androidxLifecycle" }
+billing-ktx = { module = "com.android.billingclient:billing-ktx", version.ref = "billing" }
 googleid = { module = "com.google.android.libraries.identity.googleid:googleid", version.ref = "googleid" }
 
 # Speech clips and recorded answers.

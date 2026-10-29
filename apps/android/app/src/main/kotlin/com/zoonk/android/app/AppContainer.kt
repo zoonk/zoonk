@@ -1,6 +1,9 @@
 package com.zoonk.android.app
 
 import android.content.Context
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.ProcessLifecycleOwner
 import com.zoonk.android.BuildConfig
 import com.zoonk.android.data.ApiClients
 import com.zoonk.android.data.AppCache
@@ -33,6 +36,9 @@ import com.zoonk.android.feature.plan.LivePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.tutor.LiveTutorApi
 import com.zoonk.android.feature.tutor.TutorStore
+import com.zoonk.android.feature.subscription.GooglePlayBilling
+import com.zoonk.android.feature.subscription.LiveSubscriptionApi
+import com.zoonk.android.feature.subscription.SubscriptionStore
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -96,6 +102,15 @@ class AppContainer private constructor(
     val account = AccountStore(LiveAccountApi(api, NoBotProof), sessions, cache)
     val memory = MemoryStore(LiveMemoryApi(api), cache)
     val feedback = FeedbackSender(LiveFeedbackApi(api), sessions)
+    val subscriptions =
+        SubscriptionStore(LiveSubscriptionApi(api), GooglePlayBilling(context), sessions, cache, scope).also { store ->
+            if (previewAccess != null) return@also
+            ProcessLifecycleOwner.get().lifecycle.addObserver(
+                LifecycleEventObserver { _, event ->
+                    if (event == Lifecycle.Event.ON_START) scope.launch { store.linkUnlinkedPurchases() }
+                },
+            )
+        }
 
     // Speech clips and recorded answers.
     val voiceFiles = VoiceFiles(File(context.cacheDir, "voice-clips"), api.http, images::isPrivate, sessions)

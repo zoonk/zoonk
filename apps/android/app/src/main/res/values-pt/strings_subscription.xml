@@ -1,11 +1,95 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "subscription_active": "3dc9d545d611ca4c70c1ab8e9e588573f192e16ac9289df8f55d9e8186866273",
   "subscription_available_with_plus": "103ad0b55ebf7ad34ff52318455c430aac656008a9cfb2177bcdb5ce17fb3d01",
-  "subscription_plus": "a06c6600021bcee5fa0cc76e8d6cb70526bd5f0e1f859620d1f84a551d2113ee"
+  "subscription_benefit_buddy": "de09e5db3e0c52af34f97261ed1f1bbb9aa4db57d7b3d9fb9515a249870fb946",
+  "subscription_benefit_calls": "dbaaf4d7da184f0941fe987c3f48edccb8500b0f1b8217ed727b24703189b21a",
+  "subscription_benefit_exam": "96b41d2cd179d1613eb7f17046e294c463d89f8c3cc2e8c537d4a862203f86e7",
+  "subscription_benefit_mocks": "2bf1356cf63dcb82fc80c66fca336c3ae12526c818d1c9ced485267053fd69a4",
+  "subscription_benefits_summary": "25a4c5cc51575f61478bd2f6a775b8e21e7f36082bdb4c9473e06c56e3820d39",
+  "subscription_billed_monthly": "94609d6176ef9c92d44b7773d9267165d7274718f7c7cc8c56467ae3e5568c2b",
+  "subscription_cancel_anytime": "774704a893c56cb8bca9085d2fbcde8142a1f7618281439a3517eadaf13b0e58",
+  "subscription_contact_support": "e7549a212351eec2036dd67649dd364d622dd1efb38cf24c3ee8aa94f24038fd",
+  "subscription_ending": "8e6179abbd7e7167be203dfbf587d1ca1fd978bb4bcb397c794453709439da95",
+  "subscription_ends_on": "187383b691d5631900ce5343ace72461d2e22d614bd6354653d314ffebd22a53",
+  "subscription_free": "fd0e890bb5d4ac7f48866d89c5b26b870f7c2146bf1da62fe005a2ad0418b542",
+  "subscription_get_plus": "f0c01f7d5215e42b15888f6eb1ca75f500e8275dce5be7ccede71c643bff9c66",
+  "subscription_manage_google": "3350b3c34c2619bf6c0bb6c453f81cfd595325bb120ce397fda93f8edfc15474",
+  "subscription_managed_apple": "ad2c63eacf42ba170ec2c88dd24649f94cb1db2e88c36850d005069a6f97c463",
+  "subscription_managed_google": "9f11c8ef292904c1205dbe22fa33096882c1783aaceaf0b84dea389c86569c6c",
+  "subscription_managed_web": "34be2315e00ce41c8c9e3e00f1385ed80abc2805bcfa850f82eed99123d66064",
+  "subscription_managed_zoonk": "dfac523d837d95b4a8833784f1b02da6ead0b5f40e2921f0a559451fa3527aca",
+  "subscription_messages_used": "3bf62c3cc80e0a02893fcb2f49f589c7212cac030e22ab3185951b9408bc8a59",
+  "subscription_monthly": "6318e4608f7a532ca1bf0648a78e324455d1ee06bf47856ad39403fe974184cf",
+  "subscription_offer_title": "3c3acf50af66b483295e0d56e32663726cc56dc2a303a80daa7f2db83101b29c",
+  "subscription_per_month": "af1d6a95d289ddabbad157bc5867509ad07a99278c20c8d313a1417d16d46836",
+  "subscription_per_year": "13881ab64c147e8dbbd140222013f7e3ffae079fffaae48056c6d16c07a42be2",
+  "subscription_period_ends_on": "0dff7f013addc4a8eae15ed059d9967eaef036aebd563c9851f712cf5ed38048",
+  "subscription_plus": "a06c6600021bcee5fa0cc76e8d6cb70526bd5f0e1f859620d1f84a551d2113ee",
+  "subscription_purchase_confirm_failed": "ee75710e877923cdfec7b7646b672223e63818ae29de292220ff721edf9cd1ce",
+  "subscription_purchase_confirming": "e09ac6184760d22dab559da6f3cd673291cff6dd8abbad31a9c0f3cada1ea22b",
+  "subscription_purchase_other_account": "408a269c1662f752245312c3b9bc899df992b79348f51e92ccf05cd05574a2b9",
+  "subscription_purchase_pending": "151e4c3f1daf4b6b8a90c27365b417e1dc4ee114cf4d46343b220b3dd16c6976",
+  "subscription_purchase_play_failed": "1b00adb8cab11f4e40c5d30c747bcb4eb8c9e896c750d3d882e9f9e2608e2251",
+  "subscription_renews_on": "0c88feb024bd57964a6ae8cec7551b66f22b9a4762c7587bda09be1dce267692",
+  "subscription_see_plus": "0e21b913f07a1ef2eb74e54ac0919ef56fddf8b83a59ddcb4acb699229908056",
+  "subscription_subscribe": "968a05dc4966c4f013b394e184c0c952a36ecc3f63eccdd466335adb8cb55a27",
+  "subscription_unavailable": "acca81a35ed7b93cadaa18fa013cbac8b44865be242bd1200649ec1937e43979",
+  "subscription_yearly": "f84edd9ed2907fcf765fcab5705a75451bf43c6ded7b004de1b24b093e0000fe",
+  "subscription_yearly_per_month": "6f59b66ce8f4ca5348c9ec327bffe935fa812b25a7262a0d696cce9b15f87861",
+  "subscription_yearly_saves": "c9f5e36c4e71abec83f1eeb52f09b4797b724269eb7bf9b0319f0e6f508d063b",
+  "subscription_your_plan": "2fc86d94471656493f469cb71992b1c7aed67948603d15471dd54f454654b716"
 }
 -->
 <resources>
     <string name="subscription_plus">Plus</string>
     <string name="subscription_available_with_plus">Disponível no Plus</string>
+    <string name="subscription_see_plus">Conheça o Plus</string>
+    <string name="subscription_active">Ativa</string>
+    <string name="subscription_ending">Assinatura terminando</string>
+    <!-- %1$s is a date. -->
+    <string name="subscription_ends_on">Sua assinatura termina em %1$s.</string>
+    <!-- %1$s is a date. -->
+    <string name="subscription_renews_on">Renova em %1$s.</string>
+    <!-- %1$s is a date. -->
+    <string name="subscription_period_ends_on">O período atual de cobrança termina em %1$s.</string>
+    <string name="subscription_managed_google">Esta assinatura é gerenciada pelo Google Play. Para alterá-la ou cancelá-la, use o Google Play.</string>
+    <string name="subscription_managed_apple">Esta assinatura é gerenciada pela App Store. Para alterá-la ou cancelá-la, acesse os ajustes de assinatura do seu ID Apple em um iPhone, iPad ou Mac.</string>
+    <string name="subscription_managed_web">Esta assinatura é gerenciada no site do Zoonk. Para alterá-la ou cancelá-la, acesse Assinatura no site.</string>
+    <string name="subscription_managed_zoonk">Esta assinatura é gerenciada pelo Zoonk. Entre em contato com o suporte se precisar de ajuda para alterá-la ou cancelá-la.</string>
+    <string name="subscription_manage_google">Gerenciar no Google Play</string>
+    <string name="subscription_contact_support">Falar com o suporte</string>
+    <string name="subscription_offer_title">Assine o Zoonk Plus</string>
+    <string name="subscription_your_plan">Seu plano</string>
+    <string name="subscription_free">Grátis</string>
+    <!-- %1$d is how many buddy messages were used today and %2$d the day's limit, which picks the plural. -->
+    <plurals name="subscription_messages_used">
+        <item quantity="one">%1$d/%2$d mensagem do parceiro usada hoje</item>
+        <item quantity="many">%1$d/%2$d mensagens do parceiro usadas hoje</item>
+        <item quantity="other">%1$d/%2$d mensagens do parceiro usadas hoje</item>
+    </plurals>
+    <string name="subscription_monthly">Mensal</string>
+    <string name="subscription_yearly">Anual</string>
+    <string name="subscription_per_month">por mês</string>
+    <string name="subscription_per_year">por ano</string>
+    <string name="subscription_billed_monthly">Cobrado todo mês.</string>
+    <!-- %1$s is a price, like "$5.00". -->
+    <string name="subscription_yearly_per_month">Isso dá %1$s por mês.</string>
+    <!-- %1$s is a price, like "$20.00". -->
+    <string name="subscription_yearly_saves">Você economiza %1$s por ano.</string>
+    <string name="subscription_unavailable">Não dá para comprar o Plus neste dispositivo agora. Confira se o Google Play está instalado e se você está conectado.</string>
+    <string name="subscription_get_plus">Assine o Plus</string>
+    <string name="subscription_subscribe">Assinar</string>
+    <string name="subscription_cancel_anytime">Cancele quando quiser.</string>
+    <string name="subscription_purchase_pending">Seu pagamento está pendente. O Plus será ativado quando o Google Play confirmar.</string>
+    <string name="subscription_purchase_confirming">Confirmando sua compra…</string>
+    <string name="subscription_purchase_other_account">Esta assinatura do Google Play pertence a outra conta do Zoonk. Entre nessa conta para usar a assinatura.</string>
+    <string name="subscription_purchase_play_failed">O Google Play não conseguiu concluir a compra. Tente de novo.</string>
+    <string name="subscription_purchase_confirm_failed">Sua compra foi concluída, mas ainda não conseguimos confirmá-la. Vamos tentar de novo quando você voltar ou entre em contato pelo contato@zoonk.com.</string>
+    <string name="subscription_benefits_summary">Todas as metas · todas as aulas</string>
+    <string name="subscription_benefit_exam">Seu plano completo para a prova, todos os dias até ela</string>
+    <string name="subscription_benefit_mocks">Simulados com tempo marcado, como na prova de verdade</string>
+    <string name="subscription_benefit_buddy">Um parceiro de estudos com IA sempre que você tiver dúvidas</string>
+    <string name="subscription_benefit_calls">Limites maiores para conversas de prática oral</string>
 </resources>
