@@ -106,14 +106,18 @@ sealed interface AppRoute : NavKey {
         val courseId: String,
     ) : AppRoute
 
+    /** A shared chapter sits in several courses, numbered differently in each: `courseId` is the one it was opened from. */
     @Serializable
     data class CatalogChapter(
         val chapterId: String,
+        val courseId: String,
     ) : AppRoute
 
     @Serializable
     data class CatalogLesson(
         val lessonId: String,
+        val chapterId: String,
+        val courseId: String,
     ) : AppRoute
 
     /** `goal` fills the box (reading it waits for the learner's tap); `planId` starts from a shared plan. */
