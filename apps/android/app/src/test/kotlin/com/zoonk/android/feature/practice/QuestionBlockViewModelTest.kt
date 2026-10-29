@@ -7,7 +7,6 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.practice.block.BlockKey
-import com.zoonk.android.feature.practice.block.BlockPhase
 import com.zoonk.android.feature.practice.block.QuestionBlockApi
 import com.zoonk.android.feature.practice.block.QuestionBlockStore
 import com.zoonk.android.feature.practice.block.QuestionBlockViewModel
@@ -140,7 +139,7 @@ class QuestionBlockViewModelTest {
             viewModel.submit(read.questions.first(), Answer.Choice(1))
             advanceUntilIdle()
 
-            val phase = viewModel.state.value?.phase as BlockPhase.Checked
+            val phase = viewModel.state.value?.phase as RunPhase.Checked
             assertEquals(Answer.Choice(1), phase.answer)
             assertEquals(Answer.Choice(0), phase.feedback.correctAnswer)
             assertEquals(
@@ -162,13 +161,13 @@ class QuestionBlockViewModelTest {
 
             viewModel.submit(read.questions.first(), Answer.Choice(0))
             advanceUntilIdle()
-            assertEquals(BlockPhase.AlreadyAnswered, viewModel.state.value?.phase)
+            assertEquals(RunPhase.AlreadyAnswered, viewModel.state.value?.phase)
 
             answered = setOf(FIRST)
             viewModel.reread()
             advanceUntilIdle()
             assertEquals(1, viewModel.state.value?.index)
-            assertEquals(BlockPhase.Answering, viewModel.state.value?.phase)
+            assertEquals(RunPhase.Answering, viewModel.state.value?.phase)
         }
 
     @Test
@@ -198,7 +197,7 @@ class QuestionBlockViewModelTest {
             advanceUntilIdle()
             viewModel.next(read.questions)
             advanceUntilIdle()
-            assertEquals(BlockPhase.FinishFailed, viewModel.state.value?.phase)
+            assertEquals(RunPhase.FinishFailed, viewModel.state.value?.phase)
             assertEquals(1, finishes)
 
             viewModel.finish()
@@ -260,13 +259,13 @@ class QuestionBlockViewModelTest {
 
             viewModel.timeUp(read.questions.first(), 45)
             advanceUntilIdle()
-            assertEquals(BlockPhase.AnswerFailed, viewModel.state.value?.phase)
+            assertEquals(RunPhase.AnswerFailed, viewModel.state.value?.phase)
 
             answer = { feedback(isCorrect = false) }
             viewModel.retry()
             advanceUntilIdle()
 
-            assertTrue(viewModel.state.value?.phase is BlockPhase.Checked)
+            assertTrue(viewModel.state.value?.phase is RunPhase.Checked)
             assertEquals(45_000L, sent.last().durationMs)
             assertEquals(
                 """{"dontKnow":true}""",
@@ -290,7 +289,7 @@ class QuestionBlockViewModelTest {
             viewModel.next(read.questions)
 
             assertEquals(1, viewModel.state.value?.index)
-            assertEquals(BlockPhase.Answering, viewModel.state.value?.phase)
+            assertEquals(RunPhase.Answering, viewModel.state.value?.phase)
         }
 
     @Test
@@ -305,7 +304,7 @@ class QuestionBlockViewModelTest {
             val kept = (viewModel.block.state.value as com.zoonk.android.data.LoadState.Loaded).value
             assertEquals(
                 1,
-                com.zoonk.android.feature.practice.block.BlockRun
+                QuestionRun
                     .begin(viewModel.questions(kept).questions)
                     .index,
             )

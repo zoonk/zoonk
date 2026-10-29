@@ -6,6 +6,9 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.recode
+import com.zoonk.android.feature.practice.QuestionRun
+import com.zoonk.android.feature.practice.RunControls
+import com.zoonk.android.feature.practice.RunPhase
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerFeedback
 import com.zoonk.android.feature.questions.Question
@@ -20,6 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.math.max
+import kotlin.time.Duration.Companion.seconds
 
 /** The block the learner plays, as the kit's questions. */
 data class BlockQuestions(
@@ -35,9 +39,10 @@ class QuestionBlockViewModel(
     private val key: BlockKey,
     private val store: QuestionBlockStore,
     private val now: () -> Long = SystemClock::elapsedRealtime,
-) : ViewModel() {
-    private val run = MutableStateFlow<BlockRun?>(null)
-    val state: StateFlow<BlockRun?> = run.asStateFlow()
+) : ViewModel(),
+    RunControls {
+    private val run = MutableStateFlow<QuestionRun?>(null)
+    val state: StateFlow<QuestionRun?> = run.asStateFlow()
 
     private val closing = MutableStateFlow(false)
 
@@ -59,7 +64,7 @@ class QuestionBlockViewModel(
         val minDurationMs: Long,
     )
 
-    val canRetry: Boolean get() = sent != null
+    override val canRetry: Boolean get() = sent != null
 
     val block get() = store.blocks[key]
 
@@ -70,19 +75,18 @@ class QuestionBlockViewModel(
     /** Starts the run once its questions first show; later reads of the block keep it. */
     fun begin(questions: List<Question>) {
         if (run.value != null) return
-        run.value = BlockRun.begin(questions)
+        run.value = QuestionRun.begin(questions)
         shownAt = now()
     }
 
-    fun startDrill(questions: List<Question>) = run.update { it?.start(questions) }
+    override fun startDrill(questions: List<Question>) = run.update { it?.start(questions) }
 
-    fun reveal() = run.update { it?.reveal() }
+    override fun reveal() = run.update { it?.reveal() }
 
-    /** [minDurationMs] is a timed drill's whole time when it ran out, however the clock ticked. */
-    fun submit(
+    override fun submit(
         question: Question,
         answer: Answer,
-        minDurationMs: Long = 0,
+        minDurationMs: Long,
     ) {
         val current = run.value ?: return
         if (!current.canAnswer) return
@@ -99,36 +103,36 @@ class QuestionBlockViewModel(
 
                 is MutationResult.Failed -> {
                     when (result.code) {
-                        ALREADY_ANSWERED -> run.update { it?.failed(BlockPhase.AlreadyAnswered) }
+                        ALREADY_ANSWERED -> run.update { it?.failed(RunPhase.AlreadyAnswered) }
                         BLOCK_NOT_ACTIVE -> reread()
-                        else -> run.update { it?.failed(BlockPhase.AnswerFailed) }
+                        else -> run.update { it?.failed(RunPhase.AnswerFailed) }
                     }
                 }
 
                 MutationResult.Obsolete -> {
-                    run.update { it?.failed(BlockPhase.AnswerFailed) }
+                    run.update { it?.failed(RunPhase.AnswerFailed) }
                 }
             }
         }
     }
 
-    fun retry() {
+    override fun retry() {
         sent?.let { submit(it.question, it.answer, it.minDurationMs) }
     }
 
-    fun timeUp(
+    override fun timeUp(
         question: Question,
         seconds: Int,
     ) {
         run.update { it?.timeUp() }
-        submit(question, Answer.DontKnow, minDurationMs = seconds * MILLIS_PER_SECOND)
+        submit(question, Answer.DontKnow, minDurationMs = seconds.seconds.inWholeMilliseconds)
     }
 
-    fun next(questions: List<Question>) {
-        if (run.value?.phase !is BlockPhase.Checked) return
+    override fun next(questions: List<Question>) {
+        if (run.value?.phase !is RunPhase.Checked) return
         shownAt = now()
         run.update { it?.next(questions) }
-        if (run.value?.phase == BlockPhase.Finishing) finish()
+        if (run.value?.phase == RunPhase.Finishing) finish()
     }
 
     /** From Finish on a fully answered block, or Try again after finishing failed. */
@@ -139,7 +143,7 @@ class QuestionBlockViewModel(
             viewModelScope.launch {
                 when (val result = store.finish(key)) {
                     is MutationResult.Done -> run.update { it?.finished(result.value) }
-                    is MutationResult.Failed -> run.update { it?.failed(BlockPhase.FinishFailed) }
+                    is MutationResult.Failed -> run.update { it?.failed(RunPhase.FinishFailed) }
                     MutationResult.Obsolete -> Unit
                 }
             }
@@ -154,7 +158,7 @@ class QuestionBlockViewModel(
                 closing.value = true
                 return@launch
             }
-            run.value = BlockRun.begin(questions(loaded).questions)
+            run.value = QuestionRun.begin(questions(loaded).questions)
             shownAt = now()
         }
     }
@@ -176,6 +180,5 @@ class QuestionBlockViewModel(
     private companion object {
         const val ALREADY_ANSWERED = "ALREADY_ANSWERED"
         const val BLOCK_NOT_ACTIVE = "BLOCK_NOT_ACTIVE"
-        const val MILLIS_PER_SECOND = 1_000L
     }
 }

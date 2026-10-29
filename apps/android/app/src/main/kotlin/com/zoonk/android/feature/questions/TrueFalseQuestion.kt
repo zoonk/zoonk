@@ -178,6 +178,18 @@ fun trueFalseLabel(
         TrueFalseWords.TrueFalse -> stringResource(if (isTrue) R.string.questions_true else R.string.questions_false)
     }
 
+/** A saved answer in words: a statement's answer is saved as `true` or `false`. */
+@Composable
+fun savedAnswerText(
+    answer: String,
+    words: TrueFalseWords,
+): String =
+    when (answer) {
+        "true" -> trueFalseLabel(true, words)
+        "false" -> trueFalseLabel(false, words)
+        else -> answer
+    }
+
 /** A blank is neither right nor wrong: it stays picked, never red. */
 private fun sideResult(
     side: Side,

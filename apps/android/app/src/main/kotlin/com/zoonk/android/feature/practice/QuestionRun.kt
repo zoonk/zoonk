@@ -1,4 +1,4 @@
-package com.zoonk.android.feature.practice.block
+package com.zoonk.android.feature.practice
 
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerFeedback
@@ -7,34 +7,34 @@ import com.zoonk.android.feature.questions.Question
 import com.zoonk.android.feature.questions.QuestionFormat
 import com.zoonk.api.models.StudyBlockCompletion
 
-/** Where a block's run is (main's `QuestionBlockPhase`). */
-sealed interface BlockPhase {
-    data object Answering : BlockPhase
+sealed interface RunPhase {
+    data object Answering : RunPhase
 
-    data object Checking : BlockPhase
+    data object Checking : RunPhase
 
     data class Checked(
         val answer: Answer,
         val feedback: AnswerFeedback,
-    ) : BlockPhase
+    ) : RunPhase
 
-    data object AnswerFailed : BlockPhase
+    data object AnswerFailed : RunPhase
 
-    data object AlreadyAnswered : BlockPhase
+    /** A session's block only: the question was answered elsewhere. */
+    data object AlreadyAnswered : RunPhase
 
-    /** Every question is answered; finishing can prepare the rest of the day, so it waits for a tap. */
-    data object FinishReady : BlockPhase
+    /** A session's block only: finishing can prepare the rest of the day, so it waits for a tap. */
+    data object FinishReady : RunPhase
 
-    data object Finishing : BlockPhase
+    data object Finishing : RunPhase
 
-    data object FinishFailed : BlockPhase
+    data object FinishFailed : RunPhase
 
+    /** A session's block only; a mistakes practice ends with its own summary. */
     data class Finished(
         val completion: StudyBlockCompletion,
-    ) : BlockPhase
+    ) : RunPhase
 }
 
-/** A drill's screen: its lesson's ideas first, the question to read before its answers, or open. */
 enum class DrillStage { Ideas, Reading, Open }
 
 data class Graded(
@@ -42,28 +42,30 @@ data class Graded(
     val blank: Boolean,
 )
 
-/** One run through a block's questions; [answers] are this visit's, by item. */
-data class BlockRun(
+/** [answers] are this visit's, by item. */
+data class QuestionRun(
     val index: Int,
-    val phase: BlockPhase,
+    val phase: RunPhase,
     val stage: DrillStage,
     val timedOut: Boolean = false,
     val answers: Map<String, Graded> = emptyMap(),
 ) {
-    val canAnswer: Boolean get() = phase == BlockPhase.Answering || phase == BlockPhase.AnswerFailed
+    val canAnswer: Boolean get() = phase == RunPhase.Answering || phase == RunPhase.AnswerFailed
 
-    fun checking() = copy(phase = BlockPhase.Checking)
+    fun checking() = copy(phase = RunPhase.Checking)
 
+    /** [blank] answers are neither right nor wrong: a block's blank statement, a practice's honest "I don't know". */
     fun answered(
         itemId: String,
         answer: Answer,
         feedback: AnswerFeedback,
+        blank: Boolean = feedback.blank,
     ) = copy(
-        phase = BlockPhase.Checked(answer, feedback),
-        answers = answers + (itemId to Graded(feedback.isCorrect, feedback.blank)),
+        phase = RunPhase.Checked(answer, feedback),
+        answers = answers + (itemId to Graded(feedback.isCorrect, blank)),
     )
 
-    fun failed(phase: BlockPhase) = copy(phase = phase)
+    fun failed(phase: RunPhase) = copy(phase = phase)
 
     fun timeUp() = copy(timedOut = true)
 
@@ -82,25 +84,25 @@ data class BlockRun(
 
     fun reveal() = copy(stage = DrillStage.Open)
 
-    fun next(questions: List<Question>): BlockRun {
+    fun next(questions: List<Question>): QuestionRun {
         val next = index + 1
         return if (next >= questions.size) {
-            copy(index = next, phase = BlockPhase.Finishing, timedOut = false)
+            copy(index = next, phase = RunPhase.Finishing, timedOut = false)
         } else {
-            copy(index = next, phase = BlockPhase.Answering, stage = openingStage(questions, next), timedOut = false)
+            copy(index = next, phase = RunPhase.Answering, stage = openingStage(questions, next), timedOut = false)
         }
     }
 
-    fun finishing() = copy(phase = BlockPhase.Finishing)
+    fun finishing() = copy(phase = RunPhase.Finishing)
 
-    fun finished(completion: StudyBlockCompletion) = copy(phase = BlockPhase.Finished(completion))
+    fun finished(completion: StudyBlockCompletion) = copy(phase = RunPhase.Finished(completion))
 
     companion object {
         /** Resumes at the first unanswered question; a fully answered block waits for Finish. */
-        fun begin(questions: List<Question>): BlockRun {
+        fun begin(questions: List<Question>): QuestionRun {
             val index = questions.indexOfFirst { it.answered == null }.takeIf { it >= 0 } ?: questions.size
-            val phase = if (index >= questions.size) BlockPhase.FinishReady else BlockPhase.Answering
-            return BlockRun(index, phase, openingStage(questions, index))
+            val phase = if (index >= questions.size) RunPhase.FinishReady else RunPhase.Answering
+            return QuestionRun(index, phase, openingStage(questions, index))
         }
 
         private fun openingStage(
@@ -118,13 +120,12 @@ data class BlockRun(
     }
 }
 
-/** What each question's segment in the header shows. */
 enum class Segment { Ahead, Current, Right, Wrong, Read }
 
 /** A placement question or a blank statement is read, neither right nor wrong. */
 fun segments(
     questions: List<Question>,
-    run: BlockRun,
+    run: QuestionRun,
 ): List<Segment> =
     questions.mapIndexed { index, question ->
         val graded = run.answers[question.itemId] ?: question.answered?.let { Graded(it.isCorrect, it.blank) }
@@ -144,7 +145,7 @@ data class NetTally(
 /** This visit's answers, else an earlier visit's, so a blank still counts as neither after a reload. */
 fun netTally(
     questions: List<Question>,
-    run: BlockRun,
+    run: QuestionRun,
 ): NetTally {
     val graded = questions.mapNotNull { run.answers[it.itemId] ?: it.answered?.let { mark -> Graded(mark.isCorrect, mark.blank) } }
     val right = graded.count { it.isCorrect }
@@ -152,12 +153,15 @@ fun netTally(
     return NetTally(right, graded.size - right - blank)
 }
 
-/** A drill's "I'm not sure", a placement's or typed question's "I don't know yet", or neither. */
 enum class NotSure { Drill, DontKnowYet }
 
-fun notSureOffer(question: Question): NotSure? =
+/** A mistakes practice offers "I don't know yet" on [every] question. */
+fun notSureOffer(
+    question: Question,
+    every: Boolean = false,
+): NotSure? =
     when {
         question.drill?.kind == Drill.Kind.NoGuessing -> NotSure.Drill
-        question.placement || question.format == QuestionFormat.Typed -> NotSure.DontKnowYet
+        every || question.placement || question.format == QuestionFormat.Typed -> NotSure.DontKnowYet
         else -> null
     }
