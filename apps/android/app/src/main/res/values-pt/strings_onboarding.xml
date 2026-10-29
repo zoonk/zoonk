@@ -933,6 +933,7 @@
     </plurals>
     <string name="onboarding_schedule_title">Quanto tempo você pode estudar por dia?</string>
     <string name="onboarding_schedule_other_time_label">Outro tempo por dia</string>
+    <!-- %1$s is a month and year, like "March 2027". -->
     <string name="onboarding_finish_around">Você termina por volta de %1$s.</string>
     <string name="onboarding_finish_unknown">Não dá para estimar uma data de conclusão com esse cronograma. Tente dedicar mais tempo ou escolher mais dias de estudo.</string>
     <string name="onboarding_finish_failed">Não conseguimos calcular quando você vai terminar.</string>
@@ -945,24 +946,39 @@
     <string name="onboarding_full_course_finish">Com %1$s por dia, você termina em %2$s, depois da prova em %3$s.</string>
     <string name="onboarding_weekend_time">Horário diferente nos fins de semana</string>
     <string name="onboarding_schedule_time_label">Tempo diário</string>
+    <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_suggested">%1$s (sugerido)</string>
+    <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_close">Sua data está próxima: para estudar tudo a fundo, você precisa de %1$s por dia.</string>
     <string name="onboarding_schedule_too_close">Sua data está muito próxima para estudar tudo a fundo.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_takes_exam_all">O tempo necessário para estudar todos os tópicos da prova até %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_takes_goal_all">O tempo necessário para alcançar sua meta completa até %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_covers_exam_all">Estuda todos os tópicos da prova até %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_covers_goal_all">Alcança sua meta completa até %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_reaches_exam">Chega a todos os tópicos da prova até %1$s, alguns com menos profundidade.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_reaches_goal">Alcança todas as partes da sua meta até %1$s, algumas com menos profundidade.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_share_exam">Estuda a fundo cerca de %1$s dos tópicos da prova até %2$s, começando pelos mais cobrados.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_share_goal">Estuda a fundo cerca de %1$s da sua meta até %2$s, começando pelo que mais importa.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_past_date">Sua data, %1$s, já passou. Você pode escolher outra na próxima tela.</string>
     <string name="onboarding_schedule_no_days">Escolha pelo menos um dia de estudo.</string>
     <string name="onboarding_schedule_working">Calculando quanto tempo sua meta exige…</string>
     <string name="onboarding_schedule_find_failed">Não foi possível calcular quanto tempo sua meta exige.</string>
+    <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_asking">Calculando o que dá para cobrir com %1$s por dia…</string>
+    <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_ask_failed">A gente não conseguiu calcular o que dá para cobrir com %1$s por dia.</string>
+    <!-- A link under the time a day. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_offer_everything">Estude tudo com %1$s por dia</string>
+    <!-- A link under the time a day. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_offer_every_topic">Chegue a todos os tópicos com %1$s por dia</string>
     <string name="onboarding_study_days">Dias de estudo</string>
     <string name="onboarding_weekend_time_label">Tempo nos fins de semana</string>

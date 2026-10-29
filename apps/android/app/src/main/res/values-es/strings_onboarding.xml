@@ -933,6 +933,7 @@
     </plurals>
     <string name="onboarding_schedule_title">¿Cuánto tiempo puedes estudiar cada día?</string>
     <string name="onboarding_schedule_other_time_label">Otro tiempo al día</string>
+    <!-- %1$s is a month and year, like "March 2027". -->
     <string name="onboarding_finish_around">Terminarás aproximadamente en %1$s.</string>
     <string name="onboarding_finish_unknown">No podemos calcular una fecha de finalización con este horario. Prueba a dedicar más tiempo o a estudiar más días.</string>
     <string name="onboarding_finish_failed">No hemos podido calcular cuándo terminarás.</string>
@@ -945,24 +946,39 @@
     <string name="onboarding_full_course_finish">Con %1$s al día, terminarás en %2$s, después del examen del %3$s.</string>
     <string name="onboarding_weekend_time">Otro horario los fines de semana</string>
     <string name="onboarding_schedule_time_label">Tiempo al día</string>
+    <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_suggested">%1$s (recomendado)</string>
+    <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_close">La fecha está cerca: hace falta dedicar %1$s al día para abarcarlo todo en profundidad.</string>
     <string name="onboarding_schedule_too_close">La fecha está demasiado cerca para abarcarlo todo en profundidad.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_takes_exam_all">Lo que hace falta para abarcar todos los temas del examen antes del %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_takes_goal_all">Lo que hace falta para completar todo tu objetivo antes del %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_covers_exam_all">Abarca todos los temas del examen antes del %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_covers_goal_all">Abarca todo tu objetivo antes del %1$s.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_reaches_exam">Llega a todos los temas del examen antes del %1$s, algunos con menos profundidad.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_reaches_goal">Llega a todas las partes de tu objetivo antes del %1$s, algunas con menos profundidad.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_share_exam">Abarca en profundidad alrededor del %1$s de los temas del examen antes del %2$s, empezando por los más frecuentes.</string>
+    <!-- %1$s is a percentage, such as "60%"; %2$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_share_goal">Abarca en profundidad alrededor del %1$s de tu objetivo antes del %2$s, empezando por lo más importante.</string>
+    <!-- %1$s is a date, such as "November 8". -->
     <string name="onboarding_schedule_past_date">La fecha, %1$s, ya ha pasado. Puedes elegir otra en la siguiente pantalla.</string>
     <string name="onboarding_schedule_no_days">Elige al menos un día de estudio.</string>
     <string name="onboarding_schedule_working">Calculando cuánto tiempo necesita tu objetivo…</string>
     <string name="onboarding_schedule_find_failed">No hemos podido calcular cuánto tiempo necesita tu objetivo.</string>
+    <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_asking">Calculando qué puedes abarcar dedicando %1$s al día…</string>
+    <!-- %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_ask_failed">No hemos podido calcular qué puedes cubrir dedicando %1$s al día.</string>
+    <!-- A link under the time a day. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_offer_everything">Abarca todo dedicando %1$s al día</string>
+    <!-- A link under the time a day. %1$s is a duration, such as "30 min". -->
     <string name="onboarding_schedule_offer_every_topic">Llega a todos los temas dedicando %1$s al día</string>
     <string name="onboarding_study_days">Días de estudio</string>
     <string name="onboarding_weekend_time_label">Tiempo los fines de semana</string>
