@@ -76,6 +76,7 @@ android {
 
     lint {
         abortOnError = true
+        lintConfig = file("lint.xml")
         checkDependencies = true
         warningsAsErrors = true
         // With warnings as errors, these newer-version checks would fail an unchanged tree whenever a release ships.

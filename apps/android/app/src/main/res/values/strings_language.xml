@@ -24,10 +24,39 @@
     <string name="language_unit_summary">Unit summary</string>
     <!-- TalkBack's name for the pane beside the unit's lessons. -->
     <string name="language_unit_about">About this unit</string>
+    <string name="language_skill_reading">Reading</string>
     <string name="language_skill_listening">Listening</string>
     <string name="language_skill_speaking">Speaking</string>
     <string name="language_skill_words">Words</string>
     <string name="language_skill_writing">Writing</string>
+    <!-- Heads the learner's level in each skill (reading, listening, speaking, writing), on the CEFR scale from A1 to C2. -->
+    <string name="language_level_by_skill">Level by skill</string>
+    <!-- The level the learner aims for and when: "Goal B2 by June 2027". %1$s is a CEFR level, %2$s a month and year. -->
+    <string name="language_level_goal_by">Goal %1$s by %2$s</string>
+    <!-- The level the learner aims for: "Goal B2". -->
+    <string name="language_level_goal">Goal %1$s</string>
+    <!-- What TalkBack says for a skill's row: "Reading, B1". -->
+    <string name="language_skill_level">%1$s, %2$s</string>
+    <!-- What TalkBack says for a skill's row that moved: "Reading, B1, up since the level test". -->
+    <string name="language_skill_level_trend">%1$s, %2$s, %3$s</string>
+    <!-- Read by TalkBack after a skill's level that went up since the learner's first level test. -->
+    <string name="language_level_up">up since the level test</string>
+    <!-- Read by TalkBack after a skill's level that went down since the learner's first level test. -->
+    <string name="language_level_down">down since the level test</string>
+    <string name="language_levels_move">Levels move as you practice. They get more accurate every week.</string>
+    <!-- One skill rose: "Speaking went up to B1 since the level test." -->
+    <string name="language_level_rose">%1$s went up to %2$s since the level test.</string>
+    <!-- The count is how many skills rose, always two or more; %1$s lists them: "Speaking and Writing went up since the level test." -->
+    <plurals name="language_levels_rose">
+        <item quantity="one">%1$s went up since the level test.</item>
+        <item quantity="other">%1$s went up since the level test.</item>
+    </plurals>
+    <!-- Heads the list of things the learner is now able to do in the language, from the units they finished. -->
+    <string name="language_can_already">I can already…</string>
+    <!-- Read by TalkBack after the next thing the learner will be able to do, which they can't do yet. -->
+    <string name="language_can_do_not_yet">Not yet</string>
+    <!-- What TalkBack says for a level and the level the learner aims for, shown as "B1 → B2": "B1, goal B2". -->
+    <string name="language_level_toward_goal">%1$s, goal %2$s</string>
     <string name="language_pattern_noticed">We noticed a pattern</string>
     <string name="language_pattern_typos">Just typos</string>
     <string name="language_pattern_typos_description">Your recent mistakes were slips, not a rule to learn.</string>

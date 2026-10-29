@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Lint's German typo list takes "seit dem" (since the) for "seitdem" (since then); "seit dem Einstufungstest" is correct. -->
+    <issue id="Typos">
+        <ignore regexp="&quot;seit dem&quot; is a common misspelling" />
+    </issue>
+</lint>

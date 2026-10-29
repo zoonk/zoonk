@@ -8,6 +8,17 @@
   "language_level": "e6c65afc3e9724308959d73d8ac38bf67b0c332a05b027b2744a9b6b35e614d7",
   "language_level_toward": "a4396f3294ec3799e14ced6647cbb4950024c73122e49601796cbd9d188e6d98",
   "language_level_toward_spoken": "b6131cf49157c78476841f486f943c570e834359d9a279851a14a7202cdee1eb",
+  "language_can_already": "9b72ea82187573965c1daeca76eb8c927ba93e1565647f1960cc752218b2927b",
+  "language_can_do_not_yet": "bc600f8f3609f69b27bc6bedafb9a87072d9d30eb2480269ed667e7ecc76f3ae",
+  "language_level_by_skill": "4a42e3b8b191e71c86c446721c8b6173d10bffc4d5b33b759a5f98f331d68a93",
+  "language_level_down": "9c6e792123ae46f0bb8dfbeac4e14410359777f55ab82d8ee9b1c61907ad95fc",
+  "language_level_goal": "11703e020e2531b5d862668ebd9d361e8f2cd4a2dc752103bd6da82a8a7d1220",
+  "language_level_goal_by": "026e4651209f1202e8cd2570f7b679f51063f0c84534cf08307fed7747a82875",
+  "language_level_rose": "008448d74b3c1efcdb89031b56df9753379a43a0d53e09fc9678b7e1b7085a69",
+  "language_level_toward_goal": "108fd6b803a589b05b7068281aa1098e734cc7905eb938b9de4e51037c493ad8",
+  "language_level_up": "2c67746afd51d6da6900a2ad2c6361dc72d3ee586b29a5af912fa8dbf8b7e0c9",
+  "language_levels_move": "cfbbaf171bfa3430b6598e5ca0bdf68e23bf5d53e3d84bf7134fa946fdeec2f9",
+  "language_levels_rose": "4fc6591dac13eafd76323bea1eb22bcf9b513807ef7b10ff12adf7f9ebc9d508",
   "language_pattern_noticed": "60b95d1b6a6cddba5ba99810e5dd7e0c3b4d0a5f503f8643dbe624665aee09c6",
   "language_pattern_noticed_summary": "8ad4239aba68dad88ac5146c586eed1cf8c126f867b8d6badbb51e0b16cd0ddb",
   "language_pattern_practice": "d4b5f43047f787da7a85a2d913831144e962bd49aa827e8c964aec41319ec329",
@@ -16,7 +27,10 @@
   "language_say_again": "8e0c0407eb0cc69c21203bc62484cdd281dcb96188cc79649fa452f14299e18e",
   "language_say_them": "1ca2db6ab3d3b46fc4680afdbd3e263c25a950466be4218f4afb6553a757cf93",
   "language_see_your_plan": "c6eb78019bd77b5d1e924417a4d14d7a7616b9ed263d1561be2ce75c808132de",
+  "language_skill_level": "84ad6ee6c5e72497cc6571f997df02880857d768c51a813a142602e28bb67746",
+  "language_skill_level_trend": "a7f66fc5ccf04b526d03fb0d8da88ba307cc7ab925966cba9c96f9d71e1cfaf6",
   "language_skill_listening": "1a91a0a9bb4f4ad4ee3bfaec6d5660b936e600474a69983a511761c9090b04fe",
+  "language_skill_reading": "f2c31f000909f7b9e7af0b9c698cc3321dab5c067e99dc52e683901b8ddbc8d0",
   "language_skill_speaking": "a94d8d2d399f7eafef3247e0d78407bfa8e2daf3866b12c94555b5d8217aead9",
   "language_skill_words": "3c255aff7a74c973e9b6f31dd47ed99836656531dc1ef99091375361b83463e7",
   "language_skill_writing": "0c211ff3a1c65eaef79721fbc548294edca918698c607c0df36a5e5f3936a04a",
@@ -65,10 +79,40 @@
     <string name="language_unit_summary">Resumo da unidade</string>
     <!-- TalkBack's name for the pane beside the unit's lessons. -->
     <string name="language_unit_about">Sobre esta unidade</string>
+    <string name="language_skill_reading">Leitura</string>
     <string name="language_skill_listening">Escuta</string>
     <string name="language_skill_speaking">Conversação</string>
     <string name="language_skill_words">Palavras</string>
     <string name="language_skill_writing">Escrita</string>
+    <!-- Heads the learner's level in each skill (reading, listening, speaking, writing), on the CEFR scale from A1 to C2. -->
+    <string name="language_level_by_skill">Nível por habilidade</string>
+    <!-- The level the learner aims for and when: "Goal B2 by June 2027". %1$s is a CEFR level, %2$s a month and year. -->
+    <string name="language_level_goal_by">Meta %1$s até %2$s</string>
+    <!-- The level the learner aims for: "Goal B2". -->
+    <string name="language_level_goal">Meta %1$s</string>
+    <!-- What TalkBack says for a skill's row: "Reading, B1". -->
+    <string name="language_skill_level">%1$s, %2$s</string>
+    <!-- What TalkBack says for a skill's row that moved: "Reading, B1, up since the level test". -->
+    <string name="language_skill_level_trend">%1$s, %2$s, %3$s</string>
+    <!-- Read by TalkBack after a skill's level that went up since the learner's first level test. -->
+    <string name="language_level_up">subiu desde o teste de nível</string>
+    <!-- Read by TalkBack after a skill's level that went down since the learner's first level test. -->
+    <string name="language_level_down">caiu desde o teste de nível</string>
+    <string name="language_levels_move">Os níveis mudam conforme você pratica. Eles ficam mais precisos a cada semana.</string>
+    <!-- One skill rose: "Speaking went up to B1 since the level test." -->
+    <string name="language_level_rose">%1$s subiu para %2$s desde o teste de nível.</string>
+    <!-- The count is how many skills rose, always two or more; %1$s lists them: "Speaking and Writing went up since the level test." -->
+    <plurals name="language_levels_rose">
+        <item quantity="one">%1$s subiu desde o teste de nível.</item>
+        <item quantity="many">%1$s subiram desde o teste de nível.</item>
+        <item quantity="other">%1$s subiram desde o teste de nível.</item>
+    </plurals>
+    <!-- Heads the list of things the learner is now able to do in the language, from the units they finished. -->
+    <string name="language_can_already">Já consigo…</string>
+    <!-- Read by TalkBack after the next thing the learner will be able to do, which they can't do yet. -->
+    <string name="language_can_do_not_yet">Ainda não</string>
+    <!-- What TalkBack says for a level and the level the learner aims for, shown as "B1 → B2": "B1, goal B2". -->
+    <string name="language_level_toward_goal">%1$s, meta %2$s</string>
     <string name="language_pattern_noticed">Percebemos um padrão</string>
     <string name="language_pattern_typos">Só erros de digitação</string>
     <string name="language_pattern_typos_description">Seus erros recentes foram deslizes, não uma regra que você precisa aprender.</string>
