@@ -42,6 +42,7 @@ import com.zoonk.android.feature.activities.code.sqlPlaygroundRenderer
 import com.zoonk.android.feature.activities.decisionTreeRenderer
 import com.zoonk.android.feature.activities.dialogueSimulatorRenderer
 import com.zoonk.android.feature.activities.findErrorRenderer
+import com.zoonk.android.feature.activities.geometry.geometryBoardRenderer
 import com.zoonk.android.feature.activities.geometry.unitCircleRenderer
 import com.zoonk.android.feature.activities.guessRevealRenderer
 import com.zoonk.android.feature.activities.math.areaModelRenderer
@@ -121,6 +122,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "distributionExplorer" to distributionExplorerRenderer,
         "findError" to findErrorRenderer,
         "formulaModel" to formulaModelRenderer,
+        "geometryBoard" to geometryBoardRenderer,
         "guessReveal" to guessRevealRenderer,
         "keyboardFretboard" to keyboardFretboardRenderer,
         "labeledDiagram" to labeledDiagramRenderer,

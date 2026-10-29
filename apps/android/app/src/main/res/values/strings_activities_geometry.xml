@@ -22,4 +22,45 @@
     <string name="activities_geometry_undefined">undefined</string>
     <!-- An angle in radians, like "2.5 rad". -->
     <string name="activities_geometry_radians">%1$s rad</string>
+
+    <string name="activities_geometry_badge_drag_corner">Drag a corner</string>
+    <!-- A movable corner of a shape, for TalkBack, like "Corner A". -->
+    <string name="activities_geometry_board_corner">Corner %1$s</string>
+    <!-- Where a corner is, then what the board measures, like "At 1, 3. Angles: 72°, 45°, 63°." -->
+    <string name="activities_geometry_board_corner_value">At %1$s, %2$s. %3$s</string>
+    <string name="activities_geometry_board_hint">Drag a corner, or tap a spot to move the nearest corner there.</string>
+    <!-- TalkBack actions that move a shape's corner one grid step. -->
+    <string name="activities_geometry_board_move_left">Move left</string>
+    <string name="activities_geometry_board_move_right">Move right</string>
+    <string name="activities_geometry_board_move_up">Move up</string>
+    <string name="activities_geometry_board_move_down">Move down</string>
+    <!-- Puts a shape's corners back where they started. -->
+    <string name="activities_geometry_board_back_to_start">Back to the start</string>
+    <!-- A geometry board, for TalkBack. -->
+    <plurals name="activities_geometry_board_shape">
+        <item quantity="one">A shape with %1$d corner on a grid.</item>
+        <item quantity="other">A shape with %1$d corners on a grid.</item>
+    </plurals>
+    <plurals name="activities_geometry_board_moving">
+        <item quantity="one">%1$d corner moves.</item>
+        <item quantity="other">%1$d corners move.</item>
+    </plurals>
+    <!-- A shape's angles, like "72°, 45°, 63°". -->
+    <string name="activities_geometry_board_angles">Angles: %1$s.</string>
+    <string name="activities_geometry_board_angles_total">Angles: %1$s, adding up to %2$s.</string>
+    <!-- A shape's side lengths, like "4, 4.2, 3.2". -->
+    <string name="activities_geometry_board_sides">Sides: %1$s.</string>
+    <string name="activities_geometry_board_sides_total">Sides: %1$s, adding up to a perimeter of %2$s.</string>
+    <string name="activities_geometry_board_area_total">Area: %1$s.</string>
+    <!-- The areas of the squares on a right triangle's two shorter sides, like "9, 16". -->
+    <string name="activities_geometry_board_squares">Squares on the two shorter sides: %1$s.</string>
+    <string name="activities_geometry_board_squares_total">Squares on the two shorter sides: %1$s. Square on the longest side: %2$s.</string>
+    <!-- Above a shape's angles drawn side by side. -->
+    <string name="activities_geometry_board_fan">Tear off the corners and put them side by side</string>
+    <!-- What a triangle's three angles side by side make. -->
+    <string name="activities_geometry_board_straight_line">a straight line</string>
+    <!-- What a four-sided shape's angles side by side make. -->
+    <string name="activities_geometry_board_full_turn">a full turn</string>
+    <!-- Before a shape's area, like "Area 6". -->
+    <string name="activities_geometry_board_area">Area</string>
 </resources>

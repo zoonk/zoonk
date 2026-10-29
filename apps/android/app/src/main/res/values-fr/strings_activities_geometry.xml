@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_geometry_badge_drag_corner": "f714c599d0eb04ed1e3252a9da469831becbd04d879fe13f1b231563af5274d5",
   "activities_geometry_badge_turn_it": "c620a27e8c4171932e5bac87af7549f752eaf68492f7a251eca016acd1bc18d0",
+  "activities_geometry_board_angles": "f263d40a074fe48786f85877613f3edafd8bd33afcbcb0e27f2ebbaade7210de",
+  "activities_geometry_board_angles_total": "8434d8b237f0da4d85677c7d6699e2804eb5d6836e53147f1b6b198cbe8cd6b2",
+  "activities_geometry_board_area": "0c3589fa5cc4bf4826646975bf23d009527409b0012daa7f8de989789959c3e0",
+  "activities_geometry_board_area_total": "8b7c3983597cf20025454f4a8a0204ee76ce316772c633b1d6933a567646c26d",
+  "activities_geometry_board_back_to_start": "17fa6e6e1c29070b49b7eca57642b9c81a64a06fd0c856c7c7bab96a0eb5292e",
+  "activities_geometry_board_corner": "4588926aaa6e2b4b77ab562349e28d0bbae467dbb2f7a5c3dc0e35fc9acf0956",
+  "activities_geometry_board_corner_value": "074fdd7b72d9ba9aa8f4192d93685fda3ed8cadb95f5df0b8d6709e977f09c41",
+  "activities_geometry_board_fan": "2bb124eff7f3e16340312268f1386ab1c9e10727fd0ed6e7857a8f7d044b4a01",
+  "activities_geometry_board_full_turn": "90c892578c10ccf145c2368a6cefa21a45c5cb31b4cfe3f1c5739842a2f65943",
+  "activities_geometry_board_hint": "d797e04ed8f9568748a35fedecd797f3aafc2c4953d1c68ede59e4c51d6f4a0d",
+  "activities_geometry_board_move_down": "1c5437ad9d966dd5bceb41d79d65cd89e7aa86d0f95161f4f418fdfaa9de84a1",
+  "activities_geometry_board_move_left": "6d825639f18b6d379a92f650b1ac6433ff898f9bbb2025b4fc45837e72c759c6",
+  "activities_geometry_board_move_right": "be9c2f9a1f29798a764be2f879c9d557f54492aa6f7f1e4fe6ae589dbcbcb9a7",
+  "activities_geometry_board_move_up": "6f52d654af6dd4f234d9be82a107ea6f2e736ee526648d71e9394046ddcd7265",
+  "activities_geometry_board_moving": "cfecdd039ba744302015a588de12669f5b7ee9c8158d7f360e5d93006ec420d7",
+  "activities_geometry_board_shape": "c11296a0ead1edf87d142033a94fedf6173733cb5ab6ac6ffdfa725255dd3bdd",
+  "activities_geometry_board_sides": "25ab3f97cf7fcc52ce36f8cab886a15a2c9b3b8293e471a169af009be842586d",
+  "activities_geometry_board_sides_total": "58206b60d923f07d70e167cc96383497da3f9de1d749bdce1add8c6aded19c05",
+  "activities_geometry_board_squares": "d13963606ee979d40f2228ced79a8e6957e96ba2947c9a7ba6eb84f91e30cc61",
+  "activities_geometry_board_squares_total": "91dc4f959b02c6415add37832f98fc7f21036290765f3b9df1dc0bc8405ccfc3",
+  "activities_geometry_board_straight_line": "f8b04bb79916dbc87725226692648a02fe7edc99ef047a4ee6fe4aa9aad26202",
   "activities_geometry_cos": "40a2a0205b8aeeaea67aa2e98ced681638033ec229204eb2f6079ecc51c10dcb",
   "activities_geometry_radians": "4c1bc5ecc003c3be74eeeb31fea2eae7e64b7335c4a809bb43fe2284b7980538",
   "activities_geometry_sin": "d01b09ca5ca24f11681db0775cdaaee6c98a4ae0412b099f9b9c220b6cbc2359",
@@ -36,4 +58,46 @@
     <string name="activities_geometry_undefined">indéfini</string>
     <!-- An angle in radians, like "2.5 rad". -->
     <string name="activities_geometry_radians">%1$s rad</string>
+    <string name="activities_geometry_badge_drag_corner">Fais glisser un sommet</string>
+    <!-- A movable corner of a shape, for TalkBack, like "Corner A". -->
+    <string name="activities_geometry_board_corner">Sommet %1$s</string>
+    <!-- Where a corner is, then what the board measures, like "At 1, 3. Angles: 72°, 45°, 63°." -->
+    <string name="activities_geometry_board_corner_value">En %1$s, %2$s. %3$s</string>
+    <string name="activities_geometry_board_hint">Fais glisser un sommet ou touche un point pour y déplacer le sommet le plus proche.</string>
+    <!-- TalkBack actions that move a shape's corner one grid step. -->
+    <string name="activities_geometry_board_move_left">Déplacer vers la gauche</string>
+    <string name="activities_geometry_board_move_right">Déplacer vers la droite</string>
+    <string name="activities_geometry_board_move_up">Déplacer vers le haut</string>
+    <string name="activities_geometry_board_move_down">Déplacer vers le bas</string>
+    <!-- Puts a shape's corners back where they started. -->
+    <string name="activities_geometry_board_back_to_start">Revenir au départ</string>
+    <!-- A geometry board, for TalkBack. -->
+    <plurals name="activities_geometry_board_shape">
+        <item quantity="one">Une figure avec %1$d sommet sur une grille.</item>
+        <item quantity="many">Une figure avec %1$d sommets sur une grille.</item>
+        <item quantity="other">Une figure avec %1$d sommets sur une grille.</item>
+    </plurals>
+    <plurals name="activities_geometry_board_moving">
+        <item quantity="one">%1$d sommet se déplace.</item>
+        <item quantity="many">%1$d sommets se déplacent.</item>
+        <item quantity="other">%1$d sommets se déplacent.</item>
+    </plurals>
+    <!-- A shape's angles, like "72°, 45°, 63°". -->
+    <string name="activities_geometry_board_angles">Angles : %1$s.</string>
+    <string name="activities_geometry_board_angles_total">Angles : %1$s, pour un total de %2$s.</string>
+    <!-- A shape's side lengths, like "4, 4.2, 3.2". -->
+    <string name="activities_geometry_board_sides">Côtés : %1$s.</string>
+    <string name="activities_geometry_board_sides_total">Côtés : %1$s, pour un périmètre de %2$s.</string>
+    <string name="activities_geometry_board_area_total">Aire : %1$s.</string>
+    <!-- The areas of the squares on a right triangle's two shorter sides, like "9, 16". -->
+    <string name="activities_geometry_board_squares">Carrés sur les deux côtés les plus courts : %1$s.</string>
+    <string name="activities_geometry_board_squares_total">Carrés sur les deux côtés les plus courts : %1$s. Carré sur le côté le plus long : %2$s.</string>
+    <!-- Above a shape's angles drawn side by side. -->
+    <string name="activities_geometry_board_fan">Détache les sommets et place-les côte à côte</string>
+    <!-- What a triangle's three angles side by side make. -->
+    <string name="activities_geometry_board_straight_line">une ligne droite</string>
+    <!-- What a four-sided shape's angles side by side make. -->
+    <string name="activities_geometry_board_full_turn">un tour complet</string>
+    <!-- Before a shape's area, like "Area 6". -->
+    <string name="activities_geometry_board_area">Aire</string>
 </resources>

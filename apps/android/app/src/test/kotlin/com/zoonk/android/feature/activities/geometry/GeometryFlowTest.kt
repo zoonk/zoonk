@@ -7,20 +7,27 @@ import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.semantics.getOrNull
 import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.click
+import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.pressKey
+import androidx.compose.ui.test.swipe
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.feature.activities.ActivityFixtures
 import com.zoonk.android.feature.player.LessonPlayerHarness
@@ -61,6 +68,13 @@ class GeometryFlowTest {
         performSemanticsAction(SemanticsActions.RequestFocus)
         repeat(times) { performKeyInput { pressKey(key) } }
     }
+
+    private fun SemanticsNodeInteraction.act(label: String) {
+        val action = fetchSemanticsNode().config[SemanticsActions.CustomActions].single { it.label == label }
+        rule.runOnIdle { action.action() }
+    }
+
+    private fun shows(text: String) = rule.onNodeWithText(text, substring = true).performScrollTo().assertIsDisplayed()
 
     private fun SemanticsNodeInteraction.state(): String? = fetchSemanticsNode().config.getOrNull(SemanticsProperties.StateDescription)
 
@@ -136,7 +150,53 @@ class GeometryFlowTest {
         )
     }
 
+    @Test
+    fun geometryBoardWorksTheAnglesOutFromTheParts() {
+        play("geometryBoard", isCorrect = true)
+
+        assertEquals(true, handle(CORNER_C).state()?.endsWith("Angles: 72°, 45°, 63°."))
+        rule.onNode(hasSetTextAction()).performTextInput("180")
+        harness.tap("Check")
+
+        shows("The angles always add to 180°.")
+    }
+
+    @Test
+    fun geometryBoardShowsTheRealSumAfterAWrongOne() {
+        play("geometryBoard", isCorrect = false)
+
+        rule.onNode(hasSetTextAction()).performTextInput("90")
+        harness.tap("Check")
+
+        rule
+            .onNode(
+                hasText("180") and hasAnyAncestor(SemanticsMatcher.expectValue(SemanticsProperties.PaneTitle, "Answer feedback")),
+            ).assertExists()
+    }
+
+    @Test
+    fun geometryBoardCornersMoveByKeyTalkBackDragAndTap() {
+        play("geometryBoard", isCorrect = true)
+
+        handle(CORNER_C).press(Key.DirectionUp)
+        assertEquals("At 1, 4. Angles: 76°, 53°, 51°.", handle(CORNER_C).state())
+        rule.onNodeWithText("Back to the start").performScrollTo().performClick()
+        assertEquals(true, handle(CORNER_C).state()?.startsWith("At 1, 3."))
+
+        handle(CORNER_C).act("Move up")
+        assertEquals(true, handle(CORNER_C).state()?.startsWith("At 1, 4."))
+
+        handle(CORNER_C).performTouchInput { swipe(center, center + Offset(60f, 60f)) }
+        assertEquals(false, handle(CORNER_C).state()?.startsWith("At 1, 4."))
+
+        rule.onNodeWithText("Back to the start").performScrollTo().performClick()
+        val corner = handle(CORNER_C).fetchSemanticsNode().boundsInRoot
+        rule.onRoot().performTouchInput { click(corner.center + Offset(0f, corner.height * 0.75f)) }
+        assertEquals(true, handle(CORNER_C).state()?.startsWith("At 1, 2."))
+    }
+
     private companion object {
         const val POINT = "Point on the circle"
+        const val CORNER_C = "Corner C"
     }
 }

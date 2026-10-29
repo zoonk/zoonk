@@ -1,7 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "activities_geometry_badge_drag_corner": "0bf098500fd6282d95e54bcfa1bb16f8da966fe75b05f6b6aa3d290d16772b2a",
   "activities_geometry_badge_turn_it": "490c068a489b7aaad81c0132fc532dfc42875da0ebcc82cea55ffa4f195ed62d",
+  "activities_geometry_board_angles": "1b53938e75b0fc32c05ed25461ee4bc32d8fd789ac62022912ea081101812e7d",
+  "activities_geometry_board_angles_total": "7f782e4cb54654238a9d4442bb3a9c2423260d76fe92cdc68a4ded4a853a75cd",
+  "activities_geometry_board_area": "2998b49dd6b018ab03706c589e78f82e574b3db971fc874474530df23bfd91b4",
+  "activities_geometry_board_area_total": "6514ca5800bc928e5de69dae07d8b74288e80600ca751ee69c821687406b998b",
+  "activities_geometry_board_back_to_start": "a94d64b51512e28a86acac1b43cddf57bed6f6964ba72a86e77f32be72604944",
+  "activities_geometry_board_corner": "5cdeb919e6689a2f6a87bb9b1fb2df5001b7b0d03455de67528ef8e927f0ce97",
+  "activities_geometry_board_corner_value": "a7510b6695f63ce4a2aaabeb1eedf4773f4b9afde15c22f5cc1e00116c0103bc",
+  "activities_geometry_board_fan": "5ebe5beefc00e477e30ad1ec10e5bc71fd65bb127ff132c330c86cc7d7ff92a6",
+  "activities_geometry_board_full_turn": "7c723974f9ab8e866a59a68891cf04f3689635f790d09bbafd112323de61705e",
+  "activities_geometry_board_hint": "c3272c945ccb6f4fb3c005f39d8ec7acaa68f29bd3c9715fcf674a1669947c5e",
+  "activities_geometry_board_move_down": "e7f8aa359fdf7d0af41a2a64fadb3c6261113ccbdb096971c037f71b002d9ddf",
+  "activities_geometry_board_move_left": "92afc47f09e1158641a1a9b17f7882bb236c1eb5b00fc96821db8ca2451aa63f",
+  "activities_geometry_board_move_right": "5fca0ea3688f960e950b99e966c8ba6be5bb362b4cd9c3dd6ba45348028c97ef",
+  "activities_geometry_board_move_up": "888b8290a17ba0b15721e5432cce97f121f237db7c4e333f0c9ed0076051565d",
+  "activities_geometry_board_moving": "8165d18545944862bf753ffedf06eae6b6f4b4c01cc7abd55258e9521da8e044",
+  "activities_geometry_board_shape": "a03b39957e16594b676a2457477c5fdfe4ab046ed0a9e9be68e6eb88e474a260",
+  "activities_geometry_board_sides": "5ecc36c3822409fc690c356d452bb504f5d9303aeb94886aa837859190d0b3e6",
+  "activities_geometry_board_sides_total": "cc4e0e385d672a71eba690d69a2adbc4fbee2ede38a4701b66a25195729aade9",
+  "activities_geometry_board_squares": "0af5ef853adfc09db11e8f5fd0508e3820bb9340452d61a01db662b34add3891",
+  "activities_geometry_board_squares_total": "140c7523ac104362a4d4af5784cd4cfcd38b0fd51ac3412f9e5062c0bab412d8",
+  "activities_geometry_board_straight_line": "70e129d5bd193927ff7684be5bb6eab72e870a95eeb10d91183c47dbc26bedee",
   "activities_geometry_cos": "d9055aee277eead8dccc2e4b53eac7e5d2e31e94a9f2077270999bb6f011ad4e",
   "activities_geometry_radians": "68d5c3f652c051f0bd612c63422325d8d969fdf9e010258c9d40c6a47f7b44e0",
   "activities_geometry_sin": "2f74d58822ed447383d87d2f35322133a3b4e96952d13b5d85a3c2717d509914",
@@ -36,4 +58,46 @@
     <string name="activities_geometry_undefined">indefinido</string>
     <!-- An angle in radians, like "2.5 rad". -->
     <string name="activities_geometry_radians">%1$s rad</string>
+    <string name="activities_geometry_badge_drag_corner">Arrastra un vértice</string>
+    <!-- A movable corner of a shape, for TalkBack, like "Corner A". -->
+    <string name="activities_geometry_board_corner">Vértice %1$s</string>
+    <!-- Where a corner is, then what the board measures, like "At 1, 3. Angles: 72°, 45°, 63°." -->
+    <string name="activities_geometry_board_corner_value">En %1$s, %2$s. %3$s</string>
+    <string name="activities_geometry_board_hint">Arrastra un vértice o toca un punto para mover allí el vértice más cercano.</string>
+    <!-- TalkBack actions that move a shape's corner one grid step. -->
+    <string name="activities_geometry_board_move_left">Mover a la izquierda</string>
+    <string name="activities_geometry_board_move_right">Mover a la derecha</string>
+    <string name="activities_geometry_board_move_up">Mover hacia arriba</string>
+    <string name="activities_geometry_board_move_down">Mover hacia abajo</string>
+    <!-- Puts a shape's corners back where they started. -->
+    <string name="activities_geometry_board_back_to_start">Volver al inicio</string>
+    <!-- A geometry board, for TalkBack. -->
+    <plurals name="activities_geometry_board_shape">
+        <item quantity="one">Una figura con %1$d vértice en una cuadrícula.</item>
+        <item quantity="many">Una figura con %1$d vértices en una cuadrícula.</item>
+        <item quantity="other">Una figura con %1$d vértices en una cuadrícula.</item>
+    </plurals>
+    <plurals name="activities_geometry_board_moving">
+        <item quantity="one">Se mueve %1$d vértice.</item>
+        <item quantity="many">Se mueven %1$d vértices.</item>
+        <item quantity="other">Se mueven %1$d vértices.</item>
+    </plurals>
+    <!-- A shape's angles, like "72°, 45°, 63°". -->
+    <string name="activities_geometry_board_angles">Ángulos: %1$s.</string>
+    <string name="activities_geometry_board_angles_total">Ángulos: %1$s, que suman %2$s.</string>
+    <!-- A shape's side lengths, like "4, 4.2, 3.2". -->
+    <string name="activities_geometry_board_sides">Lados: %1$s.</string>
+    <string name="activities_geometry_board_sides_total">Lados: %1$s, que suman un perímetro de %2$s.</string>
+    <string name="activities_geometry_board_area_total">Área: %1$s.</string>
+    <!-- The areas of the squares on a right triangle's two shorter sides, like "9, 16". -->
+    <string name="activities_geometry_board_squares">Cuadrados en los dos lados más cortos: %1$s.</string>
+    <string name="activities_geometry_board_squares_total">Cuadrados en los dos lados más cortos: %1$s. Cuadrado en el lado más largo: %2$s.</string>
+    <!-- Above a shape's angles drawn side by side. -->
+    <string name="activities_geometry_board_fan">Separa los vértices y colócalos uno junto a otro</string>
+    <!-- What a triangle's three angles side by side make. -->
+    <string name="activities_geometry_board_straight_line">una línea recta</string>
+    <!-- What a four-sided shape's angles side by side make. -->
+    <string name="activities_geometry_board_full_turn">una vuelta completa</string>
+    <!-- Before a shape's area, like "Area 6". -->
+    <string name="activities_geometry_board_area">Área</string>
 </resources>
