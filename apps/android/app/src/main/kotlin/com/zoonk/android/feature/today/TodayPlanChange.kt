@@ -44,8 +44,8 @@ internal fun PlanChangeNotice(
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
-    val answer = viewModel.planChangeAnswer?.takeIf { it.change.status != PlanChange.Status.PROPOSED }
-    val change = answer?.change ?: viewModel.planChangeAnswer?.change ?: state.read.today.planChange ?: return
+    val answer = viewModel.planChangeAnswer?.takeIf { it.visit == state.read.noticeVisit() }
+    val change = answer?.change ?: state.read.today.planChange ?: return
     val behind = change.behind
 
     if (change.kind == MISSED_DAYS && behind != null) {
@@ -65,7 +65,6 @@ private fun ChangeNotice(
 ) {
     val viewModel = state.viewModel
     val today = state.read.today
-    val goalId = today.goal.id
     val dateAhead =
         today.goal
             .takeIf { (it.daysLeft ?: 0) > 0 }
@@ -93,7 +92,7 @@ private fun ChangeNotice(
                 {
                     SuggestionAction(
                         text = stringResource(R.string.today_undo),
-                        onClick = { viewModel.decidePlanChange(goalId, answer.change, PlanChangeDecisionInput.Status.UNDONE) },
+                        onClick = { viewModel.decidePlanChange(state.read, answer.change, PlanChangeDecisionInput.Status.UNDONE) },
                         enabled = !saving,
                         secondary = true,
                     )
@@ -124,7 +123,7 @@ private fun ChangeNotice(
             SuggestionResult(result)
             after?.let { SuggestionActions { it() } }
         } else {
-            ChangeActions(change, enabled = !saving) { status -> viewModel.decidePlanChange(goalId, change, status) }
+            ChangeActions(change, enabled = !saving) { status -> viewModel.decidePlanChange(state.read, change, status) }
         }
 
         if (viewModel.planChangeFailed) SuggestionSaveError()
@@ -192,7 +191,12 @@ private fun FallingBehindNotice(
         } else {
             stringResource(R.string.today_behind_goal, *values)
         }
-    val kept = viewModel.planChangeAnswer?.takeIf { it.change.id == change.id && it.status == PlanChangeDecisionInput.Status.SEEN } != null
+    val kept =
+        viewModel.planChangeAnswer?.takeIf {
+            it.visit == state.read.noticeVisit() && it.change.id == change.id &&
+                it.status == PlanChangeDecisionInput.Status.SEEN
+        } !=
+            null
     val result = if (kept) stringResource(R.string.today_behind_kept) else null
 
     Suggestion(
@@ -217,7 +221,7 @@ private fun FallingBehindNotice(
                 enabled = !viewModel.isSavingPlanChange,
             ) { route ->
                 if (route == null) {
-                    viewModel.decidePlanChange(today.goal.id, change, PlanChangeDecisionInput.Status.SEEN)
+                    viewModel.decidePlanChange(state.read, change, PlanChangeDecisionInput.Status.SEEN)
                 } else {
                     close()
                     state.navigate(route)

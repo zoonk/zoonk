@@ -19,6 +19,7 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import java.util.UUID
 
 /** What a tap on Today is waiting for, so only that control shows it. */
@@ -150,10 +151,16 @@ class TodayViewModel(
 
     /** Today left the screen (a task over it, another tab), so the next notice can show on return. */
     fun endVisit() {
+        visit++
         noticeHold = null
         planChangeAnswer = null
+        planChangeFailed = false
         examChoiceMade = null
+        examChoiceFailed = false
     }
+
+    /** An answer that comes back after the learner left Today belongs to no card. */
+    private var visit = 0
 
     /** A plan change answered here, so its card says what the answer did after Today moves on. */
     var planChangeAnswer by mutableStateOf<PlanChangeAnswer?>(null)
@@ -165,22 +172,16 @@ class TodayViewModel(
     var isSavingPlanChange by mutableStateOf(false)
         private set
 
+    /** A change offered again (an undo can do that) isn't an answer: its card follows Today's read again. */
     fun decidePlanChange(
-        goalId: UUID,
+        read: TodayRead.Day,
         change: PlanChange,
         status: PlanChangeDecisionInput.Status,
-    ) {
-        if (isSavingPlanChange) return
-        isSavingPlanChange = true
+    ) = save(isSaving = { isSavingPlanChange = it }, onFailed = { planChangeFailed = true }) {
         planChangeFailed = false
-
-        viewModelScope.launch {
-            when (val result = plans.decideChange(goalId, change.id, status)) {
-                is MutationResult.Done -> planChangeAnswer = PlanChangeAnswer(status, result.value)
-                is MutationResult.Failed -> planChangeFailed = true
-                MutationResult.Obsolete -> Unit
-            }
-            isSavingPlanChange = false
+        plans.decideChange(read.today.goal.id, change.id, status).then { saved ->
+            planChangeAnswer =
+                saved.takeIf { it.status != PlanChange.Status.PROPOSED }?.let { PlanChangeAnswer(read.noticeVisit(), status, it) }
         }
     }
 
@@ -190,7 +191,7 @@ class TodayViewModel(
     }
 
     /** The exam choice just made, so its card says what it did after Today stops asking. */
-    var examChoiceMade by mutableStateOf<PlanChange?>(null)
+    var examChoiceMade by mutableStateOf<ExamChoiceMade?>(null)
         private set
 
     var examChoiceFailed by mutableStateOf(false)
@@ -200,33 +201,47 @@ class TodayViewModel(
         private set
 
     fun chooseExamOption(
-        goalId: UUID,
+        read: TodayRead.Day,
         group: String,
         subject: String,
-    ) = saveExamChoice {
-        val result = (plans.chooseExamOption(goalId, group, subject) as? MutationResult.Done)?.value
-        val change = result?.change?.takeIf { result.status == PlanChangeResult.Status.APPLIED }
-        if (change != null) examChoiceMade = change
-        change != null
+    ) = save(isSaving = { isSavingExamChoice = it }, onFailed = { examChoiceFailed = true }) {
+        examChoiceFailed = false
+        plans.chooseExamOption(read.today.goal.id, group, subject).then { result ->
+            val change = result.change?.takeIf { result.status == PlanChangeResult.Status.APPLIED }
+            if (change == null) examChoiceFailed = true else examChoiceMade = ExamChoiceMade(read.noticeVisit(), change)
+        }
     }
 
     fun undoExamChoice(
-        goalId: UUID,
-        change: PlanChange,
-    ) = saveExamChoice {
-        val undone = plans.decideChange(goalId, change.id, PlanChangeDecisionInput.Status.UNDONE) is MutationResult.Done
-        if (undone) examChoiceMade = null
-        undone
+        read: TodayRead.Day,
+        made: ExamChoiceMade,
+    ) = save(isSaving = { isSavingExamChoice = it }, onFailed = { examChoiceFailed = true }) {
+        examChoiceFailed = false
+        plans.decideChange(read.today.goal.id, made.change.id, PlanChangeDecisionInput.Status.UNDONE).then { examChoiceMade = null }
     }
 
-    private fun saveExamChoice(save: suspend () -> Boolean) {
-        if (isSavingExamChoice) return
-        isSavingExamChoice = true
-        examChoiceFailed = false
+    /**
+     * One save at a time; its result lands only on the visit that made it. [write] answers what to
+     * show once saved; a refusal calls [onFailed], and a write its session didn't outlive changes nothing.
+     */
+    private fun save(
+        isSaving: (Boolean) -> Unit,
+        onFailed: () -> Unit,
+        write: suspend () -> MutationResult<() -> Unit>,
+    ) {
+        if (isSavingPlanChange || isSavingExamChoice) return
+        isSaving(true)
+        val started = visit
 
         viewModelScope.launch {
-            examChoiceFailed = !save()
-            isSavingExamChoice = false
+            val result = write()
+            isSaving(false)
+            if (visit != started) return@launch
+            when (result) {
+                is MutationResult.Done -> result.value()
+                is MutationResult.Failed -> onFailed()
+                MutationResult.Obsolete -> Unit
+            }
         }
     }
 
@@ -246,14 +261,13 @@ class TodayViewModel(
         insightAnswers -= insight.id
 
         viewModelScope.launch {
-            val saved = store.answerInsight(insight, accepted)
             val answer =
-                when {
-                    !saved -> InsightAnswer.Failed
-                    accepted -> InsightAnswer.Accepted
-                    else -> InsightAnswer.Dismissed
+                when (store.answerInsight(insight, accepted)) {
+                    is MutationResult.Done -> if (accepted) InsightAnswer.Accepted else InsightAnswer.Dismissed
+                    is MutationResult.Failed -> InsightAnswer.Failed
+                    MutationResult.Obsolete -> null
                 }
-            insightAnswers += insight.id to answer
+            answer?.let { insightAnswers += insight.id to it }
             isAnsweringInsight = false
         }
     }
@@ -327,7 +341,29 @@ data class TodayRoute(
 
 enum class InsightAnswer { Accepted, Dismissed, Failed }
 
+/** The goal and day a notice belongs to: an answer shows only on them. */
+data class NoticeVisit(
+    val goalId: UUID,
+    val date: LocalDate,
+)
+
+fun TodayRead.Day.noticeVisit(): NoticeVisit = NoticeVisit(today.goal.id, day.localDate)
+
 data class PlanChangeAnswer(
+    val visit: NoticeVisit,
     val status: PlanChangeDecisionInput.Status,
     val change: PlanChange,
 )
+
+data class ExamChoiceMade(
+    val visit: NoticeVisit,
+    val change: PlanChange,
+)
+
+/** Turns a saved value into what to show, keeping a refusal or an obsolete write as it was. */
+private fun <T> MutationResult<T>.then(show: (T) -> Unit): MutationResult<() -> Unit> =
+    when (this) {
+        is MutationResult.Done -> MutationResult.Done { show(value) }
+        is MutationResult.Failed -> this
+        MutationResult.Obsolete -> MutationResult.Obsolete
+    }

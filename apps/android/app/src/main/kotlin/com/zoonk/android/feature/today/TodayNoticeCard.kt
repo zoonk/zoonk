@@ -105,25 +105,24 @@ private fun ExamChoiceNotice(
     modifier: Modifier,
 ) {
     val viewModel = state.viewModel
-    val goalId = state.read.today.goal.id
     val label = stringResource(R.string.today_notice_exam_choice)
     val mark = SuggestionMark.Symbol(R.drawable.ic_signpost)
     val saving = viewModel.isSavingExamChoice
-    val made = viewModel.examChoiceMade
+    val made = viewModel.examChoiceMade?.takeIf { it.visit == state.read.noticeVisit() }
 
     if (made != null) {
         val sentence =
             planChangeSentence(
-                made,
+                made.change,
                 state.read.today.goal.targetDate
                     ?.toJavaLocalDate(),
             )
         val undo: (@Composable () -> Unit)? =
-            if (made.canUndo) {
+            if (made.change.canUndo) {
                 {
                     SuggestionAction(
                         stringResource(R.string.today_undo),
-                        { viewModel.undoExamChoice(goalId, made) },
+                        { viewModel.undoExamChoice(state.read, made) },
                         enabled = !saving,
                         secondary = true,
                     )
@@ -142,8 +141,8 @@ private fun ExamChoiceNotice(
             lineAction = undo,
         ) {
             SuggestionResult(sentence)
-            planChangeProposalEffect(made.effect, planEnd(state), besideDiff = true)?.let { SuggestionDescription(it) }
-            PlanEffectDiff(made.effect)
+            planChangeProposalEffect(made.change.effect, planEnd(state), besideDiff = true)?.let { SuggestionDescription(it) }
+            PlanEffectDiff(made.change.effect)
             undo?.let { SuggestionActions { it() } }
             if (viewModel.examChoiceFailed) SuggestionSaveError()
         }
@@ -167,7 +166,7 @@ private fun ExamChoiceNotice(
             choice.options.forEach { option ->
                 SuggestionAction(
                     text = option.shortName ?: option.name,
-                    onClick = { viewModel.chooseExamOption(goalId, choice.group, option.name) },
+                    onClick = { viewModel.chooseExamOption(state.read, choice.group, option.name) },
                     enabled = !saving,
                     secondary = true,
                 )

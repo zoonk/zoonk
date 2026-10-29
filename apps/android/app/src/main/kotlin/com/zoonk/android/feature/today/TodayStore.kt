@@ -188,10 +188,10 @@ class TodayStore(
     suspend fun answerInsight(
         insight: MemoryInsight,
         accepted: Boolean,
-    ): Boolean =
+    ): MutationResult<Unit> =
         cache.mutate(invalidating = setOf(DataDomain.Memory, DataDomain.Goals, DataDomain.UserSession)) {
             api.answerInsight(it, insight.id, accepted)
-        } is MutationResult.Done
+        }
 
     init {
         // The day gives way at its end (midnight, or later for a session carried past it) without a write.
