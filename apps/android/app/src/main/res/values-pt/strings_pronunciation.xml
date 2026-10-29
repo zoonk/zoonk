@@ -1,26 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "pronunciation_accent": "667ed2f85cfde40bc97228e085c9a9db36773192eb73ed45981bbfeda808af96",
+  "pronunciation_accent": "af553ffbe50f2f9f6dce45a8def06fc08ce8044bbf01b8fe58bad3fd2ed78712",
   "pronunciation_comes_back": "a2b2f659de676c42933511caa1330c503d33ef8cdfc0fcc7010e3842f542e7da",
   "pronunciation_continue": "437d63fa59b4ddecbdac606d02dd349ee94c080191ebfcad99f5ed699ce72461",
   "pronunciation_done": "64d3a09fbe9a62fd707b3342cd7c23545698be1d360aa6e260d0c4014a891cb9",
   "pronunciation_failed": "17b6eb594d07140ddc2af43fdee2551a1d41fa2b3b129ac14a2aa5442e2f5537",
   "pronunciation_grading": "d137cf7af633132c4383e76dfe1cf82837a4f30faef65c83ed1ca4333a02bfcc",
-  "pronunciation_heard": "fd8346f48253c991b845f2ed64534835a2328be1df8a9a3fc93f0033d5a35cec",
-  "pronunciation_learned": "f08d286f9afad323ddace3d833201b127ab0d393e14ec87f6d3a9f075976eea1",
+  "pronunciation_heard": "dc9f23ba9ed730db88dab584aaadd17d89cc8b1ba04c6bd52fc2cfddf83c7acb",
+  "pronunciation_learned": "a31ba4c45e00a7a8278aa98003a2ea42c7e2626301006c2a78baa80f9f56a1dc",
   "pronunciation_listen": "ef9d3a929ed579fd17e91b15fbbbb81f003758fd7852eb6d71d294117875f829",
   "pronunciation_listen_slowly": "f9c4a08cb595bee01aba31fa3d3cbcb1882badd0f931921169348204bcde065a",
-  "pronunciation_microphone_off": "190e2b4f71bdbc2b7c5acc6d18b9c72011c448f99b40ae993e7c5dc5f4b049e0",
-  "pronunciation_no_speech": "fd81b2a4998535f697c62b2d553f4d95b78baab33d6245849970e7c7fca5ba26",
-  "pronunciation_no_words": "d08b979bfc69afe700931fbe30bef6136fc17a9cb97fd3124127859e38acf288",
-  "pronunciation_nothing_said": "e39c744fe9424a578c504fcb8a5a04703310603c0d3d28ef3111e12404127c28",
-  "pronunciation_options": "25f5f40d2ce72a21913a48a40f51457a737ff6b34c91a8e323d1be9eae6c0d53",
+  "pronunciation_microphone_off": "14e781bd7d7f6ae74ebe4c386e8bbb3bb35e05f8b8d06fb9fe5e0aad260344f2",
+  "pronunciation_no_speech": "e833a68b3841df2f2af40db728a5bab957f0618f2dcad1f86087a5c87a720520",
+  "pronunciation_no_words": "7e6376c1ae409ea2f9e55a90697ca857e7d4b531635722b2742c49af171816c7",
+  "pronunciation_nothing_said": "498114653c26ec712edac51c97bb31b0f668aa9ec80082fb94a98dec7d584071",
+  "pronunciation_options": "d84eac015a8badd6e59ef318b32b09ed2585360f090c450fc252cf5ac25c4456",
   "pronunciation_position": "c3e4d21f11b0c0e3ab4e22caf4df0ddb2d5f9b41684ad3050f3923b875d0b374",
   "pronunciation_practice_done": "9eb0556359b18184043821f6bef27e2be9da4290e4d2a16780e55a035065c1f2",
   "pronunciation_press_record": "e16079ee07dc66c6a067d8f155052ed133303ab38531db9c91a850125b8d5613",
   "pronunciation_recording": "d2e92a6dd6fadf78a5a1939e53bbf1b50e3ff46b077657b8d349f3dc24258f8e",
-  "pronunciation_save_failed": "860650d62d4725eeae778594898c5647b075f22f1bd267636cc9b20ac6181087",
+  "pronunciation_save_failed": "8b8db685019a7256bc650da0a9677f202238a8f5ff06b482928002627675c760",
   "pronunciation_save_retry": "c732b552094b4e347c7cae04eda2e87b37b7e351993d50c6ea6bd068356cf123",
   "pronunciation_say_it_like": "bea98d8cb3b2de0b26f25da7a97ba60f7528596c7894b72845a4ec901e13e4d1",
   "pronunciation_see_how": "5ab2e6f521b33a6273b0b9d6283e72feca18cb809fa0bbd0b370ec965b447e6c",
@@ -38,33 +38,33 @@
     <string name="pronunciation_listen_slowly">Ouvir devagar</string>
     <!-- %1$s is the word spelled the way it sounds in the learner's language, shown in a fixed-width font. -->
     <string name="pronunciation_say_it_like">Fale como %1$s</string>
-    <string name="pronunciation_options">Opções de tela</string>
+    <string name="pronunciation_options">Opções da tela</string>
     <string name="pronunciation_skip">Pular esta palavra</string>
     <string name="pronunciation_press_record">Toque em Gravar e fale a palavra em voz alta</string>
     <string name="pronunciation_recording">Gravando… Toque em Parar quando terminar.</string>
     <string name="pronunciation_grading">Ouvindo como soou…</string>
-    <string name="pronunciation_no_speech">Não conseguimos ouvir a palavra. Tente falar um pouco mais perto.</string>
+    <string name="pronunciation_no_speech">A gente não conseguiu ouvir a palavra. Tente de novo um pouco mais perto do microfone.</string>
     <string name="pronunciation_failed">Não deu certo. Tente de novo.</string>
-    <string name="pronunciation_microphone_off">Ative o microfone do Zoonk em Ajustes para falar a palavra. Você pode pular por enquanto.</string>
+    <string name="pronunciation_microphone_off">Ative o microfone para Zoonk nas configurações para falar a palavra. Você pode pular por enquanto.</string>
     <string name="pronunciation_sounded_right">Soou certo</string>
     <!-- %1$s is what the grader heard when the word didn't sound right. -->
-    <string name="pronunciation_heard">Ouvimos “%1$s”</string>
+    <string name="pronunciation_heard">A gente ouviu “%1$s”</string>
     <!-- %1$s is the day the word comes back to say again, such as "May 4". -->
     <string name="pronunciation_comes_back">Ela volta %1$s.</string>
-    <string name="pronunciation_learned">Você já aprendeu esta palavra. Ela não vai voltar.</string>
+    <string name="pronunciation_learned">Você aprendeu esta palavra. Ela não vai voltar.</string>
     <!-- Says the same word again. -->
     <string name="pronunciation_try_again">Tentar de novo</string>
     <!-- Goes on to the next word. -->
     <string name="pronunciation_continue">Continuar</string>
     <!-- Ends the round after its last word. -->
     <string name="pronunciation_see_how">Ver como foi</string>
-    <string name="pronunciation_save_failed">Não deu certo. Suas respostas estão salvas.</string>
+    <string name="pronunciation_save_failed">Não deu certo. Suas respostas estão guardadas.</string>
     <!-- Retries saving the round. -->
     <string name="pronunciation_save_retry">Tentar de novo</string>
-    <string name="pronunciation_no_words">Hoje não há palavras para repetir.</string>
+    <string name="pronunciation_no_words">Nenhuma palavra para repetir hoje.</string>
     <string name="pronunciation_practice_done">Prática concluída</string>
-    <string name="pronunciation_nothing_said">Você não falou nada desta vez</string>
-    <string name="pronunciation_accent">Seu sotaque não impede você de aprender. As palavras que ainda soarem diferentes voltam amanhã.</string>
+    <string name="pronunciation_nothing_said">Nenhuma palavra falada desta vez</string>
+    <string name="pronunciation_accent">Seu sotaque nunca impede seu progresso. As palavras que ainda soam diferentes voltam amanhã.</string>
     <!-- Closes the finished round. -->
     <string name="pronunciation_done">Concluído</string>
 </resources>

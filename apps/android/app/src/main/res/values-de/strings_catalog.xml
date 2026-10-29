@@ -36,6 +36,7 @@
   "catalog_expand": "9fae29107fb60ca2f5a091e344bd7bac2790aba9504645fc5b548eaa0f7cdb8f",
   "catalog_expanded": "0d5d7ffb73e1235457bcfa432b8d77043e44672b5cac6cb5ac744e588b7502a4",
   "catalog_go_to_chapter": "f9294370e02bc5de97cfde1bd46935411d54cc6490a6ad45bed6cfa8c28af80e",
+  "catalog_goal_example": "77f33462a45ba06859d53c98fa56bd9b379432aa81b62589c7ace7fc296015ee",
   "catalog_guess_first": "ebbf70a75b483b933118adf55898cedf2d5a9a0ae3a0fea20aaf86d42cd9169e",
   "catalog_guess_note": "094489b31cf63d8fd4d508affb30fb7611b120eaa32db47992f30d0dc0f582e8",
   "catalog_ideas": "06f008fa6ae9b9957df90c53ac17b44928212148ab5e9590d5ce7a8a67657980",
@@ -147,6 +148,8 @@
     <string name="catalog_subject_tech">Technologie</string>
     <string name="catalog_title">Kurse entdecken</string>
     <string name="catalog_category_title">Kurse in %1$s</string>
+    <!-- The goal box's example after "I want to", so it starts in lowercase. -->
+    <string name="catalog_goal_example">bis Juni in die Datenanalyse befördert werden</string>
     <string name="catalog_subtitle">Starte mit einem Kurs oder erzähle Zoonk, worauf du dich vorbereitest.</string>
     <string name="catalog_all">Alle</string>
     <string name="catalog_categories">Kurskategorien</string>

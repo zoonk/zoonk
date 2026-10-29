@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "listening_collapsed": "2e32ea11bf2c5b7c56cd42d3833bf17bf62a29f76a413b8fbbd581528d8d0f0a",
+  "listening_collapsed": "c3c48cb9aa3c920ead1ab4ccc8ef732c21dabedc2132b982aaad6dae5ade69f9",
   "listening_elapsed": "6f47bf5671695979e4510a4684a812547395ff4feb0b9f12777545dd4ab90f2c",
-  "listening_expanded": "50cef96a282b25e845f32719af0f797d707346afc2f898808583bdcc20026e9c",
-  "listening_failed": "e0a25b7930a5849450b27a4ee71ec2d92a7cc190d7f3a49edb917512d745de4b",
-  "listening_note_free": "5bf446a80513417fe005a21c2d641d940be5f32f430431932f7c3d4dd8b6f912",
-  "listening_note_once": "d91102ef962779b15add6042d9133f5408135c88b0f3641a6bdfe0ce74a62709",
-  "listening_note_one_more": "22cc00c4e15bdbbf70c0145b50d95e350d45395b5a66d3fcbb627617fca47d9f",
-  "listening_note_restarted": "5745b4da7e6d18195d9eac7eac7b4d88f0cefbbde8168b7b1d1e6e9578a77ddd",
-  "listening_note_twice": "40710c14c527c30b2daea2b22d33c89ab8a502d513cf55d454129ddf759bcc00",
-  "listening_note_used": "a22f7b904bb6035109b8ad7b597038b2404e57ce4962dc5ab1486bc8d7174e8c",
+  "listening_expanded": "54e88f2481f0b9f59c32713f55df2914b663873d00154e97d35b54b85573c514",
+  "listening_failed": "49998d8d808511752d1978fa285a9490eae445e1c36b7b3e8d9df260ad81da88",
+  "listening_note_free": "ebd68e819ac4898c96a17ba6e7d2fb36643d5a4f87c8ac5b08e489080131b7ce",
+  "listening_note_once": "ec4b7974b7ac6ca51179dc99888c0b5635081e690a85888f2f19b115414a3d9b",
+  "listening_note_one_more": "8f6d308dca04ee86b4b7396d94d15182e0bad70560daa4d085d8e0ccd4c083a2",
+  "listening_note_restarted": "90b4ef5f2e806ea83c1ceb6f781c0a9dd97a5e10cc50a52e09f90eb23f621f03",
+  "listening_note_twice": "75f79ae74bc995594ee389b2bb10ac8409e283d43e5c3286c468a0997116c7e5",
+  "listening_note_used": "b1cc80d23db3057eacf4b81d8c3e9d654ae58821ab4dc19eab08214077df0b6d",
   "listening_play": "82f12d7bdd6d22a7642504ab3102c6066503cd8a69b5841d3f6f889b86464f28",
-  "listening_play_again": "0a6bf442ff91fb4e39d5f9688031bc5d48b202d22446a106a4f2fa2a0c3b3f0b",
+  "listening_play_again": "54f08b01c89088162104512e0ae6eaeb84a6474d95d4a3db9696de4ac1f76012",
   "listening_playing": "4d3bd9af9ce8fd5eceb4f04fa59b0628824a2b3f93a442e73ba0e3336d6689e2",
-  "listening_playing_note": "89a883e1298c232a84a14526fbbfaca0d20dfb0775d116af74eb7515b9bec402",
+  "listening_playing_note": "9551b58c5e173ae4519787ba14c67db6a30c41ec50c497009a1773b582dfcac6",
   "listening_questions": "946e176c3436c3cd8e358bebfa6c773c5759e979e16129001efb29edac38a162",
   "listening_recording": "e2d421bc8c5bef68aaef7973ba124170934130a0cea245a62b1d555e73757dbc",
   "listening_stop": "87502404b70c3380bcb554da1c7310f36278ff72e6a9253a125fda0c2301af93",
@@ -24,25 +24,25 @@
 <resources>
     <string name="listening_recording">Enregistrement</string>
     <string name="listening_play">Écouter l’enregistrement</string>
-    <string name="listening_play_again">Le réécouter</string>
+    <string name="listening_play_again">Réécouter</string>
     <string name="listening_playing">Lecture en cours</string>
     <string name="listening_stop">Arrêter</string>
     <!-- How far the recording played: "0:42 of 2:10". -->
     <string name="listening_elapsed">%1$s sur %2$s</string>
-    <string name="listening_note_free">Tu peux réécouter autant de fois que tu veux.</string>
-    <string name="listening_note_restarted">L’enregistrement s’est arrêté avant la fin. Tu peux le relancer une fois depuis le début.</string>
-    <string name="listening_note_used">Tu as utilisé toutes tes écoutes. Réponds à partir de ce que tu as entendu.</string>
-    <string name="listening_note_one_more">Tu peux l’écouter encore une fois.</string>
-    <string name="listening_note_once">Tu l’entends une fois, comme à l’examen. Lis d’abord les questions.</string>
-    <string name="listening_note_twice">Tu l’entends deux fois, comme à l’examen. Lis d’abord les questions.</string>
-    <string name="listening_failed">L’enregistrement n’a pas pu être chargé. Vérifie ta connexion et réessaie.</string>
-    <string name="listening_playing_note">Lecture en cours. L’enregistrement ne se met pas en pause, comme à l’examen.</string>
+    <string name="listening_note_free">Écoute autant de fois que tu veux.</string>
+    <string name="listening_note_restarted">L’enregistrement s’est arrêté avant la fin. Tu peux donc le réécouter une fois depuis le début.</string>
+    <string name="listening_note_used">Tu as utilisé toutes tes écoutes. Réponds d’après ce que tu as entendu.</string>
+    <string name="listening_note_one_more">Tu peux écouter encore une fois.</string>
+    <string name="listening_note_once">Tu l’entendras une fois, comme à l’examen. Lis d’abord les questions.</string>
+    <string name="listening_note_twice">Tu l’entendras deux fois, comme à l’examen. Lis d’abord les questions.</string>
+    <string name="listening_failed">L’enregistrement n’a pas chargé. Vérifie ta connexion et réessaie.</string>
+    <string name="listening_playing_note">Lecture en cours. Comme à l’examen, tu ne peux pas mettre l’enregistrement en pause.</string>
     <plurals name="listening_questions">
         <item quantity="one">Question sur cet enregistrement (%d)</item>
         <item quantity="many">Questions sur cet enregistrement (%d)</item>
         <item quantity="other">Questions sur cet enregistrement (%d)</item>
     </plurals>
     <string name="listening_transcript">Transcription</string>
-    <string name="listening_expanded">Développé</string>
-    <string name="listening_collapsed">Réduit</string>
+    <string name="listening_expanded">Déplié</string>
+    <string name="listening_collapsed">Replié</string>
 </resources>
