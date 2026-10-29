@@ -3,7 +3,6 @@ package com.zoonk.android.ui.format
 import android.icu.math.BigDecimal
 import android.icu.text.CompactDecimalFormat
 import android.icu.text.DecimalFormat
-import android.icu.text.DecimalFormatSymbols
 import android.icu.text.NumberFormat
 import android.icu.util.Currency
 import android.icu.util.ULocale
@@ -84,45 +83,6 @@ fun formatMathAnswer(
         }
     val number = format.format(size).let { if (value < 0) MINUS_SIGN + it else it }
     return withUnit(number, unit)
-}
-
-/**
- * Reads what a learner typed in their language's way: "2,5" in Portuguese, "1,000" or "1.000" as a
- * thousand where the language groups that way, a typographic minus. Null when it isn't a number.
- */
-fun parseLocalizedNumber(
-    text: String,
-    locale: Locale,
-): Double? {
-    val cleaned = text.replace(SPACES, "").replace(MINUS_SIGN, "-")
-    if (!NUMBER_CHARACTERS.matches(cleaned)) return null
-    val normalized = normalizeSeparators(cleaned, DecimalFormatSymbols.getInstance(ULocale.forLocale(locale)).decimalSeparator)
-    return normalized.takeIf { PLAIN_NUMBER.matches(it) }?.toDoubleOrNull()?.takeIf { it.isFinite() }
-}
-
-private fun normalizeSeparators(
-    text: String,
-    decimal: Char,
-): String {
-    val hasDot = '.' in text
-    val hasComma = ',' in text
-
-    return when {
-        hasDot && hasComma -> if (decimal == ',') text.replace(".", "").replace(',', '.') else text.replace(",", "")
-        hasComma -> normalizeOneSeparator(text, ',', decimal)
-        hasDot -> normalizeOneSeparator(text, '.', decimal)
-        else -> text
-    }
-}
-
-/** A lone separator is a decimal point unless it groups thousands the language's way ("1,000" in English). */
-private fun normalizeOneSeparator(
-    text: String,
-    separator: Char,
-    decimal: Char,
-): String {
-    val groupsThousands = decimal != separator && GROUPED_DIGITS.matches(text)
-    return if (groupsThousands) text.replace(separator.toString(), "") else text.replaceFirst(separator, '.')
 }
 
 /** The ISO code for a unit that is money ("R$", "€", "USD"), null for any other unit. */
@@ -219,11 +179,6 @@ private val CURRENCY_SYMBOLS =
 
 private val ISO_CODE = Regex("^[A-Z]{3}$")
 private val ATTACHED_UNITS = setOf("%", "°", "‰")
-
-private val SPACES = Regex("[\\s\u00A0\u202F]")
-private val NUMBER_CHARACTERS = Regex("^[+-]?[\\d.,]+$")
-private val PLAIN_NUMBER = Regex("^[+-]?(?:\\d+\\.?\\d*|\\.\\d+)$")
-private val GROUPED_DIGITS = Regex("^[+-]?\\d{1,3}(?:[.,]\\d{3})+$")
 
 private const val DEFAULT_FRACTION_DIGITS = 2
 private const val SMALL_VALUE = 0.01
