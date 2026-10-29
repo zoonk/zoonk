@@ -2,6 +2,9 @@ package com.zoonk.android.feature.today
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
@@ -12,6 +15,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.feature.plan.FakePlanApi
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.StudyApi
@@ -23,6 +27,8 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.LanguageToday
+import com.zoonk.api.models.LanguageTodayPronunciation
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.SuggestedGoal
@@ -33,7 +39,9 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -56,7 +64,12 @@ class TodayFlowTest {
     private val lessonBlock = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d41"
     private val reviewBlock = "5f0c1f7e-0d3a-4c55-9d1e-6f1b0a3c2d42"
 
-    private fun show(vararg sessionFields: Pair<String, Any?>) {
+    private var language by mutableStateOf<LoadState<LanguageToday>?>(null)
+
+    private fun show(
+        vararg sessionFields: Pair<String, Any?>,
+        todayFields: List<Pair<String, Any?>> = emptyList(),
+    ) {
         val blocks =
             JsonArray(
                 listOf(
@@ -95,7 +108,7 @@ class TodayFlowTest {
                 "minutes" to minutes,
                 *sessionFields,
             )
-        val today = decodeFixture<Today>("today", "session" to day)
+        val today = decodeFixture<Today>("today", "session" to day, *todayFields.toTypedArray())
         val cache = AppCache(FakeSession(ana), CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val store = TodayStore(NoTodayApi, cache, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate), timeZone = { "UTC" })
         val viewModel =
@@ -127,9 +140,33 @@ class TodayFlowTest {
                         com.zoonk.android.ui.characters
                             .BuddyLook(),
                     buddyName = "Zu",
+                    language = language,
                 )
             }
         }
+    }
+
+    @Test
+    fun aLanguageGoalsWordsToSayAgainWinOverASuggestionReadBeforeThem() {
+        language = LoadState.Loading
+        val goal = fixture("today")["goal"]?.let { JsonObject(it.jsonObject + ("kind" to JsonPrimitive("language"))) }
+        show(
+            todayFields =
+                listOf(
+                    "goal" to goal,
+                    "studiedToday" to true,
+                    "suggestedGoal" to fixture("suggested-goal", "title" to "Chemistry"),
+                ),
+        )
+        rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
+
+        language =
+            LoadState.Loaded(
+                LanguageToday(level = null, pronunciation = LanguageTodayPronunciation(2, listOf("hola", "gracias")), speaking = null),
+            )
+
+        rule.onNodeWithText("Say 2 words again").assertExists()
+        rule.onNodeWithText("Continue Chemistry?").assertDoesNotExist()
     }
 
     @Test

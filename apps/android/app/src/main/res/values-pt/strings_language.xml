@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "language_alphabet_anytime": "c4e39ef1a32e1ebfd4462047e8beb4b237dbaf426eb41204e0b92578a39f4167",
+  "language_alphabet_first_next_session": "4cc82dc6cb7f0f65776b155950a7dd690ac649783ff222db49ac4500f2078689",
+  "language_alphabet_skip": "c7be08dcde888ec9bef9fd485d88c0270a152a504dfc0a0073b4a80455430f89",
+  "language_alphabet_skip_failed": "5b56fca8fcfaaac32b8c561b58234c825087f29a444eceaab5efc07ce4c4355a",
+  "language_level": "e6c65afc3e9724308959d73d8ac38bf67b0c332a05b027b2744a9b6b35e614d7",
+  "language_level_toward": "a4396f3294ec3799e14ced6647cbb4950024c73122e49601796cbd9d188e6d98",
+  "language_level_toward_spoken": "b6131cf49157c78476841f486f943c570e834359d9a279851a14a7202cdee1eb",
   "language_pattern_noticed": "60b95d1b6a6cddba5ba99810e5dd7e0c3b4d0a5f503f8643dbe624665aee09c6",
+  "language_pattern_noticed_summary": "8ad4239aba68dad88ac5146c586eed1cf8c126f867b8d6badbb51e0b16cd0ddb",
+  "language_pattern_practice": "d4b5f43047f787da7a85a2d913831144e962bd49aa827e8c964aec41319ec329",
   "language_pattern_typos": "dc73eb5359217a091daed4821a48a0385e0af7afd5a1aabdd32f8fe45aae69f3",
   "language_pattern_typos_description": "ba0d3902871403b5e2c26d4f56df575c15ce145f1ab21b38a34942f584c518ca",
   "language_say_again": "8e0c0407eb0cc69c21203bc62484cdd281dcb96188cc79649fa452f14299e18e",
+  "language_say_them": "1ca2db6ab3d3b46fc4680afdbd3e263c25a950466be4218f4afb6553a757cf93",
+  "language_see_your_plan": "c6eb78019bd77b5d1e924417a4d14d7a7616b9ed263d1561be2ce75c808132de",
   "language_skill_listening": "1a91a0a9bb4f4ad4ee3bfaec6d5660b936e600474a69983a511761c9090b04fe",
   "language_skill_speaking": "a94d8d2d399f7eafef3247e0d78407bfa8e2daf3866b12c94555b5d8217aead9",
   "language_skill_words": "3c255aff7a74c973e9b6f31dd47ed99836656531dc1ef99091375361b83463e7",
   "language_skill_writing": "0c211ff3a1c65eaef79721fbc548294edca918698c607c0df36a5e5f3936a04a",
+  "language_typos_open": "4666b76e29e76783864fbc9026327e50440d9ada3d41820e0002a5c0ac973347",
   "language_unit_about": "17e20e9672ddb81670fa8928a32341702b3f16fb7639bcae45441b7cbd4ac816",
   "language_unit_can_already": "3f710f380d3796de0870678f64fb06124bed18819e6e651b1ebf343a8f3dcdaf",
   "language_unit_continue": "bcb5d8e1fab57510bef013b78c766dc70a6ad5d864fce9d09525e3dff37575b8",
@@ -66,4 +78,26 @@
         <item quantity="many">Repita %d palavras</item>
         <item quantity="other">Repita %d palavras</item>
     </plurals>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_first_next_session">Primeiro na sua próxima sessão · %1$s</string>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_anytime">Pratique quando quiser · %1$s</string>
+    <!-- Skips the alphabet lesson for a learner who reads the script. -->
+    <string name="language_alphabet_skip">Já sei ler esse alfabeto</string>
+    <string name="language_alphabet_skip_failed">Não foi possível salvar. Tente de novo.</string>
+    <!-- Opens the words to say again. -->
+    <string name="language_say_them">Diga em voz alta</string>
+    <!-- Opens the noticed typos. -->
+    <string name="language_typos_open">Abrir</string>
+    <!-- %1$s names the rule the learner keeps getting wrong. -->
+    <string name="language_pattern_noticed_summary">Percebemos um padrão: %1$s</string>
+    <!-- Opens the noticed pattern. -->
+    <string name="language_pattern_practice">Pratique esse padrão</string>
+    <string name="language_level">Nível</string>
+    <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
+    <string name="language_level_toward">%1$s → %2$s</string>
+    <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
+    <string name="language_level_toward_spoken">%1$s, meta %2$s</string>
+    <!-- Opens the Plan from Today's level. -->
+    <string name="language_see_your_plan">Ver seu plano</string>
 </resources>

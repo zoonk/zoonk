@@ -49,8 +49,10 @@ import com.zoonk.android.feature.feedback.FeedbackSender
 import com.zoonk.android.feature.feedback.LiveFeedbackApi
 import com.zoonk.android.feature.goalcontent.GoalContentStore
 import com.zoonk.android.feature.goalcontent.LiveGoalContentApi
+import com.zoonk.android.feature.language.AlphabetStore
 import com.zoonk.android.feature.language.LanguageProgressStore
 import com.zoonk.android.feature.language.LanguageUnitStore
+import com.zoonk.android.feature.language.LiveAlphabetApi
 import com.zoonk.android.feature.language.LiveLanguageProgressApi
 import com.zoonk.android.feature.language.LiveLanguageUnitApi
 import com.zoonk.android.feature.livecall.LiveCallTransports
@@ -236,6 +238,7 @@ class AppContainer private constructor(
     val speaking = SpeakingStore(LiveSpeakingApi(api), cache)
     val languageUnits = LanguageUnitStore(LiveLanguageUnitApi(api), cache)
     val languageProgress = LanguageProgressStore(LiveLanguageProgressApi(api), cache)
+    val alphabet = AlphabetStore(LiveAlphabetApi(api), cache)
     val calls = OngoingCalls(context.applicationContext, scope)
     val callTransports =
         LiveCallTransports { microphone, onEvent, onLost -> WebRtcLiveCallTransport(context, microphone, onEvent, onLost) }

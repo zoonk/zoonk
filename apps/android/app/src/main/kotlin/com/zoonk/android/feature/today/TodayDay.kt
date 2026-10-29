@@ -38,7 +38,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
+import com.zoonk.android.data.value
+import com.zoonk.android.feature.language.LanguageLevelCard
+import com.zoonk.android.feature.language.hasLanguagePractice
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.OpeningWaitLine
@@ -52,6 +56,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.DockedActionBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.api.models.LanguageToday
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -83,6 +88,7 @@ internal fun TodayDay(
     brainPower: Long? = null,
     practice: @Composable () -> Unit = {},
     plans: PlanStore? = null,
+    language: LoadState<LanguageToday>? = null,
 ) {
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val stalled =
@@ -128,9 +134,24 @@ internal fun TodayDay(
                 buddyName = buddyName,
                 brainPower = brainPower,
                 practice = practice,
-                notice = { layout -> TodayNotice(TodayNoticeState(read, viewModel, navigator::open, plans), layout) },
+                notice = { layout ->
+                    // A language goal's notice waits for its language read, since the one picked first is held for the visit.
+                    if (language != LoadState.Idle && language != LoadState.Loading) {
+                        val practice = language?.value
+                        val host =
+                            HostNotices(
+                                practice =
+                                    practice != null && hasLanguagePractice(read.today.pattern, practice.pronunciation),
+                            )
+                        TodayNotice(TodayNoticeState(read, viewModel, navigator::open, plans, host, practice), layout)
+                    }
+                },
                 onMission = { opens -> openMission(opens, model, actions, today, scope) },
                 navigate = navigator::open,
+                level =
+                    language?.value?.level?.let { level ->
+                        { LanguageLevelCard(level, onOpenPlan = { navigator.open(AppRoute.Plan()) }) }
+                    },
             )
 
         // While a switch is on its way the page still shows the previous goal; a tap would open its session.

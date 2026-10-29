@@ -36,4 +36,26 @@
         <item quantity="one">Say %d word again</item>
         <item quantity="other">Say %d words again</item>
     </plurals>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_first_next_session">First in your next session · %1$s</string>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_anytime">Practice anytime · %1$s</string>
+    <!-- Skips the alphabet lesson for a learner who reads the script. -->
+    <string name="language_alphabet_skip">I can already read it</string>
+    <string name="language_alphabet_skip_failed">That didn\'t save. Try again.</string>
+    <!-- Opens the words to say again. -->
+    <string name="language_say_them">Say them</string>
+    <!-- Opens the noticed typos. -->
+    <string name="language_typos_open">Open</string>
+    <!-- %1$s names the rule the learner keeps getting wrong. -->
+    <string name="language_pattern_noticed_summary">We noticed a pattern: %1$s</string>
+    <!-- Opens the noticed pattern. -->
+    <string name="language_pattern_practice">Practice it</string>
+    <string name="language_level">Level</string>
+    <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
+    <string name="language_level_toward">%1$s → %2$s</string>
+    <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
+    <string name="language_level_toward_spoken">%1$s, goal %2$s</string>
+    <!-- Opens the Plan from Today's level. -->
+    <string name="language_see_your_plan">See your plan</string>
 </resources>

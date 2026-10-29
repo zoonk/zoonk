@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "language_alphabet_anytime": "e036804d2101ab7a4ab70bfad9965753e1229461667e68d00fb4ca96a9c18726",
+  "language_alphabet_first_next_session": "0aba09ba150a45e2198996a657f3c95dcf55654e790e66ca34846796a3117686",
+  "language_alphabet_skip": "692684557e482da4aaf08bd22358123c7cbc9525364390b0d43b873716d67cb3",
+  "language_alphabet_skip_failed": "f85d738e3b744e9e874a055cb75f09fdb78757bb3bed1e6af4303ddb2f6ac2b7",
+  "language_level": "1f86ddb745569cad918cf67d40893d9fbd4dd310c7a2b0be33ccb55074c940da",
+  "language_level_toward": "5bc1154b83f58b77c514eedae46aa9df6efd631b33b9884d8f534814132efe07",
+  "language_level_toward_spoken": "44d58bb4c1ff6d6ebcc2b4c4cd134a9c045dd4b221749d23b908d0da94045146",
   "language_pattern_noticed": "7ccf8ebfd40d1865ae558e4ea8c3b969cded022b82010b080cafa0b11c4f9e14",
+  "language_pattern_noticed_summary": "6556f401d3b5f012ae5c84f2cf1691a3e27aea0c235a1c463ea18355eb85d252",
+  "language_pattern_practice": "ab7e0108d4492eec1c32bc379518292ba685067a4d514a38e80944103f3c10ce",
   "language_pattern_typos": "068d3bcc738ab189dbaee4596510d7f53a86a65d6c80e820de46bbc4884f5e6f",
   "language_pattern_typos_description": "e93e71533738df271bc25e254565feced6e9bd7d28b670b6cb55a2a68450513b",
   "language_say_again": "c506ebf9774532f0c44de95a3c08413129cad3b25fea0cb79f06d9feba78c1be",
+  "language_say_them": "0433e77d940e51dfa302bfde200d99f289d171ae4d537642c64c438486fe1838",
+  "language_see_your_plan": "0062fe5004529c23e377dd306baad3a235c2dc4a8b7f215034c3813b940fbb0d",
   "language_skill_listening": "ef0c4cfd74971cb7d159f412d8ff5d2f4857bfa3e37e3b66e039c3fbec54c22b",
   "language_skill_speaking": "3d315cc6ec094c42000a0613911e7144f04c2866dacdd46e20233adda0192d65",
   "language_skill_words": "76846f221f535afd03a31674a13f9a6f10a4be28adbe05c39a7157cd15e3024c",
   "language_skill_writing": "117aa4ae68393827bb1bb5c2b318878530e8c5cc85e74cec72dd71ecfd7079c6",
+  "language_typos_open": "53a6a45dab4c7170895f01de25ac27d77477bd51d178ef6400767d166cf8f1d8",
   "language_unit_about": "3e925ccc1a4be8c42352272b42d4f5e1a810f29b68f81164ec4d3aba4d17bb33",
   "language_unit_can_already": "824ac16d85468eaeba7ca7cacb1808ede230d1e2498e78e792533d8d0986e7a0",
   "language_unit_continue": "74bde2162165d2a04bf413521d16c1221e5842388313f8e0900df657386f2fc3",
@@ -66,4 +78,26 @@
         <item quantity="many">Répète %d mots</item>
         <item quantity="other">Répète %d mots</item>
     </plurals>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_first_next_session">En premier lors de ta prochaine séance · %1$s</string>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_anytime">Entraîne-toi quand tu veux · %1$s</string>
+    <!-- Skips the alphabet lesson for a learner who reads the script. -->
+    <string name="language_alphabet_skip">Je sais déjà le lire</string>
+    <string name="language_alphabet_skip_failed">Ça n’a pas été enregistré. Réessaie.</string>
+    <!-- Opens the words to say again. -->
+    <string name="language_say_them">Dis-les</string>
+    <!-- Opens the noticed typos. -->
+    <string name="language_typos_open">Ouvrir</string>
+    <!-- %1$s names the rule the learner keeps getting wrong. -->
+    <string name="language_pattern_noticed_summary">On a remarqué un motif : %1$s</string>
+    <!-- Opens the noticed pattern. -->
+    <string name="language_pattern_practice">Entraîne-toi</string>
+    <string name="language_level">Niveau</string>
+    <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
+    <string name="language_level_toward">%1$s → %2$s</string>
+    <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
+    <string name="language_level_toward_spoken">%1$s, objectif %2$s</string>
+    <!-- Opens the Plan from Today's level. -->
+    <string name="language_see_your_plan">Voir ton plan</string>
 </resources>

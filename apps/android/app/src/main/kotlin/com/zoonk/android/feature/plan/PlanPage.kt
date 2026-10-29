@@ -41,6 +41,7 @@ import com.zoonk.android.feature.feedback.ReportProblem
 import com.zoonk.android.feature.feedback.rememberReportProblem
 import com.zoonk.android.feature.goalcontent.PlanSyllabusSection
 import com.zoonk.android.feature.goalcontent.hasSubjectPages
+import com.zoonk.android.feature.language.AlphabetRow
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
@@ -135,6 +136,17 @@ internal fun PlanPage(
 ) {
     val syllabus by app.plans.syllabus[page.goal.id].collectShown()
     val progress by app.plans.progress[page.goal.id].collectShown()
+    val alphabet =
+        if (page.goal.kind ==
+            LearnerSummaryGoal.Kind.LANGUAGE
+        ) {
+            app.alphabet.units[page.goal.id]
+                .collectShown()
+                .value.value
+                ?.alphabet
+        } else {
+            null
+        }
     val isSaving by viewModel.isSaving.collectAsStateWithLifecycle()
     val pending by viewModel.pending.collectAsStateWithLifecycle()
     val asked by viewModel.asked.collectAsStateWithLifecycle()
@@ -190,6 +202,7 @@ internal fun PlanPage(
     PlanContent(
         page = page,
         standing = standingOf(page, progress.value, syllabus.value),
+        alphabet = alphabet?.let { { AlphabetRow(it, page.goal.id, app.alphabet, navigator::open) } },
         structure = syllabus.value?.takeIf { it.hasSubjectPages },
         links = links,
         resume =
@@ -293,6 +306,7 @@ internal fun PlanContent(
     edits: PlanEdits = PlanEdits(),
     slot: SlotHost = SlotHost(),
     slotState: SlotState = remember { SlotState() },
+    alphabet: (@Composable () -> Unit)? = null,
 ) {
     val adjust = onAdjust?.let { { it(null) } }
     val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links, onAdjust = adjust) }
@@ -343,7 +357,7 @@ internal fun PlanContent(
                 if (structure != null) {
                     item(key = "structure", contentType = "structure") { PlanSyllabusSection(structure, onOpenSubject = links::subject) }
                 } else {
-                    item(key = "path", contentType = "path") { PathSection(page, links) }
+                    item(key = "path", contentType = "path") { PathSection(page, links, alphabet = alphabet) }
                 }
                 if (!asideBeside) {
                     item(key = "next", contentType = "next") { NextAndMore(page, links) }

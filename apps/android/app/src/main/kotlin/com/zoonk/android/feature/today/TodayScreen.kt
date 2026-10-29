@@ -60,6 +60,7 @@ import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.SuggestedGoal
+import com.zoonk.api.models.TodayGoal
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 
@@ -148,6 +149,14 @@ private fun TodayRead(
 
                     val buddy = summary.value?.buddy?.look() ?: BuddyLook()
                     val brainPower by app.today.brainPower.collectShown()
+                    val language =
+                        if (read.today.goal.kind == TodayGoal.Kind.LANGUAGE) {
+                            app.today.language[read.today.goal.id]
+                                .collectShown()
+                                .value
+                        } else {
+                            null
+                        }
                     TodayDay(
                         read = read,
                         today = app.today.today,
@@ -160,6 +169,7 @@ private fun TodayRead(
                         brainPower = brainPower.value,
                         practice = { TodayPractice(app.today, read.today.goal, navigator::open) },
                         plans = app.plans,
+                        language = language,
                     )
                 }
 

@@ -78,6 +78,7 @@ internal fun PathSection(
     page: PlanPageState,
     links: PlanLinks,
     modifier: Modifier = Modifier,
+    alphabet: (@Composable () -> Unit)? = null,
 ) {
     val phases = page.plan.phases
     val roadmap = page.plan.roadmapPhases
@@ -98,6 +99,8 @@ internal fun PathSection(
                 )
             }
         }
+
+        alphabet?.invoke()
 
         Column {
             beforeFinish.forEachIndexed { position, phase ->

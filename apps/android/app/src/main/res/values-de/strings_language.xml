@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "language_alphabet_anytime": "fae78825e2d93fa1e9359832ce75d82c7360903eafd0942e135f3f81272f8044",
+  "language_alphabet_first_next_session": "55cc2b75eae43f11fb92a3c88e612dc80fccdef982d1584c50d6ce53eca92ae5",
+  "language_alphabet_skip": "7aa4ff1d45daf5f02ee1e8cbb026ff3a4c6f1a40a66d71382b2faf081aac4614",
+  "language_alphabet_skip_failed": "2a8fb9bec4e289c6de2cc915ed67757600357d8e8d5ed53472b0ec413dba6c57",
+  "language_level": "1ccd7393c58d8e6cd1b48aa65b1362d0562b9c4dac7f801b127ef0b9fd0fd261",
+  "language_level_toward": "883a4a7c77f7cb9e52dda9636b0e2ecf99afbf1e13f96fb3e0e8a5fe40d31184",
+  "language_level_toward_spoken": "c3d812a1b5d40f12a1efd663defc77c815ae76b2b0523f43ab713cb4f2b78810",
   "language_pattern_noticed": "cf16386231591382235cc843bd83fc6ce864d5f9849a8722f04fbad074848391",
+  "language_pattern_noticed_summary": "c7c162db2cd1b710d55743afac003807c38abba5089a14ec260ae8e0ed591362",
+  "language_pattern_practice": "39c74ee43bbb635cf50b9e63745d1248b7110704a7f8bd9efc70623d22a8891a",
   "language_pattern_typos": "940d9d0fd9d278cc04d979a227d87f75bd72d55fad57a874a271e1c39cd7419a",
   "language_pattern_typos_description": "ab41b188d3c4ac6ca31ee2158d1490d9afe78292bbc744b8b082f0a1ab9dd092",
   "language_say_again": "3d3a275045e31eb15de523921bfe801c3d7540f8fefb0e096e9f2f2afe1d57b0",
+  "language_say_them": "e35601213ad810e0befdf9fb99bc6e2e537b2dbb964de7d234a69841186fd98a",
+  "language_see_your_plan": "58cc7bf05f04b6f69bd8d221b53eb193a6198afb7993d66f82ce40fee62ed888",
   "language_skill_listening": "9f74258365d43e9adcb4c18eacc590c5fbf73059f8b0bc122729625227f28919",
   "language_skill_speaking": "2574958596e22e9ab0f428c044258a9a84ee38a9721b750b32b78eaae38c84b3",
   "language_skill_words": "3e8d1534bf332d820758cb19d3b3c48561bb6768cd42eaec6cf1312b1a190844",
   "language_skill_writing": "999f638a1720dcd0e23f6f50bae0cc5ca15f4ba4159039918f572fd60fde48e3",
+  "language_typos_open": "f45b481accd4ecd8b9a15030a3b847243e7eb93b87d2334c0c6f7d4874952259",
   "language_unit_about": "1dfe91c8a0962b02a5ad45661a1bff444d97db699d360160fdf1999221571768",
   "language_unit_can_already": "db251b15c335d6454f981fcafee375b55c74b60a03142b468d26bdc21d97be27",
   "language_unit_continue": "8b6515a1860b17c0d4a0c9adcc9f0a3becf82ceb068f4aa01afa36a44844877a",
@@ -64,4 +76,26 @@
         <item quantity="one">Sag %d Wort noch einmal</item>
         <item quantity="other">Sag %d Wörter noch einmal</item>
     </plurals>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_first_next_session">Als Erstes in deiner nächsten Lerneinheit · %1$s</string>
+    <!-- %1$s is how long the alphabet lesson takes, such as "10 min". -->
+    <string name="language_alphabet_anytime">Jederzeit üben · %1$s</string>
+    <!-- Skips the alphabet lesson for a learner who reads the script. -->
+    <string name="language_alphabet_skip">Ich kann es schon lesen</string>
+    <string name="language_alphabet_skip_failed">Das wurde nicht gespeichert. Versuch es noch mal.</string>
+    <!-- Opens the words to say again. -->
+    <string name="language_say_them">Sag sie</string>
+    <!-- Opens the noticed typos. -->
+    <string name="language_typos_open">Öffnen</string>
+    <!-- %1$s names the rule the learner keeps getting wrong. -->
+    <string name="language_pattern_noticed_summary">Wir haben ein Muster erkannt: %1$s</string>
+    <!-- Opens the noticed pattern. -->
+    <string name="language_pattern_practice">Übe es</string>
+    <string name="language_level">Level</string>
+    <!-- %1$s is the learner's language level now, %2$s the level they aim for: "A2 → B1". -->
+    <string name="language_level_toward">%1$s → %2$s</string>
+    <!-- What TalkBack reads for "A2 → B1": %1$s is the level now, %2$s the level the learner aims for. -->
+    <string name="language_level_toward_spoken">%1$s, Ziel %2$s</string>
+    <!-- Opens the Plan from Today's level. -->
+    <string name="language_see_your_plan">Plan ansehen</string>
 </resources>
