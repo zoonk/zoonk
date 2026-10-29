@@ -286,7 +286,7 @@ private fun Segments(
             MeterPart(
                 when (segment) {
                     Segment.Ahead -> MeterPart.Fill.Track
-                    Segment.Current -> MeterPart.Fill.Place
+                    Segment.Current -> MeterPart.Fill.Place()
                     Segment.Right -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.tertiary)
                     Segment.Wrong -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.error)
                     Segment.Read -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.onSurface.copy(alpha = READ_ALPHA))
