@@ -24,6 +24,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -238,18 +240,15 @@ internal fun ChapterPage(
     DetailPage(
         title = chapter.chapter.title,
         onBack = actions.back,
-        actions = {
-            ask?.invoke(AskTutorAppearance.Button)
-            menu()
-        },
+        hero = { ChapterHero(chapter, actions, it) },
+        ask = ask,
+        menu = menu,
         aside = {
             ChapterProgress(chapter)
             ChapterPractice(chapter, practice, actions)
             ChapterReference(chapter, reference)
         },
     ) { asideBeside ->
-        item(key = "hero", contentType = "hero") { ChapterHero(chapter, actions) }
-
         if (chapter.lessons.isNotEmpty()) {
             val done = chapter.lessons.count { it.state == ChapterLesson.State.DONE }
             sectionTitle(
@@ -283,6 +282,7 @@ internal fun ChapterPage(
 private fun ChapterHero(
     chapter: GoalChapter,
     actions: ChapterActions,
+    onTitlePlaced: (LayoutCoordinates) -> Unit,
 ) {
     val locale = currentLocale()
     val lessons = chapter.lessons
@@ -316,7 +316,14 @@ private fun ChapterHero(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelLarge,
         )
-        Text(text = chapter.chapter.title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+        Text(
+            text = chapter.chapter.title,
+            modifier =
+                Modifier.onGloballyPositioned(onTitlePlaced).semantics {
+                    heading()
+                },
+            style = MaterialTheme.typography.titleLarge,
+        )
         if (facts != null) Text(text = facts, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle())
     }
 }

@@ -3,15 +3,20 @@ package com.zoonk.android.feature.goalcontent
 import androidx.activity.ComponentActivity
 import androidx.compose.material3.Text
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.hasProgressBarRangeInfo
+import androidx.compose.ui.test.hasScrollAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
@@ -130,6 +135,24 @@ class GoalContentFlowTest {
         rule.onNodeWithText("Continue").performClick()
 
         assertEquals(AppRoute.Chapter(chapterId(3)), navigator.currentRoute)
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h800dp")
+    fun theTitleMovesToTheBarOnceItScrollsUnderIt() {
+        showSubject("natural-sciences")
+        val title = "Natural sciences and their technologies"
+
+        rule.onAllNodesWithText(title).assertCountEquals(1)
+        val titleBottom =
+            rule
+                .onNodeWithText(title)
+                .fetchSemanticsNode()
+                .boundsInRoot.bottom
+        rule.onNode(hasScrollAction()).performSemanticsAction(SemanticsActions.ScrollBy) { it(0f, titleBottom) }
+
+        rule.onNodeWithText("Continue").assertExists()
+        rule.onAllNodesWithText(title).assertCountEquals(2)
     }
 
     @Test

@@ -60,6 +60,7 @@ import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatProgressShare
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamDocument
 import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
@@ -94,7 +95,9 @@ internal fun SubjectCoverage(
             }
             Text(
                 text = formatProgressShare(preparation, locale),
-                style = MaterialTheme.typography.displaySmall.copy(fontFeatureSettings = "tnum"),
+                style =
+                    (if (labelled) MaterialTheme.typography.headlineSmall else MaterialTheme.typography.displaySmall)
+                        .withTabularFigures(),
             )
             CoverageBar(studied = preparation)
             Column {

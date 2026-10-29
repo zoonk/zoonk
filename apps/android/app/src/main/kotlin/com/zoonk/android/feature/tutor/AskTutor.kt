@@ -7,6 +7,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltip
 import androidx.compose.material3.Text
@@ -37,7 +38,7 @@ import com.zoonk.android.ui.components.ListRowLeading
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.OutlinedIconButton
 
-enum class AskTutorAppearance { Button, Row }
+enum class AskTutorAppearance { Button, Icon, Row }
 
 /**
  * Main's "Ask {buddy}" on a chapter, subject, mock or plan page: it opens the conversation about it
@@ -61,6 +62,17 @@ fun AskTutor(
             FilledTonalButton(onClick = { open = true }, modifier = modifier.semantics { contentDescription = label }) {
                 Box(Modifier.size(BUTTON_AVATAR_SIZE)) { TutorAvatar(identity, BUTTON_AVATAR_SIZE) }
                 Text(stringResource(R.string.tutor_ask, identity.name), Modifier.padding(start = 8.dp))
+            }
+        }
+
+        AskTutorAppearance.Icon -> {
+            IconButton(onClick = { open = true }, modifier = modifier.semantics { contentDescription = label }) {
+                // Main's question bubble (lucide message-circle-question), for a learner without a buddy's face.
+                if (identity.look == null) {
+                    Icon(painterResource(R.drawable.ic_contact_support), contentDescription = null)
+                } else {
+                    TutorAvatar(identity, BUTTON_AVATAR_SIZE)
+                }
             }
         }
 

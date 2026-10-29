@@ -13,6 +13,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -213,14 +215,12 @@ internal fun SubjectPage(
     DetailPage(
         title = subject.name,
         onBack = actions.back,
+        hero = { SubjectHero(syllabus, subject, actions, it) },
         aside = { SubjectAside(syllabus, subject, today, actions.openMindMaps, ask) },
-        actions = { asideBeside ->
-            if (!asideBeside) ask?.invoke(AskTutorAppearance.Button)
-            menu()
-        },
+        ask = ask,
+        askInAside = true,
+        menu = menu,
     ) { asideBeside ->
-        item(key = "hero", contentType = "hero") { SubjectHero(syllabus, subject, actions) }
-
         if (!asideBeside && (subject.notPlannedReason == null || subject.preparation != null)) {
             item(key = "coverage", contentType = "coverage") {
                 SubjectCoverage(subject, labelled = true, modifier = Modifier.padding(top = 20.dp))
@@ -250,6 +250,7 @@ private fun SubjectHero(
     syllabus: Syllabus,
     subject: SyllabusSubject,
     actions: SubjectActions,
+    onTitlePlaced: (LayoutCoordinates) -> Unit,
 ) {
     val next = subject.nextChapterId
     val action: (@Composable (Modifier) -> Unit)? =
@@ -261,7 +262,14 @@ private fun SubjectHero(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             style = MaterialTheme.typography.labelLarge,
         )
-        Text(text = subject.name, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+        Text(
+            text = subject.name,
+            modifier =
+                Modifier.onGloballyPositioned(onTitlePlaced).semantics {
+                    heading()
+                },
+            style = MaterialTheme.typography.titleLarge,
+        )
 
         subjectFacts(subject)?.let { Text(text = it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = factsStyle()) }
         knownLine(subject)?.let {
