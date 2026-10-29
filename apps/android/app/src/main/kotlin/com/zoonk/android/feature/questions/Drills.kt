@@ -43,6 +43,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import kotlinx.coroutines.delay
@@ -302,17 +303,23 @@ fun ShowAnswersButton(
     }
 }
 
-/** "I'm not sure" in a no-guessing drill, or [label] where another word fits ("I don't know yet"). */
+/** A no-guessing drill's "I'm not sure", or "I don't know yet" elsewhere: quieter than Check, as main's. */
 @Composable
 fun NotSureButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    label: String = stringResource(R.string.questions_drill_not_sure),
+    dontKnowYet: Boolean = false,
 ) {
-    FilledTonalButton(onClick = onClick, modifier = modifier, enabled = enabled) {
-        Icon(painterResource(R.drawable.ic_help), contentDescription = null, modifier = Modifier.padding(end = 8.dp).size(18.dp))
-        Text(label)
+    OutlinedButton(onClick = onClick, modifier = modifier, enabled = enabled) {
+        if (!dontKnowYet) {
+            Icon(
+                painterResource(R.drawable.ic_help),
+                contentDescription = null,
+                modifier = Modifier.padding(end = 8.dp).size(18.dp),
+            )
+        }
+        Text(stringResource(if (dontKnowYet) R.string.questions_dont_know_yet else R.string.questions_drill_not_sure))
     }
 }
 
@@ -323,7 +330,6 @@ private fun LessonLink(
 ) {
     FilledTonalButton(onClick = { onOpenLesson(lesson.id) }) {
         Text(stringResource(R.string.questions_drill_open_lesson))
-        Icon(painterResource(R.drawable.ic_open_in_new), contentDescription = null, modifier = Modifier.padding(start = 8.dp).size(18.dp))
     }
 }
 

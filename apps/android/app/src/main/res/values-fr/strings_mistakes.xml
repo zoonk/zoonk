@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mistakes_not_found_description": "4e72ebdf861913de55ab6fc0e249fe54f7163a80144eda4aee4d3c0fe937a9c4",
   "mistakes_nothing_description": "e0344aed0e2afcd45c5f4b043a27c7978a4728e428fb5b553aeefbe11037cc25",
   "mistakes_nothing_title": "45677c5241a8ca5e81c0ba0b5d65a062945450a1a24b1ebe53687b1f80f45402",
   "mistakes_practice_comes_back": "97bce53e32a718b32ad6297bec2fec984d0349cf4ab7fdadf2d1ade16800ee43",
@@ -19,6 +20,7 @@
         <item quantity="many">%d erreurs corrigées</item>
         <item quantity="other">%d erreurs corrigées</item>
     </plurals>
+    <string name="mistakes_not_found_description">Elles ont peut-être été corrigées ou supprimées.</string>
     <string name="mistakes_nothing_title">Rien à réviser pour l’instant</string>
     <string name="mistakes_nothing_description">Les erreurs reviennent pour être révisées à partir du lendemain.</string>
 </resources>

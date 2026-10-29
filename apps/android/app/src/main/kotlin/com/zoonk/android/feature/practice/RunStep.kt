@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -141,10 +140,12 @@ internal fun RunFrame(
         closeLabel = closeLabel,
         bottomBar = { ActionBarWidth(actions) },
     ) { padding ->
-        Column(Modifier.fillMaxSize().padding(padding)) {
-            if (questions.isNotEmpty()) RunSegments(questions, run)
-            RunLayout(question, content)
-        }
+        RunLayout(
+            question,
+            Modifier.padding(padding),
+            header = { if (questions.isNotEmpty()) RunSegments(questions, run) },
+            content = content,
+        )
     }
 }
 
@@ -185,21 +186,28 @@ private fun RunSegments(
 @Composable
 private fun RunLayout(
     question: Question?,
+    modifier: Modifier,
+    header: @Composable () -> Unit,
     content: @Composable ColumnScope.(inlineSet: Boolean) -> Unit,
 ) {
-    BoxWithConstraints(Modifier.fillMaxSize()) {
+    BoxWithConstraints(modifier.fillMaxSize()) {
         val aside = question?.set?.takeIf { it.listening == null && maxWidth >= ASIDE_FROM }
 
         Row(Modifier.fillMaxSize()) {
-            Column(
-                Modifier
-                    .weight(1f)
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    content(aside == null)
+            // The progress stays over the question, in its pane, when a passage shows beside it.
+            Column(Modifier.weight(1f)) {
+                header()
+                Column(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                        content(aside == null)
+                    }
                 }
             }
 
@@ -357,15 +365,7 @@ internal fun AnswerActions(
 
         else -> {
             ActionColumn {
-                if (phase == RunPhase.AnswerFailed) {
-                    SaveErrorText()
-                    if (controls.canRetry) {
-                        FilledTonalButton(
-                            onClick = controls::retry,
-                            modifier = Modifier.fillMaxWidth(),
-                        ) { Text(stringResource(R.string.practice_try_again)) }
-                    }
-                }
+                if (phase == RunPhase.AnswerFailed) SaveErrorText(onRetry = controls::retry.takeIf { controls.canRetry })
                 ActionFlow { width ->
                     when (notSureOffer(question, every = notSureOnEvery)) {
                         NotSure.Drill -> {
@@ -376,7 +376,7 @@ internal fun AnswerActions(
                             NotSureButton(
                                 onClick = { controls.submit(question, Answer.DontKnow) },
                                 enabled = run.canAnswer,
-                                label = stringResource(R.string.questions_dont_know_yet),
+                                dontKnowYet = true,
                             )
                         }
 

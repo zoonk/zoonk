@@ -94,7 +94,7 @@ private fun PracticeRead(
 
         is LoadState.Failed -> {
             if (read.error == ApiError.NotFound) {
-                RunNotFound(onClose)
+                RunNotFound(onClose, stringResource(R.string.mistakes_not_found_description))
             } else {
                 RunLoadFailed(onClose, onRetry = { scope.launch { viewModel.practice.refresh() } })
             }
@@ -116,12 +116,10 @@ internal fun PracticeRun(
     val run = state.run
     val ending = run.phase == RunPhase.Finishing
     val endsRun = state.answerIds.isNotEmpty() && !ending
-    val leave = { if (endsRun) viewModel.end() else viewModel.close() }
-
-    BackHandler(onBack = leave)
+    BackHandler(onBack = viewModel::leave)
 
     if (ending) {
-        PracticeDone(state, onClose = viewModel::close)
+        PracticeDone(state, onClose = viewModel::leave)
         return
     }
 
@@ -136,7 +134,7 @@ internal fun PracticeRun(
         run = run,
         question = question,
         app = app,
-        onClose = leave,
+        onClose = viewModel::leave,
         mainAction = answerAction(questions, question, run, draft, viewModel),
         report = runReportTarget("mistake-practice", question, run),
         actions = {

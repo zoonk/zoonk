@@ -208,8 +208,8 @@ class MistakePracticeViewModelTest {
 
             viewModel.answer()
             advanceUntilIdle()
-            viewModel.end()
-            viewModel.end()
+            viewModel.leave()
+            viewModel.leave()
             advanceUntilIdle()
 
             assertEquals(listOf(listOf(UUID.fromString(FIRST_ANSWER))), api.finishes.map { it.answerIds })
@@ -269,9 +269,9 @@ class MistakePracticeViewModelTest {
 
             viewModel.answer()
             advanceUntilIdle()
-            viewModel.end()
+            viewModel.leave()
             runCurrent()
-            viewModel.close()
+            viewModel.leave()
             runCurrent()
             assertEquals(false, viewModel.closed.value)
 
@@ -279,6 +279,35 @@ class MistakePracticeViewModelTest {
             advanceUntilIdle()
             assertEquals(true, viewModel.closed.value)
             assertEquals(1, api.finishes.size)
+        }
+
+    @Test
+    fun leavingWhileAnAnswerIsCheckedEndsTheRunOnceItsBack() =
+        runTest(dispatcher) {
+            val checked = CompletableDeferred<Unit>()
+            val api = FakeMistakesApi(twoMistakes)
+            api.answer = {
+                checked.await()
+                practiceFeedback()
+            }
+            val viewModel = viewModel(api)
+            started(viewModel)
+
+            viewModel.answer()
+            runCurrent()
+            viewModel.leave()
+            runCurrent()
+            assertEquals(0, api.finishes.size)
+
+            checked.complete(Unit)
+            advanceUntilIdle()
+            assertEquals(
+                1,
+                api.finishes
+                    .single()
+                    .answerIds.size,
+            )
+            assertEquals(RunPhase.Finishing, viewModel.now.run.phase)
         }
 
     @Test

@@ -66,6 +66,7 @@ class MistakePracticeViewModel(
     private val closing = MutableStateFlow(false)
     val closed: StateFlow<Boolean> = closing.asStateFlow()
     private var closeWhenEnded = false
+    private var leaveWhenChecked = false
 
     private var shownAt = now()
     private var sent: Submission? = null
@@ -120,7 +121,13 @@ class MistakePracticeViewModel(
                     updateRun { it.failed(RunPhase.AnswerFailed) }
                 }
 
-                MutationResult.Obsolete -> {}
+                MutationResult.Obsolete -> {
+                    return@launch
+                }
+            }
+            if (leaveWhenChecked) {
+                leaveWhenChecked = false
+                leave()
             }
         }
     }
@@ -144,12 +151,34 @@ class MistakePracticeViewModel(
         if (mutableState.value?.run?.phase == RunPhase.Finishing) finish()
     }
 
-    /** Close after an answer ends the run early, and what was answered counts. */
-    fun end() {
-        val phase = mutableState.value?.run?.phase ?: return
-        if (phase == RunPhase.Checking || phase == RunPhase.Finishing) return
-        updateRun(QuestionRun::finishing)
-        finish()
+    /**
+     * Close or Back: after an answer the run ends and what was answered counts. Leaving never
+     * cancels a write: while an answer is checked or the end saves, it waits for it.
+     */
+    fun leave() {
+        val current = mutableState.value
+        when {
+            current == null -> {
+                closing.value = true
+            }
+
+            current.run.phase == RunPhase.Checking -> {
+                leaveWhenChecked = true
+            }
+
+            current.run.phase == RunPhase.Finishing -> {
+                if (current.end == null) closeWhenEnded = true else closing.value = true
+            }
+
+            current.answerIds.isNotEmpty() -> {
+                updateRun(QuestionRun::finishing)
+                finish()
+            }
+
+            else -> {
+                closing.value = true
+            }
+        }
     }
 
     private fun finish() {
@@ -160,12 +189,6 @@ class MistakePracticeViewModel(
             mutableState.update { it?.copy(end = PracticeEnd(summary)) }
             if (closeWhenEnded) closing.value = true
         }
-    }
-
-    /** Leaving while the end is saving waits for it: leaving the screen would cancel the count. */
-    fun close() {
-        val current = mutableState.value
-        if (current?.run?.phase == RunPhase.Finishing && current.end == null) closeWhenEnded = true else closing.value = true
     }
 
     private fun updateRun(change: (QuestionRun) -> QuestionRun) = mutableState.update { it?.copy(run = change(it.run)) }

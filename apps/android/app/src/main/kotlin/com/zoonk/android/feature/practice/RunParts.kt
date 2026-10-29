@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.FlowRowScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -200,12 +202,15 @@ internal fun RunLoadFailed(
 }
 
 @Composable
-internal fun RunNotFound(onClose: () -> Unit) {
+internal fun RunNotFound(
+    onClose: () -> Unit,
+    description: String = stringResource(R.string.practice_not_found_description),
+) {
     TaskScaffold(onClose = onClose) { padding ->
         StatusMessage(
             icon = R.drawable.ic_school,
             title = stringResource(R.string.practice_not_found_title),
-            description = stringResource(R.string.practice_not_found_description),
+            description = description,
             modifier = Modifier.padding(padding),
         ) { Button(onClick = onClose) { Text(stringResource(R.string.practice_close)) } }
     }
@@ -240,14 +245,18 @@ internal fun CheckButton(
     }
 }
 
+/** [onRetry] sends the same answer again: the only way to resend an "I don't know" or a time-up answer. */
 @Composable
-internal fun SaveErrorText() {
-    Text(
-        text = stringResource(R.string.practice_save_error),
-        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-        color = MaterialTheme.colorScheme.error,
-        style = MaterialTheme.typography.bodyMedium,
-    )
+internal fun SaveErrorText(onRetry: (() -> Unit)? = null) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = stringResource(R.string.practice_save_error),
+            modifier = Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        onRetry?.let { TextButton(onClick = it) { Text(stringResource(R.string.practice_try_again)) } }
+    }
 }
 
 @Composable
@@ -274,10 +283,12 @@ internal fun ActionFlow(content: @Composable FlowRowScope.(main: Modifier) -> Un
 
 private val MAIN_ACTION_WIDTH = 160.dp
 
+/** As wide as the questions on a narrow window; across the window, its actions at the end, on a wide one (main's action bar). */
 @Composable
 internal fun ActionBarWidth(content: @Composable () -> Unit) {
+    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        Box(Modifier.widthIn(max = ACTIONS_WIDTH).fillMaxWidth()) { content() }
+        Box(if (wide) Modifier.fillMaxWidth() else Modifier.widthIn(max = ACTIONS_WIDTH).fillMaxWidth()) { content() }
     }
 }
 

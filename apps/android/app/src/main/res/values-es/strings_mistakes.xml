@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
+  "mistakes_not_found_description": "387b1cc66e5433619eedd1d8ae81de976daa0c4cfa609c277c9a6ad400746710",
   "mistakes_nothing_description": "d028f3e140f4a267da40a948ff4bdc51b5152e93f48228f633b49b1c2806e2ca",
   "mistakes_nothing_title": "ef7dccdbfc65183c0306c8de80d565f0d682174423430a123072828359827b8f",
   "mistakes_practice_comes_back": "faa93416c8974efe5049f1d790d40e03f73c96d5458f686749f06ea713d6b58d",
@@ -19,6 +20,7 @@
         <item quantity="many">%d errores corregidos</item>
         <item quantity="other">%d errores corregidos</item>
     </plurals>
+    <string name="mistakes_not_found_description">Puede que ya se hayan corregido o eliminado.</string>
     <string name="mistakes_nothing_title">Aún no hay nada que practicar</string>
     <string name="mistakes_nothing_description">Los errores vuelven para practicar a partir del día siguiente a cuando los cometes.</string>
 </resources>

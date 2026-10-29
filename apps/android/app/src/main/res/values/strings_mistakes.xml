@@ -8,6 +8,7 @@
         <item quantity="one">%d mistake fixed</item>
         <item quantity="other">%d mistakes fixed</item>
     </plurals>
+    <string name="mistakes_not_found_description">They may have been fixed or removed.</string>
     <string name="mistakes_nothing_title">Nothing to practice yet</string>
     <string name="mistakes_nothing_description">Mistakes come back for practice from the day after you make them.</string>
 </resources>

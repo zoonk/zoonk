@@ -80,7 +80,7 @@ internal fun completion(
 
 internal class FakeMistakesApi(
     var read: MistakePractice,
-    var answer: (MistakePracticeAnswerInput) -> MistakePracticeFeedback = { practiceFeedback() },
+    var answer: suspend (MistakePracticeAnswerInput) -> MistakePracticeFeedback = { practiceFeedback() },
     var finish: suspend (MistakePracticeFinishInput) -> MistakePracticeCompletion = { completion() },
 ) : MistakesApi {
     val answers = mutableListOf<MistakePracticeAnswerInput>()
@@ -96,7 +96,10 @@ internal class FakeMistakesApi(
         session: AuthenticatedSession,
         mistakeId: UUID,
         input: MistakePracticeAnswerInput,
-    ) = input.also(answers::add).let(answer)
+    ): MistakePracticeFeedback {
+        answers += input
+        return answer(input)
+    }
 
     override suspend fun finish(
         session: AuthenticatedSession,
