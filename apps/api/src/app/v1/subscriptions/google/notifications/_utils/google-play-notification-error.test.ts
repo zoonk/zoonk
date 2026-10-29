@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import { getGooglePlayNotificationErrorResponse } from "./google-play-notification-error";
 
 describe(getGooglePlayNotificationErrorResponse, () => {
-  it.each(["invalidPurchase", "invalidProduct", "accountMismatch"] as const)(
+  it.each(["invalidPurchase", "invalidProduct", "accountMismatch", "ended"] as const)(
     "acknowledges %s, which no retry can change, without asking Pub/Sub to retry",
     async (reason) => {
       const response = getGooglePlayNotificationErrorResponse(new GooglePlayError(reason));

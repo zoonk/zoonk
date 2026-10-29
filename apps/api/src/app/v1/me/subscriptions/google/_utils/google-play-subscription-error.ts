@@ -27,6 +27,7 @@ export function getGooglePlaySubscriptionErrorResponse(error: unknown) {
         message: "This Google Play product is not supported",
         status: httpStatus.badRequest,
       });
+    case "ended":
     case "invalidPurchase":
       return createErrorResponse({
         code: "GOOGLE_PLAY_PURCHASE_INVALID",

@@ -1,7 +1,12 @@
 import { errors } from "@/lib/api-errors";
 import { GooglePlayError } from "@zoonk/core/subscriptions/google-play-error";
 
-const PERMANENT_REASONS = new Set(["accountMismatch", "invalidProduct", "invalidPurchase"]);
+const PERMANENT_REASONS = new Set([
+  "accountMismatch",
+  "ended",
+  "invalidProduct",
+  "invalidPurchase",
+]);
 
 /**
  * Pub/Sub redelivers anything but a 2xx: answers no retry can change are acknowledged, while
