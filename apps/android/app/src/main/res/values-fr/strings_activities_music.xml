@@ -4,6 +4,11 @@
   "activities_music_answer_on_guitar": "7dd609c63b0dfd0144497d0c02081beb745d41a61a83ae098ebcf896cbb6df58",
   "activities_music_badge_ear_training": "7509571791fdf0dde19c3af5e6d7cf2901e58cab45d5cc307774b4edc60b8c05",
   "activities_music_badge_play_it": "f74bd9ab24f5987f1828c245c0920dfb5e85b677529c77b40dface531bd907f5",
+  "activities_music_badge_read_listen": "d0e3534135fcf58d44d911d142a2922e576f685e1f82cf377435025b1681e6ef",
+  "activities_music_bar_notes": "7fab6c6364c79044fd1a87da3a0a79d5399ff699c9a8421809ed5dd4b93dceca",
+  "activities_music_bar_of": "4987ef1136bdb067d483d6cc3027b617a1373cdd44987ca20c31b43548c5d950",
+  "activities_music_bars": "a36361383221865eead3a512f5b6455fa750573f7321810ec339c3ba05e118b2",
+  "activities_music_bpm": "ddd3f7e6569bc0a0dcf589aff653c900ec18018ff042b87c7a8354429f7e8d7e",
   "activities_music_by_ear": "0e6dd2d0073cc4f8946689bfa25b2291c9a754b49caf63b3e9069b3d6f4ba84c",
   "activities_music_chord_augmented": "0fc926c4f6cb4faea0a7edf83bd1d7eedce3d1cf3c351b9c04141fbf57e7b44d",
   "activities_music_chord_diminished": "b005677bb8f540adcbe38e25c98915a3bd222a985acd3a4e0f8fcb173936d7e4",
@@ -18,6 +23,7 @@
   "activities_music_hear_it": "ed915b7fcb12bb4f6bba68674af5ad961635b1a9a4297daef822b1c2f6d2123b",
   "activities_music_higher_frets": "e9921c69c16ce110a4355ae0fecf4638c4a4dc56be9180921950e3d593958644",
   "activities_music_lower_frets": "acbdc2bfa56e0f75e099327575f0d5ca1ff9a78d267d6874e6ffa3f793d4baf2",
+  "activities_music_melody": "d7b3adc6d0f21f21a1477abfb7a94d15570f5bcf2d6834d41c1e28616acf4e28",
   "activities_music_no_hand_shape": "4940c0e5ff8e0a70e98afd51f322696b5e8bcb3374117454eb59ddc4ebd24e3d",
   "activities_music_no_notes": "99320ae4df53291f9386e48e6c7a733c54a7209446881c30f8d0b7126506985a",
   "activities_music_not_played": "3ede4101a2f0de227ad7b0c4708890e5d7455eacf65beec3e2b7b67a05151d45",
@@ -27,22 +33,30 @@
   "activities_music_on_the_keys": "dbc20c0045f299de8eb714b96a957e0b171339c9754c070e806b5a9bdd8458a5",
   "activities_music_open_string": "7f9ee3aebf3034810ad28ce26ae08a6b735a6cad173737ce757185b76a14a7b5",
   "activities_music_piano_keys": "7436dd844b5ca51f373c3cd22d83c0b3b405ddfc5b3e5a9cb8db6ce93d6561ba",
+  "activities_music_play_melody": "6a0c92489d11d709b9a5d3b8faa98046ab4bded5fe73ff636483298d5d2d2bae",
   "activities_music_play_sound": "216b53a240b95464501d7c17c17174ad6942ce58cd7632ded71df0dac2c5ae59",
   "activities_music_same_chord_guitar": "de769ab59c894bc98df23b555d6610fe53542cc62b94b386dfff5e1ca21b8c8f",
   "activities_music_same_notes_guitar": "e5e6a10f1e8518fa0798ef0ba9bfe72fdf2b77921b481f9e7498ba3eaa03407a",
+  "activities_music_show_as": "35e6917bef72e12d0e4a13ff53c91925b7e5d2c57ae1b4f1833886dd00c48552",
   "activities_music_show_notes": "3333c4fa8207841439900f3625c9df9a82a5be757a62580741e01f12af985044",
   "activities_music_sound_notes": "9cd89fb50fc76a9f309fd100136c92bf3fca1826b3e337cddfb0cf55f248fa93",
   "activities_music_sound_unavailable": "fee8331a7961a8f597bdedd61fca9560053f70af2a6a0762409a5f7a23807104",
+  "activities_music_staff": "6e0bd51974d079ac6515b4cda0f86106f151a64cad6ac3be519512029c5de3ec",
+  "activities_music_stop": "bbc6fab9df9a891ccf38eaec51d564c614fd5a30f36b51b2bc46cbde9a08b6d9",
   "activities_music_string": "dc38f744b5b3eef1154dc92b5f959706687365872fd549d2833c567cc38a2308",
   "activities_music_string_high_e": "5bd2c6bb14f95ca0af1a7d6de85f7fa2f426d9c5597f590a7d5d068532c23b09",
   "activities_music_string_low_e": "a81e9d6a343e10708cb826d31cb0f69bb29161e8945b176e4a249a6f73a21351",
-  "activities_music_string_position": "08bcd3886303edb39d7fdc406478257674fbaea8ad0c641ac02e2233b8a0e430"
+  "activities_music_string_position": "08bcd3886303edb39d7fdc406478257674fbaea8ad0c641ac02e2233b8a0e430",
+  "activities_music_tab": "8643118c28648b28cdf2026b3024df2328c201c42e039e860e0a0c2a6e0e6ea3",
+  "activities_music_tempo": "4e7f83d7f9e8a986228162e6ecc2ade24d3689ff19eb64b4ba94c20735192bd2"
 }
 -->
 <resources>
     <string name="activities_music_badge_play_it">Joue</string>
     <!-- Training the ear to recognize notes and chords by their sound. -->
     <string name="activities_music_badge_ear_training">Oreille musicale</string>
+    <!-- Reading music while it plays. -->
+    <string name="activities_music_badge_read_listen">Lire et écouter</string>
     <!-- A note name read aloud, like "F sharp". -->
     <string name="activities_music_note_sharp">%1$s dièse</string>
     <!-- A note name read aloud, like "E flat". -->
@@ -109,4 +123,29 @@
     <string name="activities_music_fret">Case %1$d, %2$s</string>
     <!-- For TalkBack: one string of a guitar shape, like "A string: Fret 3, C". -->
     <string name="activities_music_string_position">%1$s : %2$s</string>
+    <!-- The title of a melody that has none. -->
+    <string name="activities_music_melody">Mélodie</string>
+    <!-- For TalkBack: the choice between showing the music as a staff or as guitar tab. -->
+    <string name="activities_music_show_as">Afficher la musique en</string>
+    <!-- Music written on the five-line staff. -->
+    <string name="activities_music_staff">Portée</string>
+    <!-- Guitar tablature: music written as fret numbers on the guitar's strings. -->
+    <string name="activities_music_tab">Tablature</string>
+    <string name="activities_music_play_melody">Jouer la mélodie</string>
+    <!-- Stops the melody playing. -->
+    <string name="activities_music_stop">Arrêter</string>
+    <!-- Which bar of the melody is playing, like "Bar 2 of 4". -->
+    <string name="activities_music_bar_of">Mesure %1$d sur %2$d</string>
+    <!-- How many bars the melody has, like "4 bars". -->
+    <plurals name="activities_music_bars">
+        <item quantity="one">%d mesure</item>
+        <item quantity="many">%d mesures</item>
+        <item quantity="other">%d mesures</item>
+    </plurals>
+    <!-- For TalkBack: the tempo menu with its choice, like "Tempo: 80 bpm". -->
+    <string name="activities_music_tempo">Tempo : %1$s</string>
+    <!-- Beats per minute, like "80 bpm". -->
+    <string name="activities_music_bpm">%1$d bpm</string>
+    <!-- For TalkBack: one bar of the melody and its notes, like "Bar 1: E, E, F, G." -->
+    <string name="activities_music_bar_notes">Mesure %1$d : %2$s.</string>
 </resources>

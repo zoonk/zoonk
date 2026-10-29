@@ -46,6 +46,7 @@ import com.zoonk.android.feature.activities.guessRevealRenderer
 import com.zoonk.android.feature.activities.math.formulaModelRenderer
 import com.zoonk.android.feature.activities.math.numberLineRenderer
 import com.zoonk.android.feature.activities.music.keyboardFretboardRenderer
+import com.zoonk.android.feature.activities.music.notationPlayerRenderer
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.activities.patternTableRenderer
@@ -109,6 +110,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "keyboardFretboard" to keyboardFretboardRenderer,
         "labeledDiagram" to labeledDiagramRenderer,
         "matchPairs" to matchPairsRenderer,
+        "notationPlayer" to notationPlayerRenderer,
         "numberLine" to numberLineRenderer,
         "patternTable" to patternTableRenderer,
         "patternTester" to patternTesterRenderer,

@@ -3,6 +3,8 @@
     <string name="activities_music_badge_play_it">Play it</string>
     <!-- Training the ear to recognize notes and chords by their sound. -->
     <string name="activities_music_badge_ear_training">Ear training</string>
+    <!-- Reading music while it plays. -->
+    <string name="activities_music_badge_read_listen">Read and listen</string>
 
     <!-- A note name read aloud, like "F sharp". -->
     <string name="activities_music_note_sharp">%1$s sharp</string>
@@ -71,4 +73,29 @@
     <string name="activities_music_fret">Fret %1$d, %2$s</string>
     <!-- For TalkBack: one string of a guitar shape, like "A string: Fret 3, C". -->
     <string name="activities_music_string_position">%1$s: %2$s</string>
+
+    <!-- The title of a melody that has none. -->
+    <string name="activities_music_melody">Melody</string>
+    <!-- For TalkBack: the choice between showing the music as a staff or as guitar tab. -->
+    <string name="activities_music_show_as">Show the music as</string>
+    <!-- Music written on the five-line staff. -->
+    <string name="activities_music_staff">Staff</string>
+    <!-- Guitar tablature: music written as fret numbers on the guitar's strings. -->
+    <string name="activities_music_tab">Tab</string>
+    <string name="activities_music_play_melody">Play the melody</string>
+    <!-- Stops the melody playing. -->
+    <string name="activities_music_stop">Stop</string>
+    <!-- Which bar of the melody is playing, like "Bar 2 of 4". -->
+    <string name="activities_music_bar_of">Bar %1$d of %2$d</string>
+    <!-- How many bars the melody has, like "4 bars". -->
+    <plurals name="activities_music_bars">
+        <item quantity="one">%d bar</item>
+        <item quantity="other">%d bars</item>
+    </plurals>
+    <!-- For TalkBack: the tempo menu with its choice, like "Tempo: 80 bpm". -->
+    <string name="activities_music_tempo">Tempo: %1$s</string>
+    <!-- Beats per minute, like "80 bpm". -->
+    <string name="activities_music_bpm">%1$d bpm</string>
+    <!-- For TalkBack: one bar of the melody and its notes, like "Bar 1: E, E, F, G." -->
+    <string name="activities_music_bar_notes">Bar %1$d: %2$s.</string>
 </resources>
