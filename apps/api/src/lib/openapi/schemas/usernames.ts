@@ -30,3 +30,15 @@ export const usernameAvailabilityResponseSchema = z
     username: z.string().meta({ description: "Normalized username candidate" }),
   })
   .meta({ id: "UsernameAvailabilityResponse" });
+
+export const usernameSuggestionResponseSchema = z
+  .object({
+    username: z
+      .string()
+      .nullable()
+      .meta({
+        description:
+          "The account's username, or an available one made from its email; null when every one made from the email is taken",
+      }),
+  })
+  .meta({ id: "UsernameSuggestionResponse" });

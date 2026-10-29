@@ -309,6 +309,56 @@
         }
       }
     },
+    "/me/username-suggestion": {
+      "get": {
+        "description": "What profile setup suggests for a new account, as main's setup page does. Availability is advisory: the profile update decides.",
+        "operationId": "getCurrentUserUsernameSuggestion",
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Suggest a username for the current user",
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "The suggested username",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UsernameSuggestionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication required",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/app-attest/challenges": {
       "post": {
         "description": "A one-time challenge for Apple App Attest. The iOS app asks for one before attesting its key and before each request that needs bot proof (`POST /v1/guests`, `POST /v1/email-sign-in-codes`, `POST /v1/sessions/email-code`), where it sends the assertion in the `X-App-Attest-*` headers instead of BotID's browser proof.",
@@ -28801,6 +28851,20 @@
         ],
         "additionalProperties": false,
         "description": "The chosen buddy, or Zu with round glasses by default"
+      },
+      "UsernameSuggestionResponse": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "nullable": true,
+            "description": "The account's username, or an available one made from its email; null when every one made from the email is taken",
+            "type": "string"
+          }
+        },
+        "required": [
+          "username"
+        ],
+        "additionalProperties": false
       },
       "AppAttestChallenge": {
         "type": "object",

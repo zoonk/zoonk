@@ -120,6 +120,11 @@ const CANONICAL_OPERATIONS = [
   },
   { method: "get", operationId: "getCurrentUserSummary", path: "/me/summary" },
   {
+    method: "get",
+    operationId: "getCurrentUserUsernameSuggestion",
+    path: "/me/username-suggestion",
+  },
+  {
     method: "post",
     operationId: "acknowledgeTodayPlanChange",
     path: "/today/plan-change/acknowledgments",
