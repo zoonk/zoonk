@@ -14,6 +14,7 @@ const CHAPTERS_NAMED = 3;
 
 export async function OutlineLevel({
   band,
+  courseId,
   estimate,
   firstNumber,
   isFirst,
@@ -21,6 +22,7 @@ export async function OutlineLevel({
   params,
 }: {
   band: OutlineBand;
+  courseId: string;
   estimate: UndatedEstimate | null;
   firstNumber: number;
   isFirst: boolean;
@@ -62,6 +64,7 @@ export async function OutlineLevel({
   return (
     <CourseLevelZone
       aside={[chapterCount, span].filter(Boolean).join(OUTLINE_SEPARATOR)}
+      courseId={courseId}
       isFirst={isFirst}
       level={band.level}
       summary={

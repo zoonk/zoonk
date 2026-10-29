@@ -1,6 +1,6 @@
 import "server-only";
-import { type GoalKind, prisma, sql } from "@zoonk/db";
-import { PHASE_WORK_KINDS } from "../../plans/planner/plan-item-rules";
+import { type CourseLevel, type GoalKind, prisma, sql } from "@zoonk/db";
+import { LEARN_KINDS, PHASE_WORK_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
 
 export type PlanPhaseFacts = {
@@ -9,6 +9,8 @@ export type PlanPhaseFacts = {
   goalId: string;
   goalKind: GoalKind;
   hasItems: boolean;
+  /** The primary course's level of the plan's next lesson, else its skill's level. */
+  nextLevel: CourseLevel | null;
   phases: unknown;
   planId: string;
   userId: string;
@@ -16,6 +18,7 @@ export type PlanPhaseFacts = {
 
 const WORK_KINDS = [...PHASE_WORK_KINDS];
 const LESSON_WORK_KINDS = WORK_KINDS.filter((kind) => kind !== "boss");
+const LEARN = [...LEARN_KINDS];
 
 export async function loadPlanPhaseFacts(
   scope: { planIds: readonly string[] } | { userId: string },
@@ -41,7 +44,16 @@ export async function loadPlanPhaseFacts(
         SELECT min(i.phase)::int FROM plan_items i
         WHERE i.plan_id = p.id AND i.status = 'todo'
           AND i.kind::text = ANY(${LESSON_WORK_KINDS}::text[])
-      ) AS "firstTodoPhaseBesideChallenges"
+      ) AS "firstTodoPhaseBesideChallenges",
+      (
+        SELECT COALESCE(cc.level::text, s.level::text) FROM plan_items i
+        LEFT JOIN course_chapters cc
+          ON cc.chapter_id = i.chapter_id AND cc.course_id = g.primary_course_id
+        LEFT JOIN skills s ON s.id = i.skill_id
+        WHERE i.plan_id = p.id AND i.status = 'todo' AND i.kind::text = ANY(${LEARN}::text[])
+        ORDER BY i.scheduled_for ASC NULLS LAST, i.position ASC
+        LIMIT 1
+      ) AS "nextLevel"
     FROM plans p
     JOIN goals g ON g.id = p.goal_id
     WHERE ${where}`;

@@ -21,6 +21,7 @@ class LearnerAccessTest {
         status: LearnerSummaryGoal.Status = LearnerSummaryGoal.Status.ACTIVE,
     ) = LearnerSummaryGoal(
         courseId = null,
+        courseLevel = null,
         dailyMinutes = 20,
         id = UUID.randomUUID(),
         isActive = true,

@@ -52,15 +52,20 @@ function findActiveGoal({
 function toSummaryGoals({
   activeGoalId,
   goals,
+  phaseFacts,
 }: {
   activeGoalId: string | null;
   goals: readonly Goal[];
+  phaseFacts: readonly PlanPhaseFacts[];
 }): LearnerSummaryGoal[] {
   return goals
     .filter((goal) => goal.status !== "archived")
     .toSorted((a, b) => Number(b.id === activeGoalId) - Number(a.id === activeGoalId))
     .map((goal) => ({
       courseId: followsCourse(goal) ? goal.primaryCourseId : null,
+      courseLevel: followsCourse(goal)
+        ? (phaseFacts.find((facts) => facts.goalId === goal.id)?.nextLevel ?? null)
+        : null,
       dailyMinutes: goal.dailyMinutes,
       id: goal.id,
       isActive: goal.id === activeGoalId,
@@ -194,7 +199,7 @@ export async function getLearnerSummary(): Promise<LearnerSummary | null> {
   const activeGoalId = activeGoal?.id ?? null;
   const timeZone = getAnswerTimeZone({ goal: activeGoal });
   const localDate = getDateInTimeZone({ date: now, timeZone });
-  const listed = toSummaryGoals({ activeGoalId, goals });
+  const listed = toSummaryGoals({ activeGoalId, goals, phaseFacts });
   const current = listed.find((goal) => goal.isActive) ?? null;
   const phaseChallengesRequired = activeGoal?.kind !== "language" || subscription !== null;
 

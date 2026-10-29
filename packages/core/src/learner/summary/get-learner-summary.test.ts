@@ -3,7 +3,10 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
 import { mistakeFixture } from "@zoonk/testing/fixtures/learner";
 import { learningProfileFixture } from "@zoonk/testing/fixtures/learning-profiles";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   libraryLessonFixture,
@@ -235,6 +238,56 @@ describe(getLearnerSummary, () => {
     await learnerWithGoal({ primaryCourseId: course.id });
 
     await expect(getLearnerSummary()).resolves.toMatchObject({ goals: [{ courseId: course.id }] });
+  });
+
+  it("gives the level of the next lesson in the course a goal follows, which a course's page opens", async () => {
+    const [course, beginner, intermediate, advanced] = await Promise.all([
+      courseFixture({ isPublished: true }),
+      libraryChapterFixture({ level: "beginner" }),
+      libraryChapterFixture({ level: "intermediate" }),
+      skillFixture({ level: "advanced" }),
+    ]);
+
+    await Promise.all([
+      courseChapterFixture({
+        chapterId: beginner.id,
+        courseId: course.id,
+        level: "beginner",
+        position: 0,
+      }),
+      courseChapterFixture({
+        chapterId: intermediate.id,
+        courseId: course.id,
+        level: "intermediate",
+        position: 0,
+      }),
+    ]);
+
+    const { goal, user } = await learnerWithGoal({ primaryCourseId: course.id });
+
+    const plan = await planFixture({
+      goalId: goal.id,
+      items: [
+        { chapterId: beginner.id, status: "testedOut" },
+        { chapterId: intermediate.id },
+        { skillId: advanced.id },
+      ],
+    });
+
+    await goalFixture({ kind: "explain", primaryCourseId: course.id, userId: user.id });
+
+    const first = await getLearnerSummary();
+
+    expect(first?.goals.map((entry) => entry.courseLevel)).toStrictEqual(["intermediate", null]);
+
+    await prisma.planItem.updateMany({
+      data: { status: "done" },
+      where: { chapterId: intermediate.id, planId: plan.id },
+    });
+
+    const later = await getLearnerSummary();
+
+    expect(later?.goals[0]?.courseLevel).toBe("advanced");
   });
 
   it("names no course for a paused goal or an explanation, which a course's page starts again", async () => {

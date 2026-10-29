@@ -166,7 +166,7 @@ internal fun learnerSummary(
         {"account":{"email":"ana@zoonk.test","image":null,"name":"Ana"},"activeGoalId":"$GOAL",
          "analytics":{"disabled":false,"goal":null,"plan":"free","username":null},
          "buddy":{"beltColor":"white","energy":null,"glasses":"round","kind":"zu","name":null,"studiedToday":false},
-         "day":null,"goals":[{"courseId":null,"dailyMinutes":20,"id":"$GOAL","isActive":true,"kind":"$kind","status":"$status",
+         "day":null,"goals":[{"courseId":null,"courseLevel":null,"dailyMinutes":20,"id":"$GOAL","isActive":true,"kind":"$kind","status":"$status",
           "targetDate":"2027-01-31","targetLanguage":null,"title":"$title"}],
          "identity":{"expiresAt":1793186000000,"isAnonymous":false,"signedInAt":1761650000000,"userId":"0b6f8f62-58a5-4e0e-8f0e-2f7d0ad0c0a1"},
          "level":null,"missions":null,"nextChangeAt":1793186000000,

@@ -1,4 +1,10 @@
-import { type BuddyGlasses, type BuddyKind, type GoalKind, type GoalStatus } from "@zoonk/db/enums";
+import {
+  type BuddyGlasses,
+  type BuddyKind,
+  type CourseLevel,
+  type GoalKind,
+  type GoalStatus,
+} from "@zoonk/db/enums";
 import { type BeltColor } from "@zoonk/utils/belt-level";
 
 /** Timestamps are epoch milliseconds; signedInAt distinguishes separate sessions for the same learner. */
@@ -14,6 +20,8 @@ export type LearnerTier = "free" | "guest" | "plus";
 export type LearnerSummaryGoal = {
   /** Set only while the goal follows its course, so that course's page offers to continue it. */
   courseId: string | null;
+  /** The level of the goal's next lesson in that course, so its page opens there; null with no course. */
+  courseLevel: CourseLevel | null;
   dailyMinutes: number;
   id: string;
   isActive: boolean;

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type CourseLevel, prisma } from "@zoonk/db";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { goalFixture, planFixture } from "@zoonk/testing/fixtures/goals";
+import { goalFixture } from "@zoonk/testing/fixtures/goals";
 import {
   courseChapterFixture,
   libraryChapterFixture,
@@ -21,7 +21,7 @@ import { loadGoalCurriculumInputs } from "../library/curriculum/goal-curriculum-
 import { parsePlanGraph } from "../plans/planner/plan-state";
 import { getOnboarding } from "../view-models/onboarding/get-onboarding";
 import { isResearchedCourseStart } from "./goal-research";
-import { findCourseGoalStart, getCourseGoalLevel, startCourseGoal } from "./start-course-goal";
+import { findCourseGoalStart, startCourseGoal } from "./start-course-goal";
 
 /** Before other tests' learning events, so their pace never changes these plans. */
 const NOW = new Date("2020-09-28T12:00:00Z");
@@ -329,64 +329,6 @@ describe(startCourseGoal, () => {
 
     mockSession(other.id);
     await expect(findCourseGoalStart(course.id)).resolves.toBeNull();
-  });
-
-  it("tells the course's page the level of the next lesson in the learner's goal that follows it", async () => {
-    const [course, user, other, beginner, intermediate, advanced] = await Promise.all([
-      publicCourse(),
-      userFixture(),
-      userFixture(),
-      libraryChapterFixture({ level: "beginner" }),
-      libraryChapterFixture({ level: "intermediate" }),
-      skillFixture({ level: "advanced" }),
-    ]);
-
-    await Promise.all([
-      courseChapterFixture({
-        chapterId: beginner.id,
-        courseId: course.id,
-        level: "beginner",
-        position: 0,
-      }),
-      courseChapterFixture({
-        chapterId: intermediate.id,
-        courseId: course.id,
-        level: "intermediate",
-        position: 0,
-      }),
-      goalFixture({ kind: "explain", primaryCourseId: course.id, userId: user.id }),
-      goalFixture({ primaryCourseId: course.id, status: "completed", userId: user.id }),
-    ]);
-
-    mockSession(user.id);
-    await expect(getCourseGoalLevel(course.id)).resolves.toBeNull();
-    await expect(getCourseGoalLevel("not-a-course")).resolves.toBeNull();
-
-    const goal = await goalFixture({ primaryCourseId: course.id, userId: user.id });
-
-    const plan = await planFixture({
-      goalId: goal.id,
-      items: [
-        { chapterId: beginner.id, status: "testedOut" },
-        { chapterId: intermediate.id },
-        { skillId: advanced.id },
-      ],
-    });
-
-    await expect(getCourseGoalLevel(course.id)).resolves.toBe("intermediate");
-
-    await prisma.planItem.updateMany({
-      data: { status: "done" },
-      where: { chapterId: intermediate.id, planId: plan.id },
-    });
-
-    await expect(getCourseGoalLevel(course.id)).resolves.toBe("advanced");
-
-    mockSession(other.id);
-    await expect(getCourseGoalLevel(course.id)).resolves.toBeNull();
-
-    mockSession(null);
-    await expect(getCourseGoalLevel(course.id)).resolves.toBeNull();
   });
 
   it("says a learner's goal on the course is past onboarding once only the plan is left", async () => {

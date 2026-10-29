@@ -1,7 +1,7 @@
 "use client";
 
 import { useLearnerSummary } from "@/lib/learner/use-learner-summary";
-import { CourseLevel } from "@zoonk/db/enums";
+import { type CourseLevel } from "@zoonk/db/enums";
 import { RouteZone } from "@zoonk/learn/route-line";
 import { cn } from "@zoonk/ui/lib/utils";
 import { isJsonObject } from "@zoonk/utils/json";
@@ -41,17 +41,9 @@ function getProgressUrl({ courseId, lessonId }: ProgressScope): string {
   return lessonId ? `${path}?lesson=${encodeURIComponent(lessonId)}` : path;
 }
 
-const LEVELS: readonly unknown[] = Object.values(CourseLevel);
-
-function isCourseLevel(value: unknown): value is CourseLevel {
-  return LEVELS.includes(value);
-}
-
 function toProgress(body: unknown): CourseProgress | null {
-  return isJsonObject(body) &&
-    typeof body.lessonStarted === "boolean" &&
-    (body.level === null || isCourseLevel(body.level))
-    ? { lessonStarted: body.lessonStarted, level: body.level }
+  return isJsonObject(body) && typeof body.lessonStarted === "boolean"
+    ? { lessonStarted: body.lessonStarted }
     : null;
 }
 
@@ -102,7 +94,7 @@ export function CourseProgressScope({
   const learner = useLearnerSummary();
   const identity = learner.status === "ready" ? learner.summary.identity : null;
   const url = getProgressUrl({ courseId, lessonId });
-  const key = identity ? `${identity.userId} ${identity.signedInAt} ${url}` : null;
+  const key = identity && lessonId ? `${identity.userId} ${identity.signedInAt} ${url}` : null;
 
   useEffect(() => {
     if (key) {
@@ -143,11 +135,21 @@ export function CourseGoalSwitch({
 
 /** Opens the level the learner's plan is at, or the first one when no plan follows the course. */
 export function CourseLevelZone({
+  courseId,
   isFirst,
   level,
   ...zone
-}: Omit<ComponentProps<typeof RouteZone>, "open"> & { isFirst: boolean; level: CourseLevel }) {
-  const learnerLevel = useCourseProgress()?.level ?? null;
+}: Omit<ComponentProps<typeof RouteZone>, "open"> & {
+  courseId: string;
+  isFirst: boolean;
+  level: CourseLevel;
+}) {
+  const learner = useLearnerSummary();
+
+  const learnerLevel =
+    learner.status === "ready"
+      ? learner.summary.goals.find((goal) => goal.courseId === courseId)?.courseLevel
+      : null;
 
   return <RouteZone {...zone} open={learnerLevel ? learnerLevel === level : isFirst} />;
 }

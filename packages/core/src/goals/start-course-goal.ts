@@ -1,5 +1,5 @@
 import "server-only";
-import { type CourseLevel, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { isJsonObject } from "@zoonk/utils/json";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { isUuid } from "@zoonk/utils/uuid";
@@ -8,7 +8,6 @@ import { getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { createGoalPlan } from "../plans/create-goal-plan";
 import { fromIsoDate, toIsoDate } from "../plans/planner/plan-calendar";
-import { LEARN_KINDS } from "../plans/planner/plan-item-rules";
 import { getTargetDateBounds } from "../plans/target-date-range";
 import { getSession } from "../users/get-session";
 import { answerOnboardingQuestion } from "../view-models/onboarding/answer-onboarding-question";
@@ -85,34 +84,6 @@ export async function findCourseGoalStart(
   return existing.status === "existing"
     ? { goalId: goal.id, inOnboarding: existing.inOnboarding }
     : null;
-}
-
-/**
- * The level of the next lesson in the learner's goal that follows the course, so the course's page
- * opens there; null without such a goal or lesson.
- */
-export async function getCourseGoalLevel(courseId: string): Promise<CourseLevel | null> {
-  const session = await getSession();
-
-  const goal =
-    session && isUuid(courseId)
-      ? await findCourseGoal({ courseId, userId: session.user.id })
-      : null;
-
-  if (!goal) {
-    return null;
-  }
-
-  const next = await prisma.planItem.findFirst({
-    orderBy: [{ scheduledFor: { nulls: "last", sort: "asc" } }, { position: "asc" }],
-    select: {
-      chapter: { select: { courses: { select: { level: true }, where: { courseId } } } },
-      skill: { select: { level: true } },
-    },
-    where: { kind: { in: [...LEARN_KINDS] }, plan: { goalId: goal.id }, status: "todo" },
-  });
-
-  return next?.chapter?.courses[0]?.level ?? next?.skill?.level ?? null;
 }
 
 async function loadGoalView({ goal, userId }: { goal: GoalView; userId: string }) {

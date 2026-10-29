@@ -135,6 +135,7 @@ export async function LibraryCourseOutline({
           {outline.levels.map((band, index) => (
             <OutlineLevel
               band={band}
+              courseId={courseId}
               firstNumber={firstNumbers[index] ?? 1}
               isFirst={index === 0}
               key={band.level}

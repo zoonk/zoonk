@@ -40088,6 +40088,17 @@
             "format": "uuid",
             "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$"
           },
+          "courseLevel": {
+            "nullable": true,
+            "description": "The level of the goal's next lesson in `courseId`'s course, so that course's page opens its outline there instead of at its first level; null when `courseId` is null or the goal has no lesson left",
+            "type": "string",
+            "enum": [
+              "overview",
+              "beginner",
+              "intermediate",
+              "advanced"
+            ]
+          },
           "dailyMinutes": {
             "type": "integer",
             "minimum": -9007199254740991,
@@ -40136,6 +40147,7 @@
         },
         "required": [
           "courseId",
+          "courseLevel",
           "dailyMinutes",
           "id",
           "isActive",

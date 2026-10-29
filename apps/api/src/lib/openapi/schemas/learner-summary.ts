@@ -1,5 +1,5 @@
 import { type LearnerSummary } from "@zoonk/core/learner/summary/contract";
-import { BuddyGlasses, BuddyKind, GoalKind, GoalStatus } from "@zoonk/db";
+import { BuddyGlasses, BuddyKind, CourseLevel, GoalKind, GoalStatus } from "@zoonk/db";
 import { BELT_COLORS_ORDER } from "@zoonk/utils/belt-level";
 import { z } from "zod";
 
@@ -14,6 +14,13 @@ const learnerSummaryGoalSchema = z
       .meta({
         description:
           "The Library course the goal follows while it's active and not an explanation, so that course's page offers to continue it instead of starting it again; null for any other goal",
+      }),
+    courseLevel: z
+      .enum(CourseLevel)
+      .nullable()
+      .meta({
+        description:
+          "The level of the goal's next lesson in `courseId`'s course, so that course's page opens its outline there instead of at its first level; null when `courseId` is null or the goal has no lesson left",
       }),
     dailyMinutes: z.int(),
     id: z.uuid(),
