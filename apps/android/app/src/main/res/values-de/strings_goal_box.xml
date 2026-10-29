@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "goal_box_example_exam": "c8eac36addf7f9f9d67e429126359ee68569a5cbc212ef079768ba526fa5d368",
+  "goal_box_example_explanation": "dc7e0aa1cd763621ae6243df48082b6aeae7b604846cea45282ab8507b4c9992",
+  "goal_box_example_language": "fef1212ba8fa3d2b4c6465e0d465ca3dc8e00f7980ceda78fbf59b87b5581722",
+  "goal_box_example_music": "47bc5cf71e93c4a18015b45942ecfac3e4ec70f7d7c422132eb9ce3a8645dc78",
+  "goal_box_example_topic": "6d2d8ee5eba3144030da7bb1e2cd379a7e1efc9f88c967d142f071bb54556884",
+  "goal_box_examples": "418259aeca1e60f035b7832d27e2a025713be8913f2797082f31ef39bb940b5a",
+  "goal_box_kind_exam": "c518700da256c81ceb80fbeeab810f245f2261c98edc0b4c21de90e574d0066e",
+  "goal_box_kind_language": "58d8b8fbca8ffbebc3063f08d86f84411bc33af4702fb65c8a629224493a863f",
+  "goal_box_kind_music": "680dfba32252a0eaae70b38a1141b779bb83d487e1f9dbb88f91abbab1e17e97",
+  "goal_box_kind_quick_explanation": "54e5ccc11912cf087dc9d0dff68ca2f3d7a43a7c77df9bc6ed3c0f95237da13f",
+  "goal_box_kind_topic": "1812bd24563c83bba302b37177ea0e52d18ee14161bd377a0ad495bda1368eca",
+  "goal_box_label": "a9bd967f71fb9ca99ebd2cd570067c2117c69d021ef585e3668995065470fc68",
+  "goal_box_placeholder": "50e1c80e5158e2a16039d4185dcd3fa3cd45a768bae325ee1a8d3b49f425705a",
+  "goal_box_submit": "95008618e8a86fa9342107fd4e4d9fdca5d9f0e4822540766787eef34265791e",
+  "goal_box_write_first": "7b1695134fb342168dac07b105a41106b4fde8c6024b2db79ff261a03641acee"
+}
+-->
+<resources>
+    <string name="goal_box_label">Ich möchte</string>
+    <!-- Example in the empty goal box. Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the PAU in Spanish, the bac in French, the Abitur in German. %1$s is a language name. -->
+    <string name="goal_box_placeholder">das Abitur bestehen, %1$s sprechen …</string>
+    <string name="goal_box_submit">Meinen Plan erstellen</string>
+    <string name="goal_box_write_first">Schreib zuerst dein Ziel in eigenen Worten in das Feld.</string>
+    <string name="goal_box_examples">Beispiele</string>
+    <!-- Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the PAU in Spanish, the bac in French, the Abitur in German. -->
+    <string name="goal_box_example_exam">Das Abitur bestehen</string>
+    <!-- %1$s is a language name. -->
+    <string name="goal_box_example_language">Für ein Vorstellungsgespräch %1$s sprechen</string>
+    <string name="goal_box_example_topic">Quantenphysik verstehen</string>
+    <string name="goal_box_example_music">Musik von Grund auf lernen</string>
+    <string name="goal_box_example_explanation">Wie funktioniert Inflation?</string>
+    <string name="goal_box_kind_exam">Prüfung</string>
+    <string name="goal_box_kind_language">Sprache</string>
+    <string name="goal_box_kind_topic">Ein Thema lernen</string>
+    <string name="goal_box_kind_music">Musik</string>
+    <!-- %1$s is a duration, like "5 min". -->
+    <string name="goal_box_kind_quick_explanation">Kurze Erklärung · %1$s</string>
+</resources>

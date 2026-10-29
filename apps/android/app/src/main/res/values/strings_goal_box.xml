@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="goal_box_label">I want to</string>
+    <!-- Example in the empty goal box. Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the PAU in Spanish, the bac in French, the Abitur in German. %1$s is a language name. -->
+    <string name="goal_box_placeholder">pass the SAT, speak %1$s…</string>
+    <string name="goal_box_submit">Build my plan</string>
+    <string name="goal_box_write_first">Write your goal in the box first, in your own words.</string>
+    <string name="goal_box_examples">Examples</string>
+    <!-- Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the PAU in Spanish, the bac in French, the Abitur in German. -->
+    <string name="goal_box_example_exam">Pass the SAT</string>
+    <!-- %1$s is a language name. -->
+    <string name="goal_box_example_language">Speak %1$s for a job interview</string>
+    <string name="goal_box_example_topic">Understand quantum physics</string>
+    <string name="goal_box_example_music">Learn music from scratch</string>
+    <string name="goal_box_example_explanation">How does inflation work?</string>
+    <string name="goal_box_kind_exam">Exam</string>
+    <string name="goal_box_kind_language">Language</string>
+    <string name="goal_box_kind_topic">Learn a topic</string>
+    <string name="goal_box_kind_music">Music</string>
+    <!-- %1$s is a duration, like "5 min". -->
+    <string name="goal_box_kind_quick_explanation">Quick explanation · %1$s</string>
+</resources>

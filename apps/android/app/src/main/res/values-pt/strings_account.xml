@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "account_privacy": "c8104d7487b6459b9ca4934f0e9649f104cecdd73eb2dfd6dd654f9e0964bc61",
+  "account_terms": "4b8ae467ffd16f23667e44a4e07099b41ba94714ce25bfee3e8d1465c820af31",
+  "account_welcome_description": "eab1298241df0ef5449972b2635735790a0a1e4ce29e36d586be1786832265fa",
+  "account_welcome_have_account": "580b3e4338aa49fff7548a458668247f3d23205950b1e8b93bc5ec958f58b6bc",
+  "account_welcome_note": "0ee5d38619eff618d307db56397016c7ab9a9cbd3a4c2d096adf8d7bda4390f0",
+  "account_welcome_title": "9be25913eab7427a6a1e8897dd337020e3f587de5743fa04ed9a79bbc326feec"
+}
+-->
+<resources>
+    <string name="account_welcome_title">Saiba o que estudar todos os dias até o grande dia.</string>
+    <string name="account_welcome_description">Conte ao Zoonk sua meta e a data. Seu plano se adapta à sua rotina e muda se você perder um dia.</string>
+    <string name="account_welcome_note">Comece de graça, sem precisar criar uma conta.</string>
+    <string name="account_welcome_have_account">Já tem uma conta?</string>
+    <string name="account_terms">Termos de Serviço</string>
+    <string name="account_privacy">Política de Privacidade</string>
+</resources>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "goal_box_example_exam": "f73428bc68b7d8d931b93335bc1bc71178490e2e260efa22c5927c04497b956d",
+  "goal_box_example_explanation": "024d3f8bce9225c60c7e54ec3dc7b55e33a4f4f2e5fb120242ab45d17b4e2870",
+  "goal_box_example_language": "e8280b7b9816a1cf2622d8d511904a38429d01b8d5f5d54eb4fb73e94e9bfa6e",
+  "goal_box_example_music": "664caa9bcfbe6c40880a84a666e3b4e414463773d93fcf3b96f0396a56e81de4",
+  "goal_box_example_topic": "58481e4633ca8dddffb547b8defa53195ba6da83ce7786b8d1a25e419fd3fad7",
+  "goal_box_examples": "fdaaf4f7bb08d030c8e664af4e01f8cb1836f8a141c25eed44519c53d06c669b",
+  "goal_box_kind_exam": "2f52ec2b472c7c48e724f9d23ace0a1293e3b4904a8ccb16e5fa19406ad9b4c5",
+  "goal_box_kind_language": "3cb3b6b288bcafea9ad455cd9b97656bed40489243be8f51a38ae464f6052e18",
+  "goal_box_kind_music": "2186a7b80a6bedab57d63c27aae2f09b86dcf90e52f7af3f5068df7e7053af28",
+  "goal_box_kind_quick_explanation": "3209a67dbe0c281b5ed224f914edc64b4e5c3b37ff6de25451fc62389700276b",
+  "goal_box_kind_topic": "26e9883b3c35b727e270186c77f6ebc0b9f7dde57666afd74726965b51406fd1",
+  "goal_box_label": "c654353d563a003fa33ce6763f2edd31c2d2d15760e666b58019b7f63c93d5a5",
+  "goal_box_placeholder": "b3c159be363bcae64d4705282f2f79f9b48ae4ab49c6cd34dd17541c8aee75de",
+  "goal_box_submit": "d4e4f5bf4b04d4b5ca92de68a4ea151cd62e005764c1f5431ff236c912ba569d",
+  "goal_box_write_first": "671e03c2d5d123f88416d7983dcc8b1bc8c920f47c9b2b1eaa85a4511f8fc2b7"
+}
+-->
+<resources>
+    <string name="goal_box_label">Quero</string>
+    <!-- Example in the empty goal box. Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the PAU in Spanish, the bac in French, the Abitur in German. %1$s is a language name. -->
+    <string name="goal_box_placeholder">passar no Enem, falar %1$s…</string>
+    <string name="goal_box_submit">Montar meu plano</string>
+    <string name="goal_box_write_first">Escreva sua meta no campo primeiro, com suas próprias palavras.</string>
+    <string name="goal_box_examples">Exemplos</string>
+    <!-- Name the main national exam where the language is spoken, with its own article: the SAT in English, the ENEM in Portuguese, the PAU in Spanish, the bac in French, the Abitur in German. -->
+    <string name="goal_box_example_exam">Passar no Enem</string>
+    <!-- %1$s is a language name. -->
+    <string name="goal_box_example_language">Falar %1$s em uma entrevista de emprego</string>
+    <string name="goal_box_example_topic">Entender física quântica</string>
+    <string name="goal_box_example_music">Aprender música do zero</string>
+    <string name="goal_box_example_explanation">Como funciona a inflação?</string>
+    <string name="goal_box_kind_exam">Prova</string>
+    <string name="goal_box_kind_language">Idioma</string>
+    <string name="goal_box_kind_topic">Aprender um tópico</string>
+    <string name="goal_box_kind_music">Música</string>
+    <!-- %1$s is a duration, like "5 min". -->
+    <string name="goal_box_kind_quick_explanation">Explicação rápida · %1$s</string>
+</resources>

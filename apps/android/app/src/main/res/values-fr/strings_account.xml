@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "account_privacy": "3f566edd1364147870d3c99ab5d192aa57cbcd4160ef65a6f40643471f861ff5",
+  "account_terms": "0329ec0a77e81b512cd5263601d02ad577e0efd1c92421826094b1d8809f28c1",
+  "account_welcome_description": "668fa2f47330ddfce048fafc111e2f1781db67919683922330cb1c298ad79aaa",
+  "account_welcome_have_account": "ae231d70aa165edcdf6d2253cf77fa47d627b880ca5bea90959f55bdeac2ec9f",
+  "account_welcome_note": "c1d520efc059f827dedd7f8dcd1338e9a34a594c53adf69ae2f668b0ed5d1ef7",
+  "account_welcome_title": "e2a60015ee7f3018e2dc2d99cb14069d44083101a2ff0d098f440ebb43e6cf93"
+}
+-->
+<resources>
+    <string name="account_welcome_title">Sache quoi étudier chaque jour jusqu’au grand jour.</string>
+    <string name="account_welcome_description">Indique ton objectif et ta date à Zoonk. Ton plan s’adapte à ton emploi du temps et se réajuste si tu manques une journée.</string>
+    <string name="account_welcome_note">Commence gratuitement, sans créer de compte.</string>
+    <string name="account_welcome_have_account">Tu as déjà un compte ?</string>
+    <string name="account_terms">Conditions d’utilisation</string>
+    <string name="account_privacy">Politique de confidentialité</string>
+</resources>
