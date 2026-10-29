@@ -68,7 +68,11 @@ class AccountStore(
         name: String,
         username: String,
     ): AccountFailure? {
-        val result = cache.mutate(invalidating = setOf(DataDomain.UserSession)) { session -> session to api.updateProfile(session, name, username) }
+        val result =
+            cache.mutate(invalidating = setOf(DataDomain.UserSession)) { session ->
+                session to
+                    api.updateProfile(session, name, username)
+            }
         return when (result) {
             is MutationResult.Done -> {
                 val (session, account) = result.value

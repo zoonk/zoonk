@@ -30,7 +30,7 @@
   "memory_undo": "f6fed7b03ff129d6aa30bb0969d2597790c4ea0b3b9fe83b75f7a1c0d7c56c35",
   "memory_undo_failed": "0f1cfc90bc4891a11b6d098efad03be8f05b4728cd8cdff931071b275763af3b",
   "memory_updated": "90149d2e4e904ce504bd6460c2306a0845ca23caaebbc3f263576fdd439dfafd",
-  "memory_updated_more": "e67e158152f72dbcc588a08b5ce32f33792315feef7dfae7cc642f2ced4b4b87",
+  "memory_updated_more": "d4668c16e486d73606dbba8f0e765bcec051b87456057ee185276aaed5e5fb4a",
   "memory_use": "890bee8558d85af0306318b362f7ea3f2c74f93c3cc004c1e8d21e83368b7f35",
   "memory_use_off": "4267053d36580d0198e538b2e26efa8fa2b65b9ab4f3fb4e2d860ef5a1ed1431",
   "memory_use_on": "f6d373651c2c4de673e2dfb5ae9ea1dbeabcedb4016576734989a0c23c89ec3b"
@@ -70,6 +70,7 @@
     <string name="memory_updated">Memoria actualizada:</string>
     <plurals name="memory_updated_more">
         <item quantity="one">y %d más</item>
+        <item quantity="many">y %d más</item>
         <item quantity="other">y %d más</item>
     </plurals>
     <string name="memory_undo">Deshacer</string>

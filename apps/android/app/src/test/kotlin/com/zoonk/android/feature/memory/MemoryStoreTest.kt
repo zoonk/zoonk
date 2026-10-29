@@ -124,12 +124,20 @@ class MemoryStoreTest {
 
             val deletion = async { store.deleteFact(FACT_ID) }
             runCurrent()
-            assertTrue(store.memory.state.value.value!!.facts.isEmpty())
+            assertTrue(
+                store.memory.state.value.value!!
+                    .facts
+                    .isEmpty(),
+            )
 
             api.gate!!.complete(Unit)
             assertEquals(FACT_ID, deletion.await()?.previous?.id)
             advanceUntilIdle()
-            assertTrue(store.memory.state.value.value!!.facts.isEmpty())
+            assertTrue(
+                store.memory.state.value.value!!
+                    .facts
+                    .isEmpty(),
+            )
             assertEquals(1, api.reads)
         }
 
@@ -142,8 +150,15 @@ class MemoryStoreTest {
             assertFalse(store.setEnabled(false))
             advanceUntilIdle()
 
-            assertTrue(store.memory.state.value.value!!.enabled)
-            assertEquals(1, store.memory.state.value.value!!.facts.size)
+            assertTrue(
+                store.memory.state.value.value!!
+                    .enabled,
+            )
+            assertEquals(
+                1,
+                store.memory.state.value.value!!
+                    .facts.size,
+            )
         }
 
     @Test
@@ -154,7 +169,10 @@ class MemoryStoreTest {
             assertTrue(store.setEnabled(false))
             advanceUntilIdle()
 
-            assertFalse(store.memory.state.value.value!!.enabled)
+            assertFalse(
+                store.memory.state.value.value!!
+                    .enabled,
+            )
             assertEquals(1, api.reads)
         }
 }

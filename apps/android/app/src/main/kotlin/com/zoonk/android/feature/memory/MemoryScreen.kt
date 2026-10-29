@@ -127,7 +127,11 @@ private fun Loaded(
         rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri ->
             if (uri != null) screen.export { context.contentResolver.openOutputStream(uri) }
         }
-    val groups = MemoryCategory.entries.map { category -> category to memory.facts.filter { it.category == category } }.filter { it.second.isNotEmpty() }
+    val groups =
+        MemoryCategory.entries
+            .map { category ->
+                category to memory.facts.filter { it.category == category }
+            }.filter { it.second.isNotEmpty() }
 
     OutlinedCard(Modifier.fillMaxWidth()) {
         ListItem(
@@ -225,7 +229,10 @@ private fun FactRow(
         trailingContent = {
             Box {
                 IconButton(onClick = { isMenuOpen = true }) {
-                    Icon(painterResource(R.drawable.ic_more_vert), contentDescription = stringResource(R.string.memory_fact_options, fact.statement))
+                    Icon(
+                        painterResource(R.drawable.ic_more_vert),
+                        contentDescription = stringResource(R.string.memory_fact_options, fact.statement),
+                    )
                 }
                 DropdownMenu(expanded = isMenuOpen, onDismissRequest = { isMenuOpen = false }) {
                     DropdownMenuItem(
@@ -325,8 +332,15 @@ private fun sourceName(fact: MemoryFact): String =
 @Composable
 private fun factDate(fact: MemoryFact): String =
     DateTimeFormatter
-        .ofPattern(android.text.format.DateFormat.getBestDateTimePattern(currentLocale(), "MMMd"), currentLocale())
-        .format(java.time.Instant.ofEpochMilli(fact.createdAt.toEpochMilliseconds()).atZone(ZoneId.systemDefault()))
+        .ofPattern(
+            android.text.format.DateFormat
+                .getBestDateTimePattern(currentLocale(), "MMMd"),
+            currentLocale(),
+        ).format(
+            java.time.Instant
+                .ofEpochMilli(fact.createdAt.toEpochMilliseconds())
+                .atZone(ZoneId.systemDefault()),
+        )
 
 /** Core's `MAX_MEMORY_STATEMENT_LENGTH`. */
 private const val MAX_STATEMENT_LENGTH = 160

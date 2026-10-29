@@ -39,7 +39,13 @@ class MemoryViewModel(
     fun deleteFact(id: UUID) =
         save {
             val change = store.deleteFact(id) ?: return@save false
-            lastChange = MemoryChangeShown(factId = null, statement = null, previousFactId = change.previous.id, previousStatement = change.previous.statement)
+            lastChange =
+                MemoryChangeShown(
+                    factId = null,
+                    statement = null,
+                    previousFactId = change.previous.id,
+                    previousStatement = change.previous.statement,
+                )
             true
         }
 

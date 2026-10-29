@@ -30,7 +30,7 @@
   "memory_undo": "974e13c3fd62cc2a0111f005731fc8f166d33af65a00907b7387c7b1cec12807",
   "memory_undo_failed": "597a1efdcb7e2fdb0612a5ca5bc08d1085083a10c65a1d0a7549b99a1366cfee",
   "memory_updated": "1806c4632943665e0ee90d1352cad6e5f3205e777f7fe65f66a1cf38a1ee850d",
-  "memory_updated_more": "d139b86e1b1e489830e61267ca1db617640a9822c9101c3d243c1eb92b836b17",
+  "memory_updated_more": "2914d54b079390bc8bc38f7c1bfa85a256ff3261910d35c4043e44a827afdd51",
   "memory_use": "1243783609b6dcae5fd006a871c8e7d54c34286909170b1f0f1710c543b5f35b",
   "memory_use_off": "1c5398628f1cc7001500dada7c75016a766f9a7db1503d157bd690f9a18ade7b",
   "memory_use_on": "8e262484e946861d62988d7395e89afc3ef0a6cbf2663ae9b6ce134b86589330"
@@ -70,6 +70,7 @@
     <string name="memory_updated">Memória atualizada:</string>
     <plurals name="memory_updated_more">
         <item quantity="one">e mais %d</item>
+        <item quantity="many">e mais %d</item>
         <item quantity="other">e mais %d</item>
     </plurals>
     <string name="memory_undo">Desfazer</string>

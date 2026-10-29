@@ -80,7 +80,8 @@ class LiveMemoryApi(
         return true
     }
 
-    override suspend fun export(session: AuthenticatedSession): MemoryExport = perform { api.clients(session).memory.exportCurrentUserMemory() }
+    override suspend fun export(session: AuthenticatedSession): MemoryExport =
+        perform { api.clients(session).memory.exportCurrentUserMemory() }
 }
 
 /**
@@ -117,8 +118,15 @@ class MemoryStore(
 
     suspend fun export(): String? =
         when (val result = cache.mutate { session -> api.export(session) }) {
-            is MutationResult.Done -> withContext(Dispatchers.Default) { ExportJson.encodeToString(MemoryExport.serializer(), result.value) }
-            else -> null
+            is MutationResult.Done -> {
+                withContext(
+                    Dispatchers.Default,
+                ) { ExportJson.encodeToString(MemoryExport.serializer(), result.value) }
+            }
+
+            else -> {
+                null
+            }
         }
 
     /** Shows [optimistic] at once and keeps it once saved; puts the old memory back only when the write failed. */
@@ -131,7 +139,12 @@ class MemoryStore(
         val result =
             cache.mutate(
                 invalidating = setOf(DataDomain.Memory),
-                replacing = { listOfNotNull(memory.state.value.value?.let(memory::replacing)) },
+                replacing = {
+                    listOfNotNull(
+                        memory.state.value.value
+                            ?.let(memory::replacing),
+                    )
+                },
                 write = write,
             )
         if (result is MutationResult.Failed && before != null) memory.update { before }

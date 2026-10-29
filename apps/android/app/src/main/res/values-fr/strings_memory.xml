@@ -30,7 +30,7 @@
   "memory_undo": "ba0a54a1660b3be8b6a4ab9c9fa7f4c94ffb64e89b1d34496b71ef3509befbe3",
   "memory_undo_failed": "7c1668694f0a5f1d27c3b80251a7abf55f89b7146ef57368094b5dfdd4d0d037",
   "memory_updated": "c10493b342954890cce0fd7eea07b0624614223df9258578fa37d74c4bec3fa8",
-  "memory_updated_more": "e70ee05dfbb6416bc7e6281d65f58cbff10675e0e3a0165a4760b4304f56c467",
+  "memory_updated_more": "b5a4094a02aad5eaf2b8efe88936923b96cfbb065809f5008d7574fb649dcc60",
   "memory_use": "e5b19a9d5cb2dbc6f7131e4d67fd95bde7555d36def25376ba9433c9817f8a41",
   "memory_use_off": "da0ac40249547360c6d7662bbcd3abfd936fb1f158ad68c21df472cf5206ddd3",
   "memory_use_on": "917523527739d1e063007c2d1206fdc82e57e9b9307bb383ffff08a776347b9c"
@@ -70,6 +70,7 @@
     <string name="memory_updated">Mémoire mise à jour :</string>
     <plurals name="memory_updated_more">
         <item quantity="one">et %d autre</item>
+        <item quantity="many">et %d autres</item>
         <item quantity="other">et %d autres</item>
     </plurals>
     <string name="memory_undo">Annuler</string>

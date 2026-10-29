@@ -80,7 +80,9 @@ fun MemoryUpdated(
 
                     false -> {
                         buildAnnotatedString {
-                            withStyle(SpanStyle(color = MaterialTheme.colorScheme.error)) { append(stringResource(R.string.memory_undo_failed)) }
+                            withStyle(
+                                SpanStyle(color = MaterialTheme.colorScheme.error),
+                            ) { append(stringResource(R.string.memory_undo_failed)) }
                         }
                     }
 
