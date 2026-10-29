@@ -7,6 +7,13 @@
         "$TURBO_ROOT$/packages/utils/src/locale.ts",
         "$TURBO_ROOT$/packages/i18n/src/define-eloqnt-config.ts"
       ]
+    },
+    "test": {
+      "inputs": [
+        "$TURBO_EXTENDS$",
+        "$TURBO_ROOT$/packages/player/src/activities/**",
+        "$TURBO_ROOT$/packages/core/src/library/activities/**"
+      ]
     }
   }
 }

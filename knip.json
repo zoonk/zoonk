@@ -17,7 +17,7 @@
   "workspaces": {
     ".": { "entry": ["scripts/worktree/claude-create.mts"], "project": ["scripts/**/*.mts"] },
     "apps/android": {
-      "entry": [".eloqnt/config.ts", ".eloqnt/android-xml.ts"],
+      "entry": [".eloqnt/config.ts", ".eloqnt/android-xml.ts", "scripts/sandbox/sandbox-page.mts"],
       "project": [".eloqnt/**/*.ts", "scripts/**/*.mts", "!scripts/run-emulator.mts"]
     },
     "apps/apple": {
