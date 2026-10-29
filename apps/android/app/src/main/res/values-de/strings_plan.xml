@@ -269,8 +269,6 @@
   "plan_focus_includes": "75fadde81d0b4240b92fbffedcb506de212f39ecf7e96e026bfed5812eb0aea3",
   "plan_focus_on_these": "338283b4d1f1581e482b568da54e16e2123bf9d15924f6f9c6776202912f90da",
   "plan_focus_only": "021973b613c87e47147675868a8b71c7e9d5ac259745cefa58c40eaf33ddbb70",
-  "plan_free_week_over_body": "478cc8cf280e8aaf6467818fd265d2fb4cc5e15ba9ad40a189512f7ddb9daf7b",
-  "plan_free_week_over_title": "a31fae5a9e73c5fbfed06593e498cbdcac1b327e28d4ce299df89d824fd5bee9",
   "plan_fridays": "a73f8ddb2136c00c4f9eb9205aafd0d0e624f362a844d26dc551645e6b9b8ced",
   "plan_full_course": "83f6f7eb23a04ae784c3a70aaf718b7f1538dd7a9884428b83a5cc423ef10a16",
   "plan_full_course_off": "1f2f22ceacc2b2be7edbd2e05bd7a00f8c8f5049a2f3457692a778768ef32ece",
@@ -422,7 +420,6 @@
   "plan_score_percent": "549d7473d84de9bb35618f31d0c0cce36b2b2905603076d05699dc180aa86d2d",
   "plan_score_percent_range": "0af58cd17b0a9b65a2de7c49ce2ebd60550a9e8e35a59fc32283ded511cfa4ec",
   "plan_score_range": "ff14ce8f5b0765ea90618776915ac37d3a163ffaefef6eadec5d9e7d2e1908ba",
-  "plan_see_plus": "30a8f47fd408e54e712d21a1c1c2141f113784eaba41e1a183d1ca5fb0b9f8c7",
   "plan_setup_left_description": "4ffe96c5e1da8691cce583fed189007e536e4dfe9323d617ee9cb9dc17b8b688",
   "plan_setup_left_title": "e72d961b3f386aec4123e99cbcc4a720e054d1a1ae97a64e5e2edb81aa6c38e6",
   "plan_share": "76813c60f5b1c4c3a1f516c9750004fa2c1d7f930aba9d45c04c8e9a3a06355f",
@@ -1289,9 +1286,6 @@
     <string name="plan_catch_up">Ein bisschen aufzuholen</string>
     <string name="plan_adjust">Anpassen</string>
     <string name="plan_go_to_today">Zu Heute</string>
-    <string name="plan_see_plus">Plus ansehen</string>
-    <string name="plan_free_week_over_title">Deine kostenlose Woche zur Prüfungsvorbereitung ist vorbei</string>
-    <string name="plan_free_week_over_body">Wiederholen und Fehler korrigieren bleibt kostenlos. Mit Plus bekommst du Zugriff auf neue Lektionen, den Rest deines Plans und Probeprüfungen.</string>
     <string name="plan_suggestion">Planvorschlag</string>
     <string name="plan_updated">Plan aktualisiert</string>
     <string name="plan_updated_sentence">Dein Plan wurde aktualisiert.</string>

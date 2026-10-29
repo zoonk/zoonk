@@ -485,19 +485,19 @@ private fun FreeWeekSuggestion(
     layout: SuggestionLayout,
     links: PlanLinks,
 ) {
-    val title = stringResource(R.string.plan_free_week_over_title)
+    val title = stringResource(R.string.subscription_free_week_over_title)
 
     Suggestion(
         label = title,
         summary = title,
         layout = layout,
         mark = SuggestionMark.Symbol(R.drawable.ic_auto_awesome),
-        lineAction = { SuggestionAction(stringResource(R.string.plan_see_plus), onClick = links::plus) },
+        lineAction = { SuggestionAction(stringResource(R.string.subscription_see_plus), onClick = links::plus) },
     ) {
         SuggestionHeader(title)
-        SuggestionDescription(stringResource(R.string.plan_free_week_over_body))
+        SuggestionDescription(stringResource(R.string.subscription_free_week_over_description))
         SuggestionActions {
-            SuggestionAction(stringResource(R.string.plan_see_plus), onClick = {
+            SuggestionAction(stringResource(R.string.subscription_see_plus), onClick = {
                 close()
                 links.plus()
             })

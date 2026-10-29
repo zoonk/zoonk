@@ -269,8 +269,6 @@
   "plan_focus_includes": "d0f022780598b9984f866c7e168346eddf73737d04b3bb59b20599eee5aaf042",
   "plan_focus_on_these": "71bba09c45ec4485bb4938dae4509de75f357a0a5dd8551041a8f1f165ba773d",
   "plan_focus_only": "ca37d620f6bf7a2983a71a9f464d1e808a2aa99278b6cd6dde1ee5ecdac38180",
-  "plan_free_week_over_body": "d4d99cac74767124305e1a37ff0db7a90b0e636d8a13ff10e733d8d2583d3ff3",
-  "plan_free_week_over_title": "758276fd4ca507fdf59f73eebef06facd339a5ca60ca71d17f206c02483fc604",
   "plan_fridays": "fbc8fe30a5f764e8ce9ab801e84449ba75ad090cc698c7f083dbaedb71ace6b8",
   "plan_full_course": "4eed2bbba60b7d4344863bf97cd9cfc000e1fd0d45f420634dafe627e57a2660",
   "plan_full_course_off": "acbe58071a629a49710f39646aa427f1217be95ec09f6b74b2e7f2b8e359a57a",
@@ -422,7 +420,6 @@
   "plan_score_percent": "250574ebbf99bcb1e6b67bbada7041cb6bf40863be560cdda83ed69480494700",
   "plan_score_percent_range": "f6c1c41de239050ee04993df2578f7634dedc420f7760bac8a91bc4f1dae6a05",
   "plan_score_range": "cc1104e3f0c1ed419d3972d96845f916d2dbf696e31be771041f3383bb6dff82",
-  "plan_see_plus": "5c6c17e4c52ee47f5b234a2d57d162846ca238ef8f9820ec15acbdd82bfa4872",
   "plan_setup_left_description": "ba09c3e7b3f7fcba2994eba15610615f2c2f4ff96b145b515467a4a487582859",
   "plan_setup_left_title": "12f989b54dde6d859910555ba3eee273172b149d86c9a3fbc482698df66a1389",
   "plan_share": "309d9fd74bdae664f9584ed086455a1c0ce894920187d2666bf8150e42bac5a4",
@@ -1369,9 +1366,6 @@
     <string name="plan_catch_up">Um pouco para colocar em dia</string>
     <string name="plan_adjust">Ajustar</string>
     <string name="plan_go_to_today">Ir para Hoje</string>
-    <string name="plan_see_plus">Conheça o Plus</string>
-    <string name="plan_free_week_over_title">Sua semana grátis de preparação para a prova acabou</string>
-    <string name="plan_free_week_over_body">Revisar e corrigir seus erros continua grátis. O Plus libera novas aulas, o restante do seu plano e simulados.</string>
     <string name="plan_suggestion">Sugestão de plano</string>
     <string name="plan_updated">Plano atualizado</string>
     <string name="plan_updated_sentence">Seu plano foi atualizado.</string>

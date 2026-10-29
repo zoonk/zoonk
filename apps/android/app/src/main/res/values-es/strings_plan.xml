@@ -269,8 +269,6 @@
   "plan_focus_includes": "6aa8972ef920ccbf73e7aab2940bef14f949f9d8899c5a09b41cb24082a0ada2",
   "plan_focus_on_these": "65da4954094ef6b5815b5a5612abaec72bbea0fb719ae1df7111cbed569794d4",
   "plan_focus_only": "5fefa1bf8577518b89fd8ee26b163611f7597dd49161a982afa71b7577fc6d92",
-  "plan_free_week_over_body": "5501f2f3b4cda3c43e42f329dec406c0b227edfb77036556bb9001ca65a01533",
-  "plan_free_week_over_title": "213a6a3edc19cbbcd8ba30317b8c4902759f58d3c0b49dbe5a8039321e82ef71",
   "plan_fridays": "9031e94a99af12a5b5ca568f0967808a5b39dfc5019a97d6e62ab6932e1bcda1",
   "plan_full_course": "f17cc996d2d2d708bdd47add7da72e74410087dd8797f26e7f549e3b8bfb8672",
   "plan_full_course_off": "073ea19c4435e7d3768256ac5fc808219d1ae443cc765a3998a25818d6637e1d",
@@ -422,7 +420,6 @@
   "plan_score_percent": "2ecf9425ecee7c0c39c8429d4c4f8c55020e86cb8759647172d717e37a140697",
   "plan_score_percent_range": "61590d6afd8e96f7b9befb998d5c933f61fabced0e405222ad1e17ab0e3d77fd",
   "plan_score_range": "7720a49e6b24b95a468b09b79bf17264c1cd3d45ed926317b6efe10e9f7d905a",
-  "plan_see_plus": "3715e54a972cf074460eb69ae13eda4efcdcc0d918642a496169c0940ee5d705",
   "plan_setup_left_description": "e0728783426c90a08fba8e432182476f9973cbf048a7a43e5c378ce10fe91f3c",
   "plan_setup_left_title": "c005183917313cc0c26fc08c3cadb27af968de48cd7b703cf8562c599b96c272",
   "plan_share": "05795ba164e3af1029870f13857308e25048b0632a2935c76410399b0da9f872",
@@ -1369,9 +1366,6 @@
     <string name="plan_catch_up">Un poco para ponerte al día</string>
     <string name="plan_adjust">Ajustar</string>
     <string name="plan_go_to_today">Ir a Hoy</string>
-    <string name="plan_see_plus">Ver Plus</string>
-    <string name="plan_free_week_over_title">Se ha acabado tu semana gratis de preparación de exámenes</string>
-    <string name="plan_free_week_over_body">Los repasos y corregir tus errores siguen siendo gratis. Plus te da acceso a nuevas lecciones, al resto de tu plan y a simulacros de examen.</string>
     <string name="plan_suggestion">Sugerencia para el plan</string>
     <string name="plan_updated">Plan actualizado</string>
     <string name="plan_updated_sentence">Tu plan está actualizado.</string>
