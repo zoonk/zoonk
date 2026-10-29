@@ -340,7 +340,7 @@ private struct CheckpointResultView: View {
     } else {
       PracticeTaskLayout {
         if checkpoint.endedWithoutQuestions == true {
-          PracticeResultHeader(
+          PracticeResultTitle(
             title: LocalizedStringResource(
               "The questions were removed", table: "Practice",
               comment: "A checkpoint ended without questions."),
@@ -355,10 +355,14 @@ private struct CheckpointResultView: View {
               .frame(width: 112, height: 112)
           }
 
-          PracticeResultHeader(
+          PracticeResultTitle(
             title: CheckpointCopy.resultTitle(kind: checkpoint.kind, passed: passed),
             detail: CheckpointCopy.resultDetail(
-              kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons),
+              kind: checkpoint.kind, passed: passed, lessons: state.reinforcementLessons))
+        }
+      } response: {
+        if checkpoint.endedWithoutQuestions != true {
+          PracticeResultNumbers(
             correct: correct, total: total,
             // A win's Brain Power is its rewards' first row, as on main.
             brainPower: passed ? 0 : state.completion?.ownBrainPower ?? 0,

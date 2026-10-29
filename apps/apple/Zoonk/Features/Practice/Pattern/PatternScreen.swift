@@ -102,7 +102,7 @@ struct PatternScreen: View {
           ceremony(milestone) { ceremonyClosed = true }
         } else {
           PracticeTaskLayout {
-            PracticeResultHeader(
+            PracticeResultTitle(
               title: LocalizedStringResource(
                 "Practice done", table: "Practice", comment: "End of a practice run."),
               detail: result.correct == result.total
@@ -112,7 +112,9 @@ struct PatternScreen: View {
                 : LocalizedStringResource(
                   "Knowing the rule is the first step. It gets easier each time you use it.",
                   table: "Practice",
-                  comment: "End of a pattern drill with misses."),
+                  comment: "End of a pattern drill with misses."))
+          } response: {
+            PracticeResultNumbers(
               correct: result.correct, total: result.total, brainPower: result.brainPower,
               reached: PracticeReached(
                 energy: result.reached.energy,

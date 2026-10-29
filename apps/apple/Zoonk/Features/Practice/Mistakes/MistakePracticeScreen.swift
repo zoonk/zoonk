@@ -370,13 +370,15 @@ private struct PracticeDoneView: View {
       ceremony(milestone.value1) { ceremonyClosed = true }
     } else {
       PracticeTaskLayout {
-        PracticeResultHeader(
+        PracticeResultTitle(
           title: LocalizedStringResource(
             "Practice done", table: "Practice", comment: "End of a practice run."),
           detail: comesBack
             ? LocalizedStringResource(
               "The rest come back another day, when they stick better.", table: "Practice",
-              comment: "End of a mistakes practice run with a miss.") : nil,
+              comment: "End of a mistakes practice run with a miss.") : nil)
+      } response: {
+        PracticeResultNumbers(
           correct: summary?.correct, total: summary?.total, brainPower: summary?.brainPower ?? 0,
           facts: fixed > 0
             ? [

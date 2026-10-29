@@ -96,13 +96,15 @@ struct TestOutScreen: View {
 
   private func resultView(_ result: Components.Schemas.ChapterTestOutResult) -> some View {
     PracticeTaskLayout {
-      PracticeResultHeader(
+      PracticeResultTitle(
         title: result.passed
           ? LocalizedStringResource(
             "You already know this", table: "Practice", comment: "A passed test-out's result.")
           : LocalizedStringResource(
             "Not yet, and that's fine", table: "Practice", comment: "A failed test-out's result."),
-        detail: resultDetail(result),
+        detail: resultDetail(result))
+    } response: {
+      PracticeResultNumbers(
         facts: [
           String(
             localized: "\(result.correct) of \(result.total) right", table: "Practice",

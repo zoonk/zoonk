@@ -48,7 +48,6 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   @Environment(\.practiceActionsHidden) private var actionsHidden
   private let segments: [PracticeSegment]?
   private let index: Int
-  private let spreads: Bool
   private let stimulus: () -> Stimulus
   private let response: () -> Response
   private let actions: () -> Actions
@@ -61,33 +60,20 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   ) {
     self.segments = segments
     self.index = index
-    spreads = true
     self.stimulus = stimulus
     self.response = response
     self.actions = actions
   }
 
   var body: some View {
-    Group {
-      if spreads {
-        QuestionSpread(readableWidth: PracticeLayout.readableWidth, spacing: 20) {
-          segmentsBar
-        } stimulus: {
-          stimulus()
-        } response: {
-          response()
-        } actions: {
-          actionsBar
-        }
-      } else {
-        QuestionColumn(readableWidth: PracticeLayout.readableWidth, spacing: 20) {
-          segmentsBar
-        } content: {
-          stimulus()
-        } actions: {
-          actionsBar
-        }
-      }
+    QuestionSpread(readableWidth: PracticeLayout.readableWidth, spacing: 20) {
+      segmentsBar
+    } stimulus: {
+      stimulus()
+    } response: {
+      response()
+    } actions: {
+      actionsBar
     }
     .background(Color(.systemGroupedBackground))
   }
@@ -115,18 +101,16 @@ struct PracticeTaskLayout<Stimulus: View, Response: View, Actions: View>: View {
   }
 }
 
+/// An intro or a note: it leads, and the trailing page keeps only the way on.
 extension PracticeTaskLayout where Response == EmptyView {
   init(
     segments: [PracticeSegment]? = nil, index: Int = 0,
     @ViewBuilder content: @escaping () -> Stimulus,
     @ViewBuilder actions: @escaping () -> Actions
   ) {
-    self.segments = segments
-    self.index = index
-    spreads = false
-    stimulus = content
-    response = { EmptyView() }
-    self.actions = actions
+    self.init(
+      segments: segments, index: index, stimulus: content, response: { EmptyView() },
+      actions: actions)
   }
 }
 
@@ -334,10 +318,23 @@ struct PracticeCloseButton: View {
   }
 }
 
-/// Readouts never say "+0".
-struct PracticeResultHeader: View {
+struct PracticeResultTitle: View {
   let title: LocalizedStringResource
   var detail: LocalizedStringResource?
+
+  var body: some View {
+    VStack(alignment: .leading, spacing: 6) {
+      Text(title).font(.largeTitle.bold())
+      if let detail {
+        Text(detail).foregroundStyle(.secondary)
+      }
+    }
+    .frame(maxWidth: .infinity, alignment: .leading)
+  }
+}
+
+/// Readouts never say "+0".
+struct PracticeResultNumbers: View {
   var correct: Int?
   var total: Int?
   var brainPower = 0
@@ -346,13 +343,6 @@ struct PracticeResultHeader: View {
 
   var body: some View {
     VStack(alignment: .leading, spacing: 16) {
-      VStack(alignment: .leading, spacing: 6) {
-        Text(title).font(.largeTitle.bold())
-        if let detail {
-          Text(detail).foregroundStyle(.secondary)
-        }
-      }
-
       HStack(spacing: 24) {
         if let correct, let total, total > 0 {
           Readout(

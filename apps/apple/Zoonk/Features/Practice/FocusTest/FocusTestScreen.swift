@@ -116,7 +116,7 @@ struct FocusTestScreen: View {
           .foregroundStyle(.secondary)
         }
       }
-
+    } response: {
       VStack(alignment: .leading, spacing: 12) {
         Text(
           "How you did", tableName: "Practice",

@@ -491,8 +491,10 @@ private struct BlockFinishedView: View {
 
   var body: some View {
     PracticeTaskLayout {
-      PracticeResultHeader(
-        title: title, correct: completion.correct, total: completion.total,
+      PracticeResultTitle(title: title)
+    } response: {
+      PracticeResultNumbers(
+        correct: completion.correct, total: completion.total,
         brainPower: completion.ownBrainPower,
         reached: PracticeReached(
           energy: completion.reached.energy,
