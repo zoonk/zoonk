@@ -29,6 +29,8 @@ import com.zoonk.android.feature.account.NoBotProof
 import com.zoonk.android.feature.audio.ExoAudioOutput
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
+import com.zoonk.android.feature.catalog.CatalogStore
+import com.zoonk.android.feature.catalog.LiveCatalogApi
 import com.zoonk.android.feature.explain.ExplainStore
 import com.zoonk.android.feature.explain.LiveExplainApi
 import com.zoonk.android.feature.feedback.FeedbackSender
@@ -172,6 +174,8 @@ class AppContainer private constructor(
         previewAccess?.let(::MutableStateFlow)
             ?: combine(sessions.state, learnerSummary.summary.state, ::learnerAccess)
                 .stateIn(scope, SharingStarted.Eagerly, LearnerAccess.Restoring)
+
+    val catalog = CatalogStore(LiveCatalogApi(api), cache)
 
     init {
         scope.launch { sessions.restore() }

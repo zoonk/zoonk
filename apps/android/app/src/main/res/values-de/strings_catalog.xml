@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "catalog_after_this_chapter": "a96c3feab3e9c7b552e9e9d3796c669fae43d9b0f2d836334f8d6d7d07ea54e7",
+  "catalog_all": "5aad467d5f0f3c0eb0f1a179816fd52179e3e7158cb3f0fac709953e247e7b4c",
+  "catalog_audience": "f15de7a32dfe9b769a4ce11b8b5ca7c9b39ab53d6593fa671a75e75360901ed6",
+  "catalog_build_plan": "7880239e86f95a7d573537d41c39b06a9d3a69f0c43c2bbf73ff9366e5f7eaf1",
+  "catalog_categories": "bb6b9d1a9e681cfaac348ab6beaf3685f1707aab57a0fe67341e300c3d0dd2ac",
+  "catalog_category_title": "eac9ced4cabf9eed8b002b64fcec38588181ef7688c4667d4e5842daac759818",
+  "catalog_chapter_closing": "b86636c490d8d191271c1d3837f529fc247b265df313e6ffe479b49e178e2a60",
+  "catalog_chapter_closing_steps": "1198ac57c27e5f67bbbb5c2ad8a0392be6847abf572fdad6f65a1ec2ecadfa16",
+  "catalog_chapter_heading": "921a80005ee06e2eefd85b80b005f8ad20d632c71c5e13df873f77082dd1980b",
+  "catalog_chapter_position": "230952a54f8f7b56846ce5c8970c80728763a0c9d12a3bf0cad4c9302d98741a",
+  "catalog_chapter_strip": "7a29e959a9d479dba8cb43806b98f79444a05b6b0288a546d9848bb1ab9c179d",
+  "catalog_chapter_week": "4f2fbd5b11f85eb43200e1f86f98a1e4fe445480047f3ab4eda5c1db73d6c3b5",
+  "catalog_chapter_writes_lessons": "c76cfa757ffad74deae379737245b9ae1e21c7e9dfeb3c26fa1e478f759bfa9b",
+  "catalog_chapters": "7f0069f64242e15286507937028eaec3cd3523b3716f38e95a8475a60a0fd1a5",
+  "catalog_chapters_left_out": "03be48ae51e9a5e04bc29b8c4c17c5dafdcccbc086ff830ee7625808f6aef615",
+  "catalog_check_note": "baa78c10a5687b4967204a833a4c26138178a673293249b05e9d22b5b86bfff5",
+  "catalog_closing_follows": "320d59f661180a1b02d1ab6c5d2d77cc138c8a1b552021debb88439eef4ee763",
+  "catalog_closing_start": "a79548f337d4491dedec08dadff52ef32aba84e80f60a3853874a468cfbacfe0",
+  "catalog_closing_steps": "30f77dc0f9eb89b7fb5ca48572dbcba3b8dbd85a5b85a004c61ab27018c7b07d",
+  "catalog_collapsed": "15a71c0ded8eeb7ecea0da5d79af4fc8783607592fb45d6c6a6e98bba979b612",
+  "catalog_continue_plan": "f7dad5fd62c2b234537a2fee6c1a770ffbd6959bb2c461de86c8bd28dd6ed19e",
+  "catalog_course_meta": "725965a719fdd5cdd9ec4376a4c4387cd55c6855970c5dd159724dee3562baa5",
+  "catalog_edition_notice": "9d79ec661a6d1fb5ddbfe8ebfdb967ca6bc45882e8253899bc1aa32d28b3259c",
+  "catalog_empty_description": "ad7260f9a0a39e63b90e0bb124579431440e97568ea2d7e30e5ab19f15278bed",
+  "catalog_empty_title": "04ebf5fb83d0b261dd03568c896f8b738da7bb725de67318f6b836a675b3471d",
+  "catalog_exam_around": "4f79d976be5d95fc9a35e0fdd0e4f0450f73997c783099b0468f6f1f0bc23d70",
+  "catalog_exam_around_today": "080de6fe89a60818641ef09c38328bcee9de6c9bc425a91f2e21ce8274bc3c74",
+  "catalog_exam_on": "54e6811cfc157052521fe25f1f7cb64ac9d2b31db8ba5cba61bd3d575a08cadf",
+  "catalog_exam_on_today": "1ef1ee7346e5dbececf2ab72ed20604e1a8a33c299f2d8cf9f100ec20b227f50",
+  "catalog_example_plan": "f2c89bfa5825b64a3f8d0ebe738fa33eb9bfe29e8f2968753e84323346157fca",
+  "catalog_expanded": "400e1765b11c3df7a70d095b2e9c3fc3d10f70a0755976faacef2196e5b9d84e",
+  "catalog_go_to_chapter": "f9294370e02bc5de97cfde1bd46935411d54cc6490a6ad45bed6cfa8c28af80e",
+  "catalog_guess_first": "b54f80a7750efb3eab40f4a7b1077536be67c42e2f180e8af5b02a3319b7ba3c",
+  "catalog_guess_note": "094489b31cf63d8fd4d508affb30fb7611b120eaa32db47992f30d0dc0f582e8",
+  "catalog_ideas": "06f008fa6ae9b9957df90c53ac17b44928212148ab5e9590d5ce7a8a67657980",
+  "catalog_left_out": "e6941b3bac1f880f7672c221e24de9180fb53fa4520af18a28904bfca4fd658a",
+  "catalog_lesson_minutes": "bb03192df8a6c620413d23a9248a3d355e9e3a2c7db542552a43094b2372720d",
+  "catalog_lesson_part_of": "adc86664b5bf9f7dfbb6211a3da071370b07dee0e6b9f6d5043d7a9e4dcc1150",
+  "catalog_lessons": "732d5abda6433336a1cf6bfe8c6cd6130f8e9e3e7d7dad440ae485bdf0322bbd",
+  "catalog_lessons_fit": "6581bc561a62a22315b4efeebf5f519011bff7dbcd27af1bbb80eb7fbccdb12d",
+  "catalog_lessons_in_plan": "effc81a3a9e86b7082fcd3ddd511e3baa503e27a1a0d4f2b2b8a927e3fa697e8",
+  "catalog_level_advanced": "013727510dac8c94643e9ae1a30c434040a91186c69db74bf697c150fdbf9809",
+  "catalog_level_beginner": "6486366063527541d6cf281ca3c653eb41066e05fef95ed84d833e3aead547c8",
+  "catalog_level_intermediate": "23a6820cfbe0f5130f072eacc5adddb39d59f87c931f91660f05bb41a0afd335",
+  "catalog_level_overview": "c26df01b2f68accaa40ce66d2e1fb9b1470878cce6609389350c7aa7fdbc4858",
+  "catalog_level_week": "1cbae22910fe494f3e25370f573c2f14e110d45139f20874fa5833f5fde2167a",
+  "catalog_level_weeks": "4bdd6132d58b9c2f7523fb11e1c671fd6168e72b403ae5473643fff701f77a4e",
+  "catalog_load_more_failed": "8505b3eae11eb5f77622c13e6f6bbdf21c702933792d93eea2e2497d923240de",
+  "catalog_loading_more": "3c8a25111c0418c43a93e2dae9ef7f85ed926ae9d2616523d264239740fa535e",
+  "catalog_no_sign_up": "92862e52e8b2b5212887c185e46cafb3d27734b9d02a2db85e88cfcd9341ffd8",
+  "catalog_not_found_description": "4a8de9a4c8d062f703df94051dbc40593e87c23274119076daefc4e94d2c876a",
+  "catalog_not_found_title": "357656eb1b94eacba67b2cf10bf93d1b1a6d8c13d20a28399ad7e05fda5cc29d",
+  "catalog_outcomes": "7345351920fe21df56034db3aa36c136ccea6339deaf493c6d1c48a6a62d9d48",
+  "catalog_outline": "b0fa802fd53918fc37d5ffec048f72bbc76d9389efd6fbc9fc70aca7e9fd3b8b",
+  "catalog_outline_plan_dated": "a998816b850f75fbe8eda972b959d38e6c5f9fa4d63d47943721d4429e0148a9",
+  "catalog_outline_plan_undated": "ae477d1652e33b31d3802dc2e41e62890ca62a92a738c9344bff782550602426",
+  "catalog_outline_unwritten": "9e6816dd7798a28ebe74d02c1edca9c4160c181e7ede38067861fcee8a592d76",
+  "catalog_plan_caption": "a2fd4297aca793cacac1dbc062d17c9e40d3e4995876460fa2fcb0625fbbdc7f",
+  "catalog_plan_dated_fitting": "b784f62c0ede6cfd09c9b6029a8b4bf53e3629e9e49f194c86019d4633afd43b",
+  "catalog_plan_dated_quick": "312a9aff0de43f3b24187821c7803e89e8177a16e5fc4a8d507f7a0458908fc6",
+  "catalog_plan_dated_some_written": "d00df729353b68fc5379798edc57efadb8ffd689ddcbe68448496f75cfd2ddd6",
+  "catalog_plan_dated_written_later": "bddb2a2437813a379c5d63e0a15c09c66dc15eb201aeae2108e3d351607adffc",
+  "catalog_plan_every_exam_topic": "a721e5918ff1a56c9351dc6743a963fd815d90cff14f4c4c61dd2825d122f79a",
+  "catalog_plan_every_topic": "9d03407ad65ac9fac5c72dfc9e1181ce7f241e14370b5fe0a68e755e9842e705",
+  "catalog_plan_finish_around": "464dc38f4d884a279cf8f9fd6f5053c7ee059ee8908b902fd70caf515e946804",
+  "catalog_plan_lessons": "90d3cb05a424b299933a566a05fad8be31b5e8807be1dbc908f8f6a0a992256a",
+  "catalog_plan_line": "554ce177341243f3f9525a5a99561200954445bc53d09bb8808bc8b2a9f0346a",
+  "catalog_plan_line_chapter": "d0d4cb89233f0ee230dd5d63712773bab40f40ead9600ada6fad2a81fa1ea9da",
+  "catalog_plan_more_lessons": "ea9974f4439da3080697cc2c150daedeb12ab19e806dc9aa2179d37e8df1ab39",
+  "catalog_plan_not_all_fits": "86bb66f9487c9749cbbd90578cf947c2348e890971b77388a161c651b453e75e",
+  "catalog_plan_study": "9ca80a31ec4aa8f9964a76b4f6fb224c7eaefb4a08c87b59bd39878bc43f73b7",
+  "catalog_plan_today": "2d344b0d2db6c7b5d1eccb759f4826df66d5236e295e4fde90fa6b410aef8590",
+  "catalog_plan_weeks": "c99c4d3ec85fff6c987433e217a77f04516619128aa3c9efabdab26ff6eced8b",
+  "catalog_plan_whole_course": "d231a8c92f5a87476974ea318f1310faa93ac9872b437fca9c1d0c8b4a16852e",
+  "catalog_plus_quick_lessons": "66dc79d831f28081b6925352543f7b713284bda791fba1665e982336d6bc47ca",
+  "catalog_quick_and_written_later": "eabf78621002915ef8558755747510a104da816a2d98b4e9d4ad16ea031d422c",
+  "catalog_quick_lesson_count": "7f4644071e54f84e2c920b76ed085f4657c00e19df18656c6ecbb7e18eeed3a6",
+  "catalog_quick_lessons": "1b3d209666469a3a35c4dbacd80eb2b94b6a1d41ef9b34fbb56b2f64546e478e",
+  "catalog_quick_question": "427ba02fa377847f9c77a84e53a98d33e3325cb5b067e3f7fdb342df82a28db1",
+  "catalog_short_lessons": "9218a77594b2693f0a9642d744ee9c2609de63d4899ffcdf2a671ad35e883bce",
+  "catalog_show_fewer_chapters": "0c34f90f95efce10a98f88da3264520a0aea3e299959f8e63903ffdddccc213c",
+  "catalog_show_more_chapters": "444a585593d947a54cfbb36cdcb384b92644ac661c3058e4a8474c4c530ac9c9",
+  "catalog_start_free": "94580f620c2a6619708cae899cdc75974b6d812b31bb495544b500087940f7af",
+  "catalog_start_goal": "51bbcd79fcea19545fd589f1f2e684e796c77fde5a91eca3897207b2e706934d",
+  "catalog_start_lesson": "f720789f777382c549d932f528e4c5c7e52edb367a87088f40bd87f721b81777",
+  "catalog_subject_arts": "87c543ec9b1e2debf54d7f9735d25b4d0e6287a728e7873ab0948feb51a55b43",
+  "catalog_subject_business": "3ff310b620f38dcf269f15dd57f5eaf858bd285ebc759861f85b6701960ad1ef",
+  "catalog_subject_communication": "f0509a7ec44b2a45f2cf03e866fe7f3460c9bb8640e274c3f17a5a9524e3c353",
+  "catalog_subject_culture": "ff4b1bef06d8c91db9f721908eb82219cb8a81eefc524f83ebc4b25f53a17fda",
+  "catalog_subject_economics": "041023bbb4d2382d898db587c98d56f830a9d0d5861d4ee8812461146d3831b7",
+  "catalog_subject_engineering": "c825ca21c63621d7215717bde8873342b60ea1254fd291e7c0d25671a29ad795",
+  "catalog_subject_exams": "78582958f9cc29f51a892af52af0afe0988567a9e7978cd9ae9e37c3f6381c85",
+  "catalog_subject_geography": "1618e4ae8f637636fa725ded4ab7fdf4e1e68f9eb07ac86f3365662b00a7bd60",
+  "catalog_subject_health": "a72f9bd0118b09c0bdfb42a1ef7f518c5dbcb46fb83fbed8d1557e6541b319f9",
+  "catalog_subject_history": "8e6862a7579030cbfca10c1ca470f3329e662c443702c2afce3928e8e24f8145",
+  "catalog_subject_languages": "a17ba3479379486b6a8fb974aa51704a8d17faaf2e76d4255a49e714850cb039",
+  "catalog_subject_law": "1cd9edce5e9a547dad94425de02ddf4cfd1a19b0961d1139c4b6ddf5362c25c4",
+  "catalog_subject_math": "9783f71b22e658fb4bc51b557d53451b0f775afb3ed7e1e6492f2b36170143c9",
+  "catalog_subject_science": "aaf305a2dc2f82eca216ec4e8b032118efee7b7fcaa48120c4b39de4c9b5050b",
+  "catalog_subject_society": "20ffa6983557a8e391e8905f0863d36c392a37b44f24d1f544240e0ceb4da500",
+  "catalog_subject_tech": "b309201925319be5f73f37008e3a6680f07ff9c5c29d1d0eadedf02581341ca2",
+  "catalog_subtitle": "eb9e7f4adb80841e26ae977fc919d887b041c2f333d06cb960829d725e44c9ba",
+  "catalog_this_chapter": "3fd576b4441f4e979e22e1cc46ec49d7de78ca7eb6f521565f5c006dbd277db5",
+  "catalog_title": "344b6ed5d007612532d08bd7e9beeb7f692f8e221079443a4dafe2a02106831d",
+  "catalog_try_lesson": "a012fbd7a4faf2f36cfe4cc78d663a572ac4c0549e432a0af8a8eb9082d6c832",
+  "catalog_try_place": "7e966cf12a77f2bd4286225020e6a753c0f62ff400521f0606d693bc23129094",
+  "catalog_try_title": "e580e58ac44fc821e6644f75e10c44a5955e6d6173d14ca63ccd5bcd49bcb422",
+  "catalog_what_you_learn": "8f30ea7ea63b6cde8d9623900815e7f552cfc45fca2f35cd102b7f57f21416a7",
+  "catalog_workload_after_exam": "acca9df022220874335dce7978d4b99e115dfca146c82cebd8a61859b77213a6",
+  "catalog_workload_challenges": "fabbec9d1cd35160b436ecc09e93ff04ca62e016ec46994c20cc4faf3689aac4",
+  "catalog_workload_challenges_mocks": "abd5e6b0e268a44861126f01bc1012f865c3e3f99129ef4ff5f8164715a0124d",
+  "catalog_workload_lessons": "be6c6d7fd0c5f276873fb8c675f1f618fbb48caf634341763a2c7d2fe63fc77f",
+  "catalog_workload_practice": "4cec4759c3d500634f2c9c64b661a339c16a63c9d52b62a6af8cc152537ea223",
+  "catalog_workload_reviews_note": "91bac587403fac64ffca8ee54f50188ce9b648443b3b4a2b65187e1a57f5954a",
+  "catalog_workload_title": "a2a12cd820565feb315ed92ab93b9f30d4e2df106498d01f6f086c387464603e",
+  "catalog_workload_total": "bbd0029430e048a6a0cef148ac68a72cb6a1a74bb75699d094b4d302617af522",
+  "catalog_workload_unwritten": "db8aa99ab79123f402b8753aa6633dc3f2164b68d78d823354e01bac33423637",
+  "catalog_workload_unwritten_note": "d485fa5500fbb5ac053f6d98cfac6e9f021f885927003407c373216e6476ba59",
+  "catalog_written_later": "33d92cbedfe51b1674511ca262db2702c04dabf0f8e357f17a09fe38c4c504c9"
+}
+-->
+<resources>
+    <string name="catalog_subject_arts">Kunst</string>
+    <string name="catalog_subject_business">Wirtschaft</string>
+    <string name="catalog_subject_communication">Kommunikation</string>
+    <string name="catalog_subject_culture">Kultur</string>
+    <string name="catalog_subject_economics">Volkswirtschaft</string>
+    <string name="catalog_subject_engineering">Ingenieurwesen</string>
+    <string name="catalog_subject_exams">Prüfungen</string>
+    <string name="catalog_subject_geography">Geografie</string>
+    <string name="catalog_subject_health">Gesundheit</string>
+    <string name="catalog_subject_history">Geschichte</string>
+    <string name="catalog_subject_languages">Sprachen</string>
+    <string name="catalog_subject_law">Recht</string>
+    <string name="catalog_subject_math">Mathematik</string>
+    <string name="catalog_subject_science">Naturwissenschaften</string>
+    <string name="catalog_subject_society">Gesellschaft</string>
+    <string name="catalog_subject_tech">Technologie</string>
+    <string name="catalog_title">Kurse entdecken</string>
+    <string name="catalog_category_title">Kurse in %1$s</string>
+    <string name="catalog_subtitle">Starte mit einem Kurs oder erzähl Zoonk, worauf du dich vorbereitest.</string>
+    <string name="catalog_all">Alle</string>
+    <string name="catalog_categories">Kurskategorien</string>
+    <plurals name="catalog_course_meta">
+        <item quantity="one">%1$d Lektion · %2$s</item>
+        <item quantity="other">%1$d Lektionen · %2$s</item>
+    </plurals>
+    <string name="catalog_empty_title">Keine Kurse</string>
+    <string name="catalog_empty_description">Noch keine Kurse verfügbar.</string>
+    <string name="catalog_start_goal">Ziel starten</string>
+    <string name="catalog_loading_more">Weitere Kurse werden geladen…</string>
+    <string name="catalog_load_more_failed">Etwas ist schiefgelaufen. Bitte versuch es noch einmal.</string>
+    <string name="catalog_not_found_title">Diese Seite wurde nicht gefunden</string>
+    <string name="catalog_not_found_description">Der Link ist möglicherweise veraltet oder falsch geschrieben.</string>
+    <string name="catalog_edition_notice">Diesen Kurs gibt es auch auf Deutsch.</string>
+    <string name="catalog_exam_on_today">Prüfung am %1$s · heute</string>
+    <plurals name="catalog_exam_on">
+        <item quantity="one">Prüfung am %1$s · noch %2$d Tag</item>
+        <item quantity="other">Prüfung am %1$s · noch %2$d Tage</item>
+    </plurals>
+    <string name="catalog_exam_around_today">Prüfung etwa am %1$s · heute</string>
+    <plurals name="catalog_exam_around">
+        <item quantity="one">Prüfung etwa am %1$s · noch etwa %2$d Tag</item>
+        <item quantity="other">Prüfung etwa am %1$s · noch etwa %2$d Tage</item>
+    </plurals>
+    <string name="catalog_plan_line">Mit Zoonk passt sich dein Plan deinem Niveau und deinem Zeitplan an.</string>
+    <string name="catalog_plan_line_chapter">Mit Zoonk startet dein Plan bei diesem Kapitel und passt sich deinem Zeitplan an.</string>
+    <string name="catalog_build_plan">Meinen Plan erstellen</string>
+    <string name="catalog_continue_plan">Plan fortsetzen</string>
+    <string name="catalog_try_lesson">Lektion ausprobieren</string>
+    <string name="catalog_start_free">Kostenlos starten, ohne Konto.</string>
+    <string name="catalog_try_title">Lektion ausprobieren · kostenlos · %1$s</string>
+    <string name="catalog_try_place">%1$s · Lektion %2$s</string>
+    <string name="catalog_guess_first">Rate zuerst. Das zählt nicht.</string>
+    <string name="catalog_quick_question">Kurze Frage</string>
+    <string name="catalog_guess_note">Mit deiner Antwort beginnt die %1$s-minütige Lektion.</string>
+    <string name="catalog_check_note">Mit deiner Auswahl öffnet sich die %1$s-minütige Lektion. Dort kannst du deine Antwort prüfen.</string>
+    <string name="catalog_no_sign_up">Keine Anmeldung nötig.</string>
+    <string name="catalog_example_plan">Beispielplan</string>
+    <plurals name="catalog_plan_weeks">
+        <item quantity="one">ca. %1$s Woche</item>
+        <item quantity="other">ca. %1$s Wochen</item>
+    </plurals>
+    <plurals name="catalog_plan_whole_course">
+        <item quantity="one">um den ganzen Kurs von Grund auf mit %1$d Minute täglich von Montag bis Freitag abzuschließen.</item>
+        <item quantity="other">um den ganzen Kurs von Grund auf mit %1$d Minuten täglich von Montag bis Freitag abzuschließen.</item>
+    </plurals>
+    <string name="catalog_plan_finish_around">Wenn du heute startest, bist du ungefähr am %1$s fertig.</string>
+    <string name="catalog_plan_today">Heute</string>
+    <plurals name="catalog_plan_lessons">
+        <item quantity="one">%1$d Lektion</item>
+        <item quantity="other">%1$d Lektionen</item>
+    </plurals>
+    <plurals name="catalog_plan_more_lessons">
+        <item quantity="one">+ %1$d weitere Lektion</item>
+        <item quantity="other">+ %1$d weitere Lektionen</item>
+    </plurals>
+    <string name="catalog_plan_study">%1$s Lernzeit</string>
+    <string name="catalog_plan_dated_written_later">bis zum %1$s, bei %2$s pro Tag von Montag bis Freitag: zuerst die wichtigsten Themen, die Lektionen, die schon im Kurs sind, und weitere, die erstellt werden, sobald du sie erreichst.</string>
+    <plurals name="catalog_plan_dated_some_written">
+        <item quantity="one">bis zum %1$s, bei %2$s pro Tag von Montag bis Freitag: zuerst die wichtigsten Themen, %3$d Lektion, die schon im Kurs ist, und weitere, die erstellt werden, sobald du sie erreichst.</item>
+        <item quantity="other">bis zum %1$s, bei %2$s pro Tag von Montag bis Freitag: zuerst die wichtigsten Themen, %3$d Lektionen, die schon im Kurs sind, und weitere, die erstellt werden, sobald du sie erreichst.</item>
+    </plurals>
+    <string name="catalog_plan_dated_quick">bis zum %1$s, bei %2$s pro Tag von Montag bis Freitag: kurze Lektionen zu den wichtigsten Themen. Die vollständigen Lektionen kommen, sobald mehr Zeit da ist.</string>
+    <plurals name="catalog_plan_dated_fitting">
+        <item quantity="one">bis zum %1$s, bei %2$s pro Tag von Montag bis Freitag: zuerst die wichtigsten Themen, %3$s von %4$d Lektionen des Kurses.</item>
+        <item quantity="other">bis zum %1$s, bei %2$s pro Tag von Montag bis Freitag: zuerst die wichtigsten Themen, %3$s von %4$d Lektionen des Kurses.</item>
+    </plurals>
+    <string name="catalog_plan_not_all_fits">Bis dahin passt nicht alles in den Plan. Bevor du startest, siehst du, wie viel zu deinem Level und deiner verfügbaren Zeit passt.</string>
+    <string name="catalog_plan_every_topic">Das umfasst alle Themen des Kurses in der Tiefe.</string>
+    <string name="catalog_plan_every_exam_topic">Das umfasst alle Prüfungsthemen des Kurses in der Tiefe.</string>
+    <string name="catalog_plan_caption">Ein Beispiel. Dein Plan richtet sich nach deinen Antworten und kann deshalb später starten und früher enden.</string>
+    <string name="catalog_workload_title">So setzt sich die Lernzeit zusammen</string>
+    <string name="catalog_workload_total">Insgesamt %1$s</string>
+    <string name="catalog_workload_lessons">Lektionen</string>
+    <string name="catalog_workload_unwritten">Noch nicht erstellte Lektionen</string>
+    <string name="catalog_workload_practice">Wiederholungen und Übung</string>
+    <string name="catalog_workload_challenges">Herausforderungen</string>
+    <string name="catalog_workload_challenges_mocks">Herausforderungen und Probeprüfungen</string>
+    <string name="catalog_workload_reviews_note">Gelerntes kommt kurz vor dem Vergessen wieder dran.</string>
+    <string name="catalog_workload_after_exam">Davon kommen %1$s nach der Prüfung.</string>
+    <string name="catalog_workload_unwritten_note">Noch nicht erstellte Lektionen werden erstellt, sobald du sie erreichst.</string>
+    <string name="catalog_audience">Für wen der Kurs gedacht ist</string>
+    <string name="catalog_outcomes">Was du lernen wirst</string>
+    <string name="catalog_outline">Kursübersicht</string>
+    <plurals name="catalog_chapters">
+        <item quantity="one">%1$d Kapitel</item>
+        <item quantity="other">%1$d Kapitel</item>
+    </plurals>
+    <plurals name="catalog_short_lessons">
+        <item quantity="one">%1$d kurze Lektion</item>
+        <item quantity="other">%1$d kurze Lektionen</item>
+    </plurals>
+    <string name="catalog_outline_plan_dated">Dein Plan bis zum %1$s, bei %2$s pro Tag</string>
+    <plurals name="catalog_outline_plan_undated">
+        <item quantity="one">Dein Plan mit %1$d Minute Lernzeit pro Tag, von Grund auf</item>
+        <item quantity="other">Dein Plan mit %1$d Minuten Lernzeit pro Tag, von Grund auf</item>
+    </plurals>
+    <string name="catalog_outline_unwritten">Erstelle deinen Plan. Zoonk erstellt die Kapitel und Lektionen dieses Kurses für dich, ausgehend von deinem Level.</string>
+    <string name="catalog_level_overview">Überblick</string>
+    <string name="catalog_level_beginner">Anfänger</string>
+    <string name="catalog_level_intermediate">Fortgeschrittene</string>
+    <string name="catalog_level_advanced">Experten</string>
+    <string name="catalog_level_week">Woche %1$s</string>
+    <string name="catalog_level_weeks">Wochen %1$s–%2$s</string>
+    <string name="catalog_chapter_week">Woche %1$s</string>
+    <plurals name="catalog_show_more_chapters">
+        <item quantity="one">Noch %1$d Kapitel anzeigen</item>
+        <item quantity="other">Noch %1$d Kapitel anzeigen</item>
+    </plurals>
+    <string name="catalog_show_fewer_chapters">Weniger Kapitel anzeigen</string>
+    <string name="catalog_expanded">Ausgeklappt</string>
+    <string name="catalog_collapsed">Eingeklappt</string>
+    <string name="catalog_left_out">Ausgelassen</string>
+    <plurals name="catalog_chapters_left_out">
+        <item quantity="one">%1$d Kapitel ausgelassen</item>
+        <item quantity="other">%1$d Kapitel ausgelassen</item>
+    </plurals>
+    <plurals name="catalog_lessons_fit">
+        <item quantity="one">%1$d von %2$s Lektionen passen</item>
+        <item quantity="other">%1$d von %2$s Lektionen passen</item>
+    </plurals>
+    <plurals name="catalog_plus_quick_lessons">
+        <item quantity="one">+ %1$d kurze Lektion</item>
+        <item quantity="other">+ %1$d kurze Lektionen</item>
+    </plurals>
+    <plurals name="catalog_quick_lesson_count">
+        <item quantity="one">%1$d kurze Lektion</item>
+        <item quantity="other">%1$d kurze Lektionen</item>
+    </plurals>
+    <string name="catalog_quick_and_written_later">kurze Lektionen und Lektionen, die erstellt werden, sobald du sie erreichst</string>
+    <string name="catalog_quick_lessons">kurze Lektionen</string>
+    <string name="catalog_written_later">Lektionen, die erstellt werden, sobald du sie erreichst</string>
+    <plurals name="catalog_lessons_in_plan">
+        <item quantity="one">%1$d von %2$s Lektion</item>
+        <item quantity="other">%1$d von %2$s Lektionen</item>
+    </plurals>
+    <string name="catalog_closing_start">Starte heute auf deinem Level</string>
+    <string name="catalog_closing_follows">Dein Plan folgt diesem Kurs</string>
+    <string name="catalog_closing_steps">Ein paar kurze Fragen, dann bekommst du deinen Plan und deine erste Lektion.</string>
+    <string name="catalog_chapter_writes_lessons">Starte hier und Zoonk erstellt Lektionen passend zu deinem Level.</string>
+    <string name="catalog_what_you_learn">Das lernst du</string>
+    <string name="catalog_chapter_closing">Dein Plan ab diesem Kapitel</string>
+    <string name="catalog_chapter_closing_steps">Von hier aus folgt er dem Kurs in deinem Tempo – mit Wiederholungen, bevor du etwas vergisst.</string>
+    <string name="catalog_lessons">Lektionen</string>
+    <string name="catalog_chapter_position">Kapitel %1$s von %2$s</string>
+    <string name="catalog_chapter_strip">Wo dieses Kapitel im Kurs steht</string>
+    <string name="catalog_this_chapter">Dieses Kapitel</string>
+    <string name="catalog_after_this_chapter">Nach diesem Kapitel</string>
+    <string name="catalog_start_lesson">Lektion starten</string>
+    <plurals name="catalog_lesson_minutes">
+        <item quantity="one">%1$d Minute.</item>
+        <item quantity="other">%1$d Minuten.</item>
+    </plurals>
+    <plurals name="catalog_ideas">
+        <item quantity="one">%1$d Idee</item>
+        <item quantity="other">%1$d Ideen</item>
+    </plurals>
+    <string name="catalog_chapter_heading">Kapitel %1$s: %2$s</string>
+    <string name="catalog_go_to_chapter">Zum Kapitel</string>
+    <string name="catalog_lesson_part_of">Diese Lektion gehört zum Kurs %1$s.</string>
+</resources>
