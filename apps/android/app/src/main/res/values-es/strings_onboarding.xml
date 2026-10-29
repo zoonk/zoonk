@@ -68,6 +68,48 @@
   "onboarding_paste_link_placeholder": "e6126a992ca09571fed6d84b1348c2b9f3edc00035d67ef4b2f40e873198c575",
   "onboarding_paste_text": "8ee701ce3bb9f4c11b533db968284c255202e9e53e1df89ea4d76bfe771bd7f3",
   "onboarding_paste_text_placeholder": "8b5667e7f24ac47dbe4210aff4861896612a1d668a0b65ec0d9da09d7ebd046d",
+  "onboarding_placement_answer_failed": "e6f0cb12f235197bb6bc511dcb0c8662bd19215dd50144c74cd4c69a455b5857",
+  "onboarding_placement_answered": "1441fd29dedaf0c8cf9f244703fdcf086d653d9a5959c410d06f72c2fbdc8e0e",
+  "onboarding_placement_confirm": "ede0d9d50d66e39dc9de5d4d037c01aa4e0a142e50e643c6b32e37e8479fc840",
+  "onboarding_placement_continue_mock": "41fb57311911c1fe3ad7891ee65596b2743e1f5f7cee05543c6178128eeb2d97",
+  "onboarding_placement_description": "69ffe9cd6b7efbb9d457a97125dab64283508f35b94252461ecf9079ca9de69a",
+  "onboarding_placement_description_areas": "340d8b3baeba51cc52ea795f1d1e61659afde99c0816de7ddbd408fbda321823",
+  "onboarding_placement_dont_know": "3898cb46142d870539179e3e00df7ec460d425c640d0665d4d64239981768bd0",
+  "onboarding_placement_enough_description": "cf7bdfc7e4a68b14743eaf1da3bba70d00136f7815e487c2b1178f2d5a89bcfd",
+  "onboarding_placement_enough_title": "0fa4757016166b32fc9a8179e4a870500c382075bc0d6c8650c9b2053744a761",
+  "onboarding_placement_false": "3f03d82ff8572a7e392ca060acb62489bdcf319fc90b8641f8ef948bce4f9dcf",
+  "onboarding_placement_mock_about": "636c54eead279efb4424a16f5d33ded635a35d78f79b6683c13b30070033e7e0",
+  "onboarding_placement_mock_done": "4274f3619ffd7a761a622ee985c1fc53f11a8f5c08bac44cb31310a1f047219b",
+  "onboarding_placement_mock_range": "2a02d50de8fadbaf7d46e561f1b118ab1679a1b75820bcfe324637261cd428c6",
+  "onboarding_placement_mock_set_description": "761351932c232428bac39dea8a3df6924f3cdedf3bd5339f426da630f672b7ec",
+  "onboarding_placement_mock_set_title": "bf86a16244a3fe628fca7ca7af01ddf02e204150ca5e1afbca8be731a4a96244",
+  "onboarding_placement_mock_title": "61ba345b10e88c85345199a0cdaeee9ede5f52f2d5a26ba0d8047a69ffd16b6a",
+  "onboarding_placement_mock_waiting_description": "e31cc0fb6d7128bf85199d865910bad6ee67ad34f6d3de43265c4f0f554096b1",
+  "onboarding_placement_mock_waiting_title": "bb5b70a8340bf17aef31b9e8c03b3e63cdf9234dc225b5b7da801e0da5b17095",
+  "onboarding_placement_plus": "0d7fa71bad935a4db37ee7c88f5435d9f9b7d4373c6a052cd428056c3ae9371d",
+  "onboarding_placement_plus_description": "807d2720e247195de0054063d0c0b3165ecee415b8c70b098803e02c2ef8c78d",
+  "onboarding_placement_progress": "08f9b7eaee31e0ee8ebc8fd0f36746f3d1e2efb3f23cc84f59dab0a304dbf857",
+  "onboarding_placement_question_number": "e80cce163ae59b37120f10e99ed4a72f57a0ff4918e403b3c60a20d38668a4a1",
+  "onboarding_placement_right": "caea6d3669da6351628b308de69d5e31089fdc365f2183eb00f0a899c9e50492",
+  "onboarding_placement_see_plan": "9cf97eb0214794bc7976edd1a3b7dcea38168d331b2a0447b41f3f8285223787",
+  "onboarding_placement_set_description": "7e54411a1e519097edd8b19cf093ffe20b8f1f0902d67d806477604a9e0bd6a7",
+  "onboarding_placement_set_title": "44f843967fec1440d0a82fada30f69c47eb328d13c11748bdf54b2484466dab7",
+  "onboarding_placement_skip_basics": "195da05be3a66cf9d6d9b44006a8165dc898129b4da9b9828904113b1366a3c1",
+  "onboarding_placement_skip_for_now": "30626851f1deacfd60c0b879ef2596047bfbddf88f1260ee6b6b272b04b8d452",
+  "onboarding_placement_skip_note": "86f573f1e665bfe043dc0de272253cc4444dc42a8ece6a2209bcf53bb8fad9a7",
+  "onboarding_placement_start": "436df20cc56308b5ddb345963c9bba7a8f6de7fe222a02c2e77bfe06235ebade",
+  "onboarding_placement_stop": "bc0f196cd51dae767b4deaa87501bc9b2ffe6746eec0196a584b8dff628d2072",
+  "onboarding_placement_stop_mock": "fc3cd2f38e4338a0817eda61a0d372dd8f4c40eddc9244ad57c071e509ad53a8",
+  "onboarding_placement_title": "99de9d2341abdb4b6ed76458dd31fe88b7da40c318e706f71631512b13f8324a",
+  "onboarding_placement_true": "78840871089f7443e3dc308975c96fb03df5205bde839407f155191fd8a9c91e",
+  "onboarding_placement_try_again": "59011b080d0d1a8277f86e514a143dc438b66d828f22753c1d64b267af7a0715",
+  "onboarding_placement_unavailable_description": "11cce1de44146e7cf125d277439066e4253a6c80209f50938ef24c036deb9d2b",
+  "onboarding_placement_unavailable_title": "fb25000362ec8fc6fb671258bbd4593cc5ddbafb74b9a193e9255adcf50d9459",
+  "onboarding_placement_waiting_material": "514d8fef70919a5ed2be10fcbdc93b82c02178bbe117319f56c3458367276a6f",
+  "onboarding_placement_waiting_skills": "4de31eb1339f33f652a3b2dcfb4701d0c2f52af1edf1888218f9b888ac499222",
+  "onboarding_placement_waiting_title": "3d19d3d4675732fbed360b103921c119891ae0681e2d279db52039ce19c07a07",
+  "onboarding_placement_wrong": "314527b4b34958fff6b1fd150849fbfb939045cd76755ca2d51cde6acf7cc0c0",
+  "onboarding_placement_your_answer": "340d86c24b34c48b42a9d1a28cd2b1bfa75e1ac50154af04a433d137715999ae",
   "onboarding_plus_more_goals": "69b4a0afe48dd5c0081f16969c792c89b1b5da8168e1288cd42dd33f4889ef60",
   "onboarding_plus_more_goals_up_front": "d9ac956bad06a43300068fbd7838c5a1b75c840dbf12470185f11ffcdca5ed40",
   "onboarding_question_failed": "e0bade085d2943bcf352ab49d0d30a7d5cb777f39be0baefc2acf40e6ed00033",
@@ -335,4 +377,67 @@
     <string name="onboarding_question_limit_plus">Hoy has hecho todas las preguntas que permite tu plan.</string>
     <string name="onboarding_question_limit_month">Este mes has hecho todas las preguntas que permite el plan gratis. Vuelve a preguntar el mes que viene o pásate a Plus para seguir ahora.</string>
     <string name="onboarding_question_limit_day">Hoy has hecho todas las preguntas que permite el plan gratis. Vuelve a preguntar mañana o pásate a Plus para seguir ahora.</string>
+    <!-- Placement: a few questions that find where the plan starts. -->
+    <string name="onboarding_placement_title">Vamos a ver qué sabes ya</string>
+    <!-- %d is how many areas of the goal the questions cover. -->
+    <plurals name="onboarding_placement_description_areas">
+        <item quantity="one">Unas pocas preguntas rápidas sobre %d área para que tu plan omita lo que ya sabes. No hay puntuación y «Aún no lo sé» es una respuesta válida.</item>
+        <item quantity="many">Unas pocas preguntas rápidas sobre %d áreas para que tu plan omita lo que ya sabes. No hay puntuación y «Aún no lo sé» es una respuesta válida.</item>
+        <item quantity="other">Unas pocas preguntas rápidas sobre %d áreas para que tu plan omita lo que ya sabes. No hay puntuación y «Aún no lo sé» es una respuesta válida.</item>
+    </plurals>
+    <string name="onboarding_placement_description">Unas pocas preguntas rápidas para que tu plan omita lo que ya sabes. No hay puntuación y «Aún no lo sé» es una respuesta válida.</string>
+    <string name="onboarding_placement_mock_title">O haz un simulacro</string>
+    <!-- %1$s is a duration, such as "45 min". -->
+    <string name="onboarding_placement_mock_about">En el formato del examen, unos %1$s.</string>
+    <!-- %1$s and %2$s are durations, such as "20 min" and "1 hr". -->
+    <string name="onboarding_placement_mock_range">En el formato del examen, de %1$s a %2$s. Tú eliges la duración.</string>
+    <!-- The name of Zoonk\'s paid plan, on a chip beside what needs it. -->
+    <string name="onboarding_placement_plus">Plus</string>
+    <string name="onboarding_placement_plus_description">Disponible con Plus</string>
+    <string name="onboarding_placement_start">Empezar</string>
+    <string name="onboarding_placement_skip_basics">Omitir y empezar por lo básico</string>
+    <string name="onboarding_placement_waiting_title">Estamos preparando tus preguntas</string>
+    <string name="onboarding_placement_waiting_material">Se basan en el material que has añadido. Leerlo lleva unos minutos.</string>
+    <string name="onboarding_placement_waiting_skills">Se basan en las habilidades que necesitas para tu objetivo. Suele llevar uno o dos minutos.</string>
+    <string name="onboarding_placement_skip_for_now">Omitir por ahora</string>
+    <string name="onboarding_placement_skip_note">En tus primeras sesiones te haremos algunas de estas preguntas.</string>
+    <!-- Beside the subject, above a placement question. %1$d is its number. -->
+    <string name="onboarding_placement_question_number">Pregunta %1$d</string>
+    <string name="onboarding_placement_progress">Preguntas respondidas</string>
+    <string name="onboarding_placement_your_answer">Tu respuesta, con tus propias palabras</string>
+    <string name="onboarding_placement_dont_know">Aún no lo sé</string>
+    <string name="onboarding_placement_confirm">Confirmar</string>
+    <string name="onboarding_placement_stop">Parar aquí y ver mi plan</string>
+    <string name="onboarding_placement_answer_failed">No se ha podido enviar. Hemos guardado tus respuestas.</string>
+    <string name="onboarding_placement_try_again">Intentarlo de nuevo</string>
+    <!-- The two answers to a statement judged true or false. -->
+    <string name="onboarding_placement_true">Verdadero</string>
+    <string name="onboarding_placement_false">Falso</string>
+    <!-- The two answers to a statement judged right or wrong, for exams that word it so. -->
+    <string name="onboarding_placement_right">Correcto</string>
+    <string name="onboarding_placement_wrong">Incorrecto</string>
+    <string name="onboarding_placement_see_plan">Ver mi plan</string>
+    <plurals name="onboarding_placement_answered">
+        <item quantity="one">Has respondido %d pregunta</item>
+        <item quantity="many">Has respondido %d preguntas</item>
+        <item quantity="other">Has respondido %d preguntas</item>
+    </plurals>
+    <string name="onboarding_placement_mock_done">Simulacro completado</string>
+    <string name="onboarding_placement_mock_set_title">El simulacro ha marcado tu punto de partida</string>
+    <!-- %d is how many questions the learner answered in the mock exam. -->
+    <plurals name="onboarding_placement_mock_set_description">
+        <item quantity="one">Basado en %d respuesta. Cada día es más preciso.</item>
+        <item quantity="many">Basado en %d respuestas. Cada día es más preciso.</item>
+        <item quantity="other">Basado en %d respuestas. Cada día es más preciso.</item>
+    </plurals>
+    <string name="onboarding_placement_enough_title">Por hoy ya has respondido suficientes preguntas</string>
+    <string name="onboarding_placement_enough_description">En tus primeras sesiones responderás algunas más para ajustar mejor tu plan.</string>
+    <string name="onboarding_placement_set_title">Tu punto de partida está definido</string>
+    <string name="onboarding_placement_set_description">Cada día es más preciso.</string>
+    <string name="onboarding_placement_unavailable_title">Vamos a omitir las preguntas</string>
+    <string name="onboarding_placement_unavailable_description">No hemos podido preparar preguntas para este objetivo. Tus primeras sesiones determinarán tu punto de partida.</string>
+    <string name="onboarding_placement_mock_waiting_title">Tu simulacro está pendiente</string>
+    <string name="onboarding_placement_mock_waiting_description">Continúa donde lo dejaste o para ahora: tu plan parte de las preguntas que has respondido.</string>
+    <string name="onboarding_placement_continue_mock">Continuar el simulacro</string>
+    <string name="onboarding_placement_stop_mock">Parar y ver mi plan</string>
 </resources>

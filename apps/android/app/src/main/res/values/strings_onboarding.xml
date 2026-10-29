@@ -189,4 +189,65 @@
     <string name="onboarding_question_limit_plus">You\'ve asked as many questions as your plan allows today.</string>
     <string name="onboarding_question_limit_month">You\'ve asked as many questions as the free plan allows this month. Ask again next month, or get Plus to keep going now.</string>
     <string name="onboarding_question_limit_day">You\'ve asked as many questions as the free plan allows today. Ask again tomorrow, or get Plus to keep going now.</string>
+
+    <!-- Placement: a few questions that find where the plan starts. -->
+    <string name="onboarding_placement_title">Let\'s see what you already know</string>
+    <!-- %d is how many areas of the goal the questions cover. -->
+    <plurals name="onboarding_placement_description_areas">
+        <item quantity="one">A few quick questions about %d area, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</item>
+        <item quantity="other">A few quick questions about %d areas, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</item>
+    </plurals>
+    <string name="onboarding_placement_description">A few quick questions, so your plan skips what you already know. There\'s no score, and “I don\'t know yet” is a fine answer.</string>
+    <string name="onboarding_placement_mock_title">Or take a mock exam</string>
+    <!-- %1$s is a duration, such as "45 min". -->
+    <string name="onboarding_placement_mock_about">In the exam\'s format, about %1$s.</string>
+    <!-- %1$s and %2$s are durations, such as "20 min" and "1 hr". -->
+    <string name="onboarding_placement_mock_range">In the exam\'s format, from %1$s to %2$s. You pick how long.</string>
+    <!-- The name of Zoonk\'s paid plan, on a chip beside what needs it. -->
+    <string name="onboarding_placement_plus">Plus</string>
+    <string name="onboarding_placement_plus_description">Available with Plus</string>
+    <string name="onboarding_placement_start">Start</string>
+    <string name="onboarding_placement_skip_basics">Skip and start from the basics</string>
+    <string name="onboarding_placement_waiting_title">Getting your questions ready</string>
+    <string name="onboarding_placement_waiting_material">They come from the material you added. Reading it takes a few minutes.</string>
+    <string name="onboarding_placement_waiting_skills">They come from the skills your goal needs. It usually takes a minute or two.</string>
+    <string name="onboarding_placement_skip_for_now">Skip for now</string>
+    <string name="onboarding_placement_skip_note">Your first sessions will ask a few of these instead.</string>
+    <!-- Beside the subject, above a placement question. %1$d is its number. -->
+    <string name="onboarding_placement_question_number">Question %1$d</string>
+    <string name="onboarding_placement_progress">Questions answered</string>
+    <string name="onboarding_placement_your_answer">Your answer, in your own words</string>
+    <string name="onboarding_placement_dont_know">I don\'t know yet</string>
+    <string name="onboarding_placement_confirm">Confirm</string>
+    <string name="onboarding_placement_stop">Stop here and see my plan</string>
+    <string name="onboarding_placement_answer_failed">That didn\'t go through. Your answers are kept.</string>
+    <string name="onboarding_placement_try_again">Try again</string>
+    <!-- The two answers to a statement judged true or false. -->
+    <string name="onboarding_placement_true">True</string>
+    <string name="onboarding_placement_false">False</string>
+    <!-- The two answers to a statement judged right or wrong, for exams that word it so. -->
+    <string name="onboarding_placement_right">Right</string>
+    <string name="onboarding_placement_wrong">Wrong</string>
+    <string name="onboarding_placement_see_plan">See my plan</string>
+    <plurals name="onboarding_placement_answered">
+        <item quantity="one">%d question answered</item>
+        <item quantity="other">%d questions answered</item>
+    </plurals>
+    <string name="onboarding_placement_mock_done">Mock exam done</string>
+    <string name="onboarding_placement_mock_set_title">Your mock exam set your starting point</string>
+    <!-- %d is how many questions the learner answered in the mock exam. -->
+    <plurals name="onboarding_placement_mock_set_description">
+        <item quantity="one">Based on %d answer. It gets more accurate every day.</item>
+        <item quantity="other">Based on %d answers. It gets more accurate every day.</item>
+    </plurals>
+    <string name="onboarding_placement_enough_title">That\'s enough questions for today</string>
+    <string name="onboarding_placement_enough_description">Your first sessions ask a few more to fine-tune your plan.</string>
+    <string name="onboarding_placement_set_title">Your starting point is set</string>
+    <string name="onboarding_placement_set_description">It gets more accurate every day.</string>
+    <string name="onboarding_placement_unavailable_title">Let\'s skip the questions</string>
+    <string name="onboarding_placement_unavailable_description">We couldn\'t prepare questions for this goal. Your first sessions will find your starting point instead.</string>
+    <string name="onboarding_placement_mock_waiting_title">Your mock exam is waiting</string>
+    <string name="onboarding_placement_mock_waiting_description">Go on where you left it, or stop now: your plan starts from the questions you answered.</string>
+    <string name="onboarding_placement_continue_mock">Continue the mock exam</string>
+    <string name="onboarding_placement_stop_mock">Stop and see my plan</string>
 </resources>
