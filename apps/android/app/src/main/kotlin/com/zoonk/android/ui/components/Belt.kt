@@ -63,6 +63,13 @@ val Belt.color: Color
             }
         }
 
+/**
+ * The dark middle of a drawn belt, where main shows the belt's levels as white stripes: the same
+ * in both themes, as the belt itself is, and red on a black belt.
+ */
+val Belt.rankBar: Color
+    get() = if (this == Belt.Black) RANK_BAR_ON_BLACK else RANK_BAR
+
 @Composable
 fun BeltDot(
     belt: Belt,
@@ -143,3 +150,6 @@ private const val BELT_DOT_SHARE = 0.45f
 
 /** Enough edge for white on a light page and black on a dark one. */
 private const val EDGE_ALPHA = 0.25f
+
+private val RANK_BAR = Color(0xFF0A0A0A)
+private val RANK_BAR_ON_BLACK = Color(0xFFC10007)

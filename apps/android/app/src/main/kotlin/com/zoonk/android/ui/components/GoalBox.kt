@@ -49,7 +49,8 @@ const val MAX_GOAL_LENGTH = 2000
 /**
  * Main's goal box (the landing's and `/start`'s): "I want to …" and Build my plan. [onSubmit] gets
  * the trimmed words; an empty box asks for them unless [canSubmitEmpty] (material and an intent are
- * already chosen). [leading] holds the attach button. Enter sends, as main's box does.
+ * already chosen). [leading] holds the attach button; [placeholder] is a page's own example, as the
+ * catalog's is. Enter sends, as main's box does.
  */
 @Composable
 fun GoalBox(
@@ -62,6 +63,7 @@ fun GoalBox(
     isSubmitting: Boolean = false,
     focusRequester: FocusRequester = remember { FocusRequester() },
     leading: (@Composable () -> Unit)? = null,
+    placeholder: String? = null,
 ) {
     var isAskingForWords by rememberSaveable { mutableStateOf(false) }
 
@@ -106,7 +108,7 @@ fun GoalBox(
                     .focusRequester(focusRequester)
                     .semantics { contentDescription = label },
             readOnly = isSubmitting,
-            placeholder = { Text(stringResource(R.string.goal_box_placeholder, spokenLanguage(currentLocale()))) },
+            placeholder = { Text(placeholder ?: stringResource(R.string.goal_box_placeholder, spokenLanguage(currentLocale()))) },
             supportingText = line?.let { { Text(it) } },
             isError = isAskingForWords,
             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Go),

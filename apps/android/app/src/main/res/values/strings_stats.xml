@@ -102,6 +102,7 @@
         <item quantity="other">%1$s: %2$s across %3$s answers</item>
     </plurals>
 
+    <string name="stats_patterns_intro">When you answer best, over the last 90 days.</string>
     <string name="stats_answers">Answers</string>
     <string name="stats_last_90">In the last 90 days</string>
     <string name="stats_not_enough">Not enough answers yet</string>

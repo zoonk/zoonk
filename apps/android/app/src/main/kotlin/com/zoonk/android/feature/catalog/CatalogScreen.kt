@@ -210,9 +210,13 @@ private fun CatalogHeader(onGoal: (String) -> Unit) {
             style = MaterialTheme.typography.bodyLarge,
         )
 
-        GoalBox(value = goal, onValueChange = {
-            goal = it
-        }, onSubmit = onGoal, modifier = Modifier.padding(horizontal = 16.dp).widthIn(max = COLUMN_WIDTH))
+        GoalBox(
+            value = goal,
+            onValueChange = { goal = it },
+            onSubmit = onGoal,
+            modifier = Modifier.padding(horizontal = 16.dp).widthIn(max = COLUMN_WIDTH),
+            placeholder = stringResource(R.string.catalog_goal_example),
+        )
     }
 }
 

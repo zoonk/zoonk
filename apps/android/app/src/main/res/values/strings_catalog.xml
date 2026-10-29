@@ -19,6 +19,8 @@
 
     <string name="catalog_title">Explore courses</string>
     <string name="catalog_category_title">Courses in %1$s</string>
+    <!-- The goal box's example after "I want to", so it starts in lowercase. -->
+    <string name="catalog_goal_example">get promoted to data analyst by June</string>
     <string name="catalog_subtitle">Start from a course, or tell Zoonk what you\'re getting ready for.</string>
     <string name="catalog_all">All</string>
     <string name="catalog_categories">Course categories</string>

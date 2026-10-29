@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.stats
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -44,6 +46,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.LoadState
@@ -58,6 +61,7 @@ import com.zoonk.android.ui.components.StatTile
 import com.zoonk.android.ui.components.StatTiles
 import com.zoonk.android.ui.components.StatTone
 import com.zoonk.android.ui.components.color
+import com.zoonk.android.ui.components.rankBar
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -501,29 +505,40 @@ private fun LevelStripes(
     val reached = level.level.toInt()
     val share = level.progressInLevel.toFloat() / level.bpPerLevel.coerceAtLeast(1)
     val brain = MaterialTheme.zoonk.brain
-    val track = MaterialTheme.colorScheme.surfaceContainerHighest
-    val edge = MaterialTheme.colorScheme.outlineVariant
-    val beltColor = belt.color
+    val stripe = MaterialTheme.zoonk.beltWhite
 
-    Row(Modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-        for (index in 0 until LEVELS_PER_BELT.toInt()) {
-            Column(
-                Modifier.weight(1f),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Canvas(Modifier.fillMaxWidth().height(28.dp)) {
-                    val radius = CornerRadius(3.dp.toPx())
-                    drawRoundRect(if (index < reached) beltColor else track, cornerRadius = radius)
-                    drawRoundRect(edge, cornerRadius = radius, style = Stroke(1.dp.toPx()))
+    Column(Modifier.fillMaxWidth().clearAndSetSemantics {}, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .background(belt.rankBar, RoundedCornerShape(6.dp))
+                .padding(horizontal = 8.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+        ) {
+            for (index in 0 until LEVELS_PER_BELT.toInt()) {
+                Canvas(Modifier.weight(1f).height(28.dp)) {
+                    val radius = CornerRadius(2.dp.toPx())
+                    if (index < reached) {
+                        drawRoundRect(stripe, cornerRadius = radius)
+                    } else {
+                        val ring = if (index == reached) NEXT_RANK_RING_ALPHA else RANK_RING_ALPHA
+                        drawRoundRect(stripe.copy(alpha = ring), cornerRadius = radius, style = Stroke(1.dp.toPx()))
+                    }
                     if (index == reached && !level.isMaxLevel) {
                         val height = size.height * share
                         drawRoundRect(brain, Offset(0f, size.height - height), Size(size.width, height), radius)
                     }
                 }
+            }
+        }
+
+        Row(Modifier.fillMaxWidth().padding(horizontal = 8.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            for (index in 0 until LEVELS_PER_BELT.toInt()) {
                 Text(
                     whole(index + 1L, locale),
+                    modifier = Modifier.weight(1f),
                     color = if (index + 1 == reached) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.labelSmall.withTabularFigures(),
                     fontWeight = if (index + 1 == reached) FontWeight.SemiBold else null,
                 )
@@ -855,6 +870,7 @@ internal fun PatternsPage(context: StatsContext) {
     val bestTime = (summary.times as? Verdict.Best)?.key
 
     Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
+        StatsLine(stringResource(R.string.stats_patterns_intro))
         StatTiles(
             columns = if (context.wide) 3 else 2,
             tiles =
@@ -1102,6 +1118,8 @@ private const val SCORE_WINDOW_DAYS = 90
 internal const val MIN_PATTERN_ANSWERS = 10L
 private const val EVEN_SPREAD_POINTS = 5.0
 private const val PANEL_TINT = 0.1f
+private const val RANK_RING_ALPHA = 0.15f
+private const val NEXT_RANK_RING_ALPHA = 0.35f
 private const val AHEAD_ALPHA = 0.38f
 private const val UNCOUNTED_BAR_ALPHA = 0.2f
 private const val OTHER_BAR_ALPHA = 0.45f

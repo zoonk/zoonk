@@ -66,6 +66,7 @@
   "stats_past_year": "dabf818bf87d58d5f83de567a7131f9703df3d77666fe95fa039927b660ef806",
   "stats_patterns": "a37014c1ec2ab061a2b85919c4211e1087ae0053d0e943252adffb93a0d4d5c1",
   "stats_patterns_90": "fa0db17845d39c74b37fb2790c7be29748a84da06ae2630c1a6b5e49da875fe1",
+  "stats_patterns_intro": "9efc39acafdf4e4a6ef7f34c0203f0a0241ccbd0a2c3034553973788ab0641ba",
   "stats_period": "f387c3db1ed2b421150dd933f10f3b51f56cce0a068c57ab41836e4a3b61ddfa",
   "stats_range": "1eb98e31585bc4224fb12b1be01df83507ce2bb93b5b47bc2174850a23c9455c",
   "stats_right": "290037a154c76a9cb6ca65442fd98eb7661281ac9cd924bc4b29075b84dd7a45",
@@ -200,6 +201,7 @@
         <item quantity="many">%1$s: %2$s em %3$s respostas</item>
         <item quantity="other">%1$s: %2$s em %3$s respostas</item>
     </plurals>
+    <string name="stats_patterns_intro">Nos dias em que você responde melhor, nos últimos 90 dias.</string>
     <string name="stats_answers">Respostas</string>
     <string name="stats_last_90">Nos últimos 90 dias</string>
     <string name="stats_not_enough">Ainda não há respostas suficientes</string>

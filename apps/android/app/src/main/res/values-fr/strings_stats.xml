@@ -66,6 +66,7 @@
   "stats_past_year": "1e1eae063d7dfee1df5496a319a6871c456321190ad84c46549b5139527a922a",
   "stats_patterns": "70f91d2e38342b6077f375a6cab6144d73994fc56a3b5524fc4e2862ac186222",
   "stats_patterns_90": "8f21585c95210a4a163a96c386d292d266aba5c75af002a8d5e87cc6e7435ea5",
+  "stats_patterns_intro": "316dda34d40985b1d4ffe4eeb0949ec5a40f2df95fdcbef822001bf6f9f9dde3",
   "stats_period": "af7b230dbdb8f16bd4b05c6cd0861b3c7b7ffeb3399f890bfef47a691f001d4f",
   "stats_range": "6b0aab72cf86be61a690fac4a03b2b79459d7216fa6e70bd4587dc4d82c10000",
   "stats_right": "f97d1fbe44e04b324a96ea4e03cd48a22c5394f0a71b9d8958867f9f662891b4",
@@ -200,6 +201,7 @@
         <item quantity="many">%1$s : %2$s sur %3$s réponses</item>
         <item quantity="other">%1$s : %2$s sur %3$s réponses</item>
     </plurals>
+    <string name="stats_patterns_intro">Quand tu réponds le mieux, sur les 90 derniers jours.</string>
     <string name="stats_answers">Réponses</string>
     <string name="stats_last_90">Au cours des 90 derniers jours</string>
     <string name="stats_not_enough">Pas encore assez de réponses</string>
