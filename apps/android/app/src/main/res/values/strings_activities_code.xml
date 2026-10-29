@@ -41,6 +41,8 @@
     <string name="activities_code_your_pattern">Your pattern</string>
     <!-- The field for a spreadsheet formula, for TalkBack. -->
     <string name="activities_code_your_formula">Your formula</string>
+    <!-- A sample spreadsheet formula, the same in every language. -->
+    <string name="activities_code_formula_placeholder" translatable="false">=A1*B1</string>
     <!-- The row of buttons that type regular expression or formula symbols, for TalkBack. -->
     <string name="activities_code_symbols">Symbols</string>
     <!-- What the regular expression symbol ^ means, for TalkBack. -->

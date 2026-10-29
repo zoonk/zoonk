@@ -213,7 +213,9 @@ private fun PatternField(
             cursorBrush = SolidColor(colors.primary),
             decorationBox = { field ->
                 Box {
-                    if (!isRegex && value.text.isEmpty()) Text(FORMULA_PLACEHOLDER, color = colors.onSurfaceVariant, style = style)
+                    if (!isRegex && value.text.isEmpty()) {
+                        Text(stringResource(R.string.activities_code_formula_placeholder), color = colors.onSurfaceVariant, style = style)
+                    }
                     field()
                 }
             },
@@ -488,6 +490,5 @@ private fun PatternHints(
     }
 }
 
-private const val FORMULA_PLACEHOLDER = "=A1*B1"
 private const val CHECKED_ALPHA = 0.8f
 private const val FAILING_EDGE_ALPHA = 0.5f
