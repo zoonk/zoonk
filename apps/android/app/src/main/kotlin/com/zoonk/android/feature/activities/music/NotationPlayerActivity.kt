@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledIconButton
@@ -209,7 +210,11 @@ private fun TempoMenu(
                 },
         ) {
             Text(current, style = MaterialTheme.typography.labelLarge.withTabularFigures())
-            Icon(painterResource(R.drawable.ic_arrow_drop_down), contentDescription = null, modifier = Modifier.padding(start = 4.dp))
+            Icon(
+                painterResource(R.drawable.ic_expand_more),
+                contentDescription = null,
+                modifier = Modifier.padding(start = ButtonDefaults.IconSpacing).size(ButtonDefaults.IconSize),
+            )
         }
         DropdownMenu(expanded = isOpen, onDismissRequest = { isOpen = false }) {
             tempos.forEach { option ->
