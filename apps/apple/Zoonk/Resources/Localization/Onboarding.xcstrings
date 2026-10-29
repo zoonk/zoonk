@@ -12114,6 +12114,35 @@
         }
       }
     },
+    "Your plan" : {
+      "comment" : "Title of a new plan",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Plan"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton plan"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu plano"
+          }
+        }
+      }
+    },
     "Your plan and lessons will use it." : {
       "comment" : "Under the way to add material",
       "localizations" : {

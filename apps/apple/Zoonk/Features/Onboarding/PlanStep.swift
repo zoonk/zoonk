@@ -38,6 +38,10 @@ struct PlanStep: View {
       }
     }
     .loads(plan, refreshable: false)
+    .navigationTitle(Text("Your plan", tableName: "Onboarding", comment: "Title of a new plan"))
+    .toolbarTitleDisplayMode(.inline)
+    // The plan heads itself, as main does; the bar keeps the title for VoiceOver.
+    .toolbar(removing: .title)
   }
 
   private func building(_ plan: Resource<PlanRead>) -> some View {
