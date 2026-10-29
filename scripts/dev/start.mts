@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { randomUUID } from "node:crypto";
 import { homedir } from "node:os";
 import {
   getMailboxCaptureUrl,
@@ -32,7 +33,7 @@ async function runDevelopmentCommand({
     args: [...pnpmCommand.args, ...args],
     command: pnpmCommand.command,
     currentDirectory,
-    environment,
+    environment: { APP_CACHE_SECRET: randomUUID(), ...environment },
   });
 }
 
