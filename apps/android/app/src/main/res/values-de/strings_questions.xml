@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "questions_correct": "dd1a0e63ea70646e75930076d1b83692b0ad037fc27ac147ff92e5216303943c",
+  "questions_dont_know_yet": "d71fcb0b55415b7b9f168ac94a043d1ce28aae0a84514b2a4dd9450209a1d34e",
+  "questions_drill_last_answer": "4f866a2efdbc9c4d8856e1449ad5aa686b15abf8c804d870c367a7b38574b9c4",
+  "questions_drill_no_guessing": "ca539e879876a17ae6d5eebb74e5bc6461312d465049de732c37ab079827f9ce",
+  "questions_drill_not_sure": "e030ccffcbfaea93ef84aaf6ab7674d350c45931cb158ea96d4c7759d33db7d4",
+  "questions_drill_not_sure_praise": "4ffbc9d6a470e9f2de69cf18b4205a4113ca55d6e418c44baf65ec7b50c7cc28",
+  "questions_drill_open_lesson": "002a2c2a43f8281fee83a61ded01f1f71cfb9c88b028841bc19e0f49eec6370e",
+  "questions_drill_read_carefully": "aa7116c49fe959f5a59950d4dd8628c5005727636f509582308829729b099e52",
+  "questions_drill_reteach": "46b93d823f48284b3c89dcc5ae3374ca60eada133ef059a8d239a50b33f5b02e",
+  "questions_drill_reteach_ideas": "bfb9cbcd012d7cca24778af0e5d3ae4e260363c88822773d18a17f5cf563dfc6",
+  "questions_drill_retry": "b85920e51f2a2ccb4a3d1aa1d9d6a3f6ad5ae8633265891ef3dadc72ceb893d2",
+  "questions_drill_seconds_left": "af17e9162a8d06df3160acbad34088865ba6283832f00164d4fbad2dab2685ad",
+  "questions_drill_show_answers": "d04d2462c38d888544bbd23cf1060e1d24e511c3815b10faac79f540eefdc909",
+  "questions_drill_spot_the_trap": "48228caa5980965ee264d6ff74e78297c02701ff622ad06a9741602f83c7131f",
+  "questions_drill_start": "7c565608d2ac13fe4360f2d20b21d0368d4ffba91671fab56a83d3f58f205419",
+  "questions_drill_time_left": "80b8a3ddd482cc56e2da5f723fe0809d5bfdcfc3df2e008bb52426fe52474394",
+  "questions_drill_time_up": "c7fc6f30dd3e2cc759fa424dc8275d3179d625797ab7f239a8c147acca598b90",
+  "questions_drill_timed": "8116458e22eb334e548f2d1302872493914440fe1aafa252da8b6ae37c8a8264",
+  "questions_drill_timed_out": "bd076c2ace86a6819b9cee1f2ee6faf1940abd472b6195f360ef8e4f6e934d8f",
+  "questions_drill_trap": "88c96f0974a860560d30231b5f3d0457c6f9e659ac36fa3478ff4a7865d69fe2",
+  "questions_entry_decimals": "eb0286c96cd7739eb7789b5a79124f269a45b53962dfa9a0ca2c77bbad3d531a",
+  "questions_entry_fraction": "76afae46f23d8ca0c2207101bf0ff283292f0dfab4d19821b44826705ec43461",
+  "questions_entry_integer": "e908199333708bdf1dd370066dff6ee1b9acb1decea869623c03b031b9596511",
+  "questions_false": "eb938ed0d62b29a3c82e4a3feeb478c117770ff20aa0856ae3fdbf735b3616ca",
+  "questions_feedback_label": "04986548176f308b4b769d3f2d289d987b678172c728e378d8bd4e346c5532e6",
+  "questions_invalid_fraction": "aaa19a833dffb617cf765e08cbf9b21fde5ab3baced64a89b99affb45fe62d54",
+  "questions_invalid_integer": "b42a572c1801ad65afb809cc934244670c9bcfe4f13defc5536eb012f1ed720d",
+  "questions_invalid_number": "ef9e00e36bad32dc9c4e8336768a0842c25542588c044b6cae781f69e44080f0",
+  "questions_leave_blank": "8caf0b627c60f65f64746d9331729f4b8c8310e98439cb7448866411277e0c68",
+  "questions_left_blank": "3f5636ce50bd4a1b02e734b93bb3332124f8e2ae58ad8e89d334b0714a5cf9aa",
+  "questions_mark_correct": "acb7e5f06e9759c3dd7c8d98913dcd5b5e76eb0d221d653797f61e5ee953772e",
+  "questions_mark_wrong": "7f46cd2b5e978c5f53985b5658fe95f55e02c1a2ca63b3529dd671fadb24f86c",
+  "questions_matched_with": "97628d68b1cd118e24dc5a5560b6af67e432bb22d2a3ceaa86fef1931550cfb6",
+  "questions_mistake_fixed": "41d3e614911d5e9d21c23e6e18b271a2e00c7fd108aadb92cd2246d91f0361be",
+  "questions_not_quite": "c95d6464a2ae21750f275d318ff32022b58f6a475b759f72867b532a8985fffb",
+  "questions_open_source": "571366e965ff9338a6e06d37b354b5b0c84c9c3fae8827eda89fa5f24efe1306",
+  "questions_order_hint": "1025487c28a4b341279ab7907ecdbc6856fa074202372fd54392b36eaa0fa50f",
+  "questions_pick_all": "a935beccedb70ff7e95a50b19eb80a832f12198b186ee71285935c2a88e08d9f",
+  "questions_pick_count": "820283360e9e21414e58aeaa0bf66385f5d7a7f0f3324846c50dcbb3e8d8f7d3",
+  "questions_place": "9fab86095633b472a28621113fef2ac42cb01ab1303463775610dcc7ee5b0d0b",
+  "questions_place_right": "65ad2104a726e153caca06ad18efb8e08e72ff2a14e211c58289b2a1fe51b217",
+  "questions_place_wrong": "feeff4dbcd59760bb7d4bc874c276a51aed3f0bc1b8455969d391c930ff11b9b",
+  "questions_placement_note": "e565b4fccae9b372cf73caa5cf384c5baaac115d43adee3f54a4e9bd3b6cfd96",
+  "questions_quoted_source": "4f737f4bfaa63eb0a46d0fdf2863f473da34f70dd06f9018176d01941cee095b",
+  "questions_read_again": "f597e45e8ecf55495e0f3ac218cdf94772fa864ce45eaab0aafd4f60590c5768",
+  "questions_result": "883ec99d73b8f7ec028486f6ee091b8f6829f28d4f9b4c5cf0e99852f3e7bcef",
+  "questions_right": "9b10dbf6d9c437b0430f7fe9e067cbf5702484bdb818d4bf6aa5b2cd4ea44238",
+  "questions_right_answer": "16e7a7cd7e1aa12f8bae9255abee742e86864d70d01a6bc7a3a2b59e3772b815",
+  "questions_saved": "fd669137d45db761532b81624644287dc706dba2214b28783165fcdbe87c6158",
+  "questions_saved_tomorrow": "4c3c143a0dd5ff18cdadc83d9f797acd44725235df580ba3cf8de79e4816d2d7",
+  "questions_set_place_audio": "aae4048a94645da7e7f4729036d0d358d93074290347a87163e715afd637b3c6",
+  "questions_set_place_case": "8c91d0b034ac276cbcebae9933c71a8528348136fcc895f53c68077cd6a8cd25",
+  "questions_set_place_chart": "4975c43ae9ad369e83aef9605253dc90516edf98e39954bc4781514c8a01db52",
+  "questions_set_place_text": "e90a6a9013c7f7eacbb352432a1d7e85c3503573ca404add0147fc8b314fa0fe",
+  "questions_show_less": "aea18fc70677bd45f1fcdad1688dc6a628d1326217cdf014c3d00f6564d6525f",
+  "questions_source_checked": "87af0f365bae7d39a5a3e6a6c8228f7b9adf304d061797b73ab0e72c2a532bed",
+  "questions_source_checked_by": "80a45326584fed17c5c4f488c1f89e1dcc2644ea1aa902ffcb60cfa6efd503eb",
+  "questions_sources_chip": "fd109952e5e95d31e626d88c26292f31f619984460f88b7d7284243159abf1f4",
+  "questions_streak": "40c215a3b9f5bc54e5d558b084f9e174693e2af8bff9226948ecc3712c9a402a",
+  "questions_true": "617e712d49ffc3f15d2a19f08f1706738ffc0f1d6eac8244f1e0d6e1aee07573",
+  "questions_wrong": "d8f8005b57242854323ac33cc9beb14361e4293abe61ea3873abdf5d44655948",
+  "questions_your_answer": "c8aebde9870a36abf332ca3d1f5f3b27987cbfa4401ae1734ddc986982bebd35"
+}
+-->
+<resources>
+    <string name="questions_pick_all">Wähle alle passenden Antworten aus.</string>
+    <plurals name="questions_pick_count">
+        <item quantity="one">Wähle %d Option aus.</item>
+        <item quantity="other">Wähle %d Optionen aus.</item>
+    </plurals>
+    <string name="questions_true">Wahr</string>
+    <string name="questions_false">Falsch</string>
+    <!-- How exams like Cebraspe word a statement's verdict. -->
+    <string name="questions_right">Richtig</string>
+    <string name="questions_wrong">Falsch</string>
+    <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
+    <string name="questions_leave_blank">Leer lassen</string>
+    <string name="questions_order_hint">Tippe die Schritte in der richtigen Reihenfolge an.</string>
+    <!-- The place a step was put in, read aloud. -->
+    <string name="questions_place">Platziere %1$d</string>
+    <string name="questions_place_right">Platziere %1$d am richtigen Platz</string>
+    <string name="questions_place_wrong">Platziere %1$d am falschen Platz</string>
+    <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
+    <string name="questions_matched_with">%1$s, zugeordnet zu %2$s</string>
+    <string name="questions_your_answer">Deine Antwort</string>
+    <string name="questions_mark_correct">Richtig</string>
+    <string name="questions_mark_wrong">Falsch</string>
+    <plurals name="questions_entry_decimals">
+        <item quantity="one">Runde auf %d Dezimalstelle.</item>
+        <item quantity="other">Runde auf %d Dezimalstellen.</item>
+    </plurals>
+    <string name="questions_entry_fraction">Ein Bruch wie 2/3 oder eine Dezimalzahl.</string>
+    <string name="questions_entry_integer">Eine ganze Zahl.</string>
+    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
+    <string name="questions_invalid_number">Gib eine Zahl ein, zum Beispiel %1$s.</string>
+    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
+    <string name="questions_invalid_fraction">Gib einen Bruch wie 2/3 oder eine Zahl wie %1$s ein.</string>
+    <string name="questions_invalid_integer">Gib eine ganze Zahl ein, zum Beispiel 12.</string>
+    <string name="questions_feedback_label">Rückmeldung zur Antwort</string>
+    <string name="questions_correct">Richtig!</string>
+    <string name="questions_not_quite">Noch nicht ganz</string>
+    <string name="questions_left_blank">Leer gelassen</string>
+    <string name="questions_dont_know_yet">Das weiß ich noch nicht</string>
+    <plurals name="questions_streak">
+        <item quantity="one">%d-mal hintereinander richtig</item>
+        <item quantity="other">%d-mal hintereinander richtig</item>
+    </plurals>
+    <string name="questions_right_answer">Richtige Antwort: %1$s</string>
+    <!-- The last line of a worked solution, read aloud. -->
+    <string name="questions_result">Ergebnis: %1$s</string>
+    <string name="questions_mistake_fixed">Fehler korrigiert. Er wird aus deinem Fehlerheft entfernt.</string>
+    <string name="questions_saved">In deinem Fehlerheft gespeichert</string>
+    <string name="questions_saved_tomorrow">In deinem Fehlerheft gespeichert · kommt morgen wieder</string>
+    <string name="questions_show_less">Weniger anzeigen</string>
+    <string name="questions_read_again">Alles noch einmal lesen</string>
+    <string name="questions_set_place_audio">Frage %1$d von %2$d zu dieser Aufnahme</string>
+    <string name="questions_set_place_case">Frage %1$d von %2$d zu diesem Fall</string>
+    <string name="questions_set_place_chart">Frage %1$d von %2$d zu diesem Diagramm</string>
+    <string name="questions_set_place_text">Frage %1$d von %2$d zu diesem Text</string>
+    <string name="questions_placement_note">Wir passen deinen Plan an. Ein Fehler hier wird nie als Fehler gespeichert.</string>
+    <!-- %1$s names the exam and year the question was printed in. -->
+    <string name="questions_quoted_source">Frage aus einer früheren Prüfung · %1$s</string>
+    <!-- %1$s is a month and year, like Oct 2026. -->
+    <string name="questions_sources_chip">Quellen · geprüft am %1$s</string>
+    <string name="questions_source_checked_by">%1$s · geprüft am %2$s</string>
+    <string name="questions_source_checked">Geprüft am %1$s</string>
+    <string name="questions_open_source">Quelle öffnen</string>
+    <string name="questions_drill_reteach_ideas">Erst die Idee, dann ein paar Fragen dazu.</string>
+    <string name="questions_drill_reteach">Ein paar Fragen zu einer Idee, die du verpasst hast.</string>
+    <string name="questions_drill_read_carefully">Lies jedes Wort, bevor du antwortest.</string>
+    <string name="questions_drill_spot_the_trap">Hier steckt eine Falle. Finde sie, bevor du antwortest.</string>
+    <plurals name="questions_drill_timed">
+        <item quantity="one">%d Sekunde pro Frage, wie am Prüfungstag.</item>
+        <item quantity="other">%d Sekunden pro Frage, wie am Prüfungstag.</item>
+    </plurals>
+    <string name="questions_drill_no_guessing">Antworte nur, wenn du sicher bist. Es ist völlig in Ordnung, wenn du dir nicht sicher bist.</string>
+    <string name="questions_drill_retry">Versuch es noch einmal.</string>
+    <string name="questions_drill_start">Fragen starten</string>
+    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
+    <string name="questions_drill_last_answer">Deine letzte Antwort: %1$s</string>
+    <string name="questions_drill_timed_out">Die Zeit ist abgelaufen. Das zählt als falsch und die Frage kommt wieder.</string>
+    <string name="questions_drill_not_sure_praise">Gute Entscheidung. Zu sagen, dass du unsicher bist, ist besser als zu raten.</string>
+    <string name="questions_drill_trap">Die Falle:</string>
+    <string name="questions_drill_time_up">Zeit abgelaufen</string>
+    <string name="questions_drill_time_left">Verbleibende Zeit</string>
+    <plurals name="questions_drill_seconds_left">
+        <item quantity="one">%d Sek. übrig</item>
+        <item quantity="other">%d Sek. übrig</item>
+    </plurals>
+    <string name="questions_drill_show_answers">Ich habe es gelesen. Antworten anzeigen</string>
+    <string name="questions_drill_not_sure">Ich bin mir nicht sicher</string>
+    <string name="questions_drill_open_lesson">Lektion wiederholen</string>
+</resources>

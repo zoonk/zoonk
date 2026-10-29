@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="questions_pick_all">Select all that apply.</string>
+    <plurals name="questions_pick_count">
+        <item quantity="one">Choose %d option.</item>
+        <item quantity="other">Choose %d options.</item>
+    </plurals>
+    <string name="questions_true">True</string>
+    <string name="questions_false">False</string>
+    <!-- How exams like Cebraspe word a statement's verdict. -->
+    <string name="questions_right">Right</string>
+    <string name="questions_wrong">Wrong</string>
+    <!-- Leaving a statement unanswered where a wrong answer cancels a right one. -->
+    <string name="questions_leave_blank">Leave blank</string>
+    <string name="questions_order_hint">Tap the steps in order.</string>
+    <!-- The place a step was put in, read aloud. -->
+    <string name="questions_place">Place %1$d</string>
+    <string name="questions_place_right">Place %1$d, right place</string>
+    <string name="questions_place_wrong">Place %1$d, wrong place</string>
+    <!-- An entry on the right read aloud with the entry on the left it was matched with. -->
+    <string name="questions_matched_with">%1$s, matched with %2$s</string>
+    <string name="questions_your_answer">Your answer</string>
+    <string name="questions_mark_correct">Correct</string>
+    <string name="questions_mark_wrong">Wrong</string>
+    <plurals name="questions_entry_decimals">
+        <item quantity="one">Round to %d decimal place.</item>
+        <item quantity="other">Round to %d decimal places.</item>
+    </plurals>
+    <string name="questions_entry_fraction">A fraction, like 2/3, or a decimal.</string>
+    <string name="questions_entry_integer">A whole number.</string>
+    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
+    <string name="questions_invalid_number">Type a number, like %1$s.</string>
+    <!-- %1$s is a decimal number written the language's way, like 2.5. -->
+    <string name="questions_invalid_fraction">Type a fraction, like 2/3, or a number, like %1$s.</string>
+    <string name="questions_invalid_integer">Type a whole number, like 12.</string>
+    <string name="questions_feedback_label">Answer feedback</string>
+    <string name="questions_correct">Correct!</string>
+    <string name="questions_not_quite">Not quite</string>
+    <string name="questions_left_blank">Left blank</string>
+    <string name="questions_dont_know_yet">I don\'t know yet</string>
+    <plurals name="questions_streak">
+        <item quantity="one">%d right in a row</item>
+        <item quantity="other">%d right in a row</item>
+    </plurals>
+    <string name="questions_right_answer">Right answer: %1$s</string>
+    <!-- The last line of a worked solution, read aloud. -->
+    <string name="questions_result">Result: %1$s</string>
+    <string name="questions_mistake_fixed">Mistake fixed. It leaves your notebook.</string>
+    <string name="questions_saved">Saved to your mistakes</string>
+    <string name="questions_saved_tomorrow">Saved to your mistakes · it comes back tomorrow</string>
+    <string name="questions_show_less">Show less</string>
+    <string name="questions_read_again">Read it all again</string>
+    <string name="questions_set_place_audio">Question %1$d of %2$d on this recording</string>
+    <string name="questions_set_place_case">Question %1$d of %2$d on this case</string>
+    <string name="questions_set_place_chart">Question %1$d of %2$d on this chart</string>
+    <string name="questions_set_place_text">Question %1$d of %2$d on this text</string>
+    <string name="questions_placement_note">Fine-tuning your plan. A miss here is never saved as a mistake.</string>
+    <!-- %1$s names the exam and year the question was printed in. -->
+    <string name="questions_quoted_source">Past exam question · %1$s</string>
+    <!-- %1$s is a month and year, like Oct 2026. -->
+    <string name="questions_sources_chip">Sources · Checked %1$s</string>
+    <string name="questions_source_checked_by">%1$s · Checked %2$s</string>
+    <string name="questions_source_checked">Checked %1$s</string>
+    <string name="questions_open_source">Open the source</string>
+    <string name="questions_drill_reteach_ideas">The idea first, then a few questions on it.</string>
+    <string name="questions_drill_reteach">A few questions on an idea you missed.</string>
+    <string name="questions_drill_read_carefully">Read every word before you answer.</string>
+    <string name="questions_drill_spot_the_trap">There\'s a trap in here. Find it before you answer.</string>
+    <plurals name="questions_drill_timed">
+        <item quantity="one">%d second a question, like on the day.</item>
+        <item quantity="other">%d seconds a question, like on the day.</item>
+    </plurals>
+    <string name="questions_drill_no_guessing">Only answer when you\'re sure. Saying you\'re not sure is fine.</string>
+    <string name="questions_drill_retry">Try it again.</string>
+    <string name="questions_drill_start">Start the questions</string>
+    <!-- %1$s is the learner's earlier answer, in their words or an option's. -->
+    <string name="questions_drill_last_answer">Last time you answered: %1$s</string>
+    <string name="questions_drill_timed_out">Time\'s up. It counts as a miss, so it comes back.</string>
+    <string name="questions_drill_not_sure_praise">Good call. Saying you\'re not sure beats a guess.</string>
+    <string name="questions_drill_trap">The trap:</string>
+    <string name="questions_drill_time_up">Time\'s up</string>
+    <string name="questions_drill_time_left">Time left</string>
+    <plurals name="questions_drill_seconds_left">
+        <item quantity="one">%d second left</item>
+        <item quantity="other">%d seconds left</item>
+    </plurals>
+    <string name="questions_drill_show_answers">I\'ve read it. Show the answers</string>
+    <string name="questions_drill_not_sure">I\'m not sure</string>
+    <string name="questions_drill_open_lesson">Go over the lesson</string>
+</resources>
