@@ -77,6 +77,7 @@ describe(deploy, () => {
         target: "production",
       });
 
+      expect(call.url.searchParams.get("withCache")).toBe("1");
       expect(call.body).not.toHaveProperty("autoAssignCustomDomains", false);
       expect(call.body).not.toHaveProperty("customEnvironmentSlugOrId");
     }
@@ -120,6 +121,7 @@ describe(deploy, () => {
       });
 
       expect(call.body.build).toStrictEqual({ env: call.body.env });
+      expect(call.url.searchParams.get("withCache")).toBe("1");
       expect(call.body).not.toHaveProperty("buildMachine");
     }
 

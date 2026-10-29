@@ -203,7 +203,7 @@ async function deployApp({
     },
     method: "POST",
     path: "/v13/deployments",
-    query: { forceNew: "1" },
+    query: { forceNew: "1", withCache: "1" },
   });
 
   const deployment = z.object({ id: z.string() }).parse(response);
