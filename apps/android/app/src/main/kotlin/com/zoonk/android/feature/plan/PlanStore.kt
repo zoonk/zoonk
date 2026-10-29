@@ -269,7 +269,7 @@ class LivePlanApi(
         goalId: UUID,
         answer: ToolAnswer,
     ) = perform {
-        api.clients(session).plans.createPlanToolChoice(
+        api.streamingClients(session).plans.createPlanToolChoice(
             goalId,
             PlanToolChoiceInput(
                 choice = PlanToolChoiceInput.Choice.valueOf(answer.choice.name),
