@@ -357,9 +357,8 @@ msgstr "{done, number} de {total, number}"
 #: src/language/pronunciation/pronunciation-review-screen.tsx
 #: src/mind-maps/mind-map-card.tsx
 #: src/mind-maps/mind-map-tiles.tsx
-#: src/onboarding/steps/finish-estimate.tsx
 #: src/onboarding/steps/plan-start-notice.tsx
-#: src/onboarding/steps/time-estimate.tsx
+#: src/onboarding/steps/schedule-line.tsx
 #: src/plan/plan-bases-advice.tsx
 #: src/plan/plan-bases-sheet.tsx
 #: src/plan/plan-offer-preview.tsx
@@ -3345,7 +3344,7 @@ msgid "Checking if it's an exam, a language or a subject…"
 msgstr "Conferindo se é uma prova, um idioma ou uma matéria…"
 
 #: src/generation/use-generation-copy.ts
-#: src/onboarding/steps/plan-reveal.tsx
+#: src/onboarding/steps/plan-building.tsx
 #: src/today/today-preparing.tsx
 msgctxt "PBFmO0"
 msgid "Building your plan"
@@ -8356,6 +8355,7 @@ msgid "Goal"
 msgstr "Meta"
 
 #: src/onboarding/plan-receipt.tsx
+#: src/onboarding/steps/schedule-step.tsx
 #: src/plan/plan-properties.tsx
 #: src/plan/plan-schedule.tsx
 msgctxt "8W4rYY"
@@ -8402,30 +8402,10 @@ msgctxt "s2KyHA"
 msgid "Your answers for this goal are cleared, and you type a goal again."
 msgstr "Suas respostas sobre esta meta serão apagadas, e você vai digitar uma meta de novo."
 
-#: src/onboarding/steps/advice-sentence.tsx
-msgctxt "7CNAnx"
-msgid "You can change this anytime."
-msgstr "Você pode mudar isso quando quiser."
-
-#: src/onboarding/steps/advice-sentence.tsx
-msgctxt "Ho8Svl"
-msgid "Reading the exam's official documents first…"
-msgstr "Lendo primeiro os documentos oficiais da prova…"
-
-#: src/onboarding/steps/advice-sentence.tsx
-msgctxt "7s3R8Q"
-msgid "Building your plan…"
-msgstr "Montando seu plano…"
-
 #: src/onboarding/steps/buddy-step.tsx
 msgctxt "bv5Y_i"
 msgid "Your buddy grows as you learn."
 msgstr "Seu parceiro cresce enquanto você aprende."
-
-#: src/onboarding/steps/cover-everything.tsx
-msgctxt "5fsywg"
-msgid "To cover everything at {time} a day, move your date on the next screen."
-msgstr "Para estudar tudo em {time} por dia, mude a data na próxima tela."
 
 #: src/onboarding/steps/daily-minutes.tsx
 msgctxt "QegAWn"
@@ -8444,9 +8424,9 @@ msgid "Other time a day"
 msgstr "Outro tempo por dia"
 
 #: src/onboarding/steps/daily-minutes.tsx
-msgctxt "zbSUYV"
-msgid "per day"
-msgstr "por dia"
+msgctxt "8kifjv"
+msgid "{time} (suggested)"
+msgstr "{time} (sugerido)"
 
 #: src/onboarding/steps/date-step.tsx
 msgctxt "_2I8Hl"
@@ -8512,31 +8492,6 @@ msgstr "Decidir depois"
 msgctxt "y_efbE"
 msgid "{count, plural, one {Which one will you take?} other {Which ones will you take?}}"
 msgstr "{count, plural, one {Qual você vai fazer?} other {Quais você vai fazer?}}"
-
-#: src/onboarding/steps/finish-estimate.tsx
-msgctxt "Hy8sTO"
-msgid "Choose at least one study day."
-msgstr "Escolha pelo menos um dia de estudo."
-
-#: src/onboarding/steps/finish-estimate.tsx
-msgctxt "lzWfsi"
-msgid "You finish around <date>{month}</date>."
-msgstr "Você termina por volta de <date>{month}</date>."
-
-#: src/onboarding/steps/finish-estimate.tsx
-msgctxt "Kz6oc0"
-msgid "We can't estimate a finish date for this schedule. Try more time or more study days."
-msgstr "Não dá para estimar uma data de conclusão com esse cronograma. Tente dedicar mais tempo ou escolher mais dias de estudo."
-
-#: src/onboarding/steps/finish-estimate.tsx
-msgctxt "-TVG-n"
-msgid "We couldn't work out when you'd finish."
-msgstr "Não conseguimos calcular quando você vai terminar."
-
-#: src/onboarding/steps/finish-estimate.tsx
-msgctxt "OGpEA-"
-msgid "Working out when you'd finish…"
-msgstr "Calculando quando você vai terminar…"
 
 #: src/onboarding/steps/full-course-toggle.tsx
 #: src/plan/plan-coverage-suggestion.tsx
@@ -8786,7 +8741,12 @@ msgctxt "8S9f9-"
 msgid "Your first sessions will ask a few of these instead."
 msgstr "Algumas dessas perguntas vão aparecer nas suas primeiras sessões."
 
-#: src/onboarding/steps/plan-reveal.tsx
+#: src/onboarding/steps/plan-building.tsx
+msgctxt "ni-x13"
+msgid "Your answers are saved."
+msgstr "Suas respostas foram salvas."
+
+#: src/onboarding/steps/plan-building.tsx
 msgctxt "zCKNAZ"
 msgid "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two."
 msgstr "A gente está escolhendo o que você vai aprender primeiro e encaixando tudo nos seus dias. Uma matéria nova pode levar um ou dois minutos."
@@ -9111,15 +9071,120 @@ msgctxt "LHVFe7"
 msgid "E.g., reports, A/B tests"
 msgstr "Ex.: relatórios, testes A/B"
 
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "YNFEUo"
+msgid "Your date is too close to cover everything in depth."
+msgstr "Sua data está muito próxima para estudar tudo a fundo."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "GPWSBB"
+msgid "Your date is close: covering everything in depth takes {time} a day."
+msgstr "Sua data está próxima: para estudar tudo a fundo, você precisa de {time} por dia."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "pygqwo"
+msgid "What it takes to cover all your exam topics by {date}."
+msgstr "O tempo necessário para estudar todos os tópicos da prova até {date}."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "yW7SXR"
+msgid "What it takes to cover your whole goal by {date}."
+msgstr "O tempo necessário para alcançar sua meta completa até {date}."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "Nuzpxh"
+msgid "Covers all your exam topics by {date}."
+msgstr "Estuda todos os tópicos da prova até {date}."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "IOOHW7"
+msgid "Covers your whole goal by {date}."
+msgstr "Alcança sua meta completa até {date}."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "y6GKLH"
+msgid "Reaches every exam topic by {date}, some in less depth."
+msgstr "Chega a todos os tópicos da prova até {date}, alguns com menos profundidade."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "o8oyND"
+msgid "Reaches every part of your goal by {date}, some in less depth."
+msgstr "Alcança todas as partes da sua meta até {date}, algumas com menos profundidade."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "27gzEN"
+msgid "Covers about {share} of your exam topics in depth by {date}, what comes up most first."
+msgstr "Estuda a fundo cerca de {share} dos tópicos da prova até {date}, começando pelos mais cobrados."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "DFxvWf"
+msgid "Covers about {share} of your goal in depth by {date}, what matters most first."
+msgstr "Estuda a fundo cerca de {share} da sua meta até {date}, começando pelo que mais importa."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "EoRV3G"
+msgid "Your date, {date}, has passed. You can choose a new one on the next screen."
+msgstr "Sua data, {date}, já passou. Você pode escolher outra na próxima tela."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "lzWfsi"
+msgid "You finish around <date>{month}</date>."
+msgstr "Você termina por volta de <date>{month}</date>."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "Kz6oc0"
+msgid "We can't estimate a finish date for this schedule. Try more time or more study days."
+msgstr "Não dá para estimar uma data de conclusão com esse cronograma. Tente dedicar mais tempo ou escolher mais dias de estudo."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "Hy8sTO"
+msgid "Choose at least one study day."
+msgstr "Escolha pelo menos um dia de estudo."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "53o9vK"
+msgid "Working out the time your goal needs…"
+msgstr "Calculando quanto tempo sua meta exige…"
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "fiywvR"
+msgid "We couldn't work out the time your goal needs."
+msgstr "Não foi possível calcular quanto tempo sua meta exige."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "jQp-oV"
+msgid "Working out what {time} a day covers…"
+msgstr "Calculando o que dá para cobrir com {time} por dia…"
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "OGpEA-"
+msgid "Working out when you'd finish…"
+msgstr "Calculando quando você vai terminar…"
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "2885Jq"
+msgid "We couldn't work out what {time} a day covers."
+msgstr "A gente não conseguiu calcular o que dá para cobrir com {time} por dia."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "-TVG-n"
+msgid "We couldn't work out when you'd finish."
+msgstr "Não conseguimos calcular quando você vai terminar."
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "lOJOQa"
+msgid "Cover everything with {time} a day"
+msgstr "Estude tudo com {time} por dia"
+
+#: src/onboarding/steps/schedule-line.tsx
+msgctxt "ALuiMn"
+msgid "Reach every topic with {time} a day"
+msgstr "Chegue a todos os tópicos com {time} por dia"
+
 #: src/onboarding/steps/schedule-step.tsx
 msgctxt "h2ifto"
 msgid "How much time can you study each day?"
 msgstr "Quanto tempo você pode estudar por dia?"
-
-#: src/onboarding/steps/schedule-step.tsx
-msgctxt "2BpSHk"
-msgid "{days, plural, one {# day} other {# days}} · {time} a week"
-msgstr "{days, plural, one {# dia} other {# dias}} · {time} por semana"
 
 #: src/onboarding/steps/step-form.tsx
 #: src/plan/plan-bases-choices.tsx
@@ -9128,19 +9193,17 @@ msgid "Skip"
 msgstr "Pular"
 
 #: src/onboarding/steps/study-week.tsx
-msgctxt "8lkojx"
-msgid "Which days?"
-msgstr "Quais dias?"
+#: src/plan/plan-properties.tsx
+#: src/plan/plan-schedule.tsx
+msgctxt "RlSFBL"
+msgid "Study days"
+msgstr "Dias de estudo"
 
 #: src/onboarding/steps/study-week.tsx
-msgctxt "uCJzR6"
-msgid "Minutes on weekends"
-msgstr "Minutos nos fins de semana"
-
-#: src/onboarding/steps/study-week.tsx
-msgctxt "Foe70I"
-msgid "Other time on weekends"
-msgstr "Outro tempo nos fins de semana"
+#: src/plan/plan-schedule.tsx
+msgctxt "FYJyhw"
+msgid "Time on weekends"
+msgstr "Tempo nos fins de semana"
 
 #: src/onboarding/steps/subjects-level-step.tsx
 msgctxt "PNR_JU"
@@ -9166,47 +9229,6 @@ msgstr "Quais matérias você já conhece bem?"
 msgctxt "65ILOx"
 msgid "Subjects you know well"
 msgstr "Matérias que você já conhece bem"
-
-#: src/onboarding/steps/time-estimate.tsx
-msgctxt "rrILq8"
-msgid "<number>{share}</number> of the plan's exam topics in depth by {date}."
-msgstr "<number>{share}</number> dos tópicos da prova no plano, a fundo, até {date}."
-
-#: src/onboarding/steps/time-estimate.tsx
-msgctxt "2c4NhG"
-msgid "<number>{share}</number> of your goal in depth by {date}."
-msgstr "<number>{share}</number> da sua meta estudada a fundo até {date}."
-
-#: src/onboarding/steps/time-estimate.tsx
-msgctxt "0SQkqj"
-msgid "<number>~{share}</number> of the plan's exam topics in depth by {date}, what comes up most first."
-msgstr "<number>~{share}</number> dos tópicos da prova no plano, a fundo, até {date}, primeiro o que mais cai."
-
-#: src/onboarding/steps/time-estimate.tsx
-msgctxt "p4ORpy"
-msgid "<number>~{share}</number> of your goal in depth by {date}, what matters most first."
-msgstr "<number>~{share}</number> da sua meta estudada a fundo até {date}, começando pelo que é mais importante."
-
-#: src/onboarding/steps/time-estimate.tsx
-msgctxt "2885Jq"
-msgid "We couldn't work out what {time} a day covers."
-msgstr "A gente não conseguiu calcular o que dá para cobrir com {time} por dia."
-
-#: src/onboarding/steps/time-estimate.tsx
-#: src/plan/plan-schedule.tsx
-msgctxt "b9QpDx"
-msgid "Working out what your time covers…"
-msgstr "Calculando o que dá para cobrir com o seu tempo…"
-
-#: src/onboarding/steps/time-estimate.tsx
-msgctxt "nOGzUD"
-msgid "Last estimate, for {time} a day"
-msgstr "Última estimativa, com {time} por dia"
-
-#: src/onboarding/steps/time-estimate.tsx
-msgctxt "SD_vjQ"
-msgid "Estimate"
-msgstr "Estimativa"
 
 #: src/onboarding/understood/understood-date-row.ts
 #: src/plan/plan-properties.tsx
@@ -10041,25 +10063,19 @@ msgid "No date"
 msgstr "Sem data"
 
 #: src/plan/plan-properties.tsx
-#: src/plan/plan-schedule.tsx
-msgctxt "RlSFBL"
-msgid "Study days"
-msgstr "Dias de estudo"
-
-#: src/plan/plan-properties.tsx
 msgctxt "mWKPwa"
 msgid "Everything"
 msgstr "Tudo"
 
 #: src/plan/plan-schedule.tsx
+msgctxt "b9QpDx"
+msgid "Working out what your time covers…"
+msgstr "Calculando o que dá para cobrir com o seu tempo…"
+
+#: src/plan/plan-schedule.tsx
 msgctxt "J6l2xe"
 msgid "Covers your whole goal."
 msgstr "Cobre toda a sua meta."
-
-#: src/plan/plan-schedule.tsx
-msgctxt "FYJyhw"
-msgid "Time on weekends"
-msgstr "Tempo nos fins de semana"
 
 #: src/plan/plan-status-label.tsx
 msgctxt "FvyQR4"

@@ -1,23 +1,9 @@
 "use client";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@zoonk/ui/components/collapsible";
-import { cn } from "@zoonk/ui/lib/utils";
-import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import {
-  LIST_ROW_INTERACTIVE_CLASS,
-  ListRowContent,
-  ListRowTitle,
-  ListRowTrailing,
-} from "../../_components/list-group";
 import { WeekdayToggle } from "../../_components/weekday-toggle";
 import { WeekendTime } from "../../_components/weekend-time";
-import { type Choice, ChoiceList } from "../choice-list";
-import { OtherTimeSelect } from "./daily-minutes";
+import { TimeSelect } from "./daily-minutes";
 
 const DAYS_PER_WEEK = 7;
 
@@ -47,12 +33,12 @@ export function WeekdayToggles({
   const t = useExtracted();
 
   return (
-    <fieldset className="flex flex-col">
-      <legend className="sr-only">{t("Which days?")}</legend>
-      <div className="flex justify-between gap-1.5">
+    <fieldset className="flex flex-col gap-2">
+      <legend className="mb-2 text-sm font-medium">{t("Study days")}</legend>
+      <div className="grid max-w-sm grid-cols-7 gap-1.5">
         {EVERY_DAY.map((day) => (
           <WeekdayToggle
-            className="size-11 rounded-lg font-mono text-[0.8125rem] font-medium uppercase"
+            className="h-11 w-full min-w-0 rounded-lg px-0 font-mono text-[0.8125rem] font-medium uppercase"
             display="narrow"
             key={day}
             onPressedChange={(next) =>
@@ -73,69 +59,25 @@ export function WeekdayToggles({
 }
 
 export function WeekendMinutes({
-  choices,
+  checked,
   minutes,
   onChange,
-  weekdayMinutes,
+  onCheckedChange,
 }: {
-  choices: Choice<string>[];
-  minutes: string | null;
-  onChange: (minutes: string | null) => void;
-  weekdayMinutes: string;
+  checked: boolean;
+  minutes: number;
+  onChange: (minutes: number) => void;
+  onCheckedChange: (checked: boolean) => void;
 }) {
   const t = useExtracted();
 
   return (
     <WeekendTime
-      checked={minutes !== null}
+      checked={checked}
       className="text-sm font-medium"
-      onCheckedChange={(checked) => onChange(checked ? weekdayMinutes : null)}
+      onCheckedChange={onCheckedChange}
     >
-      {minutes !== null && (
-        <div className="flex flex-col gap-2">
-          <ChoiceList
-            choices={choices}
-            label={t("Minutes on weekends")}
-            numberKeys={false}
-            onChange={onChange}
-            value={minutes}
-            variant="chips"
-          />
-          <OtherTimeSelect
-            label={t("Other time on weekends")}
-            minutes={Number(minutes)}
-            onPick={(next) => onChange(String(next))}
-          />
-        </div>
-      )}
+      <TimeSelect label={t("Time on weekends")} onChange={onChange} value={minutes} />
     </WeekendTime>
-  );
-}
-
-export function WeekDisclosure({
-  children,
-  summary,
-}: {
-  children: React.ReactNode;
-  summary: string;
-}) {
-  const t = useExtracted();
-
-  return (
-    <Collapsible className="border-border border-y">
-      <CollapsibleTrigger className={cn(LIST_ROW_INTERACTIVE_CLASS, "group/week")}>
-        <ListRowContent>
-          <ListRowTitle>{t("Which days?")}</ListRowTitle>
-        </ListRowContent>
-        <ListRowTrailing aria-live="polite">{summary}</ListRowTrailing>
-        <ChevronDownIcon
-          aria-hidden="true"
-          className="text-muted-foreground/60 size-4 shrink-0 self-center transition-transform group-data-panel-open/week:rotate-180 motion-reduce:transition-none"
-        />
-      </CollapsibleTrigger>
-      <CollapsibleContent className="h-(--collapsible-panel-height) overflow-hidden transition-[height] duration-200 ease-out data-ending-style:h-0 data-starting-style:h-0 motion-reduce:transition-none">
-        <div className="flex flex-col gap-4 pt-1 pb-4">{children}</div>
-      </CollapsibleContent>
-    </Collapsible>
   );
 }

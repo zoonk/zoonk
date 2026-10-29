@@ -1,135 +1,181 @@
 "use client";
 
+import { getExamDocument } from "@zoonk/core/exams/document";
 import { type GoalView } from "@zoonk/core/goals/contract";
-import { type PlanTimeAdvice, type PlanTimeToCover } from "@zoonk/core/plans/time-advice-contract";
-import { isWeekend } from "@zoonk/core/plans/week-shape";
 import { type OnboardingAnswerInput } from "@zoonk/core/view-models/onboarding/contract";
 import { getLocalTimeZone } from "@zoonk/utils/time-zone";
 import { useExtracted } from "next-intl";
-import { useEffect, useRef, useState } from "react";
-import { useFormatDuration } from "../../_utils/time-format";
 import { type GenerationRun } from "../../generation/generation-run";
-import { type FindStatus, findPickedChip, findTimeChip } from "../../plan/plan-coverage";
-import {
-  type TimeToCoverAnswer,
-  getOfferedMinutes,
-  readTimeToCover,
-  useTimeToCoverTexts,
-} from "../../plan/use-time-to-cover";
-import { type Choice } from "../choice-list";
 import { PlanReceipt, PlanReceiptChips } from "../plan-receipt";
-import { AdviceSentence } from "./advice-sentence";
-import { CoverEverything, FULL_COURSE_ID, getShownShare } from "./cover-everything";
-import { MINUTES_ID, ScheduleTimeChoices, getTimeChoices } from "./daily-minutes";
-import { FinishEstimate } from "./finish-estimate";
-import { StepForm } from "./step-form";
+import { DailyTimePicker } from "./daily-minutes";
+import { FullCourseToggle } from "./full-course-toggle";
+import { NoticeReading } from "./notice-reading";
+import { PlanBuilding } from "./plan-building";
+import { type GoalDate, ScheduleLine } from "./schedule-line";
 import {
-  EVERY_DAY,
-  WeekDisclosure,
-  WeekdayToggles,
-  WeekendMinutes,
-  getStartingDays,
-} from "./study-week";
-import { TimeEstimatePanel, TimeEstimateSection } from "./time-estimate";
-import {
-  type AdviceAnswer,
-  type StudyWeek,
-  getEstimate,
-  getFullCourseEnd,
-  getPickedShare,
-  getWeekAdvice,
-  hasEstimate,
+  getOffer,
+  getSuggestedMinutes,
+  getTooClose,
   keepsFullCourse,
-  toFindWeek,
-  toStudyWeek,
-  useTimeAdvice,
-  useWeekTimeToCover,
-} from "./use-time-advice";
-import { isRunStopped } from "./wait-run";
+  toPickedMinutes,
+} from "./schedule-time";
+import { StepForm } from "./step-form";
+import { EVERY_DAY, WeekdayToggles, WeekendMinutes } from "./study-week";
+import { type Schedule, type ScheduleActions, useSchedule } from "./use-schedule";
+import { WAITING_RUN, getWaitRun, isRunStopped } from "./wait-run";
 
-function useMinuteChoices({ found, picked }: { found: PlanTimeToCover | null; picked: number }) {
-  const texts = useTimeToCoverTexts();
-  const formatDuration = useFormatDuration();
-  const answer = found && readTimeToCover(found);
-  const options = getTimeChoices(picked, getOfferedMinutes(answer));
+const FULL_COURSE_ID = "onboarding-full-course";
 
-  return {
-    choices: options.map((value) => ({
-      description: (answer && texts.note(answer, value)) ?? undefined,
-      label: formatDuration(value),
-      value: String(value),
-    })),
-    options,
-  };
+/** A run that's done leaves the time question to say the plan is still working the time out. */
+function isWaiting({ gate, run }: { gate: Schedule["gate"]; run: GenerationRun | null }) {
+  const last = gate.last;
+  return last !== null && !last.ready && (last.readingNotice || run?.status !== "ready");
 }
 
-function useWeekendChoices({
-  minutes,
-  weekend,
-}: {
-  minutes: number;
-  weekend: string | null;
-}): Choice<string>[] {
-  const formatDuration = useFormatDuration();
-  const options = getTimeChoices(minutes, weekend === null ? null : Number(weekend));
+function getGoalDate(schedule: Schedule): GoalDate | null {
+  const shown = schedule.found.found ?? schedule.found.last;
 
-  return options.map((value) => ({ label: formatDuration(value), value: String(value) }));
+  return schedule.dated && shown?.targetDate
+    ? { isoDate: shown.targetDate, namedMonth: shown.targetDateNamedMonth }
+    : null;
 }
 
-const FIND_LINE_ID = "onboarding-find";
-
-function findAnswerTarget({
-  answer,
-  minutes,
-  options,
+function getScheduleAnswer({
+  exam,
+  schedule,
 }: {
-  answer: TimeToCoverAnswer;
-  minutes: HTMLElement | null;
-  options: number[];
-}): HTMLElement | null {
-  const offered = getOfferedMinutes(answer);
+  exam: boolean;
+  schedule: Schedule;
+}): OnboardingAnswerInput | null {
+  const { days, weekend } = schedule.week;
 
-  if (offered === null) {
-    return document.querySelector<HTMLElement>(`#${FULL_COURSE_ID} [role="switch"]`);
+  if (schedule.minutes === null) {
+    return null;
   }
 
-  return findTimeChip({ choices: options, container: minutes, minutes: offered });
+  return {
+    dailyMinutes: schedule.minutes,
+    fullCourse: exam
+      ? keepsFullCourse({ checked: schedule.fullCourse, line: schedule.line })
+      : undefined,
+    question: "schedule",
+    studyDays: days.length === EVERY_DAY.length ? undefined : days,
+    timeZone: getLocalTimeZone(),
+    weekendMinutes: weekend ?? undefined,
+  };
 }
 
-function useFocusFound({
-  found,
-  options,
-  status,
+function isStale({ dated, found, picked }: Schedule): boolean {
+  const asking = !found.found && !found.failed && found.last !== null;
+  return picked === null && dated && asking;
+}
+
+function PlanWait({
+  gate,
+  goal,
+  run,
 }: {
-  found: PlanTimeToCover | null;
-  options: number[];
-  status: FindStatus;
+  gate: Schedule["gate"];
+  goal: GoalView;
+  run: GenerationRun | null;
 }) {
-  const asked = useRef(false);
+  if (gate.last?.readingNotice) {
+    return <NoticeReading document={getExamDocument(goal)} lastNotice={false} />;
+  }
 
-  useEffect(() => {
-    if (!asked.current || status === "pending") {
-      return;
-    }
+  return <PlanBuilding run={getWaitRun({ poll: gate, run: run ?? WAITING_RUN })} />;
+}
 
-    asked.current = false;
+function ScheduleTime({ exam, schedule }: { exam: boolean; schedule: Schedule }) {
+  const t = useExtracted();
+  const { found, line, minutes, setPicked } = schedule;
 
-    if (!found) {
-      return;
-    }
+  return (
+    <div className="flex flex-col gap-2">
+      <DailyTimePicker
+        label={t("Time a day")}
+        minutes={minutes}
+        onChange={(next) =>
+          setPicked(
+            toPickedMinutes({
+              first: found.first,
+              found: found.found ?? found.last,
+              minutes: next,
+            }),
+          )
+        }
+        stale={isStale(schedule)}
+        suggested={getSuggestedMinutes(found.found)}
+      />
 
-    const minutes = document.querySelector<HTMLElement>(`#${MINUTES_ID}`);
+      <ScheduleLine
+        date={getGoalDate(schedule)}
+        exam={exam}
+        line={line}
+        minutes={minutes}
+        offer={getOffer({ found: found.found, line, minutes })}
+        onRetry={found.failed ? found.covering.restart : schedule.timeAdvice.restart}
+        onUseOffer={(offer) =>
+          setPicked(toPickedMinutes({ first: found.first, found: found.found, minutes: offer }))
+        }
+        tooClose={getTooClose({ found: found.found, line })}
+      />
+    </div>
+  );
+}
 
-    (
-      findAnswerTarget({ answer: readTimeToCover(found), minutes, options }) ??
-      findPickedChip(minutes) ??
-      document.querySelector<HTMLElement>(`#${FIND_LINE_ID}`)
-    )?.focus();
-  }, [found, options, status]);
+function ExamFullCourse({ schedule }: { schedule: Schedule }) {
+  const { advice, fullCourse, line, minutes } = schedule;
+  const date = getGoalDate(schedule);
+  const short = line.kind === "share" || line.kind === "everyTopic";
 
-  return () => {
-    asked.current = true;
-  };
+  if (!date || !(short || keepsFullCourse({ checked: fullCourse, line }))) {
+    return null;
+  }
+
+  const end =
+    advice?.fullCourseEndDate && minutes !== null
+      ? {
+          dailyMinutes: minutes,
+          endDate: advice.fullCourseEndDate,
+          targetDate: date.isoDate,
+          targetDateNamedMonth: date.namedMonth,
+        }
+      : null;
+
+  return (
+    <FullCourseToggle
+      checked={fullCourse}
+      end={end}
+      id={FULL_COURSE_ID}
+      onCheckedChange={schedule.setFullCourse}
+    />
+  );
+}
+
+function ScheduleWeek({
+  recommendedMinutes,
+  schedule,
+}: {
+  recommendedMinutes: number;
+  schedule: Schedule;
+}) {
+  const { minutes, week } = schedule;
+
+  return (
+    <div className="flex flex-col gap-3">
+      <WeekdayToggles days={week.days} onChange={week.setDays} />
+
+      {week.studiesOnWeekends && (
+        <WeekendMinutes
+          checked={week.weekendOn}
+          minutes={week.weekendPicked ?? minutes ?? recommendedMinutes}
+          onChange={week.setWeekendPicked}
+          onCheckedChange={week.setWeekendOn}
+        />
+      )}
+    </div>
+  );
 }
 
 export function ScheduleStep({
@@ -142,11 +188,9 @@ export function ScheduleStep({
   pending,
   recommendedMinutes,
   run,
-}: {
+}: ScheduleActions & {
   dated: boolean;
   exam?: boolean;
-  findTimeToCover: (week: StudyWeek) => Promise<PlanTimeToCover | null>;
-  getTimeAdvice: (week: StudyWeek & { dailyMinutes: number }) => Promise<PlanTimeAdvice | null>;
   goal: GoalView;
   onAnswer: (input: OnboardingAnswerInput) => void;
   pending: boolean;
@@ -154,144 +198,38 @@ export function ScheduleStep({
   run: GenerationRun | null;
 }) {
   const t = useExtracted();
-  const formatDuration = useFormatDuration();
-  const [minutes, setMinutes] = useState(String(recommendedMinutes));
-  const [weekendMinutes, setWeekendMinutes] = useState<string | null>(null);
-  const [days, setDays] = useState(() => getStartingDays(goal.studyDays));
-  const [answer, setAnswer] = useState<AdviceAnswer | null>(null);
-  // Each rebuild of the plan (an exam's notice reading landed) makes what Find found before stale.
-  const [build, setBuild] = useState(0);
-  const [fullCourse, setFullCourse] = useState(false);
-  const studiesOnWeekends = days.some((day) => isWeekend(day));
-  const weekend = studiesOnWeekends ? weekendMinutes : null;
-  const week = toStudyWeek({ days, fullCourse: exam && fullCourse, minutes, weekend });
-  const advice = getWeekAdvice({ answer, week });
 
-  const findWeek = toFindWeek({ days, weekend });
-
-  const finder = useWeekTimeToCover({
-    findTimeToCover,
-    key: JSON.stringify({ build, findWeek }),
-    week: findWeek,
+  const schedule = useSchedule({
+    actions: { findTimeToCover, getTimeAdvice },
+    dated,
+    exam,
+    goal,
+    paused: isRunStopped(run),
+    recommendedMinutes,
   });
 
-  const found = answer?.advice.ready === false ? null : finder.found;
-  const { choices, options } = useMinuteChoices({ found, picked: Number(minutes) });
-  const weekendChoices = useWeekendChoices({ minutes: Number(minutes), weekend: weekendMinutes });
-  const askFocus = useFocusFound({ found, options, status: finder.status });
-  const pickedShare = getPickedShare({ advice, answer, found, minutes: Number(minutes) });
-  const studiesEverything = exam && keepsFullCourse({ checked: fullCourse, pickedShare });
-
-  const asking = useTimeAdvice({
-    answer,
-    getAdvice: getTimeAdvice,
-    known: pickedShare.known,
-    minutes: Number(minutes),
-    onAnswer: (next) => {
-      if (answer?.advice.ready && !next.advice.ready) {
-        setBuild((count) => count + 1);
-      }
-
-      setAnswer(next);
-    },
-    stopped: isRunStopped(run),
-    week,
-  });
-
-  const estimate = getEstimate({ advice, answer, pickedShare, status: asking.status });
-
-  const planReady =
-    answer?.advice.ready === true || (asking.status !== "polling" && !isRunStopped(run));
-
-  const estimateProps = { ...estimate, minutes: Number(minutes), onRetry: asking.restart };
-  const showsEstimate = dated && hasEstimate({ estimate, pickedShare, status: asking.status });
-  const share = getShownShare(estimate);
-
-  const weekly = days.reduce(
-    (total, day) => total + Number(isWeekend(day) && weekend ? weekend : minutes),
-    0,
-  );
+  if (isWaiting({ gate: schedule.gate, run })) {
+    return <PlanWait gate={schedule.gate} goal={goal} run={run} />;
+  }
 
   return (
     <StepForm
-      canContinue={days.length > 0}
-      onContinue={() =>
-        onAnswer({
-          dailyMinutes: Number(minutes),
-          fullCourse: exam ? studiesEverything : undefined,
-          question: "schedule",
-          studyDays: days.length === EVERY_DAY.length ? undefined : days,
-          timeZone: getLocalTimeZone(),
-          weekendMinutes: weekend ? Number(weekend) : undefined,
-        })
-      }
+      canContinue={schedule.week.days.length > 0 && schedule.minutes !== null}
+      onContinue={() => {
+        const answer = getScheduleAnswer({ exam, schedule });
+
+        if (answer) {
+          onAnswer(answer);
+        }
+      }}
       pending={pending}
-      rail={
-        <>
-          {showsEstimate && <TimeEstimateSection {...estimateProps} />}
-          <PlanReceipt goal={goal} />
-        </>
-      }
+      rail={<PlanReceipt goal={goal} />}
       title={t("How much time can you study each day?")}
     >
       <PlanReceiptChips className="min-[72rem]:hidden" goal={goal} />
-
-      <ScheduleTimeChoices choices={choices} minutes={minutes} onChange={setMinutes} />
-
-      {showsEstimate && <TimeEstimatePanel {...estimateProps} />}
-
-      <CoverEverything
-        exam={exam}
-        fullCourse={fullCourse}
-        fullCourseEnd={getFullCourseEnd({ advice, answer, minutes: Number(minutes) })}
-        minutes={Number(minutes)}
-        onFullCourseChange={setFullCourse}
-        share={share}
-        studiesEverything={studiesEverything}
-      >
-        <div className="flex flex-col gap-1">
-          {!dated && (
-            <FinishEstimate
-              advice={pickedShare.known ? advice : null}
-              onRetry={asking.restart}
-              status={asking.status}
-              stopped={isRunStopped(run)}
-              studyDays={days.length}
-            />
-          )}
-
-          <AdviceSentence
-            dated={dated}
-            find={finder.status}
-            found={found}
-            id={FIND_LINE_ID}
-            onFind={() => {
-              askFocus();
-              void finder.find();
-            }}
-            planReady={planReady}
-            readingNotice={answer?.advice.readingNotice ?? false}
-          />
-        </div>
-      </CoverEverything>
-
-      <WeekDisclosure
-        summary={t("{days, plural, one {# day} other {# days}} · {time} a week", {
-          days: days.length,
-          time: formatDuration(weekly),
-        })}
-      >
-        <WeekdayToggles days={days} onChange={setDays} />
-
-        {studiesOnWeekends && (
-          <WeekendMinutes
-            choices={weekendChoices}
-            minutes={weekendMinutes}
-            onChange={setWeekendMinutes}
-            weekdayMinutes={minutes}
-          />
-        )}
-      </WeekDisclosure>
+      <ScheduleTime exam={exam} schedule={schedule} />
+      {exam && <ExamFullCourse schedule={schedule} />}
+      <ScheduleWeek recommendedMinutes={recommendedMinutes} schedule={schedule} />
     </StepForm>
   );
 }

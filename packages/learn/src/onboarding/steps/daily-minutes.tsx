@@ -2,11 +2,14 @@
 
 import { MAX_DAILY_MINUTES } from "@zoonk/core/plans/daily-minutes";
 import { NativeSelect, NativeSelectOption } from "@zoonk/ui/components/native-select";
+import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { cn } from "@zoonk/ui/lib/utils";
+import { ChevronDownIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 import { BigQuantity } from "../../_components/big-quantity";
 import { useFormatDuration } from "../../_utils/time-format";
-import { type Choice, ChoiceList } from "../choice-list";
+import { ChoiceList } from "../choice-list";
 
 const MINUTE_OPTIONS = ["15", "30", "45", "60", "90", "120", "180", "240"].map(Number);
 
@@ -23,17 +26,14 @@ const DAILY_TIMES = [
   ),
 ];
 
-export const MINUTES_ID = "onboarding-minutes";
-
 export function getTimeChoices(...times: (number | null)[]): number[] {
   const own = times.filter((time) => time !== null);
   return [...new Set([...MINUTE_OPTIONS, ...own])].toSorted((a, b) => a - b);
 }
 
-function withShownTime(value: number | null): number[] {
-  return value === null || DAILY_TIMES.includes(value)
-    ? DAILY_TIMES
-    : [...DAILY_TIMES, value].toSorted((a, b) => a - b);
+function withShownTime(...values: (number | null)[]): number[] {
+  const own = values.filter((value) => value !== null);
+  return [...new Set([...DAILY_TIMES, ...own])].toSorted((a, b) => a - b);
 }
 
 export function TimeSelect({
@@ -136,50 +136,53 @@ export function DailyMinutesChoice({
   );
 }
 
-function MinutesReadout({ minutes }: { minutes: number }) {
+export function DailyTimePicker({
+  label,
+  minutes,
+  onChange,
+  stale = false,
+  suggested,
+}: {
+  label: string;
+  minutes: number | null;
+  onChange: (minutes: number) => void;
+  stale?: boolean;
+  suggested: number | null;
+}) {
   const t = useExtracted();
   const formatDuration = useFormatDuration();
 
-  return (
-    <p className="flex items-baseline justify-between gap-3">
-      <BigQuantity className="text-5xl">{formatDuration(minutes)}</BigQuantity>
-      <span className="text-muted-foreground font-mono text-sm">{t("per day")}</span>
-    </p>
-  );
-}
-
-export function ScheduleTimeChoices({
-  choices,
-  minutes,
-  onChange,
-}: {
-  choices: Choice<string>[];
-  minutes: string;
-  onChange: (minutes: string) => void;
-}) {
-  const t = useExtracted();
+  if (minutes === null) {
+    return <Skeleton className="h-12 w-40" />;
+  }
 
   return (
-    <div className="flex flex-col gap-4">
-      <MinutesReadout minutes={Number(minutes)} />
+    <div
+      aria-busy={stale || undefined}
+      className={cn(
+        "hover:bg-muted has-[select:focus-visible]:ring-ring/50 relative -mx-2 w-fit rounded-lg px-2 transition-colors has-[select:focus-visible]:ring-[3px]",
+        stale && "opacity-60",
+      )}
+    >
+      <span aria-hidden="true" className="flex items-center gap-2">
+        <BigQuantity className="text-5xl">{formatDuration(minutes)}</BigQuantity>
+        <ChevronDownIcon className="text-muted-foreground size-5 shrink-0" />
+      </span>
 
-      <div className="flex flex-col gap-2">
-        <div id={MINUTES_ID}>
-          <ChoiceList
-            choices={choices}
-            label={t("Minutes a day")}
-            onChange={onChange}
-            value={minutes}
-            variant="chips"
-          />
-        </div>
-
-        <OtherTimeSelect
-          label={t("Other time a day")}
-          minutes={Number(minutes)}
-          onPick={(next) => onChange(String(next))}
-        />
-      </div>
+      <select
+        aria-label={label}
+        className="absolute inset-0 size-full cursor-pointer appearance-none text-base opacity-0"
+        onChange={(event) => onChange(Number(event.target.value))}
+        value={minutes}
+      >
+        {withShownTime(minutes, suggested).map((time) => (
+          <option key={time} value={time}>
+            {time === suggested
+              ? t("{time} (suggested)", { time: formatDuration(time) })
+              : formatDuration(time)}
+          </option>
+        ))}
+      </select>
     </div>
   );
 }

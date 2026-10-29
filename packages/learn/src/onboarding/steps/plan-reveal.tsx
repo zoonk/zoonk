@@ -4,22 +4,15 @@ import { type PlanView } from "@zoonk/core/plans/view-contract";
 import { type OnboardingLibraryCourse } from "@zoonk/core/view-models/onboarding/contract";
 import { type SyllabusView } from "@zoonk/core/view-models/syllabus/contract";
 import { safeAsync } from "@zoonk/utils/error";
-import { useExtracted } from "next-intl";
 import { useEffect, useEffectEvent, useRef, useState } from "react";
 import { usePoll } from "../../_utils/use-poll";
 import { type GenerationRun } from "../../generation/generation-run";
-import { GenerationWait } from "../../generation/generation-wait";
 import { type PlanActions, type PlanGoal, PlanScreenProvider } from "../../plan/plan-context";
 import { PlanSheetHosts } from "../../plan/plan-sheet-hosts";
 import { LibraryCourseOffer } from "../library-course-offer";
 import { type OnboardingActions, type RevealedPlan } from "../onboarding-actions";
-import {
-  OnboardingColumn,
-  OnboardingDescription,
-  OnboardingHeading,
-  OnboardingTitle,
-} from "../onboarding-frame";
 import { NoticeReading } from "./notice-reading";
+import { PlanBuilding } from "./plan-building";
 import { RevealBody } from "./reveal-body";
 import { StepLoading } from "./step-parts";
 import { WAITING_RUN, getWaitRun, isRunStopped } from "./wait-run";
@@ -27,32 +20,6 @@ import { WAITING_RUN, getWaitRun, isRunStopped } from "./wait-run";
 const POLL_MS = 3000;
 
 type LibraryCourseLink = { course: OnboardingLibraryCourse; href: string };
-
-function PlanBuilding({
-  libraryCourse,
-  run,
-}: {
-  libraryCourse: LibraryCourseLink | null;
-  run: GenerationRun;
-}) {
-  const t = useExtracted();
-
-  return (
-    <OnboardingColumn>
-      <GenerationWait kind="curriculum" run={run}>
-        <OnboardingHeading>
-          <OnboardingTitle>{t("Building your plan")}</OnboardingTitle>
-          <OnboardingDescription>
-            {t(
-              "We're choosing what to learn first and fitting it into your days. A new subject can take a minute or two.",
-            )}
-          </OnboardingDescription>
-        </OnboardingHeading>
-      </GenerationWait>
-      {libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
-    </OnboardingColumn>
-  );
-}
 
 function usePlanWait({
   isReady,
@@ -154,10 +121,9 @@ export function PlanReveal({
     return !read && poll.status === "polling" ? (
       <StepLoading />
     ) : (
-      <PlanBuilding
-        libraryCourse={libraryCourse}
-        run={getWaitRun({ poll, run: run ?? WAITING_RUN })}
-      />
+      <PlanBuilding run={getWaitRun({ poll, run: run ?? WAITING_RUN })}>
+        {libraryCourse && <LibraryCourseOffer {...libraryCourse} />}
+      </PlanBuilding>
     );
   }
 

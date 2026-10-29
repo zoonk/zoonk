@@ -208,8 +208,9 @@ export async function getPlanTimeAdvice({
 }
 
 /**
- * Plans the goal at each daily time, so call it only when the learner asks, never for a page or
- * prefetch.
+ * Plans the goal at each daily time (seconds of CPU for a big exam), so it runs only for a learner's
+ * POST, such as onboarding's time question asking once the plan exists: never for a render, a GET,
+ * metadata or a prefetch.
  */
 export async function findPlanTimeToCover({
   goalId,

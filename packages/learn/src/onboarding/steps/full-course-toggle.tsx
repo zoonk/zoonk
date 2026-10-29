@@ -28,15 +28,17 @@ export function FullCourseToggle({
           {t("Study everything, even after the exam")}
         </label>
         <Switch
-          aria-describedby={descriptionId}
+          aria-describedby={checked ? descriptionId : undefined}
           checked={checked}
           id={switchId}
           onCheckedChange={onCheckedChange}
         />
       </div>
-      <p className="text-muted-foreground text-sm text-pretty" id={descriptionId}>
-        {examText(checked ? end : null)}
-      </p>
+      {checked && (
+        <p className="text-muted-foreground text-sm text-pretty" id={descriptionId}>
+          {examText(end)}
+        </p>
+      )}
     </div>
   );
 }
