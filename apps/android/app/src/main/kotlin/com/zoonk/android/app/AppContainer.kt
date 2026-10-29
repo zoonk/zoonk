@@ -34,12 +34,12 @@ import com.zoonk.android.feature.memory.LiveMemoryApi
 import com.zoonk.android.feature.memory.MemoryStore
 import com.zoonk.android.feature.plan.LivePlanApi
 import com.zoonk.android.feature.plan.PlanStore
-import com.zoonk.android.feature.tutor.LiveTutorApi
-import com.zoonk.android.feature.tutor.TutorStore
 import com.zoonk.android.feature.subscription.GooglePlayBilling
 import com.zoonk.android.feature.subscription.LiveSubscriptionApi
 import com.zoonk.android.feature.subscription.NoPlayBilling
 import com.zoonk.android.feature.subscription.SubscriptionStore
+import com.zoonk.android.feature.tutor.LiveTutorApi
+import com.zoonk.android.feature.tutor.TutorStore
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
