@@ -336,6 +336,8 @@ private struct CheckpointResultView: View {
     let checkpoint = load.checkpoint
     let result = state.completion?.checkpoint
     let passed = result?.passed ?? checkpoint.result?.passed ?? false
+    // A weekly challenge has no pass mark: finishing it wins its rewards, as on main.
+    let won = checkpoint.kind == .weekly || passed
     let correct = result?.correct ?? checkpoint.result?.correct ?? state.correct
     let total = result?.total ?? checkpoint.result?.total ?? state.questionCount
 
@@ -371,14 +373,14 @@ private struct CheckpointResultView: View {
           PracticeResultNumbers(
             correct: correct, total: total,
             // A win's Brain Power is its rewards' first row, as on main.
-            brainPower: passed ? 0 : state.completion?.ownBrainPower ?? 0,
+            brainPower: won ? 0 : state.completion?.ownBrainPower ?? 0,
             reached: PracticeReached(
               energy: state.completion?.reached.energy,
               level: state.completion?.reached.level.map {
                 .init(color: $0.color.rawValue, level: $0.level)
               }))
 
-          if passed {
+          if won {
             CheckpointRewards(
               checkpoint: checkpoint,
               brainPower: state.completion?.ownBrainPower ?? checkpoint.reward.brainPower)
