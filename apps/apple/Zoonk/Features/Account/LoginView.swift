@@ -12,6 +12,7 @@ struct LoginView: View {
             .imageScale(.large)
             .symbolRenderingMode(.hierarchical)
             .foregroundStyle(.tint)
+            .accessibilityHidden(true)
 
           Text(
             "Sign in or create an account",
