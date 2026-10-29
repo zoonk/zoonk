@@ -2,6 +2,22 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_math_badge_place_it": "39493563fa645e3b0e52cab7da404ac1346fb4aea9c90110c7030342ce83ca62",
+  "activities_math_badge_try_it": "d5abab8be74dc921816950fcd74812f4b74549f88c34fcf11dc57fdf574518b6",
+  "activities_math_formula_at_start": "1410135404dc34a3b85b6bcbc2d2c11d0f83ca83a16d687eb4aa433ae1d46aa2",
+  "activities_math_formula_before": "5608a5609761efcc64d249748f18a04c4eff744c25534cafea6a31bf2bfe9c1c",
+  "activities_math_formula_before_curve": "e2b5c40b3622190053e24552ede329f9ae401cac750c32ee0939b45ccacd5306",
+  "activities_math_formula_compared": "e442d114713c4d7bb45b49b80869e0adefa1d994a3efc0b7954b05b83ed2de7b",
+  "activities_math_formula_comparison": "bd01c4e65196ff2286ddd01ec69e806266478272c05e378b0d61bd529b7bb4df",
+  "activities_math_formula_description": "54dd00eeec8ab168578d54601aedc20226537033e2bd02d08be2349cbd47c841",
+  "activities_math_formula_from_start": "ba89bc94e9c0d29e2cfd2ed9daf510a58b6ab985f51102baea60b8fa995c5d4a",
+  "activities_math_formula_no_what_ifs": "bdaad67f30bf461e88523a866241b32a3011d717f2800a25124fe5525d9c9e91",
+  "activities_math_formula_now": "d1b06690ff482e90971ca954ee53d84e1a6eb0d636bca4d91b939e67885b5ed0",
+  "activities_math_formula_readout": "66e8c31e485927813ce20ff2d1be42aac0da0e550adf0c5208967ceb33c01270",
+  "activities_math_formula_readout_note": "9273c11c5bd81898094f78c464f50ecf591e91ad43b99bfead2c1b2a6ce0b935",
+  "activities_math_formula_slider_value": "3aeb956d78714fc26631a986c6b746d526f0bb8dd8bfb8152e2a699a659ba676",
+  "activities_math_formula_what_if_events": "40c058d0b9e4f2630384ceeaa63743ab4f47d8e1d16e86c229723f030fd3301f",
+  "activities_math_formula_what_ifs_on": "a72fad9ec8c9060d7e8ee83372f6b8a9b0cb7b63602fdd5f5b7bdce516bfc539",
+  "activities_math_formula_with_what_ifs": "126039b3a483c6316bea8315ae6cad8a4e2f1229701c379b22eb67c12c1c31df",
   "activities_math_number_line_answer": "0f273b480615b2cbd25e900eca629276d1afaefc0abea7b5567c9a3b887fe5ce",
   "activities_math_number_line_description": "1f936c44316b3a27825eb627a9046874fa21bec018305b214974c6058898fc4a",
   "activities_math_number_line_jumps": "0d8444a1dfc1824afde082909f6d9abc45a1554760fc71cfff00c806d71224a5",
@@ -11,6 +27,8 @@
 <resources>
     <!-- A badge on an activity where the learner places a dot along a number line. -->
     <string name="activities_math_badge_place_it">Posicione</string>
+    <!-- A badge on an activity whose sliders change a model's results. -->
+    <string name="activities_math_badge_try_it">Experimente</string>
     <!-- A number line's name and, in parentheses, the unit its values are measured in, like "Temperature (°C)". -->
     <string name="activities_math_number_line_label">%1$s (%2$s)</string>
     <!-- The dot the learner drags along the number line, for TalkBack. -->
@@ -19,4 +37,34 @@
     <string name="activities_math_number_line_description">Uma reta numérica de %1$s, de %2$s a %3$s. Ela começa em %4$s, e seu ponto está em %5$s.</string>
     <!-- Once checked, the jumps the line takes and where they land, like "The jumps go +3, +5 and land at 5 °C." -->
     <string name="activities_math_number_line_jumps">Os saltos seguem %1$s e chegam a %2$s.</string>
+    <!-- One result of a model at another value of its slider, like "Value after 20 years at 5%: $2,653". -->
+    <string name="activities_math_formula_compared">%1$s em %2$s: %3$s</string>
+    <!-- What a model's slider says to TalkBack: its value, then the result it drives, like "7%. Value after 20 years: $3,870". -->
+    <string name="activities_math_formula_slider_value">%1$s. %2$s: %3$s</string>
+    <!-- A result's value before the what-ifs were switched on, like "$1,500 before". -->
+    <string name="activities_math_formula_before">%1$s antes</string>
+    <!-- How much a result changed since the sliders' starting values, like "+$1,216 from the start". -->
+    <string name="activities_math_formula_from_start">%1$s desde o início</string>
+    <!-- What a model shows, for TalkBack: the result it charts and the slider across its axis, like "Sliders and a chart of Value after 20 years across Rate per year." -->
+    <string name="activities_math_formula_description">Controles deslizantes e um gráfico de %1$s ao longo de %2$s.</string>
+    <!-- What-ifs are events that change a model, like "Rent goes up $500". -->
+    <string name="activities_math_formula_no_what_ifs">Nenhuma hipótese ativada.</string>
+    <!-- The what-ifs switched on, listed, like "What-ifs switched on: Rent goes up $500." -->
+    <string name="activities_math_formula_what_ifs_on">Hipóteses ativadas: %1$s.</string>
+    <!-- One result and its value, for TalkBack, like "Monthly profit: $1,000." -->
+    <string name="activities_math_formula_readout">%1$s: %2$s.</string>
+    <!-- One result, its value and how it changed, for TalkBack, like "Monthly profit: $1,000, $1,500 before." -->
+    <string name="activities_math_formula_readout_note">%1$s: %2$s, %3$s.</string>
+    <!-- The charted result at the model's comparison point, for TalkBack, like "For comparison, at 5% it's $2,653." -->
+    <string name="activities_math_formula_comparison">Para comparar, em %1$s é %2$s.</string>
+    <!-- The name of the group of what-if switches, for TalkBack. -->
+    <string name="activities_math_formula_what_if_events">Eventos hipotéticos</string>
+    <!-- The chart legend's solid line when what-ifs are on. -->
+    <string name="activities_math_formula_with_what_ifs">Com as hipóteses</string>
+    <!-- The chart legend's solid line: the model as the sliders set it now. -->
+    <string name="activities_math_formula_now">Agora</string>
+    <!-- The chart legend's dashed line: the model before the what-ifs were switched on. -->
+    <string name="activities_math_formula_before_curve">Antes</string>
+    <!-- The chart legend's dashed line: the model at the sliders' starting values. -->
+    <string name="activities_math_formula_at_start">No início</string>
 </resources>

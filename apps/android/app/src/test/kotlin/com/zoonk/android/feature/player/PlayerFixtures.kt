@@ -164,6 +164,8 @@ const val INTERACTION_ACTIVITY_CHECK = """{"kind":"interaction","explanation":"T
 const val NUMERIC_ACTIVITY_CHECK =
     """{"kind":"numeric","question":"How much do you pay?","answer":52,"tolerance":{"kind":"absolute","value":0},"unit":"R$","explanation":"You pay 65% of R$80."}"""
 
+private const val RENDERERLESS_FIELDS = """{"pattern":"x..x","rounds":1,"stepsPerBeat":4,"tempo":90,"toleranceMs":100}"""
+
 /** An activity whose template has no renderer: the frame alone asks it. */
 fun activityStep(
     id: String,
@@ -172,10 +174,10 @@ fun activityStep(
     val content =
         ApiJson.decodeFromString(
             ActivityStepContent.serializer(),
-            """{"template":"formulaModel","prompt":"Compare the two lines.","fields":{"outputs":[],"variables":[]},"check":$check}""",
+            """{"template":"rhythmTapper","prompt":"Compare the two lines.","fields":$RENDERERLESS_FIELDS,"check":$check}""",
         )
     val frame =
-        ActivityFrame("formulaModel", "Compare the two lines.", ApiJson.decodeFromString(ActivityCheck.serializer(), check))
+        ActivityFrame("rhythmTapper", "Compare the two lines.", ApiJson.decodeFromString(ActivityCheck.serializer(), check))
     return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null))
 }
 

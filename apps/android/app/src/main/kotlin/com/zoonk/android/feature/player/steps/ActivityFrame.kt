@@ -43,6 +43,7 @@ import com.zoonk.android.feature.activities.decisionTreeRenderer
 import com.zoonk.android.feature.activities.dialogueSimulatorRenderer
 import com.zoonk.android.feature.activities.findErrorRenderer
 import com.zoonk.android.feature.activities.guessRevealRenderer
+import com.zoonk.android.feature.activities.math.formulaModelRenderer
 import com.zoonk.android.feature.activities.math.numberLineRenderer
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
@@ -102,6 +103,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "decisionTree" to decisionTreeRenderer,
         "dialogueSimulator" to dialogueSimulatorRenderer,
         "findError" to findErrorRenderer,
+        "formulaModel" to formulaModelRenderer,
         "guessReveal" to guessRevealRenderer,
         "labeledDiagram" to labeledDiagramRenderer,
         "matchPairs" to matchPairsRenderer,

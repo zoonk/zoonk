@@ -1,9 +1,7 @@
 package com.zoonk.android.feature.activities
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -11,11 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,7 +20,6 @@ import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -129,8 +123,9 @@ fun ActivityGuessScale(
                 )
             }
         }
-        GuessSlider(
+        ActivitySliderTrack(
             position = (share * GuessScale.POSITIONS).roundToInt(),
+            positions = GuessScale.POSITIONS,
             enabled = !disabled,
             modifier =
                 Modifier.semantics {
@@ -139,7 +134,7 @@ fun ActivityGuessScale(
                 },
             onPositionChange = { onGuessChange(twoSignificant(scale.valueAt(it))) },
             marks = {
-                if (actualShare == null) return@GuessSlider
+                if (actualShare == null) return@ActivitySliderTrack
                 val trackHeight = size.height
                 // The slider runs right to left in RTL; drawn marks follow it.
                 val x = { at: Double -> (if (layoutDirection == LayoutDirection.Rtl) 1 - at else at).toFloat() * size.width }
@@ -192,42 +187,6 @@ fun ActivityGuessComparison(
             }
         }
     Text(text, style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium))
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun GuessSlider(
-    position: Int,
-    enabled: Boolean,
-    modifier: Modifier,
-    onPositionChange: (Int) -> Unit,
-    marks: DrawScope.() -> Unit,
-) {
-    val track = MaterialTheme.colorScheme.surfaceContainerHigh
-    // Main's guess track has no fill: a filled part would read as an amount, not a place.
-    val colors =
-        SliderDefaults.colors(
-            activeTrackColor = track,
-            inactiveTrackColor = track,
-            disabledThumbColor = SliderDefaults.colors().thumbColor,
-            disabledActiveTrackColor = track,
-            disabledInactiveTrackColor = track,
-        )
-
-    Slider(
-        value = position.toFloat(),
-        onValueChange = { onPositionChange(it.roundToInt()) },
-        modifier = modifier.fillMaxWidth(),
-        enabled = enabled,
-        valueRange = 0f..GuessScale.POSITIONS.toFloat(),
-        colors = colors,
-        track = { state ->
-            Box {
-                SliderDefaults.Track(state, enabled = enabled, colors = colors, drawStopIndicator = null, drawTick = { _, _ -> })
-                Canvas(Modifier.matchParentSize(), onDraw = marks)
-            }
-        },
-    )
 }
 
 @Composable

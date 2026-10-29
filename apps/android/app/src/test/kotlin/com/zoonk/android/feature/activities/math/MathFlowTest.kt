@@ -9,12 +9,14 @@ import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.click
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performSemanticsAction
@@ -86,7 +88,7 @@ class MathFlowTest {
         handle: SemanticsMatcher = dot,
     ) {
         rule.onNode(handle).performScrollTo().requestFocus()
-        rule.onNode(handle).performKeyInput { repeat(times) { pressKey(key) } }
+        repeat(times) { rule.onNode(handle).performKeyInput { pressKey(key) } }
     }
 
     @Test
@@ -162,6 +164,64 @@ class MathFlowTest {
             ).performScrollTo()
             .assertIsDisplayed()
         rule.onNodeWithText("0,125").performScrollTo().assertIsDisplayed()
+    }
+
+    private fun slider(label: String) = hasContentDescription(label) and SemanticsMatcher.keyIsDefined(SemanticsActions.SetProgress)
+
+    private fun described(text: String) = rule.onNode(hasContentDescription(text, substring = true)).assertExists()
+
+    @Test
+    fun formulaModelMovingTheRateProducesTheValueToCheck() {
+        play("formulaModel", isCorrect = true)
+
+        press(Key.DirectionRight, 4, handle = slider("Rate per year"))
+        typedValue("3869.68")
+        harness.tap("Check")
+
+        assertEquals(3869.68, sentValue()!!, 0.005)
+    }
+
+    @Test
+    fun formulaModelCalculatorShowsTheChangeFromTheStart() {
+        play("formulaModel.calculator", isCorrect = true)
+
+        press(Key.DirectionRight, 4, handle = slider("Extra per month"))
+        typedValue("251.54")
+        described("from the start")
+    }
+
+    @Test
+    fun formulaModelWhatIfAndPriceGiveTheProfit() {
+        play("formulaModel.scenario", isCorrect = true)
+
+        rule.onNodeWithText("Rent goes up $500").performScrollTo().performClick()
+        rule.onNodeWithText("Rent goes up $500").assertIsSelected()
+        press(Key.DirectionRight, 2, handle = slider("Price per cup"))
+
+        typedValue("1000")
+        described("$1,500 before")
+        described("What-ifs switched on: Rent goes up $500.")
+    }
+
+    @Test
+    fun formulaModelLeavingTheWhatIfOffGivesAnotherProfit() {
+        play("formulaModel.scenario", isCorrect = false)
+
+        press(Key.DirectionRight, 2, handle = slider("Price per cup"))
+
+        typedValue("1500")
+    }
+
+    @Test
+    fun formulaModelSimulationFindsTheFarthestThrow() {
+        play("formulaModel.simulation", isCorrect = true)
+
+        rule.onNodeWithText("Projectile").assertExists()
+        described("Peak height:")
+        press(Key.DirectionRight, 15, handle = slider("Launch angle"))
+        typedValue("40.77")
+        press(Key.DirectionLeft, 10, handle = slider("Launch angle"))
+        typedValue("38.32")
     }
 
     private fun precisionStep(): LessonStep {

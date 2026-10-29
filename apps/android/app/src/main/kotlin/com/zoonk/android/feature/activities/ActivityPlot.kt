@@ -43,19 +43,57 @@ class Plot internal constructor(
         y: Double,
     ) = Offset(this.x.toPixel(x), this.y.toPixel(y))
 
+    /** A line through [points], dashed in [dash]-long pieces when given. */
     fun line(
         points: List<Pair<Double, Double>>,
         color: Color,
         width: Dp = 3.dp,
+        dash: Dp? = null,
     ) = with(scope) {
         if (points.isEmpty()) return@with
-        val path = Path()
-        points.forEachIndexed { index, (px, py) ->
-            val point = at(px, py)
-            if (index == 0) path.moveTo(point.x, point.y) else path.lineTo(point.x, point.y)
-        }
-        drawPath(path, color, style = Stroke(width.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round))
+        val effect = dash?.let { PathEffect.dashPathEffect(floatArrayOf(it.toPx(), it.toPx())) }
+        drawPath(path(points), color, style = Stroke(width.toPx(), cap = StrokeCap.Round, join = StrokeJoin.Round, pathEffect = effect))
     }
+
+    /** The area under [points]' line, down to the plot's bottom. */
+    fun area(
+        points: List<Pair<Double, Double>>,
+        color: Color,
+    ) = with(scope) {
+        if (points.isEmpty()) return@with
+        val shape =
+            path(points).apply {
+                lineTo(at(points.last().first, 0.0).x, bottom)
+                lineTo(at(points.first().first, 0.0).x, bottom)
+                close()
+            }
+        drawPath(shape, color)
+    }
+
+    /** Dashed lines from the x axis up to a point and across to the y axis, to read both its values. */
+    fun guide(
+        x: Double,
+        y: Double,
+        color: Color,
+    ) = with(scope) {
+        val point = at(x, y)
+        val corner =
+            Path().apply {
+                moveTo(point.x, bottom)
+                lineTo(point.x, point.y)
+                lineTo(this@Plot.x.range.first, point.y)
+            }
+        val dash = GUIDE_DASH.toPx()
+        drawPath(corner, color, style = Stroke(GUIDE_WIDTH.toPx(), pathEffect = PathEffect.dashPathEffect(floatArrayOf(dash, dash))))
+    }
+
+    private fun path(points: List<Pair<Double, Double>>) =
+        Path().apply {
+            points.forEachIndexed { index, (px, py) ->
+                val point = at(px, py)
+                if (index == 0) moveTo(point.x, point.y) else lineTo(point.x, point.y)
+            }
+        }
 
     /** A dot ringed with [ring] so it stands out on the line under it. */
     fun dot(
@@ -79,6 +117,20 @@ class Plot internal constructor(
         val left = x.toPixel(minOf(from, to))
         val right = x.toPixel(maxOf(from, to))
         drawRect(color, Offset(left, top), Size(right - left, bottom - top))
+    }
+
+    /** Text beside a point, centered on it vertically, on the side toward the plot's middle. */
+    fun sideLabel(
+        text: String,
+        x: Double,
+        y: Double,
+        color: Color,
+        gap: Dp = 8.dp,
+    ) = with(scope) {
+        val measured = measurer.measure(text, style.copy(color = color, fontWeight = FontWeight.SemiBold))
+        val point = at(x, y)
+        val left = if (point.x > size.width / 2) point.x - gap.toPx() - measured.size.width else point.x + gap.toPx()
+        drawText(measured, topLeft = Offset(left, point.y - measured.size.height / 2))
     }
 
     /** Text centered on a point, lifted by [lift]. */
@@ -160,3 +212,5 @@ private val LABEL_GAP = 6.dp
 private val DASH = 3.dp
 private val DASH_GAP = 4.dp
 private val DOT_RING = 2.5.dp
+private val GUIDE_DASH = 3.dp
+private val GUIDE_WIDTH = 1.5.dp
