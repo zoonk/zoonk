@@ -18,6 +18,8 @@ import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.clearCredentialState
 import com.zoonk.android.data.imageLoader
 import com.zoonk.android.data.perform
+import com.zoonk.android.feature.plan.LivePlanApi
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -64,6 +66,8 @@ class AppContainer private constructor(
             cache = cache,
             scope = scope,
         )
+
+    val plans = PlanStore(LivePlanApi(api), cache)
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =
