@@ -46,6 +46,7 @@ import com.zoonk.android.feature.activities.guessRevealRenderer
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.activities.patternTableRenderer
+import com.zoonk.android.feature.activities.sorting.categorizeRenderer
 import com.zoonk.android.feature.activities.stepSolverRenderer
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
@@ -87,6 +88,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData.PlayableLib
 val activityRenderers: Map<String, ActivityRenderer> =
     mapOf(
         "beforeAfter" to beforeAfterRenderer,
+        "categorize" to categorizeRenderer,
         "chartReader" to chartReaderRenderer,
         "codeRunner" to codeRunnerRenderer,
         "codeTracer" to codeTracerRenderer,

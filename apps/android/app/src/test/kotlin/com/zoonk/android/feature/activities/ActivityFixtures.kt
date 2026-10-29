@@ -69,10 +69,15 @@ object ActivityFixtures {
             }
         }
 
+    /** The fixture's step, with [check] in place of its own when given. */
     fun step(
         name: String,
         id: String = name,
-    ): LessonStep = step(entry(name).getValue("content"), id)
+        check: JsonObject? = null,
+    ): LessonStep {
+        val written = entry(name).getValue("content").jsonObject
+        return step(if (check == null) written else JsonObject(written + ("check" to check)), id)
+    }
 
     /** A step of content a fixture doesn't have, written as the API sends it. */
     fun step(
