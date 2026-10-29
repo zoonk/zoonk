@@ -1,7 +1,5 @@
 package com.zoonk.android.feature.player.steps
 
-import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,6 +26,14 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.activities.ActivityPhase
+import com.zoonk.android.feature.activities.ActivityProps
+import com.zoonk.android.feature.activities.ActivityRenderer
+import com.zoonk.android.feature.activities.choiceAnswer
+import com.zoonk.android.feature.activities.choiceId
+import com.zoonk.android.feature.activities.guessRevealRenderer
+import com.zoonk.android.feature.activities.numericAnswer
+import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.model.ActivityAnswer
@@ -53,48 +59,19 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.parseLocalizedNumber
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
-import com.zoonk.api.models.ActivityExpected
-import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf1
-import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf7
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Tolerance
 import kotlin.math.abs
-import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf1Value as ChoiceAnswerValue
-import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf7Value as NumericAnswerValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf1Value as InteractionCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOf2Value as NumericCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck.PlayableLibraryStepAnyOfContentOneOfCheckOneOfValue as ChoiceCheckValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData.PlayableLibraryStepAnyOfContentOneOfDataAnyOf1Value as SourcedDataValue
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData.PlayableLibraryStepAnyOfContentOneOfDataAnyOfValue as ExampleDataValue
 
-enum class ActivityPhase { Answering, Checked }
-
-/** What a template's canvas gets: the screen's answer is the player's, never the canvas's own. */
-data class ActivityCanvas(
-    val content: ActivityStepContent,
-    val answer: ActivityAnswer?,
-    val expected: ActivityExpected?,
-    val phase: ActivityPhase,
-    val onAnswerChange: (ActivityAnswer?) -> Unit,
-)
-
-data class ActivityBadge(
-    @StringRes val label: Int,
-    @DrawableRes val icon: Int,
-)
-
-/**
- * Main's `ActivityRenderer`: a template's canvas, its badge, whether its check comes before the
- * canvas, and whether it shows its data's source. The frame draws everything else.
- */
-class ActivityRenderer(
-    val badge: (ActivityStepContent) -> ActivityBadge?,
-    val canvas: @Composable (ActivityCanvas) -> Unit,
-    val checkFirst: (ActivityStepContent) -> Boolean = { false },
-    val showsData: (ActivityStepContent) -> Boolean = { false },
-)
-
 /** The one place a template gets its renderer. */
-val activityRenderers: Map<String, ActivityRenderer> = emptyMap()
+val activityRenderers: Map<String, ActivityRenderer> =
+    mapOf(
+        "guessReveal" to guessRevealRenderer,
+    )
 
 /** Apple's rule: a choice or number check can be answered from the frame alone; an interaction needs its canvas. */
 val StepContent.Activity.isPlayable: Boolean
@@ -134,7 +111,7 @@ internal fun ActivityView(
         if (checkFirst) check()
         renderer?.let {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                it.canvas(ActivityCanvas(content.content, activityAnswer, result?.expected, phase, onAnswerChange))
+                it.canvas(ActivityProps(content.content, activityAnswer, result?.expected, result?.isCorrect, phase, onAnswerChange))
                 if (it.showsData(content.content)) ActivityDataNote(frame)
             }
         }
@@ -156,7 +133,7 @@ private fun ActivityCheckArea(
             CheckQuestion(check.value.question)
             ChoiceOptions(
                 options = check.value.options.map { ChoiceOption(it.id, it.text, it.isCorrect) },
-                selectedId = (answer as? ChoiceAnswerValue)?.value?.optionId,
+                selectedId = answer.choiceId,
                 isChecked = phase == ActivityPhase.Checked,
                 isGuess = false,
                 locked = phase == ActivityPhase.Checked,
@@ -167,13 +144,6 @@ private fun ActivityCheckArea(
         NumericCheckField(check.value, answer, phase, onAnswerChange)
     }
 }
-
-internal fun choiceAnswer(optionId: String): ActivityAnswer =
-    ChoiceAnswerValue(
-        LessonStepAnswerOneOf3AnswerOneOf1(LessonStepAnswerOneOf3AnswerOneOf1.Kind.CHOICE, optionId),
-    )
-
-private fun numericValue(answer: ActivityAnswer?): Double? = (answer as? NumericAnswerValue)?.value?.`value`
 
 @Composable
 private fun CheckQuestion(text: String) {
@@ -190,7 +160,7 @@ private fun NumericCheckField(
 ) {
     val locale = currentLocale()
     var typed by rememberSaveable { mutableStateOf<String?>(null) }
-    val value = numericValue(answer)
+    val value = answer.numericValue
     val shown =
         typed?.takeIf { parseLocalizedNumber(it, locale) == value }
             ?: value?.let { formatNumber(it, locale, exactFractionDigitsFor(check.answer, check.allowed, it), grouping = false) }
@@ -209,9 +179,7 @@ private fun NumericCheckField(
                     typed = text
                     onAnswerChange(
                         parseLocalizedNumber(text, locale)?.let {
-                            NumericAnswerValue(
-                                LessonStepAnswerOneOf3AnswerOneOf7(LessonStepAnswerOneOf3AnswerOneOf7.Kind.NUMERIC, it),
-                            )
+                            numericAnswer(it)
                         },
                     )
                 },
@@ -296,7 +264,7 @@ private fun ActivityFeedback(
         when (check) {
             is ChoiceCheckValue -> {
                 val options = check.value.options
-                val chosenId = (answer as? ChoiceAnswerValue)?.value?.optionId
+                val chosenId = answer.choiceId
                 val chosen = options.firstOrNull { it.id == chosenId }
                 val correct = options.firstOrNull { it.isCorrect }
 
@@ -310,7 +278,7 @@ private fun ActivityFeedback(
             is NumericCheckValue -> {
                 val numeric = check.value
                 val locale = currentLocale()
-                val value = numericValue(answer)
+                val value = answer.numericValue
                 val digits = exactFractionDigitsFor(numeric.answer, numeric.allowed, value ?: numeric.answer)
 
                 value?.let {

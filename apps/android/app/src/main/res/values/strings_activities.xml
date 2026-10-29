@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activities_badge_estimate_first">Estimate first</string>
+    <string name="activities_badge_read_chart">Read the chart</string>
+    <string name="activities_badge_before_after">Before and after</string>
+    <string name="activities_badge_follow_key">Follow the key</string>
+    <string name="activities_badge_find_error">Find the error</string>
+    <string name="activities_badge_step_by_step">Step by step</string>
+    <string name="activities_badge_spot_pattern">Spot the pattern</string>
+    <string name="activities_badge_reply">Reply</string>
+
+    <!-- The guess scale's ends, written with their unit, like "1 day" and "3,650 days". -->
+    <string name="activities_guess_scale">A scale from %1$s to %2$s.</string>
+    <!-- The guess scale once checked; the last value is the real one. -->
+    <string name="activities_guess_scale_revealed">A scale from %1$s to %2$s. The real value is %3$s.</string>
+    <string name="activities_guess_real_value">Real value: %1$s</string>
+    <string name="activities_guess_drag">Drag to guess</string>
+    <string name="activities_guess_yours">Your guess: %1$s</string>
+    <!-- The guess slider's name, for TalkBack. -->
+    <string name="activities_guess_slider">Your guess</string>
+    <string name="activities_guess_none">No guess yet</string>
+    <string name="activities_guess_close">Your guess is close to the real value.</string>
+    <!-- How far a guess was, written with its unit, like "3 days". -->
+    <string name="activities_guess_off_by">Your guess is off by %1$s.</string>
+    <!-- How many times bigger the guess was than the real value, like "3.5". -->
+    <string name="activities_guess_too_big">Your guess is about %1$s times too big.</string>
+    <!-- How many times smaller the guess was than the real value, like "3.5". -->
+    <string name="activities_guess_too_small">Your guess is about %1$s times too small.</string>
+</resources>
