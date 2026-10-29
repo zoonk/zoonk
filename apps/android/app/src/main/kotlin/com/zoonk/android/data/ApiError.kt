@@ -41,6 +41,9 @@ suspend inline fun <reified T> perform(noinline call: suspend () -> Response<T>)
     return response.body() ?: if (T::class == Unit::class) Unit as T else throw ApiException(ApiError.Unavailable)
 }
 
+/** Like [perform], for the operations that answer `null` when there's nothing yet (a conversation before its first question). */
+suspend fun <T> performOrNull(call: suspend () -> Response<T>): T? = send(call).body()
+
 @PublishedApi
 internal suspend fun <T> send(call: suspend () -> Response<T>): Response<T> {
     val response =

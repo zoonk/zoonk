@@ -29,9 +29,12 @@ import com.zoonk.api.apis.WorkflowsApi
 import okhttp3.HttpUrl
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
+import retrofit2.Converter
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.create
+import java.lang.reflect.Type
 
 /** [baseUrl] is the API's versioned root, ending in `/v1/`. */
 class ApiServices(
@@ -43,6 +46,7 @@ class ApiServices(
             .Builder()
             .baseUrl(baseUrl)
             .client(client)
+            .addConverterFactory(NullBody)
             .addConverterFactory(ApiJson.asConverterFactory("application/json".toMediaType()))
             .build()
 
@@ -72,4 +76,29 @@ class ApiServices(
     val subscriptions: SubscriptionsApi by lazy { retrofit.create() }
     val users: UsersApi by lazy { retrofit.create() }
     val workflows: WorkflowsApi by lazy { retrofit.create() }
+}
+
+/**
+ * Some operations answer `null` while there's nothing yet (a conversation before its first
+ * question), which the generated client's non-null models can't decode.
+ */
+private object NullBody : Converter.Factory() {
+    override fun responseBodyConverter(
+        type: Type,
+        annotations: Array<out Annotation>,
+        retrofit: Retrofit,
+    ): Converter<ResponseBody, *> {
+        val next = retrofit.nextResponseBodyConverter<Any>(this, type, annotations)
+        return Converter<ResponseBody, Any?> { body ->
+            val peek = body.source().peek()
+            if (peek.request(NULL.length.toLong()) && peek.readUtf8(NULL.length.toLong()) == NULL && peek.exhausted()) {
+                body.close()
+                null
+            } else {
+                next.convert(body)
+            }
+        }
+    }
+
+    private const val NULL = "null"
 }

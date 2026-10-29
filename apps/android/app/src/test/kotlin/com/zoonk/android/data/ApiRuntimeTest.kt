@@ -169,6 +169,19 @@ class ApiRuntimeTest {
             assert(Regex("""DELETE /v1/sessions/current 204 \d+ms""").matches(log.single())) { log.single() }
         }
 
+    @Test
+    fun aNullBodyReadsAsNothingYetAndAThreadAsItself() =
+        runTest {
+            val goal = java.util.UUID.randomUUID()
+            server.enqueue(json("null"))
+            server.enqueue(
+                json("""{"hasMore":false,"id":"${java.util.UUID.randomUUID()}","lessonId":null,"nextCursor":null,"questions":[]}"""),
+            )
+
+            assertNull(performOrNull { api.clients(ana).plans.getPlanQuestionThread(goal) })
+            assertEquals(false, performOrNull { api.clients(ana).plans.getPlanQuestionThread(goal) }?.hasMore)
+        }
+
     private fun json(body: String) =
         MockResponse
             .Builder()
