@@ -183,7 +183,12 @@ async function deployApp({
 
   const response = await vercel({
     body: {
-      build: { env },
+      build: {
+        env: {
+          ...env,
+          ...(project.app === "main" ? { CIRCLE_NODE_TOTAL: "5", VERCEL_BUILD_SYSTEM_REPORT: "1" } : {}),
+        },
+      },
       env,
       gitSource: {
         ref: requiredEnv("DEPLOY_REF"),
