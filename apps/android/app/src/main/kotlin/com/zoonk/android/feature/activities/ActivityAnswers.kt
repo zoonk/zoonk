@@ -6,10 +6,13 @@ import com.zoonk.api.models.ActivityExpectedAnswer
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf1
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf13
+import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf4
+import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf4LinksInner
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf7
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf8
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf13Value as SelectionAnswerValue
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf1Value as ChoiceAnswerValue
+import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf4Value as LinksAnswerValue
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf7Value as NumericAnswerValue
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf8Value as OrderAnswerValue
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOfValue as AssignmentAnswerValue
@@ -48,3 +51,14 @@ val ActivityExpected?.selectionIds: List<String>? get() = (interaction as? Activ
 val ActivityAnswer?.assignmentPairs: Map<String, String>? get() = (this as? AssignmentAnswerValue)?.value?.pairs
 
 val ActivityExpected?.assignmentPairs: Map<String, String>? get() = (interaction as? ActivityExpectedAnswer.AssignmentWrapper)?.value?.pairs
+
+/** Links as cause-to-effect pairs, in the order the learner made them. */
+fun linksAnswer(links: List<Pair<String, String>>): ActivityAnswer =
+    LinksAnswerValue(
+        LessonStepAnswerOneOf3AnswerOneOf4(
+            LessonStepAnswerOneOf3AnswerOneOf4.Kind.LINKS,
+            links.map { (from, to) -> LessonStepAnswerOneOf3AnswerOneOf4LinksInner(from, to) },
+        ),
+    )
+
+val ActivityAnswer?.links: List<Pair<String, String>>? get() = (this as? LinksAnswerValue)?.value?.links?.map { it.from to it.to }

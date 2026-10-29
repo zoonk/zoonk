@@ -47,6 +47,7 @@ import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.activities.patternTableRenderer
 import com.zoonk.android.feature.activities.sorting.categorizeRenderer
+import com.zoonk.android.feature.activities.sorting.causeEffectChainRenderer
 import com.zoonk.android.feature.activities.sorting.matchPairsRenderer
 import com.zoonk.android.feature.activities.sorting.processOrderRenderer
 import com.zoonk.android.feature.activities.stepSolverRenderer
@@ -91,6 +92,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
     mapOf(
         "beforeAfter" to beforeAfterRenderer,
         "categorize" to categorizeRenderer,
+        "causeEffectChain" to causeEffectChainRenderer,
         "chartReader" to chartReaderRenderer,
         "codeRunner" to codeRunnerRenderer,
         "codeTracer" to codeTracerRenderer,
