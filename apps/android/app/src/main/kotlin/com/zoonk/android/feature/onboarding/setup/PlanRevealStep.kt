@@ -513,15 +513,27 @@ private fun AreaWeightList(weights: AreaWeights) {
                 stringResource(
                     when (weights.source) {
                         WeightSource.Material -> {
-                            if (oneArea) R.string.onboarding_reveal_estimated_material_area else R.string.onboarding_reveal_estimated_material_areas
+                            if (oneArea) {
+                                R.string.onboarding_reveal_estimated_material_area
+                            } else {
+                                R.string.onboarding_reveal_estimated_material_areas
+                            }
                         }
 
                         WeightSource.Guide -> {
-                            if (oneArea) R.string.onboarding_reveal_estimated_guide_area else R.string.onboarding_reveal_estimated_guide_areas
+                            if (oneArea) {
+                                R.string.onboarding_reveal_estimated_guide_area
+                            } else {
+                                R.string.onboarding_reveal_estimated_guide_areas
+                            }
                         }
 
                         WeightSource.Notice -> {
-                            if (oneArea) R.string.onboarding_reveal_estimated_notice_area else R.string.onboarding_reveal_estimated_notice_areas
+                            if (oneArea) {
+                                R.string.onboarding_reveal_estimated_notice_area
+                            } else {
+                                R.string.onboarding_reveal_estimated_notice_areas
+                            }
                         }
                     },
                 ),
