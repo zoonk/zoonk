@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A badge on an activity where the learner places a dot along a number line. -->
+    <string name="activities_math_badge_place_it">Place it</string>
+
+    <!-- A number line's name and, in parentheses, the unit its values are measured in, like "Temperature (°C)". -->
+    <string name="activities_math_number_line_label">%1$s (%2$s)</string>
+    <!-- The dot the learner drags along the number line, for TalkBack. -->
+    <string name="activities_math_number_line_answer">Your answer on the number line</string>
+    <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->
+    <string name="activities_math_number_line_description">A number line for %1$s from %2$s to %3$s. It starts at %4$s, and your dot is at %5$s.</string>
+    <!-- Once checked, the jumps the line takes and where they land, like "The jumps go +3, +5 and land at 5 °C." -->
+    <string name="activities_math_number_line_jumps">The jumps go %1$s and land at %2$s.</string>
+</resources>

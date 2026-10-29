@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_math_badge_place_it": "070447ea3aa42921741658c26af5af3d3fe69711ab7e0c1fbce4b9c0c45ab802",
+  "activities_math_number_line_answer": "edb0f828bd94e73f175f9d0f39dd55cee468ed251d3ba6f48e686d7666ace948",
+  "activities_math_number_line_description": "edaa9694921f5ecee9a225769b8b6acfdc2cf55029cc0802e7c3c56b00b8f7fa",
+  "activities_math_number_line_jumps": "d373dbd42aa54dca8c34e0b8c139c7c5235d3d65f0aa1fae425e7c49d80bc5c1",
+  "activities_math_number_line_label": "1f00dc42786c98b6d2f026674564a49cd15de8eafba4c9161c54da2c8552c9dc"
+}
+-->
+<resources>
+    <!-- A badge on an activity where the learner places a dot along a number line. -->
+    <string name="activities_math_badge_place_it">Colócala</string>
+    <!-- A number line's name and, in parentheses, the unit its values are measured in, like "Temperature (°C)". -->
+    <string name="activities_math_number_line_label">%1$s (%2$s)</string>
+    <!-- The dot the learner drags along the number line, for TalkBack. -->
+    <string name="activities_math_number_line_answer">Tu respuesta en la recta numérica</string>
+    <!-- What the number line shows, for TalkBack: its name, its ends, where it starts and where the learner's dot is, like "A number line for Temperature from -5 to 7. It starts at -3 °C, and your dot is at 5 °C." -->
+    <string name="activities_math_number_line_description">Una recta numérica de %1$s desde %2$s hasta %3$s. Empieza en %4$s y tu punto está en %5$s.</string>
+    <!-- Once checked, the jumps the line takes and where they land, like "The jumps go +3, +5 and land at 5 °C." -->
+    <string name="activities_math_number_line_jumps">Los saltos van hacia %1$s y llegan a %2$s.</string>
+</resources>

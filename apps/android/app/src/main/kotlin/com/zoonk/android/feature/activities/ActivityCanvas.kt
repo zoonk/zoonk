@@ -30,6 +30,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
@@ -43,6 +44,7 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.richtext.RichText
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 
 /**
@@ -77,6 +79,24 @@ fun LineMarker(
 ) {
     val height = with(LocalDensity.current) { style.lineHeight.toDp() }
     Box(Modifier.height(height), contentAlignment = Alignment.Center) { content() }
+}
+
+/** Main's `ActivityReadout`: the big live number. */
+@Composable
+fun ActivityReadout(
+    text: String,
+    modifier: Modifier = Modifier,
+    color: Color = Color.Unspecified,
+) {
+    Text(
+        text,
+        modifier,
+        color,
+        style =
+            MaterialTheme.typography.headlineSmall
+                .withTabularFigures()
+                .copy(fontWeight = FontWeight.Medium),
+    )
 }
 
 @Composable
