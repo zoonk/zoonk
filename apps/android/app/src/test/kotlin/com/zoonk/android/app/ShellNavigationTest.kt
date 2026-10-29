@@ -151,7 +151,7 @@ class ShellNavigationTest {
     fun onboardingHidesTheBarOnAPhone() {
         open(AppRoute.StartGoal())
 
-        rule.onNodeWithText("StartGoal(goal=null, planId=null)").assertIsDisplayed()
+        rule.onNodeWithText("StartGoal(goal=null, planId=null, draftId=null)").assertIsDisplayed()
         tab("Today").assertDoesNotExist()
 
         pressBack()
