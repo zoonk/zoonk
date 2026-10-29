@@ -143,6 +143,17 @@ class SpeechPlayerTest {
         }
 
     @Test
+    fun aRecordingWithoutTextNeverAsksForAClip() =
+        runTest {
+            server.enqueue(audio(404))
+            val player = player()
+            player.speak("prompt", "it", listOf(SpokenText(null, recording = server.url("/native/ciao.mp3").toString())))
+            advanceUntilIdle()
+            assertEquals(emptyList<String>(), asked)
+            assertEquals(SpeechState.Failed(null), player.state("prompt"))
+        }
+
+    @Test
     fun aRefusedClipSaysWhyAndIsAskedForAgainOnRetry() =
         runTest {
             refusal = ApiException(ApiError.Unavailable, "SIGN_UP_REQUIRED", 403)

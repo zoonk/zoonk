@@ -16,9 +16,12 @@ import kotlinx.coroutines.launch
 import java.io.File
 import kotlin.coroutines.cancellation.CancellationException
 
-/** A native [recording] plays first; `personal` text is the learner's own words, voiced in a clip of theirs. */
+/**
+ * A native [recording] plays first; `personal` text is the learner's own words, voiced in a clip of
+ * theirs. Without [text] only the recording plays, so it can start without the learner's tap.
+ */
 data class SpokenText(
-    val text: String,
+    val text: String?,
     val recording: String? = null,
     val personal: Boolean = false,
 )
@@ -149,7 +152,7 @@ class SpeechPlayer(
                 }
 
                 PlaybackEnd.Failed -> {
-                    if (segment.recording == null) return SpeechState.Failed(null)
+                    if (segment.recording == null || segment.text == null) return SpeechState.Failed(null)
                     segment = segment.copy(recording = null)
                     loading = load(reading, segment)
                 }
@@ -179,8 +182,9 @@ class SpeechPlayer(
                     // Read the text instead.
                 }
             }
+            val text = segment.text ?: throw ApiException(ApiError.Unavailable)
             val session = reading.session ?: throw ApiException(ApiError.Unauthorized)
-            val url = clipUrl(session, ClipKey(reading.language, segment.text, segment.personal)).await()
+            val url = clipUrl(session, ClipKey(reading.language, text, segment.personal)).await()
             try {
                 files.file(url, session)
             } catch (e: ApiException) {
