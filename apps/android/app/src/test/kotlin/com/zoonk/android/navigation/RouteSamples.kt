@@ -51,6 +51,7 @@ val routeSamples: List<AppRoute> =
         AppRoute.Pronunciation(),
         AppRoute.Conversation("conversation-1"),
         AppRoute.Conversation("conversation-1", from = "exam"),
+        AppRoute.Conversation("conversation-1", mock = "mock-1"),
         AppRoute.Explain("goal-1"),
         AppRoute.PlanLink("plan-1"),
         AppRoute.Login,

@@ -229,11 +229,12 @@ sealed interface AppRoute : NavKey {
         val goalId: String? = null,
     ) : AppRoute
 
-    /** [from] is `exam` for a task opened from the exam page, whose result leads back there. */
+    /** [from] is `exam` for a task opened from the exam page, whose result leads back there; [mock] is the mock a call returns to. */
     @Serializable
     data class Conversation(
         val conversationId: String,
         val from: String? = null,
+        val mock: String? = null,
     ) : AppRoute
 
     @Serializable

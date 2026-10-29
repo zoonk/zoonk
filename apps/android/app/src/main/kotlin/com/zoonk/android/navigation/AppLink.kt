@@ -158,7 +158,7 @@ object AppLink {
 
                     "essay" -> AppRoute.Essay(blockId = second)
 
-                    "conversation" -> AppRoute.Conversation(conversationId = second, from = query["from"])
+                    "conversation" -> AppRoute.Conversation(conversationId = second, from = query["from"], mock = query["mock"])
 
                     "explain" -> AppRoute.Explain(goalId = second)
 

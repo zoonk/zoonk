@@ -68,6 +68,7 @@ class AppLinkTest {
             "/pronunciation?goal=goal-1" to AppRoute.Pronunciation("goal-1"),
             "/conversation/conversation-1" to AppRoute.Conversation("conversation-1"),
             "/conversation/conversation-1?from=exam" to AppRoute.Conversation("conversation-1", from = "exam"),
+            "/conversation/conversation-1?mock=mock-1" to AppRoute.Conversation("conversation-1", mock = "mock-1"),
             "/explain/goal-1" to AppRoute.Explain("goal-1"),
             "/plan-link/plan-1" to AppRoute.PlanLink("plan-1"),
             "/login" to AppRoute.Login,
