@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "memory_category_background": "27c9f3a1e288b5f0f93eb1d0afeb2ada933506a380a23a5e4a8a02aae2e4cb72",
+  "memory_category_context": "46a795e5178dcf26f08e1397211180d3adacf7c1b49926ee372b0d22d0a69c61",
+  "memory_category_goals": "a41feba2615afbfd0c4d6f38f56d92ae931f898d35d70e6dbfe62f5133f67034",
+  "memory_category_learning": "ea9fb0a3c161a9cdf0235de77489e3857352913875a593352a773428ef99c018",
+  "memory_category_preferences": "c578228e900689045a3d29d7aa3900bb19f7d7f0d0b63200ef183e8d76421a39",
+  "memory_category_routine": "e4c7fa92d463f10268524f86a43bfb2f480eb4b7f289c65d621c484ce0d622e2",
+  "memory_change_undone": "5899a7872b7d47713a4c0757434e34373bf71a79a7537de4c700747ce6bb19d9",
+  "memory_delete": "364d76d54430196d45167d5a794447277899b58b751abc439e60c7fe1d245df8",
+  "memory_description": "3345100aedab295749700eb8c0dfbeefa4608d3bf60fb4a201c583c1aec09b1f",
+  "memory_download": "ec7d797913d11ac1f2b1a90ec967734965f6f022e0db81fe6a3ccaf15d7b3860",
+  "memory_download_description": "6ea8adeeadb3f05a4643218da9a901cf1ce0ae1a5f0afaefacfbba8ca6cb2428",
+  "memory_edit": "0126f8657f26e6b919727f2abb3d6b35de9d2dd5f0973bce96daab897040bfe9",
+  "memory_edit_description": "981a13730ab78460f320c945e234a9611e337938b6d63cb8d90c7e79bed9c522",
+  "memory_edit_label": "adfaca8495df48e754630b08fb1fed3dcf64e8b0876dffc232fabd6ace2eb7b1",
+  "memory_edit_title": "2b8ed7915e66bcd61df5487f7d795a20e3b4b328b62d6920b6e2baf8f22734d7",
+  "memory_empty_off": "c5b39778f065c91ab048adb27ec74062b2bbaca4387bb6df0f15cff7bb831f5c",
+  "memory_empty_on": "6f740a66717d9c9657148b29cfab7048c8f13e05f6f118e99fcdd7373e609ede",
+  "memory_fact_options": "151bcc4e145753a25df65ab4f2a7ff445fe76420adef28447d168b5031357522",
+  "memory_fact_source": "aae44201027ca276f94bd6994e2b32fa305a3b3ef4b933082e65589b070b1e2d",
+  "memory_save_failed": "99a1073fb7ba091f3da4bb81ca750b6503ac00bdcfcde306e7d199ceb844bbb4",
+  "memory_sensitive_note": "b2099ba583eb70ee829cbafaa7d4195d90d2a966753072c3c8b6f6afd48ca64c",
+  "memory_source_chat": "135aaed57f930677db309836f3102e32a5444c3ceaabcac1e2e660d0aa56b9ed",
+  "memory_source_noticed": "0897c75c424322f998f47b90eb58c332ea966306bb977d2b6a0b2b6d9ea7265d",
+  "memory_source_onboarding": "8fa540bf898b764172e337fd3c4ed21eac167a8695f12e2904c563221552ccd4",
+  "memory_source_session": "2b92a168fc717f0686c9893ad6d933ef4586d5a9430a9cc34d7e5b4f8b33bb6e",
+  "memory_source_you": "51256a91e75fcdaf41e17e8e08ed279fffa7ace7dee19e0ade3f31efe2491c81",
+  "memory_undo": "974e13c3fd62cc2a0111f005731fc8f166d33af65a00907b7387c7b1cec12807",
+  "memory_undo_failed": "597a1efdcb7e2fdb0612a5ca5bc08d1085083a10c65a1d0a7549b99a1366cfee",
+  "memory_updated": "1806c4632943665e0ee90d1352cad6e5f3205e777f7fe65f66a1cf38a1ee850d",
+  "memory_updated_more": "d139b86e1b1e489830e61267ca1db617640a9822c9101c3d243c1eb92b836b17",
+  "memory_use": "1243783609b6dcae5fd006a871c8e7d54c34286909170b1f0f1710c543b5f35b",
+  "memory_use_off": "1c5398628f1cc7001500dada7c75016a766f9a7db1503d157bd690f9a18ade7b",
+  "memory_use_on": "8e262484e946861d62988d7395e89afc3ef0a6cbf2663ae9b6ce134b86589330"
+}
+-->
+<resources>
+    <string name="memory_description">O que o Zoonk lembra para dar exemplos e montar planos que combinam com a sua vida.</string>
+    <string name="memory_use">Usar memória</string>
+    <string name="memory_use_on">Exemplos pessoais e planos que combinam com a sua semana</string>
+    <string name="memory_use_off">A memória está desativada. Nada novo é aprendido, e esses fatos não são usados.</string>
+    <string name="memory_empty_on">Ainda não há nada. Conforme você estuda e conversa, notas curtas que ajudam o Zoonk a ensinar você aparecem aqui.</string>
+    <string name="memory_empty_off">Não há nada aqui. Com a memória desativada, o Zoonk não guarda notas sobre você.</string>
+    <string name="memory_save_failed">Não foi possível salvar. Tente de novo.</string>
+    <string name="memory_category_goals">Metas</string>
+    <string name="memory_category_background">Histórico</string>
+    <string name="memory_category_routine">Rotina</string>
+    <string name="memory_category_preferences">Preferências</string>
+    <string name="memory_category_learning">Estudo</string>
+    <string name="memory_category_context">Contexto</string>
+    <string name="memory_source_noticed">Percebido pela sua atividade</string>
+    <string name="memory_source_you">Você contou</string>
+    <string name="memory_source_chat">De uma conversa</string>
+    <string name="memory_source_onboarding">Do início</string>
+    <string name="memory_source_session">De uma sessão de estudo</string>
+    <!-- %1$s is where the fact came from ("From a chat") and %2$s the day it was noted. -->
+    <string name="memory_fact_source">%1$s · %2$s</string>
+    <!-- %1$s is the fact, like "Studies after work". -->
+    <string name="memory_fact_options">Opções para “%1$s”</string>
+    <string name="memory_edit">Editar</string>
+    <string name="memory_delete">Excluir</string>
+    <string name="memory_edit_title">Editar memória</string>
+    <string name="memory_edit_description">Escreva de um jeito que represente o que é verdade para você.</string>
+    <string name="memory_edit_label">O que o Zoonk lembra</string>
+    <string name="memory_download">Baixar minha memória</string>
+    <string name="memory_download_description">Tudo o que está na sua memória em um único arquivo</string>
+    <string name="memory_sensitive_note">O Zoonk não guarda informações sobre saúde, religião ou outros assuntos sensíveis, a menos que você peça.</string>
+    <string name="memory_updated">Memória atualizada:</string>
+    <plurals name="memory_updated_more">
+        <item quantity="one">e mais %d</item>
+        <item quantity="other">e mais %d</item>
+    </plurals>
+    <string name="memory_undo">Desfazer</string>
+    <string name="memory_change_undone">Alteração desfeita</string>
+    <string name="memory_undo_failed">Não foi possível desfazer. A informação mudou desde então.</string>
+</resources>
