@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,6 +54,7 @@ import com.zoonk.android.feature.activities.ActivityCanvasLabel
 import com.zoonk.android.feature.activities.ActivityProps
 import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.ActivityTakeaway
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.theme.withTabularFigures
