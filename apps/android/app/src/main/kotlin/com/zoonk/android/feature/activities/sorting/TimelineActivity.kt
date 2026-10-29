@@ -79,8 +79,8 @@ import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.detectLift
 import com.zoonk.android.feature.activities.orderAnswer
 import com.zoonk.android.feature.activities.orderIds
-import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
