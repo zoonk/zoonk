@@ -61,10 +61,10 @@ import com.zoonk.android.feature.session.blockDetail
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.challengePhase
 import com.zoonk.android.feature.session.learnKind
+import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
-import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.MeterPart
@@ -273,7 +273,7 @@ private fun LazyListScope.plusLessons(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleSmall,
             )
-            LabelChip(text = stringResource(R.string.today_step_plus))
+            PlusMark()
         }
     }
 }

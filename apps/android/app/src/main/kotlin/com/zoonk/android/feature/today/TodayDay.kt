@@ -49,7 +49,6 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
-import com.zoonk.api.models.MistakeListAvailability
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -79,7 +78,7 @@ internal fun TodayDay(
     buddy: BuddyLook,
     buddyName: String,
     brainPower: Long? = null,
-    mistakes: MistakeListAvailability? = null,
+    practice: @Composable () -> Unit = {},
 ) {
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val stalled =
@@ -121,7 +120,7 @@ internal fun TodayDay(
                 buddy = buddy,
                 buddyName = buddyName,
                 brainPower = brainPower,
-                mistakes = mistakes,
+                practice = practice,
                 onMission = { opens -> openMission(opens, model, actions, today, scope) },
                 navigate = navigator::open,
             )

@@ -22,6 +22,9 @@ import com.zoonk.android.feature.session.toDayView
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.scaffold.TabRootScaffold
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.LanguageTodaySpeaking
+import com.zoonk.api.models.MistakeListAvailability
+import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.serialization.json.JsonArray
@@ -131,6 +134,7 @@ class TodayScreenshots {
                         .BuddyLook(),
                 buddyName = "Zu",
                 brainPower = 1240,
+                practice = { TodayPracticeRows(MistakeListAvailability(ready = 3, tomorrow = 1), MOCKS, SPEAKING, navigate = {}) },
             )
         }
     }
@@ -145,6 +149,16 @@ class TodayScreenshots {
     }
 
     private companion object {
+        val MOCKS: MockOptions by lazy {
+            decodeFixture<MockOptions>(
+                "mock-options",
+                "access" to "plusRequired",
+                "options" to JsonArray(listOf(fixture("mock-option", "kind" to "area", "area" to "Biologia"))),
+            )
+        }
+
+        val SPEAKING = LanguageTodaySpeaking(access = LanguageTodaySpeaking.Access.PLUS_REQUIRED, title = "IELTS")
+
         val DAYS: List<Pair<String, TodayRead.Day>> by lazy {
             listOfNotNull(
                 // A real read saved as `today.json` in the shots folder (GET /v1/today) renders first.
@@ -156,6 +170,20 @@ class TodayScreenshots {
                 },
                 "unopened" to unopened(),
                 "started" to started(),
+                "mock-funding" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "mockFunding" to
+                                    buildJsonObject {
+                                        put("mockDate", "2026-10-31")
+                                        put("mockMinutes", 180)
+                                        put("setAsideMinutes", 20)
+                                    },
+                            ),
+                    ),
                 "done-up-next" to doneWithUpNext(),
                 "rest" to day(blocks = emptyList(), next = null, dailyGoal = 0),
                 "waiting" to day(blocks = emptyList(), next = null, extra = mapOf("emptyDay" to "lessonsComing")),

@@ -148,7 +148,6 @@ private fun TodayRead(
 
                     val buddy = summary.value?.buddy?.look() ?: BuddyLook()
                     val brainPower by app.today.brainPower.collectShown()
-                    val mistakes by app.today.mistakes[read.today.goal.id].collectShown()
                     TodayDay(
                         read = read,
                         today = app.today.today,
@@ -159,7 +158,7 @@ private fun TodayRead(
                         buddy = buddy,
                         buddyName = buddyName(buddy.kind, summary.value?.buddy?.name),
                         brainPower = brainPower.value,
-                        mistakes = mistakes.value,
+                        practice = { TodayPractice(app.today, read.today.goal, navigator::open) },
                     )
                 }
 

@@ -36,6 +36,16 @@ class TodayStoreTest {
             ) = com.zoonk.api.models
                 .MistakeListAvailability(ready = 0, tomorrow = 0)
 
+            override suspend fun mocks(
+                session: AuthenticatedSession,
+                goalId: UUID,
+            ): com.zoonk.api.models.MockOptions = error("Not used")
+
+            override suspend fun language(
+                session: AuthenticatedSession,
+                goalId: UUID,
+            ): com.zoonk.api.models.LanguageToday = error("Not used")
+
             override suspend fun resumePreview(
                 session: AuthenticatedSession,
                 goalId: UUID,

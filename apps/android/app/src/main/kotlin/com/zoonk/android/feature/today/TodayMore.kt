@@ -26,9 +26,9 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.KindDot
-import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -148,7 +148,7 @@ private fun ChallengeLink(
             if (challenge.access ==
                 TodayWeeklyChallenge.Access.PLUS_REQUIRED
             ) {
-                LabelChip(stringResource(R.string.today_step_plus))
+                PlusMark()
             }
         },
     ) { actions.navigate(AppRoute.Challenge(planItemId.toString(), model.day.sessionId?.toString())) }

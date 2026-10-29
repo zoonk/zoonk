@@ -5,7 +5,9 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.perform
 import com.zoonk.api.apis.MistakesApi
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.MistakeListAvailability
+import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.SuggestedGoalAnswer
@@ -34,6 +36,16 @@ class LiveTodayApi(
                 ).mistakes
                 .listCurrentUserMistakes(goalId = goalId, limit = 1, status = MistakesApi.StatusListCurrentUserMistakes.OPEN)
         }.availability
+
+    override suspend fun mocks(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): MockOptions = perform { api.clients(session).exams.listMocks(goalId) }
+
+    override suspend fun language(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): LanguageToday = perform { api.clients(session).language.getLanguageToday(goalId) }
 
     override suspend fun resumePreview(
         session: AuthenticatedSession,

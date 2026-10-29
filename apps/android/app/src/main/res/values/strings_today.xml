@@ -81,7 +81,6 @@
     <string name="today_step_after_lessons_phase">%1$s · after today\'s lessons</string>
     <string name="today_step_after_challenge">After the challenge before it</string>
     <string name="today_step_after_challenge_phase">%1$s · after the challenge before it</string>
-    <string name="today_step_plus">Plus</string>
 
     <string name="today_done">Today\'s session is complete.</string>
     <string name="today_done_day_off">You studied on your day off.</string>
@@ -218,6 +217,18 @@
         <item quantity="one">%d available tomorrow</item>
         <item quantity="other">%d available tomorrow</item>
     </plurals>
+    <!-- %1$s is the mock's date, such as Nov 3. -->
+    <string name="today_mock_funding">Lighter day: saving time for the mock exam on %1$s</string>
+    <!-- %1$s is the mock's date, such as Nov 3. -->
+    <string name="today_mock_funding_welcome_back">Saving time for the mock exam on %1$s</string>
+    <string name="today_take_mock">Take a mock exam</string>
+    <string name="today_take_mock_detail">Whenever you want: a full exam day or half a day</string>
+    <string name="today_take_mock_detail_by_subject">Whenever you want: a full exam day, half a day or one subject</string>
+    <string name="today_continue_mock">Continue your mock exam</string>
+    <string name="today_continue_mock_detail">It\'s where you left it</string>
+    <string name="today_exam_speaking">Exam-style speaking</string>
+    <!-- %1$s is the exam's name, such as IELTS. -->
+    <string name="today_exam_speaking_detail">%1$s tasks on a call</string>
     <string name="today_connection_lost">Connection lost</string>
     <string name="today_connection_lost_detail">We stopped getting updates. It may still be working.</string>
     <string name="today_reconnect">Reconnect</string>

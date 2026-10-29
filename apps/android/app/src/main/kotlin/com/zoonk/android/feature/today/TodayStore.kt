@@ -12,7 +12,9 @@ import com.zoonk.android.data.value
 import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LanguageToday
 import com.zoonk.api.models.MistakeListAvailability
+import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
@@ -68,6 +70,18 @@ interface TodayApi {
         goalId: UUID,
     ): MistakeListAvailability
 
+    /** An exam goal's mocks: one running, or the sizes the learner can take. */
+    suspend fun mocks(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): MockOptions
+
+    /** A language goal's level and its exam-style speaking. */
+    suspend fun language(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): LanguageToday
+
     /** Whether resuming a paused goal moves the paused days' lessons to today. */
     suspend fun resumePreview(
         session: AuthenticatedSession,
@@ -113,6 +127,16 @@ class TodayStore(
     val mistakes =
         cache.keyed<UUID, MistakeListAvailability>(Audience.SignedIn, setOf(DataDomain.UserProgress)) { session, goalId ->
             session?.let { api.mistakes(it, goalId) }
+        }
+
+    val mocks =
+        cache.keyed<UUID, MockOptions>(Audience.SignedIn, MOCK_DOMAINS) { session, goalId ->
+            session?.let { api.mocks(it, goalId) }
+        }
+
+    val language =
+        cache.keyed<UUID, LanguageToday>(Audience.SignedIn, LANGUAGE_DOMAINS) { session, goalId ->
+            session?.let { api.language(it, goalId) }
         }
 
     val resumePreview =
@@ -169,6 +193,13 @@ class TodayStore(
                 DataDomain.UserSession,
                 DataDomain.UserSubscription,
             )
+
+        /** A mock started or finished, and the tier that marks mocks Plus. */
+        private val MOCK_DOMAINS = setOf(DataDomain.Goals, DataDomain.UserProgress, DataDomain.UserSession, DataDomain.UserSubscription)
+
+        /** The level moves with progress; the tier marks speaking Plus. */
+        private val LANGUAGE_DOMAINS =
+            setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress, DataDomain.UserSubscription)
     }
 }
 

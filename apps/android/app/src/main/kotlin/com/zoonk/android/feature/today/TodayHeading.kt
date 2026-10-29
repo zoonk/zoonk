@@ -31,6 +31,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.session.FreshStart
+import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -102,6 +103,32 @@ internal fun TodayHeading(
                 DayTime(model, MaterialTheme.typography.headlineMedium)
             }
         }
+
+        if (model.state != DayState.Done && model.state != DayState.Rest) MockFundingLine(model)
+    }
+}
+
+/** A mock the learner's plan doesn't include wears the Plus mark, so the line never reads as a mock they can take. */
+@Composable
+private fun MockFundingLine(model: TodayDayModel) {
+    val funding = model.today.mockFunding ?: return
+    val locale = currentLocale()
+    val date = formatDate(funding.mockDate.toJavaLocalDate(), locale, DateStyle.Day, model.day.localDate.toJavaLocalDate())
+    val text =
+        if (model.day.freshStart == FreshStart.WelcomeBack) {
+            stringResource(R.string.today_mock_funding_welcome_back, date)
+        } else {
+            stringResource(R.string.today_mock_funding, date)
+        }
+
+    FlowRow(
+        modifier = Modifier.semantics(mergeDescendants = true) {},
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        itemVerticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        if (!model.day.examAccess.includesMockExams) PlusMark()
     }
 }
 
