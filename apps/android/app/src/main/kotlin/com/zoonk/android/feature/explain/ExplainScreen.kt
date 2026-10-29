@@ -196,7 +196,7 @@ private fun startGoal(
 }
 
 @Composable
-private fun ExplainWaiting(
+internal fun ExplainWaiting(
     explanation: Explanation,
     viewModel: ExplainViewModel,
     navigator: AppNavigator,
@@ -416,7 +416,7 @@ private fun SlowWait(
 
 /** Main's `ExplainEnding`: what the learner now knows, the explanation in a few sentences, and where to go further. */
 @Composable
-private fun ExplainEnding(
+internal fun ExplainEnding(
     explanation: Explanation,
     state: LessonPlayerState,
     navigator: AppNavigator,
