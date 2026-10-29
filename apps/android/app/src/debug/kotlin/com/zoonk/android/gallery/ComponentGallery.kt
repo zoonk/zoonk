@@ -364,7 +364,7 @@ private fun Meters() {
                 listOf(
                     MeterPart(done, 10f),
                     MeterPart(done, 15f),
-                    MeterPart(MeterPart.Fill.Place, 12f),
+                    MeterPart(MeterPart.Fill.Place(), 12f),
                     MeterPart(MeterPart.Fill.Track, 8f),
                     MeterPart(MeterPart.Fill.Track, 20f),
                 ),

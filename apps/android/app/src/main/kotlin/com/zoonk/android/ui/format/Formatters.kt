@@ -136,6 +136,9 @@ enum class DateStyle(
 
     WeekdayDay("MMMMEEEEd"),
 
+    /** "Wed, Oct 28": Today's date line. */
+    WeekdayDayShort("MMMEEEd"),
+
     WeekdayShort("EEE"),
 }
 

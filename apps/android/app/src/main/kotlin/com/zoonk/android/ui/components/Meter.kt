@@ -52,7 +52,10 @@ data class MeterPart(
     sealed interface Fill {
         data object Track : Fill
 
-        data object Place : Fill
+        /** [share] (0 to 1) of it is done: the session's current block. */
+        data class Place(
+            val share: Float = 0f,
+        ) : Fill
 
         data class Solid(
             val color: Color,
@@ -96,7 +99,12 @@ fun MeterParts(
                     drawRoundRect(track, Offset(left, 0f), partSize, radius)
                 }
 
-                MeterPart.Fill.Place -> {
+                is MeterPart.Fill.Place -> {
+                    val done = width * fill.share.coerceIn(0f, 1f)
+                    if (done > 0f) {
+                        val doneLeft = if (rtl) left + width - done else left
+                        drawRoundRect(place, Offset(doneLeft, 0f), Size(done, size.height), radius)
+                    }
                     drawRoundRect(
                         color = place,
                         topLeft = Offset(left + ring / 2, ring / 2),
