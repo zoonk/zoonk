@@ -1,7 +1,7 @@
 package com.zoonk.api
 
 import com.zoonk.api.models.ExamBlueprintSource
-import com.zoonk.api.models.LearningProfileUpdate
+import com.zoonk.api.models.MeUpdate
 import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
@@ -48,7 +48,7 @@ class ApiJsonTest {
 
     @Test
     fun aBodyLeavesOutTheFieldsItDoesNotSet() {
-        val body = LearningProfileUpdate(soundsEnabled = true)
-        assertEquals("{\"soundsEnabled\":true}", ApiJson.encodeToString(LearningProfileUpdate.serializer(), body))
+        val body = MeUpdate(name = "Ana")
+        assertEquals("{\"name\":\"Ana\"}", ApiJson.encodeToString(MeUpdate.serializer(), body))
     }
 }

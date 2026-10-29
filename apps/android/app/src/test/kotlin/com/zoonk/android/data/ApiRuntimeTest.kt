@@ -1,10 +1,11 @@
 package com.zoonk.android.data
 
-import com.zoonk.api.models.LearningProfileUpdate
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import mockwebserver3.SocketEffect
@@ -90,7 +91,7 @@ class ApiRuntimeTest {
                     .build(),
             )
             server.enqueue(json("""{"profile":"not an object"}"""))
-            val update = LearningProfileUpdate(soundsEnabled = true)
+            val update = buildJsonObject { put("soundsEnabled", true) }
 
             suspend fun fail() =
                 runCatching { perform { api.clients(ana).account.updateCurrentUserLearningProfile(update) } }

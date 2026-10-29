@@ -1,7 +1,7 @@
 package com.zoonk.api
 
 import com.zoonk.api.models.GetChapterTestOut200Response
-import com.zoonk.api.models.LearningProfileUpdate
+import com.zoonk.api.models.MeUpdate
 import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
@@ -63,10 +63,10 @@ class ApiServicesTest {
         runTest {
             server.enqueue(MockResponse.Builder().code(500).build())
             server.enqueue(MockResponse.Builder().code(500).build())
-            services.account.updateCurrentUserLearningProfile(LearningProfileUpdate(soundsEnabled = false))
-            services.account.updateCurrentUserLearningProfile(LearningProfileUpdate(activeGoalId = goalId))
-            assertEquals("""{"soundsEnabled":false}""", server.takeRequest().body?.utf8())
-            assertEquals("""{"activeGoalId":"$goalId"}""", server.takeRequest().body?.utf8())
+            services.account.updateCurrentUser(MeUpdate(name = "Ana"))
+            services.account.updateCurrentUser(MeUpdate(username = "ana"))
+            assertEquals("""{"name":"Ana"}""", server.takeRequest().body?.utf8())
+            assertEquals("""{"username":"ana"}""", server.takeRequest().body?.utf8())
         }
 
     @Test

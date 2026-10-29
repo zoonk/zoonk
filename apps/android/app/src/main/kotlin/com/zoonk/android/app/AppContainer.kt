@@ -11,6 +11,7 @@ import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.EncryptedSessionCredentials
 import com.zoonk.android.data.LearnerSummaryStore
 import com.zoonk.android.data.LearningProfileStore
+import com.zoonk.android.data.LiveLearningProfileApi
 import com.zoonk.android.data.LiveSessionApi
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.PrivateImages
@@ -89,11 +90,7 @@ class AppContainer private constructor(
             cache = cache,
             scope = scope,
         )
-    val learningProfile =
-        LearningProfileStore(
-            api = { session -> perform { api.clients(session).account.getCurrentUserLearningProfile() }.profile },
-            cache = cache,
-        )
+    val learningProfile = LearningProfileStore(LiveLearningProfileApi(api), cache)
 
     val plans = PlanStore(LivePlanApi(api), cache)
     val tutor = TutorStore(LiveTutorApi(api), cache, sessions)

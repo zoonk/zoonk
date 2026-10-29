@@ -48,6 +48,8 @@ openApiGenerate {
         listOf(
             "ExamTopicFrequency",
             "LanguageLevelTestSpokenAnswerRequest",
+            // Its explicit nulls mean "clear it" (no daily limit, no active goal), which the model can't tell from absent.
+            "LearningProfileUpdate",
             "MeDeletion",
             "PronunciationAnswerRequest",
             "SpokenAnswerRequest",
