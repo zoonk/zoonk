@@ -112,6 +112,24 @@ class TutorPanelTest {
     }
 
     @Test
+    fun askingTheBuddyForTodaysMissionShowsItDoneUnderTheConversation() {
+        api.missionMoment =
+            ApiJson.decodeFromString(
+                """
+                {"completed":["askBuddy"],"fullMeal":{"bonus":30,"paid":false},"missions":[
+                  {"done":1,"kind":"askBuddy","status":"done","total":1,"opens":{"kind":"buddy"}},
+                  {"done":0,"kind":"somethingNew","status":"todo","total":1,"minutes":12,"opens":{"kind":"block","blockId":"$BLOCK"}}]}
+                """.trimIndent(),
+            )
+        show(TutorScope.Plan(GOAL))
+
+        compose.onNode(hasSetTextAction()).performTextInput("What should I focus on?")
+        compose.onNodeWithContentDescription("Send").performClick()
+
+        compose.onNodeWithText("Mission done!").assertExists()
+    }
+
+    @Test
     fun aSuggestionAsksItAtOnce() {
         show(TutorScope.Plan("goal"))
 
@@ -345,6 +363,7 @@ class TutorPanelTest {
 
         const val COURSE = "6a1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+        const val BLOCK = "8c1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val CHAPTER = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e60"
         val CALL: UUID = UUID.fromString("7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e61")
         const val FACT = "8f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"

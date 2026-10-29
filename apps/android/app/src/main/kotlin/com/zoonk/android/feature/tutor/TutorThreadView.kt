@@ -58,12 +58,18 @@ import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.memory.MemoryUndo
 import com.zoonk.android.feature.memory.MemoryUpdated
+import com.zoonk.android.feature.missions.MissionMoment
+import com.zoonk.android.feature.missions.MissionMomentFacts
+import com.zoonk.android.feature.session.toDayMission
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.richtext.MarkdownText
+import com.zoonk.api.models.StudyMission
+import com.zoonk.api.models.StudyMissionMoment
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -190,8 +196,21 @@ private fun Turns(
                 showsAbout = page == null,
             )
         }
+        state.missionMoment?.facts()?.takeIf { it.shows }?.let { facts ->
+            item(key = "mission-moment", contentType = "mission-moment") {
+                MissionMoment(facts, identity.look ?: BuddyLook(), identity.name)
+            }
+        }
     }
 }
+
+private fun StudyMissionMoment.facts() =
+    MissionMomentFacts(
+        missions = missions.map { it.toDayMission() },
+        completed = completed.map { done -> StudyMission.Kind.entries.first { it.value == done.value } },
+        bonus = fullMeal.bonus,
+        bonusPaid = fullMeal.paid,
+    )
 
 private val TutorTurn.day: LocalDate
     get() =
