@@ -94,6 +94,7 @@ internal fun ConversationEntry(
                 ongoing = app.calls,
                 timeZone = { TimeZone.getDefault().id },
                 prep = DraftPrepTimes(app.drafts, app.sessions),
+                scope = app.scope,
             )
         }
     ConversationContent(model, app.speech, exits, startWith, fromExam = from == FROM_EXAM)

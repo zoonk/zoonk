@@ -14,6 +14,7 @@ import com.zoonk.android.feature.livecall.OngoingCalls
 import com.zoonk.api.models.CompletedLanguageConversation
 import com.zoonk.api.models.LanguageConversation
 import com.zoonk.api.models.LanguageConversationCompletionInput
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -36,6 +37,8 @@ class ConversationViewModel(
     private val ongoing: OngoingCalls,
     private val timeZone: () -> String,
     private val prep: PrepTimes,
+    /** The app's: a call's save outlives its screen, so leaving while its feedback is written keeps the result. */
+    private val scope: CoroutineScope,
 ) : ViewModel() {
     val conversation = store.conversation(conversationId)
 
@@ -72,10 +75,14 @@ class ConversationViewModel(
         val next = newCall(conversation.script)
         call = next
         next.start(microphone, takeover)
-        ongoing.keep(next, conversation.character.name)
+        // The notification's Hang up does what End does: a call that hasn't connected goes back to its intro.
+        ongoing.keep(next, conversation.character.name) {
+            if (next.state.value.phase == LiveCallPhase.Connecting) showIntro() else next.hangUp()
+        }
+        // A dropped call the learner then ends is saved too.
         viewModelScope.launch {
-            val phase = next.state.first { it.phase == LiveCallPhase.Ended || it.phase == LiveCallPhase.Failed }.phase
-            if (phase == LiveCallPhase.Ended && call === next) save(next)
+            next.state.first { it.phase == LiveCallPhase.Ended }
+            if (call === next) scope.launch { save(next) }
         }
     }
 
@@ -123,7 +130,7 @@ class ConversationViewModel(
 
     fun saveAgain() {
         val current = call ?: return
-        viewModelScope.launch { save(current) }
+        scope.launch { save(current) }
     }
 
     /** Nothing is saved, reviewed or rewarded until the server confirmed the call closed. */

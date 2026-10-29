@@ -441,4 +441,54 @@ class LiveCallTest {
 
             assertEquals(LiveClientCommand.Thinking(LiveCallCue.NO_BACKEND, "del_1"), transport.thinking.single())
         }
+
+    @Test
+    fun hangingUpWhileTheReservationIsOnItsWayEndsItWhenItComes() {
+        runTest(dispatcher) {
+            val gate = CompletableDeferred<Unit>()
+            client.connectGates[1] = gate
+            val call = call()
+            call.start(microphone = true)
+            runCurrent()
+
+            call.hangUp()
+            gate.complete(Unit)
+            runCurrent()
+
+            assertEquals(LiveCallPhase.Ended, call.phase)
+            assertTrue("No peer opens for a call already ended", transports.isEmpty())
+            assertEquals(listOf(CONNECTION), client.ended)
+        }
+    }
+
+    @Test
+    fun aDroppedCallCanStillBeEndedForItsFeedback() =
+        runTest(dispatcher) {
+            val call = live(call())
+            transport.onEvent(learnerSays("Hola", 0.0, 800.0))
+            transport.onLost()
+            runCurrent()
+            assertEquals(LiveCallFailure.Dropped, call.state.value.failure)
+
+            call.hangUp()
+
+            assertEquals(LiveCallPhase.Ended, call.phase)
+            var summary: LiveCallSummary? = null
+            launch { summary = call.finish() }
+            runCurrent()
+            assertEquals(listOf(LanguageConversationTurn(Speaker.LEARNER, "Hola")), summary?.turns)
+        }
+
+    @Test
+    fun aCallThatFailedOtherwiseStaysFailed() =
+        runTest(dispatcher) {
+            client.reservations = ArrayDeque(listOf(CallReservation.CallsPaused))
+            val call = call()
+            call.start(microphone = true)
+            runCurrent()
+
+            call.hangUp()
+
+            assertEquals(LiveCallPhase.Failed, call.phase)
+        }
 }

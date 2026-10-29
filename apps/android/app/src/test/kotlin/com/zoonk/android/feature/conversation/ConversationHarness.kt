@@ -87,6 +87,7 @@ internal class ConversationHarness(
                 ongoing = OngoingCalls(context, scope),
                 timeZone = { "Europe/Madrid" },
                 prep = prep,
+                scope = scope,
             )
         }
 

@@ -112,8 +112,13 @@ class LiveCall(
         scope.launch { connect(mine, microphone, takeover) }
     }
 
+    /** A dropped call ends this way too, so what was said still gets its feedback. */
     fun hangUp() {
-        if (!mutableState.value.isOpen) return
+        val current = mutableState.value
+        val dropped = current.phase == LiveCallPhase.Failed && current.failure == LiveCallFailure.Dropped
+        if (!current.isOpen && !dropped) return
+        // A start still on its way never connects now: a reservation that comes back is ended at once.
+        if (current.phase == LiveCallPhase.Connecting) attempt += 1
         silence()
         mutableState.update { it.copy(phase = LiveCallPhase.Ended) }
     }

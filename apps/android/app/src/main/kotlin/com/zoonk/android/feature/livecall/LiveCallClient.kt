@@ -126,18 +126,29 @@ class LiveConversationCalls(
     private var owner: AuthenticatedSession? = null
 
     override suspend fun connect(takeover: Boolean): CallReservation {
+        var reserved: LanguageConversationSetup? = null
         // The call holds the plan's call time from its reservation.
         val reservation =
             cache.mutate(invalidating = setOf(DataDomain.Allowance)) { session ->
                 owner = session
                 perform {
                     api.clients(session).language.connectLanguageConversation(conversationId, LanguageConversationConnectInput(takeover))
-                }
+                }.also { reserved = it }
             }
         return when (reservation) {
-            is MutationResult.Done -> CallReservation.Ready(reservation.value)
-            is MutationResult.Failed -> CallReservation.refused(reservation.code, reservation.details)
-            MutationResult.Obsolete -> CallReservation.Failed
+            is MutationResult.Done -> {
+                CallReservation.Ready(reservation.value)
+            }
+
+            is MutationResult.Failed -> {
+                CallReservation.refused(reservation.code, reservation.details)
+            }
+
+            // Another learner signed in meanwhile: a reservation already made is ended under the one who made it.
+            MutationResult.Obsolete -> {
+                reserved?.let { end(it.connectionId) }
+                CallReservation.Failed
+            }
         }
     }
 

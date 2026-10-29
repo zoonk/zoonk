@@ -233,4 +233,25 @@ class ConversationFlowTest {
         compose.onNodeWithText("Start a new call to keep practicing.").assertExists()
         assertFalse(api.completions.isEmpty())
     }
+
+    @Test
+    fun endingADroppedCallSavesWhatWasSaid() {
+        show()
+        goLive()
+        transport.onEvent(learnerSays("Un café", 1000.0, 2000.0))
+        transport.onLost()
+        compose.waitForIdle()
+
+        compose.onNodeWithText("End the call").performClick()
+        compose.waitForIdle()
+
+        assertEquals(
+            listOf("Un café"),
+            api.completions
+                .single()
+                .turns
+                .map { it.text },
+        )
+        compose.onNodeWithText("You did well.").assertExists()
+    }
 }

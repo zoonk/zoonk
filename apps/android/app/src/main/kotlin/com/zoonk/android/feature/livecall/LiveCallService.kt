@@ -18,6 +18,7 @@ import com.zoonk.android.MainActivity
 import com.zoonk.android.R
 import com.zoonk.android.app.ZoonkApplication
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -47,15 +48,20 @@ class OngoingCalls(
     fun keep(
         call: LiveCall,
         characterName: String,
+        hangUp: () -> Unit = call::hangUp,
     ) {
-        val ongoing = OngoingCall(characterName, System.currentTimeMillis(), call::hangUp, call::leave)
+        val ongoing = OngoingCall(characterName, System.currentTimeMillis(), hangUp, call::leave)
         mutableCurrent.value = ongoing
         // Without the microphone there's nothing a microphone service may keep: the call runs while it's on screen.
         val microphone = ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED
         if (microphone) ContextCompat.startForegroundService(context, Intent(context, LiveCallService::class.java))
         scope.launch {
             call.state.first { !it.isOpen }
-            call.release()
+            var tries = 1
+            while (!call.release() && tries < RELEASE_TRIES) {
+                delay(RELEASE_RETRY_MS)
+                tries++
+            }
             if (mutableCurrent.value === ongoing) {
                 mutableCurrent.value = null
                 context.stopService(Intent(context, LiveCallService::class.java))
@@ -63,6 +69,10 @@ class OngoingCalls(
         }
     }
 }
+
+/** A hangup the server didn't confirm is asked again this often, this many times, while the service keeps the app. */
+private const val RELEASE_RETRY_MS = 5_000L
+private const val RELEASE_TRIES = 6
 
 /** Ends the call when Android tears it down: a call left open is billed until the server's deadline. */
 class LiveCallService : Service() {
