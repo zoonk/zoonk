@@ -254,7 +254,8 @@
     --accent-foreground: var(--color-black);
     --destructive: var(--color-pink-800);
     --destructive-text: var(--destructive);
-    --selected-tint: transparent;
+    /* A pick needs a fill as well as its thicker line, so it never rests on line weight alone. */
+    --selected-tint: var(--muted);
     --warning: var(--color-amber-800);
     --warning-text: var(--warning);
     --success: var(--color-blue-800);
@@ -352,7 +353,7 @@
       --accent-foreground: var(--color-white);
       --destructive: var(--color-pink-300);
       --destructive-text: var(--destructive);
-      --selected-tint: transparent;
+      --selected-tint: var(--muted);
       --warning: var(--color-amber-300);
       --warning-text: var(--warning);
       --success: var(--color-blue-200);
