@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fitInside
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.layout.WindowInsetsRulers
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -97,7 +99,8 @@ fun BuddyScreen(
     val coroutines = rememberCoroutineScope()
 
     TabRootScaffold(app, navigator) { padding ->
-        Box(Modifier.fillMaxSize().padding(padding)) {
+        // The keyboard covers the navigation bar, which imePadding() would leave as a gap above it.
+        Box(Modifier.fillMaxSize().padding(padding).fitInside(WindowInsetsRulers.Ime.current)) {
             val read = status
             val learner = summary.value
             when {
