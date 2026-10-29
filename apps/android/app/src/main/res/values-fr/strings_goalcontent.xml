@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "goalcontent_about_lessons": "bfc395b81d9101b9aff7d92a1fc7cedcaed078d09ee76230ff12eb018b1a9ffe",
   "goalcontent_adjust_plan": "82f960a5d67f7b4628176172034c2e7886ba926c8e32191c60bb49a99f14cabb",
   "goalcontent_also": "c9171495ed1b95ac9a14b3365e6e09905216f925c859ccbed372e11858dfc185",
   "goalcontent_also_in_plan": "0d6be97279fc0db18500117b2271abe42f235c2e5b1e6c3b020540643c8e1f42",
@@ -33,15 +32,12 @@
   "goalcontent_frequency_tagged_waits": "5dbeebb731ea99055d6f757c86abf445d3164b61c3a5fde57ad16514017163a2",
   "goalcontent_frequency_waits": "1eea02f9387b62ec64574e6d3b07ae8baad4ca2ddd848ce6b033a7f5feea7683",
   "goalcontent_from_material": "8d9ad4718ab64cd02312f3ff4d08eddbb15451ae9fd0d9b855139eed0f9cc0c0",
-  "goalcontent_from_start": "afaa92cf75e5f01ddd2918670a02d6cbbac89f7afeddff28ec14addbd8ce5278",
   "goalcontent_known": "cb122bc8d3c484b098cea468d717a6746e996027a7874563d91af727c1344701",
   "goalcontent_known_before": "108925565797050857efd7ebd89d2d012c477f294361f5dcb4b018f365dce41f",
   "goalcontent_lesson_count": "16d1b6edf799d0afa1015884a7c873c960cd10f6fd39fa72a5f9793ad4f1e961",
   "goalcontent_lessons": "d40327977fabf2c9ccb63b66a969010af4f6d7f4a4acbb78bd7559cdd601f119",
   "goalcontent_lessons_done": "708aa52b0496cd5896090dc7819df6f63d96b81f38a63f7ac93562d9bf21e02a",
-  "goalcontent_lessons_from_start": "7472b1ff0d9f5b2f86e2c735cc3f10df0786639e6ae25d9b4090df66de0e5de4",
   "goalcontent_lessons_known_skipped": "9d6d069a9fab9f532277afe82392968a9dc9dcb2e9b6e32ac2e44c4cf21d050c",
-  "goalcontent_lessons_on_the_way": "4e6987413ca3c772ce487a3ae913d863e6177d331547737708527f9e72301ce7",
   "goalcontent_lessons_skipped": "667e5296a075cb8c68a3f24f87aea2c0db6eb18a18a82366986197bb29f73b4c",
   "goalcontent_mastery": "dfb585dfbcab336201170f830f4c330eb97ab694658d7d4c35d057ab43d65d20",
   "goalcontent_mastery_pending": "c2caed35893b8ac5d64ea5dbc1dc05079070633abaaad14507121f123f7cf3af",
@@ -268,16 +264,6 @@
         <item quantity="other">Encore %d chapitres</item>
     </plurals>
     <string name="goalcontent_skipped_known">Ignoré, car tu le connais déjà</string>
-    <string name="goalcontent_lessons_on_the_way">Leçons à venir</string>
-    <!-- When a topic's lessons start: "From November". -->
-    <string name="goalcontent_from_start">À partir de %1$s</string>
-    <plurals name="goalcontent_about_lessons">
-        <item quantity="one">Environ %d leçon</item>
-        <item quantity="many">Environ %d leçons</item>
-        <item quantity="other">Environ %d leçons</item>
-    </plurals>
-    <!-- "About 6 lessons · from November". -->
-    <string name="goalcontent_lessons_from_start">%1$s · à partir de %2$s</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s terminées</string>
     <string name="goalcontent_done">Terminé</string>

@@ -138,15 +138,6 @@
         <item quantity="other">%d more chapters</item>
     </plurals>
     <string name="goalcontent_skipped_known">Skipped because you already know it</string>
-    <string name="goalcontent_lessons_on_the_way">Lessons on the way</string>
-    <!-- When a topic's lessons start: "From November". -->
-    <string name="goalcontent_from_start">From %1$s</string>
-    <plurals name="goalcontent_about_lessons">
-        <item quantity="one">About %d lesson</item>
-        <item quantity="other">About %d lessons</item>
-    </plurals>
-    <!-- "About 6 lessons · from November". -->
-    <string name="goalcontent_lessons_from_start">%1$s · from %2$s</string>
     <!-- A chapter's lessons and those done: "6 lessons · 2 done". -->
     <string name="goalcontent_lessons_done">%1$s · %2$s done</string>
     <string name="goalcontent_done">Done</string>

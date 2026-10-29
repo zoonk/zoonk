@@ -1,8 +1,5 @@
 package com.zoonk.android.feature.goalcontent
 
-import android.icu.text.DateFormat
-import android.icu.util.TimeZone
-import android.icu.util.ULocale
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -98,9 +95,6 @@ import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.SyllabusChapter
 import kotlinx.coroutines.launch
 import java.net.URI
-import java.time.LocalDate
-import java.util.Date
-import java.util.Locale
 
 internal val PAGE_PADDING = 16.dp
 
@@ -430,24 +424,6 @@ internal fun sourceHost(url: String): String =
         ?.removePrefix("www.")
         ?: url
 
-/** When a far topic starts: its day this month, else its month, with the year only in another year. */
-internal fun formatStart(
-    date: LocalDate,
-    today: LocalDate,
-    locale: Locale,
-): String {
-    val skeleton =
-        when {
-            date.year == today.year && date.month == today.month -> "MMMd"
-            date.year == today.year -> "MMMM"
-            else -> "yMMMM"
-        }
-    return DateFormat
-        .getInstanceForSkeleton(skeleton, ULocale.forLocale(locale))
-        .apply { timeZone = TimeZone.GMT_ZONE }
-        .format(Date(date.toEpochDay() * MILLIS_PER_DAY))
-}
-
 @Composable
 internal fun ContinueButton(
     started: Boolean,
@@ -529,6 +505,5 @@ private const val SMALL_MARK = 0.85f
 private const val MINUS_SHARE = 0.7f
 private const val MIN_RING_SHARE = 0.15
 private const val CHIP_TINT_ALPHA = 0.15f
-private const val MILLIS_PER_DAY = 86_400_000L
 private val BAR_HEIGHT = 6.dp
 private val BAR_CORNER = 3.dp

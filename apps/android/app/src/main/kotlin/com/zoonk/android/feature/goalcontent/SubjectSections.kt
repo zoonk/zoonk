@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.ChapterMark
 import com.zoonk.android.feature.plan.WrittenCadenceChoice
+import com.zoonk.android.feature.plan.farTopicLine
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.ui.components.KindDot
@@ -503,21 +504,7 @@ internal fun writingLine(
     far: Boolean,
     lessons: Long?,
     nextDate: KotlinLocalDate?,
-): String? {
-    if (!far) return stringResource(R.string.goalcontent_lessons_on_the_way)
-
-    val start = nextDate?.let { formatStart(it.toJavaLocalDate(), LocalDate.now(), currentLocale()) }
-    if (lessons == null) return start?.let { stringResource(R.string.goalcontent_from_start, it) }
-
-    val count = lessons.toInt()
-    val words =
-        if (count == 1) {
-            pluralStringResource(R.plurals.goalcontent_lesson_count, 1, 1)
-        } else {
-            pluralStringResource(R.plurals.goalcontent_about_lessons, count, count)
-        }
-    return if (start == null) words else stringResource(R.string.goalcontent_lessons_from_start, words, start)
-}
+): String? = if (far) farTopicLine(lessons?.toInt(), nextDate?.toJavaLocalDate()) else stringResource(R.string.plan_lessons_on_the_way)
 
 internal fun LazyListScope.subjectTopics(
     syllabus: Syllabus,
