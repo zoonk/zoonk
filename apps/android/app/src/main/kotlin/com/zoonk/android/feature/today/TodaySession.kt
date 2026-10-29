@@ -113,7 +113,10 @@ internal fun LazyListScope.todaySession(
     }
 
     if (wide && day.steps.isNotEmpty()) {
-        item(key = "meta", contentType = "meta") { DayMeta(model, Modifier.pageItem().padding(top = 8.dp)) }
+        item(
+            key = "meta",
+            contentType = "meta",
+        ) { DayMeta(model, rememberActionStatus(model, viewModel), Modifier.pageItem().padding(top = 8.dp)) }
     }
 
     if (next != null) {
@@ -659,18 +662,24 @@ private fun stepsDone(
 @Composable
 private fun DayMeta(
     model: TodayDayModel,
+    status: ActionStatus,
     modifier: Modifier,
 ) {
     val done = model.day.steps.count(DayStep::isFinished)
 
+    // While the action waits or failed, its words take the line, as main's meta does.
     Row(modifier, verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            text = stepsDone(done, model.day.steps.size),
-            modifier = Modifier.weight(1f),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-        )
-        DayTime(model, MaterialTheme.typography.titleLarge)
+        if (status.speaking) {
+            Column(Modifier.weight(1f), horizontalAlignment = Alignment.End) { TodayActionStatus(status) }
+        } else {
+            Text(
+                text = stepsDone(done, model.day.steps.size),
+                modifier = Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+            )
+            DayTime(model, MaterialTheme.typography.titleLarge)
+        }
     }
 }
 

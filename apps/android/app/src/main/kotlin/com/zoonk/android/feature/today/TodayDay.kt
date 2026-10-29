@@ -41,6 +41,7 @@ import com.zoonk.android.R
 import com.zoonk.android.data.Resource
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.OpeningWaitLine
+import com.zoonk.android.feature.session.WaitState
 import com.zoonk.android.feature.session.rememberWaitState
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -247,6 +248,7 @@ internal fun TodayAction(
     if (!model.hasAction) return
 
     val pending = viewModel.pending
+    val status = rememberActionStatus(model, viewModel)
     val tap =
         when {
             model.pastDate != null -> null
@@ -254,8 +256,6 @@ internal fun TodayAction(
             model.state == DayState.Underway -> TodayTap.Continue
             else -> null
         }
-    val wait = rememberWaitState(tap != null && pending == tap)
-    val failed = tap != null && viewModel.failed == tap
 
     Column(modifier, horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         val buttonModifier = if (docked) Modifier.fillMaxWidth() else Modifier
@@ -292,16 +292,58 @@ internal fun TodayAction(
             }
         }
 
-        OpeningWaitLine(wait)
+        // Beside the title there's no room under the button: the day's meta line says it instead.
+        if (docked) TodayActionStatus(status)
+    }
+}
 
-        if (failed) {
-            Text(
-                text = stringResource(if (tap == TodayTap.Continue) R.string.today_open_failed else R.string.today_keep_learning_failed),
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.error,
-                style = MaterialTheme.typography.bodyMedium,
-            )
+/** What the day's action is waiting for, or that it failed. */
+internal class ActionStatus(
+    val wait: WaitState,
+    val failed: TodayTap?,
+) {
+    val speaking: Boolean get() = wait != WaitState.None || failed != null
+}
+
+@Composable
+internal fun rememberActionStatus(
+    model: TodayDayModel,
+    viewModel: TodayViewModel,
+): ActionStatus {
+    val tap =
+        when {
+            model.pastDate != null -> null
+            model.keepLearning || model.state == DayState.Ahead -> TodayTap.KeepLearning
+            model.state == DayState.Underway -> TodayTap.Continue
+            else -> null
         }
+    val wait = rememberWaitState(tap != null && viewModel.pending == tap)
+    return ActionStatus(wait, tap?.takeIf { viewModel.failed == it })
+}
+
+@Composable
+internal fun TodayActionStatus(
+    status: ActionStatus,
+    modifier: Modifier = Modifier,
+) {
+    OpeningWaitLine(status.wait, modifier)
+
+    if (status.failed != null) {
+        Text(
+            text =
+                stringResource(
+                    if (status.failed ==
+                        TodayTap.Continue
+                    ) {
+                        R.string.today_open_failed
+                    } else {
+                        R.string.today_keep_learning_failed
+                    },
+                ),
+            modifier = modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodyMedium,
+        )
     }
 }
 
