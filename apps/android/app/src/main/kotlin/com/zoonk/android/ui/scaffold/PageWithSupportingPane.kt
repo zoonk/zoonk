@@ -1,18 +1,17 @@
 package com.zoonk.android.ui.scaffold
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.PaneAdaptedValue
+import androidx.compose.material3.adaptive.layout.PaneScaffoldDirective
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffold
 import androidx.compose.material3.adaptive.layout.SupportingPaneScaffoldRole
 import androidx.compose.material3.adaptive.layout.calculatePaneScaffoldDirective
 import androidx.compose.material3.adaptive.navigation.rememberSupportingPaneScaffoldNavigator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 
@@ -34,12 +33,20 @@ fun PageWithSupportingPane(
         // as on an unfolded foldable. Its default also lays the aside under the page on tall windows.
         val window = calculatePaneScaffoldDirective(currentWindowAdaptiveInfoV2())
         val roomForTwo = maxWidth >= WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND.dp
+        // Its default focuses the pane's first text field as it opens, raising the keyboard on a phone,
+        // and `copy()` turns that back on, so the directive is built whole.
         val navigator =
             rememberSupportingPaneScaffoldNavigator(
                 scaffoldDirective =
-                    window.copy(
+                    PaneScaffoldDirective(
                         maxHorizontalPartitions = if (roomForTwo) window.maxHorizontalPartitions else 1,
+                        horizontalPartitionSpacerSize = window.horizontalPartitionSpacerSize,
                         maxVerticalPartitions = 1,
+                        verticalPartitionSpacerSize = window.verticalPartitionSpacerSize,
+                        defaultPanePreferredWidth = window.defaultPanePreferredWidth,
+                        defaultPanePreferredHeight = window.defaultPanePreferredHeight,
+                        excludedBounds = window.excludedBounds,
+                        shouldAutoFocusCurrentDestination = false,
                     ),
             )
         val supportingPaneBeside = navigator.scaffoldValue[SupportingPaneScaffoldRole.Supporting] == PaneAdaptedValue.Expanded
@@ -47,17 +54,8 @@ fun PageWithSupportingPane(
         SupportingPaneScaffold(
             directive = navigator.scaffoldDirective,
             value = navigator.scaffoldValue,
-            mainPane = { AnimatedPane { PaneFocus { mainPane(supportingPaneBeside) } } },
-            supportingPane = { AnimatedPane { PaneFocus { supportingPane() } } },
+            mainPane = { AnimatedPane { mainPane(supportingPaneBeside) } },
+            supportingPane = { AnimatedPane { supportingPane() } },
         )
     }
-}
-
-/**
- * The scaffold moves focus into its pane as it opens, which lands on the pane's first text field on
- * a touch screen and opens the keyboard. The pane takes that focus itself; its fields wait for a tap.
- */
-@Composable
-private fun PaneFocus(content: @Composable () -> Unit) {
-    Box(Modifier.focusTarget()) { content() }
 }
