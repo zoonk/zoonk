@@ -20,8 +20,8 @@
   "memory_empty_on": "be5e607df7c4538b4f67c986b0158cd5881f6340d877db997d3688e75a5cd009",
   "memory_fact_options": "77fffd63eb5bfc6451aede5794bdff4f052d6a994d274796f07e376672609a2c",
   "memory_fact_source": "bcd5e26ccd31d059da6b647ac0de55b7959af5339c88d71f7bb79e4e85bcfd39",
-  "memory_save_failed": "0b29df1d4ff0fbdf856c0523fe6f5546b16ddb7174be76d7d6d8fde9ccf9b4d5",
-  "memory_sensitive_note": "83eed73b7de521382606834656d0c7cb42fcdb3b80919f9602d3598a88eada2f",
+  "memory_save_failed": "b9b722b782352903b83d0e7302a27a5cf1a730d1115291260d746edb11a6dd92",
+  "memory_sensitive_note": "7cd100039e2c493ddc859dd56a77e225cc48e41211a3ce12270c0412e57e1bfa",
   "memory_source_chat": "a4c1243ce5d684c0b55a0f042058aff8bf0fcd973800e0f2b532c681a3934a63",
   "memory_source_noticed": "ab3d7c714ffbb27966a8ae88be8e37651f850ef5f8cd7a35e118c1d757b77ac4",
   "memory_source_onboarding": "78fe03c4a10a2da81e4fe4ac1bfb50fef854e0230926265c3f222af712a61077",
@@ -43,7 +43,7 @@
     <string name="memory_use_off">Erinnerungen sind ausgeschaltet. Es wird nichts Neues gespeichert und diese Angaben werden nicht verwendet.</string>
     <string name="memory_empty_on">Noch nichts vorhanden. Wenn du lernst und chattest, erscheinen hier kurze Notizen, die Zoonk beim Unterrichten helfen.</string>
     <string name="memory_empty_off">Hier ist nichts. Zoonk speichert keine Notizen über dich, solange Erinnerungen ausgeschaltet sind.</string>
-    <string name="memory_save_failed">Das hat nicht geklappt. Versuch es erneut.</string>
+    <string name="memory_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <string name="memory_category_goals">Ziele</string>
     <string name="memory_category_background">Hintergrund</string>
     <string name="memory_category_routine">Alltag</string>
@@ -66,7 +66,7 @@
     <string name="memory_edit_label">Was Zoonk sich merkt</string>
     <string name="memory_download">Meine Erinnerungen herunterladen</string>
     <string name="memory_download_description">Alles, was du in deinen Erinnerungen gespeichert hast, als eine Datei</string>
-    <string name="memory_sensitive_note">Zoonk speichert keine Angaben zu Gesundheit, Religion oder andere sensible Informationen, es sei denn, du bittest darum.</string>
+    <string name="memory_sensitive_note">Zoonk speichert keine Angaben zu Gesundheit, Religion oder andere sensible Daten, außer wenn du darum bittest.</string>
     <string name="memory_updated">Erinnerungen aktualisiert:</string>
     <plurals name="memory_updated_more">
         <item quantity="one">und %d weitere</item>

@@ -17,7 +17,7 @@
   "practice_net_wrong": "b9b03d9f30e99f32d2c4376f66b4cc95ae3f676de4603e65868078b249b3fac9",
   "practice_not_found_description": "e7ae9fb227161324f8cab2ee43357d5534b82aaa6ffca58651c0135c57bdb6ed",
   "practice_not_found_title": "d41aa2ec79c4b930bce9aa91fd3e81143dffe0c9ec552552ff167abf6fe14fea",
-  "practice_pause_failed": "bba2ce2dec0f44f5a7450a23ba59367c0fed0c7a2e40ea4a7d5d8c4ec872f021",
+  "practice_pause_failed": "21ab244a1cf28a077681e63d7c4f21d3b332deacf3c1a8f1d3e956a2d2f89741",
   "practice_pause_stop": "68c9afebf796071923a9a55324fa7952c7658de2995602b044eed4d170ac35ce",
   "practice_pause_text": "cb67f57edb3adea809c1953db89afd75aa70c766ce7fd4b7f068f6e48a7cfbb0",
   "practice_progress": "4707ca12868e3de449fba552a619c8e4e338c13064623ff54b6cf36c17fbb674",
@@ -27,7 +27,7 @@
   "practice_time_machine_right_before": "f11e191d799f2ddfdea3571e0ce2230c3bc98d77506876cb899568db877152d2",
   "practice_time_machine_seen": "e8d2f00c28cc981567cd360695c05f0e8f6e820f76e917c02fa221bcec1d8d3d",
   "practice_time_machine_tripped": "549be218e27ee95202092a6dc1b9e8fab5183ec732ce68640d8cb872e41c30e0",
-  "practice_try_again": "e6936884c9898c36b99bc660bfc120785acfedc2168954e96982e7b69b7c8dfc"
+  "practice_try_again": "fc903144519d24a306f3c2b37321bcdad3cf52c3de46141c386a645a2153eddf"
 }
 -->
 <resources>
@@ -35,7 +35,7 @@
     <string name="practice_check">Prüfen</string>
     <string name="practice_continue">Weiter</string>
     <string name="practice_finish">Abschließen</string>
-    <string name="practice_try_again">Erneut versuchen</string>
+    <string name="practice_try_again">Versuch es noch einmal</string>
     <string name="practice_finish_ready_title">Keine Fragen mehr offen</string>
     <string name="practice_finish_ready_detail">Schließe die Übung ab, um dein Ergebnis zu sehen.</string>
     <string name="practice_already_answered">Du hast diese Frage bereits beantwortet.</string>
@@ -62,7 +62,7 @@
     <string name="practice_time_machine_tripped">Am %1$s lagst du bei dieser Frage falsch.</string>
     <string name="practice_pause_text">Ein paar Antworten hintereinander waren falsch. Eine kurze Pause hilft oft, und alles, was du heute geschafft hast, zählt.</string>
     <string name="practice_pause_stop">Für heute aufhören</string>
-    <string name="practice_pause_failed">Die Lerneinheit konnte nicht beendet werden. Versuch es erneut.</string>
+    <string name="practice_pause_failed">Wir konnten die Lerneinheit nicht beenden. Versuch es noch einmal.</string>
     <string name="practice_done_title">Übung abgeschlossen</string>
     <string name="practice_done_review">Wiederholung abgeschlossen</string>
     <string name="practice_not_found_title">Diese Fragen sind nicht mehr verfügbar</string>

@@ -14,7 +14,7 @@
   "mock_chooser_left_out_short_answer": "34fcdc7b00fa9a51b206435ecea68aa7a3d548796c53a8de81c8eb4548ca9e41",
   "mock_chooser_left_out_speaking": "f59a4181f36b1c0ea4511966984708ba521faa60f3489562ad4a6f89302675f4",
   "mock_chooser_left_out_written": "a4c007c95eee319c8d9649098461f572cf5b361ad7b8ac27b51ef70300e02d67",
-  "mock_chooser_not_enough": "de97e2b361995b9dfd0097719ff53f5f21d28f844b15371732851d7f5a20bfaf",
+  "mock_chooser_not_enough": "90e9f8f1b6b13a50c7e9d444a888f48875a0a306fa91974a18d707d421ab43f9",
   "mock_chooser_objective_only": "f86652ca3758b81fd1e64edd85574ae69fc98a895540267ce8ba59888b6b74ce",
   "mock_chooser_one_subject": "063908ea394847a8be0d174e05a1019e45d5720d7eec41ee1c02a551302d8a90",
   "mock_chooser_option_size": "2be8f50cf2c9e08ea7c638f5a6261a00ba1e22511f3e7b0ae49c4470f8a9059c",
@@ -32,8 +32,8 @@
   "mock_chooser_placement_size_spoken": "97e8b37c124281d43e95fe0e54d1681c0e541397bfe8f0ed8bb4450625a6cd6e",
   "mock_chooser_placement_start": "fda8d908361708ac029c71cac6f2c3405c85e6f696401399e0072f7e7f98dbcf",
   "mock_chooser_placement_title": "af4021604d67f6b6794a7e6c11da969b8e680f70cc2928bfcfda912abc642742",
-  "mock_chooser_placement_top_subject": "ed98df6d977a0f921d7746641657a8ed6b4d533e4774e70c8af8d16bd444baab",
-  "mock_chooser_placement_top_subjects": "75745f5f83de194f0ea7b740147b7a7638a27ad7a409a43dbfea6d3196452a5e",
+  "mock_chooser_placement_top_subject": "f233de8242e3d8145dd62026f1f998669b09f59206d281ee155ebb07a82ee67f",
+  "mock_chooser_placement_top_subjects": "df8dca345b68e80a02062a4aac03b64ca207c31c3ec65593e00c68f98d9f8d17",
   "mock_chooser_plus": "cbcad90c06d2a4b790b1d8ef7ca0ea1835c21885210ebd456fafa94e151c6b0e",
   "mock_chooser_preparing": "5d1bb8d3f57b12679121947e6ebc864849df7e546cb7c54d5b121b75676377d2",
   "mock_chooser_preparing_detail": "2cb577d6bbebfc8e5c85edb71136fc654c9eea31a474fa7ff5e257f31717fe60",
@@ -66,7 +66,7 @@
   "mock_chooser_usually_takes": "b586b6302d6c4310292f8b64f92c243bf674cff4919072cced61ba81f482b89d",
   "mock_chooser_writing": "f6b59625b0aecf630963782e594a9acfe879a1431085452aaecb7585e77b1564",
   "mock_chooser_writing_questions": "5d6066ea3560d261d4ce02401be965282033f552f03cca6434ed90b02aeb62ff",
-  "mock_chooser_writing_questions_line": "0a5bb3fb387fdb45bbe495991fc0792cef194ee5af4d74bb5e3c6bab1b149470",
+  "mock_chooser_writing_questions_line": "34e947310c537e645722e41d310f0ce7b90720ec2c221cb453aedde28f099ae0",
   "mock_chooser_written": "d3af24f472df0189081faec60b34d992638defc09096dd031bc747c6e7a47f85",
   "mock_chooser_written_part": "c08a1268c4f6d12e755b8d357c5baa78a6ffbc972177be0913f6f57031d71f8b"
 }
@@ -109,13 +109,13 @@
     <string name="mock_chooser_short_day">Morgen können wir weitere Fragen für deine Probeprüfungen erstellen.</string>
     <string name="mock_chooser_short_month">Nächsten Monat können wir weitere Fragen für deine Probeprüfungen erstellen.</string>
     <string name="mock_chooser_short_none">Im Fragenpool gibt es dafür noch keine weiteren neuen Fragen.</string>
-    <string name="mock_chooser_not_enough">Für diese Probeprüfung gibt es noch nicht genug Fragen. Versuche es mit der ganzen Prüfung oder einem anderen Fach.</string>
+    <string name="mock_chooser_not_enough">Für diese Probeprüfung gibt es noch nicht genug Fragen. Versuch die vollständige Prüfung oder ein anderes Fach.</string>
     <string name="mock_chooser_failed">Wir konnten die Probeprüfung nicht starten. Versuch es noch einmal.</string>
     <string name="mock_chooser_preparing">Wir bereiten deine Probeprüfung vor</string>
     <string name="mock_chooser_preparing_detail">Wir erstellen für dich Fragen wie in der Prüfung. Sobald sie bereit sind, beginnt deine Probeprüfung hier.</string>
     <string name="mock_chooser_writing">Wir erstellen deine Probeprüfung</string>
     <string name="mock_chooser_writing_questions">Wir erstellen Fragen wie in der Prüfung</string>
-    <string name="mock_chooser_writing_questions_line">Wir wählen Fragen für jedes Fach aus…</string>
+    <string name="mock_chooser_writing_questions_line">Wir wählen die Fragen für jedes Fach aus…</string>
     <!-- The panel beside the options, about the one picked. -->
     <string name="mock_chooser_picked">Die gewählte Probeprüfung</string>
     <string name="mock_chooser_questions">Fragen</string>
@@ -136,11 +136,11 @@
     <string name="mock_chooser_placement_start">Probeprüfung starten</string>
     <string name="mock_chooser_placement_note">Du kannst jederzeit aufhören: Dein Plan berücksichtigt die Fragen, die du beantwortet hast. Dein Ergebnis siehst du am Ende.</string>
     <string name="mock_chooser_placement_plus">Probeprüfungen sind in Plus enthalten. Ohne Plus bestimmen die kurzen Fragen deinen Ausgangspunkt.</string>
-    <string name="mock_chooser_placement_top_subject">Das Fach, das am stärksten gewichtet wird. In den ersten Tagen folgen Fragen zu den übrigen Fächern.</string>
+    <string name="mock_chooser_placement_top_subject">Das Fach mit der höchsten Gewichtung. In den ersten Tagen kommen die übrigen Fächer dran.</string>
     <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
     <plurals name="mock_chooser_placement_top_subjects">
-        <item quantity="one">Das %d Fach, das am stärksten gewichtet wird. In den ersten Tagen folgen Fragen zu den übrigen Fächern.</item>
-        <item quantity="other">Die %d Fächer, die am stärksten gewichtet werden. In den ersten Tagen folgen Fragen zu den übrigen Fächern.</item>
+        <item quantity="one">Das %d Fach mit der höchsten Gewichtung. In den ersten Tagen kommen die übrigen Fächer dran.</item>
+        <item quantity="other">Die %d Fächer mit der höchsten Gewichtung. In den ersten Tagen kommen die übrigen Fächer dran.</item>
     </plurals>
     <string name="mock_chooser_placement_short">Eine kurze Prüfung. In den ersten Tagen wird dein Ausgangspunkt genauer bestimmt.</string>
     <string name="mock_chooser_placement_medium">Alle Fächer. Ein guter Ausgangspunkt.</string>

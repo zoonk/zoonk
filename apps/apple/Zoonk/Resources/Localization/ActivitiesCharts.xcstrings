@@ -432,7 +432,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ est sélectionné. Touche un autre atome pour les lier, ou un élément pour ajouter un atome qui lui sera lié."
+            "value" : "%@ est sélectionné. Appuie sur un autre atome pour les lier, ou sur un élément pour lui ajouter un atome lié."
           }
         },
         "pt" : {
@@ -3879,7 +3879,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no se ha movido ninguna línea."
+            "value" : "Ninguna de las dos líneas se ha movido aún."
           }
         },
         "fr" : {
@@ -4627,7 +4627,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut ausführen"
+            "value" : "Noch einmal ausführen"
           }
         },
         "es" : {
@@ -4645,7 +4645,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Executar novamente"
+            "value" : "Executar de novo"
           }
         }
       }
@@ -5562,7 +5562,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touche un intervalle pour le mesurer"
+            "value" : "Appuie sur un intervalle pour le mesurer"
           }
         },
         "pt" : {
@@ -5591,7 +5591,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touche un atome pour le sélectionner."
+            "value" : "Appuie sur un atome pour le sélectionner."
           }
         },
         "pt" : {
@@ -5620,7 +5620,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touche un élément pour ajouter son premier atome."
+            "value" : "Appuie sur un élément pour ajouter son premier atome."
           }
         },
         "pt" : {

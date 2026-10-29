@@ -30,10 +30,10 @@
   "mindmaps_full_screen": "b849b53334b7c41a454a3fdc8a8e10f290d8c61415cec97bf1e33bec27303d10",
   "mindmaps_in_short": "8d9c4f61193c1c25bf8f82bac35003901cddf5d942343612d24f510d85755f32",
   "mindmaps_keep_studying": "d91203e9d030c242b72144dbbd6200ca0b3f7d137fa61f0978b96fa6b2468db7",
-  "mindmaps_save_failed": "c8ea56ac714fb06eaef22809b28e76c28859b40abfdf798efbaf532add4a8c8b",
+  "mindmaps_save_failed": "7e051e146c9b56b2bc363a8b100902d79c1e88e95f639560505102ba31bf9ce0",
   "mindmaps_saved": "380b0a16b6650c9c58968248af84dc05c929c52a1fcb605b67b8a113450b3d0b",
-  "mindmaps_try_again": "e2475de61ff6d400e7930904514c13b917b2cef9694c2b60ef7982115b6ab71f",
-  "mindmaps_try_again_spoken": "fe4053ba21defaa209511f2f1d588f7701d4729dd8421c29ce66d78319e68532",
+  "mindmaps_try_again": "b6bf7929515cc5e9f868a3ad6598d749b9553d102e28c4b3683c4ee36487d20b",
+  "mindmaps_try_again_spoken": "ce1c57390e8be0918bf4418fb4b35f0fee38117d8acfb16a68be85630ffad1ac",
   "mindmaps_unreachable_short": "4ff3770ce991a9ad1578f6f7540d3b024a81569428d924677aec8cf838a5736a",
   "mindmaps_viewer_hint": "c6ea42c5534ee7674e0026442eb4fa27d621f3b23398e662c3c066028f5d4d18",
   "mindmaps_zoom_in": "3719f260834b7704a19f09f0b3d624961677a3e15faf454532acf7fb3735d027",
@@ -78,11 +78,11 @@
     <string name="mindmaps_drawing">Desenhando…</string>
     <!-- Makes a chapter's mind map. -->
     <string name="mindmaps_create">Criar</string>
-    <string name="mindmaps_try_again">Tentar de novo</string>
+    <string name="mindmaps_try_again">Tente de novo</string>
     <!-- What screen readers say for a tile's Create, naming its chapter. -->
     <string name="mindmaps_create_spoken">Criar o mapa mental de %1$s</string>
     <!-- What screen readers say for a tile's Try again, naming its chapter. -->
-    <string name="mindmaps_try_again_spoken">Tentar criar o mapa mental de %1$s de novo</string>
+    <string name="mindmaps_try_again_spoken">Tente de novo o mapa mental de %1$s</string>
     <string name="mindmaps_failed_short">Não foi possível criar desta vez.</string>
     <string name="mindmaps_unreachable_short">Não foi possível acessar o servidor.</string>
     <string name="mindmaps_card_title">Mapa mental</string>
@@ -97,7 +97,7 @@
     <!-- Saves the mind map's picture. -->
     <string name="mindmaps_download">Baixar</string>
     <string name="mindmaps_saved">Mapa mental salvo</string>
-    <string name="mindmaps_save_failed">O mapa mental não foi salvo. Tente de novo.</string>
+    <string name="mindmaps_save_failed">Não foi possível salvar o mapa mental. Tente de novo.</string>
     <!-- Starts the one-line gist at the end of a mind map in words. -->
     <string name="mindmaps_in_short">Em resumo:</string>
     <string name="mindmaps_zoom_in">Ampliar</string>

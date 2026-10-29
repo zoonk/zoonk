@@ -173,7 +173,7 @@
   "today_week_days": "8a5b9eb284fb302d4c757a84a7d3c366a8a0a1c7dd4127f3a0b68101010d83ea",
   "today_week_deadline": "801629645a0de1deb90634c270366bf8db78d17962124b96dcc1f23caebdae2c",
   "today_week_exam_day": "408a467408a8557c041f08d1aedfa79a83e7c6c5f95d366f90416e3c17d18c2d",
-  "today_week_full_review_detail": "5b0c3a771e6646b4109beddaa7302a4793cdd50466061a082c9f7941e3ea2569",
+  "today_week_full_review_detail": "e12ef4bb8e383a2d4198fbf6abd652172cdfc9d3b7a010c28d2698f0262fc918",
   "today_week_full_review_name": "d7b02eb65c324fc08c8bbf02ef22a36b45f77c006b3bf0b40c4236054fe5d17f",
   "today_week_goal_reached": "939a3dd94b0cc686b6d891c7f7b372270a2859b562dee29d44a6e1265da50961",
   "today_week_mock_name": "f76f55398fdea6c71a0e9a3e10281016fd4225fe61bb0c244d2214edc1dfe53d",
@@ -373,7 +373,7 @@
     <string name="today_week_full_review_name">révision complète</string>
     <string name="today_week_mock_name">examen blanc</string>
     <string name="today_week_challenge_name">défi hebdomadaire</string>
-    <string name="today_week_full_review_detail">tous les sujets, en commençant par les moins bien maîtrisés</string>
+    <string name="today_week_full_review_detail">tous les sujets, en commençant par ceux que tu maîtrises le moins</string>
     <!-- %1$s is a formatted number of minutes. -->
     <string name="today_study_minutes">Étudie pendant %1$s minutes</string>
     <string name="today_study_more_minutes">Étudie %1$s minutes de plus</string>

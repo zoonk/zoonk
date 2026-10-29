@@ -195,7 +195,7 @@ msgstr "Teste ein Muster"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "YrB0ys"
 msgid "Try it"
-msgstr "Probiere es aus"
+msgstr "Probier es aus"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "82b3Fd"
@@ -337,7 +337,7 @@ msgstr "{item} an Position {position} aufgenommen."
 #: src/activities/_components/activity-sortable-list.tsx
 msgctxt "NNTjVW"
 msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
-msgstr "Um ein Element zu verschieben, drücke die Leertaste oder Eingabetaste und verschiebe es mit den Pfeiltasten. Drücke dann erneut die Leertaste oder Eingabetaste, um es abzulegen. Drücke die Escape-Taste, um abzubrechen."
+msgstr "Um ein Element zu verschieben, drück die Leertaste oder Eingabetaste und beweg es mit den Pfeiltasten. Drück dann noch einmal die Leertaste oder Eingabetaste, um es abzulegen. Drück die Esc-Taste, um abzubrechen."
 
 #: src/activities/_components/activity-sound-button.tsx
 msgctxt "ZmADei"
@@ -347,7 +347,7 @@ msgstr "Der Ton konnte nicht geladen werden. Du kannst weiterhin alle Noten sehe
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
 msgid "{runtime} didn't load. Check your connection and try again."
-msgstr "{runtime} konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut."
+msgstr "{runtime} konnte nicht geladen werden. Prüf deine Verbindung und versuch es noch einmal."
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
@@ -356,7 +356,7 @@ msgstr "{runtime} konnte nicht geladen werden. Prüfe deine Verbindung und versu
 #: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
-msgstr "Erneut versuchen"
+msgstr "Versuch es noch einmal"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "g91Ps-"
@@ -373,7 +373,7 @@ msgstr "Wird ausgeführt"
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "zG-cZG"
 msgid "Run again"
-msgstr "Erneut ausführen"
+msgstr "Noch einmal ausführen"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "KiXNvz"
@@ -750,7 +750,7 @@ msgstr "Ursache"
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "_tv81B"
 msgid "{cause} didn't lead straight to {effect} here. Try another link."
-msgstr "{cause} hat hier nicht direkt zu {effect} geführt. Versuche eine andere Verbindung."
+msgstr "{cause} hat hier nicht direkt zu {effect} geführt. Versuch eine andere Verbindung."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "1rwRJa"
@@ -911,7 +911,7 @@ msgstr "Erwartet"
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "d8Wy56"
 msgid "You changed the code. Run it again to see the new output."
-msgstr "Du hast den Code geändert. Führe ihn erneut aus, um die neue Ausgabe zu sehen."
+msgstr "Du hast den Code geändert. Führ ihn noch einmal aus, um die neue Ausgabe zu sehen."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "isBSlr"
@@ -1834,7 +1834,7 @@ msgstr "Zwei Spalten mit Karten. Wähle links und rechts jeweils eine Karte, um 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "kzygtu"
 msgid "Missed on the first try"
-msgstr "Beim ersten Versuch nicht zugeordnet"
+msgstr "Beim ersten Versuch nicht gefunden"
 
 #: src/activities/match-pairs/match-pairs-results.tsx
 msgctxt "prxLRA"
@@ -2074,7 +2074,7 @@ msgstr "Melodie"
 #: src/activities/notation-player/notation-player-activity.tsx
 msgctxt "rVVJz4"
 msgid "The music couldn't load. Check your connection and try again."
-msgstr "Die Musik konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut."
+msgstr "Die Musik konnte nicht geladen werden. Prüf deine Verbindung und versuch es noch einmal."
 
 #: src/activities/notation-player/notation-player-activity.tsx
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -2488,7 +2488,7 @@ msgstr "Tippen starten"
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "zuJJlV"
 msgid "Check the sound delay again"
-msgstr "Tonverzögerung erneut prüfen"
+msgstr "Tonverzögerung noch einmal prüfen"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "x2gkvA"
@@ -2503,7 +2503,7 @@ msgstr "Tippe bei jedem Klick · {click} von {total}"
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "U3WmLU"
 msgid "We couldn't match enough taps to the clicks. Try again, tapping with each one."
-msgstr "Wir konnten nicht genug Tippen den Klicks zuordnen. Versuch es noch einmal und tippe bei jedem Klick."
+msgstr "Wir konnten nicht genug deiner Tippbewegungen den Klicks zuordnen. Versuch es noch einmal und tipp bei jedem Klick."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "JUoCnO"
@@ -2641,7 +2641,7 @@ msgstr "Die Abfrage hat länger als {seconds} Sekunden gedauert und wurde gestop
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "ubVY3z"
 msgid "SQLite didn't load. Check your connection and try again."
-msgstr "SQLite konnte nicht geladen werden. Prüfe deine Verbindung und versuche es erneut."
+msgstr "SQLite konnte nicht geladen werden. Prüf deine Verbindung und versuch es noch einmal."
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "qj71j1"
@@ -2676,7 +2676,7 @@ msgstr "{count, plural, =0 {Dein Ergebnis enthält keine Zeilen} one {Dein Ergeb
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "BgDPcv"
 msgid "You changed the query. Run it again to see the new result."
-msgstr "Du hast die Abfrage geändert. Führe sie erneut aus, um das neue Ergebnis zu sehen."
+msgstr "Du hast die Abfrage geändert. Führ sie noch einmal aus, um das neue Ergebnis zu sehen."
 
 #: src/activities/sql-playground/sql-review.tsx
 msgctxt "2L3mBS"
@@ -3041,12 +3041,12 @@ msgstr "Wir zeichnen das Bild…"
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "P0MjYO"
 msgid "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now."
-msgstr "Du kannst weiterhin Gelerntes wiederholen und deine Fehler üben. Neue Lektionen sind nächsten Monat wieder verfügbar. Mit Plus kannst du sofort weitermachen."
+msgstr "Du kannst das Gelernte weiter wiederholen und deine Fehler üben. Nächsten Monat stehen dir wieder neue Lektionen zur Verfügung. Oder hol dir Plus und lern jetzt weiter."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "SDARaX"
 msgid "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now."
-msgstr "Du kannst weiterhin Gelerntes wiederholen und deine Fehler üben. Neue Lektionen sind morgen wieder verfügbar. Mit Plus kannst du sofort weitermachen."
+msgstr "Du kannst das Gelernte weiter wiederholen und deine Fehler üben. Morgen stehen dir wieder neue Lektionen zur Verfügung. Oder hol dir Plus und lern jetzt weiter."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "o_xO7j"
@@ -3072,7 +3072,7 @@ msgstr "Zurück"
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "q-Zgbe"
 msgid "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you."
-msgstr "Du hast alle Lektionen abgeschlossen, die du ohne Konto ausprobieren kannst. Erstelle ein kostenloses Konto, um weiterzulernen. Alles, was du gelernt hast, bleibt erhalten."
+msgstr "Du hast alle Lektionen gemacht, die du ohne Konto ausprobieren kannst. Erstell ein kostenloses Konto, um weiterzulernen. Alles, was du gelernt hast, bleibt erhalten."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "gojCcS"
@@ -3089,7 +3089,7 @@ msgstr "Kostenloses Konto erstellen"
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "nkKtmz"
 msgid "You've reached today's limit. New lessons open again tomorrow."
-msgstr "Du hast dein heutiges Limit erreicht. Neue Lektionen sind morgen wieder verfügbar."
+msgstr "Du hast dein heutiges Limit erreicht. Morgen stehen dir wieder neue Lektionen zur Verfügung."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "8aKab6"
@@ -3099,7 +3099,7 @@ msgstr "Du hast heute viel gelernt"
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "jdlHSh"
 msgid "Try again in a moment. Nothing you did was lost."
-msgstr "Versuche es gleich noch einmal. Dein Fortschritt ist erhalten geblieben."
+msgstr "Versuch es gleich noch einmal. Nichts von dem, was du gemacht hast, ist verloren gegangen."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "ObBVZr"
@@ -3192,7 +3192,7 @@ msgstr "Brauchst du etwas mehr Zeit? {name} kann es dir anders erklären."
 #: src/questions/tutor-dock.tsx
 msgctxt "bH47Z4"
 msgid "Ask {name}"
-msgstr "{name} fragen"
+msgstr "Frag {name}"
 
 #: src/lesson/controls/ask-buddy-offer.tsx
 msgctxt "c-JYNI"
@@ -3234,7 +3234,7 @@ msgstr "Meine Antwort erklären"
 #: src/lesson/feedback/explain-answer.tsx
 msgctxt "I_NpAB"
 msgid "We couldn't explain it right now. Try again in a moment."
-msgstr "Wir konnten das gerade nicht erklären. Versuch es gleich noch einmal."
+msgstr "Wir konnten es gerade nicht erklären. Versuch es gleich noch einmal."
 
 #: src/lesson/feedback/lesson-key-points.tsx
 msgctxt "YO_0e_"
@@ -3461,7 +3461,7 @@ msgstr "Das weiß ich schon"
 #: src/lesson/lesson-stage.tsx
 msgctxt "qzpeai"
 msgid "Write again"
-msgstr "Noch einmal schreiben"
+msgstr "Schreib noch einmal"
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "LnHBcu"
@@ -3471,12 +3471,12 @@ msgstr "Kurzer Check · {current} von {total}"
 #: src/lesson/lesson-stage.tsx
 msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
-msgstr "Noch nicht ganz. Schau noch einmal hin, korrigiere deine Antwort selbst und prüfe sie dann."
+msgstr "Noch nicht ganz. Schau noch einmal hin und korrigier es selbst. Prüf dann deine Antwort."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "KC15MC"
 msgid "Your answer here didn't save. Answer it again to finish the lesson."
-msgstr "Deine Antwort hier wurde nicht gespeichert. Beantworte die Frage erneut, um die Lektion abzuschließen."
+msgstr "Deine Antwort wurde hier nicht gespeichert. Beantworte die Frage noch einmal, um die Lektion abzuschließen."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "rKXfRV"
@@ -3551,12 +3551,12 @@ msgstr "Deine Mission"
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "r5v2r8"
 msgid "You can ask the team or the AI for help. Your decisions change the outcome."
-msgstr "Du kannst das Team oder die KI um Hilfe bitten. Deine Entscheidungen beeinflussen das Ergebnis."
+msgstr "Du kannst das Team oder die KI um Hilfe bitten. Deine Entscheidungen beeinflussen den Ausgang."
 
 #: src/lesson/steps/challenge/challenge-intro.tsx
 msgctxt "cjl8Gf"
 msgid "You can ask the team for help. Your decisions change the outcome."
-msgstr "Du kannst das Team um Hilfe bitten. Deine Entscheidungen beeinflussen das Ergebnis."
+msgstr "Du kannst das Team um Hilfe bitten. Deine Entscheidungen beeinflussen den Ausgang."
 
 #: src/lesson/steps/challenge/challenge-meters.tsx
 msgctxt "eppyrx"
@@ -3739,7 +3739,7 @@ msgstr "Frag {name} zu deinem Plan"
 #: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
 msgid "Ask {name} about this subject"
-msgstr "Frag {name} zu diesem Thema"
+msgstr "Frag {name} zu diesem Fach"
 
 #: src/questions/item-tutor.tsx
 msgctxt "_DwRra"
@@ -3754,37 +3754,37 @@ msgstr "Wir konnten deine letzte Frage nicht senden. Versuch es noch einmal."
 #: src/questions/lesson-question-composer.tsx
 msgctxt "v9luVQ"
 msgid "Ask about this chapter…"
-msgstr "Frag zu diesem Kapitel…"
+msgstr "Stell eine Frage zu diesem Kapitel…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "CVtLex"
 msgid "Ask about this mock exam…"
-msgstr "Frag zu dieser Probeprüfung…"
+msgstr "Stell eine Frage zu dieser Probeprüfung…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "X_H9F0"
 msgid "Ask about your plan…"
-msgstr "Frag zu deinem Plan…"
+msgstr "Stell eine Frage zu deinem Plan…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "uDwgZF"
 msgid "Ask about this subject…"
-msgstr "Frag zu diesem Thema…"
+msgstr "Stell eine Frage zu diesem Fach…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "TCh0B4"
 msgid "Ask about this question…"
-msgstr "Frag zu dieser Frage…"
+msgstr "Stell eine Frage zu dieser Frage…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "wBr6ON"
 msgid "Ask about your answer…"
-msgstr "Frag zu deiner Antwort…"
+msgstr "Stell eine Frage zu deiner Antwort…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "6sIYgs"
 msgid "Ask about the lesson content…"
-msgstr "Frag zu den Inhalten der Lektion…"
+msgstr "Stell eine Frage zum Inhalt der Lektion…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "zMPwOt"
@@ -3809,12 +3809,12 @@ msgstr "⏎ senden · ⇧⏎ neue Zeile"
 #: src/questions/lesson-question-errors.tsx
 msgctxt "2P8sqa"
 msgid "Your session expired. Sign in again."
-msgstr "Deine Sitzung ist abgelaufen. Melde dich erneut an."
+msgstr "Deine Sitzung ist abgelaufen. Melde dich noch einmal an."
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "iVOq9B"
 msgid "Subscribe to ask questions"
-msgstr "Abonniere, um Fragen zu stellen"
+msgstr "Schließ ein Abo ab, um Fragen zu stellen"
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "0-TBnr"
@@ -3844,12 +3844,12 @@ msgstr "Tarife ansehen"
 #: src/questions/lesson-question-panel.tsx
 msgctxt "BIwI4b"
 msgid "Ask about your answer"
-msgstr "Frag zu deiner Antwort"
+msgstr "Stell eine Frage zu deiner Antwort"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "OcZMlL"
 msgid "Ask about this screen"
-msgstr "Frag zu dieser Seite"
+msgstr "Stell eine Frage zu dieser Seite"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "o8a1UO"
@@ -3874,12 +3874,12 @@ msgstr "Stell Fragen zu deinem Plan"
 #: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
 msgid "Ask questions about this subject"
-msgstr "Stell Fragen zu diesem Thema"
+msgstr "Stell Fragen zu diesem Fach"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "uF5ZgT"
 msgid "Ask about this question"
-msgstr "Frag zu dieser Frage"
+msgstr "Stell eine Frage zu dieser Frage"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "J9Kkha"
@@ -3940,7 +3940,7 @@ msgstr "{name} ist ein KI-Lernkumpel und kann Fehler machen."
 #: src/questions/tutor-dock.tsx
 msgctxt "OK6Mb4"
 msgid "Create a free account to ask questions"
-msgstr "Erstelle ein kostenloses Konto, um Fragen zu stellen"
+msgstr "Erstell ein kostenloses Konto, um Fragen zu stellen"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "V-WZ__"
@@ -4000,7 +4000,7 @@ msgstr "Diese Frage wurde nicht beantwortet."
 #: src/questions/lesson-question-turn.tsx
 msgctxt "1A8Z_l"
 msgid "Check again"
-msgstr "Erneut prüfen"
+msgstr "Noch einmal prüfen"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "C1eFF3"
@@ -4015,12 +4015,12 @@ msgstr "Wir denken nach…"
 #: src/questions/lesson-question-turn.tsx
 msgctxt "wfxYSP"
 msgid "Couldn't load earlier messages. Try again."
-msgstr "Frühere Nachrichten konnten nicht geladen werden. Versuch es erneut."
+msgstr "Frühere Nachrichten konnten nicht geladen werden. Versuch es noch einmal."
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "wMoDaY"
 msgid "Couldn't load earlier questions. Try again."
-msgstr "Frühere Fragen konnten nicht geladen werden. Versuch es erneut."
+msgstr "Frühere Fragen konnten nicht geladen werden. Versuch es noch einmal."
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "_V89Z1"
@@ -4070,17 +4070,17 @@ msgstr "Gespräch mit {name}"
 #: src/questions/tutor-dock.tsx
 msgctxt "nete1_"
 msgid "Ask {name} about your answer"
-msgstr "Frage {name} zu deiner Antwort"
+msgstr "Frag {name} etwas zu deiner Antwort"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "Fp8B9R"
 msgid "Ask {name} about this question"
-msgstr "Frage {name} zu dieser Frage"
+msgstr "Frag {name} etwas zu dieser Frage"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "_Kuebo"
 msgid "Ask {name} about this screen"
-msgstr "Frage {name} zu dieser Seite"
+msgstr "Frag {name} etwas zu dieser Seite"
 
 #: src/questions/tutor-dock.tsx
 msgctxt "8ToTqX"

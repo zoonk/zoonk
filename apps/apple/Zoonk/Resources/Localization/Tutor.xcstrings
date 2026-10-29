@@ -433,7 +433,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sobre esta asignatura"
+            "value" : "Sobre este tema"
           }
         },
         "fr" : {
@@ -601,7 +601,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ fragen"
+            "value" : "Frag %@"
           }
         },
         "es" : {
@@ -630,7 +630,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ zu diesem Kapitel fragen"
+            "value" : "Frag %@ zu diesem Kapitel"
           }
         },
         "es" : {
@@ -659,7 +659,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ zu dieser Probeprüfung fragen"
+            "value" : "Frag %@ zu dieser Probeprüfung"
           }
         },
         "es" : {
@@ -688,7 +688,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ zu dieser Frage fragen"
+            "value" : "Frag %@ zu dieser Frage"
           }
         },
         "es" : {
@@ -717,7 +717,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ zu dieser Seite fragen"
+            "value" : "Frag %@ zu dieser Seite"
           }
         },
         "es" : {
@@ -746,7 +746,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ zu diesem Thema fragen"
+            "value" : "Frag %@ zu diesem Thema"
           }
         },
         "es" : {
@@ -775,7 +775,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ zu deiner Antwort fragen"
+            "value" : "Frag %@ zu deiner Antwort"
           }
         },
         "es" : {
@@ -804,7 +804,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ zu deinem Plan fragen"
+            "value" : "Frag %@ zu deinem Plan"
           }
         },
         "es" : {
@@ -833,7 +833,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frage zu den Inhalten der Lektion stellen…"
+            "value" : "Frag zu den Inhalten der Lektion…"
           }
         },
         "es" : {
@@ -862,7 +862,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frage zu diesem Kapitel stellen…"
+            "value" : "Frag zu diesem Kapitel…"
           }
         },
         "es" : {
@@ -891,7 +891,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frage zu dieser Probeprüfung stellen…"
+            "value" : "Frag zu dieser Probeprüfung…"
           }
         },
         "es" : {
@@ -920,7 +920,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frage zu dieser Aufgabe stellen"
+            "value" : "Frag zu dieser Frage"
           }
         },
         "es" : {
@@ -949,7 +949,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frage zu dieser Aufgabe stellen…"
+            "value" : "Frag zu dieser Frage…"
           }
         },
         "es" : {
@@ -978,7 +978,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frage zu dieser Seite stellen"
+            "value" : "Frag zu dieser Seite"
           }
         },
         "es" : {
@@ -1007,7 +1007,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frage zu diesem Thema stellen…"
+            "value" : "Frag zu diesem Thema…"
           }
         },
         "es" : {
@@ -1036,7 +1036,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frage zu deiner Antwort stellen"
+            "value" : "Frag zu deiner Antwort"
           }
         },
         "es" : {
@@ -1065,7 +1065,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frage zu deiner Antwort stellen…"
+            "value" : "Frag zu deiner Antwort…"
           }
         },
         "es" : {
@@ -1094,7 +1094,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frage zu deinem Plan stellen…"
+            "value" : "Frag zu deinem Plan…"
           }
         },
         "es" : {
@@ -1123,7 +1123,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stelle Fragen zu diesem Kapitel"
+            "value" : "Stell Fragen zu diesem Kapitel"
           }
         },
         "es" : {
@@ -1152,7 +1152,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stelle Fragen zu dieser Lektion"
+            "value" : "Stell Fragen zu dieser Lektion"
           }
         },
         "es" : {
@@ -1181,7 +1181,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stelle Fragen zu dieser Probeprüfung"
+            "value" : "Stell Fragen zu dieser Probeprüfung"
           }
         },
         "es" : {
@@ -1210,7 +1210,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stelle Fragen zu diesem Thema"
+            "value" : "Stell Fragen zu diesem Thema"
           }
         },
         "es" : {
@@ -1239,7 +1239,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stelle Fragen zu deinem Plan"
+            "value" : "Stell Fragen zu deinem Plan"
           }
         },
         "es" : {
@@ -1326,7 +1326,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut prüfen"
+            "value" : "Noch einmal prüfen"
           }
         },
         "es" : {
@@ -1344,7 +1344,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conferir novamente"
+            "value" : "Conferir de novo"
           }
         }
       }
@@ -1413,7 +1413,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frühere Nachrichten konnten nicht geladen werden. Versuch es erneut."
+            "value" : "Frühere Nachrichten konnten nicht geladen werden. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -1431,7 +1431,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar as mensagens anteriores. Tente novamente."
+            "value" : "Não foi possível carregar as mensagens anteriores. Tente de novo."
           }
         }
       }
@@ -2239,7 +2239,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Elige los temas en los que quieres profundizar o haz una prueba breve que los elija por ti."
+            "value" : "Elige las asignaturas que quieres tratar con más profundidad o haz una prueba breve para elegirlas."
           }
         },
         "fr" : {
@@ -2410,13 +2410,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Sprich %lld Wort noch einmal"
+                  "value" : "Sag %lld Wort noch einmal"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Sprich %lld Wörter noch einmal"
+                  "value" : "Sag %lld Wörter noch einmal"
                 }
               }
             }
@@ -2636,7 +2636,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Algo deu errado. Tente novamente."
+            "value" : "Algo deu errado. Tente de novo."
           }
         }
       }
@@ -2734,7 +2734,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Abonniere Plus, um Fragen zu stellen"
+            "value" : "Schließ ein Abo ab, um Fragen zu stellen"
           }
         },
         "es" : {
@@ -2839,7 +2839,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faça uma pausa curta e pergunte de novo."
+            "value" : "Faça uma pausa rápida e pergunte de novo."
           }
         }
       }
@@ -3088,7 +3088,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Versuch es noch einmal"
           }
         },
         "es" : {
@@ -3106,7 +3106,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -3251,7 +3251,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente não conseguiu salvar sua resposta. Tente novamente."
+            "value" : "Não conseguimos salvar sua resposta. Tente de novo."
           }
         }
       }
@@ -3280,7 +3280,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente não conseguiu enviar essa pergunta. Tente novamente."
+            "value" : "Não conseguimos enviar esta pergunta. Tente de novo."
           }
         }
       }
@@ -3309,7 +3309,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente não conseguiu enviar sua última pergunta. Tente novamente."
+            "value" : "Não conseguimos enviar sua última pergunta. Tente de novo."
           }
         }
       }
@@ -3674,7 +3674,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda gratuita disponible sin cuenta. Crea una cuenta gratis para seguir."
+            "value" : "Has agotado la ayuda gratuita disponible sin cuenta. Crea una cuenta gratis para seguir."
           }
         },
         "fr" : {
@@ -3703,7 +3703,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda de este mes. Volverás a tener ayuda el mes que viene, o puedes suscribirte a Plus para seguir ahora."
+            "value" : "Has agotado la ayuda de este mes. Volverás a tener ayuda el mes que viene, o puedes obtener Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -3732,7 +3732,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda gratuita de hoy. Crea una cuenta gratis para seguir."
+            "value" : "Has agotado la ayuda gratuita de hoy. Crea una cuenta gratis para seguir."
           }
         },
         "fr" : {
@@ -3761,7 +3761,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has agotado la ayuda de hoy. Volverá mañana, o puedes obtener Plus para seguir ahora."
+            "value" : "Has agotado la ayuda de hoy. Volverás a tener ayuda mañana, o puedes obtener Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -3871,7 +3871,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Sitzung ist abgelaufen. Melde dich erneut an."
+            "value" : "Deine Sitzung ist abgelaufen. Melde dich noch einmal an."
           }
         },
         "es" : {
@@ -3889,7 +3889,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua sessão expirou. Entre novamente."
+            "value" : "Sua sessão expirou. Entre de novo."
           }
         }
       }

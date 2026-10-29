@@ -23,7 +23,7 @@
   "explain_see": "96c35096ec56cb6eb4fe8f830303fea96bdb732ecf129346305f3ff5ee9cec1b",
   "explain_slow": "f07c017a6a85e8428cf922b7b9716fcaf6774a7699323dd7e95bbbc0d9453466",
   "explain_still_writing": "c40a0eb41ffb86de32296b06a6ad46b4de0cb59c050318f82fcc531724598017",
-  "explain_try_again": "6abbf7660d009a70f52d3d2ebddd94b30e5098d278c84fa74a8888550db935f4",
+  "explain_try_again": "7ac7a5622df94c8b634f6388ac58602ac5215bb2b1abd96820507b1a82fbe5c5",
   "explain_writing": "db4e1572bc02a297679b4988791f13ea7c02b1754a2d3ab097fb1aaccae9d2ba"
 }
 -->
@@ -49,7 +49,7 @@
     <string name="explain_deeper_goal">Quero entender %1$s a fundo</string>
     <string name="explain_slow">Está demorando mais que o normal.</string>
     <string name="explain_still_writing">Ainda estamos criando sua explicação. Ela aparece aqui assim que estiver pronta.</string>
-    <string name="explain_try_again">Tentar de novo</string>
+    <string name="explain_try_again">Tente de novo</string>
     <string name="explain_see">Ver explicação</string>
     <string name="explain_load_failed">Não conseguimos carregar esta explicação</string>
     <string name="explain_now_you_know">Agora você já sabe</string>

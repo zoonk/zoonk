@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "audio_check_failed": "6b3738b2a19bb3ea1bff0efdafde86fb8ec31fe3e3ad39e28491fb92fd8b2921",
+  "audio_check_failed": "22d97be83a0d24716329dc37cb21d748d96aeabdf7282892a64e144e7ce1da0b",
   "audio_checking": "8b053758b8b45af895f4807b9bb85b53e3dd434c2d9866c72beb94ac05991a2b",
   "audio_checking_slow": "375d912322590a9e4563bb34e0b863d96e7bdbcd8d63b2728359afbdc00217af",
   "audio_did_not_play": "8250a46d60ed026af53bede419abe509f2f9ed35c3b75b42516cd3c0705acffa",
@@ -10,20 +10,20 @@
   "audio_listening": "851d2517fd639e127847f81063ff4f9ab75737b49f37531924f54bc2b325e229",
   "audio_microphone_off_answer": "f788c6ca5798966692c65ac83020c6ac2201d82aa4ce6320cda04bf84c8ea774",
   "audio_microphone_off_title": "5feb2c051f896fbc1eefa45cd4dc6bc1b7f4bf3fda5b7b55484c323d961d43b1",
-  "audio_no_speech": "45c83a36b8296b6ac5656133ddff1d86dad5505c861ac773c0734e8bc8f3af71",
+  "audio_no_speech": "999c7c583ef97744f274e58bc0189e9320fd760ee8f463fe32e5ee061a2eab33",
   "audio_open_settings": "ce465fd3cb68788fef20ceaf1d10801f036200b3cbf9e67d175248e8c8e54019",
   "audio_record": "d8969302d4661d7415b1863799a5602232d71fe91004411b856126b367c5781e",
   "audio_record_stop": "85f61ec41fdc6a206520522e96629a73873dd7a91635cdc9e7f908f0d9e205bd",
   "audio_say_it": "1b51521a4820f1c26e7a2193d388041fe592e3bd4184d3fe711df03909de66d8",
   "audio_stop": "4b29d27a501a893aa5dd221c542786d282f25a1c7897303667cf0632237e0c76",
   "audio_try_again": "5863c1ab44298448b009cb0a5a3f70c435c7d31b6f7e2427944aa8540247e000",
-  "audio_try_again_label": "573fbffb0a17a53c85e3eb6db1d015c0b60b7af9d18ef3d9e20cf8409e6624f3"
+  "audio_try_again_label": "452dd86b59fe680c4fd1022bb177cdc77d193bcfb574d95c4780af8ea37f63b9"
 }
 -->
 <resources>
     <string name="audio_getting_ready">Preparando o áudio…</string>
     <string name="audio_stop">Parar o áudio</string>
-    <string name="audio_try_again_label">Tentar ouvir o áudio de novo</string>
+    <string name="audio_try_again_label">Tentar o áudio de novo</string>
     <string name="audio_did_not_play">O áudio não tocou.</string>
     <!-- %1$s is why the audio didn't play; the text it says follows on its own line. -->
     <string name="audio_here_is_what_it_says">%1$s Veja o que o áudio diz:</string>
@@ -34,8 +34,8 @@
     <string name="audio_listening">Ouvindo… Toque em Parar para conferir.</string>
     <string name="audio_checking">Conferindo…</string>
     <string name="audio_checking_slow">Ainda estamos conferindo. Está demorando mais que o normal.</string>
-    <string name="audio_no_speech">A gente não ouviu nenhuma palavra. Tente de novo.</string>
-    <string name="audio_check_failed">A gente não conseguiu conferir sua resposta desta vez. Tente de novo.</string>
+    <string name="audio_no_speech">Não conseguimos ouvir nenhuma palavra. Tente de novo.</string>
+    <string name="audio_check_failed">Não conseguimos conferir sua resposta desta vez. Tente de novo.</string>
     <string name="audio_say_it">Toque e fale em voz alta</string>
     <string name="audio_microphone_off_title">O microfone está desativado</string>
     <string name="audio_microphone_off_answer">Ative o microfone para o Zoonk nas configurações para responder em voz alta.</string>

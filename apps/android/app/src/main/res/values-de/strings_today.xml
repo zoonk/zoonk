@@ -42,8 +42,8 @@
   "today_finished_goal": "7e29c0aa674aa6a049211f7ea7bbee2f6d2b6dc960189348738fed81dc3918fa",
   "today_fresh_start_new_phase": "b4afff122be490a19bbff653926f323f0bd1e9d1f61d8e8c628c87a74a1d5a69",
   "today_fresh_start_new_week": "234096bde103dc787fc4871c46db52ad27e55262737e5630978ece98183b89ce",
-  "today_fresh_start_welcome_back": "56b56045f924fe917c8413ad743dc8a8030c24e2b503b03a02020bb768d43ca6",
-  "today_fresh_start_welcome_back_trial_ended": "12d85fef5daabc93cb24150d76d1b90c318df4141d5b4f4fc0f7e8582569f172",
+  "today_fresh_start_welcome_back": "2b801fe828efc6e14fd0a9628b21dd88bf424df1a56019cfb25e19ad162785c3",
+  "today_fresh_start_welcome_back_trial_ended": "9daab4311dc670496125535c46c6d425be35d3dff51bd4968f6762b99611f4ce",
   "today_get_lessons": "bb087541d9b18d3670f8deb7ab5e9a5d064c95375edadbb92f3a954309456cb4",
   "today_insight_add_it": "4c8f4383ad38216eb3845a705546e8dceb7131dfce0b74d54cc00cc7c539533e",
   "today_insight_got_it": "3bccb6f1196c270c1c0232cd10530f77930cbb6ea08b4ab17fb7e1fea8040bca",
@@ -54,7 +54,7 @@
   "today_insight_time_moved": "a77b645332159733b905f8b2fa6c44e86b92dae6432e80e9620557c358af0074",
   "today_insight_time_stays": "59d944f308112994b98e21a14d90a0f10318e34ea64d96cf671c4cfa291b922e",
   "today_keep_learning": "2eee3490e9ebf9f5ca3943e1980626592ea24e7c5118ae726fcb2bd00232c86b",
-  "today_keep_learning_failed": "5e2c4fc24e32577f031eaf7d98eb42eea33ba6cffcf93a4a55a36152dcb4fd0a",
+  "today_keep_learning_failed": "9b9bc27c9d8e19d0f137428e28c94ce6422a6f7abe23d820279da1254cbd5f46",
   "today_keep_my_time": "e667c32351f32012b0b2d845d150b796311cb60df1d3bb9d03d55147ed212590",
   "today_lessons_not_written": "25514812613cece6555872c969a8192d9619467834dacdc2bab39b18e6ddf216",
   "today_lessons_so_far": "3902c02426b390ae8fee27bff5d63e355bae38f762d5e47fcc83ab854ae8dd07",
@@ -82,7 +82,7 @@
   "today_notice_falling_behind": "25afebc898fb1ba7cd809adfc64842df52430b96ea036c38ceaaa4f9ed8334f6",
   "today_notice_plan_change": "9de571a1fee2e27896f61e88b00399af856156b080d896cac99c5fc2943beeb4",
   "today_notice_suggested_goal": "658949dcb87dc2875beb378f62f2ff35e51c6cdd34ac5ffa122757d0ef77bf56",
-  "today_open_failed": "04c9b240e0354b11125d1fe68c8599aa64b22943535dc10beb3e7bf62a04cd5e",
+  "today_open_failed": "5b3ad7c8fe1382be26a1ffb3498acf31c8fe42469d0a7bf97d45a31424d6d9db",
   "today_pace_ahead": "ae898e909e33d6442a8e8ed5a9f011b6aa4f5aabe362ab1c5e3ab12a713ff5f9",
   "today_pace_behind_days": "4e8b967b5604fedbcbf65ac0756107e3972783478036ce209b43858ff1fa6ec1",
   "today_pace_challenges_left": "1336198e9a6cc69fb4048413cd7aa25faa4ffa1aefbd37e084642c446a83125b",
@@ -118,7 +118,7 @@
   "today_resume_effect": "f762dcc9f752550a4dbb5637f8c91db57253ca11df61efedfd40bca471396261",
   "today_resume_goal": "b04d886521356324023cf5afc3f1f038562895ce4150d8619bd81278100233de",
   "today_resume_goal_limit": "a76df18f413be42a1d9edf9fc1d961a31ef386e5f7f8663850db309d2f94fcd2",
-  "today_save_failed": "f2af6c127bd84bc07b341ac927fb7c95b8130af07de0cf3aa8130372323103c7",
+  "today_save_failed": "37584d4a01b5d654d720b1b7a2e6c20a1a09b8ded1fe333c7197375abc3ec9c4",
   "today_see_day_challenge": "3be8ee99f8540f11909602dbab91003acff8561cc44b52b4f6e85fe9eb29469d",
   "today_see_day_mock": "ecbfab6a326be3750150e0fdc56776978b6e1a11a06c30eeaf5825edce384552",
   "today_see_plan": "6d118536fee5dfeb6a157a92af6560541ed75cd14b258fc6ce8b874cc81f8d53",
@@ -230,8 +230,8 @@
     <!-- %1$s and %2$s are formatted numbers: "2 of 5 done". -->
     <string name="today_steps_done">%1$s von %2$s erledigt</string>
     <!-- %1$s is a duration, such as "55 min". -->
-    <string name="today_fresh_start_welcome_back">Willkommen zurück! Heute ist es etwas leichter und dauert etwa %1$s. So findest du einfach wieder rein.</string>
-    <string name="today_fresh_start_welcome_back_trial_ended">Willkommen zurück! Heute dauert es etwa %1$s. So findest du einfach wieder rein.</string>
+    <string name="today_fresh_start_welcome_back">Willkommen zurück! Heute ist es etwas leichter und dauert etwa %1$s, damit du gut wieder einsteigen kannst.</string>
+    <string name="today_fresh_start_welcome_back_trial_ended">Willkommen zurück! Heute dauert es etwa %1$s, damit du gut wieder einsteigen kannst.</string>
     <string name="today_fresh_start_new_phase">Heute beginnt eine neue Phase, zuerst mit einer leichten Aufwärmübung.</string>
     <string name="today_fresh_start_new_week">Eine neue Woche. Heute geht es mit einer leichten Aufwärmübung los.</string>
     <plurals name="today_lessons_so_far">
@@ -303,15 +303,15 @@
     <string name="today_see_plan">Deinen Plan ansehen</string>
     <string name="today_lessons_not_written">Deine heutigen Lektionen sind noch nicht erstellt.</string>
     <string name="today_get_lessons">Heutige Lektionen erstellen</string>
-    <string name="today_open_failed">Wir konnten den nächsten Schritt nicht öffnen. Versuch es erneut.</string>
-    <string name="today_keep_learning_failed">Wir konnten deine nächsten Lektionen nicht öffnen. Versuch es erneut.</string>
+    <string name="today_open_failed">Wir konnten den nächsten Schritt nicht öffnen. Versuch es noch einmal.</string>
+    <string name="today_keep_learning_failed">Wir konnten deine nächsten Lektionen nicht öffnen. Versuch es noch einmal.</string>
     <string name="today_welcome_back">Willkommen zurück</string>
     <!-- %1$s is a course's title. -->
     <string name="today_suggested_goal_question">%1$s fortsetzen?</string>
     <string name="today_suggested_goal_detail">Erstelle in 1 Minute einen Plan.</string>
     <string name="today_suggested_goal_accept">Meinen Plan erstellen</string>
     <string name="today_not_now">Jetzt nicht</string>
-    <string name="today_save_failed">Das hat nicht geklappt. Versuch es erneut.</string>
+    <string name="today_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <string name="today_finished">Abgeschlossen</string>
     <!-- %1$s is the goal's title. -->
     <string name="today_finished_goal">Du hast %1$s abgeschlossen.</string>

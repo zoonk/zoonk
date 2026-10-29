@@ -3,14 +3,14 @@
 {
   "speaking_eyebrow": "33b25e32fb88be7013a3974fd3e99e5070345052bfa9e5651aa31d04d40f4290",
   "speaking_facts": "4e32e80d0c7adc7bdaa426581a4dcf70c9e30075dc3db86863cc4cceb54de012",
-  "speaking_footer": "2885fd237eef00a222d92ce23512360abd97a74ec94ff7d0ab3a365ba05086d9",
-  "speaking_footer_partner": "3705780509c308a48da1a6fa05c8dc07d3594a48377259c97e33a6f6ee65aa17",
+  "speaking_footer": "e8d55d442a163c8585fc72c89461e8d93fcc819327e7fdf45893e035687e6873",
+  "speaking_footer_partner": "9e2ea3e669a519864ff1b35842f682edd5868ea361dd9bdc6912b554546b3722",
   "speaking_last_at": "88d9b34ac6adc9437f0fa43b838d79cf68558df1b90ca868501ca5efe397f09c",
   "speaking_last_below": "9eb00f767b665ae448dfb71d2fe6257873e5f2259890b5363e1c991b32e7b26e",
   "speaking_last_near": "9557bced161198458ab767ed3afd358f375c7ebade07d1e69c633945f5b100d6",
   "speaking_last_none": "c68405decf7c8d45d10b30728d381a617900eae4f9b3d935c4abec63e4b477d7",
   "speaking_last_result": "cd15092c3227e32e9f9e10be7b26e0dac4f682b287f02851567c983565ca2248",
-  "speaking_mock_failed": "b6b84b91ee1ac6e84596076f53d34c1b204994bc7a77a640d1bbd53586e89cb8",
+  "speaking_mock_failed": "0fa0552337c21f33974fda757218c188ab6e6a4b81178fb354bc79a822b6aae9",
   "speaking_mock_ielts": "383d76e5ebeb927c47d9667f79dee14395ac8a2cca5feedd702147228b94d733",
   "speaking_mock_opens": "95253fd0fca965294ceccb797c7d3f0f0ec424ebe9f18e955ab97f8f9222e187",
   "speaking_mock_start": "f104e6da82ab489b6e23b1a3cffe2c569ed0e9b7b5eaef864bcffe0712d2525d",
@@ -26,7 +26,7 @@
   "speaking_rated_on": "b1fbb23621ee09a56da814f0edeebd1700bab42b7d6e8c4e63e5e543aca0869c",
   "speaking_row": "3eaaf4ea9b51b85bd6737c2d01805b7017eb2566ce774b31666f1ab566d7b2ad",
   "speaking_section": "8d1999352744f56192c5c3b9576689ca7d2994ce7822d5c559636a026bf9844f",
-  "speaking_start_failed": "1c722788a7e72bc577e577c7faf82cb3c122fc6c0741eae4b8414a971c13bf90",
+  "speaking_start_failed": "06fe48f47ea157002d9adb1dab4882c6d22276d31480150031ce6495ff195430",
   "speaking_start_task": "ee7ea541c14e49ade4c6536ed8e424891edb264c23018890035877100c3cc937",
   "speaking_tasks": "11af098887a8e2b8b822e5c812733c236264f84ff098af4cc924802a3a8dc35e",
   "speaking_title": "b4a528d4662676a6416957d889ee5a582240467b3a530e6e1fe7b7c51bc47a20",
@@ -55,9 +55,9 @@
     <string name="speaking_opens_when_ready">Deine Aufgabe öffnet sich, sobald die Aufgabenkarte bereit ist.</string>
     <string name="speaking_no_time_month">Diesen Monat ist nicht genug Gesprächszeit für diese Aufgabe übrig</string>
     <string name="speaking_no_time_day">Heute ist nicht genug Gesprächszeit für diese Aufgabe übrig</string>
-    <string name="speaking_start_failed">Die Aufgabe konnte nicht gestartet werden. Versuch es gleich noch einmal.</string>
-    <string name="speaking_footer_partner">Eine KI übernimmt die Rolle der prüfenden Person oder der anderen Person in der Prüfung. Bei jedem Versuch bekommst du eine neue Aufgabenkarte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score.</string>
-    <string name="speaking_footer">Eine KI übernimmt die Rolle der prüfenden Person. Bei jedem Versuch bekommst du eine neue Aufgabenkarte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score.</string>
+    <string name="speaking_start_failed">Die Aufgabe wurde nicht gestartet. Versuch es gleich noch einmal.</string>
+    <string name="speaking_footer_partner">Eine KI übernimmt die Rolle des Prüfers oder des anderen Prüfungsteilnehmers. Bei jedem Versuch bekommst du eine neue Aufgabenkarte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, aber keinen offiziellen Score.</string>
+    <string name="speaking_footer">Eine KI übernimmt die Rolle des Prüfers. Bei jedem Versuch bekommst du eine neue Aufgabenkarte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, aber keinen offiziellen Score.</string>
     <string name="speaking_official_format">Offizielles Format</string>
     <string name="speaking_start_task">Diese Aufgabe starten</string>
     <string name="speaking_last_result">Dein letztes Ergebnis ansehen</string>
@@ -77,7 +77,7 @@
     <string name="speaking_mock_toefl">Wiederhole Sätze und führe dann ein kurzes Gespräch mit einer prüfenden Person. Danach gibt es für jedes Kriterium eine geschätzte Bandstufe von 1 bis 6.</string>
     <string name="speaking_mock_start">Probeprüfung starten</string>
     <string name="speaking_mock_opens">Deine Probeprüfung öffnet sich, sobald sie bereit ist.</string>
-    <string name="speaking_mock_failed">Die Probeprüfung konnte nicht gestartet werden. Versuch es gleich noch einmal.</string>
+    <string name="speaking_mock_failed">Die Probeprüfung wurde nicht gestartet. Versuch es gleich noch einmal.</string>
     <string name="speaking_writing_mock">Wir erstellen deine Probeprüfung</string>
     <string name="speaking_writing_mock_phase">Wir erstellen den Leitfaden für die prüfende Person</string>
     <string name="speaking_writing_mock_line_1">Wir wählen die prüfende Person aus…</string>

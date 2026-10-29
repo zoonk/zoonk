@@ -340,7 +340,7 @@ msgstr "Suchen oder fragen"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "z5av6z"
 msgid "Go to a page, run an action or ask a question."
-msgstr "Öffne eine Seite, führe eine Aktion aus oder stelle eine Frage."
+msgstr "Öffne eine Seite, führe eine Aktion aus oder stell eine Frage."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
@@ -542,7 +542,7 @@ msgstr "Für wen der Kurs ist"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/course-start.tsx
 msgctxt "SFqn9B"
 msgid "Try a lesson"
-msgstr "Eine Lektion ausprobieren"
+msgstr "Lektion ausprobieren"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "VO_HQW"
@@ -701,7 +701,7 @@ msgstr "Wir laden weitere Kurse…"
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "W_5hwr"
 msgid "Something went wrong. Please try again."
-msgstr "Etwas ist schiefgelaufen. Bitte versuche es erneut."
+msgstr "Etwas ist schiefgelaufen. Versuch es bitte noch einmal."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
@@ -710,7 +710,7 @@ msgstr "Etwas ist schiefgelaufen. Bitte versuche es erneut."
 #: src/components/public/course-start-failure.tsx
 msgctxt "FazwRl"
 msgid "Try again"
-msgstr "Erneut versuchen"
+msgstr "Noch einmal versuchen"
 
 #: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
 msgctxt "ONxggU"
@@ -1075,17 +1075,17 @@ msgstr "{email} · Plus"
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "Bq4K5C"
 msgid "For your safety, sign in again, then delete your account."
-msgstr "Melde dich zu deiner Sicherheit erneut an und lösche dann dein Konto."
+msgstr "Melde dich zu deiner Sicherheit noch einmal an und lösche dann dein Konto."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "scfgdM"
 msgid "Sign in again"
-msgstr "Erneut anmelden"
+msgstr "Noch einmal anmelden"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "OR6zpA"
 msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
-msgstr "Wir konnten dein Konto nicht löschen. Versuche es erneut oder schreibe an hello@zoonk.com."
+msgstr "Wir konnten dein Konto nicht löschen. Versuch es noch einmal oder schreib an hello@zoonk.com."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1351,7 +1351,7 @@ msgstr "Wir fragen bei Stripe nach…"
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "1A8Z_l"
 msgid "Check again"
-msgstr "Erneut prüfen"
+msgstr "Noch einmal prüfen"
 
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
 msgctxt "uPJSSB"
@@ -1362,7 +1362,7 @@ msgstr "Zoonk Plus abonnieren"
 #: src/app/[lang]/(app)/(settings)/support/support-content.tsx
 msgctxt "e60J1V"
 msgid "Ask a question, report a problem or share an idea. We answer by email."
-msgstr "Stelle eine Frage, melde ein Problem oder teile eine Idee. Wir antworten per E-Mail."
+msgstr "Stell eine Frage, melde ein Problem oder teile eine Idee. Wir antworten per E-Mail."
 
 #: src/app/[lang]/(app)/(settings)/support/support-content.tsx
 msgctxt "l1XTI5"
@@ -3180,7 +3180,7 @@ msgstr "Fokustest"
 #: src/components/public/start-lesson-button.tsx
 msgctxt "K6x1SC"
 msgid "We couldn't open the lesson. Try again, or log in to keep going."
-msgstr "Wir konnten die Lektion nicht öffnen. Versuche es erneut oder melde dich an, um weiterzumachen."
+msgstr "Wir konnten die Lektion nicht öffnen. Versuch es noch einmal oder melde dich an, um weiterzumachen."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
@@ -3349,7 +3349,7 @@ msgstr "Zurück zu Zoonk"
 #: src/app/auth/apple/route.ts
 msgctxt "99__Yc"
 msgid "Your browser didn't open the Zoonk app. Close this page and sign in with Apple again in the app."
-msgstr "Dein Browser hat die Zoonk App nicht geöffnet. Schließe diese Seite und melde dich in der App erneut mit Apple an."
+msgstr "Dein Browser hat die Zoonk App nicht geöffnet. Schließe diese Seite und melde dich in der App noch einmal mit Apple an."
 
 #: src/app/auth/callback/route.ts
 msgctxt "1KzRxp"
@@ -3590,7 +3590,7 @@ msgstr "{chapter} · Lektion {number, number}"
 #: src/components/errors/page-error-message.tsx
 msgctxt "R6Dkep"
 msgid "It might be your connection or a problem on our side. Trying again usually fixes it."
-msgstr "Vielleicht liegt es an deiner Verbindung oder an einem Problem bei uns. Meist klappt es, wenn du es noch einmal versuchst."
+msgstr "Vielleicht liegt es an deiner Verbindung oder an einem Problem bei uns. Meistens klappt es, wenn du es noch einmal versuchst."
 
 #: src/components/errors/page-error-message.tsx
 msgctxt "9nolIL"

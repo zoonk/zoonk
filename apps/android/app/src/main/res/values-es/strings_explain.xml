@@ -5,7 +5,7 @@
   "explain_deeper": "620b01675624e17e3bdd2bbb0a052e0cb501f12dbf8889cf0dd0abdc5f6dc2ab",
   "explain_deeper_course": "a58d37947c31f1b42b9f8727d0fc47f7bdb71901a59490b98b16f48e143a8193",
   "explain_deeper_goal": "c34a10e6b0c6a09c5b10ac761ba0531dcc7a50306891e6bff85c7706b693fd38",
-  "explain_deeper_subject": "ab3eb7f080036f09171e477c0a6574067591df91145b02f61fa028025bb48026",
+  "explain_deeper_subject": "a4052ee1040f693c83c52b13858aa59178fcceada3c57daa1a31038627132bf1",
   "explain_go_further": "aeee8a233b6bfe53f3c956cb23f5603f42994655832b656417459ad55e918d24",
   "explain_load_failed": "8b1ad26f4c0d8300e62c74886cbc0123ca81b20fba2074bd965ffb95cbbc0266",
   "explain_no_plan": "fcd7f90df5997eb6b0a194b775d15ed64e45c10995769e4114853623c1f910f0",
@@ -22,7 +22,7 @@
   "explain_recap": "7b9c016364c4f41f7afa9af7eeacffd1811b92be0f29c4d4fb8ad220a63dcdb6",
   "explain_see": "d1baeffb566a860c11ceb918934ac2170be7e88d13dce09bc5fb5b36b6a8db86",
   "explain_slow": "21b381150f1080696db9ec4feaafbb2a5b743a743e3f0ceee647f503e2cedb98",
-  "explain_still_writing": "3fbb87330585eb96c8a215d1dbb6d2a5848c142124d2967604143611243edfbd",
+  "explain_still_writing": "7f6beb71b724ce2bf3cf18b24bf5ab1670bbd2b5908c808fd817a39745fb9d91",
   "explain_try_again": "ad8f3a3233fa5a1f6d3b60a11beb6915d28f36b0080d37d8e1fd9e3c0c18e449",
   "explain_writing": "b77b11b874a548ecf1246587e84997695474ea8958b3889def378b56761a1ddd"
 }
@@ -44,11 +44,11 @@
     <string name="explain_deeper">Quiero aprender esto en profundidad</string>
     <!-- %1$s is a course's title. -->
     <string name="explain_deeper_course">Preparar un plan para %1$s</string>
-    <string name="explain_deeper_subject">Preparar un plan para toda la materia</string>
+    <string name="explain_deeper_subject">Prepara un plan para toda la asignatura</string>
     <!-- A goal typed for the learner from the explanation's topic, which %1$s is, mid-sentence. -->
     <string name="explain_deeper_goal">Quiero entender %1$s en profundidad</string>
     <string name="explain_slow">Esto está tardando más de lo habitual.</string>
-    <string name="explain_still_writing">Seguimos preparando tu explicación. Aparecerá aquí en cuanto esté lista.</string>
+    <string name="explain_still_writing">Aún estamos preparando tu explicación. Aparecerá aquí en cuanto esté lista.</string>
     <string name="explain_try_again">Volver a intentarlo</string>
     <string name="explain_see">Ver explicación</string>
     <string name="explain_load_failed">No hemos podido cargar esta explicación</string>

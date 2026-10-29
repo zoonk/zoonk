@@ -4,7 +4,7 @@
   "goal_switcher_current_goal": "15cf1d56c652e170e28c47dac8e8653554baaca0320d4443797f6a724ec3d101",
   "goal_switcher_daily": "4c844eab91005a6acde1007594049f33fd0c214f26fce814fec2455462d4dbef",
   "goal_switcher_explore_courses": "526e87d929db451898ea27158c12abaf812d77dfa0bbbba95dd7c00a8f984a45",
-  "goal_switcher_failed": "d385dc3670d35b43ea143ab74825aa910fe0078f4d6a259557c642956441c9bd",
+  "goal_switcher_failed": "332b6139180661bb78e88155763d0f55c88c491e84de5a9510b2957208c87c29",
   "goal_switcher_finished": "3f70fe146bcecf6712bb1e3fc06f93189d71fd2e986038414293d17c50c70cb0",
   "goal_switcher_new_goal": "d504145110e362e5d796b44c94ed26a58ca968391204ebc11f53e69c655e7b7b",
   "goal_switcher_paused": "a8f626e7a7eb9fcf6ba8c2a5e867b8b3e4bbcb26e5bf02e19b0a6d0360277518",
@@ -25,5 +25,5 @@
     <string name="goal_switcher_daily">%1$s por dia</string>
     <string name="goal_switcher_finished">Concluída</string>
     <string name="goal_switcher_paused">Pausada</string>
-    <string name="goal_switcher_failed">Não foi possível trocar de meta. Tente novamente.</string>
+    <string name="goal_switcher_failed">Não conseguimos trocar de meta. Tente de novo.</string>
 </resources>

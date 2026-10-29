@@ -57,8 +57,8 @@
   "stats_next_level": "87bc0e09519b0a0cd11606bede9ca7ec794479856e6e5b20299f80c86aaa5cb3",
   "stats_night": "96210019d4e6ab9fe2b1d8ddd57b2612b4cf272a07a295c9e5b2ab6a953ed94a",
   "stats_no_answers": "65dc192d7fa09e784cbaff201d7ec6650aa62da3d3902434feab9b1584d0324c",
-  "stats_not_enough": "c8a8b1e6c29da417674621037806d8e005813770ca6098c403feb8c7750f9e85",
-  "stats_not_yet": "39ed62f9417477a32288d2bad03db59760858c872ee83881aad8f423cdc63226",
+  "stats_not_enough": "e551006284146dc8b1515a17f037307ff727685a05fc7bce649a924ba2e5cb6e",
+  "stats_not_yet": "a1cbdba330cc24f8cbacad99abcbfd7c18ccfe0d34fe96466395b1220f24121e",
   "stats_of_all_answers": "93e363b07239a608b55cff4389cfdd34d844a14e530a270d5e2aabf06fcd236b",
   "stats_open": "e8bd77225baeeede22d2c9311c15f76e36d48fcec1acac19fb6d889f31e5358f",
   "stats_overview": "2dd46cd32d7ff6dbdfcf881bd77b8c1367e14b72c1674fef52ac11f4ac0dd580",
@@ -78,7 +78,7 @@
   "stats_score_across": "2fb627b1f720ecd201e3591d223d26cf7cc2a31b4ceffaacf8c503fbcc959591",
   "stats_score_after_answers": "0517f4168fde3c83cb2d93227d5e6278c209b8a129cb65b81a8920163b0d3fd9",
   "stats_score_answers": "9c8982a1e24d25a05600ff0b6ca609480b5af64f3531687d9425685bbdb8cc34",
-  "stats_score_line": "27a65c166a47da463af303bf54d871d063bea1d9f098ede8460c7063435bedf1",
+  "stats_score_line": "594fee3f1787f7775f5f658563a106a331805ceb3e4d310463539376cd2fefdb",
   "stats_score_trend": "54fae4de60623559d16687fd12fc2f1008779e5f4eb8b409bbab4e957456953a",
   "stats_score_week": "8f9aa4a34150b8a37b15f5fe426247996917481b795d4533accbc1d868741c28",
   "stats_see_all": "c22dbb693d374d5b09bf42e13f55e8b097e8123903a99daba1cfe39df2271a7b",
@@ -108,7 +108,7 @@
     <string name="stats_patterns">Patrones</string>
     <string name="stats_empty_title">Empieza a aprender para seguir tu progreso</string>
     <string name="stats_go_to_today">Ir a Hoy</string>
-    <string name="stats_not_yet">Todavía no</string>
+    <string name="stats_not_yet">Aún no</string>
     <string name="stats_part_failed">No hemos podido cargar esta parte.</string>
     <string name="stats_energy_average">Media: %1$s</string>
     <string name="stats_study_days">Días de estudio</string>
@@ -189,7 +189,7 @@
         <item quantity="many">%1$s días</item>
         <item quantity="other">%1$s días</item>
     </plurals>
-    <string name="stats_score_line">Todas las respuestas cuentan lo mismo, así que las lecciones más difíciles pueden bajar tu puntuación durante un tiempo.</string>
+    <string name="stats_score_line">Todas las respuestas cuentan igual, así que las lecciones más difíciles pueden bajar tu puntuación durante un tiempo.</string>
     <string name="stats_score_trend">Evolución semanal de la puntuación: %1$s. %2$s</string>
     <plurals name="stats_score_across">
         <item quantity="one">%1$s en %2$s respuesta</item>
@@ -204,7 +204,7 @@
     <string name="stats_patterns_intro">Cuando mejor respondes, en los últimos 90 días.</string>
     <string name="stats_answers">Respuestas</string>
     <string name="stats_last_90">En los últimos 90 días</string>
-    <string name="stats_not_enough">Todavía no hay suficientes respuestas</string>
+    <string name="stats_not_enough">Aún no hay suficientes respuestas</string>
     <plurals name="stats_within_points">
         <item quantity="one">Diferencia de hasta %1$d punto</item>
         <item quantity="many">Diferencia de hasta %1$d puntos</item>

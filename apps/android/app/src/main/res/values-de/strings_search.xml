@@ -2,9 +2,9 @@
 <!-- eloqnt-fingerprints-v1
 {
   "search_appearance": "6b9a8573ea37e5256325d6b94817025d1536479b1c3ad8821c69ec6c2203a0a8",
-  "search_ask_buddy": "4626364b34ff6ad161383560a08da4629d73e67c38c16119db429eba2e039ced",
+  "search_ask_buddy": "9759f8dd5178287778668981eb79a6b194ba226abd360f7683866c2a929171af",
   "search_ask_detail": "d40b466af5d682641e9fd28202fe5d6a96e865c629490402b50fd3bc4ab0cdd5",
-  "search_ask_question": "ff5add80bed8349b9395326ba156fbb8ede37a11f0eb900bdae4022fb4352e96",
+  "search_ask_question": "a644da3b8321a9f1f7deb73db210b55d6ad83f0ebf2a98ec256d21edead9856b",
   "search_blog": "dc013f0414b752a69f8b0052be2ddfbbc5639fa52273ab3fa21561078c931c32",
   "search_buddy_keyword": "fb396cc539464812313db94199f1d24e77f28c2329bad8996fefb76c92fd7741",
   "search_clear": "063aea3d2b74ac622fc235a0a41b76edb6df38aefbbad545b0cd7eba40168cd7",
@@ -13,7 +13,7 @@
   "search_continue_failed": "a8e36bb685bc86a130dd071b40a2f347f0a583a7e82158673f63acd3ed2546a5",
   "search_group_account": "829c1cabd2d852e69c9b5893449a5e89478192c6e2eeba26c0d1a64798603437",
   "search_group_actions": "087faa68c1dc25c1c286bb17196ee5112b89eb3d7a4b620f8a6f5427909a0fbd",
-  "search_group_ask": "5894711c360b0d2625ab3c681ea3e8eb95ee91fca7b64caff2e027cdae1ed670",
+  "search_group_ask": "281c2c1afbb8db8e7600bdbc3dc495a4bded850ffd77e2316434e1a3961ebf17",
   "search_group_catalog": "c35d6807cb54ab64bef5271223e0d5507046b228ecea4c89c2f683ae959b3adf",
   "search_group_explanations": "de55908dddf8df1119ad88b8e7369adf147117345d5499b27fa1adf256dadd0f",
   "search_group_go_to": "d15e666568df79d232e80d665e05f5b072ae467bc7fcfea716a6ff1a1f061a80",
@@ -31,8 +31,8 @@
   "search_memory": "9970f62e86e6ded9c2ce10b376ca109ca03536b8c5b3de041781097483029717",
   "search_mistakes_notebook": "4e3e946372cf6019819a1d6a0d8530864a281f48605e14d40def3a13c40a4d0b",
   "search_mock_exam": "22b7d5f321102ffa7a5596a8ee45ca79b775af0ce29618d43fda4679e934eb46",
-  "search_open": "77284e5a0eef0dc347488af1ebfda5e2f476d434a2aad40be9cdce61b4e05a31",
-  "search_placeholder": "9305695887aea9f4d7b289c4f4a44edca73d161f2189b07365268678cb3fe9d1",
+  "search_open": "5760f70e491ee905bb386c1db02d4fcf9862747b1c6793ddfd229963ac4705b6",
+  "search_placeholder": "d3bb755bf28982ad373e82f37bb782d792ad2d6ee2fa2429a546ebded3dcdab4",
   "search_practice_mistakes": "b1c409d0952301240e9a87aecc1498086ba020bad01b5f922a88c71750364b78",
   "search_preferences": "204ea34c805cd8176ac04765f81bf14391f0a548d18be969a141fbe2eb80028f",
   "search_pricing": "5bc6f3f84daccda90a5952fde20b358858931d45b20ae2b7a00e3fdce39e1e24",
@@ -50,8 +50,8 @@
 }
 -->
 <resources>
-    <string name="search_placeholder">Suchen oder fragen…</string>
-    <string name="search_open">Suchen oder fragen</string>
+    <string name="search_placeholder">Such etwas oder stell eine Frage…</string>
+    <string name="search_open">Such etwas oder stell eine Frage</string>
     <string name="search_close">Suche schließen</string>
     <string name="search_clear">Suche löschen</string>
     <string name="search_continue_failed">Dein nächster Schritt konnte nicht geöffnet werden. Versuch es noch einmal.</string>
@@ -64,13 +64,13 @@
     <string name="search_group_catalog">Im Katalog</string>
     <string name="search_group_account">Mein Konto</string>
     <string name="search_group_help">Hilfe</string>
-    <string name="search_group_ask">Fragen</string>
+    <string name="search_group_ask">Frag</string>
     <string name="search_group_new_goal">Neues Ziel</string>
     <string name="search_continue">Heutige Lerneinheit fortsetzen</string>
     <string name="search_take_mock">Probeprüfung machen</string>
     <string name="search_take_mock_detail">Ganz, halb oder ein Fach</string>
     <string name="search_practice_mistakes">Deine Fehler üben</string>
-    <string name="search_ask_buddy">%1$s fragen…</string>
+    <string name="search_ask_buddy">Frag %1$s…</string>
     <string name="search_start_new_goal">Ein neues Ziel starten</string>
     <string name="search_buddy_keyword">Kumpel</string>
     <string name="search_mistakes_notebook">Fehlerheft</string>
@@ -92,7 +92,7 @@
     <string name="search_preferences">Präferenzen</string>
     <string name="search_appearance">Erscheinungsbild</string>
     <string name="search_language">Sprache</string>
-    <string name="search_ask_question">%1$s fragen: „%2$s“</string>
+    <string name="search_ask_question">Frag %1$s: „%2$s“</string>
     <string name="search_ask_detail">Öffnet den Chat</string>
     <string name="search_start_new_goal_named">Neues Ziel starten: „%1$s“</string>
     <string name="search_start_goal_named">Ziel starten: „%1$s“</string>

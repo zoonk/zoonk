@@ -12,13 +12,13 @@
   "limit_help_guest_day": "68a7410d80fe3d11e40592cf6051e4e92f72a66b5e27c65a71225da3f3fadf1d",
   "limit_help_guest_total": "5119aced2783d56a893e8412d3bfa5e5e8338ed814afa3e1d26c3ec2f0af8e3d",
   "limit_help_plus": "8d7b4291a39e1c9fdee6ac6b779f3ca8c5c09a49dca5296a7f27325b1b2fb61a",
-  "limit_lessons_free_day": "292f11d4fe8cb511db5e46172ecb1b1df9f1c7c4d46df471481a75f7e39462b9",
-  "limit_lessons_free_month": "6917cda857dbac362defccd7afd440bd3f568863e644c84119a1080bddee92c1",
-  "limit_lessons_guest": "d085b0e287665597ccbed9c44a30e17e83c60502b8ca8847efd40470c99c9f65",
-  "limit_lessons_plus": "f0748fa1a9aa73058eb9b3c3eca6cdf0c5fd379d407bc05f3d80dfa6c82010c8",
+  "limit_lessons_free_day": "e832719d0023093a5957c4456d1f55d4f518281dc13528d8e546281c8a582f8d",
+  "limit_lessons_free_month": "8a0515c1f90f5f1390aad0f99adda9dcb0ab47622c123369c9aa5a9d30f2776f",
+  "limit_lessons_guest": "fceae406eba04648ee0e6bcb2e9d2dfb7beff7b85893e6252609d85b85552125",
+  "limit_lessons_plus": "71ebc5b84b8170ebfc7c216dfc107d371f7478ed30d99bda09c609f2153421c4",
   "limit_mind_maps_free_day": "39f00567f85a1d20c4a6405ded6f19ee58a16f9b85f0284fd4acf1d5f85deb99",
   "limit_mind_maps_free_month": "24194f460709be6408ea65c17b36194e70edd2de06fc48d3f35b3f90d27baba3",
-  "limit_mind_maps_guest": "990f329f2dbe1ef90499d493a5f83a9876de45e1599e5a58162184e21d02f364",
+  "limit_mind_maps_guest": "7ffa8b9a123a408c1b0dce783c5bdb5ac865f8e39cb69a68446ce509bdc71052",
   "limit_mind_maps_plus": "a5153c1fb84e431ef276337cef823fee0f09c76013bdb9ddf1c56a09043ccbb0",
   "limit_outlines_free_day": "77c080feb8e573c95bd4b396224decb79457a869d4f037a3561d83373ffe93e3",
   "limit_outlines_free_month": "9136de11cebe8623b1de8fc4f32645230b4f7e0f436b42c281e3ee71c865fa51",
@@ -26,24 +26,24 @@
   "limit_outlines_plus": "3c2c3db1193021cf332bf66675066489c085a8b6f09ada62da0715e794953ec4",
   "limit_see_plus": "8245d1fc0f3eb8d0d5dbb7a57f8f6495fa85924b42890dd4e82ebab95bd5dccc",
   "limit_sign_up_required": "92c02f1bfe7ecdba101db07a38f44fb17a33b7d90c48736b41cf8f36d1e79a8d",
-  "limit_slow_down": "7c080352e5a3616b77eeb1809c6ad287806b35f5b726cb2c0222939fde46282a"
+  "limit_slow_down": "71b253e518db1136a43a8b04d39b8ab728df1c5e3c46cdf140b26ae5ebd0d5f0"
 }
 -->
 <resources>
     <string name="limit_create_account">Kostenloses Konto erstellen</string>
     <string name="limit_see_plus">Plus ansehen</string>
-    <string name="limit_slow_down">Mach eine kurze Pause und versuch es dann erneut.</string>
+    <string name="limit_slow_down">Mach eine kurze Pause und versuch es dann noch einmal.</string>
     <string name="limit_sign_up_required">Erstelle ein kostenloses Konto, um fortzufahren.</string>
     <string name="limit_help_guest_total">Du hast die kostenlose Hilfe ohne Konto aufgebraucht. Erstelle ein kostenloses Konto, um weiterzumachen.</string>
     <string name="limit_help_guest_day">Du hast die kostenlose Hilfe für heute aufgebraucht. Erstelle ein kostenloses Konto, um weiterzumachen.</string>
     <string name="limit_help_plus">Du hast die Hilfe für heute aufgebraucht. Morgen steht sie dir wieder zur Verfügung.</string>
     <string name="limit_help_free_month">Du hast die Hilfe für diesen Monat aufgebraucht. Nächsten Monat steht sie dir wieder zur Verfügung. Mit Plus kannst du jetzt weitermachen.</string>
     <string name="limit_help_free_day">Du hast die Hilfe für heute aufgebraucht. Morgen steht sie dir wieder zur Verfügung. Mit Plus kannst du jetzt weitermachen.</string>
-    <string name="limit_lessons_guest">Du hast die Lektionen ausprobiert, die dir ohne Konto zur Verfügung stehen. Erstelle ein kostenloses Konto, um weiterzumachen.</string>
-    <string name="limit_lessons_plus">Das waren alle neuen Lektionen für heute. Morgen stehen dir wieder neue zur Verfügung.</string>
-    <string name="limit_lessons_free_month">Das waren alle neuen Lektionen für diesen Monat. Nächsten Monat stehen dir wieder neue zur Verfügung. Mit Plus kannst du jetzt weitermachen.</string>
-    <string name="limit_lessons_free_day">Das waren alle neuen Lektionen für heute. Morgen stehen dir wieder neue zur Verfügung. Mit Plus kannst du jetzt weitermachen.</string>
-    <string name="limit_mind_maps_guest">Du hast die Mindmap erstellt, die du ohne Konto ausprobieren kannst. Erstelle ein kostenloses Konto, um weitere zu erstellen.</string>
+    <string name="limit_lessons_guest">Du hast die Lektionen ausprobiert, die ohne Konto verfügbar sind. Erstell ein kostenloses Konto, um weiterzulernen.</string>
+    <string name="limit_lessons_plus">Das waren alle neuen Lektionen für heute. Morgen sind wieder neue verfügbar.</string>
+    <string name="limit_lessons_free_month">Das waren alle neuen Lektionen für diesen Monat. Nächsten Monat sind wieder neue verfügbar. Mit Plus kannst du jetzt weiterlernen.</string>
+    <string name="limit_lessons_free_day">Das waren alle neuen Lektionen für heute. Morgen sind wieder neue verfügbar. Mit Plus kannst du jetzt weiterlernen.</string>
+    <string name="limit_mind_maps_guest">Du hast die Mindmap erstellt, die du ohne Konto ausprobieren kannst. Erstell ein kostenloses Konto, um weitere zu erstellen.</string>
     <string name="limit_mind_maps_plus">Das waren alle neuen Mindmaps für heute. Morgen kannst du weitere erstellen.</string>
     <string name="limit_mind_maps_free_month">Das waren alle neuen Mindmaps für diesen Monat. Nächsten Monat kannst du weitere erstellen. Mit Plus kannst du jetzt weitermachen.</string>
     <string name="limit_mind_maps_free_day">Das waren alle neuen Mindmaps für heute. Morgen kannst du weitere erstellen. Mit Plus kannst du jetzt weitermachen.</string>

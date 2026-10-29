@@ -386,7 +386,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu certo. Tente novamente em instantes."
+            "value" : "Não deu certo. Tente de novo em instantes."
           }
         }
       }
@@ -426,7 +426,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -444,7 +444,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -519,7 +519,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tendrás tu propio plan sobre el mismo tema, a tu ritmo. Unas preguntas permitirán omitir lo que ya sabes."
+            "value" : "Tendrás tu propio plan para la misma asignatura, a tu ritmo. Después, unas preguntas te permitirán saltarte lo que ya sabes."
           }
         },
         "fr" : {

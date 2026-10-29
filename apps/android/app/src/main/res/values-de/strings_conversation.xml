@@ -10,9 +10,9 @@
   "conversation_below_level": "ea8be04fadcb220eadaf702fc6a60ac435d493ce9b6a728e41bd60d87182d29d",
   "conversation_better": "21b65ba8c1ffc50184ce2adf30ae0dcb999c26faf202738377b882e88f1576ff",
   "conversation_brain_power": "65ee3834c6e6e9625eeaf871f7f2de8de39800bf3aeebe1512ec1ba300c793fb",
-  "conversation_brief_note": "95850ba000f8a9afd90673ca757f8808a64315cfccaa32f57ab9f9f3af68d44d",
+  "conversation_brief_note": "bec77c4d3929715d739d07ce1447270326364554e0ccec438fbc9ce4b19894a2",
   "conversation_by_criterion": "78d59154876a88e3cfe16667d2f794a68d3ed816baa0cc6c4549f7958ec63351",
-  "conversation_call_again": "d10f11e02db476bc4469cc291cb7d8db3161c6f3c7ce28c4dd4e601f1f4df820",
+  "conversation_call_again": "fa4c7bde3a7bb8f0ac69ad29c4a4252c32697911c105337b03fa808d874b8295",
   "conversation_call_length": "9a6b5bd606eae20d8278fdb6ef32bf52f9a87f6ca746f579406a96eb826f15fb",
   "conversation_calling": "c7cea49b15e0307562ba0ed2d1a026454b55002a8b4c0d480682a96a8ac2a67d",
   "conversation_calls_need_account": "1e72744b3412530031a0d92803ac735167b185d0175ec3c9022d015d86dd2efb",
@@ -39,7 +39,7 @@
   "conversation_criterion_task": "c6dd13da5853630450270555d085a3b711285e37173add35d42b8ca5f73bd741",
   "conversation_criterion_vocabulary": "ecb502cccb92c8ffac5ed4f1a2e9380ec2d506ccd2a97fc72bdda67e0473efca",
   "conversation_diff_line": "932dfa9d1e01f7639118fcbb51c3b4d63cb76ad0868cef2c2de162235f78c3cb",
-  "conversation_dropped": "2a23a9d4bf16aa5cdaacfbbed0b2342f1b4fe07ba95a70b9ca003aac9ea3dd93",
+  "conversation_dropped": "ba05711da75f1691a0a59bf6d348c50099cb5e043079e27b089d99e50bf8b0ca",
   "conversation_dropped_title": "8bc3f65b4e95a31bc83365ba5fe9648904d43188bdbc7744d952c38995b41a81",
   "conversation_end": "240beeed2080e5abb5205727cca3de1877fc14d66bb3a62cc0682a9dbbeefd49",
   "conversation_end_call": "95af89aa230f36c2ce5e6d345e423254fe2e3f3ce1dafbb8a115073b0e90f1e5",
@@ -87,9 +87,9 @@
   "conversation_near_level": "7d1896e7a23801b4cdc18a4d1d59ef2a73a4ca2f47abe2e597c96eea69f31422",
   "conversation_no_calls_month": "4c171f2abc5d42247ba2e5d7a11a4ed82ddf28003a3d8afd783a9374a2068a70",
   "conversation_no_calls_today": "75199a3fb8f5750e929642fa468c2877565adb804d9b180d5650384d26094bbb",
-  "conversation_no_estimate": "8ca05a310ee2302ab488a5a25f82b1905d4bc76d3ae1d65acb1b2b25ad35caba",
+  "conversation_no_estimate": "88ac541282b18b0183d09da26981aa5e987f328cdcaca4f62ea8be7920b816ec",
   "conversation_no_estimate_title": "e49e5b6d663939d3653f48d097b0c1b0675c49acff9d6ddb4ecdd335bb955584",
-  "conversation_no_score": "de5674a8c380d517a9dfdf5e67ebebd67a71a527d43945d881708730d62d677c",
+  "conversation_no_score": "050df04020e86abbd360737d08fb93b10840bc406a7fe0d18b449b45fad7c6dd",
   "conversation_no_score_title": "e2744d0d5de19b2e49596affe213d4a3d607cec65f0af2887931e9912609796f",
   "conversation_not_connected": "a01ce46973f859a262459382bbbb159b053b0ae30d0210bb896432ee7a66de06",
   "conversation_not_connected_title": "46265df20a91cb9022626e38904ff67ca6b1670bf01b3fd411ef49064ba6cf18",
@@ -100,7 +100,7 @@
   "conversation_opens_and_card": "8b8d0f4b8f7273ea2ff2ef3e2431a6f8c45fe541092fa0c5cee041d4ac563137",
   "conversation_opens_here": "3cc12792fb86573b68be8528a0555af63f3048a69e5151e876b04dbcb8fdbaa5",
   "conversation_opens_when_ready": "30c1d9958390898d12c9cbdccbe724abb3097a6fc81188d822bf1ceecf2d5e3c",
-  "conversation_paused": "5ba533f23f564b4058375ada032f9c9e458a35a89d62f6cce222bb56e3bb4424",
+  "conversation_paused": "7fef6fcaeb21b8291e0d9e35896cb51ab3d570aa7720971d65d72d488390e366",
   "conversation_paused_title": "ddcd52d0471b3fe2eb470dc57cff5401bde0deed0e324dd6e601081fc0e9538b",
   "conversation_phrases": "c4f55b95155865170de5d2c10402f4ca1bd47311bd7f28aa5f2d89c73349b944",
   "conversation_practice": "cf3c8d330ad470ef4121cd013f0df670f1b48c50084238f5d4ed345223823fda",
@@ -129,7 +129,7 @@
   "conversation_stars": "b14a53934175d7308c76707c9f7d505009f1488cea3d85c3702a1fe79b813547",
   "conversation_stars_rule": "cd608c10c226a942fa8a2acc5a653a5d15eebfc1995b7fa93cf5a0b400413e8d",
   "conversation_start": "8f3593d07fd429562d670a6276e8f04939841f0394e41bd68b4e1a5ad9af1713",
-  "conversation_start_failed": "e9e78499bc000729eba4de089c519493d31fe69c4c052d43aaabda1f2ad1b0ce",
+  "conversation_start_failed": "6510ab840850e11122fb2f8cb5b4f39fb527bb6a397f903ef031a8c033422cbd",
   "conversation_start_preparing": "997e5dd65b804951f9742adc44a3809a7d78c0e33d53dd109be0c6f3966dd535",
   "conversation_starting": "4cc25e058f47e9ac5a1d4049fc13c74eef173dcecab745e0f1ee298e65667e02",
   "conversation_still_closing": "d5437f3ce77c03bea2a4f644cf0344f65155a1752ba735995ce281bab219bf1b",
@@ -141,10 +141,10 @@
   "conversation_tip": "16c5940a6149a298f992262e554a4f4fb6bb0d94e6097c9b18f944cad2101e35",
   "conversation_to_improve": "c51083daa5c5057f539e3c5bf009ef796bcbd2c5c8d885d6eed60ee924a9981d",
   "conversation_toefl_mock": "f229563f310bf5053028f0bcaf0024f3898a2eaa2e7f4c899e3ff0ad8f0e24e3",
-  "conversation_try_again": "b7535df51a9e59ab0b2d08c831b304b7021179d257ee38498893aa1bbfc2d559",
-  "conversation_try_again_later": "277bf6c5df7dfceed3f3bb99aaa9196a507dda2367336006bb44b13e903292e6",
-  "conversation_try_another_mock": "4d0a7d0adc90cf0af703f48a96ede4a4cd9446a63d411d9dfa6e1cfd5f7fb967",
-  "conversation_try_new_card": "a23b9922baa501280737893d810268b6636499cc6213b85e2bbe7d1238fbec33",
+  "conversation_try_again": "26e24c2f8cd99e7ca338e09574977a1df99479d3727d22ec1aaf356387de40e7",
+  "conversation_try_again_later": "7aa863cd023812fb0cb93e8dc4b61d1b7f974ca293fc9c40a053e586fab7f8c2",
+  "conversation_try_another_mock": "6a1f68467523c08139bd771ea5ccb13d30c0969bd676a3f2ddcecf91556156c1",
+  "conversation_try_new_card": "6787e32859c28be3edbe0824d10d8c362011e51e9f292b5e48760ad0395fdd0f",
   "conversation_type_reply": "30c893b421a0cc1c259138784c8c279b3f3bcda4d4d0b0e1a416ad48488c6d0a",
   "conversation_type_reply_hint": "abef33cc231830fef9957f16a95a72441fb5d0394593865710adbb222e7db2de",
   "conversation_typed_note": "ea4af1dcee155567bfe530dc0ddee5eb13a5e058ee5f03e1ea20c3de9bd29a41",
@@ -185,7 +185,7 @@
     <string name="conversation_mic_note">Sprich oder schreibe. Das Mikrofon wird nur während des Gesprächs verwendet.</string>
     <string name="conversation_start">Gespräch starten</string>
     <string name="conversation_starting">Wir starten das Gespräch…</string>
-    <string name="conversation_start_failed">Das Gespräch konnte nicht gestartet werden. Versuch es gleich noch einmal.</string>
+    <string name="conversation_start_failed">Das Gespräch konnte nicht starten. Versuch es gleich noch einmal.</string>
     <string name="conversation_challenge_plus">Gesprächsherausforderungen sind in Plus enthalten. Dein Plan geht auch ohne sie weiter.</string>
     <string name="conversation_not_found_title">Wir konnten dieses Gespräch nicht finden</string>
     <string name="conversation_not_found_description">Der Link ist vielleicht veraltet oder enthält einen Tippfehler.</string>
@@ -228,17 +228,17 @@
     <string name="conversation_taken_over">Es wurde beendet, als du ein anderes Gespräch begonnen hast.</string>
     <string name="conversation_ended">Starte ein neues Gespräch, um weiter zu üben.</string>
     <string name="conversation_paused_title">Gespräche sind pausiert</string>
-    <string name="conversation_paused">Das gilt gerade für alle. Versuch es später noch einmal.</string>
+    <string name="conversation_paused">Das betrifft gerade alle. Versuch es später noch einmal.</string>
     <string name="conversation_in_progress_title">Du führst bereits ein Gespräch</string>
     <string name="conversation_in_progress">Es ist auf einem anderen Gerät oder in deinem Browser geöffnet. Wenn du es hier beendest, erhältst du kein Feedback dazu.</string>
     <string name="conversation_take_over">Dieses Gespräch beenden und das neue starten</string>
     <string name="conversation_dropped_title">Die Verbindung wurde unterbrochen</string>
-    <string name="conversation_dropped">Verbinde dich erneut oder beende das Gespräch, um Feedback zu dem zu bekommen, was du gesagt hast.</string>
+    <string name="conversation_dropped">Starte das Gespräch noch einmal oder beende es, um Feedback zu deinen Antworten zu bekommen.</string>
     <string name="conversation_end_call">Gespräch beenden</string>
-    <string name="conversation_call_again">Erneut verbinden</string>
+    <string name="conversation_call_again">Gespräch noch einmal starten</string>
     <string name="conversation_not_connected_title">Das Gespräch konnte nicht verbunden werden</string>
     <string name="conversation_not_connected">Das kommt manchmal vor. Versuch es gleich noch einmal.</string>
-    <string name="conversation_try_again">Erneut versuchen</string>
+    <string name="conversation_try_again">Noch einmal versuchen</string>
     <string name="conversation_writing_feedback">Wir erstellen dein Feedback…</string>
     <string name="conversation_writing_feedback_slow">Wir erstellen noch dein Feedback. Das dauert länger als üblich.</string>
     <string name="conversation_rating">Wir bewerten dein Sprechen nach den Prüfungskriterien. Das dauert normalerweise etwa eine halbe Minute.</string>
@@ -253,7 +253,7 @@
     <string name="conversation_not_this_time">Diesmal noch nicht</string>
     <string name="conversation_goals_tile">Ziele</string>
     <string name="conversation_brain_power">Brain Power</string>
-    <string name="conversation_try_again_later">Nichts geht verloren: Das Gespräch kommt zurück, damit du es erneut versuchen kannst.</string>
+    <string name="conversation_try_again_later">Nichts geht verloren: Das Gespräch kommt zurück, damit du es noch einmal versuchen kannst.</string>
     <string name="conversation_stars_rule">Ein Stern fürs Abschließen, einer dafür, dass du alles vermittelt hast, und einer für ein Gespräch ohne Hilfe.</string>
     <string name="conversation_went_well">Was gut lief</string>
     <string name="conversation_said_well">Sätze, die du gut formuliert hast</string>
@@ -336,15 +336,15 @@
     <string name="conversation_below_level">Unter Niveau %1$s</string>
     <string name="conversation_level_line">Auf diesen Skalen entspricht %1$s dem Level %2$s.</string>
     <string name="conversation_typed_note">Du hast deine Antworten getippt. Deshalb berücksichtigt diese Einschätzung nicht, wie du sprichst.</string>
-    <string name="conversation_brief_note">Du hast bei dieser Aufgabe wenig gesagt, deshalb gab es nicht viel zu beurteilen. Ein längerer Versuch ermöglicht eine genauere Einschätzung.</string>
+    <string name="conversation_brief_note">Du hast bei dieser Aufgabe wenig gesagt, deshalb gab es nicht viel zu beurteilen. Mit einer längeren Antwort lässt sich dein Ergebnis genauer schätzen.</string>
     <string name="conversation_focus">Fokus</string>
     <string name="conversation_not_rated">Nicht bewertet</string>
     <string name="conversation_estimate_sound">Eine Einschätzung auf Grundlage einer Übungsaufgabe, kein offizieller Score. Deine Aussprache wird danach bewertet, wie gut man dich versteht, niemals nach deinem Akzent.</string>
     <string name="conversation_estimate">Eine Einschätzung auf Grundlage einer Übungsaufgabe, kein offizieller Score.</string>
     <string name="conversation_work_on_first">Übe das zuerst</string>
     <string name="conversation_no_estimate_title">Für diese Aufgabe gibt es keine Einschätzung</string>
-    <string name="conversation_no_estimate">Versuche die Aufgabe erneut, wenn du bereit bist.</string>
-    <string name="conversation_try_new_card">Versuche diese Aufgabe mit einer neuen Karte</string>
+    <string name="conversation_no_estimate">Versuch die Aufgabe noch einmal, wenn du so weit bist.</string>
+    <string name="conversation_try_new_card">Versuch diese Aufgabe mit einer neuen Karte</string>
     <string name="conversation_go_to_task">Zu Aufgabe %1$s</string>
     <string name="conversation_every_criterion">Alle Kriterien ansehen</string>
     <string name="conversation_by_criterion">Nach Kriterium</string>
@@ -354,8 +354,8 @@
     <string name="conversation_mock_band_toefl">Geschätzte Bandstufe, von 1 bis 6</string>
     <string name="conversation_mock_estimate">Eine Einschätzung auf Grundlage einer kurzen Probeprüfung, kein offizieller Score.</string>
     <string name="conversation_no_score_title">Für diese Probeprüfung gibt es keinen Score</string>
-    <string name="conversation_no_score">Versuche eine weitere, wenn du bereit bist.</string>
-    <string name="conversation_try_another_mock">Weitere Probeprüfung versuchen</string>
+    <string name="conversation_no_score">Versuch eine andere, wenn du so weit bist.</string>
+    <string name="conversation_try_another_mock">Eine weitere Probeprüfung versuchen</string>
     <string name="conversation_mock_delivery">Sprechtempo und Aussprache</string>
     <string name="conversation_mock_elaboration">Klare, ausführliche Antworten</string>
     <string name="conversation_mock_fluency_coherence">Flüssigkeit und Zusammenhang</string>

@@ -472,13 +472,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld frappe en trop."
+                  "value" : "%lld appui en trop."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld frappes en trop."
+                  "value" : "%lld appuis en trop."
                 }
               }
             }
@@ -735,7 +735,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Un rythme de %1$lld pas avec un temps tous les %2$lld pas. Tape aux pas %3$@, en suivant un clic à chaque temps."
+            "value" : "Un rythme de %1$lld pas, avec un temps tous les %2$lld pas. Appuie aux pas %3$@, en suivant le clic qui marque chaque temps."
           }
         },
         "pt" : {
@@ -851,7 +851,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tonverzögerung erneut prüfen"
+            "value" : "Tonverzögerung noch einmal prüfen"
           }
         },
         "es" : {
@@ -1078,7 +1078,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Le son de ton casque peut arriver avec un léger retard. Tape une fois en suivant %lld clics pour que tes rythmes soient évalués avec précision sur cet appareil."
+            "value" : "Le son peut arriver avec un léger retard dans le casque. Appuie une fois au rythme de %lld clics pour que tes rythmes soient évalués équitablement sur cet appareil."
           }
         },
         "pt" : {
@@ -2076,7 +2076,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La frappe %1$lld est arrivée avec %2$lld ms d’avance."
+            "value" : "L’appui %1$lld avait %2$lld ms d’avance."
           }
         },
         "pt" : {
@@ -2111,7 +2111,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La frappe %1$lld est arrivée avec %2$lld ms de retard."
+            "value" : "L’appui %1$lld avait %2$lld ms de retard."
           }
         },
         "pt" : {
@@ -2140,7 +2140,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La frappe %lld a été manquée."
+            "value" : "L’appui %lld a été manqué."
           }
         },
         "pt" : {
@@ -2169,7 +2169,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tape ici"
+            "value" : "Appuie ici"
           }
         },
         "pt" : {
@@ -2204,7 +2204,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tape à chaque clic · %1$lld sur %2$lld"
+            "value" : "Appuie à chaque clic · %1$lld sur %2$lld"
           }
         },
         "pt" : {
@@ -2256,7 +2256,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido reproducir el sonido. Aun así, puedes ver todas las notas."
+            "value" : "No se ha podido reproducir el sonido. Aún puedes ver todas las notas."
           }
         },
         "fr" : {
@@ -2337,7 +2337,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch mal versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -2366,7 +2366,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten nicht genug Tipps den Klicks zuordnen. Versuch es noch mal und tippe bei jedem Klick."
+            "value" : "Wir konnten nicht genug deiner Tippbewegungen den Klicks zuordnen. Versuch es noch einmal und tipp bei jedem Klick."
           }
         },
         "es" : {

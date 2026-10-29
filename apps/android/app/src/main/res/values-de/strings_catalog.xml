@@ -52,7 +52,7 @@
   "catalog_level_overview": "c26df01b2f68accaa40ce66d2e1fb9b1470878cce6609389350c7aa7fdbc4858",
   "catalog_level_week": "1cbae22910fe494f3e25370f573c2f14e110d45139f20874fa5833f5fde2167a",
   "catalog_level_weeks": "4bdd6132d58b9c2f7523fb11e1c671fd6168e72b403ae5473643fff701f77a4e",
-  "catalog_load_more_failed": "17d5741cff91b80b57f09da03d6fb99ca1edecd1cbf4f2b1ee7604e4f8561558",
+  "catalog_load_more_failed": "405c3a48fc98f6c844665b6b0f1e389dedf93d8c8b37a132287824750d7f4684",
   "catalog_loading_more": "3c8a25111c0418c43a93e2dae9ef7f85ed926ae9d2616523d264239740fa535e",
   "catalog_no_sign_up": "92862e52e8b2b5212887c185e46cafb3d27734b9d02a2db85e88cfcd9341ffd8",
   "catalog_not_found_description": "3050813ff2224a6edc9828142300c9df3c9110c46e0f06714006de72a4bd49c0",
@@ -111,7 +111,7 @@
   "catalog_subtitle": "b52666b51086d3f1a6b9c91d2fde8204daad88a73b3c546be3cf07bae021638f",
   "catalog_this_chapter": "3fd576b4441f4e979e22e1cc46ec49d7de78ca7eb6f521565f5c006dbd277db5",
   "catalog_title": "344b6ed5d007612532d08bd7e9beeb7f692f8e221079443a4dafe2a02106831d",
-  "catalog_try_lesson": "d85a233a06b83c72a5b89fe22bd407dd5ac3473892b609cf698eaa01ae2d4e75",
+  "catalog_try_lesson": "d770f94f99c9498cb34ae9f1c8e4f7dbd00c647967c0c9602a5183faa24c7090",
   "catalog_try_place": "7e966cf12a77f2bd4286225020e6a753c0f62ff400521f0606d693bc23129094",
   "catalog_try_title": "e580e58ac44fc821e6644f75e10c44a5955e6d6173d14ca63ccd5bcd49bcb422",
   "catalog_what_you_learn": "f0be53c0f2e7f7ddd30c6c37a18bb9b533f4c53c9085438111f5fa20e4ec89f9",
@@ -158,7 +158,7 @@
     <string name="catalog_empty_description">Es gibt noch keine Kurse.</string>
     <string name="catalog_start_goal">Ein Ziel starten</string>
     <string name="catalog_loading_more">Weitere Kurse werden geladen…</string>
-    <string name="catalog_load_more_failed">Etwas ist schiefgelaufen. Bitte versuche es erneut.</string>
+    <string name="catalog_load_more_failed">Etwas ist schiefgelaufen. Versuch es noch einmal.</string>
     <string name="catalog_not_found_title">Wir konnten diese Seite nicht finden</string>
     <string name="catalog_not_found_description">Der Link ist möglicherweise veraltet oder falsch eingegeben.</string>
     <string name="catalog_edition_notice">Dieser Kurs ist auch in deiner Sprache verfügbar.</string>
@@ -176,7 +176,7 @@
     <string name="catalog_plan_line_chapter">Mit Zoonk beginnt dein Plan bei diesem Kapitel und passt zu deinem Alltag.</string>
     <string name="catalog_build_plan">Meinen Plan erstellen</string>
     <string name="catalog_continue_plan">Deinen Plan fortsetzen</string>
-    <string name="catalog_try_lesson">Eine Lektion ausprobieren</string>
+    <string name="catalog_try_lesson">Probier eine Lektion aus</string>
     <string name="catalog_start_free">Starte kostenlos, ohne Konto.</string>
     <string name="catalog_try_title">Lektion ausprobieren · kostenlos · %1$s</string>
     <string name="catalog_try_place">%1$s · Lektion %2$s</string>

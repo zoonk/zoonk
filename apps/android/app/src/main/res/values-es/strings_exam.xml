@@ -8,7 +8,7 @@
   "exam_by_subject": "8c4dd89b9c3b6e21699042b90f38e080f9d7b94b1d07bb4fb8b581a8838d176f",
   "exam_calibration": "6804b63503abacb40d1187db1eae4c9be4f089ce3559c94126373673def50d25",
   "exam_calibration_blank_unsure": "52e16b7aba471aad177b2ea831f184e9ac9ca08dbdb1a104dc694e84365ca79d",
-  "exam_calibration_keep_answering": "78d5491f90f985577311cedeb3fd050233da1e5622098b47ff5b8bcd219d1e82",
+  "exam_calibration_keep_answering": "adb4a3ef12076c1cb3a7099efbc679cc40fd2037bdeff00b31abc1245f507593",
   "exam_calibration_right": "e139f54fa8a2772a441af4fe6a4ddea1bda950caeacbc93d6df69674082d10f8",
   "exam_checklist_black_pen": "44c689f499ffb2b4408f3b6865109dca21061bc436be070eda649ba6a57ad368",
   "exam_checklist_count": "b5a142ef979ccaef10ec24af7b4e6e9297c4286596ccd759b8549be785eabea4",
@@ -66,18 +66,18 @@
   "exam_out_of": "ee8c533f2ab990ec5be15ef6623671abf2a72ee7dc6f73a926dd29fe4c2c67ec",
   "exam_pass_marks_language": "be355976e0b126c793b289d925173b7a27d0cd6ca506d9e9cc33c6d62c3ebad8",
   "exam_passed_no": "b8dfcf6d86b11ecbe867a52cd42240734843a67b18dfae1f1e85b47cb71c624e",
-  "exam_passed_unknown": "c148522227636a0ade0002be3595c6043a713a04a7875161c715b46d8179bc04",
+  "exam_passed_unknown": "49223e6ca1e2ed95a95c9c3242bfd8652e5391eb71b01c5c136e2868f4f5fd3a",
   "exam_passed_yes": "a942991058d08daaa66bbc4c9da0c1e5c4fce915e0818338bd12f6000409beb9",
   "exam_prepared": "ad5557025b4673562d6685ad2c4c25aad459dfe15d2d9717815f8e6505637f5c",
   "exam_progress_better": "34565d4f10cd0434972ae10643327077c6503fa9dda855f5b20bbae730cb7d0e",
-  "exam_progress_better_and_needs_work": "829297375e1c8374f594c186fd61d3d2081993015f59db34ec2326e9afa076fa",
+  "exam_progress_better_and_needs_work": "75cecd09706a50a8bc3c0454efc5d56ec761aa5301593b742ec5262d2f00eaef",
   "exam_progress_chart_label": "127d6c755635898f63892a1bb46aa72ae5d6c63b4ba0137c2ab6e5adcda108c4",
-  "exam_progress_locked": "04bdd1d278cf70adb8a2f6c6b97e4052c6ba5528e373590bc83fe629bcfa3770",
-  "exam_progress_needs_work": "66c2a1b2288b87e001889219563243aec4e10fd7d8a8586dd928bbc6b5316309",
-  "exam_progress_no_change": "7d2ec24d6ad1f95c81010a2dda90aa93681abc0e7b1da0f2bb80122e255edeab",
+  "exam_progress_locked": "9c59752730f7d8210e5bf9c8c80bcaac53971357c02c7af037855c9f42750fa1",
+  "exam_progress_needs_work": "252be6e43f0d97c846c05ab6555107610b8f34e3b396eb685c9c0e5873879c98",
+  "exam_progress_no_change": "e41013d630f8f4efac34ff799d06cac6a9163d54eb695d274382178e1592ff08",
   "exam_progress_take_another": "3e7d19437a829f53328f1aa04232773767415bfa6862e62b4a27ebd98e759fe0",
   "exam_progress_title": "d8c03e515313cdd4ba117ddf32627b74d89a59091c905dc3b953ed2b363b1e0d",
-  "exam_progress_trends_later": "044d433a845883652c218cdf5903cdcae4265bf90c39d1c6fdb8ac1c9f5c8284",
+  "exam_progress_trends_later": "490b641c413938b6e2b6f6f897b28a5f6f91cf57a65f1f09729ab29675c6ee00",
   "exam_questions": "249375db4eba18380496cf9752ec0cdbf2d243d3415cc3cd9e54c390df88fbfb",
   "exam_result_detail": "80917728153e3bcdc980fd3f53ef790c0a0fad40d9842e3bbef6ebda44c529e3",
   "exam_result_saved": "54ed1bc7d57a5d862525ce9c540a99258425022679ea489f127460094bb79adb",
@@ -213,7 +213,7 @@
     <string name="exam_did_you_pass">¿Has aprobado?</string>
     <string name="exam_passed_yes">Sí</string>
     <string name="exam_passed_no">No</string>
-    <string name="exam_passed_unknown">Aún no lo sé</string>
+    <string name="exam_passed_unknown">Aún no</string>
     <string name="exam_save_result">Guardar mi resultado</string>
     <string name="exam_mocks_title">Simulacros de examen</string>
     <plurals name="exam_mocks_taken">
@@ -249,12 +249,12 @@
     <string name="exam_since_first_mock">Desde el primer simulacro: %1$s</string>
     <string name="exam_progress_take_another">Haz otro simulacro para ver cómo cambia tu puntuación.</string>
     <!-- %1$s and %2$s are lists of subjects. -->
-    <string name="exam_progress_better_and_needs_work">Has mejorado en %1$s. Necesitas seguir practicando: %2$s.</string>
+    <string name="exam_progress_better_and_needs_work">Has mejorado en %1$s. Aún necesitas trabajar: %2$s.</string>
     <string name="exam_progress_better">Has mejorado en %1$s.</string>
-    <string name="exam_progress_needs_work">Necesitas seguir practicando: %1$s.</string>
-    <string name="exam_progress_no_change">Por ahora no hay grandes cambios en ninguna asignatura.</string>
-    <string name="exam_progress_trends_later">Verás tu evolución por asignatura cuando los simulacros incluyan suficientes preguntas nuevas de cada una.</string>
-    <string name="exam_progress_locked">La evolución de tus puntuaciones en los simulacros y cómo te va en cada asignatura.</string>
+    <string name="exam_progress_needs_work">Aún necesitas trabajar: %1$s.</string>
+    <string name="exam_progress_no_change">Aún no hay grandes cambios en ninguna asignatura.</string>
+    <string name="exam_progress_trends_later">Verás la evolución por asignatura cuando tus simulacros incluyan suficientes preguntas nuevas de cada una.</string>
+    <string name="exam_progress_locked">La evolución de tu puntuación en cada simulacro y cómo vas en cada asignatura.</string>
     <string name="exam_format_one_day">El día del examen</string>
     <string name="exam_format_two_days">Los dos días</string>
     <!-- The title over an exam's days, for three or more: "The 3 days". -->
@@ -287,7 +287,7 @@
         <item quantity="other">%1$d de %2$d correctas</item>
     </plurals>
     <string name="exam_calibration_blank_unsure">Las respuestas de las que no estás seguro te restan más puntos de los que te dan: déjalas en blanco.</string>
-    <string name="exam_calibration_keep_answering">Las respuestas de las que no estás seguro aún te dan puntos: sigue respondiéndolas.</string>
+    <string name="exam_calibration_keep_answering">Las respuestas de las que no estás seguro también suman puntos: sigue respondiendo.</string>
     <string name="exam_to_pass">Para aprobar</string>
     <!-- %1$s is a language's name, such as Spanish. -->
     <string name="exam_pass_marks_language">En %1$s, tal como aparece en los documentos del examen.</string>

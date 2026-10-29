@@ -46,7 +46,7 @@
   "questions_place_wrong": "20de412472a81696e160d0cef8b1833d22536ea5a2bcc2b7ea286f3990dbac59",
   "questions_placement_note": "a00b9f1f7645b53b66481e81ddd8d5431495874042a76944211d12bc88e6a2af",
   "questions_quoted_source": "02c7c552351312bdcec10c4524122ff4c25eb7a79a2927288db896cb20be6ffa",
-  "questions_read_again": "03e35336b3ebbe43047ff9acda2f3dcb08892638c4d8624d9511b6dea0b00270",
+  "questions_read_again": "aeedfc4c7f5c3c3e616fd3d76d64319f11bb751b605e98c9e89ae63a2025d67b",
   "questions_result": "fbc82503be8b0e873eb787f7797e06291d4edcde3fb070d5bcbc4ecd4035087d",
   "questions_right": "0601a4a91208cd71a19c1daf83a6776bc43876f25ab9dc41267fb5cea3fe2476",
   "questions_right_answer": "3d2e7b1d7d0877cc89a93f189dab71007eff1ae74777ed782c581cd44176d4dc",
@@ -125,7 +125,7 @@
     <string name="questions_saved">Salvo no seu caderno de erros</string>
     <string name="questions_saved_tomorrow">Salvo no seu caderno de erros · volta amanhã</string>
     <string name="questions_show_less">Mostrar menos</string>
-    <string name="questions_read_again">Ler tudo de novo</string>
+    <string name="questions_read_again">Leia tudo de novo</string>
     <string name="questions_set_place_audio">Pergunta %1$d de %2$d sobre esta gravação</string>
     <string name="questions_set_place_case">Pergunta %1$d de %2$d sobre este caso</string>
     <string name="questions_set_place_chart">Pergunta %1$d de %2$d sobre este gráfico</string>

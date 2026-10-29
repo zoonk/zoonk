@@ -330,7 +330,7 @@ msgstr "Idioma"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "4tfrGE"
 msgid "Couldn't open your next step. Try again."
-msgstr "Não foi possível abrir seu próximo passo. Tente novamente."
+msgstr "Não foi possível abrir seu próximo passo. Tente de novo."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "60v8Pt"
@@ -701,7 +701,7 @@ msgstr "Carregando mais cursos…"
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "W_5hwr"
 msgid "Something went wrong. Please try again."
-msgstr "Algo deu errado. Tente novamente."
+msgstr "Algo deu errado. Tente de novo."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
@@ -710,7 +710,7 @@ msgstr "Algo deu errado. Tente novamente."
 #: src/components/public/course-start-failure.tsx
 msgctxt "FazwRl"
 msgid "Try again"
-msgstr "Tentar novamente"
+msgstr "Tentar de novo"
 
 #: src/app/[lang]/(app)/(catalog)/courses/layout.tsx
 msgctxt "ONxggU"
@@ -1075,17 +1075,17 @@ msgstr "{email} · Plus"
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "Bq4K5C"
 msgid "For your safety, sign in again, then delete your account."
-msgstr "Para sua segurança, entre novamente e depois exclua sua conta."
+msgstr "Para sua segurança, entre de novo e depois exclua sua conta."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "scfgdM"
 msgid "Sign in again"
-msgstr "Entrar novamente"
+msgstr "Entrar de novo"
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 msgctxt "OR6zpA"
 msgid "We couldn't delete your account. Try again or email hello@zoonk.com."
-msgstr "Não conseguimos excluir sua conta. Tente novamente ou envie um e-mail para contato@zoonk.com."
+msgstr "Não foi possível excluir sua conta. Tente de novo ou envie um e-mail para contato@zoonk.com."
 
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1150,7 +1150,7 @@ msgstr "Baixar"
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 msgctxt "owirfw"
 msgid "We couldn't prepare the download. Try again."
-msgstr "Não conseguimos preparar seus dados para download. Tente novamente."
+msgstr "Não foi possível preparar o download. Tente de novo."
 
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 msgctxt "I4oZQq"
@@ -1351,7 +1351,7 @@ msgstr "Consultando Stripe…"
 #: src/app/[lang]/(app)/(settings)/subscription/stripe-checkout-confirming.tsx
 msgctxt "1A8Z_l"
 msgid "Check again"
-msgstr "Verificar novamente"
+msgstr "Conferir de novo"
 
 #: src/app/[lang]/(app)/(settings)/subscription/subscription-plans.tsx
 msgctxt "uPJSSB"
@@ -1746,7 +1746,7 @@ msgstr "Veja sua taxa de acertos e a evolução semanal nos últimos 90 dias."
 #: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
 msgctxt "33eat_"
 msgid "Weekly score trend"
-msgstr "Evolução semanal do aproveitamento"
+msgstr "Evolução semanal da pontuação"
 
 #: src/app/[lang]/(app)/(stats)/score/score-chart-figure.tsx
 msgctxt "i2_Jga"
@@ -1796,18 +1796,18 @@ msgstr "Período"
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 msgctxt "Ip-YhF"
 msgid "Every answer counts the same, so harder lessons can lower your score for a while."
-msgstr "Todas as respostas têm o mesmo peso, então aulas mais difíceis podem baixar seu aproveitamento por um tempo."
+msgstr "Todas as respostas têm o mesmo peso, então aulas mais difíceis podem baixar sua pontuação por um tempo."
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
 msgctxt "emqpoS"
 msgid "Score · 90 days"
-msgstr "Aproveitamento · 90 dias"
+msgstr "Pontuação · 90 dias"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "eIGEJG"
 msgid "Your score shows after your first answers."
-msgstr "Seu aproveitamento aparece depois das primeiras respostas."
+msgstr "Sua pontuação aparece depois das suas primeiras respostas."
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "kV-RMr"
@@ -2600,17 +2600,17 @@ msgstr "Disponível com o Plus"
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "8oF1Dm"
 msgid "Estimated score · Natural Sciences"
-msgstr "Nota estimada · Ciências da Natureza"
+msgstr "Pontuação estimada · Ciências da Natureza"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "hdNQ5-"
 msgid "Estimated score · SAT"
-msgstr "Nota estimada · SAT"
+msgstr "Pontuação estimada · SAT"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "AIeIsk"
 msgid "By topic"
-msgstr "Por assunto"
+msgstr "Por tópico"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "K1BpxO"
@@ -3072,7 +3072,7 @@ msgstr "Semana {week, number} · simulado"
 #: src/app/[lang]/(home)/_components/stop-practice.tsx
 msgctxt "D32g2O"
 msgid "Questions in your exam's format, and mock exams timed like the real one, with an estimated score."
-msgstr "Perguntas no formato da sua prova e simulados com o mesmo tempo da prova real e pontuação estimada."
+msgstr "Perguntas no formato da sua prova e simulados com o mesmo tempo da prova real e uma pontuação estimada."
 
 #: src/app/[lang]/(home)/_components/stop-practice.tsx
 msgctxt "_xKXo7"
@@ -3180,7 +3180,7 @@ msgstr "Teste de foco"
 #: src/components/public/start-lesson-button.tsx
 msgctxt "K6x1SC"
 msgid "We couldn't open the lesson. Try again, or log in to keep going."
-msgstr "Não conseguimos abrir a aula. Tente novamente ou entre na sua conta para continuar."
+msgstr "Não foi possível abrir a aula. Tente de novo ou entre na sua conta para continuar."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
@@ -3349,7 +3349,7 @@ msgstr "Voltar para Zoonk"
 #: src/app/auth/apple/route.ts
 msgctxt "99__Yc"
 msgid "Your browser didn't open the Zoonk app. Close this page and sign in with Apple again in the app."
-msgstr "Seu navegador não abriu o app do Zoonk. Feche esta página e entre com a Apple novamente no app."
+msgstr "Seu navegador não abriu o app do Zoonk. Feche esta página e entre com a Apple de novo no app."
 
 #: src/app/auth/callback/route.ts
 msgctxt "1KzRxp"
@@ -3495,12 +3495,12 @@ msgstr "Não dá tempo de ver tudo até lá. Antes de começar, você vê quanto
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "Pq4Zco"
 msgid "That's every topic in the course, in depth."
-msgstr "Isso inclui todos os assuntos do curso, a fundo."
+msgstr "São todos os tópicos do curso, estudados a fundo."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "e1oyF_"
 msgid "That's every exam topic in the course, in depth."
-msgstr "Isso inclui todos os assuntos da prova presentes no curso, a fundo."
+msgstr "São todos os tópicos da prova que estão no curso, estudados a fundo."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "YTiAat"

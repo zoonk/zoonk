@@ -52,7 +52,7 @@
   "catalog_level_overview": "32684dfaeb846efa680653113e3c41e0a9cad3b0f832fc683ee9d3b267497ea1",
   "catalog_level_week": "75fb71106500a3183d50383916152da3b3ec8e03c94d7f817a31f00893323b28",
   "catalog_level_weeks": "38b66c64bc3730ee621024507f5a043db703897acd32321c0a3686319852a81e",
-  "catalog_load_more_failed": "007fb3b7d1b46c4714894bfe73391c0dcfdff2d47f0213b9a4b2150d9b45a7dc",
+  "catalog_load_more_failed": "a71d6a0439f3005a510437253913427dfe471865acc08c41ba7a88c0175e0393",
   "catalog_loading_more": "550cc4c867b96aae7e4305a50ac2b701934ac95a800fb1b0d7b566bae1fbcb24",
   "catalog_no_sign_up": "c4b8232c7b498c392bc805c56b0cad6d648ee085a08d1bcdcf444e7779d17abc",
   "catalog_not_found_description": "45b592f8504644d52a699b7358e3cd17bb5f329a8585e74c3f8edc9e36c8e6c6",
@@ -68,8 +68,8 @@
   "catalog_plan_dated_quick": "945f010dae5ee42bff387f43c5eb1396e571589036a4063653db4399c9537819",
   "catalog_plan_dated_some_written": "744e4f304567670f31016f16a9295509d5259783f4f192f2a76e00a9e43167fa",
   "catalog_plan_dated_written_later": "aaf7e0896dfbb27f4045da44d365864ab6f51efb17e723be50775b6ce13c4640",
-  "catalog_plan_every_exam_topic": "a8fee93ed39d5c128e6ddb417b337d12ae8218976f83402df25926fda99942e7",
-  "catalog_plan_every_topic": "1630b5811cf2bd090ddad6791c617045c4a76fb46dc64a3e800ffdb8e98e01f5",
+  "catalog_plan_every_exam_topic": "4385e46efc87eaa2bd9298bb24226b801aa28200e012f19da15d10881b3143f5",
+  "catalog_plan_every_topic": "7185b03fda43cb972dbe50c162f0f40d8ca6909e1050982cdd5b25b144e71143",
   "catalog_plan_finish_around": "ee9935300b87960ee011fc89458c9ab8cfe8bd6662d78981e4293fa7a4356b9f",
   "catalog_plan_lessons": "bf16385097ceda93052cee31f7af0fad65a5399b4f6abbb19dd3602b6a8b4534",
   "catalog_plan_line": "833e1096ff4d92da386f101f0aa51b43d7cae74c929efacab5ca243cff54dad7",
@@ -159,7 +159,7 @@
     <string name="catalog_empty_description">Ainda não há cursos disponíveis.</string>
     <string name="catalog_start_goal">Começar uma meta</string>
     <string name="catalog_loading_more">Carregando mais cursos…</string>
-    <string name="catalog_load_more_failed">Algo deu errado. Tente novamente.</string>
+    <string name="catalog_load_more_failed">Algo deu errado. Tente de novo.</string>
     <string name="catalog_not_found_title">Não encontramos esta página</string>
     <string name="catalog_not_found_description">O link pode ser antigo ou ter sido digitado incorretamente.</string>
     <string name="catalog_edition_notice">Este curso também está disponível no seu idioma.</string>
@@ -225,8 +225,8 @@
         <item quantity="other">até %1$s, estudando %2$s por dia, de segunda a sexta, com o que mais cai primeiro: %3$s das %4$d aulas do curso.</item>
     </plurals>
     <string name="catalog_plan_not_all_fits">Não dá tempo de estudar tudo até lá. Antes de começar, você vê quanto cabe no seu plano, considerando seu nível e seu tempo.</string>
-    <string name="catalog_plan_every_topic">São todos os assuntos do curso, estudados a fundo.</string>
-    <string name="catalog_plan_every_exam_topic">São todos os assuntos da prova que estão no curso, estudados a fundo.</string>
+    <string name="catalog_plan_every_topic">São todos os tópicos do curso, estudados a fundo.</string>
+    <string name="catalog_plan_every_exam_topic">São todos os tópicos da prova que estão no curso, estudados a fundo.</string>
     <string name="catalog_plan_caption">Este é um exemplo. Seu plano segue suas respostas, então pode começar mais adiante e terminar mais cedo.</string>
     <string name="catalog_workload_title">Como o tempo é distribuído</string>
     <string name="catalog_workload_total">%1$s no total</string>

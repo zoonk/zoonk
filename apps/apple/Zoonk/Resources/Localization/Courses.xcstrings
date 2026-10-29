@@ -2353,7 +2353,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deine Verbindung und versuche es erneut."
+            "value" : "Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
@@ -2371,7 +2371,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira sua conexão e tente novamente."
+            "value" : "Confira sua conexão e tente de novo."
           }
         }
       }
@@ -3299,7 +3299,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lecciones aún sin preparar"
+            "value" : "Lecciones aún por preparar"
           }
         },
         "fr" : {
@@ -3328,7 +3328,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las lecciones que aún faltan se prepararán a medida que avances."
+            "value" : "Las lecciones pendientes se preparan a medida que llegas a ellas."
           }
         },
         "fr" : {
@@ -3560,7 +3560,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todavía no hay cursos disponibles."
+            "value" : "Aún no hay cursos disponibles."
           }
         },
         "fr" : {
@@ -3699,7 +3699,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Bitte versuch es gleich noch einmal."
+            "value" : "Bitte versuch es in einem Moment noch einmal."
           }
         },
         "es" : {
@@ -3717,7 +3717,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tente novamente em instantes."
+            "value" : "Tente de novo em instantes."
           }
         }
       }
@@ -4299,13 +4299,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tous les sujets de l’examen abordés dans le cours sont étudiés en profondeur."
+            "value" : "Tous les sujets de l’examen couverts par le cours sont étudiés en profondeur."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso cobre a fundo todos os assuntos da prova presentes no curso."
+            "value" : "Todos os tópicos da prova no curso, estudados a fundo."
           }
         }
       }
@@ -4334,7 +4334,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Isso cobre a fundo todos os assuntos do curso."
+            "value" : "Todos os tópicos do curso, estudados a fundo."
           }
         }
       }
@@ -4585,7 +4585,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Lektion ausprobieren"
+            "value" : "Eine Lektion ausprobieren"
           }
         },
         "es" : {
@@ -4614,7 +4614,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -4632,7 +4632,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }

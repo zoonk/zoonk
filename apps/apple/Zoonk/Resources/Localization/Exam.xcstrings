@@ -673,7 +673,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mejora en %1$@. Aún queda trabajo en: %2$@."
+            "value" : "Has mejorado en %1$@. Aún necesitas trabajar en: %2$@."
           }
         },
         "fr" : {
@@ -1455,7 +1455,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das betrifft gerade alle. Versuch es später noch einmal."
+            "value" : "Das gilt gerade für alle. Versuch es später noch einmal."
           }
         },
         "es" : {
@@ -1722,7 +1722,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Por ahora, ninguna asignatura ha cambiado mucho."
+            "value" : "Aún no hay grandes cambios en ninguna asignatura."
           }
         },
         "fr" : {
@@ -1809,7 +1809,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todavía no"
+            "value" : "Aún no"
           }
         },
         "fr" : {
@@ -2088,7 +2088,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nota"
+            "value" : "Pontuação"
           }
         }
       }
@@ -2279,7 +2279,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún necesitas practicar: %@."
+            "value" : "Aún necesitas trabajar en: %@."
           }
         },
         "fr" : {
@@ -2349,7 +2349,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Faça outro simulado para acompanhar sua nota."
+            "value" : "Faça outro simulado para ver como sua pontuação muda."
           }
         }
       }
@@ -2360,7 +2360,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das hat nicht geklappt. Versuch es gleich noch einmal."
+            "value" : "Das hat nicht geklappt. Versuch es in einem Moment noch einmal."
           }
         },
         "es" : {
@@ -2575,13 +2575,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les derniers jours avant l’examen sont consacrés à des révisions variées et à des examens blancs. Les nouveaux sujets attendront, sauf s’ils comptent beaucoup et sont rapides à étudier."
+            "value" : "Les derniers jours avant l’examen sont consacrés à des révisions variées et à des examens blancs. Les nouveaux sujets attendent, sauf s’ils comptent beaucoup et sont rapides à étudier."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os últimos dias antes da prova são para revisar diferentes assuntos e fazer simulados. Novos assuntos ficam para depois, a menos que tenham muito peso e sejam rápidos de estudar."
+            "value" : "Os últimos dias antes da prova são dedicados a revisões variadas e simulados. Os tópicos novos ficam para depois, a menos que tenham muito peso e sejam rápidos de estudar."
           }
         }
       }
@@ -2592,7 +2592,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Probeprüfung konnte nicht gestartet werden. Versuch es gleich noch einmal."
+            "value" : "Die Probeprüfung konnte nicht gestartet werden. Versuch es in einem Moment noch einmal."
           }
         },
         "es" : {
@@ -2807,13 +2807,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aujourd’hui, étudie les sujets qui reviennent le plus souvent, puis passe un court examen blanc. Ensuite, repose-toi."
+            "value" : "Aujourd’hui, étudie les sujets qui reviennent le plus souvent, puis fais un court examen blanc. Ensuite, repose-toi."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoje é dia de estudar os assuntos que mais caem e fazer um simulado curto. Depois, descanse."
+            "value" : "Hoje é dia de estudar os tópicos que mais caem e fazer um simulado curto. Depois, descanse."
           }
         }
       }
@@ -2842,7 +2842,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoje é dia de estudar os assuntos que mais caem. Depois, descanse."
+            "value" : "Hoje é dia de estudar os tópicos que mais caem. Depois, descanse."
           }
         }
       }
@@ -2865,13 +2865,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aujourd’hui, révise tous les sujets au format de ton examen, en commençant par ceux que tu maîtrises le moins. Ensuite, repose-toi. %@"
+            "value" : "Aujourd’hui, révise tous les sujets au format de ton épreuve, en commençant par ceux que tu maîtrises le moins. Ensuite, repose-toi. %@"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hoje é dia de revisar todos os assuntos no formato da sua prova, começando pelos mais difíceis para você. Depois, descanse. %@"
+            "value" : "Hoje é dia de revisar todos os tópicos no formato da sua prova, começando pelos que você tem mais dificuldade. Depois, descanse. %@"
           }
         }
       }
@@ -2975,7 +2975,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verás la evolución por materia cuando hayas respondido suficientes preguntas nuevas de cada una en los simulacros."
+            "value" : "Las tendencias por asignatura aparecerán cuando tus simulacros incluyan suficientes preguntas nuevas de cada una."
           }
         },
         "fr" : {
@@ -2998,7 +2998,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -3617,7 +3617,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua nota no AP (1 a 5)"
+            "value" : "Sua pontuação no AP (1 a 5)"
           }
         }
       }
@@ -3855,7 +3855,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua nota"
+            "value" : "Sua pontuação"
           }
         }
       }
@@ -3884,7 +3884,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua nota (a média, se houver várias)"
+            "value" : "Sua pontuação (a média, se houver várias)"
           }
         }
       }
@@ -3930,7 +3930,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu puntuación total (de 400 a 1600)"
+            "value" : "Tu puntuación total (de 400 a 1.600)"
           }
         },
         "fr" : {
@@ -3988,7 +3988,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Las respuestas de las que no estás seguro siguen sumando puntos: sigue respondiéndolas."
+            "value" : "Las respuestas de las que no estás seguro también pueden darte puntos: sigue respondiéndolas."
           }
         },
         "fr" : {

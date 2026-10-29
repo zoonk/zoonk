@@ -185,7 +185,7 @@ msgstr "Avance étape par étape"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "4M_1qG"
 msgid "Tap along"
-msgstr "Tape en rythme"
+msgstr "Suis le rythme"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "XUcSce"
@@ -1599,7 +1599,7 @@ msgstr "Le nouveau point d’intersection se trouve à {value}."
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "KP7hl9"
 msgid "Tap a numbered place to see what's there."
-msgstr "Appuie sur un lieu numéroté pour voir ce qui s’y trouve."
+msgstr "Appuie sur un lieu numéroté pour découvrir ce qui s’y trouve."
 
 #: src/activities/map-explorer/map-explorer-activity.tsx
 msgctxt "PAYKae"
@@ -1959,7 +1959,7 @@ msgstr "Chaque atome a toutes ses liaisons."
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "cSgkWf"
 msgid "{atom} is selected. Tap another atom to bond them, or an element to add one bonded to it."
-msgstr "{atom} est sélectionné. Appuie sur un autre atome pour les lier, ou sur un élément pour ajouter un atome qui lui sera lié."
+msgstr "{atom} est sélectionné. Appuie sur un autre atome pour les lier, ou sur un élément pour ajouter un atome lié à celui-ci."
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "FaoZuv"
@@ -2498,7 +2498,7 @@ msgstr "Écoute les clics…"
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "uWojAJ"
 msgid "Tap with each click · {click} of {total}"
-msgstr "Tape à chaque clic · {click} sur {total}"
+msgstr "Appuie à chaque clic · {click} sur {total}"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "U3WmLU"
@@ -2518,7 +2518,7 @@ msgstr "Le son arrive avec environ {ms} ms de retard sur cet appareil. Ce décal
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "ukg6sv"
 msgid "Headphones can play sound a little late. Tap along with {count} clicks once, and rhythms on this device are timed fairly."
-msgstr "Le son peut arriver avec un léger retard dans un casque. Tape une fois au rythme de {count} clics pour que les rythmes tiennent compte de ce décalage sur cet appareil."
+msgstr "Le son du casque peut arriver avec un léger retard. Appuie une fois au rythme de {count} clics pour que le rythme soit évalué correctement sur cet appareil."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "sz0O7I"
@@ -2545,27 +2545,27 @@ msgstr "Passer pour l’instant"
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "T0p6Z6"
 msgid "Tap {tap} came {ms} ms early."
-msgstr "Frappe {tap} en avance de {ms} ms."
+msgstr "Appui {tap} effectué avec {ms} ms d’avance."
 
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "pGYXzO"
 msgid "Tap {tap} came {ms} ms late."
-msgstr "Frappe {tap} en retard de {ms} ms."
+msgstr "Appui {tap} effectué avec {ms} ms de retard."
 
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "-w7n_f"
 msgid "Tap {tap} was missed."
-msgstr "Frappe {tap} manquée."
+msgstr "Appui {tap} manqué."
 
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "DDydNj"
 msgid "{onTime} of {total, plural, =0 {# taps} one {# tap} other {# taps}} on time."
-msgstr "{onTime} sur {total, plural, =0 {# frappe} one {# frappe} other {# frappes}} dans le rythme."
+msgstr "{onTime} sur {total, plural, =0 {# appui enregistré} one {# appui} other {# appuis}} dans les temps."
 
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "73IJ_a"
 msgid "{count, plural, one {# extra tap.} other {# extra taps.}}"
-msgstr "{count, plural, one {# frappe en trop.} other {# frappes en trop.}}"
+msgstr "{count, plural, one {# appui supplémentaire.} other {# appuis supplémentaires.}}"
 
 #: src/activities/rhythm-tapper/rhythm-grid.tsx
 msgctxt "1ozRqb"
@@ -2590,7 +2590,7 @@ msgstr "Prépare-toi…"
 #: src/activities/rhythm-tapper/rhythm-tap-pad.tsx
 msgctxt "FMhLW_"
 msgid "Tap here"
-msgstr "Tape ici"
+msgstr "Appuie ici"
 
 #: src/activities/rhythm-tapper/rhythm-tap-pad.tsx
 msgctxt "uK88Kc"
@@ -2600,7 +2600,7 @@ msgstr "ou appuie sur la barre d’espace"
 #: src/activities/rhythm-tapper/rhythm-tapper-activity.tsx
 msgctxt "eP7OeM"
 msgid "A rhythm of {length} steps with a beat every {perBeat}. Tap on steps {hits}, over a click on every beat."
-msgstr "Un rythme de {length} pas, avec un temps tous les {perBeat} pas. Tape aux pas {hits}, en suivant un clic à chaque temps."
+msgstr "Un rythme de {length} pas avec un temps tous les {perBeat} pas. Appuie aux pas {hits} en suivant le clic à chaque temps."
 
 #: src/activities/source-comparison/source-comparison-activity.tsx
 msgctxt "8bxX7Z"
@@ -2918,7 +2918,7 @@ msgstr "Espace {position} : {item}. {result}."
 #: src/components/fill-blank-step.tsx
 msgctxt "wUEGVH"
 msgid "Blank {position}: {item}. Tap to remove."
-msgstr "Espace {position} : {item}. Appuie pour retirer."
+msgstr "Case vide {position} : {item}. Appuie pour retirer."
 
 #: src/components/fill-blank-step.tsx
 msgctxt "FmmJ_j"

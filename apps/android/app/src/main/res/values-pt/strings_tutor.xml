@@ -18,7 +18,7 @@
   "tutor_ask_question": "c90feeabe10fbdd7bee7c9fc26e83a307072313f6b211cfb616510579ad95a54",
   "tutor_ask_screen": "9d16d23cfa77c801aba271e20aa26c2786c1806bbc3543ea570e8e648c3ac2d8",
   "tutor_ask_subject": "a2857686107e4d0b1c663698faa7f363713390f42d8f244e4f9ec904b657acc0",
-  "tutor_check_again": "e3bcde4c4c7594a96c0e78a2140ce871d6c065341d71301b00c8cbdd3b7527e4",
+  "tutor_check_again": "0d7688eac3f2eede84f7bd4e02570f4d205c2aee9b35e1ab6d6fa7aed53455ca",
   "tutor_close": "0422c9af31670913176efd74aab5b57620c7d85b184cecf2cafb154b71d41165",
   "tutor_description_answer": "b93d043d0cbce110884a50e10aa0aa755ce1cf83777c110156433b2f86b1be5a",
   "tutor_description_chapter": "62618c1872459ade337f8a745613907fd786771fcd94691a380d1d7e6bf84f7e",
@@ -30,12 +30,12 @@
   "tutor_description_subject": "8a2b2159f8c271841a4216b360e1e9dc9d03f60af3a58fe0b64587c039cd32d2",
   "tutor_empty_ai": "e0809ba812df3f812ba0c456b34ba1983bd86bea303042e5b9628e63a25b80a4",
   "tutor_empty_title": "7ed81b95c40a88b322a3411f6bfec787762c4b775a4eb9fb5e5cf52e79783fa6",
-  "tutor_error_failed": "507e2b8a60d915d2753b5d1dbd7e534fbdf926d680dbfc25e3283655105752f8",
+  "tutor_error_failed": "6870befb7403ff851546bdd4c758ca2aeb245057725597fe1431c362b5fc9d51",
   "tutor_error_gone": "42dec4324d42b09c1ed8714858925c621c902f83d9dcf4b7a496f033b59cc25b",
-  "tutor_error_invalid": "a670f8dfed78f3b734aafb464d561e62c910be6fd4301ad97564ee5799f9dff7",
-  "tutor_error_last_question": "97c16e5c4230a1c2522f4c51fa0cdd8c8965e610fbd98c873259687672683c26",
-  "tutor_error_session": "13085db71962e01b3827144107d24221cb2b3db662bc262f6d7846096878b810",
-  "tutor_error_slow_down": "6fee5f688d211ece82e7dd83f62518824523eecd3ebb3be737b262941063aa3f",
+  "tutor_error_invalid": "1c0bb795f2e6d5361f9246313df9bd27f55dd184d40215e02788acf4b409e0c2",
+  "tutor_error_last_question": "c2293722837a14ffa5004a9a966f804e7ef16339aa3398220a51cce062cabe2b",
+  "tutor_error_session": "9656ac5905d6f2dd135e5bdc577cd1408a094f137912960d4edb263a5d506630",
+  "tutor_error_slow_down": "742e3f30b874215c4842c06a6f6b65d53730df2753f25c6adca4a69dc25ad9fb",
   "tutor_error_subscription": "77a12b3f79dc1c24c4f9706162eb0f13cbb98ac3bc1fa8f7dc84c0944458fd55",
   "tutor_get_answer": "87ca2d1e134772e44e675a7442eb75d19153f7872ecfa8fe834fc9802d27eba1",
   "tutor_guest_title": "a63f5bd2bf69ebd91092d590089d75590e4efe4914c5ed4de6f7118a4592dd06",
@@ -44,7 +44,7 @@
   "tutor_link_open": "ea1c7d0735e27705b7290d25f294fa07c6374328a7a49018c774643902355f67",
   "tutor_link_title": "07af914f37369936210a4cdeac29345b81d9f61ca748c34f35e0910df33d0dd4",
   "tutor_load_earlier": "ed521a11a833b526ef23ecc3cbb6e5766f8015d4b9207492d35bc0b92b5b917a",
-  "tutor_load_earlier_failed": "da13841a80dc15d8868f4f4397af97b893294975da530cb0202efef064cb8736",
+  "tutor_load_earlier_failed": "53f382d717606d77195599e50643bba0531421dd5e95335e2f2b641a6e42e38e",
   "tutor_loading": "dde960dfff578b38ff2f488044a43ff453e3178160a3ecbc369f536b377b7c81",
   "tutor_no_answer": "d59b66c67865a67f2731570cc6816cb7ace8cb01076641673f2fd870feb6dd94",
   "tutor_not_answered": "c9dc4673bcac9bbcf9975a5a1dac698f5dfa5ccc061eb768d6de59ea9869a515",
@@ -95,7 +95,7 @@
   "tutor_placeholder_subject": "7aae12a5c438a2cac0ffa8e9fe254274a20a4d49db5e2c3e645efb361c5b032b",
   "tutor_plan_change_apply": "37171734619f81b0673aea32618a89099fdef4c1c15c5cdfbb6c37bdfa1fd749",
   "tutor_plan_change_declined": "3f29350b52a9b8634e1f57426423df1cc843a76e01579eee7a09141a1710b538",
-  "tutor_plan_change_failed": "11f669f38e0b297c6f9c058c76b045c544eecf487cde53f1863f14402ed813b2",
+  "tutor_plan_change_failed": "ba42f4579c7d213cd1f12dad76c11827508c1828f8c9ede7e4208592a7b19a1d",
   "tutor_plan_change_not_now": "dc8760a740ec2bda73f421bb812d7fc54bfe3cd36bf1d7dd80092c833a9179e4",
   "tutor_plan_change_one_week": "8b6df215b87f64be185344f58d84f5482fa67a11fb96027cf464aa92f638c16b",
   "tutor_plan_change_replaced": "bc2b26f694f3873eaf4273d3515db9c8095f0e2974487af2ae003005fe13ae68",
@@ -117,7 +117,7 @@
   "tutor_suggest_walk_through": "3b2caddcf991f9c25433146292e4e4be7d000b0b6a5a6e161fe4df1843db2a51",
   "tutor_thinking": "635f5c62217358520d5531c9210200d942a668595f269c69da2f96980fb7218e",
   "tutor_today": "16b189819affd1f6284847b2ed8444272e5413251c9cd6825d85295d7a01be0e",
-  "tutor_try_again": "e7a898ba8b6d39abc72cf3d620f97b8625e4c7a90dd07a7b2404d902cee6a5ce",
+  "tutor_try_again": "11a58882a8796bea2332c4cd46840004f3ed70586dec030db432aabd1295ee05",
   "tutor_view_plans": "3e8cd1ec9175472d3a927372d63432ebaf1580d99692f1a89991e6df0ca2b1cf",
   "tutor_yesterday": "db0db822c36da2e46ec015f6f671d8ef91fb4f36788c8425440774265846c55f",
   "tutor_your_buddy": "2d2b3030aea0e8c094cff8461694625fdcc6671bf94742b4d3732ebcf6be89db"
@@ -159,21 +159,21 @@
     <string name="tutor_get_answer">Receber resposta</string>
     <string name="tutor_not_answered">Esta pergunta não foi respondida.</string>
     <string name="tutor_answer_failed">A gente não conseguiu terminar esta resposta.</string>
-    <string name="tutor_check_again">Conferir novamente</string>
+    <string name="tutor_check_again">Conferir de novo</string>
     <string name="tutor_no_answer">Nenhuma resposta disponível.</string>
     <string name="tutor_thinking">Pensando…</string>
     <string name="tutor_load_earlier">Carregar perguntas anteriores</string>
-    <string name="tutor_load_earlier_failed">Não foi possível carregar as perguntas anteriores. Tente novamente.</string>
-    <string name="tutor_error_session">Sua sessão expirou. Entre novamente.</string>
+    <string name="tutor_load_earlier_failed">Não foi possível carregar as perguntas anteriores. Tente de novo.</string>
+    <string name="tutor_error_session">Sua sessão expirou. Entre de novo.</string>
     <string name="tutor_error_subscription">Assine para fazer perguntas</string>
     <string name="tutor_error_gone">Esta aula não está mais disponível.</string>
-    <string name="tutor_error_invalid">A gente não conseguiu enviar esta pergunta. Tente novamente.</string>
-    <string name="tutor_error_slow_down">Faça uma pausa curta e pergunte novamente.</string>
-    <string name="tutor_error_failed">Algo deu errado. Tente novamente.</string>
-    <string name="tutor_error_last_question">A gente não conseguiu enviar sua última pergunta. Tente novamente.</string>
+    <string name="tutor_error_invalid">A gente não conseguiu enviar esta pergunta. Tente de novo.</string>
+    <string name="tutor_error_slow_down">Faça uma pausa e depois pergunte de novo.</string>
+    <string name="tutor_error_failed">Algo deu errado. Tente de novo.</string>
+    <string name="tutor_error_last_question">A gente não conseguiu enviar sua última pergunta. Tente de novo.</string>
     <string name="tutor_sign_in">Entrar</string>
     <string name="tutor_view_plans">Ver planos</string>
-    <string name="tutor_try_again">Tentar novamente</string>
+    <string name="tutor_try_again">Tentar de novo</string>
     <string name="tutor_placeholder_chapter">Pergunte sobre este capítulo…</string>
     <string name="tutor_placeholder_mock">Pergunte sobre este simulado…</string>
     <string name="tutor_placeholder_plan">Pergunte sobre seu plano…</string>
@@ -259,7 +259,7 @@
     <string name="tutor_plan_change_undo">Desfazer</string>
     <string name="tutor_plan_change_declined">Não foi aplicada. Seu plano continua como estava.</string>
     <string name="tutor_plan_change_replaced">Uma sugestão mais recente substituiu esta.</string>
-    <string name="tutor_plan_change_failed">Não foi possível salvar. Tente novamente.</string>
+    <string name="tutor_plan_change_failed">Não foi possível salvar. Tente de novo.</string>
     <!-- Above the questions asked that day, in the buddy's conversation. -->
     <string name="tutor_today">Hoje</string>
     <string name="tutor_yesterday">Ontem</string>

@@ -222,13 +222,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · tous les sujets, en commençant par tes points faibles"
+            "value" : "%@ · tous les sujets, en commençant par ceux que tu maîtrises le moins"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ · todos os temas, começando pelos mais difíceis para você"
+            "value" : "%@ · todos os tópicos, começando pelos mais difíceis para você"
           }
         }
       }
@@ -2191,13 +2191,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld question sur chaque sujet, en commençant par ceux que tu maîtrises le moins"
+                  "value" : "%lld question sur tous les sujets, en commençant par ceux que tu maîtrises le moins"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld questions sur chaque sujet, en commençant par ceux que tu maîtrises le moins"
+                  "value" : "%lld questions sur tous les sujets, en commençant par ceux que tu maîtrises le moins"
                 }
               }
             }
@@ -2209,13 +2209,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld pergunta sobre cada assunto, começando pelo mais difícil para você"
+                  "value" : "%lld pergunta sobre cada tópico, começando pelos mais difíceis para você"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld perguntas sobre cada assunto, começando pelo mais difícil para você"
+                  "value" : "%lld perguntas sobre cada tópico, começando pelos mais difíceis para você"
                 }
               }
             }
@@ -2831,7 +2831,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Frag %@ etwas"
+            "value" : "%@ eine Frage stellen"
           }
         },
         "es" : {
@@ -3237,7 +3237,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deine Verbindung und versuche es erneut."
+            "value" : "Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
@@ -3417,7 +3417,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Speichern fehlgeschlagen. Prüfe deine Verbindung und versuche es erneut."
+            "value" : "Das Speichern hat nicht geklappt. Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
@@ -4221,7 +4221,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguir aprendiendo"
+            "value" : "Sigue aprendiendo"
           }
         },
         "fr" : {
@@ -4256,7 +4256,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantener el mío"
+            "value" : "Mantener la mía"
           }
         },
         "fr" : {
@@ -4760,13 +4760,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Aucune révision prévue aujourd’hui · %lld question sur les sujets à renforcer"
+                  "value" : "Aucune révision prévue aujourd’hui · %lld question sur les sujets que tu maîtrises le moins"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Aucune révision prévue aujourd’hui · %lld questions sur les sujets à renforcer"
+                  "value" : "Aucune révision prévue aujourd’hui · %lld questions sur les sujets que tu maîtrises le moins"
                 }
               }
             }
@@ -4778,13 +4778,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Nenhuma revisão para hoje · %lld pergunta sobre os assuntos em que você tem mais dificuldade"
+                  "value" : "Nenhuma revisão para hoje · %lld pergunta sobre os tópicos mais difíceis para você"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Nenhuma revisão para hoje · %lld perguntas sobre os assuntos em que você tem mais dificuldade"
+                  "value" : "Nenhuma revisão para hoje · %lld perguntas sobre os tópicos mais difíceis para você"
                 }
               }
             }
@@ -7246,7 +7246,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Versuch es noch einmal"
           }
         },
         "es" : {
@@ -7264,7 +7264,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -7409,7 +7409,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der nächste Schritt konnte nicht geöffnet werden. Versuch es noch einmal."
+            "value" : "Wir konnten den nächsten Schritt nicht öffnen. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -7427,7 +7427,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível abrir o próximo passo. Tente novamente."
+            "value" : "Não conseguimos abrir o próximo passo. Tente de novo."
           }
         }
       }
@@ -7438,7 +7438,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Antwort konnte nicht gespeichert werden. Versuch es noch einmal."
+            "value" : "Wir konnten deine Antwort nicht speichern. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -7456,7 +7456,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível salvar sua resposta. Tente novamente."
+            "value" : "Não conseguimos salvar sua resposta. Tente de novo."
           }
         }
       }
@@ -7589,7 +7589,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Willkommen zurück! Heute ist es etwas leichter: Du brauchst etwa %@. So kannst du entspannt wieder einsteigen."
+            "value" : "Willkommen zurück! Heute ist es etwas leichter: Du brauchst etwa %@ und kannst so in Ruhe wieder einsteigen."
           }
         },
         "es" : {
@@ -7607,7 +7607,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boas-vindas de volta! Hoje o plano está mais leve, com cerca de %@, para facilitar sua volta."
+            "value" : "Boas-vindas de volta! Hoje está mais leve, cerca de %@, para facilitar a retomada."
           }
         }
       }
@@ -7618,7 +7618,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Willkommen zurück! Heute brauchst du etwa %@. So kannst du entspannt wieder einsteigen."
+            "value" : "Willkommen zurück! Heute brauchst du etwa %@ und kannst so in Ruhe wieder einsteigen."
           }
         },
         "es" : {
@@ -7636,7 +7636,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Boas-vindas de volta! Hoje são cerca de %@, para facilitar sua volta."
+            "value" : "Boas-vindas de volta! Hoje leva cerca de %@, para facilitar a retomada."
           }
         }
       }
@@ -7752,7 +7752,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Cuando quieras: un día completo de examen, medio día o una asignatura"
+            "value" : "Cuando quieras: un día entero de examen, medio día o una asignatura"
           }
         },
         "fr" : {

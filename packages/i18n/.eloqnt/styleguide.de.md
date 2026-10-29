@@ -27,6 +27,8 @@
 - “Speaking”: “Sprechen”
 - “card”: “Karte”, not “Lernkarte”; a speaking exam's task card may be “Aufgabenkarte”
 - “in a row” (right answers in a streak): “hintereinander”, not “in Folge”
+- “again”: “noch einmal”, not “erneut”
+- Imperatives use the short “du” form: “Versuch es noch einmal”, “Frag”, “Stell eine Frage”, not “Versuche”, “Frage”, “Stelle”
 
 ## Feature names and states
 

@@ -34,7 +34,7 @@
   "generation_phase_pending": "71bd0d879d4df5b322f1899dbe1e7e1afbce32b2b96f50f3bb5646b1552a2010",
   "generation_placement": "7e05c51ab4bd49a94480a6666c9e940a7dae1daa1ae664e9b168365d276c9532",
   "generation_placement_questions": "c7211dd6ae79c28eb8fc67bbbb1057e995c7a789aad5161ec35674c42c680dbd",
-  "generation_placement_questions_line": "950c303838b011cb049397f03c02fa527af8ca88753d4c2982cfa595c20a6681",
+  "generation_placement_questions_line": "6d17883ab441eda6bee42589430caaeb87e7fa8f8d866842cd2b758501b816f2",
   "generation_question_line": "07857610b609c5e425ec65ccde066832a7ec21f84fa033ec7d96f021da1282c3",
   "generation_question_review": "7aaaa71c468c6d637323f288fae57288074cb3036dda9962dfa79d8ac5c1d869",
   "generation_reconnect": "333b8623314506790efe22e9981b5d47eda00be4fe1a98fdf46ac274734bf091",
@@ -42,7 +42,7 @@
   "generation_skills_line_1": "f46fa83de2ae096df2190eb4e542380cd5d8f30eeb8793275a34b044eee1915e",
   "generation_skills_line_2": "a4adffe3c85dd511d74f392ca7e3ceb9c922ca5934ce1ee954ccca7daa69282e",
   "generation_skills_line_3": "30e916f797b32a089090db27deb80dba469a9a18e8cf12e0ef0a76cb54e3ca64",
-  "generation_try_again": "efe52870aa74c57b0117f3cfd3c148da756331eb75fb4b45808d49fe7eaca328",
+  "generation_try_again": "bc5fce83193424c9523939e76345035c100653e506b21aaea81428577e0bcb1b",
   "generation_understanding": "a2bab6a09af7c2a3106c1d5ba3873b49212cc0853a7b131d59a38d4a0cbb4d74",
   "generation_understanding_dates": "1dabbd2794575d4cf2919afe91dca1d14320993393747a488406f8f0e8ce2edc",
   "generation_understanding_dates_line_1": "0f194def4ba50fc01cc7b528de1a96813ca07a690760de8ce7aa05d4ca7863ec",
@@ -66,7 +66,7 @@
     <string name="generation_not_started">Vorgang nicht gestartet</string>
     <string name="generation_not_started_description">Wir konnten den Vorgang nicht starten.</string>
     <!-- Starts something that failed or never started again. -->
-    <string name="generation_try_again">Erneut versuchen</string>
+    <string name="generation_try_again">Noch einmal versuchen</string>
     <!-- Screen reader state of a step of a wait. -->
     <string name="generation_phase_pending">noch nicht gestartet</string>
     <string name="generation_phase_active">läuft</string>
@@ -104,7 +104,7 @@
     <!-- The wait while placement questions are written. -->
     <string name="generation_placement">Deine Fragen vorbereiten</string>
     <string name="generation_placement_questions">Deine Fragen erstellen</string>
-    <string name="generation_placement_questions_line">Wir wählen aus, welche Fähigkeiten wir abfragen…</string>
+    <string name="generation_placement_questions_line">Wir wählen die Fähigkeiten für die Fragen aus…</string>
     <!-- The wait while the first day of a plan is prepared. -->
     <string name="generation_first_lesson">Deinen ersten Tag vorbereiten</string>
     <string name="generation_first_lesson_day">Deinen ersten Tag planen</string>

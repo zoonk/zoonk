@@ -24,11 +24,11 @@
   "goalcontent_done_and_known": "a06696e3b674415b643ebb5f3e5475518ed04a3ade6626e89d988e62ba376573",
   "goalcontent_for_reference": "c073109904ac3693f0ff7c56dc00a56e951ee3e19e2297e13fad13a562eaae26",
   "goalcontent_frequency_material": "396aa28915e95c6c0465ec694377082b7d37596ed6bc6c97a5cd70c3bfafbbb8",
-  "goalcontent_frequency_most": "2c685acad583cf4ace68838a4cbe8b9d46ee0154923190ec6fefdf6d423bbc66",
+  "goalcontent_frequency_most": "71e9ea56bdf306f67466f72e1015aaee7f1638cb6960248ce8aad00e851cdc4e",
   "goalcontent_frequency_past_exams": "9ebf6da5706b484599bccc9731bdea775f3559d88af397948cdfe5d751983480",
   "goalcontent_frequency_tagged": "c10ed4da55d3ebcbc187a4e838ddb97c028d6349041505ad791621c5a342b6cc",
-  "goalcontent_frequency_tagged_waits": "9f07b96d7ff1f23496a1ceb577c7ead04fea99b9125ce48bf9831aea30acc070",
-  "goalcontent_frequency_waits": "1eea02f9387b62ec64574e6d3b07ae8baad4ca2ddd848ce6b033a7f5feea7683",
+  "goalcontent_frequency_tagged_waits": "65516360cbb720ef1f863db307571584faa43a3846e1791feca1abf61ae163b7",
+  "goalcontent_frequency_waits": "a842ccf0909a65201bf6b4857cbf0619ed8012caf96589147d307648ed81c65f",
   "goalcontent_from_material": "22386e38313619e5e5303f6a5b21cc425fa3df91f10fb709468b5f42a9fdbd6f",
   "goalcontent_known": "cb122bc8d3c484b098cea468d717a6746e996027a7874563d91af727c1344701",
   "goalcontent_known_before": "108925565797050857efd7ebd89d2d012c477f294361f5dcb4b018f365dce41f",
@@ -39,7 +39,7 @@
   "goalcontent_mastery": "dfb585dfbcab336201170f830f4c330eb97ab694658d7d4c35d057ab43d65d20",
   "goalcontent_mastery_pending": "c2caed35893b8ac5d64ea5dbc1dc05079070633abaaad14507121f123f7cf3af",
   "goalcontent_mastery_right": "4f2d0f36ae5fdfd1b4a28615c8846faea3296934384d7ed1ff25412b2a32714d",
-  "goalcontent_material_topic_count": "aa61af76790f92d62f469b4a80b8f79d1ab5ecf1383a4dc611970d9ff25f7aad",
+  "goalcontent_material_topic_count": "b9eb557a43f24ee45041947df1737be1a590e9552f95970501b59ad40522b78d",
   "goalcontent_matrix_title": "6f7650c3ff248d8e40e7971c4d71e8b99132ab2cad391f97faacf2a19549a653",
   "goalcontent_module": "8db49d508c765da1319b58afeba877f1a8082337cc3e131dac6b62aba4fafd10",
   "goalcontent_module_count": "b9cf48c969d9adf6c91de1456e8d26cdfc6ef63b5dc67d107f0584641af27123",
@@ -93,10 +93,10 @@
   "goalcontent_topics": "14ff691e77609098e9b3c065db23037ff78d065f57a880cade8b73cf21824b87",
   "goalcontent_topics_in_guide": "590e1d242ddaeb8a26d724a5c550a4934a9e305f73802b8e4d6f660c96c4d6de",
   "goalcontent_topics_in_material": "c6e76915003eea347069361891916d8c45e6ca4923f09b22f5e015033c487344",
-  "goalcontent_topics_in_notice": "e1ee110abd56f57ed4919b42e7621a8641523f39fc62432c0192ae84f93ae0d8",
-  "goalcontent_topics_known_skipped": "f185600af1e2bdcaebffe533546421ab1097b1a1169e435ec8fe12443b4367df",
-  "goalcontent_topics_studied_of": "0589b8ea031fba5dfc9fb1ead96a2c030380d5f9a6047c4f72e3bf79b922f2fd",
-  "goalcontent_topics_studied_spoken": "923cbd90b0888ffc2d1bd93b0f3d2f83c17fccf625cb68ea82bf1a178c0e07ab"
+  "goalcontent_topics_in_notice": "5aca7cea4c74de3d442f9dfd28d87c37ddfe705c6a7d6834f2640aca40a6a9f0",
+  "goalcontent_topics_known_skipped": "6e8218018e85d2fabeadeca06beb2e0b808a0220f2a71158fe15f3ed128d0827",
+  "goalcontent_topics_studied_of": "5d44338493922e290283ba0d7dc0f3efd6df74f7c527dd354dcbf21652061eff",
+  "goalcontent_topics_studied_spoken": "02c70dfefdac562f4bcb440a231a7e4fc38b9465c42a235a6e261825e6785cef"
 }
 -->
 <resources>
@@ -120,9 +120,9 @@
         <item quantity="other">%d sujets</item>
     </plurals>
     <plurals name="goalcontent_material_topic_count">
-        <item quantity="one">%d sujet issu de tes documents</item>
-        <item quantity="many">%d sujets issus de tes documents</item>
-        <item quantity="other">%d sujets issus de tes documents</item>
+        <item quantity="one">%d sujet de tes documents</item>
+        <item quantity="many">%d sujets de tes documents</item>
+        <item quantity="other">%d sujets de tes documents</item>
     </plurals>
     <plurals name="goalcontent_chapter_count">
         <item quantity="one">%d chapitre</item>
@@ -148,15 +148,15 @@
     <string name="goalcontent_count_of">%1$s sur %2$s</string>
     <!-- A subject's topics studied of all its topics: "3 of 12 topics". -->
     <plurals name="goalcontent_topics_studied_of">
-        <item quantity="one">%1$s sujet sur %2$d</item>
-        <item quantity="many">%1$s sujets sur %2$d</item>
-        <item quantity="other">%1$s sujets sur %2$d</item>
+        <item quantity="one">%1$s sur %2$d sujet</item>
+        <item quantity="many">%1$s sur %2$d sujets</item>
+        <item quantity="other">%1$s sur %2$d sujets</item>
     </plurals>
     <!-- Screen reader text of a topic group's count: "2 of 5 topics studied". -->
     <plurals name="goalcontent_topics_studied_spoken">
-        <item quantity="one">%1$s sujet étudié sur %2$d</item>
-        <item quantity="many">%1$s sujets étudiés sur %2$d</item>
-        <item quantity="other">%1$s sujets étudiés sur %2$d</item>
+        <item quantity="one">%1$s sur %2$d sujet étudié</item>
+        <item quantity="many">%1$s sur %2$d sujets étudiés</item>
+        <item quantity="other">%1$s sur %2$d sujets étudiés</item>
     </plurals>
     <!-- The share of something done: "35% done". -->
     <string name="goalcontent_percent_done">%1$d %% terminé</string>
@@ -192,9 +192,9 @@
     <!-- How much of the exam a subject is: "20% of the exam". -->
     <string name="goalcontent_share_of_exam">%1$s de l’examen</string>
     <plurals name="goalcontent_topics_known_skipped">
-        <item quantity="one">%d sujet passé parce que tu le connais déjà</item>
-        <item quantity="many">%d sujets passés parce que tu les connais déjà</item>
-        <item quantity="other">%d sujets passés parce que tu les connais déjà</item>
+        <item quantity="one">%d sujet passé car tu le connais déjà</item>
+        <item quantity="many">%d sujets passés car tu les connais déjà</item>
+        <item quantity="other">%d sujets passés car tu les connais déjà</item>
     </plurals>
     <plurals name="goalcontent_lessons_known_skipped">
         <item quantity="one">%d leçon passée parce que tu la connais déjà</item>
@@ -206,7 +206,7 @@
     <!-- Opens the first chapter or lesson. -->
     <string name="goalcontent_start">Commencer</string>
     <string name="goalcontent_topics_in_material">Sujets dans tes documents</string>
-    <string name="goalcontent_topics_in_notice">Sujets dans l’avis d’examen</string>
+    <string name="goalcontent_topics_in_notice">Sujets dans l’avis</string>
     <string name="goalcontent_topics_in_guide">Sujets dans le guide officiel</string>
     <string name="goalcontent_details">Détails</string>
     <!-- A subject page's section of other places to go: its mind maps, asking the buddy. -->
@@ -273,11 +273,11 @@
     <string name="goalcontent_frequency_material">Les sujets marqués %1$s sont ceux qui reviennent souvent d’après tes documents. Tu y consacres plus de temps.</string>
     <string name="goalcontent_frequency_past_exams">Les sujets marqués %1$s sont ceux qui sont le plus souvent tombés aux examens précédents.</string>
     <!-- %1$s is the "Appears a lot" mark, %2$s what the source counted, %3$s a link to the source's site. -->
-    <string name="goalcontent_frequency_tagged_waits">Les sujets marqués %1$s sont ceux qui sont le plus souvent tombés aux examens précédents (%2$s, d’après %3$s). Les moins fréquents attendent.</string>
+    <string name="goalcontent_frequency_tagged_waits">Les sujets marqués %1$s sont ceux qui sont le plus souvent tombés aux examens précédents (%2$s, d’après %3$s). Ceux qui reviennent le moins souvent attendent.</string>
     <string name="goalcontent_frequency_tagged">Les sujets marqués %1$s sont ceux qui sont le plus souvent tombés aux examens précédents (%2$s, d’après %3$s). Tu y consacres plus de temps.</string>
     <!-- %1$s is what the source counted, %2$s a link to the source's site. -->
-    <string name="goalcontent_frequency_waits">Les sujets les moins souvent tombés aux examens précédents attendent (%1$s, d’après %2$s).</string>
-    <string name="goalcontent_frequency_most">Tu consacres plus de temps aux sujets les plus souvent tombés aux examens précédents (%1$s, d’après %2$s).</string>
+    <string name="goalcontent_frequency_waits">Les sujets qui sont le moins souvent tombés aux examens précédents attendent (%1$s, d’après %2$s).</string>
+    <string name="goalcontent_frequency_most">Tu consacres plus de temps aux sujets qui sont le plus souvent tombés aux examens précédents (%1$s, d’après %2$s).</string>
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
     <string name="goalcontent_matrix_title">Sur quoi portent les questions</string>
     <string name="goalcontent_see_all">Voir les %1$s</string>

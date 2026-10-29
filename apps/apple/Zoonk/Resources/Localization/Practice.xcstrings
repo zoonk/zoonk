@@ -1285,13 +1285,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld materia"
+                  "value" : "%lld asignatura"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld materias"
+                  "value" : "%lld asignaturas"
                 }
               }
             }
@@ -1697,7 +1697,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unas preguntas sobre cada materia. Las que más necesitas van primero y se tratan con más profundidad."
+            "value" : "Unas preguntas sobre cada asignatura. Las que más necesitas van primero y se tratan con más profundidad."
           }
         },
         "fr" : {
@@ -2213,7 +2213,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deine Verbindung und versuche es erneut."
+            "value" : "Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
@@ -2894,7 +2894,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Termina con las respuestas que has dado: servirán para decidir dónde profundizar en tu plan."
+            "value" : "Termina con las respuestas que has dado: también sirven para elegir qué partes de tu plan tratar con más profundidad."
           }
         },
         "fr" : {
@@ -4499,7 +4499,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todavía no, y no pasa nada"
+            "value" : "Aún no, y no pasa nada"
           }
         },
         "fr" : {
@@ -5010,7 +5010,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvir novamente"
+            "value" : "Reproduzir de novo"
           }
         }
       }
@@ -5842,7 +5842,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wieder richtig, genau wie am %@."
+            "value" : "Wieder richtig, wie am %@."
           }
         },
         "es" : {
@@ -5860,7 +5860,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Acertou de novo, como em %@."
+            "value" : "Você acertou de novo, assim como em %@."
           }
         }
       }
@@ -6535,7 +6535,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu certo. Tente de novo daqui a pouco."
+            "value" : "Não deu certo. Tente de novo em instantes."
           }
         }
       }
@@ -6691,7 +6691,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Aufnahme konnte nicht geladen werden. Prüfe deine Verbindung und versuch es noch einmal."
+            "value" : "Die Aufnahme konnte nicht geladen werden. Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
@@ -6929,19 +6929,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estas materias tienen mucho peso y son en las que más has fallado. Tu plan ahora las trata con más profundidad y mantiene todos los demás temas."
+            "value" : "Estas asignaturas tienen mucho peso y son en las que más has fallado. Tu plan ahora las trata con más profundidad y mantiene todos los demás temas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ces sujets comptent beaucoup et c’est là que tu as fait le plus d’erreurs. Ton plan les approfondit maintenant, sans laisser de côté les autres sujets."
+            "value" : "Ces matières comptent beaucoup et c’est là que tu as fait le plus d’erreurs. Ton plan les approfondit désormais, tout en gardant les autres sujets."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essas matérias têm bastante peso e foram as que você mais errou. Seu plano agora aborda elas com mais profundidade, e todos os outros tópicos continuam nele."
+            "value" : "Essas matérias têm bastante peso e foram onde você mais errou. Seu plano agora traz mais conteúdo sobre elas, e todos os outros tópicos continuam nele."
           }
         }
       }
@@ -6958,7 +6958,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Este desafío aún no está disponible."
+            "value" : "Este desafío aún no está listo."
           }
         },
         "fr" : {
@@ -7016,19 +7016,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esta materia tiene mucho peso y es en la que más has fallado. Tu plan ahora la trata con más profundidad y mantiene todos los demás temas."
+            "value" : "Esta asignatura tiene mucho peso y es en la que más has fallado. Tu plan ahora la trata con más profundidad y mantiene todos los demás temas."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ce sujet compte beaucoup et c’est là que tu as fait le plus d’erreurs. Ton plan l’approfondit maintenant, sans laisser de côté les autres sujets."
+            "value" : "Cette matière compte beaucoup et c’est là que tu as fait le plus d’erreurs. Ton plan l’approfondit désormais, tout en gardant les autres sujets."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Essa matéria tem bastante peso e foi a que você mais errou. Seu plano agora aborda ela com mais profundidade, e todos os outros tópicos continuam nele."
+            "value" : "Essa matéria tem bastante peso e foi onde você mais errou. Seu plano agora traz mais conteúdo sobre ela, e todos os outros tópicos continuam nele."
           }
         }
       }
@@ -7080,7 +7080,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les sujets de la semaine"
+            "value" : "Sujets de la semaine"
           }
         },
         "pt" : {
@@ -7329,7 +7329,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -7347,7 +7347,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -7503,7 +7503,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten die Lektionen nicht wieder in deinen Plan aufnehmen. Versuch es noch einmal."
+            "value" : "Wir konnten die Lektionen nicht wiederherstellen. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -7521,7 +7521,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos colocar as aulas de volta. Tente novamente."
+            "value" : "Não conseguimos trazer as aulas de volta. Tente de novo."
           }
         }
       }
@@ -7550,7 +7550,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos parar a sessão. Tente novamente."
+            "value" : "Não conseguimos interromper a sessão. Tente de novo."
           }
         }
       }
@@ -7561,7 +7561,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten die Änderung nicht rückgängig machen. Versuch es noch einmal."
+            "value" : "Wir konnten das nicht rückgängig machen. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -7579,7 +7579,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos desfazer a mudança. Tente novamente."
+            "value" : "Não conseguimos desfazer a mudança. Tente de novo."
           }
         }
       }
@@ -7608,7 +7608,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos criar seu teste. Tente novamente."
+            "value" : "Não conseguimos criar seu teste. Tente de novo."
           }
         }
       }
@@ -8147,7 +8147,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no habías respondido a ninguna pregunta, así que este desafío no se puntúa. No pierdes nada."
+            "value" : "Aún no habías respondido a ninguna pregunta, así que este desafío no tiene puntuación. No has perdido nada."
           }
         },
         "fr" : {
@@ -8495,7 +8495,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has alcanzado el tiempo de estudio de hoy. Pasa el desafío al lunes para conservarlo."
+            "value" : "Has alcanzado tu tiempo de estudio de hoy. Pasa el desafío al lunes para conservarlo."
           }
         },
         "fr" : {
@@ -8547,7 +8547,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast deine KI-Hilfe für heute aufgebraucht. Versuch es morgen erneut."
+            "value" : "Du hast deine KI-Hilfe für heute aufgebraucht. Versuch es morgen noch einmal."
           }
         },
         "es" : {
@@ -8565,7 +8565,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você já usou toda a ajuda da IA de hoje. Tente de novo amanhã."
+            "value" : "Você usou toda a ajuda de IA de hoje. Tente de novo amanhã."
           }
         }
       }

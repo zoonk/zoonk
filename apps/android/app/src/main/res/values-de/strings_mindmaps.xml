@@ -30,10 +30,10 @@
   "mindmaps_full_screen": "f5b16f9912ef6a40864e6aa6395e874d6e6b66476e39a60746b636c6dd00e87e",
   "mindmaps_in_short": "1c3594134a5b9a5195a20630a9172feb3e0320955c80bc8cee0d2f313955f3e7",
   "mindmaps_keep_studying": "549730140204158ec1d51c1ab3dc52b1ebf993d8fde03ecda3c7d60b6fa91e2b",
-  "mindmaps_save_failed": "2d05226b737ccd21272d0b5f37935eadf5becff3ffa4a484f2db70ffa2e46a16",
+  "mindmaps_save_failed": "9ac2641e593586b5c2412d20e590cfc2837363295fe7a18c3f18ae4aa46f62ad",
   "mindmaps_saved": "3f2087db0d86094b81688e8803cec93d627fe3d470f10fa9a98f730ebd3014ec",
-  "mindmaps_try_again": "70a0c1e09b9c763906ec63938c7ce8acfba6ef2e73dcb4761d8a699248b2bd8a",
-  "mindmaps_try_again_spoken": "234be35b665d94aba1062e33c7307549ddc8b933f13db22df6d7e09f5a590ff2",
+  "mindmaps_try_again": "d18c92113d59794675b473266cf49a8e6cfad01ae36c61c0d429694bd385b49e",
+  "mindmaps_try_again_spoken": "a62f659bfc165286a0e093fbf0f543221c35204f361c3963c81498c5e19503a7",
   "mindmaps_unreachable_short": "9000d0874e2cc41d4f065bb1c0e8dc355d20eef0f19712ebc46326c901889452",
   "mindmaps_viewer_hint": "57f78ad45a608dcc6fbbe3a4d628a57f47bfceb742a3903c41d066cb6b7b2dfd",
   "mindmaps_zoom_in": "f7c7804e0013bb2140b497130354d8aa20bc99dbb38b51e92866fa2249a4473d",
@@ -75,11 +75,11 @@
     <string name="mindmaps_drawing">Wir zeichnen…</string>
     <!-- Makes a chapter's mind map. -->
     <string name="mindmaps_create">Erstellen</string>
-    <string name="mindmaps_try_again">Erneut versuchen</string>
+    <string name="mindmaps_try_again">Noch einmal versuchen</string>
     <!-- What screen readers say for a tile's Create, naming its chapter. -->
     <string name="mindmaps_create_spoken">Mindmap zu %1$s erstellen</string>
     <!-- What screen readers say for a tile's Try again, naming its chapter. -->
-    <string name="mindmaps_try_again_spoken">Mindmap zu %1$s erneut erstellen</string>
+    <string name="mindmaps_try_again_spoken">Versuch die Mindmap zu %1$s noch einmal</string>
     <string name="mindmaps_failed_short">Diesmal konnte sie nicht erstellt werden.</string>
     <string name="mindmaps_unreachable_short">Wir konnten den Server nicht erreichen.</string>
     <string name="mindmaps_card_title">Mindmap</string>
@@ -94,7 +94,7 @@
     <!-- Saves the mind map's picture. -->
     <string name="mindmaps_download">Herunterladen</string>
     <string name="mindmaps_saved">Mindmap gespeichert</string>
-    <string name="mindmaps_save_failed">Die Mindmap wurde nicht gespeichert. Versuche es erneut.</string>
+    <string name="mindmaps_save_failed">Die Mindmap wurde nicht gespeichert. Versuch es noch einmal.</string>
     <!-- Starts the one-line gist at the end of a mind map in words. -->
     <string name="mindmaps_in_short">Kurz gesagt:</string>
     <string name="mindmaps_zoom_in">Vergrößern</string>

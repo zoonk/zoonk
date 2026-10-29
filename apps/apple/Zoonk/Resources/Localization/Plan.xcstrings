@@ -246,13 +246,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec %@ par jour, tu ne peux pas étudier tous les sujets avant l’examen : ceux qui reviennent le moins souvent sont prévus après."
+            "value" : "Avec %@ par jour, tu ne peux pas étudier tous les sujets avant l’examen : les moins fréquents seront étudiés après."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com %@ por dia, não dá para estudar todos os tópicos até a prova: os que menos caem ficam para depois."
+            "value" : "Com %@ por dia, nem todos os tópicos serão estudados até a prova: os que menos caem ficam para depois."
           }
         }
       }
@@ -275,7 +275,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec %@ par jour, tu ne peux pas étudier tous les sujets : ceux qui reviennent le moins souvent sont laissés de côté."
+            "value" : "Avec %@ par jour, tu ne peux pas étudier tous les sujets : les moins fréquents sont laissés de côté."
           }
         },
         "pt" : {
@@ -362,7 +362,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec %@ par jour, tu étudies tous les sujets de l’examen, certains moins en détail."
+            "value" : "Avec %@ par jour, tu étudies tous les sujets de l’examen, certains moins en profondeur."
           }
         },
         "pt" : {
@@ -391,13 +391,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec %@ par jour, tu étudies tous les sujets de l’examen, en approfondissant ceux qui reviennent le plus souvent."
+            "value" : "Avec %@ par jour, tu étudies tous les sujets de l’examen, et plus en profondeur ceux qui reviennent le plus souvent."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com %@ por dia, você estuda todos os tópicos da prova e se aprofunda mais nos que mais caem."
+            "value" : "Com %@ por dia, você estuda todos os tópicos da prova e aprofunda mais os que mais caem."
           }
         }
       }
@@ -1492,13 +1492,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektion aus früheren Tagen kommt zuerst: Sobald du sie abgeschlossen hast, bist du wieder im Plan."
+                  "value" : "Zuerst kommt %lld Lektion aus den vergangenen Tagen: Wenn du sie abgeschlossen hast, bist du wieder im Tempo."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld Lektionen aus früheren Tagen kommen zuerst: Sobald du sie abgeschlossen hast, bist du wieder im Plan."
+                  "value" : "Zuerst kommen %lld Lektionen aus den vergangenen Tagen: Wenn du sie abgeschlossen hast, bist du wieder im Tempo."
                 }
               }
             }
@@ -1564,13 +1564,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld aula de dias anteriores vem primeiro: depois de concluir ela, você volta a acompanhar o ritmo."
+                  "value" : "%lld aula de dias anteriores vem primeiro: ao concluir ela, você volta ao ritmo."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld aulas de dias anteriores vêm primeiro: depois de concluir elas, você volta a acompanhar o ritmo."
+                  "value" : "%lld aulas de dias anteriores vêm primeiro: ao concluir elas, você volta ao ritmo."
                 }
               }
             }
@@ -2154,7 +2154,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@minutes@ mehr am Tag für %#@days@ und du bist wieder im Plan."
+            "value" : "%#@minutes@ mehr am Tag für %#@days@ und du bist wieder im Tempo."
           },
           "substitutions" : {
             "days" : {
@@ -2346,7 +2346,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Com %#@minutes@ por dia durante %#@days@, você volta a acompanhar o ritmo."
+            "value" : "Com %#@minutes@ por dia durante %#@days@, você volta ao ritmo."
           },
           "substitutions" : {
             "days" : {
@@ -2377,13 +2377,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "mais %arg minuto"
+                      "value" : "%arg minuto a mais"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "mais %arg minutos"
+                      "value" : "%arg minutos a mais"
                     }
                   }
                 }
@@ -3746,13 +3746,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les leçons d’un sujet sont planifiées deux semaines avant que tu l’abordes. Tu peux voir celles de ce sujet dès maintenant."
+            "value" : "Les leçons d’un sujet sont planifiées deux semaines avant que tu l’étudies. Tu peux déjà voir celles-ci."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As aulas de um tópico são planejadas duas semanas antes de você chegar nele. Agora você já pode ver as deste tópico."
+            "value" : "As aulas de um tópico são planejadas duas semanas antes de você chegar nele. Você já pode ver as deste tópico."
           }
         }
       }
@@ -5705,7 +5705,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deine Verbindung und versuche es erneut."
+            "value" : "Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
@@ -5723,7 +5723,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira sua conexão e tente novamente."
+            "value" : "Confira sua conexão e tente de novo."
           }
         }
       }
@@ -6779,7 +6779,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos os assuntos, mesmo depois da prova, no seu ritmo."
+            "value" : "Todos os tópicos, mesmo depois da prova, no seu ritmo."
           }
         }
       }
@@ -7266,13 +7266,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Approfondissement d’un sujet précédent"
+            "value" : "Approfondir un sujet déjà abordé"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprofundando um assunto anterior"
+            "value" : "Aprofundando um tópico anterior"
           }
         }
       }
@@ -7794,7 +7794,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "As conversas de prática estão em pausa para todo mundo no momento. Tente de novo mais tarde."
+            "value" : "Isso está acontecendo com todo mundo agora. Tente de novo mais tarde."
           }
         }
       }
@@ -9866,7 +9866,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todavía no"
+            "value" : "Aún no"
           }
         },
         "fr" : {
@@ -9953,7 +9953,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todavía no hay nada que practicar en este capítulo."
+            "value" : "Aún no hay nada que practicar en este capítulo."
           }
         },
         "fr" : {
@@ -11978,7 +11978,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu certo. Tente novamente daqui a pouco."
+            "value" : "Não deu certo. Tente de novo em instantes."
           }
         }
       }
@@ -12018,7 +12018,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Gespräch wurde nicht gestartet. Versuch es gleich noch einmal."
+            "value" : "Das Gespräch konnte nicht gestartet werden. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -12036,7 +12036,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A conversa não começou. Tente novamente daqui a pouco."
+            "value" : "A conversa não começou. Tente de novo em instantes."
           }
         }
       }
@@ -12639,7 +12639,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Thèmes"
+            "value" : "Sujets"
           }
         },
         "pt" : {
@@ -12656,7 +12656,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -12674,7 +12674,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -13057,7 +13057,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nous recommandons les bases essentielles pour mieux comprendre les sujets qui s’appuient dessus."
+            "value" : "Nous te recommandons les bases pour mieux comprendre les sujets qui en découlent."
           }
         },
         "pt" : {
@@ -13813,7 +13813,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Zieldatum %@ wurde aus deinem Plan entfernt. Du kannst jederzeit wieder eines festlegen."
+            "value" : "Dein Zieldatum %@ wird aus deinem Plan entfernt. Du kannst jederzeit wieder eines festlegen."
           }
         },
         "es" : {
@@ -13831,7 +13831,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O prazo de %@ sai do seu plano. Você pode definir outro quando quiser."
+            "value" : "O prazo de %@ é removido do seu plano. Você pode definir outro quando quiser."
           }
         }
       }
@@ -14179,7 +14179,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano ainda está sendo criado. Tente novamente em instantes."
+            "value" : "Seu plano ainda está sendo criado. Tente de novo em instantes."
           }
         }
       }

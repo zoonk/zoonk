@@ -13,14 +13,14 @@
   "settings_delete_confirm_description": "1bfc3b14582c5313c2e7a0b4edb41dcf9e8e4e0ab278e3108e95f9ff4ba90681",
   "settings_delete_confirm_title": "c6c5d778946bbdc8864d984e8c08585a16e6d094ba13084c450f8a91e421ce6c",
   "settings_delete_ellipsis": "4709a4680b8b9fb3cc92e76f63a3e6185db677822766e6cc9cbe4e36cfcb1bbc",
-  "settings_delete_failed": "a6cfdd45c28406a443e4a8d88f34a0bc5c8f9ebb71d3e49d43392504335ab734",
+  "settings_delete_failed": "54bcf385490a31b8932440153e9b245c93bcf68dd50b6cbfa2533ed75957b319",
   "settings_delete_my_account": "591eb25556255668189fcdeee01a3129ad448e38d2f065af680dcf3d1b7caa50",
   "settings_delete_verify": "649865bcd03964a02c6cc2d93457c2ea13e5008e5cadde2af4572c803e36db34",
   "settings_done": "f110a5eb417d807ebde6f077efc82252c0c37447aaa7ceb5ba7d54b4a34d7bdd",
   "settings_download": "9fd2f0a0197558430ae7367386bc0eaabd9413ff6e173bc78f85d15a2555766c",
   "settings_download_data": "d4ec600954eb9e072b053bf8a3ff5d32b29e4b59cada8db5d17783ec00a2701e",
   "settings_download_data_description": "e8fdc8712b47a26ffc940d67a08d3157987f535bcf1bbfbf02f5d1eb84fe4f46",
-  "settings_download_failed": "b1fadb6d4795fc78debd8a567c7b9324fef463d21869f83f4c7689093f6f5c4b",
+  "settings_download_failed": "8049bd1335a05adec0586bf4131e032a39701f1cc970dd642829dbdb2b4bff59",
   "settings_download_preparing": "c70f9f5319d7ee63fd47cfabb2c7cc4a5eb7ddf78daf805287c90715c4fcef1a",
   "settings_licenses": "88faf8ac61a4bca320672d1aa30b601cd42f6d7997b1c16860f8bc5d71e9e192",
   "settings_licenses_read": "05b805a7c999c8caa32345d0b590b2d7d06f9e8d8fd1c8f780a36893218105a8",
@@ -41,7 +41,7 @@
   "settings_preferences_limit_a_day": "8f1a8c1c929c73c3759fb767b55f62d5c2cdfd854ee336682ad6f316493df98c",
   "settings_preferences_no_limit": "f196e8cb4aba138a559b21ccc0a936866fe0aa99414057122b1fdee492145507",
   "settings_preferences_on_this_device": "14e3095f177933ef610626ea65e0ac046a37c166cc4a35627e69712184fcc191",
-  "settings_preferences_save_failed": "165cbb167c1ea28b5aced5b3bf5ee8066a8444c6f81fe2880e4ee3082340c329",
+  "settings_preferences_save_failed": "aa787d4049acddb890477ed7ac84fddf791e873ceff393380ad372974c606297",
   "settings_preferences_sounds": "835e4109f126ee0f7bb938ceb6abd3ebf10aa00c74d05b8980e0ae1e093db439",
   "settings_preferences_sounds_description": "27ead4c0abf19d997a59d907bc0fe6753f623ca9ab72eedaa996708399576baf",
   "settings_preferences_summary": "97c610e0158a8a0402afce0e090fb76e0d336ab1fcc201b7cabc292c779ff22b",
@@ -68,7 +68,7 @@
     <string name="settings_download_data_description">Alles, was Zoonk über dich speichert, in einer Datei</string>
     <string name="settings_download">Herunterladen</string>
     <string name="settings_download_preparing">Wird vorbereitet…</string>
-    <string name="settings_download_failed">Wir konnten den Download nicht vorbereiten. Versuch es erneut.</string>
+    <string name="settings_download_failed">Wir konnten den Download nicht vorbereiten. Versuch es noch einmal.</string>
     <string name="settings_delete_account">Konto löschen</string>
     <string name="settings_delete_my_account">Mein Konto löschen</string>
     <string name="settings_delete_account_description">Löscht dein Konto und alle darin enthaltenen Daten endgültig. Im Web gekauftes Plus wird gekündigt. Käufe über Google Play und den App Store verwaltest du dort, wo du sie gekauft hast.</string>
@@ -80,7 +80,7 @@
     <!-- %1$s is the account's email address. -->
     <string name="settings_delete_code_description">Gib zu deiner Sicherheit den Code ein, den wir an %1$s geschickt haben.</string>
     <string name="settings_delete_verify">Bestätigen und löschen</string>
-    <string name="settings_delete_failed">Wir konnten dein Konto nicht löschen. Versuch es erneut oder schreib an hello@zoonk.com.</string>
+    <string name="settings_delete_failed">Wir konnten dein Konto nicht löschen. Versuch es noch einmal oder schreib an hello@zoonk.com.</string>
     <string name="settings_account_deleted">Dein Konto wurde gelöscht.</string>
     <string name="settings_account_deleted_title">Konto gelöscht</string>
     <string name="settings_apple_not_revoked">Deine Zoonk-Daten wurden gelöscht, aber Apple konnte nicht bestätigen, dass Zoonk von deiner Apple-ID entfernt wurde. Entferne Zoonk unter „Mit Apple anmelden“, um den Vorgang abzuschließen.</string>
@@ -102,7 +102,7 @@
     <string name="settings_preferences_language">Sprache</string>
     <string name="settings_preferences_app_language">App-Sprache</string>
     <string name="settings_preferences_on_this_device">Auf diesem Gerät</string>
-    <string name="settings_preferences_save_failed">Das hat nicht geklappt. Versuch es erneut.</string>
+    <string name="settings_preferences_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <string name="settings_licenses">Open-Source-Lizenzen</string>
     <string name="settings_licenses_website">Website</string>
     <string name="settings_licenses_read">Lizenz lesen</string>

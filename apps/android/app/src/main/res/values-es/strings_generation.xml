@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "generation_connection_lost": "91dc1a90a40387d5039c197bb37c08bcef3df646d1ab50b3e33eca97a6aacc21",
-  "generation_connection_lost_description": "bf9920dd55be9b568ae7e54e312dda1549ad5cf86584c0f81bc8cace6651e63e",
+  "generation_connection_lost_description": "5b06105f3588e5fc1dc7db5890a1d02b96c5b17c7dfe8c2cea44d2cbc57dbe69",
   "generation_curriculum": "85757c25c0346a1d925110507a39812127b30d9f088884fb8a24264e89a3512c",
   "generation_curriculum_plan": "525f0f54ea6624aa926c8ce93f13d1a0ca75c510e307b16554cdec3f7c354756",
   "generation_curriculum_plan_line_1": "1ad61ca50dd510be818002ab58d3c5eaad6011d596c50d27487acf42ee48a291",
@@ -56,7 +56,7 @@
 <resources>
     <!-- Title when the updates of something being written stopped. -->
     <string name="generation_connection_lost">Se ha perdido la conexión</string>
-    <string name="generation_connection_lost_description">Hemos dejado de recibir actualizaciones. Puede que siga funcionando.</string>
+    <string name="generation_connection_lost_description">Hemos dejado de recibir novedades. Puede que aún se esté preparando.</string>
     <!-- Follows a run again after its updates stopped. -->
     <string name="generation_reconnect">Volver a conectar</string>
     <!-- Title when something being written failed. -->

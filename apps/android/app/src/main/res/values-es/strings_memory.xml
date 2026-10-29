@@ -17,11 +17,11 @@
   "memory_edit_label": "0da017f33127fea44259e03408ff8e9f247e680d5845756112ce4a7fbe0a1c19",
   "memory_edit_title": "787abad11b3beaeaca9cd0ad7b1fc4fb0a5301c3dda3473a60d9c3ab2c472fe1",
   "memory_empty_off": "f39f592578c14bbc11573e0a80f3d954ef69e07864b7bc22b15e651fa0a48590",
-  "memory_empty_on": "e9361dd3607558bf8608111393b8f9de348a86a35a03b0bbca4c08ef4326e984",
+  "memory_empty_on": "99f7cbd1df146d21d4f25a27ecdc15cb04b4e1e20dbd4864f390f3c984d00117",
   "memory_fact_options": "3705aac9e05c4436dee15a0227917ce6af02a044962752292278ffc427abb368",
   "memory_fact_source": "84f1d4f4286866b24bfd5527b1c0e3ce21ff6c5cb26adf73318f677366021639",
   "memory_save_failed": "36dfed560e67d68dd7a9b0abe7e06f526fcf529be1c8bb7ebc30b5f923f59178",
-  "memory_sensitive_note": "7e2787f80ed68a13db4d1b4126d8c5248d0889ecf85fa793a9ce58eb58a64b83",
+  "memory_sensitive_note": "8d54de94c9668e1083447afbbea1dedb0173065f16ebf002e276a27d733ea15d",
   "memory_source_chat": "ea2f906603d77cfcc5539276deea456379e479cd4711dcae4f8616a5b9c64c54",
   "memory_source_noticed": "2ad0424ffe5fa70127d3d444861248797fadd0b89fd292597eaa780f855db182",
   "memory_source_onboarding": "abd9fa80fdbab3fe00fbea2444749c5eede08021168435275203e41751aea5fa",
@@ -41,7 +41,7 @@
     <string name="memory_use">Usar memoria</string>
     <string name="memory_use_on">Ejemplos personalizados y planes que se adaptan a tu semana</string>
     <string name="memory_use_off">La memoria está desactivada. No se aprende nada nuevo ni se usan estos datos.</string>
-    <string name="memory_empty_on">Aún no hay nada. A medida que estudies y converses, aparecerán aquí notas breves que ayudarán a Zoonk a enseñarte.</string>
+    <string name="memory_empty_on">Aún no hay nada. A medida que estudies y converses, aparecerán aquí notas breves que ayudan a Zoonk a enseñarte.</string>
     <string name="memory_empty_off">No hay nada aquí. Zoonk no guarda notas sobre ti mientras la memoria está desactivada.</string>
     <string name="memory_save_failed">No se ha guardado. Vuelve a intentarlo.</string>
     <string name="memory_category_goals">Objetivos</string>
@@ -66,7 +66,7 @@
     <string name="memory_edit_label">Lo que Zoonk recuerda</string>
     <string name="memory_download">Descargar mi memoria</string>
     <string name="memory_download_description">Todo lo que hay en tu memoria, en un solo archivo</string>
-    <string name="memory_sensitive_note">Zoonk no guarda datos sobre tu salud, religión u otros detalles sensibles a menos que se lo pidas.</string>
+    <string name="memory_sensitive_note">Zoonk no guarda datos de salud, religión ni otros datos sensibles, salvo que se lo pidas.</string>
     <string name="memory_updated">Memoria actualizada:</string>
     <plurals name="memory_updated_more">
         <item quantity="one">y %d más</item>

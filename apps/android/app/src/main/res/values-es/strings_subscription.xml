@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "subscription_active": "e979e3d0df9c7eee1126367c8057e7415b9418f6bd95f6a6e6a2adf913ee2be3",
-  "subscription_answer_cancel": "77ba0d38288d89535761e32ed476352a490cf7440930e17924e45029c813b25b",
+  "subscription_answer_cancel": "3ed790c340c9f39651ff50d61caf6f6fd814f72987d57ed4f61ee49f16a9b805",
   "subscription_answer_fair_use": "94b4b4338e0fae7bb9b9d7b94aa2bf70b0244fcf00b922414c23a7439b45fca0",
   "subscription_answer_free_buddy": "9066a90ed78bc9394c916412a21141b17b68c365e140ae6baf4624cb14dd4aaf",
   "subscription_answer_free_buddy_uploads": "a7c5b33addff58a29c3f10a399392b8ff9bc078a731eb134b3b5e71f96579280",
@@ -222,7 +222,7 @@
     <string name="subscription_answer_unlimited">Casi. Las lecciones, los objetivos y tu Compañero solo tienen límites para detener bots y herramientas automatizadas, no a quienes están aprendiendo. Las llamadas de expresión oral tienen límites diarios y mensuales, más altos que en el plan gratuito.</string>
     <string name="subscription_answer_fair_use">Lee nuestra política de uso responsable</string>
     <string name="subscription_question_cancel">¿Qué pasa si cancelo?</string>
-    <string name="subscription_answer_cancel">Conservas Plus hasta el final del periodo que ya has pagado. Después vuelves al plan gratuito y mantienes tus objetivos y tu progreso.</string>
+    <string name="subscription_answer_cancel">Conservas Plus hasta el final del periodo que ya has pagado. Después vuelves al plan gratuito y conservas tus objetivos y tu progreso.</string>
     <string name="subscription_question_refund">¿Puedo solicitar un reembolso?</string>
     <string name="subscription_answer_refund">Solo tienes que contactar con nosotros y contarnos qué ha pasado. Haremos todo lo posible para devolverte el dinero.</string>
 </resources>

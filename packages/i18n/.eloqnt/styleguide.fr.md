@@ -21,6 +21,8 @@
 - “listening”: “écoute”
 - “Speaking”: “Expression orale”
 - “mind map”: “carte mentale”
+- “topic”: “sujet”, not “thème”
+- “tap”: “appuie sur”, not “touche”
 - “card”: a speaking exam's task card: “fiche”; a card to pick in an activity: “carte”
 - “area” (a weighted part of an exam or a goal): “domaine”, not “matière”
 - “notice” (an exam's official notice): “avis” or “avis d’examen”, never “notice”

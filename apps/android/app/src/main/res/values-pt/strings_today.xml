@@ -42,8 +42,8 @@
   "today_finished_goal": "128d2d81eabc6a64b8576ac500df5fb130f1d302fb6debdd228ef24357ae867c",
   "today_fresh_start_new_phase": "4fa5884c8ed96c926856df2ff539be11940d0e63606f4ca0f0c62518b6c5b2ba",
   "today_fresh_start_new_week": "37e555c8c921bb8f42ddea524c1d36efb94e4ec066767a44e81293be5d825d7d",
-  "today_fresh_start_welcome_back": "34a3a28166a6073d37333996cbfb247511d702d140517a603718e94a65d32c18",
-  "today_fresh_start_welcome_back_trial_ended": "dd8902cbcd3ec48aef938ff455b2a784aa6b0dfb7277b1b8497b1f5c6438cb71",
+  "today_fresh_start_welcome_back": "461e3d52a2f5aa6b6d5ddc5fb88651e19a9ca0913db50bf1d47cdabd92992d7b",
+  "today_fresh_start_welcome_back_trial_ended": "47670c611b0d15db7d4b3aae3cdb7acd2815182be12c1baa7dc4b226a72e4d37",
   "today_get_lessons": "b62d36a4b2102cffd8e99a219618eb130d79c48d2b7451a723f6640af081a873",
   "today_insight_add_it": "2cfce9928a0be221a462eea611d6906c531e8383f76b3b1ea5ba43d9e45d76ae",
   "today_insight_got_it": "64cf662ce7eae98cddfd248dab7a2dab433c284452cbe9015d313184852c56dd",
@@ -54,7 +54,7 @@
   "today_insight_time_moved": "3826212463d3796749199b325baeee1c92927370106bb00d53bcd409b39cf196",
   "today_insight_time_stays": "2163d829af8f43ce3f30235b087b3085bdce53c7e96cca463ba3572305c5dd9c",
   "today_keep_learning": "b6b2a087dd3331e2950552eddcea7473c269e724bfab345f4e654cb7b3fafbcf",
-  "today_keep_learning_failed": "d7de0a630601fbf280da63c541f9c952f1d77bb5880570ad56eb6e40968dfcd7",
+  "today_keep_learning_failed": "b490d3e3466255a5a099902a1b6b67667535d2cbea4a7030d7b7012f9c993599",
   "today_keep_my_time": "cf4d6131b5f808e50fc0c32f232db27c462909143682ddb01d83c4af221c696a",
   "today_lessons_not_written": "ec6c2e401c14c9cbb2fc473c6cf4ba432e3164ef63bc59b7e3485d364fdbd4c2",
   "today_lessons_so_far": "fe86124cbcc90e94a03bd6c0d89645a5ed5da74840a2fe2e711c4d6fbd6f8a2a",
@@ -82,7 +82,7 @@
   "today_notice_falling_behind": "fe0116764ca351a0c1a0ceebf0f1edfaa36dbec062d383c5544f22eadf628c27",
   "today_notice_plan_change": "c1c9a3b17f3cb355ef0bd1726c8e83b103c941db74447c0b240e5883e2571868",
   "today_notice_suggested_goal": "8f7f92d056cff466c1e3e31b15842585daa9da6709c61a604ab40e11c32ebb33",
-  "today_open_failed": "7fa807bf9e1a465c9c633702d96e1e3f37569dd71d061359b24dc41ad4f5ac61",
+  "today_open_failed": "ffb3b6c281d0cfbd122a52d0a860688c81e6da7f723124dff97389c92c665e68",
   "today_pace_ahead": "84b95d80741560e64daa0cf3e86f1d51a92b6c763fcfe332bc329d2cd4ec3a66",
   "today_pace_behind_days": "0996f164f265878ee5e6d3e31cd1ae3cd88da1117bba12008bf041247a55e948",
   "today_pace_challenges_left": "b827f4a8673538a0c9127ad43a4c6099833db2316280a1bd7fe1b8c3a964b8c2",
@@ -173,7 +173,7 @@
   "today_week_days": "64ed4d11eedec2c8c3da592f0f56f709bca7e40f518b2db871bd7de7db8514a8",
   "today_week_deadline": "61df058751b93e5b6f878e19b8155a598dd92b9964fb56d3e4e146ab051f3d65",
   "today_week_exam_day": "aedaf60d5219c9b5d146629e72be2a32f0a878d9b3fe3019941410980c6fa5f6",
-  "today_week_full_review_detail": "d57f06bb4eb77c5c3373be53e47608040759d25890e08f33f875d03197857cef",
+  "today_week_full_review_detail": "06487b465784031d4cde814867d1ecfd651642e7c793038a19b4701742229f66",
   "today_week_full_review_name": "6389c9b5296063d0431816e2e935e6137650b80fb6fc667ebcac1e90f24579d9",
   "today_week_goal_reached": "2c30e2eefd72be05011af306375ff6252681044225a06ddea73082f28471c25f",
   "today_week_mock_name": "d3470a9f26b47471769399511a8b2b4e8fe1efc1a62702b378b9fa55717162d8",
@@ -236,8 +236,8 @@
     <!-- %1$s and %2$s are formatted numbers: "2 of 5 done". -->
     <string name="today_steps_done">%1$s de %2$s concluídos</string>
     <!-- %1$s is a duration, such as "55 min". -->
-    <string name="today_fresh_start_welcome_back">Que bom ter você de volta! Hoje é mais leve, cerca de %1$s, para facilitar a retomada.</string>
-    <string name="today_fresh_start_welcome_back_trial_ended">Que bom ter você de volta! Hoje leva cerca de %1$s, para facilitar a retomada.</string>
+    <string name="today_fresh_start_welcome_back">Que bom ter você de volta! Hoje está mais leve, cerca de %1$s, para você retomar aos poucos.</string>
+    <string name="today_fresh_start_welcome_back_trial_ended">Que bom ter você de volta! Hoje leva cerca de %1$s, para você retomar aos poucos.</string>
     <string name="today_fresh_start_new_phase">Uma nova fase começa hoje, com um aquecimento leve para começar.</string>
     <string name="today_fresh_start_new_week">Uma nova semana. Hoje começa com um aquecimento leve.</string>
     <plurals name="today_lessons_so_far">
@@ -315,8 +315,8 @@
     <string name="today_see_plan">Ver seu plano</string>
     <string name="today_lessons_not_written">As aulas de hoje ainda não foram criadas.</string>
     <string name="today_get_lessons">Criar aulas de hoje</string>
-    <string name="today_open_failed">Não foi possível abrir o próximo passo. Tente de novo.</string>
-    <string name="today_keep_learning_failed">Não foi possível abrir suas próximas aulas. Tente de novo.</string>
+    <string name="today_open_failed">A gente não conseguiu abrir o próximo passo. Tente de novo.</string>
+    <string name="today_keep_learning_failed">A gente não conseguiu abrir suas próximas aulas. Tente de novo.</string>
     <string name="today_welcome_back">Que bom ter você de volta</string>
     <!-- %1$s is a course's title. -->
     <string name="today_suggested_goal_question">Continuar %1$s?</string>
@@ -373,7 +373,7 @@
     <string name="today_week_full_review_name">revisão completa</string>
     <string name="today_week_mock_name">simulado</string>
     <string name="today_week_challenge_name">desafio semanal</string>
-    <string name="today_week_full_review_detail">todos os assuntos, começando pelos mais difíceis para você</string>
+    <string name="today_week_full_review_detail">todos os tópicos, começando pelos que você tem mais dificuldade</string>
     <!-- %1$s is a formatted number of minutes. -->
     <string name="today_study_minutes">Estude por %1$s minutos</string>
     <string name="today_study_more_minutes">Estude mais %1$s minutos</string>

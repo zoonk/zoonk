@@ -8,7 +8,7 @@
   "tutor_about_plan": "0c4db8e39e16a2ccae87bea862521ca23bffad251e9f4299195b4587d2844bb3",
   "tutor_about_question": "79fb09ee475f627692ede00bc17b35397ce3d299d521bfaead7522d5890d1b58",
   "tutor_about_step": "096e1cf433f2a297629a9976bd55290396548c98216bd1cc94e003beddb15dc5",
-  "tutor_about_subject": "39c4b1aa5b09d47915b942cff44db660b606962e4c62d6ee96440e0f394ecba3",
+  "tutor_about_subject": "ff3e5073ece81b5e5b305fb24b366e5712ff05b33a61e8b88a9b8c0248cf246e",
   "tutor_answer_failed": "8a6d45e37cc9f3d57ae33ba080aac950df742b618f104603e2e9f58eb13190d4",
   "tutor_ask": "9e5686b12cee9d60120c9e4fac67bcee84007283032a11f511d07dd2fc74e7a9",
   "tutor_ask_answer": "6f35e9b1597406d492791a90803c494f4f85492288d4c720e9d71c2ff58199e5",
@@ -17,7 +17,7 @@
   "tutor_ask_plan": "14872defa19c41c6e4da4b1f5622257f848b9076ed6f38c1964fc81f40e75dea",
   "tutor_ask_question": "3ae2f5bd4fac07614e0bbd90b774613d63ae46243481c5ba122f8b752517c40b",
   "tutor_ask_screen": "a8a0c82aa8cf09d425965ab89533659daa23f96a86cbbbd6362451f9e698ad96",
-  "tutor_ask_subject": "6e76d53b7cd23e1889f6221ddc579c920e204141db092a0f4c265f6f5279d114",
+  "tutor_ask_subject": "f211826037e53433a38bdedf041c92d3304f2f022a4b849fe7bfbec8079fd8f9",
   "tutor_check_again": "1230dc366f9b49744cd88dfae13b919b387bde051f48c56c206dbe35a9f32fc5",
   "tutor_close": "82c7a586aac5330be66b587dc9ae69ecf22464ffad9625701581980ceb015374",
   "tutor_description_answer": "252590d5a2dbcd0120d2e545b1430108b1d4e236e21cc2c6564317f944eb6a7e",
@@ -27,7 +27,7 @@
   "tutor_description_mock": "20fcb74ba7975faaffed111097aef7b7e49d71767187acfc220108ae8a377072",
   "tutor_description_plan": "2d96efea4ba09bbd1694ee0bcf8aafce96fa2516bccfb349c5a7377587420297",
   "tutor_description_step": "60a30c52b4fe7ac91f119b4db3a100c39ec09382d71fb791855b6f9647f7b9a6",
-  "tutor_description_subject": "0d66c14955f08f72487ff2e33f8d82b2e24477c5fbab30b7f484beca9d066c55",
+  "tutor_description_subject": "b69f0d6017fbc5c16ebe065b5892e593670a3e4e4b52b2aa8604bd9edb9306da",
   "tutor_empty_ai": "5c9bd2308d4182ae80be57ee09d79ea88ec3c90773c11d9ca3398b29bc7c2560",
   "tutor_empty_title": "0a50fbb095a76b1a467b587ad3bfe90159320d8cda9f2446881d4988a6532ead",
   "tutor_error_failed": "1fb8516d6a4b361f97eff1c39850bfb85ce1b9d8a018e9012b9a2aab761b4d9d",
@@ -55,7 +55,7 @@
   "tutor_offer_chapter_test_lessons": "f7d3bfec4ca81ffcdef74a4b4aa5f1ed7426fedc995bf521bae269f6fe4835e2",
   "tutor_offer_choose": "0d6cc0042911b39afe7666bc9b07323399029ca033338142456a9a0490c0277a",
   "tutor_offer_choose_focus": "c7ec3d3e8d020a82d85b994351dd2baeccf1dc4cc7fdb358bc7c94560b8899cb",
-  "tutor_offer_choose_focus_description": "cabdd2a48b4797697ec73ffda3da3d82cac6c88f689080aedf7f127b6b4dd35a",
+  "tutor_offer_choose_focus_description": "dce742cd5b6defb564d230e2dcd71ddb8c09a807bfe03a823ec19956414f45f9",
   "tutor_offer_essay_biweekly": "6d20a3f23b345c122ea1b94d0570b872bf8de17dc5438ac26b70690008de4185",
   "tutor_offer_essay_final_weeks": "95244539fa155fad8606d1715cf388c0de5a1151f5f16f869596574c2d1f85bf",
   "tutor_offer_essay_plus": "f5a4d8e5a931a93bf0fcf01bb1e8c738d139641ada8e71bde8173c7b7abe304d",
@@ -92,7 +92,7 @@
   "tutor_placeholder_lesson": "3db1751e6b1a0760d5c03e9199ccf4abfc4266ce77ef4d28f3c4f359630ccaca",
   "tutor_placeholder_mock": "0db2111a93862b16489a9c109c5c4e69bdf2381c3a53a63841c505dba4b6e8ae",
   "tutor_placeholder_plan": "b2f8202aa4df30b24612a5f92780094daa61268ae88c1a5d24eb1d834123aea6",
-  "tutor_placeholder_subject": "85bfd3d71545a552cb57918188be40faaa27b27aa833e1da98ad21d3a3f05cdb",
+  "tutor_placeholder_subject": "4eb132e73df49e1105bed5b1450e757729329638176ec6c2aca2f114ccd03501",
   "tutor_plan_change_apply": "1beaee74a33604511234d6000dd063567b3e4b8ba7ec4946e952c1c591d3c2d7",
   "tutor_plan_change_declined": "a694f1e761f4c15d290194089c79152748db91805c54ebb5168d7c9ed9aa41d5",
   "tutor_plan_change_failed": "56615a9b4471d4f53ac73a3870881269bbf30e701b5efb323bc64a35453320dc",
@@ -130,7 +130,7 @@
     <string name="tutor_ask_chapter">Pregunta a %1$s sobre este capítulo</string>
     <string name="tutor_ask_mock">Pregunta a %1$s sobre este simulacro</string>
     <string name="tutor_ask_plan">Pregunta a %1$s sobre tu plan</string>
-    <string name="tutor_ask_subject">Pregunta a %1$s sobre este tema</string>
+    <string name="tutor_ask_subject">Pregunta a %1$s sobre esta asignatura</string>
     <string name="tutor_ask_answer">Pregunta a %1$s sobre tu respuesta</string>
     <string name="tutor_ask_question">Pregunta a %1$s sobre esta pregunta</string>
     <string name="tutor_ask_screen">Pregunta a %1$s sobre esta pantalla</string>
@@ -140,7 +140,7 @@
     <string name="tutor_description_lesson">Haz preguntas sobre esta lección</string>
     <string name="tutor_description_mock">Haz preguntas sobre este simulacro</string>
     <string name="tutor_description_plan">Haz preguntas sobre tu plan</string>
-    <string name="tutor_description_subject">Haz preguntas sobre este tema</string>
+    <string name="tutor_description_subject">Haz preguntas sobre esta asignatura</string>
     <string name="tutor_description_item">Pregunta sobre esta pregunta</string>
     <string name="tutor_close">Cerrar preguntas</string>
     <string name="tutor_about_answer">Sobre tu respuesta</string>
@@ -149,7 +149,7 @@
     <string name="tutor_about_mock">Sobre este simulacro</string>
     <string name="tutor_about_plan">Sobre tu plan</string>
     <string name="tutor_about_step">Sobre esta parte</string>
-    <string name="tutor_about_subject">Sobre este tema</string>
+    <string name="tutor_about_subject">Sobre esta asignatura</string>
     <string name="tutor_about_question">Sobre esta pregunta</string>
     <string name="tutor_empty_title">¿Con qué necesitas ayuda?</string>
     <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
@@ -177,7 +177,7 @@
     <string name="tutor_placeholder_chapter">Pregunta sobre este capítulo…</string>
     <string name="tutor_placeholder_mock">Pregunta sobre este simulacro…</string>
     <string name="tutor_placeholder_plan">Pregunta sobre tu plan…</string>
-    <string name="tutor_placeholder_subject">Pregunta sobre este tema…</string>
+    <string name="tutor_placeholder_subject">Pregunta sobre esta asignatura…</string>
     <string name="tutor_placeholder_item">Pregunta sobre esta pregunta…</string>
     <string name="tutor_placeholder_answer">Pregunta sobre tu respuesta…</string>
     <string name="tutor_placeholder_lesson">Pregunta sobre el contenido de la lección…</string>
@@ -214,7 +214,7 @@
     </plurals>
     <string name="tutor_offer_take_test">Hacer la prueba</string>
     <string name="tutor_offer_choose_focus">Elige en qué centrarte</string>
-    <string name="tutor_offer_choose_focus_description">Elige las asignaturas que quieres estudiar con más profundidad o haz una prueba breve para elegirlas.</string>
+    <string name="tutor_offer_choose_focus_description">Elige las asignaturas en las que profundizar más o haz una prueba breve para elegirlas.</string>
     <!-- %1$s is the character's name, %2$s their role, like "a barista". -->
     <string name="tutor_offer_call_with">Una breve llamada para hablar con %1$s, %2$s.</string>
     <string name="tutor_offer_call">Una breve llamada para hablar a tu nivel.</string>

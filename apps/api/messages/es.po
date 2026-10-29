@@ -253,7 +253,7 @@ msgstr "A continuación puedes empezar una breve llamada de práctica cuando qui
 #: src/lib/tutor-confirmation.ts
 msgctxt "c7OWI5"
 msgid "Below you can see when your plan practices {subject}."
-msgstr "A continuación puedes ver cuándo practicarás {subject} según tu plan."
+msgstr "A continuación puedes ver cuándo practicarás {subject} en tu plan."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "zPC6bz"

@@ -5,7 +5,7 @@
   "missions_after_lessons": "8a546d2c9fa7679afc15e0f3038bc1a583e4da26db9c8c43e0d566ea38436a72",
   "missions_already_earned": "87f72e04144d99f31e9a78661e5a1056aa54559cca7681b8bf019c687a31f769",
   "missions_ask_anything": "24b9892e07f9c0f849cd9aa385f10bfbb3e0239bac7b59d97961c51428a7883b",
-  "missions_ask_buddy": "6aed88771cfc2eb5f36dfb30e6022fdb1aa78061da65d27b0806bd35c1f5c2c3",
+  "missions_ask_buddy": "23e32be31bdad163af1b586c826a2fe3c4b01dec87f2b9a1fc6bf6b40e4a5e23",
   "missions_brain_power": "86997b83168b52a5096e6188ab9f26ec032565367c9795f849707ce2276e768b",
   "missions_brain_power_about": "a64c2320bcde9cd1611e7b5a57de2c64033086e51f66f28b10cabe7e86cead9d",
   "missions_brain_power_total": "c6e21d9072b23d90952e9263e4a4f1832e32b29727f844db02567150508ebf9a",
@@ -116,7 +116,7 @@
     <string name="missions_pronunciation">Aussprache</string>
     <string name="missions_call">Ein Gespräch führen</string>
     <!-- %1$s is the learner's buddy's name. -->
-    <string name="missions_ask_buddy">%1$s etwas fragen</string>
+    <string name="missions_ask_buddy">Frag %1$s etwas</string>
     <!-- %1$s is a skill area's title. -->
     <string name="missions_practice_area">%1$s üben</string>
     <string name="missions_after_lessons">Nach den heutigen Lektionen</string>

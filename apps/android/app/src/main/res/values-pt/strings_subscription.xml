@@ -59,11 +59,11 @@
   "subscription_per_year": "13881ab64c147e8dbbd140222013f7e3ffae079fffaae48056c6d16c07a42be2",
   "subscription_period_ends_on": "1a497311d6be78fdacd5fd5ede567d91ae14a2ad2a506205fa7edb585b9e5c6e",
   "subscription_plus": "a06c6600021bcee5fa0cc76e8d6cb70526bd5f0e1f859620d1f84a551d2113ee",
-  "subscription_purchase_confirm_failed": "8f2ecf1d3bfecf55ba94eed96ad12cff529acfb29fe98b5ba41f616b0810b289",
+  "subscription_purchase_confirm_failed": "bfef612f464bd152b9c74b136ceb28ab192c563c71ad26c037c2e1513e92e469",
   "subscription_purchase_confirming": "e09ac6184760d22dab559da6f3cd673291cff6dd8abbad31a9c0f3cada1ea22b",
   "subscription_purchase_other_account": "408a269c1662f752245312c3b9bc899df992b79348f51e92ccf05cd05574a2b9",
   "subscription_purchase_pending": "501b7eacfa37ba627cba3b12c4e1352bd5ee283207b3cfe9ea1f687f27c0641d",
-  "subscription_purchase_play_failed": "26450b6b3b3966466f08bbb7d328e2369c91985a7759f65af7851fabfd38fe85",
+  "subscription_purchase_play_failed": "1b00adb8cab11f4e40c5d30c747bcb4eb8c9e896c750d3d882e9f9e2608e2251",
   "subscription_question_cancel": "37c026d7f78345ed81dd8fc8173ea3bc9420eac0075bd3d9ad841a8a55065d85",
   "subscription_question_free": "7e5a07ae693811cb85c01600dcb9c7cf7a7ca55146591255ecf0e5df615f2027",
   "subscription_question_refund": "bdd44918fc942ba278c7ec572c5538f8d88c0ffcb7d6de78b8deaaf27519a3ce",
@@ -131,8 +131,8 @@
     <string name="subscription_purchase_pending">Seu pagamento está pendente. O Plus começa quando o Google Play confirmar o pagamento.</string>
     <string name="subscription_purchase_confirming">Confirmando sua compra…</string>
     <string name="subscription_purchase_other_account">Esta assinatura do Google Play pertence a outra conta do Zoonk. Entre nessa conta para usar a assinatura.</string>
-    <string name="subscription_purchase_play_failed">O Google Play não conseguiu concluir a compra. Tente novamente.</string>
-    <string name="subscription_purchase_confirm_failed">Sua compra foi concluída, mas ainda não conseguimos confirmar. Vamos tentar de novo quando você voltar.</string>
+    <string name="subscription_purchase_play_failed">O Google Play não conseguiu concluir a compra. Tente de novo.</string>
+    <string name="subscription_purchase_confirm_failed">Sua compra foi concluída, mas a gente ainda não conseguiu confirmar. Vamos tentar de novo quando você voltar.</string>
     <string name="subscription_benefits_summary">Todas as metas · todas as aulas</string>
     <string name="subscription_benefit_exam">Seu plano completo de estudos, para cada dia até a prova</string>
     <string name="subscription_benefit_mocks">Simulados com tempo marcado, como na prova de verdade</string>

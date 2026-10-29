@@ -16,6 +16,10 @@
 - “learning” (study days): “estudio”
 - “Brain Power”: “Poder Mental”
 - “BP”: “PM”
+- “score”: “puntuación”, not “nota”
+- “subject” (of an exam or a plan): “asignatura”, not “materia”
+- “yet” / “still”: “aún”, not “todavía”
+- “keep” before a verb (“Keep going”, “Keep learning”): “seguir”, as in “Sigue aprendiendo”, not “continuar”
 - “listening”: “escucha”
 - “Speaking”: “Expresión oral”
 - “card”: “tarjeta”, not “carta”

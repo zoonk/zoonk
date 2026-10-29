@@ -13,6 +13,7 @@
 - “lesson”: “aula”, not “lição”
 - “exam”: “prova”
 - “subject”: “matéria”, not “disciplina”
+- “topic”: “tópico”, not “assunto” or “tema”
 - “notice” (official exam announcement): “edital”
 - “learning” (study days): “estudo”
 - “goal” (the learner's goal): “meta”; goal of a call, lesson, or activity: “objetivo”
@@ -33,6 +34,8 @@
 - Prerequisite choices “In depth” / “Essentials” / “Quick lesson” / “Skip”: “A fundo” / “Essencial” / “Aula rápida” / “Pular”
 - “Brain Power”: “Poder Mental”
 - “BP”: “PM”
+- “score”: “pontuação”, not “nota”
+- “again”: “de novo”, not “novamente”
 - “listening”: “escuta”
 - “Speaking”: “Conversação”
 - “Free” (subscription name): “Grátis”

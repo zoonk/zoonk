@@ -83,7 +83,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Avec %@ par jour, tu étudieras tous les sujets, certains moins en profondeur."
+            "value" : "Avec %@ par jour, tu étudies tous les sujets, certains moins en profondeur."
           }
         },
         "pt" : {
@@ -118,13 +118,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ des sujets d’examen du plan étudiés en profondeur d’ici le %2$@."
+            "value" : "%1$@ des sujets de l’examen prévus dans le plan étudiés en profondeur d’ici le %2$@."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ dos tópicos da prova no plano, a fundo até %2$@."
+            "value" : "%1$@ dos tópicos da prova no plano, estudados a fundo até %2$@."
           }
         }
       }
@@ -913,7 +913,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld %#@topics@ pas dans %3$@ par jour"
+            "value" : "%1$lld sur %#@topics@ avec %3$@ par jour"
           },
           "substitutions" : {
             "topics" : {
@@ -924,13 +924,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "sujet sur %arg ne tient"
+                      "value" : "%arg sujet ne peut pas être étudié"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "sujets sur %arg ne tiennent"
+                      "value" : "%arg sujets ne peuvent pas être étudiés"
                     }
                   }
                 }
@@ -1058,7 +1058,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld %#@topics@"
+            "value" : "%1$lld sur %#@topics@"
           },
           "substitutions" : {
             "topics" : {
@@ -1069,13 +1069,13 @@
                   "one" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "sujet sur %arg dans ton plan"
+                      "value" : "%arg sujet dans ton plan"
                     }
                   },
                   "other" : {
                     "stringUnit" : {
                       "state" : "translated",
-                      "value" : "sujets sur %arg dans ton plan"
+                      "value" : "%arg sujets dans ton plan"
                     }
                   }
                 }
@@ -1348,13 +1348,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld materia de la convocatoria"
+                  "value" : "%lld asignatura de la convocatoria"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld materias de la convocatoria"
+                  "value" : "%lld asignaturas de la convocatoria"
                 }
               }
             }
@@ -1556,13 +1556,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld sujet de tes documents"
+                  "value" : "%lld sujet issu de tes documents"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld sujets de tes documents"
+                  "value" : "%lld sujets issus de tes documents"
                 }
               }
             }
@@ -1678,7 +1678,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%#@topics@, %2$lld laissé(s) de côté dans ton plan"
+            "value" : "%#@topics@, dont %2$lld laissé(s) de côté dans ton plan"
           },
           "substitutions" : {
             "topics" : {
@@ -1814,13 +1814,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tópico, no seu plano"
+                  "value" : "%lld tópico, incluído no seu plano"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld tópicos, todos no seu plano"
+                  "value" : "%lld tópicos, todos incluídos no seu plano"
                 }
               }
             }
@@ -2055,13 +2055,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ des sujets d’examen du plan étudiés en profondeur d’ici le %2$@, en commençant par les plus fréquents."
+            "value" : "Environ %1$@ des sujets de l’examen prévus dans le plan étudiés en profondeur d’ici le %2$@, en commençant par les plus fréquents."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "~%1$@ dos tópicos da prova no plano, a fundo até %2$@, começando pelo que mais cai."
+            "value" : "~%1$@ dos tópicos da prova no plano, estudados a fundo até %2$@, começando pelos que mais caem."
           }
         }
       }
@@ -2175,13 +2175,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Unas preguntas rápidas sobre el área de %lld para que tu plan deje fuera lo que ya sabes. No hay puntuación y puedes responder «Aún no lo sé»."
+                  "value" : "Unas preguntas rápidas sobre el área %lld para que tu plan se salte lo que ya sabes. No hay puntuación y puedes responder «Aún no lo sé»."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Unas preguntas rápidas sobre las %lld áreas para que tu plan deje fuera lo que ya sabes. No hay puntuación y puedes responder «Aún no lo sé»."
+                  "value" : "Unas preguntas rápidas sobre las %lld áreas para que tu plan se salte lo que ya sabes. No hay puntuación y puedes responder «Aún no lo sé»."
                 }
               }
             }
@@ -2211,13 +2211,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Algumas perguntas rápidas sobre a área de %lld, para seu plano pular o que você já sabe. Não tem nota, e tudo bem responder “Ainda não sei”."
+                  "value" : "Algumas perguntas rápidas sobre a área, para que seu plano pule o que você já sabe. Não tem pontuação, e tudo bem responder “Ainda não sei”."
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "Algumas perguntas rápidas sobre as %lld áreas, para seu plano pular o que você já sabe. Não tem nota, e tudo bem responder “Ainda não sei”."
+                  "value" : "Algumas perguntas rápidas sobre as %lld áreas, para que seu plano pule o que você já sabe. Não tem pontuação, e tudo bem responder “Ainda não sei”."
                 }
               }
             }
@@ -2237,7 +2237,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unas preguntas rápidas para que tu plan deje fuera lo que ya sabes. No hay puntuación y puedes responder «Aún no lo sé»."
+            "value" : "Unas preguntas rápidas para que tu plan se salte lo que ya sabes. No hay puntuación y puedes responder «Aún no lo sé»."
           }
         },
         "fr" : {
@@ -2249,7 +2249,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Algumas perguntas rápidas para seu plano pular o que você já sabe. Não tem nota, e tudo bem responder “Ainda não sei”."
+            "value" : "Algumas perguntas rápidas para que seu plano pule o que você já sabe. Não tem pontuação, e tudo bem responder “Ainda não sei”."
           }
         }
       }
@@ -2732,7 +2732,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fragen"
+            "value" : "Frag"
           }
         },
         "es" : {
@@ -2761,7 +2761,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fragen zu deinem Material stellen"
+            "value" : "Frag zu deinem Material"
           }
         },
         "es" : {
@@ -2790,7 +2790,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fragen stellen"
+            "value" : "Stell Fragen"
           }
         },
         "es" : {
@@ -3680,7 +3680,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erstelle ein Konto, um Fragen zu deinem Material zu stellen."
+            "value" : "Erstell ein Konto, um Fragen zu deinem Material zu stellen."
           }
         },
         "es" : {
@@ -4191,7 +4191,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todos os temas"
+            "value" : "Todos os tópicos"
           }
         }
       }
@@ -5403,13 +5403,13 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Découvrir un sujet"
+            "value" : "Étudier un sujet"
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aprender sobre um assunto"
+            "value" : "Aprender um tópico"
           }
         }
       }
@@ -6157,7 +6157,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todavía ninguna"
+            "value" : "Aún no conozco bien ninguna"
           }
         },
         "fr" : {
@@ -6238,7 +6238,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Einen Moment. Versuche es in ein paar Sekunden noch einmal."
+            "value" : "Einen Moment. Versuch es in ein paar Sekunden noch einmal."
           }
         },
         "es" : {
@@ -6876,7 +6876,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nachricht erneut abspielen"
+            "value" : "Spiel die Nachricht noch einmal ab"
           }
         },
         "es" : {
@@ -6894,7 +6894,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ouvir a mensagem novamente"
+            "value" : "Ouvir a mensagem de novo"
           }
         }
       }
@@ -7079,7 +7079,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch einmal vorlesen"
+            "value" : "Lies es noch einmal"
           }
         },
         "es" : {
@@ -7097,7 +7097,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ler de novo"
+            "value" : "Leia de novo"
           }
         }
       }
@@ -8385,7 +8385,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nota desejada"
+            "value" : "Pontuação desejada"
           }
         }
       }
@@ -8483,7 +8483,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das konnte nicht gespeichert werden. Versuch es noch einmal."
+            "value" : "Das wurde nicht gespeichert. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -8808,19 +8808,19 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Los documentos de la próxima convocatoria aún no se han publicado, así que tu plan sigue las materias y los temas de la anterior. Te avisaremos cuando salgan los nuevos. Esto suele tardar unos minutos."
+            "value" : "Aún no se han publicado los documentos de la próxima convocatoria, así que tu plan sigue las asignaturas y los temas de la anterior. Te avisaremos cuando se publiquen los nuevos. Esto suele tardar unos minutos."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Les documents de la prochaine édition ne sont pas encore publiés. Ton plan suit donc les domaines et sujets de la dernière édition. On te préviendra quand les nouveaux documents seront disponibles. Cela prend généralement quelques minutes."
+            "value" : "Les documents de la prochaine édition ne sont pas encore disponibles. Ton plan suit donc les domaines et sujets de la dernière édition. Nous te préviendrons quand les nouveaux documents seront disponibles. Cela prend généralement quelques minutes."
           }
         },
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os documentos da próxima edição ainda não saíram, então seu plano segue as matérias e os tópicos da edição anterior. A gente avisa quando os novos saírem. Isso costuma levar alguns minutos."
+            "value" : "Os documentos da próxima edição ainda não saíram, então seu plano segue as matérias e os tópicos da última edição. Vamos avisar quando os novos saírem. Isso costuma levar alguns minutos."
           }
         }
       }
@@ -9301,7 +9301,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Para enseñarte a tocar, necesitamos escucharte, y aún estamos desarrollando esa función. Apúntate a la lista de espera y empieza hoy con formación musical: lectura de partituras, entrenamiento auditivo y ritmo."
+            "value" : "Para enseñarte a tocar, necesitamos escucharte, y aún estamos trabajando en ello. Apúntate a la lista de espera y empieza hoy con formación musical: lectura de partituras, entrenamiento auditivo y ritmo."
           }
         },
         "fr" : {
@@ -9324,7 +9324,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Noch einmal versuchen"
+            "value" : "Versuch es noch einmal"
           }
         },
         "es" : {
@@ -9353,7 +9353,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ein anderes Ziel versuchen"
+            "value" : "Versuch ein anderes Ziel"
           }
         },
         "es" : {
@@ -9759,7 +9759,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir können diese Datei nicht lesen. Versuche es mit einer PDF, einem Foto, einer Word- oder PowerPoint-Datei oder Text."
+            "value" : "Wir können diese Datei nicht lesen. Versuch es mit einem PDF, einem Foto, einer Word- oder PowerPoint-Datei oder Text."
           }
         },
         "es" : {
@@ -9788,7 +9788,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das konnten wir nicht hinzufügen. Versuch es gleich noch einmal."
+            "value" : "Wir konnten das nicht hinzufügen. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -9806,7 +9806,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos adicionar. Tente de novo em instantes."
+            "value" : "Não foi possível adicionar. Tente de novo em instantes."
           }
         }
       }
@@ -9817,7 +9817,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das konnten wir nicht beantworten. Versuch es gleich noch einmal."
+            "value" : "Wir konnten das nicht beantworten. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -9835,7 +9835,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos responder. Tente de novo em instantes."
+            "value" : "Não foi possível responder. Tente de novo em instantes."
           }
         }
       }
@@ -9951,7 +9951,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos ler sua meta. Tente de novo em instantes."
+            "value" : "Não foi possível ler sua meta. Tente de novo em instantes."
           }
         }
       }
@@ -9980,7 +9980,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos salvar sua meta. Tente de novo em instantes."
+            "value" : "Não foi possível salvar sua meta. Tente de novo em instantes."
           }
         }
       }
@@ -10055,7 +10055,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hemos dejado de recibir actualizaciones. Es posible que siga en marcha."
+            "value" : "Hemos dejado de recibir actualizaciones. Puede que siga funcionando."
           }
         },
         "fr" : {
@@ -10078,7 +10078,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir lesen es noch einmal. Um ein einzelnes Detail zu ändern, nutze den Stift daneben."
+            "value" : "Wir lesen es noch einmal. Um ein Detail zu ändern, nutz unten den Stift daneben."
           }
         },
         "es" : {
@@ -10096,7 +10096,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente vai ler de novo. Para corrigir um detalhe, use o lápis ao lado dele abaixo."
+            "value" : "Vamos ler de novo. Para corrigir um detalhe, use o lápis ao lado dele abaixo."
           }
         }
       }
@@ -10171,7 +10171,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Estamos eligiendo qué aprenderás primero y distribuyéndolo en tus días de estudio. Preparar un tema nuevo puede llevar uno o dos minutos."
+            "value" : "Estamos eligiendo qué aprender primero y organizándolo en tus días. Una asignatura nueva puede tardar uno o dos minutos."
           }
         },
         "fr" : {
@@ -10374,7 +10374,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿Qué nota necesitas?"
+            "value" : "¿Qué puntuación necesitas?"
           }
         },
         "fr" : {
@@ -10386,7 +10386,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "De que nota você precisa?"
+            "value" : "De qual pontuação você precisa?"
           }
         }
       }
@@ -10641,7 +10641,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "¿A qué carrera y nota aspiras?"
+            "value" : "¿A qué carrera quieres acceder y qué puntuación buscas?"
           }
         },
         "fr" : {
@@ -10653,7 +10653,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Qual curso e nota você busca?"
+            "value" : "Qual curso e pontuação você quer alcançar?"
           }
         }
       }
@@ -10902,7 +10902,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin una cuenta, puedes seguir un objetivo. Crea una cuenta gratuita para continuar."
+            "value" : "Sin una cuenta, puedes seguir un objetivo. Crea una cuenta gratis para seguir."
           }
         },
         "fr" : {
@@ -10960,7 +10960,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sin una cuenta, puedes enviar unos pocos objetivos nuevos al día. Crea una cuenta gratuita para continuar."
+            "value" : "Sin una cuenta, puedes enviar unos pocos objetivos nuevos al día. Crea una cuenta gratis para seguir."
           }
         },
         "fr" : {
@@ -11273,7 +11273,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du fügst gerade schnell Material hinzu. Versuch es in ein paar Minuten erneut."
+            "value" : "Du fügst gerade schnell Material hinzu. Versuch es in ein paar Minuten noch einmal."
           }
         },
         "es" : {
@@ -11302,7 +11302,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du stellst gerade schnell Fragen. Versuch es in ein paar Minuten erneut."
+            "value" : "Du stellst gerade schnell Fragen. Versuch es in ein paar Minuten noch einmal."
           }
         },
         "es" : {
@@ -11360,7 +11360,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du startest gerade schnell Ziele. Versuch es in ein paar Minuten erneut."
+            "value" : "Du startest gerade schnell Ziele. Versuch es in ein paar Minuten noch einmal."
           }
         },
         "es" : {
@@ -11389,13 +11389,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast diesen Monat so viel Material hinzugefügt, wie der Free-Tarif erlaubt. Versuch es nächsten Monat erneut oder hol dir Plus, um jetzt weiterzumachen."
+            "value" : "Du hast diesen Monat so viel Material hinzugefügt, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has añadido todo el material que permite el plan gratuito este mes. Vuelve a intentarlo el mes que viene o consigue Plus para continuar ahora."
+            "value" : "Has añadido todo el material que permite el plan gratuito este mes. Inténtalo de nuevo el mes que viene o pásate a Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -11418,13 +11418,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast heute so viel Material hinzugefügt, wie der Free-Tarif erlaubt. Versuch es morgen erneut oder hol dir Plus, um jetzt weiterzumachen."
+            "value" : "Du hast heute so viel Material hinzugefügt, wie der Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has añadido todo el material que permite el plan gratuito hoy. Vuelve a intentarlo mañana o consigue Plus para continuar ahora."
+            "value" : "Has añadido todo el material que permite el plan gratuito hoy. Inténtalo de nuevo mañana o pásate a Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -11447,7 +11447,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast heute so viel Material hinzugefügt, wie dein Tarif erlaubt. Versuch es morgen erneut."
+            "value" : "Du hast heute so viel Material hinzugefügt, wie dein Tarif erlaubt. Versuch es morgen noch einmal."
           }
         },
         "es" : {
@@ -11476,13 +11476,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast diesen Monat so viele neue Fragen gestellt, wie der Free-Tarif erlaubt. Versuch es nächsten Monat erneut oder hol dir Plus, um jetzt weiterzumachen."
+            "value" : "Du hast diesen Monat so viele neue Fragen gestellt, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has hecho todas las preguntas nuevas que permite el plan gratuito este mes. Vuelve a intentarlo el mes que viene o consigue Plus para continuar ahora."
+            "value" : "Has hecho todas las preguntas nuevas que permite el plan gratuito este mes. Inténtalo de nuevo el mes que viene o pásate a Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -11494,7 +11494,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas perguntas do plano Grátis para este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
+            "value" : "Você atingiu o limite de perguntas novas do plano Grátis para este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
           }
         }
       }
@@ -11505,13 +11505,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast heute so viele neue Fragen gestellt, wie der Free-Tarif erlaubt. Versuch es morgen erneut oder hol dir Plus, um jetzt weiterzumachen."
+            "value" : "Du hast heute so viele neue Fragen gestellt, wie der Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has hecho todas las preguntas nuevas que permite el plan gratuito hoy. Vuelve a intentarlo mañana o consigue Plus para continuar ahora."
+            "value" : "Has hecho todas las preguntas nuevas que permite el plan gratuito hoy. Inténtalo de nuevo mañana o pásate a Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -11523,7 +11523,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas perguntas do plano Grátis para hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
+            "value" : "Você atingiu o limite de perguntas novas do plano Grátis para hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
           }
         }
       }
@@ -11534,13 +11534,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast diesen Monat so viele Fragen gestellt, wie der Free-Tarif erlaubt. Stell nächsten Monat wieder Fragen oder hol dir Plus, um jetzt weiterzumachen."
+            "value" : "Du hast diesen Monat so viele Fragen gestellt, wie der Free-Tarif erlaubt. Frag nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has hecho todas las preguntas que permite el plan gratuito este mes. Vuelve a preguntar el mes que viene o consigue Plus para continuar ahora."
+            "value" : "Has hecho todas las preguntas que permite el plan gratuito este mes. Vuelve a preguntar el mes que viene o pásate a Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -11552,7 +11552,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de perguntas do plano Grátis para este mês. Faça mais perguntas no mês que vem ou assine o Plus para continuar agora."
+            "value" : "Você atingiu o limite de perguntas do plano Grátis para este mês. Pergunte de novo no mês que vem ou assine o Plus para continuar agora."
           }
         }
       }
@@ -11563,13 +11563,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast heute so viele Fragen gestellt, wie der Free-Tarif erlaubt. Stell morgen wieder Fragen oder hol dir Plus, um jetzt weiterzumachen."
+            "value" : "Du hast heute so viele Fragen gestellt, wie der Free-Tarif erlaubt. Frag morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has hecho todas las preguntas que permite el plan gratuito hoy. Vuelve a preguntar mañana o consigue Plus para continuar ahora."
+            "value" : "Has hecho todas las preguntas que permite el plan gratuito hoy. Vuelve a preguntar mañana o pásate a Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -11581,7 +11581,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de perguntas do plano Grátis para hoje. Faça mais perguntas amanhã ou assine o Plus para continuar agora."
+            "value" : "Você atingiu o limite de perguntas do plano Grátis para hoje. Pergunte de novo amanhã ou assine o Plus para continuar agora."
           }
         }
       }
@@ -11621,13 +11621,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast diesen Monat so viele neue Ziele gesendet, wie der Free-Tarif erlaubt. Versuch es nächsten Monat erneut oder hol dir Plus, um jetzt weiterzumachen."
+            "value" : "Du hast diesen Monat so viele neue Ziele gesendet, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has enviado todos los objetivos nuevos que permite el plan gratuito este mes. Vuelve a intentarlo el mes que viene o consigue Plus para continuar ahora."
+            "value" : "Has enviado todos los objetivos nuevos que permite el plan gratuito este mes. Inténtalo de nuevo el mes que viene o pásate a Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -11639,7 +11639,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas metas enviadas no plano Grátis para este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
+            "value" : "Você atingiu o limite de novas metas enviadas do plano Grátis para este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
           }
         }
       }
@@ -11650,13 +11650,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast heute so viele neue Ziele gesendet, wie der Free-Tarif erlaubt. Versuch es morgen erneut oder hol dir Plus, um jetzt weiterzumachen."
+            "value" : "Du hast heute so viele neue Ziele gesendet, wie der Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has enviado todos los objetivos nuevos que permite el plan gratuito hoy. Vuelve a intentarlo mañana o consigue Plus para continuar ahora."
+            "value" : "Has enviado todos los objetivos nuevos que permite el plan gratuito hoy. Inténtalo de nuevo mañana o pásate a Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -11668,7 +11668,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas metas enviadas no plano Grátis para hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
+            "value" : "Você atingiu o limite de novas metas enviadas do plano Grátis para hoje. Tente de novo amanhã ou assine o Plus para continuar agora."
           }
         }
       }
@@ -11679,7 +11679,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast heute so viele neue Ziele gesendet, wie dein Tarif erlaubt. Versuch es morgen erneut."
+            "value" : "Du hast heute so viele neue Ziele gesendet, wie dein Tarif erlaubt. Versuch es morgen noch einmal."
           }
         },
         "es" : {
@@ -11697,7 +11697,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas metas enviadas no seu plano para hoje. Tente de novo amanhã."
+            "value" : "Você atingiu o limite de novas metas enviadas do seu plano para hoje. Tente de novo amanhã."
           }
         }
       }
@@ -11708,13 +11708,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast diesen Monat so viele neue Ziele gestartet, wie der Free-Tarif erlaubt. Versuch es nächsten Monat erneut oder hol dir Plus, um jetzt weiterzumachen."
+            "value" : "Du hast diesen Monat so viele neue Ziele gestartet, wie der Free-Tarif erlaubt. Versuch es nächsten Monat noch einmal oder hol dir Plus, um jetzt weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has empezado todos los objetivos nuevos que permite el plan gratuito este mes. Vuelve a intentarlo el mes que viene o consigue Plus para continuar ahora."
+            "value" : "Has empezado todos los objetivos nuevos que permite el plan gratuito este mes. Inténtalo de nuevo el mes que viene o pásate a Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -11726,7 +11726,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas metas do plano Grátis para este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
+            "value" : "Você atingiu o limite de novas metas que pode começar no plano Grátis este mês. Tente de novo no mês que vem ou assine o Plus para continuar agora."
           }
         }
       }
@@ -11737,7 +11737,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast heute so viele neue Ziele gestartet, wie dein Tarif erlaubt. Versuch es morgen erneut."
+            "value" : "Du hast heute so viele neue Ziele gestartet, wie dein Tarif erlaubt. Versuch es morgen noch einmal."
           }
         },
         "es" : {
@@ -11755,7 +11755,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você atingiu o limite de novas metas do seu plano para hoje. Tente de novo amanhã."
+            "value" : "Você atingiu o limite de novas metas que pode começar no seu plano hoje. Tente de novo amanhã."
           }
         }
       }
@@ -11824,7 +11824,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Antworten zu diesem Ziel werden gelöscht und du gibst erneut ein Ziel ein."
+            "value" : "Deine Antworten zu diesem Ziel werden gelöscht und du gibst noch einmal ein Ziel ein."
           }
         },
         "es" : {
@@ -11842,7 +11842,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Suas respostas para esta meta são apagadas, e você digita uma meta de novo."
+            "value" : "Suas respostas para esta meta são apagadas e você escreve uma meta de novo."
           }
         }
       }
@@ -11946,7 +11946,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "In deinen ersten Lerneinheiten bekommst du noch ein paar Fragen, um deinen Plan genauer abzustimmen."
+            "value" : "In deinen ersten Lerneinheiten kommen noch ein paar Fragen dazu, um deinen Plan genauer abzustimmen."
           }
         },
         "es" : {
@@ -11975,7 +11975,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stattdessen bekommst du in deinen ersten Lerneinheiten ein paar dieser Fragen."
+            "value" : "Stattdessen kommen ein paar dieser Fragen in deinen ersten Lerneinheiten dran."
           }
         },
         "es" : {
@@ -12242,7 +12242,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu plan aún se está preparando. Vuelve a intentarlo en un momento."
+            "value" : "Aún estamos preparando tu plan. Inténtalo de nuevo dentro de un momento."
           }
         },
         "fr" : {
@@ -12254,7 +12254,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu plano ainda está sendo criado. Tente de novo daqui a pouco."
+            "value" : "Seu plano ainda está sendo criado. Tente de novo em instantes."
           }
         }
       }
@@ -12364,7 +12364,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ton plan suivra les matières, les sujets et les dates de l’avis d’examen. Cela prend généralement quelques minutes."
+            "value" : "Ton plan suivra les domaines, les sujets et les dates de l’avis d’examen. Cela prend généralement quelques minutes."
           }
         },
         "pt" : {

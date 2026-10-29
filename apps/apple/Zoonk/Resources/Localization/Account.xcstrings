@@ -106,7 +106,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine Sicherheitsprüfung hat diese Anfrage blockiert. Versuch es erneut oder kontaktiere hello@zoonk.com."
+            "value" : "Eine Sicherheitsprüfung hat diese Anfrage blockiert. Versuch es noch einmal oder schreib an hello@zoonk.com."
           }
         },
         "es" : {
@@ -495,7 +495,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deine Angaben und versuch es erneut."
+            "value" : "Prüf deine Angaben und versuch es noch einmal."
           }
         },
         "es" : {
@@ -582,7 +582,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deine Verbindung und versuch erneut, deine Käufe wiederherzustellen."
+            "value" : "Prüf deine Verbindung und versuch noch einmal, deine Käufe wiederherzustellen."
           }
         },
         "es" : {
@@ -1557,7 +1557,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stelle sicher, dass du mit dem Apple Account angemeldet bist, mit dem du den Kauf getätigt hast, und versuche es erneut."
+            "value" : "Stell sicher, dass du mit dem Apple Account angemeldet bist, mit dem du den Kauf getätigt hast. Versuch es dann noch einmal."
           }
         },
         "es" : {
@@ -1575,7 +1575,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira se você entrou com a Conta Apple usada na compra e tente novamente."
+            "value" : "Confira se você está usando a Conta Apple da compra e tente de novo."
           }
         }
       }
@@ -2439,7 +2439,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut anmelden"
+            "value" : "Noch einmal anmelden"
           }
         },
         "es" : {
@@ -2457,7 +2457,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Entre novamente"
+            "value" : "Entre de novo"
           }
         }
       }
@@ -2706,7 +2706,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dieser Code ist ungültig oder abgelaufen. Fordere einen neuen Code an und versuche es erneut."
+            "value" : "Der Code ist ungültig oder abgelaufen. Fordere einen neuen Code an und versuch es noch einmal."
           }
         },
         "es" : {
@@ -2724,7 +2724,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Esse código é inválido ou expirou. Peça um novo código e tente novamente."
+            "value" : "Esse código é inválido ou expirou. Peça um novo código e tente de novo."
           }
         }
       }
@@ -2764,7 +2764,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der App Store konnte diesen Kauf nicht abschließen. Prüfe deine Verbindung und versuche es erneut."
+            "value" : "Der App Store konnte den Kauf nicht abschließen. Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
@@ -2782,7 +2782,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A App Store não conseguiu concluir esta compra. Confira sua conexão e tente novamente."
+            "value" : "A App Store não conseguiu concluir esta compra. Confira sua conexão e tente de novo."
           }
         }
       }
@@ -2857,7 +2857,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zu viele Versuche. Warte einen Moment und versuche es erneut."
+            "value" : "Zu viele Versuche. Warte einen Moment und versuch es dann noch einmal."
           }
         },
         "es" : {
@@ -2875,7 +2875,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Muitas tentativas. Aguarde um pouco e tente novamente."
+            "value" : "Muitas tentativas. Espere um pouco e tente de novo."
           }
         }
       }
@@ -2886,7 +2886,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -2904,7 +2904,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -3368,7 +3368,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tu compra está a salvo y aún no se ha completado. Restaura las compras cuando vuelvas a tener conexión."
+            "value" : "Tu compra está segura y aún no se ha completado. Restaura las compras cuando vuelvas a tener conexión."
           }
         },
         "fr" : {
@@ -3606,7 +3606,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk konnte keine Verbindung herstellen. Prüfe deine Verbindung und versuche es erneut."
+            "value" : "Zoonk konnte keine Verbindung herstellen. Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
@@ -3624,7 +3624,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk não conseguiu se conectar. Confira sua conexão e tente novamente."
+            "value" : "Zoonk não conseguiu se conectar. Confira sua conexão e tente de novo."
           }
         }
       }
@@ -3635,7 +3635,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk konnte dein Konto nicht löschen. Versuche es erneut oder wende dich an hello@zoonk.com."
+            "value" : "Zoonk konnte dein Konto nicht löschen. Versuch es noch einmal oder schreib an hello@zoonk.com."
           }
         },
         "es" : {
@@ -3653,7 +3653,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk não conseguiu excluir sua conta. Tente novamente ou entre em contato pelo e-mail contato@zoonk.com."
+            "value" : "Zoonk não conseguiu excluir sua conta. Tente de novo ou entre em contato pelo contato@zoonk.com."
           }
         }
       }
@@ -3693,7 +3693,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk konnte den Bestätigungscode nicht senden. Versuche es erneut oder wende dich an hello@zoonk.com."
+            "value" : "Zoonk konnte den Bestätigungscode nicht senden. Versuch es noch einmal oder schreib an hello@zoonk.com."
           }
         },
         "es" : {
@@ -3711,7 +3711,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk não conseguiu enviar o código de verificação. Tente novamente ou entre em contato pelo e-mail contato@zoonk.com."
+            "value" : "Zoonk não conseguiu enviar o código de verificação. Tente de novo ou entre em contato pelo contato@zoonk.com."
           }
         }
       }
@@ -3722,7 +3722,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk konnte dich nicht anmelden. Versuche es erneut oder wende dich an hello@zoonk.com."
+            "value" : "Zoonk konnte dich nicht anmelden. Versuch es noch einmal oder schreib an hello@zoonk.com."
           }
         },
         "es" : {
@@ -3740,7 +3740,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Zoonk não conseguiu conectar você à sua conta. Tente novamente ou entre em contato pelo e-mail contato@zoonk.com."
+            "value" : "Zoonk não conseguiu conectar você à sua conta. Tente de novo ou entre em contato pelo contato@zoonk.com."
           }
         }
       }

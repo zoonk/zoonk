@@ -26,7 +26,7 @@
   "generation_not_started": "2fb9c290f8f405da5a301d133f7f117dcaf32f25ef0d51fa37f00479f97fbe4a",
   "generation_not_started_description": "bc266a58d6215c404b08787d56e3a8e553471e1f4270e3a2204e98bc646ad258",
   "generation_notice": "e7d22059f37252cfbbb608ce9415c5334d465676c965fea3f3e3014bea6b6a64",
-  "generation_notice_line_1": "cebcdc5188caed39fc328c7b8507f9d0281d73d6aeffb227b8206621c5059673",
+  "generation_notice_line_1": "65e5d94142e1c36f640ed7f5f7ebd7190b41c1473abfb857e31d355fb61da4b6",
   "generation_notice_line_2": "1770f63c1a502855753143c3393a1066acc8cb1b1511ca0c50412aff74559554",
   "generation_phase_active": "abcee5619fdad05818e3f1ea7c894d71f51d5e1518bf625f7116f51b7788961b",
   "generation_phase_completed": "81758654b81286e6f45665a67e24271e56abe30527768b0fd2c9a09b62ebe518",
@@ -42,7 +42,7 @@
   "generation_skills_line_1": "fd176c9a9dd23dea76e432eba0268c17c4ee0ae8f2c2aa52487149c1560f123a",
   "generation_skills_line_2": "7fe9eeacf772b6f71abf5afa07aa7129a3b6f6a4d06fae49cc2a9e404d5127c2",
   "generation_skills_line_3": "18ba208a96d442b350fafc05f0d6a299c8ee5fdbbe0e58977a97de3e2fbe4ddc",
-  "generation_try_again": "d3ed2a7d11bbf67a4a326d67d3abb8a96a10d46c528b20bcf85d3921ca731e4d",
+  "generation_try_again": "024b8c169e9224f87e39b7d643e273d677e39434d62765330a79888980eb0bae",
   "generation_understanding": "ecc8ed721cdf456fff6da3aeb54ef08002870f4a1f2e45a66e024a160f719880",
   "generation_understanding_dates": "135d05a2279cc25cedc06ccd41098a16bc47c5e033a88714c2dc7a2539e6ed1e",
   "generation_understanding_dates_line_1": "7323aa02543b661ae2dbb8e3a495ca92cd517ee1e28134ec4463f6bcee095e0d",
@@ -66,7 +66,7 @@
     <string name="generation_not_started">Não foi possível começar</string>
     <string name="generation_not_started_description">A gente não conseguiu iniciar o processo.</string>
     <!-- Starts something that failed or never started again. -->
-    <string name="generation_try_again">Tentar novamente</string>
+    <string name="generation_try_again">Tente de novo</string>
     <!-- Screen reader state of a step of a wait. -->
     <string name="generation_phase_pending">ainda não começou</string>
     <string name="generation_phase_active">em andamento</string>
@@ -80,7 +80,7 @@
     <string name="generation_goal_line_2">Decidindo o nível de aprofundamento…</string>
     <!-- A step that only runs for a plan built from the learner's own material. -->
     <string name="generation_notice">Lendo seu material</string>
-    <string name="generation_notice_line_1">Identificando os assuntos que ele aborda…</string>
+    <string name="generation_notice_line_1">Buscando os tópicos que ele aborda…</string>
     <string name="generation_notice_line_2">Organizando os assuntos na ordem em que aparecem…</string>
     <string name="generation_skills">Mapeando as habilidades necessárias</string>
     <string name="generation_skills_line_1">Listando o que sua meta exige…</string>

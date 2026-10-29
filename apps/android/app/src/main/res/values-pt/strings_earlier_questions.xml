@@ -9,7 +9,7 @@
   "earlier_questions_from_lesson": "b47d14b3ddf502037bdc62e4f19de72a28510ce3a15f43a824a39e7da3188f4f",
   "earlier_questions_no_answer": "b1682af5ec79cdc2fefb8170ddcbd1d32fb6fa7ade1c20704453e66ecee1f55f",
   "earlier_questions_older": "fa0f9fe36788172e3d37bfb7d633a6472588571906c45bb766906d8aa4270586",
-  "earlier_questions_older_failed": "d0960e987aede9d387828e03cbde0a8c590380c8cb1e00cf4c5d991f74aca059",
+  "earlier_questions_older_failed": "92fb07ecc94c93bf4b54bfbe0b4c454eff2ede4f2c8c8db078b0d257569f21ef",
   "earlier_questions_title": "5d1a93b647a8ddc5d781ec4752472de96a70395bf2163e50cb9010aeca769472"
 }
 -->
@@ -30,5 +30,5 @@
     <string name="earlier_questions_no_answer">Nenhuma resposta foi salva.</string>
     <!-- Loads the next page of the learner's earlier questions. -->
     <string name="earlier_questions_older">Perguntas anteriores</string>
-    <string name="earlier_questions_older_failed">Não foi possível carregar as perguntas anteriores. Tente novamente.</string>
+    <string name="earlier_questions_older_failed">Não foi possível carregar as perguntas anteriores. Tente de novo.</string>
 </resources>

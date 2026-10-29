@@ -123,8 +123,8 @@
   "catalog_workload_reviews_note": "dab09754bf1c7568e4b09f614414d51612fe3683c37e40188caff551487b56ee",
   "catalog_workload_title": "598d421dcdb031144dd92b65552520f189b34c2d155816cc79091c1e2da70deb",
   "catalog_workload_total": "87666529fea710ae22a682f09a535e2e40d5f8083ed6d3dcef5bae1ad7450dee",
-  "catalog_workload_unwritten": "7ff9fe89fb97f0dfa6a1a658aba946d504eb4facd88459f46f8b77e1dce0e1e4",
-  "catalog_workload_unwritten_note": "e5c2822a23ce50f8a6a044d44f7c1014cb8e641019ba15ecc728b61cdcdcfe42",
+  "catalog_workload_unwritten": "94fc3d09ae427ee92cba7b84a01c4538cb04f3297c64d6bf1bdfa1378ab62f1f",
+  "catalog_workload_unwritten_note": "7b4944482ad490f8b3e92867e2e277e4652429023b9cbc6dccb878e442511b4c",
   "catalog_written_later": "64fd48447946299a260016c9236de035cfb979be29fab9aeaa046e355d260c99"
 }
 -->
@@ -231,13 +231,13 @@
     <string name="catalog_workload_title">En qué se emplea el tiempo</string>
     <string name="catalog_workload_total">%1$s en total</string>
     <string name="catalog_workload_lessons">Lecciones</string>
-    <string name="catalog_workload_unwritten">Lecciones aún sin preparar</string>
+    <string name="catalog_workload_unwritten">Lecciones aún por preparar</string>
     <string name="catalog_workload_practice">Repasos y práctica</string>
     <string name="catalog_workload_challenges">Desafíos</string>
     <string name="catalog_workload_challenges_mocks">Desafíos y simulacros</string>
     <string name="catalog_workload_reviews_note">Repasarás lo que has estudiado justo antes de olvidarlo.</string>
     <string name="catalog_workload_after_exam">De ese tiempo, %1$s corresponde a después del examen.</string>
-    <string name="catalog_workload_unwritten_note">Las lecciones que aún no están preparadas se preparan a medida que llegas a ellas.</string>
+    <string name="catalog_workload_unwritten_note">Las lecciones pendientes se preparan cuando llegas a ellas.</string>
     <string name="catalog_audience">A quién va dirigido</string>
     <string name="catalog_outcomes">Qué podrás hacer</string>
     <string name="catalog_outline">Contenido del curso</string>

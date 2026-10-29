@@ -40,7 +40,7 @@
   "goalcontent_mastery_pending": "6af6ad6c8cfdf2738ad4e923e2b9809f52e4cc0e9f7a1c6605954dc5972c3e44",
   "goalcontent_mastery_right": "cc190e215b5d1bfe6a55bdd3024fd2bf0761f70357ffa92de83e8a50fe9998a7",
   "goalcontent_material_topic_count": "d383b1ce6b5d741943d024d0906dbfc9d638c8aa2957d3d1ce8002a6510136c6",
-  "goalcontent_matrix_title": "e68dab77f44567acdfdc1232e7f853a0f2277125b169e6ca863455ad7111cb0f",
+  "goalcontent_matrix_title": "1763ed93c5992f81557f923a86f8d291f7f5ea343ae2b11d74b48ce7c1c6896e",
   "goalcontent_module": "273981225b7bda7f617eeec388a4ed374f729ca03337e183e926f3c0f043d189",
   "goalcontent_module_count": "bbeb46413d5837b5714a9e4472d0ae6f4de6936da9f601c637ca98a5d43cdd1f",
   "goalcontent_modules": "8f78b7ac4521eb120e408b021a0916c4554af3d734e16a1c986395645e7ae98f",
@@ -60,7 +60,7 @@
   "goalcontent_questions": "bad331c4479d4a2c815ad3796cf39d9a8361d245b88a5f7b352090623a2742cb",
   "goalcontent_questions_source_edition": "cadb26ccc39526bc0d20009ca850846aeb6347bd592741fdb75a54c6005ea0bb",
   "goalcontent_questions_source_latest": "0f434d707bbe2adca9e38a40601a802594c88c5a88ae1d9e37dcc2d201639352",
-  "goalcontent_save_failed": "37f240e61d48b4a72abea75c126f24a15397e0c9b61896c25d47c1cce004569c",
+  "goalcontent_save_failed": "19c0474d2e9a74dd9da8f57cdd417b4d141101a68a3d96f70503cdf425b1b86a",
   "goalcontent_see_all": "a6d0ff5be922d08f6b4bb803821e9866386a7b0cbf30606461ccedc87972f983",
   "goalcontent_share_of_exam": "ea3db7fd65a51b92b410f077a168bc177d7beeb0d78c1edb145dbcd4e3c868df",
   "goalcontent_skill_count": "c7aa888d621084b48b2edd0e36dde070ef2c3f8bf2f568eea145f77be0cda103",
@@ -216,7 +216,7 @@
     <string name="goalcontent_adjust_plan">Plan anpassen</string>
     <!-- Puts a subject the learner took out back in their plan. -->
     <string name="goalcontent_bring_back">Wieder aufnehmen</string>
-    <string name="goalcontent_save_failed">Das hat nicht geklappt. Versuch es noch einmal.</string>
+    <string name="goalcontent_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <plurals name="goalcontent_chapters_done">
         <item quantity="one">%d Kapitel abgeschlossen</item>
         <item quantity="other">%d Kapitel abgeschlossen</item>
@@ -262,7 +262,7 @@
     <string name="goalcontent_frequency_waits">Die Themen, die in früheren Prüfungen am seltensten abgefragt wurden, kommen später dran (%1$s, laut %2$s).</string>
     <string name="goalcontent_frequency_most">Du verbringst mehr Zeit mit den Themen, die in früheren Prüfungen am häufigsten abgefragt wurden (%1$s, laut %2$s).</string>
     <!-- A section of a subject listing its skills matrix (ENEM's competencies and abilities). -->
-    <string name="goalcontent_matrix_title">Was in den Fragen vorkommt</string>
+    <string name="goalcontent_matrix_title">Was in den Fragen drankommt</string>
     <string name="goalcontent_see_all">Alle %1$s ansehen</string>
     <!-- Eyebrow of a chapter's page: "Biology · Chapter 4". -->
     <string name="goalcontent_subject_chapter">%1$s · Kapitel %2$s</string>

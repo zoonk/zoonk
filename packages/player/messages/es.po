@@ -297,7 +297,7 @@ msgstr "Tu suposición"
 #: src/activities/_components/activity-guess-scale.tsx
 msgctxt "8RsqoE"
 msgid "No guess yet"
-msgstr "Aún no has hecho una suposición"
+msgstr "Aún no hay ninguna suposición"
 
 #: src/activities/_components/activity-model-sliders.tsx
 msgctxt "9uS9GA"
@@ -342,7 +342,7 @@ msgstr "Para mover un elemento, pulsa Espacio o Intro, usa las teclas de flecha 
 #: src/activities/_components/activity-sound-button.tsx
 msgctxt "ZmADei"
 msgid "The sound couldn't load. You can still see every note."
-msgstr "No se ha podido cargar el sonido. Aun así, puedes ver todas las notas."
+msgstr "No se ha podido cargar el sonido. Aún puedes ver todas las notas."
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
@@ -730,7 +730,7 @@ msgstr "Ponlo aquí"
 #: src/activities/categorize/categorize-group.tsx
 msgctxt "KjR3ZD"
 msgid "Nothing here yet"
-msgstr "Todavía no hay nada aquí"
+msgstr "Aún no hay nada aquí"
 
 #: src/activities/categorize/categorize-results.tsx
 msgctxt "Y4KaZD"
@@ -1066,7 +1066,7 @@ msgstr "El caso"
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "8LkSSl"
 msgid "Still possible"
-msgstr "Opciones aún posibles"
+msgstr "Aún posibles"
 
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "5m07cc"
@@ -1086,7 +1086,7 @@ msgstr "Has llegado a {outcome} tras {count, plural, =0 {# preguntas} one {# pre
 #: src/activities/decision-tree/decision-tree-activity.tsx
 msgctxt "MtII9q"
 msgid "Question {number}. Still possible: {outcomes}."
-msgstr "Pregunta {number}. Opciones aún posibles: {outcomes}."
+msgstr "Pregunta {number}. Aún posibles: {outcomes}."
 
 #: src/activities/decision-tree/decision-tree-review.tsx
 msgctxt "GSaFJS"
@@ -1589,7 +1589,7 @@ msgstr "Un gráfico de dos líneas, {first} y {second}, que muestra {y} en funci
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "1eICpE"
 msgid "Neither line has moved yet."
-msgstr "Ninguna de las dos líneas se ha movido todavía."
+msgstr "Aún no se ha movido ninguna de las dos líneas."
 
 #: src/activities/line-crossing/line-crossing-parts.tsx
 msgctxt "dSVAFh"
@@ -3041,12 +3041,12 @@ msgstr "Dibujando la imagen…"
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "P0MjYO"
 msgid "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now."
-msgstr "Puedes seguir repasando lo que has aprendido y practicando tus errores. El mes que viene tendrás nuevas lecciones, o puedes conseguir Plus para seguir ahora."
+msgstr "Aún puedes repasar lo aprendido y practicar tus errores. El mes que viene habrá nuevas lecciones, o puedes obtener Plus para seguir ahora."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "SDARaX"
 msgid "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now."
-msgstr "Puedes seguir repasando lo que has aprendido y practicando tus errores. Mañana tendrás nuevas lecciones, o puedes conseguir Plus para seguir ahora."
+msgstr "Aún puedes repasar lo aprendido y practicar tus errores. Mañana habrá nuevas lecciones, o puedes obtener Plus para seguir ahora."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "o_xO7j"
@@ -3072,7 +3072,7 @@ msgstr "Volver"
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "q-Zgbe"
 msgid "You've taken the lessons you can try without an account. Create a free account to keep going, and everything you learned comes with you."
-msgstr "Ya has hecho las lecciones que puedes probar sin una cuenta. Crea una cuenta gratuita para seguir y conservar todo lo que has aprendido."
+msgstr "Ya has hecho todas las lecciones que puedes probar sin cuenta. Crea una cuenta gratis para seguir y conservar todo lo que has aprendido."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "gojCcS"
@@ -3618,7 +3618,7 @@ msgstr "No hemos podido comprobar tu respuesta esta vez. Inténtalo de nuevo."
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "dw3XKv"
 msgid "Still checking. This is taking longer than usual."
-msgstr "Seguimos comprobando tu respuesta. Está tardando más de lo habitual."
+msgstr "Aún estamos comprobando. Está tardando más de lo habitual."
 
 #: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "waVIZZ"
@@ -3739,7 +3739,7 @@ msgstr "Pregunta a {name} sobre tu plan"
 #: src/questions/ask-tutor.tsx
 msgctxt "dHV3p3"
 msgid "Ask {name} about this subject"
-msgstr "Pregunta a {name} sobre esta materia"
+msgstr "Pregunta a {name} sobre esta asignatura"
 
 #: src/questions/item-tutor.tsx
 msgctxt "_DwRra"
@@ -3769,7 +3769,7 @@ msgstr "Pregunta sobre tu plan…"
 #: src/questions/lesson-question-composer.tsx
 msgctxt "uDwgZF"
 msgid "Ask about this subject…"
-msgstr "Pregunta sobre esta materia…"
+msgstr "Pregunta sobre esta asignatura…"
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "TCh0B4"
@@ -3874,7 +3874,7 @@ msgstr "Haz preguntas sobre tu plan"
 #: src/questions/lesson-question-panel.tsx
 msgctxt "zoFfdl"
 msgid "Ask questions about this subject"
-msgstr "Haz preguntas sobre esta materia"
+msgstr "Haz preguntas sobre esta asignatura"
 
 #: src/questions/lesson-question-panel.tsx
 msgctxt "uF5ZgT"
@@ -3914,7 +3914,7 @@ msgstr "Preguntas sobre tu plan"
 #: src/questions/lesson-question-thread.tsx
 msgctxt "6QK3he"
 msgid "Questions about this subject"
-msgstr "Preguntas sobre esta materia"
+msgstr "Preguntas sobre esta asignatura"
 
 #: src/questions/lesson-question-thread.tsx
 msgctxt "UQ_Pn_"
@@ -3975,7 +3975,7 @@ msgstr "Sobre esta parte"
 #: src/questions/lesson-question-turn.tsx
 msgctxt "XHGiOR"
 msgid "About this subject"
-msgstr "Sobre este tema"
+msgstr "Sobre esta asignatura"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "aEX9_r"

@@ -1680,7 +1680,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Continuar"
+            "value" : "Seguir"
           }
         },
         "fr" : {
@@ -1709,7 +1709,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguir aprendiendo"
+            "value" : "Sigue aprendiendo"
           }
         },
         "fr" : {
@@ -3215,7 +3215,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Versuch es noch einmal"
           }
         },
         "es" : {
@@ -3273,7 +3273,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der nächste Schritt konnte nicht geöffnet werden. Versuch es erneut."
+            "value" : "Wir konnten den nächsten Schritt nicht öffnen. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -3291,7 +3291,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível abrir a próxima etapa. Tente de novo."
+            "value" : "Não conseguimos abrir o próximo passo. Tente de novo."
           }
         }
       }

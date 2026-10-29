@@ -53,7 +53,7 @@
   "goalcontent_practice_chapter": "8dd8310524433a95ee587642f3c67b0fa81a2d712aab68a2e65bea1cd5457d41",
   "goalcontent_practice_daily_cap": "2eefda542c9ce72c54cf68516deb0f82b97ee58122bdc4254b6aaddcc73fa78d",
   "goalcontent_practice_failed": "097a8c9ea892f79f55ace797f8a244230d5df2de49cd71366b4ef7cf90d743f6",
-  "goalcontent_practice_nothing": "8e6c8dd221f2415761dc7ad159725b131854af7867e557db2b92e08f2e097fc1",
+  "goalcontent_practice_nothing": "c8c9bd0f9080987951069ba48ebf0e2c4e69b739178585cc19098c1bf5697c49",
   "goalcontent_preparation": "c10d0bd9837cdc9f8efa7a21390f87c9db30a61dfd665ffd075310ac051d9c29",
   "goalcontent_progress": "42f3dc89ad615bc3ca4a0eafd7a18b56c4080017b04f51ef78bb1f36c900168b",
   "goalcontent_question_count": "28490415f917210813c767539a8c266a213bc97ce9531a3c4e023cfdd58ef08e",
@@ -288,7 +288,7 @@
     <string name="goalcontent_practice">Práctica</string>
     <string name="goalcontent_practice_chapter">Practicar este capítulo</string>
     <string name="goalcontent_practice_daily_cap">Eso es todo por hoy para la práctica extra. La sesión de mañana retomará este capítulo.</string>
-    <string name="goalcontent_practice_nothing">Todavía no hay nada que practicar en este capítulo.</string>
+    <string name="goalcontent_practice_nothing">Aún no hay nada que practicar en este capítulo.</string>
     <string name="goalcontent_practice_failed">No ha funcionado. Vuelve a intentarlo en un momento.</string>
     <string name="goalcontent_for_reference">Para consultar</string>
     <string name="goalcontent_chapter_summary">Resumen del capítulo</string>

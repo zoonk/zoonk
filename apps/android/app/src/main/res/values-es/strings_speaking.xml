@@ -3,8 +3,8 @@
 {
   "speaking_eyebrow": "511991acae0c7e8a10320f67f609c962e8e5ddba433e9a53c9407231a7ca94d0",
   "speaking_facts": "fd5b7ae0a022f633ad693d5b726517878859638621d7981e56cf663508d4ee62",
-  "speaking_footer": "52c7920d205d7f046f1a6583e7970e1d00a60a4fc4b5c0079b94d2506f1a1f36",
-  "speaking_footer_partner": "59d04d579a99f1493115e2af66bd13aab11f971f3b7ead92c492502cb6fbd54f",
+  "speaking_footer": "40031a37817025e76105f93201fb67d0390101eae3ff9e53480eb09e4ca56567",
+  "speaking_footer_partner": "9709b2ad2a88fded3fbf4990667c413727642b6108f3129b6bd44ae6ae6d00b2",
   "speaking_last_at": "6900da42be4fe0638ab00ee5cfccf77d57a20664cbe460223aad77f767421deb",
   "speaking_last_below": "6c41f84b861992e18a5c81de9ef136b1a40dad2f091d2fbdf53beb124e3680ba",
   "speaking_last_near": "a9a926187f64d8a37861a13e1a83cb0a78a4486613ac679e9f18ae5914cc5b2b",
@@ -57,8 +57,8 @@
     <string name="speaking_no_time_month">No te queda suficiente tiempo de llamada este mes para esta tarea</string>
     <string name="speaking_no_time_day">No te queda suficiente tiempo de llamada hoy para esta tarea</string>
     <string name="speaking_start_failed">No se ha iniciado la tarea. Inténtalo de nuevo en un momento.</string>
-    <string name="speaking_footer_partner">Una IA hace el papel del examinador o del otro candidato. En cada intento tendrás una tarjeta nueva y después recibirás una estimación basada en los criterios oficiales del examen, no una puntuación oficial.</string>
-    <string name="speaking_footer">Una IA hace el papel del examinador. En cada intento tendrás una tarjeta nueva y después recibirás una estimación basada en los criterios oficiales del examen, no una puntuación oficial.</string>
+    <string name="speaking_footer_partner">Una IA hace el papel del examinador o del otro candidato. Cada intento tiene una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no una puntuación oficial.</string>
+    <string name="speaking_footer">Una IA hace el papel del examinador. Cada intento tiene una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no una puntuación oficial.</string>
     <string name="speaking_official_format">Formato oficial</string>
     <string name="speaking_start_task">Empezar esta tarea</string>
     <string name="speaking_last_result">Ver tu último resultado</string>

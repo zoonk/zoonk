@@ -36,7 +36,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prüfe deine E-Mail-Adresse und deine Nachricht und versuche es dann erneut."
+            "value" : "Prüf deine E-Mail-Adresse und deine Nachricht und versuch es noch einmal."
           }
         },
         "es" : {
@@ -54,7 +54,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Confira seu e-mail e sua mensagem e tente novamente."
+            "value" : "Confira seu e-mail e sua mensagem e tente de novo."
           }
         }
       }
@@ -152,7 +152,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Feedback konnte nicht gesendet werden. Versuche es später erneut."
+            "value" : "Dein Feedback konnte nicht gesendet werden. Versuch es später noch einmal."
           }
         },
         "es" : {
@@ -170,7 +170,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível enviar seus comentários. Tente novamente mais tarde."
+            "value" : "Não foi possível enviar sua mensagem. Tente de novo mais tarde."
           }
         }
       }
@@ -332,7 +332,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Gib uns Feedback, stelle eine Frage oder sag uns, was wir verbessern können."
+            "value" : "Gib uns Feedback, stell eine Frage oder sag uns, was wir verbessern können."
           }
         },
         "es" : {
@@ -448,7 +448,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du bist offline. Prüfe deine Verbindung und versuche es erneut."
+            "value" : "Du bist offline. Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
@@ -466,7 +466,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você está sem conexão. Confira sua internet e tente novamente."
+            "value" : "Você está sem internet. Confira sua conexão e tente de novo."
           }
         }
       }

@@ -2047,7 +2047,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todas las respuestas cuentan lo mismo, así que las lecciones más difíciles pueden bajar tu puntuación durante un tiempo."
+            "value" : "Todas las respuestas cuentan igual, así que las lecciones más difíciles pueden hacer que tu puntuación baje durante un tiempo."
           }
         },
         "fr" : {
@@ -2923,7 +2923,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todavía no"
+            "value" : "Aún no"
           }
         },
         "fr" : {
@@ -4077,7 +4077,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -4586,7 +4586,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Fortschritt ist sicher. Versuche es gleich noch einmal."
+            "value" : "Dein Fortschritt ist sicher. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -4604,7 +4604,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seu progresso está salvo. Tente de novo daqui a pouco."
+            "value" : "Seu progresso está salvo. Tente de novo em instantes."
           }
         }
       }

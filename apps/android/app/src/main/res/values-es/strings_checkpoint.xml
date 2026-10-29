@@ -36,7 +36,7 @@
   "checkpoint_prize": "53740803116064d644402a1595827a520cf2a60f7d7bf15a1f369bc60c6fd6d5",
   "checkpoint_prize_phase": "ba15319e0b7539433bb73bb78b0abf4b990f2f9b30d624c2121c91944a83185d",
   "checkpoint_questions_left": "39ddf8db7f59894028872d3a0c89f74fecab68e186dcd1c80dfe7d627516a54d",
-  "checkpoint_removed_detail": "f2def09626acb478f8967ea53613bd22ac04cae247343e3f70fa3c640bd6238b",
+  "checkpoint_removed_detail": "27c6a742325d2301e2c42a42d0b6bee26c89d1570041720fd1993ded6f9b4c2b",
   "checkpoint_removed_title": "ded78ab8ec7f6887ee9a2903556d28bab1f6f99c56bec35ac9b936dee0c25aba",
   "checkpoint_retry_after_lessons": "56483e1edf41ef3a7d8c5d731809d5f2ce4bc3febf0543c55f5f181c1c030da8",
   "checkpoint_retry_tomorrow": "837f06e6d828437b6ae50ec12ffbee2e5b9373df37fafc5e3b6b51acdd30384c",
@@ -118,7 +118,7 @@
     <!-- %1$s is the Brain Power; %2$s is the phase's number. -->
     <string name="checkpoint_prize_phase">+%1$s · fase %2$s completada</string>
     <string name="checkpoint_removed_title">Se han eliminado las preguntas</string>
-    <string name="checkpoint_removed_detail">Aún no habías respondido a ninguna, así que este desafío no se puntúa. No has perdido nada.</string>
+    <string name="checkpoint_removed_detail">Aún no habías respondido a ninguna pregunta, así que este desafío no tiene puntuación. No has perdido nada.</string>
     <string name="checkpoint_weekly_done">Desafío semanal completado</string>
     <string name="checkpoint_beat">¡Has vencido al Tramposo!</string>
     <string name="checkpoint_not_this_time">Esta vez no ha podido ser</string>

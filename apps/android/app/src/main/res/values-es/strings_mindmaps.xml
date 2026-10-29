@@ -29,7 +29,7 @@
   "mindmaps_fit": "a154a9336b9fa7471c48139003252174e0e541239f9188717dc06e73d5b78140",
   "mindmaps_full_screen": "9d760956c0cff07673594932d3cfe661e5e4fc824abafa9c2017aac1e589b731",
   "mindmaps_in_short": "2c343c5e18f455bb99374e5b181ed87930b26d8a57ba22c5b8dec3fcdfde06e6",
-  "mindmaps_keep_studying": "fcb001ff7e5e9ca37161a55a816cd0ece03cc9d95924aec7286d2056295685bf",
+  "mindmaps_keep_studying": "7c65e8eaa15c06c413c85d66d9d290d8fa7465628b56858422585ff9f3d3bb65",
   "mindmaps_save_failed": "6263e3bc0b24b480ac6074fc9de7541aee92456aea5b1168b683a64e4970aa41",
   "mindmaps_saved": "6a3d9eb18923ee6324a3741bbc7e4a78d95b7aa1f1df9aecdcab3c799f25fa02",
   "mindmaps_try_again": "23f3fc2d0260bb35215c1ea5f145974a92bf689c68d92804c1edf2cd71e35ef9",
@@ -66,7 +66,7 @@
     </plurals>
     <!-- Opens the chapter whose map comes next. -->
     <string name="mindmaps_continue">Continuar</string>
-    <string name="mindmaps_keep_studying">Seguir estudiando</string>
+    <string name="mindmaps_keep_studying">Sigue estudiando</string>
     <!-- A mind map's description for screen readers when it has no words yet. -->
     <string name="mindmaps_alt_chapter">Mapa mental de %1$s</string>
     <!-- A mind map's description for screen readers: its title, then its central idea. -->

@@ -36,7 +36,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ wurde nicht geladen. Prüfe deine Verbindung und versuche es erneut."
+            "value" : "%@ konnte nicht geladen werden. Prüf deine Verbindung und versuch es noch einmal."
           }
         },
         "es" : {
@@ -54,7 +54,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível carregar %@. Confira sua conexão e tente novamente."
+            "value" : "%@ não carregou. Confira sua conexão e tente de novo."
           }
         }
       }
@@ -775,7 +775,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut ausführen"
+            "value" : "Noch einmal ausführen"
           }
         },
         "es" : {
@@ -793,7 +793,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Executar novamente"
+            "value" : "Executar de novo"
           }
         }
       }
@@ -1346,7 +1346,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Abfrage hat zu viele Zeilen zurückgegeben. Füge einen Filter oder LIMIT hinzu und versuche es erneut."
+            "value" : "Die Abfrage hat zu viele Zeilen zurückgegeben. Füge einen Filter oder LIMIT hinzu und versuch es noch einmal."
           }
         },
         "es" : {
@@ -1364,7 +1364,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A consulta retornou linhas demais. Adicione um filtro ou LIMIT e tente novamente."
+            "value" : "A consulta retornou linhas demais. Adicione um filtro ou LIMIT e tente de novo."
           }
         }
       }
@@ -1470,7 +1470,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -1488,7 +1488,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -1528,7 +1528,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast den Code geändert. Führe ihn erneut aus, um die neue Ausgabe zu sehen."
+            "value" : "Du hast den Code geändert. Führ ihn noch einmal aus, um die neue Ausgabe zu sehen."
           }
         },
         "es" : {
@@ -1557,7 +1557,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast die Abfrage geändert. Führe sie erneut aus, um das neue Ergebnis zu sehen."
+            "value" : "Du hast die Abfrage geändert. Führ sie noch einmal aus, um das neue Ergebnis zu sehen."
           }
         },
         "es" : {

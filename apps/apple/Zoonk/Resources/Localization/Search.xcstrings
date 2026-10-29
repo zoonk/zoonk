@@ -36,7 +36,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fragen"
+            "value" : "Frag nach"
           }
         },
         "es" : {
@@ -65,7 +65,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ fragen: „%2$@“"
+            "value" : "Frag %1$@: „%2$@“"
           }
         },
         "en" : {
@@ -100,7 +100,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ fragen…"
+            "value" : "Frag %@…"
           }
         },
         "es" : {

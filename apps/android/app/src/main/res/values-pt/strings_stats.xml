@@ -78,7 +78,7 @@
   "stats_score_across": "1678cb56ad1872ce9f3ac2b6583826b760533f7871d4ad9f39ad993f51cba450",
   "stats_score_after_answers": "35038540ac7e0e84e69799f78c458464d7262755564aeaa4e7b63630fa62aa37",
   "stats_score_answers": "f50db960f5ddd659246f207670539d63298610d76e685c3b66df6b029e83ae55",
-  "stats_score_line": "62ba02a82e7aaf45db0c460eb2698cb0fd1f050928984031c72fe5fe3ccf8f48",
+  "stats_score_line": "47270ac97ffe4f6a49525ebaec22198bf54d124534c40aa20b2cf084acc8920a",
   "stats_score_trend": "a4631f8f352068d0dd8410411674059b030f71e06013451aa28c376a32374b68",
   "stats_score_week": "cdd5914c17151143945375509e6b25237020b5af362e1d69da7f15b3328c4601",
   "stats_see_all": "3a089d4c034d6915dd0094f3d80a00c30834d04b2d5673e2f406cdf5895fccf9",
@@ -189,7 +189,7 @@
         <item quantity="many">%1$s dias</item>
         <item quantity="other">%1$s dias</item>
     </plurals>
-    <string name="stats_score_line">Todas as respostas têm o mesmo peso, então aulas mais difíceis podem baixar sua pontuação por um tempo.</string>
+    <string name="stats_score_line">Todas as respostas têm o mesmo peso, então aulas mais difíceis podem diminuir sua pontuação por um tempo.</string>
     <string name="stats_score_trend">Evolução semanal da pontuação: %1$s. %2$s</string>
     <plurals name="stats_score_across">
         <item quantity="one">%1$s em %2$s resposta</item>

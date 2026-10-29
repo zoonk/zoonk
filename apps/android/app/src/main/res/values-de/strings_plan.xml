@@ -165,7 +165,7 @@
   "plan_change_skills_come_in": "6a706a82ba9441236fbae1a2161904d9947af4c26765569bc13e0ab3cf7a7d80",
   "plan_change_start_area_instead": "c9480e970282563454e2773568854b32ec6e6abcf7e376ab7ea1deb484009c35",
   "plan_change_start_area_on": "42544448ff155ff8a6cfd69e4879c556b6ae8985a57dbdf4f3f100ecaa451424",
-  "plan_change_start_from_basics": "d870de5bb12d9e8aeb5054d5ce39b1a2b0a17a43cde211fd518325f9a9da3096",
+  "plan_change_start_from_basics": "86bdf89ea2fe5cf43ef6633d2640f7ccfd0ccaafeadaba7e375ce30a369c447d",
   "plan_change_start_past_basics": "d8d2728ce0b427316c6f51a128e95b7c4ae504e6e41ef74a299afd96ac62629d",
   "plan_change_still_finish_area": "4ffb5efe8668c4ae4bf88cd0abd25b5b797efa7b636d86b7fe8edb55900cac7e",
   "plan_change_still_start_area": "6746bce34a821995dbba14f10a8157c00117f641cc4caeda150a4edccc01b214",
@@ -360,11 +360,11 @@
   "plan_pace_days": "5e9d90548bb043b5f5452163aa83b95fcf806ec41f2d5e6bccaa1c78609a1f41",
   "plan_pace_days_ahead": "4896a0a57d3306e9ae45d94cdf99cfd277fedb818cb6dd26c93f9ba9237c617b",
   "plan_pace_days_behind": "7dc7f604258146c1220170ce89904371c6ca43dc19914b449fd88621f517fe0d",
-  "plan_pace_earlier_lessons_first": "144fd11fbfd05a83f59ea4886404836f80fcb57c14603273e256ae9c2e351cff",
+  "plan_pace_earlier_lessons_first": "9a79c7b5f08d75f8b32207fee6f0c795eaaf25b5f221a4c9d4fce57ffbb1649f",
   "plan_pace_finished": "bdc07f0d50f318345e9c9bb88326e33e4d722b9f9e2690128a2f188bc24daa46",
   "plan_pace_keeping_pace": "ebffb4a98e17e115b97ce9298f9f2ca52120f515df592f68f08addfb9a3a1a4f",
   "plan_pace_lessons_to_catch_up": "e5bfd50aebbb9a654992b2c714f2d5aea2037b5bf45078f0850428c30ec45ad6",
-  "plan_pace_more_minutes": "fbe6106e101f095c6e3b63b81a920df11e546213a8accf924530f409aaf4fbb4",
+  "plan_pace_more_minutes": "af2530f1462fd64281c424a2a402d2e1fcc1ec436523c6ab0cc8fa80445dcacd",
   "plan_pace_needs_adjusting": "fe59de8c4d0348e1583e2e979e7e052b2d10640bcad639952e82f7be418a8e08",
   "plan_pace_no_longer_fits": "2a6e069cda4fa94fd1a161b36cc1c7400f45bcef1536ff3df0cf7779ef529e49",
   "plan_pace_one_day_ahead": "45ddf3dbe18f388f85b40d8a236c926e513e084bdbc1fd73158f08daf9994bd3",
@@ -423,7 +423,7 @@
   "plan_saturdays": "e8e95e642c523bd600584dd986683563d404a127c436da904d71a8c1c1f1536d",
   "plan_save": "bfe7bd58174f2064ae04ec29e778dab8a0b5175dc11ecf9c7fb864b66c286e9b",
   "plan_save_choices": "ae8f2f8f7fe45c24b6ab6f8adb38114913d74df493e4f67fc79ca9fe1af3ffc7",
-  "plan_save_failed": "507da7b1a0c223b5d089cf16dd020631e75f8e19599cc220e2ee576aeffee520",
+  "plan_save_failed": "1465488f3df58bc810dd67a9ea969d432f1d4717b7d633a09d72edd89683b859",
   "plan_saving": "8faaaae3030f691af3fb166f69bee5ae7f6295476fad15cb14d280d1fca47d41",
   "plan_score_band": "ac7854b5af0736f7853d17fc54bf1c7c2a1686a5a13749375a771c9d30d53cf4",
   "plan_score_band_range": "50e36ebd05ddd9d28d01fff5d7ad32b73240f32d5dea777ddb6cf0837df17957",
@@ -509,7 +509,7 @@
   "plan_tools_none": "28178bea0e00c29a2ae8d7e452b2c727214d2445fe0adc8ceb83aa76f96a423b",
   "plan_tools_title": "8d24fd600c7915ed2c844b3ae2d92ddfe025856ec493c75c96d1d0d2e9d079c3",
   "plan_tools_without": "7a1af7ae07837fbe62c7519d0bbe6dd3e9d8c526526a320405e4b3ee302a01e0",
-  "plan_try_again": "067a97f8d338ad121d900952af3993d21d6a5e1f70b352561ae37d874ca489f6",
+  "plan_try_again": "64cf1db814134a71e9bc16954324b943392d655500f7ab9f9369553410b75efc",
   "plan_tuesdays": "592cda714fd06aafe2b52aa904d3eb79d09e57c949f3b83edd7c384e37fd2bb4",
   "plan_undo": "0bfc41ac13e8cdefc58ba156f78598a8c52268c4dbe84ec50a00fca2faff3d81",
   "plan_unit_lessons_being_written": "20ef4bcc1429a5c22d8942234eda9f3af85bfc848d877350831902e9a7f6be49",
@@ -582,7 +582,7 @@
     <string name="plan_resume">Fortsetzen</string>
     <string name="plan_cancel">Abbrechen</string>
     <string name="plan_goal_limit_reached">Im Free-Tarif kannst du jeweils ein Ziel verfolgen. Pausiere dein anderes Ziel, um dieses fortzusetzen, oder hol dir Plus für mehr Ziele.</string>
-    <string name="plan_save_failed">Das Speichern hat nicht geklappt. Versuch es noch einmal.</string>
+    <string name="plan_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <plurals name="plan_phases_done">
         <item quantity="one">%1$d von %2$d Phasen abgeschlossen</item>
         <item quantity="other">%1$d von %2$d Phasen abgeschlossen</item>
@@ -768,16 +768,16 @@
     <string name="plan_pace_win_challenges">Alle Lektionen sind geschafft: Gewinne die Herausforderungen, um deinen Plan abzuschließen.</string>
     <string name="plan_pace_no_longer_fits">Dein Plan passt nicht mehr in die verbleibende Zeit.</string>
     <plurals name="plan_pace_earlier_lessons_first">
-        <item quantity="one">Zuerst steht noch %d Lektion aus früheren Tagen an: Wenn du sie geschafft hast, bist du wieder im Plan.</item>
-        <item quantity="other">Zuerst stehen noch %d Lektionen aus früheren Tagen an: Wenn du sie geschafft hast, bist du wieder im Plan.</item>
+        <item quantity="one">Zuerst kommt %d Lektion von einem früheren Tag. Sobald du sie abgeschlossen hast, bist du wieder im Tempo.</item>
+        <item quantity="other">Zuerst kommen %d Lektionen von früheren Tagen. Sobald du sie abgeschlossen hast, bist du wieder im Tempo.</item>
     </plurals>
     <plurals name="plan_pace_days">
         <item quantity="one">%d Tag</item>
         <item quantity="other">%d Tage</item>
     </plurals>
     <plurals name="plan_pace_more_minutes">
-        <item quantity="one">%1$d Minute mehr pro Tag für %2$s und du bist wieder im Plan.</item>
-        <item quantity="other">%1$d Minuten mehr pro Tag für %2$s und du bist wieder im Plan.</item>
+        <item quantity="one">%1$d Minute mehr pro Tag für %2$s und du bist wieder im Tempo.</item>
+        <item quantity="other">%1$d Minuten mehr pro Tag für %2$s und du bist wieder im Tempo.</item>
     </plurals>
     <plurals name="plan_past_date_exam_sentence">
         <item quantity="one">Vor deiner Prüfung war noch %d Lektion offen.</item>
@@ -946,7 +946,7 @@
     <string name="plan_change_areas_left_out">%1$s wird im Plan ausgelassen.</string>
     <string name="plan_change_areas_back">%1$s ist wieder im Plan.</string>
     <string name="plan_change_start_past_basics">Einstieg nach den Grundlagen: %1$s.</string>
-    <string name="plan_change_start_from_basics">Wieder bei den Grundlagen beginnen: %1$s.</string>
+    <string name="plan_change_start_from_basics">Du beginnst wieder mit den Grundlagen: %1$s.</string>
     <string name="plan_change_tool_setup">Eine Lektion zum Einrichten von %1$s auf %2$s kommt, bevor du es brauchst.</string>
     <string name="plan_change_tool_have">Du hast %1$s, also musst du nichts einrichten.</string>
     <string name="plan_change_tool_none">Keine Installation für %1$s: Du lernst mit Beispielen.</string>
@@ -1258,7 +1258,7 @@
     <string name="plan_covered_goal_left_out">Mit %1$s am Tag schaffst du nicht alle Teile deines Ziels: Was auf deinem Lernweg zuletzt kommt, wird ausgelassen.</string>
     <string name="plan_find">Zeit finden, um alles abzudecken</string>
     <string name="plan_finding">Wir ermitteln die nötige Zeit…</string>
-    <string name="plan_try_again">Erneut versuchen</string>
+    <string name="plan_try_again">Versuch es noch einmal</string>
     <string name="plan_find_building">Dein Plan wird noch erstellt. Versuch es gleich noch einmal.</string>
     <string name="plan_find_failed">Wir konnten die benötigte Zeit nicht ermitteln.</string>
     <string name="plan_find_covers">Mit %1$s am Tag schaffst du alles ausführlich bis %2$s.</string>

@@ -30,7 +30,7 @@
   "session_energy_max": "0ae36156b07f20cb0542c96d13f3546260944dd44549e2b9e5ddcd2b0d0bf7b7",
   "session_level_up": "0b9fbcfb39acb2a474d3c57c1e97f0c06790cee327e9a89f84e4afbcca73ef68",
   "session_opening_slow": "f9c63825fe3afdc0bf79b4929071f4b66028789e744f0b3fd5ea67fd0375f611",
-  "session_opening_very_slow": "db23381b325f03abf88a62046b57fcc7b3965ce9e091248ca8f83afc49f25b98",
+  "session_opening_very_slow": "a52bf4df1ddcbedfed4fa631454db6595d4e078816d2f5fe6b49eb00e38d3871",
   "session_topics_and_more": "94611e088b86f336d379a72718e981221e88f8a1bf75d2363714056740faca09"
 }
 -->
@@ -87,7 +87,7 @@
         <item quantity="other">%1$s und %2$d weitere Themen</item>
     </plurals>
     <string name="session_opening_slow">Wir öffnen deinen nächsten Schritt…</string>
-    <string name="session_opening_very_slow">Das dauert länger als gewöhnlich. Dein nächster Schritt öffnet sich von selbst, du musst nicht noch einmal tippen.</string>
+    <string name="session_opening_very_slow">Das dauert länger als sonst. Es öffnet sich von selbst, du musst nicht noch einmal tippen.</string>
     <string name="session_level_up">Level aufgestiegen!</string>
     <!-- %1$s is the learner's Energy as a share, such as 70%. -->
     <string name="session_energy_at">Energie bei %1$s</string>

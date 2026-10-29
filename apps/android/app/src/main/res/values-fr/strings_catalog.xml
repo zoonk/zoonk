@@ -68,8 +68,8 @@
   "catalog_plan_dated_quick": "002bde5880fe8a7bf90b24bcd5f928e2fe972d9f88101116163249458d924bc0",
   "catalog_plan_dated_some_written": "c1e3158cb6001c15f55c2d2fdfb3b260e9b19bda463a2657a87da8759cd91741",
   "catalog_plan_dated_written_later": "350b5fb934316ca6477ced9ddd6e69314c0888a47d78c4b440202f87b73f462e",
-  "catalog_plan_every_exam_topic": "77e31810ba4887fd126bbebbc606333f5a4a4575b418ed1fe9f1502c875c2501",
-  "catalog_plan_every_topic": "f85aa3310b32377936bf181aad74d299c242439bfb1dbc2991e530ed83a589ec",
+  "catalog_plan_every_exam_topic": "bdbaf201b6250de1f04fe745979dcb07ab2b7374196c2c12cc000fa3e72a68c9",
+  "catalog_plan_every_topic": "6b639f42b445aeef0774025a55fa645e9c85f91335a1890504fb32f6cd24dc35",
   "catalog_plan_finish_around": "cbb7f2eabe650b8ac94ae939ff84d151aa6e228630a2fa0727399c37a5abaddd",
   "catalog_plan_lessons": "bedb10c484c618ac14ee01d9c95fdf6eb0f20c3d7bb5aaadc4dc97b62dceb0dc",
   "catalog_plan_line": "05219db10d1ebaa74f73698707f2fc13aed9ab0e63386eda4107fa68438fe981",
@@ -225,8 +225,8 @@
         <item quantity="other">d’ici le %1$s, à raison de %2$s par jour, du lundi au vendredi, en commençant par les sujets les plus fréquents : %3$s sur %4$d leçons du cours.</item>
     </plurals>
     <string name="catalog_plan_not_all_fits">Tout ne tient pas dans le temps disponible. Avant de commencer, tu verras ce qui tient selon ton niveau et le temps dont tu disposes.</string>
-    <string name="catalog_plan_every_topic">Cela couvre tous les sujets du cours en profondeur.</string>
-    <string name="catalog_plan_every_exam_topic">Cela couvre en profondeur tous les sujets d’examen du cours.</string>
+    <string name="catalog_plan_every_topic">Tous les sujets du cours sont étudiés en profondeur.</string>
+    <string name="catalog_plan_every_exam_topic">Tous les sujets d’examen du cours sont étudiés en profondeur.</string>
     <string name="catalog_plan_caption">Ceci est un exemple. Ton plan s’adapte à tes réponses : il peut commencer plus loin et finir plus tôt.</string>
     <string name="catalog_workload_title">Comment le temps est réparti</string>
     <string name="catalog_workload_total">%1$s au total</string>

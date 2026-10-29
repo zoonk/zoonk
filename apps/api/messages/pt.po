@@ -21,7 +21,7 @@ msgstr "Emails temporários não são aceitos. Use outro email ou um endereço a
 #: src/app/auth/login/social-login.tsx
 msgctxt "pN2p0t"
 msgid "There was an error signing you in. Please try again or contact hello@zoonk.com"
-msgstr "Não foi possível entrar. Tente novamente ou entre em contato pelo contato@zoonk.com"
+msgstr "Não foi possível entrar. Tente de novo ou entre em contato pelo email contato@zoonk.com"
 
 #: src/app/auth/login/email-login-form.tsx
 msgctxt "YRe93Y"
@@ -53,7 +53,7 @@ msgstr "Entre ou crie uma conta"
 #: src/app/auth/login/page.tsx
 msgctxt "o_pwJP"
 msgid "That sign-in expired. Try again."
-msgstr "Essa tentativa de acesso expirou. Tente novamente."
+msgstr "Essa tentativa de entrar expirou. Tente de novo."
 
 #: src/app/auth/login/page.tsx
 msgctxt "4wpUNc"
@@ -78,7 +78,7 @@ msgstr "Continuar com Apple"
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "_8e0dn"
 msgid "Something went wrong. Try again in a moment."
-msgstr "Algo deu errado. Tente novamente em instantes."
+msgstr "Algo deu errado. Tente de novo em instantes."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "__wP3o"
@@ -88,7 +88,7 @@ msgstr "Este código expirou. Peça um novo."
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "hUjCDW"
 msgid "Too many tries. Wait a minute, then try again."
-msgstr "Muitas tentativas. Espere um minuto e tente novamente."
+msgstr "Muitas tentativas. Espere um minuto e tente de novo."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "P-D93T"
@@ -98,7 +98,7 @@ msgstr "Muitas tentativas incorretas com este código. Peça um novo."
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "AFMAKd"
 msgid "That code isn't right. Check the email and try again."
-msgstr "Esse código não está certo. Confira o email e tente novamente."
+msgstr "Esse código não está certo. Confira o email e tente de novo."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "U2LhAf"
@@ -113,7 +113,7 @@ msgstr "Espere um minuto antes de pedir outro código."
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "bWxjFV"
 msgid "We couldn't send a new code. Try again."
-msgstr "Não conseguimos enviar um novo código. Tente novamente."
+msgstr "Não foi possível enviar um novo código. Tente de novo."
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "5UeJRL"
@@ -133,7 +133,7 @@ msgstr "Não recebeu?"
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "qs4xBq"
 msgid "Send again"
-msgstr "Enviar novamente"
+msgstr "Enviar de novo"
 
 #: src/app/auth/otp/otp-form.tsx
 msgctxt "ChATeO"
@@ -213,7 +213,7 @@ msgstr "Nome de usuário"
 #: src/app/auth/setup/setup-form.tsx
 msgctxt "bz5AYp"
 msgid "We couldn't save your profile. Try again."
-msgstr "Não conseguimos salvar seu perfil. Tente novamente."
+msgstr "Não foi possível salvar seu perfil. Tente de novo."
 
 #: src/app/auth/untrusted-origin/page.tsx
 msgctxt "1vqX2W"
@@ -283,7 +283,7 @@ msgstr "Abaixo está a página do Plus."
 #: src/lib/tutor-confirmation.ts
 msgctxt "KAqcUe"
 msgid "Below you can say again the words that were hard to pronounce."
-msgstr "Abaixo você pode repetir as palavras que foram difíceis de pronunciar."
+msgstr "Abaixo, você pode repetir as palavras que foram difíceis de pronunciar."
 
 #: src/lib/tutor-confirmation.ts
 msgctxt "BXdAAo"

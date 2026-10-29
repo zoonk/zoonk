@@ -257,7 +257,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fragen"
+            "value" : "Frag nach"
           }
         },
         "es" : {
@@ -286,7 +286,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%@ fragen"
+            "value" : "Frag %@"
           }
         },
         "es" : {
@@ -455,7 +455,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Case %1$lld : %2$@. Appuie pour retirer."
+            "value" : "Espace %1$lld : %2$@. Appuie pour le retirer."
           }
         },
         "pt" : {
@@ -1464,7 +1464,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguir escribiendo"
+            "value" : "Sigue escribiendo"
           }
         },
         "fr" : {
@@ -1748,7 +1748,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Neue Lektionen sind wieder in %@ verfügbar"
+            "value" : "Neue Lektionen sind in %@ wieder verfügbar"
           }
         },
         "es" : {
@@ -1766,7 +1766,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Novas aulas disponíveis em %@"
+            "value" : "Novas aulas estarão disponíveis em %@"
           }
         }
       }
@@ -1980,7 +1980,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nicht ganz. Schau noch mal hin, korrigiere deine Antwort selbst und prüfe sie dann."
+            "value" : "Noch nicht ganz. Schau noch einmal hin und korrigiere deine Antwort selbst. Prüf sie dann."
           }
         },
         "es" : {
@@ -1998,7 +1998,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi dessa vez. Olhe de novo, corrija por conta própria e confira."
+            "value" : "Ainda não. Olhe de novo, corrija e depois confira."
           }
         }
       }
@@ -2311,7 +2311,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guarda tu progreso para seguir"
+            "value" : "Guarda tu progreso para seguir aprendiendo"
           }
         },
         "fr" : {
@@ -3326,7 +3326,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -3355,7 +3355,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Versuche es gleich noch einmal. Nichts von dem, was du gemacht hast, ist verloren gegangen."
+            "value" : "Versuch es gleich noch einmal. Nichts von dem, was du gemacht hast, ist verloren."
           }
         },
         "es" : {
@@ -3442,7 +3442,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten deine Antwort diesmal nicht prüfen. Versuche es noch einmal."
+            "value" : "Wir konnten deine Antwort diesmal nicht prüfen. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -3460,7 +3460,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos conferir sua resposta desta vez. Tente de novo."
+            "value" : "A gente não conseguiu conferir sua resposta desta vez. Tente de novo."
           }
         }
       }
@@ -3471,7 +3471,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten es gerade nicht erklären. Versuche es gleich noch einmal."
+            "value" : "Wir konnten das gerade nicht erklären. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -3489,7 +3489,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não conseguimos explicar agora. Tente de novo em instantes."
+            "value" : "Não conseguimos explicar sua resposta agora. Tente de novo em instantes."
           }
         }
       }
@@ -3529,7 +3529,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten diese Lektion nicht speichern. Versuche es gleich noch einmal. Nichts von dem, was du gemacht hast, ist verloren gegangen."
+            "value" : "Wir konnten diese Lektion nicht speichern. Versuch es gleich noch einmal. Nichts von dem, was du gemacht hast, ist verloren."
           }
         },
         "es" : {
@@ -3558,7 +3558,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten diese Lektion nicht erstellen. Versuche es noch einmal."
+            "value" : "Wir konnten diese Lektion nicht erstellen. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -3732,7 +3732,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut erstellen"
+            "value" : "Wieder schreiben"
           }
         },
         "es" : {
@@ -3750,7 +3750,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Criar de novo"
+            "value" : "Voltar a escrever"
           }
         }
       }
@@ -3906,13 +3906,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du kannst weiterhin wiederholen, was du gelernt hast, und deine Fehler üben. Nächsten Monat gibt es wieder neue Lektionen. Mit Plus kannst du sofort weitermachen."
+            "value" : "Du kannst weiterhin wiederholen, was du gelernt hast, und deine Fehler üben. Nächsten Monat sind wieder neue Lektionen verfügbar. Oder hol dir Plus, um jetzt weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puedes seguir repasando lo aprendido y practicando tus errores. El mes que viene habrá nuevas lecciones, o puedes conseguir Plus para seguir ahora."
+            "value" : "Aún puedes repasar lo que has aprendido y practicar tus errores. Tendrás nuevas lecciones el mes que viene, o puedes obtener Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -3924,7 +3924,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você ainda pode revisar o que aprendeu e praticar o que você errou. Novas aulas ficam disponíveis no mês que vem, ou você pode assinar o Plus para continuar agora."
+            "value" : "Você ainda pode revisar o que aprendeu e praticar o que errou. Novas aulas ficam disponíveis no mês que vem, ou você pode assinar o Plus para continuar agora."
           }
         }
       }
@@ -3935,13 +3935,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du kannst weiterhin wiederholen, was du gelernt hast, und deine Fehler üben. Morgen gibt es wieder neue Lektionen. Mit Plus kannst du sofort weitermachen."
+            "value" : "Du kannst weiterhin wiederholen, was du gelernt hast, und deine Fehler üben. Morgen sind wieder neue Lektionen verfügbar. Oder hol dir Plus, um jetzt weiterzumachen."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Puedes seguir repasando lo aprendido y practicando tus errores. Mañana habrá nuevas lecciones, o puedes conseguir Plus para seguir ahora."
+            "value" : "Aún puedes repasar lo que has aprendido y practicar tus errores. Tendrás nuevas lecciones mañana, o puedes obtener Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -3953,7 +3953,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você ainda pode revisar o que aprendeu e praticar o que você errou. Novas aulas ficam disponíveis amanhã, ou você pode assinar o Plus para continuar agora."
+            "value" : "Você ainda pode revisar o que aprendeu e praticar o que errou. Novas aulas ficam disponíveis amanhã, ou você pode assinar o Plus para continuar agora."
           }
         }
       }
@@ -3993,7 +3993,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast das heutige Limit erreicht. Morgen gibt es wieder neue Lektionen."
+            "value" : "Du hast das heutige Limit erreicht. Morgen sind wieder neue Lektionen verfügbar."
           }
         },
         "es" : {
@@ -4011,7 +4011,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Você chegou ao limite de hoje. Novas aulas ficam disponíveis amanhã."
+            "value" : "Você atingiu o limite de hoje. Novas aulas ficam disponíveis amanhã."
           }
         }
       }
@@ -4022,13 +4022,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Du hast die Lektionen abgeschlossen, die du ohne Konto ausprobieren kannst. Erstelle ein kostenloses Konto, um weiterzumachen. Alles, was du gelernt hast, bleibt erhalten."
+            "value" : "Du hast alle Lektionen abgeschlossen, die du ohne Konto ausprobieren kannst. Erstelle ein kostenloses Konto, um weiterzumachen. Alles, was du gelernt hast, bleibt erhalten."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has completado las lecciones que puedes probar sin una cuenta. Crea una cuenta gratuita para seguir y conservarás todo lo que has aprendido."
+            "value" : "Has completado las lecciones que puedes probar sin cuenta. Crea una cuenta gratis para seguir y conservar todo lo que has aprendido."
           }
         },
         "fr" : {
@@ -4138,7 +4138,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Antwort hier wurde nicht gespeichert. Beantworte die Frage noch einmal, um die Lektion abzuschließen."
+            "value" : "Deine Antwort wurde hier nicht gespeichert. Beantworte die Frage noch einmal, um die Lektion abzuschließen."
           }
         },
         "es" : {
@@ -4156,7 +4156,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sua resposta aqui não foi salva. Responda de novo para terminar a aula."
+            "value" : "Sua resposta aqui não foi salva. Responda de novo para concluir a aula."
           }
         }
       }

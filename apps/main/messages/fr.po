@@ -2610,7 +2610,7 @@ msgstr "Score estimé · SAT"
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "AIeIsk"
 msgid "By topic"
-msgstr "Par thème"
+msgstr "Par sujet"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "K1BpxO"
@@ -3495,12 +3495,12 @@ msgstr "Tout ne tient pas dans le temps disponible. Avant de commencer, tu vois 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "Pq4Zco"
 msgid "That's every topic in the course, in depth."
-msgstr "Tous les sujets du cours sont abordés en profondeur."
+msgstr "Cela couvre tous les sujets du cours en profondeur."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "e1oyF_"
 msgid "That's every exam topic in the course, in depth."
-msgstr "Tous les sujets d’examen du cours sont abordés en profondeur."
+msgstr "Cela couvre en profondeur tous les sujets d’examen du cours."
 
 #: src/components/catalog/course-plan-window.tsx
 msgctxt "YTiAat"

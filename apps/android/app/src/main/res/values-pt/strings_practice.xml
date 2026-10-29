@@ -17,7 +17,7 @@
   "practice_net_wrong": "69a5a6688f0c74d17d74bcc68357ec64de09ce20766ae7407559167a18986f61",
   "practice_not_found_description": "c2b3c3842be88a706836b31808d15523d09953f5005826d3a8e5a0438557b962",
   "practice_not_found_title": "5d65c786606331fd293dbe6a76e005f6d5d1f218d7fbcebc915e6ce4f9c90c56",
-  "practice_pause_failed": "98e1c17d80dd5d1978736714050f915183001f17efdaa07a3cbafc1b8d08bd2f",
+  "practice_pause_failed": "fe0932bdfea9fa718275ee72441eb69b394e0748014b52bca835e8c087cd51a4",
   "practice_pause_stop": "0c3937460124c9a1f50fec1b8d897e8056ed90ff9e189722ff2d4495847fe3e7",
   "practice_pause_text": "19a5abab3f49643860620d4bb4d024bdc0e0354893e4ccee7e45843f81f8da55",
   "practice_progress": "00a778f09dc80d92642d4637c3be526cbeca9181a62672f10d3c2529638d3bf4",
@@ -64,7 +64,7 @@
     <string name="practice_time_machine_tripped">Em %1$s, essa pergunta te pegou.</string>
     <string name="practice_pause_text">Alguns erros seguidos. Uma pausa curta costuma ajudar, e tudo o que você fez hoje conta.</string>
     <string name="practice_pause_stop">Parar por hoje</string>
-    <string name="practice_pause_failed">Não conseguimos parar a sessão. Tente de novo.</string>
+    <string name="practice_pause_failed">Não foi possível parar a sessão. Tente de novo.</string>
     <string name="practice_done_title">Prática concluída</string>
     <string name="practice_done_review">Revisão concluída</string>
     <string name="practice_not_found_title">Essas perguntas não estão mais aqui</string>

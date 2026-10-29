@@ -6,7 +6,7 @@
   "session_block_challenge_rematch": "03266af1f2ea54c0d7ae4d5730ef62116632332d89230c045928ac2d54dc3e9b",
   "session_block_final_challenge": "c9c3b779d669b1f92aef6254fa6210e9f073c8cb14d6d828a7844ff66b3cbbc8",
   "session_block_full_review": "a9bd417d56dea00f14c5a9ae0571b5fde08c2842707e8f7c5e6a42baca768523",
-  "session_block_full_review_questions": "adebc20fa8a4fad75b1dd986ab2f4c0c2876ca74abfd134d45d332a28d86a35c",
+  "session_block_full_review_questions": "8a6821055fa7cb1038015dad79de92a0f551f039b09a3905bcca8034c46fbeec",
   "session_block_mixed_practice": "8b86f637357f21d5ab199a9c9715d009cb58aea6ddb13f481d55007cf1361023",
   "session_block_mock_exam": "4962bab0134f3d6ca2cae0f40a407e57a1de0a020b29551f217ee1558be4ed51",
   "session_block_new_lesson": "26aa493c6b88e1fecf6dc4627cedcd8d4dbb6d15f541e97d430728f29c6ede06",
@@ -30,7 +30,7 @@
   "session_energy_max": "f5a8582a80ae25784d7a319428fbacaea37a0f7e3ab8ff0a9b5d4f556894b3f7",
   "session_level_up": "9ebf40b654dcc8315b07de863dc883ae0e2f0726b70d1988d232a3daa6e9b66e",
   "session_opening_slow": "a65296b4f88c225dbab5c63ee55dba9a3591d7975d9dfa3b9af9427b869917bc",
-  "session_opening_very_slow": "f6945ea155daf452a0fbdca1ba396704cce582f320b639219ee3e50e5c1949c2",
+  "session_opening_very_slow": "de01cfac0eeee7f3f6f6af6cb448134b18bdcca867bdbb600709db58dd78b4b2",
   "session_topics_and_more": "2206b15e59e14adeacac18bcfb104487f78fcc8835bc82442753cf8d34ff7eef"
 }
 -->
@@ -84,9 +84,9 @@
         <item quantity="other">%d questions, sans indice</item>
     </plurals>
     <plurals name="session_block_full_review_questions">
-        <item quantity="one">%d question sur tous les sujets, en commençant par ceux que tu maîtrises le moins</item>
-        <item quantity="many">%d questions sur tous les sujets, en commençant par ceux que tu maîtrises le moins</item>
-        <item quantity="other">%d questions sur tous les sujets, en commençant par ceux que tu maîtrises le moins</item>
+        <item quantity="one">%d question sur chaque sujet, en commençant par ceux que tu maîtrises le moins</item>
+        <item quantity="many">%d questions sur chaque sujet, en commençant par ceux que tu maîtrises le moins</item>
+        <item quantity="other">%d questions sur chaque sujet, en commençant par ceux que tu maîtrises le moins</item>
     </plurals>
     <!-- %1$s names the first topics; %2$d counts the rest. -->
     <plurals name="session_topics_and_more">
@@ -95,7 +95,7 @@
         <item quantity="other">%1$s et %2$d autres sujets</item>
     </plurals>
     <string name="session_opening_slow">Ouverture de ta prochaine étape…</string>
-    <string name="session_opening_very_slow">Cela prend plus de temps que d’habitude. L’étape s’ouvrira toute seule, pas besoin d’appuyer à nouveau.</string>
+    <string name="session_opening_very_slow">Cela prend plus de temps que d’habitude. L’ouverture se fera toute seule, pas besoin d’appuyer à nouveau.</string>
     <string name="session_level_up">Niveau supérieur !</string>
     <!-- %1$s is the learner's Energy as a share, such as 70%. -->
     <string name="session_energy_at">Énergie à %1$s</string>

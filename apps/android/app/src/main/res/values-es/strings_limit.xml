@@ -7,21 +7,21 @@
   "limit_calls_plus_day": "45b592b304fece2b1a4d87bb639f3d946c404a61a428c3e29d00145a2fd7db53",
   "limit_calls_plus_month": "d7e1aefb218c7c093033c07e5d880e84129e31858ae814c772a4f8ee255ad9f1",
   "limit_create_account": "3d71eee97adecd55f68b128349ec99cd05a74d319320191927768c0411b1d454",
-  "limit_help_free_day": "b3b266befaf121d312621bbf86f8ec2d702e950c9ef0e7830941c921cd98e338",
-  "limit_help_free_month": "21341b95561e46b8c34611939e6dea4d156ac1bd65600353c7aed547417dad9e",
-  "limit_help_guest_day": "7b832a9f2f0af88888ca9cdc570a99a3aac0747d881e18b525fc754a0618820d",
-  "limit_help_guest_total": "536eeb158cf01b8878adf309bc0ca6899abfc3299081630eb6a97011706e6ac9",
+  "limit_help_free_day": "01bb0212dc751cbbcb8fd61166f2c77c9b354edfdd5ea4d0ada4d0a2519d7dbf",
+  "limit_help_free_month": "2d6337b350366f2a5ec9397b37c1a723a0531b58d4d84143f84a4758f3e462cc",
+  "limit_help_guest_day": "c77f21c0c519b55f82fd16a5d73536b4a532c1ee6a06fc1dc153d761c9f71b7c",
+  "limit_help_guest_total": "acc52fcffcd8dc0f49eaf3789b6dd622fccf7c9ca9704df7f9080966e697d4ce",
   "limit_help_plus": "10d5bbb3a3045df4bc522722a382b3eb727e9d5e550293d122fa7e770527de49",
-  "limit_lessons_free_day": "42757232ccc0a1ac5bbb68cdc7ad94578d84908ed55198f0e4e00b1f33d9c52d",
-  "limit_lessons_free_month": "12b744944c7836ffbbebf669c3017edac33055a073979b5b842d91579b1ee362",
-  "limit_lessons_guest": "00742b32bc6f305a21e03f0453d56409980724ee9b1cffdd96e3d2d222c3cc7e",
+  "limit_lessons_free_day": "bbe6a86eadd342fc65fa4dcfd40ea2049f9c3c1bc4742a6ff3909b8748f371c3",
+  "limit_lessons_free_month": "bce85da9ca0b8a1cb94980b587deb80f2c9f8d69df0d91b7ee11d5f9734cae96",
+  "limit_lessons_guest": "0ba969b171d7298276512a8b4790317eed2e77d42b331416f5f0513a9b772465",
   "limit_lessons_plus": "07ff5b8595e29a36b059edb9a82391448d1bd691995e3b47365098a8d87e924a",
-  "limit_mind_maps_free_day": "0f922085492046be0be7fd4b5f3435f37d3e4a0de24308add276cfe54d49c493",
-  "limit_mind_maps_free_month": "4716bfb3d4ddf0285d316ca5fdb34e0e31535438b23e10af40f04e08364358c5",
+  "limit_mind_maps_free_day": "dd8cd7e56b18e96d57f9fa76e8bf57e0a377695d5d679010a973eab9576d6f8c",
+  "limit_mind_maps_free_month": "0dec65a491a5102a7c1770f44019e8e6896992383a7c1ba7b76195ef6d653417",
   "limit_mind_maps_guest": "84ae77f0afc469a1c2b2bb1206623d4e6101733eeeb4b73b9f29b7b89e182e7c",
   "limit_mind_maps_plus": "1ca2305c8d19c28a520fdaca1d00320c2a6d9c724653f275a0f631b1889da5e1",
-  "limit_outlines_free_day": "fb14efadd7a1d4e3844ef5151ce51a8f6626e404f7876ffa1334d527a5eb46a3",
-  "limit_outlines_free_month": "a9a9e1c29ebdf0a0081c05e5c4b8ec48518beefe486d1fa07420a4a82f9ff6b5",
+  "limit_outlines_free_day": "dade9313623712278a27b64ab4c842fb6e6dd7b873f51f639875a3e49b7ad546",
+  "limit_outlines_free_month": "06cf944d04a8d90463283ee985ec8e1e48bd278f6ef3c462d8a38720d4926c96",
   "limit_outlines_guest": "4161ee198cd8fa049d4c009354d6f1065a41826acb65581fab79901606e3790d",
   "limit_outlines_plus": "96dc421a48b908d5ff26e7c8f7181da5331f1b396eeff9745b5e5eacc6eaf0e1",
   "limit_see_plus": "7f8ff241b818bfb43255d2a901840c46135ae5283711fa38461187696c0ab249",
@@ -34,23 +34,23 @@
     <string name="limit_see_plus">Ver Plus</string>
     <string name="limit_slow_down">Descansa un momento y vuelve a intentarlo.</string>
     <string name="limit_sign_up_required">Crea tu cuenta gratuita para continuar.</string>
-    <string name="limit_help_guest_total">Has usado toda la ayuda gratuita disponible sin cuenta. Crea una cuenta gratuita para continuar.</string>
-    <string name="limit_help_guest_day">Has usado toda la ayuda gratuita de hoy. Crea una cuenta gratuita para continuar.</string>
+    <string name="limit_help_guest_total">Has usado toda la ayuda gratuita disponible sin cuenta. Crea una cuenta gratis para seguir.</string>
+    <string name="limit_help_guest_day">Has usado toda la ayuda gratuita de hoy. Crea una cuenta gratis para seguir.</string>
     <string name="limit_help_plus">Has usado toda la ayuda de hoy. Podrás volver a usarla mañana.</string>
-    <string name="limit_help_free_month">Has usado toda la ayuda de este mes. Podrás volver a usarla el mes que viene o conseguir Plus para continuar ahora.</string>
-    <string name="limit_help_free_day">Has usado toda la ayuda de hoy. Podrás volver a usarla mañana o conseguir Plus para continuar ahora.</string>
-    <string name="limit_lessons_guest">Has completado las lecciones que puedes probar sin cuenta. Crea una cuenta gratuita para continuar.</string>
+    <string name="limit_help_free_month">Has usado toda la ayuda de este mes. Volverá el mes que viene, o puedes conseguir Plus para seguir ahora.</string>
+    <string name="limit_help_free_day">Has usado toda la ayuda de hoy. Volverá mañana, o puedes conseguir Plus para seguir ahora.</string>
+    <string name="limit_lessons_guest">Has completado las lecciones que puedes probar sin cuenta. Crea una cuenta gratis para seguir.</string>
     <string name="limit_lessons_plus">Eso es todo por hoy en cuanto a lecciones nuevas. Mañana podrás acceder a más.</string>
-    <string name="limit_lessons_free_month">Eso es todo por este mes en cuanto a lecciones nuevas. Podrás acceder a más el mes que viene o conseguir Plus para continuar ahora.</string>
-    <string name="limit_lessons_free_day">Eso es todo por hoy en cuanto a lecciones nuevas. Podrás acceder a más mañana o conseguir Plus para continuar ahora.</string>
+    <string name="limit_lessons_free_month">Eso es todo por este mes en cuanto a lecciones nuevas. Se abrirán más el mes que viene, o puedes conseguir Plus para seguir ahora.</string>
+    <string name="limit_lessons_free_day">Eso es todo por hoy en cuanto a lecciones nuevas. Se abrirán más mañana, o puedes conseguir Plus para seguir ahora.</string>
     <string name="limit_mind_maps_guest">Ya has creado el mapa mental que puedes probar sin cuenta. Crea una cuenta gratuita para crear más.</string>
     <string name="limit_mind_maps_plus">Eso es todo por hoy en cuanto a mapas mentales nuevos. Mañana podrás crear más.</string>
-    <string name="limit_mind_maps_free_month">Eso es todo por este mes en cuanto a mapas mentales nuevos. Podrás crear más el mes que viene o conseguir Plus para continuar ahora.</string>
-    <string name="limit_mind_maps_free_day">Eso es todo por hoy en cuanto a mapas mentales nuevos. Podrás crear más mañana o conseguir Plus para continuar ahora.</string>
+    <string name="limit_mind_maps_free_month">Eso es todo por este mes en cuanto a mapas mentales nuevos. Puedes crear más el mes que viene, o conseguir Plus para seguir ahora.</string>
+    <string name="limit_mind_maps_free_day">Eso es todo por hoy en cuanto a mapas mentales nuevos. Puedes crear más mañana, o conseguir Plus para seguir ahora.</string>
     <string name="limit_outlines_guest">Ya has visto el tema que puedes consultar por adelantado sin cuenta. Crea una cuenta gratuita para ver más.</string>
     <string name="limit_outlines_plus">Ya has visto todos los temas que puedes consultar por adelantado hoy. Mañana podrás ver más.</string>
-    <string name="limit_outlines_free_month">Ya has visto todos los temas que puedes consultar por adelantado este mes. Podrás ver más el mes que viene o conseguir Plus para continuar ahora.</string>
-    <string name="limit_outlines_free_day">Ya has visto todos los temas que puedes consultar por adelantado hoy. Podrás ver más mañana o conseguir Plus para continuar ahora.</string>
+    <string name="limit_outlines_free_month">Ya has visto todos los temas que puedes consultar por adelantado este mes. Puedes ver más el mes que viene, o conseguir Plus para seguir ahora.</string>
+    <string name="limit_outlines_free_day">Ya has visto todos los temas que puedes consultar por adelantado hoy. Puedes ver más mañana, o conseguir Plus para seguir ahora.</string>
     <string name="limit_calls_guest">Las llamadas de expresión oral están disponibles con una cuenta gratuita. Crea una para practicar en voz alta.</string>
     <string name="limit_calls_plus_month">Podrás volver a hacer llamadas el mes que viene.</string>
     <string name="limit_calls_plus_day">Podrás volver a hacer llamadas mañana.</string>

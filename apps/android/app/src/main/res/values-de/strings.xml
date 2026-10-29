@@ -37,7 +37,7 @@
   "list_row_states": "ab8f1cb9b681aeb774f9d05a3ce3d293b4ef0f51a05cadc15ccfba6862ddcc5f",
   "load_failed_description": "2a6027635b785085f850ceee7ab509b04cf35bb97af05c242a6f0cc8a1ed9a14",
   "load_failed_title": "ad734dc11ee9cc209cc4573be45c70b1f3607946b31ff91ae805cabd23337d43",
-  "load_failed_try_again": "abdb20d4242bcee5c62f01e4619160108c22869a66882abfa02dc064de0c306d",
+  "load_failed_try_again": "66c55caebd82532c7b8ac874b156c93fa6f73401887624769384c590c0ba5cce",
   "navigation_back": "991c560fdb8edd1501e082cdc5e49c3efa7cf513e1700404512bf8cfec77c65f",
   "navigation_buddy": "ba1cd1244098c498a98569ba446cb636f9c6bbc3bd0e69445b0077ccbd8a8043",
   "navigation_exam": "35d7ed00834fa898e73553396ef524e9e22201935c86da04f6e4d0c78491b322",
@@ -100,7 +100,7 @@
     <string name="answer_tag_your_guess">Deine Schätzung</string>
     <string name="load_failed_title">Diese Seite konnte nicht geladen werden</string>
     <string name="load_failed_description">Vielleicht liegt es an deiner Verbindung oder an einem Problem bei uns. Meistens klappt es beim nächsten Versuch.</string>
-    <string name="load_failed_try_again">Erneut versuchen</string>
+    <string name="load_failed_try_again">Noch einmal versuchen</string>
     <string name="suggestion_view">Ansehen</string>
     <string name="suggestion_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
     <!-- Under the daily time chips; opens a menu of every other daily study time. -->

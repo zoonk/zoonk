@@ -3,7 +3,7 @@
 {
   "audio_check_failed": "93bf9030533e2c2bf4f9778fe560282f95a83f0ca19a22b7a1f43011ecaecce3",
   "audio_checking": "7d585d40ce0f3c5acfa71f751927e9345150c18362a17f4d5a3995553eb7b53d",
-  "audio_checking_slow": "1ab379b02f84b889621e1f450ca0bba116a1639eee21d0c9d6dbe9e3f2dbd4a4",
+  "audio_checking_slow": "0ab29d28ba16cb47218e405f63543d46e38f76fa2812dc6977f5042d33540576",
   "audio_did_not_play": "a17c784d7303342ecaaafe3b176a78a9aa07d7b54152e6955a9fe2e7d6f2aa00",
   "audio_getting_ready": "b07a98f4bbed5d322cbd6afb4fc0d38b0d7039abda04f4d145cd2e65c2fbffb6",
   "audio_here_is_what_it_says": "df29384daff4eaa95d4e4f20b00b9a5e8104d4544baeeeb9005ad1c1a5c9b7a9",
@@ -33,7 +33,7 @@
     <string name="audio_record_stop">Detener</string>
     <string name="audio_listening">Escuchando… Pulsa Detener para comprobar.</string>
     <string name="audio_checking">Comprobando…</string>
-    <string name="audio_checking_slow">Seguimos comprobando. Está tardando más de lo habitual.</string>
+    <string name="audio_checking_slow">Aún estamos comprobándolo. Está tardando más de lo habitual.</string>
     <string name="audio_no_speech">No hemos oído ninguna palabra. Vuelve a intentarlo.</string>
     <string name="audio_check_failed">No hemos podido comprobar tu respuesta esta vez. Vuelve a intentarlo.</string>
     <string name="audio_say_it">Pulsa y dilo en voz alta</string>

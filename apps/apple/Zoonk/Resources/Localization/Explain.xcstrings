@@ -71,7 +71,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Prepara un plan para toda la materia"
+            "value" : "Crea un plan para toda la asignatura"
           }
         },
         "fr" : {
@@ -286,7 +286,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ler novamente"
+            "value" : "Leia de novo"
           }
         }
       }
@@ -332,7 +332,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguimos preparando tu explicación. Aparecerá aquí en cuanto esté lista."
+            "value" : "Aún estamos preparando tu explicación. Aparecerá aquí en cuanto esté lista."
           }
         },
         "fr" : {
@@ -355,7 +355,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -373,7 +373,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }

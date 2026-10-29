@@ -474,13 +474,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine KI übernimmt die Rolle der prüfenden Person oder der anderen teilnehmenden Person. Bei jedem Versuch bekommst du eine neue Aufgabenkarte. Danach erhältst du eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score."
+            "value" : "Eine KI übernimmt die Rolle der prüfenden Person oder der anderen Prüfungsteilnehmerin bzw. des anderen Prüfungsteilnehmers. Bei jedem Versuch bekommst du eine neue Aufgabenkarte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una IA hace el papel del examinador o del otro candidato. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no una puntuación oficial."
+            "value" : "Una IA hace de examinador o del otro candidato. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no una puntuación oficial."
           }
         },
         "fr" : {
@@ -492,7 +492,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma IA faz o papel da pessoa examinadora ou de outro candidato. Cada tentativa tem um novo cartão e, ao final, você recebe uma estimativa com base nos critérios oficiais da prova, sem valer como nota oficial."
+            "value" : "Uma IA faz o papel do examinador ou do outro candidato. A cada tentativa, você recebe um novo cartão e, depois, uma estimativa baseada nos critérios oficiais da prova, não uma pontuação oficial."
           }
         }
       }
@@ -503,13 +503,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Eine KI übernimmt die Rolle der prüfenden Person. Bei jedem Versuch bekommst du eine neue Aufgabenkarte. Danach erhältst du eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score."
+            "value" : "Eine KI übernimmt die Rolle der prüfenden Person. Bei jedem Versuch bekommst du eine neue Aufgabenkarte und danach eine Einschätzung anhand der offiziellen Prüfungskriterien, keinen offiziellen Score."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Una IA hace el papel del examinador. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no una puntuación oficial."
+            "value" : "Una IA hace de examinador. En cada intento tienes una tarjeta nueva y, al terminar, recibes una estimación basada en los criterios oficiales del examen, no una puntuación oficial."
           }
         },
         "fr" : {
@@ -521,7 +521,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Uma IA faz o papel da pessoa examinadora. Cada tentativa tem um novo cartão e, ao final, você recebe uma estimativa com base nos critérios oficiais da prova, sem valer como nota oficial."
+            "value" : "Uma IA faz o papel do examinador. A cada tentativa, você recebe um novo cartão e, depois, uma estimativa baseada nos critérios oficiais da prova, não uma pontuação oficial."
           }
         }
       }
@@ -648,7 +648,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut verbinden"
+            "value" : "Gespräch noch einmal starten"
           }
         },
         "es" : {
@@ -666,7 +666,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Conversar novamente"
+            "value" : "Conversar de novo"
           }
         }
       }
@@ -677,7 +677,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Verbinde dich erneut oder beende das Gespräch, um Feedback zu deinen Antworten zu erhalten."
+            "value" : "Starte das Gespräch noch einmal oder beende es, um Feedback zu deinen Antworten zu erhalten."
           }
         },
         "es" : {
@@ -695,7 +695,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Converse novamente ou encerre a conversa para receber feedback sobre o que você disse."
+            "value" : "Converse de novo ou encerre a conversa para receber feedback sobre o que você falou."
           }
         }
       }
@@ -1756,7 +1756,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Letzter Versuch: %1$lld von %2$lld nahe an %3$@"
+            "value" : "Letzter Versuch: %1$lld von %2$lld nahe %3$@"
           }
         },
         "en" : {
@@ -1977,7 +1977,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "À l’écoute… Appuie sur Arrêter pour vérifier."
+            "value" : "Écoute en cours… Appuie sur Arrêter pour vérifier."
           }
         },
         "pt" : {
@@ -2168,7 +2168,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Heute gibt es keine Wörter zum Wiederholen."
+            "value" : "Heute gibt es keine Wörter, die du noch einmal aussprechen musst."
           }
         },
         "es" : {
@@ -2302,7 +2302,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nada foi perdido: a conversa volta para você tentar de novo."
+            "value" : "Nada foi perdido: a conversa vai voltar para você tentar de novo."
           }
         }
       }
@@ -3450,7 +3450,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguimos evaluando tu expresión oral. Está tardando más de lo habitual."
+            "value" : "Aún estamos evaluando tu expresión oral. Está tardando más de lo habitual."
           }
         },
         "fr" : {
@@ -3479,7 +3479,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguimos preparando tus comentarios. Está tardando más de lo habitual."
+            "value" : "Aún estamos preparando tus comentarios. Está tardando más de lo habitual."
           }
         },
         "fr" : {
@@ -3531,7 +3531,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mach eine kurze Pause und versuche es dann erneut."
+            "value" : "Mach eine kurze Pause und versuch es dann noch einmal."
           }
         },
         "es" : {
@@ -3653,7 +3653,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das hat nicht geklappt. Versuche es erneut."
+            "value" : "Das hat nicht geklappt. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -3769,7 +3769,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Gespräch konnte nicht gestartet werden. Versuche es gleich noch einmal."
+            "value" : "Das Gespräch konnte nicht gestartet werden. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -3827,13 +3827,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das Gespräch wird noch beendet. Versuche es gleich noch einmal."
+            "value" : "Das Gespräch wird noch beendet. Versuch es gleich noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "La llamada aún se está cerrando. Vuelve a intentarlo en un momento."
+            "value" : "La llamada aún se está cerrando. Vuelve a intentarlo dentro de un momento."
           }
         },
         "fr" : {
@@ -3943,7 +3943,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Der Ton konnte nicht abgespielt werden. Versuche es erneut."
+            "value" : "Der Ton konnte nicht abgespielt werden. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -3961,7 +3961,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "O áudio não tocou. Tente de novo."
+            "value" : "O som não tocou. Tente de novo."
           }
         }
       }
@@ -3972,7 +3972,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Die Aufgabe konnte nicht gestartet werden. Versuche es gleich noch einmal."
+            "value" : "Die Aufgabe konnte nicht gestartet werden. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -4117,7 +4117,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das kommt manchmal vor. Versuche es gleich noch einmal."
+            "value" : "Das passiert manchmal. Versuch es gleich noch einmal."
           }
         },
         "es" : {
@@ -4233,7 +4233,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -4251,7 +4251,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -4454,7 +4454,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente não conseguiu conferir sua resposta desta vez. Tente novamente."
+            "value" : "Não conseguimos conferir sua resposta desta vez. Tente de novo."
           }
         }
       }
@@ -4483,7 +4483,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente não ouviu nenhuma palavra. Tente novamente."
+            "value" : "Não conseguimos ouvir nenhuma palavra. Tente de novo."
           }
         }
       }
@@ -4494,7 +4494,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wir konnten das Wort nicht hören. Versuch es noch einmal etwas näher am Mikrofon."
+            "value" : "Wir konnten das Wort nicht hören. Versuch es noch einmal und geh dabei etwas näher ans Mikrofon."
           }
         },
         "es" : {
@@ -4512,7 +4512,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "A gente não ouviu a palavra. Tente novamente um pouco mais perto do microfone."
+            "value" : "Não conseguimos ouvir a palavra. Tente de novo um pouco mais perto do microfone."
           }
         }
       }
@@ -4970,7 +4970,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado toda la ayuda gratuita disponible sin cuenta. Crea una cuenta gratuita para continuar."
+            "value" : "Has usado toda la ayuda gratuita disponible sin cuenta. Crea una cuenta gratis para seguir."
           }
         },
         "fr" : {
@@ -4999,7 +4999,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado la ayuda de este mes. Volverá el mes que viene, o puedes conseguir Plus para continuar ahora."
+            "value" : "Has usado toda la ayuda de este mes. Volverá el mes que viene, o puedes conseguir Plus para seguir ahora."
           }
         },
         "fr" : {
@@ -5028,7 +5028,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado la ayuda gratuita de hoy. Crea una cuenta gratuita para continuar."
+            "value" : "Has usado toda la ayuda gratuita de hoy. Crea una cuenta gratis para seguir."
           }
         },
         "fr" : {
@@ -5057,7 +5057,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Has usado la ayuda de hoy. Volverá mañana, o puedes conseguir Plus para continuar ahora."
+            "value" : "Has usado toda la ayuda de hoy. Volverá mañana, o puedes conseguir Plus para seguir ahora."
           }
         },
         "fr" : {

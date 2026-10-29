@@ -234,7 +234,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ führte hier nicht direkt zu %2$@. Versuche eine andere Verbindung."
+            "value" : "%1$@ führte hier nicht direkt zu %2$@. Versuch eine andere Verbindung."
           }
         },
         "en" : {
@@ -2068,7 +2068,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Fais glisser les étapes dans l’ordre, ou touche une étape puis sa place."
+            "value" : "Fais glisser les étapes pour les mettre dans l’ordre, ou appuie sur une étape puis sur sa place."
           }
         },
         "pt" : {
@@ -2126,7 +2126,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Chaque repère a un nom. Touche un repère pour le modifier."
+            "value" : "Chaque repère a un nom. Appuie sur un repère pour le changer."
           }
         },
         "pt" : {
@@ -2155,7 +2155,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Toutes les cases sont remplies. Touche une case pour la modifier."
+            "value" : "Toutes les cases sont remplies. Appuie sur une case pour la modifier."
           }
         },
         "pt" : {
@@ -2532,7 +2532,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Beim ersten Versuch übersehen"
+            "value" : "Beim ersten Versuch verpasst"
           }
         },
         "es" : {
@@ -2683,7 +2683,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no has hecho una suposición"
+            "value" : "Aún no has hecho ninguna suposición"
           }
         },
         "fr" : {
@@ -2799,7 +2799,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Aún no has marcado nada."
+            "value" : "Aún no hay ningún fragmento marcado."
           }
         },
         "fr" : {
@@ -3909,7 +3909,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touche un nom pour l’emplacement %@, ou fais-le glisser vers un emplacement."
+            "value" : "Appuie sur un nom pour le repère %@, ou fais-le glisser sur un repère."
           }
         },
         "pt" : {
@@ -3938,7 +3938,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Touche un lieu numéroté pour voir ce qui s’y trouve."
+            "value" : "Appuie sur un lieu numéroté pour voir ce qui s’y trouve."
           }
         },
         "pt" : {

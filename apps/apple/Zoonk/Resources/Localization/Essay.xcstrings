@@ -271,7 +271,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nota estimada, de 0 a %@"
+            "value" : "Pontuação estimada, de 0 a %@"
           }
         }
       }
@@ -793,7 +793,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Nota por critério"
+            "value" : "Pontuação por critério"
           }
         }
       }
@@ -897,7 +897,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Seguimos evaluando. Está tardando más de lo habitual."
+            "value" : "Aún estamos corrigiendo. Está tardando más de lo habitual."
           }
         },
         "fr" : {
@@ -949,7 +949,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das hat nicht geklappt. Versuch es gleich noch einmal."
+            "value" : "Das hat nicht geklappt. Versuch es in einem Moment noch einmal."
           }
         },
         "es" : {
@@ -967,7 +967,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu certo. Tente novamente em instantes."
+            "value" : "Não deu certo. Tente de novo em instantes."
           }
         }
       }
@@ -978,13 +978,13 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Das hat nicht geklappt. Dein Text ist noch da. Versuch es gleich noch einmal."
+            "value" : "Das hat nicht geklappt. Dein Text ist noch da. Versuch es in einem Moment noch einmal."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "No se ha podido completar. Tu texto sigue aquí. Inténtalo de nuevo dentro de un momento."
+            "value" : "No se ha podido completar. Tu texto sigue aquí. Vuelve a intentarlo dentro de un momento."
           }
         },
         "fr" : {
@@ -996,7 +996,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não deu certo. Seu texto continua aqui. Tente novamente em instantes."
+            "value" : "Não deu certo. Seu texto continua aqui. Tente de novo em instantes."
           }
         }
       }
@@ -1181,7 +1181,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -1199,7 +1199,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -1268,7 +1268,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Schreib den ganzen Aufsatz und sende ihn dann erneut."
+            "value" : "Schreib den ganzen Aufsatz und schick ihn dann noch einmal ab."
           }
         },
         "es" : {
@@ -1286,7 +1286,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Escreva o texto completo e envie novamente."
+            "value" : "Escreva a redação completa e envie de novo."
           }
         }
       }

@@ -16,18 +16,18 @@
   "audio_record_stop": "691ae82306fbd06c7123634517a8ad76d9156ca8dbebe30367a89a3791b67c04",
   "audio_say_it": "a889a5a659d600cedcb503e8ed80f00cc975b8899257b70bea9d276914c848cd",
   "audio_stop": "831b933ba5a10364a48bddd6508168c4594a154b6438630eef67c6f9dc66f8a8",
-  "audio_try_again": "2e791bb58bd643ae0da535b488d4681b3434eb0aaf1867780496e078609bc7d5",
-  "audio_try_again_label": "d172de2abf5d6b9e43b2ee0818a7a65d0d9c7f502c070e76370f136d718cae1f"
+  "audio_try_again": "0594074493363a428a05efacfe86e96cffea43db5366dd7d0d31e131bf9ccdad",
+  "audio_try_again_label": "49cc63f8153f19b4055cc9eafd290ca1b173bcc32cc03297a5d3045dca19d922"
 }
 -->
 <resources>
     <string name="audio_getting_ready">Wir bereiten die Audioaufnahme vor…</string>
     <string name="audio_stop">Wiedergabe stoppen</string>
-    <string name="audio_try_again_label">Audio erneut abspielen</string>
+    <string name="audio_try_again_label">Audio noch einmal versuchen</string>
     <string name="audio_did_not_play">Das Audio konnte nicht abgespielt werden.</string>
     <!-- %1$s is why the audio didn't play; the text it says follows on its own line. -->
     <string name="audio_here_is_what_it_says">%1$s Das wird gesagt:</string>
-    <string name="audio_try_again">Erneut versuchen</string>
+    <string name="audio_try_again">Noch einmal versuchen</string>
     <string name="audio_record">Aufnehmen</string>
     <!-- Stops recording the learner. -->
     <string name="audio_record_stop">Stoppen</string>

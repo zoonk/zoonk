@@ -3,7 +3,7 @@
 {
   "mock_chooser_about": "9d4af7d126aa38cab377e5de89addd90374b05bb9ea2a15a740bf0904f28034a",
   "mock_chooser_about_recommended": "4aaf13dce9e5b3615f848a604a0f3396721da6ee2caf41373cc107d1f2708c75",
-  "mock_chooser_failed": "cb559b27764ec6cc564171b61c0ef44068d545dea3660148aeec16145007fb78",
+  "mock_chooser_failed": "7a235326df2f552f0549a1c5f680077176771084ccb67d8fe1dc6abf93510168",
   "mock_chooser_getting_ready": "2f68b8858e61ff9e89a6b24af2ac21a3842ec060889352cc1d33e0c94551fcbc",
   "mock_chooser_last_mock": "eadb514982f2fc7e6dfe8e0738fac0e41880958104b80979c47e550326c0a7c5",
   "mock_chooser_left_out_listening": "219750897d0f2e397675b47dcd82944b51e18e2d58fe0329d30889ddf468785c",
@@ -114,7 +114,7 @@
     <string name="mock_chooser_short_month">No mês que vem a gente pode criar mais perguntas para seus simulados.</string>
     <string name="mock_chooser_short_none">O banco de perguntas ainda não tem mais perguntas novas para este simulado.</string>
     <string name="mock_chooser_not_enough">Ainda não há perguntas suficientes para este simulado. Tente a prova completa ou outra matéria.</string>
-    <string name="mock_chooser_failed">Não foi possível começar o simulado. Tente de novo.</string>
+    <string name="mock_chooser_failed">Não conseguimos começar o simulado. Tente de novo.</string>
     <string name="mock_chooser_preparing">Preparando seu simulado</string>
     <string name="mock_chooser_preparing_detail">A gente está criando perguntas parecidas com as da prova para você. O simulado começa aqui assim que elas estiverem prontas.</string>
     <string name="mock_chooser_writing">Criando seu simulado</string>

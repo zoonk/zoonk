@@ -161,7 +161,7 @@ msgstr "Continuar la sesión de hoy"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
 msgid "full, half or one subject"
-msgstr "completo, medio o de una asignatura"
+msgstr "completo, medio o una asignatura"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
@@ -691,7 +691,7 @@ msgstr "No hay cursos"
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "Wc7aau"
 msgid "No courses available yet."
-msgstr "Todavía no hay cursos disponibles."
+msgstr "Aún no hay cursos disponibles."
 
 #: src/app/[lang]/(app)/(catalog)/courses/course-list-client.tsx
 msgctxt "T0mfNV"
@@ -1796,7 +1796,7 @@ msgstr "Periodo"
 #: src/app/[lang]/(app)/(stats)/score/score-stats.tsx
 msgctxt "Ip-YhF"
 msgid "Every answer counts the same, so harder lessons can lower your score for a while."
-msgstr "Todas las respuestas cuentan por igual, así que las lecciones más difíciles pueden bajar tu puntuación durante un tiempo."
+msgstr "Todas las respuestas cuentan lo mismo, así que las lecciones más difíciles pueden hacer que tu puntuación baje durante un tiempo."
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 #: src/app/[lang]/(app)/(stats)/stats/stats-overview.tsx
@@ -1830,7 +1830,7 @@ msgstr "Ver todo"
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "lO7wKc"
 msgid "Not yet"
-msgstr "Todavía no"
+msgstr "Aún no"
 
 #: src/app/[lang]/(app)/(stats)/stats/overview-details.tsx
 msgctxt "McGBe4"
@@ -2600,7 +2600,7 @@ msgstr "Disponible con Plus"
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "8oF1Dm"
 msgid "Estimated score · Natural Sciences"
-msgstr "Puntuación estimada · Ciencias naturales"
+msgstr "Puntuación estimada · Ciencias Naturales"
 
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "hdNQ5-"
@@ -3164,7 +3164,7 @@ msgstr "Prepara un plan para {course}"
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
 msgctxt "CJ4yhP"
 msgid "Build a plan for the whole subject"
-msgstr "Prepara un plan para toda la materia"
+msgstr "Prepara un plan para toda la asignatura"
 
 #: src/app/[lang]/explain/[goalId]/explain-client.tsx
 msgctxt "xuyfqZ"
@@ -3180,7 +3180,7 @@ msgstr "Prueba de enfoque"
 #: src/components/public/start-lesson-button.tsx
 msgctxt "K6x1SC"
 msgid "We couldn't open the lesson. Try again, or log in to keep going."
-msgstr "No hemos podido abrir la lección. Inténtalo de nuevo o inicia sesión para continuar."
+msgstr "No hemos podido abrir la lección. Inténtalo de nuevo o inicia sesión para seguir."
 
 #: src/app/[lang]/learn/[lessonId]/lesson-guest-gate.tsx
 #: src/components/public/start-lesson-button.tsx
@@ -3267,7 +3267,7 @@ msgstr "~{time}"
 #: src/app/[lang]/plan-link/[planId]/page.tsx
 msgctxt "4zm4MM"
 msgid "You get your own plan for the same subject, at your own pace. A few questions then skip what you already know."
-msgstr "Tendrás tu propio plan sobre el mismo tema, a tu ritmo. Después, unas preguntas servirán para saltar lo que ya sabes."
+msgstr "Tendrás tu propio plan para la misma asignatura, a tu ritmo. Después, unas preguntas permitirán saltarte lo que ya sabes."
 
 #: src/app/[lang]/plan-link/[planId]/page.tsx
 msgctxt "ql_IXy"
@@ -3575,7 +3575,7 @@ msgstr "De ese tiempo, {time} corresponde a después del examen."
 #: src/components/catalog/plan-workload.tsx
 msgctxt "3MtrI6"
 msgid "Lessons not written yet are written as you reach them."
-msgstr "Las lecciones pendientes se preparan a medida que llegas a ellas."
+msgstr "Las lecciones aún sin preparar se preparan a medida que llegas a ellas."
 
 #: src/components/catalog/try-lesson.tsx
 msgctxt "iHnKCj"
@@ -3838,7 +3838,7 @@ msgstr "¿Qué pasa si cancelo?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "z1FMPn"
 msgid "You keep Plus until the end of the period you already paid for. Then you're back on the free plan, and your goals and progress stay with you."
-msgstr "Mantienes Plus hasta el final del periodo que ya has pagado. Después vuelves al plan gratuito y conservas tus objetivos y tu progreso."
+msgstr "Mantendrás Plus hasta que termine el periodo que ya has pagado. Después volverás al plan gratuito y conservarás tus objetivos y tu progreso."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "94whIk"

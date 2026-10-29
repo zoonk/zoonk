@@ -46,7 +46,7 @@
   "search_subscription": "60bbe7b7c741dd528a12c2a3d1e79030cf4f3178250031c4f386880d7a7d6d50",
   "search_switch_goal": "8307eca81fff24899c2efb5373f4107ca5f2a812062c9051a4440cc3968af65e",
   "search_take_mock": "addc81d822f8b914ba77811679586ac8a1e2ef871182f56f20a2f92e7f308b42",
-  "search_take_mock_detail": "51773932c2123769076ecb604c838dc758ada06a5b9b6abbbff4d6aaf83fb41c"
+  "search_take_mock_detail": "085e68f2447fa219cd7b0f59abb0227a91d8cd981f35d9f6b0bf70c7288b53bf"
 }
 -->
 <resources>
@@ -68,7 +68,7 @@
     <string name="search_group_new_goal">Nuevo objetivo</string>
     <string name="search_continue">Continuar la sesión de hoy</string>
     <string name="search_take_mock">Hacer un simulacro</string>
-    <string name="search_take_mock_detail">Completo, medio o de una asignatura</string>
+    <string name="search_take_mock_detail">Completo, mitad o una asignatura</string>
     <string name="search_practice_mistakes">Practicar tus errores</string>
     <string name="search_ask_buddy">Pregunta a %1$s…</string>
     <string name="search_start_new_goal">Empezar un nuevo objetivo</string>

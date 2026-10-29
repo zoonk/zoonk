@@ -33,7 +33,7 @@
   "buddy_page_missions": "012a51c6f6cf281e5dc7d93297455948821946d118a27c029e96dd87d42dcdf1",
   "buddy_page_missions_done": "e38241576f551f5d3c67d7525976e3b445300765eebaabe9d13ba9125a55f767",
   "buddy_page_more": "89a7b2a9941e449cfcaa649a8aeddc7554681ebc4d46355dbf61bbc19ef215fa",
-  "buddy_page_not_yet": "8772db422bc80d8c440f9f2eed3f2ecfb352e44b64e1bd43274a5228a5647887",
+  "buddy_page_not_yet": "a9d2e36f25ddab305f5888d4b0371204f654c24da510461620890cb8a5994e64",
   "buddy_page_open_failed": "0f6ec1706c8c7186e0c5950952ebfcaabc9507a3f8113dc7c5f6a7f82aa0a968",
   "buddy_page_placeholder": "252fa95674235d45c67ede52a436f2cd8707faa26cd84bfcf26954270cce6bb9",
   "buddy_page_remembers": "5d5f2ff969968f0033a2580054411fd451f21db5bd90e77057cd174333d4fe30",
@@ -82,7 +82,7 @@
     <string name="buddy_page_energy_napping">%1$s se ha echado una siesta. Cualquier cosa que aprendas le despertará.</string>
     <string name="buddy_page_energy_studied">Has estudiado hoy, así que la energía no bajará.</string>
     <string name="buddy_page_energy_study">Estudiar hoy mantiene la energía.</string>
-    <string name="buddy_page_not_yet">Todavía no</string>
+    <string name="buddy_page_not_yet">Aún no</string>
     <string name="buddy_page_missions">Misiones</string>
     <!-- Read aloud for the missions shown as "1/3". -->
     <string name="buddy_page_missions_done">Misiones completadas: %1$d de %2$d</string>

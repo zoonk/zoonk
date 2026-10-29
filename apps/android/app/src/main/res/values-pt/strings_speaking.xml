@@ -3,14 +3,14 @@
 {
   "speaking_eyebrow": "432272c43ffa9ddf449f9c71f82ec0a9efc541476135acb03259ba4a93553bd4",
   "speaking_facts": "aa4b6fd97af220f60f5aeab8e1574d756e08beddab1ea7ee7b0c28e0edfaad36",
-  "speaking_footer": "f3d3b8ce896f629349c341c4ffb7714f5b21957b87f7c578ca095491e9a04703",
-  "speaking_footer_partner": "0810ed7418979cea4d36df9d14771a285d76dec74187920d24f89580c46ed924",
+  "speaking_footer": "bed4f6f805c3e31d4cc1b10a7db8a727e705ebd569f9f7a6050575fad7e0004b",
+  "speaking_footer_partner": "b7f8899ff76c7490f8a103c966f2f4b92b6129a75472c7bca67809bdbab4793c",
   "speaking_last_at": "0729ed8f3ba625b40c77a4cb3cd4409c493bae69c6b0d448190738162e1bc932",
   "speaking_last_below": "cce5e126b2497d5dd83437da7a09f6cb50d9d8a09018689398ae63aaad082ce8",
   "speaking_last_near": "3bc7870cd25b7099191a50341692e6f7ce7f0ec448cb65b8a8992b5799815dce",
   "speaking_last_none": "16276557bfd2eee25905c761c5c0b0eefd694f0950baf8dbdbb29edc4f141aa7",
   "speaking_last_result": "a1757e4efa6d89d6ce7b9b72e914ec75bdd97fbef631f01654b52d687bfae979",
-  "speaking_mock_failed": "52b69466ea3fdb5685e3f4fa07f2199b8ac9800ef36deba2a14a26a8bdc85776",
+  "speaking_mock_failed": "584c37e55c166988caba03433d67379008942917a7d0ba2cbb991cfca7dcb69f",
   "speaking_mock_ielts": "32aee1bc156b032bbe87a0cc13c2b3a4c538608e8457722d3d233c98dcac39e1",
   "speaking_mock_opens": "133f7333f7eea73921d44fd9e890362807e55fbe971f2a602c3e1c1fe58daa77",
   "speaking_mock_start": "391c3c3319427e3be8bfa4458dba481581ab0c996e48cd06a473035633ae43af",
@@ -26,7 +26,7 @@
   "speaking_rated_on": "aa70774801af1e9f8364899696b56773202f6bfdac846e15511290118d2194fd",
   "speaking_row": "8aea7c7c4284e0cb5cc68dbf56c04362eacb812747382973d4196e590741da69",
   "speaking_section": "e6e382d4a2e8d81bef09fbd6539ef1a5d73b31b55ee9be5db1a011808b4ed780",
-  "speaking_start_failed": "b97d47e7ed8f651e66840cf7eae35a29082cf228a63ba6325b93e9174eb7ccf0",
+  "speaking_start_failed": "3a4ed42222b63c375fabfd8a3e80acbada90cbfd091c8e0a3fd43d9f2cfcf776",
   "speaking_start_task": "3d75e89211f91501a8da6713b6483bb721ee1b080083a0f256798c9ae0f0695d",
   "speaking_tasks": "0c6c16db6af97fddc5687d7ab90ec78662c529d31d6c80c54fc60ed5c2bd2453",
   "speaking_title": "dcd07e9a43e0bbf4b2b542e419644cae2cbfdea5c31b624982aa76bf5570f555",
@@ -56,9 +56,9 @@
     <string name="speaking_opens_when_ready">Sua tarefa abre assim que o cartão estiver pronto.</string>
     <string name="speaking_no_time_month">Tempo de conversa insuficiente neste mês para esta tarefa</string>
     <string name="speaking_no_time_day">Tempo de conversa insuficiente hoje para esta tarefa</string>
-    <string name="speaking_start_failed">A tarefa não começou. Tente novamente em instantes.</string>
-    <string name="speaking_footer_partner">Uma IA faz o papel do examinador ou do outro candidato. Cada tentativa tem um novo cartão e, ao final, você recebe uma estimativa baseada nos critérios oficiais da prova, não uma nota oficial.</string>
-    <string name="speaking_footer">Uma IA faz o papel do examinador. Cada tentativa tem um novo cartão e, ao final, você recebe uma estimativa baseada nos critérios oficiais da prova, não uma nota oficial.</string>
+    <string name="speaking_start_failed">A atividade não começou. Tente de novo em instantes.</string>
+    <string name="speaking_footer_partner">Uma IA faz o papel do examinador ou de outro candidato. Cada tentativa tem um novo cartão e, ao final, você recebe uma estimativa com base nos critérios oficiais da prova, não uma pontuação oficial.</string>
+    <string name="speaking_footer">Uma IA faz o papel do examinador. Cada tentativa tem um novo cartão e, ao final, você recebe uma estimativa com base nos critérios oficiais da prova, não uma pontuação oficial.</string>
     <string name="speaking_official_format">Formato oficial</string>
     <string name="speaking_start_task">Começar esta tarefa</string>
     <string name="speaking_last_result">Ver seu último resultado</string>
@@ -78,7 +78,7 @@
     <string name="speaking_mock_toefl">Repita frases e faça uma entrevista curta com um examinador. Ao final, uma faixa estimada de 1 a 6 para cada critério.</string>
     <string name="speaking_mock_start">Começar o simulado</string>
     <string name="speaking_mock_opens">Seu simulado abre assim que estiver pronto.</string>
-    <string name="speaking_mock_failed">O simulado não começou. Tente novamente em instantes.</string>
+    <string name="speaking_mock_failed">O simulado não começou. Tente de novo em instantes.</string>
     <string name="speaking_writing_mock">Criando seu simulado</string>
     <string name="speaking_writing_mock_phase">Criando o roteiro do examinador</string>
     <string name="speaking_writing_mock_line_1">Escolhendo seu examinador…</string>

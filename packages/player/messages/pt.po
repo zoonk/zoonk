@@ -337,7 +337,7 @@ msgstr "Você pegou {item} na posição {position}."
 #: src/activities/_components/activity-sortable-list.tsx
 msgctxt "NNTjVW"
 msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
-msgstr "Para mover um item, pressione Espaço ou Enter, use as teclas de seta para mover e pressione Espaço ou Enter novamente para soltar. Pressione Escape para cancelar."
+msgstr "Para mover um item, pressione Space ou Enter, use as setas para movê-lo e pressione Space ou Enter de novo para soltá-lo. Pressione Escape para cancelar."
 
 #: src/activities/_components/activity-sound-button.tsx
 msgctxt "ZmADei"
@@ -347,7 +347,7 @@ msgstr "O som não carregou. Você ainda pode ver todas as notas."
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "eYmsAC"
 msgid "{runtime} didn't load. Check your connection and try again."
-msgstr "{runtime} não carregou. Confira sua conexão e tente novamente."
+msgstr "{runtime} não carregou. Confira sua conexão e tente de novo."
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
@@ -356,7 +356,7 @@ msgstr "{runtime} não carregou. Confira sua conexão e tente novamente."
 #: src/questions/lesson-question-errors.tsx
 msgctxt "FazwRl"
 msgid "Try again"
-msgstr "Tentar novamente"
+msgstr "Tentar de novo"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "g91Ps-"
@@ -373,7 +373,7 @@ msgstr "Executando"
 #: src/activities/random-simulation/sampling-simulation.tsx
 msgctxt "zG-cZG"
 msgid "Run again"
-msgstr "Executar novamente"
+msgstr "Executar de novo"
 
 #: src/activities/_sandbox/sandbox-run-bar.tsx
 msgctxt "KiXNvz"
@@ -911,7 +911,7 @@ msgstr "Esperado"
 #: src/activities/code-runner/code-runner-output.tsx
 msgctxt "d8Wy56"
 msgid "You changed the code. Run it again to see the new output."
-msgstr "Você mudou o código. Execute novamente para ver a nova saída."
+msgstr "Você alterou o código. Execute de novo para ver a nova saída."
 
 #: src/activities/code-tracer/code-tracer-activity.tsx
 msgctxt "isBSlr"
@@ -2074,7 +2074,7 @@ msgstr "Melodia"
 #: src/activities/notation-player/notation-player-activity.tsx
 msgctxt "rVVJz4"
 msgid "The music couldn't load. Check your connection and try again."
-msgstr "Não foi possível carregar a música. Confira sua conexão e tente de novo."
+msgstr "A música não carregou. Confira sua conexão e tente de novo."
 
 #: src/activities/notation-player/notation-player-activity.tsx
 #: src/lesson/steps/spoken-answer-step.tsx
@@ -2488,7 +2488,7 @@ msgstr "Começar a tocar"
 #: src/activities/rhythm-tapper/rhythm-controls.tsx
 msgctxt "zuJJlV"
 msgid "Check the sound delay again"
-msgstr "Conferir o atraso do som novamente"
+msgstr "Conferir o atraso do som de novo"
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "x2gkvA"
@@ -2503,7 +2503,7 @@ msgstr "Toque a cada clique · {click} de {total}"
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "U3WmLU"
 msgid "We couldn't match enough taps to the clicks. Try again, tapping with each one."
-msgstr "A gente não conseguiu associar toques suficientes aos cliques. Tente novamente, tocando a cada clique."
+msgstr "Não conseguimos associar toques suficientes aos cliques. Tente de novo, tocando a cada clique."
 
 #: src/activities/rhythm-tapper/rhythm-delay-calibration.tsx
 msgctxt "JUoCnO"
@@ -2641,7 +2641,7 @@ msgstr "A consulta levou mais de {seconds} segundos e foi interrompida."
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "ubVY3z"
 msgid "SQLite didn't load. Check your connection and try again."
-msgstr "SQLite não carregou. Confira sua conexão e tente novamente."
+msgstr "SQLite não carregou. Confira sua conexão e tente de novo."
 
 #: src/activities/sql-playground/sql-playground-activity.tsx
 msgctxt "qj71j1"
@@ -2676,7 +2676,7 @@ msgstr "{count, plural, =0 {Seu resultado não tem linhas} one {Seu resultado: #
 #: src/activities/sql-playground/sql-result.tsx
 msgctxt "BgDPcv"
 msgid "You changed the query. Run it again to see the new result."
-msgstr "Você alterou a consulta. Execute novamente para ver o novo resultado."
+msgstr "Você alterou a consulta. Execute de novo para ver o novo resultado."
 
 #: src/activities/sql-playground/sql-review.tsx
 msgctxt "2L3mBS"
@@ -3041,12 +3041,12 @@ msgstr "Desenhando a imagem…"
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "P0MjYO"
 msgid "You can still review what you learned and practice your mistakes. New lessons open again next month, or get Plus to keep going now."
-msgstr "Você ainda pode revisar o que aprendeu e praticar o que errou. Novas aulas estarão disponíveis no mês que vem. Para continuar agora, assine Plus."
+msgstr "Você ainda pode revisar o que aprendeu e praticar o que errou. Novas aulas estarão disponíveis no mês que vem, ou assine o Plus para continuar agora."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "SDARaX"
 msgid "You can still review what you learned and practice your mistakes. New lessons open again tomorrow, or get Plus to keep going now."
-msgstr "Você ainda pode revisar o que aprendeu e praticar o que errou. Novas aulas estarão disponíveis amanhã. Para continuar agora, assine Plus."
+msgstr "Você ainda pode revisar o que aprendeu e praticar o que errou. Novas aulas estarão disponíveis amanhã, ou assine o Plus para continuar agora."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "o_xO7j"
@@ -3089,7 +3089,7 @@ msgstr "Criar uma conta grátis"
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "nkKtmz"
 msgid "You've reached today's limit. New lessons open again tomorrow."
-msgstr "Você chegou ao limite de hoje. Novas aulas estarão disponíveis amanhã."
+msgstr "Você atingiu o limite de hoje. Novas aulas estarão disponíveis amanhã."
 
 #: src/lesson/access/lesson-access-screen.tsx
 msgctxt "8aKab6"
@@ -3234,7 +3234,7 @@ msgstr "Explicar minha resposta"
 #: src/lesson/feedback/explain-answer.tsx
 msgctxt "I_NpAB"
 msgid "We couldn't explain it right now. Try again in a moment."
-msgstr "Não conseguimos explicar agora. Tente de novo daqui a pouco."
+msgstr "Não conseguimos explicar agora. Tente de novo em instantes."
 
 #: src/lesson/feedback/lesson-key-points.tsx
 msgctxt "YO_0e_"
@@ -3471,7 +3471,7 @@ msgstr "Conferência rápida · {current} de {total}"
 #: src/lesson/lesson-stage.tsx
 msgctxt "wIdPyY"
 msgid "Not quite. Look again and fix it yourself, then check."
-msgstr "Ainda não. Olhe de novo, corrija você mesmo e depois confira."
+msgstr "Não é bem isso. Olhe de novo, corrija você mesmo e depois confira."
 
 #: src/lesson/lesson-stage.tsx
 msgctxt "KC15MC"
@@ -3749,7 +3749,7 @@ msgstr "Sobre sua resposta a “<question></question>”"
 #: src/questions/lesson-question-composer.tsx
 msgctxt "pLRK5_"
 msgid "We couldn't send your last question. Try again."
-msgstr "Não foi possível enviar sua última pergunta. Tente de novo."
+msgstr "Não conseguimos enviar sua última pergunta. Tente de novo."
 
 #: src/questions/lesson-question-composer.tsx
 msgctxt "v9luVQ"
@@ -3809,7 +3809,7 @@ msgstr "⏎ enviar · ⇧⏎ nova linha"
 #: src/questions/lesson-question-errors.tsx
 msgctxt "2P8sqa"
 msgid "Your session expired. Sign in again."
-msgstr "Sua sessão expirou. Entre novamente."
+msgstr "Sua sessão expirou. Entre de novo."
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "iVOq9B"
@@ -3824,12 +3824,12 @@ msgstr "Esta aula não está mais disponível."
 #: src/questions/lesson-question-errors.tsx
 msgctxt "g4aIUa"
 msgid "We couldn't send this question. Try again."
-msgstr "Não foi possível enviar esta pergunta. Tente de novo."
+msgstr "Não conseguimos enviar esta pergunta. Tente de novo."
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "-xjsCZ"
 msgid "Take a short break, then ask again."
-msgstr "Faça uma pausa e pergunte de novo."
+msgstr "Faça uma pausa curta e pergunte de novo."
 
 #: src/questions/lesson-question-errors.tsx
 msgctxt "3kJE8G"
@@ -4000,7 +4000,7 @@ msgstr "Esta pergunta não foi respondida."
 #: src/questions/lesson-question-turn.tsx
 msgctxt "1A8Z_l"
 msgid "Check again"
-msgstr "Conferir novamente"
+msgstr "Conferir de novo"
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "C1eFF3"
@@ -4015,12 +4015,12 @@ msgstr "Pensando…"
 #: src/questions/lesson-question-turn.tsx
 msgctxt "wfxYSP"
 msgid "Couldn't load earlier messages. Try again."
-msgstr "Não foi possível carregar as mensagens anteriores. Tente novamente."
+msgstr "Não foi possível carregar as mensagens anteriores. Tente de novo."
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "wMoDaY"
 msgid "Couldn't load earlier questions. Try again."
-msgstr "Não foi possível carregar as perguntas anteriores. Tente novamente."
+msgstr "Não foi possível carregar as perguntas anteriores. Tente de novo."
 
 #: src/questions/lesson-question-turn.tsx
 msgctxt "_V89Z1"

@@ -387,7 +387,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Stelle eine Frage oder wünsche dir eine Änderung"
+            "value" : "Stell eine Frage oder wünsch dir eine Änderung"
           }
         },
         "es" : {
@@ -1234,7 +1234,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Hi! Ich bin %@, dein KI-Lernkumpel. Frag mich alles über das, was du gerade lernst, oder sag mir, was du an deinem Plan ändern möchtest."
+            "value" : "Hi! Ich bin %@, dein KI-Lernkumpel. Frag mich alles zu dem, was du lernst, oder sag mir, was du an deinem Plan ändern möchtest."
           }
         },
         "es" : {
@@ -1327,7 +1327,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mantenerla"
+            "value" : "Conservarla"
           }
         },
         "fr" : {
@@ -1588,7 +1588,7 @@
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Todavía no"
+            "value" : "Aún no"
           }
         },
         "fr" : {
@@ -2133,7 +2133,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erneut versuchen"
+            "value" : "Noch einmal versuchen"
           }
         },
         "es" : {
@@ -2151,7 +2151,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tentar novamente"
+            "value" : "Tentar de novo"
           }
         }
       }
@@ -2220,7 +2220,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Deine Antwort konnte nicht gespeichert werden. Versuch es erneut."
+            "value" : "Wir konnten deine Antwort nicht speichern. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -2238,7 +2238,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível salvar sua resposta. Tente novamente."
+            "value" : "Não conseguimos salvar sua resposta. Tente de novo."
           }
         }
       }
@@ -2249,7 +2249,7 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Dein Kumpel konnte nicht gespeichert werden. Versuch es erneut."
+            "value" : "Wir konnten deinen Kumpel nicht speichern. Versuch es noch einmal."
           }
         },
         "es" : {
@@ -2267,7 +2267,7 @@
         "pt" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Não foi possível salvar seu parceiro. Tente novamente."
+            "value" : "Não conseguimos salvar seu Parceiro. Tente de novo."
           }
         }
       }

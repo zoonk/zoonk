@@ -4,7 +4,7 @@
   "language_pattern_noticed": "9642a1748adf301c121d6854f75f930e97167a90c01baf2ee2838e827870c283",
   "language_pattern_typos": "940d9d0fd9d278cc04d979a227d87f75bd72d55fad57a874a271e1c39cd7419a",
   "language_pattern_typos_description": "7fd2d3865f876948c8b6e964416c8b61575082a58b14e8143d9ded0c930706ce",
-  "language_say_again": "3d3a275045e31eb15de523921bfe801c3d7540f8fefb0e096e9f2f2afe1d57b0",
+  "language_say_again": "3cff069cdc195c7d0ffe17f18905e5d9af2b0a1b9df2e1010941ffbf20744f47",
   "language_skill_listening": "9f74258365d43e9adcb4c18eacc590c5fbf73059f8b0bc122729625227f28919",
   "language_skill_speaking": "2574958596e22e9ab0f428c044258a9a84ee38a9721b750b32b78eaae38c84b3",
   "language_skill_words": "3e8d1534bf332d820758cb19d3b3c48561bb6768cd42eaec6cf1312b1a190844",
@@ -61,7 +61,7 @@
     <string name="language_pattern_typos_description">Deine letzten Fehler waren Versehen. Du musst dafür keine Regel lernen.</string>
     <!-- A practice row. %d is how many words are due to be said out loud again, a count, never a word's number: "Say 2 words again" means repeat two words. -->
     <plurals name="language_say_again">
-        <item quantity="one">Sag %d Wort noch einmal</item>
-        <item quantity="other">Sag %d Wörter noch einmal</item>
+        <item quantity="one">Sprich %d Wort noch einmal</item>
+        <item quantity="other">Sprich %d Wörter noch einmal</item>
     </plurals>
 </resources>

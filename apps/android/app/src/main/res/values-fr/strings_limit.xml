@@ -20,10 +20,10 @@
   "limit_mind_maps_free_month": "3a52f10fcc54bbcb4a5513dc3901fa26c1c2992970c8d13846f046397239d7c1",
   "limit_mind_maps_guest": "3968de4dc56bada606d42e282aeadd7da636896a9fb6aa02bc48c027ff42eb59",
   "limit_mind_maps_plus": "80c3e723c7da53de71067a68fde0b8138c69c1a62d624a3e1ba624c4f0c0a18c",
-  "limit_outlines_free_day": "bb1a4a84319f041354c76f79895b21d54d3d0b1dc9fdce7d260f2a3db5868a74",
-  "limit_outlines_free_month": "ad439674b62a9e0313292b1320b61e5fcdd9d83d1cad744c7fd84525d3fcbcbb",
-  "limit_outlines_guest": "b580b439b13fb7a4d680c8cd0194a102b0a09d9f31ead7f24c743c5f6cfa803a",
-  "limit_outlines_plus": "be6bc398e3d71321568034725173d283a0f3aeb66e5c45f08dc99821e2290b72",
+  "limit_outlines_free_day": "0a182a27bf8466aa94e095842fbc10ea859acd863f65a4e0aa2fbc9562a904a9",
+  "limit_outlines_free_month": "2f0b87c557c3465891bd1a236483ed6905fce0f3cef2f0b5864869ba0fe4145e",
+  "limit_outlines_guest": "4cd612dfaabf6259f766c76e0e0763dd2c6f973a6a6ffd310ecd4c0e87e58da1",
+  "limit_outlines_plus": "d393e383e5ca754c0c2b3bd8ee9153178fb4c9fc1fd018e346d00236dc2724c3",
   "limit_see_plus": "32e883a73378586377702476183053640c3cadc547c72cd59cba55349fe1ced5",
   "limit_sign_up_required": "4a521a7670dc2895b312610e8e416df8fd1b1912c9fe04e0cd144c3d33fc8459",
   "limit_slow_down": "93fff3fc7271b2d45c23c1067883d9e4afbfb2abc6ae4109f758412b28cdfc99"
@@ -47,10 +47,10 @@
     <string name="limit_mind_maps_plus">Tu as créé toutes les nouvelles cartes mentales disponibles aujourd’hui. Tu pourras en créer d’autres demain.</string>
     <string name="limit_mind_maps_free_month">Tu as créé toutes les nouvelles cartes mentales disponibles ce mois-ci. Tu pourras en créer d’autres le mois prochain, ou passer à Plus pour continuer dès maintenant.</string>
     <string name="limit_mind_maps_free_day">Tu as créé toutes les nouvelles cartes mentales disponibles aujourd’hui. Tu pourras en créer d’autres demain, ou passer à Plus pour continuer dès maintenant.</string>
-    <string name="limit_outlines_guest">Tu as consulté le sujet que tu peux voir à l’avance sans compte. Crée un compte gratuit pour en voir d’autres.</string>
-    <string name="limit_outlines_plus">Tu as consulté tous les sujets que tu peux voir à l’avance aujourd’hui. Tu pourras en voir d’autres demain.</string>
-    <string name="limit_outlines_free_month">Tu as consulté tous les sujets que tu peux voir à l’avance ce mois-ci. Tu pourras en voir d’autres le mois prochain, ou passer à Plus pour continuer dès maintenant.</string>
-    <string name="limit_outlines_free_day">Tu as consulté tous les sujets que tu peux voir à l’avance aujourd’hui. Tu pourras en voir d’autres demain, ou passer à Plus pour continuer dès maintenant.</string>
+    <string name="limit_outlines_guest">Tu as vu le sujet que tu peux consulter à l’avance sans compte. Crée un compte gratuit pour en voir plus.</string>
+    <string name="limit_outlines_plus">Tu as vu tous les sujets que tu peux consulter à l’avance aujourd’hui. Tu pourras en voir plus demain.</string>
+    <string name="limit_outlines_free_month">Tu as vu tous les sujets que tu peux consulter à l’avance ce mois-ci. Tu pourras en voir plus le mois prochain, ou passer à Plus pour continuer dès maintenant.</string>
+    <string name="limit_outlines_free_day">Tu as vu tous les sujets que tu peux consulter à l’avance aujourd’hui. Tu pourras en voir plus demain, ou passer à Plus pour continuer dès maintenant.</string>
     <string name="limit_calls_guest">Les appels pour pratiquer l’expression orale sont accessibles avec un compte gratuit. Crée ton compte pour t’entraîner à voix haute.</string>
     <string name="limit_calls_plus_month">Tu pourras passer de nouveaux appels le mois prochain.</string>
     <string name="limit_calls_plus_day">Tu pourras passer de nouveaux appels demain.</string>

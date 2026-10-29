@@ -2,7 +2,7 @@
 <!-- eloqnt-fingerprints-v1
 {
   "feedback_email": "af8259b8edd2eeb3605381765612e873814972e3891c0554fa669f186c1b9e03",
-  "feedback_failed": "8c1263c06c12d2e08ea5133fa17b790a7e61b37fd1b5c717ed5a51cb7f9dc1cf",
+  "feedback_failed": "6584bc26a8827e726a79b2c923bfbd981836441335bef8386d6de3898e16f06d",
   "feedback_follow_us": "ba2d558d8fa408a8ac278e8a4f62cbbbc194ef5524c8e57c5db8fac5ee33a4af",
   "feedback_help_description": "8a10e2cebeae15daa835528f67a1d888b791855dc83447a4d2b10bd8e3477964",
   "feedback_message": "e0b95995ffd31e50c7bd8c4ba0f85fab1245faad936ab6b03e661fcccb2903c2",
@@ -22,7 +22,7 @@
     <string name="feedback_email">Deine E-Mail-Adresse für unsere Antwort</string>
     <string name="feedback_send">Nachricht senden</string>
     <string name="feedback_sent">Nachricht gesendet! Wir melden uns bald bei dir.</string>
-    <string name="feedback_failed">Wir konnten deine Nachricht nicht senden. Versuch es erneut oder schreib uns an hello@zoonk.com.</string>
+    <string name="feedback_failed">Wir konnten deine Nachricht nicht senden. Versuch es noch einmal oder schreib uns an hello@zoonk.com.</string>
     <string name="feedback_follow_us">Folge uns</string>
     <string name="feedback_report_problem">Problem melden</string>
     <string name="feedback_more">Weitere Optionen</string>

@@ -45,7 +45,7 @@
   "buddy_page_today": "aa20afd753fe7dd74aacc14458f224f1609e88de5d397b911f5dd370697d366d",
   "buddy_page_weekly_summary": "20857cc86a08664bb8c12af9cc1fb2fe7e53efaa42a0d055a70b0d33658f570c",
   "buddy_page_when_buddy": "665fe7b401e8c4683df04bb49f372bc2b967bf0746a7df158b6bfa8058ef65da",
-  "buddy_page_when_call": "2ef4c4e0fce5f0c0eb696619a71ec858b7f8bf8e24d98b3c910ae0481f8d705b",
+  "buddy_page_when_call": "0224198382b1ab1f052c05c06c7f283fdfa07e9273e8a6ecbaa3d5fba6956583",
   "buddy_page_when_challenge": "c6e62e325214a66b2acf342c69288b9c4b2f8a8303b3df74b50b0429c412700e",
   "buddy_page_when_challenge_on": "75b9a6e49272efa8e4f576890086a19488fe9bab73d765564018286178609e7a",
   "buddy_page_when_essay": "b8554ca09a7a86a736343421eec0fbec01d3f34c6c526ca6560a62d51cc0e76a",
@@ -113,7 +113,7 @@
     <string name="buddy_page_when_mistake">No dia seguinte ao seu primeiro erro</string>
     <string name="buddy_page_when_review">Quando for hora da sua primeira revisão</string>
     <string name="buddy_page_when_pattern">Quando seus erros mostrarem um padrão</string>
-    <string name="buddy_page_when_call">Quando você tiver tempo para conversar de novo</string>
+    <string name="buddy_page_when_call">Quando você tiver tempo de conversa de novo</string>
     <string name="buddy_page_when_buddy">Quando você puder perguntar de novo</string>
     <string name="buddy_page_when_lesson">No dia da sua próxima aula</string>
     <string name="buddy_page_when_mock">Quando seu plano tiver um simulado</string>
