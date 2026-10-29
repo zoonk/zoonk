@@ -2,17 +2,24 @@ package com.zoonk.android.data
 
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.Error
+import com.zoonk.api.models.ErrorError
 import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.JsonElement
 import retrofit2.Response
 import java.io.IOException
 import kotlin.coroutines.cancellation.CancellationException
 
 enum class ApiError { Network, NotFound, Unauthorized, Unavailable }
 
-/** [code] is the API's error code (`RATE_LIMIT_EXCEEDED`) when it sent one. */
+/**
+ * [code] is the API's error code (`RATE_LIMIT_EXCEEDED`) when it sent one, with its [details];
+ * [status] is the HTTP status, for refusals the error alone doesn't tell apart (402, 403, 429).
+ */
 class ApiException(
     val error: ApiError,
     val code: String? = null,
+    val status: Int? = null,
+    val details: JsonElement? = null,
 ) : Exception(code ?: error.name)
 
 fun Throwable.toApiError(): ApiError =
@@ -53,12 +60,13 @@ internal suspend fun <T> send(call: suspend () -> Response<T>): Response<T> {
             404 -> ApiError.NotFound
             else -> ApiError.Unavailable
         }
-    throw ApiException(error, errorCode(response))
+    val body = errorBody(response)
+    throw ApiException(error, body?.code, response.code(), body?.details)
 }
 
-private fun errorCode(response: Response<*>): String? =
+private fun errorBody(response: Response<*>): ErrorError? =
     try {
-        response.errorBody()?.string()?.let { ApiJson.decodeFromString<Error>(it).error.code }
+        response.errorBody()?.string()?.let { ApiJson.decodeFromString<Error>(it).error }
     } catch (e: SerializationException) {
         null
     } catch (e: IOException) {

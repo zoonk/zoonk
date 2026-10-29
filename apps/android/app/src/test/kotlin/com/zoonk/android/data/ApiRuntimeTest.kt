@@ -3,6 +3,8 @@ package com.zoonk.android.data
 import com.zoonk.api.models.LearningProfileUpdate
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
 import mockwebserver3.SocketEffect
@@ -84,7 +86,7 @@ class ApiRuntimeTest {
                 MockResponse
                     .Builder()
                     .code(429)
-                    .body("""{"error":{"code":"RATE_LIMIT_EXCEEDED","message":"Slow down"}}""")
+                    .body("""{"error":{"code":"SLOW_DOWN","message":"Slow down","details":{"retryAfterSeconds":30}}}""")
                     .build(),
             )
             server.enqueue(json("""{"profile":"not an object"}"""))
@@ -98,7 +100,16 @@ class ApiRuntimeTest {
             assertEquals(ApiError.NotFound, fail().error)
             val limited = fail()
             assertEquals(ApiError.Unavailable, limited.error)
-            assertEquals("RATE_LIMIT_EXCEEDED", limited.code)
+            assertEquals("SLOW_DOWN", limited.code)
+            assertEquals(429, limited.status)
+            assertEquals(
+                "30",
+                limited.details
+                    ?.jsonObject
+                    ?.get("retryAfterSeconds")
+                    ?.jsonPrimitive
+                    ?.content,
+            )
             assertEquals(ApiError.Unavailable, fail().error)
 
             server.close()
