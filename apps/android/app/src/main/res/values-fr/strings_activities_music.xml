@@ -54,7 +54,7 @@
   "activities_music_show_notes": "3333c4fa8207841439900f3625c9df9a82a5be757a62580741e01f12af985044",
   "activities_music_skip_for_now": "019d326e0f022fe1db44c8ff5446f7cb8c1d714f5ee0eb1dfe705a2d7cc0d9c9",
   "activities_music_sound_check_failed": "232c68191fbc17df78d8900c6d088270ea7195b05ad55728b73cd255ea77a075",
-  "activities_music_sound_check_intro": "04a5667efacdbff51a0868dca21fd56f6a6a8b5c146257c48af0902ebfd25d88",
+  "activities_music_sound_check_intro": "3e293f03d5fbac471ec6fe2c0cac91810680b619f729e5118753b4510c04f8cc",
   "activities_music_sound_check_late": "7071855fb843237c56f7acea538d1607162e839d83592115d13887de547b2cef",
   "activities_music_sound_check_listen": "38a1073642ec271773046f6fb5a5bac00faf3090d165d1a6a885933876450f90",
   "activities_music_sound_check_on_time": "fce5f0d3474355c7cebbd345e848b245ec9e7d349d8bc80e4fb97743a42b6350",
@@ -71,10 +71,10 @@
   "activities_music_string_low_e": "a81e9d6a343e10708cb826d31cb0f69bb29161e8945b176e4a249a6f73a21351",
   "activities_music_string_position": "08bcd3886303edb39d7fdc406478257674fbaea8ad0c641ac02e2233b8a0e430",
   "activities_music_tab": "8643118c28648b28cdf2026b3024df2328c201c42e039e860e0a0c2a6e0e6ea3",
-  "activities_music_tap_early": "7d62f997fb81464a2ca814f7c0ebb6523f0ae9b88f71d454b3a219ee89c90043",
+  "activities_music_tap_early": "c45bf6e3513fde8da6d213416325102a862f849994297d5139b07f57e33b3311",
   "activities_music_tap_here": "186a0d68b3d8061c4aa7a1d0e4830db7799b8800dbb16f2ff5b80eb1d8e01486",
-  "activities_music_tap_late": "f5b957d41885c03f28576075f24ddf3625011abd0674823a40e4a20edf732831",
-  "activities_music_tap_missed": "7f721f3a76ad17bd17ca6dd1f29679bc6afd7ce18dd8b415122adbcf9ba91d5b",
+  "activities_music_tap_late": "90f34b22fc9fcef1b1ed0ba02740082571afb889675b52e02fcc6ac612c99040",
+  "activities_music_tap_missed": "02234e057d016c656eb357a6bcad12919efed7166a4e74b77d3e9b284e8477d3",
   "activities_music_taps_on_time": "24604b3aa6e90fa9ff5063d00c30661604ad0a57578a8bafaa19028d08ec0283",
   "activities_music_tempo": "4e7f83d7f9e8a986228162e6ecc2ade24d3689ff19eb64b4ba94c20735192bd2",
   "activities_music_try_again": "4d1e76ea6704d13263b8eb2cedd41309db0f8a70727c9f287c1c5acf789a8630"
@@ -217,11 +217,12 @@
         <item quantity="many">%1$d taps sur %2$d effectués à temps.</item>
         <item quantity="other">%1$d taps sur %2$d effectués à temps.</item>
     </plurals>
-    <!-- The tap furthest off, like "Tap 3 came 40 ms early." -->
-    <string name="activities_music_tap_early">Le tap %1$d est arrivé %2$d ms trop tôt.</string>
-    <!-- The tap furthest off, like "Tap 3 came 40 ms late." -->
-    <string name="activities_music_tap_late">Le tap %1$d est arrivé %2$d ms trop tard.</string>
-    <string name="activities_music_tap_missed">Le tap %1$d a été manqué.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms early". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_early">Ton appui sur %1$s est arrivé %2$d ms trop tôt.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms late". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_late">Ton appui sur %1$s est arrivé %2$d ms trop tard.</string>
+    <!-- Which tap was missed, counted from 1, like "Tap 3 was missed." -->
+    <string name="activities_music_tap_missed">Appui manqué sur %1$s.</string>
     <!-- Taps that matched none of the rhythm's steps. -->
     <plurals name="activities_music_extra_taps">
         <item quantity="one">%d tap en trop.</item>
@@ -230,7 +231,11 @@
     </plurals>
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Configure ton son</string>
-    <string name="activities_music_sound_check_intro">Avec un casque, le son peut avoir un léger retard. Tape une fois en rythme avec les %1$d clics, et les rythmes seront calés sur cet appareil.</string>
+    <plurals name="activities_music_sound_check_intro">
+        <item quantity="one">Le son peut avoir un léger retard avec un casque. Tape en rythme une fois au son de %1$d clic, et le rythme sera assez bien calé sur cet appareil.</item>
+        <item quantity="many">Le son peut avoir un léger retard avec un casque. Tape en rythme une fois au son de %1$d clics, et le rythme sera assez bien calé sur cet appareil.</item>
+        <item quantity="other">Le son peut avoir un léger retard avec un casque. Tape en rythme une fois au son de %1$d clics, et le rythme sera assez bien calé sur cet appareil.</item>
+    </plurals>
     <string name="activities_music_sound_check_listen">Écoute les clics…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Tape à chaque clic · %1$d sur %2$d</string>

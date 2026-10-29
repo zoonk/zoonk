@@ -54,7 +54,7 @@
   "activities_music_show_notes": "b13790dbb49ab894222a25f6a5c78887c1ebef3f4233c670b4a3e5596117997f",
   "activities_music_skip_for_now": "66e8385897b4b827780881621bc29daec7ab940aee9387becd54b5df92902254",
   "activities_music_sound_check_failed": "c28eef09e814987cfa93ee20bb343cce59f7f215344e061c0c4fb57db445240d",
-  "activities_music_sound_check_intro": "037e75f3832a3f9a1fed7252f2c619342ad06a985bc55c797c9825cffc957b6a",
+  "activities_music_sound_check_intro": "1fedb502d02104b9052922ea562d3bb514ee1e2d681286d8322329fe78194385",
   "activities_music_sound_check_late": "a64994766381c683a0aa149af8c81fdf9cb21d81cbc0591896dca2e869c6293b",
   "activities_music_sound_check_listen": "40892c575fc99d78767c9af7cf1112b7c4066632164448ac51755f0c17aeccf6",
   "activities_music_sound_check_on_time": "c15c45b19008bb4623481c1f2c504d57e9c6b8be1d9c1d3a879468b16ec952c5",
@@ -71,10 +71,10 @@
   "activities_music_string_low_e": "9d7a7809da2de51e8c7df3916f4a0a42a355a4da5075cc7ddc42549fcbd73f4c",
   "activities_music_string_position": "8643ee694f698daa1bf31aaea6b28cb173ac53dbf67d601322652ec390dd1bfd",
   "activities_music_tab": "b4f9c08d9be5927f794b59cce41268c50e12dc857ff312208d2a0a3c6832c51b",
-  "activities_music_tap_early": "4eb9246d56cb20640060fdceb6970a3fdf6423403359f91fc152c5cc48d7019c",
+  "activities_music_tap_early": "47f757a137c168fa8a2429665c7797b3bddefa6de26072c2654f34d86e1cb76d",
   "activities_music_tap_here": "32761af6c1ce9eae1a7e5d0b46273f380b60f5a570702e34e18d263c7238c38c",
-  "activities_music_tap_late": "a507f59f4a1bf65aa712e142085a71498a7bd068ab5f8d0298e442a8aa226c11",
-  "activities_music_tap_missed": "5cb96a25c6d817dda1dca043bdcb916025fc026119ddcb90eb56cb56c9f4a107",
+  "activities_music_tap_late": "fc685a8574c8f55dea0c9d2aa83354d295404bfcc36c29ca7db65ee649629436",
+  "activities_music_tap_missed": "febdfe0657cbe4e0ac5308a27b0dde615ce4ef2ddc55aa214a51142c2d014c28",
   "activities_music_taps_on_time": "0abc52bb3cc0ebd39aeb4d2be7ad8765bbec6865662b7d65bc992b8501d1940e",
   "activities_music_tempo": "1f4b9c7f0c41b6a630658d78c41c17e1880b25a7d0a8cb9ffb287614b6cd01e8",
   "activities_music_try_again": "1dcd246f9b1dc29940c64cc1e860158a9a420c41fbe107d68bdeee4f204d3970"
@@ -212,11 +212,12 @@
         <item quantity="one">%1$d von %2$d Klopfern pünktlich.</item>
         <item quantity="other">%1$d von %2$d Klopfern pünktlich.</item>
     </plurals>
-    <!-- The tap furthest off, like "Tap 3 came 40 ms early." -->
-    <string name="activities_music_tap_early">Klopfer %1$d kam %2$d ms zu früh.</string>
-    <!-- The tap furthest off, like "Tap 3 came 40 ms late." -->
-    <string name="activities_music_tap_late">Klopfer %1$d kam %2$d ms zu spät.</string>
-    <string name="activities_music_tap_missed">Klopfer %1$d wurde verpasst.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms early". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_early">Tippen %1$s erfolgte %2$d ms zu früh.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms late". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_late">Tippen %1$s erfolgte %2$d ms zu spät.</string>
+    <!-- Which tap was missed, counted from 1, like "Tap 3 was missed." -->
+    <string name="activities_music_tap_missed">Tippen %1$s wurde nicht erkannt.</string>
     <!-- Taps that matched none of the rhythm's steps. -->
     <plurals name="activities_music_extra_taps">
         <item quantity="one">%d zusätzlicher Klopfer.</item>
@@ -224,7 +225,10 @@
     </plurals>
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Ton einrichten</string>
-    <string name="activities_music_sound_check_intro">Kopfhörer können den Ton leicht verzögert wiedergeben. Klopfe einmal zu %1$d Klicks mit. Rhythmen auf diesem Gerät werden dann passend getaktet.</string>
+    <plurals name="activities_music_sound_check_intro">
+        <item quantity="one">Kopfhörer können den Ton leicht verzögert wiedergeben. Tippe einmal mit %1$d Klick, damit Rhythmen auf diesem Gerät fair bewertet werden.</item>
+        <item quantity="other">Kopfhörer können den Ton leicht verzögert wiedergeben. Tippe einmal mit %1$d Klicks, damit Rhythmen auf diesem Gerät fair bewertet werden.</item>
+    </plurals>
     <string name="activities_music_sound_check_listen">Hör dir die Klicks an…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Zu jedem Klick mitklopfen · %1$d von %2$d</string>

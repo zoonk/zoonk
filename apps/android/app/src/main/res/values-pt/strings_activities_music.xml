@@ -54,7 +54,7 @@
   "activities_music_show_notes": "e836ebdcd58aab093e2dad5a2f3ee243727b6847ccb5d53ea70aa00162541756",
   "activities_music_skip_for_now": "c9fde4476f854c126b94a7cc34b3a324e4cee196e5a21e93b7a79043fe9204fa",
   "activities_music_sound_check_failed": "ae77b65bd63b9a6a6100d1c83af1eb60fe1aa073a5f2854eed8f5335badd9345",
-  "activities_music_sound_check_intro": "52103c5e8f3d44f938340997225514ce4dead42b4ab272b4e4496e58af711925",
+  "activities_music_sound_check_intro": "eb1904ed2d4145382b4794d1b501a23c588afb25bacbd4c98bdd016e34b232cb",
   "activities_music_sound_check_late": "669acd6e1b7f022f942ab993eefbbba5495f6cf3418338e7d9529321a8c3f560",
   "activities_music_sound_check_listen": "7a1c0893dfcee3ef9af8ade6477a38115472bb8f8800c59710115e3abd93b06a",
   "activities_music_sound_check_on_time": "81ec56a70792cc6eb878e6e983191d8c6ad353007410ffca99ae259ebf058f14",
@@ -71,10 +71,10 @@
   "activities_music_string_low_e": "84db0a9447a1dad918da6cbdad6dd1490d212ab122a51675658b3ea6852ed45f",
   "activities_music_string_position": "82a37b40a2a38e3765df58a73555c011ba11fad06004828e62ebd19603d07378",
   "activities_music_tab": "00b2681fc5f1200a5f7917386c63613a3a88d4a23bd86cc6c87124abaf5468c9",
-  "activities_music_tap_early": "79754a0601ef059a5a24bdf35b1a5a8d44fe7b1a1288a691d9d2ed3e9a6c3959",
+  "activities_music_tap_early": "9d2e81898b44f8a08a08f9ba5def61a8c2c67af79cde0defbcdc7c40ac89785b",
   "activities_music_tap_here": "751654665f10ceccf593519f6785c44d6f1e8449721e9e09acc37024e4cb6736",
-  "activities_music_tap_late": "f14789fce236b999417de264c5cb5625863aed736f0b65e0c438c3f5f4637fbd",
-  "activities_music_tap_missed": "73aa50c7b521f2a74ad03209d12330af10efbf218b8de228f59393904c72ae98",
+  "activities_music_tap_late": "abd5325d863b4dace8a2b78b313e890740e403629c5dc07db190ce9da47a2e33",
+  "activities_music_tap_missed": "e9c0ef44a3eda4feb05119d023b012d4197796ae22608ed12d405abcd77dcce5",
   "activities_music_taps_on_time": "267e368ee7a452b7c6e3d5d0aed1575231d0fa5cec1920ec5436e289040312db",
   "activities_music_tempo": "a30007f4bdf3e12084a23a5de15a1cbb62355a87041a8535d85c2ecda2770690",
   "activities_music_try_again": "a483d2b707b098bb848db93a5a7c6dc0f71d4b3687992b3807fa5d25e97f7fbd"
@@ -217,11 +217,12 @@
         <item quantity="many">%1$d de %2$d toques no tempo certo.</item>
         <item quantity="other">%1$d de %2$d toques no tempo certo.</item>
     </plurals>
-    <!-- The tap furthest off, like "Tap 3 came 40 ms early." -->
-    <string name="activities_music_tap_early">O toque %1$d aconteceu %2$d ms antes.</string>
-    <!-- The tap furthest off, like "Tap 3 came 40 ms late." -->
-    <string name="activities_music_tap_late">O toque %1$d aconteceu %2$d ms depois.</string>
-    <string name="activities_music_tap_missed">O toque %1$d não foi feito.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms early". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_early">O toque %1$s aconteceu %2$d ms antes.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms late". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_late">O toque %1$s aconteceu %2$d ms depois.</string>
+    <!-- Which tap was missed, counted from 1, like "Tap 3 was missed." -->
+    <string name="activities_music_tap_missed">O toque %1$s não foi registrado.</string>
     <!-- Taps that matched none of the rhythm's steps. -->
     <plurals name="activities_music_extra_taps">
         <item quantity="one">%d toque extra.</item>
@@ -230,7 +231,11 @@
     </plurals>
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Configure o som</string>
-    <string name="activities_music_sound_check_intro">Os fones de ouvido podem reproduzir o som com um pequeno atraso. Toque junto com %1$d cliques uma vez para que os ritmos neste dispositivo sejam cronometrados corretamente.</string>
+    <plurals name="activities_music_sound_check_intro">
+        <item quantity="one">Fones de ouvido podem reproduzir o som com um pequeno atraso. Toque uma vez junto com %1$d clique, e a marcação dos ritmos neste dispositivo será razoavelmente precisa.</item>
+        <item quantity="many">Fones de ouvido podem reproduzir o som com um pequeno atraso. Toque uma vez junto com %1$d cliques, e a marcação dos ritmos neste dispositivo será razoavelmente precisa.</item>
+        <item quantity="other">Fones de ouvido podem reproduzir o som com um pequeno atraso. Toque uma vez junto com %1$d cliques, e a marcação dos ritmos neste dispositivo será razoavelmente precisa.</item>
+    </plurals>
     <string name="activities_music_sound_check_listen">Escute os cliques…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Toque a cada clique · %1$d de %2$d</string>

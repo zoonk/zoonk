@@ -80,6 +80,8 @@ import com.zoonk.android.feature.activities.ActivityRenderer
 import com.zoonk.android.feature.activities.interaction
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ActivityExpected
@@ -434,7 +436,7 @@ private fun ButtonIcon(icon: Int) {
 private fun RhythmFeedback(results: RhythmResults) {
     val onTime = results.hits.count { it.status == TapStatus.OnTime }
     val worst = Rhythm.worstHit(results.hits)
-    val tap = (worst?.index ?: 0) + 1
+    val tap = formatNumber((worst?.index ?: 0) + 1.0, currentLocale())
     val ms = kotlin.math.abs(worst?.value?.offsetMs ?: 0)
     val detail =
         when (worst?.value?.status) {
@@ -469,7 +471,7 @@ private fun SoundCheckPanel(
     val status =
         when (phase) {
             SoundCheck.Phase.Idle -> {
-                stringResource(R.string.activities_music_sound_check_intro, SoundCheckSchedule.CLICKS)
+                pluralStringResource(R.plurals.activities_music_sound_check_intro, SoundCheckSchedule.CLICKS, SoundCheckSchedule.CLICKS)
             }
 
             SoundCheck.Phase.CountIn -> {

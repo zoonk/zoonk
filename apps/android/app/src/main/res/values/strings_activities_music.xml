@@ -136,11 +136,12 @@
         <item quantity="one">%1$d of %2$d tap on time.</item>
         <item quantity="other">%1$d of %2$d taps on time.</item>
     </plurals>
-    <!-- The tap furthest off, like "Tap 3 came 40 ms early." -->
-    <string name="activities_music_tap_early">Tap %1$d came %2$d ms early.</string>
-    <!-- The tap furthest off, like "Tap 3 came 40 ms late." -->
-    <string name="activities_music_tap_late">Tap %1$d came %2$d ms late.</string>
-    <string name="activities_music_tap_missed">Tap %1$d was missed.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms early". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_early">Tap %1$s came %2$d ms early.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms late". The first value is which tap, counted from 1. -->
+    <string name="activities_music_tap_late">Tap %1$s came %2$d ms late.</string>
+    <!-- Which tap was missed, counted from 1, like "Tap 3 was missed." -->
+    <string name="activities_music_tap_missed">Tap %1$s was missed.</string>
     <!-- Taps that matched none of the rhythm's steps. -->
     <plurals name="activities_music_extra_taps">
         <item quantity="one">%d extra tap.</item>
@@ -148,7 +149,10 @@
     </plurals>
     <!-- The title of the one-time check of how late this device plays sound. -->
     <string name="activities_music_sound_check_title">Set up your sound</string>
-    <string name="activities_music_sound_check_intro">Headphones can play sound a little late. Tap along with %1$d clicks once, and rhythms on this device are timed fairly.</string>
+    <plurals name="activities_music_sound_check_intro">
+        <item quantity="one">Headphones can play sound a little late. Tap along with %1$d click once, and rhythms on this device are timed fairly.</item>
+        <item quantity="other">Headphones can play sound a little late. Tap along with %1$d clicks once, and rhythms on this device are timed fairly.</item>
+    </plurals>
     <string name="activities_music_sound_check_listen">Listen to the clicks…</string>
     <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
     <string name="activities_music_sound_check_tap">Tap with each click · %1$d of %2$d</string>
