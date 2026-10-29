@@ -235,7 +235,7 @@ private fun TimeChoices(
 }
 
 @Composable
-private fun OtherTime(
+internal fun OtherTime(
     minutes: Int,
     label: String,
     onPick: (Int) -> Unit,

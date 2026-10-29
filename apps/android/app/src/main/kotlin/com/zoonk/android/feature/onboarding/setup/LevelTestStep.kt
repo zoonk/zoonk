@@ -42,6 +42,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -351,6 +352,7 @@ private fun ColumnScope.LevelTestSpeaking(
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(
             sentence.sentence,
+            fontWeight = FontWeight.SemiBold,
             style = MaterialTheme.typography.titleLarge.copy(localeList = TextLocales(targetLanguage)),
         )
         Text(sentence.translation, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
@@ -359,13 +361,13 @@ private fun ColumnScope.LevelTestSpeaking(
     val context = LocalContext.current
     // The recorder's own model, shared by its key: skipping while a sentence is graded would race the grade.
     val voice = viewModel(key = recorderKey) { VoiceAnswerModel(context) }
-    VoiceAnswerRecorder(
-        grade = { store.speakLevelTest(goalId, it) },
-        onGraded = {},
-        navigator = navigator,
-        key = recorderKey,
-    )
     OnboardingActions {
+        VoiceAnswerRecorder(
+            grade = { store.speakLevelTest(goalId, it) },
+            onGraded = {},
+            navigator = navigator,
+            key = recorderKey,
+        )
         TextButton(onClick = onSkip, enabled = !voice.checking, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_language_test_skip_part))
         }

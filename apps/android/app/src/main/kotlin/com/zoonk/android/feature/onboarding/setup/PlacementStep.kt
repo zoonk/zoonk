@@ -64,6 +64,7 @@ import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.recode
+import com.zoonk.android.feature.audio.buttonIconSize
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
@@ -395,9 +396,10 @@ internal fun ColumnScope.PlacementQuestion(
                 OutlinedButton(
                     onClick = { send(DONT_KNOW) },
                     enabled = !pending,
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                     contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                 ) {
-                    Icon(painterResource(R.drawable.ic_help), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+                    Icon(painterResource(R.drawable.ic_help), contentDescription = null, modifier = Modifier.size(buttonIconSize()))
                     Text(dontKnowLabel, modifier = Modifier.padding(start = ButtonDefaults.IconSpacing))
                 }
             },
