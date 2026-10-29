@@ -26,10 +26,10 @@
   "onboarding_course_build": "eb1cef7cb2ab6129dbdff8bf9ab580b0fd4a4d4ca35ca4c83ea9ca68a9566f06",
   "onboarding_course_chapter_description": "8be7b3e196d51fea45dba8949d55c9bb431d3e670545a8b4c3fab1d0b5f23f4e",
   "onboarding_course_chapters": "abc062b110a8b13405a98ed1c37dd65a6b5bfc21678f65513c247bdb61a54473",
+  "onboarding_course_daily_minutes": "74736f0084f987f0d463093a9543c404ae707fb872a93af2de91e672cc300860",
   "onboarding_course_failed": "e79311caddc06db42994403f06ef568d57237b187d5bbc046413fc14a6db3f52",
   "onboarding_course_follows": "3d3b12e76189d5956cc9e185441adc3777dd74452940b0ec53265d6e025e8f87",
   "onboarding_course_lessons": "5bde40402c51378b8bab652e9a1ea57e747aed50c96ba71eb3c30bb8058976e3",
-  "onboarding_course_minutes": "94827d9f838d732559cca33e2a412e39ae75fdcbd1ea9e58007495cbedaeaef0",
   "onboarding_course_more_chapters": "5885a7906decaacd18d2e2418b2118cccec27126b663f4cbe7680e40e29730dc",
   "onboarding_course_start_free": "e490c9162815e3134bb7b62eaa019bc89834e95cf348f0b11146e744d33fff77",
   "onboarding_create_account": "bdf9ee7371fda3167e9dfd4273f89cb621af9cc4e69c084082f4925d368c16ba",
@@ -883,8 +883,11 @@
         <item quantity="many">e mais %d capítulos</item>
         <item quantity="other">e mais %d capítulos</item>
     </plurals>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_course_minutes">%1$s por dia por enquanto. Você pode mudar isso nas próximas etapas.</string>
+    <plurals name="onboarding_course_daily_minutes">
+        <item quantity="one">%d minuto por dia por enquanto. Você pode mudar isso nas próximas etapas.</item>
+        <item quantity="many">%d minutos por dia por enquanto. Você pode mudar isso nas próximas etapas.</item>
+        <item quantity="other">%d minutos por dia por enquanto. Você pode mudar isso nas próximas etapas.</item>
+    </plurals>
     <string name="onboarding_course_build">Montar meu plano</string>
     <string name="onboarding_course_failed">Não foi possível começar este curso.</string>
     <string name="onboarding_course_start_free">Comece grátis, sem precisar de uma conta.</string>

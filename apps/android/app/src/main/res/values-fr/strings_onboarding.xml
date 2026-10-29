@@ -26,10 +26,10 @@
   "onboarding_course_build": "7abdfdeaef69b361c154a695ab68e04e8cb7208765d104c3d82c40bf0a8e544d",
   "onboarding_course_chapter_description": "8eb30460e3bc4f31cb60272149282c2afa4f2383f3e79ff3d2c3c0bcac1f4be9",
   "onboarding_course_chapters": "27be565a443ad21e4f10c8367861f32799255a4e69e46f0e8c4ececb964c20b0",
+  "onboarding_course_daily_minutes": "1a1d0eaca438e7a148395bc8dbe0ef366d899d2e9f93573f2596721a71e60800",
   "onboarding_course_failed": "f618096f466e51bb2668fda81a086b58f340a1002f6e4ed49e3b94b0f5a74aeb",
   "onboarding_course_follows": "8736da2004666b1a735ccfb3863b01e60b735fa9c90f6f5952e9f7081e30c6e7",
   "onboarding_course_lessons": "3a18e4451e14f4fcb5ac613f44f91db46bc32e7a9af9a2de7b928a2182995e20",
-  "onboarding_course_minutes": "4ab83a5d3c7e6205e7fa343af12515796e2acc99f7c172d9361881001dbd7d88",
   "onboarding_course_more_chapters": "be36d7872467730ea1188f6e5c90c134d2721d5ff19b8bacfb165bc886e4a098",
   "onboarding_course_start_free": "39a006e8f2dff6b2173bee8bc74e8523c725ee7e579167ef84519e87ce95045f",
   "onboarding_create_account": "e156329ca281c90dc90348e9aa9bf992f5667a4810cd559f16049104cd38d519",
@@ -883,8 +883,11 @@
         <item quantity="many">et %d chapitres de plus</item>
         <item quantity="other">et %d chapitres de plus</item>
     </plurals>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_course_minutes">%1$s par jour pour le moment. Tu pourras modifier ce choix aux prochaines étapes.</string>
+    <plurals name="onboarding_course_daily_minutes">
+        <item quantity="one">%d minute par jour pour l’instant. Tu pourras modifier ce choix aux prochaines étapes.</item>
+        <item quantity="many">Pour l’instant, prévois %d minutes par jour. Tu pourras modifier ce choix aux prochaines étapes.</item>
+        <item quantity="other">%d minutes par jour pour l’instant. Tu pourras modifier ce choix aux prochaines étapes.</item>
+    </plurals>
     <string name="onboarding_course_build">Préparer mon plan</string>
     <string name="onboarding_course_failed">Impossible de démarrer ce cours.</string>
     <string name="onboarding_course_start_free">Commence gratuitement, sans compte.</string>

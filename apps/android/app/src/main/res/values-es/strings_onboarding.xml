@@ -26,10 +26,10 @@
   "onboarding_course_build": "ab76776ce1f46a6d686a042adaef59a020ededcdb6075f69c4f66a69eb4e2e91",
   "onboarding_course_chapter_description": "7d02b16e73826780415dba415515087cc94a65f075b9b958d4dbea9c50104ad5",
   "onboarding_course_chapters": "619c3526b4600d49c982c2ce4660215efefa7be19aec5b1e35ea31e441196025",
+  "onboarding_course_daily_minutes": "25b4138bac76e99dfbd0d7e862110be60fdaa185f49cba69f5cb7d2bcb5a1b2b",
   "onboarding_course_failed": "5d01e16c79f350bd20d47e8d582a2b3259bf86a4c1f579576be6d7e7e3f1e0df",
   "onboarding_course_follows": "62ed895487aa640affc4cd6011d9ee83ed95d64a4484b1766170ca1ed4f3455f",
   "onboarding_course_lessons": "9a6880679023de6c93705a9dbcce81f47e275d9a1c777af92950ecef0151c3db",
-  "onboarding_course_minutes": "7ef9b4f7a182f67703939dd2e54f15c43671eb8e5365016c54332a5d5b0bdcad",
   "onboarding_course_more_chapters": "db6faf6122cd92016b282c175ae639790f86c6aa6a36cbd8deda33d2311d2b5d",
   "onboarding_course_start_free": "6b978ca73fb66fa057348c8f25cf0e9652ef0046b700741903cd827ddbf31a0c",
   "onboarding_create_account": "1007c14665eb8dbf0e648548ef40fe54e896ee34dc3ca68d5b5bbada387c1647",
@@ -883,8 +883,11 @@
         <item quantity="many">y %d capítulos más</item>
         <item quantity="other">y %d capítulos más</item>
     </plurals>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_course_minutes">%1$s al día por ahora. Puedes cambiarlo en los siguientes pasos.</string>
+    <plurals name="onboarding_course_daily_minutes">
+        <item quantity="one">%d minuto al día por ahora. Puedes cambiarlo en los siguientes pasos.</item>
+        <item quantity="many">%d minutos al día por ahora. Puedes cambiarlo en los siguientes pasos.</item>
+        <item quantity="other">%d minutos al día por ahora. Puedes cambiarlo en los siguientes pasos.</item>
+    </plurals>
     <string name="onboarding_course_build">Preparar mi plan</string>
     <string name="onboarding_course_failed">No hemos podido empezar este curso.</string>
     <string name="onboarding_course_start_free">Empieza gratis, sin necesidad de tener una cuenta.</string>

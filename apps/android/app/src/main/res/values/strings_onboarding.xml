@@ -446,8 +446,10 @@
         <item quantity="one">and %d more chapter</item>
         <item quantity="other">and %d more chapters</item>
     </plurals>
-    <!-- %1$s is a duration, such as "30 min". -->
-    <string name="onboarding_course_minutes">%1$s a day for now. You can change it in the next steps.</string>
+    <plurals name="onboarding_course_daily_minutes">
+        <item quantity="one">%d minute a day for now. You can change it in the next steps.</item>
+        <item quantity="other">%d minutes a day for now. You can change it in the next steps.</item>
+    </plurals>
     <string name="onboarding_course_build">Build my plan</string>
     <string name="onboarding_course_failed">We couldn\'t start this course.</string>
     <string name="onboarding_course_start_free">Start free, no account needed.</string>

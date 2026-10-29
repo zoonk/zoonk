@@ -60,8 +60,6 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
-import com.zoonk.android.ui.format.currentLocale
-import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.CourseChapter
@@ -196,7 +194,7 @@ private fun CourseStartForm(
         if (!blocked) {
             minutes?.let {
                 Text(
-                    stringResource(R.string.onboarding_course_minutes, formatMinutes(it, currentLocale())),
+                    pluralStringResource(R.plurals.onboarding_course_daily_minutes, it, it),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )

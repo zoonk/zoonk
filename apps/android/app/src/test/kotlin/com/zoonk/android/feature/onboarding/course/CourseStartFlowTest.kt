@@ -120,7 +120,7 @@ class CourseStartFlowTest {
 
         rule.onNode(hasText("Bonds") and isHeading()).assertIsDisplayed()
         rule.onNodeWithText("1 chapter · 1 lesson").assertIsDisplayed()
-        rule.onNodeWithText("15 min a day for now. You can change it in the next steps.").assertIsDisplayed()
+        rule.onNodeWithText("15 minutes a day for now. You can change it in the next steps.").assertIsDisplayed()
         build()
 
         val body = api.courseStarts.single().second
