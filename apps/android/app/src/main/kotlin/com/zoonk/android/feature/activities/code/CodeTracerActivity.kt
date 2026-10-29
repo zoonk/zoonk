@@ -32,8 +32,10 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.activities.ActivityBadge
@@ -95,7 +97,7 @@ private fun CodeTracerActivity(props: ActivityProps) {
     val expectedPairs = props.expected.assignmentPairs
     val lastStep = fields.trace.size - 1
     val blocking = if (props.isChecked) null else blockingPause(fields.pauses, predictions, step)
-    val upcoming = if (props.isChecked) null else upcomingPause(fields.pauses, step)
+    val upcoming = if (props.isChecked) null else upcomingPause(fields.pauses, predictions, step)
     val isRevealed = { pause: Pause -> props.isChecked || furthest >= pause.step }
     val asking = upcoming?.takeUnless { isRevealed(it.value) }
 
@@ -190,25 +192,23 @@ private fun TracerVariables(values: List<WatchedValue>) {
                     color = if (item.changed) highlight else colors.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall.copy(fontFamily = mono),
                 )
-                Row(verticalAlignment = Alignment.Bottom) {
-                    if (item.changed && item.previous != null) {
-                        Text(
-                            stringResource(R.string.activities_code_value_was, item.previous),
-                            Modifier.padding(end = 4.dp),
-                            color = highlight,
-                            style = MaterialTheme.typography.labelSmall.copy(fontFamily = mono),
-                        )
-                    }
-                    Text(
-                        item.value ?: stringResource(R.string.activities_code_not_set),
-                        color = if (item.value == null) colors.onSurfaceVariant else colors.onSurface,
-                        style =
-                            MaterialTheme.typography.titleMedium.copy(
-                                fontFamily = mono,
-                                fontWeight = if (item.value == null) FontWeight.Normal else FontWeight.SemiBold,
-                            ),
-                    )
-                }
+                val was = item.previous?.takeIf { item.changed }?.let { stringResource(R.string.activities_code_value_was, it) }
+                val wasStyle =
+                    MaterialTheme.typography.labelSmall
+                        .toSpanStyle()
+                        .copy(color = highlight, fontFamily = mono)
+                Text(
+                    buildAnnotatedString {
+                        was?.let { withStyle(wasStyle) { append("$it ") } }
+                        append(item.value ?: stringResource(R.string.activities_code_not_set))
+                    },
+                    color = if (item.value == null) colors.onSurfaceVariant else colors.onSurface,
+                    style =
+                        MaterialTheme.typography.titleMedium.copy(
+                            fontFamily = mono,
+                            fontWeight = if (item.value == null) FontWeight.Normal else FontWeight.SemiBold,
+                        ),
+                )
             }
         }
     }

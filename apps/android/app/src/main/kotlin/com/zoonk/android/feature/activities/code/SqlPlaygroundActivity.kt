@@ -97,6 +97,7 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
     val editorRun = rememberEditorRun()
     val scope = rememberCoroutineScope()
     val onAnswerChange by rememberUpdatedState(props.onAnswerChange)
+    val isLocked by rememberUpdatedState(props.isLocked)
     val focus = remember { FocusRequester() }
     var query by rememberSaveable(stateSaver = TextFieldValue.Saver) { mutableStateOf(TextFieldValue()) }
     var run by remember { mutableStateOf<QueryRun?>(props.answer.rows?.let(QueryRun::Done)) }
@@ -110,6 +111,7 @@ private fun SqlPlaygroundActivity(props: ActivityProps) {
         scope.launch {
             val next = sandbox.runQuery(text, fields.tables)
             val current = editorRun.finish(revision)
+            if (isLocked) return@launch
             run = next
             onAnswerChange(if (next is QueryRun.Done && current) rowsAnswer(next.result) else null)
         }
@@ -244,7 +246,7 @@ private fun SqlTableViewer(table: SqlTable) {
 private fun cellText(cell: JsonPrimitive): String =
     when {
         cell is JsonNull -> NULL_TEXT
-        cell.isString -> cell.content
+        cell.isString -> if (cell.content.length > MAX_CELL_LENGTH) cell.content.take(MAX_CELL_LENGTH) + "…" else cell.content
         else -> cell.doubleOrNull?.let { formatNumber(it, currentLocale(), fractionDigitsFor(it), grouping = false) } ?: cell.content
     }
 
@@ -436,3 +438,6 @@ private fun SqlReview(
 }
 
 private val CELL_PADDING = 14.dp
+
+/** Wider text would make a column wider than a layout can hold. */
+private const val MAX_CELL_LENGTH = 200

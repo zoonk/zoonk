@@ -33,10 +33,12 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ActivityExpected
 import com.zoonk.api.models.LessonStepAnswer
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.encodeToJsonElement
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import org.junit.Assert.assertEquals
@@ -183,6 +185,9 @@ class CodeFlowTest {
         tap("Show a hint")
         shows("Add the increase to the price.")
         field("Your formula").performTextReplacement("=A1*B1")
+        rule.waitUntil(WAIT_MS) {
+            rule.onAllNodes(hasContentDescription("doesn't match", substring = true)).fetchSemanticsNodes().size == 2
+        }
         harness.tap("Check")
 
         shows("A formula that works")
@@ -319,6 +324,56 @@ class CodeFlowTest {
         shows("You said 5; it was 6.")
     }
 
+    @Test
+    fun twoPausesOnOneStepAreBothAskedBeforeSteppingOn() {
+        play(twoPauseTracer, expected = null, isCorrect = true) { JsonPrimitive(true) }
+
+        stepForward(2)
+        option("6")
+        shows("What will lo be on pass 3?")
+        option("6")
+        stepForward(1)
+        harness.tap("Check")
+
+        rule.waitUntil(WAIT_MS) { graded.isNotEmpty() }
+        assertEquals(listOf(assignmentAnswer(mapOf("0" to "b", "1" to "b"))), graded)
+    }
+
+    @Test
+    fun aRerunThatEndsAfterCheckLeavesTheCheckedOutput() {
+        var runs = 0
+        play(javaScriptRunner, javaScriptExpected, isCorrect = false) {
+            runs += 1
+            ScriptedSandbox.printed(if (runs == 1) "first\n" else "second\n")
+        }
+
+        tap("Run")
+        shows("first")
+        val pending = CompletableDeferred<Unit>()
+        scripted.gate = pending
+        tap("Run again")
+        harness.tap("Check")
+        shows("Not quite")
+        pending.complete(Unit)
+        rule.waitForIdle()
+
+        rule.onNodeWithText("second").assertDoesNotExist()
+        assertEquals(listOf(outputAnswer("first\n")), graded)
+    }
+
+    @Test
+    fun aHugeCellStillShowsTheResult() {
+        playFixture("sqlPlayground", isCorrect = true) {
+            val cell = JsonPrimitive("A".repeat(400_000))
+            sandboxJson.encodeToJsonElement<QueryRun>(QueryRun.Done(QueryResult(listOf("blob"), listOf(listOf(cell)))))
+        }
+
+        field("Your query").performTextReplacement("SELECT hex(zeroblob(200000)) AS blob;")
+        tap("Run")
+
+        shows("Your result: 1 row")
+    }
+
     private companion object {
         const val WAIT_MS = 5_000L
 
@@ -368,5 +423,19 @@ class CodeFlowTest {
                     ).jsonObject,
                 id = "formula",
             )
+
+        val twoPauseTracer =
+            ActivityFixtures.contentJson("codeTracer").let { content ->
+                val fields = content.getValue("fields").jsonObject
+                val lo =
+                    ApiJson.parseToJsonElement(
+                        """
+                        {"options":[{"id":"a","text":"4"},{"id":"b","text":"6"}],
+                         "question":"What will lo be on pass 3?","step":3,"variable":"lo"}
+                        """,
+                    )
+                val pauses = JsonArray(fields.getValue("pauses").jsonArray + lo)
+                ActivityFixtures.step(JsonObject(content + ("fields" to JsonObject(fields + ("pauses" to pauses)))), id = "tracer")
+            }
     }
 }

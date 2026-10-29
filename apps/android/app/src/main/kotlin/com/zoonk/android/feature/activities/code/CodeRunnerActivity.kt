@@ -92,6 +92,7 @@ private fun CodeRunnerActivity(props: ActivityProps) {
     val editorRun = rememberEditorRun()
     val scope = rememberCoroutineScope()
     val onAnswerChange by rememberUpdatedState(props.onAnswerChange)
+    val isLocked by rememberUpdatedState(props.isLocked)
     var edits by rememberSaveable(stateSaver = draftsSaver(String::toInt)) { mutableStateOf(emptyMap<Int, String>()) }
     var run by remember { mutableStateOf(props.answer.output?.let(ProgramRun::printed)) }
     val program = programWithEdits(fields.starterCode, edits)
@@ -104,6 +105,7 @@ private fun CodeRunnerActivity(props: ActivityProps) {
         scope.launch {
             val result = sandbox.runProgram(program, language)
             val current = editorRun.finish(revision)
+            if (isLocked) return@launch
             run = result
             onAnswerChange(if (!current || result.stop == ProgramStop.Unavailable) null else outputAnswer(result.output))
         }
@@ -283,7 +285,7 @@ private fun OutputCell(
 ) {
     Column(modifier.padding(horizontal = 16.dp, vertical = 12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
         Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
-        Column(Modifier.horizontalScroll(rememberScrollState()), content = content)
+        content()
     }
 }
 
@@ -295,7 +297,7 @@ private fun OutputText(
 ) {
     Text(
         text,
-        modifier,
+        modifier.horizontalScroll(rememberScrollState()),
         color = color,
         softWrap = false,
         style = MaterialTheme.typography.titleMedium.copy(fontFamily = FontFamily.Monospace, fontWeight = FontWeight.SemiBold),

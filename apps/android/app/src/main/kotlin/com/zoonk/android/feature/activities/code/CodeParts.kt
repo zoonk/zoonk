@@ -152,7 +152,7 @@ internal fun CodeLine(
 ) {
     val colors = MaterialTheme.colorScheme
     val highlight = MaterialTheme.zoonk.vizHighlight
-    val shape = RoundedCornerShape(8.dp)
+    val shape = if (tone == CodeLineTone.Current) RoundedCornerShape(topEnd = 8.dp, bottomEnd = 8.dp) else RoundedCornerShape(8.dp)
     val toned =
         when (tone) {
             CodeLineTone.Plain -> {
@@ -185,7 +185,7 @@ internal fun CodeLine(
         Text(
             number.toString().padStart(digits),
             Modifier
-                .padding(start = 4.dp, end = 12.dp)
+                .padding(start = 8.dp, end = 12.dp)
                 .clearAndSetSemantics {},
             color = colors.onSurfaceVariant,
             style = codeTextStyle(),

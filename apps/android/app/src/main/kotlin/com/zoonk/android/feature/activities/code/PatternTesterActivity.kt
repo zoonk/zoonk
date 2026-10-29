@@ -279,7 +279,7 @@ private fun SampleList(
 ) {
     val colors = MaterialTheme.colorScheme
     Column(Modifier.semantics { contentDescription = label }, verticalArrangement = Arrangement.spacedBy(6.dp)) {
-        Row(verticalAlignment = Alignment.Bottom) {
+        Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(label, Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
             results?.let { tested ->
                 val passing = tested.count(SampleResult::passes)

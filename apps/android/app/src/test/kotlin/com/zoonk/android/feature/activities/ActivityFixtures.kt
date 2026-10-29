@@ -32,12 +32,10 @@ object ActivityFixtures {
     fun expected(name: String): ActivityExpected? =
         entry(name)["expected"]?.takeUnless { it is JsonNull }?.let { ApiJson.decodeFromJsonElement(ActivityExpected.serializer(), it) }
 
-    private fun fields(name: String) =
-        entry(name)
-            .getValue("content")
-            .jsonObject
-            .getValue("fields")
-            .jsonObject
+    /** A fixture's content as the API sends it, to vary for a test. */
+    fun contentJson(name: String): JsonObject = entry(name).getValue("content").jsonObject
+
+    private fun fields(name: String) = contentJson(name).getValue("fields").jsonObject
 
     fun value(name: String): Double? = entry(name)["value"]?.jsonPrimitive?.doubleOrNull
 

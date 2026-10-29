@@ -74,11 +74,12 @@ internal fun watchedValues(
 /** Before the first line when the first line itself is a pause. */
 internal fun firstStep(pauses: List<Pause>): Int = if (pauses.any { it.step == 0L }) -1 else 0
 
-/** The pause stepping forward from [step] reaches, by its index. */
+/** The pause stepping forward from [step] reaches, by its index: the first one there still without a prediction. */
 internal fun upcomingPause(
     pauses: List<Pause>,
+    predictions: Map<String, String>,
     step: Int,
-): IndexedValue<Pause>? = pauses.withIndex().firstOrNull { it.value.step == step + 1L }
+): IndexedValue<Pause>? = blockingPause(pauses, predictions, step) ?: pauses.withIndex().firstOrNull { it.value.step == step + 1L }
 
 /** The upcoming pause while it has no prediction, which holds the learner at [step]. */
 internal fun blockingPause(
