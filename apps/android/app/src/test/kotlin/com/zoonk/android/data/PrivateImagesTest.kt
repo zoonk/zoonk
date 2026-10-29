@@ -21,6 +21,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.GraphicsMode
 import java.io.ByteArrayOutputStream
+import java.util.UUID
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -99,9 +100,10 @@ class PrivateImagesTest {
     @Test
     fun aPublicPictureNeverCarriesTheBearer() =
         runBlocking {
-            val public = elsewhere.url("/covers/1.png").toString()
+            // Public pictures share Coil's process-wide disk cache, so a path another test may have loaded on a reused port would never reach the server.
+            val public = elsewhere.url("/covers/${UUID.randomUUID()}.png").toString()
             images.loader.execute(images.request(context, public, ana))
-            assertNull(elsewhere.takeRequest().headers["Authorization"])
+            assertNull(elsewhere.arrived().headers["Authorization"])
         }
 
     @Test
@@ -109,7 +111,7 @@ class PrivateImagesTest {
         runBlocking {
             val result = images.loader.execute(images.request(context, api.url("/v1/files/moved.png").toString(), ana))
             assertEquals(4, (result as SuccessResult).image.width)
-            assertNull(elsewhere.takeRequest().headers["Authorization"])
+            assertNull(elsewhere.arrived().headers["Authorization"])
         }
 
     @Test
@@ -126,7 +128,10 @@ class PrivateImagesTest {
                 ?.image
         }
 
-    private fun MockWebServer.takeRequests(count: Int) = List(count) { takeRequest() }
+    private fun MockWebServer.arrived(): RecordedRequest =
+        checkNotNull(takeRequest(5, TimeUnit.SECONDS)) { "No request arrived within 5 s" }
+
+    private fun MockWebServer.takeRequests(count: Int) = List(count) { arrived() }
 
     private fun redirect() =
         MockResponse
