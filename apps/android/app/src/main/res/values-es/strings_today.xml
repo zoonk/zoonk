@@ -37,6 +37,15 @@
   "today_fresh_start_new_week": "74e9a9cfb35449de08fef8305581289fead8104ba43e669e021e32df70364c64",
   "today_fresh_start_welcome_back": "f8cba8472c2fbab4308327c52c771f8e624f7d7a742a098dca02755fbf781c9d",
   "today_fresh_start_welcome_back_trial_ended": "0b47fd8a68706188f02ae16af9cfe82e9abc0ad5a6b8b7be4da59609a5b47c3b",
+  "today_insight_add_it": "60ce5fd19a291ce235ababe87590e18d861f64ef22cd5bb0be2b56477bd91c0a",
+  "today_insight_got_it": "c38955229e0be0bd63a3d4935b0693d613a8773d28825ad38355773f0a3cd955",
+  "today_insight_keep_it": "2f40e0d92e4a3434f090b2cf81820e1c6c7be4511aa5bb9a38b7157c4a72f3ff",
+  "today_insight_label": "4140a51a9c7bf2a73d91c7a5cb65abf28b57535cca2c90b7fbce0a5c6931639e",
+  "today_insight_move_time": "dc09e1a986b9e989720102db4f59a355256699a1d8f50285b645ca14bf2635eb",
+  "today_insight_no_thanks": "8a044e42e33a607a5a142829e792ec2644374ab7d39099bb62bda1fe9a7e81e0",
+  "today_insight_time_moved": "03f8cfb1889856152b1c5dee7f2f0786be8f4ce0bef6d25f69ee02fe66ba2e17",
+  "today_insight_time_stays": "025d6a25a0a10760f6f9d3a7cfcb67625f5d041e0db42f9cf7917a979fb1abfe",
+  "today_insight_undo": "a8b5763c5c8417fd801fe253fe02b99d9ce6e777e7f52096e788df95789aff4d",
   "today_keep_learning": "6627840be32294097588cc8ce17de9bf5fe12d1039240eabfcaf086e84918e3b",
   "today_keep_learning_failed": "a2970d0d82733902ed313c0ec72ef298b89b532d320d72eaf6e99d223d2f7a75",
   "today_lessons_so_far": "5d8f58e85826cf0c3892661a089dbd5e30491e3bd32a93aa40197a034d01073a",
@@ -51,9 +60,12 @@
   "today_more_count": "d215d2706b8c9e61d311419d08a7997432394364b8b259bfa002bc3899140d49",
   "today_new_goal": "abfc628696277d4e26e63d9c1ead9f83790dabc2ad4e2535c54a1b32c43f676d",
   "today_not_now": "7d15274e66116674b7318ba10a1ff04723a59308f80d69b10c568a6e06c22031",
+  "today_noted": "78476c1191852cb25fc59f2b93803dfb672bf329a73e07712eff238b0f314ec4",
   "today_nothing_new": "bda36dbbed2ef5e49b8b13410935e615c370f6e6f155ca68caeba0b5d4accb2f",
   "today_nothing_new_detail": "57a868f94f15c96c821f0f3e8361fd3a09a099735705efac66ac6ce305108bb5",
   "today_nothing_to_review": "2269422cdf5f3be38ff4484d5349cda626f2fb4781ec60bbe5dd7522c0480000",
+  "today_notice_exam_access": "a9339b2641b12aa3e5fb21a7277f225cb6b015716da7e66701eb85616790fbbc",
+  "today_notice_suggested_goal": "ac360e7e9546fc1a04eea8eaa20f18594cad0dbc212a2018b23c9db47d63facd",
   "today_open_failed": "92470853a41c78697187b6d86cd8606ae1bdec93a428e545b9fa36cbe9dcbc11",
   "today_pace_ahead": "5d905064fc94ac7ea77b000d823f92a22af33fcc27709672a4b0977f52e0ea71",
   "today_pace_behind_days": "2cdf98bcf67f4d5ac53be88a027fda18eab697df50e92ada6162e20bbf28dcc6",
@@ -72,6 +84,7 @@
   "today_paused_detail": "c333b9db1ffd74b66217142d929bce210421ec9c6a2e355c526ab941defa0e00",
   "today_paused_goal": "d225824852c4c831f09dfbba14cfb707919359337e41ba4fa581bf8ea7788193",
   "today_paused_this_goal": "8ef02272aeabd96ea235ce682864c90493e916528e7a3004795ce6f607e457e9",
+  "today_plan_stays": "c946a704b8c3870752b979867c17d256de08d983561fdb10f3e299048cdd44c7",
   "today_practice_anytime": "e49fa62dc493955b7aec31d62a9608d1100c9e8a45688759434509ccaf40a72e",
   "today_practice_minutes": "e9640558ecb074d97dde46f5c4f35022f49de964896ce59c7c8bf634befb3147",
   "today_practice_with_buddy": "0f3d36057dcc0fe30556953b83bff49fa7bd5761b9fdb3075d54e60f432abbdf",
@@ -393,6 +406,20 @@
     <string name="today_exam_speaking">Expresión oral con formato de examen</string>
     <!-- %1$s is the exam's name, such as IELTS. -->
     <string name="today_exam_speaking_detail">%1$s tareas en una llamada</string>
+    <string name="today_notice_exam_access">Preparación para el examen en el plan gratuito</string>
+    <string name="today_notice_suggested_goal">Objetivo sugerido</string>
+    <string name="today_insight_label">Según tus respuestas recientes</string>
+    <string name="today_insight_add_it">Añadirlo</string>
+    <string name="today_insight_no_thanks">No, gracias</string>
+    <string name="today_insight_keep_it">Mantenerlo</string>
+    <string name="today_insight_undo">Deshacer</string>
+    <!-- %1$s is a time of day, such as 7:00 PM. -->
+    <string name="today_insight_move_time">Cambiar mi tiempo de estudio a %1$s</string>
+    <string name="today_insight_got_it">Entendido</string>
+    <string name="today_insight_time_moved">Se ha cambiado tu tiempo de estudio.</string>
+    <string name="today_insight_time_stays">Tu tiempo de estudio se mantiene igual.</string>
+    <string name="today_plan_stays">Tu plan se queda como estaba.</string>
+    <string name="today_noted">Anotado.</string>
     <string name="today_connection_lost">Se ha perdido la conexión</string>
     <string name="today_connection_lost_detail">Hemos dejado de recibir actualizaciones. Puede que siga funcionando.</string>
     <string name="today_reconnect">Volver a conectar</string>

@@ -13,6 +13,7 @@ import com.zoonk.android.feature.session.DayView
 import com.zoonk.android.feature.session.toDayView
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LanguageToday
+import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.SuggestedGoal
@@ -100,6 +101,13 @@ interface TodayApi {
         goalId: UUID,
     )
 
+    /** Accepting a plan change or a schedule idea applies it; dismissing an applied one undoes it. */
+    suspend fun answerInsight(
+        session: AuthenticatedSession,
+        insightId: UUID,
+        accepted: Boolean,
+    )
+
     /** The answer as saved: answered elsewhere first, it may differ. */
     suspend fun answerSuggestedGoal(
         session: AuthenticatedSession,
@@ -169,6 +177,14 @@ class TodayStore(
     ): MutationResult<SuggestedGoal> =
         cache.mutate(invalidating = setOf(DataDomain.Goals)) { api.answerSuggestedGoal(it, suggestion.id, accepted) }
 
+    suspend fun answerInsight(
+        insight: MemoryInsight,
+        accepted: Boolean,
+    ): Boolean =
+        cache.mutate(invalidating = setOf(DataDomain.Memory, DataDomain.Goals, DataDomain.UserSession)) {
+            api.answerInsight(it, insight.id, accepted)
+        } is MutationResult.Done
+
     init {
         // The day gives way at its end (midnight, or later for a session carried past it) without a write.
         scope.launch {
@@ -184,11 +200,12 @@ class TodayStore(
     }
 
     companion object {
-        /** What the day is built from: the goal and plan, progress, the day's session and the tier. */
+        /** What the day is built from: the goal and plan, the buddy's insights, progress, the day's session and the tier. */
         val DOMAINS =
             setOf(
                 DataDomain.Goals,
                 DataDomain.LearningProfile,
+                DataDomain.Memory,
                 DataDomain.UserProgress,
                 DataDomain.UserSession,
                 DataDomain.UserSubscription,

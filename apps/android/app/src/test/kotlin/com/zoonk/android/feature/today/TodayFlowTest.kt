@@ -240,6 +240,12 @@ class TodayFlowTest {
             goalId: UUID,
         ) = Unit
 
+        override suspend fun answerInsight(
+            session: AuthenticatedSession,
+            insightId: UUID,
+            accepted: Boolean,
+        ) = Unit
+
         override suspend fun answerSuggestedGoal(
             session: AuthenticatedSession,
             suggestionId: UUID,

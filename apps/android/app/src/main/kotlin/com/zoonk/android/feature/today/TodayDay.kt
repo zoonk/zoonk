@@ -39,6 +39,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.Resource
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.OpeningWaitLine
 import com.zoonk.android.feature.session.WaitState
@@ -79,6 +80,7 @@ internal fun TodayDay(
     buddyName: String,
     brainPower: Long? = null,
     practice: @Composable () -> Unit = {},
+    plans: PlanStore? = null,
 ) {
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val stalled =
@@ -121,6 +123,7 @@ internal fun TodayDay(
                 buddyName = buddyName,
                 brainPower = brainPower,
                 practice = practice,
+                notice = { layout -> TodayNotice(TodayNoticeState(read, viewModel, navigator::open, plans), layout) },
                 onMission = { opens -> openMission(opens, model, actions, today, scope) },
                 navigate = navigator::open,
             )

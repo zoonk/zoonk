@@ -6,6 +6,7 @@ import com.zoonk.android.data.perform
 import com.zoonk.api.apis.MistakesApi
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.LanguageToday
+import com.zoonk.api.models.MemoryInsightAnswer
 import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.OnboardingStep
@@ -62,6 +63,15 @@ class LiveTodayApi(
         goalId: UUID,
     ) {
         perform { api.clients(session).goals.updateGoal(goalId, GoalUpdateInput(status = GoalUpdateInput.Status.ACTIVE)) }
+    }
+
+    override suspend fun answerInsight(
+        session: AuthenticatedSession,
+        insightId: UUID,
+        accepted: Boolean,
+    ) {
+        val status = if (accepted) MemoryInsightAnswer.Status.ACCEPTED else MemoryInsightAnswer.Status.DISMISSED
+        perform { api.clients(session).memory.answerMemoryInsight(insightId, MemoryInsightAnswer(status)) }
     }
 
     override suspend fun answerSuggestedGoal(

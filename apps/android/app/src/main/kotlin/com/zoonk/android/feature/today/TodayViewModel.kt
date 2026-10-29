@@ -9,6 +9,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.models.MemoryInsight
 import com.zoonk.api.models.SuggestedGoal
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -120,6 +121,34 @@ class TodayViewModel(
     var answerFailed by mutableStateOf(false)
         private set
 
+    /** Kept per insight, so its card shows what the answer did once Today no longer carries it. */
+    var insightAnswers by mutableStateOf(mapOf<UUID, InsightAnswer>())
+        private set
+
+    var isAnsweringInsight by mutableStateOf(false)
+        private set
+
+    fun answerInsight(
+        insight: MemoryInsight,
+        accepted: Boolean,
+    ) {
+        if (isAnsweringInsight) return
+        isAnsweringInsight = true
+        insightAnswers -= insight.id
+
+        viewModelScope.launch {
+            val saved = store.answerInsight(insight, accepted)
+            val answer =
+                when {
+                    !saved -> InsightAnswer.Failed
+                    accepted -> InsightAnswer.Accepted
+                    else -> InsightAnswer.Dismissed
+                }
+            insightAnswers += insight.id to answer
+            isAnsweringInsight = false
+        }
+    }
+
     /** Goes by the saved answer, not the card, which may be older. */
     fun answer(
         suggestion: SuggestedGoal,
@@ -186,3 +215,5 @@ data class TodayRoute(
     val goalId: UUID? = null,
     val localDate: kotlinx.datetime.LocalDate? = null,
 )
+
+enum class InsightAnswer { Accepted, Dismissed, Failed }

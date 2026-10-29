@@ -229,6 +229,20 @@
     <string name="today_exam_speaking">Exam-style speaking</string>
     <!-- %1$s is the exam's name, such as IELTS. -->
     <string name="today_exam_speaking_detail">%1$s tasks on a call</string>
+    <string name="today_notice_exam_access">Exam prep on the free plan</string>
+    <string name="today_notice_suggested_goal">Suggested goal</string>
+    <string name="today_insight_label">From your recent answers</string>
+    <string name="today_insight_add_it">Add it</string>
+    <string name="today_insight_no_thanks">No thanks</string>
+    <string name="today_insight_keep_it">Keep it</string>
+    <string name="today_insight_undo">Undo</string>
+    <!-- %1$s is a time of day, such as 7:00 PM. -->
+    <string name="today_insight_move_time">Move my study time to %1$s</string>
+    <string name="today_insight_got_it">Got it</string>
+    <string name="today_insight_time_moved">Study time moved.</string>
+    <string name="today_insight_time_stays">Your study time stays the same.</string>
+    <string name="today_plan_stays">Your plan stays as it was.</string>
+    <string name="today_noted">Noted.</string>
     <string name="today_connection_lost">Connection lost</string>
     <string name="today_connection_lost_detail">We stopped getting updates. It may still be working.</string>
     <string name="today_reconnect">Reconnect</string>

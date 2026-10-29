@@ -15,6 +15,7 @@ import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.components.SuggestionLayout
 
 /** What the aside needs beyond the day: values the screen reads, and where its rows lead. */
 internal class TodayAsideState(
@@ -22,6 +23,7 @@ internal class TodayAsideState(
     val buddyName: String,
     val brainPower: Long?,
     val practice: @Composable () -> Unit,
+    val notice: @Composable (SuggestionLayout) -> Unit,
     val onMission: (MissionOpens) -> Unit,
     val navigate: (AppRoute) -> Unit,
 )
@@ -35,6 +37,7 @@ internal fun TodayAside(
     modifier: Modifier = Modifier,
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(32.dp)) {
+        if (!beside) aside.notice(SuggestionLayout.Line)
         MissionsCard(
             missions = model.day.missions,
             fullMeal = model.day.fullMeal,
@@ -48,6 +51,7 @@ internal fun TodayAside(
             collapseWhenDone = true,
         )
         TodayWeek(model.day, model.today.weeklyChallenge, aside.navigate)
+        if (beside) aside.notice(SuggestionLayout.Panel)
         // Beside the page, the drawer's Study places hold the same ways in.
         if (!beside) aside.practice()
     }

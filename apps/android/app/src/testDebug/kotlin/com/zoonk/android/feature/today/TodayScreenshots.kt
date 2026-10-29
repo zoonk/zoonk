@@ -170,6 +170,34 @@ class TodayScreenshots {
                 },
                 "unopened" to unopened(),
                 "started" to started(),
+                "notice-insight" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        today =
+                            mapOf(
+                                "insight" to
+                                    fixture(
+                                        "memory-insight",
+                                        "kind" to "scheduleIdea",
+                                        "message" to "You get more right in the evening. Studying around 7 PM could help.",
+                                        "studyTime" to "7:00 PM",
+                                    ),
+                            ),
+                    ),
+                "notice-access" to
+                    day(
+                        blocks = lessons(3),
+                        next = 0,
+                        extra =
+                            mapOf(
+                                "examAccess" to
+                                    buildJsonObject {
+                                        put("includesMockExams", false)
+                                        put("trialEnded", true)
+                                    },
+                            ),
+                    ),
                 "short-plan" to
                     day(
                         blocks = lessons(3),

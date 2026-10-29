@@ -159,6 +159,7 @@ private fun TodayRead(
                         buddyName = buddyName(buddy.kind, summary.value?.buddy?.name),
                         brainPower = brainPower.value,
                         practice = { TodayPractice(app.today, read.today.goal, navigator::open) },
+                        plans = app.plans,
                     )
                 }
 
