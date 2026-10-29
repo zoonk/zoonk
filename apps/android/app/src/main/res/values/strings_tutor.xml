@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Before the buddy is known. -->
+    <string name="tutor_your_buddy">Your buddy</string>
+    <string name="tutor_ask">Ask %1$s</string>
+    <string name="tutor_ask_chapter">Ask %1$s about this chapter</string>
+    <string name="tutor_ask_mock">Ask %1$s about this mock exam</string>
+    <string name="tutor_ask_plan">Ask %1$s about your plan</string>
+    <string name="tutor_ask_subject">Ask %1$s about this subject</string>
+    <string name="tutor_ask_answer">Ask %1$s about your answer</string>
+    <string name="tutor_ask_question">Ask %1$s about this question</string>
+    <string name="tutor_ask_screen">Ask %1$s about this screen</string>
+
+    <string name="tutor_description_answer">Ask about your answer</string>
+    <string name="tutor_description_step">Ask about this screen</string>
+    <string name="tutor_description_chapter">Ask questions about this chapter</string>
+    <string name="tutor_description_lesson">Ask questions about this lesson</string>
+    <string name="tutor_description_mock">Ask questions about this mock exam</string>
+    <string name="tutor_description_plan">Ask questions about your plan</string>
+    <string name="tutor_description_subject">Ask questions about this subject</string>
+    <string name="tutor_description_item">Ask about this question</string>
+    <string name="tutor_close">Close questions</string>
+
+
+    <string name="tutor_about_answer">About your answer</string>
+    <string name="tutor_about_chapter">About this chapter</string>
+    <string name="tutor_about_lesson">About this lesson</string>
+    <string name="tutor_about_mock">About this mock exam</string>
+    <string name="tutor_about_plan">About your plan</string>
+    <string name="tutor_about_step">About this part</string>
+    <string name="tutor_about_subject">About this subject</string>
+    <string name="tutor_about_question">About this question</string>
+
+    <string name="tutor_empty_title">What would you like help with?</string>
+    <!-- The buddy says it's an AI where every conversation opens (EU AI Act art. 50). -->
+    <string name="tutor_empty_ai">%1$s is an AI study buddy and can make mistakes.</string>
+    <string name="tutor_guest_title">Create a free account to ask questions</string>
+    <string name="tutor_loading">Loading the conversation…</string>
+    <string name="tutor_your_question">Your question</string>
+
+    <string name="tutor_get_answer">Get answer</string>
+    <string name="tutor_not_answered">This one wasn\'t answered.</string>
+    <string name="tutor_answer_failed">We couldn\'t finish this answer.</string>
+    <string name="tutor_check_again">Check again</string>
+    <string name="tutor_no_answer">No answer available.</string>
+    <string name="tutor_thinking">Thinking…</string>
+    <string name="tutor_load_earlier">Load earlier questions</string>
+    <string name="tutor_load_earlier_failed">Couldn\'t load earlier questions. Try again.</string>
+
+    <string name="tutor_error_session">Your session expired. Sign in again.</string>
+    <string name="tutor_error_subscription">Subscribe to ask questions</string>
+    <string name="tutor_error_gone">This lesson is no longer available.</string>
+    <string name="tutor_error_invalid">We couldn\'t send this question. Try again.</string>
+    <string name="tutor_error_slow_down">Take a short break, then ask again.</string>
+    <string name="tutor_error_failed">Something went wrong. Try again.</string>
+    <string name="tutor_error_last_question">We couldn\'t send your last question. Try again.</string>
+    <string name="tutor_sign_in">Sign in</string>
+    <string name="tutor_view_plans">View plans</string>
+    <string name="tutor_try_again">Try again</string>
+
+    <string name="tutor_placeholder_chapter">Ask about this chapter…</string>
+    <string name="tutor_placeholder_mock">Ask about this mock exam…</string>
+    <string name="tutor_placeholder_plan">Ask about your plan…</string>
+    <string name="tutor_placeholder_subject">Ask about this subject…</string>
+    <string name="tutor_placeholder_item">Ask about this question…</string>
+    <string name="tutor_placeholder_answer">Ask about your answer…</string>
+    <string name="tutor_placeholder_lesson">Ask about the lesson content…</string>
+    <string name="tutor_send">Send</string>
+    <string name="tutor_retry_last_question">Retry last question</string>
+
+    <string name="tutor_suggest_walk_through">Walk me through this answer</string>
+    <string name="tutor_suggest_chapter">What will I be able to do after this chapter?</string>
+    <string name="tutor_suggest_mock_practice">What should I practice first?</string>
+    <string name="tutor_suggest_mock_missed">Why did I miss these questions?</string>
+    <string name="tutor_suggest_plan_today">Why am I studying this today?</string>
+    <string name="tutor_suggest_plan_next">What comes next?</string>
+    <string name="tutor_suggest_subject_left">What\'s left to study here?</string>
+    <string name="tutor_suggest_subject_cover">Does my plan cover all of it?</string>
+    <string name="tutor_suggest_item_asking">What is this question asking?</string>
+    <string name="tutor_suggest_item_idea">What idea is this question about?</string>
+
+    <string name="tutor_link_title">Open this link?</string>
+    <string name="tutor_link_description">This link opens a website outside Zoonk.</string>
+    <string name="tutor_link_cancel">Cancel</string>
+    <string name="tutor_link_open">Open link</string>
+</resources>

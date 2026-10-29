@@ -98,6 +98,7 @@
 - “Noodle”: “Cuca”
 - “Beep”: “Bip”
 - “Otto”: “Oto”
+- Asking the buddy: “Pergunte para {name}”, so no article comes before the buddy's name.
 
 ## Formatting preference
 

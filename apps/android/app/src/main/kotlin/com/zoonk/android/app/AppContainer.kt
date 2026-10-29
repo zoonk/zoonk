@@ -28,6 +28,8 @@ import com.zoonk.android.feature.memory.LiveMemoryApi
 import com.zoonk.android.feature.memory.MemoryStore
 import com.zoonk.android.feature.plan.LivePlanApi
 import com.zoonk.android.feature.plan.PlanStore
+import com.zoonk.android.feature.tutor.LiveTutorApi
+import com.zoonk.android.feature.tutor.TutorStore
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -81,6 +83,7 @@ class AppContainer private constructor(
         )
 
     val plans = PlanStore(LivePlanApi(api), cache)
+    val tutor = TutorStore(LiveTutorApi(api), cache, sessions)
 
     // Account and Plus (L1).
     val account = AccountStore(LiveAccountApi(api, NoBotProof), sessions, cache)
