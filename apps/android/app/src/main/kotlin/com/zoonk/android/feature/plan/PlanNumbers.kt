@@ -1,0 +1,754 @@
+package com.zoonk.android.feature.plan
+
+import android.icu.math.BigDecimal
+import android.icu.text.NumberFormat
+import android.icu.util.ULocale
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.dp
+import com.zoonk.android.R
+import com.zoonk.android.ui.components.DoneMark
+import com.zoonk.android.ui.components.KindMark
+import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMinutes
+import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.theme.withTabularFigures
+import com.zoonk.api.models.EstimatedScore
+import com.zoonk.api.models.GoalPreparation
+import com.zoonk.api.models.GoalProgress
+import com.zoonk.api.models.GoalProgressStillNeeded
+import com.zoonk.api.models.PlanDay
+import com.zoonk.api.models.PlanItem
+import com.zoonk.api.models.PreparationComponentsMocks
+import kotlinx.datetime.toJavaLocalDate
+import java.time.format.TextStyle
+import java.util.Locale
+import kotlin.math.min
+import kotlin.math.roundToInt
+
+/** Main's two numbers that answer "will I make it?": the standing beside the pace, each opening its details. */
+enum class NumberVariant { Tiles, Stats }
+
+private data class PlanNumber(
+    val label: String,
+    val value: String,
+    val detail: String?,
+    val share: Float? = null,
+    val numeric: Boolean = true,
+)
+
+private enum class NumberSheet { Standing, Pace }
+
+@Composable
+internal fun PlanNumbers(
+    page: PlanPageState,
+    standing: Standing,
+    variant: NumberVariant,
+    links: PlanLinks,
+    modifier: Modifier = Modifier,
+    onAdjust: (() -> Unit)? = null,
+) {
+    var open by rememberSaveable { mutableStateOf<NumberSheet?>(null) }
+    val pace = page.plan.status?.pace
+    val gap = if (variant == NumberVariant.Tiles) 8.dp else 24.dp
+
+    Row(modifier.fillMaxWidth().height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(gap)) {
+        NumberButton(standingNumber(standing), variant, Modifier.weight(1f)) { open = NumberSheet.Standing }
+        if (pace != null) {
+            NumberButton(paceNumber(page, pace), variant, Modifier.weight(1f)) { open = NumberSheet.Pace }
+        }
+    }
+
+    when (open) {
+        NumberSheet.Standing -> {
+            DetailsSheet(standingTitle(standing), onDismiss = { open = null }) {
+                when (standing) {
+                    is Standing.Preparation -> PreparationDetails(standing.progress, forExam = true, lessons = null, links = links)
+                    is Standing.Progress -> PreparationDetails(standing.progress, forExam = false, lessons = standing, links = links)
+                }
+            }
+        }
+
+        NumberSheet.Pace -> {
+            if (pace != null) {
+                DetailsSheet(stringResource(R.string.plan_your_pace), onDismiss = { open = null }) {
+                    PaceDetails(
+                        page = page,
+                        pace = pace,
+                        links = links,
+                        onAdjust =
+                            onAdjust?.let {
+                                {
+                                    open = null
+                                    it()
+                                }
+                            },
+                    )
+                }
+            }
+        }
+
+        null -> {}
+    }
+}
+
+@Composable
+private fun standingTitle(standing: Standing) =
+    stringResource(if (standing is Standing.Preparation) R.string.plan_your_preparation else R.string.plan_your_progress)
+
+@Composable
+private fun standingNumber(standing: Standing): PlanNumber {
+    val locale = currentLocale()
+    return when (standing) {
+        is Standing.Preparation -> {
+            val preparation = standing.progress.preparation
+            val value = preparation?.value ?: 0.0
+            PlanNumber(
+                label = stringResource(R.string.plan_preparation),
+                value = formatPercent(value, locale),
+                detail = weekGain(preparation?.weekGain ?: 0.0),
+                share = value.toFloat(),
+            )
+        }
+
+        is Standing.Progress -> {
+            val share = if (standing.total > 0) min(1f, standing.done.toFloat() / standing.total) else 0f
+            PlanNumber(
+                label = stringResource(R.string.plan_progress),
+                value = formatGoalProgress(share.toDouble(), locale),
+                detail =
+                    pluralStringResource(
+                        R.plurals.plan_lessons_of,
+                        standing.total.toInt(),
+                        standing.done.toInt(),
+                        standing.total.toInt(),
+                    ),
+                share = share,
+            )
+        }
+    }
+}
+
+@Composable
+private fun weekGain(gain: Double): String {
+    val points = (gain * PERCENT).roundToInt()
+    return when {
+        points == 0 -> stringResource(R.string.plan_no_change_this_week)
+        points > 0 -> stringResource(R.string.plan_gain_this_week, points)
+        else -> stringResource(R.string.plan_loss_this_week, points)
+    }
+}
+
+private const val PERCENT = 100
+
+/** Main's goal progress: a percent with up to two decimals, so a small step still moves it. */
+private fun formatGoalProgress(
+    share: Double,
+    locale: Locale,
+): String =
+    NumberFormat
+        .getPercentInstance(ULocale.forLocale(locale))
+        .apply {
+            maximumFractionDigits = 2
+            roundingMode = BigDecimal.ROUND_HALF_UP
+        }.format(share)
+
+@Composable
+private fun paceNumber(
+    page: PlanPageState,
+    pace: Pace,
+): PlanNumber {
+    val (value, detail) =
+        when {
+            pace is Pace.Finished -> {
+                R.string.plan_pace_value_finished to null
+            }
+
+            pace is Pace.PastDate -> {
+                R.string.plan_pace_value_past_date to pluralStringResource(R.plurals.plan_lessons_left, pace.lessons, pace.lessons)
+            }
+
+            pace is Pace.ChallengesLeft -> {
+                R.string.plan_pace_value_challenges to paceText(pace)
+            }
+
+            page.isPaused -> {
+                R.string.plan_pace_value_paused to stringResource(R.string.plan_nothing_planned)
+            }
+
+            pace is Pace.Ahead -> {
+                R.string.plan_pace_value_ahead to paceText(pace)
+            }
+
+            pace is Pace.Behind -> {
+                R.string.plan_pace_value_behind to paceText(pace)
+            }
+
+            pace is Pace.NeedsAdjusting -> {
+                R.string.plan_pace_value_too_tight to paceText(pace)
+            }
+
+            else -> {
+                val time =
+                    formatMinutes(
+                        page.plan.schedule.dailyMinutes
+                            .toInt(),
+                        currentLocale(),
+                    )
+                R.string.plan_pace_value_on_pace to stringResource(R.string.plan_time_a_day, time)
+            }
+        }
+    return PlanNumber(stringResource(R.string.plan_pace), stringResource(value), detail, numeric = false)
+}
+
+@Composable
+private fun NumberButton(
+    number: PlanNumber,
+    variant: NumberVariant,
+    modifier: Modifier,
+    onOpen: () -> Unit,
+) {
+    val content: @Composable ColumnScope.() -> Unit = {
+        val readout = MaterialTheme.typography.headlineMedium
+        Text(
+            text = number.label,
+            style = if (variant == NumberVariant.Tiles) MaterialTheme.typography.labelLarge else MaterialTheme.typography.titleSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = number.value,
+            style = if (number.numeric) readout.withTabularFigures() else MaterialTheme.typography.headlineSmall,
+            fontWeight = if (number.numeric) null else FontWeight.SemiBold,
+        )
+        number.share?.let { Meter(it, Modifier.padding(vertical = 2.dp)) }
+        number.detail?.let { MetaLine(it) }
+    }
+
+    if (variant == NumberVariant.Tiles) {
+        OutlinedCard(
+            onClick = onOpen,
+            modifier = modifier.fillMaxHeight(),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        ) {
+            Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp), content = content)
+        }
+    } else {
+        Column(
+            modifier =
+                modifier
+                    .clip(MaterialTheme.shapes.medium)
+                    .clickable(role = Role.Button, onClick = onOpen)
+                    .padding(8.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp),
+            content = content,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DetailsSheet(
+    title: String,
+    onDismiss: () -> Unit,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    ModalBottomSheet(onDismissRequest = onDismiss) {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState()).padding(start = 24.dp, end = 24.dp, bottom = 32.dp),
+            verticalArrangement = Arrangement.spacedBy(28.dp),
+        ) {
+            Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
+            content()
+        }
+    }
+}
+
+@Composable
+private fun PaceDetails(
+    page: PlanPageState,
+    pace: Pace,
+    links: PlanLinks,
+    onAdjust: (() -> Unit)?,
+) {
+    val resting = page.isPaused && pace !is Pace.Finished && pace !is Pace.PastDate && pace !is Pace.ChallengesLeft
+    val fix = if (resting) null else paceFix(pace, page.isExam)
+
+    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+        Text(
+            text = if (resting) stringResource(R.string.plan_pace_value_paused) else paceText(pace),
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Medium,
+        )
+        if (resting) MetaLine(stringResource(R.string.plan_nothing_planned_until_resume))
+        fix?.let { MetaLine(it.text) }
+        if (fix?.adjust == true && onAdjust != null) {
+            FilledTonalButton(
+                onClick = onAdjust,
+                modifier = Modifier.padding(top = 4.dp),
+            ) { Text(stringResource(R.string.plan_adjust_plan)) }
+        }
+    }
+
+    PlanWeek(page)
+
+    PathRow(onClick = links::logbook, end = { Chevron() }) {
+        Text(stringResource(R.string.plan_last_week_recap), modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
+    }
+}
+
+@Composable
+private fun PlanWeek(page: PlanPageState) {
+    val locale = currentLocale()
+    val time = page.plan.weekTime
+    val days = page.plan.week.days
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(verticalAlignment = Alignment.Bottom) {
+            SectionHeader(stringResource(R.string.plan_this_week), Modifier.weight(1f))
+            if (time.targetMinutes > 0) {
+                Text(
+                    text =
+                        stringResource(
+                            R.string.plan_week_time,
+                            formatMinutes(time.studiedMinutes.toInt(), locale),
+                            formatMinutes(time.targetMinutes.roundToInt(), locale),
+                        ),
+                    style = MaterialTheme.typography.bodySmall.withTabularFigures(),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+        Row(Modifier.fillMaxWidth()) {
+            days.forEach { day ->
+                val date = day.date.toJavaLocalDate()
+                val spoken =
+                    stringResource(R.string.plan_week_day, date.dayOfWeek.getDisplayName(TextStyle.FULL, locale), dayStatus(day.state))
+                Column(
+                    modifier = Modifier.weight(1f).padding(vertical = 4.dp).clearAndSetSemantics { contentDescription = spoken },
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(6.dp),
+                ) {
+                    Text(
+                        text = date.dayOfWeek.getDisplayName(TextStyle.NARROW, locale),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    DayRing(day)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun dayStatus(state: PlanDay.State): String =
+    stringResource(
+        when (state) {
+            PlanDay.State.DONE -> R.string.plan_day_done
+            PlanDay.State.MISSED -> R.string.plan_day_missed
+            PlanDay.State.REST -> R.string.plan_day_rest
+            PlanDay.State.TODAY -> R.string.plan_day_today
+            PlanDay.State.UPCOMING -> R.string.plan_day_planned
+        },
+    )
+
+private val PlanItem.isDone: Boolean get() = status == PlanItem.Status.DONE || status == PlanItem.Status.TESTED_OUT
+
+/** Main's goal ring: the day's share done; a missed day's track dashed, a rest day's faint. */
+@Composable
+private fun DayRing(day: PlanDay) {
+    val ink = MaterialTheme.colorScheme.onSurface
+    val fill = MaterialTheme.colorScheme.tertiary
+    val share =
+        when {
+            day.state == PlanDay.State.DONE -> 1f
+            day.items.isNotEmpty() -> day.items.count { it.isDone }.toFloat() / day.items.size
+            else -> 0f
+        }
+    val trackAlpha =
+        when (day.state) {
+            PlanDay.State.REST -> 0.06f
+            PlanDay.State.MISSED, PlanDay.State.TODAY -> 0.25f
+            else -> 0.1f
+        }
+
+    Box(Modifier.size(36.dp), contentAlignment = Alignment.Center) {
+        Canvas(Modifier.size(36.dp)) {
+            val width = 3.dp.toPx()
+            val inset = width / 2
+            val arcSize = Size(size.width - width, size.height - width)
+            val dashes =
+                if (day.state ==
+                    PlanDay.State.MISSED
+                ) {
+                    PathEffect.dashPathEffect(floatArrayOf(3.dp.toPx(), 3.3.dp.toPx()))
+                } else {
+                    null
+                }
+            drawArc(
+                ink.copy(alpha = trackAlpha),
+                0f,
+                360f,
+                false,
+                Offset(inset, inset),
+                arcSize,
+                style = Stroke(width, pathEffect = dashes),
+            )
+            if (share >
+                0
+            ) {
+                drawArc(fill, -90f, 360f * share, false, Offset(inset, inset), arcSize, style = Stroke(width, cap = StrokeCap.Round))
+            }
+        }
+        if (day.state == PlanDay.State.DONE) DoneMark()
+    }
+}
+
+@Composable
+private fun PreparationDetails(
+    progress: GoalProgress,
+    forExam: Boolean,
+    lessons: Standing.Progress?,
+    links: PlanLinks,
+) {
+    val preparation = progress.preparation ?: return
+    if (forExam) EstimatedScoreBlock(preparation)
+    PreparationParts(preparation, forExam, lessons)
+    StillToDo(preparation, progress.stillNeeded, links)
+}
+
+@Composable
+private fun EstimatedScoreBlock(preparation: GoalPreparation) {
+    val score = preparation.estimatedScore
+    val mocks = preparation.components.mocks
+    if (score == null) {
+        if (mocks.kind == PreparationComponentsMocks.Kind.MOCK_EXAMS && mocks.taken > 0) {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                KindMark(LearnKind.Mock)
+                MetaLine(stringResource(R.string.plan_estimate_waits))
+            }
+        }
+        return
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            stringResource(R.string.plan_estimated_score),
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(scoreRange(score), style = MaterialTheme.typography.headlineMedium.withTabularFigures())
+        MetaLine(pluralStringResource(R.plurals.plan_estimate_based_on, score.mocks.toInt(), score.mocks.toInt()))
+    }
+}
+
+/** Always a range, so it never reads as a promise; whole-number scales as their reports print them. */
+@Composable
+private fun scoreRange(score: EstimatedScore): String {
+    val low = score.low.roundToInt()
+    val high = score.high.roundToInt()
+    val single = low == high
+    return when (score.scale) {
+        EstimatedScore.Scale.PERCENT -> {
+            if (single) stringResource(R.string.plan_score_percent, low) else stringResource(R.string.plan_score_percent_range, low, high)
+        }
+
+        EstimatedScore.Scale.TOEFL -> {
+            if (single) stringResource(R.string.plan_score_band, low) else stringResource(R.string.plan_score_band_range, low, high)
+        }
+
+        else -> {
+            if (single) low.toString() else stringResource(R.string.plan_score_range, low.toString(), high.toString())
+        }
+    }
+}
+
+private data class PreparationPart(
+    val label: String,
+    val caption: String,
+    val value: Double?,
+)
+
+@Composable
+private fun PreparationParts(
+    preparation: GoalPreparation,
+    forExam: Boolean,
+    lessons: Standing.Progress?,
+) {
+    val locale = currentLocale()
+    val components = preparation.components
+    val notYet = stringResource(R.string.plan_not_yet)
+    val first =
+        if (!forExam && lessons != null) {
+            PreparationPart(
+                stringResource(R.string.plan_lessons),
+                pluralStringResource(R.plurals.plan_lessons_of, lessons.total.toInt(), lessons.done.toInt(), lessons.total.toInt()),
+                if (lessons.total > 0) min(1.0, lessons.done.toDouble() / lessons.total) else 0.0,
+            )
+        } else {
+            PreparationPart(
+                stringResource(R.string.plan_coverage),
+                pluralStringResource(
+                    R.plurals.plan_coverage_caption,
+                    components.coverage.totalSkills.toInt(),
+                    components.coverage.studiedSkills.toInt(),
+                    components.coverage.totalSkills.toInt(),
+                ),
+                components.coverage.value,
+            )
+        }
+    val mastery = components.mastery
+    val retention = components.retention
+    val mocks = components.mocks
+    val taken = mocks.taken.toInt()
+    val (testLabel, testCaption) =
+        when (mocks.kind) {
+            PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
+                stringResource(R.string.plan_full_reviews) to pluralStringResource(R.plurals.plan_full_reviews_done, taken, taken)
+            }
+
+            PreparationComponentsMocks.Kind.WEEKLY_CHALLENGES -> {
+                stringResource(R.string.plan_weekly_challenges) to
+                    pluralStringResource(R.plurals.plan_weekly_challenges_count, taken, taken)
+            }
+
+            PreparationComponentsMocks.Kind.MOCK_EXAMS -> {
+                stringResource(R.string.plan_mock_exams) to pluralStringResource(R.plurals.plan_mock_exams_taken, taken, taken)
+            }
+        }
+    val parts =
+        listOf(
+            first,
+            PreparationPart(
+                stringResource(R.string.plan_mastery),
+                if (mastery.value ==
+                    null
+                ) {
+                    stringResource(R.string.plan_mastery_waits)
+                } else {
+                    stringResource(R.string.plan_mastery_caption, mastery.correct.toInt(), mastery.answered.toInt())
+                },
+                // The headline's measure: a few right answers say less than many.
+                mastery.supported,
+            ),
+            PreparationPart(
+                stringResource(R.string.plan_long_term_memory),
+                if (retention.value == null) notYet else stringResource(R.string.plan_retention_caption),
+                retention.value,
+            ),
+            PreparationPart(testLabel, if (taken == 0) notYet else testCaption, mocks.value),
+        )
+
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        parts.chunked(2).forEach { row ->
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                row.forEach { part ->
+                    val value = part.value?.let { formatPercent(it, locale) }
+                    Row(
+                        modifier = Modifier.weight(1f).semantics(mergeDescendants = true) {},
+                        horizontalArrangement = Arrangement.spacedBy(12.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        PartRing(part.value, value)
+                        Column {
+                            Text(part.label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                            MetaLine(part.caption)
+                        }
+                    }
+                }
+            }
+        }
+        MetaLine(
+            when {
+                !forExam -> {
+                    stringResource(R.string.plan_measure_progress)
+                }
+
+                preparation.components.mocks.kind == PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
+                    stringResource(
+                        R.string.plan_measure_full_reviews,
+                    )
+                }
+
+                else -> {
+                    stringResource(R.string.plan_measure_mocks)
+                }
+            },
+        )
+    }
+}
+
+@Composable
+private fun PartRing(
+    share: Double?,
+    value: String?,
+) {
+    val track = MaterialTheme.colorScheme.surfaceContainerHighest
+    val fill = MaterialTheme.colorScheme.tertiary
+    Box(Modifier.size(56.dp), contentAlignment = Alignment.Center) {
+        Canvas(Modifier.size(56.dp)) {
+            val width = 4.dp.toPx()
+            val inset = width / 2
+            val arcSize = Size(size.width - width, size.height - width)
+            drawArc(track, 0f, 360f, false, Offset(inset, inset), arcSize, style = Stroke(width))
+            val sweep = 360f * (share ?: 0.0).coerceIn(0.0, 1.0).toFloat()
+            if (sweep > 0) drawArc(fill, -90f, sweep, false, Offset(inset, inset), arcSize, style = Stroke(width, cap = StrokeCap.Round))
+        }
+        Text(
+            text = value ?: "–",
+            style = MaterialTheme.typography.labelLarge.withTabularFigures(),
+            color = if (value == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+        )
+    }
+}
+
+private data class StillNeededItem(
+    val kind: LearnKind,
+    val label: String,
+    val detail: String?,
+    val plusRequired: Boolean,
+    val opensExam: Boolean,
+)
+
+@Composable
+private fun StillToDo(
+    preparation: GoalPreparation,
+    stillNeeded: GoalProgressStillNeeded,
+    links: PlanLinks,
+) {
+    val locale = currentLocale()
+    val items =
+        buildList {
+            if (stillNeeded.left > 0) {
+                val minutes = stillNeeded.minutes.toInt()
+                add(
+                    StillNeededItem(
+                        kind = LearnKind.Lesson,
+                        label =
+                            stringResource(
+                                if (stillNeeded.rule ==
+                                    GoalProgressStillNeeded.Rule.EXAM_WEIGHTED
+                                ) {
+                                    R.string.plan_still_topics_solid
+                                } else {
+                                    R.string.plan_still_skills_solid
+                                },
+                            ),
+                        detail =
+                            if (minutes >
+                                0
+                            ) {
+                                stringResource(R.string.plan_still_time_in_plan, formatMinutes(roundEstimate(minutes), locale))
+                            } else {
+                                null
+                            },
+                        plusRequired = false,
+                        opensExam = false,
+                    ),
+                )
+            }
+            val fading = preparation.skills.fading.toInt()
+            if (fading > 0) {
+                add(
+                    StillNeededItem(
+                        LearnKind.Review,
+                        stringResource(R.string.plan_still_keep_fresh),
+                        pluralStringResource(R.plurals.plan_still_fading, fading, fading),
+                        false,
+                        false,
+                    ),
+                )
+            }
+            val mocks = preparation.components.mocks
+            if (mocks.taken == 0L) {
+                val (kind, label) =
+                    when (mocks.kind) {
+                        PreparationComponentsMocks.Kind.FULL_REVIEWS -> {
+                            LearnKind.Practice to stringResource(R.string.plan_still_full_review)
+                        }
+
+                        PreparationComponentsMocks.Kind.MOCK_EXAMS -> {
+                            LearnKind.Mock to stringResource(R.string.plan_still_first_mock)
+                        }
+
+                        PreparationComponentsMocks.Kind.WEEKLY_CHALLENGES -> {
+                            LearnKind.Challenge to stringResource(R.string.plan_still_first_challenge)
+                        }
+                    }
+                add(StillNeededItem(kind, label, null, mocks.plusRequired, opensExam = kind == LearnKind.Mock))
+            }
+        }.take(MAX_STILL_SHOWN)
+    if (items.isEmpty()) return
+
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        SectionHeader(stringResource(R.string.plan_still_to_do))
+        items.forEach { item ->
+            val content: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit = {
+                Leading { KindMark(item.kind) }
+                Column(Modifier.weight(1f)) {
+                    Text(item.label, style = MaterialTheme.typography.bodyMedium, fontWeight = FontWeight.Medium)
+                    item.detail?.let { MetaLine(it) }
+                }
+                if (item.plusRequired) PlusMark()
+            }
+            if (item.opensExam && links.hasExam) {
+                PathRow(onClick = links::exam, end = { Chevron() }, content = content)
+            } else {
+                PathRow(content = content)
+            }
+        }
+    }
+}
+
+private const val MAX_STILL_SHOWN = 2
+private const val MINUTES_PER_HOUR = 60
+
+/** Under two hours as is; beyond, to the hour, so an estimate never looks exact. */
+private fun roundEstimate(minutes: Int): Int =
+    if (minutes < 2 * MINUTES_PER_HOUR) minutes else ((minutes.toDouble() / MINUTES_PER_HOUR).roundToInt() * MINUTES_PER_HOUR)

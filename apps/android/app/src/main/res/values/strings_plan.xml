@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="plan_title">Plan</string>
+    <string name="plan_eyebrow">%1$s · %2$s</string>
+    <string name="plan_day_is_here">The day is here</string>
+    <plurals name="plan_days_left">
+        <item quantity="one">%d day left</item>
+        <item quantity="other">%d days left</item>
+    </plurals>
+    <plurals name="plan_days_left_estimate">
+        <item quantity="one">~%d day left</item>
+        <item quantity="other">~%d days left</item>
+    </plurals>
+    <plurals name="plan_days_left_estimate_spoken">
+        <item quantity="one">About %d day left</item>
+        <item quantity="other">About %d days left</item>
+    </plurals>
+    <string name="plan_date_estimate">~%1$s</string>
+    <string name="plan_date_estimate_spoken">About %1$s</string>
+    <string name="plan_date_range">%1$s – %2$s</string>
+
+    <string name="plan_no_goal_description">Tell us what you want to learn, and we\'ll plan every day until you get there.</string>
+    <string name="plan_setup_left_title">Your plan comes after a few questions</string>
+    <string name="plan_setup_left_description">Answer them and we\'ll plan every day until you reach your goal.</string>
+    <string name="plan_continue">Continue</string>
+    <string name="plan_building_eyebrow">%1$s · Building your plan</string>
+    <string name="plan_building_description">It usually takes a minute or two. Your plan opens here as soon as it\'s ready.</string>
+
+    <string name="plan_options">Plan options</string>
+    <string name="plan_adjust_plan">Adjust plan</string>
+    <string name="plan_about_exam">About the exam</string>
+    <string name="plan_full_course">See the full course</string>
+    <string name="plan_share">Share the plan</string>
+    <string name="plan_talk_to">Talk to %1$s</string>
+    <string name="plan_pause_goal">Pause this goal</string>
+    <string name="plan_resume_goal">Resume this goal</string>
+    <string name="plan_archive_goal">Archive this goal</string>
+    <string name="plan_archive_title">Archive %1$s?</string>
+    <string name="plan_archive_description">It leaves your goals and its plan stops. What you learned stays in your progress.</string>
+    <string name="plan_archive">Archive</string>
+    <string name="plan_resume_title">Resume %1$s?</string>
+    <string name="plan_resume_effect">Your plan picks up from today, starting with the lessons planned for the days you paused.</string>
+    <string name="plan_resume">Resume</string>
+    <string name="plan_cancel">Cancel</string>
+    <string name="plan_goal_limit_reached">The free plan follows one goal at a time. Pause your other goal to resume this one, or get Plus for more.</string>
+    <string name="plan_save_failed">That didn\'t save. Try again.</string>
+
+    <plurals name="plan_phases_done">
+        <item quantity="one">%1$d of %2$d phase done</item>
+        <item quantity="other">%1$d of %2$d phases done</item>
+    </plurals>
+    <string name="plan_roadmap_day_of">day %1$d of %2$d</string>
+    <string name="plan_roadmap_number_of">%1$d of %2$d</string>
+    <string name="plan_roadmap_phase_of">phase %1$d of %2$d</string>
+    <string name="plan_today">Today</string>
+    <string name="plan_mock_exam">Mock exam</string>
+    <string name="plan_phase_challenge">Phase challenge</string>
+    <string name="plan_exam_day">Exam day</string>
+    <string name="plan_goal_date">Goal date</string>
+    <string name="plan_exam_date_label">%1$s · exam</string>
+    <string name="plan_you_are_here_suffix">, you are here</string>
+    <string name="plan_done_suffix">, done</string>
+    <string name="plan_up_next_suffix">, up next</string>
+
+    <string name="plan_phase_number">Phase %1$d</string>
+    <string name="plan_phase_foundations">Foundations</string>
+    <string name="plan_phase_gaps">Fill the gaps</string>
+    <string name="plan_phase_practice">Practice</string>
+    <string name="plan_phase_final_stretch">Final stretch</string>
+    <string name="plan_phase_after_exam">After the exam</string>
+    <string name="plan_short_map_and_gaps">Exam map and gaps</string>
+    <string name="plan_short_mock_and_practice">Mock and practice</string>
+    <string name="plan_short_full_review_and_practice">Full review and practice</string>
+    <string name="plan_short_mock_and_review">Short mock and review</string>
+    <string name="plan_short_full_review">Full review</string>
+    <string name="plan_short_light_review">Light review</string>
+    <string name="plan_short_day">Day %1$d of %2$d</string>
+    <string name="plan_short_days">Days %1$d to %2$d of %3$d</string>
+
+    <string name="plan_your_path">Your path</string>
+    <string name="plan_expanded">Expanded</string>
+    <string name="plan_collapsed">Collapsed</string>
+    <string name="plan_lessons_count">%1$d / %2$d</string>
+    <plurals name="plan_lessons_done_of">
+        <item quantity="one">%1$d of %2$d lesson done</item>
+        <item quantity="other">%1$d of %2$d lessons done</item>
+    </plurals>
+    <string name="plan_until">until %1$s</string>
+    <string name="plan_until_estimate">until ~%1$s</string>
+    <string name="plan_until_estimate_spoken">until about %1$s</string>
+    <string name="plan_not_in_your_plan">Not in your plan</string>
+    <plurals name="plan_lessons_left_out">
+        <item quantity="one">%d lesson was left out</item>
+        <item quantity="other">%d lessons were left out</item>
+    </plurals>
+    <string name="plan_challenge_left_out">Challenge left out</string>
+    <string name="plan_continues_today">Continues today</string>
+    <string name="plan_continues_on">Continues %1$s</string>
+    <string name="plan_more_lessons_challenge_on">More lessons on the way · challenge %1$s</string>
+    <string name="plan_more_lessons_on_the_way">More lessons on the way</string>
+    <string name="plan_lessons_done_challenge_on">Lessons done · challenge %1$s</string>
+    <string name="plan_up_next">Up next</string>
+    <string name="plan_skipped">Skipped</string>
+    <string name="plan_done">Done</string>
+    <plurals name="plan_skills_you_know">
+        <item quantity="one">%d skill you already know</item>
+        <item quantity="other">%d skills you already know</item>
+    </plurals>
+    <string name="plan_more_lessons">More lessons</string>
+    <string name="plan_lessons_on_the_way">Lessons on the way</string>
+    <string name="plan_skipped_known">Skipped because you already know it</string>
+    <string name="plan_going_deeper">Going deeper into an earlier topic</string>
+    <string name="plan_far_from">From %1$s</string>
+    <string name="plan_far_one_lesson">%1$d lesson</string>
+    <plurals name="plan_far_lessons_about">
+        <item quantity="one">About %d lesson</item>
+        <item quantity="other">About %d lessons</item>
+    </plurals>
+    <string name="plan_far_count_from">%1$s · from %2$s</string>
+    <plurals name="plan_more_chapters">
+        <item quantity="one">%d more chapter</item>
+        <item quantity="other">%d more chapters</item>
+    </plurals>
+    <string name="plan_show_fewer_chapters">Show fewer chapters</string>
+    <string name="plan_lessons_being_written_from">Lessons from %1$s are being written.</string>
+    <string name="plan_unit_lessons_being_written">More lessons for this unit are being written.</string>
+    <string name="plan_phase_lessons_being_written">More lessons for this phase are being written.</string>
+    <string name="plan_challenge_won">Won</string>
+    <string name="plan_challenge_next_session">In your next session</string>
+    <string name="plan_challenge_after_previous">After the challenge before it</string>
+    <string name="plan_mock_next_sitting">Mock exam for the next sitting</string>
+    <plurals name="plan_mock_exams_count">
+        <item quantity="one">%d mock exam</item>
+        <item quantity="other">%d mock exams</item>
+    </plurals>
+    <plurals name="plan_mocks_next_sitting">
+        <item quantity="one">%d mock exam for the next sitting</item>
+        <item quantity="other">%d mock exams for the next sitting</item>
+    </plurals>
+    <plurals name="plan_mocks_next_sitting_on">
+        <item quantity="one">%1$d mock exam for the next sitting, on %2$s</item>
+        <item quantity="other">%1$d mock exams for the next sitting, on %2$s</item>
+    </plurals>
+    <plurals name="plan_lessons_of">
+        <item quantity="one">%1$d of %2$d lesson</item>
+        <item quantity="other">%1$d of %2$d lessons</item>
+    </plurals>
+    <string name="plan_plus" translatable="false">Plus</string>
+    <string name="plan_available_with_plus">Available with Plus</string>
+
+    <string name="plan_next_on_path">Next on your path</string>
+    <string name="plan_date_to_be_confirmed">Date to be confirmed</string>
+    <string name="plan_more">More</string>
+    <string name="plan_mind_maps">Mind maps</string>
+
+    <string name="plan_your_plan">Your plan</string>
+    <string name="plan_exam_date">Exam date</string>
+    <string name="plan_time_a_day_label">Time a day</string>
+    <string name="plan_study_days">Study days</string>
+    <string name="plan_mock_exams">Mock exams</string>
+    <string name="plan_choose">Choose</string>
+    <string name="plan_practice">Practice</string>
+    <string name="plan_everything">Everything</string>
+    <string name="plan_to_be_confirmed">To be confirmed</string>
+    <string name="plan_no_date">No date</string>
+    <string name="plan_time_weekends">%1$s · %2$s weekends</string>
+    <string name="plan_every_day">Every day</string>
+    <string name="plan_day_range">%1$s – %2$s</string>
+    <string name="plan_mocks_next">Next %1$s</string>
+    <plurals name="plan_mocks_every_weeks">
+        <item quantity="one">%1$s, every %2$d week</item>
+        <item quantity="other">%1$s, every %2$d weeks</item>
+    </plurals>
+    <string name="plan_sundays">Sundays</string>
+    <string name="plan_mondays">Mondays</string>
+    <string name="plan_tuesdays">Tuesdays</string>
+    <string name="plan_wednesdays">Wednesdays</string>
+    <string name="plan_thursdays">Thursdays</string>
+    <string name="plan_fridays">Fridays</string>
+    <string name="plan_saturdays">Saturdays</string>
+    <string name="plan_activity_vocabulary">New words</string>
+    <string name="plan_activity_listening">Listening</string>
+    <string name="plan_activity_writing">Writing</string>
+    <string name="plan_activity_speaking">Speaking</string>
+
+    <string name="plan_pace">Pace</string>
+    <string name="plan_your_pace">Your pace</string>
+    <string name="plan_pace_value_finished">Finished</string>
+    <string name="plan_pace_value_past_date">Past date</string>
+    <string name="plan_pace_value_challenges">Challenges</string>
+    <string name="plan_pace_value_paused">Paused</string>
+    <string name="plan_pace_value_ahead">Ahead</string>
+    <string name="plan_pace_value_behind">Behind</string>
+    <string name="plan_pace_value_too_tight">Too tight</string>
+    <string name="plan_pace_value_on_pace">On pace</string>
+    <string name="plan_time_a_day">%1$s a day</string>
+    <string name="plan_nothing_planned">Nothing is planned</string>
+    <string name="plan_nothing_planned_until_resume">Nothing is planned until you resume it.</string>
+    <plurals name="plan_lessons_left">
+        <item quantity="one">%d lesson left</item>
+        <item quantity="other">%d lessons left</item>
+    </plurals>
+    <plurals name="plan_pace_days_ahead">
+        <item quantity="one">One day ahead</item>
+        <item quantity="other">%d days ahead</item>
+    </plurals>
+    <plurals name="plan_pace_days_behind">
+        <item quantity="one">One day behind</item>
+        <item quantity="other">%d days behind</item>
+    </plurals>
+    <plurals name="plan_pace_lessons_to_catch_up">
+        <item quantity="one">%d lesson to catch up</item>
+        <item quantity="other">%d lessons to catch up</item>
+    </plurals>
+    <plurals name="plan_pace_challenges_left">
+        <item quantity="one">%d challenge left</item>
+        <item quantity="other">%d challenges left</item>
+    </plurals>
+    <string name="plan_pace_finished">Plan finished</string>
+    <string name="plan_pace_needs_adjusting">Needs adjusting</string>
+    <string name="plan_pace_keeping_pace">Keeping pace</string>
+    <string name="plan_pace_past_your_date">Past your date</string>
+    <plurals name="plan_pace_win_challenges">
+        <item quantity="one">Every lesson is done: win the challenge to finish your plan.</item>
+        <item quantity="other">Every lesson is done: win the challenges to finish your plan.</item>
+    </plurals>
+    <string name="plan_pace_no_longer_fits">Your plan no longer fits in the time left.</string>
+    <plurals name="plan_pace_earlier_lessons_first">
+        <item quantity="one">%d lesson from earlier days comes first: once you\'ve done it, you\'re keeping pace again.</item>
+        <item quantity="other">%d lessons from earlier days come first: once you\'ve done them, you\'re keeping pace again.</item>
+    </plurals>
+    <plurals name="plan_pace_days">
+        <item quantity="one">%d day</item>
+        <item quantity="other">%d days</item>
+    </plurals>
+    <string name="plan_pace_more_minutes">%1$d more minutes a day for %2$s and you\'re keeping pace again.</string>
+    <plurals name="plan_past_date_exam_sentence">
+        <item quantity="one">%d lesson was left before your exam.</item>
+        <item quantity="other">%d lessons were left before your exam.</item>
+    </plurals>
+    <plurals name="plan_past_date_goal_sentence">
+        <item quantity="one">Your date came with %d lesson left.</item>
+        <item quantity="other">Your date came with %d lessons left.</item>
+    </plurals>
+    <string name="plan_this_week">This week</string>
+    <string name="plan_week_time">%1$s of %2$s</string>
+    <string name="plan_week_day">%1$s: %2$s</string>
+    <string name="plan_day_done">done</string>
+    <string name="plan_day_missed">not studied</string>
+    <string name="plan_day_rest">rest day</string>
+    <string name="plan_day_today">today</string>
+    <string name="plan_day_planned">planned</string>
+    <string name="plan_last_week_recap">Last week\'s recap</string>
+
+    <string name="plan_preparation">Preparation</string>
+    <string name="plan_progress">Progress</string>
+    <string name="plan_your_preparation">Your preparation</string>
+    <string name="plan_your_progress">Your progress</string>
+    <string name="plan_no_change_this_week">No change this week</string>
+    <string name="plan_gain_this_week">+%1$d this week</string>
+    <string name="plan_loss_this_week">%1$d this week</string>
+    <string name="plan_estimate_waits">Take more mock exams of the whole exam or half of it to see your estimated score.</string>
+    <string name="plan_estimated_score">Estimated score</string>
+    <plurals name="plan_estimate_based_on">
+        <item quantity="one">Based on your last mock exam</item>
+        <item quantity="other">Based on your last %d mock exams</item>
+    </plurals>
+    <string name="plan_score_percent">%1$d%%</string>
+    <string name="plan_score_percent_range">%1$d%% to %2$d%%</string>
+    <string name="plan_score_band">Band %1$d</string>
+    <string name="plan_score_band_range">Band %1$d to %2$d</string>
+    <string name="plan_score_range">%1$s to %2$s</string>
+    <string name="plan_lessons">Lessons</string>
+    <string name="plan_coverage">Coverage</string>
+    <plurals name="plan_coverage_caption">
+        <item quantity="one">%1$d of %2$d skill, weighted by importance</item>
+        <item quantity="other">%1$d of %2$d skills, weighted by importance</item>
+    </plurals>
+    <string name="plan_mastery">Mastery</string>
+    <string name="plan_mastery_waits">Shows after a few practice questions</string>
+    <string name="plan_mastery_caption">%1$d of %2$d right</string>
+    <string name="plan_long_term_memory">Long-term memory</string>
+    <string name="plan_retention_caption">Of what you studied</string>
+    <string name="plan_not_yet">Not yet</string>
+    <string name="plan_full_reviews">Full reviews</string>
+    <string name="plan_weekly_challenges">Weekly challenges</string>
+    <plurals name="plan_full_reviews_done">
+        <item quantity="one">%d full review done</item>
+        <item quantity="other">%d full reviews done</item>
+    </plurals>
+    <plurals name="plan_weekly_challenges_count">
+        <item quantity="one">%d weekly challenge</item>
+        <item quantity="other">%d weekly challenges</item>
+    </plurals>
+    <plurals name="plan_mock_exams_taken">
+        <item quantity="one">%d mock exam taken</item>
+        <item quantity="other">%d mock exams taken</item>
+    </plurals>
+    <string name="plan_measure_progress">Your progress is the share of your plan\'s lessons you\'ve studied or already knew. Mastery, memory and weekly challenges show how well you know them.</string>
+    <string name="plan_measure_full_reviews">Your preparation adds up your subjects, each counting as much as it\'s worth on the exam. A subject\'s preparation is how much you\'ve studied times how well you know it: right answers, memory and full reviews. Harder and more frequent topics count more, and a subject stays under 75%% until you\'ve answered them and done a full review in your test\'s format.</string>
+    <string name="plan_measure_mocks">Your preparation adds up your subjects, each counting as much as it\'s worth on the exam. A subject\'s preparation is how much you\'ve studied times how well you know it: right answers, memory and mock exams. Harder and more frequent topics count more, and a subject stays under 75%% until you\'ve answered them and taken a mock exam.</string>
+    <string name="plan_still_to_do">Still to do</string>
+    <string name="plan_still_topics_solid">Get the topics that weigh most to Solid</string>
+    <string name="plan_still_skills_solid">Get every skill to Solid</string>
+    <string name="plan_still_time_in_plan">About %1$s in your plan</string>
+    <string name="plan_still_keep_fresh">Keep what you studied fresh</string>
+    <plurals name="plan_still_fading">
+        <item quantity="one">%d skill fading, back in your reviews</item>
+        <item quantity="other">%d skills fading, back in your reviews</item>
+    </plurals>
+    <string name="plan_still_full_review">Do a full review in your test\'s format</string>
+    <string name="plan_still_first_mock">Take your first mock exam</string>
+    <string name="plan_still_first_challenge">Take your first weekly challenge</string>
+</resources>

@@ -1,13 +1,19 @@
 package com.zoonk.android.feature.plan
 
 import com.zoonk.android.data.ApiClients
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.KeyedResources
+import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.value
+import com.zoonk.api.models.GoalProgress
+import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.OnboardingStep
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.Syllabus
@@ -41,6 +47,42 @@ interface PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
     ): Syllabus
+
+    suspend fun progress(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): GoalProgress
+
+    /** Whether resuming the paused goal changes its plan. */
+    suspend fun resumeChangesPlan(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): Boolean
+
+    /** Steps of the goal's setup the learner hasn't answered yet; `plan` alone means it's being built. */
+    suspend fun setupSteps(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): List<OnboardingStep>
+
+    /** The run building the plan; null until it saves its id, a few seconds after it starts. */
+    suspend fun buildingRunId(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): String?
+
+    /** Builds the plan again: only from the learner's tap, since it runs models. */
+    suspend fun rebuild(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): String
+
+    /** A goal over Free's limit answers 429. */
+    suspend fun setStatus(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        status: GoalUpdateInput.Status,
+    )
 }
 
 class LivePlanApi(
@@ -61,12 +103,49 @@ class LivePlanApi(
         session: AuthenticatedSession,
         goalId: UUID,
     ) = perform { api.clients(session).learner.getGoalSyllabus(goalId) }
+
+    override suspend fun progress(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = perform { api.clients(session).learner.getGoalProgress(goalId) }
+
+    override suspend fun resumeChangesPlan(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = perform { api.clients(session).plans.previewGoalResume(goalId) }
+
+    override suspend fun setupSteps(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = perform { api.clients(session).onboarding.getOnboarding(goalId) }.steps
+
+    override suspend fun buildingRunId(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = try {
+        perform { api.clients(session).contentGeneration.getGoalGeneration(goalId) }.generationId
+    } catch (e: ApiException) {
+        if (e.error == ApiError.NotFound) null else throw e
+    }
+
+    override suspend fun rebuild(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = perform { api.clients(session).contentGeneration.createGoalGeneration(goalId) }.generationId
+
+    override suspend fun setStatus(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        status: GoalUpdateInput.Status,
+    ) {
+        perform { api.clients(session).goals.updateGoal(goalId, GoalUpdateInput(status = status)) }
+    }
 }
 
 /** The Plan tab's reads, by goal; the subject pages read [syllabus] too. */
 class PlanStore(
     private val api: PlanApi,
-    cache: AppCache,
+    private val cache: AppCache,
     private val now: () -> Instant = Clock.System::now,
     private val timeZone: () -> TimeZone = TimeZone::currentSystemDefault,
 ) {
@@ -77,6 +156,36 @@ class PlanStore(
 
     val syllabus: KeyedResources<UUID, Syllabus> =
         cache.keyed(Audience.SignedIn, READ_DOMAINS) { session, goalId -> session?.let { api.syllabus(it, goalId) } }
+
+    val progress: KeyedResources<UUID, GoalProgress> =
+        cache.keyed(Audience.SignedIn, READ_DOMAINS) { session, goalId -> session?.let { api.progress(it, goalId) } }
+
+    val resumeChangesPlan: KeyedResources<UUID, Boolean> =
+        cache.keyed(Audience.SignedIn, setOf(DataDomain.Goals)) { session, goalId -> session?.let { api.resumeChangesPlan(it, goalId) } }
+
+    val setupSteps: KeyedResources<UUID, List<OnboardingStep>> =
+        cache.keyed(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearningProfile)) { session, goalId ->
+            session?.let { api.setupSteps(it, goalId) }
+        }
+
+    suspend fun buildingRunId(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): String? = api.buildingRunId(session, goalId)
+
+    /** Throws when it couldn't start, as `GenerationFollower`'s restart does. */
+    suspend fun rebuild(goalId: UUID): String =
+        when (val result = cache.mutate(invalidating = setOf(DataDomain.Goals)) { api.rebuild(it, goalId) }) {
+            is MutationResult.Done -> result.value
+            is MutationResult.Failed -> throw ApiException(result.error, result.code, result.status, result.details)
+            MutationResult.Obsolete -> throw ApiException(ApiError.Unauthorized)
+        }
+
+    /** Main's `updateGoal` revalidates the learning profile too. */
+    suspend fun setStatus(
+        goalId: UUID,
+        status: GoalUpdateInput.Status,
+    ): MutationResult<Unit> = cache.mutate(invalidating = WRITE_DOMAINS + DataDomain.LearningProfile) { api.setStatus(it, goalId, status) }
 
     /**
      * The server plans again on every read, so the one shown is kept while nothing changed since it

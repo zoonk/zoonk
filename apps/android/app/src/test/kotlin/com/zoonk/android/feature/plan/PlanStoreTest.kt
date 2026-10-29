@@ -4,7 +4,6 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.value
-import com.zoonk.api.models.Plan
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -23,34 +22,6 @@ import kotlin.time.Instant
 class PlanStoreTest {
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val goalId = UUID.fromString(GOAL)
-
-    private class FakePlanApi : PlanApi {
-        var plans = 0
-        var changed = false
-        val askedSince = mutableListOf<Instant>()
-
-        override suspend fun plan(
-            session: AuthenticatedSession,
-            goalId: UUID,
-        ): Plan {
-            plans++
-            return plan()
-        }
-
-        override suspend fun planChanged(
-            session: AuthenticatedSession,
-            goalId: UUID,
-            since: Instant,
-        ): Boolean {
-            askedSince += since
-            return changed
-        }
-
-        override suspend fun syllabus(
-            session: AuthenticatedSession,
-            goalId: UUID,
-        ) = syllabus()
-    }
 
     @Test
     fun aPlanThatDidntChangeSinceItWasReadIsKept() =

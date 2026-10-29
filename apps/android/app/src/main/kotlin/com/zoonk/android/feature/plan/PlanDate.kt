@@ -30,11 +30,19 @@ fun formatPlanDate(
             near -> "MMMd"
             else -> "yMMMd"
         }
-    return DateFormat
+    return formatDay(date, skeleton, locale)
+}
+
+/** A calendar day carries no time zone, so it's formatted as a UTC instant in UTC. */
+internal fun formatDay(
+    date: LocalDate,
+    skeleton: String,
+    locale: Locale,
+): String =
+    DateFormat
         .getInstanceForSkeleton(skeleton, ULocale.forLocale(locale))
         .apply { timeZone = TimeZone.GMT_ZONE }
         .format(Date(date.toEpochDay() * MILLIS_PER_DAY))
-}
 
 private const val YEAR_AWAY_DAYS = 365
 private const val MILLIS_PER_DAY = 86_400_000L
