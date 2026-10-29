@@ -203,7 +203,7 @@ class GoalContentFlowTest {
 
     @Test
     fun practiceUsedUpForTheDaySaysWhenItComesBack() {
-        api.practice = { throw ApiException(ApiError.Unavailable, status = 409) }
+        api.practice = { throw ApiException(ApiError.Unavailable, code = "EXTRA_TIME_UNAVAILABLE", status = 409) }
         showChapter()
 
         rule.onNodeWithText("Practice this chapter").performClick()

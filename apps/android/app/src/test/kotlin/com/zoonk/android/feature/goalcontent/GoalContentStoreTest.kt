@@ -71,14 +71,26 @@ class GoalContentStoreTest {
             val api = FakeGoalContentApi()
             val store = stores(api).first
 
-            api.practice = { throw ApiException(ApiError.Unavailable, code = "CONFLICT", status = 409) }
+            api.practice = { throw ApiException(ApiError.Unavailable, code = "EXTRA_TIME_UNAVAILABLE", status = 409) }
             assertEquals(PracticeOutcome.DailyCap, store.practice(key))
 
-            api.practice = { throw ApiException(ApiError.Unavailable, code = "UNPROCESSABLE", status = 422) }
+            api.practice = { throw ApiException(ApiError.Unavailable, code = "NOTHING_TO_PRACTICE", status = 422) }
             assertEquals(PracticeOutcome.NothingToPractice, store.practice(key))
 
             api.practice = { throw ApiException(ApiError.Unavailable, status = 500) }
             assertEquals(PracticeOutcome.Failed, store.practice(key))
+        }
+
+    @Test
+    fun aGoalPausedOrFinishedElsewhereIsAFailureNotTheDailyCap() =
+        runTest {
+            val api =
+                FakeGoalContentApi().apply {
+                    practice =
+                        { throw ApiException(ApiError.Unavailable, code = "GOAL_NOT_ACTIVE", status = 409) }
+                }
+
+            assertEquals(PracticeOutcome.Failed, stores(api).first.practice(key))
         }
 
     @Test

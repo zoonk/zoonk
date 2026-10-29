@@ -85,9 +85,9 @@ class GoalContentStore(
             }
 
             is MutationResult.Failed -> {
-                when (result.status) {
-                    CONFLICT -> PracticeOutcome.DailyCap
-                    UNPROCESSABLE -> PracticeOutcome.NothingToPractice
+                when (result.code) {
+                    EXTRA_TIME_UNAVAILABLE -> PracticeOutcome.DailyCap
+                    NOTHING_TO_PRACTICE -> PracticeOutcome.NothingToPractice
                     else -> PracticeOutcome.Failed
                 }
             }
@@ -98,8 +98,8 @@ class GoalContentStore(
         }
 
     private companion object {
-        const val CONFLICT = 409
-        const val UNPROCESSABLE = 422
+        const val EXTRA_TIME_UNAVAILABLE = "EXTRA_TIME_UNAVAILABLE"
+        const val NOTHING_TO_PRACTICE = "NOTHING_TO_PRACTICE"
     }
 }
 
