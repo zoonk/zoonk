@@ -74,11 +74,17 @@ export function GridHeader({
     <div
       aria-hidden="true"
       className={cn(
-        "bg-background ring-border flex min-h-11 items-center justify-center rounded-xl text-xl ring-1 motion-safe:transition-colors",
+        "bg-background ring-border flex min-h-11 items-center justify-center rounded-xl ring-1 motion-safe:transition-colors",
+        isAllele ? "text-xl" : "text-lg",
         isLit && "bg-viz-accent-soft ring-viz-accent ring-2",
       )}
     >
-      <CellValue isAllele={isAllele} value={value} />
+      {/* A sum or product grid's cells are the answer, so its headers stay quieter than them. */}
+      <CellValue
+        className={isAllele ? undefined : "text-muted-foreground font-normal"}
+        isAllele={isAllele}
+        value={value}
+      />
     </div>
   );
 }
