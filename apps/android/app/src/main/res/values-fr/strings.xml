@@ -87,5 +87,6 @@
     <string name="load_failed_try_again">Réessayer</string>
     <string name="suggestion_view">Voir</string>
     <string name="suggestion_save_failed">L’enregistrement a échoué. Réessaie.</string>
+    <!-- Under the daily time chips; opens a menu of every other daily study time. -->
     <string name="other_time">Autre durée…</string>
 </resources>

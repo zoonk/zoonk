@@ -87,5 +87,6 @@
     <string name="load_failed_try_again">Noch einmal versuchen</string>
     <string name="suggestion_view">Ansehen</string>
     <string name="suggestion_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
+    <!-- Under the daily time chips; opens a menu of every other daily study time. -->
     <string name="other_time">Andere Lernzeit…</string>
 </resources>
