@@ -382,7 +382,13 @@ internal fun AnswerActions(
 
                         null -> {}
                     }
-                    CheckButton(busy = phase == RunPhase.Checking, enabled = run.canAnswer && draft != null, modifier = width) {
+                    BusyButton(
+                        stringResource(R.string.practice_check),
+                        busy = phase == RunPhase.Checking,
+                        enabled =
+                            run.canAnswer && draft != null,
+                        modifier = width,
+                    ) {
                         draft?.let { controls.submit(question, it) }
                     }
                     ask()

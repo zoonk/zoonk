@@ -266,6 +266,25 @@ enum class GenerationKind(
             ),
         steps = mapOf("writeTask" to StepPlace.Phase("write")),
     ),
+    ChallengeQuestions(
+        label = R.string.challenge_writing,
+        phases =
+            listOf(
+                GenerationPhase(
+                    "questions",
+                    32,
+                    R.string.challenge_writing_questions,
+                    listOf(R.string.challenge_writing_line),
+                    numbered = NumberedLines(10, R.string.generation_question_line, R.string.generation_question_review),
+                ),
+            ),
+        steps =
+            mapOf(
+                "challengeQuestionsReady" to StepPlace.Done,
+                "joinChallengeQuestions" to StepPlace.Join,
+                "writeChallengeQuestions" to StepPlace.Phase("questions"),
+            ),
+    ),
     SpeakingMock(
         label = R.string.speaking_writing_mock,
         phases =

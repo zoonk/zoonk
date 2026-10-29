@@ -37,6 +37,8 @@ import com.zoonk.android.feature.buddy.LiveBuddyApi
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.LiveCatalogApi
 import com.zoonk.android.feature.ceremonies.MilestoneViews
+import com.zoonk.android.feature.challenge.ChallengeStore
+import com.zoonk.android.feature.challenge.LiveChallengeApi
 import com.zoonk.android.feature.checkpoint.CheckpointStore
 import com.zoonk.android.feature.checkpoint.LiveCheckpointApi
 import com.zoonk.android.feature.conversation.ConversationStore
@@ -258,6 +260,7 @@ class AppContainer private constructor(
     val questionBlocks = QuestionBlockStore(LiveQuestionBlockApi(api), cache, timeZone)
     val mistakes = MistakesStore(LiveMistakesApi(api), cache, timeZone)
     val checkpoints = CheckpointStore(LiveCheckpointApi(api), cache, timeZone)
+    val challenges = ChallengeStore(LiveChallengeApi(api), cache, timeZone)
 
     val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone, learnerSummary.summary, scope)
 

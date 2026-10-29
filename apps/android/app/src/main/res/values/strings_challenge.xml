@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="challenge_writing">Writing your challenge</string>
+    <string name="challenge_writing_questions">Writing questions on what you studied</string>
+    <string name="challenge_writing_line">Picking the skills to ask about…</string>
+    <string name="challenge_writing_title">Getting your challenge ready</string>
+    <string name="challenge_writing_detail">We\'re writing its questions. It starts here when they\'re ready.</string>
+
+    <!-- %1$s is the challenge's name, like "Phase 2 challenge". -->
+    <string name="challenge_rematch">New try · %1$s</string>
+    <string name="challenge_trickster_recordings">Questions on recordings from this phase, played as in the exam, with no hints.</string>
+    <plurals name="challenge_trickster_recording_count">
+        <item quantity="one">Questions on %d recording from this phase, played as in the exam, with no hints.</item>
+        <item quantity="other">Questions on %d recordings from this phase, each played as in the exam, with no hints.</item>
+    </plurals>
+    <string name="challenge_trickster_mixed">Mixed questions from this phase, with no hints.</string>
+    <string name="challenge_trickster_rule">You\'ll see right or wrong after each answer, and why at the end, with the traps he set.</string>
+    <string name="challenge_weekly_detail">Questions from what you studied this week, with no hints.</string>
+    <string name="challenge_weekly_rule">You\'ll see right or wrong after each answer, and why at the end.</string>
+    <plurals name="challenge_questions">
+        <item quantity="one">%d question</item>
+        <item quantity="other">%d questions</item>
+    </plurals>
+    <!-- %1$s is the Brain Power the challenge gives, like 30. -->
+    <string name="challenge_prize">+%1$s Brain Power</string>
+    <!-- The learner's right answers (%1$d) out of all of them (%2$d). -->
+    <plurals name="challenge_result_right">
+        <item quantity="one">%1$d of %2$d right</item>
+        <item quantity="other">%1$d of %2$d right</item>
+    </plurals>
+
+    <string name="challenge_topics_weekly">This week\'s topics</string>
+    <string name="challenge_topics_asked">What he asked</string>
+    <string name="challenge_topics_will_ask">What he\'ll ask</string>
+    <plurals name="challenge_topic_count">
+        <item quantity="one">%d topic</item>
+        <item quantity="other">%d topics</item>
+    </plurals>
+
+    <string name="challenge_today">Today</string>
+    <string name="challenge_tomorrow">Tomorrow</string>
+    <!-- %1$s is the day; %2$s is the time it starts, like 9:00 AM. -->
+    <string name="challenge_day_time">%1$s · %2$s</string>
+
+    <string name="challenge_mock_start">Start the mock exam</string>
+    <string name="challenge_objective_only">Objective part only</string>
+    <string name="challenge_section_questions">Questions</string>
+    <!-- A section's questions (%1$d) and its time (%2$s), like "45 questions · 1 h 30 min". -->
+    <plurals name="challenge_section_size">
+        <item quantity="one">%1$d question · %2$s</item>
+        <item quantity="other">%1$d questions · %2$s</item>
+    </plurals>
+    <string name="challenge_written_asked">Written in the mock, graded by the exam\'s criteria after you hand it in.</string>
+    <string name="challenge_written_practiced">Written: you practice it in your essay sessions, graded by the exam\'s criteria.</string>
+    <string name="challenge_penalty_cancels">A wrong answer cancels a right one, so leave a statement blank when you\'re not sure.</string>
+    <!-- %1$s is the share of a right answer a wrong one costs, like 25%; %2$s is the confidence below which leaving it blank pays off, like 20%. -->
+    <string name="challenge_penalty_costs">A wrong answer costs %1$s of a right one, so leave a question blank when you\'re less than %2$s sure.</string>
+    <string name="challenge_result_at_end">Your result only shows at the end, like on exam day.</string>
+    <string name="challenge_mock_plus">Mock exams come with Plus: whenever you want, and every week in your plan.</string>
+
+    <string name="challenge_call_title">The unit\'s call</string>
+    <string name="challenge_call_detail">A live call where you get your point across. Speak or type.</string>
+    <!-- %1$s is the call's length; %2$s its level, like B1. -->
+    <string name="challenge_call_level">%1$s · Level %2$s</string>
+    <plurals name="challenge_call_goals">
+        <item quantity="one">%d goal</item>
+        <item quantity="other">%d goals</item>
+    </plurals>
+    <!-- %1$s is how many goals win the call. -->
+    <string name="challenge_call_to_win">%1$s to win</string>
+    <string name="challenge_call_goals_title">What to get across</string>
+    <string name="challenge_call_passed">Challenge passed</string>
+    <!-- The goals the learner got across (%1$d) out of all of them (%2$d). -->
+    <plurals name="challenge_call_result">
+        <item quantity="one">%1$d of %2$d goals</item>
+        <item quantity="other">%1$d of %2$d goals</item>
+    </plurals>
+    <string name="challenge_call_plus">Challenge calls come with Plus. Your plan keeps going without them.</string>
+
+    <string name="challenge_start">Start</string>
+    <string name="challenge_starting">Starting…</string>
+    <string name="challenge_start_failed">That didn\'t go through. Try again in a moment.</string>
+    <string name="challenge_start_slow">Still starting. This is taking longer than usual.</string>
+    <string name="challenge_continue">Continue</string>
+    <string name="challenge_see_result">See how it went</string>
+    <string name="challenge_see_plus">See Plus</string>
+    <string name="challenge_opens_tomorrow">Opens tomorrow</string>
+    <plurals name="challenge_opens_in">
+        <item quantity="one">Opens in %d day</item>
+        <item quantity="other">Opens in %d days</item>
+    </plurals>
+    <string name="challenge_opens_after_lessons">Opens after this phase\'s lessons</string>
+    <string name="challenge_not_ready">This challenge isn\'t ready yet.</string>
+    <string name="challenge_next_session">In your next session</string>
+    <string name="challenge_used_up">You\'ve reached today\'s study time.</string>
+    <string name="challenge_used_up_move">You\'ve reached today\'s study time. Move it to Monday to keep it.</string>
+    <string name="challenge_used_up_next_session">You\'ve reached today\'s study time. It\'ll be in your next session.</string>
+    <string name="challenge_used_up_tomorrow">You\'ve reached today\'s study time. It\'ll be here tomorrow.</string>
+    <!-- %1$s is a weekday, like Monday. -->
+    <string name="challenge_used_up_on">You\'ve reached today\'s study time. It\'ll be here on %1$s.</string>
+    <string name="challenge_back_to_today">Back to Today</string>
+
+    <string name="challenge_move">Move to Monday</string>
+    <!-- %1$s is a weekday and day, like Monday, Nov 3. -->
+    <string name="challenge_moved_title">Moved to %1$s</string>
+    <string name="challenge_moved_detail">Your plan moved later lessons to make room for it.</string>
+    <string name="challenge_undo">Undo</string>
+    <string name="challenge_move_before_monday">A weekly challenge or mock exam can move only to a day on or after next Monday. It stays where it is.</string>
+    <string name="challenge_move_collision">That day already has a weekly challenge or mock exam, so this one stays where it is.</string>
+    <string name="challenge_move_no_room">Your plan can\'t make room for this challenge on Monday. It stays where it is.</string>
+    <!-- %1$s is the mock's length; %2$s the day, like Nov 3. -->
+    <string name="challenge_move_unfunded">Your plan can\'t make room for this %1$s mock exam on %2$s. It stays where it is.</string>
+    <string name="challenge_change_failed">That didn\'t save. Try again.</string>
+</resources>

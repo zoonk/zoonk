@@ -232,16 +232,18 @@ internal fun ListeningSet(set: ItemSet) {
     }
 }
 
+/** A main action that shows it's working while its write is on its way. */
 @Composable
-internal fun CheckButton(
+internal fun BusyButton(
+    label: String,
     busy: Boolean,
     enabled: Boolean,
     modifier: Modifier = Modifier,
-    onCheck: () -> Unit,
+    onClick: () -> Unit,
 ) {
-    Button(onClick = onCheck, enabled = enabled && !busy, modifier = modifier) {
+    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier) {
         if (busy) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(16.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
-        Text(stringResource(R.string.practice_check))
+        Text(label)
     }
 }
 

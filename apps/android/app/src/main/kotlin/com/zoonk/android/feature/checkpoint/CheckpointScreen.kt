@@ -74,6 +74,7 @@ import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.practice.ActionBarWidth
 import com.zoonk.android.feature.practice.ActionColumn
 import com.zoonk.android.feature.practice.ActionFlow
+import com.zoonk.android.feature.practice.BusyButton
 import com.zoonk.android.feature.practice.ListeningSet
 import com.zoonk.android.feature.practice.RunLoadFailed
 import com.zoonk.android.feature.practice.RunLoading
@@ -215,15 +216,22 @@ private fun CheckpointRead(
 }
 
 @Composable
-private fun eyebrow(checkpoint: Checkpoint): String {
-    val phase = checkpoint.phase?.let { (it.index + 1).toString() }
-    return when {
-        checkpoint.kind == Checkpoint.Kind.WEEKLY -> stringResource(R.string.checkpoint_weekly)
-        checkpoint.kind == Checkpoint.Kind.FINAL_BOSS -> stringResource(R.string.checkpoint_final)
-        phase != null -> stringResource(R.string.checkpoint_phase, phase)
+private fun eyebrow(checkpoint: Checkpoint): String =
+    checkpointName(checkpoint.kind == Checkpoint.Kind.WEEKLY, checkpoint.kind == Checkpoint.Kind.FINAL_BOSS, checkpoint.phase)
+
+/** A challenge's name, as its intro and its duel say it (main's `useCheckpointEyebrow`). */
+@Composable
+internal fun checkpointName(
+    weekly: Boolean,
+    finalBoss: Boolean,
+    phase: CheckpointPhase?,
+): String =
+    when {
+        weekly -> stringResource(R.string.checkpoint_weekly)
+        finalBoss -> stringResource(R.string.checkpoint_final)
+        phase != null -> stringResource(R.string.checkpoint_phase, (phase.index + 1).toString())
         else -> stringResource(R.string.checkpoint_phase_plain)
     }
-}
 
 @Composable
 internal fun DuelPlay(
@@ -397,32 +405,27 @@ private fun DuelActions(
         ActionFlow { width ->
             when {
                 question == null || state.feedback != null -> {
-                    BusyButton(busy = state.pending, enabled = true, modifier = width, onClick = viewModel::next) {
-                        stringResource(if (score.done) R.string.checkpoint_see_result else R.string.checkpoint_next)
-                    }
+                    BusyButton(
+                        stringResource(if (score.done) R.string.checkpoint_see_result else R.string.checkpoint_next),
+                        busy = state.pending,
+                        enabled = true,
+                        modifier = width,
+                        onClick = viewModel::next,
+                    )
                 }
 
                 else -> {
-                    BusyButton(busy = state.pending, enabled = state.selected != null, modifier = width, onClick = {
+                    BusyButton(
+                        stringResource(R.string.checkpoint_confirm),
+                        busy = state.pending,
+                        enabled = state.selected != null,
+                        modifier = width,
+                    ) {
                         state.selected?.let(viewModel::confirm)
-                    }) { stringResource(R.string.checkpoint_confirm) }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun BusyButton(
-    busy: Boolean,
-    enabled: Boolean,
-    modifier: Modifier,
-    onClick: () -> Unit,
-    label: @Composable () -> String,
-) {
-    Button(onClick = onClick, enabled = enabled && !busy, modifier = modifier) {
-        if (busy) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(16.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
-        Text(label())
     }
 }
 
