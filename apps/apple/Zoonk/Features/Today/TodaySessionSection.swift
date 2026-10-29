@@ -348,6 +348,8 @@ private struct DayProgressRow: View {
 }
 
 struct BlockRow: View {
+  @Environment(\.dynamicTypeSize) private var typeSize
+
   let block: StudyBlock
   let view: TodayView?
   let isNext: Bool
@@ -371,31 +373,42 @@ struct BlockRow: View {
               .foregroundStyle(.secondary)
           }
         }
+
+        // Accessibility sizes give the title the row's width: the minutes go under it.
+        if typeSize.isAccessibilitySize {
+          trailing
+        }
       }
 
-      Spacer(minLength: 8)
-
-      if isBusy {
-        ProgressView()
-      } else if !block.isFinished {
-        HStack(spacing: 6) {
-          if countsTowardMission {
-            Image(systemName: "target")
-              .foregroundStyle(.brain)
-              .accessibilityLabel(
-                Text(
-                  "Counts toward a mission", tableName: "Today",
-                  comment: "A block that moves today's missions"))
-          }
-
-          Text(studyDuration(minutes: block.estimatedMinutes))
-            .font(.footnote.monospacedDigit())
-            .foregroundStyle(.secondary)
-        }
+      if !typeSize.isAccessibilitySize {
+        Spacer(minLength: 8)
+        trailing
       }
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(status)
+  }
+
+  @ViewBuilder
+  private var trailing: some View {
+    if isBusy {
+      ProgressView()
+    } else if !block.isFinished {
+      HStack(spacing: 6) {
+        if countsTowardMission {
+          Image(systemName: "target")
+            .foregroundStyle(.brain)
+            .accessibilityLabel(
+              Text(
+                "Counts toward a mission", tableName: "Today",
+                comment: "A block that moves today's missions"))
+        }
+
+        Text(studyDuration(minutes: block.estimatedMinutes))
+          .font(.footnote.monospacedDigit())
+          .foregroundStyle(.secondary)
+      }
+    }
   }
 
   @ViewBuilder

@@ -124,14 +124,15 @@ private struct RoadmapCompact: View {
 
       HStack(alignment: .firstTextBaseline) {
         if let currentIndex {
-          position(phase: phases[currentIndex])
-          Spacer()
-          Text(
-            "\(currentIndex + 1) of \(phases.count)", tableName: "Plan",
-            comment: "The learner's phase number of the plan's phases, under the roadmap"
-          )
-          .monospacedDigit()
-          .foregroundStyle(.secondary)
+          PlanPathRow {
+            position(phase: phases[currentIndex])
+          } value: {
+            Text(
+              "\(currentIndex + 1) of \(phases.count)", tableName: "Plan",
+              comment: "The learner's phase number of the plan's phases, under the roadmap"
+            )
+            .monospacedDigit()
+          }
         } else {
           Text(
             "\(phases.filter { $0.state == .done }.count) of \(phases.count) phases done",

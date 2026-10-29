@@ -556,16 +556,13 @@ struct SyllabusSubjectRow: View {
     let share = isExam ? (subject.preparation ?? 0) : subject.lessonShare
 
     VStack(alignment: .leading, spacing: 6) {
-      HStack(alignment: .firstTextBaseline) {
+      PlanPathRow {
         Text(subject.name)
           .foregroundStyle(subject.notPlannedReason == nil ? .primary : .secondary)
-
-        Spacer()
-
+      } value: {
         Text(share, format: .percent.precision(.fractionLength(0)))
           .font(.subheadline)
           .monospacedDigit()
-          .foregroundStyle(.secondary)
       }
 
       if subject.notPlannedReason != nil {
