@@ -27,16 +27,25 @@ class LearnerSummaryStore(
         }
 
     init {
-        // nextChangeAt is when it changes without a write: the next midnight, the subscription's next change.
-        scope.launch {
-            summary.state
-                .map { it.value?.nextChangeAt }
-                .distinctUntilChanged()
-                .collectLatest { nextChangeAt ->
-                    nextChangeAt ?: return@collectLatest
-                    delay((nextChangeAt - now()).coerceAtLeast(0).milliseconds)
-                    summary.invalidate()
-                }
-        }
+        scope.invalidateAtNextChange(summary, summary, now)
     }
+}
+
+/**
+ * Reads [resource] again when [summary] says things change without a write (`nextChangeAt`): the
+ * next midnight, the subscription's next change.
+ */
+fun CoroutineScope.invalidateAtNextChange(
+    summary: Resource<LearnerSummary>,
+    resource: Resource<*>,
+    now: () -> Long = System::currentTimeMillis,
+) = launch {
+    summary.state
+        .map { it.value?.nextChangeAt }
+        .distinctUntilChanged()
+        .collectLatest { nextChangeAt ->
+            nextChangeAt ?: return@collectLatest
+            delay((nextChangeAt - now()).coerceAtLeast(0).milliseconds)
+            resource.invalidate()
+        }
 }

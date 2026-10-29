@@ -244,7 +244,7 @@ class AppContainer private constructor(
     val mistakes = MistakesStore(LiveMistakesApi(api), cache, timeZone)
     val checkpoints = CheckpointStore(LiveCheckpointApi(api), cache, timeZone)
 
-    val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone)
+    val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone, learnerSummary.summary, scope)
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =

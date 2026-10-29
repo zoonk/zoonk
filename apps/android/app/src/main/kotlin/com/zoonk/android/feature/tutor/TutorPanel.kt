@@ -33,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -103,6 +104,7 @@ internal class TutorPage(
     val greetingAction: (@Composable () -> Unit)? = null,
     val onAsked: () -> Unit = {},
     val onAnswered: () -> Unit = {},
+    val composerFocus: FocusRequester? = null,
 )
 
 @Composable
@@ -116,7 +118,7 @@ internal fun TutorPanel(
     page: TutorPage? = null,
 ) {
     val suggestions = page?.suggestions ?: tutorSuggestions(vm.scope, lessonSuggestions)
-    val composerPadding = Modifier.padding(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 16.dp)
+    val composerPadding = Modifier.padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp)
 
     Column(modifier) {
         if (access != TutorAccess.Ask && page != null) {
@@ -161,7 +163,15 @@ internal fun TutorPanel(
                 )
             }
         }
-        TutorComposer(vm, turns, state, routes, composerPadding, placeholder = page?.placeholder ?: placeholderLabel(vm.scope))
+        TutorComposer(
+            vm,
+            turns,
+            state,
+            routes,
+            composerPadding,
+            placeholder = page?.placeholder ?: placeholderLabel(vm.scope),
+            focus = page?.composerFocus ?: remember { FocusRequester() },
+        )
     }
 }
 

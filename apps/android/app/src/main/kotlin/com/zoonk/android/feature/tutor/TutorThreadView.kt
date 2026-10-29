@@ -172,7 +172,7 @@ private fun Turns(
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
         firstDay?.let { day -> item(key = "first-day", contentType = "day") { DayLabel(day, today) } }
-        page?.let { item(key = "greeting", contentType = "greeting") { Greeting(identity, it) } }
+        page?.let { item(key = "greeting", contentType = "greeting") { TutorGreeting(identity, it.greeting, it.greetingAction) } }
         pending()
         if (thread.hasMore) {
             item(key = "earlier", contentType = "earlier") { EarlierQuestions(state, vm::loadEarlier) }
@@ -219,16 +219,18 @@ private fun DayLabel(
     )
 }
 
+/** The buddy's hello, which opens its conversations: as an answer would sit, beside its face. */
 @Composable
-private fun Greeting(
+internal fun TutorGreeting(
     identity: TutorIdentity,
-    page: TutorPage,
+    text: String,
+    action: (@Composable () -> Unit)? = null,
 ) {
     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         Box(Modifier.size(AVATAR_SIZE)) { TutorAvatar(identity, AVATAR_SIZE) }
         Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            Text(page.greeting, style = MaterialTheme.typography.bodyLarge)
-            page.greetingAction?.invoke()
+            Text(text, style = MaterialTheme.typography.bodyLarge)
+            action?.invoke()
         }
     }
 }
@@ -271,7 +273,7 @@ private fun TurnView(
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         day?.invoke()
         Column(
-            Modifier.fillMaxWidth().semantics(mergeDescendants = true) { heading() },
+            Modifier.fillMaxWidth().padding(start = AVATAR_SIZE + 12.dp).semantics(mergeDescendants = true) { heading() },
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {

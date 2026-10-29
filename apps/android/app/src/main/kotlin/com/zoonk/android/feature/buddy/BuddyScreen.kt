@@ -3,8 +3,8 @@ package com.zoonk.android.feature.buddy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -20,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedButton
@@ -35,6 +36,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -42,7 +45,6 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
@@ -108,8 +110,15 @@ fun BuddyScreen(
                     }
                 }
 
-                read is LoadState.Failed -> {
-                    LoadFailedMessage(onRetry = { coroutines.launch { app.buddy.status.refresh() } })
+                read is LoadState.Failed || summary is LoadState.Failed -> {
+                    LoadFailedMessage(
+                        onRetry = {
+                            coroutines.launch {
+                                if (read is LoadState.Failed) app.buddy.status.refresh()
+                                if (summary is LoadState.Failed) app.learnerSummary.summary.refresh()
+                            }
+                        },
+                    )
                 }
 
                 else -> {
@@ -149,11 +158,21 @@ internal fun BuddyPage(
     val coroutines = rememberCoroutineScope()
     // Only while awake: asleep it naps on, and glowing it's already beaming.
     val react: (BuddyAct) -> Unit = { act -> if (look.energyState == BuddyEnergyState.Awake) coroutines.launch { face.play(act) } }
-    val onMission: (MissionOpens) -> Unit = { vm.openMission(it, goalId) }
+    val composer = remember { FocusRequester() }
+    val keyboard = LocalSoftwareKeyboardController.current
+    var asking by remember { mutableStateOf(false) }
+    // Asking the buddy happens in this page's own composer, so its mission puts the cursor there.
+    val onMission: (MissionOpens) -> Unit = { opens -> if (opens == MissionOpens.Buddy) asking = true else vm.openMission(opens, goalId) }
     val hasMistake = mistakes.value?.let { it.ready + it.tomorrow > 0 } == true
     val earlier by app.earlierQuestions.questions.collectShown()
 
     LaunchedEffect(vm) { vm.routes.collect(navigator::open) }
+    LaunchedEffect(asking) {
+        if (!asking) return@LaunchedEffect
+        composer.requestFocus()
+        keyboard?.show()
+        asking = false
+    }
     LaunchedEffect(ask) { if (ask != null && tutor.draft.text.isEmpty()) tutor.draft.setTextAndPlaceCursorAtEnd(ask) }
 
     val page =
@@ -164,6 +183,7 @@ internal fun BuddyPage(
             greetingAction = if (status.buddy.picked) null else ({ PickBuddyButton { editing = true } }),
             onAsked = { react(BuddyAct.Glance) },
             onAnswered = { react(BuddyAct.Smile) },
+            composerFocus = composer,
         )
     val routes =
         TutorRoutes(
@@ -178,17 +198,24 @@ internal fun BuddyPage(
     ) { beside ->
         Column(Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
             Column(Modifier.widthIn(max = BUDDY_COLUMN_WIDTH).weight(1f)) {
-                BuddyHeader(look, face, name, status, Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp)) {
-                    if (!beside) BuddyTodayLine(status, look, name, onMission, navigator)
-                    BuddyMenu(
-                        status,
-                        name,
-                        hasEarlier = earlier.value != null,
-                        onEdit = { editing = true },
-                        onGlasses = { wearing = true },
-                        navigator,
-                    )
-                }
+                BuddyHeader(
+                    look,
+                    face,
+                    name,
+                    status,
+                    Modifier.padding(start = 16.dp, end = 4.dp, top = 8.dp),
+                    line = if (beside) null else ({ BuddyTodayLine(status, look, name, onMission, navigator) }),
+                    menu = {
+                        BuddyMenu(
+                            status,
+                            name,
+                            hasEarlier = earlier.value != null,
+                            onEdit = { editing = true },
+                            onGlasses = { wearing = true },
+                            navigator,
+                        )
+                    },
+                )
                 if (vm.saveFailed && !editing) SaveFailed(Modifier.padding(horizontal = 16.dp))
                 if (vm.openFailed) OpenFailed(Modifier.padding(horizontal = 16.dp))
                 TutorPanel(tutor, access, TutorIdentity(name, look), routes, Modifier.weight(1f), page = page)
@@ -234,29 +261,30 @@ internal fun BuddyHeader(
     name: String,
     status: BuddyStatus,
     modifier: Modifier = Modifier,
-    trailing: @Composable RowScope.() -> Unit = {},
+    line: (@Composable () -> Unit)? = null,
+    menu: (@Composable () -> Unit)? = null,
 ) {
-    Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+    Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
         Box(Modifier.size(FACE_SIZE)) {
             if (face != null) BuddyActor(look, Modifier.size(FACE_SIZE), state = face) else BuddyStill(look)
         }
-        Column(Modifier.weight(1f)) {
-            Text(
-                name,
-                Modifier.semantics { heading() },
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                stringResource(R.string.buddy_page_line, buddyStageName(look.stage)),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodySmall,
-            )
+        // With large text the day's line moves under the name instead of squeezing it.
+        FlowRow(
+            Modifier.weight(1f),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            itemVerticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column {
+                Text(name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+                Text(
+                    stringResource(R.string.buddy_page_line, buddyStageName(look.stage)),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            line?.invoke()
         }
-        trailing()
+        menu?.invoke()
     }
 }
 
@@ -286,7 +314,9 @@ private fun BuddyMenu(
     val more = stringResource(R.string.buddy_page_more, name)
 
     Box {
-        IconButton(onClick = { open = true }) {
+        IconButton(onClick = {
+            open = true
+        }, colors = IconButtonDefaults.iconButtonColors(contentColor = MaterialTheme.colorScheme.onSurfaceVariant)) {
             Icon(painterResource(R.drawable.ic_more_vert), contentDescription = more)
         }
         DropdownMenu(expanded = open, onDismissRequest = { open = false }) {

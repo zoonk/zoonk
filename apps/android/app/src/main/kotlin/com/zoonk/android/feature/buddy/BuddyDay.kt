@@ -3,9 +3,11 @@ package com.zoonk.android.feature.buddy
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -14,11 +16,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -30,6 +29,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -37,6 +37,7 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.collectShown
@@ -92,13 +93,23 @@ internal fun BuddyTodayLine(
         ).joinToString(", ")
     val number = MaterialTheme.typography.labelMedium.withTabularFigures()
 
-    TextButton(onClick = { open = true }, modifier = Modifier.clearAndSetSemantics { contentDescription = spoken }) {
-        Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+    val icon = with(LocalDensity.current) { LINE_ICON.toDp() }
+
+    TextButton(
+        onClick = { open = true },
+        modifier = Modifier.semantics { contentDescription = spoken },
+        contentPadding = PaddingValues(horizontal = 8.dp),
+    ) {
+        Row(
+            Modifier.clearAndSetSemantics {},
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
             Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     painterResource(R.drawable.ic_bolt),
                     contentDescription = null,
-                    Modifier.size(14.dp),
+                    Modifier.size(icon),
                     tint = MaterialTheme.zoonk.energy,
                 )
                 Text(energy ?: DASH, style = number, color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -106,9 +117,9 @@ internal fun BuddyTodayLine(
             if (today == null || today.missions.isNotEmpty()) {
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically) {
                     if (today != null) {
-                        MissionsRing(done, today.missions.size, Modifier.size(14.dp), strokeWidth = RING_STROKE)
+                        MissionsRing(done, today.missions.size, Modifier.size(icon), strokeWidth = RING_STROKE)
                     } else {
-                        Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(14.dp))
+                        Icon(painterResource(R.drawable.ic_check), contentDescription = null, Modifier.size(icon))
                     }
                     Text(
                         today?.let { "$done/${it.missions.size}" } ?: DASH,
@@ -177,8 +188,14 @@ private fun BuddyTodaySheet(
                 onDismiss()
                 navigator.open(AppRoute.StatsEnergy)
             }
-            BuddyMissions(status, look, name, onMission)
-            BuddyFirstStepsSection(status.firstSteps, look, name, onMission)
+            if (status.today?.missions?.isNotEmpty() == true) {
+                HorizontalDivider()
+                BuddyMissions(status, look, name, onMission)
+            }
+            if (status.firstSteps != null) {
+                HorizontalDivider()
+                BuddyFirstStepsSection(status.firstSteps, look, name, onMission)
+            }
         }
     }
 }
@@ -206,36 +223,52 @@ internal fun BuddyDayPane(
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(name, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
-            OutlinedCard(Modifier.fillMaxWidth()) {
-                ListItem(headlineContent = { Text(growthLine(status.nextStage)) }, colors = ROW_COLORS)
+            Column {
+                PaneRow(growthLine(status.nextStage))
                 HorizontalDivider()
-                ListItem(
-                    headlineContent = { Text(stringResource(R.string.buddy_page_remembers, name)) },
-                    trailingContent = {
-                        memory.value?.let {
-                            Text(
-                                it.facts.size.toString(),
-                                style = MaterialTheme.typography.labelLarge.withTabularFigures(),
-                            )
-                        }
-                    },
-                    modifier = Modifier.clickable { navigator.open(AppRoute.Memory) },
-                    colors = ROW_COLORS,
-                )
+                PaneRow(stringResource(R.string.buddy_page_remembers, name), onClick = { navigator.open(AppRoute.Memory) }) {
+                    memory.value?.let {
+                        Text(
+                            it.facts.size.toString(),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                        )
+                    }
+                }
                 HorizontalDivider()
-                ListItem(
-                    headlineContent = { Text(stringResource(R.string.buddy_glasses)) },
-                    trailingContent = { GlassesCount(status) },
-                    modifier = Modifier.clickable(onClick = onGlasses),
-                    colors = ROW_COLORS,
-                )
+                PaneRow(stringResource(R.string.buddy_glasses), onClick = onGlasses) { GlassesCount(status) }
                 HorizontalDivider()
-                ListItem(
-                    headlineContent = { Text(stringResource(R.string.buddy_page_weekly_summary)) },
-                    modifier = Modifier.clickable { navigator.open(AppRoute.Logbook) },
-                    colors = ROW_COLORS,
-                )
+                PaneRow(stringResource(R.string.buddy_page_weekly_summary), onClick = { navigator.open(AppRoute.Logbook) })
             }
+        }
+    }
+}
+
+/** One of the buddy's rows; one that opens something says so with a chevron. */
+@Composable
+private fun PaneRow(
+    text: String,
+    onClick: (() -> Unit)? = null,
+    trailing: @Composable () -> Unit = {},
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .heightIn(min = 48.dp)
+            .padding(vertical = 10.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text, Modifier.weight(1f), style = MaterialTheme.typography.titleSmall)
+        trailing()
+        if (onClick != null) {
+            Icon(
+                painterResource(R.drawable.ic_chevron_right),
+                contentDescription = null,
+                Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
@@ -257,6 +290,7 @@ private fun BuddyMissions(
         buddyName = name,
         onOpen = onMission,
         brainPower = status.belt.totalBrainPower,
+        showBuddy = false,
     )
 }
 
@@ -323,8 +357,7 @@ private fun growthLine(next: BuddyStatusNextStage?): String {
     }
 }
 
-private val ROW_COLORS @Composable get() = ListItemDefaults.colors(containerColor = MaterialTheme.colorScheme.surface)
-
 private const val PERCENT = 100.0
 private const val DASH = "–"
 private const val RING_STROKE = 6f
+private val LINE_ICON = 14.sp

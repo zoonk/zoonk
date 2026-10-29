@@ -13,7 +13,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -26,12 +25,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
-import com.zoonk.android.feature.tutor.TutorAvatar
+import com.zoonk.android.feature.tutor.TutorGreeting
 import com.zoonk.android.feature.tutor.TutorIdentity
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -58,17 +59,13 @@ internal fun BuddyGoalStart(
     val examples = rememberGoalExamples().take(EXAMPLES).map { it.label }
 
     Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-        Column(Modifier.widthIn(max = BUDDY_COLUMN_WIDTH).fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(
+            Modifier.widthIn(max = BUDDY_COLUMN_WIDTH).fillMaxSize().padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
             Column(Modifier.weight(1f).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 BuddyHeader(look, face = null, name = name, status = status)
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    TutorAvatar(TutorIdentity(name, look), AVATAR_SIZE)
-                    Text(
-                        stringResource(R.string.buddy_page_goal_greeting, name),
-                        Modifier.weight(1f).padding(top = 4.dp),
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
+                TutorGreeting(TutorIdentity(name, look), stringResource(R.string.buddy_page_goal_greeting, name))
                 if (earlier.value != null) {
                     TextButton(onClick = { navigator.open(AppRoute.EarlierQuestions) }) {
                         Icon(painterResource(R.drawable.ic_history), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
@@ -76,7 +73,8 @@ internal fun BuddyGoalStart(
                     }
                 }
             }
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            val examplesLabel = stringResource(R.string.goal_box_examples)
+            FlowRow(Modifier.semantics { contentDescription = examplesLabel }, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 examples.forEach { example -> SuggestionChip(onClick = { goal = example }, label = { Text(example) }) }
             }
             GoalBox(value = goal, onValueChange = { goal = it }, onSubmit = { navigator.open(AppRoute.StartGoal(goal = it)) })
@@ -85,4 +83,3 @@ internal fun BuddyGoalStart(
 }
 
 private const val EXAMPLES = 3
-private val AVATAR_SIZE = 32.dp

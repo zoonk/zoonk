@@ -18,7 +18,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isShiftPressed
@@ -33,7 +36,6 @@ import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.LimitNotice
@@ -47,6 +49,7 @@ internal fun TutorComposer(
     routes: TutorRoutes,
     modifier: Modifier = Modifier,
     placeholder: String = placeholderLabel(vm.scope),
+    focus: FocusRequester = remember { FocusRequester() },
 ) {
     val limit = turns?.let(state::limit)
 
@@ -80,12 +83,13 @@ internal fun TutorComposer(
             modifier =
                 Modifier
                     .fillMaxWidth()
+                    .focusRequester(focus)
                     .onPreviewKeyEvent { event ->
                         val send = event.key == Key.Enter && !event.isShiftPressed
                         if (send && event.type == KeyEventType.KeyDown && canSend) vm.send()
                         send
                     },
-            placeholder = { Text(placeholder, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+            placeholder = { Text(placeholder) },
             trailingIcon = { SendButton(state.asking, resending, enabled = canSend, onClick = vm::send) },
             inputTransformation = InputTransformation.maxLength(MAX_QUESTION_LENGTH),
             lineLimits = TextFieldLineLimits.MultiLine(maxHeightInLines = MAX_LINES),

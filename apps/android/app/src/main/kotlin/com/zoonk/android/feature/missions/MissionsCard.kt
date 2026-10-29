@@ -62,7 +62,8 @@ import kotlinx.coroutines.launch
 /**
  * The day's missions (main's `MissionsCard`): their status, the Brain Power they earn together,
  * a track of their progress and a row each. [rowsInQueue] leaves the rows to the session's queue,
- * which marks each mission's block; [collapseWhenDone] folds a won day to one line.
+ * which marks each mission's block; [collapseWhenDone] folds a won day to one line; [showBuddy] off
+ * where the whole page is the buddy's.
  */
 @Composable
 fun MissionsCard(
@@ -77,6 +78,7 @@ fun MissionsCard(
     blockOf: (DayMission) -> DayStep? = { null },
     rowsInQueue: Boolean = false,
     collapseWhenDone: Boolean = false,
+    showBuddy: Boolean = true,
 ) {
     if (missions.isEmpty()) return
 
@@ -115,7 +117,7 @@ fun MissionsCard(
     OutlinedCard(modifier) {
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 4.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
-                Buddy(buddy, Modifier.padding(top = 2.dp).size(24.dp), crop = BuddyCrop.Face)
+                if (showBuddy) Buddy(buddy, Modifier.padding(top = 2.dp).size(24.dp), crop = BuddyCrop.Face)
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(
                         text = stringResource(if (won) R.string.missions_done else R.string.missions_title),

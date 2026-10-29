@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.LearningProfileStore
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.session.page
@@ -93,12 +94,13 @@ class BuddyViewModel internal constructor(
         viewModelScope.launch {
             try {
                 today.today.load()
-                val read = today.today.state.value.value as? TodayRead.Day
-                val step = read?.day?.steps?.firstOrNull { it.id == block.blockId }
-                if (read == null || step == null) {
-                    store.status.refresh()
-                    return@launch
-                }
+                // Today read before the day was opened elsewhere doesn't have the block yet.
+                if (today.find(block, goalId) == null) today.today.refresh()
+                val (read, step) =
+                    today.find(block, goalId) ?: run {
+                        store.status.refresh()
+                        return@launch
+                    }
                 when (val result = opener.open(read.day, step, next = false, goalId = read.today.goal.id)) {
                     is MutationResult.Done -> result.value?.let(opened::trySend) ?: store.status.refresh()
                     is MutationResult.Failed -> openFailed = true
@@ -109,4 +111,18 @@ class BuddyViewModel internal constructor(
             }
         }
     }
+}
+
+private fun TodayStore.find(
+    block: MissionOpens.Block,
+    goalId: String,
+): Pair<TodayRead.Day, DayStep>? {
+    val read = today.state.value.value as? TodayRead.Day ?: return null
+    if (read.today.goal.id
+            .toString() != goalId
+    ) {
+        return null
+    }
+    val step = read.day.steps.firstOrNull { it.id == block.blockId } ?: return null
+    return read to step
 }
