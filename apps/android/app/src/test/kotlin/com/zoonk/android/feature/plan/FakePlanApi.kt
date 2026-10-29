@@ -9,6 +9,7 @@ import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlin.time.Instant
 
@@ -19,6 +20,11 @@ internal class FakePlanApi : PlanApi {
     val statuses = mutableListOf<GoalUpdateInput.Status>()
     val askedSince = mutableListOf<Instant>()
     var changeFailure: ApiException? = null
+    var planFailure: ApiException? = null
+
+    /** Holds a change asking for one of these operations until its gate opens. */
+    val gates = mutableMapOf<PlanOp, CompletableDeferred<Unit>>()
+    var createdAt: (List<PlanOp>) -> String = { "2026-10-28T12:00:00Z" }
     val changes = mutableListOf<List<PlanOp>>()
     val decisions = mutableListOf<PlanChangeDecisionInput.Status>()
 
@@ -26,6 +32,7 @@ internal class FakePlanApi : PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
     ): Plan {
+        planFailure?.let { throw it }
         plans++
         return plan()
     }
@@ -83,9 +90,10 @@ internal class FakePlanApi : PlanApi {
         goalId: UUID,
         operations: List<PlanOp>,
     ): PlanChangeResult {
+        operations.firstNotNullOfOrNull { gates[it] }?.await()
         changeFailure?.let { throw it }
         changes += operations
-        return PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED)
+        return PlanChangeResult(change = planChange(createdAt = createdAt(operations)), status = PlanChangeResult.Status.APPLIED)
     }
 
     override suspend fun preview(

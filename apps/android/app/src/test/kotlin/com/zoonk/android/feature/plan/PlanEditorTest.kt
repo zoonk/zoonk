@@ -2,6 +2,9 @@ package com.zoonk.android.feature.plan
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.assertIsOff
@@ -29,6 +32,7 @@ class PlanEditorTest {
 
     private val changes = mutableListOf<Pair<PlanPart, List<PlanOp>>>()
     private val undone = mutableListOf<PlanChange>()
+    private var asked by mutableStateOf(emptyMap<PlanPart, List<PlanOp>>())
 
     private fun show(
         extra: String = "",
@@ -38,14 +42,20 @@ class PlanEditorTest {
     ) {
         val summary = learnerSummary(kind = kind)
         val page = PlanPageState(summary.goals.first(), plan(extra), summary)
-        val edits =
-            PlanEdits(
-                pending = pending,
-                latest = latest,
-                change = { part, operations, _: (PlanChangeResult?) -> Unit -> changes += part to operations },
-                undo = { undone += it },
-            )
-        compose.setContent { ZoonkTheme { Column { PlanEditorBody(page, edits) } } }
+        compose.setContent {
+            val edits =
+                PlanEdits(
+                    pending = pending,
+                    asked = asked,
+                    latest = latest,
+                    change = { part, operations, _: (PlanChangeResult?) -> Unit ->
+                        changes += part to operations
+                        asked = asked + (part to operations)
+                    },
+                    undo = { undone += it },
+                )
+            ZoonkTheme { Column { PlanEditorBody(page, edits) } }
+        }
     }
 
     @Test

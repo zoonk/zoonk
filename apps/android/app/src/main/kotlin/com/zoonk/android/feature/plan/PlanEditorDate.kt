@@ -19,10 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
@@ -46,18 +42,18 @@ import java.time.ZoneOffset
 internal fun PlanDateSection(
     page: PlanPageState,
     edits: PlanEdits,
+    drafts: EditorDrafts,
     modifier: Modifier = Modifier,
 ) {
     val schedule = page.plan.schedule
     val target = schedule.targetDate?.toJavaLocalDate()
     val namedMonth = schedule.targetDateNamedMonth && target != null
     val pending = edits.isPending(PlanPart.Date)
-    val tapped = rememberTappedChoice<LocalDate?>()
-    var picking by rememberSaveable { mutableStateOf(false) }
-    val shown = tapped.shown(target.takeUnless { namedMonth })
+    val asked = edits.asked(PlanPart.Date).filterIsInstance<PlanOp.TargetDate>().firstOrNull()
+    val shown = if (asked != null) asked.date else target.takeUnless { namedMonth }
     val locale = currentLocale()
 
-    fun setDate(date: LocalDate) = edits.change(PlanPart.Date, listOf(PlanOp.TargetDate(date)), tapped.pick(date))
+    fun setDate(date: LocalDate) = edits.change(PlanPart.Date, listOf(PlanOp.TargetDate(date))) {}
 
     val note =
         when {
@@ -74,13 +70,13 @@ internal fun PlanDateSection(
                 Modifier.fillMaxWidth().pointerInput(pending) {
                     awaitEachGesture {
                         awaitFirstDown(pass = PointerEventPass.Initial)
-                        if (waitForUpOrCancellation(pass = PointerEventPass.Initial) != null && !pending) picking = true
+                        if (waitForUpOrCancellation(pass = PointerEventPass.Initial) != null && !pending) drafts.datePicking = true
                     }
                 },
             readOnly = true,
             label = { Text(stringResource(if (page.isExam) R.string.plan_exam_date else R.string.plan_deadline)) },
             trailingIcon = {
-                IconButton(onClick = { picking = true }, enabled = !pending) {
+                IconButton(onClick = { drafts.datePicking = true }, enabled = !pending) {
                     Icon(painterResource(R.drawable.ic_calendar_month), contentDescription = stringResource(R.string.plan_pick_date))
                 }
             },
@@ -102,16 +98,16 @@ internal fun PlanDateSection(
         if (edits.hasFailed(PlanPart.Date)) SaveFailedText()
     }
 
-    if (picking) {
+    if (drafts.datePicking) {
         TargetDateDialog(
             today = page.today,
             shown = shown ?: target,
             canPick = { namedMonth || it != target },
             onPick = {
-                picking = false
+                drafts.datePicking = false
                 setDate(it)
             },
-            onDismiss = { picking = false },
+            onDismiss = { drafts.datePicking = false },
         )
     }
 }

@@ -27,7 +27,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,16 +53,16 @@ import java.util.Locale
 internal fun PlanScheduleSection(
     page: PlanPageState,
     edits: PlanEdits,
+    drafts: EditorDrafts,
     modifier: Modifier = Modifier,
     daysModifier: Modifier = Modifier,
 ) {
     val shape = page.plan.schedule.weekShape
-    var weekendChoice by rememberSaveable { mutableStateOf<Boolean?>(null) }
-    val weekendOn = weekendChoice ?: (shape.weekend != null)
+    val weekendOn = drafts.weekendOn ?: (shape.weekend != null)
 
     DailyMinutes(edits, shape, weekendOn, modifier)
     StudyDays(page, edits, shape, daysModifier)
-    WeekendMinutes(edits, shape, weekendOn, onWeekendOn = { weekendChoice = it })
+    WeekendMinutes(edits, shape, weekendOn, onWeekendOn = { drafts.weekendOn = it })
     if (edits.hasFailed(PlanPart.Schedule)) SaveFailedText()
 }
 
@@ -75,15 +74,14 @@ private fun DailyMinutes(
     modifier: Modifier,
 ) {
     val pending = edits.isPending(PlanPart.Schedule)
-    val time = rememberTappedChoice<Int>()
-    val shown = time.shown(shape.weekdays)
+    val shown = askedMinutes(edits.asked(PlanPart.Schedule), shape.weekdayDays) ?: shape.weekdays
     val locale = currentLocale()
 
     fun setMinutes(minutes: Int) {
-        if (pending || minutes == shape.weekdays) return
+        if (pending || minutes == shown) return
         val operation =
             if (weekendOn && shape.canDiffer) PlanOp.WeekdayMinutes(shape.weekdayDays, minutes) else PlanOp.DailyMinutes(minutes)
-        edits.change(PlanPart.Schedule, listOf(operation), time.pick(minutes))
+        edits.change(PlanPart.Schedule, listOf(operation)) {}
     }
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -105,7 +103,7 @@ private fun StudyDays(
     modifier: Modifier,
 ) {
     val pending = edits.isPending(PlanPart.Schedule)
-    val tapped = rememberTappedChoice<Pair<Int, Boolean>?>()
+    val asked = edits.asked(PlanPart.Schedule).filterIsInstance<PlanOp.WeekdayMinutes>()
     val locale = currentLocale()
     val studies =
         (0 until DAYS_PER_WEEK).map {
@@ -122,20 +120,15 @@ private fun StudyDays(
             val names = dayNames(maxWidth, locale)
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(DAY_GAP)) {
                 (0 until DAYS_PER_WEEK).map { (firstDay + it) % DAYS_PER_WEEK }.forEach { weekday ->
-                    val tap = tapped.shown(null)
                     DayToggle(
                         weekday = weekday,
                         name = names,
-                        on = if (tap?.first == weekday) tap.second else studies[weekday],
+                        on = asked.firstOrNull { weekday in it.weekdays }?.let { it.minutes > 0 } ?: studies[weekday],
                         // A plan needs at least one study day.
                         enabled = !pending && !(studies[weekday] && studies.count { it } == 1),
                         onToggle = { pressed ->
                             val minutes = if (pressed) minutesFor(weekday) else 0
-                            edits.change(
-                                PlanPart.Schedule,
-                                listOf(PlanOp.WeekdayMinutes(listOf(weekday), minutes)),
-                                tapped.pick(weekday to pressed),
-                            )
+                            edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(listOf(weekday), minutes))) {}
                         },
                         modifier = Modifier.weight(1f),
                     )
@@ -203,10 +196,9 @@ private fun WeekendMinutes(
 ) {
     if (!shape.canDiffer) return
     val pending = edits.isPending(PlanPart.Schedule)
-    val weekend = rememberTappedChoice<Int>()
+    val shown = askedMinutes(edits.asked(PlanPart.Schedule), shape.weekendDays) ?: shape.weekend ?: shape.weekdays
 
-    fun setWeekend(minutes: Int) =
-        edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(shape.weekendDays, minutes)), weekend.pick(minutes))
+    fun setWeekend(minutes: Int) = edits.change(PlanPart.Schedule, listOf(PlanOp.WeekdayMinutes(shape.weekendDays, minutes))) {}
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
@@ -233,7 +225,7 @@ private fun WeekendMinutes(
         if (weekendOn) {
             TimeSelect(
                 label = stringResource(R.string.plan_time_on_weekends),
-                value = weekend.shown(shape.weekend ?: shape.weekdays),
+                value = shown,
                 enabled = !pending,
                 onPick = ::setWeekend,
             )
@@ -298,6 +290,19 @@ private fun TimeSelect(
         }
     }
 }
+
+/** The time a change saving asks [days] to take, or every study day. */
+private fun askedMinutes(
+    asked: List<PlanOp>,
+    days: List<Int>,
+): Int? =
+    asked.firstNotNullOfOrNull {
+        when {
+            it is PlanOp.DailyMinutes -> it.minutes
+            it is PlanOp.WeekdayMinutes && it.weekdays == days && it.minutes > 0 -> it.minutes
+            else -> null
+        }
+    }
 
 /** Onboarding's time chips, with the learner's own times among them. */
 internal fun timeChoices(vararg times: Int?): List<Int> = (MINUTE_OPTIONS + times.filterNotNull()).distinct().sorted()

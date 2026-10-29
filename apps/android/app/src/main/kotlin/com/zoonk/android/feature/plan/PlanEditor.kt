@@ -39,6 +39,8 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,10 +65,11 @@ import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
 import kotlinx.datetime.toJavaLocalDate
 
-/** What the editor's parts save through, and which of them are waiting or failed. */
+/** What the editor's parts save through, what each asked for while it saves, and which failed. */
 @Immutable
 internal data class PlanEdits(
     val pending: Set<PlanPart> = emptySet(),
+    val asked: Map<PlanPart, List<PlanOp>> = emptyMap(),
     val failed: Set<PlanPart> = emptySet(),
     val latest: EditorChange? = null,
     val change: (PlanPart, List<PlanOp>, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
@@ -75,6 +78,28 @@ internal data class PlanEdits(
     fun isPending(part: PlanPart) = part in pending
 
     fun hasFailed(part: PlanPart) = part in failed
+
+    fun asked(part: PlanPart): List<PlanOp> = asked[part].orEmpty()
+}
+
+/** What the editor shows that isn't saved, kept above its sheet or panel, which turning a phone swaps. */
+@Stable
+internal class EditorDrafts(
+    datePicking: Boolean = false,
+    weekendOn: Boolean? = null,
+) {
+    var datePicking by mutableStateOf(datePicking)
+
+    /** Null follows the plan: on while its weekend has its own time. */
+    var weekendOn by mutableStateOf(weekendOn)
+
+    companion object {
+        val Saver =
+            listSaver<EditorDrafts, Any?>(
+                save = { listOf(it.datePicking, it.weekendOn) },
+                restore = { EditorDrafts(it[0] as Boolean, it[1] as Boolean?) },
+            )
+    }
 }
 
 /**
@@ -92,12 +117,13 @@ internal fun PlanEditor(
     onDismiss: () -> Unit,
 ) {
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val drafts = rememberSaveable(saver = EditorDrafts.Saver) { EditorDrafts() }
 
     if (wide) {
-        SidePanel(onDismiss) { PlanEditorBody(page, edits, section, onTellBuddy, onClose = onDismiss) }
+        SidePanel(onDismiss) { PlanEditorBody(page, edits, section, onTellBuddy, onClose = onDismiss, drafts = drafts) }
     } else {
         ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-            PlanEditorBody(page, edits, section, onTellBuddy)
+            PlanEditorBody(page, edits, section, onTellBuddy, drafts = drafts)
         }
     }
 }
@@ -110,6 +136,7 @@ internal fun ColumnScope.PlanEditorBody(
     section: PlanSection? = null,
     onTellBuddy: () -> Unit = {},
     onClose: (() -> Unit)? = null,
+    drafts: EditorDrafts = remember { EditorDrafts() },
 ) {
     val requesters = remember { PlanSection.entries.associateWith { BringIntoViewRequester() } }
 
@@ -146,8 +173,14 @@ internal fun ColumnScope.PlanEditorBody(
                 .padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 16.dp, bottom = 32.dp),
         verticalArrangement = Arrangement.spacedBy(28.dp),
     ) {
-        PlanDateSection(page, edits, Modifier.section(PlanSection.Date))
-        PlanScheduleSection(page, edits, modifier = Modifier.section(PlanSection.Time), daysModifier = Modifier.section(PlanSection.Days))
+        PlanDateSection(page, edits, drafts, Modifier.section(PlanSection.Date))
+        PlanScheduleSection(
+            page,
+            edits,
+            drafts,
+            modifier = Modifier.section(PlanSection.Time),
+            daysModifier = Modifier.section(PlanSection.Days),
+        )
         PlanActivities(page, edits, Modifier.section(PlanSection.Practice))
         PlanWrittenPractice(page, edits)
         PlanSteering(page, edits)
@@ -281,28 +314,3 @@ internal fun SectionLabel(
 ) {
     Text(text = text, modifier = modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
 }
-
-/**
- * Main's `useTappedChoice`: the learner's tap shows at once while its change saves, then the saved
- * choice; a pick never shows again over a later change.
- */
-@Stable
-internal class TappedChoice<T> {
-    private var tapped by mutableStateOf<Tap<T>?>(null)
-
-    fun shown(saved: T): T = tapped.let { if (it != null) it.value else saved }
-
-    /** Pass what it returns as the change's answer: only this pick goes. */
-    fun pick(value: T): (PlanChangeResult?) -> Unit {
-        val next = Tap(value)
-        tapped = next
-        return { if (tapped === next) tapped = null }
-    }
-
-    private class Tap<T>(
-        val value: T,
-    )
-}
-
-@Composable
-internal fun <T> rememberTappedChoice() = remember { TappedChoice<T>() }

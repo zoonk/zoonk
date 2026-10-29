@@ -8,6 +8,7 @@ import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
 import com.zoonk.android.data.KeyedResources
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.value
@@ -21,6 +22,7 @@ import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.Syllabus
+import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
@@ -30,10 +32,14 @@ import kotlin.time.Clock
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Instant
 
-/** [readAt] is when it was read, a little early, to ask the server whether it changed since. */
+/**
+ * [readAt] is when it was read, a little early, to ask the server whether it changed since; [writes]
+ * how many of the learner's plan writes had saved when it started.
+ */
 data class PlanRead(
     val plan: Plan,
     val readAt: Instant,
+    val writes: Int = 0,
 )
 
 /**
@@ -250,24 +256,16 @@ class PlanStore(
         status: GoalUpdateInput.Status,
     ): MutationResult<Unit> = cache.mutate(invalidating = WRITE_DOMAINS + DataDomain.LearningProfile) { api.setStatus(it, goalId, status) }
 
-    /**
-     * A learner's edit, from their tap. It answers once the plan shown is read again, so a tapped
-     * choice never shows the old one in between.
-     */
+    /** A learner's edit, from their tap. */
     suspend fun change(
         goalId: UUID,
         operations: List<PlanOp>,
-    ): MutationResult<PlanChangeResult> =
-        rereading(goalId, cache.mutate(invalidating = WRITE_DOMAINS) { api.change(it, goalId, operations) })
+    ): MutationResult<PlanChangeResult> = write(goalId) { api.change(it, goalId, operations) }
 
     suspend fun undo(
         goalId: UUID,
         changeId: UUID,
-    ): MutationResult<PlanChange> =
-        rereading(
-            goalId,
-            cache.mutate(invalidating = WRITE_DOMAINS) { api.decide(it, goalId, changeId, PlanChangeDecisionInput.Status.UNDONE) },
-        )
+    ): MutationResult<PlanChange> = write(goalId) { api.decide(it, goalId, changeId, PlanChangeDecisionInput.Status.UNDONE) }
 
     /** What an edit would do: it saves nothing, so nothing is read again. */
     suspend fun preview(
@@ -275,13 +273,32 @@ class PlanStore(
         operations: List<PlanOp>,
     ): MutationResult<PlanChangePreview> = cache.mutate { api.preview(it, goalId, operations) }
 
-    private suspend fun <T> rereading(
-        goalId: UUID,
-        result: MutationResult<T>,
-    ): MutationResult<T> {
-        if (result is MutationResult.Done) plan[goalId].refresh()
-        return result
+    /**
+     * Waits until the plan shown was read after every write saved so far (a read that fails waits
+     * for the next, as a pull or a return to the app starts). False when the plan was dropped
+     * meanwhile, as when the session ended.
+     */
+    suspend fun awaitWritesShown(goalId: UUID): Boolean {
+        val written = writes[goalId] ?: 0
+        val shown = plan[goalId]
+        val shownWrites =
+            shown.state.value.value
+                ?.writes ?: 0
+        if (shownWrites < written) shown.refresh()
+        val state = shown.state.first { it !is LoadState.Loaded || it.value.writes >= written }
+        return state is LoadState.Loaded
     }
+
+    /** Counted before the write's invalidation reads the plan again, so that read counts it. */
+    private suspend fun <T> write(
+        goalId: UUID,
+        write: suspend (AuthenticatedSession) -> T,
+    ): MutationResult<T> =
+        cache.mutate(invalidating = WRITE_DOMAINS) { session ->
+            write(session).also { writes[goalId] = (writes[goalId] ?: 0) + 1 }
+        }
+
+    private val writes = mutableMapOf<UUID, Int>()
 
     /**
      * While lessons are being written: asks whether anything changed since the plan shown was read,
@@ -304,8 +321,9 @@ class PlanStore(
         goalId: UUID,
     ): PlanRead {
         val shown = plan[goalId].state.value.value
-        if (polls.remove(goalId) && shown != null && !api.planChanged(session, goalId, shown.readAt)) return shown
-        return PlanRead(api.plan(session, goalId), now() - CLOCK_MARGIN)
+        val written = writes[goalId] ?: 0
+        if (polls.remove(goalId) && shown != null && !api.planChanged(session, goalId, shown.readAt)) return shown.copy(writes = written)
+        return PlanRead(api.plan(session, goalId), now() - CLOCK_MARGIN, written)
     }
 
     companion object {

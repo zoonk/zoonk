@@ -39,7 +39,8 @@ class PlanViewModel(
 ) : ViewModel() {
     private val saving = MutableStateFlow(false)
     private val notices = Channel<PlanEvent>(Channel.BUFFERED)
-    private val pendingParts = MutableStateFlow(emptySet<PlanPart>())
+    private val savingParts = MutableStateFlow(emptySet<PlanPart>())
+    private val askedOperations = MutableStateFlow(emptyMap<PlanPart, List<PlanOp>>())
     private val failedParts = MutableStateFlow(emptySet<PlanPart>())
     private val latestChange = MutableStateFlow<EditorChange?>(null)
 
@@ -47,7 +48,14 @@ class PlanViewModel(
 
     val events: Flow<PlanEvent> = notices.receiveAsFlow()
 
-    val pending: StateFlow<Set<PlanPart>> = pendingParts.asStateFlow()
+    /** Parts whose change is saving, which take no other tap meanwhile. */
+    val pending: StateFlow<Set<PlanPart>> = savingParts.asStateFlow()
+
+    /**
+     * What each part asked for, shown over the plan until the plan shown has it: a tap shows at once
+     * and survives turning the device.
+     */
+    val asked: StateFlow<Map<PlanPart, List<PlanOp>>> = askedOperations.asStateFlow()
 
     val failed: StateFlow<Set<PlanPart>> = failedParts.asStateFlow()
 
@@ -72,21 +80,27 @@ class PlanViewModel(
         }
     }
 
-    /** [answered] gets what the change did, or null when it didn't save, once the plan shown has it. */
+    /** [answered] gets what the change did once the plan shown has it, or null when it didn't save. */
     fun change(
         part: PlanPart,
         operations: List<PlanOp>,
         answered: (PlanChangeResult?) -> Unit = {},
     ) {
-        pendingParts.update { it + part }
+        if (part in savingParts.value) return
+        savingParts.update { it + part }
         failedParts.update { it - part }
+        askedOperations.update { it + (part to operations) }
         viewModelScope.launch {
             val result = store.change(goalId, operations)
-            val outcome = (result as? MutationResult.Done)?.value
-            if (result is MutationResult.Failed) failedParts.update { it + part }
-            pendingParts.update { it - part }
-            answered(outcome)
-            if (outcome?.status == PlanChangeResult.Status.APPLIED) outcome.change?.let { latestChange.value = EditorChange(it) }
+            savingParts.update { it - part }
+            if (result is MutationResult.Done && store.awaitWritesShown(goalId)) {
+                if (result.value.status == PlanChangeResult.Status.APPLIED) result.value.change?.let(::report)
+                answered(result.value)
+            } else if (result is MutationResult.Failed) {
+                failedParts.update { it + part }
+                answered(null)
+            }
+            askedOperations.update { if (it[part] === operations) it - part else it }
         }
     }
 
@@ -95,13 +109,18 @@ class PlanViewModel(
         latestChange.update { it?.forChange(change) { copy(undoing = true, undoFailed = false) } }
         viewModelScope.launch {
             val result = store.undo(goalId, change.id)
+            val undone = result is MutationResult.Done && store.awaitWritesShown(goalId)
             latestChange.update {
-                it?.forChange(change) {
-                    copy(undone = result is MutationResult.Done || undone, undoing = false, undoFailed = result is MutationResult.Failed)
-                }
+                it?.forChange(
+                    change,
+                ) { copy(undone = undone || this.undone, undoing = false, undoFailed = result is MutationResult.Failed) }
             }
         }
     }
+
+    /** Answers can arrive out of order: the change made last stays the one shown, with its Undo. */
+    private fun report(change: PlanChange) =
+        latestChange.update { if (it == null || it.change.createdAt <= change.createdAt) EditorChange(change) else it }
 
     /** The editor opens without the change it showed last time, as main's does. */
     fun forgetLatest() {

@@ -34,7 +34,7 @@ internal fun PlanActivities(
 ) {
     if (page.goal.kind != LearnerSummaryGoal.Kind.LANGUAGE) return
     val pending = edits.isPending(PlanPart.Activities)
-    val tapped = rememberTappedChoice<Pair<PlanSteering.SkippedActivities, Boolean>?>()
+    val asked = edits.asked(PlanPart.Activities)
     val skipped =
         page.plan.steering.skippedActivities
             .toSet()
@@ -44,13 +44,12 @@ internal fun PlanActivities(
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             PlanSteering.SkippedActivities.entries.forEach { activity ->
                 val isOn = activity !in skipped
-                val tap = tapped.shown(null)
                 FilterChip(
-                    selected = if (tap?.first == activity) tap.second else isOn,
+                    selected = askedOn(asked, activity.value) ?: isOn,
                     onClick = {
                         val activities = listOf(activity.value)
                         val operation = if (isOn) PlanOp.SkipActivities(activities) else PlanOp.RestoreActivities(activities)
-                        edits.change(PlanPart.Activities, listOf(operation), tapped.pick(activity to !isOn))
+                        edits.change(PlanPart.Activities, listOf(operation)) {}
                     },
                     label = { Text(activityName(activity)) },
                     enabled = !pending,
@@ -68,8 +67,8 @@ internal fun PlanWrittenPractice(
 ) {
     val practice = page.plan.writtenPractice ?: return
     val pending = edits.isPending(PlanPart.Writing)
-    val choice = rememberTappedChoice<WrittenPractice.Cadence>()
-    val shown = choice.shown(practice.cadence)
+    val asked = edits.asked(PlanPart.Writing).filterIsInstance<PlanOp.WrittenCadence>().firstOrNull()
+    val shown = WrittenPractice.Cadence.entries.firstOrNull { it.value == asked?.cadence } ?: practice.cadence
     val cadences = WrittenPractice.Cadence.entries.filter { it != WrittenPractice.Cadence.FINAL_WEEKS || practice.finalWeeksFrom != null }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -87,7 +86,7 @@ internal fun PlanWrittenPractice(
                                 role = Role.RadioButton,
                                 onClick = {
                                     if (cadence != practice.cadence) {
-                                        edits.change(PlanPart.Writing, listOf(PlanOp.WrittenCadence(cadence.value)), choice.pick(cadence))
+                                        edits.change(PlanPart.Writing, listOf(PlanOp.WrittenCadence(cadence.value))) {}
                                     }
                                 },
                             ),
@@ -138,8 +137,7 @@ internal fun PlanSteering(
     val steering = page.plan.steering
     if (steering.lessonsStudied == 0L) return
     val pending = edits.isPending(PlanPart.Steering)
-    val asked = rememberTappedChoice<PlanOp?>()
-    val tap = asked.shown(null)
+    val tap = edits.asked(PlanPart.Steering).firstOrNull()
     val difficulty = (tap as? PlanOp.DifficultyBias)?.bias ?: steering.difficultyBias.value
     val practice = (tap as? PlanOp.PracticeBias)?.bias ?: steering.practiceBias.value
     val steers =
@@ -160,7 +158,7 @@ internal fun PlanSteering(
                     selected = steer.active,
                     onClick = {
                         val operation = steer.operation(steer.active)
-                        edits.change(PlanPart.Steering, listOf(operation), asked.pick(operation))
+                        edits.change(PlanPart.Steering, listOf(operation)) {}
                     },
                     label = { Text(stringResource(steer.label)) },
                     enabled = !pending,
@@ -191,3 +189,16 @@ private const val STANDARD = "standard"
 private const val BALANCED = "balanced"
 private const val MORE_PRACTICE = "morePractice"
 private const val MORE_EXPLANATION = "moreExplanation"
+
+/** Whether a change saving turns [activity] on or off; null while none asks about it. */
+private fun askedOn(
+    asked: List<PlanOp>,
+    activity: String,
+): Boolean? =
+    asked.firstNotNullOfOrNull {
+        when {
+            it is PlanOp.SkipActivities && activity in it.activities -> false
+            it is PlanOp.RestoreActivities && activity in it.activities -> true
+            else -> null
+        }
+    }
