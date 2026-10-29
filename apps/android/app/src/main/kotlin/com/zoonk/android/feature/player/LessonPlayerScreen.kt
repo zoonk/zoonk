@@ -167,7 +167,9 @@ fun LessonPlayer(
                 .focusable()
                 .onKeyEvent { event ->
                     event.type == KeyEventType.KeyDown && state != null && screen != null &&
-                        handleKey(event.key, state, screen, viewModel, actions, leave)
+                        handleKey(event.key, state, screen, viewModel, actions, leave) {
+                            completionMainAction(lesson, state, ending, viewModel, exits)
+                        }
                 },
         title = { Text(lesson.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
         actions = { ScreenMenu(lesson, state, screen, viewModel) },
@@ -221,10 +223,16 @@ private fun handleKey(
     viewModel: LessonPlayerViewModel,
     actions: StepActions,
     leave: () -> Unit,
+    completionAction: () -> (() -> Unit)?,
 ): Boolean {
     val digit = DIGIT_KEYS.indexOf(key)
 
     return when {
+        (key == Key.Enter || key == Key.NumPadEnter) && state.phase == LessonPhase.Completed -> {
+            completionAction()?.invoke()
+            true
+        }
+
         key == Key.Enter || key == Key.NumPadEnter -> {
             actions.runPrimary()
             true

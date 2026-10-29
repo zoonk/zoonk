@@ -6,15 +6,20 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.pressKey
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.ANA
@@ -232,5 +237,23 @@ class LessonPlayerFlowTest {
         rule.onNodeWithText("Weather").performScrollTo().assertIsDisplayed()
         tap("Build my plan")
         assertEquals(listOf(AppRoute.CourseStart(CHAPTER_ID, CHAPTER_ID)), opened)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun aKeyboardPicksWithNumbersAndGoesOnWithEnterToTheNextLesson() {
+        play(listOf(checkStep("quiz")))
+
+        fun press(key: Key) = rule.onRoot().performKeyInput { pressKey(key) }
+
+        rule.waitForIdle()
+        press(Key.One)
+        press(Key.Enter)
+        rule.onNodeWithText("Correct!").assertIsDisplayed()
+        press(Key.Enter)
+        rule.onNodeWithText("Lesson complete").assertIsDisplayed()
+        rule.onNodeWithText("Next lesson").assertIsDisplayed()
+        press(Key.Enter)
+        assertEquals(listOf(AppRoute.Lesson(NEXT_LESSON_ID)), opened)
     }
 }

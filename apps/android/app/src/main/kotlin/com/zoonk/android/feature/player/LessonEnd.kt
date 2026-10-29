@@ -295,6 +295,51 @@ private fun Readouts(state: LessonPlayerState) {
     }
 }
 
+/**
+ * What the lesson's end does on its main button and on Enter: finish or try again, then the next
+ * lesson, the guest's plan, or back. Null while it saves.
+ */
+internal fun completionMainAction(
+    lesson: PlayableLesson,
+    state: LessonPlayerState,
+    ending: LessonEnding,
+    viewModel: LessonPlayerViewModel,
+    exits: LessonPlayerExits,
+): (() -> Unit)? =
+    when (state.completion?.status) {
+        CompletionStatus.Ready, CompletionStatus.Failed -> {
+            { viewModel.dispatch(LessonAction.CompletionRetried) }
+        }
+
+        CompletionStatus.Saved -> {
+            when {
+                ending.guest -> {
+                    { exits.replace(guestPlan(lesson, ending)) }
+                }
+
+                ending.nextLessonId != null -> {
+                    { exits.replace(AppRoute.Lesson(ending.nextLessonId)) }
+                }
+
+                else -> {
+                    exits::close
+                }
+            }
+        }
+
+        CompletionStatus.Saving, null -> {
+            null
+        }
+    }
+
+/** "Build my plan" starts the lesson's course as a goal, from its chapter; without a course, from its title. */
+private fun guestPlan(
+    lesson: PlayableLesson,
+    ending: LessonEnding,
+): AppRoute =
+    ending.fit?.course?.let { AppRoute.CourseStart(it.id.toString(), it.startChapterId?.toString()) }
+        ?: AppRoute.StartGoal(goal = lesson.title)
+
 /** "Next lesson" with the way back to the chapter, or one Continue; Finish when nothing is left to answer. */
 @Composable
 fun CompletionActions(
@@ -305,51 +350,27 @@ fun CompletionActions(
     exits: LessonPlayerExits,
 ) {
     val status = state.completion?.status ?: return
-    val nextLessonId = ending.nextLessonId
-
-    if (status == CompletionStatus.Saved && ending.guest) {
-        GuestActions(lesson, ending, exits)
-        return
-    }
-
-    when (status) {
-        CompletionStatus.Ready -> {
-            Button(onClick = { viewModel.dispatch(LessonAction.CompletionRetried) }, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.player_finish))
-            }
+    val main = completionMainAction(lesson, state, ending, viewModel, exits)
+    val label =
+        when {
+            status == CompletionStatus.Ready -> R.string.player_finish
+            status == CompletionStatus.Failed -> R.string.player_try_again
+            ending.guest -> R.string.player_build_my_plan
+            ending.nextLessonId != null -> R.string.player_next_lesson
+            else -> R.string.player_action_continue
         }
+    val back = if (lesson.targetLanguage != null) R.string.player_back_to_unit else R.string.player_back_to_chapter
 
-        CompletionStatus.Failed -> {
-            Button(onClick = { viewModel.dispatch(LessonAction.CompletionRetried) }, modifier = Modifier.fillMaxWidth()) {
-                Text(stringResource(R.string.player_try_again))
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+            if (status == CompletionStatus.Saved && ending.nextLessonId != null && !ending.guest) {
+                FilledTonalButton(onClick = exits::close, modifier = Modifier.weight(1f)) { Text(stringResource(back)) }
             }
+            Button(onClick = { main?.invoke() }, enabled = main != null, modifier = Modifier.weight(1f)) { Text(stringResource(label)) }
         }
-
-        CompletionStatus.Saving, CompletionStatus.Saved -> {
-            val saved = status == CompletionStatus.Saved
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                if (nextLessonId != null) {
-                    FilledTonalButton(onClick = exits::close, modifier = Modifier.weight(1f)) {
-                        Text(
-                            stringResource(
-                                if (lesson.targetLanguage !=
-                                    null
-                                ) {
-                                    R.string.player_back_to_unit
-                                } else {
-                                    R.string.player_back_to_chapter
-                                },
-                            ),
-                        )
-                    }
-                }
-                Button(
-                    onClick = { nextLessonId?.let { exits.replace(AppRoute.Lesson(it)) } ?: exits.close() },
-                    enabled = saved,
-                    modifier = Modifier.weight(1f),
-                ) {
-                    Text(stringResource(if (nextLessonId != null) R.string.player_next_lesson else R.string.player_action_continue))
-                }
+        if (status == CompletionStatus.Saved && ending.guest) {
+            FilledTonalButton(onClick = { exits.open(AppRoute.Login) }, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.player_create_account_to_save))
             }
         }
     }
@@ -417,28 +438,6 @@ private fun WhereItFits(fit: LessonFit) {
                     )
                 },
             )
-        }
-    }
-}
-
-/** "Build my plan" starts the lesson's course as a goal, from its chapter; without a course, from its title. */
-@Composable
-private fun GuestActions(
-    lesson: PlayableLesson,
-    ending: LessonEnding,
-    exits: LessonPlayerExits,
-) {
-    val course = ending.fit?.course
-    val plan =
-        course?.let { AppRoute.CourseStart(it.id.toString(), it.startChapterId?.toString()) } ?: AppRoute.StartGoal(goal = lesson.title)
-
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Button(
-            onClick = { exits.replace(plan) },
-            modifier = Modifier.fillMaxWidth(),
-        ) { Text(stringResource(R.string.player_build_my_plan)) }
-        FilledTonalButton(onClick = { exits.open(AppRoute.Login) }, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.player_create_account_to_save))
         }
     }
 }
