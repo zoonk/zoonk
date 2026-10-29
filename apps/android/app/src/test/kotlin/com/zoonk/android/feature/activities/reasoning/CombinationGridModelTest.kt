@@ -45,6 +45,18 @@ class CombinationGridModelTest {
         )
         assertEquals(listOf("Rr", "RR", "rr", "Rr"), round.cells)
         assertEquals(listOf("7", "2.5", "-3", "0"), listOf(7.0, 2.5, -3.0, -0.0).map(::jsNumberText))
+        assertEquals(
+            listOf("1.0000000000000001e-7", "-3.0000000000000004e-7", "0.000001", "1e+21", "-7.5e+22", "1152921504606847000", "Infinity"),
+            listOf(
+                1e-4 * 1e-3,
+                -2e-4 * 1.5e-3,
+                0.000001,
+                1e11 * 1e10,
+                -3e11 * 2.5e11,
+                1073741824.0 * 1073741824.0,
+                1e200 * 1e200,
+            ).map(::jsNumberText),
+        )
     }
 
     @Test

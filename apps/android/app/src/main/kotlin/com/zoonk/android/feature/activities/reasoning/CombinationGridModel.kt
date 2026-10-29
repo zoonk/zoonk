@@ -3,7 +3,6 @@ package com.zoonk.android.feature.activities.reasoning
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf14Fields
 import java.math.BigDecimal
 import kotlin.math.abs
-import kotlin.math.floor
 import kotlin.math.max
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf14Fields.PlayableLibraryStepAnyOfContentOneOf14FieldsOneOf1Value as SumFields
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOf14Fields.PlayableLibraryStepAnyOfContentOneOf14FieldsOneOf2Value as ProductFields
@@ -177,14 +176,23 @@ internal fun traitCounts(fill: GridFill): TraitCounts {
     return TraitCounts(dominant, cells.size - dominant)
 }
 
-/** A number as JavaScript's `String(number)` writes it, which is how core writes a cell: "7", "2.5", "0.30000000000000004". */
-internal fun jsNumberText(value: Double): String =
-    when {
-        value == 0.0 -> "0"
-        value == floor(value) -> BigDecimal(value).toPlainString()
-        else -> BigDecimal(value.toString()).stripTrailingZeros().toPlainString()
-    }
+/**
+ * A number as JavaScript's `String(number)` writes it, which is how core writes a cell: its shortest
+ * digits ("7", "2.5", "0.30000000000000004"), in exponent form below 1e-6 or from 1e21 ("1e+21").
+ */
+internal fun jsNumberText(value: Double): String {
+    if (value.isNaN()) return "NaN"
+    if (value.isInfinite()) return if (value > 0) "Infinity" else "-Infinity"
+    if (value == 0.0) return "0"
+    val shortest = BigDecimal(value.toString()).stripTrailingZeros()
+    if (abs(value) in JS_PLAIN_RANGE) return shortest.toPlainString()
+    val digits = shortest.unscaledValue().abs().toString()
+    val exponent = digits.length - 1 - shortest.scale()
+    val mantissa = if (digits.length == 1) digits else "${digits[0]}.${digits.substring(1)}"
+    return "${if (value < 0) "-" else ""}${mantissa}e${if (exponent < 0) "-" else "+"}${abs(exponent)}"
+}
 
+private val JS_PLAIN_RANGE = 1e-6..<1e21
 private val GENOTYPE = Regex("^[A-Za-z]{2}$")
 private const val MAX_FILLED_CELLS = 9
 private const val FLOAT_SLACK = 1e-9
