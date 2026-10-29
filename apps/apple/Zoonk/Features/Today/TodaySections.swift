@@ -267,7 +267,10 @@ struct TodayMissionsSection: View {
 
         if isBesideTheDay || !onlyOpensBlocks {
           ForEach(Array(missions.enumerated()), id: \.offset) { _, mission in
-            MissionRow(mission: mission, buddyName: learner.buddyDisplayName) {
+            MissionRow(
+              mission: mission, buddyName: learner.buddyDisplayName,
+              block: view.session.blocks.first { mission.opens($0) }
+            ) {
               go(mission)
             }
           }

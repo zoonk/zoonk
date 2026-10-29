@@ -118,7 +118,8 @@ extension StudyMission {
     }
   }
 
-  var step: String? {
+  /// Mirrors main's `useMissionStep`: only Today knows the block a mission opens.
+  func step(block: StudyBlock?) -> String? {
     switch waitReason {
     case .lessons:
       return String(localized: "After today's lessons", table: "Today", comment: "Mission waits")
@@ -145,9 +146,52 @@ extension StudyMission {
     case .askBuddy:
       return String(
         localized: "Anything about today's lessons", table: "Today", comment: "Ask buddy mission")
+    case .finishChapter:
+      return chapterStep
     default:
-      return detail?.title
+      break
     }
+
+    if let title = detail?.title {
+      return title
+    }
+
+    if let block, kind != .weeklyChallenge, kind != .mock {
+      return block.displayTitle
+    }
+
+    switch kind {
+    case .review:
+      return (minutes ?? 0) > 5
+        ? String(localized: "Reviews", table: "Today", comment: "A review block longer than 5 min")
+        : String(localized: "Quick review", table: "Today", comment: "A short review block")
+    case .somethingNew:
+      return String(
+        localized: "Finish today's new lesson", table: "Today",
+        comment: "Mission: the step that finishes the day's new lesson")
+    case .weakSpot:
+      return String(
+        localized: "Most room to grow", table: "Today",
+        comment: "Mission: the area where the learner has the most to gain")
+    default:
+      return nil
+    }
+  }
+
+  private var chapterStep: String {
+    let more = total - done - 1
+
+    guard let title = detail?.title else {
+      return String(
+        localized: "The last \(total - done) lessons are in today's plan", table: "Today",
+        comment: "Mission to finish a chapter whose remaining lessons are all in today's plan")
+    }
+
+    return more > 0
+      ? String(
+        localized: "\(title) (+\(more) lessons)", table: "Today",
+        comment: "The chapter's next lesson, then how many more the mission needs")
+      : title
   }
 }
 
@@ -156,6 +200,7 @@ struct MissionRow: View {
 
   let mission: StudyMission
   let buddyName: String
+  var block: StudyBlock?
   var open: (() -> Void)?
 
   private var waits: Bool { mission.waitReason != nil }
@@ -230,7 +275,7 @@ struct MissionRow: View {
       parts.append("\(mission.done)/\(mission.total)")
     }
 
-    if let step = mission.step {
+    if let step = mission.step(block: block) {
       parts.append(step)
     }
 

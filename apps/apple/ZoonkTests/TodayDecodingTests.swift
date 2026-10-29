@@ -19,6 +19,25 @@ final class TodayDecodingTests: XCTestCase {
     XCTAssertEqual(week.studyDayCount, 7)
   }
 
+  func testAMissionToFinishAChapterSaysTheLessonsAfterItsNext() throws {
+    let today = try anaTodayView()
+    let mission = try XCTUnwrap(today.session.missions.first { $0.kind == .finishChapter })
+    let block = today.session.blocks.first { mission.opens($0) }
+
+    XCTAssertEqual(mission.step(block: block), "Porcentagem e descontos (+1 lesson)")
+  }
+
+  func testAMissionOpeningABlockWithoutATitleNamesTheBlock() throws {
+    let today = try anaTodayView()
+    let practice = try XCTUnwrap(today.session.blocks.first { $0.mistakesOnly })
+    let mission = try JSONDecoder().decode(
+      StudyMission.self,
+      from: Data(#"{"done":0,"kind":"practice","minutes":3,"status":"todo","total":1}"#.utf8))
+
+    XCTAssertEqual(mission.step(block: practice), "Practice mistakes")
+    XCTAssertNil(mission.step(block: nil))
+  }
+
   private func anaTodayView() throws -> TodayView {
     let generated = try decoder().decode(
       Components.Schemas.Today.self, from: Data(anaToday.utf8))
