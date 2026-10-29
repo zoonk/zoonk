@@ -147,7 +147,7 @@ class GoalContentFlowTest {
 
         rule.onNodeWithText("Mind maps").performClick()
 
-        assertEquals(AppRoute.MindMaps, navigator.currentRoute)
+        assertEquals(AppRoute.MindMaps(), navigator.currentRoute)
     }
 
     @Test

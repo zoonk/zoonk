@@ -42,7 +42,7 @@ object AppLink {
                     .filter(String::isNotEmpty)
                     .map(::decodeSegment)
             val path = if (segments.firstOrNull() in localePrefixes) segments.drop(1) else segments
-            route(path, query(uri.rawQuery))
+            route(path, query(uri.rawQuery), uri.rawFragment?.let(::decodeSegment)?.takeIf(String::isNotEmpty))
         } catch (_: IllegalArgumentException) {
             null
         }
@@ -84,6 +84,7 @@ object AppLink {
     private fun route(
         path: List<String>,
         query: Map<String, String>,
+        fragment: String?,
     ): AppRoute? {
         val session = query["session"]
 
@@ -100,7 +101,7 @@ object AppLink {
                     "plan" -> AppRoute.Plan(focus = query["focus"])
                     "buddy" -> AppRoute.Buddy(ask = query["ask"])
                     "exam" -> AppRoute.Exam
-                    "mind-maps" -> AppRoute.MindMaps
+                    "mind-maps" -> AppRoute.MindMaps(subject = fragment)
                     "mistakes" -> AppRoute.Mistakes
                     "speaking" -> AppRoute.Speaking(task = query["task"])
                     "settings" -> AppRoute.Settings

@@ -127,7 +127,7 @@ internal fun SubjectContent(
                             restore = writes::restore,
                             setCadence = writes::setCadence,
                             openMindMaps =
-                                { navigator.open(AppRoute.MindMaps) }.takeIf {
+                                { navigator.open(AppRoute.MindMaps()) }.takeIf {
                                     subject.chapters.any { it.chapterId in withMindMaps }
                                 },
                         ),

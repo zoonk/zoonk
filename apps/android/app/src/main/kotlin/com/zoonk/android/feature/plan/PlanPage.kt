@@ -89,7 +89,7 @@ class PlanLinks(
 
     fun exam() = open(AppRoute.Exam)
 
-    fun mindMaps() = open(AppRoute.MindMaps)
+    fun mindMaps() = open(AppRoute.MindMaps())
 
     fun logbook() = open(AppRoute.Logbook)
 

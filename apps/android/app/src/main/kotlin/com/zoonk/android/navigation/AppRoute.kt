@@ -47,8 +47,11 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data object MockChooser : AppRoute
 
+    /** [subject] opens the grid at that subject's maps, as main's `/mind-maps#key` does. */
     @Serializable
-    data object MindMaps : AppRoute
+    data class MindMaps(
+        val subject: String? = null,
+    ) : AppRoute
 
     @Serializable
     data object Mistakes : AppRoute
@@ -336,7 +339,7 @@ val AppRoute.presentation: Presentation
             is AppRoute.Buddy -> Presentation.Tab(AppTab.Buddy)
 
             is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit, AppRoute.Exam,
-            AppRoute.MockChooser, AppRoute.MindMaps, AppRoute.Mistakes, is AppRoute.Speaking,
+            AppRoute.MockChooser, is AppRoute.MindMaps, AppRoute.Mistakes, is AppRoute.Speaking,
             AppRoute.EarlierQuestions,
             -> Presentation.Push
 
@@ -370,7 +373,7 @@ val AppRoute.requirement: Requirement
     get() =
         when (this) {
             is AppRoute.Plan, is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit,
-            AppRoute.Exam, AppRoute.MockChooser, AppRoute.MindMaps, is AppRoute.MindMap,
+            AppRoute.Exam, AppRoute.MockChooser, is AppRoute.MindMaps, is AppRoute.MindMap,
             AppRoute.Mistakes, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
             -> Requirement.Goal
 
@@ -397,7 +400,7 @@ val AppRoute.homeTab: AppTab
     get() =
         when (this) {
             is AppRoute.Plan, is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit,
-            AppRoute.Exam, AppRoute.MockChooser, AppRoute.MindMaps,
+            AppRoute.Exam, AppRoute.MockChooser, is AppRoute.MindMaps,
             -> AppTab.Plan
 
             is AppRoute.Buddy, AppRoute.EarlierQuestions -> AppTab.Buddy
