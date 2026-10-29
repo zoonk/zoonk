@@ -6,12 +6,14 @@ import com.zoonk.api.models.ActivityExpectedAnswer
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf1
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf13
+import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf3
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf4
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf4LinksInner
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf7
 import com.zoonk.api.models.LessonStepAnswerOneOf3AnswerOneOf8
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf13Value as SelectionAnswerValue
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf1Value as ChoiceAnswerValue
+import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf3Value as GridAnswerValue
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf4Value as LinksAnswerValue
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf7Value as NumericAnswerValue
 import com.zoonk.api.models.LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf8Value as OrderAnswerValue
@@ -36,6 +38,11 @@ fun selectionAnswer(ids: List<String>): ActivityAnswer =
     SelectionAnswerValue(LessonStepAnswerOneOf3AnswerOneOf13(ids, LessonStepAnswerOneOf3AnswerOneOf13.Kind.SELECTION))
 
 val ActivityAnswer?.selectionIds: List<String>? get() = (this as? SelectionAnswerValue)?.value?.ids
+
+fun gridAnswer(cells: List<String>): ActivityAnswer =
+    GridAnswerValue(LessonStepAnswerOneOf3AnswerOneOf3(cells, LessonStepAnswerOneOf3AnswerOneOf3.Kind.GRID))
+
+val ActivityAnswer?.gridCells: List<String>? get() = (this as? GridAnswerValue)?.value?.cells
 
 fun assignmentAnswer(pairs: Map<String, String>): ActivityAnswer =
     AssignmentAnswerValue(LessonStepAnswerOneOf3AnswerOneOf(LessonStepAnswerOneOf3AnswerOneOf.Kind.ASSIGNMENT, pairs))

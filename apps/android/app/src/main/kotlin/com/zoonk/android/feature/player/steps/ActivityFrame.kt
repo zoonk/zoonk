@@ -51,6 +51,7 @@ import com.zoonk.android.feature.activities.music.rhythmTapperRenderer
 import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.activities.patternTableRenderer
+import com.zoonk.android.feature.activities.reasoning.combinationGridRenderer
 import com.zoonk.android.feature.activities.sorting.categorizeRenderer
 import com.zoonk.android.feature.activities.sorting.causeEffectChainRenderer
 import com.zoonk.android.feature.activities.sorting.labeledDiagramRenderer
@@ -103,6 +104,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "chartReader" to chartReaderRenderer,
         "codeRunner" to codeRunnerRenderer,
         "codeTracer" to codeTracerRenderer,
+        "combinationGrid" to combinationGridRenderer,
         "decisionTree" to decisionTreeRenderer,
         "dialogueSimulator" to dialogueSimulatorRenderer,
         "findError" to findErrorRenderer,

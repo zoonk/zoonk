@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_reasoning_badge_fill_square": "84bb6ca62fb325ee6766ec6ae783f0f3f85f9ef5d3f8cd4064b18d89b8871565",
+  "activities_reasoning_grid_all_filled": "23f34d24a794b94cfeaafbed6d1e68d195051a4ad4c042c51089343f6b50804f",
+  "activities_reasoning_grid_counted": "8e218b64cef7b490cb3a906def63e49211576ac2ad379c6b58dc14dbc5b89443",
+  "activities_reasoning_grid_filled": "fecf590aba0cb05b406f6238789609ca8bda7c45825d4085ca5ebd33cec73b9f",
+  "activities_reasoning_grid_products": "5c3f96f3419937a314ee3e3eb9219e56270d6b3ad5da3402fcdcc1675d7003ce",
+  "activities_reasoning_grid_punnett": "889bc3505018a0b76a8697980710e1a959f0a10c0e8df84499d0daa14ad39d3b",
+  "activities_reasoning_grid_right": "79ee9a148c786a8e54b93fb56289972b7c647e2af47f79f5824e25e4ba98ac78",
+  "activities_reasoning_grid_square": "55960a85b42bacae39977e193c54707134001ce4c8bbab3a71436cf137a82f16",
+  "activities_reasoning_grid_square_empty": "a29da70c4fb286609d517d4e73ad708f83526fa8c7843206b97da04f2e8fc8f7",
+  "activities_reasoning_grid_sums": "0e4e72e362a9cc9254ef2efcc27d9130506e74da977d41c782d2374569d51b83",
+  "activities_reasoning_grid_traits": "fa5dfcdf2bcc598b51b396afc7166c1e9ce2eba3bb1770b21948fadac7790b9c",
+  "activities_reasoning_grid_value_trait": "797b3b6bb0dd1055e708283bab3d32ee31e8fbd344f2f96683431a829e11ba12",
+  "activities_reasoning_grid_what_goes": "2d24472d25651b9e601e3172599f22736e7a1c2011fcfc1f4782548fb3702f7d",
+  "activities_reasoning_grid_which_genotype": "98b7e0bf4f18bce74dcabbefa1ceb001d0a98a908ee1cea19f8f7bbbbf1743f9",
+  "activities_reasoning_grid_your_answer": "e0cb7cca2e56b42e835efcaa3011007f53b672a42afb07ebf0ac29d5daad48f1"
+}
+-->
+<resources>
+    <!-- A grid like a Punnett square, where the learner fills each square. -->
+    <string name="activities_reasoning_badge_fill_square">Preencha o quadrado</string>
+    <!-- What a Punnett square shows, for TalkBack: the trait, then each parent with its alleles, like "A Punnett square for Flower color: Purple parent (Pp) down the side, White parent (pp) across the top." -->
+    <string name="activities_reasoning_grid_punnett">Quadrado de Punnett para %1$s: %2$s (%3$s) na vertical, %4$s (%5$s) na horizontal.</string>
+    <!-- What a grid of sums shows, for TalkBack, like "Two dice: First die (1, 2, 3) down the side, Second die (1, 2, 3) across the top, each square their sum." -->
+    <string name="activities_reasoning_grid_sums">%1$s: %2$s (%3$s) na vertical, %4$s (%5$s) na horizontal; cada quadrado mostra a soma.</string>
+    <!-- What a grid of products shows, for TalkBack, like "Times table: Number (2, 3, 4) down the side, Times (1, 2, 3) across the top, each square their product." -->
+    <string name="activities_reasoning_grid_products">%1$s: %2$s (%3$s) na vertical, %4$s (%5$s) na horizontal; cada quadrado mostra o produto.</string>
+    <!-- An empty square of the grid, for TalkBack: its number, then its row's and its column's values, like "Square 2, P and p: empty". -->
+    <string name="activities_reasoning_grid_square_empty">Quadrado %1$d, %2$s e %3$s: vazio</string>
+    <!-- A filled square of the grid, for TalkBack: its number, its row's and its column's values, then what's in it, like "Square 2, P and p: Pp, Purple". -->
+    <string name="activities_reasoning_grid_square">Quadrado %1$d, %2$s e %3$s: %4$s</string>
+    <!-- A genotype and the trait it shows, for TalkBack, like "Pp, Purple". -->
+    <string name="activities_reasoning_grid_value_trait">%1$s, %2$s</string>
+    <!-- A checked square the learner filled wrong, for TalkBack: the right value, then the learner's, like "Pp, Purple. Your answer: pp". -->
+    <string name="activities_reasoning_grid_your_answer">%1$s. Sua resposta: %2$s</string>
+    <!-- How many squares show the thing the check counted, like "2 of 4 squares: White" or "6 of 36 squares: 7". -->
+    <plurals name="activities_reasoning_grid_counted">
+        <item quantity="one">%1$d de %2$d quadrado: %3$s</item>
+        <item quantity="many">%1$d de %2$d quadrados: %3$s</item>
+        <item quantity="other">%1$d de %2$d quadrados: %3$s</item>
+    </plurals>
+    <!-- After the check, like "3 of 4 squares right". -->
+    <plurals name="activities_reasoning_grid_right">
+        <item quantity="one">%1$d de %2$d quadrado correto</item>
+        <item quantity="many">%1$d de %2$d quadrados corretos</item>
+        <item quantity="other">%1$d de %2$d quadrados corretos</item>
+    </plurals>
+    <!-- While filling, like "5 of 9 squares filled". -->
+    <plurals name="activities_reasoning_grid_filled">
+        <item quantity="one">%1$d de %2$d quadrado preenchido</item>
+        <item quantity="many">%1$d de %2$d quadrados preenchidos</item>
+        <item quantity="other">%1$d de %2$d quadrados preenchidos</item>
+    </plurals>
+    <!-- How many filled squares show each trait so far, out of all the squares, like "Purple: 2 of 4 · White: 1 of 4". -->
+    <string name="activities_reasoning_grid_traits">%1$s: %2$d de %5$d · %3$s: %4$d de %5$d</string>
+    <string name="activities_reasoning_grid_all_filled">Todos os quadrados estão preenchidos. Toque em um deles para mudar o valor.</string>
+    <!-- Asks for the genotype of a square of a Punnett square, like "Which genotype goes in square 2?" -->
+    <string name="activities_reasoning_grid_which_genotype">Qual genótipo vai no quadrado %1$d?</string>
+    <!-- Asks for the value of a square of a grid of numbers, like "What goes in square 2?" -->
+    <string name="activities_reasoning_grid_what_goes">O que vai no quadrado %1$d?</string>
+</resources>
