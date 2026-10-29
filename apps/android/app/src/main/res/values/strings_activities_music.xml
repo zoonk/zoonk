@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="activities_music_badge_play_it">Play it</string>
+    <!-- Training the ear to recognize notes and chords by their sound. -->
+    <string name="activities_music_badge_ear_training">Ear training</string>
+
+    <!-- A note name read aloud, like "F sharp". -->
+    <string name="activities_music_note_sharp">%1$s sharp</string>
+    <!-- A note name read aloud, like "E flat". -->
+    <string name="activities_music_note_flat">%1$s flat</string>
+    <!-- A chord's name: its root note, then the chord's kind, like "C major". -->
+    <string name="activities_music_chord_major">%1$s major</string>
+    <string name="activities_music_chord_minor">%1$s minor</string>
+    <string name="activities_music_chord_augmented">%1$s augmented</string>
+    <string name="activities_music_chord_diminished">%1$s diminished</string>
+    <string name="activities_music_chord_dominant7">%1$s dominant seventh</string>
+    <string name="activities_music_chord_major7">%1$s major seventh</string>
+    <string name="activities_music_chord_minor7">%1$s minor seventh</string>
+
+    <!-- The title while the notes to find are only heard, not named. -->
+    <string name="activities_music_by_ear">By ear</string>
+    <!-- How many notes the target has, like "2 notes". -->
+    <plurals name="activities_music_note_count">
+        <item quantity="one">%d note</item>
+        <item quantity="other">%d notes</item>
+    </plurals>
+    <!-- Nothing is pressed on the instrument. -->
+    <string name="activities_music_no_notes">No notes yet</string>
+    <!-- For TalkBack: the notes the instrument plays now, like "On the keys: C, E flat, G". -->
+    <string name="activities_music_on_the_keys">On the keys: %1$s</string>
+    <!-- Plays the chord or notes to find by ear. -->
+    <string name="activities_music_play_sound">Play the sound</string>
+    <!-- Plays the notes on the keys. -->
+    <string name="activities_music_hear_it">Hear it</string>
+    <!-- For a learner who can't play sound: shows the notes to find by ear as text. -->
+    <string name="activities_music_show_notes">Can\'t listen? Show the notes</string>
+    <!-- The notes the sound plays, as text, like "The sound plays: C, G". -->
+    <string name="activities_music_sound_notes">The sound plays: %1$s</string>
+    <!-- Under an instrument when the device couldn't play sound. -->
+    <string name="activities_music_sound_unavailable">The sound couldn\'t play. You can still see every note.</string>
+
+    <!-- For TalkBack: the piano keyboard's name. -->
+    <string name="activities_music_piano_keys">Piano keys</string>
+    <!-- For TalkBack: the guitar neck's name. -->
+    <string name="activities_music_guitar_strings">Guitar strings</string>
+    <!-- Above a guitar shape that plays the chord on the keys. -->
+    <string name="activities_music_same_chord_guitar">Same chord on guitar</string>
+    <!-- Above a guitar shape that plays the notes on the keys. -->
+    <string name="activities_music_same_notes_guitar">Same notes on guitar</string>
+    <!-- Above a guitar shape that plays the right notes, after the check. -->
+    <string name="activities_music_answer_on_guitar">One way to play the answer</string>
+    <!-- Under the piano when the pressed notes can't be played as one guitar shape. -->
+    <string name="activities_music_no_hand_shape">These notes don\'t fit in one hand shape on the guitar.</string>
+    <!-- Moves the guitar neck's window toward the nut. -->
+    <string name="activities_music_lower_frets">Lower frets</string>
+    <!-- Moves the guitar neck's window up the neck. -->
+    <string name="activities_music_higher_frets">Higher frets</string>
+    <!-- Which frets of the guitar neck show, like "Frets 1 to 4". -->
+    <string name="activities_music_frets">Frets %1$d to %2$d</string>
+    <!-- The thickest guitar string, read aloud. -->
+    <string name="activities_music_string_low_e">Low E string</string>
+    <!-- The thinnest guitar string, read aloud. -->
+    <string name="activities_music_string_high_e">High E string</string>
+    <!-- A guitar string named by its open note, like "A string". -->
+    <string name="activities_music_string">%1$s string</string>
+    <!-- A guitar string left silent (muted). -->
+    <string name="activities_music_not_played">Not played</string>
+    <!-- A guitar string played open, with the note it sounds, like "Open, D". -->
+    <string name="activities_music_open_string">Open, %1$s</string>
+    <!-- A fret on a guitar string, with the note it sounds, like "Fret 3, G". -->
+    <string name="activities_music_fret">Fret %1$d, %2$s</string>
+    <!-- For TalkBack: one string of a guitar shape, like "A string: Fret 3, C". -->
+    <string name="activities_music_string_position">%1$s: %2$s</string>
+</resources>

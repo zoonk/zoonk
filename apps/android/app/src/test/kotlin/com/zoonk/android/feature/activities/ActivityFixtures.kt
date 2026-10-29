@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.activities
 
 import com.zoonk.android.feature.activities.code.patternAnswer
+import com.zoonk.android.feature.activities.music.KeyboardFretboard
+import com.zoonk.android.feature.activities.music.notesAnswer
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityFrame
 import com.zoonk.android.feature.player.model.ActivityStepContent
@@ -39,7 +41,7 @@ object ActivityFixtures {
 
     fun value(name: String): Double? = entry(name)["value"]?.jsonPrimitive?.doubleOrNull
 
-    /** The learner's answer that reaches the expected end state: where both are written alike, or a pattern template's solution. */
+    /** The learner's answer that reaches the expected end state: where both are written alike, a pattern template's solution, or a pitch-class answer's notes. */
     fun rightAnswer(name: String): ActivityAnswer? =
         when (val expected = expected(name)) {
             is ActivityExpected.ChoiceWrapper -> {
@@ -51,16 +53,23 @@ object ActivityFixtures {
             }
 
             is ActivityExpected.InteractionWrapper -> {
-                val answer = expected.value.answer
-                if (answer is ActivityExpectedAnswer.RegexWrapper || answer is ActivityExpectedAnswer.FormulaWrapper) {
-                    patternAnswer(fields(name).getValue("solution").jsonPrimitive.content)
-                } else {
-                    runCatching {
-                        ApiJson.decodeFromJsonElement(
-                            ActivityAnswer.serializer(),
-                            ApiJson.encodeToJsonElement(ActivityExpectedAnswer.serializer(), answer),
-                        )
-                    }.getOrNull()
+                when (val answer = expected.value.answer) {
+                    is ActivityExpectedAnswer.RegexWrapper, is ActivityExpectedAnswer.FormulaWrapper -> {
+                        patternAnswer(fields(name).getValue("solution").jsonPrimitive.content)
+                    }
+
+                    is ActivityExpectedAnswer.PitchclassesWrapper -> {
+                        notesAnswer(KeyboardFretboard.notes(answer.value.pitchClasses.map { it.toInt() }))
+                    }
+
+                    else -> {
+                        runCatching {
+                            ApiJson.decodeFromJsonElement(
+                                ActivityAnswer.serializer(),
+                                ApiJson.encodeToJsonElement(ActivityExpectedAnswer.serializer(), answer),
+                            )
+                        }.getOrNull()
+                    }
                 }
             }
 

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "activities_music_answer_on_guitar": "94a931d79b8139e7a7082b44e827d74261f101aa8c68d11d3afe90fce3ff8e05",
+  "activities_music_badge_ear_training": "75267010554dcecc84c5966a9e2d540be622054fd7130c4286af916ba99819d4",
+  "activities_music_badge_play_it": "7b1a3a50efb6bd6044fe71c8229607c8ab10eed24fec92a267a3def7193167bc",
+  "activities_music_by_ear": "3449157757c87226fbe55b1793a9d86f39237afe9a2010b778c5f75fcaf49962",
+  "activities_music_chord_augmented": "edcb3e25672bd750c89c6eb0ffd31e3a381c511d9024c7cad7b6f139bc21cc4c",
+  "activities_music_chord_diminished": "abf91baf13f58b6fdfe46d10002497a2658c72a9755c71cf32b8d19d6a251134",
+  "activities_music_chord_dominant7": "d24a36c1c2d30cf6e7b49b2d47eecf0d3f4dddcf12614bd33b57d492cda1ca20",
+  "activities_music_chord_major": "90517d17278128a3d24ea18a29db866ce61f4afd8822fee39302c891b66ea0b1",
+  "activities_music_chord_major7": "33728b16aa3d87b4144c7c07d58f2bf73ba8a5f2e8643787f6a5120616261225",
+  "activities_music_chord_minor": "b5e2f8588bbaff18d6bb99a1aa2735ceb0d8111dfead596afabfc5880c4bf9a7",
+  "activities_music_chord_minor7": "240473b7745a1b80f4de93daaec57195eb15399fc873f94e1ed83aab4f0f3305",
+  "activities_music_fret": "e82e046f8f146227916f213a8411ed7be7da77a5342fdd188ac029560d666777",
+  "activities_music_frets": "7b76f1d4b98599e7fd6db5f029f0abd50888911f8c2eedde57f9f32f35b476fd",
+  "activities_music_guitar_strings": "0c499161f8c2f35a644a539ce102caabba0717774f037073c42f986272d68310",
+  "activities_music_hear_it": "0aeabcf1fb83fb50bda646963717cba7fddd97f828d594b3e4d3d5bd6d0b57e5",
+  "activities_music_higher_frets": "14424c5ee6dad81b9c862aa9b39a428029751b8e652f22987986308fb4224a6a",
+  "activities_music_lower_frets": "a881c01ac6a2d542cd9c0aca6273414563999c8641a4b7b2db972b20a90f9976",
+  "activities_music_no_hand_shape": "73f3f4fd5c6b25e48f8f896391b7c4fdfd07874cd49282f9ffdec68432110ec7",
+  "activities_music_no_notes": "ba0aa86ae6c8791dec15ee3a6ace7e23917521283fe39c9c88963b56665e3205",
+  "activities_music_not_played": "5a8e02ce5cbf3abc94404101a6cdad410c3084185c8fb2acf31240014a931369",
+  "activities_music_note_count": "f64ca41f84ec82821169577e64fa7cb681756e186e3922ac104d912addd6b178",
+  "activities_music_note_flat": "05ddf4a3222aae9213cab989c52f85f3d22315cda2725421b14484e01257af7b",
+  "activities_music_note_sharp": "99f1fbe4935ca304c2c16a683ed26d58db31eca7a5021ba80ac0facd4bd1055c",
+  "activities_music_on_the_keys": "3fb46f1839a1b945f33a8121392fb3cf8ba8fdc298ea373114f8815dcdf91a57",
+  "activities_music_open_string": "44ee5f5ba9455c1c425bf159c986c22b6cc14b6329f49bb4fc3b5f95a4a97546",
+  "activities_music_piano_keys": "4df075d6dae15648a8fb1814fc2fa47747ee6d089bca10db6befd35f1d05cab8",
+  "activities_music_play_sound": "460870d52c09ae579a7d5a0ae150ad8d2e86597b6a61dee034f303405dde5d0f",
+  "activities_music_same_chord_guitar": "af8d9e3ae2b17e97cd531bb75b0f76df4fcb8a3f6de1c4575f74d0c9c8c19ad4",
+  "activities_music_same_notes_guitar": "cd6c79dd5682bbf27b154fd6b0cb02ff514afff999f9ff7c884ce4eb252f0f92",
+  "activities_music_show_notes": "b13790dbb49ab894222a25f6a5c78887c1ebef3f4233c670b4a3e5596117997f",
+  "activities_music_sound_notes": "cac9f388b9a990198798bb74bbb91b9d49097792bbd06482a90019939cebdd44",
+  "activities_music_sound_unavailable": "ebea1f14bcb412fe3ea5ef86e259bd89f1752af85d9aa70a57a4278b7c3b76f3",
+  "activities_music_string": "f51649b662df3cd52740c863d8e6a12f7a39d7f2a6cb0d94676c2096568da607",
+  "activities_music_string_high_e": "8190fd9ed5f056dc53824ae2e08f010aca878596b2efaab64259dabe3faefb05",
+  "activities_music_string_low_e": "9d7a7809da2de51e8c7df3916f4a0a42a355a4da5075cc7ddc42549fcbd73f4c",
+  "activities_music_string_position": "8643ee694f698daa1bf31aaea6b28cb173ac53dbf67d601322652ec390dd1bfd"
+}
+-->
+<resources>
+    <string name="activities_music_badge_play_it">Spiel es</string>
+    <!-- Training the ear to recognize notes and chords by their sound. -->
+    <string name="activities_music_badge_ear_training">Gehörbildung</string>
+    <!-- A note name read aloud, like "F sharp". -->
+    <string name="activities_music_note_sharp">%1$sis</string>
+    <!-- A note name read aloud, like "E flat". -->
+    <string name="activities_music_note_flat">%1$ses</string>
+    <!-- A chord's name: its root note, then the chord's kind, like "C major". -->
+    <string name="activities_music_chord_major">%1$s-Dur</string>
+    <string name="activities_music_chord_minor">%1$s-Moll</string>
+    <string name="activities_music_chord_augmented">%1$s übermäßig</string>
+    <string name="activities_music_chord_diminished">%1$s vermindert</string>
+    <string name="activities_music_chord_dominant7">%1$s Dominantseptakkord</string>
+    <string name="activities_music_chord_major7">%1$s Dur-Septakkord</string>
+    <string name="activities_music_chord_minor7">%1$s Moll-Septakkord</string>
+    <!-- The title while the notes to find are only heard, not named. -->
+    <string name="activities_music_by_ear">Nach Gehör</string>
+    <!-- How many notes the target has, like "2 notes". -->
+    <plurals name="activities_music_note_count">
+        <item quantity="one">%d Ton</item>
+        <item quantity="other">%d Töne</item>
+    </plurals>
+    <!-- Nothing is pressed on the instrument. -->
+    <string name="activities_music_no_notes">Noch keine Töne</string>
+    <!-- For TalkBack: the notes the instrument plays now, like "On the keys: C, E flat, G". -->
+    <string name="activities_music_on_the_keys">Auf den Tasten: %1$s</string>
+    <!-- Plays the chord or notes to find by ear. -->
+    <string name="activities_music_play_sound">Ton abspielen</string>
+    <!-- Plays the notes on the keys. -->
+    <string name="activities_music_hear_it">Anhören</string>
+    <!-- For a learner who can't play sound: shows the notes to find by ear as text. -->
+    <string name="activities_music_show_notes">Du kannst nicht hören? Noten anzeigen</string>
+    <!-- The notes the sound plays, as text, like "The sound plays: C, G". -->
+    <string name="activities_music_sound_notes">Der Ton spielt: %1$s</string>
+    <!-- Under an instrument when the device couldn't play sound. -->
+    <string name="activities_music_sound_unavailable">Der Ton konnte nicht abgespielt werden. Du kannst trotzdem alle Noten sehen.</string>
+    <!-- For TalkBack: the piano keyboard's name. -->
+    <string name="activities_music_piano_keys">Klaviertasten</string>
+    <!-- For TalkBack: the guitar neck's name. -->
+    <string name="activities_music_guitar_strings">Gitarrensaiten</string>
+    <!-- Above a guitar shape that plays the chord on the keys. -->
+    <string name="activities_music_same_chord_guitar">Derselbe Akkord auf der Gitarre</string>
+    <!-- Above a guitar shape that plays the notes on the keys. -->
+    <string name="activities_music_same_notes_guitar">Dieselben Töne auf der Gitarre</string>
+    <!-- Above a guitar shape that plays the right notes, after the check. -->
+    <string name="activities_music_answer_on_guitar">Eine Möglichkeit, die Antwort zu spielen</string>
+    <!-- Under the piano when the pressed notes can't be played as one guitar shape. -->
+    <string name="activities_music_no_hand_shape">Diese Töne lassen sich auf der Gitarre nicht mit einem einzigen Griff spielen.</string>
+    <!-- Moves the guitar neck's window toward the nut. -->
+    <string name="activities_music_lower_frets">Tiefere Bünde</string>
+    <!-- Moves the guitar neck's window up the neck. -->
+    <string name="activities_music_higher_frets">Höhere Bünde</string>
+    <!-- Which frets of the guitar neck show, like "Frets 1 to 4". -->
+    <string name="activities_music_frets">Bünde %1$d bis %2$d</string>
+    <!-- The thickest guitar string, read aloud. -->
+    <string name="activities_music_string_low_e">Tiefe E-Saite</string>
+    <!-- The thinnest guitar string, read aloud. -->
+    <string name="activities_music_string_high_e">Hohe E-Saite</string>
+    <!-- A guitar string named by its open note, like "A string". -->
+    <string name="activities_music_string">%1$s. Saite</string>
+    <!-- A guitar string left silent (muted). -->
+    <string name="activities_music_not_played">Nicht gespielt</string>
+    <!-- A guitar string played open, with the note it sounds, like "Open, D". -->
+    <string name="activities_music_open_string">Leersaite, %1$s</string>
+    <!-- A fret on a guitar string, with the note it sounds, like "Fret 3, G". -->
+    <string name="activities_music_fret">Bund %1$d, %2$s</string>
+    <!-- For TalkBack: one string of a guitar shape, like "A string: Fret 3, C". -->
+    <string name="activities_music_string_position">%1$s: %2$s</string>
+</resources>
