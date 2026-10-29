@@ -118,14 +118,6 @@
     <!-- Puts a subject the learner took out back in their plan. -->
     <string name="goalcontent_bring_back">Bring it back</string>
     <string name="goalcontent_save_failed">That didn\'t save. Try again.</string>
-    <!-- %1$s lists an exam's written tests: "When to practice the essay and the discursive test". -->
-    <string name="goalcontent_cadence_title">When to practice %1$s</string>
-    <string name="goalcontent_cadence_weekly">Every week</string>
-    <string name="goalcontent_cadence_biweekly">Every other week</string>
-    <string name="goalcontent_cadence_final_weeks">Only the final weeks</string>
-    <string name="goalcontent_cadence_weekly_effect">Recommended: a little every week, which improves writing the most.</string>
-    <string name="goalcontent_cadence_biweekly_effect">The same practice in alternate weeks: less spread out, more at a time.</string>
-    <string name="goalcontent_cadence_final_weeks_effect">Less spaced practice, concentrated in the final weeks before the exam.</string>
     <plurals name="goalcontent_chapters_done">
         <item quantity="one">%d chapter done</item>
         <item quantity="other">%d chapters done</item>

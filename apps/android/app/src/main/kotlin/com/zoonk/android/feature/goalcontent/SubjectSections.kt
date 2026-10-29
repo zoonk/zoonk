@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.goalcontent
 
-import android.icu.text.ListFormatter
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,6 +48,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.plan.WrittenCadenceChoice
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.ui.components.KindDot
@@ -221,68 +221,15 @@ internal fun SubjectWrittenPractice(
     val practice = syllabus.writtenPractice ?: return
     if (subject.areas.none { it in practice.parts }) return
 
-    val locale = currentLocale()
-    val shown = writes.tappedCadence ?: practice.cadence
-    val cadences = WrittenPractice.Cadence.entries.filter { it != WrittenPractice.Cadence.FINAL_WEEKS || practice.finalWeeksFrom != null }
-
-    Column(Modifier.padding(top = 20.dp)) {
-        Text(
-            text = stringResource(R.string.goalcontent_cadence_title, ListFormatter.getInstance(locale).format(practice.parts)),
-            modifier = Modifier.padding(horizontal = PAGE_PADDING),
-            style = MaterialTheme.typography.titleSmall,
-        )
-        Column(Modifier.selectableGroup().padding(top = 4.dp)) {
-            cadences.forEach { cadence ->
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .heightIn(min = 48.dp)
-                            .selectable(
-                                selected = cadence == shown,
-                                enabled = writes.tappedCadence == null,
-                                role = Role.RadioButton,
-                                onClick = { if (cadence != practice.cadence) actions.setCadence(cadence) },
-                            ).padding(horizontal = PAGE_PADDING),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    RadioButton(selected = cadence == shown, onClick = null, enabled = writes.tappedCadence == null)
-                    Text(cadenceLabel(cadence), style = MaterialTheme.typography.bodyLarge)
-                }
-            }
-        }
-        Column(Modifier.padding(horizontal = PAGE_PADDING), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                text = cadenceEffect(shown),
-                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            if (writes.cadenceFailed) SaveFailed()
-        }
-    }
+    WrittenCadenceChoice(
+        practice = practice,
+        asked = writes.tappedCadence,
+        pending = writes.tappedCadence != null,
+        failed = writes.cadenceFailed,
+        onChange = actions.setCadence,
+        modifier = Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 20.dp),
+    )
 }
-
-@Composable
-private fun cadenceLabel(cadence: WrittenPractice.Cadence) =
-    stringResource(
-        when (cadence) {
-            WrittenPractice.Cadence.WEEKLY -> R.string.goalcontent_cadence_weekly
-            WrittenPractice.Cadence.BIWEEKLY -> R.string.goalcontent_cadence_biweekly
-            WrittenPractice.Cadence.FINAL_WEEKS -> R.string.goalcontent_cadence_final_weeks
-        },
-    )
-
-@Composable
-private fun cadenceEffect(cadence: WrittenPractice.Cadence) =
-    stringResource(
-        when (cadence) {
-            WrittenPractice.Cadence.WEEKLY -> R.string.goalcontent_cadence_weekly_effect
-            WrittenPractice.Cadence.BIWEEKLY -> R.string.goalcontent_cadence_biweekly_effect
-            WrittenPractice.Cadence.FINAL_WEEKS -> R.string.goalcontent_cadence_final_weeks_effect
-        },
-    )
 
 /** Main's subject aside, from 72rem: its coverage and its details. */
 @Composable

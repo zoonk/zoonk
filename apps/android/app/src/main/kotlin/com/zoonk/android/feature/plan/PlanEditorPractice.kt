@@ -64,10 +64,30 @@ internal fun PlanWrittenPractice(
 ) {
     val practice = page.plan.writtenPractice ?: return
     val asked = edits.asked(PlanPart.Writing).filterIsInstance<PlanOp.WrittenCadence>().firstOrNull()
-    val shown = WrittenPractice.Cadence.entries.firstOrNull { it.value == asked?.cadence } ?: practice.cadence
+
+    WrittenCadenceChoice(
+        practice = practice,
+        asked = WrittenPractice.Cadence.entries.firstOrNull { it.value == asked?.cadence },
+        pending = edits.isPending(PlanPart.Writing),
+        failed = edits.hasFailed(PlanPart.Writing),
+        onChange = { edits.change(PlanPart.Writing, listOf(PlanOp.WrittenCadence(it.value))) {} },
+    )
+}
+
+/** Main's choice of when to practice the written tests, on the Plan and on a written test's page; [asked] shows while it saves. */
+@Composable
+internal fun WrittenCadenceChoice(
+    practice: WrittenPractice,
+    asked: WrittenPractice.Cadence?,
+    pending: Boolean,
+    failed: Boolean,
+    onChange: (WrittenPractice.Cadence) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val shown = asked ?: practice.cadence
     val cadences = WrittenPractice.Cadence.entries.filter { it != WrittenPractice.Cadence.FINAL_WEEKS || practice.finalWeeksFrom != null }
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         SectionLabel(stringResource(R.string.plan_when_to_practice, joinList(practice.parts)))
         Column(Modifier.selectableGroup()) {
             cadences.forEach { cadence ->
@@ -78,17 +98,14 @@ internal fun PlanWrittenPractice(
                             .heightIn(min = 48.dp)
                             .selectable(
                                 selected = cadence == shown,
+                                enabled = !pending,
                                 role = Role.RadioButton,
-                                onClick = {
-                                    if (cadence != practice.cadence) {
-                                        edits.change(PlanPart.Writing, listOf(PlanOp.WrittenCadence(cadence.value))) {}
-                                    }
-                                },
+                                onClick = { if (cadence != practice.cadence) onChange(cadence) },
                             ),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    RadioButton(selected = cadence == shown, onClick = null)
+                    RadioButton(selected = cadence == shown, onClick = null, enabled = !pending)
                     Text(cadenceLabel(cadence), style = MaterialTheme.typography.bodyLarge)
                 }
             }
@@ -99,7 +116,7 @@ internal fun PlanWrittenPractice(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        if (edits.hasFailed(PlanPart.Writing)) SaveFailedText()
+        if (failed) SaveFailedText()
     }
 }
 

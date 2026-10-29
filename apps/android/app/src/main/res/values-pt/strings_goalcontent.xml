@@ -9,13 +9,6 @@
   "goalcontent_beyond_guide": "2e1f9a4aede258f4be4b63933bf321925cd0f487cf37409e9f1ed6f334c2c708",
   "goalcontent_beyond_notice": "393397320c5863f5e65784a1a3d08371f89936a8721b8155f4e37cecd4317bbe",
   "goalcontent_bring_back": "ee15b93b667ad2d93aaf4d82ca8acdf367ade18b0d889d92df9d38722e5652f4",
-  "goalcontent_cadence_biweekly": "efa1ffe37fec242f11a4f9d784715e19f8cb92265c82bf6ada91ab0494c35f7a",
-  "goalcontent_cadence_biweekly_effect": "900bc32e50136a25d86cb8c4bdfe4f6608869c5c2c5d2751ca4e60de21190e99",
-  "goalcontent_cadence_final_weeks": "0cd88014725b504661aa4b66a7b67d4615d930314f94c0edd2ff9a0020e3044c",
-  "goalcontent_cadence_final_weeks_effect": "3f74d24f5912ff0411bb60806cb4a25d234514065dd5e7f62409f4c041904e39",
-  "goalcontent_cadence_title": "b0ee5eefbef7a53c334cf3693c8f346b2c1621d43f7b992a8c5d422099bf3bc4",
-  "goalcontent_cadence_weekly": "c4c2ed85be66fe5a43b032829383d6b29ad3b3a63a533b9f470b8f33aff24710",
-  "goalcontent_cadence_weekly_effect": "133e52983a1f0ac9cafc70a8c136279e5264cba5dc16983177666adbdafdf773",
   "goalcontent_chapter_count": "58d2dc698aad9c199ae2680bf8469d0f5b6e11b42803e008c7ed8316d112aca4",
   "goalcontent_chapter_number": "8f9ca80605c51d0dc549768a59f7e5776b6d2f2e66f85b402a3b28adbd9175fb",
   "goalcontent_chapter_summary": "c04256aaf15da344410264bfa7ab4dfaa95b80a4afc077f4a9d32a2711c3a3c0",
@@ -253,14 +246,6 @@
     <!-- Puts a subject the learner took out back in their plan. -->
     <string name="goalcontent_bring_back">Trazer de volta</string>
     <string name="goalcontent_save_failed">Não foi possível salvar. Tente de novo.</string>
-    <!-- %1$s lists an exam's written tests: "When to practice the essay and the discursive test". -->
-    <string name="goalcontent_cadence_title">Quando praticar %1$s</string>
-    <string name="goalcontent_cadence_weekly">Toda semana</string>
-    <string name="goalcontent_cadence_biweekly">A cada duas semanas</string>
-    <string name="goalcontent_cadence_final_weeks">Só nas semanas finais</string>
-    <string name="goalcontent_cadence_weekly_effect">Recomendado: um pouco toda semana. Isso ajuda você a escrever melhor.</string>
-    <string name="goalcontent_cadence_biweekly_effect">A mesma prática em semanas alternadas: menos espaçada e mais concentrada.</string>
-    <string name="goalcontent_cadence_final_weeks_effect">Prática menos espaçada, concentrada nas últimas semanas antes da prova.</string>
     <plurals name="goalcontent_chapters_done">
         <item quantity="one">%d capítulo concluído</item>
         <item quantity="many">%d capítulos concluídos</item>
