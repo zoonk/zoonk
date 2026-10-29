@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -19,17 +20,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalAccessibilityManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.isTraversalGroup
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.Suggestion
 import com.zoonk.android.ui.components.SuggestionAction
 import com.zoonk.android.ui.components.SuggestionActions
 import com.zoonk.android.ui.components.SuggestionContentScope
 import com.zoonk.android.ui.components.SuggestionDescription
+import com.zoonk.android.ui.components.SuggestionFrame
 import com.zoonk.android.ui.components.SuggestionHeader
 import com.zoonk.android.ui.components.SuggestionLayout
 import com.zoonk.android.ui.components.SuggestionMark
@@ -160,6 +167,9 @@ internal class SlotState(
     var waiting = 0
     var searches = 0
 
+    /** The result shows until it's undone. */
+    fun answered(edits: PlanEdits): SlotResult? = result?.takeIf { result -> result.change?.let { edits.changes[it.id]?.undone } != true }
+
     /** What one item asked, which paging away drops, as main's items keyed by their key do. */
     fun resetItem() {
         failed = null
@@ -189,9 +199,7 @@ internal class Slot(
     val state: SlotState,
     val layout: SuggestionLayout,
 ) {
-    /** The result shows until it's undone. */
-    val answered: SlotResult?
-        get() = state.result?.takeIf { result -> result.change?.let { edits.changes[it.id]?.undone } != true }
+    val answered: SlotResult? get() = state.answered(edits)
 
     fun answer(item: SlotItem): SlotResult? = answered?.takeIf { it.item.key == item.key }
 
@@ -235,6 +243,29 @@ internal class Slot(
     }
 }
 
+/** The items to page through, without those put off with Not now. */
+@Composable
+private fun slotItemsLeft(
+    page: PlanPageState,
+    host: SlotHost,
+    state: SlotState,
+): List<SlotItem> {
+    val fix =
+        page.plan.status
+            ?.pace
+            ?.let { paceFix(it, page.isExam) }
+    return slotItems(page, fix, finished = host.next != null).filter { it.key !in state.dismissed }
+}
+
+/** Whether the slot shows anything, so a page leaves no room for it when it doesn't. */
+@Composable
+internal fun hasSlotItem(
+    page: PlanPageState,
+    edits: PlanEdits,
+    host: SlotHost,
+    state: SlotState,
+): Boolean = state.answered(edits) != null || slotItemsLeft(page, host, state).isNotEmpty()
+
 /**
  * Main's suggestion slot: one item at a time with a pager, as a line on narrow pages and a panel
  * beside the page. An answer that changes the plan shows what it did, with Undo, for a moment.
@@ -252,11 +283,7 @@ internal fun PlanSuggestionSlot(
     host: SlotHost = SlotHost(),
     state: SlotState = remember { SlotState() },
 ) {
-    val fix =
-        page.plan.status
-            ?.pace
-            ?.let { paceFix(it, page.isExam) }
-    val items = slotItems(page, fix, finished = host.next != null).filter { it.key !in state.dismissed }
+    val items = slotItemsLeft(page, host, state)
     val slot = Slot(page, edits, links, host, state, layout)
     val answered = slot.answered
     val index = state.position.coerceIn(0, (items.size - 1).coerceAtLeast(0))
@@ -271,12 +298,13 @@ internal fun PlanSuggestionSlot(
         }
     }
 
-    val pager = @Composable {
-        if (answered == null && items.size > 1) SlotPager(index, items.size) { slot.move(it, index, items.size) }
-    }
-
-    Column(modifier.semantics { isTraversalGroup = true }) {
-        if (layout == SuggestionLayout.Panel) pager()
+    val pager: (@Composable (Modifier) -> Unit)? =
+        if (items.size > 1) {
+            { SlotPager(index, items.size, hidden = answered != null, it) { step -> slot.move(step, index, items.size) } }
+        } else {
+            null
+        }
+    val suggestion: @Composable () -> Unit = {
         key(item.key) {
             when (item) {
                 SlotItem.Paused -> {
@@ -327,19 +355,35 @@ internal fun PlanSuggestionSlot(
                 }
             }
         }
-        if (layout == SuggestionLayout.Line) pager()
+    }
+
+    Column(modifier.semantics { isTraversalGroup = true }) {
+        if (layout == SuggestionLayout.Panel) {
+            // The panel's pager heads it, so paging never moves it under the finger.
+            SuggestionFrame(head = pager?.let { { it(Modifier.padding(top = 4.dp, end = 4.dp)) } }, content = suggestion)
+        } else {
+            suggestion()
+            pager?.invoke(Modifier)
+        }
     }
 }
 
+/** [hidden] while a result shows: it keeps its place, so the result doesn't move. */
 @Composable
 private fun SlotPager(
     index: Int,
     count: Int,
+    hidden: Boolean,
+    modifier: Modifier,
     onMove: (Int) -> Unit,
 ) {
     val locale = currentLocale()
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End, verticalAlignment = Alignment.CenterVertically) {
-        IconButton(onClick = { onMove(-1) }) {
+    Row(
+        modifier = modifier.fillMaxWidth().then(if (hidden) Modifier.alpha(0f).clearAndSetSemantics {} else Modifier),
+        horizontalArrangement = Arrangement.End,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconButton(onClick = { onMove(-1) }, enabled = !hidden) {
             Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.plan_suggestion_previous))
         }
         Text(
@@ -349,10 +393,11 @@ private fun SlotPager(
                     formatNumber((index + 1).toDouble(), locale),
                     formatNumber(count.toDouble(), locale),
                 ),
+            modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        IconButton(onClick = { onMove(1) }) {
+        IconButton(onClick = { onMove(1) }, enabled = !hidden) {
             Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = stringResource(R.string.plan_suggestion_next))
         }
     }

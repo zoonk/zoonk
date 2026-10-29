@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onFirst
@@ -229,8 +230,7 @@ class PlanSuggestionSlotTest {
 
     @Test
     fun notNowPutsAnItemOffForThisOpening() {
-        val status = """"status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null}"""
-        showSlot(coveragePlan(extra = status))
+        showSlot(coveragePlan(extra = BEHIND))
 
         compose.onNodeWithContentDescription("Next").performClick()
         compose.onNodeWithText("Other options").performClick()
@@ -242,18 +242,25 @@ class PlanSuggestionSlotTest {
 
     @Test
     fun theLessonsTheTimeFitsAreAppliedAfterTheirDiff() {
-        showSlot(
-            plan(
-                """"fitOffer":{"canApply":true,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":false,""" +
-                    """"operations":[{"kind":"fitLessons"}]}""",
-            ),
-        )
+        showSlot(plan(FIT_OFFER))
 
         compose.onNodeWithText("6 more lessons fit in your time").assertIsDisplayed()
         compose.onNodeWithText("Apply").performClick()
 
         assertEquals(listOf(listOf<PlanOp>(PlanOp.FitLessons)), applied)
         compose.onNodeWithText("Plan updated").assertIsDisplayed()
+    }
+
+    @Test
+    fun aResultKeepsThePagersPlace() {
+        showSlot(plan("$BEHIND,$FIT_OFFER"))
+        compose.onNodeWithContentDescription("Next").performClick()
+        val top = compose.onNodeWithText("6 more lessons fit in your time").getUnclippedBoundsInRoot().top
+
+        compose.onNodeWithText("Apply").performClick()
+
+        assertEquals(top, compose.onNodeWithText("Plan updated").getUnclippedBoundsInRoot().top)
+        compose.onNodeWithContentDescription("Next").assertDoesNotExist()
     }
 
     @Test
@@ -301,5 +308,12 @@ class PlanSuggestionSlotTest {
 
         compose.onNodeWithText("Data science").performClick()
         compose.runOnIdle { assertEquals(AppRoute.CatalogCourse(CHANGE_ID), navigator.currentRoute) }
+    }
+
+    private companion object {
+        const val BEHIND = """"status":{"kind":"behind","days":2,"extraMinutesPerDay":10,"lessons":null}"""
+        const val FIT_OFFER =
+            """"fitOffer":{"canApply":true,"effect":{"lessonsAdded":6,"lessonsRemoved":0},"fits":false,""" +
+                """"operations":[{"kind":"fitLessons"}]}"""
     }
 }

@@ -275,6 +275,7 @@ class PlanScreenshots {
                 """"fitOffer":{"canApply":true,"fits":false,"operations":[{"kind":"fitLessons"}],"effect":{"lessonsAdded":6,""" +
                     """"lessonsRemoved":0,"topicsAdded":[{"area":"Web apps","topics":["Flask","Django","FastAPI"]}]}}""",
             )
+        val pagedPlan = fitPlan.copy(status = learnPlan().status)
         val pastDate = plan(""""status":{"kind":"pastDate","lessons":4}""")
         val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75))
         val moved = listOf<PlanOp>(PlanOp.TargetDate(java.time.LocalDate.parse("2027-04-18")))
@@ -344,6 +345,11 @@ class PlanScreenshots {
                         SlotState().apply { result = SlotResult(SlotItem.Coverage, change) }
                     }),
                 "plan-slot-fit" to Shot(fitPlan),
+                "plan-slot-paged" to Shot(pagedPlan, state = { SlotState(position = 1) }),
+                "plan-slot-paged-applied" to
+                    Shot(pagedPlan, edits = PlanEdits(changes = mapOf(change.id to EditorChange(change))), state = {
+                        SlotState(position = 1).apply { result = SlotResult(SlotItem.FitLessons, change) }
+                    }),
                 "plan-slot-past-date" to Shot(pastDate),
                 "plan-slot-past-date-exam" to Shot(pastDate, summary = exam),
                 "plan-slot-past-date-preview" to Shot(pastDate, host = SlotHost(preview = ready(moved, pastDate))),

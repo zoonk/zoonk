@@ -1,8 +1,10 @@
 package com.zoonk.android.feature.plan
 
 import androidx.activity.ComponentActivity
+import androidx.compose.ui.semantics.SemanticsProperties
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasScrollToKeyAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -15,6 +17,7 @@ import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.Plan
 import com.zoonk.api.models.Syllabus
 import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
@@ -40,9 +43,10 @@ class PlanContentTest {
         kind: String = "learn",
         resume: Resume = if (resumeChangesPlan) Resume.Confirm else Resume.Plain,
         structure: Syllabus? = null,
+        plan: Plan = learnPlan(),
     ) {
         val summary = learnerSummary(status = status, kind = kind)
-        val page = PlanPageState(summary.goals.first(), learnPlan(), summary)
+        val page = PlanPageState(summary.goals.first(), plan, summary)
         compose.setContent {
             navigator = rememberAppNavigator()
             ZoonkTheme {
@@ -139,6 +143,15 @@ class PlanContentTest {
 
         compose.onNodeWithText("Behind").assertIsDisplayed()
         compose.onNodeWithText("Progress").assertDoesNotExist()
+    }
+
+    @Test
+    fun aSlotWithNothingToSuggestTakesNoPlaceOnThePage() {
+        show(plan = learnPlan().copy(status = null))
+
+        val list = compose.onNode(hasScrollToKeyAction()).fetchSemanticsNode().config[SemanticsProperties.IndexForKey]
+        assertEquals(0, list("header"))
+        assertEquals(-1, list("suggestion"))
     }
 
     @Test

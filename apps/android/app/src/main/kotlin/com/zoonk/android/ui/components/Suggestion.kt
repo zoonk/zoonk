@@ -3,6 +3,7 @@ package com.zoonk.android.ui.components
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
@@ -94,14 +95,52 @@ fun Suggestion(
             }
 
             SuggestionLayout.Panel -> {
-                Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, border = frameBorder()) {
-                    CompositionLocalProvider(LocalPresentation provides Presentation.Panel) {
-                        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                            SuggestionContentScope(this) { open = false }.content()
+                val framing = LocalFraming.current
+                val panel =
+                    @Composable {
+                        CompositionLocalProvider(LocalPresentation provides Presentation.Panel) {
+                            Column(
+                                modifier =
+                                    Modifier.padding(
+                                        start = 16.dp,
+                                        end = 16.dp,
+                                        bottom = 16.dp,
+                                        top =
+                                            if (framing ==
+                                                Framing.Headed
+                                            ) {
+                                                0.dp
+                                            } else {
+                                                16.dp
+                                            },
+                                    ),
+                                verticalArrangement = Arrangement.spacedBy(10.dp),
+                            ) {
+                                SuggestionContentScope(this) { open = false }.content()
+                            }
                         }
                     }
+                if (framing == Framing.Own) {
+                    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, border = frameBorder(), content = panel)
+                } else {
+                    Box(modifier.fillMaxWidth()) { panel() }
                 }
             }
+        }
+    }
+}
+
+/** A panel's frame around a [Suggestion] and the [head] above it, say a pager; the suggestion draws no frame of its own. */
+@Composable
+fun SuggestionFrame(
+    modifier: Modifier = Modifier,
+    head: (@Composable () -> Unit)? = null,
+    content: @Composable () -> Unit,
+) {
+    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, border = frameBorder()) {
+        Column {
+            head?.invoke()
+            CompositionLocalProvider(LocalFraming provides if (head != null) Framing.Headed else Framing.Shared, content = content)
         }
     }
 }
@@ -272,6 +311,9 @@ private fun bodyStyle() =
 
 private enum class Presentation { Line, Panel, Sheet }
 
+/** Who draws a panel's frame: the suggestion, or a [SuggestionFrame] around it, with or without a head. */
+private enum class Framing { Own, Shared, Headed }
+
 private class Frame(
     val mark: SuggestionMark,
     val open: () -> Unit,
@@ -279,6 +321,7 @@ private class Frame(
 
 private val LocalPresentation = staticCompositionLocalOf { Presentation.Panel }
 private val LocalFrame = staticCompositionLocalOf { Frame(SuggestionMark.New) {} }
+private val LocalFraming = staticCompositionLocalOf { Framing.Own }
 
 private val PANEL_MARK = 18.dp
 

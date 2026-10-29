@@ -311,6 +311,7 @@ internal fun PlanContent(
             )
         }
 
+    val hasSuggestion = hasSlotItem(page, edits, slot, slotState)
     var pathOpen by rememberSaveable { mutableStateOf(false) }
     val list = rememberLazyListState()
     val main =
@@ -337,7 +338,7 @@ internal fun PlanContent(
                 }
                 if (!asideBeside) {
                     item(key = "numbers", contentType = "numbers") { numbers(NumberVariant.Tiles) }
-                    item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
+                    if (hasSuggestion) item(key = "suggestion", contentType = "suggestion") { suggestion(SuggestionLayout.Line) }
                 }
                 if (structure != null) {
                     item(key = "structure", contentType = "structure") { PlanSyllabusSection(structure, onOpenSubject = links::subject) }
