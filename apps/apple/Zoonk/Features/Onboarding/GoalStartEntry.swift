@@ -123,6 +123,7 @@ struct GoalEntrySections<Attachment: View>: View {
             submit()
           }
         }
+        .keepsOffFold()
       }
     } header: {
       if isSection {
