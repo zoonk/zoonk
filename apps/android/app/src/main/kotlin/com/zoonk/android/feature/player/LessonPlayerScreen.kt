@@ -476,13 +476,13 @@ private fun ActionBar(
 ) {
     val primary = screen.primary ?: return
 
-    TaskActions { wide ->
+    TaskActions { width ->
         if (screen.canGoBack) {
             OutlinedIconButton(onClick = onBack) {
                 Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.player_previous_screen))
             }
         }
-        Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = actionWidth(wide)) {
+        Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = width) {
             if (primary.busy) {
                 CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
             }
@@ -491,19 +491,20 @@ private fun ActionBar(
     }
 }
 
-/** Main's task actions: across the bar on narrower windows, at its end on wide ones, each as wide as its label. */
+/**
+ * Main's task actions: across the bar on narrower windows, at its end on wide ones. Each button
+ * takes the content's `width`: a share of the bar, or as wide as its label.
+ */
 @Composable
-internal fun TaskActions(content: @Composable RowScope.(wide: Boolean) -> Unit) {
+internal fun TaskActions(content: @Composable RowScope.(width: Modifier) -> Unit) {
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp, if (wide) Alignment.End else Alignment.Start),
         verticalAlignment = Alignment.CenterVertically,
-    ) { content(wide) }
+    ) { content(if (wide) Modifier.widthIn(min = 160.dp) else Modifier.weight(1f)) }
 }
-
-internal fun RowScope.actionWidth(wide: Boolean): Modifier = if (wide) Modifier.widthIn(min = 160.dp) else Modifier.weight(1f)
 
 private fun PrimaryLabel.text(): Int =
     when (this) {
