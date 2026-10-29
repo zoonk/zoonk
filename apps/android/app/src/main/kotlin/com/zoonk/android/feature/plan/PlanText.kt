@@ -51,7 +51,7 @@ fun phaseName(
 }
 
 @Composable
-private fun phaseKindName(
+fun phaseKindName(
     kind: PlanPhase.Kind,
     number: Int,
 ): String =
