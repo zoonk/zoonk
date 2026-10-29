@@ -12,6 +12,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.MutationResult
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.int
@@ -36,15 +37,22 @@ sealed interface Limit {
 
     companion object {
         /** The API's refusal (`SLOW_DOWN`, `USAGE_LIMIT_REACHED`, `SIGN_UP_REQUIRED`), or null for any other error. */
-        fun of(error: ApiException): Limit? =
-            when (error.code) {
+        fun of(error: ApiException): Limit? = of(error.code, error.details)
+
+        fun of(failed: MutationResult.Failed): Limit? = of(failed.code, failed.details)
+
+        private fun of(
+            code: String?,
+            details: JsonElement?,
+        ): Limit? =
+            when (code) {
                 "SIGN_UP_REQUIRED" -> {
                     SignUpRequired
                 }
 
                 "SLOW_DOWN" -> {
                     SlowDown(
-                        error.details
+                        details
                             ?.field("retryAfterSeconds")
                             ?.jsonPrimitive
                             ?.int ?: 0,
@@ -52,7 +60,7 @@ sealed interface Limit {
                 }
 
                 "USAGE_LIMIT_REACHED" -> {
-                    val limit = error.details?.field("limit")
+                    val limit = details?.field("limit")
                     val tier =
                         limit
                             ?.field("tier")

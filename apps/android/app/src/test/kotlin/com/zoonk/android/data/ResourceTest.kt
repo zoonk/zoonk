@@ -185,6 +185,12 @@ class ResourceTest {
             val failed = cache.mutate { throw java.io.IOException("offline") }
             assertEquals(MutationResult.Failed(ApiError.Network), failed)
             assertTrue(session.expired.size == 1)
+
+            val limit =
+                kotlinx.serialization.json.Json
+                    .parseToJsonElement("""{"limit":{"period":"day","tier":"free"}}""")
+            val refused = cache.mutate { throw ApiException(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 403, limit) }
+            assertEquals(MutationResult.Failed(ApiError.Unavailable, "USAGE_LIMIT_REACHED", 403, limit), refused)
         }
 
     @Test

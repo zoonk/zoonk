@@ -1,6 +1,7 @@
 package com.zoonk.android.data
 
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.serialization.json.JsonElement
 import java.lang.ref.WeakReference
 import kotlin.coroutines.cancellation.CancellationException
 import kotlin.time.Duration
@@ -93,7 +94,8 @@ class AppCache(
             if (error == ApiError.Unauthorized || session.current != identity) {
                 MutationResult.Obsolete
             } else {
-                MutationResult.Failed(error)
+                val refusal = e as? ApiException
+                MutationResult.Failed(error, refusal?.code, refusal?.status, refusal?.details)
             }
         }
     }
@@ -110,8 +112,12 @@ sealed interface MutationResult<out T> {
         val value: T,
     ) : MutationResult<T>
 
+    /** [code], [status] and [details] are the API's refusal, as [ApiException] carries them. */
     data class Failed(
         val error: ApiError,
+        val code: String? = null,
+        val status: Int? = null,
+        val details: JsonElement? = null,
     ) : MutationResult<Nothing>
 
     /** Another session is current now (or none): change nothing on screen. */
