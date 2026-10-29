@@ -53,6 +53,13 @@ struct GoalSetupContent: View {
   }
 }
 
+extension View {
+  /// Main's onboarding column, 40rem.
+  func onboardingColumn() -> some View {
+    readableColumn(640)
+  }
+}
+
 /// The screens that count as steps in the counter: placement sits between the questions; the plan isn't one.
 private let stepScreens: Set<Components.Schemas.OnboardingStep> = [
   .purpose, .role, .reason, .target, .targetDate, .followUps, .examChoice, .level, .schedule,
@@ -291,10 +298,13 @@ private struct StepScreen: View {
       }
     case .plan:
       PlanStep(view: view)
+        .onboardingColumn()
     default:
       QuestionStep(
         step: step, view: view, subject: subject, isSaving: isSaving, failed: failed,
-        onAnswer: onAnswer)
+        onAnswer: onAnswer
+      )
+      .onboardingColumn()
     }
   }
 

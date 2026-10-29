@@ -144,6 +144,7 @@ struct PlacementStep: View {
         onContinue: { router.open(.mock(blockId: mockID)) },
         onSkip: { stopMock(mockID) })
     }
+    .onboardingColumn()
   }
 
   private var isMockOpen: Bool {
@@ -186,6 +187,7 @@ struct PlacementStep: View {
         finish(fromScratch: true)
       }
     }
+    .onboardingColumn()
     .disabled(isSaving)
   }
 
@@ -225,6 +227,7 @@ struct PlacementStep: View {
           comment: "Under Skip for now")
       }
     }
+    .onboardingColumn()
     .disabled(isSaving)
     .task { await waitForQuestions() }
   }
@@ -240,6 +243,7 @@ struct PlacementStep: View {
         finish(fromScratch: false)
       }
     }
+    .onboardingColumn()
     .disabled(isSaving)
   }
 

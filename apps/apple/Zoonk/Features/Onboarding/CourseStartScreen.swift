@@ -19,6 +19,7 @@ struct CourseStartScreen: View {
         GoalSetupContent(goalID: goalID)
       } else {
         form
+          .onboardingColumn()
           .closesTask()
       }
     }

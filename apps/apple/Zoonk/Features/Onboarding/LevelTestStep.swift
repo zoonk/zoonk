@@ -35,6 +35,7 @@ struct LevelTestStep: View {
           onStart: { Task { await begin() } }, onSkip: finish)
       case .preparing(let generationID):
         preparing(generationID)
+          .onboardingColumn()
       case .question(let question, let number, let progress):
         questionScreen(question, number: number, progress: progress)
           .id(question.id)
@@ -302,6 +303,7 @@ private struct LevelTestIntro: View {
         }
       }
     }
+    .onboardingColumn()
   }
 
   /// Mirrors main's list.
@@ -501,6 +503,7 @@ private struct LevelTestDone: View {
         ),
         onContinue: onContinue)
     }
+    .onboardingColumn()
   }
 
   private func skillName(_ skill: LevelTest.Skill) -> Text {

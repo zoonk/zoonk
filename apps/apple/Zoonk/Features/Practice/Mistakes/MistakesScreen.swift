@@ -7,7 +7,6 @@ struct MistakesScreen: View {
   @Environment(LearnerSummaryStore.self) private var summary
   @State private var showsFixed = false
   @State private var isLoadingMore = false
-  @State private var width: CGFloat = 0
 
   private var resource: Resource<Components.Schemas.MistakeList> {
     practice.mistakes(goalId: goalId, fixed: showsFixed)
@@ -102,12 +101,7 @@ struct MistakesScreen: View {
       }
     }
     .listStyle(.insetGrouped)
-    .safeAreaPadding(.horizontal, max(0, (width - PracticeLayout.readableWidth) / 2))
-    .onGeometryChange(for: CGFloat.self) {
-      $0.size.width
-    } action: {
-      width = $0
-    }
+    .readableColumn(PracticeLayout.readableWidth)
     .navigationTitle(
       Text("Mistakes notebook", tableName: "Practice", comment: "Title of the mistakes notebook.")
     )

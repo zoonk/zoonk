@@ -146,14 +146,17 @@ private struct GoalStartFlow: View {
               GoalMaterialSections(material: $material, intent: $intent)
             })
         }
+        .onboardingColumn()
         .closesTask()
         .navigationDestination(for: StartPage.self) { page in
           switch page {
           case .draft:
             draftPage
+              .onboardingColumn()
               .closesTask()
           case .questions:
             MaterialQuestionsView(sources: material)
+              .onboardingColumn()
               .closesTask()
           }
         }
