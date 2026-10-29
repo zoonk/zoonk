@@ -376,7 +376,7 @@ private fun OfferCard(
     locked: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
-    OutlinedCard(modifier.widthIn(max = OFFER_MAX_WIDTH).fillMaxWidth()) {
+    OutlinedCard(modifier.widthIn(max = TUTOR_CARD_MAX_WIDTH).fillMaxWidth()) {
         Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 val titleLine =
@@ -421,6 +421,6 @@ private fun OfferButton(
     ) { Text(label) }
 }
 
-private val OFFER_MAX_WIDTH = 520.dp
+internal val TUTOR_CARD_MAX_WIDTH = 520.dp
 private val OFFER_ICON_SIZE = 20.dp
 private val COURSE_IMAGE_SIZE = 44.dp

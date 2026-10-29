@@ -137,7 +137,7 @@ class AppContainer private constructor(
                 },
         )
 
-    val tutor = TutorStore(LiveTutorApi(api), cache, sessions, memory::undo)
+    val tutor = TutorStore(LiveTutorApi(api), cache, sessions, memory::undo, plans::decideChange)
 
     // Speech clips and recorded answers.
     val voiceFiles = VoiceFiles(File(context.cacheDir, "voice-clips"), api.http, images::isPrivate, sessions)

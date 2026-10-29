@@ -206,7 +206,18 @@ private fun TurnView(
                 ) {
                     Answer(turn, vm, state, routes, others)
                 }
-                if (turn.answer != null || turn.status != TutorTurn.Status.Running) turn.toolOffer?.let { TutorOffer(it, routes) }
+                if (turn.answer != null || turn.status != TutorTurn.Status.Running) {
+                    val change = turn.planChange
+                    if (change != null && vm.goalId != null) {
+                        TutorPlanChange(
+                            change = change,
+                            deciding = change.id in state.decidingChanges,
+                            failed = change.id in state.failedDecisions,
+                            onDecide = { vm.decidePlanChange(change.id, it) },
+                        )
+                    }
+                    turn.toolOffer?.let { TutorOffer(it, routes) }
+                }
                 state.memoryChanges[turn.id]?.let { changes -> MemoryUpdated(changes.map { it.shown }, onUndo = vm::undoMemory) }
             }
         }

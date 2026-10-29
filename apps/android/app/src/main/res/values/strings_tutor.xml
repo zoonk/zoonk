@@ -131,4 +131,17 @@
     <string name="tutor_offer_plus_subscribed">Your plan and its billing.</string>
     <string name="tutor_offer_see_plus">See Plus</string>
     <string name="tutor_offer_manage">Manage</string>
+
+    <!-- A card's title naming the change the buddy suggests: a noun phrase, not an action. -->
+    <string name="tutor_plan_change_title">Change to your plan</string>
+    <!-- Beside the title of a change that lasts one week, like a lighter week. -->
+    <string name="tutor_plan_change_one_week">1 week</string>
+    <string name="tutor_plan_change_apply">Apply</string>
+    <string name="tutor_plan_change_not_now">Not now</string>
+    <!-- Applies the learner's own date over the one the exam notice or calendar sets. -->
+    <string name="tutor_plan_change_use_my_date">Use my date anyway</string>
+    <string name="tutor_plan_change_undo">Undo</string>
+    <string name="tutor_plan_change_declined">Not applied. Your plan stays as it was.</string>
+    <string name="tutor_plan_change_replaced">A newer suggestion replaced this one.</string>
+    <string name="tutor_plan_change_failed">That didn\'t save. Try again.</string>
 </resources>

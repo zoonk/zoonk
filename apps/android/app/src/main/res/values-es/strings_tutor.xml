@@ -92,6 +92,15 @@
   "tutor_placeholder_mock": "0db2111a93862b16489a9c109c5c4e69bdf2381c3a53a63841c505dba4b6e8ae",
   "tutor_placeholder_plan": "b2f8202aa4df30b24612a5f92780094daa61268ae88c1a5d24eb1d834123aea6",
   "tutor_placeholder_subject": "4eb132e73df49e1105bed5b1450e757729329638176ec6c2aca2f114ccd03501",
+  "tutor_plan_change_apply": "1beaee74a33604511234d6000dd063567b3e4b8ba7ec4946e952c1c591d3c2d7",
+  "tutor_plan_change_declined": "8adfc1f89a1bb0fc886957ec318c6742d5894a1fc1314e070f024caacbe01b1e",
+  "tutor_plan_change_failed": "56615a9b4471d4f53ac73a3870881269bbf30e701b5efb323bc64a35453320dc",
+  "tutor_plan_change_not_now": "9f4ffa82fb8a5e96504b1bd549c8a530ebe9385f292ebfac39a596be0089c2a2",
+  "tutor_plan_change_one_week": "bf419c0a4922b8871d5d7b2b398f6f6a2d57f07097adac7d4819df9626b258bc",
+  "tutor_plan_change_replaced": "46c54ebd37d7aad86d6e830c8d7a766f0b33864e886a2fc530d47ab133138778",
+  "tutor_plan_change_title": "a932fcbfb0d9ce41b4577059fab88046c8eb8033abe74be537972a5daf65f145",
+  "tutor_plan_change_undo": "6ad410121d29f5943b2fec938751b3984ab5f47b5793e1882340cee81a19497e",
+  "tutor_plan_change_use_my_date": "3898b13ed78ff7eb400ebcf9bf5bb4ff053dfbe085d0f7b0d02b4598e37e9762",
   "tutor_retry_last_question": "fe87ce9eb695e896336fb580b3ed6d911fe02142430f0d1af35df9bd1f47c36d",
   "tutor_send": "fa2db300b29960dcbda52dc712cef32ae4b96372c16714577ac0bc3fe8da934e",
   "tutor_sign_in": "48c6214ba82cb973fb493647e888ae567d9914fea779a5950cf2a6f39775cb87",
@@ -236,4 +245,16 @@
     <string name="tutor_offer_plus_subscribed">Tu plan y su facturación.</string>
     <string name="tutor_offer_see_plus">Ver Plus</string>
     <string name="tutor_offer_manage">Gestionar</string>
+    <!-- A card's title naming the change the buddy suggests: a noun phrase, not an action. -->
+    <string name="tutor_plan_change_title">Cambio en tu plan</string>
+    <!-- Beside the title of a change that lasts one week, like a lighter week. -->
+    <string name="tutor_plan_change_one_week">1 semana</string>
+    <string name="tutor_plan_change_apply">Aplicar</string>
+    <string name="tutor_plan_change_not_now">Ahora no</string>
+    <!-- Applies the learner's own date over the one the exam notice or calendar sets. -->
+    <string name="tutor_plan_change_use_my_date">Usar mi fecha de todos modos</string>
+    <string name="tutor_plan_change_undo">Deshacer</string>
+    <string name="tutor_plan_change_declined">No se ha aplicado. Tu plan sigue igual.</string>
+    <string name="tutor_plan_change_replaced">Esta sugerencia se ha sustituido por otra más reciente.</string>
+    <string name="tutor_plan_change_failed">No se ha guardado. Inténtalo de nuevo.</string>
 </resources>

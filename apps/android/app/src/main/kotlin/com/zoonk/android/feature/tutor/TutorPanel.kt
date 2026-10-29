@@ -58,8 +58,13 @@ internal fun rememberTutor(
 ): TutorViewModel {
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val account = (session as? SessionState.SignedIn)?.session?.localId
+    val summary by app.learnerSummary.summary.collectShown()
+    val activeGoalId = summary.value?.activeGoalId?.toString()
     val vm = viewModel(key = "tutor:${scope.thread}:$account") { TutorViewModel(scope, app.tutor) }
-    SideEffect { vm.scope = scope }
+    SideEffect {
+        vm.scope = scope
+        vm.activeGoalId = activeGoalId
+    }
     return vm
 }
 

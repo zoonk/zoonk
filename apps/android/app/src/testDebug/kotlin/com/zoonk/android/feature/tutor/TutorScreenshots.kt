@@ -15,6 +15,9 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.plan.effect
+import com.zoonk.android.feature.plan.planChange
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
@@ -64,12 +67,48 @@ class TutorScreenshots {
         capture("tutor-offers-font200", dark = false)
     }
 
+    @Test
+    @Config(qualifiers = "w411dp-h3200dp-xhdpi")
+    fun planChanges() = capture("tutor-plan-changes", dark = false, turns = planChangeTurns())
+
+    @Test
+    @Config(qualifiers = "w411dp-h3200dp-night-xhdpi")
+    fun planChangesDark() = capture("tutor-plan-changes-dark", dark = true, turns = planChangeTurns())
+
+    private fun planChangeTurns() =
+        listOf(
+            planChange(
+                operations = """[{"kind":"setDailyMinutes","minutes":40}]""",
+                status = "proposed",
+                effect = effect(""""lessonsAdded":4,"endDateBefore":"2027-01-31","endDateAfter":"2027-01-10""""),
+            ),
+            planChange(
+                operations = """[{"kind":"addLightWeek","startDate":"2026-11-02"}]""",
+                status = "proposed",
+                effect = effect(""""lessonsRemoved":3,"lessonsLeftOut":["Sets","Tuples","Loops"]"""),
+            ),
+            planChange(
+                operations = """[{"kind":"setTargetDate","targetDate":"2026-11-30"}]""",
+                status = "proposed",
+                extra = """"officialDate":{"date":"2026-11-08","source":null}""",
+            ),
+            planChange(operations = """[{"kind":"setDailyMinutes","minutes":40}]""", extra = """"todaySession":"changed""""),
+            planChange(operations = """[{"kind":"setDailyMinutes","minutes":20}]""", status = "declined"),
+            planChange(operations = """[{"kind":"setDailyMinutes","minutes":30}]""", status = "replaced"),
+        ).mapIndexed { index, change -> turn("c$index", TutorTurn.Status.Completed, "Here.").copy(planChange = change) }
+
     private fun capture(
         name: String,
         dark: Boolean,
+        turns: List<TutorTurn> =
+            OFFERS.mapIndexed {
+                index,
+                json,
+                ->
+                turn("q$index", TutorTurn.Status.Completed, "Here.", toolOffer = offer(json))
+            },
     ) {
         val api = FakeTutorApi()
-        val turns = OFFERS.mapIndexed { index, json -> turn("q$index", TutorTurn.Status.Completed, "Here.", toolOffer = offer(json)) }
         api.thread = TutorThread(turns, hasMore = false, nextCursor = null)
         api.answers = {
             flow {
@@ -82,7 +121,7 @@ class TutorScreenshots {
         }
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main))
-        val vm = TutorViewModel(TutorScope.Plan("goal"), TutorStore(api, cache, session) { true })
+        val vm = TutorViewModel(TutorScope.Plan("goal"), TutorStore(api, cache, session, { true }) { _, _, _ -> MutationResult.Obsolete })
         val routes = TutorRoutes(createAccount = {}, signIn = {}, seePlus = {}, open = {})
 
         compose.setContent {

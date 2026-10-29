@@ -17,11 +17,15 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.plan.planChange
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.MemoryChangeReference
+import com.zoonk.api.models.PlanChange
+import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.TutorToolOffer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -45,6 +49,10 @@ class TutorPanelTest {
     private var openedPlus = 0
     private val opened = mutableListOf<AppRoute>()
     private val undone = mutableListOf<List<MemoryChangeReference>>()
+    private val decided = mutableListOf<Pair<UUID, PlanChangeDecisionInput.Status>>()
+    private var decision: (
+        PlanChangeDecisionInput.Status,
+    ) -> MutationResult<PlanChange> = { MutationResult.Done(planChange(status = it.value)) }
     private val routes =
         TutorRoutes(createAccount = { openedLogin++ }, signIn = { openedLogin++ }, seePlus = { openedPlus++ }, open = { opened += it })
 
@@ -53,7 +61,11 @@ class TutorPanelTest {
         access: TutorAccess = TutorAccess.Ask,
     ) {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main))
-        val store = TutorStore(api, cache, session) { changes -> undone.add(changes) }
+        val store =
+            TutorStore(api, cache, session, { changes -> undone.add(changes) }) { goalId, _, status ->
+                decided += goalId to status
+                decision(status)
+            }
         val vm = TutorViewModel(scope, store)
         compose.setContent {
             ZoonkTheme { TutorPanel(vm, access, TutorIdentity("Zu", BuddyLook()), routes) }
@@ -203,6 +215,40 @@ class TutorPanelTest {
 
         compose.onNodeWithText("Change undone").assertExists()
         assertEquals(listOf(listOf(MemoryChangeReference(factId = UUID.fromString(FACT)))), undone)
+    }
+
+    @Test
+    fun applyingAChangeTheBuddyOffersSaysHowThePlanTookIt() {
+        showChange(planChange(status = "proposed", operations = """[{"kind":"setDailyMinutes","minutes":40}]"""))
+
+        compose.onNodeWithText("Change to your plan").assertExists()
+        compose.onNodeWithText("Apply").performScrollTo().performClick()
+
+        compose.onNodeWithText("Your plan follows it from now on.").assertExists()
+        compose.onNodeWithText("Apply").assertDoesNotExist()
+        compose.onNodeWithText("Undo").assertExists()
+        assertEquals(listOf(UUID.fromString(GOAL) to PlanChangeDecisionInput.Status.APPLIED), decided)
+    }
+
+    @Test
+    fun aDecisionThatDidntSaveSaysSoAndCanBeTriedAgain() {
+        decision = { MutationResult.Failed(ApiError.Network) }
+        showChange(planChange(status = "proposed", operations = """[{"kind":"setDailyMinutes","minutes":40}]"""))
+
+        compose.onNodeWithText("Not now").performScrollTo().performClick()
+
+        compose.onNodeWithText("That didn't save. Try again.").assertExists()
+        compose.onNodeWithText("Not now").assertIsEnabled()
+    }
+
+    private fun showChange(change: PlanChange) {
+        api.thread =
+            TutorThread(
+                listOf(turn("q1", TutorTurn.Status.Completed, "Try 40 minutes.").copy(planChange = change)),
+                hasMore = false,
+                nextCursor = null,
+            )
+        show(TutorScope.Plan(GOAL))
     }
 
     private fun showOffer(json: String) {

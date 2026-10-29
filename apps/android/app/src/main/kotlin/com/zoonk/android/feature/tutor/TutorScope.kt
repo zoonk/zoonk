@@ -55,6 +55,14 @@ sealed interface TutorScope {
     ) : TutorScope
 }
 
+internal val TutorScope.goalId: String?
+    get() =
+        when (this) {
+            is TutorScope.Plan -> goalId
+            is TutorScope.Subject -> goalId
+            else -> null
+        }
+
 /** One conversation per learner and thread: a lesson keeps one for itself and one per screen. */
 internal sealed interface TutorThreadKey {
     data class Plan(

@@ -269,7 +269,14 @@ class PlanStore(
     suspend fun undo(
         goalId: UUID,
         changeId: UUID,
-    ): MutationResult<PlanChange> = write(goalId) { api.decide(it, goalId, changeId, PlanChangeDecisionInput.Status.UNDONE) }
+    ): MutationResult<PlanChange> = decideChange(goalId, changeId, PlanChangeDecisionInput.Status.UNDONE)
+
+    /** Applies or declines a change offered to the learner, or undoes an applied one; answers the change as it now stands. */
+    suspend fun decideChange(
+        goalId: UUID,
+        changeId: UUID,
+        status: PlanChangeDecisionInput.Status,
+    ): MutationResult<PlanChange> = write(goalId) { api.decide(it, goalId, changeId, status) }
 
     /** What an edit would do: it saves nothing, so nothing is read again. */
     suspend fun preview(

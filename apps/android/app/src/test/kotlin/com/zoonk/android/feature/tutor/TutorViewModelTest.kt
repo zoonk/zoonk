@@ -6,6 +6,7 @@ import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitPeriod
@@ -49,7 +50,10 @@ class TutorViewModelTest {
 
     private suspend fun conversation(scope: TutorScope = this.scope): TutorViewModel {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return TutorViewModel(scope, TutorStore(api, cache, session) { true }).also { it.thread.load() }
+        return TutorViewModel(
+            scope,
+            TutorStore(api, cache, session, { true }) { _, _, _ -> MutationResult.Obsolete },
+        ).also { it.thread.load() }
     }
 
     private val TutorViewModel.turns get() =

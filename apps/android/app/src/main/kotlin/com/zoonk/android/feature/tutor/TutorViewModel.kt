@@ -18,6 +18,7 @@ import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.MemoryChangeReference
 import com.zoonk.api.models.PlanChange
+import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.StudyMissionMoment
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -39,6 +40,8 @@ data class TutorConversationState(
     val askFailure: TutorFailure? = null,
     val answerFailures: Map<String, TutorFailure> = emptyMap(),
     val memoryChanges: Map<String, List<TutorMemoryChange>> = emptyMap(),
+    val decidingChanges: Set<UUID> = emptySet(),
+    val failedDecisions: Set<UUID> = emptySet(),
     val missionMoment: StudyMissionMoment? = null,
     val loadingEarlier: Boolean = false,
     val earlierFailed: Boolean = false,
@@ -70,6 +73,12 @@ class TutorViewModel internal constructor(
     /** The conversation's latest scope (the question now checked) is what its next question is about. */
     var scope: TutorScope by mutableStateOf(scope)
         internal set
+
+    /** Main decides a conversation's plan changes for the learner's active goal unless its scope names one. */
+    var activeGoalId: String? by mutableStateOf(null)
+        internal set
+
+    internal val goalId: String? get() = scope.goalId ?: activeGoalId
 
     val thread: Resource<TutorThread> = store.threads[scope.thread]
 
@@ -121,6 +130,29 @@ class TutorViewModel internal constructor(
     }
 
     suspend fun undoMemory(changes: List<MemoryChangeReference>): Boolean = store.undoMemory(changes)
+
+    fun decidePlanChange(
+        changeId: UUID,
+        status: PlanChangeDecisionInput.Status,
+    ) {
+        val goal = goalId ?: return
+        if (changeId in state.value.decidingChanges) return
+        mutableState.update { it.copy(decidingChanges = it.decidingChanges + changeId, failedDecisions = it.failedDecisions - changeId) }
+        viewModelScope.launch {
+            val result = store.decidePlanChange(UUID.fromString(goal), changeId, status)
+            if (result is MutationResult.Done) {
+                thread.update { page ->
+                    page.copy(turns = page.turns.map { if (it.planChange?.id == changeId) it.copy(planChange = result.value) else it })
+                }
+            }
+            mutableState.update {
+                it.copy(
+                    decidingChanges = it.decidingChanges - changeId,
+                    failedDecisions = if (result is MutationResult.Failed) it.failedDecisions + changeId else it.failedDecisions,
+                )
+            }
+        }
+    }
 
     fun loadEarlier() {
         val page = thread.state.value.value ?: return
