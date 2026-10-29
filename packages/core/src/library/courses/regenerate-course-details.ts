@@ -2,7 +2,7 @@ import "server-only";
 import { getCourseDetailsPromptVersion } from "@zoonk/ai/tasks/v2/courses/details";
 import { type Course, DbNull, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { COURSE_LIST_CACHE_TAG, getCourseCacheTag } from "../../cache/tags";
 import { getAdminAccess } from "../../users/get-admin-access";
 
@@ -179,7 +179,7 @@ export async function regenerateCourseDetails({
     claims.map((claim) => dispatchCourse({ claim, startCourseDetails })),
   );
 
-  revalidateCacheTags([
+  await revalidateCourseContent([
     COURSE_LIST_CACHE_TAG,
     ...claims.map(({ course }) => getCourseCacheTag(course.id)),
   ]);

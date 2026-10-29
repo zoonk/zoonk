@@ -2,8 +2,12 @@ import { randomUUID } from "node:crypto";
 import { generateSearchTerms } from "@zoonk/ai/tasks/v2/identity/search-terms";
 import { type LessonSpec } from "@zoonk/ai/tasks/v2/lesson-spec/rules";
 import { prisma } from "@zoonk/db";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { goalFixture, planFixture, planItemFixture } from "@zoonk/testing/fixtures/goals";
-import { libraryChapterFixture } from "@zoonk/testing/fixtures/library-chapters";
+import {
+  courseChapterFixture,
+  libraryChapterFixture,
+} from "@zoonk/testing/fixtures/library-chapters";
 import {
   chapterLessonFixture,
   libraryLessonFixture,
@@ -64,6 +68,50 @@ describe(saveLessonSpecs, () => {
     vi.resetAllMocks();
     mockSearchTerms([uniqueWord()]);
     mockDecision(null);
+  });
+
+  it("expires every course outline embedding a saved lesson estimate", async () => {
+    const { chapter, first } = await chapterWithLessons();
+    const courses = await Promise.all([courseFixture(), courseFixture()]);
+
+    await Promise.all(
+      courses.map((course) => courseChapterFixture({ chapterId: chapter.id, courseId: course.id })),
+    );
+
+    const workflowRunId = randomUUID();
+    await claimLibraryGeneration({ id: first.id, target: "lessonSpec", workflowRunId });
+    vi.stubEnv("ZOONK_APP", "api");
+    vi.stubEnv("APP_CACHE_SECRET", "test-secret");
+    const fetch = vi.fn().mockResolvedValue(new Response(null));
+    vi.stubGlobal("fetch", fetch);
+
+    try {
+      await saveLessonSpecs({
+        homeChapterId: chapter.id,
+        lessonId: first.id,
+        provenance,
+        scope,
+        specs: [temperatureSpec()],
+        workflowRunId,
+      });
+
+      expect(fetch).toHaveBeenCalledWith(
+        expect.any(URL),
+        expect.objectContaining({
+          body: expect.stringContaining(`course-curriculum:${courses[0]!.id}`),
+        }),
+      );
+
+      expect(fetch).toHaveBeenCalledWith(
+        expect.any(URL),
+        expect.objectContaining({
+          body: expect.stringContaining(`course-curriculum:${courses[1]!.id}`),
+        }),
+      );
+    } finally {
+      vi.unstubAllEnvs();
+      vi.unstubAllGlobals();
+    }
   });
 
   it("stores the spec for the run that holds the claim and places split parts right after the lesson", async () => {

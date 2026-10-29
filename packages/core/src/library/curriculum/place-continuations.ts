@@ -1,6 +1,6 @@
 import "server-only";
 import { type CourseLevel } from "@zoonk/db";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { getCourseCurriculumCacheTag } from "../../cache/tags";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 
@@ -77,5 +77,5 @@ export async function placeContinuations({
     );
   });
 
-  revalidateCacheTags([getCourseCurriculumCacheTag(courseId)]);
+  await revalidateCourseContent([getCourseCurriculumCacheTag(courseId)]);
 }

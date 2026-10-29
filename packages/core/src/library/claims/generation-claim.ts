@@ -1,6 +1,6 @@
 import "server-only";
 import { type GenerationStatus, type TransactionClient, prisma } from "@zoonk/db";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import {
   getCourseCacheTag,
   getCourseCurriculumCacheTag,
@@ -167,7 +167,7 @@ export async function claimLibraryGeneration({
     : await claimWith(prisma, input);
 
   if (changed) {
-    revalidateCacheTags(await ops.tags(id));
+    await revalidateCourseContent(await ops.tags(id));
   }
 
   return result;
@@ -187,7 +187,7 @@ export async function finishLibraryGeneration({
   const { count } = await ops.finish({ id, status, workflowRunId });
 
   if (count > 0) {
-    revalidateCacheTags(await ops.tags(id));
+    await revalidateCourseContent(await ops.tags(id));
   }
 
   return count > 0;

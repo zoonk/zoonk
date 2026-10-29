@@ -1,6 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { assertPlacementVisibility } from "../_utils/placement-visibility";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
 import { getChapterCacheTags } from "../chapters/chapter-cache-tags";
@@ -34,5 +34,5 @@ export async function placeChapterLessons({
     });
   });
 
-  revalidateCacheTags(await getChapterCacheTags(chapterId));
+  await revalidateCourseContent(await getChapterCacheTags(chapterId));
 }

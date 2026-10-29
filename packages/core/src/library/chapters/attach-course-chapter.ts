@@ -1,6 +1,6 @@
 import "server-only";
 import { type CourseChapter, type CourseLevel, prisma } from "@zoonk/db";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { getCourseCurriculumCacheTag } from "../../cache/tags";
 import { assertPlacementVisibility } from "../_utils/placement-visibility";
 import { lockPlanSourceWrite, writePlanInputs } from "../_utils/plan-input-write";
@@ -39,7 +39,7 @@ export async function attachChapterToCourse({
     });
   });
 
-  revalidateCacheTags([getCourseCurriculumCacheTag(courseId)]);
+  await revalidateCourseContent([getCourseCurriculumCacheTag(courseId)]);
 
   return placement;
 }

@@ -7,6 +7,8 @@
       "ANDROID_*",
       "APPLE_*",
       "AUTH_COOKIE_CACHE_ENABLED",
+      "APP_CACHE_SECRET",
+      "MAIN_CACHE_BYPASS_SECRET",
       "BETTER_AUTH_SECRET",
       "BLOB_*",
       "CRON_SECRET",

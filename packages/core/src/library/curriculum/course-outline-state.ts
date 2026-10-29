@@ -1,6 +1,6 @@
 import "server-only";
 import { type CourseLevel, prisma } from "@zoonk/db";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import {
   COURSE_LIST_CACHE_TAG,
   getCourseCacheTag,
@@ -128,7 +128,10 @@ export async function claimCourseOutline({
     return "running";
   }
 
-  revalidateCacheTags([getCourseCacheTag(courseId), getCourseCurriculumCacheTag(courseId)]);
+  await revalidateCourseContent([
+    getCourseCacheTag(courseId),
+    getCourseCurriculumCacheTag(courseId),
+  ]);
 
   return "claimed";
 }
@@ -196,6 +199,6 @@ export async function finishCourseOutline({
   });
 
   if (count > 0) {
-    revalidateCacheTags(await getListedCourseTags(courseId));
+    await revalidateCourseContent(await getListedCourseTags(courseId));
   }
 }

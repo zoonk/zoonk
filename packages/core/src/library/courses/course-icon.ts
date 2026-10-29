@@ -2,7 +2,7 @@ import "server-only";
 import { type CourseIconParams, generateCourseIcon } from "@zoonk/ai/tasks/v2/courses/icon";
 import { prisma } from "@zoonk/db";
 import { logInfo } from "@zoonk/utils/logger";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { COURSE_LIST_CACHE_TAG, getCourseCacheTag } from "../../cache/tags";
 import { isNearSolidImage } from "../../images/image-quality";
 import { optimizeImage } from "../../images/optimize-image";
@@ -105,7 +105,7 @@ export async function createCourseIcon({
     where: { id: courseId, imageUrl: null },
   });
 
-  revalidateCacheTags([getCourseCacheTag(courseId), COURSE_LIST_CACHE_TAG]);
+  await revalidateCourseContent([getCourseCacheTag(courseId), COURSE_LIST_CACHE_TAG]);
 
   return url;
 }

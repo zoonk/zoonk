@@ -6,7 +6,7 @@ import {
 } from "@zoonk/ai/tasks/v2/courses/details";
 import { prisma } from "@zoonk/db";
 import { type CourseCategory } from "@zoonk/utils/categories";
-import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
+import { revalidateCourseContent } from "../../cache/revalidate-course-content";
 import { COURSE_LIST_CACHE_TAG, getCourseCacheTag } from "../../cache/tags";
 import { type LibraryProvenance } from "../_utils/library-rows";
 
@@ -104,7 +104,7 @@ async function saveMissingDetails({
     }),
   ]);
 
-  revalidateCacheTags([getCourseCacheTag(course.id), COURSE_LIST_CACHE_TAG]);
+  await revalidateCourseContent([getCourseCacheTag(course.id), COURSE_LIST_CACHE_TAG]);
 }
 
 /** Internal workflow bridge, not an app authorization boundary. */

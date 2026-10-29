@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
   allowedDevOrigins: ["**.local"],
   cacheComponents: true,
   distDir: isE2E ? ".next-e2e" : ".next",
+  env: { ZOONK_APP: "api" },
   experimental: {
     authInterrupts: true,
     cpus: availableParallelism(),
