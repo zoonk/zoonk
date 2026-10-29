@@ -49,6 +49,8 @@ import com.zoonk.android.feature.session.LiveStudyApi
 import com.zoonk.android.feature.session.StudyOpener
 import com.zoonk.android.feature.today.LiveTodayApi
 import com.zoonk.android.feature.today.TodayStore
+import com.zoonk.android.feature.tutor.LiveTutorApi
+import com.zoonk.android.feature.tutor.TutorStore
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
