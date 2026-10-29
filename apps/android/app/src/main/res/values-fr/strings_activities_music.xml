@@ -44,7 +44,7 @@
   "activities_music_piano_keys": "7436dd844b5ca51f373c3cd22d83c0b3b405ddfc5b3e5a9cb8db6ce93d6561ba",
   "activities_music_play_melody": "6a0c92489d11d709b9a5d3b8faa98046ab4bded5fe73ff636483298d5d2d2bae",
   "activities_music_play_sound": "216b53a240b95464501d7c17c17174ad6942ce58cd7632ded71df0dac2c5ae59",
-  "activities_music_rhythm_description": "be58a1884407e232b6bedb2445f3f45fd0c8a9a9a1d046b406011e5604c11098",
+  "activities_music_rhythm_description": "09d872399604d4d33b1da3514cd70b2c3e42534ebea639e4f13159b1c709ff1c",
   "activities_music_rhythm_hits": "0a399686a3ac9711f75e712e374f327c8f251434bcfc9545a0c26dc19feab9eb",
   "activities_music_rhythm_round": "35645b095cb5ffd061d3b823814ac0fdefe66dd17ab5863072e06881f60178ac",
   "activities_music_rhythm_rounds": "a3c2b383316bc52f889d1733ef2a2f35fb60212353b3005d5c11de34868533f8",
@@ -188,7 +188,11 @@
         <item quantity="other">%1$d bpm · %2$d manches</item>
     </plurals>
     <!-- For TalkBack: the rhythm in words, like "A rhythm of 16 steps with a beat every 4. Tap on steps 1, 4, 7, 11, 13, over a click on every beat." -->
-    <string name="activities_music_rhythm_description">Un rythme de %1$d temps, avec un battement tous les %2$d. Tape sur les temps %3$s, en suivant le clic à chaque battement.</string>
+    <plurals name="activities_music_rhythm_description">
+        <item quantity="one">Un rythme de %1$d étape, avec un battement toutes les %2$d étapes. Tape sur les étapes %3$s, en suivant le clic à chaque battement.</item>
+        <item quantity="many">Un rythme de %1$d étapes, avec un battement toutes les %2$d étapes. Tape sur les étapes %3$s, en suivant le clic à chaque battement.</item>
+        <item quantity="other">Un rythme de %1$d étapes, avec un battement toutes les %2$d étapes. Tape sur les étapes %3$s, en suivant le clic à chaque battement.</item>
+    </plurals>
     <!-- The legend for the rhythm's steps to tap. -->
     <string name="activities_music_rhythm_hits">Coups en rythme</string>
     <!-- The legend for a tap that came on time. -->

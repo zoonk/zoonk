@@ -229,8 +229,9 @@ private fun RhythmGrid(
     hits: List<HitResult>?,
 ) {
     val description =
-        stringResource(
-            R.string.activities_music_rhythm_description,
+        pluralStringResource(
+            R.plurals.activities_music_rhythm_description,
+            fields.pattern.length,
             fields.pattern.length,
             fields.stepsPerBeat,
             fields.hitSteps.joinToString(", ") { "${it + 1}" },

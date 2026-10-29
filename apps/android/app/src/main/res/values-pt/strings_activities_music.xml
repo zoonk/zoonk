@@ -44,7 +44,7 @@
   "activities_music_piano_keys": "88decf8b9681139536c62f58d3d6e3ca9b2e7ab430dd24c05b29542c7aa78909",
   "activities_music_play_melody": "30113408f4ef22f8cf7c4beed7dfa0339833e6163f80ea2906486288b34609a7",
   "activities_music_play_sound": "31cf338e776fcc37decb5b58473eebf36ff3b40f51a4e00433f48b52a592a030",
-  "activities_music_rhythm_description": "5e0455133a99a00f33b48ac8a32b6ac8498969f59191238ff06d61e4480bbdee",
+  "activities_music_rhythm_description": "dd1c9fbde90cf569972cee0b75bbda8bcf2581c290e8b39489d87c7bbf2538e7",
   "activities_music_rhythm_hits": "da93603ddaf45c41549bb93c809d553414bda0ff00f71229a1f6978e12f4ba28",
   "activities_music_rhythm_round": "29adb3273086b2966ea992f13d5ea1150b28cb1b1f87e62a236d9ad594ffc6b1",
   "activities_music_rhythm_rounds": "a0402a9a208d11565394299211921bfcf77ca59a5d0fbe1647a4df7309bc0735",
@@ -188,7 +188,11 @@
         <item quantity="other">%1$d bpm · %2$d rodadas</item>
     </plurals>
     <!-- For TalkBack: the rhythm in words, like "A rhythm of 16 steps with a beat every 4. Tap on steps 1, 4, 7, 11, 13, over a click on every beat." -->
-    <string name="activities_music_rhythm_description">Um ritmo de %1$d passos com uma batida a cada %2$d. Toque nos passos %3$s, seguindo um clique a cada batida.</string>
+    <plurals name="activities_music_rhythm_description">
+        <item quantity="one">Um ritmo de %1$d passo, com uma batida a cada %2$d. Toque nos passos %3$s, acompanhando um clique a cada batida.</item>
+        <item quantity="many">Um ritmo de %1$d passos, com uma batida a cada %2$d. Toque nos passos %3$s, acompanhando um clique a cada batida.</item>
+        <item quantity="other">Um ritmo de %1$d passos, com uma batida a cada %2$d. Toque nos passos %3$s, acompanhando um clique a cada batida.</item>
+    </plurals>
     <!-- The legend for the rhythm's steps to tap. -->
     <string name="activities_music_rhythm_hits">Toques no ritmo</string>
     <!-- The legend for a tap that came on time. -->

@@ -109,7 +109,10 @@
         <item quantity="other">%1$d bpm · %2$d rounds</item>
     </plurals>
     <!-- For TalkBack: the rhythm in words, like "A rhythm of 16 steps with a beat every 4. Tap on steps 1, 4, 7, 11, 13, over a click on every beat." -->
-    <string name="activities_music_rhythm_description">A rhythm of %1$d steps with a beat every %2$d. Tap on steps %3$s, over a click on every beat.</string>
+    <plurals name="activities_music_rhythm_description">
+        <item quantity="one">A rhythm of %1$d step with a beat every %2$d. Tap on steps %3$s, over a click on every beat.</item>
+        <item quantity="other">A rhythm of %1$d steps with a beat every %2$d. Tap on steps %3$s, over a click on every beat.</item>
+    </plurals>
     <!-- The legend for the rhythm's steps to tap. -->
     <string name="activities_music_rhythm_hits">Rhythm hits</string>
     <!-- The legend for a tap that came on time. -->
