@@ -35,7 +35,7 @@ export async function listGoalsWaitingOnSkills({
 
 /** Throws on a persistent plan conflict so the caller can retry later. */
 export async function replanWaitingGoal(goalId: string): Promise<void> {
-  await refreshGoalPlan({ goalId });
+  await refreshGoalPlan({ goalId, keepsOpenUndo: true });
 }
 
 export async function replanGoalsWaitingOnSkills(

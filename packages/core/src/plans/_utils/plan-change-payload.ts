@@ -16,7 +16,7 @@ const PLAN_CHANGE_KINDS = [
 
 export type PlanChangeKind = (typeof PLAN_CHANGE_KINDS)[number];
 
-const UNDOABLE_KINDS: ReadonlySet<string> = new Set<PlanChangeKind>(["edited", "testedOut"]);
+export const UNDOABLE_KINDS: ReadonlySet<string> = new Set<PlanChangeKind>(["edited", "testedOut"]);
 
 export function isUndoableChange(change: { kind: string; status: string }): boolean {
   return UNDOABLE_KINDS.has(change.kind) && change.status === "applied";
@@ -100,6 +100,7 @@ const planChangePayloadSchema = z.object({
   operations: z.array(anyPlanOperationSchema).default([]),
   planItemIds: z.array(z.string()).default([]),
   previewBasis: planPreviewBasisSchema.nullable().default(null),
+  replannedSince: z.literal(true).optional(),
   seenAt: z.iso.datetime().nullable().default(null),
   source: z.string().default("system"),
   todaySession: z.enum(["changed", "unchanged"]).nullable().default(null),

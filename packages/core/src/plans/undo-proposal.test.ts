@@ -1,7 +1,19 @@
 import { prisma } from "@zoonk/db";
+import { skillFixture } from "@zoonk/testing/fixtures/skills";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import {
+  outlineSkill,
+  plannedLessons,
+  waitingGoal,
+} from "../library/curriculum/_test-utils/waiting-goals";
+import { replanWaitingGoal } from "../library/curriculum/replan-waiting-goals";
+import {
+  mockDecision,
+  mockSearchTerms,
+  uniqueWord,
+} from "../library/identity/_test-utils/identity-mocks";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { changeGoalPlan } from "./change-goal-plan";
 import { createGoalPlan } from "./create-goal-plan";
@@ -167,6 +179,36 @@ describe("undoing an applied suggestion", () => {
         where: { planId: plan.id, status: "proposed" },
       }),
     ).resolves.toStrictEqual([{ id: "changeId" in newer ? newer.changeId : "" }]);
+  });
+
+  it("still undoes a suggestion after the lessons the plan waited for are written, and keeps them", async () => {
+    mockSearchTerms([uniqueWord()]);
+    mockDecision(null);
+
+    const skill = await skillFixture();
+    const { goal, plan } = await waitingGoal(skill);
+    mockSession(goal.userId);
+    const before = await readPlan(plan.id);
+
+    const applied = await proposePlanChange({
+      goalId: goal.id,
+      operations: [{ kind: "setDailyMinutes", minutes: 30 }],
+      reason: "Longer days, so the plan ends sooner.",
+      source: "memory",
+    });
+
+    expect(applied).toMatchObject({ status: "applied" });
+    const changeId = "changeId" in applied ? applied.changeId : "";
+    const lessonIds = await outlineSkill(skill);
+    await replanWaitingGoal(goal.id);
+
+    await expect(decide(goal.id, changeId, "undone")).resolves.toMatchObject({
+      change: { status: "undone" },
+      status: "updated",
+    });
+
+    await expect(readPlan(plan.id)).resolves.toMatchObject({ dailyMinutes: before.dailyMinutes });
+    await expect(plannedLessons(plan.id)).resolves.toStrictEqual(lessonIds);
   });
 
   it("leaves a change the learner made themselves undone", async () => {

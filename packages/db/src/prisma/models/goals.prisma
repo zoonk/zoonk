@@ -207,7 +207,7 @@ model PlanChange {
   @@map("plan_changes")
 }
 
-/// Only a plan's latest change can be undone, so every commit deletes the plan's earlier snapshots.
+/// Only a plan's latest change can be undone, so every commit deletes the plan's earlier snapshots. A re-plan for lessons written since keeps the open one, and undoing it re-plans after restoring.
 model PlanChangeSnapshot {
   id        String     @id @default(dbgenerated("uuidv7()")) @db.Uuid
   changeId  String     @unique @map("change_id") @db.Uuid

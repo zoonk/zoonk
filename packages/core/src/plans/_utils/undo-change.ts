@@ -3,7 +3,7 @@ import { type PlanChange, type TransactionClient, prisma } from "@zoonk/db";
 import { forgetAssumedSkills, loadPlanItemSkillIds } from "../../learner/_utils/known-skills";
 import { lockDaySession, restoreDaySession } from "../../sessions/_utils/day-session-snapshot";
 import { settleSessionDay } from "../../sessions/_utils/settle-session-day";
-import { refreshSavedGoalPlanAdvice } from "../refresh-goal-plan";
+import { refreshGoalPlan, refreshSavedGoalPlanAdvice } from "../refresh-goal-plan";
 import { getChangeLevers, replacesProposal } from "./change-levers";
 import { followPlanToday } from "./follow-plan-today";
 import { markPlanWrite } from "./mark-plan-write";
@@ -48,9 +48,11 @@ async function toUndone({ change, tx }: { change: PlanChange; tx: TransactionCli
     return { status: "replaced" as const };
   }
 
+  const { replannedSince: _replannedSince, ...asked } = payload;
+
   return {
     payload: toPlanChangePayload({
-      ...payload,
+      ...asked,
       fromProposal: false,
       seenAt: null,
       todaySession: null,
@@ -112,6 +114,10 @@ export async function undoChange({
         }
       : null;
   });
+
+  if (parsePlanChangePayload(change.payload).replannedSince) {
+    await refreshGoalPlan({ goalId: context.goal.id });
+  }
 
   await refreshSavedGoalPlanAdvice(context.goal.id);
   revalidatePlanTags(context.goal.userId);

@@ -3,7 +3,12 @@ import { type TransactionClient, prisma } from "@zoonk/db";
 import { PlanConflictError } from "../plan-conflict";
 import { type PlanPhase, type PlanState } from "../planner/plan-state";
 import { markPlanWrite } from "./mark-plan-write";
-import { type StoredPlanChangePayload } from "./plan-change-payload";
+import {
+  type StoredPlanChangePayload,
+  UNDOABLE_KINDS,
+  parsePlanChangePayload,
+  toPlanChangePayload,
+} from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
 import { type PlanSummary, reduceCompletedSummary } from "./plan-summary";
 import { getGoalUpdate } from "./plan-unchanged";
@@ -66,12 +71,51 @@ function toJsonb(value: unknown) {
   return value === null || value === undefined ? null : JSON.stringify(value);
 }
 
+/** Undoing the change restores its snapshot and then re-plans, so the written lessons come back. */
+async function carryOpenUndo({
+  context,
+  tx,
+}: {
+  context: PlanContext;
+  tx: TransactionClient;
+}): Promise<string | null> {
+  const open = await tx.planChange.findFirst({
+    select: { id: true, payload: true },
+    where: {
+      kind: { in: [...UNDOABLE_KINDS] },
+      payload: { equals: context.plan.version, path: ["versionAfter"] },
+      planId: context.plan.id,
+      snapshot: { isNot: null },
+      status: "applied",
+    },
+  });
+
+  if (!open) {
+    return null;
+  }
+
+  await tx.planChange.update({
+    data: {
+      payload: toPlanChangePayload({
+        ...parsePlanChangePayload(open.payload),
+        replannedSince: true,
+        versionAfter: context.plan.version + 1,
+      }),
+    },
+    where: { id: open.id },
+  });
+
+  return open.id;
+}
+
 export async function writePlan({
   context,
+  keepsOpenUndo = false,
   plan,
   tx,
 }: {
   context: PlanContext;
+  keepsOpenUndo?: boolean;
   plan: PlanWrite;
   tx: TransactionClient;
 }): Promise<void> {
@@ -117,7 +161,14 @@ export async function writePlan({
     await tx.goal.update({ data: goalUpdate, where: { id: context.goal.id } });
   }
 
-  await tx.planChangeSnapshot.deleteMany({ where: { change: { planId: context.plan.id } } });
+  const keptUndo = keepsOpenUndo ? await carryOpenUndo({ context, tx }) : null;
+
+  await tx.planChangeSnapshot.deleteMany({
+    where: {
+      change: { planId: context.plan.id },
+      ...(keptUndo && { changeId: { not: keptUndo } }),
+    },
+  });
 
   await savePlanItems({
     existing: context.items,

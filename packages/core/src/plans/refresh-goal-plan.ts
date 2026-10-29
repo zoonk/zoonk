@@ -144,6 +144,8 @@ export async function planGoalForPick(goalId: string): Promise<PlannedRefresh> {
 
 type RefreshInput = {
   goalId: string;
+  /** For a re-plan that only brings in lessons written meanwhile: the learner's last change stays undoable. */
+  keepsOpenUndo?: boolean;
   /** `sampled` after the learner's progress (a session ended); `saved` otherwise. */
   pace?: "sampled" | "saved";
   revalidation?: PlanTagRevalidation;
@@ -152,6 +154,7 @@ type RefreshInput = {
 
 async function refreshPlanned({
   goalId,
+  keepsOpenUndo = false,
   lostSave,
   pace = "saved",
   revalidation = "now",
@@ -191,17 +194,19 @@ async function refreshPlanned({
     return { plan: null, status: "unchanged" };
   }
 
-  return saveRefreshedPlan({ context, lostSave, pace, refreshed, revalidation });
+  return saveRefreshedPlan({ context, keepsOpenUndo, lostSave, pace, refreshed, revalidation });
 }
 
 async function saveRefreshedPlan({
   context,
+  keepsOpenUndo,
   refreshed,
   lostSave,
   pace,
   revalidation,
 }: {
   context: PlanContext;
+  keepsOpenUndo: boolean;
   refreshed: NonNullable<Awaited<ReturnType<typeof computeRefreshedPlan>>>;
   lostSave: LostSave;
   pace: "sampled" | "saved";
@@ -269,7 +274,14 @@ async function saveRefreshedPlan({
           previews: retained.previews,
           summary: retained.summary,
         })
-      : commitPlan({ change, computed, context, phaseDates: { mode, pace }, revalidation }),
+      : commitPlan({
+          change,
+          computed,
+          context,
+          keepsOpenUndo,
+          phaseDates: { mode, pace },
+          revalidation,
+        }),
   );
 
   if (!saved) {
