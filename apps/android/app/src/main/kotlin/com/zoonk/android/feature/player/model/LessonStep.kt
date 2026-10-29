@@ -24,6 +24,7 @@ import com.zoonk.api.models.PlayableLibraryStepAnyOfCitation
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContent
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfCheck
 import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfData
+import com.zoonk.api.models.PlayableLibraryStepAnyOfContentOneOfImage
 import com.zoonk.api.models.PlayableLibraryStepAnyOfMinTolerance
 
 // The contract's names for each screen's content, so code reads by meaning, not by union position.
@@ -51,6 +52,7 @@ typealias WordHints = PlayableLibraryStepAnyOf9WordHints
 typealias StepCitation = PlayableLibraryStepAnyOfCitation
 typealias StepVisual = PlayableLibraryStepAnyOf2ContentVisual
 typealias StepBasis = PlayableLibraryStepAnyOf2ContentBasis
+typealias PictureDescription = PlayableLibraryStepAnyOfContentOneOfImage
 
 enum class StepKind {
     Activity,

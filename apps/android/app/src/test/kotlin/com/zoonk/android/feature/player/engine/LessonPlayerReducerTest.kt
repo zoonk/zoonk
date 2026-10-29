@@ -6,6 +6,9 @@ import com.zoonk.android.feature.player.fillBlankStep
 import com.zoonk.android.feature.player.hookGuessStep
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.PictureDescription
+import com.zoonk.android.feature.player.model.StepContent
+import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.numberAnswerStep
 import com.zoonk.android.feature.player.stepResult
 import com.zoonk.android.feature.player.summaryStep
@@ -521,4 +524,42 @@ class LessonPlayerReducerTest {
         assertEquals("e", state.screen().struggleOffer?.id)
         assertNull(play(steps, LessonAction.Continue, *answerCheck("q1", false)).screen().struggleOffer)
     }
+
+    @Test
+    fun aQuestionWaitsForItsPictureAndPlaysOnceItComes() {
+        val drawing = numberedCheckStep("parts").copy(imagePending = true, pictureWaitStartedAt = 0)
+        val waiting = play(listOf(drawing, summaryStep("end")), started(), LessonAction.SelectAnswer("parts", LessonAnswer.Check("right")))
+
+        assertEquals(false, waiting.screen().primary?.enabled)
+
+        val drawn = waiting.then(LessonAction.PicturesRead(listOf(numberedCheckStep("parts").copy(image = PICTURE)), openedAt = 0))
+
+        assertEquals(PICTURE, drawn.currentStep?.image)
+        assertEquals(true, drawn.screen().primary?.enabled)
+    }
+
+    @Test
+    fun aNumberedPictureQuestionWhosePictureNeverCameIsLeftOut() {
+        val drawing = numberedCheckStep("parts").copy(imagePending = true, pictureWaitStartedAt = 0)
+        val opened = play(listOf(explanationStep("idea"), drawing, summaryStep("end")), started())
+
+        val stillWaiting = reduce(opened, LessonAction.PicturesRead(emptyList(), openedAt = 0), 60_000)
+        assertEquals(listOf("idea", "parts", "end"), stillWaiting.queue)
+
+        val waitOver = reduce(opened, LessonAction.PicturesRead(emptyList(), openedAt = 0), 300_000)
+        assertEquals(listOf("idea", "end"), waitOver.queue)
+    }
+}
+
+private val PICTURE = StepImage("picture", "https://api.zoonk.test/v1/files/picture", "A cell", 800, 1000)
+
+private fun numberedCheckStep(id: String): LessonStep {
+    val check = checkStep(id)
+    val content = (check.content as StepContent.Check).content
+    return check.copy(
+        content =
+            StepContent.Check(
+                content.copy(image = PictureDescription(alt = "A cell", prompt = "A cell", parts = listOf("Nucleus", "Wall"))),
+            ),
+    )
 }

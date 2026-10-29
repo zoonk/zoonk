@@ -33,6 +33,7 @@
   "player_create_account_to_save": "5b5a896002e8b80f2e0585518b86c7be1fe1123eba29df5c89dac75b0f511e34",
   "player_create_free_account": "44092e43f5acdf93f87747f6bb763fcb97fc1e1e9d7af748900d025aee96e6c0",
   "player_dont_know_yet": "c3e07971d778f9f0873d721b656f1da0e773a414951be31ae7ee75a387b5be67",
+  "player_drawing_picture": "bbe51661ed264e3ab80bd61924c2caee20654938f11366a8e237cb13fba14a78",
   "player_enter_hint": "f592437c9ab1abe5bb27950fabc9f30b88166d22e2920e11c3a056e4dd1b0bb8",
   "player_explain_first": "b003bd08404dd004febfdc4fdde94df4b5ecbcdc2606cceb864f9adbd709137d",
   "player_finish": "a0d0387005895154d7dc89c5629ba2dc243523dadadd4961ac9141f61bef7ff7",
@@ -237,6 +238,7 @@
     <string name="player_back">Voltar</string>
     <string name="player_not_found_title">Aula indisponível</string>
     <string name="player_not_found_description">Esta aula não está mais disponível.</string>
+    <string name="player_drawing_picture">Desenhando a imagem…</string>
     <string name="player_not_in_app_title">Esta aula ainda não está no app</string>
     <string name="player_not_in_app_description">Ela tem telas que o app ainda não consegue mostrar. Você pode fazer essa aula em zoonk.com.</string>
     <string name="player_start_failed_title">Não conseguimos abrir esta aula</string>

@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.player.engine
 
 import com.zoonk.android.feature.player.model.LessonAnswer
+import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepImage
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
@@ -65,6 +66,12 @@ sealed interface LessonAction {
         val hyperdrive: HyperdriveStart,
         val startedAt: Instant,
         val optionalStepIds: List<String> = emptyList(),
+    ) : LessonAction
+
+    /** A fresh read of the lesson's screens while some pictures were still being drawn. */
+    data class PicturesRead(
+        val fresh: List<LessonStep>,
+        val openedAt: Long,
     ) : LessonAction
 
     /** After a completion the server found incomplete: its answers say which screen to go back to. */
@@ -155,6 +162,10 @@ fun reduce(
 
         is LessonAction.RunStarted -> {
             state.startRun(action, now)
+        }
+
+        is LessonAction.PicturesRead -> {
+            state.withPictures(action.fresh, action.openedAt, now)
         }
 
         is LessonAction.RunResynced -> {

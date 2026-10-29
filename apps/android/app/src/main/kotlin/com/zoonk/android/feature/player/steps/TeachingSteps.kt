@@ -94,7 +94,7 @@ internal fun FactHookView(
     content: StepContent.Fact,
 ) {
     ReadScene {
-        step.image?.let { StepPicture(it, PictureFrame.Hero) }
+        StepPicture(step, PictureFrame.Hero)
         BodyText(content.content.text)
         LessonStepVisual(content.content.visual)
     }
@@ -115,7 +115,7 @@ internal fun GuessHookView(
     QuestionScene {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
             LabelChip(stringResource(R.string.player_guess_first), icon = R.drawable.ic_auto_awesome)
-            step.image?.let { StepPicture(it, PictureFrame.Question) }
+            StepPicture(step, PictureFrame.Question)
             LessonStepVisual(guess.visual)
             QuestionText(guess.question)
         }
@@ -147,7 +147,7 @@ internal fun ExplanationView(
     val explanation = content.content
 
     ReadScene {
-        step.image?.let { StepPicture(it, PictureFrame.Hero) }
+        StepPicture(step, PictureFrame.Hero)
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             explanation.title?.let { title ->
                 RichInlineText(
@@ -177,7 +177,7 @@ internal fun WorkedExampleView(
             worked.title?.let { QuestionText(it) }
         }
         BodyText(worked.problem)
-        step.image?.let { StepPicture(it, PictureFrame.Inline) }
+        StepPicture(step, PictureFrame.Inline)
         LessonStepVisual(worked.visual)
 
         val stepsLabel = stringResource(R.string.player_worked_example_steps)
@@ -228,7 +228,7 @@ internal fun CheckView(
 
     QuestionScene {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            screen.step?.image?.let { StepPicture(it, PictureFrame.Question) }
+            screen.step?.let { StepPicture(it, PictureFrame.Question) }
             ContextText(check.context)
             LessonStepVisual(check.visual)
             QuestionText(check.question)

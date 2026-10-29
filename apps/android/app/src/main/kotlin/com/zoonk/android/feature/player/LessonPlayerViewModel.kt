@@ -22,6 +22,7 @@ import com.zoonk.android.feature.player.engine.LessonSupport
 import com.zoonk.android.feature.player.engine.RunAnswer
 import com.zoonk.android.feature.player.engine.gradeOnDevice
 import com.zoonk.android.feature.player.engine.isServerGradedAnswer
+import com.zoonk.android.feature.player.engine.isWaitingForPicture
 import com.zoonk.android.feature.player.engine.reduce
 import com.zoonk.android.feature.player.engine.revealGuess
 import com.zoonk.android.feature.player.model.LessonAnswer
@@ -45,6 +46,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -131,6 +133,7 @@ class LessonPlayerViewModel(
     val ending: StateFlow<LessonEnding> = mutableEnding.asStateFlow()
 
     private var lesson: PlayableLesson? = null
+    private var openedAt = 0L
     private var owner = sessions.current
     private var work = openScope()
     private var starting: Job? = null
@@ -222,7 +225,9 @@ class LessonPlayerViewModel(
                 when (val outcome = start(runId = null) ?: return@launch) {
                     is StartOutcome.Started -> {
                         val state = playFrom(lesson, outcome.run)
-                        if (sessions.current == owner) mutableState.value = state
+                        if (sessions.current != owner) return@launch
+                        mutableState.value = state
+                        work.launch { followLatePictures() }
                     }
 
                     is StartOutcome.Refused -> {
@@ -265,6 +270,8 @@ class LessonPlayerViewModel(
         if (!leftOut.containsAll(unplayable)) return reduce(state, LessonAction.RunRefused(LessonRefusal.NotInApp), started)
 
         state = reduce(state, LessonAction.SkipSteps(unplayable), started)
+        openedAt = started
+        state = reduce(state, LessonAction.PicturesRead(emptyList(), openedAt), started)
 
         val session = owner
         if (session != null && choices.isChosen(session, TodayChoice.CantWrite)) {
@@ -272,6 +279,25 @@ class LessonPlayerViewModel(
         }
 
         return state.withFirstAnswer(started)
+    }
+
+    /** Main's and Apple's: the lesson is read again every few seconds until its pictures come or their wait ends. */
+    private suspend fun followLatePictures() {
+        while (true) {
+            val steps = mutableState.value?.steps?.values ?: return
+            if (steps.none(LessonStep::imagePending)) return
+
+            val isLastRead = steps.none { it.isWaitingForPicture(openedAt, now()) }
+            if (!isLastRead) delay(PICTURE_POLL)
+
+            val read = store.lesson(lessonId)
+            read.refresh()
+            val fresh = (read.state.value.value as? LessonLoad.Ready)?.lesson?.steps.orEmpty()
+            if (sessions.current != owner) return
+            dispatch(LessonAction.PicturesRead(fresh, openedAt))
+
+            if (isLastRead) return
+        }
     }
 
     /** A hook picked on the lesson's public page opens revealed. */
@@ -466,6 +492,7 @@ class LessonPlayerViewModel(
 
     private companion object {
         val TYPED_TIMEOUT = 45.seconds
+        val PICTURE_POLL = 4.seconds
         val SPOKEN_TIMEOUT = 60.seconds
         const val MAX_ANSWER_DURATION_MS = 3_600_000L
         const val UNPROCESSABLE = 422

@@ -77,7 +77,7 @@ private fun LessonPlayerState.primaryAction(step: LessonStep): PrimaryAction? {
     return PrimaryAction(
         isCheck = true,
         label = if (step.content is StepContent.Guess) PrimaryLabel.SeeAnswer else PrimaryLabel.Check,
-        enabled = answers[step.id].isReady(),
+        enabled = answers[step.id].isReady() && !step.imagePending,
     )
 }
 

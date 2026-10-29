@@ -107,6 +107,7 @@
     <string name="player_back">Back</string>
     <string name="player_not_found_title">Lesson not available</string>
     <string name="player_not_found_description">This lesson isn\'t available anymore.</string>
+    <string name="player_drawing_picture">Drawing the picture…</string>
     <string name="player_not_in_app_title">This lesson isn\'t in the app yet</string>
     <string name="player_not_in_app_description">It has screens the app can\'t show yet. You can do it on zoonk.com.</string>
     <string name="player_start_failed_title">We couldn\'t open this lesson</string>

@@ -33,6 +33,7 @@
   "player_create_account_to_save": "39d92af7793a6d9b978cbb046b78b12028ff6fdd2e0081081f30fb881dde0b13",
   "player_create_free_account": "0c34fe4c5f4274385871287883ca6815cdd4f564b76de0e8dd89f358b8e5f72f",
   "player_dont_know_yet": "5c1101eec18a75efb37cfa435029bf1c44dc01dddf325a372bdd83c617bb0956",
+  "player_drawing_picture": "b42a7f87cbf8073658d7c7e8f91bb8bef0fa168b199c56c4692e7585383c3561",
   "player_enter_hint": "204c79978a53d3a3750a1593911a703ac07f3c0ef5b86bbdb0b35d3f8c6f14ef",
   "player_explain_first": "7817c5587c931c5db1a8b4de4b02b8c8c1ec43c119f9235c62b5eb3a6b626753",
   "player_finish": "23743541de751a5f75218537a23cd962d90d580551803356dbc5eaa6455a9619",
@@ -237,6 +238,7 @@
     <string name="player_back">Atrás</string>
     <string name="player_not_found_title">Lección no disponible</string>
     <string name="player_not_found_description">Esta lección ya no está disponible.</string>
+    <string name="player_drawing_picture">Dibujando la imagen…</string>
     <string name="player_not_in_app_title">Esta lección aún no está disponible en la app</string>
     <string name="player_not_in_app_description">Tiene pantallas que la app aún no puede mostrar. Puedes hacerla en zoonk.com.</string>
     <string name="player_start_failed_title">No hemos podido abrir esta lección</string>
