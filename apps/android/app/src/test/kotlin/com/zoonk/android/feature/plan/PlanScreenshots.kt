@@ -117,10 +117,16 @@ class PlanScreenshots {
         captureEditor("plan-editor-font200")
     }
 
+    /** The side panel's content at its width; Robolectric copies only the activity's window. */
+    @Test
+    @Config(qualifiers = "w400dp-h2600dp-xxhdpi")
+    fun editorPanel() = captureEditor("plan-editor-panel", panel = true)
+
     private fun captureEditor(
         name: String,
         dark: Boolean = false,
         moreContrast: Boolean = false,
+        panel: Boolean = false,
     ) {
         val summary = learnerSummary(kind = "exam", title = "ENEM")
         val plan =
@@ -138,7 +144,9 @@ class PlanScreenshots {
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
-                    Column(Modifier.padding(top = 24.dp)) { PlanEditorBody(page, PlanEdits(latest = latest)) }
+                    Column(Modifier.padding(top = 24.dp)) {
+                        PlanEditorBody(page, PlanEdits(latest = latest), onClose = if (panel) ({}) else null)
+                    }
                 }
             }
         }

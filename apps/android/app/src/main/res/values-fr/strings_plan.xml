@@ -180,6 +180,7 @@
   "plan_deadline": "0cf09b4326f12bf94fb358e113ac89b46854193ae4c7c3efdadd1cc0cfc0c7b0",
   "plan_done": "55905fe3ffa56ada9aadbe8ca2d25e0650849ecc27e1aca8ff39d8aa7f9eb2d6",
   "plan_done_suffix": "8a3cbf19205496f5956efef543f92ef2ba427196a1955cee3956fcdfe555928b",
+  "plan_editor_close": "76d170354f6469487ad38b600f827cc2a54537587fd42594bf4e7a1d958b3580",
   "plan_editor_title": "92c604ed9ce12054f9041c3ef4299f8b4866907e3eeada197b504dd5fe95a685",
   "plan_estimate_based_on": "db8d2d515abd457d5607b1f2043399dfd574bc0bc42bdae5a6d1fbf40bfdadd2",
   "plan_estimate_based_on_last": "bba743495159f715405e15dc57bebb2f8688eecd5760802370a7a3df165d9533",
@@ -1009,6 +1010,7 @@
     <string name="plan_change_mocks_on">Examens blancs le %1$s</string>
     <string name="plan_change_weekly_challenges_on">Défis hebdomadaires le %1$s</string>
     <string name="plan_editor_title">Ajuster ton plan</string>
+    <string name="plan_editor_close">Fermer</string>
     <string name="plan_undo">Annuler</string>
     <string name="plan_deadline">Date limite</string>
     <string name="plan_named_month_note">%1$s pour le moment. Choisis le jour quand tu le connaîtras.</string>

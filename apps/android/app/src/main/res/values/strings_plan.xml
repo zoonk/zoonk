@@ -576,6 +576,7 @@
     <string name="plan_change_weekly_challenges_on">Weekly challenges on %1$s</string>
 
     <string name="plan_editor_title">Adjust your plan</string>
+    <string name="plan_editor_close">Close</string>
     <string name="plan_undo">Undo</string>
     <string name="plan_deadline">Deadline</string>
     <string name="plan_named_month_note">%1$s for now. Pick the day when you know it.</string>

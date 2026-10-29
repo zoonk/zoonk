@@ -180,6 +180,7 @@
   "plan_deadline": "039c47f0861b1c9dec95cff4936f8921748d42ab34c24cfea7a2930239f30ebc",
   "plan_done": "5d463edbdf3432ae2db1509c8015439459a37ba963f219ef4b5a09228d737027",
   "plan_done_suffix": "3e2030886b1bbbc7ffc13e559974b6a3f64fc038bc25555f1d7b5605d5042a0f",
+  "plan_editor_close": "ae26216a81d7ffa447aec80503f4a52e065791ff87da8ed51d3d6e78d9b54c98",
   "plan_editor_title": "f311ab287f0dbcd4c96412d6329fb4b93d4b5237bd971cbd258241c192f39988",
   "plan_estimate_based_on": "1f3168fa02f322c306d4e24bcaa6777e42d5ee66c6b166ba6b08967f32aba687",
   "plan_estimate_based_on_last": "86b6d05ddd46d6851c6f9d874b70a745e29d7df281b273f229963fe2454faa1e",
@@ -939,6 +940,7 @@
     <string name="plan_change_mocks_on">Probeprüfungen am %1$s</string>
     <string name="plan_change_weekly_challenges_on">Wöchentliche Herausforderungen am %1$s</string>
     <string name="plan_editor_title">Plan anpassen</string>
+    <string name="plan_editor_close">Schließen</string>
     <string name="plan_undo">Rückgängig</string>
     <string name="plan_deadline">Zieldatum</string>
     <string name="plan_named_month_note">%1$s ist erst mal in Ordnung. Such den Tag aus, sobald du ihn kennst.</string>

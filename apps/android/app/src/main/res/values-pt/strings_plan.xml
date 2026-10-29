@@ -180,6 +180,7 @@
   "plan_deadline": "f1c522c3854147d6420bffcdb4f09cfc0b93cc21984a06a7b93dd1d186cfe428",
   "plan_done": "3a5ba2235a1859b51b1a1e450a9b4bf2826785c492f2cf18e2a8097c08f56367",
   "plan_done_suffix": "256c28c187e4242bfd6e711d1d62ea5ae9594ff0a29ad05119bdcc310e63f4fb",
+  "plan_editor_close": "07ff239ed01f01cddbbd9c7e810d954de23544cf8bf21ff6b4b098ab08be49d2",
   "plan_editor_title": "3c54e18c02f2c5d017b271a5e55c5985530220e22c9d52b67cbe63bf3fde41bd",
   "plan_estimate_based_on": "e23ff2b9ed3752428e6db59833e3565efde2aac33c1e376a109e18935479e631",
   "plan_estimate_based_on_last": "a557f26b5a248fc9ef974607ff9946f1415292fcbbdf7d8367e44d924e65f915",
@@ -1009,6 +1010,7 @@
     <string name="plan_change_mocks_on">Simulados em %1$s</string>
     <string name="plan_change_weekly_challenges_on">Desafios semanais em %1$s</string>
     <string name="plan_editor_title">Ajuste seu plano</string>
+    <string name="plan_editor_close">Fechar</string>
     <string name="plan_undo">Desfazer</string>
     <string name="plan_deadline">Prazo</string>
     <string name="plan_named_month_note">%1$s por enquanto. Escolha o dia quando souber.</string>
