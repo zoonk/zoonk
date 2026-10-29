@@ -211,7 +211,7 @@ private fun LazyListScope.courseContent(
                 promise = promise,
                 pace = pace,
                 onTryLesson = tryLesson?.takeUnless { beside }?.let { { scope.launch { layout.listState.animateScrollToItem(1) } } },
-                headline = layout.headline,
+                headlineModifier = layout.headline,
                 modifier = modifier,
             )
         }
@@ -278,8 +278,8 @@ private fun CourseHero(
     promise: String?,
     pace: Long?,
     onTryLesson: (() -> Unit)?,
-    headline: Modifier,
     modifier: Modifier = Modifier,
+    headlineModifier: Modifier = Modifier,
 ) {
     val locale = currentLocale()
     val language = catalogLanguage(locale)
@@ -343,7 +343,7 @@ private fun CourseHero(
             Spacer(Modifier.size(12.dp))
         }
 
-        Text(course.title, modifier = headline.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        Text(course.title, modifier = headlineModifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
 
         if (!promise.isNullOrBlank()) {
             Spacer(Modifier.size(16.dp))
