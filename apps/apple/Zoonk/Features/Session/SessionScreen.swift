@@ -281,9 +281,15 @@ private struct NextStopView: View {
   }
 
   private var continueTitle: Text {
-    writing == .failed || lessonStatus == "failed"
-      ? Text("Try again", tableName: "Session", comment: "Asks again for a lesson that failed")
-      : Text("Continue", tableName: "Session", comment: "Opens the session's next block")
+    if writing == .failed || lessonStatus == "failed" {
+      return Text(
+        "Try again", tableName: "Session", comment: "Asks again for a lesson that failed")
+    }
+
+    return next?.status == .active
+      ? Text("Continue", tableName: "Session", comment: "Opens the session's next block")
+      : Text(
+        "Start", tableName: "Session", comment: "Opens the session's next block, not begun yet")
   }
 
   private func alternativeTitle(_ block: StudyBlock) -> Text {
