@@ -33,7 +33,7 @@ import java.util.UUID
 enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
 
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
-enum class PlanPart { Date, Schedule, ExamChoices, Bases, Activities, Writing, Steering, FullCourse, Focus }
+enum class PlanPart { Date, Schedule, ExamChoices, Bases, Activities, Writing, Steering, Tools, FullCourse, Focus }
 
 /** The editor's latest applied change, which it shows with Undo. */
 data class EditorChange(
@@ -119,6 +119,11 @@ class PlanViewModel(
         subject: String,
         answered: (PlanChangeResult?) -> Unit = {},
     ) = save(PlanPart.ExamChoices, listOf(PlanOp.ExamChoice(group, subject)), answered) { store.chooseExamOption(goalId, group, subject) }
+
+    fun chooseTools(
+        answer: ToolAnswer,
+        answered: (PlanChangeResult?) -> Unit = {},
+    ) = save(PlanPart.Tools, listOf(answer.operation), answered) { store.chooseTools(goalId, answer) }
 
     /** Null when it couldn't be asked. */
     suspend fun basesAdvice(): PlanBasesAdvice? = (store.basesAdvice(goalId) as? MutationResult.Done)?.value

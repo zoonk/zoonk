@@ -25,6 +25,7 @@ import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
+import com.zoonk.api.models.PlanToolChoiceInput
 import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.flow.first
@@ -148,6 +149,13 @@ interface PlanApi {
         subject: String,
     ): PlanChangeResult
 
+    /** Setting a tool up can write its setup lesson with a model first. */
+    suspend fun chooseTools(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        answer: ToolAnswer,
+    ): PlanChangeResult
+
     /** Plans the goal with every prerequisite in depth, so only when the learner asks. Saves nothing. */
     suspend fun basesAdvice(
         session: AuthenticatedSession,
@@ -242,6 +250,22 @@ class LivePlanApi(
         subject: String,
     ) = perform { api.clients(session).plans.createPlanExamChoice(goalId, ExamChoiceInput(group, subject, deviceTimeZone())) }
 
+    override suspend fun chooseTools(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        answer: ToolAnswer,
+    ) = perform {
+        api.clients(session).plans.createPlanToolChoice(
+            goalId,
+            PlanToolChoiceInput(
+                choice = PlanToolChoiceInput.Choice.valueOf(answer.choice.name),
+                tools = answer.tools,
+                system = answer.system?.let { PlanToolChoiceInput.System.valueOf(it.name) },
+                timeZone = deviceTimeZone(),
+            ),
+        )
+    }
+
     override suspend fun basesAdvice(
         session: AuthenticatedSession,
         goalId: UUID,
@@ -323,6 +347,11 @@ class PlanStore(
         group: String,
         subject: String,
     ): MutationResult<PlanChangeResult> = write(goalId) { api.chooseExamOption(it, goalId, group, subject) }
+
+    suspend fun chooseTools(
+        goalId: UUID,
+        answer: ToolAnswer,
+    ): MutationResult<PlanChangeResult> = write(goalId) { api.chooseTools(it, goalId, answer) }
 
     suspend fun basesAdvice(goalId: UUID): MutationResult<PlanBasesAdvice> = cache.mutate { api.basesAdvice(it, goalId) }
 

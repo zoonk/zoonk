@@ -288,7 +288,7 @@ class PlanScreenshots {
         write(name, compose.onRoot().captureToImage().asAndroidBitmap())
     }
 
-    /** The prerequisites' sheet, drawn here as it shows in its sheet. */
+    /** The prerequisites' and a tool's sheets, drawn here as they show in their sheets. */
     @Test
     @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
     fun editorSheets() = captureEditorSheets("plan-editor-sheet")
@@ -334,12 +334,17 @@ class PlanScreenshots {
                 preview = { preview },
                 adviseOnBases = { PlanBasesAdvice(daysLeft = 12, ready = true, recommended = PlanBasesAdvice.Recommended.QUICK) },
             )
+        var sheet by mutableStateOf("bases")
         var bases by mutableStateOf(BasesDraft())
+        var tool by mutableStateOf(ToolDraft("Spreadsheet (Google Sheets or Excel)", choice = null, system = null))
         compose.setContent {
             ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
                 Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
                     Column(Modifier.padding(top = 24.dp)) {
-                        BasesChoices(page, page.plan.bases!!, edits, bases, onDraft = { bases = it }, onDone = {})
+                        when (sheet) {
+                            "bases" -> BasesChoices(page, page.plan.bases!!, edits, bases, onDraft = { bases = it }, onDone = {})
+                            else -> ToolChoiceForm(page.plan.tools.first(), tool, edits, onDraft = { tool = it }, onDone = {})
+                        }
                     }
                 }
             }
@@ -352,6 +357,12 @@ class PlanScreenshots {
         compose.mainClock.advanceTimeBy(1_000)
         compose.waitForIdle()
         write("$prefix-bases-changed", compose.onRoot().captureToImage().asAndroidBitmap())
+
+        sheet = "tool"
+        compose.waitForIdle()
+        compose.onNodeWithText("I'll set it up").performClick()
+        compose.waitForIdle()
+        write("$prefix-tool", compose.onRoot().captureToImage().asAndroidBitmap())
     }
 
     private fun capture(
@@ -412,7 +423,10 @@ class PlanScreenshots {
               "skillId":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b02","studied":false},
              {"area":"Linguagens","choice":"essential","choices":["deep"],
               "minutes":{"deep":60,"essential":20,"quick":10},"name":"Classes de palavras","neededFor":[],
-              "skillId":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b03","studied":true}]}
+              "skillId":"6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b03","studied":true}]},
+            "tools":[{"choice":null,"essential":true,"later":false,"name":"Spreadsheet (Google Sheets or Excel)","system":null},
+             {"choice":"have","essential":false,"later":false,"name":"Scientific calculator","system":null},
+             {"choice":null,"essential":false,"later":true,"name":"Python","system":null}]
             """.trimIndent()
     }
 }

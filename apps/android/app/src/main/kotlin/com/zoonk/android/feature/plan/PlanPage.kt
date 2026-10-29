@@ -145,6 +145,7 @@ internal fun PlanPage(
             chooseFocus = { choosingFocus = true },
             studyEverything = { studyingEverything = true },
             chooseExamOption = viewModel::chooseExamOption,
+            chooseTools = viewModel::chooseTools,
             preview = viewModel::preview,
             adviseOnBases = viewModel::basesAdvice,
         )

@@ -43,6 +43,8 @@ internal class FakePlanApi : PlanApi {
     var preview = PlanChangePreview(effect = null, feasibility = null, ready = true, unchanged = true)
 
     val examChoices = mutableListOf<Pair<String, String>>()
+    val toolAnswers = mutableListOf<ToolAnswer>()
+    var toolFailure: ApiException? = null
     var advice = PlanBasesAdvice(daysLeft = 40, ready = true, recommended = PlanBasesAdvice.Recommended.ESSENTIAL)
     var advised = 0
 
@@ -155,6 +157,16 @@ internal class FakePlanApi : PlanApi {
         subject: String,
     ): PlanChangeResult {
         examChoices += group to subject
+        return PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED)
+    }
+
+    override suspend fun chooseTools(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        answer: ToolAnswer,
+    ): PlanChangeResult {
+        toolFailure?.let { throw it }
+        toolAnswers += answer
         return PlanChangeResult(change = planChange(), status = PlanChangeResult.Status.APPLIED)
     }
 

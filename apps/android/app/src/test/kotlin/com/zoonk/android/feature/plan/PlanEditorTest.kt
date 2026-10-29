@@ -27,6 +27,7 @@ import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanTool
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -43,6 +44,7 @@ class PlanEditorTest {
     private val changes = mutableListOf<Pair<PlanPart, List<PlanOp>>>()
     private val undone = mutableListOf<PlanChange>()
     private val examChoices = mutableListOf<Pair<String, String>>()
+    private val toolAnswers = mutableListOf<ToolAnswer>()
     private var asked by mutableStateOf(emptyMap<PlanPart, List<PlanOp>>())
     private var shownLatest by mutableStateOf<EditorChange?>(null)
 
@@ -78,6 +80,7 @@ class PlanEditorTest {
                         examChoices += group to subject
                         asked = asked + (PlanPart.ExamChoices to listOf(PlanOp.ExamChoice(group, subject)))
                     },
+                    chooseTools = { answer, _ -> toolAnswers += answer },
                     preview = { preview },
                     adviseOnBases = advise,
                 )
@@ -224,6 +227,28 @@ class PlanEditorTest {
         compose.onNodeWithText("Recommended").assertIsDisplayed()
     }
 
+    @Test
+    fun settingAToolUpAsksWhichDeviceFirst() {
+        show(TOOLS)
+
+        compose.onNodeWithContentDescription("Choose how you'll use Python").performScrollTo().performClick()
+        compose.onNodeWithText("I'll set it up").performClick()
+        compose.onNodeWithText("Save").assertIsNotEnabled()
+        compose.onNodeWithText("macOS").performClick()
+        compose.onNodeWithText("Save").performClick()
+
+        assertEquals(listOf(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)), toolAnswers)
+    }
+
+    @Test
+    fun noToolsLearnsEveryToolWithExamples() {
+        show(TOOLS)
+
+        compose.onNodeWithText("No tools? You can do it all with examples.").performScrollTo().performClick()
+
+        assertEquals(listOf(ToolAnswer(listOf("Python", "Spreadsheet (Google Sheets or Excel)"), PlanTool.Choice.NONE)), toolAnswers)
+    }
+
     private companion object {
         const val PREVIEW_WAIT = 1_000L
         val FRACTIONS = UUID.fromString("6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b01").toString()
@@ -241,5 +266,9 @@ class PlanEditorTest {
                 """{"area":"Math","choice":"essential","choices":["deep","essential","quick","skip"],""" +
                 """"minutes":{"deep":90,"essential":30,"quick":10},"name":"Ratios","neededFor":[],""" +
                 """"skillId":"$RATIOS","studied":false}]}"""
+
+        const val TOOLS =
+            """"tools":[{"choice":null,"essential":true,"later":false,"name":"Python","system":null},""" +
+                """{"choice":null,"essential":false,"later":true,"name":"Spreadsheet (Google Sheets or Excel)","system":null}]"""
     }
 }

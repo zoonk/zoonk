@@ -79,6 +79,7 @@ import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanTool
 import kotlinx.datetime.toJavaLocalDate
 import java.io.Serializable
 import java.util.UUID
@@ -101,6 +102,7 @@ internal data class PlanEdits(
     val chooseFocus: () -> Unit = {},
     val studyEverything: () -> Unit = {},
     val chooseExamOption: (group: String, subject: String, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
+    val chooseTools: (ToolAnswer, (PlanChangeResult?) -> Unit) -> Unit = { _, _ -> },
     val preview: suspend (List<PlanOp>) -> PlanChangePreview? = { null },
     val adviseOnBases: suspend () -> PlanBasesAdvice? = { null },
 ) {
@@ -117,6 +119,7 @@ internal class EditorDrafts(
     datePicking: Boolean = false,
     weekendOn: Boolean? = null,
     bases: BasesDraft? = null,
+    tool: ToolDraft? = null,
 ) {
     var datePicking by mutableStateOf(datePicking)
 
@@ -126,11 +129,14 @@ internal class EditorDrafts(
     /** The prerequisites' sheet while it's open. */
     var bases by mutableStateOf(bases)
 
+    /** A tool's sheet while it's open. */
+    var tool by mutableStateOf(tool)
+
     companion object {
         val Saver =
             listSaver<EditorDrafts, Any?>(
-                save = { listOf(it.datePicking, it.weekendOn, it.bases) },
-                restore = { EditorDrafts(it[0] as Boolean, it[1] as Boolean?, it[2] as BasesDraft?) },
+                save = { listOf(it.datePicking, it.weekendOn, it.bases, it.tool) },
+                restore = { EditorDrafts(it[0] as Boolean, it[1] as Boolean?, it[2] as BasesDraft?, it[3] as ToolDraft?) },
             )
     }
 }
@@ -139,6 +145,13 @@ internal class EditorDrafts(
 internal data class BasesDraft(
     val choices: Map<UUID, PlanBase.Choice> = emptyMap(),
     val saved: UUID? = null,
+) : Serializable
+
+/** [choice] and [system] start as the tool's current answer. */
+internal data class ToolDraft(
+    val name: String,
+    val choice: PlanTool.Choice?,
+    val system: PlanTool.System?,
 ) : Serializable
 
 /**
@@ -231,6 +244,7 @@ internal fun ColumnScope.PlanEditorBody(
         PlanActivities(page, edits, Modifier.section(PlanSection.Practice))
         PlanWrittenPractice(page, edits)
         PlanSteering(page, edits)
+        PlanTools(page, edits, drafts)
         PlanEditRequest(page, onTellBuddy)
     }
     if (onClose == null) {

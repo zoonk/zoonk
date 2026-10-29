@@ -455,6 +455,27 @@
   "plan_today": "2d590e714dd4fb1110d6877ecf5c4bbf19ecd6e0061c8146edf7f1a89058ca25",
   "plan_too_easy": "64bb5ffdcea889e39dfe6116bd2be102974175a942b12aaba277f8853e2709d7",
   "plan_too_hard": "d53f446183164c8d94c8a0258d276ba20d145c903ceee8d8c38243865c5832bb",
+  "plan_tool_change": "6df92fcae331772c8f345c902b719cf470a198c05ec36d1cf94475eb723aabd3",
+  "plan_tool_change_how": "186d1c9fb709a25713c68a5d08396e663d5a13a1420ec3987a15073032a6fc34",
+  "plan_tool_choose_how": "17d8a4d5a07399250a0bdf0a270163e9dbc4dfe8dee146173989a499555cc770",
+  "plan_tool_device": "8e3c0fa9b1288d7986c9b62593fc9bd715f8dafed751ae0570d17f316173eb1a",
+  "plan_tool_examples_only": "0766356e66ba76f78b16d00def0ce8ebcef4220177e87eac6d9b2f83affc5810",
+  "plan_tool_have": "e4a96e5e1f6f9acec2bd569e0389567797fe4aea4ded0040c7179c429137c650",
+  "plan_tool_have_description": "5921cfc8fcaaf06e3b149db4d2765c62bd26d0a0086eb58a6a11679dd8fccea3",
+  "plan_tool_have_it": "0fa25201140edf096afde3b974ef1a1cd4e7567fe32aec4a0ef1172cc70a7484",
+  "plan_tool_how": "7f518ab508d734836b8b68d9f5016296c1beae839b3dd814fdb844ce071ebfbf",
+  "plan_tool_needed": "91b95f7fd5b0563a63c95385a37b8db20b8ba8861afe07289b3bbd8740d78e22",
+  "plan_tool_none": "8ef500659c93187aba010778c84b13d49b0a1bcd3aa1a07a8f16c99815bcffe5",
+  "plan_tool_none_description": "678c11b6eb928fcae07ca1b2eab4e6a0edebebc2ee3f13b9c8d0567484d7ba54",
+  "plan_tool_optional": "77b9383bc9ef796ea3d10d12a12189dace5ab07eaacf2b0901b89b93981d4099",
+  "plan_tool_setup": "004f2a7657bcf1c9cd7ab2d65611f3bee29a201ade8da035221d365096783e33",
+  "plan_tool_setup_description": "296b4077b5230ce945392b2db60c1cd565b31c0c8968cbe33e1d0d318f8f6ee9",
+  "plan_tool_setup_first": "f25b4d37a96afba5abb0d23d265741a9eb9a104649fdbbcba4c9e42ef298e3e5",
+  "plan_tool_setup_for": "9d51150a23e67026a1e6e6c01f358f669d2965216e942e5a4b7282cac0bfe913",
+  "plan_tools_later": "2e18556d15be5989fe2647719a6aead78830f9a61c727d04dac3c372557d81d8",
+  "plan_tools_none": "481db05a0a39354826d22466a95948c3b6d626d47d01d98edf2ce40d555913c3",
+  "plan_tools_title": "32fc3052719f042fc4c9f5467152823bf0734fac70fcbd399dc3a1fe94e4356a",
+  "plan_tools_without": "6bb423cec8438817e066f35a477f9c85020e99dcab125c4d2589e6a2a283d08d",
   "plan_try_again": "067a97f8d338ad121d900952af3993d21d6a5e1f70b352561ae37d874ca489f6",
   "plan_tuesdays": "592cda714fd06aafe2b52aa904d3eb79d09e57c949f3b83edd7c384e37fd2bb4",
   "plan_undo": "0bfc41ac13e8cdefc58ba156f78598a8c52268c4dbe84ec50a00fca2faff3d81",
@@ -1139,6 +1160,27 @@
     <string name="plan_bases_goal_share_same">Bis zu deinem Zieldatum: %1$s deines Ziels, wie bisher.</string>
     <string name="plan_bases_exam_share">Bis zu deinem Termin: %1$s der Prüfung im Vergleich zu jetzt (%2$s).</string>
     <string name="plan_bases_goal_share">Bis zu deinem Termin: %1$s deines Ziels im Vergleich zu jetzt (%2$s).</string>
+    <string name="plan_tools_title">Das brauchst du</string>
+    <string name="plan_tool_have_it">Du hast es</string>
+    <string name="plan_tool_setup_for">Einrichtungseinheit für %1$s</string>
+    <string name="plan_tool_setup_first">Zuerst die Einrichtungseinheit</string>
+    <string name="plan_tool_examples_only">Nur mit Beispielen</string>
+    <string name="plan_tool_needed">Zum Üben nötig</string>
+    <string name="plan_tool_optional">Optional</string>
+    <string name="plan_tool_change">Ändern</string>
+    <string name="plan_tool_change_how">Ändern, wie du %1$s verwendest</string>
+    <string name="plan_tool_choose_how">Wähle, wie du %1$s verwendest</string>
+    <string name="plan_tools_none">Keine Tools? Du kannst alles mit Beispielen lernen.</string>
+    <string name="plan_tools_without">Du übst nicht am eigenen Computer. Stattdessen lernst du mit Beispielen und Simulationen.</string>
+    <string name="plan_tools_later">Mehr dazu später: %1$s</string>
+    <string name="plan_tool_how">Wie wirst du es verwenden?</string>
+    <string name="plan_tool_have">Ich habe es</string>
+    <string name="plan_tool_have_description">Du übst auf deinem eigenen Gerät.</string>
+    <string name="plan_tool_setup">Ich richte es ein</string>
+    <string name="plan_tool_setup_description">Eine kurze Lektion zeigt dir, wie es geht – kurz bevor du es brauchst.</string>
+    <string name="plan_tool_none">Keine Installation</string>
+    <string name="plan_tool_none_description">Lerne mit Beispielen. Du übst nicht am eigenen Computer.</string>
+    <string name="plan_tool_device">Dein Gerät</string>
     <string name="plan_what_you_practice">Was du übst</string>
     <string name="plan_when_to_practice">Wann möchtest du %1$s üben?</string>
     <string name="plan_cadence_weekly">Jede Woche</string>

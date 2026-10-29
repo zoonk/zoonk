@@ -10,6 +10,7 @@ import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanTool
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -363,6 +364,20 @@ class PlanViewModelTest {
                     ?.id
                     .toString(),
             )
+        }
+
+    @Test
+    fun aToolSetupThatDidntWorkFailsOnlyTheTools() =
+        runTest {
+            api.toolFailure = ApiException(ApiError.Unavailable, status = 502)
+            val answers = mutableListOf<PlanChangeResult?>()
+
+            viewModel.chooseTools(ToolAnswer(listOf("Python"), PlanTool.Choice.SETUP, PlanTool.System.MACOS)) { answers += it }
+
+            assertEquals(listOf<PlanChangeResult?>(null), answers)
+            assertEquals(setOf(PlanPart.Tools), viewModel.failed.value)
+            assertEquals(emptySet<PlanPart>(), viewModel.pending.value)
+            assertNull(viewModel.latest.value)
         }
 
     @Test
