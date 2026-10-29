@@ -102,6 +102,7 @@
   "today_step_catching_up_subject": "c76f073b0d517f1c9469eabc9632a3efab0cd4c0e8a712b49573117d26fca4d2",
   "today_step_counts_toward_mission": "2ac11f6e4bfc4a2a8404915d2515ad7c10737b403d39ce617fb92f302dbc1e2e",
   "today_step_done": "6acb02b7a7f790a2158b70d6dd97f3acbb3abfbe0cc5c7a91c087ced8400859f",
+  "today_step_next": "9fd5ad59e667efef0004d5ab6598973f36f61a535e9d8fe10cdea139021219ea",
   "today_step_often_tested": "22fc7f6f0da5481667bf8582b18e4841c36288175f84867beff2740beb8ec226",
   "today_step_often_tested_label": "b1b1f5a90871a9494ef14e098d807cc43a9e252c2a4f77d88e2f01c6012127ce",
   "today_step_plus": "bb62e7566d07217af6883606fd52ef8011d3c327a22a1cf3003fcac3e4fe9bad",
@@ -217,6 +218,8 @@
         <item quantity="other">+%d a mais</item>
     </plurals>
     <string name="today_step_done">Concluído</string>
+    <!-- TalkBack's state for the session's next step. -->
+    <string name="today_step_next">Próximo passo</string>
     <string name="today_step_skipped">Pulada</string>
     <string name="today_step_counts_toward_mission">Conta para uma missão</string>
     <string name="today_step_being_written">Sendo criada para você…</string>

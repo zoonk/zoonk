@@ -3,6 +3,7 @@ package com.zoonk.android.feature.today
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -36,6 +37,7 @@ import com.zoonk.android.ui.components.GoalRingTrack
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -100,11 +102,14 @@ private fun WeekHeader(day: DayView) {
             null
         }
 
-    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(Modifier.weight(1f)) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, itemVerticalAlignment = Alignment.Bottom) {
             Text(
                 stringResource(R.string.today_week_title),
-                modifier = Modifier.semantics { heading() },
+                modifier =
+                    Modifier.padding(end = 12.dp).semantics {
+                        heading()
+                    },
                 style = MaterialTheme.typography.titleMedium,
             )
             val line = listOfNotNull(daysText, if (hasTime && !wide) "$studiedText / $planned" else null).joinToString(" · ")
@@ -127,11 +132,11 @@ private fun WeekHeader(day: DayView) {
 
         if (hasTime && wide) {
             Row(Modifier.clearAndSetSemantics { contentDescription = timeDescription }, verticalAlignment = Alignment.Bottom) {
-                Text(studiedText, style = MaterialTheme.typography.titleLarge.withTabularFigures())
+                Readout(studiedText)
                 Text(
                     text = " / $planned",
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+                    style = MaterialTheme.typography.labelLarge.withTabularFigures(),
                 )
             }
         }
@@ -310,7 +315,7 @@ private fun ChallengeRow(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            KindDot(challenge.kind())
+            RowMark { KindDot(challenge.kind()) }
             Column {
                 Text(name, style = MaterialTheme.typography.titleSmall)
                 Text(

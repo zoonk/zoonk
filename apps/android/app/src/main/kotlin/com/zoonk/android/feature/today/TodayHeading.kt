@@ -3,6 +3,7 @@ package com.zoonk.android.feature.today
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.session.FreshStart
+import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
@@ -48,7 +50,7 @@ internal fun TodayPageHeader(
     state: String?,
     title: String,
     modifier: Modifier = Modifier,
-    trailing: @Composable RowScope.() -> Unit = {},
+    trailing: @Composable () -> Unit = {},
 ) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         val parts = listOfNotNull(date, state)
@@ -62,19 +64,21 @@ private fun Eyebrow(text: AnnotatedString) {
     Text(text = text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
 }
 
+/** What sits beside the title moves under it when both don't fit, as at large font sizes. */
 @Composable
 private fun TitleRow(
     title: String,
-    trailing: @Composable RowScope.() -> Unit,
+    trailing: @Composable () -> Unit,
 ) {
-    Row(
+    FlowRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.Bottom,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        itemVerticalAlignment = Alignment.Bottom,
     ) {
         Text(
             text = title,
-            modifier = Modifier.weight(1f).semantics { heading() },
+            modifier = Modifier.padding(end = 12.dp).semantics { heading() },
             style = MaterialTheme.typography.headlineMedium,
         )
         trailing()
@@ -95,7 +99,7 @@ internal fun TodayHeading(
             if (wide) {
                 action()
             } else {
-                DayTime(model, MaterialTheme.typography.headlineSmall)
+                DayTime(model, MaterialTheme.typography.headlineMedium)
             }
         }
     }
@@ -264,7 +268,7 @@ internal fun DayTime(
             }
         } ?: return
 
-    Text(text = text, modifier = modifier, style = style.withTabularFigures())
+    Readout(text, modifier, style)
 }
 
 /** A status, so a day that changes while the learner is here (lessons that arrive) is announced. */

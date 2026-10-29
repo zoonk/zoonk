@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- eloqnt-fingerprints-v1
 {
-  "steps_continue": "300870bd06c2dab7f983650cc316418639ee9d35f7304ea97bed47986eac75d2"
+  "steps_continue": "300870bd06c2dab7f983650cc316418639ee9d35f7304ea97bed47986eac75d2",
+  "steps_progress": "98b55b9b4807aee262e00656a6c7a07de95a8093b8c4a0decb3a40e538b31109"
 }
 -->
 <resources>
     <string name="steps_continue">Weiter</string>
+    <!-- Read by TalkBack for the step dots: "Step 2 of 4". -->
+    <string name="steps_progress">Schritt %1$d von %2$d</string>
 </resources>

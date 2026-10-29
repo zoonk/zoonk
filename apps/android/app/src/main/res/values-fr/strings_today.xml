@@ -102,6 +102,7 @@
   "today_step_catching_up_subject": "15ac2b4d26c5700ea43526c255a646e8bf31b4d7724e5c5a2e2b4cb432dbeb44",
   "today_step_counts_toward_mission": "d9bfc57823d933a6662cdb2c1b06e540ccdf93294b29580c5633cd17e56ef041",
   "today_step_done": "75ea98d625c758f01b99d7b83391975ec4e6bfc619d6a5d94cd4aeb5b752d788",
+  "today_step_next": "78e595522f467bce07684fe3cbfc5b851d58449aaf8a0d3accf3255582abf302",
   "today_step_often_tested": "8e01f7e3b3ce0dbc0bd95b275b1c78da3a8c315e74240b5c981b2b91e78d79dd",
   "today_step_often_tested_label": "963f74b2b206902c9d9a1105880c063378d2493371de53e02f55c024e4a655b4",
   "today_step_plus": "280fe9acab2cb8efd26f131105f8b537dc9968662b2638d8ea05e7c7e0f6024b",
@@ -217,6 +218,8 @@
         <item quantity="other">+%d autres</item>
     </plurals>
     <string name="today_step_done">Terminé</string>
+    <!-- TalkBack's state for the session's next step. -->
+    <string name="today_step_next">Étape suivante</string>
     <string name="today_step_skipped">Passé</string>
     <string name="today_step_counts_toward_mission">Compte pour une mission</string>
     <string name="today_step_being_written">Préparation en cours…</string>

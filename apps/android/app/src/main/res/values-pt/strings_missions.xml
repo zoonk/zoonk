@@ -43,6 +43,7 @@
   "missions_open_pronunciation": "d335f7d01bdd5e13c5b8d2f0e6af6f1b44e3f2e83b1ebaa113e8cc771cd015b3",
   "missions_open_review": "834e1f593980673f3ece7fa3baaac3634422eedbe5b35d5c7e5cc3dac3e3c93c",
   "missions_pattern": "8a726aec8c8e829ddeef3a014ff8b7f446435fcfea514313b5a557d6e702517d",
+  "missions_points": "ff4fac749b31e77caaada9b95234a2e1fab9f12257cbe1295234d3cfbe274e90",
   "missions_practice": "5e601c7e43c9909ef0bb67dc9cc7c4ff2294191e5b45659614f6d5048337ae11",
   "missions_practice_area": "410a5d16e3bf8724549c2d45cbd1070307415624ec20afc10b1c092c3967b5e8",
   "missions_progress": "99d192bb6a37b8344f18b53be34a57c81b7557dc84ad71fb172542812844e92e",
@@ -75,6 +76,8 @@
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
     <string name="missions_progress">%1$s de %2$s concluídas</string>
     <string name="missions_brain_power">Poder Mental</string>
+    <!-- %1$s is a formatted number of Brain Power points: "+50". -->
+    <string name="missions_points">+%1$s</string>
     <string name="missions_brain_power_about">O que você aprendeu, em pontos: aumenta seu nível e ajuda seu parceiro a crescer. Respostas, aulas e desafios somam pontos. Ao concluir as missões de hoje, você ganha +%1$s.</string>
     <string name="missions_brain_power_total">Você tem %1$s</string>
     <string name="missions_review">Revisar</string>

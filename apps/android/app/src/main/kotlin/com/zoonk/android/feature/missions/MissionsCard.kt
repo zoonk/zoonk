@@ -351,7 +351,7 @@ fun BrainPowerReward(
                     )
                 }
                 Text(
-                    text = "+$points",
+                    text = stringResource(R.string.missions_points, points),
                     color = if (earned) MaterialTheme.colorScheme.surface else MaterialTheme.zoonk.brainText,
                     fontWeight = FontWeight.SemiBold,
                     style = MaterialTheme.typography.titleSmall.withTabularFigures(),

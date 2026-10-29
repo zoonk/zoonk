@@ -43,6 +43,7 @@
   "missions_open_pronunciation": "fa6a7862e3053c2d40f0b9d8a6198ab9a86510a74e5c3d17187e96164a373786",
   "missions_open_review": "d1eb1ace528c2325bd73c10074f240f3ddc15e41d982b4b3cef0464d30df7dde",
   "missions_pattern": "37efee917b3a38b4b47f383a22ec80f1628c45dea900a019353f6cf5f1dbda55",
+  "missions_points": "c33ff2d1d734e4ce817ef007f37bed0d18999362ed049adc031c53ed475982e5",
   "missions_practice": "c2a4ee26148ad722d114cf0aeddde7b5a39d34162615b2df9070692058de4ccb",
   "missions_practice_area": "9f89a00e19bcb6dd0a320f6ab9f00e68e87670ea496509ba1e7c58d680bbfadd",
   "missions_progress": "7eaefb592c309a7150edcdca298c76b990e554bba3f14d9740f6d5c5fa5ab5a9",
@@ -73,6 +74,8 @@
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
     <string name="missions_progress">%1$s von %2$s abgeschlossen</string>
     <string name="missions_brain_power">Brain Power</string>
+    <!-- %1$s is a formatted number of Brain Power points: "+50". -->
+    <string name="missions_points">+%1$s</string>
     <string name="missions_brain_power_about">Dein Lernerfolg in Punkten: Er erhöht dein Level und lässt deinen Kumpel wachsen. Richtige Antworten, Lektionen und Herausforderungen bringen Punkte. Wenn du die heutigen Missionen abschließt, kommen +%1$s dazu.</string>
     <string name="missions_brain_power_total">Du hast %1$s</string>
     <string name="missions_review">Wiederholen</string>

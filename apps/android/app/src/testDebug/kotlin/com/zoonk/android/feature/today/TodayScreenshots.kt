@@ -79,6 +79,20 @@ class TodayScreenshots {
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tablet() = capture("tablet")
 
+    @Test
+    @Config(qualifiers = "w1280dp-h1600dp-xhdpi")
+    fun tabletAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("tablet-font200")
+    }
+
+    @Test
+    @Config(qualifiers = "w700dp-h2000dp-xhdpi")
+    fun mediumAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("medium-font200")
+    }
+
     private fun capture(
         name: String,
         dark: Boolean = false,

@@ -33,9 +33,11 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -52,6 +54,7 @@ import com.zoonk.android.ui.components.GoalRing
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.components.StepPagerActions
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -148,14 +151,24 @@ internal fun Logbook(
     TaskScaffold(
         onClose = onClose,
         bottomBar = {
-            StepPagerActions(steps.size, index, onIndexChange = { index = it }) {
+            StepPagerActions(
+                steps.size,
+                index,
+                onIndexChange = { index = it },
+            ) {
                 Button(onClick = onStart) { Text(stringResource(R.string.recap_lets_go)) }
             }
         },
     ) { padding ->
         Box(Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+            // A step changed by Continue or Back is announced, as main moves focus to its title.
             Column(
-                modifier = Modifier.widthIn(max = 560.dp).fillMaxWidth().padding(24.dp),
+                modifier =
+                    Modifier
+                        .widthIn(max = 560.dp)
+                        .fillMaxWidth()
+                        .padding(24.dp)
+                        .semantics { liveRegion = LiveRegionMode.Polite },
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 when (current) {
@@ -312,7 +325,7 @@ private fun StatTile(
                 )
                 Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
             }
-            Text(value, style = MaterialTheme.typography.headlineSmall.withTabularFigures())
+            Readout(value)
         }
     }
 }

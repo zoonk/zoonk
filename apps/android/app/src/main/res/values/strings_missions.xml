@@ -16,6 +16,8 @@
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
     <string name="missions_progress">%1$s of %2$s done</string>
     <string name="missions_brain_power">Brain Power</string>
+    <!-- %1$s is a formatted number of Brain Power points: "+50". -->
+    <string name="missions_points">+%1$s</string>
     <string name="missions_brain_power_about">What you\'ve learned, in points: it raises your belt and grows your buddy. Answers, lessons and challenges add to it, and finishing today\'s missions adds +%1$s.</string>
     <string name="missions_brain_power_total">You have %1$s</string>
 

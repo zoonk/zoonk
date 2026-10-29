@@ -43,6 +43,7 @@
   "missions_open_pronunciation": "1bfbbdadc6f146d6ee760ef7eb2c5fdbe962980e9b4e1820e1fcabbdd5f50b05",
   "missions_open_review": "af49f06926bae8eacb71b08981a2ff069b0a059f235a9fa3af4b1e14e256f7e3",
   "missions_pattern": "a98815008a559c12c04df986a4adfe00348d5a4708fc2e637cce4df105ba660c",
+  "missions_points": "b1a7bdf731c4ef84dcc795f9d36033a15dae5c0f9835fa9eaa8273b8afc04d5a",
   "missions_practice": "ad5e97e9252b0db0d8b33ad69cd6b2ee14671e3bdcbe2e36fcb2dc6cfb5223d7",
   "missions_practice_area": "dbb720ab69bbd6fc3b7f9bc2b3dd286214ae5f4574bdabd5d1f2c6f06fdba1e8",
   "missions_progress": "3d12b9eae0562d46bbb19ff40230c4bf297b59eb1ef60a9771511a6e81e7ea50",
@@ -75,6 +76,8 @@
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
     <string name="missions_progress">%1$s sur %2$s terminées</string>
     <string name="missions_brain_power">Puissance Mentale</string>
+    <!-- %1$s is a formatted number of Brain Power points: "+50". -->
+    <string name="missions_points">+%1$s</string>
     <string name="missions_brain_power_about">Les points qui reflètent ce que tu as appris : ils font progresser ta ceinture et grandir ton compagnon. Les réponses, leçons et défis t’en font gagner. Terminer les missions du jour ajoute +%1$s.</string>
     <string name="missions_brain_power_total">Tu as %1$s</string>
     <string name="missions_review">Réviser</string>

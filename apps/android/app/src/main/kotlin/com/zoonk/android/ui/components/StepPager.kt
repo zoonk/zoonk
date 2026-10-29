@@ -3,6 +3,7 @@ package com.zoonk.android.ui.components
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -17,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 
@@ -34,24 +36,26 @@ fun StepPagerActions(
 ) {
     BackHandler(enabled = index > 0) { onIndexChange(index - 1) }
 
-    Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+    // The dots stay centered on the bar whether or not there's a step to go back to.
+    Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
         if (index > 0) {
-            OutlinedIconButton(onClick = { onIndexChange(index - 1) }) {
+            OutlinedIconButton(onClick = { onIndexChange(index - 1) }, modifier = Modifier.align(Alignment.CenterStart)) {
                 Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
             }
         }
 
-        StepDots(count, index, Modifier.weight(1f))
+        StepDots(count, index, Modifier)
 
-        if (index < count - 1) {
-            Button(onClick = { onIndexChange(index + 1) }) { Text(stringResource(R.string.steps_continue)) }
-        } else {
-            finalAction()
+        Box(Modifier.align(Alignment.CenterEnd)) {
+            if (index < count - 1) {
+                Button(onClick = { onIndexChange(index + 1) }) { Text(stringResource(R.string.steps_continue)) }
+            } else {
+                finalAction()
+            }
         }
     }
 }
 
-/** Decorative: each step's own heading says where the learner is. */
 @Composable
 private fun StepDots(
     count: Int,
@@ -66,7 +70,14 @@ private fun StepDots(
     val current = MaterialTheme.colorScheme.onSurface
     val other = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
 
-    Row(modifier.clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally)) {
+    val description = stringResource(R.string.steps_progress, index + 1, count)
+
+    Row(
+        modifier.clearAndSetSemantics {
+            contentDescription = description
+        },
+        horizontalArrangement = Arrangement.spacedBy(6.dp, Alignment.CenterHorizontally),
+    ) {
         repeat(count) { step ->
             Canvas(Modifier.size(6.dp)) { drawCircle(if (step == index) current else other) }
         }

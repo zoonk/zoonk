@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -29,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -46,7 +49,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withLink
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zoonk.android.R
 import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayStep
@@ -212,7 +217,9 @@ private fun LazyListScope.sessionQueue(
 
     val rowsShown = (if (!foldsDone || folds.doneOpen) queue.done else emptyList()) + queue.before + next + shownAfter
 
-    items(rowsShown, key = { "step-${it.position}" }, contentType = { "step" }) { step ->
+    val beforeNext = rowsShown.indexOf(next) - 1
+
+    itemsIndexed(rowsShown, key = { _, step -> "step-${step.position}" }, contentType = { _, _ -> "step" }) { index, step ->
         val isNext = step.position == next.position
         StepRow(
             model = model,
@@ -223,6 +230,7 @@ private fun LazyListScope.sessionQueue(
             onOpen = { actions.open(step) },
             modifier = Modifier.pageItem(),
             onNavigate = actions.navigate,
+            divider = index != beforeNext,
         )
     }
 
@@ -322,6 +330,7 @@ private fun StepRow(
     onOpen: () -> Unit,
     modifier: Modifier,
     onNavigate: (AppRoute) -> Unit = {},
+    divider: Boolean = true,
 ) {
     val finished = step.isFinished
     val mission = model.countsTowardMission(step)
@@ -329,7 +338,7 @@ private fun StepRow(
         when (step.status) {
             StudyBlock.Status.COMPLETED -> stringResource(R.string.today_step_done)
             StudyBlock.Status.SKIPPED -> stringResource(R.string.today_step_skipped)
-            else -> null
+            else -> if (isNext) stringResource(R.string.today_step_next) else null
         }
 
     RowFrame(
@@ -337,6 +346,7 @@ private fun StepRow(
         busy = busy,
         onClick = if (opens) onOpen else null,
         modifier = modifier.semantics { if (state != null) stateDescription = state },
+        divider = divider,
     ) {
         RowMark { BlockMark(step) }
 
@@ -411,14 +421,23 @@ private fun EarlierWork(
     val count = formatNumber(items.size.toDouble(), currentLocale())
 
     Column(modifier) {
-        FoldRow(
-            label = stringResource(R.string.today_earlier_work, count),
-            done = false,
-            open = open,
-            minutes = null,
-            onToggle = { open = !open },
-            modifier = Modifier,
-        )
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .clickable(role = Role.Button) { open = !open }
+                    .heightIn(min = 48.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(stringResource(R.string.today_earlier_work, count), style = MaterialTheme.typography.titleSmall)
+            Icon(
+                painter = painterResource(R.drawable.ic_expand_more),
+                contentDescription = null,
+                modifier = Modifier.size(18.dp).rotate(if (open) 180f else 0f),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         if (open) {
             Text(
                 text = stringResource(R.string.today_earlier_work_detail),
@@ -495,10 +514,11 @@ private fun SubLine(text: String) {
     )
 }
 
-/** One width for every mark, so the rows' titles start in one place. */
+/** One width for every mark, growing with the font, so the rows' titles start in one place. */
 @Composable
 internal fun RowMark(content: @Composable () -> Unit) {
-    Box(Modifier.width(MARK_WIDTH).heightIn(min = 20.dp), contentAlignment = Alignment.Center) { content() }
+    val width = with(LocalDensity.current) { MARK_WIDTH.toDp() }
+    Box(Modifier.width(width).heightIn(min = width), contentAlignment = Alignment.Center) { content() }
 }
 
 /** The next block sits on a tinted card; the others are separated by hairlines. */
@@ -508,13 +528,14 @@ private fun RowFrame(
     busy: Boolean,
     onClick: (() -> Unit)?,
     modifier: Modifier,
+    divider: Boolean = true,
     content: @Composable androidx.compose.foundation.layout.RowScope.() -> Unit,
 ) {
     Column(modifier) {
         Row(
             modifier =
                 Modifier
-                    .fillMaxWidth()
+                    .then(if (isNext) Modifier.bleed(NEXT_BLEED) else Modifier.fillMaxWidth())
                     .then(
                         if (isNext) {
                             Modifier.background(
@@ -528,16 +549,25 @@ private fun RowFrame(
                     .then(if (onClick != null) Modifier.clickable(enabled = !busy, role = Role.Button, onClick = onClick) else Modifier)
                     .alpha(if (busy) BUSY_ALPHA else 1f)
                     .heightIn(min = 48.dp)
-                    .padding(horizontal = if (isNext) 10.dp else 0.dp, vertical = 10.dp),
+                    .padding(horizontal = if (isNext) NEXT_BLEED else 0.dp, vertical = 10.dp),
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = if (isNext) Alignment.Top else Alignment.CenterVertically,
         ) {
             content()
         }
 
-        if (!isNext) HorizontalDivider()
+        if (!isNext && divider) HorizontalDivider()
     }
 }
+
+/** The next block's tint reaches past the column, so its mark and words stay on every row's edges. */
+private fun Modifier.bleed(horizontal: Dp): Modifier =
+    layout { measurable, constraints ->
+        val extra = (horizontal * 2).roundToPx()
+        val width = constraints.maxWidth + extra
+        val placeable = measurable.measure(constraints.copy(minWidth = width, maxWidth = width))
+        layout(constraints.maxWidth, placeable.height) { placeable.placeRelative(-extra / 2, 0) }
+    }
 
 @Composable
 private fun Minutes(minutes: Long) {
@@ -782,7 +812,8 @@ private fun seeYou(model: TodayDayModel): String {
     return stringResource(R.string.today_see_you_day, formatDate(date, currentLocale(), DateStyle.Weekday, date))
 }
 
-internal val MARK_WIDTH = 20.dp
+private val MARK_WIDTH = 20.sp
+private val NEXT_BLEED = 10.dp
 
 private const val PHONE_DONE_ROWS = 2
 private const val OPEN_BACKLOG_LIMIT = 5

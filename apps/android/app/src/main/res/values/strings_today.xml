@@ -66,6 +66,8 @@
         <item quantity="other">+%d more</item>
     </plurals>
     <string name="today_step_done">Done</string>
+    <!-- TalkBack's state for the session's next step. -->
+    <string name="today_step_next">Next step</string>
     <string name="today_step_skipped">Skipped</string>
     <string name="today_step_counts_toward_mission">Counts toward a mission</string>
     <string name="today_step_being_written">Being written for you…</string>

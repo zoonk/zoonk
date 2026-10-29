@@ -133,7 +133,7 @@ internal fun TodayDay(
             Column(Modifier.fillMaxSize()) {
                 LazyColumn(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = if (beside) Alignment.Start else Alignment.CenterHorizontally,
                     contentPadding = PaddingValues(top = 8.dp, bottom = 24.dp),
                 ) {
                     item(key = "heading", contentType = "heading") {
