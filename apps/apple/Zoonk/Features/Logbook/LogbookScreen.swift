@@ -28,9 +28,15 @@ struct WeeklyRecap: Decodable, Equatable, Sendable {
   }
 
   struct Turnaround: Decodable, Equatable, Sendable {
+    enum Reason: String, Decodable, Sendable {
+      case gold
+      case practice
+      case solid
+    }
+
     let from: Double
     let name: String
-    let reason: String
+    let reason: Reason
     let rememberedOn: [String]
     let to: Double
   }
@@ -178,6 +184,27 @@ struct LogbookScreen: View {
   }
 
   @ViewBuilder
+  private func reason(_ turnaround: WeeklyRecap.Turnaround) -> some View {
+    switch turnaround.reason {
+    case .gold:
+      Text(
+        "\(turnaround.name) is Mastered now: you remembered it on \(turnaround.rememberedOn.count) different days.",
+        tableName: "Session",
+        comment:
+          "Why the week's biggest turnaround grew: its skill, then the days it was remembered on"
+      )
+    case .solid:
+      Text(
+        "\(turnaround.name) is Solid now: you kept getting it right on later days.",
+        tableName: "Session",
+        comment: "Why the week's biggest turnaround grew; the argument is its skill"
+      )
+    case .practice:
+      EmptyView()
+    }
+  }
+
+  @ViewBuilder
   private func changes(_ recap: WeeklyRecap) -> some View {
     if let turnaround = recap.turnaround {
       Section {
@@ -191,6 +218,9 @@ struct LogbookScreen: View {
           )
           .monospacedDigit()
           .foregroundStyle(.secondary)
+
+          reason(turnaround)
+            .padding(.top, 4)
         }
       } header: {
         Text("The biggest turnaround", tableName: "Session", comment: "The skill that grew most")

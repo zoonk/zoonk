@@ -181,6 +181,136 @@
         }
       }
     },
+    "%@ is Mastered now: you remembered it on %lld different days." : {
+      "comment" : "Why the week's biggest turnaround grew: its skill, then the days it was remembered on",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ ist jetzt gemeistert: Du hast es an %2$lld verschiedenen Tag erinnert."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ ist jetzt gemeistert: Du hast es an %2$lld verschiedenen Tagen erinnert."
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%1$@ is Mastered now: you remembered it on %2$lld different day."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%1$@ is Mastered now: you remembered it on %2$lld different days."
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ ahora está Dominado: lo recordaste en %2$lld día distinto."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ ahora está Dominado: lo recordaste en %2$lld días distintos."
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "many" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ est maîtrisé maintenant : tu t’en es souvenu %2$lld jours différents."
+                }
+              },
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ est maîtrisé maintenant : tu t’en es souvenu un jour différent."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ est maîtrisé maintenant : tu t’en es souvenu %2$lld jours différents."
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ agora está Dominado: você se lembrou disso em %2$lld dia diferente."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%1$@ agora está Dominado: você se lembrou disso em %2$lld dias diferentes."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "%@ is Solid now: you kept getting it right on later days." : {
+      "comment" : "Why the week's biggest turnaround grew; the argument is its skill",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ist jetzt sicher: Du hast es auch an späteren Tagen immer wieder richtig beantwortet."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ ahora está Firme: seguiste acertándolo en días posteriores."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ est solide maintenant : tu as continué à trouver la bonne réponse les jours suivants."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ agora está Firme: você continuou acertando nos dias seguintes."
+          }
+        }
+      }
+    },
     "%@ is Young now, and keeps growing with your Brain Power." : {
       "comment" : "The buddy's next stage",
       "localizations" : {
