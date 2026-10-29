@@ -280,6 +280,7 @@ private struct LogbookSteps: View {
     Section {
       WeekRings(recap: recap)
         .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
 
       if recap.isQuiet {
         header(
