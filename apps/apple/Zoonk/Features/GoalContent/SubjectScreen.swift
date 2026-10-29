@@ -83,7 +83,8 @@ struct SubjectScreen: View {
         }
       }
       .sheet(isPresented: $isReporting) {
-        FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "subject"))
+        FeedbackSheet(
+          api: FeedbackAPI.live(), context: FeedbackContext(screen: "subject"), isReport: true)
       }
       .loads(syllabus)
     }

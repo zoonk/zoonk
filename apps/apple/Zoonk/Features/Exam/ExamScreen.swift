@@ -118,7 +118,8 @@ private struct ExamList: View {
       }
     }
     .sheet(isPresented: $isReporting) {
-      FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "exam"))
+      FeedbackSheet(
+        api: FeedbackAPI.live(), context: FeedbackContext(screen: "exam"), isReport: true)
     }
   }
 

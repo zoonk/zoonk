@@ -7,10 +7,11 @@ struct FeedbackSheet: View {
 
   let api: any FeedbackAPIClient
   var context: FeedbackContext?
+  var isReport = false
 
   var body: some View {
     FeedbackForm(
-      api: api, context: context,
+      api: api, context: context, isReport: isReport,
       accountEmail: learner.summary.value?.identity.isAnonymous == true
         ? nil : session.account?.user.email,
       token: session.authenticatedSession?.bearerToken)
@@ -22,14 +23,17 @@ private struct FeedbackForm: View {
   @FocusState private var focusedField: FeedbackField?
   @State private var store: FeedbackFormStore
   private let asksForEmail: Bool
+  private let isReport: Bool
 
   init(
     api: any FeedbackAPIClient,
     context: FeedbackContext?,
+    isReport: Bool,
     accountEmail: String?,
     token: String?
   ) {
     asksForEmail = accountEmail?.isEmpty ?? true
+    self.isReport = isReport
     _store = State(
       initialValue: FeedbackFormStore(
         api: api,
@@ -48,10 +52,14 @@ private struct FeedbackForm: View {
         }
       }
       .navigationTitle(
-        Text(
-          "Feedback",
-          tableName: "Feedback",
-          comment: "Navigation title for the feedback form.")
+        isReport
+          ? Text(
+            "Report a problem", tableName: "Feedback",
+            comment: "Navigation title for the form reporting a problem with a page")
+          : Text(
+            "Feedback",
+            tableName: "Feedback",
+            comment: "Navigation title for the feedback form.")
       )
       .toolbarTitleDisplayMode(.inline)
       .toolbar {
@@ -102,14 +110,16 @@ private struct FeedbackForm: View {
 
   private var form: some View {
     Form {
-      Section {
-        Text(
-          "Share feedback, ask a question, or tell us what we could improve.",
-          tableName: "Feedback",
-          comment: "Introduction shown above the feedback fields."
-        )
-        .foregroundStyle(.secondary)
-        .listRowBackground(Color.clear)
+      if !isReport {
+        Section {
+          Text(
+            "Share feedback, ask a question, or tell us what we could improve.",
+            tableName: "Feedback",
+            comment: "Introduction shown above the feedback fields."
+          )
+          .foregroundStyle(.secondary)
+          .listRowBackground(Color.clear)
+        }
       }
 
       if asksForEmail {

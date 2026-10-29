@@ -98,7 +98,8 @@ struct PlanMenu: View {
     .sheet(isPresented: $isReporting) {
       FeedbackSheet(
         api: FeedbackAPI.live(),
-        context: FeedbackContext(contentID: context.plan.planId, contentKind: .plan))
+        context: FeedbackContext(contentID: context.plan.planId, contentKind: .plan),
+        isReport: true)
     }
     .confirmationDialog(
       confirmationTitle, isPresented: isConfirming, titleVisibility: .visible,

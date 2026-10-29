@@ -160,7 +160,8 @@ struct LanguageUnitScreen: View {
       .sheet(isPresented: $isReporting) {
         FeedbackSheet(
           api: FeedbackAPI.live(),
-          context: FeedbackContext(contentID: chapterId, contentKind: .chapter, screen: "unit"))
+          context: FeedbackContext(contentID: chapterId, contentKind: .chapter, screen: "unit"),
+          isReport: true)
       }
       .loads(unit)
     }
