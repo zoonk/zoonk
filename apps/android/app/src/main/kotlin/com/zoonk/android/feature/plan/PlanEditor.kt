@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.plan
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -287,6 +288,8 @@ private fun SidePanel(
                         .semantics { paneTitle = title },
                 shape = RoundedCornerShape(topStart = PANEL_CORNER, bottomStart = PANEL_CORNER),
                 color = MaterialTheme.colorScheme.surfaceContainerLow,
+                // A dark theme's light dim and near-black surface don't set the panel apart from the page.
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
             ) {
                 Column(
                     modifier =
