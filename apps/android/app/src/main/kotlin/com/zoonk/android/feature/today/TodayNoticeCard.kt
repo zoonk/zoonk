@@ -108,11 +108,11 @@ private fun ExamAccessNotice(
         layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(R.drawable.ic_auto_awesome),
-        lineAction = { SuggestionAction(seePlus, openPlus, outlined = true) },
+        lineAction = { SuggestionAction(seePlus, openPlus, secondary = true) },
     ) {
         SuggestionHeader(title)
         SuggestionDescription(stringResource(R.string.subscription_free_week_over_description))
-        SuggestionActions { SuggestionAction(seePlus, openPlus, outlined = true) }
+        SuggestionActions { SuggestionAction(seePlus, openPlus, secondary = true) }
     }
 }
 
@@ -145,7 +145,7 @@ private fun SuggestedGoalNotice(
                 text = stringResource(R.string.today_not_now),
                 onClick = { viewModel.answer(suggestion, accepted = false, hasGoal = true) },
                 enabled = !viewModel.isAnswering,
-                outlined = true,
+                secondary = true,
             )
         }
         if (viewModel.answerFailed) SuggestionSaveError()
@@ -222,9 +222,9 @@ private fun InsightActions(
     val canAccept = insight.kind != MemoryInsight.Kind.PLAN_CHANGE || applied || insight.planChange?.canApply == true
 
     SuggestionActions {
-        // A tip's only answer is outlined, so Today's own action stays the screen's one filled button.
-        if (canAccept) SuggestionAction(accept, { viewModel.answerInsight(insight, accepted = true) }, enabled, outlined = dismiss == null)
-        dismiss?.let { SuggestionAction(it, { viewModel.answerInsight(insight, accepted = false) }, enabled, outlined = true) }
+        // A tip's only answer is secondary, so Today's own action stays the screen's one filled button.
+        if (canAccept) SuggestionAction(accept, { viewModel.answerInsight(insight, accepted = true) }, enabled, secondary = dismiss == null)
+        dismiss?.let { SuggestionAction(it, { viewModel.answerInsight(insight, accepted = false) }, enabled, secondary = true) }
     }
 }
 
