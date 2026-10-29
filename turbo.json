@@ -7,8 +7,6 @@
       "ANDROID_*",
       "APPLE_*",
       "AUTH_COOKIE_CACHE_ENABLED",
-      "APP_CACHE_SECRET",
-      "MAIN_CACHE_BYPASS_SECRET",
       "BETTER_AUTH_SECRET",
       "BLOB_*",
       "CRON_SECRET",
@@ -29,7 +27,13 @@
       "ZOONK_DEV_PROJECT"
     ],
     "ui": "tui",
-    "passThroughEnv": ["CODEX_SANDBOX", "ZOONK_DEV_LAUNCHER_PID", "ZOONK_QUERY_LOG"],
+    "passThroughEnv": [
+      "APP_CACHE_SECRET",
+      "CODEX_SANDBOX",
+      "MAIN_CACHE_BYPASS_SECRET",
+      "ZOONK_DEV_LAUNCHER_PID",
+      "ZOONK_QUERY_LOG"
+    ],
     "cacheMaxAge": "7d",
     "cacheMaxSize": "10GB"
   },

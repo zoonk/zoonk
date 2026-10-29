@@ -18,6 +18,7 @@ export function LibraryCourseOffer({
     <LearnLink
       className="bg-card ring-border hover:bg-muted/60 focus-visible:ring-ring/50 flex min-h-16 items-center gap-3 rounded-xl px-4 py-3 ring-1 outline-none focus-visible:ring-[3px]"
       href={href}
+      prefetch="auto"
     >
       <BookOpenIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
       <span className="flex min-w-0 flex-1 flex-col">

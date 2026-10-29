@@ -3,7 +3,7 @@ import { isPrismaUniqueConstraintError, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { isUuid } from "@zoonk/utils/uuid";
-import { revalidateCourseContent } from "../cache/revalidate-course-content";
+import { revalidateCacheTags } from "../cache/revalidate-cache-tags";
 import { COURSE_LIST_CACHE_TAG, getCourseCacheTag, getCourseRouteCacheTag } from "../cache/tags";
 import { getAdminAccess } from "../users/get-admin-access";
 
@@ -66,7 +66,7 @@ export async function renameCourseForAdmin({
 
   const brandSlug = course.organization?.slug;
 
-  await revalidateCourseContent([
+  revalidateCacheTags([
     getCourseCacheTag(courseId),
     COURSE_LIST_CACHE_TAG,
     ...(brandSlug
