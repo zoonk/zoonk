@@ -77,6 +77,12 @@ describe(getDayState, () => {
     );
   });
 
+  it("asks the learner for a study day's lessons nobody is outlining yet", () => {
+    expect(getDayState(day({ blocks: [], emptyDay: "lessonsToPrepare", nextPosition: null }))).toBe(
+      "prepare",
+    );
+  });
+
   it("has nothing new on a study day without blocks", () => {
     expect(getDayState(day({ blocks: [], emptyDay: "nothingNew", nextPosition: null }))).toBe(
       "ahead",

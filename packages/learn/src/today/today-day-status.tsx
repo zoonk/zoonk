@@ -150,6 +150,12 @@ export function TodayDayStatus({ className }: { className?: string }) {
       return <DoneStatus className={className} />;
     case "waiting":
       return <WaitingStatus className={className} />;
+    case "prepare":
+      return (
+        <TodayStatusLine className={className} icon={<ClockIcon />}>
+          <TodayStatusSentence>{t("Today's lessons aren't written yet.")}</TodayStatusSentence>
+        </TodayStatusLine>
+      );
     case "limit":
       return (
         <TodayStatusLine className={className} icon={<HourglassIcon />}>

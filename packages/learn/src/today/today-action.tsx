@@ -8,6 +8,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { createContext, use } from "react";
 import { OpeningWaitLine } from "../_components/opening-wait-line";
+import { ChangeSaveError } from "../_components/save-error";
 import { useSlowWait } from "../_utils/use-slow-wait";
 import { type WaitState } from "../_utils/wait-state";
 import { useLearnRoutes } from "../learn-context";
@@ -179,6 +180,29 @@ function PracticeTime() {
   );
 }
 
+function PrepareLessons() {
+  const t = useExtracted();
+  const { actions } = useTodayScreen();
+  const { failed, isPending, run } = useSessionAction({ action: actions.prepareLessons });
+
+  return (
+    <>
+      <Button
+        className={ACTION_CLASS}
+        disabled={isPending}
+        focusableWhenDisabled
+        onClick={run}
+        size="lg"
+      >
+        {isPending && <Spinner aria-hidden="true" />}
+        {t("Get today's lessons")}
+      </Button>
+
+      {failed && <ChangeSaveError />}
+    </>
+  );
+}
+
 function KeepLearning() {
   const t = useExtracted();
   const { failed, isPending, run, wait } = useKeepLearning();
@@ -241,6 +265,14 @@ export function TodayAction({ className }: { className?: string }) {
     return (
       <div className={cn("flex flex-col sm:items-end", className)} data-slot="today-action">
         <SeePlanLink />
+      </div>
+    );
+  }
+
+  if (state === "prepare") {
+    return (
+      <div className={cn("flex flex-col sm:items-end", className)} data-slot="today-action">
+        <PrepareLessons />
       </div>
     );
   }

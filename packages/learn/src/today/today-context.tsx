@@ -49,6 +49,8 @@ export type TodayActions = {
   }) => Promise<PlanChangeView | "stale" | null>;
   missionLinks: MissionLinks;
   openBlock: (step: DayStep) => Promise<boolean>;
+  /** Asks for the day's lessons nobody is outlining yet; resolves once the next read says they're coming. */
+  prepareLessons: () => Promise<boolean>;
   mistakesHref: string;
   refresh: () => unknown;
   startTestOut: (chapterId: string) => Promise<TestOutStart>;

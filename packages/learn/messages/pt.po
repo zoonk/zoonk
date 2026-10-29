@@ -12336,6 +12336,11 @@ msgid "Practice for {minutes} minutes"
 msgstr "Praticar por {minutes} minutos"
 
 #: src/today/today-action.tsx
+msgctxt "Nb8Jg7"
+msgid "Get today's lessons"
+msgstr "Preparar as aulas de hoje"
+
+#: src/today/today-action.tsx
 msgctxt "WKZJxb"
 msgid "We couldn't open your next lessons. Try again."
 msgstr "A gente não conseguiu abrir suas próximas aulas. Tente de novo."
@@ -12489,6 +12494,11 @@ msgstr "Até amanhã!"
 msgctxt "L6jXw1"
 msgid "See you {day}!"
 msgstr "Até {day}!"
+
+#: src/today/today-day-status.tsx
+msgctxt "FyQP44"
+msgid "Today's lessons aren't written yet."
+msgstr "As aulas de hoje ainda não foram criadas."
 
 #: src/today/today-day-status.tsx
 msgctxt "nQ6arV"

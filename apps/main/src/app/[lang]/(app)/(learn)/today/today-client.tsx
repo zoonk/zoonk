@@ -194,6 +194,7 @@ export function TodayClient({
           return step ? taps.open(step) : Promise.resolve(false);
         },
         plusHref: "/subscription",
+        prepareLessons: taps.prepareLessons,
         refresh: refreshOnPlanChange,
         startTestOut: (chapterId) =>
           startTestOut({ chapterId, fromSession: true, goalId: today.goal.id }),

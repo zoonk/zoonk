@@ -1,5 +1,6 @@
 "use server";
 
+import { postAsLearner } from "@/lib/api/learner-api";
 import { getLessonGenerationState } from "@zoonk/core/library/generation/state";
 import { respondToMemoryInsight } from "@zoonk/core/memory/insights/respond";
 import { catchUpToday } from "@zoonk/core/sessions/catch-up";
@@ -335,6 +336,21 @@ export async function catchUpTodayAction(input: SessionInput): Promise<boolean> 
   }
 
   return result.status === "ready";
+}
+
+/** Awaits the API so the next read already says the lessons are coming. */
+export async function prepareTodayLessonsAction(input: { goalId: string }): Promise<boolean> {
+  const parsed = z.object({ goalId: z.uuid() }).safeParse(input);
+
+  if (!parsed.success) {
+    return false;
+  }
+
+  const response = await postAsLearner({
+    path: `/v1/goals/${encodeURIComponent(parsed.data.goalId)}/lesson-preparations`,
+  });
+
+  return response.ok;
 }
 
 const insightAnswerSchema = z.object({

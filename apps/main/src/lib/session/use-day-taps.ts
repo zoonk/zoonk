@@ -14,6 +14,7 @@ import {
   catchUpTodayAction,
   openNextStudyBlockAction,
   openStudyBlockAction,
+  prepareTodayLessonsAction,
 } from "./study-session-actions";
 import {
   SESSION_PATH,
@@ -222,5 +223,15 @@ export function useDayTaps({ day, refresh }: { day: TapDay; refresh: () => void 
     },
     next: (step: TapStep) => tap({ next: true, step }),
     open: (step: TapStep) => tap({ next: false, step }),
+    prepareLessons: async () => {
+      const scope = { generation: getLearnerGeneration(), origin: getCurrentLocation() };
+      const prepared = await noteAppWrite(prepareTodayLessonsAction({ goalId: day.shown.goalId }));
+
+      if (prepared && isStill(scope)) {
+        refresh();
+      }
+
+      return prepared;
+    },
   };
 }
