@@ -96,8 +96,7 @@ async function settleHungUp({
     });
 
     const now = new Date();
-    // OpenAI already ended it, so the app or browser left without ending the call: a crash keeps
-    // only the time the call was seen in use, never the rest of the learner's day.
+    // OpenAI ended it on its own, so the app or page left mid-call: keep only the time it was used.
     const liveUntil = alreadyEnded ? (current.lastActiveAt ?? current.startedAt ?? now) : now;
     const charge = getEndingCharge({ connection: current, liveUntil, now });
 

@@ -118,7 +118,6 @@ async function isAlreadyEnded(response: Response): Promise<boolean> {
   return getString(error, "code") === "session_id_not_found";
 }
 
-/** How a hangup found the session: running until now, or already over (the app or browser left). */
 export type LiveCallHangup = "alreadyEnded" | "hungUp";
 
 /**

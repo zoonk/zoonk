@@ -261,7 +261,6 @@ describe("live calls", () => {
       }),
     ).resolves.toMatchObject({ status: "ready" });
 
-    // The app died after that turn; the learner calls again a minute later.
     advance(60);
     vi.mocked(hangUpLiveCallSession).mockResolvedValueOnce("alreadyEnded");
     await reserved(conversation.id);

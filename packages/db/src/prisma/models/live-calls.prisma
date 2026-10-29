@@ -54,8 +54,7 @@ model LiveCallConnection {
   providerSessionId String?            @unique @map("provider_session_id")
   /// When the creation request left, since the provider's clock starts there.
   startedAt         DateTime?          @map("started_at")
-  /// When the call was last seen in use: its latest objective check. A session OpenAI ended on its
-  /// own (the app or browser left without ending the call) keeps the learner's time up to here.
+  /// The call's latest objective check: a session OpenAI ended on its own charges the learner up to here.
   lastActiveAt      DateTime?          @map("last_active_at")
   endedAt           DateTime?          @map("ended_at")
   /// Set while `starting` when an end was asked for before the session existed.

@@ -209,8 +209,7 @@ async function handle({
   const session = sessions.get(decodeURIComponent(route.groups.id));
 
   if (!session) {
-    // A session this peer never made (one OpenAI made before a run switched to this peer) is gone
-    // as far as the API can tell: its hangup answers as OpenAI's does, so the call can settle.
+    // Hangs up a session it never made as OpenAI does an ended one, so an older call still settles.
     json(
       response,
       !route.groups.scope && route.groups.operation === "hangup"

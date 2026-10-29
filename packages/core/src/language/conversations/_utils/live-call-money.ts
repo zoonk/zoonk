@@ -62,7 +62,6 @@ export function getEndingCharge({
   now,
 }: {
   connection: LiveCallConnection;
-  /** The learner's time stops here instead of `now`: the call was last seen in use then. */
   liveUntil?: Date;
   now: Date;
 }): { costMicros: number; learnerSeconds: number } {

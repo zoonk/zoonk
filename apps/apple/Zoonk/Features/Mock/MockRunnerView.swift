@@ -1,13 +1,11 @@
 import SwiftUI
 
-/// Like the exam room: one question at a time with no feedback. Where two pages fit it's a spread,
-/// and the open answer sheet takes the trailing page.
+/// Like the exam room: one question at a time with no feedback.
 struct MockRunnerView: View {
   @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-  /// Kept through folding and unfolding iPhone Duo.
+  /// Kept through folding and unfolding iPhone Duo, and never turned into a sheet over the question
+  /// when the screen narrows.
   @State private var showsAnswerSheet = false
-  /// Opened where the question is one column: only then a sheet, so closing iPhone Duo with it
-  /// beside the question never covers the question.
   @State private var answerSheetInSheet = false
   @State private var fitsTwoPages = false
   @State private var confirmsHandIn = false
@@ -37,8 +35,7 @@ struct MockRunnerView: View {
       ToolbarItem(placement: .principal) { MockClock(deadline: current.deadline) }
       ToolbarItem(placement: .primaryAction) {
         Button {
-          // Beside the question it closes the sheet too; elsewhere it opens it, including one left
-          // open beside the question before iPhone Duo closed.
+          // One left open beside the question before iPhone Duo closed is hidden, so this opens it.
           if showsAnswerSheet, fitsTwoPages {
             showsAnswerSheet = false
           } else {
@@ -59,13 +56,12 @@ struct MockRunnerView: View {
       isPresented: Binding(
         get: { showsAnswerSheet && answerSheetInSheet },
         set: { isShown in
-          // Only the learner closing the sheet closes it: one leaving for the pane stays open.
+          // SwiftUI also calls this when the sheet leaves for the pane, which keeps it open.
           if !isShown, answerSheetInSheet { showsAnswerSheet = false }
         })
     ) {
       answerSheet(isBeside: false).presentationDetents([.medium, .large])
     }
-    // A sheet opened in one column moves beside the question once two pages fit.
     .onChange(of: fitsTwoPages) { _, fits in
       if fits { answerSheetInSheet = false }
     }
@@ -87,9 +83,8 @@ struct MockRunnerView: View {
     }
   }
 
-  /// The question as a spread, or, with the answer sheet open where two pages fit, whole in one
-  /// column on the leading page beside the sheet. Side panels are panes, never inspectors: one
-  /// presented while iPhone Duo is folded misplaces the screen beside it.
+  /// Side panels are panes, never inspectors: one presented while iPhone Duo is folded misplaces
+  /// the screen beside it.
   @ViewBuilder
   private func pages(_ question: MockQuestion) -> some View {
     if showsAnswerSheet, fitsTwoPages {
@@ -518,7 +513,6 @@ struct MockSectionCounts {
 private struct MockAnswerSheet: View {
   let run: MockRun
   let view: MockView
-  /// Beside the question as its trailing page rather than in a sheet.
   let isBeside: Bool
   let onHandIn: () -> Void
   let onPick: (Int) -> Void

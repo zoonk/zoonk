@@ -51,7 +51,6 @@ export async function checkLanguageConversationObjectives({
     return { status: "conversationEnded" };
   }
 
-  // Should the app die from here, the call keeps the learner's time only up to this check.
   await prisma.liveCallConnection.updateMany({
     data: { lastActiveAt: new Date() },
     where: { conversationId: row.id, state: "live", userId },
