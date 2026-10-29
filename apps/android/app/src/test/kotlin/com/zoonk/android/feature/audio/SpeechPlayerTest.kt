@@ -14,13 +14,15 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
-import mockwebserver3.MockResponse
-import mockwebserver3.MockWebServer
 import okhttp3.HttpUrl
-import org.junit.After
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Protocol
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.ResponseBody.Companion.toResponseBody
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.TemporaryFolder
@@ -31,7 +33,7 @@ class SpeechPlayerTest {
     @get:Rule
     val folder = TemporaryFolder()
 
-    private val server = MockWebServer()
+    private val http = InProcessHttp()
     private val ana = AuthenticatedSession("ana", "token-a", "local-a")
     private val bia = AuthenticatedSession("bia", "token-b", "local-b")
     private val sessions = FakeSession(ana)
@@ -39,41 +41,24 @@ class SpeechPlayerTest {
     private val asked = mutableListOf<String>()
     private var refusal: ApiException? = null
 
-    @Before
-    fun start() {
-        server.start()
-    }
-
-    @After
-    fun stop() {
-        server.close()
-    }
-
     private fun TestScope.player(): SpeechPlayer {
         val dispatcher = StandardTestDispatcher(testScheduler)
-        val files = VoiceFiles(folder.root, apiHttpClient(), ::isPrivate, sessions, dispatcher)
+        val files = VoiceFiles(folder.root, http.client(), ::isPrivate, sessions, dispatcher)
         val clips =
             SpeechClips { session, _, text, personal ->
                 asked += "${session.accountId}:$text"
                 refusal?.let { throw it }
-                server.url(if (personal) "/v1/files/clips/${session.accountId}/$text.mp3" else "/blob/$text.mp3").toString()
+                http.url(if (personal) "/v1/files/clips/${session.accountId}/$text.mp3" else "/blob/$text.mp3")
             }
         return SpeechPlayer(clips, files, output, sessions, CoroutineScope(SupervisorJob() + dispatcher))
     }
 
     private fun isPrivate(url: HttpUrl) = url.encodedPath.startsWith("/v1/files/")
 
-    private fun audio(status: Int = 200) =
-        MockResponse
-            .Builder()
-            .code(status)
-            .body("mp3")
-            .build()
-
     @Test
     fun speakingForAnotherOwnerStopsTheSoundBefore() =
         runTest {
-            repeat(2) { server.enqueue(audio()) }
+            repeat(2) { http.enqueue() }
             val player = player()
             player.speak("word", "it", listOf(SpokenText("ciao")))
             advanceUntilIdle()
@@ -95,7 +80,7 @@ class SpeechPlayerTest {
     @Test
     fun segmentsPlayInOrderAndEachTextIsVoicedOncePerSession() =
         runTest {
-            repeat(2) { server.enqueue(audio()) }
+            repeat(2) { http.enqueue() }
             val player = player()
             var done = 0
             val segments = listOf(SpokenText("uno"), SpokenText("due"))
@@ -112,11 +97,11 @@ class SpeechPlayerTest {
             assertEquals(2, done)
             assertNull(player.playback.value)
             assertEquals(listOf("ana:uno", "ana:due"), asked)
-            assertEquals(2, server.requestCount)
+            assertEquals(2, http.requests.size)
             assertEquals(listOf(0.7f, 0.7f, 0.7f, 0.7f), output.rates)
 
             sessions.session = bia
-            server.enqueue(audio())
+            http.enqueue()
             player.speak("dialogue", "it", segments.take(1))
             advanceUntilIdle()
             assertEquals("bia:uno", asked.last())
@@ -125,16 +110,16 @@ class SpeechPlayerTest {
     @Test
     fun aRecordingThatWontLoadOrPlayIsReadAloudInstead() =
         runTest {
-            server.enqueue(audio(404))
-            server.enqueue(audio())
+            http.enqueue(404)
+            http.enqueue()
             val player = player()
-            player.speak("word", "it", listOf(SpokenText("ciao", recording = server.url("/native/ciao.mp3").toString())))
+            player.speak("word", "it", listOf(SpokenText("ciao", recording = http.url("/native/ciao.mp3"))))
             advanceUntilIdle()
             assertEquals(listOf("ana:ciao"), asked)
             assertEquals(SpeechState.Playing, player.state("word"))
 
-            repeat(2) { server.enqueue(audio()) }
-            player.speak("word", "it", listOf(SpokenText("pane", recording = server.url("/native/pane.mp3").toString())))
+            repeat(2) { http.enqueue() }
+            player.speak("word", "it", listOf(SpokenText("pane", recording = http.url("/native/pane.mp3"))))
             advanceUntilIdle()
             output.finish(PlaybackEnd.Failed)
             advanceUntilIdle()
@@ -145,9 +130,9 @@ class SpeechPlayerTest {
     @Test
     fun aRecordingWithoutTextNeverAsksForAClip() =
         runTest {
-            server.enqueue(audio(404))
+            http.enqueue(404)
             val player = player()
-            player.speak("prompt", "it", listOf(SpokenText(null, recording = server.url("/native/ciao.mp3").toString())))
+            player.speak("prompt", "it", listOf(SpokenText(null, recording = http.url("/native/ciao.mp3"))))
             advanceUntilIdle()
             assertEquals(emptyList<String>(), asked)
             assertEquals(SpeechState.Failed(null), player.state("prompt"))
@@ -163,7 +148,7 @@ class SpeechPlayerTest {
             assertEquals(SpeechState.Failed(Limit.SignUpRequired), player.state("word"))
 
             refusal = null
-            server.enqueue(audio())
+            http.enqueue()
             player.speak("word", "it", listOf(SpokenText("ciao")))
             advanceUntilIdle()
             assertEquals(SpeechState.Playing, player.state("word"))
@@ -184,14 +169,14 @@ class SpeechPlayerTest {
     @Test
     fun onlyTheLearnersOwnClipCarriesTheirSessionAndLeavesWithIt() =
         runTest {
-            repeat(2) { server.enqueue(audio()) }
+            repeat(2) { http.enqueue() }
             val player = player()
             player.speak("better", "it", listOf(SpokenText("io vado", personal = true)))
             advanceUntilIdle()
             player.speak("word", "it", listOf(SpokenText("ciao")))
             advanceUntilIdle()
-            assertEquals("Bearer token-a", server.takeRequest().headers["Authorization"])
-            assertNull(server.takeRequest().headers["Authorization"])
+            assertEquals("Bearer token-a", http.requests[0].header("Authorization"))
+            assertNull(http.requests[1].header("Authorization"))
 
             val files = VoiceFiles(folder.root, apiHttpClient(), ::isPrivate, sessions)
             assertEquals(1, File(folder.root, ana.localId).listFiles()?.size)
@@ -203,7 +188,7 @@ class SpeechPlayerTest {
     @Test
     fun aSoundAskedForByOneLearnerNeverUsesTheNextLearnersSession() =
         runTest {
-            server.enqueue(audio())
+            http.enqueue()
             val player = player()
             player.speak("word", "it", listOf(SpokenText("ciao")))
             sessions.session = bia
@@ -216,7 +201,7 @@ class SpeechPlayerTest {
     @Test
     fun aPrivateClipTheFilesRouteRejectsSignsThatSessionOut() =
         runTest {
-            server.enqueue(audio(401))
+            http.enqueue(401)
             val player = player()
             player.speak("better", "it", listOf(SpokenText("io vado", personal = true)))
             advanceUntilIdle()
@@ -227,20 +212,53 @@ class SpeechPlayerTest {
     @Test
     fun aPrivateClipThatFinishesAfterItsLearnerLeftIsNotKept() =
         runTest {
-            server.enqueue(audio())
+            http.enqueue()
             val signsOutMidDownload =
-                apiHttpClient {
+                http.client {
                     addInterceptor { chain ->
                         chain.proceed(chain.request()).also { sessions.session = bia }
                     }
                 }
-            val files = VoiceFiles(folder.root, signsOutMidDownload, ::isPrivate, sessions)
-            val url = server.url("/v1/files/clips/ana/io.mp3").toString()
+            val files = VoiceFiles(folder.root, signsOutMidDownload, ::isPrivate, sessions, StandardTestDispatcher(testScheduler))
+            val url = http.url("/v1/files/clips/ana/io.mp3")
             val refused = runCatching { files.file(url, ana) }.exceptionOrNull() as ApiException
             assertEquals(ApiError.Unauthorized, refused.error)
             assertEquals(false, File(folder.root, ana.localId).exists())
             assertEquals(0, folder.root.listFiles()?.size)
         }
+
+    /**
+     * Answers downloads in process, in the order they're asked for. A real socket made these tests
+     * wait on the clock, which a loaded machine can stretch past runTest's 60 seconds.
+     */
+    private class InProcessHttp : Interceptor {
+        private val statuses = ArrayDeque<Int>()
+        val requests = mutableListOf<Request>()
+
+        fun enqueue(status: Int = 200) {
+            statuses += status
+        }
+
+        fun url(path: String) = "http://clips.test$path"
+
+        fun client(configure: OkHttpClient.Builder.() -> Unit = {}) =
+            apiHttpClient {
+                configure()
+                addInterceptor(this@InProcessHttp)
+            }
+
+        override fun intercept(chain: Interceptor.Chain): Response {
+            requests += chain.request()
+            return Response
+                .Builder()
+                .request(chain.request())
+                .protocol(Protocol.HTTP_1_1)
+                .code(statuses.removeFirst())
+                .message("")
+                .body("mp3".toResponseBody())
+                .build()
+        }
+    }
 
     private class FakeOutput : AudioOutput {
         val rates = mutableListOf<Float>()
