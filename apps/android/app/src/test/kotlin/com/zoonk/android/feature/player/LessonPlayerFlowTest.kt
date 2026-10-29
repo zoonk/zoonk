@@ -68,6 +68,7 @@ class LessonPlayerFlowTest {
     private val ana = AuthenticatedSession(ANA, "token-a", "local-a")
     private val session = FakeSession(ana)
     private val opened = mutableListOf<AppRoute>()
+    private val replaced = mutableListOf<AppRoute>()
     private var closed = 0
     private lateinit var api: FakeLessonPlayerApi
     private lateinit var openAgain: () -> LessonPlayerViewModel
@@ -84,7 +85,7 @@ class LessonPlayerFlowTest {
             }
 
             override fun replace(route: AppRoute) {
-                opened += route
+                replaced += route
             }
         }
 
@@ -174,7 +175,7 @@ class LessonPlayerFlowTest {
         assertEquals(listOf(RUN_ID), api.completions)
 
         tap("Next lesson")
-        assertEquals(listOf(AppRoute.Lesson(NEXT_LESSON_ID)), opened)
+        assertEquals(listOf(AppRoute.Lesson(NEXT_LESSON_ID)), replaced)
     }
 
     @Test
@@ -445,7 +446,8 @@ class LessonPlayerFlowTest {
         rule.onNodeWithText("This is part of").performScrollTo().assertIsDisplayed()
         rule.onNodeWithText("Weather").performScrollTo().assertIsDisplayed()
         tap("Build my plan")
-        assertEquals(listOf(AppRoute.CourseStart(CHAPTER_ID, CHAPTER_ID)), opened)
+        tap("Create an account to save")
+        assertEquals(listOf(AppRoute.CourseStart(CHAPTER_ID, CHAPTER_ID), AppRoute.Login), replaced)
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -478,7 +480,7 @@ class LessonPlayerFlowTest {
         rule.onNodeWithText("Lesson complete").assertIsDisplayed()
         rule.onNodeWithText("Next lesson").assertIsDisplayed()
         press(Key.Enter)
-        assertEquals(listOf(AppRoute.Lesson(NEXT_LESSON_ID)), opened)
+        assertEquals(listOf(AppRoute.Lesson(NEXT_LESSON_ID)), replaced)
     }
 }
 
