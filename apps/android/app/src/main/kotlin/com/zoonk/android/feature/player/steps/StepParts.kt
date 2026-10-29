@@ -24,6 +24,7 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.recode
@@ -120,9 +121,12 @@ fun splitQuestionData(text: String): Pair<String?, String> {
     return data to lines.subList(start, end + 1).joinToString("\n")
 }
 
-/** A question as a TalkBack heading, with any table of data above it. */
+/** A question as a TalkBack heading, with any table of data above it; it steps back once answered. */
 @Composable
-fun QuestionText(text: String) {
+fun QuestionText(
+    text: String,
+    answered: Boolean = false,
+) {
     val (data, question) = remember(text) { splitQuestionData(text) }
 
     if (data != null) ContextText(data)
@@ -130,7 +134,11 @@ fun QuestionText(text: String) {
         RichText(
             text = question,
             modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleLarge,
+            style =
+                MaterialTheme.typography.titleLarge.copy(
+                    color = if (answered) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                    fontWeight = FontWeight.SemiBold,
+                ),
         )
     }
 }

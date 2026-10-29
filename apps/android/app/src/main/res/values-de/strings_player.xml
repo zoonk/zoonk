@@ -17,7 +17,6 @@
   "player_back": "0269238484808365c690fc814dd841f16d50bbeff49f02bc0fea5977baed6448",
   "player_back_to_chapter": "8e9b89f0ca64b060dd0b2aca24a5eb4d0b236835d555ed0acc9788c527d3b1ee",
   "player_back_to_unit": "7a1ebe70809412b22a085c4c06c5653286c439050c24b75074113a97ec20dc83",
-  "player_brain_power": "0b6c74ae45724b0d65e8ce2b33fb710134521f1d79d8a04949c15f471b440d69",
   "player_build_my_plan": "868d48c4980ee68f9c39f5a514f736e82c32a191245057cefd438272df0ae74c",
   "player_cant_write_now": "5fb6cf745b621089437b905dbc6921d38a9db92b9b490bfd6ac8661432743b68",
   "player_check_failed": "08f17424efa5c1739fa3dc22e70b19b02928e1d52be560542e8443273dc45073",
@@ -98,7 +97,6 @@
   "player_saved_to_mistakes_back_tomorrow": "40580d7ee3c2da98764b315f73d8aaad564426d5177e03b5b14610d24e755914",
   "player_saved_to_mistakes_back_weekday": "a4d0e0ead28e7283f93020930766a537f2db78e4ef9bde1427673ecf64e5520d",
   "player_saving_progress": "2ab135b1e94136d3d2beec54ae1bb0f35f100dc40e3ffa6eb48770246e778d5a",
-  "player_score": "91f510d20e776ab758353bade11409b01b3e14cbc4c9e58ef691372b4813a997",
   "player_screen_options": "17f7cc8d9b27bada525a71db4c9eb2b3c37ee2e55866504ce37b2bfff9c8fe47",
   "player_see_plus": "eafe0f2eee53ba4167760fae9c7624e1ba751862a31b8ab53d742ea4933e320e",
   "player_set_aside_description": "0eca104ae23a205e7c5a24eb1138739f3e100aaed1e3b05e593eb9c1292867bf",
@@ -261,11 +259,6 @@
     <string name="player_already_knew">Das wusstest du schon</string>
     <string name="player_saving_progress">Dein Fortschritt wird gespeichert…</string>
     <string name="player_save_failed">Das hat nicht geklappt. Deine Antworten sind gespeichert.</string>
-    <plurals name="player_score">
-        <item quantity="one">%1$s von %2$s richtig</item>
-        <item quantity="other">%1$s von %2$s richtig</item>
-    </plurals>
-    <string name="player_brain_power">+%1$s Brain Power</string>
     <string name="player_review_on">Wiederholen am %1$s</string>
     <string name="player_next_lesson">Nächste Lektion</string>
     <string name="player_back_to_chapter">Zurück zum Kapitel</string>

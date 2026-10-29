@@ -134,11 +134,6 @@
     <string name="player_already_knew">You already knew this</string>
     <string name="player_saving_progress">Saving your progress…</string>
     <string name="player_save_failed">That didn\'t go through. Your answers are kept.</string>
-    <plurals name="player_score">
-        <item quantity="one">%1$s of %2$s right</item>
-        <item quantity="other">%1$s of %2$s right</item>
-    </plurals>
-    <string name="player_brain_power">+%1$s Brain Power</string>
     <string name="player_review_on">Review on %1$s</string>
     <string name="player_next_lesson">Next lesson</string>
     <string name="player_back_to_chapter">Back to chapter</string>

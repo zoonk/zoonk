@@ -17,7 +17,6 @@
   "player_back": "0a70e5bcd7acf620cfd8dfcdde649947d1a120d37568ec0e959778a6b5aac4f2",
   "player_back_to_chapter": "b13d90c1ba4ce0653c8c110cb87b55b6cd46e2c4d9785f0bf2a38e22469da5b9",
   "player_back_to_unit": "118935561852a046c1413926a8d231b0af6aadb9698f60ddd52e5832517da8ad",
-  "player_brain_power": "ced7acb402cc59199a8833d1df8c5961b6454682ab8e09fc981202df36a978a9",
   "player_build_my_plan": "02277a7dc28e85d5ede500f49586f1fc3a8692566c0fc641196a48cbcd6e149e",
   "player_cant_write_now": "778dd85d71021e72ea9b99487b511f317c1f3be323c0dcc4c81b115a4091b9d1",
   "player_check_failed": "6573e46bd968f338ca965bae277ddb64dbd4918468a1b56a3b2313748e299002",
@@ -98,7 +97,6 @@
   "player_saved_to_mistakes_back_tomorrow": "b4481a5d7ebc976f27d20a46936f9597c7f60a45474398b8fc995e71955b2a76",
   "player_saved_to_mistakes_back_weekday": "98e088709d98e1bbd476427c3531d435b51aa5ed506dec409faa1b11de01a759",
   "player_saving_progress": "42a818f1e45dc359825f0f69f5b5aa7b4daf6b6cf667bf3ffd7b1c0c34bd36e7",
-  "player_score": "56d9d4f2d8597c67f9e479af23e6d19c32622dd66f56a308436e763e273c9a81",
   "player_screen_options": "c2738c921bfc3b59243b674b9ce5faf3fc5d8ecba0b3482f01bd2010c28f4084",
   "player_see_plus": "d5ec54f7a771c207c57ff8ab42b68548312f2feb2d259cd9d9eb909728bc7699",
   "player_set_aside_description": "bfe4a4c9f556005018f012d69e677c0c42e864682736c84d5d37805905cd755a",
@@ -265,12 +263,6 @@
     <string name="player_already_knew">Tu le savais déjà</string>
     <string name="player_saving_progress">Enregistrement de ta progression…</string>
     <string name="player_save_failed">L’enregistrement a échoué. Tes réponses sont conservées.</string>
-    <plurals name="player_score">
-        <item quantity="one">%1$s bonne réponse sur %2$s</item>
-        <item quantity="other">%1$s bonnes réponses sur %2$s</item>
-        <item quantity="many">%1$s bonnes réponses sur %2$s</item>
-    </plurals>
-    <string name="player_brain_power">+%1$s Puissance Mentale</string>
     <string name="player_review_on">À réviser le %1$s</string>
     <string name="player_next_lesson">Leçon suivante</string>
     <string name="player_back_to_chapter">Retour au chapitre</string>

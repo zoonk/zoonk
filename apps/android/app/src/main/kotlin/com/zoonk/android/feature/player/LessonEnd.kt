@@ -46,6 +46,8 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.MomentReadouts
+import com.zoonk.android.ui.components.MomentScore
 import com.zoonk.android.ui.components.needsAccount
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -279,31 +281,13 @@ private fun Readouts(state: LessonPlayerState) {
     val brainPower = if (block == null) result.brainPower else block.brainPower - if (block.fullMeal.paid) block.fullMeal.bonus else 0
     val locale = currentLocale()
 
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(32.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        if (answered > 0) {
-            Text(
-                pluralStringResource(R.plurals.player_score, correct, count(correct), count(answered)),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.titleMedium,
-            )
+    val review =
+        result.nextReviewAt?.let { reviewAt ->
+            val day = reviewAt.toJavaInstant().atZone(ZoneId.systemDefault()).toLocalDate()
+            stringResource(R.string.player_review_on, formatDate(day, locale, DateStyle.Day))
         }
-        if (brainPower > 0) {
-            Text(
-                stringResource(R.string.player_brain_power, formatNumber(brainPower.toDouble(), locale)),
-                color = MaterialTheme.zoonk.brainText,
-                style = MaterialTheme.typography.titleMedium.withTabularFigures(),
-            )
-        }
-    }
 
-    result.nextReviewAt?.let { reviewAt ->
-        val day = reviewAt.toJavaInstant().atZone(ZoneId.systemDefault()).toLocalDate()
-        Text(
-            stringResource(R.string.player_review_on, formatDate(day, locale, DateStyle.Day)),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.bodyMedium,
-        )
-    }
+    MomentReadouts(brainPower, score = MomentScore(answered, correct), facts = listOfNotNull(review))
 }
 
 /**
@@ -373,11 +357,11 @@ fun CompletionActions(
     val back = if (lesson.targetLanguage != null) R.string.player_back_to_unit else R.string.player_back_to_chapter
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+        TaskActions { wide ->
             if (status == CompletionStatus.Saved && ending.nextLessonId != null && !ending.guest) {
-                FilledTonalButton(onClick = exits::close, modifier = Modifier.weight(1f)) { Text(stringResource(back)) }
+                FilledTonalButton(onClick = exits::close, modifier = actionWidth(wide)) { Text(stringResource(back)) }
             }
-            Button(onClick = { main?.invoke() }, enabled = main != null, modifier = Modifier.weight(1f)) { Text(stringResource(label)) }
+            Button(onClick = { main?.invoke() }, enabled = main != null, modifier = actionWidth(wide)) { Text(stringResource(label)) }
         }
         if (status == CompletionStatus.Saved && ending.guest) {
             FilledTonalButton(onClick = { exits.open(AppRoute.Login) }, modifier = Modifier.fillMaxWidth()) {

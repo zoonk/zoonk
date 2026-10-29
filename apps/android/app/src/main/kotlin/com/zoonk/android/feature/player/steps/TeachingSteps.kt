@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +33,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -117,7 +121,7 @@ internal fun GuessHookView(
             LabelChip(stringResource(R.string.player_guess_first), icon = R.drawable.ic_auto_awesome)
             StepPicture(step, PictureFrame.Question)
             LessonStepVisual(guess.visual)
-            QuestionText(guess.question)
+            QuestionText(guess.question, answered = result != null)
         }
 
         ChoiceOptions(
@@ -173,7 +177,7 @@ internal fun WorkedExampleView(
 
     ReadScene {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            LabelChip(stringResource(R.string.player_worked_example))
+            LabelChip(stringResource(R.string.player_worked_example), icon = R.drawable.ic_format_list_numbered)
             worked.title?.let { QuestionText(it) }
         }
         BodyText(worked.problem)
@@ -231,7 +235,7 @@ internal fun CheckView(
             screen.step?.let { StepPicture(it, PictureFrame.Question) }
             ContextText(check.context)
             LessonStepVisual(check.visual)
-            QuestionText(check.question)
+            QuestionText(check.question, answered = result != null)
         }
 
         ChoiceOptions(
@@ -305,7 +309,7 @@ internal fun TypedAnswerView(
             if (inOwnWords) LabelChip(stringResource(R.string.player_in_your_own_words), icon = R.drawable.ic_edit)
             ContextText(typed.context)
             LessonStepVisual(typed.visual)
-            QuestionText(typed.question)
+            QuestionText(typed.question, answered = state.phase == LessonPhase.Feedback)
         }
 
         AnswerField(text, { actions.select(it?.let(LessonAnswer::Typed)) }, state, actions, isNumber)
@@ -336,7 +340,7 @@ internal fun SpokenAnswerView(
 
     QuestionScene {
         Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            QuestionText(spoken.prompt)
+            QuestionText(spoken.prompt, answered = state.phase == LessonPhase.Feedback)
             TargetText(spoken)
         }
         AnswerField((answer as? LessonAnswer.Spoken)?.text.orEmpty(), { actions.select(it?.let(LessonAnswer::Spoken)) }, state, actions)
@@ -432,13 +436,16 @@ internal fun ExplainFirstButton(
     }
 }
 
+/** Main's ghost actions line their icon up with the column's text. */
 @Composable
 private fun GhostAction(
     icon: Int,
     label: String,
     onClick: () -> Unit,
 ) {
-    TextButton(onClick = onClick) {
+    val inset = ButtonDefaults.TextButtonWithIconContentPadding.calculateStartPadding(LocalLayoutDirection.current)
+
+    TextButton(onClick = onClick, modifier = Modifier.offset(x = -inset)) {
         Icon(painterResource(icon), contentDescription = null, modifier = Modifier.padding(end = 8.dp))
         Text(label)
     }

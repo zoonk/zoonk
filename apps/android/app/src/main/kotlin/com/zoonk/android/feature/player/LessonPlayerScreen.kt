@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,6 +32,7 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -61,6 +63,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonNotice
@@ -171,7 +174,7 @@ fun LessonPlayer(
                             completionMainAction(lesson, state, ending, viewModel, exits)
                         }
                 },
-        title = { Text(lesson.title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        title = { LessonTitle(lesson.title) },
         actions = { ScreenMenu(lesson, state, screen, viewModel) },
         exitConfirmation =
             if (unsent) {
@@ -473,13 +476,13 @@ private fun ActionBar(
 ) {
     val primary = screen.primary ?: return
 
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
+    TaskActions { wide ->
         if (screen.canGoBack) {
             OutlinedIconButton(onClick = onBack) {
                 Icon(painterResource(R.drawable.ic_chevron_left), contentDescription = stringResource(R.string.player_previous_screen))
             }
         }
-        Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = Modifier.weight(1f)) {
+        Button(onClick = actions::runPrimary, enabled = primary.enabled, modifier = actionWidth(wide)) {
             if (primary.busy) {
                 CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
             }
@@ -487,6 +490,20 @@ private fun ActionBar(
         }
     }
 }
+
+/** Main's task actions: across the bar on narrower windows, at its end on wide ones, each as wide as its label. */
+@Composable
+internal fun TaskActions(content: @Composable RowScope.(wide: Boolean) -> Unit) {
+    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp, if (wide) Alignment.End else Alignment.Start),
+        verticalAlignment = Alignment.CenterVertically,
+    ) { content(wide) }
+}
+
+internal fun RowScope.actionWidth(wide: Boolean): Modifier = if (wide) Modifier.widthIn(min = 160.dp) else Modifier.weight(1f)
 
 private fun PrimaryLabel.text(): Int =
     when (this) {

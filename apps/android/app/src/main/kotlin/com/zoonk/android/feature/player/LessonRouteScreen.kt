@@ -171,6 +171,12 @@ private fun PlayingLesson(
     }
 }
 
+/** Main's task frame keeps the lesson's name small, so the screen below leads. */
+@Composable
+internal fun LessonTitle(title: String) {
+    Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.titleSmall)
+}
+
 /** A task's frame for what shows before the lesson's screens: its title, and leaving. */
 @Composable
 internal fun LessonFrame(
@@ -182,7 +188,7 @@ internal fun LessonFrame(
 ) {
     TaskScaffold(
         onClose = onClose,
-        title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
+        title = { title?.let { LessonTitle(it) } },
         bottomBar = bottomBar,
     ) { padding ->
         val scroll = if (scrolls) Modifier.verticalScroll(rememberScrollState()) else Modifier

@@ -17,7 +17,6 @@
   "player_back": "f8316b4205950cc8032be1d861aee7cd24e1b50fb37b30dade548034d6ff2f6b",
   "player_back_to_chapter": "8036bd30b88eaee506bdf10d6917d040bf9cc75eada0d1b65105057c6d5a8866",
   "player_back_to_unit": "e7b6438962d51467b8f5359cee1657de01bf0a82120cfa53eb904f52e8f4ed45",
-  "player_brain_power": "a1330ab7565020fff36015e2cbff150fdbc5fb18ed1e93840e20011b557fd4fc",
   "player_build_my_plan": "c8951096e4400454a8cf2f6e52e90a48df8085425dde23a2da8b84e4a0beca7e",
   "player_cant_write_now": "ae350165bb7e5ea84268250b6d0835228986f7b8ebe32f59bbded2151d72a104",
   "player_check_failed": "58413506bf6b1f4c0d9a504fc4277f0a1bf313ec4fa0494d3990049faa5694ca",
@@ -98,7 +97,6 @@
   "player_saved_to_mistakes_back_tomorrow": "59baa1ea5ab9a7e11ab8abf17d632dc51ae32dd1c419a7b6d7f135e1df2db8e4",
   "player_saved_to_mistakes_back_weekday": "c1060b0ebb71fe8c030eaf3d0c6aeb05d4e2625a63326bc0fccc6f749b68e540",
   "player_saving_progress": "6a98361c9b1f53b6897e58a86dfcba2d398952c5160d118d4a764377f85e7b16",
-  "player_score": "511b3f776b507037331ec9cc340cbc991e862f983830562028b064495e548dab",
   "player_screen_options": "5b473447a9a8ce7e0dfffd287832d7c89d6d4e8771ebea7e3928126f87ec706c",
   "player_see_plus": "876b1cc2dd0a89951c8d4ce102b616f8ec2445f5cee9e3c1a4f72ff18b2fb657",
   "player_set_aside_description": "1e33cca2b07f03772fde40b599b756c9f7aa357d59a1e6c051b8fe55a63ac7fc",
@@ -265,12 +263,6 @@
     <string name="player_already_knew">Você já sabia isso</string>
     <string name="player_saving_progress">Salvando seu progresso…</string>
     <string name="player_save_failed">Não foi possível salvar. Suas respostas foram mantidas.</string>
-    <plurals name="player_score">
-        <item quantity="one">%1$s de %2$s certa</item>
-        <item quantity="other">%1$s de %2$s certas</item>
-        <item quantity="many">%1$s de %2$s certas</item>
-    </plurals>
-    <string name="player_brain_power">+%1$s Poder Mental</string>
     <string name="player_review_on">Revisão em %1$s</string>
     <string name="player_next_lesson">Próxima aula</string>
     <string name="player_back_to_chapter">Voltar ao capítulo</string>

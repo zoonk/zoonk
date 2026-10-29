@@ -35,6 +35,7 @@ import com.zoonk.android.ui.components.LimitPeriod
 import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LibraryLessonCompletion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -152,6 +153,17 @@ class LessonPlayerScreenshots {
             "free-limit" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.Reached(LimitTier.Free, LimitPeriod.Day)))) },
             "slow-down" to { at(LessonAction.RunRefused(LessonRefusal.Limited(Limit.SlowDown(30)))) },
             "finish-ready" to { LessonPlayerState.initial(LESSON_ID, emptyList(), now = 0) },
+            "completed" to {
+                at(
+                    *toQuiz(),
+                    LessonAction.SelectAnswer("quiz", LessonAnswer.Check("right")),
+                    LessonAction.CheckResolved("quiz", checkResult(true).toStepResult("Right"), counts = true),
+                    LessonAction.Continue,
+                    LessonAction.SkipSteps(listOf("why")),
+                    LessonAction.Continue,
+                    LessonAction.CompletionSaved(ApiJson.decodeFromString(LibraryLessonCompletion.serializer(), COMPLETION)),
+                )
+            },
         )
 
     private fun pastHook() =
