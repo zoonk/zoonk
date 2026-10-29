@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "buddy_tab_missions": "61b5d3eeae730dd7454d80a1227dfd89cdcb12c5db0ae2ba1f1765a06d6ffcf7"
+}
+-->
+<resources>
+    <!-- Read by TalkBack after the Buddy tab's name, for the ring of today's missions around the buddy's face: how many of today's missions are done. %1$s is the number done, %2$s the number of today's missions. The noun counts all of today's missions (%2$s), so it stays plural, as in "1 of 3 missions done today". -->
+    <plurals name="buddy_tab_missions">
+        <item quantity="one">%1$s de %2$s misiones de hoy</item>
+        <item quantity="many">%1$s de %2$s misiones de hoy</item>
+        <item quantity="other">%1$s de %2$s misiones de hoy</item>
+    </plurals>
+</resources>

@@ -14,7 +14,7 @@ enum class PlaceIcon(
     /** lucide Map, SF map. */
     Plan(R.drawable.ic_map, R.drawable.ic_map_filled),
 
-    /** lucide Smile, SF face.smiling: the buddy's tab before its own face draws there. */
+    /** lucide Smile, SF face.smiling: the buddy's tab until the summary says which buddy it is. */
     Buddy(R.drawable.ic_mood, R.drawable.ic_mood_filled),
 
     /** lucide NotebookPen, SF square.and.pencil. */

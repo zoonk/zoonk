@@ -58,6 +58,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
@@ -70,6 +71,8 @@ import com.zoonk.android.R
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.buddy.BuddyTabIcon
+import com.zoonk.android.feature.buddy.buddyTabMissions
 import com.zoonk.android.feature.search.SearchHost
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -283,6 +286,7 @@ private fun AppNavigationSuite(
     summary: LearnerSummary?,
 ) {
     val route = navigator.currentRoute
+    val missions = buddyTabMissions(summary?.missions)
 
     when (navigationSuiteType) {
         NavigationSuiteType.NavigationBar -> {
@@ -293,7 +297,8 @@ private fun AppNavigationSuite(
                     NavigationBarItem(
                         selected = isSelected,
                         onClick = { navigator.select(tab) },
-                        icon = { NavigationIcon(tab.icon.drawable(isSelected)) },
+                        icon = { TabIcon(tab, isSelected, summary) },
+                        modifier = Modifier.missionsState(tab, missions),
                         label = { Text(tab.title(summary)) },
                     )
                 }
@@ -308,7 +313,8 @@ private fun AppNavigationSuite(
                     NavigationRailItem(
                         selected = isSelected,
                         onClick = { navigator.select(tab) },
-                        icon = { NavigationIcon(tab.icon.drawable(isSelected)) },
+                        icon = { TabIcon(tab, isSelected, summary) },
+                        modifier = Modifier.missionsState(tab, missions),
                         label = { Text(tab.title(summary)) },
                     )
                 }
@@ -330,7 +336,13 @@ private fun AppNavigationSuite(
                         // Main counts the day's activities left in its sidebar only; a bar would show it as an alert.
                         val badge = if (tab == AppTab.Today) summary?.today?.blocksLeft else null
 
-                        DrawerItem(tab.title(summary), tab.icon.drawable(isSelected), isSelected, badge) { navigator.select(tab) }
+                        DrawerItem(
+                            label = tab.title(summary),
+                            icon = { TabIcon(tab, isSelected, summary) },
+                            selected = isSelected,
+                            badge = badge,
+                            modifier = Modifier.missionsState(tab, missions),
+                        ) { navigator.select(tab) }
                     }
 
                     Text(
@@ -347,7 +359,7 @@ private fun AppNavigationSuite(
                         val isSelected = place == shownPlace
                         val badge = if (place == StudyPlace.Mistakes) summary?.places?.readyMistakes else null
 
-                        DrawerItem(stringResource(place.label), place.icon.drawable(isSelected), isSelected, badge) {
+                        DrawerItem(stringResource(place.label), { NavigationIcon(place.icon.drawable(isSelected)) }, isSelected, badge) {
                             navigator.open(place.route)
                         }
                     }
@@ -362,18 +374,19 @@ private fun AppNavigationSuite(
 @Composable
 private fun DrawerItem(
     label: String,
-    @DrawableRes icon: Int,
+    icon: @Composable () -> Unit,
     selected: Boolean,
     badge: Long?,
+    modifier: Modifier = Modifier,
     onClick: () -> Unit,
 ) {
     NavigationDrawerItem(
         label = { Text(label) },
         selected = selected,
         onClick = onClick,
-        icon = { NavigationIcon(icon) },
+        icon = icon,
         badge = badge?.takeIf { it > 0 }?.let { count -> { Text(formatNumber(count.toDouble(), currentLocale())) } },
-        modifier = Modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
+        modifier = modifier.padding(NavigationDrawerItemDefaults.ItemPadding),
     )
 }
 
@@ -391,6 +404,23 @@ private fun StudyPlace.isListed(places: LearnerSummaryPlaces?): Boolean =
     }
 
 private fun PlaceIcon.drawable(selected: Boolean) = if (selected) selectedIcon else icon
+
+/** The buddy's tab wears the learner's buddy once the summary says which it is. */
+@Composable
+private fun TabIcon(
+    tab: AppTab,
+    selected: Boolean,
+    summary: LearnerSummary?,
+) {
+    val buddy = summary?.buddy
+    if (tab == AppTab.Buddy && buddy != null) BuddyTabIcon(buddy, summary.missions) else NavigationIcon(tab.icon.drawable(selected))
+}
+
+/** Material's items hide their icon from TalkBack, so the item itself says the missions after its name, as main does. */
+private fun Modifier.missionsState(
+    tab: AppTab,
+    missions: String?,
+): Modifier = if (tab == AppTab.Buddy && missions != null) semantics { stateDescription = missions } else this
 
 /** Navigation icons are decorative: the item's label names the destination. */
 @Composable
