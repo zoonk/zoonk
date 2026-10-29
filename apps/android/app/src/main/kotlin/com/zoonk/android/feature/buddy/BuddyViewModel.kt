@@ -32,6 +32,9 @@ class BuddyViewModel internal constructor(
     var isSaving by mutableStateOf(false)
         private set
 
+    /** Search's question goes in the composer once: the tab keeps its route, so the page would put it back on each return. */
+    var askPlaced = false
+
     /** A change didn't save: the buddy is shown as it was. */
     var saveFailed by mutableStateOf(false)
         private set

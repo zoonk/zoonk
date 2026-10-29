@@ -176,7 +176,10 @@ internal fun BuddyPage(
         keyboard?.show()
         asking = false
     }
-    LaunchedEffect(ask) { if (ask != null && tutor.draft.text.isEmpty()) tutor.draft.setTextAndPlaceCursorAtEnd(ask) }
+    LaunchedEffect(ask) {
+        if (ask != null && !vm.askPlaced && tutor.draft.text.isEmpty()) tutor.draft.setTextAndPlaceCursorAtEnd(ask)
+        vm.askPlaced = true
+    }
 
     val page =
         TutorPage(
