@@ -24,6 +24,7 @@ import { EssayGradeSteps } from "./essay-feedback";
 import { useWritingName } from "./essay-labels";
 import { EssayInstruction, EssayTexts, usePromptLabel, useTextsLabel } from "./essay-prompt";
 import { RewriteGuide } from "./essay-rewrite-guide";
+import { EssayWordCount } from "./essay-word-count";
 import { clearUnsentText, keepUnsentText, readUnsentText } from "./unsent-text";
 import { useFinishEssay } from "./use-finish-essay";
 
@@ -165,17 +166,12 @@ function EssayBox({ writer }: { writer: EssayWriter }) {
       </label>
       <Textarea
         className="min-h-72 flex-1 text-base leading-relaxed md:text-base lg:field-sizing-fixed lg:min-h-36"
+        aria-describedby={`${textId}-count`}
         id={textId}
         onChange={(event) => writer.write(event.target.value)}
         value={writer.text}
       />
-      <p
-        aria-live="polite"
-        className="text-muted-foreground min-h-4 font-mono text-xs tabular-nums"
-      >
-        {writer.words > 0 &&
-          t("{count, plural, one {# word} other {# words}}", { count: writer.words })}
-      </p>
+      <EssayWordCount id={`${textId}-count`} words={writer.words} />
     </section>
   );
 }

@@ -2490,12 +2490,6 @@ msgid "Rewrite what needs work"
 msgstr "Reescribe lo que necesite mejorar"
 
 #: src/essay/essay-screen.tsx
-#: src/mock/mock-question.tsx
-msgctxt "-8LNI4"
-msgid "{count, plural, one {# word} other {# words}}"
-msgstr "{count, plural, one {# palabra} other {# palabras}}"
-
-#: src/essay/essay-screen.tsx
 #: src/mock/mock-screen.tsx
 msgctxt "yWVqHs"
 msgid "Grading…"
@@ -2532,6 +2526,11 @@ msgstr "Tu texto se guarda en este dispositivo y estará aquí cuando vuelvas."
 msgctxt "-D1SOt"
 msgid "Leave for now?"
 msgstr "¿Salir por ahora?"
+
+#: src/essay/essay-word-count.tsx
+msgctxt "-8LNI4"
+msgid "{count, plural, one {# word} other {# words}}"
+msgstr "{count, plural, one {# palabra} other {# palabras}}"
 
 #: src/exam/exam-checklist.tsx
 msgctxt "56-8Dh"

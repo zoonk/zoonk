@@ -8,6 +8,7 @@ import { formatLocalizedNumber } from "@zoonk/utils/localized-number";
 import { useExtracted, useLocale } from "next-intl";
 import { useId } from "react";
 import { useWritingName } from "../essay/essay-labels";
+import { EssayWordCount } from "../essay/essay-word-count";
 import { ItemSetStimulus } from "../questions/item-set-stimulus";
 import { ItemStem, ItemSupport, QUESTION_TEXT_CLASS } from "../questions/item-text";
 import { NumericAnswerField } from "../questions/numeric-answer-field";
@@ -83,7 +84,6 @@ function MockWordAnswer({ question }: { question: MockQuestion }) {
 const WORD_PATTERN = /\S+/gu;
 
 function EssayAnswer({ question }: { question: MockQuestion }) {
-  const t = useExtracted();
   const textId = useId();
   const { runner } = useMockScreen();
   const writingName = useWritingName();
@@ -98,18 +98,14 @@ function EssayAnswer({ question }: { question: MockQuestion }) {
       </label>
       <Textarea
         className="min-h-72 text-base leading-relaxed"
+        aria-describedby={`${textId}-count`}
         id={textId}
         maxLength={MAX_ESSAY_CHARACTERS}
         onChange={(event) => runner.write({ text: event.target.value })}
         readOnly={runner.pending}
         value={text}
       />
-      <p
-        aria-live="polite"
-        className="text-muted-foreground min-h-4 font-mono text-xs tabular-nums"
-      >
-        {words > 0 && t("{count, plural, one {# word} other {# words}}", { count: words })}
-      </p>
+      <EssayWordCount id={`${textId}-count`} words={words} />
     </section>
   );
 }
