@@ -70,9 +70,15 @@ object AppLink {
     fun webUrl(
         page: AppRoute.WebPage,
         language: String,
+    ): String = pageUrl(page.path, language)
+
+    /** One of main's pages by its [path] without the language, in [language] when main has it. */
+    fun pageUrl(
+        path: String,
+        language: String,
     ): String {
         val prefix = if (language in localePrefixes && language != "en") "/$language" else ""
-        return "$SITE_URL$prefix${page.path}"
+        return "$SITE_URL$prefix$path"
     }
 
     private fun route(

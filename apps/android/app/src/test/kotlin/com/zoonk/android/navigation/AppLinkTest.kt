@@ -164,4 +164,11 @@ class AppLinkTest {
         assertEquals("https://www.zoonk.com/pt/terms", AppLink.webUrl(AppRoute.Terms, "pt"))
         assertEquals("https://www.zoonk.com/blog", AppLink.webUrl(AppRoute.Blog, "it"))
     }
+
+    @Test
+    fun anyPageOfMainHasItsUrlInTheAppsLanguage() {
+        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "en"))
+        assertEquals("https://www.zoonk.com/pt/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "pt"))
+        assertEquals("https://www.zoonk.com/plan-link/abc", AppLink.pageUrl("/plan-link/abc", "it"))
+    }
 }
