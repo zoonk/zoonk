@@ -17,7 +17,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,6 +40,7 @@ import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.goalErrorMessage
 import com.zoonk.android.feature.onboarding.goalLimitMessage
 import com.zoonk.android.feature.subscription.PlusNotice
+import com.zoonk.android.ui.components.OutlinedButton
 
 @Composable
 internal fun OnboardingHeading(
