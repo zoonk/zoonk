@@ -2,6 +2,7 @@ package com.zoonk.android.feature.exam
 
 import android.icu.text.ListFormatter
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -117,74 +119,77 @@ private fun ProgressTiles(
     val change = if (first != null && progress.mocks.size > 1) latest.percent - first.percent else null
     val since = change?.let { stringResource(R.string.exam_since_first, signedChange(it)) }
 
-    StatTiles(
-        columns = 2,
-        tiles =
-            listOfNotNull(
-                { modifier ->
-                    StatTile(
-                        label = stringResource(R.string.exam_latest_mock),
-                        value = percent(latest.percent),
-                        modifier = modifier,
-                        detail =
-                            stringResource(
-                                if (method ==
-                                    ExamViewScoring.Method.NET
-                                ) {
-                                    R.string.exam_net_score_in
-                                } else {
-                                    R.string.exam_right_answers_in
-                                },
-                                name,
-                            ),
-                        icon = {
-                            Icon(
-                                painterResource(R.drawable.ic_timer),
-                                contentDescription = null,
-                                modifier = it,
-                                tint = StatTone.Neutral.color,
-                            )
-                        },
-                        footer =
-                            since?.let {
-                                {
-                                    Text(
-                                        it,
-                                        color =
-                                            if (change >
-                                                0
-                                            ) {
-                                                MaterialTheme.colorScheme.onTertiaryContainer
-                                            } else {
-                                                MaterialTheme.colorScheme.onSurfaceVariant
-                                            },
-                                        style = MaterialTheme.typography.bodySmall,
-                                    )
-                                }
-                            },
-                    )
-                },
-                best?.let { area ->
-                    { modifier: Modifier ->
+    // Two tiles side by side keep their labels whole only while each has room for them.
+    BoxWithConstraints {
+        StatTiles(
+            columns = if (maxWidth.value / LocalDensity.current.fontScale < TWO_TILES_MIN_WIDTH) 1 else 2,
+            tiles =
+                listOfNotNull(
+                    { modifier ->
                         StatTile(
-                            label = stringResource(R.string.exam_best_area),
-                            value = percent(area.percent.toLong()),
+                            label = stringResource(R.string.exam_latest_mock),
+                            value = percent(latest.percent),
                             modifier = modifier,
-                            detail = area.name,
-                            tone = StatTone.Success,
+                            detail =
+                                stringResource(
+                                    if (method ==
+                                        ExamViewScoring.Method.NET
+                                    ) {
+                                        R.string.exam_net_score_in
+                                    } else {
+                                        R.string.exam_right_answers_in
+                                    },
+                                    name,
+                                ),
                             icon = {
                                 Icon(
-                                    painterResource(R.drawable.ic_trophy),
+                                    painterResource(R.drawable.ic_timer),
                                     contentDescription = null,
                                     modifier = it,
-                                    tint = StatTone.Success.color,
+                                    tint = StatTone.Neutral.color,
                                 )
                             },
+                            footer =
+                                since?.let {
+                                    {
+                                        Text(
+                                            it,
+                                            color =
+                                                if (change >
+                                                    0
+                                                ) {
+                                                    MaterialTheme.colorScheme.onTertiaryContainer
+                                                } else {
+                                                    MaterialTheme.colorScheme.onSurfaceVariant
+                                                },
+                                            style = MaterialTheme.typography.bodySmall,
+                                        )
+                                    }
+                                },
                         )
-                    }
-                },
-            ),
-    )
+                    },
+                    best?.let { area ->
+                        { modifier: Modifier ->
+                            StatTile(
+                                label = stringResource(R.string.exam_best_area),
+                                value = percent(area.percent.toLong()),
+                                modifier = modifier,
+                                detail = area.name,
+                                tone = StatTone.Success,
+                                icon = {
+                                    Icon(
+                                        painterResource(R.drawable.ic_trophy),
+                                        contentDescription = null,
+                                        modifier = it,
+                                        tint = StatTone.Success.color,
+                                    )
+                                },
+                            )
+                        }
+                    },
+                ),
+        )
+    }
 }
 
 @Composable
@@ -322,6 +327,7 @@ internal fun findBestArea(subjects: List<ExamMockProgressSubjectsInner>): BestAr
 }
 
 private const val PERCENT = 100.0
+private const val TWO_TILES_MIN_WIDTH = 300
 private const val NO_CHANGE = "–"
 private val SUBJECT_METER_WIDTH = 80.dp
 private val SAMPLE = List(6) { 30 + it * 7 }

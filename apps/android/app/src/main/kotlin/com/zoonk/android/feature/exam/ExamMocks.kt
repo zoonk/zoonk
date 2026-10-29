@@ -1,27 +1,24 @@
 package com.zoonk.android.feature.exam
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.ListItem
-import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.mock.MockListRow
 import com.zoonk.android.feature.mock.MockSummaryRow
 import com.zoonk.android.feature.mock.mockDaySize
 import com.zoonk.android.feature.mock.mockShapeLabel
@@ -81,22 +78,18 @@ internal fun ExamMocksSection(
             }
             if (next != null) {
                 if (running) HorizontalDivider()
-                ListItem(
-                    headlineContent = {
+                MockListRow(
+                    headline = {
                         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                             Text(mockDaySize(fullLength = next.fullLength))
                             if (exam.mocksRequirePlus) PlusMark()
                         }
                     },
-                    modifier = Modifier.clickable { navigator.open(AppRoute.Challenge(next.planItemId.toString())) }.currentRow(!running),
-                    supportingContent = {
-                        Text(
-                            pluralStringResource(R.plurals.exam_questions, next.questions.toInt(), next.questions.toInt()),
-                        )
-                    },
-                    leadingContent = { StatusMark(if (running) MarkStatus.Todo else MarkStatus.Next) },
-                    trailingContent = next.date?.let { { Trailing(examDayDate(it.toJavaLocalDate(), LocalDate.now(), currentLocale())) } },
-                    colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+                    supporting = pluralStringResource(R.plurals.exam_questions, next.questions.toInt(), next.questions.toInt()),
+                    trailing = next.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), currentLocale()) },
+                    leading = { StatusMark(if (running) MarkStatus.Todo else MarkStatus.Next) },
+                    onClick = { navigator.open(AppRoute.Challenge(next.planItemId.toString())) },
+                    modifier = Modifier.currentRow(!running),
                 )
             }
             exam.mocks.forEachIndexed { index, mock ->
@@ -129,35 +122,26 @@ private fun RunningMockRow(
             formatNumber(mock.questions.toDouble(), locale),
         )
 
-    ListItem(
-        headlineContent = { Text(mockTitle(mock.number)) },
-        modifier = Modifier.clickable(onClick = onOpen).currentRow(current),
-        supportingContent = { Text(if (shape.isEmpty()) answered else stringResource(R.string.mock_row_detail, shape, answered)) },
-        leadingContent = { StatusMark(if (current) MarkStatus.Next else MarkStatus.Todo) },
-        trailingContent = { RunningMockClock(mock.deadline) },
-        colors = ListItemDefaults.colors(containerColor = Color.Transparent),
+    MockListRow(
+        headline = { Text(mockTitle(mock.number)) },
+        supporting = if (shape.isEmpty()) answered else stringResource(R.string.mock_row_detail, shape, answered),
+        trailing = runningMockClock(mock.deadline),
+        leading = { StatusMark(if (current) MarkStatus.Next else MarkStatus.Todo) },
+        onClick = onOpen,
+        modifier = Modifier.currentRow(current),
     )
 }
 
 @Composable
-private fun RunningMockClock(deadline: Instant?) {
-    if (deadline == null) {
-        Trailing(stringResource(R.string.exam_mock_handed_in))
-        return
-    }
+private fun runningMockClock(deadline: Instant?): String {
+    if (deadline == null) return stringResource(R.string.exam_mock_handed_in)
     val now by rememberNow(CLOCK_TICK)
-    val minutes = ceil((deadline - now).inWholeSeconds.coerceAtLeast(0) / SECONDS_PER_MINUTE).toInt()
-
-    if (minutes == 0) {
-        Trailing(stringResource(R.string.exam_mock_time_up))
+    val minutes = ceil((deadline - now).inWholeSeconds.coerceAtLeast(0) / SECONDS_PER_MINUTE).toLong()
+    return if (minutes == 0L) {
+        stringResource(R.string.exam_mock_time_up)
     } else {
-        Trailing(stringResource(R.string.exam_mock_time_left, formatDuration(minutes * 60L, currentLocale())))
+        stringResource(R.string.exam_mock_time_left, formatDuration(minutes * SECONDS_PER_MINUTE.toLong(), currentLocale()))
     }
-}
-
-@Composable
-private fun Trailing(text: String) {
-    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium.withTabularFigures())
 }
 
 /** Main's current row: the one the learner is on stands on the muted fill. */
