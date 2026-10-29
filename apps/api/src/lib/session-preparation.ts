@@ -2,6 +2,7 @@ import "server-only";
 import { startLearnerListeningSets } from "@/lib/learner-listening-sets";
 import { scheduleLessonWriting } from "@/lib/lesson-writing";
 import { challengeQuestionsWorkflow } from "@/workflows/v2/goals/challenge-questions-workflow";
+import { guestOutlineWorkflow } from "@/workflows/v2/sessions/guest-outline-workflow";
 import {
   type ClaimQuestions,
   sessionPreparationWorkflow,
@@ -108,10 +109,35 @@ async function startFromAccess({
   return { preparationId: preparation.runId, status: "started" as const };
 }
 
-function writeGuestNextLesson(access: GuestAccess) {
-  if (access.lessonId) {
-    scheduleLessonWriting(access.lessonId);
+/** A placement or a plan edit can move a guest's plan past the bands its build outlined. */
+function prepareGuestLessons({
+  access,
+  platform,
+}: {
+  access: GuestAccess;
+  platform: AnalyticsPlatform | null;
+}) {
+  const { goalId, lessonId, userId } = access;
+
+  if (lessonId) {
+    scheduleLessonWriting(lessonId);
   }
+
+  if (!goalId) {
+    return;
+  }
+
+  after(async () => {
+    const { error } = await safeAsync(() =>
+      start(guestOutlineWorkflow, [
+        { analytics: { distinctId: userId, goalId, platform }, goalId },
+      ]),
+    );
+
+    if (error) {
+      logError(`Could not start outlining guest goal ${goalId}'s next lessons.`, error);
+    }
+  });
 }
 
 export async function startSessionPreparation({
@@ -119,10 +145,13 @@ export async function startSessionPreparation({
 }: {
   sessionId: string;
 }): Promise<SessionPreparationStart> {
-  const access = await getSessionPreparationAccess({ sessionId });
+  const [access, platform] = await Promise.all([
+    getSessionPreparationAccess({ sessionId }),
+    getRequestPlatform(),
+  ]);
 
   if (access.status === "guest") {
-    writeGuestNextLesson(access);
+    prepareGuestLessons({ access, platform });
     return { preparationId: null, status: "started" };
   }
 
@@ -134,10 +163,9 @@ export async function startSessionPreparation({
     return access;
   }
 
-  const [claimQuestions, challengeQuestions, platform] = await Promise.all([
+  const [claimQuestions, challengeQuestions] = await Promise.all([
     readClaimQuestions(access.goalId),
     readChallengeQuestions(access.goalId),
-    getRequestPlatform(),
   ]);
 
   return startFromAccess({ access, challengeQuestions, claimQuestions, platform });
@@ -151,7 +179,7 @@ export async function scheduleSessionPreparation(sessionId: string): Promise<voi
   ]);
 
   if (access.status === "guest") {
-    writeGuestNextLesson(access);
+    prepareGuestLessons({ access, platform });
     return;
   }
 
@@ -180,10 +208,13 @@ export async function startGoalPreparation({
 }: {
   goalId: string;
 }): Promise<SessionPreparationStart> {
-  const access = await getGoalPreparationAccess({ goalId });
+  const [access, platform] = await Promise.all([
+    getGoalPreparationAccess({ goalId }),
+    getRequestPlatform(),
+  ]);
 
   if (access.status === "guest") {
-    writeGuestNextLesson(access);
+    prepareGuestLessons({ access, platform });
     return { preparationId: null, status: "started" };
   }
 
@@ -195,7 +226,7 @@ export async function startGoalPreparation({
     return access;
   }
 
-  return startFromAccess({ access, claimQuestions: null, platform: await getRequestPlatform() });
+  return startFromAccess({ access, claimQuestions: null, platform });
 }
 
 /** Starts after the response is sent; a failure is logged, and the next block prepares again. */
@@ -204,6 +235,11 @@ export async function scheduleGoalPreparation(goalId: string): Promise<void> {
     getGoalPreparationAccess({ goalId }),
     getRequestPlatform(),
   ]);
+
+  if (access.status === "guest") {
+    prepareGuestLessons({ access, platform });
+    return;
+  }
 
   if (access.status !== "ready") {
     return;

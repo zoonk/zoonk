@@ -171,8 +171,10 @@ describe(getSessionPreparationAccess, () => {
     mockGuestSession(owner.id);
 
     await expect(getSessionPreparationAccess({ sessionId: running.id })).resolves.toStrictEqual({
+      goalId: goal.id,
       lessonId: null,
       status: "guest",
+      userId: owner.id,
     });
   });
 
@@ -213,8 +215,10 @@ describe(getSessionPreparationAccess, () => {
     mockGuestSession(guest.id);
 
     await expect(getSessionPreparationAccess({ sessionId: session.id })).resolves.toStrictEqual({
+      goalId: goal.id,
       lessonId: next.id,
       status: "guest",
+      userId: guest.id,
     });
   });
 });
@@ -545,8 +549,10 @@ describe(listSessionPreparation, () => {
     mockGuestSession(guest.id);
 
     await expect(getGoalPreparationAccess({ goalId: guestGoal.id })).resolves.toStrictEqual({
+      goalId: guestGoal.id,
       lessonId: firstLesson.id,
       status: "guest",
+      userId: guest.id,
     });
   });
 
