@@ -29,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -46,14 +47,21 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.progressBarRangeInfo
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
@@ -87,8 +95,10 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.characters.TricksterAct
+import com.zoonk.android.ui.characters.TricksterActorState
 import com.zoonk.android.ui.characters.TricksterArt
 import com.zoonk.android.ui.characters.rememberTricksterActorState
+import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.FeedbackPanel
 import com.zoonk.android.ui.components.FeedbackTone
 import com.zoonk.android.ui.components.FeedbackVerdict
@@ -96,6 +106,7 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.MomentReadouts
 import com.zoonk.android.ui.components.MomentScore
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
@@ -224,15 +235,16 @@ internal fun DuelPlay(
     val score = state.score(read)
     val question = state.current(read)
     val empty = score.questions == 0
+    // Kept across resizing, so a fold or a rotation never plays his reaction again.
+    val trickster = rememberTricksterActorState()
+
+    LaunchedEffect(state.feedback) {
+        state.feedback?.let { trickster.play(if (it.isCorrect) TricksterAct.Sly else TricksterAct.Smug, it.itemId) }
+    }
 
     TaskScaffold(
         onClose = viewModel::close,
         title = { LessonTitle(stringResource(if (read.isBoss) R.string.checkpoint_trickster else R.string.checkpoint_weekly)) },
-        actions = {
-            question?.takeIf { state.feedback != null }?.let {
-                ReportProblemMenu(app, FeedbackTarget("checkpoint", FeedbackSubmissionContext.ContentKind.ITEM, UUID.fromString(it.itemId)))
-            }
-        },
         bottomBar = { ActionBarWidth { DuelActions(state, score, question, viewModel) } },
     ) { padding ->
         BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
@@ -244,11 +256,11 @@ internal fun DuelPlay(
                 ) {
                     Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
                         if (!empty) {
-                            if (read.isBoss && !wide) ShieldBar(score, read.passMark) else DuelSegments(read, state, question)
+                            if (read.isBoss && !wide) ShieldBar(read, state, score, question) else DuelSegments(read, state, question)
                         }
                         when {
                             question != null -> key(question.itemId) { QuestionCard(read, state, score, question, viewModel) }
-                            empty -> QuestionsRemoved(read.checkpoint)
+                            empty -> QuestionsRemoved(eyebrow(read.checkpoint))
                             else -> DuelOver(state, score)
                         }
                     }
@@ -258,7 +270,7 @@ internal fun DuelPlay(
                     Column(
                         Modifier.width(ASIDE_WIDTH).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 8.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp),
-                    ) { DuelAside(read, state, score) }
+                    ) { DuelAside(read, score, trickster) }
                 }
             }
         }
@@ -351,13 +363,26 @@ private fun DuelOver(
 }
 
 @Composable
-private fun QuestionsRemoved(checkpoint: Checkpoint) {
-    StatusMessage(
-        icon = R.drawable.ic_checklist,
-        title = stringResource(R.string.checkpoint_removed_title),
-        description = stringResource(R.string.checkpoint_removed_detail),
-    ) {}
-    Text(eyebrow(checkpoint), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
+private fun QuestionsRemoved(eyebrow: String?) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Icon(
+            painterResource(R.drawable.ic_playlist_remove),
+            contentDescription = null,
+            modifier = Modifier.size(24.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        eyebrow?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge) }
+        Text(
+            stringResource(R.string.checkpoint_removed_title),
+            modifier = Modifier.semantics { heading() },
+            style = MaterialTheme.typography.titleLarge,
+        )
+        Text(
+            stringResource(R.string.checkpoint_removed_detail),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodyLarge,
+        )
+    }
 }
 
 @Composable
@@ -443,14 +468,27 @@ private enum class Verdict { Right, Wrong, Current, Ahead }
 /** On a phone the shield stands in for the question segments: each right answer breaks a plate. */
 @Composable
 private fun ShieldBar(
+    read: CheckpointRead,
+    state: DuelState,
     score: DuelScore,
-    passMark: Int,
+    question: Question?,
 ) {
+    val passMark = read.passMark
     val toGo = passMark - minOf(score.correct, passMark)
-    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+    val position = question?.let { score.answered - (if (state.feedback != null) 1 else 0) + 1 } ?: score.answered
+    val progress = stringResource(R.string.practice_progress, position.coerceIn(1, score.questions), score.questions)
+    Row(
+        Modifier.semantics {
+            contentDescription = progress
+            progressBarRangeInfo = ProgressBarRangeInfo(score.answered.toFloat(), 0f..score.questions.toFloat())
+        },
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
         Trickster(Modifier.size(16.dp))
         ShieldPlates(score.correct, passMark, Modifier.weight(1f), plate = 4)
         Text(
+            modifier = Modifier.clearAndSetSemantics {},
             text =
                 when {
                     toGo == 0 -> stringResource(R.string.checkpoint_broken_all)
@@ -503,8 +541,8 @@ private fun ShieldPlates(
 @Composable
 private fun DuelAside(
     read: CheckpointRead,
-    state: DuelState,
     score: DuelScore,
+    trickster: TricksterActorState,
 ) {
     val note = stringResource(if (read.isBoss) R.string.checkpoint_no_hints_boss else R.string.checkpoint_no_hints_weekly)
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
@@ -518,11 +556,7 @@ private fun DuelAside(
         }
     }
     if (read.isBoss) {
-        val actor = rememberTricksterActorState()
-        LaunchedEffect(
-            state.feedback?.itemId,
-        ) { state.feedback?.let { actor.play(if (it.isCorrect) TricksterAct.Sly else TricksterAct.Smug) } }
-        TricksterArt(Modifier.size(104.dp), state = actor)
+        TricksterArt(Modifier.size(104.dp), state = trickster)
         Text(stringResource(R.string.checkpoint_shield), style = MaterialTheme.typography.titleSmall)
         ShieldPlates(score.correct, read.passMark, Modifier.fillMaxWidth(), plate = 8)
         val broken = minOf(score.correct, read.passMark)
@@ -561,12 +595,30 @@ private fun Prize(read: CheckpointRead) {
         icon = R.drawable.ic_psychology,
         title = stringResource(if (read.isBoss) R.string.checkpoint_winning else R.string.checkpoint_finishing),
         trailing =
-            if (phase != null && read.checkpoint.reward.phaseComplete) {
-                stringResource(R.string.checkpoint_prize_phase, points, phase)
-            } else {
-                stringResource(R.string.checkpoint_prize, points)
-            },
+            pointsText(
+                if (phase != null && read.checkpoint.reward.phaseComplete) {
+                    stringResource(R.string.checkpoint_prize_phase, points, phase)
+                } else {
+                    stringResource(R.string.checkpoint_prize, points)
+                },
+                points,
+            ),
     )
+}
+
+/** Only the points read as Brain Power: "+30 · phase 1 done" colors the "+30". */
+@Composable
+private fun pointsText(
+    text: String,
+    points: String,
+): AnnotatedString {
+    val brain = SpanStyle(color = MaterialTheme.zoonk.brainText)
+    return buildAnnotatedString {
+        append(text)
+        text.indexOf(points).takeIf { it >= 0 }?.let { start ->
+            addStyle(brain, if (start > 0 && text[start - 1] == '+') start - 1 else start, start + points.length)
+        }
+    }
 }
 
 @Composable
@@ -574,7 +626,7 @@ private fun DetailRow(
     @DrawableRes icon: Int,
     title: String,
     detail: String? = null,
-    trailing: String? = null,
+    trailing: AnnotatedString? = null,
 ) {
     Row(Modifier.fillMaxWidth().padding(vertical = 8.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         Icon(
@@ -587,7 +639,17 @@ private fun DetailRow(
             Text(title, style = MaterialTheme.typography.bodyMedium)
             detail?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
         }
-        trailing?.let { Text(it, color = MaterialTheme.zoonk.brainText, style = MaterialTheme.typography.labelLarge) }
+        // At most half the row, so a large font wraps the value instead of squeezing the title.
+        trailing?.let {
+            Box(Modifier.weight(1f), contentAlignment = Alignment.TopEnd) {
+                Text(
+                    it,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    textAlign = TextAlign.End,
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
+        }
     }
 }
 
@@ -618,29 +680,38 @@ internal fun DuelResult(
             .orEmpty()
     var reviewing by rememberSaveable { mutableStateOf(false) }
 
+    val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+
     TaskScaffold(
         onClose = viewModel::close,
         title = { LessonTitle(eyebrow(checkpoint)) },
         bottomBar = {
             ActionBarWidth {
                 ActionFlow { width ->
+                    if (answers.isNotEmpty() && !wide) {
+                        OutlinedButton(onClick = { reviewing = true }) { Text(stringResource(R.string.checkpoint_review)) }
+                    }
                     Button(onClick = viewModel::close, modifier = width) { Text(stringResource(R.string.practice_continue)) }
                 }
             }
         },
     ) { padding ->
-        BoxWithConstraints(Modifier.fillMaxSize().padding(padding)) {
-            val wide = maxWidth >= ASIDE_FROM
+        Row(Modifier.fillMaxSize().padding(padding)) {
             Column(
-                Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 16.dp),
+                Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(horizontal = 16.dp, vertical = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(20.dp)) {
                     if (outcome == null) {
-                        QuestionsRemoved(checkpoint)
+                        QuestionsRemoved(eyebrow = null)
                         return@Column
                     }
-                    if (duel.read.isBoss) TricksterArt(Modifier.size(104.dp), beaten = won, reacts = true)
+                    // A result opened again shows how it ended, still: the moment played when it was won or lost.
+                    if (duel.read.isBoss) {
+                        CelebrationScope(
+                            play = duel.state.completion != null,
+                        ) { TricksterArt(Modifier.size(104.dp), beaten = won, reacts = true) }
+                    }
                     Text(
                         text =
                             stringResource(
@@ -668,14 +739,19 @@ internal fun DuelResult(
                                 },
                             ),
                     )
-                    if (won) WonDetails(duel) else NotWonDetails(duel)
-                    if (answers.isNotEmpty()) {
-                        if (wide) {
-                            Review(duel, answers, app)
-                        } else {
-                            FilledTonalButton(onClick = { reviewing = true }) { Text(stringResource(R.string.checkpoint_review)) }
-                        }
-                    }
+                    if (!wide) ResultDetails(duel, won)
+                    if (wide && answers.isNotEmpty()) Review(duel, answers, app)
+                }
+            }
+            // From a tablet the details sit beside the outcome and its answers, as main's aside.
+            if (wide && outcome != null) {
+                VerticalDivider()
+                Column(
+                    Modifier.width(ASIDE_WIDTH).verticalScroll(rememberScrollState()).padding(horizontal = 24.dp, vertical = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Text(eyebrow(checkpoint), modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+                    ResultDetails(duel, won)
                 }
             }
         }
@@ -683,11 +759,19 @@ internal fun DuelResult(
 
     if (reviewing) {
         ModalBottomSheet(onDismissRequest = { reviewing = false }) {
-            Column(
-                Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 16.dp).padding(bottom = 24.dp),
-            ) { Review(duel, answers, app) }
+            Column(Modifier.verticalScroll(rememberScrollState()).padding(horizontal = 24.dp).padding(bottom = 32.dp)) {
+                Review(duel, answers, app, titleStyle = MaterialTheme.typography.titleLarge)
+            }
         }
     }
+}
+
+@Composable
+private fun ResultDetails(
+    duel: Duel,
+    won: Boolean,
+) {
+    if (won) WonDetails(duel) else NotWonDetails(duel)
 }
 
 @Composable
@@ -697,10 +781,11 @@ private fun phaseLabel(phase: CheckpointPhase): String =
 @Composable
 private fun Section(
     title: String,
+    titleStyle: TextStyle = MaterialTheme.typography.titleSmall,
     content: @Composable () -> Unit,
 ) {
     Column(Modifier.fillMaxWidth()) {
-        Text(title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
+        Text(title, modifier = Modifier.semantics { heading() }, style = titleStyle)
         content()
     }
 }
@@ -715,7 +800,11 @@ private fun WonDetails(duel: Duel) {
         DetailRow(
             R.drawable.ic_psychology,
             stringResource(R.string.checkpoint_brain_power),
-            trailing = stringResource(R.string.checkpoint_prize, formatNumber(points.toDouble(), currentLocale())),
+            trailing =
+                formatNumber(
+                    points.toDouble(),
+                    currentLocale(),
+                ).let { pointsText(stringResource(R.string.checkpoint_prize, it), it) },
         )
         if (checkpoint.reward.phaseComplete) {
             DetailRow(
@@ -780,7 +869,11 @@ private fun NotWonDetails(duel: Duel) {
             DetailRow(
                 R.drawable.ic_psychology,
                 stringResource(R.string.checkpoint_brain_power),
-                trailing = stringResource(R.string.checkpoint_prize, formatNumber(earned.toDouble(), currentLocale())),
+                trailing =
+                    formatNumber(
+                        earned.toDouble(),
+                        currentLocale(),
+                    ).let { pointsText(stringResource(R.string.checkpoint_prize, it), it) },
             )
         }
     }
@@ -792,8 +885,9 @@ private fun Review(
     duel: Duel,
     answers: List<StudyBlockCompletionCheckpointAnswersInner>,
     app: AppContainer,
+    titleStyle: TextStyle = MaterialTheme.typography.titleSmall,
 ) {
-    Section(stringResource(R.string.checkpoint_answers)) {
+    Section(stringResource(R.string.checkpoint_answers), titleStyle) {
         answers.forEachIndexed { index, answer ->
             val question = duel.read.questions.firstOrNull { it.itemId == answer.itemId.toString() } ?: return@forEachIndexed
             if (index > 0) HorizontalDivider()

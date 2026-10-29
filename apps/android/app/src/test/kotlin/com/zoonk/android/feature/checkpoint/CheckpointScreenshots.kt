@@ -27,6 +27,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.runBlocking
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import org.junit.Assume.assumeTrue
@@ -186,4 +187,75 @@ class CheckpointScreenshots {
             throw com.zoonk.android.data
                 .ApiException(com.zoonk.android.data.ApiError.Network)
         }, play = ::confirm)
+
+    private fun showResult(name: String) {
+        val read = checkpoint()
+        val answers =
+            JsonArray(
+                listOf(Q1, Q2).mapIndexed { index, id ->
+                    JsonObject(
+                        mapOf(
+                            "correctAnswer" to JsonObject(mapOf("selectedIndex" to JsonPrimitive(0))),
+                            "explanation" to JsonPrimitive("Mars orbits the Sun; the Moon orbits Earth."),
+                            "isCorrect" to JsonPrimitive(index == 0),
+                            "itemId" to JsonPrimitive(id),
+                            "workedSteps" to JsonArray(emptyList()),
+                        ),
+                    )
+                },
+            )
+        val completion: StudyBlockCompletion =
+            com.zoonk.android.feature.session.decodeFixture(
+                "study-block-completion",
+                "checkpoint" to
+                    JsonObject(
+                        mapOf(
+                            "answers" to answers,
+                            "correct" to JsonPrimitive(1),
+                            "kind" to JsonPrimitive("boss"),
+                            "passMark" to JsonPrimitive(2),
+                            "passed" to JsonPrimitive(false),
+                            "total" to JsonPrimitive(3),
+                        ),
+                    ),
+            )
+        val cache =
+            AppCache(
+                FakeSession(AuthenticatedSession(ANA, "token", "local")),
+                CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate),
+            )
+        val api =
+            object : CheckpointApi {
+                override suspend fun checkpoint(
+                    session: AuthenticatedSession,
+                    blockId: UUID,
+                ) = read
+
+                override suspend fun answer(
+                    session: AuthenticatedSession,
+                    checkpoint: Checkpoint,
+                    input: StudyAnswerInput,
+                ): StudyAnswerFeedback = error("Not used")
+
+                override suspend fun finish(
+                    session: AuthenticatedSession,
+                    checkpoint: Checkpoint,
+                    timeZone: String,
+                ): StudyBlockCompletion = error("Not used")
+            }
+        val viewModel = CheckpointViewModel(read.blockId, CheckpointStore(api, cache) { "UTC" })
+        val duel = Duel(read.read(), DuelState.of(read).finished(completion))
+        rule.setContent { ZoonkTheme { DuelResult(duel, viewModel, AppContainer.preview(rule.activity)) } }
+        rule.waitForIdle()
+        val bitmap = rule.onRoot().captureToImage().asAndroidBitmap()
+        File(folder, "$name.png").apply { parentFile?.mkdirs() }.outputStream().use { bitmap.compress(Bitmap.CompressFormat.PNG, 100, it) }
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun tabletResultLost() = showResult("tablet-result-lost")
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneResultLostFresh() = showResult("phone-result-lost-fresh")
 }
