@@ -121,6 +121,25 @@ describe("music activities", () => {
     await expectVerdict("Correct!");
   });
 
+  it("notation: a repeated bar is read once, and a second ending as its own bar", async () => {
+    const fixture = activityContentFixtures.notationPlayer;
+
+    openActivity({
+      content: {
+        ...fixture,
+        fields: {
+          ...fixture.fields,
+          notation: "X:1\nM:4/4\nL:1/4\nK:C\n|:C D E F|1 G A B c:|2 c B A G|]",
+        },
+      },
+      template: "notationPlayer",
+    });
+
+    await expect
+      .element(page.getByText("Bar 1: C, D, E, F. Bar 2: G, A, B, C. Bar 3: C, B, A, G."))
+      .toBeInTheDocument();
+  });
+
   it("keyboard by ear: the sound isn't named until the notes heard are found", async () => {
     openActivity({ content: byEar, template: "keyboardFretboard" });
     await expect.element(page.getByText("By ear", { exact: true })).toBeVisible();

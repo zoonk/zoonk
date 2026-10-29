@@ -51,12 +51,26 @@ function outlineTune(abcjs: Abcjs, tune: TuneObject): TuneOutline {
   );
 
   const bars = Math.max(0, ...events.map((event) => event.measureNumber ?? 0)) + 1;
+  const outline: TuneOutline = Array.from({ length: bars }, () => []);
+  const left = new Set<number>();
+  let playing: number | null = null;
 
-  return Array.from({ length: bars }, (_, bar) =>
-    events
-      .filter((event) => (event.measureNumber ?? 0) === bar)
-      .flatMap((event) => (event.midiPitches ?? []).map((pitch) => pitch.pitch)),
-  );
+  // Timings follow playback, so a repeat plays its bars again; each written bar keeps its first pass.
+  for (const event of events) {
+    const bar = event.measureNumber ?? 0;
+
+    if (bar !== playing && playing !== null) {
+      left.add(playing);
+    }
+
+    playing = bar;
+
+    if (!left.has(bar)) {
+      outline[bar]?.push(...(event.midiPitches ?? []).map((pitch) => pitch.pitch));
+    }
+  }
+
+  return outline;
 }
 
 export function useAbcNotation({
