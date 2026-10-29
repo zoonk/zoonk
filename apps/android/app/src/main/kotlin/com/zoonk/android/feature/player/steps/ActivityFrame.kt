@@ -48,6 +48,7 @@ import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.activities.patternTableRenderer
 import com.zoonk.android.feature.activities.sorting.categorizeRenderer
 import com.zoonk.android.feature.activities.sorting.causeEffectChainRenderer
+import com.zoonk.android.feature.activities.sorting.labeledDiagramRenderer
 import com.zoonk.android.feature.activities.sorting.matchPairsRenderer
 import com.zoonk.android.feature.activities.sorting.processOrderRenderer
 import com.zoonk.android.feature.activities.sorting.timelineRenderer
@@ -101,6 +102,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "dialogueSimulator" to dialogueSimulatorRenderer,
         "findError" to findErrorRenderer,
         "guessReveal" to guessRevealRenderer,
+        "labeledDiagram" to labeledDiagramRenderer,
         "matchPairs" to matchPairsRenderer,
         "patternTable" to patternTableRenderer,
         "patternTester" to patternTesterRenderer,

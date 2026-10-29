@@ -128,4 +128,29 @@
     <string name="activities_sorting_gap_between">from %1$s (%2$s) to %3$s (%4$s)</string>
     <!-- What the timeline's drawing covers, for TalkBack, like "A timeline from 3000 BCE to 2000 CE." -->
     <string name="activities_sorting_timeline_from">A timeline from %1$s to %2$s.</string>
+
+    <string name="activities_sorting_badge_label_it">Label it</string>
+    <!-- Read by TalkBack when a name goes on a numbered spot of the picture, like "Aorta on spot 5." -->
+    <string name="activities_sorting_name_on_spot">%1$s on spot %2$s.</string>
+    <!-- Read by TalkBack when a name is taken off its spot, like "Aorta taken off." -->
+    <string name="activities_sorting_name_taken_off">%1$s taken off.</string>
+    <!-- Above the names while a spot waits for one, like "Tap a name for spot 2, or hold and drag it onto any spot." -->
+    <string name="activities_sorting_tap_a_name">Tap a name for spot %1$d, or hold and drag it onto any spot.</string>
+    <string name="activities_sorting_every_spot_named">Every spot has a name. Tap a spot to change it.</string>
+    <!-- The name of the list of names to place, for TalkBack. -->
+    <string name="activities_sorting_names">Names</string>
+    <!-- Puts a name on a numbered spot, like "Put Aorta on spot 5". Also a TalkBack action on each name. -->
+    <string name="activities_sorting_put_on_spot">Put %1$s on spot %2$d</string>
+    <!-- The name of the list of numbered spots, for TalkBack. -->
+    <string name="activities_sorting_spots_to_label">Spots to label</string>
+    <!-- A numbered spot with no name yet, for TalkBack, like "Spot 3: empty". -->
+    <string name="activities_sorting_spot_empty">Spot %1$d: empty</string>
+    <!-- A numbered spot and its name, for TalkBack, like "Spot 3: Right ventricle". -->
+    <string name="activities_sorting_spot_named">Spot %1$d: %2$s</string>
+    <!-- On the spot waiting for a name. -->
+    <string name="activities_sorting_pick_a_name">Pick a name</string>
+    <!-- For TalkBack, before the learner's wrong name once checked, like "Your answer: Left atrium". -->
+    <string name="activities_sorting_your_answer">Your answer: %1$s</string>
+    <!-- For TalkBack, before the right name once checked, like "Correct answer: Right atrium". -->
+    <string name="activities_sorting_correct_answer">Correct answer: %1$s</string>
 </resources>
