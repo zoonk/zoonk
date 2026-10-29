@@ -53,8 +53,11 @@ sealed interface AppRoute : NavKey {
     @Serializable
     data object Mistakes : AppRoute
 
+    /** [task] opens that task's row, as main's `?task=` does. */
     @Serializable
-    data object Speaking : AppRoute
+    data class Speaking(
+        val task: String? = null,
+    ) : AppRoute
 
     @Serializable
     data object EarlierQuestions : AppRoute
@@ -226,9 +229,11 @@ sealed interface AppRoute : NavKey {
         val goalId: String? = null,
     ) : AppRoute
 
+    /** [from] is `exam` for a task opened from the exam page, whose result leads back there. */
     @Serializable
     data class Conversation(
         val conversationId: String,
+        val from: String? = null,
     ) : AppRoute
 
     @Serializable
@@ -312,7 +317,7 @@ val AppRoute.presentation: Presentation
             is AppRoute.Buddy -> Presentation.Tab(AppTab.Buddy)
 
             is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit, AppRoute.Exam,
-            AppRoute.MockChooser, AppRoute.MindMaps, AppRoute.Mistakes, AppRoute.Speaking,
+            AppRoute.MockChooser, AppRoute.MindMaps, AppRoute.Mistakes, is AppRoute.Speaking,
             AppRoute.EarlierQuestions,
             -> Presentation.Push
 
@@ -347,7 +352,7 @@ val AppRoute.requirement: Requirement
         when (this) {
             is AppRoute.Plan, is AppRoute.Subject, is AppRoute.Chapter, is AppRoute.LanguageUnit,
             AppRoute.Exam, AppRoute.MockChooser, AppRoute.MindMaps, is AppRoute.MindMap,
-            AppRoute.Mistakes, AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
+            AppRoute.Mistakes, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
             -> Requirement.Goal
 
             AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.Profile, AppRoute.Statistics,

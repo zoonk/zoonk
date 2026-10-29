@@ -102,7 +102,7 @@ object AppLink {
                     "exam" -> AppRoute.Exam
                     "mind-maps" -> AppRoute.MindMaps
                     "mistakes" -> AppRoute.Mistakes
-                    "speaking" -> AppRoute.Speaking
+                    "speaking" -> AppRoute.Speaking(task = query["task"])
                     "settings" -> AppRoute.Settings
                     "profile" -> AppRoute.Profile
                     "subscription", "pricing" -> AppRoute.Subscription
@@ -158,7 +158,7 @@ object AppLink {
 
                     "essay" -> AppRoute.Essay(blockId = second)
 
-                    "conversation" -> AppRoute.Conversation(conversationId = second)
+                    "conversation" -> AppRoute.Conversation(conversationId = second, from = query["from"])
 
                     "explain" -> AppRoute.Explain(goalId = second)
 
