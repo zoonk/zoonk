@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { parseEnv } from "node:util";
+import { CONNECT_TIMEOUT_SECONDS } from "./postgres.mts";
 
 const ENV_FILES = [".env", ".env.local", ".env.development.local", ".env.production.local"];
 const ID_LENGTH = 12;
@@ -71,6 +72,8 @@ export function databaseEnvironment({ name, source }: { name: string; source: UR
 } {
   const url = new URL(source);
   url.pathname = `/${name}`;
+  // Prisma's migrate commands give up after 5 s by default; the app's pg pool ignores this.
+  url.searchParams.set("connect_timeout", String(CONNECT_TIMEOUT_SECONDS));
   return { DATABASE_URL: url.href, DATABASE_URL_UNPOOLED: url.href };
 }
 

@@ -94,7 +94,14 @@ async function setupIsolatedDatabases(source: URL): Promise<void> {
   ]);
 
   await together(freshTests.map((database) => initializeTestDatabase({ database, source })));
-  await pruneDatabases({ source, worktree });
+
+  // Another worktree's test run locks its database while copying it; a later setup prunes it.
+  await pruneDatabases({ source, worktree }).catch((error: unknown) => {
+    log(
+      `Skipped pruning idle worktree databases: ${error instanceof Error ? error.message : String(error)}`,
+    );
+  });
+
   log(`Databases ready: ${databases.map((database) => database.name).join(", ")}`);
 }
 
