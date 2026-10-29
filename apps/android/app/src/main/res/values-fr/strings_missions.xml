@@ -30,8 +30,9 @@
   "missions_lesson_and_more": "27aa358a7fe5e7d2c03bb78fa5de9541ed8d042bcc00f00cb7571beac952533a",
   "missions_mock": "d74d93b83dbe95b23e1c97f49dc8c109fdce3b7c78ed91dcb98bf998b0cb0168",
   "missions_moment_all_done": "515836149af05cfb4599b96fcc7cc2fe320cbbb74fd22144dbd73e9c97090332",
-  "missions_moment_done": "2815e37e1de64bcf30cb27a02427440cde2db54a76afc8409752807fdac357ab",
+  "missions_moment_done": "17a06566ed9a98b87d65c505ccff50649bbe27f1bc6f24fdb5469b97ecde427a",
   "missions_moment_more": "5f690105d07cd4a03601315f78b94807a9f5b3817317df35399cccbe45bfecb1",
+  "missions_moment_one_done": "6a9ce6fc169514d8ff3eec90f32335e9a894c98c2e786f9be0747983320b0a25",
   "missions_most_room": "9ebd6ce875f1c68a4bdf2476e455aaf1711512a7181bd9dcbc893ea009bef02c",
   "missions_open_buddy": "15aef6fed47713d9299bc9ff12207d5233750fc91081c1e655a676e991c952c4",
   "missions_open_call": "fd14251d294edb85b179b27631fe8d9ece8c3efa33d010e4a6545ea7acd04eca",
@@ -78,10 +79,11 @@
         <item quantity="other">%d restantes</item>
     </plurals>
     <string name="missions_moment_all_done">Missions du jour terminées !</string>
+    <string name="missions_moment_one_done">Mission terminée !</string>
     <plurals name="missions_moment_done">
-        <item quantity="one">Mission terminée !</item>
-        <item quantity="many">%d missions terminées !</item>
-        <item quantity="other">%d missions terminées !</item>
+        <item quantity="one">Mission terminée : %d !</item>
+        <item quantity="many">Missions terminées : %d !</item>
+        <item quantity="other">Missions terminées : %d !</item>
     </plurals>
     <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
     <plurals name="missions_moment_more">

@@ -14,8 +14,9 @@
         <item quantity="other">%d left</item>
     </plurals>
     <string name="missions_moment_all_done">Today\'s missions done!</string>
+    <string name="missions_moment_one_done">Mission done!</string>
     <plurals name="missions_moment_done">
-        <item quantity="one">Mission done!</item>
+        <item quantity="one">%d mission done!</item>
         <item quantity="other">%d missions done!</item>
     </plurals>
     <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->

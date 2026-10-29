@@ -84,10 +84,10 @@ fun MissionMoment(
     val points = formatNumber(facts.bonus.toDouble(), currentLocale())
     val brain = MaterialTheme.zoonk.brain
     val title =
-        if (left == 0) {
-            stringResource(R.string.missions_moment_all_done)
-        } else {
-            pluralStringResource(R.plurals.missions_moment_done, justDone.size, justDone.size)
+        when {
+            left == 0 -> stringResource(R.string.missions_moment_all_done)
+            justDone.size == 1 -> stringResource(R.string.missions_moment_one_done)
+            else -> pluralStringResource(R.plurals.missions_moment_done, justDone.size, justDone.size)
         }
     val status =
         when {
