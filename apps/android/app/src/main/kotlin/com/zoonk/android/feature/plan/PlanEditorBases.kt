@@ -7,28 +7,19 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -44,7 +35,6 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -63,7 +53,6 @@ import com.zoonk.api.models.PlanChangePreviewFeasibility
 import com.zoonk.api.models.PlanChangeResult
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.datetime.toJavaLocalDate
 
 /** Main's `PlanBases`: how to study what an exam's or a goal's final work builds on. */
 @Composable
@@ -81,29 +70,9 @@ internal fun PlanBases(
     }
 
     drafts.bases?.let { draft ->
-        BasesSheet(
-            page = page,
-            bases = bases,
-            edits = edits,
-            draft = draft,
-            onDraft = { drafts.bases = it },
-            onDismiss = { drafts.bases = null },
-        )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun BasesSheet(
-    page: PlanPageState,
-    bases: PlanBases,
-    edits: PlanEdits,
-    draft: BasesDraft,
-    onDraft: (BasesDraft) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        BasesChoices(page, bases, edits, draft, onDraft, onDone = onDismiss)
+        PlanSheet(onDismiss = { drafts.bases = null }) {
+            BasesChoices(page, bases, edits, draft, onDraft = { drafts.bases = it }, onDone = { drafts.bases = null })
+        }
     }
 }
 
@@ -137,18 +106,8 @@ internal fun ColumnScope.BasesChoices(
     val operations = if (changed.isEmpty()) emptyList() else listOf(PlanOp.BaseChoices(changed))
     val check = rememberPreviewCheck(page, edits, operations, attempt)
     val recommended = (advice as? Advice.Answered)?.recommended
-
-    Column(
-        modifier = Modifier.padding(start = SHEET_MARGIN, end = SHEET_MARGIN, bottom = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-    ) {
-        Text(stringResource(R.string.plan_prerequisites), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-        Text(
-            text = stringResource(if (page.isExam) R.string.plan_prerequisites_exam else R.string.plan_prerequisites_goal),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-    }
+    val title = stringResource(R.string.plan_prerequisites)
+    val description = stringResource(if (page.isExam) R.string.plan_prerequisites_exam else R.string.plan_prerequisites_goal)
 
     val saved = edits.sheetAnswer(draft.opening)?.takeIf { it.status == PlanChangeResult.Status.APPLIED }
     if (saved != null && saved.change == null) {
@@ -157,7 +116,7 @@ internal fun ColumnScope.BasesChoices(
     }
     val applied = saved?.change?.let { edits.changes[it.id] }
     if (applied != null) {
-        AppliedBases(page, applied, edits, onDone)
+        PlanChangeApplied(page, title, description, applied, R.drawable.ic_layers, onUndo = { edits.undo(applied.change) }, onDone = onDone)
         return
     }
 
@@ -171,60 +130,49 @@ internal fun ColumnScope.BasesChoices(
         onDraft(draft.copy(choices = draft.choices + items.associate { it.skillId to it.chooseFor(choice, choiceOf(it)) }))
     }
 
-    Column(
-        modifier =
-            Modifier
-                .weight(1f, fill = false)
-                .verticalScroll(rememberScrollState())
-                .padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 8.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            AllBasesChoice(bases.items, shared, recommended, enabled = !pending, onChoose = { choose(bases.items, it) })
-            if (shared == null) Note(stringResource(R.string.plan_bases_differ))
-            if (bases.items.any { it.studied }) Note(stringResource(R.string.plan_bases_studied_stay))
-            BasesAdvice(
-                advice = advice,
-                followed = changed.isEmpty() && shared != null && shared == recommended,
-                isExam = page.isExam,
-                onAsk = {
-                    if (advice == Advice.Pending) return@BasesAdvice
-                    advice = Advice.Pending
-                    scope.launch { advice = adviceOf(edits.adviseOnBases()) }
-                },
-            )
-        }
-        val areas = bases.items.groupBy { it.area }
-        if (areas.size > 1) {
-            BasesBySubject(
-                areas = areas,
-                choiceOf = ::choiceOf,
-                startOpen = sharedChoice(open) { it.choice } == null,
-                enabled = !pending,
-                onChoose = ::choose,
-            )
-        }
-        Note(knownText(bases))
-    }
-
-    HorizontalDivider()
-    Column(
-        modifier = Modifier.padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 16.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        if (operations.isNotEmpty()) PreviewOutcome(page, check, onRetry = { attempt++ })
-        Button(
-            onClick = { edits.change(PlanPart.Bases, operations) { edits.answerSheet(draft.opening, it) } },
-            modifier = Modifier.fillMaxWidth(),
-            enabled = !pending && operations.isNotEmpty() && check is Check.Ready,
-        ) {
-            if (pending) {
-                CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
+    PlanSheetContent(
+        title = title,
+        description = description,
+        body = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                AllBasesChoice(bases.items, shared, recommended, enabled = !pending, onChoose = { choose(bases.items, it) })
+                if (shared == null) Note(stringResource(R.string.plan_bases_differ))
+                if (bases.items.any { it.studied }) Note(stringResource(R.string.plan_bases_studied_stay))
+                BasesAdvice(
+                    advice = advice,
+                    followed = changed.isEmpty() && shared != null && shared == recommended,
+                    isExam = page.isExam,
+                    onAsk = {
+                        if (advice == Advice.Pending) return@BasesAdvice
+                        advice = Advice.Pending
+                        scope.launch { advice = adviceOf(edits.adviseOnBases()) }
+                    },
+                )
             }
-            Text(stringResource(R.string.plan_save_choices))
-        }
-        if (edits.sheetFailed(PlanPart.Bases, draft.opening)) SaveFailedText()
-    }
+            val areas = bases.items.groupBy { it.area }
+            if (areas.size > 1) {
+                BasesBySubject(
+                    areas = areas,
+                    choiceOf = ::choiceOf,
+                    startOpen = sharedChoice(open) { it.choice } == null,
+                    enabled = !pending,
+                    onChoose = ::choose,
+                )
+            }
+            Note(knownText(bases))
+        },
+        actions = {
+            if (operations.isNotEmpty()) PreviewOutcome(page, check, onRetry = { attempt++ })
+            Button(
+                onClick = { edits.change(PlanPart.Bases, operations) { edits.answerSheet(draft.opening, it) } },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = !pending && operations.isNotEmpty() && check is Check.Ready,
+            ) {
+                PendingLabel(pending, stringResource(R.string.plan_save_choices))
+            }
+            if (edits.sheetFailed(PlanPart.Bases, draft.opening)) SaveFailedText()
+        },
+    )
 }
 
 @Composable
@@ -379,14 +327,8 @@ private fun BasesAdvice(
         }
         if (advice !is Advice.Answered) {
             FilledTonalButton(onClick = onAsk, modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite }) {
-                if (asking) {
-                    CircularProgressIndicator(
-                        Modifier.padding(end = 8.dp).size(18.dp),
-                        color = LocalContentColor.current,
-                        strokeWidth = 2.dp,
-                    )
-                }
-                Text(
+                PendingLabel(
+                    asking,
                     stringResource(
                         when (advice) {
                             Advice.Pending -> R.string.plan_getting_recommendation
@@ -432,40 +374,6 @@ private fun PreviewOutcome(
                 }
             }
         }
-    }
-}
-
-/** Main's `PlanChangeApplied`: what saving did, with Done and Undo; an undone change closes the sheet. */
-@Composable
-private fun AppliedBases(
-    page: PlanPageState,
-    applied: EditorChange,
-    edits: PlanEdits,
-    onDone: () -> Unit,
-) {
-    LaunchedEffect(applied.undone) { if (applied.undone) onDone() }
-
-    PlanChangeSummary(
-        change = applied.change,
-        targetDate =
-            page.plan.schedule.targetDate
-                ?.toJavaLocalDate(),
-        fullCourse = page.plan.schedule.fullCourse,
-        icon = R.drawable.ic_layers,
-        modifier = Modifier.padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 8.dp, bottom = 24.dp),
-    )
-    HorizontalDivider()
-    Column(
-        modifier = Modifier.padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 16.dp, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Button(onClick = onDone, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.plan_done)) }
-        if (applied.change.canUndo) {
-            TextButton(onClick = { edits.undo(applied.change) }, modifier = Modifier.fillMaxWidth(), enabled = !applied.undoing) {
-                Text(stringResource(R.string.plan_undo))
-            }
-        }
-        if (applied.undoFailed) SaveFailedText()
     }
 }
 

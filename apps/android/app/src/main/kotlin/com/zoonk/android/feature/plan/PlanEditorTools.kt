@@ -3,29 +3,24 @@ package com.zoonk.android.feature.plan
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,12 +29,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
@@ -82,13 +77,9 @@ internal fun PlanTools(
 
     drafts.tool?.let { draft ->
         tools.firstOrNull { it.name == draft.name }?.let { tool ->
-            ToolSheet(
-                tool = tool,
-                draft = draft,
-                edits = edits,
-                onDraft = { drafts.tool = it },
-                onDismiss = { drafts.tool = null },
-            )
+            PlanSheet(onDismiss = { drafts.tool = null }) {
+                ToolChoiceForm(tool, draft, edits, onDraft = { drafts.tool = it }, onDone = { drafts.tool = null })
+            }
         }
     }
 }
@@ -110,26 +101,47 @@ private fun ToolRow(
     val parts = CHOICES_PATTERN.matchEntire(tool.name)?.groupValues
     val action =
         stringResource(if (tool.choice == null) R.string.plan_tool_choose_how else R.string.plan_tool_change_how, tool.name)
-
-    Row(
-        modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        Icon(painterResource(toolIcon(tool.name)), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(parts?.get(1) ?: tool.name, style = MaterialTheme.typography.bodyLarge)
-            parts?.get(2)?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
-            ToolStatus(tool)
+    val button =
+        @Composable { stacked: Boolean ->
+            val described = Modifier.semantics { contentDescription = action }
+            if (tool.choice == null) {
+                FilledTonalButton(onClick = onChoose, modifier = described) { Text(stringResource(R.string.plan_choose)) }
+            } else if (stacked) {
+                TextButton(onClick = onChoose, modifier = described, shape = MaterialTheme.shapes.small, contentPadding = FLUSH_START) {
+                    Text(stringResource(R.string.plan_tool_change))
+                }
+            } else {
+                TextButton(onClick = onChoose, modifier = described) { Text(stringResource(R.string.plan_tool_change)) }
+            }
         }
-        val described = Modifier.semantics { contentDescription = action }
-        if (tool.choice == null) {
-            FilledTonalButton(onClick = onChoose, modifier = described) { Text(stringResource(R.string.plan_choose)) }
-        } else {
-            TextButton(onClick = onChoose, modifier = described) { Text(stringResource(R.string.plan_tool_change)) }
+
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
+        val stacked = maxWidth < STACKED_BELOW * LocalDensity.current.fontScale
+        Row(
+            modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp).padding(vertical = 8.dp),
+            verticalAlignment = if (stacked) Alignment.Top else Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Icon(painterResource(toolIcon(tool.name)), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+            Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(parts?.get(1) ?: tool.name, style = MaterialTheme.typography.bodyLarge)
+                parts
+                    ?.get(
+                        2,
+                    )?.let { Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant) }
+                ToolStatus(tool)
+                if (stacked) Box(Modifier.padding(top = 6.dp)) { button(true) }
+            }
+            if (!stacked) button(false)
         }
     }
 }
+
+/** The link starts where the section's text does; the button keeps its 48dp target. */
+private val FLUSH_START = PaddingValues(start = 0.dp, top = 8.dp, end = 12.dp, bottom = 8.dp)
+
+/** Main's `@max-2xs` (18rem): a row narrower than this, grown with the learner's font size, puts its button under the text. */
+private val STACKED_BELOW = 288.dp
 
 @Composable
 private fun ToolStatus(tool: PlanTool) {
@@ -233,24 +245,12 @@ private fun NoToolsPath(
             chose = true
             edits.chooseTools(ToolAnswer(tools.map { it.name }, PlanTool.Choice.NONE)) {}
         },
+        shape = MaterialTheme.shapes.small,
+        contentPadding = FLUSH_START,
     ) {
         Text(stringResource(R.string.plan_tools_none))
     }
     if (chose && edits.hasFailed(PlanPart.Tools)) SaveFailedText()
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun ToolSheet(
-    tool: PlanTool,
-    draft: ToolDraft,
-    edits: PlanEdits,
-    onDraft: (ToolDraft) -> Unit,
-    onDismiss: () -> Unit,
-) {
-    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        ToolChoiceForm(tool, draft, edits, onDraft, onDone = onDismiss)
-    }
 }
 
 /** Main's `ToolChoiceForm`: it closes once its answer saves. */
@@ -270,72 +270,56 @@ internal fun ColumnScope.ToolChoiceForm(
 
     LaunchedEffect(saved) { if (saved != null) onDone() }
 
-    Column(
-        modifier =
-            Modifier
-                .weight(1f, fill = false)
-                .verticalScroll(rememberScrollState())
-                .padding(start = SHEET_MARGIN, end = SHEET_MARGIN, bottom = 24.dp),
-        verticalArrangement = Arrangement.spacedBy(20.dp),
-    ) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(tool.name, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-            Text(
-                text = stringResource(R.string.plan_tool_how),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        }
-        Column(Modifier.selectableGroup()) {
-            TOOL_CHOICES.forEach { option ->
-                ChoiceRow(
-                    label = stringResource(option.label),
-                    description = stringResource(option.description),
-                    selected = option.choice == chosen,
-                    onSelect = { onDraft(draft.copy(choice = option.choice)) },
-                    enabled = !pending,
-                )
+    PlanSheetContent(
+        title = tool.name,
+        description = stringResource(R.string.plan_tool_how),
+        body = {
+            Column(Modifier.selectableGroup()) {
+                TOOL_CHOICES.forEach { option ->
+                    ChoiceRow(
+                        label = stringResource(option.label),
+                        description = stringResource(option.description),
+                        selected = option.choice == chosen,
+                        onSelect = { onDraft(draft.copy(choice = option.choice)) },
+                        enabled = !pending,
+                    )
+                }
             }
-        }
-        if (chosen == PlanTool.Choice.SETUP) {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                SectionLabel(stringResource(R.string.plan_tool_device))
-                FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    PlanTool.System.entries.forEach { option ->
-                        PlanChip(
-                            text = systemName(option.value),
-                            selected = option == system,
-                            onClick = { onDraft(draft.copy(system = option)) },
-                            role = Role.RadioButton,
-                            enabled = !pending,
-                        )
+            if (chosen == PlanTool.Choice.SETUP) {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    SectionLabel(stringResource(R.string.plan_tool_device))
+                    FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        PlanTool.System.entries.forEach { option ->
+                            PlanChip(
+                                text = systemName(option.value),
+                                selected = option == system,
+                                onClick = { onDraft(draft.copy(system = option)) },
+                                role = Role.RadioButton,
+                                enabled = !pending,
+                            )
+                        }
                     }
                 }
             }
-        }
-        if (edits.sheetFailed(PlanPart.Tools, draft.opening)) SaveFailedText()
-    }
-    HorizontalDivider()
-    Row(
-        modifier = Modifier.padding(start = SHEET_MARGIN, end = SHEET_MARGIN, top = 16.dp, bottom = 24.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-    ) {
-        TextButton(onClick = onDone, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.plan_cancel)) }
-        Button(
-            onClick = {
-                if (chosen == null) return@Button
-                val answer = ToolAnswer(listOf(tool.name), chosen, system.takeIf { chosen == PlanTool.Choice.SETUP })
-                edits.chooseTools(answer) { edits.answerSheet(draft.opening, it) }
-            },
-            modifier = Modifier.weight(1f),
-            enabled = chosen != null && !needsSystem && !pending,
-        ) {
-            if (pending) {
-                CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), color = LocalContentColor.current, strokeWidth = 2.dp)
+        },
+        actions = {
+            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                TextButton(onClick = onDone, modifier = Modifier.weight(1f)) { Text(stringResource(R.string.plan_cancel)) }
+                Button(
+                    onClick = {
+                        if (chosen == null) return@Button
+                        val answer = ToolAnswer(listOf(tool.name), chosen, system.takeIf { chosen == PlanTool.Choice.SETUP })
+                        edits.chooseTools(answer) { edits.answerSheet(draft.opening, it) }
+                    },
+                    modifier = Modifier.weight(1f),
+                    enabled = chosen != null && !needsSystem && !pending,
+                ) {
+                    PendingLabel(pending, stringResource(R.string.plan_save))
+                }
             }
-            Text(stringResource(R.string.plan_save))
-        }
-    }
+            if (edits.sheetFailed(PlanPart.Tools, draft.opening)) SaveFailedText()
+        },
+    )
 }
 
 private class ToolOption(
