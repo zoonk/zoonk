@@ -8,9 +8,62 @@ struct AppTabView: View {
   @State private var guestID: String?
 
   var body: some View {
+    Group {
+      if isReadingLearner {
+        Color(.systemBackground)
+          .ignoresSafeArea()
+      } else {
+        tabs
+      }
+    }
+    .environment(\.isCoveredByTask, !router.tasks.isEmpty)
+    .fullScreenCover(item: router.task(at: 0)) { route in
+      PresentedTask(route: route, depth: 0)
+    }
+    .sheet(item: router.sheet(presentedBy: 0)) { sheet in
+      AppSheetView(sheet: sheet)
+    }
+    .onChange(of: session.account?.user.id) { previous, current in
+      // Signing in keeps a visitor's place, and a guest's: their plan and progress move to the
+      // account.
+      if previous != nil, previous != current, previous != guestID {
+        router.popToRoots()
+      }
+    }
+    .onChange(of: learner.summary.value?.identity, initial: true) { _, identity in
+      if let identity {
+        guestID = identity.isAnonymous ? identity.userID : nil
+      }
+    }
+    .onChange(of: isStudyShown) {
+      if !isStudyShown {
+        router.leaveStudyTab(keepingPlace: true)
+      }
+    }
+    .onChange(of: studyTabs) {
+      if router.selectedTab.studyRoute != nil, !studyTabs.contains(router.selectedTab) {
+        router.leaveStudyTab(keepingPlace: false)
+      }
+    }
+  }
+
+  /// The toolbar's goal and level and the buddy's tab come from the learner's summary, so a
+  /// signed-in learner's shell paints once it's read (or failed), with the screen's content.
+  private var isReadingLearner: Bool {
+    guard session.authenticatedSession != nil, learner.summary.value == nil else {
+      return false
+    }
+
+    switch learner.summary.state {
+    case .idle, .loading: return true
+    case .loaded, .empty, .failed: return false
+    }
+  }
+
+  private var tabs: some View {
     @Bindable var router = router
 
-    TabView(selection: $router.selectedTab) {
+    return TabView(selection: $router.selectedTab) {
       Tab(value: AppTab.today) {
         TabRoot(tab: .today, tabBarPlacement: $tabBarPlacement)
       } label: {
@@ -57,35 +110,6 @@ struct AppTabView: View {
       }
     }
     .tabViewStyle(.sidebarAdaptable)
-    .environment(\.isCoveredByTask, !router.tasks.isEmpty)
-    .fullScreenCover(item: router.task(at: 0)) { route in
-      PresentedTask(route: route, depth: 0)
-    }
-    .sheet(item: router.sheet(presentedBy: 0)) { sheet in
-      AppSheetView(sheet: sheet)
-    }
-    .onChange(of: session.account?.user.id) { previous, current in
-      // Signing in keeps a visitor's place, and a guest's: their plan and progress move to the
-      // account.
-      if previous != nil, previous != current, previous != guestID {
-        router.popToRoots()
-      }
-    }
-    .onChange(of: learner.summary.value?.identity, initial: true) { _, identity in
-      if let identity {
-        guestID = identity.isAnonymous ? identity.userID : nil
-      }
-    }
-    .onChange(of: isStudyShown) {
-      if !isStudyShown {
-        router.leaveStudyTab(keepingPlace: true)
-      }
-    }
-    .onChange(of: studyTabs) {
-      if router.selectedTab.studyRoute != nil, !studyTabs.contains(router.selectedTab) {
-        router.leaveStudyTab(keepingPlace: false)
-      }
-    }
   }
 
   private var isStudyShown: Bool {
