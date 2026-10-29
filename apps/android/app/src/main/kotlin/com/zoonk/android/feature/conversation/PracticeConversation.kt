@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -65,7 +66,7 @@ import java.util.UUID
 
 /** Main's `useCallStart`: a start that takes longer than a call written ahead is a model writing it. */
 class CallStartModel(
-    private val start: suspend (CallRequest) -> CallStart,
+    private val startCall: suspend (CallRequest) -> CallStart,
 ) : ViewModel() {
     enum class State { Idle, Starting, Writing, Failed, WriteFailed }
 
@@ -76,11 +77,11 @@ class CallStartModel(
     var limit by mutableStateOf<Limit.Reached?>(null)
         private set
 
-    /** [onStarted] opens the call; the sheet is ready for a fresh start when the learner is back. */
-    fun start(
-        request: CallRequest,
-        onStarted: (UUID) -> Unit,
-    ) {
+    /** The call a start opened, until a screen showing then opens it with [OpenStartedCall]. */
+    var started by mutableStateOf<UUID?>(null)
+        private set
+
+    fun start(request: CallRequest) {
         val wasWriting = state == State.WriteFailed
         state = if (wasWriting) State.Writing else State.Starting
         limit = null
@@ -90,13 +91,13 @@ class CallStartModel(
                     delay(WRITING_AFTER_MS)
                     if (state == State.Starting) state = State.Writing
                 }
-            val started = start(request)
+            val started = startCall(request)
             writing.cancel()
             val wrote = state == State.Writing
             limit = (started as? CallStart.Limited)?.limit
             state =
                 if (started is CallStart.Started) {
-                    onStarted(started.conversationId)
+                    this@CallStartModel.started = started.conversationId
                     State.Idle
                 } else if (wrote) {
                     State.WriteFailed
@@ -106,8 +107,28 @@ class CallStartModel(
         }
     }
 
+    fun opened() {
+        started = null
+    }
+
     private companion object {
         const val WRITING_AFTER_MS = 1000L
+    }
+}
+
+/**
+ * Opens the call [model] started from the screen showing when it does, so a start that answers
+ * after the device turns still opens it; the sheet is ready for a fresh start when the learner is back.
+ */
+@Composable
+fun OpenStartedCall(
+    model: CallStartModel,
+    open: (UUID) -> Unit,
+) {
+    val id = model.started ?: return
+    LaunchedEffect(id) {
+        model.opened()
+        open(id)
     }
 }
 
@@ -196,11 +217,10 @@ private fun CallSetup(
 ) {
     val model = viewModel(key = "practice-call:$chapterId") { CallStartModel(start) }
     val minutes = state.minutes
-    val startCall = {
-        model.start(CallRequest.Practice(chapterId, goalId, minutes)) { id ->
-            state.sheetOpen = false
-            open(AppRoute.Conversation(id.toString()))
-        }
+    val startCall = { model.start(CallRequest.Practice(chapterId, goalId, minutes)) }
+    OpenStartedCall(model) { id ->
+        state.sheetOpen = false
+        open(AppRoute.Conversation(id.toString()))
     }
 
     when {

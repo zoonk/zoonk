@@ -26,6 +26,7 @@ import com.zoonk.android.data.StepState
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.conversation.CallStartModel
+import com.zoonk.android.feature.conversation.OpenStartedCall
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
@@ -49,7 +50,8 @@ fun SpeakingMockCard(
     from: String? = null,
 ) {
     val model = viewModel(key = "speaking-mock:$goalId") { CallStartModel(start) }
-    val startMock = { model.start(CallRequest.SpeakingMock(goalId)) { id -> open(AppRoute.Conversation(id.toString(), from = from)) } }
+    val startMock = { model.start(CallRequest.SpeakingMock(goalId)) }
+    OpenStartedCall(model) { id -> open(AppRoute.Conversation(id.toString(), from = from)) }
     val writing = model.state == CallStartModel.State.Writing || model.state == CallStartModel.State.WriteFailed
     val titleLine =
         with(LocalDensity.current) {

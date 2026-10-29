@@ -70,6 +70,7 @@ import com.zoonk.android.feature.conversation.CallLimitMessage
 import com.zoonk.android.feature.conversation.CallRequest
 import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.conversation.CallStartModel
+import com.zoonk.android.feature.conversation.OpenStartedCall
 import com.zoonk.android.feature.conversation.criterionGloss
 import com.zoonk.android.feature.conversation.inLanguage
 import com.zoonk.android.feature.conversation.spokenList
@@ -262,9 +263,10 @@ fun SpeakingPaperSection(
     val openCall = { id: UUID -> open(AppRoute.Conversation(id.toString(), from = from)) }
     val startTask = { key: String ->
         started = key
-        model.start(CallRequest.ExamSpeaking(goalId, key), openCall)
+        model.start(CallRequest.ExamSpeaking(goalId, key))
     }
     val actions = SpeakingActions(start, open, openWeb)
+    OpenStartedCall(model, openCall)
 
     Column(modifier) {
         Column(Modifier.padding(bottom = 8.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
