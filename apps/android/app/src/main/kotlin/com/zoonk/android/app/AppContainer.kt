@@ -18,8 +18,6 @@ import com.zoonk.android.data.apiHttpClient
 import com.zoonk.android.data.clearCredentialState
 import com.zoonk.android.data.imageLoader
 import com.zoonk.android.data.perform
-import com.zoonk.android.feature.plan.LivePlanApi
-import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.account.AccountStore
 import com.zoonk.android.feature.account.LiveAccountApi
 import com.zoonk.android.feature.account.NoBotProof
@@ -27,6 +25,8 @@ import com.zoonk.android.feature.feedback.FeedbackSender
 import com.zoonk.android.feature.feedback.LiveFeedbackApi
 import com.zoonk.android.feature.memory.LiveMemoryApi
 import com.zoonk.android.feature.memory.MemoryStore
+import com.zoonk.android.feature.plan.LivePlanApi
+import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -75,6 +75,7 @@ class AppContainer private constructor(
         )
 
     val plans = PlanStore(LivePlanApi(api), cache)
+
     // Account and Plus (L1).
     val account = AccountStore(LiveAccountApi(api, NoBotProof), sessions, cache)
     val memory = MemoryStore(LiveMemoryApi(api), cache)
