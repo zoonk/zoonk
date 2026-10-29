@@ -192,15 +192,8 @@ private struct PlanPhaseRow: View {
       == .orderedSame
   }
 
-  /// The counts stay at the trailing edge beside a long title; only accessibility sizes stack
-  /// them under it.
   private func header(byPlace: Bool, next: Bool) -> some View {
-    let layout =
-      typeSize.isAccessibilitySize
-      ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
-      : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: 12))
-
-    return layout {
+    PlanPathRow {
       Label {
         VStack(alignment: .leading, spacing: 2) {
           Text(
@@ -222,8 +215,7 @@ private struct PlanPhaseRow: View {
       } icon: {
         StatusMark(status: next ? .next : mark)
       }
-      .frame(maxWidth: .infinity, alignment: .leading)
-
+    } value: {
       VStack(alignment: typeSize.isAccessibilitySize ? .leading : .trailing, spacing: 2) {
         if phase.lessonsTotal > 0 {
           Text(
@@ -238,8 +230,6 @@ private struct PlanPhaseRow: View {
             .font(.caption)
         }
       }
-      .foregroundStyle(.secondary)
-      .fixedSize()
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(phase.state == .current ? youAreHere : Text(verbatim: ""))
@@ -390,15 +380,7 @@ private struct PlanChapterRow: View {
   }
 
   private var content: some View {
-    LabeledContent {
-      if chapter.lessonsTotal > 0, !chapter.writing, !chapter.isSkipped {
-        Text(
-          "\(chapter.lessonsDone) / \(chapter.lessonsTotal)", tableName: "Plan",
-          comment: "Lessons done of a chapter's lessons"
-        )
-        .monospacedDigit()
-      }
-    } label: {
+    PlanPathRow {
       Label {
         VStack(alignment: .leading, spacing: 2) {
           title
@@ -411,6 +393,14 @@ private struct PlanChapterRow: View {
         }
       } icon: {
         StatusMark(status: mark)
+      }
+    } value: {
+      if chapter.lessonsTotal > 0, !chapter.writing, !chapter.isSkipped {
+        Text(
+          "\(chapter.lessonsDone) / \(chapter.lessonsTotal)", tableName: "Plan",
+          comment: "Lessons done of a chapter's lessons"
+        )
+        .monospacedDigit()
       }
     }
   }
@@ -589,6 +579,31 @@ struct SyllabusSubjectRow: View {
       }
     }
     .accessibilityElement(children: .combine)
+  }
+}
+
+/// The counts stay at the trailing edge beside a long name, which wraps; accessibility text sizes
+/// stack them under it.
+struct PlanPathRow<Title: View, Value: View>: View {
+  @Environment(\.dynamicTypeSize) private var typeSize
+
+  @ViewBuilder let title: Title
+  @ViewBuilder let value: Value
+
+  var body: some View {
+    let layout =
+      typeSize.isAccessibilitySize
+      ? AnyLayout(VStackLayout(alignment: .leading, spacing: 4))
+      : AnyLayout(HStackLayout(alignment: .firstTextBaseline, spacing: 12))
+
+    layout {
+      title
+        .frame(maxWidth: .infinity, alignment: .leading)
+
+      value
+        .foregroundStyle(.secondary)
+        .fixedSize()
+    }
   }
 }
 

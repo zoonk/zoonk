@@ -516,18 +516,18 @@ struct NextOnPathSection: View {
 
         if let chapter, let chapterId = chapter.chapterId {
           NavigationLink(value: chapterRoute(chapterId)) {
-            LabeledContent {
-              Text(
-                "\(chapter.lessonsDone) / \(chapter.lessonsTotal)", tableName: "Plan",
-                comment: "Lessons done of a chapter's lessons"
-              )
-              .monospacedDigit()
-            } label: {
+            PlanPathRow {
               Label {
                 Text(chapter.title)
               } icon: {
                 StatusMark(status: .next)
               }
+            } value: {
+              Text(
+                "\(chapter.lessonsDone) / \(chapter.lessonsTotal)", tableName: "Plan",
+                comment: "Lessons done of a chapter's lessons"
+              )
+              .monospacedDigit()
             }
           }
         }
