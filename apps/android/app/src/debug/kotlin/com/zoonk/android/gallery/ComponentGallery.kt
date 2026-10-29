@@ -63,6 +63,11 @@ import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.Limit
+import com.zoonk.android.ui.components.LimitNotice
+import com.zoonk.android.ui.components.LimitPeriod
+import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.LimitTier
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.Meter
@@ -107,6 +112,7 @@ internal val gallerySections =
         GallerySection("Acts") { Acts() },
         GallerySection("Answer tones") { Answers() },
         GallerySection("Headers and empty states") { HeadersAndEmptyStates() },
+        GallerySection("Limit notices") { LimitNotices() },
         GallerySection("Load failed") { LoadFailedMessage(onRetry = {}) { TextButton(onClick = {}) { Text("Go to Today") } } },
         GallerySection("Formatting") { Formatting() },
     )
@@ -483,6 +489,19 @@ private fun HeadersAndEmptyStates() {
             description = "Questions you get wrong land here, ready to try again.",
             action = { FilledTonalButton(onClick = {}) { Text("Start a lesson") } },
         )
+    }
+}
+
+@Composable
+private fun LimitNotices() {
+    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+        listOf(
+            Limit.Reached(LimitTier.Guest, LimitPeriod.Day) to LimitSubject.Help,
+            Limit.Reached(LimitTier.Free, LimitPeriod.Month) to LimitSubject.Help,
+            Limit.Reached(LimitTier.Plus) to LimitSubject.Help,
+            Limit.SlowDown(30) to LimitSubject.Lessons,
+            Limit.Reached(LimitTier.Free, LimitPeriod.Day) to LimitSubject.Calls,
+        ).forEach { (limit, subject) -> LimitNotice(limit, subject, onCreateAccount = {}, onSeePlus = {}) }
     }
 }
 
