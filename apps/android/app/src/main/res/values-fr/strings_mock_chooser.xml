@@ -33,7 +33,7 @@
   "mock_chooser_placement_start": "a1dbf146bd2a930082fd16234896b740523c912c8869c7faeb29ce7459b0ef55",
   "mock_chooser_placement_title": "5d978cb81e79b732b9c1daafee891ec7b6ee3107678ef78c4b5917e0675b51f5",
   "mock_chooser_placement_top_subject": "b10e1d9be4ba9404b97dcb6543bb88bf696c731b8c9d82b2930aae1becb113c4",
-  "mock_chooser_placement_top_subjects": "52cb2a1d8e2e394f87a31ade5133fc703dabe4d609acc34bb52cf1a3116d020c",
+  "mock_chooser_placement_top_subjects": "097ae9a4b946684cd47e82dbcc4ffa3c84b7942868097c2a7b49243240d67170",
   "mock_chooser_plus": "0bb89c4a6428b90f92192dc862e9bc4efa6a2212515faf72b60f601b7fa38c2c",
   "mock_chooser_preparing": "954c3e4ec80a8a67596f4222f9e05933f74d09652cf682fdc2702cfc3f40c32e",
   "mock_chooser_preparing_detail": "1fe8d383f944c8de947708643f45d399b8f2c9a648be98bd999d430198e5ee28",
@@ -143,9 +143,9 @@
     <string name="mock_chooser_placement_top_subject">La matière qui compte le plus. Tes premiers jours portent sur le reste.</string>
     <!-- %d is how many subjects a short placement mock asks, two or more, as in "The 3 subjects worth most": the three with the most weight in the exam's score. -->
     <plurals name="mock_chooser_placement_top_subjects">
-        <item quantity="one">La %d matière qui compte le plus. Pendant tes premiers jours, tu verras le reste.</item>
-        <item quantity="many">Les %d matières qui comptent le plus. Pendant tes premiers jours, tu verras le reste.</item>
-        <item quantity="other">Les %d matières qui comptent le plus. Pendant tes premiers jours, tu verras le reste.</item>
+        <item quantity="one">%d matière qui compte le plus. Pendant tes premiers jours, on te posera des questions sur le reste.</item>
+        <item quantity="many">%d matières qui comptent le plus. Pendant tes premiers jours, on te posera des questions sur le reste.</item>
+        <item quantity="other">%d matières qui comptent le plus. Pendant tes premiers jours, on te posera des questions sur le reste.</item>
     </plurals>
     <string name="mock_chooser_placement_short">Un test rapide. Les premiers jours permettent d’affiner le résultat.</string>
     <string name="mock_chooser_placement_medium">Toutes les matières. Un bon point de départ.</string>
