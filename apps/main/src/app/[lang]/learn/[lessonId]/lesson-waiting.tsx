@@ -48,7 +48,7 @@ function Alternative({
       {alternative.kind === "lesson" ? (
         <Link className={rowClass} href={`/learn/${alternative.lessonId}`}>
           <KindMark kind="lesson" />
-          <span className="min-w-0 flex-1 text-balance">{alternative.title}</span>
+          <span className="min-w-0 flex-1 text-pretty">{alternative.title}</span>
           <ChevronRightIcon aria-hidden="true" className="text-muted-foreground size-4 shrink-0" />
         </Link>
       ) : (
