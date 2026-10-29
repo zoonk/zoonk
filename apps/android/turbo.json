@@ -12,7 +12,8 @@
       "inputs": [
         "$TURBO_EXTENDS$",
         "$TURBO_ROOT$/packages/player/src/activities/**",
-        "$TURBO_ROOT$/packages/core/src/library/activities/**"
+        "$TURBO_ROOT$/packages/core/src/library/activities/**",
+        "$TURBO_ROOT$/packages/testing/src/fixtures/activity-contents*/**"
       ]
     }
   }
