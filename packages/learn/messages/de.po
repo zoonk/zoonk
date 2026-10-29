@@ -8514,29 +8514,29 @@ msgid "{count, plural, one {Which one will you take?} other {Which ones will you
 msgstr "{count, plural, one {Welche Prüfung machst du?} other {Welche Prüfungen machst du?}}"
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "vGUvKA"
-msgid "Choose at least one study day to estimate when your plan would finish."
-msgstr "Wähle mindestens einen Lerntag aus, damit wir abschätzen können, wann dein Plan abgeschlossen ist."
+msgctxt "Hy8sTO"
+msgid "Choose at least one study day."
+msgstr "Wähle mindestens einen Lerntag aus."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "gw6vBu"
-msgid "Estimated plan finish: <month>{date}</month>"
-msgstr "Voraussichtlicher Abschluss deines Plans: <month>{date}</month>"
+msgctxt "lzWfsi"
+msgid "You finish around <date>{month}</date>."
+msgstr "Du bist ungefähr im <date>{month}</date> fertig."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "lNNBTL"
-msgid "We can't estimate a finish date for this schedule yet. Try more time or more study days."
-msgstr "Für diesen Zeitplan können wir noch kein Abschlussdatum abschätzen. Plane mehr Zeit oder mehr Lerntage ein."
+msgctxt "Kz6oc0"
+msgid "We can't estimate a finish date for this schedule. Try more time or more study days."
+msgstr "Für diesen Zeitplan lässt sich kein Abschlussdatum schätzen. Plane mehr Zeit oder mehr Lerntage ein."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "TM-y-9"
-msgid "We couldn't estimate when your plan would finish."
-msgstr "Wir konnten nicht abschätzen, wann dein Plan abgeschlossen ist."
+msgctxt "-TVG-n"
+msgid "We couldn't work out when you'd finish."
+msgstr "Wir konnten nicht ermitteln, wann du fertig bist."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "TIU4ZA"
-msgid "Working out when your plan would finish…"
-msgstr "Wir berechnen, wann dein Plan abgeschlossen ist…"
+msgctxt "OGpEA-"
+msgid "Working out when you'd finish…"
+msgstr "Wir ermitteln, wann du fertig bist…"
 
 #: src/onboarding/steps/full-course-toggle.tsx
 #: src/plan/plan-coverage-suggestion.tsx

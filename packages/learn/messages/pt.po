@@ -8514,29 +8514,29 @@ msgid "{count, plural, one {Which one will you take?} other {Which ones will you
 msgstr "{count, plural, one {Qual você vai fazer?} other {Quais você vai fazer?}}"
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "vGUvKA"
-msgid "Choose at least one study day to estimate when your plan would finish."
-msgstr "Escolha pelo menos um dia de estudo para estimar quando seu plano vai terminar."
+msgctxt "Hy8sTO"
+msgid "Choose at least one study day."
+msgstr "Escolha pelo menos um dia de estudo."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "gw6vBu"
-msgid "Estimated plan finish: <month>{date}</month>"
-msgstr "Término estimado do plano: <month>{date}</month>"
+msgctxt "lzWfsi"
+msgid "You finish around <date>{month}</date>."
+msgstr "Você termina por volta de <date>{month}</date>."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "lNNBTL"
-msgid "We can't estimate a finish date for this schedule yet. Try more time or more study days."
-msgstr "Ainda não dá para estimar uma data de término para esse cronograma. Tente reservar mais tempo ou escolher mais dias de estudo."
+msgctxt "Kz6oc0"
+msgid "We can't estimate a finish date for this schedule. Try more time or more study days."
+msgstr "Não dá para estimar uma data de conclusão com esse cronograma. Tente dedicar mais tempo ou escolher mais dias de estudo."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "TM-y-9"
-msgid "We couldn't estimate when your plan would finish."
-msgstr "Não foi possível estimar quando seu plano vai terminar."
+msgctxt "-TVG-n"
+msgid "We couldn't work out when you'd finish."
+msgstr "Não conseguimos calcular quando você vai terminar."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "TIU4ZA"
-msgid "Working out when your plan would finish…"
-msgstr "Calculando quando seu plano vai terminar…"
+msgctxt "OGpEA-"
+msgid "Working out when you'd finish…"
+msgstr "Calculando quando você vai terminar…"
 
 #: src/onboarding/steps/full-course-toggle.tsx
 #: src/plan/plan-coverage-suggestion.tsx

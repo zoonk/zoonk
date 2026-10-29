@@ -8514,29 +8514,29 @@ msgid "{count, plural, one {Which one will you take?} other {Which ones will you
 msgstr "{count, plural, one {Which one will you take?} other {Which ones will you take?}}"
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "vGUvKA"
-msgid "Choose at least one study day to estimate when your plan would finish."
-msgstr "Choose at least one study day to estimate when your plan would finish."
+msgctxt "Hy8sTO"
+msgid "Choose at least one study day."
+msgstr "Choose at least one study day."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "gw6vBu"
-msgid "Estimated plan finish: <month>{date}</month>"
-msgstr "Estimated plan finish: <month>{date}</month>"
+msgctxt "lzWfsi"
+msgid "You finish around <date>{month}</date>."
+msgstr "You finish around <date>{month}</date>."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "lNNBTL"
-msgid "We can't estimate a finish date for this schedule yet. Try more time or more study days."
-msgstr "We can't estimate a finish date for this schedule yet. Try more time or more study days."
+msgctxt "Kz6oc0"
+msgid "We can't estimate a finish date for this schedule. Try more time or more study days."
+msgstr "We can't estimate a finish date for this schedule. Try more time or more study days."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "TM-y-9"
-msgid "We couldn't estimate when your plan would finish."
-msgstr "We couldn't estimate when your plan would finish."
+msgctxt "-TVG-n"
+msgid "We couldn't work out when you'd finish."
+msgstr "We couldn't work out when you'd finish."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "TIU4ZA"
-msgid "Working out when your plan would finish…"
-msgstr "Working out when your plan would finish…"
+msgctxt "OGpEA-"
+msgid "Working out when you'd finish…"
+msgstr "Working out when you'd finish…"
 
 #: src/onboarding/steps/full-course-toggle.tsx
 #: src/plan/plan-coverage-suggestion.tsx

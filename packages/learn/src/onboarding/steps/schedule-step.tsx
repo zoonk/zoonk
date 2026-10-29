@@ -238,16 +238,6 @@ export function ScheduleStep({
 
       <ScheduleTimeChoices choices={choices} minutes={minutes} onChange={setMinutes} />
 
-      {!dated && (
-        <FinishEstimate
-          advice={pickedShare.known ? advice : null}
-          onRetry={asking.restart}
-          status={asking.status}
-          stopped={isRunStopped(run)}
-          studyDays={days.length}
-        />
-      )}
-
       {showsEstimate && <TimeEstimatePanel {...estimateProps} />}
 
       <CoverEverything
@@ -259,18 +249,30 @@ export function ScheduleStep({
         share={share}
         studiesEverything={studiesEverything}
       >
-        <AdviceSentence
-          dated={dated}
-          find={finder.status}
-          found={found}
-          id={FIND_LINE_ID}
-          onFind={() => {
-            askFocus();
-            void finder.find();
-          }}
-          planReady={planReady}
-          readingNotice={answer?.advice.readingNotice ?? false}
-        />
+        <div className="flex flex-col gap-1">
+          {!dated && (
+            <FinishEstimate
+              advice={pickedShare.known ? advice : null}
+              onRetry={asking.restart}
+              status={asking.status}
+              stopped={isRunStopped(run)}
+              studyDays={days.length}
+            />
+          )}
+
+          <AdviceSentence
+            dated={dated}
+            find={finder.status}
+            found={found}
+            id={FIND_LINE_ID}
+            onFind={() => {
+              askFocus();
+              void finder.find();
+            }}
+            planReady={planReady}
+            readingNotice={answer?.advice.readingNotice ?? false}
+          />
+        </div>
       </CoverEverything>
 
       <WeekDisclosure

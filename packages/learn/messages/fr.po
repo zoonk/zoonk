@@ -8514,29 +8514,29 @@ msgid "{count, plural, one {Which one will you take?} other {Which ones will you
 msgstr "{count, plural, one {Quel examen vas-tu passer ?} other {Quels examens vas-tu passer ?}}"
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "vGUvKA"
-msgid "Choose at least one study day to estimate when your plan would finish."
-msgstr "Choisis au moins un jour d’étude pour estimer la date de fin de ton plan."
+msgctxt "Hy8sTO"
+msgid "Choose at least one study day."
+msgstr "Choisis au moins un jour d’étude."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "gw6vBu"
-msgid "Estimated plan finish: <month>{date}</month>"
-msgstr "Fin estimée du plan : <month>{date}</month>"
+msgctxt "lzWfsi"
+msgid "You finish around <date>{month}</date>."
+msgstr "Tu termineras vers <date>{month}</date>."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "lNNBTL"
-msgid "We can't estimate a finish date for this schedule yet. Try more time or more study days."
-msgstr "On ne peut pas encore estimer la date de fin de ce plan. Essaie de prévoir plus de temps ou plus de jours d’étude."
+msgctxt "Kz6oc0"
+msgid "We can't estimate a finish date for this schedule. Try more time or more study days."
+msgstr "Impossible d’estimer une date de fin avec ce planning. Essaie d’y consacrer plus de temps ou d’étudier plus de jours."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "TM-y-9"
-msgid "We couldn't estimate when your plan would finish."
-msgstr "On n’a pas pu estimer la date de fin de ton plan."
+msgctxt "-TVG-n"
+msgid "We couldn't work out when you'd finish."
+msgstr "Impossible de déterminer quand tu termineras."
 
 #: src/onboarding/steps/finish-estimate.tsx
-msgctxt "TIU4ZA"
-msgid "Working out when your plan would finish…"
-msgstr "Calcul de la date de fin de ton plan…"
+msgctxt "OGpEA-"
+msgid "Working out when you'd finish…"
+msgstr "Calcul de ta date de fin…"
 
 #: src/onboarding/steps/full-course-toggle.tsx
 #: src/plan/plan-coverage-suggestion.tsx
