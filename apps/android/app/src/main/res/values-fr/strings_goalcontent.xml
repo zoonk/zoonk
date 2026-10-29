@@ -84,7 +84,6 @@
   "goalcontent_subject_skipped": "5097705846702e7944af517925a2d7f4e089bb3d25abbd9178ba41612b63037e",
   "goalcontent_subject_time": "f6b86f3201e99720694e9fa98fa74a663c0d5b8622e5448b5946dd2419112603",
   "goalcontent_subjects": "9387e6e35a57bfde615cbb5e2d1e4f0f4e23ebb44348c999310e93ad6d354931",
-  "goalcontent_summaries": "09276ee7f619f55c2f3688126b8b3bbf10e77bca309791a6b9831ca1cc2e455d",
   "goalcontent_test_out_description": "72eb2a55b48367d16772a2f0965f15fc05c94a48b831517dee7c075be74147aa",
   "goalcontent_test_out_title": "0aebc91806d478e111a2692994497aedca162e6a703d041c12f2bb641f4b5392",
   "goalcontent_to_review": "66842a155cc165e17c7eb6d6df4e5c25dad4963fdbcc1adee36c34d6c4a6206b",
@@ -313,7 +312,6 @@
     <string name="goalcontent_for_reference">Pour référence</string>
     <string name="goalcontent_chapter_summary">Résumé du chapitre</string>
     <string name="goalcontent_skills">Compétences</string>
-    <string name="goalcontent_summaries">Résumés</string>
     <!-- A skill whose recall is fading. -->
     <string name="goalcontent_to_review">À revoir</string>
     <string name="goalcontent_skill_learning">En cours</string>

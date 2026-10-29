@@ -188,7 +188,6 @@
     <string name="goalcontent_for_reference">For reference</string>
     <string name="goalcontent_chapter_summary">Chapter summary</string>
     <string name="goalcontent_skills">Skills</string>
-    <string name="goalcontent_summaries">Summaries</string>
     <!-- A skill whose recall is fading. -->
     <string name="goalcontent_to_review">To review</string>
     <string name="goalcontent_skill_learning">Learning</string>

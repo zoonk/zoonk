@@ -18,6 +18,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.collapse
+import androidx.compose.ui.semantics.expand
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
@@ -42,7 +44,14 @@ fun DisclosureRow(
             modifier =
                 Modifier
                     .clickable(role = Role.Button) { onExpandedChange(!expanded) }
-                    .semantics { stateDescription = state },
+                    .semantics {
+                        stateDescription = state
+                        val toggle = {
+                            onExpandedChange(!expanded)
+                            true
+                        }
+                        if (expanded) collapse(action = toggle) else expand(action = toggle)
+                    },
             leadingContent = leading,
             colors = ListItemDefaults.colors(containerColor = Color.Transparent),
             trailingContent = {

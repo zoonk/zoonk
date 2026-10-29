@@ -84,7 +84,6 @@
   "goalcontent_subject_skipped": "54166c61c953e337260305bd439f9db7283f8c34005a665a412ad694316e4a1a",
   "goalcontent_subject_time": "466abd16a3dcf3e5a1178c2fe09fc52eb126b293feca9a704bfdee4c0fbe3529",
   "goalcontent_subjects": "b538496e9ae30dda7aa4aa45c3abe518db0b61590554c5d39dfb853f2fef4368",
-  "goalcontent_summaries": "32277afa8b831d164a3f8bc5166cb3b1ea064a2f1dc6f0be0cec2ac872774359",
   "goalcontent_test_out_description": "b1d0d5b38f771b9f759237c30c00920d9687fc4f1484fb33d74671284fc2cbdd",
   "goalcontent_test_out_title": "443c4d43c0358b27165e68c377839c83ddaec49ea343d47003403ab876c6687a",
   "goalcontent_to_review": "e781eb9464829b9f8f8be585b781cda91b61b78f339b09730b6060af53912a74",
@@ -313,7 +312,6 @@
     <string name="goalcontent_for_reference">Para consultar</string>
     <string name="goalcontent_chapter_summary">Resumo do capítulo</string>
     <string name="goalcontent_skills">Habilidades</string>
-    <string name="goalcontent_summaries">Resumos</string>
     <!-- A skill whose recall is fading. -->
     <string name="goalcontent_to_review">Para revisar</string>
     <string name="goalcontent_skill_learning">Aprendendo</string>

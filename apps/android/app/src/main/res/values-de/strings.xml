@@ -27,14 +27,13 @@
   "gate_start_goal_description": "aba619fcfbe2c1549ea7777f9d47cd8f95a61a693ef43469f53d576c5a6a9976",
   "gate_start_goal_title": "ce62479880f78cd9115b282879c068c11fb96217efb0b5e1ef74abdd08f4302e",
   "gate_start_something_new": "a0a6d42aec64bc9434d4b747de0c1b71aaa1e5be339e6145b126fff71c82a8ed",
+  "lesson_summaries_title": "37fa656b2cc87dfd5e703dbe2541fd74f742a436ae9ab03f7494618d8f037025",
   "lessons_coming_up": "b73bddbdbbc9ed98aa90c545af293742b5ae83a3926d62c304d676eaeb1b828b",
   "lessons_done": "bd3d9fc087c50c30a7f19e8cabe1aa396687ac4132b1b5c7e89bacd98827d71b",
   "lessons_done_count": "e3db2f92d1dde1d26827fe00b4bda5be21d3a7a47d3e843629ad61a1e20fe67a",
   "lessons_position": "09d046e89e025e8c820083c67b6506cf8cc5539a40ee9417adb7d8c81ffda9e0",
   "lessons_title": "0b725c55323c4355bdee9d80e3d88dfbc3d9a2b7aa9302942cebd1060cfc6563",
   "lessons_up_next": "ef11f6ef628a2c38972b5201767993d86cfcb76197bb83608905f007df88e0f0",
-  "list_row_collapsed": "2e927e57ce1bbb7e5e6defa180fe7730bbe59645d8ef778ef05604362ee3d057",
-  "list_row_expanded": "5704e6404fbaea8621b878f5ac95b9643a2f662f27a1b2b24304356338d24fe2",
   "list_row_states": "ab8f1cb9b681aeb774f9d05a3ce3d293b4ef0f51a05cadc15ccfba6862ddcc5f",
   "load_failed_description": "d47a259f4a86e443c34252968e2a02478b034526c12f62d558a55d85f546ba60",
   "load_failed_title": "c9dec3bccf7b404a259a6778b9e0e365f54578c2f05308680b60c6c544f22e4c",
@@ -116,13 +115,13 @@
     <string name="lessons_done">Fertig</string>
     <string name="lessons_up_next">Als Nächstes</string>
     <string name="lessons_coming_up">Demnächst</string>
+    <!-- Heads the key ideas of each lesson in a chapter's or unit's summary. -->
+    <string name="lesson_summaries_title">Zusammenfassungen</string>
     <string name="test_out_title">Kennst du das schon?</string>
     <string name="test_out_skip_chapter">Mach den Test und überspringe das Kapitel</string>
     <string name="test_out_skip_unit">Mach den Test und überspringe die Einheit</string>
     <string name="not_found_title">Diese Seite wurde nicht gefunden</string>
     <string name="not_found_description">Der Link ist möglicherweise veraltet oder falsch eingegeben.</string>
-    <string name="list_row_expanded">Ausgeklappt</string>
-    <string name="list_row_collapsed">Eingeklappt</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
 </resources>

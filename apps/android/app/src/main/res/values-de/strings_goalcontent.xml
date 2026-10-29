@@ -84,7 +84,6 @@
   "goalcontent_subject_skipped": "1ef848968c08a37699270f4c74046b9b8c9783aa0ca82e36f18a7a801ef9b08b",
   "goalcontent_subject_time": "0d546963a74edc3db17f0c7be6e2f0117d883eaee576fd12bf767b2234ac4a21",
   "goalcontent_subjects": "d6f7742e6ce03a3722b1cab692188636dbb90f577715fc17bf7521dbb09c6de9",
-  "goalcontent_summaries": "dfa2d964f559989b245953e2ce6745e498f41718998109f6e526d6be6aa142c7",
   "goalcontent_test_out_description": "1af6ab1b1ddcb975fc42d473802cfb56b9af3f029575917582097b424dd62529",
   "goalcontent_test_out_title": "e6c9542095816fdcd949fe643c5456c333b1d97c6217dee78bba17a58bfec382",
   "goalcontent_to_review": "73c8baac1197100eab321fe125da6a75c57cf04bc73f6c8c26f5936edb175079",
@@ -296,7 +295,6 @@
     <string name="goalcontent_for_reference">Zum Nachschlagen</string>
     <string name="goalcontent_chapter_summary">Kapitelzusammenfassung</string>
     <string name="goalcontent_skills">Fähigkeiten</string>
-    <string name="goalcontent_summaries">Zusammenfassungen</string>
     <!-- A skill whose recall is fading. -->
     <string name="goalcontent_to_review">Noch offen</string>
     <string name="goalcontent_skill_learning">Im Aufbau</string>

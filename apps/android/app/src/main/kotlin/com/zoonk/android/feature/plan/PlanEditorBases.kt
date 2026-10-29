@@ -1,13 +1,10 @@
 package com.zoonk.android.feature.plan
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.Button
@@ -29,7 +26,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
@@ -37,13 +33,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.ui.components.DisclosureRow
+import com.zoonk.android.ui.components.LIST_ITEM_INSET
 import com.zoonk.android.ui.components.LabelChip
+import com.zoonk.android.ui.components.bleed
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatPercent
@@ -218,28 +215,17 @@ private fun BasesBySubject(
     onChoose: (List<PlanBase>, PlanBase.Choice) -> Unit,
 ) {
     var open by remember { mutableStateOf(startOpen) }
-    val stateWords = stringResource(if (open) R.string.list_row_expanded else R.string.list_row_collapsed)
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 48.dp)
-                    .clickable(role = Role.Button) { open = !open }
-                    .semantics { stateDescription = stateWords },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-        ) {
-            Icon(painterResource(R.drawable.ic_tune), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(stringResource(R.string.plan_choose_by_subject), Modifier.weight(1f), style = MaterialTheme.typography.bodyLarge)
-            Icon(
-                painter = painterResource(if (open) R.drawable.ic_expand_less else R.drawable.ic_expand_more),
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
+    DisclosureRow(
+        stringResource(R.string.plan_choose_by_subject),
+        expanded = open,
+        onExpandedChange = { open = it },
+        leading = { Icon(painterResource(R.drawable.ic_tune), contentDescription = null) },
+        modifier = Modifier.bleed(LIST_ITEM_INSET),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            areas.forEach { (area, items) -> SubjectChoice(area, items, choiceOf, enabled, onChoose = { onChoose(items, it) }) }
         }
-        if (open) areas.forEach { (area, items) -> SubjectChoice(area, items, choiceOf, enabled, onChoose = { onChoose(items, it) }) }
     }
 }
 

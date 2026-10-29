@@ -54,18 +54,21 @@ import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.RoutePlaceholder
+import com.zoonk.android.ui.components.DisclosureRow
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.LessonSummaries
+import com.zoonk.android.ui.components.LessonSummary
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ChapterLesson
@@ -496,53 +499,22 @@ private fun ChapterReference(
         mindMap?.card?.invoke()
         if (!hasSummary) return@Column
         if (mindMap != null) Spacer(Modifier.height(12.dp))
-        ExpandableRow(
+        DisclosureRow(
+            stringResource(R.string.goalcontent_chapter_summary),
             expanded = expanded,
-            onToggle = { expanded = !expanded },
-            headline = { Text(stringResource(R.string.goalcontent_chapter_summary)) },
-            leading = {
-                Icon(painterResource(R.drawable.ic_checklist), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
-            },
+            onExpandedChange = { expanded = it },
+            leading = { Icon(painterResource(R.drawable.ic_checklist), contentDescription = null) },
         ) {
-            Column(Modifier.padding(horizontal = PAGE_PADDING).padding(bottom = 16.dp), verticalArrangement = Arrangement.spacedBy(20.dp)) {
+            Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
                 if (chapter.skills.isNotEmpty()) {
                     Column {
-                        ReferenceLabel(stringResource(R.string.goalcontent_skills))
+                        SectionLabel(stringResource(R.string.goalcontent_skills), Modifier.padding(bottom = 4.dp))
                         chapter.skills.forEach { SkillRow(it) }
                     }
                 }
-                if (chapter.summaries.isNotEmpty()) {
-                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                        ReferenceLabel(stringResource(R.string.goalcontent_summaries))
-                        chapter.summaries.forEach { summary ->
-                            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                                Text(summary.title, style = MaterialTheme.typography.titleSmall)
-                                summary.ideas.forEach { idea -> Idea(idea) }
-                            }
-                        }
-                    }
-                }
+                LessonSummaries(chapter.summaries.map { LessonSummary(it.title, it.ideas) })
             }
         }
-    }
-}
-
-@Composable
-private fun ReferenceLabel(text: String) {
-    Text(
-        text = text,
-        modifier = Modifier.padding(bottom = 4.dp).semantics { heading() },
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.labelLarge,
-    )
-}
-
-@Composable
-private fun Idea(text: String) {
-    val style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text("•", style = style)
-        RichInlineText(text = text, modifier = Modifier.weight(1f), style = style)
     }
 }
 

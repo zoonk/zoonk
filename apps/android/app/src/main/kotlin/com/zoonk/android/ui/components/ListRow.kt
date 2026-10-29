@@ -46,7 +46,7 @@ fun ListRow(
     end: (@Composable () -> Unit)? = null,
     content: @Composable RowScope.() -> Unit,
 ) {
-    val openWords = expanded?.let { stringResource(if (it) R.string.list_row_expanded else R.string.list_row_collapsed) }
+    val openWords = expanded?.let { stringResource(if (it) R.string.disclosure_expanded else R.string.disclosure_collapsed) }
     val state =
         when {
             stateDescription != null && openWords != null -> stringResource(R.string.list_row_states, stateDescription, openWords)

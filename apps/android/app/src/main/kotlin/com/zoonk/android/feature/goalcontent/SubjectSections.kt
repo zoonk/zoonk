@@ -13,15 +13,12 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -56,8 +53,8 @@ import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MarkStatus
+import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatProgressShare
@@ -67,7 +64,6 @@ import com.zoonk.api.models.Syllabus
 import com.zoonk.api.models.SyllabusChapter
 import com.zoonk.api.models.SyllabusSubject
 import com.zoonk.api.models.SyllabusTopic
-import com.zoonk.api.models.WrittenPractice
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import kotlinx.datetime.LocalDate as KotlinLocalDate
@@ -543,7 +539,7 @@ internal fun LazyListScope.subjectTopics(
     splitByHeading(topics).forEachIndexed { runIndex, run ->
         if (run.heading != null) {
             item(key = "heading-$runIndex", contentType = "heading") {
-                SectionLabel(run.heading, Modifier.padding(top = 16.dp, bottom = 4.dp))
+                SectionLabel(run.heading, Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 16.dp, bottom = 4.dp))
             }
         }
         groupTopics(run.topics) { it.name }.forEachIndexed { index, group ->

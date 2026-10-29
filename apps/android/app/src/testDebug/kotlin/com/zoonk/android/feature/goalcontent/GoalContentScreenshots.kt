@@ -18,11 +18,17 @@ import androidx.compose.ui.graphics.asAndroidBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
+import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.FakeSession
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.mindmaps.MindMapCardActions
@@ -36,6 +42,13 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.components.LocalPrivatePictures
 import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.models.AreaPractice
+import com.zoonk.api.models.AreaPracticeInput
+import com.zoonk.api.models.GoalChapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.datetime.TimeZone
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -46,6 +59,7 @@ import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
 import java.time.LocalDate
+import java.util.UUID
 
 /**
  * Review screenshots of the subject and chapter pages and the Plan's structure, written only on
@@ -99,7 +113,12 @@ class GoalContentScreenshots {
         SCREENS.indices.forEach { screen ->
             index = screen
             compose.waitForIdle()
-            write("${SCREENS[screen].first}-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            val shot = SCREENS[screen].first
+            write("$shot-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+            val opens = OPENED[shot] ?: return@forEach
+            opens.forEach { compose.onNodeWithText(it).performClick() }
+            compose.waitForIdle()
+            write("$shot-opened-$name", compose.onRoot().captureToImage().asAndroidBitmap())
         }
     }
 
@@ -115,6 +134,27 @@ class GoalContentScreenshots {
     private companion object {
         val TODAY: LocalDate = LocalDate.of(2026, 10, 28)
         val NO_ACTIONS = SubjectActions(back = {}, openChapter = {}, adjustPlan = {}, restore = {}, setCadence = {}, openMindMaps = {})
+
+        /** What each screen's opened shot taps first. */
+        val OPENED =
+            mapOf(
+                "subject-exam" to listOf("1 chapter done, 1 skipped because you already know it", "1 Mechanics"),
+                "chapter" to listOf("Chapter summary"),
+            )
+
+        val MISSING_CHAPTER =
+            object : GoalContentApi {
+                override suspend fun chapter(
+                    session: AuthenticatedSession,
+                    key: ChapterKey,
+                ): GoalChapter = throw ApiException(ApiError.NotFound)
+
+                override suspend fun practiceArea(
+                    session: AuthenticatedSession,
+                    goalId: UUID,
+                    input: AreaPracticeInput,
+                ): AreaPractice = throw ApiException(ApiError.NotFound)
+            }
 
         /** The page's own tools, as the screens add them: Ask the buddy and Report a problem. */
         @Composable
@@ -164,6 +204,15 @@ class GoalContentScreenshots {
                 "subject-written" to { Subject("essay") },
                 "subject-module" to { Subject("basics") },
                 "chapter" to { Chapter() },
+                "chapter-not-found" to {
+                    val store =
+                        remember {
+                            val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+                            val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
+                            GoalContentStore(MISSING_CHAPTER, cache, timeZone = { TimeZone.UTC })
+                        }
+                    ChapterContent(ChapterKey(UUID.fromString(GOAL), UUID.fromString(chapterId(3))), store, rememberAppNavigator())
+                },
                 "plan-section-exam" to {
                     PlanSyllabusSection(examSyllabus(), {}, Modifier.verticalScroll(rememberScrollState()).padding(vertical = 16.dp))
                 },

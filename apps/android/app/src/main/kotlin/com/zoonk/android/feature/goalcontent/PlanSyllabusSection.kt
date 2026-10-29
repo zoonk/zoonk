@@ -1,13 +1,11 @@
 package com.zoonk.android.feature.goalcontent
 
 import android.icu.text.ListFormatter
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
@@ -29,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.ui.components.ListRow
 import com.zoonk.android.ui.components.ListRowChevron
+import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatProgressShare
 import com.zoonk.api.models.GoalContentGoal
@@ -87,21 +86,7 @@ fun PlanSyllabusSection(
 
             groups.forEach { group ->
                 val name = if (group.extra) beyondGroupName(syllabus) else group.name
-                if (name != null) {
-                    Text(
-                        text = name,
-                        modifier =
-                            Modifier
-                                .padding(
-                                    start = PAGE_PADDING,
-                                    end = PAGE_PADDING,
-                                    top = 16.dp,
-                                    bottom = 4.dp,
-                                ).semantics { heading() },
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelLarge,
-                    )
-                }
+                if (name != null) SectionLabel(name, Modifier.padding(start = PAGE_PADDING, end = PAGE_PADDING, top = 16.dp, bottom = 4.dp))
                 group.subjects.forEachIndexed { index, subject ->
                     if (index > 0) RowDivider()
                     SubjectRow(subject, layout, barWidth, onClick = { onOpenSubject(subject.key) })

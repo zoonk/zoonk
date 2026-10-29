@@ -27,14 +27,13 @@
   "gate_start_goal_description": "e5fa6b5ef700946efd97fabeda2e3bde76808b2199b54424ac66c2c40be3ebe7",
   "gate_start_goal_title": "b2bf60c7d698ff9c259faf93c1beb09c982439ac586b8fd82eb9cbad3df0b0ca",
   "gate_start_something_new": "1fd8c025fef3409b4a76578cd54eb084658b2798690ae7c0180ed76046806bf7",
+  "lesson_summaries_title": "b5240cc2ba409b5352441a2107d143a60d5a0d78e558dddf2b6ae4fb4acbfb3f",
   "lessons_coming_up": "3ec8662f7fdb88920aad8d709b960b094ed0ca6ab59b9e45157a3a63f409dfe8",
   "lessons_done": "04b3bcd956d129fa1342e39cb6f7afcf957542d0e857653ac505e7772e168f1e",
   "lessons_done_count": "e51557388da18380715c2ca5b4ede818877c85eb6eec2f53284df7dafb72950e",
   "lessons_position": "544c9bf2ae35579b4b58fd73d82242ae3ee266cb020aea424b1083af7e6d6d45",
   "lessons_title": "0f2a283125c77bf67522eedf5032044d1468ab0b5eda8c6637625c61e93692c2",
   "lessons_up_next": "b57f9b5d70d0fd3b6513dbf5612f11aa6383d0a9239c226842a2503dd542e4cb",
-  "list_row_collapsed": "e827dfacf6a393116ee76a42e705d684cef8342aeacf45b90d105c0f292e16d8",
-  "list_row_expanded": "c60b4be953fd52445faa2cc3bf3bec62805ecd49a13336d63cbdb47fcdb2ee9c",
   "list_row_states": "fc9f319c90153a44d507f801420669bee7b7d60b7c2bdc9268536b732f9c3276",
   "load_failed_description": "067b3a78163c415e1a7d7545f117486e00e95cb793574ddb2c2b63b57e1ff2ca",
   "load_failed_title": "62ff8a0e058fc2bd67435cdbf8b616ec6dd56da2d6ab8b9a62b334a15b9483c0",
@@ -116,13 +115,13 @@
     <string name="lessons_done">Hecho</string>
     <string name="lessons_up_next">A continuación</string>
     <string name="lessons_coming_up">Próximamente</string>
+    <!-- Heads the key ideas of each lesson in a chapter's or unit's summary. -->
+    <string name="lesson_summaries_title">Resúmenes</string>
     <string name="test_out_title">¿Ya te lo sabes?</string>
     <string name="test_out_skip_chapter">Haz la prueba y omite el capítulo</string>
     <string name="test_out_skip_unit">Haz la prueba y omite la unidad</string>
     <string name="not_found_title">No hemos encontrado esta página</string>
     <string name="not_found_description">Puede que el enlace sea antiguo o esté mal escrito.</string>
-    <string name="list_row_expanded">Expandido</string>
-    <string name="list_row_collapsed">Contraído</string>
     <!-- TalkBack reads a row's state, then whether it's open: "Studied, Expanded". -->
     <string name="list_row_states">%1$s, %2$s</string>
 </resources>
