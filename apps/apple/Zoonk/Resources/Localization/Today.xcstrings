@@ -3324,6 +3324,41 @@
         }
       }
     },
+    "Continue your mock exam" : {
+      "comment" : "A running mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Probeprüfung fortsetzen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Continue your mock exam"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar el simulacro de examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reprendre ton examen blanc"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continuar seu simulado"
+          }
+        }
+      }
+    },
     "Couldn't save. Check your connection and try again." : {
       "comment" : "Resuming the goal failed",
       "localizations" : {
@@ -3943,6 +3978,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Ela é criada com base no que você conta pra gente."
+          }
+        }
+      }
+    },
+    "It's where you left it" : {
+      "comment" : "Under a running mock",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sie ist noch dort, wo du aufgehört hast"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "It's where you left it"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está donde lo dejaste"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il t’attend là où tu l’as laissé"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Está onde você parou"
           }
         }
       }
@@ -6947,6 +7017,76 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "O que você já sabia"
+          }
+        }
+      }
+    },
+    "Whenever you want: a full exam day or half a day" : {
+      "comment" : "When and how long the learner's mock exams can be",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wann immer du möchtest: ein ganzer Prüfungstag oder ein halber Tag"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Whenever you want: a full exam day or half a day"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando quieras: un día completo de examen o medio día"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand tu veux : une journée complète d’examen ou une demi-journée"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando quiser: um dia inteiro de prova ou meio dia"
+          }
+        }
+      }
+    },
+    "Whenever you want: a full exam day, half a day or one subject" : {
+      "comment" : "When and how long the learner's mock exams can be, by subject too",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wann immer du möchtest: ein ganzer Prüfungstag, ein halber Tag oder ein einzelnes Fach"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Whenever you want: a full exam day, half a day or one subject"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cuando quieras: un día completo de examen, medio día o una asignatura"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quand tu veux : une journée complète d’examen, une demi-journée ou une matière"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quando quiser: um dia inteiro de prova, meio dia ou uma matéria"
           }
         }
       }

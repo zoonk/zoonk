@@ -696,6 +696,7 @@ struct TodayProgressSection: View {
 
 struct TodayPracticeSection: View {
   @Environment(AppRouter.self) private var router
+  @Environment(ExamStore.self) private var exam
   @Environment(LearnerSummaryStore.self) private var learner
 
   let view: TodayView
@@ -704,6 +705,20 @@ struct TodayPracticeSection: View {
     let places = learner.summary.value?.places
 
     Section {
+      if places?.exam == true {
+        TodayMockRow(options: exam.mockOptions(goalId: view.goal.id))
+      }
+
+      if places?.speaking == true {
+        NavigationLink(value: AppRoute.speaking) {
+          Label {
+            Text("Speaking practice", tableName: "Today", comment: "Opens speaking tasks")
+          } icon: {
+            KindMark(kind: .conversation)
+          }
+        }
+      }
+
       NavigationLink(value: AppRoute.mistakes) {
         Label {
           VStack(alignment: .leading, spacing: 2) {
@@ -735,28 +750,78 @@ struct TodayPracticeSection: View {
         }
         .tint(.primary)
       }
-
-      if places?.exam == true {
-        NavigationLink(value: AppRoute.mockChooser) {
-          Label {
-            Text("Take a mock exam", tableName: "Today", comment: "Opens the mock chooser")
-          } icon: {
-            KindMark(kind: .mock)
-          }
-        }
-      }
-
-      if places?.speaking == true {
-        NavigationLink(value: AppRoute.speaking) {
-          Label {
-            Text("Speaking practice", tableName: "Today", comment: "Opens speaking tasks")
-          } icon: {
-            KindMark(kind: .conversation)
-          }
-        }
-      }
     } header: {
       Text("Practice anytime", tableName: "Today", comment: "Practice section header")
     }
+  }
+}
+
+/// Main's `MockEntryRow`: a running mock first, and no row once the exam offers none.
+private struct TodayMockRow: View {
+  @Environment(AppRouter.self) private var router
+
+  let options: Resource<MockOptions>
+
+  var body: some View {
+    let value = options.value
+
+    if value?.offersMock != false {
+      row(value)
+        .loads(options, refreshable: false)
+    }
+  }
+
+  @ViewBuilder
+  private func row(_ value: MockOptions?) -> some View {
+    if let running = value?.running {
+      Button {
+        router.open(.mock(blockId: running.id))
+      } label: {
+        label(
+          title: Text("Continue your mock exam", tableName: "Today", comment: "A running mock"),
+          detail: Text(
+            "It's where you left it", tableName: "Today", comment: "Under a running mock"))
+      }
+      .tint(.primary)
+    } else {
+      NavigationLink(value: AppRoute.mockChooser) {
+        HStack {
+          label(
+            title: Text("Take a mock exam", tableName: "Today", comment: "Opens the mock chooser"),
+            detail: value.map(description))
+
+          if value?.access == .plusRequired {
+            Spacer()
+            PlusMark()
+          }
+        }
+      }
+    }
+  }
+
+  private func label(title: Text, detail: Text?) -> some View {
+    Label {
+      VStack(alignment: .leading, spacing: 2) {
+        title
+
+        if let detail {
+          detail
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+        }
+      }
+    } icon: {
+      KindMark(kind: .mock)
+    }
+  }
+
+  private func description(_ value: MockOptions) -> Text {
+    value.options.contains { $0.kind == .area }
+      ? Text(
+        "Whenever you want: a full exam day, half a day or one subject", tableName: "Today",
+        comment: "When and how long the learner's mock exams can be, by subject too")
+      : Text(
+        "Whenever you want: a full exam day or half a day", tableName: "Today",
+        comment: "When and how long the learner's mock exams can be")
   }
 }
