@@ -32,7 +32,8 @@ fun Meter(
     contentDescription: String? = null,
 ) {
     LinearProgressIndicator(
-        progress = { share.coerceIn(0f, 1f) },
+        // A share that reads as 0% draws nothing: Material's round cap would paint a whole dot for it.
+        progress = { share.coerceIn(0f, 1f).takeIf { it >= HALF_PERCENT } ?: 0f },
         modifier =
             modifier
                 .fillMaxWidth()
@@ -139,3 +140,5 @@ private fun Modifier.meterSemantics(contentDescription: String?): Modifier =
     } else {
         semantics { this.contentDescription = contentDescription }
     }
+
+private const val HALF_PERCENT = 0.005f
