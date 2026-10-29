@@ -77,7 +77,6 @@ struct ConversationScreen: View {
 
 private struct ConversationLoad: View {
   @Environment(VoiceServices.self) private var voice
-  @State private var conversation: Resource<LanguageConversation>?
 
   let conversationId: String
   let callsRightAway: Bool
@@ -86,24 +85,10 @@ private struct ConversationLoad: View {
   let onSaved: (() -> Void)?
 
   var body: some View {
-    Group {
-      if let conversation {
-        content(conversation)
-          .loads(conversation, refreshable: false)
-      }
-    }
-    .onAppear {
-      conversation =
-        conversation
-        ?? voice.cache.resource(audience: .signedIn) {
-          [api = voice.liveCalls, conversationId] session in
-          guard let session else {
-            return nil
-          }
+    let conversation = voice.conversation(id: conversationId)
 
-          return try await api.conversation(id: conversationId, token: session.bearerToken)
-        }
-    }
+    content(conversation)
+      .loads(conversation, refreshable: false)
   }
 
   @ViewBuilder

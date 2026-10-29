@@ -12,6 +12,7 @@ final class VoiceServices {
     [String: Resource<Components.Schemas.SpeakingPaper>] =
       [:]
   @ObservationIgnored private var checkpointCalls: [String: Resource<LanguageCheckpointCall>] = [:]
+  @ObservationIgnored private var conversations: [String: Resource<LanguageConversation>] = [:]
 
   init(clients: APIClientFactory, cache: AppCache) {
     let api = VoiceAPI(clients: clients)
@@ -60,6 +61,24 @@ final class VoiceServices {
 
     speakingPapers[goalId] = paper
     return paper
+  }
+
+  func conversation(id: String) -> Resource<LanguageConversation> {
+    if let conversation = conversations[id] {
+      return conversation
+    }
+
+    let conversation = cache.resource(audience: .signedIn) {
+      [liveCalls] session -> LanguageConversation? in
+      guard let session else {
+        return nil
+      }
+
+      return try await liveCalls.conversation(id: id, token: session.bearerToken)
+    }
+
+    conversations[id] = conversation
+    return conversation
   }
 
   func checkpointCall(blockId: String) -> Resource<LanguageCheckpointCall> {
