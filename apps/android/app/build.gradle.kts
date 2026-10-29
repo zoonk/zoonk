@@ -104,6 +104,7 @@ android {
                 "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
                 "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
             )
+            test.maxHeapSize = "2g"
             // Review screenshots are written only on demand: `-Pzoonk.shots=<folder>`.
             test.systemProperty("zoonk.shots", providers.gradleProperty("zoonk.shots").getOrElse(""))
         }
