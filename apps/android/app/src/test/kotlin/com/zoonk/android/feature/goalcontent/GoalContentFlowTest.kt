@@ -49,11 +49,14 @@ class GoalContentFlowTest {
     private val plans = PlanStore(SyllabusPlanApi(planApi), cache)
     private lateinit var navigator: AppNavigator
 
-    private fun showSubject(key: String) {
+    private fun showSubject(
+        key: String,
+        mindMapChapters: Set<UUID> = emptySet(),
+    ) {
         rule.setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
-                SubjectContent(goalId, key, plans.syllabus[goalId], plans, navigator)
+                SubjectContent(goalId, key, plans.syllabus[goalId], plans, navigator, mindMapChapters = { mindMapChapters })
             }
         }
     }
@@ -136,6 +139,22 @@ class GoalContentFlowTest {
         rule.waitForIdle()
 
         assertEquals(listOf<PlanOp>(PlanOp.WrittenCadence("biweekly")), planApi.changes.single())
+    }
+
+    @Test
+    fun aSubjectWithFinishedChaptersLeadsToTheirMindMaps() {
+        showSubject("natural-sciences", mindMapChapters = setOf(UUID.fromString(chapterId(1))))
+
+        rule.onNodeWithText("Mind maps").performClick()
+
+        assertEquals(AppRoute.MindMaps, navigator.currentRoute)
+    }
+
+    @Test
+    fun aSubjectWithoutMindMapsDoesntOfferThem() {
+        showSubject("natural-sciences", mindMapChapters = setOf(UUID.fromString(chapterId(42))))
+
+        rule.onNodeWithText("Mind maps").assertDoesNotExist()
     }
 
     @Test

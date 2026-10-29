@@ -80,6 +80,13 @@ fun SubjectScreen(
         navigator = navigator,
         menu = { ReportProblemMenu(app, FeedbackTarget(screen = "subject")) },
         ask = { AskTutor(TutorScope.Subject(goal.id.toString(), route.subjectKey), app, navigator, appearance = it) },
+        mindMapChapters = {
+            val maps by app.mindMaps.list[goal.id].collectShown()
+            maps.value
+                ?.chapters
+                ?.mapTo(mutableSetOf()) { it.chapterId }
+                .orEmpty()
+        },
     )
 }
 
@@ -92,9 +99,11 @@ internal fun SubjectContent(
     navigator: AppNavigator,
     menu: @Composable () -> Unit = {},
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
+    mindMapChapters: @Composable () -> Set<UUID> = { emptySet() },
 ) {
     val back: () -> Unit = { navigator.back() }
     val state by syllabus.collectShown()
+    val withMindMaps = mindMapChapters()
     val scope = rememberCoroutineScope()
 
     when (val shown = state) {
@@ -117,6 +126,10 @@ internal fun SubjectContent(
                             adjustPlan = { navigator.open(AppRoute.Plan()) },
                             restore = writes::restore,
                             setCadence = writes::setCadence,
+                            openMindMaps =
+                                { navigator.open(AppRoute.MindMaps) }.takeIf {
+                                    subject.chapters.any { it.chapterId in withMindMaps }
+                                },
                         ),
                 )
             }
@@ -150,6 +163,7 @@ internal data class SubjectActions(
     val restore: (List<String>) -> Unit,
     val setCadence: (WrittenPractice.Cadence) -> Unit,
     val openFarTopic: ((SyllabusChapter) -> Unit)? = null,
+    val openMindMaps: (() -> Unit)? = null,
 )
 
 internal data class SubjectWrites(
@@ -206,7 +220,7 @@ internal fun SubjectPage(
     DetailPage(
         title = subject.name,
         onBack = actions.back,
-        aside = { SubjectAside(syllabus, subject, today, ask) },
+        aside = { SubjectAside(syllabus, subject, today, actions.openMindMaps, ask) },
         actions = { asideBeside ->
             if (!asideBeside) ask?.invoke(AskTutorAppearance.Button)
             menu()
@@ -228,6 +242,13 @@ internal fun SubjectPage(
         if (subject.topics.isNotEmpty()) subjectTopics(syllabus, subject, actions)
 
         subjectMatrix(subject.matrix)
+
+        val openMindMaps = actions.openMindMaps
+        if (!asideBeside && openMindMaps != null) {
+            item(key = "also", contentType = "also") {
+                AsideSection(stringResource(R.string.goalcontent_also), Modifier.padding(top = SECTION_GAP)) { MindMapsRow(openMindMaps) }
+            }
+        }
     }
 }
 

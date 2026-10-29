@@ -44,6 +44,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.mindmaps.ChapterMindMapCard
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.feature.tutor.AskTutor
@@ -67,6 +68,7 @@ import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ChapterLesson
+import com.zoonk.api.models.ChapterMindMap
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.LearnerSummaryGoal
@@ -99,8 +101,9 @@ fun ChapterScreen(
         }
 
         else -> {
+            val key = ChapterKey(goal.id, chapterId)
             ChapterContent(
-                key = ChapterKey(goal.id, chapterId),
+                key = key,
                 store = app.goalContent,
                 navigator = navigator,
                 menu = {
@@ -114,10 +117,20 @@ fun ChapterScreen(
                     )
                 },
                 ask = { AskTutor(TutorScope.Chapter(route.chapterId), app, navigator, appearance = it) },
+                mindMap = {
+                    val map by app.mindMaps.chapter[key].collectShown()
+                    map.value?.let { MindMapSlot(it) { ChapterMindMapCard(it, key, app, navigator) } }
+                },
             )
         }
     }
 }
+
+/** The chapter's mind map, and its card where the page shows it. */
+internal class MindMapSlot(
+    val map: ChapterMindMap,
+    val card: @Composable () -> Unit,
+)
 
 @Composable
 internal fun ChapterContent(
@@ -126,6 +139,7 @@ internal fun ChapterContent(
     navigator: AppNavigator,
     menu: @Composable () -> Unit = {},
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
+    mindMap: @Composable () -> MindMapSlot? = { null },
 ) {
     val resource = store.chapter[key]
     val state by resource.collectShown()
@@ -150,6 +164,7 @@ internal fun ChapterContent(
                 practice = practiceState,
                 menu = menu,
                 ask = ask,
+                mindMap = mindMap(),
                 actions =
                     ChapterActions(
                         back = back,
@@ -217,7 +232,10 @@ internal fun ChapterPage(
     actions: ChapterActions,
     menu: @Composable () -> Unit = {},
     ask: (@Composable (AskTutorAppearance) -> Unit)? = null,
+    mindMap: MindMapSlot? = null,
 ) {
+    val reference = mindMap?.takeIf { it.map.status != ChapterMindMap.Status.UNAVAILABLE }
+
     DetailPage(
         title = chapter.chapter.title,
         onBack = actions.back,
@@ -228,7 +246,7 @@ internal fun ChapterPage(
         aside = {
             ChapterProgress(chapter)
             ChapterPractice(chapter, practice, actions)
-            ChapterReference(chapter)
+            ChapterReference(chapter, reference)
         },
     ) { asideBeside ->
         item(key = "hero", contentType = "hero") { ChapterHero(chapter, actions) }
@@ -257,7 +275,7 @@ internal fun ChapterPage(
                 key = "practice",
                 contentType = "practice",
             ) { ChapterPractice(chapter, practice, actions, Modifier.padding(top = SECTION_GAP)) }
-            item(key = "reference", contentType = "reference") { ChapterReference(chapter, Modifier.padding(top = SECTION_GAP)) }
+            item(key = "reference", contentType = "reference") { ChapterReference(chapter, reference, Modifier.padding(top = SECTION_GAP)) }
         }
     }
 }
@@ -463,14 +481,19 @@ private fun practiceMessage(outcome: PracticeOutcome?): String? =
 @Composable
 private fun ChapterReference(
     chapter: GoalChapter,
+    mindMap: MindMapSlot?,
     modifier: Modifier = Modifier,
 ) {
-    if (chapter.skills.isEmpty() && chapter.summaries.isEmpty()) return
+    val hasSummary = chapter.skills.isNotEmpty() || chapter.summaries.isNotEmpty()
+    if (mindMap == null && !hasSummary) return
 
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Column(modifier) {
-        SectionTitle(stringResource(R.string.goalcontent_for_reference), Modifier.padding(bottom = 4.dp))
+        SectionTitle(stringResource(R.string.goalcontent_for_reference), Modifier.padding(bottom = 12.dp))
+        mindMap?.card?.invoke()
+        if (!hasSummary) return@Column
+        if (mindMap != null) Spacer(Modifier.height(12.dp))
         ExpandableRow(
             expanded = expanded,
             onToggle = { expanded = !expanded },

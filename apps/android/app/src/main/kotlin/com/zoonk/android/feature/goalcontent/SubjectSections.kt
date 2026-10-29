@@ -51,6 +51,8 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.plan.formatPlanDate
 import com.zoonk.android.feature.tutor.AskTutorAppearance
+import com.zoonk.android.ui.components.KindDot
+import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.markSize
@@ -288,6 +290,7 @@ internal fun ColumnScope.SubjectAside(
     syllabus: Syllabus,
     subject: SyllabusSubject,
     today: LocalDate,
+    openMindMaps: (() -> Unit)?,
     ask: (@Composable (AskTutorAppearance) -> Unit)?,
 ) {
     if (subject.notPlannedReason == null || subject.preparation != null) {
@@ -298,7 +301,24 @@ internal fun ColumnScope.SubjectAside(
 
     AsideSection(stringResource(R.string.goalcontent_details)) { SubjectDetails(syllabus, subject, today) }
 
-    if (ask != null) AsideSection(stringResource(R.string.goalcontent_also)) { ask(AskTutorAppearance.Row) }
+    if (openMindMaps != null || ask != null) {
+        AsideSection(stringResource(R.string.goalcontent_also)) {
+            Column {
+                if (openMindMaps != null) MindMapsRow(openMindMaps)
+                ask?.invoke(AskTutorAppearance.Row)
+            }
+        }
+    }
+}
+
+/** The goal's mind maps, where this subject's finished chapters have theirs. */
+@Composable
+internal fun MindMapsRow(onClick: () -> Unit) {
+    ContentRow(
+        headline = { Text(stringResource(R.string.navigation_mind_maps)) },
+        onClick = onClick,
+        leading = { Box(Modifier.size(markSize()), contentAlignment = Alignment.Center) { KindDot(LearnKind.MindMap) } },
+    )
 }
 
 @Composable

@@ -7,6 +7,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
@@ -21,12 +22,19 @@ import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.mindmaps.MindMapCardActions
+import com.zoonk.android.feature.mindmaps.MindMapCardContent
+import com.zoonk.android.feature.mindmaps.MindMapShown
+import com.zoonk.android.feature.mindmaps.chapterMindMap
 import com.zoonk.android.feature.tutor.AskTutor
 import com.zoonk.android.feature.tutor.AskTutorAppearance
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.rememberAppNavigator
+import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.theme.ZoonkTheme
 import org.junit.Assume.assumeTrue
 import org.junit.Before
@@ -106,7 +114,7 @@ class GoalContentScreenshots {
 
     private companion object {
         val TODAY: LocalDate = LocalDate.of(2026, 10, 28)
-        val NO_ACTIONS = SubjectActions(back = {}, openChapter = {}, adjustPlan = {}, restore = {}, setCadence = {})
+        val NO_ACTIONS = SubjectActions(back = {}, openChapter = {}, adjustPlan = {}, restore = {}, setCadence = {}, openMindMaps = {})
 
         /** The page's own tools, as the screens add them: Ask the buddy and Report a problem. */
         @Composable
@@ -130,7 +138,23 @@ class GoalContentScreenshots {
         @Composable
         fun Chapter() {
             val (menu, ask) = tools(TutorScope.Chapter(chapterId(3)))
-            ChapterPage(goalChapter(), PracticeState(outcome = PracticeOutcome.DailyCap), ChapterActions({}, {}, {}, {}), menu, ask)
+            val context = LocalContext.current
+            val pictures =
+                remember { PrivatePictures(AppContainer.preview(context).images, AuthenticatedSession("ana", "token-a", "local-a")) }
+            val map = chapterMindMap("ready")
+            val navigator = rememberAppNavigator()
+            val card =
+                MindMapSlot(map) { MindMapCardContent(map, MindMapShown.Ready, null, null, MindMapCardActions({}, {}, {}, {}), navigator) }
+            CompositionLocalProvider(LocalPrivatePictures provides pictures) {
+                ChapterPage(
+                    goalChapter(),
+                    PracticeState(outcome = PracticeOutcome.DailyCap),
+                    ChapterActions({}, {}, {}, {}),
+                    menu,
+                    ask,
+                    card,
+                )
+            }
         }
 
         val SCREENS: List<Pair<String, @Composable () -> Unit>> =
