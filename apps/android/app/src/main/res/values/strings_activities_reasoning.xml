@@ -59,8 +59,11 @@
 
     <!-- A map the learner explores by tapping its numbered places. -->
     <string name="activities_reasoning_badge_explore_map">Explore the map</string>
-    <!-- How many of the map's places the learner has opened, like "2 of 3 explored". -->
-    <string name="activities_reasoning_map_explored">%1$d of %2$d explored</string>
+    <!-- How many of the map's places the learner has opened, out of all of them, like "2 of 3 explored". -->
+    <plurals name="activities_reasoning_map_explored">
+        <item quantity="one">%1$d of %2$d explored</item>
+        <item quantity="other">%1$d of %2$d explored</item>
+    </plurals>
     <string name="activities_reasoning_map_hint">Tap a numbered place to see what\'s there.</string>
     <!-- A numbered place on the map, like "1. Broad Street pump". -->
     <string name="activities_reasoning_map_place">%1$d. %2$s</string>

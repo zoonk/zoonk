@@ -25,7 +25,7 @@
   "activities_reasoning_map_description": "8ebb8dcdf83e380f6959346aa81a6ce97dd83918c84acf6bafbf41f8b86b2d12",
   "activities_reasoning_map_europe": "71817e7e56e2df908bba6f7aa75c9f39301c7de697ea3b789afaf6b49af99b5f",
   "activities_reasoning_map_europe_1914": "a983c75bc4ba631bd67bb913a860d4a2d4ddc93c4a2d0a29a7799e36e4ad58e7",
-  "activities_reasoning_map_explored": "41a28190908cb2450d9f136fa8dff89ba03c08a9c74c022cfec03377ee476971",
+  "activities_reasoning_map_explored": "a06075cc95e463367ffc6a3fb5f31d55a6d96d55c76ee2f5dd6dd6855e9cd0f2",
   "activities_reasoning_map_hint": "dc67ef57f935e283f322c0d2d653066fac48fc38ea1f9a6dccfd75631d720ddd",
   "activities_reasoning_map_label_africa": "0eaeb18ea518aeca7ac5381f1161b859e37b9046d2a906e0f60608fbaa83218c",
   "activities_reasoning_map_label_antarctica": "78ee43d749f9f69bce2514af3c3744a75bca4309123ffb009edd68ec9cae70fd",
@@ -126,8 +126,12 @@
     <string name="activities_reasoning_source_missed">Oubliés</string>
     <!-- A map the learner explores by tapping its numbered places. -->
     <string name="activities_reasoning_badge_explore_map">Explorer la carte</string>
-    <!-- How many of the map's places the learner has opened, like "2 of 3 explored". -->
-    <string name="activities_reasoning_map_explored">%1$d sur %2$d explorés</string>
+    <!-- How many of the map's places the learner has opened, out of all of them, like "2 of 3 explored". -->
+    <plurals name="activities_reasoning_map_explored">
+        <item quantity="one">%1$d sur %2$d exploré</item>
+        <item quantity="many">%1$d sur %2$d explorés</item>
+        <item quantity="other">%1$d sur %2$d explorés</item>
+    </plurals>
     <string name="activities_reasoning_map_hint">Appuie sur un lieu numéroté pour voir ce qui s’y trouve.</string>
     <!-- A numbered place on the map, like "1. Broad Street pump". -->
     <string name="activities_reasoning_map_place">%1$d. %2$s</string>

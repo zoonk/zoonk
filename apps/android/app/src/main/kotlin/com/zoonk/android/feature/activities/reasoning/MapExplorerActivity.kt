@@ -118,7 +118,7 @@ private fun MapExplorerActivity(props: ActivityProps) {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Bottom) {
             Text(name, Modifier.weight(1f), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
             Text(
-                stringResource(R.string.activities_reasoning_map_explored, visited.size, places.size),
+                pluralStringResource(R.plurals.activities_reasoning_map_explored, places.size, visited.size, places.size),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.labelMedium.withTabularFigures(),
             )

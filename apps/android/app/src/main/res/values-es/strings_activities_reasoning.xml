@@ -25,7 +25,7 @@
   "activities_reasoning_map_description": "5223578cd1c98346eb918179eee739ac4bde1458657e88f584de20e96891b2b9",
   "activities_reasoning_map_europe": "fdc3fee86c7f849c47b326bee62c997d09f6e71acae2e6c077dc2ff8222815fc",
   "activities_reasoning_map_europe_1914": "718790355629d84af625df1cbf8ba82f8ea47736171dd36a1da48fd6f634fd33",
-  "activities_reasoning_map_explored": "69c5111c3dc3a970dd2ed5641b7312097f373f20621fef2c67c41181baba116d",
+  "activities_reasoning_map_explored": "0c39bf4a49093490cde25a0d1954daac218a85c828f8b1d12a6d71e71cb47622",
   "activities_reasoning_map_hint": "4bb6da6bb60591514258ea6cf0e6dfb9d1731e1961a1d8f178b4c0b75a281518",
   "activities_reasoning_map_label_africa": "0782aa8ef4f4dc4d6de6885cb10dd3408b36cfb1e09355c95f8f8f1ffb676278",
   "activities_reasoning_map_label_antarctica": "1e201608fd64076c96dc8e90ef2a9b7281511c14a9424b2ba6c76d0e779079dd",
@@ -126,8 +126,12 @@
     <string name="activities_reasoning_source_missed">No marcado</string>
     <!-- A map the learner explores by tapping its numbered places. -->
     <string name="activities_reasoning_badge_explore_map">Explora el mapa</string>
-    <!-- How many of the map's places the learner has opened, like "2 of 3 explored". -->
-    <string name="activities_reasoning_map_explored">%1$d de %2$d explorados</string>
+    <!-- How many of the map's places the learner has opened, out of all of them, like "2 of 3 explored". -->
+    <plurals name="activities_reasoning_map_explored">
+        <item quantity="one">%1$d de %2$d explorado</item>
+        <item quantity="many">%1$d de %2$d explorados</item>
+        <item quantity="other">%1$d de %2$d explorados</item>
+    </plurals>
     <string name="activities_reasoning_map_hint">Toca un lugar numerado para ver qué hay.</string>
     <!-- A numbered place on the map, like "1. Broad Street pump". -->
     <string name="activities_reasoning_map_place">%1$d. %2$s</string>
