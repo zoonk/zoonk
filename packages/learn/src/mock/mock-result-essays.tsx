@@ -39,9 +39,11 @@ function PendingState() {
   return (
     <>
       <StepDetail role={status === "idle" ? undefined : "alert"}>{line}</StepDetail>
-      <Button onClick={() => void runner.gradeEssays()} size="sm" variant="outline">
-        {t("Grade it")}
-      </Button>
+      {status !== "limitReached" && (
+        <Button onClick={() => void runner.gradeEssays()} size="sm" variant="outline">
+          {t("Grade it")}
+        </Button>
+      )}
     </>
   );
 }
