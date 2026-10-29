@@ -8,6 +8,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudySession
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.LocalDate
@@ -25,6 +26,12 @@ interface StudyApi {
         goalId: UUID,
         body: JsonObject,
     ): OpenedStudyDay
+
+    suspend fun session(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+        timeZone: String,
+    ): StudySession
 
     /** A "10 more minutes" block after the day's session. */
     suspend fun addExtraBlock(
@@ -79,6 +86,33 @@ class StudyOpener(
                 val opened = api.openDay(session, day.goalId ?: goalId, openDayBody(day.localDate, step, next, timeZone()))
                 val target = opened.target?.takeIf { opened.targetStatus in STARTABLE }
                 target?.let { route(session, opened.sessionId, it.toDayStep()) }
+            }
+        }
+
+    /**
+     * A block end's Continue (main's `continueSession`): the session's next step, opened as Today
+     * opens it, or the session's summary once nothing is left. Today when the day is over or the
+     * step can't start, so Today says why.
+     */
+    suspend fun continueSession(sessionId: UUID): MutationResult<AppRoute> =
+        cache.mutate(invalidating = OPENING) { session ->
+            val read = api.session(session, sessionId, timeZone())
+            val goalId = read.goalId
+            // Opening saves what the queue gained since (a lapsed Plus block's replacement, lessons just written), as main's Continue does.
+            val opened =
+                if (read.current && goalId != null) {
+                    api.openDay(session, goalId, openDayBody(read.localDate, null, next = false, timeZone())).session.takeIf {
+                        it.id ==
+                            sessionId
+                    }
+                } else {
+                    null
+                }
+            val next = opened?.blocks?.firstOrNull { it.id == opened.nextBlockId }
+            when {
+                opened == null -> AppRoute.Today
+                next == null -> AppRoute.Session(sessionId = sessionId.toString())
+                else -> route(session, sessionId, next.toDayStep()) ?: AppRoute.Today
             }
         }
 

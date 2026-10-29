@@ -97,34 +97,121 @@ object AppLink {
 
             1 -> {
                 when (first) {
-                    "today" -> AppRoute.Today
-                    "plan" -> AppRoute.Plan(focus = query["focus"])
-                    "buddy" -> AppRoute.Buddy(ask = query["ask"])
-                    "exam" -> AppRoute.Exam
-                    "mind-maps" -> AppRoute.MindMaps(subject = fragment)
-                    "mistakes" -> AppRoute.Mistakes
-                    "speaking" -> AppRoute.Speaking(task = query["task"])
-                    "settings" -> AppRoute.Settings
-                    "profile" -> AppRoute.Profile
-                    "subscription", "pricing" -> AppRoute.Subscription
-                    "support" -> AppRoute.Help
-                    "stats" -> AppRoute.Statistics
-                    "level" -> AppRoute.StatsLevel
-                    "energy" -> AppRoute.StatsEnergy
-                    "activity" -> AppRoute.StatsActivity
-                    "score" -> AppRoute.StatsScore
-                    "patterns" -> AppRoute.StatsPatterns
-                    "courses" -> AppRoute.Catalog()
-                    "start" -> AppRoute.StartGoal(goal = query["goal"], planId = query["plan"], draftId = query["draft"])
-                    "session" -> AppRoute.Session(blockId = query["block"], goalId = query["goal"])
-                    "logbook" -> AppRoute.Logbook
-                    "focus-test" -> AppRoute.FocusTest(goalId = query["goal"])
-                    "pronunciation" -> AppRoute.Pronunciation(goalId = query["goal"])
-                    "login" -> AppRoute.Login
-                    "privacy" -> AppRoute.Privacy
-                    "terms" -> AppRoute.Terms
-                    "blog" -> AppRoute.Blog
-                    else -> null
+                    "today" -> {
+                        AppRoute.Today
+                    }
+
+                    "plan" -> {
+                        AppRoute.Plan(focus = query["focus"])
+                    }
+
+                    "buddy" -> {
+                        AppRoute.Buddy(ask = query["ask"])
+                    }
+
+                    "exam" -> {
+                        AppRoute.Exam
+                    }
+
+                    "mind-maps" -> {
+                        AppRoute.MindMaps(subject = fragment)
+                    }
+
+                    "mistakes" -> {
+                        AppRoute.Mistakes
+                    }
+
+                    "speaking" -> {
+                        AppRoute.Speaking(task = query["task"])
+                    }
+
+                    "settings" -> {
+                        AppRoute.Settings
+                    }
+
+                    "profile" -> {
+                        AppRoute.Profile
+                    }
+
+                    "subscription", "pricing" -> {
+                        AppRoute.Subscription
+                    }
+
+                    "support" -> {
+                        AppRoute.Help
+                    }
+
+                    "stats" -> {
+                        AppRoute.Statistics
+                    }
+
+                    "level" -> {
+                        AppRoute.StatsLevel
+                    }
+
+                    "energy" -> {
+                        AppRoute.StatsEnergy
+                    }
+
+                    "activity" -> {
+                        AppRoute.StatsActivity
+                    }
+
+                    "score" -> {
+                        AppRoute.StatsScore
+                    }
+
+                    "patterns" -> {
+                        AppRoute.StatsPatterns
+                    }
+
+                    "courses" -> {
+                        AppRoute.Catalog()
+                    }
+
+                    "start" -> {
+                        AppRoute.StartGoal(goal = query["goal"], planId = query["plan"], draftId = query["draft"])
+                    }
+
+                    "session" -> {
+                        AppRoute.Session(
+                            blockId = query["block"],
+                            goalId = query["goal"],
+                            stopped = !query["stopped"].isNullOrEmpty(),
+                        )
+                    }
+
+                    "logbook" -> {
+                        AppRoute.Logbook
+                    }
+
+                    "focus-test" -> {
+                        AppRoute.FocusTest(goalId = query["goal"])
+                    }
+
+                    "pronunciation" -> {
+                        AppRoute.Pronunciation(goalId = query["goal"])
+                    }
+
+                    "login" -> {
+                        AppRoute.Login
+                    }
+
+                    "privacy" -> {
+                        AppRoute.Privacy
+                    }
+
+                    "terms" -> {
+                        AppRoute.Terms
+                    }
+
+                    "blog" -> {
+                        AppRoute.Blog
+                    }
+
+                    else -> {
+                        null
+                    }
                 }
             }
 

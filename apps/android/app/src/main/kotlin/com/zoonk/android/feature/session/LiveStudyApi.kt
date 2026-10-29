@@ -6,6 +6,7 @@ import com.zoonk.android.data.perform
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockStart
+import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.StudySessionTimeZone
 import kotlinx.serialization.json.JsonObject
 import java.util.UUID
@@ -18,6 +19,12 @@ class LiveStudyApi(
         goalId: UUID,
         body: JsonObject,
     ): OpenedStudyDay = perform { api.clients(session).jsonBodies.openStudyDay(goalId, body) }
+
+    override suspend fun session(
+        session: AuthenticatedSession,
+        sessionId: UUID,
+        timeZone: String,
+    ): StudySession = perform { api.clients(session).studySessions.getStudySession(sessionId, timeZone) }
 
     override suspend fun addExtraBlock(
         session: AuthenticatedSession,

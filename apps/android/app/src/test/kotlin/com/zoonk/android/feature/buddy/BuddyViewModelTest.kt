@@ -22,6 +22,7 @@ import com.zoonk.api.models.MistakeListAvailability
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.SuggestedGoal
 import com.zoonk.api.models.Today
 import kotlinx.coroutines.CoroutineScope
@@ -161,6 +162,12 @@ class BuddyViewModelTest {
     }
 
     private object NoStudyApi : StudyApi {
+        override suspend fun session(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+            timeZone: String,
+        ): StudySession = error("Not used")
+
         override suspend fun prepare(
             session: AuthenticatedSession,
             sessionId: UUID,

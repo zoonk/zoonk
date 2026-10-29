@@ -9,6 +9,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.OpenedStudyDay
 import com.zoonk.api.models.StudyBlock
+import com.zoonk.api.models.StudySession
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
@@ -16,6 +17,7 @@ import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
@@ -34,6 +36,8 @@ class StudyOpenerTest {
         var target: JsonObject? = null
         var targetStatus = "resolved"
         var startError: String? = null
+        var session: StudySession = decodeFixture("study-session")
+        var openedSession: JsonObject? = null
 
         override suspend fun openDay(
             session: AuthenticatedSession,
@@ -41,13 +45,21 @@ class StudyOpenerTest {
             body: JsonObject,
         ): OpenedStudyDay {
             opened += body
+            val day = openedSession
             return decodeFixture(
                 "opened-study-day",
-                "session" to fixture("study-session"),
+                "session" to (day ?: fixture("study-session")),
+                *listOfNotNull(day?.let { "sessionId" to it.getValue("id") }).toTypedArray(),
                 "target" to target,
                 "targetStatus" to targetStatus,
             )
         }
+
+        override suspend fun session(
+            session: AuthenticatedSession,
+            sessionId: UUID,
+            timeZone: String,
+        ): StudySession = this.session
 
         override suspend fun addExtraBlock(
             session: AuthenticatedSession,
@@ -214,4 +226,66 @@ class StudyOpenerTest {
             assertEquals(listOf(SESSION), preparedFor(challenge))
             assertEquals(listOf(SESSION), preparedFor(unpicked))
         }
+
+    @Test
+    fun continuingOpensTheDayFirstSoItStartsTheNextBlockTheQueueGainedSince() =
+        runTest {
+            val api = FakeStudyApi()
+            api.session = decodeFixture("study-session", *studySession(next = null))
+            api.openedSession = fixture("study-session", *studySession(next = blockId(1)))
+
+            val result = opener(api).continueSession(SESSION)
+
+            assertEquals(MutationResult.Done(AppRoute.QuestionBlock(SESSION.toString(), blockId(1).toString())), result)
+            assertEquals(1, api.opened.size)
+            assertEquals(listOf(blockId(1)), api.started)
+        }
+
+    @Test
+    fun continuingWithNothingLeftOpensTheSessionsSummary() =
+        runTest {
+            val api = FakeStudyApi()
+            api.session = decodeFixture("study-session", *studySession(next = null))
+            api.openedSession = fixture("study-session", *studySession(next = null))
+
+            assertEquals(MutationResult.Done(AppRoute.Session(sessionId = SESSION.toString())), opener(api).continueSession(SESSION))
+            assertEquals(emptyList<UUID>(), api.started)
+        }
+
+    @Test
+    fun continuingAfterTheDayEndedOrWhenTheNextStepCantStartGoesBackToToday() =
+        runTest {
+            val api = FakeStudyApi()
+
+            api.session = decodeFixture("study-session", *studySession(next = blockId(1), current = false))
+            assertEquals(MutationResult.Done(AppRoute.Today), opener(api).continueSession(SESSION))
+            assertEquals(emptyList<JsonObject>(), api.opened)
+
+            api.session = decodeFixture("study-session", *studySession(next = blockId(1)))
+            api.openedSession = fixture("study-session", *studySession(next = blockId(1)), "id" to UUID.randomUUID().toString())
+            assertEquals(MutationResult.Done(AppRoute.Today), opener(api).continueSession(SESSION))
+
+            api.openedSession = fixture("study-session", *studySession(next = blockId(1)))
+            api.startError = "DAILY_LIMIT_REACHED"
+            assertEquals(MutationResult.Done(AppRoute.Today), opener(api).continueSession(SESSION))
+            assertEquals(emptyList<UUID>(), api.started)
+        }
+
+    private fun studySession(
+        next: UUID?,
+        current: Boolean = true,
+    ): Array<Pair<String, Any?>> =
+        arrayOf(
+            "id" to SESSION.toString(),
+            "goalId" to GOAL.toString(),
+            "current" to current,
+            "nextBlockId" to next?.toString(),
+            "blocks" to
+                JsonArray(
+                    listOf(
+                        fixture("study-block", "id" to blockId(0).toString(), "position" to 0, "status" to "completed"),
+                        fixture("study-block", "id" to blockId(1).toString(), "position" to 1),
+                    ),
+                ),
+        )
 }

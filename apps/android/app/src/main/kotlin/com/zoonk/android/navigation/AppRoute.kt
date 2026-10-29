@@ -158,11 +158,17 @@ sealed interface AppRoute : NavKey {
         val goalId: String,
     ) : AppRoute
 
-    /** `blockId` opens one of today's blocks; `goalId` shows that goal's day before it has a saved block. */
+    /**
+     * `blockId` opens one of today's blocks; `goalId` shows that goal's day before it has a saved
+     * block; `sessionId` shows that session's day. `stopped` follows Stop for today, whose summary
+     * offers to keep going.
+     */
     @Serializable
     data class Session(
         val blockId: String? = null,
         val goalId: String? = null,
+        val sessionId: String? = null,
+        val stopped: Boolean = false,
     ) : AppRoute
 
     /** A practice or review block of a session, which main plays inside its session screen. */

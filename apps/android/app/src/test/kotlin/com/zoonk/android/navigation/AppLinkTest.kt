@@ -51,6 +51,7 @@ class AppLinkTest {
             "/session" to AppRoute.Session(),
             "/session?block=block-1" to AppRoute.Session(blockId = "block-1"),
             "/session?goal=goal-1" to AppRoute.Session(goalId = "goal-1"),
+            "/session?stopped=1" to AppRoute.Session(stopped = true),
             "/logbook" to AppRoute.Logbook,
             "/learn/lesson-1" to AppRoute.Lesson("lesson-1"),
             "/learn/lesson-1?session=session-1&answer=b" to AppRoute.Lesson("lesson-1", "session-1", "b"),
