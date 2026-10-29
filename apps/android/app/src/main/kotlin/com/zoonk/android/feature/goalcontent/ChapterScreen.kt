@@ -42,7 +42,10 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.feedback.FeedbackTarget
+import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.plan.planGoal
+import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.RoutePlaceholder
@@ -61,6 +64,7 @@ import com.zoonk.android.ui.richtext.RichInlineText
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.ChapterLesson
+import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalChapter
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.MapSkill
@@ -92,7 +96,12 @@ fun ChapterScreen(
         }
 
         else -> {
-            ChapterContent(ChapterKey(goal.id, chapterId), app.goalContent, navigator)
+            ChapterContent(ChapterKey(goal.id, chapterId), app.goalContent, navigator) {
+                ReportProblemMenu(
+                    app,
+                    FeedbackTarget(screen = "chapter", contentKind = FeedbackSubmissionContext.ContentKind.CHAPTER, contentId = chapterId),
+                )
+            }
         }
     }
 }
@@ -102,6 +111,7 @@ internal fun ChapterContent(
     key: ChapterKey,
     store: GoalContentStore,
     navigator: AppNavigator,
+    menu: @Composable () -> Unit = {},
 ) {
     val resource = store.chapter[key]
     val state by resource.collectShown()
@@ -124,6 +134,7 @@ internal fun ChapterContent(
             ChapterPage(
                 chapter = shown.value,
                 practice = practiceState,
+                menu = menu,
                 actions =
                     ChapterActions(
                         back = back,
@@ -189,10 +200,12 @@ internal fun ChapterPage(
     chapter: GoalChapter,
     practice: PracticeState,
     actions: ChapterActions,
+    menu: @Composable () -> Unit = {},
 ) {
     DetailPage(
         title = chapter.chapter.title,
         onBack = actions.back,
+        actions = { menu() },
         aside = {
             ChapterProgress(chapter)
             ChapterPractice(chapter, practice, actions)
@@ -283,7 +296,7 @@ private fun LessonRow(
 
     ContentRow(
         headline = {
-            TitleWithChip(chip = if (lesson.plusRequired) ({ PlusChip() }) else null) {
+            TitleWithChip(chip = if (lesson.plusRequired) ({ PlusMark() }) else null) {
                 Text(
                     text = numberedTitle(position.toLong(), lesson.title),
                     color =
@@ -375,7 +388,7 @@ private fun ChapterPractice(
         if (canTestOut) {
             ContentRow(
                 headline = {
-                    TitleWithChip(chip = if (chapter.testOut.plusRequired) ({ PlusChip() }) else null) {
+                    TitleWithChip(chip = if (chapter.testOut.plusRequired) ({ PlusMark() }) else null) {
                         Text(stringResource(R.string.goalcontent_test_out_title))
                     }
                 },

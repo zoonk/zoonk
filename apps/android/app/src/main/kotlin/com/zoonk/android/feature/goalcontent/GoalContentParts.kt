@@ -68,7 +68,6 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
-import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.StatusMessage
@@ -433,15 +432,6 @@ internal fun FrequencyChip(modifier: Modifier = Modifier) {
                 .padding(horizontal = 6.dp, vertical = 2.dp),
         style = MaterialTheme.typography.labelMedium,
         maxLines = 1,
-    )
-}
-
-@Composable
-internal fun PlusChip(modifier: Modifier = Modifier) {
-    val spoken = stringResource(R.string.goalcontent_plus_spoken)
-    LabelChip(
-        text = stringResource(R.string.goalcontent_plus),
-        modifier = modifier.clearAndSetSemantics { contentDescription = spoken },
     )
 }
 

@@ -30,6 +30,8 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.feedback.FeedbackTarget
+import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.feature.plan.planGoal
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -68,7 +70,9 @@ fun SubjectScreen(
         return
     }
 
-    SubjectContent(goal.id, route.subjectKey, app.plans.syllabus[goal.id], app.goalContent, navigator)
+    SubjectContent(goal.id, route.subjectKey, app.plans.syllabus[goal.id], app.goalContent, navigator) {
+        ReportProblemMenu(app, FeedbackTarget(screen = "subject"))
+    }
 }
 
 @Composable
@@ -78,6 +82,7 @@ internal fun SubjectContent(
     syllabus: Resource<Syllabus>,
     store: GoalContentStore,
     navigator: AppNavigator,
+    menu: @Composable () -> Unit = {},
 ) {
     val back: () -> Unit = { navigator.back() }
     val state by syllabus.collectShown()
@@ -94,6 +99,7 @@ internal fun SubjectContent(
                     syllabus = shown.value,
                     subject = subject,
                     writes = writes.state.collectAsStateWithLifecycle().value,
+                    menu = menu,
                     actions =
                         SubjectActions(
                             back = back,
@@ -186,11 +192,13 @@ internal fun SubjectPage(
     writes: SubjectWrites,
     actions: SubjectActions,
     today: LocalDate = LocalDate.now(),
+    menu: @Composable () -> Unit = {},
 ) {
     DetailPage(
         title = subject.name,
         onBack = actions.back,
         aside = { SubjectAside(syllabus, subject, today) },
+        actions = { menu() },
     ) { asideBeside ->
         item(key = "hero", contentType = "hero") { SubjectHero(syllabus, subject, actions) }
 

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -46,6 +47,7 @@ internal fun DetailPage(
     onBack: () -> Unit,
     modifier: Modifier = Modifier,
     aside: (@Composable ColumnScope.() -> Unit)? = null,
+    actions: @Composable RowScope.() -> Unit = {},
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
     val listState = rememberLazyListState()
@@ -55,6 +57,7 @@ internal fun DetailPage(
         onBack = onBack,
         modifier = modifier,
         title = { if (titleAway) Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
+        actions = actions,
     ) { padding ->
         val direction = LocalLayoutDirection.current
         val listPadding =

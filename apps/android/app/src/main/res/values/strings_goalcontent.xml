@@ -214,6 +214,4 @@
     <string name="goalcontent_skill_learning">Learning</string>
     <string name="goalcontent_skill_solid">Solid</string>
     <string name="goalcontent_skill_mastered">Mastered</string>
-    <string name="goalcontent_plus" translatable="false">Plus</string>
-    <string name="goalcontent_plus_spoken">Available with Plus</string>
 </resources>

@@ -66,7 +66,6 @@
   "goalcontent_not_found_title": "5d426786bd07b469a9e431888f7ab22cf412ce943e4d14ca6d5ed86753c6fc88",
   "goalcontent_not_in_plan": "17fba669ad3d569d50db8a8fde84b6bcaefb007203d2518572059bdce13cf226",
   "goalcontent_percent_done": "3f59c42f4a9347c56b73148f1b0f2455579f5a42026fac059148acbb92b64ebc",
-  "goalcontent_plus_spoken": "e0a1e44d75405e6128c27cf762e0327412c5182729a03ef320caef85626155aa",
   "goalcontent_practice": "1b0cdd67cec88ec9fa92c14ca63e4633dce3a2c52cff891b95d17a2ca26835c2",
   "goalcontent_practice_chapter": "bef8e786288e3eaddb4d48a2efe3a41788e84e6be1d16bca702870764703a756",
   "goalcontent_practice_daily_cap": "1bf16e7abd2987e70f958938183ad7c8675d31155217f07df46ab13b9f1c9005",
@@ -354,5 +353,4 @@
     <string name="goalcontent_skill_learning">Aprendendo</string>
     <string name="goalcontent_skill_solid">Firme</string>
     <string name="goalcontent_skill_mastered">Dominado</string>
-    <string name="goalcontent_plus_spoken">Disponível no Plus</string>
 </resources>
