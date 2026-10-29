@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
@@ -65,7 +64,6 @@ fun AnswerOption(
         modifier =
             modifier
                 .fillMaxWidth()
-                .heightIn(min = 56.dp)
                 .clip(shape)
                 .background(tone.container)
                 .border(tone.border, shape)
@@ -75,7 +73,7 @@ fun AnswerOption(
                     } else {
                         Modifier.selectable(selected = picked, enabled = enabled, role = role, onClick = onClick)
                     },
-                ).padding(horizontal = 14.dp, vertical = 12.dp),
+                ).padding(horizontal = 14.dp, vertical = 16.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         NumberKey(marker, Modifier.alignByBaseline())

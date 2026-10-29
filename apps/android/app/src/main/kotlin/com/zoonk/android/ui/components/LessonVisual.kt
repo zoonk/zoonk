@@ -277,7 +277,9 @@ private class ChartLayout(
             .size.height
             .toFloat()
     val top = lineHeight + gap
-    private val plotHeight = with(text.density) { PLOT_HEIGHT.toPx() }
+
+    // Grows with the font, so a large font's axis labels don't crowd each other.
+    private val plotHeight = max(with(text.density) { PLOT_HEIGHT.toPx() }, lineHeight * PLOT_LINES)
     val bottom = top + plotHeight
     val band = max(right - left, 1f) / visual.categories.size
 
@@ -286,7 +288,10 @@ private class ChartLayout(
 
     val categoryLayouts = categoryLines.lines.map { lines -> lines.map(text::label) }
 
-    val height = bottom + gap + lineHeight * (categoryLines.lines.maxOfOrNull { it.size } ?: 1)
+    /** Below the lowest axis label, which is centered on the plot's bottom line. */
+    val categoriesTop = bottom + max(gap, lineHeight / 2)
+
+    val height = categoriesTop + lineHeight * (categoryLines.lines.maxOfOrNull { it.size } ?: 1)
 
     val y = LinearScale(domain, bottom to top)
 
@@ -376,11 +381,9 @@ private fun DrawScope.drawLines(
 }
 
 private fun DrawScope.drawCategories(layout: ChartLayout) {
-    val top = layout.bottom + LABEL_GAP.toPx()
-
     layout.categoryLayouts.forEachIndexed { index, lines ->
         if (index % layout.categoryLines.step != 0) return@forEachIndexed
-        var y = top
+        var y = layout.categoriesTop
         lines.forEach { line ->
             val x = (layout.center(index) - line.size.width / 2f).coerceIn(0f, max(size.width - line.size.width, 0f))
             drawText(line, topLeft = Offset(x, y))
@@ -472,6 +475,7 @@ private fun TimelineVisual(
 private val LABEL_GAP = 6.dp
 private val PLOT_END = 8.dp
 private val PLOT_HEIGHT = 160.dp
+private const val PLOT_LINES = 6
 private val BAR_RADIUS = 3.dp
 private val LINE_WIDTH = 2.dp
 private val DOT_RADIUS = 3.5.dp
