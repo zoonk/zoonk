@@ -3,17 +3,11 @@ name: Apple App
 on:
   push:
     branches: [main]
-    paths: [apps/apple/**]
+    paths: [apps/apple/**, .github/workflows/apple.yml, .github/workflows/native-changes.yml]
   pull_request:
     branches: [main]
-    paths: [apps/apple/**]
+    paths: [apps/apple/**, .github/workflows/apple.yml, .github/workflows/native-changes.yml]
     types: [opened, synchronize, reopened]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  # A newer push waits for the running build instead of cancelling it, so a busy PR's build still
-  # finishes and saves its compilation cache. GitHub keeps one run pending, the newest.
-  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -22,8 +16,18 @@ env:
   DEVELOPER_DIR: /Applications/Xcode_27.1.app/Contents/Developer
 
 jobs:
+  changes:
+    uses: ./.github/workflows/native-changes.yml
+    with:
+      app: apple
+
   format:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
+    concurrency:
+      group: ${{ github.workflow }}-format-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: false
     steps:
       - name: Check out code
         uses: actions/checkout@v7
@@ -32,8 +36,14 @@ jobs:
         run: make -C apps/apple format-check
 
   build:
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
     runs-on: xcode-27
     timeout-minutes: 30
+    concurrency:
+      group: ${{ github.workflow }}-build-${{ github.event.pull_request.number || github.ref }}
+      # Let the running build finish and save its compilation cache.
+      cancel-in-progress: false
     steps:
       - name: Check out code
         uses: actions/checkout@v7

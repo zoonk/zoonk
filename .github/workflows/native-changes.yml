@@ -1,0 +1,52 @@
+name: Native App Changes
+
+on:
+  workflow_call:
+    inputs:
+      app:
+        type: string
+        required: true
+    outputs:
+      changed:
+        value: ${{ jobs.changes.outputs.changed }}
+
+permissions:
+  contents: read
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      changed: ${{ steps.diff.outputs.changed }}
+    steps:
+      - name: Check out PR head
+        if: github.event_name == 'pull_request' && github.event.action == 'synchronize'
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          sparse-checkout: .github
+
+      # PR path filters compare the whole branch, including earlier native edits.
+      # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow#git-diff-comparisons
+      - name: Check files changed by this update
+        id: diff
+        shell: bash
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          ACTION: ${{ github.event.action }}
+          BEFORE: ${{ github.event.before }}
+          APP: ${{ inputs.app }}
+        run: |
+          if [[ "$EVENT_NAME" != pull_request || "$ACTION" != synchronize ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          git fetch --no-tags --filter=blob:none --depth=1 origin "$BEFORE"
+          files=$(git diff --name-only --no-renames "$BEFORE" HEAD -- \
+            "apps/$APP/" ".github/workflows/$APP.yml" ".github/workflows/native-changes.yml")
+          if [[ -n "$files" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi

@@ -3,15 +3,11 @@ name: Android App
 on:
   push:
     branches: [main]
-    paths: [apps/android/**, .github/workflows/android.yml]
+    paths: [apps/android/**, .github/workflows/android.yml, .github/workflows/native-changes.yml]
   pull_request:
     branches: [main]
-    paths: [apps/android/**, .github/workflows/android.yml]
+    paths: [apps/android/**, .github/workflows/android.yml, .github/workflows/native-changes.yml]
     types: [opened, synchronize, reopened]
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
-  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 permissions:
   contents: read
@@ -20,10 +16,20 @@ env:
   GRADLE_ARGUMENTS: --no-daemon --console=plain --profile -Dorg.gradle.jvmargs="-Xmx4g -Dfile.encoding=UTF-8" -Pkotlin.daemon.jvmargs=-Xmx2g
 
 jobs:
+  changes:
+    uses: ./.github/workflows/native-changes.yml
+    with:
+      app: android
+
   compile:
     name: compile
+    needs: changes
+    if: needs.changes.outputs.changed == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    concurrency:
+      group: ${{ github.workflow }}-compile-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
     steps:
       - &checkout
         name: Check out code
@@ -75,9 +81,12 @@ jobs:
   gradle:
     name: ${{ matrix.job }}
     needs: compile
-    if: ${{ !cancelled() }}
+    if: ${{ !cancelled() && needs.compile.result != 'skipped' }}
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    concurrency:
+      group: ${{ github.workflow }}-${{ matrix.job }}-${{ github.event.pull_request.number || github.ref }}
+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
     strategy:
       fail-fast: false
       matrix:
