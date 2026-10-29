@@ -27,9 +27,9 @@
   "activities_dialogue_you_said": "cd62b3dee6b0cec802e4f6a58ade526e0f434ae1fac3d48732c6be60feb7ca0a",
   "activities_find_error_ai_answer": "2d956a7f5715acc59dc164b7c1f7e36f2e66954182389a36af35ee5b78d4de07",
   "activities_find_error_ai_asked": "360791565b0e13ecdc2a0fb92d9b0b0176831151b44d8d8c7e947adbd72bfded",
-  "activities_find_error_ai_description": "eb2befe24ac4b4821065ac55fbed765a36fa69aff2588c41df162b863931be5b",
+  "activities_find_error_ai_description": "1b69f12f07520d547874d206810cd89de6a51b99245f29ac92f18f30f5a9b5dc",
   "activities_find_error_ai_note": "a79e214330078f720e8ec14ffebe48f36046095f249ab5c9efa76ae055c9efd1",
-  "activities_find_error_description": "8dd888cf010f6a94876a7134bfae2c493d39ef1c84b5a536c373f28772953c4e",
+  "activities_find_error_description": "869c9b0a4b01092c8fae79a7a8eb9950830f40efb946596b84e6841b17b5f8c5",
   "activities_find_error_problem": "d891354c83da08189c0518706166e9351624c813117583268f3b402593f7fea2",
   "activities_find_error_step": "8d6d99abb3dcee25c2d5e82c4a1dc63d745ad2da831fb8b1203f612a12abfd72",
   "activities_find_error_worked": "7c06cf8b998ae49e2a4201f6663fe8933238332cc80ccf8ab9009f60f8e6eda5",
@@ -143,9 +143,17 @@
     <string name="activities_find_error_step">Étape %1$d : %2$s</string>
     <string name="activities_find_error_wrong_step">L’étape %1$d est fausse.</string>
     <!-- For TalkBack, with the number of steps. -->
-    <string name="activities_find_error_description">Une résolution en %1$d étapes, dont une est fausse. À toi de la trouver.</string>
+    <plurals name="activities_find_error_description">
+        <item quantity="one">Une réponse détaillée en %1$d étape. Une étape est erronée ; choisis-la.</item>
+        <item quantity="many">Une réponse détaillée en %1$d étapes. Une étape est erronée ; choisis-la.</item>
+        <item quantity="other">Une réponse détaillée en %1$d étapes. Une étape est erronée ; choisis-la.</item>
+    </plurals>
     <!-- For TalkBack, with the number of steps. -->
-    <string name="activities_find_error_ai_description">Une réponse d’assistant IA en %1$d étapes, dont une est fausse. À toi de la trouver.</string>
+    <plurals name="activities_find_error_ai_description">
+        <item quantity="one">Une réponse d’un assistant IA en %1$d étape. Une étape est erronée ; choisis-la.</item>
+        <item quantity="many">Une réponse d’un assistant IA en %1$d étapes. Une étape est erronée ; choisis-la.</item>
+        <item quantity="other">Une réponse d’un assistant IA en %1$d étapes. Une étape est erronée ; choisis-la.</item>
+    </plurals>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Étapes</string>
     <!-- Before why a pick is wrong, like "Not quite: that adds the tax first." -->

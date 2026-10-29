@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -58,9 +59,9 @@ private fun FindErrorActivity(props: ActivityProps) {
     val isAi = fields.author == PlayableLibraryStepAnyOfContentOneOf29Fields.Author.AI
     val description =
         if (isAi) {
-            stringResource(R.string.activities_find_error_ai_description, fields.steps.size)
+            pluralStringResource(R.plurals.activities_find_error_ai_description, fields.steps.size, fields.steps.size)
         } else {
-            stringResource(R.string.activities_find_error_description, fields.steps.size)
+            pluralStringResource(R.plurals.activities_find_error_description, fields.steps.size, fields.steps.size)
         }
 
     ActivityCanvas(description) {

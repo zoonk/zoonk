@@ -79,9 +79,15 @@
     <string name="activities_find_error_step">Step %1$d: %2$s</string>
     <string name="activities_find_error_wrong_step">The wrong step is step %1$d.</string>
     <!-- For TalkBack, with the number of steps. -->
-    <string name="activities_find_error_description">A worked answer in %1$d steps. One step is wrong; pick it.</string>
+    <plurals name="activities_find_error_description">
+        <item quantity="one">A worked answer in %1$d step. One step is wrong; pick it.</item>
+        <item quantity="other">A worked answer in %1$d steps. One step is wrong; pick it.</item>
+    </plurals>
     <!-- For TalkBack, with the number of steps. -->
-    <string name="activities_find_error_ai_description">An AI assistant\'s answer in %1$d steps. One step is wrong; pick it.</string>
+    <plurals name="activities_find_error_ai_description">
+        <item quantity="one">An AI assistant\'s answer in %1$d step. One step is wrong; pick it.</item>
+        <item quantity="other">An AI assistant\'s answer in %1$d steps. One step is wrong; pick it.</item>
+    </plurals>
 
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Steps</string>

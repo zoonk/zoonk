@@ -27,9 +27,9 @@
   "activities_dialogue_you_said": "1aa4bb3910a8d100188ff88735f48f0b3930e0e4190636678aa481cc7cc8a437",
   "activities_find_error_ai_answer": "0d0a039b5ef3e92f1405e46489bfeb29a1bad8fa5d6568d999b8844973413799",
   "activities_find_error_ai_asked": "8b0cec117b33ea10889e9da02f21aaec04eb088892dc7bbce1a83335bb0c842e",
-  "activities_find_error_ai_description": "90581211f09534076eef1fa4fd5be89a4a09d41c6857bff4b54c62aa685a0716",
+  "activities_find_error_ai_description": "e519005dc4a6f6c878385b22aeed88c161524f683e12daeec469a74c2249b4ce",
   "activities_find_error_ai_note": "f8e88e9f36899b149d1d833de9e211f7442cdde39d0e7bb48c575d11322eb764",
-  "activities_find_error_description": "65a073c21b8a137d6b1f97bf404434e516deba141eb6149297c4824750d93d41",
+  "activities_find_error_description": "14140ac617beb63cd8203688ba4287028381995a294437593ace8eb4198158d2",
   "activities_find_error_problem": "22d80c93763e1e784044008106ed82676fd8a7695e3c8731896f805968352378",
   "activities_find_error_step": "4f7ae19acf85ea9134cb74073f88555ab2abfde37bc091fa33833d2578d4eb68",
   "activities_find_error_worked": "8f353c287027399bfc09c0da23b8c342d0bac17153af0a3fc3bf1e3be7b4dac8",
@@ -143,9 +143,17 @@
     <string name="activities_find_error_step">Passo %1$d: %2$s</string>
     <string name="activities_find_error_wrong_step">O passo %1$d está errado.</string>
     <!-- For TalkBack, with the number of steps. -->
-    <string name="activities_find_error_description">Uma resolução com %1$d passos. Um deles está errado; escolha qual.</string>
+    <plurals name="activities_find_error_description">
+        <item quantity="one">Uma resposta resolvida em %1$d passo. Um passo está errado; escolha qual.</item>
+        <item quantity="many">Uma resposta resolvida em %1$d passos. Um passo está errado; escolha qual.</item>
+        <item quantity="other">Uma resposta resolvida em %1$d passos. Um passo está errado; escolha qual.</item>
+    </plurals>
     <!-- For TalkBack, with the number of steps. -->
-    <string name="activities_find_error_ai_description">A resposta de um assistente de IA em %1$d passos. Um deles está errado; escolha qual.</string>
+    <plurals name="activities_find_error_ai_description">
+        <item quantity="one">Uma resposta de um assistente de IA em %1$d passo. Um passo está errado; escolha qual.</item>
+        <item quantity="many">Uma resposta de um assistente de IA em %1$d passos. Um passo está errado; escolha qual.</item>
+        <item quantity="other">Uma resposta de um assistente de IA em %1$d passos. Um passo está errado; escolha qual.</item>
+    </plurals>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Passos</string>
     <!-- Before why a pick is wrong, like "Not quite: that adds the tax first." -->

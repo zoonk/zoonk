@@ -27,9 +27,9 @@
   "activities_dialogue_you_said": "b1fbaaadc1ea4a6bac15d11bf868617ba0288eaa13675b2d9687a5ec006e7d7f",
   "activities_find_error_ai_answer": "90b58be6f147d4ce0bfef66434e13ae4956b7dc777b747072674e1a6d26d89d0",
   "activities_find_error_ai_asked": "ef32cbdf513267a11d60910e9d030be38f1c023df4bc9939e918bea6ebbf5889",
-  "activities_find_error_ai_description": "f037f1f8fc203929af05abe459a3394186c14a3ac6b168ec27e3172c9a3c968d",
+  "activities_find_error_ai_description": "92a28b1775be4955d84fd7c6b635de2a8170d98780381f8842cdc5992127f48e",
   "activities_find_error_ai_note": "cd249a9957327313e2a48713b6bd65d0062c0c829b5af259bc8cb099a5d70147",
-  "activities_find_error_description": "701bbb4cb2d3c80ae6cce737a5c6b0606554b3945e8d886140b3941c445cd669",
+  "activities_find_error_description": "c30797e96de80b94d383ca7366007cec75149b255ac909910e9d3c2f658ce292",
   "activities_find_error_problem": "dabd7384bd2316e1b9d7cacb1d49353cfe769ce653503ab99347f6ec5bd3aafa",
   "activities_find_error_step": "c22a7db069e3e2c307a847431b825255a5f62cfbf2a4e1767b71b0ead0b959e9",
   "activities_find_error_worked": "87e577e59d789336677df0afc513534e473325fec35606aa74e8bdbe20d7bf97",
@@ -142,9 +142,15 @@
     <string name="activities_find_error_step">Schritt %1$d: %2$s</string>
     <string name="activities_find_error_wrong_step">Schritt %1$d ist falsch.</string>
     <!-- For TalkBack, with the number of steps. -->
-    <string name="activities_find_error_description">Eine ausgearbeitete Lösung mit %1$d Schritten. Ein Schritt ist falsch. Wähle ihn aus.</string>
+    <plurals name="activities_find_error_description">
+        <item quantity="one">Eine Musterlösung mit %1$d Schritt. Ein Schritt ist falsch. Wähle ihn aus.</item>
+        <item quantity="other">Eine Musterlösung mit %1$d Schritten. Ein Schritt ist falsch. Wähle ihn aus.</item>
+    </plurals>
     <!-- For TalkBack, with the number of steps. -->
-    <string name="activities_find_error_ai_description">Die Antwort eines KI-Assistenten mit %1$d Schritten. Ein Schritt ist falsch. Wähle ihn aus.</string>
+    <plurals name="activities_find_error_ai_description">
+        <item quantity="one">Eine Antwort eines KI-Assistenten mit %1$d Schritt. Ein Schritt ist falsch. Wähle ihn aus.</item>
+        <item quantity="other">Eine Antwort eines KI-Assistenten mit %1$d Schritten. Ein Schritt ist falsch. Wähle ihn aus.</item>
+    </plurals>
     <!-- The name of the list of a problem's steps, for TalkBack. -->
     <string name="activities_solver_steps">Schritte</string>
     <!-- Before why a pick is wrong, like "Not quite: that adds the tax first." -->
