@@ -93,6 +93,13 @@ import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.Suggestion
+import com.zoonk.android.ui.components.SuggestionAction
+import com.zoonk.android.ui.components.SuggestionActions
+import com.zoonk.android.ui.components.SuggestionDescription
+import com.zoonk.android.ui.components.SuggestionHeader
+import com.zoonk.android.ui.components.SuggestionLayout
+import com.zoonk.android.ui.components.SuggestionMark
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.format.DateStyle
 import com.zoonk.android.ui.format.currentLocale
@@ -134,6 +141,7 @@ internal val gallerySections =
         GallerySection("Lesson visuals") { LessonVisuals() },
         GallerySection("Headers and empty states") { HeadersAndEmptyStates() },
         GallerySection("Limit notices") { LimitNotices() },
+        GallerySection("Suggestions") { Suggestions() },
         GallerySection("Load failed") { LoadFailedMessage(onRetry = {}) { TextButton(onClick = {}) { Text("Go to Today") } } },
         GallerySection("Formatting") { Formatting() },
         GallerySection("Audio") { Audio() },
@@ -568,6 +576,38 @@ private fun LimitNotices() {
             Limit.SlowDown(30) to LimitSubject.Lessons,
             Limit.Reached(LimitTier.Free, LimitPeriod.Day) to LimitSubject.Calls,
         ).forEach { (limit, subject) -> LimitNotice(limit, subject, onCreateAccount = {}, onSeePlus = {}) }
+    }
+}
+
+@Composable
+private fun Suggestions() {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Suggestion("Plan suggestion", "Your time covers 80% of the exam by Nov 7", SuggestionLayout.Line) {
+            SuggestionHeader("Your time covers 80% of the exam")
+            SuggestionDescription("About 25 more minutes a day covers all of it.")
+            SuggestionActions { SuggestionAction("Use 1 hr a day", onClick = {}) }
+        }
+        Suggestion(
+            "Plan suggestion",
+            "Daily time changed to 1 hr.",
+            SuggestionLayout.Line,
+            mark = SuggestionMark.Done,
+            answered = true,
+            lineAction = { SuggestionAction("Undo", onClick = {}) },
+        ) {}
+        Suggestion(
+            "Learn Python is paused",
+            "Learn Python is paused",
+            SuggestionLayout.Panel,
+            mark = SuggestionMark.Symbol(R.drawable.ic_pause),
+        ) {
+            SuggestionHeader("Learn Python is paused")
+            SuggestionDescription("Nothing is planned until you resume it.")
+            SuggestionActions {
+                SuggestionAction("Resume", onClick = {})
+                SuggestionAction("Adjust plan", onClick = {}, outlined = true)
+            }
+        }
     }
 }
 

@@ -1,0 +1,266 @@
+package com.zoonk.android.ui.components
+
+import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.paneTitle
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import com.zoonk.android.R
+import com.zoonk.android.ui.theme.zoonk
+
+/** A line that opens its content in a sheet (beside nothing), or its content in full (beside the page). */
+enum class SuggestionLayout { Line, Panel }
+
+sealed interface SuggestionMark {
+    /** Something new to know or decide. */
+    data object New : SuggestionMark
+
+    data object Done : SuggestionMark
+
+    data class Symbol(
+        @DrawableRes val icon: Int,
+    ) : SuggestionMark
+}
+
+/**
+ * Main's `Suggestion`: one thing to know or decide. As a [SuggestionLayout.Line] it shows [summary]
+ * and [lineAction], by default "View", which opens [content] in a bottom sheet titled [label]; as a
+ * [SuggestionLayout.Panel] it shows [content] in full. Once [answered], [summary] is the answer's
+ * result, read out when it shows, and an open sheet closes.
+ */
+@Composable
+fun Suggestion(
+    label: String,
+    summary: String,
+    layout: SuggestionLayout,
+    modifier: Modifier = Modifier,
+    mark: SuggestionMark = SuggestionMark.New,
+    answered: Boolean = false,
+    lineAction: (@Composable () -> Unit)? = { SuggestionOpen() },
+    content: @Composable SuggestionContentScope.() -> Unit,
+) {
+    var open by rememberSaveable { mutableStateOf(false) }
+    val frame = remember(mark) { Frame(mark) { open = true } }
+
+    LaunchedEffect(answered) { if (answered) open = false }
+
+    CompositionLocalProvider(LocalFrame provides frame) {
+        when (layout) {
+            SuggestionLayout.Line -> {
+                SuggestionLine(summary, answered, modifier, lineAction)
+                if (open) SuggestionSheet(label, onClose = { open = false }, content)
+            }
+
+            SuggestionLayout.Panel -> {
+                Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, border = frameBorder()) {
+                    CompositionLocalProvider(LocalPresentation provides Presentation.Panel) {
+                        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                            SuggestionContentScope(this) { open = false }.content()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/** The suggestion's content, which [close]s its sheet, say before leaving for another page. */
+@Stable
+class SuggestionContentScope internal constructor(
+    column: ColumnScope,
+    val close: () -> Unit,
+) : ColumnScope by column
+
+@Composable
+fun SuggestionOpen(text: String = stringResource(R.string.suggestion_view)) {
+    OutlinedButton(onClick = LocalFrame.current.open) { Text(text) }
+}
+
+@Composable
+fun SuggestionHeader(text: String) {
+    val sheet = LocalPresentation.current == Presentation.Sheet
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.CenterVertically) {
+        Mark(if (sheet) SHEET_MARK else PANEL_MARK)
+        Text(
+            text = text,
+            modifier = Modifier.semantics { heading() },
+            style = if (sheet) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall,
+        )
+    }
+}
+
+@Composable
+fun SuggestionDescription(text: String) {
+    Text(text = text, style = bodyStyle(), color = MaterialTheme.colorScheme.onSurfaceVariant)
+}
+
+@Composable
+fun SuggestionResult(text: String) {
+    Text(
+        text = text,
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+        style = bodyStyle(),
+        fontWeight = FontWeight.Medium,
+    )
+}
+
+@Composable
+fun SuggestionSaveError() {
+    Text(
+        text = stringResource(R.string.suggestion_save_failed),
+        modifier = Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.error,
+    )
+}
+
+/** Side by side in a panel; one under another, full width, in a sheet. */
+@Composable
+fun SuggestionActions(content: @Composable () -> Unit) {
+    if (LocalPresentation.current == Presentation.Sheet) {
+        Column(Modifier.fillMaxWidth().padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) { content() }
+    } else {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) { content() }
+    }
+}
+
+/** On a line it's always outlined, beside the summary. */
+@Composable
+fun SuggestionAction(
+    text: String,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    outlined: Boolean = false,
+) {
+    val presentation = LocalPresentation.current
+    val modifier = if (presentation == Presentation.Sheet) Modifier.fillMaxWidth() else Modifier
+
+    if (outlined || presentation == Presentation.Line) {
+        OutlinedButton(onClick = onClick, modifier = modifier, enabled = enabled) { Text(text) }
+    } else {
+        Button(onClick = onClick, modifier = modifier, enabled = enabled) { Text(text) }
+    }
+}
+
+@Composable
+private fun SuggestionLine(
+    summary: String,
+    answered: Boolean,
+    modifier: Modifier,
+    action: (@Composable () -> Unit)?,
+) {
+    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, border = frameBorder()) {
+        CompositionLocalProvider(LocalPresentation provides Presentation.Line) {
+            Row(
+                modifier = Modifier.heightIn(min = 56.dp).padding(start = 12.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Mark(PANEL_MARK)
+                Text(
+                    text = summary,
+                    modifier =
+                        Modifier
+                            .weight(
+                                1f,
+                            ).then(if (answered) Modifier.semantics { liveRegion = LiveRegionMode.Polite } else Modifier),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = if (answered) FontWeight.Medium else null,
+                    color = if (answered) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = if (answered) Int.MAX_VALUE else 2,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                action?.invoke()
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SuggestionSheet(
+    label: String,
+    onClose: () -> Unit,
+    content: @Composable SuggestionContentScope.() -> Unit,
+) {
+    ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
+        CompositionLocalProvider(LocalPresentation provides Presentation.Sheet) {
+            Column(
+                modifier = Modifier.padding(start = 24.dp, end = 24.dp, bottom = 32.dp).semantics { paneTitle = label },
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                SuggestionContentScope(this, onClose).content()
+            }
+        }
+    }
+}
+
+@Composable
+private fun Mark(size: Dp) {
+    val colors = MaterialTheme.colorScheme
+    val (icon, tint) =
+        when (val mark = LocalFrame.current.mark) {
+            SuggestionMark.New -> R.drawable.ic_auto_awesome to MaterialTheme.zoonk.warningText
+            SuggestionMark.Done -> R.drawable.ic_check to colors.tertiary
+            is SuggestionMark.Symbol -> mark.icon to colors.onSurfaceVariant
+        }
+    Icon(painterResource(icon), contentDescription = null, modifier = Modifier.size(size), tint = tint)
+}
+
+@Composable
+private fun frameBorder() = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
+
+@Composable
+private fun bodyStyle() =
+    if (LocalPresentation.current == Presentation.Sheet) MaterialTheme.typography.bodyLarge else MaterialTheme.typography.bodyMedium
+
+private enum class Presentation { Line, Panel, Sheet }
+
+private class Frame(
+    val mark: SuggestionMark,
+    val open: () -> Unit,
+)
+
+private val LocalPresentation = staticCompositionLocalOf { Presentation.Panel }
+private val LocalFrame = staticCompositionLocalOf { Frame(SuggestionMark.New) {} }
+
+private val PANEL_MARK = 18.dp
+private val SHEET_MARK = 24.dp

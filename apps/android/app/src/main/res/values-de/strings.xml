@@ -39,6 +39,8 @@
   "navigation_study": "8b3752f2d808233863b8e0797833bad85e2c9d653c47232cfe7b060895bfc381",
   "navigation_today": "797d355eb2b1e46bf90bd415faeff70a9c42b76904bae823d8d7a4bd4da9d095",
   "navigation_user_menu": "aa0d6f9b07be2db17049f069e73ffc6ac80559d1ee9db474bbec1c642f6bc384",
+  "suggestion_save_failed": "cf84bd9a1f3bf0c8c3071f7530f4c3ca9586046a179c7579ecabd845dad930c8",
+  "suggestion_view": "50eb71cd92f6c182f3d8422d630b5e5aa95bd81c7df3484085786ed0dac5e0ff",
   "task_leave": "e1bb1d841def987889c30c7e783fa24211f01266bb638d633c974d7082d6f4cf"
 }
 -->
@@ -82,4 +84,6 @@
     <string name="load_failed_title">Diese Seite wurde nicht geladen</string>
     <string name="load_failed_description">Vielleicht liegt es an deiner Verbindung oder an einem Problem bei uns. Meistens hilft es, es noch einmal zu versuchen.</string>
     <string name="load_failed_try_again">Noch einmal versuchen</string>
+    <string name="suggestion_view">Ansehen</string>
+    <string name="suggestion_save_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
 </resources>

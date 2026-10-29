@@ -40,4 +40,6 @@
     <string name="load_failed_title">This page didn\'t load</string>
     <string name="load_failed_description">It might be your connection or a problem on our side. Trying again usually fixes it.</string>
     <string name="load_failed_try_again">Try again</string>
+    <string name="suggestion_view">View</string>
+    <string name="suggestion_save_failed">That didn\'t save. Try again.</string>
 </resources>

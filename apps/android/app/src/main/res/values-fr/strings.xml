@@ -39,6 +39,8 @@
   "navigation_study": "06c71dd21a1b9f3028d6fa1c3df3cda53e903a434e5c17adf936ad5e3af0411a",
   "navigation_today": "9f041d69008467bfb5a3641f61fcc944b933c7323a7a2c1fd8a4429d2ce836fa",
   "navigation_user_menu": "519d13f66fa303b0080c9da45526bea41f4150663f8b1fc3e7674624fdb89b94",
+  "suggestion_save_failed": "3201328931b215cc862758f886986add42f378c955330e0da377b83466bd972d",
+  "suggestion_view": "1dcbae3a8851c1faf1f89a935ef862acc0be17cc10baf7fc0590148e7a03cde7",
   "task_leave": "6db565c745931437e4b0783c99b62b93de0ebe9c62e972e0f5db499b0a9c51ad"
 }
 -->
@@ -82,4 +84,6 @@
     <string name="load_failed_title">Cette page ne s’est pas chargée</string>
     <string name="load_failed_description">Le problème vient peut-être de ta connexion ou de notre côté. Réessaie, ça règle souvent le problème.</string>
     <string name="load_failed_try_again">Réessayer</string>
+    <string name="suggestion_view">Voir</string>
+    <string name="suggestion_save_failed">L’enregistrement a échoué. Réessaie.</string>
 </resources>

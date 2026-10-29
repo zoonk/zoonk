@@ -39,6 +39,8 @@
   "navigation_study": "051cb8f8f5b8edd416ba7f932489129a8517be830f9c11c2ee16c159d181fe12",
   "navigation_today": "de857016589edaad4a7a18f8f66a03cbd3e0a0483b49f21acd268a996a6d0e7c",
   "navigation_user_menu": "5799775025868fe68723cf9058ddd37482169ceba20b7322d3c0cc17efc9fa60",
+  "suggestion_save_failed": "6cc7e9104ccda4f7739cb892007a5c0a24504d50746bdc0b28b1d89d3725eee2",
+  "suggestion_view": "87e0754a658b539b073255533eaad7665d04cf81e81cefabfde2ef18471f35a7",
   "task_leave": "35cab1a652e1aed3abba5390d6e524cfee544775b6c5e81e98651f5c04fac094"
 }
 -->
@@ -82,4 +84,6 @@
     <string name="load_failed_title">No se ha cargado esta página</string>
     <string name="load_failed_description">Puede que haya un problema con tu conexión o con la página. Normalmente, volver a intentarlo lo soluciona.</string>
     <string name="load_failed_try_again">Volver a intentarlo</string>
+    <string name="suggestion_view">Ver</string>
+    <string name="suggestion_save_failed">No se ha guardado. Inténtalo de nuevo.</string>
 </resources>
