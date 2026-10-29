@@ -450,6 +450,21 @@ class LessonPlayerFlowTest {
 
     @OptIn(ExperimentalTestApi::class)
     @Test
+    fun aChallengesDecisionsArePickedWithNumberKeysToo() {
+        play(listOf(challengeStep("case"), summaryStep("end")))
+
+        fun press(key: Key) = rule.onRoot().performKeyInput { pressKey(key) }
+
+        rule.waitForIdle()
+        press(Key.Enter)
+        rule.onNodeWithText("What do you say first?").assertIsDisplayed()
+        press(Key.One)
+        press(Key.Enter)
+
+        rule.onNodeWithText("The customer left calmer.").performScrollTo().assertIsDisplayed()
+    }
+
+    @Test
     fun aKeyboardPicksWithNumbersAndGoesOnWithEnterToTheNextLesson() {
         play(listOf(checkStep("quiz")))
 

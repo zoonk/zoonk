@@ -83,7 +83,7 @@ import com.zoonk.android.feature.player.steps.StepActions
 import com.zoonk.android.feature.player.steps.StepView
 import com.zoonk.android.feature.player.steps.SummaryIdeas
 import com.zoonk.android.feature.player.steps.count
-import com.zoonk.android.feature.player.steps.optionAnswer
+import com.zoonk.android.feature.player.steps.keyPick
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LabelChip
@@ -285,8 +285,8 @@ private fun handleKey(
 
         digit >= 0 && state.phase == LessonPhase.Playing -> {
             val step = screen.step ?: return false
-            val answer = optionAnswer(step, digit) ?: return false
-            viewModel.select(if (state.answers[step.id] == answer) null else answer)
+            val pick = keyPick(step, digit, state) ?: return false
+            viewModel.select(pick.answer)
             true
         }
 

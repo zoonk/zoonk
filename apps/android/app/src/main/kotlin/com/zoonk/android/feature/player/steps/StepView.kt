@@ -4,9 +4,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import com.zoonk.android.feature.audio.GradeOutcome
 import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.player.engine.ChallengeProgress
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
 import com.zoonk.android.feature.player.engine.LessonScreen
+import com.zoonk.android.feature.player.engine.challengeProgress
+import com.zoonk.android.feature.player.engine.pickChallengeChoice
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.StepContent
@@ -77,33 +80,59 @@ fun isPlayable(step: LessonStep): Boolean =
         else -> true
     }
 
-/** The answer a number key picks on a screen of options; null where keys pick nothing. */
-fun optionAnswer(
+/** What a number key leaves picked: [answer] is null once pressing the pick again cleared it. */
+@JvmInline
+value class KeyPick(
+    val answer: LessonAnswer?,
+)
+
+/** The pick a number key makes on a screen of options, a second press clearing it; null where keys pick nothing. */
+fun keyPick(
     step: LessonStep,
     index: Int,
-): LessonAnswer? =
-    when (val content = step.content) {
-        is StepContent.Check -> {
-            content.content.options
-                .getOrNull(index)
-                ?.let { LessonAnswer.Check(it.id) }
-        }
-
-        is StepContent.Guess -> {
-            content.content.options
-                .getOrNull(index)
-                ?.let { LessonAnswer.Hook(it.id) }
-        }
-
-        is StepContent.Activity -> {
-            (content.frame.check as? ChoiceCheckValue)
-                ?.value
-                ?.options
-                ?.getOrNull(index)
-                ?.let { LessonAnswer.Activity(choiceAnswer(it.id)) }
-        }
-
-        else -> {
-            null
-        }
+    state: LessonPlayerState,
+): KeyPick? {
+    val content = step.content
+    if (content is StepContent.Challenge) {
+        val progress =
+            challengeProgress(
+                content.content,
+                state.answers[step.id],
+                state.revealed[step.id] ?: 0,
+            ) as? ChallengeProgress.Deciding
+        val choice =
+            progress
+                ?.walk
+                ?.node
+                ?.choices
+                ?.getOrNull(index) ?: return null
+        return KeyPick(pickChallengeChoice(choice.id.takeUnless { it == progress.pendingChoiceId }, progress.confirmed))
     }
+
+    val answer =
+        when (content) {
+            is StepContent.Check -> {
+                content.content.options
+                    .getOrNull(index)
+                    ?.let { LessonAnswer.Check(it.id) }
+            }
+
+            is StepContent.Guess -> {
+                content.content.options
+                    .getOrNull(index)
+                    ?.let { LessonAnswer.Hook(it.id) }
+            }
+
+            is StepContent.Activity -> {
+                (content.frame.check as? ChoiceCheckValue)?.value?.options?.getOrNull(index)?.let {
+                    LessonAnswer.Activity(choiceAnswer(it.id))
+                }
+            }
+
+            else -> {
+                null
+            }
+        } ?: return null
+
+    return KeyPick(answer.takeUnless { it == state.answers[step.id] })
+}
