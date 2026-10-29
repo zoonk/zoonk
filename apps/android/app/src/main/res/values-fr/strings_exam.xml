@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "exam_add_result": "8f402098dd2241c7665a8ec03d6a9f90df9bf5a3e5bc133633bc45d6af69e9d1",
+  "exam_add_result_detail": "71073f2f6c397bfc7dc1f66098d3afcecd0efa4d83cb24350a9198d40ae81a24",
+  "exam_checklist_black_pen": "4d728cb3c40c96806e2aaf930c1e9cce63f0a03fb4e0c8c4fe66b54b548fe939",
+  "exam_checklist_count": "05083b53402e9e828be945efaf8e70bec68dc0cfeed2c93db95a8cfb60718233",
+  "exam_checklist_documents": "f308f6ad1f699747c5e5f289bd5c12560e5103b65174892ecefc402224fcb0c3",
+  "exam_checklist_exam_time": "05eb5013b56a10d48ddfebd22de210db5a6532c7e9ba4f05e41a10f7d0f0e951",
+  "exam_checklist_materials": "2c18cd130a9aa258d3f7470c5943add626579f1ecad21aa470fd2dca316fcc3a",
+  "exam_checklist_route": "02de06f2a4f21ee6bf2d773ad949efb0744ee7f10927a01d36e364476a29110b",
+  "exam_checklist_sleep": "21b5e003c790ed542324e84abc8786f3211ce9b3a3f0de6c7b36bd07d05da52b",
+  "exam_checklist_title": "e789ed2ecd17fa7d2337e17d76c68b05e378bbad57f6e2f1ae1ec6540971793c",
+  "exam_day_before_learn": "1d7062b58638a7abedefc921dfd94e3e321b8722f7ffab7be48bd7a18bd2436a",
+  "exam_day_before_learn_and_mock": "89f6d069ff4c13c653f6b3747ebeabd029381830fb93e5f62b23221e4c7daafe",
+  "exam_day_before_light": "575a64f2c3fff7b8a4cba7d706217a2326cf34ead29cb0c128e83aac90448740",
+  "exam_day_before_mock": "11954f96f634bf096b592dfd4ffb89665d01eb8d1cffa831fd3dde8bfc9e72fb",
+  "exam_day_before_review": "56520814196fe5c2a9aa042ad482d697e2d53497db20bb183d7c73fa088cfe45",
+  "exam_day_time": "6d5656186f923ebefaee0b0ee4ae26d07f21e3811c66c4f7331a23d793f8220d",
+  "exam_final_stretch": "257e581b33e5bb86abb78ed4f4864739c7d97ef661afef779027b7a3fb9a80f0",
+  "exam_final_stretch_detail": "e6cfd0073b66b910cdf4940aed0736e949b782221e2100ffe26e238e47751a60",
+  "exam_how_did_it_go": "14601e68ab458d14d0b4a6a104115f9013b7422aa8405895c0f2efac5a2afb82",
+  "exam_mocks": "efe5a5639288864580c42499a9956d1519fe1c1106829dfa1145c1251f490ddf",
+  "exam_prepared": "480b9256a704167cffa8c4aa979013fd76bf3469460ad6ad4257bb400e0a0c6b",
+  "exam_see_exam": "5aa3f01c3562a094e6a223ad9c5f05f25619ab751a60b54495acf13a145035a4",
+  "exam_sessions": "1a22c0975ac328a314ddaf17df8c858c8cf6218ca517788b30a147ae56d59943",
+  "exam_today": "b835875d5ddbc86b27999480aed8a27e7d19dd4887c06e28b378e6fc715b3505",
+  "exam_tomorrow": "75daea3e619964fab302d4a00d445602c8f4969985f31304fd12c4fcfee99598",
+  "exam_tools_title": "4de7e265b5824120d065d0490f5583f4771d770635a932f74952dedb3983e81d",
+  "exam_work_sessions": "beb3112f531cfd6af8071c31250c3522dfaaf661f140e9f0a526b6dad968683d",
+  "exam_work_sessions_and_mocks": "2a9356accdd64a646e860e18b58119800f897f9b80b6be63759b905334306527"
+}
+-->
+<resources>
+    <string name="exam_final_stretch">La dernière ligne droite</string>
+    <string name="exam_final_stretch_detail">Les derniers jours avant l’examen sont consacrés aux révisions mélangées et aux examens blancs. Les nouveaux sujets attendent, sauf s’ils comptent beaucoup et se révisent vite.</string>
+    <!-- %1$s is the exam's name, such as ENEM. -->
+    <string name="exam_tomorrow">%1$s, c’est demain</string>
+    <!-- %1$s is the exam's name, such as ENEM. -->
+    <string name="exam_today">%1$s, c’est aujourd’hui</string>
+    <string name="exam_how_did_it_go">Comment ça s’est passé ?</string>
+    <string name="exam_add_result_detail">Quand tu recevras ton résultat officiel, ajoute-le ici. Il aidera à rendre les estimations plus précises pour tout le monde.</string>
+    <!-- %1$s is a line on what the learner did, such as "You did 40 sessions." -->
+    <string name="exam_day_before_mock">Aujourd’hui, tu passes un examen blanc rapide, puis tu regardes ce qu’il révèle. Ensuite, repose-toi. %1$s</string>
+    <string name="exam_day_before_learn_and_mock">Aujourd’hui, tu révises les sujets les plus fréquents, puis tu passes un examen blanc rapide. Ensuite, repose-toi.</string>
+    <string name="exam_day_before_learn">Aujourd’hui, tu révises les sujets les plus fréquents. Ensuite, repose-toi.</string>
+    <!-- %1$s is a line on what the learner did, such as "You did 40 sessions." -->
+    <string name="exam_day_before_review">Aujourd’hui, tu révises tous les sujets à fond, dans le format de ton examen, en commençant par ceux que tu maîtrises le moins. Ensuite, repose-toi. %1$s</string>
+    <!-- %1$s is a line on what the learner did, such as "You did 40 sessions." -->
+    <string name="exam_day_before_light">Aujourd’hui, tu fais une révision courte et légère. Ensuite, repose-toi. %1$s</string>
+    <plurals name="exam_work_sessions">
+        <item quantity="one">Tu as fait %d séance.</item>
+        <item quantity="many">Tu as fait %d séances.</item>
+        <item quantity="other">Tu as fait %d séances.</item>
+    </plurals>
+    <!-- %1$s is a count of sessions, %2$s a count of mock exams. -->
+    <string name="exam_work_sessions_and_mocks">Tu as fait %1$s et %2$s.</string>
+    <plurals name="exam_sessions">
+        <item quantity="one">%d séance</item>
+        <item quantity="many">%d séances</item>
+        <item quantity="other">%d séances</item>
+    </plurals>
+    <plurals name="exam_mocks">
+        <item quantity="one">%d examen blanc</item>
+        <item quantity="many">%d examens blancs</item>
+        <item quantity="other">%d examens blancs</item>
+    </plurals>
+    <string name="exam_prepared">Tu t’es préparé pour ça.</string>
+    <!-- %1$s is the exam's date, %2$s the time it starts. -->
+    <string name="exam_day_time">%1$s · %2$s</string>
+    <string name="exam_checklist_title">Pour le jour de l’examen</string>
+    <!-- How many of the exam day checklist's items the learner ticked: %1$d of %2$d. -->
+    <string name="exam_checklist_count">%1$d sur %2$d</string>
+    <string name="exam_checklist_documents">Une pièce d’identité avec photo et ta convocation</string>
+    <string name="exam_checklist_black_pen">Un stylo noir à corps transparent</string>
+    <string name="exam_checklist_route">Ton itinéraire, en prévoyant une marge</string>
+    <string name="exam_checklist_exam_time">L’heure de fermeture des portes et du début de l’examen</string>
+    <string name="exam_checklist_sleep">Une bonne nuit de sommeil</string>
+    <string name="exam_checklist_materials">Le matériel autorisé par ton professeur, comme un stylo ou une calculatrice</string>
+    <string name="exam_tools_title">Ce que tu peux utiliser</string>
+    <string name="exam_see_exam">Voir ton examen</string>
+    <string name="exam_add_result">Ajouter ton résultat</string>
+</resources>

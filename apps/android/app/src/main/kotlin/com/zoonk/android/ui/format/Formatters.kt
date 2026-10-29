@@ -136,6 +136,9 @@ enum class DateStyle(
 
     WeekdayDay("MMMMEEEEd"),
 
+    /** "Sunday, November 14, 2027": an exam's day, whose edition may be years ahead. */
+    WeekdayDayYear("yMMMMEEEEd"),
+
     /** "Wed, Oct 28": Today's date line. */
     WeekdayDayShort("MMMEEEd"),
 

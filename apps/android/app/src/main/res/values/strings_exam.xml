@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="exam_final_stretch">The final stretch</string>
+    <string name="exam_final_stretch_detail">The last days before the exam go to mixed review and mock exams. New topics wait, unless they weigh a lot and are quick.</string>
+    <!-- %1$s is the exam's name, such as ENEM. -->
+    <string name="exam_tomorrow">%1$s is tomorrow</string>
+    <!-- %1$s is the exam's name, such as ENEM. -->
+    <string name="exam_today">%1$s is today</string>
+    <string name="exam_how_did_it_go">How did it go?</string>
+    <string name="exam_add_result_detail">When your official result comes out, add it here. It helps make estimates more accurate for everyone.</string>
+    <!-- %1$s is a line on what the learner did, such as "You did 40 sessions." -->
+    <string name="exam_day_before_mock">Today is your short mock, then a look at what it finds. Then rest. %1$s</string>
+    <string name="exam_day_before_learn_and_mock">Today goes to the topics that come up most, then a short mock. Then rest.</string>
+    <string name="exam_day_before_learn">Today goes to the topics that come up most. Then rest.</string>
+    <!-- %1$s is a line on what the learner did, such as "You did 40 sessions." -->
+    <string name="exam_day_before_review">Today is a full review of every topic, in your test\'s format, your weakest first. Then rest. %1$s</string>
+    <!-- %1$s is a line on what the learner did, such as "You did 40 sessions." -->
+    <string name="exam_day_before_light">Today is a short, light review. Then rest. %1$s</string>
+    <plurals name="exam_work_sessions">
+        <item quantity="one">You did %d session.</item>
+        <item quantity="other">You did %d sessions.</item>
+    </plurals>
+    <!-- %1$s is a count of sessions, %2$s a count of mock exams. -->
+    <string name="exam_work_sessions_and_mocks">You did %1$s and %2$s.</string>
+    <plurals name="exam_sessions">
+        <item quantity="one">%d session</item>
+        <item quantity="other">%d sessions</item>
+    </plurals>
+    <plurals name="exam_mocks">
+        <item quantity="one">%d mock exam</item>
+        <item quantity="other">%d mock exams</item>
+    </plurals>
+    <string name="exam_prepared">You\'ve prepared for this.</string>
+    <!-- %1$s is the exam's date, %2$s the time it starts. -->
+    <string name="exam_day_time">%1$s · %2$s</string>
+    <string name="exam_checklist_title">For exam day</string>
+    <!-- How many of the exam day checklist's items the learner ticked: %1$d of %2$d. -->
+    <string name="exam_checklist_count">%1$d of %2$d</string>
+    <string name="exam_checklist_documents">Photo ID and your registration card</string>
+    <string name="exam_checklist_black_pen">A black pen with a clear barrel</string>
+    <string name="exam_checklist_route">Your route there, with time to spare</string>
+    <string name="exam_checklist_exam_time">When the gates close and the exam starts</string>
+    <string name="exam_checklist_sleep">A good night\'s sleep</string>
+    <string name="exam_checklist_materials">What your teacher lets you bring, like a pen or a calculator</string>
+    <string name="exam_tools_title">What you may use</string>
+    <string name="exam_see_exam">See your exam</string>
+    <string name="exam_add_result">Add your result</string>
+</resources>
