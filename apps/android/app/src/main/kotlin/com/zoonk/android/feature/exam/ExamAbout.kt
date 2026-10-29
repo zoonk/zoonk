@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
@@ -101,7 +103,7 @@ private fun ExamFormatSection(format: List<ExamFormatDay>) {
             .takeIf { it.isNotEmpty() && format.size > 1 }
 
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        SectionTitle(title, detail)
+        ExamSectionHeader(title, detail)
         Column {
             format.forEachIndexed { index, day ->
                 if (index > 0) HorizontalDivider()
@@ -141,8 +143,8 @@ private fun FormatDayRow(
         },
         verticalArrangement = Arrangement.spacedBy(2.dp),
     ) {
+        if (numbered && day.date != null) Text(dayName, color = MaterialTheme.colorScheme.onSurfaceVariant, style = numbers)
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            if (numbered) Text(dayName, color = MaterialTheme.colorScheme.onSurfaceVariant, style = numbers)
             Text(
                 day.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), locale) } ?: dayName,
                 Modifier.weight(1f),
@@ -198,7 +200,7 @@ private fun ExamScoringSection(exam: ExamView) {
             passMarks?.let {
                 {
                     ScoringRow(R.drawable.ic_flag, stringResource(R.string.exam_to_pass)) {
-                        it.texts.forEach { text -> Line(text) }
+                        it.texts.forEach { text -> Line(AnnotatedString(text, SpanStyle(localeList = LocaleList(it.language)))) }
                         if (it.language != locale.language) {
                             val language = Locale.forLanguageTag(it.language).getDisplayLanguage(locale).ifEmpty { it.language }
                             Line(stringResource(R.string.exam_pass_marks_language, language))
@@ -210,7 +212,7 @@ private fun ExamScoringSection(exam: ExamView) {
         )
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        SectionTitle(stringResource(R.string.exam_scoring_title), detail = null)
+        ExamSectionHeader(stringResource(R.string.exam_scoring_title), detail = null)
         OutlinedCard(Modifier.fillMaxWidth()) {
             rows.forEachIndexed { index, row ->
                 if (index > 0) HorizontalDivider()
@@ -351,17 +353,27 @@ private fun ScoringRow(
 }
 
 @Composable
-private fun Line(text: String) {
+private fun Line(text: String) = Line(AnnotatedString(text))
+
+/** A line in another language says so in its span, so TalkBack reads it in that language's voice. */
+@Composable
+private fun Line(text: AnnotatedString) {
     Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
 }
 
+/** A section's title, with a short fact at its end that drops under it when both don't fit on a line. */
 @Composable
-private fun SectionTitle(
+internal fun ExamSectionHeader(
     title: String,
     detail: String?,
 ) {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Bottom) {
-        Text(title, Modifier.weight(1f).semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+    FlowRow(
+        Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalArrangement = Arrangement.spacedBy(4.dp),
+        itemVerticalAlignment = Alignment.Bottom,
+    ) {
+        Text(title, Modifier.padding(end = 12.dp).semantics { heading() }, style = MaterialTheme.typography.titleMedium)
         detail?.let {
             Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium.withTabularFigures())
         }

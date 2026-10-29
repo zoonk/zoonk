@@ -53,7 +53,7 @@ import com.zoonk.api.models.MockShape
 @Composable
 internal fun ExamMockProgressSection(exam: ExamView) {
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        Text(stringResource(R.string.exam_progress_title), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
+        ExamSectionHeader(stringResource(R.string.exam_progress_title), detail = null)
         val progress = exam.progress
         if (progress != null) ProgressCard(progress, exam.scoring.method) else LockedProgress()
     }
@@ -235,7 +235,13 @@ private fun SubjectChange(change: Long?) {
             Icon(
                 painterResource(if (change < 0) R.drawable.ic_south_east else R.drawable.ic_north_east),
                 contentDescription = null,
-                modifier = Modifier.size(14.dp),
+                modifier =
+                    Modifier.size(
+                        with(LocalDensity.current) {
+                            MaterialTheme.typography.labelMedium.fontSize
+                                .toDp()
+                        },
+                    ),
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }

@@ -81,8 +81,8 @@
     <string name="exam_score_ap">Your AP score (1 to 5)</string>
     <string name="exam_score_sat">Your total score (400 to 1600)</string>
     <string name="exam_score_toefl">Your total band (1 to 6)</string>
-    <!-- Between a score and the most points possible: "62 out of 80". -->
-    <string name="exam_out_of">out of</string>
+    <!-- The field for the most points possible, beside the score's field ("62" out of "80"). -->
+    <string name="exam_out_of">Out of</string>
     <string name="exam_score_invalid">Enter a number.</string>
     <!-- %1$s and %2$s are the lowest and highest scores, %3$s the step between two scores (10 for the SAT). -->
     <string name="exam_score_off_scale">Scores go from %1$s to %2$s in steps of %3$s.</string>
@@ -140,6 +140,8 @@
     <!-- %1$s lists the day's parts, %2$s counts its questions: "Languages and Humanities · 90 questions". -->
     <string name="exam_format_parts_questions">%1$s · %2$s</string>
     <string name="exam_about">About the exam</string>
+    <!-- Said by screen readers on the mock the learner is on or is next. -->
+    <string name="exam_current">Current</string>
     <string name="exam_scoring_title">How the score works</string>
     <string name="exam_rule_net_cancels">A wrong answer cancels a right one</string>
     <!-- %1$s is a share, such as 25%. -->

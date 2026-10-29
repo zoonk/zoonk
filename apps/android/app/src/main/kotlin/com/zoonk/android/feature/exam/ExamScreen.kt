@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,6 +21,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -38,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
@@ -179,29 +184,35 @@ private fun ExamPage(
 ) {
     val about = aboutSections(exam)
     val aboutLabel = stringResource(R.string.exam_about)
+    // Wider windows give the page more room, never wider margins: one start edge, Material's 24dp from medium up.
+    val compact = !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+    val padding = PaddingValues(horizontal = if (compact) 16.dp else 24.dp, vertical = 24.dp)
 
     PageWithSupportingPane(
         supportingPane = {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(PANE_PADDING)
-                    .semantics { paneTitle = aboutLabel },
-                verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
-            ) {
-                about.forEach { AboutSection(it, exam) }
+            Row {
+                VerticalDivider()
+                Column(
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(padding)
+                        .semantics { paneTitle = aboutLabel },
+                    verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
+                ) {
+                    about.forEach { AboutSection(it, exam) }
+                }
             }
         },
     ) { aboutBeside ->
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
             LazyColumn(
                 state = listState,
                 modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
-                contentPadding = PANE_PADDING,
+                contentPadding = padding,
                 verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
             ) {
-                item(key = "hero", contentType = "hero") { ExamHero(exam, options, navigator) }
+                item(key = "hero", contentType = "hero") { ExamHero(exam, options, viewModel, navigator, fullWidthAction = compact) }
                 examSections(exam, mockOffered = options?.let(::mockEntryRoute) != null, viewModel, app, navigator)
                 if (!aboutBeside) {
                     about.forEach { section ->
@@ -220,11 +231,10 @@ private fun LazyListScope.examSections(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    if (exam.noticeDay != null || exam.noSitting != null) {
-        item(key = "notice-dates", contentType = "notice-dates") { NoticeDatesCard(exam, viewModel) }
-    }
     if (exam.showsMoment) {
-        item(key = "moment", contentType = "moment") { ExamMomentCard(exam.moment, onOpen = null) }
+        item(key = "moment", contentType = "moment") {
+            ExamMomentCard(exam.moment, onOpen = null, titleStyle = MaterialTheme.typography.titleMedium)
+        }
     }
     if (exam.takesResult) {
         item(key = "result", contentType = "result") { ExamResultSection(exam, viewModel) }
@@ -257,35 +267,44 @@ private fun LazyListScope.examSections(
     }
 }
 
+/** Main's hero: the eyebrow, the exam, its days, the main action, and a date the notice set under them. */
 @Composable
 private fun ExamHero(
     exam: ExamView,
     options: MockOptions?,
+    viewModel: ExamViewModel,
     navigator: AppNavigator,
+    fullWidthAction: Boolean,
 ) {
     val facts = examFacts(exam)
 
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        ExamEyebrow(exam)
-        Text(exam.examName, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-        if (facts.isNotEmpty()) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                facts.forEachIndexed { index, fact ->
-                    Text(
-                        text = if (index < facts.lastIndex) "$fact ·" else fact,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
+    Column(verticalArrangement = Arrangement.spacedBy(20.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            ExamEyebrow(exam)
+            Text(exam.examName, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+            if (facts.isNotEmpty()) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    facts.forEachIndexed { index, fact ->
+                        Text(
+                            text = if (index < facts.lastIndex) "$fact ·" else fact,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
                 }
             }
         }
         options?.let {
-            MockEntryButton(it, onOpen = navigator::open, modifier = Modifier.padding(top = 8.dp))
+            MockEntryButton(
+                it,
+                onOpen = navigator::open,
+                modifier = if (fullWidthAction) Modifier.fillMaxWidth() else Modifier,
+            )
         }
+        if (exam.noticeDay != null || exam.noSitting != null) NoticeDatesCard(exam, viewModel)
     }
 }
 
 private val PAGE_WIDTH = 720.dp
 private const val FROM_EXAM = "exam"
 private val SECTION_GAP = 40.dp
-private val PANE_PADDING = PaddingValues(horizontal = 16.dp, vertical = 24.dp)

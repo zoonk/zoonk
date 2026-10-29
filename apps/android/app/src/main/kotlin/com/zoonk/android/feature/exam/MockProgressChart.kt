@@ -42,6 +42,7 @@ import androidx.compose.ui.input.pointer.PointerType
 import androidx.compose.ui.input.pointer.changedToDown
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
@@ -94,10 +95,12 @@ internal fun ProgressLineChart(
     val axisColor = MaterialTheme.colorScheme.onSurfaceVariant
     val locale = currentLocale()
     val clamp = { index: Int -> index.coerceIn(0, points.lastIndex) }
+    // Taller with larger text, so the readout keeps room inside it.
+    val chartHeight = CHART_HEIGHT * LocalDensity.current.fontScale.coerceAtLeast(1f)
 
     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(
-            Modifier.height(CHART_HEIGHT).widthIn(min = 36.dp).clearAndSetSemantics {},
+            Modifier.height(chartHeight).widthIn(min = 36.dp).clearAndSetSemantics {},
             verticalArrangement = Arrangement.SpaceBetween,
         ) {
             ticks.forEach { Text(formatPercent(it / TOP.toDouble(), locale), color = axisColor, style = axis, textAlign = TextAlign.End) }
@@ -107,7 +110,7 @@ internal fun ProgressLineChart(
             Box(
                 Modifier
                     .fillMaxWidth()
-                    .height(CHART_HEIGHT)
+                    .height(chartHeight)
                     .then(if (focused) Modifier.border(2.dp, MaterialTheme.colorScheme.primary, RoundedCornerShape(4.dp)) else Modifier)
                     .semantics {
                         contentDescription = label
@@ -230,7 +233,11 @@ private fun Readout(
                     0,
                     (constraints.maxWidth - bubble.width).coerceAtLeast(0),
                 )
-            bubble.place(left, (y * constraints.maxHeight).roundToInt() - bubble.height - gap)
+            // Above the point when it fits, else under it: the readout never leaves the plot.
+            val point = (y * constraints.maxHeight).roundToInt()
+            val above = point - bubble.height - gap
+            val top = if (above >= 0) above else (point + gap).coerceAtMost(constraints.maxHeight - bubble.height).coerceAtLeast(0)
+            bubble.place(left, top)
         }
     }
 }

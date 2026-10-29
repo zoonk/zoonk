@@ -18,6 +18,7 @@
   "exam_checklist_route": "ee53d2f960f4187f8cad1509dde68ed6ceb08643424ab5651363e5aecb1c4b29",
   "exam_checklist_sleep": "ccf4b346ad97ad44623302732fac5129a1cdb7526256329291b6a76dfeaa8f2d",
   "exam_checklist_title": "d2a656f5dca0e3a71884abea48114f0f88407462a832d9a53dbedc6f80766087",
+  "exam_current": "2fa365b93ba5b3847b6542fba09efea3c8a4d1e91e0c40a2f9afda6ed7d50dd6",
   "exam_cutoff_goal": "195c281c60e4e9e8bd7d94450a17e192c1a21ca928faa0d9a095cb8625d105e5",
   "exam_cutoff_score": "330bc803926a44c3d98bf7812d1b747c048c1942b063899ec77a28a6e13eac72",
   "exam_cutoff_source": "0dabd3580d22e9055ab95d7e14e0d22fd000b9dee764081efc2c9b982bb4f1b2",
@@ -62,7 +63,7 @@
   "exam_no_sitting_title": "d775710c738917b6cdbb5002797b8083384729a0d37036b4923929091baa7722",
   "exam_not_found_description": "6f8a79ec36e77642a52d1f330204ba54a7d8828255a07ae18dfc196fa8881e58",
   "exam_not_found_title": "cc922324b2ad6f3fb9433919c6c9b80caded05029b661a098b1cfa6e9ea8487f",
-  "exam_out_of": "eeecbe976b305addbf67cd5b54544e10217ec5c4244796cbfddd290911264936",
+  "exam_out_of": "60f0ad051d19c2490c945eed7bf79dc39a9193bd53fa50f20af26d6cb6bbcd55",
   "exam_pass_marks_language": "eff0e9f8777dd065a85dcd8ee85d121e7aafbeef38a17406e0520b9b2f018e4b",
   "exam_passed_no": "1c1a267638ed91f0ce0abb99b2f7ae47871bed5f968c0fe4677eaddb5a5d5bce",
   "exam_passed_unknown": "9b7cdcaceaa25eb07ccac450bf1548609ef30ceb495f149e7e445ccaa0de9649",
@@ -198,7 +199,7 @@
     <string name="exam_score_ap">Dein AP-Score (1 bis 5)</string>
     <string name="exam_score_sat">Dein Gesamt-Score (400 bis 1.600)</string>
     <string name="exam_score_toefl">Dein Gesamtband (1 bis 6)</string>
-    <!-- Between a score and the most points possible: "62 out of 80". -->
+    <!-- The field for the most points possible, beside the score's field ("62" out of "80"). -->
     <string name="exam_out_of">von</string>
     <string name="exam_score_invalid">Gib eine Zahl ein.</string>
     <!-- %1$s and %2$s are the lowest and highest scores, %3$s the step between two scores (10 for the SAT). -->
@@ -257,6 +258,8 @@
     <!-- %1$s lists the day's parts, %2$s counts its questions: "Languages and Humanities · 90 questions". -->
     <string name="exam_format_parts_questions">%1$s · %2$s</string>
     <string name="exam_about">Über die Prüfung</string>
+    <!-- Said by screen readers on the mock the learner is on or is next. -->
+    <string name="exam_current">Aktuell</string>
     <string name="exam_scoring_title">So funktioniert der Score</string>
     <string name="exam_rule_net_cancels">Eine falsche Antwort hebt eine richtige auf</string>
     <!-- %1$s is a share, such as 25%. -->

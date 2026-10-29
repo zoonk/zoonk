@@ -31,6 +31,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -55,6 +56,7 @@ fun ExamMomentCard(
     moment: ExamMoment,
     onOpen: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    titleStyle: TextStyle = MaterialTheme.typography.titleSmall,
 ) {
     val body = momentBody(moment) ?: return
     val afterExam = moment.stage == ExamMoment.Stage.AFTER_EXAM
@@ -68,9 +70,9 @@ fun ExamMomentCard(
                 tint = MaterialTheme.colorScheme.onSurfaceVariant,
             )
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(examMomentTitle(moment), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
+                Text(examMomentTitle(moment), Modifier.semantics { heading() }, style = titleStyle)
                 moment.day?.takeUnless { afterExam }?.let {
-                    Text(examDayText(it), style = MaterialTheme.typography.labelLarge.withTabularFigures())
+                    Text(examDayText(it), style = MaterialTheme.typography.bodyMedium.withTabularFigures())
                 }
                 Text(body, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
             }

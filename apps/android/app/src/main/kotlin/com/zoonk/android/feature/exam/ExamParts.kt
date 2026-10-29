@@ -59,8 +59,7 @@ import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.Locale
-import kotlin.math.abs
-import kotlin.math.roundToLong
+import kotlin.math.floor
 
 @Composable
 internal fun ExamEyebrow(exam: ExamView) {
@@ -263,8 +262,9 @@ internal fun ExamResultSection(
             )
         }
 
-        val shown = if (status == SaveStatus.Saved) saved else exam.result.takeIf { status == SaveStatus.Idle }
-        shown?.let { ResultSaved(it.score) }
+        // The read after a save may lag it, and a later one may carry a newer result from another device.
+        val latest = listOfNotNull(saved, exam.result).maxByOrNull { it.reportedAt }
+        latest?.takeIf { status == SaveStatus.Saved || status == SaveStatus.Idle }?.let { ResultSaved(it.score) }
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
             OutlinedTextField(
@@ -413,10 +413,10 @@ private fun scoreError(
     }
 }
 
+/** Core's `isOnExamScale`: in range and a whole number of steps. */
 private fun ScaleRule.allows(score: Double): Boolean {
     val steps = score / step
-    return score in min..max && abs(steps - steps.roundToLong()) < STEP_TOLERANCE
+    return score in min..max && steps == floor(steps)
 }
 
 private const val MAX_SCORE = 10_000.0
-private const val STEP_TOLERANCE = 1e-9

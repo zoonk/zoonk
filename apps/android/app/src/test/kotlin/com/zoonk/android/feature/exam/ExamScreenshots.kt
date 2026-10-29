@@ -70,6 +70,10 @@ class ExamScreenshots {
     fun afterTheExamOnFree() = capture("exam-phone-after-free", exam = AFTER_EXAM_FREE)
 
     @Test
+    @Config(qualifiers = "w411dp-h1800dp-xxhdpi")
+    fun theDayBefore() = capture("exam-phone-day-before", exam = DAY_BEFORE)
+
+    @Test
     @Config(qualifiers = "w700dp-h2400dp-xhdpi")
     fun medium() = capture("exam-medium")
 
@@ -88,7 +92,16 @@ class ExamScreenshots {
         exam: String = PREPARING,
     ) {
         val api = FakeExamApi(exam(exam))
-        val mocks = FakeMockApi(mockOptions(if (exam == AFTER_EXAM_FREE) """"access":"plusRequired"""" else ""))
+        val mocks =
+            FakeMockApi(
+                mockOptions(
+                    when (exam) {
+                        AFTER_EXAM_FREE -> """"access":"plusRequired""""
+                        PREPARING -> """"running":{"id":"$BLOCK","purpose":"practice","shape":$MATHEMATICS}"""
+                        else -> ""
+                    },
+                ),
+            )
         compose.setContent {
             val context = LocalContext.current
             val app = remember { AppContainer.preview(context) }
@@ -129,7 +142,7 @@ class ExamScreenshots {
             """
             "stage":"finalStretch","daysEstimated":true,"daysLeft":24,
             "days":[{"date":"2026-11-08","label":null,"startTime":"13:30"},{"date":"2026-11-15","label":null,"startTime":"13:30"}],
-            "noticeDay":{"date":"2026-11-15","estimated":false},
+            "noticeDay":{"date":"2026-11-15","estimated":true},
             "nextMock":{"date":"2026-11-01","fullLength":true,"planItemId":"$PLAN_ITEM","questions":90},
             "runningMocks":[{"answered":12,"deadline":"${Clock.System.now() + 80.minutes}","id":"$BLOCK","number":3,"purpose":"practice","questions":45,
              "shape":{"area":"Mathematics","day":null,"kind":"area"}}],
@@ -149,6 +162,14 @@ class ExamScreenshots {
             "cutoff":{"course":"Medicine","edition":"2025","institution":"USP","maxScore":1000,"position":null,"quota":null,"score":812.4,
              "source":{"title":"SISU","url":"https://www.sisu.mec.gov.br/cutoffs"}},
             "targetScore":"Medicine at USP"
+            """.trimIndent()
+
+        const val MATHEMATICS = """{"area":"Mathematics","day":null,"kind":"area"}"""
+
+        val DAY_BEFORE =
+            """
+            "stage":"dayBefore","daysLeft":1,"dayBefore":"review","sessionsDone":42,"prepared":true,
+            "checklist":["documents","blackPen","route","sleep"],"tools":["A basic calculator"]
             """.trimIndent()
 
         val AFTER_EXAM_FREE =

@@ -18,6 +18,7 @@
   "exam_checklist_route": "fdc27ade1ecc18352275162a1961bc457c36aa0d2c96baaf5defa9d51ee6f951",
   "exam_checklist_sleep": "1dd1d37304788154509c9f44d5c845bb3d73f3fd2bfaa7865433ef9ce5c6d14b",
   "exam_checklist_title": "75c91866a5ad5d9c6644c77f09fd4a0d16a8e9d5cbf73fd48330b7b3bd633ba9",
+  "exam_current": "3fc5342dbcc7c590ec129a7a543a4e458eb9353ebbd40108bdd7153d31079010",
   "exam_cutoff_goal": "f7736af80ce7603f94e5f23663744def686c3a0400b12ca52ef6da467cf30a97",
   "exam_cutoff_score": "0deac5277fa3267c02d08835ab34e6ceee004efce43177c65f3285a3571c13a1",
   "exam_cutoff_source": "2a434ef9addc542169723b90c396343455dfbf39124af4350ba92b5bc60fe87e",
@@ -62,7 +63,7 @@
   "exam_no_sitting_title": "dc839247c44f43d6a8b898a965c344e361738af88f70b834e66f0458eac8e02b",
   "exam_not_found_description": "3bd651eb576a2a1fc1fbe2518e0019093266e7782608bd11f238bb46a4982bc1",
   "exam_not_found_title": "f0433e1875022cb72790f94a5ba8be1cece2011da35acb3dbf079529cc712278",
-  "exam_out_of": "3f5eabc0334986b4962482d7e9b4d353fada39fe9e0cc26ca7ea5d1ba3987c1b",
+  "exam_out_of": "bf1c8f91ba4c30f6a6f65e8e973e4ecc28cfc53c6862a55669f4687e58ec21d9",
   "exam_pass_marks_language": "be355976e0b126c793b289d925173b7a27d0cd6ca506d9e9cc33c6d62c3ebad8",
   "exam_passed_no": "b8dfcf6d86b11ecbe867a52cd42240734843a67b18dfae1f1e85b47cb71c624e",
   "exam_passed_unknown": "49223e6ca1e2ed95a95c9c3242bfd8652e5391eb71b01c5c136e2868f4f5fd3a",
@@ -204,8 +205,8 @@
     <string name="exam_score_ap">Tu puntuación del AP (de 1 a 5)</string>
     <string name="exam_score_sat">Tu puntuación total (de 400 a 1600)</string>
     <string name="exam_score_toefl">Tu banda total (de 1 a 6)</string>
-    <!-- Between a score and the most points possible: "62 out of 80". -->
-    <string name="exam_out_of">de</string>
+    <!-- The field for the most points possible, beside the score's field ("62" out of "80"). -->
+    <string name="exam_out_of">De</string>
     <string name="exam_score_invalid">Introduce un número.</string>
     <!-- %1$s and %2$s are the lowest and highest scores, %3$s the step between two scores (10 for the SAT). -->
     <string name="exam_score_off_scale">Las puntuaciones van de %1$s a %2$s, en pasos de %3$s.</string>
@@ -266,6 +267,8 @@
     <!-- %1$s lists the day's parts, %2$s counts its questions: "Languages and Humanities · 90 questions". -->
     <string name="exam_format_parts_questions">%1$s · %2$s</string>
     <string name="exam_about">Sobre el examen</string>
+    <!-- Said by screen readers on the mock the learner is on or is next. -->
+    <string name="exam_current">Actual</string>
     <string name="exam_scoring_title">Cómo funciona la puntuación</string>
     <string name="exam_rule_net_cancels">Una respuesta incorrecta anula una correcta</string>
     <!-- %1$s is a share, such as 25%. -->

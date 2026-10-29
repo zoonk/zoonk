@@ -85,6 +85,14 @@ class ExamStore(
         cache.mutate(invalidating = setOf(DataDomain.LearnerModel)) { api.report(it, goalId, report, timeZone()) }
 
     companion object {
-        val EXAM_DOMAINS = setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.LearningProfile, DataDomain.UserSubscription)
+        /** A finished speaking task's call changes the exam's speaking paper, under the learner's progress. */
+        val EXAM_DOMAINS =
+            setOf(
+                DataDomain.Goals,
+                DataDomain.LearnerModel,
+                DataDomain.LearningProfile,
+                DataDomain.UserProgress,
+                DataDomain.UserSubscription,
+            )
     }
 }

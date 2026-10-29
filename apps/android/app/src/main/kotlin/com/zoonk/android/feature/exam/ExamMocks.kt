@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.exam
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,10 +11,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.MockListRow
@@ -35,6 +39,7 @@ import com.zoonk.android.ui.format.formatDuration
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamView
+import com.zoonk.api.models.ExamViewNextMock
 import com.zoonk.api.models.ExamViewRunningMocksInner
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
@@ -60,41 +65,32 @@ internal fun ExamMocksSection(
     val locked = exam.mocksLocked(mockOffered)
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.Bottom) {
-            Text(stringResource(R.string.exam_mocks_title), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleMedium)
-            if (exam.mocks.isNotEmpty()) {
-                Text(
-                    pluralStringResource(R.plurals.exam_mocks_taken, exam.mocks.size, exam.mocks.size),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
-            }
-        }
+        ExamSectionHeader(
+            stringResource(R.string.exam_mocks_title),
+            exam.mocks.size
+                .takeIf { it > 0 }
+                ?.let { pluralStringResource(R.plurals.exam_mocks_taken, it, it) },
+        )
 
+        // The row the learner is on stands on its fill, with no hairline touching it.
+        val rows =
+            buildList<Pair<Boolean, @Composable () -> Unit>> {
+                exam.runningMocks.forEachIndexed { index, mock ->
+                    val open = { navigator.open(AppRoute.Mock(mock.id.toString())) }
+                    add((index == 0) to { RunningMockRow(mock, current = index == 0, onOpen = open) })
+                }
+                if (next != null) {
+                    add(!running to { NextMockRow(exam, next, current = !running, navigator) })
+                }
+                exam.mocks.forEach { mock ->
+                    val open = mock.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } }
+                    add(false to { MockSummaryRow(mock, onOpen = open) })
+                }
+            }
         Column {
-            exam.runningMocks.forEachIndexed { index, mock ->
-                if (index > 0) HorizontalDivider()
-                RunningMockRow(mock, current = index == 0) { navigator.open(AppRoute.Mock(mock.id.toString())) }
-            }
-            if (next != null) {
-                if (running) HorizontalDivider()
-                MockListRow(
-                    headline = {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                            Text(mockDaySize(fullLength = next.fullLength))
-                            if (exam.mocksRequirePlus) PlusMark()
-                        }
-                    },
-                    supporting = pluralStringResource(R.plurals.exam_questions, next.questions.toInt(), next.questions.toInt()),
-                    trailing = next.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), currentLocale()) },
-                    leading = { StatusMark(if (running) MarkStatus.Todo else MarkStatus.Next) },
-                    onClick = { navigator.open(AppRoute.Challenge(next.planItemId.toString())) },
-                    modifier = Modifier.currentRow(!running),
-                )
-            }
-            exam.mocks.forEachIndexed { index, mock ->
-                if (running || next != null || index > 0) HorizontalDivider()
-                MockSummaryRow(mock, onOpen = mock.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } })
+            rows.forEachIndexed { index, (current, row) ->
+                if (index > 0 && !current && !rows[index - 1].first) HorizontalDivider()
+                row()
             }
         }
 
@@ -105,6 +101,28 @@ internal fun ExamMocksSection(
             )
         }
     }
+}
+
+@Composable
+private fun NextMockRow(
+    exam: ExamView,
+    next: ExamViewNextMock,
+    current: Boolean,
+    navigator: AppNavigator,
+) {
+    MockListRow(
+        headline = {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(mockDaySize(fullLength = next.fullLength))
+                if (exam.mocksRequirePlus) PlusMark()
+            }
+        },
+        supporting = pluralStringResource(R.plurals.exam_questions, next.questions.toInt(), next.questions.toInt()),
+        trailing = next.date?.let { examDayDate(it.toJavaLocalDate(), LocalDate.now(), currentLocale()) },
+        leading = { StatusMark(if (current) MarkStatus.Next else MarkStatus.Todo) },
+        onClick = { navigator.open(AppRoute.Challenge(next.planItemId.toString())) },
+        modifier = Modifier.currentRow(current),
+    )
 }
 
 @Composable
@@ -144,10 +162,24 @@ private fun runningMockClock(deadline: Instant?): String {
     }
 }
 
-/** Main's current row: the one the learner is on stands on the muted fill. */
+/** Main's current row: its fill reaches a little past the column, and TalkBack says it's the one the learner is on. */
 @Composable
-private fun Modifier.currentRow(current: Boolean): Modifier =
-    if (current) background(MaterialTheme.colorScheme.surfaceContainerHigh, MaterialTheme.shapes.medium) else this
+private fun Modifier.currentRow(current: Boolean): Modifier {
+    if (!current) return this
+    val fill = MaterialTheme.colorScheme.surfaceContainerHigh
+    val label = stringResource(R.string.exam_current)
+    return semantics { stateDescription = label }.drawBehind {
+        val bleed = ROW_BLEED.toPx()
+        drawRoundRect(
+            fill,
+            topLeft = Offset(-bleed, 0f),
+            size = Size(size.width + bleed * 2, size.height),
+            cornerRadius = CornerRadius(ROW_RADIUS.toPx()),
+        )
+    }
+}
 
 private val CLOCK_TICK = 15.seconds
+private val ROW_BLEED = 12.dp
+private val ROW_RADIUS = 12.dp
 private const val SECONDS_PER_MINUTE = 60.0

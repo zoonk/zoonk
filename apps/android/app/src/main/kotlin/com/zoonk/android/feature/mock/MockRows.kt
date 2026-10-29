@@ -53,8 +53,9 @@ fun MockSummaryRow(
 }
 
 /**
- * Main's list row for mocks: a mark, a title over a line, and a short fact at the end that moves under
- * the line when it would squeeze the title (large fonts, narrow windows).
+ * Main's list row for mocks, flush with the page's column: a mark, a title over a line, and a short
+ * fact at the end that moves under the line when it would squeeze the title (large fonts, narrow
+ * windows).
  */
 @Composable
 fun MockListRow(
@@ -71,7 +72,7 @@ fun MockListRow(
     BoxWithConstraints(if (onClick != null) modifier.fillMaxWidth().clickable(onClick = onClick) else modifier.fillMaxWidth()) {
         val stacked = trailing != null && measurer.measure(trailing, trailingStyle).size.width > constraints.maxWidth * TRAILING_SHARE
         Row(
-            Modifier.heightIn(min = 64.dp).padding(horizontal = 16.dp, vertical = 12.dp),
+            Modifier.heightIn(min = 64.dp).padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
