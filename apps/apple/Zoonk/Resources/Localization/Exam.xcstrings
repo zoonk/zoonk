@@ -1171,6 +1171,41 @@
         }
       }
     },
+    "Exam options" : {
+      "comment" : "Spoken label of the exam's … menu",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prüfungsoptionen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Exam options"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opciones del examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options de l’examen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opções da prova"
+          }
+        }
+      }
+    },
     "From %@ to %@." : {
       "comment" : "The scale's range",
       "localizations" : {
@@ -1904,6 +1939,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Repita frases e depois faça uma entrevista curta com um examinador. Depois, você recebe uma faixa estimada de 1 a 6 para cada critério."
+          }
+        }
+      }
+    },
+    "Report a problem" : {
+      "comment" : "Opens the feedback form about the exam page",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Problem melden"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Report a problem"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informar de un problema"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signaler un problème"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relatar um problema"
           }
         }
       }

@@ -68,6 +68,7 @@ private struct ExamList: View {
   let options: MockOptions?
   /// Above the split: folding iPhone Duo recreates its panes, and the result form is in one.
   @State private var result = ExamResultForm()
+  @State private var isReporting = false
 
   var body: some View {
     PaneSplit(primaryShare: 0.55) {
@@ -93,6 +94,32 @@ private struct ExamList: View {
       }
     }
     .navigationTitle(exam.examName)
+    .toolbar {
+      ToolbarItem(placement: .topBarTrailing) {
+        Menu {
+          Button {
+            isReporting = true
+          } label: {
+            Label {
+              Text(
+                "Report a problem", tableName: "Exam",
+                comment: "Opens the feedback form about the exam page")
+            } icon: {
+              Image(systemName: "flag")
+            }
+          }
+        } label: {
+          Label {
+            Text("Exam options", tableName: "Exam", comment: "Spoken label of the exam's … menu")
+          } icon: {
+            Image(systemName: "ellipsis")
+          }
+        }
+      }
+    }
+    .sheet(isPresented: $isReporting) {
+      FeedbackSheet(api: FeedbackAPI.live(), context: FeedbackContext(screen: "exam"))
+    }
   }
 
   @ViewBuilder

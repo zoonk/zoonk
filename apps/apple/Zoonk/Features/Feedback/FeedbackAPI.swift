@@ -7,9 +7,23 @@ enum FeedbackContentKind: String, Equatable, Sendable {
   case plan
 }
 
+/// What a report is about: a piece of content, or a screen without one (main's `screen`).
 struct FeedbackContext: Equatable, Sendable {
-  let contentID: String
-  let contentKind: FeedbackContentKind
+  let contentID: String?
+  let contentKind: FeedbackContentKind?
+  let screen: String
+
+  init(contentID: String, contentKind: FeedbackContentKind) {
+    self.contentID = contentID
+    self.contentKind = contentKind
+    screen = contentKind.rawValue
+  }
+
+  init(screen: String) {
+    contentID = nil
+    contentKind = nil
+    self.screen = screen
+  }
 }
 
 struct FeedbackSubmission: Equatable, Sendable {
@@ -100,9 +114,9 @@ struct FeedbackAPI: FeedbackAPIClient, @unchecked Sendable {
     .init(
       appVersion: appVersion,
       contentId: context?.contentID,
-      contentKind: context.map { makeContentKindPayload($0.contentKind) },
+      contentKind: context?.contentKind.map(makeContentKindPayload),
       platform: .ios,
-      screen: context?.contentKind.rawValue)
+      screen: context?.screen)
   }
 
   private func makeContentKindPayload(

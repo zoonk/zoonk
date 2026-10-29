@@ -31,6 +31,25 @@ final class FeedbackAPITests: XCTestCase {
       token: "learner-session")
   }
 
+  func testAReportAboutAScreenNamesItWithoutContent() async throws {
+    let api = makeFeedbackAPI(
+      transport: FeedbackResponseTransport(
+        expectedAuthorization: "Bearer learner-session",
+        expectedBody: [
+          "context": ["appVersion": "2.0 (7)", "platform": "ios", "screen": "exam"],
+          "email": "learner@zoonk.test",
+          "message": "The exam date is wrong.",
+        ],
+        responseBody: #"{"message":"Feedback received"}"#,
+        status: .ok))
+
+    try await api.submit(
+      FeedbackSubmission(
+        context: FeedbackContext(screen: "exam"), email: "learner@zoonk.test",
+        message: "The exam date is wrong."),
+      token: "learner-session")
+  }
+
   func testSignedOutFeedbackStillNamesTheApp() async throws {
     let api = makeFeedbackAPI(
       transport: FeedbackResponseTransport(
