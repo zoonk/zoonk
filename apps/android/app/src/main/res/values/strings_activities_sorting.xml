@@ -23,4 +23,13 @@
     <string name="activities_sorting_right_count">%1$d of %2$d in the right group</string>
     <!-- A misplaced item's group, like "Burning wood belongs in New substance." -->
     <string name="activities_sorting_belongs_in">%1$s belongs in %2$s.</string>
+
+    <string name="activities_sorting_badge_put_in_order">Put in order</string>
+    <!-- The name of the list of a process's steps the learner orders, for TalkBack. -->
+    <string name="activities_sorting_steps_in_your_order">Steps, in your order</string>
+    <string name="activities_sorting_drag_steps">Hold and drag the steps into order.</string>
+    <!-- Above a process's steps in their true order, once checked. -->
+    <string name="activities_sorting_right_order">The right order</string>
+    <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
+    <string name="activities_sorting_you_had_it_at">You had it at %1$d</string>
 </resources>

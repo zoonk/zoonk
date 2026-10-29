@@ -47,6 +47,7 @@ import com.zoonk.android.feature.activities.numericAnswer
 import com.zoonk.android.feature.activities.numericValue
 import com.zoonk.android.feature.activities.patternTableRenderer
 import com.zoonk.android.feature.activities.sorting.categorizeRenderer
+import com.zoonk.android.feature.activities.sorting.processOrderRenderer
 import com.zoonk.android.feature.activities.stepSolverRenderer
 import com.zoonk.android.feature.player.engine.LessonPhase
 import com.zoonk.android.feature.player.engine.LessonPlayerState
@@ -98,6 +99,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "guessReveal" to guessRevealRenderer,
         "patternTable" to patternTableRenderer,
         "patternTester" to patternTesterRenderer,
+        "processOrder" to processOrderRenderer,
         "sqlPlayground" to sqlPlaygroundRenderer,
         "stepSolver" to stepSolverRenderer,
     )
