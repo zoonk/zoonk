@@ -63,6 +63,8 @@ fun LessonRouteScreen(
 ) {
     val resource = remember(route.lessonId) { app.lessonPlayer.lesson(route.lessonId) }
     val load by resource.collectShown()
+    val session by app.sessions.state.collectAsStateWithLifecycle()
+    val signedIn = session is SessionState.SignedIn
     val scope = rememberCoroutineScope()
     val exits =
         remember(navigator) {
@@ -103,9 +105,26 @@ fun LessonRouteScreen(
 
         is LoadState.Loaded -> {
             when (val lesson = state.value) {
-                is LessonLoad.Ready -> PlayingLesson(route, app, lesson, exits)
-                is LessonLoad.SessionRequired -> GuestGate(lesson.outline, app, navigator, exits)
-                is LessonLoad.NotGenerated -> WaitingLesson(route, app, lesson.outline, exits)
+                is LessonLoad.Ready -> {
+                    PlayingLesson(route, app, lesson, exits)
+                }
+
+                is LessonLoad.SessionRequired -> {
+                    GuestGate(lesson.outline, app, navigator, exits)
+                }
+
+                is LessonLoad.NotGenerated -> {
+                    if (signedIn) {
+                        WaitingLesson(
+                            route,
+                            app,
+                            lesson.outline,
+                            exits,
+                        )
+                    } else {
+                        GuestGate(lesson.outline, app, navigator, exits)
+                    }
+                }
             }
         }
     }
@@ -165,8 +184,8 @@ internal fun LessonFrame(
 }
 
 /**
- * A lesson's screens load only with a session, so a visitor opens it as a guest at once (main's
- * `LessonGuestGate`); the guest keeps everything if they make an account later.
+ * A lesson's screens load, and a lesson is written, only with a session, so a visitor opens it as a
+ * guest at once (main's `LessonGuestGate`); the guest keeps everything if they make an account later.
  */
 @Composable
 private fun GuestGate(
@@ -239,9 +258,11 @@ private fun WaitingLesson(
                 writingApi = LiveLessonWritingApi(app.api),
                 cache = app.cache,
                 sessions = app.sessions,
-                onReady = { resource.refresh() },
             )
         }
+    val session by app.sessions.state.collectAsStateWithLifecycle()
 
-    LessonWaitingScreen(outline, viewModel, exits)
+    LaunchedEffect((session as? SessionState.SignedIn)?.session) { viewModel.open() }
+
+    LessonWaitingScreen(outline, viewModel, exits, readLesson = resource::refresh)
 }

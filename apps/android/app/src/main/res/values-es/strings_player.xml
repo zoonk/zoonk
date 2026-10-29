@@ -73,11 +73,11 @@
   "player_open_failed": "2d65dbe4317f8cff1684c7a6ad309e6e409d35411262e774966fb438fce256ef",
   "player_opening_lesson": "b02985bdf5b120bc5495c7f9f2d8a545150cb7a1225087b0b2a8204cac14be50",
   "player_part_of": "74c6c4e4470b2dea6a28070d05c9142d4e2174412eacd2c941dc09852e6616e0",
-  "player_phase_active": "46717fba12cfe20af5d446c9607b167de6f3cbaf24b5ec8de69523d841a01bfe",
-  "player_phase_done": "1616d25560067698645c4f928b6e161753a5ce978e2f06b757e73820f712a80f",
-  "player_phase_pending": "fc8099b2994534537f61afcf85299317ee55a7662d030bb32edb0caf0b2a634f",
   "player_phase_plan": "e365e005d0ae27fcdd8770f721e78533c94f5cbccb97d24afc7d18379c4a0981",
+  "player_phase_plan_line_1": "060036faf41dd076d95e0c13a70c44bd1a491fc33dc30f9f8dc3a99519306236",
+  "player_phase_plan_line_2": "cf521e995ef34702bc665d80fe76d3bc0c655ed50a06e31769f4db0e825d7a8f",
   "player_phase_write": "1c7dd54d6f94fe0d78dff037cc856e644bbbb8cb9147fd7ad39a9f72185175f5",
+  "player_phase_write_line": "d5ba51fa8045372e9c6f1e3cc286c359c0f898d348fe99c3e66a0c726e34c4c7",
   "player_plus_limit_description": "b586693eaa0dc29ecc762b9f4ca89adadb157ed6214cbe1be010524bb030a442",
   "player_plus_limit_title": "e74bb940caa1f79151c5b78a4fbeff7c73e725374039120ee794bfb3697c9327",
   "player_previous_screen": "2de96b5a37084b2146b15a284956534e2bd0383a5dd47e28cc4da6f0cb02b63d",
@@ -125,8 +125,6 @@
   "player_worked_example_steps": "628b714bd8c43e9fdd798492e69c504b0374219d3217957536052bbc4bfb4fad",
   "player_write_again": "d2132ec064d41ff8c760995f276aec86353c1864b5579267bf9312f618fe1552",
   "player_write_your_answer": "590d33de54161b510f73183165516b3a5bad0982a6142562c54bbb3057b4b67a",
-  "player_writing_failed_description": "7120570b8a4029cc3092a42f0d8e2d1899fe261157ff0c421bf99d0c5dcbc270",
-  "player_writing_failed_title": "28d6ac6220cac24833fc7875efc9d54bcaabb41388ae7b69c9668c295566cd61",
   "player_writing_lesson": "0ad253d27c7eef2ba98d0a61196a3c6dc39cee4d2987a3ce384f560fbbc12fec",
   "player_writing_note": "e0ee233a2ccb731c96225b77888da4fd4951002b196d22d49c42f53db7a1b5bd",
   "player_your_answer": "60152d094f6a12267c08383c768572d96cfe00da95b42b0179657c85daa7565c"
@@ -217,10 +215,10 @@
     <string name="player_starting">Empezando…</string>
     <string name="player_writing_lesson">Preparando tu lección</string>
     <string name="player_phase_plan">Planificando la lección</string>
+    <string name="player_phase_plan_line_1">Eligiendo qué incluir…</string>
+    <string name="player_phase_plan_line_2">Buscando la mejor forma de explicarlo…</string>
     <string name="player_phase_write">Preparando la lección</string>
-    <string name="player_phase_active">en curso</string>
-    <string name="player_phase_done">hecha</string>
-    <string name="player_phase_pending">aún sin empezar</string>
+    <string name="player_phase_write_line">Preparando la pantalla %1$d…</string>
     <string name="player_writing_note">Suele tardar uno o dos minutos. La lección se abrirá aquí en cuanto esté lista.</string>
     <string name="player_ready_while_waiting">Lista para cuando termines</string>
     <string name="player_ready_instead">Lista para hacerla en su lugar</string>
@@ -229,8 +227,6 @@
         <item quantity="other">Repasa %1$s ideas</item>
         <item quantity="many">Repasa %1$s ideas</item>
     </plurals>
-    <string name="player_writing_failed_title">No se ha podido terminar</string>
-    <string name="player_writing_failed_description">Ha habido un problema por nuestra parte.</string>
     <string name="player_set_aside_title">Esta lección no está disponible</string>
     <string name="player_set_aside_description">No ha superado nuestros controles de calidad, así que tu plan continúa sin ella.</string>
     <string name="player_opening_lesson">Abriendo tu lección</string>

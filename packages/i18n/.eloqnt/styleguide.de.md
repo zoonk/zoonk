@@ -5,6 +5,7 @@
 - Use German for Germany and informal “du”.
 - Localize illustrative exam examples for Germany, such as the Abitur.
 - Treat “Brain Power” as a product name without an article in short labels and headings.
+- Lines saying what Zoonk is doing while it works (“Writing screen 3…”) speak as “wir” (“Wir erstellen Seite 3…”), never as an imperative to the learner.
 - Durations come with their abbreviation's period (“15 Min.”, “1 Std.”): a sentence ending with a duration placeholder such as `{time}` ends there, without a second period.
 
 ## Glossary

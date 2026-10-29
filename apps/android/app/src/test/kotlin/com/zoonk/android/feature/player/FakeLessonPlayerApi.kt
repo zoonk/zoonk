@@ -70,7 +70,7 @@ class FakeLessonPlayerApi(
     var gate: CompletableDeferred<Unit>? = null
     val readinessStates = ArrayDeque<String>()
     var writes = 0
-    var writeResponse: () -> LessonGeneration = { ApiJson.decodeFromString("""{"generationId":"gen-1","status":"generating"}""") }
+    var writeResponse: suspend () -> LessonGeneration = { ApiJson.decodeFromString("""{"generationId":"gen-1","status":"generating"}""") }
 
     override suspend fun lesson(
         session: AuthenticatedSession?,

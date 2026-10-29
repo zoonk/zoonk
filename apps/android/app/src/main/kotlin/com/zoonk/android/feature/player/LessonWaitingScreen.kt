@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
@@ -27,28 +26,31 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
-import androidx.compose.ui.semantics.clearAndSetSemantics
-import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
+import com.zoonk.android.data.GenerationFailure
+import com.zoonk.android.data.GenerationKind
+import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonOutline
 import com.zoonk.android.feature.player.steps.count
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
-import com.zoonk.android.ui.components.MarkStatus
-import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.api.models.ReadyAlternative
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
 
 private val ALTERNATIVE_AFTER = 15.seconds
+
+/** The lesson read can lag the run's end by a moment, so it's read again until it shows. */
+private val OPEN_RETRY = 2.seconds
 
 /** A lesson not written yet (main's `LessonWaiting`): its outline, "Start this lesson", then its writing. */
 @Composable
@@ -56,17 +58,29 @@ fun LessonWaitingScreen(
     outline: LessonOutline,
     viewModel: LessonWritingViewModel,
     exits: LessonPlayerExits,
+    readLesson: suspend () -> Unit,
 ) {
     val writing by viewModel.writing.collectAsStateWithLifecycle()
+    val run by viewModel.run.collectAsStateWithLifecycle()
     val alternative by viewModel.alternative.collectAsStateWithLifecycle()
     var late by remember { mutableStateOf(false) }
     val current = writing
+    val waits = current == LessonWriting.Writing || current == LessonWriting.Ready
+    val ready = current == LessonWriting.Ready || (current == LessonWriting.Writing && run.status == GenerationRun.Status.Ready)
 
-    LaunchedEffect(Unit) { viewModel.open() }
-    LaunchedEffect(current is LessonWriting.Writing) {
-        if (current is LessonWriting.Writing) {
+    LaunchedEffect(waits) {
+        if (waits) {
             delay(ALTERNATIVE_AFTER)
             late = true
+        }
+    }
+    LaunchedEffect(ready) {
+        if (ready) {
+            viewModel.recordWait()
+            while (true) {
+                readLesson()
+                delay(OPEN_RETRY)
+            }
         }
     }
 
@@ -108,19 +122,26 @@ fun LessonWaitingScreen(
                     Notice(stringResource(R.string.player_not_written_title), stringResource(R.string.player_not_written_description))
                 }
 
-                is LessonWriting.Writing -> {
-                    WritingPhasesView(current.phases)
-                    Text(
-                        stringResource(R.string.player_writing_note),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    if (late) alternative?.let { Alternative(it, instead = false, exits) }
+                LessonWriting.Writing, LessonWriting.Ready -> {
+                    val shown = if (current == LessonWriting.Ready) GenerationRun(status = GenerationRun.Status.Ready) else run
+                    val failed = shown.status == GenerationRun.Status.Failed
+                    GenerationWait(GenerationKind.Lesson, shown, onRetry = viewModel::retry)
+                    if (!failed) {
+                        Text(
+                            stringResource(R.string.player_writing_note),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                    if (late || failed) alternative?.let { Alternative(it, instead = false, exits) }
                 }
 
                 LessonWriting.Failed -> {
-                    Notice(stringResource(R.string.player_writing_failed_title), stringResource(R.string.player_writing_failed_description))
-                    FilledTonalButton(onClick = viewModel::start) { Text(stringResource(R.string.player_try_again)) }
+                    GenerationWait(
+                        GenerationKind.Lesson,
+                        GenerationRun(status = GenerationRun.Status.Failed, failure = GenerationFailure.NotStarted),
+                        onRetry = viewModel::start,
+                    )
                     alternative?.let { Alternative(it, instead = false, exits) }
                 }
 
@@ -175,51 +196,6 @@ private fun Notice(
     Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Text(title, style = MaterialTheme.typography.titleMedium)
         Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-    }
-}
-
-@Composable
-private fun WritingPhasesView(phases: WritingPhases) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Text(
-            stringResource(R.string.player_writing_lesson),
-            modifier = Modifier.semantics { heading() },
-            style = MaterialTheme.typography.titleMedium,
-        )
-        Phase(stringResource(R.string.player_phase_plan), phases.plan)
-        Phase(stringResource(R.string.player_phase_write), phases.write)
-    }
-}
-
-@Composable
-private fun Phase(
-    label: String,
-    state: PhaseState,
-) {
-    val said =
-        stringResource(
-            when (state) {
-                PhaseState.Pending -> R.string.player_phase_pending
-                PhaseState.Active -> R.string.player_phase_active
-                PhaseState.Done -> R.string.player_phase_done
-            },
-        )
-
-    Row(
-        modifier = Modifier.clearAndSetSemantics { contentDescription = "$label, $said" },
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        when (state) {
-            PhaseState.Active -> CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
-            PhaseState.Done -> StatusMark(MarkStatus.Done)
-            PhaseState.Pending -> StatusMark(MarkStatus.Todo)
-        }
-        Text(
-            label,
-            color = if (state == PhaseState.Pending) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-            style = MaterialTheme.typography.bodyLarge,
-        )
     }
 }
 

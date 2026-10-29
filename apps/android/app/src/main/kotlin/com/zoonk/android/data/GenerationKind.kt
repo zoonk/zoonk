@@ -170,6 +170,31 @@ enum class GenerationKind(
                 "writeLevelTestBank" to StepPlace.Phase("bank"),
             ),
     ),
+    Lesson(
+        label = R.string.player_writing_lesson,
+        phases =
+            listOf(
+                GenerationPhase(
+                    "plan",
+                    40,
+                    R.string.player_phase_plan,
+                    listOf(R.string.player_phase_plan_line_1, R.string.player_phase_plan_line_2),
+                ),
+                GenerationPhase(
+                    "write",
+                    50,
+                    R.string.player_phase_write,
+                    numbered = NumberedLines(6, R.string.player_phase_write_line, R.string.generation_question_review),
+                ),
+            ),
+        steps =
+            mapOf(
+                "joinRunningLesson" to StepPlace.Join,
+                "lessonReady" to StepPlace.Done,
+                "planLesson" to StepPlace.Phase("plan"),
+                "writeLesson" to StepPlace.Phase("write"),
+            ),
+    ),
     ;
 
     fun isDone(steps: Map<String, StepState>): Boolean =
