@@ -5,11 +5,13 @@
   "activities_music_badge_ear_training": "52a28fe673b4f13f6e4acf3527a8fb269af15bbf0ef9ffe65d0a346c994a9167",
   "activities_music_badge_play_it": "1ede8cb241b20e490c1fb2cc91ab5875661640f1f884af75c2a02a095af135ea",
   "activities_music_badge_read_listen": "20dc8be2fddf05695887a074d16a27477ac3a1347a970359372d7e9ea5a303a1",
+  "activities_music_badge_tap_along": "c54e178b7fdc7cb592a6d2ab276509405b79f706cfb8139379c8c6bfb3610944",
   "activities_music_bar_notes": "98f04064635b1d6c41ccb78caac307ae421b213d89c2a1d7e056b65c162653b6",
   "activities_music_bar_of": "6205a404fe4bb549fa173b70c8d11f7707613e4fcc0a30f216082105495722a6",
   "activities_music_bars": "7d389acd6cf7cefc3919ddc57cd786888d174c7e6b0373f799f4e3b59b74b16b",
   "activities_music_bpm": "05e62f73d4fdad8c6b146cefe2090319dd186a218c52ebccb7e55bb272e89d03",
   "activities_music_by_ear": "cb18eb7904556b9688a367de5aaa316fad9bd0a5e4feaa0d4e647a90604db841",
+  "activities_music_check_sound_again": "5fdcda7eabf62cdeb4e7308a4c7ad4b147b14b9c45fe82207a1e961ee96aef71",
   "activities_music_chord_augmented": "bb84dafc5da85466b2031aca21bd31a1eeb1d00369b5d8bc23ed7aa5bb640436",
   "activities_music_chord_diminished": "c276e37b2e8ab179ffe87a8ad351fb427e29731cbfde3622e43565549a8d4570",
   "activities_music_chord_dominant7": "6de6312bf25c49ca6a8827a3c3fc90d972e1519eeb0539e836127440d67e0b54",
@@ -17,11 +19,16 @@
   "activities_music_chord_major7": "2e3b93cc215d6270a4ffa191b677ab9586edf7de9dc50daa98c1a2b07e7b217b",
   "activities_music_chord_minor": "7dfa047de9c8970a5f0ac68b01a00b558624c24b6e6b81ae0fb2054a4d8cbed3",
   "activities_music_chord_minor7": "3c1452dab52e15c68d7a2a069398195373385e03d0f261b01f5eeb5c8cd5eacc",
+  "activities_music_continue": "61e971c1a27cfa6739a791a6e42dff41a8bd72cd12d4ed161c7f718ab3fa587e",
+  "activities_music_early_or_late": "060757c28a3bb3946ecc5033c0280de6cfc86209368a4fe5714b5cb94bb5062c",
+  "activities_music_extra_taps": "a0f9f2b2f843d783a45f84cca1152653d1f97ea4120ba22dbedd7619f56cc2bf",
   "activities_music_fret": "d9f1b124e7e6ea4dac6d19ae82189c82f019980f3a43e15c587e5a6e8376b140",
   "activities_music_frets": "0455a21af37b5bb026754070f7e5e2b5fe49303aa958723a2c708526f62a78e9",
+  "activities_music_get_ready": "666693fbe8b876478f608e560f133c22d24b584d44f84d48eb4f7270d728fe3d",
   "activities_music_guitar_strings": "ac60d81d44d32bdcf1adc60f7c6fec11dbe56d43f3b4b7d5b5553ff9a44c16b1",
   "activities_music_hear_it": "8f9782d992b31c4bbd73c55b5116528bd456b905b7962d9ad382bcc87df72752",
   "activities_music_higher_frets": "cb7de786a0e56b27b835942771b1b6bf8fc6e15b9565afcd515986d09d09bece",
+  "activities_music_listen_first": "725707eb264b551cd47f52e9bd2998202b59bf8ac2e4b538a46d33c04b51b954",
   "activities_music_lower_frets": "ab166e133e4b513810dea644fc8a5cf198bad675f8fda9fc6e102919dca3de5b",
   "activities_music_melody": "35b82bcdaef45d614807d552fb86cb0729e43adac85e6164cea105ce58a5f543",
   "activities_music_no_hand_shape": "487f78842a4b6c67cbfc1b1a58d8143322ecebe4b7f7501cc7901d620ac8a0d7",
@@ -31,24 +38,46 @@
   "activities_music_note_flat": "033d2bbc08e536074037ccdcadbbcc8355b13c01ff5f8f797ed2dea1c56f72c0",
   "activities_music_note_sharp": "c3649382b536d9d989a17964b6e04e5b4f59b6b080435860c305e1bcc80852af",
   "activities_music_on_the_keys": "c761c92ca28d48b27853b2844ec2e1e2d9c054cb40700edb87e963dc556374c0",
+  "activities_music_on_time": "e76dc8c42623e620bff25f92d04b7ebddba01acd4e23dd2085b9fc336cfc362c",
   "activities_music_open_string": "309f6db6dad96b456f3363307d5a0fb1171460b4379ad75f041e1ffb4d92a5d6",
+  "activities_music_or_space": "416448c32f4bbd9c475ee12e7b322c293bb593f1b6d461896494026e54933d2a",
   "activities_music_piano_keys": "c2fb7d7d294bed6820e6178f99411f3ccd31d4ad0c6d805f6cd735f24ecf30cf",
   "activities_music_play_melody": "96d3eb25cca83da17579235fbff1b573ac7dcc93fff00e9833d76404b1de02de",
   "activities_music_play_sound": "ac4f7052f14394c16009f60b89c80ed8859c40efe88d36406a9139b470c1018f",
+  "activities_music_rhythm_description": "97e045bb3198fafd605f482ac84a313ada141ffddc97fd5020769707af4c9a18",
+  "activities_music_rhythm_hits": "4adb9078f7abdcfb53d9925baa70cc13363af40e3bb4d05f032724245b21dff8",
+  "activities_music_rhythm_round": "0cab8f139cba7a035cf9c210dabbabd1721f139dfbf7162d0a908be32b05e77b",
+  "activities_music_rhythm_rounds": "6ae228d19ab0c558a05cc2df0cdc5b00758b2af0b7b981c9bd7f1e5c7b69aec5",
   "activities_music_same_chord_guitar": "2c2b526c96fe5d265f4a111ef8265ab33715e7707022c760f3136a83f03210fd",
   "activities_music_same_notes_guitar": "a8dd02c953b3d0cb0ac7e252d719084273ff99177823367d4773ef216cb0777e",
   "activities_music_show_as": "3e8b23c0d8b5d8aa4a655bac4944dbf128605944a7533938b5b9f2cfe490ca83",
   "activities_music_show_notes": "226ece4fa69fadf94f2d06528115b95f272eccfda74747692dfa89011d32f357",
+  "activities_music_skip_for_now": "fb27b1116c63734a07b41a3ca4438942863d653c729f428ea057f07fc5c0b911",
+  "activities_music_sound_check_failed": "241c0d339563fe9c0e583ee8ddad97dcf6359bff1d29a25e8e08b485302bd897",
+  "activities_music_sound_check_intro": "bba4480ff9eb75bef33a677da88db2c2dcae6f305f7c2030ef999b6effd494d7",
+  "activities_music_sound_check_late": "8d88b69d3a3203f8bf4841f721b56ab1577667c1362a34d07ea926e81e3f1d26",
+  "activities_music_sound_check_listen": "b7f64b7fe9b6d4e76ea3137cf36a7160839271fbc614d66685b8e00d0c7938f2",
+  "activities_music_sound_check_on_time": "b9f239564bac1c48a57980a906c539c6c06b8c9d42644edb4e101172ede3da46",
+  "activities_music_sound_check_start": "bfb87ab2210abc26d0081ff432fffb30441afb33200e56c43b6e557f5eba43cf",
+  "activities_music_sound_check_tap": "569680b4e52ead2072098ae0216e0556e6abd2fed2193b58e0dbe8215dd7c1ac",
+  "activities_music_sound_check_title": "ddc092ce2edb97f150854339263226f6193755333648292d9ade74abb19b628f",
   "activities_music_sound_notes": "3b7676eccbd77c714070acd6cd9327ab7faf33ea923f4bcefd0dd291a5264f6b",
   "activities_music_sound_unavailable": "081f52c1b4f1722d486d7ff5dee59d6244af411027b206d5a75c2abf977afcee",
   "activities_music_staff": "bb9df90d87212d9c7281722f441971bef0faee36fbb36110bd4a32ebb3ae02b1",
+  "activities_music_start_tapping": "82c629e7b8fb2ad22773ca733bf230d207a81660013d3f1601b77be6ed3a434d",
   "activities_music_stop": "a14cb3e66a0e9f427b7c4dcb263d9d9331a3aa5e04314fe07c0cf235ac43d597",
   "activities_music_string": "21a705ecd4ec7a8e334cc29297139f5fa3bd4a2699236678de3870b44a60f2c3",
   "activities_music_string_high_e": "a51f8ade4a021fbf28d29910c18ac506456faaa0e5726471365ac8bf58b916f9",
   "activities_music_string_low_e": "76610ef306d7361b271e87b7f548937357c8a17a127094d7cd5fcda49d25c735",
   "activities_music_string_position": "c5ac53b7ebbfc95157808b3b9bbce6c40db5cc2a99ca845fceee1ef29ce66e7c",
   "activities_music_tab": "b2bdd7e0089a8738d380a5c9b7651a64370cdbb3bb1b8a5e82bd1b8bbcfec5a1",
-  "activities_music_tempo": "5294a1a392519afd9f0d011e6b49b8e49ea56d7ef69da1dadfd7376503d82217"
+  "activities_music_tap_early": "e77625b8853af3122e8433d54344e191bf99b1571d66ee4a8c2ddceb67bb57f5",
+  "activities_music_tap_here": "79646fed9c9a8d9cefffcd1b4e6e04775857741207d688181bdb79519dea6fbe",
+  "activities_music_tap_late": "e3608bd6e65f47dc685cca7fed14582f8ac6e791ce6af96ebfaf16637a4e0d28",
+  "activities_music_tap_missed": "b4d31438520646f4f478574bc2fa9809159d9a16040159707424c98e6c2a58a2",
+  "activities_music_taps_on_time": "a4cf5f9b106664009cfcf96021f44f8a700b7115dba3cc0e7c8ab31fffd95562",
+  "activities_music_tempo": "5294a1a392519afd9f0d011e6b49b8e49ea56d7ef69da1dadfd7376503d82217",
+  "activities_music_try_again": "2eee243720c0b5aec9d10d2eb14bf15c46a230817bee082c6fc2c895af0c781f"
 }
 -->
 <resources>
@@ -57,6 +86,8 @@
     <string name="activities_music_badge_ear_training">Entrenamiento auditivo</string>
     <!-- Reading music while it plays. -->
     <string name="activities_music_badge_read_listen">Lee y escucha</string>
+    <!-- Tapping a rhythm in time with the beat. -->
+    <string name="activities_music_badge_tap_along">Sigue el ritmo</string>
     <!-- A note name read aloud, like "F sharp". -->
     <string name="activities_music_note_sharp">%1$s sostenido</string>
     <!-- A note name read aloud, like "E flat". -->
@@ -148,4 +179,62 @@
     <string name="activities_music_bpm">%1$d bpm</string>
     <!-- For TalkBack: one bar of the melody and its notes, like "Bar 1: E, E, F, G." -->
     <string name="activities_music_bar_notes">Compás %1$d: %2$s.</string>
+    <!-- The rhythm's tempo while one round plays, like "90 bpm · Round 1 of 2". -->
+    <string name="activities_music_rhythm_round">%1$d bpm · Ronda %2$d de %3$d</string>
+    <!-- The rhythm's tempo and how many times it repeats, like "90 bpm · 2 rounds". -->
+    <plurals name="activities_music_rhythm_rounds">
+        <item quantity="one">%1$d bpm · %2$d ronda</item>
+        <item quantity="many">%1$d bpm · %2$d rondas</item>
+        <item quantity="other">%1$d bpm · %2$d rondas</item>
+    </plurals>
+    <!-- For TalkBack: the rhythm in words, like "A rhythm of 16 steps with a beat every 4. Tap on steps 1, 4, 7, 11, 13, over a click on every beat." -->
+    <string name="activities_music_rhythm_description">Un ritmo de %1$d pasos con un pulso cada %2$d. Toca en los pasos %3$s, siguiendo un clic en cada pulso.</string>
+    <!-- The legend for the rhythm's steps to tap. -->
+    <string name="activities_music_rhythm_hits">Aciertos de ritmo</string>
+    <!-- The legend for a tap that came on time. -->
+    <string name="activities_music_on_time">A tiempo</string>
+    <!-- The legend for a tap that came too early or too late. -->
+    <string name="activities_music_early_or_late">Antes o después</string>
+    <!-- On the tap pad while the count-in clicks play. -->
+    <string name="activities_music_get_ready">Prepárate…</string>
+    <!-- The tap pad's label. -->
+    <string name="activities_music_tap_here">Toca aquí</string>
+    <!-- Under the tap pad when a keyboard is attached. -->
+    <string name="activities_music_or_space">o pulsa la barra espaciadora</string>
+    <!-- Plays one round of the rhythm with its clicks before the learner taps. -->
+    <string name="activities_music_listen_first">Escucha primero</string>
+    <string name="activities_music_try_again">Inténtalo de nuevo</string>
+    <string name="activities_music_start_tapping">Empieza a tocar</string>
+    <!-- Measures again how late this device plays sound. -->
+    <string name="activities_music_check_sound_again">Vuelve a comprobar el retraso del sonido</string>
+    <!-- How many of the rhythm's taps came on time, like "8 of 10 taps on time." The count is the total. -->
+    <plurals name="activities_music_taps_on_time">
+        <item quantity="one">%1$d de %2$d toque a tiempo.</item>
+        <item quantity="many">%1$d de %2$d toques a tiempo.</item>
+        <item quantity="other">%1$d de %2$d toques a tiempo.</item>
+    </plurals>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms early." -->
+    <string name="activities_music_tap_early">El toque %1$d se adelantó %2$d ms.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms late." -->
+    <string name="activities_music_tap_late">El toque %1$d se retrasó %2$d ms.</string>
+    <string name="activities_music_tap_missed">No se detectó el toque %1$d.</string>
+    <!-- Taps that matched none of the rhythm's steps. -->
+    <plurals name="activities_music_extra_taps">
+        <item quantity="one">%d toque extra.</item>
+        <item quantity="many">%d toques extra.</item>
+        <item quantity="other">%d toques extra.</item>
+    </plurals>
+    <!-- The title of the one-time check of how late this device plays sound. -->
+    <string name="activities_music_sound_check_title">Configura el sonido</string>
+    <string name="activities_music_sound_check_intro">Los auriculares pueden reproducir el sonido con un ligero retraso. Sigue una vez los %1$d clics y los ritmos de este dispositivo se ajustarán para que vayan a tiempo.</string>
+    <string name="activities_music_sound_check_listen">Escucha los clics…</string>
+    <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
+    <string name="activities_music_sound_check_tap">Toca con cada clic · %1$d de %2$d</string>
+    <string name="activities_music_sound_check_failed">No hemos podido hacer coincidir suficientes toques con los clics. Inténtalo de nuevo, tocando con cada uno.</string>
+    <string name="activities_music_sound_check_on_time">El sonido de este dispositivo llega a tiempo.</string>
+    <!-- How late this device plays sound, like "about 120 ms late". -->
+    <string name="activities_music_sound_check_late">El sonido de este dispositivo llega con unos %1$d ms de retraso. Los ritmos se ajustan para compensarlo.</string>
+    <string name="activities_music_sound_check_start">Iniciar la comprobación del sonido</string>
+    <string name="activities_music_skip_for_now">Omitir por ahora</string>
+    <string name="activities_music_continue">Continuar</string>
 </resources>

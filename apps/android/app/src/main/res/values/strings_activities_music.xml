@@ -5,6 +5,8 @@
     <string name="activities_music_badge_ear_training">Ear training</string>
     <!-- Reading music while it plays. -->
     <string name="activities_music_badge_read_listen">Read and listen</string>
+    <!-- Tapping a rhythm in time with the beat. -->
+    <string name="activities_music_badge_tap_along">Tap along</string>
 
     <!-- A note name read aloud, like "F sharp". -->
     <string name="activities_music_note_sharp">%1$s sharp</string>
@@ -98,4 +100,60 @@
     <string name="activities_music_bpm">%1$d bpm</string>
     <!-- For TalkBack: one bar of the melody and its notes, like "Bar 1: E, E, F, G." -->
     <string name="activities_music_bar_notes">Bar %1$d: %2$s.</string>
+
+    <!-- The rhythm's tempo while one round plays, like "90 bpm · Round 1 of 2". -->
+    <string name="activities_music_rhythm_round">%1$d bpm · Round %2$d of %3$d</string>
+    <!-- The rhythm's tempo and how many times it repeats, like "90 bpm · 2 rounds". -->
+    <plurals name="activities_music_rhythm_rounds">
+        <item quantity="one">%1$d bpm · %2$d round</item>
+        <item quantity="other">%1$d bpm · %2$d rounds</item>
+    </plurals>
+    <!-- For TalkBack: the rhythm in words, like "A rhythm of 16 steps with a beat every 4. Tap on steps 1, 4, 7, 11, 13, over a click on every beat." -->
+    <string name="activities_music_rhythm_description">A rhythm of %1$d steps with a beat every %2$d. Tap on steps %3$s, over a click on every beat.</string>
+    <!-- The legend for the rhythm's steps to tap. -->
+    <string name="activities_music_rhythm_hits">Rhythm hits</string>
+    <!-- The legend for a tap that came on time. -->
+    <string name="activities_music_on_time">On time</string>
+    <!-- The legend for a tap that came too early or too late. -->
+    <string name="activities_music_early_or_late">Early or late</string>
+    <!-- On the tap pad while the count-in clicks play. -->
+    <string name="activities_music_get_ready">Get ready…</string>
+    <!-- The tap pad's label. -->
+    <string name="activities_music_tap_here">Tap here</string>
+    <!-- Under the tap pad when a keyboard is attached. -->
+    <string name="activities_music_or_space">or press Space</string>
+    <!-- Plays one round of the rhythm with its clicks before the learner taps. -->
+    <string name="activities_music_listen_first">Listen first</string>
+    <string name="activities_music_try_again">Try again</string>
+    <string name="activities_music_start_tapping">Start tapping</string>
+    <!-- Measures again how late this device plays sound. -->
+    <string name="activities_music_check_sound_again">Check the sound delay again</string>
+    <!-- How many of the rhythm's taps came on time, like "8 of 10 taps on time." The count is the total. -->
+    <plurals name="activities_music_taps_on_time">
+        <item quantity="one">%1$d of %2$d tap on time.</item>
+        <item quantity="other">%1$d of %2$d taps on time.</item>
+    </plurals>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms early." -->
+    <string name="activities_music_tap_early">Tap %1$d came %2$d ms early.</string>
+    <!-- The tap furthest off, like "Tap 3 came 40 ms late." -->
+    <string name="activities_music_tap_late">Tap %1$d came %2$d ms late.</string>
+    <string name="activities_music_tap_missed">Tap %1$d was missed.</string>
+    <!-- Taps that matched none of the rhythm's steps. -->
+    <plurals name="activities_music_extra_taps">
+        <item quantity="one">%d extra tap.</item>
+        <item quantity="other">%d extra taps.</item>
+    </plurals>
+    <!-- The title of the one-time check of how late this device plays sound. -->
+    <string name="activities_music_sound_check_title">Set up your sound</string>
+    <string name="activities_music_sound_check_intro">Headphones can play sound a little late. Tap along with %1$d clicks once, and rhythms on this device are timed fairly.</string>
+    <string name="activities_music_sound_check_listen">Listen to the clicks…</string>
+    <!-- Which click to tap with now, like "Tap with each click · 2 of 6". -->
+    <string name="activities_music_sound_check_tap">Tap with each click · %1$d of %2$d</string>
+    <string name="activities_music_sound_check_failed">We couldn\'t match enough taps to the clicks. Try again, tapping with each one.</string>
+    <string name="activities_music_sound_check_on_time">Sound on this device arrives on time.</string>
+    <!-- How late this device plays sound, like "about 120 ms late". -->
+    <string name="activities_music_sound_check_late">Sound on this device arrives about %1$d ms late. Rhythms here take that out.</string>
+    <string name="activities_music_sound_check_start">Start the sound check</string>
+    <string name="activities_music_skip_for_now">Skip for now</string>
+    <string name="activities_music_continue">Continue</string>
 </resources>
