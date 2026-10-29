@@ -90,3 +90,4 @@
 - Match the app's compact durations: “2 h 30 min”, “30 s”.
 - Use a no-break space (U+00A0) before “?”, “!”, “;”, and “:” and inside « ».
 - Use the typographic apostrophe (’), never the straight one (').
+- A count goes before its noun: “les 3 matières qui comptent le plus”, never “les matières 3”. For one, drop the number: “la matière qui compte le plus”.
