@@ -12,6 +12,7 @@ import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.perform
 import com.zoonk.api.models.AllowanceResponse
+import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.GooglePlaySubscriptionRequest
 import com.zoonk.api.models.MeResponse
 import com.zoonk.api.models.StoreSubscriptionResponse
@@ -31,6 +32,8 @@ interface SubscriptionApi {
 
     suspend fun allowance(session: AuthenticatedSession): AllowanceResponse
 
+    suspend fun freePlan(): FreePlan
+
     suspend fun linkGooglePlay(
         session: AuthenticatedSession,
         purchaseToken: String,
@@ -46,6 +49,8 @@ class LiveSubscriptionApi(
         perform {
             api.clients(session).account.getCurrentUserAllowance()
         }
+
+    override suspend fun freePlan(): FreePlan = perform { api.clients(null).subscriptions.getFreePlan() }
 
     override suspend fun linkGooglePlay(
         session: AuthenticatedSession,
@@ -98,6 +103,8 @@ class SubscriptionStore(
         cache.resource(Audience.SignedIn, setOf(DataDomain.UserSession, DataDomain.UserSubscription)) { session ->
             session?.let { api.account(it) }
         }
+
+    val freePlan: Resource<FreePlan> = cache.resource(Audience.Everyone) { api.freePlan() }
 
     val allowance: Resource<AllowanceResponse> =
         cache.resource(Audience.SignedIn, setOf(DataDomain.Allowance)) { session -> session?.let { api.allowance(it) } }

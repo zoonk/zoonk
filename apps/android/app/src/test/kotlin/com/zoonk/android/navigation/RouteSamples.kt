@@ -59,6 +59,7 @@ val routeSamples: List<AppRoute> =
         AppRoute.Terms,
         AppRoute.Blog,
         AppRoute.WebSubscription,
+        AppRoute.FairUse,
     )
 
 /** Read from the sealed interface, so a route added without a sample fails the tests. */

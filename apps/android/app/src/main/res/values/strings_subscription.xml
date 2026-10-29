@@ -51,4 +51,75 @@
     <string name="subscription_benefit_mocks">Mock exams, timed like the real one</string>
     <string name="subscription_benefit_buddy">An AI study buddy whenever you\'re stuck</string>
     <string name="subscription_benefit_calls">Higher limits for speaking calls</string>
+    <string name="subscription_start_free">Start free</string>
+    <string name="subscription_no_card_needed">No card needed.</string>
+    <!-- The free plan card's lead line. %1$s is a number of goals ("2 goals"), %2$s a number of lessons a month ("40 lessons a month"). -->
+    <string name="subscription_free_summary">%1$s · %2$s</string>
+    <plurals name="subscription_free_goals">
+        <item quantity="one">%d goal</item>
+        <item quantity="other">%d goals</item>
+    </plurals>
+    <plurals name="subscription_free_lessons_a_month">
+        <item quantity="one">%d lesson a month</item>
+        <item quantity="other">%d lessons a month</item>
+    </plurals>
+    <string name="subscription_free_plan">A plan for your goal and your date</string>
+    <string name="subscription_free_exam_week">For an exam: the diagnostic, your plan and its first week</string>
+    <string name="subscription_free_exam_day">For an exam: the diagnostic, your plan and its first day</string>
+    <!-- Never shown for 1 or 7 days, which have their own strings; "one" is there only because every language needs it. -->
+    <plurals name="subscription_free_exam">
+        <item quantity="one">For an exam: the diagnostic, your plan and its first %d days</item>
+        <item quantity="other">For an exam: the diagnostic, your plan and its first %d days</item>
+    </plurals>
+    <plurals name="subscription_free_buddy">
+        <item quantity="one">An AI study buddy: %d message a day</item>
+        <item quantity="other">An AI study buddy: %d messages a day</item>
+    </plurals>
+    <string name="subscription_free_calls">Speaking practice calls, with lower limits than Plus</string>
+    <string name="subscription_questions_title">Common questions</string>
+    <string name="subscription_questions_unsure">Still unsure?</string>
+    <!-- Each language writes to its own support inbox: keep the address for this language's support (Portuguese: contato@zoonk.com). -->
+    <string name="subscription_questions_email">hello@zoonk.com</string>
+    <string name="subscription_show_answer">show the answer</string>
+    <string name="subscription_hide_answer">hide the answer</string>
+    <string name="subscription_question_free">What\'s in the free plan?</string>
+    <plurals name="subscription_answer_free_guest_lead">
+        <item quantity="one">Start free with %d lesson, no account needed. With a free account, you get:</item>
+        <item quantity="other">Start free with %d lessons, no account needed. With a free account, you get:</item>
+    </plurals>
+    <string name="subscription_answer_free_lead">With the free plan, you get:</string>
+    <plurals name="subscription_answer_free_goals">
+        <item quantity="one">%d goal at a time</item>
+        <item quantity="other">%d goals at a time</item>
+    </plurals>
+    <!-- %1$d is the lessons a month, %2$d the most a day. -->
+    <plurals name="subscription_answer_free_lessons">
+        <item quantity="one">%1$d lesson a month, up to %2$d a day</item>
+        <item quantity="other">%1$d lessons a month, up to %2$d a day</item>
+    </plurals>
+    <string name="subscription_answer_free_exam_week">The first week of exam prep</string>
+    <string name="subscription_answer_free_exam_day">The first day of exam prep</string>
+    <!-- Never shown for 1 or 7 days, which have their own strings; "one" is there only because every language needs it. -->
+    <plurals name="subscription_answer_free_exam">
+        <item quantity="one">The first %d days of exam prep</item>
+        <item quantity="other">The first %d days of exam prep</item>
+    </plurals>
+    <!-- %1$s is the buddy messages ("10 messages to your buddy"), %2$s the uploads ("3 uploads"). -->
+    <string name="subscription_answer_free_buddy_uploads">%1$s and %2$s a day</string>
+    <plurals name="subscription_answer_free_buddy">
+        <item quantity="one">%d message to your buddy</item>
+        <item quantity="other">%d messages to your buddy</item>
+    </plurals>
+    <plurals name="subscription_answer_free_uploads">
+        <item quantity="one">%d upload</item>
+        <item quantity="other">%d uploads</item>
+    </plurals>
+    <string name="subscription_answer_free_calls">Practice calls, with lower limits than Plus (exam speaking tasks come with Plus)</string>
+    <string name="subscription_question_unlimited">Is Plus really unlimited?</string>
+    <string name="subscription_answer_unlimited">Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan.</string>
+    <string name="subscription_answer_fair_use">Read our fair use policy</string>
+    <string name="subscription_question_cancel">What happens if I cancel?</string>
+    <string name="subscription_answer_cancel">You keep Plus until the end of the period you already paid for. Then you\'re back on the free plan, and your goals and progress stay with you.</string>
+    <string name="subscription_question_refund">Can I get a refund?</string>
+    <string name="subscription_answer_refund">Just contact us and tell us what happened. We\'ll do our best to get you a refund.</string>
 </resources>

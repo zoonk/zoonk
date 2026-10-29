@@ -276,6 +276,11 @@ sealed interface AppRoute : NavKey {
         override val path = "/blog"
     }
 
+    @Serializable
+    data object FairUse : WebPage {
+        override val path = "/terms#fair-use"
+    }
+
     /** Where a Plus bought on the web is changed or canceled. */
     @Serializable
     data object WebSubscription : WebPage {

@@ -58,6 +58,7 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.SectionHeader
@@ -103,7 +104,7 @@ fun SubscriptionScreen(
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 if (signedIn == null) {
-                    Offer(app, navigator, hasAccount = false)
+                    Offer(app, navigator, hasAccount = false, isVisitor = session is SessionState.SignedOut)
                 } else {
                     Account(app, navigator)
                 }
@@ -123,7 +124,7 @@ private fun Account(
     when (val state = account) {
         is LoadState.Loaded -> {
             val subscription = state.value.account.subscription
-            if (subscription != null) CurrentPlan(subscription, navigator) else Offer(app, navigator, hasAccount = true)
+            if (subscription != null) CurrentPlan(subscription, navigator) else Offer(app, navigator, hasAccount = true, isVisitor = false)
         }
 
         is LoadState.Failed -> {
@@ -228,8 +229,10 @@ private fun Offer(
     app: AppContainer,
     navigator: AppNavigator,
     hasAccount: Boolean,
+    isVisitor: Boolean,
 ) {
     val offers by app.subscriptions.offers.collectShown()
+    val freePlan by app.subscriptions.freePlan.collectShown()
     val purchase by app.subscriptions.purchase.collectAsStateWithLifecycle()
     var period by rememberSaveable { mutableStateOf(BillingPeriod.Monthly) }
     val activity = LocalActivity.current
@@ -314,6 +317,17 @@ private fun Offer(
             PlusBenefits()
         }
     }
+
+    freePlan.value?.let { limits ->
+        if (isVisitor) {
+            FreePlanCard(
+                limits,
+                currency = plans?.let { (it.monthly ?: it.yearly)?.currency },
+                onStart = { navigator.showRoot(AppTab.Today) },
+            )
+        }
+    }
+    CommonQuestions(freePlan.value, hasAccount, navigator)
 }
 
 @Composable
@@ -425,14 +439,29 @@ private fun FreePlanSummary(app: AppContainer) {
 /** Main's PlusBenefits. */
 @Composable
 fun PlusBenefits(modifier: Modifier = Modifier) {
+    PlanIncludes(
+        summary = stringResource(R.string.subscription_benefits_summary),
+        items =
+            listOf(
+                R.string.subscription_benefit_exam,
+                R.string.subscription_benefit_mocks,
+                R.string.subscription_benefit_buddy,
+                R.string.subscription_benefit_calls,
+            ).map { stringResource(it) },
+        modifier = modifier,
+    )
+}
+
+/** Main's PlanIncludes: a plan's lead line, then what it includes. */
+@Composable
+internal fun PlanIncludes(
+    summary: String,
+    items: List<String>,
+    modifier: Modifier = Modifier,
+) {
     Column(modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(stringResource(R.string.subscription_benefits_summary), style = MaterialTheme.typography.titleMedium)
-        listOf(
-            R.string.subscription_benefit_exam,
-            R.string.subscription_benefit_mocks,
-            R.string.subscription_benefit_buddy,
-            R.string.subscription_benefit_calls,
-        ).forEach { benefit ->
+        Text(summary, style = MaterialTheme.typography.titleMedium)
+        items.forEach { item ->
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.Top) {
                 Icon(
                     painterResource(R.drawable.ic_check),
@@ -440,21 +469,21 @@ fun PlusBenefits(modifier: Modifier = Modifier) {
                     modifier = Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
-                Text(stringResource(benefit), style = MaterialTheme.typography.bodyMedium)
+                Text(item, style = MaterialTheme.typography.bodyMedium)
             }
         }
     }
 }
 
 @Composable
-private fun Note(
+internal fun Note(
     text: String,
     modifier: Modifier = Modifier,
 ) {
     Text(text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
 }
 
-private fun money(
+internal fun money(
     micros: Long,
     currency: String,
     locale: Locale,

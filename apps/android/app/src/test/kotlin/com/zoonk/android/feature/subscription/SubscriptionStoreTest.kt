@@ -17,6 +17,7 @@ import com.zoonk.android.data.StoredSession
 import com.zoonk.android.data.account
 import com.zoonk.android.data.value
 import com.zoonk.api.models.AllowanceResponse
+import com.zoonk.api.models.FreePlan
 import com.zoonk.api.models.MeResponse
 import com.zoonk.api.models.MeSubscription
 import com.zoonk.api.models.StoreSubscriptionResponse
@@ -90,6 +91,8 @@ private class FakeSubscriptionApi : SubscriptionApi {
     override suspend fun account(session: AuthenticatedSession): MeResponse = account(session.accountId)
 
     override suspend fun allowance(session: AuthenticatedSession): AllowanceResponse = throw UnsupportedOperationException()
+
+    override suspend fun freePlan(): FreePlan = throw UnsupportedOperationException()
 
     override suspend fun linkGooglePlay(
         session: AuthenticatedSession,
