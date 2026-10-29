@@ -36,6 +36,7 @@ protocol StudyAPIClient: Sendable {
   func answerSuggestedGoal(token: String, suggestionID: String, accepted: Bool) async throws
   func markMilestoneShown(token: String, milestoneID: String) async throws
   func getWeeklyRecap(token: String, goalID: String?) async throws -> WeeklyRecap
+  func getLanguageToday(token: String, goalID: String) async throws -> LanguageTodayView
   func decidePlanChange(
     token: String, goalID: String, changeID: String, decision: PlanChangeDecision
   ) async throws -> TodayView.PlanChange?
@@ -294,6 +295,21 @@ struct StudyAPI: StudyAPIClient {
 
   func writeLesson(token: String, lessonID: String) async throws -> LessonWritingOutcome {
     try await LessonPlayerAPI(clients: clients).writeLesson(id: lessonID, token: token)
+  }
+
+  func getLanguageToday(token: String, goalID: String) async throws -> LanguageTodayView {
+    try await clients.perform(token: token) { client in
+      switch try await client.getLanguageToday(path: .init(goalId: goalID)) {
+      case .ok(let response):
+        return try StudyJSON.recode(try response.body.json)
+      case .unauthorized:
+        throw APIError.unauthorized
+      case .notFound:
+        throw APIError.notFound
+      default:
+        throw APIError.unavailable
+      }
+    }
   }
 
   /// Nil when the change is out of date: answered elsewhere, or the plan moved on.

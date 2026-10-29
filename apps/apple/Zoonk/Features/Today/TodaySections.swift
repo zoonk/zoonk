@@ -850,11 +850,11 @@ struct TodayProgressSection: View {
 }
 
 struct TodayPracticeSection: View {
-  @Environment(AppRouter.self) private var router
   @Environment(ExamStore.self) private var exam
   @Environment(LearnerSummaryStore.self) private var learner
 
   let view: TodayView
+  let language: LanguageTodayView?
 
   var body: some View {
     let places = learner.summary.value?.places
@@ -864,12 +864,30 @@ struct TodayPracticeSection: View {
         TodayMockRow(options: exam.mockOptions(goalId: view.goal.id))
       }
 
-      if places?.speaking == true {
+      if let speaking = language?.speaking {
         NavigationLink(value: AppRoute.speaking) {
-          Label {
-            Text("Speaking practice", tableName: "Today", comment: "Opens speaking tasks")
-          } icon: {
-            KindMark(kind: .conversation)
+          HStack {
+            Label {
+              VStack(alignment: .leading, spacing: 2) {
+                Text(
+                  "Exam-style speaking", tableName: "Today",
+                  comment: "Opens the exam's speaking tasks")
+                Text(
+                  "\(speaking.title) tasks on a call", tableName: "Today",
+                  comment:
+                    "The speaking paper's exam and level, as in B1 Preliminary tasks on a call"
+                )
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+              }
+            } icon: {
+              KindMark(kind: .conversation)
+            }
+
+            if speaking.access == "plusRequired" {
+              Spacer()
+              PlusMark()
+            }
           }
         }
       }
@@ -888,25 +906,77 @@ struct TodayPracticeSection: View {
       }
       .badge(places?.readyMistakes ?? 0)
 
-      if let pattern = view.pattern {
-        Button {
-          router.open(.pattern(patternId: pattern.id))
-        } label: {
-          Label {
-            VStack(alignment: .leading, spacing: 2) {
-              Text("Practice a pattern", tableName: "Today", comment: "Opens a noticed pattern")
-              Text(pattern.title)
-                .font(.footnote)
-                .foregroundStyle(.secondary)
-            }
-          } icon: {
-            KindMark(kind: .practice)
-          }
-        }
-        .tint(.primary)
-      }
     } header: {
       Text("Practice anytime", tableName: "Today", comment: "Practice section header")
+    }
+  }
+}
+
+/// Main's `LanguagePracticeRow`: words to say again first, else the pattern noticed in recent
+/// mistakes.
+struct TodayLanguagePracticeSection: View {
+  @Environment(AppRouter.self) private var router
+
+  let view: TodayView
+  let language: LanguageTodayView?
+
+  var body: some View {
+    if let pronunciation = language?.pronunciation {
+      notice(
+        title: Text(
+          "Say \(pronunciation.count) words again", tableName: "Today",
+          comment: "Mispronounced words due to be said again today"),
+        detail: Text(pronunciation.words.formatted(.list(type: .and))), systemImage: "mic",
+        action: Text("Say them", tableName: "Today", comment: "Opens the words to say again")
+      ) {
+        router.open(.pronunciation(goalId: view.goal.id))
+      }
+    } else if let pattern = view.pattern {
+      if pattern.kind == "typos" {
+        notice(
+          title: Text("Just typos", tableName: "Today", comment: "Recent mistakes were slips"),
+          detail: Text(
+            "Your recent mistakes were slips, not a rule to learn.", tableName: "Today",
+            comment: "Explains a pattern of typos"),
+          systemImage: "keyboard",
+          action: Text("Open", tableName: "Today", comment: "Opens the noticed typos")
+        ) {
+          router.open(.pattern(patternId: pattern.id))
+        }
+      } else {
+        notice(
+          title: Text(
+            "We noticed a pattern", tableName: "Today",
+            comment: "A rule the learner keeps getting wrong, noticed in recent mistakes"),
+          detail: Text(pattern.title), systemImage: "sparkles",
+          action: Text("Practice it", tableName: "Today", comment: "Opens the noticed pattern")
+        ) {
+          router.open(.pattern(patternId: pattern.id))
+        }
+      }
+    }
+  }
+
+  private func notice(
+    title: Text, detail: Text, systemImage: String, action: Text, open: @escaping () -> Void
+  ) -> some View {
+    Section {
+      Label {
+        VStack(alignment: .leading, spacing: 2) {
+          title
+          detail
+            .font(.subheadline)
+            .foregroundStyle(.secondary)
+        }
+      } icon: {
+        Image(systemName: systemImage)
+          .foregroundStyle(.tint)
+      }
+      .accessibilityElement(children: .combine)
+
+      Button(action: open) {
+        action
+      }
     }
   }
 }

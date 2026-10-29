@@ -84,6 +84,8 @@ struct TodayView: Decodable, Equatable, Sendable {
 
   struct Pattern: Decodable, Equatable, Sendable {
     let id: String
+    /// `pattern`, or `typos` when the recent mistakes were slips.
+    let kind: String
     let title: String
   }
 
@@ -171,4 +173,23 @@ struct TodayProblem: Decodable, Sendable {
   }
 
   let error: Body
+}
+
+/// A language goal's practice beside the day.
+struct LanguageTodayView: Decodable, Equatable, Sendable {
+  struct Pronunciation: Decodable, Equatable, Sendable {
+    let count: Int
+    /// The first few.
+    let words: [String]
+  }
+
+  struct Speaking: Decodable, Equatable, Sendable {
+    /// `open`, `plusRequired` or `callsPaused`.
+    let access: String
+    /// The paper's exam and level, "B1 Preliminary".
+    let title: String
+  }
+
+  let pronunciation: Pronunciation?
+  let speaking: Speaking?
 }

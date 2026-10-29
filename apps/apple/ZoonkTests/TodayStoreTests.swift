@@ -571,6 +571,10 @@ private actor StudyAPIStub: StudyAPIClient {
     throw APIError.unavailable
   }
 
+  func getLanguageToday(token: String, goalID: String) async throws -> LanguageTodayView {
+    throw APIError.unavailable
+  }
+
   func decidePlanChange(
     token: String, goalID: String, changeID: String, decision: PlanChangeDecision
   ) async throws -> TodayView.PlanChange? {

@@ -31,17 +31,18 @@ struct TodayDayView: View {
       List {
         aside
         notices
-        TodayPracticeSection(view: view)
+        TodayPracticeSection(view: view, language: language)
       }
     } single: {
       List {
         day
         notices
         aside
-        TodayPracticeSection(view: view)
+        TodayPracticeSection(view: view, language: language)
       }
     }
     .listStyle(.insetGrouped)
+    .modifier(LanguageTodayLoading(goal: view.goal))
     .navigationSubtitle(dayLine)
     .task(id: view.session.localDate) {
       await refreshAtDayEnd()
@@ -73,8 +74,14 @@ struct TodayDayView: View {
       })
   }
 
+  private var language: LanguageTodayView? {
+    view.goal.kind == .language ? store.languageToday(goalID: view.goal.id).value : nil
+  }
+
   @ViewBuilder
   private var notices: some View {
+    TodayLanguagePracticeSection(view: view, language: language)
+
     if let insight = view.insight {
       Section {
         MemoryInsightCard(insight: insight)
@@ -279,6 +286,21 @@ extension StudyDestination {
       .mock(blockId: blockID, sessionId: sessionID)
     case .questionBlock, .session, .lessonWait:
       nil
+    }
+  }
+}
+
+/// A language goal's day reads its practice beside it.
+private struct LanguageTodayLoading: ViewModifier {
+  @Environment(TodayStore.self) private var store
+
+  let goal: TodayView.Goal
+
+  func body(content: Content) -> some View {
+    if goal.kind == .language {
+      content.loads(store.languageToday(goalID: goal.id), refreshable: false)
+    } else {
+      content
     }
   }
 }

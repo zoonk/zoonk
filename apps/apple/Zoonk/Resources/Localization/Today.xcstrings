@@ -535,6 +535,41 @@
         }
       }
     },
+    "%@ tasks on a call" : {
+      "comment" : "The speaking paper's exam and level, as in B1 Preliminary tasks on a call",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@-Aufgaben im Gespräch"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%@ tasks on a call"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tareas de %@ en una llamada"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tâches de %@ en appel"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tarefas de %@ em uma conversa"
+          }
+        }
+      }
+    },
     "%@ today" : {
       "comment" : "Exam day",
       "localizations" : {
@@ -3626,6 +3661,41 @@
         }
       }
     },
+    "Exam-style speaking" : {
+      "comment" : "Opens the exam's speaking tasks",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprechen im Prüfungsformat"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Exam-style speaking"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expresión oral tipo examen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expression orale au format examen"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conversação no formato de prova"
+          }
+        }
+      }
+    },
     "Final challenge" : {
       "comment" : "The plan's final challenge block",
       "localizations" : {
@@ -4118,6 +4188,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Está onde você parou"
+          }
+        }
+      }
+    },
+    "Just typos" : {
+      "comment" : "Recent mistakes were slips",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nur Tippfehler"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Just typos"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Solo erratas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Juste des fautes de frappe"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Só erros de digitação"
           }
         }
       }
@@ -4908,6 +5013,41 @@
         }
       }
     },
+    "Open" : {
+      "comment" : "Opens the noticed typos",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Öffnen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Open"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abrir"
+          }
+        }
+      }
+    },
     "Past your date" : {
       "comment" : "Plan status",
       "localizations" : {
@@ -5260,6 +5400,41 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "Practice it" : {
+      "comment" : "Opens the noticed pattern",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Muster üben"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Practice it"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Practícalo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S’entraîner dessus"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Praticar"
           }
         }
       }
@@ -5728,6 +5903,136 @@
         }
       }
     },
+    "Say %lld words again" : {
+      "comment" : "Mispronounced words due to be said again today",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Sag %lld Wort noch einmal"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Sag %lld Wörter noch einmal"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Say %lld word again"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "Say %lld words again"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Vuelve a decir %lld palabra"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Vuelve a decir %lld palabras"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Répète %lld mot"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Répète %lld mots"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Diga %lld palavra de novo"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Diga %lld palavras de novo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "Say them" : {
+      "comment" : "Opens the words to say again",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch einmal sagen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Say them"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vuelve a decirlas"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Répéter les mots"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diga-as de novo"
+          }
+        }
+      }
+    },
     "See %@'s challenge" : {
       "comment" : "The week's challenge",
       "localizations" : {
@@ -6014,35 +6319,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Pulado"
-          }
-        }
-      }
-    },
-    "Speaking practice" : {
-      "comment" : "Opens speaking tasks",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sprechübung"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Práctica de expresión oral"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "S’entraîner à l’oral"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prática de conversação"
           }
         }
       }
@@ -7203,6 +7479,41 @@
         }
       }
     },
+    "We noticed a pattern" : {
+      "comment" : "A rule the learner keeps getting wrong, noticed in recent mistakes",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Uns ist ein Muster aufgefallen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "We noticed a pattern"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hemos detectado un patrón"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On a repéré un schéma récurrent"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Percebemos um padrão"
+          }
+        }
+      }
+    },
     "Weekly challenge" : {
       "comment" : "The week's challenge\nThe week's challenge block",
       "localizations" : {
@@ -7861,6 +8172,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua explicação rápida"
+          }
+        }
+      }
+    },
+    "Your recent mistakes were slips, not a rule to learn." : {
+      "comment" : "Explains a pattern of typos",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deine letzten Fehler waren Flüchtigkeitsfehler und keine Regel, die du lernen musst."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your recent mistakes were slips, not a rule to learn."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tus errores recientes han sido despistes, no una regla que debas aprender."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tes erreurs récentes étaient des fautes d’inattention, pas une règle à apprendre."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seus erros recentes foram deslizes, não uma regra que você precisa aprender."
           }
         }
       }

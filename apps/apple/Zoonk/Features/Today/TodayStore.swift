@@ -40,6 +40,7 @@ final class TodayStore {
 
   @ObservationIgnored private let api: any StudyAPIClient
   @ObservationIgnored private let cache: AppCache
+  @ObservationIgnored private var languageTodays: [String: Resource<LanguageTodayView>] = [:]
 
   init(api: any StudyAPIClient, cache: AppCache) {
     self.api = api
@@ -55,6 +56,26 @@ final class TodayStore {
       return try await api.getToday(
         token: session.bearerToken, timeZone: TimeZone.current.identifier)
     }
+  }
+
+  func languageToday(goalID: String) -> Resource<LanguageTodayView> {
+    if let resource = languageTodays[goalID] {
+      return resource
+    }
+
+    let api = api
+    let resource: Resource<LanguageTodayView> = cache.resource(
+      audience: .signedIn, domains: [.goals, .userProgress, .userSession, .userSubscription]
+    ) { session in
+      guard let session else {
+        return nil
+      }
+
+      return try await api.getLanguageToday(token: session.bearerToken, goalID: goalID)
+    }
+
+    languageTodays[goalID] = resource
+    return resource
   }
 
   var day: TodayView? {

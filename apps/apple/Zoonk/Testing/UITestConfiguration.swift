@@ -452,6 +452,10 @@
       throw APIError.network
     }
 
+    func getLanguageToday(token: String, goalID: String) async throws -> LanguageTodayView {
+      throw APIError.network
+    }
+
     func decidePlanChange(
       token: String, goalID: String, changeID: String, decision: PlanChangeDecision
     ) async throws -> TodayView.PlanChange? {
