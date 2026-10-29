@@ -40,13 +40,14 @@ async function postedPlan({
     },
     basis: {
       layoutInputVersion: 0,
+      layoutSourceVersion: 0,
       layoutStudyDay: "2026-10-01",
       planId: plan.id,
       planVersion: plan.version,
       timeZone: "UTC",
       userId,
     },
-    schemaVersion: 3,
+    schemaVersion: 4,
     selected: {
       bases: null,
       coverage: {

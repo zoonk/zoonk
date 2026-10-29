@@ -82,7 +82,7 @@ export async function lockSkillPlanInputs({
 }: SkillInputs & { tx: TransactionClient }) {
   const lockIds = await loadLockIds(tx, input);
 
-  await lockPlanInputWrite({
+  return lockPlanInputWrite({
     loadPlanIds: () => loadPlanIds(tx, input),
     lockSources: () => lockSources({ input, lockIds, tx }),
     tx,

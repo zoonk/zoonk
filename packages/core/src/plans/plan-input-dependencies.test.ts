@@ -74,7 +74,14 @@ async function readVersions(scope: Awaited<ReturnType<typeof contentScope>>) {
     where: { id: { in: scope.plans.map(({ id }) => id) } },
   });
 
-  return { plans: plans.map(({ id, inputVersion, version }) => ({ id, inputVersion, version })) };
+  return {
+    plans: plans.map(({ id, inputVersion, sourceVersion, version }) => ({
+      id,
+      inputVersion,
+      sourceVersion,
+      version,
+    })),
+  };
 }
 
 describe("question-bank plan invalidation", () => {
@@ -92,7 +99,7 @@ describe("question-bank plan invalidation", () => {
     expect(after).toStrictEqual({
       plans: before.plans.map((plan) => ({
         ...plan,
-        inputVersion: plan.inputVersion + Number(affectedIds.has(plan.id)),
+        sourceVersion: plan.sourceVersion + Number(affectedIds.has(plan.id)),
       })),
     });
   });

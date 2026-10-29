@@ -3,11 +3,13 @@ import { prisma } from "@zoonk/db";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
+import { holdBackLessonDraft } from "../library/generation/hold-back-lesson";
 import {
   generatedMultipleChoice,
   generatedProvenance,
 } from "../library/items/_test-utils/generated-items";
 import { createItems } from "../library/items/create-items";
+import { selectDayPlanFromContext } from "../sessions/_utils/selected-day-plan";
 import { planLibraryFixture, unplannedGoalFixture } from "./_test-utils/plan-library";
 import { commitPlan } from "./_utils/commit-plan";
 import { loadPlanContext } from "./_utils/plan-context";
@@ -15,7 +17,7 @@ import { readFreshPlanSummary } from "./_utils/plan-summary";
 import { computePlan } from "./_utils/replan";
 import { readSelectedItemFacts } from "./_utils/selected-item-contract";
 import { createGoalPlan } from "./create-goal-plan";
-import { PlanConflictError } from "./plan-conflict";
+import { PlanConflictError, withPlanRetry } from "./plan-conflict";
 
 const NOW = new Date("2020-09-28T12:00:00Z");
 
@@ -78,6 +80,7 @@ describe("selected plan persistence", () => {
     const summary = readFreshPlanSummary({
       basis: {
         layoutInputVersion: saved.inputVersion,
+        layoutSourceVersion: saved.sourceVersion,
         layoutStudyDay: "2020-09-28",
         planId: saved.id,
         planVersion: saved.version,
@@ -114,28 +117,114 @@ describe("selected plan persistence", () => {
     }
   });
 
-  it("refuses an older computed plan when a real bank write changes its inputs", async () => {
+  it("commits across a content publication, then reselects Today from the newer source", async () => {
     const { context, library, plan } = await setup();
     const computed = await computePlan({ context, mode: "automatic", now: NOW });
 
     const questions = await createItems({
       format: "multipleChoice",
-      items: [generatedMultipleChoice()],
+      items: Array.from({ length: 6 }, () => generatedMultipleChoice()),
       language: "en",
       provenance: generatedProvenance(),
       skillId: library.skills[0]!.id,
     });
 
-    expect(questions.created).toHaveLength(1);
+    expect(questions.created).toHaveLength(6);
+    await expect(commitPlan({ change: null, computed, context })).resolves.toBeNull();
 
-    const before = await readSaved(plan.id);
-    expect(before.inputVersion).toBeGreaterThan(0);
+    const saved = await readSaved(plan.id);
 
-    await expect(commitPlan({ change: null, computed, context })).rejects.toBeInstanceOf(
-      PlanConflictError,
+    expect(saved.summary).toMatchObject({
+      basis: { layoutSourceVersion: context.plan.sourceVersion },
+    });
+
+    expect(saved.sourceVersion).toBeGreaterThan(context.plan.sourceVersion);
+    const fresh = await loadPlanContext({ goal: saved.goal, now: NOW });
+    expect(fresh).not.toBeNull();
+
+    const today = await selectDayPlanFromContext({
+      context: fresh!,
+      now: NOW,
+      useFreshSaved: true,
+    });
+
+    expect(today.computed ?? today.retained).toBeDefined();
+    const selected = today.computed ?? today.retained;
+
+    expect([...selected!.itemFacts.values()].some((facts) => facts.boss?.questions === 6)).toBe(
+      true,
     );
+  });
 
-    await expect(readSaved(plan.id)).resolves.toStrictEqual(before);
+  it("rejects a hold-back during computation and retries once across a publication", async () => {
+    const { context, library, plan, user } = await setup();
+    const lesson = library.lessons[0]!;
+    const runId = randomUUID();
+
+    await prisma.lesson.update({
+      data: { contentRunId: runId, contentStatus: "running", ownerId: user.id },
+      where: { id: lesson.id },
+    });
+
+    await prisma.planItem.deleteMany({ where: { lessonId: lesson.id, planId: plan.id } });
+
+    let attempts = 0;
+    const held: unknown[] = [];
+    const conflicts: unknown[] = [];
+    const heldVersions: number[] = [];
+    const selectedBeforeHold: (string | null)[] = [];
+    const publications: number[] = [];
+
+    const saving = withPlanRetry(async () => {
+      attempts += 1;
+      const current = await loadPlanContext({ goal: context.goal, now: NOW });
+      expect(current).not.toBeNull();
+      const computed = await computePlan({ context: current!, mode: "automatic", now: NOW });
+
+      if (attempts === 1) {
+        selectedBeforeHold.push(...computed.built.items.map((item) => item.lessonId));
+
+        held.push(
+          await holdBackLessonDraft({
+            lessonId: lesson.id,
+            model: "test",
+            problems: [{ problem: "The lesson cannot be played", screen: null }],
+            workflowRunId: runId,
+          }),
+        );
+
+        const afterHold = await readSaved(plan.id);
+        heldVersions.push(afterHold.version - current!.plan.version);
+      } else {
+        const published = await createItems({
+          format: "multipleChoice",
+          items: [generatedMultipleChoice()],
+          language: "en",
+          provenance: generatedProvenance(),
+          skillId: library.skills[1]!.id,
+        });
+
+        publications.push(published.created.length);
+      }
+
+      return commitPlan({ change: null, computed, context: current! }).catch((error: unknown) => {
+        conflicts.push(error);
+        throw error;
+      });
+    });
+
+    await expect(saving).resolves.toBeNull();
+    expect(attempts).toBe(2);
+    expect(publications).toStrictEqual([1]);
+    expect(held).toMatchObject([{ setAside: true }]);
+    expect(heldVersions).toStrictEqual([0]);
+    expect(selectedBeforeHold).toContain(lesson.id);
+    expect(conflicts).toStrictEqual([expect.any(PlanConflictError)]);
+    const saved = await readSaved(plan.id);
+
+    expect(
+      saved.items.filter((item) => item.status === "todo").map((item) => item.lessonId),
+    ).not.toContain(lesson.id);
   });
 
   it("recomputes the selected boss against a newly populated bank", async () => {

@@ -1,7 +1,7 @@
 import "server-only";
 import { type TransactionClient, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
+import { markPlanSourcesChanged } from "../../learner/_utils/mark-learner-changed";
 import {
   type PlanInputRoots,
   loadPlanInputSources,
@@ -21,9 +21,9 @@ export async function lockPlanInputWrite({
   loadPlanIds: () => Promise<readonly string[]>;
   lockSources: () => Promise<void>;
   tx: TransactionClient;
-}): Promise<void> {
+}): Promise<readonly string[]> {
   const planIds = await loadPlanIds();
-  await markPlansChanged(tx, { planIds });
+  await markPlanSourcesChanged(tx, { planIds });
   await lockSources();
   const currentPlanIds = await loadPlanIds();
   const marked = new Set(planIds);
@@ -31,9 +31,14 @@ export async function lockPlanInputWrite({
   if (currentPlanIds.some((id) => !marked.has(id))) {
     throw new PlanInputWriteConflictError("Plan inputs changed; try the write again.");
   }
+
+  return planIds;
 }
 
-export function lockPlanSourceWrite(tx: TransactionClient, roots: PlanInputRoots): Promise<void> {
+export function lockPlanSourceWrite(
+  tx: TransactionClient,
+  roots: PlanInputRoots,
+): Promise<readonly string[]> {
   return lockPlanInputWrite({
     loadPlanIds: () => resolvePlanInputDependents(tx, roots),
     lockSources: async () => lockSourceRoots(tx, await loadPlanInputSources(tx, roots)),
@@ -41,7 +46,10 @@ export function lockPlanSourceWrite(tx: TransactionClient, roots: PlanInputRoots
   });
 }
 
-export function lockPlanBlueprintWrite(tx: TransactionClient, blueprintId: string): Promise<void> {
+export function lockPlanBlueprintWrite(
+  tx: TransactionClient,
+  blueprintId: string,
+): Promise<readonly string[]> {
   return lockPlanInputWrite({
     loadPlanIds: () => resolvePlanInputDependents(tx, { blueprintIds: [blueprintId] }),
     lockSources: () => lockSourceBlueprint(tx, blueprintId),

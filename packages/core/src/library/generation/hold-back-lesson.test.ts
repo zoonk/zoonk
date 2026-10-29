@@ -97,6 +97,9 @@ describe(holdBackLessonDraft, () => {
       setAside: false,
     });
 
-    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion + 1 });
+    await expect(readPlan()).resolves.toMatchObject({
+      inputVersion: plan.inputVersion,
+      sourceVersion: plan.sourceVersion + 1,
+    });
   });
 });

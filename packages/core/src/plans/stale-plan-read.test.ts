@@ -179,6 +179,7 @@ describe("the visible Plan after days away, before any learner POST", () => {
 
     expect(planSummarySchema.parse(before.summary).basis).toMatchObject({
       layoutInputVersion: plan.inputVersion,
+      layoutSourceVersion: plan.sourceVersion,
       layoutStudyDay: "2026-10-15",
       planVersion: plan.version,
     });

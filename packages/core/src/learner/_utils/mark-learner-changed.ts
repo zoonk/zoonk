@@ -3,6 +3,7 @@ import {
   type LearnerWriteTransaction,
   lockLearner,
   markLockedPlanInputsChanged,
+  markLockedPlanSourcesChanged,
   markPlanInputsChanged,
 } from "@zoonk/db/learner-writes";
 
@@ -23,9 +24,10 @@ export async function markLearnerChanged(
 }
 
 /** Locks learners in id order after their plans to avoid deadlocks between shared-content writers. */
-export async function markPlansChanged(
+async function markChangedPlans(
   tx: LearnerWriteTransaction,
   { planIds }: { planIds: readonly string[] },
+  mark: typeof markLockedPlanInputsChanged,
 ): Promise<void> {
   if (planIds.length === 0) {
     return;
@@ -38,7 +40,7 @@ export async function markPlansChanged(
     ORDER BY plan.id FOR UPDATE OF plan
   `;
 
-  await markLockedPlanInputsChanged(tx, { planIds: plans.map((plan) => plan.id) });
+  await mark(tx, { planIds: plans.map((plan) => plan.id) });
 
   const userIds = [...new Set(plans.map((plan) => plan.userId))].toSorted();
 
@@ -47,4 +49,18 @@ export async function markPlansChanged(
     WHERE id = ANY(${userIds}::uuid[])
     ORDER BY id FOR UPDATE
   `;
+}
+
+export function markPlansChanged(
+  tx: LearnerWriteTransaction,
+  input: { planIds: readonly string[] },
+): Promise<void> {
+  return markChangedPlans(tx, input, markLockedPlanInputsChanged);
+}
+
+export function markPlanSourcesChanged(
+  tx: LearnerWriteTransaction,
+  input: { planIds: readonly string[] },
+): Promise<void> {
+  return markChangedPlans(tx, input, markLockedPlanSourcesChanged);
 }

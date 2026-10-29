@@ -461,7 +461,7 @@ describe(createItems, () => {
     await expect(prisma.item.count({ where: { skillId: skill.id } })).resolves.toBe(2);
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
-      inputVersion: plan.inputVersion + 1,
+      sourceVersion: plan.sourceVersion + 1,
     });
   });
 

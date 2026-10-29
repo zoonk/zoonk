@@ -94,7 +94,7 @@ async function versions({ plans }: Scope) {
   });
 
   return {
-    plans: savedPlans.map(({ id, inputVersion, version }) => ({ id, inputVersion, version })),
+    plans: savedPlans.map(({ id, sourceVersion, version }) => ({ id, sourceVersion, version })),
   };
 }
 
@@ -110,7 +110,7 @@ function changedVersions({
   return {
     plans: before.plans.map((plan) => ({
       ...plan,
-      inputVersion: plan.inputVersion + (plan.id === scope.plans[6]!.id ? 0 : writes),
+      sourceVersion: plan.sourceVersion + (plan.id === scope.plans[6]!.id ? 0 : writes),
     })),
   };
 }

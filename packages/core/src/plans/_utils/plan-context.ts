@@ -28,6 +28,7 @@ export type PlanContext = {
     | "inputsKey"
     | "inputVersion"
     | "noticeWaitUntil"
+    | "sourceVersion"
     | "sourceSkillIds"
     | "summary"
     | "version"
@@ -108,6 +109,7 @@ export async function loadPlanContext({
       inputsKey: plan.inputsKey,
       noticeWaitUntil: plan.noticeWaitUntil,
       sourceSkillIds: plan.sourceSkillIds,
+      sourceVersion: plan.sourceVersion,
       summary: plan.summary,
       version: plan.version,
     },

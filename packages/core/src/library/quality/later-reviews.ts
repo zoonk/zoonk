@@ -6,7 +6,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../cache/tags";
-import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
+import { markPlanSourcesChanged } from "../../learner/_utils/mark-learner-changed";
 import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
 import { loadLessonWritingContext } from "../lessons/_utils/lesson-writing-inputs";
 import { loadLessonReuse } from "../lessons/lesson-reuse";
@@ -131,7 +131,7 @@ export async function pullLessonForFix(lessonId: string): Promise<boolean> {
         skillIds: current.skills.map(({ skillId }) => skillId),
       });
 
-      await markPlansChanged(tx, { planIds });
+      await markPlanSourcesChanged(tx, { planIds });
 
       const { count } = await tx.lesson.updateMany({
         data: { contentStatus: "failed" },

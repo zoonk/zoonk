@@ -881,14 +881,14 @@ describe("saving an exam's graph again", () => {
 
     await save(built.graph);
 
-    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion });
+    await expect(readPlan()).resolves.toMatchObject({ sourceVersion: plan.sourceVersion });
 
     await save(
       { ...built.graph, skills: built.graph.skills.slice(0, 1) },
       { ...provenance, runId: crypto.randomUUID() },
     );
 
-    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion });
+    await expect(readPlan()).resolves.toMatchObject({ sourceVersion: plan.sourceVersion });
 
     const added = await skillFixture();
 
@@ -897,6 +897,6 @@ describe("saving an exam's graph again", () => {
       skills: [...built.graph.skills, { ...built.graph.skills[0], skillId: added.id }],
     } as typeof built.graph);
 
-    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion + 1 });
+    await expect(readPlan()).resolves.toMatchObject({ sourceVersion: plan.sourceVersion + 1 });
   });
 });

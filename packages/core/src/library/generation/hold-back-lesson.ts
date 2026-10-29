@@ -1,5 +1,6 @@
 import "server-only";
 import { type StudySessionStatus, type TransactionClient, prisma } from "@zoonk/db";
+import { markLockedPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
@@ -200,7 +201,11 @@ export async function holdBackLessonDraft({
       const setAside =
         drafts.length >= (lesson.ownerId ? PRIVATE_LESSON_DRAFTS : MAX_LESSON_DRAFTS);
 
-      await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
+      const dependentPlanIds = await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
+
+      if (setAside) {
+        await markLockedPlanInputsChanged(tx, { planIds: dependentPlanIds });
+      }
 
       const planIds = setAside ? await moveOnWithoutLesson(tx, lessonId, holdKey) : [];
 

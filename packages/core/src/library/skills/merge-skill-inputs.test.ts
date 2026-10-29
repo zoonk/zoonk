@@ -92,7 +92,13 @@ describe("a merge's inputs while it waits", () => {
           { expected: writer === "merge" ? 2 : 1, plan: masteryPlan.plan },
         ].map(({ plan, expected }) =>
           expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
-            inputVersion: expected,
+            inputVersion:
+              expected -
+              Number(
+                writer === "prerequisites" &&
+                  (plan.id === incomingPlan.plan.id || plan.id === duplicatePlan.plan.id),
+              ),
+            sourceVersion: expected,
           }),
         ),
       );

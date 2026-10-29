@@ -111,11 +111,14 @@ describe("blueprint inputs while its writer waits", () => {
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { goalId: arrivingId } }),
-      ).resolves.toMatchObject({ inputVersion: registration === "create" ? 1 : 2 });
+      ).resolves.toMatchObject({
+        inputVersion: registration === "create" ? 0 : 1,
+        sourceVersion: 1,
+      });
 
       await expect(
         prisma.plan.findUniqueOrThrow({ where: { id: plan.id } }),
-      ).resolves.toMatchObject({ inputVersion: 1 });
+      ).resolves.toMatchObject({ inputVersion: 0, sourceVersion: 1 });
 
       await expect(
         prisma.examBlueprint.findUniqueOrThrow({ where: { id: blueprint.id } }),

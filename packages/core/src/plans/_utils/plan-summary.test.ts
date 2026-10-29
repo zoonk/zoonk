@@ -44,13 +44,14 @@ const summary: PlanSummary = {
   },
   basis: {
     layoutInputVersion: 4,
+    layoutSourceVersion: 0,
     layoutStudyDay: "2026-10-14",
     planId: plan.id,
     planVersion: plan.version,
     timeZone: "America/Sao_Paulo",
     userId: plan.userId,
   },
-  schemaVersion: 3,
+  schemaVersion: 4,
   selected: {
     bases: null,
     coverage,
@@ -104,6 +105,7 @@ describe(readFreshPlanSummary, () => {
   it("checks the session's saved plan and study day against a layout summary", () => {
     const basis = {
       layoutInputVersion: 4,
+      layoutSourceVersion: 0,
       layoutStudyDay: "2026-10-14",
       planId: plan.id,
       planVersion: plan.version,

@@ -130,11 +130,17 @@ describe(pullLessonForFix, () => {
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: dependent.id } }),
-    ).resolves.toMatchObject({ inputVersion: dependent.inputVersion + 1 });
+    ).resolves.toMatchObject({
+      inputVersion: dependent.inputVersion,
+      sourceVersion: dependent.sourceVersion + 1,
+    });
 
     await expect(
       prisma.plan.findUniqueOrThrow({ where: { id: unrelated.id } }),
-    ).resolves.toMatchObject({ inputVersion: unrelated.inputVersion });
+    ).resolves.toMatchObject({
+      inputVersion: unrelated.inputVersion,
+      sourceVersion: unrelated.sourceVersion,
+    });
   });
 });
 

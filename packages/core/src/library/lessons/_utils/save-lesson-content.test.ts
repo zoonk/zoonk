@@ -266,7 +266,7 @@ describe(saveLessonContent, () => {
     ).resolves.toMatchObject({ contentStatus: "running" });
 
     await expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
-      inputVersion: plan.inputVersion,
+      sourceVersion: plan.sourceVersion,
     });
   });
 
@@ -285,7 +285,7 @@ describe(saveLessonContent, () => {
       workflowRunId,
     });
 
-    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion + 1 });
+    await expect(readPlan()).resolves.toMatchObject({ sourceVersion: plan.sourceVersion + 1 });
 
     await saveLessonVersion({
       language: "en",
@@ -295,7 +295,7 @@ describe(saveLessonContent, () => {
       summary: [],
     });
 
-    await expect(readPlan()).resolves.toMatchObject({ inputVersion: plan.inputVersion + 2 });
+    await expect(readPlan()).resolves.toMatchObject({ sourceVersion: plan.sourceVersion + 2 });
   });
 
   it("repairs skills in replacement versions too", async () => {

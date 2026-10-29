@@ -97,18 +97,21 @@ async function insertTestedOutStandIns(
 
   const skillIds = skills.map((skill) => skill.id);
 
-  const [last, planned, names] = await Promise.all([
-    tx.planItem.findFirst({
-      orderBy: { position: "desc" },
-      select: { position: true },
-      where: { planId: plan.id },
-    }),
-    tx.planItem.findMany({
-      select: { skillId: true },
-      where: { planId: plan.id, skillId: { in: skillIds } },
-    }),
-    tx.skill.findMany({ select: { id: true, name: true }, where: { id: { in: skillIds } } }),
-  ]);
+  const last = await tx.planItem.findFirst({
+    orderBy: { position: "desc" },
+    select: { position: true },
+    where: { planId: plan.id },
+  });
+
+  const planned = await tx.planItem.findMany({
+    select: { skillId: true },
+    where: { planId: plan.id, skillId: { in: skillIds } },
+  });
+
+  const names = await tx.skill.findMany({
+    select: { id: true, name: true },
+    where: { id: { in: skillIds } },
+  });
 
   const plannedIds = new Set(planned.map((item) => item.skillId));
   const missing = skills.filter((skill) => !plannedIds.has(skill.id));

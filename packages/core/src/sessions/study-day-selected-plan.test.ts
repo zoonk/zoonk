@@ -61,6 +61,7 @@ function assertFresh(plan: Awaited<ReturnType<typeof saved>>, userId: string) {
     readFreshPlanSummary({
       basis: {
         layoutInputVersion: plan.inputVersion,
+        layoutSourceVersion: plan.sourceVersion,
         layoutStudyDay: "2026-09-30",
         planId: plan.id,
         planVersion: plan.version,

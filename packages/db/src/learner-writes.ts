@@ -12,6 +12,16 @@ export async function markLockedPlanInputsChanged(
   `;
 }
 
+export async function markLockedPlanSourcesChanged(
+  tx: LearnerWriteTransaction,
+  { planIds }: { planIds: readonly string[] },
+): Promise<void> {
+  await tx.$executeRaw`
+    UPDATE plans SET source_version = source_version + 1
+    WHERE id = ANY(${[...planIds]}::uuid[])
+  `;
+}
+
 /**
  * Learner writers lock plans, then learner rows, then their own rows, so two of them wait for each
  * other instead of deadlocking.

@@ -13,7 +13,10 @@ async function dependentPlan(attrs: Omit<Parameters<typeof planFixture>[0], "goa
 function readPlans(planIds: readonly string[]) {
   return Promise.all(
     planIds.map((id) =>
-      prisma.plan.findUniqueOrThrow({ select: { inputVersion: true }, where: { id } }),
+      prisma.plan.findUniqueOrThrow({
+        select: { inputVersion: true, sourceVersion: true },
+        where: { id },
+      }),
     ),
   );
 }
@@ -35,9 +38,9 @@ describe(lockPlanInputWrite, () => {
     );
 
     await expect(readPlans([first.id, second.id, unrelated.id])).resolves.toStrictEqual([
-      { inputVersion: first.inputVersion + 1 },
-      { inputVersion: second.inputVersion + 1 },
-      { inputVersion: unrelated.inputVersion },
+      { inputVersion: first.inputVersion, sourceVersion: first.sourceVersion + 1 },
+      { inputVersion: second.inputVersion, sourceVersion: second.sourceVersion + 1 },
+      { inputVersion: unrelated.inputVersion, sourceVersion: unrelated.sourceVersion },
     ]);
   });
 
@@ -59,8 +62,8 @@ describe(lockPlanInputWrite, () => {
     expect(loads).toBe(4);
 
     await expect(readPlans([first.id, joined.id])).resolves.toStrictEqual([
-      { inputVersion: first.inputVersion + 1 },
-      { inputVersion: joined.inputVersion + 1 },
+      { inputVersion: first.inputVersion, sourceVersion: first.sourceVersion + 1 },
+      { inputVersion: joined.inputVersion, sourceVersion: joined.sourceVersion + 1 },
     ]);
   });
 });

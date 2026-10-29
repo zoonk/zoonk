@@ -117,6 +117,7 @@ function keepsShownLayout(context: PlanContext): boolean {
   const sameInputs =
     !stored.success ||
     (stored.data.basis.layoutInputVersion === context.plan.inputVersion &&
+      stored.data.basis.layoutSourceVersion === context.plan.sourceVersion &&
       readFreshPlanSummary({
         basis: {
           ...getPlanSummaryBasis(context),
@@ -163,7 +164,11 @@ export async function selectDayPlanFromContext({
     value: context.plan.summary,
   });
 
-  if (useFreshSaved && fresh?.basis.layoutInputVersion === context.plan.inputVersion) {
+  if (
+    useFreshSaved &&
+    fresh?.basis.layoutInputVersion === context.plan.inputVersion &&
+    fresh.basis.layoutSourceVersion === context.plan.sourceVersion
+  ) {
     return savedSelection({ context, summary: fresh.selected });
   }
 

@@ -113,8 +113,8 @@ model Plan {
   settings            Json                   @default("{}")
   estimateHours       Float?                 @map("estimate_hours")
   version             Int                    @default(1)
-  /// Source input writers increment this independently of plan edits and Undo.
   inputVersion        Int                    @default(0) @map("input_version")
+  sourceVersion       Int                    @default(0) @map("source_version")
   /// Valid for the plan version it was posted with (see `readPlanSummary`); a legacy value reads as
   /// pending, never as a plan with no work.
   summary             Json?

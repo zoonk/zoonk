@@ -1,6 +1,7 @@
 import "server-only";
 import { writeLessonDraft } from "@zoonk/ai/tasks/v2/lesson-writer";
 import { prisma } from "@zoonk/db";
+import { markLockedPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
@@ -274,7 +275,8 @@ export async function setAsidePublishedLesson({
           : null;
       }
 
-      await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
+      const dependentPlanIds = await lockPlanSourceWrite(tx, { lessonIds: [lessonId] });
+      await markLockedPlanInputsChanged(tx, { planIds: dependentPlanIds });
 
       if ((await lockCurrentLessonVersion(tx, lessonId)) !== version) {
         throw new PublishedLessonReplacedError();

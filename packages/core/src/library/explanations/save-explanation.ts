@@ -7,7 +7,7 @@ import { buildLessonIdentityKey, scopeIdentityKey } from "@zoonk/utils/identity-
 import { isJsonObject } from "@zoonk/utils/json";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import { getGoalsCacheTag, getLibraryLessonCacheTag } from "../../cache/tags";
-import { markPlansChanged } from "../../learner/_utils/mark-learner-changed";
+import { markPlanSourcesChanged } from "../../learner/_utils/mark-learner-changed";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
 import { resolvePlanInputDependents } from "../../plans/_utils/plan-input-dependencies";
 import { createGoalPlan } from "../../plans/create-goal-plan";
@@ -72,7 +72,7 @@ async function publishSteps({
         skillIds: linkedSkills.map(({ skillId: linkedSkillId }) => linkedSkillId),
       });
 
-      await markPlansChanged(tx, { planIds });
+      await markPlanSourcesChanged(tx, { planIds });
 
       const claimed = await tx.lesson.updateMany({
         data: {

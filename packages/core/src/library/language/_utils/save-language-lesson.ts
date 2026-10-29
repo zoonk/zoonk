@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidateCacheTags } from "../../../cache/revalidate-cache-tags";
 import { getLibraryLessonCacheTag } from "../../../cache/tags";
-import { markPlansChanged } from "../../../learner/_utils/mark-learner-changed";
+import { markPlanSourcesChanged } from "../../../learner/_utils/mark-learner-changed";
 import { resolvePlanInputDependents } from "../../../plans/_utils/plan-input-dependencies";
 import { type LibraryProvenance, toProvenanceData } from "../../_utils/library-rows";
 import { toStepData } from "../../lessons/_utils/step-data";
@@ -93,7 +93,7 @@ export async function saveLanguageLesson(input: SaveLanguageLessonInput): Promis
         skillIds: current.skills.map(({ skillId: linkedSkillId }) => linkedSkillId),
       });
 
-      await markPlansChanged(tx, { planIds });
+      await markPlanSourcesChanged(tx, { planIds });
 
       const claimed = await tx.lesson.updateMany({
         data: {

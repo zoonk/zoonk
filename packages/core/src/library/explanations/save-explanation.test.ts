@@ -142,11 +142,16 @@ describe(saveExplanationLesson, () => {
           plans.map((plan) => {
             const current = updated.find((row) => row.id === plan.id);
 
-            return { inputVersion: current?.inputVersion, version: current?.version };
+            return {
+              inputVersion: current?.inputVersion,
+              sourceVersion: current?.sourceVersion,
+              version: current?.version,
+            };
           }),
         ).toStrictEqual(
           plans.map((plan, index) => ({
-            inputVersion: plan.inputVersion + (index < 3 ? writes : 0),
+            inputVersion: plan.inputVersion,
+            sourceVersion: plan.sourceVersion + (index < 3 ? writes : 0),
             version: plan.version,
           })),
         );

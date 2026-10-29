@@ -584,7 +584,7 @@ type WriterCase = {
   beforeRelease?: () => Promise<void>;
   expectWritten: () => Promise<void>;
   marks?: number;
-  plan: Pick<Plan, "id" | "inputVersion">;
+  plan: Pick<Plan, "id" | "inputVersion" | "sourceVersion">;
   root: SourceRoot;
   write: () => Promise<unknown>;
 };
@@ -605,7 +605,10 @@ async function writeWhileRead({ beforeRelease, expectWritten, plan, root, write 
 
   await expectWritten();
 
-  return prisma.plan.findUniqueOrThrow({ select: { inputVersion: true }, where: { id: plan.id } });
+  return prisma.plan.findUniqueOrThrow({
+    select: { inputVersion: true, sourceVersion: true },
+    where: { id: plan.id },
+  });
 }
 
 function lessonRoot(id: string): SourceRoot {
@@ -1562,11 +1565,13 @@ describe("plan source writers lock what plans read and mark them", () => {
     expect(Object.keys(WRITER_CASES).toSorted()).toStrictEqual(marking.toSorted());
   });
 
-  it.each(CASES)("$name ($file)", async ({ build }) => {
+  it.each(CASES)("$name ($file)", async ({ build, file }) => {
     const writer = await build();
 
     await expect(writeWhileRead(writer)).resolves.toStrictEqual({
-      inputVersion: writer.plan.inputVersion + (writer.marks ?? 1),
+      inputVersion:
+        writer.plan.inputVersion + Number(file === "library/quality/published-lesson-check.ts"),
+      sourceVersion: writer.plan.sourceVersion + (writer.marks ?? 1),
     });
   });
 });

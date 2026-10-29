@@ -68,7 +68,7 @@ describe("plan writes", () => {
         plan: { id: plan.id, userId: goal.userId, version: plan.version },
         value: plan.summary,
       }),
-    ).toMatchObject({ basis: { planVersion: plan.version }, schemaVersion: 3 });
+    ).toMatchObject({ basis: { planVersion: plan.version }, schemaVersion: 4 });
   });
 
   it("refuses a layout an input writer marked since", async () => {

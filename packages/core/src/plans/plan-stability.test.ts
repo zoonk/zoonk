@@ -89,6 +89,7 @@ async function assertRetainedSummary({
   const summary = readFreshPlanSummary({
     basis: {
       layoutInputVersion: plan.inputVersion,
+      layoutSourceVersion: plan.sourceVersion,
       layoutStudyDay: day,
       planId,
       planVersion: plan.version,

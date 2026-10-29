@@ -11,11 +11,12 @@ import {
   selectedSummarySchema,
 } from "./selected-summary-contract";
 
-const PLAN_SUMMARY_SCHEMA_VERSION = 3;
+const PLAN_SUMMARY_SCHEMA_VERSION = 4;
 
 const planSummaryBasisSchema = z
   .object({
     layoutInputVersion: z.int().nonnegative(),
+    layoutSourceVersion: z.int().nonnegative(),
     layoutStudyDay: z.iso.date(),
     planId: z.string(),
     planVersion: z.int().positive(),
@@ -204,6 +205,7 @@ export function getPlanSummaryBasis(
 ): PlanSummary["basis"] {
   return {
     layoutInputVersion: context.plan.inputVersion,
+    layoutSourceVersion: context.plan.sourceVersion,
     layoutStudyDay: toIsoDate(context.today),
     planId: context.plan.id,
     planVersion: context.plan.version,

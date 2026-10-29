@@ -116,13 +116,13 @@ function write({
   return saveLessonVersion({ ...input, replaces: stale ? 0 : 1 });
 }
 
-async function inputVersion(planId: string) {
+async function sourceVersion(planId: string) {
   const plan = await prisma.plan.findUniqueOrThrow({ where: { id: planId } });
-  return plan.inputVersion;
+  return plan.sourceVersion;
 }
 
 async function unchanged(context: Awaited<ReturnType<typeof fixture>>) {
-  await expect(inputVersion(context.plan.id)).resolves.toBe(0);
+  await expect(sourceVersion(context.plan.id)).resolves.toBe(0);
 
   await expect(
     prisma.lesson.findUniqueOrThrow({ where: { id: context.lesson.id } }),
@@ -156,10 +156,18 @@ describe("lesson writer plan marks", () => {
       ]);
 
       await expect(write({ ...context, writer })).resolves.not.toBeNull();
-      await expect(inputVersion(context.plan.id)).resolves.toBe(1);
-      await expect(inputVersion(second.plan.id)).resolves.toBe(1);
-      await expect(inputVersion(guestPlan.plan.id)).resolves.toBe(1);
-      await expect(inputVersion(unrelated.plan.id)).resolves.toBe(0);
+      await expect(sourceVersion(context.plan.id)).resolves.toBe(1);
+      await expect(sourceVersion(second.plan.id)).resolves.toBe(1);
+      await expect(sourceVersion(guestPlan.plan.id)).resolves.toBe(1);
+      await expect(sourceVersion(unrelated.plan.id)).resolves.toBe(0);
+
+      await Promise.all(
+        [context.plan, second.plan, guestPlan.plan].map((plan) =>
+          expect(prisma.plan.findUniqueOrThrow({ where: { id: plan.id } })).resolves.toMatchObject({
+            inputVersion: plan.inputVersion + Number(writer === "holdback"),
+          }),
+        ),
+      );
 
       await expect(
         prisma.planItem.findUniqueOrThrow({ where: { id: context.item.id } }),
@@ -230,7 +238,14 @@ describe("lesson writer plan marks", () => {
     }
 
     await expect(attempt).resolves.toBeNull();
-    await expect(inputVersion(context.plan.id)).resolves.toBe(1);
+
+    await expect(
+      prisma.plan.findUniqueOrThrow({ where: { id: context.plan.id } }),
+    ).resolves.toMatchObject({
+      inputVersion: context.plan.inputVersion + 1,
+      sourceVersion: context.plan.sourceVersion,
+    });
+
     await expect(prisma.step.count({ where: { lessonId: context.lesson.id } })).resolves.toBe(1);
 
     await expect(

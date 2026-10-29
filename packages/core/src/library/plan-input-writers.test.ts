@@ -155,7 +155,7 @@ async function fixture(writer: Writer) {
 async function inputVersions(planIds: string[]) {
   return prisma.plan.findMany({
     orderBy: { id: "asc" },
-    select: { inputVersion: true },
+    select: { inputVersion: true, sourceVersion: true },
     where: { id: { in: planIds } },
   });
 }
@@ -169,11 +169,14 @@ describe("plan input writers", () => {
       await context.write();
 
       await expect(inputVersions(context.plans.map(({ id }) => id))).resolves.toStrictEqual(
-        context.plans.map(() => ({ inputVersion: 1 })),
+        context.plans.map(() => ({
+          inputVersion: Number(writer === "merge" || writer === "zone"),
+          sourceVersion: Number(writer !== "zone"),
+        })),
       );
 
       await expect(inputVersions([unrelated.plan.id])).resolves.toStrictEqual([
-        { inputVersion: 0 },
+        { inputVersion: 0, sourceVersion: 0 },
       ]);
     },
   );
@@ -204,7 +207,10 @@ describe("plan input writers", () => {
     }
 
     await expect(inputVersions(context.plans.map(({ id }) => id))).resolves.toStrictEqual(
-      context.plans.map(() => ({ inputVersion: 1 })),
+      context.plans.map(() => ({
+        inputVersion: Number(writer === "merge" || writer === "zone"),
+        sourceVersion: Number(writer !== "zone"),
+      })),
     );
   });
 });

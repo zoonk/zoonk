@@ -1,5 +1,6 @@
 import "server-only";
 import { type LearnerSkill, type Skill, type TransactionClient, prisma } from "@zoonk/db";
+import { markLockedPlanInputsChanged } from "@zoonk/db/learner-writes";
 import { isUuid } from "@zoonk/utils/uuid";
 import { revalidateCacheTags } from "../../cache/revalidate-cache-tags";
 import {
@@ -120,7 +121,7 @@ async function moveLinks(tx: TransactionClient, { duplicate, survivor }: SkillPa
 
 async function mergeInto(pair: SkillPair) {
   return writePlanInputs(async (tx) => {
-    await lockSkillPlanInputs({
+    const planIds = await lockSkillPlanInputs({
       masterySkillId: pair.duplicate.id,
       skillIds: [pair.duplicate.id, pair.survivor.id],
       tx,
@@ -135,7 +136,10 @@ async function mergeInto(pair: SkillPair) {
       throw new Error("A skill was merged meanwhile; try the merge again.");
     }
 
+    await markLockedPlanInputsChanged(tx, { planIds });
+
     const userIds = await moveLearnerSkills(tx, pair);
+
     await movePointers(tx, pair);
     const lessonIds = await moveLinks(tx, pair);
 

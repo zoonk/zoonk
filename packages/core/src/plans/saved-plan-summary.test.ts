@@ -5,6 +5,7 @@ type Basis = PlanSummary["basis"];
 
 const basis: Basis = {
   layoutInputVersion: 4,
+  layoutSourceVersion: 0,
   layoutStudyDay: "2026-10-14",
   planId: "plan-a",
   planVersion: 7,
@@ -27,7 +28,7 @@ const summary: PlanSummary = {
     fullCourseEndDate: null,
   },
   basis,
-  schemaVersion: 3,
+  schemaVersion: 4,
   selected: {
     bases: null,
     coverage: null,
