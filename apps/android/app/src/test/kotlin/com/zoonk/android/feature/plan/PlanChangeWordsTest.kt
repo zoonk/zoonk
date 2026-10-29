@@ -141,6 +141,16 @@ class PlanChangeWordsTest {
     }
 
     @Test
+    fun lessonsSwappedWithinASkillKeepTheirCountBesideADiff() {
+        val swapped = effect(""""lessonsRemoved":0,"lessonsLeftOut":["Sets","Tuples","Loops","Maps","Files"]""")
+
+        assertEquals(
+            listOf("Lessons left out: Sets, Tuples, Loops and 2 more."),
+            words({ lessonsText(planChange(effect = swapped).effect, named = true) }),
+        )
+    }
+
+    @Test
     fun appliedLinesSayWhenTodaysSessionTakesIt() {
         val change = planChange(extra = """"todaySession":"unchanged"""")
 

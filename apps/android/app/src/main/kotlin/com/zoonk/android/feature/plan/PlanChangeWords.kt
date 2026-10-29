@@ -941,9 +941,11 @@ internal fun lessonsText(
                 if (it.isEmpty()) null else stringResource(R.string.plan_change_unwritten, joinList(it))
             }
     if (named) {
-        // Beside a diff, which already counts them, only the names say more.
+        // Beside a diff, which already counts them, only the names say more. Lessons swapped within a
+        // skill remove none in total, so the diff has no count for them and the names keep "and N more".
+        val shown = if (removed == 0 && leftOut.isNotEmpty()) shortList(leftOut, ListKind.Lessons) else names
         val left =
-            names?.let {
+            shown?.let {
                 stringResource(
                     if (someOf &&
                         removed > 0
