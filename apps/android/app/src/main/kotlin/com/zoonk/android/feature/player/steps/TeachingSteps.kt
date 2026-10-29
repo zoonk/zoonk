@@ -39,6 +39,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.player.engine.LessonPhase
@@ -47,6 +48,7 @@ import com.zoonk.android.feature.player.engine.LessonScreen
 import com.zoonk.android.feature.player.engine.isNumberAnswer
 import com.zoonk.android.feature.player.model.LessonAnswer
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.SpokenAnswerStepContent
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepResult
 import com.zoonk.android.ui.components.AnswerOption
@@ -306,28 +308,7 @@ internal fun TypedAnswerView(
             QuestionText(typed.question)
         }
 
-        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedTextField(
-                value = text,
-                onValueChange = { value ->
-                    actions.select(value.take(MAX_TYPED_ANSWER_LENGTH).takeIf { it.isNotEmpty() }?.let(LessonAnswer::Typed))
-                },
-                modifier =
-                    (if (isNumber) Modifier.widthIn(min = 192.dp) else Modifier.fillMaxWidth())
-                        .onPreviewKeyEvent { event ->
-                            val submits = event.key == Key.Enter && !event.isShiftPressed && !isNumber
-                            if (submits && event.type == KeyEventType.KeyDown) actions.runPrimary()
-                            submits
-                        },
-                readOnly = locked,
-                placeholder = { Text(stringResource(if (isNumber) R.string.player_your_answer else R.string.player_write_your_answer)) },
-                minLines = if (isNumber) 1 else 3,
-                singleLine = isNumber,
-                keyboardOptions = if (isNumber) KeyboardOptions(keyboardType = KeyboardType.Decimal) else KeyboardOptions.Default,
-                textStyle = MaterialTheme.typography.bodyLarge.let { if (isNumber) it.withTabularFigures() else it },
-            )
-            AnswerHint(state, isNumber)
-        }
+        AnswerField(text, { actions.select(it?.let(LessonAnswer::Typed)) }, state, actions, isNumber)
 
         if (!locked) {
             Column {
@@ -340,6 +321,71 @@ internal fun TypedAnswerView(
                 }
             }
         }
+    }
+}
+
+/** Main's spoken screen typed instead of said, as it is wherever the device can't record. */
+@Composable
+internal fun SpokenAnswerView(
+    content: StepContent.SpokenAnswer,
+    answer: LessonAnswer?,
+    state: LessonPlayerState,
+    actions: StepActions,
+) {
+    val spoken = content.content
+
+    QuestionScene {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            QuestionText(spoken.prompt)
+            TargetText(spoken)
+        }
+        AnswerField((answer as? LessonAnswer.Spoken)?.text.orEmpty(), { actions.select(it?.let(LessonAnswer::Spoken)) }, state, actions)
+    }
+}
+
+@Composable
+private fun TargetText(spoken: SpokenAnswerStepContent) {
+    val translation = spoken.translation?.takeIf { it.isNotBlank() && it.trim() != spoken.targetText.trim() }
+
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            text = spoken.targetText,
+            style = MaterialTheme.typography.headlineSmall.copy(localeList = LocaleList(spoken.language)),
+        )
+        listOfNotNull(spoken.romanization, translation).forEach {
+            Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        }
+    }
+}
+
+/** Enter checks a written answer; a number's field keeps Enter for the keyboard's own use. */
+@Composable
+private fun AnswerField(
+    text: String,
+    onChange: (String?) -> Unit,
+    state: LessonPlayerState,
+    actions: StepActions,
+    isNumber: Boolean = false,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        OutlinedTextField(
+            value = text,
+            onValueChange = { value -> onChange(value.take(MAX_TYPED_ANSWER_LENGTH).takeIf { it.isNotEmpty() }) },
+            modifier =
+                (if (isNumber) Modifier.widthIn(min = 192.dp) else Modifier.fillMaxWidth())
+                    .onPreviewKeyEvent { event ->
+                        val submits = event.key == Key.Enter && !event.isShiftPressed && !isNumber
+                        if (submits && event.type == KeyEventType.KeyDown) actions.runPrimary()
+                        submits
+                    },
+            readOnly = state.phase != LessonPhase.Playing,
+            placeholder = { Text(stringResource(if (isNumber) R.string.player_your_answer else R.string.player_write_your_answer)) },
+            minLines = if (isNumber) 1 else 3,
+            singleLine = isNumber,
+            keyboardOptions = if (isNumber) KeyboardOptions(keyboardType = KeyboardType.Decimal) else KeyboardOptions.Default,
+            textStyle = MaterialTheme.typography.bodyLarge.let { if (isNumber) it.withTabularFigures() else it },
+        )
+        AnswerHint(state, isNumber)
     }
 }
 

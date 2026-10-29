@@ -119,6 +119,16 @@ fun LessonAccessScreen(
             }
         }
 
+        LessonRefusal.NotInApp -> {
+            AccessLayout(
+                R.drawable.ic_error,
+                stringResource(R.string.player_not_in_app_title),
+                stringResource(R.string.player_not_in_app_description),
+            ) {
+                Button(onClick = exits::close, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.player_back)) }
+            }
+        }
+
         LessonRefusal.Failed -> {
             AccessLayout(
                 R.drawable.ic_error,

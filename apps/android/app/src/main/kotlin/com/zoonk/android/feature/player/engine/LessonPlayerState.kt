@@ -23,6 +23,9 @@ sealed interface LessonRefusal {
 
     data object PlusRequired : LessonRefusal
 
+    /** A screen the lesson needs is of a kind this app can't show yet. */
+    data object NotInApp : LessonRefusal
+
     /** A slow-down, a used-up allowance, or a guest who needs an account. */
     data class Limited(
         val limit: Limit,

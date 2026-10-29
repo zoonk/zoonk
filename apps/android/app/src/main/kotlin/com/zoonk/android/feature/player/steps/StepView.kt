@@ -25,8 +25,9 @@ interface StepActions {
 }
 
 /**
- * The one place a screen kind gets its view: a kind without one here is left out of the lesson
- * ([isPlayable]), as Apple's player does, so the learner never meets a screen they can't answer.
+ * The one place a screen kind gets its view. A kind without one here ([isPlayable]) is left out
+ * when the lesson can do without it, and otherwise the lesson doesn't open: the server finishes a
+ * run only once every screen it needs has an answer.
  */
 @Composable
 fun StepView(
@@ -47,13 +48,14 @@ fun StepView(
         is StepContent.Check -> CheckView(content, answer, result, locked, screen, actions)
         is StepContent.Summary -> SummaryView(content)
         is StepContent.TypedAnswer -> TypedAnswerView(step, content, answer, state, screen, actions)
-        is StepContent.Activity, is StepContent.Challenge, is StepContent.SpokenAnswer, is StepContent.Language -> Unit
+        is StepContent.SpokenAnswer -> SpokenAnswerView(content, answer, state, actions)
+        is StepContent.Activity, is StepContent.Challenge, is StepContent.Language -> Unit
     }
 }
 
 fun isPlayable(step: LessonStep): Boolean =
     when (step.content) {
-        is StepContent.Activity, is StepContent.Challenge, is StepContent.SpokenAnswer, is StepContent.Language -> false
+        is StepContent.Activity, is StepContent.Challenge, is StepContent.Language -> false
         else -> true
     }
 

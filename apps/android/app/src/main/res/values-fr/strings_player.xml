@@ -62,6 +62,8 @@
   "player_next_lesson": "b00fccbe9c29eda0ceab8b948e61124faa4f9af58d7b524a2308fe1e70986da2",
   "player_not_found_description": "0900170d4ef4646593638816d6632119d2ebd0a39f94613c9becbd4e89e9d617",
   "player_not_found_title": "c5995cd035b62c43c415b6ab4ff36334abadceffa18703525af484f17baca95d",
+  "player_not_in_app_description": "54215c065552bfe2896ea207e9b11901bafd808f033a77a890093785e82427ea",
+  "player_not_in_app_title": "fa8827167a37fc94c96e05d24c697263981e5e1e2cbcda3915d449b1d062738a",
   "player_not_written_description": "f1870c505f0274ee3a8eec1ecde9765e1145152d4ae8e6869e95c870dd550dc1",
   "player_not_written_title": "e7fdaea3138e4290047cc7b21ec8ade04c84cc1ed73c7f5743a79921ca314d12",
   "player_nothing_left_description": "edbe2abb381856c0b6f28f8149b24e72d6d218dad89af92190c867dbfc863065",
@@ -235,6 +237,8 @@
     <string name="player_back">Retour</string>
     <string name="player_not_found_title">Leçon indisponible</string>
     <string name="player_not_found_description">Cette leçon n’est plus disponible.</string>
+    <string name="player_not_in_app_title">Cette leçon n’est pas encore disponible dans l’application</string>
+    <string name="player_not_in_app_description">Certaines pages ne s’affichent pas encore dans l’application. Tu peux suivre cette leçon sur zoonk.com.</string>
     <string name="player_start_failed_title">Nous n’avons pas pu ouvrir cette leçon</string>
     <string name="player_start_failed_description">Réessaie dans un instant. Tu n’as rien perdu.</string>
     <string name="player_slow_down_title">Fais une petite pause</string>

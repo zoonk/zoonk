@@ -182,7 +182,7 @@ private fun WritingRefused(
             FilledTonalButton(onClick = { exits.open(AppRoute.Subscription) }) { Text(stringResource(R.string.player_see_plus)) }
         }
 
-        LessonRefusal.NotFound, LessonRefusal.Failed -> {
+        LessonRefusal.NotFound, LessonRefusal.Failed, LessonRefusal.NotInApp -> {
             LessonAccessScreen(refusal, onRetry, exits)
         }
     }

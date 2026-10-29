@@ -7,6 +7,7 @@ import com.zoonk.android.feature.player.model.GuessHook
 import com.zoonk.android.feature.player.model.GuessOption
 import com.zoonk.android.feature.player.model.LanguageExercise
 import com.zoonk.android.feature.player.model.LessonStep
+import com.zoonk.android.feature.player.model.SpokenAnswerStepContent
 import com.zoonk.android.feature.player.model.StepContent
 import com.zoonk.android.feature.player.model.StepKind
 import com.zoonk.android.feature.player.model.StepResult
@@ -99,6 +100,21 @@ fun numberAnswerStep(id: String) =
                 sampleAnswer = "20",
                 acceptedAnswers = listOf("20"),
             ),
+        ),
+    )
+
+fun spokenStep(id: String) =
+    LessonStep(
+        id,
+        null,
+        StepContent.SpokenAnswer(
+            SpokenAnswerStepContent(
+                language = "es",
+                prompt = "Say that you're hungry",
+                targetText = "Tengo hambre",
+                translation = "I'm hungry",
+            ),
+            listening = null,
         ),
     )
 

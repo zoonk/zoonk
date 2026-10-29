@@ -62,6 +62,8 @@
   "player_next_lesson": "7bd9f0b726aa2ab49cfdc4a88c62413f30f4973f992cc7a798f4b160a34f1a5d",
   "player_not_found_description": "3c7ff2626f290e1ff4e59aeacb4ab32500078b0ce0611ecba1db5fd9cb957d3c",
   "player_not_found_title": "397ab93f3c5ff28a329fffcd08cd03b7e5e0178ac49fe90fd4208f136eea7509",
+  "player_not_in_app_description": "64fa6c93c8e2c8f2dd6cd34863de5a5d678b9031c53e2d53f3f1ae90769a74e0",
+  "player_not_in_app_title": "0f35dab328ca24e52f27a756a4f7a3163c71246339700108e7fa09614ee87f21",
   "player_not_written_description": "b946780f16a20c654fca310e0e4b06bb8e1c2373546c031361f925e9399d7817",
   "player_not_written_title": "a9190872c1b2e938824c505352662f137102e80437e5bfe1a1413c57ae0e682a",
   "player_nothing_left_description": "aa9d1844e623435f09b3620cee24b49bdf56d0a5cb4368f2160c1a6b0bf409f9",
@@ -235,6 +237,8 @@
     <string name="player_back">Voltar</string>
     <string name="player_not_found_title">Aula indisponível</string>
     <string name="player_not_found_description">Esta aula não está mais disponível.</string>
+    <string name="player_not_in_app_title">Esta aula ainda não está no app</string>
+    <string name="player_not_in_app_description">Ela tem telas que o app ainda não consegue mostrar. Você pode fazer essa aula em zoonk.com.</string>
     <string name="player_start_failed_title">Não conseguimos abrir esta aula</string>
     <string name="player_start_failed_description">Tente de novo daqui a pouco. Você não perdeu nada do que fez.</string>
     <string name="player_slow_down_title">Faça uma pausa curta</string>

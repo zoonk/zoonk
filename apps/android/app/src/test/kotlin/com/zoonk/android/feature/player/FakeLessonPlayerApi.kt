@@ -63,6 +63,7 @@ class FakeLessonPlayerApi(
     val checks = mutableListOf<Pair<String, LessonStepCheckInput>>()
     val completions = mutableListOf<String>()
     var runAnswers = "[]"
+    var optionalStepIds = "[]"
     var startError: ApiException? = null
     var checkFailures = 0
     var grade: (String, LessonStepCheckInput) -> LessonStepCheckResult = { _, _ -> checkResult(isCorrect = true) }
@@ -91,7 +92,7 @@ class FakeLessonPlayerApi(
         startError?.let { throw it }
         return ApiJson.decodeFromString(
             """
-            {"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"runId":"$RUN_ID",
+            {"answers":$runAnswers,"hyperdrive":{"knownStepIds":[],"streak":0},"optionalStepIds":$optionalStepIds,"runId":"$RUN_ID",
              "startedAt":"2026-10-28T10:00:00Z","support":null}
             """.trimIndent(),
         )

@@ -258,7 +258,12 @@ class LessonPlayerViewModel(
         val started = now()
         var state = LessonPlayerState.initial(lesson.id, lesson.steps, run.support?.toSupport(), started)
         state = reduce(state, run.toStartedAction(), started)
-        state = reduce(state, LessonAction.SkipSteps(lesson.steps.filterNot(::isPlayable).map(LessonStep::id)), started)
+
+        val unplayable = lesson.steps.filterNot(::isPlayable).map(LessonStep::id)
+        val leftOut = run.optionalStepIds.orEmpty().map(UUID::toString) + run.answers.map { it.stepId.toString() }
+        if (!leftOut.containsAll(unplayable)) return reduce(state, LessonAction.RunRefused(LessonRefusal.NotInApp), started)
+
+        state = reduce(state, LessonAction.SkipSteps(unplayable), started)
 
         val session = owner
         if (session != null && choices.isChosen(session, TodayChoice.CantWrite)) {

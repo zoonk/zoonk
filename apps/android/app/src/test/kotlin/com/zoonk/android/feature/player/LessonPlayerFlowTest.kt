@@ -34,6 +34,7 @@ import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.LessonStepAnswer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -185,6 +186,40 @@ class LessonPlayerFlowTest {
     }
 
     @Test
+    fun aSpokenScreenCanBeTypedAndTheServerChecksIt() {
+        play(listOf(spokenStep("say"), summaryStep("end")))
+
+        rule.onNodeWithText("Tengo hambre").assertIsDisplayed()
+        rule.onNode(hasSetTextAction()).performTextInput("Tengo hambre")
+        tap("Check")
+
+        rule.onNodeWithText("Correct!").assertIsDisplayed()
+        assertEquals(
+            LessonStepAnswer.LessonStepAnswerOneOf2Value::class,
+            api.checks
+                .single()
+                .second.answer::class,
+        )
+    }
+
+    @Test
+    fun aLessonNeedingAScreenTheAppCantShowYetSaysSoInsteadOfOpening() {
+        play(listOf(explanationStep("idea"), fillBlankStep(BLANK_ID), summaryStep("end")))
+
+        rule.onNodeWithText("This lesson isn't in the app yet").assertIsDisplayed()
+        tap("Back")
+        assertEquals(1, closed)
+    }
+
+    @Test
+    fun aScreenTheLessonCanDoWithoutIsLeftOut() {
+        play(listOf(explanationStep("idea"), fillBlankStep(BLANK_ID), summaryStep("end"))) { optionalStepIds = """["$BLANK_ID"]""" }
+
+        tap("Next")
+        rule.onNodeWithText("One idea.").assertIsDisplayed()
+    }
+
+    @Test
     fun aMissedCheckComesBackAtTheEndAndTheSegmentsSayHowItWent() {
         play(listOf(checkStep("quiz"), explanationStep("idea")))
 
@@ -273,3 +308,5 @@ class LessonPlayerFlowTest {
         assertEquals(listOf(AppRoute.Lesson(NEXT_LESSON_ID)), opened)
     }
 }
+
+private const val BLANK_ID = "00000000-0000-4000-8000-0000000000ee"
