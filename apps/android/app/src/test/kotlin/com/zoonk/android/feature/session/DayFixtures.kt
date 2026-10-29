@@ -86,9 +86,7 @@ internal fun day(
         week =
             StudySessionWeek(
                 days = emptyList(),
-                daysHitGoal = 0,
                 nextStudyDate = null,
-                studyDays = 5,
                 time = StudySessionWeekTime(studiedMinutes = 0, targetMinutes = 100.0),
             ),
         dayEndsAt = 0,

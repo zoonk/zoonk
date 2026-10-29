@@ -85087,23 +85087,12 @@
                   "additionalProperties": false
                 }
               },
-              "daysHitGoal": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
               "nextStudyDate": {
                 "nullable": true,
                 "description": "The learner's next day with study time after today, within a week and past the week's end: when today's study time used up is back. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "studyDays": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "Days of the week with a time goal"
               },
               "time": {
                 "type": "object",
@@ -85130,9 +85119,7 @@
             },
             "required": [
               "days",
-              "daysHitGoal",
               "nextStudyDate",
-              "studyDays",
               "time"
             ],
             "additionalProperties": false,
@@ -87174,23 +87161,12 @@
                   "additionalProperties": false
                 }
               },
-              "daysHitGoal": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991
-              },
               "nextStudyDate": {
                 "nullable": true,
                 "description": "The learner's next day with study time after today, within a week and past the week's end: when today's study time used up is back. Say tomorrow when it's the next day, else name the day; null when the coming week has none (say the next session)",
                 "type": "string",
                 "format": "date",
                 "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))$"
-              },
-              "studyDays": {
-                "type": "integer",
-                "minimum": 0,
-                "maximum": 9007199254740991,
-                "description": "Days of the week with a time goal"
               },
               "time": {
                 "type": "object",
@@ -87217,9 +87193,7 @@
             },
             "required": [
               "days",
-              "daysHitGoal",
               "nextStudyDate",
-              "studyDays",
               "time"
             ],
             "additionalProperties": false,

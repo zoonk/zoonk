@@ -396,7 +396,7 @@ private func dayJSON(
     "localDate":"\(localDate)","minutes":{"dailyGoal":\(dailyGoal),"done":0,"planned":15},
     "missions":[],"nextPosition":\(nextPosition.map(String.init) ?? "null"),
     "pauseSuggested":false,"plusLessons":[],"sessionBar":{"completed":0,"total":1},
-    "week":{"days":[],"daysHitGoal":0,"nextStudyDate":null,"studyDays":7,
+    "week":{"days":[],"nextStudyDate":null,
     "time":{"studiedMinutes":0,"targetMinutes":100}},
     "status":"\(id == nil ? "unstarted" : "active")"\(id.map { ",\"id\":\"\($0)\"" } ?? "")}
     """

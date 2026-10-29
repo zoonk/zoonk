@@ -2,7 +2,6 @@ import { type StudySessionBlock } from "@zoonk/db";
 import { type StudyWeek } from "../../progress/_utils/load-study-week";
 import { type BlockCheckpoint } from "../block-payload";
 import { type CapsuleFormat } from "../capsules";
-import { type WeekDay } from "../daily-goal";
 import { type DayBlockScreen } from "../day-block";
 import { type ExtraTime } from "../extra-time";
 import { type DailyTimeLimitStatus } from "../get-daily-time-limit";
@@ -115,13 +114,7 @@ export type StudySessionView = {
   plusLessons: PlusLesson[];
   sessionBar: { completed: number; total: number };
   status: StudySessionRow["status"];
-  week: {
-    days: WeekDay[];
-    daysHitGoal: number;
-    nextStudyDate: StudyWeek["nextStudyDate"];
-    studyDays: number;
-    time: StudyWeek["time"];
-  };
+  week: StudyWeek;
 };
 
 export function getSessionBar(blocks: readonly Pick<StudySessionBlock, "status">[]) {

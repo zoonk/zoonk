@@ -78,8 +78,6 @@ export function toDayViewFields({
 
   const empty = examAccess.trialEnded && emptyDay ? "nothingNew" : emptyDay;
   const minutesDone = Math.round(getSessionMinutesDone(session.blocks));
-  const { days } = week;
-
   const blocksPower = session.blocks.reduce((sum, block) => sum + block.brainPower, 0);
 
   return {
@@ -116,12 +114,6 @@ export function toDayViewFields({
     pauseSuggested: shouldSuggestPause(answers.map((answer) => answer.isCorrect)),
     plusLessons,
     sessionBar,
-    week: {
-      days,
-      daysHitGoal: days.filter((day) => day.hitGoal).length,
-      nextStudyDate: week.nextStudyDate,
-      studyDays: days.filter((day) => day.goalMinutes > 0).length,
-      time: week.time,
-    },
+    week,
   };
 }

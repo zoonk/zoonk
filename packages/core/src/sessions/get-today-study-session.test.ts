@@ -219,7 +219,10 @@ describe(getTodayStudySession, () => {
 
     expect(rest.status === "ready" && rest.session.blocks).toStrictEqual([]);
     expect(rest.status === "ready" && rest.session.minutes.dailyGoal).toBe(0);
-    expect(rest.status === "ready" && rest.session.week.studyDays).toBe(6);
+
+    expect(
+      rest.status === "ready" && rest.session.week.days.filter((day) => day.goalMinutes > 0),
+    ).toHaveLength(6);
 
     const other = await sessionGoalFixture({ lessons: 8, userId: user.id });
 
@@ -275,9 +278,9 @@ describe(getTodayStudySession, () => {
       throw new Error(`Expected a session, got ${result.status}`);
     }
 
-    const { days, studyDays } = result.session.week;
+    const { days } = result.session.week;
 
-    expect(studyDays).toBe(5);
+    expect(days.filter((day) => day.goalMinutes > 0)).toHaveLength(5);
 
     expect(days.slice(0, 2).map((day) => [day.goalMinutes, day.kind])).toStrictEqual([
       [0, "beforeStart"],

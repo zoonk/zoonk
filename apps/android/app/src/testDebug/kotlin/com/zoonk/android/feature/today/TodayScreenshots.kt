@@ -240,9 +240,7 @@ class TodayScreenshots {
                             }
                         },
                     )
-                    put("daysHitGoal", 2)
                     put("nextStudyDate", "2026-10-29")
-                    put("studyDays", 5)
                     putJsonObject("time") {
                         put("studiedMinutes", 80)
                         put("targetMinutes", 225)
