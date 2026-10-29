@@ -388,6 +388,26 @@ class PlanViewModelTest {
         }
 
     @Test
+    fun aSlotChangeKeepsItsUndoAfterTheEditorOpens() =
+        runTest {
+            viewModel.change(PlanPart.Suggestion, listOf(PlanOp.DailyMinutes(45)))
+            val change =
+                viewModel.changes.value
+                    .getValue(UUID.fromString(CHANGE_ID))
+                    .change
+            viewModel.forgetLatest()
+
+            viewModel.undo(change)
+
+            assertNull(viewModel.latest.value)
+            assertTrue(
+                viewModel.changes.value
+                    .getValue(change.id)
+                    .undone,
+            )
+        }
+
+    @Test
     fun anExamChoiceShowsItsChangeOnceThePlanShownHasIt() =
         runTest {
             var readsWhenAnswered = -1

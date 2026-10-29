@@ -6,6 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onFirst
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -118,6 +120,21 @@ class PlanSuggestionSlotTest {
 
         assertEquals(listOf("Foreign language" to "Spanish"), chosen)
         assertEquals(CHANGE_ID, undone.single().id.toString())
+    }
+
+    @Test
+    fun anUndoThatDidntSaveSaysSoOnTheLine() {
+        show(
+            """"examChoices":[{"group":"Foreign language","options":[{"name":"English","shortName":null},""" +
+                """{"name":"Spanish","shortName":null}],"subject":null}]""",
+            layout = SuggestionLayout.Line,
+        )
+        compose.onNodeWithText("Choose").performClick()
+        compose.onNodeWithText("Spanish").performClick()
+
+        changes = changes.mapValues { it.value.copy(undoFailed = true) }
+
+        compose.onAllNodesWithText("That didn't save. Try again.").onFirst().assertIsDisplayed()
     }
 
     /** A slot whose finds, previews and changes answer at once, as the plan's would. */

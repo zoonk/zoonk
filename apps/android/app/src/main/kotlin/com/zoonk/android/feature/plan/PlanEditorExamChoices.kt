@@ -86,13 +86,14 @@ internal fun ExamChoiceSuggestion(
     answer: String?,
     onChoose: (subject: String) -> Unit,
     modifier: Modifier = Modifier,
+    undoFailed: Boolean = false,
     undo: @Composable () -> Unit = {},
 ) {
     val title = stringResource(R.string.plan_exam_choice_question, choice.group)
 
     Suggestion(
         label = title,
-        summary = answer ?: title,
+        summary = if (undoFailed) stringResource(R.string.suggestion_save_failed) else answer ?: title,
         layout = layout,
         modifier = modifier,
         mark = SuggestionMark.Symbol(R.drawable.ic_signpost),
@@ -103,6 +104,7 @@ internal fun ExamChoiceSuggestion(
         if (answer != null) {
             SuggestionResult(answer)
             SuggestionActions(undo)
+            if (undoFailed) SuggestionSaveError()
             return@Suggestion
         }
         SuggestionDescription(stringResource(R.string.plan_exam_choice_until_you_pick, choice.group))

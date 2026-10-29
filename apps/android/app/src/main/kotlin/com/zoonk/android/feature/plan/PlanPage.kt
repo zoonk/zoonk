@@ -21,6 +21,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -219,6 +220,7 @@ internal fun PlanPage(
                 nextLevel = nextLevel,
                 onContinue = viewModel::continueAtNextLevel,
             ),
+        slotState = viewModel.slotState,
     )
 
     if (editing) {
@@ -290,9 +292,9 @@ internal fun PlanContent(
     onAdjust: ((PlanSection?) -> Unit)? = null,
     edits: PlanEdits = PlanEdits(),
     slot: SlotHost = SlotHost(),
+    slotState: SlotState = remember { SlotState() },
 ) {
     val adjust = onAdjust?.let { { it(null) } }
-    val slotState = rememberSlotState()
     val numbers = @Composable { variant: NumberVariant -> PlanNumbers(page, standing, variant, links, onAdjust = adjust) }
     val suggestion =
         @Composable { layout: SuggestionLayout ->

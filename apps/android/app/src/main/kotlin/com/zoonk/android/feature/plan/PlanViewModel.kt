@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -55,7 +55,8 @@ class PlanViewModel(
     private val savingParts = MutableStateFlow(emptySet<PlanPart>())
     private val askedOperations = MutableStateFlow(emptyMap<PlanPart, List<PlanOp>>())
     private val failedParts = MutableStateFlow(emptySet<PlanPart>())
-    private val openingChanges = MutableStateFlow(emptyMap<UUID, EditorChange>())
+    private val trackedChanges = MutableStateFlow(emptyMap<UUID, EditorChange>())
+    private val editorChangeIds = MutableStateFlow(emptySet<UUID>())
     private val sheetAnswersState = MutableStateFlow(emptyMap<UUID, PlanChangeResult?>())
     private val timeToCoverState = MutableStateFlow<TimeToCoverState>(TimeToCoverState.Idle)
     private var search: TimeToCoverSearch? = null
@@ -78,8 +79,8 @@ class PlanViewModel(
 
     val failed: StateFlow<Set<PlanPart>> = failedParts.asStateFlow()
 
-    /** Every change this opening of the editor made, so a sheet keeps its own, with its Undo, after a newer one. */
-    val changes: StateFlow<Map<UUID, EditorChange>> = openingChanges.asStateFlow()
+    /** Every change made here, so a sheet or the slot keeps its own, with its Undo, after a newer one or the editor reopening. */
+    val changes: StateFlow<Map<UUID, EditorChange>> = trackedChanges.asStateFlow()
 
     /**
      * What each sheet opening's save answered (null: it didn't save), kept here so the sheet showing
@@ -87,9 +88,13 @@ class PlanViewModel(
      */
     val sheetAnswers: StateFlow<Map<UUID, PlanChangeResult?>> = sheetAnswersState.asStateFlow()
 
-    /** The change made last, which the editor shows with Undo; answers can arrive out of order. */
+    /** The change this opening of the editor made last, which it shows with Undo; answers can arrive out of order. */
     val latest: StateFlow<EditorChange?> =
-        openingChanges.map { all -> all.values.maxByOrNull { it.change.createdAt } }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
+        combine(trackedChanges, editorChangeIds) { all, ids -> ids.mapNotNull(all::get).maxByOrNull { it.change.createdAt } }
+            .stateIn(viewModelScope, SharingStarted.Eagerly, null)
+
+    /** The suggestion slot's state, kept here so a save's answer, with its Undo, survives turning the device. */
+    internal val slotState = SlotState()
 
     /** Read it with [forPlan]: it's the plan revision it was asked of. */
     val timeToCover: StateFlow<TimeToCoverState> = timeToCoverState.asStateFlow()
@@ -166,7 +171,7 @@ class PlanViewModel(
             val shown = if (saved != null) store.awaitWritesShown(goalId) else null
             val sameOpening = opening == openings
             if (saved != null && shown == PlanShown.Current) {
-                if (sameOpening && saved.status == PlanChangeResult.Status.APPLIED) saved.change?.let(::report)
+                if (saved.status == PlanChangeResult.Status.APPLIED) saved.change?.let { report(it, editor = sameOpening) }
                 answered(saved)
             } else if (result is MutationResult.Failed || shown == PlanShown.Stale) {
                 if (sameOpening) failedParts.update { it + part }
@@ -178,7 +183,7 @@ class PlanViewModel(
     }
 
     fun undo(change: PlanChange) {
-        if (openingChanges.value[change.id]?.undoing == true) return
+        if (trackedChanges.value[change.id]?.undoing == true) return
         update(change.id) { copy(undoing = true, undoFailed = false) }
         viewModelScope.launch {
             val result = store.undo(goalId, change.id)
@@ -199,12 +204,18 @@ class PlanViewModel(
         result: PlanChangeResult?,
     ) = sheetAnswersState.update { it + (opening to result) }
 
-    private fun report(change: PlanChange) = openingChanges.update { it + (change.id to EditorChange(change)) }
+    private fun report(
+        change: PlanChange,
+        editor: Boolean,
+    ) {
+        trackedChanges.update { it + (change.id to EditorChange(change)) }
+        if (editor) editorChangeIds.update { it + change.id }
+    }
 
     private fun update(
         id: UUID,
         transform: EditorChange.() -> EditorChange,
-    ) = openingChanges.update { all -> all[id]?.let { all + (id to it.transform()) } ?: all }
+    ) = trackedChanges.update { all -> all[id]?.let { all + (id to it.transform()) } ?: all }
 
     /**
      * Main's time-to-cover store: one search per plan revision, which [found] joins while it runs,
@@ -309,7 +320,7 @@ class PlanViewModel(
     /** The editor opens without the change it showed last time, as main's does. */
     fun forgetLatest() {
         openings++
-        openingChanges.value = emptyMap()
+        editorChangeIds.value = emptySet()
         sheetAnswersState.value = emptyMap()
         failedParts.value = emptySet()
     }

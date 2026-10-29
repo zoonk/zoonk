@@ -15,8 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.listSaver
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -169,20 +168,7 @@ internal class SlotState(
         asking = null
         waiting = 0
     }
-
-    companion object {
-        val Saver =
-            listSaver<SlotState, Any>(
-                save = { listOf(it.position, ArrayList(it.dismissed), it.intent.name) },
-                restore = {
-                    SlotState(it[0] as Int, (it[1] as List<*>).filterIsInstance<String>(), CoverageIntent.valueOf(it[2] as String))
-                },
-            )
-    }
 }
-
-@Composable
-internal fun rememberSlotState(): SlotState = rememberSaveable(saver = SlotState.Saver) { SlotState() }
 
 /** What the slot reads beside the plan: its own preview, and what to study next once the plan has ended. */
 internal class SlotHost(
@@ -264,7 +250,7 @@ internal fun PlanSuggestionSlot(
     layout: SuggestionLayout,
     modifier: Modifier = Modifier,
     host: SlotHost = SlotHost(),
-    state: SlotState = rememberSlotState(),
+    state: SlotState = remember { SlotState() },
 ) {
     val fix =
         page.plan.status
@@ -304,6 +290,7 @@ internal fun PlanSuggestionSlot(
                         layout = layout,
                         failed = edits.hasFailed(PlanPart.ExamChoices),
                         answer = change?.let { planChangeSentence(it) },
+                        undoFailed = change?.let { edits.changes[it.id]?.undoFailed } == true,
                         onChoose = { subject ->
                             edits.chooseExamOption(item.choice.group, subject) { answer ->
                                 answer?.change?.takeIf { answer.status == PlanChangeResult.Status.APPLIED }?.let {
@@ -396,11 +383,12 @@ internal fun PlanChangeSuggestion(
     val answer = slot.answer(item)
     val change = answer?.change
     val result = answer?.let { change?.let { planChangeSentence(it) } ?: stringResource(R.string.plan_updated_sentence) }
+    val undoFailed = change?.let { slot.edits.changes[it.id]?.undoFailed } == true
     val undo = @Composable { if (change?.canUndo == true) SlotUndo(change, slot.edits) }
 
     Suggestion(
         label = stringResource(R.string.plan_suggestion),
-        summary = result ?: title,
+        summary = if (undoFailed) stringResource(R.string.suggestion_save_failed) else result ?: title,
         layout = slot.layout,
         mark = if (answer != null) SuggestionMark.Done else mark,
         answered = answer != null,
@@ -410,7 +398,7 @@ internal fun PlanChangeSuggestion(
             SuggestionHeader(stringResource(R.string.plan_updated))
             SuggestionResult(result)
             SuggestionActions(undo)
-            if (change?.let { slot.edits.changes[it.id]?.undoFailed } == true) SuggestionSaveError()
+            if (undoFailed) SuggestionSaveError()
             return@Suggestion
         }
         SuggestionHeader(title)
