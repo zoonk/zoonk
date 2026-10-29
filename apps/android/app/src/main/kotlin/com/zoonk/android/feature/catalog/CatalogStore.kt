@@ -1,6 +1,8 @@
 package com.zoonk.android.feature.catalog
 
 import com.zoonk.android.data.ApiClients
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.KeyedResources
@@ -127,6 +129,16 @@ class CatalogStore(
     }
 }
 
+/** An id that isn't one names nothing, as the API answers for an unknown one. */
+internal fun String.toUuid(): UUID =
+    try {
+        UUID.fromString(this)
+    } catch (_: IllegalArgumentException) {
+        throw ApiException(ApiError.NotFound)
+    }
+
+internal fun String.toUuidOrNull(): UUID? = runCatching { UUID.fromString(this) }.getOrNull()
+
 /** Main's catalog lists courses in the app's language, or English when Zoonk has no catalog in it. */
 fun catalogLanguage(locale: Locale): String = locale.language.takeIf { it in CATALOG_LANGUAGES } ?: "en"
 
@@ -149,17 +161,16 @@ class LiveCatalogApi(
         return CoursePage(page.data, page.pagination.nextCursor?.takeIf { page.pagination.hasMore })
     }
 
-    override suspend fun course(courseId: String) = perform { courses.getCourse(UUID.fromString(courseId)) }
+    override suspend fun course(courseId: String) = perform { courses.getCourse(courseId.toUuid()) }
 
-    override suspend fun chapters(courseId: String) =
-        perform { api.clients(null).chapters.listCourseChapters(UUID.fromString(courseId)) }.data
+    override suspend fun chapters(courseId: String) = perform { api.clients(null).chapters.listCourseChapters(courseId.toUuid()) }.data
 
     override suspend fun chapter(
         chapterId: String,
         courseId: String,
-    ) = perform { api.clients(null).chapters.getChapter(UUID.fromString(chapterId), UUID.fromString(courseId)) }
+    ) = perform { api.clients(null).chapters.getChapter(chapterId.toUuid(), courseId.toUuid()) }
 
-    override suspend fun lesson(lessonId: String) = perform { api.clients(null).libraryLessons.getCatalogLesson(UUID.fromString(lessonId)) }
+    override suspend fun lesson(lessonId: String) = perform { api.clients(null).libraryLessons.getCatalogLesson(lessonId.toUuid()) }
 
     private companion object {
         const val PAGE_SIZE = 20L

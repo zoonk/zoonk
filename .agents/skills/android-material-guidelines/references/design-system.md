@@ -14,25 +14,25 @@ When `globals.css` changes, regenerate the palette: `pnpm --filter android palet
 
 ## Color roles
 
-| Main token                                                 | Compose                                                                                                                     |
-| ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `background`                                               | `background`, `surface` (what `Scaffold` draws), `surfaceContainerLowest`                                                   |
-| `card`, `popover`                                          | `surfaceContainerLow`, `surfaceContainer` (cards, sheets, menus and the navigation bar draw their own)                      |
-| `muted` (the row the learner is on), `surface-3` (a track) | `surfaceContainerHigh`, `surfaceContainerHighest`                                                                           |
-| `border`, `input`                                          | `outlineVariant`, `outline`                                                                                                 |
-| `foreground`, `muted-foreground`, `faint`                  | `onSurface`, `onSurfaceVariant` (both quiet steps)                                                                          |
-| `primary` (the main action)                                | `primary` / `onPrimary`                                                                                                     |
-| `selected` (a pick before it's checked)                    | `primary` ink: radio, checkbox, a 2dp ring on `MaterialTheme.zoonk.selectedTint` (`answerTone`). Never blue.                |
-| `success` (progress, done, right, the learner's place)     | `tertiary`; its tint `tertiaryContainer`. Pass `tertiary` to progress indicators: Material defaults to `primary`.           |
-| `success-text` (progress in words)                         | `onTertiaryContainer`, on the page or on the tint                                                                           |
-| `destructive`, `destructive-text` (wrong, removed)         | `error` takes `destructive-text`, since Material writes field errors in it; tint `errorContainer`, words `onErrorContainer` |
-| `warning`, `warning-text` (look here)                      | `MaterialTheme.zoonk.warning`, `warningText`                                                                                |
-| `brain`, `brain-text` (Brain Power, only)                  | `MaterialTheme.zoonk.brain`, `brainText`                                                                                    |
-| `energy`                                                   | `MaterialTheme.zoonk.energy`                                                                                                |
-| `kind-*`                                                   | `LearnKind.color`, drawn by `KindMark` and `KindDot`                                                                        |
-| `belt-*`                                                   | `Belt.color`: full strength in every scheme, drawn by `BeltDot`                                                             |
-| `viz-accent`, `viz-secondary`, `viz-highlight`             | `MaterialTheme.zoonk.vizAccent`, `vizSecondary`, `vizHighlight`: a chart's series, in that order                            |
-| subject hues                                               | added to the palette and `ZoonkColors` when a feature needs them                                                            |
+| Main token                                                  | Compose                                                                                                                     |
+| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `background`                                                | `background`, `surface` (what `Scaffold` draws), `surfaceContainerLowest`                                                   |
+| `card`, `popover`                                           | `surfaceContainerLow`, `surfaceContainer` (cards, sheets, menus and the navigation bar draw their own)                      |
+| `muted` (the row the learner is on), `surface-3` (a track)  | `surfaceContainerHigh`, `surfaceContainerHighest`                                                                           |
+| `border`, `input`                                           | `outlineVariant`, `outline`                                                                                                 |
+| `foreground`, `muted-foreground`, `faint`                   | `onSurface`, `onSurfaceVariant` (both quiet steps)                                                                          |
+| `primary` (the main action)                                 | `primary` / `onPrimary`                                                                                                     |
+| `selected` (a pick before it's checked)                     | `primary` ink: radio, checkbox, a 2dp ring on `MaterialTheme.zoonk.selectedTint` (`answerTone`). Never blue.                |
+| `success` (progress, done, right, the learner's place)      | `tertiary`; its tint `tertiaryContainer`. Pass `tertiary` to progress indicators: Material defaults to `primary`.           |
+| `success-text` (progress in words)                          | `onTertiaryContainer`, on the page or on the tint                                                                           |
+| `destructive`, `destructive-text` (wrong, removed)          | `error` takes `destructive-text`, since Material writes field errors in it; tint `errorContainer`, words `onErrorContainer` |
+| `warning`, `warning-text` (look here)                       | `MaterialTheme.zoonk.warning`, `warningText`                                                                                |
+| `brain`, `brain-text` (Brain Power, only)                   | `MaterialTheme.zoonk.brain`, `brainText`                                                                                    |
+| `energy`                                                    | `MaterialTheme.zoonk.energy`                                                                                                |
+| `kind-*`                                                    | `LearnKind.color`, drawn by `KindMark` and `KindDot`                                                                        |
+| `belt-*`                                                    | `Belt.color`: full strength in every scheme, drawn by `BeltDot`                                                             |
+| `viz-accent`, `viz-secondary`, `viz-highlight`              | `MaterialTheme.zoonk.vizAccent`, `vizSecondary`, `vizHighlight`: a chart's series, in that order                            |
+| `[data-subject]`: `subject`, `subject-text`, `subject-tint` | `Subject.colors` (`ZoonkColors.subjects`), drawn by `SubjectGlyph` and `SubjectLabel`                                       |
 
 `ZoonkColors` holds only meanings Material has no role for. Add one only when no role carries it without colliding with another meaning: its token in the generator's list, then `ZoonkColors`.
 

@@ -47,6 +47,8 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.feature.feedback.FeedbackTarget
+import com.zoonk.android.feature.feedback.ReportProblemMenu
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -57,6 +59,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.api.models.CourseResource
+import com.zoonk.api.models.FeedbackSubmissionContext
 import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
 
@@ -71,7 +74,9 @@ fun CourseScreen(
     val state by detail.collectShown()
     val title = (state as? LoadState.Loaded)?.value?.course?.title
 
-    CatalogPage(app, navigator, detail, state, title) { value, layout ->
+    val report = FeedbackTarget("course", FeedbackSubmissionContext.ContentKind.COURSE, route.courseId.toUuidOrNull())
+
+    CatalogPage(app, navigator, detail, state, title, report) { value, layout ->
         courseContent(app, navigator, value, layout)
     }
 }
@@ -87,6 +92,7 @@ internal fun <T : Any> CatalogPage(
     resource: Resource<T>,
     state: LoadState<T>,
     title: String?,
+    report: FeedbackTarget? = null,
     content: LazyListScope.(T, CatalogPageLayout) -> Unit,
 ) {
     val scope = rememberCoroutineScope()
@@ -99,6 +105,7 @@ internal fun <T : Any> CatalogPage(
     PageScaffold(
         onBack = { navigator.back() },
         title = { title?.let { Text(it, maxLines = 1, overflow = TextOverflow.Ellipsis) } },
+        actions = { if (report != null && state is LoadState.Loaded) ReportProblemMenu(app, report) },
     ) { padding ->
         PullToRefreshBox(
             isRefreshing = isRefreshing,

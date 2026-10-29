@@ -31,6 +31,7 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.components.MeterPart
@@ -44,6 +45,7 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.CatalogTryLesson
 import com.zoonk.api.models.CourseChapter
+import com.zoonk.api.models.FeedbackSubmissionContext
 
 /** A chapter as its course places it, drawn from the course's outline; only the lesson to try is the chapter's own read. */
 @Composable
@@ -59,7 +61,9 @@ fun ChapterScreen(
     val place = state.value?.let { placeOf(it, route.chapterId) }
     val shown = if (state is LoadState.Loaded && place == null) LoadState.Failed(ApiError.NotFound) else state
 
-    CatalogPage(app, navigator, detail, shown, place?.chapter?.title) { value, layout ->
+    val report = FeedbackTarget("chapter", FeedbackSubmissionContext.ContentKind.CHAPTER, route.chapterId.toUuidOrNull())
+
+    CatalogPage(app, navigator, detail, shown, place?.chapter?.title, report) { value, layout ->
         placeOf(value, route.chapterId)?.let { chapterContent(app, navigator, value, it, chapterState.value?.tryLesson, layout) }
     }
 }
