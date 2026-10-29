@@ -51,6 +51,16 @@ internal data class ZoonkPalette(
     val vizHighlight: Color,
     val destructiveTint: Color,
     val successTint: Color,
+    /** Main's `[data-subject]` roles by subject key, `general` included. */
+    val subjects: Map<String, SubjectColors>,
+)
+
+/** Main's `--subject` (marks), `--subject-text` and `--subject-tint` (its label's words and fill). */
+@Immutable
+data class SubjectColors(
+    val color: Color,
+    val text: Color,
+    val tint: Color,
 )
 
 internal val LightPalette =
@@ -95,6 +105,26 @@ internal val LightPalette =
         vizHighlight = Color(0xFFB66C18),
         destructiveTint = Color(0xFFFDEFF3),
         successTint = Color(0xFFEFF6FD),
+        subjects =
+            mapOf(
+                "health" to SubjectColors(Color(0xFFD17A8F), Color(0xFF854354), Color(0xFFF9EEF0)),
+                "languages" to SubjectColors(Color(0xFFD37E6D), Color(0xFF874539), Color(0xFFF9EEEC)),
+                "history" to SubjectColors(Color(0xFFC98660), Color(0xFF7F4C2E), Color(0xFFF8EFEA)),
+                "culture" to SubjectColors(Color(0xFFBA8F60), Color(0xFF74532F), Color(0xFFF6F0EA)),
+                "law" to SubjectColors(Color(0xFFB09460), Color(0xFF6D572F), Color(0xFFF5F1EA)),
+                "business" to SubjectColors(Color(0xFFA69860), Color(0xFF655B2F), Color(0xFFF3F2EA)),
+                "society" to SubjectColors(Color(0xFF8FA160), Color(0xFF54622F), Color(0xFFF0F3EA)),
+                "economics" to SubjectColors(Color(0xFF67AA76), Color(0xFF336840), Color(0xFFEBF4ED)),
+                "geography" to SubjectColors(Color(0xFF68A793), Color(0xFF346657), Color(0xFFEBF4F1)),
+                "science" to SubjectColors(Color(0xFF67A5A6), Color(0xFF336466), Color(0xFFEBF3F3)),
+                "math" to SubjectColors(Color(0xFF66A2B7), Color(0xFF326272), Color(0xFFEBF3F6)),
+                "communication" to SubjectColors(Color(0xFF65A0C6), Color(0xFF32607D), Color(0xFFEBF3F8)),
+                "engineering" to SubjectColors(Color(0xFF699DD2), Color(0xFF355E87), Color(0xFFEBF2F9)),
+                "tech" to SubjectColors(Color(0xFF7998D2), Color(0xFF435A86), Color(0xFFEEF2F9)),
+                "exams" to SubjectColors(Color(0xFF8D92D2), Color(0xFF525586), Color(0xFFF0F1F9)),
+                "general" to SubjectColors(Color(0xFF978DD2), Color(0xFF5A5287), Color(0xFFF2F0F9)),
+                "arts" to SubjectColors(Color(0xFFBF7FB9), Color(0xFF774773), Color(0xFFF7EEF6)),
+            ),
     )
 
 internal val DarkPalette =
@@ -139,6 +169,26 @@ internal val DarkPalette =
         vizHighlight = Color(0xFFF7C15F),
         destructiveTint = Color(0xFF1F1418),
         successTint = Color(0xFF141A20),
+        subjects =
+            mapOf(
+                "health" to SubjectColors(Color(0xFFE896A8), Color(0xFFF3B8C4), Color(0xFF2D2024)),
+                "languages" to SubjectColors(Color(0xFFEA9989), Color(0xFFF4BBAF), Color(0xFF2E211F)),
+                "history" to SubjectColors(Color(0xFFE0A07D), Color(0xFFEDC0A7), Color(0xFF2C221D)),
+                "culture" to SubjectColors(Color(0xFFD1A97E), Color(0xFFE1C5A8), Color(0xFF2A231D)),
+                "law" to SubjectColors(Color(0xFFC8AD7E), Color(0xFFDAC8A8), Color(0xFF28241D)),
+                "business" to SubjectColors(Color(0xFFBEB17E), Color(0xFFD4CBA8), Color(0xFF27251D)),
+                "society" to SubjectColors(Color(0xFFA8BA7E), Color(0xFFC4D1A8), Color(0xFF23261D)),
+                "economics" to SubjectColors(Color(0xFF85C291), Color(0xFFADD7B5), Color(0xFF1E2721)),
+                "geography" to SubjectColors(Color(0xFF85BFAC), Color(0xFFAED5C7), Color(0xFF1E2725)),
+                "science" to SubjectColors(Color(0xFF85BDBE), Color(0xFFADD3D4), Color(0xFF1E2728)),
+                "math" to SubjectColors(Color(0xFF84BBCE), Color(0xFFADD2DF), Color(0xFF1D262A)),
+                "communication" to SubjectColors(Color(0xFF83B9DC), Color(0xFFACD0E9), Color(0xFF1D262D)),
+                "engineering" to SubjectColors(Color(0xFF85B6E8), Color(0xFFADCEF1), Color(0xFF1E252E)),
+                "tech" to SubjectColors(Color(0xFF94B2E8), Color(0xFFB6CBF1), Color(0xFF20252E)),
+                "exams" to SubjectColors(Color(0xFFA6ABE8), Color(0xFFC2C7F1), Color(0xFF23242E)),
+                "general" to SubjectColors(Color(0xFFB0A7E8), Color(0xFFC9C4F2), Color(0xFF24232E)),
+                "arts" to SubjectColors(Color(0xFFD69AD0), Color(0xFFE5BBE0), Color(0xFF2B212B)),
+            ),
     )
 
 internal val LightMoreContrastPalette =
@@ -183,6 +233,26 @@ internal val LightMoreContrastPalette =
         vizHighlight = Color(0xFF973C00),
         destructiveTint = Color(0xFFF7E8EF),
         successTint = Color(0xFFEAEDF9),
+        subjects =
+            mapOf(
+                "health" to SubjectColors(Color(0xFF832644), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "languages" to SubjectColors(Color(0xFF85291A), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "history" to SubjectColors(Color(0xFF7C3500), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "culture" to SubjectColors(Color(0xFF6E4100), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "law" to SubjectColors(Color(0xFF654700), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "business" to SubjectColors(Color(0xFF5C4C00), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "society" to SubjectColors(Color(0xFF445500), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "economics" to SubjectColors(Color(0xFF005E26), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "geography" to SubjectColors(Color(0xFF005B48), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "science" to SubjectColors(Color(0xFF00595C), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "math" to SubjectColors(Color(0xFF00566D), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "communication" to SubjectColors(Color(0xFF00537B), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "engineering" to SubjectColors(Color(0xFF094F88), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "tech" to SubjectColors(Color(0xFF2B4B87), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "exams" to SubjectColors(Color(0xFF434387), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "general" to SubjectColors(Color(0xFF4E3E88), Color(0xFF000000), Color(0xFFFFFFFF)),
+                "arts" to SubjectColors(Color(0xFF722D6E), Color(0xFF000000), Color(0xFFFFFFFF)),
+            ),
     )
 
 internal val DarkMoreContrastPalette =
@@ -227,4 +297,24 @@ internal val DarkMoreContrastPalette =
         vizHighlight = Color(0xFFFEE685),
         destructiveTint = Color(0xFF170F13),
         successTint = Color(0xFF111417),
+        subjects =
+            mapOf(
+                "health" to SubjectColors(Color(0xFFFFBBCA), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "languages" to SubjectColors(Color(0xFFFFBEAF), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "history" to SubjectColors(Color(0xFFFAC4A6), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "culture" to SubjectColors(Color(0xFFECCAA7), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "law" to SubjectColors(Color(0xFFE4CEA7), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "business" to SubjectColors(Color(0xFFDCD2A7), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "society" to SubjectColors(Color(0xFFC9D9A7), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "economics" to SubjectColors(Color(0xFFADE0B7), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "geography" to SubjectColors(Color(0xFFAEDDCD), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "science" to SubjectColors(Color(0xFFADDBDC), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "math" to SubjectColors(Color(0xFFACD9EA), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "communication" to SubjectColors(Color(0xFFACD8F5), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "engineering" to SubjectColors(Color(0xFFADD5FF), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "tech" to SubjectColors(Color(0xFFB8D2FF), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "exams" to SubjectColors(Color(0xFFC7CDFF), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "general" to SubjectColors(Color(0xFFD0C9FF), Color(0xFFFFFFFF), Color(0xFF000000)),
+                "arts" to SubjectColors(Color(0xFFF1BEEB), Color(0xFFFFFFFF), Color(0xFF000000)),
+            ),
     )

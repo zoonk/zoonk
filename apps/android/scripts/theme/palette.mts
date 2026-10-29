@@ -1,6 +1,6 @@
 type Rgba = { alpha: number; blue: number; green: number; red: number };
 
-type CssBlock = { children: CssBlock[]; declarations: Map<string, string>; prelude: string };
+export type CssBlock = { children: CssBlock[]; declarations: Map<string, string>; prelude: string };
 
 export type Mode = "dark" | "darkMoreContrast" | "light" | "lightMoreContrast";
 
@@ -156,7 +156,7 @@ function stripComments(css: string): string {
 }
 
 /** Only as much CSS as `globals.css` uses: blocks, custom properties, statements and strings. */
-function parseCss(css: string): CssBlock {
+export function parseCss(css: string): CssBlock {
   const text = stripComments(css);
   const root: CssBlock = { children: [], declarations: new Map(), prelude: "" };
   const stack = [root];
@@ -197,7 +197,7 @@ function parseCss(css: string): CssBlock {
   return root;
 }
 
-function tokensAt(root: CssBlock, preludes: string[]): Map<string, string> {
+export function tokensAt(root: CssBlock, preludes: string[]): Map<string, string> {
   const search = (blocks: CssBlock[], path: string[]): Map<string, string> | undefined => {
     const [head, ...rest] = path;
 
@@ -258,7 +258,7 @@ export function readTailwindPalette(themeCss: string): Map<string, string> {
   return palette;
 }
 
-type Lookup = { palette: Map<string, string>; tokens: Map<string, string> };
+export type Lookup = { palette: Map<string, string>; tokens: Map<string, string> };
 
 function lookUp(variable: string, { palette, tokens }: Lookup): string {
   // `var(--color-primary)` is Tailwind's name for the `--primary` token.

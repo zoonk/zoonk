@@ -36,6 +36,8 @@ data class ZoonkColors(
     val vizAccent: Color,
     val vizSecondary: Color,
     val vizHighlight: Color,
+    /** By subject key (a course category, or `general`); read through `Subject.colors`. */
+    val subjects: Map<String, SubjectColors>,
 )
 
 internal fun ZoonkPalette.zoonkColors() =
@@ -63,6 +65,7 @@ internal fun ZoonkPalette.zoonkColors() =
         vizAccent = vizAccent,
         vizSecondary = vizSecondary,
         vizHighlight = vizHighlight,
+        subjects = subjects,
     )
 
 internal val LocalZoonkColors = staticCompositionLocalOf { LightPalette.zoonkColors() }

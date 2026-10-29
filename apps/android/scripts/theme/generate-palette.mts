@@ -15,6 +15,7 @@ import {
   readModes,
   readTailwindPalette,
 } from "./palette.mts";
+import { readSubjects, subjectPalette } from "./subject-palette.mts";
 
 const androidRoot = fileURLToPath(new URL("../../", import.meta.url));
 const repoRoot = fileURLToPath(new URL("../../../../", import.meta.url));
@@ -41,7 +42,9 @@ function camelCase(token: string): string {
   return token.replaceAll(/-(?<letter>\w)/gu, (_match, letter: string) => letter.toUpperCase());
 }
 
-const tokens = readModes(readFileSync(globalsPath, "utf8"));
+const globalsCss = readFileSync(globalsPath, "utf8");
+const tokens = readModes(globalsCss);
+const subjects = readSubjects(globalsCss);
 const palette = readTailwindPalette(readFileSync(tailwindTheme, "utf8"));
 const names = [...PALETTE_TOKENS, ...Object.keys(TINTS)];
 
@@ -51,12 +54,24 @@ const colors = Object.fromEntries(
 
 const fields = names.map((name) => `    val ${camelCase(name)}: Color,`).join("\n");
 
+function subjectEntries(mode: Mode): string {
+  return [...subjects]
+    .map(([subject, modes]) => {
+      const roles = subjectPalette({ palette, subject: modes[mode], tokens: tokens[mode] });
+
+      return `            "${subject}" to SubjectColors(Color(${roles.get("subject")}), Color(${roles.get("subject-text")}), Color(${roles.get("subject-tint")})),`;
+    })
+    .join("\n");
+}
+
 const instances = MODES.map(({ mode, name }) => {
   const values = names.map(
     (token) => `        ${camelCase(token)} = Color(${colors[mode]?.get(token)}),`,
   );
 
-  return `internal val ${name} =\n    ZoonkPalette(\n${values.join("\n")}\n    )`;
+  const subjectMap = `        subjects =\n            mapOf(\n${subjectEntries(mode)}\n            ),`;
+
+  return `internal val ${name} =\n    ZoonkPalette(\n${values.join("\n")}\n${subjectMap}\n    )`;
 });
 
 writeFileSync(
@@ -75,6 +90,16 @@ import androidx.compose.ui.graphics.Color
 @Immutable
 internal data class ZoonkPalette(
 ${fields}
+    /** Main's \`[data-subject]\` roles by subject key, \`general\` included. */
+    val subjects: Map<String, SubjectColors>,
+)
+
+/** Main's \`--subject\` (marks), \`--subject-text\` and \`--subject-tint\` (its label's words and fill). */
+@Immutable
+data class SubjectColors(
+    val color: Color,
+    val text: Color,
+    val tint: Color,
 )
 
 ${instances.join("\n\n")}
