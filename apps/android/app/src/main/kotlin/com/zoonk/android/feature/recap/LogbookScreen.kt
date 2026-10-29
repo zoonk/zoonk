@@ -60,6 +60,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.WeeklyRecap
@@ -68,7 +69,6 @@ import kotlinx.coroutines.launch
 import kotlinx.datetime.DatePeriod
 import kotlinx.datetime.plus
 import kotlinx.datetime.toJavaLocalDate
-import java.time.format.TextStyle
 
 /** The week's recap as a few steps; nothing in it is written by a model. */
 @Composable
@@ -248,12 +248,7 @@ private fun WeekRings(recap: WeeklyRecap) {
             Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(6.dp)) {
                 GoalRing(if (isStudied) 1f else 0f) { if (isStudied) DoneMark() }
                 Text(
-                    text =
-                        day
-                            .toJavaLocalDate()
-                            .dayOfWeek
-                            .getDisplayName(TextStyle.NARROW_STANDALONE, locale)
-                            .uppercase(locale),
+                    text = weekdayNames(locale).narrow.getValue(day.toJavaLocalDate().dayOfWeek),
                     color = if (isStudied) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelSmall,
                 )
@@ -410,12 +405,7 @@ private fun TurnaroundChart(turnaround: WeeklyRecapTurnaround) {
         Row(Modifier.fillMaxWidth().clearAndSetSemantics {}) {
             points.forEach { point ->
                 Text(
-                    text =
-                        point.date
-                            .toJavaLocalDate()
-                            .dayOfWeek
-                            .getDisplayName(TextStyle.NARROW_STANDALONE, locale)
-                            .uppercase(locale),
+                    text = weekdayNames(locale).narrow.getValue(point.date.toJavaLocalDate().dayOfWeek),
                     modifier = Modifier.weight(1f),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center,

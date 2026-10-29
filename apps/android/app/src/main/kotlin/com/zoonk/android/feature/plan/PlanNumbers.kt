@@ -62,6 +62,7 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.formatPercent
+import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.EstimatedScore
 import com.zoonk.api.models.GoalPreparation
@@ -71,7 +72,6 @@ import com.zoonk.api.models.PlanDay
 import com.zoonk.api.models.PlanItem
 import com.zoonk.api.models.PreparationComponentsMocks
 import kotlinx.datetime.toJavaLocalDate
-import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.min
 import kotlin.math.roundToInt
@@ -381,14 +381,14 @@ private fun PlanWeek(page: PlanPageState) {
             days.forEach { day ->
                 val date = day.date.toJavaLocalDate()
                 val spoken =
-                    stringResource(R.string.plan_week_day, date.dayOfWeek.getDisplayName(TextStyle.FULL, locale), dayStatus(day.state))
+                    stringResource(R.string.plan_week_day, weekdayNames(locale).full.getValue(date.dayOfWeek), dayStatus(day.state))
                 Column(
                     modifier = Modifier.weight(1f).padding(vertical = 4.dp).clearAndSetSemantics { contentDescription = spoken },
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp),
                 ) {
                     Text(
-                        text = date.dayOfWeek.getDisplayName(TextStyle.NARROW, locale),
+                        text = weekdayNames(locale).narrow.getValue(date.dayOfWeek),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )

@@ -39,19 +39,17 @@ import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.Readout
 import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.WeekdayNames
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
+import com.zoonk.android.ui.format.weekdayNames
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.StudySessionWeekDaysInner
 import com.zoonk.api.models.TodayWeeklyChallenge
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.toJavaLocalDate
-import java.time.DayOfWeek
-import java.time.format.TextStyle
-import java.util.Locale
-import java.util.concurrent.ConcurrentHashMap
 import kotlin.math.roundToInt
 
 private typealias WeekDay = StudySessionWeekDaysInner
@@ -333,20 +331,3 @@ private fun ChallengeRow(
 }
 
 private val RING = 30.dp
-
-internal class WeekdayNames(
-    locale: Locale,
-) {
-    val full =
-        DayOfWeek.entries.associateWith {
-            it.getDisplayName(TextStyle.FULL_STANDALONE, locale).replaceFirstChar { c ->
-                c.titlecase(locale)
-            }
-        }
-    val narrow = DayOfWeek.entries.associateWith { it.getDisplayName(TextStyle.NARROW_STANDALONE, locale).uppercase(locale) }
-}
-
-private val weekdayNamesByLocale = ConcurrentHashMap<Locale, WeekdayNames>()
-
-/** Kept per locale: a lookup loads the locale's calendar data, slow enough on a loaded device to stall composition. */
-internal fun weekdayNames(locale: Locale): WeekdayNames = weekdayNamesByLocale.getOrPut(locale) { WeekdayNames(locale) }
