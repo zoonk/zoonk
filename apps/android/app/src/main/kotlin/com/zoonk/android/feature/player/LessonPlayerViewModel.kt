@@ -35,12 +35,12 @@ import com.zoonk.android.feature.player.model.toApi
 import com.zoonk.android.feature.player.model.toStepResult
 import com.zoonk.android.feature.player.model.writtenText
 import com.zoonk.android.feature.player.steps.isPlayable
+import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonStepCheckInput
 import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonRun
-import com.zoonk.api.models.NextLessonResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
@@ -118,6 +118,7 @@ class LessonPlayerViewModel(
     private val sessions: SessionSource,
     private val choices: TodayChoices,
     private val isGuest: () -> Boolean = { false },
+    private val activeGoalId: () -> String? = { null },
     private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
     private val mutableState = MutableStateFlow<LessonPlayerState?>(null)
@@ -443,12 +444,19 @@ class LessonPlayerViewModel(
         if (sessions.current == session) mutableEnding.value = ending
     }
 
+    /** Main's: the first lesson after this one in its chapter that the learner hasn't finished. */
     private suspend fun nextLessonIn(
         session: AuthenticatedSession,
         chapterId: String,
     ): String? {
-        val next = (store.api.nextLesson(session, chapterId) as? NextLessonResponse.LessonWrapper)?.value ?: return null
-        return next.lessonId.toString().takeIf { !next.completed && it != lessonId }
+        val goalId = activeGoalId() ?: return null
+        val lessons = store.api.chapterLessons(session, goalId, chapterId)
+        val index = lessons.indexOfFirst { it.lessonId.toString() == lessonId }
+        return lessons
+            .drop(index + 1)
+            .firstOrNull { it.state != ChapterLesson.State.DONE }
+            ?.lessonId
+            ?.toString()
     }
 
     /** The work for one learner's run, cancelled when another session opens the lesson. */

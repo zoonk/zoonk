@@ -7,6 +7,7 @@ import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.feature.player.model.PlayableLesson
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.LessonReadiness
@@ -14,13 +15,13 @@ import com.zoonk.api.models.LessonStepCheckInput
 import com.zoonk.api.models.LessonStepCheckResult
 import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonRun
-import com.zoonk.api.models.NextLessonResponse
 import kotlinx.coroutines.CompletableDeferred
 
 const val LESSON_ID = "00000000-0000-4000-8000-0000000000aa"
 const val RUN_ID = "00000000-0000-4000-8000-0000000000bb"
 const val NEXT_LESSON_ID = "00000000-0000-4000-8000-0000000000cc"
 const val CHAPTER_ID = "00000000-0000-4000-8000-0000000000dd"
+const val DONE_LESSON_ID = "00000000-0000-4000-8000-0000000000ff"
 
 fun playable(steps: List<LessonStep>) =
     PlayableLesson(
@@ -139,17 +140,17 @@ class FakeLessonPlayerApi(
         return writeResponse()
     }
 
-    override suspend fun nextLesson(
+    override suspend fun chapterLessons(
         session: AuthenticatedSession,
+        goalId: String,
         chapterId: String,
-    ): NextLessonResponse =
-        ApiJson.decodeFromString(
-            """
-            {"type":"lesson","canPrefetch":true,"chapterId":"$CHAPTER_ID","chapterSlug":"c","completed":false,
-             "courseId":"$CHAPTER_ID","courseSlug":"c","hasStarted":true,"lessonId":"$NEXT_LESSON_ID","lessonPosition":2,
-             "lessonSlug":"l","organizationSlug":null}
-            """.trimIndent(),
-        )
+    ): List<ChapterLesson> =
+        listOf(LESSON_ID to "done", DONE_LESSON_ID to "done", NEXT_LESSON_ID to "upcoming").map { (id, state) ->
+            ApiJson.decodeFromString(
+                ChapterLesson.serializer(),
+                """{"lessonId":"$id","minutes":5,"plusRequired":false,"skillIds":[],"state":"$state","title":"Lesson","written":true}""",
+            )
+        }
 
     var fit: LessonFit? = null
 

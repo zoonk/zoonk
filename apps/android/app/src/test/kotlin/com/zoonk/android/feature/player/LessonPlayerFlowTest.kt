@@ -94,6 +94,7 @@ class LessonPlayerFlowTest {
                 sessions = session,
                 choices = TodayChoices(DraftStore(folder.newFolder(), scope)),
                 isGuest = { guest },
+                activeGoalId = { GOAL_ID },
             )
 
         rule.setContent {
@@ -310,3 +311,4 @@ class LessonPlayerFlowTest {
 }
 
 private const val BLANK_ID = "00000000-0000-4000-8000-0000000000ee"
+private const val GOAL_ID = "00000000-0000-4000-8000-000000000011"

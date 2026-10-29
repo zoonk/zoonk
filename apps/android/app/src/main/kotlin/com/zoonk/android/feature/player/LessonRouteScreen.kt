@@ -149,6 +149,11 @@ private fun PlayingLesson(
                 sessions = app.sessions,
                 choices = app.todayChoices,
                 isGuest = { (app.sessions.state.value as? SessionState.SignedIn)?.isGuest == true },
+                activeGoalId = {
+                    app.learnerSummary.summary.state.value.value
+                        ?.activeGoalId
+                        ?.toString()
+                },
             )
         }
     val session by app.sessions.state.collectAsStateWithLifecycle()

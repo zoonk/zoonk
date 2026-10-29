@@ -11,6 +11,7 @@ import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.toLessonLoad
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.api.models.ChapterLesson
 import com.zoonk.api.models.LessonFit
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.LessonReadiness
@@ -20,7 +21,6 @@ import com.zoonk.api.models.LibraryLessonCompletion
 import com.zoonk.api.models.LibraryLessonCompletionInput
 import com.zoonk.api.models.LibraryLessonRun
 import com.zoonk.api.models.LibraryLessonStartInput
-import com.zoonk.api.models.NextLessonResponse
 import java.time.ZoneId
 import java.util.UUID
 
@@ -67,11 +67,12 @@ interface LessonPlayerApi {
         lessonId: String,
     ): LessonGeneration
 
-    /** The lesson's chapter's first lesson the learner hasn't finished. */
-    suspend fun nextLesson(
+    /** The chapter's lessons in order, each with where the learner is in it. */
+    suspend fun chapterLessons(
         session: AuthenticatedSession,
+        goalId: String,
         chapterId: String,
-    ): NextLessonResponse
+    ): List<ChapterLesson>
 
     /** Null outside a public chapter. */
     suspend fun fit(
@@ -140,10 +141,11 @@ class LiveLessonPlayerApi(
         lessonId: String,
     ) = perform { api.clients(session).contentGeneration.createLibraryLessonGeneration(UUID.fromString(lessonId)) }
 
-    override suspend fun nextLesson(
+    override suspend fun chapterLessons(
         session: AuthenticatedSession,
+        goalId: String,
         chapterId: String,
-    ) = perform { api.clients(session).progress.getChapterNextLesson(UUID.fromString(chapterId)) }
+    ) = perform { api.clients(session).learner.getGoalChapter(UUID.fromString(goalId), UUID.fromString(chapterId)) }.lessons
 
     override suspend fun fit(
         session: AuthenticatedSession,
