@@ -227,16 +227,19 @@ export async function loadPracticeItems({
     where: { reps: { gt: 0 }, skillId: { in: pool }, userId },
   });
 
-  const recalls = studied.map((row) => ({
-    recall: getSkillRetrievability({ memory: row, now }) ?? 0,
-    skillId: row.skillId,
-  }));
+  const studiedBySkill = new Map(studied.map((row) => [row.skillId, row]));
+
+  const recalls = pool.flatMap((skillId) => {
+    const memory = studiedBySkill.get(skillId);
+
+    return memory ? [{ recall: getSkillRetrievability({ memory, now }) ?? 0, skillId }] : [];
+  });
 
   const unstudied = pool
     .filter(
       (skillId) =>
         (everySkill || claimed.has(skillId) || firstSkillIds.has(skillId)) &&
-        !studied.some((row) => row.skillId === skillId),
+        !studiedBySkill.has(skillId),
     )
     .map((skillId) => ({ recall: 0, skillId }));
 

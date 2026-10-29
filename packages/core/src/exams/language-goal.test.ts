@@ -258,7 +258,13 @@ describe("onboarding's reason answer", () => {
   it("gives the exam goal the moved goal's place among the goals typed with it", async () => {
     const { draft, goal, user } = await languageGoalInOnboarding();
 
+    await prisma.goal.update({
+      data: { createdAt: new Date(goal.createdAt.getTime() - 2000) },
+      where: { id: goal.id },
+    });
+
     const other = await goalFixture({
+      createdAt: new Date(goal.createdAt.getTime() - 1000),
       details: { onboardingId: draft.id },
       kind: "learn",
       userId: user.id,
