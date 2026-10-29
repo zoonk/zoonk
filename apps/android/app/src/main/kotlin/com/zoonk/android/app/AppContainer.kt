@@ -52,6 +52,8 @@ import com.zoonk.android.feature.livecall.OngoingCalls
 import com.zoonk.android.feature.livecall.WebRtcLiveCallTransport
 import com.zoonk.android.feature.memory.LiveMemoryApi
 import com.zoonk.android.feature.memory.MemoryStore
+import com.zoonk.android.feature.mindmaps.LiveMindMapApi
+import com.zoonk.android.feature.mindmaps.MindMapStore
 import com.zoonk.android.feature.mistakes.LiveMistakesApi
 import com.zoonk.android.feature.mistakes.MistakesStore
 import com.zoonk.android.feature.mock.LiveMockApi
@@ -138,6 +140,7 @@ class AppContainer private constructor(
 
     val plans = PlanStore(LivePlanApi(api), cache)
     val goalContent = GoalContentStore(LiveGoalContentApi(api), cache)
+    val mindMaps = MindMapStore(LiveMindMapApi(api, images), cache)
 
     // Account and Plus (L1).
     private val integrity =

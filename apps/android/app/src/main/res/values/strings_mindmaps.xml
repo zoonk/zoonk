@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- How many of the goal's mind maps are drawn: "3 maps". -->
+    <plurals name="mindmaps_count">
+        <item quantity="one">%1$s map</item>
+        <item quantity="other">%1$s maps</item>
+    </plurals>
+    <!-- The group of mind maps when the goal's chapters have no subjects. -->
+    <string name="mindmaps_chapters_finished">Chapters you finished</string>
+    <plurals name="mindmaps_chapter_count">
+        <item quantity="one">%d chapter</item>
+        <item quantity="other">%d chapters</item>
+    </plurals>
+    <!-- A mind map tile's caption over the chapter's title. -->
+    <string name="mindmaps_chapter_number">Chapter %1$s</string>
+    <string name="mindmaps_empty_title">No mind maps yet</string>
+    <string name="mindmaps_empty_description">Finish a chapter to make its mind map: its main ideas in one picture.</string>
+    <!-- %1$s is the chapter the learner is in, %2$d the lessons left in it. -->
+    <plurals name="mindmaps_first_after">
+        <item quantity="one">Your first one comes after %1$s: %2$d lesson left.</item>
+        <item quantity="other">Your first one comes after %1$s: %2$d lessons left.</item>
+    </plurals>
+    <!-- Opens the chapter whose map comes next. -->
+    <string name="mindmaps_continue">Continue</string>
+    <string name="mindmaps_keep_studying">Keep studying</string>
+    <!-- A mind map's description for screen readers when it has no words yet. -->
+    <string name="mindmaps_alt_chapter">Mind map of %1$s</string>
+    <!-- A mind map's description for screen readers: its title, then its central idea. -->
+    <string name="mindmaps_alt">Mind map: %1$s. %2$s</string>
+    <!-- The same, for a title that already ends a sentence. -->
+    <string name="mindmaps_alt_sentence">Mind map: %1$s %2$s</string>
+    <!-- A tile for a map whose picture had mistakes, shown in words instead. -->
+    <string name="mindmaps_as_text">As text</string>
+    <string name="mindmaps_drawing">Drawing…</string>
+    <!-- Makes a chapter's mind map. -->
+    <string name="mindmaps_create">Create</string>
+    <string name="mindmaps_try_again">Try again</string>
+    <string name="mindmaps_failed_short">It couldn\'t be made this time.</string>
+    <string name="mindmaps_unreachable_short">We couldn\'t reach the server.</string>
+    <string name="mindmaps_card_title">Mind map</string>
+    <string name="mindmaps_card_description">The chapter\'s main ideas in one picture, to review at a glance.</string>
+    <string name="mindmaps_card_create">Create the mind map</string>
+    <string name="mindmaps_card_generating_title">Drawing the mind map…</string>
+    <string name="mindmaps_card_generating">It takes about half a minute. You can leave this page; it\'ll be here.</string>
+    <string name="mindmaps_card_failed">The mind map couldn\'t be made this time.</string>
+    <string name="mindmaps_card_unreachable">We couldn\'t reach the server. Check your connection.</string>
+    <string name="mindmaps_as_text_note">Its picture had mistakes, so here\'s the mind map as text.</string>
+    <string name="mindmaps_full_screen">Full screen</string>
+    <!-- Saves the mind map's picture. -->
+    <string name="mindmaps_download">Download</string>
+    <string name="mindmaps_saved">Mind map saved</string>
+    <string name="mindmaps_save_failed">The mind map didn\'t save. Try again.</string>
+    <!-- Starts the one-line gist at the end of a mind map in words. -->
+    <string name="mindmaps_in_short">In short:</string>
+    <string name="mindmaps_zoom_in">Zoom in</string>
+    <string name="mindmaps_zoom_out">Zoom out</string>
+    <string name="mindmaps_fit">Fit to screen</string>
+    <string name="mindmaps_viewer_hint">Pinch, scroll or use + and - to zoom; drag or use the arrows to move.</string>
+</resources>

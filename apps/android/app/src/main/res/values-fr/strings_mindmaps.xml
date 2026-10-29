@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- eloqnt-fingerprints-v1
+{
+  "mindmaps_alt": "89735a3e8bcab4d0323e4f86d0f87d1738efab41b4bf51534311861444232a9a",
+  "mindmaps_alt_chapter": "b0d837f5f74ffbe174d21b5142a180532b1d90bfcdc14fa7ac2589a0d9335ab8",
+  "mindmaps_alt_sentence": "9a866a776275a8cfe83466b1898b0bdeff1d7d655a73de2bd4750e05789537e0",
+  "mindmaps_as_text": "63ec156151cc2d86d81d84d0f35b799cf0e3adc611ab4c0005a1ce13e6d0984f",
+  "mindmaps_as_text_note": "80490bfb0fafd739674442281de25332aabde840c8e0a7953f6ae740a3e9d077",
+  "mindmaps_card_create": "a3ad20a31b54564550fc876bc0e3f9da72f6631638c2c7b7e58d07c8736b4b49",
+  "mindmaps_card_description": "0606d89113d44cd9d0ed7c3a2bee6b02d8c68cb7c7def50efd9382244b67a07e",
+  "mindmaps_card_failed": "27d107b1889d0113988167829f00b66c9a461eb92fe97b4f0c116622cd5478c7",
+  "mindmaps_card_generating": "0869fe1e063396d31799271d14ea5aabb2a9201bf5910fb8592e8f36b19d51a8",
+  "mindmaps_card_generating_title": "3f673606d610595292824382914945c06da6871d05e7a2e6830a07252a733a45",
+  "mindmaps_card_title": "0541102f36e0a930c67cfbc14ebe322c73b9bc2ed50b8643d718232a40903626",
+  "mindmaps_card_unreachable": "8ae855f63c919c2e8a62fb20ec21652449dbb87326c8f1f774d05303b8dece47",
+  "mindmaps_chapter_count": "659d692a8bef30000c5c6a174c862e95c05cf908aec4b595bcfb4b6fc5ef7c91",
+  "mindmaps_chapter_number": "88f66f8334224abb9ba90a434570380461fe279255fb4b449f3609eb5073d51d",
+  "mindmaps_chapters_finished": "9f8a450809a2e4e6195c5c35d003824fd7b388884e79626c0a253784ba30af84",
+  "mindmaps_continue": "b784f3f9532bcce6665966186051cd903a7fc0ac757e36159be10ecf667855a1",
+  "mindmaps_count": "43c254bfe3b419bb6f68a0330c6f1ec99c02155cc6e95119192779d475fd4f6c",
+  "mindmaps_create": "f2197ba6a2dd540a535203bb23992f3c302705c9c90715a9f95593a9b5883781",
+  "mindmaps_download": "b5d542bc091862ff63e3550d54c70f5599e32d92b4707565ae0f5132317ef467",
+  "mindmaps_drawing": "e83755ed3cc2038ac804b39059c34eefe85a56e6e5dd0c8ec58ccd76408aaca4",
+  "mindmaps_empty_description": "124a617c322c064655231ece05e0054b81ec10d25df69cbcd7ab589c8c520f73",
+  "mindmaps_empty_title": "2f771b777658bce2ec191853909be743f8809af3660668ab47d26fc872b74ee3",
+  "mindmaps_failed_short": "6eb867e242967a0a14c21cbb6d0aadc8535488c0266158bc52d47e10f657a306",
+  "mindmaps_first_after": "40123116840a0e720ef1389952365834428df094d1f89b690fab95211af234c7",
+  "mindmaps_fit": "3f91b91c817f76ae407b94fc49afcc196ad499e9cf544af3a271f1ef5e0fc18b",
+  "mindmaps_full_screen": "f7316d46825c87acd24470bb4b9090e7e1b5bcb8f71df5fddf0577bd782afd1c",
+  "mindmaps_in_short": "8bdee8b1bc249b9aed6592a9a87163acb58c3ee23a3f6ce697ccaf512ea22735",
+  "mindmaps_keep_studying": "267911c89379b5fd5553b5a56f276e34497960d06bdf1cec89284ab48f84f28f",
+  "mindmaps_save_failed": "bd3abe0f108ef4f213e0a32d48c58914657a1212879b84d411bbb7a08fb02532",
+  "mindmaps_saved": "3fb1b0719b06d6ce11db29ad441d6ca5ce2d80e2a7d35f916bce8627367232da",
+  "mindmaps_try_again": "c857ca9901e7a42834c355837041707fa8c4b71adc1b98ac65fb68671fd0dca7",
+  "mindmaps_unreachable_short": "71d603ac13245a4989e66982c4946e6d11f929ac7ab21e0ec6b17c53b8c04f16",
+  "mindmaps_viewer_hint": "0e998ec58086dcdb65cfa237970e0d6dd6cbca3cdbb772723500903e1d26e50e",
+  "mindmaps_zoom_in": "85c157258ed59f4b45704d736a213066e976ba8a3195a571f5e0db929ad8e4be",
+  "mindmaps_zoom_out": "3c8b1c99bea16762a1344d0f95f471d2a1587daa66d58c25d3e821d81757c4bc"
+}
+-->
+<resources>
+    <!-- How many of the goal's mind maps are drawn: "3 maps". -->
+    <plurals name="mindmaps_count">
+        <item quantity="one">%1$s carte mentale</item>
+        <item quantity="many">%1$s cartes mentales</item>
+        <item quantity="other">%1$s cartes mentales</item>
+    </plurals>
+    <!-- The group of mind maps when the goal's chapters have no subjects. -->
+    <string name="mindmaps_chapters_finished">Chapitres terminés</string>
+    <plurals name="mindmaps_chapter_count">
+        <item quantity="one">%d chapitre</item>
+        <item quantity="many">%d chapitres</item>
+        <item quantity="other">%d chapitres</item>
+    </plurals>
+    <!-- A mind map tile's caption over the chapter's title. -->
+    <string name="mindmaps_chapter_number">Chapitre %1$s</string>
+    <string name="mindmaps_empty_title">Aucune carte mentale pour l’instant</string>
+    <string name="mindmaps_empty_description">Termine un chapitre pour créer sa carte mentale : toutes ses idées principales en une image.</string>
+    <!-- %1$s is the chapter the learner is in, %2$d the lessons left in it. -->
+    <plurals name="mindmaps_first_after">
+        <item quantity="one">Ta première carte mentale sera disponible après %1$s : il te restera %2$d leçon.</item>
+        <item quantity="many">Ta première carte mentale sera disponible après %1$s : il te restera %2$d leçons.</item>
+        <item quantity="other">Ta première carte mentale sera disponible après %1$s : il te restera %2$d leçons.</item>
+    </plurals>
+    <!-- Opens the chapter whose map comes next. -->
+    <string name="mindmaps_continue">Continuer</string>
+    <string name="mindmaps_keep_studying">Continuer à étudier</string>
+    <!-- A mind map's description for screen readers when it has no words yet. -->
+    <string name="mindmaps_alt_chapter">Carte mentale de %1$s</string>
+    <!-- A mind map's description for screen readers: its title, then its central idea. -->
+    <string name="mindmaps_alt">Carte mentale : %1$s. %2$s</string>
+    <!-- The same, for a title that already ends a sentence. -->
+    <string name="mindmaps_alt_sentence">Carte mentale : %1$s %2$s</string>
+    <!-- A tile for a map whose picture had mistakes, shown in words instead. -->
+    <string name="mindmaps_as_text">En texte</string>
+    <string name="mindmaps_drawing">Création en cours…</string>
+    <!-- Makes a chapter's mind map. -->
+    <string name="mindmaps_create">Créer</string>
+    <string name="mindmaps_try_again">Réessayer</string>
+    <string name="mindmaps_failed_short">Impossible de la créer cette fois.</string>
+    <string name="mindmaps_unreachable_short">Impossible de joindre le serveur.</string>
+    <string name="mindmaps_card_title">Carte mentale</string>
+    <string name="mindmaps_card_description">Les idées principales du chapitre réunies en une image pour les revoir d’un coup d’œil.</string>
+    <string name="mindmaps_card_create">Créer la carte mentale</string>
+    <string name="mindmaps_card_generating_title">Création de la carte mentale…</string>
+    <string name="mindmaps_card_generating">Cela prend environ 30 s. Tu peux quitter cette page, elle sera toujours là.</string>
+    <string name="mindmaps_card_failed">Impossible de créer la carte mentale cette fois.</string>
+    <string name="mindmaps_card_unreachable">Impossible de joindre le serveur. Vérifie ta connexion.</string>
+    <string name="mindmaps_as_text_note">L’image contenait des erreurs, voici la carte mentale en texte.</string>
+    <string name="mindmaps_full_screen">Plein écran</string>
+    <!-- Saves the mind map's picture. -->
+    <string name="mindmaps_download">Télécharger</string>
+    <string name="mindmaps_saved">Carte mentale enregistrée</string>
+    <string name="mindmaps_save_failed">La carte mentale n’a pas été enregistrée. Réessaie.</string>
+    <!-- Starts the one-line gist at the end of a mind map in words. -->
+    <string name="mindmaps_in_short">En bref :</string>
+    <string name="mindmaps_zoom_in">Zoom avant</string>
+    <string name="mindmaps_zoom_out">Zoom arrière</string>
+    <string name="mindmaps_fit">Ajuster à l’écran</string>
+    <string name="mindmaps_viewer_hint">Pince pour zoomer, fais défiler ou utilise + et − ; fais glisser ou utilise les flèches pour te déplacer.</string>
+</resources>
