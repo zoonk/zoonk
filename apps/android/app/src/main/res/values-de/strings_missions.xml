@@ -23,11 +23,15 @@
   "missions_fix_a_mistake": "fed83ab6cf710889d41c0b12d58248d4dbbda6825f40570debca478a6626f910",
   "missions_fix_mistakes": "fe26d4583d5f05fdc2f8d688bb89795b1f3fbd48f659498bacc0de18fe57812c",
   "missions_from_notebook": "fd0137c042f80cf7917919f769305d53e2175cc82c9bf58f20b4bcb089e468ae",
+  "missions_just_done": "3ba3e7cf24821b60e88a378109ea273ffaf33bf811ca4102624bf24457236daa",
   "missions_last_lesson": "35f144442439b81d41e77a6b5c4647dd43d81c29ddcf1947b8180f8dd6666427",
   "missions_last_lessons": "27930a299cf22aa927188f9f955d0fa372ba8a827801cdcc65059def47b11b02",
   "missions_left": "a11090976bc3bbe1eea05e12bc556be64e68a436ad933d962a0c2edfd15b5fb7",
   "missions_lesson_and_more": "ad38525b08c7a570be791d157cf7cab52395861053b6e625a6d72e5de9c7678a",
   "missions_mock": "d21a3a1c188f15279dd4671a9fcda593be0f0cb563aba7cf7ffde6c5123ecf79",
+  "missions_moment_all_done": "35e366741935bab25e54c28403cbd9e1cb2c14ee78b82147a4fdaef00ddca65c",
+  "missions_moment_done": "65443e7b53b66dac95b959691f466c5d27bf07e076024a288981674f54a63202",
+  "missions_moment_more": "0354ec4022ecadd5d4c6978205cd5333d4e292fff8fe49b434ad5bac21607ec2",
   "missions_most_room": "a1874b9116a661cb291f080cc6559d8f0f1c238f7268b4d27895221bf38074fa",
   "missions_open_buddy": "65499004d72b7656a2830792cf32dc3605c1954085b53b6ce8d8a550fd7897d1",
   "missions_open_call": "c47e614d1c9857b6e557df51ca494486dc0d06f1bca53c2943a6330ea6c0b878",
@@ -71,6 +75,17 @@
         <item quantity="one">Noch %d übrig</item>
         <item quantity="other">Noch %d übrig</item>
     </plurals>
+    <string name="missions_moment_all_done">Die Missionen für heute sind geschafft!</string>
+    <plurals name="missions_moment_done">
+        <item quantity="one">Mission geschafft!</item>
+        <item quantity="other">%d Missionen geschafft!</item>
+    </plurals>
+    <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
+    <plurals name="missions_moment_more">
+        <item quantity="one">Noch %1$d für +%2$s Brain Power</item>
+        <item quantity="other">Noch %1$d für +%2$s Brain Power</item>
+    </plurals>
+    <string name="missions_just_done">Gerade erledigt</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
     <string name="missions_progress">%1$s von %2$s abgeschlossen</string>
     <string name="missions_brain_power">Brain Power</string>

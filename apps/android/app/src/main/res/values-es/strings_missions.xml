@@ -23,11 +23,15 @@
   "missions_fix_a_mistake": "372bd1a11e793634cfe11f99e94fdd658e3056293e08707b4893b7fa5b3dc0d4",
   "missions_fix_mistakes": "5de226de442096bdb5ee023203790531a67b9bf1e7aee61dd75c2824e380b2c8",
   "missions_from_notebook": "bc0ddb9a10a9745a91371fe5ac7a1ad79f31e35d46631b796b8caa44d0b238be",
+  "missions_just_done": "8c6494ef4e5cf4def8e84a1e59aa1e839f86ab34f7061d6fd62cf2c770c1e6c6",
   "missions_last_lesson": "6e961660afa88895286ea2279f65c7558276a8c5ba288df725486cc9667b61ac",
   "missions_last_lessons": "968a0e8241552a256d7445c5de62f107e88a92d417f73c35ea387cb2b926592b",
   "missions_left": "49fca12fdffb1fa4d198ec0dbd267eb74e05ea7fa4b30228203c79a85a9c4dc8",
   "missions_lesson_and_more": "5ce1403dc5436cac1ea9637609ebc6536daeaa714ca136af818ec5c492de8f20",
   "missions_mock": "dfacd6edd49e9a604d794be3c1f6cdda3f4d30d6a99af2fde7ad271dc111a0a4",
+  "missions_moment_all_done": "fc01249960d1ef500c02322be950455940eb7aebc2e598ab512df922b63f34a9",
+  "missions_moment_done": "3054fe7f50b6998019d48192f9eee7c4ab5ca9bce5d9c07a0d68b8a3b2803bfe",
+  "missions_moment_more": "ef5a600916df35a86e770e055f32f774f483c847ac19b7a49624c6d3d78cffd4",
   "missions_most_room": "7147bf54223be5a9f2cc279cda54a0dbeefbbe96ab537c49332c1ed2b9295b24",
   "missions_open_buddy": "26c61ffcdac1c936898f74171ffe7415835be9f102975764a0bd551ffc7c296e",
   "missions_open_call": "aaf2f021cef9f31ba521938d6aa848ce59cd50d7de8450af7427f06ffc78dbd5",
@@ -73,6 +77,19 @@
         <item quantity="many">quedan %d</item>
         <item quantity="other">quedan %d</item>
     </plurals>
+    <string name="missions_moment_all_done">¡Has completado las misiones de hoy!</string>
+    <plurals name="missions_moment_done">
+        <item quantity="one">¡Misión completada!</item>
+        <item quantity="many">¡Has completado %d misiones!</item>
+        <item quantity="other">¡Has completado %d misiones!</item>
+    </plurals>
+    <!-- %1$d is how many missions are left, %2$s the day's bonus, such as 50. -->
+    <plurals name="missions_moment_more">
+        <item quantity="one">Te falta %1$d para conseguir +%2$s Poder Mental</item>
+        <item quantity="many">Te faltan %1$d para conseguir +%2$s Poder Mental</item>
+        <item quantity="other">Te faltan %1$d para conseguir +%2$s Poder Mental</item>
+    </plurals>
+    <string name="missions_just_done">Acabas de completar</string>
     <!-- Read by TalkBack after the missions' status: "2 of 3 done". -->
     <string name="missions_progress">%1$s de %2$s completadas</string>
     <string name="missions_brain_power">Poder Mental</string>
