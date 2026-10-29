@@ -28,6 +28,7 @@
 - “questions” (counts): “perguntas”; an exam item being discussed: “questão”
 - “practice questions”: “perguntas de prática”, not “perguntas práticas”
 - “options” (multiple choice): “alternativas”
+- “guess” (the learner's answer before the real one shows): “palpite”; “estimate” (an estimated score): “estimativa”
 - “security check”: “sistema de segurança”; “verificação” is used for emailed codes
 - “picture” / “image”: “imagem”, not “figura”
 - “mind map”: “mapa mental”
