@@ -8,12 +8,15 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -55,7 +58,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.onboarding.AdviceQuery
 import com.zoonk.android.feature.onboarding.CoverQuery
 import com.zoonk.android.feature.onboarding.OnboardingStore
-import com.zoonk.android.feature.onboarding.start.isCompactWidth
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.format.DateStyle
@@ -84,8 +86,8 @@ internal fun ColumnScope.ScheduleStep(
     store: OnboardingStore,
     vm: GoalSetupViewModel,
     pending: Boolean,
+    factsBeside: Boolean,
 ) {
-    val goalId = goal.id.toString()
     val exam = goal.kind == Goal.Kind.EXAM
     val dated = goal.targetDate != null || exam
     var minutes by rememberSaveable { mutableIntStateOf(recommendedMinutes) }
@@ -97,7 +99,7 @@ internal fun ColumnScope.ScheduleStep(
     var answer by remember { mutableStateOf<AdviceAnswer?>(null) }
     var build by remember { mutableIntStateOf(0) }
     var finding by remember { mutableStateOf<CoverQuery?>(null) }
-    val adviceQuery = AdviceQuery(goalId, week.adviceInput(minutes))
+    val adviceQuery = AdviceQuery(goal, week.adviceInput(minutes))
     val adviceResource = store.timeAdvice[adviceQuery]
     if (dated) {
         val adviceState by adviceResource.collectShown()
@@ -110,7 +112,7 @@ internal fun ColumnScope.ScheduleStep(
     }
     val advice = weekAdvice(answer, week)
     val lookup = findWeek(days, weekend)
-    val coverQuery = CoverQuery(goalId, lookup.coverInput(), build)
+    val coverQuery = CoverQuery(goal, lookup.coverInput(), build)
     val finds = store.timesToCover[coverQuery]
     val findState = if (finding == coverQuery) finds.collectShown().value else null
     val found = (findState as? LoadState.Loaded)?.value?.takeIf { it.ready && answer?.advice?.ready != false }
@@ -150,7 +152,7 @@ internal fun ColumnScope.ScheduleStep(
             )
         },
     ) {
-        if (isCompactWidth()) PlanFactChips(goal)
+        if (!factsBeside) PlanFactChips(goal)
 
         TimeChoices(minutes, found, onChange = { minutes = it })
 
@@ -218,6 +220,7 @@ private fun TimeChoices(
                 FilterChip(
                     selected = option == minutes,
                     onClick = { onChange(option) },
+                    leadingIcon = selectedCheck(option == minutes),
                     label = {
                         Column {
                             Text(formatMinutes(option, locale), style = MaterialTheme.typography.labelLarge.withTabularFigures())
@@ -459,16 +462,7 @@ private fun FullCourseToggle(
         } else {
             stringResource(R.string.onboarding_full_course_rule)
         }
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Row(
-            modifier = Modifier.fillMaxWidth().toggleable(checked, role = Role.Switch, onValueChange = onCheckedChange),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(stringResource(R.string.onboarding_full_course), modifier = Modifier.weight(1f), fontWeight = FontWeight.Medium)
-            Switch(checked = checked, onCheckedChange = null)
-        }
-        Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-    }
+    SwitchRow(stringResource(R.string.onboarding_full_course), checked, onCheckedChange, description)
 }
 
 @Composable
@@ -539,6 +533,7 @@ private fun WeekdayToggles(
             FilterChip(
                 selected = picked,
                 onClick = { onChange(if (picked) days - day else (days + day).sorted()) },
+                leadingIcon = selectedCheck(picked),
                 label = { Text(weekday.getDisplayName(TextStyle.NARROW, locale)) },
                 modifier = Modifier.semantics { contentDescription = weekday.getDisplayName(TextStyle.FULL, locale) },
             )
@@ -554,22 +549,14 @@ private fun WeekendTime(
 ) {
     val locale = currentLocale()
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        Row(
-            modifier =
-                Modifier.fillMaxWidth().toggleable(weekendMinutes != null, role = Role.Switch) { on ->
-                    onChange(if (on) minutes else null)
-                },
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(stringResource(R.string.onboarding_weekend_time), modifier = Modifier.weight(1f), fontWeight = FontWeight.Medium)
-            Switch(checked = weekendMinutes != null, onCheckedChange = null)
-        }
+        SwitchRow(stringResource(R.string.onboarding_weekend_time), weekendMinutes != null, { on -> onChange(if (on) minutes else null) })
         if (weekendMinutes != null) {
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 timeChoices(minutes, weekendMinutes).forEach { option ->
                     FilterChip(
                         selected = option == weekendMinutes,
                         onClick = { onChange(option) },
+                        leadingIcon = selectedCheck(option == weekendMinutes),
                         label = { Text(formatMinutes(option, locale), style = MaterialTheme.typography.labelLarge.withTabularFigures()) },
                     )
                 }
@@ -584,7 +571,7 @@ private fun PlanFactChips(goal: Goal) {
     val facts = planFacts(goal).filter { it.chip }
     if (facts.isEmpty()) return
     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        facts.forEach { LabelChip(text = it.value) }
+        facts.forEach { LabelChip(text = it.count ?: it.value) }
     }
 }
 
@@ -605,3 +592,31 @@ private fun findStatus(state: LoadState<PlanTimeToCover>?): FindStatus? =
     }
 
 private const val STALE_ALPHA = 0.6f
+
+private fun selectedCheck(selected: Boolean): (@Composable () -> Unit)? =
+    if (selected) {
+        { Icon(painterResource(R.drawable.ic_check), contentDescription = null, modifier = Modifier.size(FilterChipDefaults.IconSize)) }
+    } else {
+        null
+    }
+
+/** The whole row toggles, its description read with it, at least a touch target tall. */
+@Composable
+private fun SwitchRow(
+    title: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    description: String? = null,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(checked, role = Role.Switch, onValueChange = onCheckedChange),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Text(title, fontWeight = FontWeight.Medium)
+            description?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
+        }
+        Switch(checked = checked, onCheckedChange = null)
+    }
+}

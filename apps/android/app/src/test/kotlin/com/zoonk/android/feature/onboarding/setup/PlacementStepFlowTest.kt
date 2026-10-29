@@ -28,6 +28,7 @@ import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.mockOptionsOf
 import com.zoonk.android.feature.onboarding.placementOf
 import com.zoonk.android.feature.onboarding.runningMock
+import com.zoonk.android.feature.onboarding.trueFalseQuestion
 import com.zoonk.android.feature.onboarding.typedQuestion
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -61,7 +62,17 @@ class PlacementStepFlowTest {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    PlacementStep(GOAL_ID, "bar exam", areaCount = 3, run, onRetryRun = null, store, navigator, onDone = { done++ })
+                    PlacementStep(
+                        GOAL_ID,
+                        "bar exam",
+                        areaCount = 3,
+                        run,
+                        onRetryRun = null,
+                        store,
+                        navigator,
+                        onProgress = {},
+                        onDone = { done++ },
+                    )
                 }
             }
         }
@@ -79,6 +90,23 @@ class PlacementStepFlowTest {
         rule.onNodeWithText("A few quick questions about 3 areas", substring = true).assertIsDisplayed()
         assertEquals(emptyList<Any>(), api.placementAnswers)
         assertEquals(emptyList<Boolean>(), api.finishedPlacements)
+    }
+
+    @Test
+    fun aQuestionShowsTheVisualItAsksAbout() {
+        api.placement =
+            placementOf(
+                next =
+                    trueFalseQuestion(
+                        statement = "The second reform came first.",
+                        visual = """{"kind":"timeline","title":"Court reforms","events":[{"date":"1990","label":"First reform"}]}""",
+                    ),
+            )
+        show()
+        tap("Start")
+
+        rule.onNodeWithText("Court reforms").assertIsDisplayed()
+        rule.onNodeWithText("The second reform came first.").assertIsDisplayed()
     }
 
     @Test

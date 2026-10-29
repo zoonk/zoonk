@@ -14,6 +14,7 @@ import com.zoonk.api.models.CreateUploadRequest
 import com.zoonk.api.models.CreateUploadRequestOneOf
 import com.zoonk.api.models.CreateUploadRequestOneOf1
 import com.zoonk.api.models.CreateUploadRequestOneOf2
+import com.zoonk.api.models.Goal
 import com.zoonk.api.models.GoalCreateInput
 import com.zoonk.api.models.GoalGenerationRun
 import com.zoonk.api.models.MaterialQuestionAnswer
@@ -194,13 +195,13 @@ class OnboardingStore(
     /** What a daily time and week would cover: the server plans the goal for it without saving anything. */
     val timeAdvice =
         cache.keyed<AdviceQuery, PlanTimeAdvice>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearnerModel)) { session, query ->
-            session?.let { api.timeAdvice(it, query.goalId, query.input) }
+            session?.let { api.timeAdvice(it, query.goal.id.toString(), query.input) }
         }
 
     /** Read only from the learner's tap: the server plans the goal at each daily time. */
     val timesToCover =
         cache.keyed<CoverQuery, PlanTimeToCover>(Audience.SignedIn, setOf(DataDomain.Goals, DataDomain.LearnerModel)) { session, query ->
-            session?.let { api.timeToCover(it, query.goalId, query.input) }
+            session?.let { api.timeToCover(it, query.goal.id.toString(), query.input) }
         }
 
     suspend fun writeGoal(goalId: String) = write { api.writeGoal(it, goalId) }
@@ -353,7 +354,12 @@ class OnboardingStore(
         fromScratch: Boolean,
     ) = write(setOf(DataDomain.Goals, DataDomain.LearnerModel)) { api.finishPlacement(it, goalId, fromScratch) }
 
-    suspend fun stopPlacementMock(mockId: String) = write(setOf(DataDomain.LearnerModel)) { api.finishMock(it, mockId) }
+    /** The goal's mock offer is read again, so a stopped mock no longer shows as running. */
+    suspend fun stopPlacementMock(
+        goalId: String,
+        mockId: String,
+    ) = write(setOf(DataDomain.LearnerModel)) { api.finishMock(it, mockId) }
+        .also { if (it is WriteOutcome.Done) placementMocks[goalId].invalidate() }
 }
 
 /** [period] is `day`, `month` or `total`; [resource] what ran out (`goal`, `activeGoals`, `upload`); [tier] `guest`, `free` or `plus`. */
@@ -391,14 +397,15 @@ private inline fun <reified T> JsonElement.decode(): T? =
         null
     }
 
+/** Keyed by the whole [goal], so an answer that changed it (a new date, level or purpose) reads again. */
 data class AdviceQuery(
-    val goalId: String,
+    val goal: Goal,
     val input: PlanTimeAdviceInput,
 )
 
 /** [build] counts the plan's rebuilds, so a time found for an earlier build is never shown again. */
 data class CoverQuery(
-    val goalId: String,
+    val goal: Goal,
     val input: PlanTimeToCoverInput,
     val build: Int,
 )

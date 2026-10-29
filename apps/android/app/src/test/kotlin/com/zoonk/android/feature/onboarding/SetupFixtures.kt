@@ -26,8 +26,9 @@ internal fun choiceQuestion(
 internal fun trueFalseQuestion(
     itemId: String = ITEM_ID,
     statement: String = "A contract needs consideration to be binding.",
+    visual: String = "null",
 ) = """
-    {"context":null,"image":null,"itemId":"$itemId","skillId":"$SKILL_ID","visual":null,"format":"trueFalse",
+    {"context":null,"image":null,"itemId":"$itemId","skillId":"$SKILL_ID","visual":$visual,"format":"trueFalse",
      "options":null,"question":"$statement"}
     """.trimIndent()
 

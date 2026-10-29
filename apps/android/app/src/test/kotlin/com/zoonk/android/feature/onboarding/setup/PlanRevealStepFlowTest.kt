@@ -8,6 +8,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -120,7 +121,7 @@ class PlanRevealStepFlowTest {
         show()
 
         rule.onNodeWithText("Reading the exam's official documents").assertIsDisplayed()
-        rule.onNodeWithText("Reading the official documents").assertIsDisplayed()
+        rule.onNodeWithContentDescription("Reading the official documents").assertIsDisplayed()
     }
 
     private companion object {

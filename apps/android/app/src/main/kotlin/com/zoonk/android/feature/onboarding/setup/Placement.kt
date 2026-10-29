@@ -2,11 +2,13 @@ package com.zoonk.android.feature.onboarding.setup
 
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.value
+import com.zoonk.api.models.LessonVisual
 import com.zoonk.api.models.MockOptions
 import com.zoonk.api.models.MockOptionsPlacementMock
 import com.zoonk.api.models.Placement
 import com.zoonk.api.models.PlacementQuestion
 import com.zoonk.api.models.PlacementStatus
+import com.zoonk.api.models.QuestionImage
 import com.zoonk.api.models.TrueFalseLabels
 
 internal sealed interface PlacementFormat {
@@ -23,6 +25,8 @@ internal data class PlacementItem(
     val itemId: String,
     val question: String,
     val context: String?,
+    val image: QuestionImage?,
+    val visual: LessonVisual?,
     val format: PlacementFormat,
 )
 
@@ -135,14 +139,21 @@ private fun MockOptions.mockOffer(): MockOffer? {
 private fun PlacementQuestion.item(): PlacementItem =
     when (this) {
         is PlacementQuestion.BankQuestionOneOfValue -> {
-            PlacementItem(value.itemId.toString(), value.question, value.context, PlacementFormat.Choice(value.options))
+            PlacementItem(
+                value.itemId.toString(),
+                value.question,
+                value.context,
+                value.image,
+                value.visual,
+                PlacementFormat.Choice(value.options),
+            )
         }
 
         is PlacementQuestion.BankQuestionOneOf1Value -> {
-            PlacementItem(value.itemId.toString(), value.question, value.context, PlacementFormat.TrueFalse)
+            PlacementItem(value.itemId.toString(), value.question, value.context, value.image, value.visual, PlacementFormat.TrueFalse)
         }
 
         is PlacementQuestion.PlacementQuestionOneOfValue -> {
-            PlacementItem(value.itemId.toString(), value.question, value.context, PlacementFormat.Typed)
+            PlacementItem(value.itemId.toString(), value.question, value.context, value.image, value.visual, PlacementFormat.Typed)
         }
     }

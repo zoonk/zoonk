@@ -28,7 +28,6 @@
   "onboarding_date_description": "8e27bb954bc82d438fb53ac21277baa6db15f4caf8e8a616d4572b464986a12d",
   "onboarding_date_label": "7f409b88baca068679bef0edf58c72f19960d1f610f4b34302b8514b4f30dedc",
   "onboarding_date_none": "07acf872bb329c41a6c7b713cb954dd979d681453eda2314626c2e93700b9395",
-  "onboarding_date_pick": "f602ffbaaa7b9fcf8e2adeb3da558fe110e30104ac4eab2be773806b0f85a25c",
   "onboarding_date_title": "1a783945a7ef442b4c87fade6827b5a382dd89b3fb0ca7416792e05c1f36c74e",
   "onboarding_days": "543f8d53c09fbf78ce5ce102eeb7852a36a5ba9d2dee7d72e65189c61bb0bb44",
   "onboarding_decide_later": "62bf694cebaba7b09d4497017604e9fcdca7b296a4973df3040fdccab8bd3fba",
@@ -273,6 +272,10 @@
   "onboarding_reveal_reading_guide": "d1366a4a65abe731f536dc60f7dbc7f504eafc06abe24cff5a830940b26034cf",
   "onboarding_reveal_reading_last": "a30f87658a3fd5d86cc00bb0feb26fc8b79593977c04f61f277ba90f3ce79360",
   "onboarding_reveal_reading_last_title": "0fdfd31d5fffc3c08cb92512ecc025ce0bff491b3f2cd9ec9ed313823f0d8fa0",
+  "onboarding_reveal_reading_line_dates": "07973eb546b3d06ca44cc90723e700dbda3d8c91eb1bcc74f386c19a0bc83f47",
+  "onboarding_reveal_reading_line_fit": "f9e3cf76433eded5ef633297a5319394f95a0faa43e74b769f3a19a8cf24c488",
+  "onboarding_reveal_reading_line_guide": "537d14e67264cb04b47691138aff51fc4ebecd392beaef0fbe86e49672a58e2b",
+  "onboarding_reveal_reading_line_notice": "2573ba96b2c4278bffeeafa22326aa093b6cd4ec4046a55fa781f8a304bcecbf",
   "onboarding_reveal_reading_notice": "b79b6b86d6ca05afae70170264b87d06b4b0eb4dea25a69f25f01e8aa6c6cc33",
   "onboarding_reveal_reading_step": "9693f2ec5d502bf2321016a008f6338dfeea213267b0d7fc6d6bc84a28b622c7",
   "onboarding_reveal_reading_title": "5c82d729e3d6bfcc7b11a4932e22d19cf7fd95843d0493567719b18223ceecca",
@@ -858,7 +861,6 @@
     <string name="onboarding_date_description">Sans date, tu étudies tout à ton rythme et nous t’indiquons quand tu atteins chaque étape.</string>
     <string name="onboarding_date_none">Pas de date, tout étudier</string>
     <string name="onboarding_date_label">Date</string>
-    <string name="onboarding_date_pick">Choisir une date</string>
     <string name="onboarding_exam_choice_title_one">Quel examen vas-tu passer ?</string>
     <string name="onboarding_exam_choice_title_other">Quels examens vas-tu passer ?</string>
     <string name="onboarding_exam_choice_description">Le plan et les examens blancs s’adaptent à ton choix. Tu peux le modifier dans ton plan.</string>
@@ -940,4 +942,9 @@
     <!-- On a setup question when the plan's run failed. -->
     <string name="onboarding_plan_stopped">La préparation de ton plan s’est arrêtée</string>
     <string name="onboarding_plan_answers_saved">Tes réponses sont enregistrées. Réessaie pour que ton plan soit prêt quand tu auras terminé.</string>
+    <!-- Detail lines while an exam's official documents are read. -->
+    <string name="onboarding_reveal_reading_line_notice">Repérage des domaines et des thèmes indiqués dans l’avis d’examen…</string>
+    <string name="onboarding_reveal_reading_line_guide">Repérage des parties et des thèmes indiqués dans le guide officiel…</string>
+    <string name="onboarding_reveal_reading_line_dates">Vérification des dates et du format de l’examen…</string>
+    <string name="onboarding_reveal_reading_line_fit">Intégration dans ton plan…</string>
 </resources>

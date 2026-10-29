@@ -455,7 +455,6 @@
     <string name="onboarding_date_description">Without a date, you study everything at your own pace, and we show when you reach each milestone.</string>
     <string name="onboarding_date_none">No date, study everything</string>
     <string name="onboarding_date_label">Date</string>
-    <string name="onboarding_date_pick">Pick a date</string>
     <string name="onboarding_exam_choice_title_one">Which one will you take?</string>
     <string name="onboarding_exam_choice_title_other">Which ones will you take?</string>
     <string name="onboarding_exam_choice_description">The plan and the mocks follow your pick. You can change it in your plan.</string>
@@ -535,4 +534,9 @@
     <!-- On a setup question when the plan's run failed. -->
     <string name="onboarding_plan_stopped">Building your plan stopped</string>
     <string name="onboarding_plan_answers_saved">Your answers are saved. Try again so it\'s ready when you finish.</string>
+    <!-- Detail lines while an exam's official documents are read. -->
+    <string name="onboarding_reveal_reading_line_notice">Finding the subjects and topics the notice lists…</string>
+    <string name="onboarding_reveal_reading_line_guide">Finding the parts and topics the official guide lists…</string>
+    <string name="onboarding_reveal_reading_line_dates">Checking the exam\'s dates and format…</string>
+    <string name="onboarding_reveal_reading_line_fit">Fitting them into your plan…</string>
 </resources>

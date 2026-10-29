@@ -81,7 +81,7 @@ internal class PlacementViewModel(
         isSaving = true
         finishFailed = false
         viewModelScope.launch {
-            val stopped = stopMockId?.let { store.stopPlacementMock(it) }
+            val stopped = stopMockId?.let { store.stopPlacementMock(goalId, it) }
             val outcome = if (stopped == null || stopped is WriteOutcome.Done) store.finishPlacement(goalId, fromScratch) else stopped
             when (outcome) {
                 is WriteOutcome.Done -> {

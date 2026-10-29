@@ -28,7 +28,6 @@
   "onboarding_date_description": "a819ea8dd7b1404bc386bd7328fa2bee798f5b6cc761bd1017b6fbd06ce97b5c",
   "onboarding_date_label": "ba7f9c07f6e329c8a330f1ec72db0fe572844799bad319cc8c0303af3b4bdb3f",
   "onboarding_date_none": "c6bad4e35412b213ce93a47a09054494ee5c6adf85f4c5329902b72d252e967d",
-  "onboarding_date_pick": "110be6ffbb27b1c5dc7bc1d4534cff8aebb40f840ca3db9b62ae04dd64f3a25d",
   "onboarding_date_title": "690c3d409c34c320aad8356c443c5fea5b8cb2ba8b83c002b9a8aee79d19497f",
   "onboarding_days": "ca4deaaa3029e035b12b25eaefff171c8582133ec0b486b636cf37cb14cb12e4",
   "onboarding_decide_later": "e7aa12a729bced0020dd219f83c2c4a75f162fb5e846935d14c121111d9dc993",
@@ -273,6 +272,10 @@
   "onboarding_reveal_reading_guide": "b3b2d19dbeee26df1a7c439771bc3bf64e39e6d70b0fbb8b9211cc35414b3510",
   "onboarding_reveal_reading_last": "b9293afbdb8f0cb12d194f1f31f5a0cb3fea476591622085569506ecf2bdc7d2",
   "onboarding_reveal_reading_last_title": "0ab818341d23b4d6c8b10c4db7545e68f5c1f2bbe8c3cada15238ab5ed71de64",
+  "onboarding_reveal_reading_line_dates": "3e9fcef8350a32531740da5762ea3416aea037534a9accd0f922b25004a5dc60",
+  "onboarding_reveal_reading_line_fit": "9639eb80d8e669dca04ec2b61fa271a843cace9492b09b132fa2cf01c80b745a",
+  "onboarding_reveal_reading_line_guide": "3f6c2a2196ef6dea1b35d21984f42beda2dc06f7f51283ccf48bac819fe4f325",
+  "onboarding_reveal_reading_line_notice": "19aa0094b7f1198faa951b35b1703e12a157830b056d4d14ae1087c847459f06",
   "onboarding_reveal_reading_notice": "c46beff9b8bda19bbf5092b0e8d78ed88af24160508f36dfc113cf5ca5079429",
   "onboarding_reveal_reading_step": "15b2f9596ca81afcde6e05a3e0169468deee743ee2a337ac2aea0af93c265f6e",
   "onboarding_reveal_reading_title": "3cb3ec943f10e8de51068d0cbd2758996ce7b0d0bc504fc825178cafab74ba58",
@@ -858,7 +861,6 @@
     <string name="onboarding_date_description">Sem uma data, você estuda tudo no seu ritmo, e a gente mostra quando você chegar a cada marco.</string>
     <string name="onboarding_date_none">Sem data, estudar tudo</string>
     <string name="onboarding_date_label">Data</string>
-    <string name="onboarding_date_pick">Escolha uma data</string>
     <string name="onboarding_exam_choice_title_one">Qual prova você vai fazer?</string>
     <string name="onboarding_exam_choice_title_other">Quais provas você vai fazer?</string>
     <string name="onboarding_exam_choice_description">O plano e os simulados seguem o que você escolher. Dá para mudar isso no seu plano.</string>
@@ -940,4 +942,9 @@
     <!-- On a setup question when the plan's run failed. -->
     <string name="onboarding_plan_stopped">A montagem do seu plano foi interrompida</string>
     <string name="onboarding_plan_answers_saved">Suas respostas foram salvas. Tente de novo para deixar tudo pronto quando você terminar.</string>
+    <!-- Detail lines while an exam's official documents are read. -->
+    <string name="onboarding_reveal_reading_line_notice">Encontrando as matérias e os tópicos do edital…</string>
+    <string name="onboarding_reveal_reading_line_guide">Encontrando as partes e os tópicos do guia oficial…</string>
+    <string name="onboarding_reveal_reading_line_dates">Conferindo as datas e o formato da prova…</string>
+    <string name="onboarding_reveal_reading_line_fit">Organizando tudo no seu plano…</string>
 </resources>

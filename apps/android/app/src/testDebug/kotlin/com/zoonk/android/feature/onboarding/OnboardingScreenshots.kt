@@ -347,7 +347,17 @@ class OnboardingScreenshots {
         ) {
             val store = rememberStore(api)
             SetupColumn {
-                PlacementStep(GOAL_ID, "bar exam", areaCount = 4, run, onRetryRun = {}, store, rememberAppNavigator(), onDone = {})
+                PlacementStep(
+                    GOAL_ID,
+                    "bar exam",
+                    areaCount = 4,
+                    run,
+                    onRetryRun = {},
+                    store,
+                    rememberAppNavigator(),
+                    onProgress = {},
+                    onDone = {},
+                )
             }
         }
 

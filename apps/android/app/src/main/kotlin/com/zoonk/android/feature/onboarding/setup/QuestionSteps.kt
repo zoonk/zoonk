@@ -1,10 +1,13 @@
 package com.zoonk.android.feature.onboarding.setup
 
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
@@ -37,8 +40,13 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.onClick
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -417,7 +425,13 @@ internal fun ColumnScope.TextStep(
         onContinue = { answer(value.trim()) },
         onSkip = { answer(null) },
     ) {
-        AnswerField(stringResource(label), stringResource(placeholder), value, onValueChange = { value = it })
+        AnswerField(
+            stringResource(label),
+            stringResource(placeholder),
+            value,
+            onValueChange = { value = it },
+            onDone = { if (value.isNotBlank() && !pending) answer(value.trim()) },
+        )
     }
 }
 
@@ -600,17 +614,28 @@ internal fun ColumnScope.DateStep(
         onContinue = { picked?.let(answer) },
         onSkip = { answer(null) },
     ) {
+        val shown = picked?.let { formatDate(it, currentLocale(), DateStyle.LongYear) }.orEmpty()
+        val label = stringResource(R.string.onboarding_date_label)
+        val presses = remember { MutableInteractionSource() }
+        LaunchedEffect(presses) {
+            presses.interactions.collect { if (it is PressInteraction.Release) picking = true }
+        }
         OutlinedTextField(
-            value = picked?.let { formatDate(it, currentLocale(), DateStyle.LongYear) }.orEmpty(),
+            value = shown,
             onValueChange = {},
-            modifier = Modifier.fillMaxWidth(),
+            modifier =
+                Modifier.fillMaxWidth().clearAndSetSemantics {
+                    contentDescription = listOf(label, shown).filter(String::isNotEmpty).joinToString(", ")
+                    role = Role.Button
+                    onClick {
+                        picking = true
+                        true
+                    }
+                },
             readOnly = true,
-            label = { Text(stringResource(R.string.onboarding_date_label)) },
-            trailingIcon = {
-                IconButton(onClick = { picking = true }) {
-                    Icon(painterResource(R.drawable.ic_calendar_month), contentDescription = stringResource(R.string.onboarding_date_pick))
-                }
-            },
+            label = { Text(label) },
+            trailingIcon = { Icon(painterResource(R.drawable.ic_calendar_month), contentDescription = null) },
+            interactionSource = presses,
         )
     }
 
@@ -703,7 +728,12 @@ internal fun ColumnScope.ExamChoiceStep(
     ) {
         choices.forEach { choice ->
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(choice.group, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleSmall)
+                Text(
+                    choice.group,
+                    modifier = Modifier.semantics { heading() },
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.titleSmall,
+                )
                 ChoiceList(
                     choices =
                         choice.options.map { option ->
@@ -763,6 +793,7 @@ private fun AnswerField(
     value: String,
     onValueChange: (String) -> Unit,
     focusFirst: Boolean = true,
+    onDone: (() -> Unit)? = null,
 ) {
     val focus = remember { FocusRequester() }
     OutlinedTextField(
@@ -772,7 +803,19 @@ private fun AnswerField(
         label = { Text(label) },
         placeholder = { Text(placeholder) },
         singleLine = true,
-        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
+        keyboardOptions =
+            KeyboardOptions(
+                capitalization = KeyboardCapitalization.Sentences,
+                imeAction =
+                    if (onDone !=
+                        null
+                    ) {
+                        ImeAction.Done
+                    } else {
+                        ImeAction.Next
+                    },
+            ),
+        keyboardActions = KeyboardActions(onDone = { onDone?.invoke() }),
     )
     if (focusFirst) LaunchedEffect(Unit) { focus.requestFocus() }
 }

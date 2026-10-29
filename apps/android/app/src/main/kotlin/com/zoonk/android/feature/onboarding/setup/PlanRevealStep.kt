@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.READING_RUN
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.onboarding.OnboardingStore
@@ -146,33 +147,21 @@ private fun PlanBuilding(
 @Composable
 private fun NoticeReading(plan: Plan) {
     val lastEdition = plan.schedule.targetDateEstimated
-    OnboardingHeading(
-        stringResource(if (lastEdition) R.string.onboarding_reveal_reading_last_title else R.string.onboarding_reveal_reading_title),
-        stringResource(
-            when {
-                lastEdition -> R.string.onboarding_reveal_reading_last
-                plan.examDocument == ExamDocument.GUIDE -> R.string.onboarding_reveal_reading_guide
-                else -> R.string.onboarding_reveal_reading_notice
-            },
-        ),
-    )
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            StatusMark(MarkStatus.Done)
-            Text(
-                stringResource(R.string.onboarding_reveal_reading_done_step),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-            CircularProgressIndicator(Modifier.size(markSize()).padding(4.dp), strokeWidth = 2.dp)
-            Text(
-                stringResource(R.string.onboarding_reveal_reading_step),
-                fontWeight = FontWeight.Medium,
-                style = MaterialTheme.typography.bodyMedium,
-            )
-        }
+    GenerationWait(
+        kind = if (plan.examDocument == ExamDocument.GUIDE) GenerationKind.GuideReading else GenerationKind.NoticeReading,
+        run = READING_RUN,
+        onRetry = null,
+    ) {
+        OnboardingHeading(
+            stringResource(if (lastEdition) R.string.onboarding_reveal_reading_last_title else R.string.onboarding_reveal_reading_title),
+            stringResource(
+                when {
+                    lastEdition -> R.string.onboarding_reveal_reading_last
+                    plan.examDocument == ExamDocument.GUIDE -> R.string.onboarding_reveal_reading_guide
+                    else -> R.string.onboarding_reveal_reading_notice
+                },
+            ),
+        )
     }
 }
 
@@ -688,7 +677,12 @@ private fun FreeWeekOverNotice(onSeePlus: () -> Unit) {
 @Composable
 private fun ListRow(content: @Composable RowScope.() -> Unit) {
     Row(
-        modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).padding(vertical = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .heightIn(min = 48.dp)
+                .semantics(mergeDescendants = true) {}
+                .padding(vertical = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
         content = content,

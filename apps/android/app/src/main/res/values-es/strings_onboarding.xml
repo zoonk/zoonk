@@ -28,7 +28,6 @@
   "onboarding_date_description": "f52082fddbcb3aedd91902d39bbe457c03b6b8572b507a7710f8dbd5f519e268",
   "onboarding_date_label": "727c84d7038889634c5308de86192de3d22f3fb67baac2c181841bf158a369a9",
   "onboarding_date_none": "1e29913e08cd57af825810902bfe25727ce27419515c57ceb03a994778906b8b",
-  "onboarding_date_pick": "b9d04068d396db8a0071e05629395f04445cf4469c0dfe7c117bc0f6b86eed09",
   "onboarding_date_title": "baea71fdaec5fc194c9e88c240fe09c2465f4e01e64803aae80bec12d586ddff",
   "onboarding_days": "163c7ee0701a8060a83fc617c38a167ab91fb0d6b0922c0059d5e143786b8a3f",
   "onboarding_decide_later": "495b9bb564e84e4ac93e79ef81ad03a0f9845460264233a4e9dbd5198bf2ba11",
@@ -273,6 +272,10 @@
   "onboarding_reveal_reading_guide": "b54e9ee79814ebc6f43f64049379f771e5eb55c40d4012ff2ccd6bb085a50dc3",
   "onboarding_reveal_reading_last": "61c8406788ad40f8f29f22440bebe3ffbf7b6fd92613a0bf1516ec460cfe6f51",
   "onboarding_reveal_reading_last_title": "ccf325fcd72e4147f60a62ed98d2532f75052b67fc5aaaa9873c9d2c03cf136a",
+  "onboarding_reveal_reading_line_dates": "583c72a3b34620cd132edaf55b83e99c51a760de4c136ccf55e667547eb9e31b",
+  "onboarding_reveal_reading_line_fit": "582b571b9163309b1b131de91a53c40896a9f11c7e73cddc9f28bf8d918c1260",
+  "onboarding_reveal_reading_line_guide": "e21383030134966ad7e23de5ffa96759755d0422ec9509e3eda91f203a03fb25",
+  "onboarding_reveal_reading_line_notice": "aff5a9a2f30020635224dcda4858ded5559754b8831d355bf7e62d78f2ffbf4c",
   "onboarding_reveal_reading_notice": "ee18e8ea1abc1ad23429e35900306e4ba807d5b549259b10d4afc466f59a74e4",
   "onboarding_reveal_reading_step": "780825ad23c5c7faf469764e4a9dd57aa3185088c688ce0b76c09a41214321aa",
   "onboarding_reveal_reading_title": "30ab14e961b0ae52f1b1fdee54fd785c1b53200d77bc204bb4425263b4dfd43f",
@@ -858,7 +861,6 @@
     <string name="onboarding_date_description">Si no tienes una fecha, estudiarás todo a tu ritmo y te mostraremos cuándo alcanzas cada hito.</string>
     <string name="onboarding_date_none">Sin fecha, estudiar todo</string>
     <string name="onboarding_date_label">Fecha</string>
-    <string name="onboarding_date_pick">Elige una fecha</string>
     <string name="onboarding_exam_choice_title_one">¿Cuál vas a hacer?</string>
     <string name="onboarding_exam_choice_title_other">¿Cuáles vas a hacer?</string>
     <string name="onboarding_exam_choice_description">El plan y los simulacros se adaptan a lo que elijas. Puedes cambiarlo en tu plan.</string>
@@ -940,4 +942,9 @@
     <!-- On a setup question when the plan's run failed. -->
     <string name="onboarding_plan_stopped">Se ha detenido la preparación de tu plan</string>
     <string name="onboarding_plan_answers_saved">Tus respuestas están guardadas. Vuelve a intentarlo para que esté listo cuando termines.</string>
+    <!-- Detail lines while an exam's official documents are read. -->
+    <string name="onboarding_reveal_reading_line_notice">Buscando las asignaturas y los temas que aparecen en la convocatoria…</string>
+    <string name="onboarding_reveal_reading_line_guide">Buscando los apartados y temas que aparecen en la guía oficial…</string>
+    <string name="onboarding_reveal_reading_line_dates">Comprobando las fechas y el formato del examen…</string>
+    <string name="onboarding_reveal_reading_line_fit">Encajándolos en tu plan…</string>
 </resources>

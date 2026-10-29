@@ -14,6 +14,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.repeatOnLifecycle
 import com.zoonk.android.data.GenerationFailure
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.Resource
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.minutes
@@ -78,11 +79,11 @@ internal fun Poll.status(active: Boolean) =
         else -> PollStatus.Polling
     }
 
-/** True when the read came back, as a new value counts. */
+/** True when the read came back with a value; a stored failure (a 404 too) counts as failed. */
 internal suspend fun Resource<*>.refreshed(): Boolean {
     val before = revision
     refresh()
-    return revision != before
+    return revision != before && state.value !is LoadState.Failed
 }
 
 /** A run that failed or never started waits for its Try again; a lost connection doesn't. */

@@ -28,7 +28,6 @@
   "onboarding_date_description": "deb02084647468aca3d3662e0dcb714ca7d554a3ab8fa80edd60f73c954129ce",
   "onboarding_date_label": "753446bb6bc9baccedb47dd621c10f3a563c34bb6691b842e48bdf8201f00699",
   "onboarding_date_none": "53e602a814172c49408eebb2b61d3f3f37e0b54e24a6ba685102f74cba156349",
-  "onboarding_date_pick": "21d923c50732ec709f73531fc48e1961b7099d2d715c74d3dbf87c08c8fb6085",
   "onboarding_date_title": "de9f5bd71ead27127f8551caa8c97995730596eb1109f68c7ecee47cc6aa4742",
   "onboarding_days": "ca4a5780553711cc9bb6209dafc173716db3e96d7c65df9422c6ac7e6169cbb0",
   "onboarding_decide_later": "3f82144c0f43d6410656ebb9092260c3b119634464e355db74116716d2dccdff",
@@ -273,6 +272,10 @@
   "onboarding_reveal_reading_guide": "36fd96d095853c6e0b35248217742260b06037996adf8d3288816e764aeb5cbb",
   "onboarding_reveal_reading_last": "28fdb39e885b2cb29c6326659f3bcd3ea9467092fd656d14dde3e1e1165cb90d",
   "onboarding_reveal_reading_last_title": "e046961998252bbf670b8c820d672a0a458636a566e6ce6fcfb8a025e0b18f81",
+  "onboarding_reveal_reading_line_dates": "d5e0be36440b38723cc04edee6a8f66da2f471b08a5d8ba70ba2cdaca31fa482",
+  "onboarding_reveal_reading_line_fit": "53763b39bf1d739843f7241aafc96f1487dd8ffe4fc7edd6beeaf7d95faa58e2",
+  "onboarding_reveal_reading_line_guide": "5f4c25bb93b21e1501355c1aae9df9a85e965daf0986acfd23ca861d0b541cfa",
+  "onboarding_reveal_reading_line_notice": "15f92802abed72d11ef800d1a9c30205c76bc52d6d53e51097a51c283b25b68a",
   "onboarding_reveal_reading_notice": "c41357934016a9cb3f1b1695c17164cd59d50a89ec8f3ea10ba812bdec2d8c27",
   "onboarding_reveal_reading_step": "4af6e09e3ebf3d40afdfc24f638059e8d22b7396ad1620bd76418bbcdf94742f",
   "onboarding_reveal_reading_title": "1896eb4780aeb2f39bf0acb505211b1109ad5e2a64e724ff173584495ccc3555",
@@ -842,7 +845,6 @@
     <string name="onboarding_date_description">Ohne festes Datum lernst du alles in deinem eigenen Tempo. Wir zeigen dir, wann du die einzelnen Meilensteine erreichst.</string>
     <string name="onboarding_date_none">Kein Datum, alles lernen</string>
     <string name="onboarding_date_label">Datum</string>
-    <string name="onboarding_date_pick">Datum auswählen</string>
     <string name="onboarding_exam_choice_title_one">Welche Prüfung legst du ab?</string>
     <string name="onboarding_exam_choice_title_other">Welche Prüfungen legst du ab?</string>
     <string name="onboarding_exam_choice_description">Dein Plan und die Probeprüfungen richten sich nach deiner Auswahl. Du kannst sie später in deinem Plan ändern.</string>
@@ -922,4 +924,9 @@
     <!-- On a setup question when the plan's run failed. -->
     <string name="onboarding_plan_stopped">Die Erstellung deines Plans wurde abgebrochen</string>
     <string name="onboarding_plan_answers_saved">Deine Antworten sind gespeichert. Versuch es noch einmal, damit dein Plan fertig ist, wenn du fertig bist.</string>
+    <!-- Detail lines while an exam's official documents are read. -->
+    <string name="onboarding_reveal_reading_line_notice">Wir suchen die Fächer und Themen aus der Bekanntmachung …</string>
+    <string name="onboarding_reveal_reading_line_guide">Wir suchen die Bereiche und Themen aus dem offiziellen Leitfaden …</string>
+    <string name="onboarding_reveal_reading_line_dates">Wir prüfen die Prüfungstermine und das Format …</string>
+    <string name="onboarding_reveal_reading_line_fit">Wir fügen sie in deinen Plan ein …</string>
 </resources>

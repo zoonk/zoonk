@@ -64,6 +64,9 @@ internal class GoalSetupViewModel(
     var isStartingOver by mutableStateOf(false)
         private set
 
+    /** How far a placement test is while it asks, which takes the step dots' place and Back's. */
+    var placementProgress by mutableStateOf<Float?>(null)
+
     val goalId: String get() = flow.goalId
 
     val follower =
@@ -91,9 +94,15 @@ internal class GoalSetupViewModel(
         update(flow.copy(current = view.steps.firstOrNull() ?: OnboardingStep.PLAN, history = answeredScreens(view)))
     }
 
-    /** One answer saves at a time, so a pick that moves on by itself and a Continue never save twice. */
-    fun answer(input: OnboardingAnswerInput) {
-        val step = flow.current ?: return
+    /**
+     * One answer saves at a time, so a pick and a Continue never save twice. [from] is the screen the
+     * answer belongs to: a placement that finishes after Back still answers placement.
+     */
+    fun answer(
+        input: OnboardingAnswerInput,
+        from: OnboardingStep? = flow.current,
+    ) {
+        val step = from ?: return
         if (isSaving) return
         isSaving = true
         saveFailed = false

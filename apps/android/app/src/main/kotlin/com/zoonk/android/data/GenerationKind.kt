@@ -147,6 +147,18 @@ enum class GenerationKind(
                 ),
         doneOnCompleted = "createPlan",
     ),
+
+    /** An exam's official documents read after its plan was built; no run reports it, so it's drawn by time. */
+    NoticeReading(
+        label = R.string.onboarding_reveal_reading_title,
+        phases = readingPhases(R.string.onboarding_reveal_reading_line_notice),
+        steps = READING_STEPS,
+    ),
+    GuideReading(
+        label = R.string.onboarding_reveal_reading_title,
+        phases = readingPhases(R.string.onboarding_reveal_reading_line_guide),
+        steps = READING_STEPS,
+    ),
     LevelTestBank(
         label = R.string.generation_level_test,
         phases =
@@ -423,3 +435,25 @@ private fun share(
     value: Float,
     total: Float,
 ) = if (total == 0f) 0f else value / total
+
+/** Main weighs the built plan as 40% of the wait and the reading, about four minutes, as the rest. */
+private fun readingPhases(
+    @StringRes findLine: Int,
+) = listOf(
+    GenerationPhase("plan", 160, R.string.onboarding_reveal_reading_done_step),
+    GenerationPhase(
+        "read",
+        240,
+        R.string.onboarding_reveal_reading_step,
+        listOf(findLine, R.string.onboarding_reveal_reading_line_dates, R.string.onboarding_reveal_reading_line_fit),
+    ),
+)
+
+private val READING_STEPS = mapOf("planBuilt" to StepPlace.Phase("plan"), "readNotice" to StepPlace.Phase("read"))
+
+/** The run a notice reading shows: its plan built, its documents being read. */
+val READING_RUN =
+    GenerationRun(
+        status = GenerationRun.Status.Following,
+        steps = mapOf("planBuilt" to StepState.Completed, "readNotice" to StepState.Started),
+    )

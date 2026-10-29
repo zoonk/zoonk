@@ -427,7 +427,7 @@ class LiveOnboardingApi(
         session: AuthenticatedSession,
         goalId: String,
         input: PlacementAnswerInput,
-    ) = perform { api.clients(session).learner.createPlacementAnswer(UUID.fromString(goalId), input) }
+    ) = perform { api.streamingClients(session).learner.createPlacementAnswer(UUID.fromString(goalId), input) }
 
     override suspend fun finishPlacement(
         session: AuthenticatedSession,

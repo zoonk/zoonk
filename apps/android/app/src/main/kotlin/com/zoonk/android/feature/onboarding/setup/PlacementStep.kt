@@ -21,12 +21,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
@@ -37,6 +39,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -57,17 +61,23 @@ import com.zoonk.android.R
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.recode
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.start.OnboardingActions
 import com.zoonk.android.feature.onboarding.start.OnboardingHeading
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.components.AnswerOption
+import com.zoonk.android.ui.components.AnswerOptionGroup
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LabelChip
 import com.zoonk.android.ui.components.LearnKind
+import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.Meter
+import com.zoonk.android.ui.components.PictureFrame
+import com.zoonk.android.ui.components.PrivatePicture
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatMinutes
@@ -83,6 +93,7 @@ import com.zoonk.api.models.PlacementAnswerAnyOf
 import com.zoonk.api.models.TrueFalseLabels
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
+import com.zoonk.api.models.LessonVisual as ApiLessonVisual
 
 /**
  * Main's `PlacementStep`: a few questions that find where the plan starts, or a mock exam in their
@@ -98,6 +109,7 @@ internal fun ColumnScope.PlacementStep(
     onRetryRun: (() -> Unit)?,
     store: OnboardingStore,
     navigator: AppNavigator,
+    onProgress: (Float?) -> Unit,
     onDone: () -> Unit,
 ) {
     val vm = viewModel(key = "placement:$goalId") { PlacementViewModel(goalId, store, createSavedStateHandle()) }
@@ -107,6 +119,9 @@ internal fun ColumnScope.PlacementStep(
     val phase = vm.phase(placement, mocks)
     val poll = rememberPoll(active = phase == PlacementPhase.Waiting && !run.isStopped) { resource.refreshed() }
     val finish = { fromScratch: Boolean -> vm.finish(fromScratch, onDone = onDone) }
+    val progress = (phase as? PlacementPhase.Question)?.spent?.toFloat()
+    LaunchedEffect(progress) { onProgress(progress) }
+    DisposableEffect(Unit) { onDispose { onProgress(null) } }
 
     when (phase) {
         PlacementPhase.Loading -> {
@@ -281,7 +296,7 @@ private fun ColumnScope.PlacementWaiting(
     if (patient || run.status == GenerationRun.Status.Failed) {
         OnboardingActions {
             FinishFailed(failed)
-            FilledTonalButton(onClick = onSkip, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
+            TextButton(onClick = onSkip, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
                 Text(stringResource(R.string.onboarding_placement_skip_for_now))
             }
             Text(
@@ -333,22 +348,22 @@ private fun ColumnScope.PlacementQuestion(
     }
     val confirm = { answer?.let(send) }
 
-    Meter(
-        share = question.spent.toFloat(),
-        color = MaterialTheme.colorScheme.primary,
-        contentDescription = stringResource(R.string.onboarding_placement_progress),
-    )
     Eyebrow("${subject.labelCase()} · ${stringResource(R.string.onboarding_placement_question_number, question.number)}")
     item.context?.let {
         RichText(it, style = MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurfaceVariant))
     }
+    item.image?.let { PrivatePicture(it.url, it.alt, it.width, it.height, PictureFrame.Question) }
+    val visual = remember(item.visual) { item.visual?.recode<ApiLessonVisual, LessonVisual>() }
+    visual?.let { LessonVisual(it) }
     RichText(item.question, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
 
     if (item.format == PlacementFormat.Typed) {
+        val typedFocus = remember { FocusRequester() }
+        LaunchedEffect(Unit) { typedFocus.requestFocus() }
         OutlinedTextField(
             value = typed,
             onValueChange = { typed = it.take(MAX_TYPED_ANSWER) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().focusRequester(typedFocus),
             label = { Text(stringResource(R.string.onboarding_placement_your_answer)) },
             minLines = 3,
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Send),
@@ -370,17 +385,22 @@ private fun ColumnScope.PlacementQuestion(
             }
         }
         FinishFailed(finishFailed)
-        Button(onClick = { confirm() }, enabled = answer != null && !pending, modifier = Modifier.fillMaxWidth()) {
-            Text(stringResource(R.string.onboarding_placement_confirm))
-        }
-        FilledTonalButton(
-            onClick = { send(DONT_KNOW) },
-            enabled = !pending,
-            modifier = Modifier.fillMaxWidth(),
-            contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
-        ) {
-            Icon(painterResource(R.drawable.ic_help), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
-            Text(stringResource(R.string.onboarding_placement_dont_know), modifier = Modifier.padding(start = ButtonDefaults.IconSpacing))
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(
+                onClick = { send(DONT_KNOW) },
+                enabled = !pending,
+                modifier = Modifier.weight(1f),
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+            ) {
+                Icon(painterResource(R.drawable.ic_help), contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+                Text(
+                    stringResource(R.string.onboarding_placement_dont_know),
+                    modifier = Modifier.padding(start = ButtonDefaults.IconSpacing),
+                )
+            }
+            Button(onClick = { confirm() }, enabled = answer != null && !pending, modifier = Modifier.weight(CONFIRM_WEIGHT)) {
+                Text(stringResource(R.string.onboarding_placement_confirm))
+            }
         }
         TextButton(onClick = onStop, enabled = !pending, modifier = Modifier.fillMaxWidth()) {
             Text(stringResource(R.string.onboarding_placement_stop))
@@ -427,44 +447,19 @@ private fun choices(
         }
     }
 
-/** Main's `AnswerOption`s: numbered, picked in ink until Confirm sends the pick. */
 @Composable
 private fun AnswerList(
     choices: List<Choice>,
     picked: Int?,
     onPick: (Int) -> Unit,
 ) {
-    Column(Modifier.fillMaxWidth().selectableGroup(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    AnswerOptionGroup {
         choices.forEachIndexed { index, choice ->
-            val selected = picked == index
-            val tone = answerTone(picked = selected, result = null)
-            Surface(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .clip(MaterialTheme.shapes.medium)
-                        .selectable(selected = selected, role = Role.RadioButton, onClick = { onPick(index) }),
-                shape = MaterialTheme.shapes.medium,
-                color = tone.container,
-                contentColor = tone.contentColor,
-                border = tone.border,
-            ) {
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = (index + 1).toString(),
-                        modifier = Modifier.clearAndSetSemantics {},
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.labelLarge.withTabularFigures(),
-                    )
-                    if (choice.rich) {
-                        RichInlineText(choice.label, style = MaterialTheme.typography.bodyLarge)
-                    } else {
-                        Text(choice.label, style = MaterialTheme.typography.bodyLarge)
-                    }
+            AnswerOption(marker = index + 1, picked = picked == index, result = null, onClick = { onPick(index) }) {
+                if (choice.rich) {
+                    RichInlineText(choice.label, style = MaterialTheme.typography.bodyLarge)
+                } else {
+                    Text(choice.label, style = MaterialTheme.typography.bodyLarge)
                 }
             }
         }
@@ -586,3 +581,5 @@ private val DONT_KNOW = PlacementAnswer.ChoiceAnswerValue(ChoiceAnswer.ChoiceAns
 private val PATIENCE = 20.seconds
 private const val MAX_TYPED_ANSWER = 1000
 private const val READS_MATERIAL_STEP = "readExamNotice"
+
+private const val CONFIRM_WEIGHT = 1.6f

@@ -55,12 +55,17 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.LocalPrivatePictures
+import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.MeterPart
 import com.zoonk.android.ui.components.MeterParts
+import com.zoonk.android.ui.components.PrivatePictures
 import com.zoonk.android.ui.scaffold.PageScaffold
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.Onboarding
+import com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value
+import com.zoonk.api.models.OnboardingAnswerInputOneOf9
 import com.zoonk.api.models.OnboardingStep
 import kotlinx.datetime.toJavaLocalDate
 import kotlinx.serialization.json.JsonArray
@@ -74,7 +79,10 @@ fun GoalSetupScreen(
     navigator: AppNavigator,
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
-    GoalSetupScreen(route, app.onboarding, isGuest = (session as? SessionState.SignedIn)?.isGuest == true, navigator)
+    val signedIn = session as? SessionState.SignedIn
+    CompositionLocalProvider(LocalPrivatePictures provides PrivatePictures(app.images, signedIn?.session)) {
+        GoalSetupScreen(route, app.onboarding, isGuest = signedIn?.isGuest == true, navigator)
+    }
 }
 
 @Composable
@@ -89,7 +97,8 @@ fun GoalSetupScreen(
     val view = (state as? LoadState.Loaded)?.value
     val step = vm.flow.current
     val inQuestions = step != null && step != OnboardingStep.PLAN
-    val back = { vm.back() }.takeIf { inQuestions && vm.flow.history.isNotEmpty() }
+    val testing = vm.placementProgress.takeIf { step == OnboardingStep.PLACEMENT }
+    val back = { vm.back() }.takeIf { inQuestions && testing == null && vm.flow.history.isNotEmpty() }
 
     view?.let { LaunchedEffect(it.goal.id) { vm.begin(it) } }
     if (view?.goal?.kind == Goal.Kind.EXPLAIN) {
@@ -103,7 +112,22 @@ fun GoalSetupScreen(
 
     PageScaffold(
         onBack = { back?.invoke() ?: navigator.back() },
-        title = { if (view != null && step in QUESTION_SCREENS) StepDots(view, vm.flow) },
+        title = {
+            when {
+                testing != null -> {
+                    Meter(
+                        share = testing,
+                        modifier = Modifier.width(STEP_DOTS_WIDTH),
+                        color = MaterialTheme.colorScheme.primary,
+                        contentDescription = stringResource(R.string.onboarding_placement_progress),
+                    )
+                }
+
+                view != null && step in QUESTION_SCREENS -> {
+                    StepDots(view, vm.flow)
+                }
+            }
+        },
         actions = {
             if (view != null && inQuestions) {
                 MoreMenu(
@@ -122,7 +146,7 @@ fun GoalSetupScreen(
         PageWithSupportingPane(
             supportingPane = { view?.let { PlanSoFar(it.goal) } },
             modifier = Modifier.padding(padding).consumeWindowInsets(padding),
-        ) { _ ->
+        ) { asideBeside ->
             when (val shown = state) {
                 is LoadState.Loaded -> {
                     SetupColumn {
@@ -134,7 +158,7 @@ fun GoalSetupScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
-                        step?.let { SetupStep(it, shown.value, vm, store, isGuest, navigator) }
+                        step?.let { SetupStep(it, shown.value, vm, store, isGuest, navigator, asideBeside) }
                     }
                 }
 
@@ -156,6 +180,7 @@ private fun ColumnScope.SetupStep(
     store: OnboardingStore,
     isGuest: Boolean,
     navigator: AppNavigator,
+    asideBeside: Boolean,
 ) {
     val subject = view.subject()
     val pending = vm.isSaving
@@ -165,7 +190,7 @@ private fun ColumnScope.SetupStep(
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 
     CompositionLocalProvider(LocalPlanStart provides planStart) {
-        QuestionStep(step, view, vm, store, isGuest, navigator, subject, pending, run, onRetryRun)
+        QuestionStep(step, view, vm, store, isGuest, navigator, subject, pending, run, onRetryRun, asideBeside)
     }
 }
 
@@ -181,6 +206,7 @@ private fun ColumnScope.QuestionStep(
     pending: Boolean,
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
+    asideBeside: Boolean,
 ) {
     when (step) {
         OnboardingStep.PURPOSE -> {
@@ -229,7 +255,7 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.SCHEDULE -> {
-            ScheduleStep(view.goal, view.recommendedMinutes.toInt(), run, store, vm, pending)
+            ScheduleStep(view.goal, view.recommendedMinutes.toInt(), run, store, vm, pending, factsBeside = asideBeside)
         }
 
         OnboardingStep.BUDDY -> {
@@ -245,13 +271,11 @@ private fun ColumnScope.QuestionStep(
                 onRetryRun = onRetryRun,
                 store = store,
                 navigator = navigator,
+                onProgress = { vm.placementProgress = it },
                 onDone = {
                     vm.answer(
-                        com.zoonk.api.models.OnboardingAnswerInput.OnboardingAnswerInputOneOf9Value(
-                            com.zoonk.api.models.OnboardingAnswerInputOneOf9(
-                                com.zoonk.api.models.OnboardingAnswerInputOneOf9.Question.PLACEMENT,
-                            ),
-                        ),
+                        OnboardingAnswerInputOneOf9Value(OnboardingAnswerInputOneOf9(OnboardingAnswerInputOneOf9.Question.PLACEMENT)),
+                        from = OnboardingStep.PLACEMENT,
                     )
                 },
             )
@@ -303,7 +327,7 @@ private fun StepDots(
                     },
                 )
             },
-        modifier = Modifier.width(96.dp),
+        modifier = Modifier.width(STEP_DOTS_WIDTH),
         contentDescription = stringResource(R.string.onboarding_step_of, answered + 1, total),
     )
 }
@@ -387,3 +411,5 @@ private fun Map<String, kotlinx.serialization.json.JsonElement>.texts(key: Strin
     (get(key) as? JsonArray).orEmpty().mapNotNull { (it as? JsonPrimitive)?.contentOrNull }
 
 private const val DONE_ALPHA = 0.25f
+
+private val STEP_DOTS_WIDTH = 96.dp
