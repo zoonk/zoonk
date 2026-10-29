@@ -20,13 +20,8 @@ class LinearScale(
 
     fun toValue(position: Float): Double {
         val (start, end) = range
-        return if (end ==
-            start
-        ) {
-            domain.start
-        } else {
-            domain.start + (position - start) / (end - start).toDouble() * (domain.endInclusive - domain.start)
-        }
+        val span = domain.endInclusive - domain.start
+        return if (end == start) domain.start else domain.start + (position - start) / (end - start).toDouble() * span
     }
 }
 
