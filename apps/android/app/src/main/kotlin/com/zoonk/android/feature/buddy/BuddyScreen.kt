@@ -191,6 +191,7 @@ internal fun BuddyPage(
             signIn = { navigator.open(AppRoute.Login) },
             seePlus = { navigator.open(AppRoute.Subscription) },
             open = navigator::open,
+            startCall = app.conversations::start,
         )
 
     PageWithSupportingPane(
