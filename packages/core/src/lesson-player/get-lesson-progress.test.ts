@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { lessonRunFixture } from "./_test-utils/lesson-run-fixture";
 import { setupPlayableLesson, stepOfKind } from "./_test-utils/playable-lesson-setup";
-import { getLessonProgress } from "./get-lesson-progress";
+import { getLessonProgress, hasStartedLesson } from "./get-lesson-progress";
 
 describe(getLessonProgress, () => {
   it("reads the answers of the sittings the learner left unfinished this week, oldest first", async () => {
@@ -74,5 +74,22 @@ describe(getLessonProgress, () => {
     mockSession(null);
 
     await expect(getLessonProgress({ lessonId: lesson.id })).resolves.toStrictEqual([]);
+  });
+});
+
+describe(hasStartedLesson, () => {
+  it("counts a lesson as started once its unfinished sitting has an answer", async () => {
+    const { lesson, steps, user } = await setupPlayableLesson();
+    const run = await lessonRunFixture({ lessonId: lesson.id, userId: user.id });
+
+    await expect(hasStartedLesson({ lessonId: lesson.id })).resolves.toBe(false);
+
+    await attemptFixture({
+      answeredAt: new Date(run.startedAt.getTime() + 1000),
+      stepId: stepOfKind(steps, "check").id,
+      userId: user.id,
+    });
+
+    await expect(hasStartedLesson({ lessonId: lesson.id })).resolves.toBe(true);
   });
 });

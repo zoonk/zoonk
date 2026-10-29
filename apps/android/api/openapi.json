@@ -8253,6 +8253,71 @@
         }
       }
     },
+    "/library/lessons/{lessonId}/progress": {
+      "get": {
+        "description": "Whether the learner or guest has started the lesson, for its public page's \"Continue the lesson\" in place of its first question. Starting it (POST /library/lessons/{lessonId}/starts) resumes that sitting with its `answers`. Without a session, nothing is started.",
+        "operationId": "getLibraryLessonProgress",
+        "security": [
+          {},
+          {
+            "bearerAuth": []
+          },
+          {
+            "cookieAuth": []
+          }
+        ],
+        "summary": "Get whether the learner started a Library lesson",
+        "tags": [
+          "Library lessons"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lessonId",
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "pattern": "^([0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-8][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}|00000000-0000-0000-0000-000000000000|ffffffff-ffff-ffff-ffff-ffffffffffff)$",
+              "description": "Lesson ID"
+            },
+            "required": true,
+            "description": "Lesson ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Whether the lesson is started",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryLessonProgress"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/library/lessons/{lessonId}/starts": {
       "post": {
         "description": "Starts a run of the lesson for the learner or guest. A new lesson counts toward the allowance once; restarting it is free, and a second start within half an hour resumes the same run with its `answers`, so the app opens the lesson where the learner left off. A refused start is `SLOW_DOWN` (429, try again after `Retry-After`) or `USAGE_LIMIT_REACHED` with `details.limit`: 403 asks a guest to sign up, 402 a free learner to upgrade, 429 Plus to come back later. A new lesson of a free exam plan past its first week (shown with `plusRequired` on its chapter) answers 402 `PLUS_REQUIRED`: Plus opens the rest of the plan, while lessons done or begun, lessons outside the plan, reviews and mistakes stay open.",
@@ -69367,6 +69432,19 @@
         ],
         "additionalProperties": false,
         "description": "Where a public lesson fits, for the end of a guest's lesson: its chapter and place in it, and the course \"Build my plan\" starts"
+      },
+      "LibraryLessonProgress": {
+        "type": "object",
+        "properties": {
+          "started": {
+            "type": "boolean",
+            "description": "The learner left a sitting of the lesson unfinished this week with an answer, so starting it again picks up where they left off"
+          }
+        },
+        "required": [
+          "started"
+        ],
+        "additionalProperties": false
       },
       "LibraryLessonRun": {
         "type": "object",

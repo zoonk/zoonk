@@ -9,7 +9,11 @@ import {
   libraryLessonStartInputSchema,
 } from "@zoonk/core/lesson-player/contract";
 import { challengeTeamSchema } from "@zoonk/core/library/challenges/team";
-import { lessonFitSchema, playableLibraryLessonResponseSchema } from "../schemas/library-lessons";
+import {
+  lessonFitSchema,
+  libraryLessonProgressSchema,
+  playableLibraryLessonResponseSchema,
+} from "../schemas/library-lessons";
 import { lessonPathParamsSchema } from "../schemas/paths";
 import {
   conflictResponse,
@@ -106,6 +110,24 @@ export const libraryLessonPaths = {
       },
       security: OPTIONAL_AUTHENTICATION_SECURITY,
       summary: "Get where a Library lesson fits",
+      tags: ["Library lessons"],
+    },
+  },
+  "/library/lessons/{lessonId}/progress": {
+    get: {
+      description:
+        'Whether the learner or guest has started the lesson, for its public page\'s "Continue the lesson" in place of its first question. Starting it (POST /library/lessons/{lessonId}/starts) resumes that sitting with its `answers`. Without a session, nothing is started.',
+      operationId: "getLibraryLessonProgress",
+      requestParams: { path: lessonPathParamsSchema },
+      responses: {
+        "200": {
+          content: { "application/json": { schema: libraryLessonProgressSchema } },
+          description: "Whether the lesson is started",
+        },
+        "400": validationErrorResponse,
+      },
+      security: OPTIONAL_AUTHENTICATION_SECURITY,
+      summary: "Get whether the learner started a Library lesson",
       tags: ["Library lessons"],
     },
   },

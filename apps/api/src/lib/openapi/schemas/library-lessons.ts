@@ -179,6 +179,17 @@ export const playableLibraryLessonResponseSchema = z
   ])
   .meta({ id: "PlayableLibraryLessonResponse" });
 
+export const libraryLessonProgressSchema = z
+  .object({
+    started: z
+      .boolean()
+      .meta({
+        description:
+          "The learner left a sitting of the lesson unfinished this week with an answer, so starting it again picks up where they left off",
+      }),
+  })
+  .meta({ id: "LibraryLessonProgress" });
+
 export const lessonFitSchema = z
   .object({
     chapter: z.object({

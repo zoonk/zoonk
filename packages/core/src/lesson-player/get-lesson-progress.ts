@@ -29,3 +29,9 @@ export async function getLessonProgress({
 
   return first ? loadProgressAnswers({ lessonId: id, since: first.startedAt, userId }) : [];
 }
+
+/** Whether a lesson's public page offers "Continue the lesson": an unfinished sitting with an answer. */
+export async function hasStartedLesson({ lessonId }: { lessonId: string }): Promise<boolean> {
+  const answers = await getLessonProgress({ lessonId });
+  return answers.length > 0;
+}

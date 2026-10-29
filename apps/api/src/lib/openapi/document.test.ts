@@ -96,6 +96,11 @@ const CANONICAL_OPERATIONS = [
   { method: "post", operationId: "createGuestSession", path: "/guests" },
   { method: "get", operationId: "getLibraryLesson", path: "/library/lessons/{lessonId}" },
   {
+    method: "get",
+    operationId: "getLibraryLessonProgress",
+    path: "/library/lessons/{lessonId}/progress",
+  },
+  {
     method: "post",
     operationId: "createLibraryLessonStart",
     path: "/library/lessons/{lessonId}/starts",
