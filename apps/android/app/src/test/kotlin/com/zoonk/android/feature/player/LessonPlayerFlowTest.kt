@@ -30,6 +30,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DraftStore
 import com.zoonk.android.data.DraftsChange
 import com.zoonk.android.data.FakeSession
+import com.zoonk.android.feature.player.engine.LessonRun
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonStep
 import com.zoonk.android.navigation.AppRoute
@@ -87,7 +88,7 @@ class LessonPlayerFlowTest {
         api = FakeLessonPlayerApi(LessonLoad.Ready(lesson)).apply(configure)
         val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
         val cache = AppCache(session, scope)
-        val drafts = DraftStore(folder.newFolder(), scope)
+        val drafts = DraftStore(folder.newFolder(), scope, io = Dispatchers.Main.immediate)
         runBlocking { drafts.follow { DraftsChange(ana.accountId) } }
         val newViewModel = {
             LessonPlayerViewModel(
@@ -115,6 +116,11 @@ class LessonPlayerFlowTest {
                     LessonPlayer(lesson, state, ending, viewModel, exits)
                 }
             }
+        }
+        rule.waitUntil {
+            viewModel.state.value
+                ?.run
+                .let { it is LessonRun.Started || it is LessonRun.Refused }
         }
     }
 
