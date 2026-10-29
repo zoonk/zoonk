@@ -31,6 +31,8 @@ import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.LiveCatalogApi
+import com.zoonk.android.feature.conversation.ConversationStore
+import com.zoonk.android.feature.conversation.LiveConversationApi
 import com.zoonk.android.feature.explain.ExplainStore
 import com.zoonk.android.feature.explain.LiveExplainApi
 import com.zoonk.android.feature.feedback.FeedbackSender
@@ -179,6 +181,7 @@ class AppContainer private constructor(
     val goalSwitch = GoalSwitch(learningProfile::setActiveGoal)
 
     // Live calls and speaking (L9).
+    val conversations = ConversationStore(LiveConversationApi(api), cache)
     val calls = OngoingCalls(context.applicationContext, scope)
     val callTransports =
         LiveCallTransports { microphone, onEvent, onLost -> WebRtcLiveCallTransport(context, microphone, onEvent, onLost) }

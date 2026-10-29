@@ -47,6 +47,8 @@ openApiGenerate {
     schemaMappings =
         listOf(
             "ExamTopicFrequency",
+            // Its call lengths are numbers the generator would send as strings ("5.0").
+            "LanguageConversationStartInput",
             "LanguageLevelTestSpokenAnswerRequest",
             // Its explicit nulls mean "clear it" (no daily limit, no active goal), which the model can't tell from absent.
             "LearningProfileUpdate",

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A call is a spoken conversation with an AI character who plays a role (a waiter, a receptionist) in the language the learner studies. -->
+    <string name="conversation_practice_call">Practice call</string>
+    <string name="conversation_unit_challenge">Unit challenge</string>
+    <string name="conversation_ielts_mock">IELTS speaking mock</string>
+    <string name="conversation_toefl_mock">TOEFL speaking mock</string>
+    <!-- How long the call lasts and its language level, such as "5 min · Level A2". -->
+    <string name="conversation_intro_meta">%1$s · Level %2$s</string>
+    <!-- The character's role and where the call takes place, such as "Waiter · Café in Madrid". -->
+    <string name="conversation_character_detail">%1$s · %2$s</string>
+    <string name="conversation_get_across">What to get across</string>
+    <string name="conversation_mic_note">Speak or type. The microphone is used only during the call.</string>
+    <string name="conversation_start">Start the call</string>
+    <string name="conversation_starting">Starting…</string>
+    <string name="conversation_start_failed">The call didn\'t start. Try again in a moment.</string>
+    <string name="conversation_challenge_plus">Challenge calls come with Plus. Your plan keeps going without them.</string>
+    <string name="conversation_not_found_title">We couldn\'t find this call</string>
+    <string name="conversation_not_found_description">The link may be old or mistyped.</string>
+
+    <!-- Read before what the learner said in the call's transcript. -->
+    <string name="conversation_you_said">You: %1$s</string>
+    <!-- Read before what the character said in the call's transcript: the character's name, then the words. -->
+    <string name="conversation_character_said">%1$s: %2$s</string>
+    <string name="conversation_type_reply">Type your reply</string>
+    <string name="conversation_type_reply_hint">Or type your reply</string>
+    <string name="conversation_send">Send</string>
+    <string name="conversation_phrases">Phrases you can use</string>
+    <string name="conversation_almost_up_month">Your call time for this month is almost up.</string>
+    <string name="conversation_almost_up_day">Your call time for today is almost up.</string>
+    <!-- A hint for the call's next goal. -->
+    <string name="conversation_tip">Tip: %1$s</string>
+    <!-- The call's clock: time talked, then the call's length, such as "1:05 / 5:00". -->
+    <string name="conversation_clock">%1$s / %2$s</string>
+    <string name="conversation_goals">Goals of the call</string>
+    <!-- How many of the call's goals the learner has met, such as "1 of 3". -->
+    <string name="conversation_goals_met">%1$s of %2$s</string>
+    <string name="conversation_goal_done">Done</string>
+    <string name="conversation_goal_not_yet">Not yet</string>
+    <string name="conversation_reconnecting">Reconnecting…</string>
+    <string name="conversation_calling">Calling…</string>
+    <string name="conversation_microphone_off">Microphone off</string>
+    <string name="conversation_muted">Muted</string>
+    <string name="conversation_talking">%1$s is talking…</string>
+    <string name="conversation_listening">Listening…</string>
+    <string name="conversation_help">Help</string>
+    <string name="conversation_mute">Mute</string>
+    <string name="conversation_end">End</string>
+
+    <string name="conversation_no_calls_today">No more calls today</string>
+    <string name="conversation_no_calls_month">No more calls this month</string>
+    <string name="conversation_calls_need_account">Calls need a free account</string>
+    <string name="conversation_ended_title">This call has ended</string>
+    <string name="conversation_taken_over">It ended when you started another call.</string>
+    <string name="conversation_ended">Start a new call to keep practicing.</string>
+    <string name="conversation_paused_title">Calls are paused</string>
+    <string name="conversation_paused">It\'s the same for everyone right now. Try again later.</string>
+    <string name="conversation_in_progress_title">You\'re already in a call</string>
+    <string name="conversation_in_progress">It\'s open in another tab or on another device. Ending it from here skips its feedback.</string>
+    <string name="conversation_take_over">End that call and start this one</string>
+    <string name="conversation_dropped_title">The call dropped</string>
+    <string name="conversation_dropped">Call again, or end the call to get feedback on what you said.</string>
+    <string name="conversation_end_call">End the call</string>
+    <string name="conversation_call_again">Call again</string>
+    <string name="conversation_not_connected_title">The call didn\'t connect</string>
+    <string name="conversation_not_connected">This happens sometimes. Try again in a moment.</string>
+    <string name="conversation_try_again">Try again</string>
+    <string name="conversation_writing_feedback">Writing your feedback…</string>
+    <string name="conversation_writing_feedback_slow">Still writing your feedback. This is taking longer than usual.</string>
+    <string name="conversation_rating">Rating your speaking on the exam\'s criteria. It usually takes about half a minute.</string>
+    <string name="conversation_rating_slow">Still rating your speaking. This is taking longer than usual.</string>
+    <string name="conversation_still_closing">The call is still closing. Try again in a moment.</string>
+    <string name="conversation_save_failed">We couldn\'t save the call.</string>
+
+    <plurals name="conversation_stars">
+        <item quantity="one">%1$d of 3 stars</item>
+        <item quantity="other">%1$d of 3 stars</item>
+    </plurals>
+    <string name="conversation_challenge_passed">Challenge passed</string>
+    <string name="conversation_not_this_time">Not this time</string>
+    <string name="conversation_goals_tile">Goals</string>
+    <string name="conversation_brain_power">Brain Power</string>
+    <string name="conversation_try_again_later">Nothing is lost: the call comes back so you can try again.</string>
+    <string name="conversation_stars_rule">A star for finishing, one for getting everything across and one without Help.</string>
+    <string name="conversation_went_well">What went well</string>
+    <string name="conversation_said_well">Phrases you said well</string>
+    <string name="conversation_to_improve">To improve</string>
+    <string name="conversation_still_to_get_across">Goals still to get across</string>
+    <string name="conversation_words_to_practice">Words to practice saying</string>
+    <!-- Labels of a correction: what the learner said, then a better way to say it. -->
+    <string name="conversation_you_said_label">You said</string>
+    <string name="conversation_better">Better</string>
+    <string name="conversation_listen">Listen</string>
+
+    <string name="conversation_practice">Practice a conversation</string>
+    <!-- Who the practice call is with, such as "with Lucía · Waiter". -->
+    <string name="conversation_practice_with">with %1$s · %2$s</string>
+    <string name="conversation_call_length">Call length</string>
+    <string name="conversation_longer_calls_plus">Longer calls come with Plus.</string>
+    <string name="conversation_opens_when_ready">Your call opens as soon as it\'s ready.</string>
+    <string name="conversation_writing_call">Writing your call</string>
+    <string name="conversation_writing_call_phase">Writing the call for your level</string>
+    <string name="conversation_writing_call_line_1">Choosing who you\'ll talk to…</string>
+    <string name="conversation_writing_call_line_2">Writing what they say first…</string>
+    <string name="conversation_writing_call_line_3">Picking what to get across…</string>
+    <string name="conversation_writing_call_line_4">Adding phrases you can lean on…</string>
+</resources>
