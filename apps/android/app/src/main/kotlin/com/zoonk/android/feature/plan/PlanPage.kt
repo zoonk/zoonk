@@ -36,6 +36,8 @@ import com.zoonk.android.app.LocalSnackbarHostState
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.conversation.CallRequest
+import com.zoonk.android.feature.conversation.CallStart
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblem
 import com.zoonk.android.feature.feedback.rememberReportProblem
@@ -50,6 +52,7 @@ import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.api.models.FeedbackSubmissionContext
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.LanguageProgress
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.Plan
@@ -107,6 +110,8 @@ class PlanLinks(
 
     fun plus() = open(AppRoute.Subscription)
 
+    fun speaking() = open(AppRoute.Speaking())
+
     /** Null where the page shows no far topic's sheet. */
     fun farTopic(topic: FarTopic): (() -> Unit)? =
         openFarTopic?.let { open ->
@@ -119,7 +124,7 @@ class PlanLinks(
     /** These links run [close] before leaving, so a sheet they're in doesn't stay over the page they open. */
     fun closing(close: () -> Unit) = PlanLinks(navigator, page, openFarTopic) { close() }
 
-    private fun open(route: AppRoute) {
+    fun open(route: AppRoute) {
         leaving()
         navigator.open(route)
     }
@@ -135,11 +140,24 @@ internal fun PlanPage(
     focus: String?,
 ) {
     val syllabus by app.plans.syllabus[page.goal.id].collectShown()
-    val progress by app.plans.progress[page.goal.id].collectShown()
+    val isLanguage = page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE
+    val standing =
+        if (isLanguage) {
+            app.languageProgress.progress[page.goal.id]
+                .collectShown()
+                .value.value
+                ?.let { Standing.Language(it, app.conversations::start) }
+        } else {
+            standingOf(
+                page,
+                app.plans.progress[page.goal.id]
+                    .collectShown()
+                    .value.value,
+                syllabus.value,
+            )
+        }
     val alphabet =
-        if (page.goal.kind ==
-            LearnerSummaryGoal.Kind.LANGUAGE
-        ) {
+        if (isLanguage) {
             app.alphabet.units[page.goal.id]
                 .collectShown()
                 .value.value
@@ -201,7 +219,7 @@ internal fun PlanPage(
 
     PlanContent(
         page = page,
-        standing = standingOf(page, progress.value, syllabus.value),
+        standing = standing,
         alphabet = alphabet?.let { { AlphabetRow(it, page.goal.id, app.alphabet, navigator::open) } },
         structure = syllabus.value?.takeIf { it.hasSubjectPages },
         links = links,
@@ -467,6 +485,11 @@ internal sealed interface Standing {
         val done: Long,
         val total: Long,
     ) : Standing
+
+    data class Language(
+        val progress: LanguageProgress,
+        val startCall: suspend (CallRequest) -> CallStart,
+    ) : Standing
 }
 
 internal fun standingOf(
@@ -474,7 +497,6 @@ internal fun standingOf(
     progress: GoalProgress?,
     syllabus: Syllabus?,
 ): Standing? {
-    if (page.goal.kind == LearnerSummaryGoal.Kind.LANGUAGE) return null
     val preparation = progress?.preparation ?: return null
     if (preparation.goalId != page.goal.id) return null
     if (page.isExam) return Standing.Preparation(progress)

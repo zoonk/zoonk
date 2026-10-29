@@ -244,6 +244,7 @@
   "plan_estimate_based_on_last": "a557f26b5a248fc9ef974607ff9946f1415292fcbbdf7d8367e44d924e65f915",
   "plan_estimate_waits": "6b666bd3845091aafce61254df66435165837495c5c99bcafc5d8d238683c9a7",
   "plan_estimated_score": "23c9cae7314afe000eec6765c33f1a1cc2a489f2677da396718968d618abe6e4",
+  "plan_even_across_skills": "e4745de9674b6c733a238baba45617a7b08f056e0cabc66d38c8c4b3d584c6b9",
   "plan_every_day": "218543d1c5c2c19e7dddaf7ebe21dd17dc76f4f873e8ae3c2595966403a2e653",
   "plan_everything": "4b1a86b344e110d5a16c5ebe737783960d777848840a43aa23a1f182ad243362",
   "plan_exam_choice_left_out": "fc560e67ae2b53492f8da1a5a9c9a8660b6415e016ae602b3ee3f0bcddefbb5b",
@@ -308,6 +309,7 @@
   "plan_lessons_left_out": "dc2638b683747f43eff5e425cb82a930ae4f6b22b234666f07390bc7d678750f",
   "plan_lessons_of": "d499d1de4b272aa8b6932c33ebe200e2dc61c5702c4cc7f14c51100b98749d0c",
   "plan_lessons_on_the_way": "4b3376bc6b04e979b3fdd626837cb49dfd3df94895b96b0e22f925895b116bd5",
+  "plan_level": "b09744509e407a5798b0303a350765d958172654bba1df9e489642aa73d501b9",
   "plan_long_term_memory": "e889641f9dc6225c3572cf31f4738b368fe452c1a5afcf4e5dc23dff71ac267c",
   "plan_loss_this_week": "bc6f8ae8d650b1941e8b0d1a9aca1a896d271363a8fdb3e25cdfd6c641d0fb1b",
   "plan_mastery": "863c6e53096b8d47cac83e398c634803ce8fe27d83c7fac72900c736aa94a6d6",
@@ -443,6 +445,7 @@
   "plan_short_mock_and_practice": "1c8f8a74fa76f9017e7a9ee20ae6b9e1a32f9d4f0fb1d533d0c47499ee345150",
   "plan_short_mock_and_review": "a4e9d781a9e0c7203baf5b0ad5ab6a3ff8bf22c6264bdcf6dd114d9fdb6487fb",
   "plan_show_fewer_chapters": "3b4d1e015ff17b5686bef2825286cb720084b1845df66640415d62b9c5d836d2",
+  "plan_skill_leads": "08367c2ddab56edfa0a7aeef83ed710255caf7cf839993fbba70a15b75cfd947",
   "plan_skills_you_know": "3da4c326f88321d2f80e60c86e81244f507305b4b8d5b2f0daa4fcbc5d16be2b",
   "plan_skipped": "57af5682488225642aa7973e204c5b397431dfb73714266e37e936201ae4296c",
   "plan_skipped_known": "68bca620b6b2c0ede853bbbcb475072e799538c783fab209183eb1151cbb6723",
@@ -533,6 +536,7 @@
   "plan_where_to_focus_description": "a6760d1587c67cb6c7a7424c7658a90de1a45b3e418d78ea63ef7c0ab19c2c02",
   "plan_working_out_coverage": "0a5db8dbd8f99937f8267c9407b6609d80dcb17c6782dde977d76596ce634985",
   "plan_you_are_here_suffix": "a19417688343522f9a638b5f9e0ff5b54c018dc44958cef3b8c9d2bcf90ddf59",
+  "plan_your_level": "8550c1be4019ecb32be191ceeb731422a74899099c8ddb67c441b98521fc8b3b",
   "plan_your_pace": "655d879a5fb3464890a30aa7d2e8792155e02e7bd82416d1d53a7439ea1bdeea",
   "plan_your_path": "546f19f13c52d1c9feb0580b1be89e45ba0adec3eba55c3688845900dc729650",
   "plan_your_plan": "3b24026117a414e9ea4d584f8eb5abe90ee9efa40f5e8233298ee2c8ddf1143a",
@@ -825,6 +829,13 @@
     <string name="plan_progress">Progresso</string>
     <string name="plan_your_preparation">Seu preparo</string>
     <string name="plan_your_progress">Seu progresso</string>
+    <!-- A language goal's standing: its level across skills, such as "B1". -->
+    <string name="plan_level">Nível</string>
+    <string name="plan_your_level">Seu nível</string>
+    <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
+    <string name="plan_even_across_skills">Habilidades no mesmo nível</string>
+    <!-- Under a language goal's level: the skill that is highest, such as "Reading leads". -->
+    <string name="plan_skill_leads">%1$s está à frente</string>
     <string name="plan_no_change_this_week">Sem mudanças nesta semana</string>
     <plurals name="plan_gain_this_week">
         <item quantity="one">+%d nesta semana</item>

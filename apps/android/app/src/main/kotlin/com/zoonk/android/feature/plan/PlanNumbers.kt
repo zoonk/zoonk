@@ -52,6 +52,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
+import com.zoonk.android.feature.language.CanDoList
+import com.zoonk.android.feature.language.LevelValue
+import com.zoonk.android.feature.language.SkillLevelsCard
+import com.zoonk.android.feature.language.skillName
+import com.zoonk.android.feature.speaking.SpeakingMockCard
+import com.zoonk.android.feature.speaking.SpeakingPracticeRow
 import com.zoonk.android.feature.subscription.PlusMark
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
@@ -74,9 +80,11 @@ import com.zoonk.api.models.EstimatedScore
 import com.zoonk.api.models.GoalPreparation
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.GoalProgressStillNeeded
+import com.zoonk.api.models.LanguageSkillLevel
 import com.zoonk.api.models.PlanDay
 import com.zoonk.api.models.PlanItem
 import com.zoonk.api.models.PreparationComponentsMocks
+import com.zoonk.api.models.SpeakingPaper
 import kotlinx.datetime.toJavaLocalDate
 import java.util.Locale
 import kotlin.math.min
@@ -90,6 +98,7 @@ private data class PlanNumber(
     val detail: String?,
     val share: Float? = null,
     val numeric: Boolean = true,
+    val target: String? = null,
 )
 
 private enum class NumberSheet { Standing, Pace }
@@ -124,6 +133,7 @@ internal fun PlanNumbers(
                 when (standing) {
                     is Standing.Preparation -> PreparationDetails(standing.progress, forExam = true, lessons = null, links = links)
                     is Standing.Progress -> PreparationDetails(standing.progress, forExam = false, lessons = standing, links = links)
+                    is Standing.Language -> LanguageDetails(standing, links.closing { open = null })
                 }
             }
         }
@@ -153,7 +163,13 @@ internal fun PlanNumbers(
 
 @Composable
 private fun standingTitle(standing: Standing) =
-    stringResource(if (standing is Standing.Preparation) R.string.plan_your_preparation else R.string.plan_your_progress)
+    stringResource(
+        when (standing) {
+            is Standing.Preparation -> R.string.plan_your_preparation
+            is Standing.Progress -> R.string.plan_your_progress
+            is Standing.Language -> R.string.plan_your_level
+        },
+    )
 
 @Composable
 private fun standingNumber(standing: Standing): PlanNumber {
@@ -185,6 +201,42 @@ private fun standingNumber(standing: Standing): PlanNumber {
                 share = share,
             )
         }
+
+        is Standing.Language -> {
+            val language = standing.progress
+            PlanNumber(
+                label = stringResource(R.string.plan_level),
+                value = language.level ?: stringResource(R.string.plan_not_yet),
+                detail =
+                    when (val lead = skillLead(language.levels)) {
+                        SkillLead.Even -> stringResource(R.string.plan_even_across_skills)
+                        is SkillLead.Leads -> stringResource(R.string.plan_skill_leads, skillName(lead.skill))
+                        null -> null
+                    },
+                numeric = language.level != null,
+                target = language.target?.label,
+            )
+        }
+    }
+}
+
+internal sealed interface SkillLead {
+    data object Even : SkillLead
+
+    data class Leads(
+        val skill: LanguageSkillLevel.Skill,
+    ) : SkillLead
+}
+
+/** The highest skill, when one is ahead of the others; none when the highest are tied. */
+internal fun skillLead(levels: List<LanguageSkillLevel>): SkillLead? {
+    val sorted = levels.sortedByDescending { it.score }
+    val first = sorted.firstOrNull() ?: return null
+    val rest = sorted.drop(1)
+    return when {
+        rest.all { it.score == first.score } -> SkillLead.Even
+        rest.first().score == first.score -> null
+        else -> SkillLead.Leads(first.skill)
     }
 }
 
@@ -275,11 +327,12 @@ private fun NumberButton(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        Text(
-            text = number.value,
-            style = MaterialTheme.typography.headlineMedium.let { if (number.numeric) it.withTabularFigures() else it },
-            fontWeight = if (number.numeric) null else FontWeight.SemiBold,
-        )
+        val style =
+            MaterialTheme.typography.headlineMedium.let {
+                if (number.numeric) it.withTabularFigures() else it.copy(fontWeight = FontWeight.SemiBold)
+            }
+        val target = number.target
+        if (target == null) Text(number.value, style = style) else LevelValue(number.value, target, style)
         number.share?.let { Meter(it, Modifier.padding(vertical = 2.dp)) }
         number.detail?.let { MetaLine(it) }
     }
@@ -466,6 +519,22 @@ private fun DayRing(day: PlanDay) {
             }
         }
         if (day.state == PlanDay.State.DONE) DoneMark()
+    }
+}
+
+@Composable
+internal fun LanguageDetails(
+    standing: Standing.Language,
+    links: PlanLinks,
+) {
+    val language = standing.progress
+    SkillLevelsCard(language)
+    CanDoList(language.canDo)
+    language.speaking?.let { paper ->
+        SpeakingPracticeRow(paper.title, paper.access == SpeakingPaper.Access.PLUS_REQUIRED, onOpen = links::speaking)
+    }
+    language.speakingMock?.let { exam ->
+        SpeakingMockCard(exam, language.goal.id, language.speakingMockPaused, start = standing.startCall, open = links::open)
     }
 }
 

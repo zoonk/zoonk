@@ -268,6 +268,13 @@
     <string name="plan_progress">Progress</string>
     <string name="plan_your_preparation">Your preparation</string>
     <string name="plan_your_progress">Your progress</string>
+    <!-- A language goal's standing: its level across skills, such as "B1". -->
+    <string name="plan_level">Level</string>
+    <string name="plan_your_level">Your level</string>
+    <!-- Under a language goal's level when all of its skills (reading, listening, speaking, writing) are at the same level. -->
+    <string name="plan_even_across_skills">Even across skills</string>
+    <!-- Under a language goal's level: the skill that is highest, such as "Reading leads". -->
+    <string name="plan_skill_leads">%1$s leads</string>
     <string name="plan_no_change_this_week">No change this week</string>
     <plurals name="plan_gain_this_week">
         <item quantity="one">+%d this week</item>

@@ -138,7 +138,7 @@ class PlanContentTest {
     }
 
     @Test
-    fun aLanguageGoalKeepsItsPaceWhileItsLevelLoadsElsewhere() {
+    fun aLanguageGoalKeepsItsPaceWhileItsLevelLoads() {
         show(kind = "language")
 
         compose.onNodeWithText("Behind").assertIsDisplayed()
