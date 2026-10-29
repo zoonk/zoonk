@@ -34,6 +34,7 @@ function completeWithBelt(lesson: ReturnType<typeof buildLesson>) {
           completion: {
             ...outcome.completion,
             ceremony: {
+              beltStartBrainPower: null,
               earnedAt: new Date().toISOString(),
               id: "belt-orange",
               key: "orange",
