@@ -132,35 +132,21 @@ private struct PronunciationRoundView: View {
   private func roundView(_ round: PronunciationRound) -> some View {
     switch round.step {
     case .result(let result):
-      PronunciationResultView(isEmpty: round.words.isEmpty, result: result)
-        .safeAreaBar(edge: .bottom) {
-          Button {
-            dismiss()
-          } label: {
-            Text("Done", tableName: "Voice", comment: "Closes the finished round")
-              .frame(maxWidth: .infinity)
-          }
-          .buttonStyle(.mainAction)
-          .controlSize(.large)
-          .keyboardShortcut(.defaultAction)
-          .scenePadding()
-          .keepsOffFold()
-        }
+      PronunciationResultView(isEmpty: round.words.isEmpty, result: result) {
+        dismiss()
+      }
     case .word(_, let state):
       if let word = round.current {
-        ScrollView {
-          VStack(alignment: .leading, spacing: 24) {
-            RoundMeter(round: round)
+        QuestionSpread(readableWidth: PracticeLayout.readableWidth, spacing: 24) {
+          EmptyView()
+        } stimulus: {
+          RoundMeter(round: round)
 
-            PronunciationWordView(word: word, language: reviews.language, owner: reviews.goalId)
-              .id(word.id)
-
-            wordStatus(state)
-          }
-          .frame(maxWidth: .infinity, alignment: .leading)
-          .scenePadding()
-        }
-        .safeAreaBar(edge: .bottom) {
+          PronunciationWordView(word: word, language: reviews.language, owner: reviews.goalId)
+            .id(word.id)
+        } response: {
+          wordStatus(state)
+        } actions: {
           VStack(spacing: 12) {
             if round.finishFailed {
               finishError(round)
@@ -168,8 +154,9 @@ private struct PronunciationRoundView: View {
 
             wordActions(round, state: state)
           }
+          .frame(maxWidth: PracticeLayout.readableWidth)
           .scenePadding()
-          .keepsOffFold()
+          .frame(maxWidth: .infinity)
         }
         .taskOptions(
           isShown: showsOptions(state),
@@ -410,6 +397,7 @@ private struct GradeNote: View {
 private struct PronunciationResultView: View {
   let isEmpty: Bool
   let result: PronunciationRound.Result?
+  let done: () -> Void
 
   private var day: DayResult? {
     result.flatMap { DayResult($0) }
@@ -426,63 +414,94 @@ private struct PronunciationResultView: View {
           Image(systemName: "checkmark.circle")
         }
       }
+      .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
     } else {
-      List {
-        Section {
-          VStack(alignment: .leading, spacing: 8) {
-            Group {
-              if result == nil {
-                Text(
-                  "Nothing said this time", tableName: "Voice", comment: "A round with no answers")
-              } else {
-                Text("Practice done", tableName: "Voice", comment: "A finished round")
-              }
-            }
-            .font(.title2.weight(.semibold))
-
-            Text(
-              "An accent never blocks you. Words that still sound different come back tomorrow.",
-              tableName: "Voice", comment: "What a pronunciation round's grade means"
-            )
-            .foregroundStyle(.secondary)
-          }
-          .listRowBackground(Color.clear)
-          .listRowSeparator(.hidden)
+      PaneSplit {
+        List {
+          summary
         }
-
-        if let result {
-          Section {
-            LabeledContent {
-              Text(
-                "\(result.correct) of \(result.total)", tableName: "Voice",
-                comment: "Words that sounded right out of those said"
-              )
-              .monospacedDigit()
-            } label: {
-              Text("Sounded right", tableName: "Voice", comment: "Readout label for right words")
-            }
-
-            LabeledContent {
-              Text(result.brainPower, format: .number)
-                .monospacedDigit()
-                .foregroundStyle(.brain)
-            } label: {
-              Label {
-                Text("Brain Power", tableName: "Voice", comment: "Points earned label")
-              } icon: {
-                Image(systemName: "brain.head.profile")
-                  .foregroundStyle(.brain)
-                  .accessibilityHidden(true)
-              }
-            }
-          }
-
-          if let day {
-            DayMomentSections(result: day)
-          }
+      } secondary: {
+        List {
+          dayMoment
         }
+        .safeAreaBar(edge: .bottom) { doneButton }
+      } single: {
+        List {
+          summary
+          dayMoment
+        }
+        .safeAreaBar(edge: .bottom) { doneButton.keepsOffFold() }
       }
       .milestoneCeremony(day?.ceremony)
     }
+  }
+
+  @ViewBuilder private var summary: some View {
+    Section {
+      VStack(alignment: .leading, spacing: 8) {
+        Group {
+          if result == nil {
+            Text(
+              "Nothing said this time", tableName: "Voice", comment: "A round with no answers")
+          } else {
+            Text("Practice done", tableName: "Voice", comment: "A finished round")
+          }
+        }
+        .font(.title2.weight(.semibold))
+
+        Text(
+          "An accent never blocks you. Words that still sound different come back tomorrow.",
+          tableName: "Voice", comment: "What a pronunciation round's grade means"
+        )
+        .foregroundStyle(.secondary)
+      }
+      .listRowBackground(Color.clear)
+      .listRowSeparator(.hidden)
+    }
+
+    if let result {
+      Section {
+        LabeledContent {
+          Text(
+            "\(result.correct) of \(result.total)", tableName: "Voice",
+            comment: "Words that sounded right out of those said"
+          )
+          .monospacedDigit()
+        } label: {
+          Text("Sounded right", tableName: "Voice", comment: "Readout label for right words")
+        }
+
+        LabeledContent {
+          Text(result.brainPower, format: .number)
+            .monospacedDigit()
+            .foregroundStyle(.brain)
+        } label: {
+          Label {
+            Text("Brain Power", tableName: "Voice", comment: "Points earned label")
+          } icon: {
+            Image(systemName: "brain.head.profile")
+              .foregroundStyle(.brain)
+              .accessibilityHidden(true)
+          }
+        }
+      }
+    }
+  }
+
+  @ViewBuilder private var dayMoment: some View {
+    if let day {
+      DayMomentSections(result: day)
+    }
+  }
+
+  private var doneButton: some View {
+    Button(action: done) {
+      Text("Done", tableName: "Voice", comment: "Closes the finished round")
+        .frame(maxWidth: .infinity)
+    }
+    .buttonStyle(.mainAction)
+    .controlSize(.large)
+    .keyboardShortcut(.defaultAction)
+    .scenePadding()
   }
 }
