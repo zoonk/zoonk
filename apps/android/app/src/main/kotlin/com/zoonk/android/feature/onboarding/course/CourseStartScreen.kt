@@ -106,8 +106,13 @@ internal fun CourseStartScreen(
         navigator.closeSection()
         if (inSetup) navigator.open(AppRoute.GoalSetup(goalId)) else navigator.showRoot(AppTab.Today)
     }
+    val started = vm.started
     // A start that just made the goal leads there itself, though the summary may name it first.
-    existingGoalId?.takeUnless { vm.isStarting }?.let { goalId -> LaunchedEffect(goalId) { openGoal(goalId, store.inSetup(goalId)) } }
+    if (started != null) {
+        LaunchedEffect(started) { openGoal(started.goalId, started.inSetup) }
+    } else if (existingGoalId != null && !vm.isStarting) {
+        LaunchedEffect(existingGoalId) { openGoal(existingGoalId, store.inSetup(existingGoalId)) }
+    }
 
     PageScaffold(
         onBack = navigator::back,
@@ -119,7 +124,7 @@ internal fun CourseStartScreen(
             when (val shown = state) {
                 is LoadState.Loaded -> {
                     if (existingGoalId == null) {
-                        CourseStartForm(shown.value, route, vm, allowance.value?.goalStartLimit(), signedIn, navigator, openGoal)
+                        CourseStartForm(shown.value, route, vm, allowance.value?.goalStartLimit(), signedIn, navigator)
                     } else {
                         Loading()
                     }
@@ -158,7 +163,6 @@ private fun CourseStartForm(
     upFront: GoalLimitReason?,
     signedIn: Boolean,
     navigator: AppNavigator,
-    openGoal: (String, Boolean) -> Unit,
 ) {
     val course = detail.course
     val chapter = detail.chapters.find { it.id.toString() == route.chapterId && it.lessonCount > 0 }
@@ -166,7 +170,7 @@ private fun CourseStartForm(
     val limit = (vm.failure as? CourseStartFailure.Limit)?.reason ?: upFront.takeIf { vm.failure == null }
     val blocked = limit != null && (limit.needsAccount || limit == GoalLimitReason.OneActiveGoal)
     val minutes = route.dailyMinutes?.takeIf { it in MIN_DAILY_MINUTES..MAX_DAILY_MINUTES }
-    val start = { vm.start(course.id.toString(), chapter?.id?.toString(), minutes, openGoal) }
+    val start = { vm.start(course.id.toString(), chapter?.id?.toString(), minutes) }
     val remedy = { to: AppRoute ->
         vm.clearFailure()
         navigator.open(to)

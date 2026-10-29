@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.onboarding.course
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -8,6 +9,7 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.isHeading
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
+import androidx.compose.ui.test.junit4.StateRestorationTester
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -55,11 +57,15 @@ class CourseStartFlowTest {
     private lateinit var navigator: AppNavigator
     private var existingGoalId by mutableStateOf<String?>(null)
 
-    private fun show(route: AppRoute.CourseStart = AppRoute.CourseStart(COURSE)) {
+    private fun show(
+        route: AppRoute.CourseStart = AppRoute.CourseStart(COURSE),
+        restoration: StateRestorationTester? = null,
+    ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate))
         val store = OnboardingStore(api, cache, session) { true }
-        rule.setContent {
+        val setContent: (@Composable () -> Unit) -> Unit = restoration?.let { it::setContent } ?: rule::setContent
+        setContent {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 CourseStartScreen(route, CatalogStore(FakeCatalogApi(), cache), store, signedIn = true, existingGoalId, navigator)
@@ -164,6 +170,22 @@ class CourseStartFlowTest {
 
         api.courseStartGate?.complete(Unit)
         rule.waitForIdle()
+        assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
+    }
+
+    @Test
+    fun aStartInFlightThroughARotationLeadsToItsGoal() {
+        api.courseStartGate = CompletableDeferred()
+        val restoration = StateRestorationTester(rule)
+        val route = AppRoute.CourseStart(COURSE, chapterId = CHAPTER_TWO)
+        show(route, restoration)
+        rule.runOnIdle { navigator.open(route) }
+
+        build()
+        restoration.emulateSavedInstanceStateRestore()
+        api.courseStartGate?.complete(Unit)
+        rule.waitForIdle()
+
         assertEquals(AppRoute.GoalSetup(GOAL_ID), navigator.currentRoute)
     }
 

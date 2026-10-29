@@ -7,6 +7,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.serialization.saved
 import androidx.lifecycle.viewModelScope
+import com.zoonk.android.feature.onboarding.CourseStarted
 import com.zoonk.android.feature.onboarding.GoalLimitReason
 import com.zoonk.android.feature.onboarding.OnboardingStore
 import com.zoonk.android.feature.onboarding.WriteOutcome
@@ -39,6 +40,10 @@ internal class CourseStartViewModel(
     var failure by mutableStateOf<CourseStartFailure?>(null)
         private set
 
+    /** The screen showing now leads there, since this outlives the one that tapped. */
+    var started by mutableStateOf<CourseStarted?>(null)
+        private set
+
     fun pick(next: LevelChoice) {
         level = next
         savedLevel = next.key()
@@ -54,7 +59,6 @@ internal class CourseStartViewModel(
         courseId: String,
         chapterId: String?,
         dailyMinutes: Int?,
-        onStarted: (goalId: String, inSetup: Boolean) -> Unit,
     ) {
         if (isStarting) return
         isStarting = true
@@ -62,7 +66,8 @@ internal class CourseStartViewModel(
         viewModelScope.launch {
             when (val outcome = store.startCourse(courseId, chapterId, dailyMinutes, level.takeIf { chapterId == null })) {
                 is WriteOutcome.Done -> {
-                    return@launch onStarted(outcome.value.goalId, outcome.value.inSetup)
+                    started = outcome.value
+                    return@launch
                 }
 
                 is WriteOutcome.Refused -> {
