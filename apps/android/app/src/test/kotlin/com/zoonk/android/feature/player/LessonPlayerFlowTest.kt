@@ -43,6 +43,7 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.LessonStepAnswer
+import com.zoonk.api.models.LessonStepAnswerOneOf3Answer
 import com.zoonk.api.models.SpokenAnswerGrade
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
@@ -274,6 +275,24 @@ class LessonPlayerFlowTest {
                 .single()
                 .second.answer::class,
         )
+    }
+
+    @Test
+    fun aNumericActivitySendsTheTypedNumberAndWritesMoneyTheWayItsLanguageDoes() {
+        play(listOf(activityStep("act", NUMERIC_ACTIVITY_CHECK), summaryStep("end"))) {
+            grade = { _, _ -> checkResult(isCorrect = false) }
+        }
+
+        rule.onNode(hasSetTextAction()).performTextInput("50.5")
+        tap("Check")
+
+        rule.onNodeWithText("R$50.5").assertIsDisplayed()
+        rule.onNodeWithText("R$52").assertIsDisplayed()
+        val sent =
+            api.checks
+                .single()
+                .second.answer as LessonStepAnswer.LessonStepAnswerOneOf3Value
+        assertEquals(50.5, (sent.value.answer as LessonStepAnswerOneOf3Answer.LessonStepAnswerOneOf3AnswerOneOf7Value).value.`value`, 0.0)
     }
 
     @Test

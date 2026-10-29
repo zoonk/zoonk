@@ -47,10 +47,10 @@ import com.zoonk.android.ui.components.PictureFrame
 import com.zoonk.android.ui.format.currencyFor
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.exactFractionDigitsFor
+import com.zoonk.android.ui.format.formatAmount
 import com.zoonk.android.ui.format.formatMoney
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.format.parseLocalizedNumber
-import com.zoonk.android.ui.format.withUnit
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ActivityExpected
@@ -217,6 +217,7 @@ private fun NumericCheckField(
                 },
                 modifier = Modifier.widthIn(min = 160.dp, max = 240.dp),
                 readOnly = phase == ActivityPhase.Checked,
+                placeholder = { Text(stringResource(R.string.player_your_answer)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 textStyle = MaterialTheme.typography.bodyLarge.withTabularFigures(),
@@ -315,14 +316,14 @@ private fun ActivityFeedback(
                 value?.let {
                     LabeledLine(
                         stringResource(R.string.player_activity_your_answer),
-                        withUnit(formatNumber(it, locale, digits), numeric.unit),
+                        formatAmount(it, locale, numeric.unit, maximumFractionDigits = digits),
                         tabular = true,
                     )
                 }
                 if (!isCorrect) {
                     LabeledLine(
                         stringResource(R.string.player_correct_answer_label),
-                        withUnit(formatNumber(numeric.answer, locale, digits), numeric.unit),
+                        formatAmount(numeric.answer, locale, numeric.unit, maximumFractionDigits = digits),
                         tabular = true,
                     )
                 }

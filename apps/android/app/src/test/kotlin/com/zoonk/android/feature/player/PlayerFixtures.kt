@@ -158,15 +158,21 @@ fun stepResult(
 private const val ACTIVITY_CHECK =
     """{"kind":"choice","question":"Which line rises fastest?","options":[{"id":"a","isCorrect":true,"reason":"It doubles every step.","text":"Line A"},{"id":"b","isCorrect":false,"reason":"It stays flat.","text":"Line B"}]}"""
 
-/** A choice activity whose template has no renderer: the frame alone asks it. */
-fun activityStep(id: String): LessonStep {
+const val NUMERIC_ACTIVITY_CHECK =
+    """{"kind":"numeric","question":"How much do you pay?","answer":52,"tolerance":{"kind":"absolute","value":0},"unit":"R$","explanation":"You pay 65% of R$80."}"""
+
+/** An activity whose template has no renderer: the frame alone asks it. */
+fun activityStep(
+    id: String,
+    check: String = ACTIVITY_CHECK,
+): LessonStep {
     val content =
         ApiJson.decodeFromString(
             ActivityStepContent.serializer(),
-            """{"template":"formulaModel","prompt":"Compare the two lines.","fields":{"outputs":[],"variables":[]},"check":$ACTIVITY_CHECK}""",
+            """{"template":"formulaModel","prompt":"Compare the two lines.","fields":{"outputs":[],"variables":[]},"check":$check}""",
         )
     val frame =
-        ActivityFrame("formulaModel", "Compare the two lines.", ApiJson.decodeFromString(ActivityCheck.serializer(), ACTIVITY_CHECK))
+        ActivityFrame("formulaModel", "Compare the two lines.", ApiJson.decodeFromString(ActivityCheck.serializer(), check))
     return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null))
 }
 

@@ -23,14 +23,15 @@ fun formatAmount(
     locale: Locale,
     unit: String? = null,
     compact: Boolean = false,
+    maximumFractionDigits: Int? = null,
 ): String {
     val money = moneyUnit(unit)
     if (money != null) {
-        val amount = formatMoney(value, money.currency, locale, compact)
+        val amount = formatMoney(value, money.currency, locale, compact, maximumFractionDigits)
         return if (money.rest.isEmpty()) amount else "$amount ${money.rest}"
     }
 
-    val digits = fractionDigitsFor(value)
+    val digits = maximumFractionDigits ?: fractionDigitsFor(value)
     val number = if (compact) formatCompact(value, locale, digits) else formatNumber(value, locale, digits)
     return withUnit(number, unit)
 }
