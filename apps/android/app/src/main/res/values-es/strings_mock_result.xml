@@ -6,7 +6,6 @@
   "mock_result_after": "11fffffb3cf79780a88fbcfe338f13fc4d52fa516427e5de9b4118a5d7e3f52e",
   "mock_result_already_changed": "7752b319aaee1323721153fb84579f793cd4bb5b306933e63e2c12616b6d6efc",
   "mock_result_already_in": "cf1e9dbf41fcaf8fff25bbced32b419867a7c0376ac7dd237b3f25c626b4db13",
-  "mock_result_answers": "73c36e068758a0e68d918cfa5bd9087803e1284ed3b10b42db1cf9a6373b5443",
   "mock_result_apply": "097f0e3c202ec5569375ddcbcec426ffcb358ccd931096967e3ecc2620309ba7",
   "mock_result_blank": "0aae2c9bcb167e97448f8f411c1d9f6591753f9ed599bde6460e9eca5f2f97e0",
   "mock_result_blank_exam_day": "73c46e488e6140a25e1e02b67171cacd9c882a08e11aea58d80eb6195a382f02",
@@ -22,7 +21,6 @@
   "mock_result_consistency_detail": "6dcc8e561722eed09dcf04be40e35af9f645eb30e0a1738f5a1f91adc61e6369",
   "mock_result_continue": "8026e4811157c754409eedf5ecee2a5efbfbc26ba8a04120f1cd124ce1c75128",
   "mock_result_continue_session": "ddb8506f0e948591fb803289024f9bdf2e76d98bc01e3c0c537bd4d90c270a04",
-  "mock_result_criteria": "097ceb149faa511515f2a31d940b56a85fd69d216c0af23635187393dec1473d",
   "mock_result_criterion_addressing": "8696e4a8b9d4fffb4a023335ccc966da75d40603c1037f1374f92c40495f23be",
   "mock_result_criterion_argument": "d2a94bdf890de70824e95aec20272ae01360c8e25d276a5e0445a636de9e5d98",
   "mock_result_criterion_closing": "a912dd18dd04eba1634ef1c416d5009aa4c70fb1f845d29ff0eb325e5693a938",
@@ -108,9 +106,8 @@
   "mock_result_skip_title": "188162414d1564ee200e43be882eab6d84adb93aa9c65424148c3f52061e4305",
   "mock_result_subjects": "71e0f594ad1151c4dd34f380992c0b1a03cafa7317bb57dfbf9a67a48f1dcb25",
   "mock_result_task_not_graded": "956b6f7ba576c4440ae8713612d5bf3f4df2c4a9eed69f3423b963b68934031c",
-  "mock_result_tasks": "c6b0a5f6ff0276dc3e511616f3c58af6b6cb67aebeab3513898239678a57129b",
   "mock_result_timing": "987b1cf583c9780c60f49fc10927efb839718f603ce166b1becefeaa630d8212",
-  "mock_result_timing_area": "621d131162eb8be36f2bf40db54476bffbdf36fd8f6aa8d0ab3ebfc35829e21e",
+  "mock_result_timing_area": "65885e3299f82eea96cfd285870234a10b0e94d1489b89acb7f1689b2b79b0b3",
   "mock_result_to_pass_guide": "4ef8f6a83682aeea9b6078dc036c3c97ad3dee0cb40efaef372c63e78facb6db",
   "mock_result_to_pass_notice": "d6e29139d2bea7c4fe999f0c21693370291315663dfdf3377cd94238585c9821",
   "mock_result_too_short": "06e2a0c1333614e2c259a5cc1ba51498d416176359c7598a3811a579365d8a99",
@@ -178,11 +175,11 @@
     <string name="mock_result_collapsed">Contraído</string>
     <string name="mock_result_insights">Qué ha mostrado el simulacro</string>
     <string name="mock_result_timing">Tiempo</string>
-    <!-- %1$d is the seconds the learner took per question in the subject %2$s; %3$s is the seconds to aim for. -->
+    <!-- %1$d is the seconds the learner took per question in one subject; %2$s is that subject's name, such as "Mathematics"; %3$s is the seconds to aim for. -->
     <plurals name="mock_result_timing_area">
-        <item quantity="one">%1$d segundo por pregunta de %2$s. Intenta tardar %3$s como máximo.</item>
-        <item quantity="many">%1$d segundos por pregunta de %2$s. Intenta tardar %3$s como máximo.</item>
-        <item quantity="other">%1$d segundos por pregunta de %2$s. Intenta tardar %3$s como máximo.</item>
+        <item quantity="one">%1$d segundo por pregunta en %2$s. Procura tardar %3$s o menos.</item>
+        <item quantity="many">%1$d segundos por pregunta en %2$s. Procura tardar %3$s o menos.</item>
+        <item quantity="other">%1$d segundos por pregunta en %2$s. Procura tardar %3$s o menos.</item>
     </plurals>
     <plurals name="mock_result_left_at_timeout">
         <item quantity="one">Quedó %d pregunta por responder cuando se acabó el tiempo.</item>
@@ -230,7 +227,6 @@
     <string name="mock_result_question_area">Pregunta %1$d · %2$s</string>
     <string name="mock_result_question">Pregunta %1$d</string>
     <string name="mock_result_left_blank">La dejaste en blanco.</string>
-    <string name="mock_result_answers">Tu respuesta y la correcta</string>
     <string name="mock_result_partly_right_note">Parcialmente correcta: has conseguido parte de los puntos.</string>
     <string name="mock_result_written_part">Parte escrita · %1$d de %2$d</string>
     <string name="mock_result_your_essay">Tu redacción</string>
@@ -244,7 +240,6 @@
     <string name="mock_result_grade_it">Corregir</string>
     <!-- %1$s is the essay's highest possible score. -->
     <string name="mock_result_essay_scale">Puntuación estimada, de 0 a %1$s</string>
-    <string name="mock_result_criteria">Puntuación por criterio</string>
     <!-- A criterion's score, such as "160 of 200". -->
     <string name="mock_result_score_of">%1$s de %2$s</string>
     <string name="mock_result_criterion_formal_writing">Expresión escrita formal</string>
@@ -275,7 +270,6 @@
     <string name="mock_result_pass_group">El examen exige al menos %1$s de %2$s entre esta prueba y la parte de escucha.</string>
     <string name="mock_result_pass_paper">El examen exige al menos %1$s en esta prueba.</string>
     <string name="mock_result_pass_floor">Por debajo de %1$s en esta prueba, no se aprueba el examen completo.</string>
-    <string name="mock_result_tasks">Tareas</string>
     <string name="mock_result_see_feedback">Ver comentarios</string>
     <string name="mock_result_not_done">Sin completar</string>
     <string name="mock_result_your_preparation">Tu preparación</string>

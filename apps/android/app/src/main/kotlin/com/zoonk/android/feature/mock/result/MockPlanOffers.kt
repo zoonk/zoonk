@@ -21,12 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.SpanStyle
@@ -39,6 +41,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.R
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.SessionSource
 import com.zoonk.android.feature.mock.runner.MockRunStore
 import com.zoonk.android.feature.mock.runner.StepDetail
 import com.zoonk.android.feature.mock.runner.StepTitle
@@ -80,28 +83,29 @@ private val OfferAnswer?.isSettled: Boolean get() = this != null && this != Offe
 /** Main's `usePlanChange`: the plan changes only on the learner's Apply; Keep my plan changes nothing. */
 class MockPlanOffersViewModel(
     private val store: MockRunStore,
+    private val sessions: SessionSource,
     private val blockId: String,
 ) : ViewModel() {
     private val mutable = MutableStateFlow(PlanOffers())
     val state: StateFlow<PlanOffers> = mutable.asStateFlow()
 
-    /** Applies the offers not settled yet, one after another, as main does. */
+    /** Applies the offers not settled yet, one after another, as main does, all for the session that tapped Apply. */
     fun apply(offers: List<Offer>) {
         if (mutable.value.applying) return
         val open = offers.filterNot { mutable.value.answers[it].isSettled }
+        val owner = sessions.current
         mutable.update { it.copy(applying = true) }
         viewModelScope.launch {
-            val answers =
-                buildMap {
-                    open.forEach { offer ->
-                        when (val result = store.adapt(blockId, offer)) {
-                            is MutationResult.Done -> put(offer, OfferAnswer.Outcome(result.value))
-                            is MutationResult.Failed -> put(offer, OfferAnswer.Failed)
-                            MutationResult.Obsolete -> Unit
-                        }
-                    }
+            val answers = mutableMapOf<Offer, OfferAnswer>()
+            for (offer in open) {
+                if (sessions.current != owner) break
+                when (val result = store.adapt(blockId, offer)) {
+                    is MutationResult.Done -> answers[offer] = OfferAnswer.Outcome(result.value)
+                    is MutationResult.Failed -> answers[offer] = OfferAnswer.Failed
+                    MutationResult.Obsolete -> break
                 }
-            mutable.update { it.copy(answers = it.answers + answers, applying = false) }
+            }
+            mutable.update { it.copy(answers = it.answers + answers.takeIf { sessions.current == owner }.orEmpty(), applying = false) }
         }
     }
 
@@ -135,10 +139,10 @@ internal fun PlanStep(
     onApply: () -> Unit,
     onKeep: () -> Unit,
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Eyebrow(stringResource(if (preparation != null) R.string.mock_result_your_preparation else R.string.mock_result_your_plan))
         if (preparation != null) {
-            PreparationNumbers(preparation, MaterialTheme.typography.displaySmall)
+            PreparationNumbers(preparation, MaterialTheme.typography.displayMedium)
         } else {
             planChangeTitle(adapt)?.let { StepTitle(it) }
         }
@@ -241,7 +245,13 @@ private fun OfferStatus(
             Icon(
                 painterResource(R.drawable.ic_check_circle),
                 contentDescription = null,
-                modifier = Modifier.size(18.dp),
+                modifier =
+                    Modifier.size(
+                        with(LocalDensity.current) {
+                            MaterialTheme.typography.bodyMedium.lineHeight
+                                .toDp()
+                        },
+                    ),
                 tint = MaterialTheme.colorScheme.tertiary,
             )
         }

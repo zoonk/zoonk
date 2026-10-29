@@ -112,6 +112,14 @@ class MockResultScreenshots {
     }
 
     @Test
+    @Config(qualifiers = "w411dp-h2400dp-xhdpi")
+    fun phoneLastStepAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        show(enem())
+        capture("result-phone-font200-last", continues = 2)
+    }
+
+    @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun expanded() {
         show(enem())

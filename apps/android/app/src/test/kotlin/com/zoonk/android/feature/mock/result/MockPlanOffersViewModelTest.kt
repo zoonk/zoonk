@@ -32,6 +32,7 @@ class MockPlanOffersViewModelTest {
 
     private val dispatcher = StandardTestDispatcher()
     private val api = FakeMockRunApi(finishedMock())
+    private val session = FakeSession(AuthenticatedSession("ana", "token", "local"))
 
     @Before
     fun main() = Dispatchers.setMain(dispatcher)
@@ -41,11 +42,11 @@ class MockPlanOffersViewModelTest {
 
     private fun viewModel(): MockPlanOffersViewModel {
         val scope = CoroutineScope(SupervisorJob() + dispatcher)
-        val session = FakeSession(AuthenticatedSession("ana", "token", "local"))
         return MockPlanOffersViewModel(
             MockRunStore(api, AppCache(session, scope), DraftStore(folder.root, scope, io = dispatcher)) {
                 "UTC"
             },
+            session,
             RUN_BLOCK,
         )
     }
@@ -79,6 +80,19 @@ class MockPlanOffersViewModelTest {
             advanceUntilIdle()
 
             assertEquals(listOf(Offer.SKIP, Offer.FOCUS), api.offers)
+            assertEquals(false, offers.state.value.applying)
+        }
+
+    @Test
+    fun aSessionChangeStopsTheOffersStillToSend() =
+        runTest(dispatcher) {
+            val offers = viewModel()
+            api.afterOffer = { session.session = AuthenticatedSession("bo", "token-b", "local-b") }
+
+            offers.apply(listOf(Offer.SKIP, Offer.FOCUS))
+            advanceUntilIdle()
+
+            assertEquals(listOf(Offer.SKIP), api.offers)
             assertEquals(false, offers.state.value.applying)
         }
 }

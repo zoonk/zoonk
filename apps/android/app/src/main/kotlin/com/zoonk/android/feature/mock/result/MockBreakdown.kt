@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,6 +22,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -124,7 +126,8 @@ private fun TopicRows(topics: List<MockResultTopicsInner>) {
 
     TopicList(sorted.take(TOPICS_SHOWN))
     if (rest.isNotEmpty()) {
-        TextButton(onClick = { more = !more }) {
+        val state = stringResource(if (more) R.string.mock_result_expanded else R.string.mock_result_collapsed)
+        TextButton(onClick = { more = !more }, modifier = Modifier.semantics { stateDescription = state }) {
             Text(pluralStringResource(R.plurals.mock_result_more_topics, rest.size, rest.size))
             Icon(
                 painterResource(R.drawable.ic_expand_more),
@@ -208,9 +211,15 @@ private fun Insight(
         Modifier.fillMaxWidth().padding(vertical = 12.dp).semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        Icon(painterResource(icon), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
+        val titleStyle = MaterialTheme.typography.titleSmall
+        Icon(
+            painterResource(icon),
+            contentDescription = null,
+            modifier = Modifier.size(with(LocalDensity.current) { titleStyle.lineHeight.toDp() }),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.titleSmall)
+            Text(title, Modifier.semantics { heading() }, style = titleStyle)
             lines.forEach {
                 Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
             }

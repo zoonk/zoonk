@@ -49,10 +49,10 @@
     <string name="mock_result_collapsed">Collapsed</string>
     <string name="mock_result_insights">What the mock exam showed</string>
     <string name="mock_result_timing">Timing</string>
-    <!-- %1$d is the seconds the learner took per question in the subject %2$s; %3$s is the seconds to aim for. -->
+    <!-- %1$d is the seconds the learner took per question in one subject; %2$s is that subject's name, such as "Mathematics"; %3$s is the seconds to aim for. -->
     <plurals name="mock_result_timing_area">
-        <item quantity="one">%1$d second per %2$s question. Aim for %3$s or less.</item>
-        <item quantity="other">%1$d seconds per %2$s question. Aim for %3$s or less.</item>
+        <item quantity="one">%1$d second per question in %2$s. Aim for %3$s or less.</item>
+        <item quantity="other">%1$d seconds per question in %2$s. Aim for %3$s or less.</item>
     </plurals>
     <plurals name="mock_result_left_at_timeout">
         <item quantity="one">%d question was left when time ran out.</item>
@@ -94,7 +94,6 @@
     <string name="mock_result_question_area">Question %1$d · %2$s</string>
     <string name="mock_result_question">Question %1$d</string>
     <string name="mock_result_left_blank">You left it blank.</string>
-    <string name="mock_result_answers">Your answer and the right one</string>
     <string name="mock_result_partly_right_note">Partly right: it earned part of its points.</string>
     <string name="mock_result_written_part">Written part · %1$d of %2$d</string>
     <string name="mock_result_your_essay">Your essay</string>
@@ -108,7 +107,6 @@
     <string name="mock_result_grade_it">Grade it</string>
     <!-- %1$s is the essay's highest possible score. -->
     <string name="mock_result_essay_scale">Estimated score, from 0 to %1$s</string>
-    <string name="mock_result_criteria">Score by criterion</string>
     <!-- A criterion's score, such as "160 of 200". -->
     <string name="mock_result_score_of">%1$s of %2$s</string>
     <string name="mock_result_criterion_formal_writing">Formal writing</string>
@@ -139,7 +137,6 @@
     <string name="mock_result_pass_group">The exam asks for at least %1$s of %2$s on this paper and listening together.</string>
     <string name="mock_result_pass_paper">The exam asks for at least %1$s on this paper.</string>
     <string name="mock_result_pass_floor">Below %1$s on this paper, the whole exam isn\'t passed.</string>
-    <string name="mock_result_tasks">Tasks</string>
     <string name="mock_result_see_feedback">See feedback</string>
     <string name="mock_result_not_done">Not done</string>
     <string name="mock_result_your_preparation">Your preparation</string>

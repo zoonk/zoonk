@@ -123,8 +123,9 @@ private fun NumberKey(
     }
 }
 
+/** An option's words with a tag beside them while their longest word fits next to it, else under them. */
 @Composable
-private fun TagBesideOrUnder(
+internal fun TagBesideOrUnder(
     modifier: Modifier,
     content: @Composable () -> Unit,
     tag: @Composable () -> Unit,

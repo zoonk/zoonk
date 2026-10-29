@@ -1,7 +1,6 @@
 package com.zoonk.android.feature.mock.result
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.size
@@ -21,8 +20,10 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.LocaleList
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.chooser.MockNotes
@@ -46,13 +47,14 @@ import kotlin.math.roundToInt
 internal fun ScoreStep(
     view: MockExam,
     result: MockResult,
+    dayMoment: @Composable () -> Unit,
     review: @Composable () -> Unit,
 ) {
     ScoreHeader(view, result)
     AnswerTiles(result)
     PassMarks(view)
     NoteLines(scoreNoteLines(view.scoreNotes))
-    MockDayMoment(view.ceremony, view.missionMoment, view.reached)
+    dayMoment()
     if (hasBreakdown(result)) Breakdown(result)
     if (hasInsights(result)) Insights(result)
     review()
@@ -67,11 +69,12 @@ internal fun ScoreStep(
     )
 }
 
-/** A [range] reads as one number, so its dash keeps the numbers' size. */
+/** A [range] reads as one number, so its dash keeps the numbers' size; a raw score's [lead] is its number, the rest its unit. */
 private data class Score(
     val label: String,
     val value: String,
     val range: Boolean = false,
+    val lead: String? = null,
 )
 
 @Composable
@@ -81,9 +84,21 @@ private fun score(result: MockResult): Score {
     val net = result.net
 
     return when {
-        irt != null -> Score(stringResource(R.string.mock_result_estimated_score), scoreRange(irt.low, irt.high), range = true)
-        net != null -> Score(stringResource(R.string.mock_result_net_score, net.max.toInt()), formatNumber(net.net, locale))
-        else -> Score(stringResource(R.string.mock_result_right_answers), rightOf(result.correct, result.total))
+        irt != null -> {
+            Score(stringResource(R.string.mock_result_estimated_score), scoreRange(irt.low, irt.high), range = true)
+        }
+
+        net != null -> {
+            Score(stringResource(R.string.mock_result_net_score, net.max.toInt()), formatNumber(net.net, locale))
+        }
+
+        else -> {
+            Score(
+                stringResource(R.string.mock_result_right_answers),
+                rightOf(result.correct, result.total),
+                lead = formatNumber(result.correct, locale),
+            )
+        }
     }
 }
 
@@ -130,39 +145,84 @@ private fun ScoreHeader(
     val detail = listOf(score.label, view.examName.orEmpty(), areas).filter { it.isNotEmpty() }.joinToString(" · ")
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(Modifier.semantics(mergeDescendants = true) { heading() }, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(
                 stringResource(R.string.mock_result_done, mockTitle(view.number)),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 style = MaterialTheme.typography.titleMedium,
             )
-            if (score.range) ScoreRange(score.value) else Readout(score.value, style = MaterialTheme.typography.displayMedium)
+            when {
+                score.range -> ScoreRange(score.value)
+                score.lead != null -> RightOfReadout(score.value, score.lead)
+                else -> Readout(score.value, style = MaterialTheme.typography.displayMedium)
+            }
         }
         Text(detail, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         Delta(result)
     }
 }
 
-/** The change since the last mock, for scores on the exam's scale or net of penalties. */
+/** "7 of 10": the right answers are the number, "of 10" its unit, as main's `BigQuantity` draws a quantity's words. */
+@Composable
+private fun RightOfReadout(
+    text: String,
+    lead: String,
+) {
+    val unit =
+        SpanStyle(
+            fontSize = MaterialTheme.typography.labelLarge.fontSize,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            fontWeight = FontWeight.Normal,
+        )
+    val start = text.indexOf(lead)
+
+    Text(
+        buildAnnotatedString {
+            if (start < 0) {
+                append(text)
+            } else {
+                withStyle(unit) { append(text.substring(0, start)) }
+                append(lead)
+                withStyle(unit) { append(text.substring(start + lead.length)) }
+            }
+        },
+        style =
+            MaterialTheme.typography.displayMedium
+                .withTabularFigures()
+                .copy(fontWeight = FontWeight.SemiBold),
+    )
+}
+
+/**
+ * The change since the last mock, for scores on the exam's scale or net of penalties: the header's
+ * quietest line. One that rounds to 0 still says so, level, where main's arrow points down.
+ */
 @Composable
 private fun Delta(result: MockResult) {
     val current = result.irt?.score ?: result.net?.net ?: return
     val previous = result.previous ?: return
+    if (current == previous) return
     val change = (current - previous).roundToInt()
-    if (change == 0) return
     val number = formatNumber(change.toDouble(), currentLocale())
+    val style = MaterialTheme.typography.bodySmall.withTabularFigures()
 
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
         Icon(
-            painterResource(if (change > 0) R.drawable.ic_trending_up else R.drawable.ic_trending_down),
+            painterResource(
+                when {
+                    change > 0 -> R.drawable.ic_trending_up
+                    change < 0 -> R.drawable.ic_trending_down
+                    else -> R.drawable.ic_trending_flat
+                },
+            ),
             contentDescription = null,
-            modifier = Modifier.size(16.dp),
+            modifier = Modifier.size(with(LocalDensity.current) { style.lineHeight.toDp() }),
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
             if (change > 0) stringResource(R.string.mock_result_up, number) else stringResource(R.string.mock_result_down, number),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
-            style = MaterialTheme.typography.labelLarge.withTabularFigures(),
+            style = style,
         )
     }
 }
@@ -233,12 +293,7 @@ private fun AnswerTiles(result: MockResult) {
                         )
                     },
                 )
-            // Each tile keeps its label whole, at any font size: fewer to a row where they'd squeeze.
-            BoxWithConstraints {
-                val tileWidth = with(LocalDensity.current) { MIN_TILE_WIDTH.toPx() * fontScale }
-                val fit = (constraints.maxWidth / tileWidth).toInt()
-                StatTiles(columns = fit.coerceIn(1, tiles.size), tiles = tiles)
-            }
+            StatTiles(columns = tiles.size, tiles = tiles)
         }
         if (blankNote) {
             NoteLines(
@@ -347,4 +402,3 @@ internal fun NoteLines(lines: List<String>) {
 }
 
 private const val MAX_NAMED_AREAS = 3
-private val MIN_TILE_WIDTH = 104.dp

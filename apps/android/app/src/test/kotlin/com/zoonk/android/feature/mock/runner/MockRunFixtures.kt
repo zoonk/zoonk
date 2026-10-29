@@ -110,6 +110,7 @@ internal class FakeMockRunApi(
     val offers = mutableListOf<MockPlanOfferInput.Offer>()
     var offerResult = MockPlanOfferResult(changeId = null, lessonsSkipped = 3, reason = null, status = MockPlanOfferResult.Status.APPLIED)
     var offerFailure: ApiException? = null
+    var afterOffer: (() -> Unit)? = null
 
     override suspend fun mock(
         session: AuthenticatedSession,
@@ -182,6 +183,7 @@ internal class FakeMockRunApi(
     ): MockPlanOfferResult {
         offerFailure?.let { throw it }
         offers += offer
+        afterOffer?.invoke()
         return offerResult
     }
 }

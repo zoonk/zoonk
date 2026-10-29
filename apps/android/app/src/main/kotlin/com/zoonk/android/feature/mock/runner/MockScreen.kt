@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -66,8 +65,10 @@ import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatDuration
+import com.zoonk.android.ui.scaffold.DockedActionBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.MockExam
 import com.zoonk.api.models.MockExamCurrent
@@ -235,13 +236,13 @@ private fun StepColumn(
     modifier: Modifier,
     content: @Composable () -> Unit,
 ) {
-    Box(modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
+    // The whole pane scrolls, margins included, with the step held to a readable column.
+    Box(modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
         Column(
             Modifier
                 .widthIn(max = COLUMN_WIDTH)
                 .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(STEP_PADDING),
+                .padding(detailPagePadding()),
             verticalArrangement = Arrangement.spacedBy(24.dp),
         ) { content() }
     }
@@ -258,7 +259,7 @@ private fun StepAside(
             Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(STEP_PADDING)
+                .padding(detailPagePadding())
                 .semantics { paneTitle = title },
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
@@ -345,6 +346,12 @@ internal fun MockActionBar(content: @Composable ColumnScope.() -> Unit) {
     }
 }
 
+/** A pane's pinned actions, as the task's own bar draws them, so two panes' feet line up. */
+@Composable
+internal fun PaneFooter(content: @Composable () -> Unit) {
+    DockedActionBar { Box(Modifier.fillMaxWidth().padding(16.dp)) { content() } }
+}
+
 /** A step's main action. Busy, it keeps its ink and shows a wheel, as main's does. */
 @Composable
 internal fun MockMainButton(
@@ -388,13 +395,19 @@ internal fun MockEyebrow(view: MockExam) {
 }
 
 @Composable
-internal fun StepTitle(text: String) {
-    Text(text, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+internal fun StepTitle(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(text, modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
 }
 
 @Composable
-internal fun StepDetail(text: String) {
-    Text(text, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+internal fun StepDetail(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(text, modifier, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
 }
 
 /** A clock never starts grading: time closes the answers, and the learner hands them in. */
@@ -566,5 +579,4 @@ private fun MockExpired(
 }
 
 internal val COLUMN_WIDTH = 640.dp
-internal val STEP_PADDING = PaddingValues(horizontal = 16.dp, vertical = 24.dp)
 private const val SECONDS_PER_MINUTE = 60L

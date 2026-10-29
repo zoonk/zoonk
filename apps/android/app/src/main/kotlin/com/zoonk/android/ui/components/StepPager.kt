@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
@@ -24,6 +25,7 @@ import com.zoonk.android.R
 /**
  * Main's `Steps`: a few steps one at a time, with back (a button and the system's back) and next,
  * and the last step's own action in place of next. Back from the first step leaves as the screen does.
+ * Without [dots], the screen shows [StepDots] itself, as main does in its header.
  */
 @Composable
 fun StepPagerActions(
@@ -31,21 +33,23 @@ fun StepPagerActions(
     index: Int,
     onIndexChange: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    dots: Boolean = true,
     finalAction: @Composable () -> Unit,
 ) {
     BackHandler(enabled = index > 0) { onIndexChange(index - 1) }
 
     // The dots stay centered on the bar whether or not there's a step to go back to.
     Box(modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-        if (index > 0) {
-            OutlinedIconButton(onClick = { onIndexChange(index - 1) }, modifier = Modifier.align(Alignment.CenterStart)) {
-                Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
+        if (dots) StepDots(count, index)
+
+        // Back is measured first, so a long last action wraps beside it instead of covering it.
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            if (index > 0) {
+                OutlinedIconButton(onClick = { onIndexChange(index - 1) }) {
+                    Icon(painterResource(R.drawable.ic_arrow_back), contentDescription = stringResource(R.string.navigation_back))
+                }
             }
-        }
-
-        StepDots(count, index, Modifier)
-
-        Box(Modifier.align(Alignment.CenterEnd)) {
+            Spacer(Modifier.weight(1f))
             if (index < count - 1) {
                 Button(onClick = { onIndexChange(index + 1) }) { Text(stringResource(R.string.steps_continue)) }
             } else {
@@ -56,10 +60,10 @@ fun StepPagerActions(
 }
 
 @Composable
-private fun StepDots(
+fun StepDots(
     count: Int,
     index: Int,
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
 ) {
     if (count < 2) {
         Row(modifier) {}

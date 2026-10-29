@@ -44,11 +44,13 @@ internal fun SpeakingEstimate(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Eyebrow(paper.paper)
         StepTitle(
-            when {
-                low == null || high == null || !points -> stringResource(R.string.mock_result_no_estimate)
-                low == high -> stringResource(R.string.mock_result_about_points, number(low), total)
-                else -> stringResource(R.string.mock_result_about_range, number(low), number(high), total)
-            },
+            modifier = Modifier.stepHeading(),
+            text =
+                when {
+                    low == null || high == null || !points -> stringResource(R.string.mock_result_no_estimate)
+                    low == high -> stringResource(R.string.mock_result_about_points, number(low), total)
+                    else -> stringResource(R.string.mock_result_about_range, number(low), number(high), total)
+                },
         )
         StepDetail(
             when {
@@ -62,8 +64,7 @@ internal fun SpeakingEstimate(
         passRule(paper.pass)?.let { StepDetail(it) }
     }
 
-    val label = stringResource(R.string.mock_result_tasks)
-    Column(Modifier.semantics { contentDescription = label }) {
+    Column {
         paper.tasks.forEachIndexed { index, task ->
             if (index > 0) HorizontalDivider()
             Row(

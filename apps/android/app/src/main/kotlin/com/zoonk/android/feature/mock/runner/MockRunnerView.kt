@@ -72,9 +72,9 @@ import com.zoonk.android.feature.questions.formatClock
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.android.ui.components.StatusMark
-import com.zoonk.android.ui.scaffold.DockedActionBar
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.scaffold.detailPagePadding
 import com.zoonk.android.ui.scaffold.supportingPaneBeside
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
@@ -131,10 +131,11 @@ internal fun MockRunnerView(
                 supportingPane = { SheetPane(viewModel, run, current, handIn) },
             ) { beside ->
                 Column(Modifier.fillMaxSize()) {
-                    Box(Modifier.weight(1f).fillMaxWidth(), contentAlignment = Alignment.TopCenter) {
-                        Column(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth().verticalScroll(rememberScrollState())) {
+                    // The whole pane scrolls, margins included, with the question held to a readable column.
+                    Box(Modifier.weight(1f).fillMaxWidth().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+                        Column(Modifier.widthIn(max = COLUMN_WIDTH).fillMaxWidth()) {
                             RunnerProgress(run, titled = !beside, onQuestionTimeUp = viewModel::timeOutQuestion)
-                            Column(Modifier.padding(STEP_PADDING), verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                            Column(Modifier.padding(detailPagePadding()), verticalArrangement = Arrangement.spacedBy(24.dp)) {
                                 key(question.question.set?.id) { MockRecording(viewModel, run, question, audio) }
                                 key(question.itemId) { MockQuestionCard(viewModel, run, question) }
                                 if (!beside) {
@@ -209,7 +210,7 @@ private fun SheetPane(
                     .weight(1f)
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState())
-                    .padding(STEP_PADDING),
+                    .padding(detailPagePadding()),
                 verticalArrangement = Arrangement.spacedBy(24.dp),
             ) {
                 AnswerSheetHeader(run, MaterialTheme.typography.titleMedium)
@@ -223,12 +224,6 @@ private fun SheetPane(
             }
         }
     }
-}
-
-/** A pane's pinned actions, as the task's own bar draws them, so the two panes' feet line up. */
-@Composable
-private fun PaneFooter(content: @Composable () -> Unit) {
-    DockedActionBar { Box(Modifier.fillMaxWidth().padding(16.dp)) { content() } }
 }
 
 @Composable

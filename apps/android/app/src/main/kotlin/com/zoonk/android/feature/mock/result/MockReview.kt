@@ -46,6 +46,7 @@ import com.zoonk.android.feature.questions.TrueFalseWords
 import com.zoonk.android.feature.questions.trueFalseLabel
 import com.zoonk.android.ui.components.AnswerResult
 import com.zoonk.android.ui.components.AnswerTag
+import com.zoonk.android.ui.components.TagBesideOrUnder
 import com.zoonk.android.ui.components.answerTone
 import com.zoonk.android.ui.richtext.RichText
 import com.zoonk.android.ui.theme.withTabularFigures
@@ -71,15 +72,10 @@ internal fun ReviewSheet(
     onDismiss: () -> Unit,
 ) {
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        Column(
-            Modifier
-                .verticalScroll(rememberScrollState())
-                .padding(horizontal = 24.dp)
-                .navigationBarsPadding(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
+        // The title stays while a long review scrolls under it.
+        Column(Modifier.padding(horizontal = 24.dp).navigationBarsPadding(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Text(stringResource(R.string.mock_result_review), Modifier.semantics { heading() }, style = MaterialTheme.typography.titleLarge)
-            ReviewList(view, app)
+            Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState())) { ReviewList(view, app) }
         }
     }
 }
@@ -147,7 +143,6 @@ private fun ReviewAnswers(
 ) {
     val yours = entry.learnerAnswer
     val right = entry.correctAnswer
-    val label = stringResource(R.string.mock_result_answers)
 
     if (yours == null) {
         Text(
@@ -156,7 +151,7 @@ private fun ReviewAnswers(
             style = MaterialTheme.typography.bodyMedium,
         )
     }
-    Column(Modifier.semantics { contentDescription = label }, verticalArrangement = Arrangement.spacedBy(10.dp)) {
+    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         yours?.let { ReviewAnswer(it, entry, right = false, numbered, words) }
         right?.let { ReviewAnswer(it, entry, right = true, numbered, words) }
     }
@@ -206,7 +201,10 @@ private fun ReviewAnswer(
                 )
             }
         }
-        ItemLine(if (statement) trueFalseLabel(isTrue, words) else answer, Modifier.weight(1f))
-        AnswerTag(picked = !right, result = result)
+        TagBesideOrUnder(
+            modifier = Modifier.weight(1f),
+            content = { ItemLine(if (statement) trueFalseLabel(isTrue, words) else answer) },
+            tag = { AnswerTag(picked = !right, result = result) },
+        )
     }
 }

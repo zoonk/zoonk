@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
@@ -22,14 +23,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.feature.mock.runner.EssayGrading
@@ -117,7 +122,7 @@ private fun UngradedEssay(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         step.eyebrow?.let { Eyebrow(it) }
-        StepTitle(writingName(rubric))
+        StepTitle(writingName(rubric), Modifier.stepHeading())
         if (essay.status == MockEssay.Status.BLANK) StepDetail(stringResource(R.string.mock_result_left_blank))
         if (essay.grade?.zeroReason == EssayGrade.ZeroReason.TOO_SHORT) StepDetail(stringResource(R.string.mock_result_too_short))
     }
@@ -141,12 +146,8 @@ private fun PendingGrade(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
-            Text(
-                stringResource(if (slow) R.string.mock_result_grading_slow else R.string.mock_result_grading),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = MaterialTheme.typography.bodyMedium,
-            )
+            CircularProgressIndicator(Modifier.size(18.dp), color = MaterialTheme.colorScheme.onSurfaceVariant, strokeWidth = 2.dp)
+            StepDetail(stringResource(if (slow) R.string.mock_result_grading_slow else R.string.mock_result_grading))
         }
         return
     }
@@ -157,12 +158,7 @@ private fun PendingGrade(
             EssayGrading.LimitReached -> stringResource(R.string.mock_result_grading_limit)
             else -> stringResource(R.string.mock_result_not_graded)
         }
-    Text(
-        line,
-        if (grading == EssayGrading.Idle) Modifier else Modifier.semantics { liveRegion = LiveRegionMode.Assertive },
-        color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.bodyLarge,
-    )
+    StepDetail(line, if (grading == EssayGrading.Idle) Modifier else Modifier.semantics { liveRegion = LiveRegionMode.Assertive })
     OutlinedButton(onClick = onGrade) { Text(stringResource(R.string.mock_result_grade_it)) }
 }
 
@@ -174,7 +170,7 @@ private fun EssayGradeCard(
     val locale = currentLocale()
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Column(Modifier.semantics(mergeDescendants = true) { heading() }, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Column(Modifier.semantics(mergeDescendants = true) { heading() }.stepHeading(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(writingName(rubric), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.titleMedium)
             ScoreRange(
                 stringResource(R.string.mock_result_range, formatNumber(grade.range.low, locale), formatNumber(grade.range.high, locale)),
@@ -191,14 +187,25 @@ private fun CriteriaRows(
     rubric: MockExam.EssayRubric?,
 ) {
     val locale = currentLocale()
-    val label = stringResource(R.string.mock_result_criteria)
-
-    Column(Modifier.semantics { contentDescription = label }) {
-        grade.criteria.forEach { criterion ->
-            val next = criterion.id == grade.nextStep?.criterionId
+    val valueStyle = MaterialTheme.typography.labelMedium.withTabularFigures()
+    val values =
+        grade.criteria.map { criterion ->
             val shown = shownScore(criterion, rubric, grade)
+            stringResource(R.string.mock_result_score_of, formatNumber(shown.first, locale), formatNumber(shown.second, locale))
+        }
+    // Every value takes the widest one's room, so the meters line up.
+    val measurer = rememberTextMeasurer()
+    val valueWidth = with(LocalDensity.current) { values.maxOfOrNull { measurer.measure(it, valueStyle).size.width }?.toDp() ?: 0.dp }
+    val nextLabel = stringResource(R.string.mock_result_next_step)
+
+    Column {
+        grade.criteria.forEachIndexed { index, criterion ->
+            val next = criterion.id == grade.nextStep?.criterionId
+            if (index > 0) HorizontalDivider()
             Row(
-                Modifier.fillMaxWidth().height(IntrinsicSize.Min).semantics(mergeDescendants = true) {},
+                Modifier.fillMaxWidth().height(IntrinsicSize.Min).semantics(mergeDescendants = true) {
+                    if (next) stateDescription = nextLabel
+                },
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -213,10 +220,7 @@ private fun CriteriaRows(
                     modifier = Modifier.width(METER_WIDTH),
                     color = if (next) MaterialTheme.zoonk.warning else MaterialTheme.colorScheme.tertiary,
                 )
-                Text(
-                    stringResource(R.string.mock_result_score_of, formatNumber(shown.first, locale), formatNumber(shown.second, locale)),
-                    style = MaterialTheme.typography.labelMedium.withTabularFigures(),
-                )
+                Text(values[index], Modifier.width(valueWidth), style = valueStyle, textAlign = TextAlign.End)
             }
         }
     }
@@ -239,7 +243,7 @@ private fun NextStepComment(grade: EssayGrade) {
     if (nextStep == null) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             Eyebrow(stringResource(R.string.mock_result_next_step))
-            StepTitle(stringResource(R.string.mock_result_nothing_left))
+            StepTitle(stringResource(R.string.mock_result_nothing_left), Modifier.stepHeading())
             StepDetail(stringResource(R.string.mock_result_full_marks))
         }
         return
@@ -248,7 +252,7 @@ private fun NextStepComment(grade: EssayGrade) {
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Eyebrow(stringResource(R.string.mock_result_next_step))
-        StepTitle(criterion?.let { criterionName(it) } ?: stringResource(R.string.mock_result_what_to_rewrite))
+        StepTitle(criterion?.let { criterionName(it) } ?: stringResource(R.string.mock_result_what_to_rewrite), Modifier.stepHeading())
     }
     criterion?.quote?.let { quote ->
         Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(12.dp)) {

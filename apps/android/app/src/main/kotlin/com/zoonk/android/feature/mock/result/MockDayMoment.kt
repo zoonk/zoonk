@@ -1,19 +1,33 @@
 package com.zoonk.android.feature.mock.result
 
 import androidx.compose.runtime.Composable
-import com.zoonk.api.models.Milestone
-import com.zoonk.api.models.MockExamReached
-import com.zoonk.api.models.StudyMissionMoment
+import androidx.compose.runtime.getValue
+import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.collectShown
+import com.zoonk.android.data.value
+import com.zoonk.android.feature.session.DayMoment
+import com.zoonk.android.feature.session.ReachedFacts
+import com.zoonk.android.feature.session.missionMomentFacts
+import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.characters.look
+import com.zoonk.api.models.MockExam
 
-/**
- * Where main's `DayMoment` goes on a mock's result: the day's missions it completed and the belt or
- * Energy it reached, celebrated under the result's `CelebrationScope`. The session lane's moment
- * renders here once it lands; until then this shows nothing.
- */
+/** Main's `DayMoment` on a mock's result: the day's missions it finished, then the belt level and Energy it reached. */
 @Composable
-@Suppress("UNUSED_PARAMETER")
 internal fun MockDayMoment(
-    ceremony: Milestone?,
-    missionMoment: StudyMissionMoment?,
-    reached: MockExamReached,
-) = Unit
+    app: AppContainer,
+    view: MockExam,
+) {
+    val summary by app.learnerSummary.summary.collectShown()
+    val learnerBuddy = summary.value?.buddy
+    val look = learnerBuddy?.look() ?: BuddyLook()
+
+    DayMoment(
+        missions = view.missionMoment?.missionMomentFacts(),
+        reached = ReachedFacts(view.reached.level, view.reached.energy),
+        ceremony = view.ceremony?.kind,
+        buddy = look,
+        buddyName = buddyName(look.kind, learnerBuddy?.name),
+    )
+}
