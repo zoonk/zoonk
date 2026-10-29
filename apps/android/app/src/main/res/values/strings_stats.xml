@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="stats_all_goals">All goals</string>
-    <string name="stats_nav">Your stats</string>
+    <string name="stats_open">Open Statistics</string>
     <string name="stats_overview">Overview</string>
     <string name="stats_level">Level</string>
     <string name="stats_energy">Energy</string>
@@ -22,7 +22,6 @@
     <string name="stats_right_count">%1$s/%2$s right</string>
     <string name="stats_right_last_90">Right answers in the last 90 days</string>
     <string name="stats_score_90">Score · 90 days</string>
-    <string name="stats_score_90_value">Score · 90 days · %1$s</string>
     <string name="stats_score_after_answers">Your score shows after your first answers.</string>
     <string name="stats_patterns_90">Patterns · 90 days</string>
     <string name="stats_see_all">See all</string>
@@ -43,6 +42,8 @@
     <string name="stats_next_belt">Next belt</string>
     <string name="stats_belt_at">%1$s at %2$s Brain Power</string>
     <string name="stats_every_belt">Every belt earned</string>
+    <string name="stats_belt_earned">Earned</string>
+    <string name="stats_belt_current">Current</string>
     <string name="stats_level_line">Every lesson adds %1$s Brain Power, and it never goes down.</string>
 
     <string name="stats_today">Today</string>
@@ -70,12 +71,18 @@
         <item quantity="one">%1$s activity</item>
         <item quantity="other">%1$s activities</item>
     </plurals>
+    <string name="stats_day_no_study">%1$s · No study</string>
+    <plurals name="stats_day_activities">
+        <item quantity="one">%1$s · %2$s activity</item>
+        <item quantity="other">%1$s · %2$s activities</item>
+    </plurals>
+    <string name="stats_day_no_energy">%1$s · No Energy recorded</string>
+    <string name="stats_day_energy">%1$s · %2$s Energy</string>
     <string name="stats_calendar_energy_summary">Energy over the past 12 months: %1$s today, %2$s on average since you started</string>
 
     <string name="stats_right_answers">Right answers</string>
     <string name="stats_right">Right</string>
     <string name="stats_of_all_answers">Of all your answers</string>
-    <string name="stats_correct_of_total">%1$s of %2$s</string>
     <string name="stats_period">Period</string>
     <string name="stats_back_from_today">Back from today</string>
     <plurals name="stats_days">
@@ -83,8 +90,15 @@
         <item quantity="other">%1$s days</item>
     </plurals>
     <string name="stats_score_line">Every answer counts the same, so harder lessons can lower your score for a while.</string>
-    <string name="stats_week">Week</string>
-    <string name="stats_score_percent">Score (%)</string>
+    <string name="stats_score_trend">Weekly score trend: %1$s. %2$s</string>
+    <plurals name="stats_score_across">
+        <item quantity="one">%1$s across %2$s answer</item>
+        <item quantity="other">%1$s across %2$s answers</item>
+    </plurals>
+    <plurals name="stats_score_week">
+        <item quantity="one">%1$s: %2$s across %3$s answer</item>
+        <item quantity="other">%1$s: %2$s across %3$s answers</item>
+    </plurals>
 
     <string name="stats_answers">Answers</string>
     <string name="stats_last_90">In the last 90 days</string>

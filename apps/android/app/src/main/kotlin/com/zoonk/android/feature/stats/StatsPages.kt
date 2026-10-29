@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.stats
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,11 +9,16 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.LocalMinimumInteractiveComponentSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
@@ -22,10 +28,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -33,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
@@ -42,7 +52,6 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.Belt
 import com.zoonk.android.ui.components.BeltDot
-import com.zoonk.android.ui.components.LessonVisual
 import com.zoonk.android.ui.components.Meter
 import com.zoonk.android.ui.components.SectionHeader
 import com.zoonk.android.ui.components.StatTile
@@ -77,7 +86,7 @@ private fun percent(
 ) = formatPercent(value / PERCENT, locale)
 
 /** Main's `formatMetricPercent`, for scores and averages: "66.7%", "67%". */
-private fun metricPercent(
+internal fun metricPercent(
     value: Double,
     locale: Locale,
 ) = formatPercent(value / PERCENT, locale, maximumFractionDigits = 1)
@@ -219,21 +228,35 @@ private fun OverviewContent(
         StatTiles(columns = if (context.wide) 4 else 2, tiles = tiles)
         Beside(context.stats.activity) { activity -> activity?.let { ActivityCalendar(it) } }
 
-        // Main shows the trend and the patterns from `md`; narrower, a row leads to the patterns.
-        if (context.wide) {
-            Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
-                Column(Modifier.weight(1.25f)) { Beside(context.stats.score) { ScoreTrend(it) } }
-                Column(Modifier.weight(1f)) { Beside(context.stats.patterns) { PatternsOverview(context, it) } }
+        // Main shows the trend and the patterns from `md`, side by side from `lg`; narrower, a row leads to the patterns.
+        when {
+            context.expanded -> {
+                Row(horizontalArrangement = Arrangement.spacedBy(40.dp)) {
+                    Column(Modifier.weight(1.25f)) { Beside(context.stats.score) { ScoreTrend(it) } }
+                    Column(Modifier.weight(1f)) { Beside(context.stats.patterns) { PatternsOverview(context, it) } }
+                }
             }
-        } else {
-            Beside(context.stats.patterns) { patterns ->
-                val summary = patterns?.let { patternsSummary(it) }
-                val names = listOfNotNull(summary?.let { bestDayName(it.days) }, summary?.let { bestTimeName(it.times) })
-                OutlinedCard(onClick = { context.open(StatsPage.Patterns) }) {
-                    ListItem(
-                        headlineContent = { Text(stringResource(R.string.stats_patterns)) },
-                        trailingContent = { Text(names.joinToString(" · ").ifEmpty { stringResource(R.string.stats_not_yet) }) },
-                    )
+
+            context.wide -> {
+                Beside(context.stats.score) { ScoreTrend(it) }
+                Beside(context.stats.patterns) { PatternsOverview(context, it) }
+            }
+
+            else -> {
+                Beside(context.stats.patterns) { patterns ->
+                    val summary = patterns?.let { patternsSummary(it) }
+                    val names = listOfNotNull(summary?.let { bestDayName(it.days) }, summary?.let { bestTimeName(it.times) })
+                    OutlinedCard(onClick = { context.open(StatsPage.Patterns) }) {
+                        ListItem(
+                            headlineContent = { Text(stringResource(R.string.stats_patterns)) },
+                            trailingContent = {
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                                    PatternValue(names.joinToString(" · ").ifEmpty { stringResource(R.string.stats_not_yet) })
+                                    Icon(painterResource(R.drawable.ic_chevron_right), contentDescription = null)
+                                }
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -260,13 +283,24 @@ private fun LevelTile(
 
 @Composable
 private fun ScoreTrend(score: CurrentUserScoreResponseScore?) {
-    if (score == null) {
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            SectionHeader(stringResource(R.string.stats_score_90))
-            StatsLine(stringResource(R.string.stats_score_after_answers))
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        // As tall as the patterns' "See all" beside it, so the two headers line up.
+        Row(
+            Modifier.heightIn(min = LocalMinimumInteractiveComponentSize.current),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            SectionHeader(stringResource(R.string.stats_score_90), Modifier.weight(1f))
+            score?.let {
+                Text(
+                    metricPercent(it.score, currentLocale()),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
+                )
+            }
         }
-    } else {
-        ScoreChart(score, stringResource(R.string.stats_score_90_value, metricPercent(score.score, currentLocale())))
+
+        if (score == null) StatsLine(stringResource(R.string.stats_score_after_answers)) else ScoreChart(score)
     }
 }
 
@@ -316,8 +350,25 @@ private fun PatternRow(
 ) {
     ListItem(
         headlineContent = { Text(label) },
-        trailingContent = { Text(listOfNotNull(value ?: stringResource(R.string.stats_not_yet), score).joinToString("  ")) },
+        trailingContent = {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                PatternValue(value ?: stringResource(R.string.stats_not_yet))
+                score?.let {
+                    Text(
+                        it,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
+                    )
+                }
+            }
+        },
     )
+}
+
+/** The answer reads at the label's weight, not as a list item's quiet trailing text. */
+@Composable
+private fun PatternValue(text: String) {
+    Text(text, color = MaterialTheme.colorScheme.onSurface, style = MaterialTheme.typography.bodyMedium)
 }
 
 // Level
@@ -395,8 +446,9 @@ private fun NextLevelTile(
 }
 
 /**
- * Main's belt progression: the belt's ten levels (those reached in the belt's color, the next one
- * filling with Brain Power), the next belt and how far it is, and every belt in order.
+ * Main's belt progression: a panel in the belt's tint with its ten levels (those reached in the
+ * belt's color, the next one filling with Brain Power), the next belt and how far it is, then every
+ * belt in order, the earned ones full and the current one ringed.
  */
 @Composable
 private fun BeltProgression(
@@ -405,77 +457,142 @@ private fun BeltProgression(
     nextBelt: Belt?,
 ) {
     val locale = currentLocale()
+    val surface = MaterialTheme.colorScheme.surfaceContainerLow
+    // White and black would wash the panel white or gray, so theirs stays neutral, as on main.
+    val panel =
+        if (belt == Belt.White ||
+            belt == Belt.Black
+        ) {
+            MaterialTheme.colorScheme.surfaceContainerHigh
+        } else {
+            lerp(surface, belt.color, PANEL_TINT)
+        }
+
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        SectionHeader(stringResource(R.string.stats_belt_progression))
+
+        Card(colors = CardDefaults.cardColors(containerColor = panel)) {
+            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(stringResource(belt.label), style = MaterialTheme.typography.titleMedium)
+                    Text(
+                        stringResource(R.string.stats_level_of, whole(level.level, locale), whole(LEVELS_PER_BELT, locale)),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+
+                LevelStripes(level, belt)
+                NextBelt(level, nextBelt)
+            }
+        }
+
+        BeltRack(belt)
+    }
+}
+
+/** Drawn for the eye only: the words above it name the belt and level. */
+@Composable
+private fun LevelStripes(
+    level: CurrentUserProgressResponseLevel,
+    belt: Belt,
+) {
+    val locale = currentLocale()
+    val reached = level.level.toInt()
     val share = level.progressInLevel.toFloat() / level.bpPerLevel.coerceAtLeast(1)
     val brain = MaterialTheme.zoonk.brain
     val track = MaterialTheme.colorScheme.surfaceContainerHighest
+    val edge = MaterialTheme.colorScheme.outlineVariant
     val beltColor = belt.color
-    val reached = level.level.toInt()
-    val position = stringResource(R.string.stats_level_of, whole(level.level, locale), whole(LEVELS_PER_BELT, locale))
 
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionHeader(stringResource(R.string.stats_belt_progression))
-
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(12.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-            Text(stringResource(belt.label), style = MaterialTheme.typography.titleSmall)
-            Text(position, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-        }
-
-        Canvas(Modifier.fillMaxWidth().height(28.dp).clearAndSetSemantics { contentDescription = position }) {
-            val gap = 4.dp.toPx()
-            val width = (size.width - gap * (LEVELS_PER_BELT - 1)) / LEVELS_PER_BELT
-            val radius = CornerRadius(3.dp.toPx())
-            val hairline = 1.dp.toPx()
-
-            for (index in 0 until LEVELS_PER_BELT.toInt()) {
-                val left = index * (width + gap)
-                drawRoundRect(if (index < reached) beltColor else track, Offset(left, 0f), Size(width, size.height), radius)
-                drawRoundRect(
-                    brain.copy(alpha = OUTLINE_ALPHA),
-                    Offset(left, 0f),
-                    Size(width, size.height),
-                    radius,
-                    style = Stroke(hairline),
-                )
-                if (index == reached && !level.isMaxLevel) {
-                    val height = size.height * share
-                    drawRoundRect(brain, Offset(left, size.height - height), Size(width, height), radius)
+    Row(Modifier.fillMaxWidth().clearAndSetSemantics {}, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        for (index in 0 until LEVELS_PER_BELT.toInt()) {
+            Column(
+                Modifier.weight(1f),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Canvas(Modifier.fillMaxWidth().height(28.dp)) {
+                    val radius = CornerRadius(3.dp.toPx())
+                    drawRoundRect(if (index < reached) beltColor else track, cornerRadius = radius)
+                    drawRoundRect(edge, cornerRadius = radius, style = Stroke(1.dp.toPx()))
+                    if (index == reached && !level.isMaxLevel) {
+                        val height = size.height * share
+                        drawRoundRect(brain, Offset(0f, size.height - height), Size(size.width, height), radius)
+                    }
                 }
+                Text(
+                    whole(index + 1L, locale),
+                    color = if (index + 1 == reached) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelSmall.withTabularFigures(),
+                    fontWeight = if (index + 1 == reached) FontWeight.SemiBold else null,
+                )
             }
         }
+    }
+}
 
-        val next = level.nextBelt
-        if (nextBelt != null && next != null) {
-            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-                Text(
-                    stringResource(R.string.stats_next_belt),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelLarge,
-                )
-                BeltDot(nextBelt)
-                Text(
-                    stringResource(R.string.stats_belt_at, stringResource(nextBelt.label), whole(next.startBrainPower, locale)),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Text(
-                    stringResource(R.string.stats_to_go, whole(next.brainPowerToGo, locale)),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-            }
-        } else {
-            Text(stringResource(R.string.stats_every_belt), style = MaterialTheme.typography.bodyMedium)
+@Composable
+private fun NextBelt(
+    level: CurrentUserProgressResponseLevel,
+    nextBelt: Belt?,
+) {
+    val locale = currentLocale()
+    val next = level.nextBelt
+
+    if (nextBelt == null || next == null) {
+        Text(stringResource(R.string.stats_every_belt), style = MaterialTheme.typography.bodyMedium)
+        return
+    }
+
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Text(
+            stringResource(R.string.stats_next_belt),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelLarge,
+        )
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            BeltDot(nextBelt)
+            Text(
+                stringResource(R.string.stats_belt_at, stringResource(nextBelt.label), whole(next.startBrainPower, locale)),
+                style = MaterialTheme.typography.bodyMedium,
+            )
         }
+        Text(
+            stringResource(R.string.stats_to_go, whole(next.brainPowerToGo, locale)),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
+}
 
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
-            Belt.entries.forEach { entry ->
-                val name = stringResource(entry.label)
-                Column(
-                    modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = name },
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    BeltDot(entry, if (entry == belt) Modifier.padding(2.dp) else Modifier)
-                    if (entry == belt) Canvas(Modifier.size(4.dp)) { drawCircle(brain) }
-                }
+/** Every belt in order: earned ones full, the current one ringed, those ahead faint (main's tied and folded belts). */
+@Composable
+private fun BeltRack(current: Belt) {
+    val ring = MaterialTheme.colorScheme.onSurface
+    val earned = stringResource(R.string.stats_belt_earned)
+    val now = stringResource(R.string.stats_belt_current)
+
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+        Belt.entries.forEach { entry ->
+            val name = stringResource(entry.label)
+            Box(
+                modifier =
+                    Modifier
+                        .clip(CircleShape)
+                        .then(if (entry == current) Modifier.border(1.5.dp, ring, CircleShape) else Modifier)
+                        .padding(4.dp)
+                        .alpha(if (entry > current) AHEAD_ALPHA else 1f)
+                        .clearAndSetSemantics {
+                            contentDescription = name
+                            when {
+                                entry == current -> stateDescription = now
+                                entry < current -> stateDescription = earned
+                                else -> Unit
+                            }
+                        },
+            ) {
+                BeltDot(entry)
             }
         }
     }
@@ -533,10 +650,24 @@ internal fun EnergyPage(context: StatsContext) {
                 ),
         )
 
+        val newest =
+            energy.days
+                .lastOrNull()
+                ?.date
+                ?.toJavaLocalDate()
+        val days =
+            energy.days.map { day ->
+                val date = formatDate(day.date.toJavaLocalDate(), locale, DateStyle.Day, today = newest ?: day.date.toJavaLocalDate())
+                val label =
+                    day.energy?.let { stringResource(R.string.stats_day_energy, date, metricPercent(it, locale)) }
+                        ?: stringResource(R.string.stats_day_no_energy, date)
+                CalendarDay(day.date.toJavaLocalDate(), energyBand(day.energy), label)
+            }
+
         YearCalendar(
             title = stringResource(R.string.stats_past_year),
-            days = energy.days.map { CalendarDay(it.date.toJavaLocalDate(), energyBand(it.energy)) },
-            levels = ENERGY_LEVELS,
+            days = days,
+            shades = ENERGY_SHADES,
             color = MaterialTheme.zoonk.energy,
             low = stringResource(R.string.stats_low),
             high = stringResource(R.string.stats_high),
@@ -546,6 +677,7 @@ internal fun EnergyPage(context: StatsContext) {
                     percent(energy.currentEnergy, locale),
                     insights?.let { metricPercent(it.averageEnergy, locale) } ?: DASH,
                 ),
+            start = energy.days.indexOfLast { it.energy != null }.takeIf { it >= 0 } ?: energy.days.lastIndex,
         )
 
         StatsLine(stringResource(R.string.stats_energy_line))
@@ -609,11 +741,28 @@ private fun ActivityCalendar(activity: CurrentUserActivityResponseActivity) {
     val locale = currentLocale()
     val maximum = activity.days.maxOfOrNull { it.activitiesCompleted } ?: 0
     val active = activity.days.count { it.activitiesCompleted > 0 }
+    val newest =
+        activity.days
+            .lastOrNull()
+            ?.date
+            ?.toJavaLocalDate()
+    val days =
+        activity.days.map { day ->
+            val date = formatDate(day.date.toJavaLocalDate(), locale, DateStyle.Day, today = newest ?: day.date.toJavaLocalDate())
+            val count = day.activitiesCompleted
+            val label =
+                if (count == 0L) {
+                    stringResource(R.string.stats_day_no_study, date)
+                } else {
+                    pluralStringResource(R.plurals.stats_day_activities, count.toInt(), date, whole(count, locale))
+                }
+            CalendarDay(day.date.toJavaLocalDate(), activityBand(count, maximum), label)
+        }
 
     YearCalendar(
         title = stringResource(R.string.stats_past_year),
-        days = activity.days.map { CalendarDay(it.date.toJavaLocalDate(), activityBand(it.activitiesCompleted, maximum)) },
-        levels = ACTIVITY_LEVELS,
+        days = days,
+        shades = ACTIVITY_SHADES,
         color = MaterialTheme.colorScheme.tertiary,
         low = stringResource(R.string.stats_less),
         high = stringResource(R.string.stats_more),
@@ -624,6 +773,7 @@ private fun ActivityCalendar(activity: CurrentUserActivityResponseActivity) {
                 whole(active.toLong(), locale),
                 pluralStringResource(R.plurals.stats_activities, maximum.toInt(), whole(maximum, locale)),
             ),
+        start = activity.days.indexOfLast { it.activitiesCompleted > 0 }.takeIf { it >= 0 } ?: activity.days.lastIndex,
     )
 }
 
@@ -653,16 +803,13 @@ internal fun ScorePage(context: StatsContext) {
                         )
                     },
                     { modifier ->
-                        val correct = whole(score.correctAnswers, locale)
-                        val total = whole(score.totalAnswers, locale)
-                        val spoken = stringResource(R.string.stats_correct_of_total, correct, total)
                         StatTile(
                             label = stringResource(R.string.stats_right),
-                            value = "$correct/$total",
+                            value = whole(score.correctAnswers, locale) + "/" + whole(score.totalAnswers, locale),
                             detail = stringResource(R.string.stats_of_all_answers),
                             tone = StatTone.Success,
                             icon = tonedIcon(R.drawable.ic_check_circle, StatTone.Success),
-                            modifier = modifier.semantics { contentDescription = spoken },
+                            modifier = modifier,
                         )
                     },
                     { modifier ->
@@ -682,31 +829,9 @@ internal fun ScorePage(context: StatsContext) {
                 ),
         )
 
-        ScoreChart(score, stringResource(R.string.stats_score_90))
+        ScoreChart(score)
         StatsLine(stringResource(R.string.stats_score_line))
     }
-}
-
-/** The shared chart on main's fixed 0–100% scale, so its points read out to TalkBack as every chart's do. */
-@Composable
-private fun ScoreChart(
-    score: CurrentUserScoreResponseScore,
-    title: String,
-) {
-    val locale = currentLocale()
-
-    LessonVisual(
-        LessonVisual.Chart(
-            chart = LessonVisual.Chart.Kind.Line,
-            title = title,
-            categoryLabel = stringResource(R.string.stats_week),
-            valueLabel = stringResource(R.string.stats_score_percent),
-            categories = score.dataPoints.map { formatDate(it.date.toJavaLocalDate(), locale, DateStyle.Day) },
-            series = listOf(LessonVisual.Chart.Series(stringResource(R.string.stats_score), score.dataPoints.map { it.score })),
-            axisStart = 0.0,
-            axisEnd = PERCENT,
-        ),
-    )
 }
 
 // Patterns
@@ -736,7 +861,8 @@ internal fun PatternsPage(context: StatsContext) {
                             label = stringResource(R.string.stats_best_day),
                             value = bestDayName(summary.days) ?: DASH,
                             detail = verdictDetail(summary.days),
-                            icon = icon(R.drawable.ic_calendar_month),
+                            tone = StatTone.Success,
+                            icon = tonedIcon(R.drawable.ic_calendar_month, StatTone.Success),
                             modifier = modifier,
                         )
                     },
@@ -745,7 +871,8 @@ internal fun PatternsPage(context: StatsContext) {
                             label = stringResource(R.string.stats_best_time),
                             value = bestTimeName(summary.times) ?: DASH,
                             detail = verdictDetail(summary.times),
-                            icon = icon(R.drawable.ic_schedule),
+                            tone = StatTone.Success,
+                            icon = tonedIcon(R.drawable.ic_schedule, StatTone.Success),
                             modifier = modifier,
                         )
                     },
@@ -801,6 +928,8 @@ private fun PatternBars(
     val locale = currentLocale()
     val muted = MaterialTheme.colorScheme.onSurfaceVariant
 
+    if (rows.isEmpty()) return
+
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(title)
         rows.forEach { row ->
@@ -819,16 +948,25 @@ private fun PatternBars(
                 }
 
             Column(Modifier.semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Bottom) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         row.name.replaceFirstChar { it.titlecase(locale) },
+                        modifier = Modifier.alignByBaseline(),
                         style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = if (row.best) FontWeight.SemiBold else null,
+                        fontWeight = if (row.best) FontWeight.Medium else null,
                     )
-                    row.hours?.let { Text(it, color = muted, style = MaterialTheme.typography.labelSmall.withTabularFigures()) }
+                    row.hours?.let {
+                        Text(
+                            it,
+                            modifier = Modifier.alignByBaseline(),
+                            color = muted,
+                            style = MaterialTheme.typography.labelSmall.withTabularFigures(),
+                        )
+                    }
                     Box(Modifier.weight(1f))
                     Text(
                         if (row.answers > 0) percent(row.score, locale) else DASH,
+                        modifier = Modifier.alignByBaseline(),
                         color = if (counted) MaterialTheme.colorScheme.onSurface else muted,
                         style = MaterialTheme.typography.bodyMedium.withTabularFigures(),
                     )
@@ -960,6 +1098,7 @@ private const val BRAIN_POWER_PER_LESSON = 10L
 private const val SCORE_WINDOW_DAYS = 90
 internal const val MIN_PATTERN_ANSWERS = 10L
 private const val EVEN_SPREAD_POINTS = 5.0
-private const val OUTLINE_ALPHA = 0.25f
+private const val PANEL_TINT = 0.1f
+private const val AHEAD_ALPHA = 0.38f
 private const val UNCOUNTED_BAR_ALPHA = 0.2f
 private const val OTHER_BAR_ALPHA = 0.45f

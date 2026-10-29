@@ -4,9 +4,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -108,12 +110,34 @@ class StatsFlowTest {
     }
 
     @Test
-    fun theTabsMoveBetweenPages() {
+    fun theLevelPageSaysHowFarTheNextBeltIs() {
         show(StatsPage.Level)
 
         rule.onNodeWithText("40 Brain Power").assertIsDisplayed()
-        rule.onNodeWithText("Score").performClick()
+        rule.onNodeWithText("740 to go").assertExists()
+    }
 
+    @Test
+    fun aTappedDayIsTheOneTheCalendarSays() {
+        show(StatsPage.Activity)
+
+        rule.onNodeWithContentDescription("Oct 28 · 5 activities").assertIsSelected()
+        rule.onNodeWithContentDescription("Oct 27 · 3 activities").performClick().assertIsSelected()
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp")
+    fun theListBesideSwapsPagesSoBackLeavesTheSection() {
+        show(StatsPage.Level)
+        rule.runOnIdle {
+            navigator.open(AppRoute.Statistics)
+            navigator.open(AppRoute.StatsLevel)
+        }
+
+        rule.onNodeWithText("Score").performClick()
         assertEquals(AppRoute.StatsScore, navigator.currentRoute)
+
+        rule.runOnIdle { navigator.back() }
+        assertEquals(AppRoute.Statistics, navigator.currentRoute)
     }
 }
