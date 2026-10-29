@@ -120,6 +120,7 @@ filter:
     - getCurrentUserScorePatterns
     - getCurrentUserStepExampleLine
     - getCurrentUserSummary
+    - getCurrentUserUsernameSuggestion
     - getCurrentUserWeeklyRecap
     - getEssay
     - getExam

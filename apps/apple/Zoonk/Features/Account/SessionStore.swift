@@ -285,6 +285,15 @@ final class SessionStore {
     googleAuthentication.handle(url)
   }
 
+  /// What profile setup offers a new account; nil when every one is taken or it didn't load.
+  func usernameSuggestion() async -> String? {
+    guard let authenticatedSession else {
+      return nil
+    }
+
+    return try? await api.getUsernameSuggestion(token: authenticatedSession.bearerToken)
+  }
+
   func updateProfile(name: String, username: String) async -> Bool {
     guard let authenticatedSession else {
       state = .signedOut

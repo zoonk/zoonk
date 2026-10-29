@@ -214,27 +214,27 @@ final class ZoonkUITests: XCTestCase {
   }
 
   @MainActor
-  func testRequiredProfileSetupOnlyOffersSave() {
+  func testRequiredProfileSetupOnlyOffersContinue() {
     continueAfterFailure = false
 
     let app = makeApp(for: .requiredSetup)
     launch(app)
 
-    let setupNavigationBar = app.navigationBars["Finish setup"]
+    let setupTitle = app.staticTexts["What should we call you?"]
     XCTAssertTrue(
-      setupNavigationBar.waitForExistence(timeout: 5),
+      setupTitle.waitForExistence(timeout: 5),
       "Expected required profile setup to open directly")
     XCTAssertTrue(
-      app.buttons["Save"].exists,
-      "Expected required profile setup to offer its save action")
+      app.buttons["Continue"].exists,
+      "Expected required profile setup to offer its continue action")
     XCTAssertFalse(
       app.buttons["Close"].exists,
       "Expected required profile setup to omit the account sheet close action")
 
-    setupNavigationBar.swipeDown(velocity: .fast)
+    setupTitle.swipeDown(velocity: .fast)
 
     XCTAssertTrue(
-      setupNavigationBar.waitForExistence(timeout: 2),
+      setupTitle.waitForExistence(timeout: 2),
       "Expected required profile setup to reject interactive dismissal")
   }
 

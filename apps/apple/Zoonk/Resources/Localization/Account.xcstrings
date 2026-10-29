@@ -36,6 +36,41 @@
         }
       }
     },
+    "3-30 characters. Letters, numbers, and underscores only." : {
+      "comment" : "Username requirements below the profile field",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3–30 Zeichen. Nur Buchstaben, Zahlen und Unterstriche."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "3-30 characters. Letters, numbers, and underscores only."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De 3 a 30 caracteres. Solo letras, números y guiones bajos."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De 3 à 30 caractères. Lettres, chiffres et tirets bas uniquement."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "De 3 a 30 caracteres. Apenas letras, números e sublinhados."
+          }
+        }
+      }
+    },
     "6-digit code" : {
       "comment" : "Placeholder for the account deletion verification code\nPlaceholder for the email sign-in code",
       "localizations" : {
@@ -384,6 +419,76 @@
         }
       }
     },
+    "Change" : {
+      "comment" : "Shows the username field in setup",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ändern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Change"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudar"
+          }
+        }
+      }
+    },
+    "Change username" : {
+      "comment" : "Shows the username field",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nutzernamen ändern"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Change username"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cambiar nombre de usuario"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modifier le nom d’utilisateur"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mudar nome de usuário"
+          }
+        }
+      }
+    },
     "Check the information and try again." : {
       "comment" : "Error shown when profile information is invalid",
       "localizations" : {
@@ -496,35 +601,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Confira sua conexão e tente restaurar as compras novamente."
-          }
-        }
-      }
-    },
-    "Choose how your name appears before you continue." : {
-      "comment" : "Explains why first-time profile setup is required",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lege fest, wie dein Name angezeigt werden soll, bevor du fortfährst."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elige cómo aparecerá tu nombre antes de continuar."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choisis comment ton nom apparaîtra avant de continuer."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escolha como seu nome será exibido antes de continuar."
           }
         }
       }
@@ -1179,35 +1255,6 @@
         }
       }
     },
-    "Finish setup" : {
-      "comment" : "Navigation title for required first-time profile setup",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Einrichtung abschließen"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Finalizar configuración"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Terminer la configuration"
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Concluir configuração"
-          }
-        }
-      }
-    },
     "For your security, enter a new code sent to the email on this account." : {
       "comment" : "Explains the email reauthentication requirement for account deletion",
       "localizations" : {
@@ -1378,6 +1425,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mais tempo para conversas de prática oral"
+          }
+        }
+      }
+    },
+    "How Zoonk and your buddy call you" : {
+      "comment" : "What the profile name is for",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie Zoonk und dein Kumpel dich nennen"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "How Zoonk and your buddy call you"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cómo te llamarán Zoonk y tu compañero"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le nom que Zoonk et ton compagnon utilisent pour t’appeler"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como o Zoonk e seu parceiro chamam você"
           }
         }
       }
@@ -2827,35 +2909,6 @@
         }
       }
     },
-    "Use 3–30 letters, numbers, or underscores." : {
-      "comment" : "Username requirements below the profile field",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Verwende 3–30 Zeichen: Buchstaben, Zahlen oder Unterstriche."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Usa entre 3 y 30 caracteres: letras, números o guiones bajos."
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Utilise 3 à 30 caractères : lettres, chiffres ou tirets bas."
-          }
-        },
-        "pt" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Use de 3 a 30 caracteres: letras, números ou sublinhados."
-          }
-        }
-      }
-    },
     "Use a different email" : {
       "comment" : "Button that returns to the email entry step",
       "localizations" : {
@@ -3084,6 +3137,76 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enviamos um código de acesso para seu email. Ele expira em 5 minutos."
+          }
+        }
+      }
+    },
+    "What should we call you?" : {
+      "comment" : "Title of the profile setup after signing up",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wie sollen wir dich nennen?"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "What should we call you?"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "¿Cómo te llamamos?"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comment veux-tu qu’on t’appelle\n?"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Como devemos chamar você?"
+          }
+        }
+      }
+    },
+    "You can change it later in your profile." : {
+      "comment" : "Explains that the setup's name and username can change later",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du kannst das später in deinem Profil ändern."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "You can change it later in your profile."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Puedes cambiarlo más adelante en tu perfil."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu pourras le modifier plus tard dans ton profil."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você pode mudar isso depois no seu perfil."
           }
         }
       }
@@ -3322,6 +3445,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sua assinatura terminará em %@."
+          }
+        }
+      }
+    },
+    "Your username: @%@" : {
+      "comment" : "The username setup suggests; the argument is the username",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dein Nutzername: @%@"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Your username: @%@"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu nombre de usuario: @%@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ton nom d’utilisateur\n: @%@"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seu nome de usuário: @%@"
           }
         }
       }

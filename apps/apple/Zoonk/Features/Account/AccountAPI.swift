@@ -39,6 +39,8 @@ protocol AccountAPIClient {
     signedTransaction: String
   ) async throws -> AppleSubscriptionSynchronization
   func updateProfile(token: String, name: String, username: String) async throws -> CurrentAccount
+  /// The account's username, or an available one made from its email; nil when none is free.
+  func getUsernameSuggestion(token: String) async throws -> String?
 }
 
 extension AccountAPIClient {
@@ -238,6 +240,21 @@ struct AccountAPI {
     case .conflict(let response):
       throw getAPIError(statusCode: 409, payload: try response.body.json)
     case .internalServerError, .undocumented:
+      throw AccountAPIError.invalidResponse
+    }
+  }
+
+  func getUsernameSuggestion(token: String) async throws -> String? {
+    let output = try await perform(token: token) { client in
+      try await client.getCurrentUserUsernameSuggestion()
+    }
+
+    switch output {
+    case .ok(let response):
+      return try response.body.json.username
+    case .unauthorized:
+      throw AccountAPIError.unauthorized
+    default:
       throw AccountAPIError.invalidResponse
     }
   }

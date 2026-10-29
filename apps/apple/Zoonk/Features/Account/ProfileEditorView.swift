@@ -6,6 +6,7 @@ struct ProfileEditorView: View {
   @Environment(SettingsStore.self) private var settings
   @State private var name: String
   @State private var username: String
+  @State private var isChangingUsername = false
 
   let account: CurrentAccount
   let isRequiredSetup: Bool
@@ -23,14 +24,13 @@ struct ProfileEditorView: View {
   var body: some View {
     Form {
       if isRequiredSetup {
-        Section {
-          Text(
-            "Choose how your name appears before you continue.",
-            tableName: "Account",
-            comment: "Explains why first-time profile setup is required"
-          )
-          .foregroundStyle(.secondary)
-        }
+        StepHeader(
+          title: Text(
+            "What should we call you?", tableName: "Account",
+            comment: "Title of the profile setup after signing up"),
+          description: Text(
+            "You can change it later in your profile.", tableName: "Account",
+            comment: "Explains that the setup's name and username can change later"))
       }
 
       Section {
@@ -44,41 +44,81 @@ struct ProfileEditorView: View {
           Text("Name", tableName: "Account", comment: "Profile name field label")
         }
         .textContentType(.name)
-        .accessibilityLabel(
-          Text("Name", tableName: "Account", comment: "Profile name field label"))
-
-        TextField(
-          text: normalizedUsernameBinding,
-          prompt: Text(
-            "username",
-            tableName: "Account",
-            comment: "Placeholder for the username field")
-        ) {
-          Text("Username", tableName: "Account", comment: "Profile username field label")
-        }
-        .textInputAutocapitalization(.never)
-        .autocorrectionDisabled()
-        .textContentType(.username)
-        .accessibilityLabel(
-          Text("Username", tableName: "Account", comment: "Profile username field label"))
+      } header: {
+        Text("Name", tableName: "Account", comment: "Profile name field label")
       } footer: {
-        Text(
-          "Use 3–30 letters, numbers, or underscores.",
-          tableName: "Account",
-          comment: "Username requirements below the profile field")
+        if !isRequiredSetup {
+          Text(
+            "How Zoonk and your buddy call you", tableName: "Account",
+            comment: "What the profile name is for")
+        }
       }
 
-      Section(
-        String(
-          localized: "Account email",
-          table: "Account",
-          comment: "Section title above the read-only account email")
-      ) {
-        LabeledContent {
-          Text(account.user.email)
-            .foregroundStyle(.secondary)
-        } label: {
-          Text("Email", tableName: "Account", comment: "Read-only profile email label")
+      if showsUsernameField {
+        Section {
+          HStack(spacing: 2) {
+            Text(verbatim: "@")
+              .foregroundStyle(.secondary)
+              .accessibilityHidden(true)
+
+            TextField(
+              text: normalizedUsernameBinding,
+              prompt: Text(
+                "username",
+                tableName: "Account",
+                comment: "Placeholder for the username field")
+            ) {
+              Text("Username", tableName: "Account", comment: "Profile username field label")
+            }
+            .textInputAutocapitalization(.never)
+            .autocorrectionDisabled()
+            .textContentType(.username)
+          }
+        } header: {
+          Text("Username", tableName: "Account", comment: "Profile username field label")
+        } footer: {
+          Text(
+            "3-30 characters. Letters, numbers, and underscores only.",
+            tableName: "Account",
+            comment: "Username requirements below the profile field")
+        }
+      } else {
+        Section {
+          HStack {
+            if username.isEmpty {
+              ProgressView()
+            } else {
+              Text(
+                "Your username: @\(username)", tableName: "Account",
+                comment: "The username setup suggests; the argument is the username")
+            }
+
+            Spacer()
+
+            Button {
+              isChangingUsername = true
+            } label: {
+              Text("Change", tableName: "Account", comment: "Shows the username field in setup")
+            }
+            .accessibilityLabel(
+              Text("Change username", tableName: "Account", comment: "Shows the username field"))
+          }
+        }
+      }
+
+      if !isRequiredSetup {
+        Section(
+          String(
+            localized: "Account email",
+            table: "Account",
+            comment: "Section title above the read-only account email")
+        ) {
+          LabeledContent {
+            Text(account.user.email)
+              .foregroundStyle(.secondary)
+          } label: {
+            Text("Email", tableName: "Account", comment: "Read-only profile email label")
+          }
         }
       }
 
@@ -86,6 +126,10 @@ struct ProfileEditorView: View {
         Section {
           AccountFailureMessage(failure: session.failure)
         }
+      }
+
+      if isRequiredSetup {
+        StepButtons(canContinue: isValid && !session.isWorking, onContinue: save)
       }
 
       if let deleteAccount {
@@ -121,29 +165,56 @@ struct ProfileEditorView: View {
       }
     }
     .disabled(session.isWorking)
-    .navigationTitle(profileNavigationTitle)
+    .navigationTitle(
+      isRequiredSetup
+        ? Text(verbatim: "")
+        : Text("Profile", tableName: "Account", comment: "Profile editor navigation title")
+    )
     .toolbarTitleDisplayMode(.inline)
-    .toolbar {
-      ToolbarItem(placement: .confirmationAction) {
-        Button {
-          Task {
-            let didUpdate = await session.updateProfile(
-              name: normalizedName,
-              username: normalizedUsername)
+    .task {
+      guard isRequiredSetup, username.isEmpty else {
+        return
+      }
 
-            if didUpdate && !isRequiredSetup {
-              dismiss()
+      if let suggestion = await session.usernameSuggestion() {
+        username = suggestion
+      } else {
+        isChangingUsername = true
+      }
+    }
+    .onChange(of: session.failure) {
+      if session.failure == .usernameTaken {
+        isChangingUsername = true
+      }
+    }
+    .toolbar {
+      if !isRequiredSetup {
+        ToolbarItem(placement: .confirmationAction) {
+          Button(action: save) {
+            if session.isWorking {
+              ProgressView()
+                .controlSize(.small)
+            } else {
+              Text("Save", tableName: "Account", comment: "Button that saves profile changes")
             }
           }
-        } label: {
-          if session.isWorking {
-            ProgressView()
-              .controlSize(.small)
-          } else {
-            Text("Save", tableName: "Account", comment: "Button that saves profile changes")
-          }
+          .disabled(!isValid || session.isWorking)
         }
-        .disabled(!isValid || session.isWorking)
+      }
+    }
+  }
+
+  private var showsUsernameField: Bool {
+    !isRequiredSetup || isChangingUsername
+  }
+
+  private func save() {
+    Task {
+      let didUpdate = await session.updateProfile(
+        name: normalizedName, username: normalizedUsername)
+
+      if didUpdate && !isRequiredSetup {
+        dismiss()
       }
     }
   }
@@ -171,17 +242,6 @@ struct ProfileEditorView: View {
     return !normalizedName.isEmpty
       && 3...30 ~= normalizedUsername.count
       && hasSupportedCharacters
-  }
-
-  private var profileNavigationTitle: Text {
-    if isRequiredSetup {
-      return Text(
-        "Finish setup",
-        tableName: "Account",
-        comment: "Navigation title for required first-time profile setup")
-    }
-
-    return Text("Profile", tableName: "Account", comment: "Profile editor navigation title")
   }
 }
 
