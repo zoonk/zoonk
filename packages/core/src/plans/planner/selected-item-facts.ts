@@ -6,6 +6,7 @@ import { type BossSizes } from "./boss-sizes";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { placeExamBosses } from "./exam-boss-days";
 import { toIsoDate } from "./plan-calendar";
+import { LEARN_KINDS } from "./plan-item-rules";
 import { type PlannedItem } from "./plan-items";
 
 export type SelectedItemFacts = {
@@ -23,8 +24,6 @@ export type SelectedItemFacts = {
     waiting: boolean;
   };
 };
-
-const LEARN_KINDS = new Set<PlannedItem["kind"]>(["chapter", "lesson"]);
 
 function listLessonRaw(input: BuildPlanInput): Map<string, number> {
   return new Map(

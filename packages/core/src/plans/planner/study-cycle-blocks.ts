@@ -1,7 +1,6 @@
+import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import { type CycleContext, type CycleState, type Lane, isUnitReady } from "./study-cycle-lanes";
-
-export const EPSILON = 1e-6;
 
 export function takeBlock({
   budget,
@@ -21,8 +20,8 @@ export function takeBlock({
 
     if (
       !unit ||
-      (taken > 0 && taken + unit.minutes > budget + EPSILON) ||
-      state.used + unit.minutes > dayEnd + EPSILON ||
+      (taken > 0 && taken + unit.minutes > budget + PLAN_EPSILON) ||
+      state.used + unit.minutes > dayEnd + PLAN_EPSILON ||
       !isUnitReady({ context, left: state.left, unit })
     ) {
       return taken;
@@ -123,13 +122,13 @@ export function forceStuckLessons({
 
   const lane = lanes.find((open) => isReady(open)) ?? lanes.find((open) => open.units.length > 0);
   const unit = lane?.units[0];
-  const fits = state.used === start || state.used + (unit?.minutes ?? 0) <= dayEnd + EPSILON;
+  const fits = state.used === start || state.used + (unit?.minutes ?? 0) <= dayEnd + PLAN_EPSILON;
 
   if (
     (canGoOn && state.used !== start) ||
     !lane ||
     !unit ||
-    state.used + EPSILON >= dayEnd ||
+    state.used + PLAN_EPSILON >= dayEnd ||
     !fits
   ) {
     return;

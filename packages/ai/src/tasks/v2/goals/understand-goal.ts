@@ -64,6 +64,7 @@ export type UnderstandGoalInput = {
 };
 
 export type UnderstandGoalParams = UnderstandGoalInput & {
+  dailyMinutesLimits: { min: number; max: number };
   analytics?: AiGenerationContext;
   model?: string;
   reasoning?: Reasoning;
@@ -101,7 +102,11 @@ export async function understandGoal(params: UnderstandGoalParams) {
     task: "understand-goal",
   });
 
-  const data = normalizeGoalUnderstanding({ raw: result.output, today: params.today });
+  const data = normalizeGoalUnderstanding({
+    dailyMinutesLimits: params.dailyMinutesLimits,
+    raw: result.output,
+    today: params.today,
+  });
 
   return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
 }

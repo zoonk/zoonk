@@ -6,15 +6,14 @@ import { useCallback, useImperativeHandle, useLayoutEffect, useRef, useState } f
 import { flushSync } from "react-dom";
 import { type Act, type PosesByExpression, playAct } from "./acting";
 
-/** `delay` is in milliseconds on the animation clock. */
-export type PlayOptions = { delay?: number; playbackRate?: number };
+export type PlayOptions = { delayMs?: number; playbackRate?: number };
 
 /** `play` resolves true once the act lands, false once another act stops it. */
 export type ActorHandle<ActName extends string> = {
   play: (name: ActName, options?: PlayOptions) => Promise<boolean>;
 };
 
-export type Reaction<ActName extends string> = { act: ActName; delay?: number };
+export type Reaction<ActName extends string> = { act: ActName; delayMs?: number };
 
 export type AfterBlink<Expression extends string, ActName extends string> = {
   act: ActName;
@@ -121,7 +120,7 @@ export function useActor<Expression extends string, ActName extends string>({
 
     const playback = playAct({
       act: next.act,
-      delay: next.options.delay,
+      delayMs: next.options.delayMs,
       from: current.current,
       playbackRate: next.options.playbackRate,
       poses,
@@ -185,11 +184,11 @@ export function useActor<Expression extends string, ActName extends string>({
 
     reacted.current = true;
 
-    void play(reaction.act, { delay: reaction.delay }).then((didLand) => {
+    void play(reaction.act, { delayMs: reaction.delayMs }).then((didLand) => {
       const root = svg.current;
 
       if (didLand && root && afterBlink?.faces.has(current.current)) {
-        void play(afterBlink.act, { delay: BLINK_AFTER_FRAMES * readDuration(root, "frame") });
+        void play(afterBlink.act, { delayMs: BLINK_AFTER_FRAMES * readDuration(root, "frame") });
       }
     });
   }, [afterBlink, celebrate, play, reaction, svg]);

@@ -26,10 +26,10 @@ const LIGHT_BELTS: ReadonlySet<BeltColor> = new Set(["white", "yellow", "orange"
 const GLOWING_ENERGY = 80;
 const MAX_ENERGY = 100;
 
-type RowMotion = { delay: number } | null;
+type RowMotion = { delayMs: number } | null;
 
 function beatStyle(motion: RowMotion): React.CSSProperties | undefined {
-  return motion ? { animationDelay: `${motion.delay}ms` } : undefined;
+  return motion ? { animationDelay: `${motion.delayMs}ms` } : undefined;
 }
 
 function ReachedRow({
@@ -101,7 +101,7 @@ function LevelReached({
       bar={
         <BeltTicks
           color={level.color}
-          delay={motion?.delay}
+          delayMs={motion?.delayMs}
           filling={motion ? 1 : 0}
           level={level.level}
         />
@@ -183,12 +183,12 @@ function EnergyReached({
 export function ReachedMoment({
   buddy,
   ceremony,
-  delay,
+  delayMs,
   reached,
 }: {
   buddy?: LearnBuddy | null;
   ceremony: Pick<CeremonyMilestone, "kind"> | null;
-  delay: number;
+  delayMs: number;
   reached: Reached;
 }) {
   const celebrate = useCelebration();
@@ -198,16 +198,16 @@ export function ReachedMoment({
     return null;
   }
 
-  const energyDelay = level ? delay + BEAT_MS : delay;
+  const energyDelay = level ? delayMs + BEAT_MS : delayMs;
 
   return (
     <StepRows data-slot="reached-moment">
-      {level && <LevelReached level={level} motion={celebrate ? { delay } : null} />}
+      {level && <LevelReached level={level} motion={celebrate ? { delayMs } : null} />}
       {reached.energy !== null && (
         <EnergyReached
           buddy={buddy}
           energy={reached.energy}
-          motion={celebrate ? { delay: energyDelay } : null}
+          motion={celebrate ? { delayMs: energyDelay } : null}
         />
       )}
     </StepRows>

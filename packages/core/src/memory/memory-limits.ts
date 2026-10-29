@@ -1,0 +1,1 @@
+export const MAX_MEMORY_STATEMENT_LENGTH = 160;

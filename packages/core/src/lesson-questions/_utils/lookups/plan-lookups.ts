@@ -1,8 +1,8 @@
-import "server-only";
 import {
   type GoalTutorLookUpRequest,
   type GoalTutorLookUpResult,
 } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup";
+import "server-only";
 import { type PlanLookUp } from "@zoonk/ai/tasks/v2/tutor/goal-tutor-lookup-plan";
 import { type Goal, type PlanItem, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
@@ -13,12 +13,12 @@ import {
   type SkillAreas,
   getSkillAreas,
   getWritingTitle,
-  isWritingItem,
 } from "../../../plans/_utils/plan-phase-views";
 import { getGoalPlan } from "../../../plans/get-goal-plan";
 import { findPlanTimeToCover } from "../../../plans/get-time-advice";
 import { type PlanPhaseView, type PlanView } from "../../../plans/plan-view-contract";
 import { addDays, fromIsoDate, toIsoDate } from "../../../plans/planner/plan-calendar";
+import { isWritingItem } from "../../../plans/planner/plan-item-rules";
 import { parsePlanGraph } from "../../../plans/planner/plan-state";
 import {
   type LinkScope,

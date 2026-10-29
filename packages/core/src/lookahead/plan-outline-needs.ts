@@ -8,8 +8,8 @@ import { type CourseBandNeed, type CurriculumScope } from "../library/curriculum
 import { toExamIdentity } from "../library/curriculum/shared-graph-prompt";
 import { type CandidateExam, toGoalCandidateExams } from "../library/exams/candidate-exams";
 import { goalUsesTools } from "../plans/_utils/plan-tools";
-import { isStandIn } from "../plans/_utils/stand-in-lessons";
 import { addDays } from "../plans/planner/plan-calendar";
+import { isStandIn } from "../plans/planner/plan-item-rules";
 import { type ExistingPlanItem } from "../plans/planner/plan-items";
 import { parsePlanGraph } from "../plans/planner/plan-state";
 

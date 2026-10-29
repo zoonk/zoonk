@@ -1,7 +1,8 @@
-import "server-only";
 import { loadOftenTestedSkillIds } from "../../exams/map/load-often-tested";
+import "server-only";
 import { readSavedPlan } from "../../learner/facts/saved-plan";
 import { loadBlockedTestOutChapters } from "../../learner/test-out/_utils/offer-eligibility";
+import { isWritingItem } from "../../plans/planner/plan-item-rules";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 import { loadStudyWeek } from "../../progress/_utils/load-study-week";
 import { type UnstartedDayView } from "../day-view";
@@ -31,9 +32,7 @@ function getEmptyDay({
     return null;
   }
 
-  return selection.items.some(
-    (item) => item.kind === "lesson" && item.status === "todo" && !item.lessonId && !item.chapterId,
-  )
+  return selection.items.some((item) => item.status === "todo" && isWritingItem(item))
     ? "lessonsComing"
     : "nothingNew";
 }

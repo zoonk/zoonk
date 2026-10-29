@@ -13,13 +13,13 @@ function tickClass(color: BeltColor): string {
 export function BeltTicks({
   className,
   color,
-  delay = 0,
+  delayMs = 0,
   filling = 0,
   level,
 }: {
   className?: string;
   color: BeltColor;
-  delay?: number;
+  delayMs?: number;
   filling?: number;
   level: number;
 }) {
@@ -41,7 +41,7 @@ export function BeltTicks({
             {fills && (
               <span
                 className={cn("animate-fill absolute inset-0 origin-left", tickClass(color))}
-                style={{ animationDelay: `${delay}ms` }}
+                style={{ animationDelay: `${delayMs}ms` }}
               />
             )}
           </MeterPart>

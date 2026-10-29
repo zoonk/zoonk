@@ -6,6 +6,7 @@ import { estimateDailyNeed, estimateFinish, readFixedDays } from "./daily-need";
 import { mayCostToKeepPhaseDates } from "./phase-dates-move";
 import { getBaseChoices, getDefaultBaseChoice } from "./plan-bases";
 import { daysBetween, toIsoDate } from "./plan-calendar";
+import { PHASE_WORK_KINDS } from "./plan-item-rules";
 import { type ExamSubjectShare, getCoverage } from "./selected-coverage";
 import { listSettled, readRequirement, sumRequirement } from "./selected-requirement";
 
@@ -79,9 +80,7 @@ function summarizeBases(input: BuildPlanInput): SelectedSummary["bases"] {
 function getEndDate(built: BuiltPlan): string | null {
   return built.items.reduce<string | null>((latest, item) => {
     const counts =
-      item.status === "todo" &&
-      item.scheduledFor !== null &&
-      (item.kind === "lesson" || item.kind === "chapter" || item.kind === "boss");
+      item.status === "todo" && item.scheduledFor !== null && PHASE_WORK_KINDS.has(item.kind);
 
     if (!counts || !item.scheduledFor) {
       return latest;

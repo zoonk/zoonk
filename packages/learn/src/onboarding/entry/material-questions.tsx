@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_MATERIAL_QUESTION_LENGTH } from "@zoonk/core/library/sources/material-question-contract";
 import { Button } from "@zoonk/ui/components/button";
 import { Spinner } from "@zoonk/ui/components/spinner";
 import { Textarea } from "@zoonk/ui/components/textarea";
@@ -27,8 +28,6 @@ import {
 } from "../onboarding-frame";
 import { GOAL_PANEL_CLASS } from "./goal-field";
 import { TypedGoal } from "./goal-outcomes";
-
-const MAX_QUESTION_LENGTH = 500;
 
 type Turn = { id: string; outcome: MaterialQuestionOutcome; question: string };
 
@@ -181,7 +180,7 @@ export function MaterialQuestions({
           autoFocus
           className="field-sizing-content max-h-40 min-h-11 border-0 bg-transparent px-0 shadow-none focus-visible:ring-0"
           id={inputId}
-          maxLength={MAX_QUESTION_LENGTH}
+          maxLength={MAX_MATERIAL_QUESTION_LENGTH}
           onChange={(event) => setQuestion(event.target.value)}
           onKeyDown={(event) => {
             if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {

@@ -9,6 +9,7 @@ import { addPhaseCheckpoints } from "./phase-checkpoints";
 import { type PlanBase } from "./plan-bases";
 import { type ExistingPlanItem } from "./plan-items";
 import { getLearningShare } from "./plan-phases";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type PlanGraph, type PlanGraphSkill, type PlanSettings } from "./plan-state";
 import {
   DEFAULT_LESSON_MINUTES,
@@ -27,8 +28,6 @@ import {
   orderSkills,
 } from "./skill-order";
 import { countStandInLessons } from "./stand-in-size";
-
-const EPSILON = 1e-6;
 
 type QueueInput = {
   announcements?: readonly string[];
@@ -264,7 +263,8 @@ export function buildPlanQueue(queueInput: QueueInput): {
   const coreOnly = new Set(
     ordered
       .filter(
-        (skill) => skill.minutes <= (essentialMinutes.get(skill.skillId) ?? -Infinity) + EPSILON,
+        (skill) =>
+          skill.minutes <= (essentialMinutes.get(skill.skillId) ?? -Infinity) + PLAN_EPSILON,
       )
       .map((skill) => skill.skillId),
   );

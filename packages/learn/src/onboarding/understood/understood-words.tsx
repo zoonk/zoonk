@@ -1,10 +1,10 @@
 "use client";
 
+import { MAX_GOAL_PROMPT_LENGTH } from "@zoonk/core/goals/goal-input-limits";
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-import { MAX_GOAL_LENGTH } from "../entry/goal-entry";
 import { GOAL_PANEL_CLASS } from "../entry/goal-field";
 import { TypedGoal } from "../entry/goal-outcomes";
 
@@ -54,7 +54,7 @@ export function UnderstoodWords({
         autoFocus
         className="field-sizing-content max-h-48 min-h-11 w-full min-w-0 resize-none bg-transparent text-[17px] leading-snug outline-none"
         id={inputId}
-        maxLength={MAX_GOAL_LENGTH}
+        maxLength={MAX_GOAL_PROMPT_LENGTH}
         onChange={(event) => setValue(event.target.value)}
         onFocus={(event) => {
           const { length } = event.currentTarget.value;

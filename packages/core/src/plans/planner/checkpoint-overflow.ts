@@ -2,6 +2,7 @@ import { type BossMinutes, getPlannedBossMinutes } from "./boss-minutes";
 import { type BuildPlanInput } from "./build-plan";
 import { fromIsoDate, getPlanCalendar, toIsoDate } from "./plan-calendar";
 import { getExamDayRules, getPlannedMinutes } from "./plan-days";
+import { LEARN_KINDS } from "./plan-item-rules";
 import { type PlannedItem } from "./plan-items";
 import { type PlanSettings } from "./plan-state";
 
@@ -18,7 +19,7 @@ function isBeside({ boss, items }: { boss: PlannedItem; items: readonly PlannedI
     items.some(
       (item, index) =>
         index < position &&
-        (item.kind === "lesson" || item.kind === "chapter") &&
+        LEARN_KINDS.has(item.kind) &&
         item.phase <= boss.phase &&
         item.scheduledFor?.getTime() === day,
     )

@@ -4,6 +4,8 @@ import {
   normalizeGoalUnderstanding,
 } from "./normalize-goal-understanding";
 
+const DAILY_MINUTES_LIMITS = { max: 1440, min: 5 };
+
 type RawUnderstoodGoal = RawGoalUnderstanding["goals"][number];
 
 const TODAY = "2026-09-26";
@@ -49,8 +51,27 @@ function raw(overrides: Partial<RawGoalUnderstanding> = {}): RawGoalUnderstandin
 }
 
 describe(normalizeGoalUnderstanding, () => {
+  it("uses the caller's daily time limits", () => {
+    expect(
+      normalizeGoalUnderstanding({
+        dailyMinutesLimits: { max: 90, min: 10 },
+        raw: raw({ dailyMinutes: 2 }),
+        today: TODAY,
+      }),
+    ).toMatchObject({ dailyMinutes: 10 });
+
+    expect(
+      normalizeGoalUnderstanding({
+        dailyMinutesLimits: { max: 90, min: 10 },
+        raw: raw({ dailyMinutes: 200 }),
+        today: TODAY,
+      }),
+    ).toMatchObject({ dailyMinutes: 90 });
+  });
+
   it("keeps what an exam goal said and leaves the rest undefined", () => {
     const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
       raw: raw({
         goals: [
           rawGoal({
@@ -92,6 +113,7 @@ describe(normalizeGoalUnderstanding, () => {
 
   it("writes the course an exam's learner aims for with a capital, as a name stands alone", () => {
     const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
       raw: raw({
         goals: [
           rawGoal({
@@ -111,6 +133,7 @@ describe(normalizeGoalUnderstanding, () => {
 
   it("keeps the month the learner named for an exam, only a real one, and only for exams", () => {
     const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
       raw: raw({
         goals: [
           rawGoal({ examMonth: 3, examName: "OAB", examYear: 2027, kind: "exam" }),
@@ -128,6 +151,7 @@ describe(normalizeGoalUnderstanding, () => {
 
   it("keeps what an exam's learner aims for beyond passing, only for exams", () => {
     const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
       raw: raw({
         goals: [
           rawGoal({ examName: "ENEM", examTarget: "admission", kind: "exam" }),
@@ -145,6 +169,7 @@ describe(normalizeGoalUnderstanding, () => {
 
   it("drops past or invalid dates, invalid times and out-of-range weekdays", () => {
     const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
       raw: raw({
         goals: [rawGoal({ targetDate: "2026-01-10" }), rawGoal({ targetDate: "2027-13-45" })],
         studyDays: [1, 3, 3, 9, -1],
@@ -162,8 +187,17 @@ describe(normalizeGoalUnderstanding, () => {
   });
 
   it("keeps daily minutes within what the planner accepts", () => {
-    const tooLittle = normalizeGoalUnderstanding({ raw: raw({ dailyMinutes: 1 }), today: TODAY });
-    const tooMuch = normalizeGoalUnderstanding({ raw: raw({ dailyMinutes: 2000 }), today: TODAY });
+    const tooLittle = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({ dailyMinutes: 1 }),
+      today: TODAY,
+    });
+
+    const tooMuch = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+      raw: raw({ dailyMinutes: 2000 }),
+      today: TODAY,
+    });
 
     expect(tooLittle).toMatchObject({ dailyMinutes: 5 });
     expect(tooMuch).toMatchObject({ dailyMinutes: 1440 });
@@ -171,6 +205,7 @@ describe(normalizeGoalUnderstanding, () => {
 
   it("drops language goals without a language and keeps at most three goals", () => {
     const result = normalizeGoalUnderstanding({
+      dailyMinutesLimits: DAILY_MINUTES_LIMITS,
       raw: raw({
         goals: [
           rawGoal({ kind: "language", targetLanguage: null, title: "Speak better" }),
@@ -196,17 +231,26 @@ describe(normalizeGoalUnderstanding, () => {
 
   it("asks for more when nothing usable is left", () => {
     expect(
-      normalizeGoalUnderstanding({ raw: raw({ goals: [rawGoal({ title: "  " })] }), today: TODAY }),
+      normalizeGoalUnderstanding({
+        dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+        raw: raw({ goals: [rawGoal({ title: "  " })] }),
+        today: TODAY,
+      }),
     ).toStrictEqual({ route: "unclear" });
 
     expect(
-      normalizeGoalUnderstanding({ raw: raw({ question: null, route: "explain" }), today: TODAY }),
+      normalizeGoalUnderstanding({
+        dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+        raw: raw({ question: null, route: "explain" }),
+        today: TODAY,
+      }),
     ).toStrictEqual({ route: "unclear" });
   });
 
   it("returns only what each other route needs", () => {
     expect(
       normalizeGoalUnderstanding({
+        dailyMinutesLimits: DAILY_MINUTES_LIMITS,
         raw: raw({ question: "How a microwave works", route: "explain" }),
         today: TODAY,
       }),
@@ -214,13 +258,18 @@ describe(normalizeGoalUnderstanding, () => {
 
     expect(
       normalizeGoalUnderstanding({
+        dailyMinutesLimits: DAILY_MINUTES_LIMITS,
         raw: raw({ instrument: "guitar", route: "instrument" }),
         today: TODAY,
       }),
     ).toStrictEqual({ instrument: "guitar", route: "instrument" });
 
     expect(
-      normalizeGoalUnderstanding({ raw: raw({ route: "unsafe" }), today: TODAY }),
+      normalizeGoalUnderstanding({
+        dailyMinutesLimits: DAILY_MINUTES_LIMITS,
+        raw: raw({ route: "unsafe" }),
+        today: TODAY,
+      }),
     ).toStrictEqual({ route: "unsafe" });
   });
 });

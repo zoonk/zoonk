@@ -1,5 +1,7 @@
-import { EPSILON, findDayIndex, findDayIndexFrom, findLessonDayFrom } from "./day-index";
+import { findDayIndex, findDayIndexFrom, findLessonDayFrom } from "./day-index";
+import { LEARN_KINDS } from "./plan-item-rules";
 import { type ExistingPlanItem } from "./plan-items";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import { type PlanDay } from "./schedule-units";
 
@@ -30,7 +32,7 @@ export function placeBoss({
       beside: false,
       dayIndex,
       start,
-      used: Math.max(used, end <= dayEnd + EPSILON ? end : dayEnd),
+      used: Math.max(used, end <= dayEnd + PLAN_EPSILON ? end : dayEnd),
     };
   };
 
@@ -46,14 +48,14 @@ export function placeBoss({
 
   const floor = Math.max(used, cumulative[afterDay] ?? 0);
 
-  const reached = floor <= EPSILON ? -1 : findDayIndex({ cumulative, needed: floor });
+  const reached = floor <= PLAN_EPSILON ? -1 : findDayIndex({ cumulative, needed: floor });
   const lastDay = Math.max(reached, afterDay);
   const start = lastDay === -1 ? floor : Math.max(floor, cumulative[lastDay] ?? floor);
 
   const covered = findDayIndexFrom({
     cumulative,
     from: Math.max(0, from, afterDay + 1),
-    needed: start + 2 * EPSILON,
+    needed: start + 2 * PLAN_EPSILON,
   });
 
   const next = findLessonDayFrom({ cumulative, from: covered });
@@ -81,8 +83,6 @@ export function withKeptLessons({
     return { ...unit, afterDay: days.findLastIndex((item) => item.date.getTime() <= after) };
   });
 }
-
-const LEARN_KINDS = new Set<ExistingPlanItem["kind"]>(["chapter", "lesson"]);
 
 type KeptLesson = Pick<ExistingPlanItem, "kind" | "phase" | "scheduledFor"> &
   Partial<Pick<ExistingPlanItem, "completedAt" | "id" | "status">>;

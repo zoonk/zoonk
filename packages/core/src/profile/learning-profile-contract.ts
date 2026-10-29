@@ -1,9 +1,8 @@
 import { BuddyGlasses, BuddyKind } from "@zoonk/db";
 import { z } from "zod";
+import { BUDDY_NAME_MAX_LENGTH } from "./buddy-name-limit";
 import { MAX_DAILY_LIMIT_MINUTES, MIN_DAILY_LIMIT_MINUTES } from "./daily-limit";
 import { type ResolvedBuddy } from "./default-buddy";
-
-const BUDDY_NAME_MAX_LENGTH = 24;
 
 export const learningBuddySchema = z
   .object({

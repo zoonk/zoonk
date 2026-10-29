@@ -6,12 +6,12 @@ import {
 } from "../../exams/choices/exam-choice-contract";
 import { type TargetCutoff } from "../../exams/cutoffs/target-cutoff-contract";
 import { type GoalDraft, type GoalView, goalDraftSchema } from "../../goals/goal-contract";
+import { MAX_GOAL_PROMPT_LENGTH } from "../../goals/goal-input-limits";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
 import { DAYS_PER_WEEK } from "../../plans/planner/plan-state";
 import { learningProfileUpdateSchema } from "../../profile/learning-profile-contract";
+import { MAX_ONBOARDING_ANSWER_LENGTH } from "./onboarding-limits";
 
-const MAX_GOAL_TEXT_LENGTH = 2000;
-const MAX_ANSWER_LENGTH = 200;
 const MAX_KNOWN_SUBJECTS = 40;
 const MAX_EXAM_CHOICES = 5;
 const MIN_LANGUAGE_LENGTH = 2;
@@ -30,7 +30,7 @@ export const goalUnderstandingInputSchema = z
       .string()
       .trim()
       .min(1)
-      .max(MAX_GOAL_TEXT_LENGTH)
+      .max(MAX_GOAL_PROMPT_LENGTH)
       .meta({ description: "What the learner wants to achieve, in their own words" }),
     language: z
       .string()
@@ -124,7 +124,7 @@ const draftGoalSchema = z
   .max(MAX_DRAFT_GOAL_INDEX)
   .meta({ description: "Which goal of the card, in order: 0 is the main goal" });
 
-const draftTextSchema = z.string().trim().min(1).max(MAX_ANSWER_LENGTH);
+const draftTextSchema = z.string().trim().min(1).max(MAX_ONBOARDING_ANSWER_LENGTH);
 
 /** Dependent fields follow edits; null dates restore exam dates, while changing the original words needs a new understanding. */
 export const onboardingDraftEditSchema = z
@@ -221,7 +221,7 @@ export type OnboardingView = {
   steps: OnboardingStep[];
 };
 
-const nullableAnswer = z.string().trim().min(1).max(MAX_ANSWER_LENGTH).nullable();
+const nullableAnswer = z.string().trim().min(1).max(MAX_ONBOARDING_ANSWER_LENGTH).nullable();
 
 /** Generated iOS clients omit nil fields, so omission must equal an explicit null skipped answer. */
 const skippableAnswer = nullableAnswer.default(null);
@@ -313,7 +313,7 @@ export const onboardingAnswerInputSchema = z
     z
       .object({
         knownSubjects: z
-          .array(z.string().trim().min(1).max(MAX_ANSWER_LENGTH))
+          .array(z.string().trim().min(1).max(MAX_ONBOARDING_ANSWER_LENGTH))
           .max(MAX_KNOWN_SUBJECTS)
           .optional()
           .meta({

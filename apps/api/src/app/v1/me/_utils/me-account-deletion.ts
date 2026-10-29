@@ -1,5 +1,5 @@
 import { createErrorResponse, errors, httpStatus } from "@/lib/api-errors";
-import { EmailAccountDeletionError } from "@zoonk/auth/email-deletion-contract";
+import { AccountDeletionEmailMismatchError } from "@zoonk/auth/email-deletion-contract";
 import { getAuthError } from "@zoonk/auth/errors";
 import { AppleAuthorizationError, NativeAppleAccountError } from "@zoonk/auth/native-apple";
 
@@ -32,7 +32,7 @@ function getEmailOTPDeletionError(code?: string) {
 }
 
 export function getAccountDeletionErrorResponse(error: unknown) {
-  if (error instanceof EmailAccountDeletionError) {
+  if (error instanceof AccountDeletionEmailMismatchError) {
     return createErrorResponse({
       code: "ACCOUNT_DELETION_EMAIL_MISMATCH",
       message: "Email authorization does not match this account",

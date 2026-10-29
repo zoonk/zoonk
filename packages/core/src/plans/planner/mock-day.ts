@@ -1,9 +1,8 @@
+import { PLAN_EPSILON } from "./plan-precision";
 import { type PlanSettings } from "./plan-state";
 import { type DayShape, type FixedEvent } from "./schedule-units";
 
 type MockFunding = PlanSettings["mockFunding"][number];
-
-export const EPSILON = 1e-6;
 
 export function findDayMock(shape: DayShape): FixedEvent | undefined {
   return shape.events.find((event) => event.kind === "mock" && event.replacesDay);
@@ -46,5 +45,7 @@ export function getMockDayMinutes({ base, entry }: { base: number; entry: MockFu
   const given = entry.contributions.reduce((sum, contribution) => sum + contribution.minutes, 0);
   const needed = Math.max(0, entry.minutes - base);
 
-  return given >= needed - EPSILON ? Math.max(base, entry.minutes) : base + Math.min(given, needed);
+  return given >= needed - PLAN_EPSILON
+    ? Math.max(base, entry.minutes)
+    : base + Math.min(given, needed);
 }

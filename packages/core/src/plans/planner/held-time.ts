@@ -1,6 +1,5 @@
+import { PLAN_EPSILON } from "./plan-precision";
 import { type PlanDay, type ScheduledUnit } from "./schedule-units";
-
-export const EPSILON = 1e-6;
 
 export type Held = { date: Date; index: number; minutes: number };
 
@@ -45,7 +44,7 @@ export function listHeldTime({
         const room = Math.max(0, free(day.date) - (claimed.get(key) ?? 0));
         const minutes = Math.min(state.left, room);
 
-        if (minutes <= EPSILON) {
+        if (minutes <= PLAN_EPSILON) {
           return state;
         }
 
@@ -59,7 +58,7 @@ export function listHeldTime({
       { held: [], left: part.minutes },
     );
 
-    return taken.left > EPSILON
+    return taken.left > PLAN_EPSILON
       ? [...taken.held, { date: part.date, index, minutes: taken.left }]
       : taken.held;
   });
@@ -80,7 +79,7 @@ export function listHeldFrom({
     (state, piece) => {
       const begin = Math.max(state.at, from);
       const end = Math.min(state.at + piece.minutes, from + minutes);
-      const pieces = end - begin > EPSILON ? [{ ...piece, minutes: end - begin }] : [];
+      const pieces = end - begin > PLAN_EPSILON ? [{ ...piece, minutes: end - begin }] : [];
 
       return { at: state.at + piece.minutes, pieces: [...state.pieces, ...pieces] };
     },
@@ -89,5 +88,5 @@ export function listHeldFrom({
 }
 
 export function findHeld(held: readonly Held[], at: number): Held | undefined {
-  return held.find((_, index) => sumMinutes(held.slice(0, index + 1)) > at + EPSILON);
+  return held.find((_, index) => sumMinutes(held.slice(0, index + 1)) > at + PLAN_EPSILON);
 }

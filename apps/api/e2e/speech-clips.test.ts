@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { getSpeechClipKey } from "@zoonk/core/audio/speech-clip-key";
+import { getUsageRule } from "@zoonk/core/entitlements/limits";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { mediaAssetFixture } from "@zoonk/testing/fixtures/library-steps";
@@ -8,7 +9,7 @@ import { usageRecordsFixture } from "@zoonk/testing/fixtures/usage";
 import { createAuthenticatedApiContext } from "./helpers/auth";
 import { createGuest } from "./helpers/bearer";
 
-const GUEST_DAILY_HELP = 40;
+const GUEST_DAILY_HELP = getUsageRule({ kind: "assist", tier: "guest" }).day ?? 0;
 
 function uniqueSentence() {
   return `Ciao, questa è la frase ${randomUUID().slice(0, 8)}.`;

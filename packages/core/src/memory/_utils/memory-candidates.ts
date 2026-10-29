@@ -3,7 +3,7 @@ import { type SessionPattern } from "@zoonk/ai/tasks/v2/memory/session-patterns"
 import { type MemoryCategory, type MemoryOrigin } from "@zoonk/db";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import { normalizeString } from "@zoonk/utils/string";
-import { MAX_MEMORY_STATEMENT_LENGTH } from "../memory-contract";
+import { MAX_MEMORY_STATEMENT_LENGTH } from "../memory-limits";
 
 const MAX_CANDIDATES = 5;
 

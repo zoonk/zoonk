@@ -46,14 +46,14 @@ function resolveEase(root: Element): EaseResolver {
  */
 export function playAct<Expression extends string>({
   act,
-  delay = 0,
+  delayMs = 0,
   from,
   playbackRate = 1,
   poses = {},
   root,
 }: {
   act: Act<Expression>;
-  delay?: number;
+  delayMs?: number;
   from: Expression;
   playbackRate?: number;
   poses?: PosesByExpression<Expression>;
@@ -67,7 +67,7 @@ export function playAct<Expression extends string>({
 
   const duration = act.frames * frameMs;
   const ease = resolveEase(root);
-  const options: KeyframeAnimationOptions = { delay, duration, fill: "forwards" };
+  const options: KeyframeAnimationOptions = { delay: delayMs, duration, fill: "forwards" };
   const to = act.to ?? from;
 
   const partAnimations = act.tracks.flatMap((track) => {

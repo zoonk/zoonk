@@ -10,13 +10,13 @@ import { getSecondaryStartControlClassName, getStartControlClassName } from "./p
  */
 export async function StartPlanLink({
   chapterId,
-  continues = false,
+  showContinueLabel = false,
   courseId,
   minutes,
   secondary = false,
 }: {
   chapterId?: string | null;
-  continues?: boolean;
+  showContinueLabel?: boolean;
   courseId: string;
   minutes?: number;
   secondary?: boolean;
@@ -30,7 +30,7 @@ export async function StartPlanLink({
       prefetch
       rel="nofollow"
     >
-      {continues ? t("Continue your plan") : t("Build my plan")}
+      {showContinueLabel ? t("Continue your plan") : t("Build my plan")}
       <ArrowRightIcon aria-hidden="true" data-icon="inline-end" />
     </Link>
   );

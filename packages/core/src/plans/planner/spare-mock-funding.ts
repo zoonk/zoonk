@@ -1,4 +1,4 @@
-import { EPSILON, findDayMock } from "./mock-day";
+import { findDayMock } from "./mock-day";
 import { type MockFunding, listPast, resolveIdentity, sumContributions } from "./mock-funding";
 import {
   type MockClock,
@@ -7,6 +7,7 @@ import {
   getMockCursor,
 } from "./mock-identity";
 import { toIsoDate } from "./plan-calendar";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type PlanDay, type ScheduledEvent } from "./schedule-units";
 
 function listReviewWindow({
@@ -49,7 +50,7 @@ function fundReviews({
   return window.flatMap(({ at, day, item }) => {
     const share = item.minutes * factor;
 
-    if (share <= EPSILON) {
+    if (share <= PLAN_EPSILON) {
       return [];
     }
 
@@ -130,7 +131,7 @@ export function fundSpareMocks({
     const { spendable, window } = listReviewWindow({ date, fundedDays, result, windowStart });
     const needed = Math.max(0, minutes - review.minutes - sumContributions(past));
 
-    if (needed > spendable + EPSILON) {
+    if (needed > spendable + PLAN_EPSILON) {
       result[index] = review;
       return;
     }

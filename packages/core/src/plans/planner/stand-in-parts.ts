@@ -1,13 +1,10 @@
 import { type StudyPortion } from "./interval-study-minutes";
+import { isStandInUnit } from "./plan-item-rules";
 import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
-
-function isStandIn(unit: QueueUnit): boolean {
-  return unit.kind === "lesson" && unit.lessonId === null && unit.skillId !== null;
-}
 
 export function splitStandIns(units: readonly QueueUnit[]): QueueUnit[] {
   return units.flatMap((unit) => {
-    if (!isStandIn(unit)) {
+    if (!isStandInUnit(unit)) {
       return [unit];
     }
 

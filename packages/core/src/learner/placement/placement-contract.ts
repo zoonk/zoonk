@@ -4,6 +4,7 @@ import { isJsonObject } from "@zoonk/utils/json";
 import { z } from "zod";
 import { readCourseStart } from "../../goals/course-start-details";
 import { answerTimeZoneSchema, choiceAnswerSchema, itemAnswerInputSchema } from "../contract";
+import { MAX_TYPED_PLACEMENT_ANSWER_LENGTH } from "./placement-limits";
 import { type OwnLevel } from "./placement-steps";
 
 export const ownLevelSchema = z
@@ -28,13 +29,11 @@ export const placementStatusSchema = z
 
 export type PlacementStatus = z.infer<typeof placementStatusSchema>;
 
-const MAX_TYPED_PLACEMENT_ANSWER = 1000;
-
 const placementAnswerSchema = z
   .union([
     choiceAnswerSchema,
     z
-      .object({ text: z.string().trim().min(1).max(MAX_TYPED_PLACEMENT_ANSWER) })
+      .object({ text: z.string().trim().min(1).max(MAX_TYPED_PLACEMENT_ANSWER_LENGTH) })
       .strict()
       .meta({ description: "The learner's own words, for a `typed` question" }),
   ])

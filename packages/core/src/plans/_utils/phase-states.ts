@@ -1,5 +1,6 @@
 import { type Goal } from "@zoonk/db";
 import { type PlanPhaseView } from "../plan-view-contract";
+import { PHASE_WORK_KINDS } from "../planner/plan-item-rules";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanPhase, type PlanSettings } from "../planner/plan-state";
 import { hasPlanDeadline, isPlanOver, withinLessonScope } from "./plan-end";
@@ -7,8 +8,6 @@ import { findShortPlanPhase, getShortPlanShape } from "./short-plan-view";
 import { isWorkFinished } from "./work-progress";
 
 type PhaseItem = Pick<ExistingPlanItem, "chapterId" | "kind" | "lessonId" | "phase" | "status">;
-
-export const PHASE_WORK_KINDS = new Set<PhaseItem["kind"]>(["boss", "chapter", "lesson"]);
 
 /** `loadCurrentPhases` is its SQL twin: change both together. */
 export function findCurrentPhase({

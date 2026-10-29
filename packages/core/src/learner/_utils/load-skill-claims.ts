@@ -4,6 +4,7 @@ import { getLessonSkillRows, toIdKey } from "../../library/_utils/shared-rows";
 import { loadPassedOverClaims } from "../../plans/_utils/load-passed-over-claims";
 import { loadUndoneTestOuts } from "../../plans/_utils/undone-test-outs";
 import { listFocusedSkillIds } from "../../plans/planner/focus-targets";
+import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanGraph, parsePlanSettings } from "../../plans/planner/plan-state";
 import {
   type ClaimEvent,
@@ -27,7 +28,7 @@ export type ClaimPlan = Pick<Plan, "createdAt" | "graph" | "id" | "settings"> & 
 function isClaimingItem(item: ClaimPlan["items"][number]) {
   return (
     item.completedAt !== null &&
-    (item.kind === "chapter" || item.kind === "lesson") &&
+    LEARN_KINDS.has(item.kind) &&
     (item.status === "done" || item.status === "testedOut")
   );
 }
@@ -70,7 +71,7 @@ async function loadPlanEvents({
             select: { completedAt: true, lessonId: true, skillId: true, status: true },
             where: {
               completedAt: { not: null },
-              kind: { in: ["chapter", "lesson"] },
+              kind: { in: [...LEARN_KINDS] },
               plan: { goalId },
               status: { in: ["done", "testedOut"] },
             },

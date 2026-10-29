@@ -1,7 +1,7 @@
 import { type BuildPlanInput } from "./build-plan";
 import { listBegunSkillIds } from "./carried-bases";
-import { isStandInItem } from "./kept-items";
 import { type LandedUnits } from "./landed-lessons";
+import { isStandIn } from "./plan-item-rules";
 import { type ScheduledUnit } from "./schedule-units";
 
 export function getBaseDays({
@@ -45,7 +45,7 @@ export function getBaseDays({
 export function getStandInDays(input: BuildPlanInput): Map<string, Date> {
   return new Map(
     input.items.flatMap((item) =>
-      item.status === "todo" && isStandInItem(item) && item.scheduledFor && item.skillId
+      item.status === "todo" && isStandIn(item) && item.scheduledFor && item.skillId
         ? [
             [
               item.skillId,

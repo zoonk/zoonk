@@ -4,9 +4,9 @@ import { isValidTimeZone } from "@zoonk/utils/time-zone";
 import { z } from "zod";
 import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../plans/daily-minutes";
 import { DAYS_PER_WEEK } from "../plans/planner/plan-state";
+import { MAX_GOAL_PROMPT_LENGTH } from "./goal-input-limits";
 
 const MAX_TITLE_LENGTH = 120;
-const MAX_PROMPT_LENGTH = 2000;
 const MAX_GOALS_AT_ONCE = 3;
 const MAX_GOAL_SOURCES = 5;
 const MAX_LANGUAGE_LENGTH = 10;
@@ -63,7 +63,7 @@ export const goalDraftSchema = z
       .string()
       .trim()
       .min(1)
-      .max(MAX_PROMPT_LENGTH)
+      .max(MAX_GOAL_PROMPT_LENGTH)
       .meta({ description: "What the learner typed" }),
     targetDate: z.iso
       .date()

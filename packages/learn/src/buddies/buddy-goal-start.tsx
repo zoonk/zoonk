@@ -1,11 +1,11 @@
 "use client";
 
+import { MAX_GOAL_PROMPT_LENGTH } from "@zoonk/core/goals/goal-input-limits";
 import { HistoryIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
 import { TutorMessage, useTutorIdentity } from "../conversation/tutor-identity";
 import { LearnLink } from "../learn-link";
-import { MAX_GOAL_LENGTH } from "../onboarding/entry/goal-entry";
 import {
   GoalField,
   GoalFieldSubmit,
@@ -105,7 +105,7 @@ export function BuddyGoalStart({
             autoFocusOnPointer
             defaultValue={draft}
             id={fieldId}
-            maxLength={MAX_GOAL_LENGTH}
+            maxLength={MAX_GOAL_PROMPT_LENGTH}
             placeholder={t("What you want to learn")}
             {...goal.field}
           />

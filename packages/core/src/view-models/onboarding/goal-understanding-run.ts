@@ -5,6 +5,7 @@ import { type GoalUnderstanding, understandGoal } from "@zoonk/ai/tasks/v2/goals
 import { prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 import { unchanged, writeLearnerChange } from "../../learner/_utils/write-learner-change";
+import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../../plans/daily-minutes";
 import { completeDraft, parseStoredUnderstanding } from "./_utils/onboarding-draft";
 import { saveUnderstanding } from "./_utils/understanding-cache";
 import { getLearnerToday } from "./_utils/understanding-view";
@@ -69,6 +70,7 @@ export async function readGoalWords(
   const [understood, intent] = await Promise.all([
     understandGoal({
       analytics,
+      dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
       goal: draft.prompt,
       language: draft.language,
       serviceTier,

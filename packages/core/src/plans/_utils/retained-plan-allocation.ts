@@ -1,5 +1,6 @@
 import { type BuildPlanInput, type BuiltPlan } from "../planner/build-plan";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
+import { LEARN_KINDS } from "../planner/plan-item-rules";
 import { getItemKey } from "../planner/plan-items";
 import { type ExamSubjectShare } from "../planner/selected-coverage";
 import { summarizeSelectedPlan } from "../planner/selected-plan-summary";
@@ -30,7 +31,7 @@ export function retainPlanAllocation({
   }));
 
   const intervals = rows.flatMap(({ facts, item, key }) => {
-    if ((item.kind !== "lesson" && item.kind !== "chapter") || !item.scheduledFor || !facts) {
+    if (!LEARN_KINDS.has(item.kind) || !item.scheduledFor || !facts) {
       return [];
     }
 

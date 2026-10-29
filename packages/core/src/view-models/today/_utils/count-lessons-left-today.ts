@@ -1,5 +1,6 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
+import { LEARN_KINDS } from "../../../plans/planner/plan-item-rules";
 import {
   type SessionPlanItem,
   getSessionItemIdentity,
@@ -24,9 +25,7 @@ export async function countLessonsLeftToday({
   if (session.status === "unstarted" && selectedItems) {
     const todo = new Set(
       selectedItems
-        .filter(
-          (item) => item.status === "todo" && (item.kind === "lesson" || item.kind === "chapter"),
-        )
+        .filter((item) => item.status === "todo" && LEARN_KINDS.has(item.kind))
         .map((item) => getSessionItemIdentity(item)),
     );
 

@@ -1,4 +1,3 @@
-import "server-only";
 import {
   type GenerationStatus,
   type Goal,
@@ -6,7 +5,9 @@ import {
   type TransactionClient,
   prisma,
 } from "@zoonk/db";
+import "server-only";
 import { readSkillCourses } from "../../lookahead/plan-outline-needs";
+import { isStandIn } from "../../plans/planner/plan-item-rules";
 import { isExamSchedule } from "../../plans/planner/plan-queue";
 
 const OUTLINING: GenerationStatus[] = ["pending", "running"];
@@ -17,10 +18,6 @@ const STAND_IN = {
   lessonId: null,
   skillId: { not: null },
 } as const;
-
-function isStandIn(item: Pick<PlanItem, "chapterId" | "kind" | "lessonId" | "skillId">) {
-  return item.kind === "lesson" && !item.lessonId && !item.chapterId && item.skillId !== null;
-}
 
 /** A long stand-in may start today while its due date is later; detect its consumed interval. */
 async function loadNextStandIn({

@@ -1,9 +1,8 @@
 import { type Goal, type PlanItem } from "@zoonk/db";
+import { LEARN_KINDS } from "../planner/plan-item-rules";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { countLessons } from "./stand-in-lessons";
 import { getWorkProgress, isWorkFinished } from "./work-progress";
-
-const LEARN_KINDS = new Set<PlanItem["kind"]>(["chapter", "lesson"]);
 
 const EXAM_DAY_KINDS = new Set<PlanItem["kind"]>(["mock", "review"]);
 

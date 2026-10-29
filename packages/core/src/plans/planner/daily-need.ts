@@ -3,10 +3,9 @@ import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
 import { withDailyMinutes } from "./daily-time-plans";
 import { findDayMock, getSpendable } from "./mock-day";
 import { addDays, getStudyMinutes, toIsoDate } from "./plan-calendar";
+import { PLAN_EPSILON } from "./plan-precision";
 import { createDays, getCalendar, getPlanStart } from "./plan-run-days";
 import { type DayShape, type PlanDay, getLessonCapacity } from "./schedule-units";
-
-const EPSILON = 1e-6;
 
 const DAY_MINUTES = 1440;
 
@@ -64,18 +63,18 @@ export function estimateDailyNeed({
   fixed: FixedDays;
   remaining: number;
 }): DailyNeed {
-  if (remaining <= EPSILON) {
+  if (remaining <= PLAN_EPSILON) {
     return { basis: "estimated", minutes: null, reason: "nothingLeft" };
   }
 
   const capacityAt = (dailyMinutes: number) => getCapacityAt({ dailyMinutes, fixed });
   const most = capacityAt(DAY_MINUTES);
 
-  if (most.lessons <= EPSILON) {
+  if (most.lessons <= PLAN_EPSILON) {
     return { basis: "estimated", minutes: null, reason: "noStudyDays" };
   }
 
-  if (most.value < remaining - EPSILON) {
+  if (most.value < remaining - PLAN_EPSILON) {
     return { basis: "estimated", minutes: null, reason: "exceedsDay" };
   }
 
@@ -86,7 +85,7 @@ export function estimateDailyNeed({
 
     const middle = Math.floor((low + high) / 2);
 
-    return capacityAt(middle).value >= remaining - EPSILON
+    return capacityAt(middle).value >= remaining - PLAN_EPSILON
       ? search(low, middle)
       : search(middle + 1, high);
   };
@@ -193,7 +192,7 @@ export function estimateFinish({
   input: BuildPlanInput;
   remaining: number;
 }): Finish {
-  if (remaining <= EPSILON) {
+  if (remaining <= PLAN_EPSILON) {
     return { date: null, reason: "nothingLeft" };
   }
 
@@ -220,12 +219,15 @@ export function estimateFinish({
     return totals;
   }, []);
 
-  const at = sums.findIndex((sum) => sum >= remaining - EPSILON);
+  const at = sums.findIndex((sum) => sum >= remaining - PLAN_EPSILON);
   const date = days[at];
 
   if (date) {
     return { date: toIsoDate(date) };
   }
 
-  return { date: null, reason: (sums.at(-1) ?? 0) <= EPSILON ? "noStudyDays" : "beyondHorizon" };
+  return {
+    date: null,
+    reason: (sums.at(-1) ?? 0) <= PLAN_EPSILON ? "noStudyDays" : "beyondHorizon",
+  };
 }

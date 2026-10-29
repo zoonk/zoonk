@@ -1,14 +1,13 @@
-import "server-only";
 import { type PlanItem, type StudyFreshStart, prisma } from "@zoonk/db";
+import "server-only";
 import { parsePlanChangePayload } from "../../plans/_utils/plan-change-payload";
+import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { readBlockPayload } from "../block-payload";
 import { type PlannedLesson } from "../session-builder";
 import { type DayBlockInput } from "./day-block-view";
 import { loadPlanLessons } from "./load-plan-lessons";
 import { type SessionPlanItem } from "./session-plan-item";
 import { type CatchUpView } from "./session-view";
-
-const LEARN_KINDS: PlanItem["kind"][] = ["lesson", "chapter"];
 
 /** Bound optional catch-up to roughly one extra study day so returning learners do not create enormous queues. */
 const CATCH_UP_DAY_SHARE = 1.25;
@@ -39,7 +38,7 @@ export async function loadCatchUpItems(goalId: string | null): Promise<PlanItem[
     where: {
       OR: [{ lessonId: { not: null } }, { chapterId: { not: null } }],
       id: { in: carriedItemIds },
-      kind: { in: LEARN_KINDS },
+      kind: { in: [...LEARN_KINDS] },
       status: "todo",
     },
   });

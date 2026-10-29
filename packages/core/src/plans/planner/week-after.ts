@@ -3,6 +3,7 @@ import { findDayIndex } from "./day-index";
 import { type StudyPortion, listIntervalPortions } from "./interval-study-minutes";
 import { type KeptPiece } from "./kept-items";
 import { toIsoDate } from "./plan-calendar";
+import { isStandInUnit } from "./plan-item-rules";
 import { type QueueUnit } from "./plan-units";
 import { type PlanDay, type ScheduledUnit, getCumulativeCapacity } from "./schedule-units";
 
@@ -122,10 +123,6 @@ function getSpillEnd({ days, minutes }: { days: readonly PlanDay[]; minutes: num
   return (days[index] ?? days.at(-1))?.date ?? null;
 }
 
-function isStandIn(unit: QueueUnit): boolean {
-  return unit.kind === "lesson" && unit.lessonId === null && unit.skillId !== null;
-}
-
 export function layOutAfterThisWeek<T extends LaidOut>({
   days,
   kept,
@@ -160,7 +157,7 @@ export function layOutAfterThisWeek<T extends LaidOut>({
     begins.every((unit) => unit.date < start);
 
   const invertsSkill = scheduled.some((unit) => {
-    if (!isStandIn(unit)) {
+    if (!isStandInUnit(unit)) {
       return false;
     }
 
@@ -174,7 +171,7 @@ export function layOutAfterThisWeek<T extends LaidOut>({
   });
 
   if (keepsThisWeek && !invertsSkill) {
-    const parts = own.filter((unit) => isStandIn(unit));
+    const parts = own.filter((unit) => isStandInUnit(unit));
     const last = Math.max(...parts.map((unit) => unit.date.getTime()));
 
     return {

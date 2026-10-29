@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { answerTimeZoneSchema, itemAnswerInputSchema } from "../learner/contract";
 import { type ListeningSetView } from "../library/listening/listening-set-view";
+import { MAX_SESSION_TYPED_ANSWER_LENGTH } from "./answer-limits";
 import { areaIdSchema } from "./day-block";
 
 export const todayStudySessionInputSchema = z
@@ -72,13 +73,11 @@ const numberAnswerSchema = z
   .strict()
   .meta({ id: "NumberAnswer" });
 
-const MAX_TYPED_ANSWER_LENGTH = 500;
-
 const typedAnswerSchema = z
   .object({
     text: z
       .string()
-      .max(MAX_TYPED_ANSWER_LENGTH)
+      .max(MAX_SESSION_TYPED_ANSWER_LENGTH)
       .meta({ description: "A typed question's answer: a word, a number or a short phrase" }),
   })
   .strict()

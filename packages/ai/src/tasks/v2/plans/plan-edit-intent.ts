@@ -94,6 +94,7 @@ export type PlanEditInput = {
 };
 
 export type PlanEditParams = PlanEditInput & {
+  dailyMinutesLimits: { min: number; max: number };
   analytics?: AiGenerationContext;
   model?: string;
   reasoning?: Reasoning;

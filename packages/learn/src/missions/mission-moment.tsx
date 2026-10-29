@@ -73,7 +73,9 @@ function MomentBuddy({ buddy, whole }: { buddy: LearnBuddy | null; whole: boolea
         expression={whole ? "happy" : "neutral"}
         glasses={resolved.glasses}
         kind={resolved.kind}
-        reaction={whole ? { act: "cheer", delay: 2 * BEAT_MS } : { act: "smile", delay: BEAT_MS }}
+        reaction={
+          whole ? { act: "cheer", delayMs: 2 * BEAT_MS } : { act: "smile", delayMs: BEAT_MS }
+        }
         studiedToday
       />
     </span>
@@ -91,8 +93,8 @@ function PaidBonus({ celebrate, points }: { celebrate: boolean; points: number }
       data-slot="missions-bonus"
       style={celebrate ? { animationDelay: `${2 * BEAT_MS}ms` } : undefined}
     >
-      <BrainPowerReadout delay={2 * BEAT_MS} points={points} />
-      <Burst className="text-brain top-5 left-9" delay={3 * BEAT_MS} />
+      <BrainPowerReadout delayMs={2 * BEAT_MS} points={points} />
+      <Burst className="text-brain top-5 left-9" delayMs={3 * BEAT_MS} />
     </span>
   );
 }
@@ -183,7 +185,7 @@ export function MissionMoment({
 
       <MissionTrack
         className="mt-4"
-        delay={BEAT_MS}
+        delayMs={BEAT_MS}
         from={celebrate ? from : undefined}
         missions={missions}
       />

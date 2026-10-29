@@ -5,9 +5,8 @@ import { hasEveryTopic } from "./feasibility-topics";
 import { getAreaFoundationIds, getSkillArea } from "./graph-areas";
 import { getBaseChoices } from "./plan-bases";
 import { type PlannedItem } from "./plan-items";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type SkillRequirement, isCompleted } from "./selected-requirement";
-
-const EPSILON = 1e-6;
 
 export type ExamSubjectShare = { areas: readonly string[]; share: number };
 
@@ -170,7 +169,8 @@ function listShortLessons({
       skillIds: entries.map((entry) => entry.skillId).toSorted(),
     }))
     .filter(
-      (lesson) => held.has(lesson.lessonId) && lesson.countedRaw < lesson.requiredRaw - EPSILON,
+      (lesson) =>
+        held.has(lesson.lessonId) && lesson.countedRaw < lesson.requiredRaw - PLAN_EPSILON,
     )
     .toSorted((a, b) => a.lessonId.localeCompare(b.lessonId));
 }
@@ -224,7 +224,7 @@ export function getCoverage({
       coveredRaw: Math.min(requiredRaw, coveredRaw),
       requiredRaw,
       skillId,
-      state: requiredRaw > EPSILON ? ("measured" as const) : ("unknown" as const),
+      state: requiredRaw > PLAN_EPSILON ? ("measured" as const) : ("unknown" as const),
       worth,
     };
   });
@@ -236,7 +236,7 @@ export function getCoverage({
     built: {
       ...built,
       items: built.items.filter(
-        (item) => item.status !== "todo" || sumRawBefore({ built, deadline, item }) > EPSILON,
+        (item) => item.status !== "todo" || sumRawBefore({ built, deadline, item }) > PLAN_EPSILON,
       ),
     },
     known: input.knownSkillIds ?? new Set(),
@@ -246,7 +246,7 @@ export function getCoverage({
   const whole = skills.every(
     (skill) =>
       skill.state === "settled" ||
-      (skill.state === "measured" && skill.coveredRaw >= skill.requiredRaw - EPSILON),
+      (skill.state === "measured" && skill.coveredRaw >= skill.requiredRaw - PLAN_EPSILON),
   );
 
   return {

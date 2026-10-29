@@ -1,5 +1,6 @@
 import { type EntitlementTier } from "../../entitlements/contract";
 import { type GoalPlan } from "../../learner/_utils/goal-skill-graph";
+import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { type SessionPlanItem } from "../_utils/session-plan-item";
 import { type PlannedBlock } from "../session-builder";
@@ -139,9 +140,7 @@ export function finishChapterCandidate({
   const findRemaining = (chapterId: string) =>
     items.filter(
       (item) =>
-        item.chapterId === chapterId &&
-        item.status === "todo" &&
-        ["lesson", "chapter"].includes(item.kind),
+        item.chapterId === chapterId && item.status === "todo" && LEARN_KINDS.has(item.kind),
     );
 
   const chapterId = chapterIds.find((id) => {

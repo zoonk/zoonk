@@ -2,6 +2,7 @@ import { type ItemSkillRows } from "../../learner/_utils/goal-plan-projection";
 import { toBossPlan } from "./boss-plan";
 import { type BuildPlanInput } from "./build-plan";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
+import { LEARN_KINDS } from "./plan-item-rules";
 import {
   EVENT_RANK,
   KEPT_RANK,
@@ -15,8 +16,6 @@ import {
 import { getBossKey } from "./plan-units";
 
 export type BossCandidate = { beside: boolean; date: string; key: string; phase: number };
-
-const LEARN_KINDS = new Set<PlannedItem["kind"]>(["chapter", "lesson"]);
 
 const BETWEEN_ITEMS = 0.5;
 

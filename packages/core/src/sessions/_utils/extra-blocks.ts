@@ -6,6 +6,7 @@ import { loadGoalSkillIds } from "../../learner/_utils/goal-skill-graph";
 import { markLearnerChanged, markPlansChanged } from "../../learner/_utils/mark-learner-changed";
 import { practicesShortAnswers } from "../../library/exams/short-answers";
 import { getGoalField } from "../../library/items/item-field";
+import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { type DifficultyBias, parsePlanSettings } from "../../plans/planner/plan-state";
 import { getBlockItemIds, readBlockPayload, toBlockPayload } from "../block-payload";
 import { type ExtraTime, hasExtraPracticeLeft } from "../extra-time";
@@ -141,7 +142,7 @@ export async function buildExtraLessons({
     orderBy: { position: "asc" },
     take: EXTRA_LESSON_WINDOW + done.size,
     where: {
-      kind: { in: ["lesson", "chapter"] },
+      kind: { in: [...LEARN_KINDS] },
       plan: { goalId: session.goalId ?? "" },
       status: "todo",
       ...(planItemIds && { id: { in: [...planItemIds] } }),

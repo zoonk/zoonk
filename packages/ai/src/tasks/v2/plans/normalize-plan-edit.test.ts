@@ -3,6 +3,7 @@ import { normalizePlanEdit } from "./normalize-plan-edit";
 
 const input = {
   areas: ["Mathematics", "Natural sciences", "Língua Portuguesa"],
+  dailyMinutesLimits: { max: 1440, min: 5 },
   goalKind: "exam",
   today: "2026-09-28",
 };
@@ -25,6 +26,27 @@ function change(attrs: Partial<Parameters<typeof normalizePlanEdit>[0]["raw"]["c
 }
 
 describe(normalizePlanEdit, () => {
+  it("uses the caller's time limits and preserves days off", () => {
+    const result = normalizePlanEdit({
+      input: { ...input, dailyMinutesLimits: { max: 90, min: 10 } },
+      raw: {
+        changes: [
+          change({ kind: "setDailyMinutes", minutes: 2 }),
+          change({ kind: "setWeekdayMinutes", minutes: 200, weekdays: [1] }),
+          change({ kind: "setWeekdayMinutes", minutes: 0, weekdays: [0] }),
+        ],
+        summary: "Change study time",
+        understood: true,
+      },
+    });
+
+    expect(result.operations).toStrictEqual([
+      { kind: "setDailyMinutes", minutes: 10 },
+      { kind: "setWeekdayMinutes", minutes: 90, weekdays: [1] },
+      { kind: "setWeekdayMinutes", minutes: 0, weekdays: [0] },
+    ]);
+  });
+
   it("narrows a focus to the part of an area the learner named, with that area's skills only", () => {
     const skills = [
       { area: "Natural sciences", name: "Explain heredity", skillId: "genetics" },

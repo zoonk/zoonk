@@ -1,9 +1,10 @@
 "use client";
 
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { type DiffLine, DiffLines } from "../_components/diff-lines";
 import { useFormatIsoDate } from "../_utils/iso-date";
+import { useFormatWeekday } from "../_utils/use-format-weekday";
 import { getShownEndMove } from "./end-move";
 import { getLessonLineTone } from "./line-tone";
 
@@ -12,19 +13,6 @@ type PlanEffect = NonNullable<PlanChangeView["effect"]>;
 type GoalDateMove = { after: string; before: string | null };
 
 const NO_BREAK_SPACE = "\u00A0";
-
-const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
-const DAY_MS = 86_400_000;
-
-function useWeekdayName() {
-  const format = useFormatter();
-
-  return (weekday: number) =>
-    format.dateTime(new Date(REFERENCE_SUNDAY + weekday * DAY_MS), {
-      timeZone: "UTC",
-      weekday: "long",
-    });
-}
 
 function useDiffDate() {
   const formatDate = useFormatIsoDate();
@@ -117,7 +105,7 @@ function useGoalDateLines() {
 function usePlanEffectLines() {
   const t = useExtracted();
   const formatDate = useDiffDate();
-  const weekdayName = useWeekdayName();
+  const weekdayName = useFormatWeekday();
   const lessonLines = useLessonLines();
   const goalDateLines = useGoalDateLines();
 

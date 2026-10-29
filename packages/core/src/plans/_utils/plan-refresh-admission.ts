@@ -1,3 +1,4 @@
+import { LEARN_KINDS } from "../planner/plan-item-rules";
 import { type PlanContext } from "./plan-context";
 import { areLessonsFinished } from "./plan-end";
 import { type ComputedPlan } from "./replan";
@@ -27,8 +28,6 @@ export function addsLessonsAfterLessonsDone({
 
   return (
     done &&
-    computed.built.items.some(
-      (item) => (item.kind === "lesson" || item.kind === "chapter") && item.status === "todo",
-    )
+    computed.built.items.some((item) => LEARN_KINDS.has(item.kind) && item.status === "todo")
   );
 }

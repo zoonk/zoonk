@@ -2,6 +2,7 @@ import "server-only";
 import { type Goal, prisma, sql } from "@zoonk/db";
 import { hasPlanDeadline, withinLessonScope } from "../../plans/_utils/plan-end";
 import { findUpNextItem } from "../../plans/_utils/up-next-item";
+import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanSettings } from "../../plans/planner/plan-state";
 import { loadTodayLearnBlocks } from "../../view-models/_utils/today-lesson-order";
 import {
@@ -64,7 +65,7 @@ export async function loadUpNextChapter(
             phase: true,
             status: true,
           },
-          where: { kind: { in: ["chapter", "lesson"] }, status: { in: ["todo", "skipped"] } },
+          where: { kind: { in: [...LEARN_KINDS] }, status: { in: ["todo", "skipped"] } },
         },
         settings: true,
       },

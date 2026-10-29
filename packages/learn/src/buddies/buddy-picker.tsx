@@ -1,5 +1,6 @@
 "use client";
 
+import { BUDDY_NAME_MAX_LENGTH } from "@zoonk/core/profile/buddy-name-limit";
 import { Buddy } from "@zoonk/ui/components/buddy";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
@@ -13,8 +14,6 @@ import { CHOICE_CARD_PICKED_CLASS } from "../onboarding/choice-styles";
 import { useKeptTyping } from "../use-kept-typing";
 import { BUDDY_KINDS, BuddyTagline } from "./buddy-labels";
 import { useBuddyName } from "./use-buddy-name";
-
-const BUDDY_NAME_MAX_LENGTH = 24;
 
 export type BuddyChoice = { glasses: BuddyGlasses; kind: BuddyKind; name: string };
 

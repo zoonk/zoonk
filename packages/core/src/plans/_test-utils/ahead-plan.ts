@@ -5,6 +5,7 @@ import { mockSession } from "../../_test-utils/mock-session";
 import { getPlanTabView } from "../../view-models/plan/get-plan-view";
 import { loadPaceSamples } from "../_utils/pace-samples";
 import { createGoalPlan } from "../create-goal-plan";
+import { LEARN_KINDS } from "../planner/plan-item-rules";
 import { choosePace } from "../planner/plan-pace";
 import { parsePlanSettings } from "../planner/plan-state";
 import { refreshGoalPlan } from "../refresh-goal-plan";
@@ -105,7 +106,7 @@ export async function aheadPlanFixture({
 
   await prisma.planItem.updateMany({
     data: { completedAt: AHEAD_START, status: "done" },
-    where: { kind: { in: ["chapter", "lesson"] }, planId: plan.id, status: "todo" },
+    where: { kind: { in: [...LEARN_KINDS] }, planId: plan.id, status: "todo" },
   });
 
   await refreshGoalPlan({ goalId: goal.id });

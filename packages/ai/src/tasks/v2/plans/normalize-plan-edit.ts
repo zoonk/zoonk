@@ -65,6 +65,7 @@ type RawChange = {
 export type PlanEditSkill = { area: string; name: string; skillId: string };
 
 type Context = {
+  dailyMinutesLimits: { min: number; max: number };
   areas: readonly string[];
   goalKind: string;
   language?: string;
@@ -229,7 +230,7 @@ function toOperation({
   switch (change.kind) {
     case "setDailyMinutes":
     case "setWeekdayMinutes":
-      return toTimeOperation(change);
+      return toTimeOperation({ change, dailyMinutesLimits: context.dailyMinutesLimits });
     case "addLightWeek":
     case "setTargetDate":
     case "clearTargetDate":

@@ -2,6 +2,7 @@ import { type Goal, type PlanItemStatus } from "@zoonk/db";
 import { getBossTimings } from "../../checkpoints/_utils/boss-reached";
 import { type PlanChapterView, type PlanPhaseView } from "../plan-view-contract";
 import { toIsoDate } from "../planner/plan-calendar";
+import { isWritingItem } from "../planner/plan-item-rules";
 import { type PlanPhase } from "../planner/plan-state";
 import { buildCheckpoint } from "./phase-checkpoint";
 import { getPhaseStates } from "./phase-states";
@@ -35,12 +36,6 @@ export function getSkillAreas({
   return new Map(
     skills.map((skill) => [skill.skillId, skill.area === courseTitle ? null : skill.area]),
   );
-}
-
-export function isWritingItem(
-  item: Pick<PlanReadItem, "chapterId" | "kind" | "lessonId">,
-): boolean {
-  return item.kind === "lesson" && item.lessonId === null && item.chapterId === null;
 }
 
 export function getWritingTitle({

@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_TYPED_PLACEMENT_ANSWER_LENGTH } from "@zoonk/core/learner/placement/placement-limits";
 import { type TrueFalseLabels } from "@zoonk/core/library/exams/true-false-labels";
 import { Button } from "@zoonk/ui/components/button";
 import { Label } from "@zoonk/ui/components/label";
@@ -22,8 +23,6 @@ import {
   OnboardingSubject,
 } from "../onboarding-frame";
 import { OnboardingTestQuestion } from "../onboarding-host";
-
-const MAX_TYPED_ANSWER = 1000;
 
 function useQuestionChoices({
   question,
@@ -120,7 +119,7 @@ function TypedAnswerField({
         autoFocus
         className="min-h-28 text-base"
         id={fieldId}
-        maxLength={MAX_TYPED_ANSWER}
+        maxLength={MAX_TYPED_PLACEMENT_ANSWER_LENGTH}
         onChange={(event) => onChange(event.target.value)}
         onKeyDown={(event) => {
           if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {

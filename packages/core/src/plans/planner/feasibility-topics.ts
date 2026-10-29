@@ -1,16 +1,13 @@
 import { toTopicKey } from "../../library/exams/topic-key";
 import { type BuildPlanInput, type BuiltPlan } from "./build-plan";
+import { LEARN_KINDS } from "./plan-item-rules";
 import { type PlanGraphSkill } from "./plan-state";
 import { findFrequentSkillIds } from "./topic-weights";
 
 function listPlannedSkillIds(built: BuiltPlan): Set<string> {
   return new Set(
     built.items.flatMap((item) =>
-      item.status !== "skipped" &&
-      (item.kind === "lesson" || item.kind === "chapter") &&
-      item.skillId
-        ? [item.skillId]
-        : [],
+      item.status !== "skipped" && LEARN_KINDS.has(item.kind) && item.skillId ? [item.skillId] : [],
     ),
   );
 }

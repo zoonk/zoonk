@@ -3,7 +3,9 @@ import { findDayIndex, isLessonRoom } from "./day-index";
 import { canHoldPhaseChallenge } from "./phase-challenge-days";
 import { listWonPhases } from "./phase-time";
 import { fromIsoDate, toIsoDate } from "./plan-calendar";
+import { LEARN_KINDS } from "./plan-item-rules";
 import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type PlanPhase } from "./plan-state";
 import { type QueueUnit, getBossKey } from "./plan-units";
 import {
@@ -15,10 +17,6 @@ import {
   placeUnits,
 } from "./schedule-units";
 import { withKeptLessons } from "./whole-boss";
-
-const EPSILON = 1e-6;
-
-const LEARN_KINDS = new Set<PlannedItem["kind"]>(["chapter", "lesson"]);
 
 export function getShownPhaseEnds({
   items,
@@ -73,7 +71,7 @@ function getDayEndAfter({
   units: readonly QueueUnit[];
 }): number {
   const used = getUsedAfterUnits({ cumulative, units });
-  const day = used <= EPSILON ? -1 : findDayIndex({ cumulative, needed: used });
+  const day = used <= PLAN_EPSILON ? -1 : findDayIndex({ cumulative, needed: used });
 
   return day === -1 ? used : Math.max(used, cumulative[day] ?? used);
 }
@@ -94,7 +92,7 @@ function pullPhaseDepth({
     return sums;
   }, []);
 
-  const count = ends.findIndex((end) => end > room + EPSILON);
+  const count = ends.findIndex((end) => end > room + PLAN_EPSILON);
   return count === -1 ? candidates : candidates.slice(0, count);
 }
 
@@ -128,7 +126,7 @@ function keepAfterEarlierChallenges({
 
   const restLate = placeUnits({ cumulative, units: rest }).findIndex(
     ({ dayIndex, start: unitStart, unit }) =>
-      dayIndex < 0 || unitStart + unit.minutes > room + EPSILON,
+      dayIndex < 0 || unitStart + unit.minutes > room + PLAN_EPSILON,
   );
 
   const count = restLate === -1 ? rest.length : restLate;
@@ -168,7 +166,7 @@ function keepPhaseEnd({
 
   const late = placeUnits({ cumulative, units: before }).findIndex(
     ({ dayIndex, start: unitStart, unit }) =>
-      dayIndex < 0 || unitStart + unit.minutes > start + EPSILON,
+      dayIndex < 0 || unitStart + unit.minutes > start + PLAN_EPSILON,
   );
 
   const lateLesson =
@@ -293,7 +291,7 @@ export function listStrainedEnds({
       0,
     );
 
-    return !isLessonRoom(capacity) || load > Math.max(capacity, boss.minutes) + EPSILON
+    return !isLessonRoom(capacity) || load > Math.max(capacity, boss.minutes) + PLAN_EPSILON
       ? [
           {
             phase,

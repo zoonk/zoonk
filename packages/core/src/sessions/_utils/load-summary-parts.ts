@@ -3,6 +3,7 @@ import { type MasteryState, prisma } from "@zoonk/db";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { loadAnswersReviewSkillIds } from "../../learner/_utils/lesson-plan-skills";
 import { addDays } from "../../plans/planner/plan-calendar";
+import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { readBlockPayload } from "../block-payload";
 import { capReviewDay } from "../capsules";
 import { isExamTomorrow } from "./exam-tomorrow";
@@ -138,7 +139,7 @@ export async function loadTomorrow({
 
   const next = await prisma.planItem.findFirst({
     orderBy: { position: "asc" },
-    where: { kind: { in: ["lesson", "chapter"] }, plan: { goalId }, status: "todo" },
+    where: { kind: { in: [...LEARN_KINDS] }, plan: { goalId }, status: "todo" },
   });
 
   if (!next) {

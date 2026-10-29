@@ -1,11 +1,10 @@
 "use client";
 
+import { MAX_ONBOARDING_ANSWER_LENGTH } from "@zoonk/core/view-models/onboarding/onboarding-limits";
 import { Input } from "@zoonk/ui/components/input";
 import { Label } from "@zoonk/ui/components/label";
 import { useId } from "react";
 import { useKeptTyping } from "../../use-kept-typing";
-
-const MAX_ANSWER_LENGTH = 200;
 
 /**
  * Only a screen's first field takes focus. Its text stays 16px on phones, where iOS Safari zooms
@@ -35,7 +34,7 @@ export function TextField({
         className="h-11 text-base md:text-[0.9375rem]"
         id={inputId}
         {...kept.field}
-        maxLength={MAX_ANSWER_LENGTH}
+        maxLength={MAX_ONBOARDING_ANSWER_LENGTH}
         onChange={(event) => onChange(event.target.value)}
         placeholder={placeholder}
         value={value}

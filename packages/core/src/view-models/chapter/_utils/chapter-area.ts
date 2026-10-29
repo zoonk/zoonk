@@ -1,10 +1,8 @@
-import { type PlanItem } from "@zoonk/db";
 import { countSkillStates } from "../../../learner/mastery-state";
 import { isWorkFinished } from "../../../plans/_utils/work-progress";
+import { LEARN_KINDS } from "../../../plans/planner/plan-item-rules";
 import { type GoalMap } from "../../_utils/goal-map";
 import { type MapArea, type MapSkill } from "../../map/map-contract";
-
-const LEARN_KINDS = new Set<PlanItem["kind"]>(["chapter", "lesson"]);
 
 export type ChapterArea = Pick<MapArea, "counts" | "skills" | "state"> & { position: number };
 

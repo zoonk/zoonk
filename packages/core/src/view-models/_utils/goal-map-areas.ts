@@ -4,10 +4,9 @@ import { countSkillStates } from "../../learner/mastery-state";
 import { getPhaseStates } from "../../plans/_utils/phase-states";
 import { type TodayLearnBlock, findUpNextItem } from "../../plans/_utils/up-next-item";
 import { isWorkFinished } from "../../plans/_utils/work-progress";
+import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { type PlanPhase } from "../../plans/planner/plan-state";
 import { type MapArea, type MapPhase, type MapSkill } from "../map/map-contract";
-
-const LEARN_KINDS = new Set<PlanItem["kind"]>(["chapter", "lesson"]);
 
 export type MapItem = Pick<
   PlanItem,

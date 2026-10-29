@@ -8,12 +8,12 @@ import { useEffectEvent, useLayoutEffect, useRef } from "react";
 /** The final value is on the page from the first frame for screen readers and layout; the counting digits draw over it. */
 export function CountUp({
   className,
-  delay = 0,
+  delayMs = 0,
   format = String,
   value,
 }: {
   className?: string;
-  delay?: number;
+  delayMs?: number;
   format?: (value: number) => string;
   value: number;
 }) {
@@ -33,7 +33,7 @@ export function CountUp({
 
     // No keyframes: the browser's clock for the token's time and curve, read on every frame.
     const clock = overlay.animate([], {
-      delay,
+      delay: delayMs,
       duration,
       easing: readEasing(overlay, "out"),
       fill: "both",
@@ -69,7 +69,7 @@ export function CountUp({
     });
 
     return end;
-  }, [delay, plays, value]);
+  }, [delayMs, plays, value]);
 
   return (
     <span

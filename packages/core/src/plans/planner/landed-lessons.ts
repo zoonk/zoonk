@@ -1,6 +1,6 @@
 import { type BuildPlanInput } from "./build-plan";
 import { withBaseChoices } from "./chosen-bases";
-import { isStandInItem } from "./kept-items";
+import { isStandIn, isUnwrittenLesson } from "./plan-item-rules";
 import { buildPlanQueue } from "./plan-queue";
 import { type PlannerLesson, type QueueUnit } from "./plan-units";
 import { type DroppedUnit } from "./schedule-units";
@@ -29,7 +29,7 @@ export function findLanding(input: BuildPlanInput): Landing | null {
   const standIns = new Set(
     input.items.flatMap((item) =>
       item.status === "todo" &&
-      isStandInItem(item) &&
+      isStandIn(item) &&
       !written.has(item.skillId ?? "") &&
       !isAfterExam(item)
         ? [item.skillId ?? ""]
@@ -166,7 +166,7 @@ export function getLandingSkillMinutes({
   pending: readonly QueueUnit[];
 }): SkillMinutes[] {
   const isHeld = (unit: QueueUnit) =>
-    unit.kind === "lesson" && unit.lessonId === null && landed?.has(unit.skillId ?? "") === true;
+    isUnwrittenLesson(unit) && landed?.has(unit.skillId ?? "") === true;
 
   return getSkillMinutes({
     dropped: dropped.filter((unit) => !isHeld(unit)),
@@ -188,8 +188,5 @@ export function withoutWrittenStandIns({
     ),
   );
 
-  return dropped.filter(
-    (unit) =>
-      !(unit.kind === "lesson" && unit.lessonId === null && written.has(unit.skillId ?? "")),
-  );
+  return dropped.filter((unit) => !(isUnwrittenLesson(unit) && written.has(unit.skillId ?? "")));
 }

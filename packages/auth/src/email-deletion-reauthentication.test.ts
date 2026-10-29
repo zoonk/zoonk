@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { EmailAccountDeletionError } from "./email-deletion-contract";
+import { AccountDeletionEmailMismatchError } from "./email-deletion-contract";
 import { createEmailDeletionReauthentication } from "./email-deletion-reauthentication";
 
 const mocks = vi.hoisted(() => ({
@@ -76,7 +76,7 @@ describe(createEmailDeletionReauthentication, () => {
     });
 
     await expect(reauthorize({ credentials, expectedUserId: randomUUID() })).rejects.toBeInstanceOf(
-      EmailAccountDeletionError,
+      AccountDeletionEmailMismatchError,
     );
 
     await expect(

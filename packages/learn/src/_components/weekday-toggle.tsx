@@ -1,10 +1,7 @@
 "use client";
 
 import { Toggle } from "@zoonk/ui/components/toggle";
-import { MS_PER_DAY } from "@zoonk/utils/date";
-import { useFormatter } from "next-intl";
-
-const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
+import { useFormatWeekday } from "../_utils/use-format-weekday";
 
 export function WeekdayToggle({
   display,
@@ -14,12 +11,11 @@ export function WeekdayToggle({
   display: "narrow" | "short";
   weekday: number;
 }) {
-  const format = useFormatter();
-  const date = new Date(REFERENCE_SUNDAY + weekday * MS_PER_DAY);
+  const formatWeekday = useFormatWeekday();
 
   return (
-    <Toggle aria-label={format.dateTime(date, { timeZone: "UTC", weekday: "long" })} {...props}>
-      {format.dateTime(date, { timeZone: "UTC", weekday: display })}
+    <Toggle aria-label={formatWeekday(weekday)} {...props}>
+      {formatWeekday(weekday, display)}
     </Toggle>
   );
 }

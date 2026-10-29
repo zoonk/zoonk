@@ -7,6 +7,7 @@ import { getExamPrepAccess as getPlanExamPrep } from "../../entitlements/limits"
 import { findActiveGoalId } from "../../goals/_utils/goal-view";
 import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { loadStartedLessonIds } from "../../lesson-player/_utils/lesson-runs";
+import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { type ExamPrepAccess, getExamPrepAccess } from "./exam-access";
 import { type SessionPlanItem } from "./session-plan-item";
 
@@ -119,7 +120,7 @@ export async function loadDayPlusLessons({
   const today = planned.filter(
     (item) =>
       item.status === "todo" &&
-      (item.kind === "lesson" || item.kind === "chapter") &&
+      LEARN_KINDS.has(item.kind) &&
       item.scheduledFor?.getTime() === localDate.getTime(),
   );
 

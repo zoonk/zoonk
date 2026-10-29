@@ -1,5 +1,6 @@
 import { type BuildPlanInput } from "./build-plan";
 import { getKeptMinutes } from "./kept-minutes";
+import { LEARN_KINDS, isStandIn } from "./plan-item-rules";
 import { type ExistingPlanItem, type PlannedItem, getItemKey } from "./plan-items";
 import { type ExamWindow } from "./plan-phases";
 import { type QueueUnit } from "./plan-units";
@@ -10,15 +11,6 @@ import {
   type ScheduledUnit,
 } from "./schedule-units";
 import { listThisWeekItems } from "./this-week-items";
-
-export function isStandInItem(item: ExistingPlanItem): boolean {
-  return (
-    item.kind === "lesson" &&
-    item.lessonId === null &&
-    item.chapterId === null &&
-    item.skillId !== null
-  );
-}
 
 function isLandedStandIn({
   item,
@@ -32,7 +24,7 @@ function isLandedStandIn({
   const lessons = written(item.skillId ?? "");
 
   return (
-    isStandInItem(item) &&
+    isStandIn(item) &&
     lessons.some((lessonId) => !planned.has(lessonId)) &&
     !lessons.some((lessonId) => planned.has(lessonId))
   );
@@ -77,7 +69,7 @@ export function splitExistingItems({
   const landed = thisWeek.filter(
     (item) =>
       (!keepsRest && isLandedStandIn({ item, planned, written })) ||
-      (isStandInItem(item) && landedSkillIds?.has(item.skillId ?? "") === true),
+      (isStandIn(item) && landedSkillIds?.has(item.skillId ?? "") === true),
   );
 
   const frozen = thisWeek.filter((item) => !landed.includes(item));
@@ -258,8 +250,6 @@ export function keepThisWeek({
   };
 }
 
-const LEFT_WORK_KINDS = new Set<ExistingPlanItem["kind"]>(["chapter", "lesson"]);
-
 export function setAsideLeftWork({
   input,
   placed,
@@ -287,7 +277,7 @@ export function setAsideLeftWork({
 
     const left =
       item.status === "todo" &&
-      LEFT_WORK_KINDS.has(item.kind) &&
+      LEARN_KINDS.has(item.kind) &&
       (isOverdue || yielded.has(key)) &&
       !placedKeys.has(key) &&
       !(

@@ -14,6 +14,7 @@ vi.mock("ai", async (importOriginal) => {
 
 const input = {
   dailyMinutes: 20,
+  dailyMinutesLimits: { max: 1440, min: 5 },
   language: "en",
   memory: ["Never studies on Sundays: it's family day"],
   today: "2026-09-28",

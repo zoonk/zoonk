@@ -1,4 +1,3 @@
-import { isWritingItem } from "../../../plans/_utils/plan-phase-views";
 import {
   getOpenEarlySkill,
   isFarTopic,
@@ -6,6 +5,7 @@ import {
 } from "../../../plans/_utils/stand-in-lessons";
 import { getWorkProgress, isWorkFinished } from "../../../plans/_utils/work-progress";
 import { toIsoDate } from "../../../plans/planner/plan-calendar";
+import { isWritingItem } from "../../../plans/planner/plan-item-rules";
 import { type SyllabusChapter } from "../syllabus-contract";
 import { uniquePlanItems } from "./subject-progress";
 import { type SyllabusItem, type SyllabusSkill } from "./syllabus-input";

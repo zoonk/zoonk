@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
+import { getUsageRule } from "@zoonk/core/entitlements/limits";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
 import { libraryLessonFixture } from "@zoonk/testing/fixtures/library-lessons";
@@ -11,7 +12,7 @@ import { createGuest } from "./helpers/bearer";
 
 const RECORDING = { buffer: Buffer.from([1, 2, 3]), mimeType: "audio/webm", name: "answer.webm" };
 
-const GUEST_DAILY_HELP = 40;
+const GUEST_DAILY_HELP = getUsageRule({ kind: "assist", tier: "guest" }).day ?? 0;
 
 async function createPrivateSpokenStep(ownerId: string) {
   const lesson = await libraryLessonFixture({

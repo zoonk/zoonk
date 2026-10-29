@@ -35,7 +35,7 @@ export function DayMoment({
       <ReachedMoment
         buddy={buddy}
         ceremony={ceremony}
-        delay={getAfterMissionsDelay(missionMoment)}
+        delayMs={getAfterMissionsDelay(missionMoment)}
         reached={reached}
       />
     </div>

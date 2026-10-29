@@ -1,6 +1,6 @@
 import "server-only";
 import { type GoalKind, prisma, sql } from "@zoonk/db";
-import { PHASE_WORK_KINDS } from "../../plans/_utils/phase-states";
+import { PHASE_WORK_KINDS } from "../../plans/planner/plan-item-rules";
 import { parsePlanPhases } from "../../plans/planner/plan-state";
 
 export type PlanPhaseFacts = {

@@ -25,14 +25,14 @@ function readoutWords(chunks: React.ReactNode) {
   );
 }
 
-export function BrainPowerReadout({ delay, points }: { delay?: number; points: number }) {
+export function BrainPowerReadout({ delayMs, points }: { delayMs?: number; points: number }) {
   const t = useExtracted();
   const format = useFormatter();
 
   return t.rich("<number>+{points}</number> <words>Brain Power</words>", {
     number: () => (
       <ReadoutNumber className="text-brain-text">
-        <CountUp delay={delay} format={(value) => `+${format.number(value)}`} value={points} />
+        <CountUp delayMs={delayMs} format={(value) => `+${format.number(value)}`} value={points} />
       </ReadoutNumber>
     ),
     points: format.number(points),

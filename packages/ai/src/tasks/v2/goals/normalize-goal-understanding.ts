@@ -1,8 +1,5 @@
 import { LANGUAGE_CODE_PATTERN } from "@zoonk/utils/languages";
 
-const MIN_DAILY_MINUTES = 5;
-/** A whole day, as core's `MAX_DAILY_MINUTES` bounds it: core depends on this package. */
-const MAX_DAILY_MINUTES = 1440;
 const DAYS_PER_WEEK = 7;
 const MAX_GOALS = 3;
 const MAX_FOLLOW_UPS = 2;
@@ -104,12 +101,18 @@ function cleanCourseName(value: string | null): string | undefined {
   return text && `${text.charAt(0).toLocaleUpperCase()}${text.slice(1)}`;
 }
 
-function cleanDailyMinutes(value: number | null): number | undefined {
+function cleanDailyMinutes({
+  limits,
+  value,
+}: {
+  limits: { min: number; max: number };
+  value: number | null;
+}): number | undefined {
   if (value === null || !Number.isFinite(value)) {
     return undefined;
   }
 
-  return Math.min(MAX_DAILY_MINUTES, Math.max(MIN_DAILY_MINUTES, Math.round(value)));
+  return Math.min(limits.max, Math.max(limits.min, Math.round(value)));
 }
 
 function cleanStudyDays(days: number[] | null): number[] | undefined {
@@ -188,7 +191,15 @@ function normalizeGoal({
   };
 }
 
-function normalizeGoals(raw: RawGoalUnderstanding, today: string): GoalUnderstanding {
+function normalizeGoals({
+  raw,
+  today,
+  dailyMinutesLimits,
+}: {
+  raw: RawGoalUnderstanding;
+  today: string;
+  dailyMinutesLimits: { min: number; max: number };
+}): GoalUnderstanding {
   const goals = raw.goals
     .slice(0, MAX_GOALS)
     .flatMap((goal) => normalizeGoal({ goal, today }) ?? []);
@@ -201,7 +212,7 @@ function normalizeGoals(raw: RawGoalUnderstanding, today: string): GoalUnderstan
     raw.studyTime && STUDY_TIME_PATTERN.test(raw.studyTime) ? raw.studyTime : undefined;
 
   return {
-    dailyMinutes: cleanDailyMinutes(raw.dailyMinutes),
+    dailyMinutes: cleanDailyMinutes({ limits: dailyMinutesLimits, value: raw.dailyMinutes }),
     followUps: raw.followUps
       .flatMap((question) => cleanText(question) ?? [])
       .slice(0, MAX_FOLLOW_UPS),
@@ -218,9 +229,11 @@ function normalizeGoals(raw: RawGoalUnderstanding, today: string): GoalUnderstan
  * getting a broken plan.
  */
 export function normalizeGoalUnderstanding({
+  dailyMinutesLimits,
   raw,
   today,
 }: {
+  dailyMinutesLimits: { min: number; max: number };
   raw: RawGoalUnderstanding;
   today: string;
 }): GoalUnderstanding {
@@ -234,7 +247,7 @@ export function normalizeGoalUnderstanding({
       return instrument ? { instrument, route: "instrument" } : { route: "unclear" };
     }
     case "goals":
-      return normalizeGoals(raw, today);
+      return normalizeGoals({ dailyMinutesLimits, raw, today });
     case "unclear":
     case "unsafe":
       return { route: raw.route };

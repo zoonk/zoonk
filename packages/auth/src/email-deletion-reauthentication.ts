@@ -2,8 +2,8 @@ import { prisma } from "@zoonk/db";
 import { betterAuth } from "better-auth/minimal";
 import { type BetterAuthOptions } from "better-auth/types";
 import {
+  AccountDeletionEmailMismatchError,
   type EmailAccountDeletionCredentials,
-  EmailAccountDeletionError,
 } from "./email-deletion-contract";
 import { type EmailOTPStorage, createEmailOTPPlugin } from "./email-otp-plugin";
 import { baseAuthConfig, baseAuthPlugins } from "./server";
@@ -37,7 +37,7 @@ export function createEmailDeletionReauthentication({
     rateLimit,
   });
 
-  /** Throws `EmailAccountDeletionError` when the code belongs to another account. */
+  /** Throws `AccountDeletionEmailMismatchError` when the verified email belongs to another account. */
   return async function reauthorizeEmailForAccountDeletion({
     credentials,
     expectedUserId,
@@ -49,7 +49,7 @@ export function createEmailDeletionReauthentication({
 
     if (session.user.id !== expectedUserId) {
       return throwAfterSessionCleanup({
-        error: new EmailAccountDeletionError(
+        error: new AccountDeletionEmailMismatchError(
           "Email reauthorization does not match the current user",
         ),
         sessionToken: session.token,

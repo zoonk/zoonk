@@ -1,6 +1,7 @@
 import { type NextMockMove } from "./next-mock-move";
 import { daysBetween, fromIsoDate, toIsoDate } from "./plan-calendar";
 import { SMALL_CHANGE_DAYS, SMALL_CHANGE_LESSONS } from "./plan-change-thresholds";
+import { isUnwrittenLesson } from "./plan-item-rules";
 import { type PlannedItem } from "./plan-items";
 import { type PlanGraph } from "./plan-state";
 import { type SkillMinutes } from "./skill-minutes";
@@ -71,10 +72,6 @@ function countGained({ from, to }: { from: Map<string, number>; to: Map<string, 
     (total, [key, lessons]) => total + Math.max(0, lessons - (to.get(key) ?? 0)),
     0,
   );
-}
-
-function isStandIn(item: Pick<EffectItem, "kind" | "lessonId" | "status">): boolean {
-  return item.status === "todo" && item.kind === "lesson" && !item.lessonId;
 }
 
 function gainsStandIns({
@@ -173,7 +170,9 @@ function countLessonChanges(
   const { filed, now, was } = countSkillChanges(input);
 
   const standIns = new Set(
-    filed.filter((item) => isStandIn(item)).map((item) => item.skillId ?? ""),
+    filed
+      .filter((item) => item.status === "todo" && isUnwrittenLesson(item))
+      .map((item) => item.skillId ?? ""),
   );
 
   return {

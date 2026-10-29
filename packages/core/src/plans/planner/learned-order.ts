@@ -1,3 +1,4 @@
+import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import {
   type DroppedUnit,
@@ -5,8 +6,6 @@ import {
   type ScheduledUnit,
   scheduleUnits,
 } from "./schedule-units";
-
-const EPSILON = 1e-6;
 
 export type LaidOutOrder = { dropped: QueueUnit[]; placed: QueueUnit[] };
 
@@ -60,7 +59,7 @@ function splitByOrder({ rest, sequence }: { rest: readonly QueueUnit[]; sequence
     const used = taken.get(unit.key) ?? 0;
     const minutes = own ? Math.min(unit.minutes, sumMinutes(own) - used) : 0;
 
-    if (minutes <= EPSILON) {
+    if (minutes <= PLAN_EPSILON) {
       return [];
     }
 
@@ -80,7 +79,7 @@ function splitByOrder({ rest, sequence }: { rest: readonly QueueUnit[]; sequence
     const left = sumMinutes(own) - used;
     const [first] = own;
 
-    return first && left > EPSILON ? [{ ...resize(first, left), depth: true }] : [];
+    return first && left > PLAN_EPSILON ? [{ ...resize(first, left), depth: true }] : [];
   });
 
   return { extras, parts };
@@ -170,7 +169,7 @@ function keepsPlaced({
 
   const keepsKeys = [...before].every(
     ([key, minutes]) =>
-      (after.get(key) ?? 0) >= Math.min(minutes, available.get(key) ?? 0) - EPSILON,
+      (after.get(key) ?? 0) >= Math.min(minutes, available.get(key) ?? 0) - PLAN_EPSILON,
   );
 
   const keepsQuick = [...quickBases].every(

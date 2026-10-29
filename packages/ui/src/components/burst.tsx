@@ -19,11 +19,11 @@ const SPARKS: readonly Spark[] = [
 
 export function Burst({
   className,
-  delay = 0,
+  delayMs = 0,
   sparks = SPARKS,
 }: {
   className?: string;
-  delay?: number;
+  delayMs?: number;
   sparks?: readonly Spark[];
 }) {
   const plays = useCelebration();
@@ -42,7 +42,7 @@ export function Burst({
         const style: CSSPropertiesWithVariables = {
           "--spark-x": `${spark.x}px`,
           "--spark-y": `${spark.y}px`,
-          animationDelay: `${delay}ms`,
+          animationDelay: `${delayMs}ms`,
           height: spark.size,
           left: -spark.size / 2,
           top: -spark.size / 2,

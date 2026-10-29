@@ -1,9 +1,9 @@
 import { z } from "zod";
 
-export class EmailAccountDeletionError extends Error {
+export class AccountDeletionEmailMismatchError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = "EmailAccountDeletionError";
+    this.name = "AccountDeletionEmailMismatchError";
   }
 }
 

@@ -1,8 +1,7 @@
 import { getOneDayStudy } from "./interval-study-minutes";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import { type PlanDay, type ScheduledUnit, getLessonCapacity } from "./schedule-units";
-
-const EPSILON = 1e-6;
 
 type TodayTaking = { open: boolean; started: Set<string>; taken: QueueUnit[]; used: number };
 
@@ -39,7 +38,7 @@ function takeIfReady({
     return state;
   }
 
-  if (state.used + unit.minutes > capacity + EPSILON) {
+  if (state.used + unit.minutes > capacity + PLAN_EPSILON) {
     state.open = false;
     return state;
   }

@@ -1,4 +1,4 @@
-export const EPSILON = 1e-6;
+import { PLAN_EPSILON } from "./plan-precision";
 
 export function findDayIndex({
   cumulative,
@@ -9,12 +9,12 @@ export function findDayIndex({
 }) {
   const search = (low: number, high: number): number => {
     if (low >= high) {
-      return (cumulative[low] ?? 0) + EPSILON >= needed ? low : -1;
+      return (cumulative[low] ?? 0) + PLAN_EPSILON >= needed ? low : -1;
     }
 
     const middle = Math.floor((low + high) / 2);
 
-    return (cumulative[middle] ?? 0) + EPSILON >= needed
+    return (cumulative[middle] ?? 0) + PLAN_EPSILON >= needed
       ? search(low, middle)
       : search(middle + 1, high);
   };
@@ -41,7 +41,7 @@ export function findDayIndexFrom({
     return -1;
   }
 
-  if ((cumulative[from] ?? 0) + EPSILON >= needed) {
+  if ((cumulative[from] ?? 0) + PLAN_EPSILON >= needed) {
     return from;
   }
 
@@ -49,11 +49,11 @@ export function findDayIndexFrom({
     return -1;
   }
 
-  if ((cumulative[from + 1] ?? 0) + EPSILON >= needed) {
+  if ((cumulative[from + 1] ?? 0) + PLAN_EPSILON >= needed) {
     return from + 1;
   }
 
-  const reaches = (day: number) => (cumulative[day] ?? 0) + EPSILON >= needed;
+  const reaches = (day: number) => (cumulative[day] ?? 0) + PLAN_EPSILON >= needed;
 
   const search = (low: number, high: number): number => {
     if (low >= high) {
@@ -78,7 +78,7 @@ export function findDayIndexFrom({
 }
 
 export function isLessonRoom(capacity: number): boolean {
-  return capacity > EPSILON;
+  return capacity > PLAN_EPSILON;
 }
 
 export function findLessonDayFrom({

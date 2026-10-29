@@ -1,15 +1,12 @@
+import { LEARN_KINDS, PHASE_WORK_KINDS } from "./plan-item-rules";
 import { type PlannedItem } from "./plan-items";
-
-const LEARN_KINDS = new Set<PlannedItem["kind"]>(["boss", "chapter", "lesson"]);
 
 export function listWonPhases(
   items: readonly Pick<PlannedItem, "kind" | "phase" | "status">[],
 ): Set<number> {
   const studying = new Set(
     items.flatMap((item) =>
-      item.kind !== "boss" && LEARN_KINDS.has(item.kind) && item.status === "todo"
-        ? [item.phase]
-        : [],
+      LEARN_KINDS.has(item.kind) && item.status === "todo" ? [item.phase] : [],
     ),
   );
 
@@ -47,7 +44,7 @@ function getPhaseEnds({
 function listPhasesToStudy(items: readonly PlannedItem[]): Set<number> {
   return new Set(
     items.flatMap((item) =>
-      item.status === "todo" && LEARN_KINDS.has(item.kind) ? [item.phase] : [],
+      item.status === "todo" && PHASE_WORK_KINDS.has(item.kind) ? [item.phase] : [],
     ),
   );
 }

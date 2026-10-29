@@ -1,6 +1,7 @@
 import { type Goal, type PlanItem } from "@zoonk/db";
 import { readSelectedItemFacts } from "../../plans/_utils/selected-item-contract";
 import { toIsoDate } from "../../plans/planner/plan-calendar";
+import { LEARN_KINDS, hasUnwrittenSkill } from "../../plans/planner/plan-item-rules";
 import { type PlanGraph } from "../../plans/planner/plan-state";
 import { DEFAULT_LESSON_MINUTES } from "../../plans/planner/plan-units";
 
@@ -13,12 +14,6 @@ export function getLessonLookahead(dayMinutes: number): number {
 
 type DayItem = Pick<PlanItem, "chapterId" | "lessonId" | "scheduledFor" | "skillId"> &
   Partial<Pick<PlanItem, "facts" | "lessons">>;
-
-export const LEARN_KINDS: ReadonlySet<PlanItem["kind"]> = new Set(["lesson", "chapter"]);
-
-function isStandIn(item: DayItem): boolean {
-  return item.lessonId === null && item.chapterId === null && item.skillId !== null;
-}
 
 function isDue({ item, today }: { item: DayItem; today: Date }): boolean {
   return item.scheduledFor !== null && item.scheduledFor <= today;
@@ -50,7 +45,7 @@ function getDayShares<TItem extends DayItem>({
     .filter((item) => isDue({ item, today }))
     .reduce((shares, item) => {
       const area = areas.get(item.skillId ?? "") ?? null;
-      const lessons = isStandIn(item) ? (item.lessons ?? 1) : 1;
+      const lessons = hasUnwrittenSkill(item) ? (item.lessons ?? 1) : 1;
       return shares.set(area, (shares.get(area) ?? 0) + lessons);
     }, new Map<string | null, number>());
 }
@@ -69,7 +64,10 @@ function listHeldAreas<TItem extends DayItem>({
 }): string[] {
   const areas = new Map(graph.skills.map((skill) => [skill.skillId, skill.area]));
   const areaOf = (item: DayItem) => areas.get(item.skillId ?? "") ?? null;
-  const written = new Set(items.filter((item) => !isStandIn(item)).map((item) => areaOf(item)));
+
+  const written = new Set(
+    items.filter((item) => !hasUnwrittenSkill(item)).map((item) => areaOf(item)),
+  );
 
   const practiced = new Set(
     graph.skills.filter((skill) => !idleSkillIds.has(skill.skillId)).map((skill) => skill.area),
@@ -92,7 +90,7 @@ function listOpenLessons<TItem extends DayItem>({
   const written = new Set<string | null>();
 
   return items.filter((item) => {
-    if (isStandIn(item)) {
+    if (hasUnwrittenSkill(item)) {
       waiting.add(item.skillId);
       return false;
     }

@@ -1,6 +1,7 @@
+import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import { getLessonCapacity } from "./schedule-units";
-import { EPSILON, takeBlock } from "./study-cycle-blocks";
+import { takeBlock } from "./study-cycle-blocks";
 import { getDueMinutes } from "./study-cycle-budgets";
 import {
   type CadencedArea,
@@ -63,7 +64,7 @@ export function toCadencedLanes({
 }
 
 export function hasCadencedLeft(lane: CadencedLane): boolean {
-  return lane.units.length > 0 && lane.quota > EPSILON;
+  return lane.units.length > 0 && lane.quota > PLAN_EPSILON;
 }
 
 export function isCadencedBehind({
@@ -76,7 +77,7 @@ export function isCadencedBehind({
   const total = lane.openLeft[0] ?? 0;
   const gone = total - (lane.openLeft[dayIndex] ?? 0);
 
-  return (lane.minutes - lane.quota) * total + EPSILON < lane.minutes * gone;
+  return (lane.minutes - lane.quota) * total + PLAN_EPSILON < lane.minutes * gone;
 }
 
 export function listOpenCadenced({
@@ -107,12 +108,12 @@ export function takeCadencedBlocks({
   lanes.forEach((lane) => {
     pullPrerequisites({ context, lane, lanes: [...state.lanes, lane], left: state.left });
 
-    const share = Math.min(1, lane.quota / Math.max(lane.openLeft[dayIndex] ?? 0, EPSILON));
+    const share = Math.min(1, lane.quota / Math.max(lane.openLeft[dayIndex] ?? 0, PLAN_EPSILON));
     const due = getDueMinutes({ date: context.days[dayIndex]?.date, lane });
     const budget = Math.max(room * share, due);
     const head = lane.units[0];
 
-    if (head && head.minutes > budget + EPSILON && !isCadencedBehind({ dayIndex, lane })) {
+    if (head && head.minutes > budget + PLAN_EPSILON && !isCadencedBehind({ dayIndex, lane })) {
       return;
     }
 

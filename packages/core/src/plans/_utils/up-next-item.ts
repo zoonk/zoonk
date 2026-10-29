@@ -1,7 +1,5 @@
 import { type PlanItem } from "@zoonk/db";
-import { isWritingItem } from "./plan-phase-views";
-
-const LEARN_KINDS = new Set<PlanItem["kind"]>(["chapter", "lesson"]);
+import { LEARN_KINDS, isWritingItem } from "../planner/plan-item-rules";
 
 export type UpNextCandidate = Pick<PlanItem, "chapterId" | "kind" | "lessonId" | "status"> & {
   id: string | null;

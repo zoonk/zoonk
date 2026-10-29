@@ -24,7 +24,7 @@ export function TricksterArt({
       className={cn("size-28 sm:size-32", className)}
       expression={beaten && !reacts ? "defeated" : "sly"}
       pose={beaten ? "sly" : "hero"}
-      reaction={reacts ? { act: beaten ? "defeat" : "smug", delay: BEAT_MS } : undefined}
+      reaction={reacts ? { act: beaten ? "defeat" : "smug", delayMs: BEAT_MS } : undefined}
       ref={ref}
     />
   );

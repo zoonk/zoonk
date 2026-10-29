@@ -1,12 +1,10 @@
 "use client";
 
+import { MAX_SESSION_TYPED_ANSWER_LENGTH } from "@zoonk/core/sessions/answer-limits";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { CheckIcon, XIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
-
-/** The contract takes up to 500 characters. */
-const MAX_TYPED_ANSWER = 500;
 
 export function TypedAnswerField({
   children,
@@ -54,7 +52,7 @@ export function TypedAnswerField({
           disabled={locked}
           enterKeyHint="done"
           id={inputId}
-          maxLength={MAX_TYPED_ANSWER}
+          maxLength={MAX_SESSION_TYPED_ANSWER_LENGTH}
           onChange={(event) => {
             setText(event.target.value);
             onChange?.(event.target.value.trim());

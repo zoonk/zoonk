@@ -1,6 +1,5 @@
+import { PLAN_EPSILON } from "./plan-precision";
 import { type CycleContext, type CycleState, type Lane, isUnitReady } from "./study-cycle-lanes";
-
-const EPSILON = 1e-6;
 
 export function getDueMinutes({ date, lane }: { date: Date | undefined; lane: Lane }): number {
   if (!date || lane.dueUnits.length === 0) {
@@ -105,7 +104,7 @@ function getDueDate({
   const later = Math.max(used + others, context.cumulative[dayIndex - 1] ?? 0);
   const left = (context.cumulative[dueIndex] ?? 0) - later;
 
-  return left + EPSILON < needed ? dueBy : date;
+  return left + PLAN_EPSILON < needed ? dueBy : date;
 }
 
 export function toDueDates({

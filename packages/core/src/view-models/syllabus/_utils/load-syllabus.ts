@@ -17,6 +17,7 @@ import {
 import { getWrittenPracticeView } from "../../../plans/_utils/written-practice-view";
 import { listFocusedSkillIds } from "../../../plans/planner/focus-targets";
 import { getSkillArea } from "../../../plans/planner/graph-areas";
+import { LEARN_KINDS } from "../../../plans/planner/plan-item-rules";
 import {
   type PlanGraph,
   parsePlanGraph,
@@ -55,7 +56,7 @@ function fromSavedPlan(goal: Partial<Pick<Goal, "primaryCourseId">>, saved: Save
     ? {
         goal: { primaryCourseId: goal.primaryCourseId ?? null },
         graph: saved.graph,
-        items: saved.items.filter((item) => item.kind === "lesson" || item.kind === "chapter"),
+        items: saved.items.filter((item) => LEARN_KINDS.has(item.kind)),
         settings: saved.settings,
       }
     : null;
@@ -77,7 +78,7 @@ function readSyllabusPlan(
       goal: { primaryCourseId: goal.primaryCourseId ?? null },
       graph: selectedPlan.state.graph,
       items: selectedPlan.items
-        .filter((item) => item.kind === "lesson" || item.kind === "chapter")
+        .filter((item) => LEARN_KINDS.has(item.kind))
         .map((item) => ({ ...item, id: item.id ?? getPlanReadItemKey(item) })),
       settings: selectedPlan.state.settings,
     };
@@ -90,7 +91,7 @@ function readSyllabusPlan(
       items: {
         orderBy: { position: "asc" },
         select: itemSelect,
-        where: { kind: { in: ["lesson", "chapter"] } },
+        where: { kind: { in: [...LEARN_KINDS] } },
       },
       settings: true,
     },

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { planChangeInputSchema } from "../plan-contract";
 import { toIsoDate } from "../planner/plan-calendar";
+import { PLAN_EPSILON } from "../planner/plan-precision";
 import { getSkillValue } from "../planner/selected-coverage";
 import { planEffectSchema } from "./plan-change-payload";
 import { type PlanContext } from "./plan-context";
@@ -9,8 +10,6 @@ import {
   type SelectedSummary,
   selectedSummarySchema,
 } from "./selected-summary-contract";
-
-const EPSILON = 1e-6;
 
 const PLAN_SUMMARY_SCHEMA_VERSION = 3;
 
@@ -138,7 +137,7 @@ function creditShortLessons({
   const whole = skills.every(
     (skill) =>
       skill.state === "settled" ||
-      (skill.state === "measured" && skill.coveredRaw >= skill.requiredRaw - EPSILON),
+      (skill.state === "measured" && skill.coveredRaw >= skill.requiredRaw - PLAN_EPSILON),
   );
 
   return {

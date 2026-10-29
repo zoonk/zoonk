@@ -2,24 +2,16 @@
 
 import { type PlanOperation } from "@zoonk/core/plans/contract";
 import { type PlanChangeView } from "@zoonk/core/plans/view-contract";
-import { MS_PER_DAY } from "@zoonk/utils/date";
 import { useExtracted, useFormatter } from "next-intl";
-import { isoDateToUtc, useFormatIsoDate } from "../_utils/iso-date";
+import { useFormatIsoDate } from "../_utils/iso-date";
 import { toLabelCase } from "../_utils/label-case";
 import { useFormatDuration } from "../_utils/time-format";
-
-const REFERENCE_SUNDAY = isoDateToUtc("2023-01-01").getTime();
-
-function toWeekdayIsoDate(weekday: number): string {
-  return new Date(REFERENCE_SUNDAY + weekday * MS_PER_DAY)
-    .toISOString()
-    .slice(0, "YYYY-MM-DD".length);
-}
+import { useFormatWeekday } from "../_utils/use-format-weekday";
 
 export function useWeekdaySentence() {
   const t = useExtracted();
   const format = useFormatter();
-  const formatDate = useFormatIsoDate();
+  const formatWeekday = useFormatWeekday();
   const formatDuration = useFormatDuration();
 
   return function weekdaySentence(
@@ -27,7 +19,7 @@ export function useWeekdaySentence() {
   ): string {
     const days = toLabelCase(
       format.list(
-        operation.weekdays.map((weekday) => formatDate(toWeekdayIsoDate(weekday), "weekday")),
+        operation.weekdays.map((weekday) => formatWeekday(weekday)),
         { type: "conjunction" },
       ),
     );
@@ -40,7 +32,7 @@ export function useWeekdaySentence() {
 
 export function useWeeklyEventsText() {
   const t = useExtracted();
-  const formatDate = useFormatIsoDate();
+  const formatWeekday = useFormatWeekday();
 
   return function weeklyEventsText(effect: PlanChangeView["effect"]): string | null {
     const moved = effect?.weeklyEvents;
@@ -49,7 +41,7 @@ export function useWeeklyEventsText() {
       return null;
     }
 
-    const day = formatDate(toWeekdayIsoDate(moved.after), "weekday");
+    const day = formatWeekday(moved.after);
 
     return moved.kind === "mock"
       ? t("Weekly mocks move to {day}.", { day })

@@ -14,27 +14,27 @@ function byFurthest(fills: number[]): number[] {
 }
 
 function getFillMotion({
-  delay,
+  delayMs,
   fill,
   order,
   was,
 }: {
-  delay: number;
+  delayMs: number;
   fill: number;
   order: number;
   was: number;
 }): CSSPropertiesWithVariables {
-  return { "--fill-from": was / fill, animationDelay: `${delay + order * STAGGER_MS}ms` };
+  return { "--fill-from": was / fill, animationDelay: `${delayMs + order * STAGGER_MS}ms` };
 }
 
 export function MissionTrack({
   className,
-  delay = 0,
+  delayMs = 0,
   from,
   missions,
 }: {
   className?: string;
-  delay?: number;
+  delayMs?: number;
   from?: readonly TrackMission[];
   missions: readonly TrackMission[];
 }) {
@@ -68,7 +68,7 @@ export function MissionTrack({
                 width: `${fill * 100}%`,
                 ...(moved[index] &&
                   getFillMotion({
-                    delay,
+                    delayMs,
                     fill,
                     order: moved.slice(0, index).filter(Boolean).length,
                     was: before[index] ?? 0,

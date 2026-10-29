@@ -1,13 +1,6 @@
 import { type UnfundedMove } from "../plan-error-contract";
 import { type LessonDays, keepWindowTeaching } from "./kept-teaching";
-import {
-  EPSILON,
-  findDayMock,
-  fundDay,
-  getMockDayMinutes,
-  getSpendable,
-  sumSavedOn,
-} from "./mock-day";
+import { findDayMock, fundDay, getMockDayMinutes, getSpendable, sumSavedOn } from "./mock-day";
 import {
   type MockClock,
   type MockIdentity,
@@ -18,6 +11,7 @@ import {
   matchSavedMocks,
 } from "./mock-identity";
 import { toIsoDate } from "./plan-calendar";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type MovedEvent, type PlanSettings } from "./plan-state";
 import { type DayShape, type PlanDay } from "./schedule-units";
 
@@ -162,7 +156,7 @@ function fundMockOn({
   const spendable = window.reduce((total, item) => total + getSpendable(item.shape), 0);
   const needed = Math.max(0, minutes - getSpendable(own) - past);
 
-  return needed > spendable + EPSILON ? null : { needed, spendable, window };
+  return needed > spendable + PLAN_EPSILON ? null : { needed, spendable, window };
 }
 
 function fundWindow({
@@ -183,7 +177,7 @@ function fundWindow({
   return window.flatMap((item, offset) => {
     const minutes = getSpendable(item.shape) * factor;
 
-    if (minutes <= EPSILON) {
+    if (minutes <= PLAN_EPSILON) {
       return [];
     }
 

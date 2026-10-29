@@ -18,6 +18,7 @@ import { loadPlanAtToken } from "../../plans/_utils/plan-token";
 import { isPlanUnchanged } from "../../plans/_utils/plan-unchanged";
 import { type ComputedPlan, computePlan } from "../../plans/_utils/replan";
 import { type SelectedSummary } from "../../plans/_utils/selected-summary-contract";
+import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { getItemKey } from "../../plans/planner/plan-items";
 import { type PlanPhase, type PlanState } from "../../plans/planner/plan-state";
 import { type SessionPlanItem, getSessionItemIdentity } from "./session-plan-item";
@@ -96,7 +97,7 @@ function needsCheckpointReconciliation(context: PlanContext): boolean {
 
   return context.items.some(
     (item) =>
-      (item.kind === "lesson" || item.kind === "chapter") &&
+      LEARN_KINDS.has(item.kind) &&
       item.status !== "skipped" &&
       !challenges.has(item.phase) &&
       context.phases[item.phase]?.kind !== "afterExam",
@@ -278,7 +279,7 @@ export function getSelectedCatchUpItems({
   return items.filter(
     (item) =>
       item.status === "todo" &&
-      (item.kind === "lesson" || item.kind === "chapter") &&
+      LEARN_KINDS.has(item.kind) &&
       (item.lessonId !== null || item.chapterId !== null) &&
       leftKeys.has(item.key ?? getItemKey(item)),
   );

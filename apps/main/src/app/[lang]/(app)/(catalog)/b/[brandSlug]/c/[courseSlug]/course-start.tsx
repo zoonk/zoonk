@@ -8,7 +8,7 @@ import { getExtracted } from "next-intl/server";
 function CoursePlanLink({ courseId, pace }: { courseId: string; pace: number | null }) {
   return (
     <CourseGoalSwitch
-      continueLink={<StartPlanLink continues courseId={courseId} />}
+      continueLink={<StartPlanLink showContinueLabel courseId={courseId} />}
       startLinks={<StartPlanLink courseId={courseId} minutes={pace ?? undefined} />}
     />
   );

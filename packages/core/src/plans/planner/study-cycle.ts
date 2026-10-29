@@ -1,9 +1,9 @@
 import { findDayIndex } from "./day-index";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import { type PlanDay, getCumulativeCapacity } from "./schedule-units";
 import { splitStandIns } from "./stand-in-parts";
 import {
-  EPSILON,
   appendRest,
   fillRest,
   forceStuckLessons,
@@ -151,7 +151,7 @@ function fillDay({
   const lead = behind ?? chosen.find((lane) => isDue({ date: dateOf(lane), lane })) ?? first;
   const head = lead?.units[0];
 
-  if (lead && head && head.minutes > room + EPSILON) {
+  if (lead && head && head.minutes > room + PLAN_EPSILON) {
     placeUnit({ lane: lead, state });
 
     if (behind) {
@@ -205,7 +205,7 @@ function closeDay({
 }): void {
   state.studyDay += 1;
 
-  if (state.used + EPSILON < dayEnd) {
+  if (state.used + PLAN_EPSILON < dayEnd) {
     state.used = dayEnd;
     state.closedDay = true;
     state.skippedDay ||= empty;
@@ -226,7 +226,7 @@ function arrangeDays({
       state.lanes.some((lane) => lane.units.length > 0) ||
       (cadenced && state.cadenced.some((lane) => hasCadencedLeft(lane)));
 
-    if (hasUnits && dayEnd > state.used + EPSILON) {
+    if (hasUnits && dayEnd > state.used + PLAN_EPSILON) {
       fillDay({ context, dayIndex, state });
     }
   });

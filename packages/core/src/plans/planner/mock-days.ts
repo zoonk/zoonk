@@ -7,6 +7,7 @@ import {
 } from "./plan-calendar";
 import { type ExistingPlanItem } from "./plan-items";
 import { type ExamWindow, findExamWindow } from "./plan-phases";
+import { PLAN_EPSILON } from "./plan-precision";
 import { MIN_DAYS_APART } from "./spare-mocks";
 
 export type MockDays = {
@@ -19,8 +20,6 @@ export type MockDays = {
 
 const DAYS_PER_WEEK = 7;
 
-const EPSILON = 1e-6;
-
 export function getMockWeeks({
   calendar,
   minutes,
@@ -29,7 +28,7 @@ export function getMockWeeks({
   minutes: number;
 }): number {
   const day = getStudyDayMinutes(calendar);
-  return day > 0 ? Math.max(1, Math.ceil(minutes / day - EPSILON)) : 1;
+  return day > 0 ? Math.max(1, Math.ceil(minutes / day - PLAN_EPSILON)) : 1;
 }
 
 export function isMockWeek({

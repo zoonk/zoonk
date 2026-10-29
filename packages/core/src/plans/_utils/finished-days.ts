@@ -1,7 +1,6 @@
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
+import { LEARN_KINDS } from "../planner/plan-item-rules";
 import { type ExistingPlanItem } from "../planner/plan-items";
-
-const LEARN_KINDS: ReadonlySet<ExistingPlanItem["kind"]> = new Set(["chapter", "lesson"]);
 
 export function listFinishedDays({
   items,

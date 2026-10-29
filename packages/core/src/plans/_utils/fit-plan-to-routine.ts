@@ -2,6 +2,7 @@ import "server-only";
 import { fitPlanToRoutineFacts } from "@zoonk/ai/tasks/v2/plans/routine-fit";
 import { prisma } from "@zoonk/db";
 import { toProvenanceData } from "../../library/_utils/library-rows";
+import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../daily-minutes";
 import { withPlanRetry } from "../plan-conflict";
 import { applyChangeNow, isPlanReady } from "./apply-plan-change";
 import { type PlanContext } from "./plan-context";
@@ -27,6 +28,7 @@ async function readRoutine(context: PlanContext) {
   const { data, provenance } = await fitPlanToRoutineFacts({
     analytics,
     dailyMinutes,
+    dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
     language,
     memory,
     today,

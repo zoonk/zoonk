@@ -7,8 +7,7 @@ import {
 } from "@zoonk/db";
 import { z } from "zod";
 import { type PlanEffect } from "../plans/planner/plan-effect";
-
-export const MAX_MEMORY_STATEMENT_LENGTH = 160;
+import { MAX_MEMORY_STATEMENT_LENGTH } from "./memory-limits";
 
 const MAX_UNDO_CHANGES = 10;
 

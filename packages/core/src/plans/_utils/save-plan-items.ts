@@ -1,9 +1,9 @@
 import "server-only";
 import { DbNull, type PlanItem, type TransactionClient } from "@zoonk/db";
 import { toIsoDate } from "../planner/plan-calendar";
+import { isStandIn } from "../planner/plan-item-rules";
 import { type ExistingPlanItem, type PlannedItem } from "../planner/plan-items";
 import { readSelectedItemFacts } from "./selected-item-contract";
-import { isStandIn } from "./stand-in-lessons";
 
 export type SavedPlanItem = Omit<PlannedItem, "key" | "minutes"> & {
   facts?: PlanItem["facts"];

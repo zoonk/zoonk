@@ -1,5 +1,6 @@
 "use client";
 
+import { MAX_GOAL_PROMPT_LENGTH } from "@zoonk/core/goals/goal-input-limits";
 import { Button } from "@zoonk/ui/components/button";
 import { useEnterClick } from "@zoonk/ui/hooks/keyboard";
 import { cn } from "@zoonk/ui/lib/utils";
@@ -25,9 +26,6 @@ import {
 } from "./goal-field";
 import { GoalErrorAlert } from "./goal-outcomes";
 import { useLocalGoalExample } from "./use-local-goal-example";
-
-/** The same limit core applies to a typed goal. */
-export const MAX_GOAL_LENGTH = 2000;
 
 function SubmitButton() {
   const t = useExtracted();
@@ -90,7 +88,7 @@ export function GoalEntry({
             autoFocusOnPointer
             defaultValue={defaultGoal}
             id={inputId}
-            maxLength={MAX_GOAL_LENGTH}
+            maxLength={MAX_GOAL_PROMPT_LENGTH}
             placeholder={t(
               "{exam, select, abitur {pass the Abitur, speak {language}…} bac {pass the bac, speak {language}…} enem {pass the ENEM, speak {language}…} pau {pass the PAU, speak {language}…} other {pass the SAT, speak {language}…}}",
               example,

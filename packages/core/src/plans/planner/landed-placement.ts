@@ -1,18 +1,11 @@
 import { type BuildPlanInput } from "./build-plan";
-import {
-  EPSILON,
-  type Held,
-  findHeld,
-  listHeldFrom,
-  listHeldTime,
-  sumByDay,
-  sumMinutes,
-} from "./held-time";
+import { type Held, findHeld, listHeldFrom, listHeldTime, sumByDay, sumMinutes } from "./held-time";
 import { getOneDayStudy } from "./interval-study-minutes";
-import { isStandInItem } from "./kept-items";
 import { getBaseDays, getStandInDays } from "./landed-days";
 import { type LandedUnits, withoutWrittenStandIns } from "./landed-lessons";
+import { isStandIn, isUnwrittenLesson } from "./plan-item-rules";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
+import { PLAN_EPSILON } from "./plan-precision";
 import { DEFAULT_LESSON_MINUTES, type QueueUnit } from "./plan-units";
 import {
   type DroppedUnit,
@@ -35,7 +28,7 @@ export function listKeptTime({
   return frozen.flatMap((item) => {
     const unit = units.get(getItemKey(item));
 
-    return unit && item.scheduledFor && !isStandInItem(item)
+    return unit && item.scheduledFor && !isStandIn(item)
       ? [{ date: item.scheduledFor, minutes: unit.minutes }]
       : [];
   });
@@ -98,8 +91,8 @@ function findRoom({
     const used = layout.usedOn(date);
 
     return (
-      used + unit.minutes <= limit + EPSILON ||
-      (used <= EPSILON && limit > EPSILON && unit.minutes > limit)
+      used + unit.minutes <= limit + PLAN_EPSILON ||
+      (used <= PLAN_EPSILON && limit > PLAN_EPSILON && unit.minutes > limit)
     );
   };
 
@@ -150,7 +143,10 @@ function placeSkill({
 }): { leftOut: QueueUnit[]; placed: Placed[] } {
   const total = sumMinutes(held);
   const written = units.filter((unit) => unit.lessonId !== null);
-  const lessons = cut ? written.filter((_, index) => index * perLesson < total - EPSILON) : written;
+
+  const lessons = cut
+    ? written.filter((_, index) => index * perLesson < total - PLAN_EPSILON)
+    : written;
 
   const { leftOut, placed } = lessons.reduce<{
     after: Date | null;
@@ -205,10 +201,6 @@ function findAnchor({ date, laid }: { date: Date; laid: readonly ScheduledUnit[]
   return (index === -1 ? laid.length : index) - BETWEEN;
 }
 
-function isStandInPart(unit: Pick<QueueUnit, "kind" | "lessonId">): boolean {
-  return unit.kind === "lesson" && unit.lessonId === null;
-}
-
 export function putLandedLessons({
   days,
   dropped = [],
@@ -232,7 +224,7 @@ export function putLandedLessons({
     return { dropped: [...dropped], laidOut: kept ? [] : [...units], landed: [] };
   }
 
-  const isPart = (unit: ScheduledUnit) => isStandInPart(unit) && landed.has(unit.skillId ?? "");
+  const isPart = (unit: ScheduledUnit) => isUnwrittenLesson(unit) && landed.has(unit.skillId ?? "");
 
   const laid = [...units, ...keptParts.filter((unit) => isPart(unit))].toSorted(
     (a, b) => a.date.getTime() - b.date.getTime(),
@@ -247,7 +239,7 @@ export function putLandedLessons({
   };
 
   const others = kept
-    ? [...kept, ...laid.filter((unit) => isStandInPart(unit) && !isPart(unit))]
+    ? [...kept, ...laid.filter((unit) => isUnwrittenLesson(unit) && !isPart(unit))]
     : laid.filter((unit) => !isPart(unit));
 
   const other = sumByDay(others);

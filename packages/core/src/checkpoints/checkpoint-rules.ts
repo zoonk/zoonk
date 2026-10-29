@@ -1,6 +1,7 @@
 import { type PlanItemKind, type PlanItemStatus } from "@zoonk/db";
 import { interleave } from "@zoonk/utils/interleave";
 import { listCoreLessonItems } from "../plans/_utils/core-lessons";
+import { LEARN_KINDS } from "../plans/planner/plan-item-rules";
 
 export const CHECKPOINT_QUESTIONS = 10;
 
@@ -90,8 +91,6 @@ type BossPlan = {
 };
 
 type CoreLessons = ReadonlyMap<string, readonly BossPlanItem[]>;
-
-const LEARN_KINDS = new Set<PlanItemKind>(["chapter", "lesson"]);
 
 export function isBossTeachingItem(item: Pick<BossPlanItem, "kind" | "status">): boolean {
   return LEARN_KINDS.has(item.kind) && item.status !== "skipped" && item.status !== "testedOut";

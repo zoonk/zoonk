@@ -51,7 +51,7 @@ function RewardsArt() {
       glasses={buddy.glasses}
       kind={buddy.kind}
       label={t("{buddy}, happy with today", { buddy: name })}
-      reaction={{ act: "proud", delay: BEAT_MS }}
+      reaction={{ act: "proud", delayMs: BEAT_MS }}
       studiedToday
     />
   );

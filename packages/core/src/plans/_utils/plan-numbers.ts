@@ -2,6 +2,7 @@ import { type PlanNumbers, type PlanWorkload } from "../numbers-contract";
 import { type BuiltPlan } from "../planner/build-plan";
 import { addDays, daysBetween, getPlanCalendar } from "../planner/plan-calendar";
 import { getExamDayRules, getPlannedMinutes } from "../planner/plan-days";
+import { LEARN_KINDS, isUnwrittenLesson } from "../planner/plan-item-rules";
 import { type PlanSettings } from "../planner/plan-state";
 
 function roundPlanMinutes(minutes: number): number {
@@ -28,7 +29,7 @@ export function getPlanWorkload({
       (!fromDate || item.scheduledFor >= fromDate),
   );
 
-  const teaching = items.filter((item) => item.kind === "lesson" || item.kind === "chapter");
+  const teaching = items.filter((item) => LEARN_KINDS.has(item.kind));
 
   const rawMinutes = (item: (typeof items)[number]) => {
     const portions = built.lessonRawMinutes.get(item.key);
@@ -41,11 +42,11 @@ export function getPlanWorkload({
   };
 
   const written = teaching
-    .filter((item) => item.lessonId !== null || item.kind === "chapter")
+    .filter((item) => !isUnwrittenLesson(item))
     .reduce((sum, item) => sum + rawMinutes(item), 0);
 
   const unwritten = teaching
-    .filter((item) => item.lessonId === null && item.kind !== "chapter")
+    .filter((item) => isUnwrittenLesson(item))
     .reduce((sum, item) => sum + rawMinutes(item), 0);
 
   const lessons = teaching.reduce((sum, item) => sum + item.minutes, 0);

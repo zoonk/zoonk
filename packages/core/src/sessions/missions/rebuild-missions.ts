@@ -3,6 +3,7 @@ import { type Goal, type TransactionClient } from "@zoonk/db";
 import { countUsage } from "../../entitlements/_utils/usage-counts";
 import { libraryRowsVisibleTo } from "../../library/_utils/library-visibility";
 import { getLearnerTier } from "../../lookahead/learner-lookahead";
+import { LEARN_KINDS } from "../../plans/planner/plan-item-rules";
 import { type loadDayPlan } from "../_utils/day-plan";
 import { type StudySessionRow } from "../_utils/study-session-access";
 import { type Mission } from "../missions";
@@ -66,7 +67,7 @@ async function canFinishChapter({
   const remaining = await client.planItem.findMany({
     where: {
       chapterId: pick.anchor.chapterId,
-      kind: { in: ["lesson", "chapter"] },
+      kind: { in: [...LEARN_KINDS] },
       plan: { goalId: session.goalId },
       status: "todo",
     },

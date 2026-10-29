@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const MAX_QUESTION_LENGTH = 500;
+export const MAX_MATERIAL_QUESTION_LENGTH = 500;
 const MAX_QUESTION_SOURCES = 5;
 const MIN_LANGUAGE_LENGTH = 2;
 const MAX_LANGUAGE_LENGTH = 10;
@@ -12,7 +12,7 @@ export const materialQuestionInputSchema = z
       .min(MIN_LANGUAGE_LENGTH)
       .max(MAX_LANGUAGE_LENGTH)
       .meta({ description: "The learner's language, for the answer" }),
-    question: z.string().trim().min(1).max(MAX_QUESTION_LENGTH),
+    question: z.string().trim().min(1).max(MAX_MATERIAL_QUESTION_LENGTH),
     sourceIds: z
       .array(z.uuid())
       .min(1)

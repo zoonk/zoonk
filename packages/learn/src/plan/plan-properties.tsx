@@ -4,10 +4,11 @@ import { LANGUAGE_ACTIVITY_TYPES } from "@zoonk/core/language/activities";
 import { type MockScheduleView } from "@zoonk/core/plans/view-contract";
 import { getWeekShape } from "@zoonk/core/plans/week-shape";
 import { cn } from "@zoonk/ui/lib/utils";
-import { useExtracted, useFormatter } from "next-intl";
+import { useExtracted } from "next-intl";
 import { PageSection, PageSectionHeader, PageSectionTitle } from "../_components/page";
 import { PlusMark } from "../_components/plus-lock";
 import { useFormatDuration } from "../_utils/time-format";
+import { useFormatWeekday } from "../_utils/use-format-weekday";
 import { LearnLink } from "../learn-link";
 import { useActivityName } from "./plan-activities";
 import { usePlanScreen } from "./plan-context";
@@ -17,25 +18,12 @@ import { type PlanEditorSection } from "./plan-editor-sections";
 const TITLE_ID = "plan-properties-title";
 const DAYS_PER_WEEK = 7;
 
-const REFERENCE_SUNDAY = Date.parse("2023-01-01T00:00:00Z");
-const DAY_MS = 86_400_000;
-
 const MONDAY_FIRST: readonly number[] = Array.from(
   { length: DAYS_PER_WEEK },
   (_, index) => (index + 1) % DAYS_PER_WEEK,
 );
 
 const MIN_RANGE_DAYS = 3;
-
-function useWeekdayShort() {
-  const format = useFormatter();
-
-  return (weekday: number) =>
-    format.dateTime(new Date(REFERENCE_SUNDAY + weekday * DAY_MS), {
-      timeZone: "UTC",
-      weekday: "short",
-    });
-}
 
 function isOneRun(days: readonly number[]): boolean {
   const positions = days.map((day) => MONDAY_FIRST.indexOf(day));
@@ -47,7 +35,7 @@ function isOneRun(days: readonly number[]): boolean {
 
 function useStudyDaysText() {
   const t = useExtracted();
-  const weekdayShort = useWeekdayShort();
+  const formatWeekday = useFormatWeekday();
 
   return (weekdayMinutes: readonly number[]): string => {
     const days = MONDAY_FIRST.filter((day) => (weekdayMinutes[day] ?? 0) > 0);
@@ -64,10 +52,13 @@ function useStudyDaysText() {
       days.length >= MIN_RANGE_DAYS &&
       isOneRun(days)
     ) {
-      return t("{first} – {last}", { first: weekdayShort(first), last: weekdayShort(last) });
+      return t("{first} – {last}", {
+        first: formatWeekday(first, "short"),
+        last: formatWeekday(last, "short"),
+      });
     }
 
-    return days.map((day) => weekdayShort(day)).join(", ");
+    return days.map((day) => formatWeekday(day, "short")).join(", ");
   };
 }
 

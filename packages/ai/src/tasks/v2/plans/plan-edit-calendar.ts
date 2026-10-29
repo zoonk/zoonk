@@ -1,6 +1,3 @@
-const MIN_DAILY_MINUTES = 5;
-/** A whole day, as core's `MAX_DAILY_MINUTES` bounds it: core depends on this package. */
-const MAX_DAILY_MINUTES = 1440;
 const LAST_WEEKDAY = 6;
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/u;
 const ISO_DATE_LENGTH = 10;
@@ -30,10 +27,18 @@ export function isValidDate(value: string | null): value is string {
   );
 }
 
-function toMinutes({ min, value }: { min: number; value: number | null }): number | null {
+function toMinutes({
+  max,
+  min,
+  value,
+}: {
+  max: number;
+  min: number;
+  value: number | null;
+}): number | null {
   return value === null || !Number.isFinite(value)
     ? null
-    : Math.min(MAX_DAILY_MINUTES, Math.max(min, Math.round(value)));
+    : Math.min(max, Math.max(min, Math.round(value)));
 }
 
 function toWeekdays(values: readonly number[] | null): number[] {
@@ -44,15 +49,19 @@ function toWeekdays(values: readonly number[] | null): number[] {
   return [...new Set(valid)].toSorted((a, b) => a - b);
 }
 
-export function toTimeOperation(
-  change: Pick<RawCalendarChange, "kind" | "minutes" | "weekdays">,
-): TimeOperation | null {
+export function toTimeOperation({
+  change,
+  dailyMinutesLimits,
+}: {
+  change: Pick<RawCalendarChange, "kind" | "minutes" | "weekdays">;
+  dailyMinutesLimits: { min: number; max: number };
+}): TimeOperation | null {
   if (change.kind === "setDailyMinutes") {
-    const minutes = toMinutes({ min: MIN_DAILY_MINUTES, value: change.minutes });
+    const minutes = toMinutes({ ...dailyMinutesLimits, value: change.minutes });
     return minutes === null ? null : { kind: "setDailyMinutes", minutes };
   }
 
-  const minutes = toMinutes({ min: 0, value: change.minutes });
+  const minutes = toMinutes({ max: dailyMinutesLimits.max, min: 0, value: change.minutes });
   const weekdays = toWeekdays(change.weekdays);
 
   return minutes === null || weekdays.length === 0

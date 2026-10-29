@@ -1,15 +1,12 @@
 import { OUTLINE_AHEAD_DAYS } from "../../lookahead/outline-ahead";
 import { addDays, toIsoDate } from "../planner/plan-calendar";
+import { isStandIn } from "../planner/plan-item-rules";
 import { type ExistingPlanItem } from "../planner/plan-items";
 
 type EstimatedItem = Pick<
   ExistingPlanItem,
   "chapterId" | "kind" | "lessonId" | "lessons" | "skillId"
 >;
-
-export function isStandIn(item: Omit<EstimatedItem, "lessons">): boolean {
-  return item.kind === "lesson" && !item.lessonId && !item.chapterId && Boolean(item.skillId);
-}
 
 export function countItemLessons(item: EstimatedItem): number {
   return isStandIn(item) ? Math.max(1, item.lessons ?? 1) : 1;

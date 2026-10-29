@@ -40,6 +40,7 @@ export type PlanRoutineFitInput = {
 };
 
 export type PlanRoutineFitParams = PlanRoutineFitInput & {
+  dailyMinutesLimits: { min: number; max: number };
   analytics?: AiGenerationContext;
   model?: string;
   reasoning?: Reasoning;
@@ -54,13 +55,17 @@ export type PlanRoutineFit = { operations: RoutineOperation[]; reason: string };
 
 function toRoutineOperation({
   change,
+  dailyMinutesLimits,
   today,
 }: {
   change: z.infer<typeof changeSchema>;
+  dailyMinutesLimits: { min: number; max: number };
   today: string;
 }): RoutineOperation | null {
   const operation =
-    change.kind === "addLightWeek" ? toDateOperation({ change, today }) : toTimeOperation(change);
+    change.kind === "addLightWeek"
+      ? toDateOperation({ change, today })
+      : toTimeOperation({ change, dailyMinutesLimits });
 
   return operation?.kind === "addLightWeek" || operation?.kind === "setWeekdayMinutes"
     ? operation
@@ -69,13 +74,17 @@ function toRoutineOperation({
 
 /** Checked the same way as a plan edit's; the reason goes only with changes. */
 function normalizeRoutineFit({
+  dailyMinutesLimits,
   raw,
   today,
 }: {
+  dailyMinutesLimits: { min: number; max: number };
   raw: z.infer<typeof schema>;
   today: string;
 }): PlanRoutineFit {
-  const operations = raw.changes.flatMap((change) => toRoutineOperation({ change, today }) ?? []);
+  const operations = raw.changes.flatMap(
+    (change) => toRoutineOperation({ change, dailyMinutesLimits, today }) ?? [],
+  );
 
   return { operations, reason: operations.length > 0 ? decodeHtmlEntities(raw.reason).trim() : "" };
 }
@@ -120,7 +129,11 @@ export async function fitPlanToRoutineFacts(
     task: "plan-routine-fit",
   });
 
-  const data = normalizeRoutineFit({ raw: result.output, today: params.today });
+  const data = normalizeRoutineFit({
+    dailyMinutesLimits: params.dailyMinutesLimits,
+    raw: result.output,
+    today: params.today,
+  });
 
   return { data, provenance, systemPrompt, usage: result.usage, userPrompt };
 }

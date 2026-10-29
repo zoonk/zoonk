@@ -7,6 +7,7 @@ import {
   daySessionSnapshotSchema,
 } from "../../sessions/_utils/day-session-snapshot";
 import { fromIsoDate, toIsoDate } from "../planner/plan-calendar";
+import { isStandIn } from "../planner/plan-item-rules";
 import {
   type PlanPhase,
   type PlanState,
@@ -18,7 +19,6 @@ import {
 import { type ContextPlanItem, type PlanContext } from "./plan-context";
 import { type PlanSummary, planSummarySchema } from "./plan-summary";
 import { readSelectedItemFacts, selectedItemFactsSchema } from "./selected-item-contract";
-import { isStandIn } from "./stand-in-lessons";
 
 const snapshotItemSchema = z.object({
   chapterId: z.string().nullable(),

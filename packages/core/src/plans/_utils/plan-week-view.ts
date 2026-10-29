@@ -8,8 +8,9 @@ import {
   toIsoDate,
 } from "../planner/plan-calendar";
 import { type ExamDayRules, getPlannedMinutes } from "../planner/plan-days";
+import { isWritingItem } from "../planner/plan-item-rules";
 import { DAYS_PER_WEEK, type PlanSettings } from "../planner/plan-state";
-import { type SkillAreas, getWritingTitle, isWritingItem } from "./plan-phase-views";
+import { type SkillAreas, getWritingTitle } from "./plan-phase-views";
 import { type PlanReadItem } from "./plan-read-projection";
 import { projectSavedAllocationOn } from "./saved-allocation";
 import { isWorkFinished } from "./work-progress";

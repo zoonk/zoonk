@@ -1,7 +1,8 @@
-import { EPSILON, findDayIndex, findDayIndexFrom } from "./day-index";
+import { findDayIndex, findDayIndexFrom } from "./day-index";
 import { type StudyPortion, getUnitStudy } from "./interval-study-minutes";
 import { findLargestCount, makeRoomForOutcomes } from "./outcome-room";
 import { addDays } from "./plan-calendar";
+import { PLAN_EPSILON } from "./plan-precision";
 import { type QueueUnit } from "./plan-units";
 import { type PlacedBoss, placeBoss, withKeptLessons } from "./whole-boss";
 
@@ -79,7 +80,7 @@ export function getCumulativeCapacity(days: readonly PlanDay[]): number[] {
 type PlacedUnit = { beside?: boolean; dayIndex: number; start: number; unit: QueueUnit };
 
 function getDayEnd({ cumulative, used }: { cumulative: readonly number[]; used: number }) {
-  if (used <= EPSILON) {
+  if (used <= PLAN_EPSILON) {
     return used;
   }
 
@@ -103,7 +104,7 @@ function getDueDay({
   start: number;
   unit: QueueUnit;
 }): number {
-  const startsDayOne = first && start + EPSILON < (cumulative[0] ?? 0);
+  const startsDayOne = first && start + PLAN_EPSILON < (cumulative[0] ?? 0);
 
   if (!startsDayOne || dayIndex === 0) {
     return dayIndex;

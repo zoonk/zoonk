@@ -1,5 +1,6 @@
 import "server-only";
 import { interpretPlanEdit } from "@zoonk/ai/tasks/v2/plans/edit-intent";
+import { MAX_DAILY_MINUTES, MIN_DAILY_MINUTES } from "../daily-minutes";
 import { type PlanOperation } from "../plan-contract";
 import { withTopicPart } from "./focus-topic-part";
 import { type PlanContext } from "./plan-context";
@@ -55,7 +56,13 @@ export async function interpretPlanWords({
     need: `A change to the study plan: ${text}`,
   });
 
-  const edit = await interpretPlanEdit({ ...toPlanEditInput(context), memory, request: text });
+  const edit = await interpretPlanEdit({
+    dailyMinutesLimits: { max: MAX_DAILY_MINUTES, min: MIN_DAILY_MINUTES },
+    ...toPlanEditInput(context),
+    memory,
+    request: text,
+  });
+
   const operations = await toPlanOperations({ context, edit, request: text });
 
   return {

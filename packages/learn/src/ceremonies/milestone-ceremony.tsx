@@ -108,7 +108,7 @@ function CeremonyArt({
         )}
       />
       {milestone.kind !== "glasses" && (
-        <Burst className="text-brain top-1/2 left-1/2" delay={BEAT_MS} sparks={STAGE_SPARKS} />
+        <Burst className="text-brain top-1/2 left-1/2" delayMs={BEAT_MS} sparks={STAGE_SPARKS} />
       )}
       <BuddyActor
         beltColor={milestone.kind === "belt" && belt ? belt : buddy.beltColor}
@@ -118,7 +118,7 @@ function CeremonyArt({
         glasses={milestone.kind === "glasses" && glasses ? glasses : buddy.glasses}
         kind={buddy.kind}
         label={buddyName}
-        reaction={{ act: milestone.kind === "glasses" ? "proud" : "cheer", delay: BEAT_MS }}
+        reaction={{ act: milestone.kind === "glasses" ? "proud" : "cheer", delayMs: BEAT_MS }}
       />
     </span>
   );

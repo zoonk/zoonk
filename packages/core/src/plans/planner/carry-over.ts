@@ -2,6 +2,7 @@ import { keepCarriedAfterBases, listBegunSkillIds } from "./carried-bases";
 import { findChapterInProgress } from "./chapter-in-progress";
 import { takeFocusedToday } from "./focused-today";
 import { getSkillArea } from "./graph-areas";
+import { LEARN_KINDS, PHASE_WORK_KINDS } from "./plan-item-rules";
 import { type ExistingPlanItem, getItemKey } from "./plan-items";
 import { type PlanGraph } from "./plan-state";
 import { type QueueUnit } from "./plan-units";
@@ -12,8 +13,6 @@ export type CarryOver = {
   lessonIds: readonly string[];
   todayExceptAreas?: readonly string[] | null;
 };
-
-const LEARN_KINDS = new Set<ExistingPlanItem["kind"]>(["chapter", "lesson"]);
 
 function isTeachable(item: ExistingPlanItem): boolean {
   return LEARN_KINDS.has(item.kind) && (item.lessonId !== null || item.chapterId !== null);
@@ -49,9 +48,7 @@ function isKeptToday({
 function findCurrentPhase(items: readonly Pick<ExistingPlanItem, "kind" | "phase" | "status">[]) {
   return Math.min(
     ...items.flatMap((item) =>
-      item.status === "todo" && (LEARN_KINDS.has(item.kind) || item.kind === "boss")
-        ? [item.phase]
-        : [],
+      item.status === "todo" && PHASE_WORK_KINDS.has(item.kind) ? [item.phase] : [],
     ),
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { type MemoryFactView } from "@zoonk/core/memory/contract";
+import { MAX_MEMORY_STATEMENT_LENGTH } from "@zoonk/core/memory/memory-limits";
 import { Button } from "@zoonk/ui/components/button";
 import {
   Dialog,
@@ -21,12 +22,6 @@ import { EllipsisIcon, PencilIcon, Trash2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useId, useState } from "react";
 import { MemoryFactSource } from "./memory-labels";
-
-/**
- * Core's `MAX_MEMORY_STATEMENT_LENGTH`, repeated: its module loads database enums, which can't ship
- * to the browser.
- */
-const MAX_STATEMENT_LENGTH = 160;
 
 function EditFactDialog({
   fact,
@@ -69,7 +64,7 @@ function EditFactDialog({
           </label>
           <Textarea
             id={statementId}
-            maxLength={MAX_STATEMENT_LENGTH}
+            maxLength={MAX_MEMORY_STATEMENT_LENGTH}
             onChange={(event) => setStatement(event.target.value)}
             value={statement}
           />

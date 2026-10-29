@@ -1,10 +1,9 @@
 import "server-only";
 import { carriesGiven } from "../planner/carry-over";
+import { PHASE_WORK_KINDS } from "../planner/plan-item-rules";
 import { type ExistingPlanItem } from "../planner/plan-items";
 import { type PlanCarrySnapshot, loadPlanCarrySnapshot } from "./carried-lessons";
 import { type PlanContext } from "./plan-context";
-
-const LEARN_KINDS = new Set(["chapter", "lesson"]);
 
 type LeftWorkItem = Pick<
   ExistingPlanItem,
@@ -14,11 +13,7 @@ type LeftWorkItem = Pick<
 function isPendingStudyItem<Item extends LeftWorkItem>(
   item: Item,
 ): item is Item & { scheduledFor: Date } {
-  return (
-    item.status === "todo" &&
-    (LEARN_KINDS.has(item.kind) || item.kind === "boss") &&
-    item.scheduledFor !== null
-  );
+  return item.status === "todo" && PHASE_WORK_KINDS.has(item.kind) && item.scheduledFor !== null;
 }
 
 export function hasOverduePlanWork({ items, today }: Pick<PlanContext, "items" | "today">) {
