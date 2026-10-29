@@ -13,10 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -111,7 +111,7 @@ class SuggestionContentScope internal constructor(
 
 @Composable
 fun SuggestionOpen(text: String = stringResource(R.string.suggestion_view)) {
-    OutlinedButton(onClick = LocalFrame.current.open) { Text(text) }
+    FilledTonalButton(onClick = LocalFrame.current.open) { Text(text) }
 }
 
 @Composable
@@ -162,19 +162,19 @@ fun SuggestionActions(content: @Composable () -> Unit) {
     }
 }
 
-/** On a line it's always outlined, beside the summary. */
+/** On a line it's always [secondary], beside the summary. */
 @Composable
 fun SuggestionAction(
     text: String,
     onClick: () -> Unit,
     enabled: Boolean = true,
-    outlined: Boolean = false,
+    secondary: Boolean = false,
 ) {
     val presentation = LocalPresentation.current
     val modifier = if (presentation == Presentation.Sheet) Modifier.fillMaxWidth() else Modifier
 
-    if (outlined || presentation == Presentation.Line) {
-        OutlinedButton(onClick = onClick, modifier = modifier, enabled = enabled) { Text(text) }
+    if (secondary || presentation == Presentation.Line) {
+        FilledTonalButton(onClick = onClick, modifier = modifier, enabled = enabled) { Text(text) }
     } else {
         Button(onClick = onClick, modifier = modifier, enabled = enabled) { Text(text) }
     }
@@ -238,7 +238,7 @@ private fun Mark(size: Dp) {
     val colors = MaterialTheme.colorScheme
     val (icon, tint) =
         when (val mark = LocalFrame.current.mark) {
-            SuggestionMark.New -> R.drawable.ic_auto_awesome to MaterialTheme.zoonk.warningText
+            SuggestionMark.New -> R.drawable.ic_auto_awesome to MaterialTheme.zoonk.warning
             SuggestionMark.Done -> R.drawable.ic_check to colors.tertiary
             is SuggestionMark.Symbol -> mark.icon to colors.onSurfaceVariant
         }

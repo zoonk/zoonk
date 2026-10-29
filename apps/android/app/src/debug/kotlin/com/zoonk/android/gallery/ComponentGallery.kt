@@ -612,7 +612,7 @@ private fun Suggestions() {
             SuggestionDescription("Nothing is planned until you resume it.")
             SuggestionActions {
                 SuggestionAction("Resume", onClick = {})
-                SuggestionAction("Adjust plan", onClick = {}, outlined = true)
+                SuggestionAction("Adjust plan", onClick = {}, secondary = true)
             }
         }
     }
