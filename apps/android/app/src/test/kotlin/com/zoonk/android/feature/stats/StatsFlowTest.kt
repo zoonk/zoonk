@@ -127,6 +127,19 @@ class StatsFlowTest {
 
     @Test
     @Config(qualifiers = "w1280dp-h800dp")
+    fun aPageOpenedFromElsewhereIsSwappedInPlace() {
+        show(StatsPage.Score)
+        rule.runOnIdle { navigator.open(AppRoute.StatsScore) }
+
+        rule.onNodeWithText("Energy").performClick()
+        assertEquals(AppRoute.StatsEnergy, navigator.currentRoute)
+
+        rule.runOnIdle { navigator.back() }
+        assertEquals(AppRoute.Today, navigator.currentRoute)
+    }
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp")
     fun theListBesideSwapsPagesSoBackLeavesTheSection() {
         show(StatsPage.Level)
         rule.runOnIdle {
