@@ -178,7 +178,13 @@ internal fun planStatusText(status: PlanStatus): String =
 
         is PlanStatus.PlanStatusOneOf1Value -> {
             val days = status.value.days.toInt()
-            pluralStringResource(R.plurals.today_pace_ahead, days, days)
+            if (days ==
+                1
+            ) {
+                stringResource(R.string.today_pace_one_day_ahead)
+            } else {
+                pluralStringResource(R.plurals.today_pace_ahead, days, days)
+            }
         }
 
         is PlanStatus.PlanStatusOneOf2Value -> {
@@ -186,6 +192,8 @@ internal fun planStatusText(status: PlanStatus): String =
             val days = status.value.days.toInt()
             if (lessons != null && lessons > 0) {
                 pluralStringResource(R.plurals.today_pace_lessons_to_catch_up, lessons, lessons)
+            } else if (days == 1) {
+                stringResource(R.string.today_pace_one_day_behind)
             } else {
                 pluralStringResource(R.plurals.today_pace_behind_days, days, days)
             }

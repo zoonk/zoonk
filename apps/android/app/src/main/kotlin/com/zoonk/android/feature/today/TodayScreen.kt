@@ -336,7 +336,7 @@ private fun Preparing(
         return
     }
 
-    PollWhile(active = left.value == false, read = app.today.today)
+    pollWhile(active = left.value == false, read = app.today.today)
 
     TodayPage(padding) {
         TodayPageHeader(date = stringResource(R.string.today_building_plan), state = null, title = stringResource(R.string.today_title))

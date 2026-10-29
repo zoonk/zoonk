@@ -35,13 +35,15 @@
   "today_nothing_new_detail": "ea7df4102d379fc17daf896654e7950a473b6c2e3ffb8b568111c4bc2f31886e",
   "today_nothing_to_review": "1d7e3f64d1651514a6894f94f05b76a0b0e698c24ed2ef9ca150e603c7299df1",
   "today_open_failed": "75fcc30a662dcaf012a289dd30cdf9065584a174d22812f32b61c1898f38a01e",
-  "today_pace_ahead": "17f94f7f8a7c4d46fe72c017d3cd4672a20c9227cc24e06d325a82c65419b1c6",
-  "today_pace_behind_days": "0cd47d10181e1ef26f38259b988cf0f0a7de4079fc089d094941215104ceb1a2",
+  "today_pace_ahead": "ae898e909e33d6442a8e8ed5a9f011b6aa4f5aabe362ab1c5e3ab12a713ff5f9",
+  "today_pace_behind_days": "4e8b967b5604fedbcbf65ac0756107e3972783478036ce209b43858ff1fa6ec1",
   "today_pace_challenges_left": "d28acebbacb13f4f7e005c3d52dcdeb2893c29ed65644d80d233e8cf9aa74ec1",
   "today_pace_finished": "881d9f8f9f8c71b80327276bcc7d2f4ba76d9cc09c743afb6ec53c2eb1e84cc0",
   "today_pace_lessons_to_catch_up": "6b229a22588126c31bfc157542f826e2aa7fadc8f0d71e0588f6d68f3c85cced",
   "today_pace_needs_adjusting": "eaaeded7a501bb4db9f1da92661c4f4abd3686899597f1f2a7fbd5790f71ae7a",
   "today_pace_on_track": "729874b7d2d247bac9d6e743cca9745269617064ae760fd9602b6aa9f4b25cad",
+  "today_pace_one_day_ahead": "e8682dbe848198a1d1c30569fa1789248b396eef3ce4e069d9a2f942d43bc097",
+  "today_pace_one_day_behind": "88dfa8d8c548bb22f6d3eb9bce6e16a5ed6e5624f2c5c79d21dd5c15c93b5bc3",
   "today_pace_past_date": "3a1b14654c0f2f8c882309ad7529f7fc8c94bdb65095c05decad7f7c0a19c29a",
   "today_past_date": "9ddceea956fd99f236f97b82bc8424766ff07aa40cbcd1cd78cad4a43b0147f1",
   "today_past_date_detail": "430b369da4b7d859f707b2a1462e8d9f31e758eb9ec3a3e2c29888eb59f4c15a",
@@ -86,7 +88,6 @@
   "today_step_plus": "43ffb8e6a4ebd29091a53b5dca12e987a873b73b3283b4027a2db29fe72023d5",
   "today_step_skipped": "5cdfcb175ebebddc925c6ecdac781d505907d9250367dd17db19deb53b5f70ff",
   "today_steps_done": "720ef2f602efb76f38a0f7b669df1f8009ce2ed031cb099ff4f75a98bf5c1f02",
-  "today_suggested_goal": "2240db908ea240bf6d502a2fcfc4e114243660ee0bb59deb35307d3dae628a1f",
   "today_suggested_goal_accept": "babc690b5d8c446c08a2c0738c49281e98d65a9b0d667d297f77580126f94903",
   "today_suggested_goal_detail": "56dbb2a5a25eeb9f09000fc90f6a70fa3c953cc2790ca2538772150ab9cfac10",
   "today_suggested_goal_question": "1f89bec72f964ca85d3da30a7ae9be3eea848293f16e8a1e541f082e8f65b1aa",
@@ -114,12 +115,14 @@
         <item quantity="other">Noch etwa %d Tage</item>
     </plurals>
     <string name="today_behind">Im Rückstand</string>
+    <string name="today_pace_one_day_ahead">Einen Tag voraus</string>
     <plurals name="today_pace_ahead">
-        <item quantity="one">Einen Tag voraus</item>
+        <item quantity="one">%d Tag voraus</item>
         <item quantity="other">%d Tage voraus</item>
     </plurals>
+    <string name="today_pace_one_day_behind">Einen Tag im Rückstand</string>
     <plurals name="today_pace_behind_days">
-        <item quantity="one">Einen Tag im Rückstand</item>
+        <item quantity="one">%d Tag im Rückstand</item>
         <item quantity="other">%d Tage im Rückstand</item>
     </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
@@ -215,7 +218,6 @@
     <string name="today_open_failed">Der nächste Schritt ließ sich nicht öffnen. Versuch es noch einmal.</string>
     <string name="today_keep_learning_failed">Deine nächsten Lektionen ließen sich nicht öffnen. Versuch es noch einmal.</string>
     <string name="today_welcome_back">Willkommen zurück</string>
-    <string name="today_suggested_goal">Vorgeschlagenes Ziel</string>
     <!-- %1$s is a course's title. -->
     <string name="today_suggested_goal_question">Mit %1$s weitermachen?</string>
     <string name="today_suggested_goal_detail">Erstelle in 1 Minute einen Plan.</string>

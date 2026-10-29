@@ -12,12 +12,14 @@
         <item quantity="other">~%d days left</item>
     </plurals>
     <string name="today_behind">Behind</string>
+    <string name="today_pace_one_day_ahead">One day ahead</string>
     <plurals name="today_pace_ahead">
-        <item quantity="one">One day ahead</item>
+        <item quantity="one">%d day ahead</item>
         <item quantity="other">%d days ahead</item>
     </plurals>
+    <string name="today_pace_one_day_behind">One day behind</string>
     <plurals name="today_pace_behind_days">
-        <item quantity="one">One day behind</item>
+        <item quantity="one">%d day behind</item>
         <item quantity="other">%d days behind</item>
     </plurals>
     <plurals name="today_pace_lessons_to_catch_up">
@@ -119,7 +121,6 @@
     <string name="today_keep_learning_failed">We couldn\'t open your next lessons. Try again.</string>
 
     <string name="today_welcome_back">Welcome back</string>
-    <string name="today_suggested_goal">Suggested goal</string>
     <!-- %1$s is a course's title. -->
     <string name="today_suggested_goal_question">Continue %1$s?</string>
     <string name="today_suggested_goal_detail">Build a plan in 1 minute.</string>

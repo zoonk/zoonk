@@ -20,7 +20,7 @@ import kotlin.time.TimeSource
  * while lessons are written. True once it gave up: 3 failed reads in a row, or 10 minutes.
  */
 @Composable
-internal fun PollWhile(
+internal fun pollWhile(
     active: Boolean,
     read: Resource<*>,
 ): Boolean {

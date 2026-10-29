@@ -75,7 +75,7 @@ internal fun TodayDay(
 ) {
     val wide = currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
     val switchingTo by switching.collectAsStateWithLifecycle()
-    val stalled = PollWhile(active = read.day.isWaitingForLessons(read.today.lessonStatus), read = today)
+    val stalled = pollWhile(active = read.day.isWaitingForLessons(read.today.lessonStatus), read = today)
     val model = remember(read, stalled) { TodayDayModel(read, stalled) }
     val scope = rememberCoroutineScope()
     var pulled by remember { mutableStateOf(false) }
