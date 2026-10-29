@@ -73,6 +73,7 @@ import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
 import kotlinx.datetime.toJavaLocalDate
+import java.util.UUID
 
 /**
  * What the editor's parts save through, what each asked for while it saves, and which failed; the
@@ -84,6 +85,7 @@ internal data class PlanEdits(
     val asked: Map<PlanPart, List<PlanOp>> = emptyMap(),
     val failed: Set<PlanPart> = emptySet(),
     val latest: EditorChange? = null,
+    val changes: Map<UUID, EditorChange> = emptyMap(),
     val change: (PlanPart, List<PlanOp>, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
     val undo: (PlanChange) -> Unit = {},
     val timeToCover: TimeToCoverState = TimeToCoverState.Idle,

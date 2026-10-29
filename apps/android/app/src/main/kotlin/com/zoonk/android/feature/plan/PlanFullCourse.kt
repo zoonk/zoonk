@@ -38,6 +38,7 @@ import com.zoonk.api.models.LearnerSummaryGoal
 import com.zoonk.api.models.PlanChangeResult
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
+import java.util.UUID
 
 /**
  * Main's `useFullCourse`: studying everything, an exam's past its date and another goal's without
@@ -181,7 +182,7 @@ internal fun ColumnScope.StudyEverythingBody(
     onDone: () -> Unit,
 ) {
     var appliedId by rememberSaveable { mutableStateOf<String?>(null) }
-    val applied = edits.latest?.takeIf { it.change.id.toString() == appliedId }
+    val applied = appliedId?.let { edits.changes[UUID.fromString(it)] }
     val course = fullCourse(page)
     val title = stringResource(R.string.plan_study_everything)
     val exam = course?.isExam ?: page.isExam

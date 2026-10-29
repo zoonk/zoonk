@@ -38,6 +38,7 @@ import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanAreasInner
 import com.zoonk.api.models.PlanChangeResult
+import java.util.UUID
 
 /** An area the learner can put depth on, with the options the exam counts inside it. */
 internal data class FocusChoice(
@@ -74,7 +75,7 @@ internal fun ColumnScope.ChooseFocusBody(
     val title = stringResource(R.string.plan_where_to_focus)
     val description = stringResource(R.string.plan_where_to_focus_description)
     var appliedId by rememberSaveable { mutableStateOf<String?>(null) }
-    val applied = edits.latest?.takeIf { it.change.id.toString() == appliedId }
+    val applied = appliedId?.let { edits.changes[UUID.fromString(it)] }
 
     if (applied != null) {
         PlanChangeApplied(

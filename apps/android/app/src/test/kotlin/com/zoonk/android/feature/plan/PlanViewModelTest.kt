@@ -315,4 +315,33 @@ class PlanViewModelTest {
         withContext(Dispatchers.Main) { store.plan[goalId].refresh() }
         return plan
     }
+
+    @Test
+    fun aChangeKeepsItsUndoAfterANewerOneIsLatest() =
+        runTest {
+            val focus = PlanOp.FocusAreas(listOf("Algebra"))
+            val time = PlanOp.DailyMinutes(45)
+            val newer = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d02"
+            api.createdAt = { if (it == listOf(time)) "2026-10-28T12:01:00Z" else "2026-10-28T12:00:00Z" }
+            api.changeId = { if (it == listOf(time)) newer else CHANGE_ID }
+
+            viewModel.change(PlanPart.Focus, listOf(focus))
+            viewModel.change(PlanPart.Schedule, listOf(time))
+            val sheets = viewModel.changes.value.getValue(UUID.fromString(CHANGE_ID))
+            viewModel.undo(sheets.change)
+
+            assertEquals(
+                newer,
+                viewModel.latest.value
+                    ?.change
+                    ?.id
+                    .toString(),
+            )
+            assertTrue(
+                viewModel.changes.value
+                    .getValue(UUID.fromString(CHANGE_ID))
+                    .undone,
+            )
+            assertEquals(false, viewModel.latest.value?.undone)
+        }
 }

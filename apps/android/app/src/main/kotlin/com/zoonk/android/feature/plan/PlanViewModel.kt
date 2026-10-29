@@ -14,9 +14,12 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -47,7 +50,7 @@ class PlanViewModel(
     private val savingParts = MutableStateFlow(emptySet<PlanPart>())
     private val askedOperations = MutableStateFlow(emptyMap<PlanPart, List<PlanOp>>())
     private val failedParts = MutableStateFlow(emptySet<PlanPart>())
-    private val latestChange = MutableStateFlow<EditorChange?>(null)
+    private val openingChanges = MutableStateFlow(emptyMap<UUID, EditorChange>())
     private val timeToCoverState = MutableStateFlow<TimeToCoverState>(TimeToCoverState.Idle)
     private var search: TimeToCoverSearch? = null
     private val previewState = MutableStateFlow<PlanPreviewState>(PlanPreviewState.Idle)
@@ -67,7 +70,12 @@ class PlanViewModel(
 
     val failed: StateFlow<Set<PlanPart>> = failedParts.asStateFlow()
 
-    val latest: StateFlow<EditorChange?> = latestChange.asStateFlow()
+    /** Every change this opening of the editor made, so a sheet keeps its own, with its Undo, after a newer one. */
+    val changes: StateFlow<Map<UUID, EditorChange>> = openingChanges.asStateFlow()
+
+    /** The change made last, which the editor shows with Undo; answers can arrive out of order. */
+    val latest: StateFlow<EditorChange?> =
+        openingChanges.map { all -> all.values.maxByOrNull { it.change.createdAt } }.stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     /** Read it with [forPlan]: it's the plan revision it was asked of. */
     val timeToCover: StateFlow<TimeToCoverState> = timeToCoverState.asStateFlow()
@@ -126,26 +134,27 @@ class PlanViewModel(
     }
 
     fun undo(change: PlanChange) {
-        if (latestChange.value?.undoing == true) return
-        latestChange.update { it?.forChange(change) { copy(undoing = true, undoFailed = false) } }
+        if (openingChanges.value[change.id]?.undoing == true) return
+        update(change.id) { copy(undoing = true, undoFailed = false) }
         viewModelScope.launch {
             val result = store.undo(goalId, change.id)
             val shown = if (result is MutationResult.Done) store.awaitWritesShown(goalId) else null
-            latestChange.update {
-                it?.forChange(change) {
-                    copy(
-                        undone = undone || shown == PlanShown.Current,
-                        undoing = false,
-                        undoFailed = result is MutationResult.Failed || shown == PlanShown.Stale,
-                    )
-                }
+            update(change.id) {
+                copy(
+                    undone = undone || shown == PlanShown.Current,
+                    undoing = false,
+                    undoFailed = result is MutationResult.Failed || shown == PlanShown.Stale,
+                )
             }
         }
     }
 
-    /** Answers can arrive out of order: the change made last stays the one shown, with its Undo. */
-    private fun report(change: PlanChange) =
-        latestChange.update { if (it == null || it.change.createdAt <= change.createdAt) EditorChange(change) else it }
+    private fun report(change: PlanChange) = openingChanges.update { it + (change.id to EditorChange(change)) }
+
+    private fun update(
+        id: UUID,
+        transform: EditorChange.() -> EditorChange,
+    ) = openingChanges.update { all -> all[id]?.let { all + (id to it.transform()) } ?: all }
 
     /**
      * Main's time-to-cover store: one search per plan revision, which [found] joins while it runs,
@@ -226,14 +235,9 @@ class PlanViewModel(
     /** The editor opens without the change it showed last time, as main's does. */
     fun forgetLatest() {
         openings++
-        latestChange.value = null
+        openingChanges.value = emptyMap()
         failedParts.value = emptySet()
     }
-
-    private fun EditorChange.forChange(
-        change: PlanChange,
-        transform: EditorChange.() -> EditorChange,
-    ) = if (this.change.id == change.id) transform() else this
 
     private companion object {
         const val TOO_MANY_REQUESTS = 429

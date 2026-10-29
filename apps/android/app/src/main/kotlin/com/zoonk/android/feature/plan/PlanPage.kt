@@ -123,6 +123,7 @@ internal fun PlanPage(
     val asked by viewModel.asked.collectAsStateWithLifecycle()
     val failed by viewModel.failed.collectAsStateWithLifecycle()
     val latest by viewModel.latest.collectAsStateWithLifecycle()
+    val changes by viewModel.changes.collectAsStateWithLifecycle()
     val timeToCover by viewModel.timeToCover.collectAsStateWithLifecycle()
     val preview by viewModel.preview.collectAsStateWithLifecycle()
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME) }
@@ -136,6 +137,7 @@ internal fun PlanPage(
             asked = asked,
             failed = failed,
             latest = latest,
+            changes = changes,
             change = viewModel::change,
             undo = viewModel::undo,
             timeToCover = timeToCover,

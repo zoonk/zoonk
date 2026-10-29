@@ -42,6 +42,7 @@ class PlanSheetsTest {
     private fun edits(latest: EditorChange? = null) =
         PlanEdits(
             latest = latest,
+            changes = latest?.let { mapOf(it.change.id to it) }.orEmpty(),
             change = { part, operations, answered ->
                 changes += part to operations
                 answer = answered
