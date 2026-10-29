@@ -197,7 +197,6 @@ private fun CurrentPlan(
             }
             OutlinedButton(
                 onClick = { navigator.open(AppRoute.Help) },
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
             ) { Text(stringResource(R.string.subscription_contact_support)) }
         }
     }
@@ -312,7 +311,6 @@ private fun Offer(
             if (purchase == PurchaseState.ConfirmFailed) {
                 OutlinedButton(
                     onClick = { navigator.open(AppRoute.Help) },
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                 ) { Text(stringResource(R.string.subscription_contact_support)) }
             }
             HorizontalDivider()

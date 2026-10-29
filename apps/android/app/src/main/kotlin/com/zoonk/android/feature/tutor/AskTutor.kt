@@ -95,7 +95,7 @@ fun TutorAskButton(
     if (worded) {
         OutlinedButton(onClick = {
             open = true
-        }, colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)) {
+        }) {
             Icon(painterResource(R.drawable.ic_contact_support), contentDescription = null, Modifier.size(ButtonDefaults.IconSize))
             Text(label, Modifier.padding(start = ButtonDefaults.IconSpacing))
         }

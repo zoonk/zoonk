@@ -414,7 +414,6 @@ private fun OfferButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
     ) { Text(label) }
 }
 

@@ -68,7 +68,6 @@ fun PlusNotice(
                         onSeePlus?.let {
                             OutlinedButton(
                                 onClick = it,
-                                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                             ) { Text(stringResource(R.string.subscription_see_plus)) }
                         }
                         action?.invoke()

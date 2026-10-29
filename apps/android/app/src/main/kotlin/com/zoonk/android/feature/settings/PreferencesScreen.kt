@@ -227,7 +227,6 @@ private fun BuddySection(
             OutlinedButton(
                 onClick = { preferences.editBuddy(true) },
                 modifier = Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
             ) {
                 Text(stringResource(editLabel))
             }

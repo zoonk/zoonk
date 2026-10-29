@@ -179,7 +179,6 @@ internal fun GoalLimitNotice(
         action = {
             OutlinedButton(
                 onClick = onOpenPlan,
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
             ) {
                 Text(stringResource(R.string.onboarding_go_to_plan))
             }

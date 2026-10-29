@@ -16,7 +16,8 @@ import androidx.compose.ui.graphics.Shape
 
 /*
  * Material draws outlined buttons' borders in `outlineVariant`, our hairline `border`, which nearly
- * vanishes in dark theme. Main's outline buttons use `--input`, our `outline`, so these take it.
+ * vanishes in dark theme, and their labels in a muted grey. Main's outline buttons use `--input`,
+ * our `outline`, with ink labels, so these take both.
  */
 
 @Composable
@@ -25,7 +26,7 @@ fun OutlinedButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     shape: Shape = ButtonDefaults.outlinedShape,
-    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(),
+    colors: ButtonColors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
     elevation: ButtonElevation? = null,
     border: BorderStroke? = outlinedBorder(enabled, ButtonDefaults.outlinedButtonBorder(enabled)),
     contentPadding: PaddingValues = ButtonDefaults.ContentPadding,
@@ -50,7 +51,7 @@ fun OutlinedIconButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     shape: Shape = IconButtonDefaults.outlinedShape,
-    colors: IconButtonColors = IconButtonDefaults.outlinedIconButtonColors(),
+    colors: IconButtonColors = IconButtonDefaults.outlinedIconButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
     border: BorderStroke? = outlinedBorder(enabled, IconButtonDefaults.outlinedIconButtonBorder(enabled)),
     interactionSource: MutableInteractionSource? = null,
     content: @Composable () -> Unit,

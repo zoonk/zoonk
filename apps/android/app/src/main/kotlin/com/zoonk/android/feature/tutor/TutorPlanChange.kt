@@ -119,7 +119,6 @@ private fun Decisions(
     onDecide: (Decision) -> Unit,
 ) {
     val overridesOfficialDate = change.officialDate != null
-    val outlined = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)
 
     when {
         change.status == PlanChange.Status.PROPOSED -> {
@@ -135,7 +134,7 @@ private fun Decisions(
                 }
             }
             val decline: @Composable (Modifier) -> Unit = { width ->
-                OutlinedButton(onClick = { onDecide(Decision.DECLINED) }, enabled = !deciding, modifier = width, colors = outlined) {
+                OutlinedButton(onClick = { onDecide(Decision.DECLINED) }, enabled = !deciding, modifier = width) {
                     ButtonLabel(
                         if (overridesOfficialDate) {
                             planChangeKeepOfficialDateLabel(change.examDocument)
@@ -160,7 +159,7 @@ private fun Decisions(
         }
 
         change.status == PlanChange.Status.APPLIED && change.canUndo -> {
-            OutlinedButton(onClick = { onDecide(Decision.UNDONE) }, enabled = !deciding, colors = outlined) {
+            OutlinedButton(onClick = { onDecide(Decision.UNDONE) }, enabled = !deciding) {
                 Text(stringResource(R.string.tutor_plan_change_undo))
             }
         }

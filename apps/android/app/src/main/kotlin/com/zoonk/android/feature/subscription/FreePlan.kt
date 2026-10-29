@@ -56,7 +56,6 @@ internal fun FreePlanCard(
             OutlinedButton(
                 onClick = onStart,
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
             ) { Text(stringResource(R.string.subscription_start_free)) }
             Note(stringResource(R.string.subscription_no_card_needed), Modifier.align(Alignment.CenterHorizontally))
             HorizontalDivider()

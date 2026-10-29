@@ -396,7 +396,6 @@ internal fun ColumnScope.PlacementQuestion(
                 OutlinedButton(
                     onClick = { send(DONT_KNOW) },
                     enabled = !pending,
-                    colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
                     contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
                 ) {
                     Icon(painterResource(R.drawable.ic_help), contentDescription = null, modifier = Modifier.size(buttonIconSize()))

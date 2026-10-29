@@ -340,7 +340,6 @@ private fun ProviderButton(
         onClick = onClick,
         enabled = enabled,
         modifier = Modifier.fillMaxWidth(),
-        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.onSurface),
         contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
     ) {
         if (isWorking) {

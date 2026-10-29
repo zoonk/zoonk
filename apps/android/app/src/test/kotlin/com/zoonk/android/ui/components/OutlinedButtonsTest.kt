@@ -36,6 +36,7 @@ private class Roles(
     val background: Color,
     val outline: Color,
     val outlineVariant: Color,
+    val onSurface: Color,
 )
 
 @RunWith(AndroidJUnit4::class)
@@ -48,7 +49,7 @@ class OutlinedButtonsTest {
     private val looks = listOf(false, true).flatMap { dark -> listOf(false, true).map { Look(dark, it) } }
 
     @Test
-    fun anOutlinedButtonsBorderIsTheInputOutlineInEveryLook() {
+    fun anOutlinedButtonHasTheInputOutlineAndAnInkLabelInEveryLook() {
         val roles = mutableMapOf<Look, Roles>()
 
         compose.setContent {
@@ -56,7 +57,7 @@ class OutlinedButtonsTest {
                 looks.forEach { look ->
                     ZoonkTheme(darkTheme = look.dark, moreContrast = look.moreContrast) {
                         val scheme = MaterialTheme.colorScheme
-                        roles[look] = Roles(scheme.background, scheme.outline, scheme.outlineVariant)
+                        roles[look] = Roles(scheme.background, scheme.outline, scheme.outlineVariant, scheme.onSurface)
                         Surface {
                             OutlinedButton(onClick = {}, modifier = Modifier.padding(8.dp).testTag("$look")) { Text("Not now") }
                         }
@@ -74,6 +75,9 @@ class OutlinedButtonsTest {
                 "$look draws its border $border, not outline ${role.outline} (outlineVariant is ${role.outlineVariant})",
                 distance(border, role.outline) < BLENDED,
             )
+
+            val label = (0 until pixels.width).map { pixels[it, pixels.height / 2] }.maxBy { distance(it, role.background) }
+            assertTrue("$look writes its label in $label, not onSurface ${role.onSurface}", distance(label, role.onSurface) < BLENDED)
         }
     }
 
