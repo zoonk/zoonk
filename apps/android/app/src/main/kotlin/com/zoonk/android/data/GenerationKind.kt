@@ -170,6 +170,29 @@ enum class GenerationKind(
                 "writeLevelTestBank" to StepPlace.Phase("bank"),
             ),
     ),
+    Explanation(
+        label = R.string.explain_writing,
+        phases =
+            listOf(
+                GenerationPhase("read", 2, R.string.explain_phase_read, listOf(R.string.explain_phase_read_line)),
+                GenerationPhase("find", 2, R.string.explain_phase_find, listOf(R.string.explain_phase_find_line)),
+                GenerationPhase(
+                    "write",
+                    12,
+                    R.string.explain_phase_write,
+                    numbered = NumberedLines(5, R.string.explain_phase_write_line, R.string.explain_phase_write_review),
+                ),
+            ),
+        steps =
+            mapOf(
+                "classifyQuestion" to StepPlace.Phase("read"),
+                "explanationReady" to StepPlace.Done,
+                "findExplanation" to StepPlace.Phase("find"),
+                "joinRunningExplanation" to StepPlace.Join,
+                "writeExplanation" to StepPlace.Phase("write"),
+            ),
+        doneOnCompleted = "writeExplanation",
+    ),
     Lesson(
         label = R.string.player_writing_lesson,
         phases =

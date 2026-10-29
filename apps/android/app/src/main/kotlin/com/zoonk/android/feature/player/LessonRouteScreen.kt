@@ -133,13 +133,15 @@ fun LessonRouteScreen(
     }
 }
 
+/** A lesson's screens, played from [load]; [endSlot] ends it its own way. */
 @Composable
-private fun PlayingLesson(
+internal fun PlayingLesson(
     route: AppRoute.Lesson,
     app: AppContainer,
     load: LessonLoad.Ready,
     navigator: AppNavigator,
     exits: LessonPlayerExits,
+    endSlot: LessonEndSlot? = null,
 ) {
     val viewModel =
         viewModel(key = "lesson:${route.lessonId}") {
@@ -184,7 +186,7 @@ private fun PlayingLesson(
         LocalLessonSpeech provides app.speech,
         LocalChallengeTeam provides team,
     ) {
-        LessonPlayer(load.lesson, state, ending, viewModel, exits, navigator)
+        LessonPlayer(load.lesson, state, ending, viewModel, exits, navigator, endSlot)
         LessonSounds(state, enabled = profile.value?.soundsEnabled ?: true)
     }
 }

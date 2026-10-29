@@ -257,7 +257,7 @@ fun LessonCompletionView(
             if (completion.status == CompletionStatus.Failed) {
                 Text(stringResource(R.string.player_save_failed), color = MaterialTheme.colorScheme.error)
             }
-            if (completion.status == CompletionStatus.Saved) Readouts(state)
+            if (completion.status == CompletionStatus.Saved) LessonReadouts(state)
         }
 
         if (completion.status == CompletionStatus.Saved && ending.guest) {
@@ -271,8 +271,12 @@ fun LessonCompletionView(
     }
 }
 
+/** How many were right and the Brain Power earned, with when the lesson comes back for review unless [withReview] is off. */
 @Composable
-private fun Readouts(state: LessonPlayerState) {
+internal fun LessonReadouts(
+    state: LessonPlayerState,
+    withReview: Boolean = true,
+) {
     val result = state.completion?.result ?: return
     val segments = state.screen().segments
     val correct = segments.count { it == Segment.Right }
@@ -282,7 +286,7 @@ private fun Readouts(state: LessonPlayerState) {
     val locale = currentLocale()
 
     val review =
-        result.nextReviewAt?.let { reviewAt ->
+        result.nextReviewAt?.takeIf { withReview }?.let { reviewAt ->
             val day = reviewAt.toJavaInstant().atZone(ZoneId.systemDefault()).toLocalDate()
             stringResource(R.string.player_review_on, formatDate(day, locale, DateStyle.Day))
         }

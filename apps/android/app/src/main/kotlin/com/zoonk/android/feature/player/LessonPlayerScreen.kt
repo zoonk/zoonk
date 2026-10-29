@@ -66,6 +66,7 @@ import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.feature.audio.VoiceRecording
+import com.zoonk.android.feature.player.engine.CompletionStatus
 import com.zoonk.android.feature.player.engine.LessonAction
 import com.zoonk.android.feature.player.engine.LessonNotice
 import com.zoonk.android.feature.player.engine.LessonPhase
@@ -137,8 +138,14 @@ fun LessonPlayer(
     viewModel: LessonPlayerViewModel,
     exits: LessonPlayerExits,
     navigator: AppNavigator,
+    endSlot: LessonEndSlot? = null,
 ) {
     val screen = remember(state) { state?.screen() }
+    val ownEnd =
+        endSlot?.takeIf {
+            state?.completion?.status == CompletionStatus.Saving ||
+                state?.completion?.status == CompletionStatus.Saved
+        }
     val actions =
         remember(viewModel) {
             object : StepActions {
@@ -183,7 +190,11 @@ fun LessonPlayer(
                 .onKeyEvent { event ->
                     event.type == KeyEventType.KeyDown && state != null && screen != null &&
                         handleKey(event.key, state, screen, viewModel, actions, leave) {
-                            completionMainAction(lesson, state, ending, viewModel, exits)
+                            if (ownEnd == null) {
+                                completionMainAction(lesson, state, ending, viewModel, exits)
+                            } else {
+                                ownEnd.done.takeIf { state.completion?.status == CompletionStatus.Saved }
+                            }
                         }
                 },
         title = { LessonTitle(lesson.title) },
@@ -205,6 +216,10 @@ fun LessonPlayer(
                     null
                 }
 
+                state.phase == LessonPhase.Completed && ownEnd != null -> {
+                    { BarColumn { DoneAction(ownEnd, saving = state.completion?.status == CompletionStatus.Saving) } }
+                }
+
                 state.phase == LessonPhase.Completed -> {
                     { BarColumn { CompletionActions(lesson, state, ending, viewModel, exits) } }
                 }
@@ -223,7 +238,7 @@ fun LessonPlayer(
                 Starting()
             } else {
                 Segments(screen.segments, state)
-                Content(state, screen, ending, viewModel, actions, exits, navigator)
+                Content(state, screen, ending, viewModel, actions, exits, navigator, ownEnd)
             }
         }
     }
@@ -337,6 +352,7 @@ private fun Content(
     actions: StepActions,
     exits: LessonPlayerExits,
     navigator: AppNavigator,
+    ownEnd: LessonEndSlot?,
 ) {
     val run = state.run
 
@@ -348,7 +364,9 @@ private fun Content(
         }
 
         state.phase == LessonPhase.Completed -> {
-            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) { LessonCompletionView(state, ending) }
+            Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
+                if (ownEnd == null) LessonCompletionView(state, ending) else ownEnd.body(state)
+            }
         }
 
         else -> {
@@ -596,5 +614,21 @@ private fun SummarySheet(
             Text(stringResource(R.string.player_lesson_summary), style = MaterialTheme.typography.titleLarge)
             SummaryIdeas(ideas)
         }
+    }
+}
+
+/** A lesson that ends its own way, as a quick explanation does: its end once the lesson saves, and Done. */
+class LessonEndSlot(
+    val body: @Composable (LessonPlayerState) -> Unit,
+    val done: () -> Unit,
+)
+
+@Composable
+private fun DoneAction(
+    end: LessonEndSlot,
+    saving: Boolean,
+) {
+    TaskActions { width ->
+        Button(onClick = end.done, enabled = !saving, modifier = width) { Text(stringResource(R.string.player_done)) }
     }
 }

@@ -2,6 +2,7 @@ package com.zoonk.android.feature.player.model
 
 import androidx.compose.runtime.Immutable
 import com.zoonk.api.ApiJson
+import com.zoonk.api.models.ExplanationLesson
 import com.zoonk.api.models.LessonTutorSuggestion
 import com.zoonk.api.models.PlayableLibraryLessonResponse
 import com.zoonk.api.models.PlayableLibraryLessonResponseOneOf1Lesson
@@ -80,6 +81,21 @@ fun PlayableLibraryLessonResponse.toLessonLoad(): LessonLoad =
             LessonLoad.SessionRequired(value.lesson.toOutline())
         }
     }
+
+/** A quick explanation's lesson, which comes with it already written. */
+fun ExplanationLesson.toPlayableLesson(): PlayableLesson =
+    PlayableLesson(
+        id = id.toString(),
+        title = title,
+        description = description,
+        estimatedMinutes = estimatedMinutes,
+        language = language,
+        targetLanguage = targetLanguage,
+        chapterId = chapter?.id?.toString(),
+        steps = steps.map(PlayableLibraryStep::toLessonStep),
+        summaryIdeas = summaryIdeas,
+        tutorSuggestions = emptyList(),
+    )
 
 private fun PlayableLibraryLessonResponseOneOf1Lesson.toOutline() =
     LessonOutline(id = id.toString(), title = title, description = description, estimatedMinutes = estimatedMinutes)

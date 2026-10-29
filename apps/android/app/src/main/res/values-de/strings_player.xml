@@ -57,6 +57,7 @@
   "player_course_size": "ca11a1dc010bb2144c12e251e07c82ed6853fbcafb6d985b11fec027a096600f",
   "player_create_account_to_save": "4f5c2e3607465d24dc788e09795ad26bcceea9635140590faae1b23fbdabcfaf",
   "player_create_free_account": "7a2c4da6f2274b55536aab3f70f6ec0f859022e9df8a76386455f35d511177ce",
+  "player_done": "cb7f69657399660da0c86aba0cc00f3949e2c7869b0cb25c7a59769611f297af",
   "player_dont_know_yet": "fc0cb08c3ec16ab07e06e3cdab25d74857a5f2f9557ddd32927a8f5f9624bc09",
   "player_drawing_picture": "90f7c7d66c1ff5e61595c164b38b603c9220684add66268b58abd858af15b897",
   "player_enter_hint": "b97fa0b492e0859a348ca6797d20d911285c5bda6f499734123a811016976919",
@@ -313,6 +314,7 @@
     <string name="player_challenge_skills">Geübte Fähigkeiten</string>
     <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
     <string name="player_challenge_practice">„%1$s“ üben · %2$s</string>
+    <string name="player_done">Fertig</string>
     <string name="player_drawing_picture">Wir zeichnen das Bild…</string>
     <string name="player_not_in_app_title">Diese Lektion gibt es noch nicht in der App</string>
     <string name="player_not_in_app_description">Sie enthält Seiten, die die App noch nicht anzeigen kann. Du kannst sie auf zoonk.com bearbeiten.</string>

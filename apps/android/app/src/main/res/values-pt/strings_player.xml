@@ -57,6 +57,7 @@
   "player_course_size": "21340d8d1adfe84d0ad40877ba6c78ba18ac85d9610f46b0f6c10577167d82bc",
   "player_create_account_to_save": "5b5a896002e8b80f2e0585518b86c7be1fe1123eba29df5c89dac75b0f511e34",
   "player_create_free_account": "44092e43f5acdf93f87747f6bb763fcb97fc1e1e9d7af748900d025aee96e6c0",
+  "player_done": "1d377f03544eac42c690dbe068d79c9dfdbc78a5588e8114fc50541c4c351195",
   "player_dont_know_yet": "c3e07971d778f9f0873d721b656f1da0e773a414951be31ae7ee75a387b5be67",
   "player_drawing_picture": "bbe51661ed264e3ab80bd61924c2caee20654938f11366a8e237cb13fba14a78",
   "player_enter_hint": "f592437c9ab1abe5bb27950fabc9f30b88166d22e2920e11c3a056e4dd1b0bb8",
@@ -316,6 +317,7 @@
     <string name="player_challenge_skills">Habilidades praticadas</string>
     <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
     <string name="player_challenge_practice">Praticar “%1$s” · %2$s</string>
+    <string name="player_done">Concluído</string>
     <string name="player_drawing_picture">Desenhando a imagem…</string>
     <string name="player_not_in_app_title">Esta aula ainda não está no app</string>
     <string name="player_not_in_app_description">Ela tem telas que o app ainda não consegue mostrar. Você pode fazer essa aula em zoonk.com.</string>

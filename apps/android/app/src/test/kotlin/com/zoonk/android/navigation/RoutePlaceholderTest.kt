@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
 /** Routes whose screens are drawn: their features' own tests open them. */
-private val drawn = setOf(AppRoute.Lesson::class)
+private val drawn = setOf(AppRoute.Lesson::class, AppRoute.Explain::class)
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h891dp")

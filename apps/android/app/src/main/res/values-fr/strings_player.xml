@@ -57,6 +57,7 @@
   "player_course_size": "c907dfd3c48bed7c9d2e7c94fb12b003ac412ccafc41c4e3118b4ad8e6d72665",
   "player_create_account_to_save": "f69a62663112964576be9cab10262c7c1e98b5d39f37b48b5b5c3b516e2bb9a5",
   "player_create_free_account": "0059a5dfdbb5cefd3ca4ac6a8ec134f1e03b870a34a78ad77b369cfee9880ca3",
+  "player_done": "a4e9646c524011e053a3f1bc023df5902c0b97981df586214b70bed93bc3eb5d",
   "player_dont_know_yet": "7e05563ef48817f0d8c348a88cd47b29e124f5148532d056bf5e3d6db66c05ca",
   "player_drawing_picture": "416a982f9da51704271ecddd847643d4ef896a460ad247231cf04d43c74d8846",
   "player_enter_hint": "06108e643aaf58826b9fdf6b737ed38ae91af43e51a42473120fdcc2edc9aa2e",
@@ -316,6 +317,7 @@
     <string name="player_challenge_skills">Compétences travaillées</string>
     <!-- %1$s is the skill to practice, %2$s how long it takes, such as "5 min". -->
     <string name="player_challenge_practice">S’entraîner sur « %1$s » · %2$s</string>
+    <string name="player_done">Terminé</string>
     <string name="player_drawing_picture">Dessin de l’image…</string>
     <string name="player_not_in_app_title">Cette leçon n’est pas encore disponible dans l’application</string>
     <string name="player_not_in_app_description">Certaines pages ne s’affichent pas encore dans l’application. Tu peux suivre cette leçon sur zoonk.com.</string>
