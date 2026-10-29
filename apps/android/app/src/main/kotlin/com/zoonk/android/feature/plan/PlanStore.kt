@@ -21,6 +21,8 @@ import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanTimeToCover
+import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.PlanWatch
 import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.flow.first
@@ -130,6 +132,12 @@ interface PlanApi {
         changeId: UUID,
         status: PlanChangeDecisionInput.Status,
     ): PlanChange
+
+    /** Plans the goal at each daily time; saves nothing. */
+    suspend fun timeToCover(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): PlanTimeToCover
 }
 
 class LivePlanApi(
@@ -207,6 +215,11 @@ class LivePlanApi(
         status: PlanChangeDecisionInput.Status,
     ) = perform { api.clients(session).plans.decidePlanChange(goalId, changeId, PlanChangeDecisionInput(status, deviceTimeZone())) }
 
+    override suspend fun timeToCover(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ) = perform { api.clients(session).plans.findPlanTimeToCover(goalId, PlanTimeToCoverInput()) }
+
     private fun changeInput(operations: List<PlanOp>) =
         buildJsonObject {
             put("operations", JsonArray(operations.mapNotNull { it.toJson() }))
@@ -283,6 +296,9 @@ class PlanStore(
         goalId: UUID,
         operations: List<PlanOp>,
     ): MutationResult<PlanChangePreview> = cache.mutate { api.preview(it, goalId, operations) }
+
+    /** Plans the goal at each daily time, so only from the learner's tap. It saves nothing, so nothing is read again. */
+    suspend fun timeToCover(goalId: UUID): MutationResult<PlanTimeToCover> = cache.mutate { api.timeToCover(it, goalId) }
 
     /** Reads the plan again unless the plan shown has every write saved so far, and says whether it has them now. */
     suspend fun awaitWritesShown(goalId: UUID): PlanShown {

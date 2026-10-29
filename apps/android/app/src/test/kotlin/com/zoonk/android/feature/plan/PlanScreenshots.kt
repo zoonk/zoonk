@@ -138,6 +138,57 @@ class PlanScreenshots {
     @Config(qualifiers = "w400dp-h2600dp-xxhdpi")
     fun editorPanel() = captureEditor("plan-editor-panel", panel = true)
 
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-xxhdpi")
+    fun coverage() = captureCoverage("phone")
+
+    @Test
+    @Config(qualifiers = "w411dp-h1500dp-night-xxhdpi")
+    fun coverageDarkMoreContrast() = captureCoverage("phone-dark-more-contrast", dark = true, moreContrast = true)
+
+    @Test
+    @Config(qualifiers = "w411dp-h2600dp-xhdpi")
+    fun coverageAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        captureCoverage("phone-font200")
+    }
+
+    /** The coverage block under the time a day, in each of its states. */
+    private fun captureCoverage(
+        suffix: String,
+        dark: Boolean = false,
+        moreContrast: Boolean = false,
+    ) {
+        val learn = learnerSummary()
+        val exam = learnerSummary(kind = "exam", title = "ENEM")
+        val goalPlan = coveragePlan()
+        val goal = PlanPageState(learn.goals.first(), goalPlan, learn)
+        val examPlan = coveragePlan(kind = "exam", fullCourse = true)
+        val examPage = PlanPageState(exam.goals.first(), examPlan, exam)
+        val found = TimeToCoverState.Answered(timeToCoverRevision(goalPlan), timeToCover(recommended = 75, fittingDate = "2027-04-18"))
+
+        val parts: Map<String, @Composable ColumnScope.() -> Unit> =
+            mapOf(
+                "plan-coverage-found" to { PlanScheduleSection(goal, PlanEdits(timeToCover = found), EditorDrafts()) },
+                "plan-coverage-ask" to { PlanScheduleSection(goal, PlanEdits(), EditorDrafts()) },
+                "plan-coverage-working-out" to { PlanScheduleSection(goal, PlanEdits(pending = setOf(PlanPart.Schedule)), EditorDrafts()) },
+                "plan-coverage-exam" to { PlanScheduleSection(examPage, PlanEdits(), EditorDrafts()) },
+            )
+        var shown by mutableStateOf(parts.keys.first())
+        compose.setContent {
+            ZoonkTheme(darkTheme = dark, moreContrast = moreContrast) {
+                Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
+                    Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(28.dp)) { parts.getValue(shown)(this) }
+                }
+            }
+        }
+        parts.keys.forEach { name ->
+            shown = name
+            compose.waitForIdle()
+            write("$name-$suffix", compose.onRoot().captureToImage().asAndroidBitmap())
+        }
+    }
+
     private fun captureEditor(
         name: String,
         dark: Boolean = false,

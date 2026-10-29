@@ -123,10 +123,21 @@ internal fun PlanPage(
     val asked by viewModel.asked.collectAsStateWithLifecycle()
     val failed by viewModel.failed.collectAsStateWithLifecycle()
     val latest by viewModel.latest.collectAsStateWithLifecycle()
+    val timeToCover by viewModel.timeToCover.collectAsStateWithLifecycle()
     var editing by rememberSaveable { mutableStateOf(focus == ADJUST || focus == ADJUST_TIME) }
     var editingAt by rememberSaveable { mutableStateOf(if (focus == ADJUST_TIME) PlanSection.Time else null) }
     val links = PlanLinks(navigator, page)
-    val edits = PlanEdits(pending, asked, failed, latest, viewModel::change, viewModel::undo)
+    val edits =
+        PlanEdits(
+            pending = pending,
+            asked = asked,
+            failed = failed,
+            latest = latest,
+            change = viewModel::change,
+            undo = viewModel::undo,
+            timeToCover = timeToCover,
+            findTimeToCover = viewModel::findTimeToCover,
+        )
     val report =
         rememberReportProblem(
             app,

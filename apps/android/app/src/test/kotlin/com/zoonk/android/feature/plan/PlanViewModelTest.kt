@@ -6,6 +6,7 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangeResult
 import kotlinx.coroutines.CompletableDeferred
@@ -218,4 +219,83 @@ class PlanViewModelTest {
             assertEquals(emptyList<PlanChangeResult?>(), answers)
             assertEquals(emptyMap<PlanPart, List<PlanOp>>(), viewModel.asked.value)
         }
+
+    @Test
+    fun aTapWhileTheTimeIsBeingFoundJoinsTheSameSearch() =
+        runTest {
+            val plan = shown()
+            val outcomes = mutableListOf<TimeToCoverOutcome>()
+            api.timeToCoverGate = CompletableDeferred()
+
+            viewModel.findTimeToCover(plan) { outcomes += it }
+            viewModel.findTimeToCover(plan) { outcomes += it }
+            assertEquals(TimeToCoverState.Pending(timeToCoverRevision(plan)), viewModel.timeToCover.value)
+            api.timeToCoverGate?.complete(Unit)
+
+            assertEquals(1, api.timeToCoverRequests)
+            assertEquals(List(2) { TimeToCoverOutcome.Answered(api.timeToCover) }, outcomes)
+            assertEquals(TimeToCoverState.Answered(timeToCoverRevision(plan), api.timeToCover), viewModel.timeToCover.value)
+        }
+
+    @Test
+    fun aTimeFoundIsGivenAgainWithoutPlanningTheGoalAgain() =
+        runTest {
+            val plan = shown()
+            val outcomes = mutableListOf<TimeToCoverOutcome>()
+
+            viewModel.findTimeToCover(plan) { outcomes += it }
+            viewModel.findTimeToCover(plan) { outcomes += it }
+
+            assertEquals(1, api.timeToCoverRequests)
+            assertEquals(List(2) { TimeToCoverOutcome.Answered(api.timeToCover) }, outcomes)
+        }
+
+    @Test
+    fun aPlanReplannedWhileTheTimeIsFoundGetsNoAnswer() =
+        runTest {
+            val plan = shown()
+            val outcomes = mutableListOf<TimeToCoverOutcome>()
+            api.timeToCoverGate = CompletableDeferred()
+
+            viewModel.findTimeToCover(plan) { outcomes += it }
+            val replanned = shown(coveragePlan(coreFits = false))
+            api.timeToCoverGate?.complete(Unit)
+
+            assertEquals(listOf<TimeToCoverOutcome>(TimeToCoverOutcome.Stale), outcomes)
+            assertEquals(TimeToCoverState.Idle, viewModel.timeToCover.value.forPlan(replanned))
+        }
+
+    @Test
+    fun aPlanStillBeingBuiltLetsTheLearnerAskAgain() =
+        runTest {
+            val plan = shown()
+            val outcomes = mutableListOf<TimeToCoverOutcome>()
+            api.timeToCover = timeToCover(ready = false)
+
+            viewModel.findTimeToCover(plan) { outcomes += it }
+            assertEquals(TimeToCoverState.Building(timeToCoverRevision(plan)), viewModel.timeToCover.value)
+            viewModel.findTimeToCover(plan) { outcomes += it }
+
+            assertEquals(2, api.timeToCoverRequests)
+            assertEquals(List(2) { TimeToCoverOutcome.Building }, outcomes)
+        }
+
+    @Test
+    fun aSearchThatFailedSaysSoAndSavesNothing() =
+        runTest {
+            val plan = shown()
+            api.timeToCoverFailure = ApiException(ApiError.Network)
+
+            viewModel.findTimeToCover(plan)
+
+            assertEquals(TimeToCoverState.Failed(timeToCoverRevision(plan)), viewModel.timeToCover.value)
+            assertEquals(1, api.plans)
+            assertTrue(api.changes.isEmpty())
+        }
+
+    private suspend fun shown(plan: Plan = coveragePlan()): Plan {
+        api.shownPlan = plan
+        withContext(Dispatchers.Main) { store.plan[goalId].refresh() }
+        return plan
+    }
 }

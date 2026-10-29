@@ -4,6 +4,7 @@ import com.zoonk.api.ApiJson
 import com.zoonk.api.models.GoalProgress
 import com.zoonk.api.models.LearnerSummary
 import com.zoonk.api.models.Plan
+import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.Syllabus
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.decodeFromJsonElement
@@ -192,3 +193,36 @@ internal fun planChange(
     )
 
 internal fun effect(fields: String = ""): String = """{"lessonsAdded":0,"lessonsRemoved":0${if (fields.isEmpty()) "" else ",$fields"}}"""
+
+/** A plan whose time a day doesn't cover everything by its date. */
+internal fun coveragePlan(
+    kind: String = "goal",
+    coreFits: Boolean = true,
+    timeCovers: Boolean = false,
+    fullCourse: Boolean = false,
+    areas: String = "[]",
+): Plan =
+    plan(
+        """
+        "areas":$areas,
+        "feasibility":{"coreFits":$coreFits,"coveredShare":0.6,"deadline":"2027-01-31","deepensMostAsked":false,"fits":false,
+         "measure":"$kind","timeCovers":$timeCovers},
+        "schedule":{"dailyMinutes":20,"fullCourse":$fullCourse,"lightWeeks":[],"studyDays":5,"targetDate":"2027-01-31",
+         "targetDateEstimated":false,"targetDateNamedMonth":false,"weekdayMinutes":[0,20,20,20,20,20,0]}
+        """.trimIndent(),
+    )
+
+internal fun timeToCover(
+    recommended: Long? = 45,
+    core: Long? = null,
+    fittingDate: String? = null,
+    ready: Boolean = true,
+): PlanTimeToCover =
+    PlanTimeToCover(
+        coreMinutes = core,
+        fittingDate = fittingDate?.let(kotlinx.datetime.LocalDate::parse),
+        ready = ready,
+        recommendedMinutes = recommended,
+        targetDate = kotlinx.datetime.LocalDate.parse("2027-01-31"),
+        targetDateNamedMonth = false,
+    )

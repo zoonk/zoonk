@@ -3,9 +3,14 @@ package com.zoonk.android.feature.plan
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.data.value
 import com.zoonk.api.models.GoalUpdateInput
+import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanTimeToCover
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,7 +28,7 @@ import java.util.UUID
 enum class PlanEvent { SaveFailed, GoalLimitReached, Archived }
 
 /** A place that saves plan edits: each waits and fails on its own, as each of main's `usePlanChange` does. */
-enum class PlanPart { Date, Schedule, Activities, Writing, Steering }
+enum class PlanPart { Date, Schedule, Activities, Writing, Steering, FullCourse }
 
 /** The editor's latest applied change, which it shows with Undo. */
 data class EditorChange(
@@ -43,6 +48,8 @@ class PlanViewModel(
     private val askedOperations = MutableStateFlow(emptyMap<PlanPart, List<PlanOp>>())
     private val failedParts = MutableStateFlow(emptySet<PlanPart>())
     private val latestChange = MutableStateFlow<EditorChange?>(null)
+    private val timeToCoverState = MutableStateFlow<TimeToCoverState>(TimeToCoverState.Idle)
+    private var search: TimeToCoverSearch? = null
 
     /** Counts the editor's openings, so a change saved in one doesn't show its answer in the next. */
     private var openings = 0
@@ -60,6 +67,9 @@ class PlanViewModel(
     val failed: StateFlow<Set<PlanPart>> = failedParts.asStateFlow()
 
     val latest: StateFlow<EditorChange?> = latestChange.asStateFlow()
+
+    /** Read it with [forPlan]: it's the plan revision it was asked of. */
+    val timeToCover: StateFlow<TimeToCoverState> = timeToCoverState.asStateFlow()
 
     fun setStatus(status: GoalUpdateInput.Status) {
         if (saving.value) return
@@ -132,6 +142,64 @@ class PlanViewModel(
     /** Answers can arrive out of order: the change made last stays the one shown, with its Undo. */
     private fun report(change: PlanChange) =
         latestChange.update { if (it == null || it.change.createdAt <= change.createdAt) EditorChange(change) else it }
+
+    /**
+     * Main's time-to-cover store: one search per plan revision, which [found] joins while it runs,
+     * and an answer stays only for the plan it was found for. Only from the learner's tap: it plans
+     * the goal at each daily time.
+     */
+    fun findTimeToCover(
+        plan: Plan,
+        found: (TimeToCoverOutcome) -> Unit = {},
+    ) {
+        val revision = timeToCoverRevision(plan)
+        (timeToCoverState.value as? TimeToCoverState.Answered)?.takeIf { it.revision == revision }?.let {
+            found(TimeToCoverOutcome.Answered(it.time))
+            return
+        }
+        val running = search?.takeIf { it.revision == revision } ?: startSearch(revision)
+        viewModelScope.launch {
+            val result = running.result.await()
+            found(if (shownRevision() != revision) TimeToCoverOutcome.Stale else result.outcome())
+        }
+    }
+
+    private fun startSearch(revision: List<Any?>): TimeToCoverSearch {
+        timeToCoverState.value = TimeToCoverState.Pending(revision)
+        val started = TimeToCoverSearch(revision, viewModelScope.async { store.timeToCover(goalId) })
+        search = started
+        viewModelScope.launch {
+            val result = started.result.await()
+            if (search === started) search = null
+            timeToCoverState.update { if (it == TimeToCoverState.Pending(revision)) result.state(revision) else it }
+        }
+        return started
+    }
+
+    private fun shownRevision() =
+        store.plan[goalId]
+            .state.value.value
+            ?.plan
+            ?.let(::timeToCoverRevision)
+
+    private class TimeToCoverSearch(
+        val revision: List<Any?>,
+        val result: Deferred<MutationResult<PlanTimeToCover>>,
+    )
+
+    private fun MutationResult<PlanTimeToCover>.outcome(): TimeToCoverOutcome =
+        when (this) {
+            is MutationResult.Done -> if (value.ready) TimeToCoverOutcome.Answered(value) else TimeToCoverOutcome.Building
+            is MutationResult.Failed -> TimeToCoverOutcome.Failed
+            MutationResult.Obsolete -> TimeToCoverOutcome.Stale
+        }
+
+    private fun MutationResult<PlanTimeToCover>.state(revision: List<Any?>): TimeToCoverState =
+        when (this) {
+            is MutationResult.Done -> if (value.ready) TimeToCoverState.Answered(revision, value) else TimeToCoverState.Building(revision)
+            is MutationResult.Failed -> TimeToCoverState.Failed(revision)
+            MutationResult.Obsolete -> TimeToCoverState.Idle
+        }
 
     /** The editor opens without the change it showed last time, as main's does. */
     fun forgetLatest() {

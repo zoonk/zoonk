@@ -602,4 +602,35 @@
     <string name="plan_more_explanation">More explanation</string>
     <string name="plan_tell_buddy">Something else? Tell %1$s</string>
     <string name="plan_tell_buddy_description">In your own words, like “less on weekends”. You\'ll see the change before it applies.</string>
+
+    <string name="plan_working_out_coverage">Working out what your time covers…</string>
+    <string name="plan_covers_whole_goal">Covers your whole goal.</string>
+    <string name="plan_time_covers_everything_by">Your time covers everything by %1$s</string>
+    <string name="plan_covered_not_enough">%1$s a day isn\'t enough time to cover your goal.</string>
+    <string name="plan_covered_exam_most_asked">%1$s a day studies every topic of the exam, the ones that come up most in more depth.</string>
+    <string name="plan_covered_exam_less_depth">%1$s a day studies every topic of the exam, some of them in less depth.</string>
+    <string name="plan_covered_goal_core">%1$s a day studies every part of your goal, the ones that matter most in more depth.</string>
+    <string name="plan_covered_exam_after">%1$s a day doesn\'t reach every topic by the exam: the ones that come up least come after it.</string>
+    <string name="plan_covered_exam_left_out">%1$s a day doesn\'t reach every topic: the ones that come up least are left out.</string>
+    <string name="plan_covered_goal_left_out">%1$s a day doesn\'t reach every part of your goal: what comes last in your path is left out.</string>
+    <string name="plan_find">Find the time that covers everything</string>
+    <string name="plan_finding">Finding the time…</string>
+    <string name="plan_try_again">Try again</string>
+    <string name="plan_find_building">Your plan is still being built. Try again in a moment.</string>
+    <string name="plan_find_failed">We couldn\'t work out the time needed.</string>
+    <string name="plan_find_covers">%1$s a day covers everything in depth by %2$s.</string>
+    <string name="plan_find_none">No amount of time a day covers everything in depth by %1$s.</string>
+    <string name="plan_find_every_topic">%1$s a day studies every topic, some in less depth.</string>
+    <string name="plan_find_fitting_date">At %1$s a day, your plan covers everything by %2$s.</string>
+    <string name="plan_find_no_date">We couldn\'t find a date that covers everything.</string>
+    <string name="plan_note_covers_everything">Covers everything</string>
+    <string name="plan_note_every_topic">Every topic</string>
+    <string name="plan_move_date">Move your date to cover everything</string>
+    <string name="plan_move_date_to">Move your date to %1$s</string>
+    <string name="plan_full_course_switch">Study everything, even after the exam</string>
+    <string name="plan_full_course_off">What doesn\'t fit by the exam is left out of your plan.</string>
+    <string name="plan_full_course_on_exam">%1$s Until the exam, what comes up most comes first.</string>
+    <string name="plan_full_course_on_exam_unknown_end">Until the exam, what comes up most comes first. What doesn\'t fit comes after it.</string>
+    <string name="plan_finish">At %1$s a day, you finish in %2$s.</string>
+    <string name="plan_finish_after_exam">At %1$s a day, you finish in %2$s, after the exam on %3$s.</string>
 </resources>

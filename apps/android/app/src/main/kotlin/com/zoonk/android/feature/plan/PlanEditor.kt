@@ -69,11 +69,15 @@ import com.zoonk.android.R
 import com.zoonk.android.ui.characters.BuddyKind
 import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.Plan
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeResult
 import kotlinx.datetime.toJavaLocalDate
 
-/** What the editor's parts save through, what each asked for while it saves, and which failed. */
+/**
+ * What the editor's parts save through, what each asked for while it saves, and which failed; and
+ * the search for the time that covers everything.
+ */
 @Immutable
 internal data class PlanEdits(
     val pending: Set<PlanPart> = emptySet(),
@@ -82,6 +86,8 @@ internal data class PlanEdits(
     val latest: EditorChange? = null,
     val change: (PlanPart, List<PlanOp>, (PlanChangeResult?) -> Unit) -> Unit = { _, _, _ -> },
     val undo: (PlanChange) -> Unit = {},
+    val timeToCover: TimeToCoverState = TimeToCoverState.Idle,
+    val findTimeToCover: (Plan, (TimeToCoverOutcome) -> Unit) -> Unit = { _, _ -> },
 ) {
     fun isPending(part: PlanPart) = part in pending
 
@@ -324,13 +330,23 @@ internal fun PlanChip(
     modifier: Modifier = Modifier,
     role: Role? = null,
     @DrawableRes trailing: Int? = null,
+    description: String? = null,
 ) {
     val colors = MaterialTheme.colorScheme
 
     FilterChip(
         selected = selected,
         onClick = onClick,
-        label = { Text(text) },
+        label = {
+            if (description == null) {
+                Text(text)
+            } else {
+                Column(Modifier.padding(vertical = 6.dp)) {
+                    Text(text)
+                    Text(description, style = MaterialTheme.typography.labelSmall)
+                }
+            }
+        },
         modifier = if (role != null) modifier.semantics { this.role = role } else modifier,
         leadingIcon =
             if (selected) {

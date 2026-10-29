@@ -9,6 +9,7 @@ import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
+import com.zoonk.api.models.PlanTimeToCover
 import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlin.time.Instant
@@ -31,6 +32,11 @@ internal class FakePlanApi : PlanApi {
     var planGate: CompletableDeferred<Unit>? = null
     val changes = mutableListOf<List<PlanOp>>()
     val decisions = mutableListOf<PlanChangeDecisionInput.Status>()
+    var shownPlan: Plan = plan()
+    var timeToCover: PlanTimeToCover = timeToCover()
+    var timeToCoverGate: CompletableDeferred<Unit>? = null
+    var timeToCoverFailure: ApiException? = null
+    var timeToCoverRequests = 0
 
     override suspend fun plan(
         session: AuthenticatedSession,
@@ -39,7 +45,7 @@ internal class FakePlanApi : PlanApi {
         planGate?.await()
         planFailure?.let { throw it }
         plans++
-        return plan()
+        return shownPlan
     }
 
     override suspend fun planChanged(
@@ -118,5 +124,15 @@ internal class FakePlanApi : PlanApi {
     ): PlanChange {
         decisions += status
         return planChange(status = status.value)
+    }
+
+    override suspend fun timeToCover(
+        session: AuthenticatedSession,
+        goalId: UUID,
+    ): PlanTimeToCover {
+        timeToCoverRequests++
+        timeToCoverGate?.await()
+        timeToCoverFailure?.let { throw it }
+        return timeToCover
     }
 }

@@ -64,7 +64,7 @@ internal fun PlanScheduleSection(
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(28.dp)) {
-            DailyMinutes(edits, shape, weekendOn, modifier)
+            DailyMinutes(page, edits, shape, weekendOn, modifier)
             StudyDays(page, edits, shape, daysModifier)
             WeekendMinutes(edits, shape, weekendOn, onWeekendOn = { drafts.weekendOn = it })
         }
@@ -74,6 +74,7 @@ internal fun PlanScheduleSection(
 
 @Composable
 private fun DailyMinutes(
+    page: PlanPageState,
     edits: PlanEdits,
     shape: WeekShape,
     weekendOn: Boolean,
@@ -82,6 +83,7 @@ private fun DailyMinutes(
     val pending = edits.isPending(PlanPart.Schedule)
     val shown = askedMinutes(edits.asked(PlanPart.Schedule), shape.weekdayDays) ?: shape.weekdays
     val locale = currentLocale()
+    val answer = (edits.timeToCover.forPlan(page.plan) as? TimeToCoverState.Answered)?.time?.answer()
 
     fun setMinutes(minutes: Int) {
         if (pending || minutes == shown) return
@@ -93,16 +95,19 @@ private fun DailyMinutes(
     Column(modifier, verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionLabel(stringResource(R.string.plan_time_a_day_label))
         FlowRow(Modifier.selectableGroup(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            timeChoices(shape.weekdays, shown).forEach { minutes ->
+            timeChoices(shape.weekdays, shown, answer?.offeredMinutes).forEach { minutes ->
                 PlanChip(
                     formatMinutes(minutes, locale),
                     selected = minutes == shown,
                     onClick = { setMinutes(minutes) },
                     role = Role.RadioButton,
+                    description = answer?.let { timeNote(it, minutes) },
                 )
             }
             OtherTime(shown, onPick = ::setMinutes)
         }
+        DailyCoverage(page, edits)
+        FullCourseSwitch(page, edits)
     }
 }
 
