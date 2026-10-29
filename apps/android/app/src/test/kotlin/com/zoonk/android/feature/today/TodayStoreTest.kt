@@ -81,7 +81,7 @@ class TodayStoreTest {
             val suggestion = fixture("suggested-goal", "title" to "Spanish")
             val details = JsonObject(mapOf("suggestedGoal" to suggestion))
 
-            val read = read(api { throw ApiException(ApiError.NotFound, "NO_ACTIVE_GOAL", details) }, ana, "UTC")
+            val read = read(api { throw ApiException(ApiError.NotFound, "NO_ACTIVE_GOAL", details = details) }, ana, "UTC")
 
             assertEquals("Spanish", (read as TodayRead.NoGoal).suggestedGoal?.title)
         }
@@ -104,7 +104,7 @@ class TodayStoreTest {
                 TodayRead.Preparing(goal, "Biology"),
                 read(
                     api {
-                        throw ApiException(ApiError.Unavailable, "PLAN_NOT_READY", details)
+                        throw ApiException(ApiError.Unavailable, "PLAN_NOT_READY", details = details)
                     },
                     ana,
                     "UTC",

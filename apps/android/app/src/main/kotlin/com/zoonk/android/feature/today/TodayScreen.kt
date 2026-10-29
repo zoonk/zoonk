@@ -85,7 +85,9 @@ fun TodayScreen(
                 LoadFailedMessage(onRetry = { scope.launch { app.sessions.retryRestore() } }, modifier = Modifier.padding(padding))
             }
 
-            LearnerAccess.Restoring -> {}
+            LearnerAccess.Restoring -> {
+                TodayPlaceholder(padding)
+            }
 
             LearnerAccess.SignedIn, LearnerAccess.NoGoal, LearnerAccess.Learner -> {
                 TodayRead(app, navigator, viewModel, padding)

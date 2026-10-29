@@ -3,8 +3,8 @@ package com.zoonk.android
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.isSelected
 import androidx.compose.ui.test.junit4.ComposeTestRule
 import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onNodeWithText
@@ -43,10 +43,10 @@ class MainActivityTest {
         rule.onNodeWithText(AppRoute.PlanLink("plan-1").toString()).assertIsDisplayed()
 
         controller.get().onBackPressedDispatcher.onBackPressed()
-        rule.onNode(hasText("Today") and !hasClickAction()).assertIsDisplayed()
+        rule.onNode(hasText("Today") and isSelected()).assertIsDisplayed()
 
         controller.recreate()
-        rule.onNode(hasText("Today") and !hasClickAction()).assertIsDisplayed()
+        rule.onNode(hasText("Today") and isSelected()).assertIsDisplayed()
         rule.onNodeWithText(AppRoute.PlanLink("plan-1").toString()).assertDoesNotExist()
     }
 
@@ -54,6 +54,6 @@ class MainActivityTest {
     fun aLinkTheAppHasNoPlaceForOpensToday() {
         Robolectric.buildActivity(MainActivity::class.java, link("https://zoonk.com/auth/apple?token=abc")).setup()
 
-        rule.onNode(hasText("Today") and !hasClickAction()).assertIsDisplayed()
+        rule.onNode(hasText("Today") and isSelected()).assertIsDisplayed()
     }
 }
