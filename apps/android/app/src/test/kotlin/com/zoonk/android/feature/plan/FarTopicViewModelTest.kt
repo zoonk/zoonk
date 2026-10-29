@@ -76,7 +76,7 @@ class FarTopicViewModelTest {
             assertEquals(listOf(flask.skillId), api.outlineWrites)
 
             api.outline = { SkillOutline(emptyList(), SkillOutline.Status.WRITING) }
-            val following = launch { topics.follow(flask.skillId) }
+            val following = launch { topics.follow() }
             advanceTimeBy(5.seconds)
             api.outline = { SkillOutline(chapters, SkillOutline.Status.READY) }
             advanceUntilIdle()
@@ -106,6 +106,44 @@ class FarTopicViewModelTest {
             advanceUntilIdle()
 
             assertEquals(1, api.plans)
+            page.cancel()
+        }
+
+    @Test
+    fun anEarlierOpeningsReadDoesntReplaceWhatTheNextOneShows() =
+        runTest(dispatcher) {
+            val (topics) = setUp()
+            val slowRead = CompletableDeferred<Unit>()
+            api.outlineReadGate = slowRead
+            topics.open(flask)
+            advanceUntilIdle()
+            topics.close()
+            api.outlineReadGate = null
+            topics.open(flask)
+            advanceUntilIdle()
+            topics.request()
+            advanceUntilIdle()
+
+            slowRead.complete(Unit)
+            advanceUntilIdle()
+
+            assertEquals(FarTopicShown.Writing, topics.sheet.value?.shown)
+        }
+
+    @Test
+    fun lessonsWrittenWhileTheSheetWasClosedReadThePageAgainOnTheNextClose() =
+        runTest(dispatcher) {
+            val (topics, store) = setUp()
+            val page = launch { store.plan[goalId].shown.collect {} }
+            advanceUntilIdle()
+            api.outline = { SkillOutline(chapters, SkillOutline.Status.READY) }
+
+            topics.open(flask)
+            advanceUntilIdle()
+            topics.close()
+            advanceUntilIdle()
+
+            assertEquals(2, api.plans)
             page.cancel()
         }
 
@@ -151,7 +189,7 @@ class FarTopicViewModelTest {
             advanceUntilIdle()
             api.outline = { throw ApiException(ApiError.Network) }
 
-            topics.follow(flask.skillId)
+            topics.follow()
             assertEquals(FarTopicShown.Unreachable(stuck = true), topics.sheet.value?.shown)
 
             topics.retry()

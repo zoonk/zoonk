@@ -52,6 +52,9 @@ internal class FakePlanApi : PlanApi {
 
     var outline: () -> SkillOutline = { SkillOutline(emptyList(), SkillOutline.Status.AVAILABLE) }
     var outlineReads = 0
+
+    /** Holds the far topic reads started while it's set, until it opens. */
+    var outlineReadGate: CompletableDeferred<Unit>? = null
     var writeOutline: () -> SkillOutlineGeneration = { SkillOutlineGeneration(null, SkillOutlineGeneration.Status.WRITING) }
 
     /** Holds every far topic write until it opens. */
@@ -193,6 +196,7 @@ internal class FakePlanApi : PlanApi {
         goalId: UUID,
         skillId: UUID,
     ): SkillOutline {
+        outlineReadGate?.await()
         outlineReads++
         return outline()
     }

@@ -119,19 +119,26 @@ class FarTopicViewModel(
 
     private var landed = false
 
+    /** Counts the sheet's openings, so an answer to an earlier one doesn't show in the next. */
+    private var openings = 0
+
     fun open(topic: FarTopic) {
+        val opening = ++openings
         opened.value = FarTopicSheetState(topic)
         viewModelScope.launch {
             val read = store.outline(goalId, topic.skillId)
-            if (read !is MutationResult.Obsolete) update(topic.skillId) { copy(shown = read.shown()) }
+            if (read is MutationResult.Obsolete) return@launch
+            val shown = read.shown().also(::noteLanded)
+            update(opening) { copy(shown = shown) }
         }
     }
 
     fun request() {
         val state = opened.value ?: return
         if (state.asking) return
+        val opening = openings
         val skillId = state.topic.skillId
-        update(skillId) { copy(asking = true) }
+        update(opening) { copy(asking = true) }
         viewModelScope.launch {
             val shown =
                 when (val result = store.writeOutline(goalId, skillId)) {
@@ -139,7 +146,7 @@ class FarTopicViewModel(
                         if (result.value.status == SkillOutlineGeneration.Status.WRITING) {
                             FarTopicShown.Writing
                         } else {
-                            store.outline(goalId, skillId).shown().also { if (it is FarTopicShown.Ready) landed = true }
+                            store.outline(goalId, skillId).shown().also(::noteLanded)
                         }
                     }
 
@@ -152,21 +159,23 @@ class FarTopicViewModel(
                         null
                     }
                 }
-            update(skillId) { copy(shown = shown ?: this.shown, asking = false) }
+            update(opening) { copy(shown = shown ?: this.shown, asking = false) }
         }
     }
 
     fun retry() {
         val state = opened.value ?: return
         if ((state.shown as? FarTopicShown.Unreachable)?.stuck == true) {
-            update(state.topic.skillId) { copy(shown = FarTopicShown.Writing) }
+            update(openings) { copy(shown = FarTopicShown.Writing) }
         } else {
             request()
         }
     }
 
     /** Runs while the sheet shows the lessons being written. */
-    suspend fun follow(skillId: UUID) {
+    suspend fun follow() {
+        val opening = openings
+        val skillId = opened.value?.topic?.skillId ?: return
         val started = timeSource.markNow()
         var misses = 0
 
@@ -178,13 +187,13 @@ class FarTopicViewModel(
             misses = if (outline == null) misses + 1 else 0
 
             if (outline != null && outline.status != SkillOutline.Status.WRITING) {
-                landed = true
-                update(skillId) { copy(shown = outline.shown()) }
+                val shown = outline.shown().also(::noteLanded)
+                update(opening) { copy(shown = shown) }
                 return
             }
 
             if (misses >= MAX_MISSES || started.elapsedNow() >= GIVE_UP_AFTER) {
-                update(skillId) { copy(shown = FarTopicShown.Unreachable(stuck = true)) }
+                update(opening) { copy(shown = FarTopicShown.Unreachable(stuck = true)) }
                 return
             }
         }
@@ -198,11 +207,16 @@ class FarTopicViewModel(
         }
     }
 
-    /** Answers apply only while their topic is open: the learner may have closed it or opened another. */
+    /** Chapters its row doesn't show yet, even ones written while the sheet was closed: the page reads again on closing. */
+    private fun noteLanded(shown: FarTopicShown) {
+        if (shown is FarTopicShown.Ready) landed = true
+    }
+
+    /** Answers apply only to the opening that asked: the learner may have closed it or opened another since. */
     private fun update(
-        skillId: UUID,
+        opening: Int,
         transform: FarTopicSheetState.() -> FarTopicSheetState,
-    ) = opened.update { state -> state?.takeIf { it.topic.skillId == skillId }?.transform() ?: state }
+    ) = opened.update { state -> if (opening == openings) state?.transform() else state }
 
     private companion object {
         val POLL_EVERY = 4.seconds
@@ -387,6 +401,6 @@ private fun FollowWhileWritten(
 ) {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     LaunchedEffect(lifecycle, skillId) {
-        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { topics.follow(skillId) }
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { topics.follow() }
     }
 }
