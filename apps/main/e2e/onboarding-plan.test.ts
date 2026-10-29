@@ -93,6 +93,7 @@ test("keeps the learner's time when saving it fails, and saves it on the next tr
   await page.getByRole("button", { exact: true, name: "Continue" }).click();
   await expect(page.getByText("Plan created", { exact: true })).toBeVisible();
   await expect(page.getByText("45 min a day", { exact: true })).toBeVisible();
+  await expect(page.getByRole("alert").filter({ hasText: "That didn't save." })).toBeHidden();
 });
 
 test("an exam's plan waits on the reveal while its notice is read, then shows on its own", async ({

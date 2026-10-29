@@ -74,7 +74,7 @@ export function StepsFlow({
   routes: OnboardingRoutes;
 }) {
   const [isPending, startTransition] = useTransition();
-  const [failed, setFailed] = useState(false);
+  const [failedStep, setFailedStep] = useState<OnboardingStep | null>(null);
 
   // Current only when the page opened on the plan; after the steps the reveal reads it fresh.
   const pagePlan = (onboarding.steps[0] ?? "plan") === "plan" ? initialPlan : null;
@@ -101,9 +101,9 @@ export function StepsFlow({
     const step = state.current;
     setSending({ open: true, step });
 
-    startTransition(async () => {
-      setFailed(false);
+    setFailedStep(null);
 
+    startTransition(async () => {
       // A save that fails, even by throwing, keeps the learner here with what they picked.
       const { data: outcome } = await safeAsync(() =>
         actions.answer({ goalId: state.view.goal.id, input }),
@@ -113,7 +113,7 @@ export function StepsFlow({
       setSending({ open: false, step });
 
       if (!outcome || outcome.status === "failed") {
-        setFailed(true);
+        setFailedStep(step);
         return;
       }
 
@@ -167,7 +167,7 @@ export function StepsFlow({
             // Answers change in "Adjust" now, not by going back through the questions.
             onBack: state.history.length > 0 && !isPlan ? back : undefined,
           }}
-          notice={failed && <ChangeSaveError />}
+          notice={failedStep === state.current && <ChangeSaveError />}
         >
           {/* Placement follows the run itself, so only the questions say it stopped. */}
           <PlanStartNoticeProvider
