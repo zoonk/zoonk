@@ -68,7 +68,7 @@ const nextConfig: NextConfig = {
   },
   logging: { browserToTerminal: true },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
-  partialPrefetching: false,
+  partialPrefetching: true,
   reactCompiler: true,
   redirects: async () => [...oldStartRedirects, ...movedPageRedirects],
   turbopack: {
