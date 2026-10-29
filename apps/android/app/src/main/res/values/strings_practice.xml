@@ -33,7 +33,8 @@
     <string name="practice_pause_stop">Stop for today</string>
     <string name="practice_pause_failed">We couldn\'t stop the session. Try again.</string>
     <string name="practice_done_title">Practice done</string>
-    <string name="practice_not_found_title">This practice isn\'t available</string>
-    <string name="practice_not_found_description">It may have ended or moved. Today has what\'s next.</string>
-    <string name="practice_back_to_today">Back to Today</string>
+    <string name="practice_done_review">Review done</string>
+    <string name="practice_not_found_title">These questions aren\'t here anymore</string>
+    <string name="practice_not_found_description">They may have ended or moved. Today has what\'s next.</string>
+    <string name="practice_close">Close</string>
 </resources>

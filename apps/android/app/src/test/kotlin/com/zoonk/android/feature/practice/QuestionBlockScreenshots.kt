@@ -169,6 +169,27 @@ class QuestionBlockScreenshots {
         show("phone-font200-checked", check = true, questions = arrayOf(planet(), next))
     }
 
+    private val typed =
+        blockQuestion(
+            "5b4c3e1a-1c2d-4e5f-8a9b-0c1d2e3f4a5b",
+            "format" to "typed",
+            "question" to "What's the chemical symbol for sodium?",
+            "options" to null,
+        )
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneTyped() {
+        show("phone-typed", questions = arrayOf(typed, next))
+    }
+
+    @Test
+    @Config(qualifiers = "w411dp-h891dp-xxhdpi")
+    fun phoneTypedLargeFont() {
+        RuntimeEnvironment.setFontScale(2f)
+        show("phone-font200-typed", questions = arrayOf(typed, next))
+    }
+
     @Test
     @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
     fun tabletPassageBeside() {

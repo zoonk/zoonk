@@ -2,9 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "practice_already_answered": "7fe9432a1332d0fdf29017ff1c3bec5a6342415d3252db2fbf58a3769805745c",
-  "practice_back_to_today": "56fd2c8c409f7cf941ddd64aa8764ae0e3cc8ba9d18eb9306c85d69856a69618",
   "practice_check": "f265d5e786dd2788516f70ee64d3c56eff5c075ac530793a0cbdc30c750064c1",
+  "practice_close": "7f387ca519336a612ad0d7c69011de45440b6ef0855425b484e8a49a304d8a8b",
   "practice_continue": "eba33facb75d6f337aa804f2727e0de04f44ced7aec16f13aff415a53086cbb6",
+  "practice_done_review": "c0ed4c305a02a183f4709657c03c947ba2a86c0e94c0722d2d8faa18ea5f2125",
   "practice_done_title": "48dc429c4408e302cbb06c4240e84313c9ffd2df5603b1cc89380bde44e62c3a",
   "practice_finish": "2a0892e4f4042c35a8ded465e06f28b1ed4a938c3ae1648448b446338137bb41",
   "practice_finish_ready_detail": "eb35825e1ab3006ffcb954068e7ea7f7d89e21927a285f7cef621c9dbdf621f6",
@@ -14,8 +15,8 @@
   "practice_net_right": "e813ce58a66a6446aea5559704f3cd7829c4193ee096e9226bb7be6cc821e8dc",
   "practice_net_tally": "58cb3dc280800b6e8c9e7794660d2121a471b250d09b2fbc04596d8affaaad48",
   "practice_net_wrong": "54abbc1074fca4def04c4a57790d8458c7d3f9e1382917c7f166ef8387d044e6",
-  "practice_not_found_description": "e82dec30e6b14dcc15f5d3e0795137b14bd0b02de4dea4a3710917c1f7b1c39d",
-  "practice_not_found_title": "0c5c487d66c96084764a2c6d8dcac709fd028b3de0661abb6db663cea90772b9",
+  "practice_not_found_description": "d80c9b4009a7f34432a72c9d78b6cdffdc208edaa736374147588c4cea1ca7fc",
+  "practice_not_found_title": "0d06b01f3ae99ed84d59be4ecc8d1278d42863236f9f44a29d3d8a73570d168e",
   "practice_pause_failed": "7874ea85ac2ae2794f1cee7ac093ad9a6443f6286747acc7ee4eebeb409a9289",
   "practice_pause_stop": "fea96b27bf850935e3d3631431ebc09f09f383bf170084c7b7df010830a28b73",
   "practice_pause_text": "05541185e9a489edcbe979d733503f3473331572282d3989a555cbcbe2a8c178",
@@ -65,7 +66,8 @@
     <string name="practice_pause_stop">Arrêter pour aujourd’hui</string>
     <string name="practice_pause_failed">Impossible d’arrêter la séance. Réessaie.</string>
     <string name="practice_done_title">Entraînement terminé</string>
-    <string name="practice_not_found_title">Cet entraînement n’est pas disponible</string>
-    <string name="practice_not_found_description">Il est peut-être terminé ou déplacé. Tu trouveras la suite dans Aujourd’hui.</string>
-    <string name="practice_back_to_today">Retour à Aujourd’hui</string>
+    <string name="practice_done_review">Révision terminée</string>
+    <string name="practice_not_found_title">Ces questions ne sont plus disponibles</string>
+    <string name="practice_not_found_description">Elles ont peut-être été terminées ou déplacées. La suite est dans Aujourd’hui.</string>
+    <string name="practice_close">Fermer</string>
 </resources>

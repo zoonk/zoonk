@@ -94,7 +94,7 @@ fun ItemSetText(
     continued: Boolean = false,
     inAside: Boolean = false,
 ) {
-    val folds = continued && !inAside && (set.text?.length ?: 0) >= LONG_TEXT_CHARACTERS
+    val folds = continued && !inAside && isLongText(set.text)
     var expanded by rememberSaveable(set.id) { mutableStateOf(!folds) }
     val foldedHeight = MaterialTheme.typography.bodyMedium.lineHeightDp() * FOLDED_LINES
 
@@ -285,7 +285,9 @@ private fun checkedDay(checkedAt: String): LocalDate? =
         Instant.parse(checkedAt).atZone(ZoneOffset.UTC).toLocalDate()
     }.getOrNull()
 
-/** About where a phone starts folding a set's text. */
+/** About where a phone starts folding a set's text, and where an aside gives it half the window. */
+internal fun isLongText(text: String?): Boolean = (text?.length ?: 0) >= LONG_TEXT_CHARACTERS
+
 private const val LONG_TEXT_CHARACTERS = 400
 private const val FOLDED_LINES = 4
 private const val FADE_FROM = 0.4f

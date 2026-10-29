@@ -50,7 +50,11 @@ class QuestionBlockViewModelTest {
     private var answered = setOf<String>()
     private var status = "active"
     private var answer: () -> StudyAnswerFeedback = { feedback(isCorrect = true) }
-    private var finish: () -> StudyBlockCompletion = { throw ApiException(ApiError.Network) }
+    private var finishes = 0
+    private var finish: () -> StudyBlockCompletion = {
+        finishes++
+        throw ApiException(ApiError.Network)
+    }
 
     @Before
     fun main() = Dispatchers.setMain(dispatcher)
@@ -182,7 +186,7 @@ class QuestionBlockViewModelTest {
         }
 
     @Test
-    fun aFinishThatFailsCanBeTriedAgain() =
+    fun aFinishThatFailsWaitsForTryAgainAndSendsItOnce() =
         runTest(dispatcher) {
             val viewModel = viewModel()
             val read = started(viewModel)
@@ -194,8 +198,13 @@ class QuestionBlockViewModelTest {
             advanceUntilIdle()
             viewModel.next(read.questions)
             advanceUntilIdle()
-
             assertEquals(BlockPhase.FinishFailed, viewModel.state.value?.phase)
+            assertEquals(1, finishes)
+
+            viewModel.finish()
+            viewModel.finish()
+            advanceUntilIdle()
+            assertEquals(2, finishes)
         }
 
     @Test
@@ -232,6 +241,74 @@ class QuestionBlockViewModelTest {
                 ),
             )
             assertTrue(viewModel.state.value?.timedOut == true)
+        }
+
+    @Test
+    fun tryAgainSendsTheSameTimedNotSureAfterItFailed() =
+        runTest(dispatcher) {
+            val timed =
+                JsonObject(
+                    mapOf(
+                        "kind" to JsonPrimitive("timed"),
+                        "lesson" to kotlinx.serialization.json.JsonNull,
+                        "timeLimitSeconds" to JsonPrimitive(45),
+                    ),
+                )
+            val viewModel = viewModel(drill = timed) { 3_000L }
+            val read = started(viewModel)
+            answer = { throw ApiException(ApiError.Network) }
+
+            viewModel.timeUp(read.questions.first(), 45)
+            advanceUntilIdle()
+            assertEquals(BlockPhase.AnswerFailed, viewModel.state.value?.phase)
+
+            answer = { feedback(isCorrect = false) }
+            viewModel.retry()
+            advanceUntilIdle()
+
+            assertTrue(viewModel.state.value?.phase is BlockPhase.Checked)
+            assertEquals(45_000L, sent.last().durationMs)
+            assertEquals(
+                """{"dontKnow":true}""",
+                ApiJson.encodeToString(
+                    com.zoonk.api.models.StudyAnswerInputAnswer
+                        .serializer(),
+                    sent.last().answer,
+                ),
+            )
+        }
+
+    @Test
+    fun aSecondContinueBeforeTheNextQuestionShowsSkipsNothing() =
+        runTest(dispatcher) {
+            val viewModel = viewModel()
+            val read = started(viewModel)
+
+            viewModel.submit(read.questions[0], Answer.Choice(0))
+            advanceUntilIdle()
+            viewModel.next(read.questions)
+            viewModel.next(read.questions)
+
+            assertEquals(1, viewModel.state.value?.index)
+            assertEquals(BlockPhase.Answering, viewModel.state.value?.phase)
+        }
+
+    @Test
+    fun anAnswerIsKeptInTheBlocksReadSoReopeningResumesAfterIt() =
+        runTest(dispatcher) {
+            val viewModel = viewModel()
+            val read = started(viewModel)
+
+            viewModel.submit(read.questions[0], Answer.Choice(0))
+            advanceUntilIdle()
+
+            val kept = (viewModel.block.state.value as com.zoonk.android.data.LoadState.Loaded).value
+            assertEquals(
+                1,
+                com.zoonk.android.feature.practice.block.BlockRun
+                    .begin(viewModel.questions(kept).questions)
+                    .index,
+            )
         }
 
     private companion object {

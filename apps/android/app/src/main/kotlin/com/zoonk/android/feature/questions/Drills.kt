@@ -172,20 +172,20 @@ fun DrillAnswerNotes(
     trap: String?,
 ) {
     if (timedOut) {
-        DrillAnswerNote(R.drawable.ic_timer_off) {
+        NoteRow(R.drawable.ic_timer_off) {
             Text(stringResource(R.string.questions_drill_timed_out), style = MaterialTheme.typography.bodyMedium)
         }
     }
 
     if (notSure && drill?.kind == Drill.Kind.NoGuessing) {
-        DrillAnswerNote(R.drawable.ic_back_hand) {
+        NoteRow(R.drawable.ic_back_hand) {
             Text(stringResource(R.string.questions_drill_not_sure_praise), style = MaterialTheme.typography.bodyMedium)
         }
     }
 
     if (trap != null) {
         val label = stringResource(R.string.questions_drill_trap)
-        DrillAnswerNote(R.drawable.ic_warning) {
+        NoteRow(R.drawable.ic_warning) {
             Text(
                 text =
                     buildAnnotatedString {
@@ -327,8 +327,9 @@ private fun LessonLink(
     }
 }
 
+/** A quiet line with its symbol beside it, as main's `Callout`. */
 @Composable
-private fun DrillAnswerNote(
+internal fun NoteRow(
     @DrawableRes icon: Int,
     text: @Composable () -> Unit,
 ) {

@@ -1,5 +1,7 @@
 package com.zoonk.android.feature.practice.block
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -8,13 +10,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +32,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
+import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.semantics.contentDescription
@@ -41,6 +54,7 @@ import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.player.LessonTitle
 import com.zoonk.android.feature.questions.Answer
 import com.zoonk.android.feature.questions.AnswerCheck
 import com.zoonk.android.feature.questions.DrillAnswerNotes
@@ -60,9 +74,11 @@ import com.zoonk.android.feature.questions.QuestionTitle
 import com.zoonk.android.feature.questions.QuotedSource
 import com.zoonk.android.feature.questions.ShowAnswersButton
 import com.zoonk.android.feature.questions.TrueFalseWords
+import com.zoonk.android.feature.questions.isLongText
 import com.zoonk.android.feature.session.blockTitle
 import com.zoonk.android.feature.session.toDayStep
-import com.zoonk.android.feature.tutor.AskTutor
+import com.zoonk.android.feature.today.TodayRead
+import com.zoonk.android.feature.tutor.TutorAskButton
 import com.zoonk.android.feature.tutor.TutorScope
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -73,8 +89,10 @@ import com.zoonk.android.ui.components.StatusMessage
 import com.zoonk.android.ui.scaffold.TaskScaffold
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.FeedbackSubmissionContext
+import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockCompletion
 import com.zoonk.api.models.StudyBlockDetail
+import kotlinx.serialization.Serializable
 import java.util.UUID
 
 @Composable
@@ -82,7 +100,17 @@ fun QuestionBlockScreen(
     route: AppRoute.QuestionBlock,
     app: AppContainer,
     navigator: AppNavigator,
-) = QuestionBlock(route.sessionId, route.blockId, app, navigator, onClose = navigator::closeTask)
+) {
+    // The session's own day says whether the exam is tomorrow; Today has it read already.
+    val examTomorrow =
+        remember(route) {
+            ((app.today.today.state.value as? LoadState.Loaded)?.value as? TodayRead.Day)
+                ?.day
+                ?.takeIf { it.sessionId?.toString() == route.sessionId }
+                ?.examTomorrow == true
+        }
+    QuestionBlock(route.sessionId, route.blockId, app, navigator, onClose = navigator::closeTask, examTomorrow = examTomorrow)
+}
 
 /**
  * A session's practice or review block played one question at a time (main's `QuestionBlock`), for
@@ -96,8 +124,10 @@ fun QuestionBlock(
     app: AppContainer,
     navigator: AppNavigator,
     onClose: () -> Unit,
-    finished: @Composable (StudyBlockCompletion) -> Unit = { BlockFinished(it, onClose) },
+    examTomorrow: Boolean = false,
+    finished: (@Composable (StudyBlockCompletion) -> Unit)? = null,
 ) {
+    BackHandler(onBack = onClose)
     val key = remember(sessionId, blockId) { blockKey(sessionId, blockId) }
     if (key == null) {
         NotFound(onClose)
@@ -116,7 +146,11 @@ fun QuestionBlock(
             val run by viewModel.state.collectAsStateWithLifecycle()
             run?.let { shown ->
                 val phase = shown.phase
-                if (phase is BlockPhase.Finished) finished(phase.completion) else Runner(read, shown, viewModel, app, navigator, onClose)
+                when {
+                    phase !is BlockPhase.Finished -> Runner(read, shown, viewModel, app, navigator, onClose, examTomorrow)
+                    finished != null -> finished(phase.completion)
+                    else -> BlockFinished(phase.completion, read.detail.isReview, onClose)
+                }
             }
         }
 
@@ -155,27 +189,33 @@ private fun NotFound(onClose: () -> Unit) {
             title = stringResource(R.string.practice_not_found_title),
             description = stringResource(R.string.practice_not_found_description),
             modifier = Modifier.padding(padding),
-        ) { Button(onClick = onClose) { Text(stringResource(R.string.practice_back_to_today)) } }
+        ) { Button(onClick = onClose) { Text(stringResource(R.string.practice_close)) } }
     }
 }
 
+/** The block's result in place of its questions; [completion] null while it saves. */
 @Composable
 private fun BlockFinished(
-    completion: StudyBlockCompletion,
+    completion: StudyBlockCompletion?,
+    review: Boolean,
     onClose: () -> Unit,
 ) {
     TaskScaffold(
         onClose = onClose,
         bottomBar = {
             ActionBarWidth {
-                Button(
-                    onClick = onClose,
-                    modifier = Modifier.fillMaxWidth(),
-                ) { Text(stringResource(R.string.practice_continue)) }
+                ActionFlow { width ->
+                    Button(onClick = onClose, enabled = completion != null, modifier = width) {
+                        if (completion == null) CircularProgressIndicator(Modifier.padding(end = 8.dp).size(18.dp), strokeWidth = 2.dp)
+                        Text(stringResource(R.string.practice_continue))
+                    }
+                }
             }
         },
-    ) { padding -> BlockDone(completion, Modifier.fillMaxSize().padding(padding)) }
+    ) { padding -> BlockDone(completion, review, Modifier.fillMaxSize().padding(padding)) }
 }
+
+private val StudyBlockDetail.isReview get() = block.kind == StudyBlock.Kind.REVIEW
 
 @Composable
 internal fun Runner(
@@ -185,26 +225,57 @@ internal fun Runner(
     app: AppContainer,
     navigator: AppNavigator,
     onClose: () -> Unit,
+    examTomorrow: Boolean = false,
 ) {
     val detail = read.detail
     val questions = read.questions
     val question = questions.getOrNull(run.index)
-    var draft by rememberSaveable(run.index, stateSaver = AnswerSaver) { mutableStateOf<Answer?>(null) }
+    // Kept with its question, so a pick restored after the process was gone never answers another.
+    var saved by rememberSaveable(stateSaver = DraftSaver) { mutableStateOf<Draft?>(null) }
+    val draft = saved?.takeIf { it.itemId == question?.itemId }?.answer
     val title = blockTitle(detail.block.toDayStep())
+
+    if (run.phase == BlockPhase.Finishing) {
+        BlockFinished(null, detail.isReview, onClose)
+        return
+    }
+
+    val focus = remember { FocusRequester() }
+    val mainAction: (() -> Unit)? =
+        when {
+            run.phase is BlockPhase.Checked -> ({ viewModel.next(questions) })
+            run.phase == BlockPhase.FinishReady || run.phase == BlockPhase.FinishFailed -> viewModel::finish
+            run.phase == BlockPhase.AlreadyAnswered -> viewModel::reread
+            question == null -> null
+            run.stage == DrillStage.Ideas -> ({ viewModel.startDrill(questions) })
+            run.stage == DrillStage.Reading -> viewModel::reveal
+            run.canAnswer && draft != null -> ({ viewModel.submit(question, draft) })
+            else -> null
+        }
+
+    LaunchedEffect(Unit) { focus.requestFocus() }
 
     TaskScaffold(
         onClose = onClose,
-        title = { Text(title, maxLines = 1) },
-        actions = { reportTarget(question, run)?.let { ReportProblemMenu(app, it) } },
-        bottomBar =
-            when (run.phase) {
-                BlockPhase.Finishing -> null
-                else -> ({ ActionBarWidth { BlockActions(read, run, question, draft, viewModel, app, navigator) } })
+        // A keyboard's Enter runs the main action and Escape leaves, as in the lesson player.
+        modifier =
+            Modifier.focusRequester(focus).focusable().onKeyEvent { event ->
+                when {
+                    event.type != KeyEventType.KeyDown -> false
+                    event.key == Key.Enter || event.key == Key.NumPadEnter -> mainAction?.invoke() != null
+                    event.key == Key.Escape -> true.also { onClose() }
+                    else -> false
+                }
             },
+        title = { LessonTitle(title) },
+        actions = { reportTarget(question, run)?.let { ReportProblemMenu(app, it) } },
+        bottomBar = { ActionBarWidth { BlockActions(read, run, question, draft, viewModel, app, navigator) } },
     ) { padding ->
         Column(Modifier.fillMaxSize().padding(padding)) {
             if (questions.isNotEmpty()) Segments(questions, run)
-            BlockBody(read, run, question, onDraft = { draft = it }, viewModel, navigator)
+            BlockBody(read, run, question, onDraft = { answer ->
+                saved = question?.let { Draft(it.itemId, answer) }
+            }, viewModel, navigator, examTomorrow)
         }
     }
 }
@@ -228,16 +299,19 @@ private fun Segments(
             )
         }
 
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .padding(bottom = 8.dp)
-            .semantics {
-                contentDescription = label
-                progressBarRangeInfo = ProgressBarRangeInfo(run.index.toFloat(), 0f..questions.size.toFloat())
-            },
-    ) { MeterParts(parts) }
+    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+        Box(
+            Modifier
+                .widthIn(max = CONTENT_WIDTH)
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .padding(bottom = 8.dp)
+                .semantics {
+                    contentDescription = label
+                    progressBarRangeInfo = ProgressBarRangeInfo(run.index.toFloat(), 0f..questions.size.toFloat())
+                },
+        ) { MeterParts(parts) }
+    }
 }
 
 @Composable
@@ -248,13 +322,9 @@ private fun BlockBody(
     onDraft: (Answer?) -> Unit,
     viewModel: QuestionBlockViewModel,
     navigator: AppNavigator,
+    examTomorrow: Boolean,
 ) {
     val phase = run.phase
-
-    if (phase == BlockPhase.Finishing) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) { CircularProgressIndicator() }
-        return
-    }
 
     BoxWithConstraints(Modifier.fillMaxSize()) {
         val aside = question?.set?.takeIf { it.listening == null && maxWidth >= ASIDE_FROM }
@@ -264,7 +334,7 @@ private fun BlockBody(
                 ?.set
                 ?.id == question.set?.id
 
-        Row(Modifier.fillMaxSize(), horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+        Row(Modifier.fillMaxSize()) {
             Column(
                 Modifier
                     .weight(1f)
@@ -287,6 +357,7 @@ private fun BlockBody(
                                 onDraft,
                                 viewModel,
                                 navigator,
+                                examTomorrow,
                             )
                         }
                     }
@@ -294,11 +365,13 @@ private fun BlockBody(
             }
 
             if (aside != null) {
+                VerticalDivider()
+                // A rail beside the question, half the window only for a long passage, as main's aside.
+                val rail = if (isLongText(aside.text)) Modifier.weight(1f) else Modifier.width(ASIDE_WIDTH)
                 Column(
-                    Modifier
-                        .weight(1f)
+                    rail
                         .verticalScroll(rememberScrollState())
-                        .padding(end = 16.dp, top = 8.dp, bottom = 8.dp),
+                        .padding(horizontal = 24.dp, vertical = 8.dp),
                 ) { ItemSetText(aside, inAside = true) }
             }
         }
@@ -316,6 +389,7 @@ private fun QuestionArea(
     onDraft: (Answer?) -> Unit,
     viewModel: QuestionBlockViewModel,
     navigator: AppNavigator,
+    examTomorrow: Boolean,
 ) {
     val drill = question.drill
     val phase = run.phase
@@ -338,6 +412,9 @@ private fun QuestionArea(
         DrillCountdown(seconds = seconds, onTimeUp = { viewModel.timeUp(question, seconds) })
     }
 
+    if (question.placement && run.stage != DrillStage.Reading) PlacementNote()
+    question.citation?.takeIf { question.quoted }?.let { QuotedSource(it) }
+
     question.set?.let { set ->
         if (set.listening != null) {
             ListeningSet(set)
@@ -346,16 +423,13 @@ private fun QuestionArea(
         }
     }
 
+    ItemSupport(question)
+
     if (run.stage == DrillStage.Reading) {
-        question.citation?.takeIf { question.quoted }?.let { QuotedSource(it) }
-        ItemSupport(question)
         QuestionTitle(question.question)
         return
     }
 
-    if (question.placement) PlacementNote()
-    question.citation?.takeIf { question.quoted }?.let { QuotedSource(it) }
-    ItemSupport(question)
     if (question.format != QuestionFormat.TrueFalse) QuestionTitle(question.question, graded = checked != null)
 
     QuestionAnswer(
@@ -374,7 +448,7 @@ private fun QuestionArea(
             answer = checked.answer,
             feedback = checked.feedback,
             words = words,
-            examTomorrow = false,
+            examTomorrow = examTomorrow,
             timedOut = run.timedOut,
         ) {
             DrillAnswerNotes(drill, notSure = checked.answer == Answer.DontKnow, timedOut = run.timedOut, trap = checked.feedback.trap)
@@ -396,8 +470,9 @@ private fun BlockActions(
 ) {
     val phase = run.phase
     val ask: @Composable () -> Unit = {
-        if (question != null && !(question.drill?.timeLimitSeconds != null && phase == BlockPhase.Answering)) {
-            AskTutor(
+        // Not on a placement question, nor on a timed one before its answer, as main.
+        if (question != null && !question.placement && !(question.drill?.timeLimitSeconds != null && phase !is BlockPhase.Checked)) {
+            TutorAskButton(
                 TutorScope.Item(
                     question.itemId,
                     read.detail.block.id
@@ -406,32 +481,40 @@ private fun BlockActions(
                 ),
                 app,
                 navigator,
+                worded = phase is BlockPhase.Checked && !phase.feedback.isCorrect,
             )
         }
     }
 
     when {
         phase == BlockPhase.FinishReady -> {
-            Button(onClick = viewModel::finish, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.practice_finish)) }
+            ActionFlow { width ->
+                Button(onClick = viewModel::finish, modifier = width) { Text(stringResource(R.string.practice_finish)) }
+            }
         }
 
         phase == BlockPhase.FinishFailed -> {
-            SaveError(onRetry = viewModel::finish)
+            ActionColumn {
+                SaveErrorText()
+                ActionFlow { width ->
+                    Button(onClick = viewModel::finish, modifier = width) { Text(stringResource(R.string.practice_try_again)) }
+                }
+            }
         }
 
         phase == BlockPhase.AlreadyAnswered -> {
             ActionColumn {
                 Text(stringResource(R.string.practice_already_answered), style = MaterialTheme.typography.bodyMedium)
-                Button(onClick = viewModel::reread, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.practice_continue)) }
+                ActionFlow { width ->
+                    Button(onClick = viewModel::reread, modifier = width) { Text(stringResource(R.string.practice_continue)) }
+                }
             }
         }
 
         phase is BlockPhase.Checked -> {
-            ActionRow(ask) {
-                Button(
-                    onClick = { viewModel.next(read.questions) },
-                    modifier = Modifier.weight(1f),
-                ) { Text(stringResource(R.string.practice_continue)) }
+            ActionFlow { width ->
+                Button(onClick = { viewModel.next(read.questions) }, modifier = width) { Text(stringResource(R.string.practice_continue)) }
+                ask()
             }
         }
 
@@ -447,8 +530,16 @@ private fun BlockActions(
 
         else -> {
             ActionColumn {
-                if (phase == BlockPhase.AnswerFailed) SaveErrorText()
-                ActionRow(ask) {
+                if (phase == BlockPhase.AnswerFailed) {
+                    SaveErrorText()
+                    if (viewModel.canRetry) {
+                        FilledTonalButton(
+                            onClick = viewModel::retry,
+                            modifier = Modifier.fillMaxWidth(),
+                        ) { Text(stringResource(R.string.practice_try_again)) }
+                    }
+                }
+                ActionFlow { width ->
                     when (notSureOffer(question)) {
                         NotSure.Drill -> {
                             NotSureButton(onClick = { viewModel.submit(question, Answer.DontKnow) }, enabled = run.canAnswer)
@@ -464,9 +555,10 @@ private fun BlockActions(
 
                         null -> {}
                     }
-                    CheckButton(busy = phase == BlockPhase.Checking, enabled = run.canAnswer && draft != null) {
+                    CheckButton(busy = phase == BlockPhase.Checking, enabled = run.canAnswer && draft != null, modifier = width) {
                         draft?.let { viewModel.submit(question, it) }
                     }
+                    ask()
                 }
             }
         }
@@ -496,12 +588,19 @@ private fun isNetScored(
         ?.let { it.format.value == "swipe" }
         ?: detail.block.netScored
 
-private val AnswerSaver =
-    Saver<Answer?, String>(
-        save = { it?.let { answer -> ApiJson.encodeToString(Answer.serializer(), answer) } ?: "" },
-        restore = { it.takeIf(String::isNotEmpty)?.let { json -> ApiJson.decodeFromString(Answer.serializer(), json) } },
+@Serializable
+private data class Draft(
+    val itemId: String,
+    val answer: Answer?,
+)
+
+private val DraftSaver =
+    Saver<Draft?, String>(
+        save = { it?.let { draft -> ApiJson.encodeToString(Draft.serializer(), draft) } ?: "" },
+        restore = { it.takeIf(String::isNotEmpty)?.let { json -> ApiJson.decodeFromString(Draft.serializer(), json) } },
     )
 
 private val ASIDE_FROM = 840.dp
+private val ASIDE_WIDTH = 360.dp
 private val CONTENT_WIDTH = 640.dp
 private const val READ_ALPHA = 0.25f

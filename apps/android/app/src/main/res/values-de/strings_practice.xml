@@ -2,9 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "practice_already_answered": "6fbf9650ba31736e65cd8cb09794893efcfa4039b2c4ea534935ef7ccb7b7234",
-  "practice_back_to_today": "93f94aea5abe7cee0285b5fb3dcb1c5eb1e4a8cfc87be570e32921ecba9eb290",
   "practice_check": "b78a5076b4f52ceaac4445f275d88e7f51e114abed08619cf9a1997f27bae5f5",
+  "practice_close": "68830891a34fd3d3cd83bdb99bea235a138084fbcbafa25389243bfa14080c3d",
   "practice_continue": "5fc1a36b7fc4a343603f0b44066b245c21083857702ddb03b9b441895890d669",
+  "practice_done_review": "4763ea35e7d60ee1beb35c1b434502f5771c5cd14afd4c9ae21eb80d22705728",
   "practice_done_title": "b6e89208d8800a97cc08818fd2d6c56202c39bfe0e6a45dfc86ebe86ec5e14af",
   "practice_finish": "f301f6230c1f62a9e583d3b759042943d1b3038a0d9b2c2c9a96a864074a77f5",
   "practice_finish_ready_detail": "5eedca25f700ea7af3180868e1a1310f92d063a6319279f9509bee0097c81ea5",
@@ -14,8 +15,8 @@
   "practice_net_right": "180e94e29a18241346d4ee074d5223ab0a3b682fd1c9f866787a91199d60a4c7",
   "practice_net_tally": "fd1ec269dade3335e32ea7ba68dc1ac214528a1695ba98d666a09e71960b9ff5",
   "practice_net_wrong": "b9b03d9f30e99f32d2c4376f66b4cc95ae3f676de4603e65868078b249b3fac9",
-  "practice_not_found_description": "2378f933fc24ece9b85256b454b5b70359d5b2d95cd59e4a18e79e1c661d6785",
-  "practice_not_found_title": "a2875d625bca118d5ad8ac0822f049a0b67806a9e05e54650c2062fa72081970",
+  "practice_not_found_description": "7ee9d93970b9894725e6876f9800ff15dd13982532ee0e737cb061a145cb07fd",
+  "practice_not_found_title": "02cfa13aa356974fd80f07f352b4a5a8da404a4f660c24c874f796541089574a",
   "practice_pause_failed": "21ab244a1cf28a077681e63d7c4f21d3b332deacf3c1a8f1d3e956a2d2f89741",
   "practice_pause_stop": "68c9afebf796071923a9a55324fa7952c7658de2995602b044eed4d170ac35ce",
   "practice_pause_text": "83cd6c4aa3e4385e9e1fb95d16caea4948fed6b78128bb0026c3a0757473c8a8",
@@ -63,7 +64,8 @@
     <string name="practice_pause_stop">Für heute aufhören</string>
     <string name="practice_pause_failed">Wir konnten die Lerneinheit nicht beenden. Versuch es noch einmal.</string>
     <string name="practice_done_title">Übung abgeschlossen</string>
-    <string name="practice_not_found_title">Diese Übung ist nicht verfügbar</string>
-    <string name="practice_not_found_description">Sie ist vielleicht beendet oder verschoben worden. Unter „Heute“ findest du, was als Nächstes ansteht.</string>
-    <string name="practice_back_to_today">Zurück zu Heute</string>
+    <string name="practice_done_review">Wiederholung abgeschlossen</string>
+    <string name="practice_not_found_title">Diese Fragen gibt es nicht mehr</string>
+    <string name="practice_not_found_description">Sie wurden vielleicht beendet oder verschoben. Unter „Heute“ findest du, was als Nächstes ansteht.</string>
+    <string name="practice_close">Schließen</string>
 </resources>

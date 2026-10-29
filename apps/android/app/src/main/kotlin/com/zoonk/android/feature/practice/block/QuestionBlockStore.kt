@@ -5,10 +5,12 @@ import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.Audience
 import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.DataDomain
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.perform
 import com.zoonk.android.data.recode
 import com.zoonk.android.feature.questions.Answer
+import com.zoonk.api.models.CheckpointQuestionsInnerAnswered
 import com.zoonk.api.models.StudyAnswerFeedback
 import com.zoonk.api.models.StudyAnswerInput
 import com.zoonk.api.models.StudyAnswerInputAnswer
@@ -60,7 +62,7 @@ class LiveQuestionBlockApi(
         session: AuthenticatedSession,
         key: BlockKey,
         input: StudyAnswerInput,
-    ) = perform { api.clients(session).studySessions.createStudyAnswer(key.sessionId, key.blockId, input) }
+    ) = perform { api.streamingClients(session).studySessions.createStudyAnswer(key.sessionId, key.blockId, input) }
 
     override suspend fun finish(
         session: AuthenticatedSession,
@@ -68,9 +70,8 @@ class LiveQuestionBlockApi(
         timeZone: String,
     ) = perform {
         api
-            .clients(
-                session,
-            ).studySessions
+            .streamingClients(session)
+            .studySessions
             .createStudyBlockCompletion(key.sessionId, key.blockId, StudySessionTimeZone(timeZone))
     }
 
@@ -100,7 +101,14 @@ class QuestionBlockStore(
         answer: Answer,
         durationMs: Long,
     ): MutationResult<StudyAnswerFeedback> =
-        cache.mutate(invalidating = ANSWERED) { session ->
+        cache.mutate(
+            invalidating = ANSWERED,
+            // The block keeps its own read, marked answered, so reopening it resumes past this question.
+            replacing = { feedback ->
+                val block = blocks[key]
+                listOfNotNull((block.state.value as? LoadState.Loaded)?.value?.let { block.replacing(it.answered(itemId, feedback)) })
+            },
+        ) { session ->
             api.answer(
                 session,
                 key,
@@ -115,7 +123,23 @@ class QuestionBlockStore(
         cache.mutate(invalidating = FINISHED) { session -> api.stop(session, sessionId, timeZone()) }
 
     private companion object {
-        val ANSWERED = setOf(DataDomain.LearnerModel, DataDomain.UserProgress)
+        val ANSWERED = setOf(DataDomain.LearnerModel, DataDomain.UserProgress, DataDomain.UserSession)
         val FINISHED = setOf(DataDomain.Goals, DataDomain.LearnerModel, DataDomain.UserProgress, DataDomain.UserSession)
     }
 }
+
+private fun StudyBlockDetail.answered(
+    itemId: String,
+    feedback: StudyAnswerFeedback,
+) = copy(
+    questions =
+        questions.map { question ->
+            if (question.itemId.toString() ==
+                itemId
+            ) {
+                question.copy(answered = CheckpointQuestionsInnerAnswered(feedback.blank, feedback.isCorrect))
+            } else {
+                question
+            }
+        },
+)

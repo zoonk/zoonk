@@ -2,9 +2,10 @@
 <!-- eloqnt-fingerprints-v1
 {
   "practice_already_answered": "ed10832f930fa271536b338dbe21917434cd9f7446c50a639e4888605af801aa",
-  "practice_back_to_today": "12d2333f382d0fead9d65ca18daaa792c49040c7679ab27e6ec6428759527576",
   "practice_check": "6407ea2c775d226fb5a988ff41066c359b8f931a6dd663f99bb67257ed9c1427",
+  "practice_close": "6e5c2a7f543a68214e6df78520b866c5f7c33bb10335213c7850ac1952356f8a",
   "practice_continue": "df69d7f33c844d95eeee7417b847ca8e28eb0a05a9b3da701a320a25887724bd",
+  "practice_done_review": "1a667b73f08c8a20da76ade9de3600de24d7f7136948d572ae79176ecaaa575c",
   "practice_done_title": "6d204805ed20e16b37680e2afc22a1fa5b854c79670396adb3a14929800d3d6e",
   "practice_finish": "b25632a84594d07e8b18f0c6e47d5166023547a3e5b4c883c242e264151a8293",
   "practice_finish_ready_detail": "e5f43013c63e9707787230294df9105b4099156256b16d5a5c57a2af5ebb6fe7",
@@ -14,8 +15,8 @@
   "practice_net_right": "61de1ea3bf0de1d541f7b8b1fd42aa343fe012033b8031ef97b896218c0a9c77",
   "practice_net_tally": "732158dc2d55b2e71c5a1d18e326c5c135646c3a842925ef173b622c5bb92427",
   "practice_net_wrong": "728bbb7d6268d7a196aa93a17a9aa6944163035e73b147a47291644349522ddf",
-  "practice_not_found_description": "303f3794993cf6d270c1c2d6f67a1617e0b889aae78ba652756954afe781424f",
-  "practice_not_found_title": "518ded674bfb5440c6f945a99249baa97649f99afd75ab33733679513832e3ce",
+  "practice_not_found_description": "c2b3c3842be88a706836b31808d15523d09953f5005826d3a8e5a0438557b962",
+  "practice_not_found_title": "cca264405c5bb086c2fade52f738e168529fa79b5ad0ea80a20c324445913349",
   "practice_pause_failed": "e36a2f033f8ea3c513f094fac2e54959621635e6c96a270a38cb59eaa6f1583a",
   "practice_pause_stop": "0c3937460124c9a1f50fec1b8d897e8056ed90ff9e189722ff2d4495847fe3e7",
   "practice_pause_text": "cf110b7b30e83ca8d06038fbe4673f4432550dc2223f9e3dad74130bb03317fc",
@@ -65,7 +66,8 @@
     <string name="practice_pause_stop">Parar por hoje</string>
     <string name="practice_pause_failed">Não foi possível encerrar a sessão. Tente de novo.</string>
     <string name="practice_done_title">Prática concluída</string>
-    <string name="practice_not_found_title">Esta prática não está disponível</string>
-    <string name="practice_not_found_description">Ela pode ter terminado ou mudado de lugar. Confira o que vem a seguir em Hoje.</string>
-    <string name="practice_back_to_today">Voltar para Hoje</string>
+    <string name="practice_done_review">Revisão concluída</string>
+    <string name="practice_not_found_title">Estas perguntas não estão mais aqui</string>
+    <string name="practice_not_found_description">Elas podem ter acabado ou mudado de lugar. Veja o que vem a seguir em Hoje.</string>
+    <string name="practice_close">Fechar</string>
 </resources>

@@ -13,6 +13,7 @@ import com.zoonk.api.models.CheckpointQuestionsInner
 import com.zoonk.api.models.StudyAnswerFeedback
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockDetail
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -48,6 +49,17 @@ class QuestionBlockViewModel(
 
     private var shownAt = now()
     private var read: BlockQuestions? = null
+    private var sent: Submission? = null
+    private var finishing: Job? = null
+
+    /** What the last answer sent, so Try again sends the same (a timed drill's "not sure" included). */
+    private data class Submission(
+        val question: Question,
+        val answer: Answer,
+        val minDurationMs: Long,
+    )
+
+    val canRetry: Boolean get() = sent != null
 
     val block get() = store.blocks[key]
 
@@ -75,11 +87,13 @@ class QuestionBlockViewModel(
         val current = run.value ?: return
         if (!current.canAnswer) return
         run.value = current.checking()
+        sent = Submission(question, answer, minDurationMs)
 
         viewModelScope.launch {
             val duration = max(minDurationMs, now() - shownAt)
             when (val result = store.answer(key, question.itemId, answer, duration)) {
                 is MutationResult.Done -> {
+                    sent = null
                     run.update { it?.answered(question.itemId, answer, result.value.recode<StudyAnswerFeedback, AnswerFeedback>()) }
                 }
 
@@ -98,6 +112,10 @@ class QuestionBlockViewModel(
         }
     }
 
+    fun retry() {
+        sent?.let { submit(it.question, it.answer, it.minDurationMs) }
+    }
+
     fun timeUp(
         question: Question,
         seconds: Int,
@@ -107,6 +125,7 @@ class QuestionBlockViewModel(
     }
 
     fun next(questions: List<Question>) {
+        if (run.value?.phase !is BlockPhase.Checked) return
         shownAt = now()
         run.update { it?.next(questions) }
         if (run.value?.phase == BlockPhase.Finishing) finish()
@@ -114,14 +133,16 @@ class QuestionBlockViewModel(
 
     /** From Finish on a fully answered block, or Try again after finishing failed. */
     fun finish() {
+        if (finishing?.isActive == true) return
         run.update { it?.finishing() }
-        viewModelScope.launch {
-            when (val result = store.finish(key)) {
-                is MutationResult.Done -> run.update { it?.finished(result.value) }
-                is MutationResult.Failed -> run.update { it?.failed(BlockPhase.FinishFailed) }
-                MutationResult.Obsolete -> Unit
+        finishing =
+            viewModelScope.launch {
+                when (val result = store.finish(key)) {
+                    is MutationResult.Done -> run.update { it?.finished(result.value) }
+                    is MutationResult.Failed -> run.update { it?.failed(BlockPhase.FinishFailed) }
+                    MutationResult.Obsolete -> Unit
+                }
             }
-        }
     }
 
     /** "You already answered this question": read the block again and go on where it is. */
