@@ -315,7 +315,7 @@ private fun PlanPhases(
             phases.map { phase ->
                 val fill =
                     when (phase.state) {
-                        PlanPhase.State.CURRENT -> MeterPart.Fill.Place
+                        PlanPhase.State.CURRENT -> MeterPart.Fill.Place()
                         PlanPhase.State.DONE -> MeterPart.Fill.Solid(MaterialTheme.colorScheme.tertiary)
                         else -> MeterPart.Fill.Track
                     }
