@@ -39,8 +39,9 @@ openApiGenerate {
             // An enum value is named `context`, a Kotlin soft keyword.
             "enumPropertyNaming" to "UPPERCASE",
         )
-    // The contract's integers have no format, and epoch milliseconds (`readAt`) overflow an Int.
-    typeMappings = mapOf("AnyType" to "JsonElement", "integer" to "kotlin.Long", "number" to "kotlin.Double")
+    // The contract's integers have no format, and epoch milliseconds (`readAt`) overflow an Int. An
+    // empty object (some language exercises' `content`) would be `kotlin.Any`, which can't decode.
+    typeMappings = mapOf("AnyType" to "JsonElement", "object" to "JsonElement", "integer" to "kotlin.Long", "number" to "kotlin.Double")
     importMappings = mapOf("JsonElement" to "kotlinx.serialization.json.JsonElement")
     // Unions of JSON values the generator can't express; a new one fails compilation, so add it here.
     schemaMappings =

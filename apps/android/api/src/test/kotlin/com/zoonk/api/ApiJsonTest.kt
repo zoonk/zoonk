@@ -2,6 +2,7 @@ package com.zoonk.api
 
 import com.zoonk.api.models.ExamBlueprintSource
 import com.zoonk.api.models.LearningProfileUpdate
+import com.zoonk.api.models.PlayableLibraryStepAnyOf9Exercise
 import kotlinx.serialization.json.Json
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -30,6 +31,19 @@ class ApiJsonTest {
         assertEquals(ExamBlueprintSource.Kind.OFFICIAL, decoded.kind)
         val encoded = ApiJson.encodeToString(ExamBlueprintSource.serializer(), decoded)
         assertTrue(encoded.contains("\"id\":\"7d3c1c1e-5b0a-4d43-9f55-0c9a3c1c2f10\""))
+    }
+
+    @Test
+    fun decodesALanguageExerciseWhoseContentIsAnEmptyObject() {
+        val exercise =
+            """
+            {"content":{},"fillBlankOptions":[],"id":"7d3c1c1e-5b0a-4d43-9f55-0c9a3c1c2f10","kind":"listening",
+             "matchColumnsRightItems":[],"position":0,"sentence":null,"sentenceWordOptions":[],"translationOptions":[],
+             "vocabularyOptions":[],"word":null,"wordBankOptions":[]}
+            """.trimIndent()
+
+        val decoded = ApiJson.decodeFromString<PlayableLibraryStepAnyOf9Exercise>(exercise)
+        assertTrue(decoded is PlayableLibraryStepAnyOf9Exercise.PlayableLibraryStepAnyOf5ListeningOneOf2Value)
     }
 
     @Test
