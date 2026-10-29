@@ -80,7 +80,7 @@
   "plan_change_calendar_says": "ad4bc7aac0dceef8d561da9e7be12128dd9dc3623c3d7e0a19ff4701c45a8905",
   "plan_change_calendar_sets_date": "ceb2a169d34cd005ca237fcfef621e309d5fa4298c5a1604813c6d2296578c20",
   "plan_change_changed": "5881e85088fb7b6beb2e8ac321c93a69b7a3326106fbe283ff880cceb6c0686a",
-  "plan_change_daily_time": "26cf588f278f69177ce31e1f28e16f726ff99247c5cfd27da3656c50fbded45e",
+  "plan_change_daily_time": "1d4b47adc2b4035749427ead5f60ac2539fb86fd704e2e2c8392f87c78cae141",
   "plan_change_daily_time_changed": "fed38d2a00183fb90e9a834bbce7cb635234a4bbb416f41fc4488d5c061f10c7",
   "plan_change_date_moved": "43cd2f4a4beae130fd81a4bfddc6c4341c2d41bf3d0b517524c05250b7cf7876",
   "plan_change_days_time": "bad622eac0117a26f224c0987c23b46142b7dffe2da5517904cbfb0b7071e997",
@@ -931,7 +931,7 @@
     <string name="plan_change_calendar_sets_date">O calendário oficial da prova marca a prova para %1$s.</string>
     <string name="plan_change_keep_notice_date">Manter a data do edital</string>
     <string name="plan_change_keep_official_date">Manter a data oficial</string>
-    <string name="plan_change_daily_time">Tempo diário: %1$s</string>
+    <string name="plan_change_daily_time">Tempo diário: %1$s.</string>
     <string name="plan_change_weekly_challenge">Desafio semanal: %1$s.</string>
     <string name="plan_change_goal_date">Data da meta: %1$s.</string>
     <string name="plan_change_leave_out">Deixar de fora: %1$s.</string>
