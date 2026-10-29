@@ -16,12 +16,68 @@ concurrency:
 permissions:
   contents: read
 
+env:
+  GRADLE_ARGUMENTS: --no-daemon --console=plain --profile -Dorg.gradle.jvmargs="-Xmx4g -Dfile.encoding=UTF-8" -Pkotlin.daemon.jvmargs=-Xmx2g
+
 jobs:
-  gradle:
-    name: ${{ matrix.job }}
+  compile:
+    name: compile
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Parallel jobs keep each one under 5 minutes as the app grows; `make check` runs all three.
+    steps:
+      - &checkout
+        name: Check out code
+        uses: actions/checkout@v7
+
+      - &java
+        name: Set up JDK 25
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 25
+
+      - &android
+        name: Set up Android SDK
+        uses: android-actions/setup-android@v4
+        with:
+          packages: platform-tools platforms;android-37.0 build-tools;36.0.0
+
+      - &gradle
+        name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-provider: enhanced
+          cache-read-only: false
+
+      - name: Compile shared Release inputs
+        run: make -C apps/android build BUILD_TASKS=:app:compileReleaseKotlin
+
+      - name: Share compiled task outputs
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: android-compile-cache
+          path: |
+            ~/.gradle/caches/build-cache-1/*
+            !~/.gradle/caches/build-cache-1/*.lock
+            !~/.gradle/caches/build-cache-1/gc.properties
+          compression-level: 0
+          retention-days: 1
+          if-no-files-found: error
+
+      - &profiles
+        name: Upload task profiles
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: profile-${{ matrix.job || 'compile' }}
+          path: apps/android/build/reports/profile/
+
+  gradle:
+    name: ${{ matrix.job }}
+    needs: compile
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
@@ -32,38 +88,25 @@ jobs:
             target: test
           - job: release
             target: build
+            arguments: -x :app:lintVitalRelease
     steps:
-      - name: Check out code
-        uses: actions/checkout@v7
+      - name: Require successful compilation
+        if: needs.compile.result != 'success'
+        run: exit 1
 
-      - name: Set up JDK 25
-        uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: 25
+      - *checkout
+      - *java
+      - *android
+      - *gradle
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
+      - name: Restore compiled task outputs
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          packages: platform-tools platforms;android-37.0 build-tools;36.0.0
-
-      - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v6
-        with:
-          cache-provider: enhanced
-          # Pull requests write their own cache scope too, so each run after a PR's first starts
-          # warm. They read main's scope but never write it.
-          cache-read-only: false
+          name: android-compile-cache
+          path: ~/.gradle/caches/build-cache-1
+          digest-mismatch: error
 
       - name: Run Gradle
-        env:
-          # Full Release lint, including fatal issues, runs in the checks job.
-          GRADLE_ARGUMENTS: --no-daemon --console=plain --profile -Dorg.gradle.jvmargs="-Xmx4g -Dfile.encoding=UTF-8" -Pkotlin.daemon.jvmargs=-Xmx2g ${{ matrix.job == 'release' && '-x :app:lintVitalRelease' || '' }}
-        run: make -C apps/android ${{ matrix.target }}
+        run: make -C apps/android ${{ matrix.target }} GRADLE_ARGUMENTS="$GRADLE_ARGUMENTS ${{ matrix.arguments }}"
 
-      - name: Upload task profiles
-        if: always()
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
-        with:
-          name: profile-${{ matrix.job }}
-          path: apps/android/build/reports/profile/
+      - *profiles
