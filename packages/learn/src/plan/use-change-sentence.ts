@@ -50,7 +50,7 @@ function useFollowsNoticeSentence() {
     );
 }
 
-/** For a waiting change: "Daily time: 40 min.", never "changed to" before the learner said yes. */
+/** For a change never applied: "Daily time: 40 min.", never "changed to" unless the learner said yes. */
 function useProposedOperationSentence() {
   const t = useExtracted();
   const formatDate = useFormatIsoDate();
@@ -233,6 +233,8 @@ export function useChangeSentence({ targetDate = null }: { targetDate?: string |
   const phaseDatesSentence = usePhaseDatesSentence();
 
   return (change: PlanChangeContent): string => {
+    const neverApplied = ["proposed", "declined", "replaced"].includes(change.status);
+
     if (change.reason) {
       return change.reason;
     }
@@ -241,7 +243,7 @@ export function useChangeSentence({ targetDate = null }: { targetDate?: string |
       return noticeSentence(change);
     }
 
-    if (change.source === PHASE_DATES_SOURCE && change.status === "proposed") {
+    if (change.source === PHASE_DATES_SOURCE && neverApplied) {
       return phaseDatesSentence(change.effect);
     }
 
@@ -268,7 +270,7 @@ export function useChangeSentence({ targetDate = null }: { targetDate?: string |
         ? change.operations
             .map(
               (operation) =>
-                (change.status === "proposed" && proposedSentence(operation)) ||
+                (neverApplied && proposedSentence(operation)) ||
                 operationSentence(operation, change.examDocument),
             )
             .join(" ")
