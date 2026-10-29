@@ -8,18 +8,15 @@ import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AppCache
 import com.zoonk.android.data.AuthenticatedSession
-import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationFollower
 import com.zoonk.android.data.GenerationKind
 import com.zoonk.android.data.GenerationRun
 import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.SessionSource
-import com.zoonk.android.data.generationEvents
 import com.zoonk.android.data.perform
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.ui.components.Limit
-import com.zoonk.api.models.Generation
 import com.zoonk.api.models.GenerationWaitInput
 import com.zoonk.api.models.LessonGeneration
 import com.zoonk.api.models.LessonReadiness
@@ -27,12 +24,9 @@ import com.zoonk.api.models.ReadyAlternative
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.emitAll
-import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 
@@ -59,17 +53,7 @@ sealed interface LessonWriting {
     ) : LessonWriting
 }
 
-interface LessonWritingApi {
-    fun events(
-        generationId: String,
-        session: AuthenticatedSession,
-    ): Flow<GenerationEvent>
-
-    suspend fun status(
-        generationId: String,
-        session: AuthenticatedSession,
-    ): Generation.Status
-
+fun interface LessonWritingApi {
     suspend fun recordWait(
         session: AuthenticatedSession,
         milliseconds: Long,
@@ -79,16 +63,6 @@ interface LessonWritingApi {
 class LiveLessonWritingApi(
     private val api: ApiClients,
 ) : LessonWritingApi {
-    override fun events(
-        generationId: String,
-        session: AuthenticatedSession,
-    ): Flow<GenerationEvent> = api.generationEvents(generationId, session)
-
-    override suspend fun status(
-        generationId: String,
-        session: AuthenticatedSession,
-    ): Generation.Status = perform { api.clients(session).workflows.getGeneration(generationId) }.status
-
     override suspend fun recordWait(
         session: AuthenticatedSession,
         milliseconds: Long,
@@ -113,6 +87,7 @@ class LessonWritingViewModel(
     private val lessonId: String,
     private val store: LessonPlayerStore,
     private val writingApi: LessonWritingApi,
+    private val generations: (AuthenticatedSession?) -> GenerationSource,
     private val cache: AppCache,
     private val sessions: SessionSource,
     private val now: () -> Long = System::currentTimeMillis,
@@ -130,14 +105,9 @@ class LessonWritingViewModel(
             scope = viewModelScope,
             source =
                 object : GenerationSource {
-                    override fun events(id: String): Flow<GenerationEvent> =
-                        flow {
-                            val session = owner ?: return@flow
-                            emitAll(writingApi.events(id, session))
-                        }
+                    override fun events(id: String) = generations(owner).events(id)
 
-                    override suspend fun status(id: String): Generation.Status =
-                        writingApi.status(id, owner ?: throw ApiException(ApiError.Unauthorized))
+                    override suspend fun status(id: String) = generations(owner).status(id)
                 },
             restart = ::writeAgain,
         )

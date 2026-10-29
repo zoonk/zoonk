@@ -8,6 +8,7 @@ import com.zoonk.android.data.AuthenticatedSession
 import com.zoonk.android.data.FakeSession
 import com.zoonk.android.data.GenerationEvent
 import com.zoonk.android.data.GenerationRun
+import com.zoonk.android.data.GenerationSource
 import com.zoonk.android.feature.player.engine.LessonRefusal
 import com.zoonk.android.feature.player.model.LessonLoad
 import com.zoonk.android.feature.player.model.LessonOutline
@@ -54,26 +55,20 @@ class LessonWritingViewModelTest {
 
     private fun TestScope.writing(): LessonWritingViewModel {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        val writingApi =
-            object : LessonWritingApi {
-                override fun events(
-                    generationId: String,
-                    session: AuthenticatedSession,
-                ): Flow<GenerationEvent> = flowOf(*events.toTypedArray())
+        val generations =
+            object : GenerationSource {
+                override fun events(id: String): Flow<GenerationEvent> = flowOf(*events.toTypedArray())
 
-                override suspend fun status(
-                    generationId: String,
-                    session: AuthenticatedSession,
-                ) = Generation.Status.COMPLETED
-
-                override suspend fun recordWait(
-                    session: AuthenticatedSession,
-                    milliseconds: Long,
-                ) {
-                    waits += session to milliseconds
-                }
+                override suspend fun status(id: String) = Generation.Status.COMPLETED
             }
-        return LessonWritingViewModel(LESSON_ID, LessonPlayerStore(api, cache), writingApi, cache, session) { testScheduler.currentTime }
+        return LessonWritingViewModel(
+            LESSON_ID,
+            LessonPlayerStore(api, cache),
+            { session, milliseconds -> waits += session to milliseconds },
+            { generations },
+            cache,
+            session,
+        ) { testScheduler.currentTime }
     }
 
     @Test

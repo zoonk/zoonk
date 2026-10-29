@@ -37,6 +37,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.LiveGenerationSource
 import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SignInResult
@@ -256,6 +257,7 @@ private fun WaitingLesson(
                 lessonId = route.lessonId,
                 store = app.lessonPlayer,
                 writingApi = LiveLessonWritingApi(app.api),
+                generations = { LiveGenerationSource(app.api, it) },
                 cache = app.cache,
                 sessions = app.sessions,
             )
