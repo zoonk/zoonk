@@ -14,8 +14,8 @@ import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
 import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatList
 import com.zoonk.api.models.StudyBlock
-import java.util.Locale
 
 /** Main's `getBlockKind`: practice that only fixes mistakes is the notebook's kind. */
 val DayStep.learnKind: LearnKind
@@ -174,14 +174,6 @@ fun shortTopicList(topics: List<String>): String {
         pluralStringResource(R.plurals.session_topics_and_more, rest, named.joinToString(", "), rest)
     }
 }
-
-private fun formatList(
-    names: List<String>,
-    locale: Locale,
-): String =
-    android.icu.text.ListFormatter
-        .getInstance(locale)
-        .format(names)
 
 /** "1", "1.1", "5.7.": a notice's item number, never a year opening a topic ("2026 in numbers"). */
 private val ITEM_NUMBER = Regex("""^\s*(\d{1,3}(?:\.\d{1,3})*)\.?\s+(\S.*)$""", RegexOption.DOT_MATCHES_ALL)

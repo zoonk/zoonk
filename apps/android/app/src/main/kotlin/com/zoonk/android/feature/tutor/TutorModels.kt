@@ -4,11 +4,14 @@ import androidx.compose.runtime.Immutable
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.MutationResult
+import com.zoonk.android.feature.memory.MemoryChangeShown
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.StudyMissionMoment
 import com.zoonk.api.models.TutorToolOffer
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import java.util.UUID
 import kotlin.time.Instant
 
 @Immutable
@@ -71,10 +74,13 @@ data class TutorMemoryChange(
 
     @Serializable
     data class Fact(
-        val id: String,
+        @Contextual val id: UUID,
         val statement: String,
     )
 }
+
+internal val TutorMemoryChange.shown: MemoryChangeShown
+    get() = MemoryChangeShown(fact?.id, fact?.statement, previous?.id, previous?.statement)
 
 /** The AI SDK UI message stream's parts the conversation reads. */
 internal sealed interface TutorAnswerEvent {

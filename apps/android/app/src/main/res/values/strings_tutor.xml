@@ -82,4 +82,53 @@
     <string name="tutor_link_description">This link opens a website outside Zoonk.</string>
     <string name="tutor_link_cancel">Cancel</string>
     <string name="tutor_link_open">Open link</string>
+
+    <string name="tutor_offer_open">Open</string>
+    <string name="tutor_offer_choose">Choose</string>
+    <string name="tutor_offer_start">Start</string>
+    <string name="tutor_offer_practice">Practice</string>
+    <string name="tutor_offer_start_goal">Start a new goal</string>
+    <!-- The goal the learner may start, in quotes. -->
+    <string name="tutor_offer_goal">“%1$s”</string>
+    <string name="tutor_offer_one_goal">The free plan follows one goal at a time: pause your current goal from its menu, or follow more than one with Plus.</string>
+    <string name="tutor_offer_catalog_course">A ready course in the catalog</string>
+    <string name="tutor_offer_chapter_test">Test: %1$s</string>
+    <plurals name="tutor_offer_chapter_test_lessons">
+        <item quantity="one">Pass it to skip %d lesson you already know.</item>
+        <item quantity="other">Pass it to skip up to %d lessons you already know.</item>
+    </plurals>
+    <string name="tutor_offer_take_test">Take the test</string>
+    <string name="tutor_offer_choose_focus">Choose where to focus</string>
+    <string name="tutor_offer_choose_focus_description">Pick the subjects that get more depth, or take a short test that picks them.</string>
+    <!-- %1$s is the character's name, %2$s their role, like "a barista". -->
+    <string name="tutor_offer_call_with">A short call out loud with %1$s, %2$s.</string>
+    <string name="tutor_offer_call">A short call out loud, at your level.</string>
+    <string name="tutor_offer_mock">Take a mock exam</string>
+    <string name="tutor_offer_mock_description">Whenever you want: a full exam day or half a day</string>
+    <string name="tutor_offer_mock_by_subject">Whenever you want: a full exam day, half a day or one subject</string>
+    <string name="tutor_offer_mock_plus">Mock exams come with Plus: whenever you want, and every week in your plan.</string>
+    <string name="tutor_offer_essay_weekly">Practiced every week in your plan, each draft graded.</string>
+    <string name="tutor_offer_essay_biweekly">Practiced every other week in your plan, each draft graded.</string>
+    <string name="tutor_offer_essay_final_weeks">Practiced in the final weeks before the exam, each draft graded.</string>
+    <string name="tutor_offer_essay_plus">Essay practice with grading comes with Plus.</string>
+    <string name="tutor_offer_mistakes">Mistakes notebook</string>
+    <plurals name="tutor_offer_mistakes_open">
+        <item quantity="one">%d mistake to fix, with practice that brings it back.</item>
+        <item quantity="other">%d mistakes to fix, with practice that brings each one back.</item>
+    </plurals>
+    <plurals name="tutor_offer_pronunciation">
+        <item quantity="one">Say %d word again</item>
+        <item quantity="other">Say %d words again</item>
+    </plurals>
+    <string name="tutor_offer_logbook">Logbook</string>
+    <string name="tutor_offer_logbook_description">What you did this week next to the last, and what comes next.</string>
+    <string name="tutor_offer_memory">Memory</string>
+    <string name="tutor_offer_memory_description">See, correct or delete what your buddy remembers about you.</string>
+    <string name="tutor_offer_stats">Statistics</string>
+    <string name="tutor_offer_stats_description">Energy, level, right answers and when you study best.</string>
+    <string name="tutor_offer_plus">Plus</string>
+    <string name="tutor_offer_plus_description">What Plus includes and its price.</string>
+    <string name="tutor_offer_plus_subscribed">Your plan and its billing.</string>
+    <string name="tutor_offer_see_plus">See Plus</string>
+    <string name="tutor_offer_manage">Manage</string>
 </resources>

@@ -108,7 +108,6 @@ class AppContainer private constructor(
     val learningProfile = LearningProfileStore(LiveLearningProfileApi(api), cache)
 
     val plans = PlanStore(LivePlanApi(api), cache)
-    val tutor = TutorStore(LiveTutorApi(api), cache, sessions)
 
     // Account and Plus (L1).
     private val integrity =
@@ -137,6 +136,8 @@ class AppContainer private constructor(
                     flowOf(false)
                 },
         )
+
+    val tutor = TutorStore(LiveTutorApi(api), cache, sessions, memory::undo)
 
     // Speech clips and recorded answers.
     val voiceFiles = VoiceFiles(File(context.cacheDir, "voice-clips"), api.http, images::isPrivate, sessions)

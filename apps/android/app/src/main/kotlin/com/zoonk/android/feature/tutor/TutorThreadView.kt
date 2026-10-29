@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import com.zoonk.android.R
 import com.zoonk.android.data.ApiError
 import com.zoonk.android.data.LoadState
+import com.zoonk.android.feature.memory.MemoryUpdated
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.richtext.MarkdownText
@@ -196,13 +197,17 @@ private fun TurnView(
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Box(Modifier.size(AVATAR_SIZE)) { TutorAvatar(identity, AVATAR_SIZE) }
-            // A finished or failed answer is read out once; while it streams nothing is, word by word.
-            val finished = turn.status == TutorTurn.Status.Completed || turn.status == TutorTurn.Status.Failed
-            Column(
-                Modifier.weight(1f).padding(top = 4.dp).semantics { if (finished) liveRegion = LiveRegionMode.Polite },
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Answer(turn, vm, state, routes, others)
+            Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                // A finished or failed answer is read out once; while it streams nothing is, word by word.
+                val finished = turn.status == TutorTurn.Status.Completed || turn.status == TutorTurn.Status.Failed
+                Column(
+                    Modifier.semantics { if (finished) liveRegion = LiveRegionMode.Polite },
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Answer(turn, vm, state, routes, others)
+                }
+                if (turn.answer != null || turn.status != TutorTurn.Status.Running) turn.toolOffer?.let { TutorOffer(it, routes) }
+                state.memoryChanges[turn.id]?.let { changes -> MemoryUpdated(changes.map { it.shown }, onUndo = vm::undoMemory) }
             }
         }
     }

@@ -48,6 +48,43 @@
   "tutor_loading": "5277e539af32defe65e8d3ad4289e9e3a3ba2eb4ea21eaa5dec559c0a5acfc5f",
   "tutor_no_answer": "b4a1008cf435666209dff13731de57f479c923f1f3d2bfa5e82316a202ca2215",
   "tutor_not_answered": "140e642aef7128586a54bbbd1a20ffc2cd0439bfe500a8b33d58c906010db75a",
+  "tutor_offer_call": "c78aa182e25e5fff90ff54444ef796830e16bfeb688332dd3a0569876a104711",
+  "tutor_offer_call_with": "43a4c703a7b60b63e5c892906b20805058481962e2615bf939c13f8c4d3f8fc8",
+  "tutor_offer_catalog_course": "39070b327d66ae3f08d062f08cde55b0f3d8127e32be20127d99793e8b9f069b",
+  "tutor_offer_chapter_test": "1553fec8fb01d34d2a141977e9431e26a15df93d2fe67279aade4a97efcabd7d",
+  "tutor_offer_chapter_test_lessons": "03f0cbce6e640e09a34415bc43fb0b3f4a66792f00640c8ddfa62b04c29302d3",
+  "tutor_offer_choose": "9c9a7bd9fea83462d1c52de8b3f0515ff48f82cec52f6ef0f56f81c27f5f9bbe",
+  "tutor_offer_choose_focus": "ed50983250942583f2f29a6fa98cc8179791253275cd83944cfc368223f15c76",
+  "tutor_offer_choose_focus_description": "9a523f89d8b044b92133583d275e4df91a06c797bb5f320a24316012b854f31f",
+  "tutor_offer_essay_biweekly": "52bcbbad7363578142b9d5845621d2ce66f538d56e697215504233d081860754",
+  "tutor_offer_essay_final_weeks": "d6c967df06f63a275c5aab8fdfd0f4a491d130acba8ea416916d74d88c8976d3",
+  "tutor_offer_essay_plus": "3dd6e6298030b479add3ca29ff5282363d1dce9b2a76c33dc1471d51d7b3848a",
+  "tutor_offer_essay_weekly": "1739ce483eb01baa534881673e0117e50f4f0099eed25fbaef2619cedbc5b1b9",
+  "tutor_offer_goal": "938d1a5d3a4b7f96d9b94fdcd91fd5c61a76207cd615e52d46b2688ecedbdbf1",
+  "tutor_offer_logbook": "0b37ccdc1df31b596b3384259f9472465010c210cfebeec51019023878e0f22c",
+  "tutor_offer_logbook_description": "e7ae7c6dd7d31b14ae40408c7926151de550d60382d11357612f96104854cf3c",
+  "tutor_offer_manage": "464ebf4851ccaff156675a11e62da5612cb8278a60ddcd2975684367124bcaf7",
+  "tutor_offer_memory": "a25c8e458f61e5f13ea9ac4aea117f3e7eba4c449759d15f3285200a68f5a493",
+  "tutor_offer_memory_description": "5244634d80ba23b6a5c508420952d4442796926c1164241158951d31c8f99f2d",
+  "tutor_offer_mistakes": "84aaa07838fd7a8afd90cc0f7948159d73ccbd6e01ceb15ea3c97ba9f1f43b7c",
+  "tutor_offer_mistakes_open": "9c642eaf0be3556c8ccc1e988ddb17d2d6eaf1c6280718f8e6a6772a51ea031d",
+  "tutor_offer_mock": "d8e9f8b8f515995dffdf01f8679898dec8d752a8b13674ad30be53d37c225094",
+  "tutor_offer_mock_by_subject": "91cc53ad20ffb41b45093736227f813f0ba4d9f355b328a6f23248e335c1fcf5",
+  "tutor_offer_mock_description": "670b28f56eafdb998e586fe2e193735c69223070cf82223dde679ea346b4b437",
+  "tutor_offer_mock_plus": "20697935093ff4d63415f9ac8e00885224eac9aee971af47b39b4fba975b0fa4",
+  "tutor_offer_one_goal": "90d412ed10d64384f36c76a683dd3562a7ebe9d0413fe798b4ed097d22b43b26",
+  "tutor_offer_open": "317835413b4fe905136253e8886415d67c278aa153076d5359b6db1aa5beae25",
+  "tutor_offer_plus": "ba4d0bfb16f3b2c58a3c44eee98e05f3ab27aced6eb0bf372d02da87e1b1dbf5",
+  "tutor_offer_plus_description": "b577b2e60a212013029804450439b2e6b468537ed4ce4e032b78241352a456cc",
+  "tutor_offer_plus_subscribed": "be2162b4f8ae329273972023f63d14cbc52a78b579a744fd4098c72df3ca5066",
+  "tutor_offer_practice": "33b3c3568bfe55edb97385a0fcd1de810c3b348b1f20b9b6974b743c9de6574c",
+  "tutor_offer_pronunciation": "d212ca9ae4c15c8158298250b53b9ad324981d54a0e2b71c821b4db18c70a0b2",
+  "tutor_offer_see_plus": "7747a25562668cc4451620cfbd66a1bd34d608a550316234fcafaae902bc3a10",
+  "tutor_offer_start": "8d9d363514ed15681c5c955cba8d1d8e6aa8ded869fb458849331a15043d3d18",
+  "tutor_offer_start_goal": "0b521f46957bd210a6d6e9a1c25c9e0665aa374b3eaee03b058bf4777127af3b",
+  "tutor_offer_stats": "16bb921a43fa9bf579cf80e227542076d33224ef69bd0add31071470320f5d54",
+  "tutor_offer_stats_description": "6fb89e34e890a77c7cda87e5bded769d00d4e2f26a744490d50f2f91d3a48c97",
+  "tutor_offer_take_test": "e5df1a34171424c2d0baaea0b3bfbab80bcdc4e025a7c925c188a6d0c66ec441",
   "tutor_placeholder_answer": "6b9ebc0c03a3695e685ac1efa6a371b440f0dd08d39ad22112092d027def16e0",
   "tutor_placeholder_chapter": "46e35db89173806dc7ba6f9442447acd8fc7f053e833050a9bef6a16dcd69e42",
   "tutor_placeholder_item": "f93e5486654a9b4fef67839f27f7f50f2e510d4c1ea2f2642cc34fdb4c52854d",
@@ -148,4 +185,52 @@
     <string name="tutor_link_description">Dieser Link öffnet eine Website außerhalb von Zoonk.</string>
     <string name="tutor_link_cancel">Abbrechen</string>
     <string name="tutor_link_open">Link öffnen</string>
+    <string name="tutor_offer_open">Öffnen</string>
+    <string name="tutor_offer_choose">Auswählen</string>
+    <string name="tutor_offer_start">Starten</string>
+    <string name="tutor_offer_practice">Üben</string>
+    <string name="tutor_offer_start_goal">Ein neues Ziel starten</string>
+    <!-- The goal the learner may start, in quotes. -->
+    <string name="tutor_offer_goal">„%1$s“</string>
+    <string name="tutor_offer_one_goal">Mit dem Free-Tarif kannst du immer nur ein Ziel verfolgen: Pausiere dein aktuelles Ziel über das Menü oder verfolge mit Plus mehrere Ziele.</string>
+    <string name="tutor_offer_catalog_course">Ein fertiger Kurs im Katalog</string>
+    <string name="tutor_offer_chapter_test">Test: %1$s</string>
+    <plurals name="tutor_offer_chapter_test_lessons">
+        <item quantity="one">Bestehe den Test, um %d Lektion zu überspringen, die du schon kennst.</item>
+        <item quantity="other">Bestehe den Test, um bis zu %d Lektionen zu überspringen, die du schon kennst.</item>
+    </plurals>
+    <string name="tutor_offer_take_test">Den Test machen</string>
+    <string name="tutor_offer_choose_focus">Schwerpunkte wählen</string>
+    <string name="tutor_offer_choose_focus_description">Wähle die Themen aus, die vertieft werden sollen, oder mach einen kurzen Test, der sie für dich auswählt.</string>
+    <!-- %1$s is the character's name, %2$s their role, like "a barista". -->
+    <string name="tutor_offer_call_with">Ein kurzes Gespräch zum Sprechen mit %1$s, %2$s.</string>
+    <string name="tutor_offer_call">Ein kurzes Gespräch zum Sprechen, passend zu deinem Level.</string>
+    <string name="tutor_offer_mock">Eine Probeprüfung machen</string>
+    <string name="tutor_offer_mock_description">Wann immer du möchtest: ein ganzer Prüfungstag oder ein halber Tag</string>
+    <string name="tutor_offer_mock_by_subject">Wann immer du möchtest: ein ganzer Prüfungstag, ein halber Tag oder ein einzelnes Fach</string>
+    <string name="tutor_offer_mock_plus">Probeprüfungen gibt es mit Plus: wann immer du möchtest und jede Woche in deinem Plan.</string>
+    <string name="tutor_offer_essay_weekly">Jede Woche in deinem Plan üben, jeder Entwurf wird bewertet.</string>
+    <string name="tutor_offer_essay_biweekly">Alle zwei Wochen in deinem Plan üben, jeder Entwurf wird bewertet.</string>
+    <string name="tutor_offer_essay_final_weeks">In den letzten Wochen vor der Prüfung üben, jeder Entwurf wird bewertet.</string>
+    <string name="tutor_offer_essay_plus">Schreibübungen mit Bewertung sind in Plus enthalten.</string>
+    <string name="tutor_offer_mistakes">Fehlerheft</string>
+    <plurals name="tutor_offer_mistakes_open">
+        <item quantity="one">%d Fehler zum Korrigieren, mit Übungen, die ihn wieder ins Gedächtnis rufen.</item>
+        <item quantity="other">%d Fehler zum Korrigieren, mit Übungen, die jeden wieder ins Gedächtnis rufen.</item>
+    </plurals>
+    <plurals name="tutor_offer_pronunciation">
+        <item quantity="one">%d Wort noch einmal sagen</item>
+        <item quantity="other">%d Wörter noch einmal sagen</item>
+    </plurals>
+    <string name="tutor_offer_logbook">Logbuch</string>
+    <string name="tutor_offer_logbook_description">Was du diese Woche im Vergleich zur letzten gemacht hast und was als Nächstes ansteht.</string>
+    <string name="tutor_offer_memory">Erinnerungen</string>
+    <string name="tutor_offer_memory_description">Sieh dir an, was dein Kumpel über dich gespeichert hat, korrigiere oder lösche es.</string>
+    <string name="tutor_offer_stats">Statistiken</string>
+    <string name="tutor_offer_stats_description">Energie, Level, richtige Antworten und wann du am besten lernst.</string>
+    <string name="tutor_offer_plus">Plus</string>
+    <string name="tutor_offer_plus_description">Was Plus umfasst und was es kostet.</string>
+    <string name="tutor_offer_plus_subscribed">Dein Tarif und die Abrechnung.</string>
+    <string name="tutor_offer_see_plus">Plus ansehen</string>
+    <string name="tutor_offer_manage">Verwalten</string>
 </resources>

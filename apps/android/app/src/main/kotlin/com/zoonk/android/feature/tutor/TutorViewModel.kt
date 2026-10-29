@@ -16,6 +16,7 @@ import com.zoonk.android.data.MutationResult
 import com.zoonk.android.data.Resource
 import com.zoonk.android.data.value
 import com.zoonk.android.ui.components.Limit
+import com.zoonk.api.models.MemoryChangeReference
 import com.zoonk.api.models.PlanChange
 import com.zoonk.api.models.StudyMissionMoment
 import kotlinx.coroutines.delay
@@ -118,6 +119,8 @@ class TutorViewModel internal constructor(
             }
         }
     }
+
+    suspend fun undoMemory(changes: List<MemoryChangeReference>): Boolean = store.undoMemory(changes)
 
     fun loadEarlier() {
         val page = thread.state.value.value ?: return

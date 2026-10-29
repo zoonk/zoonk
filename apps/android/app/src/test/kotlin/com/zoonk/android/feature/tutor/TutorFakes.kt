@@ -2,6 +2,7 @@ package com.zoonk.android.feature.tutor
 
 import com.zoonk.android.data.ApiException
 import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.api.models.TutorToolOffer
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlin.time.Instant
@@ -65,7 +66,8 @@ internal fun turn(
     answer: String?,
     question: String = "Why?",
     about: TutorTurn.About = TutorTurn.About.Plan,
-) = TutorTurn(id, question, answer, status, Instant.parse("2026-10-28T12:00:00Z"), about)
+    toolOffer: TutorToolOffer? = null,
+) = TutorTurn(id, question, answer, status, Instant.parse("2026-10-28T12:00:00Z"), about, toolOffer = toolOffer)
 
 /** What the server labels a question asked in [this] scope. */
 private val TutorScope.about: TutorTurn.About

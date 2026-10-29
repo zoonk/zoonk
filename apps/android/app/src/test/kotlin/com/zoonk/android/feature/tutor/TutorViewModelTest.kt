@@ -49,7 +49,7 @@ class TutorViewModelTest {
 
     private suspend fun conversation(scope: TutorScope = this.scope): TutorViewModel {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + dispatcher))
-        return TutorViewModel(scope, TutorStore(api, cache, session)).also { it.thread.load() }
+        return TutorViewModel(scope, TutorStore(api, cache, session) { true }).also { it.thread.load() }
     }
 
     private val TutorViewModel.turns get() =

@@ -9,6 +9,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performFirstLinkClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
@@ -19,6 +20,9 @@ import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.theme.ZoonkTheme
+import com.zoonk.api.ApiJson
+import com.zoonk.api.models.MemoryChangeReference
+import com.zoonk.api.models.TutorToolOffer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -28,6 +32,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
 class TutorPanelTest {
@@ -37,15 +42,19 @@ class TutorPanelTest {
     private val api = FakeTutorApi()
     private val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
     private var openedLogin = 0
+    private var openedPlus = 0
     private val opened = mutableListOf<AppRoute>()
-    private val routes = TutorRoutes(createAccount = { openedLogin++ }, signIn = { openedLogin++ }, seePlus = {}, open = { opened += it })
+    private val undone = mutableListOf<List<MemoryChangeReference>>()
+    private val routes =
+        TutorRoutes(createAccount = { openedLogin++ }, signIn = { openedLogin++ }, seePlus = { openedPlus++ }, open = { opened += it })
 
     private fun show(
         scope: TutorScope = TutorScope.Chapter("chapter"),
         access: TutorAccess = TutorAccess.Ask,
     ) {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main))
-        val vm = TutorViewModel(scope, TutorStore(api, cache, session))
+        val store = TutorStore(api, cache, session) { changes -> undone.add(changes) }
+        val vm = TutorViewModel(scope, store)
         compose.setContent {
             ZoonkTheme { TutorPanel(vm, access, TutorIdentity("Zu", BuddyLook()), routes) }
         }
@@ -147,5 +156,65 @@ class TutorPanelTest {
         compose.onNodeWithText("Look at your plan.", substring = true).performFirstLinkClick()
 
         assertEquals(listOf<AppRoute>(AppRoute.Plan()), opened)
+    }
+
+    @Test
+    fun aGoalOfferStartsItOrOpensItsReadyCourse() {
+        val offer =
+            """{"kind":"startGoal","access":"open","goal":"Learn Spanish","course":""" +
+                """{"id":"$COURSE","brandSlug":"zoonk","slug":"spanish","title":"Spanish basics","description":null,"imageUrl":null}}"""
+        showOffer(offer)
+
+        compose.onNodeWithText("“Learn Spanish”").assertExists()
+        compose.onNodeWithText("Start").performClick()
+        compose.onNodeWithText("Spanish basics").performScrollTo().performClick()
+
+        assertEquals(listOf(AppRoute.StartGoal(goal = "Learn Spanish"), AppRoute.CatalogCourse(COURSE)), opened)
+    }
+
+    @Test
+    fun aLockedOfferSaysWhatPlusAddsAndLeadsThere() {
+        showOffer("""{"kind":"mockExam","access":"plusRequired","goalId":"$GOAL","subjects":[]}""")
+
+        compose.onNodeWithText("Mock exams come with Plus: whenever you want, and every week in your plan.").assertExists()
+        compose.onNodeWithText("Choose").assertDoesNotExist()
+        compose.onNodeWithText("See Plus").performClick()
+
+        assertEquals(1, openedPlus)
+        assertEquals(emptyList<AppRoute>(), opened)
+    }
+
+    @Test
+    fun undoingWhatTheBuddyRememberedSendsItsFact() {
+        val fact = TutorMemoryChange.Fact(UUID.fromString(FACT), "Likes space")
+        api.answers = {
+            flow {
+                emit(TutorAnswerEvent.Text("Noted."))
+                emit(TutorAnswerEvent.Finish)
+                emit(TutorAnswerEvent.Remembered(listOf(TutorMemoryChange(TutorMemoryChange.Action.Added, fact))))
+            }
+        }
+        show()
+
+        compose.onNode(hasSetTextAction()).performTextInput("I like space")
+        compose.onNodeWithContentDescription("Send").performClick()
+        compose.onNodeWithText("Memory updated: Likes space").assertExists()
+        compose.onNodeWithText("Undo").performClick()
+
+        compose.onNodeWithText("Change undone").assertExists()
+        assertEquals(listOf(listOf(MemoryChangeReference(factId = UUID.fromString(FACT)))), undone)
+    }
+
+    private fun showOffer(json: String) {
+        val offer = ApiJson.decodeFromString<TutorToolOffer>(json)
+        api.thread =
+            TutorThread(listOf(turn("q1", TutorTurn.Status.Completed, "Here.", toolOffer = offer)), hasMore = false, nextCursor = null)
+        show()
+    }
+
+    private companion object {
+        const val COURSE = "6a1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+        const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
+        const val FACT = "8f1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
     }
 }
