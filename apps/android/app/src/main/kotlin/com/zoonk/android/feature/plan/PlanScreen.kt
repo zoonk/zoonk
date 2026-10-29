@@ -147,6 +147,7 @@ private fun ReadyPlan(
     val resource = app.plans.plan[goal.id]
     var pulled by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val farTopics = viewModel(key = "far-topics-${goal.id}") { FarTopicViewModel(app.plans, goal.id) }
     val viewModel = viewModel(key = "plan-${goal.id}") { PlanViewModel(app.plans, goal.id) }
 
     WhileShown(plan.isPhaseBeingWritten) {
@@ -167,7 +168,14 @@ private fun ReadyPlan(
         },
         modifier = Modifier.fillMaxSize().padding(padding),
     ) {
-        PlanPage(page = PlanPageState(goal, plan, summary), app = app, navigator = navigator, viewModel = viewModel, focus = focus)
+        PlanPage(
+            page = PlanPageState(goal, plan, summary),
+            app = app,
+            navigator = navigator,
+            viewModel = viewModel,
+            farTopics = farTopics,
+            focus = focus,
+        )
     }
 }
 

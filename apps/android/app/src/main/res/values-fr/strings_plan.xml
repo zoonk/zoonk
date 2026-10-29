@@ -243,9 +243,14 @@
   "plan_exam_day": "1fdffcf8860479fba0728177493c2be4678ef0478b33634178089611c225644a",
   "plan_eyebrow": "fed58a3aaacc96d95f7e31b9d29a82b3c3bf43a1750b7d79e3f5041dd64f7fdf",
   "plan_far_count_from": "bb2f846e6b09a02bfc8fd54b71de2793b981ab827ff37c0c9d10dc77cd903ee9",
+  "plan_far_explain": "a0bbe1adc94fdacbb7d2bb950c165b058af133495d95895fde85f3fd90246917",
   "plan_far_from": "505f366fd4f0033f845ffac5642aecbdf0fc64cdd2f2a52140a27d799da1dd98",
   "plan_far_lessons": "5fb84652f74f2e58bae4576a43d209493b94d98f74b2b01e729187cccbc891ca",
   "plan_far_lessons_about": "7167b815ba130f2ab8222f5100ad6c08ccecf3cf219cbbb3f2b8dbc1bce76826",
+  "plan_far_nothing_left": "c9e914e69d04657da3057f79e0097a5b084d606e6f483f6b6ae1d11059fc9d18",
+  "plan_far_see_lessons": "096ab62767d7a76f1e2e6d3d9bacb0a8ac35f375622238752d2b9e85a3c24cdc",
+  "plan_far_unreachable": "c0c17f9d19e9904208f435753a3d076530feb46cc6aef4fba2d761af21d8a763",
+  "plan_far_writing": "3460af8a8c2c55a24eb4f0289aedc4c2f40dcf76b3ce066b6c757cdde81d1f32",
   "plan_find": "b99abb0d91aeadda225c77387e6eba5ed294b787c632fdffd1d7b9c2928fed83",
   "plan_find_building": "6f68863c4eb8c835976c1007e40b529ab8daf04b101a40276a4555e5e9ff824f",
   "plan_find_covers": "ba7d5766aff3f6f58efd3217b1b2a64dff8c8e1665212b8df7a859d172da53bb",
@@ -639,6 +644,13 @@
         <item quantity="other">Environ %d leçons</item>
     </plurals>
     <string name="plan_far_count_from">%1$s · à partir du %2$s</string>
+    <!-- A far topic's sheet: why its lessons aren't there yet. -->
+    <string name="plan_far_explain">Les leçons d’un sujet sont planifiées deux semaines avant que tu l’abordes. Tu peux voir celles de ce sujet maintenant.</string>
+    <!-- Writes a far topic's lessons now. -->
+    <string name="plan_far_see_lessons">Voir les leçons</string>
+    <string name="plan_far_writing">Préparation des leçons… Ça prend environ trente secondes.</string>
+    <string name="plan_far_unreachable">Impossible de joindre le serveur. Vérifie ta connexion.</string>
+    <string name="plan_far_nothing_left">Il n’y a plus rien à préparer pour ce sujet.</string>
     <plurals name="plan_more_chapters">
         <item quantity="one">%d chapitre supplémentaire</item>
         <item quantity="many">%d chapitres supplémentaires</item>

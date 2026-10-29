@@ -63,6 +63,7 @@ internal const val CHAPTER_DONE = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b01"
 internal const val CHAPTER_NEXT = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b02"
 internal const val CHAPTER_LATER = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1b03"
 internal const val CHECKPOINT_ITEM = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1c01"
+internal const val FAR_SKILL = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1e01"
 
 internal fun chapter(
     id: String?,
@@ -73,8 +74,10 @@ internal fun chapter(
     writing: Boolean = false,
     far: Boolean = false,
     nextDate: String? = null,
+    skillId: String? = null,
 ) = """{"chapterId":${id?.let { "\"$it\"" }},"deeper":false,"far":$far,"lessonsDone":$done,"lessonsTotal":$total,
-    "nextDate":${nextDate?.let { "\"$it\"" }},"skills":[],"state":"$state","testedOut":false,"title":"$title","writing":$writing}"""
+    "nextDate":${nextDate?.let { "\"$it\"" }},"skillId":${skillId?.let { "\"$it\"" }},"skills":[],"state":"$state","testedOut":false,
+    "title":"$title","writing":$writing}"""
 
 internal fun phase(
     index: Int,
@@ -132,7 +135,7 @@ internal fun learnPlan(): Plan =
             "2026-12-20",
             0,
             18,
-            listOf(chapter(null, "Flask", "upcoming", 0, 0, writing = true, far = true, nextDate = "2026-11-11")),
+            listOf(chapter(null, "Flask", "upcoming", 0, 0, writing = true, far = true, nextDate = "2026-11-11", skillId = FAR_SKILL)),
         )},
           ${phase(3, "Projects", "upcoming", "2026-12-21", "2027-01-31", 0, 10)}
         ],

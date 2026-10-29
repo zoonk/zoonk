@@ -243,9 +243,14 @@
   "plan_exam_day": "0b032c6ce85e563879c4ab61fd3d9f6d945fc2d358ab739fdd881466c56cc8a6",
   "plan_eyebrow": "1730c570a6da601b1a6e9ff16fcc7a6d0ee4c80eba3fbe02bc36f50f1de5f8b2",
   "plan_far_count_from": "307069ace0117ab7ac834c3986ad37255c103f164eee2f381f24ce34153ff1b4",
+  "plan_far_explain": "1558f90a71f67e451ed0e9dd0e6001fdc13b9b29900868e94316b45069944e58",
   "plan_far_from": "c38a7c7291589b7f339c3e6b6907b765af53b14c89e3f536fde3c5e115628bf7",
   "plan_far_lessons": "e5e2b1ab82bc71e6e07b762de4ebba4f8cb4d2c50f55ce24d8464b730fa20f14",
   "plan_far_lessons_about": "dd76f528123aba35d7b048b4a14d928c97b06c75bbd2f56da224d4e0d4a12246",
+  "plan_far_nothing_left": "d7a876866a54452b046a0f14f336cb0901f7392dc34031922dede92c1f9f870f",
+  "plan_far_see_lessons": "6956b0d4ddfcdf9ed4709ecf44056a7338623bac5d55067cb39dd2271824537f",
+  "plan_far_unreachable": "23ea53a2b0abc1cc33561a96f11095f8c7cd38797eb0920504d8862cdb10a0ce",
+  "plan_far_writing": "8b76598007c24e04e6b49d18f0b3cdc6bfbb2fbaada74329b14570b7c5834928",
   "plan_find": "3febb124217822dc52c29f5c6ba0e60c2647c7c8f7a7a98ac2ea9df05dd0ab7f",
   "plan_find_building": "ac9c8c6e7bf07750964be07f8f99c94650bd7ef81d5d5ee1adf3b5793f7cb37d",
   "plan_find_covers": "4e6b4619fa1acb16b810a61462a05c2e57bcb8f89c535b1492251b5158bd3a9b",
@@ -639,6 +644,13 @@
         <item quantity="other">Cerca de %d aulas</item>
     </plurals>
     <string name="plan_far_count_from">%1$s · a partir de %2$s</string>
+    <!-- A far topic's sheet: why its lessons aren't there yet. -->
+    <string name="plan_far_explain">As aulas de um tópico são planejadas duas semanas antes de você chegar até ele. Você já pode ver as deste tópico.</string>
+    <!-- Writes a far topic's lessons now. -->
+    <string name="plan_far_see_lessons">Ver as aulas</string>
+    <string name="plan_far_writing">Preparando as aulas… Leva cerca de 30 s.</string>
+    <string name="plan_far_unreachable">Não foi possível acessar o servidor. Confira sua conexão.</string>
+    <string name="plan_far_nothing_left">Não há mais nada para preparar neste tópico.</string>
     <plurals name="plan_more_chapters">
         <item quantity="one">%d capítulo a mais</item>
         <item quantity="many">%d capítulos a mais</item>

@@ -20,12 +20,24 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.zoonk.android.data.ApiError
+import com.zoonk.android.data.ApiException
+import com.zoonk.android.data.AppCache
+import com.zoonk.android.data.AuthenticatedSession
+import com.zoonk.android.data.FakeSession
 import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.PlanBasesAdvice
 import com.zoonk.api.models.PlanChangePreview
+import com.zoonk.api.models.SkillOutline
+import com.zoonk.api.models.SkillOutlineChapter
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.datetime.LocalDate
 import org.junit.Assume.assumeTrue
 import org.junit.Before
 import org.junit.Rule
@@ -35,6 +47,7 @@ import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
 import org.robolectric.annotation.GraphicsMode
 import java.io.File
+import java.util.UUID
 
 /** Review screenshots of the Plan, written only with `-Pzoonk.shots=<folder>`. No goldens. */
 @RunWith(AndroidJUnit4::class)
@@ -120,6 +133,80 @@ class PlanScreenshots {
             shown = name
             compose.waitForIdle()
             write(name, compose.onRoot().captureToImage().asAndroidBitmap())
+        }
+    }
+
+    /** A far topic's sheet in each state, driven through its view model as the sheet is. */
+    @Test
+    @Config(qualifiers = "w411dp-h900dp-xxhdpi")
+    fun farTopic() {
+        val api = FakePlanApi()
+        val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
+        val store = PlanStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)))
+        val topics = FarTopicViewModel(store, UUID.fromString(GOAL))
+        val flask = FarTopic(UUID.fromString(FAR_SKILL), "Flask", lessons = 6, nextDate = LocalDate(2026, 12, 21))
+        val available = { SkillOutline(emptyList(), SkillOutline.Status.AVAILABLE) }
+        compose.setContent {
+            val navigator = rememberAppNavigator()
+            val open by topics.sheet.collectAsStateWithLifecycle()
+            ZoonkTheme {
+                Surface(color = MaterialTheme.colorScheme.surfaceContainerLow) {
+                    open?.let { FarTopicContent(it, topics, navigator, onChapter = {}, modifier = Modifier.padding(24.dp)) }
+                }
+            }
+        }
+
+        fun shot(
+            name: String,
+            setUp: () -> Unit,
+        ) {
+            compose.runOnIdle {
+                topics.close()
+                setUp()
+            }
+            compose.waitForIdle()
+            write("far-topic-$name", compose.onRoot().captureToImage().asAndroidBitmap())
+        }
+
+        shot("available") { topics.open(flask) }
+        shot("writing") {
+            api.outline = { SkillOutline(emptyList(), SkillOutline.Status.WRITING) }
+            topics.open(flask)
+        }
+        shot("ready") {
+            api.outline = {
+                SkillOutline(
+                    listOf(
+                        SkillOutlineChapter(UUID.fromString(CHAPTER_NEXT), "Routes, views and the request cycle in a small Flask app"),
+                        SkillOutlineChapter(UUID.fromString(CHAPTER_LATER), "Templates"),
+                    ),
+                    SkillOutline.Status.READY,
+                )
+            }
+            topics.open(flask)
+        }
+        shot("refused") {
+            api.outline = available
+            api.writeOutline = {
+                throw ApiException(
+                    ApiError.Unavailable,
+                    "USAGE_LIMIT_REACHED",
+                    402,
+                    ApiJson.parseToJsonElement("""{"limit":{"period":"day","tier":"free"}}"""),
+                )
+            }
+            topics.open(flask)
+            topics.request()
+        }
+        shot("unreachable") {
+            api.outline = { throw ApiException(ApiError.Network) }
+            topics.open(flask)
+        }
+        shot("nothing-left") {
+            api.outline = available
+            api.writeOutline = { throw ApiException(ApiError.Unavailable, status = 422) }
+            topics.open(flask)
+            topics.request()
         }
     }
 

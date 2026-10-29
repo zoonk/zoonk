@@ -243,9 +243,14 @@
   "plan_exam_day": "9dd20b958bfe79dbc1f5d50d63963b0eadba74458cd6427d547a3d598d2b5fad",
   "plan_eyebrow": "491cdf1bfa03fcfbc90817969fcb3d33b2d551178a54845494d48b5d19376ab1",
   "plan_far_count_from": "ca0a1fd89b2e943774c968530a98893f6d201d462bb830c2839be492e1f12ada",
+  "plan_far_explain": "cbc6114a9f1333c5470da33512ec16824b6cbad3765bf980a32df91a8da4400d",
   "plan_far_from": "fa7e47e64d7b7d9c69caac8798674243c8cceaf94ec3aeca5364f144aec09fe2",
   "plan_far_lessons": "d0a81aef8bc53432792c763ae7a5459937db7f16bb87a6b38080279f6db0e6ec",
   "plan_far_lessons_about": "71b1fe45f9ccde0331e8379d206a7f01b0e1910bcb1e09ab8460ba8b6a5b44f7",
+  "plan_far_nothing_left": "a5bb89be5729bc84f4b12e658fc13e59a10e1a149e56e359c18b342e4c4bce2f",
+  "plan_far_see_lessons": "691b290fe28adf03f18b5962450bb403b32fd645810ed59dd84c43ca95ac05ef",
+  "plan_far_unreachable": "a072a8b1152707ec235018a17ec4723997f346f49c9ce7a3506a3c2efe84556f",
+  "plan_far_writing": "3f156c0546bb6b3a192a835980181e1a06f08c05e6c4970bccd34d6f11b8ebff",
   "plan_find": "7c235019cacdc4b426525693fde3e0e7f06ad2c9375fbdada8a44086c6148672",
   "plan_find_building": "b19c8cb593fe4faf8dd134d0401a093815e73668a7df0ce3a9abf13f18ead1ae",
   "plan_find_covers": "e7d6e2008cfe3a58d27abbd75ef75269def425a7cddeb55a2fadba852164921d",
@@ -630,6 +635,13 @@
         <item quantity="other">Etwa %d Lektionen</item>
     </plurals>
     <string name="plan_far_count_from">%1$s · ab %2$s</string>
+    <!-- A far topic's sheet: why its lessons aren't there yet. -->
+    <string name="plan_far_explain">Die Lektionen zu einem Thema werden zwei Wochen vorher geplant. Die Planung für dieses Thema kannst du jetzt sehen.</string>
+    <!-- Writes a far topic's lessons now. -->
+    <string name="plan_far_see_lessons">Lektionen ansehen</string>
+    <string name="plan_far_writing">Wir bereiten die Lektionen vor… Das dauert etwa 30 Sek.</string>
+    <string name="plan_far_unreachable">Wir konnten den Server nicht erreichen. Prüfe deine Verbindung.</string>
+    <string name="plan_far_nothing_left">Für dieses Thema gibt es nichts mehr vorzubereiten.</string>
     <plurals name="plan_more_chapters">
         <item quantity="one">%d weiteres Kapitel</item>
         <item quantity="other">%d weitere Kapitel</item>

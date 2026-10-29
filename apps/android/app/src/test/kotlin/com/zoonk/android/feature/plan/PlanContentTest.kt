@@ -16,11 +16,13 @@ import com.zoonk.android.navigation.rememberAppNavigator
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.GoalUpdateInput
 import com.zoonk.api.models.Syllabus
+import kotlinx.datetime.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
+import java.util.UUID
 
 @RunWith(AndroidJUnit4::class)
 @Config(qualifiers = "w411dp-h2000dp")
@@ -30,6 +32,7 @@ class PlanContentTest {
 
     private lateinit var navigator: AppNavigator
     private val statuses = mutableListOf<GoalUpdateInput.Status>()
+    private val farTopics = mutableListOf<FarTopic>()
 
     private fun show(
         status: String = "active",
@@ -47,7 +50,7 @@ class PlanContentTest {
                     page = page,
                     standing = if (kind == "language") null else Standing.Progress(progress(), done = 13, total = 46),
                     structure = structure,
-                    links = PlanLinks(navigator, page),
+                    links = PlanLinks(navigator, page, openFarTopic = { farTopics += it }),
                     resume = resume,
                     isSaving = false,
                     onSetStatus = { statuses += it },
@@ -101,6 +104,16 @@ class PlanContentTest {
         compose.onNodeWithText("Sets and tuples").performClick()
 
         compose.runOnIdle { assertEquals(AppRoute.Chapter(CHAPTER_LATER), navigator.currentRoute) }
+    }
+
+    @Test
+    fun aFarTopicOpensItsSheetWithWhatItsRowSays() {
+        show()
+
+        compose.onNodeWithText("Web apps").performClick()
+        compose.onNodeWithText("Flask").performClick()
+
+        assertEquals(listOf(FarTopic(UUID.fromString(FAR_SKILL), "Flask", null, LocalDate(2026, 11, 11))), farTopics)
     }
 
     @Test

@@ -70,6 +70,7 @@ data class PlanPageState(
 class PlanLinks(
     private val navigator: AppNavigator,
     private val page: PlanPageState,
+    private val openFarTopic: ((FarTopic) -> Unit)? = null,
     private val leaving: () -> Unit = {},
 ) {
     val hasExam: Boolean get() = page.isExam
@@ -104,8 +105,17 @@ class PlanLinks(
 
     fun plus() = open(AppRoute.Subscription)
 
+    /** Null where the page shows no far topic's sheet. */
+    fun farTopic(topic: FarTopic): (() -> Unit)? =
+        openFarTopic?.let { open ->
+            {
+                leaving()
+                open(topic)
+            }
+        }
+
     /** These links run [close] before leaving, so a sheet they're in doesn't stay over the page they open. */
-    fun closing(close: () -> Unit) = PlanLinks(navigator, page) { close() }
+    fun closing(close: () -> Unit) = PlanLinks(navigator, page, openFarTopic) { close() }
 
     private fun open(route: AppRoute) {
         leaving()
@@ -119,6 +129,7 @@ internal fun PlanPage(
     app: AppContainer,
     navigator: AppNavigator,
     viewModel: PlanViewModel,
+    farTopics: FarTopicViewModel,
     focus: String?,
 ) {
     val syllabus by app.plans.syllabus[page.goal.id].collectShown()
@@ -135,7 +146,7 @@ internal fun PlanPage(
     var editingAt by rememberSaveable { mutableStateOf(if (focus == ADJUST_TIME) PlanSection.Time else null) }
     var choosingFocus by rememberSaveable { mutableStateOf(focus == CHOOSE_FOCUS) }
     var studyingEverything by rememberSaveable { mutableStateOf(focus == STUDY_EVERYTHING && fullCourse(page) != null) }
-    val links = PlanLinks(navigator, page)
+    val links = PlanLinks(navigator, page, farTopics::open)
     val edits =
         PlanEdits(
             pending = pending,
@@ -213,6 +224,8 @@ internal fun PlanPage(
             onDismiss = { choosingFocus = false },
         )
     }
+
+    FarTopicSheet(farTopics, navigator) { links.chapter(it.toString()) }
 
     if (studyingEverything) {
         StudyEverythingSheet(

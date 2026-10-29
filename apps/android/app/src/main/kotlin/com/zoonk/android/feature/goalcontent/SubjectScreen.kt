@@ -34,6 +34,9 @@ import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.feedback.FeedbackTarget
 import com.zoonk.android.feature.feedback.ReportProblemMenu
+import com.zoonk.android.feature.plan.FarTopic
+import com.zoonk.android.feature.plan.FarTopicSheet
+import com.zoonk.android.feature.plan.FarTopicViewModel
 import com.zoonk.android.feature.plan.PlanOp
 import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.tutor.AskTutor
@@ -108,6 +111,7 @@ internal fun SubjectContent(
                 PageScaffold(onBack = back) { PageNotFound(navigator, it) }
             } else {
                 val writes = viewModel(key = "subject-$goalId") { SubjectViewModel(plans, syllabus, goalId) }
+                val farTopics = viewModel(key = "far-topics-$goalId") { FarTopicViewModel(plans, goalId) }
                 SubjectPage(
                     syllabus = shown.value,
                     subject = subject,
@@ -121,12 +125,20 @@ internal fun SubjectContent(
                             adjustPlan = { navigator.open(AppRoute.Plan()) },
                             restore = writes::restore,
                             setCadence = writes::setCadence,
+                            openFarTopic = { chapter ->
+                                chapter.skillId?.let {
+                                    farTopics.open(
+                                        FarTopic(it, chapter.title, chapter.plannedLessons, chapter.nextDate),
+                                    )
+                                }
+                            },
                             openMindMaps =
                                 { navigator.open(AppRoute.MindMaps(subject = subject.key)) }.takeIf {
                                     subject.chapters.any { it.chapterId in withMindMaps }
                                 },
                         ),
                 )
+                FarTopicSheet(farTopics, navigator) { navigator.open(AppRoute.Chapter(it.toString())) }
             }
         }
 

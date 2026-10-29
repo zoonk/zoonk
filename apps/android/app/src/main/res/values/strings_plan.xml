@@ -120,6 +120,13 @@
         <item quantity="other">About %d lessons</item>
     </plurals>
     <string name="plan_far_count_from">%1$s · from %2$s</string>
+    <!-- A far topic's sheet: why its lessons aren't there yet. -->
+    <string name="plan_far_explain">A topic\'s lessons are planned two weeks before you get to it. You can see this one\'s now.</string>
+    <!-- Writes a far topic's lessons now. -->
+    <string name="plan_far_see_lessons">See the lessons</string>
+    <string name="plan_far_writing">Preparing the lessons… It takes about half a minute.</string>
+    <string name="plan_far_unreachable">We couldn\'t reach the server. Check your connection.</string>
+    <string name="plan_far_nothing_left">There\'s nothing left to prepare for this topic.</string>
     <plurals name="plan_more_chapters">
         <item quantity="one">%d more chapter</item>
         <item quantity="other">%d more chapters</item>

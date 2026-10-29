@@ -27,6 +27,8 @@ import com.zoonk.api.models.PlanTimeToCover
 import com.zoonk.api.models.PlanTimeToCoverInput
 import com.zoonk.api.models.PlanToolChoiceInput
 import com.zoonk.api.models.PlanWatch
+import com.zoonk.api.models.SkillOutline
+import com.zoonk.api.models.SkillOutlineGeneration
 import com.zoonk.api.models.Syllabus
 import kotlinx.coroutines.flow.first
 import kotlinx.serialization.json.JsonArray
@@ -161,6 +163,18 @@ interface PlanApi {
         session: AuthenticatedSession,
         goalId: UUID,
     ): PlanBasesAdvice
+
+    suspend fun outline(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        skillId: UUID,
+    ): SkillOutline
+
+    suspend fun writeOutline(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        skillId: UUID,
+    ): SkillOutlineGeneration
 }
 
 class LivePlanApi(
@@ -271,6 +285,18 @@ class LivePlanApi(
         goalId: UUID,
     ) = perform { api.clients(session).plans.createPlanBasesAdvice(goalId) }
 
+    override suspend fun outline(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        skillId: UUID,
+    ) = perform { api.clients(session).learner.getSkillOutline(goalId, skillId) }
+
+    override suspend fun writeOutline(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        skillId: UUID,
+    ) = perform { api.clients(session).learner.createSkillOutlineGeneration(goalId, skillId) }
+
     private fun changeInput(operations: List<PlanOp>) =
         buildJsonObject {
             put("operations", JsonArray(operations.mapNotNull { it.toJson() }))
@@ -363,6 +389,24 @@ class PlanStore(
 
     /** Plans the goal at each daily time, so only from the learner's tap. It saves nothing, so nothing is read again. */
     suspend fun timeToCover(goalId: UUID): MutationResult<PlanTimeToCover> = cache.mutate { api.timeToCover(it, goalId) }
+
+    /** A far topic's lesson plan as it stands: read when its sheet opens and while it's written, never written. */
+    suspend fun outline(
+        goalId: UUID,
+        skillId: UUID,
+    ): MutationResult<SkillOutline> = cache.mutate { api.outline(it, goalId, skillId) }
+
+    /** Writes a far topic's lesson plan with a model, so only from the learner's tap. */
+    suspend fun writeOutline(
+        goalId: UUID,
+        skillId: UUID,
+    ): MutationResult<SkillOutlineGeneration> =
+        cache.mutate(invalidating = setOf(DataDomain.Allowance)) {
+            api.writeOutline(it, goalId, skillId)
+        }
+
+    /** A far topic's lessons were written: the plan and the syllabus read again to show them. */
+    fun outlineLanded() = cache.invalidate(setOf(DataDomain.Goals))
 
     /** Reads the plan again unless the plan shown has every write saved so far, and says whether it has them now. */
     suspend fun awaitWritesShown(goalId: UUID): PlanShown {

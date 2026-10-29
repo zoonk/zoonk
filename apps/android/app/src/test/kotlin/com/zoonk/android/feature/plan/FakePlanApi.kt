@@ -11,6 +11,8 @@ import com.zoonk.api.models.PlanChangeDecisionInput
 import com.zoonk.api.models.PlanChangePreview
 import com.zoonk.api.models.PlanChangeResult
 import com.zoonk.api.models.PlanTimeToCover
+import com.zoonk.api.models.SkillOutline
+import com.zoonk.api.models.SkillOutlineGeneration
 import kotlinx.coroutines.CompletableDeferred
 import java.util.UUID
 import kotlin.time.Instant
@@ -47,6 +49,14 @@ internal class FakePlanApi : PlanApi {
     var toolFailure: ApiException? = null
     var advice = PlanBasesAdvice(daysLeft = 40, ready = true, recommended = PlanBasesAdvice.Recommended.ESSENTIAL)
     var advised = 0
+
+    var outline: () -> SkillOutline = { SkillOutline(emptyList(), SkillOutline.Status.AVAILABLE) }
+    var outlineReads = 0
+    var writeOutline: () -> SkillOutlineGeneration = { SkillOutlineGeneration(null, SkillOutlineGeneration.Status.WRITING) }
+
+    /** Holds every far topic write until it opens. */
+    var outlineGate: CompletableDeferred<Unit>? = null
+    val outlineWrites = mutableListOf<UUID>()
 
     override suspend fun plan(
         session: AuthenticatedSession,
@@ -176,5 +186,24 @@ internal class FakePlanApi : PlanApi {
     ): PlanBasesAdvice {
         advised++
         return advice
+    }
+
+    override suspend fun outline(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        skillId: UUID,
+    ): SkillOutline {
+        outlineReads++
+        return outline()
+    }
+
+    override suspend fun writeOutline(
+        session: AuthenticatedSession,
+        goalId: UUID,
+        skillId: UUID,
+    ): SkillOutlineGeneration {
+        outlineGate?.await()
+        outlineWrites += skillId
+        return writeOutline()
     }
 }

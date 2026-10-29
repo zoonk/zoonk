@@ -422,6 +422,8 @@ private fun ChapterRow(
 ) {
     val isNext = chapter.state == PlanPhaseChaptersInner.State.CURRENT
     val chapterId = chapter.chapterId?.toString()
+    val skillId = chapter.skillId
+    val title = chapterTitle(chapter)
     val content: @Composable RowScope.() -> Unit = {
         ListRowLeading { ChapterMark(chapter, isNext) }
         TitleAndMeta(
@@ -435,7 +437,7 @@ private fun ChapterRow(
             },
         ) {
             Text(
-                text = chapterTitle(chapter),
+                text = title,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 color =
@@ -454,9 +456,17 @@ private fun ChapterRow(
     }
 
     when {
-        chapter.writing && chapter.skillId != null -> ListRow(content = content)
-        chapterId == null -> ListRow(content = content)
-        else -> ListRow(onClick = { links.chapter(chapterId) }, highlighted = isNext, end = { ListRowChevron() }, content = content)
+        chapter.writing && skillId != null -> {
+            ListRow(onClick = links.farTopic(FarTopic(skillId, title, chapter.plannedLessons, chapter.nextDate)), content = content)
+        }
+
+        chapterId == null -> {
+            ListRow(content = content)
+        }
+
+        else -> {
+            ListRow(onClick = { links.chapter(chapterId) }, highlighted = isNext, end = { ListRowChevron() }, content = content)
+        }
     }
 }
 
