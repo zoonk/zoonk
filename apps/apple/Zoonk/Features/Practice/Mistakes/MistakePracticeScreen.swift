@@ -196,9 +196,9 @@ struct MistakePracticeScreen: View {
           title: LocalizedStringResource(
             "Check", table: "Practice", comment: "Sends the answer to be graded."),
           isBusy: { if case .checking = state.phase { true } else { false } }(),
-          isDisabled: !state.acceptsAnswer || draft == nil
+          isDisabled: !state.acceptsAnswer || draft?.complete == nil
         ) {
-          if let draft { Task { await check(draft, timedOut: false) } }
+          if let answer = draft?.complete { Task { await check(answer, timedOut: false) } }
         }
 
         ask(step, answered: false, missed: false)

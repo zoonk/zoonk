@@ -115,8 +115,8 @@ final class QuestionBlockRun {
   }
 
   func retryAnswer() async {
-    guard let draft else { return }
-    await submit(draft)
+    guard let answer = draft?.complete else { return }
+    await submit(answer)
   }
 
   func next() async {

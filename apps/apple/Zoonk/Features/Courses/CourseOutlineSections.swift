@@ -1,11 +1,41 @@
 import SwiftUI
 
+/// What the learner unfolded in a course's outline, by level or area. Kept by the screen above its
+/// panes, so folding or unfolding keeps it.
+struct CourseOutlineDisclosures {
+  var expanded: [String: Bool] = [:]
+  var showsAll: Set<String> = []
+}
+
+extension Binding<CourseOutlineDisclosures> {
+  fileprivate func isExpanded(_ key: String, otherwise: Bool) -> Binding<Bool> {
+    Binding<Bool> {
+      wrappedValue.expanded[key] ?? otherwise
+    } set: {
+      wrappedValue.expanded[key] = $0
+    }
+  }
+
+  fileprivate func isShowingAll(_ key: String) -> Binding<Bool> {
+    Binding<Bool> {
+      wrappedValue.showsAll.contains(key)
+    } set: {
+      if $0 {
+        wrappedValue.showsAll.insert(key)
+      } else {
+        wrappedValue.showsAll.remove(key)
+      }
+    }
+  }
+}
+
 struct CourseOutlineSections: View {
   let detail: CourseDetail
   let estimate: CoursePlanEstimate?
   let exam: CoursePlanExample.Exam?
   let lead: String?
   let minutes: Int?
+  @Binding var disclosures: CourseOutlineDisclosures
 
   var body: some View {
     let chapters = detail.chapters.sorted { $0.position < $1.position }
@@ -46,11 +76,13 @@ struct CourseOutlineSections: View {
 
     if case .byDate(_, _, let areas) = estimate?.reach, !chapters.isEmpty {
       CourseAreaOutline(
-        areas: areas, chapters: chapters, course: detail.course, places: places)
+        areas: areas, chapters: chapters, course: detail.course, places: places,
+        disclosures: $disclosures)
     } else {
       ForEach(Array(courseLevelBands(chapters).enumerated()), id: \.element.id) { index, band in
         CourseLevelOutline(
-          band: band, course: detail.course, isFirst: index == 0, places: places)
+          band: band, course: detail.course, isFirst: index == 0, places: places,
+          disclosures: $disclosures)
       }
     }
   }
@@ -99,20 +131,16 @@ private struct CourseLevelOutline: View {
   let course: Course
   let isFirst: Bool
   let places: [String: CoursePlanEstimate.ChapterPlace]
-
-  @State private var isExpanded: Bool?
+  @Binding var disclosures: CourseOutlineDisclosures
 
   var body: some View {
-    let isExpanded = Binding {
-      self.isExpanded ?? isFirst
-    } set: {
-      self.isExpanded = $0
-    }
+    let key = "level:\(band.level)"
+    let isExpanded = $disclosures.isExpanded(key, otherwise: isFirst)
 
     Section {
       DisclosureGroup(isExpanded: isExpanded) {
         OutlineChapterRows(
-          chapters: band.chapters, course: course,
+          chapters: band.chapters, course: course, showsAll: $disclosures.isShowingAll(key),
           mark: { chapter in places[chapter.id].flatMap(weekText) })
       } label: {
         VStack(alignment: .leading, spacing: 2) {
@@ -166,6 +194,7 @@ private struct CourseAreaOutline: View {
   let chapters: [CourseChapter]
   let course: Course
   let places: [String: CoursePlanEstimate.ChapterPlace]
+  @Binding var disclosures: CourseOutlineDisclosures
 
   var body: some View {
     let names = areas.compactMap(\.name).reduce(into: [String]()) { names, name in
@@ -176,7 +205,7 @@ private struct CourseAreaOutline: View {
 
     if names.count <= 1 {
       Section {
-        areaRows(chapters: chapters)
+        areaRows(chapters: chapters, key: "areas")
       } header: {
         Text(areaFit(name: names.first, chapters: chapters))
       }
@@ -185,8 +214,8 @@ private struct CourseAreaOutline: View {
         let areaChapters = chapters.filter { places[$0.id]?.area == name }
 
         Section {
-          DisclosureGroup {
-            areaRows(chapters: areaChapters)
+          DisclosureGroup(isExpanded: $disclosures.isExpanded("area:\(name)", otherwise: false)) {
+            areaRows(chapters: areaChapters, key: "area:\(name)")
           } label: {
             VStack(alignment: .leading, spacing: 2) {
               LabeledContent {
@@ -211,12 +240,13 @@ private struct CourseAreaOutline: View {
     }
   }
 
-  private func areaRows(chapters: [CourseChapter]) -> some View {
+  private func areaRows(chapters: [CourseChapter], key: String) -> some View {
     let ordered = chapters.sorted {
       (places[$0.id]?.studyOrder ?? .max) < (places[$1.id]?.studyOrder ?? .max)
     }
 
-    return OutlineChapterRows(chapters: ordered, course: course, mark: mark)
+    return OutlineChapterRows(
+      chapters: ordered, course: course, showsAll: $disclosures.isShowingAll(key), mark: mark)
   }
 
   private func mark(_ chapter: CourseChapter) -> String? {
@@ -332,9 +362,8 @@ private struct OutlineChapterRows: View {
 
   let chapters: [CourseChapter]
   let course: Course
+  @Binding var showsAll: Bool
   let mark: (CourseChapter) -> String?
-
-  @State private var showsAll = false
 
   var body: some View {
     let folds = chapters.count >= Self.foldedFrom

@@ -333,9 +333,9 @@ struct QuestionBlockView: View {
         title: LocalizedStringResource(
           "Check", table: "Practice", comment: "Sends the answer to be graded."),
         isBusy: phase == .checking,
-        isDisabled: !accepts || run.draft == nil
+        isDisabled: !accepts || run.draft?.complete == nil
       ) {
-        if let draft = run.draft { Task { await run.submit(draft) } }
+        if let answer = run.draft?.complete { Task { await run.submit(answer) } }
       }
 
       ask(answered: false, missed: false)

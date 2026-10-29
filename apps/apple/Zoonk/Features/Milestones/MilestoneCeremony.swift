@@ -5,6 +5,8 @@ struct MilestoneCeremony: View {
   @Environment(BuddyStore.self) private var buddyStore
   @Environment(LearnerSummaryStore.self) private var learner
   @Environment(StudySessionStore.self) private var sessions
+  /// Folding or unfolding draws the stage again; it celebrates only the first time.
+  @State private var hasPlayed = false
 
   let milestone: Milestone
   let onClose: () -> Void
@@ -39,7 +41,12 @@ struct MilestoneCeremony: View {
   }
 
   private var stage: some View {
-    MilestoneStage(milestone: milestone, buddy: learner.summary.value?.buddy ?? BuddyLook())
+    MilestoneStage(
+      milestone: milestone, buddy: learner.summary.value?.buddy ?? BuddyLook(), plays: !hasPlayed
+    )
+    .onDisappear {
+      hasPlayed = true
+    }
   }
 
   private var words: some View {
@@ -191,6 +198,7 @@ struct MilestoneStage: View {
 
   let milestone: Milestone
   let buddy: BuddyLook
+  var plays = true
 
   private static let sparks: [Burst.Spark] = [
     .init(size: 13, x: -128, y: -50), .init(size: 10, x: -68, y: -118),
@@ -233,14 +241,14 @@ struct MilestoneStage: View {
       .fill(disc)
       .aspectRatio(1, contentMode: .fit)
       .overlay {
-        if !isGlasses {
+        if plays, !isGlasses {
           Burst(sparks: Self.sparks, delay: .beat)
         }
       }
       .overlay {
         BuddyCharacter(
           look: look, expression: .happy,
-          reaction: ActReaction(act: isGlasses ? .proud : .cheer, delay: .beat)
+          reaction: plays ? ActReaction(act: isGlasses ? .proud : .cheer, delay: .beat) : nil
         )
         .padding(side * 0.14)
       }

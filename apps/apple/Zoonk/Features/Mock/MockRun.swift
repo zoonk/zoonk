@@ -31,6 +31,7 @@ final class MockRun {
   let queue: MockDraftQueue
 
   private(set) var drafts: [String: MockDraft] = [:]
+  private var partials: [String: PracticeAnswer] = [:]
   private(set) var position = 0
   private(set) var busy: Step?
   private(set) var failed = false
@@ -100,13 +101,19 @@ final class MockRun {
     sectionTimeUp = view.current.map { $0.deadline <= .now } ?? false
   }
 
+  /// A partial answer stays on the device; the mock saves no answer for it.
   func answerBinding(for question: MockQuestion) -> Binding<PracticeAnswer?> {
     Binding(
-      get: { [weak self] in self?.drafts[question.itemId]?.answer },
+      get: { [weak self] in
+        self?.partials[question.itemId] ?? self?.drafts[question.itemId]?.answer
+      },
       set: { [weak self] answer in
+        self?.partials[question.itemId] = answer?.complete == nil ? answer : nil
+        let saved = answer?.complete
+
         switch question.format {
-        case .typed, .numeric, .essay: self?.write(answer)
-        case .multipleChoice, .trueFalse: self?.answer(answer)
+        case .typed, .numeric, .essay: self?.write(saved)
+        case .multipleChoice, .trueFalse: self?.answer(saved)
         }
       })
   }

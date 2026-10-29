@@ -434,7 +434,7 @@ enum PracticeAnswerText {
       let value = number.formatted(.number)
       guard let unit = question.unit else { return value }
       return unit.position == .prefix ? "\(unit.symbol) \(value)" : "\(value) \(unit.symbol)"
-    case .dontKnow:
+    case .dontKnow, .partial:
       return nil
     }
   }

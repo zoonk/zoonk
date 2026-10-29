@@ -73,8 +73,6 @@ struct ChoiceItemView: View {
   let result: PracticeItemResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
-  /// Picks short of what the question asks for, which aren't an answer yet.
-  @State private var incomplete: [Int]?
 
   var body: some View {
     let correct = result?.correctAnswer?.picks ?? []
@@ -105,15 +103,24 @@ struct ChoiceItemView: View {
   }
 
   private var picks: [Int] {
-    incomplete ?? draft?.picks ?? []
+    if case .partial(let picked) = draft {
+      return picked.compactMap(\.self)
+    }
+
+    return draft?.picks ?? []
   }
 
   private func pick(_ index: Int) {
     if select.isMulti {
       let next = picks.contains(index) ? picks.filter { $0 != index } : picks + [index]
-      let complete = select.isComplete(next)
-      incomplete = complete ? nil : next
-      draft = complete ? .choices(next) : nil
+
+      draft =
+        if select.isComplete(next) {
+          .choices(next)
+        } else {
+          next.isEmpty ? nil : .partial(next)
+        }
+
       return
     }
 
@@ -278,8 +285,6 @@ struct MatchPairsItemView: View {
   let right: [String]
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
-  /// Pairs made while some are still open, which aren't an answer yet.
-  @State private var incomplete: [Int?]?
   @State private var selected: Int?
 
   var body: some View {
@@ -328,15 +333,20 @@ struct MatchPairsItemView: View {
   }
 
   private var matches: [Int?] {
-    if let incomplete, incomplete.count == left.count { return incomplete }
-    if case .matches(let matched) = draft, matched.count == left.count { return matched }
-    return Array(repeating: nil, count: left.count)
+    switch draft {
+    case .partial(let made) where made.count == left.count: made
+    case .matches(let matched) where matched.count == left.count: matched
+    default: Array(repeating: nil, count: left.count)
+    }
   }
 
   private func update(_ next: [Int?]) {
-    let complete = next.allSatisfy { $0 != nil }
-    incomplete = complete ? nil : next
-    draft = complete ? .matches(next.compactMap(\.self)) : nil
+    draft =
+      if next.allSatisfy({ $0 != nil }) {
+        .matches(next.compactMap(\.self))
+      } else {
+        next.allSatisfy { $0 == nil } ? nil : .partial(next)
+      }
   }
 
   private func pickLeft(_ index: Int, current: [Int?]) {
@@ -385,8 +395,6 @@ struct OrderItemView: View {
   let result: PracticeItemResult?
   let isLocked: Bool
   @Binding var draft: PracticeAnswer?
-  /// Steps placed while some are still out, which aren't an answer yet.
-  @State private var incomplete: [Int]?
 
   var body: some View {
     let placed: [Int] = if case .order(let given) = result?.answer { given } else { order }
@@ -430,16 +438,22 @@ struct OrderItemView: View {
   }
 
   private var order: [Int] {
-    if let incomplete { return incomplete }
-    if case .order(let given) = draft { return given }
-    return []
+    switch draft {
+    case .partial(let placed): placed.compactMap(\.self)
+    case .order(let given): given
+    default: []
+    }
   }
 
   private func tap(_ index: Int) {
     let next = order.contains(index) ? order.filter { $0 != index } : order + [index]
-    let complete = next.count == steps.count
-    incomplete = complete ? nil : next
-    draft = complete ? .order(next) : nil
+
+    draft =
+      if next.count == steps.count {
+        .order(next)
+      } else {
+        next.isEmpty ? nil : .partial(next)
+      }
   }
 }
 

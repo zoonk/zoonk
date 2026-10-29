@@ -1,15 +1,21 @@
 import SwiftUI
 
+/// What the learner opened or closed in the day's session. Kept by the screen above its panes, so
+/// folding or unfolding keeps it.
+struct TodayDisclosures {
+  var earlierWork: Bool?
+  var showsDone = false
+  var showsMore = false
+}
+
 struct TodaySessionSection: View {
   @Environment(AppRouter.self) private var router
 
   let view: TodayView
   let busy: TodayDayView.Tap?
   let failed: TodayDayView.Tap?
+  @Binding var disclosures: TodayDisclosures
   let open: (StudyBlock, Bool) -> Void
-
-  @State private var showsDone = false
-  @State private var showsMore = false
 
   /// Done blocks shown before folding them into one row, and upcoming ones before "+N more".
   private let doneRows = 2
@@ -19,7 +25,13 @@ struct TodaySessionSection: View {
 
   var body: some View {
     if !view.earlierWork.isEmpty {
-      TodayEarlierWorkSection(items: view.earlierWork)
+      TodayEarlierWorkSection(
+        items: view.earlierWork,
+        isExpanded: Binding {
+          disclosures.earlierWork ?? (view.earlierWork.count <= 5)
+        } set: {
+          disclosures.earlierWork = $0
+        })
     }
 
     Section {
@@ -126,13 +138,13 @@ struct TodaySessionSection: View {
     let upcoming = session.blocks.filter { !$0.isFinished && $0.position != next?.position }
     let foldsDone = next != nil && done.count > doneRows
     let markedUpTo = upcoming.lastIndex { countsTowardMission($0) }.map { $0 + 1 } ?? 0
-    let shownUpcoming = showsMore ? upcoming.count : max(upcomingRows, markedUpTo)
+    let shownUpcoming = disclosures.showsMore ? upcoming.count : max(upcomingRows, markedUpTo)
 
     if foldsDone {
-      FoldRow(isOpen: $showsDone, isDone: true, count: done.count, minutes: nil)
+      FoldRow(isOpen: $disclosures.showsDone, isDone: true, count: done.count, minutes: nil)
     }
 
-    if !foldsDone || showsDone {
+    if !foldsDone || disclosures.showsDone {
       ForEach(done, id: \.position) { block in
         BlockRow(block: block, view: view, isNext: false, countsTowardMission: false)
       }
@@ -167,9 +179,10 @@ struct TodaySessionSection: View {
       }
     }
 
-    if upcoming.count > shownUpcoming || (showsMore && upcoming.count > upcomingRows) {
+    if upcoming.count > shownUpcoming || (disclosures.showsMore && upcoming.count > upcomingRows) {
       FoldRow(
-        isOpen: $showsMore, isDone: false, count: upcoming.count - max(upcomingRows, markedUpTo),
+        isOpen: $disclosures.showsMore, isDone: false,
+        count: upcoming.count - max(upcomingRows, markedUpTo),
         minutes: upcoming.dropFirst(max(upcomingRows, markedUpTo)).reduce(0) {
           $0 + $1.estimatedMinutes
         })
@@ -631,14 +644,8 @@ struct NextRowBackground: View {
 /// Today shows the saved plan, and starting the session fits it to today's time, so the day that
 /// opens can differ from the one shown.
 private struct TodayEarlierWorkSection: View {
-  @State private var isExpanded: Bool
-
   let items: [TodayView.EarlierWork]
-
-  init(items: [TodayView.EarlierWork]) {
-    self.items = items
-    _isExpanded = State(initialValue: items.count <= 5)
-  }
+  @Binding var isExpanded: Bool
 
   var body: some View {
     Section {

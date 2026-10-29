@@ -192,6 +192,14 @@ final class PracticeModelTests: XCTestCase {
       #"{"order":[1,0]}"#)
   }
 
+  func testPartialPicksAreNeverAnAnswer() {
+    let partial = PracticeAnswer.partial([2, nil])
+
+    XCTAssertNil(partial.complete)
+    XCTAssertEqual(PracticeAnswer.matches([2, 0]).complete, .matches([2, 0]))
+    XCTAssertThrowsError(try JSONEncoder().encode(partial), "a partial answer is never sent")
+  }
+
   func testAnswersReachTheGeneratedInputs() throws {
     let input: Components.Schemas.StudyAnswerInput.AnswerPayload = try PracticeJSON.recode(
       PracticeAnswer.number(2.5))

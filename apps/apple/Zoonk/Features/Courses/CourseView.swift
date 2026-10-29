@@ -47,6 +47,8 @@ private struct CourseLandingList: View {
 
   let detail: CourseDetail
 
+  @State private var outline = CourseOutlineDisclosures()
+
   var body: some View {
     PaneSplit {
       List {
@@ -89,7 +91,7 @@ private struct CourseLandingList: View {
 
     CourseOutlineSections(
       detail: detail, estimate: example?.pace?.estimate, exam: example?.exam,
-      lead: outlineLead, minutes: example?.pace?.minutes)
+      lead: outlineLead, minutes: example?.pace?.minutes, disclosures: $outline)
 
     CourseClosingSection(courseID: detail.course.id, follows: follows)
   }

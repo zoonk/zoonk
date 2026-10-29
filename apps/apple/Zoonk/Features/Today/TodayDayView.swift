@@ -12,6 +12,7 @@ struct TodayDayView: View {
   @State private var busy: Tap?
   @State private var failed: Tap?
   @State private var tapTask: Task<Void, Never>?
+  @State private var disclosures = TodayDisclosures()
 
   enum Tap: Equatable {
     case block(Int)
@@ -54,7 +55,8 @@ struct TodayDayView: View {
 
   @ViewBuilder
   private var day: some View {
-    TodaySessionSection(view: view, busy: busy, failed: failed, open: open)
+    TodaySessionSection(
+      view: view, busy: busy, failed: failed, disclosures: $disclosures, open: open)
 
     if !view.upNextLessons.isEmpty {
       TodayUpNextSection(view: view, isBusy: busy == .keepLearning) {

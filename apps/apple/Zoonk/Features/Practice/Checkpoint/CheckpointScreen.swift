@@ -198,7 +198,7 @@ struct CheckpointScreen: View {
         PracticeMainButton(
           title: LocalizedStringResource(
             "Confirm", table: "Practice", comment: "Sends a checkpoint answer."),
-          isBusy: state.isPending, isDisabled: draft == nil
+          isBusy: state.isPending, isDisabled: draft?.complete == nil
         ) { Task { await confirm() } }
       }
     }
@@ -225,7 +225,7 @@ struct CheckpointScreen: View {
 
   private func confirm() async {
     guard case .loaded(let loaded) = load, let question = state?.currentQuestion,
-      let answer = draft, state?.isPending == false, state?.feedback == nil
+      let answer = draft?.complete, state?.isPending == false, state?.feedback == nil
     else { return }
 
     state?.confirm()

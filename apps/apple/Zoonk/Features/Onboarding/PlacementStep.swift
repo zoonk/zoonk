@@ -465,10 +465,10 @@ struct PlacementQuestionScreen<Media: View>: View {
       PracticeMainButton(
         title: LocalizedStringResource(
           "Confirm", table: "Onboarding", comment: "Sends a placement answer"),
-        isBusy: isSaving, isDisabled: draft == nil || isSaving
+        isBusy: isSaving, isDisabled: draft?.complete == nil || isSaving
       ) {
-        if let draft {
-          onAnswer(draft)
+        if let answer = draft?.complete {
+          onAnswer(answer)
         }
       }
 

@@ -53,12 +53,20 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
   case order([Int])
   case text(String)
   case trueFalse(Bool)
+  /// Picks, pairs or steps short of what the question asks for. The screen keeps them, so a fold
+  /// keeps them too; they aren't an answer, so they're never checked or sent.
+  case partial([Int?])
 
   private enum CodingKeys: String, CodingKey {
     case dontKnow, isTrue, matches, number, order, selectedIndex, selectedIndexes, text
   }
 
   var isDontKnow: Bool { self == .dontKnow }
+
+  /// Nil while the answer is only partial.
+  var complete: PracticeAnswer? {
+    if case .partial = self { nil } else { self }
+  }
 
   var picks: [Int] {
     switch self {
@@ -102,6 +110,9 @@ enum PracticeAnswer: Hashable, Sendable, Codable {
     case .order(let order): try container.encode(order, forKey: .order)
     case .text(let text): try container.encode(text, forKey: .text)
     case .trueFalse(let isTrue): try container.encode(isTrue, forKey: .isTrue)
+    case .partial:
+      throw EncodingError.invalidValue(
+        self, .init(codingPath: [], debugDescription: "A partial answer is never sent"))
     }
   }
 }
