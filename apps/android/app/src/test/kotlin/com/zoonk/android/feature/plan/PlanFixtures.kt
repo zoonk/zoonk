@@ -169,3 +169,24 @@ internal fun learnerSummary(
          "readAt":1761650000000,"tier":"free","timeZone":null,"today":null}
         """.trimIndent(),
     )
+
+internal const val CHANGE_ID = "6f1c2c1e-1b8a-4d8e-9a77-2d8f4b0f1d01"
+
+/** A saved change; [effect] and [extra] are raw JSON fields. */
+internal fun planChange(
+    operations: String = "[]",
+    kind: String = "edited",
+    status: String = "applied",
+    source: String = "learner",
+    effect: String? = null,
+    extra: String = "",
+): com.zoonk.api.models.PlanChange =
+    ApiJson.decodeFromString(
+        """
+        {"canApply":true,"canUndo":true,"createdAt":"2026-10-28T12:00:00Z","examDocument":"notice","id":"$CHANGE_ID",
+         "kind":"$kind","lessonsSkipped":0,"operations":$operations,"seen":false,"source":"$source","status":"$status"
+         ${effect?.let { ""","effect":$it""" }.orEmpty()}${if (extra.isEmpty()) "" else ",$extra"}}
+        """.trimIndent(),
+    )
+
+internal fun effect(fields: String = ""): String = """{"lessonsAdded":0,"lessonsRemoved":0${if (fields.isEmpty()) "" else ",$fields"}}"""

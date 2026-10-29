@@ -327,4 +327,249 @@
     <string name="plan_still_full_review">Do a full review in your test\'s format</string>
     <string name="plan_still_first_mock">Take your first mock exam</string>
     <string name="plan_still_first_challenge">Take your first weekly challenge</string>
+
+    <string name="plan_change_today_changed">It\'s in your plan, and today\'s session follows it.</string>
+    <string name="plan_change_today_unchanged">It\'s in your plan from your next study day. Today\'s session stays as it is.</string>
+    <string name="plan_change_from_now_on">Your plan follows it from now on.</string>
+    <string name="plan_change_changed">Your plan changed.</string>
+    <string name="plan_change_own_level_first">For your new level, these come first: %1$s.</string>
+    <string name="plan_change_rebalance">More time for %1$s, where it\'s needed most.</string>
+    <string name="plan_change_follows_notice">Your plan follows the exam notice.</string>
+    <string name="plan_change_follows_guide">Your plan follows the exam\'s official guide.</string>
+    <string name="plan_change_read_notice_around">We read the exam notice: your plan can follow its subjects, with the exam around %1$s.</string>
+    <string name="plan_change_read_guide_around">We read the exam\'s official guide: your plan can follow its parts, with the exam around %1$s.</string>
+    <string name="plan_change_read_notice_on">We read the exam notice: your plan can follow its subjects, with the exam on %1$s.</string>
+    <string name="plan_change_read_guide_on">We read the exam\'s official guide: your plan can follow its parts, with the exam on %1$s.</string>
+    <string name="plan_change_read_notice">We read the exam notice: your plan can follow its subjects and topics.</string>
+    <string name="plan_change_read_guide">We read the exam\'s official guide: your plan can follow its parts and topics.</string>
+    <string name="plan_change_likely_date">The exam\'s likely date is now %1$s.</string>
+    <string name="plan_change_notice_says">The exam notice says %1$s.</string>
+    <string name="plan_change_calendar_says">The exam\'s official calendar says %1$s.</string>
+    <string name="plan_change_notice_sets_date">The exam notice sets the exam for %1$s.</string>
+    <string name="plan_change_calendar_sets_date">The exam\'s official calendar sets the exam for %1$s.</string>
+    <string name="plan_change_keep_notice_date">Keep the notice\'s date</string>
+    <string name="plan_change_keep_official_date">Keep the official date</string>
+    <string name="plan_change_daily_time">Daily time: %1$s.</string>
+    <string name="plan_change_weekly_challenge">Weekly challenge: %1$s.</string>
+    <string name="plan_change_goal_date">Goal date: %1$s.</string>
+    <string name="plan_change_daily_time_changed">Daily time changed to %1$s.</string>
+    <string name="plan_change_rest_day">%1$s: rest day.</string>
+    <string name="plan_change_days_time">%1$s: %2$s a day.</string>
+    <string name="plan_change_light_week">A light week from %1$s, at half the time.</string>
+    <string name="plan_change_weekly_challenge_moved">The weekly challenge moved to %1$s.</string>
+    <string name="plan_change_activities_left_out">%1$s left out of your lessons.</string>
+    <string name="plan_change_activities_back">%1$s back in your lessons.</string>
+    <string name="plan_change_more_practice">More practice from now on.</string>
+    <string name="plan_change_more_explanation">More explanation from now on.</string>
+    <string name="plan_change_harder">Harder from now on: tougher practice, and the basics you already do well are skipped.</string>
+    <string name="plan_change_easier">Easier material from now on.</string>
+    <string name="plan_change_usual_difficulty">Lessons at the usual difficulty from now on.</string>
+    <string name="plan_change_writing_weekly">Writing practice every week from now on.</string>
+    <string name="plan_change_writing_biweekly">Writing practice every other week from now on.</string>
+    <string name="plan_change_writing_final_weeks">Writing practice only in the final weeks from now on.</string>
+    <plurals name="plan_change_skills_come_in">
+        <item quantity="one">%1$s comes into your plan.</item>
+        <item quantity="other">%1$s come into your plan.</item>
+    </plurals>
+    <string name="plan_change_date_moved">Date moved to %1$s.</string>
+    <string name="plan_change_phase_dates_moved">Your phase dates moved, so more lessons fit before your goal\'s date.</string>
+    <string name="plan_change_fit_lessons">The lessons your time fits come into your plan.</string>
+    <string name="plan_change_exam_choice">Your plan studies %1$s for %2$s.</string>
+    <string name="plan_change_no_deadline">No deadline: you study everything at your own pace.</string>
+    <string name="plan_change_full_course">You study everything: what doesn\'t fit before the exam comes after it.</string>
+    <string name="plan_change_ends_at_exam">Your plan ends at the exam again.</string>
+    <plurals name="plan_change_bases_deep">
+        <item quantity="one">%d prerequisite is studied in depth.</item>
+        <item quantity="other">%d prerequisites are studied in depth.</item>
+    </plurals>
+    <plurals name="plan_change_bases_essential">
+        <item quantity="one">%d prerequisite keeps its essentials.</item>
+        <item quantity="other">%d prerequisites keep their essentials.</item>
+    </plurals>
+    <plurals name="plan_change_bases_quick">
+        <item quantity="one">%d prerequisite gets a quick lesson.</item>
+        <item quantity="other">%d prerequisites get a quick lesson each.</item>
+    </plurals>
+    <plurals name="plan_change_bases_skip">
+        <item quantity="one">%d prerequisite is skipped.</item>
+        <item quantity="other">%d prerequisites are skipped.</item>
+    </plurals>
+    <string name="plan_change_more_time_for">More time for %1$s.</string>
+    <string name="plan_change_less_time_for">Less time for %1$s.</string>
+    <string name="plan_change_areas_left_out">%1$s left out of the plan.</string>
+    <string name="plan_change_areas_back">%1$s back in the plan.</string>
+    <string name="plan_change_start_past_basics">Starting past the basics: %1$s.</string>
+    <string name="plan_change_start_from_basics">Starting from the basics again: %1$s.</string>
+    <string name="plan_change_tool_setup">A lesson to set up %1$s on %2$s comes before you need it.</string>
+    <string name="plan_change_tool_have">You have %1$s, so there\'s nothing to set up.</string>
+    <string name="plan_change_tool_none">No install for %1$s: you\'ll learn with examples.</string>
+    <string name="plan_system_chromebook" translatable="false">Chromebook</string>
+    <string name="plan_system_linux" translatable="false">Linux</string>
+    <string name="plan_system_macos" translatable="false">macOS</string>
+    <string name="plan_system_phone">Phone only</string>
+    <string name="plan_system_windows" translatable="false">Windows</string>
+    <string name="plan_change_missed_days">Lessons left from earlier days come first, and the rest of your plan moved later.</string>
+    <plurals name="plan_change_tested_out">
+        <item quantity="one">You tested out of %d lesson, so it\'s off your plan.</item>
+        <item quantity="other">You tested out of %d lessons, so it\'s off your plan.</item>
+    </plurals>
+    <plurals name="plan_change_relearn_topics">
+        <item quantity="one">%1$s is back in your plan: you missed a question on it.</item>
+        <item quantity="other">%1$s are back in your plan: you missed questions on them.</item>
+    </plurals>
+    <plurals name="plan_change_other_subjects">
+        <item quantity="one">%d other subject</item>
+        <item quantity="other">%d other subjects</item>
+    </plurals>
+    <plurals name="plan_change_relearn_subjects">
+        <item quantity="one">%1$d topic from %2$s is back in your plan: you missed a question on it.</item>
+        <item quantity="other">%1$d topics from %2$s are back in your plan: you missed questions on them.</item>
+    </plurals>
+    <plurals name="plan_change_goal_takes_fewer">
+        <item quantity="one">Your goal takes %d fewer lesson.</item>
+        <item quantity="other">Your goal takes %d fewer lessons.</item>
+    </plurals>
+    <plurals name="plan_change_goal_takes_about_more">
+        <item quantity="one">Your goal takes about %d more lesson.</item>
+        <item quantity="other">Your goal takes about %d more lessons.</item>
+    </plurals>
+    <plurals name="plan_change_goal_takes_more">
+        <item quantity="one">Your goal takes %d more lesson.</item>
+        <item quantity="other">Your goal takes %d more lessons.</item>
+    </plurals>
+    <plurals name="plan_change_no_longer_fit">
+        <item quantity="one">%d lesson no longer fits by your date.</item>
+        <item quantity="other">%d lessons no longer fit by your date.</item>
+    </plurals>
+    <plurals name="plan_change_about_more_fit">
+        <item quantity="one">About %d more lesson fits by your date.</item>
+        <item quantity="other">About %d more lessons fit by your date.</item>
+    </plurals>
+    <plurals name="plan_change_more_fit">
+        <item quantity="one">%d more lesson fits by your date.</item>
+        <item quantity="other">%d more lessons fit by your date.</item>
+    </plurals>
+    <string name="plan_change_time_lessons_need">We now plan for the time your lessons need.</string>
+    <plurals name="plan_change_topics_no_longer_fit">
+        <item quantity="one">%1$s no longer fits by your date.</item>
+        <item quantity="other">%1$s no longer fit by your date.</item>
+    </plurals>
+    <plurals name="plan_change_topics_now_fit">
+        <item quantity="one">%1$s now fits by your date.</item>
+        <item quantity="other">%1$s now fit by your date.</item>
+    </plurals>
+    <string name="plan_change_now_in_plan">Now in your plan: %1$s.</string>
+    <string name="plan_change_out_of_plan">Out of your plan: %1$s.</string>
+    <string name="plan_change_placement_changed">Your placement answers changed what fits by your date.</string>
+    <string name="plan_change_phase_dates_late_many">Some lessons are taking longer than planned, so the challenges that end these phases now come before them. Moving their dates fits the lessons in first.</string>
+    <plurals name="plan_change_phase_dates_late_one">
+        <item quantity="one">Some lessons are taking longer than planned, so the challenge that ends %1$s now comes before them. Moving that end %2$d day later fits them in first.</item>
+        <item quantity="other">Some lessons are taking longer than planned, so the challenge that ends %1$s now comes before them. Moving that end %2$d days later fits them in first.</item>
+    </plurals>
+    <plurals name="plan_change_phase_dates_rest_many">
+        <item quantity="one">%d phase challenge falls on a day you rest. Moving your phase dates gives it a study day.</item>
+        <item quantity="other">%d phase challenges fall on days you rest. Moving your phase dates gives them study days.</item>
+    </plurals>
+    <string name="plan_change_phase_dates_rest_one">%1$s ends with a challenge on %2$s, a day you rest. Moving your phase dates gives it a study day.</string>
+    <string name="plan_change_phase_dates_outcomes">Keeping your phase dates leaves %1$s out by your goal\'s date. Moving them fits them in.</string>
+    <string name="plan_change_phase_dates_lessons">Some lessons take more or less time than planned. Moving your phase dates fits more of them before your goal\'s date.</string>
+    <string name="plan_change_phase_dates_room">A phase\'s challenge falls on a day without room for it. Moving your phase dates gives it room.</string>
+    <string name="plan_change_phase_ends">%1$s ends %2$s instead of %3$s.</string>
+    <string name="plan_change_phase_end_row">%1$s: %2$s (was %3$s)</string>
+    <string name="plan_change_ends_instead">Ends %1$s instead of %2$s.</string>
+    <string name="plan_change_ends_around_instead">Ends around %1$s instead of %2$s.</string>
+    <string name="plan_change_finish_around">You finish around %1$s.</string>
+    <string name="plan_change_start_area_on">You start %1$s on %2$s.</string>
+    <string name="plan_change_start_area_instead">You start %1$s on %2$s instead of %3$s.</string>
+    <string name="plan_change_still_start_area">You still start %1$s on %2$s.</string>
+    <string name="plan_change_still_finish_area">You still finish %1$s around %2$s, with all its lessons: everything fits by your date.</string>
+    <plurals name="plan_change_area_gets_about_more">
+        <item quantity="one">%1$s gets about %2$d more lesson, so you finish it around %3$s instead of %4$s.</item>
+        <item quantity="other">%1$s gets about %2$d more lessons, so you finish it around %3$s instead of %4$s.</item>
+    </plurals>
+    <plurals name="plan_change_area_gets_more">
+        <item quantity="one">%1$s gets %2$d more lesson, so you finish it around %3$s instead of %4$s.</item>
+        <item quantity="other">%1$s gets %2$d more lessons, so you finish it around %3$s instead of %4$s.</item>
+    </plurals>
+    <plurals name="plan_change_area_fewer">
+        <item quantity="one">%1$s has %2$d lesson fewer to go, so you finish it around %3$s instead of %4$s.</item>
+        <item quantity="other">%1$s has %2$d lessons fewer to go, so you finish it around %3$s instead of %4$s.</item>
+    </plurals>
+    <string name="plan_change_finish_area_instead">You finish %1$s around %2$s instead of %3$s.</string>
+    <plurals name="plan_change_area_lessons_to_go">
+        <item quantity="one">%1$s: %2$d lesson to go instead of %3$d.</item>
+        <item quantity="other">%1$s: %2$d lessons to go instead of %3$d.</item>
+    </plurals>
+    <string name="plan_change_new_lessons_start">The new lessons start on %1$s.</string>
+    <string name="plan_change_new_lessons_before_basics">The new lessons start on %1$s, before the basics.</string>
+    <string name="plan_change_review_first">Your review on %1$s starts with %2$s.</string>
+    <string name="plan_change_weekly_mocks_move">Weekly mocks move to %1$s.</string>
+    <string name="plan_change_weekly_challenges_move">Weekly challenges move to %1$s.</string>
+    <string name="plan_change_next_mock_moves">Your next mock moves to %1$s.</string>
+    <plurals name="plan_change_topics_leave">
+        <item quantity="one">%1$d topic leaves: %2$s.</item>
+        <item quantity="other">%1$d topics leave: %2$s.</item>
+    </plurals>
+    <plurals name="plan_change_names_and_more">
+        <item quantity="one">%1$s and %2$d more</item>
+        <item quantity="other">%1$s and %2$d more</item>
+    </plurals>
+    <plurals name="plan_change_names_and_more_topics">
+        <item quantity="one">%1$s and %2$d more topic</item>
+        <item quantity="other">%1$s and %2$d more topics</item>
+    </plurals>
+    <plurals name="plan_change_unwritten_skill">
+        <item quantity="one">%1$s (about %2$d)</item>
+        <item quantity="other">%1$s (about %2$d)</item>
+    </plurals>
+    <string name="plan_change_unwritten">Lessons not written yet: %1$s.</string>
+    <plurals name="plan_change_adds">
+        <item quantity="one">Adds %d lesson</item>
+        <item quantity="other">Adds %d lessons</item>
+    </plurals>
+    <plurals name="plan_change_adds_about">
+        <item quantity="one">Adds about %d lesson</item>
+        <item quantity="other">Adds about %d lessons</item>
+    </plurals>
+    <plurals name="plan_change_more_lessons">
+        <item quantity="one">%d more lesson</item>
+        <item quantity="other">%d more lessons</item>
+    </plurals>
+    <plurals name="plan_change_about_more_lessons">
+        <item quantity="one">About %d more lesson</item>
+        <item quantity="other">About %d more lessons</item>
+    </plurals>
+    <plurals name="plan_change_leaves_out">
+        <item quantity="one">Leaves out %d lesson</item>
+        <item quantity="other">Leaves out %d lessons</item>
+    </plurals>
+    <plurals name="plan_change_fewer_lessons">
+        <item quantity="one">%d fewer lesson</item>
+        <item quantity="other">%d fewer lessons</item>
+    </plurals>
+    <plurals name="plan_change_fewer">
+        <item quantity="one">%d fewer</item>
+        <item quantity="other">%d fewer</item>
+    </plurals>
+    <plurals name="plan_change_adds_and_leaves_out">
+        <item quantity="one">%1$s and leaves out %2$d</item>
+        <item quantity="other">%1$s and leaves out %2$d</item>
+    </plurals>
+    <string name="plan_change_more_and_fewer">%1$s and %2$s</string>
+    <string name="plan_change_sentence">%1$s.</string>
+    <string name="plan_change_named">%1$s: %2$s.</string>
+    <string name="plan_change_such_as">%1$s, such as %2$s.</string>
+    <string name="plan_change_undone">Undone. Your plan is back as it was.</string>
+    <string name="plan_change_now">Now</string>
+    <string name="plan_change_after">After the change</string>
+    <string name="plan_change_goal_date_line">Goal date %1$s</string>
+    <string name="plan_change_plan_ends">Plan ends %1$s</string>
+    <string name="plan_change_until">%1$s until %2$s</string>
+    <plurals name="plan_change_area_to_go">
+        <item quantity="one">%1$s: %2$d lesson to go</item>
+        <item quantity="other">%1$s: %2$d lessons to go</item>
+    </plurals>
+    <string name="plan_change_next_mock">Next mock %1$s</string>
+    <string name="plan_change_mocks_on">Mock exams on %1$s</string>
+    <string name="plan_change_weekly_challenges_on">Weekly challenges on %1$s</string>
 </resources>
