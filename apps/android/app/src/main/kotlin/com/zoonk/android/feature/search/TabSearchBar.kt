@@ -1,6 +1,5 @@
 package com.zoonk.android.feature.search
 
-import android.view.KeyEvent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +20,7 @@ import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.SearchBarScrollBehavior
 import androidx.compose.material3.SearchBarState
 import androidx.compose.material3.SearchBarValue
 import androidx.compose.material3.Text
@@ -37,14 +37,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.core.view.ViewCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
@@ -75,24 +73,69 @@ import kotlinx.coroutines.launch
 
 /**
  * Main's command palette (DECISIONS #4): a Material `SearchBar` under the tab roots' top app bar,
- * docked where the window has the room and full screen elsewhere, opened with Ctrl+K too. What
- * the app already has filters as the learner types; only the catalog is searched on the server.
+ * docked where the window has the room and full screen elsewhere. Ctrl+K opens it while it shows;
+ * [SearchHost] opens search elsewhere.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TabSearchBar(
     app: AppContainer,
     navigator: AppNavigator,
+    modifier: Modifier = Modifier,
 ) {
     val state = rememberSearchBarState()
+    val docked = isSearchDocked()
+    val host = LocalAppSearch.current
+
+    DisposableEffect(host, state) {
+        host?.tabBar = state
+        onDispose { if (host?.tabBar === state) host.tabBar = null }
+    }
+
+    SearchPanel(app, navigator, state, docked) { inputField ->
+        // Docked results open at the bar's width, so a wide window's bar keeps Material's docked width.
+        val width = if (docked) Modifier.widthIn(max = DOCKED_WIDTH) else Modifier.fillMaxWidth()
+        SearchBar(
+            state = state,
+            inputField = inputField,
+            modifier = modifier.then(width).padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+        )
+    }
+}
+
+/** Phones' bar scrolls away with the page and back on the way up (Material's enter-always); a docked bar stays. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun rememberTabSearchScroll(): SearchBarScrollBehavior? {
+    val behavior = SearchBarDefaults.enterAlwaysSearchBarScrollBehavior()
+    return behavior.takeUnless { isSearchDocked() }
+}
+
+/** A landscape phone is wide but short: the keyboard would cover a docked panel. */
+@Composable
+private fun isSearchDocked(): Boolean {
+    val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
+    return sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) &&
+        sizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
+}
+
+/**
+ * Search itself: the field, what it finds and what a result does. [collapsed] draws the bar it
+ * opens from, if any; without one it opens full screen. What the app already has filters as the
+ * learner types; only the catalog is searched on the server.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+internal fun SearchPanel(
+    app: AppContainer,
+    navigator: AppNavigator,
+    state: SearchBarState,
+    docked: Boolean,
+    collapsed: @Composable (inputField: @Composable () -> Unit) -> Unit = {},
+) {
     val text = rememberTextFieldState()
     val scope = rememberCoroutineScope()
     val snackbars = LocalSnackbarHostState.current
-    val sizeClass = currentWindowAdaptiveInfoV2().windowSizeClass
-    // A landscape phone is wide but short: the keyboard would cover a docked panel.
-    val docked =
-        sizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND) &&
-            sizeClass.isHeightAtLeastBreakpoint(WindowSizeClass.HEIGHT_DP_MEDIUM_LOWER_BOUND)
     val switcher = viewModel { GoalSwitcherViewModel(app) }
     val search = viewModel { SearchViewModel(app) }
     val continueFailed = stringResource(R.string.search_continue_failed)
@@ -167,9 +210,7 @@ fun TabSearchBar(
             )
         }
 
-    // Docked results open at the bar's width, so a wide window's bar keeps Material's docked width.
-    val width = if (docked) Modifier.widthIn(max = DOCKED_WIDTH) else Modifier.fillMaxWidth()
-    SearchBar(state = state, inputField = inputField, modifier = width.padding(start = 16.dp, end = 16.dp, bottom = 8.dp))
+    collapsed(inputField)
 
     val results = @Composable { SearchResults(groups, highlighted = first, onOpen = { act(it.action) }) }
 
@@ -178,8 +219,6 @@ fun TabSearchBar(
     } else {
         ExpandedFullScreenSearchBar(state = state, inputField = inputField) { results() }
     }
-
-    OpenWithCtrlK(state)
 }
 
 class SearchViewModel(
@@ -320,25 +359,6 @@ private fun SearchResults(
                 )
             }
         }
-    }
-}
-
-/** Main's ⌘K, for a hardware keyboard: a shortcut no focused field took opens search. */
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun OpenWithCtrlK(state: SearchBarState) {
-    val view = LocalView.current
-    val scope = rememberCoroutineScope()
-
-    DisposableEffect(view, state) {
-        val listener =
-            ViewCompat.OnUnhandledKeyEventListenerCompat { _, event ->
-                val shortcut = event.keyCode == KeyEvent.KEYCODE_K && (event.isCtrlPressed || event.isMetaPressed)
-                if (shortcut && event.action == KeyEvent.ACTION_DOWN) scope.launch { state.animateToExpanded() }
-                shortcut
-            }
-        ViewCompat.addOnUnhandledKeyEventListener(view, listener)
-        onDispose { ViewCompat.removeOnUnhandledKeyEventListener(view, listener) }
     }
 }
 

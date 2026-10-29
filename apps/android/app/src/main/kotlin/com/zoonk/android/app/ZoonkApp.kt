@@ -61,6 +61,7 @@ import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
+import com.zoonk.android.feature.search.SearchHost
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.AppSection
@@ -102,14 +103,16 @@ fun ZoonkApp(
         }
     }
 
-    AppShell(
-        navigator,
-        entryProvider,
-        summary =
-            summary.value.takeIf {
-                access.value == LearnerAccess.SignedIn || access.value == LearnerAccess.NoGoal || access.value == LearnerAccess.Learner
-            },
-    )
+    val signedIn = access.value == LearnerAccess.SignedIn || access.value == LearnerAccess.NoGoal || access.value == LearnerAccess.Learner
+
+    val snackbars = remember { SnackbarHostState() }
+
+    // Search opens over any page, so it shares the frame's snackbars.
+    CompositionLocalProvider(LocalSnackbarHostState provides snackbars) {
+        SearchHost(app, navigator, signedIn) {
+            AppShell(navigator, entryProvider, summary = summary.value.takeIf { signedIn }, snackbarHostState = snackbars)
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -119,8 +122,8 @@ fun AppShell(
     entryProvider: (NavKey) -> NavEntry<NavKey>,
     modifier: Modifier = Modifier,
     summary: LearnerSummary? = null,
+    snackbarHostState: SnackbarHostState = remember { SnackbarHostState() },
 ) {
-    val snackbarHostState = remember { SnackbarHostState() }
     val entries = navigator.rememberEntries(entryProvider)
     val navigationSuiteType = navigationSuiteType(currentWindowAdaptiveInfoV2(), navigator)
 
