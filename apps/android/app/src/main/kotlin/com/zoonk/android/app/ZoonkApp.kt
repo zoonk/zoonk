@@ -44,7 +44,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Alignment
@@ -65,6 +67,7 @@ import androidx.navigation3.ui.defaultPopTransitionSpec
 import androidx.navigation3.ui.defaultTransitionSpec
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
+import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
 import com.zoonk.android.feature.search.SearchHost
@@ -121,6 +124,20 @@ fun ZoonkApp(
     val access = app.learnerAccess.collectAsStateWithLifecycle()
     val summary by app.learnerSummary.summary.collectShown()
     val entryProvider = remember(app, navigator) { gatedEntries(appEntries(app, navigator), access, app, navigator) }
+    val signedIn =
+        app.sessions.state
+            .collectAsStateWithLifecycle()
+            .value as? SessionState.SignedIn
+    var shownAccountId by rememberSaveable { mutableStateOf<String?>(null) }
+    var shownGuest by rememberSaveable { mutableStateOf(false) }
+
+    // As main reloads its tabs when someone signs in: another learner's screens aren't theirs.
+    LaunchedEffect(signedIn?.session?.accountId) {
+        val learner = signedIn ?: return@LaunchedEffect
+        if (startsAnotherLearner(shownAccountId, shownGuest, learner)) navigator.popToRoots()
+        shownAccountId = learner.session.accountId
+        shownGuest = learner.isGuest
+    }
 
     LaunchedEffect(link) {
         if (link != null) {
@@ -140,6 +157,13 @@ fun ZoonkApp(
         }
     }
 }
+
+/** A guest who signs in brings their work into the account, so only that change keeps the screens open. */
+internal fun startsAnotherLearner(
+    shownAccountId: String?,
+    shownGuest: Boolean,
+    next: SessionState.SignedIn,
+): Boolean = shownAccountId != null && shownAccountId != next.session.accountId && !(shownGuest && !next.isGuest)
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
 @Composable
