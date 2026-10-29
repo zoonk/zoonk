@@ -176,7 +176,13 @@ struct ProfileEditorView: View {
         return
       }
 
-      if let suggestion = await session.usernameSuggestion() {
+      let suggestion = await session.usernameSuggestion()
+
+      guard !Task.isCancelled else {
+        return
+      }
+
+      if let suggestion {
         username = suggestion
       } else {
         isChangingUsername = true
