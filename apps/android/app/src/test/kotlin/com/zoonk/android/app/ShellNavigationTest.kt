@@ -69,7 +69,7 @@ class ShellNavigationTest {
 
     @Test
     fun snackbarsShowAboveADockedAction() {
-        open(AppRoute.Exam)
+        open(AppRoute.Memory)
         rule.onNodeWithText("Show").performClick()
 
         val snackbar = rule.onNodeWithText("Saved").fetchSemanticsNode().boundsInRoot

@@ -90,7 +90,7 @@ private fun testEntries(
         entry<AppRoute.Today> { CountedList("today") }
         entry<AppRoute.Plan> { CountedList("plan") }
         entry<AppRoute.Buddy> { CountedList("buddy") }
-        entry<AppRoute.Exam> { DockedActionPage() }
+        entry<AppRoute.Memory> { DockedActionPage() }
         entry<AppRoute.Chapter> { route ->
             viewModel { CountingViewModel("chapter:${route.chapterId}") }
             RoutePlaceholder(route, app, navigator)
