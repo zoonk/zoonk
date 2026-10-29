@@ -46,7 +46,7 @@ struct PlanStandingSheet: View {
       } else if let lessons = syllabus?.lessons {
         Section {
           LabeledContent {
-            Text(lessons.done, format: .number).monospacedDigit()
+            Text(lessons.done - lessons.known, format: .number).monospacedDigit()
           } label: {
             Text("Lessons studied", tableName: "Plan", comment: "Lessons the learner studied")
           }

@@ -316,14 +316,14 @@ struct PlanNumbersSection: View {
       return nil
     }
 
-    let share = lessons.total > 0 ? Double(lessons.done + lessons.known) / Double(lessons.total) : 0
+    let share = lessons.total > 0 ? min(1, Double(lessons.done) / Double(lessons.total)) : 0
 
     return PlanNumber(
       label: String(
         localized: "Progress", table: "Plan", comment: "Label of the goal's progress number"),
       value: share.formatted(.percent.precision(.fractionLength(0...2))),
       detail: String(
-        localized: "\(lessons.done + lessons.known) of \(lessons.total) lessons",
+        localized: "\(lessons.done) of \(lessons.total) lessons",
         table: "Plan", comment: "Lessons studied or known of the plan's lessons"))
   }
 
