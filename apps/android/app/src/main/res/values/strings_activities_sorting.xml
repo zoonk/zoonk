@@ -32,4 +32,34 @@
     <string name="activities_sorting_right_order">The right order</string>
     <!-- Where the learner had a step that's out of place, like "You had it at 3". -->
     <string name="activities_sorting_you_had_it_at">You had it at %1$d</string>
+
+    <string name="activities_sorting_badge_match_pairs">Match pairs</string>
+    <!-- Pairs matched so far, like "1 of 3 pairs matched". -->
+    <string name="activities_sorting_pairs_matched">%1$d of %2$d pairs matched</string>
+    <!-- Cards that look like they match one on the other side but don't. -->
+    <plurals name="activities_sorting_cards_without_match">
+        <item quantity="one">%d card has no match</item>
+        <item quantity="other">%d cards have no match</item>
+    </plurals>
+    <!-- The name of the two columns of cards, for TalkBack. -->
+    <string name="activities_sorting_cards_to_match">Cards to match</string>
+    <!-- A matched card, for TalkBack, like "pregnant, matched". -->
+    <string name="activities_sorting_card_matched">%1$s, matched</string>
+    <!-- A card with no match, for TalkBack, like "embarrassed, no match". -->
+    <string name="activities_sorting_card_no_match">%1$s, no match</string>
+    <!-- Read by TalkBack after a match, like "Matched éxito with success. 2 of 3 pairs matched." -->
+    <string name="activities_sorting_matched">Matched %1$s with %2$s. %3$d of %4$d pairs matched.</string>
+    <!-- Starts the reason a picked card has no match, like "“embarrassed” has no match." -->
+    <string name="activities_sorting_no_match_note">“%1$s” has no match.</string>
+    <!-- Read by TalkBack after a wrong pair, like "éxito and pregnant don't go together." -->
+    <string name="activities_sorting_dont_go_together">%1$s and %2$s don\'t go together.</string>
+    <string name="activities_sorting_dont_go_together_short">Those two don\'t go together.</string>
+    <!-- Before why a pair is wrong. -->
+    <string name="activities_sorting_not_quite">Not quite:</string>
+    <!-- Above the pairs the learner got wrong on the first try. -->
+    <string name="activities_sorting_missed_first_try">Missed on the first try</string>
+    <!-- A pair missed on the first try, like "embarazada goes with pregnant, not embarrassed." -->
+    <string name="activities_sorting_goes_with">%1$s goes with %2$s, not %3$s.</string>
+    <!-- Above the cards that look like a match but have none. -->
+    <string name="activities_sorting_look_alikes">Look-alikes with no match</string>
 </resources>
