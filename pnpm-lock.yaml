@@ -451,9 +451,15 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 24.19.1
+      '@zoonk/core':
+        specifier: workspace:*
+        version: link:../../packages/core
       '@zoonk/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@zoonk/testing':
+        specifier: workspace:*
+        version: link:../../packages/testing
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
@@ -469,6 +475,9 @@ importers:
       fast-xml-parser:
         specifier: 5.11.2
         version: 5.11.2
+      tsx:
+        specifier: 'catalog:'
+        version: 4.23.15
       typescript:
         specifier: 'catalog:'
         version: 7.0.2

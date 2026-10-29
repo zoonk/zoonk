@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "fixtures:activities": "tsx scripts/activities/export-fixtures.mts",
     "i18n": "node scripts/i18n/translate.mts",
     "i18n:lint": "node scripts/i18n/check-catalogs.mts && eloqnt lint --strict",
     "palette": "node scripts/theme/generate-palette.mts",
@@ -15,12 +16,15 @@
     "@eloqnt/cli": "catalog:",
     "@eloqnt/format-android-xml": "catalog:",
     "@types/node": "catalog:",
+    "@zoonk/core": "workspace:*",
     "@zoonk/i18n": "workspace:*",
+    "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "esbuild": "0.28.2",
     "fast-xml-builder": "1.3.1",
     "fast-xml-parser": "5.11.2",
+    "tsx": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   }

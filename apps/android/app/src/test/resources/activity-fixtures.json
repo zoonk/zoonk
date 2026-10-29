@@ -1,0 +1,1564 @@
+{
+  "areaModel": {
+    "content": {
+      "check": {
+        "kind": "choice",
+        "options": [
+          {
+            "id": "o0",
+            "isCorrect": false,
+            "reason": "Because of 212 m².",
+            "text": "212 m²",
+            "value": 212
+          },
+          {
+            "id": "o1",
+            "isCorrect": true,
+            "reason": "Because of 322 m².",
+            "text": "322 m²",
+            "value": 322
+          },
+          {
+            "id": "o2",
+            "isCorrect": false,
+            "reason": "Because of 37 m².",
+            "text": "37 m²",
+            "value": 37
+          }
+        ],
+        "question": "What is the garden's area?"
+      },
+      "fields": {
+        "height": { "parts": [10, 4], "total": 14 },
+        "model": "area",
+        "unit": "m",
+        "width": { "parts": [20, 3], "total": 23 }
+      },
+      "prompt": "A garden bed is 23 m by 14 m. Split it to find its area.",
+      "template": "areaModel"
+    },
+    "expected": { "kind": "choice", "optionId": "o1" },
+    "value": 322
+  },
+  "balance": {
+    "content": {
+      "check": {
+        "answer": 3,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 }
+      },
+      "fields": {
+        "equation": { "left": "4*x + 1", "right": "2*x + 7" },
+        "hints": [{ "hint": "Take the same off both sides.", "move": "Took bags off one side" }],
+        "objects": [
+          { "label": "One bag of rice", "symbol": "x" },
+          { "label": "1 kg", "symbol": "1" }
+        ],
+        "steps": [
+          { "left": "2*x + 1", "right": "7", "move": "Take 2 bags off each side" },
+          { "left": "2*x", "right": "6", "move": "Take 1 kg off each side" },
+          { "left": "x", "right": "3", "move": "Split into 2 equal groups" }
+        ],
+        "variable": "x"
+      },
+      "prompt": "Every bag weighs the same. How heavy is one bag?",
+      "template": "balance"
+    },
+    "expected": { "kind": "numeric", "value": 3 },
+    "value": 3
+  },
+  "formulaModel": {
+    "content": {
+      "check": {
+        "inputs": [{ "name": "rate", "value": 7 }],
+        "answer": 3869.68,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 }
+      },
+      "data": { "isExample": true },
+      "fields": {
+        "compareAt": 5,
+        "outputs": [
+          {
+            "formula": "1000 * (1 + rate / 100) ^ 20",
+            "id": "value",
+            "label": "Value after 20 years",
+            "unit": "$"
+          }
+        ],
+        "variables": [
+          {
+            "initial": 5,
+            "label": "Rate per year",
+            "max": 12,
+            "min": 0,
+            "name": "rate",
+            "step": 0.5,
+            "unit": "%"
+          }
+        ]
+      },
+      "prompt": "Move the rate. What is $1,000 worth after 20 years?",
+      "template": "formulaModel"
+    },
+    "expected": { "kind": "numeric", "value": 3869.68 },
+    "value": 2653.2977051444223
+  },
+  "guessReveal": {
+    "content": {
+      "check": {
+        "answer": 11.57,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "relative", "value": 0.01 }
+      },
+      "fields": {
+        "comparison": "Less than two weeks.",
+        "max": 3650,
+        "min": 1,
+        "scale": "log",
+        "takeaway": "A billion seconds is about 32 years.",
+        "truth": {
+          "expression": "1000000 / 86400",
+          "kind": "computed",
+          "workings": [
+            { "expression": "1000000 / 60", "label": "minutes" },
+            { "expression": "1000000 / 86400", "label": "days" }
+          ]
+        },
+        "unit": "days"
+      },
+      "prompt": "How long is a million seconds?",
+      "template": "guessReveal"
+    },
+    "expected": { "kind": "numeric", "value": 11.57 },
+    "value": 11.574074074074074
+  },
+  "numberLine": {
+    "content": {
+      "check": {
+        "answer": 5,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 }
+      },
+      "fields": {
+        "label": "Temperature",
+        "max": 7,
+        "min": -5,
+        "moves": [{ "by": 3 }, { "by": 5 }],
+        "start": -3,
+        "step": 1,
+        "unit": "°C"
+      },
+      "prompt": "At 7 am it's −3 °C. By noon it's 8 degrees warmer.",
+      "template": "numberLine"
+    },
+    "expected": { "kind": "numeric", "value": 5 },
+    "value": 5
+  },
+  "stepSolver": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "problem": "A $60 jacket is 25% off. With 8% sales tax, what do you pay?",
+        "steps": [
+          {
+            "choices": [
+              {
+                "id": "a",
+                "isCorrect": true,
+                "reason": "Tax is charged on the sale price.",
+                "text": "Take 25% off"
+              },
+              {
+                "id": "b",
+                "isCorrect": false,
+                "reason": "The discount comes first.",
+                "text": "Add the tax"
+              }
+            ],
+            "expression": "60 * (1 - 0.25)",
+            "id": "discount",
+            "math": "60 − 15 = 45",
+            "prompt": "What comes first?",
+            "value": 45
+          },
+          {
+            "choices": [
+              {
+                "id": "a",
+                "isCorrect": false,
+                "reason": "That's before the discount.",
+                "text": "$60"
+              },
+              {
+                "id": "b",
+                "isCorrect": true,
+                "reason": "You pay tax on what you pay.",
+                "text": "$45"
+              }
+            ],
+            "expression": "45 * 0.08",
+            "id": "tax",
+            "math": "8% of 45 = 3.60",
+            "prompt": "8% of which price?",
+            "value": 3.6
+          }
+        ]
+      },
+      "prompt": "Solve it one step at a time.",
+      "template": "stepSolver"
+    },
+    "expected": {
+      "answer": { "kind": "assignment", "pairs": { "discount": "a", "tax": "b" } },
+      "kind": "interaction"
+    },
+    "value": 3.6
+  },
+  "chartReader": {
+    "content": {
+      "check": {
+        "output": "late",
+        "kind": "choice",
+        "options": [
+          {
+            "id": "o0",
+            "isCorrect": false,
+            "reason": "Because of 9 ppm.",
+            "text": "9 ppm",
+            "value": 9
+          },
+          {
+            "id": "o1",
+            "isCorrect": true,
+            "reason": "Because of 24 ppm.",
+            "text": "24 ppm",
+            "value": 24
+          },
+          {
+            "id": "o2",
+            "isCorrect": false,
+            "reason": "Because of 50 ppm.",
+            "text": "50 ppm",
+            "value": 50
+          }
+        ],
+        "question": "How much did CO₂ rise from 2010 to 2020?"
+      },
+      "data": { "source": { "publisher": "NOAA", "title": "Mauna Loa CO2 record", "year": 2024 } },
+      "fields": {
+        "points": [
+          { "x": 1960, "y": 317 },
+          { "x": 1970, "y": 326 },
+          { "x": 2010, "y": 390 },
+          { "x": 2020, "y": 414 }
+        ],
+        "spans": [
+          { "from": 1960, "id": "early", "label": "1960 to 1970", "to": 1970 },
+          { "from": 2010, "id": "late", "label": "2010 to 2020", "to": 2020 }
+        ],
+        "statistic": "change",
+        "xLabel": "Year",
+        "yLabel": "CO₂ (ppm)"
+      },
+      "prompt": "Measure the rise decade by decade.",
+      "template": "chartReader"
+    },
+    "expected": { "kind": "choice", "optionId": "o1" },
+    "value": 9
+  },
+  "distributionExplorer": {
+    "content": {
+      "check": {
+        "answer": 95.45,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 },
+        "unit": "%"
+      },
+      "data": { "source": { "title": "Wechsler Adult Intelligence Scale norms" } },
+      "fields": {
+        "distribution": { "kind": "normal", "mean": 100, "sd": 15 },
+        "handles": { "from": 90, "to": 110 },
+        "target": { "from": 70, "to": 130 },
+        "unit": "IQ points",
+        "valueLabel": "IQ score"
+      },
+      "prompt": "Drag the handles to cover 2 standard deviations.",
+      "template": "distributionExplorer"
+    },
+    "expected": { "kind": "numeric", "value": 95.45 },
+    "value": 95.44998742254873
+  },
+  "geometryBoard": {
+    "content": {
+      "check": {
+        "answer": 180,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 }
+      },
+      "fields": {
+        "invariant": "The angles always add to 180°.",
+        "measure": "angleSum",
+        "points": [
+          { "id": "a", "movable": true, "x": 0, "y": 0 },
+          { "id": "b", "movable": false, "x": 4, "y": 0 },
+          { "id": "c", "movable": true, "x": 1, "y": 3 }
+        ]
+      },
+      "prompt": "Drag a corner and watch the angles.",
+      "template": "geometryBoard"
+    },
+    "expected": { "kind": "numeric", "value": 180 },
+    "value": 180
+  },
+  "randomSimulation": {
+    "content": {
+      "check": {
+        "kind": "choice",
+        "options": [
+          {
+            "id": "o0",
+            "isCorrect": false,
+            "reason": "Because of Almost always.",
+            "text": "Almost always",
+            "value": 0.9
+          },
+          {
+            "id": "o1",
+            "isCorrect": false,
+            "reason": "Because of About half the time.",
+            "text": "About half the time",
+            "value": 0.5
+          },
+          {
+            "id": "o2",
+            "isCorrect": true,
+            "reason": "Because of About 1 in 4.",
+            "text": "About 1 in 4",
+            "value": 0.25
+          },
+          {
+            "id": "o3",
+            "isCorrect": false,
+            "reason": "Because of Rarely.",
+            "text": "Rarely",
+            "value": 0.05
+          }
+        ],
+        "question": "How often do you get exactly 5 heads?"
+      },
+      "fields": {
+        "hitLabel": "Exactly 5 heads",
+        "mode": "chance",
+        "model": {
+          "hit": { "comparison": "exactly", "value": 5 },
+          "kind": "binomial",
+          "probability": 0.5,
+          "trials": 10
+        },
+        "runs": 1000,
+        "trialLabel": "10 flips"
+      },
+      "prompt": "Flip a coin 10 times.",
+      "template": "randomSimulation"
+    },
+    "expected": { "kind": "choice", "optionId": "o2" },
+    "value": 0.24609375000000025
+  },
+  "unitCircle": {
+    "content": {
+      "check": {
+        "inputs": [{ "name": "angle", "value": 30 }],
+        "output": "sin",
+        "answer": 0.5,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 }
+      },
+      "fields": {
+        "angleUnit": "degrees",
+        "frame": "A Ferris wheel seat.",
+        "show": ["sin", "cos"],
+        "startAngle": 0
+      },
+      "prompt": "Turn the wheel to 30°.",
+      "template": "unitCircle"
+    },
+    "expected": { "kind": "numeric", "value": 0.5 },
+    "value": 0
+  },
+  "combinationGrid": {
+    "content": {
+      "check": {
+        "kind": "choice",
+        "options": [
+          {
+            "id": "o0",
+            "isCorrect": false,
+            "reason": "Because of 1 in 4.",
+            "text": "1 in 4",
+            "value": 0.25
+          },
+          {
+            "id": "o1",
+            "isCorrect": true,
+            "reason": "Because of 1 in 2.",
+            "text": "1 in 2",
+            "value": 0.5
+          },
+          {
+            "id": "o2",
+            "isCorrect": false,
+            "reason": "Because of 3 in 4.",
+            "text": "3 in 4",
+            "value": 0.75
+          }
+        ],
+        "question": "What share of the seeds grow white flowers?"
+      },
+      "fields": {
+        "columns": { "label": "White parent", "values": ["p", "p"] },
+        "rows": { "label": "Purple parent", "values": ["P", "p"] },
+        "rule": "alleles",
+        "title": "Flower color",
+        "traits": { "dominant": "Purple", "recessive": "White" }
+      },
+      "prompt": "Cross a purple Pp pea with a white pp pea.",
+      "template": "combinationGrid"
+    },
+    "expected": { "kind": "choice", "optionId": "o1" },
+    "value": 0.5
+  },
+  "labeledDiagram": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "distractors": ["Pulmonary valve"],
+        "mixUps": [
+          {
+            "feedback": "The picture faces you, so the heart's right side is on your left.",
+            "labels": ["Right atrium", "Left atrium"]
+          }
+        ],
+        "parts": [
+          { "label": "Right atrium", "part": "right atrium" },
+          { "label": "Left atrium", "part": "left atrium" },
+          { "label": "Right ventricle", "part": "right ventricle" },
+          { "label": "Left ventricle", "part": "left ventricle" },
+          { "label": "Aorta", "part": "aorta" }
+        ],
+        "picture": {
+          "alt": "A human heart cut open from the front, with five numbered parts",
+          "prompt": "A human heart cut open from the front, showing its four chambers and the aorta"
+        }
+      },
+      "prompt": "Put each name on its number in the heart.",
+      "template": "labeledDiagram"
+    },
+    "expected": {
+      "answer": {
+        "kind": "assignment",
+        "pairs": {
+          "1": "Right atrium",
+          "2": "Left atrium",
+          "3": "Right ventricle",
+          "4": "Left ventricle",
+          "5": "Aorta"
+        }
+      },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "lineCrossing": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "data": { "source": { "publisher": "USDA", "title": "Egg Markets Overview", "year": 2022 } },
+      "fields": {
+        "change": "Bird flu cut the number of laying hens.",
+        "feedback": {
+          "wrongDirection": "Fewer hens means less supply.",
+          "wrongLine": "People didn't want more eggs."
+        },
+        "lines": [
+          { "id": "supply", "intercept": 1, "label": "Supply", "slope": 0.5 },
+          { "id": "demand", "intercept": 10, "label": "Demand", "slope": -1 }
+        ],
+        "shift": { "amount": 2, "direction": "left", "line": "supply" },
+        "xLabel": "Eggs sold",
+        "yLabel": "Price per dozen"
+      },
+      "prompt": "Drag a line to explain the 2022 egg price spike.",
+      "template": "lineCrossing"
+    },
+    "expected": {
+      "answer": { "curve": "supply", "direction": "left", "kind": "curveShift" },
+      "kind": "interaction"
+    },
+    "value": 4.666666666666666
+  },
+  "moleculeBuilder": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": { "elements": ["C", "O", "H"], "formula": "CO2" },
+      "prompt": "Build CO₂ so every atom has all its bonds.",
+      "template": "moleculeBuilder"
+    },
+    "expected": {
+      "answer": { "elements": { "C": 1, "O": 2 }, "kind": "molecule" },
+      "kind": "interaction"
+    },
+    "value": 4
+  },
+  "processOrder": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "steps": [
+          { "icon": "sun", "id": "absorb", "text": "Chlorophyll absorbs sunlight" },
+          {
+            "icon": "droplets",
+            "id": "split",
+            "text": "Water is split, releasing oxygen",
+            "why": "The absorbed light energy is what splits water."
+          },
+          {
+            "icon": "battery-charging",
+            "id": "store",
+            "text": "Light energy is stored in ATP and NADPH",
+            "why": "Splitting water frees the electrons that charge ATP and NADPH."
+          },
+          {
+            "icon": "refresh-cw",
+            "id": "calvin",
+            "text": "The Calvin cycle builds sugar from CO₂",
+            "why": "The Calvin cycle runs on the ATP and NADPH that light made."
+          },
+          {
+            "icon": "wheat",
+            "id": "starch",
+            "text": "The plant stores sugar as starch",
+            "why": "There has to be sugar before any can be stored."
+          }
+        ]
+      },
+      "prompt": "How does a leaf turn light into sugar?",
+      "template": "processOrder"
+    },
+    "expected": {
+      "answer": { "ids": ["absorb", "split", "store", "calvin", "starch"], "kind": "order" },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "codeRunner": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "editableLines": [2],
+        "expectedOutput": "5050",
+        "language": "python",
+        "mistakes": [{ "feedback": "range stops before its end.", "output": "4950" }],
+        "solution": "total = 0\nfor n in range(1, 101):\n    total += n\nprint(total)",
+        "starterCode": "total = 0\nfor n in range(1, 100):\n    total += n\nprint(total)"
+      },
+      "prompt": "Fix the loop so it adds every whole number from 1 to 100.",
+      "template": "codeRunner"
+    },
+    "expected": { "answer": { "kind": "output", "output": "5050" }, "kind": "interaction" },
+    "value": null
+  },
+  "codeTracer": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "code": "let lo = 0, hi = 7;\nwhile (lo <= hi) {\n  const mid = Math.floor((lo + hi) / 2);\n  if (mid < 6) lo = mid + 1;\n  else if (mid > 6) hi = mid - 1;\n  else break;\n}",
+        "language": "javascript",
+        "pauses": [
+          {
+            "options": [
+              { "id": "a", "text": "5" },
+              { "id": "b", "text": "6" },
+              { "id": "c", "text": "7" }
+            ],
+            "question": "What will mid be on pass 3?",
+            "step": 3,
+            "variable": "mid"
+          }
+        ],
+        "trace": [
+          {
+            "line": 1,
+            "values": [
+              { "name": "lo", "value": 0 },
+              { "name": "hi", "value": 7 }
+            ]
+          },
+          {
+            "line": 3,
+            "values": [
+              { "name": "lo", "value": 0 },
+              { "name": "mid", "value": 3 }
+            ]
+          },
+          {
+            "line": 3,
+            "values": [
+              { "name": "lo", "value": 4 },
+              { "name": "mid", "value": 5 }
+            ]
+          },
+          {
+            "line": 3,
+            "values": [
+              { "name": "lo", "value": 6 },
+              { "name": "mid", "value": 6 }
+            ]
+          }
+        ],
+        "watch": ["lo", "hi", "mid"]
+      },
+      "prompt": "Find position 6 by halving the range each pass.",
+      "template": "codeTracer"
+    },
+    "expected": {
+      "answer": { "kind": "assignment", "pairs": { "0": "b" } },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "dialogueSimulator": {
+    "content": {
+      "check": {
+        "explanation": "She spoke to you as usted (dígame), so tiene matches her tone. Greeting before you ask is expected in Spanish shops.",
+        "kind": "interaction"
+      },
+      "fields": {
+        "language": "es",
+        "lines": [
+          {
+            "speaker": "them",
+            "text": "Buenos días, dígame.",
+            "translation": "Good morning, how can I help?"
+          }
+        ],
+        "replies": [
+          {
+            "id": "polite",
+            "isBest": true,
+            "text": "Buenos días. ¿Tiene algo para el dolor de garganta?",
+            "translation": "Good morning. Do you have anything for a sore throat?",
+            "why": "A greeting first, then usted (tiene), matching how she spoke to you."
+          },
+          {
+            "id": "blunt",
+            "isBest": false,
+            "text": "Dame algo para la garganta.",
+            "translation": "Give me something for my throat.",
+            "why": "No greeting and a bare command sound rude to a stranger."
+          },
+          {
+            "id": "slang",
+            "isBest": false,
+            "text": "Oye, ¿tienes algo para la garganta, tío?",
+            "translation": "Hey, got anything for the throat, mate?",
+            "why": "Tú and tío are for friends, not a pharmacist you just met."
+          }
+        ],
+        "scene": "A pharmacy in Chamberí, Madrid"
+      },
+      "prompt": "You have a sore throat. How do you answer?",
+      "template": "dialogueSimulator"
+    },
+    "expected": { "answer": { "ids": ["polite"], "kind": "selection" }, "kind": "interaction" },
+    "value": null
+  },
+  "patternTable": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "choices": ["áis", "éis", "ís", "en"],
+        "modelMeaning": "to speak",
+        "modelWord": "hablar",
+        "newMeaning": "to eat",
+        "newWord": "comer",
+        "rows": [
+          {
+            "answer": "como",
+            "blank": false,
+            "label": "yo",
+            "labelMeaning": "I",
+            "model": "hablo"
+          },
+          {
+            "answer": "comes",
+            "blank": false,
+            "label": "tú",
+            "labelMeaning": "you",
+            "model": "hablas"
+          },
+          {
+            "answer": "come",
+            "blank": false,
+            "label": "él, ella, usted",
+            "labelMeaning": "he, she, you (formal)",
+            "model": "habla"
+          },
+          {
+            "answer": "comemos",
+            "blank": false,
+            "label": "nosotros",
+            "labelMeaning": "we",
+            "model": "hablamos"
+          },
+          {
+            "answer": "coméis",
+            "blank": true,
+            "label": "vosotros",
+            "labelMeaning": "you all (Spain)",
+            "model": "habláis"
+          },
+          {
+            "answer": "comen",
+            "blank": true,
+            "label": "ellos, ustedes",
+            "labelMeaning": "they, you all (formal)",
+            "model": "hablan"
+          }
+        ]
+      },
+      "prompt": "Use the pattern from hablar to finish comer.",
+      "template": "patternTable"
+    },
+    "expected": {
+      "answer": { "kind": "assignment", "pairs": { "4": "éis", "5": "en" } },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "patternTester": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "hints": [{ "hint": "Say where the text must end.", "mistake": "Matches extra digits" }],
+        "mode": "regex",
+        "shouldMatch": ["94103", "94103-1234"],
+        "shouldNotMatch": ["9410", "941031", "94103-12"],
+        "solution": "^\\d{5}(-\\d{4})?$",
+        "task": "Match US ZIP codes, like 94103 or 94103-1234."
+      },
+      "prompt": "Write the pattern.",
+      "template": "patternTester"
+    },
+    "expected": {
+      "answer": {
+        "kind": "regex",
+        "shouldMatch": ["94103", "94103-1234"],
+        "shouldNotMatch": ["9410", "941031", "94103-12"]
+      },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "sqlPlayground": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "data": {
+        "source": {
+          "publisher": "United Nations",
+          "title": "World Population Prospects",
+          "year": 2024
+        }
+      },
+      "fields": {
+        "expected": {
+          "columns": ["name", "pop_millions"],
+          "orderMatters": true,
+          "rows": [
+            ["India", 1451],
+            ["China", 1419],
+            ["Indonesia", 283]
+          ]
+        },
+        "mistakes": [
+          {
+            "feedback": "OR keeps rows that pass either test.",
+            "mistake": "Used OR instead of AND"
+          }
+        ],
+        "solution": "SELECT name, pop_millions FROM countries WHERE continent = 'Asia' AND pop_millions > 200 ORDER BY pop_millions DESC;",
+        "tables": [
+          {
+            "columns": [
+              { "name": "name", "type": "text" },
+              { "name": "continent", "type": "text" },
+              { "name": "pop_millions", "type": "integer" }
+            ],
+            "name": "countries",
+            "rows": [
+              ["India", "Asia", 1451],
+              ["China", "Asia", 1419],
+              ["Brazil", "South America", 212],
+              ["Indonesia", "Asia", 283]
+            ]
+          }
+        ]
+      },
+      "prompt": "Which countries in Asia have more than 200 million people?",
+      "template": "sqlPlayground"
+    },
+    "expected": {
+      "answer": {
+        "columns": ["name", "pop_millions"],
+        "kind": "rows",
+        "orderMatters": true,
+        "rows": [
+          ["India", 1451],
+          ["China", 1419],
+          ["Indonesia", 283]
+        ]
+      },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "argumentBuilder": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "claim": "Romeo's love is impulsive.",
+        "evidence": [
+          {
+            "id": "e1",
+            "isStrong": true,
+            "why": "It names the speed.",
+            "citation": "Act 2, Scene 2",
+            "quote": "It is too rash, too unadvised, too sudden."
+          },
+          {
+            "id": "e2",
+            "isStrong": false,
+            "why": "It is about Rosaline.",
+            "citation": "Act 1, Scene 1",
+            "quote": "O brawling love!"
+          }
+        ],
+        "reasoning": [
+          {
+            "id": "r1",
+            "isStrong": true,
+            "why": "It ties the quote to the claim.",
+            "text": "Juliet herself sees the rush."
+          },
+          {
+            "id": "r2",
+            "isStrong": false,
+            "why": "It says nothing about Romeo.",
+            "text": "Love is common in plays."
+          }
+        ]
+      },
+      "prompt": "Build the argument.",
+      "template": "argumentBuilder"
+    },
+    "expected": { "answer": { "ids": ["e1", "r1"], "kind": "selection" }, "kind": "interaction" },
+    "value": null
+  },
+  "categorize": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "groups": [
+          { "id": "chemical", "label": "New substance", "rule": "Something new forms." },
+          { "id": "physical", "label": "Same substance", "rule": "Only the form changes." }
+        ],
+        "items": [
+          { "groupId": "chemical", "id": "i1", "text": "Burning wood", "why": "Ash and gas form." },
+          { "groupId": "physical", "id": "i2", "text": "Melting ice", "why": "It is still water." },
+          { "groupId": "chemical", "id": "i3", "text": "Rusting iron", "why": "Iron oxide forms." }
+        ]
+      },
+      "prompt": "Sort each change.",
+      "template": "categorize"
+    },
+    "expected": {
+      "answer": {
+        "kind": "assignment",
+        "pairs": { "i1": "chemical", "i2": "physical", "i3": "chemical" }
+      },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "causeEffectChain": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "links": [
+          { "from": "plow", "to": "dust", "why": "Bare soil blew away." },
+          { "from": "drought", "to": "dust", "why": "Dry soil lifted." }
+        ],
+        "nodes": [
+          { "id": "plow", "label": "Prairie plowed for wheat", "year": 1920 },
+          { "id": "drought", "label": "Years of drought", "year": 1931 },
+          { "id": "dust", "label": "Dust storms", "year": 1934 }
+        ]
+      },
+      "prompt": "Link each cause to its effect.",
+      "template": "causeEffectChain"
+    },
+    "expected": {
+      "answer": {
+        "kind": "links",
+        "links": [
+          { "from": "plow", "to": "dust" },
+          { "from": "drought", "to": "dust" }
+        ]
+      },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "decisionTree": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "case": {
+          "answers": [
+            { "branch": "Needles", "nodeId": "q1" },
+            { "branch": "In bundles", "nodeId": "q2" }
+          ],
+          "description": "Needles grow in bundles of two.",
+          "outcomeId": "pine"
+        },
+        "nodes": [
+          {
+            "branches": [
+              { "label": "Needles", "next": "q2" },
+              { "label": "Broad leaves", "next": "oak" }
+            ],
+            "id": "q1",
+            "kind": "question",
+            "question": "What are the leaves like?"
+          },
+          {
+            "branches": [
+              { "label": "In bundles", "next": "pine" },
+              { "label": "Single", "next": "spruce" }
+            ],
+            "id": "q2",
+            "kind": "question",
+            "question": "How do the needles grow?"
+          },
+          { "id": "pine", "kind": "outcome", "label": "Pine" },
+          { "id": "spruce", "kind": "outcome", "label": "Spruce" },
+          { "id": "oak", "kind": "outcome", "label": "Oak" }
+        ],
+        "rootId": "q1"
+      },
+      "prompt": "Name the tree from one leaf.",
+      "template": "decisionTree"
+    },
+    "expected": {
+      "answer": { "ids": ["q1", "q2", "pine"], "kind": "order" },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "findError": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "correction": "120 × 0.8 = 96, not 100.",
+        "errorStepId": "s2",
+        "problem": "A $100 price goes up 20%, then down 20%.",
+        "steps": [
+          {
+            "expression": "100 * 1.2",
+            "id": "s1",
+            "result": 120,
+            "text": "Up 20%: 100 × 1.2 = 120"
+          },
+          {
+            "expression": "120 * 0.8",
+            "id": "s2",
+            "result": 100,
+            "text": "Down 20%: 120 × 0.8 = 100"
+          },
+          { "id": "s3", "text": "So the price is back where it started." }
+        ],
+        "why": "The 20% off is taken from a bigger number."
+      },
+      "prompt": "Find the wrong step.",
+      "template": "findError"
+    },
+    "expected": { "answer": { "ids": ["s2"], "kind": "selection" }, "kind": "interaction" },
+    "value": null
+  },
+  "mapExplorer": {
+    "content": {
+      "check": {
+        "kind": "choice",
+        "options": [
+          {
+            "id": "o0",
+            "isCorrect": true,
+            "reason": "Because of Their water didn't come from the Broad Street pump.",
+            "text": "Their water didn't come from the Broad Street pump"
+          },
+          {
+            "id": "o1",
+            "isCorrect": false,
+            "reason": "Because of The air in their buildings was cleaner.",
+            "text": "The air in their buildings was cleaner"
+          }
+        ],
+        "question": "What kept the brewers and the workhouse safe?"
+      },
+      "data": { "source": { "title": "On the Mode of Communication of Cholera", "year": 1855 } },
+      "fields": {
+        "baseMapId": "london-1854",
+        "places": [
+          {
+            "id": "pump",
+            "label": "Broad Street pump",
+            "latitude": 51.51334,
+            "longitude": -0.13667,
+            "reveals": "Most of the deaths were in houses a few streets from this pump."
+          },
+          {
+            "id": "brewery",
+            "label": "Brewery on Broad Street",
+            "latitude": 51.51348,
+            "longitude": -0.1358,
+            "reveals": "Over 70 workers and no cholera deaths. They drank beer and had their own well."
+          },
+          {
+            "id": "workhouse",
+            "label": "Poland Street workhouse",
+            "latitude": 51.5149,
+            "longitude": -0.137,
+            "reveals": "535 people lived here and only 5 died. It had its own well."
+          }
+        ]
+      },
+      "prompt": "Tap the map to find clues.",
+      "template": "mapExplorer"
+    },
+    "expected": { "kind": "choice", "optionId": "o0" },
+    "value": null
+  },
+  "matchPairs": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "distractors": [
+          {
+            "side": "right",
+            "text": "embarrassed",
+            "why": "Embarrassed is avergonzada in Spanish. Embarazada looks like it but means pregnant."
+          },
+          {
+            "side": "right",
+            "text": "library",
+            "why": "A library is a biblioteca. A librería sells books: it's a bookstore."
+          }
+        ],
+        "pairs": [
+          { "id": "a", "left": "embarazada", "right": "pregnant" },
+          { "id": "b", "left": "éxito", "right": "success" },
+          { "id": "c", "left": "librería", "right": "bookstore" }
+        ]
+      },
+      "prompt": "Match each word to its meaning.",
+      "template": "matchPairs"
+    },
+    "expected": {
+      "answer": { "kind": "assignment", "pairs": { "a": "a", "b": "b", "c": "c" } },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "sourceComparison": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "markPrompt": "Mark who each writer says fired first.",
+        "sources": [
+          {
+            "author": "A colonial captain",
+            "citation": { "title": "Deposition of John Parker", "year": 1775 },
+            "date": "April 1775",
+            "excerpt": "The regulars fired on us without any provocation.",
+            "id": "parker",
+            "passages": [{ "id": "p1", "isTarget": true, "text": "The regulars fired on us" }]
+          },
+          {
+            "author": "A British officer",
+            "citation": { "title": "Report of John Pitcairn", "year": 1775 },
+            "date": "April 1775",
+            "excerpt": "Some of the rebels fired first from behind a wall.",
+            "id": "pitcairn",
+            "passages": [{ "id": "p2", "isTarget": true, "text": "the rebels fired first" }]
+          }
+        ]
+      },
+      "prompt": "Read both eyewitnesses.",
+      "template": "sourceComparison"
+    },
+    "expected": { "answer": { "ids": ["p1", "p2"], "kind": "selection" }, "kind": "interaction" },
+    "value": null
+  },
+  "timeline": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "anchors": [{ "label": "Great Pyramid built", "year": -2560 }],
+        "end": 2000,
+        "events": [
+          { "id": "moon", "label": "Moon landing", "year": 1969 },
+          { "id": "cleo", "label": "Cleopatra rules Egypt", "year": -51 }
+        ],
+        "start": -3000
+      },
+      "prompt": "Place each event on the timeline.",
+      "template": "timeline"
+    },
+    "expected": { "answer": { "ids": ["cleo", "moon"], "kind": "order" }, "kind": "interaction" },
+    "value": null
+  },
+  "beforeAfter": {
+    "content": {
+      "check": {
+        "output": "hours",
+        "answer": 0.12,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 }
+      },
+      "data": { "source": { "title": "Ford Motor Company production records" } },
+      "fields": {
+        "after": {
+          "description": "The moving line.",
+          "facts": [{ "id": "hours", "label": "Hours per car", "value": 1.5 }],
+          "label": "1914"
+        },
+        "before": {
+          "description": "Cars built in place.",
+          "facts": [{ "id": "hours", "label": "Hours per car", "value": 12.5 }],
+          "label": "1912"
+        },
+        "change": "The car moved past the workers."
+      },
+      "prompt": "What did the moving line change?",
+      "template": "beforeAfter"
+    },
+    "expected": { "kind": "numeric", "value": 0.12 },
+    "value": 0.12
+  },
+  "keyboardFretboard": {
+    "content": {
+      "check": {
+        "explanation": "Moving the middle note down a half step, from E to E♭, makes the chord minor. C and G stay where they are.",
+        "kind": "interaction"
+      },
+      "fields": {
+        "instruments": ["piano", "guitar"],
+        "start": { "kind": "chord", "quality": "major", "root": "C" },
+        "target": { "kind": "chord", "quality": "minor", "root": "C" }
+      },
+      "prompt": "Change one note to turn C major into C minor.",
+      "template": "keyboardFretboard"
+    },
+    "expected": {
+      "answer": { "kind": "pitchClasses", "pitchClasses": [0, 3, 7] },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "notationPlayer": {
+    "content": {
+      "check": {
+        "kind": "choice",
+        "options": [
+          { "id": "o0", "isCorrect": true, "reason": "Because of By steps.", "text": "By steps" },
+          { "id": "o1", "isCorrect": false, "reason": "Because of By leaps.", "text": "By leaps" }
+        ],
+        "question": "Does this melody move mostly by steps or by leaps?"
+      },
+      "fields": {
+        "notation": "X:1\nT:Ode to Joy\nC:Beethoven, 1824\nM:4/4\nL:1/4\nK:C\nE E F G | G F E D | C C D E | E3/2 D/2 D2 |]",
+        "tempo": 80,
+        "view": "staff"
+      },
+      "prompt": "Follow the notes while the melody plays.",
+      "template": "notationPlayer"
+    },
+    "expected": { "kind": "choice", "optionId": "o0" },
+    "value": null
+  },
+  "rhythmTapper": {
+    "content": {
+      "check": {
+        "explanation": "The son clave is three hits, then two: beat 1, just before beat 2, the and of 2, then the and of 3 and beat 4.",
+        "kind": "interaction"
+      },
+      "fields": {
+        "pattern": "x..x..x...x.x...",
+        "rounds": 2,
+        "stepsPerBeat": 4,
+        "tempo": 90,
+        "toleranceMs": 100
+      },
+      "prompt": "Tap the son clave over the beat.",
+      "template": "rhythmTapper"
+    },
+    "expected": {
+      "answer": {
+        "kind": "rhythm",
+        "tapTimesMs": [
+          0, 500, 1000, 1666.6666666666665, 2000, 2666.6666666666665, 3166.6666666666665,
+          3666.6666666666665, 4333.333333333333, 4666.666666666666
+        ],
+        "toleranceMs": 100
+      },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "combinationGrid.dice": {
+    "content": {
+      "check": {
+        "output": "7",
+        "answer": 0.1667,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 }
+      },
+      "fields": {
+        "columns": { "label": "Second die", "values": [1, 2, 3, 4, 5, 6] },
+        "rows": { "label": "First die", "values": [1, 2, 3, 4, 5, 6] },
+        "title": "Two dice",
+        "rule": "sum"
+      },
+      "prompt": "Every way two dice can land. How often do they add up to 7?",
+      "template": "combinationGrid"
+    },
+    "expected": { "kind": "numeric", "value": 0.1667 },
+    "value": null
+  },
+  "combinationGrid.timesTable": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "columns": { "label": "Times", "values": [1, 2, 3] },
+        "rows": { "label": "Number", "values": [2, 3, 4] },
+        "title": "Times table",
+        "rule": "product"
+      },
+      "prompt": "Fill in the times table.",
+      "template": "combinationGrid"
+    },
+    "expected": {
+      "answer": { "cells": ["2", "4", "6", "3", "6", "9", "4", "8", "12"], "kind": "grid" },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "formulaModel.calculator": {
+    "content": {
+      "check": {
+        "inputs": [{ "name": "extra", "value": 200 }],
+        "answer": 251.54,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 }
+      },
+      "data": { "isExample": true },
+      "fields": {
+        "outputs": [
+          {
+            "formula": "-log(1 - 0.005 * 200000 / (1199 + extra)) / log(1.005)",
+            "id": "months",
+            "label": "Months to pay off"
+          }
+        ],
+        "variables": [
+          {
+            "initial": 0,
+            "label": "Extra per month",
+            "max": 500,
+            "min": 0,
+            "name": "extra",
+            "step": 50,
+            "unit": "$"
+          }
+        ]
+      },
+      "prompt": "Add an extra payment to the example mortgage.",
+      "template": "formulaModel"
+    },
+    "expected": { "kind": "numeric", "value": 251.54 },
+    "value": 360.08488878299187
+  },
+  "formulaModel.scenario": {
+    "content": {
+      "check": {
+        "inputs": [
+          { "name": "price", "value": 4 },
+          { "name": "rentUp", "value": 1 }
+        ],
+        "answer": 1000,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 }
+      },
+      "data": { "isExample": true },
+      "fields": {
+        "events": [{ "label": "Rent goes up $500", "name": "rentUp" }],
+        "outputs": [
+          {
+            "formula": "(price - 1) * (2000 - 250 * price) - 1500 - 500 * rentUp",
+            "id": "profit",
+            "label": "Monthly profit",
+            "unit": "$"
+          }
+        ],
+        "title": "Coffee cart",
+        "variables": [
+          {
+            "initial": 3,
+            "label": "Price per cup",
+            "max": 6,
+            "min": 2,
+            "name": "price",
+            "step": 0.5,
+            "unit": "$"
+          }
+        ]
+      },
+      "prompt": "Turn on the rent increase.",
+      "template": "formulaModel"
+    },
+    "expected": { "kind": "numeric", "value": 1000 },
+    "value": 1000
+  },
+  "formulaModel.simulation": {
+    "content": {
+      "check": {
+        "inputs": [{ "name": "angle", "value": 45 }],
+        "answer": 40.77,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 }
+      },
+      "data": { "isExample": true },
+      "fields": {
+        "outputs": [
+          {
+            "formula": "speed^2 * sin(rad(2 * angle)) / 9.81",
+            "id": "distance",
+            "label": "Lands at",
+            "unit": "m"
+          },
+          {
+            "formula": "(speed * sin(rad(angle)))^2 / (2 * 9.81)",
+            "id": "peak",
+            "label": "Peak height",
+            "unit": "m"
+          }
+        ],
+        "plot": { "x": "angle", "y": "distance" },
+        "title": "Projectile",
+        "variables": [
+          {
+            "initial": 30,
+            "label": "Launch angle",
+            "max": 90,
+            "min": 0,
+            "name": "angle",
+            "step": 1,
+            "unit": "°"
+          },
+          {
+            "initial": 20,
+            "label": "Speed",
+            "max": 30,
+            "min": 5,
+            "name": "speed",
+            "step": 1,
+            "unit": "m/s"
+          }
+        ]
+      },
+      "prompt": "Move the angle and watch where the ball lands.",
+      "template": "formulaModel"
+    },
+    "expected": { "kind": "numeric", "value": 40.77 },
+    "value": 35.311943069701876
+  },
+  "guessReveal.cited": {
+    "content": {
+      "check": {
+        "answer": 14,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 2 }
+      },
+      "data": { "source": { "title": "The True Size of Africa", "year": 2010 } },
+      "fields": {
+        "max": 30,
+        "min": 1,
+        "scale": "linear",
+        "takeaway": "The map stretches land near the poles.",
+        "truth": { "kind": "cited", "value": 14 },
+        "unit": "times"
+      },
+      "prompt": "How many Greenlands fit in Africa?",
+      "template": "guessReveal"
+    },
+    "expected": { "kind": "numeric", "value": 14 },
+    "value": 14
+  },
+  "keyboardFretboard.byEar": {
+    "content": {
+      "check": { "explanation": "Here is why.", "kind": "interaction" },
+      "fields": {
+        "byEar": true,
+        "instruments": ["piano"],
+        "target": { "kind": "notes", "notes": ["C", "G"] }
+      },
+      "prompt": "Play the sound, then find its two notes on the keys.",
+      "template": "keyboardFretboard"
+    },
+    "expected": {
+      "answer": { "kind": "pitchClasses", "pitchClasses": [0, 7] },
+      "kind": "interaction"
+    },
+    "value": null
+  },
+  "keyboardFretboard.byEarChoice": {
+    "content": {
+      "check": {
+        "kind": "choice",
+        "options": [
+          {
+            "id": "o0",
+            "isCorrect": false,
+            "reason": "Because of A major chord.",
+            "text": "A major chord"
+          },
+          {
+            "id": "o1",
+            "isCorrect": true,
+            "reason": "Because of A minor chord.",
+            "text": "A minor chord"
+          }
+        ],
+        "question": "What did you hear?"
+      },
+      "fields": {
+        "byEar": true,
+        "instruments": ["piano", "guitar"],
+        "target": { "kind": "chord", "quality": "minor", "root": "A" }
+      },
+      "prompt": "Play the chord. Does it sound major or minor?",
+      "template": "keyboardFretboard"
+    },
+    "expected": { "kind": "choice", "optionId": "o1" },
+    "value": null
+  },
+  "lineCrossing.breakEven": {
+    "content": {
+      "check": {
+        "output": "x",
+        "answer": 250,
+        "explanation": "Worked out by code.",
+        "kind": "numeric",
+        "question": "What is the value?",
+        "tolerance": { "kind": "absolute", "value": 0.01 }
+      },
+      "data": { "isExample": true },
+      "fields": {
+        "change": "The rent for the workshop goes up by $500 a month.",
+        "feedback": {
+          "wrongDirection": "Higher rent costs more at every quantity.",
+          "wrongLine": "The price of each lamp didn't change."
+        },
+        "lines": [
+          { "id": "cost", "intercept": 2000, "label": "Cost", "slope": 5 },
+          { "id": "revenue", "intercept": 0, "label": "Revenue", "slope": 15 }
+        ],
+        "shift": { "amount": 500, "direction": "up", "line": "cost" },
+        "xLabel": "Lamps sold",
+        "yLabel": "Dollars per month"
+      },
+      "prompt": "Move a line to show the new rent. How many lamps break even now?",
+      "template": "lineCrossing"
+    },
+    "expected": { "kind": "numeric", "value": 250 },
+    "value": 3750
+  },
+  "randomSimulation.sampling": {
+    "content": {
+      "check": {
+        "kind": "choice",
+        "options": [
+          {
+            "id": "o0",
+            "isCorrect": true,
+            "reason": "Because of Half as big.",
+            "text": "Half as big",
+            "value": 0.5
+          },
+          {
+            "id": "o1",
+            "isCorrect": false,
+            "reason": "Because of A quarter as big.",
+            "text": "A quarter as big",
+            "value": 0.25
+          },
+          {
+            "id": "o2",
+            "isCorrect": false,
+            "reason": "Because of The same.",
+            "text": "The same",
+            "value": 1
+          }
+        ],
+        "question": "Asking 4 times the people makes the error…"
+      },
+      "data": { "isExample": true },
+      "fields": {
+        "mode": "sampling",
+        "population": { "kind": "proportion", "proportion": 0.5 },
+        "populationLabel": "Example town",
+        "runs": 200,
+        "sampleSizes": [100, 400],
+        "sizeLabel": "People per poll"
+      },
+      "prompt": "Run 200 polls of each size.",
+      "template": "randomSimulation"
+    },
+    "expected": { "kind": "choice", "optionId": "o0" },
+    "value": 0.5
+  }
+}
