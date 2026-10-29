@@ -2,24 +2,63 @@
 <!-- eloqnt-fingerprints-v1
 {
   "activities_code_badge_run": "4765fd41ff3983cab48ddc19818d355f587598f23cfdb705c51de2a1346970a5",
+  "activities_code_badge_test_pattern": "70800bc4028f252fa432865153d40e8951dff3e29650c5db23de3c0a61aa6333",
   "activities_code_changed_code": "61974c0977d8cec6f5d939ee74f8fac99c0362d3dd5068ee1a1c153529658be8",
   "activities_code_code": "59f9739696514843d6cc97e2ecbe5bbaaee6e50fc2fafa8e150cb71cd0adfce5",
   "activities_code_error_line": "e9420ebd212be30c6eaad572c5e5ae2d3c770d7bce360aa75d1898a5f9cae5ba",
+  "activities_code_examples_pass": "956f37bd22af8463427c17518ec2b22590f7de3266e209e1fab1f31b7f99d830",
   "activities_code_expected": "d8a934d273316c38881808dd848ddd098350ac60a8a56808ee8386d005123d52",
+  "activities_code_formula_that_works": "df8bf341d395ccbc8ec8577fadf1dfd5a383c1e030650412feb8518cccb1a08a",
+  "activities_code_hint_mistake": "40560607a4b2dca42c6f218d9fa73a5904eb4481d310d6bca169d29b282e24e4",
   "activities_code_line_yours": "49015406183f6ce66f2eb86c1ba5f905eebc4da8d5b3829953cd0443571dc50d",
   "activities_code_lines_yours": "c04fa0f930871609dc885dab732a822dd0accbed19860547de553da3c22233af",
   "activities_code_not_quite": "47c84dcbe7d3a98187ceab9aae70659edbc6bae64abafadd48dafded665eea4d",
   "activities_code_nothing_printed": "0167a831dc7663e499cff6cff67245c7b40a60b259c679ff7e5ba9e7476051f1",
+  "activities_code_pass_count": "035c93235b5718a796b6078d463c86ab990a68d8efee5235df47c26f2d7cc5d3",
+  "activities_code_pattern_cant_run": "b41e4c0715a5be504f1b7b377280f3ac2b427fbba343c7420d2a28cf237e2e7a",
+  "activities_code_pattern_that_works": "fb9f56a1781edf4d60fba5afed1d45ebf8f1441a0743e1f1c1c8a7d669a48f84",
   "activities_code_run": "89d1764a30cfdb1a0fd418c350d071dcda2665765f8560de7e27ac5175514486",
   "activities_code_run_again": "6e1b580294f19af115f16a5adfe8083172f19bc855ee2cd005aca153147838fb",
   "activities_code_run_to_see": "a82978082c389b38155a45e91ee88eccf4a7be8b0df73ef0c371bb2aa241e2dc",
   "activities_code_running": "25c59930932df28e60e7eef6d84a3e68fef9e020d35d3d9c969937dc2a298b57",
   "activities_code_runtime_failed": "eb78f3c8821e6c8c245a9b6d4cb7040e67ef4993f387692a37ead81ed1791f77",
   "activities_code_runtime_loading": "3a075fa7c7f92981df10d41cbd33907b3fb8116b85b2af449af0470bd3caa51e",
+  "activities_code_sample_doesnt_match": "5259ddd9d356fe47ff309351ceb0d0539433d558da62e0c38391fbace1282eea",
+  "activities_code_sample_matched": "92477cbf8ce3bb7471ccdc1407b1e99df6328f1bc2b33d657740c3cb76fdf722",
+  "activities_code_sample_matches": "ac9fa70ea5b3b48d41356878a69b654ea96d165b3b02b16492dfaf9551363799",
+  "activities_code_sample_no_match": "8ebf578e0ed0533f372cda452f68e88c9d41437147ce83e66cb0664d7888f764",
+  "activities_code_should_give": "0106268f61e370eb7d3f29271a22e68ebd1fdd297bc6c10fe12af94fd605b67e",
+  "activities_code_should_match": "6e95d0030ea1717e246d0a623ed441c9a88c361bfcb8aaa7f31a56e1cf9d01e0",
+  "activities_code_should_not_match": "d60ad680e3b28a4756eb590356b046d7d995a85cfab7ebf158e164d3191da17a",
+  "activities_code_show_another_hint": "f5bdb0ddd89eb2c7f1cf29fe90b2be697d7fcaa48c9ec6faa463687819c02855",
+  "activities_code_show_hint": "fe51e369ec1fe95847c2feffaa9a3676eac45b9d4c41c27209d0cd1c1985b519",
+  "activities_code_snippet_any": "e6b1dadba926e00563c79e69d5d03991c20dfadfd127c11eed75e3899964dffe",
+  "activities_code_snippet_digit": "3bd6fe569c4bbcbfae3ece7565bf5cce9573df707b494c95a72ee94ec946f685",
+  "activities_code_snippet_divided_by": "47c067fd1390dbfafe856ef355dfe89fea607ee00213e7110bc71a7c0a3e15bf",
+  "activities_code_snippet_end": "bfd07a6c38e68d79fb869c538f533da483ef7a082e38ed8f654b5658409f5a4f",
+  "activities_code_snippet_group": "19093da29278709c08ea79d89bea6b413bdcdafe4647641d2ab197d74dbcfe83",
+  "activities_code_snippet_minus": "32108a51abe7f569b523b5838e9e5ebcc9a934e3bdf9eacd21e0decf4afe1e22",
+  "activities_code_snippet_one_of": "1d5a36b47de2b99db786d909f4edee940aa1ff1ad34f0e5d063eed911c6e6b2e",
+  "activities_code_snippet_one_or_more": "a0ab06ac057858998d5032bc1e6bcb0dc225afac75374b693e69a38858076aba",
+  "activities_code_snippet_optional": "ec3d933cd42d7769cabfd3a794e01963750e5c125b975aca144b5455f55ca69f",
+  "activities_code_snippet_or": "67d02e0c2b03318d4d9b4a23f3bcbf03daabb35e7bcc27ee7f4af2f972ed071b",
+  "activities_code_snippet_parentheses": "fc4319465f6cab211fa7f5ee0b4971ba5a57ab685f55cf09bda2053ee0de7fb6",
+  "activities_code_snippet_plus": "6552789aa61fde8f0f9a49894113074f71f408d64157362072d9947cc1de7f61",
+  "activities_code_snippet_power": "e06c280b75f8beb13db345c763b049b085c1c77498d597901d304f7653fa525b",
+  "activities_code_snippet_repeat": "6752f452f482b72e812c331201cdac9cd6ead51f4ccb292264ba799284992d78",
+  "activities_code_snippet_space": "ee927e94938f03d84676cb7c7ba4409f48e427c98ebef8348508a65d99e8cd2c",
+  "activities_code_snippet_start": "b6e93e85dac7976ad6c54f8c05cdf93a8bca39b83311fc5d50d9955981913855",
+  "activities_code_snippet_times": "5f38b63f3467070ea288430aff9f2c1c91728f3a20ff1bd233008a4051da4661",
+  "activities_code_snippet_word": "a89164731cc6738be95d552748e874d7b88e1500c2475f2666953eedc3d8ad14",
+  "activities_code_snippet_zero_or_more": "55c56dca63189281744c4e4b1187092d6cce4f46202c154c61edc47b33a78903",
   "activities_code_start_over": "496fe69a3bfc8b0343c67fae6fd909e6f1d41694779312346ad19f045f7f6b6c",
   "activities_code_stopped_after": "c3af8741acb22f60c6199edafd278d06a3f26db762e648241ccb8fa29b617273",
+  "activities_code_symbols": "81f8cc72215ddf4a476eb99ea21d7b268eb1be2a0f3afb60348e3ecacfc3152f",
   "activities_code_too_much_output": "2f7f78d34ca0aa348de07f7ecf4716e173d36368ee04c676476d223618c97dd0",
-  "activities_code_your_output": "fb3e652322cf44adb360dcae47d2d06b8d8247501ab7b91db6360b7c478baeca"
+  "activities_code_your_formula": "2720d8e21acafdd42cf1cf966801514d4e8446afe5cb3fb6867a30da667b0964",
+  "activities_code_your_output": "fb3e652322cf44adb360dcae47d2d06b8d8247501ab7b91db6360b7c478baeca",
+  "activities_code_your_pattern": "1c8585e24a98b0ec7098aafcd8ea0aba141522c5c3700aafe67f145574f15dcb",
+  "activities_code_your_result": "5d5c52b28a28721e0ca3ed87d06210285f779cbd067933a18876458e69fd39f2"
 }
 -->
 <resources>
@@ -56,4 +95,82 @@
     <string name="activities_code_too_much_output">Wurde gestoppt, weil zu viel ausgegeben wurde. Gibt es eine Endlosschleife?</string>
     <!-- Before the feedback for a likely mistake the program's output shows. -->
     <string name="activities_code_not_quite">Fast:</string>
+    <string name="activities_code_badge_test_pattern">Muster testen</string>
+    <!-- The field for a regular expression, for TalkBack. -->
+    <string name="activities_code_your_pattern">Dein Muster</string>
+    <!-- The field for a spreadsheet formula, for TalkBack. -->
+    <string name="activities_code_your_formula">Deine Formel</string>
+    <!-- The row of buttons that type regular expression or formula symbols, for TalkBack. -->
+    <string name="activities_code_symbols">Symbole</string>
+    <!-- What the regular expression symbol ^ means, for TalkBack. -->
+    <string name="activities_code_snippet_start">Textanfang</string>
+    <!-- What the regular expression symbol $ means, for TalkBack. -->
+    <string name="activities_code_snippet_end">Textende</string>
+    <!-- What the regular expression symbol \d means, for TalkBack. -->
+    <string name="activities_code_snippet_digit">Beliebige Ziffer</string>
+    <!-- What the regular expression symbol \w means, for TalkBack. -->
+    <string name="activities_code_snippet_word">Beliebiger Buchstabe, Ziffer oder Unterstrich</string>
+    <!-- What the regular expression symbol \s means, for TalkBack. -->
+    <string name="activities_code_snippet_space">Beliebiges Leerzeichen</string>
+    <!-- What the regular expression symbol . means, for TalkBack. -->
+    <string name="activities_code_snippet_any">Beliebiges Zeichen</string>
+    <!-- What the regular expression brackets [ ] mean, for TalkBack. -->
+    <string name="activities_code_snippet_one_of">Eines dieser Zeichen</string>
+    <!-- What the regular expression braces { } mean, for TalkBack. -->
+    <string name="activities_code_snippet_repeat">Mehrfach wiederholen</string>
+    <!-- What the regular expression parentheses ( ) mean, for TalkBack. -->
+    <string name="activities_code_snippet_group">Gruppe</string>
+    <!-- What the regular expression symbol ? means, for TalkBack. -->
+    <string name="activities_code_snippet_optional">Optional</string>
+    <!-- What the regular expression symbol + means, for TalkBack. -->
+    <string name="activities_code_snippet_one_or_more">Einmal oder öfter</string>
+    <!-- What the regular expression symbol * means, for TalkBack. -->
+    <string name="activities_code_snippet_zero_or_more">Gar nicht oder öfter</string>
+    <!-- What the regular expression symbol | means, for TalkBack. -->
+    <string name="activities_code_snippet_or">Oder</string>
+    <!-- The + sign in a formula, for TalkBack. Not "Plus", the subscription's name. -->
+    <string name="activities_code_snippet_plus">Pluszeichen</string>
+    <!-- The − sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_minus">Minuszeichen</string>
+    <!-- The × sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_times">Mal</string>
+    <!-- The ÷ sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_divided_by">Geteilt durch</string>
+    <!-- The ^ sign in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_power">Hoch</string>
+    <!-- Parentheses in a formula, for TalkBack. -->
+    <string name="activities_code_snippet_parentheses">Klammern</string>
+    <string name="activities_code_pattern_cant_run">Dieses Muster kann nicht ausgeführt werden. Prüfe, ob alle Klammern geschlossen sind und ob du eine Gruppe wiederholst, die bereits eine Wiederholung enthält.</string>
+    <!-- Example texts the regular expression should match. -->
+    <string name="activities_code_should_match">Soll übereinstimmen mit</string>
+    <!-- Example texts the regular expression should not match. -->
+    <string name="activities_code_should_not_match">Soll nicht übereinstimmen mit</string>
+    <!-- An example text the pattern matches, as it should. -->
+    <string name="activities_code_sample_matches">passt</string>
+    <!-- An example text the pattern doesn't match, as it should. -->
+    <string name="activities_code_sample_doesnt_match">passt nicht</string>
+    <!-- An example text the pattern should match but doesn't. -->
+    <string name="activities_code_sample_no_match">keine Übereinstimmung</string>
+    <!-- An example text the pattern shouldn't match but does. -->
+    <string name="activities_code_sample_matched">stimmte überein</string>
+    <!-- How many examples of a list pass, like "1 of 3 pass". -->
+    <plurals name="activities_code_pass_count">
+        <item quantity="one">%1$d von %2$d bestanden</item>
+        <item quantity="other">%1$d von %2$d bestanden</item>
+    </plurals>
+    <!-- How many examples pass in all, for TalkBack, like "2 of 5 examples pass." -->
+    <plurals name="activities_code_examples_pass">
+        <item quantity="one">%1$d von %2$d Beispielen stimmen überein.</item>
+        <item quantity="other">%1$d von %2$d Beispielen stimmen überein.</item>
+    </plurals>
+    <!-- The output a spreadsheet formula should give for an example's cells. -->
+    <string name="activities_code_should_give">Soll ergeben</string>
+    <!-- What the learner's formula gives for an example's cells. -->
+    <string name="activities_code_your_result">Dein Ergebnis</string>
+    <string name="activities_code_show_hint">Tipp anzeigen</string>
+    <string name="activities_code_show_another_hint">Weiteren Tipp anzeigen</string>
+    <!-- A likely mistake, before the hint for it, like "Matches extra digits:". -->
+    <string name="activities_code_hint_mistake">%1$s:</string>
+    <string name="activities_code_pattern_that_works">Ein funktionierendes Muster</string>
+    <string name="activities_code_formula_that_works">Eine funktionierende Formel</string>
 </resources>

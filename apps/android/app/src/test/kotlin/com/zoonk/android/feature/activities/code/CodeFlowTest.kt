@@ -4,8 +4,10 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.SemanticsNodeInteraction
+import androidx.compose.ui.test.assert
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsEnabled
+import androidx.compose.ui.test.assertIsFocused
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
@@ -15,6 +17,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performKeyInput
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performTextReplacement
 import androidx.compose.ui.test.pressKey
 import androidx.compose.ui.test.requestFocus
@@ -153,6 +156,54 @@ class CodeFlowTest {
         assertEquals("const doubled = numbers.map((n) => n * 2);", runs.last().code.lines()[1])
     }
 
+    private fun field(name: String) = rule.onNode(hasContentDescription(name))
+
+    @Test
+    fun examplesPassAsThePatternGrows() {
+        playFixture("patternTester", isCorrect = true, { ScriptedSandbox.regexTested(it) })
+
+        field("Your pattern").performTextReplacement("^\\d{5}")
+        shows("1 of 3 pass")
+        field("Your pattern").performTextReplacement("^\\d{5}(-\\d{4})?$")
+        shows("3 of 3 pass")
+        harness.tap("Check")
+
+        shows("A pattern that works")
+        assertEquals(listOf(patternAnswer("^\\d{5}(-\\d{4})?$")), graded)
+    }
+
+    @Test
+    fun aFormulaIsCheckedCellByCell() {
+        play(formulaTester, expected = null, isCorrect = false, { ScriptedSandbox.regexTested(it) })
+
+        tap("Show a hint")
+        shows("Add the increase to the price.")
+        field("Your formula").performTextReplacement("=A1*B1")
+        harness.tap("Check")
+
+        shows("A formula that works")
+        assertEquals(listOf(patternAnswer("=A1*B1")), graded)
+    }
+
+    @OptIn(ExperimentalTestApi::class)
+    @Test
+    fun enterOnASymbolButtonTypesItAtTheCursor() {
+        playFixture("patternTester", isCorrect = true, { ScriptedSandbox.regexTested(it) })
+        val pattern = field("Your pattern")
+
+        pattern.requestFocus()
+        rule.onNode(hasContentDescription("^, Start of the text")).requestFocus().performKeyInput { pressKey(Key.Enter) }
+        pattern.assert(hasText("^"))
+        rule.onNode(hasContentDescription("\\d, Any digit")).requestFocus().performKeyInput { pressKey(Key.Enter) }
+        pattern.assert(hasText("^\\d")).assertIsFocused()
+        pattern.performTextInput("{5}(-\\d{4})?$")
+        shows("2 of 2 pass")
+        rule.onNodeWithText("Check").requestFocus().performKeyInput { pressKey(Key.Enter) }
+
+        rule.waitUntil { graded.isNotEmpty() }
+        assertEquals(listOf(patternAnswer("^\\d{5}(-\\d{4})?$")), graded)
+    }
+
     private companion object {
         const val WAIT_MS = 5_000L
 
@@ -184,6 +235,23 @@ class CodeFlowTest {
                         """,
                     ).jsonObject,
                 id = "runner",
+            )
+
+        val formulaTester =
+            ActivityFixtures.step(
+                ApiJson
+                    .parseToJsonElement(
+                        """
+                        {"check":{"explanation":"Here is why.","kind":"interaction"},"prompt":"Write the pattern.",
+                         "template":"patternTester",
+                         "fields":{"mode":"formula","solution":"A1*(1+B1)","task":"Price A1 goes up by rate B1. What's the new price?",
+                          "tolerance":{"kind":"absolute","value":0.01},
+                          "hints":[{"hint":"Add the increase to the price.","mistake":"Only the increase"}],
+                          "examples":[{"inputs":[{"name":"A1","value":100},{"name":"B1","value":0.2}],"output":120},
+                                      {"inputs":[{"name":"A1","value":50},{"name":"B1","value":0.1}],"output":55}]}}
+                        """,
+                    ).jsonObject,
+                id = "formula",
             )
     }
 }

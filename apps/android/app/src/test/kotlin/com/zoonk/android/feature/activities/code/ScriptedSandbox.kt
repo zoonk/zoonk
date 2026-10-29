@@ -19,7 +19,7 @@ import kotlinx.serialization.json.jsonPrimitive
  */
 internal class ScriptedSandbox(
     private val scope: CoroutineScope,
-    var answer: (JsonObject) -> JsonElement = { JsonPrimitive(true) },
+    var answer: (JsonObject) -> JsonElement = { request -> if (request.type == "testRegex") regexTested(request) else JsonPrimitive(true) },
 ) {
     val requests = mutableListOf<JsonObject>()
     var gate: CompletableDeferred<Unit>? = null
@@ -48,8 +48,6 @@ internal class ScriptedSandbox(
 
         override fun close() = Unit
     }
-
-    private val JsonObject.type get() = getValue("type").jsonPrimitive.content
 
     companion object {
         private const val LOADED = """{"type":"loaded"}"""
@@ -86,3 +84,5 @@ internal class ScriptedSandbox(
 }
 
 internal val JsonObject.code: String get() = getValue("code").jsonPrimitive.content
+
+private val JsonObject.type get() = getValue("type").jsonPrimitive.content

@@ -36,6 +36,7 @@ import com.zoonk.android.feature.activities.chartReaderRenderer
 import com.zoonk.android.feature.activities.choiceAnswer
 import com.zoonk.android.feature.activities.choiceId
 import com.zoonk.android.feature.activities.code.codeRunnerRenderer
+import com.zoonk.android.feature.activities.code.patternTesterRenderer
 import com.zoonk.android.feature.activities.decisionTreeRenderer
 import com.zoonk.android.feature.activities.dialogueSimulatorRenderer
 import com.zoonk.android.feature.activities.findErrorRenderer
@@ -91,6 +92,7 @@ val activityRenderers: Map<String, ActivityRenderer> =
         "findError" to findErrorRenderer,
         "guessReveal" to guessRevealRenderer,
         "patternTable" to patternTableRenderer,
+        "patternTester" to patternTesterRenderer,
         "stepSolver" to stepSolverRenderer,
     )
 

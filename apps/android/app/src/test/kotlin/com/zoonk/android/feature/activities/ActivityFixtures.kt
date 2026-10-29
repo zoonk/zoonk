@@ -1,5 +1,6 @@
 package com.zoonk.android.feature.activities
 
+import com.zoonk.android.feature.activities.code.patternAnswer
 import com.zoonk.android.feature.player.model.ActivityAnswer
 import com.zoonk.android.feature.player.model.ActivityFrame
 import com.zoonk.android.feature.player.model.ActivityStepContent
@@ -31,9 +32,16 @@ object ActivityFixtures {
     fun expected(name: String): ActivityExpected? =
         entry(name)["expected"]?.takeUnless { it is JsonNull }?.let { ApiJson.decodeFromJsonElement(ActivityExpected.serializer(), it) }
 
+    private fun fields(name: String) =
+        entry(name)
+            .getValue("content")
+            .jsonObject
+            .getValue("fields")
+            .jsonObject
+
     fun value(name: String): Double? = entry(name)["value"]?.jsonPrimitive?.doubleOrNull
 
-    /** The learner's answer that reaches the expected end state, where both are written alike. */
+    /** The learner's answer that reaches the expected end state: where both are written alike, or a pattern template's solution. */
     fun rightAnswer(name: String): ActivityAnswer? =
         when (val expected = expected(name)) {
             is ActivityExpected.ChoiceWrapper -> {
@@ -45,12 +53,17 @@ object ActivityFixtures {
             }
 
             is ActivityExpected.InteractionWrapper -> {
-                runCatching {
-                    ApiJson.decodeFromJsonElement(
-                        ActivityAnswer.serializer(),
-                        ApiJson.encodeToJsonElement(ActivityExpectedAnswer.serializer(), expected.value.answer),
-                    )
-                }.getOrNull()
+                val answer = expected.value.answer
+                if (answer is ActivityExpectedAnswer.RegexWrapper || answer is ActivityExpectedAnswer.FormulaWrapper) {
+                    patternAnswer(fields(name).getValue("solution").jsonPrimitive.content)
+                } else {
+                    runCatching {
+                        ApiJson.decodeFromJsonElement(
+                            ActivityAnswer.serializer(),
+                            ApiJson.encodeToJsonElement(ActivityExpectedAnswer.serializer(), answer),
+                        )
+                    }.getOrNull()
+                }
             }
 
             null -> {

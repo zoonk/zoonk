@@ -244,6 +244,65 @@ internal fun CodeLineField(
     )
 }
 
+/** Main's `CodeSnippet`: [before] goes in front of the selection and [after] behind it. */
+data class CodeSnippet(
+    val label: String,
+    val name: String,
+    val before: String,
+    val after: String = "",
+)
+
+/** Main's `insertAtCursor`: wraps the selection in the snippet and puts the cursor after what it wrapped. */
+fun TextFieldValue.inserting(snippet: CodeSnippet): TextFieldValue {
+    val start = minOf(selection.min, text.length)
+    val end = minOf(selection.max, text.length)
+    val selected = text.substring(start, end)
+    val inserted = snippet.before + selected + snippet.after
+    return TextFieldValue(
+        text = text.substring(0, start) + inserted + text.substring(end),
+        selection = TextRange(start + snippet.before.length + selected.length),
+    )
+}
+
+/** Main's `ActivitySnippetBar`: buttons that type a symbol or name, each named for TalkBack when its label is a symbol. */
+@Composable
+internal fun SnippetBar(
+    snippets: List<CodeSnippet>,
+    label: String,
+    enabled: Boolean,
+    onInsert: (CodeSnippet) -> Unit,
+) {
+    Row(
+        Modifier
+            .fillMaxWidth()
+            .semantics { contentDescription = label }
+            .horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
+    ) {
+        snippets.forEach { snippet ->
+            FilledTonalButton(
+                onClick = { onInsert(snippet) },
+                modifier =
+                    Modifier
+                        .heightIn(min = 48.dp)
+                        .widthIn(min = 48.dp)
+                        .then(
+                            if (snippet.name == snippet.label) {
+                                Modifier
+                            } else {
+                                Modifier.semantics { contentDescription = "${snippet.label}, ${snippet.name}" }
+                            },
+                        ),
+                enabled = enabled,
+                shape = RoundedCornerShape(12.dp),
+                contentPadding = PaddingValues(horizontal = 12.dp),
+            ) {
+                Text(snippet.label, style = MaterialTheme.typography.bodyMedium.copy(fontFamily = FontFamily.Monospace))
+            }
+        }
+    }
+}
+
 /**
  * Main's `SandboxRunBar`: Run is the main action until the first run, then steps back so Check
  * stands out. Runs wait for the runtime, so Run works while it loads.
