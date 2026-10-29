@@ -17,6 +17,7 @@ import com.zoonk.api.models.OnboardingDraft
 import com.zoonk.api.models.OnboardingDraftEdit
 import com.zoonk.api.models.PlanLinkStartInput
 import com.zoonk.api.models.Source
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -29,6 +30,11 @@ internal fun understoodDraft(
 ): OnboardingDraft =
     ApiJson.decodeFromString(
         """{"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"understood","understanding":$understanding}""",
+    )
+
+internal fun failedDraft(prompt: String = "pass the bar exam"): OnboardingDraft =
+    ApiJson.decodeFromString(
+        """{"generationId":null,"goalId":null,"id":"$DRAFT_ID","prompt":"$prompt","status":"failed","understanding":null}""",
     )
 
 internal fun readingDraft(
@@ -94,10 +100,17 @@ internal class FakeOnboardingApi : OnboardingApi {
         return draft
     }
 
+    var readsAgain = 0
+    var readAgainGate: CompletableDeferred<Unit>? = null
+
     override suspend fun readAgain(
         session: AuthenticatedSession,
         id: String,
-    ): OnboardingDraft = draft
+    ): OnboardingDraft {
+        readsAgain++
+        readAgainGate?.await()
+        return draft
+    }
 
     override suspend fun revise(
         session: AuthenticatedSession,

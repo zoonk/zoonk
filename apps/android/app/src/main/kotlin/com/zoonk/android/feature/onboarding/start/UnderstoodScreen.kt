@@ -16,11 +16,11 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SelectableDates
 import androidx.compose.material3.Text
@@ -34,7 +34,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,9 +47,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.LinkAnnotation
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.zoonk.android.R
@@ -67,7 +71,6 @@ import com.zoonk.api.models.OnboardingDraftEditOneOf1
 import com.zoonk.api.models.OnboardingDraftEditOneOf2
 import com.zoonk.api.models.OnboardingDraftEditOneOf3
 import com.zoonk.api.models.UnderstoodGoal
-import kotlinx.coroutines.launch
 import kotlinx.datetime.toKotlinLocalDate
 import java.time.Instant
 import java.time.LocalDate
@@ -83,7 +86,7 @@ internal fun ColumnScope.UnderstoodScreen(
     error: GoalError?,
     goalLimit: GoalLimitReason?,
     onConfirm: () -> Unit,
-    onRevise: suspend (OnboardingDraftEdit) -> Boolean,
+    edits: FactEdits,
     onRewrite: (String) -> Unit,
     onCreateAccount: () -> Unit,
     onSeePlus: () -> Unit,
@@ -94,7 +97,6 @@ internal fun ColumnScope.UnderstoodScreen(
     val is24Hour = DateFormat.is24HourFormat(LocalContext.current)
     val rows = remember(resources, locale, is24Hour) { UnderstoodRows(resources, locale, is24Hour) }
     var rewriting by rememberSaveable { mutableStateOf(false) }
-    var editing by rememberSaveable { mutableStateOf<String?>(null) }
     val firstGoalRows =
         listOfNotNull(
             rows.materialRow(material),
@@ -129,9 +131,11 @@ internal fun ColumnScope.UnderstoodScreen(
                 FactRow(
                     row = row,
                     editValue = editValue(understood, row),
-                    editing = editing == key,
-                    onEdit = { editing = if (it) key else null },
-                    onSave = { value -> row.editable?.let { field -> onRevise(draftEdit(field, index, value)) } ?: false },
+                    editing = edits.editing == key,
+                    saving = edits.saving != null,
+                    failed = edits.failed == key,
+                    onEdit = { edits.onEdit(if (it) key else null) },
+                    onSave = { value -> row.editable?.let { field -> edits.onRevise(key, draftEdit(field, index, value)) } },
                 )
             }
         }
@@ -184,59 +188,62 @@ private fun RewriteWords(
     LaunchedEffect(Unit) { focus.requestFocus() }
 }
 
+/** The fixes in flight live in the screen's ViewModel, so a rotation never drops a save. */
+internal class FactEdits(
+    val editing: String?,
+    val saving: String?,
+    val failed: String?,
+    val onEdit: (String?) -> Unit,
+    val onRevise: (String, OnboardingDraftEdit) -> Unit,
+)
+
 @Composable
 private fun FactRow(
     row: UnderstoodRow,
     editValue: String,
     editing: Boolean,
+    saving: Boolean,
+    failed: Boolean,
     onEdit: (Boolean) -> Unit,
-    onSave: suspend (String) -> Boolean,
+    onSave: (String) -> Unit,
 ) {
-    val scope = rememberCoroutineScope()
-    var saving by remember { mutableStateOf(false) }
-    var failed by remember { mutableStateOf(false) }
-    val save: (String) -> Unit = { value ->
-        if (!saving) {
-            saving = true
-            failed = false
-            scope.launch {
-                val saved = onSave(value)
-                saving = false
-                failed = !saved
-                if (saved) onEdit(false)
-            }
-        }
-    }
+    val save: (String) -> Unit = { value -> if (!saving) onSave(value) }
     val label = if (editing) row.editLabel ?: row.label else row.label
     val editor = row.editable?.kind
 
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp), verticalAlignment = Alignment.Top) {
         Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+            if (!editing) {
+                Column(Modifier.semantics(mergeDescendants = true) {}, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.Bottom) {
+                        Text(row.value, fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyLarge)
+                        row.badge?.let {
+                            Text(
+                                it,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                style = MaterialTheme.typography.labelSmall,
+                            )
+                        }
+                    }
+                }
+            } else {
+                Text(label, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall)
+            }
 
             if (editing && editor == EditorKind.Text) {
                 TextEditor(label, editValue, saving, onCancel = { onEdit(false) }, onSave = save)
             } else {
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.Bottom) {
-                    Text(row.value, fontWeight = FontWeight.Medium, style = MaterialTheme.typography.bodyLarge)
-                    row.badge?.let {
-                        Text(
-                            it,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            style = MaterialTheme.typography.labelSmall,
-                        )
-                    }
-                }
                 RowNote(row)
                 row.suggestedDate?.let { date ->
-                    OutlinedButton(onClick = { save(date.toString()) }, enabled = !saving, modifier = Modifier.padding(top = 6.dp)) {
+                    FilledTonalButton(onClick = { save(date.toString()) }, enabled = !saving, modifier = Modifier.padding(top = 6.dp)) {
                         Text(stringResource(R.string.onboarding_use_this_date))
                     }
                 }
                 if (row.choiceDates.isNotEmpty()) {
                     FlowRow(modifier = Modifier.padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                         row.choiceDates.forEach { date ->
-                            OutlinedButton(onClick = { save(date.toString()) }, enabled = !saving) {
+                            FilledTonalButton(onClick = { save(date.toString()) }, enabled = !saving) {
                                 Text(formatDate(date, currentLocale(), DateStyle.Short))
                             }
                         }
@@ -273,29 +280,30 @@ private fun FactRow(
     }
 }
 
+/** Main's note line: the note, then where it came from as a link that opens the page in a Custom Tab. */
 @Composable
 private fun RowNote(row: UnderstoodRow) {
     val context = LocalContext.current
     if (row.note == null && row.source == null) return
+    val muted = MaterialTheme.colorScheme.onSurfaceVariant
+    val sourceText = row.source?.let { stringResource(R.string.onboarding_source, sourceName(it)) }
 
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), itemVerticalAlignment = Alignment.CenterVertically) {
-        row.note?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodySmall) }
-        row.source?.let { source ->
-            TextButton(onClick = { CustomTabsIntent.Builder().build().launchUrl(context, source.url.toUri()) }) {
-                Text(
-                    stringResource(R.string.onboarding_source, sourceName(source)),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-                Icon(
-                    painterResource(R.drawable.ic_open_in_new),
-                    contentDescription = null,
-                    modifier = Modifier.padding(start = 4.dp).size(14.dp),
-                )
+    val text =
+        buildAnnotatedString {
+            row.note?.let(::append)
+            if (row.note != null && row.source != null) append(" · ")
+            val source = row.source
+            if (source != null && sourceText != null) {
+                withLink(
+                    LinkAnnotation.Clickable(
+                        tag = source.url,
+                        styles = TextLinkStyles(SpanStyle(color = muted, textDecoration = TextDecoration.Underline)),
+                        linkInteractionListener = { CustomTabsIntent.Builder().build().launchUrl(context, source.url.toUri()) },
+                    ),
+                ) { append("$sourceText ↗") }
             }
         }
-    }
+    Text(text, color = muted, style = MaterialTheme.typography.bodySmall)
 }
 
 @Composable

@@ -13,11 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -30,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
+import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
@@ -45,9 +45,18 @@ internal fun OnboardingHeading(
     description: String? = null,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(text = title, modifier = Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        // Each step swaps the whole screen: naming it as a pane makes TalkBack say which one arrived.
+        Text(
+            text = title,
+            modifier =
+                Modifier.semantics {
+                    heading()
+                    paneTitle = title
+                },
+            style = MaterialTheme.typography.headlineSmall,
+        )
         if (description != null) {
-            Text(text = description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyLarge)
+            Text(text = description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
         }
     }
 }
@@ -77,11 +86,13 @@ internal fun OutcomeIcon(
 }
 
 @Composable
+internal fun isCompactWidth(): Boolean =
+    !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
+
+@Composable
 internal fun ColumnScope.OnboardingActions(content: @Composable ColumnScope.() -> Unit) {
     // Main pins them to the bottom on phones, within thumb reach; wider windows keep them under the content.
-    if (!currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)) {
-        Spacer(Modifier.weight(1f))
-    }
+    if (isCompactWidth()) Spacer(Modifier.weight(1f))
     Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp), verticalArrangement = Arrangement.spacedBy(8.dp), content = content)
 }
 
@@ -150,10 +161,7 @@ internal fun GoalLimitNotice(
 ) {
     if (!reason.isPlusLimit) return
 
-    Card(
-        modifier = modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
-    ) {
+    OutlinedCard(modifier = modifier.fillMaxWidth()) {
         Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(painterResource(R.drawable.ic_lock), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -171,7 +179,7 @@ internal fun GoalLimitNotice(
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 if (reason == GoalLimitReason.OneActiveGoal) {
-                    OutlinedButton(onClick = onOpenPlan, modifier = Modifier.padding(top = 8.dp)) {
+                    FilledTonalButton(onClick = onOpenPlan, modifier = Modifier.padding(top = 8.dp)) {
                         Text(stringResource(R.string.onboarding_go_to_plan))
                     }
                 }
@@ -196,7 +204,7 @@ internal fun ColumnScope.GoalLimitWall(
         )
         Button(onClick = onSeePlus, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_see_plus)) }
         if (reason == GoalLimitReason.OneActiveGoal) {
-            OutlinedButton(
+            FilledTonalButton(
                 onClick = onOpenPlan,
                 modifier = Modifier.fillMaxWidth(),
             ) { Text(stringResource(R.string.onboarding_go_to_plan)) }
@@ -270,7 +278,7 @@ internal fun ColumnScope.InstrumentGoal(
         stringResource(R.string.onboarding_instrument_title, instrument),
         stringResource(R.string.onboarding_instrument_description),
     )
-    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
+    OutlinedCard {
         Row(modifier = Modifier.padding(16.dp), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(painterResource(R.drawable.ic_music_note), contentDescription = null, modifier = Modifier.size(20.dp))
             Text(stringResource(R.string.onboarding_musicianship_card, instrument), style = MaterialTheme.typography.bodyMedium)

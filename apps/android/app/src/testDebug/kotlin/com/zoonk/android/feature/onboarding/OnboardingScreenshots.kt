@@ -193,7 +193,7 @@ class OnboardingScreenshots {
                     val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
                     OnboardingStore(api, AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)), session) { true }
                 }
-            StartGoalScreen(route, store, hasSession = true, canAttach = true, rememberAppNavigator())
+            StartGoalScreen(route, store, sessionKey = "local-a", canAttach = true, rememberAppNavigator())
         }
     }
 }

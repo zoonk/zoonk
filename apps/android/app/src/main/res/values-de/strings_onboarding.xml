@@ -32,6 +32,7 @@
   "onboarding_guest_gate_title": "5d90d0f3a6bff9163cf72d4e64e7470cb8d6a320f379e88a4551108980b035c2",
   "onboarding_how_it_works": "b3c7f3e3cddd2fb63b8fb2f60cc1dd09b53492e832e8d1b9d02efe118af8c633",
   "onboarding_how_it_works_answer": "fb0e1920d76c8670c88bad4e289eb9093cc957032cc79a573516abeb951a1e77",
+  "onboarding_how_it_works_current": "8528fd69bd76ba2856fceae1f206a94c2a93cf2f5bfd4cdc492dc829ac561f0c",
   "onboarding_how_it_works_plan": "8efe00237a9112dd294d4bc109e074ed8c180b89ddfc283debca42d0e9f07e92",
   "onboarding_how_it_works_say": "2ae20f361d3d3fef3adf662a00d35bf0f4da2b28581a8a52a48649e0775b01e6",
   "onboarding_instrument_description": "e9d37e353e37f78c2f34807c92bd437a3d8bf8e7075329efc03bd1b12cac0357",
@@ -162,6 +163,8 @@
     <string name="onboarding_how_it_works_say">Sag, was du erreichen möchtest</string>
     <string name="onboarding_how_it_works_answer">Beantworte ein paar Fragen</string>
     <string name="onboarding_how_it_works_plan">Du bekommst einen Plan mit Terminen und deiner ersten Lektion</string>
+    <!-- Screen reader state of the step the learner is on in How it works. -->
+    <string name="onboarding_how_it_works_current">Aktueller Schritt</string>
     <string name="onboarding_start_free">Starte kostenlos, ganz ohne Konto.</string>
     <!-- The goal written for material the learner attached without typing anything. %1$s lists the material's titles. -->
     <string name="onboarding_material_goal_exam">Mich mit meinen Unterlagen auf eine Prüfung vorbereiten: %1$s</string>

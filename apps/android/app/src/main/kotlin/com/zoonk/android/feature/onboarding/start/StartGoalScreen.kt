@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,8 +42,10 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.core.os.ConfigurationCompat
@@ -85,19 +88,21 @@ fun StartGoalScreen(
 ) {
     val session by app.sessions.state.collectAsStateWithLifecycle()
     val signedIn = session as? SessionState.SignedIn
-    StartGoalScreen(route, app.onboarding, hasSession = signedIn != null, canAttach = signedIn?.isGuest == false, navigator)
+    StartGoalScreen(route, app.onboarding, sessionKey = signedIn?.session?.localId, canAttach = signedIn?.isGuest == false, navigator)
 }
 
-/** Material needs an account ([canAttach]): a guest is asked to create one first. */
+/** [sessionKey] names the session the screen shows, null for a visitor; material needs an account ([canAttach]). */
 @Composable
 fun StartGoalScreen(
     route: AppRoute.StartGoal,
     store: OnboardingStore,
-    hasSession: Boolean,
+    sessionKey: String?,
     canAttach: Boolean,
     navigator: AppNavigator,
 ) {
     val vm = viewModel { StartGoalViewModel(store, createSavedStateHandle(), route.goal, route.draftId, route.planId) }
+    val hasSession = sessionKey != null
+    LaunchedEffect(sessionKey) { vm.followSession(sessionKey) }
     val allowance by store.allowance.collectShown()
     val upFront = allowance.value?.goalStartLimit()
     val language = appLanguage()
@@ -169,7 +174,7 @@ fun StartGoalScreen(
                     }
 
                     screen is StartScreen.Draft -> {
-                        Draft(vm, store, screen.id, upFront, language, actions)
+                        Draft(vm, store, screen.id, hasSession, upFront, language, actions)
                     }
                 }
             }
@@ -285,6 +290,7 @@ private fun ColumnScope.Draft(
     vm: StartGoalViewModel,
     store: OnboardingStore,
     id: String,
+    hasSession: Boolean,
     upFront: GoalLimitReason?,
     language: String,
     actions: StartActions,
@@ -310,6 +316,8 @@ private fun ColumnScope.Draft(
         }
 
         LoadState.Idle, LoadState.Loading -> {
+            // Only a signed-in learner's own draft can be read; anyone else starts from their words.
+            if (!hasSession) LaunchedEffect(id) { vm.backToEntry("") }
             UnderstandingWait(goal = null, run = GenerationRun(), onRetry = null)
         }
     }
@@ -365,7 +373,11 @@ private fun ColumnScope.DraftContent(
                         } else {
                             GenerationFailure.NotStarted
                         }
-                    UnderstandingWait(draft.prompt, failedRun(failure), onRetry = vm::retryRead)
+                    if (vm.isRetrying) {
+                        UnderstandingWait(draft.prompt, GenerationRun(), onRetry = null)
+                    } else {
+                        UnderstandingWait(draft.prompt, failedRun(failure), onRetry = vm::retryRead)
+                    }
                 }
             }
         }
@@ -389,7 +401,7 @@ private fun ColumnScope.DraftContent(
                         onCreated = actions.toSetup,
                     )
                 },
-                onRevise = vm::revise,
+                edits = FactEdits(vm.editing, vm.savingEdit, vm.failedEdit, vm::edit, vm::revise),
                 onRewrite = { vm.rewrite(it, language) },
                 onCreateAccount = actions.createAccount,
                 onSeePlus = actions.seePlus,
@@ -454,10 +466,12 @@ private fun ColumnScope.MaterialQuestions(
 
     OnboardingHeading(stringResource(R.string.onboarding_questions_title), stringResource(R.string.onboarding_questions_description))
 
-    vm.turns.forEach { turn ->
-        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            TypedGoal(turn.question)
-            MaterialAnswer(turn.outcome)
+    Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(24.dp)) {
+        vm.turns.forEach { turn ->
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                TypedGoal(turn.question)
+                MaterialAnswer(turn.outcome)
+            }
         }
     }
 
@@ -472,6 +486,7 @@ private fun ColumnScope.MaterialQuestions(
         }
     }
 
+    if (isCompactWidth()) Spacer(Modifier.weight(1f))
     Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         OutlinedTextField(
             value = question,
@@ -497,6 +512,7 @@ private fun HowItWorks(hasAccount: Boolean) {
             R.string.onboarding_how_it_works_answer,
             R.string.onboarding_how_it_works_plan,
         )
+    val current = stringResource(R.string.onboarding_how_it_works_current)
     Column(Modifier.padding(24.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
         SectionHeader(stringResource(R.string.onboarding_how_it_works))
         steps.forEachIndexed { index, step ->
@@ -504,6 +520,7 @@ private fun HowItWorks(hasAccount: Boolean) {
             Row(
                 modifier =
                     Modifier
+                        .semantics(mergeDescendants = true) { if (index == 0) stateDescription = current }
                         .fillMaxWidth()
                         .background(
                             if (index ==
@@ -519,6 +536,7 @@ private fun HowItWorks(hasAccount: Boolean) {
             ) {
                 Text(
                     text = (index + 1).toString(),
+                    modifier = Modifier.clearAndSetSemantics {},
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.labelMedium.withTabularFigures(),
                 )

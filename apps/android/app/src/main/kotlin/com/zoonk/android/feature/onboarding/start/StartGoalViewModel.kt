@@ -125,7 +125,23 @@ class StartGoalViewModel(
     var isAsking by mutableStateOf(false)
         private set
 
+    var isRetrying by mutableStateOf(false)
+        private set
+
+    /** The fact being fixed in place, its save on its way, and the last one that didn't save. */
+    var editing by mutableStateOf<String?>(null)
+        private set
+
+    var savingEdit by mutableStateOf<String?>(null)
+        private set
+
+    var failedEdit by mutableStateOf<String?>(null)
+        private set
+
     private var isSending = false
+
+    /** The session this flow's words, material and answers belong to. */
+    private var sessionKey: String? = null
 
     /** The run the screen's draft is read by, so the same run isn't followed from the start again. */
     private var followed: String? = null
@@ -227,6 +243,7 @@ class StartGoalViewModel(
     ) {
         if (isSending) return
         isSending = true
+        draftId?.let(store::forgetSent)
         entryError = null
         update { it.copy(screen = StartScreen.Sending(goal)) }
         viewModelScope.launch {
@@ -242,6 +259,22 @@ class StartGoalViewModel(
 
     fun backToEntry(words: String) = showEntry(words)
 
+    /** Another learner, or none, sees nothing of this one's words, material or answers. */
+    fun followSession(key: String?) {
+        val previous = sessionKey
+        sessionKey = key
+        if (previous == null || previous == key) return
+        turns = emptyList()
+        isAttachOpen = false
+        update { it.copy(attached = emptyList(), intent = null) }
+        showEntry("")
+    }
+
+    fun edit(field: String?) {
+        editing = field
+        failedEdit = null
+    }
+
     /** Follows the draft the screen shows while it's read; a draft read before needs nothing. */
     fun follow(draft: OnboardingDraft) {
         val id = draft.generationId.takeIf { draft.status == OnboardingDraft.Status.UNDERSTANDING }
@@ -253,6 +286,8 @@ class StartGoalViewModel(
     /** A read that failed or never started waits for this tap, since starting it is new work. */
     fun retryRead() {
         val id = draftId ?: return
+        if (isRetrying) return
+        isRetrying = true
         viewModelScope.launch {
             when (val outcome = store.readAgain(id)) {
                 is WriteOutcome.Done -> {
@@ -265,6 +300,7 @@ class StartGoalViewModel(
 
                 else -> {}
             }
+            isRetrying = false
         }
     }
 
@@ -272,10 +308,29 @@ class StartGoalViewModel(
         viewModelScope.launch { loadRead() }
     }
 
-    /** False when it couldn't be saved, which keeps the editor open. */
-    suspend fun revise(edit: OnboardingDraftEdit): Boolean {
-        val id = draftId ?: return false
-        return store.revise(id, edit) is WriteOutcome.Done
+    /** A fact that couldn't be saved keeps its editor open. */
+    fun revise(
+        field: String,
+        edit: OnboardingDraftEdit,
+    ) {
+        val id = draftId ?: return
+        if (savingEdit != null) return
+        savingEdit = field
+        failedEdit = null
+        viewModelScope.launch {
+            when (store.revise(id, edit)) {
+                is WriteOutcome.Done -> {
+                    if (editing == field) editing = null
+                }
+
+                WriteOutcome.Obsolete -> {}
+
+                else -> {
+                    failedEdit = field
+                }
+            }
+            savingEdit = null
+        }
     }
 
     fun rewrite(
@@ -400,6 +455,8 @@ class StartGoalViewModel(
     private fun showDraft(draft: OnboardingDraft) {
         readFailed = false
         draftLimit = null
+        waitlist = null
+        editing = null
         update { it.copy(screen = StartScreen.Draft(draft.id.toString())) }
     }
 
@@ -407,12 +464,21 @@ class StartGoalViewModel(
         words: String,
         error: GoalError? = null,
     ) {
+        draftId?.let(store::forgetSent)
         follower.stop()
+        followed = null
         readFailed = false
         draftLimit = null
+        waitlist = null
+        editing = null
         creationError = null
         entryError = error
         update { it.copy(screen = StartScreen.Entry, words = words) }
+    }
+
+    /** Leaving the draft takes back what the tap that sent it allowed, so a later visit only reads it. */
+    override fun onCleared() {
+        draftId?.let(store::forgetSent)
     }
 
     private fun update(transform: (StartFlowState) -> StartFlowState) {

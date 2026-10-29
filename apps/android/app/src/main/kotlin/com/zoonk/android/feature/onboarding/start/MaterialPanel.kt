@@ -12,22 +12,23 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
-import androidx.compose.material3.InputChip
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -121,8 +122,7 @@ fun AttachControls(
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            FilterChip(
-                selected = false,
+            AssistChip(
                 onClick = { picker.launch(ACCEPTED_TYPES) },
                 enabled = !pending,
                 label = { Text(stringResource(R.string.onboarding_upload_file)) },
@@ -259,27 +259,34 @@ private fun PanelCard(content: @Composable () -> Unit) {
     }
 }
 
+/** Removing material takes its own button, never a tap on its name. */
 @Composable
 internal fun AttachedChips(
     items: List<AttachedSource>,
     onRemove: (String) -> Unit,
 ) {
-    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         items.forEach { item ->
             val title = item.title.ifBlank { stringResource(R.string.onboarding_your_text) }
-            InputChip(
-                selected = false,
-                onClick = { onRemove(item.id) },
-                label = { Text(title, maxLines = 1, overflow = TextOverflow.Ellipsis) },
-                leadingIcon = { Icon(painterResource(R.drawable.ic_description), contentDescription = null, Modifier.size(18.dp)) },
-                trailingIcon = {
-                    Icon(
-                        painterResource(R.drawable.ic_close),
-                        contentDescription = stringResource(R.string.onboarding_remove_material, title),
-                        Modifier.size(18.dp),
+            Surface(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+                Row(modifier = Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Icon(painterResource(R.drawable.ic_description), contentDescription = null, modifier = Modifier.size(18.dp))
+                    Text(
+                        title,
+                        modifier = Modifier.padding(start = 6.dp).widthIn(max = 240.dp),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.bodyMedium,
                     )
-                },
-            )
+                    IconButton(onClick = { onRemove(item.id) }) {
+                        Icon(
+                            painterResource(R.drawable.ic_close),
+                            contentDescription = stringResource(R.string.onboarding_remove_material, title),
+                            modifier = Modifier.size(18.dp),
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -359,7 +366,7 @@ internal fun MaterialAnswer(outcome: WriteOutcome<com.zoonk.api.models.MaterialQ
         return
     }
 
-    Card(colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow)) {
+    OutlinedCard {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Text(answer.answer, style = MaterialTheme.typography.bodyLarge)
             if (answer.citations.isNotEmpty()) {

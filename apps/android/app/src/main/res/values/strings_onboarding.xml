@@ -10,6 +10,8 @@
     <string name="onboarding_how_it_works_say">Say what you want to achieve</string>
     <string name="onboarding_how_it_works_answer">Answer a few questions</string>
     <string name="onboarding_how_it_works_plan">Get a plan with dates, and your first lesson</string>
+    <!-- Screen reader state of the step the learner is on in How it works. -->
+    <string name="onboarding_how_it_works_current">current step</string>
     <string name="onboarding_start_free">Start free, no account needed.</string>
     <!-- The goal written for material the learner attached without typing anything. %1$s lists the material's titles. -->
     <string name="onboarding_material_goal_exam">Prepare for an exam on my material: %1$s</string>
