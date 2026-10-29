@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -57,14 +58,17 @@ private fun subscribed(id: String): MeResponse =
 private class FakePlayBilling : PlayBilling {
     val bought = mutableListOf<Pair<BillingPeriod, String>>()
     var unlinked = listOf<String>()
+    var offerReads = 0
     override val updates = MutableSharedFlow<PlayPurchaseUpdate>(extraBufferCapacity = 4)
 
-    override suspend fun offers(): PlusOffers =
-        PlusOffers(
+    override suspend fun offers(): PlusOffers {
+        offerReads++
+        return PlusOffers(
             PlusOffer(BillingPeriod.Monthly, "monthly-token", "$5.00", 5_000_000, "USD"),
             PlusOffer(BillingPeriod.Yearly, "yearly-token", "$40.00", 40_000_000, "USD"),
             product = Unit,
         )
+    }
 
     override suspend fun buy(
         activity: Activity,
@@ -105,6 +109,7 @@ class SubscriptionStoreTest {
 
     private val billing = FakePlayBilling()
     private val api = FakeSubscriptionApi()
+    private val foreground = MutableStateFlow(false)
 
     private suspend fun TestScope.store(
         session: AuthenticatedSession,
@@ -120,7 +125,7 @@ class SubscriptionStoreTest {
                 clearCredentialState = {},
             )
         sessions.restore()
-        val store = SubscriptionStore(api, billing, sessions, AppCache(sessions, main), main)
+        val store = SubscriptionStore(api, billing, sessions, AppCache(sessions, main), main, foreground)
         store.offers.load()
         advanceUntilIdle()
         return sessions to store
@@ -164,28 +169,86 @@ class SubscriptionStoreTest {
         }
 
     @Test
-    fun purchasesNotLinkedYetAreLinkedWhenTheAppReturns() =
+    fun purchasesNotLinkedYetAreLinkedWhenTheAppComesToTheForeground() =
         runTest {
             val (_, store) = store(ana)
             billing.unlinked = listOf("from-the-play-store")
 
-            store.linkUnlinkedPurchases()
+            foreground.value = true
+            advanceUntilIdle()
+
+            assertEquals(listOf("token-a" to "from-the-play-store"), api.linked)
+            assertEquals(PurchaseState.Done, store.purchase.value)
+        }
+
+    @Test
+    fun anAccountSignedInWhileInTheForegroundLinksWhatPlayHolds() =
+        runTest {
+            val main = CoroutineScope(SupervisorJob() + StandardTestDispatcher(testScheduler))
+            val sessionApi = FakeSessionApi().apply { accounts += "token-a" to ANA }
+            val sessions =
+                SessionStore(
+                    sessionApi,
+                    MemoryCredentials(),
+                    DraftStore(
+                        folder.newFolder(),
+                        main,
+                        io = StandardTestDispatcher(testScheduler),
+                    ),
+                    { _, _ -> },
+                    {
+                    },
+                )
+            sessions.restore()
+            SubscriptionStore(api, billing, sessions, AppCache(sessions, main), main, foreground)
+            billing.unlinked = listOf("from-the-play-store")
+            foreground.value = true
+            advanceUntilIdle()
+            assertTrue(api.linked.isEmpty())
+
+            sessions.signIn { "token-a" }
             advanceUntilIdle()
 
             assertEquals(listOf("token-a" to "from-the-play-store"), api.linked)
         }
 
     @Test
-    fun aGuestCantBuyOrLinkUntilItHasAnAccount() =
+    fun aGuestNeverLinksAPurchaseEvenFromPlaysCallback() =
         runTest {
             val (_, store) = store(AuthenticatedSession(GUEST, "token-guest", "local-g"), isGuest = true)
             billing.unlinked = listOf("from-the-play-store")
 
             store.buy(activity, BillingPeriod.Monthly)
-            store.linkUnlinkedPurchases()
+            foreground.value = true
+            billing.updates.emit(PlayPurchaseUpdate.Purchased("out-of-app"))
             advanceUntilIdle()
 
             assertTrue(billing.bought.isEmpty())
             assertTrue(api.linked.isEmpty())
+        }
+
+    @Test
+    fun aCheckoutReadsPlaysOffersAgain() =
+        runTest {
+            val (_, store) = store(ana)
+            val reads = billing.offerReads
+
+            store.buy(activity, BillingPeriod.Monthly)
+
+            assertEquals(reads + 1, billing.offerReads)
+            assertEquals(listOf(BillingPeriod.Monthly to ANA), billing.bought)
+        }
+
+    @Test
+    fun anotherAccountStartsWithoutTheLastOnesPurchaseState() =
+        runTest {
+            val (sessions, store) = store(ana)
+            store.buy(activity, BillingPeriod.Yearly)
+            assertEquals(PurchaseState.Buying, store.purchase.value)
+
+            sessions.signOut()
+            advanceUntilIdle()
+
+            assertEquals(PurchaseState.Idle, store.purchase.value)
         }
 }

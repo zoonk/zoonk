@@ -16,6 +16,7 @@ import com.android.billingclient.api.queryPurchasesAsync
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -69,6 +70,22 @@ interface PlayBilling {
 
     /** Bought but not linked to a Zoonk account yet: in another session, the Play Store or with a promo code. */
     suspend fun unacknowledgedPurchases(): List<String>
+}
+
+/** For previews: Play sells nothing here. */
+object NoPlayBilling : PlayBilling {
+    override suspend fun offers(): PlusOffers? = null
+
+    override suspend fun buy(
+        activity: Activity,
+        offers: PlusOffers,
+        offer: PlusOffer,
+        accountId: String,
+    ) = false
+
+    override val updates: Flow<PlayPurchaseUpdate> = emptyFlow()
+
+    override suspend fun unacknowledgedPurchases(): List<String> = emptyList()
 }
 
 class GooglePlayBilling(

@@ -220,7 +220,8 @@ private fun Offer(
     val activity = LocalActivity.current
     val scope = rememberCoroutineScope()
     val plans = offers.value
-    val offer = plans?.let { if (period == BillingPeriod.Yearly) it.yearly else it.monthly }
+    // Play can sell one base plan and not the other in a region: show the one it sells.
+    val offer = plans?.let { it.offerFor(period) ?: it.monthly ?: it.yearly }
     val isWorking = purchase == PurchaseState.Buying || purchase == PurchaseState.Confirming
 
     Text(
@@ -274,7 +275,7 @@ private fun Offer(
 
                 else -> {
                     Button(
-                        onClick = { activity?.let { scope.launch { app.subscriptions.buy(it, period) } } },
+                        onClick = { activity?.let { scope.launch { offer?.let { chosen -> app.subscriptions.buy(it, chosen.period) } } } },
                         enabled = offer != null && !isWorking && activity != null,
                         modifier = Modifier.fillMaxWidth(),
                     ) {

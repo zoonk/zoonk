@@ -2,7 +2,6 @@ package com.zoonk.android.app
 
 import android.content.Context
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.ProcessLifecycleOwner
 import com.zoonk.android.BuildConfig
 import com.zoonk.android.data.ApiClients
@@ -39,6 +38,7 @@ import com.zoonk.android.feature.tutor.LiveTutorApi
 import com.zoonk.android.feature.tutor.TutorStore
 import com.zoonk.android.feature.subscription.GooglePlayBilling
 import com.zoonk.android.feature.subscription.LiveSubscriptionApi
+import com.zoonk.android.feature.subscription.NoPlayBilling
 import com.zoonk.android.feature.subscription.SubscriptionStore
 import com.zoonk.android.navigation.LearnerAccess
 import com.zoonk.api.models.LearnerSummary
@@ -51,6 +51,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import okhttp3.HttpUrl.Companion.toHttpUrl
@@ -100,14 +102,23 @@ class AppContainer private constructor(
     val memory = MemoryStore(LiveMemoryApi(api), cache)
     val feedback = FeedbackSender(LiveFeedbackApi(api), sessions)
     val subscriptions =
-        SubscriptionStore(LiveSubscriptionApi(api), GooglePlayBilling(context), sessions, cache, scope).also { store ->
-            if (previewAccess != null) return@also
-            ProcessLifecycleOwner.get().lifecycle.addObserver(
-                LifecycleEventObserver { _, event ->
-                    if (event == Lifecycle.Event.ON_START) scope.launch { store.linkUnlinkedPurchases() }
+        SubscriptionStore(
+            api = LiveSubscriptionApi(api),
+            // Previews make no requests, Play's included.
+            billing = if (previewAccess == null) GooglePlayBilling(context) else NoPlayBilling,
+            sessions = sessions,
+            cache = cache,
+            scope = scope,
+            isForeground =
+                if (previewAccess == null) {
+                    ProcessLifecycleOwner
+                        .get()
+                        .lifecycle.currentStateFlow
+                        .map { it.isAtLeast(Lifecycle.State.STARTED) }
+                } else {
+                    flowOf(false)
                 },
-            )
-        }
+        )
 
     // Speech clips and recorded answers.
     val voiceFiles = VoiceFiles(File(context.cacheDir, "voice-clips"), api.http, images::isPrivate, sessions)

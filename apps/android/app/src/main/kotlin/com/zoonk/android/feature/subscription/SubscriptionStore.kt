@@ -11,15 +11,17 @@ import com.zoonk.android.data.Resource
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.SessionStore
 import com.zoonk.android.data.perform
-import com.zoonk.android.data.value
 import com.zoonk.api.models.AllowanceResponse
 import com.zoonk.api.models.GooglePlaySubscriptionRequest
 import com.zoonk.api.models.MeResponse
 import com.zoonk.api.models.StoreSubscriptionResponse
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
 import kotlin.coroutines.cancellation.CancellationException
 
@@ -77,7 +79,8 @@ sealed interface PurchaseState {
 /**
  * Plus on Google Play: Play's prices, the purchase, and linking every purchase to the account
  * that made it. Google refunds a purchase nobody acknowledges within three days, and the server
- * acknowledges it once linked, so unlinked purchases are linked again each time the app returns.
+ * acknowledges it once linked, so unlinked purchases are linked again whenever a full account is
+ * in the foreground. A guest never links one: the server would make the purchase the guest's.
  */
 class SubscriptionStore(
     private val api: SubscriptionApi,
@@ -85,6 +88,7 @@ class SubscriptionStore(
     private val sessions: SessionStore,
     private val cache: AppCache,
     scope: CoroutineScope,
+    isForeground: Flow<Boolean>,
 ) {
     val offers: Resource<PlusOffers> = cache.resource(Audience.Everyone) { billing.offers() }
 
@@ -100,81 +104,96 @@ class SubscriptionStore(
     private val mutablePurchase = MutableStateFlow<PurchaseState>(PurchaseState.Idle)
     val purchase: StateFlow<PurchaseState> = mutablePurchase.asStateFlow()
 
+    private val linking = mutableSetOf<String>()
+
     init {
         scope.launch {
             billing.updates.collect { update ->
                 when (update) {
-                    is PlayPurchaseUpdate.Purchased -> link(update.purchaseToken)
+                    is PlayPurchaseUpdate.Purchased -> fullAccount()?.let { link(it, update.purchaseToken) }
                     PlayPurchaseUpdate.Pending -> mutablePurchase.value = PurchaseState.Pending
                     PlayPurchaseUpdate.Canceled -> mutablePurchase.value = PurchaseState.Idle
                     PlayPurchaseUpdate.Failed -> mutablePurchase.value = PurchaseState.PlayFailed
                 }
             }
         }
+        // Each account starts clean, and links what Play holds once it's in the foreground.
+        scope.launch {
+            combine(isForeground, sessions.state) { foreground, _ -> fullAccount() to foreground }
+                .distinctUntilChanged()
+                .collect { (session, foreground) ->
+                    if (session != reconciledFor) mutablePurchase.value = PurchaseState.Idle
+                    reconciledFor = session
+                    if (session != null && foreground) reconcile(session)
+                }
+        }
     }
+
+    private var reconciledFor: AuthenticatedSession? = null
 
     /** Only an account can buy: a guest creates one first, as main asks. */
     suspend fun buy(
         activity: Activity,
         period: BillingPeriod,
     ) {
-        val signedIn = sessions.state.value as? SessionState.SignedIn ?: return
-        if (signedIn.isGuest || mutablePurchase.value == PurchaseState.Buying || mutablePurchase.value == PurchaseState.Confirming) return
-        val offers = offers.state.value.value ?: return
-        val offer = (if (period == BillingPeriod.Yearly) offers.yearly else offers.monthly) ?: return
+        val session = fullAccount() ?: return
+        if (mutablePurchase.value == PurchaseState.Buying || mutablePurchase.value == PurchaseState.Confirming) return
         mutablePurchase.value = PurchaseState.Buying
-        val opened =
-            try {
-                billing.buy(activity, offers, offer, signedIn.session.accountId)
-            } catch (e: CancellationException) {
-                mutablePurchase.value = PurchaseState.Idle
-                throw e
-            }
-        if (!opened) mutablePurchase.value = PurchaseState.PlayFailed
+        try {
+            // Play's details go stale; a checkout always starts from fresh ones.
+            val offers = billing.offers()
+            val offer = offers?.let { it.offerFor(period) ?: it.monthly ?: it.yearly }
+            val opened =
+                offers != null && offer != null && sessions.current == session && billing.buy(activity, offers, offer, session.accountId)
+            if (offers != null) this.offers.replace(offers)
+            if (!opened) mutablePurchase.value = PurchaseState.PlayFailed
+        } catch (e: CancellationException) {
+            mutablePurchase.value = PurchaseState.Idle
+            throw e
+        }
     }
 
-    /** When the app returns: links purchases made elsewhere or whose confirmation failed. */
-    suspend fun linkUnlinkedPurchases() {
-        val signedIn = sessions.state.value as? SessionState.SignedIn ?: return
-        if (signedIn.isGuest) return
-        billing.unacknowledgedPurchases().forEach { link(it) }
+    /** Play's answer to a purchase can be lost; whatever is still unlinked is found here. */
+    private suspend fun reconcile(session: AuthenticatedSession) {
+        if (mutablePurchase.value == PurchaseState.Buying) mutablePurchase.value = PurchaseState.Idle
+        billing.unacknowledgedPurchases().forEach { link(session, it) }
     }
 
-    private suspend fun link(purchaseToken: String) {
+    private suspend fun link(
+        session: AuthenticatedSession,
+        purchaseToken: String,
+    ) {
+        if (sessions.current != session || !linking.add(purchaseToken)) return
         mutablePurchase.value = PurchaseState.Confirming
-        var linkedBy: AuthenticatedSession? = null
-        val result =
-            cache.mutate(
-                invalidating = setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession),
-                replacing = { listOf(account.replacing(it.currentAccount)) },
-            ) { session ->
-                linkedBy = session
-                api.linkGooglePlay(session, purchaseToken)
-            }
-        mutablePurchase.value =
+        try {
+            val result =
+                cache.mutate(
+                    invalidating = setOf(DataDomain.UserSubscription, DataDomain.Allowance, DataDomain.UserSession),
+                    replacing = { listOf(account.replacing(it.currentAccount)) },
+                ) { current -> api.linkGooglePlay(current, purchaseToken) }
             when (result) {
                 is MutationResult.Done -> {
-                    linkedBy?.let { sessions.showAccount(it, result.value.currentAccount) }
-                    PurchaseState.Done
+                    sessions.showAccount(session, result.value.currentAccount)
+                    mutablePurchase.value = PurchaseState.Done
                 }
 
                 is MutationResult.Failed -> {
-                    if (result.code in OTHER_ACCOUNT_CODES) PurchaseState.OtherAccount else PurchaseState.ConfirmFailed
+                    mutablePurchase.value =
+                        if (result.code in OTHER_ACCOUNT_CODES) PurchaseState.OtherAccount else PurchaseState.ConfirmFailed
                 }
 
-                MutationResult.Obsolete -> {
-                    PurchaseState.Idle
-                }
+                MutationResult.Obsolete -> {}
             }
-    }
-
-    fun dismissPurchaseState() {
-        if (mutablePurchase.value != PurchaseState.Buying && mutablePurchase.value != PurchaseState.Confirming) {
-            mutablePurchase.value = PurchaseState.Idle
+        } finally {
+            linking.remove(purchaseToken)
         }
     }
+
+    private fun fullAccount(): AuthenticatedSession? = (sessions.state.value as? SessionState.SignedIn)?.takeUnless { it.isGuest }?.session
 
     private companion object {
         val OTHER_ACCOUNT_CODES = setOf("GOOGLE_PLAY_ACCOUNT_MISMATCH", "GOOGLE_PLAY_SUBSCRIPTION_CONFLICT")
     }
 }
+
+fun PlusOffers.offerFor(period: BillingPeriod): PlusOffer? = if (period == BillingPeriod.Yearly) yearly else monthly
