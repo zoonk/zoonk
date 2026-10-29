@@ -85,6 +85,7 @@
   "tutor_offer_stats": "d3663ae64ec560a707f0a08e01608e209840ff50da4458e0becf3befe543d12e",
   "tutor_offer_stats_description": "2b191aee593b3b5590fcf405af296556accdb39cdf6b58b1d7a89c04bde40e14",
   "tutor_offer_take_test": "7795dcb3745bb498eb4d8c9475058b2ae0b602c8d76af7ac7fbe0a166b5e0779",
+  "tutor_page_sign_up": "38839210a66e369b489423073b88b5cd8fd657b4ef0fc2a88da28a53160118c3",
   "tutor_placeholder_answer": "8e98e5c489233d00296a5b635094eb8dc6fc8b066972f05d0f0610412276edbe",
   "tutor_placeholder_chapter": "329aa535de198403eab620d6774956ce4dc0c19566c60afb9ab85ecd31c99722",
   "tutor_placeholder_item": "111d443a9dfe8ad8c1d2ada92b0aada25e740a29d01e4ab44f565a5b7e1a8747",
@@ -115,8 +116,10 @@
   "tutor_suggest_subject_left": "bd758de57f1350b4375f7afeb337694df09721f65de8196a2ce587ff6b92d7e4",
   "tutor_suggest_walk_through": "284903d57160053a899ef46526f0536a4013a97c9c8a147744ecef0124d566f2",
   "tutor_thinking": "635f5c62217358520d5531c9210200d942a668595f269c69da2f96980fb7218e",
+  "tutor_today": "16b189819affd1f6284847b2ed8444272e5413251c9cd6825d85295d7a01be0e",
   "tutor_try_again": "e7a898ba8b6d39abc72cf3d620f97b8625e4c7a90dd07a7b2404d902cee6a5ce",
   "tutor_view_plans": "3e8cd1ec9175472d3a927372d63432ebaf1580d99692f1a89991e6df0ca2b1cf",
+  "tutor_yesterday": "db0db822c36da2e46ec015f6f671d8ef91fb4f36788c8425440774265846c55f",
   "tutor_your_buddy": "2d2b3030aea0e8c094cff8461694625fdcc6671bf94742b4d3732ebcf6be89db"
 }
 -->
@@ -257,4 +260,8 @@
     <string name="tutor_plan_change_declined">Não foi aplicado. Seu plano continua como estava.</string>
     <string name="tutor_plan_change_replaced">Uma sugestão mais recente substituiu esta.</string>
     <string name="tutor_plan_change_failed">Não foi salvo. Tente de novo.</string>
+    <!-- Above the questions asked that day, in the buddy's conversation. -->
+    <string name="tutor_today">Hoje</string>
+    <string name="tutor_yesterday">Ontem</string>
+    <string name="tutor_page_sign_up">Crie uma conta grátis para começar a conversa.</string>
 </resources>

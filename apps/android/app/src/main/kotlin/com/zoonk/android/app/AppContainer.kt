@@ -31,6 +31,8 @@ import com.zoonk.android.feature.activities.code.CodeSandbox
 import com.zoonk.android.feature.audio.ExoAudioOutput
 import com.zoonk.android.feature.audio.SpeechPlayer
 import com.zoonk.android.feature.audio.VoiceFiles
+import com.zoonk.android.feature.buddy.BuddyStore
+import com.zoonk.android.feature.buddy.LiveBuddyApi
 import com.zoonk.android.feature.catalog.CatalogStore
 import com.zoonk.android.feature.catalog.LiveCatalogApi
 import com.zoonk.android.feature.checkpoint.CheckpointStore
@@ -234,6 +236,8 @@ class AppContainer private constructor(
     val questionBlocks = QuestionBlockStore(LiveQuestionBlockApi(api), cache, timeZone)
     val mistakes = MistakesStore(LiveMistakesApi(api), cache, timeZone)
     val checkpoints = CheckpointStore(LiveCheckpointApi(api), cache, timeZone)
+
+    val buddy = BuddyStore(LiveBuddyApi(api), cache, timeZone)
 
     /** Who the shell shows screens to, which its gates read. */
     val learnerAccess: StateFlow<LearnerAccess> =

@@ -73,6 +73,7 @@ import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.characters.BuddyPicker
 import com.zoonk.android.ui.characters.BuddyStage
 import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.characters.buddyStageName
 import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.characters.worn
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -227,7 +228,7 @@ private fun BuddySection(
                 leadingContent = { Buddy(look, Modifier.size(40.dp)) },
                 headlineContent = { Text(buddyName(kind, profile.buddy.name)) },
                 supportingContent = {
-                    Text(stringResource(R.string.settings_preferences_buddy_line, stageName(look.stage), stringResource(glasses.worn)))
+                    Text(stringResource(R.string.settings_preferences_buddy_line, buddyStageName(look.stage), stringResource(glasses.worn)))
                 },
             )
             OutlinedButton(
@@ -241,73 +242,14 @@ private fun BuddySection(
 
     if (preferences.isEditingBuddy) {
         BuddyEditor(
-            profile = profile,
             look = look,
+            name = profile.buddy.name.orEmpty(),
+            earnedGlasses = profile.availableGlasses.map { BuddyGlasses.of(it.value) }.toSet() + BuddyGlasses.Round,
             isSaving = preferences.isSavingBuddy,
             saveFailed = preferences.buddySaveFailed,
             onClose = { preferences.editBuddy(false) },
             onSave = preferences::setBuddy,
         )
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun BuddyEditor(
-    profile: LearningProfile,
-    look: BuddyLook,
-    isSaving: Boolean,
-    saveFailed: Boolean,
-    onClose: () -> Unit,
-    onSave: (BuddyKind, BuddyGlasses, String) -> Unit,
-) {
-    var kind by rememberSaveable { mutableStateOf(look.kind) }
-    var glasses by rememberSaveable { mutableStateOf(look.glasses) }
-    var name by rememberSaveable { mutableStateOf(profile.buddy.name.orEmpty()) }
-    val earned = profile.availableGlasses.map { BuddyGlasses.of(it.value) }.toSet() + BuddyGlasses.Round
-
-    ModalBottomSheet(onDismissRequest = onClose, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
-        Column(Modifier.navigationBarsPadding().imePadding()) {
-            Column(
-                modifier =
-                    Modifier
-                        .weight(1f, fill = false)
-                        .verticalScroll(rememberScrollState())
-                        .padding(horizontal = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Text(stringResource(R.string.settings_preferences_buddy), style = MaterialTheme.typography.titleLarge)
-                BuddyPicker(
-                    kind = kind,
-                    name = name,
-                    onSelect = { kind = it },
-                    onNameChange = { name = it },
-                    glasses = glasses,
-                    look = look,
-                )
-                Text(stringResource(R.string.buddy_glasses), style = MaterialTheme.typography.titleMedium)
-                BuddyGlassesPicker(look = look.copy(kind = kind), earned = earned, selected = glasses, onSelect = { glasses = it })
-            }
-            HorizontalDivider()
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (saveFailed) {
-                    Text(
-                        text = stringResource(R.string.settings_preferences_save_failed),
-                        modifier = Modifier.weight(1f).semantics { liveRegion = LiveRegionMode.Polite },
-                        color = MaterialTheme.colorScheme.error,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                } else {
-                    Spacer(Modifier.weight(1f))
-                }
-                TextButton(onClick = onClose) { Text(stringResource(R.string.settings_cancel)) }
-                Button(onClick = { onSave(kind, glasses, name) }, enabled = !isSaving) { Text(stringResource(R.string.settings_save)) }
-            }
-        }
     }
 }
 
@@ -401,16 +343,6 @@ private fun LanguageSection() {
         }
     }
 }
-
-@Composable
-private fun stageName(stage: BuddyStage): String =
-    stringResource(
-        when (stage) {
-            BuddyStage.Baby -> R.string.buddy_stage_baby
-            BuddyStage.Young -> R.string.buddy_stage_young
-            BuddyStage.Adult -> R.string.buddy_stage_adult
-        },
-    )
 
 @Composable
 private fun Section(

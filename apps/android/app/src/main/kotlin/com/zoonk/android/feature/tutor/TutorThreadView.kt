@@ -10,11 +10,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -58,8 +60,13 @@ import com.zoonk.android.feature.memory.MemoryUndo
 import com.zoonk.android.feature.memory.MemoryUpdated
 import com.zoonk.android.navigation.AppLink
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.format.DateStyle
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.richtext.MarkdownText
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.ZoneId
 
 internal class TutorRoutes(
     val createAccount: () -> Unit,
@@ -78,11 +85,23 @@ internal fun TutorThreadView(
     suggestions: List<TutorSuggestion>,
     routes: TutorRoutes,
     modifier: Modifier = Modifier,
+    page: TutorPage? = null,
 ) {
     val coroutines = rememberCoroutineScope()
 
     Box(modifier.fillMaxSize()) {
         when {
+            page != null -> {
+                val loaded = (thread as? LoadState.Loaded)?.value
+                Turns(vm, loaded ?: TutorThread.Empty, state, identity, routes, page) {
+                    if (thread is LoadState.Failed) {
+                        item(key = "failed", contentType = "failed") { LoadFailure(thread, vm, routes) }
+                    } else if (loaded == null) {
+                        item(key = "loading", contentType = "loading") { ConversationLoading(Modifier.height(LOADING_HEIGHT)) }
+                    }
+                }
+            }
+
             thread is LoadState.Loaded -> {
                 val turns = thread.value.turns
                 if (turns.isEmpty() && !thread.value.hasMore) {
@@ -93,25 +112,29 @@ internal fun TutorThreadView(
             }
 
             thread is LoadState.Failed -> {
-                val failure = if (thread.error == ApiError.NotFound) TutorFailure.Gone else TutorFailure.Failed
-                Column(
-                    Modifier.align(Alignment.Center).padding(24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    Text(
-                        failureMessage(failure),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodyMedium,
-                    )
-                    FailureAction(failure, routes, onRetry = { coroutines.launch { vm.thread.refresh() } })
-                }
+                LoadFailure(thread, vm, routes, Modifier.align(Alignment.Center).padding(24.dp))
             }
 
             else -> {
-                ConversationLoading()
+                ConversationLoading(Modifier.fillMaxSize())
             }
         }
+    }
+}
+
+@Composable
+private fun LoadFailure(
+    thread: LoadState.Failed,
+    vm: TutorViewModel,
+    routes: TutorRoutes,
+    modifier: Modifier = Modifier,
+) {
+    val coroutines = rememberCoroutineScope()
+    val failure = if (thread.error == ApiError.NotFound) TutorFailure.Gone else TutorFailure.Failed
+
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(failureMessage(failure), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+        FailureAction(failure, routes, onRetry = { coroutines.launch { vm.thread.refresh() } })
     }
 }
 
@@ -122,15 +145,22 @@ private fun Turns(
     state: TutorConversationState,
     identity: TutorIdentity,
     routes: TutorRoutes,
+    page: TutorPage? = null,
+    pending: LazyListScope.() -> Unit = {},
 ) {
     val list = rememberLazyListState()
     val latest = thread.turns.lastOrNull()?.id
     var shown by rememberSaveable { mutableStateOf<String?>(null) }
+    val today = remember { LocalDate.now() }
+    val days = thread.turns.map { it.day }
+    // A page opens with its hello, dated by the conversation's first day when that wasn't today.
+    val firstDay = days.firstOrNull()?.takeIf { page != null && it != today }
+    val leading = (if (firstDay != null) 1 else 0) + (if (page != null) 1 else 0) + (if (thread.hasMore) 1 else 0)
 
     // The latest question comes into view as it's asked, from its top, as main scrolls it.
     LaunchedEffect(latest) {
         if (latest == null || latest == shown) return@LaunchedEffect
-        val index = thread.turns.lastIndex + if (thread.hasMore) 1 else 0
+        val index = leading + thread.turns.lastIndex
         if (shown == null) list.scrollToItem(index) else list.animateScrollToItem(index)
         shown = latest
     }
@@ -141,11 +171,64 @@ private fun Turns(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp),
     ) {
+        firstDay?.let { day -> item(key = "first-day", contentType = "day") { DayLabel(day, today) } }
+        page?.let { item(key = "greeting", contentType = "greeting") { Greeting(identity, it) } }
+        pending()
         if (thread.hasMore) {
             item(key = "earlier", contentType = "earlier") { EarlierQuestions(state, vm::loadEarlier) }
         }
-        items(thread.turns, key = { it.id }, contentType = { "turn" }) { turn ->
-            TurnView(turn, vm, state, identity, routes, others = thread.turns.count { it.isInProgress && it.id != turn.id })
+        itemsIndexed(thread.turns, key = { _, turn -> turn.id }, contentType = { _, _ -> "turn" }) { index, turn ->
+            val day = days[index].takeIf { page != null && index > 0 && it != days[index - 1] }
+            TurnView(
+                turn = turn,
+                vm = vm,
+                state = state,
+                identity = identity,
+                routes = routes,
+                others = thread.turns.count { it.isInProgress && it.id != turn.id },
+                day = day?.let { { DayLabel(it, today) } },
+                showsAbout = page == null,
+            )
+        }
+    }
+}
+
+private val TutorTurn.day: LocalDate
+    get() =
+        java.time.Instant
+            .ofEpochMilli(createdAt.toEpochMilliseconds())
+            .atZone(ZoneId.systemDefault())
+            .toLocalDate()
+
+@Composable
+private fun DayLabel(
+    day: LocalDate,
+    today: LocalDate,
+) {
+    Text(
+        text =
+            when (day) {
+                today -> stringResource(R.string.tutor_today)
+                today.minusDays(1) -> stringResource(R.string.tutor_yesterday)
+                else -> formatDate(day, currentLocale(), DateStyle.WeekdayDay, today)
+            },
+        modifier = Modifier.fillMaxWidth(),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center,
+        style = MaterialTheme.typography.labelMedium,
+    )
+}
+
+@Composable
+private fun Greeting(
+    identity: TutorIdentity,
+    page: TutorPage,
+) {
+    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Box(Modifier.size(AVATAR_SIZE)) { TutorAvatar(identity, AVATAR_SIZE) }
+        Column(Modifier.weight(1f).padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+            Text(page.greeting, style = MaterialTheme.typography.bodyLarge)
+            page.greetingAction?.invoke()
         }
     }
 }
@@ -182,14 +265,23 @@ private fun TurnView(
     identity: TutorIdentity,
     routes: TutorRoutes,
     others: Int,
+    day: (@Composable () -> Unit)? = null,
+    showsAbout: Boolean = true,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        day?.invoke()
         Column(
             Modifier.fillMaxWidth().semantics(mergeDescendants = true) { heading() },
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(aboutLabel(turn.about), color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelMedium)
+            if (showsAbout) {
+                Text(
+                    aboutLabel(turn.about),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            }
             Surface(
                 modifier = Modifier.widthIn(max = BUBBLE_MAX_WIDTH),
                 shape = MaterialTheme.shapes.large,
@@ -468,10 +560,10 @@ private fun CenteredState(
 }
 
 @Composable
-private fun ConversationLoading() {
+private fun ConversationLoading(modifier: Modifier = Modifier) {
     val loading = stringResource(R.string.tutor_loading)
 
-    Box(Modifier.fillMaxSize().semantics { contentDescription = loading }, contentAlignment = Alignment.Center) {
+    Box(modifier.fillMaxWidth().semantics { contentDescription = loading }, contentAlignment = Alignment.Center) {
         CircularProgressIndicator()
     }
 }
@@ -479,3 +571,4 @@ private fun ConversationLoading() {
 private val AVATAR_SIZE = 32.dp
 private val EMPTY_AVATAR_SIZE = 48.dp
 private val BUBBLE_MAX_WIDTH = 480.dp
+private val LOADING_HEIGHT = 96.dp

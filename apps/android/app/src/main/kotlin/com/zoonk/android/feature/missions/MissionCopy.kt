@@ -270,9 +270,11 @@ private fun missionStep(
 }
 
 /** The kind a mission's row wears when no block of the day stands for it; the buddy's face and the Trickster come with the characters. */
-val DayMission.learnKind: LearnKind
+val DayMission.learnKind: LearnKind get() = kind.learnKind
+
+val Kind.learnKind: LearnKind
     get() =
-        when (kind) {
+        when (this) {
             Kind.ASK_BUDDY, Kind.CALL -> LearnKind.Conversation
             Kind.CHALLENGE, Kind.WEEKLY_CHALLENGE -> LearnKind.Challenge
             Kind.ESSAY -> LearnKind.Essay

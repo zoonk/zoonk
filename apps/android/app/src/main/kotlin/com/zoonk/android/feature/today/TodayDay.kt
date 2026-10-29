@@ -43,6 +43,7 @@ import com.zoonk.android.feature.plan.PlanStore
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.feature.session.OpeningWaitLine
 import com.zoonk.android.feature.session.WaitState
+import com.zoonk.android.feature.session.page
 import com.zoonk.android.feature.session.rememberWaitState
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
@@ -180,32 +181,8 @@ private fun openMission(
             if (step != null) actions.open(step) else scope.launch { today.refresh() }
         }
 
-        MissionOpens.MistakesPractice -> {
-            actions.navigate(AppRoute.MistakePractice())
-        }
-
-        is MissionOpens.Pattern -> {
-            actions.navigate(AppRoute.Pattern(opens.patternId.toString()))
-        }
-
-        MissionOpens.Pronunciation -> {
-            actions.navigate(AppRoute.Pronunciation(goalId))
-        }
-
-        is MissionOpens.Call -> {
-            actions.navigate(AppRoute.LanguageUnit(opens.chapterId.toString()))
-        }
-
-        MissionOpens.Buddy -> {
-            actions.navigate(AppRoute.Buddy())
-        }
-
-        is MissionOpens.AreaPractice -> {
-            actions.navigate(AppRoute.Chapter(opens.areaId.toString()))
-        }
-
-        MissionOpens.MockChooser -> {
-            actions.navigate(AppRoute.MockChooser)
+        else -> {
+            opens.page(goalId)?.let(actions.navigate)
         }
     }
 }

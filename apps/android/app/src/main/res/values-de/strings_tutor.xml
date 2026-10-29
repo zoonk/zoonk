@@ -85,6 +85,7 @@
   "tutor_offer_stats": "16bb921a43fa9bf579cf80e227542076d33224ef69bd0add31071470320f5d54",
   "tutor_offer_stats_description": "6fb89e34e890a77c7cda87e5bded769d00d4e2f26a744490d50f2f91d3a48c97",
   "tutor_offer_take_test": "e5df1a34171424c2d0baaea0b3bfbab80bcdc4e025a7c925c188a6d0c66ec441",
+  "tutor_page_sign_up": "7aa895a167bd27e8c56c02535d6276f04677358d392870d32c0b96da90af926c",
   "tutor_placeholder_answer": "6b9ebc0c03a3695e685ac1efa6a371b440f0dd08d39ad22112092d027def16e0",
   "tutor_placeholder_chapter": "46e35db89173806dc7ba6f9442447acd8fc7f053e833050a9bef6a16dcd69e42",
   "tutor_placeholder_item": "f93e5486654a9b4fef67839f27f7f50f2e510d4c1ea2f2642cc34fdb4c52854d",
@@ -115,8 +116,10 @@
   "tutor_suggest_subject_left": "2eb0c42f1ccc89df75153ae0cd7d0ad8e68a194da0f65a003b5f021b52ff6efa",
   "tutor_suggest_walk_through": "ea02058ee9ece5620469bf76ecb17de70a22e48a88787b95f7573567574f070c",
   "tutor_thinking": "52d4befb1aea5433ee19153b8718d347682964a37f12ec5c992ddaa882f57e19",
+  "tutor_today": "87a1601ee66715300d3e762951f42d2f899b41077ad37106e3fed71c6ebafb5b",
   "tutor_try_again": "be71def06be76635836bd8b2436b5ff5c60b2f798360b9d310235c9d0027c81a",
   "tutor_view_plans": "ea33ab7b45736ed15fff6b2818bc49ffb344ddd771c9638aadb7eaf6ccfc361d",
+  "tutor_yesterday": "cd308c023b1ea105a9a361303309790e6e27db43e2f9bd8f8a76b2ef8a7b4457",
   "tutor_your_buddy": "4b3009cbbd5c7b089efb1e833bc110e5c9b35ac5dfb03a0f51cdac80545adfec"
 }
 -->
@@ -254,4 +257,8 @@
     <string name="tutor_plan_change_declined">Nicht übernommen. Dein Plan bleibt wie bisher.</string>
     <string name="tutor_plan_change_replaced">Dieser Vorschlag wurde durch einen neueren ersetzt.</string>
     <string name="tutor_plan_change_failed">Das wurde nicht gespeichert. Versuch es noch einmal.</string>
+    <!-- Above the questions asked that day, in the buddy's conversation. -->
+    <string name="tutor_today">Heute</string>
+    <string name="tutor_yesterday">Gestern</string>
+    <string name="tutor_page_sign_up">Erstelle ein kostenloses Konto, um das Gespräch zu beginnen.</string>
 </resources>

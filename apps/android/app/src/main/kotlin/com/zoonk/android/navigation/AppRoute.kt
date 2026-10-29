@@ -377,7 +377,7 @@ val AppRoute.requirement: Requirement
             AppRoute.Mistakes, is AppRoute.Speaking, is AppRoute.TestOut, is AppRoute.FocusTest,
             -> Requirement.Goal
 
-            AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.Profile, AppRoute.Statistics,
+            is AppRoute.Buddy, AppRoute.EarlierQuestions, AppRoute.Memory, AppRoute.Profile, AppRoute.Statistics,
             AppRoute.StatsLevel, AppRoute.StatsEnergy, AppRoute.StatsActivity, AppRoute.StatsScore,
             AppRoute.StatsPatterns, is AppRoute.GoalSetup, is AppRoute.PlacementMock,
             is AppRoute.Session, is AppRoute.QuestionBlock, AppRoute.Logbook,

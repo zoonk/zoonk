@@ -57,7 +57,6 @@ import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
 import com.zoonk.api.models.StudyMission
-import com.zoonk.api.models.StudySessionFullMeal
 import kotlinx.coroutines.launch
 
 /**
@@ -68,7 +67,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun MissionsCard(
     missions: List<DayMission>,
-    fullMeal: StudySessionFullMeal,
+    bonus: Long,
+    bonusEarned: Boolean,
     buddy: BuddyLook,
     buddyName: String,
     onOpen: (MissionOpens) -> Unit,
@@ -81,11 +81,11 @@ fun MissionsCard(
     if (missions.isEmpty()) return
 
     val locale = currentLocale()
-    val points = formatNumber(fullMeal.bonus.toDouble(), locale)
+    val points = formatNumber(bonus.toDouble(), locale)
     val allDone = missions.all(DayMission::done)
-    val won = allDone && fullMeal.earned
+    val won = allDone && bonusEarned
 
-    if (fullMeal.earned && !allDone) {
+    if (bonusEarned && !allDone) {
         MissionsLine(modifier) {
             Text(
                 text = stringResource(R.string.missions_already_earned, points),
@@ -232,58 +232,92 @@ private fun MissionRow(
     onOpen: (MissionOpens) -> Unit,
 ) {
     val opens = mission.opens?.takeIf { !mission.done && mission.waitReason == null }
-    val muted = mission.done || mission.waitReason != null
-    val openLabel = missionOpenLabel(mission, buddyName)
-    val done = stringResource(R.string.today_step_done)
+
+    MissionListRow(
+        name = missionName(mission, buddyName),
+        line = if (mission.done) null else missionStepLine(mission, block),
+        done = mission.done,
+        muted = mission.done || mission.waitReason != null,
+        mark = { if (block != null && !mission.done) BlockMark(block) else MissionMark(mission.kind, mission.done, buddy) },
+        openLabel = missionOpenLabel(mission, buddyName),
+        onOpen = opens?.let { { onOpen(it) } },
+        trailing =
+            if (!mission.done && mission.opens is MissionOpens.Block && mission.waitReason == null) {
+                {
+                    Icon(
+                        painterResource(R.drawable.ic_target),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = MaterialTheme.zoonk.brain,
+                    )
+                }
+            } else {
+                null
+            },
+    )
+}
+
+/** A mission's mark when no block of the day stands for it: done, the Trickster, the buddy's face, or its kind. */
+@Composable
+fun MissionMark(
+    kind: StudyMission.Kind,
+    done: Boolean,
+    buddy: BuddyLook,
+) {
+    when {
+        done -> DoneMark()
+        kind == StudyMission.Kind.CHALLENGE -> Trickster(Modifier.size(20.dp))
+        kind == StudyMission.Kind.ASK_BUDDY -> Buddy(buddy, Modifier.size(16.dp), crop = BuddyCrop.Face)
+        else -> KindMark(kind.learnKind)
+    }
+}
+
+/** One row of the day's missions or the buddy's first steps: its mark, name and line, opening where it leads. */
+@Composable
+fun MissionListRow(
+    name: String,
+    line: String?,
+    done: Boolean,
+    muted: Boolean,
+    mark: @Composable () -> Unit,
+    openLabel: String?,
+    onOpen: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+    trailing: (@Composable () -> Unit)? = null,
+) {
+    val doneLabel = stringResource(R.string.today_step_done)
 
     Row(
         modifier =
-            Modifier
+            modifier
                 .fillMaxWidth()
-                .then(if (opens != null) Modifier.clickable(role = Role.Button, onClickLabel = openLabel) { onOpen(opens) } else Modifier)
-                .semantics { if (mission.done) stateDescription = done }
+                .then(if (onOpen != null) Modifier.clickable(role = Role.Button, onClickLabel = openLabel, onClick = onOpen) else Modifier)
+                .semantics { if (done) stateDescription = doneLabel }
                 .heightIn(min = 48.dp)
                 .padding(vertical = 10.dp),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Box(Modifier.width(20.dp), contentAlignment = Alignment.Center) {
-            when {
-                mission.done -> DoneMark()
-                block != null -> BlockMark(block)
-                mission.kind == StudyMission.Kind.CHALLENGE -> Trickster(Modifier.size(20.dp))
-                mission.kind == StudyMission.Kind.ASK_BUDDY -> Buddy(buddy, Modifier.size(16.dp), crop = BuddyCrop.Face)
-                else -> KindMark(mission.learnKind)
-            }
-        }
+        Box(Modifier.width(20.dp), contentAlignment = Alignment.Center) { mark() }
 
         Column(Modifier.weight(1f)) {
             Text(
-                text = missionName(mission, buddyName),
+                text = name,
                 color = if (muted) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
                 style = MaterialTheme.typography.titleSmall,
             )
-            if (!mission.done) {
-                missionStepLine(mission, block)?.let {
-                    Text(
-                        it,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
-                }
+            line?.let {
+                Text(
+                    it,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
+                )
             }
         }
 
-        if (!mission.done && mission.opens is MissionOpens.Block && mission.waitReason == null) {
-            Icon(
-                painterResource(R.drawable.ic_target),
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = MaterialTheme.zoonk.brain,
-            )
-        }
+        trailing?.invoke()
     }
 }
 

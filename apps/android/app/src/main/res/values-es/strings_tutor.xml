@@ -85,6 +85,7 @@
   "tutor_offer_stats": "53ce5c63e0ab3258fe11c8f18b0f8951542e13edc1ebb3937173523a203b6d97",
   "tutor_offer_stats_description": "0aa4939c5fb11f344eed147397ddbde0c45bb630cb18a6e7849bc471dc9904d9",
   "tutor_offer_take_test": "038a2f5f3d71cc914f3ac08bce2301cc5679f884cba1081c9404f926d5d62288",
+  "tutor_page_sign_up": "bd01b658712ba314697094c56a78ab6d47d421023bac4efb7300ebc5aa33160b",
   "tutor_placeholder_answer": "104c0b18cb6c7b307b9a3def09f3dc47be2e04de023fcac4a99d2ad8b9e06754",
   "tutor_placeholder_chapter": "cdfae927d4934de7ba2f07cf7d56ad35a51785c9b8812b1cee88c769c154b23f",
   "tutor_placeholder_item": "5bfc84dd6d5c05098d5b3c02358c30c39cc5c6ff89b744dd8c1ccbbaa38e4734",
@@ -115,8 +116,10 @@
   "tutor_suggest_subject_left": "cccdea974a71eca417c7417210875c474c43eea6b732ebc2ea5f34eb3475ce34",
   "tutor_suggest_walk_through": "4e291482ee5ccc313e837137f9313f0a281e310a14b5635c4aeedc73ea665036",
   "tutor_thinking": "480234a0ce4b39601f69d3aafd9059c29d2372d05b8307e99c89d96702df3c33",
+  "tutor_today": "6a6c5b8872b324a27155c2a5e1531309a2dbf44fbec67f4630a4198cd2445108",
   "tutor_try_again": "06e465e85734398d3a4e97eb2145c38f05d06095dd1467e61af8c5929551d57b",
   "tutor_view_plans": "d9a43c96e9ffe0f562d611d18ce304a22078a31b5ce15e27ddc38a166d93c30e",
+  "tutor_yesterday": "219e1e594b6f6138e3450eadc63193fdd0cc16ffb683bcc0994e1b697206827c",
   "tutor_your_buddy": "44f409ab71a1ccd79ddc15c41d26777f31e43d4e1077888cb12dfb54e93522cc"
 }
 -->
@@ -257,4 +260,8 @@
     <string name="tutor_plan_change_declined">No se ha aplicado. Tu plan sigue igual.</string>
     <string name="tutor_plan_change_replaced">Esta sugerencia se ha sustituido por otra más reciente.</string>
     <string name="tutor_plan_change_failed">No se ha guardado. Inténtalo de nuevo.</string>
+    <!-- Above the questions asked that day, in the buddy's conversation. -->
+    <string name="tutor_today">Hoy</string>
+    <string name="tutor_yesterday">Ayer</string>
+    <string name="tutor_page_sign_up">Crea una cuenta gratis para empezar la conversación.</string>
 </resources>

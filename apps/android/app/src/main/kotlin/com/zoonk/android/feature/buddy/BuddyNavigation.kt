@@ -11,6 +11,6 @@ fun EntryProviderScope<NavKey>.buddyEntries(
     app: AppContainer,
     navigator: AppNavigator,
 ) {
-    entry<AppRoute.Buddy> { RoutePlaceholder(it, app, navigator) }
+    entry<AppRoute.Buddy> { BuddyScreen(it, app, navigator) }
     entry<AppRoute.EarlierQuestions> { RoutePlaceholder(it, app, navigator) }
 }

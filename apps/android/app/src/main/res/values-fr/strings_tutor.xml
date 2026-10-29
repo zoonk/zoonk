@@ -85,6 +85,7 @@
   "tutor_offer_stats": "fb9766b48258287af999de16d7ceab828cc74e01a7205134a4a3ce7163d02baf",
   "tutor_offer_stats_description": "6af8cf56551c7313081f5b93d20bbdb7e3dd4f226e41b4fca1276dceacffe814",
   "tutor_offer_take_test": "c0d6160fc6ba8699cc58cd55182719fdbde99cc0c57db8115808f755b9782288",
+  "tutor_page_sign_up": "e2f8164302daa3532c14e17a33ab0989ad4925027500920c376f4a01ac5fef1f",
   "tutor_placeholder_answer": "5892b89ebce44a8dcf35e80f9dba2f0f22eec0dfe1cfd4578970ec8c9998597d",
   "tutor_placeholder_chapter": "b5f1c43f6cb20f825c759a4ce62de3de9818bcc043dfeb831d8f85b02b09f4e5",
   "tutor_placeholder_item": "8b2539efd877dcd7974fa213b4fc279642619fec56102abaad823de2d36159f3",
@@ -115,8 +116,10 @@
   "tutor_suggest_subject_left": "c95dd82be80592a1c4974919c893a91724181664d05d44b44a9d64648bd6f331",
   "tutor_suggest_walk_through": "6229df574dc44af3d1e305d59d5ff0a9b0320c161facfe79ba48476848572789",
   "tutor_thinking": "fe3c1cba6e6c1c3ab955aed45c04f67425186b579c9990fbfb5d978e01886f5e",
+  "tutor_today": "b035bf1c59b5b2f95d6af2cb0feb76cee50e2a3149aac8bd539da400d0fa0d55",
   "tutor_try_again": "36f7d6fa69c3fdd7862bd37ec7675e16c3b788e45d2a6f19863078d1503ddb29",
   "tutor_view_plans": "0c7f841b3964955a79274da08a7f1bc441f2b30728b752b9d443e281776634f3",
+  "tutor_yesterday": "5da1c03001493e90945c539c4484a6f60ff984c8443e61e6e08440a00bbc9902",
   "tutor_your_buddy": "0186bf3bafa76fb10a40b960468c2feccfd3e709558a73e234b735bae4da548a"
 }
 -->
@@ -257,4 +260,8 @@
     <string name="tutor_plan_change_declined">Non appliqué. Ton plan reste inchangé.</string>
     <string name="tutor_plan_change_replaced">Une nouvelle suggestion a remplacé celle-ci.</string>
     <string name="tutor_plan_change_failed">La modification n’a pas été enregistrée. Réessaie.</string>
+    <!-- Above the questions asked that day, in the buddy's conversation. -->
+    <string name="tutor_today">Aujourd’hui</string>
+    <string name="tutor_yesterday">Hier</string>
+    <string name="tutor_page_sign_up">Crée un compte gratuit pour commencer la conversation.</string>
 </resources>

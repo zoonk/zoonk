@@ -1,6 +1,7 @@
 package com.zoonk.android.feature.session
 
 import androidx.compose.runtime.Immutable
+import com.zoonk.android.navigation.AppRoute
 import com.zoonk.api.models.DailyTimeLimit
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudyBlockCapsulesInner
@@ -137,6 +138,19 @@ sealed interface MissionOpens {
 
     data object MockChooser : MissionOpens
 }
+
+/** The page a mission opens, as Today and the buddy open it; a block opens with its day instead. */
+fun MissionOpens.page(goalId: String): AppRoute? =
+    when (this) {
+        is MissionOpens.Block -> null
+        MissionOpens.MistakesPractice -> AppRoute.MistakePractice()
+        is MissionOpens.Pattern -> AppRoute.Pattern(patternId.toString())
+        MissionOpens.Pronunciation -> AppRoute.Pronunciation(goalId)
+        is MissionOpens.Call -> AppRoute.LanguageUnit(chapterId.toString())
+        MissionOpens.Buddy -> AppRoute.Buddy()
+        is MissionOpens.AreaPractice -> AppRoute.Chapter(areaId.toString())
+        MissionOpens.MockChooser -> AppRoute.MockChooser
+    }
 
 /** A checkpoint's facts whichever of its two shapes the API sent (with or without a mock's identity). */
 data class CheckpointFacts(
@@ -296,7 +310,7 @@ private fun UnstartedStudyDayBlocksInner.toDayStep(): DayStep =
         waitReason = waitReason?.let { reason -> StudyBlock.WaitReason.entries.first { it.value == reason.value } },
     )
 
-private fun StudyMission.toDayMission(): DayMission =
+internal fun StudyMission.toDayMission(): DayMission =
     DayMission(
         kind = kind,
         done = status == StudyMission.Status.DONE,
@@ -322,7 +336,7 @@ private fun UnstartedStudyDayMissionsInner.toDayMission(): DayMission =
         opens = opens?.toMissionOpens(),
     )
 
-private fun StudyMissionOpens.toMissionOpens(): MissionOpens =
+internal fun StudyMissionOpens.toMissionOpens(): MissionOpens =
     when (this) {
         is StudyMissionOpens.StudyMissionOpensOneOfValue -> MissionOpens.Block(blockId = value.blockId, position = null)
         is StudyMissionOpens.StudyMissionOpensOneOf1Value -> MissionOpens.MistakesPractice

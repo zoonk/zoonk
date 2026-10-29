@@ -20,3 +20,14 @@ fun buddyName(
             BuddyKind.Otto -> R.string.buddy_name_otto
         },
     )
+
+@Composable
+@ReadOnlyComposable
+fun buddyStageName(stage: BuddyStage): String =
+    stringResource(
+        when (stage) {
+            BuddyStage.Baby -> R.string.buddy_stage_baby
+            BuddyStage.Young -> R.string.buddy_stage_young
+            BuddyStage.Adult -> R.string.buddy_stage_adult
+        },
+    )

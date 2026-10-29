@@ -144,4 +144,9 @@
     <string name="tutor_plan_change_declined">Not applied. Your plan stays as it was.</string>
     <string name="tutor_plan_change_replaced">A newer suggestion replaced this one.</string>
     <string name="tutor_plan_change_failed">That didn\'t save. Try again.</string>
+
+    <!-- Above the questions asked that day, in the buddy's conversation. -->
+    <string name="tutor_today">Today</string>
+    <string name="tutor_yesterday">Yesterday</string>
+    <string name="tutor_page_sign_up">Create a free account to start the conversation.</string>
 </resources>

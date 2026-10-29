@@ -3,6 +3,7 @@ package com.zoonk.android.feature.tutor
 import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasScrollToIndexAction
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.v2.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -10,6 +11,7 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performFirstLinkClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToIndex
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.zoonk.android.data.ApiError
@@ -39,6 +41,8 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.UUID
+import kotlin.time.Clock
+import kotlin.time.Duration.Companion.days
 
 @RunWith(AndroidJUnit4::class)
 class TutorPanelTest {
@@ -71,6 +75,7 @@ class TutorPanelTest {
     private fun show(
         scope: TutorScope = TutorScope.Chapter("chapter"),
         access: TutorAccess = TutorAccess.Ask,
+        page: TutorPage? = null,
     ) {
         val cache = AppCache(session, CoroutineScope(SupervisorJob() + Dispatchers.Main))
         val store =
@@ -80,7 +85,7 @@ class TutorPanelTest {
             }
         val vm = TutorViewModel(scope, store)
         compose.setContent {
-            ZoonkTheme { TutorPanel(vm, access, TutorIdentity("Zu", BuddyLook()), routes) }
+            ZoonkTheme { TutorPanel(vm, access, TutorIdentity("Zu", BuddyLook()), routes, page = page) }
         }
     }
 
@@ -271,6 +276,48 @@ class TutorPanelTest {
         compose.onNodeWithText("Not now").assertIsEnabled()
     }
 
+    @Test
+    fun aPageOpensWithTheBuddysHelloAndAsksItsSuggestionsFromAboveTheComposer() {
+        show(TutorScope.Plan(GOAL), page = PAGE)
+
+        compose.onNodeWithText("Hi! I'm Zu.").assertExists()
+        compose.onNodeWithText("What would you like help with?").assertDoesNotExist()
+        compose.onNodeWithText("I want to study less this week").performClick()
+
+        assertEquals(listOf("I want to study less this week"), api.asked.map { it.question })
+    }
+
+    @Test
+    fun aPageDatesItsDaysAndLeavesOutWhatEachQuestionIsAbout() {
+        val now = Clock.System.now()
+        api.thread =
+            TutorThread(
+                listOf(
+                    turn("q1", TutorTurn.Status.Completed, "Earlier.").copy(createdAt = now - 1.days),
+                    turn("q2", TutorTurn.Status.Completed, "Now.").copy(createdAt = now),
+                ),
+                hasMore = false,
+                nextCursor = null,
+            )
+        show(TutorScope.Plan(GOAL), page = PAGE)
+
+        compose.onNodeWithText("About your plan").assertDoesNotExist()
+        compose.onNodeWithText("Today").assertExists()
+        compose.onNode(hasScrollToIndexAction()).performScrollToIndex(0)
+        compose.onNodeWithText("Yesterday").assertExists()
+    }
+
+    @Test
+    fun aGuestOnAPageSeesTheHelloAndIsAskedToCreateAnAccount() {
+        show(TutorScope.Plan(GOAL), access = TutorAccess.Guest, page = PAGE)
+
+        compose.onNodeWithText("Hi! I'm Zu.").assertExists()
+        compose.onNodeWithText("Create a free account").performClick()
+
+        assertEquals(1, openedLogin)
+        assertEquals(0, api.threadReads)
+    }
+
     private fun showChange(change: PlanChange) {
         api.thread =
             TutorThread(
@@ -289,6 +336,13 @@ class TutorPanelTest {
     }
 
     private companion object {
+        val PAGE =
+            TutorPage(
+                greeting = "Hi! I'm Zu.",
+                suggestions = listOf(TutorSuggestion("I want to study less this week")),
+                placeholder = "Ask a question or request a change",
+            )
+
         const val COURSE = "6a1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val GOAL = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e5f"
         const val CHAPTER = "7b1c2d3e-4b5a-4c7d-8e9f-0a1b2c3d4e60"

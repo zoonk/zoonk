@@ -4,25 +4,33 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.isImeVisible
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.material3.SuggestionChip
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -40,6 +48,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
+import com.zoonk.android.data.LoadState
 import com.zoonk.android.data.SessionState
 import com.zoonk.android.data.collectShown
 import com.zoonk.android.data.value
@@ -81,6 +90,21 @@ internal fun rememberTutorAccess(app: AppContainer): TutorAccess {
     }
 }
 
+/**
+ * The conversation as a page of its own, as main's `TutorConversation` on the buddy tab: the
+ * buddy's hello opens it and its suggestions wait above the composer until the first question.
+ * [onAsked] and [onAnswered] fire for questions asked and answered while it shows.
+ */
+@Immutable
+internal class TutorPage(
+    val greeting: String,
+    val suggestions: List<TutorSuggestion>,
+    val placeholder: String,
+    val greetingAction: (@Composable () -> Unit)? = null,
+    val onAsked: () -> Unit = {},
+    val onAnswered: () -> Unit = {},
+)
+
 @Composable
 internal fun TutorPanel(
     vm: TutorViewModel,
@@ -89,10 +113,26 @@ internal fun TutorPanel(
     routes: TutorRoutes,
     modifier: Modifier = Modifier,
     lessonSuggestions: List<TutorSuggestion> = emptyList(),
+    page: TutorPage? = null,
 ) {
-    val suggestions = tutorSuggestions(vm.scope, lessonSuggestions)
+    val suggestions = page?.suggestions ?: tutorSuggestions(vm.scope, lessonSuggestions)
+    val composerPadding = Modifier.padding(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 16.dp)
 
     Column(modifier) {
+        if (access != TutorAccess.Ask && page != null) {
+            TutorThreadView(
+                vm,
+                LoadState.Loaded(TutorThread.Empty),
+                TutorConversationState(),
+                identity,
+                suggestions,
+                routes,
+                Modifier.weight(1f),
+                page,
+            )
+            PageAccountPrompt(routes, composerPadding)
+            return@Column
+        }
         if (access != TutorAccess.Ask) {
             AccountPrompt(access, routes, Modifier.weight(1f))
             return@Column
@@ -108,8 +148,93 @@ internal fun TutorPanel(
             LaunchedEffect(remote) { lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) { vm.followRemote(remote) } }
         }
 
-        TutorThreadView(vm, thread, state, identity, suggestions, routes, Modifier.weight(1f))
-        TutorComposer(vm, turns, state, routes, Modifier.padding(start = 12.dp, end = 12.dp, top = 8.dp, bottom = 16.dp))
+        TutorThreadView(vm, thread, state, identity, suggestions, routes, Modifier.weight(1f), page)
+        if (page != null) {
+            TurnSignals(turns, page)
+            val empty = turns?.isEmpty() == true && thread.value?.hasMore == false
+            if (empty && state.limit(turns.orEmpty()) == null) {
+                SuggestionChips(
+                    suggestions,
+                    enabled = state.canAsk(turns.orEmpty()),
+                    onSend = vm::send,
+                    Modifier.padding(horizontal = 12.dp),
+                )
+            }
+        }
+        TutorComposer(vm, turns, state, routes, composerPadding, placeholder = page?.placeholder ?: placeholderLabel(vm.scope))
+    }
+}
+
+@Composable
+private fun SuggestionChips(
+    suggestions: List<TutorSuggestion>,
+    enabled: Boolean,
+    onSend: (TutorSuggestion) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    FlowRow(modifier, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        suggestions.forEach { suggestion ->
+            SuggestionChip(onClick = { onSend(suggestion) }, label = { Text(suggestion.label) }, enabled = enabled)
+        }
+    }
+}
+
+/** Guests see the buddy's hello; talking takes an account, which the conversation would start. */
+@Composable
+private fun PageAccountPrompt(
+    routes: TutorRoutes,
+    modifier: Modifier = Modifier,
+) {
+    OutlinedCard(modifier.fillMaxWidth()) {
+        Row(
+            Modifier.padding(start = 16.dp, end = 8.dp, top = 8.dp, bottom = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                stringResource(R.string.tutor_page_sign_up),
+                Modifier.weight(1f),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+            Button(onClick = routes.createAccount) { Text(stringResource(R.string.limit_create_account)) }
+        }
+    }
+}
+
+/** Main's turn signals: a question asked here, then its answer finishing, once each; none for what was already there. */
+@Composable
+private fun TurnSignals(
+    turns: List<TutorTurn>?,
+    page: TutorPage,
+) {
+    val seen = remember { TurnsSeen() }
+    val onAsked by rememberUpdatedState(page.onAsked)
+    val onAnswered by rememberUpdatedState(page.onAnswered)
+
+    LaunchedEffect(turns) { turns?.let { seen.check(it, onAsked, onAnswered) } }
+}
+
+internal class TurnsSeen {
+    private var known: MutableSet<String>? = null
+    private val waiting = mutableSetOf<String>()
+
+    fun check(
+        turns: List<TutorTurn>,
+        onAsked: () -> Unit,
+        onAnswered: () -> Unit,
+    ) {
+        val opening = known == null
+        val seen = known ?: mutableSetOf<String>().also { known = it }
+        turns.forEach { turn ->
+            val isNew = seen.add(turn.id)
+            if (turn.isInProgress) {
+                if (isNew && !opening) onAsked()
+                waiting += turn.id
+            } else if (waiting.remove(turn.id) && turn.status == TutorTurn.Status.Completed) {
+                onAnswered()
+            }
+        }
     }
 }
 

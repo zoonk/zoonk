@@ -40,7 +40,8 @@ internal fun TodayAside(
         if (!beside) aside.notice(SuggestionLayout.Line)
         MissionsCard(
             missions = model.day.missions,
-            fullMeal = model.day.fullMeal,
+            bonus = model.day.fullMeal.bonus,
+            bonusEarned = model.day.fullMeal.earned,
             buddy = aside.buddy,
             buddyName = aside.buddyName,
             onOpen = aside.onMission,
