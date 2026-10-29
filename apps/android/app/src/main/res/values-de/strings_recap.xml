@@ -22,7 +22,6 @@
   "recap_reviews": "feb869cb1f4642131f57c3e11a5b993bafa934c143587b78553149479d72d6b3",
   "recap_solid": "c3279e130c2aa72307c68d558f73e502760f305010947949affe534434c366d5",
   "recap_time": "85d9abdbe0d9687a2820d0daef6ee783d72022b6200f255c1fa3e1628c7aff58",
-  "recap_title": "7f4de5e3eeeaa91b7d7f70f5f7122567d1fc4ab3364dfbfdeeeefb2a6b627121",
   "recap_trap_hunter_badge": "c289a87fdeaff96dea2faa27547e7172106387ff4486cf8a9df1aeb08cefef5f",
   "recap_trap_hunter_badges": "f7cc895f52755a51a3b7fd2041850a98b0880842e437fa97037b1eb1df7582be",
   "recap_turnaround": "c1376040fb25a93f775d043593c67a87ee4fb4e7e94f5769ea32f46eeca408be",
@@ -34,7 +33,6 @@
 }
 -->
 <resources>
-    <string name="recap_title">Logbuch</string>
     <plurals name="recap_days_studied">
         <item quantity="one">%d Tag gelernt</item>
         <item quantity="other">%d Tage gelernt</item>

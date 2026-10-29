@@ -45,6 +45,10 @@ import com.zoonk.android.feature.session.BlockMark
 import com.zoonk.android.feature.session.DayMission
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
+import com.zoonk.android.ui.characters.Buddy
+import com.zoonk.android.ui.characters.BuddyCrop
+import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.format.currentLocale
@@ -52,6 +56,7 @@ import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.android.ui.theme.zoonk
+import com.zoonk.api.models.StudyMission
 import com.zoonk.api.models.StudySessionFullMeal
 import kotlinx.coroutines.launch
 
@@ -64,6 +69,7 @@ import kotlinx.coroutines.launch
 fun MissionsCard(
     missions: List<DayMission>,
     fullMeal: StudySessionFullMeal,
+    buddy: BuddyLook,
     buddyName: String,
     onOpen: (MissionOpens) -> Unit,
     modifier: Modifier = Modifier,
@@ -109,6 +115,7 @@ fun MissionsCard(
     OutlinedCard(modifier) {
         Column(Modifier.padding(start = 16.dp, end = 16.dp, top = 14.dp, bottom = 4.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(10.dp), verticalAlignment = Alignment.Top) {
+                Buddy(buddy, Modifier.padding(top = 2.dp).size(24.dp), crop = BuddyCrop.Face)
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(
                         text = stringResource(if (won) R.string.missions_done else R.string.missions_title),
@@ -126,7 +133,7 @@ fun MissionsCard(
                 Column(Modifier.padding(top = 6.dp)) {
                     missions.forEachIndexed { index, mission ->
                         if (index > 0) HorizontalDivider()
-                        MissionRow(mission, blockOf(mission), buddyName, onOpen)
+                        MissionRow(mission, blockOf(mission), buddy, buddyName, onOpen)
                     }
                 }
             } else {
@@ -220,6 +227,7 @@ private fun MissionTrack(
 private fun MissionRow(
     mission: DayMission,
     block: DayStep?,
+    buddy: BuddyLook,
     buddyName: String,
     onOpen: (MissionOpens) -> Unit,
 ) {
@@ -243,6 +251,8 @@ private fun MissionRow(
             when {
                 mission.done -> DoneMark()
                 block != null -> BlockMark(block)
+                mission.kind == StudyMission.Kind.CHALLENGE -> Trickster(Modifier.size(20.dp))
+                mission.kind == StudyMission.Kind.ASK_BUDDY -> Buddy(buddy, Modifier.size(16.dp), crop = BuddyCrop.Face)
                 else -> KindMark(mission.learnKind)
             }
         }

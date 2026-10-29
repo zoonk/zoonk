@@ -103,7 +103,18 @@ class TodayFlowTest {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 LaunchedEffect(viewModel) { viewModel.routes.collect { navigator.open(it.route) } }
-                TodayDay(read, store.today, false, viewModel, navigator, PaddingValues(), buddyName = "Zu")
+                TodayDay(
+                    read,
+                    store.today,
+                    false,
+                    viewModel,
+                    navigator,
+                    PaddingValues(),
+                    buddy =
+                        com.zoonk.android.ui.characters
+                            .BuddyLook(),
+                    buddyName = "Zu",
+                )
             }
         }
     }

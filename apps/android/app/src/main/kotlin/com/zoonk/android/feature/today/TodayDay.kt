@@ -44,6 +44,7 @@ import com.zoonk.android.feature.session.OpeningWaitLine
 import com.zoonk.android.feature.session.rememberWaitState
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
 import com.zoonk.android.ui.scaffold.PageWithSupportingPane
@@ -74,6 +75,7 @@ internal fun TodayDay(
     viewModel: TodayViewModel,
     navigator: AppNavigator,
     padding: PaddingValues,
+    buddy: BuddyLook,
     buddyName: String,
     brainPower: Long? = null,
     mistakes: MistakeListAvailability? = null,
@@ -115,6 +117,7 @@ internal fun TodayDay(
     ) {
         val aside =
             TodayAsideState(
+                buddy = buddy,
                 buddyName = buddyName,
                 brainPower = brainPower,
                 mistakes = mistakes,

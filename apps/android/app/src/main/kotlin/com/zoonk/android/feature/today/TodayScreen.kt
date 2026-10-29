@@ -45,6 +45,9 @@ import com.zoonk.android.feature.account.VisitorWelcome
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.navigation.LearnerAccess
+import com.zoonk.android.ui.characters.BuddyLook
+import com.zoonk.android.ui.characters.buddyName
+import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.GoalBox
 import com.zoonk.android.ui.components.GoalExamples
 import com.zoonk.android.ui.components.LoadFailedMessage
@@ -143,6 +146,7 @@ private fun TodayRead(
                         return
                     }
 
+                    val buddy = summary.value?.buddy?.look() ?: BuddyLook()
                     val brainPower by app.today.brainPower.collectShown()
                     val mistakes by app.today.mistakes[read.today.goal.id].collectShown()
                     TodayDay(
@@ -152,7 +156,8 @@ private fun TodayRead(
                         viewModel = viewModel,
                         navigator = navigator,
                         padding = padding,
-                        buddyName = summary.value?.buddy?.name ?: stringResource(R.string.navigation_buddy),
+                        buddy = buddy,
+                        buddyName = buddyName(buddy.kind, summary.value?.buddy?.name),
                         brainPower = brainPower.value,
                         mistakes = mistakes.value,
                     )

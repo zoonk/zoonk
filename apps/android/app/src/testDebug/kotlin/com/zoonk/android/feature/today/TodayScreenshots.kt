@@ -105,7 +105,19 @@ class TodayScreenshots {
         val viewModel = viewModel { TodayViewModel(app.studyOpener, app.today) }
 
         TabRootScaffold(app, navigator) { padding ->
-            TodayDay(read, app.today.today, false, viewModel, navigator, padding, buddyName = "Zu", brainPower = 1240)
+            TodayDay(
+                read,
+                app.today.today,
+                false,
+                viewModel,
+                navigator,
+                padding,
+                buddy =
+                    com.zoonk.android.ui.characters
+                        .BuddyLook(),
+                buddyName = "Zu",
+                brainPower = 1240,
+            )
         }
     }
 

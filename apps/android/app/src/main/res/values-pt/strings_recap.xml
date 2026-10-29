@@ -22,7 +22,6 @@
   "recap_reviews": "446ee8591fc7757127a2151e25e694fdc1f22d9ae19e0e572d601fcb425b7ab7",
   "recap_solid": "c1190aa530846296a881a250d0759238701fc81830c0b944c614da41ce239b72",
   "recap_time": "51d5c652a64f2d9b8c6c2f2db7d8e4c1cc5e8c19edea490777f0fefae25aacb3",
-  "recap_title": "113940242f1dc33c79b8aa678ff2de4f5ab8a4856f4fe164e787510e69c0b2f8",
   "recap_trap_hunter_badge": "6c3fdecbb33fcef846a5f8497f94ce130e7cf5b6c04e2e380d138875621de0e2",
   "recap_trap_hunter_badges": "fd8ab18eb05ef04d4491c70267e84f280647b21d913ff3633bd3138be1bbe732",
   "recap_turnaround": "67b49c1c807c9ceceabe6756fa46cc47c57a595c14d1dd3767e3361325519c2a",
@@ -34,7 +33,6 @@
 }
 -->
 <resources>
-    <string name="recap_title">Diário de bordo</string>
     <plurals name="recap_days_studied">
         <item quantity="one">%d dia de estudo</item>
         <item quantity="many">%d dias de estudo</item>

@@ -22,7 +22,6 @@
   "recap_reviews": "d0e3e027d0faaecf6bc94ca435fe618e386096a1593f9f0fc88f4c700a306ce6",
   "recap_solid": "07e123581fb515f5260444e84c52d52412a3e763f8ff55da7e9ae163d5dd0178",
   "recap_time": "fa399d7f515dee830355c712223fd70885d6acedb044ea651aa7c57536a52749",
-  "recap_title": "16c7aa3bb6d2748c1714f1c7b56bccbfba4828221a68076ac04d3b951926609b",
   "recap_trap_hunter_badge": "1f156a4947cc757014af6880fc4fd33bcb9b4655cc845433f28b3ead3fb9a660",
   "recap_trap_hunter_badges": "c2ceb8b200103bee3ff16ffdc77d04886bc610e62f082d8c6772034c35e0ab04",
   "recap_turnaround": "e796fc3687cbd49e71e868b23d3e07c0a6ea4f0b78082cda1d847e22efaf48b0",
@@ -34,7 +33,6 @@
 }
 -->
 <resources>
-    <string name="recap_title">Cuaderno de bitácora</string>
     <plurals name="recap_days_studied">
         <item quantity="one">Estudiaste %d día</item>
         <item quantity="many">Estudiaste %d días</item>

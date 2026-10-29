@@ -56,7 +56,14 @@ fun missionName(
         }
 
         Kind.FIX_MISTAKE -> {
-            pluralStringResource(R.plurals.missions_fix_mistakes, mission.total.toInt(), mission.total.toInt())
+            val count = mission.total.toInt()
+            if (count ==
+                1
+            ) {
+                stringResource(R.string.missions_fix_a_mistake)
+            } else {
+                pluralStringResource(R.plurals.missions_fix_mistakes, count, count)
+            }
         }
 
         Kind.PATTERN -> {
@@ -221,6 +228,7 @@ private fun missionStep(
             val left = (mission.total - mission.progress).toInt()
             val more = left - 1
             when {
+                title == null && left == 1 -> stringResource(R.string.missions_last_lesson)
                 title == null -> pluralStringResource(R.plurals.missions_last_lessons, left, left)
                 more > 0 -> pluralStringResource(R.plurals.missions_lesson_and_more, more, title, more)
                 else -> title

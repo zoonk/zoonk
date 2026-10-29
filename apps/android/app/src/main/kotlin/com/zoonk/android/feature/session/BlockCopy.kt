@@ -1,14 +1,18 @@
 package com.zoonk.android.feature.session
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.zoonk.android.R
+import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.DoneMark
 import com.zoonk.android.ui.components.KindMark
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.components.MarkStatus
 import com.zoonk.android.ui.components.StatusMark
+import com.zoonk.android.ui.components.markSize
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.api.models.StudyBlock
 import java.util.Locale
@@ -193,12 +197,15 @@ internal fun topicWords(name: String): String =
 private const val QUICK_REVIEW_MAX_MINUTES = 5
 private const val NAMED = 3
 
-/** The Trickster marks a phase's boss once the characters land; until then its kind's mark does. */
+/** The Trickster is a phase's boss: the week's challenge and mocks wear their kind's mark. */
 @Composable
 fun BlockMark(step: DayStep) {
-    when (step.status) {
-        StudyBlock.Status.COMPLETED -> DoneMark()
-        StudyBlock.Status.SKIPPED -> StatusMark(MarkStatus.Skipped)
+    val checkpoint = step.checkpointFacts
+
+    when {
+        step.status == StudyBlock.Status.COMPLETED -> DoneMark()
+        step.status == StudyBlock.Status.SKIPPED -> StatusMark(MarkStatus.Skipped)
+        checkpoint != null && !checkpoint.mock && checkpoint.kind != CheckpointFacts.Kind.Weekly -> Trickster(Modifier.size(markSize()))
         else -> KindMark(step.learnKind)
     }
 }

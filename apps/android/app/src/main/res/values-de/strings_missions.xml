@@ -20,9 +20,11 @@
   "missions_finish_chapter": "90c4e3bce1d58bec0ed4b412725d8a4549506dc4a3c4991daddb321c8d6add68",
   "missions_finish_chapter_named": "8a090d4195618fd48b1e82c5ed3b008418c3eb3f28742986a6229d38c2fa8a70",
   "missions_finish_new_lesson": "8c3670b63fc1c400af9d4c967cdaf1fef8aeba76c45add7f2e6e3ffd53945c4b",
-  "missions_fix_mistakes": "10dedecee26381a3f0bb8f1076a535ab16db805378b84769e38c62dbdd2e9dec",
+  "missions_fix_a_mistake": "fed83ab6cf710889d41c0b12d58248d4dbbda6825f40570debca478a6626f910",
+  "missions_fix_mistakes": "fe26d4583d5f05fdc2f8d688bb89795b1f3fbd48f659498bacc0de18fe57812c",
   "missions_from_notebook": "fd0137c042f80cf7917919f769305d53e2175cc82c9bf58f20b4bcb089e468ae",
-  "missions_last_lessons": "dbcc159c49e36e2ce7b207f4158637f41f8bedabb943ed389c4755f56483cf0a",
+  "missions_last_lesson": "35f144442439b81d41e77a6b5c4647dd43d81c29ddcf1947b8180f8dd6666427",
+  "missions_last_lessons": "27930a299cf22aa927188f9f955d0fa372ba8a827801cdcc65059def47b11b02",
   "missions_left": "a11090976bc3bbe1eea05e12bc556be64e68a436ad933d962a0c2edfd15b5fb7",
   "missions_lesson_and_more": "ad38525b08c7a570be791d157cf7cab52395861053b6e625a6d72e5de9c7678a",
   "missions_mock": "d21a3a1c188f15279dd4671a9fcda593be0f0cb563aba7cf7ffde6c5123ecf79",
@@ -85,8 +87,9 @@
     <string name="missions_essay">Schreiben üben</string>
     <!-- A verb: a mission to practice. -->
     <string name="missions_practice">Üben</string>
+    <string name="missions_fix_a_mistake">Einen Fehler korrigieren</string>
     <plurals name="missions_fix_mistakes">
-        <item quantity="one">Einen Fehler korrigieren</item>
+        <item quantity="one">%d Fehler korrigieren</item>
         <item quantity="other">%d Fehler korrigieren</item>
     </plurals>
     <string name="missions_pattern">Ein Muster üben</string>
@@ -104,9 +107,10 @@
     <string name="missions_quick_call_unit">Kurzes Gespräch · %1$s</string>
     <string name="missions_quick_call">Ein kurzes Gespräch</string>
     <string name="missions_ask_anything">Alles zu den heutigen Lektionen</string>
+    <string name="missions_last_lesson">Die letzte Lektion steht im Plan für heute</string>
     <plurals name="missions_last_lessons">
-        <item quantity="one">Die letzte Lektion ist im heutigen Plan</item>
-        <item quantity="other">Die letzten %d Lektionen sind im heutigen Plan</item>
+        <item quantity="one">Die letzte Lektion von %d steht im Plan für heute</item>
+        <item quantity="other">Die letzten %d Lektionen stehen im Plan für heute</item>
     </plurals>
     <!-- %1$s is a lesson's title; %2$d counts the chapter's other lessons left. -->
     <plurals name="missions_lesson_and_more">

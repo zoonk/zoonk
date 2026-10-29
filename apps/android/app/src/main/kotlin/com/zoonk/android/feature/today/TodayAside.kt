@@ -28,6 +28,7 @@ import com.zoonk.android.feature.session.DayMission
 import com.zoonk.android.feature.session.DayStep
 import com.zoonk.android.feature.session.MissionOpens
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.android.ui.characters.BuddyLook
 import com.zoonk.android.ui.components.KindDot
 import com.zoonk.android.ui.components.LearnKind
 import com.zoonk.android.ui.format.currentLocale
@@ -37,6 +38,7 @@ import com.zoonk.api.models.MistakeListAvailability
 
 /** What the aside needs beyond the day: values the screen reads, and where its rows lead. */
 internal class TodayAsideState(
+    val buddy: BuddyLook,
     val buddyName: String,
     val brainPower: Long?,
     val mistakes: MistakeListAvailability?,
@@ -56,6 +58,7 @@ internal fun TodayAside(
         MissionsCard(
             missions = model.day.missions,
             fullMeal = model.day.fullMeal,
+            buddy = aside.buddy,
             buddyName = aside.buddyName,
             onOpen = aside.onMission,
             brainPower = aside.brainPower,

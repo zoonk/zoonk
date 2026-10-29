@@ -22,7 +22,6 @@
   "recap_reviews": "aa7db0185b82b7e7492c382c8393bbc452111e321445cc908fc2ffd5caf60f90",
   "recap_solid": "edff3924762736b0c45ce23120c13c77b02431b9c642e75f780b3123986bd93f",
   "recap_time": "ea14349a2b7dec94346528d6f303d2b65b0632a4c4f788b0c1235230a6345f22",
-  "recap_title": "eef741f16621ec63df4ca10a691f7a4dd69a2f46b2def40f07a74694a93831ba",
   "recap_trap_hunter_badge": "3735ce9cfc4f96667184eb39f3049b204d6887ec00995c8711e9e6f58c00418c",
   "recap_trap_hunter_badges": "e38ac85fb1d79163aff626d5fa4cb93bf3dad2771f400f40823fa0d10ffcb100",
   "recap_turnaround": "a4b51e7568f97c3f21f7e3dc3fc879678f13746ce1d1fae1bb769d617cd418b1",
@@ -34,7 +33,6 @@
 }
 -->
 <resources>
-    <string name="recap_title">Journal de bord</string>
     <plurals name="recap_days_studied">
         <item quantity="one">%d jour étudié</item>
         <item quantity="many">%d jours étudiés</item>

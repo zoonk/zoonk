@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="recap_title">Logbook</string>
     <plurals name="recap_days_studied">
         <item quantity="one">%d day studied</item>
         <item quantity="other">%d days studied</item>

@@ -31,8 +31,9 @@
     <string name="missions_essay">Practice writing</string>
     <!-- A verb: a mission to practice. -->
     <string name="missions_practice">Practice</string>
+    <string name="missions_fix_a_mistake">Fix a mistake</string>
     <plurals name="missions_fix_mistakes">
-        <item quantity="one">Fix a mistake</item>
+        <item quantity="one">Fix %d mistake</item>
         <item quantity="other">Fix %d mistakes</item>
     </plurals>
     <string name="missions_pattern">Practice a pattern</string>
@@ -51,8 +52,9 @@
     <string name="missions_quick_call_unit">Quick call · %1$s</string>
     <string name="missions_quick_call">A quick call</string>
     <string name="missions_ask_anything">Anything about today\'s lessons</string>
+    <string name="missions_last_lesson">The last lesson is in today\'s plan</string>
     <plurals name="missions_last_lessons">
-        <item quantity="one">The last lesson is in today\'s plan</item>
+        <item quantity="one">The last %d lesson is in today\'s plan</item>
         <item quantity="other">The last %d lessons are in today\'s plan</item>
     </plurals>
     <!-- %1$s is a lesson's title; %2$d counts the chapter's other lessons left. -->
