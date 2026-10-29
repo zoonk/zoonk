@@ -53,6 +53,8 @@ class MockChooserViewModel(
     private val mutableOpened = MutableStateFlow<String?>(null)
     private var owner: AuthenticatedSession? = null
     private var writing: MockChoice? = null
+    private var generationId: String? = null
+    private val shown = MutableStateFlow(true)
 
     private val follower =
         GenerationFollower(
@@ -83,9 +85,15 @@ class MockChooserViewModel(
     ) {
         if (mutableBusy.value || mutableStatus.value == ChooserStatus.Writing) return
         val acceptFewer = (mutableStatus.value as? ChooserStatus.Short)?.key == key
+        owner = sessions.current
         mutableStatus.value = ChooserStatus.Choosing
         mutableBusy.value = true
         viewModelScope.launch {
+            if (!isOwnersSession) {
+                abandon()
+                mutableBusy.value = false
+                return@launch
+            }
             when (val result = starter.start(goalId, choice, acceptFewer)) {
                 is MutationResult.Done -> {
                     if (result.value ==
@@ -111,11 +119,31 @@ class MockChooserViewModel(
 
     fun retry() = follower.retry()
 
+    /**
+     * Writing goes on on the server while the chooser is hidden, but the screen stops following it,
+     * and a mock never starts its clock out of sight: it waits to be seen again.
+     */
+    fun onShown(isShown: Boolean) {
+        shown.value = isShown
+        val id = generationId ?: return
+        if (mutableStatus.value != ChooserStatus.Writing || follower.run.value.status == GenerationRun.Status.Ready) return
+        if (isShown) follower.follow(id) else follower.stop()
+    }
+
+    /** Every step after the tap belongs to the session that tapped. */
+    private val isOwnersSession: Boolean get() = sessions.current == owner
+
+    private fun abandon() {
+        follower.stop()
+        generationId = null
+        mutableStatus.value = ChooserStatus.Choosing
+    }
+
     private suspend fun write(
         choice: MockChoice,
         key: String,
     ) {
-        val session = sessions.current
+        if (!isOwnersSession) return abandon()
         val result = starter.writeQuestions(goalId, choice)
         if (result is MutationResult.Failed) {
             mutableStatus.value = ChooserStatus.Failed(notEnoughQuestions = false)
@@ -124,12 +152,14 @@ class MockChooserViewModel(
 
         when (val written = (result as? MutationResult.Done)?.value) {
             is QuestionWriting.Writing -> {
-                owner = session
                 writing = choice
+                generationId = written.generationId
                 mutableStatus.value = ChooserStatus.Writing
                 mutableBusy.value = false
                 follower.follow(written.generationId)
                 follower.run.first { it.status == GenerationRun.Status.Ready }
+                shown.first { it }
+                if (!isOwnersSession) return abandon()
                 mutableBusy.value = true
                 startWithWhatThereIs(choice, key)
             }
@@ -181,9 +211,10 @@ class MockChooserViewModel(
 
     /** The run's Try again: null once nothing is left to write, which starts the mock. */
     private suspend fun writeAgain(): String? {
+        check(isOwnersSession) { "Another session can't write this mock's questions" }
         val choice = checkNotNull(writing)
         val result = starter.writeQuestions(goalId, choice)
         val written = (result as? MutationResult.Done)?.value ?: error("The mock's questions couldn't be asked for again")
-        return (written as? QuestionWriting.Writing)?.generationId
+        return (written as? QuestionWriting.Writing)?.generationId.also { generationId = it }
     }
 }

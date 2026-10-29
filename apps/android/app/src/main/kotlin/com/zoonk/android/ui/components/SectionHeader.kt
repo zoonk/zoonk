@@ -44,3 +44,17 @@ fun SectionHeader(
         )
     }
 }
+
+/** Main's `PageSectionLabel`: a quiet label naming a group inside a section, still a heading for TalkBack. */
+@Composable
+fun SectionLabel(
+    text: String,
+    modifier: Modifier = Modifier,
+) {
+    Text(
+        text = text,
+        modifier = modifier.semantics { heading() },
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.titleSmall,
+    )
+}

@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -36,6 +38,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEventType
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onPreviewKeyEvent
+import androidx.compose.ui.input.key.type
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
@@ -45,6 +55,8 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.paneTitle
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.zoonk.android.R
@@ -58,9 +70,13 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
 import com.zoonk.android.ui.components.SectionHeader
+import com.zoonk.android.ui.components.SectionLabel
 import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.format.formatNumber
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.DETAIL_PAGE_WIDTH
+import com.zoonk.android.ui.scaffold.DetailPage
+import com.zoonk.android.ui.scaffold.detailPagePadding
+import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.AnytimeMock
 import com.zoonk.api.models.MockOption
@@ -91,8 +107,11 @@ internal fun PracticeChooser(
         option?.let { MockNotes(view.examDocument, view.sizeSource, it.questions, it.minutes, it.leftOut) }
     }
 
+    val start = { option?.let { viewModel.start(MockChoice.Practice(it.shape), it.key) } }
+
     ChooserPage(
         listState = listState,
+        onEnter = { if (open) start() else navigator.open(AppRoute.Subscription) },
         aside = {
             option?.let {
                 PickedMock(
@@ -107,7 +126,7 @@ internal fun PracticeChooser(
             view.lastMock?.let { last ->
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     SectionHeader(stringResource(R.string.mock_chooser_last_mock))
-                    MockSummaryRow(last, onOpen = last.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } })
+                    MockSummaryRow(last, onOpen = last.blockId?.let { { navigator.open(AppRoute.Mock(it.toString())) } }, stacked = true)
                 }
             }
         },
@@ -125,26 +144,25 @@ internal fun PracticeChooser(
                     }
 
                     shown is ChooserStatus.Short -> {
-                        StartButton(startWith(shown.outcome), busy, enabled = option != null) {
-                            option?.let { viewModel.start(MockChoice.Practice(it.shape), it.key) }
-                        }
+                        StartButton(startWith(shown.outcome), busy, enabled = option != null) { start() }
                     }
 
                     else -> {
-                        StartButton(stringResource(R.string.mock_chooser_start), busy, enabled = option != null) {
-                            option?.let { viewModel.start(MockChoice.Practice(it.shape), it.key) }
-                        }
+                        StartButton(stringResource(R.string.mock_chooser_start), busy, enabled = option != null) { start() }
                     }
                 }
             }
         }
         refusal(shown, navigator)
-        item(key = "exam", contentType = "choices") { ChoiceRows(examChoices, picked) { picked = it } }
-        if (subjectChoices.isNotEmpty()) {
-            item(key = "subjects", contentType = "subjects") {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    SectionHeader(stringResource(R.string.mock_chooser_one_subject))
-                    ChoiceRows(subjectChoices, picked) { picked = it }
+        // One pick across both lists, as on main: the subjects are a labeled group of the same choice.
+        item(key = "choices", contentType = "choices") {
+            Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
+                ChoiceRows(examChoices, picked) { picked = it }
+                if (subjectChoices.isNotEmpty()) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        SectionLabel(stringResource(R.string.mock_chooser_one_subject))
+                        ChoiceRows(subjectChoices, picked) { picked = it }
+                    }
                 }
             }
         }
@@ -186,8 +204,11 @@ internal fun PlacementChooser(
             )
         }
 
+    val start = { option?.let { viewModel.start(MockChoice.Placement(it.length), it.key) } }
+
     ChooserPage(
         listState = listState,
+        onEnter = { if (open) start() else navigator.open(AppRoute.Subscription) },
         aside = {
             option?.let {
                 PickedMock(
@@ -207,9 +228,7 @@ internal fun PlacementChooser(
                 status = status,
             ) {
                 if (open) {
-                    StartButton(stringResource(R.string.mock_chooser_placement_start), busy, enabled = option != null) {
-                        option?.let { viewModel.start(MockChoice.Placement(it.length), it.key) }
-                    }
+                    StartButton(stringResource(R.string.mock_chooser_placement_start), busy, enabled = option != null) { start() }
                 } else {
                     SeePlusButton(navigator)
                 }
@@ -237,12 +256,12 @@ internal fun MockWriting(
     run: GenerationRun,
     onRetry: () -> Unit,
 ) {
-    Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopCenter) {
+    Box(Modifier.fillMaxSize().verticalScroll(rememberScrollState()), contentAlignment = Alignment.TopStart) {
         GenerationWait(
             kind = GenerationKind.MockQuestions,
             run = run,
             onRetry = onRetry,
-            modifier = Modifier.widthIn(max = PAGE_WIDTH).padding(PAGE_PADDING),
+            modifier = Modifier.widthIn(max = DETAIL_PAGE_WIDTH).padding(detailPagePadding()),
         ) {
             Text(
                 stringResource(R.string.mock_chooser_preparing),
@@ -262,32 +281,23 @@ internal fun MockWriting(
 @Composable
 private fun ChooserPage(
     listState: LazyListState,
-    aside: @Composable () -> Unit,
+    onEnter: () -> Unit,
+    aside: @Composable ColumnScope.() -> Unit,
     content: LazyListScope.(asideBeside: Boolean) -> Unit,
 ) {
-    val asideLabel = stringResource(R.string.mock_chooser_picked)
-
-    PageWithSupportingPane(
-        supportingPane = {
-            Column(
-                Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(PAGE_PADDING)
-                    .semantics { paneTitle = asideLabel },
-                verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
-            ) { aside() }
-        },
-    ) { asideBeside ->
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
-                contentPadding = PAGE_PADDING,
-                verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
-            ) { content(asideBeside) }
-        }
-    }
+    DetailPage(
+        aside = aside,
+        asideLabel = stringResource(R.string.mock_chooser_picked),
+        // Enter takes the page's main action, as main's Start does; the arrows move the pick.
+        modifier =
+            Modifier.onPreviewKeyEvent { event ->
+                val enter = event.key == Key.Enter || event.key == Key.NumPadEnter
+                if (enter && event.type == KeyEventType.KeyDown) onEnter()
+                enter
+            },
+        listState = listState,
+        content = content,
+    )
 }
 
 @Composable
@@ -300,9 +310,9 @@ private fun ChooserHero(
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(eyebrow, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.labelLarge)
-        Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
+        Text(title, Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall.copy(lineBreak = LineBreak.Heading))
         StatusLine(status, line)
-        Box(Modifier.padding(top = 8.dp)) { action() }
+        Box(Modifier.padding(top = 8.dp).mainActionWidth()) { action() }
     }
 }
 
@@ -370,7 +380,13 @@ private fun StartButton(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    Button(onClick = onClick, enabled = enabled || busy) {
+    // Disabled while it gets the mock ready, keeping its ink as main does.
+    val colors =
+        ButtonDefaults.buttonColors(
+            disabledContainerColor = if (busy) MaterialTheme.colorScheme.primary else Color.Unspecified,
+            disabledContentColor = if (busy) MaterialTheme.colorScheme.onPrimary else Color.Unspecified,
+        )
+    Button(onClick = onClick, modifier = Modifier.mainActionWidth(), enabled = enabled && !busy, colors = colors) {
         if (busy) {
             CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
             Spacer(Modifier.width(ButtonDefaults.IconSpacing))
@@ -383,7 +399,9 @@ private fun StartButton(
 
 @Composable
 private fun SeePlusButton(navigator: AppNavigator) {
-    Button(onClick = { navigator.open(AppRoute.Subscription) }) { Text(stringResource(R.string.mock_chooser_see_plus)) }
+    Button(onClick = { navigator.open(AppRoute.Subscription) }, modifier = Modifier.mainActionWidth()) {
+        Text(stringResource(R.string.mock_chooser_see_plus))
+    }
 }
 
 /** Fair use for new questions ran out: main's help limit notice with its way on. */
@@ -457,18 +475,23 @@ private fun ChoiceRow(
     stacked: Boolean,
     onClick: () -> Unit,
 ) {
+    val labelStyle = MaterialTheme.typography.bodyLarge.copy(lineBreak = LineBreak.Heading)
     Row(
         Modifier
             .fillMaxWidth()
             .heightIn(min = 64.dp)
+            .onFocusChanged { if (it.isFocused && !selected) onClick() }
             .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .padding(vertical = 12.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.Top,
     ) {
-        RadioButton(selected = selected, onClick = null)
+        // The radio stands beside the label's first line, however many lines follow.
+        Box(Modifier.height(with(LocalDensity.current) { labelStyle.lineHeight.toDp() }), contentAlignment = Alignment.Center) {
+            RadioButton(selected = selected, onClick = null)
+        }
         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text(choice.label, style = MaterialTheme.typography.bodyLarge)
+            Text(choice.label, style = labelStyle)
             choice.description?.let {
                 Text(
                     it,
@@ -476,19 +499,22 @@ private fun ChoiceRow(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            if (stacked) ChoiceSize(choice)
+            if (stacked) ChoiceSize(choice, MaterialTheme.typography.bodySmall)
         }
-        if (!stacked) ChoiceSize(choice)
+        if (!stacked) ChoiceSize(choice, MaterialTheme.typography.labelMedium)
     }
 }
 
 @Composable
-private fun ChoiceSize(choice: RowChoice) {
+private fun ChoiceSize(
+    choice: RowChoice,
+    style: TextStyle,
+) {
     Text(
         choice.trailing,
         Modifier.semantics { contentDescription = choice.spokenTrailing },
         color = MaterialTheme.colorScheme.onSurfaceVariant,
-        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+        style = style.withTabularFigures(),
     )
 }
 
@@ -507,14 +533,12 @@ private fun PickedMock(
     names: List<String>,
     written: List<String> = emptyList(),
 ) {
-    Column(verticalArrangement = Arrangement.spacedBy(SECTION_GAP)) {
+    Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             SectionHeader(title)
             Column {
                 PickedFact(stringResource(R.string.mock_chooser_questions), formatNumber(size.questions.toDouble(), currentLocale()))
-                HorizontalDivider()
                 PickedFact(stringResource(R.string.mock_chooser_time_limit), minutesText(size.minutes))
-                HorizontalDivider()
                 PickedFact(
                     stringResource(R.string.mock_chooser_usually_takes),
                     stringResource(R.string.mock_chooser_about, minutesText(size.estimatedMinutes)),
@@ -523,7 +547,7 @@ private fun PickedMock(
         }
         if (names.isNotEmpty() || written.isNotEmpty()) {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                SectionHeader(namesTitle)
+                SectionLabel(namesTitle)
                 Column {
                     names.forEachIndexed { index, name ->
                         if (index > 0) HorizontalDivider()
@@ -547,8 +571,7 @@ private fun PickedFact(
     Row(
         Modifier
             .fillMaxWidth()
-            .heightIn(min = 48.dp)
-            .padding(vertical = 12.dp)
+            .padding(vertical = 8.dp)
             .semantics(mergeDescendants = true) {},
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -577,7 +600,4 @@ private fun PickedName(
 
 private fun recommendedKey(placement: MockOptionsPlacement): String = "placement:${placement.recommended.value}"
 
-private val PAGE_WIDTH = 720.dp
-private val PAGE_PADDING = PaddingValues(horizontal = 16.dp, vertical = 24.dp)
-private val SECTION_GAP = 32.dp
 private val STACK_BELOW = 480.dp

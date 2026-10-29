@@ -32,12 +32,13 @@ import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.ExamMockSummary
 import com.zoonk.api.models.MockOptions
 
-/** A finished mock: its number, when and what it covered, and how it went; [onOpen] opens its result. */
+/** A finished mock: its number, when and what it covered, and how it went; [onOpen] opens its result. [stacked] always puts how it went under the line. */
 @Composable
 fun MockSummaryRow(
     mock: ExamMockSummary,
     onOpen: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    stacked: Boolean = false,
 ) {
     val label = mockSummaryLabel(mock)
     val date = mockDate(mock.finishedAt)
@@ -49,6 +50,7 @@ fun MockSummaryRow(
         leading = { StatusMark(MarkStatus.Done) },
         onClick = onOpen,
         modifier = modifier,
+        stacked = stacked,
     )
 }
 
@@ -65,12 +67,14 @@ fun MockListRow(
     leading: @Composable () -> Unit,
     onClick: (() -> Unit)?,
     modifier: Modifier = Modifier,
+    stacked: Boolean = false,
 ) {
     val trailingStyle = MaterialTheme.typography.labelMedium.withTabularFigures()
     val measurer = rememberTextMeasurer()
 
     BoxWithConstraints(if (onClick != null) modifier.fillMaxWidth().clickable(onClick = onClick) else modifier.fillMaxWidth()) {
-        val stacked = trailing != null && measurer.measure(trailing, trailingStyle).size.width > constraints.maxWidth * TRAILING_SHARE
+        val under =
+            trailing != null && (stacked || measurer.measure(trailing, trailingStyle).size.width > constraints.maxWidth * TRAILING_SHARE)
         Row(
             Modifier.heightIn(min = 64.dp).padding(vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -80,9 +84,16 @@ fun MockListRow(
             Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 ProvideTextStyle(MaterialTheme.typography.bodyLarge) { headline() }
                 Text(supporting, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
-                if (stacked) Text(trailing, color = MaterialTheme.colorScheme.onSurfaceVariant, style = trailingStyle)
+                // Under the line, the fact is the row's quietest words.
+                if (under) {
+                    Text(
+                        trailing,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodySmall.withTabularFigures(),
+                    )
+                }
             }
-            if (trailing != null && !stacked) Text(trailing, color = MaterialTheme.colorScheme.onSurfaceVariant, style = trailingStyle)
+            if (trailing != null && !under) Text(trailing, color = MaterialTheme.colorScheme.onSurfaceVariant, style = trailingStyle)
         }
     }
 }

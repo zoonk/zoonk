@@ -62,8 +62,9 @@ import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppTab
 import com.zoonk.android.ui.components.LoadFailedMessage
 import com.zoonk.android.ui.components.StatusMessage
+import com.zoonk.android.ui.scaffold.DetailPage
 import com.zoonk.android.ui.scaffold.PageScaffold
-import com.zoonk.android.ui.scaffold.PageWithSupportingPane
+import com.zoonk.android.ui.scaffold.mainActionWidth
 import com.zoonk.api.models.ExamView
 import com.zoonk.api.models.MockOptions
 import kotlinx.coroutines.launch
@@ -183,42 +184,17 @@ private fun ExamPage(
     listState: LazyListState,
 ) {
     val about = aboutSections(exam)
-    val aboutLabel = stringResource(R.string.exam_about)
-    // Wider windows give the page more room, never wider margins: one start edge, Material's 24dp from medium up.
-    val compact = !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_MEDIUM_LOWER_BOUND)
-    val padding = PaddingValues(horizontal = if (compact) 16.dp else 24.dp, vertical = 24.dp)
 
-    PageWithSupportingPane(
-        supportingPane = {
-            Row {
-                VerticalDivider()
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(padding)
-                        .semantics { paneTitle = aboutLabel },
-                    verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
-                ) {
-                    about.forEach { AboutSection(it, exam) }
-                }
-            }
-        },
+    DetailPage(
+        aside = { about.forEach { AboutSection(it, exam) } },
+        asideLabel = stringResource(R.string.exam_about),
+        listState = listState,
     ) { aboutBeside ->
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.TopStart) {
-            LazyColumn(
-                state = listState,
-                modifier = Modifier.widthIn(max = PAGE_WIDTH).fillMaxSize(),
-                contentPadding = padding,
-                verticalArrangement = Arrangement.spacedBy(SECTION_GAP),
-            ) {
-                item(key = "hero", contentType = "hero") { ExamHero(exam, options, viewModel, navigator, fullWidthAction = compact) }
-                examSections(exam, mockOffered = options?.let(::mockEntryRoute) != null, viewModel, app, navigator)
-                if (!aboutBeside) {
-                    about.forEach { section ->
-                        item(key = "about-$section", contentType = section) { AboutSection(section, exam) }
-                    }
-                }
+        item(key = "hero", contentType = "hero") { ExamHero(exam, options, viewModel, navigator) }
+        examSections(exam, mockOffered = options?.let(::mockEntryRoute) != null, viewModel, app, navigator)
+        if (!aboutBeside) {
+            about.forEach { section ->
+                item(key = "about-$section", contentType = section) { AboutSection(section, exam) }
             }
         }
     }
@@ -274,7 +250,6 @@ private fun ExamHero(
     options: MockOptions?,
     viewModel: ExamViewModel,
     navigator: AppNavigator,
-    fullWidthAction: Boolean,
 ) {
     val facts = examFacts(exam)
 
@@ -298,13 +273,11 @@ private fun ExamHero(
             MockEntryButton(
                 it,
                 onOpen = navigator::open,
-                modifier = if (fullWidthAction) Modifier.fillMaxWidth() else Modifier,
+                modifier = Modifier.mainActionWidth(),
             )
         }
         if (exam.noticeDay != null || exam.noSitting != null) NoticeDatesCard(exam, viewModel)
     }
 }
 
-private val PAGE_WIDTH = 720.dp
 private const val FROM_EXAM = "exam"
-private val SECTION_GAP = 40.dp

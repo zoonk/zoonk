@@ -17,6 +17,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.lifecycle.compose.LifecycleStartEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.zoonk.android.app.AppContainer
@@ -107,6 +108,11 @@ internal fun MockChooser(
     val listState = rememberLazyListState()
     val loaded = state.value
     val exit = opened?.let(ChooserExit::ToMock) ?: chooserExit(state, placement, goalId)
+
+    LifecycleStartEffect(viewModel) {
+        viewModel.onShown(true)
+        onStopOrDispose { viewModel.onShown(false) }
+    }
 
     if (exit != null) {
         Leave(exit, navigator)

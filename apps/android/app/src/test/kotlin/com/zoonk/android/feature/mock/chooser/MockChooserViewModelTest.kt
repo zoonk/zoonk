@@ -111,6 +111,43 @@ class MockChooserViewModelTest {
         }
 
     @Test
+    fun aMockWrittenWhileTheChooserWasHiddenStartsOnlyOnceItsSeenAgain() =
+        runTest(dispatcher) {
+            api.starts = listOf({ NEEDS_QUESTIONS }, { started() })
+            api.writes = listOf { writing(MockQuestionsGeneration.Status.GENERATING, "run-1") }
+            val viewModel = viewModel()
+
+            viewModel.start(full, "full:1:")
+            viewModel.onShown(false)
+            advanceUntilIdle()
+            assertEquals(listOf(full to false), api.started)
+            assertNull(viewModel.opened.value)
+
+            viewModel.onShown(true)
+            advanceUntilIdle()
+            assertEquals(STARTED, viewModel.opened.value)
+        }
+
+    @Test
+    fun anotherLearnerSigningInWhileQuestionsAreWrittenNeverStartsTheMock() =
+        runTest(dispatcher) {
+            api.starts = listOf({ NEEDS_QUESTIONS }, { started() })
+            api.writes = listOf { writing(MockQuestionsGeneration.Status.GENERATING, "run-1") }
+            val viewModel = viewModel()
+
+            viewModel.start(full, "full:1:")
+            viewModel.onShown(false)
+            advanceUntilIdle()
+            session.session = AuthenticatedSession("bea", "token-b", "local-b")
+            viewModel.onShown(true)
+            advanceUntilIdle()
+
+            assertEquals(listOf(full to false), api.started)
+            assertNull(viewModel.opened.value)
+            assertEquals(ChooserStatus.Choosing, viewModel.status.value)
+        }
+
+    @Test
     fun aBankThatCantHaveMoreWrittenNowStartsWithWhatItHas() =
         runTest(dispatcher) {
             api.starts = listOf({ NEEDS_QUESTIONS }, { started() })
