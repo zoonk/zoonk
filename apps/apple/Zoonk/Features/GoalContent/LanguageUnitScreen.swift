@@ -83,6 +83,7 @@ extension GoalContentAPI {
 struct LanguageUnitScreen: View {
   @Environment(GoalContentStore.self) private var store
   @Environment(LearnerSummaryStore.self) private var learner
+  @State private var isReporting = false
 
   let chapterId: String
 
@@ -133,6 +134,33 @@ struct LanguageUnitScreen: View {
         ToolbarItem(placement: .primaryAction) {
           TutorAskButton(scope: .chapter(chapterId: chapterId))
         }
+
+        ToolbarItem(placement: .primaryAction) {
+          Menu {
+            Button {
+              isReporting = true
+            } label: {
+              Label {
+                Text(
+                  "Report a problem", tableName: "Plan",
+                  comment: "Opens the feedback form about the unit page")
+              } icon: {
+                Image(systemName: "flag")
+              }
+            }
+          } label: {
+            Label {
+              Text("Unit options", tableName: "Plan", comment: "Spoken label of the unit's … menu")
+            } icon: {
+              Image(systemName: "ellipsis")
+            }
+          }
+        }
+      }
+      .sheet(isPresented: $isReporting) {
+        FeedbackSheet(
+          api: FeedbackAPI.live(),
+          context: FeedbackContext(contentID: chapterId, contentKind: .chapter, screen: "unit"))
       }
       .loads(unit)
     }
@@ -222,14 +250,15 @@ private struct LanguageUnitContent: View {
 
     if !lessons.isEmpty {
       Section {
-        ForEach(lessons) { lesson in
+        ForEach(Array(lessons.enumerated()), id: \.element.id) { index, lesson in
           Button {
             router.open(.lesson(lessonId: lesson.lessonId))
           } label: {
             LessonRow(
               lesson: GoalChapter.Lesson(
                 lessonId: lesson.lessonId, minutes: lesson.minutes, plusRequired: false,
-                state: lesson.state, title: lesson.title))
+                state: lesson.state, title: lesson.title),
+              number: index + 1)
           }
         }
       } header: {

@@ -3,6 +3,7 @@ import SwiftUI
 struct ChapterScreen: View {
   @Environment(GoalContentStore.self) private var store
   @Environment(LearnerSummaryStore.self) private var learner
+  @State private var isReporting = false
 
   let chapterId: String
 
@@ -53,6 +54,35 @@ struct ChapterScreen: View {
         ToolbarItem(placement: .primaryAction) {
           TutorAskButton(scope: .chapter(chapterId: chapterId))
         }
+
+        ToolbarItem(placement: .primaryAction) {
+          Menu {
+            Button {
+              isReporting = true
+            } label: {
+              Label {
+                Text(
+                  "Report a problem", tableName: "Plan",
+                  comment: "Opens the feedback form about the chapter page")
+              } icon: {
+                Image(systemName: "flag")
+              }
+            }
+          } label: {
+            Label {
+              Text(
+                "Chapter options", tableName: "Plan",
+                comment: "Spoken label of the chapter's … menu")
+            } icon: {
+              Image(systemName: "ellipsis")
+            }
+          }
+        }
+      }
+      .sheet(isPresented: $isReporting) {
+        FeedbackSheet(
+          api: FeedbackAPI.live(),
+          context: FeedbackContext(contentID: chapterId, contentKind: .chapter))
       }
       .loads(chapter)
     }
@@ -135,11 +165,11 @@ private struct ChapterContent: View {
   private var lessonsSection: some View {
     if !lessons.isEmpty {
       Section {
-        ForEach(lessons) { lesson in
+        ForEach(Array(lessons.enumerated()), id: \.element.id) { index, lesson in
           Button {
             router.open(.lesson(lessonId: lesson.lessonId))
           } label: {
-            LessonRow(lesson: lesson)
+            LessonRow(lesson: lesson, number: index + 1)
           }
         }
       } header: {
@@ -278,17 +308,16 @@ private struct ChapterContent: View {
   }
 }
 
+/// Main's lesson list row: numbered in the chapter or unit, its minutes at the trailing edge.
 struct LessonRow: View {
   let lesson: GoalChapter.Lesson
+  let number: Int
 
   var body: some View {
-    LabeledContent {
-      Text(planDurationText(minutes: Double(lesson.minutes)))
-        .monospacedDigit()
-    } label: {
+    PlanPathRow {
       Label {
         HStack {
-          Text(lesson.title)
+          Text(verbatim: "\(number). \(lesson.title)")
             .foregroundStyle(.primary)
 
           if lesson.plusRequired {
@@ -298,6 +327,9 @@ struct LessonRow: View {
       } icon: {
         StatusMark(status: status)
       }
+    } value: {
+      Text(planDurationText(minutes: Double(lesson.minutes)))
+        .monospacedDigit()
     }
     .accessibilityElement(children: .combine)
     .accessibilityValue(state)

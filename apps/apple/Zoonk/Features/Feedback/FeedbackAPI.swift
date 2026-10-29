@@ -13,10 +13,10 @@ struct FeedbackContext: Equatable, Sendable {
   let contentKind: FeedbackContentKind?
   let screen: String
 
-  init(contentID: String, contentKind: FeedbackContentKind) {
+  init(contentID: String, contentKind: FeedbackContentKind, screen: String? = nil) {
     self.contentID = contentID
     self.contentKind = contentKind
-    screen = contentKind.rawValue
+    self.screen = screen ?? contentKind.rawValue
   }
 
   init(screen: String) {

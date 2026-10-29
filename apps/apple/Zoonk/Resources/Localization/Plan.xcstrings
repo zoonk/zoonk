@@ -5642,6 +5642,41 @@
         }
       }
     },
+    "Chapter options" : {
+      "comment" : "Spoken label of the chapter's … menu",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optionen für das Kapitel"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Chapter options"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opciones del capítulo"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options du chapitre"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opções do capítulo"
+          }
+        }
+      }
+    },
     "Chapter summary" : {
       "comment" : "Folds a chapter's skills and summaries",
       "localizations" : {
@@ -12758,6 +12793,41 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unidade %1$lld · %2$@"
+          }
+        }
+      }
+    },
+    "Unit options" : {
+      "comment" : "Spoken label of the unit's … menu",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Optionen für die Einheit"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Unit options"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opciones de la unidad"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options de l’unité"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opções da unidade"
           }
         }
       }
