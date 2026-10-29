@@ -146,6 +146,7 @@ type RefreshInput = {
   goalId: string;
   /** For a re-plan that only brings in lessons written meanwhile: the learner's last change stays undoable. */
   keepsOpenUndo?: boolean;
+  settleMissedDays?: boolean;
   /** `sampled` after the learner's progress (a session ended); `saved` otherwise. */
   pace?: "sampled" | "saved";
   revalidation?: PlanTagRevalidation;
@@ -158,6 +159,7 @@ async function refreshPlanned({
   lostSave,
   pace = "saved",
   revalidation = "now",
+  settleMissedDays = true,
   settleOnly = false,
 }: RefreshInput & { lostSave: LostSave }): Promise<PlannedRefresh> {
   const context = await loadPlanAtToken(goalId);
@@ -174,7 +176,7 @@ async function refreshPlanned({
     return { plan: null, status: "notReady" };
   }
 
-  const left = await loadLeftWork(context);
+  const left = settleMissedDays ? await loadLeftWork(context) : [];
 
   if (left.length > 0) {
     return settleLeftWork({ context, left, lostSave, pace, revalidation });

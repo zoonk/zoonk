@@ -116,7 +116,7 @@ export async function undoChange({
   });
 
   if (parsePlanChangePayload(change.payload).replannedSince) {
-    await refreshGoalPlan({ goalId: context.goal.id });
+    await refreshGoalPlan({ goalId: context.goal.id, settleMissedDays: false });
   }
 
   await refreshSavedGoalPlanAdvice(context.goal.id);
