@@ -50,6 +50,7 @@ class ApiServices(
             .client(client)
             .addConverterFactory(NullBody)
             .addConverterFactory(SerialNames)
+            .addConverterFactory(FormFields)
             .addConverterFactory(ApiJson.asConverterFactory("application/json".toMediaType()))
             .build()
 

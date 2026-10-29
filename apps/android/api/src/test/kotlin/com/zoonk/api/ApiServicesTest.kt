@@ -6,10 +6,14 @@ import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.test.runTest
 import mockwebserver3.MockResponse
 import mockwebserver3.MockWebServer
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import java.util.UUID
@@ -63,6 +67,24 @@ class ApiServicesTest {
             services.account.updateCurrentUserLearningProfile(LearningProfileUpdate(activeGoalId = goalId))
             assertEquals("""{"soundsEnabled":false}""", server.takeRequest().body?.utf8())
             assertEquals("""{"activeGoalId":"$goalId"}""", server.takeRequest().body?.utf8())
+        }
+
+    @Test
+    fun aMultipartAnswerSendsItsFieldsAsPlainText() =
+        runTest {
+            server.enqueue(MockResponse.Builder().code(500).build())
+            val audio = MultipartBody.Part.createFormData("audio", "answer.m4a", byteArrayOf(1, 2).toRequestBody("audio/mp4".toMediaType()))
+            services.language.createSpokenAnswer(
+                goalId,
+                durationMs = 1200,
+                audio = audio,
+                studySessionId = goalId,
+                timeZone = "America/Sao_Paulo",
+            )
+            val body = server.takeRequest().body!!.utf8()
+            assertTrue(body.contains("\r\n\r\n1200\r\n"))
+            assertTrue(body.contains("\r\n\r\n$goalId\r\n"))
+            assertTrue(body.contains("\r\n\r\nAmerica/Sao_Paulo\r\n"))
         }
 
     private fun json(body: String) =
