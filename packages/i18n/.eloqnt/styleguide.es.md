@@ -8,35 +8,23 @@
 
 ## Glossary
 
-- “course”: “curso”
-- “chapter”: “capítulo”
-- “lesson”: “lección”
 - “goal”: “objetivo”
-- “session” (study): “sesión”; expired sign-in session: “Tu sesión ha caducado”
+- “session” (study): “sesión”
 - “check” (an answer): “comprobar”
 - “guess” (a pick that doesn't count, “Your guess”): “suposición”, never “respuesta”
 - “write” (Zoonk generating content): “preparar”; learner writing: “escribir”
 - “learning” (study days): “estudio”
 - “Brain Power”: “Poder Mental”
 - “BP”: “PM”
-- “Energy”: “Energía”
-- “score”: “Puntuación”
-- “step”: “paso”
 - “listening”: “escucha”
 - “Speaking”: “Expresión oral”
-- “mind map”: “mapa mental”
 - “card”: “tarjeta”, not “carta”
 - “hello@zoonk.com”: “contacto@zoonk.com”
 
 ## Feature names and states
 
-- “Today”: “Hoy”
-- “Plan”: “Plan”
 - “Buddy”: “Compañero”
-- “Progress”: “Progreso”
-- “Content”: “Contenido”
 - “Time capsules”: “Cápsulas del tiempo”
-- “Missions”: “Misiones”
 - Mission names (missions list, first steps): “tú” imperative: “Completa tu primera lección”, “Practica {area}”
 - “essay”: “redacción”, not “ensayo”
 - “Hyperdrive”: “Hiperimpulso”
@@ -61,17 +49,13 @@
 
 ## Plan terminology
 
-- “Pace”: “Ritmo”
-- “Paused”: “En pausa”
 - “Finished”: “Completado”
 - “Past date”: “Fecha pasada”, not “Terminado”, “Caducado”, or “Vencido”
 - “Needs adjusting”: “Necesita ajustes”
 - “Too tight”: “Demasiado ajustado”
 - “Even across skills”: “Igualado en todas las habilidades”
-- “Ahead” / “Behind”: “Adelantado” / “Atrasado”
 - “left out”: “omitir”, not “saltar”
 - “Daily time”: “Tiempo diario”
-- “Next date”: “Próxima fecha”
 
 ## Buddy names
 

@@ -10,20 +10,16 @@
 
 ## Glossary
 
-- “course”: “curso”
-- “chapter”: “capítulo”
 - “lesson”: “aula”, not “lição”
 - “exam”: “prova”
 - “subject”: “matéria”, not “disciplina”
 - “notice” (official exam announcement): “edital”
-- “topic”: “tópico”
-- “module”: “módulo”
 - “learning” (study days): “estudo”
 - “goal” (the learner's goal): “meta”; goal of a call, lesson, or activity: “objetivo”
 - “start a goal”: “começar uma meta”
-- “session” (study): “sessão”; expired sign-in session: “Sua sessão expirou”, not “Sua sessão terminou”
+- “session” (study): “sessão”
 - “check” (an answer): “conferir”; “grade” (an essay) and “fix” (a mistake): “corrigir”
-- “say again” (words in pronunciation practice): “repetir”, as in “Repita 2 palavras”
+- “say” (the learner speaking aloud in pronunciation or speaking practice): “falar”, as in “Fale em voz alta”; words left to say again: “repetir”, as in “Repita 2 palavras”
 - “write” (Zoonk generating content): “criar”; learner writing: “escrever”
 - “share” (personal facts): “contar”
 - “questions” (counts): “perguntas”; an exam item being discussed: “questão”
@@ -32,15 +28,11 @@
 - “guess” (the learner's answer before the real one shows): “palpite”; “estimate” (an estimated score): “estimativa”
 - “security check”: “sistema de segurança”; “verificação” is used for emailed codes
 - “picture” / “image”: “imagem”, not “figura”
-- “mind map”: “mapa mental”
 - “learning path”: “trilha”
 - “prerequisite”: “base”, not “pré-requisito”
 - Prerequisite choices “In depth” / “Essentials” / “Quick lesson” / “Skip”: “A fundo” / “Essencial” / “Aula rápida” / “Pular”
 - “Brain Power”: “Poder Mental”
 - “BP”: “PM”
-- “Energy”: “Energia”
-- “score”: “Pontuação”
-- “step”: “passo”
 - “listening”: “escuta”
 - “Speaking”: “Conversação”
 - “Free” (subscription name): “Grátis”
@@ -50,13 +42,8 @@
 
 ## Feature names and states
 
-- “Today”: “Hoje”
-- “Plan”: “Plano”
 - “Buddy”: “Parceiro”
-- “Progress”: “Progresso”
-- “Content”: “Conteúdo”
 - “Time capsules”: “Cápsulas do tempo”
-- “Missions”: “Missões”
 - Mission names (missions list, first steps): infinitive, like a to-do list: “Concluir sua primeira aula”, “Praticar {area}”
 - “call” (speaking practice): “conversa”, not “chamada” or “ligação”; “speaking practice calls” is “conversas de prática”, without repeating “conversação”
 - “Hyperdrive”: “Hiperpropulsão”
@@ -81,18 +68,15 @@
 
 ## Plan terminology
 
-- “Pace”: “Ritmo”
 - “Paused” (pace): “Em pausa”; paused goal: “Pausada”
 - “Finished” (plan): “Concluído”; finished goal: “Concluída”
 - “Past date”: “Passou da data”, not “Encerrado”, “Expirado”, or “Vencido”
 - “Needs adjusting”: “Precisa de ajustes”
 - “Too tight”: “Apertado demais”
 - “Even across skills”: “Habilidades no mesmo nível”
-- “Ahead” / “Behind”: “Adiantado” / “Atrasado”
 - “left out”: “ficar de fora”, not “pulado” or “ignorado”
 - “skipped” (known through placement): “pulado”, not “ignorado”
 - “Daily time”: “Tempo diário”, not “Tempo por dia”
-- “Next date”: “Próxima data”
 
 ## Buddy names
 

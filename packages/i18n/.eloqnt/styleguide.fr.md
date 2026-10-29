@@ -8,11 +8,6 @@
 
 ## Glossary
 
-- “course”: “cours”
-- “chapter”: “chapitre”
-- “lesson”: “leçon”
-- “exam”: “examen”
-- “goal”: “objectif”
 - “plan” (study plan): “plan”, not “programme” or “parcours”; subscription plan: “formule”
 - “Free” (subscription): “gratuite”
 - “Guardian”: “Parent ou tuteur”
@@ -22,9 +17,7 @@
 - “share” (personal facts): “dire”
 - “Brain Power”: “Puissance Mentale”
 - “BP”: “PM”
-- “Energy”: “Énergie”
 - “score”: “Score”
-- “step”: “étape”
 - “listening”: “écoute”
 - “Speaking”: “Expression orale”
 - “mind map”: “carte mentale”
@@ -35,12 +28,8 @@
 
 ## Feature names and states
 
-- “Today”: “Aujourd’hui”
 - “Buddy”: “Compagnon”
-- “Progress”: “Progrès”
-- “Content”: “Contenu”
 - “Time capsules”: “Capsules temporelles”
-- “Missions”: “Missions”
 - Mission names (missions list, first steps): infinitive: “Terminer ta première leçon”, “Travailler {area}”; “Practice” and “Review” stay distinct: “S’entraîner” / “Réviser”
 - “essay”: “rédaction”, not “dissertation”
 - “Hyperdrive”: “Hyperpropulsion”
@@ -66,17 +55,13 @@
 
 ## Plan terminology
 
-- “Pace”: “Rythme”
-- “Paused”: “En pause”
 - “Finished”: “Terminé”
 - “Past date”: “Date passée”, not “Clos” or “Expiré”
 - “Needs adjusting”: “À ajuster”
 - “Too tight”: “Trop serré”
 - “Even across skills”: “Équilibré entre les compétences”
-- “Ahead” / “Behind”: “En avance” / “En retard”
 - “left out”: “laissé de côté”, not “passé” or “sauté”
 - “Daily time”: “Durée quotidienne”, not “Temps par jour”
-- “Next date”: “Prochaine date”
 
 ## Buddy names
 

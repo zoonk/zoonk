@@ -10,8 +10,6 @@
 
 ## Glossary
 
-- “course”: “Kurs”
-- “chapter”: “Kapitel”
 - “lesson”: “Lektion”
 - “goal” (the learner's goal): “Ziel”, not “Lernziel”
 - “plan” (study plan): “Plan”, also in a sentence about Plus (“every week in your plan”, “your plan and progress”); subscription plan (“the free plan”, “as your plan allows”): “Tarif”
@@ -21,26 +19,20 @@
 - “write” (Zoonk generating content): “erstellen”; learner writing: “schreiben”
 - “Brain Power”: “Brain Power”
 - “BP”: “BP”
-- “Energy”: “Energie”
 - “score”: “Score”
 - “level”: “Level”
-- “step”: “Schritt”
 - “start over” (answers or a plan): “von vorn beginnen”; “neu starten” is restarting a device or running code again
 - “position” (the post an exam is for): “Stelle”
 - “listening”: “Hören”
 - “Speaking”: “Sprechen”
-- “mind map”: “Mindmap”
 - “card”: “Karte”, not “Lernkarte”; a speaking exam's task card may be “Aufgabenkarte”
 - “in a row” (right answers in a streak): “hintereinander”, not “in Folge”
 
 ## Feature names and states
 
-- “Today”: “Heute”
 - “Buddy”: “Kumpel”
-- “Progress”: “Fortschritt”
 - “Content”: “Inhalte”
 - “Time capsules”: “Zeitkapseln”
-- “Missions”: “Missionen”
 - Mission names (missions list, first steps): infinitive: “Deine erste Lektion abschließen”, “{area} üben”
 - “call” (speaking practice): “Gespräch”, not “Anruf”
 - “Hyperdrive”: “Hyperantrieb”
@@ -60,22 +52,18 @@
 - “Logbook”: “Logbuch”
 - “Fading” (needs review): “Nachlassend”
 - “Overview” (course level): “Überblick”
-- “Appearance” (settings): “Aussehen”
 - “Focus test”: “Fokustest”
 
 ## Plan terminology
 
 - “Pace”: “Tempo”
-- “Paused”: “Pausiert”
 - “Finished”: “Abgeschlossen”
 - “Past date”: “Nach dem Zieldatum”, not “Beendet” or “Abgelaufen”
 - “Needs adjusting”: “Anpassung nötig”
 - “Too tight”: “Zu knapp”
 - “Even across skills”: “Alle Fähigkeiten gleichauf”
-- “Ahead” / “Behind”: “Voraus” / “Im Rückstand”
 - “left out”: “ausgelassen”, not “übersprungen”
 - “Daily time”: “Tägliche Lernzeit”, not “Zeitbudget”
-- “Next date”: “Nächster Termin”
 
 ## Buddy names
 
