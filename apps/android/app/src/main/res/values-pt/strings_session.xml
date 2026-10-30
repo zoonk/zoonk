@@ -29,6 +29,7 @@
   "session_energy_glowing_brightest": "39160b3c6edd5226332735f935cf58db234bde438e38581a7f2fe9de68bf2414",
   "session_energy_max": "1d3bb47dc7678c67cacfa31e931794d1ce57ebab16253a7ba2506a78617bf7dc",
   "session_level_up": "84804ea8e0ecfef3e141751c23bd7c8eb9db83cd30ab00b795d0d7b3074cd1b0",
+  "session_next_eyebrow": "9b2e5474ad38a19de0fb02491aaf0efe0417d0cf21614eaeb161648620437d5c",
   "session_next_getting_ready": "b87e11cc508a525d890f479dbbd6369cbdf0b632929371de629b0888a8a5a832",
   "session_next_instead": "77e67bf137900d3e557ed38788980efb51f9971ed97e1489c59118779a7850d2",
   "session_next_start": "97f92d4ba845627b50c7151e63c3dac0dd9795510ccee99574971bb68c5972e0",
@@ -186,6 +187,8 @@
     <string name="session_summary_finish">Finalizar</string>
     <string name="session_summary_save_note">Salve seu plano para encontrar ele na próxima vez.</string>
     <string name="session_summary_create_account">Criar uma conta</string>
+    <!-- Above the title of the session's next step. -->
+    <string name="session_next_eyebrow">A seguir</string>
     <string name="session_next_start">Começar</string>
     <string name="session_next_getting_ready">Preparando tudo…</string>
     <string name="session_next_stop">Parar por hoje</string>

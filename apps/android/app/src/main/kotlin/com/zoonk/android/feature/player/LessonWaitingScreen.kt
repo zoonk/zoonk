@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -43,6 +42,7 @@ import com.zoonk.android.ui.components.GenerationWait
 import com.zoonk.android.ui.components.Limit
 import com.zoonk.android.ui.components.LimitNotice
 import com.zoonk.android.ui.components.LimitSubject
+import com.zoonk.android.ui.components.OutlinedButton
 import com.zoonk.api.models.ReadyAlternative
 import kotlinx.coroutines.delay
 import kotlin.time.Duration.Companion.seconds
@@ -185,7 +185,7 @@ fun LessonNotWrittenNotice(
                 onCreateAccount = { onOpen(AppRoute.Login) },
                 onSeePlus = { onOpen(AppRoute.Subscription) },
             )
-            if (refusal.limit is Limit.SlowDown) FilledTonalButton(onClick = onRetry) { Text(stringResource(R.string.player_try_again)) }
+            if (refusal.limit is Limit.SlowDown) OutlinedButton(onClick = onRetry) { Text(stringResource(R.string.player_try_again)) }
         }
 
         LessonRefusal.PlusRequired -> {
@@ -193,7 +193,7 @@ fun LessonNotWrittenNotice(
                 stringResource(R.string.subscription_free_week_over_title),
                 stringResource(R.string.subscription_free_week_over_description),
             )
-            FilledTonalButton(onClick = { onOpen(AppRoute.Subscription) }) { Text(stringResource(R.string.player_see_plus)) }
+            OutlinedButton(onClick = { onOpen(AppRoute.Subscription) }) { Text(stringResource(R.string.player_see_plus)) }
         }
 
         else -> {
@@ -210,7 +210,7 @@ private fun Notice(
     description: String,
 ) {
     Column(Modifier.semantics { liveRegion = LiveRegionMode.Polite }, verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        Text(title, style = MaterialTheme.typography.titleMedium)
+        Text(title, style = MaterialTheme.typography.titleSmall)
         Text(description, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
     }
 }

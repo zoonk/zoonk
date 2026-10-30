@@ -107,6 +107,8 @@
     <string name="session_summary_finish">Finish</string>
     <string name="session_summary_save_note">Save your plan so it\'s here next time.</string>
     <string name="session_summary_create_account">Create an account</string>
+    <!-- Above the title of the session's next step. -->
+    <string name="session_next_eyebrow">Up next</string>
     <string name="session_next_start">Start</string>
     <string name="session_next_getting_ready">Getting it ready…</string>
     <string name="session_next_stop">Stop for today</string>

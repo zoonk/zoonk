@@ -8,11 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.adaptive.currentWindowAdaptiveInfoV2
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -26,6 +29,7 @@ import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.window.core.layout.WindowSizeClass
 import com.zoonk.android.R
 import com.zoonk.android.app.AppContainer
 import com.zoonk.android.data.LoadState
@@ -35,6 +39,7 @@ import com.zoonk.android.feature.ceremonies.SessionCeremony
 import com.zoonk.android.feature.player.LessonNotWrittenNotice
 import com.zoonk.android.feature.player.LessonWriting
 import com.zoonk.android.feature.today.TodayRead
+import com.zoonk.android.feature.today.stepsDone
 import com.zoonk.android.navigation.AppNavigator
 import com.zoonk.android.navigation.AppRoute
 import com.zoonk.android.ui.characters.BuddyLook
@@ -42,9 +47,14 @@ import com.zoonk.android.ui.characters.buddyName
 import com.zoonk.android.ui.characters.look
 import com.zoonk.android.ui.components.CelebrationScope
 import com.zoonk.android.ui.components.LoadFailedMessage
+import com.zoonk.android.ui.components.MeterPart
+import com.zoonk.android.ui.components.MeterParts
 import com.zoonk.android.ui.components.NotFoundMessage
 import com.zoonk.android.ui.components.OutlinedButton
+import com.zoonk.android.ui.format.currentLocale
+import com.zoonk.android.ui.format.formatMinutes
 import com.zoonk.android.ui.scaffold.TaskScaffold
+import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.StudyBlock
 import com.zoonk.api.models.StudySession
 import com.zoonk.api.models.TodayGoal
@@ -266,6 +276,11 @@ private fun NextStop(
     val ready = !waiting && refusal == null
     val startsFor = goalId?.takeIf { ready }
     val instead = alternative?.takeIf { !ready && goalId != null }
+    // Main stacks the actions full width below its large breakpoint once an alternative joins them.
+    val stacked =
+        instead != null &&
+            !currentWindowAdaptiveInfoV2().windowSizeClass.isWidthAtLeastBreakpoint(WindowSizeClass.WIDTH_DP_EXPANDED_LOWER_BOUND)
+    val actionWidth = if (stacked) Modifier.fillMaxWidth() else Modifier
 
     LaunchedEffect(waiting) {
         val reread = rereading ?: return@LaunchedEffect
@@ -281,6 +296,7 @@ private fun NextStop(
 
     TaskScaffold(
         onClose = navigator::closeTask,
+        title = { Text(stringResource(R.string.session_summary_eyebrow), maxLines = 1, style = MaterialTheme.typography.titleSmall) },
         bottomBar =
             if (startsFor != null || instead != null || onStop != null || viewModel.failed != null) {
                 {
@@ -298,6 +314,7 @@ private fun NextStop(
                             onStop?.let {
                                 OutlinedButton(
                                     onClick = it,
+                                    modifier = actionWidth,
                                     enabled = !busy,
                                 ) { Text(stringResource(R.string.session_next_stop)) }
                             }
@@ -307,7 +324,11 @@ private fun NextStop(
                                 }
                             }
                             instead?.let { other ->
-                                Button(onClick = { goalId?.let { viewModel.start(day, other, it) } }, enabled = !busy) {
+                                Button(
+                                    onClick = { goalId?.let { viewModel.start(day, other, it) } },
+                                    modifier = actionWidth,
+                                    enabled = !busy,
+                                ) {
                                     Text(
                                         stringResource(
                                             if (refusal != null) R.string.session_next_instead else R.string.session_next_while_waiting,
@@ -323,51 +344,93 @@ private fun NextStop(
                 null
             },
     ) { padding ->
-        Column(
-            modifier = Modifier.padding(padding).fillMaxSize().padding(horizontal = 16.dp, vertical = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Column(Modifier.widthIn(max = 640.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                Text(
-                    stringResource(R.string.session_summary_eyebrow),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.labelLarge,
-                )
-                Row(horizontalArrangement = Arrangement.spacedBy(12.dp), verticalAlignment = Alignment.CenterVertically) {
-                    BlockMark(step)
+        Column(Modifier.padding(padding).fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
+            SessionSegments(day, step, Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth().padding(horizontal = 16.dp))
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(horizontal = 16.dp, vertical = 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                Column(Modifier.widthIn(max = CONTENT_WIDTH).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(
+                        stringResource(R.string.session_next_eyebrow),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
                     Text(blockTitle(step), Modifier.semantics { heading() }, style = MaterialTheme.typography.headlineSmall)
-                }
-                blockDetail(
-                    step,
-                )?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
-                refusal?.let { reason ->
-                    Surface(
-                        Modifier.padding(top = 16.dp).fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.surfaceContainerHigh,
-                        shape = MaterialTheme.shapes.medium,
-                    ) {
-                        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                            LessonNotWrittenNotice(
-                                reason,
-                                onRetry = { goalId?.let { viewModel.start(day, step, it) } },
-                                onOpen = navigator::open,
-                            )
+                    blockDetail(step)?.let {
+                        Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium)
+                    }
+                    StepFacts(step)
+                    refusal?.let { reason ->
+                        Surface(
+                            Modifier.padding(top = 16.dp).fillMaxWidth(),
+                            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                            shape = MaterialTheme.shapes.medium,
+                        ) {
+                            Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                                LessonNotWrittenNotice(
+                                    reason,
+                                    onRetry = { goalId?.let { viewModel.start(day, step, it) } },
+                                    onOpen = navigator::open,
+                                )
+                            }
                         }
                     }
-                }
-                if (waiting) {
-                    Row(
-                        Modifier.padding(top = 16.dp),
-                        horizontalArrangement = Arrangement.spacedBy(12.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        CircularProgressIndicator(Modifier.padding(2.dp))
-                        Text(stringResource(R.string.session_next_getting_ready), style = MaterialTheme.typography.bodyMedium)
+                    if (waiting) {
+                        Row(
+                            Modifier.padding(top = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            CircularProgressIndicator(Modifier.padding(2.dp))
+                            Text(stringResource(R.string.session_next_getting_ready), style = MaterialTheme.typography.bodyMedium)
+                        }
                     }
                 }
             }
         }
     }
+}
+
+/** Main's session header segments: the day's work by its minutes, done in blue and the shown step as the learner's place. */
+@Composable
+private fun SessionSegments(
+    day: DayView,
+    step: DayStep,
+    modifier: Modifier,
+) {
+    val steps = day.steps.filter { it.status != StudyBlock.Status.SKIPPED }
+    val done = MaterialTheme.colorScheme.tertiary
+    val parts =
+        steps.map {
+            val fill =
+                when {
+                    it.status == StudyBlock.Status.COMPLETED -> MeterPart.Fill.Solid(done)
+                    it.position == step.position -> MeterPart.Fill.Place()
+                    else -> MeterPart.Fill.Track
+                }
+            MeterPart(fill, weight = it.estimatedMinutes.coerceAtLeast(1).toFloat())
+        }
+
+    if (parts.isNotEmpty()) MeterParts(parts, modifier, contentDescription = stepsDone(steps.count(DayStep::isFinished), steps.size))
+}
+
+@Composable
+private fun StepFacts(step: DayStep) {
+    val facts =
+        listOfNotNull(
+            formatMinutes(step.estimatedMinutes.toInt(), currentLocale()),
+            stringResource(R.string.today_step_often_tested).takeIf { step.oftenTested },
+        )
+    Text(
+        facts.joinToString(" · "),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.labelMedium.withTabularFigures(),
+    )
 }
 
 @Composable
@@ -397,3 +460,4 @@ private fun StudySession.alternativeTo(step: StudyBlock): DayStep? =
 
 private val OPEN = setOf(StudyBlock.Status.ACTIVE, StudyBlock.Status.PENDING)
 private const val LESSON_CHECK_MILLIS = 5_000L
+private val CONTENT_WIDTH = 640.dp

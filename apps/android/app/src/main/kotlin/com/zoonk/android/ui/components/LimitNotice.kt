@@ -2,7 +2,6 @@ package com.zoonk.android.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -120,11 +119,11 @@ fun LimitActions(
 ) {
     when {
         limit.needsAccount -> {
-            FilledTonalButton(onClick = onCreateAccount) { Text(stringResource(R.string.limit_create_account)) }
+            OutlinedButton(onClick = onCreateAccount) { Text(stringResource(R.string.limit_create_account)) }
         }
 
         limit is Limit.Reached && limit.tier == LimitTier.Free -> {
-            FilledTonalButton(onClick = onSeePlus) { Text(stringResource(R.string.limit_see_plus)) }
+            OutlinedButton(onClick = onSeePlus) { Text(stringResource(R.string.limit_see_plus)) }
         }
     }
 }

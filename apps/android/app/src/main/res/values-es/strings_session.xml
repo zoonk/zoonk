@@ -29,6 +29,7 @@
   "session_energy_glowing_brightest": "0f7dda432d1d1c3b050d26ece6109c0dec475fa75f5995687a08b90f8e17f7a1",
   "session_energy_max": "86ce469e1d4a1c34948658f5a4e00864c2e88969cd501775d6fd0f53c680d994",
   "session_level_up": "0c8e13eda0a22a045c2aaf87da1816439aeb43e29a3d30d719e64ba48f65bb48",
+  "session_next_eyebrow": "9a4bd910739077c5b904e20667add82cd1cd301d47c83c455df82c7cd0abf073",
   "session_next_getting_ready": "c4021b79857ae7bbf2a0b86b69767398fe8a6e0b012b8ee69090fd3e1d0e4241",
   "session_next_instead": "56072d4724a17db3334075a155f1dbd1ba3355e88829ed5be129f9fdfb20b152",
   "session_next_start": "b8c4197a15a471311d41e0c915971af90009ddd117af1a9d3b7d75d79a391139",
@@ -186,6 +187,8 @@
     <string name="session_summary_finish">Terminar</string>
     <string name="session_summary_save_note">Guarda tu plan para tenerlo aquí la próxima vez.</string>
     <string name="session_summary_create_account">Crear una cuenta</string>
+    <!-- Above the title of the session's next step. -->
+    <string name="session_next_eyebrow">A continuación</string>
     <string name="session_next_start">Empezar</string>
     <string name="session_next_getting_ready">Preparándolo…</string>
     <string name="session_next_stop">Terminar por hoy</string>

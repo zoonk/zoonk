@@ -650,7 +650,7 @@ private val DayStep.share: Float
     get() = if (status != StudyBlock.Status.ACTIVE || questions == 0L) 0f else (answered.toFloat() / questions).coerceAtMost(1f)
 
 @Composable
-private fun stepsDone(
+internal fun stepsDone(
     done: Int,
     total: Int,
 ): String {
