@@ -131,9 +131,13 @@ private struct LessonPlayerContent: View {
 
         return activityRenderers.renderer(for: content.template) == nil
       }
-      store.isGuest = learnerSummary?.summary.value?.identity.isAnonymous == true
       await store.load()
       await store.followLatePictures()
+    }
+    // A visitor who starts the lesson as a guest gets the session first and the summary after it.
+    .onChange(of: learnerSummary?.summary.value?.identity.isAnonymous, initial: true) {
+      _, isAnonymous in
+      store.isGuest = isAnonymous == true
     }
     .environment(\.lessonAudio, sounds)
     .onChange(of: store.state?.currentStep?.id) { sounds.stop() }
