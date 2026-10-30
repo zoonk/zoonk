@@ -22,7 +22,7 @@ function withTranslatorComments(xml: string, messages: ReturnType<typeof decodeX
   const comments = new Map(
     [...xml.matchAll(COMMENTED_RESOURCE)].map(({ groups }) => [
       groups?.name,
-      groups?.comment.trim(),
+      groups?.comment?.trim(),
     ]),
   );
 
