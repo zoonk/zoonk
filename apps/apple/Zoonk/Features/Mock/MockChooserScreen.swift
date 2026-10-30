@@ -211,7 +211,10 @@ private struct MockChooser: View {
               detail: precision(option),
               trailing: String(
                 localized: "\(option.questions) q", table: "Mock",
-                comment: "A mock's number of questions; q is short for questions")
+                comment: "A mock's number of questions; q is short for questions"),
+              spokenTrailing: String(
+                localized: "\(option.questions) questions", table: "Mock",
+                comment: "Spoken: a placement length's questions")
             ) {
               length = option.length
             }
@@ -395,7 +398,11 @@ private struct MockChooser: View {
           "\(option.questions) q · ~\(MockLabels.duration(minutes: option.estimatedMinutes))",
         table: "Mock",
         comment:
-          "A mock's number of questions (q is short for questions) and about how long it takes")
+          "A mock's number of questions (q is short for questions) and about how long it takes"),
+      spokenTrailing: String(
+        localized:
+          "\(option.questions) questions, about \(MockLabels.duration(minutes: option.estimatedMinutes))",
+        table: "Mock", comment: "Spoken: a mock's questions and time")
     ) {
       picked = option.id
     }
@@ -403,7 +410,7 @@ private struct MockChooser: View {
 
   private func choiceRow(
     id: String, isPicked: Bool, title: String, detail: String?, trailing: String,
-    action: @escaping () -> Void
+    spokenTrailing: String, action: @escaping () -> Void
   ) -> some View {
     Button(action: action) {
       HStack(alignment: .firstTextBaseline) {
@@ -419,6 +426,7 @@ private struct MockChooser: View {
         Text(trailing)
           .font(.subheadline.monospacedDigit())
           .foregroundStyle(.secondary)
+          .accessibilityLabel(spokenTrailing)
         Image(systemName: "checkmark")
           .fontWeight(.semibold)
           .opacity(isPicked ? 1 : 0)
