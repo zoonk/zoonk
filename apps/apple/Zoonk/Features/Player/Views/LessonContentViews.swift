@@ -91,7 +91,7 @@ enum LessonPictureFrame {
 }
 
 struct LessonPictureView: View {
-  @Environment(\.privateImageLoader) private var privateImages
+  @Environment(\.imageLoader) private var images
   @Environment(\.lessonScreenHeight) private var screenHeight
   @Environment(SessionStore.self) private var session
 
@@ -135,9 +135,9 @@ struct LessonPictureView: View {
     let loading = LessonPicturePlaceholder(alt: asks ? alt : nil, isDrawing: false)
 
     return Group {
-      if let privateImages, privateImages.requiresSession(url) {
+      if let images, images.requiresSession(url) {
         LessonPrivatePicture(
-          loader: privateImages, token: session.authenticatedSession?.bearerToken, url: url,
+          loader: images, token: session.authenticatedSession?.bearerToken, url: url,
           placeholder: loading)
       } else {
         AsyncImage(url: url) { phase in
@@ -231,7 +231,7 @@ private struct PictureFrameLayout: Layout {
 }
 
 private struct LessonPrivatePicture: View {
-  let loader: PrivateImageLoader
+  let loader: ImageLoader
   let token: String?
   let url: URL
   let placeholder: LessonPicturePlaceholder

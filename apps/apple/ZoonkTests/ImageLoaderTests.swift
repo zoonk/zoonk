@@ -3,12 +3,13 @@ import XCTest
 
 @testable import Zoonk
 
-final class PrivateImageLoaderTests: XCTestCase {
+@MainActor
+final class ImageLoaderTests: XCTestCase {
   private let privateURL = URL(
     string: "https://api.zoonk.test/v1/files/courses/owner-id/cover.png")!
 
   func testOnlyTheAPIsOwnFilesNeedTheSession() {
-    let loader = PrivateImageLoader(apiBaseURL: URL(string: "https://api.zoonk.test")!) { _ in
+    let loader = ImageLoader(apiBaseURL: URL(string: "https://api.zoonk.test")!) { _ in
       XCTFail("Expected no request")
       throw URLError(.badURL)
     }
@@ -25,7 +26,7 @@ final class PrivateImageLoaderTests: XCTestCase {
 
   func testLoadsWithTheSessionAndReusesThePictureForThatSession() async throws {
     let fetcher = ImageFetchRecorder(status: 200)
-    let loader = PrivateImageLoader(
+    let loader = ImageLoader(
       apiBaseURL: URL(string: "https://api.zoonk.test")!, fetch: fetcher.fetch)
 
     let firstImage = await loader.image(for: privateURL, token: "session-a")
@@ -39,7 +40,7 @@ final class PrivateImageLoaderTests: XCTestCase {
 
   func testAnotherSessionDoesNotReuseThePreviousSessionsPicture() async {
     let fetcher = ImageFetchRecorder(status: 200)
-    let loader = PrivateImageLoader(
+    let loader = ImageLoader(
       apiBaseURL: URL(string: "https://api.zoonk.test")!, fetch: fetcher.fetch)
 
     _ = await loader.image(for: privateURL, token: "session-a")
@@ -49,9 +50,39 @@ final class PrivateImageLoaderTests: XCTestCase {
     XCTAssertEqual(authorizations, ["Bearer session-a", "Bearer session-b"])
   }
 
+  func testKeepsAPublicPictureInMemoryForEverySessionWithoutSendingIt() async {
+    let fetcher = ImageFetchRecorder(status: 200)
+    let loader = ImageLoader(
+      apiBaseURL: URL(string: "https://api.zoonk.test")!, fetch: fetcher.fetch)
+    let publicURL = URL(string: "https://cdn.zoonk.test/courses/cover.png")!
+
+    XCTAssertNil(loader.cachedImage(for: publicURL, token: nil))
+    _ = await loader.image(for: publicURL, token: "session-a")
+    let again = await loader.image(for: publicURL, token: "session-b")
+
+    XCTAssertNotNil(again)
+    XCTAssertNotNil(loader.cachedImage(for: publicURL, token: nil))
+    let authorizations = await fetcher.authorizations
+    XCTAssertEqual(authorizations, [nil])
+  }
+
+  func testOverlappingLoadsOfOnePictureShareOneRequest() async {
+    let fetcher = ImageFetchRecorder(status: 200)
+    let loader = ImageLoader(
+      apiBaseURL: URL(string: "https://api.zoonk.test")!, fetch: fetcher.fetch)
+
+    async let first = loader.image(for: privateURL, token: "session-a")
+    async let second = loader.image(for: privateURL, token: "session-a")
+    let images = await [first, second]
+
+    XCTAssertEqual(images.compactMap { $0 }.count, 2)
+    let authorizations = await fetcher.authorizations
+    XCTAssertEqual(authorizations, ["Bearer session-a"])
+  }
+
   func testRefusedPictureKeepsTheFallback() async {
     let fetcher = ImageFetchRecorder(status: 401)
-    let loader = PrivateImageLoader(
+    let loader = ImageLoader(
       apiBaseURL: URL(string: "https://api.zoonk.test")!, fetch: fetcher.fetch)
 
     let image = await loader.image(for: privateURL, token: "expired-session")
@@ -68,7 +99,7 @@ private actor ImageFetchRecorder {
     self.status = status
   }
 
-  nonisolated var fetch: PrivateImageLoader.Fetch {
+  nonisolated var fetch: ImageLoader.Fetch {
     { request in try await self.respond(to: request) }
   }
 

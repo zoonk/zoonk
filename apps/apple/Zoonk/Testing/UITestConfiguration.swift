@@ -26,7 +26,7 @@
       } catch {
         return UITestConfiguration(
           dependencies: AppDependencies(
-            clients: clients, session: .preview(), privateImageLoader: .live(),
+            clients: clients, session: .preview(), imageLoader: .live(),
             subscriptionStore: .live()),
           initiallyPresentsAccount: false, fixtureFailure: String(describing: error))
       }
@@ -47,7 +47,7 @@
           clients: clients,
           session: SessionStore.preview(
             account: try fixtures.decode(CurrentAccount.self, "ZOONK_UI_TEST_ACCOUNT")),
-          privateImageLoader: .live(),
+          imageLoader: .live(),
           subscriptionStore: .live(),
           buddyAPI: buddyStatus.map(UITestBuddyAPI.init),
           courseCatalogAPI: courseCatalogAPI(snapshot: catalogSnapshot),

@@ -21,9 +21,9 @@ struct ZoonkApp: App {
   @State private var tutor: TutorStore
   @State private var voice: VoiceServices
   private let cache: AppCache
+  private let images: ImageLoader
   private let initialSheet: AppSheet?
   private let lessonPlayer: LessonPlayerDependencies
-  private let privateImages: PrivateImageLoader
   #if DEBUG
     private let uiTestFixtureFailure: String?
   #endif
@@ -45,13 +45,13 @@ struct ZoonkApp: App {
     _exam = State(initialValue: dependencies.examStore)
     _explain = State(initialValue: dependencies.explainStore)
     _goalContent = State(initialValue: dependencies.goalContentStore)
+    images = dependencies.imageLoader
     _learnerSummary = State(initialValue: dependencies.learnerSummaryStore)
     lessonPlayer = dependencies.lessonPlayer
     _mindMaps = State(initialValue: dependencies.mindMapsStore)
     _plan = State(initialValue: dependencies.planStore)
     _onboarding = State(initialValue: dependencies.onboardingStore)
     _practice = State(initialValue: dependencies.practiceStore)
-    privateImages = dependencies.privateImageLoader
     _progress = State(initialValue: dependencies.progressStore)
     initialSheet = initiallyPresentsAccount ? .account : nil
     _session = State(initialValue: dependencies.sessionStore)
@@ -94,7 +94,7 @@ struct ZoonkApp: App {
         .environment(today)
         .environment(tutor)
         .environment(voice)
-        .environment(\.privateImageLoader, privateImages)
+        .environment(\.imageLoader, images)
         .environment(\.lessonTutor, .buddy)
         .environment(
           \.lessonGuestStart, LessonGuestStart { [session] in await session.continueAsGuest() }

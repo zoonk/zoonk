@@ -6,13 +6,13 @@ struct AppDependencies {
   let examStore: ExamStore
   let explainStore: ExplainStore
   let goalContentStore: GoalContentStore
+  let imageLoader: ImageLoader
   let learnerSummaryStore: LearnerSummaryStore
   let lessonPlayer: LessonPlayerDependencies
   let mindMapsStore: MindMapsStore
   let onboardingStore: OnboardingStore
   let planStore: PlanStore
   let practiceStore: PracticeStore
-  let privateImageLoader: PrivateImageLoader
   let progressStore: ProgressStore
   let sessionStore: SessionStore
   let settingsStore: SettingsStore
@@ -34,7 +34,7 @@ struct AppDependencies {
     return AppDependencies(
       clients: clients,
       session: sessionStore,
-      privateImageLoader: .live(configuration: configuration),
+      imageLoader: .live(configuration: configuration),
       subscriptionStore: .live(),
       mindMapsAPI: mindMapsAPI)
   }
@@ -42,7 +42,7 @@ struct AppDependencies {
   init(
     clients: APIClientFactory,
     session: SessionStore,
-    privateImageLoader: PrivateImageLoader,
+    imageLoader: ImageLoader,
     subscriptionStore: AppStoreSubscriptionStore,
     buddyAPI: (any BuddyAPIClient)? = nil,
     courseCatalogAPI: (any CourseCatalogAPIClient)? = nil,
@@ -78,12 +78,12 @@ struct AppDependencies {
       preferences: settingsStore.preferences,
       blockFinished: { studySessionStore.apply($1, sessionID: $0) })
     goalContentStore = GoalContentStore(api: GoalContentAPI(clients: clients), cache: cache)
+    self.imageLoader = imageLoader
     mindMapsStore = MindMapsStore(
       api: mindMapsAPI ?? MindMapsAPI(clients: clients), cache: cache)
     onboardingStore = OnboardingStore(clients: clients, cache: cache, session: session)
     planStore = PlanStore(api: PlanAPI(clients: clients), cache: cache)
     practiceStore = PracticeStore(api: PracticeAPI(clients: clients), cache: cache)
-    self.privateImageLoader = privateImageLoader
     progressStore = ProgressStore(
       api: progressAPI ?? ProgressAPI(clients: clients),
       cache: cache)

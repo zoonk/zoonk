@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct CourseArtwork: View {
-  @Environment(\.privateImageLoader) private var privateImages
+  @Environment(\.imageLoader) private var images
   @Environment(SessionStore.self) private var session: SessionStore?
 
   let imageURL: URL?
@@ -11,26 +11,13 @@ struct CourseArtwork: View {
 
   var body: some View {
     Group {
-      if let imageURL, let privateImages, privateImages.requiresSession(imageURL) {
-        PrivateArtworkImage(
-          loader: privateImages,
+      if let imageURL, let images {
+        ArtworkImage(
+          loader: images,
           token: session?.authenticatedSession?.bearerToken,
           url: imageURL
         ) { phase in
           artwork(phase)
-        }
-      } else if let imageURL {
-        AsyncImage(url: imageURL) { phase in
-          switch phase {
-          case .success(let image):
-            artwork(.loaded(image))
-          case .empty:
-            artwork(.loading)
-          case .failure:
-            artwork(.failed)
-          @unknown default:
-            artwork(.failed)
-          }
         }
       } else {
         fallback
@@ -83,27 +70,23 @@ private enum ArtworkPhase {
   case loading
 }
 
-private struct PrivateArtworkImage<Content: View>: View {
+private struct ArtworkImage<Content: View>: View {
   @State private var phase = ArtworkPhase.loading
 
-  let loader: PrivateImageLoader
+  let loader: ImageLoader
   let token: String?
   let url: URL
   @ViewBuilder let content: (ArtworkPhase) -> Content
 
   var body: some View {
-    content(phase)
-      .task(id: PrivateArtworkRequest(token: token, url: url)) {
+    // A picture already in memory shows in the first frame, before the task runs.
+    content(loader.cachedImage(for: url, token: token).map { .loaded(Image(uiImage: $0)) } ?? phase)
+      .task(id: ArtworkRequest(token: token, url: url)) {
         await load()
       }
   }
 
   private func load() async {
-    guard let token else {
-      phase = .failed
-      return
-    }
-
     phase = .loading
     let image = await loader.image(for: url, token: token)
 
@@ -115,7 +98,7 @@ private struct PrivateArtworkImage<Content: View>: View {
   }
 }
 
-private struct PrivateArtworkRequest: Equatable {
+private struct ArtworkRequest: Equatable {
   let token: String?
   let url: URL
 }

@@ -60,7 +60,7 @@ struct AppView: View {
   let dependencies = AppDependencies(
     clients: .live(baseURL: AppConfiguration.current.apiBaseURL),
     session: .preview(),
-    privateImageLoader: .live(),
+    imageLoader: .live(),
     subscriptionStore: .live())
 
   AppView()
