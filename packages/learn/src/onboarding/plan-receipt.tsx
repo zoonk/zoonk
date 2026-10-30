@@ -3,13 +3,13 @@
 import { type GoalView } from "@zoonk/core/goals/contract";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
-import { parseCefrScore } from "@zoonk/utils/cefr";
 import { useExtracted } from "next-intl";
 import { FactChip, FactChips } from "../_components/fact-chips";
 import { daysUntilIsoDate, useFormatIsoDate } from "../_utils/iso-date";
 import { useFormatDuration } from "../_utils/time-format";
+import { readSetupLevel } from "./_utils/setup-level";
 import { OnboardingRailSection } from "./onboarding-rail";
-import { readLevelChoice, toLevelAnswer, useOwnLevelLabels } from "./steps/level-choices";
+import { useOwnLevelLabels } from "./steps/level-choices";
 import { useDetailRows, useLanguageRows } from "./understood/use-understood-rows";
 
 type ReceiptFact = { count?: string; id: string; label: string; mono?: boolean; value: string };
@@ -23,20 +23,13 @@ function useLevelText() {
   const ownLevels = useOwnLevelLabels();
 
   return function levelText(details: GoalView["details"]): string | null {
-    const { level, levelNote } = details;
+    const level = readSetupLevel(details);
 
-    if (typeof level === "string" && parseCefrScore(level) !== null) {
-      return level;
+    if (!level) {
+      return null;
     }
 
-    if (typeof levelNote === "string" && levelNote.trim() !== "") {
-      return levelNote;
-    }
-
-    const choice = readLevelChoice(details);
-    const own = choice && toLevelAnswer(choice);
-
-    return own ? ownLevels[own] : null;
+    return level.kind === "own" ? ownLevels[level.level] : level.text;
   };
 }
 

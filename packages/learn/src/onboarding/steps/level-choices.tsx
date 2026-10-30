@@ -3,6 +3,7 @@
 import { type OnboardingOwnLevel } from "@zoonk/core/view-models/onboarding/contract";
 import { useExtracted } from "next-intl";
 import { useFormatDuration } from "../../_utils/time-format";
+import { readOwnLevel } from "../_utils/setup-level";
 import { type Choice, ChoiceList } from "../choice-list";
 
 const QUICK_TEST_MINUTES = 2;
@@ -11,24 +12,18 @@ const QUICK_TEST = "test";
 
 export type LevelChoice = OnboardingOwnLevel | typeof QUICK_TEST;
 
-const OWN_LEVELS: readonly OnboardingOwnLevel[] = ["advanced", "basic", "intermediate", "none"];
-
-function isOwnLevel(value: unknown): value is OnboardingOwnLevel {
-  return OWN_LEVELS.some((level) => level === value);
-}
-
 export function toLevelAnswer(choice: LevelChoice): OnboardingOwnLevel | null {
   return choice === QUICK_TEST ? null : choice;
 }
 
 export function readLevelChoice(details: Record<string, unknown>): LevelChoice | null {
-  const { answered, level } = details;
+  const own = readOwnLevel(details);
 
-  if (isOwnLevel(level)) {
-    return level;
+  if (own) {
+    return own;
   }
 
-  return Array.isArray(answered) && answered.includes("level") ? QUICK_TEST : null;
+  return Array.isArray(details.answered) && details.answered.includes("level") ? QUICK_TEST : null;
 }
 
 export function useOwnLevelLabels(): Record<OnboardingOwnLevel, string> {
