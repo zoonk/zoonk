@@ -28,14 +28,10 @@ final class MockEssayGradingTests: XCTestCase {
     let grading = Task { await run.gradeEssays() }
     await transport.waitForHeldGrading()
     clock.now = at(day: 30, hour: 0, minute: 1)
+    run.offerGradingOnANewDay()
     await transport.release()
     await grading.value
-    guard case .limitReached = run.essayGrading else {
-      return XCTFail("the day's essay grades were used up")
-    }
 
-    clock.now = at(day: 30, hour: 8)
-    run.offerGradingOnANewDay()
     XCTAssertEqual(run.essayGrading, .idle)
   }
 

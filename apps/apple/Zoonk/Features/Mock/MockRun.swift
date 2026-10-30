@@ -336,6 +336,7 @@ final class MockRun {
     case .done(let allGraded):
       await mock.refresh()
       essayGrading = allGraded ? .idle : .limitReached(on: askedOn)
+      offerGradingOnANewDay()
     case .obsolete:
       essayGrading = .idle
     case .failed, nil:
