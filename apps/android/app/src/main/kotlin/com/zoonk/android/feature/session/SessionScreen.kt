@@ -188,18 +188,23 @@ private fun SessionSummaryContent(
 
     // The day was read before work was added elsewhere: reading both again shows that work's next step.
     if (!stopped && !summary.finished) {
-        LaunchedEffect(summary) {
-            app.studySessions.day[session.id].refresh()
-            app.studySessions.summary[session.id].refresh()
+        LaunchedEffect(session.id) {
+            val day = app.studySessions.day[session.id]
+            val again = app.studySessions.summary[session.id]
+            day.refresh()
+            again.refresh()
+            val next = day.state.value.value?.nextBlockId
+            val finished = again.state.value.value?.finished
+            // This read leaves out work Today replaces, such as a challenge Plus no longer covers.
+            if (next == null && finished == false) navigator.open(AppRoute.Today)
         }
         SessionLoading(navigator::closeTask)
         return
     }
 
-    // Showing a ceremony marks it shown, which reads the summary again without it: the first one stays until closed.
-    var ceremony by remember(session.id) { mutableStateOf(summary.ceremony) }
-    ceremony?.let { milestone ->
-        SessionCeremony(app, milestone) { ceremony = null }
+    (viewModel.ceremony ?: summary.ceremony?.takeUnless { viewModel.ceremonyClosed })?.let { milestone ->
+        LaunchedEffect(milestone) { viewModel.holdCeremony(milestone) }
+        SessionCeremony(app, milestone, viewModel::closeCeremony)
         return
     }
 

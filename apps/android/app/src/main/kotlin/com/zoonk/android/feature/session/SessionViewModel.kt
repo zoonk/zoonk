@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zoonk.android.data.MutationResult
 import com.zoonk.android.navigation.AppRoute
+import com.zoonk.api.models.Milestone
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -25,10 +26,26 @@ class SessionViewModel(
     var failed by mutableStateOf<SessionAction?>(null)
         private set
 
+    /** The summary's ceremony from when it shows until it's closed: showing it marks it shown, so reading the summary again leaves it out. */
+    var ceremony by mutableStateOf<Milestone?>(null)
+        private set
+
+    var ceremonyClosed by mutableStateOf(false)
+        private set
+
     private val opened = Channel<AppRoute>(Channel.BUFFERED)
 
     /** Where a tap leads, in place of the session screen. */
     val routes: Flow<AppRoute> = opened.receiveAsFlow()
+
+    fun holdCeremony(milestone: Milestone) {
+        if (!ceremonyClosed) ceremony = milestone
+    }
+
+    fun closeCeremony() {
+        ceremony = null
+        ceremonyClosed = true
+    }
 
     fun start(
         day: DayView,
