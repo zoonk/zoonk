@@ -30,9 +30,11 @@
   "session_energy_max": "0ae36156b07f20cb0542c96d13f3546260944dd44549e2b9e5ddcd2b0d0bf7b7",
   "session_level_up": "0b9fbcfb39acb2a474d3c57c1e97f0c06790cee327e9a89f84e4afbcca73ef68",
   "session_next_getting_ready": "4c69eedb4ba162ed9bc83ff860a1906a048ba930d9e2ba01afc1ce21ae1c3613",
+  "session_next_instead": "656d26b0d6d095fe89bc9ae59f053f090d58eeede384c457635b12aaa0e183fd",
   "session_next_start": "3f280bf14e2b4c501ae76d10fcb78c66a294c88572e588ce77b46c1069eeb7ae",
   "session_next_stop": "fb866918fed036f4cb7e7b115333c93ba090ea981e2964581896d342e7fd5d95",
   "session_next_stop_failed": "215f669d94b4de038a638f60daa2a72ee7699d05071e96380aa62954c93db622",
+  "session_next_while_waiting": "76ae9cabdc58eb78019c81e8efd98a8aaba4719a74297f334d04ee250777ec7c",
   "session_opening_slow": "f9c63825fe3afdc0bf79b4929071f4b66028789e744f0b3fd5ea67fd0375f611",
   "session_opening_very_slow": "a52bf4df1ddcbedfed4fa631454db6595d4e078816d2f5fe6b49eb00e38d3871",
   "session_summary_back_on": "7dd438ecebf23d1dbfd1c66c195cf8aac7690d3c5399ddeb60013b234b40460c",
@@ -178,4 +180,8 @@
     <string name="session_next_getting_ready">Wir bereiten alles vor…</string>
     <string name="session_next_stop">Für heute aufhören</string>
     <string name="session_next_stop_failed">Wir konnten die Lerneinheit nicht beenden. Versuch es noch einmal.</string>
+    <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->
+    <string name="session_next_while_waiting">In der Zwischenzeit: %1$s</string>
+    <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
+    <string name="session_next_instead">Stattdessen: %1$s</string>
 </resources>

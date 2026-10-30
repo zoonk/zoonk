@@ -182,7 +182,7 @@ class StudyOpener(
         val blockId = step.id ?: return null
         val lessonId = step.lessonId
 
-        if (step.kind == StudyBlock.Kind.LEARN && step.screen == StudyBlock.Screen.SESSION && lessonId != null) {
+        if (lessonId != null && step.isUnwrittenLesson()) {
             return unwritten(session, sessionId, blockId, lessonId)
         }
 
@@ -305,6 +305,9 @@ class StudyOpener(
         val STARTABLE = setOf(OpenedStudyDay.TargetStatus.NEXT, OpenedStudyDay.TargetStatus.RESOLVED)
     }
 }
+
+/** A lesson step whose lesson is picked but not written, which a tap asks [StudyOpener] to write. */
+internal fun DayStep.isUnwrittenLesson(): Boolean = kind == StudyBlock.Kind.LEARN && screen == StudyBlock.Screen.SESSION && lessonId != null
 
 /** A lesson step whose lesson isn't made yet, which [StudyOpener] opens on the session screen to wait for it. */
 internal fun DayStep.waitsForItsLesson(): Boolean =

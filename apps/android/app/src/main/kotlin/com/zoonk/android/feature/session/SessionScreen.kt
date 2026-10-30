@@ -96,6 +96,7 @@ fun SessionScreen(
                     day.goalId ?: shown.today.goal.id,
                     asked = false,
                     notWritten = null,
+                    alternative = null,
                     refresh = null,
                     onStop = null,
                     navigator = navigator,
@@ -144,6 +145,7 @@ private fun SavedDay(
                     goalId = session.goalId,
                     asked = opened != null,
                     notWritten = opened?.let { app.studyOpener.notWritten(it.id) },
+                    alternative = session.alternativeTo(step),
                     refresh = { app.studySessions.day[sessionId].refresh() },
                     onStop = if (session.sessionBar.completed > 0) ({ viewModel.stop(sessionId) }) else null,
                     navigator = navigator,
@@ -239,8 +241,9 @@ private fun SessionSummaryContent(
  * The day's next step, or the one a tap opened when its lesson isn't made yet. That wait reads the
  * day again until the lesson is there, then opens it, since the tap asked for it; a link or a
  * screen restored later waits for Start instead. [notWritten] says, in place of Start, why the API
- * wouldn't write the lesson the tap asked for. [refresh] is null on a day not opened yet, which has
- * no lesson to wait for; [onStop] once the session has work done.
+ * wouldn't write the lesson the tap asked for; [alternative] is work to do meanwhile or instead.
+ * [refresh] is null on a day not opened yet, which has no lesson to wait for; [onStop] once the
+ * session has work done.
  */
 @Composable
 private fun NextStop(
@@ -250,6 +253,7 @@ private fun NextStop(
     goalId: UUID?,
     asked: Boolean,
     notWritten: LessonWriting?,
+    alternative: DayStep?,
     refresh: (suspend () -> Unit)?,
     onStop: (() -> Unit)?,
     navigator: AppNavigator,
@@ -258,7 +262,10 @@ private fun NextStop(
     val waiting = rereading != null
     var waited by remember(step.id) { mutableStateOf(false) }
     val busy = viewModel.busy != null
-    val startsFor = goalId?.takeIf { !waiting && notWritten == null }
+    val refusal = notWritten?.takeIf { step.isUnwrittenLesson() }
+    val ready = !waiting && refusal == null
+    val startsFor = goalId?.takeIf { ready }
+    val instead = alternative?.takeIf { !ready && goalId != null }
 
     LaunchedEffect(waiting) {
         val reread = rereading ?: return@LaunchedEffect
@@ -275,7 +282,7 @@ private fun NextStop(
     TaskScaffold(
         onClose = navigator::closeTask,
         bottomBar =
-            if (startsFor != null || onStop != null) {
+            if (startsFor != null || instead != null || onStop != null || viewModel.failed != null) {
                 {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         when (viewModel.failed) {
@@ -297,6 +304,16 @@ private fun NextStop(
                             startsFor?.let { goal ->
                                 Button(onClick = { viewModel.start(day, step, goal) }, enabled = !busy) {
                                     Text(stringResource(R.string.session_next_start))
+                                }
+                            }
+                            instead?.let { other ->
+                                Button(onClick = { goalId?.let { viewModel.start(day, other, it) } }, enabled = !busy) {
+                                    Text(
+                                        stringResource(
+                                            if (refusal != null) R.string.session_next_instead else R.string.session_next_while_waiting,
+                                            blockTitle(other),
+                                        ),
+                                    )
                                 }
                             }
                         }
@@ -323,7 +340,7 @@ private fun NextStop(
                 blockDetail(
                     step,
                 )?.let { Text(it, color = MaterialTheme.colorScheme.onSurfaceVariant, style = MaterialTheme.typography.bodyMedium) }
-                notWritten?.let { reason ->
+                refusal?.let { reason ->
                     Surface(
                         Modifier.padding(top = 16.dp).fillMaxWidth(),
                         color = MaterialTheme.colorScheme.surfaceContainerHigh,
@@ -370,6 +387,13 @@ private fun SessionLoading(onClose: () -> Unit) {
         }
     }
 }
+
+/** Main's `findAlternativeStudyBlock`: other work to do while [step]'s lesson waits, never work that waits itself. */
+private fun StudySession.alternativeTo(step: StudyBlock): DayStep? =
+    blocks
+        .firstOrNull {
+            it.id != step.id && it.status == StudyBlock.Status.PENDING && it.kind != StudyBlock.Kind.LEARN && it.waitReason == null
+        }?.toDayStep()
 
 private val OPEN = setOf(StudyBlock.Status.ACTIVE, StudyBlock.Status.PENDING)
 private const val LESSON_CHECK_MILLIS = 5_000L

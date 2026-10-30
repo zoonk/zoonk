@@ -111,4 +111,8 @@
     <string name="session_next_getting_ready">Getting it ready…</string>
     <string name="session_next_stop">Stop for today</string>
     <string name="session_next_stop_failed">We couldn\'t stop the session. Try again.</string>
+    <!-- A button on the session's next step while its lesson is prepared: %1$s is another step's title, such as "Review", to do meanwhile. -->
+    <string name="session_next_while_waiting">While you wait: %1$s</string>
+    <!-- A button on the session's next step when its lesson can't be written now: %1$s is another step's title, such as "Review", to do instead. -->
+    <string name="session_next_instead">Instead: %1$s</string>
 </resources>

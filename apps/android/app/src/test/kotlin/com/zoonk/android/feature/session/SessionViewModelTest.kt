@@ -96,6 +96,8 @@ class SessionViewModelTest {
             viewModel.readUnfinished(SESSION)
             advanceUntilIdle()
 
+            assertEquals(1, api.sessionReads)
+            assertEquals(1, api.summaryReads)
             assertEquals(emptyList<AppRoute>(), routes)
         }
 
