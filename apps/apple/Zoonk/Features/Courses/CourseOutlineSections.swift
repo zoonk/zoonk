@@ -4,7 +4,7 @@ import SwiftUI
 /// panes, so folding or unfolding keeps it.
 struct CourseOutlineDisclosures {
   var expanded: [String: Bool] = [:]
-  var showsAll: Set<String> = []
+  var showsAll: [String: Bool] = [:]
 }
 
 extension Binding<CourseOutlineDisclosures> {
@@ -16,30 +16,28 @@ extension Binding<CourseOutlineDisclosures> {
     }
   }
 
-  fileprivate func isShowingAll(_ key: String) -> Binding<Bool> {
+  fileprivate func isShowingAll(_ key: String, otherwise: Bool) -> Binding<Bool> {
     Binding<Bool> {
-      wrappedValue.showsAll.contains(key)
+      wrappedValue.showsAll[key] ?? otherwise
     } set: {
-      if $0 {
-        wrappedValue.showsAll.insert(key)
-      } else {
-        wrappedValue.showsAll.remove(key)
-      }
+      wrappedValue.showsAll[key] = $0
     }
   }
 }
 
-/// The level a course's outline opens at: the learner's when their plan follows the course, else the
-/// first. While a signed-in learner's summary is on its way none opens, so theirs opens in place
-/// without the first closing above it.
-enum OutlineOpening: Equatable {
+/// Where the learner's plan is in a course's outline. While a signed-in learner's summary is on its
+/// way no level opens and the example plan's numbers stay hidden, so neither changes under them.
+enum OutlineLearner: Equatable {
   case waiting
-  case first
-  case level(CourseLevel)
+  /// A visitor, or a learner whose plan doesn't follow the course.
+  case noPlan
+  /// `chapterID` holds the plan's next lesson; nil while that lesson isn't written into a chapter,
+  /// when `level` still says where the plan is.
+  case follows(chapterID: String?, level: CourseLevel?)
 
   init(signedIn: Bool, summary: LoadState<LearnerSummary>, courseID: String) {
     guard signedIn else {
-      self = .first
+      self = .noPlan
       return
     }
 
@@ -48,21 +46,42 @@ enum OutlineOpening: Equatable {
       self = .waiting
     case .loaded(let summary):
       self =
-        summary.goals.first { $0.courseID == courseID }?.courseLevel.map { .level($0) } ?? .first
+        summary.goals.first { $0.courseID == courseID }
+        .map { .follows(chapterID: $0.courseChapterID, level: $0.courseLevel) } ?? .noPlan
     case .empty, .failed:
-      self = .first
+      self = .noPlan
     }
   }
+
+  /// The example plan helps someone deciding; a learner whose plan follows the course has their own.
+  var showsExampleNumbers: Bool { self == .noPlan }
 
   func opens(_ level: CourseLevel, isFirst: Bool) -> Bool {
     switch self {
     case .waiting:
       false
-    case .first:
+    case .noPlan, .follows(_, nil):
       isFirst
-    case .level(let open):
+    case .follows(_, let open?):
       open == level
     }
+  }
+
+  func isHere(chapterID: String) -> Bool {
+    if case .follows(let here?, _) = self {
+      return here == chapterID
+    }
+
+    return false
+  }
+
+  func isHere(level: CourseLevel) -> Bool {
+    self == .follows(chapterID: nil, level: level)
+  }
+
+  /// A long list opens its fold when the fold hides the learner's chapter.
+  func unfolds(_ chapterIDs: [String]) -> Bool {
+    chapterIDs.contains { isHere(chapterID: $0) }
   }
 }
 
@@ -72,7 +91,7 @@ struct CourseOutlineSections: View {
   let exam: CoursePlanExample.Exam?
   let lead: String?
   let minutes: Int?
-  let opening: OutlineOpening
+  let learner: OutlineLearner
   @Binding var disclosures: CourseOutlineDisclosures
 
   var body: some View {
@@ -82,7 +101,7 @@ struct CourseOutlineSections: View {
     )
 
     Section {
-      if let estimate, !chapters.isEmpty {
+      if let estimate, !chapters.isEmpty, learner.showsExampleNumbers {
         planLine(estimate)
           .font(.subheadline)
           .foregroundStyle(.secondary)
@@ -114,13 +133,20 @@ struct CourseOutlineSections: View {
 
     if case .byDate(_, _, let areas) = estimate?.reach, !chapters.isEmpty {
       CourseAreaOutline(
-        areas: areas, chapters: chapters, course: detail.course, places: places,
+        areas: areas, chapters: chapters, course: detail.course, learner: learner, places: places,
         disclosures: $disclosures)
-    } else {
-      ForEach(Array(courseLevelBands(chapters).enumerated()), id: \.element.id) { index, band in
-        CourseLevelOutline(
-          band: band, course: detail.course, isOpen: opening.opens(band.level, isFirst: index == 0),
-          places: places, disclosures: $disclosures)
+    } else if !chapters.isEmpty {
+      let bands = courseLevelBands(chapters)
+
+      ForEach(detail.course.levels, id: \.self) { level in
+        if let band = bands.first(where: { $0.level == level }) {
+          CourseLevelOutline(
+            band: band, course: detail.course, learner: learner,
+            isOpen: learner.opens(level, isFirst: level == bands.first?.level),
+            places: learner.showsExampleNumbers ? places : [:], disclosures: $disclosures)
+        } else {
+          UnwrittenLevel(level: level, isHere: learner.isHere(level: level))
+        }
       }
     }
   }
@@ -155,10 +181,11 @@ struct CourseOutlineSections: View {
     }
 
     let lessonText = String(
-      localized: "\(lessons.count) short lessons", table: "Courses",
-      comment: "How many lessons a course or a chapter has")
-    let minutes = lessons.reduce(0) { $0 + $1.estimatedMinutes }
-    return [chapterText, lessonText, catalogDurationText(minutes: minutes)].joined(separator: " · ")
+      localized: "\(lessons.count) lessons written so far", table: "Courses",
+      comment:
+        "After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now."
+    )
+    return [chapterText, lessonText].joined(separator: " · ")
   }
 }
 
@@ -167,6 +194,7 @@ private struct CourseLevelOutline: View {
 
   let band: CourseLevelBand
   let course: Course
+  let learner: OutlineLearner
   let isOpen: Bool
   let places: [String: CoursePlanEstimate.ChapterPlace]
   @Binding var disclosures: CourseOutlineDisclosures
@@ -178,7 +206,8 @@ private struct CourseLevelOutline: View {
     Section {
       DisclosureGroup(isExpanded: isExpanded) {
         OutlineChapterRows(
-          chapters: band.chapters, course: course, showsAll: $disclosures.isShowingAll(key),
+          chapters: band.chapters, course: course, learner: learner,
+          disclosures: $disclosures, key: key,
           mark: { chapter in places[chapter.id].flatMap(weekText) })
       } label: {
         VStack(alignment: .leading, spacing: 2) {
@@ -186,8 +215,7 @@ private struct CourseLevelOutline: View {
             Text(aside)
               .font(.footnote.monospacedDigit())
           } label: {
-            Text(band.level.localizedTitle)
-              .font(.headline)
+            LevelTitle(level: band.level, isHere: learner.isHere(level: band.level))
           }
 
           if !isExpanded.wrappedValue {
@@ -226,11 +254,86 @@ private struct CourseLevelOutline: View {
   }
 }
 
+/// A level the course covers with no chapter written yet, so a learner sees the whole course it
+/// promises. It has nothing to open.
+private struct UnwrittenLevel: View {
+  let level: CourseLevel
+  let isHere: Bool
+
+  var body: some View {
+    Section {
+      VStack(alignment: .leading, spacing: 2) {
+        LevelTitle(level: level, isHere: isHere)
+
+        Text(
+          "Not written yet. Zoonk writes its chapters as learners reach it.", tableName: "Courses",
+          comment:
+            "Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level."
+        )
+        .font(.subheadline)
+        .foregroundStyle(.secondary)
+      }
+      .accessibilityElement(children: .combine)
+    }
+  }
+}
+
+private struct LevelTitle: View {
+  let level: CourseLevel
+  let isHere: Bool
+
+  var body: some View {
+    ViewThatFits(in: .horizontal) {
+      HStack(alignment: .firstTextBaseline, spacing: 12) {
+        title
+        here
+      }
+
+      VStack(alignment: .leading, spacing: 2) {
+        title
+        here
+      }
+    }
+  }
+
+  private var title: some View {
+    Text(level.localizedTitle)
+      .font(.headline)
+  }
+
+  @ViewBuilder
+  private var here: some View {
+    if isHere {
+      YouAreHere()
+    }
+  }
+}
+
+/// Marks the chapter of the next lesson in the learner's plan, or its level while that lesson isn't
+/// written into a chapter yet.
+private struct YouAreHere: View {
+  var body: some View {
+    HStack(spacing: 6) {
+      Image(systemName: "smallcircle.filled.circle.fill")
+        .symbolRenderingMode(.hierarchical)
+        .imageScale(.small)
+        .accessibilityHidden(true)
+
+      Text(
+        "You are here", tableName: "Courses",
+        comment: "On a course's outline, marks the chapter or level the learner's plan is at")
+    }
+    .font(.footnote)
+    .foregroundStyle(.success)
+  }
+}
+
 /// A chapter the estimate can't place in an area yet isn't listed.
 private struct CourseAreaOutline: View {
   let areas: [CoursePlanEstimate.Area]
   let chapters: [CourseChapter]
   let course: Course
+  let learner: OutlineLearner
   let places: [String: CoursePlanEstimate.ChapterPlace]
   @Binding var disclosures: CourseOutlineDisclosures
 
@@ -245,7 +348,9 @@ private struct CourseAreaOutline: View {
       Section {
         areaRows(chapters: chapters, key: "areas")
       } header: {
-        Text(areaFit(name: names.first, chapters: chapters))
+        if learner.showsExampleNumbers {
+          Text(areaFit(name: names.first, chapters: chapters))
+        }
       }
     } else {
       ForEach(names, id: \.self) { name in
@@ -267,9 +372,11 @@ private struct CourseAreaOutline: View {
                   .font(.headline)
               }
 
-              Text(areaFit(name: name, chapters: areaChapters))
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
+              if learner.showsExampleNumbers {
+                Text(areaFit(name: name, chapters: areaChapters))
+                  .font(.subheadline)
+                  .foregroundStyle(.secondary)
+              }
             }
             .accessibilityElement(children: .combine)
           }
@@ -284,10 +391,15 @@ private struct CourseAreaOutline: View {
     }
 
     return OutlineChapterRows(
-      chapters: ordered, course: course, showsAll: $disclosures.isShowingAll(key), mark: mark)
+      chapters: ordered, course: course, learner: learner, disclosures: $disclosures, key: key,
+      mark: mark)
   }
 
   private func mark(_ chapter: CourseChapter) -> String? {
+    guard learner.showsExampleNumbers else {
+      return nil
+    }
+
     guard let place = places[chapter.id], let weeks = weekText(place) else {
       return String(
         localized: "Left out", table: "Courses",
@@ -400,23 +512,29 @@ private struct OutlineChapterRows: View {
 
   let chapters: [CourseChapter]
   let course: Course
-  @Binding var showsAll: Bool
+  let learner: OutlineLearner
+  @Binding var disclosures: CourseOutlineDisclosures
+  let key: String
   let mark: (CourseChapter) -> String?
 
   var body: some View {
     let folds = chapters.count >= Self.foldedFrom
+    let showsAll = $disclosures.isShowingAll(
+      key, otherwise: learner.unfolds(chapters.dropFirst(Self.shown).map(\.id)))
 
-    ForEach(folds && !showsAll ? Array(chapters.prefix(Self.shown)) : chapters) { chapter in
+    ForEach(folds && !showsAll.wrappedValue ? Array(chapters.prefix(Self.shown)) : chapters) {
+      chapter in
       NavigationLink(value: CourseDestination.chapter(ChapterReference((course, chapter)))) {
-        OutlineChapterRow(chapter: chapter, mark: mark(chapter))
+        OutlineChapterRow(
+          chapter: chapter, isHere: learner.isHere(chapterID: chapter.id), mark: mark(chapter))
       }
     }
 
     if folds {
       Button {
-        showsAll.toggle()
+        showsAll.wrappedValue.toggle()
       } label: {
-        if showsAll {
+        if showsAll.wrappedValue {
           Text(
             "Show fewer chapters", tableName: "Courses", comment: "Folds a long list of chapters")
         } else {
@@ -431,6 +549,7 @@ private struct OutlineChapterRows: View {
 
 private struct OutlineChapterRow: View {
   let chapter: CourseChapter
+  let isHere: Bool
   let mark: String?
 
   var body: some View {
@@ -440,16 +559,20 @@ private struct OutlineChapterRow: View {
         .foregroundStyle(.tertiary)
 
       VStack(alignment: .leading, spacing: 4) {
-        ViewThatFits(in: .horizontal) {
-          HStack(alignment: .firstTextBaseline) {
-            title
-            Spacer(minLength: 8)
-            markText
-          }
+        Text(chapter.title)
+          .font(.body.weight(.semibold))
 
-          VStack(alignment: .leading, spacing: 2) {
-            title
-            markText
+        if isHere || mark != nil {
+          HStack(alignment: .firstTextBaseline, spacing: 12) {
+            if isHere {
+              YouAreHere()
+            }
+
+            if let mark {
+              Text(mark)
+                .font(.footnote.monospacedDigit())
+                .foregroundStyle(.secondary)
+            }
           }
         }
 
@@ -459,20 +582,6 @@ private struct OutlineChapterRow: View {
             .foregroundStyle(.secondary)
         }
       }
-    }
-  }
-
-  private var title: some View {
-    Text(chapter.title)
-      .font(.body.weight(.semibold))
-  }
-
-  @ViewBuilder
-  private var markText: some View {
-    if let mark {
-      Text(mark)
-        .font(.footnote.monospacedDigit())
-        .foregroundStyle(.secondary)
     }
   }
 }

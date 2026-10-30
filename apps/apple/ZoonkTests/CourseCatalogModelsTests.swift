@@ -123,6 +123,7 @@ extension Course {
       valueProposition: "Find your way around the night sky."),
     language: "en",
     languageFlag: nil,
+    levels: [.beginner],
     organization: .testFixture,
     quickTestMinutes: 2,
     slug: "astronomy",

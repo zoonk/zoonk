@@ -957,6 +957,101 @@
         }
       }
     },
+    "%lld lessons written so far" : {
+      "comment" : "After the course's chapter count. Zoonk writes more lessons as learners reach them, so this counts only those written until now.",
+      "localizations" : {
+        "de" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bisher %lld Lektion erstellt"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Bisher %lld Lektionen erstellt"
+                }
+              }
+            }
+          }
+        },
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lesson written so far"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "new",
+                  "value" : "%lld lessons written so far"
+                }
+              }
+            }
+          }
+        },
+        "es" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lección preparada hasta ahora"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld lecciones preparadas hasta ahora"
+                }
+              }
+            }
+          }
+        },
+        "fr" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçon préparée à ce jour"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld leçons préparées à ce jour"
+                }
+              }
+            }
+          }
+        },
+        "pt" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aula criada até agora"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld aulas criadas até agora"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "%lld minutes" : {
       "comment" : "How long a lesson takes",
       "localizations" : {
@@ -3906,6 +4001,35 @@
         }
       }
     },
+    "Not written yet. Zoonk writes its chapters as learners reach it." : {
+      "comment" : "Under the name of a course's level, such as Intermediate, that has no chapters yet. “it” is that level.",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch nicht erstellt. Zoonk erstellt die Kapitel, sobald Lernende dieses Level erreichen."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aún sin preparar. Zoonk prepara sus capítulos a medida que los estudiantes llegan a este nivel."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas encore préparé. Zoonk prépare ses chapitres quand les apprenants atteignent ce niveau."
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ainda sem conteúdo. O Zoonk cria os capítulos conforme as pessoas chegam a esse nível."
+          }
+        }
+      }
+    },
     "Of this, %@ comes after the exam." : {
       "comment" : "How much of an exam plan's time comes after the exam",
       "localizations" : {
@@ -5316,6 +5440,35 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Você responde no começo da aula."
+          }
+        }
+      }
+    },
+    "You are here" : {
+      "comment" : "On a course's outline, marks the chapter or level the learner's plan is at",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Du bist hier"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Estás aquí"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tu en es ici"
+          }
+        },
+        "pt" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você está aqui"
           }
         }
       }

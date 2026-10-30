@@ -93,7 +93,7 @@ private struct CourseLandingList: View {
     CourseOutlineSections(
       detail: detail, estimate: example?.pace?.estimate, exam: example?.exam,
       lead: outlineLead, minutes: example?.pace?.minutes,
-      opening: OutlineOpening(
+      learner: OutlineLearner(
         signedIn: session.authenticatedSession != nil, summary: learner.summary.state,
         courseID: detail.course.id),
       disclosures: $outline)

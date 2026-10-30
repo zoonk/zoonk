@@ -75,6 +75,9 @@ struct Course: Codable, Equatable, Identifiable, Sendable {
   let landingPage: CourseLandingPage?
   let language: String
   let languageFlag: String?
+  /// Every level the course covers, in order, including those with no chapter written yet; empty
+  /// until any chapter is written.
+  let levels: [CourseLevel]
   let organization: CourseOrganization?
   /// How long starting the course's "Not sure" quick test takes.
   let quickTestMinutes: Int

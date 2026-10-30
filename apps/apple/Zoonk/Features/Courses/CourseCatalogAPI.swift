@@ -222,6 +222,7 @@ private func makeCourse(
     },
     language: payload.language,
     languageFlag: payload.languageFlag,
+    levels: payload.levels.map { makeCourseLevel($0.level) },
     organization: payload.organization.map { makeCourseOrganization($0.value1) },
     quickTestMinutes: payload.quickTestMinutes,
     slug: payload.slug,
@@ -326,8 +327,8 @@ private func makeCourseLesson(
     title: payload.title)
 }
 
-/// Both chapter resources declare the same level values inline, so they map by raw value. A level the
-/// app doesn't know yet joins the overview band instead of hiding the chapter.
+/// Chapter and course resources declare the same level values inline, so they map by raw value. A
+/// level the app doesn't know yet joins the overview band instead of hiding the chapter.
 private func makeCourseLevel<Payload: RawRepresentable>(
   _ payload: Payload
 ) -> CourseLevel where Payload.RawValue == String {

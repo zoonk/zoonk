@@ -19,6 +19,9 @@ struct LearnerSummary: Equatable, Sendable {
 }
 
 struct LearnerGoal: Equatable, Identifiable, Sendable {
+  /// The chapter of the goal's next lesson in the course it follows; nil until that lesson is
+  /// written into a chapter, when `courseLevel` still says where the plan is.
+  var courseChapterID: String? = nil
   /// Set only while the goal follows its course, so that course's page offers to continue it.
   var courseID: String? = nil
   /// The level of the goal's next lesson in that course, where its page opens the outline.
@@ -120,6 +123,7 @@ func makeLearnerSummary(_ summary: Components.Schemas.LearnerSummary) -> Learner
     buddyName: summary.buddy.name,
     goals: summary.goals.map { goal in
       LearnerGoal(
+        courseChapterID: goal.courseChapterId,
         courseID: goal.courseId,
         courseLevel: goal.courseLevel.flatMap { CourseLevel(rawValue: $0.rawValue) },
         dailyMinutes: goal.dailyMinutes,
