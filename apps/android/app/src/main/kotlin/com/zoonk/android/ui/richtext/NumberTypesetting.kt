@@ -12,6 +12,14 @@ private const val NBSP = "\u00A0"
  */
 private val LONG_NUMBER = Regex("(?<![0-9.,\\p{L}/-])[1-9][0-9]{4,}(?![0-9\\p{L}/-]|[.,][0-9])")
 
+/** A postal code's label right before it ("ZIP 94103", "PLZ 10115"), or a state's code ("CA 94103"). */
+private val POSTAL_LABEL =
+    Regex("\\b(?:zip(?: code)?|postal code|postcode|plz|postleitzahl|cep|cp|code postal|código postal):?\\s$", RegexOption.IGNORE_CASE)
+
+private val STATE_CODE = Regex("(?<!\\p{L})\\p{Lu}{2},?\\s$")
+
+private fun isPostalCode(before: String) = POSTAL_LABEL.containsMatchIn(before) || STATE_CODE.containsMatchIn(before)
+
 /** Units lessons write after a number, in their own case ("A" is amperes, "a" is a word). */
 private val UNITS =
     listOf(
@@ -133,8 +141,9 @@ internal fun typesetNumbers(
     val grouping = NumberFormat.getIntegerInstance(locale).apply { isGroupingUsed = true }
 
     return text
-        .replace(LONG_NUMBER) { grouping.format(it.value.toBigInteger()) }
-        .replace(NUMBER_THEN_UNIT, NBSP)
+        .replace(LONG_NUMBER) { number ->
+            if (isPostalCode(text.substring(0, number.range.first))) number.value else grouping.format(number.value.toBigInteger())
+        }.replace(NUMBER_THEN_UNIT, NBSP)
         .replace(CURRENCY_THEN_NUMBER) { match ->
             val sign = match.groupValues[1]
             sign + (moneySignGap(locale, sign) ?: NBSP)

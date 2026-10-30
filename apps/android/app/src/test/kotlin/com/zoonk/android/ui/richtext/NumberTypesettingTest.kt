@@ -21,6 +21,13 @@ class NumberTypesettingTest {
     }
 
     @Test
+    fun leavesAPostalCodeAloneAfterItsLabelOrAStatesCode() {
+        val text = "Write to San Francisco, CA 94103, ZIP code 94103, PLZ 10115 or code postal 75001."
+        assertEquals(text, typesetNumbers(english, text))
+        assertEquals("CA has 39,000 schools.", typesetNumbers(english, "CA has 39000 schools."))
+    }
+
+    @Test
     fun keepsANumberWithItsUnitOrCurrencyOnOneLine() {
         assertEquals("uma marcada 3${NBSP}Ω e outra 6${NBSP}Ω", typesetNumbers(portuguese, "uma marcada 3 Ω e outra 6 Ω"))
         assertEquals("custa R$${NBSP}80 e pesa 2${NBSP}kg", typesetNumbers(portuguese, "custa R$ 80 e pesa 2 kg"))
