@@ -71,7 +71,6 @@ private fun jsNumber(value: Double): String {
     return if (exponential) text.toString().replace('E', 'e') else text.toPlainString()
 }
 
-/** Main's `runSimulation`: one outcome per run of [model], drawn from [seed]. */
 internal fun runSimulation(
     model: ChanceModel,
     runs: Int,
@@ -112,7 +111,6 @@ internal fun isHit(
         is SharedBirthdayModel -> outcome == 1
     }
 
-/** Core's exact chance of a hit, shown once the runs are in. */
 internal fun hitProbability(model: ChanceModel): Double =
     when (model) {
         is BinomialModel -> {
@@ -133,14 +131,12 @@ internal fun hitProbability(model: ChanceModel): Double =
         }
     }
 
-/** Every outcome from the lowest to the highest, with how often it came up. */
 internal fun outcomeCounts(outcomes: List<Int>): List<Pair<Int, Int>> {
     if (outcomes.isEmpty()) return emptyList()
     val counts = outcomes.groupingBy { it }.eachCount()
     return (outcomes.min()..outcomes.max()).map { it to (counts[it] ?: 0) }
 }
 
-/** The share of hits so far, at about [points] places along the runs. */
 internal fun runningShare(
     hits: List<Boolean>,
     points: Int,
@@ -158,7 +154,6 @@ internal fun truthOf(population: Population): Double =
         is MeanPopulation -> population.value.mean
     }
 
-/** Core's `standardError`: how far a sample of [size] typically lands from the truth. */
 internal fun standardError(
     population: Population,
     size: Int,
@@ -170,7 +165,6 @@ private fun spreadOf(population: Population): Double =
         is MeanPopulation -> population.value.sd
     }
 
-/** Main's `simulateSamples`: the result of [runs] polls of [size], exact for small polls and by the normal curve for big ones. */
 internal fun simulateSamples(
     population: Population,
     runs: Int,
@@ -197,7 +191,6 @@ internal fun simulateSamples(
     }
 }
 
-/** Where the middle 95% of [results] fall. */
 internal fun middleRange(results: List<Double>): Pair<Double, Double> {
     val sorted = results.sorted()
     val tail = (1 - MIDDLE_SHARE) / 2
@@ -228,7 +221,6 @@ internal fun histogram(
     return counts.mapIndexed { index, count -> HistogramBin(count, min + index * width, min + (index + 1) * width) }
 }
 
-/** How many decimals a value needs next to [margin]: whole numbers for big margins, tenths or hundredths for small ones. */
 internal fun valueDigits(
     margin: Double,
     population: Population,

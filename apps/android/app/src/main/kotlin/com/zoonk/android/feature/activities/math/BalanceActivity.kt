@@ -91,7 +91,6 @@ private class BalanceObject(
     val symbol: String,
 )
 
-/** Main's balance: bags and blocks on a scale when they're few and whole, otherwise the equation solved by picking moves. */
 @Composable
 private fun BalanceActivity(props: ActivityProps) {
     val fields = (props.content as BalanceContent).value.fields
@@ -395,7 +394,6 @@ private fun BalanceSteps(
     }
 }
 
-/** Main's scale drawing, in its 350-wide units scaled to the space, with the arm tilting toward the heavier pan. */
 @Composable
 private fun BalanceScale(
     frame: BalanceState,

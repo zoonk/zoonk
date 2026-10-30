@@ -246,7 +246,6 @@ private fun RunRow(
     }
 }
 
-/** Main's `OutcomeHistogram`: how often each outcome came up, hits highlighted, the bars growing as the runs come in. */
 @Composable
 private fun OutcomeHistogram(
     all: List<Int>,
@@ -286,7 +285,6 @@ private fun OutcomeHistogram(
     }
 }
 
-/** Main's `RunningShareChart`: the share of hits so far, settling as the runs come in, against the learner's guess. */
 @Composable
 private fun RunningShareChart(
     hits: List<Boolean>,
@@ -420,7 +418,6 @@ private fun SamplingSimulation(
     }
 }
 
-/** Main's margin: "±5.2 points" for a share, "±3 cm" for a mean. */
 @Composable
 private fun marginText(
     margin: Double,
@@ -437,7 +434,6 @@ private fun marginText(
     )
 }
 
-/** Main's `SamplingChart`: the polls' results, the smallest size's behind them, the true value and where the middle 95% fall. */
 @Composable
 private fun SamplingChart(
     bins: List<HistogramBin>,
@@ -576,7 +572,6 @@ private fun LegendItem(
     }
 }
 
-/** Main's `SampleSizeStops`: each size under its stop, the ends kept inside the track. */
 @Composable
 private fun SizeStops(
     labels: List<String>,
@@ -613,7 +608,6 @@ private fun SizeStops(
     }
 }
 
-/** Main's `SamplingExpectedSpread`: what each size's margin should be, and how much it shrinks from the smallest to the largest. */
 @Composable
 private fun ExpectedSpread(
     fields: PlayableLibraryStepAnyOfContentOneOf8FieldsOneOf1,

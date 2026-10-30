@@ -34,7 +34,6 @@ internal sealed interface BalanceMove {
     ) : BalanceMove
 }
 
-/** Main's `parseBalance`: each side as bags and units, when both are linear in [variable]. */
 internal fun parseBalance(
     left: String,
     right: String,
@@ -74,7 +73,6 @@ internal fun tiltDegrees(
     return (right - left) / heavier * MAX_TILT_DEGREES
 }
 
-/** Bags alone on one side and blocks alone on the other split into as many groups as there are bags. */
 internal fun splitGroups(state: BalanceState): Double? {
     val (bags, blocks) = if (state.left.x > 0) state.left to state.right else state.right to state.left
     return bags.x.takeIf { it > 1 && bags.units == 0.0 && blocks.x == 0.0 }
@@ -99,7 +97,6 @@ internal fun applyMove(
         }
     }
 
-/** The value one bag weighs once it stands alone against blocks. */
 internal fun isolatedValue(state: BalanceState): Double? {
     val (left, right) = state
     return when {
@@ -124,7 +121,6 @@ internal fun reachedSteps(
     }
 }
 
-/** A pan written as an expression: "2x + 1", "x", "7". */
 internal fun panText(
     pan: Pan,
     symbol: String,
@@ -148,7 +144,6 @@ internal data class PanLayout(
     val weight: ItemPosition?,
 )
 
-/** Main's `panLayout`: bags in rows, whole blocks in stacks of three to five, any other amount as one weight. */
 internal fun panLayout(
     pan: Pan,
     width: Float,

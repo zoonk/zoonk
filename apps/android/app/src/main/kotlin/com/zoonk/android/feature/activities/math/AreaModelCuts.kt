@@ -5,7 +5,6 @@ import com.zoonk.android.feature.activities.isMultiple
 import com.zoonk.android.feature.activities.snapToStep
 import com.zoonk.android.ui.components.cleanFloat
 
-/** One side of an area or bar model: where it's cut, the step a cut moves by and its whole length. */
 internal data class SideCuts(
     val cuts: List<Double>,
     val step: Double,
@@ -28,7 +27,6 @@ internal fun cutsToParts(
 internal fun splitStep(parts: List<Double>): Double =
     DECIMAL_STEPS.find { step -> parts.all { isMultiple(it, step) } } ?: DECIMAL_STEPS.last()
 
-/** Moves one cut, keeping at least a step between it and its neighbors. */
 internal fun moveCut(
     side: SideCuts,
     index: Int,
@@ -48,7 +46,6 @@ internal fun cutRange(
     step = side.step,
 )
 
-/** Every cell of the grid, row by row, or the bar's parts. */
 internal fun pieces(sides: List<List<Double>>): List<Double> {
     val first = sides.firstOrNull() ?: return emptyList()
     val second = sides.getOrNull(1) ?: return first

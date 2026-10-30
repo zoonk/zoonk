@@ -21,7 +21,6 @@ internal typealias DistributionFields = PlayableLibraryStepAnyOfContentOneOf9Fie
 internal typealias Distribution = PlayableLibraryStepAnyOfContentOneOf9FieldsDistribution
 internal typealias Interval = PlayableLibraryStepAnyOfContentOneOf9FieldsHandles
 
-/** Core's `distributionExplorer` value: the percent of values between [range]'s ends. */
 internal fun percentBetween(
     distribution: Distribution,
     range: Interval,
@@ -78,7 +77,6 @@ internal fun densityCurve(
     return xs.sorted().map { it to densityAt(distribution, it) }
 }
 
-/** A bell curve's mean and whole SDs, or round values across a flat one. */
 internal fun distributionTicks(
     distribution: Distribution,
     domain: ClosedFloatingPointRange<Double>,
