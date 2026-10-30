@@ -170,7 +170,7 @@ msgstr "Continuar a sessão de hoje"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
 msgid "full, half or one subject"
-msgstr "prova inteira, metade ou uma matéria"
+msgstr "completo, metade ou uma matéria"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
@@ -350,7 +350,7 @@ msgstr "Busque ou pergunte"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 msgctxt "z5av6z"
 msgid "Go to a page, run an action or ask a question."
-msgstr "Acesse uma página, execute uma ação ou faça uma pergunta."
+msgstr "Vá para uma página, execute uma ação ou faça uma pergunta."
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette.tsx
 #: src/app/[lang]/(app)/(settings)/profile/delete-account-section.tsx
@@ -581,7 +581,7 @@ msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "bdvt9X"
 msgid "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level."
-msgstr "Quando você monta seu plano, o Zoonk cria os capítulos e as aulas deste curso para você, começando no seu nível."
+msgstr "Quando você monta seu plano, o Zoonk cria os capítulos e as aulas desse curso para você, começando no seu nível."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "FwtWUq"
@@ -1072,7 +1072,7 @@ msgstr "Começar um curso"
 #: src/app/[lang]/(app)/(onboarding)/start/page.tsx
 msgctxt "j8Jfmw"
 msgid "Write what you want to achieve in your own words. Zoonk asks only what's missing and builds a plan for your time. Start free, no account needed."
-msgstr "Escreva com suas palavras o que você quer alcançar. O Zoonk pergunta só o que falta e monta um plano para o tempo que você tem. Comece grátis, sem precisar de conta."
+msgstr "Escreva com suas palavras o que você quer alcançar. O Zoonk pergunta só o que falta e monta um plano para o tempo que você tem. Comece de graça, sem precisar de conta."
 
 #: src/app/[lang]/(app)/(onboarding)/start/page.tsx
 msgctxt "G4ZsrK"
@@ -1136,7 +1136,7 @@ msgstr "Suas metas, planos, progresso, memórias, feedback e arquivos enviados s
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
 msgctxt "_nHp1D"
 msgid "Everything Zoonk keeps about you, as one file"
-msgstr "Tudo o que o Zoonk guarda sobre você, em um só arquivo"
+msgstr "Tudo que o Zoonk guarda sobre você, em um só arquivo"
 
 #: src/app/[lang]/(app)/(settings)/profile/export-data-button.tsx
 #: src/app/[lang]/(app)/(settings)/profile/page.tsx
@@ -1251,7 +1251,7 @@ msgstr "Veja, corrija ou apague o que o Zoonk lembra sobre você."
 #: src/app/[lang]/(app)/(settings)/settings/memory/page.tsx
 msgctxt "KTQxC5"
 msgid "What Zoonk remembers to give you examples and plans that fit your life."
-msgstr "O que o Zoonk lembra para te dar exemplos e planos que combinam com sua vida."
+msgstr "O que o Zoonk lembra para te dar exemplos e planos que combinam com a sua vida."
 
 #: src/app/[lang]/(app)/(settings)/subscription/cancel-plus-button.tsx
 msgctxt "UWVETE"
@@ -1328,7 +1328,7 @@ msgstr "Esta assinatura é gerenciada via Google Play. Para alterar ou cancelar,
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "P0ZHma"
 msgid "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it."
-msgstr "O Zoonk gerencia esta assinatura. Fale com o suporte se precisar de ajuda para alterar ou cancelar sua assinatura."
+msgstr "Essa assinatura é gerenciada pelo Zoonk. Fale com o suporte se precisar de ajuda para alterar ou cancelar a assinatura."
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "5CI3KH"
@@ -1988,7 +1988,7 @@ msgstr "Equações lineares em contexto"
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "Oczvha"
 msgid "Transitions"
-msgstr "Transições"
+msgstr "Conectivos"
 
 #: src/app/[lang]/(home)/_components/exam-tomorrow.ts
 msgctxt "evMyyy"
@@ -2196,7 +2196,7 @@ msgstr "Aula + 6 perguntas"
 #: src/app/[lang]/(home)/_components/hero-days.ts
 msgctxt "PrA5f8"
 msgid "Calling about an apartment"
-msgstr "Conversa por telefone sobre um apartamento"
+msgstr "Ligando para saber sobre um apartamento"
 
 #: src/app/[lang]/(home)/_components/goal-tomorrows.ts
 #: src/app/[lang]/(home)/_components/hero-days.ts
@@ -2319,7 +2319,7 @@ msgstr "Saiba o que estudar todos os dias até o grande dia."
 #: src/app/[lang]/opengraph-image.tsx
 msgctxt "6kw-3N"
 msgid "Tell Zoonk your goal and date. Your plan fits your schedule and adjusts if you miss a day."
-msgstr "Conte para o Zoonk sua meta e a data. Seu plano se encaixa na sua rotina e se ajusta se você ficar um dia sem estudar."
+msgstr "Diga ao Zoonk sua meta e a data. Seu plano cabe na sua rotina e se ajusta se você ficar um dia sem estudar."
 
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "UDq71K"
@@ -2339,12 +2339,12 @@ msgstr "ser promovido a analista de dados até {month}"
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "Kiy_DO"
 msgid "speak Spanish for my move to Madrid in {month}"
-msgstr "falar espanhol para quando eu me mudar para Madrid em {month}"
+msgstr "falar espanhol para me mudar para Madrid em {month}"
 
 #: src/app/[lang]/(home)/_components/landing-goal-box.tsx
 msgctxt "FWZush"
 msgid "speak English for my move to London in {month}"
-msgstr "falar inglês para quando eu me mudar para London em {month}"
+msgstr "falar inglês para me mudar para London em {month}"
 
 #: src/app/[lang]/(home)/_components/placed-plans.tsx
 msgctxt "HyMpO2"
@@ -2745,7 +2745,7 @@ msgstr "Posso visitar o apartamento no sábado?"
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "wXawda"
 msgid "{move, select, london {Stress the first part: <b>SAT</b>-ur-day.} other {Stress the accent: <b>SÁ</b>-ba-do.}}"
-msgstr "{move, select, london {Dê ênfase à primeira sílaba: <b>SAT</b>-ur-day.} other {Dê ênfase à sílaba com acento: <b>SÁ</b>-ba-do.}}"
+msgstr "{move, select, london {Dê ênfase à primeira parte: <b>SAT</b>-ur-day.} other {Dê ênfase à sílaba com acento: <b>SÁ</b>-ba-do.}}"
 
 #: src/app/[lang]/(home)/_components/practice-move.tsx
 msgctxt "waQKY7"
@@ -2836,7 +2836,7 @@ msgstr "Aula · Ligando para saber sobre um apartamento"
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "4teyr4"
 msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
-msgstr "As duas palavras servem, mas em London as pessoas dizem “flat”. “Apartment” é mais comum nos US, então “flat” soa mais natural quando você vai alugar um imóvel em London."
+msgstr "As duas funcionam, mas em London as pessoas dizem “flat”. “Apartment” é mais comum nos US, então “flat” soa mais natural quando você vai alugar um apartamento por lá."
 
 #. A learner of English asks about the English words “flat” and “apartment”.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
@@ -2872,7 +2872,7 @@ msgstr "Travou? Pergunte para Zu."
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "HRHTTM"
 msgid "Your AI study buddy explains any question as simply as you need, right where you got stuck."
-msgstr "Seu parceiro de estudos com IA tira suas dúvidas com explicações tão simples quanto você precisar, bem onde você travou."
+msgstr "Seu parceiro de estudo com IA tira qualquer dúvida com explicações tão simples quanto você precisar, bem onde você travou."
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "HGiiLi"
@@ -3012,7 +3012,7 @@ msgstr "No ritmo. Nada muda."
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "ACteAu"
 msgid "Short lessons Zoonk writes for your goal."
-msgstr "Aulas curtas que o Zoonk cria para sua meta."
+msgstr "Aulas curtas que o Zoonk cria para a sua meta."
 
 #: src/app/[lang]/(home)/_components/stop-every-day.tsx
 msgctxt "eXs5Be"
@@ -3089,7 +3089,7 @@ msgstr "Semana {week, number} · simulado"
 #: src/app/[lang]/(home)/_components/stop-practice.tsx
 msgctxt "D32g2O"
 msgid "Questions in your exam's format, and mock exams timed like the real one, with an estimated score."
-msgstr "Questões no formato da sua prova e simulados com o mesmo tempo da prova real e uma estimativa de pontuação."
+msgstr "Questões no formato da sua prova e simulados com o mesmo limite de tempo e uma estimativa de pontuação."
 
 #: src/app/[lang]/(home)/_components/stop-practice.tsx
 msgctxt "_xKXo7"
@@ -3373,7 +3373,7 @@ msgstr "Seu navegador não abriu o app do Zoonk. Feche esta página e entre com 
 #: src/app/auth/callback/route.ts
 msgctxt "1KzRxp"
 msgid "We couldn't sign you in."
-msgstr "Não foi possível entrar na sua conta."
+msgstr "Não deu para entrar na sua conta."
 
 #: src/app/global-not-found.tsx
 #: src/components/catalog/catalog-not-found.tsx
@@ -3444,12 +3444,12 @@ msgstr "Voltar ao topo"
 #: src/components/catalog/catalog-hero.tsx
 msgctxt "Q4d9LI"
 msgid "With Zoonk, your plan starts at this chapter and fits your schedule."
-msgstr "Com o Zoonk, seu plano começa neste capítulo e se encaixa na sua rotina."
+msgstr "Com o Zoonk, seu plano começa neste capítulo e cabe na sua rotina."
 
 #: src/components/catalog/catalog-hero.tsx
 msgctxt "Deu0Hn"
 msgid "With Zoonk, your plan starts at your level and fits your schedule."
-msgstr "Com o Zoonk, seu plano começa no seu nível e se encaixa na sua rotina."
+msgstr "Com o Zoonk, seu plano começa no seu nível e cabe na sua rotina."
 
 #: src/components/catalog/chapter-strip.tsx
 msgctxt "ZmNtfT"
@@ -3671,7 +3671,7 @@ msgstr "Um parceiro de estudos com IA: {count, plural, one {# mensagem} other {#
 #: src/components/pricing/free-plan.tsx
 msgctxt "JfcsFI"
 msgid "Speaking practice calls, with lower limits than Plus"
-msgstr "Conversas para praticar a fala, com limites menores que os do Plus"
+msgstr "Conversas para praticar conversação, com limites menores que os do Plus"
 
 #: src/components/pricing/free-plan.tsx
 msgctxt "kTr3m7"
@@ -3766,7 +3766,7 @@ msgstr "Cancele quando quiser."
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "jPlE1k"
 msgid "Get ready for your exam, new job or move with Zoonk Plus: unlimited lessons and goals, full exam prep with mock exams and your AI study buddy. Start free."
-msgstr "Prepare-se para sua prova, seu novo emprego ou sua mudança com o Zoonk Plus: aulas e metas ilimitadas, preparo completo para provas com simulados e seu parceiro de estudos com IA. Comece grátis."
+msgstr "Prepare-se para sua prova, um novo emprego ou uma mudança com o Zoonk Plus: aulas e metas ilimitadas, preparo completo para provas com simulados e seu parceiro de estudos com IA. Comece de graça."
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "DfjjXa"
@@ -3776,12 +3776,12 @@ msgstr "Zoonk Plus: planos e preços"
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "rmN6Kk"
 msgid "Start free. <rest>Plus when you want everything.</rest>"
-msgstr "Comece grátis. <rest>Assine o Plus quando quiser tudo.</rest>"
+msgstr "Comece de graça. <rest>Quando quiser tudo, tem o Plus.</rest>"
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "xrpz7X"
 msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "O Grátis inclui uma meta por vez. O Plus inclui todas as metas, até o grande dia."
+msgstr "O plano Grátis inclui uma meta por vez. O Plus inclui todas as suas metas, até o grande dia."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"

@@ -751,7 +751,7 @@ msgstr "Conexión eliminada: {cause} llevó a {effect}."
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "jFy9ot"
 msgid "Linked: {cause} led to {effect}."
-msgstr "Relación creada: {cause} ha dado lugar a {effect}."
+msgstr "Relación creada: {cause} dio lugar a {effect}."
 
 #: src/activities/cause-effect-chain/cause-effect-chain-activity.tsx
 msgctxt "xCm5pu"
@@ -2560,13 +2560,13 @@ msgstr "Saltar por ahora"
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "T0p6Z6"
 msgid "Tap {tap} came {ms} ms early."
-msgstr "El toque {tap} ha llegado {ms} ms antes de tiempo."
+msgstr "El toque {tap} se ha adelantado {ms} ms."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "pGYXzO"
 msgid "Tap {tap} came {ms} ms late."
-msgstr "El toque {tap} ha llegado {ms} ms tarde."
+msgstr "El toque {tap} se ha retrasado {ms} ms."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
@@ -3298,7 +3298,7 @@ msgstr "Guardado en tu cuaderno de errores"
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "L33Kca"
 msgid "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "Se ha guardado en tu cuaderno de errores · volverá {when, select, today {hoy en un repaso} tomorrow {en el repaso de mañana} weekday {en el repaso del {day}} other {en un repaso el {day}}}"
+msgstr "Guardado en tu cuaderno de errores · volverá {when, select, today {hoy en un repaso} tomorrow {en el repaso de mañana} weekday {en el repaso del {day}} other {en un repaso el {day}}}"
 
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "Tdwaid"
@@ -3308,7 +3308,7 @@ msgstr "Esta pregunta volverá al final de la lección"
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "r6_UUR"
 msgid "This idea comes back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "Esta idea volverá {when, select, today {hoy en un repaso} tomorrow {en el repaso de mañana} weekday {en el repaso del {day}} other {en un repaso el {day}}}"
+msgstr "Volverás a ver esta idea {when, select, today {hoy en un repaso} tomorrow {en el repaso de mañana} weekday {en el repaso del {day}} other {en un repaso el {day}}}"
 
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GVY4V5"
@@ -3636,7 +3636,7 @@ msgstr "Tu ejemplo"
 #: src/lesson/steps/hook-step.tsx
 msgctxt "p6MDZm"
 msgid "Guess first"
-msgstr "Haz primero una suposición"
+msgstr "Primero, haz una suposición"
 
 #: src/lesson/steps/hook-step.tsx
 msgctxt "CKdZQn"
@@ -3658,7 +3658,7 @@ msgstr "Aún estamos comprobando. Está tardando más de lo habitual."
 #: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "waVIZZ"
 msgid "Press Enter to check, Shift+Enter for a new line."
-msgstr "Pulsa Intro para comprobar, Mayús+Intro para una nueva línea."
+msgstr "Pulsa Intro para comprobar y Mayús+Intro para añadir una línea."
 
 #: src/lesson/steps/lesson-answer-field.tsx
 msgctxt "YAXwBl"
@@ -3679,7 +3679,7 @@ msgstr "Grabar"
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "CzQFwa"
 msgid "Listening… Tap Stop to check."
-msgstr "Escuchando… Pulsa Detener para comprobar."
+msgstr "Escuchando… Pulsa Detener para comprobar tu respuesta."
 
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "begRkt"

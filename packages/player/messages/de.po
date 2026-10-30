@@ -2939,7 +2939,7 @@ msgstr "Lücke {position}: {item}. {result}."
 #: src/components/fill-blank-step.tsx
 msgctxt "wUEGVH"
 msgid "Blank {position}: {item}. Tap to remove."
-msgstr "Lücke {position}: {item}. Tipp zum Entfernen darauf."
+msgstr "Lücke {position}: {item}. Zum Entfernen antippen."
 
 #. The numbered gap in a fill-in-the-blank sentence, read by screen readers.
 #: src/components/fill-blank-step.tsx
@@ -3286,19 +3286,19 @@ msgstr "Fehlt:"
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "lSkYzL"
 msgid "Saved to your mistakes · back at the end of this lesson"
-msgstr "Im Fehlerheft gespeichert · kommt am Ende dieser Lektion wieder"
+msgstr "In deinem Fehlerheft gespeichert · kommt am Ende dieser Lektion wieder"
 
 #. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
-msgstr "Im Fehlerheft gespeichert"
+msgstr "In deinem Fehlerheft gespeichert"
 
 #. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "L33Kca"
 msgid "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "Im Fehlerheft gespeichert · kommt {when, select, today {bei einer Wiederholung später heute} tomorrow {bei der morgigen Wiederholung} weekday {bei der Wiederholung am {day}} other {bei einer Wiederholung am {day}}} wieder"
+msgstr "In deinem Fehlerheft gespeichert · kommt {when, select, today {später heute in einer Wiederholung} tomorrow {in der Wiederholung morgen} weekday {in der Wiederholung am {day}} other {in einer Wiederholung am {day}}} wieder"
 
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "Tdwaid"

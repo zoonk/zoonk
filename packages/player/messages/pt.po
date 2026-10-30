@@ -44,7 +44,7 @@ msgstr "Treine o ouvido"
 #: src/activities/_components/activity-badge.tsx
 msgctxt "h3UUQw"
 msgid "Estimate first"
-msgstr "Dê um palpite primeiro"
+msgstr "Dê seu palpite primeiro"
 
 #: src/activities/_components/activity-badge.tsx
 msgctxt "7JlauX"
@@ -337,7 +337,7 @@ msgstr "Você pegou {item} na posição {position}."
 #: src/activities/_components/activity-sortable-list.tsx
 msgctxt "NNTjVW"
 msgid "To move an item, press Space or Enter, use the arrow keys to move it, then press Space or Enter again to drop it. Press Escape to cancel."
-msgstr "Para mover um item, pressione a barra de espaço ou Enter, use as setas para mover o item e depois pressione a barra de espaço ou Enter de novo para soltar. Pressione Escape para cancelar."
+msgstr "Para mover um item, pressione a barra de espaço ou Enter, mova com as setas e pressione a barra de espaço ou Enter de novo para soltar. Pressione Escape para cancelar."
 
 #: src/activities/_components/activity-sound-button.tsx
 msgctxt "ZmADei"
@@ -656,7 +656,7 @@ msgstr "Mostrar depois: {label}"
 #: src/activities/before-after/before-after-activity.tsx
 msgctxt "psZS5m"
 msgid "The after state is hidden until you show it."
-msgstr "O depois fica oculto até você mostrar."
+msgstr "O resultado só aparece quando você pede para ver."
 
 #: src/activities/before-after/before-after-state.tsx
 msgctxt "bnMqMr"
@@ -1767,7 +1767,7 @@ msgstr "Mapa de Soho, em Londres, em 1854"
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "iHLnJo"
 msgid "Map of the Roman Empire in 117 CE"
-msgstr "Mapa do Império Romano em 117 EC"
+msgstr "Mapa do Império Romano em 117 da Era Comum"
 
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "ccq12s"
@@ -1957,7 +1957,7 @@ msgstr "Toque em um elemento para adicionar seu primeiro átomo."
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "zL2gBh"
 msgid "{atom} has more bonds than it can make."
-msgstr "{atom} tem mais ligações do que pode fazer."
+msgstr "{atom} tem mais ligações do que pode formar."
 
 #: src/activities/molecule-builder/molecule-status.tsx
 msgctxt "8TlLXe"
@@ -2154,7 +2154,7 @@ msgstr "Terminações para {person}"
 #: src/activities/pattern-table/pattern-table-activity.tsx
 msgctxt "xyUt8H"
 msgid "A table of {model} and {word}. {count, plural, one {# cell is} other {# cells are}} left for you to complete."
-msgstr "Uma tabela com {model} e {word}. {count, plural, one {Falta # célula} other {Faltam # células}} para você preencher."
+msgstr "Uma tabela com {model} e {word}. {count, plural, one {Falta # célula} other {Faltam # células}} para você completar."
 
 #: src/activities/pattern-tester/formula-examples.tsx
 #: src/activities/pattern-tester/regex-samples.tsx
@@ -2560,13 +2560,13 @@ msgstr "Pular por enquanto"
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "T0p6Z6"
 msgid "Tap {tap} came {ms} ms early."
-msgstr "O toque {tap} saiu {ms} ms adiantado."
+msgstr "O toque {tap} ficou {ms} ms adiantado."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "pGYXzO"
 msgid "Tap {tap} came {ms} ms late."
-msgstr "O toque {tap} saiu {ms} ms atrasado."
+msgstr "O toque {tap} ficou {ms} ms atrasado."
 
 #. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
@@ -3039,7 +3039,7 @@ msgstr "Correto, atenção à escrita"
 #: src/components/verdict-label.tsx
 msgctxt "yRGkJi"
 msgid "Not checked this time"
-msgstr "Não conferimos desta vez"
+msgstr "Não conferido desta vez"
 
 #. Starts the explanation of why the learner's answer is wrong.
 #: src/components/verdict-label.tsx
@@ -3286,19 +3286,19 @@ msgstr "Faltou:"
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "lSkYzL"
 msgid "Saved to your mistakes · back at the end of this lesson"
-msgstr "Salvo no Caderno de erros · volta no fim desta aula"
+msgstr "Salvo no seu caderno de erros · volta no final desta aula"
 
 #. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "GHR6FB"
 msgid "Saved to your mistakes"
-msgstr "Salvo no Caderno de erros"
+msgstr "Salvo no seu caderno de erros"
 
 #. “your mistakes” is the learner's Mistakes notebook, in lowercase as in the English.
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "L33Kca"
 msgid "Saved to your mistakes · back {when, select, today {in a review later today} tomorrow {in tomorrow's review} weekday {in {day}'s review} other {in a review on {day}}}"
-msgstr "Salvo no Caderno de erros · volta {when, select, today {em uma revisão ainda hoje} tomorrow {na revisão de amanhã} weekday {na revisão de {day}} other {em uma revisão em {day}}}"
+msgstr "Salvo no seu caderno de erros · volta {when, select, today {em uma revisão ainda hoje} tomorrow {na revisão de amanhã} weekday {na revisão de {day}} other {em uma revisão no dia {day}}}"
 
 #: src/lesson/feedback/lesson-result-notes.tsx
 msgctxt "Tdwaid"
@@ -3636,7 +3636,7 @@ msgstr "Seu exemplo"
 #: src/lesson/steps/hook-step.tsx
 msgctxt "p6MDZm"
 msgid "Guess first"
-msgstr "Dê um palpite primeiro"
+msgstr "Dê seu palpite primeiro"
 
 #: src/lesson/steps/hook-step.tsx
 msgctxt "CKdZQn"
@@ -4146,7 +4146,7 @@ msgstr "Abrir este link?"
 #: src/questions/tutor-markdown.tsx
 msgctxt "YGP6Yl"
 msgid "This link opens a website outside Zoonk."
-msgstr "Este link abre um site fora do Zoonk."
+msgstr "Esse link abre um site fora do Zoonk."
 
 #: src/questions/tutor-markdown.tsx
 msgctxt "47FYwb"

@@ -517,7 +517,7 @@ msgstr "Ton plan à partir de ce chapitre"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "NCLSU6"
 msgid "Start today, at your level"
-msgstr "Commence dès aujourd’hui, à ton niveau"
+msgstr "Commence aujourd’hui, à ton niveau"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 msgctxt "H_k_3P"
@@ -581,7 +581,7 @@ msgstr "{count, plural, one {# chapitre} other {# chapitres}}"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "bdvt9X"
 msgid "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level."
-msgstr "Quand tu crées ton plan, Zoonk prépare pour toi les chapitres et les leçons de ce cours en partant de ton niveau."
+msgstr "Quand tu crées ton plan, Zoonk prépare pour toi les chapitres et les leçons de ce cours, en partant de ton niveau."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "FwtWUq"
@@ -1505,7 +1505,7 @@ msgstr "Tes jours d’étude, tes leçons terminées et le temps passé à appre
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "jPmToJ"
 msgid "Energy intensity from low to high"
-msgstr "Intensité de l’Énergie, de faible à forte"
+msgstr "Intensité de l’Énergie, de faible à élevée"
 
 #: src/app/[lang]/(app)/(stats)/energy/energy-chart.tsx
 msgctxt "477I0g"
@@ -1592,7 +1592,7 @@ msgstr "{belt} à <mono>{points}</mono> points de Puissance Mentale"
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "dzpvr6"
 msgid "{points, plural, one {<mono>#</mono> to go} other {<mono>#</mono> to go}}"
-msgstr "{points, plural, other {Encore <mono>#</mono> à gagner}}"
+msgstr "{points, plural, one {Encore <mono>#</mono> point} other {Encore <mono>#</mono> points}}"
 
 #: src/app/[lang]/(app)/(stats)/level/level-progression.tsx
 msgctxt "3DtX17"
@@ -1988,7 +1988,7 @@ msgstr "Équations du premier degré en contexte"
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "Oczvha"
 msgid "Transitions"
-msgstr "Transitions"
+msgstr "Mots de liaison"
 
 #: src/app/[lang]/(home)/_components/exam-tomorrow.ts
 msgctxt "evMyyy"
@@ -2836,7 +2836,7 @@ msgstr "Leçon · Appeler pour un appartement"
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "4teyr4"
 msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
-msgstr "Les deux se disent, mais à London, on dit plutôt « flat ». « Apartment » est plus courant aux US, donc « flat » est plus naturel si tu loues un logement à London."
+msgstr "Les deux se disent, mais à Londres, on dit « flat ». « Apartment » est plus courant aux États-Unis, donc « flat » est plus naturel quand tu loues un logement à Londres."
 
 #. A learner of English asks about the English words “flat” and “apartment”.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
@@ -2937,7 +2937,7 @@ msgstr "Ton plan part de là où tu en es."
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "-3GuWe"
 msgid "A few quick questions find what you already know, and your plan skips it."
-msgstr "Quelques questions rapides permettent de repérer ce que tu sais déjà, et ton plan saute ces notions."
+msgstr "Grâce à quelques questions rapides, ton plan saute ce que tu sais déjà."
 
 #: src/app/[lang]/(home)/_components/stop-day-one.tsx
 msgctxt "j9qNv7"
@@ -3331,7 +3331,7 @@ msgstr "Politique de confidentialité"
 #: src/app/[lang]/pronunciation/page.tsx
 msgctxt "mSmk6Q"
 msgid "Say it again"
-msgstr "Redis-le"
+msgstr "Dis-le encore"
 
 #: src/app/[lang]/session/page.tsx
 msgctxt "hnntJl"
@@ -3373,7 +3373,7 @@ msgstr "Ton navigateur n’a pas ouvert l’application Zoonk. Ferme cette page 
 #: src/app/auth/callback/route.ts
 msgctxt "1KzRxp"
 msgid "We couldn't sign you in."
-msgstr "Nous n’avons pas réussi à te connecter."
+msgstr "Nous n’avons pas pu te connecter."
 
 #: src/app/global-not-found.tsx
 #: src/components/catalog/catalog-not-found.tsx
@@ -3761,7 +3761,7 @@ msgstr "économise {amount}"
 #: src/components/pricing/plus-plan.tsx
 msgctxt "dyhF_4"
 msgid "Cancel anytime."
-msgstr "Résiliation à tout moment."
+msgstr "Résiliable à tout moment."
 
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "jPlE1k"
@@ -3897,7 +3897,7 @@ msgstr "Un plan pour un examen"
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "2ZZIpk"
 msgid "{days, plural, =7 {Free: the diagnostic and week 1 · Plus: every week after it to exam day, with mock exams} one {Free: the diagnostic and day 1 · Plus: every day after it to exam day, with mock exams} other {Free: the diagnostic and the first # days · Plus: every day after them to exam day, with mock exams}}"
-msgstr "{days, plural, =7 {Gratuite : le diagnostic et la première semaine · Plus : toutes les semaines suivantes jusqu’au jour de l’examen, avec des examens blancs} one {Gratuite : le diagnostic et le jour # · Plus : tous les jours suivants jusqu’au jour de l’examen, avec des examens blancs} other {Gratuite : le diagnostic et les # premiers jours · Plus : tous les jours suivants jusqu’au jour de l’examen, avec des examens blancs}}"
+msgstr "{days, plural, =7 {Gratuite : le diagnostic et les # premiers jours · Plus : toutes les semaines suivantes jusqu’au jour de l’examen, avec des examens blancs} one {Gratuite : le diagnostic et le jour # · Plus : tous les jours suivants jusqu’au jour de l’examen, avec des examens blancs} other {Gratuite : le diagnostic et les # premiers jours · Plus : tous les jours suivants jusqu’au jour de l’examen, avec des examens blancs}}"
 
 #: src/components/pricing/pricing-covers.tsx
 msgctxt "Q-aTo1"

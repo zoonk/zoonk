@@ -153,7 +153,7 @@ msgstr "Ziel starten: „{goal}“"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 msgctxt "ZT0z9z"
 msgid "Ask"
-msgstr "Frag"
+msgstr "Frage stellen"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-groups.ts
 #: src/app/[lang]/(app)/(learn)/today/today-goal-paused.tsx
@@ -328,7 +328,7 @@ msgstr "Darstellung"
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "PCSt5T"
 msgid "Preferences"
-msgstr "Einstellungen"
+msgstr "Personalisierung"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-settings.ts
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
@@ -517,7 +517,7 @@ msgstr "Dein Plan ab diesem Kapitel"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "NCLSU6"
 msgid "Start today, at your level"
-msgstr "Starte heute auf deinem Level"
+msgstr "Leg heute auf deinem Level los"
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/library-chapter-page.tsx
 msgctxt "H_k_3P"
@@ -1988,7 +1988,7 @@ msgstr "Lineare Gleichungen im Kontext"
 #: src/app/[lang]/(home)/_components/practice-exam.tsx
 msgctxt "Oczvha"
 msgid "Transitions"
-msgstr "Übergänge"
+msgstr "Verbindungswörter"
 
 #: src/app/[lang]/(home)/_components/exam-tomorrow.ts
 msgctxt "evMyyy"

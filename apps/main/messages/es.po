@@ -170,7 +170,7 @@ msgstr "Continuar la sesión de hoy"
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 msgctxt "Zu-MTq"
 msgid "full, half or one subject"
-msgstr "examen completo, medio examen o una asignatura"
+msgstr "completo, medio o de una asignatura"
 
 #: src/app/[lang]/(app)/(catalog)/_components/command-palette-learner-groups.ts
 #: src/app/[lang]/(app)/(learn)/mock/new/page.tsx
@@ -581,7 +581,7 @@ msgstr "{count, plural, one {# capítulo} other {# capítulos}}"
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-outline.tsx
 msgctxt "bdvt9X"
 msgid "Build your plan and Zoonk writes this course's chapters and lessons for you, starting at your level."
-msgstr "Cuando creas tu plan, Zoonk prepara los capítulos y las lecciones de este curso para ti, empezando por tu nivel."
+msgstr "Cuando creas tu plan, Zoonk prepara para ti los capítulos y las lecciones de este curso, partiendo de tu nivel."
 
 #: src/app/[lang]/(app)/(catalog)/b/[brandSlug]/c/[courseSlug]/library-course-page.tsx
 msgctxt "FwtWUq"
@@ -1236,7 +1236,7 @@ msgstr "Guardado."
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "VnpW_P"
 msgid "Choose your buddy, sounds, a daily time limit and the app's language."
-msgstr "Elige a tu compañero, los sonidos, un límite de tiempo diario y el idioma de la aplicación."
+msgstr "Elige tu compañero, los sonidos, un límite de tiempo diario y el idioma de la aplicación."
 
 #: src/app/[lang]/(app)/(settings)/settings/appearance/page.tsx
 msgctxt "BbrYZc"
@@ -1303,7 +1303,7 @@ msgstr "Gratis"
 #: src/app/[lang]/(app)/(settings)/subscription/free-plan-summary.tsx
 msgctxt "kkHvAa"
 msgid "<mono>{used, number}/{limit, number}</mono> buddy messages used today"
-msgstr "<mono>{used, number}/{limit, number}</mono> mensajes enviados hoy a tu compañero"
+msgstr "Hoy has usado <mono>{used, number}/{limit, number}</mono> mensajes con tu compañero"
 
 #: src/app/[lang]/(app)/(settings)/subscription/managed-subscription.tsx
 msgctxt "3iCRcP"
@@ -2790,7 +2790,7 @@ msgstr "Simulacro 2 · Pregunta 4 · Ciencias Naturales"
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "80lZTQ"
 msgid "308 is what you get if you divide all of the $15.40 by 5 cents. But $12 of it is the monthly fee. Only the $3.40 left pays for texts, and $3.40 ÷ $0.05 = 68."
-msgstr "308 es lo que obtienes si divides los 15,40 $ entre 5 céntimos. Pero 12 $ son la cuota mensual. Solo los 3,40 $ restantes se destinan a los mensajes, y 3,40 $ ÷ 0,05 $ = 68."
+msgstr "308 es el resultado de dividir los 15,40 $ entre 5 céntimos. Pero 12 $ son la cuota mensual. Solo los 3,40 $ que quedan se destinan a los mensajes de texto, y 3,40 $ ÷ 0,05 $ = 68."
 
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "HKbV8Z"
@@ -2836,7 +2836,7 @@ msgstr "Lección · Llamar para preguntar por un piso"
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
 msgctxt "4teyr4"
 msgid "Both work, but in London people say “flat”. “Apartment” is more common in the US, so “flat” sounds more natural when you're renting there."
-msgstr "Las dos valen, pero en Londres se dice «flat». «Apartment» es más común en Estados Unidos, así que «flat» suena más natural si alquilas un piso en Londres."
+msgstr "Las dos valen, pero en Londres se dice «flat». «Apartment» es más habitual en Estados Unidos, así que «flat» suena más natural si vas a alquilar allí."
 
 #. A learner of English asks about the English words “flat” and “apartment”.
 #: src/app/[lang]/(home)/_components/stop-buddy.tsx
@@ -3219,7 +3219,7 @@ msgstr "Sobre esta lección"
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "27L4n6"
 msgid "Ready to do instead"
-msgstr "Otra opción para empezar ahora"
+msgstr "Otra opción para empezar ya"
 
 #: src/app/[lang]/learn/[lessonId]/lesson-waiting.tsx
 msgctxt "aa5y6W"
@@ -3341,7 +3341,7 @@ msgstr "Sesión de hoy"
 #: src/app/[lang]/terms/page.tsx
 msgctxt "DaGtoz"
 msgid "Read Zoonk's terms of use to understand the rules and conditions for using our platform and services"
-msgstr "Lee los términos de uso de Zoonk para conocer las normas y condiciones de nuestra plataforma y nuestros servicios"
+msgstr "Lee los términos de uso de Zoonk para conocer las normas y condiciones para usar nuestra plataforma y nuestros servicios"
 
 #: src/app/[lang]/terms/page.tsx
 msgctxt "UhkSyx"
@@ -3781,7 +3781,7 @@ msgstr "Empieza gratis. <rest>Plus cuando quieras tenerlo todo.</rest>"
 #: src/components/pricing/plus-pricing.tsx
 msgctxt "xrpz7X"
 msgid "Free covers one goal at a time. Plus covers every goal, all the way to the big day."
-msgstr "El plan gratuito incluye un objetivo a la vez. Plus incluye todos tus objetivos hasta el gran día."
+msgstr "Free te ayuda con un objetivo a la vez. Plus te ayuda con todos tus objetivos hasta el gran día."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "1vrigA"
@@ -3847,7 +3847,7 @@ msgstr "¿Es Plus realmente ilimitado?"
 #: src/components/pricing/plus-questions.tsx
 msgctxt "flRDel"
 msgid "Almost. Lessons, goals and your buddy have limits only to stop bots and automated tools, not people learning. Speaking calls have daily and monthly limits, higher than on the free plan. <link>Read our fair use policy</link>."
-msgstr "Casi. Las lecciones, los objetivos y tu compañero solo tienen límites para frenar los bots y las herramientas automatizadas, no a las personas que aprenden. Las llamadas para practicar la expresión oral tienen límites diarios y mensuales, más altos que los del plan gratuito. <link>Lee nuestra política de uso razonable</link>."
+msgstr "Casi. Las lecciones, los objetivos y tu compañero solo tienen límites para frenar a los bots y las herramientas automatizadas, no a las personas que aprenden. Las llamadas de práctica oral tienen límites diarios y mensuales más altos que los del plan gratuito. <link>Lee nuestra política de uso razonable</link>."
 
 #: src/components/pricing/plus-questions.tsx
 msgctxt "jNjtlE"
