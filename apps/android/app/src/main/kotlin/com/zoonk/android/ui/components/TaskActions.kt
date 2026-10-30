@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.window.core.layout.WindowSizeClass
 
-/** Main's `TaskActionBar`: as wide as the task's column on a narrow window, across it on a wide one. */
+/** Main's `TaskActionBar`: as wide as the task's column on a narrow window, across it on a wide one, its lines at the end. */
 @Composable
 fun TaskActionBar(content: @Composable ColumnScope.() -> Unit) {
     val wide = isWideWindow()
@@ -23,6 +23,7 @@ fun TaskActionBar(content: @Composable ColumnScope.() -> Unit) {
         Column(
             if (wide) Modifier.fillMaxWidth() else Modifier.widthIn(max = TASK_COLUMN_WIDTH).fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalAlignment = if (wide) Alignment.End else Alignment.Start,
             content = content,
         )
     }

@@ -74,14 +74,11 @@ class MockRunnerScreenshots {
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
-    fun theBreak() =
-        capture(
-            "mock-break",
-            runningMock(
-                current = "null",
-                extra = """"breakUntil":"${Clock.System.now() + 9.minutes}"""",
-            ),
-        )
+    fun theBreak() = capture("mock-break", onBreak())
+
+    @Test
+    @Config(qualifiers = "w1280dp-h800dp-land-xhdpi")
+    fun theBreakBesideItsSections() = capture("mock-break-expanded", onBreak())
 
     @Test
     @Config(qualifiers = "w411dp-h891dp-xxhdpi")
@@ -104,6 +101,8 @@ class MockRunnerScreenshots {
                 extra = """"scoring":"net"""",
             ),
         )
+
+    private fun onBreak() = runningMock(current = "null", extra = """"breakUntil":"${Clock.System.now() + 9.minutes}"""")
 
     /** The first question answered and the second flagged, from the drafts the server kept. */
     private fun answered() =

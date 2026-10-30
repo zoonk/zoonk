@@ -265,7 +265,7 @@ internal fun MockStepStatus(
             Row(live, verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     stringResource(R.string.mock_not_saved_retrying),
-                    Modifier.weight(1f),
+                    Modifier.weight(1f, fill = false),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     style = MaterialTheme.typography.bodyMedium,
                 )
