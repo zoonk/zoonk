@@ -7,7 +7,7 @@ import { findOwnedGoal, getAnswerTimeZone } from "../learner/_utils/owned-goal";
 import { unchanged, writeLearnerChange } from "../learner/_utils/write-learner-change";
 import { loadPlanCourse } from "../plans/_utils/plan-course";
 import { isPlanFinished } from "../plans/_utils/plan-end";
-import { parsePlanSettings } from "../plans/planner/plan-state";
+import { parsePlanPhases, parsePlanSettings } from "../plans/planner/plan-state";
 import { trackGoalReached } from "./_utils/track-goal-reached";
 import { createGoals } from "./create-goals";
 import { type GoalView } from "./goal-contract";
@@ -54,10 +54,17 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
 
   const { goal } = owned;
 
-  const items = await prisma.planItem.findMany({
-    select: { chapterId: true, kind: true, lessonId: true, scheduledFor: true, status: true },
-    where: { plan: { goalId } },
+  const plan = await prisma.plan.findUnique({
+    select: {
+      items: {
+        select: { chapterId: true, kind: true, lessonId: true, scheduledFor: true, status: true },
+      },
+      phases: true,
+    },
+    where: { goalId },
   });
+
+  const items = plan?.items ?? [];
 
   const today = getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) });
 
@@ -71,6 +78,7 @@ export async function continueGoalAtNextLevel(goalId: string): Promise<NextLevel
       goalKind: goal.kind,
       items,
       phaseChallengesRequired,
+      phases: parsePlanPhases(plan?.phases),
       targetDate: goal.targetDate,
       today,
     })

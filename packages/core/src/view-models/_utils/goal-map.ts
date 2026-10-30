@@ -9,6 +9,7 @@ import { readGoalPlan } from "../../learner/_utils/read-goal-plan";
 import { toSkillStatus } from "../../learner/_utils/skill-status";
 import { getRequestInstant } from "../../learner/facts/request-instant";
 import { findPlanPhase } from "../../plans/_utils/phase-states";
+import { isPlanFinished } from "../../plans/_utils/plan-end";
 import { type TodayLearnBlock } from "../../plans/_utils/up-next-item";
 import { parsePlanPhases, parsePlanSettings } from "../../plans/planner/plan-state";
 import { type MapArea, type MapPhase } from "../map/map-contract";
@@ -16,12 +17,10 @@ import { type MapItem, type MapNode, buildGoalMapAreas } from "./goal-map-areas"
 import { loadTodayLearnBlocks } from "./today-lesson-order";
 
 export type GoalMap = {
-  phaseChallengesRequired: boolean;
   areas: MapArea[];
   /** Each chapter's displayed course comes first. */
   courseIds: string[];
-  /** Studies the full course beyond the exam. */
-  fullCourse: boolean;
+  finished: boolean;
   plan: GoalPlan;
   items: MapItem[];
   phases: MapPhase[];
@@ -205,9 +204,16 @@ export async function loadGoalMap({
   return {
     ...built,
     courseIds: [...new Set(courseIds)],
-    fullCourse: rows.settings.fullCourse,
+    finished: isPlanFinished({
+      goalKind: goal.kind,
+      items,
+      phaseChallengesRequired,
+      phases: rows.phases,
+      studiesPastTarget,
+      targetDate: goal.targetDate,
+      today,
+    }),
     items,
-    phaseChallengesRequired,
     plan: graph,
     todayBlocks,
   };

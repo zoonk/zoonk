@@ -13,6 +13,12 @@ export const phaseKindSchema = z
 
 export const planPhaseSchema = z
   .object({
+    challengeLeftOut: z
+      .boolean()
+      .meta({
+        description:
+          "The phase keeps lessons but its challenge has no room before the plan's date, so it's off the calendar and the phase isn't done without it: say there's no time for its challenge before the date, whatever the phase's state. Adding time or moving the date brings it back. A phase with nothing to study (placement found it known, or the plan holds none of its lessons) has no challenge and is never marked",
+      }),
     chapterCount: z.int().min(0),
     chapters: z
       .array(

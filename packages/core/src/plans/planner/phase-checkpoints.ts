@@ -1,5 +1,5 @@
 import { LEARN_KINDS } from "./plan-item-rules";
-import { type ExistingPlanItem } from "./plan-items";
+import { type ExistingPlanItem, type PlannedItem } from "./plan-items";
 import { type QueueUnit, getBossKey } from "./plan-units";
 
 export function addPhaseCheckpoints({
@@ -38,16 +38,16 @@ export function addPhaseCheckpoints({
  * A phase's challenge checks what the learner studies in it: a phase placement found known, or one
  * whose lessons their time leaves out entirely, has nothing for it to check.
  */
-export function withoutUntaughtChallenges<Unit extends Pick<QueueUnit, "kind" | "phase">>({
+export function listTaughtPhases({
   kept,
   landed,
   units,
 }: {
   kept: readonly Pick<ExistingPlanItem, "kind" | "phase" | "status">[];
   landed: readonly Pick<QueueUnit, "kind" | "phase">[];
-  units: readonly Unit[];
-}): Unit[] {
-  const taught = new Set([
+  units: readonly Pick<QueueUnit, "kind" | "phase">[];
+}): ReadonlySet<number> {
+  return new Set([
     ...[...units, ...landed].flatMap((unit) => (unit.kind === "lesson" ? [unit.phase] : [])),
     ...kept.flatMap((item) =>
       LEARN_KINDS.has(item.kind) && (item.status === "todo" || item.status === "done")
@@ -55,6 +55,22 @@ export function withoutUntaughtChallenges<Unit extends Pick<QueueUnit, "kind" | 
         : [],
     ),
   ]);
+}
 
-  return units.filter((unit) => unit.kind !== "boss" || taught.has(unit.phase));
+export function listChallengesLeftOut({
+  dropped,
+  items,
+  taught,
+}: {
+  dropped: readonly Pick<QueueUnit, "key" | "kind" | "phase">[];
+  items: readonly Pick<PlannedItem, "key">[];
+  taught: ReadonlySet<number>;
+}): ReadonlySet<number> {
+  const planned = new Set(items.map((item) => item.key));
+
+  return new Set(
+    dropped.flatMap((unit) =>
+      unit.kind === "boss" && taught.has(unit.phase) && !planned.has(unit.key) ? [unit.phase] : [],
+    ),
+  );
 }

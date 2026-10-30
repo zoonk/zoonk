@@ -1,10 +1,7 @@
 import "server-only";
 import { isJsonObject } from "@zoonk/utils/json";
-import { getDateInTimeZone } from "@zoonk/utils/time-zone";
-import { getAnswerTimeZone } from "../../learner/_utils/owned-goal";
 import { countSkillStates } from "../../learner/mastery-state";
 import { loadPlanCourse } from "../../plans/_utils/plan-course";
-import { isPlanFinished } from "../../plans/_utils/plan-end";
 import { loadGoalMap } from "../_utils/goal-map";
 import { listFadingSkills } from "../_utils/group-skills";
 import { resolveViewGoal } from "../_utils/resolve-view-goal";
@@ -52,16 +49,7 @@ export async function getFieldMapView(
       course,
       courses: areaCourses.map(({ courseId, title }) => ({ courseId, title })),
       goal: { id: goal.id, kind: goal.kind, title: goal.title },
-      next: isPlanFinished({
-        goalKind: goal.kind,
-        items: map.items,
-        phaseChallengesRequired: map.phaseChallengesRequired,
-        studiesPastTarget: goal.kind === "exam" && map.fullCourse,
-        targetDate: goal.targetDate,
-        today: getDateInTimeZone({ date: new Date(), timeZone: getAnswerTimeZone({ goal }) }),
-      })
-        ? buildStudyNext({ course, courses, goalKind: goal.kind })
-        : null,
+      next: map.finished ? buildStudyNext({ course, courses, goalKind: goal.kind }) : null,
       phases: map.phases,
       refresh: { emphasized: isRefreshGoal(goal.details), skills: listFadingSkills(skills) },
     },

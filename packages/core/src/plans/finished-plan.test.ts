@@ -299,7 +299,7 @@ describe("a finished plan", () => {
     );
   });
 
-  it("never reads a phase the plan holds nothing of as done", async () => {
+  it("never reads a phase the plan holds nothing of, or one without its challenge, as done", async () => {
     const { plan } = await shortLearnGoal(new Date("2020-09-30T00:00:00Z"));
 
     const before = await readPlan();
@@ -316,10 +316,17 @@ describe("a finished plan", () => {
 
     const after = await readPlan();
 
-    expect(after?.status).toStrictEqual({ kind: "finished" });
+    expect(before?.phases.some((phase) => phase.challengeLeftOut)).toBe(true);
+    expect(after?.end).toBeNull();
 
     expect(after?.phases.map((phase) => phase.state)).toStrictEqual(
-      before?.phases.map((phase) => (phase.state === "leftOut" ? "leftOut" : "done")),
+      before?.phases.map((phase) => {
+        if (phase.state === "leftOut") {
+          return "leftOut";
+        }
+
+        return phase.challengeLeftOut ? "unfinished" : "done";
+      }),
     );
 
     await expect(readMapPhaseStates()).resolves.toStrictEqual(

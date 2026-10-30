@@ -55,11 +55,13 @@ function getPhaseStart({
 }
 
 function summarizeLearnPhases({
+  challengesLeftOut,
   graph,
   items,
   kept,
   scheduleStart,
 }: {
+  challengesLeftOut: ReadonlySet<number>;
   graph: PlanGraph;
   items: readonly PlannedItem[];
   kept: ReadonlyMap<number, Date>;
@@ -83,6 +85,7 @@ function summarizeLearnPhases({
     const first = start && last && last < start ? last : start;
 
     summarized.push({
+      ...(challengesLeftOut.has(index) && { challengeLeftOut: true }),
       endDate: toIsoOrNull(last),
       kind: "learn",
       milestone: phase.milestone,
@@ -136,6 +139,7 @@ function summarizeExamPhases({
 
 export function summarizePlan({
   afterExam = null,
+  challengesLeftOut = new Set(),
   graph,
   items,
   kept = new Map(),
@@ -144,6 +148,7 @@ export function summarizePlan({
   windows,
 }: {
   afterExam?: AfterExamSpan | null;
+  challengesLeftOut?: ReadonlySet<number>;
   graph: PlanGraph;
   items: readonly PlannedItem[];
   kept?: ReadonlyMap<number, Date>;
@@ -163,7 +168,7 @@ export function summarizePlan({
     phases:
       windows.length > 0
         ? summarizeExamPhases({ afterExam, items, windows })
-        : summarizeLearnPhases({ graph, items, kept, scheduleStart }),
+        : summarizeLearnPhases({ challengesLeftOut, graph, items, kept, scheduleStart }),
     skillLessons: countSkillLessons(queue),
   };
 }

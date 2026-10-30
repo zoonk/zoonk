@@ -93,7 +93,7 @@ export function getPhaseStates({
   currentPhase: number | null;
   goalKind: Goal["kind"];
   items: readonly StateItem[];
-  phases: readonly Pick<PlanPhase, "kind">[];
+  phases: readonly Pick<PlanPhase, "challengeLeftOut" | "kind">[];
   studiesPastTarget?: boolean;
   targetDate?: Date | null;
   today?: Date | null;
@@ -101,7 +101,14 @@ export function getPhaseStates({
   const deadline = hasPlanDeadline({ studiesPastTarget, targetDate });
   const items = withinLessonScope({ deadline, items: planItems });
 
-  const current = isPlanOver({ goalKind, items, phaseChallengesRequired, targetDate, today })
+  const current = isPlanOver({
+    goalKind,
+    items,
+    phaseChallengesRequired,
+    phases,
+    targetDate,
+    today,
+  })
     ? null
     : currentPhase;
 
@@ -116,6 +123,8 @@ export function getPhaseStates({
       ? inPhase
       : inPhase.filter((item) => item.kind !== "boss");
 
-    return getProgressState({ current, finished: isPhaseFinished(required), index });
+    const leftOut = phaseChallengesRequired && phase.challengeLeftOut === true;
+
+    return getProgressState({ current, finished: !leftOut && isPhaseFinished(required), index });
   });
 }

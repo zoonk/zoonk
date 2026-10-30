@@ -59,7 +59,7 @@ export function buildGoalMapAreas({
   areaDetails: ReadonlyMap<string, AreaDetails>;
   items: readonly MapItem[];
   nodes: readonly MapNode[];
-  phases: readonly Pick<PlanPhase, "kind" | "name">[];
+  phases: readonly Pick<PlanPhase, "challengeLeftOut" | "kind" | "name">[];
   progress: MapPhaseProgress;
   todayBlocks: readonly TodayLearnBlock[];
 }): { areas: MapArea[]; phases: MapPhase[]; upNextItemId: string | null } {

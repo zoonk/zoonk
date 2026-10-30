@@ -280,6 +280,7 @@ export function buildPhaseViews({
     const minutes = getPhaseMinutes({ estimateMinutes, index, items, phase });
 
     return {
+      challengeLeftOut: phase.challengeLeftOut === true,
       chapterCount: new Set(lessons.map((item) => getGroupKey({ item, skillAreas }))).size,
       chapters: buildChapters({
         chapterTitles,

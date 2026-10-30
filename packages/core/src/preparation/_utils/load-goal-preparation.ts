@@ -15,6 +15,7 @@ import { countSkillStates } from "../../learner/mastery-state";
 import { readExamBlueprint } from "../../library/exams/read-exam-blueprint";
 import { type PlanReadContext } from "../../plans/_utils/plan-read-projection";
 import { getStartOfWeek } from "../../plans/planner/plan-calendar";
+import { parsePlanPhases } from "../../plans/planner/plan-state";
 import { getRequestProgressDateContext } from "../../progress/get-request-date-context";
 import { loadCatchUpItems } from "../../sessions/_utils/catch-up";
 import { loadExamPrepAccess } from "../../sessions/_utils/plus-only-lessons";
@@ -26,9 +27,10 @@ import { loadPreparationInputs } from "./load-preparation-inputs";
 
 const WEEK_DAYS = 7;
 
-type SelectedPreparationPlan = Pick<PlanReadContext, "items" | "plan" | "state" | "today"> & {
-  catchUp?: number;
-};
+type SelectedPreparationPlan = Pick<
+  PlanReadContext,
+  "items" | "phases" | "plan" | "state" | "today"
+> & { catchUp?: number };
 
 function getStatusSchedule({
   savedPlan,
@@ -38,10 +40,15 @@ function getStatusSchedule({
   selectedPlan?: SelectedPreparationPlan;
 }) {
   if (selectedPlan) {
-    return { estimateHours: selectedPlan.plan.estimateHours, items: selectedPlan.items };
+    const { items, phases, plan } = selectedPlan;
+    return { estimateHours: plan.estimateHours, items, phases };
   }
 
-  return { estimateHours: savedPlan?.estimateHours ?? null, items: savedPlan?.items ?? [] };
+  return {
+    estimateHours: savedPlan?.estimateHours ?? null,
+    items: savedPlan?.items ?? [],
+    phases: parsePlanPhases(savedPlan?.phases),
+  };
 }
 
 export async function loadGoalPreparation({
@@ -140,6 +147,7 @@ export async function loadOwnedGoalPreparation({
           itemCount: schedule.items.length,
         }),
         phaseChallengesRequired,
+        phases: schedule.phases,
         studiesPastTarget: selectedPlan
           ? goal.kind === "exam" && selectedPlan.state.settings.fullCourse
           : inputs.studiesPastTarget,

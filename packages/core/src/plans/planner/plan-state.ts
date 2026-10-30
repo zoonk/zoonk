@@ -138,6 +138,8 @@ const planSettingsSchema = z.object({
 });
 
 const planPhaseSchema = z.object({
+  /** Its challenge has no room before the date; a phase with nothing to study has none at all. */
+  challengeLeftOut: z.boolean().optional(),
   endDate: isoDateSchema.nullable().default(null),
   kind: z.enum(PLAN_PHASE_KINDS).default("learn"),
   milestone: z.string().nullable().default(null),

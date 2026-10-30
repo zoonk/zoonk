@@ -160,6 +160,20 @@ describe(isPlanFinished, () => {
       false,
     );
   });
+
+  it("isn't finished, nor over, while a phase's challenge is left out for time", () => {
+    const end = {
+      goalKind: "learn" as const,
+      items: [lesson("done"), challenge("done")],
+      phases: [{}, { challengeLeftOut: true }],
+      targetDate: DATE,
+      today: TODAY,
+    };
+
+    expect(isPlanFinished(end)).toBe(false);
+    expect(isPlanOver(end)).toBe(false);
+    expect(isPlanFinished({ ...end, phaseChallengesRequired: false })).toBe(true);
+  });
 });
 
 describe(countChallengesLeft, () => {
@@ -210,6 +224,18 @@ describe(countChallengesLeft, () => {
         today: TODAY,
       }),
     ).toBe(0);
+  });
+
+  it("counts only the challenges on the calendar, beside one left out for time", () => {
+    expect(
+      countChallengesLeft({
+        goalKind: "learn",
+        items: [lesson("done"), challenge("todo")],
+        phases: [{}, { challengeLeftOut: true }],
+        targetDate: DATE,
+        today: TODAY,
+      }),
+    ).toBe(1);
   });
 });
 

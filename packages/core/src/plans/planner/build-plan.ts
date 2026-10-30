@@ -26,7 +26,7 @@ import { listKeptTime, putLandedLessons } from "./landed-placement";
 import { type LaidOutOrder, toQueueUnit } from "./learned-order";
 import { type MockClock, type MockResolution } from "./mock-identity";
 import { createLayOut } from "./pass-layout";
-import { withoutUntaughtChallenges } from "./phase-checkpoints";
+import { listChallengesLeftOut, listTaughtPhases } from "./phase-checkpoints";
 import { placeItemsInPhaseTime } from "./phase-time";
 import { type PlanBase } from "./plan-bases";
 import { addDays, getEndOfWeek } from "./plan-calendar";
@@ -227,7 +227,8 @@ function planGoal({
     units: [...carriedSchedule.units, ...restSchedule.units],
   });
 
-  const laidOut = withoutUntaughtChallenges({ kept: keptWork, landed, units: placed });
+  const taught = listTaughtPhases({ kept: keptWork, landed, units: placed });
+  const laidOut = placed.filter((unit) => unit.kind !== "boss" || taught.has(unit.phase));
 
   const schedule = keepThisWeek({
     days: funded.days,
@@ -296,6 +297,7 @@ function planGoal({
   return {
     ...summarizePlan({
       afterExam: afterExam?.span ?? null,
+      challengesLeftOut: listChallengesLeftOut({ dropped, items, taught }),
       graph: input.graph,
       items,
       kept: phaseEnds,

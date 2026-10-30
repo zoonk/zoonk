@@ -135,13 +135,14 @@ function layUnits({
   units: readonly QueueUnit[];
 }) {
   return units.reduce<{
+    besideDays: Set<number>;
     boss: PlacedBoss | null;
     dayIndex: number;
     placed: PlacedUnit[];
     used: number;
   }>(
     (state, unit) => {
-      const boss = placeBoss({
+      const placedBoss = placeBoss({
         cumulative,
         from: state.dayIndex,
         previous: state.boss,
@@ -149,7 +150,17 @@ function layUnits({
         used: state.used,
       });
 
+      // A day runs past the learner's time by one challenge at most; another has no room.
+      const boss =
+        placedBoss?.beside && state.besideDays.has(placedBoss.dayIndex)
+          ? { ...placedBoss, dayIndex: -1 }
+          : placedBoss;
+
       if (boss) {
+        if (boss.beside && boss.dayIndex >= 0) {
+          state.besideDays.add(boss.dayIndex);
+        }
+
         state.placed.push({
           beside: boss.beside,
           dayIndex: boss.dayIndex,
@@ -158,6 +169,7 @@ function layUnits({
         });
 
         return {
+          besideDays: state.besideDays,
           boss,
           dayIndex: Math.max(state.dayIndex, boss.dayIndex),
           placed: state.placed,
@@ -183,9 +195,15 @@ function layUnits({
       const { heldOn } = unit;
       const next = heldOn !== undefined && (found === -1 || found > heldOn) ? heldOn : found;
 
-      return { boss: null, dayIndex: next, placed: state.placed, used: needed };
+      return {
+        besideDays: state.besideDays,
+        boss: null,
+        dayIndex: next,
+        placed: state.placed,
+        used: needed,
+      };
     },
-    { boss: null, dayIndex: 0, placed: [], used: 0 },
+    { besideDays: new Set(), boss: null, dayIndex: 0, placed: [], used: 0 },
   );
 }
 

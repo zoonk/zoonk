@@ -28,7 +28,11 @@ export async function loadPhasesFinished({
   return phases.flatMap((phase) => {
     const items = plan.items.filter((item) => item.phase === phase);
     const lastDone = Math.max(...items.map((item) => item.completedAt?.getTime() ?? 0));
-    const finished = items.every((item) => item.status !== "todo") && isPhaseFinished(items);
+
+    const finished =
+      !names[phase]?.challengeLeftOut &&
+      items.every((item) => item.status !== "todo") &&
+      isPhaseFinished(items);
 
     return finished && lastDone >= from.getTime() && lastDone < to.getTime()
       ? [{ name: names[phase]?.name ?? "", phase }]

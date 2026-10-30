@@ -109,7 +109,7 @@ function readPlanStatus({
   freeWeekOver: boolean;
   studiesPastTarget: boolean;
 }): PlanView["status"] {
-  const { goal, items, plan, today } = context;
+  const { goal, items, phases, plan, today } = context;
 
   return getPlanStatus({
     catchUp,
@@ -121,6 +121,7 @@ function readPlanStatus({
       itemCount: items.length,
     }),
     phaseChallengesRequired,
+    phases,
     studiesPastTarget,
     targetDate: goal.targetDate,
     today,
@@ -242,6 +243,7 @@ export async function buildPlanView({
       goalKind: goal.kind,
       items,
       phaseChallengesRequired,
+      phases,
       studiesPastTarget: fullCourse,
       targetDate: goal.targetDate,
       today: context.today,

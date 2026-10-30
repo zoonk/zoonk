@@ -109,6 +109,7 @@ export type PlanPhaseCheckpointView = {
 };
 
 export type PlanPhaseView = {
+  challengeLeftOut: boolean;
   chapterCount: number;
   chapters: PlanChapterView[];
   checkpoint: PlanPhaseCheckpointView | null;

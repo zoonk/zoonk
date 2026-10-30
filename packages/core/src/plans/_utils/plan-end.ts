@@ -1,6 +1,7 @@
 import { type Goal, type PlanItem } from "@zoonk/db";
 import { LEARN_KINDS } from "../planner/plan-item-rules";
 import { type ExistingPlanItem } from "../planner/plan-items";
+import { type PlanPhase } from "../planner/plan-state";
 import { countLessons } from "./stand-in-lessons";
 import { getWorkProgress, isWorkFinished } from "./work-progress";
 
@@ -15,10 +16,13 @@ type LeftItem = Pick<
   "chapterId" | "kind" | "lessonId" | "lessons" | "skillId" | "status"
 >;
 
+type EndPhase = Pick<PlanPhase, "challengeLeftOut">;
+
 type PlanEndInput = {
   phaseChallengesRequired?: boolean;
   goalKind: Goal["kind"];
   items: readonly DatedEndItem[];
+  phases?: readonly EndPhase[];
   studiesPastTarget?: boolean;
   targetDate: Date | null;
   today: Date;
@@ -48,6 +52,16 @@ export function withinLessonScope<Item extends EndItem>({
   items: readonly Item[];
 }): Item[] {
   return items.filter((item) => !LEARN_KINDS.has(item.kind) || isInLessonScope({ deadline, item }));
+}
+
+function hasChallengeLeftOut({
+  phaseChallengesRequired = true,
+  phases = [],
+}: {
+  phaseChallengesRequired?: boolean;
+  phases?: readonly EndPhase[];
+}): boolean {
+  return phaseChallengesRequired && phases.some((phase) => phase.challengeLeftOut);
 }
 
 function isClosingWorkLeft({
@@ -85,12 +99,14 @@ export function isPlanOver({
   phaseChallengesRequired = true,
   goalKind,
   items,
+  phases,
   targetDate = null,
   today = null,
 }: {
   phaseChallengesRequired?: boolean;
   goalKind: Goal["kind"];
   items: readonly DatedEndItem[];
+  phases?: readonly EndPhase[];
   targetDate?: Date | null;
   today?: Date | null;
 }): boolean {
@@ -99,6 +115,7 @@ export function isPlanOver({
   return (
     learn.length > 0 &&
     !learn.some((item) => isTodo(item)) &&
+    !hasChallengeLeftOut({ phaseChallengesRequired, phases }) &&
     !items.some((item) =>
       isClosingWorkLeft({ goalKind, item, phaseChallengesRequired, targetDate, today }),
     )
@@ -109,12 +126,14 @@ export function isPlanFinished({
   phaseChallengesRequired = true,
   goalKind,
   items,
+  phases,
   studiesPastTarget = false,
   targetDate,
   today,
 }: PlanEndInput): boolean {
   return (
     areLessonsFinished({ items, studiesPastTarget, targetDate }) &&
+    !hasChallengeLeftOut({ phaseChallengesRequired, phases }) &&
     !items.some((item) =>
       isClosingWorkLeft({ goalKind, item, phaseChallengesRequired, targetDate, today }),
     )
@@ -140,7 +159,9 @@ export function countChallengesLeft(input: PlanEndInput): number {
   const challenges = input.items.filter((item) => item.kind === "boss" && isTodo(item));
   const rest = input.items.filter((item) => item.kind !== "boss");
 
-  return challenges.length > 0 && isPlanFinished({ ...input, items: rest }) ? challenges.length : 0;
+  return challenges.length > 0 && isPlanFinished({ ...input, items: rest, phases: [] })
+    ? challenges.length
+    : 0;
 }
 
 export function countLessonsLeft(items: readonly LeftItem[]): number {

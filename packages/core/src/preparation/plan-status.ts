@@ -7,6 +7,7 @@ import {
 } from "../plans/_utils/plan-end";
 import { daysBetween } from "../plans/planner/plan-calendar";
 import { type ExistingPlanItem } from "../plans/planner/plan-items";
+import { type PlanPhase } from "../plans/planner/plan-state";
 
 type PlanAdjustment = "addTime" | "moveDate" | "narrowScope";
 
@@ -118,6 +119,7 @@ function getPlanLifecycle({
   goalKind,
   items,
   phaseChallengesRequired,
+  phases,
   studiesPastTarget,
   targetDate,
   today,
@@ -126,11 +128,20 @@ function getPlanLifecycle({
   goalKind: Goal["kind"];
   items: readonly PlanStatusItem[];
   phaseChallengesRequired: boolean;
+  phases: readonly Pick<PlanPhase, "challengeLeftOut">[];
   studiesPastTarget: boolean;
   targetDate: Date | null;
   today: Date;
 }): PlanLifecycle | null {
-  const ends = { goalKind, items, phaseChallengesRequired, studiesPastTarget, targetDate, today };
+  const ends = {
+    goalKind,
+    items,
+    phaseChallengesRequired,
+    phases,
+    studiesPastTarget,
+    targetDate,
+    today,
+  };
 
   if (isPlanFinished(ends)) {
     return { kind: "finished" };
@@ -213,6 +224,7 @@ export function getPlanStatus({
   goalKind,
   items,
   minutesPerItem,
+  phases = [],
   studiesPastTarget = false,
   targetDate,
   today,
@@ -223,6 +235,7 @@ export function getPlanStatus({
   goalKind: Goal["kind"];
   items: readonly PlanStatusItem[];
   minutesPerItem: number;
+  phases?: readonly Pick<PlanPhase, "challengeLeftOut">[];
   studiesPastTarget?: boolean;
   targetDate: Date | null;
   /** The learner-local date, as a UTC-midnight label like `scheduledFor`. */
@@ -233,6 +246,7 @@ export function getPlanStatus({
     goalKind,
     items,
     phaseChallengesRequired,
+    phases,
     studiesPastTarget,
     targetDate,
     today,
