@@ -24,7 +24,17 @@ enum ActivityTileMark: Hashable, Sendable {
   }
 }
 
+extension Color {
+  /// In more contrast a pick gets a fill as well as its thicker line, so it never rests on line
+  /// weight alone, as on main.
+  static func pick(_ contrast: ColorSchemeContrast) -> Color {
+    Color(contrast == .increased ? .systemFill : .quaternarySystemFill)
+  }
+}
+
 struct ActivityTileStyle: ButtonStyle {
+  @Environment(\.colorSchemeContrast) private var contrast
+
   let mark: ActivityTileMark
   var isCompact = false
 
@@ -81,7 +91,7 @@ struct ActivityTileStyle: ButtonStyle {
 
   private var background: Color {
     switch mark {
-    case .selected: Color(.quaternarySystemFill)
+    case .selected: .pick(contrast)
     case .right: Color.success.opacity(0.15)
     case .wrong: Color.destructive.opacity(0.15)
     default: Color(.systemBackground)

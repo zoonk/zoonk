@@ -182,6 +182,8 @@ struct LessonOptionStyle: ButtonStyle {
     }
   }
 
+  @Environment(\.colorSchemeContrast) private var contrast
+
   let mark: Mark
 
   func makeBody(configuration: Configuration) -> some View {
@@ -210,7 +212,7 @@ struct LessonOptionStyle: ButtonStyle {
 
   private var background: Color {
     switch mark {
-    case .selected: Color(.quaternarySystemFill)
+    case .selected: .pick(contrast)
     case .right: Color.success.opacity(0.15)
     case .wrong: Color.destructive.opacity(0.15)
     default: Color(.secondarySystemBackground)

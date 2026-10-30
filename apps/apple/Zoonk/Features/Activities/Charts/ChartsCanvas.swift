@@ -32,6 +32,8 @@ struct ChartsChoiceStyle: ButtonStyle {
     case plain, selected, right, wrong
   }
 
+  @Environment(\.colorSchemeContrast) private var contrast
+
   var state: State = .plain
 
   func makeBody(configuration: Configuration) -> some View {
@@ -61,7 +63,7 @@ struct ChartsChoiceStyle: ButtonStyle {
   private var background: AnyShapeStyle {
     switch state {
     case .plain: AnyShapeStyle(.background)
-    case .selected: AnyShapeStyle(.fill.quaternary)
+    case .selected: AnyShapeStyle(Color.pick(contrast))
     case .right: AnyShapeStyle(Color.success.opacity(0.15))
     case .wrong: AnyShapeStyle(Color.destructive.opacity(0.15))
     }
