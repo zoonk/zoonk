@@ -5,11 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -18,13 +20,17 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -75,9 +81,13 @@ import com.zoonk.api.models.PlanSchedule
 import com.zoonk.api.models.PlanWeekShape
 import com.zoonk.api.models.ShortExamFocus
 import com.zoonk.api.models.Syllabus
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.datetime.toJavaLocalDate
 import java.time.LocalDate
 import java.util.Locale
+import kotlin.time.Duration.Companion.milliseconds
 
 /** Reading the plan starts no work; only Start and Adjust leave. */
 @Composable
@@ -89,6 +99,7 @@ internal fun ColumnScope.PlanRevealStep(
     onRetryRun: (() -> Unit)?,
     store: OnboardingStore,
     navigator: AppNavigator,
+    prepareToday: suspend () -> Unit = {},
 ) {
     val goalId = goal.id.toString()
     val resource = store.plans[goalId]
@@ -131,6 +142,7 @@ internal fun ColumnScope.PlanRevealStep(
                     navigator.closeSection()
                     navigator.open(AppRoute.Plan())
                 },
+                prepareToday = prepareToday,
                 onCreateAccount = { navigator.open(AppRoute.Login) },
                 onSeePlus = { navigator.open(AppRoute.Subscription) },
             )
@@ -202,6 +214,44 @@ internal fun NoticeReading(
     }
 }
 
+/** Today opens once it has read the new plan's day; a read slower than a moment shows on Start, never as a tap that did nothing. */
+@Composable
+private fun StartButton(
+    prepareToday: suspend () -> Unit,
+    onStart: () -> Unit,
+) {
+    val scope = rememberCoroutineScope()
+    var opening by remember { mutableStateOf<Job?>(null) }
+    var working by remember { mutableStateOf(false) }
+
+    Button(
+        onClick = {
+            if (opening == null) {
+                opening =
+                    scope.launch {
+                        val progress =
+                            launch {
+                                delay(TODAY_PROGRESS_DELAY)
+                                working = true
+                            }
+                        prepareToday()
+                        progress.cancel()
+                        working = false
+                        opening = null
+                        onStart()
+                    }
+            }
+        },
+        modifier = Modifier.fillMaxWidth(),
+    ) {
+        if (working) {
+            CircularProgressIndicator(Modifier.size(ButtonDefaults.IconSize), color = LocalContentColor.current, strokeWidth = 2.dp)
+            Spacer(Modifier.size(ButtonDefaults.IconSpacing))
+        }
+        Text(stringResource(R.string.onboarding_reveal_start))
+    }
+}
+
 @Composable
 private fun RevealBody(
     plan: Plan,
@@ -209,6 +259,7 @@ private fun RevealBody(
     syllabus: Syllabus?,
     isGuest: Boolean,
     onStart: () -> Unit,
+    prepareToday: suspend () -> Unit,
     onAdjust: () -> Unit,
     onCreateAccount: () -> Unit,
     onSeePlus: () -> Unit,
@@ -225,7 +276,7 @@ private fun RevealBody(
     }
 
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Button(onClick = onStart, modifier = Modifier.fillMaxWidth()) { Text(stringResource(R.string.onboarding_reveal_start)) }
+        StartButton(prepareToday, onStart)
         FilledTonalButton(
             onClick = onAdjust,
             modifier = Modifier.fillMaxWidth(),
@@ -784,3 +835,5 @@ private const val METER_WEIGHT = 0.5f
 
 /** Below half a percent, the share would read "0%". */
 private const val MIN_SHOWN_SHARE = 0.005
+
+private val TODAY_PROGRESS_DELAY = 400.milliseconds

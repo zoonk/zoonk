@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.ProgressBarRangeInfo
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasProgressBarRangeInfo
 import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.v2.createComposeRule
 import androidx.compose.ui.test.onNodeWithContentDescription
@@ -36,10 +38,12 @@ import com.zoonk.android.ui.format.formatDate
 import com.zoonk.android.ui.theme.ZoonkTheme
 import com.zoonk.api.models.Goal
 import com.zoonk.api.models.OnboardingLibraryCourse
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -62,6 +66,7 @@ class PlanRevealStepFlowTest {
         run: GenerationRun = GenerationRun(status = GenerationRun.Status.Following),
         goal: Goal = examGoal(),
         libraryCourse: OnboardingLibraryCourse? = null,
+        prepareToday: suspend () -> Unit = {},
     ) {
         val session = FakeSession(AuthenticatedSession("ana", "token-a", "local-a"))
         val store =
@@ -74,7 +79,7 @@ class PlanRevealStepFlowTest {
             ZoonkTheme {
                 navigator = rememberAppNavigator()
                 Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
-                    PlanRevealStep(goal, isGuest, libraryCourse, run, onRetryRun = null, store, navigator)
+                    PlanRevealStep(goal, isGuest, libraryCourse, run, onRetryRun = null, store, navigator, prepareToday)
                 }
             }
         }
@@ -123,6 +128,24 @@ class PlanRevealStepFlowTest {
         rule.onNodeWithText("Today").performScrollTo().assertIsDisplayed()
         rule.onNodeWithText(formatDate(today.plusDays(21), Locale.US, DateStyle.Day, today)).performScrollTo().assertIsDisplayed()
         rule.onNodeWithText(formatDate(earlier, Locale.US, DateStyle.Day, today)).assertDoesNotExist()
+    }
+
+    @Test
+    fun startWaitsForTodayAndShowsItIsWorkingWhileTodayLoads() {
+        val today = CompletableDeferred<Unit>()
+        show(prepareToday = { today.await() })
+        navigator.select(AppTab.Plan)
+
+        rule.onNodeWithText("Start").performScrollTo().performClick()
+        rule.mainClock.advanceTimeBy(500)
+
+        assertNotEquals(AppRoute.Today, navigator.currentRoute)
+        rule.onNode(hasProgressBarRangeInfo(ProgressBarRangeInfo.Indeterminate)).assertIsDisplayed()
+
+        today.complete(Unit)
+        rule.waitForIdle()
+
+        assertEquals(AppRoute.Today, navigator.currentRoute)
     }
 
     @Test

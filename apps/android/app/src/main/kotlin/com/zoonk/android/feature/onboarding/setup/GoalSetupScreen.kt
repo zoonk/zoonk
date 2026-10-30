@@ -86,7 +86,7 @@ fun GoalSetupScreen(
         LocalSetupDrafts provides signedIn?.session?.let { SetupDrafts(app.drafts, it) },
         LocalSetupSpeech provides app.speech,
     ) {
-        GoalSetupScreen(route, app.onboarding, isGuest = signedIn?.isGuest == true, navigator)
+        GoalSetupScreen(route, app.onboarding, isGuest = signedIn?.isGuest == true, navigator, prepareToday = { app.today.today.load() })
     }
 }
 
@@ -96,6 +96,7 @@ fun GoalSetupScreen(
     store: OnboardingStore,
     isGuest: Boolean,
     navigator: AppNavigator,
+    prepareToday: suspend () -> Unit = {},
 ) {
     val drafts = LocalSetupDrafts.current
     val vm = viewModel { GoalSetupViewModel(store, drafts, createSavedStateHandle(), route.goalId) }
@@ -173,7 +174,7 @@ fun GoalSetupScreen(
                                 style = MaterialTheme.typography.bodyMedium,
                             )
                         }
-                        step?.let { SetupStep(it, shown.value, vm, store, isGuest, navigator, asideBeside) }
+                        step?.let { SetupStep(it, shown.value, vm, store, isGuest, navigator, asideBeside, prepareToday) }
                     }
                 }
 
@@ -196,6 +197,7 @@ private fun ColumnScope.SetupStep(
     isGuest: Boolean,
     navigator: AppNavigator,
     asideBeside: Boolean,
+    prepareToday: suspend () -> Unit,
 ) {
     val subject = view.subject()
     val pending = vm.isSaving
@@ -205,7 +207,7 @@ private fun ColumnScope.SetupStep(
     val planStart = PlanStart(run, onRetryRun).takeIf { step != OnboardingStep.PLACEMENT && step != OnboardingStep.PLAN }
 
     CompositionLocalProvider(LocalPlanStart provides planStart) {
-        QuestionStep(step, view, vm, store, isGuest, navigator, subject, pending, run, onRetryRun, asideBeside)
+        QuestionStep(step, view, vm, store, isGuest, navigator, subject, pending, run, onRetryRun, asideBeside, prepareToday)
     }
 }
 
@@ -222,6 +224,7 @@ private fun ColumnScope.QuestionStep(
     run: GenerationRun,
     onRetryRun: (() -> Unit)?,
     asideBeside: Boolean,
+    prepareToday: suspend () -> Unit,
 ) {
     when (step) {
         OnboardingStep.PURPOSE -> {
@@ -338,7 +341,7 @@ private fun ColumnScope.QuestionStep(
         }
 
         OnboardingStep.PLAN -> {
-            PlanRevealStep(view.goal, isGuest, view.libraryCourse, run, onRetryRun, store, navigator)
+            PlanRevealStep(view.goal, isGuest, view.libraryCourse, run, onRetryRun, store, navigator, prepareToday)
         }
     }
 }
