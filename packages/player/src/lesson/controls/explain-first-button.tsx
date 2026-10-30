@@ -26,7 +26,11 @@ export function ExplainFirstButton() {
       variant="ghost"
     >
       <BookOpenIcon aria-hidden="true" />
-      {t("Explain first")}
+      {t({
+        description:
+          "Button the learner taps to see the lesson's explanation before answering this question.",
+        message: "Explain first",
+      })}
     </Button>
   );
 }

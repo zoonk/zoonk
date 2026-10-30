@@ -17,21 +17,38 @@ export function RhythmFeedback({
   const offMs = String(Math.abs(worst?.hit.offsetMs ?? 0));
 
   const detail = {
-    early: t("Tap {tap} came {ms} ms early.", { ms: offMs, tap: tapNumber }),
-    late: t("Tap {tap} came {ms} ms late.", { ms: offMs, tap: tapNumber }),
-    missed: t("Tap {tap} was missed.", { tap: tapNumber }),
+    early: t({
+      description: "A tap is one beat the learner taps in a rhythm activity.",
+      message: "Tap {tap} came {ms} ms early.",
+      values: { ms: offMs, tap: tapNumber },
+    }),
+    late: t({
+      description: "A tap is one beat the learner taps in a rhythm activity.",
+      message: "Tap {tap} came {ms} ms late.",
+      values: { ms: offMs, tap: tapNumber },
+    }),
+    missed: t({
+      description: "A tap is one beat the learner taps in a rhythm activity.",
+      message: "Tap {tap} was missed.",
+      values: { tap: tapNumber },
+    }),
     onTime: "",
   };
 
   return (
     <p aria-live="polite" className="text-sm leading-snug" role="status">
-      {t("{onTime} of {total, plural, =0 {# taps} one {# tap} other {# taps}} on time.", {
-        onTime: String(onTime),
-        total: hits.length,
+      {t({
+        description: "A tap is one beat the learner taps in a rhythm activity.",
+        message: "{onTime} of {total, plural, =0 {# taps} one {# tap} other {# taps}} on time.",
+        values: { onTime: String(onTime), total: hits.length },
       })}{" "}
       {worst && detail[worst.hit.status]}{" "}
       {extraTaps > 0 &&
-        t("{count, plural, one {# extra tap.} other {# extra taps.}}", { count: extraTaps })}
+        t({
+          description: "A tap is one beat the learner taps in a rhythm activity.",
+          message: "{count, plural, one {# extra tap.} other {# extra taps.}}",
+          values: { count: extraTaps },
+        })}
     </p>
   );
 }

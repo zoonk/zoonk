@@ -572,15 +572,6 @@ msgid "Heavier"
 msgstr "Schwerer"
 
 #: src/activities/balance/balance-activity.tsx
-#: src/activities/balance/balance-symbolic.tsx
-#: src/activities/code-runner/code-runner-output.tsx
-#: src/activities/match-pairs/match-pairs-activity.tsx
-#: src/activities/step-solver/step-solver-step.tsx
-msgctxt "Ilqo6R"
-msgid "Not quite:"
-msgstr "Noch nicht ganz:"
-
-#: src/activities/balance/balance-activity.tsx
 msgctxt "p3Hw_t"
 msgid "A balance. Left pan: {left}. Right pan: {right}."
 msgstr "Eine Waage. Linke Waagschale: {left}. Rechte Waagschale: {right}."
@@ -792,6 +783,7 @@ msgctxt "WHQHly"
 msgid "Causes and effects in time order: {nodes}."
 msgstr "Ursachen und Wirkungen in zeitlicher Reihenfolge: {nodes}."
 
+#. Marks a cause-and-effect link the learner made that isn't part of the story.
 #: src/activities/cause-effect-chain/cause-effect-link-list.tsx
 msgctxt "ghG6a0"
 msgid "Not a link in this story"
@@ -1616,101 +1608,121 @@ msgctxt "2p1LR9"
 msgid "This map can't be shown. Continue to the next screen."
 msgstr "Diese Karte kann nicht angezeigt werden. Fahre mit der nächsten Seite fort."
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "VH7A0a"
 msgid "Africa"
 msgstr "Afrika"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "1vXyK5"
 msgid "Antarctica"
 msgstr "Antarktis"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "igS9LQ"
 msgid "Asia"
 msgstr "Asien"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "h_3PM1"
 msgid "Austria-Hungary"
 msgstr "Österreich-Ungarn"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "X3AIiK"
 msgid "Europe"
 msgstr "Europa"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "9KADbj"
 msgid "France"
 msgstr "Frankreich"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "eE22iN"
 msgid "German Empire"
 msgstr "Deutsches Kaiserreich"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "VzQxqn"
 msgid "Italy"
 msgstr "Italien"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "rn1UqJ"
 msgid "North America"
 msgstr "Nordamerika"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "UIzbXh"
 msgid "Oceania"
 msgstr "Ozeanien"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "_vGZhi"
 msgid "Ottoman Empire"
 msgstr "Osmanisches Reich"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "cgoJNF"
 msgid "Parthian Empire"
 msgstr "Partherreich"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "QOSGzc"
 msgid "Roman Empire"
 msgstr "Römisches Reich"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "hAZZWd"
 msgid "Russian Empire"
 msgstr "Russisches Kaiserreich"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "fV65BM"
 msgid "Serbia"
 msgstr "Serbien"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "1T84kB"
 msgid "South America"
 msgstr "Südamerika"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "GL9Msi"
 msgid "Spain"
 msgstr "Spanien"
 
+#. A historical alliance on a map of Europe in 1914: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "uwKSuF"
 msgid "Triple Alliance"
 msgstr "Dreibund"
 
+#. A historical alliance on a map of Europe in 1914: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "_TcfPX"
 msgid "Triple Entente"
 msgstr "Triple Entente"
 
+#. A place labeled on a map: use its usual name in your language.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "SKtwiU"
 msgid "United Kingdom"
@@ -1751,6 +1763,7 @@ msgctxt "3y01ec"
 msgid "Map of Soho, London, in 1854"
 msgstr "Karte von Soho, London, im Jahr 1854"
 
+#. A map's name: the Roman Empire in the year 117 AD.
 #: src/activities/map-explorer/use-base-map-words.ts
 msgctxt "iHLnJo"
 msgid "Map of the Roman Empire in 117 CE"
@@ -2041,6 +2054,7 @@ msgctxt "iHeHi6"
 msgid "Silicon"
 msgstr "Silicium"
 
+#. Shows the notes on a music staff instead of guitar tab.
 #: src/activities/notation-player/notation-options.tsx
 msgctxt "gFJ4sU"
 msgid "Staff"
@@ -2542,26 +2556,31 @@ msgctxt "WYzHAI"
 msgid "Skip for now"
 msgstr "Vorerst überspringen"
 
+#. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "T0p6Z6"
 msgid "Tap {tap} came {ms} ms early."
 msgstr "Tipp {tap} war {ms} ms zu früh."
 
+#. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "pGYXzO"
 msgid "Tap {tap} came {ms} ms late."
 msgstr "Tipp {tap} war {ms} ms zu spät."
 
+#. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "-w7n_f"
 msgid "Tap {tap} was missed."
 msgstr "Tipp {tap} wurde verpasst."
 
+#. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "DDydNj"
 msgid "{onTime} of {total, plural, =0 {# taps} one {# tap} other {# taps}} on time."
 msgstr "{onTime} von {total, plural, =0 {# Tipps} one {# Tipp} other {# Tipps}} im Takt."
 
+#. A tap is one beat the learner taps in a rhythm activity.
 #: src/activities/rhythm-tapper/rhythm-feedback.tsx
 msgctxt "73IJ_a"
 msgid "{count, plural, one {# extra tap.} other {# extra taps.}}"
@@ -2910,16 +2929,19 @@ msgctxt "e7WNdK"
 msgid "Word bank"
 msgstr "Wortauswahl"
 
+#. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
 msgctxt "SL2Bob"
 msgid "Blank {position}: {item}. {result}."
 msgstr "Lücke {position}: {item}. {result}."
 
+#. The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.
 #: src/components/fill-blank-step.tsx
 msgctxt "wUEGVH"
 msgid "Blank {position}: {item}. Tap to remove."
 msgstr "Lücke {position}: {item}. Zum Entfernen tippen."
 
+#. The numbered gap in a fill-in-the-blank sentence, read by screen readers.
 #: src/components/fill-blank-step.tsx
 msgctxt "FmmJ_j"
 msgid "Blank {position}"
@@ -2977,6 +2999,7 @@ msgctxt "anLbqe"
 msgid "Which one means this?"
 msgstr "Welche Antwort hat diese Bedeutung?"
 
+#. Verdict on an answer that is almost right.
 #: src/components/verdict-label.tsx
 msgctxt "Bk6B6r"
 msgid "Almost there"
@@ -2997,6 +3020,7 @@ msgctxt "WbwDD5"
 msgid "Good guess!"
 msgstr "Gut geraten!"
 
+#. Verdict on a wrong answer.
 #: src/components/verdict-label.tsx
 msgctxt "--l7ni"
 msgid "Not quite"
@@ -3016,6 +3040,12 @@ msgstr "Richtig, achte auf die Schreibweise"
 msgctxt "yRGkJi"
 msgid "Not checked this time"
 msgstr "Diesmal nicht geprüft"
+
+#. Starts the explanation of why the learner's answer is wrong.
+#: src/components/verdict-label.tsx
+msgctxt "Ilqo6R"
+msgid "Not quite:"
+msgstr "Noch nicht ganz:"
 
 #: src/components/vocabulary-step.tsx
 msgctxt "lqtP-R"
@@ -3199,6 +3229,7 @@ msgctxt "c-JYNI"
 msgid "No thanks"
 msgstr "Nein, danke"
 
+#. Button the learner taps to see the lesson's explanation before answering this question.
 #: src/lesson/controls/explain-first-button.tsx
 msgctxt "cd_q95"
 msgid "Explain first"
@@ -3640,6 +3671,7 @@ msgctxt "7Y6Yvq"
 msgid "Record"
 msgstr "Aufnehmen"
 
+#. “Stop” is the label of the button that ends the recording.
 #: src/lesson/steps/spoken-answer-step.tsx
 msgctxt "CzQFwa"
 msgid "Listening… Tap Stop to check."

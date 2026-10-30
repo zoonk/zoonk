@@ -27,7 +27,10 @@ function useStateLabel() {
 
   return function stateLabel(state: ListedLink["state"]) {
     if (state === "incorrect") {
-      return t("Not a link in this story");
+      return t({
+        description: "Marks a cause-and-effect link the learner made that isn't part of the story.",
+        message: "Not a link in this story",
+      });
     }
 
     return state === "missed" ? t("Missed link") : null;

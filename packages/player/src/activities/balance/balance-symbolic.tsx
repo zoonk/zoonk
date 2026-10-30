@@ -2,6 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { NotQuiteLead } from "../../components/verdict-label";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 
 type SymbolicStep = { equation: string; move: string };
@@ -77,7 +78,7 @@ export function BalanceSymbolic({
 
       {hint && (
         <p aria-live="polite" className="text-sm leading-snug">
-          <span className="text-destructive-text font-semibold">{t("Not quite:")}</span> {hint}
+          <NotQuiteLead /> {hint}
         </p>
       )}
     </div>

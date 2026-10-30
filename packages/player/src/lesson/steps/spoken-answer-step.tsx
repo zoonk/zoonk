@@ -120,7 +120,11 @@ function RecordButton({ onBlocked, stepId }: { onBlocked: () => void; stepId: st
             )}
           >
             {isIdle && getIdleHint()}
-            {isRecording && t("Listening… Tap Stop to check.")}
+            {isRecording &&
+              t({
+                description: "“Stop” is the label of the button that ends the recording.",
+                message: "Listening… Tap Stop to check.",
+              })}
           </p>
         )}
       </div>

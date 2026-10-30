@@ -4,6 +4,7 @@ import { useFormatNumber } from "@zoonk/learn/format-number";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { NotQuiteLead } from "../../components/verdict-label";
 import { ActivityCanvas, ActivityTextAlternative } from "../_components/activity-canvas";
 import { type ActivityRendererProps } from "../activity-renderer";
 import { BalanceControls } from "./balance-controls";
@@ -127,7 +128,7 @@ function BlockBalance({
 
       {tilt !== 0 && hint && (
         <p aria-live="polite" className="text-sm leading-snug">
-          <span className="text-destructive-text font-semibold">{t("Not quite:")}</span> {hint}
+          <NotQuiteLead /> {hint}
         </p>
       )}
 

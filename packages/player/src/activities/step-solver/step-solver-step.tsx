@@ -5,6 +5,7 @@ import { RichTextBlocks } from "@zoonk/learn/rich-text";
 import { cn } from "@zoonk/ui/lib/utils";
 import { Check, X } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { NotQuiteLead } from "../../components/verdict-label";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import { ActivitySelectGrid, ActivitySelectGridItem } from "../_components/activity-select-grid";
 import { type ActivityRendererProps } from "../activity-renderer";
@@ -134,8 +135,7 @@ export function StepSolverStep({
 
         {status === "current" && lastWrong && (
           <p aria-live="polite" className="text-sm leading-snug">
-            <span className="text-destructive-text font-semibold">{t("Not quite:")}</span>{" "}
-            {lastWrong.reason}
+            <NotQuiteLead /> {lastWrong.reason}
           </p>
         )}
 

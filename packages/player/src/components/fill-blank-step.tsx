@@ -46,14 +46,21 @@ function BlankSlot({
       <button
         aria-label={
           hasResult
-            ? t("Blank {position}: {item}. {result}.", {
-                item: word,
-                position: String(index + 1),
-                result: resultState === "correct" ? t("Correct") : t("Incorrect"),
+            ? t({
+                description:
+                  "The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.",
+                message: "Blank {position}: {item}. {result}.",
+                values: {
+                  item: word,
+                  position: String(index + 1),
+                  result: resultState === "correct" ? t("Correct") : t("Incorrect"),
+                },
               })
-            : t("Blank {position}: {item}. Tap to remove.", {
-                item: word,
-                position: String(index + 1),
+            : t({
+                description:
+                  "The numbered gap in a fill-in-the-blank sentence, read by screen readers. {item} is the word placed in it.",
+                message: "Blank {position}: {item}. Tap to remove.",
+                values: { item: word, position: String(index + 1) },
               })
         }
         className={cn(
@@ -74,7 +81,11 @@ function BlankSlot({
 
   return (
     <span
-      aria-label={t("Blank {position}", { position: String(index + 1) })}
+      aria-label={t({
+        description: "The numbered gap in a fill-in-the-blank sentence, read by screen readers.",
+        message: "Blank {position}",
+        values: { position: String(index + 1) },
+      })}
       className="border-muted-foreground/30 inline-flex min-w-16 border-b-2"
       role="img"
     />

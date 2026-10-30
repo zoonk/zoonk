@@ -3,6 +3,7 @@
 import { CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
+import { NotQuiteLead } from "../../components/verdict-label";
 import { LessonRichText } from "../../lesson/_components/lesson-rich-text";
 import {
   ActivityCanvas,
@@ -192,7 +193,7 @@ export function MatchPairsActivity({
         <div className="bg-destructive/10 flex gap-2.5 rounded-xl px-3.5 py-3 text-sm leading-snug">
           <CircleX aria-hidden="true" className="text-destructive-text mt-0.5 size-4 shrink-0" />
           <p>
-            <span className="text-destructive-text font-semibold">{t("Not quite:")}</span>{" "}
+            <NotQuiteLead />{" "}
             {miss.explanation ? (
               <LessonRichText text={miss.explanation} />
             ) : (

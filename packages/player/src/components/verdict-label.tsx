@@ -29,11 +29,14 @@ export function VerdictLabel({ end, verdict }: { end?: React.ReactNode; verdict:
   const t = useExtracted();
 
   const labels: Record<Verdict, string> = {
-    almost: t("Almost there"),
+    almost: t({
+      description: "Verdict on an answer that is almost right.",
+      message: "Almost there",
+    }),
     correct: t("Correct!"),
     guess: t("Here's the answer"),
     guessRight: t("Good guess!"),
-    incorrect: t("Not quite"),
+    incorrect: t({ description: "Verdict on a wrong answer.", message: "Not quite" }),
     sampleAnswer: t("Here's a good answer"),
     typo: t("Right, watch the spelling"),
     unchecked: t("Not checked this time"),
@@ -47,5 +50,18 @@ export function VerdictLabel({ end, verdict }: { end?: React.ReactNode; verdict:
     >
       {labels[verdict]}
     </FeedbackVerdict>
+  );
+}
+
+export function NotQuiteLead() {
+  const t = useExtracted();
+
+  return (
+    <span className="text-destructive-text font-semibold">
+      {t({
+        description: "Starts the explanation of why the learner's answer is wrong.",
+        message: "Not quite:",
+      })}
+    </span>
   );
 }

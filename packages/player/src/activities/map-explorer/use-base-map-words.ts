@@ -7,26 +7,88 @@ export function useBaseMapLabels(): (key: string | null, text: string) => string
   const t = useExtracted();
 
   const labels: Readonly<Record<string, string>> = {
-    africa: t("Africa"),
-    antarctica: t("Antarctica"),
-    asia: t("Asia"),
-    austriaHungary: t("Austria-Hungary"),
-    europe: t("Europe"),
-    france: t("France"),
-    germanEmpire: t("German Empire"),
-    italy: t("Italy"),
-    northAmerica: t("North America"),
-    oceania: t("Oceania"),
-    ottomanEmpire: t("Ottoman Empire"),
-    parthianEmpire: t("Parthian Empire"),
-    romanEmpire: t("Roman Empire"),
-    russianEmpire: t("Russian Empire"),
-    serbia: t("Serbia"),
-    southAmerica: t("South America"),
-    spain: t("Spain"),
-    tripleAlliance: t("Triple Alliance"),
-    tripleEntente: t("Triple Entente"),
-    unitedKingdom: t("United Kingdom"),
+    africa: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Africa",
+    }),
+    antarctica: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Antarctica",
+    }),
+    asia: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Asia",
+    }),
+    austriaHungary: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Austria-Hungary",
+    }),
+    europe: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Europe",
+    }),
+    france: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "France",
+    }),
+    germanEmpire: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "German Empire",
+    }),
+    italy: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Italy",
+    }),
+    northAmerica: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "North America",
+    }),
+    oceania: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Oceania",
+    }),
+    ottomanEmpire: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Ottoman Empire",
+    }),
+    parthianEmpire: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Parthian Empire",
+    }),
+    romanEmpire: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Roman Empire",
+    }),
+    russianEmpire: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Russian Empire",
+    }),
+    serbia: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Serbia",
+    }),
+    southAmerica: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "South America",
+    }),
+    spain: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "Spain",
+    }),
+    tripleAlliance: t({
+      description:
+        "A historical alliance on a map of Europe in 1914: use its usual name in your language.",
+      message: "Triple Alliance",
+    }),
+    tripleEntente: t({
+      description:
+        "A historical alliance on a map of Europe in 1914: use its usual name in your language.",
+      message: "Triple Entente",
+    }),
+    unitedKingdom: t({
+      description: "A place labeled on a map: use its usual name in your language.",
+      message: "United Kingdom",
+    }),
   };
 
   return function labelText(key, text) {
@@ -45,7 +107,10 @@ export function useBaseMapName(): (id: ActivityBaseMapId) => string {
     europe: t("Map of Europe"),
     "europe-1914": t("Map of Europe in 1914"),
     "london-1854": t("Map of Soho, London, in 1854"),
-    "roman-empire-117": t("Map of the Roman Empire in 117 CE"),
+    "roman-empire-117": t({
+      description: "A map's name: the Roman Empire in the year 117 AD.",
+      message: "Map of the Roman Empire in 117 CE",
+    }),
     "usa-states": t("Map of the United States by state"),
     world: t("World map"),
     "world-continents": t("World map of the continents"),
