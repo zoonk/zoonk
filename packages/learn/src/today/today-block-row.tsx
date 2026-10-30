@@ -37,7 +37,9 @@ function useRowLabel() {
 
   const part = (block: DayStep): string | null => {
     if (!isCatchingUp(block)) {
-      return block.subject ?? (block.checkpoint ? detail(block) : null);
+      return block.checkpoint
+        ? [block.subject, detail(block)].filter(Boolean).join(" · ")
+        : block.subject;
     }
 
     return block.subject
