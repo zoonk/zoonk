@@ -166,6 +166,9 @@ const val NUMERIC_ACTIVITY_CHECK =
 
 private const val RENDERERLESS_FIELDS = """{"elements":["C","O","H"],"formula":"CO2"}"""
 
+/** Every real template gets a renderer in time, so the frame names one that never will. */
+private const val RENDERERLESS_TEMPLATE = "notInTheApp"
+
 /** An activity whose template has no renderer: the frame alone asks it. */
 fun activityStep(
     id: String,
@@ -177,7 +180,7 @@ fun activityStep(
             """{"template":"moleculeBuilder","prompt":"Compare the two lines.","fields":$RENDERERLESS_FIELDS,"check":$check}""",
         )
     val frame =
-        ActivityFrame("moleculeBuilder", "Compare the two lines.", ApiJson.decodeFromString(ActivityCheck.serializer(), check))
+        ActivityFrame(RENDERERLESS_TEMPLATE, "Compare the two lines.", ApiJson.decodeFromString(ActivityCheck.serializer(), check))
     return LessonStep(id, null, StepContent.Activity(content, frame, minTolerance = null))
 }
 
