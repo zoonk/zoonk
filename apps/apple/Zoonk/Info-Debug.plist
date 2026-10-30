@@ -44,6 +44,8 @@
 	<string>Zoonk connects to the development server on your local network.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Zoonk hears what you say in speaking exercises and calls. Nothing is recorded outside them.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Zoonk saves the mind maps you choose to your photos.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>

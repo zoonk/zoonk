@@ -161,6 +161,13 @@ private struct ZoomableRemoteImage: View {
               comment: "Spoken label of a map's picture")
           )
           .accessibilityAddTraits(.isImage)
+          .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+              ShareLink(
+                item: Image(uiImage: image),
+                preview: SharePreview(title, image: Image(uiImage: image)))
+            }
+          }
       } else if failed {
         ContentUnavailableView {
           Label {
