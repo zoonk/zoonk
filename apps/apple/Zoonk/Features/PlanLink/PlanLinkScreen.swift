@@ -103,7 +103,7 @@ struct PlanLinkScreen: View {
 
       Section {
         Picker(selection: $dailyMinutes) {
-          ForEach([15, 30, 45, 60, 90, 120], id: \.self) { minutes in
+          ForEach(ScheduleTime.dailyTimes(), id: \.self) { minutes in
             Text(duration(minutes)).tag(minutes)
           }
         } label: {

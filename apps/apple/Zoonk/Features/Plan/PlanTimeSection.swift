@@ -22,10 +22,10 @@ struct PlanTimeSection: View {
 
   var body: some View {
     let current = plan.schedule.shape.weekdays
-    var choices = Set(Self.timeChoices + [current])
+    var recommended: Int?
 
-    if case .time(let time) = found, let minutes = time.recommendedMinutes {
-      choices.insert(minutes)
+    if case .time(let time) = found {
+      recommended = time.recommendedMinutes
     }
 
     return Section {
@@ -40,7 +40,7 @@ struct PlanTimeSection: View {
             Task { await setMinutes(minutes) }
           })
       ) {
-        ForEach(choices.sorted(), id: \.self) { minutes in
+        ForEach(ScheduleTime.dailyTimes(with: current, recommended), id: \.self) { minutes in
           Text(planDurationText(minutes: Double(minutes)))
             .tag(minutes)
         }
@@ -269,8 +269,6 @@ struct PlanTimeSection: View {
         localized: "What doesn't fit by the exam is left out of your plan.", table: "Plan",
         comment: "Says the plan stops studying everything"))
   }
-
-  static let timeChoices = [10, 15, 20, 30, 45, 60, 90, 120, 180]
 }
 
 /// Nil when it covers everything in depth.
