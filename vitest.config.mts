@@ -8,6 +8,7 @@ export default defineConfig({
       "scripts/e2e/*.test.mts",
       "scripts/perf/*.test.mts",
       "scripts/verify/*.test.mts",
+      "scripts/worktree/*.test.mts",
     ],
   },
 });

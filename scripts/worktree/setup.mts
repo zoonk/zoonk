@@ -2,7 +2,11 @@ import { realpathSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { getPnpmCommand } from "../dev/process.mts";
-import { pruneDatabases } from "./cleanup.mts";
+import {
+  listRemovedWorktrees,
+  pruneDatabases,
+  stopProcessesInRemovedDirectories,
+} from "./cleanup.mts";
 import { type WorktreeDatabase, markDatabase, prepareDatabases } from "./databases.mts";
 import {
   copyEnvironment,
@@ -94,6 +98,20 @@ async function setupIsolatedDatabases(source: URL): Promise<void> {
   ]);
 
   await together(freshTests.map((database) => initializeTestDatabase({ database, source })));
+
+  const stopped = await listRemovedWorktrees(source)
+    .then(stopProcessesInRemovedDirectories)
+    .catch((error: unknown) => {
+      log(
+        `Skipped stopping processes in removed worktrees: ${error instanceof Error ? error.message : String(error)}`,
+      );
+
+      return [];
+    });
+
+  if (stopped.length > 0) {
+    log(`Stopped ${stopped.length} processes still running in removed worktrees.`);
+  }
 
   // Another worktree's test run locks its database while copying it; a later setup prunes it.
   await pruneDatabases({ source, worktree }).catch((error: unknown) => {
