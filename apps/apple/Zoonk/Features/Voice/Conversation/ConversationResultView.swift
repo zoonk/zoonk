@@ -189,41 +189,46 @@ struct ConversationResultView: View {
     }
   }
 
+  /// An exam task or speaking mock is rated on its exam's criteria instead.
+  private var showsStars: Bool {
+    conversation.speakingTask == nil && conversation.mockExam == nil
+  }
+
   private func header(_ result: Components.Schemas.LanguageConversation.ResultPayload) -> some View
   {
     Section {
-      VStack(alignment: .leading, spacing: 12) {
-        if conversation.kind == .checkpoint {
-          Group {
-            if result.passed {
-              Text("Challenge passed", tableName: "Voice", comment: "A checkpoint call passed")
-            } else {
-              Text("Not this time", tableName: "Voice", comment: "A checkpoint call not passed")
+      if conversation.kind == .checkpoint || showsStars {
+        VStack(alignment: .leading, spacing: 12) {
+          if conversation.kind == .checkpoint {
+            Group {
+              if result.passed {
+                Text("Challenge passed", tableName: "Voice", comment: "A checkpoint call passed")
+              } else {
+                Text("Not this time", tableName: "Voice", comment: "A checkpoint call not passed")
+              }
             }
+            .font(.title2.weight(.semibold))
           }
-          .font(.title2.weight(.semibold))
-        }
 
-        if conversation.speakingTask == nil, conversation.mockExam == nil {
-          HStack(spacing: 4) {
-            ForEach(0..<3, id: \.self) { index in
-              Image(systemName: index < result.stars ? "star.fill" : "star")
-                .foregroundStyle(
-                  index < result.stars ? AnyShapeStyle(.energy) : AnyShapeStyle(.tertiary))
+          if showsStars {
+            HStack(spacing: 4) {
+              ForEach(0..<3, id: \.self) { index in
+                Image(systemName: index < result.stars ? "star.fill" : "star")
+                  .foregroundStyle(
+                    index < result.stars ? AnyShapeStyle(.energy) : AnyShapeStyle(.tertiary))
+              }
             }
+            .font(.title2)
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(
+              Text("\(result.stars) of 3 stars", tableName: "Voice", comment: "A call's stars"))
           }
-          .font(.title2)
-          .accessibilityElement(children: .ignore)
-          .accessibilityLabel(
-            Text("\(result.stars) of 3 stars", tableName: "Voice", comment: "A call's stars"))
         }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
       }
-      .listRowBackground(Color.clear)
-      .listRowSeparator(.hidden)
 
-      if conversation.speakingTask == nil, conversation.mockExam == nil,
-        !conversation.objectives.isEmpty
-      {
+      if showsStars, !conversation.objectives.isEmpty {
         LabeledContent {
           Text(
             "\(conversation.objectives.filter(\.met).count) of \(conversation.objectives.count)",
@@ -256,7 +261,7 @@ struct ConversationResultView: View {
         Text(
           "Nothing is lost: the call comes back so you can try again.", tableName: "Voice",
           comment: "A checkpoint call that didn't pass")
-      } else if conversation.speakingTask == nil, conversation.mockExam == nil {
+      } else if showsStars {
         Text(
           "A star for finishing, one for getting everything across and one without Help.",
           tableName: "Voice", comment: "How a call's stars are earned")
