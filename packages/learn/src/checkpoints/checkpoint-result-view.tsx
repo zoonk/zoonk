@@ -13,6 +13,7 @@ import { TaskMainLink } from "../shell/task-frame";
 import { useCheckpointScreen } from "./checkpoint-context";
 import { NoVerdictStep } from "./checkpoint-empty";
 import { useCheckpointEyebrow } from "./checkpoint-labels";
+import { hasResultRows } from "./checkpoint-result";
 import { CheckpointResultDetails } from "./checkpoint-result-details";
 import {
   CheckpointReviewDrawer,
@@ -20,7 +21,12 @@ import {
   useReviewedAnswers,
 } from "./checkpoint-review";
 import { TricksterArt } from "./trickster-art";
-import { useCheckpointOutcome, useIsWon } from "./use-checkpoint-outcome";
+import {
+  useCheckpointOutcome,
+  useEarnedBrainPower,
+  useIsWon,
+  useResultRows,
+} from "./use-checkpoint-outcome";
 
 function useHeadline(): string {
   const t = useExtracted();
@@ -39,6 +45,7 @@ function ScoreLine() {
   const { checkpoint, duel } = useCheckpointScreen();
   const outcome = useCheckpointOutcome();
   const won = useIsWon();
+  const brainPower = useEarnedBrainPower();
 
   if (!outcome) {
     return null;
@@ -46,7 +53,7 @@ function ScoreLine() {
 
   return (
     <MomentReadouts
-      brainPower={0}
+      brainPower={brainPower}
       className="pt-3"
       facts={[
         !won &&
@@ -100,6 +107,7 @@ function DuelDayMoment() {
 
 function OutcomeStep({ showsReview }: { showsReview: boolean }) {
   const headline = useHeadline();
+  const hasDetails = hasResultRows(useResultRows());
 
   return (
     <StepCard className="gap-6">
@@ -112,9 +120,11 @@ function OutcomeStep({ showsReview }: { showsReview: boolean }) {
 
       <DuelDayMoment />
 
-      <div className="flex w-full flex-col gap-6 lg:hidden">
-        <CheckpointResultDetails />
-      </div>
+      {hasDetails && (
+        <div className="flex w-full flex-col gap-6 lg:hidden">
+          <CheckpointResultDetails />
+        </div>
+      )}
 
       {showsReview && <CheckpointReviewSection />}
     </StepCard>
@@ -127,6 +137,8 @@ export function CheckpointResultView() {
   const ceremony = duel.state.completion?.ceremony ?? null;
   const name = useCheckpointEyebrow(checkpoint);
   const outcome = useCheckpointOutcome();
+  const rows = useResultRows();
+  const hasDetails = outcome !== null && hasResultRows(rows);
   const reviewed = useReviewedAnswers();
   // The answers sit beside the outcome where the aside shows, and in a sheet on a phone. Only a
   // duel just finished has them, so this never changes what the server drew.
@@ -135,7 +147,9 @@ export function CheckpointResultView() {
 
   return (
     <Steps
-      aside={outcome ? { children: <CheckpointResultDetails />, label: name, title: name } : null}
+      aside={
+        hasDetails ? { children: <CheckpointResultDetails />, label: name, title: name } : null
+      }
       exitHref={hrefs.exit}
       finalAction={
         <TaskMainLink href={hrefs.continue} steadyMs={SCREEN_STEADY_MS}>

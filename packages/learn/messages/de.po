@@ -1743,7 +1743,6 @@ msgid "<reward>+{points}</reward> · phase {phase} done"
 msgstr "<reward>+{points}</reward> · Phase {phase} abgeschlossen"
 
 #: src/checkpoints/checkpoint-duel-view.tsx
-#: src/checkpoints/checkpoint-result-details.tsx
 #: src/session/summary/summary-parts.tsx
 msgctxt "HiOz-P"
 msgid "+{points}"
@@ -1836,14 +1835,6 @@ msgid "Phase challenge"
 msgstr "Phasen-Herausforderung"
 
 #: src/checkpoints/checkpoint-result-details.tsx
-#: src/language/conversation/call-stars-step.tsx
-#: src/missions/brain-power-reward.tsx
-#: src/session/summary/summary-parts.tsx
-msgctxt "LEuDU7"
-msgid "Brain Power"
-msgstr "Brain Power"
-
-#: src/checkpoints/checkpoint-result-details.tsx
 #: src/session/summary/summary-rewards.tsx
 msgctxt "y0EYpw"
 msgid "Rewards"
@@ -1879,11 +1870,6 @@ msgstr "Wie es weitergeht"
 msgctxt "WhT_G3"
 msgid "The next phase, {phase}, is already open."
 msgstr "Die nächste Phase, {phase}, ist bereits freigeschaltet."
-
-#: src/checkpoints/checkpoint-result-details.tsx
-msgctxt "Ysr8td"
-msgid "Earned"
-msgstr "Verdient"
 
 #: src/checkpoints/checkpoint-result-view.tsx
 msgctxt "5oy0X2"
@@ -4634,6 +4620,13 @@ msgstr "{stars, plural, =0 {# von 3 Sternen} other {# von 3 Sternen}}"
 msgctxt "XHLYdJ"
 msgid "Goals"
 msgstr "Ziele"
+
+#: src/language/conversation/call-stars-step.tsx
+#: src/missions/brain-power-reward.tsx
+#: src/session/summary/summary-parts.tsx
+msgctxt "LEuDU7"
+msgid "Brain Power"
+msgstr "Brain Power"
 
 #: src/language/conversation/call-stars-step.tsx
 msgctxt "39TKEV"

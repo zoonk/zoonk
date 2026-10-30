@@ -2,6 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { useCheckpointScreen } from "./checkpoint-context";
+import { type ResultRows, getEarnedBrainPower, getResultRows } from "./checkpoint-result";
 
 type Outcome = { correct: number; passed: boolean; total: number };
 
@@ -47,4 +48,23 @@ export function useRetry(): { detail: string; passed: boolean; title: string } |
     passed: false,
     title: retry === "tomorrow" ? t("New try tomorrow") : t("New try in your next session"),
   };
+}
+
+export function useResultRows(): ResultRows {
+  const { checkpoint } = useCheckpointScreen();
+  const won = useIsWon();
+  const retry = useRetry();
+
+  return getResultRows({ checkpoint, hasRetry: retry !== null, won });
+}
+
+export function useEarnedBrainPower(): number {
+  const { checkpoint, duel } = useCheckpointScreen();
+  const won = useIsWon();
+
+  return getEarnedBrainPower({
+    completion: duel.state.completion,
+    prize: checkpoint.reward.brainPower,
+    won,
+  });
 }
