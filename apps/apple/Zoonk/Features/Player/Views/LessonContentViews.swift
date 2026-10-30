@@ -71,13 +71,28 @@ struct LessonQuestionText: View {
 }
 
 extension EnvironmentValues {
-  /// A question's picture is at most 40% of the screen's height, as on main.
-  @Entry var questionPictureMaxHeight: CGFloat = .infinity
+  @Entry var lessonScreenHeight: CGFloat = .infinity
+}
+
+/// Main's caps on a lesson picture's height, as shares of the screen's: a read screen's lead
+/// picture, one inside a step, and a question's, which keeps its options in view.
+enum LessonPictureFrame {
+  case hero
+  case inline
+  case question
+
+  func maxHeight(screen: CGFloat) -> CGFloat {
+    switch self {
+    case .hero: screen * 0.55
+    case .inline: screen * 0.45
+    case .question: screen * 0.4
+    }
+  }
 }
 
 struct LessonPictureView: View {
   @Environment(\.privateImageLoader) private var privateImages
-  @Environment(\.questionPictureMaxHeight) private var questionPictureMaxHeight
+  @Environment(\.lessonScreenHeight) private var screenHeight
   @Environment(SessionStore.self) private var session
 
   let image: LessonStepImage?
@@ -85,6 +100,7 @@ struct LessonPictureView: View {
   let isPending: Bool
   /// A question's picture says what it shows until it's there, since the question may need it.
   var asks = false
+  var hero = false
 
   var body: some View {
     if let image, let url = URL(string: image.url) {
@@ -107,7 +123,8 @@ struct LessonPictureView: View {
   }
 
   private var maxHeight: CGFloat {
-    asks ? questionPictureMaxHeight : .infinity
+    let frame: LessonPictureFrame = asks ? .question : hero ? .hero : .inline
+    return frame.maxHeight(screen: screenHeight)
   }
 
   private func picture(url: URL, image: LessonStepImage) -> some View {

@@ -153,8 +153,8 @@ struct LessonStageView: View {
         }
         .environment(\.isPaneSplit, spread != nil)
         .environment(
-          \.questionPictureMaxHeight,
-          (proxy.size.height + proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom) * 0.4
+          \.lessonScreenHeight,
+          proxy.size.height + proxy.safeAreaInsets.top + proxy.safeAreaInsets.bottom
         )
         .environment(store.promptAudio)
         .onChange(of: pages != nil, initial: true) { _, isSpread in

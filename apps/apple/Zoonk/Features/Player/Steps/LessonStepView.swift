@@ -107,7 +107,7 @@ private struct HookStepView: View {
     } else {
       // A read screen leads with its picture; a spread has it on the facing page.
       if !isPaneSplit {
-        StepMedia(step: step, visual: content.visual)
+        StepMedia(step: step, visual: content.visual, hero: true)
       }
 
       LessonTextBlocks(content.text ?? "")
@@ -126,7 +126,7 @@ private struct HookStepView: View {
         isGuess: true
       ) { context.select(.hookGuess(optionId: $0)) }
     } else if isPaneSplit {
-      StepMedia(step: step, visual: content.visual)
+      StepMedia(step: step, visual: content.visual, hero: true)
     }
   }
 }
@@ -149,7 +149,7 @@ private struct ExplanationStepView: View {
     switch part {
     case .screen:
       if !isPaneSplit {
-        StepMedia(step: step, visual: content.visual)
+        StepMedia(step: step, visual: content.visual, hero: true)
       }
 
       if let title = content.title {
@@ -160,7 +160,7 @@ private struct ExplanationStepView: View {
         .font(.body)
     case .turn:
       if isPaneSplit {
-        StepMedia(step: step, visual: content.visual)
+        StepMedia(step: step, visual: content.visual, hero: true)
       }
 
       if let explore = content.explore, !isExploredPictureLost,
@@ -519,10 +519,12 @@ struct StepMedia: View {
   let step: LessonStep
   let visual: LessonVisual?
   var asks = false
+  var hero = false
 
   var body: some View {
     LessonPictureView(
-      image: step.image, alt: step.picture?.alt, isPending: step.imagePending, asks: asks)
+      image: step.image, alt: step.picture?.alt, isPending: step.imagePending, asks: asks,
+      hero: hero)
 
     if let visual {
       LessonVisualView(visual: visual)
