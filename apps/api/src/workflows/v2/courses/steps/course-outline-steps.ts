@@ -6,7 +6,6 @@ import {
   finishCourseOutline,
   getCourseBandContext,
   getCourseOutlineOwner,
-  releaseCourseOutlineAsk,
   releaseStaleCourseOutline,
 } from "@zoonk/core/library/curriculum/course-outline-state";
 import { placeContinuations } from "@zoonk/core/library/curriculum/place-continuations";
@@ -108,12 +107,6 @@ export async function claimCourseOutlineStep(input: { courseId: string; workflow
   await releaseStaleCourseOutline({ courseId: input.courseId, staleRunId: ownerId });
 
   return claimCourseOutline(input);
-}
-
-export async function releaseCourseOutlineAskStep(courseId: string): Promise<void> {
-  "use step";
-
-  await releaseCourseOutlineAsk(courseId);
 }
 
 export async function finishCourseOutlineStep(input: {

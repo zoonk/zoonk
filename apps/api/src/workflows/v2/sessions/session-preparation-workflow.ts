@@ -1,7 +1,6 @@
 import { type AnalyticsPlatform } from "@zoonk/core/analytics/shared-properties";
 import { OUTLINE_AHEAD_DAYS, OUTLINE_SOON_DAYS } from "@zoonk/core/lookahead/outline-ahead";
 import { type SessionPreparation } from "@zoonk/core/lookahead/session-preparation";
-import { type OutlineAsk } from "@zoonk/core/lookahead/today-outlines";
 import { getWorkflowMetadata, sleep } from "workflow";
 import { start } from "workflow/api";
 import { type ContentAnalytics } from "../_shared/content-analytics";
@@ -9,7 +8,6 @@ import { type PlanStepOutcome, retryPlanConflicts } from "../_shared/plan-confli
 import { repeatUntil } from "../_shared/repeat-until";
 import { claimRunToken } from "../_shared/run-token";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
-import { settleOutlines } from "../goals/goal-outlines";
 import { preparePlacementItems, preparePlacementWeekItems } from "../goals/placement-items";
 import {
   listLessonFieldItemTargetsStep,
@@ -17,6 +15,7 @@ import {
   readGoalField,
 } from "../goals/steps/field-items-steps";
 import {
+  endLessonsAskStep,
   listPlanOutlineNeedsStep,
   listSoonStandInCourseIdsStep,
   readPlanFirstSkillStep,
@@ -42,9 +41,9 @@ export type ClaimQuestions = {
 };
 
 export type SessionPreparationInput = {
-  askedOutlines?: OutlineAsk[];
   claimQuestions?: ClaimQuestions | null;
   goalId: string;
+  lessonsAskedAt?: number | null;
   platform?: AnalyticsPlatform | null;
   timeZone: string;
   userId: string;
@@ -90,11 +89,10 @@ async function startLessonWork({
   input: SessionPreparationInput;
 }): Promise<PlanStepOutcome<SessionPreparation | null>> {
   using claim = await claimRunToken(`session-prep:${input.userId}`);
-  const asked = input.askedOutlines ?? [];
 
+  // The learner's own ask waits for their other preparation instead of being dropped.
   if (claim.conflict) {
-    await settleOutlines({ asked, started: [] });
-    return { conflict: false, value: null };
+    return input.lessonsAskedAt ? { conflict: true } : { conflict: false, value: null };
   }
 
   const [preparation, extensions, outlines, soon, firstSkillId] = await Promise.all([
@@ -106,9 +104,6 @@ async function startLessonWork({
   ]);
 
   const courseRequests = mergeCourseRequests([...extensions, ...outlines]);
-
-  await settleOutlines({ asked, started: courseRequests.map((request) => request.courseId) });
-
   const { forExam, laterLessonIds, lessonIds } = preparation;
   const soonCourseIds = new Set(soon);
 
@@ -150,7 +145,33 @@ async function startLessonWork({
     ),
   ]);
 
+  if (input.lessonsAskedAt) {
+    await endLessonsAskStep({
+      askedAt: input.lessonsAskedAt,
+      goalId: input.goalId,
+      startedCourseIds: courseRequests.map((request) => request.courseId),
+    });
+  }
+
   return { conflict: false, value: preparation };
+}
+
+/** An ask whose preparation gives up without starting anything stops reading as coming. */
+async function startAskedLessonWork(args: {
+  analytics: ContentAnalytics;
+  input: SessionPreparationInput;
+}): Promise<SessionPreparation | null> {
+  const { goalId, lessonsAskedAt } = args.input;
+
+  try {
+    return await retryPlanConflicts(startLessonWork, args);
+  } catch (error) {
+    if (lessonsAskedAt) {
+      await endLessonsAskStep({ askedAt: lessonsAskedAt, goalId, startedCourseIds: [] });
+    }
+
+    throw error;
+  }
 }
 
 function getOutlineWait({
@@ -270,7 +291,7 @@ export async function sessionPreparationWorkflow(
   "use workflow";
 
   const analytics = { distinctId: input.userId, goalId: input.goalId, platform: input.platform };
-  const preparation = await retryPlanConflicts(startLessonWork, { analytics, input });
+  const preparation = await startAskedLessonWork({ analytics, input });
 
   if (!preparation) {
     return { status: "alreadyRunning" };

@@ -11,7 +11,7 @@ import { readSkillCourses } from "../../lookahead/plan-outline-needs";
 import { isStandIn } from "../../plans/planner/plan-item-rules";
 import { isExamSchedule } from "../../plans/planner/plan-queue";
 
-export const OUTLINING: GenerationStatus[] = ["pending", "running"];
+const OUTLINING: GenerationStatus[] = ["pending", "running"];
 
 export type DayOutlines = "awaiting" | "idle" | null;
 
@@ -113,27 +113,47 @@ export async function loadDayStandInCourseIds({
 }
 
 /**
- * Whether the day's stand-ins are being outlined (`awaiting`) or wait for someone to ask (`idle`);
- * null without stand-ins. A stand-in reserves time only while its course is actively awaiting an
- * outline; never wait on content nobody is writing.
+ * Whether the day's stand-ins are getting lessons (`awaiting`) or wait for someone to ask (`idle`);
+ * null without stand-ins. They're getting lessons while an outline is writing a course they need,
+ * or while the learner's ask is fresh and no such course has been written since it. Never wait on
+ * content nobody is writing.
  */
 export async function getDayOutlines(input: DayOutlinesInput): Promise<DayOutlines> {
-  const { client = prisma, now = new Date() } = input;
+  const { client = prisma, goal, now = new Date() } = input;
   const courseIds = await loadDayStandInCourseIds(input);
 
   if (courseIds.length === 0) {
     return null;
   }
 
-  const outlining = await client.course.count({
-    where: {
-      id: { in: courseIds },
-      outlineStatus: { in: OUTLINING },
-      updatedAt: { gt: getOutlineStaleBefore(now) },
-    },
+  const staleBefore = getOutlineStaleBefore(now);
+
+  const [outlining, plan] = await Promise.all([
+    client.course.count({
+      where: {
+        id: { in: courseIds },
+        outlineStatus: { in: OUTLINING },
+        updatedAt: { gt: staleBefore },
+      },
+    }),
+    client.plan.findUnique({ select: { lessonsAskedAt: true }, where: { goalId: goal.id } }),
+  ]);
+
+  const askedAt = plan?.lessonsAskedAt;
+
+  if (outlining > 0) {
+    return "awaiting";
+  }
+
+  if (!askedAt || askedAt <= staleBefore) {
+    return "idle";
+  }
+
+  const written = await client.course.count({
+    where: { id: { in: courseIds }, updatedAt: { gt: askedAt } },
   });
 
-  return outlining > 0 ? "awaiting" : "idle";
+  return written > 0 ? "idle" : "awaiting";
 }
 
 export async function isDayAwaitingOutlines(input: DayOutlinesInput): Promise<boolean> {

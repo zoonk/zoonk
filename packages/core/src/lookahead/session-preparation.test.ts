@@ -174,7 +174,6 @@ describe(getSessionPreparationAccess, () => {
       goalId: goal.id,
       lessonId: null,
       status: "guest",
-      timeZone: "America/Sao_Paulo",
       userId: owner.id,
     });
   });
@@ -219,7 +218,6 @@ describe(getSessionPreparationAccess, () => {
       goalId: goal.id,
       lessonId: next.id,
       status: "guest",
-      timeZone: "UTC",
       userId: guest.id,
     });
   });
@@ -554,7 +552,6 @@ describe(listSessionPreparation, () => {
       goalId: guestGoal.id,
       lessonId: firstLesson.id,
       status: "guest",
-      timeZone: "UTC",
       userId: guest.id,
     });
   });

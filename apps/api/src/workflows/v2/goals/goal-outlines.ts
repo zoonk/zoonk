@@ -1,13 +1,12 @@
 import { type CourseBandNeed, type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
-import { type OutlineAsk } from "@zoonk/core/lookahead/today-outlines";
 import { start } from "workflow/api";
 import { courseOutlineWorkflow } from "../courses/course-outline-workflow";
 import { type GoalRunContext } from "./goal-run-context";
 import {
+  endLessonsAskStep,
   listPlanOutlineNeedsStep,
   readGoalLookaheadStep,
   readPlanFirstSkillStep,
-  settleOutlineAsksStep,
 } from "./steps/goal-lookahead-steps";
 
 type OutlineCourse = { bands: CourseBandNeed[]; courseId: string; scope: CurriculumScope };
@@ -37,30 +36,16 @@ export async function startOutlines({
   );
 }
 
-export async function settleOutlines({
-  asked,
-  started,
-}: {
-  asked: OutlineAsk[];
-  started: string[];
-}): Promise<void> {
-  if (asked.length === 0 && started.length === 0) {
-    return;
-  }
-
-  await settleOutlineAsksStep({ asked, started });
-}
-
 export async function outlinePlanAhead({
-  asked = [],
   context,
   forGuest,
   goalId,
+  lessonsAskedAt,
 }: {
-  asked?: OutlineAsk[];
   context: GoalRunContext;
   forGuest: boolean;
   goalId: string;
+  lessonsAskedAt?: number | null;
 }) {
   const lookahead = await readGoalLookaheadStep(goalId);
 
@@ -69,6 +54,13 @@ export async function outlinePlanAhead({
     readPlanFirstSkillStep(goalId),
   ]);
 
-  await settleOutlines({ asked, started: needs.map((need) => need.courseId) });
   await startOutlines({ context, courses: needs, firstSkillId, forGuest });
+
+  if (lessonsAskedAt) {
+    await endLessonsAskStep({
+      askedAt: lessonsAskedAt,
+      goalId,
+      startedCourseIds: needs.map((need) => need.courseId),
+    });
+  }
 }

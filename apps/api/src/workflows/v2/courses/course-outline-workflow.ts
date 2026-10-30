@@ -20,7 +20,6 @@ import {
   logReplanFailureStep,
   placeContinuationsStep,
   planOutlineBandStep,
-  releaseCourseOutlineAskStep,
   replanWaitingGoalStep,
   saveOutlineChapterStep,
   writeOutlineBandStep,
@@ -253,12 +252,9 @@ export async function courseOutlineWorkflow(
 
     const missing = await planBands({ context, needs: input.bands });
 
-    if (missing.length > 0) {
-      return takeNextTurn({ attempt, input, status: "joined" });
-    }
-
-    await releaseCourseOutlineAskStep(input.courseId);
-    return { status: "joined" };
+    return missing.length > 0
+      ? takeNextTurn({ attempt, input, status: "joined" })
+      : { status: "joined" };
   }
 
   const [, outlined] = await Promise.allSettled([
@@ -293,7 +289,7 @@ async function writeOutline({
   const plans = await planBands({ context, needs: input.bands });
 
   if (plans.length === 0) {
-    await Promise.all([releaseCourseOutlineAskStep(input.courseId), startSharedCourseWork(input)]);
+    await startSharedCourseWork(input);
     return { bandsWritten: 0, chapterIds: [], status: "written" };
   }
 

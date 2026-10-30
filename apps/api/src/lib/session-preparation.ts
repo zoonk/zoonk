@@ -14,13 +14,13 @@ import {
   requestUpcomingChallengeQuestions,
 } from "@zoonk/core/checkpoints/challenge-questions";
 import { requestClaimQuestions } from "@zoonk/core/lookahead/claim-questions";
+import { askForLessons } from "@zoonk/core/lookahead/lessons-ask";
 import {
   type GoalPreparationAccess,
   type SessionPreparationAccess,
   getGoalPreparationAccess,
   getSessionPreparationAccess,
 } from "@zoonk/core/lookahead/session-preparation";
-import { type OutlineAsk, askTodayOutlines } from "@zoonk/core/lookahead/today-outlines";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { after } from "next/server";
@@ -80,23 +80,23 @@ function startChallengeQuestions(request: ChallengeQuestions | null) {
 
 async function startFromAccess({
   access,
-  askedOutlines,
   challengeQuestions = null,
   claimQuestions,
+  lessonsAskedAt,
   platform,
 }: {
   access: ReadyAccess;
-  askedOutlines?: OutlineAsk[];
   challengeQuestions?: ChallengeQuestions | null;
   claimQuestions: ClaimQuestions | null;
+  lessonsAskedAt?: number | null;
   platform: AnalyticsPlatform | null;
 }) {
   const [preparation] = await Promise.all([
     start(sessionPreparationWorkflow, [
       {
-        askedOutlines,
         claimQuestions,
         goalId: access.goalId,
+        lessonsAskedAt,
         platform,
         timeZone: access.timeZone,
         userId: access.userId,
@@ -113,17 +113,14 @@ async function startFromAccess({
   return { preparationId: preparation.runId, status: "started" as const };
 }
 
-/**
- * A placement or a plan edit can move a guest's plan past the bands its build outlined. Only a
- * goal's preparation asks for the day's outlines up front: the learner is about to look at the day.
- */
-async function prepareGuestLessons({
+/** A placement or a plan edit can move a guest's plan past the bands its build outlined. */
+function prepareGuestLessons({
   access,
-  askToday,
+  lessonsAskedAt,
   platform,
 }: {
   access: GuestAccess;
-  askToday: boolean;
+  lessonsAskedAt?: number | null;
   platform: AnalyticsPlatform | null;
 }) {
   const { goalId, lessonId, userId } = access;
@@ -136,14 +133,10 @@ async function prepareGuestLessons({
     return;
   }
 
-  const askedOutlines = askToday
-    ? await askTodayOutlines({ goalId, timeZone: access.timeZone })
-    : [];
-
   after(async () => {
     const { error } = await safeAsync(() =>
       start(guestOutlineWorkflow, [
-        { analytics: { distinctId: userId, goalId, platform }, askedOutlines, goalId },
+        { analytics: { distinctId: userId, goalId, platform }, goalId, lessonsAskedAt },
       ]),
     );
 
@@ -164,7 +157,7 @@ export async function startSessionPreparation({
   ]);
 
   if (access.status === "guest") {
-    await prepareGuestLessons({ access, askToday: false, platform });
+    prepareGuestLessons({ access, platform });
     return { preparationId: null, status: "started" };
   }
 
@@ -192,7 +185,7 @@ export async function scheduleSessionPreparation(sessionId: string): Promise<voi
   ]);
 
   if (access.status === "guest") {
-    await prepareGuestLessons({ access, askToday: false, platform });
+    prepareGuestLessons({ access, platform });
     return;
   }
 
@@ -227,7 +220,7 @@ export async function startGoalPreparation({
   ]);
 
   if (access.status === "guest") {
-    await prepareGuestLessons({ access, askToday: true, platform });
+    prepareGuestLessons({ access, lessonsAskedAt: await askForLessons({ goalId }), platform });
     return { preparationId: null, status: "started" };
   }
 
@@ -239,9 +232,9 @@ export async function startGoalPreparation({
     return access;
   }
 
-  const askedOutlines = await askTodayOutlines(access);
+  const lessonsAskedAt = await askForLessons({ goalId });
 
-  return startFromAccess({ access, askedOutlines, claimQuestions: null, platform });
+  return startFromAccess({ access, claimQuestions: null, lessonsAskedAt, platform });
 }
 
 /** Starts after the response is sent; a failure is logged, and the next block prepares again. */
@@ -252,7 +245,7 @@ export async function scheduleGoalPreparation(goalId: string): Promise<void> {
   ]);
 
   if (access.status === "guest") {
-    await prepareGuestLessons({ access, askToday: true, platform });
+    prepareGuestLessons({ access, lessonsAskedAt: await askForLessons({ goalId }), platform });
     return;
   }
 
@@ -260,11 +253,11 @@ export async function scheduleGoalPreparation(goalId: string): Promise<void> {
     return;
   }
 
-  const askedOutlines = await askTodayOutlines(access);
+  const lessonsAskedAt = await askForLessons({ goalId });
 
   after(async () => {
     const { error } = await safeAsync(() =>
-      startFromAccess({ access, askedOutlines, claimQuestions: null, platform }),
+      startFromAccess({ access, claimQuestions: null, lessonsAskedAt, platform }),
     );
 
     if (error) {

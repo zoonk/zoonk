@@ -136,14 +136,6 @@ export async function claimCourseOutline({
   return "claimed";
 }
 
-/** A course asked for an outline that turned out to have nothing to write stops reading as being outlined. */
-export async function releaseCourseOutlineAsk(courseId: string): Promise<void> {
-  await prisma.course.updateMany({
-    data: { outlineStatus: "completed" },
-    where: { id: courseId, outlineStatus: "pending" },
-  });
-}
-
 export async function releaseStaleCourseOutline({
   courseId,
   staleRunId,

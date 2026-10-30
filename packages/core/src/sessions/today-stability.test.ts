@@ -11,7 +11,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { mockSession } from "../_test-utils/mock-session";
 import { replanGoalsWaitingOnSkills } from "../library/curriculum/replan-waiting-goals";
-import { askTodayOutlines } from "../lookahead/today-outlines";
+import { askForLessons } from "../lookahead/lessons-ask";
 import { keepPaceOwn } from "../plans/_test-utils/keep-pace-own";
 import { planLibraryFixture, unplannedGoalFixture } from "../plans/_test-utils/plan-library";
 import { readSelectedItemFacts } from "../plans/_utils/selected-item-contract";
@@ -114,7 +114,7 @@ async function setupPlacedDay() {
 
   mockSession(user.id);
 
-  return { goal };
+  return { course, goal };
 }
 
 async function landWaitingLessons({
@@ -286,14 +286,14 @@ describe("today's session the learner was shown", () => {
 
     expect(opened.today.session).toMatchObject({ blocks: [], emptyDay: "lessonsToPrepare" });
 
-    await askTodayOutlines({ goalId: goal.id, timeZone: "UTC" });
+    await askForLessons({ goalId: goal.id });
     const after = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
     expect(after.today.session).toMatchObject({ blocks: [], emptyDay: "lessonsComing" });
   });
 
-  it("asks for a practice-only day's lessons nobody is outlining, and says they're coming once asked", async () => {
-    const { goal } = await setupPlacedDay();
+  it("asks for a practice-only day's lessons nobody is outlining, and says they're coming until their course is written", async () => {
+    const { course, goal } = await setupPlacedDay();
     const before = await getTodayView({ goalId: goal.id, timeZone: "UTC" });
     const day = before.status === "ready" ? before.today.session : null;
 
@@ -310,10 +310,16 @@ describe("today's session the learner was shown", () => {
 
     expect(opened.today.session).toMatchObject({ lessonsComing: false, lessonsToPrepare: true });
 
-    await askTodayOutlines({ goalId: goal.id, timeZone: "UTC" });
+    await askForLessons({ goalId: goal.id });
     const after = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
 
     expect(after.today.session).toMatchObject({ lessonsComing: true, lessonsToPrepare: false });
+
+    vi.setSystemTime(A_MINUTE_LATER);
+    await prisma.course.update({ data: { outlineStatus: "completed" }, where: { id: course.id } });
+    const written = await openTodayView({ goalId: goal.id, timeZone: "UTC" });
+
+    expect(written.today.session).toMatchObject({ lessonsComing: false, lessonsToPrepare: true });
   });
 
   it("stops waiting on an outline nobody has touched for a while", async () => {

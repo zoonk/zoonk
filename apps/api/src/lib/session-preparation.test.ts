@@ -16,11 +16,14 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { getDateInTimeZone } from "@zoonk/utils/time-zone";
 import { after } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { sleep } from "workflow";
 import { start } from "workflow/api";
 import {
   mockGuestSession,
   mockSession,
 } from "../../../../packages/core/src/_test-utils/mock-session";
+import { finishCourseOutline } from "../../../../packages/core/src/library/curriculum/course-outline-state";
+import { getTodayView } from "../../../../packages/core/src/view-models/today/get-today-view";
 import { mockHookConflict } from "../../mocks/workflow";
 import { getStartMock } from "../workflows/_test-utils/start-mock";
 import { courseOutlineWorkflow } from "../workflows/v2/courses/course-outline-workflow";
@@ -50,6 +53,18 @@ function runStartedWorkflowsInline() {
 
     return { runId: "started-run" } as Awaited<ReturnType<typeof start>>;
   });
+}
+
+/** Holds the next started workflow until the test runs it, as a queue would. */
+function holdNextStart(): () => Promise<unknown> {
+  const held: { run?: () => Promise<unknown> } = {};
+
+  getStartMock().mockImplementationOnce(async (workflow, args) => {
+    held.run = async () => typeof workflow === "function" && workflow(...args);
+    return { runId: "held-run" } as Awaited<ReturnType<typeof start>>;
+  });
+
+  return async () => held.run?.();
 }
 
 async function settle() {
@@ -142,9 +157,22 @@ async function placedGuestFixture({ guest = true }: { guest?: boolean } = {}) {
 
 type PlacedGuest = Awaited<ReturnType<typeof placedGuestFixture>>;
 
-async function readOutlineStatus({ course }: PlacedGuest) {
-  const row = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
-  return row.outlineStatus;
+async function readCourse({ course }: PlacedGuest) {
+  return prisma.course.findUniqueOrThrow({
+    select: { outlineRunId: true, outlineStatus: true, updatedAt: true },
+    where: { id: course.id },
+  });
+}
+
+async function isDayComing({ goal }: PlacedGuest): Promise<boolean> {
+  const view = await getTodayView({ goalId: goal.id, timeZone: TIME_ZONE });
+
+  if (view.status !== "ready" || !view.today.session) {
+    throw new Error(`Today did not read for goal ${goal.id}`);
+  }
+
+  const { session } = view.today;
+  return session.lessonsComing || session.emptyDay === "lessonsComing";
 }
 
 async function startSessionFor({ goal, user }: PlacedGuest) {
@@ -171,45 +199,84 @@ describe("preparing a guest's lessons", () => {
     ["asked for the goal", (guest: PlacedGuest) => startGoalPreparation({ goalId: guest.goal.id })],
     ["after a plan write", (guest: PlacedGuest) => scheduleGoalPreparation(guest.goal.id)],
   ])(
-    "marks the band's course as awaiting its outline before the work starts, %s",
+    "says the band's lessons are coming as soon as the learner asks, before any outline starts, %s",
     async (_when, prepare: (guest: PlacedGuest) => Promise<unknown>) => {
       const guest = await placedGuestFixture();
+      const course = await readCourse(guest);
+
+      await expect(isDayComing(guest)).resolves.toBe(false);
 
       await prepare(guest);
 
-      await expect(readOutlineStatus(guest)).resolves.toBe("pending");
+      await expect(isDayComing(guest)).resolves.toBe(true);
+      await expect(readCourse(guest)).resolves.toStrictEqual(course);
 
       await settle();
+
+      await expect(isDayComing(guest)).resolves.toBe(true);
     },
   );
 
   it.each([
+    ["asked for the goal", (guest: PlacedGuest) => startGoalPreparation({ goalId: guest.goal.id })],
+    ["after a plan write", (guest: PlacedGuest) => scheduleGoalPreparation(guest.goal.id)],
     ["asked for a session", startSessionFor],
     ["after a session write", scheduleSessionFor],
   ])(
-    "marks the band's course only once its outline starts, %s",
+    "leaves the shared course to the outline it starts, %s",
     async (_when, prepare: (guest: PlacedGuest) => Promise<unknown>) => {
       const guest = await placedGuestFixture();
+      const course = await readCourse(guest);
 
       await prepare(guest);
-
-      await expect(readOutlineStatus(guest)).resolves.toBe("completed");
-
       await settle();
 
-      await expect(readOutlineStatus(guest)).resolves.toBe("pending");
+      expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, expect.anything());
+      await expect(readCourse(guest)).resolves.toStrictEqual(course);
     },
   );
 
-  it("gives a course back when its stand-in's skill turns out to be taught already", async () => {
+  it("stops saying lessons are coming when the day's stand-in turns out to be taught already", async () => {
     const guest = await placedGuestFixture();
     await teachSkill({ course: guest.course, skillId: guest.next.id });
+    const course = await readCourse(guest);
 
     await startGoalPreparation({ goalId: guest.goal.id });
     await settle();
 
     expect(start).not.toHaveBeenCalledWith(courseOutlineWorkflow, expect.anything());
-    await expect(readOutlineStatus(guest)).resolves.toBe("completed");
+    await expect(isDayComing(guest)).resolves.toBe(false);
+    await expect(readCourse(guest)).resolves.toStrictEqual(course);
+  });
+
+  it("leaves a long-running outline its course, so it can still finish", async () => {
+    const guest = await placedGuestFixture();
+
+    await prisma.course.update({
+      data: {
+        outlineRunId: "long-outline",
+        outlineStatus: "running",
+        updatedAt: new Date(Date.now() - 20 * 60_000),
+      },
+      where: { id: guest.course.id },
+    });
+
+    const course = await readCourse(guest);
+
+    await startGoalPreparation({ goalId: guest.goal.id });
+    await settle();
+
+    await expect(readCourse(guest)).resolves.toStrictEqual(course);
+    await expect(isDayComing(guest)).resolves.toBe(true);
+
+    await finishCourseOutline({
+      courseId: guest.course.id,
+      status: "completed",
+      workflowRunId: "long-outline",
+    });
+
+    await expect(readCourse(guest)).resolves.toMatchObject({ outlineStatus: "completed" });
+    await expect(isDayComing(guest)).resolves.toBe(false);
   });
 
   it.each([
@@ -248,14 +315,39 @@ describe("preparing an account's lessons", () => {
     runStartedWorkflowsInline();
   });
 
-  it("gives the courses it asked for back when another goal's preparation holds the learner", async () => {
+  it("keeps the day's lessons coming through overlapping asks, one waiting for the other's turn", async () => {
     const account = await placedGuestFixture({ guest: false });
-    mockHookConflict({ returnValue: Promise.resolve(null), runId: "other-goal-run" });
+    const course = await readCourse(account);
+    const runFirst = holdNextStart();
+
+    await startGoalPreparation({ goalId: account.goal.id });
+
+    mockHookConflict({ returnValue: Promise.resolve(null), runId: "held-run" });
+    vi.mocked(sleep).mockImplementationOnce(async () => mockHookConflict(null));
 
     await startGoalPreparation({ goalId: account.goal.id });
     await settle();
+    await runFirst();
+
+    expect(start).toHaveBeenCalledWith(courseOutlineWorkflow, expect.anything());
+    await expect(isDayComing(account)).resolves.toBe(true);
+    await expect(readCourse(account)).resolves.toStrictEqual(course);
+  });
+
+  it("stops saying lessons are coming when its preparation never gets a turn", async () => {
+    const account = await placedGuestFixture({ guest: false });
+    const course = await readCourse(account);
+    const runPreparation = holdNextStart();
+    mockHookConflict({ returnValue: Promise.resolve(null), runId: "other-goal-run" });
+
+    await startGoalPreparation({ goalId: account.goal.id });
+
+    await expect(isDayComing(account)).resolves.toBe(true);
+
+    await runPreparation().catch(() => null);
 
     expect(start).not.toHaveBeenCalledWith(courseOutlineWorkflow, expect.anything());
-    await expect(readOutlineStatus(account)).resolves.toBe("completed");
+    await expect(isDayComing(account)).resolves.toBe(false);
+    await expect(readCourse(account)).resolves.toStrictEqual(course);
   });
 });

@@ -5,6 +5,7 @@ import {
 } from "@zoonk/core/library/curriculum/goal-primary-course";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { type LearnerLookahead, getGoalLookahead } from "@zoonk/core/lookahead/learner-lookahead";
+import { endLessonsAsk } from "@zoonk/core/lookahead/lessons-ask";
 import {
   type PlanOutlineNeed,
   listPlanOutlineNeeds,
@@ -17,7 +18,6 @@ import {
   pickPlanStartToWrite,
   pickSpeculativeLessons,
 } from "@zoonk/core/lookahead/speculative-lessons";
-import { type OutlineAsk, settleOutlineAsks } from "@zoonk/core/lookahead/today-outlines";
 import { type GoalKind, prisma } from "@zoonk/db";
 import { withAiRetry } from "../../_shared/ai-retry";
 import { type ContentAnalytics, toContentAnalytics } from "../../_shared/content-analytics";
@@ -135,13 +135,14 @@ export async function listPlanOutlineNeedsStep(input: {
   return listPlanOutlineNeeds(input);
 }
 
-export async function settleOutlineAsksStep(input: {
-  asked: OutlineAsk[];
-  started: string[];
+export async function endLessonsAskStep(input: {
+  askedAt: number;
+  goalId: string;
+  startedCourseIds: string[];
 }): Promise<void> {
   "use step";
 
-  await settleOutlineAsks(input);
+  await endLessonsAsk(input);
 }
 
 export async function listSoonStandInCourseIdsStep(input: {

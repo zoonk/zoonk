@@ -18,13 +18,7 @@ const OPEN_BLOCK_STATUSES = new Set<StudySessionBlock["status"]>(["active", "pen
 export type SessionPreparationAccess =
   | { goalId: string; sessionId: string; status: "ready"; timeZone: string; userId: string }
   /** Guests may prepare only their next lesson, counted as its start, and the outlines their plan reaches. */
-  | {
-      goalId: string | null;
-      lessonId: string | null;
-      status: "guest";
-      timeZone: string;
-      userId: string;
-    }
+  | { goalId: string | null; lessonId: string | null; status: "guest"; userId: string }
   | { status: "plusRequired" }
   | { status: "notFound" }
   | { status: "unauthorized" };
@@ -90,7 +84,6 @@ export async function getSessionPreparationAccess({
       goalId: session.goalId,
       lessonId: findNextLessonId(session.blocks),
       status: "guest",
-      timeZone: getAnswerTimeZone({ goal: session.goal, timeZone: null }),
       userId,
     };
   }
@@ -134,7 +127,6 @@ export async function getGoalPreparationAccess({
       goalId,
       lessonId: await findPlanFirstLessonId(goalId),
       status: "guest",
-      timeZone: getAnswerTimeZone({ goal: owned.goal, timeZone: null }),
       userId: owned.userId,
     };
   }
