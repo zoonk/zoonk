@@ -327,12 +327,25 @@ private fun lineSpans(
     layout: TextLayoutResult,
     range: TextRange,
 ): List<LineSpan> =
-    (layout.getLineForOffset(range.start)..layout.getLineForOffset(range.end - 1)).mapNotNull { line ->
+    (layout.getLineForOffset(range.start)..layout.getLineForOffset(range.end - 1)).flatMap { line ->
         val from = maxOf(range.start, layout.getLineStart(line))
         val to = minOf(range.end, layout.getLineEnd(line, visibleEnd = true)) - 1
-        if (to < from) return@mapNotNull null
-        val boxes = (from..to).map(layout::getBoundingBox)
-        LineSpan(boxes.minOf { it.left }, boxes.maxOf { it.right }, layout.getLineBaseline(line))
+        val glyphs = (from..to).map { layout.getBoundingBox(it).let { box -> box.left..box.right } }
+        visualRuns(glyphs).map { LineSpan(it.start, it.endInclusive, layout.getLineBaseline(line)) }
+    }
+
+/**
+ * A passage's glyphs on one line as the stretches they cover, left to right: in mixed-direction text
+ * a passage can split around words that aren't part of it.
+ */
+internal fun visualRuns(glyphs: List<ClosedFloatingPointRange<Float>>): List<ClosedFloatingPointRange<Float>> =
+    glyphs.sortedBy { it.start }.fold(emptyList()) { runs, glyph ->
+        val last = runs.lastOrNull()
+        if (last != null && glyph.start <= last.endInclusive + TOUCHING) {
+            runs.dropLast(1) + (last.start..maxOf(last.endInclusive, glyph.endInclusive))
+        } else {
+            runs + glyph
+        }
     }
 
 @Composable
@@ -393,6 +406,7 @@ private fun Modifier.tint(color: Color) =
 private const val SOFT = 0.16f
 private const val PASSAGE_TINT = 0.15f
 private const val SWATCH_TINT = 0.25f
+private const val TOUCHING = 1f
 private const val LINE_HEIGHT = 1.9f
 
 /** Roughly how far the font's letters reach above and below the baseline, as shares of its size. */
