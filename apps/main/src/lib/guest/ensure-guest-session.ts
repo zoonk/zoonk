@@ -2,16 +2,22 @@ import { ensureLearnerSummary } from "@/lib/learner/learner-store";
 import { safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
+/** Better Auth's captcha plugin answers this code when Vercel BotID flags the browser. */
+const BOT_CHECK_REFUSED = "VERIFICATION_FAILED";
+
+/** `blocked`: the bot check refused this browser, so trying again won't help. */
+type GuestSession = "blocked" | "failed" | "ready";
+
 /**
  * Only a check that answered "no session" makes a guest: after a failed check, signing in anonymously
  * could replace a signed-in learner's session. The auth client loads on the first tap that needs it.
  */
-async function startGuestSession(): Promise<boolean> {
+async function startGuestSession(): Promise<GuestSession> {
   const { data: auth, error: loadError } = await safeAsync(() => import("@zoonk/auth/client"));
 
   if (loadError) {
     logError("[ensureGuestSession] Could not load the auth client:", loadError);
-    return false;
+    return "failed";
   }
 
   const { authClient } = auth;
@@ -19,28 +25,28 @@ async function startGuestSession(): Promise<boolean> {
 
   if (checkError) {
     logError("[ensureGuestSession] Could not check the session:", checkError);
-    return false;
+    return "failed";
   }
 
   if (data) {
-    return true;
+    return "ready";
   }
 
   const { error } = await authClient.signIn.anonymous();
 
   if (error) {
     logError("[ensureGuestSession] Could not start a guest session:", error);
-    return false;
+    return error.code === BOT_CHECK_REFUSED ? "blocked" : "failed";
   }
 
   ensureLearnerSummary();
-  return true;
+  return "ready";
 }
 
-let pending: Promise<boolean> | null = null;
+let pending: Promise<GuestSession> | null = null;
 
 /** Two callers at once wait for the same sign-in instead of making two guests. */
-export function ensureGuestSession(): Promise<boolean> {
+export function ensureGuestSession(): Promise<GuestSession> {
   pending ??= startGuestSession().finally(() => {
     pending = null;
   });

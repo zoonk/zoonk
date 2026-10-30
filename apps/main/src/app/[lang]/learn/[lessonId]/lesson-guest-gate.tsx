@@ -28,7 +28,7 @@ function useOpenAsGuest() {
   const [isRefreshing, startTransition] = useTransition();
 
   const open = useEffectEvent(async () => {
-    const hasSession = await ensureGuestSession();
+    const hasSession = (await ensureGuestSession()) === "ready";
     dispatch({ hasSession, type: "opened" });
 
     if (hasSession) {

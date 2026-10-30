@@ -28,7 +28,7 @@ describe("ensureGuestSession", () => {
     auth.signInAnonymously.mockResolvedValue({ data: { user: { id: "guest-1" } }, error: null });
     const ensureGuestSession = await loadHelper();
 
-    await expect(ensureGuestSession()).resolves.toBe(true);
+    await expect(ensureGuestSession()).resolves.toBe("ready");
 
     expect(auth.signInAnonymously).toHaveBeenCalledOnce();
   });
@@ -38,14 +38,27 @@ describe("ensureGuestSession", () => {
     auth.signInAnonymously.mockResolvedValue({ data: null, error: { status: 429 } });
     const ensureGuestSession = await loadHelper();
 
-    await expect(ensureGuestSession()).resolves.toBe(false);
+    await expect(ensureGuestSession()).resolves.toBe("failed");
+  });
+
+  it("says when the bot check refused this browser, since trying again can't help", async () => {
+    auth.getSession.mockResolvedValue({ data: null, error: null });
+
+    auth.signInAnonymously.mockResolvedValue({
+      data: null,
+      error: { code: "VERIFICATION_FAILED", message: "Captcha verification failed", status: 403 },
+    });
+
+    const ensureGuestSession = await loadHelper();
+
+    await expect(ensureGuestSession()).resolves.toBe("blocked");
   });
 
   it("changes nothing for a session the browser already holds", async () => {
     auth.getSession.mockResolvedValue({ data: { user: { id: "learner-l" } }, error: null });
     const ensureGuestSession = await loadHelper();
 
-    await expect(ensureGuestSession()).resolves.toBe(true);
+    await expect(ensureGuestSession()).resolves.toBe("ready");
 
     expect(auth.signInAnonymously).not.toHaveBeenCalled();
   });
@@ -54,7 +67,7 @@ describe("ensureGuestSession", () => {
     auth.getSession.mockResolvedValue({ data: null, error: { status: 429 } });
     const ensureGuestSession = await loadHelper();
 
-    await expect(ensureGuestSession()).resolves.toBe(false);
+    await expect(ensureGuestSession()).resolves.toBe("failed");
 
     expect(auth.signInAnonymously).not.toHaveBeenCalled();
   });

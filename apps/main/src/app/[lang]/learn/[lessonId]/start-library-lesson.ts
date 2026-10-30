@@ -59,7 +59,7 @@ export async function startLibraryLesson({
   studySessionId: string | null;
 }): Promise<LessonStartOutcome> {
   // A session check or guest sign-in that failed is worth retrying; it never means "signed out".
-  if (!(await ensureGuestSession())) {
+  if ((await ensureGuestSession()) !== "ready") {
     return { reason: "failed" };
   }
 

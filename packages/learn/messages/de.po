@@ -8374,6 +8374,12 @@ msgctxt "goalErrors.HeGg5v"
 msgid "You've sent as many new goals as the free plan allows today. Try again tomorrow, or get Plus to keep going now."
 msgstr "Du hast heute so viele neue Ziele gesendet, wie der Free-Tarif erlaubt. Versuch es morgen noch einmal oder hol dir Plus, um jetzt weiterzumachen."
 
+#. Shown when automated bot protection refuses to let this browser continue without an account.
+#: src/onboarding/goal-errors.ts
+msgctxt "goalErrors.CMlBco"
+msgid "A security check blocked this browser. Create a free account to continue, or try another browser."
+msgstr "Eine Sicherheitsprüfung hat diesen Browser blockiert. Erstell ein kostenloses Konto, um fortzufahren, oder versuch es mit einem anderen Browser."
+
 #: src/onboarding/goal-errors.ts
 msgctxt "goalErrors.YYmbyX"
 msgid "One moment. Try again in a few seconds."

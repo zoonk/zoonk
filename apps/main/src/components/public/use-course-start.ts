@@ -43,7 +43,7 @@ export function useCourseStart({
       }
 
       const { data } = await safeAsync(async () =>
-        (await ensureGuestSession())
+        (await ensureGuestSession()) === "ready"
           ? startCourseAction({
               chapterId,
               courseId,

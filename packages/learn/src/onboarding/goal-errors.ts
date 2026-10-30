@@ -97,6 +97,18 @@ export function useStartError() {
       return { message: goalLimitMessage("signUpRequired"), needsAccount: true };
     }
 
+    if (outcome.status === "browserBlocked") {
+      return {
+        message: t({
+          description:
+            "Shown when automated bot protection refuses to let this browser continue without an account.",
+          message:
+            "A security check blocked this browser. Create a free account to continue, or try another browser.",
+        }),
+        needsAccount: true,
+      };
+    }
+
     return {
       message:
         outcome.status === "slowDown"

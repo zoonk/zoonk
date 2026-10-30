@@ -13,8 +13,13 @@ export const WEB_UNDERSTANDING_ACTIONS: UnderstandingActions = {
   get: getUnderstandingAction,
   retry: retryUnderstandingAction,
   revise: ({ draftId, edit }) => reviseUnderstandingAction(draftId, edit),
-  start: async (input) =>
-    (await ensureGuestSession())
-      ? startUnderstandingAction({ ...input, timeZone: getLocalTimeZone() })
-      : { status: "failed" },
+  start: async (input) => {
+    const guest = await ensureGuestSession();
+
+    if (guest === "ready") {
+      return startUnderstandingAction({ ...input, timeZone: getLocalTimeZone() });
+    }
+
+    return { status: guest === "blocked" ? "browserBlocked" : "failed" };
+  },
 };

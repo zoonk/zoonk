@@ -27,6 +27,7 @@ export type StartUnderstandingOutcome =
   | { period: "day" | "month" | "total"; status: "limitReached"; tier: EntitlementTier }
   | { status: "needsAccount" }
   | { status: "signUpRequired" }
+  | { status: "browserBlocked" }
   | { status: "failed" };
 
 export type UnderstandingActions = {

@@ -43,7 +43,9 @@ export const WEB_ONBOARDING_ACTIONS: OnboardingActions = {
   askMaterial: askMaterialQuestion,
   attach: { file: attachGoalFile, link: attachGoalLink, text: attachGoalText },
   createGoals: async (input) =>
-    (await ensureGuestSession()) ? createOnboardingGoalsAction(input) : { status: "failed" },
+    (await ensureGuestSession()) === "ready"
+      ? createOnboardingGoalsAction(input)
+      : { status: "failed" },
   findTimeToCover: findGoalTimeToCover,
   finishPlacement: (input) => finishPlacementAction({ ...input, timeZone: getLocalTimeZone() }),
   getPlacement: (goalId) => getPlacementAction({ goalId, timeZone: getLocalTimeZone() }),
@@ -97,7 +99,7 @@ export function getPlanLinkOnboardingActions(planId: string): OnboardingActions 
   return {
     ...WEB_ONBOARDING_ACTIONS,
     createGoals: async (input) =>
-      (await ensureGuestSession())
+      (await ensureGuestSession()) === "ready"
         ? createGoalsFromPlanLinkAction(planId, input)
         : { status: "failed" },
   };

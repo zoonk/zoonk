@@ -53,7 +53,7 @@ function readAnswer({
 }
 
 export async function askToWriteLesson(lessonId: string): Promise<LessonWritingAnswer> {
-  if (!(await ensureGuestSession())) {
+  if ((await ensureGuestSession()) !== "ready") {
     return { status: "failed" };
   }
 
