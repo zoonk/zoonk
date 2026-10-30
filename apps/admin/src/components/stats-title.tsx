@@ -9,7 +9,7 @@ export function StatsTitle({ title, help }: { title: string; help?: string }) {
 
   return (
     <Tooltip>
-      <TooltipTrigger className="decoration-muted-foreground/50 cursor-help text-left uppercase decoration-dotted underline-offset-4 hover:underline">
+      <TooltipTrigger className="decoration-muted-foreground/50 hit-area relative cursor-help text-left uppercase decoration-dotted underline-offset-4 hover:underline">
         {title}
       </TooltipTrigger>
       <TooltipContent>{help}</TooltipContent>
