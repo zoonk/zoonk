@@ -131,7 +131,7 @@ class PlanPhasesTest {
 
     @Test
     fun partsShareWhatsLeftAfterTheirMinimumByWeight() {
-        assertEquals(listOf(30f, 50f), weightedWidths(listOf(1f, 3f), total = 82f, minimum = 20f, gap = 2f))
+        assertEquals(listOf(30f, 50f), weightedWidths(listOf(1f, 3f), total = 82f, minimums = listOf(20f, 20f), gap = 2f))
     }
 
     @Test

@@ -8,11 +8,17 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -31,6 +37,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -40,14 +47,21 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.Hyphens
+import androidx.compose.ui.text.style.LineBreak
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.max
 import com.zoonk.android.R
 import com.zoonk.android.ui.characters.Trickster
 import com.zoonk.android.ui.components.KindDot
@@ -57,6 +71,8 @@ import com.zoonk.android.ui.format.currentLocale
 import com.zoonk.android.ui.theme.withTabularFigures
 import com.zoonk.api.models.PlanPhase
 import kotlinx.datetime.toJavaLocalDate
+import kotlin.math.floor
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 /**
@@ -78,7 +94,7 @@ internal fun PlanRoadmap(
         if (maxWidth < FULL_ROADMAP_WIDTH) {
             RoadmapCompact(page, phases, onOpenPath)
         } else {
-            RoadmapFull(page, phases, links)
+            RoadmapFull(page, phases, links, maxWidth)
         }
     }
 }
@@ -170,7 +186,7 @@ private fun RoadmapMeter(phases: List<PlanPhase>) {
         val minimum = 24.dp.toPx()
         val ring = 1.5.dp.toPx()
         val radius = CornerRadius(size.height / 2)
-        val widths = weightedWidths(phases.map { it.weight() }, size.width, minimum, gap)
+        val widths = weightedWidths(phases.map { it.weight() }, size.width, List(phases.size) { minimum }, gap)
         var start = 0f
 
         phases.forEachIndexed { index, phase ->
@@ -195,16 +211,16 @@ private fun RoadmapMeter(phases: List<PlanPhase>) {
     }
 }
 
-/** Each part gets [minimum], then its share of what's left by weight, as main's flex rows do. */
+/** Each part gets its minimum, then its share of what's left by weight, as main's flex rows do. */
 internal fun weightedWidths(
     weights: List<Float>,
     total: Float,
-    minimum: Float,
+    minimums: List<Float>,
     gap: Float,
 ): List<Float> {
-    val shared = (total - weights.size * minimum - (weights.size - 1).coerceAtLeast(0) * gap).coerceAtLeast(0f)
+    val shared = (total - minimums.sum() - (weights.size - 1).coerceAtLeast(0) * gap).coerceAtLeast(0f)
     val sum = weights.sum()
-    return weights.map { minimum + if (sum > 0) shared * it / sum else 0f }
+    return weights.mapIndexed { index, weight -> minimums[index] + if (sum > 0) shared * weight / sum else 0f }
 }
 
 @Composable
@@ -212,11 +228,14 @@ private fun RoadmapFull(
     page: PlanPageState,
     phases: List<PlanPhase>,
     links: PlanLinks,
+    width: Dp,
 ) {
     var opened by rememberSaveable { mutableStateOf<Long?>(null) }
     val position = roadmapPosition(page, phases)
     val currentIndex = phases.indexOfFirst { it.state == PlanPhase.State.CURRENT }
     val overrun = page.plan.overrun(page.goal.kind)
+    val names = phases.map { bandName(it, phaseName(it, page.mocksRequirePlus)) }
+    val bands = bandLayout(names, phases.map { it.weight() }, width)
 
     Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -235,13 +254,16 @@ private fun RoadmapFull(
             }
             RoadmapLegend(page, phases)
         }
-        WeightedRow(weights = phases.map { it.weight() }, minimum = 64.dp, gap = 3.dp) {
+        Row(horizontalArrangement = Arrangement.spacedBy(BAND_GAP)) {
             phases.forEachIndexed { index, phase ->
                 PhaseColumn(
                     page = page,
                     phase = phase,
+                    name = names[index],
+                    width = bands.widths[index],
+                    bandHeight = bands.height,
                     isLast = index == phases.lastIndex,
-                    labelled = currentIndex != -1 && index > currentIndex,
+                    shownWhen = phaseWhen(index, currentIndex),
                     overrun = overrun?.takeIf { it.phaseIndex == phase.index },
                     hasOverrun = overrun != null,
                     onOpen = { opened = phase.index },
@@ -285,52 +307,133 @@ private fun RoadmapLegend(
     }
 }
 
+/** Main's `getPhaseWhen`: what the axis says under a phase, "Today" under the current one and the start of each after it. */
+private enum class PhaseWhen { Today, Start }
+
+private fun phaseWhen(
+    position: Int,
+    currentIndex: Int,
+): PhaseWhen? =
+    when {
+        position == currentIndex -> PhaseWhen.Today
+        currentIndex != -1 && position > currentIndex -> PhaseWhen.Start
+        else -> null
+    }
+
+/** A band's name; a done phase's check sits in its first line, so a narrow band's lines get its whole width. */
+private class BandName(
+    val plain: String,
+    val text: AnnotatedString,
+    val placeholders: List<AnnotatedString.Range<Placeholder>>,
+)
+
+private fun bandName(
+    phase: PlanPhase,
+    name: String,
+): BandName =
+    if (phase.state == PlanPhase.State.DONE) {
+        val text =
+            buildAnnotatedString {
+                appendInlineContent(CHECK, "✓")
+                append(name)
+            }
+        BandName(name, text, listOf(AnnotatedString.Range(CHECK_MARK, 0, 1)))
+    } else {
+        BandName(name, AnnotatedString(name), emptyList())
+    }
+
+/** Names wrap and hyphenate rather than being cut. */
+@Composable
+private fun bandStyle() = MaterialTheme.typography.labelMedium.copy(hyphens = Hyphens.Auto, lineBreak = LineBreak.Heading)
+
+private class BandLayout(
+    val widths: List<Dp>,
+    val height: Dp,
+)
+
+/**
+ * Main's bands: each drawn to its phase's time but never narrower than its name's longest word, and
+ * every band in the row as tall as the one whose name takes the most lines. When the longest words
+ * don't fit the row, each band keeps only the floor and its name hyphenates.
+ */
+@Composable
+private fun bandLayout(
+    names: List<BandName>,
+    weights: List<Float>,
+    width: Dp,
+): BandLayout {
+    val measurer = rememberTextMeasurer()
+    val style = bandStyle()
+
+    with(LocalDensity.current) {
+        fun measure(
+            name: BandName,
+            maxWidth: Int = Constraints.Infinity,
+        ) = measurer.measure(name.text, style, constraints = Constraints(maxWidth = maxWidth), placeholders = name.placeholders)
+
+        val padding = (BAND_PADDING_X * 2).toPx()
+        val narrowest = MIN_BAND_WIDTH.toPx()
+        val gap = BAND_GAP.toPx()
+        val words = names.map { max(narrowest, measure(it).multiParagraph.intrinsics.minIntrinsicWidth + padding) }
+        val minimums = if (words.sum() + gap * (names.size - 1) <= width.toPx()) words else List(names.size) { narrowest }
+        val widths = weightedWidths(weights, width.toPx(), minimums, gap).map { floor(it) }
+        val text = names.indices.maxOfOrNull { measure(names[it], (widths[it] - padding).roundToInt().coerceAtLeast(0)).size.height } ?: 0
+        return BandLayout(widths.map { it.toDp() }, max(BAND_HEIGHT, text.toDp() + BAND_PADDING_Y * 2))
+    }
+}
+
 @Composable
 private fun PhaseColumn(
     page: PlanPageState,
     phase: PlanPhase,
+    name: BandName,
+    width: Dp,
+    bandHeight: Dp,
     isLast: Boolean,
-    labelled: Boolean,
+    shownWhen: PhaseWhen?,
     overrun: PlanOverrun?,
     hasOverrun: Boolean,
     onOpen: () -> Unit,
 ) {
     val todayShare = if (phase.state == PlanPhase.State.CURRENT) phase.shareAt(page.today, DayPart.Start) else null
-    val ink = MaterialTheme.colorScheme.onSurface
 
-    BoxWithConstraints {
-        val width = maxWidth
-        Column(
-            Modifier.drawBehind {
-                todayShare ?: return@drawBehind
-                val x = size.width * if (layoutDirection == LayoutDirection.Rtl) 1 - todayShare else todayShare
-                val tick = 6.dp.toPx()
-                val line = 1.5.dp.toPx()
-                drawRect(ink, Offset(x, -tick), Size(line, tick))
-                drawRect(ink, Offset(x, BAND_HEIGHT.toPx()), Size(line, tick))
-            },
-        ) {
-            PhaseBand(page, phase, isLast, onOpen)
-            PhaseLane(page, phase, isLast, overrun, hasOverrun)
-            PhaseAxis(page, phase, isLast, labelled, todayShare, overrun, hasOverrun, width)
-        }
+    Column(Modifier.width(width)) {
+        PhaseBand(page, phase, name, bandHeight, isLast, shownWhen, todayShare, onOpen)
+        PhaseLane(page, phase, isLast, overrun, hasOverrun)
+        PhaseAxis(page, phase, isLast, shownWhen == PhaseWhen.Start, todayShare, overrun, hasOverrun, width)
     }
 }
 
 private val BAND_HEIGHT = 32.dp
+private val BAND_GAP = 3.dp
+private val BAND_PADDING_X = 10.dp
+private val BAND_PADDING_Y = 4.dp
+private val MIN_BAND_WIDTH = 72.dp
+private const val CHECK = "check"
+private val CHECK_MARK = Placeholder(1.5.em, 1.2.em, PlaceholderVerticalAlign.TextCenter)
 
 @Composable
 private fun PhaseBand(
     page: PlanPageState,
     phase: PlanPhase,
+    name: BandName,
+    height: Dp,
     isLast: Boolean,
+    shownWhen: PhaseWhen?,
+    todayShare: Float?,
     onOpen: () -> Unit,
 ) {
     val colors = MaterialTheme.colorScheme
-    val name = phaseName(phase, page.mocksRequirePlus)
-    val from = phase.start?.let { stringResource(R.string.plan_roadmap_from, formatPlanDate(it, page.today, currentLocale())) }
+    val whenWords =
+        phase.start?.let { start ->
+            when (shownWhen) {
+                PhaseWhen.Today -> stringResource(R.string.plan_today)
+                PhaseWhen.Start -> stringResource(R.string.plan_roadmap_from, formatPlanDate(start, page.today, currentLocale()))
+                null -> null
+            }
+        }
     val until = page.finish?.takeIf { isLast }?.let { roadmapUntil(it, page.today) }
-    val label = listOfNotNull(name + phaseStateWords(phase.state), from, until).joinToString(". ")
+    val label = listOfNotNull(name.plain + phaseStateWords(phase.state), whenWords, until).joinToString(". ")
     val (container, content) =
         when (phase.state) {
             PlanPhase.State.CURRENT -> colors.surfaceContainerHighest to colors.onSurface
@@ -339,14 +442,22 @@ private fun PhaseBand(
         }
     val current = phase.state == PlanPhase.State.CURRENT
     val share = phase.lessonShare()
+    val ink = colors.onSurface
 
     Surface(
         onClick = onOpen,
         modifier =
             Modifier
                 .fillMaxWidth()
-                .height(BAND_HEIGHT)
-                .semantics { contentDescription = label },
+                .height(height)
+                .drawBehind {
+                    todayShare ?: return@drawBehind
+                    val x = size.width * if (layoutDirection == LayoutDirection.Rtl) 1 - todayShare else todayShare
+                    val tick = 6.dp.toPx()
+                    val line = 1.5.dp.toPx()
+                    drawRect(ink, Offset(x, -tick), Size(line, tick))
+                    drawRect(ink, Offset(x, size.height), Size(line, tick))
+                }.semantics { contentDescription = label },
         shape = MaterialTheme.shapes.small,
         color = container,
         contentColor = content,
@@ -363,16 +474,24 @@ private fun PhaseBand(
                 }
             },
         ) {
-            Row(
-                modifier = Modifier.padding(horizontal = 10.dp).align(Alignment.CenterStart),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                if (phase.state == PlanPhase.State.DONE) {
-                    Icon(painterResource(R.drawable.ic_check), contentDescription = null, modifier = Modifier.size(14.dp))
-                }
-                Text(text = name, style = MaterialTheme.typography.labelMedium, maxLines = 1, overflow = TextOverflow.Ellipsis)
-            }
+            Text(
+                text = name.text,
+                modifier = Modifier.padding(horizontal = BAND_PADDING_X, vertical = BAND_PADDING_Y).align(Alignment.CenterStart),
+                style = bandStyle(),
+                inlineContent =
+                    mapOf(
+                        CHECK to
+                            InlineTextContent(CHECK_MARK) {
+                                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.CenterStart) {
+                                    Icon(
+                                        painterResource(R.drawable.ic_check),
+                                        contentDescription = null,
+                                        Modifier.fillMaxHeight().aspectRatio(1f),
+                                    )
+                                }
+                            },
+                    ),
+            )
         }
     }
 }
@@ -515,33 +634,6 @@ private fun FractionRow(
                         Anchor.End -> x - placeable.width
                     }
                 placeable.placeRelative(left, 0)
-            }
-        }
-    }
-}
-
-@Composable
-private fun WeightedRow(
-    weights: List<Float>,
-    minimum: Dp,
-    gap: Dp,
-    content: @Composable () -> Unit,
-) {
-    Layout(content = content, modifier = Modifier.fillMaxWidth()) { measurables, constraints ->
-        val gapPx = gap.roundToPx()
-        val widths = weightedWidths(weights, constraints.maxWidth.toFloat(), minimum.toPx(), gapPx.toFloat())
-        val placeables =
-            measurables.mapIndexed {
-                index,
-                it,
-                ->
-                it.measure(Constraints.fixedWidth(widths[index].roundToInt().coerceAtLeast(0)))
-            }
-        layout(constraints.maxWidth, placeables.maxOfOrNull { it.height } ?: 0) {
-            var x = 0
-            placeables.forEach {
-                it.placeRelative(x, 0)
-                x += it.width + gapPx
             }
         }
     }

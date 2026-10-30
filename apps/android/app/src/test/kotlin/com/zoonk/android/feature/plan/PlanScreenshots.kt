@@ -89,6 +89,13 @@ class PlanScreenshots {
     fun medium() = capture("plan-medium")
 
     @Test
+    @Config(qualifiers = "w700dp-h3200dp-xhdpi")
+    fun mediumAtTwiceTheFontSize() {
+        RuntimeEnvironment.setFontScale(2f)
+        capture("plan-medium-font200")
+    }
+
+    @Test
     @Config(qualifiers = "w1280dp-h900dp-land-xhdpi")
     fun expanded() = capture("plan-expanded")
 
