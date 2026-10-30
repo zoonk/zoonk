@@ -64,6 +64,27 @@ const EXAMS: Exam[] = [
   },
   {
     expected: {
+      noticeHints: ["edital"],
+      officialDomains: ["idepi.org.br", "piracema.mg.gov.br"],
+      sectionHints: ["quadro de provas", "conteúdos programáticos"],
+    },
+    id: "piracema-2026",
+    language: "pt",
+    plan: {
+      board: null,
+      country: "BR",
+      edition: "2026",
+      name: "Concurso Prefeitura de Piracema",
+      officialDomains: ["piracema.mg.gov.br"],
+      queries: [
+        "edital concurso público Prefeitura de Piracema MG 2026",
+        "concurso Piracema MG 2026 Assistente Administrativo",
+      ],
+      role: "Assistente Administrativo",
+    },
+  },
+  {
+    expected: {
       noticeHints: ["structure", "test", "digital"],
       officialDomains: ["collegeboard.org"],
     },

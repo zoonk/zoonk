@@ -22,6 +22,7 @@ const MAX_DOCUMENTS = 6;
 const DOCUMENT_TYPES = [
   "notice",
   "correction",
+  "annex",
   "syllabus",
   "pastPaper",
   "officialPage",
