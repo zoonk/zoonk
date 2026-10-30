@@ -1,55 +1,39 @@
 import SwiftUI
 
+/// What the learner opened and chose on a result. Kept above its pages, so folding or unfolding
+/// iPhone Duo keeps it.
+private struct MockResultChoices {
+  var opened: Set<String> = []
+  var essayComments: [String: Set<String>] = [:]
+  var plan = MockPlanAnswers()
+  var speakingTask: MockSpeaking.Task?
+}
+
 struct MockResultView: View {
   @Environment(AppRouter.self) private var router
   @Environment(\.dismiss) private var dismiss
+  @State private var choices = MockResultChoices()
   let run: MockRun
   let view: MockView
 
   var body: some View {
-    List {
-      if let result = view.result {
-        if result.total > 0 || (view.essays.isEmpty && view.speaking == nil) {
-          MockScoreSections(view: view, result: result)
-        }
-
-        if result.areas.count > 1 {
-          MockAreaSection(result: result)
-        } else if result.topics.count > 1 {
-          Section {
-            MockTopicRows(topics: result.topics)
-          } header: {
-            Text("By topic", tableName: "Mock", comment: "Each topic's result")
-          }
-        }
-
-        MockInsightsSection(result: result)
+    PaneSplit {
+      List {
+        resultSections
+        reviewSections
       }
-
-      DayMomentSections(result: view.day)
-
-      ForEach(Array(view.essays.enumerated()), id: \.element.id) { index, essay in
-        MockEssaySections(
-          run: run, essay: essay, number: index + 1, total: view.essays.count,
-          rubric: view.essayRubric ?? .custom)
+    } secondary: {
+      List {
+        planSections
       }
-
-      if let speaking = view.speaking {
-        MockSpeakingSection(paper: speaking)
+      .safeAreaBar(edge: .bottom) { actionBar }
+    } single: {
+      List {
+        resultSections
+        planSections
+        reviewSections
       }
-
-      if let adapt = view.adapt, adapt.skip != nil || adapt.focus != nil {
-        MockPlanSection(run: run, adapt: adapt, preparation: view.result?.preparation)
-      } else if let preparation = view.result?.preparation, preparation.after != preparation.before
-      {
-        MockPreparationSection(preparation: preparation)
-      }
-
-      if !view.review.isEmpty {
-        MockReviewSection(items: view.review)
-      }
-
-      MockNotesSection(view: view)
+      .safeAreaBar(edge: .bottom) { actionBar.keepsOffFold() }
     }
     .navigationTitle(MockLabels.title(number: view.number))
     .milestoneCeremony(view.day.ceremony)
@@ -60,15 +44,76 @@ struct MockResultView: View {
         }
       }
     }
-    .safeAreaBar(edge: .bottom) {
-      VStack(spacing: 8) {
-        mainAction
-        secondaryAction
-      }
-      .scenePadding(.horizontal)
-      .padding(.vertical, 10)
-      .keepsOffFold()
+    .sheet(item: $choices.speakingTask) { task in
+      ConversationScreen(conversationId: task.conversationId)
     }
+  }
+
+  @ViewBuilder
+  private var resultSections: some View {
+    if let result = view.result {
+      if result.total > 0 || (view.essays.isEmpty && view.speaking == nil) {
+        MockScoreSections(view: view, result: result)
+      }
+
+      if result.areas.count > 1 {
+        MockAreaSection(result: result, opened: $choices.opened)
+      } else if result.topics.count > 1 {
+        Section {
+          MockTopicRows(topics: result.topics, opened: $choices.opened.contains("topics"))
+        } header: {
+          Text("By topic", tableName: "Mock", comment: "Each topic's result")
+        }
+      }
+
+      MockInsightsSection(result: result)
+    }
+
+    DayMomentSections(result: view.day)
+
+    ForEach(Array(view.essays.enumerated()), id: \.element.id) { index, essay in
+      MockEssaySections(
+        run: run, essay: essay, number: index + 1, total: view.essays.count,
+        rubric: view.essayRubric ?? .custom,
+        openCriteria: Binding {
+          choices.essayComments[essay.id] ?? []
+        } set: {
+          choices.essayComments[essay.id] = $0
+        })
+    }
+
+    if let speaking = view.speaking {
+      MockSpeakingSection(paper: speaking) { choices.speakingTask = $0 }
+    }
+  }
+
+  @ViewBuilder
+  private var planSections: some View {
+    if let adapt = view.adapt, adapt.skip != nil || adapt.focus != nil {
+      MockPlanSection(
+        run: run, adapt: adapt, preparation: view.result?.preparation,
+        answers: $choices.plan)
+    } else if let preparation = view.result?.preparation, preparation.after != preparation.before {
+      MockPreparationSection(preparation: preparation)
+    }
+  }
+
+  @ViewBuilder
+  private var reviewSections: some View {
+    if !view.review.isEmpty {
+      MockReviewSection(items: view.review, opened: $choices.opened)
+    }
+
+    MockNotesSection(view: view)
+  }
+
+  private var actionBar: some View {
+    VStack(spacing: 8) {
+      mainAction
+      secondaryAction
+    }
+    .scenePadding(.horizontal)
+    .padding(.vertical, 10)
   }
 
   /// The questions answered wrong: the ones to fix. Blanks are reviewed but aren't mistakes.
@@ -374,6 +419,7 @@ private struct MockScoreSections: View {
 
 private struct MockAreaSection: View {
   let result: MockResult
+  @Binding var opened: Set<String>
 
   var body: some View {
     Section {
@@ -383,8 +429,8 @@ private struct MockAreaSection: View {
         if topics.isEmpty {
           row(area)
         } else {
-          DisclosureGroup {
-            MockTopicRows(topics: topics)
+          DisclosureGroup(isExpanded: $opened.contains("area:\(area.name)")) {
+            MockTopicRows(topics: topics, opened: $opened.contains("topics:\(area.name)"))
           } label: {
             row(area)
           }
@@ -422,6 +468,7 @@ private struct MockTopicRows: View {
   private static let shown = 5
 
   let topics: [MockResult.Topic]
+  @Binding var opened: Bool
 
   var body: some View {
     let sorted = topics.sorted { first, second in
@@ -436,7 +483,7 @@ private struct MockTopicRows: View {
     }
 
     if !rest.isEmpty {
-      DisclosureGroup {
+      DisclosureGroup(isExpanded: $opened) {
         ForEach(rest) { topic in
           row(topic)
         }
@@ -562,6 +609,7 @@ private struct MockEssaySections: View {
   let number: Int
   let total: Int
   let rubric: EssayRubric
+  @Binding var openCriteria: Set<String>
 
   var body: some View {
     Section {
@@ -580,6 +628,7 @@ private struct MockEssaySections: View {
 
     if let grade = essay.grade {
       EssayGradeSections(grade: grade)
+      EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
     }
   }
 
@@ -631,8 +680,8 @@ private struct MockEssaySections: View {
 }
 
 private struct MockSpeakingSection: View {
-  @State private var openTask: MockSpeaking.Task?
   let paper: MockSpeaking
+  let open: (MockSpeaking.Task) -> Void
 
   var body: some View {
     Section {
@@ -659,7 +708,7 @@ private struct MockSpeakingSection: View {
         LabeledContent {
           if task.status == .completed {
             Button {
-              openTask = task
+              open(task)
             } label: {
               Text("See feedback", tableName: "Mock", comment: "Opens a speaking task's result")
             }
@@ -673,9 +722,6 @@ private struct MockSpeakingSection: View {
       }
     } header: {
       Text(paper.paper)
-    }
-    .sheet(item: $openTask) { task in
-      ConversationScreen(conversationId: task.conversationId)
     }
   }
 
@@ -787,19 +833,23 @@ private struct MockPreparationRow: View {
   }
 }
 
-private struct MockPlanSection: View {
-  private enum Answer: Equatable {
+private struct MockPlanAnswers {
+  enum Answer: Equatable {
     case declined
     case failed
     case outcome(MockPlanOfferOutcome)
   }
 
+  var byOffer: [MockPlanOffer: Answer] = [:]
+  var applying = false
+}
+
+private struct MockPlanSection: View {
   @Environment(ExamStore.self) private var exam
-  @State private var answers: [MockPlanOffer: Answer] = [:]
-  @State private var applying = false
   let run: MockRun
   let adapt: MockAdapt
   let preparation: MockResult.Preparation?
+  @Binding var answers: MockPlanAnswers
 
   private var offers: [MockPlanOffer] {
     [adapt.skip != nil ? .skip : nil, adapt.focus != nil ? .focus : nil].compactMap { $0 }
@@ -807,7 +857,7 @@ private struct MockPlanSection: View {
 
   private var open: [MockPlanOffer] {
     offers.filter { offer in
-      switch answers[offer] {
+      switch answers.byOffer[offer] {
       case nil, .failed: true
       default: false
       }
@@ -861,7 +911,7 @@ private struct MockPlanSection: View {
           Text(line).foregroundStyle(.secondary)
         }
       } else {
-        if answers.values.contains(.failed) {
+        if answers.byOffer.values.contains(.failed) {
           Text(
             "That didn't go through. Try again in a moment.", tableName: "Mock",
             comment: "Applying the plan change failed"
@@ -876,15 +926,15 @@ private struct MockPlanSection: View {
             Text("Apply", tableName: "Mock", comment: "Applies the mock's plan change")
           }
           .buttonStyle(.bordered)
-          .disabled(applying)
+          .disabled(answers.applying)
 
           Button {
-            for offer in open { answers[offer] = .declined }
+            for offer in open { answers.byOffer[offer] = .declined }
           } label: {
             Text("Keep my plan", tableName: "Mock", comment: "Declines the mock's plan change")
           }
           .buttonStyle(.borderless)
-          .disabled(applying)
+          .disabled(answers.applying)
         }
       }
     } header: {
@@ -894,8 +944,8 @@ private struct MockPlanSection: View {
 
   /// One after the other: both change the plan.
   private func apply() async {
-    applying = true
-    defer { applying = false }
+    answers.applying = true
+    defer { answers.applying = false }
 
     for offer in open {
       let blockId = run.mock.value?.blockId ?? ""
@@ -904,15 +954,15 @@ private struct MockPlanSection: View {
       }
 
       switch result {
-      case .done(let outcome): answers[offer] = .outcome(outcome)
-      case .failed: answers[offer] = .failed
+      case .done(let outcome): answers.byOffer[offer] = .outcome(outcome)
+      case .failed: answers.byOffer[offer] = .failed
       case .obsolete: return
       }
     }
   }
 
   private var statusLines: [String] {
-    let applied = answers.values.contains {
+    let applied = answers.byOffer.values.contains {
       if case .outcome(.applied) = $0 { return true }
       return false
     }
@@ -920,7 +970,7 @@ private struct MockPlanSection: View {
     var lines: [String] = []
 
     for offer in offers {
-      switch answers[offer] {
+      switch answers.byOffer[offer] {
       case .declined:
         if !applied {
           lines.append(
@@ -959,11 +1009,12 @@ private struct MockPlanSection: View {
 
 private struct MockReviewSection: View {
   let items: [MockReviewItem]
+  @Binding var opened: Set<String>
 
   var body: some View {
     Section {
       ForEach(items) { item in
-        DisclosureGroup {
+        DisclosureGroup(isExpanded: $opened.contains("review:\(item.id)")) {
           VStack(alignment: .leading, spacing: 8) {
             if let context = item.context {
               ItemText(context).font(.callout).foregroundStyle(.secondary)

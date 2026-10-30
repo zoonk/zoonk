@@ -89,10 +89,19 @@ struct EssayGradeSections: View {
             comment: "ENEM's intervention proposal elements")
         }
       }
+    }
+  }
+}
 
+struct EssayCommentsSection: View {
+  let grade: EssayGrade
+  @Binding var openCriteria: Set<String>
+
+  var body: some View {
+    if grade.zeroReason != .tooShort {
       Section {
         ForEach(grade.criteria) { criterion in
-          DisclosureGroup {
+          DisclosureGroup(isExpanded: $openCriteria.contains(criterion.id)) {
             VStack(alignment: .leading, spacing: 8) {
               if let quote = criterion.quote {
                 Text(verbatim: "“\(quote)”")

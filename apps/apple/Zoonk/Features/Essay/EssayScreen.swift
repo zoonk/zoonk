@@ -79,6 +79,7 @@ private struct EssayContent: View {
   @State private var finishing = false
   @State private var finishFailed = false
   @State private var confirmsLeave = false
+  @State private var openCriteria: Set<String> = []
 
   let resource: Resource<EssayView>
   let essay: EssayView
@@ -128,10 +129,22 @@ private struct EssayContent: View {
           .safeAreaBar(edge: .bottom) { actionBar }
         }
       } else if let grade = essay.drafts.first?.grade {
-        List {
-          EssayGradeSections(grade: grade)
+        PaneSplit {
+          List {
+            EssayGradeSections(grade: grade)
+          }
+        } secondary: {
+          List {
+            EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
+          }
+          .safeAreaBar(edge: .bottom) { actionBar }
+        } single: {
+          List {
+            EssayGradeSections(grade: grade)
+            EssayCommentsSection(grade: grade, openCriteria: $openCriteria)
+          }
+          .safeAreaBar(edge: .bottom) { actionBar }
         }
-        .safeAreaBar(edge: .bottom) { actionBar }
       }
     }
     .toolbar {
