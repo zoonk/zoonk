@@ -60,7 +60,7 @@ internal fun MockLeftOutNote(
     leftOut: List<MockLeftOut>,
     modifier: Modifier = Modifier,
 ) {
-    val lines = leftOut.mapNotNull { leftOutLine(it) }
+    val lines = leftOut.mapNotNull { leftOutLine(it, namesWrittenInFull = false) }
     if (lines.isEmpty()) return
 
     Column(modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) { lines.forEach { NoteLine(AnnotatedString(it)) } }
