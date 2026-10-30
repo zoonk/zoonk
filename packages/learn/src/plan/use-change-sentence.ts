@@ -163,13 +163,15 @@ function useNoticeSentence() {
     if (follows && date) {
       return estimated
         ? t({
-            description: '{date} is a day, like "May 5".',
+            description:
+              '"With the exam around {date}" means "and the exam is around {date}". {date} is a day, like "May 5".',
             message:
               "{document, select, notice {We read the exam notice: your plan can follow its subjects, with the exam around {date}.} other {We read the exam's official guide: your plan can follow its parts, with the exam around {date}.}}",
             values: { date, document },
           })
         : t({
-            description: '{date} is a day, like "May 5".',
+            description:
+              '"With the exam on {date}" means "and the exam is on {date}". {date} is a day, like "May 5".',
             message:
               "{document, select, notice {We read the exam notice: your plan can follow its subjects, with the exam on {date}.} other {We read the exam's official guide: your plan can follow its parts, with the exam on {date}.}}",
             values: { date, document },

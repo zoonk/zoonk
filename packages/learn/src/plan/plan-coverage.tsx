@@ -55,10 +55,13 @@ export function useCoveredText() {
 
     if (coreFits && measure === "exam") {
       return deepensMostAsked
-        ? t(
-            "{time} a day studies every topic of the exam, the ones that come up most in more depth.",
-            { time },
-          )
+        ? t({
+            description:
+              "Every exam topic gets studied, and the ones asked most often get extra depth.",
+            message:
+              "{time} a day studies every topic of the exam, the ones that come up most in more depth.",
+            values: { time },
+          })
         : t("{time} a day studies every topic of the exam, some of them in less depth.", { time });
     }
 

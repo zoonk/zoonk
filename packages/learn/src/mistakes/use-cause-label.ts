@@ -16,7 +16,10 @@ export function useCauseLabel() {
           message: "Content gap",
         });
       case "misread":
-        return t("Misread");
+        return t({
+          description: "Why the learner got a question wrong: they misread the question.",
+          message: "Misread",
+        });
       case "trap":
         return t("Fell for a trap");
       case "time":

@@ -266,7 +266,12 @@ function useMissionStep() {
       return t("Finish today's new lesson");
     }
 
-    return kind === "weakSpot" ? t("Most room to grow") : null;
+    return kind === "weakSpot"
+      ? t({
+          description: "A mission to practice the area where the learner can improve the most.",
+          message: "Most room to grow",
+        })
+      : null;
   };
 }
 

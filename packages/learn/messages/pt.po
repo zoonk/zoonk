@@ -5429,6 +5429,7 @@ msgctxt "slNkkm"
 msgid "goal"
 msgstr "meta"
 
+#. {level} is a language level, like "B2". {date} is a month, like "May 2027".
 #: src/language/progress/skill-levels-card.tsx
 msgctxt "eRD-Et"
 msgid "Goal {level} by {date}"
@@ -5787,6 +5788,7 @@ msgctxt "IKiWjm"
 msgid "{count, plural, =0 {Questions on this recording (#)} one {Question on this recording (#)} other {Questions on this recording (#)}}"
 msgstr "{count, plural, =0 {Perguntas sobre esta gravação (#)} one {Pergunta sobre esta gravação (#)} other {Perguntas sobre esta gravação (#)}}"
 
+#. A memory is one fact Zoonk remembers about the learner.
 #: src/memory/memory-fact-row.tsx
 msgctxt "XjSodK"
 msgid "Edit memory"
@@ -6415,6 +6417,7 @@ msgctxt "tbs1gZ"
 msgid "Finish today's new lesson"
 msgstr "Conclua a aula nova de hoje"
 
+#. A mission to practice the area where the learner can improve the most.
 #: src/missions/mission-copy.tsx
 msgctxt "YiVZjK"
 msgid "Most room to grow"
@@ -6750,6 +6753,7 @@ msgctxt "Bbb4bg"
 msgid "Content gap"
 msgstr "Faltou conhecimento"
 
+#. Why the learner got a question wrong: they misread the question.
 #: src/mistakes/use-cause-label.ts
 msgctxt "RyFXHc"
 msgid "Misread"
@@ -9898,6 +9902,7 @@ msgctxt "qCWuYX"
 msgid "{time} a day isn't enough time to cover your goal."
 msgstr "{time} por dia não é suficiente para estudar toda a sua meta."
 
+#. Every exam topic gets studied, and the ones asked most often get extra depth.
 #: src/plan/plan-coverage.tsx
 msgctxt "sifA0D"
 msgid "{time} a day studies every topic of the exam, the ones that come up most in more depth."
@@ -10689,13 +10694,13 @@ msgctxt "5m7gA2"
 msgid "Your plan changed."
 msgstr "Seu plano mudou."
 
-#. {date} is a day, like "May 5".
+#. "With the exam around {date}" means "and the exam is around {date}". {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
 msgctxt "Fvg-A-"
 msgid "{document, select, notice {We read the exam notice: your plan can follow its subjects, with the exam around {date}.} other {We read the exam's official guide: your plan can follow its parts, with the exam around {date}.}}"
 msgstr "{document, select, notice {A gente leu o edital: seu plano pode seguir as matérias dele, com a prova por volta de {date}.} other {A gente leu o guia oficial da prova: seu plano pode seguir as partes dele, com a prova por volta de {date}.}}"
 
-#. {date} is a day, like "May 5".
+#. "With the exam on {date}" means "and the exam is on {date}". {date} is a day, like "May 5".
 #: src/plan/use-change-sentence.ts
 msgctxt "DbbM04"
 msgid "{document, select, notice {We read the exam notice: your plan can follow its subjects, with the exam on {date}.} other {We read the exam's official guide: your plan can follow its parts, with the exam on {date}.}}"
@@ -12685,7 +12690,7 @@ msgctxt "vzcvDF"
 msgid "You've done every lesson in your plan, or already know it."
 msgstr "Você já concluiu todas as aulas do seu plano ou já sabia o conteúdo."
 
-#. Lessons left unfinished on earlier days. {count} is how many.
+#. Study left over, not a job: lessons left unfinished on earlier days. {count} is how many.
 #: src/today/today-earlier-work.tsx
 msgctxt "ylqDtY"
 msgid "Earlier unfinished work · {count}"

@@ -18,7 +18,8 @@ export function TodayEarlierWork() {
     <details className="mb-5 border-b pb-4 text-sm" open={items.length <= OPEN_BACKLOG_LIMIT}>
       <summary className="min-h-11 cursor-pointer py-3 font-medium">
         {t({
-          description: "Lessons left unfinished on earlier days. {count} is how many.",
+          description:
+            "Study left over, not a job: lessons left unfinished on earlier days. {count} is how many.",
           message: "Earlier unfinished work · {count}",
           values: { count: String(items.length) },
         })}

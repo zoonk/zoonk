@@ -48,7 +48,12 @@ function EditFactDialog({
     >
       <DialogContent closeLabel={t("Close")}>
         <DialogHeader>
-          <DialogTitle>{t("Edit memory")}</DialogTitle>
+          <DialogTitle>
+            {t({
+              description: "A memory is one fact Zoonk remembers about the learner.",
+              message: "Edit memory",
+            })}
+          </DialogTitle>
           <DialogDescription>
             {t({
               description: '"It" is the note Zoonk keeps about the learner, edited in this dialog.',
