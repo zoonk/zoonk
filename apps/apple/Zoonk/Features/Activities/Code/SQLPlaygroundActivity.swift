@@ -170,6 +170,10 @@ private struct SQLPlaygroundCanvas: View {
       isStale = true
       context.setAnswer(nil)
     }
+    // A run still going at Check ends unseen, so the answer keeps the result it was graded on.
+    .onChange(of: isChecked) {
+      activeRun = nil
+    }
     .onDisappear {
       activeRun = nil
     }

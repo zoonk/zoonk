@@ -136,6 +136,10 @@ private struct CodeRunnerCanvas: View {
       runtime = .loading
       runtime = await runner.warmUp() ? .ready : .failed
     }
+    // A run still going at Check ends unseen, so the answer keeps the output it was graded on.
+    .onChange(of: isChecked) {
+      activeRun = nil
+    }
     .onDisappear {
       activeRun = nil
       runner.close()
