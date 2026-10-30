@@ -16,6 +16,7 @@ import {
 } from "../../onboarding/onboarding-frame";
 import { OnboardingTestQuestion } from "../../onboarding/onboarding-host";
 import { PlacementQuestionScreen } from "../../onboarding/steps/placement-question";
+import { useSpokenAudio } from "../../speech/use-spoken-audio";
 import { useNoSpeechMessage } from "../no-speech-message";
 import { ListeningMessage, SpeakingPrompt } from "./level-test-parts";
 
@@ -24,6 +25,7 @@ type NextStep = ReadyTest["next"];
 
 export function LevelTestQuestion({
   answer,
+  audioPending,
   onStop,
   onView,
   progress,
@@ -31,6 +33,7 @@ export function LevelTestQuestion({
   targetLanguage,
 }: {
   answer: (input: LevelTestAnswerInput) => Promise<LanguageLevelTestView | null>;
+  audioPending: boolean;
   onStop: () => void;
   onView: (view: LanguageLevelTestView) => void;
   /** 0 to 1. */
@@ -41,20 +44,38 @@ export function LevelTestQuestion({
   const t = useExtracted();
   const [failed, setFailed] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const speech = useSpokenAudio(targetLanguage);
   const isListening = question.skill === "listening";
+  const audioFailed = isListening && speech.state.status === "failed";
+  const listeningOut = audioFailed ? t("Skip this question") : t("I didn't understand the audio");
 
   return (
     <PlacementQuestionScreen
-      dontKnowLabel={isListening ? t("I didn't understand the audio") : undefined}
+      dontKnowLabel={isListening ? listeningOut : undefined}
       failed={failed}
       key={question.id}
       media={
-        isListening ? <ListeningMessage language={targetLanguage} text={question.passage} /> : null
+        isListening ? (
+          <ListeningMessage
+            language={targetLanguage}
+            pending={audioPending}
+            question={question}
+            speech={speech}
+          />
+        ) : null
       }
       onAnswer={(choice, durationMs) =>
         startTransition(async () => {
           const answerIndex = "selectedIndex" in choice ? choice.selectedIndex : null;
-          const view = await answer({ answerIndex, durationMs, questionId: question.id });
+          const skipped = audioFailed && "dontKnow" in choice;
+
+          const view = await answer({
+            answerIndex,
+            durationMs,
+            questionId: question.id,
+            ...(skipped && { skipped }),
+          });
+
           setFailed(!view);
 
           if (view) {

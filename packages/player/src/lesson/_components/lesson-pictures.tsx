@@ -2,7 +2,7 @@
 
 import { asksNumberedPicture } from "@zoonk/core/lesson-player/picture-policy";
 import { type LessonPicture } from "@zoonk/core/lesson-player/playable-lesson";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { MediaPending } from "@zoonk/ui/components/media-pending";
 import { useMountTime } from "@zoonk/ui/hooks/mount-time";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ImageIcon } from "lucide-react";
@@ -163,19 +163,13 @@ function LessonPicturePending({ alt, frame }: { alt?: string; frame: LessonPictu
   const t = useExtracted();
 
   return (
-    <div
-      className={cn(
-        "text-muted-foreground relative flex aspect-4/5 w-full items-center justify-center overflow-hidden rounded-xl",
-        PICTURE_FRAME_CLASS[frame],
-      )}
+    <MediaPending
+      className={cn("aspect-4/5 w-full", PICTURE_FRAME_CLASS[frame])}
+      icon={<ImageIcon aria-hidden="true" className="size-6" />}
     >
-      <Skeleton aria-hidden="true" className="bg-muted/60 absolute inset-0" />
-      <div className="relative flex flex-col items-center gap-2 p-4 text-center text-sm">
-        <ImageIcon aria-hidden="true" className="size-6" />
-        <p role="status">{t("Drawing the picture…")}</p>
-        {alt && <p>{alt}</p>}
-      </div>
-    </div>
+      <p role="status">{t("Drawing the picture…")}</p>
+      {alt && <p>{alt}</p>}
+    </MediaPending>
   );
 }
 

@@ -5249,6 +5249,11 @@ msgid "Play the message"
 msgstr "Ouvir a mensagem"
 
 #: src/language/level-test/level-test-parts.tsx
+msgctxt "jsopgk"
+msgid "The voice message is on its way…"
+msgstr "A mensagem de voz está chegando…"
+
+#: src/language/level-test/level-test-parts.tsx
 msgctxt "T6bERo"
 msgid "Getting the message ready. The first time can take a few seconds."
 msgstr "Preparando a mensagem. Na primeira vez, isso pode levar alguns segundos."
@@ -5296,6 +5301,11 @@ msgstr "Pular o teste"
 msgctxt "FMLSDB"
 msgid "Your plan starts from the level you gave, and your first sessions fine-tune it."
 msgstr "Seu plano começa no nível que você informou e vai sendo ajustado nas primeiras sessões."
+
+#: src/language/level-test/level-test-questions.tsx
+msgctxt "-JyB5g"
+msgid "Skip this question"
+msgstr "Pular esta pergunta"
 
 #: src/language/level-test/level-test-questions.tsx
 msgctxt "U86096"

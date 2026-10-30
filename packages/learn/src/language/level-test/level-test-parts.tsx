@@ -3,6 +3,7 @@
 import { type LanguageLevelTestView } from "@zoonk/core/language/level-test/contract";
 import { Button } from "@zoonk/ui/components/button";
 import { LineMarker } from "@zoonk/ui/components/line-marker";
+import { MediaPending } from "@zoonk/ui/components/media-pending";
 import { useCanRecord, useVoiceRecorder } from "@zoonk/ui/hooks/voice-recorder";
 import { cn } from "@zoonk/ui/lib/utils";
 import { HeadphonesIcon, PlayIcon } from "lucide-react";
@@ -16,19 +17,31 @@ import {
   useSpeechActionLabel,
   withoutFailure,
 } from "../../speech/speech-parts";
-import { useSpokenAudio } from "../../speech/use-spoken-audio";
+import { type useSpokenAudio } from "../../speech/use-spoken-audio";
 import { useSkillName } from "../_utils/use-skill-name";
 import { LevelBar } from "../level-bar";
 
 /** Slower than normal, so a level test isn't a test of catching fast speech. */
 const LISTENING_RATE = 0.9;
 
+const MESSAGE_CLASS = cn(SURFACE_CLASS, "min-h-20");
+
 type ReadyTest = Extract<LanguageLevelTestView, { status: "ready" }>;
 type LevelView = ReadyTest["levels"][number];
+type TestQuestion = Extract<ReadyTest["next"], { kind: "question" }>["question"];
 
-export function ListeningMessage({ language, text }: { language: string; text: string }) {
+export function ListeningMessage({
+  language,
+  pending,
+  question,
+  speech,
+}: {
+  language: string;
+  pending: boolean;
+  question: TestQuestion;
+  speech: ReturnType<typeof useSpokenAudio>;
+}) {
   const t = useExtracted();
-  const speech = useSpokenAudio(language);
   const [played, setPlayed] = useState(false);
   const buttonState = withoutFailure(speech.state);
   const { status } = buttonState;
@@ -39,16 +52,31 @@ export function ListeningMessage({ language, text }: { language: string; text: s
   );
 
   if (!speech.isAvailable) {
-    return <p lang={language}>{text}</p>;
+    return <p lang={language}>{question.passage}</p>;
+  }
+
+  if (pending) {
+    return (
+      <MediaPending
+        className={cn(MESSAGE_CLASS, "text-muted-foreground")}
+        icon={<HeadphonesIcon aria-hidden="true" className="size-5" />}
+      >
+        <p role="status">{t("The voice message is on its way…")}</p>
+      </MediaPending>
+    );
   }
 
   const play = () => {
     setPlayed(true);
-    speech.speak({ rate: LISTENING_RATE, segments: [text] });
+
+    speech.speak({
+      rate: LISTENING_RATE,
+      segments: [{ audioUrl: question.audio?.url ?? null, text: question.passage }],
+    });
   };
 
   return (
-    <div className={cn(SURFACE_CLASS, "flex flex-col gap-3 p-4")}>
+    <div className={cn(MESSAGE_CLASS, "flex flex-col justify-center gap-3 p-4")}>
       <div className="flex items-center gap-3">
         <Button
           aria-busy={status === "loading"}
@@ -73,12 +101,7 @@ export function ListeningMessage({ language, text }: { language: string; text: s
       </div>
 
       {speech.state.status === "failed" && (
-        <SpeechFailedNote
-          language={language}
-          limit={speech.state.limit}
-          onRetry={play}
-          text={text}
-        />
+        <SpeechFailedNote language={language} limit={speech.state.limit} onRetry={play} />
       )}
     </div>
   );

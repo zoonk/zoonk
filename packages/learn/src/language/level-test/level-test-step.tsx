@@ -59,6 +59,29 @@ function toResumedPhase({
     : { kind: "intro" };
 }
 
+function getPendingAudioQuestion(phase: Phase): string | null {
+  if (phase.kind !== "test" || phase.test.next.kind !== "question") {
+    return null;
+  }
+
+  const { question } = phase.test.next;
+  return question.audioPending ? question.id : null;
+}
+
+function withReadAudio({ phase, view }: { phase: Phase; view: LanguageLevelTestView }): Phase {
+  if (
+    phase.kind !== "test" ||
+    phase.test.next.kind !== "question" ||
+    view.status !== "ready" ||
+    view.next.kind !== "question" ||
+    view.next.question.id !== phase.test.next.question.id
+  ) {
+    return phase;
+  }
+
+  return { kind: "test", test: { ...phase.test, next: view.next } };
+}
+
 function getLanguageName(goal: { language: string; targetLanguage: string }): string {
   return (
     new Intl.DisplayNames([goal.language], { type: "language" }).of(goal.targetLanguage) ??
@@ -122,6 +145,24 @@ export function LanguageLevelTestStep({
     },
   });
 
+  const audioQuestion = getPendingAudioQuestion(phase);
+
+  const audioPoll = usePoll({
+    active: audioQuestion !== null,
+    intervalMs: POLL_MS,
+    key: audioQuestion ?? undefined,
+    onPoll: async () => {
+      const view = await actions.get();
+
+      if (!view) {
+        throw new Error("The level test couldn't be read");
+      }
+
+      setPhase((current) => withReadAudio({ phase: current, view }));
+    },
+    startNow: false,
+  });
+
   const begin = async () => {
     rememberStepStart({ goalId, step: "levelTest" });
     setBank(INITIAL_BANK_WAIT);
@@ -180,6 +221,7 @@ export function LanguageLevelTestStep({
       return (
         <TestStep
           actions={actions}
+          audioPending={audioPoll.status === "polling"}
           next={phase.test.next}
           onStop={() => setPhase({ kind: "done" })}
           onView={show}
@@ -194,6 +236,7 @@ export function LanguageLevelTestStep({
 
 function TestStep({
   actions,
+  audioPending,
   next,
   onStop,
   onView,
@@ -201,6 +244,7 @@ function TestStep({
   targetLanguage,
 }: {
   actions: LanguageLevelTestActions;
+  audioPending: boolean;
   next: ReadyTest["next"];
   onStop: () => void;
   onView: (view: LanguageLevelTestView) => void;
@@ -222,6 +266,8 @@ function TestStep({
   return next.kind === "question" ? (
     <LevelTestQuestion
       answer={actions.answer}
+      audioPending={audioPending}
+      key={next.question.id}
       onStop={onStop}
       onView={onView}
       progress={progress}
