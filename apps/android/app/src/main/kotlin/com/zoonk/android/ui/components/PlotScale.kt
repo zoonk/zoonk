@@ -30,6 +30,7 @@ fun niceTicks(
     count: Int = DEFAULT_TICK_COUNT,
 ): List<Double> {
     val step = niceStep(domain.endInclusive - domain.start, count)
+    if (!step.isFinite()) return emptyList()
     val first = ceil(cleanFloat(domain.start / step)) * step
     val total = floor(cleanFloat((domain.endInclusive - first) / step)).toInt()
     return (0..total).map { cleanFloat(first + it * step) }
@@ -49,7 +50,10 @@ fun niceDomain(
     val high = anchors.max()
     if (low == high) return low..low + 1
     val step = niceStep(high - low, count)
-    return cleanFloat(floor(cleanFloat(low / step)) * step)..cleanFloat(ceil(cleanFloat(high / step)) * step)
+    val start = floor(cleanFloat(low / step)) * step
+    val end = ceil(cleanFloat(high / step)) * step
+    // Rounding out to a whole step can pass the largest number a double holds.
+    return if (start.isFinite() && end.isFinite()) cleanFloat(start)..cleanFloat(end) else low..high
 }
 
 private fun niceStep(

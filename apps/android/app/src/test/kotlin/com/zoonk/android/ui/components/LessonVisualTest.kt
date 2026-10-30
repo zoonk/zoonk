@@ -4,6 +4,7 @@ import com.zoonk.android.data.recode
 import com.zoonk.api.ApiJson
 import com.zoonk.api.models.ItemSetVisual
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 /** Expected values are what main's `@zoonk/utils/plot-scale` and `getCategoryLabels` give. */
@@ -23,6 +24,15 @@ class LessonVisualTest {
         cases.forEach { (values, includeZero, ticks) ->
             assertEquals(ticks, niceTicks(niceDomain(values, includeZero)))
         }
+    }
+
+    @Test
+    fun aDomainNearTheLargestNumberStaysDrawable() {
+        val domain = niceDomain(listOf(0.0, 1.7e308))
+
+        assertTrue(domain.start.isFinite() && domain.endInclusive.isFinite() && domain.endInclusive >= 1.7e308)
+        assertTrue(niceTicks(domain, 3).all(Double::isFinite))
+        assertEquals(emptyList<Double>(), niceTicks(niceDomain(listOf(-1.7e308, 1.7e308)), 3))
     }
 
     @Test
