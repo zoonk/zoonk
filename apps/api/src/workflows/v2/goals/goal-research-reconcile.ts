@@ -8,7 +8,7 @@ import { type BuiltCurriculum } from "./goal-curriculum";
 import { outlinePlanAhead } from "./goal-outlines";
 import { type GoalRunContext } from "./goal-run-context";
 import { preparePlacementItems } from "./placement-items";
-import { checkGraphCoverageStep, saveSharedSkillGraphStep } from "./steps/goal-curriculum-steps";
+import { checkGraphCoverageStep, saveExamSkillGraphStep } from "./steps/goal-curriculum-steps";
 import { followNoticeStep } from "./steps/goal-plan-steps";
 import {
   claimNoticeLandingStep,
@@ -61,7 +61,7 @@ function keepExamGraph({
   researched: GoalCurriculumInputs;
   scope: CurriculumScope;
 }): Promise<void> {
-  return saveSharedSkillGraphStep({
+  return saveExamSkillGraphStep({
     courseIdsByKey: curriculum.courseIdsByKey,
     graph,
     idsByKey,

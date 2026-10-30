@@ -41,6 +41,7 @@ export type {
   ItemSet,
   LanguageConversation,
   LanguageLevelTest,
+  LanguageSkillGraph,
   LanguageSkillLevel,
   LearnerSkill,
   LearnerSource,

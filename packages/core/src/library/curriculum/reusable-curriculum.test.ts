@@ -28,9 +28,9 @@ import { resetExamSkillGraphForAdmin } from "./exam-skill-graph-reset";
 import { loadGoalCurriculumInputs } from "./goal-curriculum-inputs";
 import { toGoalPlanGraph } from "./goal-plan-graph";
 import {
+  claimLanguageSkillGraph,
   findReusableCurriculum,
   saveExamSkillGraph,
-  saveLanguageSkillGraph,
 } from "./reusable-curriculum";
 
 const SHARED: CurriculumScope = {
@@ -905,19 +905,21 @@ describe("saving an exam's graph again", () => {
   });
 });
 
-const ITALIAN = { answered: ["reason", "level"], prompt: "Quero ficar fluente em italiano" };
-
-/** Tests share database rows, so each test's learners answer with a title no other test uses. */
-function italianTitle(): string {
-  return `Falar italiano com fluência ${crypto.randomUUID().slice(0, 8)}`;
+/** Tests share database rows, so each test's learners type words no other test's learners type. */
+function italianPrompt(): string {
+  return `Quero ficar fluente em italiano ${crypto.randomUUID().slice(0, 8)}`;
 }
 
+const BEFORE_TEST = { answered: ["reason", "level"], level: "basic" };
+
 async function languageGoal({
-  details = { answered: ITALIAN.answered, level: "basic" },
-  title,
+  details = BEFORE_TEST,
+  prompt,
+  title = "Falar italiano com fluência",
 }: {
   details?: Record<string, unknown>;
-  title: string;
+  prompt: string;
+  title?: string;
 }) {
   const user = await userFixture();
 
@@ -925,7 +927,7 @@ async function languageGoal({
     details,
     kind: "language",
     language: "pt",
-    prompt: ITALIAN.prompt,
+    prompt,
     targetLanguage: "it",
     title,
     userId: user.id,
@@ -944,7 +946,7 @@ function sharedScope(inputs: { goal: { title: string } }): CurriculumScope {
   return { generalGoal: inputs.goal.title, language: "pt", ownerId: null, targetLanguage: "it" };
 }
 
-async function savedGraph(inputs: Awaited<ReturnType<typeof languageGoal>>) {
+async function claimedGraph(inputs: Awaited<ReturnType<typeof languageGoal>>) {
   const [course, skills] = await Promise.all([
     courseFixture({ language: "pt", targetLanguage: "it" }),
     Promise.all([skillFixture(), skillFixture()]),
@@ -965,7 +967,7 @@ async function savedGraph(inputs: Awaited<ReturnType<typeof languageGoal>>) {
     })),
   };
 
-  await saveLanguageSkillGraph({
+  const kept = await claimLanguageSkillGraph({
     graph,
     inputs,
     provenance: {
@@ -977,33 +979,34 @@ async function savedGraph(inputs: Awaited<ReturnType<typeof languageGoal>>) {
     scope: sharedScope(inputs),
   });
 
-  return { course, skills };
+  return { course, kept, skills };
 }
 
 describe("a shared language goal's graph", () => {
-  it("plans a later learner with the same answers from it, even once their level test is done", async () => {
-    const title = italianTitle();
-    const first = await languageGoal({ title });
-    const built = await savedGraph(first);
+  it("plans a later learner who typed the same words from it, whatever their goal's title, once their level test is done too", async () => {
+    const prompt = italianPrompt();
+    const first = await claimedGraph(await languageGoal({ prompt }));
 
     const later = await languageGoal({
-      details: { answered: ITALIAN.answered, level: "B1+", levelTest: { answers: [] } },
-      title,
+      details: { answered: ["reason", "level"], level: "B1+", levelTest: { answers: [] } },
+      prompt,
+      title: "Ficar fluente em italiano",
     });
 
     const reused = await findReusableCurriculum({ inputs: later, scope: sharedScope(later) });
 
-    expect(reused?.idsByKey).toStrictEqual(idsOf(built.skills));
-    expect(reused?.primaryCourseId).toBe(built.course.id);
+    expect(first.kept).toBeNull();
+    expect(reused?.idsByKey).toStrictEqual(idsOf(first.skills));
+    expect(reused?.primaryCourseId).toBe(first.course.id);
   });
 
-  it("builds a new graph for a goal with other answers or a course of its own", async () => {
-    const title = italianTitle();
-    await savedGraph(await languageGoal({ title }));
+  it("builds a new graph for a goal typed in other words or with a course of its own", async () => {
+    const prompt = italianPrompt();
+    await claimedGraph(await languageGoal({ prompt }));
 
     const [other, owned] = await Promise.all([
-      languageGoal({ title: `${title} para viajar` }),
-      languageGoal({ title }),
+      languageGoal({ prompt: italianPrompt() }),
+      languageGoal({ prompt }),
     ]);
 
     await Promise.all([
@@ -1019,14 +1022,18 @@ describe("a shared language goal's graph", () => {
     ]);
   });
 
-  it("keeps the first of two graphs learners with the same answers saved at once", async () => {
-    const title = italianTitle();
-    const [first, second] = await Promise.all([languageGoal({ title }), languageGoal({ title })]);
-    const [one, two] = await Promise.all([savedGraph(first), savedGraph(second)]);
-    const later = await languageGoal({ title });
+  it("gives the learner whose graph came second the graph kept first, when both answered the same at once", async () => {
+    const prompt = italianPrompt();
 
-    const reused = await findReusableCurriculum({ inputs: later, scope: sharedScope(later) });
+    const [oneGoal, twoGoal] = await Promise.all([
+      languageGoal({ prompt }),
+      languageGoal({ prompt }),
+    ]);
 
-    expect([idsOf(one.skills), idsOf(two.skills)]).toContainEqual(reused?.idsByKey);
+    const [one, two] = await Promise.all([claimedGraph(oneGoal), claimedGraph(twoGoal)]);
+    const [first, later] = one.kept ? [two, one] : [one, two];
+
+    expect(first.kept).toBeNull();
+    expect(later.kept?.idsByKey).toStrictEqual(idsOf(first.skills));
   });
 });

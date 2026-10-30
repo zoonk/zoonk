@@ -1,11 +1,16 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type GoalCurriculumInputs } from "@zoonk/core/library/curriculum/goal-curriculum-inputs";
+import { toGoalPlanGraph } from "@zoonk/core/library/curriculum/goal-plan-graph";
 import { setGoalPrimaryCourse } from "@zoonk/core/library/curriculum/goal-primary-course";
 import {
   type PlanSkillGraph,
   loadPlanSkillGraph,
 } from "@zoonk/core/library/curriculum/plan-skill-graph";
-import { findReusableCurriculum } from "@zoonk/core/library/curriculum/reusable-curriculum";
+import {
+  type ReusableCurriculum,
+  claimLanguageSkillGraph,
+  findReusableCurriculum,
+} from "@zoonk/core/library/curriculum/reusable-curriculum";
 import { type CurriculumScope } from "@zoonk/core/library/curriculum/scope";
 import { getRun } from "workflow/api";
 import { type BuiltCurriculum } from "../goal-curriculum";
@@ -61,6 +66,22 @@ export async function loadStoredCurriculumStep({
   return toBuiltCurriculum({ stored });
 }
 
+async function adoptCurriculum({
+  goalId,
+  reusable,
+}: {
+  goalId: string;
+  reusable: ReusableCurriculum;
+}): Promise<BuiltCurriculum> {
+  const courseId = reusable.primaryCourseId ?? Object.values(reusable.courseIdsByKey)[0];
+
+  if (courseId) {
+    await setGoalPrimaryCourse({ courseId, goalId });
+  }
+
+  return toBuiltCurriculum({ generatedAt: new Date().toISOString(), stored: reusable });
+}
+
 export async function reuseCurriculumStep({
   inputs,
   scope,
@@ -77,16 +98,40 @@ export async function reuseCurriculumStep({
   }
 
   const goalId = inputs.goal.id;
-  const courseId = reusable.primaryCourseId ?? Object.values(reusable.courseIdsByKey)[0];
 
   await using stream = createStepStream<GoalStreamStep>();
   await stream.status({ entityId: goalId, status: "started", step: "buildSkillGraph" });
-
-  if (courseId) {
-    await setGoalPrimaryCourse({ courseId, goalId });
-  }
-
+  const adopted = await adoptCurriculum({ goalId, reusable });
   await stream.status({ entityId: goalId, status: "completed", step: "buildSkillGraph" });
 
-  return toBuiltCurriculum({ generatedAt: new Date().toISOString(), stored: reusable });
+  return adopted;
+}
+
+/** Null when this run's graph is the one goals with the same answers plan from. */
+export async function claimLanguageGraphStep({
+  courseIdsByKey,
+  graph,
+  idsByKey,
+  inputs,
+  provenance,
+  scope,
+}: Pick<BuiltCurriculum, "courseIdsByKey" | "graph" | "idsByKey" | "provenance"> & {
+  inputs: GoalCurriculumInputs;
+  scope: CurriculumScope;
+}): Promise<BuiltCurriculum | null> {
+  "use step";
+
+  const kept = await claimLanguageSkillGraph({
+    graph: toGoalPlanGraph({ courseIdsByKey, graph, idsByKey }),
+    inputs,
+    provenance: {
+      generatedAt: new Date(provenance.generatedAt),
+      model: provenance.model,
+      promptVersion: provenance.promptVersion,
+      runId: provenance.runId,
+    },
+    scope,
+  });
+
+  return kept ? adoptCurriculum({ goalId: inputs.goal.id, reusable: kept }) : null;
 }

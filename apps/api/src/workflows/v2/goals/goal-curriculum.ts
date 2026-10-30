@@ -21,8 +21,8 @@ import {
   buildSkillGraphStep,
   checkGraphCoverageStep,
   linkSkillPrerequisitesStep,
+  saveExamSkillGraphStep,
   saveGoalSkillsStep,
-  saveSharedSkillGraphStep,
 } from "./steps/goal-curriculum-steps";
 import {
   findGoalCoursesStep,
@@ -34,7 +34,7 @@ import { createGoalPlanStep, runPlanSetupTaskStep } from "./steps/goal-plan-step
 import { goalProgressStep } from "./steps/goal-progress-step";
 import { startNoticeWaitStep } from "./steps/notice-steps";
 import { mergeSkillTwinsStep } from "./steps/skill-twins-step";
-import { reuseCurriculumStep } from "./steps/stored-plan-steps";
+import { claimLanguageGraphStep, reuseCurriculumStep } from "./steps/stored-plan-steps";
 
 /** Skills go to the Library in slices, so every step stays short and retries alone. */
 const SKILL_SLICE = 12;
@@ -156,7 +156,7 @@ async function createPlanAndOutlines({
   });
 
   if (!reused) {
-    await saveSharedSkillGraphStep({ courseIdsByKey, graph, idsByKey, inputs, provenance, scope });
+    await saveExamSkillGraphStep({ courseIdsByKey, graph, idsByKey, inputs, provenance, scope });
   }
 
   await setUpPlan({ goalId, tasks: setupTasks });
@@ -235,6 +235,17 @@ function saveBuiltGraph({
   return { saved: saveCurriculum({ courseIds, graph, slices }), skillIds };
 }
 
+type PreparedCurriculum = SavingCurriculum & { built: BuiltGraph; reused: boolean };
+
+function toReused(curriculum: BuiltCurriculum): PreparedCurriculum {
+  return {
+    built: curriculum,
+    reused: true,
+    saved: Promise.resolve(curriculum),
+    skillIds: Promise.resolve(curriculum.idsByKey),
+  };
+}
+
 async function prepareCurriculum({
   context,
   inputs,
@@ -247,18 +258,12 @@ async function prepareCurriculum({
   rebuild: boolean;
   researchId?: string | null;
   scope: CurriculumScope;
-}): Promise<SavingCurriculum & { built: BuiltGraph; reused: boolean }> {
+}): Promise<PreparedCurriculum> {
   const reused = rebuild ? null : await reuseCurriculumStep({ inputs, scope });
 
   if (reused) {
     await goalProgressStep({ entityId: inputs.goal.id, status: "started", step: "saveSkills" });
-
-    return {
-      built: reused,
-      reused: true,
-      saved: Promise.resolve(reused),
-      skillIds: Promise.resolve(reused.idsByKey),
-    };
+    return toReused(reused);
   }
 
   const built = pinStartedCourse({
@@ -268,7 +273,20 @@ async function prepareCurriculum({
 
   await goalProgressStep({ entityId: inputs.goal.id, status: "started", step: "saveSkills" });
 
-  return { built, reused: false, ...saveBuiltGraph({ built, context, inputs, scope }) };
+  const saving = saveBuiltGraph({ built, context, inputs, scope });
+  const { courseIdsByKey, idsByKey } = await saving.saved;
+
+  // Claimed before the plan, so learners who answered the same at once plan from one graph.
+  const kept = await claimLanguageGraphStep({
+    courseIdsByKey,
+    graph: built.graph,
+    idsByKey,
+    inputs,
+    provenance: built.provenance,
+    scope,
+  });
+
+  return kept ? toReused(kept) : { built, reused: false, ...saving };
 }
 
 export async function buildCurriculum({

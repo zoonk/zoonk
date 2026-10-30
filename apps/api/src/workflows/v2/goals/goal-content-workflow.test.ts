@@ -207,6 +207,17 @@ async function newGoal(attrs: Partial<Parameters<typeof goalFixture>[0]> = {}) {
   return { goal, user };
 }
 
+/** Tests share database rows, so each test's learners type words no other test's learners type. */
+function italianAnswers() {
+  return {
+    details: { answered: ["reason", "level"], level: "basic" },
+    kind: "language" as const,
+    language: "pt",
+    prompt: `Quero ficar fluente em italiano ${crypto.randomUUID().slice(0, 8)}`,
+    targetLanguage: "it",
+  };
+}
+
 async function runPlacementInline(workflow: unknown, args: unknown[]) {
   if (workflow === placementItemsWorkflow) {
     await placementItemsWorkflow(...(args as Parameters<typeof placementItemsWorkflow>));
@@ -1346,20 +1357,15 @@ describe(goalContentWorkflow, () => {
   );
 
   it(
-    "plans a later learner with the same language answers from the first one's graph, after their level test too",
+    "plans a later learner who typed the same words from the first one's graph, whatever their goal's title",
     { timeout: TIMEOUT },
     async () => {
-      const answers = {
-        kind: "language" as const,
-        language: "pt",
-        prompt: "Quero ficar fluente em italiano",
-        targetLanguage: "it",
-        title: `Falar italiano com fluência ${crypto.randomUUID().slice(0, 8)}`,
-      };
+      const answers = italianAnswers();
 
       const first = await newGoal({
         ...answers,
         details: { answered: ["reason", "level"], level: "basic" },
+        title: "Falar italiano com fluência",
       });
 
       await goalContentWorkflow({ goalId: first.goal.id });
@@ -1368,6 +1374,7 @@ describe(goalContentWorkflow, () => {
       const later = await newGoal({
         ...answers,
         details: { answered: ["reason", "level"], level: "B1+", levelTest: { answers: [] } },
+        title: "Ficar fluente em italiano",
       });
 
       await goalContentWorkflow({ goalId: later.goal.id });
@@ -1379,6 +1386,31 @@ describe(goalContentWorkflow, () => {
 
       expect(generateSkillGraph).not.toHaveBeenCalled();
       expect(planSkillIdsOf(laterPlan)).toStrictEqual(planSkillIdsOf(firstPlan));
+    },
+  );
+
+  it(
+    "plans two learners who answered the same at once from one graph",
+    { timeout: TIMEOUT },
+    async () => {
+      const answers = italianAnswers();
+
+      vi.mocked(generateSkillGraph)
+        .mockResolvedValueOnce(graphResult(isolatedGraph()))
+        .mockResolvedValueOnce(graphResult(isolatedGraph()));
+
+      const learners = await Promise.all([newGoal(answers), newGoal(answers)]);
+      await Promise.all(learners.map(({ goal }) => goalContentWorkflow({ goalId: goal.id })));
+
+      const plans = await Promise.all(
+        learners.map(({ goal }) => prisma.plan.findUniqueOrThrow({ where: { goalId: goal.id } })),
+      );
+
+      const [first, second] = plans.map((plan) => planSkillIdsOf(plan));
+
+      expect(generateSkillGraph).toHaveBeenCalledTimes(2);
+      expect(first?.length).toBeGreaterThan(0);
+      expect(second).toStrictEqual(first);
     },
   );
 
